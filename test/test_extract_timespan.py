@@ -45,7 +45,7 @@ class TestExtractTimespan(unittest.TestCase):
     def test_unsupported_language_raises(self):
         # a language with no engine locale data (locale/<code>/lang.json)
         with self.assertRaises(NotImplementedError):
-            extract_timespan("june 2027", "ru", ANCHOR)
+            extract_timespan("june 2027", "zu", ANCHOR)
 
 
 class TestDateSpanValidation(unittest.TestCase):

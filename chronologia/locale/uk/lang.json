@@ -1,0 +1,79 @@
+{
+  "tokenizer": {
+    "split_contractions": false,
+    "ordinal_dot": false
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "NUM UNIT MARKER",
+        "MARKER NUM UNIT"
+      ]
+    },
+    "named_day": {
+      "orders": [
+        "DAY_WORD"
+      ]
+    },
+    "weekday_ref": {
+      "orders": [
+        "REL_MARKER WEEKDAY"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "DAY MONTH YEAR?",
+        "DAY of MONTH YEAR?",
+        "MONTH DAY? YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "season_ref": {
+      "orders": [
+        "REL_MARKER SEASON",
+        "SEASON of YEAR",
+        "SEASON YEAR?"
+      ]
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK MERIDIEM?",
+        "at HOUR MERIDIEM?",
+        "at? LANDMARK"
+      ],
+      "prefer_future": true
+    },
+    "iso_date": {
+      "orders": [
+        "ISO"
+      ]
+    },
+    "year_ref": {
+      "orders": [
+        "in GYEAR",
+        "article? year_word GYEAR",
+        "GYEAR"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": true,
+    "hemisphere": "north",
+    "prefer_future": true
+  },
+  "quantifiers": {
+    "1": [
+      "один",
+      "одна",
+      "одне"
+    ],
+    "0.5": [
+      "пів"
+    ]
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "hook": "chronologia.extract.numfold_slavic:fold_uk"
+}

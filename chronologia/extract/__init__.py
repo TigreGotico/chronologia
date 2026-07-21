@@ -112,12 +112,41 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     return _TIMESPAN_ENGINES[code]
 
 
-#: range framings, most specific first; each yields (left, right) text
-_RANGE_PATTERNS = (
-    re.compile(r"^\s*(?:from\s+)?(.+?)\s+(?:to|until|till|through|thru|-)\s+(.+?)\s*$",
-               re.IGNORECASE),
-    re.compile(r"^\s*between\s+(.+?)\s+and\s+(.+?)\s*$", re.IGNORECASE),
-)
+#: default (English) range framing words, always available so English
+#: behaviour is unchanged.  A language adds its own surfaces via the
+#: ``from``/``to``/``between``/``and`` connectors (``marker_from.voc`` ...),
+#: which are unioned in per language -- ranges are not English-only.
+_RANGE_FROM = ("from",)
+_RANGE_TO = ("to", "until", "till", "through", "thru", "-")
+_RANGE_BETWEEN = ("between",)
+_RANGE_AND = ("and",)
+
+
+def _range_words(spec, name, defaults):
+    forms = set(defaults)
+    forms |= set(spec.connectors.get(name, ()))
+    return tuple(sorted((re.escape(f) for f in forms if f),
+                        key=len, reverse=True))
+
+
+def _range_patterns(spec):
+    """(from-A-to-B, between-A-and-B) regexes for a language, most specific
+    first.  Framing words are the English defaults unioned with the
+    language's own ``from``/``to``/``between``/``and`` connector surfaces."""
+    to_alt = "|".join(_range_words(spec, "to", _RANGE_TO))
+    from_alt = "|".join(_range_words(spec, "from", _RANGE_FROM))
+    between_alt = "|".join(_range_words(spec, "between", _RANGE_BETWEEN))
+    and_alt = "|".join(_range_words(spec, "and", _RANGE_AND))
+    return (
+        re.compile(rf"^\s*(?:(?:{from_alt})\s+)?(.+?)\s+(?:{to_alt})\s+(.+?)\s*$",
+                   re.IGNORECASE),
+        re.compile(rf"^\s*(?:{between_alt})\s+(.+?)\s+(?:{and_alt})\s+(.+?)\s*$",
+                   re.IGNORECASE),
+    )
+
+
+def _starts_with_any(lowered, words):
+    return any(lowered.startswith(w.lower() + " ") for w in words)
 
 
 def _extract_range(text, lang, anchor):
@@ -127,18 +156,25 @@ def _extract_range(text, lang, anchor):
     after the right; otherwise returns ``None`` so the normal single-span
     path runs (this keeps "quarter to five" -- a clock, not a range -- from
     being read as a range)."""
+    spec = _timespan_engine(lang).spec
+    patterns = _range_patterns(spec)
     lowered = text.strip().lower()
-    between = lowered.startswith("between ")
-    has_from = lowered.startswith("from ")
-    for pat in _RANGE_PATTERNS:
+    between = _starts_with_any(lowered, _RANGE_BETWEEN + tuple(
+        spec.connectors.get("between", ())))
+    has_from = _starts_with_any(lowered, _RANGE_FROM + tuple(
+        spec.connectors.get("from", ())))
+    # lone clock-fraction words that a bare "A to B" must never treat as a
+    # range endpoint (would hijack "quarter to five" / "čtvrt na päť")
+    fraction_words = set(spec.clock_fractions) | {"quarter", "half", "a quarter"}
+    for pat in patterns:
         m = pat.match(text)
         if not m:
             continue
         left_txt, right_txt = m.group(1), m.group(2)
         # a bare "A to B" (no from/between) is only trusted when neither side
         # is a lone clock fraction word -- avoids hijacking "quarter to five"
-        if pat is _RANGE_PATTERNS[0] and not (has_from or between):
-            if left_txt.strip().lower() in ("quarter", "half", "a quarter"):
+        if pat is patterns[0] and not (has_from or between):
+            if left_txt.strip().lower() in fraction_words:
                 continue
         left = extract_timespan(left_txt, lang, anchor) \
             or _bare_weekday_endpoint(left_txt, lang, anchor)

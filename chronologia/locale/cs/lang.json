@@ -1,0 +1,37 @@
+{
+  "tokenizer": {"split_contractions": false, "ordinal_dot": true},
+  "constructions": {
+    "relative_offset": {"orders": ["NUM UNIT MARKER", "MARKER NUM UNIT",
+                        "MARKER indef? UNIT", "indef? UNIT MARKER"]},
+    "named_day": {"orders": ["DAY_WORD"]},
+    "weekday_ref": {"orders": ["REL_MARKER WEEKDAY"]},
+    "calendar_date": {
+      "orders": ["DAY MONTH YEAR?", "DAY of MONTH YEAR?", "MONTH DAY? YEAR?"],
+      "prefer_future": true
+    },
+    "season_ref": {
+      "orders": ["REL_MARKER SEASON", "SEASON of YEAR", "SEASON YEAR?"]
+    },
+    "clock_time": {
+      "orders": ["CLOCK MERIDIEM?", "at HOUR MERIDIEM?",
+                 "HOUR oclock MERIDIEM?", "HOUR MERIDIEM", "at? LANDMARK",
+                 "FRACTION CLOCKDIR HOUR MERIDIEM?",
+                 "MINUTE CLOCKDIR HOUR MERIDIEM?"],
+      "prefer_future": true
+    },
+    "iso_date": {"orders": ["ISO"]},
+    "year_ref": {"orders": ["in GYEAR", "article? year_word GYEAR", "GYEAR"]},
+    "decade_ref": {
+      "orders": ["PART? article? NUM plural", "article? PART DECADE"]
+    },
+    "scoped_ordinal": {
+      "orders": ["article? ORD SCOPE_UNIT",
+                 "article? ORD UNIT of MONTH YEAR?"]
+    }
+  },
+  "conventions": {"week_start": "monday", "dmy": true, "hemisphere": "north",
+                  "prefer_future": true},
+  "quantifiers": {"1": ["jeden", "jedna", "jedno"], "0.5": ["půl"]},
+  "guards": {"bare_year_min_digits": 4},
+  "hook": "chronologia.extract.numfold_slavic:fold_cs"
+}
