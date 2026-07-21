@@ -1205,6 +1205,20 @@ _reg("DK", None, "Anden pinsedag", *_mov(50))
 _reg("DK", None, "Juledag", 2024, 12, 25)
 _reg("DK", None, "Anden juledag", 2024, 12, 26)
 
+# --- NO: helligdager (Norwegian names) ---
+_reg("NO", None, "Første nyttårsdag", 2024, 1, 1)
+_reg("NO", None, "Skjærtorsdag", *_mov(-3))
+_reg("NO", None, "Langfredag", *_mov(-2))
+_reg("NO", None, "Første påskedag", *_mov(0))
+_reg("NO", None, "Andre påskedag", *_mov(1))
+_reg("NO", None, "Arbeidernes dag", 2024, 5, 1)
+_reg("NO", None, "Kristi himmelfartsdag", *_mov(39))
+_reg("NO", None, "Grunnlovsdag", 2024, 5, 17)
+_reg("NO", None, "Første pinsedag", *_mov(49))
+_reg("NO", None, "Andre pinsedag", *_mov(50))
+_reg("NO", None, "Første juledag", 2024, 12, 25)
+_reg("NO", None, "Andre juledag", 2024, 12, 26)
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
