@@ -123,16 +123,35 @@ def test_ramesses_ii_middle_lies_between_high_and_low():
     assert high_start.year < mid_start.year < low_start.year
 
 
-@pytest.mark.parametrize("variant", [
-    "egyptian_high", "egyptian_middle", "egyptian_low",
-])
-def test_all_three_variants_share_the_same_ten_rulers(variant):
-    names = [name for name, _ in REGNAL_SEQUENCES[variant].segments]
-    assert names == [
+# The dataset is attested-only: a ruler appears in a variant only where
+# that variant's figure is directly attested in the cited source, so the
+# three variants have DIFFERENT ruler subsets (see chronologia/regnal.py
+# for the per-ruler citation notes and the documented gaps).
+@pytest.mark.parametrize("variant,expected_rulers", [
+    ("egyptian_high", [
         "ahmose_i", "amenhotep_i", "thutmose_i", "thutmose_iii",
-        "amenhotep_ii", "amenhotep_iii", "akhenaten", "tutankhamun",
-        "horemheb", "ramesses_ii",
-    ]
+        "amenhotep_ii", "ramesses_ii",
+    ]),
+    ("egyptian_middle", ["ramesses_ii"]),
+    ("egyptian_low", [
+        "amenhotep_i", "thutmose_i", "thutmose_iii", "amenhotep_ii",
+        "amenhotep_iii", "ay", "horemheb", "ramesses_ii",
+    ]),
+])
+def test_variant_ruler_subsets_are_attested_only(variant, expected_rulers):
+    names = [name for name, _ in REGNAL_SEQUENCES[variant].segments]
+    assert names == expected_rulers
+
+
+def test_ay_precedes_horemheb_in_low_variant_no_interpolation_regression():
+    # Regression test: an earlier draft of this dataset interpolated a
+    # Horemheb accession that landed BEFORE Tutankhamun/Ay, which is
+    # historically impossible (Horemheb reigned after Ay). The attested-only
+    # dataset must keep Ay strictly before Horemheb.
+    seq = REGNAL_SEQUENCES["egyptian_low"]
+    ay_start, _ = seq._bounds("ay")
+    horemheb_start, _ = seq._bounds("horemheb")
+    assert ay_start.year < horemheb_start.year
 
 
 def test_unknown_ruler_raises_key_error():
@@ -155,3 +174,20 @@ def test_regnal_year_far_past_reign_end_is_out_of_range():
     seq = REGNAL_SEQUENCES["egyptian_low"]
     # amenhotep_ii: 1427-1391 BC == 36 regnal years; year 100 does not exist.
     assert seq.year_span("amenhotep_ii", 100) is None
+
+
+# -- Structural invariant across the WHOLE registry -------------------------
+#
+# Regression coverage for the class of bug found in an earlier draft of the
+# egyptian_high sequence: an interpolated Horemheb entry landed before
+# Tutankhamun's, i.e. segments were not in strictly increasing start_jdn
+# order. That is a structural invariant every RegnalSequence must hold,
+# not just the Egyptian ones, so it is asserted globally here.
+@pytest.mark.parametrize("key", sorted(REGNAL_SEQUENCES))
+def test_every_regnal_sequence_has_strictly_increasing_start_jdn(key):
+    segments = REGNAL_SEQUENCES[key].segments
+    starts = [start_jdn for _, start_jdn in segments]
+    assert starts == sorted(starts) and len(set(starts)) == len(starts), (
+        f"{key!r} segments are not in strictly increasing start_jdn order: "
+        f"{segments!r}"
+    )

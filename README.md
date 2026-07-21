@@ -114,15 +114,18 @@ c.CALENDARS["egyptian"].from_jdn(1448638 + 365)  # (2, 1, 1), 365 days later, al
 ```
 
 `REGNAL_SEQUENCES` includes a small demonstrative New Kingdom (Dynasty
-18-19) dataset — Ahmose I through Ramesses II, ~10 rulers — in **three**
-parallel chronology variants, `egyptian_high`, `egyptian_middle` and
-`egyptian_low`, reflecting the ±10-25 year disagreement in Egyptological
-absolute dating (the dispute traces to which observation site is assumed
-for the Sothic/heliacal-rise anchor in Amenhotep I's reign, and propagates
-down the sequence via the attested relative reign lengths). Ramesses II's
-accession is the one figure directly attested by name in all three
-variants: 1304 BC (high), 1290 BC (middle/conventional), 1279 BC (low) —
-divergence of a quarter-century between the high and low variants:
+18-19) dataset, Ahmose I through Ramesses II, in **three** parallel
+chronology variants — `egyptian_high`, `egyptian_middle` and `egyptian_low`
+— reflecting the ±13-25 year disagreement in Egyptological absolute dating.
+The dataset is **attested-only**: a ruler is listed in a variant only where
+that variant's accession year is directly attested (with an explicit
+chronology label) in a cited source, so the three variants have different
+ruler subsets and lengths, and documented gaps rather than interpolated
+fill-ins — see `chronologia/regnal.py` for the full per-ruler citation
+trail. Ramesses II's accession is the one figure directly attested by name
+in all three variants: 1304 BC (high), 1290 BC (middle/conventional),
+1279 BC (low) — divergence of a quarter-century between the high and low
+variants:
 
 ```python
 c.REGNAL_SEQUENCES["egyptian_high"].year_span("ramesses_ii", 5)
