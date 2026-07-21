@@ -205,6 +205,52 @@ c.combine_basis("exact", "tabulated")            # 'tabulated'
 c.combine_basis("reconstructed", "predicted")    # 'reconstructed' (peer tie-break)
 ```
 
+## Named periods
+
+`chronologia.periods` names stretches of time. A `NamedPeriod` binds a name
+("Jurassic", "Late Bronze Age") to a `DateSpan`, a hierarchy `level`, an
+optional `region` (`None` == a global name), a versioned `source`, and a
+`parent` key. Two data instances ship in `PERIODS`:
+
+- the **ICS International Chronostratigraphic Chart** (version `2023/09`) — the
+  full global scale, every eon/era/period/epoch/age placed on the
+  Before-Present axis, published GSSP boundary uncertainties folded *outward*
+  into the endpoints, `basis="tabulated"`;
+- a small, region-tagged **archaeological set** (British three-age system vs
+  Mesopotamian Bronze Age), `basis="reconstructed"`, that exists only to prove
+  regional disambiguation. Per-site phasings stay out.
+
+`lookup(name, region=None)` answers an exact global name or a `(name, region)`
+pair; a bare, region-ambiguous name raises `AmbiguousPeriodError` and
+`candidates(name)` lists the choices — picking a locale default is the
+consumer's job. `subdivide(target, part)` cuts any span into conventional
+early/mid/late thirds (or first-/second-half halves), but an authority-defined
+subdivision wins: the ICS **Late Jurassic** entry, not an arithmetic third.
+
+```python
+import chronologia as c
+
+# "during the jurassic" — a chart entry, on the deep-time BP axis
+jurassic = c.lookup("jurassic")
+(1950 - jurassic.span.start.year) / 1e6    # ~201.6 Ma  (201.4 + 0.2 GSSP unc)
+jurassic.span.resolution                   # DateTimeResolution.PERIOD_GEOLOGICAL
+jurassic.parent                            # 'mesozoic'
+c.lookup("holocene").span.start.year       # -9750  == 1950 - 11_700 yr BP
+
+# early/mid/late — authority-defined subdivision wins over arithmetic thirds
+c.subdivide(jurassic, "late") == c.lookup("late jurassic").span   # True
+
+# "late bronze age" is region-ambiguous: Britain vs Mesopotamia
+sorted(p.region for p in c.candidates("bronze age"))   # ['GB', 'MESO']
+c.lookup("late bronze age", region="GB").span.start.year     # -1149  (1150 BC)
+c.lookup("late bronze age", region="MESO").span.start.year   # -1549  (1550 BC)
+
+# Radiocarbon: 14C BP and cal BP are distinct reckonings (coarse IntCal20)
+cal = c.calibrate_c14(3000)                # ~3000 14C BP -> a cal-BP span
+1950 - cal.start.year                      # ~3300 cal BP (demonstrative, not OxCal)
+cal.basis                                  # 'reconstructed'
+```
+
 ## Leap seconds
 
 `chronologia.leapseconds` converts between the real timescales — UTC, TAI
@@ -372,6 +418,12 @@ each module's docstring:
 - Honsberg & Bowden, *Solar Time* (PVCDROM / PVEducation) — the equation of
   time closed form and the 4-minutes-per-degree longitude rule for local
   mean and apparent solar time.
+- ICS International Chronostratigraphic Chart, version 2023/09 (boundary ages
+  via the Macrostrat international timescale, CC-BY 4.0) — the geological
+  named periods in `chronologia/data/ics_chart.tab`.
+- Reimer et al. 2020, *The IntCal20 Northern Hemisphere radiocarbon age
+  calibration curve*, Radiocarbon 62, doi:10.1017/RDC.2020.41 — the coarse
+  calibration table in `chronologia/data/intcal20_coarse.tab`.
 
 ## Used by
 

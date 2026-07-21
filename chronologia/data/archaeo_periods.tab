@@ -1,0 +1,42 @@
+# chronologia named-period registry — demonstrative archaeological periods
+#
+# A SMALL, region-tagged set whose only purpose is to prove regional
+# disambiguation: the same period name ("Bronze Age", "Late Bronze Age")
+# denotes different absolute spans in different regions, so a bare name is
+# ambiguous and must be resolved with a region tag (or by the consumer's
+# locale default). Per-site phasings (e.g. Troy VIIa, Bronze Age at a single
+# tell) are deliberately OUT of scope — this registry stops at the
+# region-level conventional chronology.
+#
+# Dates are the conventional, approximate calendar boundaries taught for each
+# region; they are cultural reconstructions, not GSSP-style ratified points,
+# hence basis "reconstructed".
+#
+# Sources (conventional chronologies):
+#   British three-age system / Great Britain (GB):
+#     Encyclopaedia Britannica, "Three-age system" and "Bronze Age";
+#     British Museum period chronology for Britain.
+#   Mesopotamia / Ancient Near East (MESO):
+#     Encyclopaedia Britannica, "History of Mesopotamia" (Bronze Age
+#     subdivisions of the Ancient Near East: EBA/MBA/LBA).
+# Consulted: 2026-07-21.
+#
+# Years are ASTRONOMICAL years (1 BC == year 0), so a "BC" year Y maps to
+# 1 - Y (2500 BC -> -2499, AD 43 -> 43). Spans are half-open [start, end) and
+# tile within a region (a period's end year is the next period's start year).
+#
+# Format: 8 tab-separated columns:
+#   key<TAB>name<TAB>level<TAB>region<TAB>start_year<TAB>end_year<TAB>parent<TAB>basis
+#   level in {period, age}; parent is a key or "-" for none.
+#
+key	name	level	region	start_year	end_year	parent	basis
+neolithic_gb	Neolithic	period	GB	-3999	-2499	-	reconstructed
+bronze_age_gb	Bronze Age	period	GB	-2499	-799	-	reconstructed
+early_bronze_age_gb	Early Bronze Age	age	GB	-2499	-1499	bronze_age_gb	reconstructed
+middle_bronze_age_gb	Middle Bronze Age	age	GB	-1499	-1149	bronze_age_gb	reconstructed
+late_bronze_age_gb	Late Bronze Age	age	GB	-1149	-799	bronze_age_gb	reconstructed
+iron_age_gb	Iron Age	period	GB	-799	43	-	reconstructed
+bronze_age_meso	Bronze Age	period	MESO	-3299	-1199	-	reconstructed
+early_bronze_age_meso	Early Bronze Age	age	MESO	-3299	-2099	bronze_age_meso	reconstructed
+middle_bronze_age_meso	Middle Bronze Age	age	MESO	-2099	-1549	bronze_age_meso	reconstructed
+late_bronze_age_meso	Late Bronze Age	age	MESO	-1549	-1199	bronze_age_meso	reconstructed

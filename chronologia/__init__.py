@@ -29,6 +29,9 @@ from chronologia.leapseconds import (GPS_EPOCH, LEAP_SECONDS,
                                      utc_tai_offset, utc_to_gps, utc_to_tai)
 from chronologia.localtime import (EOT_ACCURACY, LMTZone, apparent_solar_time,
                                    equation_of_time, local_mean_time)
+from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
+                                 AmbiguousPeriodError, NamedPeriod, calibrate_c14,
+                                 candidates, children, lookup, subdivide)
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
 from chronologia.resolution import DateTimeResolution
 from chronologia.roman import roman_to_julian
@@ -83,6 +86,17 @@ __all__ = [
     "DayCycle",
     "DaySubdivision",
     "resolve_cycle_day",
+    # named-period registry (ICS chart + archaeological periods)
+    "NamedPeriod",
+    "PERIODS",
+    "AmbiguousPeriodError",
+    "ICS_CHART_VERSION",
+    "INTCAL20_COARSE",
+    "lookup",
+    "candidates",
+    "children",
+    "subdivide",
+    "calibrate_c14",
     # regnal reckoning
     "REGNAL_SEQUENCES",
     "RegnalSequence",
