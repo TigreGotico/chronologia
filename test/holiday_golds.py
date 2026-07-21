@@ -117,3 +117,31 @@ HOLIDAY_GOLDS["CN"] = [
     _g("Qingming Festival", 2025, 4, 4),
     _g("Qingming Festival", 2023, 4, 5),
 ]
+
+
+# --------------------------------------------------------------------------
+# Japan (Cabinet Office national holidays; furikae substitute days out of scope)
+# --------------------------------------------------------------------------
+# Equinox golds assert the Cabinet Office's PUBLISHED dates.
+HOLIDAY_GOLDS["JP"] = [
+    _g("New Year's Day", 2024, 1, 1),
+    _g("Coming of Age Day", 2024, 1, 8),
+    _g("National Foundation Day", 2024, 2, 11),
+    _g("Emperor's Birthday", 2024, 2, 23),
+    _g("Vernal Equinox Day", 2024, 3, 20),
+    _g("Showa Day", 2024, 4, 29),
+    _g("Constitution Memorial Day", 2024, 5, 3),
+    _g("Greenery Day", 2024, 5, 4),
+    _g("Children's Day", 2024, 5, 5),
+    _g("Marine Day", 2024, 7, 15),
+    _g("Mountain Day", 2024, 8, 11),
+    _g("Respect for the Aged Day", 2024, 9, 16),
+    _g("Autumnal Equinox Day", 2024, 9, 22),
+    _g("Sports Day", 2024, 10, 14),
+    _g("Culture Day", 2024, 11, 3),
+    _g("Labour Thanksgiving Day", 2024, 11, 23),
+    # other-year equinoxes + Happy Monday
+    _g("Vernal Equinox Day", 2025, 3, 20),
+    _g("Autumnal Equinox Day", 2025, 9, 23),
+    _g("Coming of Age Day", 2025, 1, 13),
+]

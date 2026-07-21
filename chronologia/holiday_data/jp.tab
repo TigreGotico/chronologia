@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: JP
+# source: Cabinet Office (内閣府), "国民の祝日について"
+#   https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html and the official dates
+#   CSV https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv
+#   Legal basis: 国民の祝日に関する法律 (Act No. 178 of 1948, as amended).
+# retrieved: 2026-07-21
+# notes:
+#   The 16 national holidays. The two equinox holidays (Shunbun no Hi / Shubun
+#   no Hi) are gazetted each February from the astronomical equinox reckoned in
+#   Japan Standard Time (UTC+9); the equinox rule kind reproduces the Cabinet
+#   Office's published dates, and the golds assert those published dates.
+#   OUT OF SCOPE: the 振替休日 (furikae) substitute-holiday days. When a holiday
+#   falls on a Sunday the following non-holiday day becomes a day off; those
+#   substitute days are per-calendar administrative arrangements (expressible via
+#   the sun_mon observed policy, demonstrated in the tests) and, like China's
+#   调休 make-up days, are not listed here — we list the statutory holidays on
+#   their legal dates.
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- fixed ---
+fixed       | New Year's Day             | 1 1   | public |  |
+fixed       | National Foundation Day    | 2 11  | public |  |
+fixed       | Emperor's Birthday         | 2 23  | public |  |
+fixed       | Showa Day                  | 4 29  | public |  |
+fixed       | Constitution Memorial Day  | 5 3   | public |  |
+fixed       | Greenery Day               | 5 4   | public |  |
+fixed       | Children's Day             | 5 5   | public |  |
+fixed       | Mountain Day               | 8 11  | public |  |
+fixed       | Culture Day                | 11 3  | public |  |
+fixed       | Labour Thanksgiving Day    | 11 23 | public |  |
+#
+# --- Happy-Monday nth-weekday ---
+nth_weekday | Coming of Age Day          | 1 2 0  | public |  |
+nth_weekday | Marine Day                 | 7 3 0  | public |  |
+nth_weekday | Respect for the Aged Day   | 9 3 0  | public |  |
+nth_weekday | Sports Day                 | 10 2 0 | public |  |
+#
+# --- equinox holidays (JST = UTC+9) ---
+equinox     | Vernal Equinox Day         | march 9     | public |  |
+equinox     | Autumnal Equinox Day       | september 9 | public |  |

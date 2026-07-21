@@ -249,6 +249,33 @@ def test_au_differential_national_2024_2025():
                     f"absent from ours")
 
 
+def test_jp_differential_statutory_days_match_package():
+    # Every JP statutory holiday matches the package on its legal date; the
+    # package's EXTRA entries are all 振替休日 substitute days we hold out of
+    # scope (like China's 调休). Includes the equinox holidays on the Cabinet
+    # Office dates (2024 秋分の日 = 09-22; the package's 09-23 is the substitute).
+    for year in (2024, 2025):
+        ours = set(_our_dates("JP", year))
+        pkg = holidays_pkg.country_holidays("JP", years=year)
+        theirs = {(d.month, d.day) for d in pkg}
+        assert ours <= theirs, f"JP {year} missing from package: {ours - theirs}"
+        for d in pkg:
+            if (d.month, d.day) not in ours:
+                assert "振替休日" in pkg[d], (
+                    f"JP {year}: unexpected non-furikae package day {d}: {pkg[d]}")
+
+
+def test_jp_furikae_mechanism_expressible_but_out_of_scope():
+    # The substitute-holiday relocation is expressible via the sun_mon policy —
+    # 2024 秋分の日 is Sunday 09-22, whose furikae substitute is Monday 09-23 —
+    # but the .tab lists the statutory day itself (09-22), not the substitute.
+    from chronologia import SUNDAY_TO_MONDAY
+    assert SUNDAY_TO_MONDAY.apply(AstroDate(2024, 9, 22)) == AstroDate(2024, 9, 23)
+    got = [h for h in holidays_for("JP", 2024)
+           if h.name == "Autumnal Equinox Day"]
+    assert got[0].date == AstroDate(2024, 9, 22)
+
+
 def test_cn_differential_statutory_core_matches_package():
     # The package labels statutory days 元旦/春节/清明节/劳动节/端午节/中秋节/国庆节
     # and separately labels the 调休 make-up days 休息日(...调休) / 补假. Our
