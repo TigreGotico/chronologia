@@ -31,11 +31,12 @@ Python 3.10+.
   is the worst-of rule for propagating it. Widths beyond `timedelta`'s
   ~2.7-million-year ceiling are reported as a **`WideDuration`** so a
   geological span never overflows (see **Deep time** below).
-- **`CALENDARS`** — a registry of 16 calendars, each an integer inverse pair
+- **`CALENDARS`** — a registry of 17 calendars, each an integer inverse pair
   through the **Julian Day Number** hub: `to_jdn(y, m, d)` and `from_jdn(jdn)`.
-  Twelve are closed-form arithmetic: `julian`, `hebrew`, `islamic_civil`,
+  Thirteen are closed-form arithmetic: `julian`, `hebrew`, `islamic_civil`,
   `french_republican`, `bahai`, `coptic`, `ethiopian`, `revised_julian`,
-  `armenian`, `mayan_long_count`, `iso_week`, `solar_hijri_arithmetic`. Four
+  `armenian`, `egyptian`, `mayan_long_count`, `iso_week`,
+  `solar_hijri_arithmetic`. Four
   are `TabulatedCalendar`s backed by data files in `calendar_data/`:
   `umm_al_qura`, `badi_2015`, `french_republican_equinox`, `chinese` — bounded
   event tables with an out-of-range `CalendarRangeError` fallback contract and
@@ -50,8 +51,8 @@ Python 3.10+.
   epoch-plus-count approximation three months off.
 - **Day cycles, regnal sequences, and Roman dates** — `DAY_CYCLES` (week,
   Roman nundinal, Republican décade), `REGNAL_SEQUENCES` (Roman consuls,
-  Japanese nengō), and `roman_to_julian` for `a.d.` Kalends/Nones/Ides
-  reckoning.
+  Japanese nengō, New Kingdom Egyptian high/middle/low chronology variants),
+  and `roman_to_julian` for `a.d.` Kalends/Nones/Ides reckoning.
 
 ### Scope: arithmetic, tabulated, out of scope
 
@@ -94,6 +95,39 @@ span.resolution        # DateTimeResolution.MONTH
 # Roman calendar: the Ides of March, 44 (a.d. count is inclusive, 1 == the day)
 c.roman_to_julian(44, 3, "ides", 1)   # (44, 3, 15)
 c.roman_to_julian(44, 3, "ides", 2)   # (44, 3, 14)  -> pridie
+```
+
+## Egyptian calendar & New Kingdom regnal chronology
+
+The `egyptian` calendar is the original 365-day "vague year": twelve 30-day
+months grouped into three season-thirds — Akhet "Inundation" (months 1-4),
+Peret "Emergence" (5-8), Shemu "Harvest" (9-12) — plus five epagomenal days
+as month 13, and (unlike Coptic/Ethiopic) **no leap day, ever**. The civil
+year drifts one day earlier against the solar year every four years,
+completing a full Sothic cycle in 1460 Egyptian years. Epoch: the era of
+Nabonassar anchor Ptolemy used to key the *Almagest*'s observation tables —
+1 Thoth year 1 = JDN 1448638 = -746-02-26 proleptic Julian.
+
+```python
+c.CALENDARS["egyptian"].to_jdn(1, 1, 1)     # 1448638, the epoch
+c.CALENDARS["egyptian"].from_jdn(1448638 + 365)  # (2, 1, 1), 365 days later, always
+```
+
+`REGNAL_SEQUENCES` includes a small demonstrative New Kingdom (Dynasty
+18-19) dataset — Ahmose I through Ramesses II, ~10 rulers — in **three**
+parallel chronology variants, `egyptian_high`, `egyptian_middle` and
+`egyptian_low`, reflecting the ±10-25 year disagreement in Egyptological
+absolute dating (the dispute traces to which observation site is assumed
+for the Sothic/heliacal-rise anchor in Amenhotep I's reign, and propagates
+down the sequence via the attested relative reign lengths). Ramesses II's
+accession is the one figure directly attested by name in all three
+variants: 1304 BC (high), 1290 BC (middle/conventional), 1279 BC (low) —
+divergence of a quarter-century between the high and low variants:
+
+```python
+c.REGNAL_SEQUENCES["egyptian_high"].year_span("ramesses_ii", 5)
+c.REGNAL_SEQUENCES["egyptian_low"].year_span("ramesses_ii", 5)
+# same regnal year, ~25 years apart in absolute Gregorian terms
 ```
 
 ## Timelines & discontinuities

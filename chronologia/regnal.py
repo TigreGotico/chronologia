@@ -107,4 +107,71 @@ REGNAL_SEQUENCES = {
         ("trajan_frontinus", _jdn(100, 1, 1)),      # AD 100
         ("severus_quintianus", _jdn(235, 1, 1)),    # AD 235
     )),
+    # New Kingdom Egypt (Dynasty 18-19), Ahmose I through Ramesses II: a
+    # small demonstrative set of ~10 well-attested rulers, in THREE parallel
+    # chronology variants -- "high", "middle" (conventional) and "low" --
+    # the standard three-way split scholarship uses for this period because
+    # the absolute anchor (the Sothic/heliacal-rise observation tied to
+    # Amenhotep I's reign) is itself disputed by ~25 years depending on the
+    # observation site assumed, and the dispute propagates down the whole
+    # dynastic sequence via the attested relative reign lengths.  BC years
+    # are astronomical (63 BC == -62), matching the ``consuls`` convention
+    # above; accession day/month are not attested for most of these rulers,
+    # so each segment starts 1 January proleptic Julian/Gregorian of its
+    # accession year (a documented simplification, as for ``consuls``).
+    #
+    # Source: Wikipedia's per-ruler chronology sections (a sourced mirror of
+    # the scholarly high/middle/low debate -- see e.g. "Ramesses II",
+    # "Seti I", "Thutmose III", "Amenhotep II/III", "Ahmose I", "Akhenaten",
+    # "Tutankhamun", "Horemheb"), which is where each ruler's high and/or low
+    # figure below is directly attested.  Ramesses II is the one ruler whose
+    # three variants (1304 / 1290 / 1279 BC) are ALL directly and
+    # consistently attested by name in the literature; that triple is the
+    # anchor.  For rulers where only a high/low pair (or only a low figure)
+    # is directly attested, the missing variant(s) are interpolated --
+    # documented per-entry below -- rather than independently sourced, which
+    # is the honest boundary of this small demonstrative dataset.
+    #
+    # Uncertainty: +/-10 to +/-25 years per accession, growing toward the
+    # earlier rulers (Ahmose I) and narrowing toward Ramesses II, per the
+    # cited sources.  This composes with the suffixed-variant convention
+    # used elsewhere in this registry (e.g. a caller distinguishing
+    # ``egyptian_high``/``egyptian_middle``/``egyptian_low`` the same way
+    # ``nengo``/``consuls`` are distinguished by key).
+    "egyptian_high": RegnalSequence("egyptian_high", (
+        ("ahmose_i", _jdn(-1569, 1, 1)),        # 1570 BC, attested
+        ("amenhotep_i", _jdn(-1544, 1, 1)),     # 1545 BC, attested
+        ("thutmose_i", _jdn(-1525, 1, 1)),      # 1526 BC, attested
+        ("thutmose_iii", _jdn(-1503, 1, 1)),    # 1504 BC, attested
+        ("amenhotep_ii", _jdn(-1453, 1, 1)),    # 1454 BC, attested
+        ("amenhotep_iii", _jdn(-1416, 1, 1)),   # 1417 BC, attested
+        ("akhenaten", _jdn(-1378, 1, 1)),       # 1379 BC, interpolated
+        ("tutankhamun", _jdn(-1340, 1, 1)),     # 1341 BC, attested
+        ("horemheb", _jdn(-1343, 1, 1)),        # 1344 BC, interpolated
+        ("ramesses_ii", _jdn(-1303, 1, 1)),     # 1304 BC, attested
+    )),
+    "egyptian_middle": RegnalSequence("egyptian_middle", (
+        ("ahmose_i", _jdn(-1559, 1, 1)),        # 1560 BC, interpolated
+        ("amenhotep_i", _jdn(-1534, 1, 1)),     # 1535 BC, interpolated
+        ("thutmose_i", _jdn(-1515, 1, 1)),      # 1516 BC, interpolated
+        ("thutmose_iii", _jdn(-1491, 1, 1)),    # 1492 BC, interpolated
+        ("amenhotep_ii", _jdn(-1440, 1, 1)),    # 1441 BC, interpolated
+        ("amenhotep_iii", _jdn(-1403, 1, 1)),   # 1404 BC, interpolated
+        ("akhenaten", _jdn(-1365, 1, 1)),       # 1366 BC, interpolated
+        ("tutankhamun", _jdn(-1335, 1, 1)),     # 1336 BC, interpolated
+        ("horemheb", _jdn(-1331, 1, 1)),        # 1332 BC, interpolated
+        ("ramesses_ii", _jdn(-1289, 1, 1)),     # 1290 BC, attested
+    )),
+    "egyptian_low": RegnalSequence("egyptian_low", (
+        ("ahmose_i", _jdn(-1549, 1, 1)),        # 1550 BC, attested
+        ("amenhotep_i", _jdn(-1524, 1, 1)),     # 1525 BC, attested
+        ("thutmose_i", _jdn(-1505, 1, 1)),      # 1506 BC, attested
+        ("thutmose_iii", _jdn(-1478, 1, 1)),    # 1479 BC, attested
+        ("amenhotep_ii", _jdn(-1426, 1, 1)),    # 1427 BC, attested
+        ("amenhotep_iii", _jdn(-1390, 1, 1)),   # 1391 BC, attested
+        ("akhenaten", _jdn(-1352, 1, 1)),       # 1353 BC, attested
+        ("tutankhamun", _jdn(-1331, 1, 1)),     # 1332 BC, attested
+        ("horemheb", _jdn(-1318, 1, 1)),        # 1319 BC, attested
+        ("ramesses_ii", _jdn(-1278, 1, 1)),     # 1279 BC, attested
+    )),
 }
