@@ -47,7 +47,26 @@ The kinds:
 
 An :class:`ObservedShift` modifier is layered on top of any kind: a weekend
 falling on a listed weekday shifts by a signed delta (the U.S. federal rule is
-Saturday → preceding Friday, Sunday → following Monday).
+Saturday → preceding Friday, Sunday → following Monday) — it *relocates* the day.
+
+A :class:`SubstitutePolicy` is the complementary mechanism: instead of moving the
+nominal day it *adds* a separate substitute holiday when the nominal falls on a
+listed weekday, keeping the nominal day too. This is the UK "in-lieu" convention
+(gov.uk: a bank holiday on a weekend grants a substitute weekday — normally the
+following Monday — and the Christmas/Boxing pair can cascade two substitutes when
+25/26 December fall on a weekend) and Japan's 振替休日 furikae (a holiday on a
+Sunday makes the following non-holiday weekday a holiday). Because the substitute
+must land on the next day that is not *already* a holiday, the policy is resolved
+at the :class:`HolidayCalendar` level (it needs the year's whole holiday set),
+not inside a single rule. See :class:`SubstitutePolicy`.
+
+Rule validity ranges
+--------------------
+A :class:`HolidayRule` may carry ``from_year`` / ``until_year`` bounds: a holiday
+that only became statutory in a given year (Brazil's Consciência Negra national
+from 2024 by Lei 14.759/2023; the U.S. Juneteenth federal holiday from 2021;
+Japan's Mountain Day from 2016) resolves to *nothing* outside its effective range,
+so the same fixed rule is honestly silent before it existed and present after.
 
 Category schema
 ---------------
@@ -103,6 +122,9 @@ __all__ = [
     "SUNDAY_TO_MONDAY",
     "SATURDAY_SUNDAY_TO_MONDAY",
     "IL_INDEPENDENCE_SHIFT",
+    "SubstitutePolicy",
+    "GB_SUBSTITUTE",
+    "JP_FURIKAE",
     "HolidayRule",
     "CivilHoliday",
     "HolidayCalendar",
@@ -423,6 +445,72 @@ _OBSERVED_POLICIES: Dict[str, ObservedShift] = {
 
 
 # --------------------------------------------------------------------------
+# Substitute-day (in-lieu) policy — ADDS a day, resolved calendar-wide.
+# --------------------------------------------------------------------------
+@dataclass(frozen=True)
+class SubstitutePolicy:
+    """An in-lieu substitute-day policy: *adds* a holiday, never relocates.
+
+    When a holiday's nominal date lands on one of ``trigger_weekdays`` (Monday==0
+    .. Sunday==6), a separate substitute holiday is granted on the next day that
+    is not *already* a holiday — and, when ``skip_weekends`` is set, not a
+    Saturday or Sunday either. The nominal day stays a holiday in its own right;
+    the substitute is emitted alongside it with ``label`` appended to the name.
+
+    Unlike :class:`ObservedShift`, which each rule can apply on its own, a
+    substitute must know the year's *whole* holiday set to skip days already
+    taken (so the UK Christmas/Boxing pair cascades to two distinct Mondays/
+    Tuesdays rather than colliding). It is therefore applied by
+    :meth:`HolidayCalendar.holidays`, not by the rule in isolation.
+
+    * UK bank holidays (:data:`GB_SUBSTITUTE`): a weekend bank holiday
+      (Saturday or Sunday) → the next free weekday, gov.uk's "substitute day".
+    * Japan 振替休日 (:data:`JP_FURIKAE`): a Sunday holiday → the following
+      non-holiday day (Saturdays are eligible substitutes, so weekends are not
+      skipped).
+    """
+
+    trigger_weekdays: Tuple[int, ...]
+    skip_weekends: bool = True
+    label: str = " (substitute)"
+
+    def __post_init__(self) -> None:
+        for wd in self.trigger_weekdays:
+            if not 0 <= wd <= 6:
+                raise ValueError(f"weekday out of range: {wd}")
+
+    def substitute_for(self, nominal: AstroDate,
+                       taken: FrozenSet[AstroDate]) -> Optional[AstroDate]:
+        """The substitute day for ``nominal`` given already-``taken`` holidays.
+
+        Returns ``None`` when ``nominal``'s weekday is not a trigger. Otherwise
+        rolls forward one day at a time past any day already in ``taken`` (and,
+        if ``skip_weekends``, past Saturdays and Sundays) and returns the first
+        free day.
+        """
+        if nominal.weekday() not in self.trigger_weekdays:
+            return None
+        cand = nominal + timedelta(days=1)
+        while cand in taken or (self.skip_weekends and cand.weekday() >= 5):
+            cand = cand + timedelta(days=1)
+        return cand
+
+
+#: UK gov.uk substitute-day rule: a bank holiday on Saturday or Sunday grants a
+#: substitute on the next weekday that is not already a bank holiday.
+GB_SUBSTITUTE = SubstitutePolicy((5, 6), skip_weekends=True,
+                                 label=" (substitute day)")
+#: Japan 振替休日: a national holiday on a Sunday makes the following non-holiday
+#: day a holiday (weekends are not skipped — a Saturday can be the substitute).
+JP_FURIKAE = SubstitutePolicy((6,), skip_weekends=False, label=" (振替休日)")
+
+_SUBSTITUTE_POLICIES: Dict[str, SubstitutePolicy] = {
+    "gb_substitute": GB_SUBSTITUTE,
+    "jp_furikae": JP_FURIKAE,
+}
+
+
+# --------------------------------------------------------------------------
 # The rule wrapper and the output object.
 # --------------------------------------------------------------------------
 @dataclass(frozen=True)
@@ -432,7 +520,9 @@ class HolidayRule:
     The ``kind`` is one of the per-kind frozen classes above; ``categories`` is
     a subset of :data:`CATEGORIES`; ``subdiv`` scopes the rule to a subdivision
     (``None`` = jurisdiction-wide); ``observed`` optionally shifts the computed
-    date onto its observed day.
+    date onto its observed day; ``substitute`` optionally grants an in-lieu day
+    (resolved calendar-wide, see :meth:`HolidayCalendar.holidays`); ``from_year``
+    / ``until_year`` optionally bound the years the rule is in force (inclusive).
     """
 
     name: str
@@ -440,14 +530,31 @@ class HolidayRule:
     categories: FrozenSet[str]
     subdiv: Optional[str] = None
     observed: Optional[ObservedShift] = None
+    substitute: Optional[SubstitutePolicy] = None
+    from_year: Optional[int] = None
+    until_year: Optional[int] = None
 
     def __post_init__(self) -> None:
         bad = set(self.categories) - CATEGORIES
         if bad:
             raise ValueError(
                 f"unknown categories {sorted(bad)}; schema is {sorted(CATEGORIES)}")
+        if (self.from_year is not None and self.until_year is not None
+                and self.from_year > self.until_year):
+            raise ValueError(
+                f"from_year {self.from_year} > until_year {self.until_year}")
+
+    def in_force(self, year: int) -> bool:
+        """True when ``year`` is within this rule's validity range (inclusive)."""
+        if self.from_year is not None and year < self.from_year:
+            return False
+        if self.until_year is not None and year > self.until_year:
+            return False
+        return True
 
     def resolve(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        if not self.in_force(year):
+            return ()
         out = []
         for date, basis in self.kind.observances(year):
             if self.observed is not None:
@@ -531,12 +638,20 @@ class HolidayCalendar:
         of the requested categories.
         """
         want = frozenset(categories) if categories is not None else None
-        out = []
+        applicable = []
         for rule in self.rules:
             if rule.subdiv is not None and rule.subdiv != subdiv:
                 continue
             if want is not None and not (rule.categories & want):
                 continue
+            applicable.append(rule)
+
+        out = []
+        # Nominal (base) occurrences first — they populate the ``taken`` set the
+        # substitute pass rolls forward past, so a substitute never collides with
+        # another holiday (the UK Christmas/Boxing cascade, Japan furikae).
+        subst_work = []  # (nominal_date, rule) awaiting a substitute day
+        for rule in applicable:
             for date, basis in rule.resolve(year):
                 out.append(CivilHoliday(
                     name=rule.name,
@@ -545,6 +660,22 @@ class HolidayCalendar:
                     subdiv=rule.subdiv,
                     categories=rule.categories,
                     basis=basis))
+                if rule.substitute is not None:
+                    subst_work.append((date, basis, rule))
+
+        taken = {h.span.start for h in out}
+        for date, basis, rule in sorted(subst_work, key=lambda t: t[0]):
+            sub = rule.substitute.substitute_for(date, frozenset(taken))
+            if sub is None:
+                continue
+            taken.add(sub)
+            out.append(CivilHoliday(
+                name=rule.name + rule.substitute.label,
+                span=_day_span(sub, basis),
+                jurisdiction=self.jurisdiction,
+                subdiv=rule.subdiv,
+                categories=rule.categories,
+                basis=basis))
         out.sort(key=lambda h: (h.span.start, h.name))
         return tuple(out)
 
@@ -581,6 +712,22 @@ def _parse_kind(kind: str, args: str) -> RuleKind:
     raise ValueError(f"unknown rule kind {kind!r}")
 
 
+def _parse_valid(token: Optional[str]) -> Tuple[Optional[int], Optional[int]]:
+    """Parse a ``valid`` column into ``(from_year, until_year)`` bounds.
+
+    Grammar: ``"2024-"`` (from 2024 on), ``"-2015"`` (until 2015), ``"2016-2020"``
+    (both bounds), ``"2024"`` (that single year only), empty/``None`` (unbounded).
+    """
+    if not token:
+        return (None, None)
+    if "-" in token:
+        lo, hi = token.split("-", 1)
+        return (int(lo) if lo.strip() else None,
+                int(hi) if hi.strip() else None)
+    y = int(token)
+    return (y, y)
+
+
 def load_calendar(path: str) -> HolidayCalendar:
     """Parse a ``holiday_data/*.tab`` file into a :class:`HolidayCalendar`.
 
@@ -589,7 +736,7 @@ def load_calendar(path: str) -> HolidayCalendar:
     ``jurisdiction``, ``source`` (official URL) and ``retrieved`` (date) to be
     present — provenance is mandatory. Each data row is pipe-delimited::
 
-        kind | name | args | categories | subdiv | observed
+        kind | name | args | categories | subdiv | observed | valid
 
     * ``kind`` — ``fixed`` / ``nth_weekday`` / ``easter`` / ``calendar_date`` /
       ``equinox`` / ``solar_term`` / ``decree`` (see the per-kind classes for
@@ -597,8 +744,11 @@ def load_calendar(path: str) -> HolidayCalendar:
     * ``name`` — the official holiday name (data, verbatim; no translation).
     * ``categories`` — space-separated subset of :data:`CATEGORIES`.
     * ``subdiv`` — optional subdivision code (empty = jurisdiction-wide).
-    * ``observed`` — optional named policy (``us`` / ``sun_mon`` /
-      ``sat_sun_mon`` / ``il_independence``; empty = none).
+    * ``observed`` — optional named policy: a relocating shift (``us`` /
+      ``sun_mon`` / ``sat_sun_mon`` / ``il_independence``) OR an in-lieu
+      substitute (``gb_substitute`` / ``jp_furikae``); empty = none.
+    * ``valid`` — optional validity range (``"2024-"`` / ``"-2015"`` /
+      ``"2016-2020"`` / ``"2024"``; empty = always in force).
     """
     meta: Dict[str, str] = {}
     rules = []
@@ -620,14 +770,27 @@ def load_calendar(path: str) -> HolidayCalendar:
             kind, name, args, cats = cols[0], cols[1], cols[2], cols[3]
             subdiv = cols[4] if len(cols) > 4 and cols[4] else None
             obs_name = cols[5] if len(cols) > 5 and cols[5] else None
-            observed = _OBSERVED_POLICIES[obs_name] if obs_name else None
+            valid = cols[6] if len(cols) > 6 and cols[6] else None
+            # The observed column names either a relocating ObservedShift or an
+            # in-lieu SubstitutePolicy (they are mutually exclusive per rule).
+            observed = substitute = None
+            if obs_name in _OBSERVED_POLICIES:
+                observed = _OBSERVED_POLICIES[obs_name]
+            elif obs_name in _SUBSTITUTE_POLICIES:
+                substitute = _SUBSTITUTE_POLICIES[obs_name]
+            elif obs_name is not None:
+                raise ValueError(f"unknown observed/substitute policy {obs_name!r}")
+            from_year, until_year = _parse_valid(valid)
             categories = frozenset(cats.split())
             rules.append(HolidayRule(
                 name=name,
                 kind=_parse_kind(kind, args),
                 categories=categories,
                 subdiv=subdiv,
-                observed=observed))
+                observed=observed,
+                substitute=substitute,
+                from_year=from_year,
+                until_year=until_year))
     missing = [h for h in _REQUIRED_HEADERS if h not in meta]
     if missing:
         raise ValueError(

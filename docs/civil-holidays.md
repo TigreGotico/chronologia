@@ -113,6 +113,38 @@ obs = [h for h in holidays_for("US", 2021) if h.name == "Independence Day"][0]
 assert obs.date == AstroDate(2021, 7, 5)   # observed the Monday
 ```
 
+## Substitute (in-lieu) days
+
+An observed shift *relocates* a holiday; a **substitute** *adds* one, keeping the
+nominal day too. The UK grants a substitute weekday when a bank holiday falls on a
+weekend, and the Christmas/Boxing pair cascades to two distinct days — resolved
+across the whole year so a substitute never lands on another holiday:
+
+```python
+gb = {(h.date.month, h.date.day): h.name for h in holidays_for("GB", 2021)}
+assert gb[(12, 27)] == "Christmas Day (substitute day)"   # Sat 25 Dec -> Mon 27
+assert gb[(12, 28)] == "Boxing Day (substitute day)"      # Sun 26 Dec -> Tue 28
+```
+
+Japan's 振替休日 (furikae) is the same mechanism with a Sunday-only trigger:
+
+```python
+jp = {(h.date.month, h.date.day): h.name for h in holidays_for("JP", 2024)}
+assert jp[(9, 23)] == "Autumnal Equinox Day (振替休日)"   # Sun 22 Sep -> Mon 23
+```
+
+## Year-gated holidays
+
+A rule can carry a validity range, so a holiday that only became statutory in a
+given year is absent before it and present after (US Juneteenth from 2021):
+
+```python
+assert "Juneteenth National Independence Day" not in \
+    {h.name for h in holidays_for("US", 2020)}
+assert "Juneteenth National Independence Day" in \
+    {h.name for h in holidays_for("US", 2021)}
+```
+
 ## Categories
 
 Every holiday carries a documented subset of the schema
@@ -131,8 +163,12 @@ format with a mandatory provenance header (official source URL + retrieval
 date), one pipe-delimited rule per line:
 
 ```
-kind | name | args | categories | subdiv | observed
+kind | name | args | categories | subdiv | observed | valid
 ```
+
+The `observed` column names either a relocating shift (`us`, `sun_mon`, …) or an
+in-lieu substitute (`gb_substitute`, `jp_furikae`); the optional `valid` column
+bounds the years a rule is in force (`2024-`, `-2015`, `2016-2020`, `2024`).
 
 New jurisdictions are data, not code: add a `.tab` file with its citations and
 the engine loads it.
