@@ -21,6 +21,12 @@ classifiers = [
 ]
 dependencies = []
 
+[project.optional-dependencies]
+# Civil-holiday bridge (chronologia.holiday_bridge). The core keeps NO runtime
+# dependency on the fast-moving observance database; this is an opt-in extra,
+# the tzdb pattern applied to holidays.
+holidays = ["holidays>=0.100"]
+
 [tool.setuptools]
 packages = ["chronologia", "chronologia.data"]
 

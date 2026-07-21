@@ -85,6 +85,8 @@ from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
 from chronologia.zone_timelines import (ClockSegment, ClockTimeline,
                                         ZoneDiscontinuity, ZoneNeverExisted,
                                         zone_history_start, zone_timeline)
+from chronologia.holiday_bridge import (Holiday, HolidaysNotInstalled,
+                                        civil_holidays, is_holiday)
 
 __version__ = "0.1.0a1"
 
@@ -283,4 +285,9 @@ __all__ = [
     "ClockSegment",
     "ZoneDiscontinuity",
     "ZoneNeverExisted",
+    # civil holidays (optional bridge onto the vacanza/holidays database)
+    "Holiday",
+    "civil_holidays",
+    "is_holiday",
+    "HolidaysNotInstalled",
 ]
