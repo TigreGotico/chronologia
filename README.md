@@ -175,6 +175,17 @@ c.combine_basis("reconstructed", "predicted")    # 'reconstructed' (peer tie-bre
 offset history (IERS Bulletin C, mirrored via the IANA/IETF
 `leap-seconds.list`). This is unrelated to the `"unix"` era above: POSIX/unix
 time ignores leap seconds entirely and always advances 86400 seconds per day.
+### Historical local time
+Before standard time zones (the international system dates from 1884),
+every town kept its own clock set by the sun. `chronologia.localtime`
+reconstructs the two pre-zone reckonings against a single UTC reference:
+**local mean time** (mean solar time at a meridian, a fixed offset of
+4 minutes of time per degree of longitude, east positive) and **apparent
+solar time** (what a sundial reads — mean time plus the *equation of
+time*). The equation of time uses the closed form cited below, accurate
+to within half a minute (`EOT_ACCURACY`), with the explicit
+`apparent = mean + EoT` sign convention (a positive value means the
+sundial runs *fast*).
 
 ```python
 from datetime import datetime
@@ -198,6 +209,17 @@ c.table_valid_until()
 Pre-1972 instants (the fractional "rubber second" era) raise `ValueError` —
 out of scope, no cited table backs it.
 
+# Solar noon in Lisbon on 1755-11-01, the day of the great earthquake.
+# Lisbon sits ~9.14 deg west, so its mean-time clock trails Greenwich.
+lisbon = c.local_mean_time(-9.14)
+lisbon.offset            # timedelta(seconds=-2194)  ->  -36m34s
+lisbon.tzname()          # 'LMT-00:36:34(lambda=9.140W)'
+when = datetime(1755, 11, 1, 12, 0, 0)   # 12:00 UTC
+lisbon.from_utc(when)                 # AstroDate(1755, 11, 1, 11, 23, 26)  (LMT)
+c.apparent_solar_time(when, -9.14)    # AstroDate(1755, 11, 1, 11, 39, 52, ...) (sundial)
+# The equation of time swings ~+16.4 min in early November (sundial fast)
+# to ~-14.2 min in mid-February (sundial slow).
+c.equation_of_time(datetime(1755, 11, 1))   # timedelta ~ +16m26s
 ## Cited sources
 
 The conversion algorithms are grounded in canonical references, cited inline in
@@ -211,6 +233,9 @@ each module's docstring:
 - Radiocarbon 19(3):355–363 — the before-present (1950) reference epoch.
 - IERS Bulletin C / IANA-IETF `leap-seconds.list` — the UTC-TAI offset table
   in `chronologia/data/leap_seconds.tab`.
+- Honsberg & Bowden, *Solar Time* (PVCDROM / PVEducation) — the equation of
+  time closed form and the 4-minutes-per-degree longitude rule for local
+  mean and apparent solar time.
 
 ## Used by
 

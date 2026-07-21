@@ -26,6 +26,8 @@ from chronologia.leapseconds import (GPS_EPOCH, LEAP_SECONDS,
                                      gps_to_utc, is_leap_second_day,
                                      table_valid_until, tai_to_utc,
                                      utc_tai_offset, utc_to_gps, utc_to_tai)
+from chronologia.localtime import (EOT_ACCURACY, LMTZone, apparent_solar_time,
+                                   equation_of_time, local_mean_time)
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
 from chronologia.resolution import DateTimeResolution
 from chronologia.roman import roman_to_julian
@@ -83,6 +85,12 @@ __all__ = [
     "RegnalSequence",
     # roman calendar
     "roman_to_julian",
+    # historical local time (mean + apparent solar)
+    "LMTZone",
+    "local_mean_time",
+    "equation_of_time",
+    "apparent_solar_time",
+    "EOT_ACCURACY",
     # derived resolution vocabulary
     "DateTimeResolution",
     # timelines & discontinuities
