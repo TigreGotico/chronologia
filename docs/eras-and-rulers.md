@@ -221,6 +221,95 @@ print(roman_to_julian(-43, 4, "kalends", 2))
 The result is a **Julian** calendar date (the calendar Rome actually used), in
 the Roman date's own labels.
 
+## Movable feasts: why Easter wanders
+
+Most feast days sit on a fixed calendar square — Christmas is always 25
+December. Easter is different: it *moves*, and a whole family of feasts moves
+with it. The rule is old and deliberately simple: **Easter is the first Sunday
+after the first full moon on or after the 21 March equinox.**
+
+The subtle part is that "full moon" here does not mean *look at the sky*. The
+Church long ago replaced the real Moon with a **codified arithmetic table** —
+a repeating cycle of "ecclesiastical" full-moon dates keyed to the year's place
+in a 19-year lunar cycle. So computing Easter (the *computus*) is exact integer
+arithmetic on a calendar, not astronomy. Given a year, you get a definite date,
+with no error bar:
+
+```python
+from chronologia import easter
+
+print(easter(2024).isoformat())
+# 2024-03-31T00:00:00
+```
+
+Easter can only ever land between **22 March and 25 April** — bounds the rule
+guarantees. The earliest possible date last fell in 1818, the latest in 1943:
+
+```python
+print(easter(1818).isoformat()[:10], easter(1943).isoformat()[:10])
+# 1818-03-22 1943-04-25
+```
+
+### Why East and West disagree
+
+The Eastern Orthodox churches mostly still run the *same* rule, but on the
+**Julian** calendar with the older Julian lunar table. Two things have drifted
+apart — the calendars (now 13 days) and the lunar tables — so Orthodox Easter
+usually falls one to five weeks later. `chronologia` gives you both, and lets
+you choose how the Orthodox date is expressed:
+
+```python
+# Western Easter (Gregorian civil calendar):
+print(easter(2024, "gregorian").isoformat()[:10])
+# 2024-03-31
+
+# Orthodox Easter, rendered on the civil calendar people actually use:
+print(easter(2024, "julian_gregorian_date").isoformat()[:10])
+# 2024-05-05
+
+# Orthodox Easter carrying its OWN Julian-calendar label (22 April Julian) --
+# a label, not a civil instant, so don't read its weekday as a civil Sunday:
+print(easter(2024, "julian").isoformat()[:10])
+# 2024-04-22
+```
+
+Occasionally the two coincide. 2025 is such a year — both fall on 20 April:
+
+```python
+print(easter(2025, "gregorian") == easter(2025, "julian_gregorian_date"))
+# True
+```
+
+### The feasts that move with Easter
+
+Once Easter is fixed, a chain of feasts follows by counting whole days from it:
+Ash Wednesday 46 days before, Good Friday 2 days before, Ascension 39 days
+after, Pentecost 49 days after. `movable_feast` returns any of them as a real
+civil date:
+
+```python
+from chronologia import movable_feast
+
+print(movable_feast("ash_wednesday", 2024).isoformat()[:10])
+# 2024-02-14
+print(movable_feast("good_friday", 2024).isoformat()[:10])
+# 2024-03-29
+print(movable_feast("pentecost", 2024).isoformat()[:10])
+# 2024-05-19
+```
+
+The fixed solar feasts don't move at all, and Advent Sunday is counted back
+from the fixed Christmas date (the first Sunday of the four before it):
+
+```python
+from chronologia import fixed_feast, advent_sunday
+
+print(fixed_feast("christmas", 2024).isoformat()[:10])
+# 2024-12-25
+print(advent_sunday(2024).isoformat()[:10])
+# 2024-12-01
+```
+
 ## Reference
 
 | tool | what it does |
@@ -231,6 +320,10 @@ the Roman date's own labels.
 | `resolve_bp(value, unit)` | a Before-Present expression → a `DateSpan` (see [deep-time.md](deep-time.md)) |
 | `REGNAL_SEQUENCES[key].year_span(name, n)` | the Gregorian span of regnal year `n` of a ruler |
 | `roman_to_julian(year, month, anchor, count)` | a Roman Kalends/Nones/Ides date → a Julian `(year, month, day)` |
+| `easter(year, method)` | Easter Sunday as an `AstroDate` (`method`: `gregorian`, `julian`, `julian_gregorian_date`) |
+| `movable_feast(name, year, method)` | a feast offset from Easter (Ash Wednesday, Pentecost, …) as a civil date |
+| `fixed_feast(name, year)` | a fixed solar feast (Christmas, Epiphany, …) as an `AstroDate` |
+| `advent_sunday(year)` | the first Sunday of Advent, counted back from Christmas |
 
 Built-in eras in `ERAS`: `common_era`, `before_christ`, `before_present`,
 `unix`, `julian_day`, `holocene`, `anno_mundi`, `french_republican`, `bahai`,
@@ -243,3 +336,9 @@ Built-in regnal sequences in `REGNAL_SEQUENCES`: `nengo` (Japanese eras),
 Roman anchors accepted by `roman_to_julian`: `"kalends"`, `"nones"`, `"ides"`.
 The `count` is the inclusive backward ordinal (1 = the anchor day itself,
 2 = *pridie*).
+
+Movable feasts in `MOVABLE_FEAST_OFFSETS` (day offset from Easter):
+`ash_wednesday` (−46), `palm_sunday` (−7), `good_friday` (−2), `ascension`
+(+39), `pentecost` (+49), `trinity_sunday` (+56), `corpus_christi` (+60).
+Fixed feasts in `FIXED_FEASTS`: `christmas`, `epiphany`, `assumption`,
+`all_saints`.
