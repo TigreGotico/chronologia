@@ -488,6 +488,28 @@ itself). When you add a language or a construction, add corpus cases in the
 same spirit — real sentences, and cases written to *break* the parse, not
 just the happy path.
 
+## The corpus convention (and the cross-language parity contract)
+
+A language opts into span-native extraction by shipping a **corpus package**
+at `test/nl_corpus_<code>/` — a directory of parametrised `test_nl_*.py`
+modules, each a real sentence asserting the exact span, expected values
+derived by hand. `test/test_language_parity.py` is the structural guard over
+that convention. It is **discovery-based**: it finds corpus packages by
+directory name, with no hardcoded language list, so a new language lands its
+package and is validated automatically — parallel branches never collide on
+that file. It enforces three things per discovered corpus:
+
+- the corpus backs a real `locale/<code>/lang.json`;
+- the corpus collects **at least 100 cases**;
+- every non-reference corpus ships a **semantic-parity block**
+  (`nl_corpus_<code>/parity.py`, a `PARITY` list of `(<code> phrase, English
+  phrase)` pairs) whose every pair resolves to the **same span** in that
+  language as in the English reference corpus.
+
+The reference language `en` is exempt from the parity-block requirement — it
+*is* the reference the others are measured against. Languages whose locale
+predates the convention simply have no package yet; adding one opts them in.
+
 ## Speaking dates back out
 
 This module *reads* dates. To *say* one back to a user — voice-facing
