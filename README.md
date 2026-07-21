@@ -220,6 +220,105 @@ c.apparent_solar_time(when, -9.14)    # AstroDate(1755, 11, 1, 11, 39, 52, ...) 
 # The equation of time swings ~+16.4 min in early November (sundial fast)
 # to ~-14.2 min in mid-February (sundial slow).
 c.equation_of_time(datetime(1755, 11, 1))   # timedelta ~ +16m26s
+
+## Timezones
+`AstroDate` is naive by default and carries an **optional** `tzinfo`, with
+semantics identical to `datetime`: an aware point compares, subtracts and
+hashes by the *instant* it names; a naive one by its wall-clock fields;
+mixing the two never compares equal and raises `TypeError` on ordering or
+subtraction. `utcoffset()` / `tzname()` / `dst()` delegate to the attached
+zone; `astimezone(tz)` converts to another zone; `replace(tzinfo=...)`
+re-labels the same wall clock without converting.
+
+```python
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+import chronologia as c
+
+NY = ZoneInfo("America/New_York")
+
+noon = c.AstroDate(2024, 7, 1, 12, tzinfo=NY)   # aware
+noon.utcoffset()                                # timedelta(hours=-4)  (EDT)
+noon.astimezone(timezone.utc)                   # 2024-07-01T16:00:00+00:00
+
+# naive vs aware behaves exactly like datetime
+c.AstroDate(2024, 1, 1) == c.AstroDate(2024, 1, 1, tzinfo=NY)   # False
+```
+
+Two documented deviations / conventions:
+
+- **Naive `astimezone()` raises `ValueError`.** Modern `datetime.astimezone`
+  silently assumes the system-local zone for a naive value — a well-known
+  footgun. `AstroDate` rejects it: attach a zone with `replace(tzinfo=...)`
+  first so the source zone is explicit.
+- **Out-of-range zone lookups extrapolate.** Beyond `datetime`'s 1..9999
+  window a `zoneinfo` zone has no tabulated data, so offset lookups evaluate
+  the zone's *recurring rule* at a **proxy year** `2000 + (year % 400)`. The
+  proleptic Gregorian calendar (and every DST rule keyed to month/weekday)
+  repeats with a 400-year period, so the proxy shares the real year's leap
+  status and weekday pattern. This extrapolates the *current* recurring rule
+  across all time; it cannot reconstruct historical offset changes (in-range
+  pre-1970 data is used as-is, with `zoneinfo`'s usual reliability caveats).
+
+```python
+# The far future still resolves the recurring rule (via the proxy year);
+# no real datetime exists out of range, but the point stays comparable.
+c.AstroDate(12000, 7, 1, tzinfo=NY).utcoffset()   # timedelta(hours=-4)
+```
+
+### Fold and gap
+A wall-clock reading can be ambiguous (fall-back repeats an hour) or
+non-existent (spring-forward skips one). Rather than a fold bit,
+`resolve_wall_clock(y, m, d, h, mi, zone)` returns the outcome as data:
+
+```python
+# fall back: 2024-11-03 01:30 happens twice -> the two real instants
+early, late = c.resolve_wall_clock(2024, 11, 3, 1, 30, NY)
+early.utcoffset(), late.utcoffset()   # -4h (EDT), -5h (EST)
+late - early                          # timedelta(hours=1)
+
+# spring forward: 2024-03-10 02:30 never existed -> NeverExisted + why
+gone = c.resolve_wall_clock(2024, 3, 10, 2, 30, NY)
+gone.discontinuity.kind               # DiscontinuityKind.SKIP
+
+# an unambiguous reading returns a single aware AstroDate
+c.resolve_wall_clock(2024, 6, 1, 12, 0, NY)
+```
+
+The repeat pair carries each occurrence in a fixed-offset zone (AstroDate
+has no fold bit), so the two share one wall reading yet name distinct,
+comparable instants. The skip result is a
+`NeverExisted` carrying a synthetic `SKIP` `Discontinuity` — a real
+"never existed + why" answer, never an exception.
+
+## Civil arithmetic
+Time has two kinds of "add a day". **Absolute** arithmetic (`point +
+timedelta`) always advances a real duration and is untouched. **Civil**
+arithmetic (`civil_add`) walks the calendar the way people mean it:
+
+```python
+import chronologia as c
+
+# Months/years clamp the day of month (never spill into the next month):
+c.civil_add(c.AstroDate(2024, 1, 31), months=1)   # 2024-02-29 (leap year)
+c.civil_add(c.AstroDate(2023, 1, 31), months=1)   # 2023-02-28
+
+# Adding days preserves the wall clock across a DST edge, so the *real*
+# elapsed time is 23 or 25 hours, not 24:
+start = c.AstroDate(2024, 3, 9, 12, tzinfo=ZoneInfo("America/New_York"))
+end = c.civil_add(start, days=1, zone=ZoneInfo("America/New_York"))
+end - start                                        # timedelta(hours=23)
+# whereas the absolute step is exactly 24h of real time:
+(start + timedelta(days=1)) - start                # timedelta(days=1)
+
+# With a timeline, a day step walks civil labels across a reform seam:
+c.civil_add(c.AstroDate(1582, 10, 4), days=1,
+            timeline=c.TIMELINES["rome_1582"])      # 1582-10-15 (Gregorian)
+```
+
+`civil_add` also accepts a `DateSpan`, shifting both endpoints. The two
+never silently conflate: absolute duration is `+ timedelta`, civil label
+walking is `civil_add`.
 ## Cited sources
 
 The conversion algorithms are grounded in canonical references, cited inline in
