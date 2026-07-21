@@ -123,6 +123,10 @@ for _name, (_m, _d) in _US_2024.items():
 # Monday Dec 26).
 _reg("US", None, "Independence Day", 2021, 7, 5)
 _reg("US", None, "Christmas Day", 2022, 12, 26)
+# Juneteenth is federal only from 2021 (us.tab "2021-"); 19 Jun 2021 was a
+# Saturday (observed Fri 18th), 19 Jun 2022 a Sunday (observed Mon 20th).
+_reg("US", None, "Juneteenth National Independence Day", 2021, 6, 18)
+_reg("US", None, "Juneteenth National Independence Day", 2022, 6, 20)
 
 
 @pytest.mark.parametrize("name,year,month,day", [
@@ -132,6 +136,15 @@ _reg("US", None, "Christmas Day", 2022, 12, 26)
 def test_us_gold(name, year, month, day):
     got = _dates_for("US", year)
     assert got[(name, None)] == AstroDate(year, month, day)
+
+
+def test_us_juneteenth_year_gated_federal_from_2021():
+    """Juneteenth National Independence Day Act signed 17 Jun 2021 — the federal
+    holiday is absent in 2020 and present from 2021 (us.tab "2021-" range)."""
+    name = "Juneteenth National Independence Day"
+    assert name not in _dates_for("US", 2020)
+    assert _dates_for("US", 2021)[(name, None)] == AstroDate(2021, 6, 18)  # Sat->Fri
+    assert _dates_for("US", 2022)[(name, None)] == AstroDate(2022, 6, 20)  # Sun->Mon
 
 
 # ==========================================================================

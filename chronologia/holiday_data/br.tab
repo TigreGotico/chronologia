@@ -13,10 +13,9 @@
 #   The facultative status is carried in the CATEGORY: they are tagged
 #   "religious" only, NOT "public", so the public national set stays exactly the
 #   statutory feriados. Their movable dates derive from computus.
-#   Consciência Negra is emitted every year by FixedRule; before 2024 it was only
-#   a state/municipal holiday, so its 2023 occurrence is a documented
-#   reference-only differential entry (see test_holidays_br.py), adjudicated by
-#   Lei 14.759/2023's effective date.
+#   Consciência Negra became a NATIONAL holiday only from 2024 (Lei 14.759/2023);
+#   its rule carries a "2024-" validity range, so it is honestly silent for 2023
+#   and earlier (when it was only a state/municipal holiday) and present from 2024.
 # retrieved: 2026-07-21
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
@@ -30,7 +29,7 @@ fixed  | Independência do Brasil                       | 9 7   | public        
 fixed  | Nossa Senhora Aparecida                       | 10 12 | public religious |  |
 fixed  | Finados                                       | 11 2  | public religious |  |
 fixed  | Proclamação da República                      | 11 15 | public          |  |
-fixed  | Dia Nacional de Zumbi e da Consciência Negra  | 11 20 | public          |  |
+fixed  | Dia Nacional de Zumbi e da Consciência Negra  | 11 20 | public          |  |  | 2024-
 fixed  | Natal                                         | 12 25 | public religious |  |
 #
 # --- facultative national religious days (NOT statutory feriados) ---
