@@ -122,6 +122,14 @@ def test_halfto_idiom_gap():
 # -- English semantic parity ---------------------------------------------
 
 PAIRS = [
+    ('15. kolovoza 2020', 'august 15 2020'),
+    ('1. svibnja 1945', 'may 1 1945'),
+    ('10. travnja', 'april 10'),
+    ('2017-06-30', '2017-06-30'),
+    ('15:30', '15:30'),
+    ('09:30', '09:30'),
+    ('15. kolovoza', 'august 15'),
+
     ("danas", "today"), ("sutra", "tomorrow"), ("jučer", "yesterday"),
     ("za 3 dana", "in 3 days"), ("za 2 tjedna", "in 2 weeks"),
     ("za 5 godina", "in 5 years"), ("sljedeći petak", "next friday"),
