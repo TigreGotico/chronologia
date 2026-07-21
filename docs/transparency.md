@@ -7,29 +7,35 @@ This page is the honest account.
 
 ## Who did what
 
-**The human maintainer** set the direction and made every decision that
-shaped the library: that results must be *spans* with honest widths
-rather than fake-precise instants; that `AstroDate` must speak
-`datetime`'s language; that holiday data must be built clean-room from
-primary sources; that every holiday needs its own "when is X" test;
-that holiday names belong to the countries that own them; that ugly
-APIs get rewritten ("anyone who reads this will close the tab" — they
-were right). The maintainer also contributed data directly — the
-Portuguese municipal holiday tables here began as their hand-curated
-research — and handled every relationship with human contributors.
+**The human maintainer designed this architecture.** Years before this
+library existed, they prototyped its core ideas in a lingua-franca pull
+request: date extraction split from time extraction, resolution-aware
+results (day, week, month, century…), calendar-scoped ordinals and
+seasons, and named eras and epochs with out-of-range dates as an open
+problem. That design — including the `ranges` module and the
+`DateTimeResolution` concept that still anchor the resolver — sat
+largely dormant in the predecessor parser until this library grew
+around it. The maintainer also made every decision that shaped the
+result: that results must be *spans* with honest widths rather than
+fake-precise instants; that `AstroDate` must speak `datetime`'s
+language; that extraction belongs in the reckoning library; that
+holiday data must be built clean-room from primary sources, that every
+holiday needs its own "when is X" test, and that holiday names belong
+to the countries that own them; that ugly APIs get rewritten ("anyone
+who reads this will close the tab" — they were right). They contributed
+data directly too — the Portuguese municipal holiday tables began as
+their hand-curated research.
 
-**An orchestrating AI** (Anthropic's Claude) planned the work, split it
-into missions, reviewed every result, and merged nothing it had not
+**An orchestrating AI** (Anthropic's Claude) worked the gaps in that
+design: filled in the unresolved parts (the out-of-range representation
+became `AstroDate`; the resolution concept became span width), extended
+the architecture to domains the original didn't reach (calendars,
+timelines, deep time, the sky, Mars), planned the work, split it into
+missions, reviewed every result, and merged nothing it had not
 independently re-verified. **Dozens of subordinate AI agents** each
 executed one mission — one language, one calendar family, one country
 batch, one documentation pass — in isolated git worktrees, under
 written rules, with their work gated by tests before merging.
-
-**A human domain expert** (the author of the Aragonese grammar)
-reviewed the Aragonese language work in the neighbouring parser project
-and contributed corrections. Those corrections were treated as
-reference material — his contribution remains his; nothing here was
-pushed onto his work.
 
 ## The method
 
@@ -108,10 +114,11 @@ were caught by the same discipline that built the rest:
 ## Why this disclosure
 
 AI-written code at this scale is new enough that readers should not
-have to guess. The honest summary: the *judgment* in this library —
-what it should be, what it must refuse to do, whose names things carry,
-which sources count — is human. The *labor* — tens of thousands of
-lines of arithmetic, data transcription, tests, and prose — is AI,
+have to guess. The honest summary: the *architecture and judgment* in
+this library — its founding design, what it should be, what it must
+refuse to do, whose names things carry, which sources count — are
+human. The *labor* — tens of thousands of lines of arithmetic, data
+transcription, tests, and prose — is AI,
 verified by machine-checkable gates and spot-audited by the
 orchestrator at every merge. Where those gates could not reach
 (translation quality across scripts, contested historical claims), the
