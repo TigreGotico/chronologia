@@ -1,430 +1,238 @@
 # chronologia
 
-A general-purpose calendrical and chronological core for Python. It models
-*when* something happened, across the whole span of recorded and deep time,
-with types that behave like the standard library where they can and reach past
-its limits where they must.
+**A Python library that answers questions about dates — any date, in any
+calendar, from the age of the dinosaurs to next Tuesday.**
 
-`chronologia` is pure Python with **no runtime dependencies** and requires
-Python 3.10+.
+Ever wondered…
 
-## What it gives you
+- what day **"the 15th of Ramadan"** falls on this year?
+- why Russia celebrates the **October** Revolution in **November**?
+- when exactly **"the Jurassic"** was?
+- what happened to the **ten days that vanished** in October 1582?
+- whether **February 30th** ever existed? (It did. Once. In Sweden.)
 
-- **`AstroDate`** — a frozen point in time with an **unbounded year**
-  (astronomical numbering: 1 BC is year 0; proleptic Gregorian). It is
-  duck-typed to `datetime`'s public API — `replace()`, `weekday()`,
-  `isoweekday()`, `isocalendar()`, `toordinal()`, expanded-year `isoformat()` /
-  `fromisoformat()`, a width-safe `strftime` subset, `timedelta` arithmetic,
-  and comparison / equality that interoperate with `date` and `datetime`. It
-  exists to carry the years C `datetime` refuses (`-003760-09-07T00:00:00` is a
-  valid `AstroDate`). Compatibility is protocol-based (subclassing `datetime`
-  is impossible — its C-level year bounds are exactly the constraint being
-  escaped) and enforced by a test that walks `datetime`'s public API.
-- **`DateSpan`** — a frozen **half-open interval** `[start, end)` whose
-  endpoints are always `AstroDate`. Width *is* the referential uncertainty:
-  "June 2027" is a month-wide span, "44 BC" a year-wide one, a clock time a
-  minute-wide one. Half-open so adjacent spans tile with no fenceposts — June
-  ends exactly where July begins. `DateTimeResolution` is **derived** from the
-  width, never asserted, which removes a whole class of tag-vs-value drift.
-  A span also carries a **`basis`** (`exact` / `tabulated` / `reconstructed` /
-  `predicted`) recording how its endpoints were established; `combine_basis()`
-  is the worst-of rule for propagating it. Widths beyond `timedelta`'s
-  ~2.7-million-year ceiling are reported as a **`WideDuration`** so a
-  geological span never overflows (see **Deep time** below).
-- **`CALENDARS`** — a registry of 17 calendars, each an integer inverse pair
-  through the **Julian Day Number** hub: `to_jdn(y, m, d)` and `from_jdn(jdn)`.
-  Thirteen are closed-form arithmetic: `julian`, `hebrew`, `islamic_civil`,
-  `french_republican`, `bahai`, `coptic`, `ethiopian`, `revised_julian`,
-  `armenian`, `egyptian`, `mayan_long_count`, `iso_week`,
-  `solar_hijri_arithmetic`. Four
-  are `TabulatedCalendar`s backed by data files in `calendar_data/`:
-  `umm_al_qura`, `badi_2015`, `french_republican_equinox`, `chinese` — bounded
-  event tables with an out-of-range `CalendarRangeError` fallback contract and
-  an optional-ephemeris `register_event_provider` hook for extending past the
-  tabulated range. Because everything reduces to JDN, conversions compose
-  freely.
-- **`ERAS`** — year-numbering conventions attached to a calendar or an epoch:
-  `before_christ` / `common_era` / `holocene` number the Gregorian year,
-  `anno_mundi` is the Hebrew calendar's own numbering, `unix` and `julian_day`
-  are linear counts. Calendar-backed eras resolve **exactly** through the
-  calendar's JDN hub — Anno Mundi 5786 begins on 2025-09-23, not an
-  epoch-plus-count approximation three months off.
-- **Day cycles, regnal sequences, and Roman dates** — `DAY_CYCLES` (week,
-  Roman nundinal, Republican décade), `REGNAL_SEQUENCES` (Roman consuls,
-  Japanese nengō, New Kingdom Egyptian high/middle/low chronology variants),
-  and `roman_to_julian` for `a.d.` Kalends/Nones/Ides reckoning.
+Computers are surprisingly bad at these questions. Python's built-in
+`datetime` can't even hold a year before 1 AD. This library answers all
+of them — and it never needs the internet, never guesses, and tells you
+honestly when history itself doesn't know the answer.
 
-### Scope: arithmetic, tabulated, out of scope
+## Install
 
-`chronologia` implements **arithmetic** calendars — those whose leap and
-month-length rules are closed-form functions of the year, so conversion is a
-pure integer computation with no tables to ship — and **tabulated** calendars,
-whose civil dates are fixed by observation or a published civil-authority
-schedule rather than a closed-form rule. Tabulated calendars load bounded
-event tables from `calendar_data/*.tab` files (each carrying its own
-provenance header), classify themselves via a `basis` attribute, raise
-`CalendarRangeError` outside their tabulated coverage, and accept an optional
-ephemeris `register_event_provider` callback for callers who want to extend
-coverage past the shipped table. Calendars requiring live astronomical
-ephemerides by default are **out of scope** — this is a reckoning core, not an
-astronomy engine.
-
-## Quickstart
-
-```python
-from datetime import timedelta
-import chronologia as c
-
-# An unbounded date, well before datetime's year-1 floor
-a = c.AstroDate(-3760, 9, 7)
-a.isoformat()          # '-003760-09-07T00:00:00'
-a.weekday()            # 0
-(a + timedelta(days=1)).isoformat()  # '-003760-09-08T00:00:00'
-
-# Round-trip any date through the JDN hub into another calendar
-jdn = c.gregorian_to_jdn(2025, 9, 23)
-c.CALENDARS["hebrew"].from_jdn(jdn)   # (5786, 7, 1)  -> 1 Tishri 5786
-
-# Eras resolve to concrete dates; calendar-backed ones are exact
-c.resolve_era("anno_mundi", 5786)     # datetime.date(2025, 9, 23)
-
-# A half-open span derives its own resolution from its width
-span = c.DateSpan(c.AstroDate(2027, 6, 1), c.AstroDate(2027, 7, 1))
-span.resolution        # DateTimeResolution.MONTH
-
-# Roman calendar: the Ides of March, 44 (a.d. count is inclusive, 1 == the day)
-c.roman_to_julian(44, 3, "ides", 1)   # (44, 3, 15)
-c.roman_to_julian(44, 3, "ides", 2)   # (44, 3, 14)  -> pridie
+```bash
+pip install chronologia
 ```
 
-## Egyptian calendar & New Kingdom regnal chronology
+Pure Python. No dependencies. Python 3.10+.
 
-The `egyptian` calendar is the original 365-day "vague year": twelve 30-day
-months grouped into three season-thirds — Akhet "Inundation" (months 1-4),
-Peret "Emergence" (5-8), Shemu "Harvest" (9-12) — plus five epagomenal days
-as month 13, and (unlike Coptic/Ethiopic) **no leap day, ever**. The civil
-year drifts one day earlier against the solar year every four years,
-completing a full Sothic cycle in 1460 Egyptian years. Epoch: the era of
-Nabonassar anchor Ptolemy used to key the *Almagest*'s observation tables —
-1 Thoth year 1 = JDN 1448638 = -746-02-26 proleptic Julian.
+## Your first three lines
+
+When does the Hebrew year 5786 begin?
 
 ```python
-c.CALENDARS["egyptian"].to_jdn(1, 1, 1)     # 1448638, the epoch
-c.CALENDARS["egyptian"].from_jdn(1448638 + 365)  # (2, 1, 1), 365 days later, always
+from chronologia import CALENDARS, jdn_to_gregorian
+
+hebrew = CALENDARS["hebrew"]
+print(jdn_to_gregorian(hebrew.to_jdn(5786, 7, 1)))   # (2025, 9, 23)
 ```
 
-`REGNAL_SEQUENCES` includes a small demonstrative New Kingdom (Dynasty
-18-19) dataset, Ahmose I through Ramesses II, in **three** parallel
-chronology variants — `egyptian_high`, `egyptian_middle` and `egyptian_low`
-— reflecting the ±13-25 year disagreement in Egyptological absolute dating.
-The dataset is **attested-only**: a ruler is listed in a variant only where
-that variant's accession year is directly attested (with an explicit
-chronology label) in a cited source, so the three variants have different
-ruler subsets and lengths, and documented gaps rather than interpolated
-fill-ins — see `chronologia/regnal.py` for the full per-ruler citation
-trail. Ramesses II's accession is the one figure directly attested by name
-in all three variants: 1304 BC (high), 1290 BC (middle/conventional),
-1279 BC (low) — divergence of a quarter-century between the high and low
-variants:
+That's September 23rd, 2025 — the real Rosh Hashanah. No lookup
+service, no approximation: the library computes it from the same
+arithmetic rules the Hebrew calendar itself is defined by.
+
+### How did that work?
+
+One trick powers everything here. Every day that has ever existed gets
+a plain number — its **Julian Day Number** — day 1, day 2, day 3…
+counting on forever in both directions. Every calendar in the library
+knows how to turn its own dates into that number and back again. So
+*any* calendar can talk to *any* other calendar by meeting at the
+number in the middle. Seventeen calendars are built in — Hebrew,
+Islamic, Chinese, Coptic, Ethiopian, Maya, French Revolutionary,
+ancient Egyptian, and more (full list at the bottom).
+
+## Dates that don't fit in `datetime`
+
+Python's `datetime` stops at year 1. History doesn't. This library's
+`AstroDate` works just like a `datetime` — same methods, same
+comparisons, you can mix the two freely — but its year is unlimited:
 
 ```python
-c.REGNAL_SEQUENCES["egyptian_high"].year_span("ramesses_ii", 5)
-c.REGNAL_SEQUENCES["egyptian_low"].year_span("ramesses_ii", 5)
-# same regnal year, ~25 years apart in absolute Gregorian terms
-```
-
-## Timelines & discontinuities
-
-Calendars are pure proleptic bijections — the astronomical timeline (JDN) never
-jumps. What jumps is *civil* labelling, when a pope, parliament, tsar or emperor
-decrees that "tomorrow" shall be called something the calendar in force would
-never have generated. A `Timeline` records, for one jurisdiction, which calendar
-was in force over each stretch of days and what its reforms did to the labels.
-Duration math is unaffected (always JDN-space); a non-existent label is a typed
-answer, not an exception.
-## Deep time
-
-`chronologia` reaches past the geological ceiling of `datetime` — and past the
-~2.7-million-year ceiling of `timedelta`. A span millions of years wide still
-constructs, compares, and classifies without overflow, and scaled
-Before-Present expressions carry their own precision.
-
-- **`WideDuration`** — `DateSpan.width` returns a plain `timedelta` for any
-  span that fits one (byte-identical to `end - start`) and a `WideDuration`
-  (whole mean-Gregorian-years plus a sub-year `remainder`) only when a
-  `timedelta` would raise `OverflowError`. Both are orderable against each
-  other and against `timedelta`.
-- **Geological resolution tiers** — above `MILLENNIUM`, width derives one of
-  `EPOCH_GEOLOGICAL` (≳10 kyr), `PERIOD_GEOLOGICAL` (≳10 Myr),
-  `ERA_GEOLOGICAL` (≳100 Myr) or `EON` (≳500 Myr). Thresholds sit near the
-  order of magnitude of the like-named ICS divisions (a period is ~10⁷–10⁸ yr,
-  the Jurassic ~56 Myr), not any single revisable boundary.
-- **`resolve_bp(value, unit)`** — scaled Before-Present units `a` / `ka` /
-  `Ma` / `Ga` (10⁰/10³/10⁶/10⁹ years before AD 1950). The returned span's
-  **width is the precision of the expression**, read off the last significant
-  digit — so pass `value` as a **string** when precision matters (`"66"` and
-  `"66.0"` denote different precisions the floats cannot tell apart).
-
-```python
-import chronologia as c
-
-# The October Revolution: 25 October 1917 was the label in force in Russia
-# (Julian), the same instant proleptic Gregorian calls 7 November 1917.
-russia = c.TIMELINES["russia_1918"]
-jdn = c.julian_to_jdn(1917, 10, 25)
-russia.from_jdn(jdn)                     # CivilLabel(year=1917, month=10, day=25)
-russia.to_jdn((1917, 10, 25)) == jdn     # True
-c.jdn_to_gregorian(jdn)                  # (1917, 11, 7)
-c.proleptic("gregorian").from_jdn(jdn)   # CivilLabel(year=1917, month=11, day=7)
-
-# 1–13 February 1918 never existed (the switch skipped them):
-res = russia.to_jdn((1918, 2, 9))
-isinstance(res, c.NeverExisted)          # True
-res.discontinuity.kind                   # DiscontinuityKind.SKIP
-
-# The default proleptic timeline is zero behaviour change — it matches the
-# bare calendar. Registered jurisdictions: rome_1582 (+ es/pt/it/pl group),
-# britain_1752, russia_1918, greece_1923, sweden_1700_1712, japan_1873.
-# A Jurassic-scale span: constructs, compares and classifies with no overflow
-jurassic = c.DateSpan(c.AstroDate(-201_400_000, 1, 1),
-                      c.AstroDate(-143_100_000, 1, 1))
-w = jurassic.width                 # WideDuration(years=58_300_000, ...)
-w.years                            # 58300000
-jurassic.resolution                # DateTimeResolution.PERIOD_GEOLOGICAL
-jurassic.contains(c.AstroDate(-180_000_000, 1, 1))   # True
-
-# Scaled Before-Present: precision comes from the significant figures
-kpg = c.resolve_bp("66", "Ma")     # the K-Pg boundary, to Ma precision
-kpg.start.year                     # -65998050  == 1950 - 66_000_000
-kpg.width.total_seconds() / (365.2425 * 86400)   # ~1_000_000  (1 Ma wide)
-kpg.basis                          # 'reconstructed'
-c.resolve_bp("66.043", "Ma").width # 1 ka wide  (last digit is the .001 Ma place)
-
-# Worst-of basis lattice: exact < tabulated < {reconstructed, predicted}
-c.combine_basis("exact", "tabulated")            # 'tabulated'
-c.combine_basis("reconstructed", "predicted")    # 'reconstructed' (peer tie-break)
-```
-
-## Named periods
-
-`chronologia.periods` names stretches of time. A `NamedPeriod` binds a name
-("Jurassic", "Late Bronze Age") to a `DateSpan`, a hierarchy `level`, an
-optional `region` (`None` == a global name), a versioned `source`, and a
-`parent` key. Two data instances ship in `PERIODS`:
-
-- the **ICS International Chronostratigraphic Chart** (version `2023/09`) — the
-  full global scale, every eon/era/period/epoch/age placed on the
-  Before-Present axis, published GSSP boundary uncertainties folded *outward*
-  into the endpoints, `basis="tabulated"`;
-- a small, region-tagged **archaeological set** (British three-age system vs
-  Mesopotamian Bronze Age), `basis="reconstructed"`, that exists only to prove
-  regional disambiguation. Per-site phasings stay out.
-
-`lookup(name, region=None)` answers an exact global name or a `(name, region)`
-pair; a bare, region-ambiguous name raises `AmbiguousPeriodError` and
-`candidates(name)` lists the choices — picking a locale default is the
-consumer's job. `subdivide(target, part)` cuts any span into conventional
-early/mid/late thirds (or first-/second-half halves), but an authority-defined
-subdivision wins: the ICS **Late Jurassic** entry, not an arithmetic third.
-
-```python
-import chronologia as c
-
-# "during the jurassic" — a chart entry, on the deep-time BP axis
-jurassic = c.lookup("jurassic")
-(1950 - jurassic.span.start.year) / 1e6    # ~201.6 Ma  (201.4 + 0.2 GSSP unc)
-jurassic.span.resolution                   # DateTimeResolution.PERIOD_GEOLOGICAL
-jurassic.parent                            # 'mesozoic'
-c.lookup("holocene").span.start.year       # -9750  == 1950 - 11_700 yr BP
-
-# early/mid/late — authority-defined subdivision wins over arithmetic thirds
-c.subdivide(jurassic, "late") == c.lookup("late jurassic").span   # True
-
-# "late bronze age" is region-ambiguous: Britain vs Mesopotamia
-sorted(p.region for p in c.candidates("bronze age"))   # ['GB', 'MESO']
-c.lookup("late bronze age", region="GB").span.start.year     # -1149  (1150 BC)
-c.lookup("late bronze age", region="MESO").span.start.year   # -1549  (1550 BC)
-
-# Radiocarbon: 14C BP and cal BP are distinct reckonings (coarse IntCal20)
-cal = c.calibrate_c14(3000)                # ~3000 14C BP -> a cal-BP span
-1950 - cal.start.year                      # ~3300 cal BP (demonstrative, not OxCal)
-cal.basis                                  # 'reconstructed'
-```
-
-## Leap seconds
-
-`chronologia.leapseconds` converts between the real timescales — UTC, TAI
-(International Atomic Time), and GPS time — using the tabulated UTC-TAI
-offset history (IERS Bulletin C, mirrored via the IANA/IETF
-`leap-seconds.list`). This is unrelated to the `"unix"` era above: POSIX/unix
-time ignores leap seconds entirely and always advances 86400 seconds per day.
-### Historical local time
-Before standard time zones (the international system dates from 1884),
-every town kept its own clock set by the sun. `chronologia.localtime`
-reconstructs the two pre-zone reckonings against a single UTC reference:
-**local mean time** (mean solar time at a meridian, a fixed offset of
-4 minutes of time per degree of longitude, east positive) and **apparent
-solar time** (what a sundial reads — mean time plus the *equation of
-time*). The equation of time uses the closed form cited below, accurate
-to within half a minute (`EOT_ACCURACY`), with the explicit
-`apparent = mean + EoT` sign convention (a positive value means the
-sundial runs *fast*).
-
-```python
+from chronologia import AstroDate, CALENDARS, jdn_to_gregorian
 from datetime import datetime
-import chronologia as c
 
-# cumulative UTC-TAI offset (whole seconds) at an instant
-c.utc_tai_offset(datetime(2020, 6, 15))   # 37
-
-# real-timescale conversions (TAI-GPS = 19s constant)
-c.utc_to_tai(datetime(2020, 6, 15, 12, 0, 0))
-c.utc_to_gps(datetime(2020, 6, 15, 12, 0, 0))
-
-# was a leap second (23:59:60 UTC) inserted on this UTC calendar date?
-c.is_leap_second_day(datetime(2016, 12, 31).date())   # True
-
-# the table is confirmed complete only up to this date (predicted/constant
-# offset beyond it, per Bulletin C's own ~6-month announcement horizon)
-c.table_valid_until()
+# The Ides of March, 44 BC — a date in the ROMAN (Julian) calendar,
+# so we let the Julian calendar say which day it really was:
+ides = AstroDate(*jdn_to_gregorian(CALENDARS["julian"].to_jdn(-43, 3, 15)))
+print(ides.weekday())               # 2  — Caesar was assassinated on a Wednesday
+print(ides < datetime(2020, 1, 1))  # True — compares freely with datetime
 ```
 
-Pre-1972 instants (the fractional "rubber second" era) raise `ValueError` —
-out of scope, no cited table backs it.
+Two small things just happened, and both matter. First: historians say
+"44 BC", but astronomers give the year 0 to 1 BC so the arithmetic has
+no gap — 44 BC is year −43; you only ever notice this before year 1.
+Second: ancient dates were written in *their* calendar, not ours — the
+Roman "March 15" lands on what our modern calendar, projected backwards,
+would call March 13. The library keeps both straight, because that's
+exactly the kind of thing humans get silently wrong.
 
-# Solar noon in Lisbon on 1755-11-01, the day of the great earthquake.
-# Lisbon sits ~9.14 deg west, so its mean-time clock trails Greenwich.
-lisbon = c.local_mean_time(-9.14)
-lisbon.offset            # timedelta(seconds=-2194)  ->  -36m34s
-lisbon.tzname()          # 'LMT-00:36:34(lambda=9.140W)'
-when = datetime(1755, 11, 1, 12, 0, 0)   # 12:00 UTC
-lisbon.from_utc(when)                 # AstroDate(1755, 11, 1, 11, 23, 26)  (LMT)
-c.apparent_solar_time(when, -9.14)    # AstroDate(1755, 11, 1, 11, 39, 52, ...) (sundial)
-# The equation of time swings ~+16.4 min in early November (sundial fast)
-# to ~-14.2 min in mid-February (sundial slow).
-c.equation_of_time(datetime(1755, 11, 1))   # timedelta ~ +16m26s
+## Nobody means midnight
 
-## Timezones
-`AstroDate` is naive by default and carries an **optional** `tzinfo`, with
-semantics identical to `datetime`: an aware point compares, subtracts and
-hashes by the *instant* it names; a naive one by its wall-clock fields;
-mixing the two never compares equal and raises `TypeError` on ordering or
-subtraction. `utcoffset()` / `tzname()` / `dst()` delegate to the attached
-zone; `astimezone(tz)` converts to another zone; `replace(tzinfo=...)`
-re-labels the same wall clock without converting.
+When someone says **"June 2027"**, they mean the whole month — not one
+secret instant at midnight on the 1st. This library takes that
+seriously: its answers are **spans** — a start and an end. The width of
+a span is honest information. A day is a day wide. A month is a month
+wide. "The Jurassic" is fifty-six million years wide:
 
 ```python
-from datetime import datetime, timedelta, timezone
+from chronologia import lookup
+
+jurassic = lookup("jurassic")
+print(jurassic.span.start.year)   # -201598050  (about 201.6 million years ago)
+print(jurassic.span.end.year)     # -143098050
+```
+
+Every span also carries a one-word honesty label, its **basis**: was
+this *computed* from an exact rule (`"exact"`), *looked up* in a
+published table (`"tabulated"`), *pieced together* by historians
+(`"reconstructed"`), or *guessed about a future* nobody has decided yet
+(`"predicted"`)? The Jurassic above says `tabulated` — it comes straight
+from the official geological chart, uncertainties included.
+
+## Stories the library can tell
+
+### The ten days that never happened
+
+In October 1582, Pope Gregory XIII fixed the slowly-drifting calendar
+by deleting ten days: in Rome, October 4th was followed directly by
+October 15th. Ask this library about one of the deleted days and it
+doesn't crash or guess — it tells you *that date never existed there,
+and why*:
+
+```python
+from chronologia import TIMELINES
+
+rome = TIMELINES["rome_1582"]
+print(rome.to_jdn((1582, 10, 9)))
+# NeverExisted(label=1582-10-09, discontinuity=SKIP: Oct 4 → Oct 15,
+#              citation='Inter gravissimas (1582)')
+```
+
+Different countries made the jump in different centuries — Britain in
+1752 (eleven days by then), Russia in 1918 (thirteen). That's why the
+"October Revolution" of October 25th, 1917 happened on what most of the
+world called November 7th:
+
+```python
+from chronologia import jdn_to_gregorian
+russia = TIMELINES["russia_1918"]
+print(jdn_to_gregorian(russia.to_jdn((1917, 10, 25))))   # (1917, 11, 7)
+```
+
+And Sweden, after botching a gradual transition, needed a one-off
+**February 30th** in 1712 to get back in step. The library knows that
+day too — everywhere else, it was March 11th.
+
+### Clocks lie twice a year
+
+When clocks "fall back" in autumn, 1:30 AM happens **twice** that
+night; when they "spring forward", 2:30 AM **never happens at all**.
+Ask for a wall-clock time in a zone and get the honest answer — both
+instants, or "that time didn't exist":
+
+```python
 from zoneinfo import ZoneInfo
-import chronologia as c
+from chronologia import resolve_wall_clock
 
-NY = ZoneInfo("America/New_York")
-
-noon = c.AstroDate(2024, 7, 1, 12, tzinfo=NY)   # aware
-noon.utcoffset()                                # timedelta(hours=-4)  (EDT)
-noon.astimezone(timezone.utc)                   # 2024-07-01T16:00:00+00:00
-
-# naive vs aware behaves exactly like datetime
-c.AstroDate(2024, 1, 1) == c.AstroDate(2024, 1, 1, tzinfo=NY)   # False
+ny = ZoneInfo("America/New_York")
+resolve_wall_clock(2024, 11, 3, 1, 30, ny)   # → two instants (the fold)
+resolve_wall_clock(2024, 3, 10, 2, 30, ny)   # → NeverExisted (the gap)
 ```
 
-Two documented deviations / conventions:
+"This time tomorrow" across one of those edges is really a 23- or
+25-hour day. `civil_add` keeps the wall clock and tells you the true
+duration; plain `+ timedelta` stays exactly 24 hours. You choose which
+question you're asking — the library never silently picks for you.
 
-- **Naive `astimezone()` raises `ValueError`.** Modern `datetime.astimezone`
-  silently assumes the system-local zone for a naive value — a well-known
-  footgun. `AstroDate` rejects it: attach a zone with `replace(tzinfo=...)`
-  first so the source zone is explicit.
-- **Out-of-range zone lookups extrapolate.** Beyond `datetime`'s 1..9999
-  window a `zoneinfo` zone has no tabulated data, so offset lookups evaluate
-  the zone's *recurring rule* at a **proxy year** `2000 + (year % 400)`. The
-  proleptic Gregorian calendar (and every DST rule keyed to month/weekday)
-  repeats with a 400-year period, so the proxy shares the real year's leap
-  status and weekday pattern. This extrapolates the *current* recurring rule
-  across all time; it cannot reconstruct historical offset changes (in-range
-  pre-1970 data is used as-is, with `zoneinfo`'s usual reliability caveats).
+There's more where that came from: leap seconds (the reason precise
+systems know UTC and TAI drift apart — 37 seconds so far), and even
+local *sun* time for history before timezones existed, when noon in
+every town was simply when the sun was overhead.
+
+### Deep time, honestly
+
+"66 million years ago" and "66.043 million years ago" are different
+claims — the first is rounded to the nearest million, the second is
+precise to the thousand. The library reads precision from how you wrote
+the number, and the span's width says exactly what you claimed:
 
 ```python
-# The far future still resolves the recurring rule (via the proxy year);
-# no real datetime exists out of range, but the point stays comparable.
-c.AstroDate(12000, 7, 1, tzinfo=NY).utcoffset()   # timedelta(hours=-4)
+from chronologia import resolve_bp
+resolve_bp("66", "Ma")       # a span one million years wide
+resolve_bp("66.043", "Ma")   # a span one thousand years wide
 ```
 
-### Fold and gap
-A wall-clock reading can be ambiguous (fall-back repeats an hour) or
-non-existent (spring-forward skips one). Rather than a fold bit,
-`resolve_wall_clock(y, m, d, h, mi, zone)` returns the outcome as data:
+Radiocarbon dates get the same honesty: a "3500 BP" radiocarbon age is
+**not** 3500 calendar years (radiocarbon clocks run uneven);
+`calibrate_c14(3500)` converts through the published calibration curve
+and answers with a span around 1900 BC, labelled `reconstructed`.
 
-```python
-# fall back: 2024-11-03 01:30 happens twice -> the two real instants
-early, late = c.resolve_wall_clock(2024, 11, 3, 1, 30, NY)
-early.utcoffset(), late.utcoffset()   # -4h (EDT), -5h (EST)
-late - early                          # timedelta(hours=1)
+### Emperors, popes, and consuls
 
-# spring forward: 2024-03-10 02:30 never existed -> NeverExisted + why
-gone = c.resolve_wall_clock(2024, 3, 10, 2, 30, NY)
-gone.discontinuity.kind               # DiscontinuityKind.SKIP
+"Reiwa 7" (Japan's current era), "the consulship of Lentulus and
+Marcellus" (how Romans named their years), "Year 5 of Ramesses II" — in
+**three competing scholarly chronologies, 25 years apart**, and the
+library gives you all three rather than pretending Egyptologists agree.
+Even the full Roman date grammar works: *ante diem III Kalendas
+Apriles* is March 30th, counted the way Romans counted — inclusively,
+backwards from the Kalends.
 
-# an unambiguous reading returns a single aware AstroDate
-c.resolve_wall_clock(2024, 6, 1, 12, 0, NY)
-```
+## What it will NOT do (on purpose)
 
-The repeat pair carries each occurrence in a fixed-offset zone (AstroDate
-has no fold bit), so the two share one wall reading yet name distinct,
-comparable instants. The skip result is a
-`NeverExisted` carrying a synthetic `SKIP` `Discontinuity` — a real
-"never existed + why" answer, never an exception.
+Some dates cannot be computed — by anyone — and this library refuses to
+pretend otherwise:
 
-## Civil arithmetic
-Time has two kinds of "add a day". **Absolute** arithmetic (`point +
-timedelta`) always advances a real duration and is untouched. **Civil**
-arithmetic (`civil_add`) walks the calendar the way people mean it:
+- **Moon-sighting months.** The religious Islamic month begins when
+  witnesses *see* the new crescent. A future sighting hasn't happened
+  yet, so the honest answer is a two-day span labelled `predicted` —
+  never fake certainty. (Saudi Arabia's *civil* calendar is published
+  as an official table, so it *is* included — as a table, exactly as
+  far as the table goes.)
+- **The Chinese calendar beyond its tables.** Exact from 1901 to 2099
+  via the Hong Kong Observatory's published tables; beyond that the
+  true calendar needs astronomy, so the library stops rather than
+  drifts.
+- **Calendars nobody controlled.** Before Julius Caesar, Roman priests
+  added days for political reasons — the "calendar" was whatever they
+  decided that year. No software can recover decisions that were never
+  rules. Historians' reconstructions are supported *as*
+  reconstructions, wearing their uncertainty openly.
 
-```python
-import chronologia as c
+One rule covers all of it: **a span's width and basis always tell the
+truth about what is knowable.**
 
-# Months/years clamp the day of month (never spill into the next month):
-c.civil_add(c.AstroDate(2024, 1, 31), months=1)   # 2024-02-29 (leap year)
-c.civil_add(c.AstroDate(2023, 1, 31), months=1)   # 2023-02-28
+## Reference
 
-# Adding days preserves the wall clock across a DST edge, so the *real*
-# elapsed time is 23 or 25 hours, not 24:
-start = c.AstroDate(2024, 3, 9, 12, tzinfo=ZoneInfo("America/New_York"))
-end = c.civil_add(start, days=1, zone=ZoneInfo("America/New_York"))
-end - start                                        # timedelta(hours=23)
-# whereas the absolute step is exactly 24h of real time:
-(start + timedelta(days=1)) - start                # timedelta(days=1)
+Full guides for everything above live in [`docs/`](docs/):
 
-# With a timeline, a day step walks civil labels across a reform seam:
-c.civil_add(c.AstroDate(1582, 10, 4), days=1,
-            timeline=c.TIMELINES["rome_1582"])      # 1582-10-15 (Gregorian)
-```
+| | |
+|---|---|
+| 17 calendars | Gregorian, Julian, Revised Julian, Hebrew, Islamic (arithmetic + the Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican (arithmetic + historical equinox), Bahá'í (arithmetic + true equinox), ISO week |
+| Timelines | 10 jurisdictions' calendar reforms — Rome, Britain, Sweden, Russia, Greece, Japan… |
+| Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one |
+| Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present |
+| Regnal years | Japanese nengō, Roman consuls, Egyptian chronologies |
+| Time itself | timezones with honest fall-back/spring-forward handling, leap seconds (UTC/TAI/GPS), historical local mean time, the French Revolution's 10-hour clock |
 
-`civil_add` also accepts a `DateSpan`, shifting both endpoints. The two
-never silently conflate: absolute duration is `+ timedelta`, civil label
-walking is `civil_add`.
-## Cited sources
+Every algorithm and every number in the data files is transcribed from
+a cited published source — citations sit in the module docstrings and
+data-file headers. Where sources disagree, both versions ship under
+different names. Where sources are silent, the library says so instead
+of guessing.
 
-The conversion algorithms are grounded in canonical references, cited inline in
-each module's docstring:
+Used by
+[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser) to
+understand dates in spoken language.
 
-- Reingold & Dershowitz, *Calendrical Calculations* (1990 and later editions) —
-  the Hebrew, Islamic civil, French Republican, and Bahai arithmetic.
-- U.S. Naval Observatory, Julian Date reference — the JDN hub and the
-  Gregorian/Julian conversions.
-- POSIX.1-2017 §4.16 — the Unix epoch seconds count.
-- Radiocarbon 19(3):355–363 — the before-present (1950) reference epoch.
-- IERS Bulletin C / IANA-IETF `leap-seconds.list` — the UTC-TAI offset table
-  in `chronologia/data/leap_seconds.tab`.
-- Honsberg & Bowden, *Solar Time* (PVCDROM / PVEducation) — the equation of
-  time closed form and the 4-minutes-per-degree longitude rule for local
-  mean and apparent solar time.
-- ICS International Chronostratigraphic Chart, version 2023/09 (boundary ages
-  via the Macrostrat international timescale, CC-BY 4.0) — the geological
-  named periods in `chronologia/data/ics_chart.tab`.
-- Reimer et al. 2020, *The IntCal20 Northern Hemisphere radiocarbon age
-  calibration curve*, Radiocarbon 62, doi:10.1017/RDC.2020.41 — the coarse
-  calibration table in `chronologia/data/intcal20_coarse.tab`.
+## License
 
-## Used by
-
-- [ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser)
+Apache-2.0 © TigreGotico
