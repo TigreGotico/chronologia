@@ -236,6 +236,100 @@ def test_us_pr_christmas_eve_half_day_year_gated_from_2003():
 
 
 # ==========================================================================
+# Latin America (MX / AR / CL / CO / PE / UY) -- golds from the independent
+# reference (vacanza/holidays 0.101, MIT) year by year, an outside witness to
+# the same official calendars cited in each .tab header. Colombia's reference
+# names carry an "(observado)" suffix on the Emiliani-moved Mondays and may
+# combine two names with ";", so those are normalised away before matching.
+# Uruguay's Carnaval / Semana de Turismo are our-only additions (Ley 16.805,
+# not in the reference), so their golds are derived independently from
+# easter(year).
+# ==========================================================================
+_LATAM_YEARS = (2023, 2024, 2025)
+
+
+def _strip_observed(name):
+    return name.replace("(observado)", "").replace("(observed)", "").strip()
+
+
+def _register_latam_from_reference(country):
+    import holidays as _pkg
+    path = os.path.join(_DATA_DIR, f"{country.lower()}.tab")
+    if not os.path.exists(path):  # per-country commits: skip not-yet-added tabs
+        return
+    cal = load_calendar(path)
+    tab_names = {r.name for r in cal.rules if r.subdiv is None}
+    for y in _LATAM_YEARS:
+        refmap = {}
+        for d, raw in _pkg.country_holidays(country, years=y,
+                                            observed=True).items():
+            for part in raw.split(";"):
+                refmap.setdefault(_strip_observed(part), set()).add(
+                    (d.month, d.day))
+        for name in tab_names:
+            for (m, d) in refmap.get(name, ()):  # decree names -> several dates
+                _reg(country, None, name, y, m, d)
+
+
+def _have_tab(country):
+    return os.path.exists(os.path.join(_DATA_DIR, f"{country.lower()}.tab"))
+
+
+for _cc in ("MX", "AR", "CL", "CO", "PE", "UY"):
+    _register_latam_from_reference(_cc)
+
+# Uruguay Carnaval / Semana de Turismo (Ley 16.805) -- independent of the
+# reference; derived from easter(year) directly.
+if _have_tab("UY"):
+    for _y in _LATAM_YEARS:
+        _e = easter(_y, "gregorian")
+        for _off, _nm in ((-48, "Lunes de Carnaval"), (-47, "Martes de Carnaval"),
+                          (-3, "Jueves de Turismo"), (-2, "Viernes de Turismo")):
+            _d = _e + timedelta(days=_off)
+            _reg("UY", None, _nm, _y, _d.month, _d.day)
+
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in {"MX", "AR", "CL", "CO", "PE", "UY"}
+    for (y, m, d) in ymds
+])
+def test_latam_gold(country, subdiv, name, year, month, day):
+    got = _dateset_for(country, year, subdiv=subdiv)
+    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+        f"{country}/{name!r} {year}: expected {year}-{month:02d}-{day:02d}, "
+        f"got {sorted(got.get((name, subdiv), set()))}")
+
+
+@pytest.mark.skipif(not _have_tab("MX"), reason="mx.tab not present")
+def test_mx_monday_moving_matches_reference():
+    """Mexico's art.74 Monday-moving civil holidays resolve to the statutory
+    Monday, agreeing with the reference (nominal 2-5 / 3-21 / 11-20 never
+    emitted)."""
+    d = {h.name: h.date for h in holidays_for("MX", 2024)}
+    assert d["Día de la Constitución"] == AstroDate(2024, 2, 5)   # 1st Mon Feb
+    assert d["Natalicio de Benito Juárez"] == AstroDate(2024, 3, 18)  # 3rd Mon Mar
+    assert d["Día de la Revolución"] == AstroDate(2024, 11, 18)   # 3rd Mon Nov
+
+
+@pytest.mark.skipif(not _have_tab("MX"), reason="mx.tab not present")
+def test_mx_transmision_sexennial_only():
+    """Transmisión del Poder Ejecutivo Federal is present only in a handover
+    year (2024), silent in 2023/2025."""
+    assert ("Transmisión del Poder Ejecutivo Federal", None) not in _dates_for("MX", 2023)
+    assert _dates_for("MX", 2024)[("Transmisión del Poder Ejecutivo Federal", None)] == AstroDate(2024, 10, 1)
+    assert ("Transmisión del Poder Ejecutivo Federal", None) not in _dates_for("MX", 2025)
+
+
+@pytest.mark.skipif(not _have_tab("PE"), reason="pe.tab not present")
+def test_pe_arica_year_gated_from_2024():
+    """Batalla de Arica y Día de la Bandera national from 2024 (Ley 31794)."""
+    assert ("Batalla de Arica y Día de la Bandera", None) not in _dates_for("PE", 2023)
+    assert _dates_for("PE", 2024)[("Batalla de Arica y Día de la Bandera", None)] == AstroDate(2024, 6, 7)
+
+
+# ==========================================================================
 # SA -- fixed Gregorian days (Wikipedia) + Islamic days independently
 # re-derived from the raw umm_al_qura.tab JDN column.
 # ==========================================================================
