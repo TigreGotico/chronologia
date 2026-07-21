@@ -110,14 +110,14 @@ from datetime import datetime
 trace = explain("the 3rd week of june 1969", load_lang_spec("en"),
                 datetime(2017, 6, 27))
 print(len(trace.tokens), "tokens,", len(trace.winners), "winning construction")
-# 7 tokens, 1 winning construction
+# 6 tokens, 1 winning construction
 ```
 
 `trace.report()` returns the whole thing as readable text — reach for it
-when a phrase parses to something you did not expect. (One caveat, spelled
-out under *Honest limits* below: `explain` runs the bare tokenizer, so it
-does **not** apply the spelled-number fold — a trace of a phrase with
-written-out numbers looks different from the real parse.)
+when a phrase parses to something you did not expect. `explain` runs the
+**identical** pre-match pipeline as `extract_timespan` — the same
+spelled-number fold and multiword merge — so its trace of a phrase reflects
+the real parse token-for-token, written-out numbers and all.
 
 ## How it actually works
 
@@ -294,24 +294,27 @@ carries the connective words `on`, `the`, `at` too — the engine only
 removes what a construction actually bound, not the natural-language glue
 around it.)
 
-One honest wrinkle worth seeing: `explain` runs the **bare** tokenizer, with
-no fold, so its trace of this sentence looks nothing like the real parse —
-"fifth" stays a word, so no `DAY` binds and only a bare-month `calendar_date`
-survives:
+`explain` sees exactly these decisions, because it runs the same pre-match
+pipeline — fold and all. Its trace of this sentence shows both winners with
+their real bindings: "fifth" folded to `5`, so `calendar_date` binds `DAY`,
+and `clock_time` binds "half past 9":
 
 ```python
 from chronologia import explain
 from chronologia.extract import load_lang_spec
 
 trace = explain(sentence, load_lang_spec("en"), datetime(2024, 1, 1))
-print(len(trace.winners), "winner(s)")   # 1 winner(s)
-print(trace.winners[0].match.construction, trace.winners[0].match.slots.keys())
-# calendar_date dict_keys(['MONTH'])
+print(len(trace.winners), "winner(s)")   # 2 winner(s)
+for w in trace.winners:
+    print(w.match.construction, sorted(w.match.slots.keys()))
+# calendar_date ['DAY', 'MONTH']
+# clock_time ['CLOCKDIR', 'FRACTION', 'HOUR']
 ```
 
-To see the real, folded matcher decisions, match the folded tokens directly
-(as the two matcher blocks above do). `explain` is still the right tool for
-digit-form phrases and for understanding *why a candidate lost*.
+The trace mirrors the matcher blocks above token-for-token — the composition
+pass that folds the lone date and lone clock into one span is the one thing it
+does *not* show, because that pass lives above the grammar (see below).
+`explain` remains the right tool for understanding *why a candidate lost*.
 
 ### Precedence: the verbatim order
 
@@ -324,7 +327,7 @@ matter:
 | rank | constructions |
 |------|---------------|
 | 0 | `era_date`, `named_period`, `deep_time` |
-| 1 | `era_bc`, `era_ad`, `era_bp`, `regnal_date`, `roman_date`, `military_time`, `hebrew_new_year` |
+| 1 | `era_bc`, `era_ad`, `era_bp`, `scoped_bc`, `scoped_ad`, `regnal_date`, `roman_date`, `military_time`, `hebrew_new_year` |
 | 2 | `scoped_ordinal`, `month_fuzzy`, `half_period`, `month_day_ref`, `decade_ref` |
 | 3 | `season_ref` |
 | 4 | `iso_date` |
@@ -363,25 +366,32 @@ print(explain("1500 hours", load_lang_spec("en"), datetime(2024, 1, 1)).report()
 # ... lost  scoped_ordinal span=(0, 2): overlaps military_time span=(0, 2) of higher precedence
 ```
 
-**A caveat the code makes honest.** Precedence only settles *equal-length*
-overlaps. It does **not** reach across differently-sized spans, and it cannot
-make a construction match tokens it has no order for. "3rd century BC" is the
-classic trap: there is no construction spanning `century` *and* `bc`, so
-`scoped_ordinal` claims "3rd century" and `bc` is simply left in the
-remainder — the phrase resolves to the third century **AD**, not BC:
+**Why the grammar needs an era tail — a worked lesson.** Precedence only
+settles *equal-length* overlaps. It does **not** reach across differently-sized
+spans, and it cannot make a construction match tokens it has no order for. So a
+scoped period on the BC axis is not something the ranking can conjure: "3rd
+century BC" needs a *construction* whose order actually spans the scope word
+**and** the era word. That is exactly what `scoped_bc` (and its AD twin
+`scoped_ad`) is — the order `article? ORD SCOPE_UNIT bc`. Because it covers one
+more token than the bare `scoped_ordinal` ("3rd century"), it wins on span
+length outright, and its resolver reads the period off the BC axis via the era
+registry:
 
 ```python
 from chronologia import extract_timespan
 
 span, remainder = extract_timespan("3rd century bc", "en", datetime(2024, 1, 1))
 print(span.start.year, span.end.year, "|", repr(remainder))
-# 200 300 | 'bc'
+# -299 -199 | ''
 ```
 
-So `era_bc` outranking `scoped_ordinal` in the table does *not* rescue this
-phrase — the table only decides ties, and these two never tie. Getting "BC"
-to bind here would need a construction whose order actually spans the scope
-word and the era word; the ranking cannot substitute for a missing rule.
+The 3rd century BC is the BC years 300..201, astronomically `[-299, -199)` — a
+century-wide span, `bc` consumed, nothing stranded in the remainder. An explicit
+`ad`/`ce` marker takes the same shape on the AD axis (`scoped_ad`), so "2nd
+century ad" resolves to `[100, 200)` with the marker consumed rather than left
+over. The lesson generalises: when a phrase joins two vocabularies the table
+alone cannot bridge them — you add the order that spans both. Ranking decides
+ties; it never substitutes for a missing rule.
 
 ### The assembly passes: ranges and composition
 
@@ -436,8 +446,10 @@ limitations, stated plainly:
 - **No crossing or discontiguous spans.** A construction binds one
   *contiguous* run of tokens. A meaning split across a gap ("the 3rd … of the
   months I mentioned") or interleaved with another construction cannot be
-  expressed as a single `Match`. The "3rd century BC" trap above is this
-  limit in miniature.
+  expressed as a single `Match`. When two *adjacent* vocabularies need to
+  combine — a scope word and an era word, as in "3rd century BC" — the fix is
+  a construction whose order spans both (that is what `scoped_bc` added); the
+  contiguity limit only bites when the tokens are genuinely not adjacent.
 - **No scattered sets.** "the first and third Mondays" names a *set* of days;
   the engine resolves single spans, not enumerated collections.
 - **Single-winner selection resolves ambiguity silently.** `_select` takes
