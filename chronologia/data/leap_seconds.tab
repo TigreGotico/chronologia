@@ -1,0 +1,52 @@
+# chronologia leap-second table (UTC-TAI offset, cumulative)
+#
+# Source: IANA/IETF leap-seconds.list (mirrors the IERS Bulletin C / USNO
+# TAI-UTC series), https://data.iana.org/time-zones/data/leap-seconds.list
+# Downloaded: 2026-07-21
+# Local copy cited at: ~/AgentWorkspaces/papers/standards/leap-seconds.list
+# (see ~/AgentWorkspaces/papers/standards/INDEX.md)
+#
+# Format: two tab-separated columns per data row:
+#   effective_utc_date<TAB>cumulative_tai_minus_utc_seconds
+# `effective_utc_date` is the UTC calendar date on which the given offset
+# takes effect (00:00:00 UTC that day); the leap second itself, when one is
+# inserted, is dated the day before as 23:59:60 UTC.
+#
+# The first row (1972-01-01, 10) is the initial TAI-UTC offset fixed at the
+# 1972 introduction of leap seconds, not a leap-second insertion. Every
+# subsequent row is one inserted leap second (27 rows, 1972-06-30 through
+# 2016-12-31 insertions), each raising the cumulative offset by exactly 1.
+#
+# table_valid_until: 2027-06-28 (the source list's `#@` expiry line — the
+# date through which the list is confirmed complete absent a further IERS
+# Bulletin C announcement; Bulletin C announces roughly six months ahead of
+# any new leap second).
+#
+1972-01-01	10
+1972-07-01	11
+1973-01-01	12
+1974-01-01	13
+1975-01-01	14
+1976-01-01	15
+1977-01-01	16
+1978-01-01	17
+1979-01-01	18
+1980-01-01	19
+1981-07-01	20
+1982-07-01	21
+1983-07-01	22
+1985-07-01	23
+1988-01-01	24
+1990-01-01	25
+1991-01-01	26
+1992-07-01	27
+1993-07-01	28
+1994-07-01	29
+1996-01-01	30
+1997-07-01	31
+1999-01-01	32
+2006-01-01	33
+2009-01-01	34
+2012-07-01	35
+2015-07-01	36
+2017-01-01	37
