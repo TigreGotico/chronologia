@@ -7,7 +7,7 @@ engine level (independent of any one locale's full corpus):
 * multi-word connectors -- a connector surface may span several tokens
   ("vor christus", "v. chr."), matched word-for-word;
 * localized range connectives -- "von A bis B" resolves from the locale's
-  own ``marker_range_*`` vocabulary, not hardcoded English.
+  own from/to/between/and connectors (dev's range mechanism).
 """
 from datetime import datetime
 

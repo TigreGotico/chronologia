@@ -1,6 +1,6 @@
 """German spoken decades ("die zwanziger Jahre") and localized ranges
 ("von A bis B", "zwischen A und B") -- the range connectives resolve from
-the locale's own ``marker_range_*`` vocabulary, no English words involved.
+the locale's own from/to/between/and connectors, no English words involved.
 """
 import pytest
 
