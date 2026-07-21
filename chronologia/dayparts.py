@@ -144,7 +144,7 @@ _REGIONAL: List[DayPart] = [
     # es: one "tarde" covers English afternoon + early evening — the proof the
     # boundaries are conventional and region-specific, not universal.
     _p("tarde", (12, 0), (20, 0), "es", _CLDR_ES),
-    _p("madrugada", (0, 0), (6, 0), "es", _CLDR_ES),        # crosses midnight
+    _p("madrugada", (0, 0), (6, 0), "es", _CLDR_ES),        # small hours
 ]
 
 #: The day-part registry, keyed by :attr:`DayPart.key`.
