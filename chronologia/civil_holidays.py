@@ -97,14 +97,44 @@ Rules live in ``chronologia/holiday_data/<country>.tab`` — a documented text
 format (see :func:`load_calendar`) with a provenance header (official source
 URL + retrieval date) per file, one rule per line, an optional subdivision
 column. The engine loads them lazily and caches per file.
+
+Internationalisation — three layers
+------------------------------------
+The golden rule: *a holiday's real name is what its own government calls it.*
+Names are therefore modelled in three layers, kept honestly distinct.
+
+1. **Official native names (primary data).** A holiday's ``name`` is the
+   jurisdiction's own official-language name (Portugal's ``"Implantação da
+   República"``, Saudi Arabia's ``"عيد الفطر"``, China's ``"春节"``). A
+   jurisdiction with *several* official languages carries all of them: the
+   ``name`` cell of a ``.tab`` row may hold ``;;``-separated, ``lang:``-tagged
+   alternates (``zh:春节 ;; en:Spring Festival``), which populate
+   :attr:`CivilHoliday.names` (a BCP-47-ish ``lang -> name`` mapping); the first
+   alternate is the primary ``name``. A plain, untagged single-name cell stays
+   fully backward-compatible (empty ``names``). These are *citable facts*: each
+   comes verbatim from the file's cited primary source.
+
+2. **Display translations (renderings, not facts).** ``holiday_data/
+   translations.tab`` supplies convenience *translations* (en/pt/es/de/fr …) for
+   holidays whose display in another language is useful. They are marked
+   ``source: translation`` precisely because they are renderings we authored, not
+   official names a government published — an honesty distinction the format
+   preserves. They land in :attr:`CivilHoliday.translations`.
+
+3. **The resolution API.** :meth:`CivilHoliday.display_name` walks a documented
+   fallback chain: an *official* name for ``lang`` if the jurisdiction has one,
+   else a *translation*, else the primary ``name``. So the government's own word
+   always wins where it exists, and a rendering fills in only where it does not.
 """
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import (Dict, FrozenSet, Iterable, Optional, Protocol, Tuple,
-                    runtime_checkable)
+from types import MappingProxyType
+from typing import (Dict, FrozenSet, Iterable, Mapping, Optional, Protocol,
+                    Tuple, runtime_checkable)
 
 from chronologia.astrodate import (BASIS_EXACT, BASIS_TABULATED, AstroDate,
                                    DateSpan)
@@ -141,6 +171,8 @@ __all__ = [
     "holidays_for",
     "is_civil_holiday",
     "load_calendar",
+    "load_translations",
+    "parse_name_cell",
 ]
 
 #: The documented category schema (see the module docstring).
@@ -148,6 +180,45 @@ CATEGORIES: FrozenSet[str] = frozenset(
     {"public", "regional", "municipal", "religious", "school"})
 
 _EASTER_METHODS = ("gregorian", "julian_gregorian_date")
+
+#: A ``lang:`` tag at the start of a ``;;``-separated name alternate. The tag is
+#: a short BCP-47-ish code (``en``, ``zh``, ``pt-BR``, ``ca``); anything else —
+#: including a name that merely contains a colon — is treated as an untagged
+#: name, so plain single-name rows stay backward-compatible.
+_LANG_TAG = re.compile(r"^([A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})?):(.+)$", re.S)
+
+
+def parse_name_cell(cell: str) -> Tuple[str, Dict[str, str]]:
+    """Split a ``.tab`` ``name`` cell into ``(primary_name, names_by_lang)``.
+
+    The cell is one or more official-language names separated by ``;;``. Each
+    alternate is either ``lang:text`` (a BCP-47-ish tag) or a plain ``text``.
+    The **primary** name is the first alternate's text; ``names_by_lang`` maps
+    every *tagged* alternate's language to its text. A plain single-name cell
+    (the common, backward-compatible case) yields that name and an empty map::
+
+        parse_name_cell("New Year's Day")        -> ("New Year's Day", {})
+        parse_name_cell("zh:春节 ;; en:Spring Festival")
+            -> ("春节", {"zh": "春节", "en": "Spring Festival"})
+    """
+    primary = None
+    names: Dict[str, str] = {}
+    for part in cell.split(";;"):
+        part = part.strip()
+        if not part:
+            continue
+        m = _LANG_TAG.match(part)
+        if m:
+            lang, text = m.group(1), m.group(2).strip()
+            names[lang] = text
+            text_val = text
+        else:
+            text_val = part
+        if primary is None:
+            primary = text_val
+    if primary is None:
+        raise ValueError("empty name cell")
+    return primary, names
 
 
 # --------------------------------------------------------------------------
@@ -621,8 +692,15 @@ class HolidayRule:
     from_year: Optional[int] = None
     until_year: Optional[int] = None
     span_shape: str = "day"
+    #: Official-language name alternates, ``lang -> name`` (see
+    #: :func:`parse_name_cell`). ``name`` is the primary (first) official name;
+    #: this maps *every* official-language rendering the source publishes, and is
+    #: empty for a single-name rule. Excluded from equality/hash (it is derived
+    #: metadata on the same rule identity, and keeps the rule hashable).
+    names: Mapping[str, str] = field(default_factory=dict, compare=False)
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "names", MappingProxyType(dict(self.names)))
         bad = set(self.categories) - CATEGORIES
         if bad:
             raise ValueError(
@@ -669,22 +747,61 @@ class CivilHoliday:
     subdiv: Optional[str]
     categories: FrozenSet[str]
     basis: str
+    #: Official-language name alternates (``lang -> name``), copied from the
+    #: rule. ``name`` is the primary (first) official name; empty for a
+    #: single-name holiday. Excluded from equality/hash (derived display data).
+    names: Mapping[str, str] = field(default_factory=dict, compare=False)
+    #: Display *translations* (``lang -> text``) — renderings we authored, not
+    #: official names (see ``holiday_data/translations.tab``). Distinct from
+    #: :attr:`names` on purpose. Excluded from equality/hash.
+    translations: Mapping[str, str] = field(default_factory=dict, compare=False)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "names", MappingProxyType(dict(self.names)))
+        object.__setattr__(
+            self, "translations", MappingProxyType(dict(self.translations)))
 
     @property
     def date(self) -> AstroDate:
         """The holiday's day (the span's start)."""
         return self.span.start
 
+    def display_name(self, lang: str) -> str:
+        """The best name to *show* in ``lang``, along a documented fallback chain.
+
+        The government's own word wins where it exists: an **official** name for
+        ``lang`` (from :attr:`names`) is returned first; failing that a **display
+        translation** (from :attr:`translations`); failing that the primary
+        :attr:`name` itself. ``lang`` is matched exactly, then by its primary
+        subtag (so ``"pt-BR"`` falls back to ``"pt"``).
+        """
+        for table in (self.names, self.translations):
+            if lang in table:
+                return table[lang]
+        base = lang.split("-", 1)[0]
+        if base != lang:
+            for table in (self.names, self.translations):
+                if base in table:
+                    return table[base]
+        return self.name
+
     def to_json(self) -> dict:
         """A ``json.dumps``-ready dict envelope (see :meth:`from_json`).
 
         ``categories`` serialize as a sorted list (deterministic output);
-        :meth:`from_json` restores the :class:`frozenset`.
+        :meth:`from_json` restores the :class:`frozenset`. ``names`` and
+        ``translations`` serialize only when non-empty (backward-compatible with
+        older single-name envelopes, which :meth:`from_json` reads too).
         """
-        return {"type": "CivilHoliday", "name": self.name,
-                "span": self.span.to_json(), "jurisdiction": self.jurisdiction,
-                "subdiv": self.subdiv, "categories": sorted(self.categories),
-                "basis": self.basis}
+        env = {"type": "CivilHoliday", "name": self.name,
+               "span": self.span.to_json(), "jurisdiction": self.jurisdiction,
+               "subdiv": self.subdiv, "categories": sorted(self.categories),
+               "basis": self.basis}
+        if self.names:
+            env["names"] = dict(self.names)
+        if self.translations:
+            env["translations"] = dict(self.translations)
+        return env
 
     @classmethod
     def from_json(cls, data: dict) -> "CivilHoliday":
@@ -694,7 +811,8 @@ class CivilHoliday:
                 f"not a CivilHoliday envelope: {data.get('type')!r}")
         return cls(data["name"], DateSpan.from_json(data["span"]),
                    data["jurisdiction"], data.get("subdiv"),
-                   frozenset(data.get("categories", ())), data["basis"])
+                   frozenset(data.get("categories", ())), data["basis"],
+                   data.get("names", {}), data.get("translations", {}))
 
 
 def _day_span(date: AstroDate, basis: str) -> DateSpan:
@@ -735,6 +853,47 @@ def _shape_span(date: AstroDate, basis: str, shape: str) -> DateSpan:
 # --------------------------------------------------------------------------
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "holiday_data")
 _REQUIRED_HEADERS = ("jurisdiction", "source", "retrieved")
+_TRANSLATIONS_FILE = os.path.join(_DATA_DIR, "i18n", "translations.tab")
+
+
+def load_translations(path: str = _TRANSLATIONS_FILE
+                      ) -> Dict[Tuple[str, str], Dict[str, str]]:
+    """Parse ``holiday_data/translations.tab`` into ``(JURIS, name) -> {lang: text}``.
+
+    **File format** (``# civil-holidays-translations v1``). ``#``-lines are
+    comments; each data row is pipe-delimited ``jurisdiction | name | lang |
+    text``. ``jurisdiction`` is the upper-case code (``PT``); ``name`` is the
+    holiday's **primary** ``name`` (its official native name — the join key back
+    to the rule); ``lang`` is a BCP-47-ish code; ``text`` is the *translation*.
+
+    These are display renderings, not official names — the honest distinction the
+    header records with ``source: translation``. A missing file yields ``{}``.
+    """
+    out: Dict[Tuple[str, str], Dict[str, str]] = {}
+    if not os.path.exists(path):
+        return out
+    with open(path, encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.rstrip("\n")
+            if not line.strip() or line.lstrip().startswith("#"):
+                continue
+            cols = [c.strip() for c in line.split("|")]
+            if len(cols) < 4:
+                raise ValueError(
+                    f"malformed translation line (need 4 columns): {line!r}")
+            juris, name, lang, text = cols[0], cols[1], cols[2], cols[3]
+            out.setdefault((juris.upper(), name), {})[lang] = text
+    return out
+
+
+_TRANSLATIONS: Optional[Dict[Tuple[str, str], Dict[str, str]]] = None
+
+
+def _translations_for(jurisdiction: str, name: str) -> Dict[str, str]:
+    global _TRANSLATIONS
+    if _TRANSLATIONS is None:
+        _TRANSLATIONS = load_translations()
+    return _TRANSLATIONS.get((jurisdiction.upper(), name), {})
 
 
 @dataclass(frozen=True)
@@ -771,6 +930,7 @@ class HolidayCalendar:
         # another holiday (the UK Christmas/Boxing cascade, Japan furikae).
         subst_work = []  # (nominal_date, rule) awaiting a substitute day
         for rule in applicable:
+            trans = _translations_for(self.jurisdiction, rule.name)
             for date, basis in rule.resolve(year):
                 out.append(CivilHoliday(
                     name=rule.name,
@@ -778,7 +938,9 @@ class HolidayCalendar:
                     jurisdiction=self.jurisdiction,
                     subdiv=rule.subdiv,
                     categories=rule.categories,
-                    basis=basis))
+                    basis=basis,
+                    names=rule.names,
+                    translations=trans))
                 if rule.substitute is not None:
                     subst_work.append((date, basis, rule))
 
@@ -788,13 +950,18 @@ class HolidayCalendar:
             if sub is None:
                 continue
             taken.add(sub)
+            label = rule.substitute.label
+            trans = _translations_for(self.jurisdiction, rule.name)
             out.append(CivilHoliday(
-                name=rule.name + rule.substitute.label,
+                name=rule.name + label,
                 span=_day_span(sub, basis),
                 jurisdiction=self.jurisdiction,
                 subdiv=rule.subdiv,
                 categories=rule.categories,
-                basis=basis))
+                basis=basis,
+                names={lang: text + label for lang, text in rule.names.items()},
+                translations={lang: text + label
+                              for lang, text in trans.items()}))
         out.sort(key=lambda h: (h.span.start, h.name))
         return tuple(out)
 
@@ -868,7 +1035,13 @@ def load_calendar(path: str) -> HolidayCalendar:
       classes for the ``args`` grammar). A ``one_off`` row's ``args`` is
       ``<year> <month> <day> <citation…>`` — the citation is the rest of the
       field and is mandatory.
-    * ``name`` — the official holiday name (data, verbatim; no translation).
+    * ``name`` — the official holiday name(s), verbatim from the cited source. A
+      single plain name is the common case; a multi-official jurisdiction may
+      give ``;;``-separated ``lang:``-tagged alternates (``zh:春节 ;; en:Spring
+      Festival``) — see :func:`parse_name_cell`. The first alternate is the
+      primary ``name``; every tagged one populates :attr:`HolidayRule.names`.
+      Display *translations* are a separate layer (``translations.tab``), never
+      mixed into this column.
     * ``categories`` — space-separated subset of :data:`CATEGORIES`.
     * ``subdiv`` — optional subdivision code (empty = jurisdiction-wide).
     * ``observed`` — optional named policy: a relocating shift (``us`` /
@@ -898,7 +1071,8 @@ def load_calendar(path: str) -> HolidayCalendar:
             if len(cols) < 4:
                 raise ValueError(
                     f"malformed rule line (need >=4 columns): {line!r}")
-            kind, name, args, cats = cols[0], cols[1], cols[2], cols[3]
+            kind, name_cell, args, cats = cols[0], cols[1], cols[2], cols[3]
+            name, names = parse_name_cell(name_cell)
             subdiv = cols[4] if len(cols) > 4 and cols[4] else None
             obs_name = cols[5] if len(cols) > 5 and cols[5] else None
             valid = cols[6] if len(cols) > 6 and cols[6] else None
@@ -923,7 +1097,8 @@ def load_calendar(path: str) -> HolidayCalendar:
                 substitute=substitute,
                 from_year=from_year,
                 until_year=until_year,
-                span_shape=span_shape))
+                span_shape=span_shape,
+                names=names))
     missing = [h for h in _REQUIRED_HEADERS if h not in meta]
     if missing:
         raise ValueError(

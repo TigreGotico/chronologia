@@ -59,7 +59,7 @@ decree | San Jorge/Día de Aragón | 2023-4-24 2024-4-23 2025-4-23 2026-4-23 | r
 decree | Día de Asturias | 2023-9-8 2024-9-9 2025-9-8 2026-9-8 | regional | ES-AS |
 decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 | regional religious | ES-AS |
 # --- Illes Balears (ES-IB) ---
-decree | Día de les Illes Balears | 2023-3-1 2024-3-1 2025-3-1 2026-3-2 | regional | ES-IB |
+decree | es:Día de les Illes Balears ;; ca:Dia de les Illes Balears | 2023-3-1 2024-3-1 2025-3-1 2026-3-2 | regional | ES-IB |
 decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 | regional religious | ES-IB |
 decree | Lunes de Pascua | 2023-4-10 2024-4-1 2026-4-6 | regional religious | ES-IB |
 decree | San Esteban | 2025-12-26 2026-12-26 | regional religious | ES-IB |
@@ -82,7 +82,7 @@ decree | Fiesta de Castilla y León | 2024-4-23 2025-4-23 2026-4-23 | regional |
 decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 | regional religious | ES-CL |
 decree | Santiago Apóstol/Día Nacional de Galicia | 2023-7-25 | regional religious | ES-CL |
 # --- Cataluña (ES-CT) ---
-decree | Fiesta Nacional de Cataluña | 2023-9-11 2024-9-11 2025-9-11 2026-9-11 | regional | ES-CT |
+decree | es:Fiesta Nacional de Cataluña ;; ca:Diada Nacional de Catalunya | 2023-9-11 2024-9-11 2025-9-11 2026-9-11 | regional | ES-CT |
 decree | Lunes de Pascua | 2023-4-10 2024-4-1 2025-4-21 2026-4-6 | regional religious | ES-CT |
 decree | San Esteban | 2023-12-26 2024-12-26 2025-12-26 2026-12-26 | regional religious | ES-CT |
 decree | San Juan | 2023-6-24 2024-6-24 2025-6-24 2026-6-24 | regional religious | ES-CT |
@@ -91,7 +91,7 @@ decree | Día de Extremadura | 2023-9-8 2025-9-8 2026-9-8 | regional | ES-EX |
 decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 | regional religious | ES-EX |
 decree | Martes de Carnaval | 2023-2-21 2024-2-13 | regional | ES-EX |
 # --- Galicia (ES-GA) ---
-decree | Día de las Letras Gallegas | 2023-5-17 2024-5-17 2025-5-17 | regional | ES-GA |
+decree | es:Día de las Letras Gallegas ;; gl:Día das Letras Galegas | 2023-5-17 2024-5-17 2025-5-17 | regional | ES-GA |
 decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 | regional religious | ES-GA |
 decree | San José | 2026-3-19 | regional religious | ES-GA |
 decree | San Juan | 2026-6-24 | regional religious | ES-GA |
@@ -120,7 +120,7 @@ decree | Día de La Rioja | 2023-6-9 2024-6-10 2025-6-9 2026-6-9 | regional | ES
 decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 | regional religious | ES-RI |
 decree | Lunes de Pascua | 2023-4-10 2024-4-1 2025-4-21 2026-4-6 | regional religious | ES-RI |
 # --- Comunitat Valenciana (ES-VC) ---
-decree | Día de la Comunitat Valenciana | 2023-10-9 2024-10-9 2025-10-9 2026-10-9 | regional | ES-VC |
+decree | es:Día de la Comunitat Valenciana ;; ca:Dia de la Comunitat Valenciana | 2023-10-9 2024-10-9 2025-10-9 2026-10-9 | regional | ES-VC |
 decree | Lunes de Pascua | 2023-4-10 2024-4-1 2025-4-21 2026-4-6 | regional religious | ES-VC |
 decree | San José | 2024-3-19 2025-3-19 2026-3-19 | regional religious | ES-VC |
 decree | San Juan | 2023-6-24 2024-6-24 2025-6-24 2026-6-24 | regional religious | ES-VC |

@@ -9,16 +9,18 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
+# Names carry the official Arabic (ar) name as primary, with an English (en)
+# romanization alongside; see the i18n format spec in civil_holidays.
 # --- fixed (Gregorian) national days ---
-fixed         | Founding Day  | 2 22 | public |  |
-fixed         | National Day  | 9 23 | public |  |
+fixed         | ar:يوم التأسيس ;; en:Founding Day  | 2 22 | public |  |
+fixed         | ar:اليوم الوطني ;; en:National Day  | 9 23 | public |  |
 #
 # --- Islamic (Umm al-Qura calendar_date) holidays ---
-calendar_date | Eid al-Fitr           | umm_al_qura 10 1  | public religious |  |
-calendar_date | Eid al-Fitr Holiday   | umm_al_qura 10 2  | public religious |  |
-calendar_date | Eid al-Fitr Holiday   | umm_al_qura 10 3  | public religious |  |
-calendar_date | Arafah Day            | umm_al_qura 12 9  | public religious |  |
-calendar_date | Eid al-Adha           | umm_al_qura 12 10 | public religious |  |
-calendar_date | Eid al-Adha Holiday   | umm_al_qura 12 11 | public religious |  |
-calendar_date | Eid al-Adha Holiday   | umm_al_qura 12 12 | public religious |  |
-calendar_date | Eid al-Adha Holiday   | umm_al_qura 12 13 | public religious |  |
+calendar_date | ar:عيد الفطر ;; en:Eid al-Fitr             | umm_al_qura 10 1  | public religious |  |
+calendar_date | ar:عطلة عيد الفطر ;; en:Eid al-Fitr Holiday | umm_al_qura 10 2  | public religious |  |
+calendar_date | ar:عطلة عيد الفطر ;; en:Eid al-Fitr Holiday | umm_al_qura 10 3  | public religious |  |
+calendar_date | ar:يوم عرفة ;; en:Arafah Day               | umm_al_qura 12 9  | public religious |  |
+calendar_date | ar:عيد الأضحى ;; en:Eid al-Adha            | umm_al_qura 12 10 | public religious |  |
+calendar_date | ar:عطلة عيد الأضحى ;; en:Eid al-Adha Holiday | umm_al_qura 12 11 | public religious |  |
+calendar_date | ar:عطلة عيد الأضحى ;; en:Eid al-Adha Holiday | umm_al_qura 12 12 | public religious |  |
+calendar_date | ar:عطلة عيد الأضحى ;; en:Eid al-Adha Holiday | umm_al_qura 12 13 | public religious |  |

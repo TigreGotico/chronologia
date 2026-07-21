@@ -342,18 +342,21 @@ def test_us_veterans_day_2024_no_shift_monday():
 # Saudi Arabia calendar_date golds + out-of-range
 # --------------------------------------------------------------------------
 def test_sa_eid_al_fitr_2024():
-    got = [h for h in holidays_for("SA", 2024) if h.name == "Eid al-Fitr"]
+    # Primary name is the official Arabic one; English is available via `names`.
+    got = [h for h in holidays_for("SA", 2024) if h.name == "عيد الفطر"]
     assert got[0].date == AstroDate(2024, 4, 10)
     assert got[0].basis == "tabulated"
+    assert got[0].names["en"] == "Eid al-Fitr"
+    assert got[0].display_name("en") == "Eid al-Fitr"
 
 
 def test_sa_eid_al_adha_2024():
-    got = [h for h in holidays_for("SA", 2024) if h.name == "Eid al-Adha"]
+    got = [h for h in holidays_for("SA", 2024) if h.name == "عيد الأضحى"]
     assert got[0].date == AstroDate(2024, 6, 16)
 
 
 def test_sa_national_day_fixed_exact():
-    got = [h for h in holidays_for("SA", 2024) if h.name == "National Day"]
+    got = [h for h in holidays_for("SA", 2024) if h.name == "اليوم الوطني"]
     assert got[0].date == AstroDate(2024, 9, 23)
     assert got[0].basis == "exact"
 
@@ -361,7 +364,7 @@ def test_sa_national_day_fixed_exact():
 def test_sa_out_of_range_year_drops_islamic_keeps_fixed():
     got = holidays_for("SA", 2100)
     names = {h.name for h in got}
-    assert names == {"Founding Day", "National Day"}
+    assert names == {"يوم التأسيس", "اليوم الوطني"}   # Founding Day, National Day
 
 
 # --------------------------------------------------------------------------

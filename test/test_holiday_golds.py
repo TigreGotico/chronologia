@@ -333,8 +333,9 @@ def test_pe_arica_year_gated_from_2024():
 # SA -- fixed Gregorian days (Wikipedia) + Islamic days independently
 # re-derived from the raw umm_al_qura.tab JDN column.
 # ==========================================================================
-_reg("SA", None, "Founding Day", 2024, 2, 22)
-_reg("SA", None, "National Day", 2024, 9, 23)
+# Primary names are the official Arabic ones (English is carried in `names`).
+_reg("SA", None, "يوم التأسيس", 2024, 2, 22)      # Founding Day
+_reg("SA", None, "اليوم الوطني", 2024, 9, 23)     # National Day
 
 
 def _jdn_to_gregorian(jdn: int):
@@ -370,22 +371,23 @@ def _umm_al_qura_month_start(ah_year: int, ah_month: int) -> int:
 # 1 Shawwal AH 1445 = Eid al-Fitr; 10 Dhu al-Hijjah AH 1445 = Eid al-Adha.
 _shawwal_start = _umm_al_qura_month_start(1445, 10)
 _dhulhijjah_start = _umm_al_qura_month_start(1445, 12)
-for _i, _name in enumerate(("Eid al-Fitr", "Eid al-Fitr Holiday", "Eid al-Fitr Holiday")):
+# Primary names are the official Arabic ones (see sa.tab); English is in `names`.
+for _i, _name in enumerate(("عيد الفطر", "عطلة عيد الفطر", "عطلة عيد الفطر")):
     _y, _m, _d = _jdn_to_gregorian(_shawwal_start + _i)
     _reg("SA", None, _name, _y, _m, _d)
 for _i, _name in enumerate((
-        "Arafah Day", "Eid al-Adha", "Eid al-Adha Holiday",
-        "Eid al-Adha Holiday", "Eid al-Adha Holiday"), start=8):
+        "يوم عرفة", "عيد الأضحى", "عطلة عيد الأضحى",
+        "عطلة عيد الأضحى", "عطلة عيد الأضحى"), start=8):
     _y, _m, _d = _jdn_to_gregorian(_dhulhijjah_start + _i)
     _reg("SA", None, _name, _y, _m, _d)
 
-# The Eid holidays repeat identical names ("Eid al-Fitr Holiday" twice, "Eid
-# al-Adha Holiday" three times); the engine yields them in date order, so
-# golds are asserted positionally against the sorted, deduped output.
+# The Eid holidays repeat identical names ("عطلة عيد الفطر" twice, "عطلة عيد
+# الأضحى" three times); the engine yields them in date order, so golds are
+# asserted positionally against the sorted, deduped output.
 _SA_ISLAMIC_ORDER_2024 = [
-    "Eid al-Fitr", "Eid al-Fitr Holiday", "Eid al-Fitr Holiday",
-    "Arafah Day", "Eid al-Adha", "Eid al-Adha Holiday",
-    "Eid al-Adha Holiday", "Eid al-Adha Holiday",
+    "عيد الفطر", "عطلة عيد الفطر", "عطلة عيد الفطر",
+    "يوم عرفة", "عيد الأضحى", "عطلة عيد الأضحى",
+    "عطلة عيد الأضحى", "عطلة عيد الأضحى",
 ]
 _SA_ISLAMIC_DATES_2024 = sorted(
     _jdn_to_gregorian(_shawwal_start + i) for i in range(3)
@@ -394,8 +396,8 @@ _SA_ISLAMIC_DATES_2024 = sorted(
 
 def test_sa_fixed_golds_2024():
     got = _dates_for("SA", 2024)
-    assert got[("Founding Day", None)] == AstroDate(2024, 2, 22)
-    assert got[("National Day", None)] == AstroDate(2024, 9, 23)
+    assert got[("يوم التأسيس", None)] == AstroDate(2024, 2, 22)   # Founding Day
+    assert got[("اليوم الوطني", None)] == AstroDate(2024, 9, 23)  # National Day
 
 
 def test_sa_islamic_golds_2024_independent_jdn_rederivation():
@@ -1149,76 +1151,80 @@ _reg("IN", None, "Diwali (Deepavali)", 2025, 10, 20)
 _reg("IN", None, "Guru Nanak's Jayanti", 2024, 11, 15)
 _reg("IN", None, "Maha Shivaratri", 2024, 3, 8)
 
-# --- CN: statutory list (source: State Council) ---
-_reg("CN", None, "New Year's Day", 2024, 1, 1)
-_reg("CN", None, "Labour Day", 2024, 5, 1)
-_reg("CN", None, "National Day", 2024, 10, 1)
-_reg("CN", None, "National Day Holiday", 2024, 10, 2)
-_reg("CN", None, "National Day Holiday", 2024, 10, 3)
-_reg("CN", None, "Spring Festival", 2024, 2, 10)
-_reg("CN", None, "Spring Festival", 2025, 1, 29)
-_reg("CN", None, "Spring Festival Holiday", 2024, 2, 11)
-_reg("CN", None, "Spring Festival Holiday", 2024, 2, 12)
-_reg("CN", None, "Dragon Boat Festival", 2024, 6, 10)
-_reg("CN", None, "Mid-Autumn Festival", 2024, 9, 17)
-_reg("CN", None, "Qingming Festival", 2023, 4, 5)   # solar term
-_reg("CN", None, "Qingming Festival", 2024, 4, 4)
-_reg("CN", None, "Qingming Festival", 2025, 4, 4)
+# --- CN: statutory list (source: State Council). Primary names are the official
+#     Chinese (zh) names; English is carried in `names`. ---
+_reg("CN", None, "元旦", 2024, 1, 1)          # New Year's Day
+_reg("CN", None, "劳动节", 2024, 5, 1)         # Labour Day
+_reg("CN", None, "国庆节", 2024, 10, 1)        # National Day
+_reg("CN", None, "国庆节假期", 2024, 10, 2)     # National Day Holiday
+_reg("CN", None, "国庆节假期", 2024, 10, 3)
+_reg("CN", None, "春节", 2024, 2, 10)         # Spring Festival
+_reg("CN", None, "春节", 2025, 1, 29)
+_reg("CN", None, "春节假期", 2024, 2, 11)      # Spring Festival Holiday
+_reg("CN", None, "春节假期", 2024, 2, 12)
+_reg("CN", None, "端午节", 2024, 6, 10)        # Dragon Boat Festival
+_reg("CN", None, "中秋节", 2024, 9, 17)        # Mid-Autumn Festival
+_reg("CN", None, "清明节", 2023, 4, 5)         # Qingming — solar term
+_reg("CN", None, "清明节", 2024, 4, 4)
+_reg("CN", None, "清明节", 2025, 4, 4)
 
-# --- JP: national holidays (source: Cabinet Office) ---
-_reg("JP", None, "New Year's Day", 2024, 1, 1)
-_reg("JP", None, "National Foundation Day", 2024, 2, 11)
-_reg("JP", None, "Emperor's Birthday", 2024, 2, 23)
-_reg("JP", None, "Showa Day", 2024, 4, 29)
-_reg("JP", None, "Constitution Memorial Day", 2024, 5, 3)
-_reg("JP", None, "Greenery Day", 2024, 5, 4)
-_reg("JP", None, "Children's Day", 2024, 5, 5)
-_reg("JP", None, "Mountain Day", 2024, 8, 11)
-_reg("JP", None, "Culture Day", 2024, 11, 3)
-_reg("JP", None, "Labour Thanksgiving Day", 2024, 11, 23)
-_reg("JP", None, "Coming of Age Day", 2024, 1, 8)       # 2nd Mon Jan
-_reg("JP", None, "Coming of Age Day", 2025, 1, 13)
-_reg("JP", None, "Marine Day", 2024, 7, 15)             # 3rd Mon Jul
-_reg("JP", None, "Respect for the Aged Day", 2024, 9, 16)  # 3rd Mon Sep
-_reg("JP", None, "Sports Day", 2024, 10, 14)            # 2nd Mon Oct
-_reg("JP", None, "Vernal Equinox Day", 2024, 3, 20)     # Cabinet Office published
-_reg("JP", None, "Vernal Equinox Day", 2025, 3, 20)
-_reg("JP", None, "Autumnal Equinox Day", 2024, 9, 22)   # Cabinet Office published
-_reg("JP", None, "Autumnal Equinox Day", 2025, 9, 23)
+# --- JP: national holidays (source: Cabinet Office). Primary names are the
+#     official Japanese (ja) names; English is carried in `names`. ---
+_reg("JP", None, "元日", 2024, 1, 1)                # New Year's Day
+_reg("JP", None, "建国記念の日", 2024, 2, 11)          # National Foundation Day
+_reg("JP", None, "天皇誕生日", 2024, 2, 23)           # Emperor's Birthday
+_reg("JP", None, "昭和の日", 2024, 4, 29)            # Showa Day
+_reg("JP", None, "憲法記念日", 2024, 5, 3)            # Constitution Memorial Day
+_reg("JP", None, "みどりの日", 2024, 5, 4)            # Greenery Day
+_reg("JP", None, "こどもの日", 2024, 5, 5)            # Children's Day
+_reg("JP", None, "山の日", 2024, 8, 11)             # Mountain Day
+_reg("JP", None, "文化の日", 2024, 11, 3)            # Culture Day
+_reg("JP", None, "勤労感謝の日", 2024, 11, 23)         # Labour Thanksgiving Day
+_reg("JP", None, "成人の日", 2024, 1, 8)             # Coming of Age Day — 2nd Mon Jan
+_reg("JP", None, "成人の日", 2025, 1, 13)
+_reg("JP", None, "海の日", 2024, 7, 15)             # Marine Day — 3rd Mon Jul
+_reg("JP", None, "敬老の日", 2024, 9, 16)            # Respect for the Aged — 3rd Mon Sep
+_reg("JP", None, "スポーツの日", 2024, 10, 14)        # Sports Day — 2nd Mon Oct
+_reg("JP", None, "春分の日", 2024, 3, 20)            # Vernal Equinox — CAO published
+_reg("JP", None, "春分の日", 2025, 3, 20)
+_reg("JP", None, "秋分の日", 2024, 9, 22)            # Autumnal Equinox — CAO published
+_reg("JP", None, "秋分の日", 2025, 9, 23)
 # 振替休日 furikae substitutes (jp_furikae policy): a Sunday holiday grants the
 # following non-holiday day. 2024 Cabinet Office substitute days.
-_reg("JP", None, "National Foundation Day (振替休日)", 2024, 2, 12)
-_reg("JP", None, "Children's Day (振替休日)", 2024, 5, 6)
-_reg("JP", None, "Mountain Day (振替休日)", 2024, 8, 12)
-_reg("JP", None, "Autumnal Equinox Day (振替休日)", 2024, 9, 23)
-_reg("JP", None, "Culture Day (振替休日)", 2024, 11, 4)
+_reg("JP", None, "建国記念の日 (振替休日)", 2024, 2, 12)
+_reg("JP", None, "こどもの日 (振替休日)", 2024, 5, 6)
+_reg("JP", None, "山の日 (振替休日)", 2024, 8, 12)
+_reg("JP", None, "秋分の日 (振替休日)", 2024, 9, 23)
+_reg("JP", None, "文化の日 (振替休日)", 2024, 11, 4)
 
 # --- TR: public holidays (source: Act 2429) ---
-_reg("TR", None, "Yilbasi", 2024, 1, 1)
-_reg("TR", None, "Ulusal Egemenlik ve Cocuk Bayrami", 2024, 4, 23)
-_reg("TR", None, "Emek ve Dayanisma Gunu", 2024, 5, 1)
-_reg("TR", None, "Ataturk'u Anma, Genclik ve Spor Bayrami", 2024, 5, 19)
-_reg("TR", None, "Demokrasi ve Milli Birlik Gunu", 2024, 7, 15)
-_reg("TR", None, "Zafer Bayrami", 2024, 8, 30)
-_reg("TR", None, "Cumhuriyet Bayrami", 2024, 10, 29)
-_reg("TR", None, "Cumhuriyet Bayrami", 2025, 10, 29)
-_reg("TR", None, "Ramazan Bayrami", 2024, 4, 10)   # 1 Shawwal (islamic_civil)
-_reg("TR", None, "Ramazan Bayrami", 2025, 3, 31)
-_reg("TR", None, "Kurban Bayrami", 2024, 6, 17)    # 10 Dhu al-Hijja (islamic_civil)
+# Names are the official Turkish spellings, with full diacritics.
+_reg("TR", None, "Yılbaşı", 2024, 1, 1)
+_reg("TR", None, "Ulusal Egemenlik ve Çocuk Bayramı", 2024, 4, 23)
+_reg("TR", None, "Emek ve Dayanışma Günü", 2024, 5, 1)
+_reg("TR", None, "Atatürk'ü Anma, Gençlik ve Spor Bayramı", 2024, 5, 19)
+_reg("TR", None, "Demokrasi ve Millî Birlik Günü", 2024, 7, 15)
+_reg("TR", None, "Zafer Bayramı", 2024, 8, 30)
+_reg("TR", None, "Cumhuriyet Bayramı", 2024, 10, 29)
+_reg("TR", None, "Cumhuriyet Bayramı", 2025, 10, 29)
+_reg("TR", None, "Ramazan Bayramı", 2024, 4, 10)   # 1 Shawwal (islamic_civil)
+_reg("TR", None, "Ramazan Bayramı", 2025, 3, 31)
+_reg("TR", None, "Kurban Bayramı", 2024, 6, 17)    # 10 Dhu al-Hijja (islamic_civil)
 
 # --- IL: Hebrew-calendar holidays (source: Israeli official listing) ---
-_reg("IL", None, "Rosh Hashanah", 2024, 10, 3)     # Tishrei 1
-_reg("IL", None, "Rosh Hashanah", 2024, 10, 4)     # Tishrei 2
-_reg("IL", None, "Rosh Hashanah", 2025, 9, 23)
-_reg("IL", None, "Yom Kippur", 2024, 10, 12)
-_reg("IL", None, "Sukkot", 2024, 10, 17)
-_reg("IL", None, "Shemini Atzeret / Simchat Torah", 2024, 10, 24)
-_reg("IL", None, "Pesach", 2024, 4, 23)
-_reg("IL", None, "Pesach", 2025, 4, 13)
-_reg("IL", None, "Pesach (Seventh Day)", 2024, 4, 29)
-_reg("IL", None, "Shavuot", 2024, 6, 12)
-_reg("IL", None, "Yom Ha'atzmaut", 2024, 5, 14)    # Iyar 5 (Mon) -> Tue (postponed)
-_reg("IL", None, "Yom Ha'atzmaut", 2025, 5, 1)     # Iyar 5 (Sat) -> Thu (postponed)
+# Primary names are the official Hebrew (he) names; English is carried in `names`.
+_reg("IL", None, "ראש השנה", 2024, 10, 3)          # Rosh Hashanah — Tishrei 1
+_reg("IL", None, "ראש השנה", 2024, 10, 4)          # Tishrei 2
+_reg("IL", None, "ראש השנה", 2025, 9, 23)
+_reg("IL", None, "יום כיפור", 2024, 10, 12)        # Yom Kippur
+_reg("IL", None, "סוכות", 2024, 10, 17)            # Sukkot
+_reg("IL", None, "שמיני עצרת / שמחת תורה", 2024, 10, 24)  # Shemini Atzeret / Simchat Torah
+_reg("IL", None, "פסח", 2024, 4, 23)               # Pesach
+_reg("IL", None, "פסח", 2025, 4, 13)
+_reg("IL", None, "שביעי של פסח", 2024, 4, 29)      # Pesach (Seventh Day)
+_reg("IL", None, "שבועות", 2024, 6, 12)            # Shavuot
+_reg("IL", None, "יום העצמאות", 2024, 5, 14)       # Yom Ha'atzmaut — Iyar 5 (Mon) -> Tue
+_reg("IL", None, "יום העצמאות", 2025, 5, 1)        # Iyar 5 (Sat) -> Thu (postponed)
 
 
 def _dateset_for(country, year, subdiv=None):
@@ -1248,8 +1254,8 @@ def test_w1b_gold(country, subdiv, name, year, month, day):
 def test_jp_mountain_day_year_gated_from_2016():
     """Mountain Day (山の日) — established by the 2014 amendment, in force from
     2016 (jp.tab "2016-"): absent 2015, present from 2016."""
-    assert ("Mountain Day", None) not in _dates_for("JP", 2015)
-    assert _dates_for("JP", 2016)[("Mountain Day", None)] == AstroDate(2016, 8, 11)
+    assert ("山の日", None) not in _dates_for("JP", 2015)
+    assert _dates_for("JP", 2016)[("山の日", None)] == AstroDate(2016, 8, 11)
 
 
 # ==========================================================================

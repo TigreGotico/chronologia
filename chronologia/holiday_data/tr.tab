@@ -12,20 +12,21 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
+# Names are the official Turkish (tr) names, spelled with full diacritics.
 # --- fixed national ---
-fixed         | Yilbasi                                                | 1 1   | public |  |
-fixed         | Ulusal Egemenlik ve Cocuk Bayrami                      | 4 23  | public |  |
-fixed         | Emek ve Dayanisma Gunu                                 | 5 1   | public |  |
-fixed         | Ataturk'u Anma, Genclik ve Spor Bayrami                | 5 19  | public |  |
-fixed         | Demokrasi ve Milli Birlik Gunu                         | 7 15  | public |  |
-fixed         | Zafer Bayrami                                          | 8 30  | public |  |
-fixed         | Cumhuriyet Bayrami                                     | 10 29 | public |  |
+fixed         | Yılbaşı                                                | 1 1   | public |  |
+fixed         | Ulusal Egemenlik ve Çocuk Bayramı                      | 4 23  | public |  |
+fixed         | Emek ve Dayanışma Günü                                 | 5 1   | public |  |
+fixed         | Atatürk'ü Anma, Gençlik ve Spor Bayramı                | 5 19  | public |  |
+fixed         | Demokrasi ve Millî Birlik Günü                         | 7 15  | public |  |
+fixed         | Zafer Bayramı                                          | 8 30  | public |  |
+fixed         | Cumhuriyet Bayramı                                     | 10 29 | public |  |
 #
 # --- Islamic (islamic_civil; +/-1 observation caveat) ---
-calendar_date | Ramazan Bayrami | islamic_civil 10 1  | public religious |  |
-calendar_date | Ramazan Bayrami | islamic_civil 10 2  | public religious |  |
-calendar_date | Ramazan Bayrami | islamic_civil 10 3  | public religious |  |
-calendar_date | Kurban Bayrami  | islamic_civil 12 10 | public religious |  |
-calendar_date | Kurban Bayrami  | islamic_civil 12 11 | public religious |  |
-calendar_date | Kurban Bayrami  | islamic_civil 12 12 | public religious |  |
-calendar_date | Kurban Bayrami  | islamic_civil 12 13 | public religious |  |
+calendar_date | Ramazan Bayramı | islamic_civil 10 1  | public religious |  |
+calendar_date | Ramazan Bayramı | islamic_civil 10 2  | public religious |  |
+calendar_date | Ramazan Bayramı | islamic_civil 10 3  | public religious |  |
+calendar_date | Kurban Bayramı  | islamic_civil 12 10 | public religious |  |
+calendar_date | Kurban Bayramı  | islamic_civil 12 11 | public religious |  |
+calendar_date | Kurban Bayramı  | islamic_civil 12 12 | public religious |  |
+calendar_date | Kurban Bayramı  | islamic_civil 12 13 | public religious |  |

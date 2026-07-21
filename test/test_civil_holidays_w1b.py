@@ -201,12 +201,13 @@ def test_il_differential_hebrew_holidays_match_package():
     # labels Independence Day "יום העצמאות (נצפה)" = observed, and our
     # il_independence postponement reproduces the same observed Gregorian date
     # (2024-05-14, 2025-05-01). Sukkot/Pesach first days coincide.
+    # Names are the official Hebrew primaries (English is in `names`).
     checks = {
-        2024: {"Rosh Hashanah": (10, 3), "Yom Kippur": (10, 12),
-               "Sukkot": (10, 17), "Pesach": (4, 23),
-               "Shavuot": (6, 12), "Yom Ha'atzmaut": (5, 14)},
-        2025: {"Rosh Hashanah": (9, 23), "Pesach": (4, 13),
-               "Yom Ha'atzmaut": (5, 1)},
+        2024: {"ראש השנה": (10, 3), "יום כיפור": (10, 12),
+               "סוכות": (10, 17), "פסח": (4, 23),
+               "שבועות": (6, 12), "יום העצמאות": (5, 14)},
+        2025: {"ראש השנה": (9, 23), "פסח": (4, 13),
+               "יום העצמאות": (5, 1)},
     }
     for year, expect in checks.items():
         ours = _our_dates("IL", year)
@@ -223,10 +224,10 @@ def test_il_differential_hebrew_holidays_match_package():
 
 def test_il_independence_day_postponement_both_directions():
     # 2024: Iyar 5 = Monday -> delayed to Tuesday (05-14).
-    got24 = [h for h in holidays_for("IL", 2024) if h.name == "Yom Ha'atzmaut"]
+    got24 = [h for h in holidays_for("IL", 2024) if h.name == "יום העצמאות"]
     assert got24[0].date == AstroDate(2024, 5, 14)
     # 2025: Iyar 5 = Saturday -> advanced to Thursday (05-01).
-    got25 = [h for h in holidays_for("IL", 2025) if h.name == "Yom Ha'atzmaut"]
+    got25 = [h for h in holidays_for("IL", 2025) if h.name == "יום העצמאות"]
     assert got25[0].date == AstroDate(2025, 5, 1)
 
 
@@ -241,7 +242,7 @@ def test_tr_differential_fixed_match_islamic_within_one_day():
         for md in fixed:
             assert md in ours and md in theirs, f"TR {year} fixed {md}"
         # first day of each feast (min date carrying each feast name)
-        for feast in ("Ramazan Bayrami", "Kurban Bayrami"):
+        for feast in ("Ramazan Bayramı", "Kurban Bayramı"):
             our_first = min(m_d for m_d, n in ours.items() if n == feast)
             pkg_name = "Ramazan Bayramı" if feast.startswith("Ram") \
                 else "Kurban Bayramı"
@@ -267,8 +268,8 @@ def test_jp_furikae_substitute_now_emitted():
     # The furikae substitute is ADDED (jp_furikae policy) while the statutory day
     # is kept: 2024 秋分の日 is Sunday 09-22 and its substitute is Monday 09-23.
     dates = {(h.date.month, h.date.day): h.name for h in holidays_for("JP", 2024)}
-    assert dates[(9, 22)] == "Autumnal Equinox Day"          # statutory, kept
-    assert dates[(9, 23)] == "Autumnal Equinox Day (振替休日)"  # substitute, added
+    assert dates[(9, 22)] == "秋分の日"          # Autumnal Equinox — statutory, kept
+    assert dates[(9, 23)] == "秋分の日 (振替休日)"  # substitute, added
 
 
 def test_cn_differential_statutory_core_matches_package():
@@ -292,8 +293,8 @@ def test_cn_differential_statutory_core_matches_package():
 
 def test_cn_qingming_is_solar_term_not_lunar():
     # Qingming tracks the solar term (Apr 4/5), not a fixed date or lunar date.
-    assert _our_dates("CN", 2024)[(4, 4)] == "Qingming Festival"
-    assert _our_dates("CN", 2023)[(4, 5)] == "Qingming Festival"
+    assert _our_dates("CN", 2024)[(4, 4)] == "清明节"   # Qingming Festival
+    assert _our_dates("CN", 2023)[(4, 5)] == "清明节"
 
 
 def test_in_differential_fixed_and_decree_agree():

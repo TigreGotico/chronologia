@@ -54,5 +54,5 @@ packages = ["chronologia", "chronologia.data", "chronologia.extract"]
 version = { attr = "chronologia.version.VERSION_STR" }
 
 [tool.setuptools.package-data]
-chronologia = ["py.typed", "calendar_data/*", "holiday_data/*", "locale/*/*.voc", "locale/*/*.json"]
+chronologia = ["py.typed", "calendar_data/*", "holiday_data/*", "holiday_data/i18n/*", "locale/*/*.voc", "locale/*/*.json"]
 "chronologia.data" = ["*.tab"]

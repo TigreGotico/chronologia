@@ -15,12 +15,13 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
-calendar_date | Rosh Hashanah                    | hebrew 7 1  | public religious |  |
-calendar_date | Rosh Hashanah                    | hebrew 7 2  | public religious |  |
-calendar_date | Yom Kippur                       | hebrew 7 10 | public religious |  |
-calendar_date | Sukkot                           | hebrew 7 15 | public religious |  |
-calendar_date | Shemini Atzeret / Simchat Torah  | hebrew 7 22 | public religious |  |
-calendar_date | Pesach                           | hebrew 1 15 | public religious |  |
-calendar_date | Pesach (Seventh Day)             | hebrew 1 21 | public religious |  |
-calendar_date | Shavuot                          | hebrew 3 6  | public religious |  |
-calendar_date | Yom Ha'atzmaut                   | hebrew 2 5  | public | | il_independence
+# Names carry the official Hebrew (he) name as primary, English (en) alongside.
+calendar_date | he:ראש השנה ;; en:Rosh Hashanah                          | hebrew 7 1  | public religious |  |
+calendar_date | he:ראש השנה ;; en:Rosh Hashanah                          | hebrew 7 2  | public religious |  |
+calendar_date | he:יום כיפור ;; en:Yom Kippur                            | hebrew 7 10 | public religious |  |
+calendar_date | he:סוכות ;; en:Sukkot                                    | hebrew 7 15 | public religious |  |
+calendar_date | he:שמיני עצרת / שמחת תורה ;; en:Shemini Atzeret / Simchat Torah | hebrew 7 22 | public religious |  |
+calendar_date | he:פסח ;; en:Pesach                                      | hebrew 1 15 | public religious |  |
+calendar_date | he:שביעי של פסח ;; en:Pesach (Seventh Day)               | hebrew 1 21 | public religious |  |
+calendar_date | he:שבועות ;; en:Shavuot                                  | hebrew 3 6  | public religious |  |
+calendar_date | he:יום העצמאות ;; en:Yom Ha'atzmaut                      | hebrew 2 5  | public | | il_independence

@@ -88,7 +88,10 @@ come from the **Umm al-Qura** table, so they carry `basis="tabulated"` — a
 published-table date, not an astronomical recomputation:
 
 ```python
-eid = [h for h in holidays_for("SA", 2024) if h.name == "Eid al-Fitr"][0]
+# The primary name is the official Arabic one; `display_name` renders English.
+eid = [h for h in holidays_for("SA", 2024)
+       if h.display_name("en") == "Eid al-Fitr"][0]
+assert eid.name == "عيد الفطر"
 assert eid.date == AstroDate(2024, 4, 10)
 assert eid.basis == "tabulated"
 ```
@@ -98,7 +101,7 @@ engine **omits** the Islamic holidays rather than fabricating a wrong date — t
 fixed Gregorian national days still resolve:
 
 ```python
-far = {h.name for h in holidays_for("SA", 2100)}
+far = {h.display_name("en") for h in holidays_for("SA", 2100)}
 assert far == {"Founding Day", "National Day"}   # Eid dropped, honestly
 ```
 
@@ -130,7 +133,7 @@ Japan's 振替休日 (furikae) is the same mechanism with a Sunday-only trigger:
 
 ```python
 jp = {(h.date.month, h.date.day): h.name for h in holidays_for("JP", 2024)}
-assert jp[(9, 23)] == "Autumnal Equinox Day (振替休日)"   # Sun 22 Sep -> Mon 23
+assert jp[(9, 23)] == "秋分の日 (振替休日)"   # Autumnal Equinox: Sun 22 Sep -> Mon 23
 ```
 
 ## Year-gated holidays
@@ -156,6 +159,68 @@ religious = holidays_for("PT", 2024, categories=["religious"])
 assert all("religious" in h.categories for h in religious)
 ```
 
+## Internationalisation — a holiday's real name
+
+The golden rule: **a holiday's real name is what its own government calls it.**
+Saudi Arabia does not have a holiday called "Eid al-Fitr"; it has one called
+عيد الفطر. So the **primary name is the official native name**, and everything
+else is layered honestly on top of it.
+
+```python
+from chronologia import holidays_for
+
+# China's Spring Festival. Its real name is Chinese; the English name is a
+# *co-official* alternate the government also publishes.
+cny = [h for h in holidays_for("CN", 2024) if h.name == "春节"][0]
+assert cny.name == "春节"                       # official native name (primary)
+assert cny.names["en"] == "Spring Festival"     # co-official English name
+```
+
+A jurisdiction with several official languages carries **all** of them in
+`names`. Canada is bilingual federally; the United Kingdom's bank holidays carry
+their Welsh names; India's national days carry Hindi:
+
+```python
+canada_day = [h for h in holidays_for("CA", 2024) if h.name == "Canada Day"][0]
+assert canada_day.names["fr"] == "Fête du Canada"     # French is official too
+
+xmas = [h for h in holidays_for("GB", 2024) if h.name == "Christmas Day"][0]
+assert xmas.names["cy"] == "Dydd Nadolig"             # Welsh, co-official in Wales
+```
+
+### Official names vs translations
+
+There are two honestly-distinct kinds of name. **Official names** are citable
+facts — a government published them. **Translations** are renderings *we*
+authored to help you display a holiday elsewhere; they are marked
+`source: translation` and never masquerade as official. `display_name(lang)`
+walks a documented fallback chain — **official name → translation → the primary
+native name**:
+
+```python
+# The government's own word wins where it exists; a translation fills the gap.
+assert cny.display_name("en") == "Spring Festival"      # co-official English
+assert cny.display_name("pt") == "Ano Novo Chinês"      # a display translation
+assert cny.display_name("ja") == "春节"                  # no rendering -> native
+
+# Portugal is single-language official, so display_name renders via translations.
+ano_novo = [h for h in holidays_for("PT", 2024) if h.name == "Ano Novo"][0]
+assert ano_novo.display_name("de") == "Neujahr"         # translation
+assert ano_novo.display_name("pt") == "Ano Novo"        # native (the official)
+```
+
+Translations cover the national and regional tiers in English, Portuguese,
+Spanish, German and French, for a **deliberately growing** set of jurisdictions:
+a jurisdiction earns its full five-language matrix when those renderings are
+authored with confidence, rather than fabricating a low-confidence gloss for
+every holiday the moment a new country's native-primary file lands. Every
+jurisdiction, covered or not, still gets its official native name (and any
+co-official names — Switzerland's de/fr/it, Belgium's nl/fr/de, Ireland's
+en/ga), and `display_name` always resolves *something* via the fallback chain.
+Portugal's ~300 municipal saints'-day feasts are deliberately *not* translated:
+"Santo António" is the same proper noun in every language, so `display_name`
+falls back to the native name — which is the honest answer, not a gap.
+
 ## Data files
 
 Rules live in `chronologia/holiday_data/<country>.tab` — a documented text
@@ -166,9 +231,20 @@ date), one pipe-delimited rule per line:
 kind | name | args | categories | subdiv | observed | valid
 ```
 
-The `observed` column names either a relocating shift (`us`, `sun_mon`, …) or an
-in-lieu substitute (`gb_substitute`, `jp_furikae`); the optional `valid` column
-bounds the years a rule is in force (`2024-`, `-2015`, `2016-2020`, `2024`).
+The `name` column is normally a single official name. A multi-official
+jurisdiction gives `;;`-separated, `lang:`-tagged alternates — the first is the
+primary name, the rest populate `names`:
+
+```
+calendar_date | zh:春节 ;; en:Spring Festival | chinese 1 1 | public |  |
+```
+
+Display translations live separately in `holiday_data/i18n/translations.tab`
+(`jurisdiction | name | lang | text`, keyed on the primary native name), so a
+rendering can never be mistaken for an official name. The `observed` column
+names either a relocating shift (`us`, `sun_mon`, …) or an in-lieu substitute
+(`gb_substitute`, `jp_furikae`); the optional `valid` column bounds the years a
+rule is in force (`2024-`, `-2015`, `2016-2020`, `2024`).
 
 New jurisdictions are data, not code: add a `.tab` file with its citations and
 the engine loads it.

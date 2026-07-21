@@ -23,24 +23,25 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
+# Names carry the official Japanese (ja) name as primary, English (en) alongside.
 # --- fixed ---
-fixed       | New Year's Day             | 1 1   | public |  | jp_furikae
-fixed       | National Foundation Day    | 2 11  | public |  | jp_furikae
-fixed       | Emperor's Birthday         | 2 23  | public |  | jp_furikae
-fixed       | Showa Day                  | 4 29  | public |  | jp_furikae
-fixed       | Constitution Memorial Day  | 5 3   | public |  | jp_furikae
-fixed       | Greenery Day               | 5 4   | public |  | jp_furikae
-fixed       | Children's Day             | 5 5   | public |  | jp_furikae
-fixed       | Mountain Day               | 8 11  | public |  | jp_furikae| 2016-
-fixed       | Culture Day                | 11 3  | public |  | jp_furikae
-fixed       | Labour Thanksgiving Day    | 11 23 | public |  | jp_furikae
+fixed       | ja:元日 ;; en:New Year's Day               | 1 1   | public |  | jp_furikae
+fixed       | ja:建国記念の日 ;; en:National Foundation Day  | 2 11  | public |  | jp_furikae
+fixed       | ja:天皇誕生日 ;; en:Emperor's Birthday        | 2 23  | public |  | jp_furikae
+fixed       | ja:昭和の日 ;; en:Showa Day                  | 4 29  | public |  | jp_furikae
+fixed       | ja:憲法記念日 ;; en:Constitution Memorial Day  | 5 3   | public |  | jp_furikae
+fixed       | ja:みどりの日 ;; en:Greenery Day              | 5 4   | public |  | jp_furikae
+fixed       | ja:こどもの日 ;; en:Children's Day            | 5 5   | public |  | jp_furikae
+fixed       | ja:山の日 ;; en:Mountain Day                 | 8 11  | public |  | jp_furikae| 2016-
+fixed       | ja:文化の日 ;; en:Culture Day                | 11 3  | public |  | jp_furikae
+fixed       | ja:勤労感謝の日 ;; en:Labour Thanksgiving Day  | 11 23 | public |  | jp_furikae
 #
 # --- Happy-Monday nth-weekday ---
-nth_weekday | Coming of Age Day          | 1 2 0  | public |  |
-nth_weekday | Marine Day                 | 7 3 0  | public |  |
-nth_weekday | Respect for the Aged Day   | 9 3 0  | public |  |
-nth_weekday | Sports Day                 | 10 2 0 | public |  |
+nth_weekday | ja:成人の日 ;; en:Coming of Age Day          | 1 2 0  | public |  |
+nth_weekday | ja:海の日 ;; en:Marine Day                   | 7 3 0  | public |  |
+nth_weekday | ja:敬老の日 ;; en:Respect for the Aged Day    | 9 3 0  | public |  |
+nth_weekday | ja:スポーツの日 ;; en:Sports Day              | 10 2 0 | public |  |
 #
 # --- equinox holidays (JST = UTC+9) ---
-equinox     | Vernal Equinox Day         | march 9     | public |  | jp_furikae
-equinox     | Autumnal Equinox Day       | september 9 | public |  | jp_furikae
+equinox     | ja:春分の日 ;; en:Vernal Equinox Day         | march 9     | public |  | jp_furikae
+equinox     | ja:秋分の日 ;; en:Autumnal Equinox Day       | september 9 | public |  | jp_furikae

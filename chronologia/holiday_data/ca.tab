@@ -19,12 +19,15 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
+# Canada is officially bilingual federally, so the federal holidays carry both
+# the English (en) and French (fr) official names. The primary name stays the
+# English one (the join key used by the golds); French is added in `names`.
 # --- federal (Holidays Act) ---
-fixed       | New Year's Day | 1 1   | public          |  |
-easter      | Good Friday    | -2    | public religious |  |
-fixed       | Canada Day     | 7 1   | public          |  | sun_mon
-nth_weekday | Labour Day     | 9 1 0 | public          |  |
-fixed       | Christmas Day  | 12 25 | public religious |  |
+fixed       | en:New Year's Day ;; fr:Jour de l'An | 1 1   | public          |  |
+easter      | en:Good Friday ;; fr:Vendredi saint  | -2    | public religious |  |
+fixed       | en:Canada Day ;; fr:Fête du Canada   | 7 1   | public          |  | sun_mon
+nth_weekday | en:Labour Day ;; fr:Fête du travail  | 9 1 0 | public          |  |
+fixed       | en:Christmas Day ;; fr:Noël          | 12 25 | public religious |  |
 #
 # --- Ontario (CA-ON) ---
 nth_weekday      | Family Day      | 2 3 0   | public | CA-ON |
@@ -32,10 +35,10 @@ weekday_onbefore | Victoria Day    | 5 24 0  | public | CA-ON |
 nth_weekday      | Thanksgiving Day| 10 2 0  | public | CA-ON |
 fixed            | Boxing Day      | 12 26   | public | CA-ON |
 #
-# --- Quebec (CA-QC) ---
-weekday_onbefore | National Patriots' Day | 5 24 0 | public | CA-QC |
-fixed            | Saint-Jean-Baptiste    | 6 24   | public religious | CA-QC |
-nth_weekday      | Thanksgiving Day       | 10 2 0 | public | CA-QC |
+# --- Quebec (CA-QC): French is the official language of the province ---
+weekday_onbefore | en:National Patriots' Day ;; fr:Journée nationale des patriotes | 5 24 0 | public | CA-QC |
+fixed            | fr:Saint-Jean-Baptiste ;; en:Saint-Jean-Baptiste Day           | 6 24   | public religious | CA-QC |
+nth_weekday      | en:Thanksgiving Day ;; fr:Action de grâce                       | 10 2 0 | public | CA-QC |
 #
 # --- British Columbia (CA-BC) ---
 nth_weekday      | Family Day                            | 2 3 0  | public | CA-BC |

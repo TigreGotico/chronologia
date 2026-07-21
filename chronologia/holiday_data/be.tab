@@ -11,13 +11,14 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
-fixed   | Nieuwjaar            | 1 1   | public          |  |
-easter  | Paasmaandag          | 1     | public religious |  |
-fixed   | Dag van de Arbeid    | 5 1   | public          |  |
-easter  | O. L. H. Hemelvaart  | 39    | public religious |  |
-easter  | Pinkstermaandag      | 50    | public religious |  |
-fixed   | Nationale feestdag   | 7 21  | public          |  |
-fixed   | O. L. V. Hemelvaart  | 8 15  | public religious |  |
-fixed   | Allerheiligen        | 11 1  | public religious |  |
-fixed   | Wapenstilstand       | 11 11 | public          |  |
-fixed   | Kerstmis             | 12 25 | public religious |  |
+# Belgium is trilingual (nl/fr/de); the Dutch primary name is the join key.
+fixed   | nl:Nieuwjaar ;; fr:Nouvel An ;; de:Neujahr                    | 1 1   | public          |  |
+easter  | nl:Paasmaandag ;; fr:Lundi de Pâques ;; de:Ostermontag        | 1     | public religious |  |
+fixed   | nl:Dag van de Arbeid ;; fr:Fête du Travail ;; de:Tag der Arbeit | 5 1  | public          |  |
+easter  | nl:O. L. H. Hemelvaart ;; fr:Ascension ;; de:Christi Himmelfahrt | 39   | public religious |  |
+easter  | nl:Pinkstermaandag ;; fr:Lundi de Pentecôte ;; de:Pfingstmontag | 50   | public religious |  |
+fixed   | nl:Nationale feestdag ;; fr:Fête nationale ;; de:Nationalfeiertag | 7 21 | public          |  |
+fixed   | nl:O. L. V. Hemelvaart ;; fr:Assomption ;; de:Mariä Himmelfahrt | 8 15 | public religious |  |
+fixed   | nl:Allerheiligen ;; fr:Toussaint ;; de:Allerheiligen          | 11 1  | public religious |  |
+fixed   | nl:Wapenstilstand ;; fr:Armistice ;; de:Waffenstillstand      | 11 11 | public          |  |
+fixed   | nl:Kerstmis ;; fr:Noël ;; de:Weihnachten                      | 12 25 | public religious |  |

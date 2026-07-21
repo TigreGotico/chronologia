@@ -17,19 +17,21 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
+# Names carry the official Chinese (zh) name as primary, with an English (en)
+# name alongside; see the i18n format spec in civil_holidays.load_calendar.
 # --- fixed (Gregorian) ---
-fixed         | New Year's Day        | 1 1  | public |  |
-fixed         | Labour Day            | 5 1  | public |  |
-fixed         | National Day          | 10 1 | public |  |
-fixed         | National Day Holiday  | 10 2 | public |  |
-fixed         | National Day Holiday  | 10 3 | public |  |
+fixed         | zh:元旦 ;; en:New Year's Day             | 1 1  | public |  |
+fixed         | zh:劳动节 ;; en:Labour Day               | 5 1  | public |  |
+fixed         | zh:国庆节 ;; en:National Day             | 10 1 | public |  |
+fixed         | zh:国庆节假期 ;; en:National Day Holiday  | 10 2 | public |  |
+fixed         | zh:国庆节假期 ;; en:National Day Holiday  | 10 3 | public |  |
 #
 # --- Chinese lunisolar (calendar_date) ---
-calendar_date | Spring Festival          | chinese 1 1  | public |  |
-calendar_date | Spring Festival Holiday  | chinese 1 2  | public |  |
-calendar_date | Spring Festival Holiday  | chinese 1 3  | public |  |
-calendar_date | Dragon Boat Festival     | chinese 5 5  | public |  |
-calendar_date | Mid-Autumn Festival      | chinese 8 15 | public |  |
+calendar_date | zh:春节 ;; en:Spring Festival             | chinese 1 1  | public |  |
+calendar_date | zh:春节假期 ;; en:Spring Festival Holiday  | chinese 1 2  | public |  |
+calendar_date | zh:春节假期 ;; en:Spring Festival Holiday  | chinese 1 3  | public |  |
+calendar_date | zh:端午节 ;; en:Dragon Boat Festival      | chinese 5 5  | public |  |
+calendar_date | zh:中秋节 ;; en:Mid-Autumn Festival       | chinese 8 15 | public |  |
 #
 # --- solar term (jieqi), UTC+8 ---
-solar_term    | Qingming Festival        | qingming 8   | public |  |
+solar_term    | zh:清明节 ;; en:Qingming Festival         | qingming 8   | public |  |
