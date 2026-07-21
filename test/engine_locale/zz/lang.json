@@ -1,0 +1,57 @@
+{
+  "tokenizer": {"split_contractions": true, "ordinal_dot": true},
+  "lemmas": {"zwochen": "zweek"},
+  "suffix_strip": [["-aren", ""], ["-en", ""]],
+  "constructions": {
+    "relative_offset": {"orders": ["NUM UNIT MARKER", "MARKER NUM UNIT"]},
+    "named_day": {"orders": ["DAY_WORD"]},
+    "weekday_ref": {"orders": ["REL_MARKER WEEKDAY"]},
+    "calendar_date": {
+      "orders": ["MONTH DAY? YEAR?", "DAY of MONTH YEAR?"],
+      "prefer_future": true
+    },
+    "nongregorian_date": {
+      "orders": ["CAL_MONTH DAY? YEAR?", "DAY of CAL_MONTH YEAR?"],
+      "prefer_future": true
+    },
+    "cycle_ref": {
+      "orders": ["REL_MARKER CYCLE_DAY", "CYCLE_DAY"]
+    },
+    "roman_date": {
+      "orders": ["ad ORD ANCHOR_DAY MONTH", "PRIDIE ANCHOR_DAY MONTH",
+                 "ANCHOR_DAY MONTH"]
+    },
+    "regnal_date": {
+      "orders": ["ERANAME NUM", "ORD year_word of ERANAME",
+                 "consulship of ERANAME"]
+    },
+    "season_ref": {
+      "orders": ["SEASON of YEAR", "REL_MARKER SEASON", "SEASON YEAR?"]
+    },
+    "scoped_ordinal": {
+      "orders": [
+        "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
+        "article? ORD UNIT of MONTH YEAR?",
+        "article? ordlast UNIT of MONTH YEAR?",
+        "article? ORD UNIT of article? year_word YEAR?",
+        "article? ordlast UNIT of article? year_word YEAR?",
+        "article? ORD SCOPE_UNIT"
+      ]
+    },
+    "subdivision_time": {
+      "orders": ["SUBH dhour SUBM dmin SUBS dsec",
+                 "SUBH dhour SUBM dmin", "SUBH dhour"]
+    },
+    "clock_time": {
+      "orders": ["CLOCK MERIDIEM?", "at HOUR MERIDIEM?",
+                 "FRACTION CLOCKDIR HOUR MERIDIEM?", "HOUR oclock MERIDIEM?"],
+      "prefer_future": true
+    },
+    "iso_date": {"orders": ["ISO"]}
+  },
+  "conventions": {"week_start": "monday", "dmy": true, "hemisphere": null,
+                  "prefer_future": true},
+  "day_subdivision": "french_decimal",
+  "guards": {"bare_year_min_digits": 4},
+  "hook": null
+}
