@@ -29,6 +29,13 @@ nth_weekday    | Spring Bank Holiday     | 5 -1 0 | public          |  |
 fixed          | Christmas Day           | 12 25  | public religious |  | gb_substitute
 fixed          | Boxing Day              | 12 26  | public          |  | gb_substitute
 #
+# --- One-off royal / national bank holidays (one_off; each carries its gov.uk
+#     proclamation citation). These were additional bank holidays granted for a
+#     single year only and never recur. gov.uk lists them in the year's table.
+one_off        | Platinum Jubilee bank holiday   | 2022 6 3  https://www.gov.uk/bank-holidays  | public |  |
+one_off        | State Funeral of Queen Elizabeth II | 2022 9 19 https://www.gov.uk/government/news/bank-holiday-announced-for-her-majesty-queen-elizabeth-iis-state-funeral-on-monday-19-september | public |  |
+one_off        | Coronation of King Charles III  | 2023 5 8  https://www.gov.uk/government/news/extra-bank-holiday-to-mark-the-coronation-of-king-charles-iii | public |  |
+#
 # --- England & Wales (GB-EAW) ---
 easter         | Easter Monday               | 1      | public religious | GB-EAW |
 nth_weekday    | Summer Bank Holiday         | 8 -1 0 | public          | GB-EAW |

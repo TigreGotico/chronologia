@@ -550,6 +550,12 @@ _reg("GB", None, "Boxing Day (substitute day)", 2021, 12, 28)
 _reg("GB", None, "Christmas Day (substitute day)", 2022, 12, 27)
 _reg("GB", None, "New Year's Day (substitute day)", 2022, 1, 3)
 _reg("GB", None, "New Year's Day (substitute day)", 2023, 1, 2)
+# One-off bank holidays (one_off kind): granted for a single year, never recur.
+# Dates from gov.uk's per-year bank-holiday listing / proclamation news (cited in
+# gb.tab's one_off rows). They resolve only in their stated year.
+_reg("GB", None, "Platinum Jubilee bank holiday", 2022, 6, 3)
+_reg("GB", None, "State Funeral of Queen Elizabeth II", 2022, 9, 19)
+_reg("GB", None, "Coronation of King Charles III", 2023, 5, 8)
 
 # --- DE: national nine + all 16 Länder (source: Land Feiertagsgesetze) ---
 _reg("DE", None, "Neujahr", 2024, 1, 1)

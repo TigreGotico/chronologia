@@ -13,8 +13,8 @@ import os
 import pytest
 
 from chronologia import (AstroDate, CalendarDateRule, CivilHoliday,
-                         DecreeTableRule, EasterOffsetRule, FixedRule,
-                         HolidayCalendar, HolidayRule, NthWeekdayRule,
+                         DecreeTableRule, OneOffRule, EasterOffsetRule,
+                         FixedRule, HolidayCalendar, HolidayRule, NthWeekdayRule,
                          ObservedShift, SUNDAY_TO_MONDAY, US_OBSERVED_SHIFT,
                          holidays_for, is_civil_holiday, load_calendar)
 from chronologia.civil_holidays import CATEGORIES, _DATA_DIR, _day_span
@@ -45,6 +45,28 @@ def test_fixed_rule_rejects_bad_month():
 def test_fixed_rule_rejects_bad_day():
     with pytest.raises(ValueError):
         FixedRule(1, 32)
+
+
+def test_one_off_resolves_only_in_its_year():
+    r = OneOffRule(2023, 5, 8, "https://example.gov/coronation")
+    assert _date(r, 2023) == AstroDate(2023, 5, 8)
+    assert r.observances(2022) == ()
+    assert r.observances(2024) == ()
+
+
+def test_one_off_basis_tabulated():
+    r = OneOffRule(2022, 6, 3, "https://www.gov.uk/bank-holidays")
+    assert r.observances(2022)[0][1] == "tabulated"
+
+
+def test_one_off_requires_citation():
+    with pytest.raises(ValueError):
+        OneOffRule(2022, 6, 3, "   ")
+
+
+def test_one_off_rejects_bad_date():
+    with pytest.raises(ValueError):
+        OneOffRule(2022, 13, 3, "cite")
 
 
 def test_nth_weekday_third_monday_january_2024():

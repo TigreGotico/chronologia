@@ -44,6 +44,13 @@ The kinds:
 * :class:`DecreeTableRule` ``(dates)`` — explicit per-year dates for holidays
   that have *no* rule (announced by decree each year, e.g. China's 调休 shift
   days). Basis ``tabulated``: the honest kind for rule-less realities.
+* :class:`OneOffRule` ``(year, month, day, citation)`` — a single dated
+  occurrence that happened *once* and carries no recurrence: a coronation, a
+  jubilee, a state funeral, a one-time proclaimed bank holiday. It resolves to
+  its date in exactly its ``year`` and to nothing in every other year, and its
+  ``citation`` (an official source URL/reference) is **mandatory** — a one-off
+  with no provenance cannot be constructed. Basis ``tabulated``: the honest kind
+  for a decreed single event.
 
 An :class:`ObservedShift` modifier is layered on top of any kind: a weekend
 falling on a listed weekday shifts by a signed delta (the U.S. federal rule is
@@ -115,6 +122,7 @@ __all__ = [
     "EasterOffsetRule",
     "CalendarDateRule",
     "DecreeTableRule",
+    "OneOffRule",
     "EquinoxRule",
     "SolarTermRule",
     "ObservedShift",
@@ -335,6 +343,43 @@ class DecreeTableRule:
             if y == year:
                 out.append((AstroDate(y, m, d), BASIS_TABULATED))
         return tuple(out)
+
+
+@dataclass(frozen=True)
+class OneOffRule:
+    """A single dated occurrence in exactly ``year`` — a decreed one-time event.
+
+    Coronations, jubilees, state funerals and one-time proclaimed bank holidays
+    are not rules: they happened once, on a documented date, and recur never.
+    ``OneOffRule`` models exactly that — it yields ``(year, month, day)`` when
+    asked for its own ``year`` and an empty tuple for every other year, so a
+    recurring-rule engine stays honest about a non-recurring event instead of
+    fabricating it annually.
+
+    ``citation`` is **mandatory**: a one-off asserts a specific historical fact,
+    so it must carry the official source (a gov/legal URL or reference) that
+    establishes it. An empty citation is a construction error. Basis
+    ``tabulated`` — the honest footing for a decreed single date.
+    """
+
+    year: int
+    month: int
+    day: int
+    citation: str
+
+    def __post_init__(self) -> None:
+        if not 1 <= self.month <= 12:
+            raise ValueError(f"month out of range: {self.month}")
+        if not 1 <= self.day <= 31:
+            raise ValueError(f"day out of range: {self.day}")
+        if not self.citation.strip():
+            raise ValueError(
+                "OneOffRule requires a citation (official source for the event)")
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        if year != self.year:
+            return ()
+        return ((AstroDate(self.year, self.month, self.day), BASIS_TABULATED),)
 
 
 @dataclass(frozen=True)
@@ -709,6 +754,10 @@ def _parse_kind(kind: str, args: str) -> RuleKind:
             y, m, d = (int(x) for x in token.split("-"))
             dates.append((y, (m, d)))
         return DecreeTableRule(tuple(dates))
+    if kind == "one_off":
+        y, m, d = int(parts[0]), int(parts[1]), int(parts[2])
+        citation = " ".join(parts[3:])
+        return OneOffRule(y, m, d, citation)
     raise ValueError(f"unknown rule kind {kind!r}")
 
 
@@ -739,8 +788,10 @@ def load_calendar(path: str) -> HolidayCalendar:
         kind | name | args | categories | subdiv | observed | valid
 
     * ``kind`` — ``fixed`` / ``nth_weekday`` / ``easter`` / ``calendar_date`` /
-      ``equinox`` / ``solar_term`` / ``decree`` (see the per-kind classes for
-      the ``args`` grammar).
+      ``equinox`` / ``solar_term`` / ``decree`` / ``one_off`` (see the per-kind
+      classes for the ``args`` grammar). A ``one_off`` row's ``args`` is
+      ``<year> <month> <day> <citation…>`` — the citation is the rest of the
+      field and is mandatory.
     * ``name`` — the official holiday name (data, verbatim; no translation).
     * ``categories`` — space-separated subset of :data:`CATEGORIES`.
     * ``subdiv`` — optional subdivision code (empty = jurisdiction-wide).
