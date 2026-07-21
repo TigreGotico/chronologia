@@ -40,6 +40,12 @@ from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
 from chronologia.solar import (SOLAR_ACCURACY, NoSunEvent, SunEvents,
                                sun_events, sunset_day_start)
+from chronologia.unequal_hours import (BABYLONIAN_HOURS, CLOCK_CONVENTIONS,
+                                       EDO_JAPANESE, ITALIAN_HOURS,
+                                       ROMAN_HOURS, UNEQUAL_HOUR_SYSTEMS,
+                                       ZMANIM_GRA, ClockConvention,
+                                       UnequalHourSystem, convention_time,
+                                       temporal_hour_span)
 from chronologia.resolution import DateTimeResolution
 from chronologia.roman import roman_to_julian
 from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
@@ -135,6 +141,18 @@ __all__ = [
     "MOON_PHASE_ACCURACY",
     "MEAN_SYNODIC_MONTH_DAYS",
     "EPOCH_NEW_MOON",
+    # unequal (temporal/seasonal) hours and clock-count conventions
+    "UnequalHourSystem",
+    "ClockConvention",
+    "temporal_hour_span",
+    "convention_time",
+    "UNEQUAL_HOUR_SYSTEMS",
+    "CLOCK_CONVENTIONS",
+    "ROMAN_HOURS",
+    "ZMANIM_GRA",
+    "EDO_JAPANESE",
+    "ITALIAN_HOURS",
+    "BABYLONIAN_HOURS",
     # derived resolution vocabulary
     "DateTimeResolution",
     # timelines & discontinuities
