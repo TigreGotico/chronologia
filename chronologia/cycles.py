@@ -34,9 +34,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
-from typing import Mapping, Optional
+from typing import List, Mapping, Optional, Tuple, Union
 
-from chronologia.calendars import CALENDARS, gregorian_to_jdn
+from chronologia.calendars import CALENDARS, gregorian_to_jdn, jdn_to_gregorian
 
 #: microseconds in a civil day -- the exact hub every subdivision rescales to.
 US_PER_DAY = 86_400 * 1_000_000
@@ -147,3 +147,203 @@ def resolve_cycle_day(cycle: DayCycle, position: int, rel: int,
     if cycle.position(target) != position:
         return None                 # month-anchored boundary discontinuity
     return target
+
+
+# --------------------------------------------------------------------------
+# Year cycles: cyclic *year* labels (the generalisation of DayCycle to
+# years instead of days) -- the 60-term Chinese sexagenary cycle, the
+# 12-term Chinese zodiac, and the 15-year Roman/Byzantine indiction.
+# --------------------------------------------------------------------------
+#
+# Two anchoring flavours cover the space, mirroring DayCycle's two ``kind``s:
+#
+# * ``calendar_key`` set (sexagenary, chinese_zodiac) -- the cycle labels the
+#   *native year* of a calendar registered in ``CALENDARS`` (here, the
+#   Chinese lunisolar year).  ``anchor_year`` is that calendar's own year
+#   number carrying ``names[0]``.  Resolving a Gregorian instant crosses
+#   through the calendar's ``from_astro`` first, so the label flips at the
+#   calendar's own year boundary (Chinese New Year), not at 1 January --
+#   this is what makes 2024-01-15 (before CNY 2024-02-10) still a rabbit
+#   year, where a naive ``gregorian_year % 12`` would get it wrong.
+# * ``calendar_key`` is ``None`` (indiction) -- the cycle labels the plain
+#   Gregorian year, but its year may start on a day other than 1 January;
+#   ``year_start`` (month, day) names that start, mirroring
+#   ``Era.year_start`` (the Byzantine Anno Mundi/indiction convention: the
+#   administrative year begins 1 September).  A moment on/after
+#   ``year_start`` belongs to the *following* Gregorian year's label.
+#
+# Sources (downloaded, cited):
+#
+# * Sexagenary cycle / Chinese zodiac -- the 10 Heavenly Stems (jia, yi,
+#   bing, ding, wu, ji, geng, xin, ren, gui) x 12 Earthly Branches (zi, chou,
+#   yin, mao, chen, si, wu, wei, shen, you, xu, hai) pairing, and the
+#   correspondence "1984 began the present cycle (a jiazi year)" -- Wikipedia,
+#   "Sexagenary cycle" (en.wikipedia.org/wiki/Sexagenary_cycle, retrieved
+#   2026-07-21).  The animal-to-branch correspondence (zi=rat .. hai=pig) is
+#   the standard Chinese zodiac ordering, same source family.  The label
+#   applies to the *Chinese lunisolar year* (``CALENDARS["chinese"]``'s own
+#   year number, itself the Gregorian year of the non-leap 1st Lunar Month
+#   opening it -- see ``calendar_data/chinese.tab``), so it is bounded by
+#   that table's coverage (lunar years 1901..2099).
+# * Indiction -- the 15-year Roman/Byzantine tax cycle, introduced by
+#   Constantine 1 September 312 and used until 1806; the Constantinopolitan
+#   convention starts the indiction year 1 September (shifted there from
+#   23 September in the later 5th century, probably 462 AD).  Formula:
+#   for a Julian/Gregorian year Y, indiction = ``(Y + 2) mod 15 + 1`` for
+#   January-August of Y; the indiction increments at 1 September, so
+#   September-December of Y uses ``(Y + 3) mod 15 + 1`` (equivalently: run
+#   the Jan-Aug formula on Y + 1).  Corroborated by two independent
+#   worked-example sources: skypoint.com/members/waltzmn/MSDating.html
+#   ("Indiction = (X+2) MOD 15 + 1 ... this only applies to the first eight
+#   months of the year"; manuscript dated May [year] 6343) and Wikipedia,
+#   "Indiction" (en.wikipedia.org/wiki/Indiction; "the indiction for the
+#   year 2017 is 10: (2017 + 3) mod 15 = 10" -- the same identity, since
+#   ``(Y+3) mod 15`` and ``(Y+2) mod 15 + 1`` agree except at the mod-15
+#   remainder-zero edge, which the ``+1`` form resolves to 15 instead of 0).
+#   Both retrieved 2026-07-21.
+
+#: The 10 Heavenly Stems, pinyin, in their canonical cyclic order.
+_HEAVENLY_STEMS = ("jia", "yi", "bing", "ding", "wu", "ji", "geng", "xin",
+                   "ren", "gui")
+#: The 12 Earthly Branches, pinyin, in their canonical cyclic order.
+_EARTHLY_BRANCHES = ("zi", "chou", "yin", "mao", "chen", "si", "wu", "wei",
+                     "shen", "you", "xu", "hai")
+#: The 12 zodiac animals, in Earthly-Branch order (zi=rat .. hai=pig).
+_ZODIAC_ANIMALS = ("rat", "ox", "tiger", "rabbit", "dragon", "snake",
+                   "horse", "goat", "monkey", "rooster", "dog", "pig")
+
+#: The 60 sexagenary names (stem-branch, hyphenated pinyin), generated from
+#: the stem x branch pairing -- ``names[i]`` is stem ``i % 10`` paired with
+#: branch ``i % 12`` for ``i`` in ``0..59``, e.g. ``names[0] == "jia-zi"``,
+#: ``names[40] == "jia-chen"``, ``names[16] == "geng-chen"``.
+_SEXAGENARY_NAMES = tuple(
+    f"{_HEAVENLY_STEMS[i % 10]}-{_EARTHLY_BRANCHES[i % 12]}" for i in range(60))
+
+
+@dataclass(frozen=True)
+class YearCycle:
+    """A repeating labelled sequence of *years* (the year-axis counterpart
+    of :class:`DayCycle`).
+
+    ``anchor_year`` is the native year (on ``calendar_key`` when set, else
+    the plain Gregorian year) carrying ``names[0]``.  ``calendar_key`` names
+    a :data:`~chronologia.calendars.CALENDARS` entry whose own year number
+    the cycle labels (``None`` for a cycle that labels the Gregorian year
+    itself).  ``year_start`` is the ``(month, day)`` a Gregorian-year-keyed
+    cycle's year begins on when it is not 1 January (ignored when
+    ``calendar_key`` is set, since the calendar's own year boundary applies
+    instead).
+    """
+    key: str
+    length: int
+    names: Tuple[str, ...]
+    anchor_year: int
+    calendar_key: Optional[str]
+    citation: str
+    year_start: Tuple[int, int] = (1, 1)
+
+    def native_year(self, moment) -> int:
+        """The native year label ``moment`` falls in, on this cycle's axis."""
+        if self.calendar_key is not None:
+            cal = CALENDARS[self.calendar_key]
+            return cal.from_astro(moment).year
+        year = moment.year
+        if (moment.month, moment.day) >= self.year_start:
+            year += 1                   # past this Gregorian year's start day
+        return year
+
+    def position(self, native_year: int) -> int:
+        """The 0-based position ``native_year`` occupies in this cycle."""
+        return (native_year - self.anchor_year) % self.length
+
+    def name_at(self, native_year: int) -> str:
+        """The cycle name labelling ``native_year``."""
+        return self.names[self.position(native_year)]
+
+    def year_span(self, native_year: int) -> Tuple["AstroDate", "AstroDate"]:
+        """Half-open ``[start, next-start)`` Gregorian-proleptic span of the
+        cycle year labelled ``native_year``."""
+        from chronologia.astrodate import AstroDate
+        if self.calendar_key is not None:
+            cal = CALENDARS[self.calendar_key]
+            start = cal.date(native_year, 1, 1)
+            end = cal.date(native_year + 1, 1, 1)
+            return start, end
+        sm, sd = self.year_start
+        # native_year N covers [year_start of Gregorian year N-1 .. of N)
+        # when year_start isn't 1 Jan (the label is assigned to the *later*
+        # Gregorian year for the Sept-Dec tail, so the span starts a
+        # Gregorian year earlier); plain 1-Jan-anchored cycles start at N.
+        start_year = native_year - 1 if self.year_start != (1, 1) else native_year
+        end_year = native_year if self.year_start != (1, 1) else native_year + 1
+        start = AstroDate(*jdn_to_gregorian(gregorian_to_jdn(start_year, sm, sd)))
+        end = AstroDate(*jdn_to_gregorian(gregorian_to_jdn(end_year, sm, sd)))
+        return start, end
+
+
+#: Registered year cycles, keyed by name.
+YEAR_CYCLES = {
+    # The 60-term Chinese sexagenary cycle (stem-branch), labelling the
+    # Chinese lunisolar year; 1984 is jiazi (position 0).
+    "sexagenary": YearCycle(
+        "sexagenary", 60, _SEXAGENARY_NAMES, 1984, "chinese",
+        "Wikipedia, \"Sexagenary cycle\" -- 1984 begins the current cycle "
+        "(jiazi); stem x branch pairing, retrieved 2026-07-21."),
+    # The 12-animal Chinese zodiac, labelling the Chinese lunisolar year;
+    # 1984 is the rat (position 0), same anchoring as sexagenary.
+    "chinese_zodiac": YearCycle(
+        "chinese_zodiac", 12, _ZODIAC_ANIMALS, 1984, "chinese",
+        "Wikipedia, \"Sexagenary cycle\" -- 1984 is a rat year; zi=rat.."
+        "hai=pig branch-to-animal correspondence, retrieved 2026-07-21."),
+    # The 15-year Roman/Byzantine indiction (Constantinopolitan convention:
+    # administrative year begins 1 September).  names[i] == str(i+1);
+    # anchor_year=13 makes position(Y) == (Y+2) mod 15, the cited formula.
+    "indiction": YearCycle(
+        "indiction", 15, tuple(str(n) for n in range(1, 16)), 13, None,
+        "skypoint.com Dating Manuscripts (\"Indiction = (X+2) MOD 15 + 1\", "
+        "first eight months only) and Wikipedia \"Indiction\" (\"(Y+3) mod "
+        "15\" for 2017 = 10, the same identity); Constantinopolitan "
+        "1-September year start; both retrieved 2026-07-21.",
+        year_start=(9, 1)),
+}
+
+
+def year_cycle_label(moment, cycle: Union[str, YearCycle]) -> str:
+    """The cycle name labelling ``moment`` (an ``AstroDate``/``date``/
+    ``datetime``), e.g. ``year_cycle_label(AstroDate(2024, 6, 1),
+    "chinese_zodiac") == "dragon"``.
+
+    Raises :class:`KeyError` for an unknown ``cycle`` string, and propagates
+    :class:`~chronologia.calendars.CalendarRangeError` when a calendar-backed
+    cycle's moment falls outside its table (``sexagenary``/``chinese_zodiac``
+    are bounded to Chinese lunisolar years 1901..2099).
+    """
+    if isinstance(cycle, str):
+        if cycle not in YEAR_CYCLES:
+            raise KeyError(f"unknown year cycle {cycle!r}; expected one of "
+                           f"{sorted(YEAR_CYCLES)}")
+        cycle = YEAR_CYCLES[cycle]
+    return cycle.name_at(cycle.native_year(moment))
+
+
+def years_of(cycle: Union[str, YearCycle], name: str, start: int, end: int
+            ) -> List[Tuple["AstroDate", "AstroDate"]]:
+    """The half-open ``[start, next-start)`` spans of every year named
+    ``name`` in this cycle whose native year falls in ``start..end``
+    inclusive (plain Gregorian-year integers), e.g. ``years_of(
+    "chinese_zodiac", "dragon", 1990, 2025)`` lists 2000, 2012 and 2024.
+
+    Raises :class:`ValueError` for a ``name`` this cycle does not carry.
+    """
+    if isinstance(cycle, str):
+        if cycle not in YEAR_CYCLES:
+            raise KeyError(f"unknown year cycle {cycle!r}; expected one of "
+                           f"{sorted(YEAR_CYCLES)}")
+        cycle = YEAR_CYCLES[cycle]
+    if name not in cycle.names:
+        raise ValueError(f"{cycle.key}: unknown name {name!r}; expected one "
+                         f"of {cycle.names}")
+    idx = cycle.names.index(name)
+    return [cycle.year_span(native_year)
+            for native_year in range(start, end + 1)
+            if cycle.position(native_year) == idx]
