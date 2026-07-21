@@ -249,6 +249,27 @@ def test_au_differential_national_2024_2025():
                     f"absent from ours")
 
 
+def test_tr_differential_fixed_match_islamic_within_one_day():
+    # Fixed national days match the package exactly; the Islamic feast first-days
+    # agree to within +/-1 (islamic_civil arithmetic vs Diyanet). 2024: Ramazan
+    # ours 04-10 = Diyanet 04-10; Kurban ours 06-17 vs Diyanet 06-16 (+1).
+    fixed = {(1, 1), (4, 23), (5, 1), (5, 19), (7, 15), (8, 30), (10, 29)}
+    for year in (2024, 2025):
+        ours = _our_dates("TR", year)
+        theirs = _pkg_dates("TR", year)
+        for md in fixed:
+            assert md in ours and md in theirs, f"TR {year} fixed {md}"
+        # first day of each feast (min date carrying each feast name)
+        for feast in ("Ramazan Bayrami", "Kurban Bayrami"):
+            our_first = min(m_d for m_d, n in ours.items() if n == feast)
+            pkg_name = "Ramazan Bayramı" if feast.startswith("Ram") \
+                else "Kurban Bayramı"
+            pkg_first = min(m_d for m_d, n in theirs.items() if n == pkg_name)
+            delta = abs((datetime.date(year, *our_first)
+                         - datetime.date(year, *pkg_first)).days)
+            assert delta <= 1, f"TR {year} {feast}: offset {delta} days"
+
+
 def test_jp_differential_statutory_days_match_package():
     # Every JP statutory holiday matches the package on its legal date; the
     # package's EXTRA entries are all 振替休日 substitute days we hold out of

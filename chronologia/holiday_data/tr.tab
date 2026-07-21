@@ -1,0 +1,31 @@
+# civil-holidays v1
+# jurisdiction: TR
+# source: Act No. 2429 on National Holidays and General Holidays (19 March 1981),
+#   tabulated at https://en.wikipedia.org/wiki/Public_holidays_in_Turkey
+# retrieved: 2026-07-21
+# notes:
+#   Fixed national days plus the two Islamic feasts. Ramazan Bayrami (Eid al-Fitr)
+#   is 3 days from 1 Shawwal; Kurban Bayrami (Eid al-Adha) is 4 days from 10 Dhu
+#   al-Hijja (both also have a half-day eve, not modelled). Islamic dates resolve
+#   through islamic_civil (arithmetic); Turkey's Diyanet civil calendar can differ
+#   by +/-1 day from the tabular date (the observation caveat).
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- fixed national ---
+fixed         | Yilbasi                                                | 1 1   | public |  |
+fixed         | Ulusal Egemenlik ve Cocuk Bayrami                      | 4 23  | public |  |
+fixed         | Emek ve Dayanisma Gunu                                 | 5 1   | public |  |
+fixed         | Ataturk'u Anma, Genclik ve Spor Bayrami                | 5 19  | public |  |
+fixed         | Demokrasi ve Milli Birlik Gunu                         | 7 15  | public |  |
+fixed         | Zafer Bayrami                                          | 8 30  | public |  |
+fixed         | Cumhuriyet Bayrami                                     | 10 29 | public |  |
+#
+# --- Islamic (islamic_civil; +/-1 observation caveat) ---
+calendar_date | Ramazan Bayrami | islamic_civil 10 1  | public religious |  |
+calendar_date | Ramazan Bayrami | islamic_civil 10 2  | public religious |  |
+calendar_date | Ramazan Bayrami | islamic_civil 10 3  | public religious |  |
+calendar_date | Kurban Bayrami  | islamic_civil 12 10 | public religious |  |
+calendar_date | Kurban Bayrami  | islamic_civil 12 11 | public religious |  |
+calendar_date | Kurban Bayrami  | islamic_civil 12 12 | public religious |  |
+calendar_date | Kurban Bayrami  | islamic_civil 12 13 | public religious |  |

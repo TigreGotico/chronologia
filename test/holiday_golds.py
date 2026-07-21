@@ -145,3 +145,23 @@ HOLIDAY_GOLDS["JP"] = [
     _g("Autumnal Equinox Day", 2025, 9, 23),
     _g("Coming of Age Day", 2025, 1, 13),
 ]
+
+
+# --------------------------------------------------------------------------
+# Turkey (Act 2429; Islamic via islamic_civil tabular, +/-1 caveat)
+# --------------------------------------------------------------------------
+HOLIDAY_GOLDS["TR"] = [
+    _g("Yilbasi", 2024, 1, 1),
+    _g("Ulusal Egemenlik ve Cocuk Bayrami", 2024, 4, 23),
+    _g("Emek ve Dayanisma Gunu", 2024, 5, 1),
+    _g("Ataturk'u Anma, Genclik ve Spor Bayrami", 2024, 5, 19),
+    _g("Demokrasi ve Milli Birlik Gunu", 2024, 7, 15),
+    _g("Zafer Bayrami", 2024, 8, 30),
+    _g("Cumhuriyet Bayrami", 2024, 10, 29),
+    # Islamic 2024 (islamic_civil tabular first day)
+    _g("Ramazan Bayrami", 2024, 4, 10),
+    _g("Kurban Bayrami", 2024, 6, 17),
+    # other years
+    _g("Cumhuriyet Bayrami", 2025, 10, 29),
+    _g("Ramazan Bayrami", 2025, 3, 31),
+]
