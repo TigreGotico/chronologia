@@ -59,9 +59,12 @@ __all__ = [
     "tai_to_utc",
     "utc_to_gps",
     "gps_to_utc",
+    "utc_to_tt",
+    "tt_to_utc",
     "is_leap_second_day",
     "GPS_EPOCH",
     "TAI_MINUS_GPS",
+    "TT_MINUS_TAI",
 ]
 
 Instant = Union[date, datetime, AstroDate]
@@ -230,4 +233,42 @@ def gps_to_utc(instant: datetime) -> datetime:
     offset2 = utc_tai_offset(candidate) - TAI_MINUS_GPS
     if offset2 != offset:
         candidate = instant - timedelta(seconds=offset2)
+    return candidate
+
+
+# TT - TAI is a defining constant: Terrestrial Time runs 32.184 s ahead of TAI
+# for all time (the offset that made TT continuous with the older Ephemeris
+# Time at 1977-01-01).  Unlike the UTC-TAI offset it is never tabulated and
+# never steps.
+TT_MINUS_TAI = 32.184
+
+
+def utc_to_tt(instant: Instant) -> Instant:
+    """Convert a UTC instant to Terrestrial Time (``TT = TAI + 32.184 s``).
+
+    TT is the smooth timescale on which every :class:`~chronologia.axes.TimeAxis`
+    epoch is fixed, so this is the bridge from civil UTC into axis space (Mars
+    Sol Date and friends).  ``TT - UTC = utc_tai_offset(instant) + 32.184 s``.
+    *instant* may be an :class:`AstroDate`, ``datetime`` or ``date`` (naive-input
+    convention as elsewhere in this module); the result is the same type, naive,
+    and represents TT.  Raises ``ValueError`` before 1972 (out of the
+    leap-second table's scope).
+    """
+    seconds = utc_tai_offset(instant) + TT_MINUS_TAI
+    return instant + timedelta(seconds=seconds)
+
+
+def tt_to_utc(instant: Instant) -> Instant:
+    """Convert a Terrestrial Time instant to the equivalent UTC instant.
+
+    Inverse of :func:`utc_to_tt`.  Estimates the offset from *instant* treated
+    as UTC (never enough off to cross a table boundary in practice), then
+    re-checks against the resulting UTC date so a same-instant round trip with
+    :func:`utc_to_tt` is exact.
+    """
+    seconds = utc_tai_offset(instant) + TT_MINUS_TAI
+    candidate = instant - timedelta(seconds=seconds)
+    seconds2 = utc_tai_offset(candidate) + TT_MINUS_TAI
+    if seconds2 != seconds:
+        candidate = instant - timedelta(seconds=seconds2)
     return candidate
