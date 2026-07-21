@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: AT
+# source: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10008541
+#   (Arbeitsruhegesetz — ARG, BGBl. Nr. 144/1983 §7: the 13 nationwide Austrian
+#   Feiertage. Local copy papers/holidays/at_holidays.md.) Austria is Catholic-
+#   majority: all 13 including Epiphany, Corpus Christi, Assumption and Immaculate
+#   Conception are nationwide statutory holidays — there is NO Land split in the
+#   general work-free set (note: Karfreitag / Good Friday is NOT a general holiday
+#   since the 2019 ECJ ruling C-193/17). The Länder split appears instead as the
+#   LANDESPATRON (patron-saint) days: each Bundesland's patron feast is a
+#   dienst-/schulfrei day in that Land, shipped here as regional-category entries
+#   keyed to the ISO 3166-2 code (AT-1 Burgenland … AT-9 Wien). Dates cited in
+#   papers/holidays/at_holidays.md.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- Nationwide Feiertage (ARG §7) ---
+fixed   | Neujahr               | 1 1   | public          |  |
+fixed   | Heilige Drei Könige   | 1 6   | public religious |  |
+easter  | Ostermontag           | 1     | public religious |  |
+fixed   | Staatsfeiertag        | 5 1   | public          |  |
+easter  | Christi Himmelfahrt   | 39    | public religious |  |
+easter  | Pfingstmontag         | 50    | public religious |  |
+easter  | Fronleichnam          | 60    | public religious |  |
+fixed   | Mariä Himmelfahrt     | 8 15  | public religious |  |
+fixed   | Nationalfeiertag      | 10 26 | public          |  |
+fixed   | Allerheiligen         | 11 1  | public religious |  |
+fixed   | Mariä Empfängnis      | 12 8  | public religious |  |
+fixed   | Christtag             | 12 25 | public religious |  |
+fixed   | Stephanstag           | 12 26 | public religious |  |
+#
+# --- Landespatrone (regional) ---
+fixed   | Heiliger Florian           | 5 4   | regional religious | AT-4 |
+fixed   | Heiliger Rupert            | 9 24  | regional religious | AT-5 |
+fixed   | Heiliger Josef             | 3 19  | regional religious | AT-6 |
+fixed   | Heiliger Josef             | 3 19  | regional religious | AT-7 |
+fixed   | Heiliger Josef             | 3 19  | regional religious | AT-8 |
+fixed   | Tag der Volksabstimmung    | 10 10 | regional          | AT-2 |
+fixed   | Heiliger Martin            | 11 11 | regional religious | AT-1 |
+fixed   | Heiliger Leopold           | 11 15 | regional religious | AT-3 |
+fixed   | Heiliger Leopold           | 11 15 | regional religious | AT-9 |

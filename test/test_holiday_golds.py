@@ -1050,6 +1050,30 @@ _reg("IE", None, "Saint Stephen's Day", 2024, 12, 26)
 _reg("IE", None, "Day of Remembrance and Recognition", 2022, 3, 18)  # one_off
 
 
+# --- AT: nationwide 13 (ARG §7) + Landespatrone (regional) ---
+_reg("AT", None, "Neujahr", 2024, 1, 1)
+_reg("AT", None, "Heilige Drei Könige", 2024, 1, 6)
+_reg("AT", None, "Ostermontag", *_mov(1))
+_reg("AT", None, "Staatsfeiertag", 2024, 5, 1)
+_reg("AT", None, "Christi Himmelfahrt", *_mov(39))
+_reg("AT", None, "Pfingstmontag", *_mov(50))
+_reg("AT", None, "Fronleichnam", *_mov(60))
+_reg("AT", None, "Mariä Himmelfahrt", 2024, 8, 15)
+_reg("AT", None, "Nationalfeiertag", 2024, 10, 26)
+_reg("AT", None, "Allerheiligen", 2024, 11, 1)
+_reg("AT", None, "Mariä Empfängnis", 2024, 12, 8)
+_reg("AT", None, "Christtag", 2024, 12, 25)
+_reg("AT", None, "Stephanstag", 2024, 12, 26)
+for _s in ("AT-6", "AT-7", "AT-8"):
+    _reg("AT", _s, "Heiliger Josef", 2024, 3, 19)
+_reg("AT", "AT-4", "Heiliger Florian", 2024, 5, 4)
+_reg("AT", "AT-5", "Heiliger Rupert", 2024, 9, 24)
+_reg("AT", "AT-2", "Tag der Volksabstimmung", 2024, 10, 10)
+_reg("AT", "AT-1", "Heiliger Martin", 2024, 11, 11)
+for _s in ("AT-3", "AT-9"):
+    _reg("AT", _s, "Heiliger Leopold", 2024, 11, 15)
+
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
