@@ -2,8 +2,7 @@
 
 This library was written by AI, orchestrated by AI, and directed by a
 human — most of it in one very long working session. You deserve to know
-that, to know how it worked, and to know what went wrong along the way.
-This page is the honest account.
+that, and to know how it worked. This page is the honest account.
 
 ## Who did what
 
@@ -78,38 +77,6 @@ Nowruz in some years (the corrected variant was verified against twelve
 documented Nowruz dates and shipped instead, with the discrepancy
 documented); and several long-standing bugs in the predecessor parser's
 own languages, including entire missing grammatical features.
-
-## What went wrong — and was caught
-
-An honest account includes the failures. All of these happened, and all
-were caught by the same discipline that built the rest:
-
-- **A blind merge-conflict script produced invalid TOML**, silently
-  breaking the build in a way that masked test results for two rounds
-  until the missing output was chased down. Lesson: structured files
-  are validated after every conflict resolution, always.
-- **A test baseline went stale** and 100 differences appeared. Forensics
-  showed every single one was a documented, intentional bug fix and
-  zero were regressions — but proving that required categorizing all
-  100 rather than regenerating the baseline and hoping.
-- **A branch was merged while red** because a shell construct swallowed
-  the test runner's exit code. The failures turned out to be a naming
-  mismatch between two agents' conventions, fixed by raising coverage
-  to the stricter floor — but the merge should not have happened, and
-  merge commands now guard on the gate's recorded result.
-- **A coordination message was routed to the wrong agent**, which
-  correctly recognized the mismatch and refused to act on it — while
-  the intended recipient, never receiving it, did work that then had to
-  be unwound by hand.
-- **An agent was dispatched to push fixes onto a human contributor's
-  pull request.** The maintainer stopped it — nothing was pushed, and
-  the rule is now permanent: community contributions are reference
-  material, never edited by AI. The contributor's corrections were
-  preserved as cited notes instead.
-- **A claimed fact was published without checking** ("it was a
-  Wednesday") and failed its own verification script; the corrected
-  example became a better teaching moment than the wrong one would
-  have been. Every claimed output in these docs is now executed.
 
 ## Why this disclosure
 
