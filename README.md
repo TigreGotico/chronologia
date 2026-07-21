@@ -1,7 +1,27 @@
 # chronologia
 
-**A Python library that answers questions about dates — any date, in any
-calendar, from the age of the dinosaurs to next Tuesday.**
+**A Python library that reads dates written by humans and answers
+questions about them — any date, in any calendar, from the age of the
+dinosaurs to next Tuesday.**
+
+It does two things that usually need two libraries: it *understands* a
+date the way a person wrote it ("the 15th of Ramadan 1446", "next
+winter", "66 million years ago") and it *computes* across every system
+of reckoning humans have used. One call turns a phrase into the exact
+stretch of time it refers to:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+span, _ = extract_timespan("the 15th of Ramadan 1446", "en",
+                           datetime(2024, 1, 1))
+print(span.start_datetime.date())   # 2025-03-15
+```
+
+That is the whole point of a *span*: a phrase names a stretch of time,
+not an instant. The rest of this README is the reckoning engine that the
+extractor resolves against.
 
 Ever wondered…
 
@@ -22,7 +42,10 @@ honestly when history itself doesn't know the answer.
 pip install chronologia
 ```
 
-Pure Python. No dependencies. Python 3.10+.
+Python 3.10+. The calendrical core is pure standard library; the
+natural-language layer adds two small helpers — **ovos-number-parser**
+(spelled numbers → digits) and **ovos-spec-tools** (loads each language's
+vocabulary files).
 
 ## Your first three lines
 
@@ -264,6 +287,7 @@ Full guides for everything above live in [`docs/`](docs/):
 | | |
 |---|---|
 | **Who is this for?** | [**docs/use-cases.md**](docs/use-cases.md) — worked programs for archivists, historians, archaeologists, faith communities, astronomers, engineers, and voice assistants — start here |
+| Reading human dates | [**docs/extraction.md**](docs/extraction.md) — `extract_timespan` turns a phrase into a span; how the per-language vocabulary works and how to add a language |
 | 17 calendars | Gregorian, Julian, Revised Julian, Hebrew, Islamic (arithmetic + the Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican (arithmetic + historical equinox), Bahá'í (arithmetic + true equinox), ISO week |
 | Timelines | 13 jurisdictions' calendar reforms and dateline hops — Rome, Britain, Sweden, Russia, Greece, Japan, plus the days Samoa, the Philippines and Alaska deleted or re-lived at the International Date Line; and `zone_timeline`, which reads any `zoneinfo` zone as a timeline (a DST fall-back *is* a `REPEAT`, a spring-forward a `SKIP`) |
 | Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one |
@@ -281,9 +305,11 @@ data-file headers. Where sources disagree, both versions ship under
 different names. Where sources are silent, the library says so instead
 of guessing.
 
-Used by
-[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser) to
-understand dates in spoken language.
+For spoken-language assistants,
+[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser) builds
+on this library — adding the voice-facing glue: speaking a date back out
+loud, session handling, and the legacy per-language helpers. If you need
+to *say* a date rather than *read* one, start there.
 
 ## License
 

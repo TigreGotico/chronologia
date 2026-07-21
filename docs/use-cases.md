@@ -450,20 +450,20 @@ single instant — midnight on the 1st — and every downstream bug flows from t
 lie: the reminder lands on the wrong edge, "is X during June?" gets the wrong
 answer, and nobody can see where the precision was invented.
 
-The fix is not in the parser. It is in what the parser is *allowed to return*.
-If the reckoning backend speaks in spans, the parser can hand back "the whole of
-June 2027" — a stretch with an honest width — and the assistant can decide what
-to do with a month-wide answer instead of pretending it got a timestamp.
-`chronologia` is that backend. It is what lets a language layer stay honest, and
-it is exactly the role it plays for
-[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser), which turns
-spoken dates into these spans.
+The fix is not in a separate parser. It is in what the reckoning layer is
+*allowed to return*. `chronologia` reads the phrase itself — `extract_timespan`
+hands back "the whole of June 2027" as a stretch with an honest width — and the
+assistant decides what to do with a month-wide answer instead of pretending it
+got a timestamp.
 
 ```python
-from chronologia import DateSpan, AstroDate
+from chronologia import extract_timespan, AstroDate
+from datetime import datetime
 
-# What a parser SHOULD return for "june 2027" — the whole month, as a span:
-june = DateSpan(AstroDate(2027, 6, 1), AstroDate(2027, 7, 1))
+anchor = datetime(2024, 1, 1)   # the assistant's "now"
+
+# The phrase, read the way the user said it — no pre-cleaning:
+june, _ = extract_timespan("remind me in june 2027", "en", anchor)
 print("width:", june.width, "| resolution:", june.resolution.name)
 # width: 30 days, 0:00:00 | resolution: MONTH
 
@@ -472,19 +472,21 @@ assert june.contains(AstroDate(2027, 6, 15))
 
 # And it can tell a vague utterance from a precise one by the span's WIDTH,
 # which a single collapsed instant would have thrown away:
-precise = DateSpan(AstroDate(2027, 6, 15, 9, 0), AstroDate(2027, 6, 15, 9, 1))
+precise, _ = extract_timespan("9am on the 15th of june 2027", "en", anchor)
 print("'june 2027' is", june.width // precise.width, "times vaguer than '9am on the 15th'")
 ```
 
 The span is the whole contribution: "June 2027" stays a month wide, the assistant
 can test containment honestly, and the difference between a vague utterance and a
 precise one survives as the span's width instead of being flattened to a
-timestamp. The language layer lives elsewhere — `chronologia` just makes sure it
-never has to lie.
+timestamp. The library reads the date *and* keeps it honest.
 
 **What else you'll want.** The span type and its `basis` labels are in
-[getting-started.md](getting-started.md); the parser that consumes them is
-[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser).
+[getting-started.md](getting-started.md); the language data and how to add a
+language are in [extraction.md](extraction.md). To *speak* a date back out loud —
+voice-facing formatting and session glue —
+[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser) builds on top
+of this library.
 
 ---
 
