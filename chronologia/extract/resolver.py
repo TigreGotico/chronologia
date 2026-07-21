@@ -812,6 +812,17 @@ class Resolver:
                 else:                                           # to (before)
                     hour -= 1
                     minute = 60 - offset
+            elif (frac_tok is not None and dir_tok is None
+                    and self.spec.conventions.bare_half_to):
+                # Continental-Germanic "halb neun"/"halv nio" == the half
+                # *before* nine (08:30).  Only the half-fraction takes this
+                # bare form; a bare quarter ("viertel neun") is regionally
+                # ambiguous, so it is rejected rather than guessed.
+                offset = self.spec.clock_fractions[frac_tok.text]
+                if offset != 30:
+                    return None
+                hour -= 1
+                minute = 30
             if hour < 0:            # "quarter to midnight" underflows -> 23:45
                 hour += 24
         meridiem = match.slots.get("MERIDIEM")
