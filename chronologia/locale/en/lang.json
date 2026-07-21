@@ -46,6 +46,8 @@
         "article? ORD SCOPE_UNIT"
       ]
     },
+    "scoped_bc": {"orders": ["article? ORD SCOPE_UNIT bc"]},
+    "scoped_ad": {"orders": ["article? ORD SCOPE_UNIT ad"]},
     "clock_time": {
       "orders": ["CLOCK MERIDIEM?", "at HOUR MERIDIEM?",
                  "FRACTION CLOCKDIR HOUR MERIDIEM?", "HOUR oclock MERIDIEM?",
