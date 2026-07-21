@@ -1,0 +1,47 @@
+# civil-holidays v1
+# jurisdiction: AR
+# source: https://www.argentina.gob.ar/interior/feriados
+#   (the official Ministerio del Interior feriados calendar, consolidating
+#   Ley 27.399 and the annual "feriados con fines turísticos" decrees; local
+#   copy papers/holidays/ar_feriados_interior.html). Cross-checked against
+#   vacanza/holidays 0.101 (MIT). Names are the official Spanish.
+#
+#   Argentina has three holiday classes (Ley 27.399): inamovibles (fixed),
+#   trasladables (moved by a midweek rule to a Monday), and the annually
+#   decreed "feriados con fines turísticos" (bridge days). The trasladables
+#   (Güemes 17 Jun, Diversidad Cultural 12 Oct, Soberanía Nacional 20 Nov) and
+#   the tourism bridges have no single arithmetic form, so they are decree rows
+#   carrying the gazetted dates. Paso a la Inmortalidad del Gral. San Martín is
+#   fixed BY LAW to the third Monday of August, so it is an nth_weekday rule.
+#   Carnaval and the two Holy Week days are Easter offsets.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+# --- fixed (inamovibles) / Easter ---
+fixed  | Año Nuevo                                                     | 1 1   | public |  |
+easter | Lunes de Carnaval                                             | -48   | public |  |
+easter | Martes de Carnaval                                            | -47   | public |  |
+fixed  | Día Nacional de la Memoria por la Verdad y la Justicia        | 3 24  | public |  |
+fixed  | Día del Veterano y de los Caidos en la Guerra de Malvinas     | 4 2   | public |  |
+easter | Jueves Santo                                                 | -3    | public religious |  |
+easter | Viernes Santo                                                | -2    | public religious |  |
+fixed  | Día del Trabajo                                              | 5 1   | public |  |
+fixed  | Día de la Revolución de Mayo                                 | 5 25  | public |  |
+fixed  | Paso a la Inmortalidad del General Don Manuel Belgrano       | 6 20  | public |  |
+fixed  | Día de la Independencia                                      | 7 9   | public |  |
+fixed  | Inmaculada Concepción de María                               | 12 8  | public religious |  |
+fixed  | Navidad                                                     | 12 25 | public religious |  |
+#
+# --- decree-tabulated trasladables ---
+# (Ley 27.399 moves Tue/Wed to the previous Monday and Thu to the following
+# Monday, leaving Fri/Sat/Sun/Mon in place — San Martín's 17 Aug thus lands on
+# 21 Aug in 2023 (Thu) but stays on 17 Aug in 2024/2025 (Sat/Sun); Güemes'
+# 17 Jun likewise varies — so both are gazetted decree rows.)
+decree | Paso a la Inmortalidad del General Don José de San Martín       | 2023-08-21 2024-08-17 2025-08-17 | public |  |
+decree | Paso a la Inmortalidad del General Don Martín Miguel de Güemes | 2023-06-17 2024-06-17 2025-06-16 | public |  |
+decree | Día del Respeto a la Diversidad Cultural | 2023-10-16 2024-10-12 2025-10-12 | public |  |
+decree | Día de la Soberanía Nacional             | 2023-11-20 2024-11-18 2025-11-24 | public |  |
+#
+# --- decree-tabulated feriados con fines turísticos (annual bridge days) ---
+decree | Feriado con fines turísticos | 2023-05-26 2023-06-19 2023-10-13 2024-04-01 2024-06-21 2024-10-11 2025-05-02 2025-08-15 2025-11-21 | public |  |
