@@ -968,11 +968,12 @@ class Calendar:
 
 
 CALENDARS: Dict[str, object] = {
-    # tabular/civil Hijri: deterministic arithmetic, but ±1 day from a
-    # sighting-based observation -> ``tabulated`` rather than ``exact``.
+    # tabular/civil Hijri: a deterministic arithmetic rule, hence ``exact``
+    # as a conversion; its ±1-day divergence from sighting-based observation
+    # is a documented model caveat, not a basis class.
     "islamic_civil": Calendar(
         "islamic_civil", 12, islamic_civil_to_jdn, islamic_civil_from_jdn,
-        islamic_civil_to_jdn(1, 1, 1), basis="tabulated"),
+        islamic_civil_to_jdn(1, 1, 1)),
     "hebrew": Calendar(
         "hebrew", 13, hebrew_to_jdn, hebrew_from_jdn,
         hebrew_to_jdn(1, 7, 1)),

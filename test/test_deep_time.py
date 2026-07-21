@@ -170,7 +170,8 @@ class TestBasisLattice(unittest.TestCase):
         # plumbing only: default exact, tabular Hijri declares tabulated
         self.assertEqual(CALENDARS["julian"].basis, "exact")
         self.assertEqual(CALENDARS["hebrew"].basis, "exact")
-        self.assertEqual(CALENDARS["islamic_civil"].basis, "tabulated")
+        self.assertEqual(CALENDARS["islamic_civil"].basis, "exact")
+        self.assertEqual(CALENDARS["umm_al_qura"].basis, "tabulated")
 
 
 # --------------------------------------------------------------------------
