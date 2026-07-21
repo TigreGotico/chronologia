@@ -42,6 +42,9 @@ from chronologia.localtime import (EOT_ACCURACY, LMTZone, apparent_solar_time,
 from chronologia.moon import (EPOCH_NEW_MOON, MEAN_SYNODIC_MONTH_DAYS,
                               MOON_PHASE_ACCURACY, lunation_number, moon_phase,
                               next_phase, previous_phase)
+from chronologia.luna import (LTC_DRIFT_MICROSECONDS_PER_DAY, LTC_STATUS,
+                              LUNAR_DAY_SECONDS, LunarTimeStandardStatus,
+                              ltc_offset)
 from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
                                  AmbiguousPeriodError, NamedPeriod, calibrate_c14,
                                  candidates, children, lookup, subdivide)
@@ -181,6 +184,12 @@ __all__ = [
     "MOON_PHASE_ACCURACY",
     "MEAN_SYNODIC_MONTH_DAYS",
     "EPOCH_NEW_MOON",
+    # lunar time: natural cycle registered, civil LTC standard withheld
+    "LUNAR_DAY_SECONDS",
+    "LTC_DRIFT_MICROSECONDS_PER_DAY",
+    "LTC_STATUS",
+    "LunarTimeStandardStatus",
+    "ltc_offset",
     # unequal (temporal/seasonal) hours and clock-count conventions
     "UnequalHourSystem",
     "ClockConvention",
