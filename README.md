@@ -91,6 +91,38 @@ c.roman_to_julian(44, 3, "ides", 1)   # (44, 3, 15)
 c.roman_to_julian(44, 3, "ides", 2)   # (44, 3, 14)  -> pridie
 ```
 
+## Timelines & discontinuities
+
+Calendars are pure proleptic bijections — the astronomical timeline (JDN) never
+jumps. What jumps is *civil* labelling, when a pope, parliament, tsar or emperor
+decrees that "tomorrow" shall be called something the calendar in force would
+never have generated. A `Timeline` records, for one jurisdiction, which calendar
+was in force over each stretch of days and what its reforms did to the labels.
+Duration math is unaffected (always JDN-space); a non-existent label is a typed
+answer, not an exception.
+
+```python
+import chronologia as c
+
+# The October Revolution: 25 October 1917 was the label in force in Russia
+# (Julian), the same instant proleptic Gregorian calls 7 November 1917.
+russia = c.TIMELINES["russia_1918"]
+jdn = c.julian_to_jdn(1917, 10, 25)
+russia.from_jdn(jdn)                     # CivilLabel(year=1917, month=10, day=25)
+russia.to_jdn((1917, 10, 25)) == jdn     # True
+c.jdn_to_gregorian(jdn)                  # (1917, 11, 7)
+c.proleptic("gregorian").from_jdn(jdn)   # CivilLabel(year=1917, month=11, day=7)
+
+# 1–13 February 1918 never existed (the switch skipped them):
+res = russia.to_jdn((1918, 2, 9))
+isinstance(res, c.NeverExisted)          # True
+res.discontinuity.kind                   # DiscontinuityKind.SKIP
+
+# The default proleptic timeline is zero behaviour change — it matches the
+# bare calendar. Registered jurisdictions: rome_1582 (+ es/pt/it/pl group),
+# britain_1752, russia_1918, greece_1923, sweden_1700_1712, japan_1873.
+```
+
 ## Cited sources
 
 The conversion algorithms are grounded in canonical references, cited inline in
