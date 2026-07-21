@@ -419,6 +419,88 @@ try:
 except ValueError as exc:
     print("rejected:", exc)
 # rejected: unknown moon phase 'waxing_gibbous'; expected one of ['first_quarter', 'full', 'last_quarter', 'new']
+## When does summer actually start? Depends whom you ask
+
+Meteorologists, astronomers, and the Sun itself give three different answers.
+
+- **Meteorologists** start summer on the **1st of June** — fixed three-month
+  blocks (Jun/Jul/Aug), tidy for climate statistics. That is the
+  *meteorological* season, and it is not in this module.
+- **Astronomers** start it at the **June solstice** and end it at the
+  **September equinox** — each season tied to a real solar event. That is the
+  *astronomical* season, and it is `astronomical_season_span`.
+- **The Sun itself** reaches those turning points at instants you can compute
+  to about a minute, from Jean Meeus's *Astronomical Algorithms* (ch. 27):
+  `equinox`.
+
+```python
+from chronologia import equinox, astronomical_season_span, solar_term
+
+# The four cardinal instants of 2024, in civil UTC, each a DateSpan whose
+# width (2 minutes) IS the stated ~1-minute accuracy.
+for which in ("march", "june", "september", "december"):
+    sp = equinox(2024, which)
+    mid = sp.start + (sp.end - sp.start) / 2
+    print(which, mid.strftime("%Y-%m-%d %H:%M"), sp.basis)
+# march 2024-03-20 03:06 reconstructed
+# june 2024-06-20 20:50 reconstructed
+# september 2024-09-22 12:43 reconstructed
+# december 2024-12-21 09:20 reconstructed
+
+# Astronomical northern summer: June solstice -> September equinox (~93 days).
+summer = astronomical_season_span(2024, "summer")
+print("summer runs", (summer.end - summer.start).days, "days")
+# summer runs 93 days
+```
+
+The label flips with the hemisphere: the **same** March equinox that opens
+spring in the north opens **autumn** in the south. Winter (north) and summer
+(south) run past New Year's — December solstice of one year to the March
+equinox of the next.
+
+```python
+north_spring = astronomical_season_span(2024, "spring", "north")
+south_autumn = astronomical_season_span(2024, "autumn", "south")
+print("same solar events:", north_spring == south_autumn)
+# same solar events: True
+```
+
+The **basis is `"reconstructed"`** — these are closed-form arithmetic
+reconstructions of an astronomical truth from mean orbital theory, the same
+honest label the moon phases carry, for the same reason. And like everything
+else, bad input is refused, not guessed:
+
+```python
+try:
+    equinox(2024, "spring")  # not a cardinal-event name
+except ValueError as exc:
+    print("rejected:", exc)
+# rejected: unknown event 'spring'; expected one of ['december', 'june', 'march', 'september']
+```
+
+### The 24 solar terms (jieqi)
+
+The same Meeus machinery, run at 15° steps of the Sun's longitude instead of
+only the 90° cardinals, gives the 24 Chinese *solar terms* — `lichun` (立春,
+"start of spring", ~4 February) through `dongzhi` (冬至, the winter solstice).
+Because these use Meeus's *low-accuracy* Sun longitude (ch. 25) rather than the
+dedicated cardinal polynomial, they carry a wider bound — `SOLAR_TERM_ACCURACY`
+is 30 minutes, honestly larger than the ~1-minute equinoxes.
+
+```python
+lichun = solar_term(2024, "lichun")
+print("lichun:", lichun.start.strftime("%Y-%m-%d"))
+# lichun: 2024-02-04
+print("chunfen == March equinox longitude 0")
+print(solar_term(2024, "chunfen").start.month)  # 3
+```
+
+This is the class-B improvement path for the Chinese-calendar family, but it
+**does not upgrade the Chinese calendar itself** (`chronologia.calendars`),
+whose tabulated month/leap-month structure stays authoritative — a
+mean-longitude term instant is not a substitute for the table's true-longitude
+astronomical basis.
+
 ## "Morning" is a convention, and conventions differ
 
 A time zone tells you what a clock reads. It does **not** tell you whether
@@ -667,6 +749,10 @@ day attach as another named school — but the library will not invent one.
 | `next_phase(instant, phase)` / `previous_phase(instant, phase)` | next/previous `"new"`/`"first_quarter"`/`"full"`/`"last_quarter"` as a `DateSpan`, width `2 * MOON_PHASE_ACCURACY` |
 | `lunation_number(instant)` | Brown Lunation Number of the containing lunation |
 | `MOON_PHASE_ACCURACY`, `MEAN_SYNODIC_MONTH_DAYS`, `EPOCH_NEW_MOON` | the mean-model constants and their stated/measured accuracy |
+| `equinox(year, which)` | the March/June/September/December equinox or solstice as a `DateSpan` in civil UTC (Meeus ch.27; `EQUINOX_ACCURACY` ~1 min; `basis="reconstructed"`) |
+| `astronomical_season_span(year, season, hemisphere)` | the equinox-to-solstice span of a season (the astronomical alternative to the meteorological three-month blocks), north or south |
+| `solar_term(year, index_or_name)` | one of the 24 Chinese solar terms (jieqi) via mean-longitude crossing (Meeus ch.25; `SOLAR_TERM_ACCURACY` 30 min) — does not upgrade the tabulated Chinese calendar |
+| `SOLAR_TERM_NAMES`, `EQUINOX_ACCURACY`, `SOLAR_TERM_ACCURACY`, `VALID_YEAR_RANGE` | the term names, the two stated bounds, and the 1000..3000 validity window |
 | `daypart_span(date_or_span, name, region=None, zone=None)` | the span a named day-part (morning, tarde, night) occupies on a date; midnight-crossers reach into the next civil day; a `tzinfo` `zone` makes the endpoints aware, resolving DST gap/fold to the post-transition instant |
 | `DAY_PARTS`, `DayPart` | the region-tagged day-part registry (CLDR day-period boundaries) |
 | `DateSpan.intersect` / `.union` / `.gap` | half-open interval algebra over spans (overlap, seamless merge, the hole between) |

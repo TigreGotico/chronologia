@@ -44,6 +44,10 @@ from chronologia.localtime import (EOT_ACCURACY, LMTZone, apparent_solar_time,
 from chronologia.moon import (EPOCH_NEW_MOON, MEAN_SYNODIC_MONTH_DAYS,
                               MOON_PHASE_ACCURACY, lunation_number, moon_phase,
                               next_phase, previous_phase)
+from chronologia.equinoxes import (EQUINOX_ACCURACY, SOLAR_TERM_ACCURACY,
+                                   SOLAR_TERM_NAMES, VALID_YEAR_RANGE,
+                                   astronomical_season_span, equinox,
+                                   solar_term)
 from chronologia.luna import (LTC_DRIFT_MICROSECONDS_PER_DAY, LTC_STATUS,
                               LUNAR_DAY_SECONDS, LunarTimeStandardStatus,
                               ltc_offset)
@@ -200,6 +204,14 @@ __all__ = [
     "MOON_PHASE_ACCURACY",
     "MEAN_SYNODIC_MONTH_DAYS",
     "EPOCH_NEW_MOON",
+    # equinoxes, solstices, astronomical seasons and the 24 solar terms
+    "equinox",
+    "astronomical_season_span",
+    "solar_term",
+    "EQUINOX_ACCURACY",
+    "SOLAR_TERM_ACCURACY",
+    "SOLAR_TERM_NAMES",
+    "VALID_YEAR_RANGE",
     # lunar time: natural cycle registered, civil LTC standard withheld
     "LUNAR_DAY_SECONDS",
     "LTC_DRIFT_MICROSECONDS_PER_DAY",
