@@ -88,7 +88,10 @@ come from the **Umm al-Qura** table, so they carry `basis="tabulated"` — a
 published-table date, not an astronomical recomputation:
 
 ```python
-eid = [h for h in holidays_for("SA", 2024) if h.name == "Eid al-Fitr"][0]
+# The primary name is the official Arabic one; `display_name` renders English.
+eid = [h for h in holidays_for("SA", 2024)
+       if h.display_name("en") == "Eid al-Fitr"][0]
+assert eid.name == "عيد الفطر"
 assert eid.date == AstroDate(2024, 4, 10)
 assert eid.basis == "tabulated"
 ```
@@ -98,7 +101,7 @@ engine **omits** the Islamic holidays rather than fabricating a wrong date — t
 fixed Gregorian national days still resolve:
 
 ```python
-far = {h.name for h in holidays_for("SA", 2100)}
+far = {h.display_name("en") for h in holidays_for("SA", 2100)}
 assert far == {"Founding Day", "National Day"}   # Eid dropped, honestly
 ```
 
@@ -130,7 +133,7 @@ Japan's 振替休日 (furikae) is the same mechanism with a Sunday-only trigger:
 
 ```python
 jp = {(h.date.month, h.date.day): h.name for h in holidays_for("JP", 2024)}
-assert jp[(9, 23)] == "Autumnal Equinox Day (振替休日)"   # Sun 22 Sep -> Mon 23
+assert jp[(9, 23)] == "秋分の日 (振替休日)"   # Autumnal Equinox: Sun 22 Sep -> Mon 23
 ```
 
 ## Year-gated holidays

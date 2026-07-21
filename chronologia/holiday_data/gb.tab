@@ -21,13 +21,17 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
+# UK-wide bank holidays carry the Welsh (cy) co-official name alongside English;
+# Welsh is an official language of Wales (Welsh Language (Wales) Measure 2011),
+# where these bank holidays are observed. The primary name stays English (the
+# join key used by the golds).
 # --- UK-wide bank holidays (all three regions) ---
-fixed          | New Year's Day          | 1 1    | public          |  | gb_substitute
-easter         | Good Friday             | -2     | public religious |  |
-nth_weekday    | Early May Bank Holiday  | 5 1 0  | public          |  |
-nth_weekday    | Spring Bank Holiday     | 5 -1 0 | public          |  |
-fixed          | Christmas Day           | 12 25  | public religious |  | gb_substitute
-fixed          | Boxing Day              | 12 26  | public          |  | gb_substitute
+fixed          | en:New Year's Day ;; cy:Dydd Calan               | 1 1    | public          |  | gb_substitute
+easter         | en:Good Friday ;; cy:Dydd Gwener y Groglith      | -2     | public religious |  |
+nth_weekday    | en:Early May Bank Holiday ;; cy:Gŵyl Banc Calan Mai | 5 1 0  | public          |  |
+nth_weekday    | en:Spring Bank Holiday ;; cy:Gŵyl Banc y Gwanwyn | 5 -1 0 | public          |  |
+fixed          | en:Christmas Day ;; cy:Dydd Nadolig              | 12 25  | public religious |  | gb_substitute
+fixed          | en:Boxing Day ;; cy:Gŵyl San Steffan            | 12 26  | public          |  | gb_substitute
 #
 # --- One-off royal / national bank holidays (one_off; each carries its gov.uk
 #     proclamation citation). These were additional bank holidays granted for a

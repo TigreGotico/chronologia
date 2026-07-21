@@ -155,6 +155,61 @@ def test_old_envelope_without_i18n_still_loads():
 
 
 # --------------------------------------------------------------------------
+# Official native names as primary data, with co-official / romanized alternates
+# --------------------------------------------------------------------------
+@pytest.mark.parametrize("juris,year,langs", [
+    ("SA", 2024, ("ar", "en")),   # Arabic primary + English romanization
+    ("CN", 2024, ("zh", "en")),
+    ("JP", 2024, ("ja", "en")),
+    ("IL", 2024, ("he", "en")),
+])
+def test_multi_official_jurisdictions_carry_all_names(juris, year, langs):
+    hols = holidays_for(juris, year)
+    # every holiday of these jurisdictions carries every declared language
+    assert hols
+    for h in hols:
+        for lang in langs:
+            assert lang in h.names, (juris, h.name, lang, dict(h.names))
+        # the primary name is the first official language (native script)
+        assert h.name == h.names[langs[0]]
+
+
+def test_saudi_primary_is_arabic_english_is_display():
+    eid = [h for h in holidays_for("SA", 2024)
+           if h.display_name("en") == "Eid al-Fitr"][0]
+    assert eid.name == "عيد الفطر"          # official native primary
+    assert eid.names["ar"] == "عيد الفطر"
+    assert eid.display_name("ar") == "عيد الفطر"
+    assert eid.display_name("en") == "Eid al-Fitr"
+
+
+def test_canada_federal_holidays_are_bilingual():
+    canada_day = [h for h in holidays_for("CA", 2024)
+                  if h.name == "Canada Day"][0]
+    assert canada_day.names["en"] == "Canada Day"
+    assert canada_day.names["fr"] == "Fête du Canada"
+    assert canada_day.display_name("fr") == "Fête du Canada"
+
+
+def test_gb_welsh_co_official_name():
+    xmas = [h for h in holidays_for("GB", 2024)
+            if h.name == "Christmas Day"][0]
+    assert xmas.names["cy"] == "Dydd Nadolig"
+    assert xmas.display_name("cy") == "Dydd Nadolig"
+
+
+def test_india_national_days_carry_hindi():
+    rep = [h for h in holidays_for("IN", 2024) if h.name == "Republic Day"][0]
+    assert rep.names["hi"] == "गणतंत्र दिवस"
+
+
+def test_spain_regional_co_official_name():
+    cat = [h for h in holidays_for("ES", 2024, subdiv="ES-CT")
+           if h.name == "Fiesta Nacional de Cataluña"][0]
+    assert cat.names["ca"] == "Diada Nacional de Catalunya"
+
+
+# --------------------------------------------------------------------------
 # .tab format spec: multi-name cells parse, single-name cells unchanged
 # --------------------------------------------------------------------------
 def test_every_tab_name_cell_parses():

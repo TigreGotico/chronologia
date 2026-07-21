@@ -17,10 +17,13 @@
 #   honestly tabulated, not computed.
 # columns: kind | name | args | categories | subdiv | observed
 #
+# The MHA/DoPT gazette is issued in English and Hindi; the national days carry
+# the Hindi (hi) co-official name alongside English (the English primary is the
+# join key used by the golds).
 # --- national (fixed) ---
-fixed         | Republic Day               | 1 26   | public          |  |
-fixed         | Independence Day           | 8 15   | public          |  |
-fixed         | Mahatma Gandhi's Jayanti   | 10 2   | public          |  |
+fixed         | en:Republic Day ;; hi:गणतंत्र दिवस             | 1 26   | public          |  |
+fixed         | en:Independence Day ;; hi:स्वतंत्रता दिवस       | 8 15   | public          |  |
+fixed         | en:Mahatma Gandhi's Jayanti ;; hi:महात्मा गांधी जयंती | 10 2   | public          |  |
 #
 # --- other central gazetted (fixed / computable) ---
 fixed         | Christmas                  | 12 25  | public religious |  |
