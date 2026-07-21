@@ -231,6 +231,79 @@ print(86400 * 1000000)                 # microseconds in half a day, for compari
 `43200000000` is exactly half of `86400000000` — 5 decimal hours land dead on
 midday.
 
+## Sunrise, sunset, and the twilights
+
+Where local mean time and the equation of time reconstruct the *clock*, the
+sun's actual rising and setting need a date, a latitude, and a longitude.
+`sun_events` transcribes the NOAA *General Solar Position Calculations*
+(NOAA Global Monitoring Division), a closed-form method accurate to within
+about a minute for 1901–2099 (`SOLAR_ACCURACY`). All returned instants are
+UTC `AstroDate`s, and longitude is east-positive — the same convention as
+`local_mean_time`.
+
+```python
+from chronologia import sun_events, AstroDate
+
+ev = sun_events(AstroDate(2010, 6, 21), 40.0, -105.0)   # Denver, solstice
+print(ev.sunrise.strftime("%Y-%m-%d %H:%M"))    # UTC (Denver is UTC-6)
+# 2010-06-21 11:30
+print(ev.solar_noon.strftime("%H:%M"))
+# 19:01
+print(ev.sunset.strftime("%Y-%m-%d %H:%M"))     # sunset falls after UTC midnight
+# 2010-06-22 02:31
+```
+
+Each day also carries the three standard twilight boundaries — civil, nautical,
+and astronomical, at solar depression 6°, 12°, and 18° — as dawn/dusk pairs
+around sunrise and sunset:
+
+```python
+ev = sun_events(AstroDate(2024, 3, 20), 40.0, 0.0)
+order = [ev.astronomical_dawn, ev.nautical_dawn, ev.civil_dawn, ev.sunrise,
+         ev.solar_noon, ev.sunset, ev.civil_dusk, ev.nautical_dusk,
+         ev.astronomical_dusk]
+print([e.strftime("%H:%M") for e in order])
+# ['04:33', '05:05', '05:37', '06:04', '12:07', '18:11', '18:38', '19:10', '19:42']
+```
+
+### Polar honesty
+
+North of the Arctic Circle the sun may never rise or never set. Rather than
+inventing a time, the affected field becomes a typed `NoSunEvent` carrying the
+`kind` — the same "never existed" stance the spring-forward gap takes. Every
+boundary is judged on its own zenith, so a polar day and a polar night are both
+reported truthfully:
+
+```python
+from chronologia import NoSunEvent
+
+summer = sun_events(AstroDate(2024, 6, 21), 78.0, 15.0)   # Svalbard, midsummer
+print(isinstance(summer.sunrise, NoSunEvent), summer.sunrise.kind)
+# True polar_day
+
+winter = sun_events(AstroDate(2024, 12, 21), 78.0, 15.0)  # polar night
+print(isinstance(winter.sunrise, NoSunEvent), winter.sunrise.kind)
+# True polar_night
+```
+
+`solar_noon` is always a real instant — it depends only on longitude and the
+equation of time — even when nothing rises or sets.
+
+### Sunset-anchored days
+
+The default civil day starts at midnight, needing no location. But the Hebrew
+and Islamic calendars begin each day at the *previous* evening's sunset. When a
+location is available, `sunset_day_start` upgrades that convention to a computed
+sunset instant:
+
+```python
+from chronologia import sunset_day_start
+
+start = sunset_day_start(AstroDate(2024, 6, 1), 31.78, 35.22)  # Jerusalem
+print(start.strftime("%Y-%m-%d %H:%M"))    # the 31 May evening sunset that opens 1 June
+# 2024-05-31 16:38
+```
+
 ## Reference
 
 | tool | what it does |
@@ -244,4 +317,7 @@ midday.
 | `local_mean_time(longitude_deg)` | the local-mean-time zone for a meridian (east positive) |
 | `equation_of_time(date)` | the sundial-vs-clock offset on a date (`EOT_ACCURACY` bounds it) |
 | `apparent_solar_time(instant, longitude_deg)` | what a sundial at that longitude reads |
+| `sun_events(date, latitude, longitude)` | sunrise/sunset/solar-noon and the civil/nautical/astronomical twilights, in UTC (`SOLAR_ACCURACY` bounds it) |
+| `sunset_day_start(date, latitude, longitude)` | the previous evening's computed sunset that opens a sunset-anchored calendar day |
+| `NoSunEvent` | a typed absence (`polar_day`/`polar_night`) returned when the sun never rises or never sets |
 | `DAY_SUBDIVISIONS`, `DaySubdivision` | alternative divisions of the day, such as French decimal time |
