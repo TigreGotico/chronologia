@@ -188,6 +188,99 @@ silently folded into an instant. Full general-relativistic proper time — the f
 that a clock on Mars ticks at its own rate relative to a clock on Earth — is out
 of scope: that needs an ephemeris and a spacetime metric, not a calendar.
 
+## The Moon: a cycle we can count, a standard we can't yet
+
+The Moon is tidally locked, so a surface observer's mean solar day *is* one mean
+synodic month — 29.53 Earth days, new moon to new moon. That natural cycle needs
+no committee, and the library registers it as a time axis:
+
+```python
+from chronologia import AXES, LUNAR_DAY_SECONDS
+
+lunar = AXES["lunar"]
+print(round(LUNAR_DAY_SECONDS))          # 2551443  (29.53 Earth days)
+```
+
+A *civil* lunar clock is another matter. On 2 April 2024 the US OSTP directed
+NASA to define **Coordinated Lunar Time**, because a clock on the Moon runs about
+58.7 microseconds per Earth-day faster than one on Earth. The standard does not
+exist yet, so the library refuses to invent one: it ships the *status* as data
+and makes the offset function raise until there is something real to compute.
+
+```python
+from chronologia import LTC_STATUS, ltc_offset, AstroDate
+import pytest
+
+print(LTC_STATUS.status)                 # mandated_unpublished
+print(LTC_STATUS.drift_microseconds_per_day)   # 58.7
+with pytest.raises(NotImplementedError):
+    ltc_offset(AstroDate(2030, 1, 1))    # names the pending standard, cites the source
+```
+
+## Cosmology: the deepest time
+
+Two things change when the clock runs back to the Big Bang, and the library adds
+exactly those two mechanisms.
+
+**The epoch is itself uncertain.** Every earthly epoch is a fixed instant; the
+Big Bang is known only to 13.787 ± 0.020 Gyr before present (Planck 2018). So the
+age-of-universe era counts from a *span*, and every date it resolves carries that
+±20 Myr. The epoch uncertainty and the value's own precision simply **add** —
+interval bounds, not statistics, so no quadrature:
+
+```python
+from chronologia import resolve_cosmic
+
+# recombination: 380 kyr after the Big Bang
+span = resolve_cosmic("380", "ka")
+half_myr = ((1950 - span.start.year) - (1950 - span.end.year)) / 2 / 1e6
+print(round(half_myr, 4))                # 20.0005  (20 Myr epoch + 0.5 kyr value)
+print(span.basis)                        # reconstructed
+```
+
+**Looking at the sky is looking at the past.** Light from redshift `z` was
+emitted a lookback time ago, so `lookback_time(z)` places it that many years
+before present. The lookback integral depends on the Hubble constant — and two
+careful measurements *disagree* about it (the Hubble tension). Rather than pick a
+winner, the library ships both as named variants and lets you call it twice:
+
+```python
+from chronologia import lookback_gyr
+
+planck = lookback_gyr(1, "planck2018")   # CMB value, H0 = 67.4
+shoes = lookback_gyr(1, "shoes2022")     # local ladder, H0 = 73.04
+print(round(planck, 2), round(shoes, 2)) # 7.95 7.34
+print(round(planck - shoes, 2))          # 0.61 Gyr apart -- the tension, in years
+```
+
+Two careful measurements disagree, so the library ships both and names them.
+
+### Sagan's Cosmic Calendar (a formatting example)
+
+Carl Sagan's Cosmic Calendar maps the whole 13.787-Gyr history onto a single
+year: the Big Bang at midnight on 1 January, *now* at the last tick of 31
+December. It is a pure presentation affine map — not core reckoning — so it lives
+here as a runnable example. Anatomically modern humans (~200,000 years ago)
+appear in the final minutes of the last day:
+
+```python
+from datetime import datetime, timedelta
+from chronologia import UNIVERSE_AGE_GYR
+
+def cosmic_calendar(years_ago):
+    """Map a real 'years before present' onto Sagan's one-year calendar."""
+    age = float(UNIVERSE_AGE_GYR) * 1e9
+    year = timedelta(days=365)                       # a 365-day cosmic year
+    moment = datetime(2001, 1, 1) + year * (1 - years_ago / age)
+    return moment.strftime("%b %d %H:%M")
+
+humans = cosmic_calendar(200_000)
+print(f"Modern humans appear: {humans}")             # Dec 31 23:52
+assert humans.startswith("Dec 31 23:5")
+```
+
+On this scale all of recorded history is the last few seconds before midnight.
+
 ## Reference
 
 | Concept | Object / call | Source |
@@ -199,6 +292,10 @@ of scope: that needs an ephemeris and a spacetime metric, not a calendar.
 | Generalized hub | `TimeAxis`, `AXES` | `earth_day` (JDN), `mars_sol` (MSD) |
 | Darian calendar | `darian.date`, `darian.from_msd`, `DarianDate` | Gangale, *The Darian Calendar for Mars* |
 | Mission sol counts | `mission_sol`, `MISSION_ERAS` | NASA mission pages / *Timekeeping on Mars* |
+| Lunar cycle / LTC status | `AXES["lunar"]`, `LTC_STATUS`, `ltc_offset` | Wikipedia "Coordinated Lunar Time" (2024 OSTP directive) |
+| Age-of-universe era | `resolve_cosmic`, `AGE_OF_UNIVERSE_ERA` | Planck 2018 (13.787 ± 0.020 Gyr) |
+| Redshift → lookback | `lookback_time`, `lookback_gyr`, `COSMOLOGIES` | Planck 2018 / SH0ES 2022 (the Hubble tension) |
+| Cosmological periods | `COSMIC_PERIODS` | Wikipedia recombination / chronology of the universe |
 
 Every constant above is transcribed from a cited source in the papers library;
 where a source is silent (the Darian epoch), the library anchors to a published
