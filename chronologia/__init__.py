@@ -54,6 +54,9 @@ from chronologia.roman import roman_to_julian
 from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
                                    DiscontinuityKind, NeverExisted, Timeline,
                                    TimelineSegment, proleptic)
+from chronologia.zone_timelines import (ClockSegment, ClockTimeline,
+                                        ZoneDiscontinuity, ZoneNeverExisted,
+                                        zone_history_start, zone_timeline)
 
 __version__ = "0.1.0a1"
 
@@ -174,4 +177,11 @@ __all__ = [
     "NeverExisted",
     "TIMELINES",
     "proleptic",
+    # timezones as timelines (clock-granular view over zoneinfo transitions)
+    "zone_timeline",
+    "zone_history_start",
+    "ClockTimeline",
+    "ClockSegment",
+    "ZoneDiscontinuity",
+    "ZoneNeverExisted",
 ]
