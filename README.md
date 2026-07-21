@@ -268,6 +268,7 @@ Full guides for everything above live in [`docs/`](docs/):
 | Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one |
 | Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present |
 | Regnal years | Japanese nengō, Roman consuls, Egyptian chronologies |
+| Recurrence | [RFC 5545 RRULE](docs/recurrence.md) — "every third Tuesday", Labor Day, Friday the 13th — parsed and expanded as pure JDN arithmetic into day-wide `DateSpan`s, unbounded in either direction of the year axis |
 | Time itself | [timezones](docs/timezones.md) with honest fall-back/spring-forward handling, leap seconds (UTC/TAI/GPS), historical local mean time, the French Revolution's 10-hour clock |
 | Moon phases | mean-lunation arithmetic (new/first-quarter/full/last-quarter) as a `DateSpan` with a measured accuracy bound and honest reconstructed/predicted basis |
 | Beyond Earth | [Mars and beyond](docs/mars-and-beyond.md) — Mars Sol Date, Coordinated Mars Time, the Darian calendar and rover mission-sol counts, all riding one generalized `TimeAxis`; the natural lunar cycle and the withheld Coordinated Lunar Time; and cosmology — a span-valued Big Bang epoch, redshift→lookback time as Planck-vs-SH0ES variants (the Hubble tension), and Sagan's Cosmic Calendar |
