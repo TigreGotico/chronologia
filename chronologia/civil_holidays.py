@@ -350,6 +350,27 @@ class CivilHoliday:
         """The holiday's day (the span's start)."""
         return self.span.start
 
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :meth:`from_json`).
+
+        ``categories`` serialize as a sorted list (deterministic output);
+        :meth:`from_json` restores the :class:`frozenset`.
+        """
+        return {"type": "CivilHoliday", "name": self.name,
+                "span": self.span.to_json(), "jurisdiction": self.jurisdiction,
+                "subdiv": self.subdiv, "categories": sorted(self.categories),
+                "basis": self.basis}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "CivilHoliday":
+        """Rebuild a :class:`CivilHoliday` from a :meth:`to_json` envelope."""
+        if data.get("type") != "CivilHoliday":
+            raise ValueError(
+                f"not a CivilHoliday envelope: {data.get('type')!r}")
+        return cls(data["name"], DateSpan.from_json(data["span"]),
+                   data["jurisdiction"], data.get("subdiv"),
+                   frozenset(data.get("categories", ())), data["basis"])
+
 
 def _day_span(date: AstroDate, basis: str) -> DateSpan:
     start = AstroDate(date.year, date.month, date.day)

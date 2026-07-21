@@ -165,6 +165,20 @@ class MarsDate:
         return (f"MSD {self.sol} "
                 f"{self.hour:02d}:{self.minute:02d}:{self.second:02d} MTC")
 
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :meth:`from_json`)."""
+        return {"type": "MarsDate", "sol": self.sol, "hour": self.hour,
+                "minute": self.minute, "second": self.second,
+                "microsecond": self.microsecond}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "MarsDate":
+        """Rebuild a :class:`MarsDate` from a :meth:`to_json` envelope."""
+        if data.get("type") != "MarsDate":
+            raise ValueError(f"not a MarsDate envelope: {data.get('type')!r}")
+        return cls(data["sol"], data.get("hour", 0), data.get("minute", 0),
+                   data.get("second", 0), data.get("microsecond", 0))
+
 
 def to_mars(instant: AstroDate) -> MarsDate:
     """Module-level converter: an Earth UTC instant to a :class:`MarsDate`.
@@ -305,6 +319,19 @@ class DarianDate:
 
     def __str__(self) -> str:
         return f"{self.sol} {self.month_name} {self.year}"
+
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :meth:`from_json`)."""
+        return {"type": "DarianDate", "year": self.year, "month": self.month,
+                "sol": self.sol}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "DarianDate":
+        """Rebuild a :class:`DarianDate` from a :meth:`to_json` envelope."""
+        if data.get("type") != "DarianDate":
+            raise ValueError(
+                f"not a DarianDate envelope: {data.get('type')!r}")
+        return cls(data["year"], data["month"], data["sol"])
 
 
 class DarianCalendar:

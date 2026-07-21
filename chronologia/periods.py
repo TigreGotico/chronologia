@@ -90,6 +90,23 @@ class NamedPeriod:
     source: str
     parent: Optional[str] = None
 
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :meth:`from_json`)."""
+        return {"type": "NamedPeriod", "key": self.key, "name": self.name,
+                "span": self.span.to_json(), "level": self.level,
+                "region": self.region, "source": self.source,
+                "parent": self.parent}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "NamedPeriod":
+        """Rebuild a :class:`NamedPeriod` from a :meth:`to_json` envelope."""
+        if data.get("type") != "NamedPeriod":
+            raise ValueError(
+                f"not a NamedPeriod envelope: {data.get('type')!r}")
+        return cls(data["key"], data["name"], DateSpan.from_json(data["span"]),
+                   data["level"], data.get("region"), data["source"],
+                   data.get("parent"))
+
 
 # --------------------------------------------------------------------------
 # Before-Present axis helpers (deep-time entries)

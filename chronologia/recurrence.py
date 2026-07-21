@@ -235,6 +235,18 @@ class Recurrence:
     def __str__(self) -> str:
         return self.to_string()
 
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope carrying the RRULE string."""
+        return {"type": "Recurrence", "rrule": self.to_string()}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "Recurrence":
+        """Rebuild a :class:`Recurrence` from a :meth:`to_json` envelope."""
+        if data.get("type") != "Recurrence":
+            raise ValueError(
+                f"not a Recurrence envelope: {data.get('type')!r}")
+        return parse_rrule(data["rrule"])
+
 
 def _validate(rec: Recurrence) -> None:
     if rec.freq not in _FREQS:

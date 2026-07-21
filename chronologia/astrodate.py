@@ -324,6 +324,25 @@ class AstroDate:
         return cls(int(y), int(mo), int(d),
                    int(hh or 0), int(mm or 0), int(ss or 0), micro, tzinfo=zone)
 
+    # -- JSON serialization ------------------------------------------------
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :func:`from_json`).
+
+        The instant is carried as the year-expanded ISO string produced by
+        :meth:`isoformat`, so a deep-time year (``-003760-09-07T00:00:00``)
+        and an aware instant's UTC-offset suffix both round-trip.  The named
+        zone is not preserved — only its offset — mirroring
+        :meth:`fromisoformat`.
+        """
+        return {"type": "AstroDate", "iso": self.isoformat()}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "AstroDate":
+        """Rebuild an :class:`AstroDate` from a :meth:`to_json` envelope."""
+        if data.get("type") != "AstroDate":
+            raise ValueError(f"not an AstroDate envelope: {data.get('type')!r}")
+        return cls.fromisoformat(data["iso"])
+
     @classmethod
     def from_date(cls, d: _date) -> "AstroDate":
         """Build from a ``datetime.date`` (date fields only)."""
@@ -964,3 +983,22 @@ class DateSpan:
         else:
             return None
         return DateSpan(lo, hi, combine_basis(self.basis, other.basis))
+
+    # -- JSON serialization ------------------------------------------------
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :func:`from_json`).
+
+        Both endpoints are nested :meth:`AstroDate.to_json` envelopes and the
+        :attr:`basis` rides alongside, so aware/deep-time spans round-trip.
+        """
+        return {"type": "DateSpan", "start": self.start.to_json(),
+                "end": self.end.to_json(), "basis": self.basis}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "DateSpan":
+        """Rebuild a :class:`DateSpan` from a :meth:`to_json` envelope."""
+        if data.get("type") != "DateSpan":
+            raise ValueError(f"not a DateSpan envelope: {data.get('type')!r}")
+        return cls(AstroDate.from_json(data["start"]),
+                   AstroDate.from_json(data["end"]),
+                   data.get("basis", BASIS_EXACT))

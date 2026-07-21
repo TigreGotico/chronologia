@@ -133,6 +133,23 @@ class EdtfDate:
             return "~"
         return ""
 
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :meth:`from_json`)."""
+        return {"type": "EdtfDate", "span": self.span.to_json(),
+                "uncertain": self.uncertain, "approximate": self.approximate,
+                "open_start": self.open_start, "open_end": self.open_end}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "EdtfDate":
+        """Rebuild an :class:`EdtfDate` from a :meth:`to_json` envelope."""
+        if data.get("type") != "EdtfDate":
+            raise ValueError(f"not an EdtfDate envelope: {data.get('type')!r}")
+        return cls(DateSpan.from_json(data["span"]),
+                   bool(data.get("uncertain", False)),
+                   bool(data.get("approximate", False)),
+                   bool(data.get("open_start", False)),
+                   bool(data.get("open_end", False)))
+
 
 # --------------------------------------------------------------------------
 # Low-level span builders.

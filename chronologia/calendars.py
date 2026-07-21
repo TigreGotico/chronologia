@@ -858,6 +858,19 @@ class CalendarDate:
     def __str__(self) -> str:
         return f"{self.calendar} {self.year}-{self.month:02d}-{self.day:02d}"
 
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :meth:`from_json`)."""
+        return {"type": "CalendarDate", "calendar": self.calendar,
+                "year": self.year, "month": self.month, "day": self.day}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "CalendarDate":
+        """Rebuild a :class:`CalendarDate` from a :meth:`to_json` envelope."""
+        if data.get("type") != "CalendarDate":
+            raise ValueError(
+                f"not a CalendarDate envelope: {data.get('type')!r}")
+        return cls(data["calendar"], data["year"], data["month"], data["day"])
+
 
 @dataclass(frozen=True)
 class TabulatedCalendar:
