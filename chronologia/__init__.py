@@ -88,6 +88,14 @@ from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
 from chronologia.zone_timelines import (ClockSegment, ClockTimeline,
                                         ZoneDiscontinuity, ZoneNeverExisted,
                                         zone_history_start, zone_timeline)
+from chronologia.civil_holidays import (CATEGORIES, US_OBSERVED_SHIFT,
+                                        SUNDAY_TO_MONDAY, CalendarDateRule,
+                                        CivilHoliday, DecreeTableRule,
+                                        EasterOffsetRule, FixedRule,
+                                        HolidayCalendar, HolidayRule,
+                                        NthWeekdayRule, ObservedShift,
+                                        holidays_for, is_civil_holiday,
+                                        load_calendar)
 
 __version__ = "0.1.0a1"
 
@@ -293,5 +301,20 @@ __all__ = [
     "ClockSegment",
     "ZoneDiscontinuity",
     "ZoneNeverExisted",
-    # civil holidays (optional bridge onto the vacanza/holidays database)
+    # civil holidays — computed public/regional/municipal holiday rules
+    "CATEGORIES",
+    "FixedRule",
+    "NthWeekdayRule",
+    "EasterOffsetRule",
+    "CalendarDateRule",
+    "DecreeTableRule",
+    "ObservedShift",
+    "US_OBSERVED_SHIFT",
+    "SUNDAY_TO_MONDAY",
+    "HolidayRule",
+    "CivilHoliday",
+    "HolidayCalendar",
+    "holidays_for",
+    "is_civil_holiday",
+    "load_calendar",
 ]

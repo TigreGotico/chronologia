@@ -1,0 +1,24 @@
+# civil-holidays v1
+# jurisdiction: SA
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Saudi_Arabia
+#   (Eid al-Fitr / Eid al-Adha via the Umm al-Qura calendar; National Day 09-23;
+#   Founding Day 02-22). Islamic dates resolve through umm_al_qura.tab, whose
+#   published range is AH 1356..1500 (roughly 1937..2077 CE); Gregorian years
+#   whose occurrence falls outside that table are omitted, not fabricated.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- fixed (Gregorian) national days ---
+fixed         | Founding Day  | 2 22 | public |  |
+fixed         | National Day  | 9 23 | public |  |
+#
+# --- Islamic (Umm al-Qura calendar_date) holidays ---
+calendar_date | Eid al-Fitr           | umm_al_qura 10 1  | public religious |  |
+calendar_date | Eid al-Fitr Holiday   | umm_al_qura 10 2  | public religious |  |
+calendar_date | Eid al-Fitr Holiday   | umm_al_qura 10 3  | public religious |  |
+calendar_date | Arafah Day            | umm_al_qura 12 9  | public religious |  |
+calendar_date | Eid al-Adha           | umm_al_qura 12 10 | public religious |  |
+calendar_date | Eid al-Adha Holiday   | umm_al_qura 12 11 | public religious |  |
+calendar_date | Eid al-Adha Holiday   | umm_al_qura 12 12 | public religious |  |
+calendar_date | Eid al-Adha Holiday   | umm_al_qura 12 13 | public religious |  |

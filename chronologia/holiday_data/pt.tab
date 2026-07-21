@@ -1,0 +1,329 @@
+# civil-holidays v1
+# jurisdiction: PT
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Portugal
+#   (national + regional; Codigo do Trabalho art. 234) and the
+#   curated municipal seed https://gist.github.com/JarbasAl/00ac648935e964a795e9b9fe4585c2a5
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- national (public) ---
+fixed | Ano Novo | 1 1 | public
+easter | Sexta-feira Santa | -2 | public religious
+easter | Domingo de Pascoa | 0 | public religious
+fixed | Dia da Liberdade | 4 25 | public
+fixed | Dia do Trabalhador | 5 1 | public
+easter | Corpo de Deus | 60 | public religious
+fixed | Dia de Portugal | 6 10 | public
+fixed | Assuncao de Nossa Senhora | 8 15 | public religious
+fixed | Implantacao da Republica | 10 5 | public
+fixed | Dia de Todos os Santos | 11 1 | public religious
+fixed | Restauracao da Independencia | 12 1 | public
+fixed | Imaculada Conceicao | 12 8 | public religious
+fixed | Natal | 12 25 | public religious
+easter | Carnaval | -47 | public
+#
+# --- regional ---
+fixed | Dia da Regiao Autonoma da Madeira | 7 1 | regional | PT-30
+easter | Dia da Regiao Autonoma dos Acores | 50 | regional | PT-20
+#
+# --- municipal (fixed-date) ---
+fixed | Foral de D. Manuel I (1504) | 8 20 | municipal | PT-ABF
+fixed | Elevação a cidade (1916) | 6 14 | municipal | PT-ABT
+fixed | São Bernardo | 8 20 | municipal | PT-ACB
+fixed | São João Baptista | 6 24 | municipal | PT-ACH
+fixed | São João Baptista | 6 24 | municipal | PT-ADV
+fixed | São Pedro | 6 29 | municipal | PT-AFE
+fixed | Restauração do concelho | 2 10 | municipal | PT-AGB
+fixed | São João Baptista | 6 24 | municipal | PT-AGH
+fixed | Nossa Senhora do Mont`Alto | 9 7 | municipal | PT-AGN
+fixed | Santo António | 6 13 | municipal | PT-AJT
+fixed | Banho Santo | 8 29 | municipal | PT-AJZ
+fixed | Batalha do Côa (1810) | 7 2 | municipal | PT-ALD
+fixed | São Martinho | 11 11 | municipal | PT-ALJ
+fixed | São João Baptista | 6 24 | municipal | PT-ALM
+fixed | Criação do município | 9 11 | municipal | PT-AMD
+fixed | São João Baptista | 6 24 | municipal | PT-AMM
+fixed | Santo António | 6 13 | municipal | PT-AMR
+fixed | Elevação a cidade | 7 8 | municipal | PT-AMT
+fixed | Criação do município | 4 2 | municipal | PT-APC
+fixed | Rainha Santa Mafalda | 5 2 | municipal | PT-ARC
+fixed | São João Baptista | 6 24 | municipal | PT-ARR
+fixed | São João Baptista | 6 24 | municipal | PT-ASL
+fixed | Santa Joana Princesa | 5 12 | municipal | PT-AVR
+fixed | São Bento | 7 11 | municipal | PT-AVV
+fixed | Santo António | 6 13 | municipal | PT-AVZ
+fixed | São Bartolomeu | 8 24 | municipal | PT-BAO
+fixed | São Pedro | 6 29 | municipal | PT-BBR
+fixed | Santa Cruz | 5 3 | municipal | PT-BCL
+fixed | Nossa Senhora das Graças | 8 22 | municipal | PT-BGC
+fixed | Primeira missa no Brasil | 4 26 | municipal | PT-BMT
+fixed | Festa de Nossa Senhora da Conceição | 8 28 | municipal | PT-BRC
+fixed | São João Baptista | 6 24 | municipal | PT-BRG
+fixed | Elevação a cidade (1984) | 6 28 | municipal | PT-BRR
+fixed | Criação do município | 11 6 | municipal | PT-BTC
+fixed | Batalha de Aljubarrota (1385) | 8 14 | municipal | PT-BTL
+fixed | São Miguel Arcanjo | 9 29 | municipal | PT-CBC
+fixed | Rainha Santa Isabel | 7 4 | municipal | PT-CBR
+fixed | São Tiago | 7 25 | municipal | PT-CBT
+fixed | Nossa Senhora do Castelo | 8 17 | municipal | PT-CCH
+fixed | Santa Cristina | 7 24 | municipal | PT-CDN
+fixed | São Pedro | 6 29 | municipal | PT-CDR
+fixed | Restauração do município | 1 13 | municipal | PT-CDV
+fixed | 1ª Incursão Monárquica (1912) | 7 8 | municipal | PT-CHV
+fixed | Nascimento de Sacadura Cabral | 5 23 | municipal | PT-CLB
+fixed | Fundação da localidade pela rainha D. Leonor | 5 15 | municipal | PT-CLD
+fixed | Criação do município | 10 4 | municipal | PT-CML
+fixed | São João Baptista | 6 24 | municipal | PT-CNF
+fixed | São Tiago | 7 25 | municipal | PT-CNT
+fixed | Fundação do município | 7 4 | municipal | PT-CPR
+fixed | São João Baptista | 6 24 | municipal | PT-CPV
+fixed | Santo António | 6 13 | municipal | PT-CSC
+fixed | São João Baptista | 6 24 | municipal | PT-CTM
+fixed | Elevação a cidade | 10 20 | municipal | PT-CVL
+fixed | São Pedro | 6 29 | municipal | PT-CVR
+fixed | Batalha das Linhas de Elvas (1659) | 1 14 | municipal | PT-ELV
+fixed | Criação do município (1945) | 11 24 | municipal | PT-ENT
+fixed | Elevação à categoria de vila | 8 19 | municipal | PT-EPS
+fixed | Elevação a cidade | 6 16 | municipal | PT-ESP
+fixed | Santo António | 6 13 | municipal | PT-ETR
+fixed | São Pedro | 6 29 | municipal | PT-EVR
+fixed | Feiras Francas | 5 16 | municipal | PT-FAF
+fixed | São Miguel Arcanjo | 9 29 | municipal | PT-FAG
+fixed | Outorgação do foral manuelino | 3 5 | municipal | PT-FAL
+fixed | Elevação a cidade | 9 7 | municipal | PT-FAR
+fixed | Batalha de Salgadela (1664) | 7 7 | municipal | PT-FCR
+fixed | São João Baptista | 6 24 | municipal | PT-FIG
+fixed | São Pedro | 6 29 | municipal | PT-FLG
+fixed | Santa Luzia | 9 15 | municipal | PT-FND
+fixed | Batalha dos Atoleiros | 4 6 | municipal | PT-FTR
+fixed | Elevação a cidade | 8 21 | municipal | PT-FUN
+fixed | São João Baptista | 6 24 | municipal | PT-FVN
+fixed | Santo António | 6 13 | municipal | PT-FZZ
+fixed | Recebimento do foral manuelino | 11 23 | municipal | PT-GAV
+fixed | Criação do município através do foral | 10 22 | municipal | PT-GDL
+fixed | Batalha de São Mamede (1128) | 6 24 | municipal | PT-GMR
+fixed | Doação de Góis a Anaia Vestrares | 8 13 | municipal | PT-GOI
+fixed | Foral de D. Sancho I (1199) | 11 27 | municipal | PT-GRD
+fixed | São João Baptista | 6 24 | municipal | PT-HRT
+fixed | Criação do município | 4 11 | municipal | PT-LGA
+fixed | Nossa Senhora da Luz | 9 8 | municipal | PT-LGA
+fixed | São Gonçalo de Lagos | 10 27 | municipal | PT-LGS
+fixed | Criação do município (1501) | 6 29 | municipal | PT-LJP
+fixed | Nossa Senhora dos Remédios | 9 8 | municipal | PT-LMG
+fixed | São João Baptista | 6 24 | municipal | PT-LNH
+fixed | Elevação a cidade e fundação da diocese | 5 22 | municipal | PT-LRA
+fixed | Criação do município | 7 26 | municipal | PT-LRS
+fixed | São João Baptista | 6 24 | municipal | PT-LSA
+fixed | Santo António | 6 13 | municipal | PT-LSB
+fixed | Santa Maria Madalena | 7 22 | municipal | PT-MAD
+fixed | São João Baptista | 6 24 | municipal | PT-MBR
+fixed | Criação da Capitania de Machico | 5 8 | municipal | PT-MCH
+fixed | Nossa Senhora do Castelinho | 9 8 | municipal | PT-MCN
+fixed | Nascimento de José Falcão (1841) | 6 1 | municipal | PT-MCV
+fixed | São Martinho | 11 11 | municipal | PT-MDA
+fixed | São Tiago | 7 25 | municipal | PT-MDB
+fixed | São Pedro | 6 29 | municipal | PT-MDC
+fixed | Outorgação do Foral de D. Afonso III (1250) | 5 25 | municipal | PT-MDL
+fixed | Elevação a cidade | 7 10 | municipal | PT-MDR
+fixed | Feira dos Gorazes | 10 15 | municipal | PT-MGD
+fixed | Nossa Senhora do Castelo | 9 8 | municipal | PT-MGL
+fixed | São Tomé | 7 25 | municipal | PT-MIR
+fixed | São João de Deus | 3 8 | municipal | PT-MMN
+fixed | Nossa Senhora da Vitória | 9 8 | municipal | PT-MMV
+fixed | Outorgação do foral | 3 12 | municipal | PT-MNC
+fixed | Nossa Senhora das Candeias | 2 2 | municipal | PT-MOU
+fixed | São João Baptista | 6 24 | municipal | PT-MRA
+fixed | Nossa Senhora da Natividade | 9 8 | municipal | PT-MRS
+fixed | Nossa Senhora da Estrela | 9 8 | municipal | PT-MRV
+fixed | Santo André | 11 30 | municipal | PT-MSF
+fixed | Outorgação do foral | 3 4 | municipal | PT-MTG
+fixed | São Pedro | 6 29 | municipal | PT-MTJ
+fixed | São João Baptista | 6 24 | municipal | PT-MTL
+fixed | Atribuição do foral | 6 9 | municipal | PT-MTR
+fixed | Fundação do município | 5 8 | municipal | PT-MUR
+fixed | São João Baptista | 6 24 | municipal | PT-NLS
+fixed | Fundação do município (1514) | 7 18 | municipal | PT-NRD
+fixed | Nossa Senhora das Areias (ou da Nazaré) | 9 8 | municipal | PT-NZR
+fixed | Tomada de Óbidos aos mouros | 1 11 | municipal | PT-OBD
+fixed | Nossa Senhora da Piedade | 9 8 | municipal | PT-ODM
+fixed | Criação do município (1759) | 6 7 | municipal | PT-OER
+fixed | Restauração do município | 10 7 | municipal | PT-OFR
+fixed | Recebimento da notícia da Implantação da República | 10 7 | municipal | PT-OHP
+fixed | Revolta de Olhão contra os Franceses (1808) | 6 16 | municipal | PT-OLH
+fixed | Nossa Senhora da Cola | 9 8 | municipal | PT-ORQ
+fixed | São Cristóvão | 7 25 | municipal | PT-OVR
+fixed | São Martinho | 11 11 | municipal | PT-PBL
+fixed | São Lourenço | 8 10 | municipal | PT-PCR
+fixed | São Genésio | 8 25 | municipal | PT-PCT
+fixed | Nascimento de António José de Almeida | 7 17 | municipal | PT-PCV
+fixed | Criação do município | 11 6 | municipal | PT-PFR
+fixed | Criação do município | 7 24 | municipal | PT-PGR
+fixed | Atribuição do foral manuelino (1512) | 6 1 | municipal | PT-PLM
+fixed | São Pedro | 6 29 | municipal | PT-PMS
+fixed | Santa Maria Madalena | 7 22 | municipal | PT-PMZ
+fixed | São Pedro | 6 29 | municipal | PT-PND
+fixed | São Martinho | 11 11 | municipal | PT-PNF
+fixed | Elevação a cidade (2007) | 8 25 | municipal | PT-PNH
+fixed | São Miguel Arcanjo | 9 29 | municipal | PT-PNL
+fixed | Santo António | 6 13 | municipal | PT-PNV
+fixed | Restauração dos títulos de vila isenta | 4 10 | municipal | PT-PPS
+fixed | Nossa Senhora do Socorro | 8 16 | municipal | PT-PRG
+fixed | Restauração do município | 1 13 | municipal | PT-PRS
+fixed | São João Baptista | 6 24 | municipal | PT-PRT
+fixed | Criação do município (1835) | 6 24 | municipal | PT-PST
+fixed | São Bartolomeu | 8 24 | municipal | PT-PTB
+fixed | Elevação a cidade e fundação da diocese | 5 23 | municipal | PT-PTG
+fixed | Nossa Senhora das Dores | 9 20 | municipal | PT-PTL
+fixed | Elevação a cidade (1924) | 12 11 | municipal | PT-PTM
+fixed | Nossa Senhora da Luz | 9 8 | municipal | PT-PTS
+fixed | São José | 3 19 | municipal | PT-PVL
+fixed | São Pedro | 6 29 | municipal | PT-PVZ
+fixed | São Pedro | 6 29 | municipal | PT-RBR
+fixed | São Pedro | 6 29 | municipal | PT-RGR
+fixed | Criação do município | 11 6 | municipal | PT-RMR
+fixed | Santo António | 6 13 | municipal | PT-RMZ
+fixed | Nossa Senhora do Socorro | 8 16 | municipal | PT-RPN
+fixed | São Miguel Arcanjo | 9 29 | municipal | PT-RSD
+fixed | São Bernardo | 8 20 | municipal | PT-SAT
+fixed | Elevação a município (1914) | 6 1 | municipal | PT-SBA
+fixed | Nossa Senhora do Rosário | 9 8 | municipal | PT-SBR
+fixed | São João Baptista | 6 24 | municipal | PT-SCF
+fixed | Santo Amaro | 1 15 | municipal | PT-SCR
+fixed | Elevação a cidade | 7 3 | municipal | PT-SEI
+fixed | Elevação a cidade e fundação do município | 10 11 | municipal | PT-SJM
+fixed | São João Baptista | 6 24 | municipal | PT-SJP
+fixed | Conquista da cidade aos mouros | 9 3 | municipal | PT-SLV
+fixed | Restauração do município | 1 13 | municipal | PT-SMP
+fixed | Elevação a vila (1362) | 11 24 | municipal | PT-SNS
+fixed | São Pedro | 6 29 | municipal | PT-SNT
+fixed | São Pedro | 6 29 | municipal | PT-SPS
+fixed | Elevação à categoria de vila | 9 22 | municipal | PT-SRD
+fixed | São Mateus | 9 21 | municipal | PT-SRE
+fixed | Festa de N.ª Srª ao Pé da Cruz | 5 3 | municipal | PT-SRN
+fixed | São Roque | 8 16 | municipal | PT-SRP
+fixed | São Nuno de Santa Maria (1360) | 6 24 | municipal | PT-SRT
+fixed | Nosso Senhor Jesus das Chagas | 5 4 | municipal | PT-SSB
+fixed | Nascimento de Bocage (Setúbal) | 9 15 | municipal | PT-STB
+fixed | São Tiago | 7 25 | municipal | PT-STC
+fixed | Fundação do município (1835) | 5 25 | municipal | PT-STN
+fixed | São José | 3 19 | municipal | PT-STR
+fixed | São Bento | 7 11 | municipal | PT-STS
+fixed | São Vicente | 1 22 | municipal | PT-SVC
+fixed | São Mateus | 9 21 | municipal | PT-SVV
+fixed | São Pedro | 6 29 | municipal | PT-SXL
+fixed | São João Baptista | 6 24 | municipal | PT-TBC
+fixed | Foral de D. Manuel I (1514) | 10 20 | municipal | PT-TBR
+fixed | Restauração da Comarca | 4 10 | municipal | PT-TBU
+fixed | Batalha de São Marcos (1385) | 5 29 | municipal | PT-TCS
+fixed | São José | 3 19 | municipal | PT-TMC
+fixed | Fundação do Castelo Templário | 3 1 | municipal | PT-TMR
+fixed | Santa Eufémia | 9 16 | municipal | PT-TND
+fixed | São Miguel Arcanjo | 9 29 | municipal | PT-TRC
+fixed | São Martinho | 11 11 | municipal | PT-TVD
+fixed | São João Baptista | 6 24 | municipal | PT-TVR
+fixed | São Vicente | 1 22 | municipal | PT-VBP
+fixed | São João Baptista | 6 24 | municipal | PT-VCD
+fixed | Nossa Senhora da Agonia | 8 20 | municipal | PT-VCT
+fixed | São João Baptista | 6 24 | municipal | PT-VFC
+fixed | São Bartolomeu | 8 24 | municipal | PT-VFL
+fixed | São Sebastião | 1 20 | municipal | PT-VFR
+fixed | São Mateus | 9 21 | municipal | PT-VIS
+fixed | Santo António | 6 13 | municipal | PT-VLC
+fixed | Outorgação do foral de D. Dinis | 5 21 | municipal | PT-VLF
+fixed | São João Baptista | 6 24 | municipal | PT-VLG
+fixed | Criação do município | 11 6 | municipal | PT-VLP
+fixed | Recebimento do foral de D. Dinis | 9 19 | municipal | PT-VLR
+fixed | São Jorge | 4 23 | municipal | PT-VLS
+fixed | São Frei Gil | 5 14 | municipal | PT-VLZ
+fixed | São Lourenço | 8 10 | municipal | PT-VMS
+fixed | Santo António | 6 13 | municipal | PT-VNB
+fixed | Recebimento do foral manuelino | 10 1 | municipal | PT-VNC
+fixed | Elevação a município | 9 7 | municipal | PT-VND
+fixed | Santo António | 6 13 | municipal | PT-VNF
+fixed | São João Baptista | 6 24 | municipal | PT-VNG
+fixed | Outorgação do foral manuelino | 5 20 | municipal | PT-VNH
+fixed | Elevação a cidade | 6 20 | municipal | PT-VNO
+fixed | Estabelecimento e denominação da sede de concelho | 3 2 | municipal | PT-VNP
+fixed | Restauração do município | 1 13 | municipal | PT-VNT
+fixed | Atribuição do foral manuelino | 6 22 | municipal | PT-VPA
+fixed | São João Baptista | 6 24 | municipal | PT-VPT
+fixed | Santo António | 6 13 | municipal | PT-VRL
+fixed | Elevação a cidade | 5 13 | municipal | PT-VRS
+fixed | Nascimento de Couto Jardim | 8 16 | municipal | PT-VVC
+fixed | Santo António | 6 13 | municipal | PT-VVD
+#
+# --- municipal (movable) ---
+nth_weekday | Segunda-feira da Senhora do Socorro | 8 3 6 1 | municipal | PT-ABL
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-ACN
+nth_weekday | Festas de Alcoutim | 9 2 4 0 | municipal | PT-ACT
+easter | Segunda-feira de Pascoela (Nossa Senhora da Boa Nova) | 8 | municipal | PT-ADL
+easter | Pentecostes (Festa de São Geraldo) | 50 | municipal | PT-AGD
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-ALQ
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-ALR
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-ALT
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-AND
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-ANS
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-ARL
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-ARV
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-AVS
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-AVT
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-AZB
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-BJA
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-BNV
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-BRB
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-CHM
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-CMN
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-CMR
+nth_weekday | Nossa Senhora das Febres | 7 3 6 1 | municipal | PT-CRS
+easter | São Gregório | 1 | municipal | PT-CRT
+easter | Nossa Senhora de Mércoles | 9 | municipal | PT-CTB
+easter | Nossa Senhora da Boa Viagem | 1 | municipal | PT-CTC
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-CTX
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-CUB
+easter | Nossa Senhora da Luz | 1 | municipal | PT-CVD
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-ETZ
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-FEC
+nth_weekday | Nossa Senhora do Rosário | 10 1 6 1 | municipal | PT-GDM
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-GLG
+nth_weekday | Nosso Senhor do Calvário | 8 2 6 1 | municipal | PT-GVA
+easter | Nossa Senhora do Almortão | 15 | municipal | PT-IDN
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-ILH
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-LLE
+nth_weekday | Nosso Senhor dos Aflitos | 7 -1 6 1 | municipal | PT-LSD
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-MAC
+nth_weekday | Nossa Senhora do Bom Despacho | 7 2 6 1 | municipal | PT-MAI
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-MCQ
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-MFR
+easter | Segunda-feira de Pascoela (Nossa Senhora dos Prazeres) | 8 | municipal | PT-MFT
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-MGR
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-MLD
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-MLG
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-MOR
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-MRT
+nth_weekday | Festas em Honra de Nossa Senhora da Boa Viagem | 9 2 6 2 | municipal | PT-MTA
+easter | Terça-feira de Pentecostes | 51 | municipal | PT-MTS
+easter | Nossa Senhora da Graça | 1 | municipal | PT-NIS
+nth_weekday | Nossa Senhora de La Salette | 8 2 6 1 | municipal | PT-OAZ
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-OBR
+nth_weekday | Santa Margarida | 8 2 6 1 | municipal | PT-OLR
+easter | Senhor Santo Cristo dos Milagres | 29 | municipal | PT-PDL
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-PNC
+nth_weekday | Nossa Senhora da Boa Viagem | 8 1 6 1 | municipal | PT-PNI
+nth_weekday | Divino Salvador | 7 3 6 1 | municipal | PT-PRD
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-PRL
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-PSR
+easter | Oitava do Corpo de Deus | 61 | municipal | PT-PVC
+easter | Segunda-feira de Páscoa | 1 | municipal | PT-RDD
+easter | Segunda-feira de Pascoela (Nossa Senhora dos Prazeres / Nossa Senhora da Graça) | 8 | municipal | PT-SBG
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-SCD
+nth_weekday | Senhor Santo Cristo dos Milagres | 8 2 6 1 | municipal | PT-SCG
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-SMA
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-SMG
+easter | Nossa Senhora do Carmo da Serra (de São Miguel) | 1 | municipal | PT-SSL
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-TNV
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-VDG
+easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | municipal | PT-VFX
+easter | Pentecostes / Divino Espírito Santo | 50 | municipal | PT-VGS
+nth_weekday | Feira da Ladra | 10 1 5 2 | municipal | PT-VRM
+nth_weekday | Nossa Senhora da Alagada | 8 4 6 1 | municipal | PT-VVR
