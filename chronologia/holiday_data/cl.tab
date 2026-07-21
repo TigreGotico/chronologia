@@ -1,0 +1,46 @@
+# civil-holidays v1
+# jurisdiction: CL
+# source: https://www.feriados.cl/  and Ley 19.973 (feriados nacionales) with
+#   Ley 20.148 (San Pedro y San Pablo / Encuentro de Dos Mundos traslado),
+#   Ley 20.299 (Iglesias Evangélicas), Ley 20.983 (2-Jan bridge) and Ley 19.668
+#   / Ley 21.357 (Día Nacional de los Pueblos Indígenas, tied to the June
+#   solstice). Local copy papers/holidays/cl_feriados_ley19973.html.
+#   Cross-checked against vacanza/holidays 0.101 (MIT). Names are official Spanish.
+#
+#   Chile applies several distinct traslado rules and solstice/one-off feriados
+#   that no single arithmetic kind captures cleanly, so the movable ones are
+#   decree rows carrying the officially gazetted dates (an honest tabulation,
+#   not a fabricated rule):
+#     * San Pedro y San Pablo and Encuentro de Dos Mundos move to the nearest
+#       Monday only in some weekday cases (Ley 20.148).
+#     * Día de las Iglesias Evangélicas moves off 31 Oct in some years (Ley 20.299).
+#     * Día Nacional de los Pueblos Indígenas falls on the June solstice
+#       (Ley 21.357), 20 or 21 June.
+#     * Feriado nacional (2 Jan) and the extra Fiestas Patrias bridge day are
+#       one-off decrees granted only in qualifying years (2023, 2024).
+#   The remaining holidays are fixed Gregorian dates or Easter offsets.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+# --- fixed / Easter ---
+fixed  | Año Nuevo                          | 1 1   | public          |  |
+easter | Viernes Santo                      | -2    | public religious |  |
+easter | Sábado Santo                       | -1    | public religious |  |
+fixed  | Día Nacional del Trabajo           | 5 1   | public          |  |
+fixed  | Día de las Glorias Navales         | 5 21  | public          |  |
+fixed  | Virgen del Carmen                  | 7 16  | public religious |  |
+fixed  | Asunción de la Virgen              | 8 15  | public religious |  |
+fixed  | Día de la Independencia            | 9 18  | public          |  |
+fixed  | Día de las Glorias del Ejército    | 9 19  | public          |  |
+fixed  | Día de Todos los Santos            | 11 1  | public religious |  |
+fixed  | La Inmaculada Concepción           | 12 8  | public religious |  |
+fixed  | Navidad                            | 12 25 | public religious |  |
+#
+# --- decree-tabulated movable / one-off feriados ---
+decree | Feriado nacional                   | 2023-01-02 | public |  |
+decree | Día Nacional de los Pueblos Indígenas | 2023-06-21 2024-06-20 2025-06-20 | public |  |
+decree | San Pedro y San Pablo              | 2023-06-26 2024-06-29 2025-06-29 | public religious |  |
+decree | Fiestas Patrias                    | 2024-09-20 | public |  |
+decree | Día del Encuentro de dos Mundos    | 2023-10-09 2024-10-12 2025-10-12 | public |  |
+decree | Día Nacional de las Iglesias Evangélicas y Protestantes | 2023-10-27 2024-10-31 2025-10-31 | public religious |  |
