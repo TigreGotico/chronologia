@@ -816,10 +816,25 @@ class DateSpan:
             raise ValueError(f"unknown basis {self.basis!r}; expected one of "
                              f"{sorted(_BASIS_RANK)}")
 
+    @staticmethod
+    def _instant_us(point: AstroDate) -> int:
+        """Wall-clock microseconds, shifted to the UTC instant when aware.
+
+        A naive point (``utcoffset() is None``) returns its wall-clock reading
+        unchanged (byte-identical to the pre-``zone`` behaviour); an aware one
+        subtracts its offset first, so two endpoints carrying *different*
+        offsets (a span whose boundaries straddle a DST transition) still
+        subtract to the true elapsed duration instead of a naive field
+        difference.
+        """
+        off = point.utcoffset()
+        wall = point._total_us()
+        return wall if off is None else wall - _td_us(off)
+
     @property
     def _delta_us(self) -> int:
         """Total width in microseconds as an unbounded int (never overflows)."""
-        return self.end._total_us() - self.start._total_us()
+        return self._instant_us(self.end) - self._instant_us(self.start)
 
     @property
     def width(self):

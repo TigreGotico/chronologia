@@ -55,14 +55,14 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from datetime import timedelta
-from typing import Literal, Union
+from datetime import timedelta, tzinfo as _tzinfo
+from typing import Literal, Optional, Union
 
 from chronologia.astrodate import AstroDate
 from chronologia.solar import (SOLAR_ACCURACY, NoSunEvent, SunEvent,
                                _as_astrodate, _boundary, _declination,
                                _eqtime_minutes, _gamma, _midnight_utc,
-                               _validate, sun_events)
+                               _to_zone, _validate, sun_events)
 
 __all__ = [
     "PrayerConvention",
@@ -199,7 +199,8 @@ def _asr_zenith(latitude: float, decl: float, factor: int) -> float:
 
 def prayer_times(date, latitude: float, longitude: float,
                  convention: str = "mwl",
-                 asr: str = "standard") -> PrayerTimes:
+                 asr: str = "standard",
+                 zone: Optional[_tzinfo] = None) -> PrayerTimes:
     """Islamic prayer times for ``date`` at (``latitude``, ``longitude``), UTC.
 
     ``date`` is an :class:`~chronologia.astrodate.AstroDate`,
@@ -210,6 +211,16 @@ def prayer_times(date, latitude: float, longitude: float,
     ``"egyptian_gas"``, ``"umm_al_qura_makkah"``, ``"karachi"``); ``asr``
     selects the shadow factor from :data:`ASR_METHODS` (``"standard"`` = 1,
     ``"hanafi"`` = 2).  Unknown keys raise :class:`ValueError`.
+
+    ``zone``, when given, changes only *presentation*: every computed instant
+    is identical (the underlying hour-angle arithmetic is entirely UTC and
+    unaffected), but each real :class:`~chronologia.astrodate.AstroDate` field
+    is converted (via :meth:`~chronologia.astrodate.AstroDate.astimezone`)
+    into an aware reading in ``zone`` before being returned, so
+    ``prayer_times(d, lat, lon, zone=z).dhuhr == prayer_times(d, lat, lon).dhuhr``
+    (same instant) while the former prints local wall-clock digits.
+    :class:`~chronologia.solar.NoSunEvent` fields (undefined at high
+    latitudes) are returned unconverted, since they name no instant.
 
     Returns a :class:`PrayerTimes`.  Fajr and Isha are typed
     :class:`~chronologia.solar.NoSunEvent` when the depression angle is never
@@ -255,16 +266,21 @@ def prayer_times(date, latitude: float, longitude: float,
                          _asr_zenith(latitude, decl, asr_method.shadow_factor),
                          eqtime, decl, evening=True)
 
+    def present(value: SunEvent) -> SunEvent:
+        if zone is None or not isinstance(value, AstroDate):
+            return value
+        return _to_zone(value, zone)
+
     return PrayerTimes(
         date=_midnight_utc(point),
         latitude=latitude,
         longitude=longitude,
         convention=convention,
         asr=asr,
-        fajr=fajr,
-        sunrise=events.sunrise,
-        dhuhr=events.solar_noon,
-        asr_time=asr_time,
-        maghrib=events.sunset,
-        isha=isha,
+        fajr=present(fajr),
+        sunrise=present(events.sunrise),
+        dhuhr=present(events.solar_noon),
+        asr_time=present(asr_time),
+        maghrib=present(events.sunset),
+        isha=present(isha),
     )

@@ -52,10 +52,12 @@ not a global name.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone, tzinfo as _tzinfo
 from typing import Dict, List, Optional, Tuple, Union
 
-from chronologia.astrodate import AstroDate, DateSpan, civil_add
+from chronologia.astrodate import (AstroDate, DateSpan, _fold_offsets,
+                                   civil_add, resolve_wall_clock)
+from chronologia.timelines import NeverExisted
 
 #: One-minute minimal width for instant anchors (noon, midnight), matching the
 #: point convention used elsewhere ("3 pm" == ``[15:00, 15:01)``).
@@ -179,21 +181,55 @@ def _civil_ymd(date_or_span: Union[AstroDate, date, datetime, DateSpan]
     return anchor.year, anchor.month, anchor.day
 
 
-def _span_on_date(part: DayPart, y: int, m: int, d: int) -> DateSpan:
-    start = AstroDate(y, m, d, part.start.hour, part.start.minute,
-                      part.start.second, part.start.microsecond)
+def _resolve_boundary(y: int, m: int, d: int, part_time: time,
+                      zone: _tzinfo) -> AstroDate:
+    """A day-part endpoint's wall-clock reading, resolved aware in ``zone``.
+
+    Delegates to :func:`~chronologia.astrodate.resolve_wall_clock` for the
+    fold/gap semantics, then applies the documented convention for the two
+    ambiguous outcomes: **fold** (the reading occurs twice, DST falling back)
+    keeps the *later* of the two real instants; **gap** (the reading is
+    skipped, DST springing forward) is resolved to the *post-transition*
+    instant — the moment with the new, post-jump offset, at that same wall
+    clock reading.  Either way, the boundary is always a single, well-defined
+    instant, never a raised error and never a silently-picked earlier one.
+    """
+    h, mi = part_time.hour, part_time.minute
+    resolved = resolve_wall_clock(y, m, d, h, mi, zone)
+    if isinstance(resolved, tuple):
+        boundary = resolved[1]  # fold: later occurrence == post-transition
+    elif isinstance(resolved, NeverExisted):
+        _, off1 = _fold_offsets(y, m, d, h, mi, zone)
+        boundary = AstroDate(y, m, d, h, mi, tzinfo=timezone(off1))
+    else:
+        boundary = resolved
+    if part_time.second or part_time.microsecond:
+        boundary = boundary.replace(second=part_time.second,
+                                    microsecond=part_time.microsecond)
+    return boundary
+
+
+def _span_on_date(part: DayPart, y: int, m: int, d: int,
+                  zone: Optional[_tzinfo] = None) -> DateSpan:
     if part.crosses_midnight:
         nxt = civil_add(AstroDate(y, m, d), days=1)
         y2, m2, d2 = nxt.year, nxt.month, nxt.day
     else:
         y2, m2, d2 = y, m, d
-    end = AstroDate(y2, m2, d2, part.end.hour, part.end.minute,
-                    part.end.second, part.end.microsecond)
+    if zone is None:
+        start = AstroDate(y, m, d, part.start.hour, part.start.minute,
+                          part.start.second, part.start.microsecond)
+        end = AstroDate(y2, m2, d2, part.end.hour, part.end.minute,
+                        part.end.second, part.end.microsecond)
+    else:
+        start = _resolve_boundary(y, m, d, part.start, zone)
+        end = _resolve_boundary(y2, m2, d2, part.end, zone)
     return DateSpan(start, end)
 
 
 def daypart_span(date_or_span: Union[AstroDate, date, datetime, DateSpan],
-                 name: str, region: Optional[str] = None) -> DateSpan:
+                 name: str, region: Optional[str] = None,
+                 zone: Optional[_tzinfo] = None) -> DateSpan:
     """The span a day-part occupies on a concrete date.
 
     ``date_or_span`` supplies the civil date to anchor to — an
@@ -211,10 +247,25 @@ def daypart_span(date_or_span: Union[AstroDate, date, datetime, DateSpan],
     day-part to "tuesday" and to a truncated slice of Tuesday differ exactly by
     the overlap.  A day-part disjoint from the given span raises
     :class:`ValueError`, since there is no interval to return.
+
+    **``zone``.**  ``None`` (the default) keeps every endpoint a naive
+    wall-clock reading, byte-identical to the library's behaviour before
+    ``zone`` existed.  Given a ``tzinfo``, both endpoints become **aware**
+    :class:`AstroDate` instants in that zone instead of bare wall-clock
+    readings — resolved via
+    :func:`~chronologia.astrodate.resolve_wall_clock`, so a boundary landing
+    in a DST **gap** (spring-forward) or **fold** (fall-back) resolves
+    deterministically to the *post-transition* instant (see
+    :func:`_resolve_boundary`) rather than raising or guessing.  Because the
+    two endpoints can therefore each pick up a different UTC offset across a
+    transition, :attr:`DateSpan.width` on the result honestly reflects the
+    real elapsed time -- 23 or 25 hours instead of the nominal 24 (or, for a
+    day-part narrower than a full day, a similar hour thinner/thicker than its
+    naive width) whenever the transition falls inside the part's boundaries.
     """
     part = lookup(name, region)
     y, m, d = _civil_ymd(date_or_span)
-    span = _span_on_date(part, y, m, d)
+    span = _span_on_date(part, y, m, d, zone=zone)
     if isinstance(date_or_span, DateSpan):
         composed = span.intersect(date_or_span)
         if composed is None:

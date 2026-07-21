@@ -45,8 +45,8 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
-from typing import Literal, Union
+from datetime import date, datetime, timedelta, timezone, tzinfo as _tzinfo
+from typing import Literal, Optional, Union
 
 from chronologia.astrodate import AstroDate
 
@@ -204,22 +204,11 @@ def _validate(latitude: float, longitude: float) -> None:
         raise ValueError(f"longitude must be in -180..180, got {longitude}")
 
 
-def sun_events(date, latitude: float, longitude: float) -> SunEvents:
-    """Solar boundaries of ``date`` at (``latitude``, ``longitude``), in UTC.
-
-    ``date`` is an :class:`AstroDate`, :class:`~datetime.date`, or
-    :class:`~datetime.datetime` (only the calendar date is used).  Latitude is
-    degrees north (-90..90), longitude degrees **east** (-180..180); both are
-    range-validated (``ValueError`` otherwise).  Returns a :class:`SunEvents`
-    whose ``solar_noon`` is always present and whose rise/set/twilight fields
-    are each an :class:`AstroDate` or a :class:`NoSunEvent` (polar honesty).
-
-    >>> ev = sun_events(AstroDate(2000, 3, 20), 0.0, 0.0)
-    >>> ev.solar_noon.hour
-    12
-    """
-    _validate(latitude, longitude)
-    point = _as_astrodate(date)
+def _sun_events_solar_day(point: AstroDate, latitude: float,
+                          longitude: float) -> SunEvents:
+    """The original solar-day computation: events of the UTC calendar day
+    containing ``point``'s date, all fields naive UTC.  Byte-identical to
+    :func:`sun_events`'s behaviour before ``zone`` existed."""
     midnight = _midnight_utc(point)
     g = _gamma(point)
     eqtime = _eqtime_minutes(g)
@@ -248,6 +237,135 @@ def sun_events(date, latitude: float, longitude: float) -> SunEvents:
         nautical_dusk=evening(ZENITH_NAUTICAL),
         astronomical_dawn=morning(ZENITH_ASTRONOMICAL),
         astronomical_dusk=evening(ZENITH_ASTRONOMICAL),
+    )
+
+
+#: The field names of :class:`SunEvents` that carry a :data:`SunEvent`
+#: (``date``/``latitude``/``longitude`` are metadata, ``solar_noon`` is
+#: handled alongside them since it is always present).
+_EVENT_FIELDS = ("solar_noon", "sunrise", "sunset", "civil_dawn", "civil_dusk",
+                 "nautical_dawn", "nautical_dusk", "astronomical_dawn",
+                 "astronomical_dusk")
+
+
+def _to_zone(instant: AstroDate, zone: _tzinfo) -> AstroDate:
+    """A naive-UTC :class:`AstroDate` reinterpreted as an instant in ``zone``."""
+    return instant.replace(tzinfo=timezone.utc).astimezone(zone)
+
+
+def _civil_window(point: AstroDate, zone: _tzinfo):
+    """The ``[00:00, 24:00)`` wall-clock window of ``point``'s civil day in
+    ``zone``, as a pair of aware :class:`AstroDate` bounds."""
+    y, m, d = point.year, point.month, point.day
+    start = AstroDate(y, m, d, tzinfo=zone)
+    nxt = AstroDate.fromordinal(_midnight_utc(point).toordinal() + 1)
+    end = AstroDate(nxt.year, nxt.month, nxt.day, tzinfo=zone)
+    return start, end
+
+
+def _select_civil_event(field: str, day_events: list, zone: _tzinfo,
+                        start, end, this_day: SunEvents) -> SunEvent:
+    """The value of ``field`` whose instant falls in the civil window.
+
+    Gathers the candidate from each of the (up to three) neighbouring solar
+    days that is not a :class:`NoSunEvent`, converts it to ``zone``, and keeps
+    those landing in ``[start, end)``.  When two land in the window -- the
+    dateline-adjacent case a large zone offset can produce -- the earlier
+    instant wins (documented in :func:`sun_events`).  When none land in the
+    window (persistent polar day/night), the typed :class:`NoSunEvent` from
+    ``this_day`` (the solar day matching ``point``'s own date) is returned
+    unconverted, since it names no instant to reinterpret.
+    """
+    candidates = []
+    for day in day_events:
+        value = getattr(day, field)
+        if isinstance(value, NoSunEvent):
+            continue
+        aware = _to_zone(value, zone)
+        if start <= aware < end:
+            candidates.append(aware)
+    if candidates:
+        candidates.sort()
+        return candidates[0]
+    return getattr(this_day, field)
+
+
+def sun_events(date, latitude: float, longitude: float,
+              zone: Optional[_tzinfo] = None) -> SunEvents:
+    """Solar boundaries of ``date`` at (``latitude``, ``longitude``).
+
+    ``date`` is an :class:`AstroDate`, :class:`~datetime.date`, or
+    :class:`~datetime.datetime` (only the calendar date is used).  Latitude is
+    degrees north (-90..90), longitude degrees **east** (-180..180); both are
+    range-validated (``ValueError`` otherwise).  Returns a :class:`SunEvents`
+    whose ``solar_noon`` is always present and whose rise/set/twilight fields
+    are each an :class:`AstroDate` or a :class:`NoSunEvent` (polar honesty).
+
+    **``zone=None`` (default): solar-day anchoring, unchanged.**  ``date`` is
+    read as the UTC calendar day and every field is the crossing of *that* UTC
+    day, naive.  This is byte-identical to the library's behaviour before
+    ``zone`` existed -- every pre-existing caller and test is untouched.
+
+    >>> ev = sun_events(AstroDate(2000, 3, 20), 0.0, 0.0)
+    >>> ev.solar_noon.hour
+    12
+
+    **``zone=<tzinfo>``: civil-day anchoring.**  ``date`` is instead read as a
+    **civil day in ``zone``** -- the wall-clock stretch ``[00:00, 24:00)`` of
+    that zone on that date.  The UTC solar day and the zone's civil day need
+    not coincide (a zone west of Greenwich starts its civil day before the UTC
+    day that shares its date; a zone far east, after), so this method computes
+    the ordinary solar-day events for ``date - 1``, ``date``, and ``date + 1``
+    (covering any zone offset up to the day boundaries) and, for each field
+    independently, keeps whichever of those crossings converts (via
+    :meth:`AstroDate.astimezone`) into the requested civil window.
+
+    Because a day can be dropped or repeated at the International Date Line,
+    the civil day *can* contain two occurrences of one kind of event (or,
+    symmetrically, zero) -- the classic case being a zone many hours ahead of
+    UTC (e.g. ``Pacific/Kiritimati``, UTC+14) paired with a longitude that
+    still sits west of the date line, so its solar sunrise/sunset instants and
+    its civil day disagree about which calendar date they fall on.  When two
+    occurrences land in the civil window, **the first (earlier) instant is
+    returned** -- the same "first crossing wins" convention as the plain
+    solar-day method already uses for a single day; when none does (a
+    persistent high-latitude polar day/night), the :class:`NoSunEvent` for the
+    solar day sharing ``date``'s own calendar date is returned, since a
+    :class:`NoSunEvent` names no instant to reinterpret in ``zone``.
+
+    Every returned :class:`AstroDate` (``solar_noon`` and any real
+    rise/set/twilight field) is **aware**, converted into ``zone`` via
+    :meth:`~chronologia.astrodate.AstroDate.astimezone`; ``NoSunEvent`` fields
+    stay as produced by the underlying solar-day computation (naive UTC
+    ``date``), since they carry no instant.  ``NoSunEvent`` itself is
+    otherwise unaffected by ``zone``.
+    """
+    _validate(latitude, longitude)
+    point = _as_astrodate(date)
+    if zone is None:
+        return _sun_events_solar_day(point, latitude, longitude)
+
+    midnight = _midnight_utc(point)
+    prev_point = AstroDate.fromordinal(midnight.toordinal() - 1)
+    next_point = AstroDate.fromordinal(midnight.toordinal() + 1)
+    prev_events = _sun_events_solar_day(prev_point, latitude, longitude)
+    this_events = _sun_events_solar_day(point, latitude, longitude)
+    next_events = _sun_events_solar_day(next_point, latitude, longitude)
+    day_events = [prev_events, this_events, next_events]
+
+    start, end = _civil_window(point, zone)
+
+    values = {
+        field: _select_civil_event(field, day_events, zone, start, end,
+                                   this_events)
+        for field in _EVENT_FIELDS
+    }
+
+    return SunEvents(
+        date=start,
+        latitude=latitude,
+        longitude=longitude,
+        **values,
     )
 
 
