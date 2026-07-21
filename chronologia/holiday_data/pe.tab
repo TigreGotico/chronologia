@@ -1,0 +1,33 @@
+# civil-holidays v1
+# jurisdiction: PE
+# source: https://www.gob.pe/feriados
+#   (the official gob.pe calendar of "feriados nacionales", consolidating
+#   Decreto Legislativo 713 and the day-specific laws/decrees; local copy
+#   papers/holidays/pe_feriados_gobpe.html). Cross-checked against
+#   vacanza/holidays 0.101 (MIT). Names are the official Spanish.
+#
+#   Batalla de Arica y Día de la Bandera (7 June) became a national holiday
+#   only from 2024 (Ley 31794, 2023), so its rule carries a "2024-" range and
+#   is honestly silent in 2023. All Peruvian national holidays are fixed
+#   Gregorian dates or Easter offsets — Peru does not apply Monday-moving.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed  | Año Nuevo                          | 1 1   | public          |  |
+easter | Jueves Santo                       | -3    | public religious |  |
+easter | Viernes Santo                      | -2    | public religious |  |
+easter | Domingo de Resurrección            | 0     | public religious |  |
+fixed  | Día del Trabajo                    | 5 1   | public          |  |
+fixed  | Batalla de Arica y Día de la Bandera | 6 7 | public          |  |  | 2024-
+fixed  | San Pedro y San Pablo              | 6 29  | public religious |  |
+fixed  | Día de la Fuerza Aérea del Perú    | 7 23  | public          |  |
+fixed  | Día de la Independencia            | 7 28  | public          |  |
+fixed  | Día de la Gran Parada Militar      | 7 29  | public          |  |
+fixed  | Batalla de Junín                   | 8 6   | public          |  |
+fixed  | Santa Rosa de Lima                 | 8 30  | public religious |  |
+fixed  | Combate de Angamos                 | 10 8  | public          |  |
+fixed  | Todos Los Santos                   | 11 1  | public religious |  |
+fixed  | Inmaculada Concepción              | 12 8  | public religious |  |
+fixed  | Batalla de Ayacucho                | 12 9  | public          |  |
+fixed  | Navidad del Señor                  | 12 25 | public religious |  |

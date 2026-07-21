@@ -1,0 +1,41 @@
+# civil-holidays v1
+# jurisdiction: MA
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Morocco
+#   (the statutory list). Cross-checked against vacanza/holidays 0.101 (MIT).
+#   Names are the official Arabic (the reference's "(تقديري)"/"estimated"
+#   annotation on the Islamic days is NOT part of the official name and is
+#   dropped here).
+#
+#   AMAZIGH NEW YEAR: رأس السنة الأمازيغية (Yennayer, ⵉⴹ ⵏ ⵓⵙⴳⴳⵯⴰⵙ / Tifinagh) was
+#   made a paid national holiday only by the May 2023 royal decree, effective
+#   from 2024, so its fixed 13 January rule carries a "2024-" range — honestly
+#   silent in 2023 and present from 2024.
+#
+#   ISLAMIC DATES ARE TABULATED through islamic_civil (the arithmetic Hijri calendar); the
+#   reference marks them "(تقديري)" because the official Moroccan dates are
+#   astronomically estimated and can differ by ±1-2 days — those differences are
+#   catalogued in the differential test.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+# --- fixed civil ---
+fixed | رأس السنة الميلادية              | 1 1   | public          |  |
+fixed | ذكرى تقديم وثيقة الاستقلال        | 1 11  | public          |  |
+fixed | رأس السنة الأمازيغية             | 1 13  | public          |  |  | 2024-
+fixed | عيد العمال                      | 5 1   | public          |  |
+fixed | عيد العرش                       | 7 30  | public          |  |
+fixed | ذكرى استرجاع إقليم وادي الذهب     | 8 14  | public          |  |
+fixed | ذكرى ثورة الملك و الشعب           | 8 20  | public          |  |
+fixed | عيد الشباب                      | 8 21  | public          |  |
+fixed | ذكرى المسيرة الخضراء             | 11 6  | public          |  |
+fixed | عيد الإستقلال                    | 11 18 | public          |  |
+#
+# --- Islamic (tabular Hijri = islamic_civil) ---
+calendar_date | عيد الفطر          | islamic_civil 10 1  | public religious |  |
+calendar_date | عيد الفطر          | islamic_civil 10 2  | public religious |  |
+calendar_date | عيد الأضحى         | islamic_civil 12 10 | public religious |  |
+calendar_date | عيد الأضحى         | islamic_civil 12 11 | public religious |  |
+calendar_date | رأس السنة الهجرية  | islamic_civil 1 1   | public religious |  |
+calendar_date | عيد المولد النبوي  | islamic_civil 3 12  | public religious |  |
+calendar_date | عيد المولد النبوي  | islamic_civil 3 13  | public religious |  |

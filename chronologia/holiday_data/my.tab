@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: MY
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Malaysia
+#   (the federal gazetted holidays, Holidays Act 1951). Cross-checked against
+#   vacanza/holidays 0.101 (MIT). Names are the official Malay.
+#
+#   MAXIMAL CALENDAR MIXER — Islamic + Chinese + Hindu + Buddhist + civil:
+#     * Islamic (islamic_civil, tabulated): Hari Raya Puasa, Hari Raya Qurban,
+#       Awal Muharam, Hari Keputeraan Nabi Muhammad — arithmetic Hijri, ±1-2
+#       days from the sighted dates (catalogued in the differential test).
+#     * Chinese (Tahun Baharu Cina), Buddhist (Hari Wesak) and Hindu (Hari
+#       Deepavali): decree rows carrying the gazetted dates. Deepavali is
+#       federally gazetted but the reference package places it only at the
+#       state level, so it is an our-only national row here.
+#     * Hari Keputeraan Agong (the King's official birthday) is fixed by
+#       proclamation to the first Monday of June — an nth_weekday rule.
+#   The remaining national days are fixed Gregorian dates.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+# --- fixed civil ---
+fixed | Hari Pekerja      | 5 1   | public          |  |
+fixed | Hari Kebangsaan   | 8 31  | public          |  |
+fixed | Hari Malaysia     | 9 16  | public          |  |
+fixed | Hari Krismas      | 12 25 | public religious |  |
+#
+# --- King's official birthday (first Monday of June, by proclamation) ---
+nth_weekday | Hari Keputeraan Rasmi Seri Paduka Baginda Yang di-Pertuan Agong | 6 1 0 | public |  |
+#
+# --- Islamic (tabular Hijri = islamic_civil) ---
+calendar_date | Hari Raya Puasa                 | islamic_civil 10 1  | public religious |  |
+calendar_date | Hari Raya Puasa (Hari Kedua)    | islamic_civil 10 2  | public religious |  |
+calendar_date | Hari Raya Qurban                | islamic_civil 12 10 | public religious |  |
+calendar_date | Awal Muharam                    | islamic_civil 1 1   | public religious |  |
+calendar_date | Hari Keputeraan Nabi Muhammad S.A.W. | islamic_civil 3 12 | public religious |  |
+#
+# --- decree-tabulated (Chinese / Buddhist / Hindu) ---
+decree | Tahun Baharu Cina              | 2023-01-22 2024-02-10 2025-01-29 | public religious |  |
+decree | Tahun Baharu Cina (Hari Kedua) | 2023-01-23 2024-02-11 2025-01-30 | public religious |  |
+decree | Hari Wesak                     | 2023-05-04 2024-05-22 2025-05-12 | public religious |  |
+decree | Hari Deepavali                 | 2023-11-12 2024-10-31 2025-10-20 | public religious |  |

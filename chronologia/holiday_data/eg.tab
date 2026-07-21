@@ -1,0 +1,39 @@
+# civil-holidays v1
+# jurisdiction: EG
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Egypt
+#   (the statutory list; Islamic dates resolve through the tabular Islamic
+#   calendar). Cross-checked against vacanza/holidays 0.101 (MIT). Names are the
+#   official Arabic.
+#
+#   ISLAMIC DATES ARE TABULATED: chronologia resolves the Islamic holidays
+#   through the arithmetic tabular Hijri calendar (islamic_civil, basis
+#   "tabulated"), an honest deterministic model. Egypt's actual observance and
+#   the reference's estimates are astronomical/decreed and can differ by ±1-2
+#   days; those differences (plus Egypt's "يوم تعويضي" compensatory-day shifts,
+#   which are NOT modelled) are catalogued as documented disagreements in the
+#   differential test, not smoothed over. Sham Ennessim (شم النسيم) is the
+#   Monday after Coptic (Orthodox) Easter, an Easter offset on the
+#   Julian-Gregorian reckoning.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+# --- fixed civil / Coptic ---
+fixed  | عيد الميلاد المجيد                | 1 7   | public religious |  |
+fixed  | ثورة ٢٥ يناير وعيد الشرطة          | 1 25  | public          |  |
+fixed  | عيد تحرير سيناء                   | 4 25  | public          |  |
+fixed  | عيد العمال                       | 5 1   | public          |  |
+fixed  | عيد ثورة ٣٠ يونيو                 | 6 30  | public          |  |
+fixed  | عيد ثورة ٢٣ يوليو                 | 7 23  | public          |  |
+fixed  | عيد القوات المسلحة               | 10 6  | public          |  |
+easter | عيد شم النسيم                     | 1 julian_gregorian_date | public religious |  |
+#
+# --- Islamic (tabular Hijri = islamic_civil) ---
+calendar_date | عيد الفطر المبارك          | islamic_civil 10 1  | public religious |  |
+calendar_date | عيد الفطر المبارك          | islamic_civil 10 2  | public religious |  |
+calendar_date | وقفة عيد الأضحى المبارك    | islamic_civil 12 9  | public religious |  |
+calendar_date | عيد الأضحى المبارك         | islamic_civil 12 10 | public religious |  |
+calendar_date | عيد الأضحى المبارك         | islamic_civil 12 11 | public religious |  |
+calendar_date | عيد الأضحى المبارك         | islamic_civil 12 12 | public religious |  |
+calendar_date | رأس السنة الهجرية          | islamic_civil 1 1   | public religious |  |
+calendar_date | المولد النبوي الشريف       | islamic_civil 3 12  | public religious |  |

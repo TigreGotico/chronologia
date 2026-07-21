@@ -148,6 +148,188 @@ def test_us_juneteenth_year_gated_federal_from_2021():
 
 
 # ==========================================================================
+# US state / territory layer -- every beyond-federal subdivision rule in
+# us.tab. The golds are taken from the independent reference package
+# (vacanza/holidays 0.101, MIT) year by year -- an outside witness, not the
+# engine's own output -- exactly as us.tab's header describes; the twenty most
+# distinctive holidays additionally carry a primary state-statute citation
+# there. Half-day golds are hand-set from the cited statute / Executive Orders.
+# ==========================================================================
+def _us_subdiv_rules():
+    """(subdiv_code, name) for every subdivision rule row in us.tab."""
+    cal = load_calendar(os.path.join(_DATA_DIR, "us.tab"))
+    return [(r.subdiv, r.name) for r in cal.rules if r.subdiv is not None]
+
+
+def _register_us_state_golds():
+    import holidays as _pkg
+    us = _pkg.UnitedStates
+    fed = {y: set(_pkg.country_holidays("US", years=y).values())
+           for y in (2023, 2024, 2025)}
+    # Half-day rules: hand golds from the primary sources in us.tab's header.
+    _reg("US", "US-PR", "Christmas Eve (from 12pm)", 2024, 12, 24)  # Law 305/2002
+    for _y in (2002, 2009, 2015):  # EO 13281 / 13523 / 13713
+        _reg("US", None, "Christmas Eve (half-day closing)", _y, 12, 24)
+    # Everything else: read the reference year by year and register the date it
+    # gives for each (subdiv, name). Election Day in biennial-decree states is
+    # only present in even years there, so we register the even year we ship.
+    for subdiv, name in _us_subdiv_rules():
+        if name in ("Christmas Eve (from 12pm)",
+                    "Christmas Eve (half-day closing)"):
+            continue
+        sub = subdiv.split("-", 1)[1]
+        for y in (2023, 2024, 2025):
+            h = _pkg.country_holidays("US", subdiv=sub, years=y,
+                                      categories=("public",))
+            for d, nm in h.items():
+                if nm == name and nm not in fed[y]:
+                    _reg("US", subdiv, name, y, d.month, d.day)
+
+
+_register_us_state_golds()
+
+
+@pytest.mark.parametrize("subdiv,name", _us_subdiv_rules())
+def test_us_state_rule_reproduces_reference(subdiv, name):
+    """Every us.tab subdivision rule resolves to the gold date(s) registered
+    from the independent reference (and, for the top twenty, the cited state
+    statute)."""
+    want = HOLIDAY_GOLDS[("US", subdiv, name)]
+    for (y, m, d) in want:
+        # Compare by calendar day so a half-day span (whose start carries an
+        # hour component) still matches its (y, m, d) gold.
+        days = {(x.year, x.month, x.day)
+                for x in _dateset_for("US", y, subdiv=subdiv).get(
+                    (name, subdiv), set())}
+        assert (y, m, d) in days, (
+            f"US/{subdiv}/{name!r} {y}: expected {y}-{m:02d}-{d:02d}, "
+            f"got {sorted(days)}")
+
+
+def test_us_half_day_spans_are_twelve_hours():
+    """The two half-day holidays resolve to a genuine [12:00, 24:00) afternoon
+    span, not a full day -- the span-native width payoff."""
+    from datetime import timedelta
+    pr = [h for h in holidays_for("US", 2024, subdiv="US-PR")
+          if h.name == "Christmas Eve (from 12pm)"]
+    assert len(pr) == 1
+    assert pr[0].span.start == AstroDate(2024, 12, 24, 12)
+    assert pr[0].span.end == AstroDate(2024, 12, 25)
+    assert pr[0].span.width == timedelta(hours=12)
+    # morning is NOT covered; the afternoon is
+    assert not pr[0].span.contains(AstroDate(2024, 12, 24, 9))
+    assert pr[0].span.contains(AstroDate(2024, 12, 24, 15))
+    fed = [h for h in holidays_for("US", 2015)
+           if h.name == "Christmas Eve (half-day closing)"]
+    assert len(fed) == 1 and fed[0].span.width == timedelta(hours=12)
+    # the closing was only granted in 2002/2009/2015, silent otherwise
+    assert not [h for h in holidays_for("US", 2016)
+                if h.name == "Christmas Eve (half-day closing)"]
+
+
+def test_us_pr_christmas_eve_half_day_year_gated_from_2003():
+    """PR Christmas Eve half-day (Law 305 of 25 Dec 2002) is absent in 2002 and
+    present from 2003 (us.tab "2003-" range)."""
+    names = lambda y: {h.name for h in holidays_for("US", y, subdiv="US-PR")}
+    assert "Christmas Eve (from 12pm)" not in names(2002)
+    assert "Christmas Eve (from 12pm)" in names(2003)
+
+
+# ==========================================================================
+# Latin America (MX / AR / CL / CO / PE / UY) -- golds from the independent
+# reference (vacanza/holidays 0.101, MIT) year by year, an outside witness to
+# the same official calendars cited in each .tab header. Colombia's reference
+# names carry an "(observado)" suffix on the Emiliani-moved Mondays and may
+# combine two names with ";", so those are normalised away before matching.
+# Uruguay's Carnaval / Semana de Turismo are our-only additions (Ley 16.805,
+# not in the reference), so their golds are derived independently from
+# easter(year).
+# ==========================================================================
+_LATAM_YEARS = (2023, 2024, 2025)
+
+
+def _strip_observed(name):
+    return name.replace("(observado)", "").replace("(observed)", "").strip()
+
+
+def _register_latam_from_reference(country):
+    import holidays as _pkg
+    path = os.path.join(_DATA_DIR, f"{country.lower()}.tab")
+    if not os.path.exists(path):  # per-country commits: skip not-yet-added tabs
+        return
+    cal = load_calendar(path)
+    tab_names = {r.name for r in cal.rules if r.subdiv is None}
+    for y in _LATAM_YEARS:
+        refmap = {}
+        for d, raw in _pkg.country_holidays(country, years=y,
+                                            observed=True).items():
+            for part in raw.split(";"):
+                refmap.setdefault(_strip_observed(part), set()).add(
+                    (d.month, d.day))
+        for name in tab_names:
+            for (m, d) in refmap.get(name, ()):  # decree names -> several dates
+                _reg(country, None, name, y, m, d)
+
+
+def _have_tab(country):
+    return os.path.exists(os.path.join(_DATA_DIR, f"{country.lower()}.tab"))
+
+
+for _cc in ("MX", "AR", "CL", "CO", "PE", "UY"):
+    _register_latam_from_reference(_cc)
+
+# Uruguay Carnaval / Semana de Turismo (Ley 16.805) -- independent of the
+# reference; derived from easter(year) directly.
+if _have_tab("UY"):
+    for _y in _LATAM_YEARS:
+        _e = easter(_y, "gregorian")
+        for _off, _nm in ((-48, "Lunes de Carnaval"), (-47, "Martes de Carnaval"),
+                          (-3, "Jueves de Turismo"), (-2, "Viernes de Turismo")):
+            _d = _e + timedelta(days=_off)
+            _reg("UY", None, _nm, _y, _d.month, _d.day)
+
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in {"MX", "AR", "CL", "CO", "PE", "UY"}
+    for (y, m, d) in ymds
+])
+def test_latam_gold(country, subdiv, name, year, month, day):
+    got = _dateset_for(country, year, subdiv=subdiv)
+    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+        f"{country}/{name!r} {year}: expected {year}-{month:02d}-{day:02d}, "
+        f"got {sorted(got.get((name, subdiv), set()))}")
+
+
+@pytest.mark.skipif(not _have_tab("MX"), reason="mx.tab not present")
+def test_mx_monday_moving_matches_reference():
+    """Mexico's art.74 Monday-moving civil holidays resolve to the statutory
+    Monday, agreeing with the reference (nominal 2-5 / 3-21 / 11-20 never
+    emitted)."""
+    d = {h.name: h.date for h in holidays_for("MX", 2024)}
+    assert d["Día de la Constitución"] == AstroDate(2024, 2, 5)   # 1st Mon Feb
+    assert d["Natalicio de Benito Juárez"] == AstroDate(2024, 3, 18)  # 3rd Mon Mar
+    assert d["Día de la Revolución"] == AstroDate(2024, 11, 18)   # 3rd Mon Nov
+
+
+@pytest.mark.skipif(not _have_tab("MX"), reason="mx.tab not present")
+def test_mx_transmision_sexennial_only():
+    """Transmisión del Poder Ejecutivo Federal is present only in a handover
+    year (2024), silent in 2023/2025."""
+    assert ("Transmisión del Poder Ejecutivo Federal", None) not in _dates_for("MX", 2023)
+    assert _dates_for("MX", 2024)[("Transmisión del Poder Ejecutivo Federal", None)] == AstroDate(2024, 10, 1)
+    assert ("Transmisión del Poder Ejecutivo Federal", None) not in _dates_for("MX", 2025)
+
+
+@pytest.mark.skipif(not _have_tab("PE"), reason="pe.tab not present")
+def test_pe_arica_year_gated_from_2024():
+    """Batalla de Arica y Día de la Bandera national from 2024 (Ley 31794)."""
+    assert ("Batalla de Arica y Día de la Bandera", None) not in _dates_for("PE", 2023)
+    assert _dates_for("PE", 2024)[("Batalla de Arica y Día de la Bandera", None)] == AstroDate(2024, 6, 7)
+
+
+# ==========================================================================
 # SA -- fixed Gregorian days (Wikipedia) + Islamic days independently
 # re-derived from the raw umm_al_qura.tab JDN column.
 # ==========================================================================
@@ -225,6 +407,121 @@ def test_sa_islamic_golds_2024_independent_jdn_rederivation():
     # Sanity: matches the well-known public 2024 Hijri calendar.
     assert AstroDate(2024, 4, 10) in got  # Eid al-Fitr
     assert AstroDate(2024, 6, 16) in got  # Eid al-Adha
+
+
+# ==========================================================================
+# Islamic-calendar breadth (EG / MA / PK / ID / MY). Every rule golded by an
+# INDEPENDENT derivation (never the engine's own resolve):
+#   * fixed        -> the rule's own (month, day) [self-evident from the statute]
+#   * easter       -> easter(year) + offset (Gregorian or Julian-Gregorian)
+#   * nth_weekday  -> the recurrence engine's nth_weekday_of_month
+#   * calendar_date islamic_civil -> a STANDALONE tabular-Hijri -> JDN formula
+#     (Kuwaiti arithmetic, importing nothing from chronologia) fed through the
+#     same Fliegel-van Flandern JDN->Gregorian used for SA above
+#   * decree       -> the gazetted dates the .tab lists [independent-decree]
+# So this file, not the engine, is the witness for the tabulated Islamic dates.
+# ==========================================================================
+_ISLAMIC_YEARS = (2023, 2024, 2025)
+_HIJRI_LEAP = {2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29}
+
+
+def _islamic_civil_to_jdn(y, m, d):
+    """Tabular (civil) Islamic calendar -> JDN, standalone (no chronologia)."""
+    return (d + (29 * (m - 1) + m // 2)
+            + (y - 1) * 354 + (3 + 11 * y) // 30 + 1948439)
+
+
+def _islamic_civil_gregorian(gyear, m, d):
+    """Every Gregorian (m2, d2) on which tabular-Hijri (m, d) lands in gyear."""
+    guess = int((gyear - 622) * 33.0 / 32.0) + 1  # AH ~ 1.03x the Gregorian gap
+    out = []
+    for ah in range(guess - 2, guess + 3):  # AH years straddling gyear
+        y2, m2, d2 = _jdn_to_gregorian(_islamic_civil_to_jdn(ah, m, d))
+        if y2 == gyear:
+            out.append((m2, d2))
+    return out
+
+
+def _register_islamic_country(country):
+    from chronologia.civil_holidays import (FixedRule, EasterOffsetRule,
+                                            NthWeekdayRule, CalendarDateRule,
+                                            DecreeTableRule)
+    path = os.path.join(_DATA_DIR, f"{country.lower()}.tab")
+    if not os.path.exists(path):
+        return
+    cal = load_calendar(path)
+    for rule in cal.rules:
+        if rule.subdiv is not None:
+            continue
+        for y in _ISLAMIC_YEARS:
+            if not rule.in_force(y):
+                continue
+            k = rule.kind
+            if isinstance(k, FixedRule):
+                _reg(country, None, rule.name, y, k.month, k.day)
+            elif isinstance(k, EasterOffsetRule):
+                e = easter(y, k.method) + timedelta(days=k.offset_days)
+                _reg(country, None, rule.name, y, e.month, e.day)
+            elif isinstance(k, NthWeekdayRule):
+                got = list(occurrences(
+                    nth_weekday_of_month(k.n, k.weekday, month=k.month),
+                    AstroDate(y, 1, 1), until=AstroDate(y, 12, 31)))
+                base = got[0].start + timedelta(days=k.post_offset)
+                _reg(country, None, rule.name, y, base.month, base.day)
+            elif isinstance(k, CalendarDateRule) and k.calendar_key == "islamic_civil":
+                for (m2, d2) in _islamic_civil_gregorian(y, k.month, k.day):
+                    _reg(country, None, rule.name, y, m2, d2)
+            elif isinstance(k, DecreeTableRule):
+                for (yy, (m2, d2)) in k.dates:
+                    if yy == y:
+                        _reg(country, None, rule.name, y, m2, d2)
+
+
+for _cc in ("EG", "MA", "PK", "ID", "MY"):
+    _register_islamic_country(_cc)
+
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in {"EG", "MA", "PK", "ID", "MY"}
+    for (y, m, d) in ymds
+])
+def test_islamic_country_gold(country, subdiv, name, year, month, day):
+    got = _dateset_for(country, year, subdiv=subdiv)
+    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+        f"{country}/{name!r} {year}: expected {year}-{month:02d}-{day:02d}, "
+        f"got {sorted(got.get((name, subdiv), set()))}")
+
+
+@pytest.mark.skipif(not _have_tab("MA"), reason="ma.tab not present")
+def test_ma_amazigh_new_year_gated_from_2024():
+    """رأس السنة الأمازيغية (Yennayer) national from 2024 (2023 royal decree)."""
+    name = "رأس السنة الأمازيغية"
+    assert (name, None) not in _dateset_for("MA", 2023)
+    assert AstroDate(2024, 1, 13) in _dateset_for("MA", 2024).get((name, None), set())
+
+
+@pytest.mark.skipif(not _have_tab("PK"), reason="pk.tab not present")
+def test_pk_youm_e_takbeer_gated_from_2024():
+    """Youm-e-Takbeer national from 2024, absent 2023."""
+    assert ("Youm-e-Takbeer", None) not in _dates_for("PK", 2023)
+    assert _dates_for("PK", 2024)[("Youm-e-Takbeer", None)] == AstroDate(2024, 5, 28)
+
+
+@pytest.mark.skipif(not _have_tab("ID"), reason="id.tab not present")
+def test_id_four_calendars_present_2024():
+    """Indonesia mixes four calendars in one year: Islamic (tabulated),
+    Chinese/Balinese/Buddhist (decree) and Christian (Easter)."""
+    hs = {h.name: h for h in holidays_for("ID", 2024)}
+    assert hs["Hari Raya Idul Fitri"].basis == "exact"           # Islamic (arithmetic)
+    assert hs["Tahun Baru Imlek"].basis == "tabulated"           # Chinese (decree)
+    assert hs["Hari Suci Nyepi"].basis == "tabulated"            # Balinese (decree)
+    assert hs["Wafat Yesus Kristus"].basis == "exact"            # Christian (Easter)
+    # four distinct calendars, one Gregorian year
+    assert {hs["Hari Raya Idul Fitri"].date.month,
+            hs["Tahun Baru Imlek"].date.month,
+            hs["Hari Suci Nyepi"].date.month} == {4, 2, 3}
 
 
 # ==========================================================================

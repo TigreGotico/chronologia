@@ -119,6 +119,7 @@ __all__ = [
     "FixedRule",
     "NthWeekdayRule",
     "WeekdayOnOrBeforeRule",
+    "WeekdayOnOrAfterRule",
     "EasterOffsetRule",
     "CalendarDateRule",
     "DecreeTableRule",
@@ -242,6 +243,42 @@ class WeekdayOnOrBeforeRule:
         anchor = AstroDate(year, self.month, self.day)
         delta = (anchor.weekday() - self.weekday) % 7
         return ((anchor - timedelta(days=delta), BASIS_EXACT),)
+
+
+@dataclass(frozen=True)
+class WeekdayOnOrAfterRule:
+    """The earliest ``weekday`` falling on or after ``(month, day)`` each year.
+
+    The mirror of :class:`WeekdayOnOrBeforeRule`, and the minimal kind for
+    "move this holiday to the following Monday (unless it already is one)"
+    rules. Colombia's Ley 51 de 1983 ("Ley Emiliani") relocates a fixed list of
+    civil/religious holidays to the *next Monday on or after* their nominal
+    date: Reyes Magos (6 Jan), San José (19 Mar), San Pedro y San Pablo
+    (29 Jun), La Asunción (15 Aug), Día de la Raza (12 Oct), Todos los Santos
+    (1 Nov) and Independencia de Cartagena (11 Nov) — so ``weekday`` is Monday
+    (0). When the nominal date is already that weekday, it is unmoved (Reyes
+    2025 stays 6 Jan).
+
+    ``weekday`` is Monday==0 .. Sunday==6 (the :class:`AstroDate` convention).
+    Basis ``exact``.
+    """
+
+    month: int
+    day: int
+    weekday: int
+
+    def __post_init__(self) -> None:
+        if not 1 <= self.month <= 12:
+            raise ValueError(f"month out of range: {self.month}")
+        if not 1 <= self.day <= 31:
+            raise ValueError(f"day out of range: {self.day}")
+        if not 0 <= self.weekday <= 6:
+            raise ValueError(f"weekday out of range: {self.weekday}")
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        anchor = AstroDate(year, self.month, self.day)
+        delta = (self.weekday - anchor.weekday()) % 7
+        return ((anchor + timedelta(days=delta), BASIS_EXACT),)
 
 
 @dataclass(frozen=True)
@@ -583,12 +620,16 @@ class HolidayRule:
     substitute: Optional[SubstitutePolicy] = None
     from_year: Optional[int] = None
     until_year: Optional[int] = None
+    span_shape: str = "day"
 
     def __post_init__(self) -> None:
         bad = set(self.categories) - CATEGORIES
         if bad:
             raise ValueError(
                 f"unknown categories {sorted(bad)}; schema is {sorted(CATEGORIES)}")
+        if self.span_shape not in _SPAN_SHAPES:
+            raise ValueError(
+                f"unknown span shape {self.span_shape!r}; expected {_SPAN_SHAPES}")
         if (self.from_year is not None and self.until_year is not None
                 and self.from_year > self.until_year):
             raise ValueError(
@@ -661,6 +702,34 @@ def _day_span(date: AstroDate, basis: str) -> DateSpan:
     return DateSpan(start, start + timedelta(days=1), basis)
 
 
+#: Half-day span shapes. The engine's :class:`~chronologia.astrodate.DateSpan`
+#: is span-native — its *width* IS the referent — so a half-day holiday is not a
+#: flag bolted onto a day, it is a genuinely narrower span. ``half_pm`` (the
+#: common "offices close at noon" pre-holiday afternoon) is the interval
+#: ``[12:00, 24:00)`` of the day — the free afternoon; ``half_am`` is
+#: ``[00:00, 12:00)``. ``day`` (the default) is the full ``[00:00, 24:00)``.
+_SPAN_SHAPES = ("day", "half_pm", "half_am")
+
+
+def _shape_span(date: AstroDate, basis: str, shape: str) -> DateSpan:
+    """Build the resolved :class:`DateSpan` for ``shape``.
+
+    A half-day is a real 12-hour-wide span, so ``span.width`` reports
+    ``timedelta(hours=12)`` and ``span.contains`` is honest about which half of
+    the civil day the holiday actually covers (a ``half_pm`` afternoon does not
+    contain the morning). This is the first holiday whose width is not a whole
+    day — the payoff of a span-native model over a date-plus-flag one.
+    """
+    day0 = AstroDate(date.year, date.month, date.day)
+    if shape == "day":
+        return DateSpan(day0, day0 + timedelta(days=1), basis)
+    if shape == "half_pm":
+        return DateSpan(day0.replace(hour=12), day0 + timedelta(days=1), basis)
+    if shape == "half_am":
+        return DateSpan(day0, day0.replace(hour=12), basis)
+    raise ValueError(f"unknown span shape {shape!r}; expected {_SPAN_SHAPES}")
+
+
 # --------------------------------------------------------------------------
 # The calendar object and the data-file loader.
 # --------------------------------------------------------------------------
@@ -705,7 +774,7 @@ class HolidayCalendar:
             for date, basis in rule.resolve(year):
                 out.append(CivilHoliday(
                     name=rule.name,
-                    span=_day_span(date, basis),
+                    span=_shape_span(date, basis, rule.span_shape),
                     jurisdiction=self.jurisdiction,
                     subdiv=rule.subdiv,
                     categories=rule.categories,
@@ -741,6 +810,8 @@ def _parse_kind(kind: str, args: str) -> RuleKind:
         return NthWeekdayRule(month, n, wd, post)
     if kind == "weekday_onbefore":
         return WeekdayOnOrBeforeRule(int(parts[0]), int(parts[1]), int(parts[2]))
+    if kind == "weekday_onafter":
+        return WeekdayOnOrAfterRule(int(parts[0]), int(parts[1]), int(parts[2]))
     if kind == "easter":
         offset = int(parts[0])
         method = parts[1] if len(parts) > 1 else "gregorian"
@@ -790,7 +861,7 @@ def load_calendar(path: str) -> HolidayCalendar:
     ``jurisdiction``, ``source`` (official URL) and ``retrieved`` (date) to be
     present — provenance is mandatory. Each data row is pipe-delimited::
 
-        kind | name | args | categories | subdiv | observed | valid
+        kind | name | args | categories | subdiv | observed | valid | span
 
     * ``kind`` — ``fixed`` / ``nth_weekday`` / ``easter`` / ``calendar_date`` /
       ``equinox`` / ``solar_term`` / ``decree`` / ``one_off`` (see the per-kind
@@ -805,6 +876,10 @@ def load_calendar(path: str) -> HolidayCalendar:
       substitute (``gb_substitute`` / ``jp_furikae``); empty = none.
     * ``valid`` — optional validity range (``"2024-"`` / ``"-2015"`` /
       ``"2016-2020"`` / ``"2024"``; empty = always in force).
+    * ``span`` — optional span shape: ``day`` (default, a whole-day holiday),
+      ``half_pm`` (the free afternoon ``[12:00, 24:00)`` — the "offices close at
+      noon" pre-holiday half-day) or ``half_am`` (``[00:00, 12:00)``). The
+      resolved :class:`CivilHoliday`'s span carries the real 12-hour width.
     """
     meta: Dict[str, str] = {}
     rules = []
@@ -827,6 +902,7 @@ def load_calendar(path: str) -> HolidayCalendar:
             subdiv = cols[4] if len(cols) > 4 and cols[4] else None
             obs_name = cols[5] if len(cols) > 5 and cols[5] else None
             valid = cols[6] if len(cols) > 6 and cols[6] else None
+            span_shape = cols[7] if len(cols) > 7 and cols[7] else "day"
             # The observed column names either a relocating ObservedShift or an
             # in-lieu SubstitutePolicy (they are mutually exclusive per rule).
             observed = substitute = None
@@ -846,7 +922,8 @@ def load_calendar(path: str) -> HolidayCalendar:
                 observed=observed,
                 substitute=substitute,
                 from_year=from_year,
-                until_year=until_year))
+                until_year=until_year,
+                span_shape=span_shape))
     missing = [h for h in _REQUIRED_HEADERS if h not in meta]
     if missing:
         raise ValueError(

@@ -1,0 +1,32 @@
+# civil-holidays v1
+# jurisdiction: UY
+# source: https://www.impo.com.uy/bases/leyes/16805-1996
+#   (Ley 16.805 de feriados, as amended by Ley 17.414; local copy
+#   papers/holidays/uy_ley16805_impo.html). Cross-checked against
+#   vacanza/holidays 0.101 (MIT). Names are the official Spanish.
+#
+#   Uruguay's law distinguishes "feriados laborables" (paid non-working days:
+#   the five the reference lists) from "feriados no laborables" (observed but
+#   not paid, notably Carnaval and Semana de Turismo — Uruguay's secular names
+#   for Holy Week). The reference carries only the five laborables, so Carnaval
+#   (the Monday and Tuesday before Ash Wednesday) and Semana de Turismo
+#   (Thursday/Friday of Holy Week) are our-only additions here, grounded in
+#   Ley 16.805 art. 18 and exercising the Easter offsets. They keep the
+#   secular civil names the law uses, not "Carnaval"/"Jueves Santo" religious
+#   glosses.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+# --- feriados laborables (the reference's five) ---
+fixed  | Año Nuevo                       | 1 1   | public          |  |
+fixed  | Día de los Trabajadores         | 5 1   | public          |  |
+fixed  | Jura de la Constitución         | 7 18  | public          |  |
+fixed  | Declaratoria de la Independencia| 8 25  | public          |  |
+fixed  | Día de la Familia               | 12 25 | public religious |  |
+#
+# --- feriados no laborables (Ley 16.805 art. 18; Easter-linked) ---
+easter | Lunes de Carnaval               | -48   | public          |  |
+easter | Martes de Carnaval              | -47   | public          |  |
+easter | Jueves de Turismo               | -3    | public          |  |
+easter | Viernes de Turismo              | -2    | public          |  |

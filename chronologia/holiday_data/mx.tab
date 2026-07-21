@@ -1,0 +1,38 @@
+# civil-holidays v1
+# jurisdiction: MX
+# source: https://www.diputados.gob.mx/LeyesBiblio/pdf/LFT.pdf
+#   (Ley Federal del Trabajo, art. 74 — the statutory list of "días de descanso
+#   obligatorio"; local copy papers/holidays/mx_lft_art74.pdf). Cross-checked
+#   against vacanza/holidays 0.101 (MIT). Names are the official Spanish.
+#
+#   MONDAY-MOVING RULE (art. 74, fracciones II, III and VI): three civil
+#   holidays are fixed by law NOT to their historical date but to a Monday —
+#   this is Mexico's own "puente" flavour, distinct from a weekend observed
+#   shift. The statute itself names the Monday, so the rule kind is
+#   nth_weekday, not a shift applied to a fixed date:
+#     * Día de la Constitución — nominal 5 Feb, observed the FIRST Monday of
+#       February (art. 74-II).
+#     * Natalicio de Benito Juárez — nominal 21 Mar, observed the THIRD Monday
+#       of March (art. 74-III).
+#     * Día de la Revolución — nominal 20 Nov, observed the THIRD Monday of
+#       November (art. 74-VI).
+#   Because the statute defines these AS the Monday, chronologia and the
+#   reference agree on the moved date; the historical nominal dates (2-5, 3-21,
+#   11-20) are documented here but never emitted.
+#
+#   Transmisión del Poder Ejecutivo Federal (art. 74-VII) is a holiday only in a
+#   presidential-handover year (every six years, 1 October since the 2024
+#   handover under the 2014 electoral reform), so it is a decree row listing the
+#   sexennial dates, honestly silent in the five intervening years.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed       | Año Nuevo                                | 1 1    | public          |  |
+nth_weekday | Día de la Constitución                   | 2 1 0  | public          |  |
+nth_weekday | Natalicio de Benito Juárez               | 3 3 0  | public          |  |
+fixed       | Día del Trabajo                          | 5 1    | public          |  |
+fixed       | Día de la Independencia                  | 9 16   | public          |  |
+decree      | Transmisión del Poder Ejecutivo Federal  | 2024-10-01 2030-10-01 | public |  |
+nth_weekday | Día de la Revolución                     | 11 3 0 | public          |  |
+fixed       | Navidad                                  | 12 25  | public religious |  |
