@@ -84,6 +84,7 @@ from chronologia.astrodate import (BASIS_EXACT, BASIS_TABULATED, AstroDate,
                                    DateSpan)
 from chronologia.calendars import CALENDARS, CalendarRangeError, gregorian_to_jdn
 from chronologia.computus import easter
+from chronologia.equinoxes import equinox, solar_term
 from chronologia.recurrence import (WEEKDAYS, nth_weekday_of_month,
                                     occurrences)
 
@@ -95,9 +96,13 @@ __all__ = [
     "EasterOffsetRule",
     "CalendarDateRule",
     "DecreeTableRule",
+    "EquinoxRule",
+    "SolarTermRule",
     "ObservedShift",
     "US_OBSERVED_SHIFT",
     "SUNDAY_TO_MONDAY",
+    "SATURDAY_SUNDAY_TO_MONDAY",
+    "IL_INDEPENDENCE_SHIFT",
     "HolidayRule",
     "CivilHoliday",
     "HolidayCalendar",
@@ -260,17 +265,29 @@ class CalendarDateRule:
         cal = CALENDARS[self.calendar_key]
         lo = gregorian_to_jdn(year, 1, 1)
         hi = gregorian_to_jdn(year, 12, 31)
-        # Estimate the other calendar's year that maps here, then sweep a small
-        # window around it (a lunar year is ~11 days short of a solar one).
-        est = int((year - 622) * 33 / 32) + 1
+        # Derive the *candidate* calendar years by asking the calendar itself
+        # which of its years straddle this Gregorian year's two boundaries, then
+        # sweep one year either side. This is calendar-agnostic — it works for a
+        # lunar year numbered off the Hijri epoch (``umm_al_qura``), a lunisolar
+        # year numbered off the Gregorian one it opens in (``chinese``) and a
+        # ~3760-offset year (``hebrew``) alike — where a fixed arithmetic guess
+        # keyed to one epoch would silently miss the others. A year whose
+        # boundary falls outside the calendar's range simply contributes no
+        # candidate (honest silence, never a fabricated date).
+        cyears = set()
+        for gm, gd in ((1, 1), (12, 31)):
+            try:
+                cyears.add(cal.from_astro(AstroDate(year, gm, gd)).year)
+            except (CalendarRangeError, KeyError, ValueError):
+                continue
+        if not cyears:
+            return ()
         basis = self._basis()
         out = []
-        for cyear in range(est - 2, est + 3):
+        for cyear in range(min(cyears) - 1, max(cyears) + 2):
             try:
                 jdn = cal.to_jdn(cyear, self.month, self.day)
-            except CalendarRangeError:
-                continue
-            except (KeyError, ValueError):
+            except (CalendarRangeError, KeyError, ValueError):
                 continue
             if lo <= jdn <= hi:
                 out.append((AstroDate.from_calendar(
@@ -296,6 +313,67 @@ class DecreeTableRule:
             if y == year:
                 out.append((AstroDate(y, m, d), BASIS_TABULATED))
         return tuple(out)
+
+
+@dataclass(frozen=True)
+class EquinoxRule:
+    """The equinox holiday of ``year``, taken on its date in a civil timezone.
+
+    Japan's Shunbun no Hi (Vernal Equinox Day) and Shūbun no Hi (Autumnal
+    Equinox Day) are gazetted each February from the *astronomical* equinox
+    instant reckoned in Japan Standard Time (UTC+9). ``which`` is the cardinal
+    event name :func:`~chronologia.equinoxes.equinox` accepts (``"march"`` /
+    ``"september"``); ``tz_offset_hours`` is the civil offset the date is read
+    in. The instant comes from Meeus ch.27 arithmetic that reproduces the
+    Cabinet Office's published dates to within its own accuracy, so the whole
+    civil day is a firm date — basis ``exact``. (Because the gazette is the
+    legal authority, the ``.tab`` header cites it; the arithmetic only
+    *reproduces* it, and the golds assert the published dates, not this
+    function's output.)
+    """
+
+    which: str
+    tz_offset_hours: float = 0.0
+
+    def __post_init__(self) -> None:
+        # Delegate the ``which`` validation to the equinox engine on first use;
+        # only the two equinoxes (not the solstices) are civil holidays here.
+        if self.which not in ("march", "september"):
+            raise ValueError(
+                f"equinox holiday must be 'march' or 'september', "
+                f"got {self.which!r}")
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        span = equinox(year, self.which)
+        instant = span.start + span.width / 2 + timedelta(
+            hours=self.tz_offset_hours)
+        return ((AstroDate(instant.year, instant.month, instant.day),
+                 BASIS_EXACT),)
+
+
+@dataclass(frozen=True)
+class SolarTermRule:
+    """A solar-term holiday of ``year``, taken on its date in a civil timezone.
+
+    China's Qingming (Tomb-Sweeping Day) is not a lunar date but a *solar term*
+    (jieqi) — the day the Sun reaches ecliptic longitude 15°, reckoned in China
+    Standard Time (UTC+8). ``term`` is a name
+    :func:`~chronologia.equinoxes.solar_term` accepts (e.g. ``"qingming"``);
+    ``tz_offset_hours`` is the civil offset. Basis ``exact`` — the same
+    computed-date footing as :class:`EquinoxRule` and
+    :class:`EasterOffsetRule`. The State Council announcement remains the cited
+    legal authority in the ``.tab`` header.
+    """
+
+    term: str
+    tz_offset_hours: float = 0.0
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        span = solar_term(year, self.term)
+        instant = span.start + span.width / 2 + timedelta(
+            hours=self.tz_offset_hours)
+        return ((AstroDate(instant.year, instant.month, instant.day),
+                 BASIS_EXACT),)
 
 
 # --------------------------------------------------------------------------
@@ -326,10 +404,21 @@ class ObservedShift:
 US_OBSERVED_SHIFT = ObservedShift(((5, -1), (6, 1)))
 #: "If it falls on a Sunday, observe the next Monday."
 SUNDAY_TO_MONDAY = ObservedShift(((6, 1),))
+#: Australian "weekend → next Monday" rule (Australia Day and, in most
+#: states, Christmas/Boxing/ANZAC): Saturday → +2, Sunday → +1.
+SATURDAY_SUNDAY_TO_MONDAY = ObservedShift(((5, 2), (6, 1)))
+#: Israel's Yom Ha'atzmaut (Independence Day) postponement, keyed to the
+#: weekday of the nominal Iyar 5. Under the 2004 amendment 5 Iyar can only be
+#: Monday, Wednesday, Friday or Saturday: Monday → +1 (Tuesday, to keep the
+#: preceding Yom HaZikaron off Sunday), Friday → −1 and Saturday → −2 (both to
+#: Thursday, away from Shabbat); Wednesday is unshifted.
+IL_INDEPENDENCE_SHIFT = ObservedShift(((0, 1), (4, -1), (5, -2)))
 
 _OBSERVED_POLICIES: Dict[str, ObservedShift] = {
     "us": US_OBSERVED_SHIFT,
     "sun_mon": SUNDAY_TO_MONDAY,
+    "sat_sun_mon": SATURDAY_SUNDAY_TO_MONDAY,
+    "il_independence": IL_INDEPENDENCE_SHIFT,
 }
 
 
@@ -477,6 +566,12 @@ def _parse_kind(kind: str, args: str) -> RuleKind:
         return EasterOffsetRule(offset, method)
     if kind == "calendar_date":
         return CalendarDateRule(parts[0], int(parts[1]), int(parts[2]))
+    if kind == "equinox":
+        tz = float(parts[1]) if len(parts) > 1 else 0.0
+        return EquinoxRule(parts[0], tz)
+    if kind == "solar_term":
+        tz = float(parts[1]) if len(parts) > 1 else 0.0
+        return SolarTermRule(parts[0], tz)
     if kind == "decree":
         dates = []
         for token in parts:
@@ -497,11 +592,13 @@ def load_calendar(path: str) -> HolidayCalendar:
         kind | name | args | categories | subdiv | observed
 
     * ``kind`` — ``fixed`` / ``nth_weekday`` / ``easter`` / ``calendar_date`` /
-      ``decree`` (see the per-kind classes for ``args`` grammar).
+      ``equinox`` / ``solar_term`` / ``decree`` (see the per-kind classes for
+      the ``args`` grammar).
     * ``name`` — the official holiday name (data, verbatim; no translation).
     * ``categories`` — space-separated subset of :data:`CATEGORIES`.
     * ``subdiv`` — optional subdivision code (empty = jurisdiction-wide).
-    * ``observed`` — optional named policy (``us`` / ``sun_mon``; empty = none).
+    * ``observed`` — optional named policy (``us`` / ``sun_mon`` /
+      ``sat_sun_mon`` / ``il_independence``; empty = none).
     """
     meta: Dict[str, str] = {}
     rules = []

@@ -1,0 +1,26 @@
+# civil-holidays v1
+# jurisdiction: IL
+# source: State of Israel official holidays, tabulated at
+#   https://en.wikipedia.org/wiki/Public_holidays_in_Israel
+#   Independence Day postponement: Israeli Independence Day Law (5709-1949) as
+#   amended 2004.
+# retrieved: 2026-07-21
+# notes:
+#   Hebrew-calendar holidays resolve through the hebrew calendar_date rule
+#   (arithmetic; Nisan = month 1 ... Tishrei = 7). Yom Ha'atzmaut is nominally
+#   Iyar 5 (2,5) but postponed by the il_independence observed policy: because of
+#   the calendar's structure nominal 5 Iyar only falls on Mon/Wed/Fri/Sat, and it
+#   shifts Mon -> +1 (Tue), Fri -> -1 and Sat -> -2 (both to Thu), Wed unchanged,
+#   to keep it and the preceding Yom HaZikaron away from Shabbat.
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+calendar_date | Rosh Hashanah                    | hebrew 7 1  | public religious |  |
+calendar_date | Rosh Hashanah                    | hebrew 7 2  | public religious |  |
+calendar_date | Yom Kippur                       | hebrew 7 10 | public religious |  |
+calendar_date | Sukkot                           | hebrew 7 15 | public religious |  |
+calendar_date | Shemini Atzeret / Simchat Torah  | hebrew 7 22 | public religious |  |
+calendar_date | Pesach                           | hebrew 1 15 | public religious |  |
+calendar_date | Pesach (Seventh Day)             | hebrew 1 21 | public religious |  |
+calendar_date | Shavuot                          | hebrew 3 6  | public religious |  |
+calendar_date | Yom Ha'atzmaut                   | hebrew 2 5  | public | | il_independence

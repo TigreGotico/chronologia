@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: CN
+# source: General Office of the State Council (国务院办公厅) annual holiday-
+#   arrangement announcements, tabulated at
+#   https://en.wikipedia.org/wiki/Public_holidays_in_China
+# retrieved: 2026-07-21
+# notes:
+#   The 11 statutory public-holiday days. Spring Festival, Dragon Boat and Mid-
+#   Autumn are Chinese-lunisolar dates (calendar_date). Qingming is NOT a lunar
+#   date but a SOLAR TERM (Sun at ecliptic longitude 15 deg), reckoned in China
+#   Standard Time (UTC+8) via the solar_term rule kind.
+#   OUT OF SCOPE: the 调休 (tiaoxiu) make-up-workday system. Each year the State
+#   Council bridges these statutory days into "golden weeks" by swapping adjacent
+#   weekends into workdays and designating nearby weekdays as rest days; those
+#   shifted rest/work days are per-year administrative arrangements, not holidays,
+#   and are deliberately not listed here (we list holidays, not shifted workdays).
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- fixed (Gregorian) ---
+fixed         | New Year's Day        | 1 1  | public |  |
+fixed         | Labour Day            | 5 1  | public |  |
+fixed         | National Day          | 10 1 | public |  |
+fixed         | National Day Holiday  | 10 2 | public |  |
+fixed         | National Day Holiday  | 10 3 | public |  |
+#
+# --- Chinese lunisolar (calendar_date) ---
+calendar_date | Spring Festival          | chinese 1 1  | public |  |
+calendar_date | Spring Festival Holiday  | chinese 1 2  | public |  |
+calendar_date | Spring Festival Holiday  | chinese 1 3  | public |  |
+calendar_date | Dragon Boat Festival     | chinese 5 5  | public |  |
+calendar_date | Mid-Autumn Festival      | chinese 8 15 | public |  |
+#
+# --- solar term (jieqi), UTC+8 ---
+solar_term    | Qingming Festival        | qingming 8   | public |  |
