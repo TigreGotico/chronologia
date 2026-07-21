@@ -98,6 +98,27 @@ published table (`"tabulated"`), *pieced together* by historians
 (`"predicted"`)? The Jurassic above says `tabulated` — it comes straight
 from the official geological chart, uncertainties included.
 
+Even a plain word like **"morning"** is a span, and — this matters — it
+is a *convention* a culture agrees on, not a fact about the sun. So the
+library keeps day-part boundaries as region-tagged data (from the Unicode
+CLDR day-period rules) and hands you the span on a real date. English
+splits the afternoon off from the evening at 18:00; Spanish runs one
+*tarde* straight through to 20:00:
+
+```python
+from datetime import date
+from chronologia import daypart_span
+
+tuesday = date(2027, 6, 8)
+print(daypart_span(tuesday, "afternoon").end.isoformat())         # 2027-06-08T18:00:00
+print(daypart_span(tuesday, "tarde", region="es").end.isoformat())  # 2027-06-08T20:00:00
+
+# "tuesday night" belongs to Tuesday, yet ends on Wednesday morning:
+night = daypart_span(tuesday, "night")
+print(night.start.isoformat(), "->", night.end.isoformat())
+# 2027-06-08T21:00:00 -> 2027-06-09T06:00:00
+```
+
 ## Stories the library can tell
 
 ### The ten days that never happened

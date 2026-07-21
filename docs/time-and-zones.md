@@ -364,6 +364,85 @@ try:
 except ValueError as exc:
     print("rejected:", exc)
 # rejected: unknown moon phase 'waxing_gibbous'; expected one of ['first_quarter', 'full', 'last_quarter', 'new']
+## "Morning" is a convention, and conventions differ
+
+A time zone tells you what a clock reads. It does **not** tell you whether
+that reading counts as morning, afternoon, or evening — that is a cultural
+boundary, drawn differently from one language to the next, and it is not the
+sun's business. English cuts the post-noon day in two, *afternoon* then
+*evening*, with the seam at 18:00. Spanish runs a single *tarde* straight
+across both, all the way to 20:00. Neither is "right"; they are conventions.
+
+`chronologia` keeps these boundaries as region-tagged data — transcribed from
+the Unicode CLDR day-period rules, the machine-readable authority for exactly
+this locale variation — and `daypart_span` applies a named part to a real
+date, returning the same half-open `DateSpan` every other layer produces:
+
+```python
+from datetime import date
+from chronologia import daypart_span
+
+tuesday = date(2027, 6, 8)
+
+# English: afternoon ends and evening begins at 18:00.
+print(daypart_span(tuesday, "afternoon").start.isoformat(),
+      daypart_span(tuesday, "afternoon").end.isoformat())
+# 2027-06-08T12:00:00 2027-06-08T18:00:00
+
+# Spanish: one "tarde" covers what English splits into afternoon + evening.
+tarde = daypart_span(tuesday, "tarde", region="es")
+print(tarde.start.isoformat(), tarde.end.isoformat())
+# 2027-06-08T12:00:00 2027-06-08T20:00:00
+```
+
+Ask for a part a region does not redefine and you get the global default —
+Spanish overrides *tarde*, not *morning*, so `morning` in region `"es"` is the
+default morning. Ask for a region-only name with no region and it is honestly
+unknown:
+
+```python
+from chronologia import UnknownDayPartError
+
+print(daypart_span(tuesday, "morning", region="es")
+      == daypart_span(tuesday, "morning"))
+# True
+
+try:
+    daypart_span(tuesday, "tarde")          # no region: "tarde" is not global
+except UnknownDayPartError as exc:
+    print("unknown:", "tarde" in str(exc))
+# unknown: True
+```
+
+Night is the interesting one: **"tuesday night" belongs to Tuesday, yet it
+ends on Wednesday.** A part whose clock end is earlier than its start crosses
+midnight, and the span anchors to the *named* day and reaches into the next:
+
+```python
+night = daypart_span(tuesday, "night")
+print(night.start.isoformat(), "->", night.end.isoformat())
+# 2027-06-08T21:00:00 -> 2027-06-09T06:00:00
+print(night.start.day, night.end.day)
+# 8 9
+```
+
+Because day-parts are ordinary spans, the interval algebra composes them.
+Adjacent parts tile with no gap — `morning` ends exactly where `afternoon`
+begins — so their union is one seamless span, and the gap between two
+non-adjacent parts is itself a span:
+
+```python
+morning = daypart_span(tuesday, "morning")
+afternoon = daypart_span(tuesday, "afternoon")
+evening = daypart_span(tuesday, "evening")
+
+print(morning.union(afternoon).start.isoformat(),
+      morning.union(afternoon).end.isoformat())
+# 2027-06-08T06:00:00 2027-06-08T18:00:00
+
+# the stretch morning and evening leave between them is the afternoon:
+print(morning.gap(evening) == afternoon)
+# True
 ```
 
 ## Reference
@@ -387,3 +466,6 @@ except ValueError as exc:
 | `next_phase(instant, phase)` / `previous_phase(instant, phase)` | next/previous `"new"`/`"first_quarter"`/`"full"`/`"last_quarter"` as a `DateSpan`, width `2 * MOON_PHASE_ACCURACY` |
 | `lunation_number(instant)` | Brown Lunation Number of the containing lunation |
 | `MOON_PHASE_ACCURACY`, `MEAN_SYNODIC_MONTH_DAYS`, `EPOCH_NEW_MOON` | the mean-model constants and their stated/measured accuracy |
+| `daypart_span(date_or_span, name, region=None)` | the span a named day-part (morning, tarde, night) occupies on a date; midnight-crossers reach into the next civil day |
+| `DAY_PARTS`, `DayPart` | the region-tagged day-part registry (CLDR day-period boundaries) |
+| `DateSpan.intersect` / `.union` / `.gap` | half-open interval algebra over spans (overlap, seamless merge, the hole between) |
