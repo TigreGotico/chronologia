@@ -21,3 +21,44 @@ HOLIDAY_GOLDS = {}
 
 def _g(name, year, month, day, subdiv=None):
     return Gold(name, subdiv, year, month, day)
+
+
+# --------------------------------------------------------------------------
+# Australia (Fair Work Ombudsman + WA King's Birthday proclamations)
+# --------------------------------------------------------------------------
+HOLIDAY_GOLDS["AU"] = [
+    # national 2024
+    _g("New Year's Day", 2024, 1, 1),
+    _g("Australia Day", 2024, 1, 26),
+    _g("Good Friday", 2024, 3, 29),
+    _g("Easter Monday", 2024, 4, 1),
+    _g("ANZAC Day", 2024, 4, 25),
+    _g("Christmas Day", 2024, 12, 25),
+    _g("Boxing Day", 2024, 12, 26),
+    # Australia Day weekend shift: 2025-01-26 is a Sunday -> observed Monday.
+    _g("Australia Day", 2025, 1, 27),
+    # state/territory 2024
+    _g("King's Birthday", 2024, 6, 10, "AU-VIC"),
+    _g("Melbourne Cup Day", 2024, 11, 5, "AU-VIC"),
+    _g("Labour Day", 2024, 3, 11, "AU-VIC"),
+    _g("King's Birthday", 2024, 10, 7, "AU-QLD"),
+    _g("Labour Day", 2024, 5, 6, "AU-QLD"),
+    _g("King's Birthday", 2024, 9, 23, "AU-WA"),   # proclaimed (decree)
+    _g("Western Australia Day", 2024, 6, 3, "AU-WA"),
+    _g("Labour Day", 2024, 3, 4, "AU-WA"),
+    _g("King's Birthday", 2024, 6, 10, "AU-NSW"),
+    _g("Labour Day", 2024, 10, 7, "AU-NSW"),
+    _g("King's Birthday", 2024, 6, 10, "AU-SA"),
+    _g("Labour Day", 2024, 10, 7, "AU-SA"),
+    _g("King's Birthday", 2024, 6, 10, "AU-TAS"),
+    _g("Eight Hours Day", 2024, 3, 11, "AU-TAS"),
+    _g("King's Birthday", 2024, 6, 10, "AU-ACT"),
+    _g("Labour Day", 2024, 10, 7, "AU-ACT"),
+    _g("Canberra Day", 2024, 3, 11, "AU-ACT"),
+    _g("King's Birthday", 2024, 6, 10, "AU-NT"),
+    _g("May Day", 2024, 5, 6, "AU-NT"),
+    _g("Picnic Day", 2024, 8, 5, "AU-NT"),
+    # WA King's Birthday proclaimed dates other years (decree coverage)
+    _g("King's Birthday", 2025, 9, 29, "AU-WA"),
+    _g("King's Birthday", 2023, 9, 25, "AU-WA"),
+]

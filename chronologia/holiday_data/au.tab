@@ -1,0 +1,57 @@
+# civil-holidays v1
+# jurisdiction: AU
+# source: https://www.fairwork.gov.au/employment-conditions/public-holidays
+#   (Fair Work Ombudsman national + state/territory public holidays) and the
+#   Western Australia King's Birthday proclamations
+#   https://www.wa.gov.au/service/employment/public-holidays/public-holidays-western-australia
+#   Australia Day, New Year, Christmas and Boxing Day are observed the following
+#   Monday when they fall on a weekend (sat_sun_mon).
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- national ---
+fixed       | New Year's Day  | 1 1    | public          |       | sat_sun_mon
+fixed       | Australia Day   | 1 26   | public          |       | sat_sun_mon
+easter      | Good Friday     | -2     | public religious |       |
+easter      | Easter Monday   | 1      | public religious |       |
+fixed       | ANZAC Day       | 4 25   | public          |       |
+fixed       | Christmas Day   | 12 25  | public religious |       | sat_sun_mon
+fixed       | Boxing Day      | 12 26  | public religious |       | sat_sun_mon
+#
+# --- New South Wales ---
+nth_weekday | King's Birthday | 6 2 0  | public | AU-NSW |
+nth_weekday | Labour Day      | 10 1 0 | public | AU-NSW |
+#
+# --- Victoria ---
+nth_weekday | King's Birthday    | 6 2 0  | public | AU-VIC |
+nth_weekday | Labour Day         | 3 2 0  | public | AU-VIC |
+nth_weekday | Melbourne Cup Day  | 11 1 1 | public | AU-VIC |
+#
+# --- Queensland ---
+nth_weekday | King's Birthday | 10 1 0 | public | AU-QLD |
+nth_weekday | Labour Day      | 5 1 0  | public | AU-QLD |
+#
+# --- Western Australia ---
+# King's Birthday is proclaimed annually (no fixed rule): decree data.
+decree      | King's Birthday      | 2023-9-25 2024-9-23 2025-9-29 2026-9-28 | public | AU-WA |
+nth_weekday | Western Australia Day | 6 1 0 | public | AU-WA |
+nth_weekday | Labour Day           | 3 1 0  | public | AU-WA |
+#
+# --- South Australia ---
+nth_weekday | King's Birthday | 6 2 0  | public | AU-SA |
+nth_weekday | Labour Day      | 10 1 0 | public | AU-SA |
+#
+# --- Tasmania ---
+nth_weekday | King's Birthday  | 6 2 0 | public | AU-TAS |
+nth_weekday | Eight Hours Day  | 3 2 0 | public | AU-TAS |
+#
+# --- Australian Capital Territory ---
+nth_weekday | King's Birthday | 6 2 0  | public | AU-ACT |
+nth_weekday | Labour Day      | 10 1 0 | public | AU-ACT |
+nth_weekday | Canberra Day    | 3 2 0  | public | AU-ACT |
+#
+# --- Northern Territory ---
+nth_weekday | King's Birthday | 6 2 0 | public | AU-NT |
+nth_weekday | May Day         | 5 1 0 | public | AU-NT |
+nth_weekday | Picnic Day      | 8 1 0 | public | AU-NT |

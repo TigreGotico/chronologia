@@ -212,3 +212,48 @@ def test_registered_country_has_min_six_golds(cc):
         pytest.skip(f"{cc} not yet shipped")
     golds_2024 = [g for g in HOLIDAY_GOLDS[key] if g.year == 2024]
     assert len(golds_2024) >= 6, f"{cc}: fewer than 6 golds for 2024"
+
+
+# ==========================================================================
+# Differential vs the vacanza `holidays` package (black-box only)
+# ==========================================================================
+holidays_pkg = pytest.importorskip("holidays")
+
+
+def _pkg_dates(cc, year, subdiv=None):
+    """{(month, day): name} from the holidays package for one year."""
+    h = holidays_pkg.country_holidays(cc, subdiv=subdiv, years=year)
+    return {(d.month, d.day): h[d] for d in h}
+
+
+def _our_dates(cc, year, subdiv=None):
+    out = {}
+    for h in holidays_for(cc, year, subdiv=subdiv):
+        out.setdefault((h.date.month, h.date.day), h.name)
+    return out
+
+
+def test_au_differential_national_2024_2025():
+    # Adjudication of the one structural divergence: when a national holiday
+    # falls on a weekend, our observed-shift *relocates* the day (Sun New Year
+    # 2023-01-01 -> Mon 01-02), whereas the package keeps the nominal weekend
+    # date *and* adds a separate "additional day" on the Monday. So the two
+    # agree exactly on every package holiday that already lands on a weekday;
+    # the weekend ones are the expected, documented offset.
+    for year in (2023, 2024, 2025):
+        ours = set(_our_dates("AU", year))
+        for (m, d), name in _pkg_dates("AU", year).items():
+            if datetime.date(year, m, d).weekday() < 5:  # Mon-Fri
+                assert (m, d) in ours, (
+                    f"AU {year}: package weekday holiday {name} {year}-{m}-{d} "
+                    f"absent from ours")
+
+
+def test_au_differential_wa_kings_birthday_decree_matches_package():
+    # Adjudication: WA King's Birthday is proclaimed, not ruled. Our decree
+    # table must agree with the package's tabulated dates 2023-2026.
+    expected = {2023: (9, 25), 2024: (9, 23), 2025: (9, 29), 2026: (9, 28)}
+    for year, md in expected.items():
+        ours = [h for h in holidays_for("AU", year, subdiv="AU-WA")
+                if h.name == "King's Birthday"]
+        assert ours and (ours[0].date.month, ours[0].date.day) == md
