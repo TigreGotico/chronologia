@@ -45,6 +45,9 @@ from chronologia.moon import (EPOCH_NEW_MOON, MEAN_SYNODIC_MONTH_DAYS,
 from chronologia.luna import (LTC_DRIFT_MICROSECONDS_PER_DAY, LTC_STATUS,
                               LUNAR_DAY_SECONDS, LunarTimeStandardStatus,
                               ltc_offset)
+from chronologia.computus import (EASTER_METHODS, FIXED_FEASTS,
+                                  MOVABLE_FEAST_OFFSETS, advent_sunday, easter,
+                                  fixed_feast, movable_feast)
 from chronologia.cosmology import (AGE_OF_UNIVERSE_ERA, COSMIC_PERIODS,
                                    COSMOLOGIES, HUBBLE_TIME_GYR,
                                    UNIVERSE_AGE_GYR,
@@ -228,6 +231,14 @@ __all__ = [
     "AsrMethod",
     "CONVENTIONS",
     "ASR_METHODS",
+    # computus: Easter and the movable/fixed liturgical feasts
+    "easter",
+    "movable_feast",
+    "fixed_feast",
+    "advent_sunday",
+    "EASTER_METHODS",
+    "MOVABLE_FEAST_OFFSETS",
+    "FIXED_FEASTS",
     # derived resolution vocabulary
     "DateTimeResolution",
     # timelines & discontinuities
