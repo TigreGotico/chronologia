@@ -1,0 +1,44 @@
+# civil-holidays v1
+# jurisdiction: IN
+# source: Government of India, Ministry of Home Affairs / Dept. of Personnel &
+#   Training annual gazette notification of Central Government holidays, tabulated
+#   at https://en.wikipedia.org/wiki/Public_holidays_in_India
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# notes:
+#   Scope is the CENTRAL government gazetted (closed) holiday list; the optional
+#   "restricted" holidays are out of scope. The three fixed days (Republic,
+#   Independence, Gandhi Jayanti) are the only nationwide statutory holidays.
+#   Islamic holidays resolve through islamic_civil (arithmetic); the gazette
+#   follows local moon-sighting, so the tabular date can differ by +/-1 day (the
+#   observation caveat). Hindu/Buddhist/Sikh/Jain festivals follow regional
+#   panchang computations with NO arithmetic rule in the registry: they are
+#   encoded as DECREE data — the exact per-year gazette dates for 2023-2026,
+#   honestly tabulated, not computed.
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- national (fixed) ---
+fixed         | Republic Day               | 1 26   | public          |  |
+fixed         | Independence Day           | 8 15   | public          |  |
+fixed         | Mahatma Gandhi's Jayanti   | 10 2   | public          |  |
+#
+# --- other central gazetted (fixed / computable) ---
+fixed         | Christmas                  | 12 25  | public religious |  |
+easter        | Good Friday                | -2     | public religious |  |
+#
+# --- Islamic (islamic_civil; +/-1 observation caveat) ---
+calendar_date | Id-ul-Fitr                 | islamic_civil 10 1  | public religious |  |
+calendar_date | Id-ul-Zuha (Bakrid)        | islamic_civil 12 10 | public religious |  |
+calendar_date | Muharram                   | islamic_civil 1 10  | public religious |  |
+calendar_date | Milad-un-Nabi              | islamic_civil 3 12  | public religious |  |
+#
+# --- Hindu / Buddhist / Sikh / Jain lunisolar (per-year gazette DECREE data) ---
+decree        | Holi              | 2023-3-8 2024-3-25 2025-3-14 2026-3-4    | public religious |  |
+decree        | Ram Navami        | 2023-3-30 2024-4-17 2025-4-6 2026-3-26   | public religious |  |
+decree        | Mahavir Jayanti   | 2023-4-4 2024-4-21 2025-4-10 2026-3-31   | public religious |  |
+decree        | Buddha Purnima    | 2023-5-5 2024-5-23 2025-5-12 2026-5-1    | public religious |  |
+decree        | Janmashtami       | 2023-9-7 2024-8-26 2025-8-16 2026-9-4    | public religious |  |
+decree        | Dussehra          | 2023-10-24 2024-10-12 2025-10-2 2026-10-20 | public religious |  |
+decree        | Diwali (Deepavali)| 2023-11-12 2024-10-31 2025-10-20 2026-11-8 | public religious |  |
+decree        | Guru Nanak's Jayanti | 2023-11-27 2024-11-15 2025-11-5 2026-11-24 | public religious |  |
+decree        | Maha Shivaratri   | 2024-3-8 2025-2-26 2026-2-15             | public religious |  |

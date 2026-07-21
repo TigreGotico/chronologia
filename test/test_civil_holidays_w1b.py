@@ -249,6 +249,48 @@ def test_au_differential_national_2024_2025():
                     f"absent from ours")
 
 
+def test_in_differential_fixed_and_decree_agree():
+    # Adjudication: the fixed national days, the Christian days and the Hindu
+    # decree dates match the package exactly (the package's IN central list is
+    # itself compiled from the MHA/DoPT gazette). We compare by holiday name on
+    # the years both list it.
+    names = ["Republic Day", "Independence Day", "Mahatma Gandhi's Jayanti",
+             "Christmas", "Good Friday", "Holi", "Diwali (Deepavali)",
+             "Dussehra", "Janmashtami"]
+    for year in (2023, 2024, 2025):
+        pkg = holidays_pkg.country_holidays("IN", years=year)
+        pkg_by_name = {}
+        for d in pkg:
+            pkg_by_name.setdefault(pkg[d], (d.month, d.day))
+        for h in holidays_for("IN", year):
+            if h.name in names and h.name in pkg_by_name:
+                assert (h.date.month, h.date.day) == pkg_by_name[h.name], (
+                    f"IN {year} {h.name}: ours {h.date} vs pkg "
+                    f"{pkg_by_name[h.name]}")
+
+
+def test_in_differential_islamic_within_one_day():
+    # Headline-free expected divergence: islamic_civil is arithmetic; the gazette
+    # follows moon-sighting. Every shared Islamic holiday agrees to within +/-1
+    # day. (2024: Id-ul-Fitr ours 04-10 vs gazette 04-11; Bakrid/Muharram/Milad
+    # coincide.)
+    pairs = [("Id-ul-Fitr", 10, 1), ("Id-ul-Zuha (Bakrid)", 12, 10),
+             ("Muharram", 1, 10), ("Milad-un-Nabi", 3, 12)]
+    for year in (2023, 2024, 2025):
+        pkg = holidays_pkg.country_holidays("IN", years=year)
+        pkg_by_name = {}
+        for d in pkg:
+            # package uses "Id-ul-Zuha (Bakrid)", "Muharram", "Milad-un-Nabi"
+            pkg_by_name.setdefault(pkg[d], datetime.date(year, d.month, d.day))
+        for name, _m, _d in pairs:
+            ours = [h for h in holidays_for("IN", year) if h.name == name]
+            if ours and name in pkg_by_name:
+                delta = abs((datetime.date(
+                    year, ours[0].date.month, ours[0].date.day)
+                    - pkg_by_name[name]).days)
+                assert delta <= 1, f"IN {year} {name}: offset {delta} days"
+
+
 def test_au_differential_wa_kings_birthday_decree_matches_package():
     # Adjudication: WA King's Birthday is proclaimed, not ruled. Our decree
     # table must agree with the package's tabulated dates 2023-2026.

@@ -62,3 +62,36 @@ HOLIDAY_GOLDS["AU"] = [
     _g("King's Birthday", 2025, 9, 29, "AU-WA"),
     _g("King's Birthday", 2023, 9, 25, "AU-WA"),
 ]
+
+
+# --------------------------------------------------------------------------
+# India (MHA / DoPT central gazetted list)
+# --------------------------------------------------------------------------
+# Islamic golds assert OUR islamic_civil tabular date (the gazette can be +/-1).
+HOLIDAY_GOLDS["IN"] = [
+    # fixed national + gazetted 2024
+    _g("Republic Day", 2024, 1, 26),
+    _g("Independence Day", 2024, 8, 15),
+    _g("Mahatma Gandhi's Jayanti", 2024, 10, 2),
+    _g("Christmas", 2024, 12, 25),
+    _g("Good Friday", 2024, 3, 29),
+    # Islamic 2024 (islamic_civil tabular)
+    _g("Id-ul-Fitr", 2024, 4, 10),
+    _g("Id-ul-Zuha (Bakrid)", 2024, 6, 17),
+    _g("Muharram", 2024, 7, 17),
+    _g("Milad-un-Nabi", 2024, 9, 16),
+    # Hindu/Buddhist/Sikh/Jain decree 2024 (gazette dates)
+    _g("Holi", 2024, 3, 25),
+    _g("Ram Navami", 2024, 4, 17),
+    _g("Mahavir Jayanti", 2024, 4, 21),
+    _g("Buddha Purnima", 2024, 5, 23),
+    _g("Janmashtami", 2024, 8, 26),
+    _g("Dussehra", 2024, 10, 12),
+    _g("Diwali (Deepavali)", 2024, 10, 31),
+    _g("Guru Nanak's Jayanti", 2024, 11, 15),
+    _g("Maha Shivaratri", 2024, 3, 8),
+    # a few other-year decree/fixed golds
+    _g("Diwali (Deepavali)", 2025, 10, 20),
+    _g("Holi", 2023, 3, 8),
+    _g("Republic Day", 2025, 1, 26),
+]
