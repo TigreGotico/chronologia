@@ -29,6 +29,9 @@ dependencies = [
     "ovos-spec-tools>=1.5.0a1",
 ]
 
+[project.scripts]
+chronologia = "chronologia.__main__:main"
+
 [project.optional-dependencies]
 # Test/dev extras: property-based fuzzing (test/test_properties.py) needs
 # Hypothesis; the rest of the suite runs on pytest alone.

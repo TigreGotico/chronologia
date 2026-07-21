@@ -280,6 +280,34 @@ pretend otherwise:
 One rule covers all of it: **a span's width and basis always tell the
 truth about what is knowable.**
 
+## Command line
+
+Installing the package puts a `chronologia` command on your path (or run it
+as `python -m chronologia`). Each subcommand prints one friendly line:
+
+```bash
+chronologia convert 2024-06-01 --to hebrew        # gregorian 2024-06-01 = hebrew 5784-02-24
+chronologia extract "last summer"                 # -> [..., ...) (year)
+chronologia holidays US 2024                       # one date + name per line
+chronologia easter 2024                            # Easter 2024 (gregorian): 2024-03-31
+chronologia when 1984-06?                          # -> [1984-06-01..., 1984-07-01...) [?]
+```
+
+The same entry point is callable in-process — handy for scripts and tests —
+by handing `main` an argument list (it prints to stdout and returns an exit
+code):
+
+```python
+from chronologia.__main__ import main
+
+main(["easter", "2024"])                # prints: Easter 2024 (gregorian): 2024-03-31
+main(["convert", "2024-06-01", "--to", "coptic"])
+main(["when", "1984-06?"])
+```
+
+BC / negative years need argparse's `--` separator so the leading `-` is not
+read as a flag: `chronologia convert --from julian --to gregorian -- -0043-03-15`.
+
 ## Reference
 
 Full guides for everything above live in [`docs/`](docs/):
