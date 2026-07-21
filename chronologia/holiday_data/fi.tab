@@ -1,0 +1,29 @@
+# civil-holidays v1
+# jurisdiction: FI
+# source: https://www.finlex.fi/fi/laki/ajantasa/1934/19340205
+#   (Laki uskonnonvapaudesta / Laki vapaapäivistä; Finnish official holidays.
+#   Local copy papers/holidays/fi_holidays.md.) Finnish AND Swedish are both
+#   official languages, so each name carries both, "Finnish / Swedish". Movable
+#   Midsummer/All Saints are Saturday-anchored: Juhannuspäivä = Saturday in
+#   20–26 June (Sat on/before 26 Jun); Juhannusaatto = the preceding Friday
+#   (Fri on/before 25 Jun); Pyhäinpäivä = Saturday in 31 Oct–6 Nov (Sat on/before
+#   6 Nov). Jouluaatto and Juhannusaatto are de-facto national holidays.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+fixed            | Uudenvuodenpäivä / Nyårsdagen              | 1 1    | public          |  |
+fixed            | Loppiainen / Trettondedag jul             | 1 6    | public religious |  |
+easter           | Pitkäperjantai / Långfredagen             | -2     | public religious |  |
+easter           | Pääsiäispäivä / Påskdagen                 | 0      | public religious |  |
+easter           | Toinen pääsiäispäivä / Annandag påsk      | 1      | public religious |  |
+fixed            | Vappu / Första maj                        | 5 1    | public          |  |
+easter           | Helatorstai / Kristi himmelsfärdsdag      | 39     | public religious |  |
+easter           | Helluntaipäivä / Pingst                   | 49     | public religious |  |
+weekday_onbefore | Juhannusaatto / Midsommarafton            | 6 25 4 | public          |  |
+weekday_onbefore | Juhannuspäivä / Midsommardagen            | 6 26 5 | public          |  |
+weekday_onbefore | Pyhäinpäivä / Alla helgons dag            | 11 6 5 | public religious |  |
+fixed            | Itsenäisyyspäivä / Självständighetsdagen  | 12 6   | public          |  |
+fixed            | Jouluaatto / Julafton                     | 12 24  | public religious |  |
+fixed            | Joulupäivä / Juldagen                     | 12 25  | public religious |  |
+fixed            | Tapaninpäivä / Annandag jul               | 12 26  | public religious |  |

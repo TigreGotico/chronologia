@@ -1219,6 +1219,23 @@ _reg("NO", None, "Andre pinsedag", *_mov(50))
 _reg("NO", None, "Første juledag", 2024, 12, 25)
 _reg("NO", None, "Andre juledag", 2024, 12, 26)
 
+# --- FI: official holidays (Finnish / Swedish names) ---
+_reg("FI", None, "Uudenvuodenpäivä / Nyårsdagen", 2024, 1, 1)
+_reg("FI", None, "Loppiainen / Trettondedag jul", 2024, 1, 6)
+_reg("FI", None, "Pitkäperjantai / Långfredagen", *_mov(-2))
+_reg("FI", None, "Pääsiäispäivä / Påskdagen", *_mov(0))
+_reg("FI", None, "Toinen pääsiäispäivä / Annandag påsk", *_mov(1))
+_reg("FI", None, "Vappu / Första maj", 2024, 5, 1)
+_reg("FI", None, "Helatorstai / Kristi himmelsfärdsdag", *_mov(39))
+_reg("FI", None, "Helluntaipäivä / Pingst", *_mov(49))
+_reg("FI", None, "Juhannusaatto / Midsommarafton", 2024, 6, 21)  # Fri on/before 25 Jun
+_reg("FI", None, "Juhannuspäivä / Midsommardagen", 2024, 6, 22)  # Sat on/before 26 Jun
+_reg("FI", None, "Pyhäinpäivä / Alla helgons dag", 2024, 11, 2)  # Sat on/before 6 Nov
+_reg("FI", None, "Itsenäisyyspäivä / Självständighetsdagen", 2024, 12, 6)
+_reg("FI", None, "Jouluaatto / Julafton", 2024, 12, 24)
+_reg("FI", None, "Joulupäivä / Juldagen", 2024, 12, 25)
+_reg("FI", None, "Tapaninpäivä / Annandag jul", 2024, 12, 26)
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
