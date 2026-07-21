@@ -1160,6 +1160,23 @@ _reg("CZ", None, "Štědrý den", 2024, 12, 24)
 _reg("CZ", None, "1. svátek vánoční", 2024, 12, 25)
 _reg("CZ", None, "2. svátek vánoční", 2024, 12, 26)
 
+# --- SK: štátne sviatky + dni pracovného pokoja (Slovak names) ---
+_reg("SK", None, "Deň vzniku Slovenskej republiky", 2024, 1, 1)
+_reg("SK", None, "Zjavenie Pána (Traja králi)", 2024, 1, 6)
+_reg("SK", None, "Veľký piatok", *_mov(-2))
+_reg("SK", None, "Veľkonočný pondelok", *_mov(1))
+_reg("SK", None, "Sviatok práce", 2024, 5, 1)
+_reg("SK", None, "Deň víťazstva nad fašizmom", 2024, 5, 8)
+_reg("SK", None, "Sviatok svätého Cyrila a svätého Metoda", 2024, 7, 5)
+_reg("SK", None, "Výročie Slovenského národného povstania", 2024, 8, 29)
+_reg("SK", None, "Deň Ústavy Slovenskej republiky", 2023, 9, 1)  # work-free until 2023
+_reg("SK", None, "Sedembolestná Panna Mária", 2024, 9, 15)
+_reg("SK", None, "Sviatok Všetkých svätých", 2024, 11, 1)
+_reg("SK", None, "Deň boja za slobodu a demokraciu", 2024, 11, 17)  # work-free until 2024
+_reg("SK", None, "Štedrý deň", 2024, 12, 24)
+_reg("SK", None, "Prvý sviatok vianočný", 2024, 12, 25)
+_reg("SK", None, "Druhý sviatok vianočný", 2024, 12, 26)
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
