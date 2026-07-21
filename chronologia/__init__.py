@@ -14,10 +14,11 @@ and calendar-backed eras (Anno Mundi, French Republican, Bahai) resolve
 from chronologia.astrodate import (AstroDate, DateSpan, WideDuration,
                                    civil_add, combine_basis, is_leap_year,
                                    resolve_wall_clock)
-from chronologia.calendars import (CALENDARS, Calendar, CalendarRangeError,
-                                   TabulatedCalendar, gregorian_to_jdn,
-                                   jdn_to_gregorian, julian_to_jdn,
-                                   jdn_to_julian, register_event_provider)
+from chronologia.calendars import (CALENDARS, Calendar, CalendarDate,
+                                   CalendarRangeError, TabulatedCalendar,
+                                   gregorian_to_jdn, jdn_to_gregorian,
+                                   julian_to_jdn, jdn_to_julian,
+                                   register_event_provider)
 from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, DayCycle,
                                 DaySubdivision, resolve_cycle_day)
 from chronologia.dayparts import (CLDR_VERSION, DAY_PARTS, DayPart,
@@ -72,6 +73,7 @@ __all__ = [
     # JDN calendar hub
     "CALENDARS",
     "Calendar",
+    "CalendarDate",
     "CalendarRangeError",
     "TabulatedCalendar",
     "gregorian_to_jdn",

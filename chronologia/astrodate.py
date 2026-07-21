@@ -332,6 +332,32 @@ class AstroDate:
         return cls(dt.year, dt.month, dt.day, dt.hour, dt.minute,
                    dt.second, dt.microsecond)
 
+    @classmethod
+    def from_calendar(cls, key: str, year: int, month: int,
+                      day: int) -> "AstroDate":
+        """Build from a civil date in a registered calendar (objects out).
+
+        ``AstroDate.from_calendar("julian", -43, 3, 15)`` is the Gregorian
+        instant of the Ides of March 44 BC — no JDN threading at the call
+        site.  Raises ``KeyError`` on an unknown ``key`` and
+        :class:`~chronologia.calendars.CalendarRangeError` for a tabulated
+        calendar queried out of range.
+        """
+        from chronologia.calendars import CALENDARS
+        jdn = CALENDARS[key].to_jdn(year, month, day)
+        return cls(*jdn_to_gregorian(jdn))
+
+    def to_calendar(self, key: str):
+        """This instant as a :class:`~chronologia.calendars.CalendarDate`.
+
+        ``AstroDate(...).to_calendar("hebrew")`` reads the Gregorian date
+        fields and returns the civil date the named calendar assigns them.
+        """
+        from chronologia.calendars import CALENDARS, CalendarDate
+        jdn = gregorian_to_jdn(self.year, self.month, self.day)
+        y, m, d = CALENDARS[key].from_jdn(jdn)
+        return CalendarDate(key, y, m, d)
+
     def strftime(self, fmt: str) -> str:
         """Format the year-width-safe directive subset of ``strftime``.
 

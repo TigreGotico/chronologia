@@ -807,6 +807,58 @@ def _month_field(month: int, leap: int) -> int:
     return month + 100 if leap else month
 
 
+# --------------------------------------------------------------------------
+# Friendly object facade: CalendarDate (objects in, objects out).
+# --------------------------------------------------------------------------
+# The JDN plumbing above is the internal architecture; callers should never
+# have to thread raw integers through it.  ``CalendarDate`` is the object a
+# calendar hands back, and every ``Calendar``/``TabulatedCalendar`` grows a
+# ``date(...)`` / ``from_astro(...)`` pair so a round trip stays in objects.
+
+
+def _gregorian_jdn_of(moment) -> int:
+    """Proleptic-Gregorian JDN of any ``.year/.month/.day``-bearing instant.
+
+    Accepts an :class:`~chronologia.astrodate.AstroDate`, a ``datetime.date``
+    or a ``datetime.datetime`` interchangeably (time-of-day is ignored) — the
+    single coercion point behind every ``from_astro`` facade below.
+    """
+    return gregorian_to_jdn(moment.year, moment.month, moment.day)
+
+
+@dataclass(frozen=True)
+class CalendarDate:
+    """A civil date under a named calendar — the object a calendar hands back.
+
+    ``calendar`` is a registry key (``"hebrew"``, ``"julian"`` …); ``year``,
+    ``month`` and ``day`` are that calendar's own numbering.  The
+    :attr:`astro` property crosses to the shared timeline as an
+    :class:`~chronologia.astrodate.AstroDate` (the Gregorian-proleptic instant
+    of day 1..length of the named date).
+
+    ``str(cd)`` is deliberately **numeric** — ``"hebrew 5786-07-01"``, never
+    ``"1 Tishri 5786"``.  Turning month numbers into names is language-aware
+    and belongs to the NLP layer; this core stays i18n-free, so the string
+    form prints the registry key and the raw ``(year, month, day)`` only.
+    """
+
+    calendar: str
+    year: int
+    month: int
+    day: int
+
+    @property
+    def astro(self):
+        """The Gregorian-proleptic instant of this date, as an ``AstroDate``."""
+        from chronologia.astrodate import AstroDate
+        cal = CALENDARS[self.calendar]
+        return AstroDate(*jdn_to_gregorian(
+            cal.to_jdn(self.year, self.month, self.day)))
+
+    def __str__(self) -> str:
+        return f"{self.calendar} {self.year}-{self.month:02d}-{self.day:02d}"
+
+
 @dataclass(frozen=True)
 class TabulatedCalendar:
     """A calendar whose month starts come from a bounded published table.
@@ -903,6 +955,25 @@ class TabulatedCalendar:
         if month >= self.month_count:
             return 1, year + 1
         return month + 1, year
+
+    # -- friendly object facade (objects in, objects out) ------------------
+    def date(self, year: int, month: int, day: int):
+        """The Gregorian-proleptic instant of this calendar date (AstroDate).
+
+        Object-returning sugar for ``to_jdn`` + ``jdn_to_gregorian``; raises
+        :class:`CalendarRangeError` outside the table, exactly as ``to_jdn``.
+        """
+        from chronologia.astrodate import AstroDate
+        return AstroDate(*jdn_to_gregorian(self.to_jdn(year, month, day)))
+
+    def from_astro(self, moment) -> "CalendarDate":
+        """The :class:`CalendarDate` this calendar assigns to an instant.
+
+        ``moment`` is any ``AstroDate``/``date``/``datetime``; raises
+        :class:`CalendarRangeError` when the instant is outside the table.
+        """
+        y, m, d = self.from_jdn(_gregorian_jdn_of(moment))
+        return CalendarDate(self.key, y, m, d)
 
 
 def _load_tabulated(filename: str) -> TabulatedCalendar:
@@ -1005,6 +1076,26 @@ class Calendar:
     epoch_jdn: int
     basis: str = "exact"
     fallback: Optional[str] = None
+
+    # -- friendly object facade (objects in, objects out) ------------------
+    def date(self, year: int, month: int, day: int):
+        """The Gregorian-proleptic instant of this calendar date (AstroDate).
+
+        Object-returning sugar over the ``to_jdn`` + ``jdn_to_gregorian``
+        plumbing, so ``CALENDARS["hebrew"].date(5786, 7, 1)`` yields the
+        AstroDate directly instead of a bare JDN.
+        """
+        from chronologia.astrodate import AstroDate
+        return AstroDate(*jdn_to_gregorian(self.to_jdn(year, month, day)))
+
+    def from_astro(self, moment) -> "CalendarDate":
+        """The :class:`CalendarDate` this calendar assigns to an instant.
+
+        ``moment`` is any ``AstroDate``/``date``/``datetime`` (the Gregorian
+        instant); returns the matching civil date in this calendar's numbering.
+        """
+        y, m, d = self.from_jdn(_gregorian_jdn_of(moment))
+        return CalendarDate(self.key, y, m, d)
 
 
 CALENDARS: Dict[str, object] = {
