@@ -644,6 +644,172 @@ def test_w1a_gold(country, subdiv, name, year, month, day):
 
 
 # ==========================================================================
+# Wave 1b: AU, IN, CN, JP, TR, IL.
+# Golds hand-derived from each country's cited primary source (see the .tab
+# header + papers/holidays/INDEX.md). Independence properties preserved:
+#   * Easter-relative movables (Good Friday / Easter Monday) re-derived via
+#     ``_mov`` from ``easter(2024)``, never read from the engine.
+#   * nth-weekday movables carry the rule in a comment; the literal is the
+#     source's own published date, not the .tab arg.
+#   * Equinox golds (JP Shunbun/Shubun) are the Cabinet Office's PUBLISHED
+#     dates, independent of chronologia's equinox arithmetic.
+#   * Decree golds (AU WA King's Birthday proclamations; IN Hindu/Buddhist/
+#     Sikh/Jain lunisolar) are the per-year gazette/proclamation dates.
+#   * Islamic and lunisolar calendar_date golds are the source announcements'
+#     published dates (State Council / official listings), independent of the
+#     engine's calendar conversion.
+# The differential vs the vacanza `holidays` package and the behavioural
+# assertions live in test_civil_holidays_w1b.py (this batch's per-country
+# module), including the Islamic +/-1 caveat and the 调休/振替休日 out-of-scope
+# adjudications.
+# ==========================================================================
+# --- AU: national + state/territory (source: Fair Work + WA proclamations) ---
+_reg("AU", None, "New Year's Day", 2024, 1, 1)
+_reg("AU", None, "Australia Day", 2024, 1, 26)
+_reg("AU", None, "Australia Day", 2025, 1, 27)   # 2025-01-26 Sun -> Mon (sat_sun_mon)
+_reg("AU", None, "Good Friday", *_mov(-2))
+_reg("AU", None, "Easter Monday", *_mov(1))
+_reg("AU", None, "ANZAC Day", 2024, 4, 25)
+_reg("AU", None, "Christmas Day", 2024, 12, 25)
+_reg("AU", None, "Boxing Day", 2024, 12, 26)
+_reg("AU", "AU-NSW", "King's Birthday", 2024, 6, 10)     # 2nd Mon Jun
+_reg("AU", "AU-NSW", "Labour Day", 2024, 10, 7)          # 1st Mon Oct
+_reg("AU", "AU-VIC", "King's Birthday", 2024, 6, 10)
+_reg("AU", "AU-VIC", "Labour Day", 2024, 3, 11)          # 2nd Mon Mar
+_reg("AU", "AU-VIC", "Melbourne Cup Day", 2024, 11, 5)   # 1st Tue Nov
+_reg("AU", "AU-QLD", "King's Birthday", 2024, 10, 7)     # 1st Mon Oct
+_reg("AU", "AU-QLD", "Labour Day", 2024, 5, 6)           # 1st Mon May
+_reg("AU", "AU-WA", "King's Birthday", 2023, 9, 25)      # proclaimed (decree)
+_reg("AU", "AU-WA", "King's Birthday", 2024, 9, 23)
+_reg("AU", "AU-WA", "King's Birthday", 2025, 9, 29)
+_reg("AU", "AU-WA", "Western Australia Day", 2024, 6, 3)  # 1st Mon Jun
+_reg("AU", "AU-WA", "Labour Day", 2024, 3, 4)            # 1st Mon Mar
+_reg("AU", "AU-SA", "King's Birthday", 2024, 6, 10)
+_reg("AU", "AU-SA", "Labour Day", 2024, 10, 7)
+_reg("AU", "AU-TAS", "King's Birthday", 2024, 6, 10)
+_reg("AU", "AU-TAS", "Eight Hours Day", 2024, 3, 11)     # 2nd Mon Mar
+_reg("AU", "AU-ACT", "King's Birthday", 2024, 6, 10)
+_reg("AU", "AU-ACT", "Labour Day", 2024, 10, 7)
+_reg("AU", "AU-ACT", "Canberra Day", 2024, 3, 11)        # 2nd Mon Mar
+_reg("AU", "AU-NT", "King's Birthday", 2024, 6, 10)
+_reg("AU", "AU-NT", "May Day", 2024, 5, 6)               # 1st Mon May
+_reg("AU", "AU-NT", "Picnic Day", 2024, 8, 5)            # 1st Mon Aug
+
+# --- IN: central gazetted (source: MHA/DoPT gazette) ---
+_reg("IN", None, "Republic Day", 2024, 1, 26)
+_reg("IN", None, "Republic Day", 2025, 1, 26)
+_reg("IN", None, "Independence Day", 2024, 8, 15)
+_reg("IN", None, "Mahatma Gandhi's Jayanti", 2024, 10, 2)
+_reg("IN", None, "Christmas", 2024, 12, 25)
+_reg("IN", None, "Good Friday", *_mov(-2))
+# Islamic (islamic_civil tabular; gazette can differ +/-1, see w1b module)
+_reg("IN", None, "Id-ul-Fitr", 2024, 4, 10)
+_reg("IN", None, "Id-ul-Zuha (Bakrid)", 2024, 6, 17)
+_reg("IN", None, "Muharram", 2024, 7, 17)
+_reg("IN", None, "Milad-un-Nabi", 2024, 9, 16)
+# Hindu/Buddhist/Sikh/Jain lunisolar (per-year gazette decree dates)
+_reg("IN", None, "Holi", 2023, 3, 8)
+_reg("IN", None, "Holi", 2024, 3, 25)
+_reg("IN", None, "Ram Navami", 2024, 4, 17)
+_reg("IN", None, "Mahavir Jayanti", 2024, 4, 21)
+_reg("IN", None, "Buddha Purnima", 2024, 5, 23)
+_reg("IN", None, "Janmashtami", 2024, 8, 26)
+_reg("IN", None, "Dussehra", 2024, 10, 12)
+_reg("IN", None, "Diwali (Deepavali)", 2024, 10, 31)
+_reg("IN", None, "Diwali (Deepavali)", 2025, 10, 20)
+_reg("IN", None, "Guru Nanak's Jayanti", 2024, 11, 15)
+_reg("IN", None, "Maha Shivaratri", 2024, 3, 8)
+
+# --- CN: statutory list (source: State Council) ---
+_reg("CN", None, "New Year's Day", 2024, 1, 1)
+_reg("CN", None, "Labour Day", 2024, 5, 1)
+_reg("CN", None, "National Day", 2024, 10, 1)
+_reg("CN", None, "National Day Holiday", 2024, 10, 2)
+_reg("CN", None, "National Day Holiday", 2024, 10, 3)
+_reg("CN", None, "Spring Festival", 2024, 2, 10)
+_reg("CN", None, "Spring Festival", 2025, 1, 29)
+_reg("CN", None, "Spring Festival Holiday", 2024, 2, 11)
+_reg("CN", None, "Spring Festival Holiday", 2024, 2, 12)
+_reg("CN", None, "Dragon Boat Festival", 2024, 6, 10)
+_reg("CN", None, "Mid-Autumn Festival", 2024, 9, 17)
+_reg("CN", None, "Qingming Festival", 2023, 4, 5)   # solar term
+_reg("CN", None, "Qingming Festival", 2024, 4, 4)
+_reg("CN", None, "Qingming Festival", 2025, 4, 4)
+
+# --- JP: national holidays (source: Cabinet Office) ---
+_reg("JP", None, "New Year's Day", 2024, 1, 1)
+_reg("JP", None, "National Foundation Day", 2024, 2, 11)
+_reg("JP", None, "Emperor's Birthday", 2024, 2, 23)
+_reg("JP", None, "Showa Day", 2024, 4, 29)
+_reg("JP", None, "Constitution Memorial Day", 2024, 5, 3)
+_reg("JP", None, "Greenery Day", 2024, 5, 4)
+_reg("JP", None, "Children's Day", 2024, 5, 5)
+_reg("JP", None, "Mountain Day", 2024, 8, 11)
+_reg("JP", None, "Culture Day", 2024, 11, 3)
+_reg("JP", None, "Labour Thanksgiving Day", 2024, 11, 23)
+_reg("JP", None, "Coming of Age Day", 2024, 1, 8)       # 2nd Mon Jan
+_reg("JP", None, "Coming of Age Day", 2025, 1, 13)
+_reg("JP", None, "Marine Day", 2024, 7, 15)             # 3rd Mon Jul
+_reg("JP", None, "Respect for the Aged Day", 2024, 9, 16)  # 3rd Mon Sep
+_reg("JP", None, "Sports Day", 2024, 10, 14)            # 2nd Mon Oct
+_reg("JP", None, "Vernal Equinox Day", 2024, 3, 20)     # Cabinet Office published
+_reg("JP", None, "Vernal Equinox Day", 2025, 3, 20)
+_reg("JP", None, "Autumnal Equinox Day", 2024, 9, 22)   # Cabinet Office published
+_reg("JP", None, "Autumnal Equinox Day", 2025, 9, 23)
+
+# --- TR: public holidays (source: Act 2429) ---
+_reg("TR", None, "Yilbasi", 2024, 1, 1)
+_reg("TR", None, "Ulusal Egemenlik ve Cocuk Bayrami", 2024, 4, 23)
+_reg("TR", None, "Emek ve Dayanisma Gunu", 2024, 5, 1)
+_reg("TR", None, "Ataturk'u Anma, Genclik ve Spor Bayrami", 2024, 5, 19)
+_reg("TR", None, "Demokrasi ve Milli Birlik Gunu", 2024, 7, 15)
+_reg("TR", None, "Zafer Bayrami", 2024, 8, 30)
+_reg("TR", None, "Cumhuriyet Bayrami", 2024, 10, 29)
+_reg("TR", None, "Cumhuriyet Bayrami", 2025, 10, 29)
+_reg("TR", None, "Ramazan Bayrami", 2024, 4, 10)   # 1 Shawwal (islamic_civil)
+_reg("TR", None, "Ramazan Bayrami", 2025, 3, 31)
+_reg("TR", None, "Kurban Bayrami", 2024, 6, 17)    # 10 Dhu al-Hijja (islamic_civil)
+
+# --- IL: Hebrew-calendar holidays (source: Israeli official listing) ---
+_reg("IL", None, "Rosh Hashanah", 2024, 10, 3)     # Tishrei 1
+_reg("IL", None, "Rosh Hashanah", 2024, 10, 4)     # Tishrei 2
+_reg("IL", None, "Rosh Hashanah", 2025, 9, 23)
+_reg("IL", None, "Yom Kippur", 2024, 10, 12)
+_reg("IL", None, "Sukkot", 2024, 10, 17)
+_reg("IL", None, "Shemini Atzeret / Simchat Torah", 2024, 10, 24)
+_reg("IL", None, "Pesach", 2024, 4, 23)
+_reg("IL", None, "Pesach", 2025, 4, 13)
+_reg("IL", None, "Pesach (Seventh Day)", 2024, 4, 29)
+_reg("IL", None, "Shavuot", 2024, 6, 12)
+_reg("IL", None, "Yom Ha'atzmaut", 2024, 5, 14)    # Iyar 5 (Mon) -> Tue (postponed)
+_reg("IL", None, "Yom Ha'atzmaut", 2025, 5, 1)     # Iyar 5 (Sat) -> Thu (postponed)
+
+
+def _dateset_for(country, year, subdiv=None):
+    """{(name, subdiv): {dates}} — a set per rule, so a name that resolves to
+    several dates in one year (Rosh Hashanah's two days, a multi-day feast) is
+    not collapsed the way ``_dates_for`` would."""
+    out = {}
+    for h in holidays_for(country, year, subdiv=subdiv):
+        out.setdefault((h.name, h.subdiv), set()).add(h.date)
+    return out
+
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in {"AU", "IN", "CN", "JP", "TR", "IL"}
+    for (y, m, d) in ymds
+])
+def test_w1b_gold(country, subdiv, name, year, month, day):
+    got = _dateset_for(country, year, subdiv=subdiv)
+    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+        f"{country}/{subdiv}/{name!r} {year}: expected "
+        f"{year}-{month:02d}-{day:02d}, got "
+        f"{sorted(got.get((name, subdiv), set()))}")
+
+
+# ==========================================================================
 # Structural enforcement: every rule in every holiday_data/*.tab needs a gold.
 # ==========================================================================
 def _every_tab_rule_key():

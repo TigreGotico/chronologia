@@ -13,25 +13,20 @@ New engine machinery exercised by this batch (each with its own unit here):
 * the ``sat_sun_mon`` (Australia Day) and ``il_independence`` (Yom Ha'atzmaut
   Iyar-5 postponement) observed-shift policies.
 
-Country golds (``HOLIDAY_GOLDS``) are hand-derived from the primary sources cited
-in ``~/AgentWorkspaces/papers/holidays/`` — the Cabinet Office / State Council /
-Fair Work / MHA-DoPT / Act 2429 / Israeli Independence Day Law listings. Fixed and
-nth-weekday golds restate the source; calendar_date golds are cross-derived from
-the calendar registry; decree and equinox golds assert the gazette dates. A
-differential against the vacanza ``holidays`` package (black-box only) is run over
-the shared set for 2023–2025 with the adjudications documented inline.
+This is the wave-1b per-country module: it owns the engine-kind unit tests and
+the behavioural / package-differential assertions. The country golds themselves
+live in the shared registry ``test_holiday_golds.py`` (``HOLIDAY_GOLDS``), whose
+single ``test_every_tab_rule_has_a_gold`` walker enforces one gold per rule; the
+adjudications documented inline here (the Islamic +/-1 caveat, the 调休 / 振替休日
+out-of-scope offsets) explain the divergences that walker's golds encode.
 """
 import datetime
-import os
 
 import pytest
 
 from chronologia import (AstroDate, CalendarDateRule, EquinoxRule,
                          IL_INDEPENDENCE_SHIFT, SATURDAY_SUNDAY_TO_MONDAY,
-                         SolarTermRule, holidays_for, load_calendar)
-from chronologia.civil_holidays import CATEGORIES, _DATA_DIR
-
-from holiday_golds import HOLIDAY_GOLDS
+                         SolarTermRule, holidays_for)
 
 
 def _obs(rule, year):
@@ -162,56 +157,6 @@ def test_il_independence_wednesday_unshifted():
     # 2023 nominal Iyar 5 = Wed 2023-04-26 -> unchanged.
     assert IL_INDEPENDENCE_SHIFT.apply(AstroDate(2023, 4, 26)) == \
         AstroDate(2023, 4, 26)
-
-
-# ==========================================================================
-# Gold application — every registered gold resolves to its expected date
-# ==========================================================================
-def _all_golds():
-    out = []
-    for cc, golds in sorted(HOLIDAY_GOLDS.items()):
-        for g in golds:
-            out.append(pytest.param(
-                cc, g, id=f"{cc}-{g.year}-{g.name}-{g.subdiv or 'nat'}"))
-    return out
-
-
-@pytest.mark.parametrize("cc,gold", _all_golds())
-def test_registered_gold_resolves(cc, gold):
-    got = holidays_for(cc, gold.year, subdiv=gold.subdiv)
-    hits = [h for h in got if h.name == gold.name
-            and h.date == AstroDate(gold.year, gold.month, gold.day)]
-    assert hits, (
-        f"{cc} {gold.name} {gold.year}: expected "
-        f"{gold.year}-{gold.month:02d}-{gold.day:02d}; got "
-        + ", ".join(f"{h.name}@{h.date}" for h in got if h.name == gold.name))
-
-
-# ==========================================================================
-# Coverage lint — every rule in a registered w1b .tab has at least one gold
-# ==========================================================================
-_W1B_COUNTRIES = ["au", "in", "cn", "jp", "tr", "il"]
-
-
-@pytest.mark.parametrize("cc", [
-    c for c in _W1B_COUNTRIES
-    if os.path.exists(os.path.join(_DATA_DIR, f"{c}.tab"))])
-def test_every_rule_has_a_gold(cc):
-    cal = load_calendar(os.path.join(_DATA_DIR, f"{cc}.tab"))
-    golds = HOLIDAY_GOLDS.get(cc.upper(), [])
-    covered = {(g.name, g.subdiv) for g in golds}
-    uncovered = sorted(
-        {(r.name, r.subdiv) for r in cal.rules} - covered)
-    assert not uncovered, f"{cc}: rules without a gold: {uncovered}"
-
-
-@pytest.mark.parametrize("cc", _W1B_COUNTRIES)
-def test_registered_country_has_min_six_golds(cc):
-    key = cc.upper()
-    if key not in HOLIDAY_GOLDS:
-        pytest.skip(f"{cc} not yet shipped")
-    golds_2024 = [g for g in HOLIDAY_GOLDS[key] if g.year == 2024]
-    assert len(golds_2024) >= 6, f"{cc}: fewer than 6 golds for 2024"
 
 
 # ==========================================================================
