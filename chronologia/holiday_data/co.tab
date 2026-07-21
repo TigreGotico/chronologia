@@ -1,0 +1,47 @@
+# civil-holidays v1
+# jurisdiction: CO
+# source: https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=4954
+#   (Ley 51 de 1983, "Ley Emiliani"; local copy papers/holidays/co_ley51_1983.html).
+#   Cross-checked against vacanza/holidays 0.101 (MIT). Names are official Spanish.
+#
+#   EMILIANI RULE: Ley 51 de 1983 relocates a fixed list of holidays to "el
+#   lunes siguiente" — the next Monday ON OR AFTER the nominal date (unmoved
+#   when the nominal date already is a Monday). This is the weekday_onafter
+#   kind with weekday=0. The reference marks these "(observado)"; the moved
+#   Monday is the actual holiday, so no separate nominal day is emitted.
+#     Reyes Magos (6 Jan), San José (19 Mar), San Pedro y San Pablo (29 Jun),
+#     La Asunción (15 Aug), Día de la Raza (12 Oct), Todos los Santos (1 Nov),
+#     Independencia de Cartagena (11 Nov).
+#   The three Easter-linked Emiliani holidays are ALSO moved to Monday, which —
+#   because Easter's weekday is fixed — is an exact Easter offset: Ascensión
+#   (nominally Easter+39/Thu -> Easter+43), Corpus Christi (Easter+60/Thu ->
+#   Easter+64), Sagrado Corazón (Easter+68/Fri -> Easter+71). The non-moved
+#   holidays (New Year, Labour, Independence 20 Jul, Boyacá 7 Aug, Inmaculada
+#   8 Dec, Navidad, and the two Holy Week days) stay on their fixed dates.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+# --- fixed (never moved) ---
+fixed          | Año Nuevo               | 1 1   | public          |  |
+easter         | Jueves Santo            | -3    | public religious |  |
+easter         | Viernes Santo           | -2    | public religious |  |
+fixed          | Día del Trabajo         | 5 1   | public          |  |
+fixed          | Día de la Independencia | 7 20  | public          |  |
+fixed          | Batalla de Boyacá       | 8 7   | public          |  |
+fixed          | La Inmaculada Concepción| 12 8  | public religious |  |
+fixed          | Navidad                 | 12 25 | public religious |  |
+#
+# --- Emiliani: next Monday on or after the nominal date ---
+weekday_onafter | Día de los Reyes Magos      | 1 6   0 | public religious |  |
+weekday_onafter | Día de San José             | 3 19  0 | public religious |  |
+weekday_onafter | San Pedro y San Pablo       | 6 29  0 | public religious |  |
+weekday_onafter | La Asunción                 | 8 15  0 | public religious |  |
+weekday_onafter | Día de la Raza              | 10 12 0 | public          |  |
+weekday_onafter | Día de Todos los Santos     | 11 1  0 | public religious |  |
+weekday_onafter | Independencia de Cartagena  | 11 11 0 | public          |  |
+#
+# --- Emiliani, Easter-linked (moved-to-Monday = exact Easter offset) ---
+easter | Ascensión del señor | 43 | public religious |  |
+easter | Corpus Christi      | 64 | public religious |  |
+easter | Sagrado Corazón     | 71 | public religious |  |

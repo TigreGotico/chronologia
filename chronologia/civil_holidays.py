@@ -119,6 +119,7 @@ __all__ = [
     "FixedRule",
     "NthWeekdayRule",
     "WeekdayOnOrBeforeRule",
+    "WeekdayOnOrAfterRule",
     "EasterOffsetRule",
     "CalendarDateRule",
     "DecreeTableRule",
@@ -242,6 +243,42 @@ class WeekdayOnOrBeforeRule:
         anchor = AstroDate(year, self.month, self.day)
         delta = (anchor.weekday() - self.weekday) % 7
         return ((anchor - timedelta(days=delta), BASIS_EXACT),)
+
+
+@dataclass(frozen=True)
+class WeekdayOnOrAfterRule:
+    """The earliest ``weekday`` falling on or after ``(month, day)`` each year.
+
+    The mirror of :class:`WeekdayOnOrBeforeRule`, and the minimal kind for
+    "move this holiday to the following Monday (unless it already is one)"
+    rules. Colombia's Ley 51 de 1983 ("Ley Emiliani") relocates a fixed list of
+    civil/religious holidays to the *next Monday on or after* their nominal
+    date: Reyes Magos (6 Jan), San José (19 Mar), San Pedro y San Pablo
+    (29 Jun), La Asunción (15 Aug), Día de la Raza (12 Oct), Todos los Santos
+    (1 Nov) and Independencia de Cartagena (11 Nov) — so ``weekday`` is Monday
+    (0). When the nominal date is already that weekday, it is unmoved (Reyes
+    2025 stays 6 Jan).
+
+    ``weekday`` is Monday==0 .. Sunday==6 (the :class:`AstroDate` convention).
+    Basis ``exact``.
+    """
+
+    month: int
+    day: int
+    weekday: int
+
+    def __post_init__(self) -> None:
+        if not 1 <= self.month <= 12:
+            raise ValueError(f"month out of range: {self.month}")
+        if not 1 <= self.day <= 31:
+            raise ValueError(f"day out of range: {self.day}")
+        if not 0 <= self.weekday <= 6:
+            raise ValueError(f"weekday out of range: {self.weekday}")
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        anchor = AstroDate(year, self.month, self.day)
+        delta = (self.weekday - anchor.weekday()) % 7
+        return ((anchor + timedelta(days=delta), BASIS_EXACT),)
 
 
 @dataclass(frozen=True)
@@ -773,6 +810,8 @@ def _parse_kind(kind: str, args: str) -> RuleKind:
         return NthWeekdayRule(month, n, wd, post)
     if kind == "weekday_onbefore":
         return WeekdayOnOrBeforeRule(int(parts[0]), int(parts[1]), int(parts[2]))
+    if kind == "weekday_onafter":
+        return WeekdayOnOrAfterRule(int(parts[0]), int(parts[1]), int(parts[2]))
     if kind == "easter":
         offset = int(parts[0])
         method = parts[1] if len(parts) > 1 else "gregorian"
