@@ -1015,6 +1015,25 @@ for _s, _n, _m, _d in _IT_PATRONS:
     _reg("IT", _s, _n, 2024, _m, _d)
 
 
+# --- GR: Orthodox-Easter national set (native Greek names) ---
+_reg("GR", None, "Πρωτοχρονιά", 2024, 1, 1)
+_reg("GR", None, "Θεοφάνεια", 2024, 1, 6)
+_reg("GR", None, "Καθαρά Δευτέρα", *_orth(-48))   # 2024-03-18
+_reg("GR", None, "Εικοστή Πέμπτη Μαρτίου", 2024, 3, 25)
+_reg("GR", None, "Μεγάλη Παρασκευή", *_orth(-2))  # 2024-05-03
+_reg("GR", None, "Δευτέρα του Πάσχα", *_orth(1))  # 2024-05-06
+_reg("GR", None, "Εργατική Πρωτομαγιά", 2024, 5, 1)
+_reg("GR", None, "Δευτέρα του Αγίου Πνεύματος", *_orth(50))  # 2024-06-24
+_reg("GR", None, "Κοίμηση της Θεοτόκου", 2024, 8, 15)
+_reg("GR", None, "Ημέρα του Όχι", 2024, 10, 28)
+_reg("GR", None, "Χριστούγεννα", 2024, 12, 25)
+_reg("GR", None, "Σύναξη της Υπεραγίας Θεοτόκου", 2024, 12, 26)
+# Cross-year Orthodox-Easter movables (independent Julian computus):
+# 2023 Orthodox Easter 16 Apr -> Clean Monday 27 Feb; 2025 20 Apr -> 3 Mar.
+_reg("GR", None, "Καθαρά Δευτέρα", 2023, 2, 27)
+_reg("GR", None, "Καθαρά Δευτέρα", 2025, 3, 3)
+
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())

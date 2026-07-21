@@ -1,0 +1,28 @@
+# civil-holidays v1
+# jurisdiction: GR
+# source: https://www.gov.gr/arxes/upourgeio-ergasias-kai-koinonikes-asphaliseis
+#   (Greek statutory public holidays / υποχρεωτικές αργίες — Ν. 4808/2021 art. 60
+#   and Β.Δ. 748/1966, as codified. Local copy papers/holidays/gr_holidays.md.)
+#   ORTHODOX EASTER: Greece reckons Easter on the Orthodox (Julian-computus)
+#   calendar, so every Easter-relative holiday uses method julian_gregorian_date,
+#   NOT the Western computus. In 2024 Orthodox Easter is 5 May, whence Καθαρά
+#   Δευτέρα (Clean Monday, −48) = 18 Mar, Μεγάλη Παρασκευή (Good Friday, −2) =
+#   3 May, Δευτέρα του Πάσχα (Easter Monday, +1) = 6 May, Δευτέρα του Αγίου
+#   Πνεύματος (Holy Spirit / Whit Monday, +50) = 24 Jun — the Orthodox reckoning
+#   flowing straight through the computus. Names are the official Greek.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+fixed   | Πρωτοχρονιά                        | 1 1                    | public          |  |
+fixed   | Θεοφάνεια                          | 1 6                    | public religious |  |
+easter  | Καθαρά Δευτέρα                     | -48 julian_gregorian_date | public religious |  |
+fixed   | Εικοστή Πέμπτη Μαρτίου             | 3 25                   | public religious |  |
+easter  | Μεγάλη Παρασκευή                   | -2 julian_gregorian_date  | public religious |  |
+easter  | Δευτέρα του Πάσχα                  | 1 julian_gregorian_date   | public religious |  |
+fixed   | Εργατική Πρωτομαγιά               | 5 1                    | public          |  |
+easter  | Δευτέρα του Αγίου Πνεύματος        | 50 julian_gregorian_date  | public religious |  |
+fixed   | Κοίμηση της Θεοτόκου               | 8 15                   | public religious |  |
+fixed   | Ημέρα του Όχι                      | 10 28                  | public          |  |
+fixed   | Χριστούγεννα                       | 12 25                  | public religious |  |
+fixed   | Σύναξη της Υπεραγίας Θεοτόκου      | 12 26                  | public religious |  |
