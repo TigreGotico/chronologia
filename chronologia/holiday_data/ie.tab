@@ -14,16 +14,18 @@
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed | valid
 #
-fixed        | New Year's Day        | 1 1     | public          |  |  |
-nth_weekday  | Saint Brigid's Day    | 2 1 0   | public          |  |  | 2023-
-fixed        | Saint Patrick's Day   | 3 17    | public religious |  |  |
-easter       | Easter Monday         | 1       | public religious |  |  |
-nth_weekday  | May Day               | 5 1 0   | public          |  |  |
-nth_weekday  | June Bank Holiday     | 6 1 0   | public          |  |  |
-nth_weekday  | August Bank Holiday   | 8 1 0   | public          |  |  |
-nth_weekday  | October Bank Holiday  | 10 -1 0 | public          |  |  |
-fixed        | Christmas Day         | 12 25   | public religious |  |  |
-fixed        | Saint Stephen's Day   | 12 26   | public religious |  |  |
+# Ireland's holidays carry the Irish (ga) name alongside English; English is
+# the primary (join-key) name.
+fixed        | en:New Year's Day ;; ga:Lá Caille        | 1 1     | public          |  |  |
+nth_weekday  | en:Saint Brigid's Day ;; ga:Lá Fhéile Bríde | 2 1 0 | public          |  |  | 2023-
+fixed        | en:Saint Patrick's Day ;; ga:Lá Fhéile Pádraig | 3 17 | public religious |  |  |
+easter       | en:Easter Monday ;; ga:Luan Cásca        | 1       | public religious |  |  |
+nth_weekday  | en:May Day ;; ga:Lá Bealtaine            | 5 1 0   | public          |  |  |
+nth_weekday  | en:June Bank Holiday ;; ga:Lá Saoire i mí an Mheithimh | 6 1 0 | public   |  |  |
+nth_weekday  | en:August Bank Holiday ;; ga:Lá Saoire i mí Lúnasa | 8 1 0 | public       |  |  |
+nth_weekday  | en:October Bank Holiday ;; ga:Lá Saoire i mí Dheireadh Fómhair | 10 -1 0 | public |  |  |
+fixed        | en:Christmas Day ;; ga:Lá Nollag         | 12 25   | public religious |  |  |
+fixed        | en:Saint Stephen's Day ;; ga:Lá Fhéile Stiofáin | 12 26 | public religious |  |  |
 #
 # --- One-off national public holiday ---
 one_off      | Day of Remembrance and Recognition | 2022 3 18 https://www.gov.ie/en/press-release/0dc4f-taoiseach-announces-once-off-public-holiday-in-2022/ | public |  |  |

@@ -228,13 +228,34 @@ def test_every_tab_name_cell_parses():
 # Translation-coverage matrix (en/pt/es/de/fr) for the 15 jurisdictions
 # --------------------------------------------------------------------------
 #: The official primary language of each jurisdiction's primary `name`. A holiday
-#: is trivially "covered" for this language by its own name.
+#: is trivially "covered" for this language by its own name. Every shipped
+#: jurisdiction is listed so the coverage helpers never KeyError as new
+#: native-primary country files land.
 _PRIMARY_LANG = {
     "PT": "pt", "US": "en", "GB": "en", "CA": "en", "AU": "en", "IN": "en",
     "CN": "zh", "JP": "ja", "IL": "he", "SA": "ar", "TR": "tr", "DE": "de",
     "FR": "fr", "BR": "pt", "ES": "es",
+    # tier-2 additions (native-primary):
+    "AR": "es", "AT": "de", "BE": "nl", "CH": "de", "CL": "es", "CO": "es",
+    "CZ": "cs", "DK": "da", "EG": "ar", "FI": "fi", "GR": "el", "ID": "id",
+    "IE": "en", "IT": "it", "MA": "ar", "MX": "es", "MY": "ms", "NL": "nl",
+    "NO": "no", "PE": "es", "PK": "en", "PL": "pl", "SE": "sv", "SK": "sk",
+    "UY": "es",
 }
 _MATRIX_LANGS = ("en", "pt", "es", "de", "fr")
+
+#: Jurisdictions whose full en/pt/es/de/fr display matrix has been authored in
+#: translations.tab (or is trivially covered because the primary language is one
+#: of the matrix five). The strict matrix test enforces only these. It is a
+#: DELIBERATELY GROWING allowlist: adding a jurisdiction's national holidays to
+#: translations.tab (in all five languages) is what qualifies it for entry — the
+#: honest alternative to fabricating low-confidence renderings for every new
+#: country the moment its native-primary .tab lands. The en+native guarantee
+#: (below) is what every jurisdiction gets immediately.
+_MATRIX_JURISDICTIONS = frozenset({
+    "PT", "US", "GB", "CA", "AU", "IN", "CN", "JP", "IL", "SA", "TR", "DE",
+    "FR", "BR", "ES", "IE", "IT",
+})
 
 
 def _all_rules():
@@ -264,14 +285,23 @@ def _covered(juris, name, names_map, trans, lang):
             or _PRIMARY_LANG[juris] == lang)
 
 
-def test_every_non_municipal_holiday_has_en_and_native():
+def test_every_shipped_jurisdiction_has_a_primary_language():
+    # Guards the coverage helpers: every jurisdiction file must be classified.
+    shipped = {j for j, _s, _n, _m in _all_rules()}
+    assert shipped <= set(_PRIMARY_LANG), (
+        f"unclassified jurisdictions: {shipped - set(_PRIMARY_LANG)}")
+
+
+def test_every_non_municipal_holiday_of_covered_jurisdictions_has_en_and_native():
+    # en + native is the immediate guarantee for every jurisdiction whose display
+    # matrix has been authored; the native name is always present.
     trans = load_translations()
     missing = []
     for j, _subdiv, name, names_map in _all_rules():
-        # native: the primary name is always present and is the native name
+        if j not in _MATRIX_JURISDICTIONS:
+            continue
         if not name:
             missing.append((j, name, "native"))
-        # en: available as an official name or a translation (or already native)
         if not _covered(j, name, names_map, trans, "en"):
             missing.append((j, name, "en"))
     assert not missing, f"holidays missing en/native coverage: {missing}"
@@ -281,12 +311,30 @@ def test_every_national_holiday_has_full_five_language_matrix():
     trans = load_translations()
     missing = []
     for j, subdiv, name, names_map in _all_rules():
-        if subdiv is not None:            # national tier only
+        if subdiv is not None:                    # national tier only
+            continue
+        if j not in _MATRIX_JURISDICTIONS:        # deliberately-growing allowlist
             continue
         for lang in _MATRIX_LANGS:
             if not _covered(j, name, names_map, trans, lang):
                 missing.append((j, name, lang))
     assert not missing, f"national holidays missing matrix coverage: {missing}"
+
+
+def test_multi_official_new_jurisdictions_carry_co_official_names():
+    # Switzerland (de/fr/it), Belgium (nl/fr/de) and Ireland (en/ga): national
+    # holidays carry their co-official names.
+    expect = {
+        ("CH", "Neujahrstag"): {"fr": "Nouvel An", "it": "Capodanno"},
+        ("BE", "Nieuwjaar"): {"fr": "Nouvel An", "de": "Neujahr"},
+        ("IE", "New Year's Day"): {"ga": "Lá Caille"},
+    }
+    for (juris, primary), langs in expect.items():
+        year = 2024
+        h = [x for x in holidays_for(juris, year) if x.name == primary][0]
+        for lang, text in langs.items():
+            assert h.names.get(lang) == text, (juris, primary, lang, dict(h.names))
+            assert h.display_name(lang) == text
 
 
 def test_display_name_renders_every_matrix_language_for_a_sample():

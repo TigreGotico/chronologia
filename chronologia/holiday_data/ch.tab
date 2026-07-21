@@ -18,10 +18,12 @@
 # columns: kind | name | args | categories | subdiv | observed
 #
 # --- Everywhere (de-facto national) ---
-fixed   | Neujahrstag      | 1 1   | public          |  |
-easter  | Auffahrt         | 39    | public religious |  |
-fixed   | Nationalfeiertag | 8 1   | public          |  |
-fixed   | Weihnachten      | 12 25 | public religious |  |
+# National holidays carry all three main official languages (de/fr/it); the
+# German primary name is the join key used by the golds.
+fixed   | de:Neujahrstag ;; fr:Nouvel An ;; it:Capodanno       | 1 1   | public          |  |
+easter  | de:Auffahrt ;; fr:Ascension ;; it:Ascensione          | 39    | public religious |  |
+fixed   | de:Nationalfeiertag ;; fr:Fête nationale ;; it:Festa nazionale | 8 1 | public       |  |
+fixed   | de:Weihnachten ;; fr:Noël ;; it:Natale                | 12 25 | public religious |  |
 #
 # --- Zürich (CH-ZH) ---
 easter  | Karfreitag       | -2    | regional religious | CH-ZH |

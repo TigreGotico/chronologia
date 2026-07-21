@@ -210,10 +210,16 @@ assert ano_novo.display_name("pt") == "Ano Novo"        # native (the official)
 ```
 
 Translations cover the national and regional tiers in English, Portuguese,
-Spanish, German and French. Portugal's ~300 municipal saints'-day feasts are
-deliberately *not* translated: "Santo António" is the same proper noun in every
-language, so `display_name` falls back to the native name — which is the honest
-answer, not a gap.
+Spanish, German and French, for a **deliberately growing** set of jurisdictions:
+a jurisdiction earns its full five-language matrix when those renderings are
+authored with confidence, rather than fabricating a low-confidence gloss for
+every holiday the moment a new country's native-primary file lands. Every
+jurisdiction, covered or not, still gets its official native name (and any
+co-official names — Switzerland's de/fr/it, Belgium's nl/fr/de, Ireland's
+en/ga), and `display_name` always resolves *something* via the fallback chain.
+Portugal's ~300 municipal saints'-day feasts are deliberately *not* translated:
+"Santo António" is the same proper noun in every language, so `display_name`
+falls back to the native name — which is the honest answer, not a gap.
 
 ## Data files
 
