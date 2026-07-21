@@ -25,6 +25,8 @@ from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, YEAR_CYCLES,
                                 years_of)
 from chronologia.dayparts import (CLDR_VERSION, DAY_PARTS, DayPart,
                                   UnknownDayPartError, daypart_span)
+from chronologia.edtf import (EdtfDate, EdtfParseError, format_edtf,
+                             parse_edtf)
 from chronologia.eras import (ERAS, Era, EraCounting, astro_year_range,
                               resolve_bp, resolve_era, resolve_era_year_span)
 from chronologia.axes import (AXES, EARTH_DAY_SECONDS, MARS_SOL_RATIO,
@@ -258,6 +260,11 @@ __all__ = [
     "EASTER_METHODS",
     "MOVABLE_FEAST_OFFSETS",
     "FIXED_FEASTS",
+    # EDTF (Extended Date/Time Format) <-> DateSpan
+    "parse_edtf",
+    "format_edtf",
+    "EdtfDate",
+    "EdtfParseError",
     # derived resolution vocabulary
     "DateTimeResolution",
     # timelines & discontinuities
