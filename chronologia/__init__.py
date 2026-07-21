@@ -21,7 +21,6 @@ from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, DayCycle,
                                 DaySubdivision, resolve_cycle_day)
 from chronologia.eras import (ERAS, Era, EraCounting, astro_year_range,
                               resolve_bp, resolve_era, resolve_era_year_span)
-                              resolve_era, resolve_era_year_span)
 from chronologia.leapseconds import (GPS_EPOCH, LEAP_SECONDS,
                                      TABLE_VALID_UNTIL, TAI_MINUS_GPS,
                                      gps_to_utc, is_leap_second_day,
