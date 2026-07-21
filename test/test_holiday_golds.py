@@ -1129,6 +1129,22 @@ _reg("NL", None, "Tweede Pinksterdag", *_mov(50))
 _reg("NL", None, "Eerste Kerstdag", 2024, 12, 25)
 _reg("NL", None, "Tweede Kerstdag", 2024, 12, 26)
 
+# --- PL: statutory non-working days (Polish names); Wigilia from 2025 ---
+_reg("PL", None, "Nowy Rok", 2024, 1, 1)
+_reg("PL", None, "Święto Trzech Króli", 2024, 1, 6)
+_reg("PL", None, "Niedziela Wielkanocna", *_mov(0))
+_reg("PL", None, "Poniedziałek Wielkanocny", *_mov(1))
+_reg("PL", None, "Święto Państwowe", 2024, 5, 1)
+_reg("PL", None, "Święto Narodowe Trzeciego Maja", 2024, 5, 3)
+_reg("PL", None, "Zielone Świątki", *_mov(49))
+_reg("PL", None, "Dzień Bożego Ciała", *_mov(60))
+_reg("PL", None, "Wniebowzięcie Najświętszej Marii Panny", 2024, 8, 15)
+_reg("PL", None, "Uroczystość Wszystkich Świętych", 2024, 11, 1)
+_reg("PL", None, "Narodowe Święto Niepodległości", 2024, 11, 11)
+_reg("PL", None, "Wigilia Bożego Narodzenia", 2025, 12, 24)
+_reg("PL", None, "Boże Narodzenie (pierwszy dzień)", 2024, 12, 25)
+_reg("PL", None, "Boże Narodzenie (drugi dzień)", 2024, 12, 26)
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())

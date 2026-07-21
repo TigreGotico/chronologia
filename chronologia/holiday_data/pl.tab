@@ -1,0 +1,25 @@
+# civil-holidays v1
+# jurisdiction: PL
+# source: https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU19510040028
+#   (Ustawa z dnia 18 stycznia 1951 r. o dniach wolnych od pracy, consolidated.
+#   Local copy papers/holidays/pl_holidays.md.) Names are official Polish.
+#   Wigilia (Christmas Eve, 24 Dec) became a statutory non-working day from 2025
+#   (amendment of 2024) — modelled with valid range 2025-.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid
+#
+fixed   | Nowy Rok                                 | 1 1   | public          |  |  |
+fixed   | Święto Trzech Króli                      | 1 6   | public religious |  |  |
+easter  | Niedziela Wielkanocna                    | 0     | public religious |  |  |
+easter  | Poniedziałek Wielkanocny                 | 1     | public religious |  |  |
+fixed   | Święto Państwowe                         | 5 1   | public          |  |  |
+fixed   | Święto Narodowe Trzeciego Maja           | 5 3   | public          |  |  |
+easter  | Zielone Świątki                          | 49    | public religious |  |  |
+easter  | Dzień Bożego Ciała                       | 60    | public religious |  |  |
+fixed   | Wniebowzięcie Najświętszej Marii Panny   | 8 15  | public religious |  |  |
+fixed   | Uroczystość Wszystkich Świętych          | 11 1  | public religious |  |  |
+fixed   | Narodowe Święto Niepodległości           | 11 11 | public          |  |  |
+fixed   | Wigilia Bożego Narodzenia                | 12 24 | public religious |  |  | 2025-
+fixed   | Boże Narodzenie (pierwszy dzień)         | 12 25 | public religious |  |  |
+fixed   | Boże Narodzenie (drugi dzień)            | 12 26 | public religious |  |  |
