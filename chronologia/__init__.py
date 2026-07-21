@@ -23,6 +23,9 @@ from chronologia.eras import (ERAS, Era, EraCounting, astro_year_range,
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
 from chronologia.resolution import DateTimeResolution
 from chronologia.roman import roman_to_julian
+from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
+                                   DiscontinuityKind, NeverExisted, Timeline,
+                                   TimelineSegment, proleptic)
 
 __version__ = "0.1.0a1"
 
@@ -61,4 +64,13 @@ __all__ = [
     "roman_to_julian",
     # derived resolution vocabulary
     "DateTimeResolution",
+    # timelines & discontinuities
+    "Timeline",
+    "TimelineSegment",
+    "Discontinuity",
+    "DiscontinuityKind",
+    "CivilLabel",
+    "NeverExisted",
+    "TIMELINES",
+    "proleptic",
 ]
