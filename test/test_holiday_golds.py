@@ -1192,6 +1192,19 @@ _reg("SE", None, "Alla helgons dag", 2024, 11, 2)  # Sat on/before 6 Nov
 _reg("SE", None, "Juldagen", 2024, 12, 25)
 _reg("SE", None, "Annandag jul", 2024, 12, 26)
 
+# --- DK: helligdage (Danish names); Store bededag abolished from 2024 ---
+_reg("DK", None, "Nytårsdag", 2024, 1, 1)
+_reg("DK", None, "Skærtorsdag", *_mov(-3))
+_reg("DK", None, "Langfredag", *_mov(-2))
+_reg("DK", None, "Påskedag", *_mov(0))
+_reg("DK", None, "Anden påskedag", *_mov(1))
+_reg("DK", None, "Store bededag", 2023, 5, 5)   # 4th Fri after Easter, until 2023
+_reg("DK", None, "Kristi himmelfartsdag", *_mov(39))
+_reg("DK", None, "Pinsedag", *_mov(49))
+_reg("DK", None, "Anden pinsedag", *_mov(50))
+_reg("DK", None, "Juledag", 2024, 12, 25)
+_reg("DK", None, "Anden juledag", 2024, 12, 26)
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
