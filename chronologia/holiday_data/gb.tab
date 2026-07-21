@@ -5,36 +5,41 @@
 #   papers/holidays/gb_bank_holidays_govuk.html). Subdivisions follow the three
 #   bank-holiday regimes: GB-EAW = England & Wales, GB-SCT = Scotland,
 #   GB-NIR = Northern Ireland. Easter-relative days derive from computus.
-#   NOTE ON SUBSTITUTE DAYS: gov.uk grants a substitute weekday when a bank
-#   holiday falls on a weekend (and the double-substitute when Christmas Day is a
-#   Sunday). chronologia's ObservedShift cannot express the Christmas/Boxing
-#   interaction, so substitute ("in lieu") days are deliberately NOT modelled
-#   here; the rules carry the statutory nominal dates. The reference package's
-#   observed substitute days therefore appear as documented reference-only
-#   entries in the differential (test_holidays_gb.py).
+#   SUBSTITUTE DAYS: gov.uk grants a substitute weekday when a bank holiday falls
+#   on a weekend — "normally the following Monday", and, per the same page, when
+#   both Christmas Day and Boxing Day fall on a weekend the substitutes cascade to
+#   two distinct weekdays. Legally the substitute IS the bank holiday; the nominal
+#   weekend date is not itself a working-day holiday. We model this with the
+#   gb_substitute policy (SubstitutePolicy): it ADDS a "<name> (substitute day)"
+#   holiday on the next weekday not already a bank holiday, resolved calendar-wide
+#   so the Christmas/Boxing pair cascades correctly (e.g. 2021: Christmas Sat 25
+#   Dec -> Mon 27, Boxing Sun 26 Dec -> Tue 28). The nominal statutory date is
+#   kept too (matching the reference package, which lists both). Applied to every
+#   weekend-susceptible fixed bank holiday; the nth-weekday and Easter days can
+#   never fall on a weekend.
 # retrieved: 2026-07-21
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
 # --- UK-wide bank holidays (all three regions) ---
-fixed          | New Year's Day          | 1 1    | public          |  |
+fixed          | New Year's Day          | 1 1    | public          |  | gb_substitute
 easter         | Good Friday             | -2     | public religious |  |
 nth_weekday    | Early May Bank Holiday  | 5 1 0  | public          |  |
 nth_weekday    | Spring Bank Holiday     | 5 -1 0 | public          |  |
-fixed          | Christmas Day           | 12 25  | public religious |  |
-fixed          | Boxing Day              | 12 26  | public          |  |
+fixed          | Christmas Day           | 12 25  | public religious |  | gb_substitute
+fixed          | Boxing Day              | 12 26  | public          |  | gb_substitute
 #
 # --- England & Wales (GB-EAW) ---
 easter         | Easter Monday               | 1      | public religious | GB-EAW |
 nth_weekday    | Summer Bank Holiday         | 8 -1 0 | public          | GB-EAW |
 #
 # --- Scotland (GB-SCT) ---
-fixed          | 2nd January             | 1 2    | public          | GB-SCT |
+fixed          | 2nd January             | 1 2    | public          | GB-SCT | gb_substitute
 nth_weekday    | Summer Bank Holiday     | 8 1 0  | public          | GB-SCT |
-fixed          | St Andrew's Day         | 11 30  | public          | GB-SCT |
+fixed          | St Andrew's Day         | 11 30  | public          | GB-SCT | gb_substitute
 #
 # --- Northern Ireland (GB-NIR) ---
-fixed          | St Patrick's Day        | 3 17   | public religious | GB-NIR |
+fixed          | St Patrick's Day        | 3 17   | public religious | GB-NIR | gb_substitute
 easter         | Easter Monday           | 1      | public religious | GB-NIR |
-fixed          | Battle of the Boyne     | 7 12   | public          | GB-NIR |
+fixed          | Battle of the Boyne     | 7 12   | public          | GB-NIR | gb_substitute
 nth_weekday    | Summer Bank Holiday     | 8 -1 0 | public          | GB-NIR |

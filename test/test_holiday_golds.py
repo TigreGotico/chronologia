@@ -542,6 +542,14 @@ _reg("GB", "GB-NIR", "St Patrick's Day", 2024, 3, 17)
 _reg("GB", "GB-NIR", "Easter Monday", *_mov(1))
 _reg("GB", "GB-NIR", "Battle of the Boyne", 2024, 7, 12)
 _reg("GB", "GB-NIR", "Summer Bank Holiday", 2024, 8, 26)  # last Monday of Aug
+# gov.uk substitute ("in-lieu") days (gb_substitute policy). The Christmas/Boxing
+# cascade of 2021 and the New Year substitutes are the flagship golds; names carry
+# the " (substitute day)" suffix the policy appends.
+_reg("GB", None, "Christmas Day (substitute day)", 2021, 12, 27)
+_reg("GB", None, "Boxing Day (substitute day)", 2021, 12, 28)
+_reg("GB", None, "Christmas Day (substitute day)", 2022, 12, 27)
+_reg("GB", None, "New Year's Day (substitute day)", 2022, 1, 3)
+_reg("GB", None, "New Year's Day (substitute day)", 2023, 1, 2)
 
 # --- DE: national nine + all 16 Länder (source: Land Feiertagsgesetze) ---
 _reg("DE", None, "Neujahr", 2024, 1, 1)
