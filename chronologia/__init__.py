@@ -283,4 +283,5 @@ __all__ = [
     "ClockSegment",
     "ZoneDiscontinuity",
     "ZoneNeverExisted",
+    # civil holidays (optional bridge onto the vacanza/holidays database)
 ]
