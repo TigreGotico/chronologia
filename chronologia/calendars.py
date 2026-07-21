@@ -502,6 +502,46 @@ def armenian_from_jdn(jdn: int) -> Tuple[int, int, int]:
 
 
 # --------------------------------------------------------------------------
+# Egyptian civil calendar: the original 365-day "vague year".
+# --------------------------------------------------------------------------
+# Twelve 30-day months (grouped in three four-month seasons: Akhet
+# "Inundation" months 1-4, Peret "Emergence" months 5-8, Shemu "Harvest"
+# months 9-12) plus five epagomenal days (the birthdays of Osiris, Horus,
+# Seth, Isis and Nephthys) as month 13 -- and, unlike Coptic/Ethiopic, no
+# intercalation whatsoever, so the calendar is *the* vague year: every year
+# is exactly 365 days, and the civil new year (1 Thoth) drifts one day
+# earlier against the solar/Sothic year every four years, completing a full
+# cycle in 1460 Egyptian years (the Sothic cycle).  The Armenian calendar
+# above is a documented later transplant of this same wandering-year
+# arithmetic.
+#
+# Epoch: the era of Nabonassar anchor used since antiquity to fix the
+# Egyptian civil calendar astronomically (Ptolemy's *Almagest* keyed his
+# observation tables to it): 1 Thoth I, year 1 of Nabonassar = 26 February
+# 747 BC Julian (proleptic astronomical year -746) = JDN 1448638.  Algorithm
+# (a plain 365-day linear count, one 30-day month at a time, epagomenal days
+# as month 13) and the epoch value are both transcribed from Dershowitz &
+# Reingold, "Calendrical Calculations" (the Egyptian calendar section);
+# cross-checked here against ``julian_to_jdn(-746, 2, 26) == 1448638``, which
+# matches the source's stated JDN for the epoch exactly.
+
+_EGYPTIAN_EPOCH_JDN = julian_to_jdn(-746, 2, 26)   # 1448638
+
+
+def egyptian_to_jdn(year: int, month: int, day: int) -> int:
+    """Egyptian civil (year, month, day) -> JDN.  Months 1..12 have 30 days;
+    the five epagomenal days are month 13.  No leap year, ever -- the vague
+    year is always 365 days long.  Proleptic for years <= 0."""
+    return _EGYPTIAN_EPOCH_JDN + 365 * (year - 1) + 30 * (month - 1) + (day - 1)
+
+
+def egyptian_from_jdn(jdn: int) -> Tuple[int, int, int]:
+    days = jdn - _EGYPTIAN_EPOCH_JDN
+    year, rem = days // 365 + 1, days % 365
+    return year, rem // 30 + 1, rem % 30 + 1
+
+
+# --------------------------------------------------------------------------
 # Maya Long Count: a pure day count in a mixed-radix positional notation.
 # --------------------------------------------------------------------------
 # The Long Count is not a year/month/day calendar at all -- it is a single
@@ -995,6 +1035,9 @@ CALENDARS: Dict[str, object] = {
     "armenian": Calendar(
         "armenian", 13, armenian_to_jdn, armenian_from_jdn,
         _ARMENIAN_EPOCH_JDN),
+    "egyptian": Calendar(
+        "egyptian", 13, egyptian_to_jdn, egyptian_from_jdn,
+        _EGYPTIAN_EPOCH_JDN),
     "mayan_long_count": Calendar(
         "mayan_long_count", 18, mayan_long_count_registry_to_jdn,
         mayan_long_count_registry_from_jdn, _MAYAN_EPOCH_JDN),
