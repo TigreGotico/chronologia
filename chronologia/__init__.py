@@ -96,6 +96,7 @@ from chronologia.civil_holidays import (CATEGORIES, US_OBSERVED_SHIFT,
                                         NthWeekdayRule, ObservedShift,
                                         holidays_for, is_civil_holiday,
                                         load_calendar)
+from chronologia.extract import explain, extract_timespan
 
 __version__ = "0.1.0a1"
 
@@ -119,6 +120,9 @@ __all__ = [
     "julian_to_jdn",
     "jdn_to_julian",
     "register_event_provider",
+    # natural-language extraction (text -> DateSpan)
+    "extract_timespan",
+    "explain",
     # eras
     "ERAS",
     "Era",

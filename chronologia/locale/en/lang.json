@@ -1,0 +1,99 @@
+{
+  "tokenizer": {"split_contractions": false, "ordinal_dot": false},
+  "constructions": {
+    "relative_offset": {"orders": ["NUM UNIT MARKER", "MARKER NUM UNIT",
+                        "MARKER indef? QUANT? of? indef? UNIT",
+                        "MARKER indef? NUM of? indef? UNIT",
+                        "indef? QUANT? of? indef? UNIT MARKER",
+                        "indef? NUM of? indef? UNIT MARKER"]},
+    "named_day": {"orders": ["DAY_WORD"]},
+    "named_day_after": {"orders": ["article? indef? UNIT after DAY_WORD"]},
+    "named_day_before": {"orders": ["article? indef? UNIT before DAY_WORD"]},
+    "weekday_offset": {
+      "orders": ["indef? QUANT? UNIT from WEEKDAY",
+                 "indef? NUM UNIT from WEEKDAY"]
+    },
+    "weekday_ref": {"orders": ["REL_MARKER WEEKDAY"]},
+    "calendar_date": {
+      "orders": ["MONTH DAY? YEAR?", "DAY of MONTH YEAR?", "DAY MONTH YEAR?"],
+      "prefer_future": true
+    },
+    "nongregorian_date": {
+      "orders": ["CAL_MONTH DAY? YEAR?", "DAY of CAL_MONTH YEAR?",
+                 "DAY CAL_MONTH YEAR?"],
+      "prefer_future": true
+    },
+    "roman_date": {
+      "orders": ["ad ORD ANCHOR_DAY MONTH", "ad ORD ANCHOR_DAY of MONTH",
+                 "PRIDIE ANCHOR_DAY MONTH", "PRIDIE ANCHOR_DAY of MONTH",
+                 "ANCHOR_DAY of MONTH", "ANCHOR_DAY MONTH"]
+    },
+    "regnal_date": {
+      "orders": ["ERANAME NUM", "ORD year_word of ERANAME",
+                 "consulship of ERANAME"]
+    },
+    "season_ref": {
+      "orders": ["SEASON of YEAR", "REL_MARKER SEASON", "SEASON YEAR?"]
+    },
+    "scoped_ordinal": {
+      "orders": [
+        "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
+        "article? ordlast SEL_UNIT of article? SORD SCOPE_UNIT",
+        "article? ORD UNIT of MONTH YEAR?",
+        "article? ordlast UNIT of MONTH YEAR?",
+        "article? ORD UNIT of article? year_word YEAR?",
+        "article? ordlast UNIT of article? year_word YEAR?",
+        "article? ORD SCOPE_UNIT"
+      ]
+    },
+    "clock_time": {
+      "orders": ["CLOCK MERIDIEM?", "at HOUR MERIDIEM?",
+                 "FRACTION CLOCKDIR HOUR MERIDIEM?", "HOUR oclock MERIDIEM?",
+                 "HOUR MERIDIEM",
+                 "at? LANDMARK", "FRACTION CLOCKDIR LANDMARK",
+                 "MINUTE CLOCKDIR HOUR MERIDIEM?",
+                 "MINUTE CLOCKDIR LANDMARK"],
+      "prefer_future": true
+    },
+    "military_time": {
+      "orders": ["MILTIME hours", "MILTIMEZ"],
+      "prefer_future": true
+    },
+    "era_bc": {"orders": ["NUM bc"]},
+    "era_ad": {"orders": ["NUM ad", "ad NUM"]},
+    "era_bp": {"orders": ["NUM bp", "NUM year_word before present"]},
+    "deep_time": {
+      "orders": ["NUM SCALE year_word ago",
+                 "NUM SCALE year_word before present"]
+    },
+    "named_period": {
+      "orders": ["in? during? article? PART? PERIOD"]
+    },
+    "iso_date": {"orders": ["ISO"]},
+    "hebrew_new_year": {
+      "orders": ["article? hebrew new year_word YEAR"]
+    },
+    "year_ref": {"orders": ["in GYEAR", "article? year_word GYEAR", "GYEAR",
+                            "article? year_word NUM SCALE"]},
+    "decade_ref": {
+      "orders": ["PART? article? NUM plural",
+                 "PART? article? DECADE",
+                 "article? PART DECADE"]
+    },
+    "month_fuzzy": {"orders": ["PART MONTH"]},
+    "month_day_ref": {
+      "orders": ["article? ORD of article? month_word"],
+      "prefer_future": true
+    },
+    "half_period": {
+      "orders": ["article? NUM half of GYEAR",
+                 "article? NUM half of article? SCOPE_UNIT"]
+    }
+  },
+  "conventions": {"week_start": "monday", "dmy": false, "hemisphere": null,
+                  "prefer_future": true},
+  "quantifiers": {"1": ["a", "an", "one"], "2": ["couple", "pair"],
+                  "3": ["few", "several"], "0.5": ["half"]},
+  "guards": {"bare_year_min_digits": 4},
+  "hook": "chronologia.extract.numfold:fold_en"
+}

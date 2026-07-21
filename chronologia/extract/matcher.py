@@ -1,0 +1,193 @@
+"""Tokens -> matches, with precedence and longest-span resolution.
+
+Each construction order is matched by a plain backtracking walk over its
+:class:`SlotElement` sequence (optional slots try both present and
+skipped; the longest consumption wins).  Slot binding is a single lookup
+into the language's typed vocab maps -- there are no per-language regexes
+to debug, only named slots.
+
+Overlap resolution follows the doc: among competing matches the longest
+span wins, ties broken by precedence (era > scoped > calendar > ...).
+Selected matches never overlap.
+"""
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass
+from typing import Dict, List, Tuple
+
+from chronologia.extract.compiler import CompiledSpec
+from chronologia.extract.model import (LangSpec, Match, SlotElement,
+                                           SlotOrder, Token)
+
+_ISO = re.compile(r"\d{4}-\d{2}-\d{2}")
+_CLOCK = re.compile(r"\d{1,2}:\d{2}(?::\d{2})?")
+
+
+def _calendar_for_surface(spec: LangSpec, surface: str):
+    """Which registered calendar owns a calendar-month surface (surfaces are
+    unique across calendars within a language, so the first hit is the
+    only hit)."""
+    for cal_key, months in spec.calendar_months.items():
+        if surface in months:
+            return cal_key
+    return None
+
+
+@dataclass(frozen=True)
+class Candidate:
+    match: Match
+    precedence: int
+
+
+def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
+    name = element.name
+    if not element.is_slot:
+        return token.text in spec.connectors.get(name, frozenset())
+    if name == "NUM":
+        return token.is_number
+    if name == "UNIT":
+        return token.text in spec.units
+    if name in ("MARKER", "DIRECTION_MARKER"):
+        return token.text in spec.directions
+    if name == "DAY_WORD":
+        return token.text in spec.named_days
+    if name == "REL_MARKER":
+        return token.text in spec.rel_markers
+    if name == "WEEKDAY":
+        return token.text in spec.weekdays
+    if name == "MONTH":
+        return token.text in spec.months
+    if name == "CAL_MONTH":
+        return any(token.text in months
+                   for months in spec.calendar_months.values())
+    if name == "DAY":
+        return token.is_number and 1 <= (token.value or 0) <= 31
+    if name == "YEAR":
+        return token.is_number and ((token.value or 0) >= 32
+                                    or len(token.raw.rstrip(".")) >= 4)
+    if name == "GYEAR":
+        # a standalone Gregorian year: a bare 4-5 digit run (1000-99999), so
+        # small integers ("5", "123") and digit soup ("1234567890") never read
+        # as a year when nothing else anchors them
+        raw = token.raw.rstrip(".")
+        # a leading zero marks a clock reading ("0600"), never a year
+        return (token.is_number and raw.isdigit() and 4 <= len(raw) <= 5
+                and raw[0] != "0")
+    if name in ("MILTIME", "MILTIMEZ"):
+        raw = token.raw.rstrip(".")
+        if not (token.is_number and raw.isdigit() and len(raw) == 4):
+            return False
+        hh, mm = int(raw[:2]), int(raw[2:])
+        if not (0 <= hh <= 23 and 0 <= mm <= 59):
+            return False
+        # MILTIMEZ (the bare, no-"hours" form) only fires with a leading zero,
+        # so "1500" stays a year while "0600" reads as a clock
+        return raw[0] == "0" if name == "MILTIMEZ" else True
+    if name == "LANDMARK":
+        return token.text in spec.clock_landmarks
+    if name == "QUANT":
+        return token.text in spec.quantifiers
+    if name == "ISO":
+        return _ISO.fullmatch(token.text) is not None
+    # -- clock_time slots --------------------------------------------------
+    if name == "CLOCK":
+        return _CLOCK.fullmatch(token.text) is not None
+    if name == "HOUR":
+        return token.is_number and 0 <= (token.value or 0) <= 24
+    if name == "MINUTE":
+        return token.is_number and 0 <= (token.value or 0) <= 59
+    if name == "FRACTION":
+        return token.text in spec.clock_fractions
+    if name == "CLOCKDIR":
+        return token.text in spec.clock_dirs
+    if name == "MERIDIEM":
+        return token.text in spec.meridiems
+    # -- season_ref / scoped_ordinal slots ---------------------------------
+    if name == "SEASON":
+        return token.text in spec.seasons
+    if name in ("ORD", "SORD"):
+        return token.is_number and (token.value or 0) >= 1
+    if name in ("SUBH", "SUBM", "SUBS"):
+        return token.is_number and (token.value or 0) >= 0
+    if name in ("SCOPE_UNIT", "SEL_UNIT"):
+        return token.text in spec.scope_units or token.text in spec.units
+    # -- day-cycle / regnal / roman slots ----------------------------------
+    if name == "CYCLE_DAY":
+        return token.text in spec.cycle_positions
+    if name == "ERANAME":
+        return token.text in spec.regnal_names
+    if name == "ANCHOR_DAY":
+        return token.text in spec.roman_anchors
+    if name == "PRIDIE":
+        return token.text in spec.connectors.get("pridie", frozenset())
+    # -- deep-time / named-period slots ------------------------------------
+    if name == "PERIOD":
+        return token.text in spec.periods
+    if name == "SCALE":
+        return token.text in spec.scales
+    if name == "PART":
+        return token.text in spec.period_parts
+    if name == "DECADE":
+        return token.text in spec.decade_words
+    return False
+
+
+def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
+          ei: int, ti: int, spec: LangSpec,
+          slots: Dict[str, Token]) -> List[Tuple[int, Dict[str, Token]]]:
+    if ei == len(elements):
+        return [(ti, dict(slots))]
+    el = elements[ei]
+    results: List[Tuple[int, Dict[str, Token]]] = []
+    if ti < len(tokens) and _bind(el, tokens[ti], spec):
+        bound = dict(slots)
+        if el.is_slot:
+            bound[el.name] = tokens[ti]
+        results += _walk(elements, tokens, ei + 1, ti + 1, spec, bound)
+    if el.optional:
+        results += _walk(elements, tokens, ei + 1, ti, spec, slots)
+    return results
+
+
+class ConstructionMatcher:
+    """Runs a compiled table over a token stream."""
+
+    def __init__(self, compiled: CompiledSpec):
+        self.compiled = compiled
+        self.spec = compiled.spec
+
+    def _candidates(self, tokens: Tuple[Token, ...]) -> List[Candidate]:
+        out: List[Candidate] = []
+        for precedence, name, order in self.compiled.table:
+            for start in range(len(tokens)):
+                ends = _walk(order.elements, tokens, 0, start, self.spec, {})
+                if not ends:
+                    continue
+                end, slots = max(ends, key=lambda r: r[0])
+                if end > start:
+                    cal = (_calendar_for_surface(self.spec, slots["CAL_MONTH"].text)
+                           if "CAL_MONTH" in slots else None)
+                    out.append(Candidate(
+                        Match(name, (start, end), slots, calendar=cal),
+                        precedence))
+        return out
+
+    @staticmethod
+    def _select(candidates: List[Candidate]) -> List[Candidate]:
+        ordered = sorted(candidates,
+                         key=lambda c: (-c.match.length, c.precedence,
+                                        c.match.span[0]))
+        taken: set = set()
+        chosen: List[Candidate] = []
+        for cand in ordered:
+            span = range(*cand.match.span)
+            if any(i in taken for i in span):
+                continue
+            taken.update(span)
+            chosen.append(cand)
+        chosen.sort(key=lambda c: c.match.span[0])
+        return chosen
+
+    def match(self, tokens: Tuple[Token, ...]) -> Tuple[Match, ...]:
+        return tuple(c.match for c in self._select(self._candidates(tokens)))

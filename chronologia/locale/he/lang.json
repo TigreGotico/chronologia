@@ -1,0 +1,13 @@
+{
+  "tokenizer": {"split_contractions": false, "ordinal_dot": false},
+  "constructions": {
+    "nongregorian_date": {
+      "orders": ["DAY CAL_MONTH YEAR?", "CAL_MONTH DAY? YEAR?"],
+      "prefer_future": true
+    }
+  },
+  "conventions": {"week_start": "sunday", "dmy": true, "hemisphere": null,
+                  "prefer_future": true},
+  "guards": {},
+  "hook": null
+}
