@@ -1,0 +1,58 @@
+# civil-holidays v1
+# jurisdiction: IT
+# source: https://www.normattiva.it/uri-res/N2Ls?urn:nulla&legge=1949-05-27;260
+#   (Legge 27 maggio 1949, n. 260 "Disposizioni in materia di ricorrenze
+#   festive", as amended by L. 90/1954 and DPR 792/1985 — the statutory list of
+#   Italian national "festività". Twelve civil festività: 1 Jan, Epifania 6 Jan,
+#   Pasqua and Lunedì dell'Angelo (Easter-relative via computus), 25 Apr
+#   (Liberazione), 1 May, 2 Jun (Repubblica), Ferragosto 15 Aug, Ognissanti
+#   1 Nov, Immacolata 8 Dec, Natale 25 Dec, Santo Stefano 26 Dec. Note: the
+#   "Giornata dell'Unità Nazionale e delle Forze Armate" (4 Nov, celebrated the
+#   first Sunday of November) is a solemn commemoration, NOT a work-free civil
+#   festività, so it is deliberately omitted (see the reference differential in
+#   test_holidays_it.py). Local copy papers/holidays/it_holidays.md.
+#   MUNICIPAL patron-saint days (giorno del Santo Patrono): each comune's patron
+#   feast is a recognised local holiday (L. 260/1949 art. 2). We ship the patron
+#   feast of the 20 regional capitals as municipal-category entries keyed to the
+#   capital's ISO 3166-2 province code — the well-documented civic patrons rather
+#   than the reference's 114 province rows (documented choice: depth-with-citation
+#   over breadth). Dates cited in papers/holidays/it_holidays.md.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- National festività (Legge 260/1949) ---
+fixed   | Capodanno                              | 1 1   | public          |  |
+fixed   | Epifania                               | 1 6   | public religious |  |
+easter  | Pasqua                                 | 0     | public religious |  |
+easter  | Lunedì dell'Angelo                     | 1     | public religious |  |
+fixed   | Anniversario della Liberazione         | 4 25  | public          |  |
+fixed   | Festa del Lavoro                       | 5 1   | public          |  |
+fixed   | Festa della Repubblica                 | 6 2   | public          |  |
+fixed   | Assunzione della Beata Vergine Maria   | 8 15  | public religious |  |
+fixed   | Ognissanti                             | 11 1  | public religious |  |
+fixed   | Immacolata Concezione                  | 12 8  | public religious |  |
+fixed   | Natale                                 | 12 25 | public religious |  |
+fixed   | Santo Stefano                          | 12 26 | public religious |  |
+#
+# --- Regional-capital patron saints (municipal) ---
+fixed   | San Giovanni Battista        | 6 24  | municipal religious | IT-TO |
+fixed   | San Grato                    | 9 7   | municipal religious | IT-AO |
+fixed   | Sant'Ambrogio                | 12 7  | municipal religious | IT-MI |
+fixed   | San Vigilio                  | 6 26  | municipal religious | IT-TN |
+fixed   | Madonna della Salute         | 11 21 | municipal religious | IT-VE |
+fixed   | San Giusto                   | 11 3  | municipal religious | IT-TS |
+fixed   | San Giovanni Battista        | 6 24  | municipal religious | IT-GE |
+fixed   | San Petronio                 | 10 4  | municipal religious | IT-BO |
+fixed   | San Giovanni Battista        | 6 24  | municipal religious | IT-FI |
+fixed   | San Costanzo                 | 1 29  | municipal religious | IT-PG |
+fixed   | San Ciriaco                  | 5 4   | municipal religious | IT-AN |
+fixed   | Santi Pietro e Paolo         | 6 29  | municipal religious | IT-RM |
+fixed   | San Massimo d'Aveia          | 6 10  | municipal religious | IT-AQ |
+fixed   | San Giorgio                  | 4 23  | municipal religious | IT-CB |
+fixed   | San Gennaro                  | 9 19  | municipal religious | IT-NA |
+fixed   | San Nicola                   | 12 6  | municipal religious | IT-BA |
+fixed   | San Gerardo di Potenza       | 5 30  | municipal religious | IT-PZ |
+fixed   | San Vitaliano                | 7 16  | municipal religious | IT-CZ |
+fixed   | Santa Rosalia                | 7 15  | municipal religious | IT-PA |
+fixed   | San Saturnino di Cagliari    | 10 30 | municipal religious | IT-CA |

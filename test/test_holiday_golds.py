@@ -956,6 +956,80 @@ def test_jp_mountain_day_year_gated_from_2016():
 
 
 # ==========================================================================
+# Wave 2 (t2a): IT, GR, IE, AT, CH, BE, NL, PL, CZ, SK, SE, DK, NO, FI.
+# Golds hand-derived from each country's cited primary source (see the .tab
+# header + papers/holidays/INDEX.md). Easter-relative movables re-derived via
+# ``_mov`` from ``easter(2024)``; Orthodox-Easter (GR) movables via
+# ``_orth`` from the Julian-reckoned computus, never read from the engine.
+# Per-country differential + behavioural assertions live in test_holidays_<cc>.py.
+# ==========================================================================
+_T2A = {"IT", "GR", "IE", "AT", "CH", "BE", "NL", "PL", "CZ", "SK",
+        "SE", "DK", "NO", "FI"}
+
+_ORTH2024 = easter(2024, "julian_gregorian_date")
+
+
+def _orth(offset):
+    """(2024, month, day) for ``orthodox_easter(2024) + offset`` (independent)."""
+    d = _ORTH2024 + timedelta(days=offset)
+    return (2024, d.month, d.day)
+
+
+# --- IT: national festività (L.260/1949) + 20 regional-capital patrons ---
+_reg("IT", None, "Capodanno", 2024, 1, 1)
+_reg("IT", None, "Epifania", 2024, 1, 6)
+_reg("IT", None, "Pasqua", *_mov(0))
+_reg("IT", None, "Lunedì dell'Angelo", *_mov(1))
+_reg("IT", None, "Anniversario della Liberazione", 2024, 4, 25)
+_reg("IT", None, "Festa del Lavoro", 2024, 5, 1)
+_reg("IT", None, "Festa della Repubblica", 2024, 6, 2)
+_reg("IT", None, "Assunzione della Beata Vergine Maria", 2024, 8, 15)
+_reg("IT", None, "Ognissanti", 2024, 11, 1)
+_reg("IT", None, "Immacolata Concezione", 2024, 12, 8)
+_reg("IT", None, "Natale", 2024, 12, 25)
+_reg("IT", None, "Santo Stefano", 2024, 12, 26)
+# Regional-capital patron feasts (municipal): (subdiv, name, month, day).
+_IT_PATRONS = [
+    ("IT-TO", "San Giovanni Battista", 6, 24),
+    ("IT-AO", "San Grato", 9, 7),
+    ("IT-MI", "Sant'Ambrogio", 12, 7),
+    ("IT-TN", "San Vigilio", 6, 26),
+    ("IT-VE", "Madonna della Salute", 11, 21),
+    ("IT-TS", "San Giusto", 11, 3),
+    ("IT-GE", "San Giovanni Battista", 6, 24),
+    ("IT-BO", "San Petronio", 10, 4),
+    ("IT-FI", "San Giovanni Battista", 6, 24),
+    ("IT-PG", "San Costanzo", 1, 29),
+    ("IT-AN", "San Ciriaco", 5, 4),
+    ("IT-RM", "Santi Pietro e Paolo", 6, 29),
+    ("IT-AQ", "San Massimo d'Aveia", 6, 10),
+    ("IT-CB", "San Giorgio", 4, 23),
+    ("IT-NA", "San Gennaro", 9, 19),
+    ("IT-BA", "San Nicola", 12, 6),
+    ("IT-PZ", "San Gerardo di Potenza", 5, 30),
+    ("IT-CZ", "San Vitaliano", 7, 16),
+    ("IT-PA", "Santa Rosalia", 7, 15),
+    ("IT-CA", "San Saturnino di Cagliari", 10, 30),
+]
+for _s, _n, _m, _d in _IT_PATRONS:
+    _reg("IT", _s, _n, 2024, _m, _d)
+
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in _T2A
+    for (y, m, d) in ymds
+])
+def test_t2a_gold(country, subdiv, name, year, month, day):
+    got = _dateset_for(country, year, subdiv=subdiv)
+    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+        f"{country}/{subdiv}/{name!r} {year}: expected "
+        f"{year}-{month:02d}-{day:02d}, got "
+        f"{sorted(got.get((name, subdiv), set()))}")
+
+
+# ==========================================================================
 # Structural enforcement: every rule in every holiday_data/*.tab needs a gold.
 # ==========================================================================
 def _every_tab_rule_key():
