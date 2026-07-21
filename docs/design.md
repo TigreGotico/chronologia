@@ -26,6 +26,35 @@ it happens on the integer line where there are no gaps or reforms. And each
 spoke is **independently testable** against its own cited source, since it only
 has to get its own JDN round-trip right.
 
+### Under the hood: the JDN plumbing
+
+The guides speak entirely in objects — `Calendar.date(...)` returns an
+`AstroDate`, `Calendar.from_astro(...)` returns a `CalendarDate`, and the same
+`date`/`from_astro` pair sits on `Timeline`. That object facade is a thin
+convenience over the integer hub every spoke actually implements: a raw
+`to_jdn(year, month, day) -> int` and its inverse `from_jdn(jdn) -> (year,
+month, day)`, plus the free `gregorian_to_jdn` / `jdn_to_gregorian` functions
+for the reference calendar. The facade is exactly this composition:
+
+```python
+from chronologia import CALENDARS, AstroDate, gregorian_to_jdn, jdn_to_gregorian
+
+cal = CALENDARS["hebrew"]
+
+# What Calendar.date does internally: label -> JDN -> Gregorian instant.
+jdn = cal.to_jdn(5786, 7, 1)
+assert AstroDate(*jdn_to_gregorian(jdn)) == cal.date(5786, 7, 1)
+
+# What Calendar.from_astro does internally: Gregorian instant -> JDN -> label.
+y, m, d = cal.from_jdn(gregorian_to_jdn(2025, 9, 23))
+assert (y, m, d) == (5786, 7, 1)
+```
+
+The integer layer stays public and documented — it is the composition point
+for everything, and duration math lives there — but application code should
+reach for the object facade. This is the one place the guides show the JDN
+threading directly; everywhere else, objects go in and objects come out.
+
 ## The type system
 
 Four value types carry all temporal information. All are frozen (immutable) and
@@ -120,7 +149,7 @@ almost every "why isn't X included?" question.
 from chronologia import CALENDARS, CalendarRangeError
 
 try:
-    CALENDARS["umm_al_qura"].to_jdn(1200, 1, 1)   # before the table starts
+    CALENDARS["umm_al_qura"].date(1200, 1, 1)     # before the table starts
 except CalendarRangeError as error:
     print(error.fallback)
     # islamic_civil
