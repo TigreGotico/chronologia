@@ -1104,8 +1104,17 @@ for _s in ("CH-TI", "CH-VS"):
 _reg("CH", "CH-TI", "Heilige Drei Könige", 2024, 1, 6)
 _reg("CH", "CH-TI", "Peter und Paul", 2024, 6, 29)
 _reg("CH", "CH-GE", "Jeûne genevois", 2024, 9, 5)   # Thu after 1st Sun Sep
-_reg("CH", "CH-GE", "Restauration de la République", 2024, 12, 31)
-
+_reg("CH", "CH-GE", "Restauration de la République", 2024, 12, 31)# --- BE: 10 legal holidays (KB 18 April 1974, Dutch names) ---
+_reg("BE", None, "Nieuwjaar", 2024, 1, 1)
+_reg("BE", None, "Paasmaandag", *_mov(1))
+_reg("BE", None, "Dag van de Arbeid", 2024, 5, 1)
+_reg("BE", None, "O. L. H. Hemelvaart", *_mov(39))
+_reg("BE", None, "Pinkstermaandag", *_mov(50))
+_reg("BE", None, "Nationale feestdag", 2024, 7, 21)
+_reg("BE", None, "O. L. V. Hemelvaart", 2024, 8, 15)
+_reg("BE", None, "Allerheiligen", 2024, 11, 1)
+_reg("BE", None, "Wapenstilstand", 2024, 11, 11)
+_reg("BE", None, "Kerstmis", 2024, 12, 25)
 
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
