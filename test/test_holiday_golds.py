@@ -410,6 +410,121 @@ def test_sa_islamic_golds_2024_independent_jdn_rederivation():
 
 
 # ==========================================================================
+# Islamic-calendar breadth (EG / MA / PK / ID / MY). Every rule golded by an
+# INDEPENDENT derivation (never the engine's own resolve):
+#   * fixed        -> the rule's own (month, day) [self-evident from the statute]
+#   * easter       -> easter(year) + offset (Gregorian or Julian-Gregorian)
+#   * nth_weekday  -> the recurrence engine's nth_weekday_of_month
+#   * calendar_date islamic_civil -> a STANDALONE tabular-Hijri -> JDN formula
+#     (Kuwaiti arithmetic, importing nothing from chronologia) fed through the
+#     same Fliegel-van Flandern JDN->Gregorian used for SA above
+#   * decree       -> the gazetted dates the .tab lists [independent-decree]
+# So this file, not the engine, is the witness for the tabulated Islamic dates.
+# ==========================================================================
+_ISLAMIC_YEARS = (2023, 2024, 2025)
+_HIJRI_LEAP = {2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29}
+
+
+def _islamic_civil_to_jdn(y, m, d):
+    """Tabular (civil) Islamic calendar -> JDN, standalone (no chronologia)."""
+    return (d + (29 * (m - 1) + m // 2)
+            + (y - 1) * 354 + (3 + 11 * y) // 30 + 1948439)
+
+
+def _islamic_civil_gregorian(gyear, m, d):
+    """Every Gregorian (m2, d2) on which tabular-Hijri (m, d) lands in gyear."""
+    guess = int((gyear - 622) * 33.0 / 32.0) + 1  # AH ~ 1.03x the Gregorian gap
+    out = []
+    for ah in range(guess - 2, guess + 3):  # AH years straddling gyear
+        y2, m2, d2 = _jdn_to_gregorian(_islamic_civil_to_jdn(ah, m, d))
+        if y2 == gyear:
+            out.append((m2, d2))
+    return out
+
+
+def _register_islamic_country(country):
+    from chronologia.civil_holidays import (FixedRule, EasterOffsetRule,
+                                            NthWeekdayRule, CalendarDateRule,
+                                            DecreeTableRule)
+    path = os.path.join(_DATA_DIR, f"{country.lower()}.tab")
+    if not os.path.exists(path):
+        return
+    cal = load_calendar(path)
+    for rule in cal.rules:
+        if rule.subdiv is not None:
+            continue
+        for y in _ISLAMIC_YEARS:
+            if not rule.in_force(y):
+                continue
+            k = rule.kind
+            if isinstance(k, FixedRule):
+                _reg(country, None, rule.name, y, k.month, k.day)
+            elif isinstance(k, EasterOffsetRule):
+                e = easter(y, k.method) + timedelta(days=k.offset_days)
+                _reg(country, None, rule.name, y, e.month, e.day)
+            elif isinstance(k, NthWeekdayRule):
+                got = list(occurrences(
+                    nth_weekday_of_month(k.n, k.weekday, month=k.month),
+                    AstroDate(y, 1, 1), until=AstroDate(y, 12, 31)))
+                base = got[0].start + timedelta(days=k.post_offset)
+                _reg(country, None, rule.name, y, base.month, base.day)
+            elif isinstance(k, CalendarDateRule) and k.calendar_key == "islamic_civil":
+                for (m2, d2) in _islamic_civil_gregorian(y, k.month, k.day):
+                    _reg(country, None, rule.name, y, m2, d2)
+            elif isinstance(k, DecreeTableRule):
+                for (yy, (m2, d2)) in k.dates:
+                    if yy == y:
+                        _reg(country, None, rule.name, y, m2, d2)
+
+
+for _cc in ("EG", "MA", "PK", "ID", "MY"):
+    _register_islamic_country(_cc)
+
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in {"EG", "MA", "PK", "ID", "MY"}
+    for (y, m, d) in ymds
+])
+def test_islamic_country_gold(country, subdiv, name, year, month, day):
+    got = _dateset_for(country, year, subdiv=subdiv)
+    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+        f"{country}/{name!r} {year}: expected {year}-{month:02d}-{day:02d}, "
+        f"got {sorted(got.get((name, subdiv), set()))}")
+
+
+@pytest.mark.skipif(not _have_tab("MA"), reason="ma.tab not present")
+def test_ma_amazigh_new_year_gated_from_2024():
+    """رأس السنة الأمازيغية (Yennayer) national from 2024 (2023 royal decree)."""
+    name = "رأس السنة الأمازيغية"
+    assert (name, None) not in _dateset_for("MA", 2023)
+    assert AstroDate(2024, 1, 13) in _dateset_for("MA", 2024).get((name, None), set())
+
+
+@pytest.mark.skipif(not _have_tab("PK"), reason="pk.tab not present")
+def test_pk_youm_e_takbeer_gated_from_2024():
+    """Youm-e-Takbeer national from 2024, absent 2023."""
+    assert ("Youm-e-Takbeer", None) not in _dates_for("PK", 2023)
+    assert _dates_for("PK", 2024)[("Youm-e-Takbeer", None)] == AstroDate(2024, 5, 28)
+
+
+@pytest.mark.skipif(not _have_tab("ID"), reason="id.tab not present")
+def test_id_four_calendars_present_2024():
+    """Indonesia mixes four calendars in one year: Islamic (tabulated),
+    Chinese/Balinese/Buddhist (decree) and Christian (Easter)."""
+    hs = {h.name: h for h in holidays_for("ID", 2024)}
+    assert hs["Hari Raya Idul Fitri"].basis == "exact"           # Islamic (arithmetic)
+    assert hs["Tahun Baru Imlek"].basis == "tabulated"           # Chinese (decree)
+    assert hs["Hari Suci Nyepi"].basis == "tabulated"            # Balinese (decree)
+    assert hs["Wafat Yesus Kristus"].basis == "exact"            # Christian (Easter)
+    # four distinct calendars, one Gregorian year
+    assert {hs["Hari Raya Idul Fitri"].date.month,
+            hs["Tahun Baru Imlek"].date.month,
+            hs["Hari Suci Nyepi"].date.month} == {4, 2, 3}
+
+
+# ==========================================================================
 # PT -- national + regional (hand golds, movable derived via easter(2024)).
 # ==========================================================================
 _E2024 = easter(2024, "gregorian")
