@@ -249,6 +249,40 @@ def test_au_differential_national_2024_2025():
                     f"absent from ours")
 
 
+def test_il_differential_hebrew_holidays_match_package():
+    # The Hebrew-calendar holidays match the package on the day; the package
+    # labels Independence Day "יום העצמאות (נצפה)" = observed, and our
+    # il_independence postponement reproduces the same observed Gregorian date
+    # (2024-05-14, 2025-05-01). Sukkot/Pesach first days coincide.
+    checks = {
+        2024: {"Rosh Hashanah": (10, 3), "Yom Kippur": (10, 12),
+               "Sukkot": (10, 17), "Pesach": (4, 23),
+               "Shavuot": (6, 12), "Yom Ha'atzmaut": (5, 14)},
+        2025: {"Rosh Hashanah": (9, 23), "Pesach": (4, 13),
+               "Yom Ha'atzmaut": (5, 1)},
+    }
+    for year, expect in checks.items():
+        ours = _our_dates("IL", year)
+        for name, md in expect.items():
+            got = [h for h in holidays_for("IL", year) if h.name == name]
+            assert got and (got[0].date.month, got[0].date.day) == md, (
+                f"IL {year} {name}: expected {md}")
+        # every one of our dates is a package holiday date (package may list the
+        # intermediate chol hamoed / minor days we do not).
+        theirs = {(d.month, d.day)
+                  for d in holidays_pkg.country_holidays("IL", years=year)}
+        assert set(ours) <= theirs, f"IL {year}: {set(ours) - theirs}"
+
+
+def test_il_independence_day_postponement_both_directions():
+    # 2024: Iyar 5 = Monday -> delayed to Tuesday (05-14).
+    got24 = [h for h in holidays_for("IL", 2024) if h.name == "Yom Ha'atzmaut"]
+    assert got24[0].date == AstroDate(2024, 5, 14)
+    # 2025: Iyar 5 = Saturday -> advanced to Thursday (05-01).
+    got25 = [h for h in holidays_for("IL", 2025) if h.name == "Yom Ha'atzmaut"]
+    assert got25[0].date == AstroDate(2025, 5, 1)
+
+
 def test_tr_differential_fixed_match_islamic_within_one_day():
     # Fixed national days match the package exactly; the Islamic feast first-days
     # agree to within +/-1 (islamic_civil arithmetic vs Diyanet). 2024: Ramazan

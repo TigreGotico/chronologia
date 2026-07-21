@@ -165,3 +165,25 @@ HOLIDAY_GOLDS["TR"] = [
     _g("Cumhuriyet Bayrami", 2025, 10, 29),
     _g("Ramazan Bayrami", 2025, 3, 31),
 ]
+
+
+# --------------------------------------------------------------------------
+# Israel (Hebrew calendar; Yom Ha'atzmaut Iyar-5 postponement)
+# --------------------------------------------------------------------------
+HOLIDAY_GOLDS["IL"] = [
+    _g("Rosh Hashanah", 2024, 10, 3),
+    _g("Rosh Hashanah", 2024, 10, 4),
+    _g("Yom Kippur", 2024, 10, 12),
+    _g("Sukkot", 2024, 10, 17),
+    _g("Shemini Atzeret / Simchat Torah", 2024, 10, 24),
+    _g("Pesach", 2024, 4, 23),
+    _g("Pesach (Seventh Day)", 2024, 4, 29),
+    _g("Shavuot", 2024, 6, 12),
+    # nominal Iyar 5 = Mon 2024-05-13 -> postponed to Tue 05-14
+    _g("Yom Ha'atzmaut", 2024, 5, 14),
+    # other years
+    _g("Rosh Hashanah", 2025, 9, 23),
+    _g("Pesach", 2025, 4, 13),
+    # nominal Iyar 5 = Sat 2025-05-03 -> advanced to Thu 05-01
+    _g("Yom Ha'atzmaut", 2025, 5, 1),
+]
