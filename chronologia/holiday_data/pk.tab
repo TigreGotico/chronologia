@@ -1,0 +1,33 @@
+# civil-holidays v1
+# jurisdiction: PK
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Pakistan
+#   (the federal gazetted holidays). Cross-checked against vacanza/holidays
+#   0.101 (MIT). Names follow the federal gazette's own English practice.
+#
+#   ISLAMIC DATES ARE TABULATED through islamic_civil (the arithmetic Hijri calendar).
+#   Pakistan's holidays are announced by the Central Ruet-e-Hilal Committee's
+#   moon sighting, so the actual dates can differ from the arithmetic table by
+#   ±1-2 days; those differences are catalogued in the differential test.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+# --- fixed civil ---
+fixed | Kashmir Solidarity Day | 2 5   | public          |  |
+fixed | Pakistan Day           | 3 23  | public          |  |
+fixed | Labour Day             | 5 1   | public          |  |
+fixed | Youm-e-Takbeer         | 5 28  | public          |  |  | 2024-
+fixed | Independence Day       | 8 14  | public          |  |
+fixed | Iqbal Day              | 11 9  | public          |  |
+fixed | Quaid-e-Azam Day       | 12 25 | public          |  |
+#
+# --- Islamic (tabular Hijri = islamic_civil) ---
+calendar_date | Eid-ul-Fitr       | islamic_civil 10 1  | public religious |  |
+calendar_date | Eid-ul-Fitr       | islamic_civil 10 2  | public religious |  |
+calendar_date | Eid-ul-Fitr       | islamic_civil 10 3  | public religious |  |
+calendar_date | Eid-ul-Adha       | islamic_civil 12 10 | public religious |  |
+calendar_date | Eid-ul-Adha       | islamic_civil 12 11 | public religious |  |
+calendar_date | Eid-ul-Adha       | islamic_civil 12 12 | public religious |  |
+calendar_date | Ashura            | islamic_civil 1 9   | public religious |  |
+calendar_date | Ashura            | islamic_civil 1 10  | public religious |  |
+calendar_date | Eid Milad-un-Nabi | islamic_civil 3 12  | public religious |  |
