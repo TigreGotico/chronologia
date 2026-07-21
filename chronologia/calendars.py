@@ -58,7 +58,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Mapping, Optional, Tuple
+from typing import Callable, Dict, Mapping, Optional, Tuple, Union
 
 # JDN of RD 1 (proleptic Gregorian 0001-01-01) minus the RD value itself:
 # JDN(noon integer) = RD + 1721425.  Verified: gregorian_to_jdn(1, 1, 1) ==
@@ -858,6 +858,19 @@ class CalendarDate:
     def __str__(self) -> str:
         return f"{self.calendar} {self.year}-{self.month:02d}-{self.day:02d}"
 
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :meth:`from_json`)."""
+        return {"type": "CalendarDate", "calendar": self.calendar,
+                "year": self.year, "month": self.month, "day": self.day}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "CalendarDate":
+        """Rebuild a :class:`CalendarDate` from a :meth:`to_json` envelope."""
+        if data.get("type") != "CalendarDate":
+            raise ValueError(
+                f"not a CalendarDate envelope: {data.get('type')!r}")
+        return cls(data["calendar"], data["year"], data["month"], data["day"])
+
 
 @dataclass(frozen=True)
 class TabulatedCalendar:
@@ -1098,7 +1111,7 @@ class Calendar:
         return CalendarDate(self.key, y, m, d)
 
 
-CALENDARS: Dict[str, object] = {
+CALENDARS: Dict[str, Union[Calendar, TabulatedCalendar]] = {
     # tabular/civil Hijri: a deterministic arithmetic rule, hence ``exact``
     # as a conversion; its ±1-day divergence from sighting-based observation
     # is a documented model caveat, not a basis class.

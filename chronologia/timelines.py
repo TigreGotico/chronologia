@@ -62,10 +62,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, cast
 
-from chronologia.calendars import (CALENDARS, Calendar, gregorian_to_jdn,
-                                    jdn_to_gregorian, julian_to_jdn)
+from chronologia.calendars import (CALENDARS, Calendar, TabulatedCalendar,
+                                    gregorian_to_jdn, jdn_to_gregorian,
+                                    julian_to_jdn)
 
 # Lower bound standing in for "the beginning of the timeline" — a plain int so
 # it orders against real JDNs; never itself a valid civil day.
@@ -76,7 +77,8 @@ _MIN_JDN = -(10 ** 15)
 # (which owns its own set and deliberately omits Gregorian).
 _GREGORIAN = Calendar("gregorian", 12, gregorian_to_jdn, jdn_to_gregorian,
                       gregorian_to_jdn(1, 1, 1))
-_TL_CALENDARS: Dict[str, Calendar] = {**CALENDARS, "gregorian": _GREGORIAN}
+_TL_CALENDARS: Dict[str, Union[Calendar, TabulatedCalendar]] = {
+    **CALENDARS, "gregorian": _GREGORIAN}
 
 
 class DiscontinuityKind(Enum):
@@ -122,8 +124,8 @@ class Discontinuity:
     """
     jdn: int
     kind: DiscontinuityKind
-    before_label: CivilLabel
-    after_label: CivilLabel
+    before_label: Union[CivilLabel, Tuple[int, int, int]]
+    after_label: Union[CivilLabel, Tuple[int, int, int]]
     citation: str
 
     def __post_init__(self):
@@ -258,9 +260,9 @@ class Timeline:
         segment's RELABEL year-start rule.  Raises :class:`UnknownCalendar`
         when the segment's calendar is out of the registry.
         """
-        for d in self.discontinuities:
-            if d.kind is DiscontinuityKind.INSERT and d.jdn == jdn:
-                return d.after_label
+        for disc in self.discontinuities:
+            if disc.kind is DiscontinuityKind.INSERT and disc.jdn == jdn:
+                return _label(disc.after_label)
         seg = self._segment_at(jdn)
         if seg.calendar_key not in _TL_CALENDARS:
             raise UnknownCalendar(
@@ -285,7 +287,7 @@ class Timeline:
             if d.kind is DiscontinuityKind.INSERT and d.after_label == label:
                 return d.jdn
 
-        answers = []
+        answers: List[int] = []
         for seg in self.segments:
             if seg.calendar_key not in _TL_CALENDARS:
                 continue
@@ -302,7 +304,7 @@ class Timeline:
         if len(answers) == 1:
             return answers[0]
         if len(answers) >= 2:
-            return tuple(sorted(answers))
+            return cast(Tuple[int, int], tuple(sorted(answers)))
 
         # No segment bore this label — is it inside a SKIP window?
         for d in self.discontinuities:

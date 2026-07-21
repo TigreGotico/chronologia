@@ -55,7 +55,7 @@ at ``~/AgentWorkspaces/papers/standards/rfc5545_icalendar_recurrence.txt``;
 the enumerated example dates seed the gold test suite.
 """
 from dataclasses import dataclass, field
-from typing import Iterator, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, Optional, Tuple, Union
 
 from chronologia.astrodate import AstroDate, DateSpan, is_leap_year
 from chronologia.calendars import (gregorian_to_jdn, iso_week_from_jdn,
@@ -235,6 +235,18 @@ class Recurrence:
     def __str__(self) -> str:
         return self.to_string()
 
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope carrying the RRULE string."""
+        return {"type": "Recurrence", "rrule": self.to_string()}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "Recurrence":
+        """Rebuild a :class:`Recurrence` from a :meth:`to_json` envelope."""
+        if data.get("type") != "Recurrence":
+            raise ValueError(
+                f"not a Recurrence envelope: {data.get('type')!r}")
+        return parse_rrule(data["rrule"])
+
 
 def _validate(rec: Recurrence) -> None:
     if rec.freq not in _FREQS:
@@ -365,7 +377,7 @@ def parse_rrule(s: str) -> Recurrence:
     def _ints(v: str) -> Tuple[int, ...]:
         return tuple(int(x) for x in v.split(","))
 
-    kwargs = {"freq": fields.pop("FREQ").upper()}
+    kwargs: Dict[str, Any] = {"freq": fields.pop("FREQ").upper()}
     if "INTERVAL" in fields:
         kwargs["interval"] = int(fields.pop("INTERVAL"))
     if "COUNT" in fields:
@@ -442,7 +454,7 @@ def every(freq: str, **by) -> Recurrence:
     >>> labor_day.to_string()
     'FREQ=YEARLY;BYMONTH=9;BYDAY=1MO'
     """
-    kwargs = {"freq": freq.upper()}
+    kwargs: Dict[str, Any] = {"freq": freq.upper()}
 
     def _tup(v):
         return (v,) if isinstance(v, int) else tuple(v)

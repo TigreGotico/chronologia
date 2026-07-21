@@ -29,9 +29,27 @@ dependencies = [
     "ovos-spec-tools>=1.5.0a1",
 ]
 
+[project.scripts]
+chronologia = "chronologia.__main__:main"
+
+[project.optional-dependencies]
+# Test/dev extras: property-based fuzzing (test/test_properties.py) needs
+# Hypothesis; the rest of the suite runs on pytest alone.
+test = [
+    "pytest",
+    "hypothesis>=6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "hypothesis>=6.0",
+    "mypy",
+]
+
 [tool.setuptools]
 packages = ["chronologia", "chronologia.data", "chronologia.extract"]
 
 [tool.setuptools.package-data]
-chronologia = ["calendar_data/*", "holiday_data/*", "locale/*/*.voc", "locale/*/*.json"]
+chronologia = ["py.typed", "calendar_data/*", "holiday_data/*", "locale/*/*.voc", "locale/*/*.json"]
 "chronologia.data" = ["*.tab"]

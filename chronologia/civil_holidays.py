@@ -73,7 +73,8 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Dict, FrozenSet, Iterable, Optional, Tuple
+from typing import (Dict, FrozenSet, Iterable, Optional, Protocol, Tuple,
+                    runtime_checkable)
 
 from chronologia.astrodate import (BASIS_EXACT, BASIS_TABULATED, AstroDate,
                                    DateSpan)
@@ -110,6 +111,14 @@ _EASTER_METHODS = ("gregorian", "julian_gregorian_date")
 # --------------------------------------------------------------------------
 # Rule kinds — each exposes ``observances(year) -> ((AstroDate, basis), ...)``.
 # --------------------------------------------------------------------------
+@runtime_checkable
+class RuleKind(Protocol):
+    """The structural contract every holiday rule kind satisfies."""
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        ...
+
+
 @dataclass(frozen=True)
 class FixedRule:
     """A constant Gregorian ``(month, day)`` — the same date every year."""
@@ -300,7 +309,7 @@ class HolidayRule:
     """
 
     name: str
-    kind: object
+    kind: RuleKind
     categories: FrozenSet[str]
     subdiv: Optional[str] = None
     observed: Optional[ObservedShift] = None
@@ -340,6 +349,27 @@ class CivilHoliday:
     def date(self) -> AstroDate:
         """The holiday's day (the span's start)."""
         return self.span.start
+
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready dict envelope (see :meth:`from_json`).
+
+        ``categories`` serialize as a sorted list (deterministic output);
+        :meth:`from_json` restores the :class:`frozenset`.
+        """
+        return {"type": "CivilHoliday", "name": self.name,
+                "span": self.span.to_json(), "jurisdiction": self.jurisdiction,
+                "subdiv": self.subdiv, "categories": sorted(self.categories),
+                "basis": self.basis}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "CivilHoliday":
+        """Rebuild a :class:`CivilHoliday` from a :meth:`to_json` envelope."""
+        if data.get("type") != "CivilHoliday":
+            raise ValueError(
+                f"not a CivilHoliday envelope: {data.get('type')!r}")
+        return cls(data["name"], DateSpan.from_json(data["span"]),
+                   data["jurisdiction"], data.get("subdiv"),
+                   frozenset(data.get("categories", ())), data["basis"])
 
 
 def _day_span(date: AstroDate, basis: str) -> DateSpan:
@@ -392,7 +422,7 @@ class HolidayCalendar:
         return tuple(out)
 
 
-def _parse_kind(kind: str, args: str) -> object:
+def _parse_kind(kind: str, args: str) -> RuleKind:
     parts = args.split()
     if kind == "fixed":
         m, d = int(parts[0]), int(parts[1])

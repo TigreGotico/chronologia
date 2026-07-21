@@ -97,6 +97,7 @@ from chronologia.civil_holidays import (CATEGORIES, US_OBSERVED_SHIFT,
                                         holidays_for, is_civil_holiday,
                                         load_calendar)
 from chronologia.extract import explain, extract_timespan
+from chronologia.serialization import from_json, to_json
 
 __version__ = "0.1.0a1"
 
@@ -109,6 +110,9 @@ __all__ = [
     "is_leap_year",
     "resolve_wall_clock",
     "civil_add",
+    # JSON serialization (one {"type": ..., ...} envelope convention)
+    "to_json",
+    "from_json",
     # JDN calendar hub
     "CALENDARS",
     "Calendar",
