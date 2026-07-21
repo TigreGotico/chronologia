@@ -479,14 +479,29 @@ chosen a zone far from its actual longitude, they diverge:
 - **Western China** runs on Beijing time (UTC+8) despite spanning what would
   naturally be five zones, so in Kashgar the sun peaks near 3 PM on the clock.
 
-The library handles this by *keeping the two inputs separate*, exactly as the
-quarantine demands: you pass the **true latitude and longitude** to `sun_events`
-(the sun does not care about politics) and the **political zone** to
-`resolve_wall_clock` or `astimezone` when you render. There is no single fused
-"zone" knob that secretly reconciles them, because reconciling them is a
-decision only you can make — which civil date do you consider the sun's event to
-"belong" to? You answer that by choosing the date you anchor the query on. The
-divergence is not hidden inside a parameter; it is left visible, in your hands.
+The library keeps the two inputs separate, exactly as the quarantine
+demands: the **true latitude and longitude** feed the sun (which does not
+care about politics), and the **political zone** decides which civil day
+you are asking about. By default, `sun_events(date, lat, lon)` anchors on
+the *solar* day and answers in UTC. When you mean a *civil* day — "sunrise
+on their 21st of June" — say so explicitly:
+
+```python
+from zoneinfo import ZoneInfo
+from datetime import date
+from chronologia import sun_events
+
+kiritimati = ZoneInfo("Pacific/Kiritimati")   # UTC+14, longitude ~157° WEST
+ev = sun_events(date(2024, 6, 21), 1.87, -157.4, zone=kiritimati)
+print(ev.sunrise.isoformat()[:22])
+# 2024-06-21T06:23:56.73
+```
+
+Without `zone=`, the same question answered by solar-day anchoring lands a
+full calendar day away — the classic off-by-one-day bug of solar libraries,
+which here is a *named, tested convention* instead of an accident. The knob
+does not secretly reconcile physics and politics; it states, in the call,
+which of the two days you meant.
 
 ## Reference
 
@@ -494,6 +509,7 @@ divergence is not hidden inside a parameter; it is left visible, in your hands.
 
 | tool | seam | what it does |
 |---|---|---|
+| `sun_events(date, lat, lon, zone=...)` | 4 | with `zone`, the date is that zone's civil day and events return aware |
 | `resolve_wall_clock(y, m, d, h, mi, zone)` | 1 | wall label → instant: one `AstroDate`, an `(earlier, later)` pair (fall-back fold), or a `NeverExisted` (spring-forward gap) |
 | `AstroDate.astimezone(tz)` | 2 | instant → wall reading in `tz`; **raises** on a naive `AstroDate` (no assumed local zone) |
 | `AstroDate.replace(tzinfo=...)` | — | re-*label* a reading with a zone (does not convert the instant) |
