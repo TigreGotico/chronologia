@@ -265,7 +265,7 @@ Full guides for everything above live in [`docs/`](docs/):
 | | |
 |---|---|
 | 17 calendars | Gregorian, Julian, Revised Julian, Hebrew, Islamic (arithmetic + the Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican (arithmetic + historical equinox), Bahá'í (arithmetic + true equinox), ISO week |
-| Timelines | 10 jurisdictions' calendar reforms — Rome, Britain, Sweden, Russia, Greece, Japan… |
+| Timelines | 13 jurisdictions' calendar reforms and dateline hops — Rome, Britain, Sweden, Russia, Greece, Japan, plus the days Samoa, the Philippines and Alaska deleted or re-lived at the International Date Line; and `zone_timeline`, which reads any `zoneinfo` zone as a timeline (a DST fall-back *is* a `REPEAT`, a spring-forward a `SKIP`) |
 | Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one |
 | Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present |
 | Regnal years | Japanese nengō, Roman consuls, Egyptian chronologies |

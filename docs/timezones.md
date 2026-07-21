@@ -503,6 +503,119 @@ which here is a *named, tested convention* instead of an accident. The knob
 does not secretly reconcile physics and politics; it states, in the call,
 which of the two days you meant.
 
+## Timezones ARE timelines
+
+Everything above treats a zone as an *infection* to quarantine. There is a
+second, complementary truth worth seeing plainly: a timezone **is** the same
+mechanism as a calendar reform — a jurisdiction's history of civil
+label-mappings, where a parliament decrees that a wall-clock label shall jump.
+`chronologia` already has a vocabulary for exactly that — the
+[Timelines](timelines.md) layer, with its `SKIP` (a label that never existed)
+and `REPEAT` (one label, two moments). A daylight-saving change is a **`SKIP`**
+(spring-forward: 2:30 AM never happened) or a **`REPEAT`** (fall-back: 1:30 AM
+happened twice). The golden rule of this page, stated once:
+
+> **A timezone is the Timeline mechanism at clock granularity.**
+
+### The golden rule's parable: the country that deleted a Friday
+
+At the end of 2011, **Samoa deleted a day**. To move from the American side of
+the International Date Line to the Asian side — so its clocks matched Australia
+and New Zealand, its main trading partners — the country jumped from UTC−11 to
+UTC+13, and in doing so **Friday, 30 December 2011 simply never happened**.
+Thursday the 29th was followed directly by Saturday the 31st. No baby was born
+that Friday; no wage was paid; the day is a hole in the civil record. That is a
+`SKIP`, the very same kind of event as the ten days Pope Gregory deleted in
+1582 — a *decree* removing labels no clock ever bore:
+
+```python
+from chronologia import TIMELINES, NeverExisted
+
+samoa = TIMELINES["samoa_2011"]
+gone = samoa.to_jdn((2011, 12, 30))          # ask for the deleted Friday
+print(type(gone).__name__)                    # NeverExisted
+print(gone.discontinuity.kind.name)           # SKIP
+# the days on either side are now neighbours — one day apart, not two:
+print(samoa.to_jdn((2011, 12, 31)) - samoa.to_jdn((2011, 12, 29)))   # 1
+```
+
+Samoa, the Philippines (which deleted 31 December 1844), and Alaska (whose 1867
+transfer *repeated* a Friday while switching Julian→Gregorian — the one seam
+that carries a `REPEAT` and a `SKIP` at once) live in `TIMELINES` as day-level
+entries, because a whole civil day was added or removed.
+
+### Events versus rules — why it is an adapter, not a copy
+
+Here is the distinction that keeps the two layers honest, and it is the whole
+reason `chronologia` vendors no zone data (the [Morocco
+story](#why-chronologia-vendors-no-zone-data--the-morocco-story) above):
+
+- **`tzdb` stores *rules*** — *intensional*, recurring law: "spring forward on
+  the second Sunday of March, every year, until repealed." One sentence covers
+  infinitely many future transitions.
+- **A `Timeline` stores *events*** — *extensional*, one-time facts: "on this
+  JDN, Samoa skipped a Friday." Each is written out, once.
+
+So the library does **not** re-encode any zone rule (that would be copying
+`tzdb`, and going stale the moment Morocco moves its clocks). Instead
+`zone_timeline` is an **adapter**: give it a zone and a finite window, and it
+*materializes* the rule into events — walking the window, finding the actual
+UTC transitions `zoneinfo` reports, and emitting one discontinuity apiece in the
+Timeline vocabulary:
+
+```python
+from datetime import datetime, timezone
+from chronologia import zone_timeline
+
+utc = timezone.utc
+ny_view = zone_timeline("America/New_York",
+                        datetime(2024, 1, 1, tzinfo=utc),
+                        datetime(2025, 1, 1, tzinfo=utc))
+for d in ny_view.discontinuities:
+    print(d.kind.name, d.instant.date(), "|", d.citation)
+# SKIP   2024-03-10 | UTC-5 -> UTC-4 (America/New_York)
+# REPEAT 2024-11-03 | UTC-4 -> UTC-5 (America/New_York)
+```
+
+The offset *decreases* on fall-back (UTC−4 → UTC−5) so the November event is a
+`REPEAT`; it *increases* on spring-forward so March is a `SKIP`. The view is
+clock-granular — its `to_instant` gives back the same typed honesty as Seam 1
+(one instant, an `(earlier, later)` fold pair, or a "never existed"):
+
+```python
+gap = ny_view.to_instant(datetime(2024, 3, 10, 2, 30))    # spring-forward morning
+print(type(gap).__name__)                                  # ZoneNeverExisted
+
+fold = ny_view.to_instant(datetime(2024, 11, 3, 1, 30))   # fall-back night
+print((fold[1] - fold[0]).total_seconds() / 3600)          # 1.0 — an hour apart
+```
+
+Because it is a materialized view over *whatever `zoneinfo` currently trusts*, a
+`zone_timeline` is never wrong about Morocco either — re-materialize it and you
+get today's `tzdb`, not a frozen copy.
+
+### The first door a zone ever opened: `zone_history_start`
+
+Every `tzdb` zone begins in **Local Mean Time** — raw longitude, odd-minute
+offsets — and has exactly one first transition to a rounded standard offset, the
+moment the jurisdiction adopted standard time. `zone_history_start` surfaces it.
+The classic case is London adopting **GMT on 1 December 1847** (railway time):
+
+```python
+from chronologia import zone_history_start
+
+instant, lmt, standard = zone_history_start("Europe/London")
+print(instant.date())                     # 1847-12-01
+print(lmt.total_seconds())                # -75.0  — LMT ~1m15s west of Greenwich
+print(standard.total_seconds())           # 0.0    — GMT
+```
+
+Read these values as a *faithful surfacing of `tzdb`*, cited to it — not an
+independent historical claim. IANA warns that its pre-1970 data is not reliable,
+so `zone_history_start` reports what `zoneinfo` actually returns and no more; for
+deep history the honest floor remains longitude-based
+[`local_mean_time`](#pre-zone-history-lmtzone).
+
 ## Reference
 
 ### Timezone-related public API
@@ -518,6 +631,8 @@ which of the two days you meant.
 | `civil_add(point, *, days, zone=...)` | 3 | wall-preserving day arithmetic; with a DST `zone` a "day" is the true 23/24/25 hours |
 | `sun_events(date, lat, lon)` | 4 | solar events for a civil date at a physical location, returned as UTC instants |
 | `local_mean_time(longitude_deg)` | — | an `LMTZone` fixed-offset zone for pre-1884 history (four minutes per degree, east-positive) |
+| `zone_timeline(tz, start, end)` | — | materialize a zone's transitions in `[start, end)` as a clock-granular `ClockTimeline` (fall-back → `REPEAT`, spring-forward → `SKIP`) |
+| `zone_history_start(tz)` | — | the zone's first transition out of Local Mean Time: `(instant, lmt_offset, first_standard_offset)`, as `zoneinfo` reports it |
 | `LMTZone` | — | the mean-solar-time zone type; duck-types `tzinfo` for labelling |
 | `NeverExisted` | 1 | the typed "this wall time was skipped, and why" result |
 
