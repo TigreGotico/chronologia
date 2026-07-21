@@ -28,11 +28,17 @@ RD (Rata Die, 0001-01-01 == 1); JDN(0001-01-01) == 1721426, hence
 from __future__ import annotations
 
 from dataclasses import dataclass, replace as _dc_replace
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone, tzinfo
 from typing import Optional, Tuple, Union
 
 from chronologia.calendars import gregorian_to_jdn, jdn_to_gregorian
 from chronologia.resolution import DateTimeResolution
+from chronologia.timelines import (CivilLabel, Discontinuity,
+                                   DiscontinuityKind, NeverExisted)
+
+# Sentinel so ``replace(tzinfo=None)`` can *clear* the zone (as ``datetime``
+# does) while an omitted ``tzinfo`` argument leaves it untouched.
+_KEEP = object()
 
 # JDN of RD 1 (proleptic Gregorian 0001-01-01); ordinal = jdn - this.
 _RD_TO_JDN = 1721425
@@ -56,13 +62,35 @@ def _days_in_month(year: int, month: int) -> int:
     return _DAYS_IN_MONTH[month - 1]
 
 
+def _td_us(td: timedelta) -> int:
+    """A ``timedelta`` as a signed microsecond count (unbounded int)."""
+    return td.days * _US_PER_DAY + td.seconds * 1_000_000 + td.microseconds
+
+
 @dataclass(frozen=True, slots=True, eq=False)
 class AstroDate:
     """A frozen, tz-naive point in time with an unbounded (astronomical) year.
 
     Fields mirror ``datetime``: ``year`` (any int), ``month``/``day``
-    (default 1), ``hour``/``minute``/``second``/``microsecond`` (default 0).
-    Fully duck-typed to ``datetime``'s public API; see the module docstring.
+    (default 1), ``hour``/``minute``/``second``/``microsecond`` (default 0),
+    and an optional ``tzinfo`` (default ``None`` => naive).  Fully duck-typed
+    to ``datetime``'s public API; see the module docstring.
+
+    **Aware/naive semantics mirror ``datetime`` exactly.**  A naive AstroDate
+    (``tzinfo is None``) compares by wall-clock fields; an aware one compares
+    by the instant it names (wall minus ``utcoffset()``).  Mixing the two
+    never compares equal and raises ``TypeError`` on ordering, precisely as
+    ``datetime`` does.  ``utcoffset()``/``tzname()``/``dst()`` delegate to the
+    attached ``tzinfo``.  Because the year may fall outside ``datetime``'s
+    1..9999 window (where a ``zoneinfo`` zone has no tabulated data), those
+    lookups use a **proxy year** ``2000 + (year % 400)`` — the proleptic
+    Gregorian calendar (and therefore every recurring DST rule keyed to a
+    month/weekday) repeats with a 400-year period, so the proxy shares the
+    real year's leap status and weekday pattern.  This *extrapolates the
+    zone's current recurring rule* across all of time; it does not and cannot
+    reconstruct historical offset changes (a zone's pre-1970 data is used
+    as-is by ``zoneinfo`` where the real year is in range, with the usual
+    caveats about its reliability, and is simply unavailable out of range).
     """
     year: int
     month: int = 1
@@ -71,6 +99,7 @@ class AstroDate:
     minute: int = 0
     second: int = 0
     microsecond: int = 0
+    tzinfo: Optional[tzinfo] = None
 
     def __post_init__(self):
         if self.month is None or not 1 <= self.month <= 12:
@@ -107,16 +136,84 @@ class AstroDate:
     def in_datetime_range(self) -> bool:
         return date.min.year <= self.year <= date.max.year
 
+    # -- tz-aware duck-typing ---------------------------------------------
+    def _proxy_datetime(self) -> datetime:
+        """A naive ``datetime`` for handing to ``tzinfo`` offset lookups.
+
+        In-range years pass through unchanged; out-of-range years map to
+        ``2000 + (year % 400)`` (see the class docstring) so a ``zoneinfo``
+        zone's recurring rule is still evaluable.  The proxy shares the real
+        year's leap status, so 29 February is preserved.
+        """
+        if self.in_datetime_range:
+            py = self.year
+        else:
+            py = 2000 + (self.year % 400)
+        return datetime(py, self.month, self.day, self.hour, self.minute,
+                        self.second, self.microsecond)
+
+    def utcoffset(self) -> Optional[timedelta]:
+        """The offset from UTC, or ``None`` when naive (``tzinfo`` protocol)."""
+        if self.tzinfo is None:
+            return None
+        return self.tzinfo.utcoffset(self._proxy_datetime())
+
+    def tzname(self) -> Optional[str]:
+        """The zone's name for this instant, or ``None`` when naive."""
+        if self.tzinfo is None:
+            return None
+        return self.tzinfo.tzname(self._proxy_datetime())
+
+    def dst(self) -> Optional[timedelta]:
+        """The daylight-saving adjustment, or ``None`` when naive."""
+        if self.tzinfo is None:
+            return None
+        return self.tzinfo.dst(self._proxy_datetime())
+
+    @property
+    def _is_aware(self) -> bool:
+        return self.tzinfo is not None and self.utcoffset() is not None
+
+    def astimezone(self, tz: tzinfo) -> "AstroDate":
+        """Return the same instant expressed in ``tz`` (aware -> aware).
+
+        A **naive** AstroDate raises ``ValueError`` — a documented deviation
+        from modern ``datetime.astimezone`` (which assumes the system local
+        zone).  That assumption is a well-known footgun; requiring an explicit
+        ``replace(tzinfo=...)`` first makes the intended zone unambiguous.
+        """
+        if not self._is_aware:
+            raise ValueError(
+                "astimezone() cannot convert a naive AstroDate: it has no "
+                "zone to convert from. Attach one with replace(tzinfo=...) "
+                "first (AstroDate does not assume a system-local zone).")
+        # Shift the wall clock by (target_offset - self_offset) at this
+        # instant; the instant itself is preserved.  The delta is read from a
+        # proxy-year round trip so it works identically in and out of range.
+        proxy_self = self._proxy_datetime().replace(tzinfo=self.tzinfo)
+        proxy_target = proxy_self.astimezone(tz)
+        delta = (proxy_target.replace(tzinfo=None)
+                 - proxy_self.replace(tzinfo=None))
+        shifted = AstroDate._from_total_us(self._total_us() + _td_us(delta))
+        return shifted.replace(tzinfo=tz)
+
     # -- datetime duck-typing ---------------------------------------------
     def replace(self, year=None, month=None, day=None, hour=None,
-                minute=None, second=None, microsecond=None) -> "AstroDate":
-        """Return a copy with the given fields replaced (like ``datetime``)."""
-        return _dc_replace(
-            self,
-            **{k: v for k, v in dict(
-                year=year, month=month, day=day, hour=hour, minute=minute,
-                second=second, microsecond=microsecond).items()
-               if v is not None})
+                minute=None, second=None, microsecond=None,
+                tzinfo=_KEEP) -> "AstroDate":
+        """Return a copy with the given fields replaced (like ``datetime``).
+
+        ``replace(tzinfo=...)`` is **label-preserving**: it re-labels the same
+        wall-clock reading with a new zone, it does not convert the instant
+        (that is :meth:`astimezone`).  Passing ``tzinfo=None`` clears the zone.
+        """
+        changes = {k: v for k, v in dict(
+            year=year, month=month, day=day, hour=hour, minute=minute,
+            second=second, microsecond=microsecond).items()
+            if v is not None}
+        if tzinfo is not _KEEP:
+            changes["tzinfo"] = tzinfo
+        return _dc_replace(self, **changes)
 
     def toordinal(self) -> int:
         """Proleptic Gregorian ordinal (0001-01-01 == 1), a plain int.
@@ -160,11 +257,16 @@ class AstroDate:
         return time(self.hour, self.minute, self.second, self.microsecond)
 
     def datetime(self) -> Optional[datetime]:
-        """The equivalent ``datetime``, or ``None`` when out of range."""
+        """The equivalent ``datetime``, or ``None`` when out of range.
+
+        Carries ``tzinfo`` through, so an aware AstroDate yields an aware
+        ``datetime`` (a naive one stays naive — byte-identical to before).
+        """
         if not self.in_datetime_range:
             return None
         return datetime(self.year, self.month, self.day, self.hour,
-                        self.minute, self.second, self.microsecond)
+                        self.minute, self.second, self.microsecond,
+                        tzinfo=self.tzinfo)
 
     def _year_field(self) -> str:
         if 0 <= self.year <= 9999:
@@ -177,10 +279,21 @@ class AstroDate:
         The time part is **always** present (``datetime`` never omits it):
         ``2020-01-01T00:00:00``, with microseconds appended only when nonzero,
         exactly as ``datetime``/``time`` do.  Years outside 0..9999 carry an
-        explicit sign and >=6 digits (``-003760-09-07T00:00:00``).
+        explicit sign and >=6 digits (``-003760-09-07T00:00:00``).  When aware,
+        the UTC-offset suffix is appended just as ``datetime`` does
+        (``...T12:00:00-04:00``).
         """
+        off = self.utcoffset()
+        suffix = ""
+        if off is not None:
+            total = _td_us(off) // 1_000_000
+            sign = "+" if total >= 0 else "-"
+            total = abs(total)
+            hh, rem = divmod(total, 3600)
+            mm, ss = divmod(rem, 60)
+            suffix = f"{sign}{hh:02d}:{mm:02d}" + (f":{ss:02d}" if ss else "")
         return (f"{self._year_field()}-{self.month:02d}-{self.day:02d}"
-                f"{sep}{self.time().isoformat()}")
+                f"{sep}{self.time().isoformat()}{suffix}")
 
     def __str__(self) -> str:
         return self.isoformat()
@@ -191,13 +304,22 @@ class AstroDate:
         import re
         m = re.match(
             r"^([+-]?\d{4,})-(\d{2})-(\d{2})"
-            r"(?:[T ](\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?)?$", s)
+            r"(?:[T ](\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?)?"
+            r"(Z|[+-]\d{2}:\d{2}(?::\d{2})?)?$", s)
         if not m:
             raise ValueError(f"invalid AstroDate isoformat: {s!r}")
-        y, mo, d, hh, mm, ss, us = m.groups()
+        y, mo, d, hh, mm, ss, us, tz = m.groups()
         micro = int((us or "0").ljust(6, "0")) if us else 0
+        zone = None
+        if tz == "Z":
+            zone = timezone.utc
+        elif tz:
+            osign = -1 if tz[0] == "-" else 1
+            parts = [int(p) for p in tz[1:].split(":")]
+            osecs = parts[0] * 3600 + parts[1] * 60 + (parts[2] if len(parts) > 2 else 0)
+            zone = timezone(timedelta(seconds=osign * osecs))
         return cls(int(y), int(mo), int(d),
-                   int(hh or 0), int(mm or 0), int(ss or 0), micro)
+                   int(hh or 0), int(mm or 0), int(ss or 0), micro, tzinfo=zone)
 
     @classmethod
     def from_date(cls, d: date) -> "AstroDate":
@@ -276,72 +398,228 @@ class AstroDate:
                    sec_of_day % 60, us)
 
     @staticmethod
-    def _as_total_us(other) -> Optional[int]:
+    def _operand_key(other) -> Optional[Tuple[bool, int]]:
+        """``(is_aware, key_us)`` for a date-like operand, else ``None``.
+
+        ``key_us`` is the wall-clock microsecond count for a naive operand and
+        the **instant** (wall minus ``utcoffset``) for an aware one, so aware
+        values compare and subtract by the moment they name.
+        """
         if isinstance(other, AstroDate):
-            return other._total_us()
-        if isinstance(other, datetime):
-            return AstroDate.from_datetime(other)._total_us()
-        if isinstance(other, date):
-            return AstroDate.from_date(other)._total_us()
-        return None
+            wall = other._total_us()
+            off = other.utcoffset()
+        elif isinstance(other, datetime):
+            wall = AstroDate.from_datetime(other)._total_us()
+            off = other.utcoffset()
+        elif isinstance(other, date):
+            wall = AstroDate.from_date(other)._total_us()
+            off = None
+        else:
+            return None
+        if off is None:
+            return (False, wall)
+        return (True, wall - _td_us(off))
 
     def __add__(self, other):
         if isinstance(other, timedelta):
-            delta = (other.days * _US_PER_DAY
-                     + other.seconds * 1_000_000 + other.microseconds)
-            return AstroDate._from_total_us(self._total_us() + delta)
+            return (AstroDate._from_total_us(self._total_us() + _td_us(other))
+                    .replace(tzinfo=self.tzinfo))
         return NotImplemented
 
     __radd__ = __add__
 
     def __sub__(self, other):
         if isinstance(other, timedelta):
-            delta = (other.days * _US_PER_DAY
-                     + other.seconds * 1_000_000 + other.microseconds)
-            return AstroDate._from_total_us(self._total_us() - delta)
-        us = self._as_total_us(other)
-        if us is None:
+            return (AstroDate._from_total_us(self._total_us() - _td_us(other))
+                    .replace(tzinfo=self.tzinfo))
+        right = self._operand_key(other)
+        if right is None:
             return NotImplemented
-        return timedelta(microseconds=self._total_us() - us)
+        left = self._operand_key(self)
+        if left[0] != right[0]:
+            raise TypeError("can't subtract offset-naive and offset-aware "
+                            "AstroDate/datetime values")
+        return timedelta(microseconds=left[1] - right[1])
 
     def __rsub__(self, other):
-        us = self._as_total_us(other)
-        if us is None:
+        right = self._operand_key(other)
+        if right is None:
             return NotImplemented
-        return timedelta(microseconds=us - self._total_us())
+        left = self._operand_key(self)
+        if left[0] != right[0]:
+            raise TypeError("can't subtract offset-naive and offset-aware "
+                            "AstroDate/datetime values")
+        return timedelta(microseconds=right[1] - left[1])
 
     # -- comparison & equality --------------------------------------------
     def __eq__(self, other):
-        us = self._as_total_us(other)
-        return NotImplemented if us is None else self._total_us() == us
+        right = self._operand_key(other)
+        if right is None:
+            return NotImplemented
+        left = self._operand_key(self)
+        if left[0] != right[0]:
+            return False  # naive and aware are never equal (datetime parity)
+        return left[1] == right[1]
 
     def __ne__(self, other):
         result = self.__eq__(other)
         return result if result is NotImplemented else not result
 
+    def _order(self, other):
+        """Shared ordering key pair, raising like ``datetime`` on mismatch."""
+        right = self._operand_key(other)
+        if right is None:
+            return None
+        left = self._operand_key(self)
+        if left[0] != right[0]:
+            raise TypeError("can't compare offset-naive and offset-aware "
+                            "AstroDate/datetime values")
+        return (left[1], right[1])
+
     def __lt__(self, other):
-        us = self._as_total_us(other)
-        return NotImplemented if us is None else self._total_us() < us
+        keys = self._order(other)
+        return NotImplemented if keys is None else keys[0] < keys[1]
 
     def __le__(self, other):
-        us = self._as_total_us(other)
-        return NotImplemented if us is None else self._total_us() <= us
+        keys = self._order(other)
+        return NotImplemented if keys is None else keys[0] <= keys[1]
 
     def __gt__(self, other):
-        us = self._as_total_us(other)
-        return NotImplemented if us is None else self._total_us() > us
+        keys = self._order(other)
+        return NotImplemented if keys is None else keys[0] > keys[1]
 
     def __ge__(self, other):
-        us = self._as_total_us(other)
-        return NotImplemented if us is None else self._total_us() >= us
+        keys = self._order(other)
+        return NotImplemented if keys is None else keys[0] >= keys[1]
 
     def __hash__(self):
-        # Hash-consistent with ``datetime`` for in-range values so that an
-        # AstroDate and the equal ``datetime`` collide in dicts/sets.
+        # Hash-consistent with ``datetime``: an in-range AstroDate hashes as
+        # the equal ``datetime`` (naive by wall, aware by instant), so the two
+        # collide in dicts/sets.  Out of range there is no datetime, so the
+        # (awareness, key) pair is hashed instead — still eq-consistent.
         if self.in_datetime_range:
             return hash(self.datetime())
-        return hash((self.year, self.month, self.day, self.hour,
-                     self.minute, self.second, self.microsecond))
+        aware, key = self._operand_key(self)
+        return hash((aware, key))
+
+
+# --------------------------------------------------------------------------
+# Wall-clock resolution against a zone: fold (REPEAT) and gap (SKIP).
+# --------------------------------------------------------------------------
+
+def _fold_offsets(y, m, d, h, mi, zone):
+    """``(off0, off1)`` — the ``fold=0`` / ``fold=1`` offsets of a wall time.
+
+    Evaluated at a proxy year when ``y`` is outside ``datetime``'s range, so a
+    ``zoneinfo`` zone's recurring rule still resolves (see AstroDate docstring).
+    """
+    py = y if date.min.year <= y <= date.max.year else 2000 + (y % 400)
+    off0 = datetime(py, m, d, h, mi, tzinfo=zone, fold=0).utcoffset()
+    off1 = datetime(py, m, d, h, mi, tzinfo=zone, fold=1).utcoffset()
+    return off0, off1
+
+
+def resolve_wall_clock(y: int, m: int, d: int, h: int, mi: int, zone: tzinfo
+                       ) -> Union["AstroDate", Tuple["AstroDate", "AstroDate"],
+                                  NeverExisted]:
+    """Resolve a civil wall-clock reading against a DST-bearing ``zone``.
+
+    Three outcomes, following PEP 495's fold model:
+
+    * **unique** — the wall time occurs exactly once: an aware
+      :class:`AstroDate` in ``zone``.
+    * **REPEAT** (fall-back fold — the offset *shrinks*, so the clock repeats
+      an hour): a ``(earlier, later)`` tuple of the two real instants.  Each is
+      carried in a **fixed-offset** zone (the offset actually in force for that
+      occurrence), because AstroDate has no fold bit — this keeps the identical
+      wall reading yet gives the pair distinct, comparable instants.
+    * **SKIP** (spring-forward gap — the offset *grows*, so the clock jumps and
+      the reading never happens): a :class:`~chronologia.timelines.NeverExisted`
+      carrying a synthetic :class:`~chronologia.timelines.Discontinuity` of kind
+      ``SKIP`` — a real "never existed + why" answer, never an error.
+    """
+    off0, off1 = _fold_offsets(y, m, d, h, mi, zone)
+    if off0 == off1:
+        return AstroDate(y, m, d, h, mi, tzinfo=zone)
+    if off0 > off1:  # fall back: two occurrences of one wall time
+        earlier = AstroDate(y, m, d, h, mi, tzinfo=timezone(off0))
+        later = AstroDate(y, m, d, h, mi, tzinfo=timezone(off1))
+        return (earlier, later)
+    # off0 < off1: spring-forward gap -- this wall time never existed
+    jdn = AstroDate(y, m, d).toordinal() + _RD_TO_JDN
+    disc = Discontinuity(
+        jdn, DiscontinuityKind.SKIP,
+        (y, m, d), (y, m, d),
+        f"DST spring-forward gap at {h:02d}:{mi:02d} in zone "
+        f"{getattr(zone, 'key', zone)!r}: the local clock jumps from "
+        f"UTC{off0} to UTC{off1}, so this wall-clock reading never occurred")
+    return NeverExisted(CivilLabel(y, m, d), disc)
+
+
+# --------------------------------------------------------------------------
+# Dual arithmetic: civil (calendar/zone/timeline-aware) vs absolute (+delta).
+# --------------------------------------------------------------------------
+
+def civil_add(point_or_span, *, years: int = 0, months: int = 0, days: int = 0,
+              zone: Optional[tzinfo] = None, timeline=None):
+    """Calendar-aware **civil** arithmetic — the counterpart to ``+ timedelta``.
+
+    Absolute arithmetic (``point + timedelta``) always advances a real
+    duration.  ``civil_add`` instead walks the *civil* calendar:
+
+    * ``years`` / ``months`` shift the calendar fields and **clamp** the day of
+      month (31 Jan + 1 month -> 28/29 Feb — the last valid day, never spilling
+      into March), like ``dateutil.relativedelta`` and most calendar UIs.
+    * ``days`` add whole calendar days preserving the wall-clock time.  With a
+      DST ``zone`` the real elapsed time across a transition is 23 or 25 hours,
+      not 24 (the result is aware in ``zone``; subtract two aware points to see
+      the true duration).  Without a zone it is a plain field shift.
+    * ``timeline`` routes the day step through civil labels: the point's
+      ``(year, month, day)`` is read as a civil label, converted to JDN, the
+      days added there, and converted back — so adding one day to Julian
+      ``1582-10-04`` under ``rome_1582`` lands on Gregorian ``1582-10-15``,
+      crossing the reform seam.
+
+    ``point_or_span`` may be an :class:`AstroDate` (returns an AstroDate) or a
+    :class:`DateSpan` (shifts both endpoints, returns a DateSpan).
+    """
+    if isinstance(point_or_span, DateSpan):
+        span = point_or_span
+        return DateSpan(
+            civil_add(span.start, years=years, months=months, days=days,
+                      zone=zone, timeline=timeline),
+            civil_add(span.end, years=years, months=months, days=days,
+                      zone=zone, timeline=timeline),
+            basis=span.basis)
+
+    pt = point_or_span
+    y, m, d = pt.year, pt.month, pt.day
+    if years or months:
+        total = (y * 12 + (m - 1)) + years * 12 + months
+        y, nm0 = divmod(total, 12)
+        m = nm0 + 1
+        d = min(d, _days_in_month(y, m))
+
+    if days and timeline is not None:
+        jdn = timeline.to_jdn((y, m, d))
+        if not isinstance(jdn, int):
+            raise ValueError(
+                f"civil_add: label {(y, m, d)} is not a single JDN on "
+                f"timeline {getattr(timeline, 'key', timeline)!r} "
+                f"(got {jdn!r}); cannot step days across it")
+        label = timeline.from_jdn(jdn + days)
+        return AstroDate(label.year, label.month, label.day,
+                         pt.hour, pt.minute, pt.second, pt.microsecond,
+                         tzinfo=pt.tzinfo)
+
+    if days:
+        base = AstroDate(y, m, d)
+        shifted = AstroDate.fromordinal(base.toordinal() + days)
+        y, m, d = shifted.year, shifted.month, shifted.day
+
+    tz = zone if zone is not None else pt.tzinfo
+    return AstroDate(y, m, d, pt.hour, pt.minute, pt.second, pt.microsecond,
+                     tzinfo=tz)
 
 
 # --------------------------------------------------------------------------

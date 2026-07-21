@@ -12,7 +12,8 @@ and calendar-backed eras (Anno Mundi, French Republican, Bahai) resolve
 *exactly* rather than by an epoch-plus-count approximation.
 """
 from chronologia.astrodate import (AstroDate, DateSpan, WideDuration,
-                                   combine_basis, is_leap_year)
+                                   civil_add, combine_basis, is_leap_year,
+                                   resolve_wall_clock)
 from chronologia.calendars import (CALENDARS, Calendar, CalendarRangeError,
                                    TabulatedCalendar, gregorian_to_jdn,
                                    jdn_to_gregorian, julian_to_jdn,
@@ -44,6 +45,8 @@ __all__ = [
     "WideDuration",
     "combine_basis",
     "is_leap_year",
+    "resolve_wall_clock",
+    "civil_add",
     # JDN calendar hub
     "CALENDARS",
     "Calendar",
