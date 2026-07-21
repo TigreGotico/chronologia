@@ -162,11 +162,24 @@ class TimelineSegment:
     over (``(1, 1)`` for the modern convention; ``(3, 25)`` for pre-1752
     England); labels before it in the calendar year carry the previous year's
     number.  ``year_offset`` is a constant added to the civil year number.
+
+    ``jdn_shift`` slides this segment's *label ↔ JDN* mapping by a whole number
+    of days: :meth:`Timeline.from_jdn` reads the calendar at ``jdn - jdn_shift``
+    and :meth:`Timeline.to_jdn` places a label at ``calendar_jdn + jdn_shift``.
+    It is ``0`` for every ordinary reform (a calendar switch already re-aligns
+    the labels by construction).  It earns its keep only for a **same-calendar
+    civil-day edit** — an International-Date-Line hop that deletes or re-lives a
+    day without changing the calendar: a westward skip (Samoa 2011, Philippines
+    1844) shifts the post-seam segment ``-1`` so the surviving days close ranks
+    (the seam day borrows the *next* calendar label), and an eastward repeat
+    (Alaska 1867's Gregorian segment) shifts ``+1`` so the seam day carries the
+    *previous* calendar label — the mechanism that lets one weekday recur.
     """
     start_jdn: int
     calendar_key: str
     year_start: Tuple[int, int] = (1, 1)
     year_offset: int = 0
+    jdn_shift: int = 0
 
 
 @dataclass(frozen=True)
@@ -234,7 +247,7 @@ class Timeline:
     def _label_to_jdn_via(self, seg: TimelineSegment, label: CivilLabel) -> int:
         cal = _TL_CALENDARS[seg.calendar_key]
         return cal.to_jdn(self._native_year(seg, label),
-                          label.month, label.day)
+                          label.month, label.day) + seg.jdn_shift
 
     # -- public conversions ------------------------------------------------
 
@@ -254,7 +267,7 @@ class Timeline:
                 f"calendar {seg.calendar_key!r} (in force at {jdn} on "
                 f"timeline {self.key!r}) is not in the registry")
         cal = _TL_CALENDARS[seg.calendar_key]
-        y, m, d = cal.from_jdn(jdn)
+        y, m, d = cal.from_jdn(jdn - seg.jdn_shift)
         return self._civil_from_native(seg, y, m, d)
 
     def to_jdn(self, label: Union[CivilLabel, Tuple[int, int, int]]
@@ -444,6 +457,98 @@ japan_1873 = Timeline(
                    "japanese_calendar_reference.html"),))
 
 
+# --------------------------------------------------------------------------
+# The dateline family — civil days deleted or re-lived at the International
+# Date Line.  A meridian/offset change is not, on its own, a Timeline event
+# (the module docstring quarantines Samoa's ordinary UTC shift).  What lands
+# here is the rarer thing an IDL hop can do: delete or repeat a whole *civil
+# calendar day*, which is a genuine label discontinuity — a day-number that no
+# JDN ever bore, or a weekday lived twice.  The underlying calendar stays
+# Gregorian throughout each of these, so the seam is expressed with a
+# ``jdn_shift`` on the post-seam segment (see :class:`TimelineSegment`) rather
+# than the calendar-switch re-alignment the reform timelines above rely on.
+# --------------------------------------------------------------------------
+
+# -- samoa_2011: SKIP Friday 30 December 2011 (westward IDL hop) ------------
+# samoa_dateline_reference.html: "the entire calendar day of Friday, 30
+# December 2011" was skipped — Thursday 29 December was followed directly by
+# Saturday 31 December — as Samoa moved from UTC-11 to UTC+13, redrawing the
+# International Date Line to share the calendar day of its trading partners.
+# The JDN proleptic Gregorian labels "30 December 2011" is the real solar day
+# Samoa repurposed as its civil "31 December"; the post-seam ``jdn_shift=-1``
+# makes it carry that later label, so no JDN bears "30 December".
+_SAMOA_SEAM = gregorian_to_jdn(2011, 12, 30)
+samoa_2011 = Timeline(
+    "samoa_2011",
+    (TimelineSegment(_MIN_JDN, "gregorian"),
+     TimelineSegment(_SAMOA_SEAM, "gregorian", jdn_shift=-1)),
+    (Discontinuity(_SAMOA_SEAM, DiscontinuityKind.SKIP,
+                   (2011, 12, 29), (2011, 12, 31),
+                   "UTC-11 -> UTC+13 (Pacific/Apia); Samoa dateline change 2011; "
+                   "samoa_dateline_reference.html"),))
+
+
+# -- philippines_1844: SKIP Tuesday 31 December 1844 (westward IDL hop) -----
+# philippines_dateline_reference.html: Governor-General Narciso Claveria y
+# Zaldua decreed that "Tuesday, December 31, 1844, should be removed from the
+# Philippine calendar" — Monday 30 December was followed by Wednesday 1 January
+# 1845 — as the islands left the western-hemisphere date reckoning inherited
+# from the Acapulco galleon trade and joined the Asian side of the date line.
+# The JDN proleptic Gregorian labels "31 December 1844" is the real solar day
+# the Philippines repurposed as its civil "1 January 1845" (post-seam
+# ``jdn_shift=-1``), so no JDN bears "31 December 1844".
+_PHIL_SEAM = gregorian_to_jdn(1844, 12, 31)
+philippines_1844 = Timeline(
+    "philippines_1844",
+    (TimelineSegment(_MIN_JDN, "gregorian"),
+     TimelineSegment(_PHIL_SEAM, "gregorian", jdn_shift=-1)),
+    (Discontinuity(_PHIL_SEAM, DiscontinuityKind.SKIP,
+                   (1844, 12, 30), (1845, 1, 1),
+                   "westward IDL hop (Asia/Manila); Claveria decree 1844; "
+                   "philippines_dateline_reference.html"),))
+
+
+# -- alaska_1867: the double event — REPEAT + Julian->Gregorian switch ------
+# The only place in this registry where two discontinuity kinds meet at one
+# seam.  international_date_line_reference.html: the transfer of Russian America
+# took place on the solar afternoon Europe reckoned as Saturday 19 October 1867
+# (Gregorian).  Sitka had been keeping the Julian calendar, so its last day
+# under Russian rule was **Friday, 6 October 1867 (Julian)**; and because Alaska
+# simultaneously crossed to the *eastern* side of the International Date Line,
+# the transfer day was relabelled one weekday back — **Friday, 18 October 1867
+# (Gregorian)**, "now known as Alaska Day".  So a Friday was directly followed
+# by a Friday (the eastward IDL step repeated the weekday) while the calendar
+# jumped Julian->Gregorian (alaska_purchase_reference.html: "the Julian calendar
+# in the 19th century was 12 days behind the Gregorian").
+#
+# Modelled faithfully, per those sources, as BOTH kinds at the single seam:
+#   * a **calendar-switch segment boundary** at the first Gregorian day, Julian
+#     before it, Gregorian after — the 11 intervening Gregorian dates (7–17
+#     October 1867) that no Alaskan civil day bore therefore read as a SKIP;
+#   * the Gregorian segment carries ``jdn_shift=+1`` (the eastward IDL step: one
+#     JDN "behind" astronomical Gregorian), which is exactly what makes the two
+#     civil labels 6-Oct-Julian and 18-Oct-Gregorian resolve, *each through its
+#     own calendar*, to the same JDN — hence the same weekday — while sitting on
+#     two consecutive real solar days: the **REPEAT**.
+# Unlike an ordinary fall-back REPEAT (one label, two JDNs, returned by to_jdn
+# as a two-candidate tuple), Alaska's is a *weekday* repeat: it is recorded as a
+# REPEAT :class:`Discontinuity`, not surfaced through to_jdn, because the two
+# Fridays share their calendar JDN rather than sharing a civil label.
+_ALASKA_SEAM = gregorian_to_jdn(1867, 10, 19)  # first Gregorian-reckoned day
+alaska_1867 = Timeline(
+    "alaska_1867",
+    (TimelineSegment(_MIN_JDN, "julian"),
+     TimelineSegment(_ALASKA_SEAM, "gregorian", jdn_shift=1)),
+    (Discontinuity(_ALASKA_SEAM, DiscontinuityKind.REPEAT,
+                   (1867, 10, 6), (1867, 10, 18),
+                   "Friday -> Friday, eastward IDL step (America/Sitka); "
+                   "Alaska transfer 1867; international_date_line_reference.html"),
+     Discontinuity(_ALASKA_SEAM, DiscontinuityKind.SKIP,
+                   (1867, 10, 6), (1867, 10, 18),
+                   "Julian -> Gregorian, 7-17 Oct 1867 omitted; "
+                   "alaska_purchase_reference.html")))
+
+
 #: The timeline registry.  The initial Catholic-adopter group (Spain, Portugal,
 #: the Italian principalities, Poland–Lithuania) switched on the same 1582 seam
 #: as Rome, so they alias the ``rome_1582`` timeline.
@@ -458,4 +563,7 @@ TIMELINES: Dict[str, Timeline] = {
     "greece_1923": greece_1923,
     "sweden_1700_1712": sweden_1700_1712,
     "japan_1873": japan_1873,
+    "samoa_2011": samoa_2011,
+    "philippines_1844": philippines_1844,
+    "alaska_1867": alaska_1867,
 }
