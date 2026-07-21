@@ -2,7 +2,8 @@
 
 ``DateTimeResolution`` names the granularity ("width") of a temporal
 reference: a day, a week, a month, a year, a decade, a century, a
-millennium, or a count backwards from the before-present epoch.
+millennium, a count backwards from the before-present epoch, or — for
+deep time — a geological epoch, period, era or eon.
 
 In chronologia the resolution is *derived*, never asserted: a
 :class:`~chronologia.astrodate.DateSpan` computes its own resolution from
@@ -67,3 +68,20 @@ class DateTimeResolution(Enum):
     BEFORE_PRESENT_DECADE = 31
     BEFORE_PRESENT_CENTURY = 32
     BEFORE_PRESENT_MILLENNIUM = 33
+
+    # -- deep-time (geological) tiers, above MILLENNIUM -------------------
+    # Widths large enough that a ``timedelta`` overflows; a
+    # :class:`~chronologia.astrodate.DateSpan` over a geological interval
+    # derives one of these from its width.  Thresholds are chosen to sit near
+    # the *order of magnitude* of the like-named divisions of the ICS
+    # geologic time scale rather than to reproduce any single boundary (those
+    # are irregular and revised): a geological *epoch* is Ma-scale
+    # (Holocene .. Pleistocene span 10^4..10^7 yr), a *period* 10^7..10^8 yr
+    # (the Jurassic is ~56 Myr), an *era* 10^8..~5x10^8 yr (the Mesozoic is
+    # ~186 Myr), and an *eon* the largest division, ~5x10^8 yr and up (the
+    # Phanerozoic is ~539 Myr).  Appended (never renumbered) so existing
+    # members keep their integer values.
+    EPOCH_GEOLOGICAL = 34
+    PERIOD_GEOLOGICAL = 35
+    ERA_GEOLOGICAL = 36
+    EON = 37

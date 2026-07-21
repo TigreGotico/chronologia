@@ -952,6 +952,11 @@ class Calendar:
     by arithmetic calendars) names a calendar key a bounded calendar degrades to
     out of range.  :class:`TabulatedCalendar` is the ``basis != "exact"``
     counterpart with the same attribute surface.
+    Consumers building a :class:`~chronologia.astrodate.DateSpan` from a
+    calendar date may seed the span's ``basis`` from this attribute and
+    combine it with other inputs' bases via
+    :func:`~chronologia.astrodate.combine_basis`; that wiring lives at
+    the call sites, not here.
     """
     key: str
     month_count: int
@@ -963,9 +968,11 @@ class Calendar:
 
 
 CALENDARS: Dict[str, object] = {
+    # tabular/civil Hijri: deterministic arithmetic, but ±1 day from a
+    # sighting-based observation -> ``tabulated`` rather than ``exact``.
     "islamic_civil": Calendar(
         "islamic_civil", 12, islamic_civil_to_jdn, islamic_civil_from_jdn,
-        islamic_civil_to_jdn(1, 1, 1)),
+        islamic_civil_to_jdn(1, 1, 1), basis="tabulated"),
     "hebrew": Calendar(
         "hebrew", 13, hebrew_to_jdn, hebrew_from_jdn,
         hebrew_to_jdn(1, 7, 1)),

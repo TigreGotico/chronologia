@@ -11,7 +11,8 @@ Everything reduces to the JDN hub, so conversions compose: an
 and calendar-backed eras (Anno Mundi, French Republican, Bahai) resolve
 *exactly* rather than by an epoch-plus-count approximation.
 """
-from chronologia.astrodate import (AstroDate, DateSpan, is_leap_year)
+from chronologia.astrodate import (AstroDate, DateSpan, WideDuration,
+                                   combine_basis, is_leap_year)
 from chronologia.calendars import (CALENDARS, Calendar, CalendarRangeError,
                                    TabulatedCalendar, gregorian_to_jdn,
                                    jdn_to_gregorian, julian_to_jdn,
@@ -33,6 +34,8 @@ __all__ = [
     # unbounded datetime-compatible point and half-open interval
     "AstroDate",
     "DateSpan",
+    "WideDuration",
+    "combine_basis",
     "is_leap_year",
     # JDN calendar hub
     "CALENDARS",
