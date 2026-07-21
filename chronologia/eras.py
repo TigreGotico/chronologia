@@ -33,9 +33,10 @@ so existing consumers never see the new type unless they parse era phrases.
 """
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
+from decimal import Decimal
 from typing import Callable, Optional, Tuple, Union
 
-from chronologia.astrodate import AstroDate, is_leap_year
+from chronologia.astrodate import AstroDate, DateSpan, is_leap_year
 from chronologia.calendars import (CALENDARS, Calendar, gregorian_to_jdn,
                                         jdn_to_gregorian)
 from chronologia.resolution import DateTimeResolution
@@ -237,6 +238,89 @@ def resolve_era_year_span(era: Union[str, Era], value: Union[int, float]
     end = AstroDate(*jdn_to_gregorian(
         cal.to_jdn(cyear + era.year_length, sm, sd)))
     return start, end
+
+
+# --------------------------------------------------------------------------
+# Scaled Before-Present units (deep time)
+# --------------------------------------------------------------------------
+
+#: Years per scaled Before-Present unit.  ``a`` = annum (year), ``ka`` = kilo-
+#: annum (10^3 yr), ``Ma`` = mega-annum (10^6 yr), ``Ga`` = giga-annum
+#: (10^9 yr) — the SI-prefixed units of the geologic literature (IUGS/ICS).
+_BP_UNITS = {"a": 1, "ka": 1_000, "Ma": 1_000_000, "Ga": 1_000_000_000}
+
+#: The Before-Present epoch: AD 1950 (Stuiver & Polach 1977; see
+#: ``ERAS["before_present"]``).  "0 BP" is 1950-01-01.
+_BP_EPOCH_YEAR = 1950
+
+# Mean Gregorian year in days, for the (rare) sub-year BP remainder only.
+_MEAN_YEAR_DAYS = Decimal("365.2425")
+
+
+def _astrodate_years_before_present(years_before: Decimal) -> AstroDate:
+    """The :class:`AstroDate` ``years_before`` years before AD 1950.
+
+    Whole years step the astronomical year field exactly (leap structure
+    preserved); a fractional part — only reachable with sub-year precision —
+    is applied as a mean-Gregorian-year number of days, the one documented
+    approximation (a fraction of a year has no exact calendar length).
+    """
+    whole = int(years_before)                      # truncates toward zero
+    frac = years_before - whole
+    base = AstroDate(_BP_EPOCH_YEAR - whole, 1, 1)
+    if frac == 0:
+        return base
+    # larger years_before == further into the past == earlier date
+    return base - timedelta(days=float(frac * _MEAN_YEAR_DAYS))
+
+
+def resolve_bp(value: Union[int, float, str, Decimal], unit: str = "a"
+               ) -> DateSpan:
+    """Resolve a scaled Before-Present expression into a :class:`DateSpan`.
+
+    ``unit`` is one of ``a``/``ka``/``Ma``/``Ga`` (10^0/10^3/10^6/10^9 years).
+    The returned span's **width is the precision of the expression**, read off
+    the last significant digit: the span is one unit of that digit's place
+    wide.  Pass ``value`` as a **string** (or ``Decimal``) when precision
+    matters — ``"66"`` and ``"66.0"`` denote different precisions but the
+    floats ``66``/``66.0`` are indistinguishable once parsed, so the string
+    form is authoritative.
+
+    Sig-fig rule (precise): let ``e`` be the decimal exponent of ``value`` as
+    written (``Decimal(str(value)).as_tuple().exponent`` — ``0`` for ``"66"``,
+    ``-3`` for ``"66.043"``, ``-1`` for ``"66.0"``).  The precision is
+    ``10**e`` of the unit, so:
+
+    * ``"66 Ma"``    (e=0)  -> 1 Ma wide;
+    * ``"66.043 Ma"``(e=-3) -> 10^-3 Ma = 1 ka wide;
+    * ``"66.0 Ma"``  (e=-1) -> 10^-1 Ma = 100 ka wide.
+
+    Trailing zeros *before* the decimal point are treated as significant
+    (``"660"`` -> place value = ones), the standard ambiguous case, resolved
+    this way because ``Decimal`` reports their exponent as ``0``.
+
+    Orientation: the stated value is the span's **start** (the older, more
+    negative astronomical year) and the span runs one precision unit *toward
+    the present* — half-open ``[value, value + precision)`` on the
+    years-before-present axis — so consecutive precision bins tile exactly
+    ("66 Ma" abuts "67 Ma" at their shared 66-Ma-ago edge).  ``basis`` is
+    ``"reconstructed"``: a deep-time date is a modelled (e.g. radiometric)
+    reconstruction, never an observed civil instant.
+
+    Example: ``resolve_bp("66", "Ma")`` -> a 1-Ma span whose ``start`` is
+    astronomical year ``1950 - 66_000_000 = -65_998_050`` (the K–Pg boundary
+    epoch to Ma precision).
+    """
+    if unit not in _BP_UNITS:
+        raise ValueError(f"unknown BP unit {unit!r}; expected one of "
+                         f"{sorted(_BP_UNITS)}")
+    dval = Decimal(str(value))
+    mult = _BP_UNITS[unit]
+    years_before = dval * mult
+    precision_years = Decimal(1).scaleb(dval.as_tuple().exponent) * mult
+    start = _astrodate_years_before_present(years_before)
+    end = _astrodate_years_before_present(years_before - precision_years)
+    return DateSpan(start, end, basis="reconstructed")
 
 
 def resolve_era(era: Union[str, Era], value: Union[int, float]

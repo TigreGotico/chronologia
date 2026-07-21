@@ -345,12 +345,151 @@ class AstroDate:
 
 
 # --------------------------------------------------------------------------
+# WideDuration: a span width that overflows ``timedelta``.
+# --------------------------------------------------------------------------
+
+# Mean Gregorian year, in microseconds: 365.2425 days.  Used only to split a
+# geological span into a whole-year count plus a sub-year remainder — never in
+# ``AstroDate`` field math, which stays exact and calendar-based.
+_MEAN_YEAR_US = 365_2425 * 86_400 * 1_000_000 // 10_000  # 365.2425 days in us
+
+
+@dataclass(frozen=True, slots=True)
+class WideDuration:
+    """A signed duration too large for :class:`datetime.timedelta`.
+
+    ``timedelta`` caps at ``±999_999_999`` days (~2.74 million years), so the
+    width of a geological span (a Jurassic interval is tens of millions of
+    years) cannot be represented as one.  :attr:`DateSpan.width` returns a
+    plain ``timedelta`` whenever the span fits — byte-identical to
+    ``end - start`` — and a ``WideDuration`` only when it would otherwise
+    ``OverflowError``.
+
+    The value is stored as a whole number of **mean Gregorian years**
+    (365.2425 days) plus a ``remainder`` ``timedelta`` strictly smaller than
+    one such year, so ``remainder`` always fits.  The split is a *reporting*
+    convenience — the authoritative magnitude is the total microsecond count
+    the two encode, exposed by :meth:`total_seconds` and used for all
+    comparisons.  ``WideDuration`` is orderable and equality-comparable
+    against both other ``WideDuration`` values and ``timedelta`` (a
+    ``timedelta`` is simply a magnitude that happens to be small enough to fit
+    one), so a geological width and an ordinary width compare cleanly.
+    """
+    years: int
+    remainder: timedelta
+
+    @classmethod
+    def _from_us(cls, total_us: int) -> "WideDuration":
+        years = total_us // _MEAN_YEAR_US
+        return cls(years, timedelta(microseconds=total_us - years * _MEAN_YEAR_US))
+
+    def _total_us(self) -> int:
+        rem_us = (self.remainder.days * _US_PER_DAY
+                  + self.remainder.seconds * 1_000_000
+                  + self.remainder.microseconds)
+        return self.years * _MEAN_YEAR_US + rem_us
+
+    def total_seconds(self) -> float:
+        """Total length in seconds (mirrors ``timedelta.total_seconds``)."""
+        return self._total_us() / 1_000_000
+
+    @staticmethod
+    def _other_us(other) -> Optional[int]:
+        if isinstance(other, WideDuration):
+            return other._total_us()
+        if isinstance(other, timedelta):
+            return (other.days * _US_PER_DAY + other.seconds * 1_000_000
+                    + other.microseconds)
+        return None
+
+    def __eq__(self, other):
+        us = self._other_us(other)
+        return NotImplemented if us is None else self._total_us() == us
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return result if result is NotImplemented else not result
+
+    def __lt__(self, other):
+        us = self._other_us(other)
+        return NotImplemented if us is None else self._total_us() < us
+
+    def __le__(self, other):
+        us = self._other_us(other)
+        return NotImplemented if us is None else self._total_us() <= us
+
+    def __gt__(self, other):
+        us = self._other_us(other)
+        return NotImplemented if us is None else self._total_us() > us
+
+    def __ge__(self, other):
+        us = self._other_us(other)
+        return NotImplemented if us is None else self._total_us() >= us
+
+    def __hash__(self):
+        return hash(self._total_us())
+
+
+# --------------------------------------------------------------------------
 # DateSpan: the primitive result of the engine.
 # --------------------------------------------------------------------------
 
+# Basis lattice: how the endpoints of a span were established, worst-of.  See
+# :func:`combine_basis`.
+BASIS_EXACT = "exact"
+BASIS_TABULATED = "tabulated"
+BASIS_RECONSTRUCTED = "reconstructed"
+BASIS_PREDICTED = "predicted"
+
+# Certainty rank, ascending imprecision.  ``exact`` is the bottom (identity)
+# element; ``reconstructed`` and ``predicted`` are *peers* at the same rank —
+# both are modelled rather than observed, one from evidence about the past,
+# one from a forward model — so neither is "worse" than the other.
+_BASIS_RANK = {
+    BASIS_EXACT: 0,
+    BASIS_TABULATED: 1,
+    BASIS_RECONSTRUCTED: 2,
+    BASIS_PREDICTED: 2,
+}
+
+
+def combine_basis(*bases: str) -> str:
+    """Worst-of over the basis lattice ``exact < tabulated < {reconstructed,
+    predicted}``.
+
+    Combining the bases of several inputs yields the *least certain* — a span
+    built from an exact endpoint and a tabulated one is only as trustworthy as
+    the tabulated one.  The lattice is a total order except for the top pair:
+    ``reconstructed`` and ``predicted`` are peers (equal rank).  When a
+    combination mixes exactly those two differing peers, the result is
+    ``reconstructed`` — an arbitrary but stable tie-break (documented, not
+    meaningful: neither peer is more certain, so the lattice needs a canonical
+    representative and the past-facing label is chosen).
+
+    Properties (exercised by the tests): idempotent, commutative, associative,
+    monotone worst-of; ``exact`` is the identity, so ``combine_basis()`` and
+    ``combine_basis("exact", x)`` both reduce cleanly.
+    """
+    worst = BASIS_EXACT
+    for b in bases:
+        if b not in _BASIS_RANK:
+            raise ValueError(f"unknown basis {b!r}; expected one of "
+                             f"{sorted(_BASIS_RANK)}")
+        if _BASIS_RANK[b] > _BASIS_RANK[worst]:
+            worst = b
+        elif _BASIS_RANK[b] == _BASIS_RANK[worst] and b != worst \
+                and _BASIS_RANK[b] == 2:
+            # two differing peers -> canonical representative
+            worst = BASIS_RECONSTRUCTED
+    return worst
+
+
 # Canonical width (in days) of each derivable resolution class, ascending.
 # Referential width IS the uncertainty; ``resolution`` is derived from it and
-# never asserted, removing the tag-vs-value inconsistency class.
+# never asserted, removing the tag-vs-value inconsistency class.  The tail
+# (millennium and up) carries the deep-time tiers; see
+# :class:`~chronologia.resolution.DateTimeResolution` for the threshold
+# rationale.  ``EON`` is the open-topped fallback.
 _RESOLUTION_BY_WIDTH = (
     (1.0, DateTimeResolution.DAY),
     (7.0, DateTimeResolution.WEEK),
@@ -358,6 +497,10 @@ _RESOLUTION_BY_WIDTH = (
     (366.0, DateTimeResolution.YEAR),
     (3653.0, DateTimeResolution.DECADE),
     (36525.0, DateTimeResolution.CENTURY),
+    (3_652_500.0, DateTimeResolution.MILLENNIUM),          # up to ~10 kyr
+    (3_652_500_000.0, DateTimeResolution.EPOCH_GEOLOGICAL),  # ~10 kyr..10 Myr
+    (36_525_000_000.0, DateTimeResolution.PERIOD_GEOLOGICAL),  # ..100 Myr
+    (182_625_000_000.0, DateTimeResolution.ERA_GEOLOGICAL),  # ..~500 Myr
 )
 
 
@@ -371,9 +514,18 @@ class DateSpan:
     eras and explicit ranges all unify under this one type.  The span answers
     *which stretch of time was referred to*, never parser confidence.
     ``DateTimeResolution`` is derived from :attr:`width`, never stored.
+
+    :attr:`basis` records *how* the endpoints were established — ``exact``
+    (default, so every existing construction is unchanged), ``tabulated`` (a
+    deterministic table that may differ from observation, e.g. the tabular
+    Hijri), ``reconstructed`` (modelled from evidence about the past, e.g. a
+    radiometric deep-time date) or ``predicted`` (a forward model).  It rides
+    alongside width and never affects it; :func:`combine_basis` is the
+    worst-of rule for propagating it when spans are combined.
     """
     start: AstroDate
     end: AstroDate
+    basis: str = BASIS_EXACT
 
     def __post_init__(self):
         if not isinstance(self.start, AstroDate) \
@@ -382,10 +534,27 @@ class DateSpan:
         if self.start > self.end:
             raise ValueError(
                 f"DateSpan start {self.start} must be <= end {self.end}")
+        if self.basis not in _BASIS_RANK:
+            raise ValueError(f"unknown basis {self.basis!r}; expected one of "
+                             f"{sorted(_BASIS_RANK)}")
 
     @property
-    def width(self) -> timedelta:
-        return self.end - self.start
+    def _delta_us(self) -> int:
+        """Total width in microseconds as an unbounded int (never overflows)."""
+        return self.end._total_us() - self.start._total_us()
+
+    @property
+    def width(self):
+        """The span's width.
+
+        Returns a plain ``datetime.timedelta`` whenever the interval fits one
+        (byte-identical to ``end - start``); for a geological span that would
+        overflow ``timedelta`` it returns a :class:`WideDuration` instead.
+        """
+        try:
+            return timedelta(microseconds=self._delta_us)
+        except OverflowError:
+            return WideDuration._from_us(self._delta_us)
 
     @property
     def start_datetime(self) -> Optional[datetime]:
@@ -399,12 +568,17 @@ class DateSpan:
 
     @property
     def resolution(self) -> DateTimeResolution:
-        """The ``DateTimeResolution`` derived from the span's width."""
-        days = self.width.total_seconds() / 86400.0
+        """The ``DateTimeResolution`` derived from the span's width.
+
+        Computed straight from the microsecond delta so a geological width
+        (which has no ``timedelta``) is classified without overflow; ``EON``
+        is the open-topped fallback above the largest threshold.
+        """
+        days = self._delta_us / float(_US_PER_DAY)
         for limit, res in _RESOLUTION_BY_WIDTH:
             if days <= limit:
                 return res
-        return DateTimeResolution.MILLENNIUM
+        return DateTimeResolution.EON
 
     def contains(self, point) -> bool:
         """True when ``point`` (AstroDate/date/datetime) is in ``[start, end)``."""
