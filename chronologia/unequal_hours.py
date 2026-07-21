@@ -59,11 +59,11 @@ Sources are cited per system in the ``citations`` / ``citation`` fields and in
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import timedelta
-from typing import Union
+from datetime import timedelta, tzinfo as _tzinfo
+from typing import Optional, Union
 
 from chronologia.astrodate import BASIS_TABULATED, AstroDate, DateSpan
-from chronologia.solar import NoSunEvent, SunEvent, SunEvents, sun_events
+from chronologia.solar import NoSunEvent, SunEvent, SunEvents, _to_zone, sun_events
 
 #: Daylight is bounded by (dawn field, dusk field) of :class:`SunEvents`.  A
 #: system's ``day_anchor`` selects the pair: ``"sunrise"`` -> the true
@@ -157,7 +157,9 @@ def _anchor_instant(events: SunEvents, anchor_event: str) -> SunEvent:
 
 def temporal_hour_span(date, latitude: float, longitude: float,
                        hour_number: int,
-                       system: UnequalHourSystem) -> Union[DateSpan, NoSunEvent]:
+                       system: UnequalHourSystem,
+                       zone: Optional[_tzinfo] = None
+                       ) -> Union[DateSpan, NoSunEvent]:
     """The ``hour_number``-th unequal hour of ``date`` under ``system``.
 
     ``hour_number`` runs ``1..system.total_hours``: ``1..day_hours`` are the
@@ -172,6 +174,12 @@ def temporal_hour_span(date, latitude: float, longitude: float,
     If the solar anchor the hour needs does not occur (polar day / night), the
     typed :class:`NoSunEvent` from :func:`sun_events` is returned unchanged --
     never an exception, never a fabricated time.
+
+    ``zone``, when given, changes only *presentation*: the underlying solar
+    computation is the same UTC solar-day arithmetic either way (the instants
+    are identical), but the returned :class:`DateSpan`'s ``start``/``end``
+    become aware readings in ``zone``.  A :class:`NoSunEvent` result is
+    returned unconverted, since it names no instant.
 
     >>> ss = temporal_hour_span(AstroDate(2024, 6, 21), 41.9, 12.5, 1, ROMAN_HOURS)
     >>> round(ss.width.total_seconds() / 60)   # a June day-hour at Rome
@@ -211,12 +219,17 @@ def temporal_hour_span(date, latitude: float, longitude: float,
     def boundary(i: int) -> AstroDate:
         return start + timedelta(microseconds=round(span_us * i / count))
 
-    return DateSpan(boundary(index - 1), boundary(index),
-                    basis=BASIS_TABULATED)
+    span = DateSpan(boundary(index - 1), boundary(index), basis=BASIS_TABULATED)
+    if zone is None:
+        return span
+    return DateSpan(_to_zone(span.start, zone), _to_zone(span.end, zone),
+                    basis=span.basis)
 
 
 def convention_time(date, latitude: float, longitude: float, hour: int,
-                    convention: ClockConvention) -> Union[AstroDate, NoSunEvent]:
+                    convention: ClockConvention,
+                    zone: Optional[_tzinfo] = None
+                    ) -> Union[AstroDate, NoSunEvent]:
     """The instant of clock-count ``hour`` under ``convention`` on ``date``.
 
     The hour is a steady 60 minutes; the count's origin is ``convention``'s
@@ -225,6 +238,11 @@ def convention_time(date, latitude: float, longitude: float, hour: int,
     (Italian hour 24 == the sunset that opens the day; Babylonian hour 0 ==
     sunrise).  Returns a UTC :class:`AstroDate`, or the typed
     :class:`NoSunEvent` from :func:`sun_events` when the anchor does not occur.
+
+    ``zone``, when given, changes only *presentation*: the computed instant is
+    identical either way; the return value is converted (via
+    :meth:`~chronologia.astrodate.AstroDate.astimezone`) into an aware reading
+    in ``zone``.  A :class:`NoSunEvent` result is returned unconverted.
 
     >>> t = convention_time(AstroDate(2024, 6, 21), 41.9, 12.5, 24, ITALIAN_HOURS)
     >>> ev = sun_events(AstroDate(2024, 6, 21), 41.9, 12.5)
@@ -240,7 +258,8 @@ def convention_time(date, latitude: float, longitude: float, hour: int,
     if isinstance(anchor, NoSunEvent):
         return anchor
     steps = hour % convention.count
-    return anchor + convention.direction * timedelta(hours=steps)
+    result = anchor + convention.direction * timedelta(hours=steps)
+    return result if zone is None else _to_zone(result, zone)
 
 
 # --------------------------------------------------------------------------
