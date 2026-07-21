@@ -21,3 +21,295 @@ nth_weekday | Columbus Day                         | 10 2 0  | public          |
 fixed       | Veterans Day                         | 11 11   | public          |  | us
 nth_weekday | Thanksgiving Day                     | 11 4 3  | public          |  |
 fixed       | Christmas Day                        | 12 25   | public religious|  | us
+#
+# ==========================================================================
+# STATE / TERRITORY LAYER (subdivisions)
+# ==========================================================================
+# All 50 states + DC and the five territories (AS, GU, MP, PR, VI) are the ISO
+# 3166-2:US checklist (57 subdivisions). North Dakota (US-ND) and the US Minor
+# Outlying Islands (US-UM) observe only the federal set, so they carry no
+# beyond-federal rows -- honest silence, not an omission.
+#
+# SCOPE: each subdivision's holidays that fall BEYOND the federal set (a
+# distinct date, or a state-renamed observance the state fixes by its own
+# statute). Same-date federal renames (a state's "Presidents' Day" for the
+# federal Washington's Birthday) are carried too, as the state's own named
+# rule. Weekend in-lieu "(observed)" days are NOT modelled here: whether a
+# state grants the Friday-before / Monday-after varies by employer and year,
+# and the nominal statutory date is the firm datum -- future data.
+#
+# SOURCES: the distinctive holidays are grounded in each state's own government
+# page (primary), cross-checked one-for-one against vacanza/holidays 0.101
+# (MIT) for the 57-subdivision checklist and the long-tail dates. Primary
+# state citations for the twenty most distinctive:
+#   Texas Independence Day / San Jacinto Day / Confederate Memorial Day (Jan 19)
+#     / LBJ Day / Emancipation Day in Texas -- Texas Gov't Code sec. 662.003
+#     (statutory & optional holidays), https://statutes.capitol.texas.gov/Docs/GV/htm/GV.662.htm
+#   Patriots' Day (MA) -- Mass. Gen. Laws ch.6 sec.12J, https://malegislature.gov/Laws/GeneralLaws/PartI/TitleI/Chapter6/Section12J
+#   Patriots' Day (ME) -- Maine Rev. Stat. tit.1 sec.1051, https://legislature.maine.gov/statutes/1/title1sec1051.html
+#   Pioneer Day (UT) -- Utah Code sec.63G-1-301, https://le.utah.gov/xcode/Title63G/Chapter1/63G-1-S301.html
+#   Cesar Chavez Day (CA) -- Cal. Gov't Code sec.6700, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=6700&lawCode=GOV
+#   Mardi Gras (LA) -- La. Rev. Stat. sec.1:55, https://legis.la.gov/legis/Law.aspx?d=321848
+#   Nevada Day (NV) -- Nev. Rev. Stat. sec.236.015, https://www.leg.state.nv.us/nrs/nrs-236.html
+#   Seward's Day / Alaska Day (AK) -- Alaska Stat. sec.44.12.010, http://www.akleg.gov/basis/statutes.asp#44.12.010
+#   Kamehameha Day / Prince Kuhio Day / Statehood Day (HI) -- Haw. Rev. Stat. sec.8-1..8-5, https://www.capitol.hawaii.gov/hrscurrent/Vol01_Ch0001-0042F/HRS0008/
+#   West Virginia Day (WV) -- W.Va. Code sec.2-2-1, https://code.wvlegislature.gov/2-2-1/
+#   Truman Day (MO) -- Mo. Rev. Stat. sec.9.010, https://revisor.mo.gov/main/OneSection.aspx?section=9.010
+#   Emancipation Day (DC) -- DC Official Code sec.1-612.02, https://code.dccouncil.gov/us/dc/council/code/sections/1-612.02
+#   Bennington Battle Day / Town Meeting Day (VT) -- 1 V.S.A. sec.371, https://legislature.vermont.gov/statutes/section/01/007/00371
+#   Casimir Pulaski Day (IL) -- 5 ILCS 490/65, https://www.ilga.gov/legislation/ilcs/ilcs4.asp?ActID=176
+#   Confederate Memorial Day / Jefferson Davis Birthday (AL) -- Ala. Code sec.1-3-8, https://law.justia.com/codes/alabama/title-1/chapter-3/section-1-3-8/
+#   Arbor Day (NE) -- Neb. Rev. Stat. sec.25-2221, https://nebraskalegislature.gov/laws/statutes.php?statute=25-2221
+#   Puerto Rico Constitution Day / Emancipation Day (PR) -- 1 LPRA sec.71
+#   Guam Discovery Day / Liberation Day (GU) -- 1 GCA sec.1000
+#   American Samoa Flag Day (AS) -- ASCA sec.1.0501
+#   Victory Day (RI) -- R.I. Gen. Laws sec.25-1-1, http://webserver.rilegislature.gov/Statutes/TITLE25/25-1/25-1-1.HTM
+# REFERENCE-ATTRIBUTED ROWS (vacanza/holidays 0.101, MIT -- no readily citable
+# standalone primary page found, so the date is taken from the reference and
+# marked here): all remaining long-tail subdivision rows (the federal-rename
+# "Presidents'/Washington/Lincoln" third-Monday variants; "Day/Friday After
+# Thanksgiving" and its named cousins State Holiday GA / Family Day NV / Native
+# American Heritage Day WA / American Indian Heritage Day MD; Christmas Eve /
+# New Year's Eve / Day After Christmas full-day state closures KS/MI/NC/TX/WI;
+# Good Friday state closures; Election Day; the CNMI/Guam/Virgin-Islands
+# territorial observances; Frances Xavier Cabrini Day CO; Susan B. Anthony Day).
+#
+# Election Day is modelled as a biennial decree (even-year general election,
+# the Tuesday after the first Monday of November) for states that observe it
+# only in general-election years, and as an every-year nth_weekday rule for
+# Indiana and New York, which the reference lists in odd years too.
+# --- US-AK ---
+nth_weekday | Martin Luther King Jr.'s Birthday | 1 3 0 | public | US-AK |
+nth_weekday | Presidents' Day | 2 3 0 | public | US-AK |
+nth_weekday | Seward's Day | 3 -1 0 | public | US-AK |
+nth_weekday | Indigenous Peoples' Day | 10 2 0 | public | US-AK |
+fixed       | Alaska Day | 10 18 | public | US-AK |
+# --- US-AL ---
+nth_weekday | Martin Luther King, Jr & Robert E. Lee's Birthday | 1 3 0 | public | US-AL |
+nth_weekday | George Washington & Thomas Jefferson's Birthday | 2 3 0 | public | US-AL |
+nth_weekday | Confederate Memorial Day | 4 4 0 | public | US-AL |
+nth_weekday | Jefferson Davis Birthday | 6 1 0 | public | US-AL |
+nth_weekday | Columbus Day / American Indian Heritage Day / Fraternal Day | 10 2 0 | public | US-AL |
+# --- US-AR ---
+nth_weekday | George Washington's Birthday and Daisy Gatson Bates Day | 2 3 0 | public | US-AR |
+# --- US-AS ---
+fixed       | American Samoa Flag Day | 4 17 | public | US-AS |
+fixed       | Manu'a Islands Cession Day | 7 16 | public | US-AS |
+nth_weekday | White Sunday | 10 2 6 | public religious | US-AS |
+# --- US-AZ ---
+nth_weekday | Dr. Martin Luther King Jr. / Civil Rights Day | 1 3 0 | public | US-AZ |
+nth_weekday | Lincoln/Washington Presidents' Day | 2 3 0 | public | US-AZ |
+# --- US-CA ---
+nth_weekday | Presidents' Day | 2 3 0 | public | US-CA |
+fixed       | Susan B. Anthony Day | 2 15 | public | US-CA |
+fixed       | Cesar Chavez Day | 3 31 | public | US-CA |
+nth_weekday | Day After Thanksgiving | 11 4 3 1 | public | US-CA |
+# --- US-CO ---
+nth_weekday | Washington-Lincoln Day | 2 3 0 | public | US-CO |
+fixed       | Cesar Chavez Day | 3 31 | public | US-CO |
+nth_weekday | Frances Xavier Cabrini Day | 10 1 0 | public | US-CO |
+# --- US-CT ---
+fixed       | Lincoln's Birthday | 2 12 | public | US-CT |
+easter      | Good Friday | -2 | public religious | US-CT |
+# --- US-DC ---
+fixed       | Emancipation Day | 4 16 | public | US-DC |
+nth_weekday | Indigenous Peoples' Day | 10 2 0 | public | US-DC |
+# --- US-DE ---
+easter      | Good Friday | -2 | public religious | US-DE |
+nth_weekday | Day After Thanksgiving | 11 4 3 1 | public | US-DE |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-DE |
+# --- US-FL ---
+fixed       | Susan B. Anthony Day | 2 15 | public | US-FL |
+nth_weekday | Friday After Thanksgiving | 11 4 3 1 | public | US-FL |
+# --- US-GA ---
+# Georgia names two distinct dates "State Holiday": Good Friday and the day
+# after Thanksgiving (it does not gazette either under its own name).
+easter      | State Holiday | -2      | public | US-GA |
+nth_weekday | State Holiday | 11 4 3 1 | public | US-GA |
+# --- US-GU ---
+nth_weekday | Guam Discovery Day | 3 1 0 | public | US-GU |
+easter      | Good Friday | -2 | public religious | US-GU |
+fixed       | Liberation Day (Guam) | 7 21 | public | US-GU |
+fixed       | All Souls' Day | 11 2 | public religious | US-GU |
+fixed       | Lady of Camarin Day | 12 8 | public religious | US-GU |
+# --- US-HI ---
+nth_weekday | Presidents' Day | 2 3 0 | public | US-HI |
+fixed       | Prince Jonah Kuhio Kalanianaole Day | 3 26 | public | US-HI |
+fixed       | Kamehameha Day | 6 11 | public | US-HI |
+nth_weekday | Statehood Day | 8 3 4 | public | US-HI |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-HI |
+# --- US-IA ---
+fixed       | Lincoln's Birthday | 2 12 | public | US-IA |
+# --- US-ID ---
+nth_weekday | Martin Luther King Jr. / Idaho Human Rights Day | 1 3 0 | public | US-ID |
+nth_weekday | Presidents' Day | 2 3 0 | public | US-ID |
+# --- US-IL ---
+fixed       | Lincoln's Birthday | 2 12 | public | US-IL |
+nth_weekday | Casimir Pulaski Day | 3 1 0 | public | US-IL |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-IL |
+# --- US-IN ---
+easter      | Good Friday | -2 | public religious | US-IN |
+nth_weekday | Primary Election Day | 5 1 0 1 | public | US-IN |
+nth_weekday | Election Day | 11 1 0 1 | public | US-IN |
+nth_weekday | Lincoln's Birthday | 11 4 3 1 | public | US-IN |
+# --- US-KS ---
+fixed       | Christmas Eve | 12 24 | public religious | US-KS |
+# --- US-KY ---
+easter      | Good Friday | -2 | public religious | US-KY |
+fixed       | New Year's Eve | 12 31 | public | US-KY |
+# --- US-LA ---
+easter      | Mardi Gras | -47 | public religious | US-LA |
+easter      | Good Friday | -2 | public religious | US-LA |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-LA |
+# --- US-MA ---
+nth_weekday | Patriots' Day | 4 3 0 | public | US-MA |
+# --- US-MD ---
+nth_weekday | Presidents' Day | 2 3 0 | public | US-MD |
+nth_weekday | American Indian Heritage Day | 11 4 3 1 | public | US-MD |
+# --- US-ME ---
+nth_weekday | Patriots' Day | 4 3 0 | public | US-ME |
+nth_weekday | Indigenous Peoples' Day | 10 2 0 | public | US-ME |
+# --- US-MI ---
+fixed       | Christmas Eve | 12 24 | public religious | US-MI |
+fixed       | New Year's Eve | 12 31 | public | US-MI |
+nth_weekday | Day After Thanksgiving | 11 4 3 1 | public | US-MI |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-MI |
+# --- US-MN ---
+nth_weekday | Washington's and Lincoln's Birthday | 2 3 0 | public | US-MN |
+# --- US-MO ---
+fixed       | Truman Day | 5 8 | public | US-MO |
+# --- US-MP ---
+fixed       | Commonwealth Covenant Day | 3 24 | public | US-MP |
+easter      | Good Friday | -2 | public religious | US-MP |
+nth_weekday | Commonwealth Cultural Day | 10 2 0 | public | US-MP |
+fixed       | Citizenship Day | 11 4 | public | US-MP |
+fixed       | Constitution Day | 12 8 | public | US-MP |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-MP |
+# --- US-MS ---
+nth_weekday | Dr. Martin Luther King Jr. and Robert E. Lee's Birthdays | 1 3 0 | public | US-MS |
+nth_weekday | Confederate Memorial Day | 4 -1 0 | public | US-MS |
+# --- US-MT ---
+nth_weekday | Lincoln's and Washington's Birthdays | 2 3 0 | public | US-MT |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-MT |
+# --- US-NC ---
+easter      | Good Friday | -2 | public religious | US-NC |
+nth_weekday | Day After Thanksgiving | 11 4 3 1 | public | US-NC |
+fixed       | Christmas Eve | 12 24 | public religious | US-NC |
+fixed       | Day After Christmas | 12 26 | public | US-NC |
+# --- US-NE ---
+nth_weekday | Arbor Day | 4 -1 4 | public | US-NE |
+nth_weekday | Indigenous Peoples' Day | 10 2 0 | public | US-NE |
+# --- US-NH ---
+nth_weekday | Dr. Martin Luther King Jr. / Civil Rights Day | 1 3 0 | public | US-NH |
+nth_weekday | Day After Thanksgiving | 11 4 3 1 | public | US-NH |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-NH |
+# --- US-NJ ---
+fixed       | Lincoln's Birthday | 2 12 | public | US-NJ |
+nth_weekday | Presidents Day | 2 3 0 | public | US-NJ |
+easter      | Good Friday | -2 | public religious | US-NJ |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-NJ |
+# --- US-NM ---
+# New Mexico applies the "Presidents' Day" label to the day after Thanksgiving
+# (its February third Monday is not a state holiday) -- reference-attributed.
+nth_weekday | Indigenous Peoples' Day | 10 2 0 | public | US-NM |
+nth_weekday | Presidents' Day | 11 4 3 1 | public | US-NM |
+# --- US-NV ---
+nth_weekday | Nevada Day | 10 -1 4 | public | US-NV |
+nth_weekday | Family Day | 11 4 3 1 | public | US-NV |
+# --- US-NY ---
+fixed       | Lincoln's Birthday | 2 12 | public | US-NY |
+fixed       | Susan B. Anthony Day | 2 15 | public | US-NY |
+nth_weekday | Election Day | 11 1 0 1 | public | US-NY |
+# --- US-OH ---
+nth_weekday | Washington-Lincoln Day | 2 3 0 | public | US-OH |
+# --- US-OK ---
+nth_weekday | Presidents' Day | 2 3 0 | public | US-OK |
+nth_weekday | Day After Thanksgiving | 11 4 3 1 | public | US-OK |
+# --- US-OR ---
+nth_weekday | Presidents Day | 2 3 0 | public | US-OR |
+# --- US-PA ---
+nth_weekday | Presidents' Day | 2 3 0 | public | US-PA |
+nth_weekday | Day After Thanksgiving | 11 4 3 1 | public | US-PA |
+# --- US-PR ---
+fixed       | Epiphany | 1 6 | public religious | US-PR |
+nth_weekday | George Washington Day, Presidents' Day, and the Day of the Women and Men Heroes of Puerto Rico | 2 3 0 | public | US-PR |
+fixed       | Emancipation Day | 3 22 | public | US-PR |
+easter      | Good Friday | -2 | public religious | US-PR |
+fixed       | Puerto Rico Constitution Day | 7 25 | public | US-PR |
+fixed       | Puerto Rican Identity Day | 11 19 | public | US-PR |
+# --- US-RI ---
+nth_weekday | Victory Day | 8 2 0 | public | US-RI |
+nth_weekday | Indigenous Peoples' Day / Columbus Day | 10 2 0 | public | US-RI |
+# --- US-SC ---
+nth_weekday | President's Day | 2 3 0 | public | US-SC |
+nth_weekday | Confederate Memorial Day | 4 4 0 | public | US-SC |
+# --- US-SD ---
+nth_weekday | Native Americans' Day | 10 2 0 | public | US-SD |
+# --- US-TN ---
+nth_weekday | President's Day | 2 3 0 | public | US-TN |
+easter      | Good Friday | -2 | public religious | US-TN |
+# --- US-TX ---
+fixed       | Emancipation Day In Texas; Juneteenth National Independence Day | 6 19 | public | US-TX |
+fixed       | Confederate Memorial Day | 1 19 | public | US-TX |
+nth_weekday | Presidents' Day | 2 3 0 | public | US-TX |
+fixed       | Texas Independence Day | 3 2 | public | US-TX |
+fixed       | Cesar Chavez Day | 3 31 | public | US-TX |
+easter      | Good Friday | -2 | public religious | US-TX |
+fixed       | San Jacinto Day | 4 21 | public | US-TX |
+fixed       | Lyndon Baines Johnson Day | 8 27 | public | US-TX |
+nth_weekday | Friday After Thanksgiving | 11 4 3 1 | public | US-TX |
+fixed       | Christmas Eve | 12 24 | public religious | US-TX |
+fixed       | Day After Christmas | 12 26 | public | US-TX |
+# --- US-UT ---
+nth_weekday | Washington and Lincoln Day | 2 3 0 | public | US-UT |
+fixed       | Pioneer Day | 7 24 | public | US-UT |
+# --- US-VA ---
+nth_weekday | George Washington Day | 2 3 0 | public | US-VA |
+nth_weekday | Indigenous Peoples' Day | 10 2 0 | public | US-VA |
+# --- US-VI ---
+fixed       | Three Kings Day | 1 6 | public religious | US-VI |
+nth_weekday | Presidents' Day | 2 3 0 | public | US-VI |
+fixed       | Transfer Day | 3 31 | public | US-VI |
+easter      | Holy Thursday | -3 | public religious | US-VI |
+easter      | Good Friday | -2 | public religious | US-VI |
+easter      | Easter Monday | 1 | public religious | US-VI |
+fixed       | Emancipation Day | 7 3 | public | US-VI |
+nth_weekday | Columbus Day and Puerto Rico Friendship Day | 10 2 0 | public | US-VI |
+fixed       | Liberty Day | 11 1 | public | US-VI |
+fixed       | Christmas Second Day | 12 26 | public religious | US-VI |
+# --- US-VT ---
+nth_weekday | Presidents' Day | 2 3 0 | public | US-VT |
+nth_weekday | Town Meeting Day | 3 1 1 | public | US-VT |
+fixed       | Bennington Battle Day | 8 16 | public | US-VT |
+# --- US-WA ---
+nth_weekday | Presidents' Day | 2 3 0 | public | US-WA |
+nth_weekday | Native American Heritage Day | 11 4 3 1 | public | US-WA |
+# --- US-WI ---
+fixed       | Susan B. Anthony Day | 2 15 | public | US-WI |
+fixed       | Christmas Eve | 12 24 | public religious | US-WI |
+fixed       | New Year's Eve | 12 31 | public | US-WI |
+# --- US-WV ---
+nth_weekday | Presidents' Day | 2 3 0 | public | US-WV |
+fixed       | West Virginia Day | 6 20 | public | US-WV |
+nth_weekday | Day After Thanksgiving | 11 4 3 1 | public | US-WV |
+decree | Election Day | 2022-11-08 2024-11-05 2026-11-03 | public | US-WV |
+# --- US-WY ---
+nth_weekday | President's Day | 2 3 0 | public | US-WY |
+#
+# ==========================================================================
+# HALF-DAY HOLIDAYS -- span-native DateSpan demonstration (span = half_pm)
+# ==========================================================================
+# A half-day holiday is not a whole day with a flag: it is a genuinely narrower
+# DateSpan. "half_pm" resolves to the free afternoon [12:00, 24:00) of the day
+# (12 hours wide) -- offices close at noon. is_civil_holiday() is therefore
+# honest: the morning of a half-day is a working period.
+#
+# 1) Puerto Rico Christmas Eve (from 12pm): a recurring statutory half-day,
+#    Law No. 305 of 25 Dec 2002 (adds Christmas Eve to 1 LPRA sec.71 as a
+#    from-noon holiday), in force from 2003. Name follows the reference gloss.
+# 2) U.S. federal Christmas Eve half-day closing: granted by Executive Order in
+#    2002 (EO 13281), 2009 (EO 13523) and 2015 (EO 13713) -- the President
+#    closing executive departments at noon on 24 December. Primary: the Federal
+#    Register EO documents cited in vacanza's united_states.py header.
+fixed  | Christmas Eve (from 12pm)          | 12 24                                | public | US-PR |  | 2003- | half_pm
+decree | Christmas Eve (half-day closing)   | 2002-12-24 2009-12-24 2015-12-24     | public |       |  |       | half_pm

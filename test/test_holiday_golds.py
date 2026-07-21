@@ -148,6 +148,94 @@ def test_us_juneteenth_year_gated_federal_from_2021():
 
 
 # ==========================================================================
+# US state / territory layer -- every beyond-federal subdivision rule in
+# us.tab. The golds are taken from the independent reference package
+# (vacanza/holidays 0.101, MIT) year by year -- an outside witness, not the
+# engine's own output -- exactly as us.tab's header describes; the twenty most
+# distinctive holidays additionally carry a primary state-statute citation
+# there. Half-day golds are hand-set from the cited statute / Executive Orders.
+# ==========================================================================
+def _us_subdiv_rules():
+    """(subdiv_code, name) for every subdivision rule row in us.tab."""
+    cal = load_calendar(os.path.join(_DATA_DIR, "us.tab"))
+    return [(r.subdiv, r.name) for r in cal.rules if r.subdiv is not None]
+
+
+def _register_us_state_golds():
+    import holidays as _pkg
+    us = _pkg.UnitedStates
+    fed = {y: set(_pkg.country_holidays("US", years=y).values())
+           for y in (2023, 2024, 2025)}
+    # Half-day rules: hand golds from the primary sources in us.tab's header.
+    _reg("US", "US-PR", "Christmas Eve (from 12pm)", 2024, 12, 24)  # Law 305/2002
+    for _y in (2002, 2009, 2015):  # EO 13281 / 13523 / 13713
+        _reg("US", None, "Christmas Eve (half-day closing)", _y, 12, 24)
+    # Everything else: read the reference year by year and register the date it
+    # gives for each (subdiv, name). Election Day in biennial-decree states is
+    # only present in even years there, so we register the even year we ship.
+    for subdiv, name in _us_subdiv_rules():
+        if name in ("Christmas Eve (from 12pm)",
+                    "Christmas Eve (half-day closing)"):
+            continue
+        sub = subdiv.split("-", 1)[1]
+        for y in (2023, 2024, 2025):
+            h = _pkg.country_holidays("US", subdiv=sub, years=y,
+                                      categories=("public",))
+            for d, nm in h.items():
+                if nm == name and nm not in fed[y]:
+                    _reg("US", subdiv, name, y, d.month, d.day)
+
+
+_register_us_state_golds()
+
+
+@pytest.mark.parametrize("subdiv,name", _us_subdiv_rules())
+def test_us_state_rule_reproduces_reference(subdiv, name):
+    """Every us.tab subdivision rule resolves to the gold date(s) registered
+    from the independent reference (and, for the top twenty, the cited state
+    statute)."""
+    want = HOLIDAY_GOLDS[("US", subdiv, name)]
+    for (y, m, d) in want:
+        # Compare by calendar day so a half-day span (whose start carries an
+        # hour component) still matches its (y, m, d) gold.
+        days = {(x.year, x.month, x.day)
+                for x in _dateset_for("US", y, subdiv=subdiv).get(
+                    (name, subdiv), set())}
+        assert (y, m, d) in days, (
+            f"US/{subdiv}/{name!r} {y}: expected {y}-{m:02d}-{d:02d}, "
+            f"got {sorted(days)}")
+
+
+def test_us_half_day_spans_are_twelve_hours():
+    """The two half-day holidays resolve to a genuine [12:00, 24:00) afternoon
+    span, not a full day -- the span-native width payoff."""
+    from datetime import timedelta
+    pr = [h for h in holidays_for("US", 2024, subdiv="US-PR")
+          if h.name == "Christmas Eve (from 12pm)"]
+    assert len(pr) == 1
+    assert pr[0].span.start == AstroDate(2024, 12, 24, 12)
+    assert pr[0].span.end == AstroDate(2024, 12, 25)
+    assert pr[0].span.width == timedelta(hours=12)
+    # morning is NOT covered; the afternoon is
+    assert not pr[0].span.contains(AstroDate(2024, 12, 24, 9))
+    assert pr[0].span.contains(AstroDate(2024, 12, 24, 15))
+    fed = [h for h in holidays_for("US", 2015)
+           if h.name == "Christmas Eve (half-day closing)"]
+    assert len(fed) == 1 and fed[0].span.width == timedelta(hours=12)
+    # the closing was only granted in 2002/2009/2015, silent otherwise
+    assert not [h for h in holidays_for("US", 2016)
+                if h.name == "Christmas Eve (half-day closing)"]
+
+
+def test_us_pr_christmas_eve_half_day_year_gated_from_2003():
+    """PR Christmas Eve half-day (Law 305 of 25 Dec 2002) is absent in 2002 and
+    present from 2003 (us.tab "2003-" range)."""
+    names = lambda y: {h.name for h in holidays_for("US", y, subdiv="US-PR")}
+    assert "Christmas Eve (from 12pm)" not in names(2002)
+    assert "Christmas Eve (from 12pm)" in names(2003)
+
+
+# ==========================================================================
 # SA -- fixed Gregorian days (Wikipedia) + Islamic days independently
 # re-derived from the raw umm_al_qura.tab JDN column.
 # ==========================================================================
