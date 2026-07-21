@@ -339,6 +339,8 @@ on this library — adding the voice-facing glue: speaking a date back out
 loud, session handling, and the legacy per-language helpers. If you need
 to *say* a date rather than *read* one, start there.
 
+**How this library was built**: see [docs/transparency.md](docs/transparency.md) — an honest account, failures included.
+
 ## License
 
 Apache-2.0 © TigreGotico
