@@ -65,6 +65,9 @@ from chronologia.cosmology import (AGE_OF_UNIVERSE_ERA, COSMIC_PERIODS,
 from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
                                  AmbiguousPeriodError, NamedPeriod, calibrate_c14,
                                  candidates, children, lookup, subdivide)
+from chronologia.recurrence import (Recurrence, every, last_weekday_of_month,
+                                    nth_weekday_of_month, occurrences,
+                                    parse_rrule)
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
 from chronologia.solar import (SOLAR_ACCURACY, NoSunEvent, SunEvents,
                                sun_events, sunset_day_start)
@@ -181,6 +184,13 @@ __all__ = [
     "UnknownDayPartError",
     "daypart_span",
     "CLDR_VERSION",
+    # RFC 5545 recurrence rules (RRULE) over the JDN hub
+    "Recurrence",
+    "parse_rrule",
+    "occurrences",
+    "every",
+    "nth_weekday_of_month",
+    "last_weekday_of_month",
     # regnal reckoning
     "REGNAL_SEQUENCES",
     "RegnalSequence",
