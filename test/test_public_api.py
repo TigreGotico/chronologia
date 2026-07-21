@@ -6,8 +6,9 @@ import chronologia
 
 EXPECTED_EXPORTS = {
     "AstroDate", "DateSpan", "is_leap_year",
-    "CALENDARS", "Calendar", "gregorian_to_jdn", "jdn_to_gregorian",
-    "julian_to_jdn", "jdn_to_julian",
+    "CALENDARS", "Calendar", "CalendarRangeError", "TabulatedCalendar",
+    "gregorian_to_jdn", "jdn_to_gregorian",
+    "julian_to_jdn", "jdn_to_julian", "register_event_provider",
     "ERAS", "Era", "EraCounting", "astro_year_range",
     "resolve_era", "resolve_era_year_span",
     "DAY_CYCLES", "DAY_SUBDIVISIONS", "DayCycle", "DaySubdivision",
@@ -37,9 +38,16 @@ def test_astrodate_calendar_jdn_round_trip():
     jdn = chronologia.gregorian_to_jdn(a.year, a.month, a.day)
     assert chronologia.jdn_to_gregorian(jdn) == (2025, 9, 23)
 
-    # every registered calendar is an integer inverse pair through JDN
+    # every registered calendar is an integer inverse pair through JDN --
+    # tabulated calendars are bounded and may not cover an arbitrary 2025
+    # Gregorian date, so an out-of-range CalendarRangeError is acceptable
+    # for those (but not for exact-basis arithmetic calendars).
     for cal in chronologia.CALENDARS.values():
-        y, m, d = cal.from_jdn(jdn)
+        try:
+            y, m, d = cal.from_jdn(jdn)
+        except chronologia.CalendarRangeError:
+            assert isinstance(cal, chronologia.TabulatedCalendar)
+            continue
         assert cal.to_jdn(y, m, d) == jdn
 
 
