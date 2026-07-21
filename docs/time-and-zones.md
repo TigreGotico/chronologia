@@ -445,6 +445,83 @@ print(morning.gap(evening) == afternoon)
 # True
 ```
 
+## The hour that stretched in summer
+
+Ask what time it is and you assume the answer ticks at a steady rate — sixty
+minutes, every hour, all year. For most of history that was not how anyone told
+time. The pre-mechanical world counted a *fixed number of hours between sunrise
+and sunset* — twelve, in the Greco-Roman and later European tradition — and
+another fixed number through the night. Because the count was fixed but the
+daylight was not, the hour itself breathed with the seasons. In high summer,
+when the sun is up far longer, each of the twelve daytime hours had to be
+*longer* to fit; in deep winter they shrank. At Rome's latitude the swing is
+dramatic — a daytime hour ran to about **76 minutes at the June solstice** and
+collapsed to roughly **46 minutes at the December solstice** — and the night
+hours did the exact opposite. These are **temporal**, **seasonal**, or
+**unequal** hours.
+
+`temporal_hour_span` builds them straight on top of `sun_events`: it takes the
+daylight span, divides it into the system's hour count, and hands back the
+`hour_number`-th slice as a `DateSpan` whose *width is that hour's real length*.
+
+```python
+from chronologia import temporal_hour_span, ROMAN_HOURS, AstroDate
+
+rome = (41.9, 12.5)
+june = temporal_hour_span(AstroDate(2024, 6, 21), *rome, 1, ROMAN_HOURS)
+december = temporal_hour_span(AstroDate(2024, 12, 21), *rome, 1, ROMAN_HOURS)
+print(round(june.width.total_seconds() / 60), "min in June")
+# 76 min in June
+print(round(december.width.total_seconds() / 60), "min in December")
+# 46 min in December
+```
+
+`hour_number` runs `1..24` for the Roman 12+12 system: hours 1–12 divide
+sunrise→sunset, hours 13–24 divide sunset→next sunrise. The daytime hours tile
+the daylight exactly — the twelfth ends on sunset with no fencepost gap — and
+the width varies with date and latitude, which is the whole point. Ship-in
+systems are `ROMAN_HOURS`, `ZMANIM_GRA` (Jewish *sha'ot zmaniyot* by the Vilna
+Gaon — the same sunrise→sunset ÷ 12 geometry), and `EDO_JAPANESE` (six day and
+six night hours). Every span is `basis="tabulated"`: it inherits the class-B
+accuracy of the NOAA solar model, not an ephemeris.
+
+The Magen Avraham reckoning of the *zmanim* is deliberately **not** shipped: it
+runs dawn→nightfall at solar depressions of 16.1° and 8.5°, and `sun_events`
+exposes only the 6°/12°/18° civil/nautical/astronomical twilights, so no honest
+mapping exists yet — better a missing system than a mislabelled one.
+
+### Counting from sunset: Italian and Babylonian hours
+
+A different convention keeps the hour *equal* (a steady sixty minutes) but moves
+the **origin** of the count to a solar event. Italian hours (*ore
+all'italiana*) numbered 1–24 from sunset, so the clock struck 24 at sunset and
+started over; Babylonian hours counted equal hours from sunrise.
+`convention_time` returns the instant of a given count. Because the count wraps
+modulo 24, the 24th hour lands back on the anchor:
+
+```python
+from chronologia import convention_time, sun_events, ITALIAN_HOURS
+
+ev = sun_events(AstroDate(2024, 6, 21), *rome)
+print(convention_time(AstroDate(2024, 6, 21), *rome, 24, ITALIAN_HOURS) == ev.sunset)
+# True
+```
+
+### Polar honesty carries through
+
+An unequal hour needs a sunrise and a sunset to divide; a clock count needs its
+anchor event. When the sun never rises or never sets, `sun_events` returns a
+typed `NoSunEvent`, and both functions **return it unchanged** — never raising,
+never inventing a time:
+
+```python
+from chronologia import NoSunEvent
+
+polar = temporal_hour_span(AstroDate(2024, 6, 21), 78.0, 15.0, 1, ROMAN_HOURS)
+print(isinstance(polar, NoSunEvent), polar.kind)
+# True polar_day
+```
+
 ## Reference
 
 | tool | what it does |
@@ -460,6 +537,10 @@ print(morning.gap(evening) == afternoon)
 | `apparent_solar_time(instant, longitude_deg)` | what a sundial at that longitude reads |
 | `sun_events(date, latitude, longitude)` | sunrise/sunset/solar-noon and the civil/nautical/astronomical twilights, in UTC (`SOLAR_ACCURACY` bounds it) |
 | `sunset_day_start(date, latitude, longitude)` | the previous evening's computed sunset that opens a sunset-anchored calendar day |
+| `temporal_hour_span(date, lat, lon, hour_number, system)` | the Nth unequal (temporal/seasonal) hour as a `DateSpan` whose width is its true season-varying length; `NoSunEvent` in polar conditions |
+| `convention_time(date, lat, lon, hour, convention)` | the instant of an equal-hour clock count re-anchored to a solar event (Italian from sunset, Babylonian from sunrise) |
+| `ROMAN_HOURS`, `ZMANIM_GRA`, `EDO_JAPANESE` | shipped proportional-hour systems (`UNEQUAL_HOUR_SYSTEMS`) |
+| `ITALIAN_HOURS`, `BABYLONIAN_HOURS` | shipped clock-count conventions (`CLOCK_CONVENTIONS`) |
 | `NoSunEvent` | a typed absence (`polar_day`/`polar_night`) returned when the sun never rises or never sets |
 | `DAY_SUBDIVISIONS`, `DaySubdivision` | alternative divisions of the day, such as French decimal time |
 | `moon_phase(instant)` | mean lunar phase fraction, `0.0`=new..`0.5`=full..→`1.0` |

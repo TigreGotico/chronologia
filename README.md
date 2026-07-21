@@ -193,6 +193,12 @@ print(isinstance(midsummer.sunrise, NoSunEvent), midsummer.sunrise.kind)
 # True polar_day
 ```
 
+From those solar events it also builds the **unequal hours** the pre-clock
+world lived by — `temporal_hour_span` divides daylight into a fixed count, so a
+Roman daytime hour stretches to ~76 minutes at Rome in June and shrinks to ~46
+in December — plus the sunset-anchored Italian and sunrise-anchored Babylonian
+clock counts (`convention_time`).
+
 ### Deep time, honestly
 
 "66 million years ago" and "66.043 million years ago" are different
