@@ -304,6 +304,68 @@ print(start.strftime("%Y-%m-%d %H:%M"))    # the 31 May evening sunset that open
 # 2024-05-31 16:38
 ```
 
+## Why "the next full moon" has an error bar
+
+Ask an almanac for the next full moon and it gives you one clean-looking
+number. That number is a lie of precision. The Moon's orbit is eccentric, so
+its actual (true) phase times wander around the arithmetic average by up to
+about half a day, in either direction, for no more exciting reason than
+gravity.
+This library does not run a full lunar ephemeris (that is out of scope — see
+the H-series roadmap). Instead it multiplies: a fixed mean lunation length
+(29.530589 days, the present-day value) times a lunation count since a cited
+epoch (Jean Meeus's Lunation Number 0, the first new moon of 2000, ≈18:14
+UTC on 6 January). That arithmetic is exact; the *model* is only
+approximately true, so every answer comes back as a span with a stated width,
+never a bare instant:
+
+```python
+from datetime import datetime
+from chronologia import moon_phase, next_phase, previous_phase
+# 2024-01-11 11:57 UTC is a real, published new moon (US Naval Observatory).
+print(round(moon_phase(datetime(2024, 1, 11, 11, 57)), 3))
+# 0.005
+full = next_phase(datetime(2024, 7, 1), "full")
+print(full.basis)
+# predicted
+print(full.width)
+# 1 day, 4:00:00
+```
+
+`0.005` is close to `0.0` (new moon) — a lunation is about 29.5 days, so
+`0.005` of one is roughly 3.5 hours, comfortably inside this module's stated
+accuracy. `next_phase` always returns a span, never a point: its width is
+`2 * MOON_PHASE_ACCURACY` (28 hours), centred on the mean-arithmetic instant.
+**The `basis` is honest about direction, not calendar date.** A phase in the
+anchor's future is `"predicted"` (a forward model); one in its past is
+`"reconstructed"` (modelled from evidence/theory about something that already
+happened) — the same reconstructed/predicted split deep-time spans use
+elsewhere in this library, just applied at hour granularity instead of
+geological granularity:
+past_full = previous_phase(datetime(2024, 8, 1), "full")
+print(past_full.basis)
+# reconstructed
+**The accuracy bound is measured, not assumed.** Cross-checked against the
+US Naval Observatory's published 2024 phase table, the mean model's largest
+new/full-moon miss is about 14 hours — hence `MOON_PHASE_ACCURACY`. Quarter
+phases (`"first_quarter"` / `"last_quarter"`) carry a wider, undocumented-bound
+error in the same check (up to ~23 hours) because the mean-quarter formula
+omits an extra periodic correction that mean new/full moon mostly cancels —
+a known asymmetry of the simple model, not a bug.
+Every lunation is also numbered, in the older Brown convention almanacs used
+1923-1983:
+from chronologia import lunation_number
+print(lunation_number(datetime(2024, 1, 11, 11, 57)))
+# 1250
+Ask for a phase name outside the four recognised ones and you get a clear
+error rather than a silent nonsense result:
+try:
+    next_phase(datetime(2024, 1, 1), "waxing_gibbous")
+except ValueError as exc:
+    print("rejected:", exc)
+# rejected: unknown moon phase 'waxing_gibbous'; expected one of ['first_quarter', 'full', 'last_quarter', 'new']
+```
+
 ## Reference
 
 | tool | what it does |
@@ -321,3 +383,7 @@ print(start.strftime("%Y-%m-%d %H:%M"))    # the 31 May evening sunset that open
 | `sunset_day_start(date, latitude, longitude)` | the previous evening's computed sunset that opens a sunset-anchored calendar day |
 | `NoSunEvent` | a typed absence (`polar_day`/`polar_night`) returned when the sun never rises or never sets |
 | `DAY_SUBDIVISIONS`, `DaySubdivision` | alternative divisions of the day, such as French decimal time |
+| `moon_phase(instant)` | mean lunar phase fraction, `0.0`=new..`0.5`=full..→`1.0` |
+| `next_phase(instant, phase)` / `previous_phase(instant, phase)` | next/previous `"new"`/`"first_quarter"`/`"full"`/`"last_quarter"` as a `DateSpan`, width `2 * MOON_PHASE_ACCURACY` |
+| `lunation_number(instant)` | Brown Lunation Number of the containing lunation |
+| `MOON_PHASE_ACCURACY`, `MEAN_SYNODIC_MONTH_DAYS`, `EPOCH_NEW_MOON` | the mean-model constants and their stated/measured accuracy |

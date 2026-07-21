@@ -29,6 +29,9 @@ from chronologia.leapseconds import (GPS_EPOCH, LEAP_SECONDS,
                                      utc_tai_offset, utc_to_gps, utc_to_tai)
 from chronologia.localtime import (EOT_ACCURACY, LMTZone, apparent_solar_time,
                                    equation_of_time, local_mean_time)
+from chronologia.moon import (EPOCH_NEW_MOON, MEAN_SYNODIC_MONTH_DAYS,
+                              MOON_PHASE_ACCURACY, lunation_number, moon_phase,
+                              next_phase, previous_phase)
 from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
                                  AmbiguousPeriodError, NamedPeriod, calibrate_c14,
                                  candidates, children, lookup, subdivide)
@@ -116,6 +119,14 @@ __all__ = [
     "SunEvents",
     "NoSunEvent",
     "SOLAR_ACCURACY",
+    # moon phases (mean-lunation arithmetic)
+    "moon_phase",
+    "next_phase",
+    "previous_phase",
+    "lunation_number",
+    "MOON_PHASE_ACCURACY",
+    "MEAN_SYNODIC_MONTH_DAYS",
+    "EPOCH_NEW_MOON",
     # derived resolution vocabulary
     "DateTimeResolution",
     # timelines & discontinuities

@@ -236,6 +236,7 @@ Full guides for everything above live in [`docs/`](docs/):
 | Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present |
 | Regnal years | Japanese nengō, Roman consuls, Egyptian chronologies |
 | Time itself | timezones with honest fall-back/spring-forward handling, leap seconds (UTC/TAI/GPS), historical local mean time, the French Revolution's 10-hour clock |
+| Moon phases | mean-lunation arithmetic (new/first-quarter/full/last-quarter) as a `DateSpan` with a measured accuracy bound and honest reconstructed/predicted basis |
 
 Every algorithm and every number in the data files is transcribed from
 a cited published source — citations sit in the module docstrings and
