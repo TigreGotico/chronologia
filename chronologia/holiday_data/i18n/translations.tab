@@ -1,71 +1,917 @@
 # civil-holidays-translations v1
 # source: translation
-# retrieved: 2026-07-21
+# retrieved: 2026-07-22
 # note:
 #   DISPLAY translations, NOT official names. Every row here is a rendering we
-#   authored for convenience — a way to *show* a holiday in another language —
-#   and is deliberately kept distinct from the official native names that live in
-#   the per-jurisdiction .tab files. The golden rule still holds: a holiday's
-#   real name is what its own government calls it (that is the primary `name` and
-#   any co-official `names`); these are only helpful glosses. The join key is the
-#   holiday's PRIMARY name (its official native name) exactly as spelled in the
-#   jurisdiction's .tab file.
+#   authored for convenience - a way to *show* a holiday in another language -
+#   and is deliberately kept distinct from the official native names that live
+#   in the per-jurisdiction .tab files. The golden rule still holds: a holiday's
+#   real name is what its own government calls it (that is the primary `name`
+#   and any co-official `names`); these are only helpful glosses. The join key
+#   is the holiday's PRIMARY name (its official native name) exactly as spelled
+#   in the jurisdiction's .tab file. A language is omitted for a holiday when
+#   that language is already its official name (carried in the .tab `names`).
 # columns: jurisdiction | name | lang | text
 #
-# ===================== PT — national public holidays =====================
-PT | Ano Novo                       | en | New Year's Day
-PT | Ano Novo                       | es | Año Nuevo
-PT | Ano Novo                       | de | Neujahr
-PT | Ano Novo                       | fr | Jour de l'an
-PT | Sexta-feira Santa              | en | Good Friday
-PT | Sexta-feira Santa              | es | Viernes Santo
-PT | Sexta-feira Santa              | de | Karfreitag
-PT | Sexta-feira Santa              | fr | Vendredi saint
-PT | Domingo de Pascoa              | en | Easter Sunday
-PT | Domingo de Pascoa              | es | Domingo de Resurrección
-PT | Domingo de Pascoa              | de | Ostersonntag
-PT | Domingo de Pascoa              | fr | Pâques
-PT | Dia da Liberdade               | en | Freedom Day
-PT | Dia da Liberdade               | es | Día de la Libertad
-PT | Dia da Liberdade               | de | Tag der Freiheit
-PT | Dia da Liberdade               | fr | Jour de la Liberté
-PT | Dia do Trabalhador             | en | Labour Day
-PT | Dia do Trabalhador             | es | Día del Trabajador
-PT | Dia do Trabalhador             | de | Tag der Arbeit
-PT | Dia do Trabalhador             | fr | Fête du Travail
-PT | Corpo de Deus                  | en | Corpus Christi
-PT | Corpo de Deus                  | es | Corpus Christi
-PT | Corpo de Deus                  | de | Fronleichnam
-PT | Corpo de Deus                  | fr | Fête-Dieu
-PT | Dia de Portugal                | en | Portugal Day
-PT | Dia de Portugal                | es | Día de Portugal
-PT | Dia de Portugal                | de | Portugal-Tag
-PT | Dia de Portugal                | fr | Fête nationale du Portugal
-PT | Assuncao de Nossa Senhora      | en | Assumption of Mary
-PT | Assuncao de Nossa Senhora      | es | Asunción de la Virgen
-PT | Assuncao de Nossa Senhora      | de | Mariä Himmelfahrt
-PT | Assuncao de Nossa Senhora      | fr | Assomption
-PT | Implantacao da Republica       | en | Republic Day
-PT | Implantacao da Republica       | es | Implantación de la República
-PT | Implantacao da Republica       | de | Ausrufung der Republik
-PT | Implantacao da Republica       | fr | Instauration de la République
-PT | Dia de Todos os Santos         | en | All Saints' Day
-PT | Dia de Todos os Santos         | es | Día de Todos los Santos
-PT | Dia de Todos os Santos         | de | Allerheiligen
-PT | Dia de Todos os Santos         | fr | Toussaint
-PT | Restauracao da Independencia   | en | Restoration of Independence
-PT | Restauracao da Independencia   | es | Restauración de la Independencia
-PT | Restauracao da Independencia   | de | Wiederherstellung der Unabhängigkeit
-PT | Restauracao da Independencia   | fr | Restauration de l'Indépendance
-PT | Imaculada Conceicao            | en | Immaculate Conception
-PT | Imaculada Conceicao            | es | Inmaculada Concepción
-PT | Imaculada Conceicao            | de | Mariä Empfängnis
-PT | Imaculada Conceicao            | fr | Immaculée Conception
-PT | Natal                          | en | Christmas Day
-PT | Natal                          | es | Navidad
-PT | Natal                          | de | Weihnachten
-PT | Natal                          | fr | Noël
-PT | Carnaval                       | en | Carnival
-PT | Carnaval                       | es | Carnaval
-PT | Carnaval                       | de | Karneval
-PT | Carnaval                       | fr | Carnaval
+# ===== PT =====
+PT | Ano Novo | en | New Year's Day
+PT | Ano Novo | es | Año Nuevo
+PT | Ano Novo | de | Neujahr
+PT | Ano Novo | fr | Jour de l'an
+PT | Sexta-feira Santa | en | Good Friday
+PT | Sexta-feira Santa | es | Viernes Santo
+PT | Sexta-feira Santa | de | Karfreitag
+PT | Sexta-feira Santa | fr | Vendredi saint
+PT | Domingo de Pascoa | en | Easter Sunday
+PT | Domingo de Pascoa | es | Domingo de Resurrección
+PT | Domingo de Pascoa | de | Ostersonntag
+PT | Domingo de Pascoa | fr | Pâques
+PT | Dia da Liberdade | en | Freedom Day
+PT | Dia da Liberdade | es | Día de la Libertad
+PT | Dia da Liberdade | de | Tag der Freiheit
+PT | Dia da Liberdade | fr | Jour de la Liberté
+PT | Dia do Trabalhador | en | Labour Day
+PT | Dia do Trabalhador | es | Día del Trabajador
+PT | Dia do Trabalhador | de | Tag der Arbeit
+PT | Dia do Trabalhador | fr | Fête du Travail
+PT | Corpo de Deus | en | Corpus Christi
+PT | Corpo de Deus | es | Corpus Christi
+PT | Corpo de Deus | de | Fronleichnam
+PT | Corpo de Deus | fr | Fête-Dieu
+PT | Dia de Portugal | en | Portugal Day
+PT | Dia de Portugal | es | Día de Portugal
+PT | Dia de Portugal | de | Portugal-Tag
+PT | Dia de Portugal | fr | Fête nationale du Portugal
+PT | Assuncao de Nossa Senhora | en | Assumption of Mary
+PT | Assuncao de Nossa Senhora | es | Asunción de la Virgen
+PT | Assuncao de Nossa Senhora | de | Mariä Himmelfahrt
+PT | Assuncao de Nossa Senhora | fr | Assomption
+PT | Implantacao da Republica | en | Republic Day
+PT | Implantacao da Republica | es | Implantación de la República
+PT | Implantacao da Republica | de | Ausrufung der Republik
+PT | Implantacao da Republica | fr | Instauration de la République
+PT | Dia de Todos os Santos | en | All Saints' Day
+PT | Dia de Todos os Santos | es | Día de Todos los Santos
+PT | Dia de Todos os Santos | de | Allerheiligen
+PT | Dia de Todos os Santos | fr | Toussaint
+PT | Restauracao da Independencia | en | Restoration of Independence
+PT | Restauracao da Independencia | es | Restauración de la Independencia
+PT | Restauracao da Independencia | de | Wiederherstellung der Unabhängigkeit
+PT | Restauracao da Independencia | fr | Restauration de l'Indépendance
+PT | Imaculada Conceicao | en | Immaculate Conception
+PT | Imaculada Conceicao | es | Inmaculada Concepción
+PT | Imaculada Conceicao | de | Mariä Empfängnis
+PT | Imaculada Conceicao | fr | Immaculée Conception
+PT | Natal | en | Christmas Day
+PT | Natal | es | Navidad
+PT | Natal | de | Weihnachten
+PT | Natal | fr | Noël
+PT | Carnaval | en | Carnival
+PT | Carnaval | es | Carnaval
+PT | Carnaval | de | Karneval
+PT | Carnaval | fr | Carnaval
+PT | Dia da Regiao Autonoma da Madeira | en | Madeira Day
+PT | Dia da Regiao Autonoma da Madeira | es | Día de la Región Autónoma de Madeira
+PT | Dia da Regiao Autonoma da Madeira | de | Tag der Autonomen Region Madeira
+PT | Dia da Regiao Autonoma da Madeira | fr | Jour de la Région autonome de Madère
+PT | Dia da Regiao Autonoma dos Acores | en | Azores Day
+PT | Dia da Regiao Autonoma dos Acores | es | Día de la Región Autónoma de las Azores
+PT | Dia da Regiao Autonoma dos Acores | de | Tag der Autonomen Region der Azoren
+PT | Dia da Regiao Autonoma dos Acores | fr | Jour de la Région autonome des Açores
+# ===== US =====
+US | New Year's Day | pt | Ano Novo
+US | New Year's Day | es | Año Nuevo
+US | New Year's Day | de | Neujahr
+US | New Year's Day | fr | Jour de l'an
+US | Birthday of Martin Luther King, Jr. | pt | Aniversário de Martin Luther King, Jr.
+US | Birthday of Martin Luther King, Jr. | es | Natalicio de Martin Luther King, Jr.
+US | Birthday of Martin Luther King, Jr. | de | Martin-Luther-King-Tag
+US | Birthday of Martin Luther King, Jr. | fr | Anniversaire de Martin Luther King, Jr.
+US | Washington's Birthday | pt | Aniversário de Washington
+US | Washington's Birthday | es | Natalicio de Washington
+US | Washington's Birthday | de | Washingtons Geburtstag
+US | Washington's Birthday | fr | Anniversaire de Washington
+US | Memorial Day | pt | Dia da Memória
+US | Memorial Day | es | Día de los Caídos
+US | Memorial Day | de | Memorial Day
+US | Memorial Day | fr | Journée du Souvenir
+US | Juneteenth National Independence Day | pt | Juneteenth — Dia da Emancipação
+US | Juneteenth National Independence Day | es | Juneteenth — Día de la Emancipación
+US | Juneteenth National Independence Day | de | Juneteenth — Tag der Befreiung
+US | Juneteenth National Independence Day | fr | Juneteenth — Jour de l'émancipation
+US | Independence Day | pt | Dia da Independência
+US | Independence Day | es | Día de la Independencia
+US | Independence Day | de | Unabhängigkeitstag
+US | Independence Day | fr | Jour de l'Indépendance
+US | Labor Day | pt | Dia do Trabalho
+US | Labor Day | es | Día del Trabajo
+US | Labor Day | de | Tag der Arbeit
+US | Labor Day | fr | Fête du Travail
+US | Columbus Day | pt | Dia de Colombo
+US | Columbus Day | es | Día de la Raza
+US | Columbus Day | de | Kolumbus-Tag
+US | Columbus Day | fr | Jour de Christophe Colomb
+US | Veterans Day | pt | Dia dos Veteranos
+US | Veterans Day | es | Día de los Veteranos
+US | Veterans Day | de | Veteranentag
+US | Veterans Day | fr | Journée des anciens combattants
+US | Thanksgiving Day | pt | Dia de Ação de Graças
+US | Thanksgiving Day | es | Día de Acción de Gracias
+US | Thanksgiving Day | de | Erntedankfest
+US | Thanksgiving Day | fr | Action de grâce
+US | Christmas Day | pt | Natal
+US | Christmas Day | es | Navidad
+US | Christmas Day | de | Weihnachten
+US | Christmas Day | fr | Noël
+# ===== GB =====
+GB | New Year's Day | pt | Ano Novo
+GB | New Year's Day | es | Año Nuevo
+GB | New Year's Day | de | Neujahr
+GB | New Year's Day | fr | Jour de l'an
+GB | Good Friday | pt | Sexta-feira Santa
+GB | Good Friday | es | Viernes Santo
+GB | Good Friday | de | Karfreitag
+GB | Good Friday | fr | Vendredi saint
+GB | Early May Bank Holiday | pt | Feriado do início de Maio
+GB | Early May Bank Holiday | es | Festivo de principios de mayo
+GB | Early May Bank Holiday | de | Feiertag Anfang Mai
+GB | Early May Bank Holiday | fr | Jour férié de début mai
+GB | Spring Bank Holiday | pt | Feriado da Primavera
+GB | Spring Bank Holiday | es | Festivo de primavera
+GB | Spring Bank Holiday | de | Frühlingsfeiertag
+GB | Spring Bank Holiday | fr | Jour férié de printemps
+GB | Christmas Day | pt | Natal
+GB | Christmas Day | es | Navidad
+GB | Christmas Day | de | Weihnachten
+GB | Christmas Day | fr | Noël
+GB | Boxing Day | pt | Dia de São Estêvão
+GB | Boxing Day | es | San Esteban
+GB | Boxing Day | de | Zweiter Weihnachtsfeiertag
+GB | Boxing Day | fr | Lendemain de Noël
+GB | Easter Monday | pt | Segunda-feira de Páscoa
+GB | Easter Monday | es | Lunes de Pascua
+GB | Easter Monday | de | Ostermontag
+GB | Easter Monday | fr | Lundi de Pâques
+GB | Summer Bank Holiday | pt | Feriado de Verão
+GB | Summer Bank Holiday | es | Festivo de verano
+GB | Summer Bank Holiday | de | Sommerfeiertag
+GB | Summer Bank Holiday | fr | Jour férié d'été
+GB | 2nd January | pt | 2 de Janeiro
+GB | 2nd January | es | 2 de enero
+GB | 2nd January | de | 2. Januar
+GB | 2nd January | fr | 2 janvier
+GB | St Andrew's Day | pt | Dia de Santo André
+GB | St Andrew's Day | es | Día de San Andrés
+GB | St Andrew's Day | de | Andreastag
+GB | St Andrew's Day | fr | Saint-André
+GB | St Patrick's Day | pt | Dia de São Patrício
+GB | St Patrick's Day | es | Día de San Patricio
+GB | St Patrick's Day | de | St. Patrick's Day
+GB | St Patrick's Day | fr | Saint-Patrick
+GB | Battle of the Boyne | pt | Batalha de Boyne
+GB | Battle of the Boyne | es | Batalla del Boyne
+GB | Battle of the Boyne | de | Schlacht am Boyne
+GB | Battle of the Boyne | fr | Bataille de la Boyne
+# ===== CA =====
+CA | New Year's Day | pt | Ano Novo
+CA | New Year's Day | es | Año Nuevo
+CA | New Year's Day | de | Neujahr
+CA | Good Friday | pt | Sexta-feira Santa
+CA | Good Friday | es | Viernes Santo
+CA | Good Friday | de | Karfreitag
+CA | Canada Day | pt | Dia do Canadá
+CA | Canada Day | es | Día de Canadá
+CA | Canada Day | de | Kanada-Tag
+CA | Labour Day | pt | Dia do Trabalho
+CA | Labour Day | es | Día del Trabajo
+CA | Labour Day | de | Tag der Arbeit
+CA | Christmas Day | pt | Natal
+CA | Christmas Day | es | Navidad
+CA | Christmas Day | de | Weihnachten
+CA | Family Day | pt | Dia da Família
+CA | Family Day | es | Día de la Familia
+CA | Family Day | de | Tag der Familie
+CA | Family Day | fr | Jour de la famille
+CA | Victoria Day | pt | Dia de Vitória
+CA | Victoria Day | es | Día de Victoria
+CA | Victoria Day | de | Victoria Day
+CA | Victoria Day | fr | Fête de la Reine
+CA | Thanksgiving Day | pt | Dia de Ação de Graças
+CA | Thanksgiving Day | es | Día de Acción de Gracias
+CA | Thanksgiving Day | de | Erntedankfest
+CA | Thanksgiving Day | fr | Action de grâce
+CA | Boxing Day | pt | Dia de São Estêvão
+CA | Boxing Day | es | San Esteban
+CA | Boxing Day | de | Zweiter Weihnachtsfeiertag
+CA | Boxing Day | fr | Lendemain de Noël
+CA | National Patriots' Day | pt | Dia Nacional dos Patriotas
+CA | National Patriots' Day | es | Día Nacional de los Patriotas
+CA | National Patriots' Day | de | Nationaler Patriotentag
+CA | Saint-Jean-Baptiste | en | Saint-Jean-Baptiste Day
+CA | Saint-Jean-Baptiste | pt | Dia de São João Baptista
+CA | Saint-Jean-Baptiste | es | Día de San Juan Bautista
+CA | Saint-Jean-Baptiste | de | Johannistag
+CA | British Columbia Day | pt | Dia da Colúmbia Britânica
+CA | British Columbia Day | es | Día de Columbia Británica
+CA | British Columbia Day | de | British Columbia Day
+CA | British Columbia Day | fr | Jour de la Colombie-Britannique
+CA | National Day for Truth and Reconciliation | pt | Dia Nacional da Verdade e Reconciliação
+CA | National Day for Truth and Reconciliation | es | Día Nacional de la Verdad y la Reconciliación
+CA | National Day for Truth and Reconciliation | de | Nationaler Tag der Wahrheit und Versöhnung
+CA | National Day for Truth and Reconciliation | fr | Journée nationale de la vérité et de la réconciliation
+CA | Remembrance Day | pt | Dia da Lembrança
+CA | Remembrance Day | es | Día del Recuerdo
+CA | Remembrance Day | de | Volkstrauertag
+CA | Remembrance Day | fr | Jour du Souvenir
+CA | Louis Riel Day | pt | Dia de Louis Riel
+CA | Louis Riel Day | es | Día de Louis Riel
+CA | Louis Riel Day | de | Louis-Riel-Tag
+CA | Louis Riel Day | fr | Jour de Louis Riel
+CA | Heritage Day | pt | Dia do Património
+CA | Heritage Day | es | Día del Patrimonio
+CA | Heritage Day | de | Tag des Erbes
+CA | Heritage Day | fr | Jour du patrimoine
+# ===== AU =====
+AU | New Year's Day | pt | Ano Novo
+AU | New Year's Day | es | Año Nuevo
+AU | New Year's Day | de | Neujahr
+AU | New Year's Day | fr | Jour de l'an
+AU | Australia Day | pt | Dia da Austrália
+AU | Australia Day | es | Día de Australia
+AU | Australia Day | de | Australia Day
+AU | Australia Day | fr | Fête de l'Australie
+AU | Good Friday | pt | Sexta-feira Santa
+AU | Good Friday | es | Viernes Santo
+AU | Good Friday | de | Karfreitag
+AU | Good Friday | fr | Vendredi saint
+AU | Easter Monday | pt | Segunda-feira de Páscoa
+AU | Easter Monday | es | Lunes de Pascua
+AU | Easter Monday | de | Ostermontag
+AU | Easter Monday | fr | Lundi de Pâques
+AU | ANZAC Day | pt | Dia do ANZAC
+AU | ANZAC Day | es | Día del ANZAC
+AU | ANZAC Day | de | ANZAC Day
+AU | ANZAC Day | fr | Jour de l'ANZAC
+AU | Christmas Day | pt | Natal
+AU | Christmas Day | es | Navidad
+AU | Christmas Day | de | Weihnachten
+AU | Christmas Day | fr | Noël
+AU | Boxing Day | pt | Dia de São Estêvão
+AU | Boxing Day | es | San Esteban
+AU | Boxing Day | de | Zweiter Weihnachtsfeiertag
+AU | Boxing Day | fr | Lendemain de Noël
+AU | King's Birthday | pt | Aniversário do Rei
+AU | King's Birthday | es | Cumpleaños del Rey
+AU | King's Birthday | de | Geburtstag des Königs
+AU | King's Birthday | fr | Anniversaire du Roi
+AU | Labour Day | pt | Dia do Trabalho
+AU | Labour Day | es | Día del Trabajo
+AU | Labour Day | de | Tag der Arbeit
+AU | Labour Day | fr | Fête du Travail
+AU | Melbourne Cup Day | pt | Dia da Melbourne Cup
+AU | Melbourne Cup Day | es | Día de la Copa de Melbourne
+AU | Melbourne Cup Day | de | Melbourne-Cup-Tag
+AU | Melbourne Cup Day | fr | Jour de la Melbourne Cup
+AU | Western Australia Day | pt | Dia da Austrália Ocidental
+AU | Western Australia Day | es | Día de Australia Occidental
+AU | Western Australia Day | de | Tag von Westaustralien
+AU | Western Australia Day | fr | Jour de l'Australie-Occidentale
+AU | Eight Hours Day | pt | Dia das Oito Horas
+AU | Eight Hours Day | es | Día de las Ocho Horas
+AU | Eight Hours Day | de | Achtstundentag
+AU | Eight Hours Day | fr | Journée des huit heures
+AU | Canberra Day | pt | Dia de Camberra
+AU | Canberra Day | es | Día de Canberra
+AU | Canberra Day | de | Canberra Day
+AU | Canberra Day | fr | Jour de Canberra
+AU | May Day | pt | Dia do Trabalhador
+AU | May Day | es | Primero de Mayo
+AU | May Day | de | Maifeiertag
+AU | May Day | fr | Premier Mai
+AU | Picnic Day | pt | Dia do Piquenique
+AU | Picnic Day | es | Día del Picnic
+AU | Picnic Day | de | Picknicktag
+AU | Picnic Day | fr | Jour du pique-nique
+# ===== IN =====
+IN | Republic Day | pt | Dia da República
+IN | Republic Day | es | Día de la República
+IN | Republic Day | de | Tag der Republik
+IN | Republic Day | fr | Jour de la République
+IN | Independence Day | pt | Dia da Independência
+IN | Independence Day | es | Día de la Independencia
+IN | Independence Day | de | Unabhängigkeitstag
+IN | Independence Day | fr | Jour de l'Indépendance
+IN | Mahatma Gandhi's Jayanti | pt | Jayanti de Mahatma Gandhi
+IN | Mahatma Gandhi's Jayanti | es | Jayanti de Mahatma Gandhi
+IN | Mahatma Gandhi's Jayanti | de | Mahatma Gandhis Jayanti
+IN | Mahatma Gandhi's Jayanti | fr | Jayanti de Mahatma Gandhi
+IN | Christmas | pt | Natal
+IN | Christmas | es | Navidad
+IN | Christmas | de | Weihnachten
+IN | Christmas | fr | Noël
+IN | Good Friday | pt | Sexta-feira Santa
+IN | Good Friday | es | Viernes Santo
+IN | Good Friday | de | Karfreitag
+IN | Good Friday | fr | Vendredi saint
+IN | Id-ul-Fitr | pt | Eid al-Fitr
+IN | Id-ul-Fitr | es | Eid al-Fitr
+IN | Id-ul-Fitr | de | Eid al-Fitr
+IN | Id-ul-Fitr | fr | Aïd el-Fitr
+IN | Id-ul-Zuha (Bakrid) | pt | Eid al-Adha (Bakrid)
+IN | Id-ul-Zuha (Bakrid) | es | Eid al-Adha (Bakrid)
+IN | Id-ul-Zuha (Bakrid) | de | Eid al-Adha (Bakrid)
+IN | Id-ul-Zuha (Bakrid) | fr | Aïd el-Adha (Bakrid)
+IN | Muharram | pt | Muharram
+IN | Muharram | es | Muharram
+IN | Muharram | de | Muharram
+IN | Muharram | fr | Mouharram
+IN | Milad-un-Nabi | pt | Mawlid
+IN | Milad-un-Nabi | es | Mawlid
+IN | Milad-un-Nabi | de | Mawlid
+IN | Milad-un-Nabi | fr | Mawlid
+IN | Holi | pt | Holi
+IN | Holi | es | Holi
+IN | Holi | de | Holi
+IN | Holi | fr | Holi
+IN | Ram Navami | pt | Rama Navami
+IN | Ram Navami | es | Rama Navami
+IN | Ram Navami | de | Rama Navami
+IN | Ram Navami | fr | Rama Navami
+IN | Mahavir Jayanti | pt | Mahavir Jayanti
+IN | Mahavir Jayanti | es | Mahavir Jayanti
+IN | Mahavir Jayanti | de | Mahavir Jayanti
+IN | Mahavir Jayanti | fr | Mahavir Jayanti
+IN | Buddha Purnima | pt | Buda Purnima
+IN | Buddha Purnima | es | Buda Purnima
+IN | Buddha Purnima | de | Buddha Purnima
+IN | Buddha Purnima | fr | Bouddha Purnima
+IN | Janmashtami | pt | Janmashtami
+IN | Janmashtami | es | Janmashtami
+IN | Janmashtami | de | Janmashtami
+IN | Janmashtami | fr | Janmashtami
+IN | Dussehra | pt | Dussehra
+IN | Dussehra | es | Dussehra
+IN | Dussehra | de | Dussehra
+IN | Dussehra | fr | Dussehra
+IN | Diwali (Deepavali) | pt | Diwali (Deepavali)
+IN | Diwali (Deepavali) | es | Diwali (Deepavali)
+IN | Diwali (Deepavali) | de | Diwali (Deepavali)
+IN | Diwali (Deepavali) | fr | Diwali (Deepavali)
+IN | Guru Nanak's Jayanti | pt | Jayanti de Guru Nanak
+IN | Guru Nanak's Jayanti | es | Jayanti de Gurú Nanak
+IN | Guru Nanak's Jayanti | de | Guru Nanaks Jayanti
+IN | Guru Nanak's Jayanti | fr | Jayanti de Guru Nanak
+IN | Maha Shivaratri | pt | Maha Shivaratri
+IN | Maha Shivaratri | es | Maha Shivaratri
+IN | Maha Shivaratri | de | Maha Shivaratri
+IN | Maha Shivaratri | fr | Maha Shivaratri
+# ===== CN =====
+CN | 元旦 | pt | Ano Novo
+CN | 元旦 | es | Año Nuevo
+CN | 元旦 | de | Neujahr
+CN | 元旦 | fr | Jour de l'an
+CN | 劳动节 | pt | Dia do Trabalho
+CN | 劳动节 | es | Día del Trabajo
+CN | 劳动节 | de | Tag der Arbeit
+CN | 劳动节 | fr | Fête du Travail
+CN | 国庆节 | pt | Dia Nacional
+CN | 国庆节 | es | Día Nacional
+CN | 国庆节 | de | Nationalfeiertag
+CN | 国庆节 | fr | Fête nationale
+CN | 国庆节假期 | pt | Feriado do Dia Nacional
+CN | 国庆节假期 | es | Festivo del Día Nacional
+CN | 国庆节假期 | de | Nationalfeiertag (Ferientag)
+CN | 国庆节假期 | fr | Congé de la Fête nationale
+CN | 春节 | pt | Ano Novo Chinês
+CN | 春节 | es | Año Nuevo Chino
+CN | 春节 | de | Chinesisches Neujahr
+CN | 春节 | fr | Nouvel An chinois
+CN | 春节假期 | pt | Feriado do Ano Novo Chinês
+CN | 春节假期 | es | Festivo del Año Nuevo Chino
+CN | 春节假期 | de | Chinesisches Neujahr (Ferientag)
+CN | 春节假期 | fr | Congé du Nouvel An chinois
+CN | 端午节 | pt | Festival do Barco-Dragão
+CN | 端午节 | es | Fiesta del Bote del Dragón
+CN | 端午节 | de | Drachenbootfest
+CN | 端午节 | fr | Fête des bateaux-dragons
+CN | 中秋节 | pt | Festival do Meio-Outono
+CN | 中秋节 | es | Fiesta del Medio Otoño
+CN | 中秋节 | de | Mondfest
+CN | 中秋节 | fr | Fête de la mi-automne
+CN | 清明节 | pt | Festival de Qingming
+CN | 清明节 | es | Fiesta de Qingming
+CN | 清明节 | de | Qingming-Fest
+CN | 清明节 | fr | Fête de Qingming
+# ===== JP =====
+JP | 元日 | pt | Ano Novo
+JP | 元日 | es | Año Nuevo
+JP | 元日 | de | Neujahr
+JP | 元日 | fr | Jour de l'an
+JP | 建国記念の日 | pt | Dia da Fundação Nacional
+JP | 建国記念の日 | es | Día de la Fundación Nacional
+JP | 建国記念の日 | de | Tag der Reichsgründung
+JP | 建国記念の日 | fr | Jour de la fondation nationale
+JP | 天皇誕生日 | pt | Aniversário do Imperador
+JP | 天皇誕生日 | es | Cumpleaños del Emperador
+JP | 天皇誕生日 | de | Geburtstag des Kaisers
+JP | 天皇誕生日 | fr | Anniversaire de l'Empereur
+JP | 昭和の日 | pt | Dia de Showa
+JP | 昭和の日 | es | Día de Showa
+JP | 昭和の日 | de | Showa-Tag
+JP | 昭和の日 | fr | Jour de Showa
+JP | 憲法記念日 | pt | Dia da Constituição
+JP | 憲法記念日 | es | Día de la Constitución
+JP | 憲法記念日 | de | Tag der Verfassung
+JP | 憲法記念日 | fr | Jour de la Constitution
+JP | みどりの日 | pt | Dia do Verde
+JP | みどりの日 | es | Día del Verdor
+JP | みどりの日 | de | Tag des Grüns
+JP | みどりの日 | fr | Jour de la verdure
+JP | こどもの日 | pt | Dia das Crianças
+JP | こどもの日 | es | Día del Niño
+JP | こどもの日 | de | Kindertag
+JP | こどもの日 | fr | Jour des enfants
+JP | 山の日 | pt | Dia da Montanha
+JP | 山の日 | es | Día de la Montaña
+JP | 山の日 | de | Tag des Berges
+JP | 山の日 | fr | Jour de la montagne
+JP | 文化の日 | pt | Dia da Cultura
+JP | 文化の日 | es | Día de la Cultura
+JP | 文化の日 | de | Tag der Kultur
+JP | 文化の日 | fr | Jour de la culture
+JP | 勤労感謝の日 | pt | Dia de Ação de Graças pelo Trabalho
+JP | 勤労感謝の日 | es | Día de Acción de Gracias por el Trabajo
+JP | 勤労感謝の日 | de | Tag des Dankes für die Arbeit
+JP | 勤労感謝の日 | fr | Jour d'action de grâce du travail
+JP | 成人の日 | pt | Dia da Maioridade
+JP | 成人の日 | es | Día de la Mayoría de Edad
+JP | 成人の日 | de | Tag der Volljährigkeit
+JP | 成人の日 | fr | Jour de la majorité
+JP | 海の日 | pt | Dia do Mar
+JP | 海の日 | es | Día del Mar
+JP | 海の日 | de | Tag des Meeres
+JP | 海の日 | fr | Jour de la mer
+JP | 敬老の日 | pt | Dia do Respeito aos Idosos
+JP | 敬老の日 | es | Día del Respeto a los Ancianos
+JP | 敬老の日 | de | Tag der Achtung vor dem Alter
+JP | 敬老の日 | fr | Jour du respect pour les personnes âgées
+JP | スポーツの日 | pt | Dia do Desporto
+JP | スポーツの日 | es | Día del Deporte
+JP | スポーツの日 | de | Tag des Sports
+JP | スポーツの日 | fr | Jour du sport
+JP | 春分の日 | pt | Dia do Equinócio de Primavera
+JP | 春分の日 | es | Día del Equinoccio de Primavera
+JP | 春分の日 | de | Tag der Frühlings-Tagundnachtgleiche
+JP | 春分の日 | fr | Jour de l'équinoxe de printemps
+JP | 秋分の日 | pt | Dia do Equinócio de Outono
+JP | 秋分の日 | es | Día del Equinoccio de Otoño
+JP | 秋分の日 | de | Tag der Herbst-Tagundnachtgleiche
+JP | 秋分の日 | fr | Jour de l'équinoxe d'automne
+# ===== IL =====
+IL | ראש השנה | pt | Rosh Hashanah
+IL | ראש השנה | es | Rosh Hashaná
+IL | ראש השנה | de | Rosch ha-Schana
+IL | ראש השנה | fr | Roch Hachana
+IL | יום כיפור | pt | Yom Kipur
+IL | יום כיפור | es | Yom Kipur
+IL | יום כיפור | de | Jom Kippur
+IL | יום כיפור | fr | Yom Kippour
+IL | סוכות | pt | Sucot
+IL | סוכות | es | Sucot
+IL | סוכות | de | Sukkot
+IL | סוכות | fr | Souccot
+IL | שמיני עצרת / שמחת תורה | pt | Shemini Atzeret / Simchat Torá
+IL | שמיני עצרת / שמחת תורה | es | Sheminí Atzéret / Simjá Torá
+IL | שמיני עצרת / שמחת תורה | de | Schmini Azeret / Simchat Tora
+IL | שמיני עצרת / שמחת תורה | fr | Chemini Atseret / Sim'hat Torah
+IL | פסח | pt | Pessach
+IL | פסח | es | Pésaj
+IL | פסח | de | Pessach
+IL | פסח | fr | Pessa'h
+IL | שביעי של פסח | pt | Sétimo dia de Pessach
+IL | שביעי של פסח | es | Séptimo día de Pésaj
+IL | שביעי של פסח | de | Siebter Tag von Pessach
+IL | שביעי של פסח | fr | Septième jour de Pessa'h
+IL | שבועות | pt | Shavuot
+IL | שבועות | es | Shavuot
+IL | שבועות | de | Schawuot
+IL | שבועות | fr | Chavouot
+IL | יום העצמאות | pt | Dia da Independência de Israel
+IL | יום העצמאות | es | Día de la Independencia de Israel
+IL | יום העצמאות | de | Israelischer Unabhängigkeitstag
+IL | יום העצמאות | fr | Jour de l'indépendance d'Israël
+# ===== SA =====
+SA | يوم التأسيس | pt | Dia da Fundação
+SA | يوم التأسيس | es | Día de la Fundación
+SA | يوم التأسيس | de | Gründungstag
+SA | يوم التأسيس | fr | Jour de la fondation
+SA | اليوم الوطني | pt | Dia Nacional
+SA | اليوم الوطني | es | Día Nacional
+SA | اليوم الوطني | de | Nationalfeiertag
+SA | اليوم الوطني | fr | Fête nationale
+SA | عيد الفطر | pt | Eid al-Fitr
+SA | عيد الفطر | es | Eid al-Fitr
+SA | عيد الفطر | de | Eid al-Fitr
+SA | عيد الفطر | fr | Aïd el-Fitr
+SA | عطلة عيد الفطر | pt | Feriado do Eid al-Fitr
+SA | عطلة عيد الفطر | es | Festivo del Eid al-Fitr
+SA | عطلة عيد الفطر | de | Eid al-Fitr (Ferientag)
+SA | عطلة عيد الفطر | fr | Congé de l'Aïd el-Fitr
+SA | يوم عرفة | pt | Dia de Arafah
+SA | يوم عرفة | es | Día de Arafat
+SA | يوم عرفة | de | Arafat-Tag
+SA | يوم عرفة | fr | Jour d'Arafat
+SA | عيد الأضحى | pt | Eid al-Adha
+SA | عيد الأضحى | es | Eid al-Adha
+SA | عيد الأضحى | de | Eid al-Adha
+SA | عيد الأضحى | fr | Aïd el-Adha
+SA | عطلة عيد الأضحى | pt | Feriado do Eid al-Adha
+SA | عطلة عيد الأضحى | es | Festivo del Eid al-Adha
+SA | عطلة عيد الأضحى | de | Eid al-Adha (Ferientag)
+SA | عطلة عيد الأضحى | fr | Congé de l'Aïd el-Adha
+# ===== TR =====
+TR | Yılbaşı | en | New Year's Day
+TR | Yılbaşı | pt | Ano Novo
+TR | Yılbaşı | es | Año Nuevo
+TR | Yılbaşı | de | Neujahr
+TR | Yılbaşı | fr | Jour de l'an
+TR | Ulusal Egemenlik ve Çocuk Bayramı | en | National Sovereignty and Children's Day
+TR | Ulusal Egemenlik ve Çocuk Bayramı | pt | Dia da Soberania Nacional e da Criança
+TR | Ulusal Egemenlik ve Çocuk Bayramı | es | Día de la Soberanía Nacional y del Niño
+TR | Ulusal Egemenlik ve Çocuk Bayramı | de | Tag der nationalen Souveränität und des Kindes
+TR | Ulusal Egemenlik ve Çocuk Bayramı | fr | Fête de la souveraineté nationale et de l'enfance
+TR | Emek ve Dayanışma Günü | en | Labour and Solidarity Day
+TR | Emek ve Dayanışma Günü | pt | Dia do Trabalho e da Solidariedade
+TR | Emek ve Dayanışma Günü | es | Día del Trabajo y la Solidaridad
+TR | Emek ve Dayanışma Günü | de | Tag der Arbeit und Solidarität
+TR | Emek ve Dayanışma Günü | fr | Fête du travail et de la solidarité
+TR | Atatürk'ü Anma, Gençlik ve Spor Bayramı | en | Commemoration of Atatürk, Youth and Sports Day
+TR | Atatürk'ü Anma, Gençlik ve Spor Bayramı | pt | Dia da Comemoração de Atatürk, da Juventude e do Desporto
+TR | Atatürk'ü Anma, Gençlik ve Spor Bayramı | es | Día de la Conmemoración de Atatürk, la Juventud y el Deporte
+TR | Atatürk'ü Anma, Gençlik ve Spor Bayramı | de | Gedenktag an Atatürk, Jugend und Sport
+TR | Atatürk'ü Anma, Gençlik ve Spor Bayramı | fr | Commémoration d'Atatürk, fête de la jeunesse et du sport
+TR | Demokrasi ve Millî Birlik Günü | en | Democracy and National Unity Day
+TR | Demokrasi ve Millî Birlik Günü | pt | Dia da Democracia e da Unidade Nacional
+TR | Demokrasi ve Millî Birlik Günü | es | Día de la Democracia y la Unidad Nacional
+TR | Demokrasi ve Millî Birlik Günü | de | Tag der Demokratie und nationalen Einheit
+TR | Demokrasi ve Millî Birlik Günü | fr | Jour de la démocratie et de l'unité nationale
+TR | Zafer Bayramı | en | Victory Day
+TR | Zafer Bayramı | pt | Dia da Vitória
+TR | Zafer Bayramı | es | Día de la Victoria
+TR | Zafer Bayramı | de | Tag des Sieges
+TR | Zafer Bayramı | fr | Fête de la Victoire
+TR | Cumhuriyet Bayramı | en | Republic Day
+TR | Cumhuriyet Bayramı | pt | Dia da República
+TR | Cumhuriyet Bayramı | es | Día de la República
+TR | Cumhuriyet Bayramı | de | Tag der Republik
+TR | Cumhuriyet Bayramı | fr | Fête de la République
+TR | Ramazan Bayramı | en | Eid al-Fitr
+TR | Ramazan Bayramı | pt | Eid al-Fitr
+TR | Ramazan Bayramı | es | Eid al-Fitr
+TR | Ramazan Bayramı | de | Eid al-Fitr
+TR | Ramazan Bayramı | fr | Aïd el-Fitr
+TR | Kurban Bayramı | en | Eid al-Adha
+TR | Kurban Bayramı | pt | Eid al-Adha
+TR | Kurban Bayramı | es | Eid al-Adha
+TR | Kurban Bayramı | de | Eid al-Adha
+TR | Kurban Bayramı | fr | Aïd el-Adha
+# ===== DE =====
+DE | Neujahr | en | New Year's Day
+DE | Neujahr | pt | Ano Novo
+DE | Neujahr | es | Año Nuevo
+DE | Neujahr | fr | Jour de l'an
+DE | Karfreitag | en | Good Friday
+DE | Karfreitag | pt | Sexta-feira Santa
+DE | Karfreitag | es | Viernes Santo
+DE | Karfreitag | fr | Vendredi saint
+DE | Ostermontag | en | Easter Monday
+DE | Ostermontag | pt | Segunda-feira de Páscoa
+DE | Ostermontag | es | Lunes de Pascua
+DE | Ostermontag | fr | Lundi de Pâques
+DE | Erster Mai | en | Labour Day
+DE | Erster Mai | pt | Dia do Trabalhador
+DE | Erster Mai | es | Día del Trabajo
+DE | Erster Mai | fr | Fête du Travail
+DE | Christi Himmelfahrt | en | Ascension Day
+DE | Christi Himmelfahrt | pt | Ascensão
+DE | Christi Himmelfahrt | es | Ascensión
+DE | Christi Himmelfahrt | fr | Ascension
+DE | Pfingstmontag | en | Whit Monday
+DE | Pfingstmontag | pt | Segunda-feira de Pentecostes
+DE | Pfingstmontag | es | Lunes de Pentecostés
+DE | Pfingstmontag | fr | Lundi de Pentecôte
+DE | Tag der Deutschen Einheit | en | German Unity Day
+DE | Tag der Deutschen Einheit | pt | Dia da Unidade Alemã
+DE | Tag der Deutschen Einheit | es | Día de la Unidad Alemana
+DE | Tag der Deutschen Einheit | fr | Jour de l'Unité allemande
+DE | Erster Weihnachtstag | en | Christmas Day
+DE | Erster Weihnachtstag | pt | Dia de Natal
+DE | Erster Weihnachtstag | es | Navidad
+DE | Erster Weihnachtstag | fr | Noël
+DE | Zweiter Weihnachtstag | en | Boxing Day
+DE | Zweiter Weihnachtstag | pt | Segundo Dia de Natal
+DE | Zweiter Weihnachtstag | es | San Esteban
+DE | Zweiter Weihnachtstag | fr | Lendemain de Noël
+DE | Heilige Drei Könige | en | Epiphany
+DE | Heilige Drei Könige | pt | Dia de Reis
+DE | Heilige Drei Könige | es | Epifanía
+DE | Heilige Drei Könige | fr | Épiphanie
+DE | Internationaler Frauentag | en | International Women's Day
+DE | Internationaler Frauentag | pt | Dia Internacional da Mulher
+DE | Internationaler Frauentag | es | Día Internacional de la Mujer
+DE | Internationaler Frauentag | fr | Journée internationale des femmes
+DE | Ostersonntag | en | Easter Sunday
+DE | Ostersonntag | pt | Domingo de Páscoa
+DE | Ostersonntag | es | Domingo de Resurrección
+DE | Ostersonntag | fr | Pâques
+DE | Pfingstsonntag | en | Whit Sunday
+DE | Pfingstsonntag | pt | Domingo de Pentecostes
+DE | Pfingstsonntag | es | Domingo de Pentecostés
+DE | Pfingstsonntag | fr | Pentecôte
+DE | Fronleichnam | en | Corpus Christi
+DE | Fronleichnam | pt | Corpo de Deus
+DE | Fronleichnam | es | Corpus Christi
+DE | Fronleichnam | fr | Fête-Dieu
+DE | Mariä Himmelfahrt | en | Assumption of Mary
+DE | Mariä Himmelfahrt | pt | Assunção de Nossa Senhora
+DE | Mariä Himmelfahrt | es | Asunción de la Virgen
+DE | Mariä Himmelfahrt | fr | Assomption
+DE | Weltkindertag | en | World Children's Day
+DE | Weltkindertag | pt | Dia Mundial da Criança
+DE | Weltkindertag | es | Día Mundial del Niño
+DE | Weltkindertag | fr | Journée mondiale de l'enfance
+DE | Reformationstag | en | Reformation Day
+DE | Reformationstag | pt | Dia da Reforma
+DE | Reformationstag | es | Día de la Reforma
+DE | Reformationstag | fr | Jour de la Réforme
+DE | Allerheiligen | en | All Saints' Day
+DE | Allerheiligen | pt | Dia de Todos os Santos
+DE | Allerheiligen | es | Todos los Santos
+DE | Allerheiligen | fr | Toussaint
+DE | Buß- und Bettag | en | Day of Repentance and Prayer
+DE | Buß- und Bettag | pt | Dia de Penitência e Oração
+DE | Buß- und Bettag | es | Día de Penitencia y Oración
+DE | Buß- und Bettag | fr | Jour de pénitence et de prière
+# ===== FR =====
+FR | Jour de l'an | en | New Year's Day
+FR | Jour de l'an | pt | Ano Novo
+FR | Jour de l'an | es | Año Nuevo
+FR | Jour de l'an | de | Neujahr
+FR | Lundi de Pâques | en | Easter Monday
+FR | Lundi de Pâques | pt | Segunda-feira de Páscoa
+FR | Lundi de Pâques | es | Lunes de Pascua
+FR | Lundi de Pâques | de | Ostermontag
+FR | Fête du Travail | en | Labour Day
+FR | Fête du Travail | pt | Dia do Trabalhador
+FR | Fête du Travail | es | Día del Trabajo
+FR | Fête du Travail | de | Tag der Arbeit
+FR | Fête de la Victoire | en | Victory in Europe Day
+FR | Fête de la Victoire | pt | Dia da Vitória
+FR | Fête de la Victoire | es | Día de la Victoria
+FR | Fête de la Victoire | de | Tag des Sieges
+FR | Ascension | en | Ascension Day
+FR | Ascension | pt | Ascensão
+FR | Ascension | es | Ascensión
+FR | Ascension | de | Christi Himmelfahrt
+FR | Lundi de Pentecôte | en | Whit Monday
+FR | Lundi de Pentecôte | pt | Segunda-feira de Pentecostes
+FR | Lundi de Pentecôte | es | Lunes de Pentecostés
+FR | Lundi de Pentecôte | de | Pfingstmontag
+FR | Fête nationale | en | Bastille Day
+FR | Fête nationale | pt | Dia da Bastilha
+FR | Fête nationale | es | Día de la Bastilla
+FR | Fête nationale | de | Nationalfeiertag
+FR | Assomption | en | Assumption of Mary
+FR | Assomption | pt | Assunção de Nossa Senhora
+FR | Assomption | es | Asunción de la Virgen
+FR | Assomption | de | Mariä Himmelfahrt
+FR | Toussaint | en | All Saints' Day
+FR | Toussaint | pt | Dia de Todos os Santos
+FR | Toussaint | es | Todos los Santos
+FR | Toussaint | de | Allerheiligen
+FR | Armistice 1918 | en | Armistice Day
+FR | Armistice 1918 | pt | Dia do Armistício
+FR | Armistice 1918 | es | Día del Armisticio
+FR | Armistice 1918 | de | Waffenstillstandstag
+FR | Noël | en | Christmas Day
+FR | Noël | pt | Natal
+FR | Noël | es | Navidad
+FR | Noël | de | Weihnachten
+FR | Vendredi saint | en | Good Friday
+FR | Vendredi saint | pt | Sexta-feira Santa
+FR | Vendredi saint | es | Viernes Santo
+FR | Vendredi saint | de | Karfreitag
+FR | Saint Étienne | en | St Stephen's Day
+FR | Saint Étienne | pt | Dia de Santo Estêvão
+FR | Saint Étienne | es | San Esteban
+FR | Saint Étienne | de | Stephanstag
+# ===== BR =====
+BR | Confraternização Universal | en | New Year's Day
+BR | Confraternização Universal | es | Año Nuevo
+BR | Confraternização Universal | de | Neujahr
+BR | Confraternização Universal | fr | Jour de l'an
+BR | Sexta-feira Santa | en | Good Friday
+BR | Sexta-feira Santa | es | Viernes Santo
+BR | Sexta-feira Santa | de | Karfreitag
+BR | Sexta-feira Santa | fr | Vendredi saint
+BR | Tiradentes | en | Tiradentes Day
+BR | Tiradentes | es | Día de Tiradentes
+BR | Tiradentes | de | Tiradentes-Tag
+BR | Tiradentes | fr | Jour de Tiradentes
+BR | Dia do Trabalhador | en | Labour Day
+BR | Dia do Trabalhador | es | Día del Trabajo
+BR | Dia do Trabalhador | de | Tag der Arbeit
+BR | Dia do Trabalhador | fr | Fête du Travail
+BR | Independência do Brasil | en | Independence of Brazil
+BR | Independência do Brasil | es | Independencia de Brasil
+BR | Independência do Brasil | de | Unabhängigkeit Brasiliens
+BR | Independência do Brasil | fr | Indépendance du Brésil
+BR | Nossa Senhora Aparecida | en | Our Lady of Aparecida
+BR | Nossa Senhora Aparecida | es | Nuestra Señora Aparecida
+BR | Nossa Senhora Aparecida | de | Unsere Liebe Frau von Aparecida
+BR | Nossa Senhora Aparecida | fr | Notre-Dame d'Aparecida
+BR | Finados | en | All Souls' Day
+BR | Finados | es | Día de los Difuntos
+BR | Finados | de | Allerseelen
+BR | Finados | fr | Jour des morts
+BR | Proclamação da República | en | Proclamation of the Republic
+BR | Proclamação da República | es | Proclamación de la República
+BR | Proclamação da República | de | Ausrufung der Republik
+BR | Proclamação da República | fr | Proclamation de la République
+BR | Dia Nacional de Zumbi e da Consciência Negra | en | National Day of Zumbi and Black Awareness
+BR | Dia Nacional de Zumbi e da Consciência Negra | es | Día Nacional de Zumbi y de la Conciencia Negra
+BR | Dia Nacional de Zumbi e da Consciência Negra | de | Nationaler Tag des Zumbi und des schwarzen Bewusstseins
+BR | Dia Nacional de Zumbi e da Consciência Negra | fr | Journée nationale de Zumbi et de la conscience noire
+BR | Natal | en | Christmas Day
+BR | Natal | es | Navidad
+BR | Natal | de | Weihnachten
+BR | Natal | fr | Noël
+BR | Carnaval | en | Carnival
+BR | Carnaval | es | Carnaval
+BR | Carnaval | de | Karneval
+BR | Carnaval | fr | Carnaval
+BR | Corpus Christi | en | Corpus Christi
+BR | Corpus Christi | es | Corpus Christi
+BR | Corpus Christi | de | Fronleichnam
+BR | Corpus Christi | fr | Fête-Dieu
+BR | Revolução Constitucionalista | en | Constitutionalist Revolution
+BR | Revolução Constitucionalista | es | Revolución Constitucionalista
+BR | Revolução Constitucionalista | de | Verfassungsrevolution
+BR | Revolução Constitucionalista | fr | Révolution constitutionnaliste
+BR | São Jorge | en | St George's Day
+BR | São Jorge | es | San Jorge
+BR | São Jorge | de | St.-Georgs-Tag
+BR | São Jorge | fr | Saint-Georges
+# ===== ES =====
+ES | Año Nuevo | en | New Year's Day
+ES | Año Nuevo | pt | Ano Novo
+ES | Año Nuevo | de | Neujahr
+ES | Año Nuevo | fr | Jour de l'an
+ES | Epifanía del Señor | en | Epiphany
+ES | Epifanía del Señor | pt | Epifania do Senhor
+ES | Epifanía del Señor | de | Erscheinung des Herrn
+ES | Epifanía del Señor | fr | Épiphanie
+ES | Viernes Santo | en | Good Friday
+ES | Viernes Santo | pt | Sexta-feira Santa
+ES | Viernes Santo | de | Karfreitag
+ES | Viernes Santo | fr | Vendredi saint
+ES | Fiesta del Trabajo | en | Labour Day
+ES | Fiesta del Trabajo | pt | Dia do Trabalhador
+ES | Fiesta del Trabajo | de | Tag der Arbeit
+ES | Fiesta del Trabajo | fr | Fête du Travail
+ES | Asunción de la Virgen | en | Assumption of Mary
+ES | Asunción de la Virgen | pt | Assunção de Nossa Senhora
+ES | Asunción de la Virgen | de | Mariä Himmelfahrt
+ES | Asunción de la Virgen | fr | Assomption
+ES | Fiesta Nacional de España | en | National Day of Spain
+ES | Fiesta Nacional de España | pt | Festa Nacional de Espanha
+ES | Fiesta Nacional de España | de | Nationalfeiertag Spaniens
+ES | Fiesta Nacional de España | fr | Fête nationale de l'Espagne
+ES | Todos los Santos | en | All Saints' Day
+ES | Todos los Santos | pt | Dia de Todos os Santos
+ES | Todos los Santos | de | Allerheiligen
+ES | Todos los Santos | fr | Toussaint
+ES | Día de la Constitución Española | en | Constitution Day
+ES | Día de la Constitución Española | pt | Dia da Constituição
+ES | Día de la Constitución Española | de | Tag der Verfassung
+ES | Día de la Constitución Española | fr | Jour de la Constitution
+ES | Inmaculada Concepción | en | Immaculate Conception
+ES | Inmaculada Concepción | pt | Imaculada Conceição
+ES | Inmaculada Concepción | de | Mariä Empfängnis
+ES | Inmaculada Concepción | fr | Immaculée Conception
+ES | Natividad del Señor | en | Christmas Day
+ES | Natividad del Señor | pt | Natal
+ES | Natividad del Señor | de | Weihnachten
+ES | Natividad del Señor | fr | Noël
+ES | Día de Andalucía | en | Andalusia Day
+ES | Día de Andalucía | pt | Dia da Andaluzia
+ES | Día de Andalucía | de | Tag von Andalusien
+ES | Día de Andalucía | fr | Jour de l'Andalousie
+ES | Jueves Santo | en | Maundy Thursday
+ES | Jueves Santo | pt | Quinta-feira Santa
+ES | Jueves Santo | de | Gründonnerstag
+ES | Jueves Santo | fr | Jeudi saint
+ES | San Jorge/Día de Aragón | en | St George's Day / Aragon Day
+ES | San Jorge/Día de Aragón | pt | Dia de São Jorge / Dia de Aragão
+ES | San Jorge/Día de Aragón | de | St.-Georgs-Tag / Tag von Aragonien
+ES | San Jorge/Día de Aragón | fr | Saint-Georges / Jour de l'Aragon
+ES | Día de Asturias | en | Asturias Day
+ES | Día de Asturias | pt | Dia das Astúrias
+ES | Día de Asturias | de | Tag von Asturien
+ES | Día de Asturias | fr | Jour des Asturies
+ES | Día de les Illes Balears | en | Balearic Islands Day
+ES | Día de les Illes Balears | pt | Dia das Ilhas Baleares
+ES | Día de les Illes Balears | de | Tag der Balearen
+ES | Día de les Illes Balears | fr | Jour des Îles Baléares
+ES | Lunes de Pascua | en | Easter Monday
+ES | Lunes de Pascua | pt | Segunda-feira de Páscoa
+ES | Lunes de Pascua | de | Ostermontag
+ES | Lunes de Pascua | fr | Lundi de Pâques
+ES | San Esteban | en | St Stephen's Day
+ES | San Esteban | pt | Dia de Santo Estêvão
+ES | San Esteban | de | Stephanstag
+ES | San Esteban | fr | Saint-Étienne
+ES | Día de Canarias | en | Canary Islands Day
+ES | Día de Canarias | pt | Dia das Canárias
+ES | Día de Canarias | de | Tag der Kanaren
+ES | Día de Canarias | fr | Jour des Canaries
+ES | Día de las Instituciones de Cantabria | en | Day of the Institutions of Cantabria
+ES | Día de las Instituciones de Cantabria | pt | Dia das Instituições da Cantábria
+ES | Día de las Instituciones de Cantabria | de | Tag der Institutionen Kantabriens
+ES | Día de las Instituciones de Cantabria | fr | Jour des institutions de la Cantabrie
+ES | La Bien Aparecida | en | La Bien Aparecida
+ES | La Bien Aparecida | pt | La Bien Aparecida
+ES | La Bien Aparecida | de | La Bien Aparecida
+ES | La Bien Aparecida | fr | La Bien Aparecida
+ES | Santiago Apóstol/Día Nacional de Galicia | en | St James the Apostle / Galicia Day
+ES | Santiago Apóstol/Día Nacional de Galicia | pt | Santiago Apóstolo / Dia da Galiza
+ES | Santiago Apóstol/Día Nacional de Galicia | de | Apostel Jakobus / Tag Galiciens
+ES | Santiago Apóstol/Día Nacional de Galicia | fr | Saint-Jacques / Jour de la Galice
+ES | Corpus Christi | en | Corpus Christi
+ES | Corpus Christi | pt | Corpo de Deus
+ES | Corpus Christi | de | Fronleichnam
+ES | Corpus Christi | fr | Fête-Dieu
+ES | Día de Castilla-La Mancha | en | Castile–La Mancha Day
+ES | Día de Castilla-La Mancha | pt | Dia de Castela-Mancha
+ES | Día de Castilla-La Mancha | de | Tag von Kastilien-La Mancha
+ES | Día de Castilla-La Mancha | fr | Jour de Castille-La Manche
+ES | Fiesta de Castilla y León | en | Castile and León Day
+ES | Fiesta de Castilla y León | pt | Dia de Castela e Leão
+ES | Fiesta de Castilla y León | de | Tag von Kastilien und León
+ES | Fiesta de Castilla y León | fr | Jour de Castille-et-León
+ES | Fiesta Nacional de Cataluña | en | National Day of Catalonia
+ES | Fiesta Nacional de Cataluña | pt | Diada da Catalunha
+ES | Fiesta Nacional de Cataluña | de | Nationalfeiertag Kataloniens
+ES | Fiesta Nacional de Cataluña | fr | Fête nationale de la Catalogne
+ES | San Juan | en | St John's Day
+ES | San Juan | pt | Dia de São João
+ES | San Juan | de | Johannistag
+ES | San Juan | fr | Saint-Jean
+ES | Día de Extremadura | en | Extremadura Day
+ES | Día de Extremadura | pt | Dia da Estremadura
+ES | Día de Extremadura | de | Tag der Extremadura
+ES | Día de Extremadura | fr | Jour de l'Estrémadure
+ES | Martes de Carnaval | en | Shrove Tuesday
+ES | Martes de Carnaval | pt | Terça-feira de Carnaval
+ES | Martes de Carnaval | de | Faschingsdienstag
+ES | Martes de Carnaval | fr | Mardi gras
+ES | Día de las Letras Gallegas | en | Galician Literature Day
+ES | Día de las Letras Gallegas | pt | Dia das Letras Galegas
+ES | Día de las Letras Gallegas | de | Tag der galicischen Literatur
+ES | Día de las Letras Gallegas | fr | Jour des lettres galiciennes
+ES | San José | en | St Joseph's Day
+ES | San José | pt | Dia de São José
+ES | San José | de | Josefstag
+ES | San José | fr | Saint-Joseph
+ES | Fiesta de la Comunidad de Madrid | en | Community of Madrid Day
+ES | Fiesta de la Comunidad de Madrid | pt | Dia da Comunidade de Madrid
+ES | Fiesta de la Comunidad de Madrid | de | Tag der Autonomen Gemeinschaft Madrid
+ES | Fiesta de la Comunidad de Madrid | fr | Jour de la Communauté de Madrid
+ES | Día de la Región de Murcia | en | Region of Murcia Day
+ES | Día de la Región de Murcia | pt | Dia da Região de Múrcia
+ES | Día de la Región de Murcia | de | Tag der Region Murcia
+ES | Día de la Región de Murcia | fr | Jour de la Région de Murcie
+ES | Día de La Rioja | en | La Rioja Day
+ES | Día de La Rioja | pt | Dia da Rioja
+ES | Día de La Rioja | de | Tag von La Rioja
+ES | Día de La Rioja | fr | Jour de La Rioja
+ES | Día de la Comunitat Valenciana | en | Valencian Community Day
+ES | Día de la Comunitat Valenciana | pt | Dia da Comunidade Valenciana
+ES | Día de la Comunitat Valenciana | de | Tag der Valencianischen Gemeinschaft
+ES | Día de la Comunitat Valenciana | fr | Jour de la Communauté valencienne
+ES | Día de Ceuta | en | Ceuta Day
+ES | Día de Ceuta | pt | Dia de Ceuta
+ES | Día de Ceuta | de | Tag von Ceuta
+ES | Día de Ceuta | fr | Jour de Ceuta
+ES | Fiesta del Sacrificio (Aid al-Adha) | en | Feast of the Sacrifice (Eid al-Adha)
+ES | Fiesta del Sacrificio (Aid al-Adha) | pt | Festa do Sacrifício (Eid al-Adha)
+ES | Fiesta del Sacrificio (Aid al-Adha) | de | Opferfest (Eid al-Adha)
+ES | Fiesta del Sacrificio (Aid al-Adha) | fr | Fête du Sacrifice (Aïd el-Adha)
+ES | Nuestra Señora de África | en | Our Lady of Africa
+ES | Nuestra Señora de África | pt | Nossa Senhora de África
+ES | Nuestra Señora de África | de | Unsere Liebe Frau von Afrika
+ES | Nuestra Señora de África | fr | Notre-Dame d'Afrique
+ES | Fiesta del Aid al-Fitr | en | Feast of Eid al-Fitr
+ES | Fiesta del Aid al-Fitr | pt | Festa do Eid al-Fitr
+ES | Fiesta del Aid al-Fitr | de | Fest des Eid al-Fitr
+ES | Fiesta del Aid al-Fitr | fr | Fête de l'Aïd el-Fitr

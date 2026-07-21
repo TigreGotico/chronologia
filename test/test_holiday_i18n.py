@@ -222,3 +222,100 @@ def test_every_tab_name_cell_parses():
             assert rule.name
             for lang, text in rule.names.items():
                 assert lang and text
+
+
+# --------------------------------------------------------------------------
+# Translation-coverage matrix (en/pt/es/de/fr) for the 15 jurisdictions
+# --------------------------------------------------------------------------
+#: The official primary language of each jurisdiction's primary `name`. A holiday
+#: is trivially "covered" for this language by its own name.
+_PRIMARY_LANG = {
+    "PT": "pt", "US": "en", "GB": "en", "CA": "en", "AU": "en", "IN": "en",
+    "CN": "zh", "JP": "ja", "IL": "he", "SA": "ar", "TR": "tr", "DE": "de",
+    "FR": "fr", "BR": "pt", "ES": "es",
+}
+_MATRIX_LANGS = ("en", "pt", "es", "de", "fr")
+
+
+def _all_rules():
+    """(juris, subdiv, name, names_map) for every non-municipal rule shipped.
+
+    Municipal holidays (Portugal's ~300 concelho saints' days and the like) are
+    excluded: they are proper-noun local feasts whose name is the same word in
+    every language, so display falls back to the native name by design. The
+    translation matrix targets the national and regional tiers people display.
+    """
+    out = []
+    for fn in sorted(os.listdir(_DATA_DIR)):
+        if not fn.endswith(".tab"):
+            continue
+        cal = load_calendar(os.path.join(_DATA_DIR, fn))
+        j = cal.jurisdiction.upper()
+        for rule in cal.rules:
+            if "municipal" in rule.categories:
+                continue
+            out.append((j, rule.subdiv, rule.name, dict(rule.names)))
+    return out
+
+
+def _covered(juris, name, names_map, trans, lang):
+    return (lang in names_map
+            or lang in trans.get((juris, name), {})
+            or _PRIMARY_LANG[juris] == lang)
+
+
+def test_every_non_municipal_holiday_has_en_and_native():
+    trans = load_translations()
+    missing = []
+    for j, _subdiv, name, names_map in _all_rules():
+        # native: the primary name is always present and is the native name
+        if not name:
+            missing.append((j, name, "native"))
+        # en: available as an official name or a translation (or already native)
+        if not _covered(j, name, names_map, trans, "en"):
+            missing.append((j, name, "en"))
+    assert not missing, f"holidays missing en/native coverage: {missing}"
+
+
+def test_every_national_holiday_has_full_five_language_matrix():
+    trans = load_translations()
+    missing = []
+    for j, subdiv, name, names_map in _all_rules():
+        if subdiv is not None:            # national tier only
+            continue
+        for lang in _MATRIX_LANGS:
+            if not _covered(j, name, names_map, trans, lang):
+                missing.append((j, name, lang))
+    assert not missing, f"national holidays missing matrix coverage: {missing}"
+
+
+def test_display_name_renders_every_matrix_language_for_a_sample():
+    # A concrete end-to-end check across scripts: each jurisdiction renders in
+    # all five display languages via the fallback chain.
+    samples = {
+        ("PT", 2024): "Ano Novo", ("US", 2024): "New Year's Day",
+        ("DE", 2024): "Neujahr", ("CN", 2024): "元旦", ("SA", 2024): "عيد الفطر",
+        ("JP", 2024): "元日", ("IL", 2024): "פסח", ("TR", 2024): "Cumhuriyet Bayramı",
+    }
+    for (juris, year), primary in samples.items():
+        h = [x for x in holidays_for(juris, year) if x.name == primary][0]
+        for lang in _MATRIX_LANGS:
+            assert h.display_name(lang), (juris, primary, lang)
+
+
+def test_translations_never_shadow_an_official_name():
+    # display_name must return the OFFICIAL name when the language is official,
+    # even if a translation for that language also exists.
+    trans = load_translations()
+    for j, _subdiv, name, names_map in _all_rules():
+        for lang in names_map:
+            got = trans.get((j, name), {})
+            if lang in got:
+                # if both exist, they should agree that the official one wins:
+                # simulate a CivilHoliday and check display_name.
+                from chronologia.astrodate import AstroDate, DateSpan
+                d = AstroDate(2024, 1, 1)
+                h = CivilHoliday(name, DateSpan(d, d, "exact"), j, None,
+                                 frozenset({"public"}), "exact",
+                                 names=names_map, translations=got)
+                assert h.display_name(lang) == names_map[lang]
