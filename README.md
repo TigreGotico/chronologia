@@ -57,17 +57,23 @@ Python's `datetime` stops at year 1. History doesn't. This library's
 comparisons, you can mix the two freely — but its year is unlimited:
 
 ```python
-from chronologia import AstroDate
+from chronologia import AstroDate, CALENDARS, jdn_to_gregorian
 from datetime import datetime
 
-caesar = AstroDate(-43, 3, 15)        # the Ides of March, 44 BC
-print(caesar.weekday())               # 2  — it was a Wednesday
-print(caesar < datetime(2020, 1, 1))  # True — compares with datetime
+# The Ides of March, 44 BC — a date in the ROMAN (Julian) calendar,
+# so we let the Julian calendar say which day it really was:
+ides = AstroDate(*jdn_to_gregorian(CALENDARS["julian"].to_jdn(-43, 3, 15)))
+print(ides.weekday())               # 2  — Caesar was assassinated on a Wednesday
+print(ides < datetime(2020, 1, 1))  # True — compares freely with datetime
 ```
 
-Why −43 and not −44? Historians say "44 BC", but astronomers give the
-year 0 to 1 BC so the arithmetic has no gap — so 44 BC is year −43.
-You only ever notice this before year 1.
+Two small things just happened, and both matter. First: historians say
+"44 BC", but astronomers give the year 0 to 1 BC so the arithmetic has
+no gap — 44 BC is year −43; you only ever notice this before year 1.
+Second: ancient dates were written in *their* calendar, not ours — the
+Roman "March 15" lands on what our modern calendar, projected backwards,
+would call March 13. The library keeps both straight, because that's
+exactly the kind of thing humans get silently wrong.
 
 ## Nobody means midnight
 
