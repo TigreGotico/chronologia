@@ -1,0 +1,71 @@
+# civil-holidays-translations v1
+# source: translation
+# retrieved: 2026-07-21
+# note:
+#   DISPLAY translations, NOT official names. Every row here is a rendering we
+#   authored for convenience — a way to *show* a holiday in another language —
+#   and is deliberately kept distinct from the official native names that live in
+#   the per-jurisdiction .tab files. The golden rule still holds: a holiday's
+#   real name is what its own government calls it (that is the primary `name` and
+#   any co-official `names`); these are only helpful glosses. The join key is the
+#   holiday's PRIMARY name (its official native name) exactly as spelled in the
+#   jurisdiction's .tab file.
+# columns: jurisdiction | name | lang | text
+#
+# ===================== PT — national public holidays =====================
+PT | Ano Novo                       | en | New Year's Day
+PT | Ano Novo                       | es | Año Nuevo
+PT | Ano Novo                       | de | Neujahr
+PT | Ano Novo                       | fr | Jour de l'an
+PT | Sexta-feira Santa              | en | Good Friday
+PT | Sexta-feira Santa              | es | Viernes Santo
+PT | Sexta-feira Santa              | de | Karfreitag
+PT | Sexta-feira Santa              | fr | Vendredi saint
+PT | Domingo de Pascoa              | en | Easter Sunday
+PT | Domingo de Pascoa              | es | Domingo de Resurrección
+PT | Domingo de Pascoa              | de | Ostersonntag
+PT | Domingo de Pascoa              | fr | Pâques
+PT | Dia da Liberdade               | en | Freedom Day
+PT | Dia da Liberdade               | es | Día de la Libertad
+PT | Dia da Liberdade               | de | Tag der Freiheit
+PT | Dia da Liberdade               | fr | Jour de la Liberté
+PT | Dia do Trabalhador             | en | Labour Day
+PT | Dia do Trabalhador             | es | Día del Trabajador
+PT | Dia do Trabalhador             | de | Tag der Arbeit
+PT | Dia do Trabalhador             | fr | Fête du Travail
+PT | Corpo de Deus                  | en | Corpus Christi
+PT | Corpo de Deus                  | es | Corpus Christi
+PT | Corpo de Deus                  | de | Fronleichnam
+PT | Corpo de Deus                  | fr | Fête-Dieu
+PT | Dia de Portugal                | en | Portugal Day
+PT | Dia de Portugal                | es | Día de Portugal
+PT | Dia de Portugal                | de | Portugal-Tag
+PT | Dia de Portugal                | fr | Fête nationale du Portugal
+PT | Assuncao de Nossa Senhora      | en | Assumption of Mary
+PT | Assuncao de Nossa Senhora      | es | Asunción de la Virgen
+PT | Assuncao de Nossa Senhora      | de | Mariä Himmelfahrt
+PT | Assuncao de Nossa Senhora      | fr | Assomption
+PT | Implantacao da Republica       | en | Republic Day
+PT | Implantacao da Republica       | es | Implantación de la República
+PT | Implantacao da Republica       | de | Ausrufung der Republik
+PT | Implantacao da Republica       | fr | Instauration de la République
+PT | Dia de Todos os Santos         | en | All Saints' Day
+PT | Dia de Todos os Santos         | es | Día de Todos los Santos
+PT | Dia de Todos os Santos         | de | Allerheiligen
+PT | Dia de Todos os Santos         | fr | Toussaint
+PT | Restauracao da Independencia   | en | Restoration of Independence
+PT | Restauracao da Independencia   | es | Restauración de la Independencia
+PT | Restauracao da Independencia   | de | Wiederherstellung der Unabhängigkeit
+PT | Restauracao da Independencia   | fr | Restauration de l'Indépendance
+PT | Imaculada Conceicao            | en | Immaculate Conception
+PT | Imaculada Conceicao            | es | Inmaculada Concepción
+PT | Imaculada Conceicao            | de | Mariä Empfängnis
+PT | Imaculada Conceicao            | fr | Immaculée Conception
+PT | Natal                          | en | Christmas Day
+PT | Natal                          | es | Navidad
+PT | Natal                          | de | Weihnachten
+PT | Natal                          | fr | Noël
+PT | Carnaval                       | en | Carnival
+PT | Carnaval                       | es | Carnaval
+PT | Carnaval                       | de | Karneval
+PT | Carnaval                       | fr | Carnaval

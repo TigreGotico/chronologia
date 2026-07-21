@@ -101,7 +101,8 @@ from chronologia.civil_holidays import (CATEGORIES, IL_INDEPENDENCE_SHIFT,
                                         ObservedShift, SolarTermRule,
                                         WeekdayOnOrBeforeRule,
                                         holidays_for, is_civil_holiday,
-                                        load_calendar)
+                                        load_calendar, load_translations,
+                                        parse_name_cell)
 from chronologia.extract import explain, extract_timespan
 from chronologia.serialization import from_json, to_json
 
@@ -338,4 +339,6 @@ __all__ = [
     "holidays_for",
     "is_civil_holiday",
     "load_calendar",
+    "load_translations",
+    "parse_name_cell",
 ]
