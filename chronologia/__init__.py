@@ -20,7 +20,7 @@ from chronologia.calendars import (CALENDARS, Calendar, CalendarRangeError,
 from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, DayCycle,
                                 DaySubdivision, resolve_cycle_day)
 from chronologia.eras import (ERAS, Era, EraCounting, astro_year_range,
-                              resolve_era, resolve_era_year_span)
+                              resolve_bp, resolve_era, resolve_era_year_span)
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
 from chronologia.resolution import DateTimeResolution
 from chronologia.roman import roman_to_julian
@@ -52,6 +52,7 @@ __all__ = [
     "Era",
     "EraCounting",
     "astro_year_range",
+    "resolve_bp",
     "resolve_era",
     "resolve_era_year_span",
     # day cycles
