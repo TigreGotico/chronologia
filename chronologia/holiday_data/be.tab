@@ -1,0 +1,23 @@
+# civil-holidays v1
+# jurisdiction: BE
+# source: https://www.ejustice.just.fgov.be/eli/besluit/1974/04/18/1974041807/justel
+#   (Koninklijk besluit van 18 april 1974 / Arrêté royal — the 10 Belgian legal
+#   public holidays (wettelijke feestdagen). Local copy papers/holidays/be_holidays.md.)
+#   Names are the official Dutch (Nederlands); French/German glosses ride the
+#   translations layer. The 10 legal holidays do NOT include Easter Sunday or
+#   Whit Sunday (both Sundays, not distinct legal feestdagen) — the reference
+#   package lists them, a documented differential in test_holidays_be.py.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+fixed   | Nieuwjaar            | 1 1   | public          |  |
+easter  | Paasmaandag          | 1     | public religious |  |
+fixed   | Dag van de Arbeid    | 5 1   | public          |  |
+easter  | O. L. H. Hemelvaart  | 39    | public religious |  |
+easter  | Pinkstermaandag      | 50    | public religious |  |
+fixed   | Nationale feestdag   | 7 21  | public          |  |
+fixed   | O. L. V. Hemelvaart  | 8 15  | public religious |  |
+fixed   | Allerheiligen        | 11 1  | public religious |  |
+fixed   | Wapenstilstand       | 11 11 | public          |  |
+fixed   | Kerstmis             | 12 25 | public religious |  |

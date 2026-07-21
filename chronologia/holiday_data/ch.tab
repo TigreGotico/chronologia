@@ -1,0 +1,76 @@
+# civil-holidays v1
+# jurisdiction: CH
+# source: https://www.bj.admin.ch/bj/de/home/staat/nationalfeiertag/feiertage.html
+#   (Swiss federal justice office overview of public holidays. Local copy
+#   papers/holidays/ch_holidays.md.) Only 1 August (Bundesfeier) is a
+#   federally-mandated holiday; the Confederation lets each canton fix its own,
+#   so the "national" set here is the four days observed de-facto everywhere
+#   (Neujahr, Auffahrt/Ascension, Bundesfeier, Weihnachten). The other holidays
+#   are CANTONAL. With 26 cantons a full enumeration is out of scope; we ship a
+#   documented 6-canton sample exercising the split types — Protestant/Catholic,
+#   German/French/Italian, Berchtoldstag, the Genevan Jeûne and Restauration:
+#     CH-ZH Zürich · CH-BE Bern · CH-LU Luzern (Catholic) · CH-TI Ticino
+#     (Italian/Catholic) · CH-GE Genève (Jeûne genevois + Restauration) ·
+#     CH-VS Valais (Catholic).
+#   Cantonal dates cited in papers/holidays/ch_holidays.md.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- Everywhere (de-facto national) ---
+fixed   | Neujahrstag      | 1 1   | public          |  |
+easter  | Auffahrt         | 39    | public religious |  |
+fixed   | Nationalfeiertag | 8 1   | public          |  |
+fixed   | Weihnachten      | 12 25 | public religious |  |
+#
+# --- Zürich (CH-ZH) ---
+easter  | Karfreitag       | -2    | regional religious | CH-ZH |
+easter  | Ostermontag      | 1     | regional religious | CH-ZH |
+fixed   | Tag der Arbeit   | 5 1   | regional          | CH-ZH |
+easter  | Pfingstmontag    | 50    | regional religious | CH-ZH |
+fixed   | Stephanstag      | 12 26 | regional religious | CH-ZH |
+#
+# --- Bern (CH-BE) ---
+fixed   | Berchtoldstag    | 1 2   | regional          | CH-BE |
+easter  | Karfreitag       | -2    | regional religious | CH-BE |
+easter  | Ostermontag      | 1     | regional religious | CH-BE |
+easter  | Pfingstmontag    | 50    | regional religious | CH-BE |
+fixed   | Stephanstag      | 12 26 | regional religious | CH-BE |
+#
+# --- Luzern (CH-LU, Catholic) ---
+fixed   | Berchtoldstag    | 1 2   | regional          | CH-LU |
+easter  | Karfreitag       | -2    | regional religious | CH-LU |
+easter  | Ostermontag      | 1     | regional religious | CH-LU |
+easter  | Pfingstmontag    | 50    | regional religious | CH-LU |
+easter  | Fronleichnam     | 60    | regional religious | CH-LU |
+fixed   | Mariä Himmelfahrt | 8 15 | regional religious | CH-LU |
+fixed   | Allerheiligen    | 11 1  | regional religious | CH-LU |
+fixed   | Mariä Empfängnis | 12 8  | regional religious | CH-LU |
+fixed   | Stephanstag      | 12 26 | regional religious | CH-LU |
+#
+# --- Ticino (CH-TI, Italian/Catholic) ---
+fixed   | Heilige Drei Könige | 1 6 | regional religious | CH-TI |
+fixed   | Josefstag        | 3 19  | regional religious | CH-TI |
+easter  | Ostermontag      | 1     | regional religious | CH-TI |
+fixed   | Tag der Arbeit   | 5 1   | regional          | CH-TI |
+easter  | Pfingstmontag    | 50    | regional religious | CH-TI |
+easter  | Fronleichnam     | 60    | regional religious | CH-TI |
+fixed   | Peter und Paul   | 6 29  | regional religious | CH-TI |
+fixed   | Mariä Himmelfahrt | 8 15 | regional religious | CH-TI |
+fixed   | Allerheiligen    | 11 1  | regional religious | CH-TI |
+fixed   | Mariä Empfängnis | 12 8  | regional religious | CH-TI |
+fixed   | Stephanstag      | 12 26 | regional religious | CH-TI |
+#
+# --- Genève (CH-GE) ---
+easter  | Karfreitag       | -2    | regional religious | CH-GE |
+easter  | Ostermontag      | 1     | regional religious | CH-GE |
+easter  | Pfingstmontag    | 50    | regional religious | CH-GE |
+nth_weekday | Jeûne genevois | 9 1 6 4 | regional religious | CH-GE |
+fixed   | Restauration de la République | 12 31 | regional | CH-GE |
+#
+# --- Valais (CH-VS, Catholic) ---
+fixed   | Josefstag        | 3 19  | regional religious | CH-VS |
+easter  | Fronleichnam     | 60    | regional religious | CH-VS |
+fixed   | Mariä Himmelfahrt | 8 15 | regional religious | CH-VS |
+fixed   | Allerheiligen    | 11 1  | regional religious | CH-VS |
+fixed   | Mariä Empfängnis | 12 8  | regional religious | CH-VS |

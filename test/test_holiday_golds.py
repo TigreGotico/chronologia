@@ -550,6 +550,12 @@ _reg("GB", None, "Boxing Day (substitute day)", 2021, 12, 28)
 _reg("GB", None, "Christmas Day (substitute day)", 2022, 12, 27)
 _reg("GB", None, "New Year's Day (substitute day)", 2022, 1, 3)
 _reg("GB", None, "New Year's Day (substitute day)", 2023, 1, 2)
+# One-off bank holidays (one_off kind): granted for a single year, never recur.
+# Dates from gov.uk's per-year bank-holiday listing / proclamation news (cited in
+# gb.tab's one_off rows). They resolve only in their stated year.
+_reg("GB", None, "Platinum Jubilee bank holiday", 2022, 6, 3)
+_reg("GB", None, "State Funeral of Queen Elizabeth II", 2022, 9, 19)
+_reg("GB", None, "Coronation of King Charles III", 2023, 5, 8)
 
 # --- DE: national nine + all 16 Länder (source: Land Feiertagsgesetze) ---
 _reg("DE", None, "Neujahr", 2024, 1, 1)
@@ -947,6 +953,301 @@ def test_jp_mountain_day_year_gated_from_2016():
     2016 (jp.tab "2016-"): absent 2015, present from 2016."""
     assert ("Mountain Day", None) not in _dates_for("JP", 2015)
     assert _dates_for("JP", 2016)[("Mountain Day", None)] == AstroDate(2016, 8, 11)
+
+
+# ==========================================================================
+# Wave 2 (t2a): IT, GR, IE, AT, CH, BE, NL, PL, CZ, SK, SE, DK, NO, FI.
+# Golds hand-derived from each country's cited primary source (see the .tab
+# header + papers/holidays/INDEX.md). Easter-relative movables re-derived via
+# ``_mov`` from ``easter(2024)``; Orthodox-Easter (GR) movables via
+# ``_orth`` from the Julian-reckoned computus, never read from the engine.
+# Per-country differential + behavioural assertions live in test_holidays_<cc>.py.
+# ==========================================================================
+_T2A = {"IT", "GR", "IE", "AT", "CH", "BE", "NL", "PL", "CZ", "SK",
+        "SE", "DK", "NO", "FI"}
+
+_ORTH2024 = easter(2024, "julian_gregorian_date")
+
+
+def _orth(offset):
+    """(2024, month, day) for ``orthodox_easter(2024) + offset`` (independent)."""
+    d = _ORTH2024 + timedelta(days=offset)
+    return (2024, d.month, d.day)
+
+
+# --- IT: national festività (L.260/1949) + 20 regional-capital patrons ---
+_reg("IT", None, "Capodanno", 2024, 1, 1)
+_reg("IT", None, "Epifania", 2024, 1, 6)
+_reg("IT", None, "Pasqua", *_mov(0))
+_reg("IT", None, "Lunedì dell'Angelo", *_mov(1))
+_reg("IT", None, "Anniversario della Liberazione", 2024, 4, 25)
+_reg("IT", None, "Festa del Lavoro", 2024, 5, 1)
+_reg("IT", None, "Festa della Repubblica", 2024, 6, 2)
+_reg("IT", None, "Assunzione della Beata Vergine Maria", 2024, 8, 15)
+_reg("IT", None, "Ognissanti", 2024, 11, 1)
+_reg("IT", None, "Immacolata Concezione", 2024, 12, 8)
+_reg("IT", None, "Natale", 2024, 12, 25)
+_reg("IT", None, "Santo Stefano", 2024, 12, 26)
+# Regional-capital patron feasts (municipal): (subdiv, name, month, day).
+_IT_PATRONS = [
+    ("IT-TO", "San Giovanni Battista", 6, 24),
+    ("IT-AO", "San Grato", 9, 7),
+    ("IT-MI", "Sant'Ambrogio", 12, 7),
+    ("IT-TN", "San Vigilio", 6, 26),
+    ("IT-VE", "Madonna della Salute", 11, 21),
+    ("IT-TS", "San Giusto", 11, 3),
+    ("IT-GE", "San Giovanni Battista", 6, 24),
+    ("IT-BO", "San Petronio", 10, 4),
+    ("IT-FI", "San Giovanni Battista", 6, 24),
+    ("IT-PG", "San Costanzo", 1, 29),
+    ("IT-AN", "San Ciriaco", 5, 4),
+    ("IT-RM", "Santi Pietro e Paolo", 6, 29),
+    ("IT-AQ", "San Massimo d'Aveia", 6, 10),
+    ("IT-CB", "San Giorgio", 4, 23),
+    ("IT-NA", "San Gennaro", 9, 19),
+    ("IT-BA", "San Nicola", 12, 6),
+    ("IT-PZ", "San Gerardo di Potenza", 5, 30),
+    ("IT-CZ", "San Vitaliano", 7, 16),
+    ("IT-PA", "Santa Rosalia", 7, 15),
+    ("IT-CA", "San Saturnino di Cagliari", 10, 30),
+]
+for _s, _n, _m, _d in _IT_PATRONS:
+    _reg("IT", _s, _n, 2024, _m, _d)
+
+
+# --- GR: Orthodox-Easter national set (native Greek names) ---
+_reg("GR", None, "Πρωτοχρονιά", 2024, 1, 1)
+_reg("GR", None, "Θεοφάνεια", 2024, 1, 6)
+_reg("GR", None, "Καθαρά Δευτέρα", *_orth(-48))   # 2024-03-18
+_reg("GR", None, "Εικοστή Πέμπτη Μαρτίου", 2024, 3, 25)
+_reg("GR", None, "Μεγάλη Παρασκευή", *_orth(-2))  # 2024-05-03
+_reg("GR", None, "Δευτέρα του Πάσχα", *_orth(1))  # 2024-05-06
+_reg("GR", None, "Εργατική Πρωτομαγιά", 2024, 5, 1)
+_reg("GR", None, "Δευτέρα του Αγίου Πνεύματος", *_orth(50))  # 2024-06-24
+_reg("GR", None, "Κοίμηση της Θεοτόκου", 2024, 8, 15)
+_reg("GR", None, "Ημέρα του Όχι", 2024, 10, 28)
+_reg("GR", None, "Χριστούγεννα", 2024, 12, 25)
+_reg("GR", None, "Σύναξη της Υπεραγίας Θεοτόκου", 2024, 12, 26)
+# Cross-year Orthodox-Easter movables (independent Julian computus):
+# 2023 Orthodox Easter 16 Apr -> Clean Monday 27 Feb; 2025 20 Apr -> 3 Mar.
+_reg("GR", None, "Καθαρά Δευτέρα", 2023, 2, 27)
+_reg("GR", None, "Καθαρά Δευτέρα", 2025, 3, 3)
+
+
+# --- IE: public holidays (Organisation of Working Time Act 1997) ---
+_reg("IE", None, "New Year's Day", 2024, 1, 1)
+_reg("IE", None, "Saint Brigid's Day", 2024, 2, 5)   # 1st Mon Feb
+_reg("IE", None, "Saint Brigid's Day", 2023, 2, 6)
+_reg("IE", None, "Saint Brigid's Day", 2025, 2, 3)
+_reg("IE", None, "Saint Patrick's Day", 2024, 3, 17)
+_reg("IE", None, "Easter Monday", *_mov(1))
+_reg("IE", None, "May Day", 2024, 5, 6)              # 1st Mon May
+_reg("IE", None, "June Bank Holiday", 2024, 6, 3)    # 1st Mon Jun
+_reg("IE", None, "August Bank Holiday", 2024, 8, 5)  # 1st Mon Aug
+_reg("IE", None, "October Bank Holiday", 2024, 10, 28)  # last Mon Oct
+_reg("IE", None, "Christmas Day", 2024, 12, 25)
+_reg("IE", None, "Saint Stephen's Day", 2024, 12, 26)
+_reg("IE", None, "Day of Remembrance and Recognition", 2022, 3, 18)  # one_off
+
+
+# --- AT: nationwide 13 (ARG §7) + Landespatrone (regional) ---
+_reg("AT", None, "Neujahr", 2024, 1, 1)
+_reg("AT", None, "Heilige Drei Könige", 2024, 1, 6)
+_reg("AT", None, "Ostermontag", *_mov(1))
+_reg("AT", None, "Staatsfeiertag", 2024, 5, 1)
+_reg("AT", None, "Christi Himmelfahrt", *_mov(39))
+_reg("AT", None, "Pfingstmontag", *_mov(50))
+_reg("AT", None, "Fronleichnam", *_mov(60))
+_reg("AT", None, "Mariä Himmelfahrt", 2024, 8, 15)
+_reg("AT", None, "Nationalfeiertag", 2024, 10, 26)
+_reg("AT", None, "Allerheiligen", 2024, 11, 1)
+_reg("AT", None, "Mariä Empfängnis", 2024, 12, 8)
+_reg("AT", None, "Christtag", 2024, 12, 25)
+_reg("AT", None, "Stephanstag", 2024, 12, 26)
+for _s in ("AT-6", "AT-7", "AT-8"):
+    _reg("AT", _s, "Heiliger Josef", 2024, 3, 19)
+_reg("AT", "AT-4", "Heiliger Florian", 2024, 5, 4)
+_reg("AT", "AT-5", "Heiliger Rupert", 2024, 9, 24)
+_reg("AT", "AT-2", "Tag der Volksabstimmung", 2024, 10, 10)
+_reg("AT", "AT-1", "Heiliger Martin", 2024, 11, 11)
+for _s in ("AT-3", "AT-9"):
+    _reg("AT", _s, "Heiliger Leopold", 2024, 11, 15)
+
+
+# --- CH: de-facto national 4 + documented 6-canton sample ---
+_reg("CH", None, "Neujahrstag", 2024, 1, 1)
+_reg("CH", None, "Auffahrt", *_mov(39))
+_reg("CH", None, "Nationalfeiertag", 2024, 8, 1)
+_reg("CH", None, "Weihnachten", 2024, 12, 25)
+# Cantonal (2024): movables via _mov, fixed literal.
+_CH_GF, _CH_EM, _CH_WM, _CH_FL = _mov(-2), _mov(1), _mov(50), _mov(60)
+for _s in ("CH-ZH", "CH-BE", "CH-LU", "CH-GE"):
+    _reg("CH", _s, "Karfreitag", *_CH_GF)
+for _s in ("CH-ZH", "CH-BE", "CH-LU", "CH-TI", "CH-GE"):
+    _reg("CH", _s, "Ostermontag", *_CH_EM)
+for _s in ("CH-ZH", "CH-BE", "CH-LU", "CH-TI", "CH-GE"):
+    _reg("CH", _s, "Pfingstmontag", *_CH_WM)
+for _s in ("CH-ZH", "CH-TI"):
+    _reg("CH", _s, "Tag der Arbeit", 2024, 5, 1)
+for _s in ("CH-ZH", "CH-BE", "CH-LU", "CH-TI"):
+    _reg("CH", _s, "Stephanstag", 2024, 12, 26)
+for _s in ("CH-BE", "CH-LU"):
+    _reg("CH", _s, "Berchtoldstag", 2024, 1, 2)
+for _s in ("CH-LU", "CH-TI", "CH-VS"):
+    _reg("CH", _s, "Fronleichnam", *_CH_FL)
+for _s in ("CH-LU", "CH-TI", "CH-VS"):
+    _reg("CH", _s, "Mariä Himmelfahrt", 2024, 8, 15)
+    _reg("CH", _s, "Allerheiligen", 2024, 11, 1)
+    _reg("CH", _s, "Mariä Empfängnis", 2024, 12, 8)
+for _s in ("CH-TI", "CH-VS"):
+    _reg("CH", _s, "Josefstag", 2024, 3, 19)
+_reg("CH", "CH-TI", "Heilige Drei Könige", 2024, 1, 6)
+_reg("CH", "CH-TI", "Peter und Paul", 2024, 6, 29)
+_reg("CH", "CH-GE", "Jeûne genevois", 2024, 9, 5)   # Thu after 1st Sun Sep
+_reg("CH", "CH-GE", "Restauration de la République", 2024, 12, 31)# --- BE: 10 legal holidays (KB 18 April 1974, Dutch names) ---
+_reg("BE", None, "Nieuwjaar", 2024, 1, 1)
+_reg("BE", None, "Paasmaandag", *_mov(1))
+_reg("BE", None, "Dag van de Arbeid", 2024, 5, 1)
+_reg("BE", None, "O. L. H. Hemelvaart", *_mov(39))
+_reg("BE", None, "Pinkstermaandag", *_mov(50))
+_reg("BE", None, "Nationale feestdag", 2024, 7, 21)
+_reg("BE", None, "O. L. V. Hemelvaart", 2024, 8, 15)
+_reg("BE", None, "Allerheiligen", 2024, 11, 1)
+_reg("BE", None, "Wapenstilstand", 2024, 11, 11)
+_reg("BE", None, "Kerstmis", 2024, 12, 25)
+
+# --- NL: official holidays (Dutch names); Koningsdag shift ---
+_reg("NL", None, "Nieuwjaarsdag", 2024, 1, 1)
+_reg("NL", None, "Goede Vrijdag", *_mov(-2))
+_reg("NL", None, "Eerste paasdag", *_mov(0))
+_reg("NL", None, "Tweede paasdag", *_mov(1))
+_reg("NL", None, "Koningsdag", 2024, 4, 27)
+_reg("NL", None, "Koningsdag", 2025, 4, 26)   # 27 Apr Sun -> Sat 26 (nl_kingsday)
+_reg("NL", None, "Hemelvaartsdag", *_mov(39))
+_reg("NL", None, "Eerste Pinksterdag", *_mov(49))
+_reg("NL", None, "Tweede Pinksterdag", *_mov(50))
+_reg("NL", None, "Eerste Kerstdag", 2024, 12, 25)
+_reg("NL", None, "Tweede Kerstdag", 2024, 12, 26)
+
+# --- PL: statutory non-working days (Polish names); Wigilia from 2025 ---
+_reg("PL", None, "Nowy Rok", 2024, 1, 1)
+_reg("PL", None, "Święto Trzech Króli", 2024, 1, 6)
+_reg("PL", None, "Niedziela Wielkanocna", *_mov(0))
+_reg("PL", None, "Poniedziałek Wielkanocny", *_mov(1))
+_reg("PL", None, "Święto Państwowe", 2024, 5, 1)
+_reg("PL", None, "Święto Narodowe Trzeciego Maja", 2024, 5, 3)
+_reg("PL", None, "Zielone Świątki", *_mov(49))
+_reg("PL", None, "Dzień Bożego Ciała", *_mov(60))
+_reg("PL", None, "Wniebowzięcie Najświętszej Marii Panny", 2024, 8, 15)
+_reg("PL", None, "Uroczystość Wszystkich Świętych", 2024, 11, 1)
+_reg("PL", None, "Narodowe Święto Niepodległości", 2024, 11, 11)
+_reg("PL", None, "Wigilia Bożego Narodzenia", 2025, 12, 24)
+_reg("PL", None, "Boże Narodzenie (pierwszy dzień)", 2024, 12, 25)
+_reg("PL", None, "Boże Narodzenie (drugi dzień)", 2024, 12, 26)
+
+# --- CZ: státní/ostatní svátky (Czech names) ---
+_reg("CZ", None, "Nový rok", 2024, 1, 1)
+_reg("CZ", None, "Velký pátek", *_mov(-2))
+_reg("CZ", None, "Velikonoční pondělí", *_mov(1))
+_reg("CZ", None, "Svátek práce", 2024, 5, 1)
+_reg("CZ", None, "Den vítězství", 2024, 5, 8)
+_reg("CZ", None, "Den slovanských věrozvěstů Cyrila a Metoděje", 2024, 7, 5)
+_reg("CZ", None, "Den upálení mistra Jana Husa", 2024, 7, 6)
+_reg("CZ", None, "Den české státnosti", 2024, 9, 28)
+_reg("CZ", None, "Den vzniku samostatného československého státu", 2024, 10, 28)
+_reg("CZ", None, "Den boje za svobodu a demokracii", 2024, 11, 17)
+_reg("CZ", None, "Štědrý den", 2024, 12, 24)
+_reg("CZ", None, "1. svátek vánoční", 2024, 12, 25)
+_reg("CZ", None, "2. svátek vánoční", 2024, 12, 26)
+
+# --- SK: štátne sviatky + dni pracovného pokoja (Slovak names) ---
+_reg("SK", None, "Deň vzniku Slovenskej republiky", 2024, 1, 1)
+_reg("SK", None, "Zjavenie Pána (Traja králi)", 2024, 1, 6)
+_reg("SK", None, "Veľký piatok", *_mov(-2))
+_reg("SK", None, "Veľkonočný pondelok", *_mov(1))
+_reg("SK", None, "Sviatok práce", 2024, 5, 1)
+_reg("SK", None, "Deň víťazstva nad fašizmom", 2024, 5, 8)
+_reg("SK", None, "Sviatok svätého Cyrila a svätého Metoda", 2024, 7, 5)
+_reg("SK", None, "Výročie Slovenského národného povstania", 2024, 8, 29)
+_reg("SK", None, "Deň Ústavy Slovenskej republiky", 2023, 9, 1)  # work-free until 2023
+_reg("SK", None, "Sedembolestná Panna Mária", 2024, 9, 15)
+_reg("SK", None, "Sviatok Všetkých svätých", 2024, 11, 1)
+_reg("SK", None, "Deň boja za slobodu a demokraciu", 2024, 11, 17)  # work-free until 2024
+_reg("SK", None, "Štedrý deň", 2024, 12, 24)
+_reg("SK", None, "Prvý sviatok vianočný", 2024, 12, 25)
+_reg("SK", None, "Druhý sviatok vianočný", 2024, 12, 26)
+
+# --- SE: allmänna helgdagar (Swedish names) ---
+_reg("SE", None, "Nyårsdagen", 2024, 1, 1)
+_reg("SE", None, "Trettondedag jul", 2024, 1, 6)
+_reg("SE", None, "Långfredagen", *_mov(-2))
+_reg("SE", None, "Påskdagen", *_mov(0))
+_reg("SE", None, "Annandag påsk", *_mov(1))
+_reg("SE", None, "Första maj", 2024, 5, 1)
+_reg("SE", None, "Kristi himmelsfärdsdag", *_mov(39))
+_reg("SE", None, "Pingstdagen", *_mov(49))
+_reg("SE", None, "Sveriges nationaldag", 2024, 6, 6)
+_reg("SE", None, "Midsommardagen", 2024, 6, 22)   # Sat on/before 26 Jun
+_reg("SE", None, "Alla helgons dag", 2024, 11, 2)  # Sat on/before 6 Nov
+_reg("SE", None, "Juldagen", 2024, 12, 25)
+_reg("SE", None, "Annandag jul", 2024, 12, 26)
+
+# --- DK: helligdage (Danish names); Store bededag abolished from 2024 ---
+_reg("DK", None, "Nytårsdag", 2024, 1, 1)
+_reg("DK", None, "Skærtorsdag", *_mov(-3))
+_reg("DK", None, "Langfredag", *_mov(-2))
+_reg("DK", None, "Påskedag", *_mov(0))
+_reg("DK", None, "Anden påskedag", *_mov(1))
+_reg("DK", None, "Store bededag", 2023, 5, 5)   # 4th Fri after Easter, until 2023
+_reg("DK", None, "Kristi himmelfartsdag", *_mov(39))
+_reg("DK", None, "Pinsedag", *_mov(49))
+_reg("DK", None, "Anden pinsedag", *_mov(50))
+_reg("DK", None, "Juledag", 2024, 12, 25)
+_reg("DK", None, "Anden juledag", 2024, 12, 26)
+
+# --- NO: helligdager (Norwegian names) ---
+_reg("NO", None, "Første nyttårsdag", 2024, 1, 1)
+_reg("NO", None, "Skjærtorsdag", *_mov(-3))
+_reg("NO", None, "Langfredag", *_mov(-2))
+_reg("NO", None, "Første påskedag", *_mov(0))
+_reg("NO", None, "Andre påskedag", *_mov(1))
+_reg("NO", None, "Arbeidernes dag", 2024, 5, 1)
+_reg("NO", None, "Kristi himmelfartsdag", *_mov(39))
+_reg("NO", None, "Grunnlovsdag", 2024, 5, 17)
+_reg("NO", None, "Første pinsedag", *_mov(49))
+_reg("NO", None, "Andre pinsedag", *_mov(50))
+_reg("NO", None, "Første juledag", 2024, 12, 25)
+_reg("NO", None, "Andre juledag", 2024, 12, 26)
+
+# --- FI: official holidays (Finnish / Swedish names) ---
+_reg("FI", None, "Uudenvuodenpäivä / Nyårsdagen", 2024, 1, 1)
+_reg("FI", None, "Loppiainen / Trettondedag jul", 2024, 1, 6)
+_reg("FI", None, "Pitkäperjantai / Långfredagen", *_mov(-2))
+_reg("FI", None, "Pääsiäispäivä / Påskdagen", *_mov(0))
+_reg("FI", None, "Toinen pääsiäispäivä / Annandag påsk", *_mov(1))
+_reg("FI", None, "Vappu / Första maj", 2024, 5, 1)
+_reg("FI", None, "Helatorstai / Kristi himmelsfärdsdag", *_mov(39))
+_reg("FI", None, "Helluntaipäivä / Pingst", *_mov(49))
+_reg("FI", None, "Juhannusaatto / Midsommarafton", 2024, 6, 21)  # Fri on/before 25 Jun
+_reg("FI", None, "Juhannuspäivä / Midsommardagen", 2024, 6, 22)  # Sat on/before 26 Jun
+_reg("FI", None, "Pyhäinpäivä / Alla helgons dag", 2024, 11, 2)  # Sat on/before 6 Nov
+_reg("FI", None, "Itsenäisyyspäivä / Självständighetsdagen", 2024, 12, 6)
+_reg("FI", None, "Jouluaatto / Julafton", 2024, 12, 24)
+_reg("FI", None, "Joulupäivä / Juldagen", 2024, 12, 25)
+_reg("FI", None, "Tapaninpäivä / Annandag jul", 2024, 12, 26)
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in _T2A
+    for (y, m, d) in ymds
+])
+def test_t2a_gold(country, subdiv, name, year, month, day):
+    got = _dateset_for(country, year, subdiv=subdiv)
+    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+        f"{country}/{subdiv}/{name!r} {year}: expected "
+        f"{year}-{month:02d}-{day:02d}, got "
+        f"{sorted(got.get((name, subdiv), set()))}")
 
 
 # ==========================================================================

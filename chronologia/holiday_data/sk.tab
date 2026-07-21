@@ -1,0 +1,29 @@
+# civil-holidays v1
+# jurisdiction: SK
+# source: https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/1993/241/
+#   (Zákon NR SR č. 241/1993 Z. z. o štátnych sviatkoch, dňoch pracovného pokoja
+#   a pamätných dňoch. Local copy papers/holidays/sk_holidays.md.) Names are
+#   official Slovak. The 2023 consolidation package (zákon č. 530/2023 Z. z.,
+#   effective 2024) reduced the days of rest: Deň Ústavy SR (1 September) ceased
+#   to be a work-free day from 2024 (valid -2023 here — it remains a štátny
+#   sviatok but a working day), and Deň boja za slobodu a demokraciu (17 November)
+#   ceased to be a work-free day from 2025 (valid -2024).
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid
+#
+fixed   | Deň vzniku Slovenskej republiky   | 1 1   | public          |  |  |
+fixed   | Zjavenie Pána (Traja králi)       | 1 6   | public religious |  |  |
+easter  | Veľký piatok                      | -2    | public religious |  |  |
+easter  | Veľkonočný pondelok               | 1     | public religious |  |  |
+fixed   | Sviatok práce                     | 5 1   | public          |  |  |
+fixed   | Deň víťazstva nad fašizmom        | 5 8   | public          |  |  |
+fixed   | Sviatok svätého Cyrila a svätého Metoda | 7 5 | public religious |  |  |
+fixed   | Výročie Slovenského národného povstania | 8 29 | public       |  |  |
+fixed   | Deň Ústavy Slovenskej republiky   | 9 1   | public          |  |  | -2023
+fixed   | Sedembolestná Panna Mária         | 9 15  | public religious |  |  |
+fixed   | Sviatok Všetkých svätých          | 11 1  | public religious |  |  |
+fixed   | Deň boja za slobodu a demokraciu  | 11 17 | public          |  |  | -2024
+fixed   | Štedrý deň                        | 12 24 | public religious |  |  |
+fixed   | Prvý sviatok vianočný             | 12 25 | public religious |  |  |
+fixed   | Druhý sviatok vianočný            | 12 26 | public religious |  |  |

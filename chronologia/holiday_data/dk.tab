@@ -1,0 +1,23 @@
+# civil-holidays v1
+# jurisdiction: DK
+# source: https://www.retsinformation.dk/eli/lta/2023/214
+#   (Lov nr. 214 af 28. februar 2023 om afskaffelse af store bededag som helligdag,
+#   plus the traditional helligdage. Local copy papers/holidays/dk_holidays.md.)
+#   Names are official Danish. Store bededag (General Prayer Day, 4th Friday after
+#   Easter, +26) was ABOLISHED as a holiday from 2024 by that Act — modelled with
+#   valid range until 2023.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid
+#
+fixed   | Nytårsdag              | 1 1   | public          |  |  |
+easter  | Skærtorsdag            | -3    | public religious |  |  |
+easter  | Langfredag             | -2    | public religious |  |  |
+easter  | Påskedag               | 0     | public religious |  |  |
+easter  | Anden påskedag         | 1     | public religious |  |  |
+easter  | Store bededag          | 26    | public religious |  |  | -2023
+easter  | Kristi himmelfartsdag  | 39    | public religious |  |  |
+easter  | Pinsedag               | 49    | public religious |  |  |
+easter  | Anden pinsedag         | 50    | public religious |  |  |
+fixed   | Juledag                | 12 25 | public religious |  |  |
+fixed   | Anden juledag          | 12 26 | public religious |  |  |

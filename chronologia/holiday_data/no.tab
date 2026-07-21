@@ -1,0 +1,24 @@
+# civil-holidays v1
+# jurisdiction: NO
+# source: https://lovdata.no/dokument/NL/lov/1947-04-26-1
+#   (Lov om 1 og 17 mai som høgtidsdager + Lov om helligdager og helligdagsfred.
+#   Local copy papers/holidays/no_holidays.md.) Names are official Norwegian
+#   (bokmål). Norway's public holidays are uniform nationwide — its counties
+#   (fylker) carry no distinct statutory holidays, so only the national set is
+#   shipped.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+fixed   | Første nyttårsdag       | 1 1   | public          |  |
+easter  | Skjærtorsdag            | -3    | public religious |  |
+easter  | Langfredag              | -2    | public religious |  |
+easter  | Første påskedag         | 0     | public religious |  |
+easter  | Andre påskedag          | 1     | public religious |  |
+fixed   | Arbeidernes dag         | 5 1   | public          |  |
+easter  | Kristi himmelfartsdag   | 39    | public religious |  |
+fixed   | Grunnlovsdag            | 5 17  | public          |  |
+easter  | Første pinsedag         | 49    | public religious |  |
+easter  | Andre pinsedag          | 50    | public religious |  |
+fixed   | Første juledag          | 12 25 | public religious |  |
+fixed   | Andre juledag           | 12 26 | public religious |  |

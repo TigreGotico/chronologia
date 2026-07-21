@@ -6,29 +6,30 @@ independent reference package and a few subdivision behaviour checks.
 
 chronologia now models gov.uk substitute ("in-lieu") days via the gb_substitute
 policy, so the reference's observed substitutes are matched, not documented away.
-The remaining documented disagreements are all one-off royal/special bank
-holidays the reference lists and chronologia (recurring rules only) does not, plus
-the reference's special relocation of the 2022 Spring Bank Holiday:
+The one-off royal/special bank holidays the reference lists — the 2022 Platinum
+Jubilee (3 Jun), the 2022 State Funeral of Queen Elizabeth II (19 Sep) and the
+2023 Coronation of King Charles III (8 May) — are now modelled as ``one_off``
+rules (gb.tab, each with its gov.uk citation), so they agree with the reference
+in their year and are silent otherwise. The only remaining documented
+disagreement is the reference's special *relocation* of the 2022 Spring Bank
+Holiday:
 
 * 2022 our-only 30 May: our Spring Bank Holiday sits on its recurring last-Monday-
   of-May date; the reference moved it to 2 Jun 2022 for the Platinum Jubilee.
-* 2022 ref-only 2 Jun: that specially-relocated Spring Bank Holiday.
-* 2022 ref-only 3 Jun: the one-off Platinum Jubilee bank holiday (2022 only).
-* 2022 ref-only 19 Sep: the one-off State Funeral of Queen Elizabeth II (2022).
-* 2023 ref-only 8 May: the one-off bank holiday for the Coronation of King
-  Charles III (2023 only) — not a recurring rule.
+* 2022 ref-only 2 Jun: that specially-relocated Spring Bank Holiday. We keep the
+  recurring rule rather than model a one-year relocation of an existing holiday;
+  the added one-off Jubilee day is the documented extra day.
 
 The 2021 Christmas/Boxing substitute cascade (Sat 25 Dec -> Mon 27, Sun 26 Dec ->
-Tue 28) and the 2023 New Year substitute (Sun 1 Jan -> Mon 2 Jan) now agree with
-the reference exactly; 2021 has no disagreements at all.
+Tue 28) and the 2023 New Year substitute (Sun 1 Jan -> Mon 2 Jan) agree with the
+reference exactly; 2021, 2023, 2024 and 2025 have no disagreements at all.
 """
 from chronologia import AstroDate, holidays_for
 from holiday_testkit import assert_national_differential
 
 _J = "GB"
 _DISAGREEMENTS = {
-    2022: {"our_only": {(5, 30)}, "ref_only": {(6, 2), (6, 3), (9, 19)}},
-    2023: {"ref_only": {(5, 8)}},
+    2022: {"our_only": {(5, 30)}, "ref_only": {(6, 2)}},
 }
 
 
@@ -59,6 +60,19 @@ def test_scotland_has_st_andrews_but_england_does_not():
 def test_northern_ireland_battle_of_the_boyne_july_12():
     nir = holidays_for(_J, 2024, subdiv="GB-NIR")
     assert AstroDate(2024, 7, 12) in {h.date for h in nir if h.subdiv == "GB-NIR"}
+
+
+def test_one_off_bank_holidays_resolve_only_in_their_year():
+    # The Coronation bank holiday exists in 2023 and in no adjacent year.
+    y2023 = {(h.date.month, h.date.day): h.name for h in holidays_for(_J, 2023)}
+    assert y2023[(5, 8)] == "Coronation of King Charles III"
+    for other in (2022, 2024):
+        names = {h.name for h in holidays_for(_J, other)}
+        assert "Coronation of King Charles III" not in names
+    # The 2022 one-offs land in 2022 only.
+    y2022 = {(h.date.month, h.date.day): h.name for h in holidays_for(_J, 2022)}
+    assert y2022[(6, 3)] == "Platinum Jubilee bank holiday"
+    assert y2022[(9, 19)] == "State Funeral of Queen Elizabeth II"
 
 
 def test_scotland_summer_bank_holiday_precedes_england():
