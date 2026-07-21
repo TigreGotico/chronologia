@@ -1,0 +1,151 @@
+{
+  "tokenizer": {
+    "split_contractions": false,
+    "ordinal_dot": false
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "NUM UNIT MARKER",
+        "MARKER NUM UNIT",
+        "MARKER indef? NUM UNIT",
+        "indef? NUM UNIT MARKER",
+        "MARKER QUANT UNIT",
+        "QUANT UNIT MARKER",
+        "before QUANT UNIT MARKER"
+      ]
+    },
+    "named_day": {
+      "orders": [
+        "DAY_WORD"
+      ]
+    },
+    "weekday_ref": {
+      "orders": [
+        "REL_MARKER WEEKDAY"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "DAY MONTH YEAR?",
+        "DAY of MONTH YEAR?",
+        "MONTH DAY? YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "season_ref": {
+      "orders": [
+        "REL_MARKER SEASON",
+        "SEASON of YEAR",
+        "SEASON YEAR?"
+      ]
+    },
+    "scoped_ordinal": {
+      "orders": [
+        "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
+        "article? ORD UNIT of MONTH YEAR?",
+        "article? ORD UNIT of article? year_word YEAR?",
+        "article? ORD SCOPE_UNIT"
+      ]
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK MERIDIEM?",
+        "at HOUR MERIDIEM?",
+        "HOUR oclock MERIDIEM?",
+        "FRACTION CLOCKDIR HOUR MERIDIEM?",
+        "FRACTION HOUR MERIDIEM?",
+        "MINUTE CLOCKDIR HOUR MERIDIEM?",
+        "MINUTE CLOCKDIR LANDMARK",
+        "at? LANDMARK",
+        "FRACTION CLOCKDIR LANDMARK",
+        "FRACTION LANDMARK"
+      ],
+      "prefer_future": true
+    },
+    "military_time": {
+      "orders": [
+        "MILTIME hours",
+        "MILTIMEZ"
+      ],
+      "prefer_future": true
+    },
+    "era_bc": {
+      "orders": [
+        "NUM bc"
+      ]
+    },
+    "era_ad": {
+      "orders": [
+        "NUM ad",
+        "ad NUM"
+      ]
+    },
+    "era_bp": {
+      "orders": [
+        "NUM bp"
+      ]
+    },
+    "deep_time": {
+      "orders": [
+        "NUM SCALE year_word ago",
+        "ago NUM SCALE year_word"
+      ]
+    },
+    "named_period": {
+      "orders": [
+        "in? during? article? PART? PERIOD"
+      ]
+    },
+    "iso_date": {
+      "orders": [
+        "ISO"
+      ]
+    },
+    "year_ref": {
+      "orders": [
+        "in year_word GYEAR",
+        "in GYEAR",
+        "article? year_word GYEAR",
+        "GYEAR",
+        "article? year_word NUM SCALE"
+      ]
+    },
+    "month_fuzzy": {
+      "orders": [
+        "PART MONTH"
+      ]
+    },
+    "month_day_ref": {
+      "orders": [
+        "article? ORD of article? month_word"
+      ],
+      "prefer_future": true
+    },
+    "half_period": {
+      "orders": [
+        "article? NUM half of GYEAR",
+        "article? NUM half of article? SCOPE_UNIT"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": true,
+    "hemisphere": "north",
+    "prefer_future": true,
+    "bare_half_to": true
+  },
+  "quantifiers": {
+    "1": [
+      "een"
+    ],
+    "0.5": [
+      "half"
+    ]
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "hook": "chronologia.extract.numfold:fold_nl"
+}

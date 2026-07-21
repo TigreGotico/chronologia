@@ -1,0 +1,26 @@
+"""nb: BC/AD (multi-word era vocabulary), deep time, named periods."""
+import pytest
+
+from ._corpus import start, span, nomatch, AstroDate
+
+
+@pytest.mark.parametrize("text,astro_year", [('44 før kristus', -43), ('44 f.kr.', -43), ('753 før kristus', -752), ('1 før kristus', 0), ('100 før kristus', -99)])
+def test_bc(text, astro_year):
+    assert start(text).year == astro_year
+
+
+@pytest.mark.parametrize("text,y", [('2024 etter kristus', 2024), ('2024 e.kr.', 2024), ('1 etter kristus', 1), ('476 etter kristus', 476)])
+def test_ad(text, y):
+    assert start(text) == AstroDate(y, 1, 1)
+
+
+@pytest.mark.parametrize("text,approx_year", [('for 66 millioner år siden', -65998050), ('for 2 millioner år siden', -1998050), ('for 3 milliarder år siden', -2999998050), ('for 250 millioner år siden', -249998050)])
+def test_deep_time(text, approx_year):
+    assert start(text).year == approx_year
+    assert span(text).start_datetime is None
+
+
+@pytest.mark.parametrize("text", ['jura', 'kritt', 'trias', 'devon', 'perm', 'paleozoikum', 'mesozoikum', 'holocen', 'pleistocen', 'kambrium', 'bronsealderen', 'jernalderen', 'under jura', 'under kritt'])
+def test_named_period(text):
+    s = span(text)
+    assert s.end.year > s.start.year

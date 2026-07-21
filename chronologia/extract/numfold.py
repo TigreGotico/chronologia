@@ -299,3 +299,163 @@ fold_pt = _make_romance_fold("pt", {"segunda", "quarta", "quinta", "sexta",
 fold_es = _make_romance_fold("es", set())
 fold_gl = _make_romance_fold("gl", set())
 fold_ca = _make_romance_fold("ca", set())
+
+
+
+# ---------------------------------------------------------------------------
+# Continental / North Germanic spelled-number folding
+#
+# The Germanic languages build numbers as single compound words
+# ("einundzwanzig" 21, "vijfentwintig" 25), so a spelled number is usually a
+# *single* token rather than English's multi-word run.  ovos-number-parser
+# resolves those compounds; the fold owns only which tokens are numbers.
+#
+# Two surfaces must survive the fold: clock fractions ("halb"/"viertel",
+# "halv"/"kvart" -- their own FRACTION slot) and scale words
+# ("million"/"milliard" -- the deep-time SCALE slot).  They are excluded by
+# an explicit stop-set per language.
+# ---------------------------------------------------------------------------
+
+def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None):
+    """Build a ``tuple[Token] -> tuple[Token]`` fold for a Germanic language.
+
+    ``extract_fn`` is the language's ``ovos_number_parser`` extractor; the
+    German-family extractors return ordinals only under ``ordinals=True`` and
+    cardinals only under the default, so both are tried.  ``stop_words`` are
+    surfaces that resolve as numbers but must stay their own token (clock
+    fractions and scale words).
+    """
+    stop = frozenset(stop_words)
+    suffixes = frozenset(ord_suffixes)
+    wmap = dict(word_map or {})
+
+    def value_of(text):
+        v = extract_fn(text, ordinals=True)
+        if v is False or v is None:
+            v = extract_fn(text)
+        return v
+
+    def is_numword(tok):
+        if tok.is_number:
+            return True
+        if tok.text in stop:
+            return False
+        v = value_of(tok.text)
+        return v is not None and v is not False
+
+    def fold(tokens):
+        # pass -1: rewrite fixed word->value surfaces to digit tokens.  Used
+        # for the Frisian inflected "coming-hour" forms ("fiven" -> 5,
+        # "fjouweren" -> 4) that the number parser does not recognise but the
+        # clock look-ahead ("healwei fiven" == 04:30) needs as a bare HOUR.
+        if wmap:
+            tokens = tuple(
+                replace(t, text=str(wmap[t.text]), raw=t.raw,
+                        is_number=True, value=wmap[t.text])
+                if (not t.is_number and t.text in wmap) else t
+                for t in tokens)
+
+        # pass 0: merge a digit followed by a lone alphabetic ordinal suffix
+        # ("21 e" -> 21, Dutch "21e"; "3 de" -> 3).  Digit-dot ordinals are
+        # handled by the tokenizer (ordinal_dot); this covers the alpha form.
+        if suffixes:
+            merged = []
+            i = 0
+            while i < len(tokens):
+                t = tokens[i]
+                nxt = tokens[i + 1] if i + 1 < len(tokens) else None
+                if (t.is_number and nxt is not None and not nxt.is_number
+                        and nxt.text in suffixes):
+                    merged.append(replace(t, raw=t.raw + nxt.raw))
+                    i += 2
+                    continue
+                merged.append(t)
+                i += 1
+            tokens = tuple(merged)
+
+        out = []
+        i = 0
+        n = len(tokens)
+        while i < n:
+            if not is_numword(tokens[i]):
+                out.append(tokens[i])
+                i += 1
+                continue
+            j = i
+            run = []
+            while j < n and is_numword(tokens[j]):
+                run.append(tokens[j])
+                j += 1
+            spelled = [t for t in run if not t.is_number]
+            if not spelled:
+                out.extend(run)
+                i = j
+                continue
+            text = " ".join(t.text for t in run)
+            value = value_of(text)
+            if value is None or value is False:
+                out.extend(run)
+                i = j
+                continue
+            num = int(value) if float(value).is_integer() else float(value)
+            out.append(Token(text=str(num), raw=str(num), index=0,
+                             is_number=True, value=num))
+            i = j
+        return _reindex(out)
+
+    return fold
+
+
+def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),
+                        word_map=None):
+    """Defer the ``ovos_number_parser`` import to first call (keeps locale
+    load cheap and import-order-independent)."""
+    holder = {}
+
+    def fold(tokens):
+        f = holder.get("f")
+        if f is None:
+            import importlib
+            extract_fn = getattr(importlib.import_module(module_name), fn_name)
+            f = holder["f"] = _make_germanic_fold(extract_fn, stop_words,
+                                                  ord_suffixes, word_map)
+        return f(tokens)
+
+    return fold
+
+
+#: Frisian inflected "coming-hour" forms (the genitive hour used after
+#: healwei/kertier/oer/foar), mapped to their hour value.
+_FY_HOURS = {"ienen": 1, "twaen": 2, "trijen": 3, "fjouweren": 4, "fiven": 5,
+             "seizen": 6, "sânen": 7, "achten": 8, "njoggenen": 9,
+             "tsienen": 10, "alven": 11, "tolven": 12}
+
+
+# Per-language stop-sets: clock fractions + scale words that must not fold.
+fold_de = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_de", "extract_number_de",
+    {"halb", "viertel", "dreiviertel", "million", "millionen",
+     "milliarde", "milliarden", "tausend"})
+fold_nl = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_nl", "extract_number_nl",
+    {"half", "kwart", "miljoen", "miljard", "duizend"},
+    ord_suffixes={"e", "de", "ste", "te"})
+fold_sv = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_sv", "extract_number_sv",
+    {"halv", "kvart", "miljon", "miljoner", "miljard", "miljarder", "tusen"})
+fold_da = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_da", "extract_number_da",
+    {"halv", "halvdel", "halvdelen", "kvart", "million", "millioner",
+     "milliard", "milliarder", "tusind"})
+fold_nb = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_nb", "extract_number_nb",
+    {"halv", "halvdel", "halvdelen", "kvart", "million", "millioner",
+     "milliard", "milliarder", "tusen"})
+fold_nn = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_nn", "extract_number_nn",
+    {"halv", "halvdel", "halvdelen", "kvart", "million", "millionar",
+     "milliard", "milliardar", "tusen"})
+fold_fy = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_fy", "extract_number_fy",
+    {"heal", "healwei", "kertier", "miljoen", "miljard", "tûzen"},
+    ord_suffixes={"e", "de", "te"}, word_map=_FY_HOURS)

@@ -110,8 +110,17 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.is_number and (token.value or 0) >= 1
     if name in ("SUBH", "SUBM", "SUBS"):
         return token.is_number and (token.value or 0) >= 0
-    if name in ("SCOPE_UNIT", "SEL_UNIT"):
+    if name == "SEL_UNIT":
         return token.text in spec.scope_units or token.text in spec.units
+    if name == "SCOPE_UNIT":
+        # the outer scope of an ordinal ("the third CENTURY") is never a
+        # sub-day unit -- excluding hour/minute keeps "15 uur"/"15 uhr" a
+        # clock, not a spurious "15th hour" scoped ordinal (matters where a
+        # unit word doubles as the o'clock word, e.g. Dutch "uur").
+        if token.text in spec.scope_units:
+            return True
+        kind = spec.units.get(token.text)
+        return kind is not None and kind not in ("hour", "minute", "second")
     # -- day-cycle / regnal / roman slots ----------------------------------
     if name == "CYCLE_DAY":
         return token.text in spec.cycle_positions
@@ -133,6 +142,28 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
     return False
 
 
+def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
+                    spec: LangSpec) -> int:
+    """Longest run of tokens from ``ti`` matching a connector surface.
+
+    A connector surface may be **multi-word** ("vor christus", "v. chr.",
+    "before the present"): it is compared word-for-word against the token
+    stream, punctuation-split the same way the tokenizer splits it (dots
+    dropped).  Returns the number of tokens consumed (0 if none matched).
+    """
+    surfaces = spec.connectors.get(name)
+    if not surfaces or ti >= len(tokens):
+        return 0
+    best = 0
+    for surf in surfaces:
+        words = surf.lower().replace(".", " ").split()
+        n = len(words)
+        if n and ti + n <= len(tokens) and all(
+                tokens[ti + k].text == words[k] for k in range(n)):
+            best = max(best, n)
+    return best
+
+
 def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
           ei: int, ti: int, spec: LangSpec,
           slots: Dict[str, Token]) -> List[Tuple[int, Dict[str, Token]]]:
@@ -140,11 +171,16 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
         return [(ti, dict(slots))]
     el = elements[ei]
     results: List[Tuple[int, Dict[str, Token]]] = []
-    if ti < len(tokens) and _bind(el, tokens[ti], spec):
-        bound = dict(slots)
-        if el.is_slot:
+    if el.is_slot:
+        if ti < len(tokens) and _bind(el, tokens[ti], spec):
+            bound = dict(slots)
             bound[el.name] = tokens[ti]
-        results += _walk(elements, tokens, ei + 1, ti + 1, spec, bound)
+            results += _walk(elements, tokens, ei + 1, ti + 1, spec, bound)
+    else:
+        consumed = _connector_span(el.name, tokens, ti, spec)
+        if consumed:
+            results += _walk(elements, tokens, ei + 1, ti + consumed, spec,
+                             slots)
     if el.optional:
         results += _walk(elements, tokens, ei + 1, ti, spec, slots)
     return results

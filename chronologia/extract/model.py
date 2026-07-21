@@ -71,6 +71,12 @@ class Conventions:
     dmy: bool = True
     hemisphere: Optional[str] = None
     prefer_future: bool = True
+    # Continental-Germanic clock convention: a bare half-fraction names the
+    # half *before* the stated hour ("halb neun" == 08:30, "half negen",
+    # "halv nio"), the opposite of English "half nine" == 09:30.  A fact,
+    # not logic -- the resolver reads it when a FRACTION binds with no
+    # explicit CLOCKDIR.
+    bare_half_to: bool = False
 
 
 @dataclass(frozen=True)
