@@ -85,6 +85,9 @@ class EraCounting:
     DAYS_SINCE = "days_since"        # day count from a fixed origin (Julian day)
     SECONDS_SINCE = "seconds_since"  # second count from a fixed origin (unix)
 
+    def __repr__(self) -> str:
+        return "EraCounting()"       # a constants namespace; carries no state
+
 
 @dataclass(frozen=True)
 class Era:

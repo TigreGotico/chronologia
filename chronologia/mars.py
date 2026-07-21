@@ -342,6 +342,9 @@ class DarianCalendar:
     a :class:`DarianDate`.  Objects in, objects out.
     """
 
+    def __repr__(self) -> str:
+        return "DarianCalendar()"    # a stateless operator (see ``darian``)
+
     def date(self, year: int, month: int, sol: int) -> MarsDate:
         """The :class:`MarsDate` (MTC 00:00:00) of a Darian ``(year, month, sol)``."""
         return DarianDate(year, month, sol).to_mars()
