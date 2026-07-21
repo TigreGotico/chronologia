@@ -10,26 +10,30 @@
 #   no Hi) are gazetted each February from the astronomical equinox reckoned in
 #   Japan Standard Time (UTC+9); the equinox rule kind reproduces the Cabinet
 #   Office's published dates, and the golds assert those published dates.
-#   OUT OF SCOPE: the 振替休日 (furikae) substitute-holiday days. When a holiday
-#   falls on a Sunday the following non-holiday day becomes a day off; those
-#   substitute days are per-calendar administrative arrangements (expressible via
-#   the sun_mon observed policy, demonstrated in the tests) and, like China's
-#   调休 make-up days, are not listed here — we list the statutory holidays on
-#   their legal dates.
+#   振替休日 (furikae): when a national holiday falls on a Sunday, the following
+#   non-holiday day becomes a holiday (Act on National Holidays, art. 3(2)). This
+#   is modelled with the jp_furikae SubstitutePolicy — it ADDS a "<name> (振替休日)"
+#   holiday on the next non-holiday day, resolved calendar-wide so a run of
+#   holidays cascades correctly. Applied to the fixed and equinox holidays (the
+#   Happy-Monday nth-weekday days are always a Monday and can never fall on a
+#   Sunday). China's 调休 make-up days stay OUT OF SCOPE by contrast: they shuffle
+#   ordinary workdays onto weekends rather than granting substitute holidays, so
+#   they are not holidays at all — see cn.tab and test_civil_holidays_w1b.py.
+#   Mountain Day is in force from 2016 (2014 amendment); its rule carries "2016-".
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
 # --- fixed ---
-fixed       | New Year's Day             | 1 1   | public |  |
-fixed       | National Foundation Day    | 2 11  | public |  |
-fixed       | Emperor's Birthday         | 2 23  | public |  |
-fixed       | Showa Day                  | 4 29  | public |  |
-fixed       | Constitution Memorial Day  | 5 3   | public |  |
-fixed       | Greenery Day               | 5 4   | public |  |
-fixed       | Children's Day             | 5 5   | public |  |
-fixed       | Mountain Day               | 8 11  | public |  |
-fixed       | Culture Day                | 11 3  | public |  |
-fixed       | Labour Thanksgiving Day    | 11 23 | public |  |
+fixed       | New Year's Day             | 1 1   | public |  | jp_furikae
+fixed       | National Foundation Day    | 2 11  | public |  | jp_furikae
+fixed       | Emperor's Birthday         | 2 23  | public |  | jp_furikae
+fixed       | Showa Day                  | 4 29  | public |  | jp_furikae
+fixed       | Constitution Memorial Day  | 5 3   | public |  | jp_furikae
+fixed       | Greenery Day               | 5 4   | public |  | jp_furikae
+fixed       | Children's Day             | 5 5   | public |  | jp_furikae
+fixed       | Mountain Day               | 8 11  | public |  | jp_furikae| 2016-
+fixed       | Culture Day                | 11 3  | public |  | jp_furikae
+fixed       | Labour Thanksgiving Day    | 11 23 | public |  | jp_furikae
 #
 # --- Happy-Monday nth-weekday ---
 nth_weekday | Coming of Age Day          | 1 2 0  | public |  |
@@ -38,5 +42,5 @@ nth_weekday | Respect for the Aged Day   | 9 3 0  | public |  |
 nth_weekday | Sports Day                 | 10 2 0 | public |  |
 #
 # --- equinox holidays (JST = UTC+9) ---
-equinox     | Vernal Equinox Day         | march 9     | public |  |
-equinox     | Autumnal Equinox Day       | september 9 | public |  |
+equinox     | Vernal Equinox Day         | march 9     | public |  | jp_furikae
+equinox     | Autumnal Equinox Day       | september 9 | public |  | jp_furikae

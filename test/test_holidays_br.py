@@ -5,24 +5,29 @@ Per-holiday gold dates for BR live in the shared HOLIDAY_GOLDS registry
 statutory feriados — carried as "religious"-only (never "public"), so the
 national public differential excludes them.
 
-Documented national differential disagreement (vacanza/holidays), adjudicated in
-the reference's favour:
-
-* 2023 our-only 20 Nov: Dia da Consciência Negra became a NATIONAL holiday only
-  from 2024 (Lei 14.759/2023). chronologia's FixedRule cannot year-gate, so it
-  over-emits the 2023 occurrence.
+National differential (vacanza/holidays) is clean for 2023-2025: Dia da
+Consciência Negra became a NATIONAL holiday only from 2024 (Lei 14.759/2023), and
+its rule now carries a "2024-" validity range, so chronologia no longer emits the
+2023 occurrence and there is nothing to document as a disagreement.
 """
-from chronologia import holidays_for
+from chronologia import AstroDate, holidays_for
 from holiday_testkit import assert_national_differential
 
 _J = "BR"
-_DISAGREEMENTS = {
-    2023: {"our_only": {(11, 20)}},
-}
+_DISAGREEMENTS: dict = {}
 
 
 def test_national_differential_2023_2025():
     assert_national_differential(_J, (2023, 2024, 2025), _DISAGREEMENTS)
+
+
+def test_consciencia_negra_year_gated_national_from_2024():
+    """Lei 14.759/2023: national only from 2024 — absent 2023, present 2024."""
+    name = "Dia Nacional de Zumbi e da Consciência Negra"
+    dates_2023 = {h.name: h.date for h in holidays_for(_J, 2023)}
+    dates_2024 = {h.name: h.date for h in holidays_for(_J, 2024)}
+    assert name not in dates_2023
+    assert dates_2024[name] == AstroDate(2024, 11, 20)
 
 
 def test_carnaval_and_corpus_are_facultative_not_public():

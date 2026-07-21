@@ -4,26 +4,50 @@ Per-holiday gold dates for GB live in the shared HOLIDAY_GOLDS registry
 (test_holiday_golds.py); this module owns the national differential against the
 independent reference package and a few subdivision behaviour checks.
 
-Documented national differential disagreements (vacanza/holidays), all
-adjudicated in the reference's favour — chronologia deliberately omits substitute
-("in lieu") days and one-off royal bank holidays:
+chronologia now models gov.uk substitute ("in-lieu") days via the gb_substitute
+policy, so the reference's observed substitutes are matched, not documented away.
+The remaining documented disagreements are all one-off royal/special bank
+holidays the reference lists and chronologia (recurring rules only) does not, plus
+the reference's special relocation of the 2022 Spring Bank Holiday:
 
-* 2023 ref-only 2 Jan: substitute Monday for New Year's Day (1 Jan 2023 was a
-  Sunday). chronologia carries statutory nominal dates only.
+* 2022 our-only 30 May: our Spring Bank Holiday sits on its recurring last-Monday-
+  of-May date; the reference moved it to 2 Jun 2022 for the Platinum Jubilee.
+* 2022 ref-only 2 Jun: that specially-relocated Spring Bank Holiday.
+* 2022 ref-only 3 Jun: the one-off Platinum Jubilee bank holiday (2022 only).
+* 2022 ref-only 19 Sep: the one-off State Funeral of Queen Elizabeth II (2022).
 * 2023 ref-only 8 May: the one-off bank holiday for the Coronation of King
   Charles III (2023 only) — not a recurring rule.
+
+The 2021 Christmas/Boxing substitute cascade (Sat 25 Dec -> Mon 27, Sun 26 Dec ->
+Tue 28) and the 2023 New Year substitute (Sun 1 Jan -> Mon 2 Jan) now agree with
+the reference exactly; 2021 has no disagreements at all.
 """
 from chronologia import AstroDate, holidays_for
 from holiday_testkit import assert_national_differential
 
 _J = "GB"
 _DISAGREEMENTS = {
-    2023: {"ref_only": {(1, 2), (5, 8)}},
+    2022: {"our_only": {(5, 30)}, "ref_only": {(6, 2), (6, 3), (9, 19)}},
+    2023: {"ref_only": {(5, 8)}},
 }
 
 
-def test_national_differential_2023_2025():
-    assert_national_differential(_J, (2023, 2024, 2025), _DISAGREEMENTS)
+def test_national_differential_2021_2025():
+    assert_national_differential(_J, (2021, 2022, 2023, 2024, 2025), _DISAGREEMENTS)
+
+
+def test_christmas_boxing_substitute_cascade_2021():
+    # Christmas Sat 25 Dec -> substitute Mon 27; Boxing Sun 26 Dec -> Tue 28.
+    dates = {(h.date.month, h.date.day): h.name for h in holidays_for(_J, 2021)}
+    assert dates[(12, 27)] == "Christmas Day (substitute day)"
+    assert dates[(12, 28)] == "Boxing Day (substitute day)"
+    # The nominal weekend dates are kept too.
+    assert (12, 25) in dates and (12, 26) in dates
+
+
+def test_new_year_substitute_2023():
+    dates = {(h.date.month, h.date.day): h.name for h in holidays_for(_J, 2023)}
+    assert dates[(1, 2)] == "New Year's Day (substitute day)"
 
 
 def test_scotland_has_st_andrews_but_england_does_not():

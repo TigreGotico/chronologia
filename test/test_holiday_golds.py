@@ -123,6 +123,10 @@ for _name, (_m, _d) in _US_2024.items():
 # Monday Dec 26).
 _reg("US", None, "Independence Day", 2021, 7, 5)
 _reg("US", None, "Christmas Day", 2022, 12, 26)
+# Juneteenth is federal only from 2021 (us.tab "2021-"); 19 Jun 2021 was a
+# Saturday (observed Fri 18th), 19 Jun 2022 a Sunday (observed Mon 20th).
+_reg("US", None, "Juneteenth National Independence Day", 2021, 6, 18)
+_reg("US", None, "Juneteenth National Independence Day", 2022, 6, 20)
 
 
 @pytest.mark.parametrize("name,year,month,day", [
@@ -132,6 +136,15 @@ _reg("US", None, "Christmas Day", 2022, 12, 26)
 def test_us_gold(name, year, month, day):
     got = _dates_for("US", year)
     assert got[(name, None)] == AstroDate(year, month, day)
+
+
+def test_us_juneteenth_year_gated_federal_from_2021():
+    """Juneteenth National Independence Day Act signed 17 Jun 2021 — the federal
+    holiday is absent in 2020 and present from 2021 (us.tab "2021-" range)."""
+    name = "Juneteenth National Independence Day"
+    assert name not in _dates_for("US", 2020)
+    assert _dates_for("US", 2021)[(name, None)] == AstroDate(2021, 6, 18)  # Sat->Fri
+    assert _dates_for("US", 2022)[(name, None)] == AstroDate(2022, 6, 20)  # Sun->Mon
 
 
 # ==========================================================================
@@ -529,6 +542,14 @@ _reg("GB", "GB-NIR", "St Patrick's Day", 2024, 3, 17)
 _reg("GB", "GB-NIR", "Easter Monday", *_mov(1))
 _reg("GB", "GB-NIR", "Battle of the Boyne", 2024, 7, 12)
 _reg("GB", "GB-NIR", "Summer Bank Holiday", 2024, 8, 26)  # last Monday of Aug
+# gov.uk substitute ("in-lieu") days (gb_substitute policy). The Christmas/Boxing
+# cascade of 2021 and the New Year substitutes are the flagship golds; names carry
+# the " (substitute day)" suffix the policy appends.
+_reg("GB", None, "Christmas Day (substitute day)", 2021, 12, 27)
+_reg("GB", None, "Boxing Day (substitute day)", 2021, 12, 28)
+_reg("GB", None, "Christmas Day (substitute day)", 2022, 12, 27)
+_reg("GB", None, "New Year's Day (substitute day)", 2022, 1, 3)
+_reg("GB", None, "New Year's Day (substitute day)", 2023, 1, 2)
 
 # --- DE: national nine + all 16 Länder (source: Land Feiertagsgesetze) ---
 _reg("DE", None, "Neujahr", 2024, 1, 1)
@@ -582,8 +603,14 @@ _reg("ES", None, "Asunción de la Virgen", 2024, 8, 15)
 _reg("ES", None, "Fiesta Nacional de España", 2024, 10, 12)
 _reg("ES", None, "Todos los Santos", 2024, 11, 1)
 _reg("ES", None, "Día de la Constitución Española", 2024, 12, 6)
-_reg("ES", None, "Inmaculada Concepción", 2024, 12, 8)
+_reg("ES", None, "Inmaculada Concepción", 2024, 12, 9)  # Sun 8 Dec -> Mon 9 (sun_mon)
 _reg("ES", None, "Natividad del Señor", 2024, 12, 25)
+# National Sunday traslado outcomes, each verified against the cited BOE
+# "relación de fiestas laborales" resolution for that year (see es.tab header).
+_reg("ES", None, "Año Nuevo", 2023, 1, 2)                     # BOE-A-2022-16755
+_reg("ES", None, "Fiesta Nacional de España", 2025, 10, 13)  # BOE-A-2024-21316
+_reg("ES", None, "Todos los Santos", 2026, 11, 2)            # BOE-A-2025-21667
+_reg("ES", None, "Día de la Constitución Española", 2026, 12, 7)  # BOE-A-2025-21667
 
 # --- BR: national feriados + facultative Carnaval/Corpus (source: Planalto) ---
 _reg("BR", None, "Confraternização Universal", 2024, 1, 1)
@@ -630,6 +657,105 @@ _reg("CA", "CA-MB", "National Day for Truth and Reconciliation", 2024, 9, 30)
 _reg("CA", "CA-MB", "Thanksgiving Day", 2024, 10, 14)
 _reg("CA", "CA-NS", "Heritage Day", 2024, 2, 19)
 _reg("CA", "CA-NS", "Remembrance Day", 2024, 11, 11)
+
+
+# ==========================================================================
+# ES autonomous-community layer -- golds parsed from the four cited BOE tables
+# (source-vs-engine, the same discipline as PT municipal): the expected dates
+# come from the BOE HTML, not from es.tab's own args.
+# ==========================================================================
+_ES_CODES = ["ES-AN", "ES-AR", "ES-AS", "ES-IB", "ES-CN", "ES-CB", "ES-CM",
+             "ES-CL", "ES-CT", "ES-EX", "ES-GA", "ES-MD", "ES-MC", "ES-NC",
+             "ES-PV", "ES-RI", "ES-VC", "ES-CE", "ES-ML"]
+_ES_MONTHS = {m.lower(): i for i, m in enumerate(
+    ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto",
+     "Septiembre", "Octubre", "Noviembre", "Diciembre"], 1)}
+_ES_BOE = {2023: "es_boe_BOE-A-2022-16755.html",
+           2024: "es_boe_BOE-A-2023-22014.html",
+           2025: "es_boe_BOE-A-2024-21316.html",
+           2026: "es_boe_BOE-A-2025-21667.html"}
+
+
+def _es_canon(n):
+    """Map a BOE row name to the es.tab regional rule name; None = drop (a
+    nationwide holiday or a national-holiday Sunday traslado, handled elsewhere)."""
+    if n.startswith("Lunes siguiente") or n.startswith("Día siguiente"):
+        if "Asturias" in n:
+            return "Día de Asturias"
+        if "Illes Balears" in n:
+            return "Día de les Illes Balears"
+        if "Rioja" in n:
+            return "Día de La Rioja"
+        if "San Jorge" in n:
+            return "San Jorge/Día de Aragón"
+        if "San José" in n:
+            return "San José"
+        return None
+    if "Rioja" in n:
+        return "Día de La Rioja"
+    if "Sacrificio" in n or "Adha" in n:
+        return "Fiesta del Sacrificio (Aid al-Adha)"
+    if "Eid Fitr" in n or "Eid al-Fitr" in n:
+        return "Fiesta del Aid al-Fitr"
+    if n.startswith("Corpus") or n.startswith("Fiesta del Corpus"):
+        return "Corpus Christi"
+    return n
+
+
+def _es_regional_source_golds():
+    """Parse the four BOE tables into {(subdiv, name, year): (month, day)} for the
+    community-specific holidays (markers ** / *** that are not nationwide)."""
+    out = {}
+    for year, fn in _ES_BOE.items():
+        path = os.path.join(_PAPERS, fn)
+        html_text = open(path, encoding="utf-8").read()
+        m = re.search(r'<table class="tabla_girada_condensada">(.*?)</table>',
+                      html_text, re.S)
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", m.group(1), re.S)
+        curm = None
+        for r in rows:
+            cells = [re.sub(r"<[^>]+>", "", c).strip()
+                     for c in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", r, re.S)]
+            import html as _h
+            cells = [_h.unescape(c) for c in cells]
+            if not cells:
+                continue
+            if cells[0].lower() in _ES_MONTHS:
+                curm = _ES_MONTHS[cells[0].lower()]
+                continue
+            mm = re.match(r"(\d+)\s+(.*)", cells[0])
+            if not mm or curm is None:
+                continue
+            day = int(mm.group(1))
+            name = mm.group(2).rstrip(".").strip()
+            marks = {_ES_CODES[i]: v for i, v in enumerate(cells[1:])
+                     if i < 19 and v in ("*", "**", "***")}
+            if len(marks) == 19:  # nationwide -> not a regional extra
+                continue
+            base = _es_canon(name)
+            if base is None:
+                continue
+            for sub in marks:
+                out[(sub, base, year)] = (curm, day)
+    return out
+
+
+_ES_REGIONAL_SOURCE = _es_regional_source_golds()
+for (_sub, _name, _yr), (_m, _d) in _ES_REGIONAL_SOURCE.items():
+    _reg("ES", _sub, _name, _yr, _m, _d)
+
+
+@pytest.mark.parametrize("subdiv,name,year,month,day", sorted(
+    (s, n, y, m, d) for (s, n, y), (m, d) in _ES_REGIONAL_SOURCE.items()))
+def test_es_regional_gold_matches_boe_source(subdiv, name, year, month, day):
+    """Source-vs-engine: the BOE-table date must equal the engine's decree
+    resolution for that community and year."""
+    got = _dates_for("ES", year, subdiv=subdiv)
+    assert got[(name, subdiv)] == AstroDate(year, month, day)
+
+
+def test_es_regional_covers_all_communities():
+    assert {s for (s, _n, _y) in _ES_REGIONAL_SOURCE} == set(_ES_CODES)
 
 
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
@@ -756,6 +882,13 @@ _reg("JP", None, "Vernal Equinox Day", 2024, 3, 20)     # Cabinet Office publish
 _reg("JP", None, "Vernal Equinox Day", 2025, 3, 20)
 _reg("JP", None, "Autumnal Equinox Day", 2024, 9, 22)   # Cabinet Office published
 _reg("JP", None, "Autumnal Equinox Day", 2025, 9, 23)
+# 振替休日 furikae substitutes (jp_furikae policy): a Sunday holiday grants the
+# following non-holiday day. 2024 Cabinet Office substitute days.
+_reg("JP", None, "National Foundation Day (振替休日)", 2024, 2, 12)
+_reg("JP", None, "Children's Day (振替休日)", 2024, 5, 6)
+_reg("JP", None, "Mountain Day (振替休日)", 2024, 8, 12)
+_reg("JP", None, "Autumnal Equinox Day (振替休日)", 2024, 9, 23)
+_reg("JP", None, "Culture Day (振替休日)", 2024, 11, 4)
 
 # --- TR: public holidays (source: Act 2429) ---
 _reg("TR", None, "Yilbasi", 2024, 1, 1)
@@ -807,6 +940,13 @@ def test_w1b_gold(country, subdiv, name, year, month, day):
         f"{country}/{subdiv}/{name!r} {year}: expected "
         f"{year}-{month:02d}-{day:02d}, got "
         f"{sorted(got.get((name, subdiv), set()))}")
+
+
+def test_jp_mountain_day_year_gated_from_2016():
+    """Mountain Day (山の日) — established by the 2014 amendment, in force from
+    2016 (jp.tab "2016-"): absent 2015, present from 2016."""
+    assert ("Mountain Day", None) not in _dates_for("JP", 2015)
+    assert _dates_for("JP", 2016)[("Mountain Day", None)] == AstroDate(2016, 8, 11)
 
 
 # ==========================================================================

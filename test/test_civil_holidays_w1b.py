@@ -17,8 +17,10 @@ This is the wave-1b per-country module: it owns the engine-kind unit tests and
 the behavioural / package-differential assertions. The country golds themselves
 live in the shared registry ``test_holiday_golds.py`` (``HOLIDAY_GOLDS``), whose
 single ``test_every_tab_rule_has_a_gold`` walker enforces one gold per rule; the
-adjudications documented inline here (the Islamic +/-1 caveat, the 调休 / 振替休日
-out-of-scope offsets) explain the divergences that walker's golds encode.
+adjudications documented inline here (the Islamic +/-1 caveat; Japan's 振替休日
+furikae substitutes, now modelled via the jp_furikae policy; China's 调休 make-up
+workdays, which stay out of scope) explain the divergences that walker's golds
+encode.
 """
 import datetime
 
@@ -250,30 +252,23 @@ def test_tr_differential_fixed_match_islamic_within_one_day():
 
 
 def test_jp_differential_statutory_days_match_package():
-    # Every JP statutory holiday matches the package on its legal date; the
-    # package's EXTRA entries are all 振替休日 substitute days we hold out of
-    # scope (like China's 调休). Includes the equinox holidays on the Cabinet
-    # Office dates (2024 秋分の日 = 09-22; the package's 09-23 is the substitute).
+    # Every JP holiday — statutory days AND the 振替休日 furikae substitutes we now
+    # model — matches the package on its date. The equinox holidays sit on the
+    # Cabinet Office dates (2024 秋分の日 = 09-22) and their furikae substitute
+    # (09-23) is emitted alongside, matching the package's own furikae entry.
     for year in (2024, 2025):
         ours = set(_our_dates("JP", year))
         pkg = holidays_pkg.country_holidays("JP", years=year)
         theirs = {(d.month, d.day) for d in pkg}
         assert ours <= theirs, f"JP {year} missing from package: {ours - theirs}"
-        for d in pkg:
-            if (d.month, d.day) not in ours:
-                assert "振替休日" in pkg[d], (
-                    f"JP {year}: unexpected non-furikae package day {d}: {pkg[d]}")
 
 
-def test_jp_furikae_mechanism_expressible_but_out_of_scope():
-    # The substitute-holiday relocation is expressible via the sun_mon policy —
-    # 2024 秋分の日 is Sunday 09-22, whose furikae substitute is Monday 09-23 —
-    # but the .tab lists the statutory day itself (09-22), not the substitute.
-    from chronologia import SUNDAY_TO_MONDAY
-    assert SUNDAY_TO_MONDAY.apply(AstroDate(2024, 9, 22)) == AstroDate(2024, 9, 23)
-    got = [h for h in holidays_for("JP", 2024)
-           if h.name == "Autumnal Equinox Day"]
-    assert got[0].date == AstroDate(2024, 9, 22)
+def test_jp_furikae_substitute_now_emitted():
+    # The furikae substitute is ADDED (jp_furikae policy) while the statutory day
+    # is kept: 2024 秋分の日 is Sunday 09-22 and its substitute is Monday 09-23.
+    dates = {(h.date.month, h.date.day): h.name for h in holidays_for("JP", 2024)}
+    assert dates[(9, 22)] == "Autumnal Equinox Day"          # statutory, kept
+    assert dates[(9, 23)] == "Autumnal Equinox Day (振替休日)"  # substitute, added
 
 
 def test_cn_differential_statutory_core_matches_package():
