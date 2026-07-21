@@ -302,7 +302,10 @@ from chronologia import sunset_day_start
 start = sunset_day_start(AstroDate(2024, 6, 1), 31.78, 35.22)  # Jerusalem
 print(start.strftime("%Y-%m-%d %H:%M"))    # the 31 May evening sunset that opens 1 June
 # 2024-05-31 16:38
+```
+
 ## Why "the next full moon" has an error bar
+
 Ask an almanac for the next full moon and it gives you one clean-looking
 number. That number is a lie of precision. The Moon's orbit is eccentric, so
 its actual (true) phase times wander around the arithmetic average by up to
@@ -315,6 +318,8 @@ epoch (Jean Meeus's Lunation Number 0, the first new moon of 2000, ≈18:14
 UTC on 6 January). That arithmetic is exact; the *model* is only
 approximately true, so every answer comes back as a span with a stated width,
 never a bare instant:
+
+```python
 from datetime import datetime
 from chronologia import moon_phase, next_phase, previous_phase
 # 2024-01-11 11:57 UTC is a real, published new moon (US Naval Observatory).
@@ -325,6 +330,8 @@ print(full.basis)
 # predicted
 print(full.width)
 # 1 day, 4:00:00
+```
+
 `0.005` is close to `0.0` (new moon) — a lunation is about 29.5 days, so
 `0.005` of one is roughly 3.5 hours, comfortably inside this module's stated
 accuracy. `next_phase` always returns a span, never a point: its width is
