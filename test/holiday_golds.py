@@ -95,3 +95,25 @@ HOLIDAY_GOLDS["IN"] = [
     _g("Holi", 2023, 3, 8),
     _g("Republic Day", 2025, 1, 26),
 ]
+
+
+# --------------------------------------------------------------------------
+# China (State Council statutory list; 调休 make-up days out of scope)
+# --------------------------------------------------------------------------
+HOLIDAY_GOLDS["CN"] = [
+    _g("New Year's Day", 2024, 1, 1),
+    _g("Spring Festival", 2024, 2, 10),
+    _g("Spring Festival Holiday", 2024, 2, 11),
+    _g("Spring Festival Holiday", 2024, 2, 12),
+    _g("Qingming Festival", 2024, 4, 4),
+    _g("Labour Day", 2024, 5, 1),
+    _g("Dragon Boat Festival", 2024, 6, 10),
+    _g("Mid-Autumn Festival", 2024, 9, 17),
+    _g("National Day", 2024, 10, 1),
+    _g("National Day Holiday", 2024, 10, 2),
+    _g("National Day Holiday", 2024, 10, 3),
+    # other years
+    _g("Spring Festival", 2025, 1, 29),
+    _g("Qingming Festival", 2025, 4, 4),
+    _g("Qingming Festival", 2023, 4, 5),
+]

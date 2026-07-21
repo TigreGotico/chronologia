@@ -249,6 +249,31 @@ def test_au_differential_national_2024_2025():
                     f"absent from ours")
 
 
+def test_cn_differential_statutory_core_matches_package():
+    # The package labels statutory days 元旦/春节/清明节/劳动节/端午节/中秋节/国庆节
+    # and separately labels the 调休 make-up days 休息日(...调休) / 补假. Our
+    # statutory dates must each appear in the package; the package's EXTRA dates
+    # are exactly the 调休 arrangements we hold out of scope.
+    statutory_2024 = {(1, 1), (2, 10), (2, 11), (2, 12), (4, 4), (5, 1),
+                      (6, 10), (9, 17), (10, 1), (10, 2), (10, 3)}
+    ours = set(_our_dates("CN", 2024))
+    assert ours == statutory_2024
+    theirs = set(_pkg_dates("CN", 2024))
+    assert ours <= theirs, f"statutory day missing from package: {ours - theirs}"
+    # Everything the package has beyond ours is a make-up/rest day (调休/补假).
+    pkg = holidays_pkg.country_holidays("CN", years=2024)
+    for d in pkg:
+        if (d.month, d.day) not in ours:
+            assert ("调休" in pkg[d] or "补假" in pkg[d] or "休息" in pkg[d]), (
+                f"unexpected non-tiaoxiu package day {d}: {pkg[d]}")
+
+
+def test_cn_qingming_is_solar_term_not_lunar():
+    # Qingming tracks the solar term (Apr 4/5), not a fixed date or lunar date.
+    assert _our_dates("CN", 2024)[(4, 4)] == "Qingming Festival"
+    assert _our_dates("CN", 2023)[(4, 5)] == "Qingming Festival"
+
+
 def test_in_differential_fixed_and_decree_agree():
     # Adjudication: the fixed national days, the Christian days and the Hindu
     # decree dates match the package exactly (the package's IN central list is
