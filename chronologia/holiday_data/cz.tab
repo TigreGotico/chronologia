@@ -1,0 +1,26 @@
+# civil-holidays v1
+# jurisdiction: CZ
+# source: https://www.zakonyprolidi.cz/cs/2000-245
+#   (Zákon č. 245/2000 Sb., o státních svátcích, o ostatních svátcích, o
+#   významných dnech a o dnech pracovního klidu. Local copy
+#   papers/holidays/cz_holidays.md.) Names are official Czech. Good Friday
+#   (Velký pátek) has been a public holiday since 2016. 1 January is both the
+#   státní svátek "Den obnovy samostatného českého státu" and the ostatní svátek
+#   "Nový rok"; shipped as a single day named Nový rok.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+fixed   | Nový rok                                        | 1 1   | public          |  |
+easter  | Velký pátek                                     | -2    | public religious |  |
+easter  | Velikonoční pondělí                             | 1     | public religious |  |
+fixed   | Svátek práce                                    | 5 1   | public          |  |
+fixed   | Den vítězství                                   | 5 8   | public          |  |
+fixed   | Den slovanských věrozvěstů Cyrila a Metoděje    | 7 5   | public religious |  |
+fixed   | Den upálení mistra Jana Husa                    | 7 6   | public          |  |
+fixed   | Den české státnosti                             | 9 28  | public religious |  |
+fixed   | Den vzniku samostatného československého státu   | 10 28 | public          |  |
+fixed   | Den boje za svobodu a demokracii                | 11 17 | public          |  |
+fixed   | Štědrý den                                      | 12 24 | public religious |  |
+fixed   | 1. svátek vánoční                               | 12 25 | public religious |  |
+fixed   | 2. svátek vánoční                               | 12 26 | public religious |  |

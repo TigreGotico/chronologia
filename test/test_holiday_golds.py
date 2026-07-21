@@ -1145,6 +1145,21 @@ _reg("PL", None, "Wigilia Bożego Narodzenia", 2025, 12, 24)
 _reg("PL", None, "Boże Narodzenie (pierwszy dzień)", 2024, 12, 25)
 _reg("PL", None, "Boże Narodzenie (drugi dzień)", 2024, 12, 26)
 
+# --- CZ: státní/ostatní svátky (Czech names) ---
+_reg("CZ", None, "Nový rok", 2024, 1, 1)
+_reg("CZ", None, "Velký pátek", *_mov(-2))
+_reg("CZ", None, "Velikonoční pondělí", *_mov(1))
+_reg("CZ", None, "Svátek práce", 2024, 5, 1)
+_reg("CZ", None, "Den vítězství", 2024, 5, 8)
+_reg("CZ", None, "Den slovanských věrozvěstů Cyrila a Metoděje", 2024, 7, 5)
+_reg("CZ", None, "Den upálení mistra Jana Husa", 2024, 7, 6)
+_reg("CZ", None, "Den české státnosti", 2024, 9, 28)
+_reg("CZ", None, "Den vzniku samostatného československého státu", 2024, 10, 28)
+_reg("CZ", None, "Den boje za svobodu a demokracii", 2024, 11, 17)
+_reg("CZ", None, "Štědrý den", 2024, 12, 24)
+_reg("CZ", None, "1. svátek vánoční", 2024, 12, 25)
+_reg("CZ", None, "2. svátek vánoční", 2024, 12, 26)
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
