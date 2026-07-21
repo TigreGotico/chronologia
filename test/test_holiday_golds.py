@@ -882,6 +882,13 @@ _reg("JP", None, "Vernal Equinox Day", 2024, 3, 20)     # Cabinet Office publish
 _reg("JP", None, "Vernal Equinox Day", 2025, 3, 20)
 _reg("JP", None, "Autumnal Equinox Day", 2024, 9, 22)   # Cabinet Office published
 _reg("JP", None, "Autumnal Equinox Day", 2025, 9, 23)
+# 振替休日 furikae substitutes (jp_furikae policy): a Sunday holiday grants the
+# following non-holiday day. 2024 Cabinet Office substitute days.
+_reg("JP", None, "National Foundation Day (振替休日)", 2024, 2, 12)
+_reg("JP", None, "Children's Day (振替休日)", 2024, 5, 6)
+_reg("JP", None, "Mountain Day (振替休日)", 2024, 8, 12)
+_reg("JP", None, "Autumnal Equinox Day (振替休日)", 2024, 9, 23)
+_reg("JP", None, "Culture Day (振替休日)", 2024, 11, 4)
 
 # --- TR: public holidays (source: Act 2429) ---
 _reg("TR", None, "Yilbasi", 2024, 1, 1)
@@ -933,6 +940,13 @@ def test_w1b_gold(country, subdiv, name, year, month, day):
         f"{country}/{subdiv}/{name!r} {year}: expected "
         f"{year}-{month:02d}-{day:02d}, got "
         f"{sorted(got.get((name, subdiv), set()))}")
+
+
+def test_jp_mountain_day_year_gated_from_2016():
+    """Mountain Day (山の日) — established by the 2014 amendment, in force from
+    2016 (jp.tab "2016-"): absent 2015, present from 2016."""
+    assert ("Mountain Day", None) not in _dates_for("JP", 2015)
+    assert _dates_for("JP", 2016)[("Mountain Day", None)] == AstroDate(2016, 8, 11)
 
 
 # ==========================================================================
