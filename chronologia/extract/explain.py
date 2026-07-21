@@ -17,9 +17,8 @@ from typing import Optional, Tuple
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.matcher import Candidate, ConstructionMatcher
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
-from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.pipeline import prematch_tokens
 from chronologia.extract.resolver import Resolver
-from chronologia.extract.tokenizer import Tokenizer
 
 # module-level compiler so repeated explain() calls reuse the cache
 _COMPILER = ConstructionCompiler()
@@ -77,8 +76,9 @@ def _reason(cand: Candidate, winners) -> str:
 
 def explain(text: str, spec: LangSpec, anchor: datetime) -> ExplainTrace:
     compiled = _COMPILER.compile(spec)
-    tokens = TemporalNormaliser(spec).normalise(
-        Tokenizer(spec.tokenizer).tokenize(text))
+    # the identical pre-match pipeline extract_timespan runs (normalise +
+    # language hook + multiword merge), so the trace reflects the real parse
+    tokens = prematch_tokens(text, spec)
     matcher = ConstructionMatcher(compiled)
     candidates = matcher._candidates(tokens)
     selected = matcher._select(candidates)

@@ -26,6 +26,7 @@ from chronologia.extract.model import (Conventions, Direction, LangSpec,
                                            Match, Resolution, SlotElement,
                                            SlotOrder, Token, TokenizerModes)
 from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.pipeline import prematch_tokens
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_clock)
 from chronologia.extract.tokenizer import Tokenizer
@@ -57,38 +58,11 @@ class DateTimeEngine:
         self.normaliser = TemporalNormaliser(spec)
         self.matcher = ConstructionMatcher(self.compiled)
         self.resolver = Resolver(spec)
-        # multiword vocab surfaces ("bronze age") that the tokenizer splits;
-        # merged back into one token so a single slot can bind them. Longest
-        # first so "late bronze age" wins over "bronze age".
-        self._multiword = sorted(
-            (s for s in spec.periods if " " in s),
-            key=lambda s: len(s.split()), reverse=True)
 
     def tokenize(self, text: str) -> Tuple[Token, ...]:
-        tokens = self.normaliser.normalise(self.tokenizer.tokenize(text))
-        if self.spec.hook is not None:
-            tokens = self.spec.hook(tokens)
-        return self._merge_multiword(tokens)
-
-    def _merge_multiword(self, tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        if not self._multiword:
-            return tokens
-        phrases = [(s.split(), s) for s in self._multiword]
-        out: List[Token] = []
-        i = 0
-        while i < len(tokens):
-            for words, surface in phrases:
-                n = len(words)
-                if [t.text for t in tokens[i:i + n]] == words:
-                    raw = " ".join(t.raw for t in tokens[i:i + n])
-                    out.append(Token(text=surface, raw=raw, index=len(out)))
-                    i += n
-                    break
-            else:
-                out.append(Token(tokens[i].text, tokens[i].raw, len(out),
-                                 tokens[i].is_number, tokens[i].value))
-                i += 1
-        return tuple(out)
+        # the single shared pre-match pipeline, identical to the one
+        # explain() replays, so a trace never misrepresents a real parse
+        return prematch_tokens(text, self.spec)
 
     def resolve(self, text: str, anchor: datetime) -> List[Resolution]:
         matches = self.matcher.match(self.tokenize(text))
