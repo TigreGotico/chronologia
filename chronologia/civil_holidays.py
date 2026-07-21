@@ -26,6 +26,10 @@ The kinds:
   (``-1`` = last) ``weekday`` of ``month``, optionally shifted ``post_offset``
   days (so "the Monday after the 2nd Sunday of July" is ``n=2, weekday=SUN,
   post_offset=1``); evaluated through the RRULE engine. Basis ``exact``.
+* :class:`WeekdayOnOrBeforeRule` ``(month, day, weekday)`` — the latest
+  ``weekday`` on or before a fixed ``(month, day)``, for "the Monday preceding
+  25 May"-style rules (Victoria Day) whose ordinal drifts year to year. Basis
+  ``exact``.
 * :class:`EasterOffsetRule` ``(offset_days, method)`` — a whole-day offset from
   the computed Easter Sunday (``method`` ∈ ``gregorian`` | ``julian_gregorian_date``).
   Because Easter is always a Sunday, every "n-th Monday/Thursday after Easter"
@@ -87,6 +91,7 @@ __all__ = [
     "CATEGORIES",
     "FixedRule",
     "NthWeekdayRule",
+    "WeekdayOnOrBeforeRule",
     "EasterOffsetRule",
     "CalendarDateRule",
     "DecreeTableRule",
@@ -168,6 +173,39 @@ class NthWeekdayRule:
             return ()
         base = got[0].start
         return ((base + timedelta(days=self.post_offset), BASIS_EXACT),)
+
+
+@dataclass(frozen=True)
+class WeekdayOnOrBeforeRule:
+    """The latest ``weekday`` falling on or before ``(month, day)`` each year.
+
+    The minimal kind for "the Monday preceding a fixed date" rules that no
+    ``n``-th-weekday count can express, because the ordinal drifts year to year.
+    Canada's Victoria Day is "the Monday preceding 25 May" — equivalently the
+    Monday on or before 24 May — so ``WeekdayOnOrBeforeRule(5, 24, 0)``. Quebec's
+    National Patriots' Day shares that anchor; Saxony's Buß- und Bettag is the
+    Wednesday on or before 22 November, ``WeekdayOnOrBeforeRule(11, 22, 2)``.
+
+    ``weekday`` is Monday==0 .. Sunday==6 (the :class:`AstroDate` convention).
+    Basis ``exact``.
+    """
+
+    month: int
+    day: int
+    weekday: int
+
+    def __post_init__(self) -> None:
+        if not 1 <= self.month <= 12:
+            raise ValueError(f"month out of range: {self.month}")
+        if not 1 <= self.day <= 31:
+            raise ValueError(f"day out of range: {self.day}")
+        if not 0 <= self.weekday <= 6:
+            raise ValueError(f"weekday out of range: {self.weekday}")
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        anchor = AstroDate(year, self.month, self.day)
+        delta = (anchor.weekday() - self.weekday) % 7
+        return ((anchor - timedelta(days=delta), BASIS_EXACT),)
 
 
 @dataclass(frozen=True)
@@ -431,6 +469,8 @@ def _parse_kind(kind: str, args: str) -> RuleKind:
         month, n, wd = int(parts[0]), int(parts[1]), int(parts[2])
         post = int(parts[3]) if len(parts) > 3 else 0
         return NthWeekdayRule(month, n, wd, post)
+    if kind == "weekday_onbefore":
+        return WeekdayOnOrBeforeRule(int(parts[0]), int(parts[1]), int(parts[2]))
     if kind == "easter":
         offset = int(parts[0])
         method = parts[1] if len(parts) > 1 else "gregorian"

@@ -94,6 +94,7 @@ from chronologia.civil_holidays import (CATEGORIES, US_OBSERVED_SHIFT,
                                         EasterOffsetRule, FixedRule,
                                         HolidayCalendar, HolidayRule,
                                         NthWeekdayRule, ObservedShift,
+                                        WeekdayOnOrBeforeRule,
                                         holidays_for, is_civil_holiday,
                                         load_calendar)
 from chronologia.extract import explain, extract_timespan
@@ -313,6 +314,7 @@ __all__ = [
     "CATEGORIES",
     "FixedRule",
     "NthWeekdayRule",
+    "WeekdayOnOrBeforeRule",
     "EasterOffsetRule",
     "CalendarDateRule",
     "DecreeTableRule",

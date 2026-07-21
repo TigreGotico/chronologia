@@ -1,0 +1,40 @@
+# civil-holidays v1
+# jurisdiction: GB
+# source: https://www.gov.uk/bank-holidays
+#   (UK government bank-holidays listing; local copy
+#   papers/holidays/gb_bank_holidays_govuk.html). Subdivisions follow the three
+#   bank-holiday regimes: GB-EAW = England & Wales, GB-SCT = Scotland,
+#   GB-NIR = Northern Ireland. Easter-relative days derive from computus.
+#   NOTE ON SUBSTITUTE DAYS: gov.uk grants a substitute weekday when a bank
+#   holiday falls on a weekend (and the double-substitute when Christmas Day is a
+#   Sunday). chronologia's ObservedShift cannot express the Christmas/Boxing
+#   interaction, so substitute ("in lieu") days are deliberately NOT modelled
+#   here; the rules carry the statutory nominal dates. The reference package's
+#   observed substitute days therefore appear as documented reference-only
+#   entries in the differential (test_holidays_gb.py).
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- UK-wide bank holidays (all three regions) ---
+fixed          | New Year's Day          | 1 1    | public          |  |
+easter         | Good Friday             | -2     | public religious |  |
+nth_weekday    | Early May Bank Holiday  | 5 1 0  | public          |  |
+nth_weekday    | Spring Bank Holiday     | 5 -1 0 | public          |  |
+fixed          | Christmas Day           | 12 25  | public religious |  |
+fixed          | Boxing Day              | 12 26  | public          |  |
+#
+# --- England & Wales (GB-EAW) ---
+easter         | Easter Monday               | 1      | public religious | GB-EAW |
+nth_weekday    | Summer Bank Holiday         | 8 -1 0 | public          | GB-EAW |
+#
+# --- Scotland (GB-SCT) ---
+fixed          | 2nd January             | 1 2    | public          | GB-SCT |
+nth_weekday    | Summer Bank Holiday     | 8 1 0  | public          | GB-SCT |
+fixed          | St Andrew's Day         | 11 30  | public          | GB-SCT |
+#
+# --- Northern Ireland (GB-NIR) ---
+fixed          | St Patrick's Day        | 3 17   | public religious | GB-NIR |
+easter         | Easter Monday           | 1      | public religious | GB-NIR |
+fixed          | Battle of the Boyne     | 7 12   | public          | GB-NIR |
+nth_weekday    | Summer Bank Holiday     | 8 -1 0 | public          | GB-NIR |
