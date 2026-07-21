@@ -270,7 +270,7 @@ Full guides for everything above live in [`docs/`](docs/):
 | Regnal years | Japanese nengō, Roman consuls, Egyptian chronologies |
 | Time itself | [timezones](docs/timezones.md) with honest fall-back/spring-forward handling, leap seconds (UTC/TAI/GPS), historical local mean time, the French Revolution's 10-hour clock |
 | Moon phases | mean-lunation arithmetic (new/first-quarter/full/last-quarter) as a `DateSpan` with a measured accuracy bound and honest reconstructed/predicted basis |
-| Beyond Earth | [Mars and beyond](docs/mars-and-beyond.md) — Mars Sol Date, Coordinated Mars Time, the Darian calendar and rover mission-sol counts, all riding one generalized `TimeAxis` |
+| Beyond Earth | [Mars and beyond](docs/mars-and-beyond.md) — Mars Sol Date, Coordinated Mars Time, the Darian calendar and rover mission-sol counts, all riding one generalized `TimeAxis`; the natural lunar cycle and the withheld Coordinated Lunar Time; and cosmology — a span-valued Big Bang epoch, redshift→lookback time as Planck-vs-SH0ES variants (the Hubble tension), and Sagan's Cosmic Calendar |
 
 Every algorithm and every number in the data files is transcribed from
 a cited published source — citations sit in the module docstrings and

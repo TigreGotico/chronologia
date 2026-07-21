@@ -45,6 +45,12 @@ from chronologia.moon import (EPOCH_NEW_MOON, MEAN_SYNODIC_MONTH_DAYS,
 from chronologia.luna import (LTC_DRIFT_MICROSECONDS_PER_DAY, LTC_STATUS,
                               LUNAR_DAY_SECONDS, LunarTimeStandardStatus,
                               ltc_offset)
+from chronologia.cosmology import (AGE_OF_UNIVERSE_ERA, COSMIC_PERIODS,
+                                   COSMOLOGIES, HUBBLE_TIME_GYR,
+                                   UNIVERSE_AGE_GYR,
+                                   UNIVERSE_AGE_UNCERTAINTY_GYR, CosmologyParams,
+                                   UncertainEra, age_of_universe_gyr,
+                                   lookback_gyr, lookback_time, resolve_cosmic)
 from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
                                  AmbiguousPeriodError, NamedPeriod, calibrate_c14,
                                  candidates, children, lookup, subdivide)
@@ -190,6 +196,19 @@ __all__ = [
     "LTC_STATUS",
     "LunarTimeStandardStatus",
     "ltc_offset",
+    # cosmology: span-valued epochs + parameter-set variants
+    "UNIVERSE_AGE_GYR",
+    "UNIVERSE_AGE_UNCERTAINTY_GYR",
+    "UncertainEra",
+    "AGE_OF_UNIVERSE_ERA",
+    "resolve_cosmic",
+    "CosmologyParams",
+    "COSMOLOGIES",
+    "lookback_gyr",
+    "lookback_time",
+    "age_of_universe_gyr",
+    "COSMIC_PERIODS",
+    "HUBBLE_TIME_GYR",
     # unequal (temporal/seasonal) hours and clock-count conventions
     "UnequalHourSystem",
     "ClockConvention",
