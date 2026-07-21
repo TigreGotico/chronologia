@@ -1,0 +1,25 @@
+# civil-holidays v1
+# jurisdiction: NL
+# source: https://www.rijksoverheid.nl/onderwerpen/erkende-feestdagen/officiele-feestdagen-in-nederland
+#   (Dutch government list of officially recognised holidays / Algemene
+#   termijnenwet. Local copy papers/holidays/nl_holidays.md.) Names are official
+#   Dutch. KONINGSDAG: celebrated 27 April, but when the 27th is a Sunday it is
+#   brought forward to Saturday 26 April (never postponed) — modelled with the
+#   nl_kingsday observed shift (Sunday -> -1 day). Bevrijdingsdag (5 May) is a
+#   national commemoration every year but a paid day off only every five years
+#   (lustrum, e.g. 2025); it is NOT modelled as a recurring work-free holiday —
+#   the 2025 lustrum appearance is a documented reference differential.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+fixed   | Nieuwjaarsdag        | 1 1   | public          |  |
+easter  | Goede Vrijdag        | -2    | public religious |  |
+easter  | Eerste paasdag       | 0     | public religious |  |
+easter  | Tweede paasdag       | 1     | public religious |  |
+fixed   | Koningsdag           | 4 27  | public          |  | nl_kingsday
+easter  | Hemelvaartsdag       | 39    | public religious |  |
+easter  | Eerste Pinksterdag   | 49    | public religious |  |
+easter  | Tweede Pinksterdag   | 50    | public religious |  |
+fixed   | Eerste Kerstdag      | 12 25 | public religious |  |
+fixed   | Tweede Kerstdag      | 12 26 | public religious |  |

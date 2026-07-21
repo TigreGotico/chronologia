@@ -1116,6 +1116,19 @@ _reg("BE", None, "Allerheiligen", 2024, 11, 1)
 _reg("BE", None, "Wapenstilstand", 2024, 11, 11)
 _reg("BE", None, "Kerstmis", 2024, 12, 25)
 
+# --- NL: official holidays (Dutch names); Koningsdag shift ---
+_reg("NL", None, "Nieuwjaarsdag", 2024, 1, 1)
+_reg("NL", None, "Goede Vrijdag", *_mov(-2))
+_reg("NL", None, "Eerste paasdag", *_mov(0))
+_reg("NL", None, "Tweede paasdag", *_mov(1))
+_reg("NL", None, "Koningsdag", 2024, 4, 27)
+_reg("NL", None, "Koningsdag", 2025, 4, 26)   # 27 Apr Sun -> Sat 26 (nl_kingsday)
+_reg("NL", None, "Hemelvaartsdag", *_mov(39))
+_reg("NL", None, "Eerste Pinksterdag", *_mov(49))
+_reg("NL", None, "Tweede Pinksterdag", *_mov(50))
+_reg("NL", None, "Eerste Kerstdag", 2024, 12, 25)
+_reg("NL", None, "Tweede Kerstdag", 2024, 12, 26)
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())

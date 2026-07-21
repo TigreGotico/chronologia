@@ -130,6 +130,7 @@ __all__ = [
     "SUNDAY_TO_MONDAY",
     "SATURDAY_SUNDAY_TO_MONDAY",
     "IL_INDEPENDENCE_SHIFT",
+    "NL_KINGSDAY_SHIFT",
     "SubstitutePolicy",
     "GB_SUBSTITUTE",
     "JP_FURIKAE",
@@ -480,12 +481,16 @@ SATURDAY_SUNDAY_TO_MONDAY = ObservedShift(((5, 2), (6, 1)))
 #: preceding Yom HaZikaron off Sunday), Friday → −1 and Saturday → −2 (both to
 #: Thursday, away from Shabbat); Wednesday is unshifted.
 IL_INDEPENDENCE_SHIFT = ObservedShift(((0, 1), (4, -1), (5, -2)))
+#: Netherlands Koningsdag (King's Day): celebrated 27 April, but when the 27th
+#: is a Sunday it is brought forward to Saturday 26 April (never postponed).
+NL_KINGSDAY_SHIFT = ObservedShift(((6, -1),))
 
 _OBSERVED_POLICIES: Dict[str, ObservedShift] = {
     "us": US_OBSERVED_SHIFT,
     "sun_mon": SUNDAY_TO_MONDAY,
     "sat_sun_mon": SATURDAY_SUNDAY_TO_MONDAY,
     "il_independence": IL_INDEPENDENCE_SHIFT,
+    "nl_kingsday": NL_KINGSDAY_SHIFT,
 }
 
 
