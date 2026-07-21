@@ -603,8 +603,14 @@ _reg("ES", None, "Asunción de la Virgen", 2024, 8, 15)
 _reg("ES", None, "Fiesta Nacional de España", 2024, 10, 12)
 _reg("ES", None, "Todos los Santos", 2024, 11, 1)
 _reg("ES", None, "Día de la Constitución Española", 2024, 12, 6)
-_reg("ES", None, "Inmaculada Concepción", 2024, 12, 8)
+_reg("ES", None, "Inmaculada Concepción", 2024, 12, 9)  # Sun 8 Dec -> Mon 9 (sun_mon)
 _reg("ES", None, "Natividad del Señor", 2024, 12, 25)
+# National Sunday traslado outcomes, each verified against the cited BOE
+# "relación de fiestas laborales" resolution for that year (see es.tab header).
+_reg("ES", None, "Año Nuevo", 2023, 1, 2)                     # BOE-A-2022-16755
+_reg("ES", None, "Fiesta Nacional de España", 2025, 10, 13)  # BOE-A-2024-21316
+_reg("ES", None, "Todos los Santos", 2026, 11, 2)            # BOE-A-2025-21667
+_reg("ES", None, "Día de la Constitución Española", 2026, 12, 7)  # BOE-A-2025-21667
 
 # --- BR: national feriados + facultative Carnaval/Corpus (source: Planalto) ---
 _reg("BR", None, "Confraternização Universal", 2024, 1, 1)
@@ -651,6 +657,105 @@ _reg("CA", "CA-MB", "National Day for Truth and Reconciliation", 2024, 9, 30)
 _reg("CA", "CA-MB", "Thanksgiving Day", 2024, 10, 14)
 _reg("CA", "CA-NS", "Heritage Day", 2024, 2, 19)
 _reg("CA", "CA-NS", "Remembrance Day", 2024, 11, 11)
+
+
+# ==========================================================================
+# ES autonomous-community layer -- golds parsed from the four cited BOE tables
+# (source-vs-engine, the same discipline as PT municipal): the expected dates
+# come from the BOE HTML, not from es.tab's own args.
+# ==========================================================================
+_ES_CODES = ["ES-AN", "ES-AR", "ES-AS", "ES-IB", "ES-CN", "ES-CB", "ES-CM",
+             "ES-CL", "ES-CT", "ES-EX", "ES-GA", "ES-MD", "ES-MC", "ES-NC",
+             "ES-PV", "ES-RI", "ES-VC", "ES-CE", "ES-ML"]
+_ES_MONTHS = {m.lower(): i for i, m in enumerate(
+    ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto",
+     "Septiembre", "Octubre", "Noviembre", "Diciembre"], 1)}
+_ES_BOE = {2023: "es_boe_BOE-A-2022-16755.html",
+           2024: "es_boe_BOE-A-2023-22014.html",
+           2025: "es_boe_BOE-A-2024-21316.html",
+           2026: "es_boe_BOE-A-2025-21667.html"}
+
+
+def _es_canon(n):
+    """Map a BOE row name to the es.tab regional rule name; None = drop (a
+    nationwide holiday or a national-holiday Sunday traslado, handled elsewhere)."""
+    if n.startswith("Lunes siguiente") or n.startswith("Día siguiente"):
+        if "Asturias" in n:
+            return "Día de Asturias"
+        if "Illes Balears" in n:
+            return "Día de les Illes Balears"
+        if "Rioja" in n:
+            return "Día de La Rioja"
+        if "San Jorge" in n:
+            return "San Jorge/Día de Aragón"
+        if "San José" in n:
+            return "San José"
+        return None
+    if "Rioja" in n:
+        return "Día de La Rioja"
+    if "Sacrificio" in n or "Adha" in n:
+        return "Fiesta del Sacrificio (Aid al-Adha)"
+    if "Eid Fitr" in n or "Eid al-Fitr" in n:
+        return "Fiesta del Aid al-Fitr"
+    if n.startswith("Corpus") or n.startswith("Fiesta del Corpus"):
+        return "Corpus Christi"
+    return n
+
+
+def _es_regional_source_golds():
+    """Parse the four BOE tables into {(subdiv, name, year): (month, day)} for the
+    community-specific holidays (markers ** / *** that are not nationwide)."""
+    out = {}
+    for year, fn in _ES_BOE.items():
+        path = os.path.join(_PAPERS, fn)
+        html_text = open(path, encoding="utf-8").read()
+        m = re.search(r'<table class="tabla_girada_condensada">(.*?)</table>',
+                      html_text, re.S)
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", m.group(1), re.S)
+        curm = None
+        for r in rows:
+            cells = [re.sub(r"<[^>]+>", "", c).strip()
+                     for c in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", r, re.S)]
+            import html as _h
+            cells = [_h.unescape(c) for c in cells]
+            if not cells:
+                continue
+            if cells[0].lower() in _ES_MONTHS:
+                curm = _ES_MONTHS[cells[0].lower()]
+                continue
+            mm = re.match(r"(\d+)\s+(.*)", cells[0])
+            if not mm or curm is None:
+                continue
+            day = int(mm.group(1))
+            name = mm.group(2).rstrip(".").strip()
+            marks = {_ES_CODES[i]: v for i, v in enumerate(cells[1:])
+                     if i < 19 and v in ("*", "**", "***")}
+            if len(marks) == 19:  # nationwide -> not a regional extra
+                continue
+            base = _es_canon(name)
+            if base is None:
+                continue
+            for sub in marks:
+                out[(sub, base, year)] = (curm, day)
+    return out
+
+
+_ES_REGIONAL_SOURCE = _es_regional_source_golds()
+for (_sub, _name, _yr), (_m, _d) in _ES_REGIONAL_SOURCE.items():
+    _reg("ES", _sub, _name, _yr, _m, _d)
+
+
+@pytest.mark.parametrize("subdiv,name,year,month,day", sorted(
+    (s, n, y, m, d) for (s, n, y), (m, d) in _ES_REGIONAL_SOURCE.items()))
+def test_es_regional_gold_matches_boe_source(subdiv, name, year, month, day):
+    """Source-vs-engine: the BOE-table date must equal the engine's decree
+    resolution for that community and year."""
+    got = _dates_for("ES", year, subdiv=subdiv)
+    assert got[(name, subdiv)] == AstroDate(year, month, day)
+
+
+def test_es_regional_covers_all_communities():
+    assert {s for (s, _n, _y) in _ES_REGIONAL_SOURCE} == set(_ES_CODES)
 
 
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
