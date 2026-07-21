@@ -46,6 +46,9 @@ from chronologia.unequal_hours import (BABYLONIAN_HOURS, CLOCK_CONVENTIONS,
                                        ZMANIM_GRA, ClockConvention,
                                        UnequalHourSystem, convention_time,
                                        temporal_hour_span)
+from chronologia.prayer_times import (ASR_METHODS, CONVENTIONS, AsrMethod,
+                                      PrayerConvention, PrayerTimes,
+                                      prayer_times)
 from chronologia.resolution import DateTimeResolution
 from chronologia.roman import roman_to_julian
 from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
@@ -153,6 +156,13 @@ __all__ = [
     "EDO_JAPANESE",
     "ITALIAN_HOURS",
     "BABYLONIAN_HOURS",
+    # islamic prayer times (cited angle-set variants over the solar engine)
+    "prayer_times",
+    "PrayerTimes",
+    "PrayerConvention",
+    "AsrMethod",
+    "CONVENTIONS",
+    "ASR_METHODS",
     # derived resolution vocabulary
     "DateTimeResolution",
     # timelines & discontinuities

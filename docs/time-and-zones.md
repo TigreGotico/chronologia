@@ -522,6 +522,68 @@ print(isinstance(polar, NoSunEvent), polar.kind)
 # True polar_day
 ```
 
+### Prayer times
+
+Islamic prayer times are the same solar hour-angle machinery with one extra
+input: a *convention*. A convention is a named school of calculation, not a
+truth — the schools publish different sun-depression angles for Fajr and Isha,
+and the library computes what each angle implies. It names the school it used
+and never rules on which is right.
+
+```python
+from chronologia import prayer_times, AstroDate
+
+pt = prayer_times(AstroDate(2024, 2, 15), 30.0444, 31.2357, "egyptian_gas")
+print([getattr(pt, f).strftime("%H:%M")
+       for f in ("fajr", "sunrise", "dhuhr", "asr_time", "maghrib", "isha")])
+# ['03:08', '04:36', '10:09', '13:18', '15:42', '17:00']   (UTC)
+```
+
+Dhuhr is solar noon and Maghrib is sunset, straight from `sun_events`. Fajr and
+Isha are the depression-angle crossings — Fajr at the convention's Fajr angle
+below the horizon, Isha at its Isha angle — the same shape as the civil /
+nautical / astronomical twilights, with the school's angle in place of 6 / 12 /
+18°. Asr is the shadow-length crossing: `asr="standard"` (factor 1, the
+majority) or `asr="hanafi"` (factor 2), both cited.
+
+Five conventions ship (`mwl`, `isna`, `egyptian_gas`, `umm_al_qura_makkah`,
+`karachi`), each carrying the published source it quotes. They differ, and that
+difference is the point:
+
+```python
+mwl = prayer_times(AstroDate(2024, 2, 15), 30.0444, 31.2357, "mwl")
+isna = prayer_times(AstroDate(2024, 2, 15), 30.0444, 31.2357, "isna")
+print(isna.fajr > mwl.fajr)   # ISNA's shallower 15° Fajr is later than MWL's 18°
+# True
+```
+
+Umm al-Qura fixes Isha not by an angle but by a fixed **interval** — 90 minutes
+after Maghrib — so both kinds are supported:
+
+```python
+from datetime import timedelta
+makkah = prayer_times(AstroDate(2024, 2, 15), 21.4225, 39.8262, "umm_al_qura_makkah")
+print(makkah.isha == makkah.maghrib + timedelta(minutes=90))
+# True
+```
+
+**High-latitude honesty.** When the summer night is too short for the sun to
+reach the depression angle (a "white night"), Fajr and Isha are simply
+undefined — a typed `NoSunEvent`, never a fabricated time:
+
+```python
+from chronologia import NoSunEvent
+short_night = prayer_times(AstroDate(2024, 6, 21), 60.0, 10.0, "mwl")
+print(isinstance(short_night.fajr, NoSunEvent))
+# True
+```
+
+The various higher-latitude estimation rules (middle-of-the-night, one-seventh,
+angle-based) are deliberately **out of scope**: choosing what to substitute when
+the arithmetic yields nothing is a jurisprudential decision, not a calculation,
+and authorities differ. The convention mechanism is where such a rule would one
+day attach as another named school — but the library will not invent one.
+
 ## Reference
 
 | tool | what it does |
@@ -541,6 +603,9 @@ print(isinstance(polar, NoSunEvent), polar.kind)
 | `convention_time(date, lat, lon, hour, convention)` | the instant of an equal-hour clock count re-anchored to a solar event (Italian from sunset, Babylonian from sunrise) |
 | `ROMAN_HOURS`, `ZMANIM_GRA`, `EDO_JAPANESE` | shipped proportional-hour systems (`UNEQUAL_HOUR_SYSTEMS`) |
 | `ITALIAN_HOURS`, `BABYLONIAN_HOURS` | shipped clock-count conventions (`CLOCK_CONVENTIONS`) |
+| `prayer_times(date, latitude, longitude, convention, asr)` | the five daily Islamic prayer times plus sunrise, in UTC, for a named convention and Asr school |
+| `CONVENTIONS`, `PrayerConvention` | the shipped Fajr/Isha schools (`mwl`, `isna`, `egyptian_gas`, `umm_al_qura_makkah`, `karachi`), each with its cited angles or interval |
+| `ASR_METHODS`, `AsrMethod` | the two Asr shadow-factor schools (`standard` = 1, `hanafi` = 2), both cited |
 | `NoSunEvent` | a typed absence (`polar_day`/`polar_night`) returned when the sun never rises or never sets |
 | `DAY_SUBDIVISIONS`, `DaySubdivision` | alternative divisions of the day, such as French decimal time |
 | `moon_phase(instant)` | mean lunar phase fraction, `0.0`=new..`0.5`=full..→`1.0` |

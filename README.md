@@ -198,6 +198,13 @@ world lived by — `temporal_hour_span` divides daylight into a fixed count, so 
 Roman daytime hour stretches to ~76 minutes at Rome in June and shrinks to ~46
 in December — plus the sunset-anchored Italian and sunrise-anchored Babylonian
 clock counts (`convention_time`).
+On the same machinery it computes Islamic prayer times as *named
+conventions* — `mwl`, `isna`, `egyptian_gas`, `umm_al_qura_makkah`,
+`karachi` — each a published school with its own Fajr/Isha depression
+angles (and a per-call Shafi'i/Hanafi Asr factor); the library computes
+what the angles imply and never rules on which school is right, returning
+a typed `NoSunEvent` for the white-night latitudes where a depression
+angle is never reached.
 
 ### Deep time, honestly
 
