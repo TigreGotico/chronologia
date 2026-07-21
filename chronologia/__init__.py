@@ -21,6 +21,11 @@ from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, DayCycle,
                                 DaySubdivision, resolve_cycle_day)
 from chronologia.eras import (ERAS, Era, EraCounting, astro_year_range,
                               resolve_bp, resolve_era, resolve_era_year_span)
+from chronologia.leapseconds import (GPS_EPOCH, LEAP_SECONDS,
+                                     TABLE_VALID_UNTIL, TAI_MINUS_GPS,
+                                     gps_to_utc, is_leap_second_day,
+                                     table_valid_until, tai_to_utc,
+                                     utc_tai_offset, utc_to_gps, utc_to_tai)
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
 from chronologia.resolution import DateTimeResolution
 from chronologia.roman import roman_to_julian
@@ -55,6 +60,18 @@ __all__ = [
     "resolve_bp",
     "resolve_era",
     "resolve_era_year_span",
+    # leap seconds (UTC/TAI/GPS)
+    "LEAP_SECONDS",
+    "TABLE_VALID_UNTIL",
+    "table_valid_until",
+    "utc_tai_offset",
+    "utc_to_tai",
+    "tai_to_utc",
+    "utc_to_gps",
+    "gps_to_utc",
+    "is_leap_second_day",
+    "GPS_EPOCH",
+    "TAI_MINUS_GPS",
     # day cycles
     "DAY_CYCLES",
     "DAY_SUBDIVISIONS",

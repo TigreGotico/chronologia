@@ -168,6 +168,36 @@ c.combine_basis("exact", "tabulated")            # 'tabulated'
 c.combine_basis("reconstructed", "predicted")    # 'reconstructed' (peer tie-break)
 ```
 
+## Leap seconds
+
+`chronologia.leapseconds` converts between the real timescales — UTC, TAI
+(International Atomic Time), and GPS time — using the tabulated UTC-TAI
+offset history (IERS Bulletin C, mirrored via the IANA/IETF
+`leap-seconds.list`). This is unrelated to the `"unix"` era above: POSIX/unix
+time ignores leap seconds entirely and always advances 86400 seconds per day.
+
+```python
+from datetime import datetime
+import chronologia as c
+
+# cumulative UTC-TAI offset (whole seconds) at an instant
+c.utc_tai_offset(datetime(2020, 6, 15))   # 37
+
+# real-timescale conversions (TAI-GPS = 19s constant)
+c.utc_to_tai(datetime(2020, 6, 15, 12, 0, 0))
+c.utc_to_gps(datetime(2020, 6, 15, 12, 0, 0))
+
+# was a leap second (23:59:60 UTC) inserted on this UTC calendar date?
+c.is_leap_second_day(datetime(2016, 12, 31).date())   # True
+
+# the table is confirmed complete only up to this date (predicted/constant
+# offset beyond it, per Bulletin C's own ~6-month announcement horizon)
+c.table_valid_until()
+```
+
+Pre-1972 instants (the fractional "rubber second" era) raise `ValueError` —
+out of scope, no cited table backs it.
+
 ## Cited sources
 
 The conversion algorithms are grounded in canonical references, cited inline in
@@ -179,6 +209,8 @@ each module's docstring:
   Gregorian/Julian conversions.
 - POSIX.1-2017 §4.16 — the Unix epoch seconds count.
 - Radiocarbon 19(3):355–363 — the before-present (1950) reference epoch.
+- IERS Bulletin C / IANA-IETF `leap-seconds.list` — the UTC-TAI offset table
+  in `chronologia/data/leap_seconds.tab`.
 
 ## Used by
 

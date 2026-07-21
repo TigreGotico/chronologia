@@ -22,7 +22,8 @@ classifiers = [
 dependencies = []
 
 [tool.setuptools]
-packages = ["chronologia"]
+packages = ["chronologia", "chronologia.data"]
 
 [tool.setuptools.package-data]
 chronologia = ["calendar_data/*"]
+"chronologia.data" = ["*.tab"]
