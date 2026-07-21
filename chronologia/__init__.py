@@ -19,8 +19,10 @@ from chronologia.calendars import (CALENDARS, Calendar, CalendarDate,
                                    gregorian_to_jdn, jdn_to_gregorian,
                                    julian_to_jdn, jdn_to_julian,
                                    register_event_provider)
-from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, DayCycle,
-                                DaySubdivision, resolve_cycle_day)
+from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, YEAR_CYCLES,
+                                DayCycle, DaySubdivision, YearCycle,
+                                resolve_cycle_day, year_cycle_label,
+                                years_of)
 from chronologia.dayparts import (CLDR_VERSION, DAY_PARTS, DayPart,
                                   UnknownDayPartError, daypart_span)
 from chronologia.eras import (ERAS, Era, EraCounting, astro_year_range,
@@ -151,6 +153,11 @@ __all__ = [
     "DayCycle",
     "DaySubdivision",
     "resolve_cycle_day",
+    # year cycles (sexagenary, Chinese zodiac, indiction)
+    "YEAR_CYCLES",
+    "YearCycle",
+    "year_cycle_label",
+    "years_of",
     # named-period registry (ICS chart + archaeological periods)
     "NamedPeriod",
     "PERIODS",

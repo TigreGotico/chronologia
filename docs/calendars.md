@@ -384,6 +384,60 @@ print(freq.date(1, 1, 1))   # 1 Vendémiaire An I
 **Caveat — table range:** covers An I to An XIII, the years the calendar was in
 official use. Source: the published equinox table for the Republican calendar.
 
+## Year cycles: which recent years were dragon years?
+
+`chronologia.cycles` also registers **year cycles** — repeating labelled
+sequences of *years*, the year-axis counterpart of the day cycles above
+(`DAY_CYCLES`). Three are shipped: the 60-term Chinese **sexagenary** cycle
+(stem-branch, e.g. `jia-zi`), the 12-term **Chinese zodiac** (`rat` .. `pig`),
+and the 15-year Roman/Byzantine **indiction**.
+
+```python
+from chronologia import year_cycle_label, years_of, AstroDate
+
+print(year_cycle_label(AstroDate(2024, 6, 1), "chinese_zodiac"))
+# dragon
+
+print([start.year for start, _ in years_of("chinese_zodiac", "dragon", 1990, 2025)])
+# [2000, 2012, 2024]
+```
+
+**The mod-12-is-wrong-at-January lesson.** The zodiac and sexagenary labels
+apply to the *Chinese lunisolar year*, not the Gregorian year, so a naive
+`gregorian_year % 12` breaks every January/February until Chinese New Year
+catches up:
+
+```python
+print(year_cycle_label(AstroDate(2024, 1, 15), "chinese_zodiac"))   # before CNY 2024-02-10
+# rabbit
+print(year_cycle_label(AstroDate(2024, 2, 10), "chinese_zodiac"))   # Chinese New Year 2024
+# dragon
+```
+
+`year_cycle_label` resolves through `CALENDARS["chinese"]` itself (see
+"Chinese" above), so it inherits that table's exact coverage — lunar years
+1901–2099 — and raises `CalendarRangeError` outside it, same as any other
+Chinese-calendar lookup.
+
+**The indiction's own year-start edge.** The 15-year indiction is keyed to the
+plain Gregorian year, but its own year begins 1 September (the
+Constantinopolitan convention — see "When the year does not start on 1
+January" in *Eras and rulers*), so August and October of the *same* Gregorian
+year carry different indiction numbers:
+
+```python
+print(year_cycle_label(AstroDate(2024, 8, 15), "indiction"))   # before 1 Sept
+# 2
+print(year_cycle_label(AstroDate(2024, 10, 15), "indiction"))  # after 1 Sept
+# 3
+```
+
+Sources: Wikipedia, "Sexagenary cycle" (1984 = jiazi, the stem x branch
+pairing) and "Indiction" (Constantinopolitan 1-September year start; formula
+corroborated against a second independent worked example at
+skypoint.com/members/waltzmn/MSDating.html); both retrieved 2026-07-21 — see
+`chronologia/cycles.py` for the full citations.
+
 ---
 
 ## Reference: all 17 calendars
