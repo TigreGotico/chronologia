@@ -29,10 +29,10 @@ Pure Python. No dependencies. Python 3.10+.
 When does the Hebrew year 5786 begin?
 
 ```python
-from chronologia import CALENDARS, jdn_to_gregorian
+from chronologia import CALENDARS
 
 hebrew = CALENDARS["hebrew"]
-print(jdn_to_gregorian(hebrew.to_jdn(5786, 7, 1)))   # (2025, 9, 23)
+print(hebrew.date(5786, 7, 1))   # 2025-09-23T00:00:00
 ```
 
 That's September 23rd, 2025 — the real Rosh Hashanah. No lookup
@@ -57,12 +57,12 @@ Python's `datetime` stops at year 1. History doesn't. This library's
 comparisons, you can mix the two freely — but its year is unlimited:
 
 ```python
-from chronologia import AstroDate, CALENDARS, jdn_to_gregorian
+from chronologia import AstroDate
 from datetime import datetime
 
 # The Ides of March, 44 BC — a date in the ROMAN (Julian) calendar,
 # so we let the Julian calendar say which day it really was:
-ides = AstroDate(*jdn_to_gregorian(CALENDARS["julian"].to_jdn(-43, 3, 15)))
+ides = AstroDate.from_calendar("julian", -43, 3, 15)
 print(ides.weekday())               # 2  — Caesar was assassinated on a Wednesday
 print(ides < datetime(2020, 1, 1))  # True — compares freely with datetime
 ```
@@ -133,7 +133,7 @@ and why*:
 from chronologia import TIMELINES
 
 rome = TIMELINES["rome_1582"]
-print(rome.to_jdn((1582, 10, 9)))
+print(rome.date(1582, 10, 9))
 # NeverExisted(label=1582-10-09, discontinuity=SKIP: Oct 4 → Oct 15,
 #              citation='Inter gravissimas (1582)')
 ```
@@ -144,9 +144,8 @@ Different countries made the jump in different centuries — Britain in
 world called November 7th:
 
 ```python
-from chronologia import jdn_to_gregorian
 russia = TIMELINES["russia_1918"]
-print(jdn_to_gregorian(russia.to_jdn((1917, 10, 25))))   # (1917, 11, 7)
+print(russia.date(1917, 10, 25))   # 1917-11-07T00:00:00
 ```
 
 And Sweden, after botching a gradual transition, needed a one-off

@@ -44,10 +44,12 @@ called a **proleptic** timeline. You opt into a country's real history by
 naming its timeline in `TIMELINES`.
 
 ```python
-from chronologia import proleptic, julian_to_jdn, jdn_to_gregorian
+from chronologia import proleptic, AstroDate
 
-# With no reforms, a timeline is just the bare calendar:
-print(proleptic("julian").from_jdn(julian_to_jdn(1582, 10, 10)))
+# With no reforms, a timeline is just the bare calendar — hand it a real
+# instant and it hands back the civil label a local would have written:
+oct10 = AstroDate.from_calendar("julian", 1582, 10, 10)
+print(proleptic("julian").from_astro(oct10))
 # CivilLabel(year=1582, month=10, day=10)
 ```
 
@@ -67,7 +69,7 @@ the decree that explains why.*
 from chronologia import TIMELINES
 
 rome = TIMELINES["rome_1582"]
-answer = rome.to_jdn((1582, 10, 9))       # one of the deleted days
+answer = rome.date(1582, 10, 9)           # one of the deleted days
 print(answer.discontinuity.kind.name)
 # SKIP
 print(answer.discontinuity.citation)
@@ -98,10 +100,8 @@ that has existed exactly once in human history.
 
 ```python
 sweden = TIMELINES["sweden_1700_1712"]
-print(sweden.to_jdn((1712, 2, 30)))            # a real day on the number line
-# 2346425
-print(jdn_to_gregorian(sweden.to_jdn((1712, 2, 30))))
-# (1712, 3, 11)
+print(sweden.date(1712, 2, 30))            # a real day, as an AstroDate
+# 1712-03-11T00:00:00
 ```
 
 Everywhere else on Earth, that day was the 11th of March 1712. The timeline
@@ -124,14 +124,15 @@ old English labels come out with their original year number:
 britain = TIMELINES["britain_1752"]
 
 # The English civil label for the day we would call 24 Feb 1732:
-print(britain.from_jdn(julian_to_jdn(1752, 2, 24)))
+feb24 = AstroDate.from_calendar("julian", 1752, 2, 24)
+print(britain.from_astro(feb24))
 # CivilLabel(year=1752, month=2, day=24)
 ```
 
 And the deleted-days SKIP still applies to the same timeline:
 
 ```python
-answer = britain.to_jdn((1752, 9, 5))     # inside the 11 deleted days
+answer = britain.date(1752, 9, 5)         # inside the 11 deleted days
 print(answer.discontinuity.kind.name)
 # SKIP
 ```
@@ -150,7 +151,7 @@ aliases of this timeline (`spain_1582`, `portugal_1582`, `italy_1582`,
 
 ```python
 rome = TIMELINES["rome_1582"]
-print(rome.to_jdn((1582, 10, 9)).discontinuity.after_label.as_tuple())
+print(rome.date(1582, 10, 9).discontinuity.after_label.as_tuple())
 # (1582, 10, 15)
 ```
 
@@ -160,7 +161,7 @@ Britain, September 1752: eleven days deleted, and the civil year moved from 25
 March to 1 January (see the RELABEL example above).
 
 ```python
-print(TIMELINES["britain_1752"].to_jdn((1752, 9, 5)).discontinuity.kind.name)
+print(TIMELINES["britain_1752"].date(1752, 9, 5).discontinuity.kind.name)
 # SKIP
 ```
 
@@ -171,8 +172,8 @@ By 1918 the gap was thirteen days. This is why Russia's October Revolution of
 
 ```python
 russia = TIMELINES["russia_1918"]
-print(jdn_to_gregorian(russia.to_jdn((1917, 10, 25))))
-# (1917, 11, 7)
+print(russia.date(1917, 10, 25))
+# 1917-11-07T00:00:00
 ```
 
 ### greece_1923 — one of the last European switches
@@ -181,7 +182,7 @@ Greece's civil switch in 1923: the day after 15 February (Julian) was 1 March
 (Gregorian), deleting the 16th to the 28th.
 
 ```python
-print(TIMELINES["greece_1923"].to_jdn((1923, 2, 20)).discontinuity.kind.name)
+print(TIMELINES["greece_1923"].date(1923, 2, 20).discontinuity.kind.name)
 # SKIP
 ```
 
@@ -191,8 +192,8 @@ Sweden's botched transition and its unique 30 February 1712 (see the INSERT
 example above), followed by its actual Gregorian adoption in 1753.
 
 ```python
-print(jdn_to_gregorian(TIMELINES["sweden_1700_1712"].to_jdn((1712, 2, 30))))
-# (1712, 3, 11)
+print(TIMELINES["sweden_1700_1712"].date(1712, 2, 30))
+# 1712-03-11T00:00:00
 ```
 
 ### japan_1873 — from a lunisolar calendar to the Gregorian one
@@ -203,8 +204,8 @@ side is not yet a supported calendar, so a date before the switch is reported
 as simply outside the modelled span:
 
 ```python
-print(jdn_to_gregorian(TIMELINES["japan_1873"].to_jdn((1873, 1, 1))))
-# (1873, 1, 1)
+print(TIMELINES["japan_1873"].date(1873, 1, 1))
+# 1873-01-01T00:00:00
 ```
 
 Ask that same timeline about a *pre-1873* date and it reports, honestly, that
@@ -226,13 +227,18 @@ lunisolar calendar is not yet wired in — rather than inventing an answer.
 | `sweden_1700_1712` | Sweden | INSERT (30 Feb 1712) + SKIP (1753) |
 | `japan_1873` | Japan | RELABEL (lunisolar → Gregorian) |
 
-Two calls do all the work on any timeline:
+Two calls do all the work on any timeline, objects in and objects out:
 
-- `timeline.from_jdn(jdn)` → the civil `CivilLabel(year, month, day)` a person
-  in that jurisdiction would have written for that day.
-- `timeline.to_jdn((year, month, day))` → the day number(s) that label maps to:
-  a single JDN, a two-tuple for a REPEAT, or a `NeverExisted` for a label
-  inside a SKIP window.
+- `timeline.date(year, month, day)` → the astronomical instant(s) a civil label
+  names: a single `AstroDate`, an `(earlier, later)` tuple of `AstroDate`s for a
+  REPEAT, or a `NeverExisted` for a label inside a SKIP window.
+- `timeline.from_astro(moment)` → the civil `CivilLabel(year, month, day)` a
+  person in that jurisdiction would have written for that `AstroDate`/`date`/
+  `datetime`.
+
+Underneath, the low-level `timeline.to_jdn((year, month, day))` and
+`timeline.from_jdn(jdn)` speak raw Julian Day Numbers directly; the two calls
+above are the object-returning facade over them.
 
 And the four `DiscontinuityKind` values — `SKIP`, `REPEAT`, `INSERT`,
 `RELABEL` — are exactly the four shapes above. The distinction the library

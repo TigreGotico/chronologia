@@ -322,6 +322,35 @@ class Timeline:
             f"label {label.as_tuple()} maps to no segment of "
             f"timeline {self.key!r}")
 
+    # -- friendly object facade (labels in, honest objects out) ------------
+
+    def date(self, year: int, month: int, day: int):
+        """The astronomical instant(s) a civil ``(year, month, day)`` names.
+
+        Object-returning sugar over :meth:`to_jdn`: a single
+        :class:`~chronologia.astrodate.AstroDate` for the ordinary case, a
+        ``(earlier, later)`` tuple of AstroDates for a REPEAT (one label, two
+        JDNs), or a :class:`NeverExisted` when the label falls in a SKIP window
+        — ``TIMELINES["russia_1918"].date(1917, 10, 25)`` is the October
+        Revolution as a Gregorian AstroDate in one line.
+        """
+        from chronologia.astrodate import AstroDate
+        result = self.to_jdn((year, month, day))
+        if isinstance(result, NeverExisted):
+            return result
+        if isinstance(result, tuple):
+            return tuple(AstroDate(*jdn_to_gregorian(j)) for j in result)
+        return AstroDate(*jdn_to_gregorian(result))
+
+    def from_astro(self, moment) -> CivilLabel:
+        """The civil :class:`CivilLabel` this timeline assigns to an instant.
+
+        ``moment`` is any ``AstroDate``/``date``/``datetime``; the Gregorian
+        date fields are read and mapped through the calendar in force.
+        """
+        return self.from_jdn(gregorian_to_jdn(moment.year, moment.month,
+                                              moment.day))
+
 
 # --------------------------------------------------------------------------
 # Data instances (citations above; gold values in test/test_timelines.py).

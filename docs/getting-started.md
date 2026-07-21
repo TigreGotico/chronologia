@@ -47,21 +47,21 @@ common language.
 Let's do it. When does the Hebrew year 5786 begin?
 
 ```python
-from chronologia import CALENDARS, jdn_to_gregorian
+from chronologia import CALENDARS
 
 hebrew = CALENDARS["hebrew"]
-number_line_position = hebrew.to_jdn(5786, 7, 1)   # 1 Tishri, the new year
-print(jdn_to_gregorian(number_line_position))
-# (2025, 9, 23)
+print(hebrew.date(5786, 7, 1))   # 1 Tishri, the new year
+# 2025-09-23T00:00:00
 ```
 
-`to_jdn` pushed the Hebrew date down to its spot on the number line;
-`jdn_to_gregorian` asked our everyday (Gregorian) calendar what day sits
-there. The answer, `(2025, 9, 23)`, is the 23rd of September 2025 — the real
-Rosh Hashanah, computed from the Hebrew calendar's own rules, not looked up
-anywhere.
+`date` pushed the Hebrew date down to its spot on the number line and asked
+our everyday (Gregorian) calendar what day sits there, handing back an
+`AstroDate` — a real date object, no integers to thread. The answer, the
+23rd of September 2025, is the real Rosh Hashanah, computed from the Hebrew
+calendar's own rules, not looked up anywhere.
 
-Every JDN is just an integer, so you can look at one directly:
+The number in the middle is still there under the object — every JDN is just
+an integer, so you can look at one directly:
 
 ```python
 from chronologia import gregorian_to_jdn
@@ -206,7 +206,7 @@ from chronologia import (
 
 # The calendar hub: 17 calendars plus direct Gregorian/Julian conversion
 from chronologia import (
-    CALENDARS, Calendar, TabulatedCalendar, CalendarRangeError,
+    CALENDARS, Calendar, CalendarDate, TabulatedCalendar, CalendarRangeError,
     gregorian_to_jdn, jdn_to_gregorian,
     julian_to_jdn, jdn_to_julian,
     register_event_provider,
