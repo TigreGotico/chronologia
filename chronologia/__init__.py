@@ -33,6 +33,8 @@ from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
                                  AmbiguousPeriodError, NamedPeriod, calibrate_c14,
                                  candidates, children, lookup, subdivide)
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
+from chronologia.solar import (SOLAR_ACCURACY, NoSunEvent, SunEvents,
+                               sun_events, sunset_day_start)
 from chronologia.resolution import DateTimeResolution
 from chronologia.roman import roman_to_julian
 from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
@@ -108,6 +110,12 @@ __all__ = [
     "equation_of_time",
     "apparent_solar_time",
     "EOT_ACCURACY",
+    # arithmetic solar events (NOAA sunrise/sunset)
+    "sun_events",
+    "sunset_day_start",
+    "SunEvents",
+    "NoSunEvent",
+    "SOLAR_ACCURACY",
     # derived resolution vocabulary
     "DateTimeResolution",
     # timelines & discontinuities
