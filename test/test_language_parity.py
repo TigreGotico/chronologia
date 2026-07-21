@@ -24,7 +24,6 @@ adding their package opts them in.
 """
 import importlib.util
 import os
-import subprocess
 import sys
 
 import pytest
@@ -59,14 +58,65 @@ _PACKAGES = _corpus_packages()
 _LANGS = sorted(_PACKAGES)
 
 
-def _collect_count(pkg_path):
-    """Number of test items pytest collects under ``pkg_path``."""
-    env = dict(os.environ, PYTEST_DISABLE_PLUGIN_AUTOLOAD="1")
-    proc = subprocess.run(
-        [sys.executable, "-m", "pytest", "--collect-only", "-q",
-         "-p", "no:cacheprovider", pkg_path],
-        cwd=_REPO_ROOT, env=env, capture_output=True, text=True)
-    return sum(1 for line in proc.stdout.splitlines() if "::" in line)
+class _CollectItemsPlugin:
+    """Records every item pytest collects, for later per-package bucketing."""
+
+    def __init__(self):
+        self.items = []
+
+    def pytest_collection_modifyitems(self, items):
+        self.items.extend(items)
+
+
+def _collect_all_counts(packages=None):
+    """Collect corpus package(s) **once** and bucket item counts by lang.
+
+    This replaces spawning one ``pytest --collect-only`` subprocess per
+    language (O(langs) process starts, each paying full pytest import/
+    interpreter-startup cost) with a single in-process collection pass over
+    every corpus package at once, using pytest's own collection API
+    (``pytest.main(..., plugins=[...])`` with a
+    ``pytest_collection_modifyitems`` hook) -- the same collector the old
+    subprocess invoked, just run once instead of N times.
+
+    ``packages`` defaults to the module-level discovered packages; a caller
+    may pass an explicit ``{lang: path}`` dict to exercise this function in
+    isolation (e.g. to prove the guard itself catches an empty corpus).
+    """
+    packages = _PACKAGES if packages is None else packages
+    if not packages:
+        return {}
+    plugin = _CollectItemsPlugin()
+    devnull = open(os.devnull, "w")
+    stdout, sys.stdout = sys.stdout, devnull
+    try:
+        pytest.main(
+            ["--collect-only", "-q", "-p", "no:cacheprovider",
+             *packages.values()],
+            plugins=[plugin],
+        )
+    finally:
+        sys.stdout = stdout
+        devnull.close()
+    counts = {lang: 0 for lang in packages}
+    by_path = sorted(packages.items(), key=lambda kv: len(kv[1]), reverse=True)
+    for item in plugin.items:
+        item_path = str(getattr(item, "path", None) or item.fspath)
+        for lang, pkg_path in by_path:
+            if item_path == pkg_path or item_path.startswith(pkg_path + os.sep):
+                counts[lang] += 1
+                break
+    return counts
+
+
+_COUNTS_CACHE = None
+
+
+def _collect_count(lang):
+    global _COUNTS_CACHE
+    if _COUNTS_CACHE is None:
+        _COUNTS_CACHE = _collect_all_counts()
+    return _COUNTS_CACHE[lang]
 
 
 def test_at_least_one_corpus_exists():
@@ -84,7 +134,7 @@ def test_corpus_backs_a_real_locale(lang):
 
 @pytest.mark.parametrize("lang", _LANGS)
 def test_corpus_has_enough_cases(lang):
-    n = _collect_count(_PACKAGES[lang])
+    n = _collect_count(lang)
     assert n >= MIN_CASES, \
         f"nl_corpus_{lang} collects only {n} cases (need >= {MIN_CASES})"
 
@@ -103,3 +153,22 @@ def test_non_reference_corpus_has_parity_block(lang):
     assert len(parity) >= MIN_PARITY, \
         (f"nl_corpus_{lang}.parity.PARITY has {len(parity)} cases "
          f"(need >= {MIN_PARITY})")
+
+
+def test_guard_flags_an_empty_corpus(tmp_path):
+    """Adversarial test of the guard mechanism itself.
+
+    A corpus package with no ``test_nl_*`` modules must collect zero cases
+    and therefore trip the ``MIN_CASES`` threshold -- proving the in-process
+    single-pass collector (``_collect_all_counts``) still catches a corpus
+    that regresses to empty, exactly as the old per-language subprocess did.
+    """
+    fake_pkg = tmp_path / "nl_corpus_fake"
+    fake_pkg.mkdir()
+    (fake_pkg / "__init__.py").write_text("")
+    # deliberately no test_nl_*.py files inside -- this is the broken fixture
+
+    counts = _collect_all_counts({"fake": str(fake_pkg)})
+
+    assert counts["fake"] == 0
+    assert counts["fake"] < MIN_CASES
