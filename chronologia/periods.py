@@ -236,7 +236,7 @@ def lookup(name: str, region: Optional[str] = None) -> NamedPeriod:
         raise KeyError(f"unknown period {name!r}")
     if len(cands) == 1:
         return cands[0]
-    regions = sorted(p.region for p in cands)
+    regions = sorted((p.region for p in cands), key=lambda r: r or "")
     raise AmbiguousPeriodError(
         f"{name!r} is region-ambiguous across {regions}; "
         f"pass region= or use candidates()")

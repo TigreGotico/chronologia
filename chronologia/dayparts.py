@@ -174,6 +174,7 @@ def lookup(name: str, region: Optional[str] = None) -> DayPart:
 
 def _civil_ymd(date_or_span: Union[AstroDate, date, datetime, DateSpan]
                ) -> Tuple[int, int, int]:
+    anchor: Union[AstroDate, date, datetime]
     if isinstance(date_or_span, DateSpan):
         anchor = date_or_span.start
     else:

@@ -58,7 +58,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Mapping, Optional, Tuple
+from typing import Callable, Dict, Mapping, Optional, Tuple, Union
 
 # JDN of RD 1 (proleptic Gregorian 0001-01-01) minus the RD value itself:
 # JDN(noon integer) = RD + 1721425.  Verified: gregorian_to_jdn(1, 1, 1) ==
@@ -1098,7 +1098,7 @@ class Calendar:
         return CalendarDate(self.key, y, m, d)
 
 
-CALENDARS: Dict[str, object] = {
+CALENDARS: Dict[str, Union[Calendar, TabulatedCalendar]] = {
     # tabular/civil Hijri: a deterministic arithmetic rule, hence ``exact``
     # as a conversion; its ±1-day divergence from sighting-based observation
     # is a documented model caveat, not a basis class.

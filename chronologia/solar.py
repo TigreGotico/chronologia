@@ -365,7 +365,9 @@ def sun_events(date, latitude: float, longitude: float,
         date=start,
         latitude=latitude,
         longitude=longitude,
-        **values,
+        # solar_noon always resolves to an AstroDate (never NoSunEvent); the
+        # uniform dict value type erases that, so the **-splat is widened.
+        **values,  # type: ignore[arg-type]
     )
 
 

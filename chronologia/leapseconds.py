@@ -46,7 +46,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from importlib import resources
-from typing import Tuple, Union
+from typing import Tuple, TypeVar, Union
 
 from chronologia.astrodate import AstroDate
 
@@ -68,6 +68,9 @@ __all__ = [
 ]
 
 Instant = Union[date, datetime, AstroDate]
+# Type-preserving instant: the ``*_to_*`` timescale conversions return the same
+# concrete type they were handed (``AstroDate`` in -> ``AstroDate`` out).
+_I = TypeVar("_I", date, datetime, AstroDate)
 
 # TAI - GPS is a fixed constant: GPS time was set to equal TAI - 19s at the
 # GPS epoch and has never itself stepped for leap seconds since.
@@ -243,7 +246,7 @@ def gps_to_utc(instant: datetime) -> datetime:
 TT_MINUS_TAI = 32.184
 
 
-def utc_to_tt(instant: Instant) -> Instant:
+def utc_to_tt(instant: _I) -> _I:
     """Convert a UTC instant to Terrestrial Time (``TT = TAI + 32.184 s``).
 
     TT is the smooth timescale on which every :class:`~chronologia.axes.TimeAxis`
@@ -258,7 +261,7 @@ def utc_to_tt(instant: Instant) -> Instant:
     return instant + timedelta(seconds=seconds)
 
 
-def tt_to_utc(instant: Instant) -> Instant:
+def tt_to_utc(instant: _I) -> _I:
     """Convert a Terrestrial Time instant to the equivalent UTC instant.
 
     Inverse of :func:`utc_to_tt`.  Estimates the offset from *instant* treated

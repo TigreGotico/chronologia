@@ -34,9 +34,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
-from typing import List, Mapping, Optional, Tuple, Union
+from typing import TYPE_CHECKING, List, Mapping, Optional, Tuple, Union
 
 from chronologia.calendars import CALENDARS, gregorian_to_jdn, jdn_to_gregorian
+
+if TYPE_CHECKING:
+    from chronologia.astrodate import AstroDate
 
 #: microseconds in a civil day -- the exact hub every subdivision rescales to.
 US_PER_DAY = 86_400 * 1_000_000
@@ -64,6 +67,7 @@ class DayCycle:
         """The 0-based position of ``jdn`` within this cycle."""
         if self.kind == "free_running":
             return (jdn - self.anchor_jdn) % self.length
+        assert self.calendar is not None  # month_anchored always names one
         cal = CALENDARS[self.calendar]
         day_of_month = cal.from_jdn(jdn)[2]
         return (day_of_month - 1) % self.length

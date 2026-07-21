@@ -73,7 +73,8 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Dict, FrozenSet, Iterable, Optional, Tuple
+from typing import (Dict, FrozenSet, Iterable, Optional, Protocol, Tuple,
+                    runtime_checkable)
 
 from chronologia.astrodate import (BASIS_EXACT, BASIS_TABULATED, AstroDate,
                                    DateSpan)
@@ -110,6 +111,14 @@ _EASTER_METHODS = ("gregorian", "julian_gregorian_date")
 # --------------------------------------------------------------------------
 # Rule kinds — each exposes ``observances(year) -> ((AstroDate, basis), ...)``.
 # --------------------------------------------------------------------------
+@runtime_checkable
+class RuleKind(Protocol):
+    """The structural contract every holiday rule kind satisfies."""
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        ...
+
+
 @dataclass(frozen=True)
 class FixedRule:
     """A constant Gregorian ``(month, day)`` — the same date every year."""
@@ -300,7 +309,7 @@ class HolidayRule:
     """
 
     name: str
-    kind: object
+    kind: RuleKind
     categories: FrozenSet[str]
     subdiv: Optional[str] = None
     observed: Optional[ObservedShift] = None
@@ -392,7 +401,7 @@ class HolidayCalendar:
         return tuple(out)
 
 
-def _parse_kind(kind: str, args: str) -> object:
+def _parse_kind(kind: str, args: str) -> RuleKind:
     parts = args.split()
     if kind == "fixed":
         m, d = int(parts[0]), int(parts[1])

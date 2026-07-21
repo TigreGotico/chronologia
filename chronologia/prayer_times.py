@@ -279,7 +279,8 @@ def prayer_times(date, latitude: float, longitude: float,
         asr=asr,
         fajr=present(fajr),
         sunrise=present(events.sunrise),
-        dhuhr=present(events.solar_noon),
+        # solar_noon is always an AstroDate; present() widens to SunEvent.
+        dhuhr=present(events.solar_noon),  # type: ignore[arg-type]
         asr_time=present(asr_time),
         maghrib=present(events.sunset),
         isha=present(isha),

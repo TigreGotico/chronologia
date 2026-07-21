@@ -55,7 +55,7 @@ at ``~/AgentWorkspaces/papers/standards/rfc5545_icalendar_recurrence.txt``;
 the enumerated example dates seed the gold test suite.
 """
 from dataclasses import dataclass, field
-from typing import Iterator, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, Optional, Tuple, Union
 
 from chronologia.astrodate import AstroDate, DateSpan, is_leap_year
 from chronologia.calendars import (gregorian_to_jdn, iso_week_from_jdn,
@@ -365,7 +365,7 @@ def parse_rrule(s: str) -> Recurrence:
     def _ints(v: str) -> Tuple[int, ...]:
         return tuple(int(x) for x in v.split(","))
 
-    kwargs = {"freq": fields.pop("FREQ").upper()}
+    kwargs: Dict[str, Any] = {"freq": fields.pop("FREQ").upper()}
     if "INTERVAL" in fields:
         kwargs["interval"] = int(fields.pop("INTERVAL"))
     if "COUNT" in fields:
@@ -442,7 +442,7 @@ def every(freq: str, **by) -> Recurrence:
     >>> labor_day.to_string()
     'FREQ=YEARLY;BYMONTH=9;BYDAY=1MO'
     """
-    kwargs = {"freq": freq.upper()}
+    kwargs: Dict[str, Any] = {"freq": freq.upper()}
 
     def _tup(v):
         return (v,) if isinstance(v, int) else tuple(v)

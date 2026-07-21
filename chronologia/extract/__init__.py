@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import re
 from datetime import datetime, timedelta
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from chronologia.astrodate import AstroDate, DateSpan
 from chronologia.extract.compiler import ConstructionCompiler
@@ -74,7 +74,8 @@ class DateTimeEngine:
         if not self._multiword:
             return tokens
         phrases = [(s.split(), s) for s in self._multiword]
-        out, i = [], 0
+        out: List[Token] = []
+        i = 0
         while i < len(tokens):
             for words, surface in phrases:
                 n = len(words)
@@ -116,7 +117,7 @@ class DateTimeEngine:
         return explain(text, self.spec, anchor)
 
 
-_TIMESPAN_ENGINES = {}
+_TIMESPAN_ENGINES: Dict[str, "DateTimeEngine"] = {}
 
 
 def _timespan_engine(lang: str) -> "DateTimeEngine":

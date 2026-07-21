@@ -213,7 +213,7 @@ def _era_year_start(era: Era) -> Tuple[int, int]:
     """``(month, day)`` this era's year begins on its calendar."""
     if era.year_start is not None:
         return era.year_start
-    return _CALENDAR_YEAR_START.get(era.calendar, (1, 1))
+    return _CALENDAR_YEAR_START.get(era.calendar or "", (1, 1))
 
 
 def resolve_era_year_span(era: Union[str, Era], value: Union[int, float]
@@ -317,7 +317,7 @@ def resolve_bp(value: Union[int, float, str, Decimal], unit: str = "a"
     dval = Decimal(str(value))
     mult = _BP_UNITS[unit]
     years_before = dval * mult
-    precision_years = Decimal(1).scaleb(dval.as_tuple().exponent) * mult
+    precision_years = Decimal(1).scaleb(int(dval.as_tuple().exponent)) * mult
     start = _astrodate_years_before_present(years_before)
     end = _astrodate_years_before_present(years_before - precision_years)
     return DateSpan(start, end, basis="reconstructed")

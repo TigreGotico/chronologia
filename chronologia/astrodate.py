@@ -29,6 +29,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace as _dc_replace
 from datetime import date, datetime, time, timedelta, timezone, tzinfo
+# Aliases for annotation sites where a method/field name (``date``,
+# ``datetime``, ``tzinfo``) would otherwise shadow the imported type.
+from datetime import date as _date, datetime as _datetime, tzinfo as _tzinfo
 from typing import Optional, Tuple, Union
 
 from chronologia.calendars import gregorian_to_jdn, jdn_to_gregorian
@@ -99,7 +102,7 @@ class AstroDate:
     minute: int = 0
     second: int = 0
     microsecond: int = 0
-    tzinfo: Optional[tzinfo] = None
+    tzinfo: Optional[_tzinfo] = None
 
     def __post_init__(self):
         if self.month is None or not 1 <= self.month <= 12:
@@ -174,7 +177,7 @@ class AstroDate:
     def _is_aware(self) -> bool:
         return self.tzinfo is not None and self.utcoffset() is not None
 
-    def astimezone(self, tz: tzinfo) -> "AstroDate":
+    def astimezone(self, tz: _tzinfo) -> "AstroDate":
         """Return the same instant expressed in ``tz`` (aware -> aware).
 
         A **naive** AstroDate raises ``ValueError`` — a documented deviation
@@ -246,7 +249,7 @@ class AstroDate:
         week = (thursday - jan1) // 7 + 1
         return (iso_year, week, iso_weekday)
 
-    def date(self) -> Optional[date]:
+    def date(self) -> Optional[_date]:
         """The equivalent ``datetime.date``, or ``None`` when out of range."""
         if not self.in_datetime_range:
             return None
@@ -256,7 +259,7 @@ class AstroDate:
         """The time-of-day component as a ``datetime.time``."""
         return time(self.hour, self.minute, self.second, self.microsecond)
 
-    def datetime(self) -> Optional[datetime]:
+    def datetime(self) -> Optional[_datetime]:
         """The equivalent ``datetime``, or ``None`` when out of range.
 
         Carries ``tzinfo`` through, so an aware AstroDate yields an aware
@@ -322,12 +325,12 @@ class AstroDate:
                    int(hh or 0), int(mm or 0), int(ss or 0), micro, tzinfo=zone)
 
     @classmethod
-    def from_date(cls, d: date) -> "AstroDate":
+    def from_date(cls, d: _date) -> "AstroDate":
         """Build from a ``datetime.date`` (date fields only)."""
         return cls(d.year, d.month, d.day)
 
     @classmethod
-    def from_datetime(cls, dt: datetime) -> "AstroDate":
+    def from_datetime(cls, dt: _datetime) -> "AstroDate":
         """Build from a ``datetime`` (all fields; tzinfo is dropped)."""
         return cls(dt.year, dt.month, dt.day, dt.hour, dt.minute,
                    dt.second, dt.microsecond)

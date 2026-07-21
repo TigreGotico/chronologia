@@ -53,7 +53,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, cast
 
 from chronologia.timelines import DiscontinuityKind
 
@@ -89,7 +89,7 @@ def _as_utc(dt: datetime) -> datetime:
 
 def _offset_at(tz, instant_utc: datetime) -> timedelta:
     """The zone's UTC offset in force at a UTC instant."""
-    return instant_utc.astimezone(tz).utcoffset()
+    return cast(timedelta, instant_utc.astimezone(tz).utcoffset())
 
 
 def _fmt_offset(td: timedelta) -> str:

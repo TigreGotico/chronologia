@@ -151,7 +151,7 @@ def resolve_cosmic(years_since_big_bang: Union[int, float, str, Decimal],
     dval = Decimal(str(years_since_big_bang))
     mult = _BP_UNITS[unit]
     since_years = dval * mult
-    value_bin = Decimal(1).scaleb(dval.as_tuple().exponent) * mult
+    value_bin = Decimal(1).scaleb(int(dval.as_tuple().exponent)) * mult
     half = _UNIVERSE_AGE_UNC_YEARS + value_bin / 2      # uncertainties ADD
     center_bp = _UNIVERSE_AGE_YEARS - since_years        # years before present
     start = _astrodate_years_before_present(center_bp + half)   # older edge
@@ -343,7 +343,7 @@ def lookback_time(z: Union[int, float, str, Decimal],
     # sensitivity dt/dz [Gyr per unit z] at this z (0 at z=0)
     dt_dz = cosmo.hubble_time_gyr() / ((1.0 + zf) * _E(zf, cosmo.Omega_m,
                                                        cosmo.Omega_lambda))
-    z_bin = float(Decimal(1).scaleb(dz.as_tuple().exponent))
+    z_bin = float(Decimal(1).scaleb(int(dz.as_tuple().exponent)))
     half_gyr = MODEL_UNCERTAINTY_FLOOR_GYR + dt_dz * z_bin / 2.0  # add
     center_bp = Decimal(str(lb)) * _GYR
     half_years = Decimal(str(half_gyr)) * _GYR
