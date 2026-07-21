@@ -865,3 +865,58 @@ class DateSpan:
     def overlaps(self, other: "DateSpan") -> bool:
         """True when two half-open spans share any instant."""
         return self.start < other.end and other.start < self.end
+
+    def _min(self, a: AstroDate, b: AstroDate) -> AstroDate:
+        return a if a <= b else b
+
+    def _max(self, a: AstroDate, b: AstroDate) -> AstroDate:
+        return a if a >= b else b
+
+    def intersect(self, other: "DateSpan") -> Optional["DateSpan"]:
+        """The overlap ``[max(starts), min(ends))``, or ``None`` if disjoint.
+
+        Half-open, so two spans that merely touch (``self.end == other.start``)
+        share no instant and return ``None`` — the same fencepost-free rule
+        that lets adjacent spans tile.  The result's :attr:`basis` is the
+        worst-of the two inputs (:func:`combine_basis`), since the overlap is
+        only as well-established as its least-certain endpoint.
+        """
+        start = self._max(self.start, other.start)
+        end = self._min(self.end, other.end)
+        if start >= end:
+            return None
+        return DateSpan(start, end, combine_basis(self.basis, other.basis))
+
+    def union(self, other: "DateSpan") -> "DateSpan":
+        """The single span ``[min(starts), max(ends))`` covering both.
+
+        Defined only when the two spans overlap *or* are adjacent — half-open
+        tiling means adjacency (``self.end == other.start``) merges seamlessly
+        into one gap-free span, so "june" ∪ "july" is exactly the two-month
+        span.  Two disjoint, non-adjacent spans have a hole between them that a
+        single interval cannot represent, so this raises :class:`ValueError`
+        (see :meth:`gap` for that hole).  Basis is the worst-of the inputs.
+        """
+        if self.end < other.start or other.end < self.start:
+            raise ValueError(
+                "union of disjoint non-adjacent spans is not a single span; "
+                "they leave a gap (see DateSpan.gap)")
+        return DateSpan(self._min(self.start, other.start),
+                        self._max(self.end, other.end),
+                        combine_basis(self.basis, other.basis))
+
+    def gap(self, other: "DateSpan") -> Optional["DateSpan"]:
+        """The empty span between two disjoint spans, or ``None``.
+
+        When the spans overlap or merely touch (adjacent) there is no gap and
+        this returns ``None``.  Otherwise it is the half-open interval running
+        from the earlier span's end up to the later span's start — the stretch
+        of time covered by neither.  Basis is the worst-of the inputs.
+        """
+        if self.end < other.start:
+            lo, hi = self.end, other.start
+        elif other.end < self.start:
+            lo, hi = other.end, self.start
+        else:
+            return None
+        return DateSpan(lo, hi, combine_basis(self.basis, other.basis))
