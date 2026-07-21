@@ -304,6 +304,61 @@ print(start.strftime("%Y-%m-%d %H:%M"))    # the 31 May evening sunset that open
 # 2024-05-31 16:38
 ```
 
+### Civil days across the date line: `zone=`
+
+`sun_events` (and `daypart_span`, `prayer_times`, `temporal_hour_span`,
+`convention_time` alongside it) default to the **solar day**: `date` is read
+as a UTC calendar day, exactly as above. `zone=None`, the default everywhere,
+keeps that behaviour byte-identical — nothing above this subsection changes.
+
+Pass a `tzinfo` as `zone` and `date` is read instead as that zone's **civil
+day** — the wall-clock stretch `[00:00, 24:00)` on that date, in that zone.
+Usually the two agree to within minutes. They can disagree by a whole
+calendar day at Kiribati's Kiritimati island: its clocks run UTC+14, the
+most-ahead zone on Earth, but the island itself sits at 157.4° **west** —
+still numerically in the hemisphere the date line is supposed to separate
+from UTC+14. Converting the *solar-day* sunrise into that zone lands it a day
+late:
+
+```python
+from datetime import timezone
+from zoneinfo import ZoneInfo
+from chronologia import sun_events, AstroDate
+
+kiritimati = ZoneInfo("Pacific/Kiritimati")
+d = AstroDate(2024, 6, 21)
+
+solar = sun_events(d, 1.87, -157.4)                       # solar day (UTC)
+print(solar.sunrise.replace(tzinfo=timezone.utc)
+      .astimezone(kiritimati).strftime("%Y-%m-%d %H:%M"))
+# 2024-06-22 06:24  <- a day late for "21 June" in Kiritimati
+
+civil = sun_events(d, 1.87, -157.4, zone=kiritimati)      # civil day
+print(civil.sunrise.strftime("%Y-%m-%d %H:%M"))
+# 2024-06-21 06:23  <- lands inside the civil day it was asked about
+```
+
+Under the hood, `zone=` computes the ordinary solar-day events for
+`date - 1`, `date`, and `date + 1`, converts each real event into `zone`, and
+keeps — field by field — whichever crossing lands in the requested civil
+window. Because a date-line zone can make a civil day contain *two*
+occurrences of one kind of event (or none), the convention is: **the earlier
+instant wins** when there are two, and the `NoSunEvent`/absence for the solar
+day sharing `date`'s own calendar date is returned when there are none (a
+persistent polar day/night propagates exactly as before). Every real event
+returned this way is an **aware** `AstroDate` in `zone`; a `NoSunEvent` is
+returned unconverted, since it names no instant to convert.
+
+`daypart_span(..., zone=...)` gets the same aware endpoints, resolved via
+`resolve_wall_clock`: a boundary landing in a DST gap or fold resolves to the
+*post-transition* instant (never raises, never picks arbitrarily), so
+`DateSpan.width` on the result honestly reports 23 or 25 (or, for a narrower
+part, correspondingly thinner/thicker) hours whenever the part's boundaries
+straddle a transition. `prayer_times` and the unequal-hour functions
+(`temporal_hour_span`, `convention_time`) accept the same `zone=` purely for
+*presentation*: the computed instants are identical either way, only the
+returned `AstroDate`s become aware wall-clock readings in `zone`.
+
 ## Why "the next full moon" has an error bar
 
 Ask an almanac for the next full moon and it gives you one clean-looking
@@ -597,7 +652,7 @@ day attach as another named school — but the library will not invent one.
 | `local_mean_time(longitude_deg)` | the local-mean-time zone for a meridian (east positive) |
 | `equation_of_time(date)` | the sundial-vs-clock offset on a date (`EOT_ACCURACY` bounds it) |
 | `apparent_solar_time(instant, longitude_deg)` | what a sundial at that longitude reads |
-| `sun_events(date, latitude, longitude)` | sunrise/sunset/solar-noon and the civil/nautical/astronomical twilights, in UTC (`SOLAR_ACCURACY` bounds it) |
+| `sun_events(date, latitude, longitude, zone=None)` | sunrise/sunset/solar-noon and the civil/nautical/astronomical twilights (`SOLAR_ACCURACY` bounds it); `zone=None` is the UTC solar day, a `tzinfo` reads `date` as that zone's civil day and returns aware events |
 | `sunset_day_start(date, latitude, longitude)` | the previous evening's computed sunset that opens a sunset-anchored calendar day |
 | `temporal_hour_span(date, lat, lon, hour_number, system)` | the Nth unequal (temporal/seasonal) hour as a `DateSpan` whose width is its true season-varying length; `NoSunEvent` in polar conditions |
 | `convention_time(date, lat, lon, hour, convention)` | the instant of an equal-hour clock count re-anchored to a solar event (Italian from sunset, Babylonian from sunrise) |
@@ -612,6 +667,6 @@ day attach as another named school — but the library will not invent one.
 | `next_phase(instant, phase)` / `previous_phase(instant, phase)` | next/previous `"new"`/`"first_quarter"`/`"full"`/`"last_quarter"` as a `DateSpan`, width `2 * MOON_PHASE_ACCURACY` |
 | `lunation_number(instant)` | Brown Lunation Number of the containing lunation |
 | `MOON_PHASE_ACCURACY`, `MEAN_SYNODIC_MONTH_DAYS`, `EPOCH_NEW_MOON` | the mean-model constants and their stated/measured accuracy |
-| `daypart_span(date_or_span, name, region=None)` | the span a named day-part (morning, tarde, night) occupies on a date; midnight-crossers reach into the next civil day |
+| `daypart_span(date_or_span, name, region=None, zone=None)` | the span a named day-part (morning, tarde, night) occupies on a date; midnight-crossers reach into the next civil day; a `tzinfo` `zone` makes the endpoints aware, resolving DST gap/fold to the post-transition instant |
 | `DAY_PARTS`, `DayPart` | the region-tagged day-part registry (CLDR day-period boundaries) |
 | `DateSpan.intersect` / `.union` / `.gap` | half-open interval algebra over spans (overlap, seamless merge, the hole between) |
