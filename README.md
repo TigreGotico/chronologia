@@ -26,6 +26,11 @@ Python 3.10+.
   minute-wide one. Half-open so adjacent spans tile with no fenceposts — June
   ends exactly where July begins. `DateTimeResolution` is **derived** from the
   width, never asserted, which removes a whole class of tag-vs-value drift.
+  A span also carries a **`basis`** (`exact` / `tabulated` / `reconstructed` /
+  `predicted`) recording how its endpoints were established; `combine_basis()`
+  is the worst-of rule for propagating it. Widths beyond `timedelta`'s
+  ~2.7-million-year ceiling are reported as a **`WideDuration`** so a
+  geological span never overflows (see **Deep time** below).
 - **`CALENDARS`** — a registry of 16 calendars, each an integer inverse pair
   through the **Julian Day Number** hub: `to_jdn(y, m, d)` and `from_jdn(jdn)`.
   Twelve are closed-form arithmetic: `julian`, `hebrew`, `islamic_civil`,
@@ -100,6 +105,28 @@ never have generated. A `Timeline` records, for one jurisdiction, which calendar
 was in force over each stretch of days and what its reforms did to the labels.
 Duration math is unaffected (always JDN-space); a non-existent label is a typed
 answer, not an exception.
+## Deep time
+
+`chronologia` reaches past the geological ceiling of `datetime` — and past the
+~2.7-million-year ceiling of `timedelta`. A span millions of years wide still
+constructs, compares, and classifies without overflow, and scaled
+Before-Present expressions carry their own precision.
+
+- **`WideDuration`** — `DateSpan.width` returns a plain `timedelta` for any
+  span that fits one (byte-identical to `end - start`) and a `WideDuration`
+  (whole mean-Gregorian-years plus a sub-year `remainder`) only when a
+  `timedelta` would raise `OverflowError`. Both are orderable against each
+  other and against `timedelta`.
+- **Geological resolution tiers** — above `MILLENNIUM`, width derives one of
+  `EPOCH_GEOLOGICAL` (≳10 kyr), `PERIOD_GEOLOGICAL` (≳10 Myr),
+  `ERA_GEOLOGICAL` (≳100 Myr) or `EON` (≳500 Myr). Thresholds sit near the
+  order of magnitude of the like-named ICS divisions (a period is ~10⁷–10⁸ yr,
+  the Jurassic ~56 Myr), not any single revisable boundary.
+- **`resolve_bp(value, unit)`** — scaled Before-Present units `a` / `ka` /
+  `Ma` / `Ga` (10⁰/10³/10⁶/10⁹ years before AD 1950). The returned span's
+  **width is the precision of the expression**, read off the last significant
+  digit — so pass `value` as a **string** when precision matters (`"66"` and
+  `"66.0"` denote different precisions the floats cannot tell apart).
 
 ```python
 import chronologia as c
@@ -121,6 +148,24 @@ res.discontinuity.kind                   # DiscontinuityKind.SKIP
 # The default proleptic timeline is zero behaviour change — it matches the
 # bare calendar. Registered jurisdictions: rome_1582 (+ es/pt/it/pl group),
 # britain_1752, russia_1918, greece_1923, sweden_1700_1712, japan_1873.
+# A Jurassic-scale span: constructs, compares and classifies with no overflow
+jurassic = c.DateSpan(c.AstroDate(-201_400_000, 1, 1),
+                      c.AstroDate(-143_100_000, 1, 1))
+w = jurassic.width                 # WideDuration(years=58_300_000, ...)
+w.years                            # 58300000
+jurassic.resolution                # DateTimeResolution.PERIOD_GEOLOGICAL
+jurassic.contains(c.AstroDate(-180_000_000, 1, 1))   # True
+
+# Scaled Before-Present: precision comes from the significant figures
+kpg = c.resolve_bp("66", "Ma")     # the K-Pg boundary, to Ma precision
+kpg.start.year                     # -65998050  == 1950 - 66_000_000
+kpg.width.total_seconds() / (365.2425 * 86400)   # ~1_000_000  (1 Ma wide)
+kpg.basis                          # 'reconstructed'
+c.resolve_bp("66.043", "Ma").width # 1 ka wide  (last digit is the .001 Ma place)
+
+# Worst-of basis lattice: exact < tabulated < {reconstructed, predicted}
+c.combine_basis("exact", "tabulated")            # 'tabulated'
+c.combine_basis("reconstructed", "predicted")    # 'reconstructed' (peer tie-break)
 ```
 
 ## Cited sources
