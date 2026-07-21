@@ -1,42 +1,13 @@
-"""Shared assertions for the per-country civil-holiday gold suites.
+"""Shared national-differential assertions for the per-country holiday suites.
 
-Kept separate from :mod:`holiday_golds` (pure data registry) so the country
-modules share exactly one implementation of "does this gold resolve?" and "does
-our national set agree with the reference package?".
+Per-holiday gold DATES live in the one shared registry ``HOLIDAY_GOLDS``
+(test_holiday_golds.py, which also owns the single structural enforcement test).
+This module carries only the differential machinery each country module reuses to
+compare our national set against the independent reference package.
 """
 from __future__ import annotations
 
-from datetime import timedelta
-
-from chronologia import AstroDate, holidays_for
-from chronologia.computus import easter
-
-from holiday_golds import Gold
-
-
-def assert_gold(gold: Gold) -> None:
-    """A holiday named ``gold.name`` under its subdiv resolves to the gold date.
-
-    For movable golds (``easter_offset`` set) the expected date is re-derived
-    independently in-test as ``easter(year, method) + offset`` and cross-checked
-    against the stated ``(month, day)`` — never read back from the rule engine.
-    """
-    expected = AstroDate(gold.year, gold.month, gold.day)
-    if gold.easter_offset is not None:
-        recomputed = easter(gold.year, gold.easter_method) + timedelta(
-            days=gold.easter_offset)
-        assert recomputed == expected, (
-            f"{gold.name}: source phrase easter{gold.easter_offset:+d} = "
-            f"{recomputed.date()}, gold says {expected.date()}")
-    hs = holidays_for(gold.jurisdiction, gold.year, subdiv=gold.subdiv)
-    matches = [h for h in hs if h.name == gold.name
-               and h.subdiv == gold.subdiv]
-    assert matches, (
-        f"no holiday named {gold.name!r} (subdiv={gold.subdiv}) in "
-        f"{gold.jurisdiction} {gold.year}")
-    assert expected in {h.date for h in matches}, (
-        f"{gold.jurisdiction}/{gold.subdiv} {gold.name} {gold.year}: "
-        f"expected {expected.date()}, got {[m.date.date() for m in matches]}")
+from chronologia import holidays_for
 
 
 def national_public_dates(jurisdiction: str, year: int):

@@ -1,58 +1,25 @@
-"""UK bank-holiday golds + national differential (source: gov.uk/bank-holidays).
+"""UK national differential + subdivision behaviour (source: gov.uk/bank-holidays).
 
-Every gold is hand-derived from the gov.uk bank-holidays listing
-(papers/holidays/gb_bank_holidays_govuk.html). Movable days recompute
-easter(2024) in-test; nth-weekday bank holidays carry the 2024 calendar date the
-listing publishes. Subdivisions: GB-EAW (England & Wales), GB-SCT (Scotland),
-GB-NIR (Northern Ireland).
+Per-holiday gold dates for GB live in the shared HOLIDAY_GOLDS registry
+(test_holiday_golds.py); this module owns the national differential against the
+independent reference package and a few subdivision behaviour checks.
 
-Documented national differential disagreements (vacanza/holidays 0.101), all
-adjudicated in the reference's favour — chronologia deliberately omits
-substitute ("in lieu") days and one-off royal bank holidays:
+Documented national differential disagreements (vacanza/holidays), all
+adjudicated in the reference's favour — chronologia deliberately omits substitute
+("in lieu") days and one-off royal bank holidays:
 
-* 2023 ref-only 1 Jan substitute (2 Jan): 1 Jan 2023 was a Sunday; gov.uk grants
-  a substitute Monday. chronologia carries statutory nominal dates only.
+* 2023 ref-only 2 Jan: substitute Monday for New Year's Day (1 Jan 2023 was a
+  Sunday). chronologia carries statutory nominal dates only.
 * 2023 ref-only 8 May: the one-off bank holiday for the Coronation of King
-  Charles III (proclaimed for 2023 only) — not a recurring rule.
+  Charles III (2023 only) — not a recurring rule.
 """
-import pytest
-
 from chronologia import AstroDate, holidays_for
-from holiday_golds import Gold, register
-from holiday_testkit import assert_gold, assert_national_differential
+from holiday_testkit import assert_national_differential
 
 _J = "GB"
-GOLDS = [
-    # --- UK-wide (all three regions), 2024 ---
-    Gold(_J, None, "New Year's Day", 2024, 1, 1),
-    Gold(_J, None, "Good Friday", 2024, 3, 29, easter_offset=-2),
-    Gold(_J, None, "Early May Bank Holiday", 2024, 5, 6),   # 1st Monday of May
-    Gold(_J, None, "Spring Bank Holiday", 2024, 5, 27),     # last Monday of May
-    Gold(_J, None, "Christmas Day", 2024, 12, 25),
-    Gold(_J, None, "Boxing Day", 2024, 12, 26),
-    # --- England & Wales ---
-    Gold(_J, "GB-EAW", "Easter Monday", 2024, 4, 1, easter_offset=1),
-    Gold(_J, "GB-EAW", "Summer Bank Holiday", 2024, 8, 26),  # last Monday of Aug
-    # --- Scotland ---
-    Gold(_J, "GB-SCT", "2nd January", 2024, 1, 2),
-    Gold(_J, "GB-SCT", "Summer Bank Holiday", 2024, 8, 5),   # 1st Monday of Aug
-    Gold(_J, "GB-SCT", "St Andrew's Day", 2024, 11, 30),
-    # --- Northern Ireland ---
-    Gold(_J, "GB-NIR", "St Patrick's Day", 2024, 3, 17),
-    Gold(_J, "GB-NIR", "Easter Monday", 2024, 4, 1, easter_offset=1),
-    Gold(_J, "GB-NIR", "Battle of the Boyne", 2024, 7, 12),
-    Gold(_J, "GB-NIR", "Summer Bank Holiday", 2024, 8, 26),  # last Monday of Aug
-]
-register(GOLDS)
-
 _DISAGREEMENTS = {
     2023: {"ref_only": {(1, 2), (5, 8)}},
 }
-
-
-@pytest.mark.parametrize("gold", GOLDS, ids=lambda g: f"{g.subdiv or 'GB'}:{g.name}")
-def test_gold_dates(gold):
-    assert_gold(gold)
 
 
 def test_national_differential_2023_2025():

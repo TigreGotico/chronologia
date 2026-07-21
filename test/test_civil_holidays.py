@@ -446,37 +446,3 @@ def test_every_tab_categories_within_schema(filename):
 
 def test_at_least_three_jurisdictions_shipped():
     assert {"pt.tab", "us.tab", "sa.tab"} <= set(_tab_files())
-
-
-# --------------------------------------------------------------------------
-# Per-rule gold coverage enforcement (shared registry, see holiday_golds.py).
-# Every rule of every non-legacy jurisdiction must be pinned by a gold, so a new
-# country cannot ship an unasserted holiday.
-# --------------------------------------------------------------------------
-from holiday_golds import (LEGACY_UNENFORCED, ensure_all_registered,  # noqa: E402
-                           enforced_jurisdictions, golds_for)
-
-ensure_all_registered()
-
-
-@pytest.mark.parametrize("filename", _tab_files())
-def test_every_rule_has_a_gold(filename):
-    jurisdiction = filename[:-len(".tab")].upper()
-    if jurisdiction in LEGACY_UNENFORCED:
-        pytest.skip(f"{jurisdiction} is a documented legacy pilot (no golds)")
-    cal = load_calendar(os.path.join(_DATA_DIR, filename))
-    covered = {(g.subdiv, g.name) for g in golds_for(jurisdiction)}
-    assert covered, f"{jurisdiction} is not legacy but registered no golds"
-    missing = sorted({(r.subdiv, r.name) for r in cal.rules} - covered)
-    assert not missing, (
-        f"{jurisdiction} rules without a gold: {missing}")
-
-
-def test_new_countries_are_gold_enforced():
-    # The six W1a countries must be enforced (not silently exempted).
-    assert {"GB", "DE", "FR", "ES", "BR", "CA"} <= enforced_jurisdictions()
-
-
-def test_legacy_exemption_is_closed_set():
-    # Only the documented pilots are exempt; nothing else may opt out.
-    assert LEGACY_UNENFORCED == frozenset({"PT", "US", "SA"})
