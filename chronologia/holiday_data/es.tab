@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: ES
+# source: https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430
+#   (Estatuto de los Trabajadores art. 37.2, consolidated BOE text; local copy
+#   papers/holidays/es_estatuto_trabajadores_art37_boe.html). Cross-checked
+#   against vacanza/holidays 0.101 (MIT).
+#
+#   SCOPE DECISION (documented): this file ships ONLY Spain's national fixed
+#   holiday set. Spain's regional layer is decree-heavy — each of the 17
+#   comunidades autónomas fixes its own extra days every year by resolution, plus
+#   the ~two local (municipal) days — and modelling it half-way (a few communities)
+#   would be worse than not at all. Autonomous-community and local variation is
+#   left as explicit FUTURE DATA, to be added as a complete decree-backed layer.
+#
+#   The state also applies a "traslado" rule each year: when a national fiesta
+#   falls on a Sunday the government's calendario laboral drops or moves it (e.g.
+#   Año Nuevo 2023 and Inmaculada 2024 fell on Sundays and are absent from those
+#   years' national lists). chronologia's FixedRule emits the statutory date
+#   every year and does NOT model the annual traslado; the resulting differences
+#   are documented reference-only entries in test_holidays_es.py.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- national fiestas laborales (Estatuto de los Trabajadores art. 37.2) ---
+fixed  | Año Nuevo                       | 1 1   | public          |  |
+fixed  | Epifanía del Señor              | 1 6   | public religious |  |
+easter | Viernes Santo                   | -2    | public religious |  |
+fixed  | Fiesta del Trabajo              | 5 1   | public          |  |
+fixed  | Asunción de la Virgen           | 8 15  | public religious |  |
+fixed  | Fiesta Nacional de España       | 10 12 | public          |  |
+fixed  | Todos los Santos                | 11 1  | public religious |  |
+fixed  | Día de la Constitución Española | 12 6  | public          |  |
+fixed  | Inmaculada Concepción           | 12 8  | public religious |  |
+fixed  | Natividad del Señor             | 12 25 | public religious |  |

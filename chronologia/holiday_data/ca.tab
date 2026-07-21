@@ -1,0 +1,62 @@
+# civil-holidays v1
+# jurisdiction: CA
+# source: https://laws-lois.justice.gc.ca/eng/acts/H-5/page-1.html
+#   (Holidays Act, R.S.C. 1985 c. H-5: New Year's, Canada Day with its Sunday
+#   shift, Remembrance Day, Christmas; local copy
+#   papers/holidays/ca_holidays_act_justice.html). Provincial statutory holidays
+#   were cross-checked against vacanza/holidays 0.101 (MIT) and the provincial
+#   employment-standards listings it cites.
+#
+#   SCOPE DECISION (documented): federal set (subdiv None) plus a COMPACT
+#   provincial sample — CA-ON, CA-QC, CA-BC, CA-AB, CA-MB, CA-NS — chosen to
+#   exercise every provincial rule shape (Victoria Day / National Patriots' Day
+#   via the Monday-preceding-25-May rule; the four "third Monday of February"
+#   variants Family Day / Louis Riel Day / Heritage Day; nth-weekday Thanksgiving
+#   and BC Day; Saint-Jean-Baptiste; Remembrance Day; Boxing Day). The remaining
+#   provinces/territories are future data. Canada Day carries the federal Holidays
+#   Act Sunday->Monday shift (sun_mon).
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- federal (Holidays Act) ---
+fixed       | New Year's Day | 1 1   | public          |  |
+easter      | Good Friday    | -2    | public religious |  |
+fixed       | Canada Day     | 7 1   | public          |  | sun_mon
+nth_weekday | Labour Day     | 9 1 0 | public          |  |
+fixed       | Christmas Day  | 12 25 | public religious |  |
+#
+# --- Ontario (CA-ON) ---
+nth_weekday      | Family Day      | 2 3 0   | public | CA-ON |
+weekday_onbefore | Victoria Day    | 5 24 0  | public | CA-ON |
+nth_weekday      | Thanksgiving Day| 10 2 0  | public | CA-ON |
+fixed            | Boxing Day      | 12 26   | public | CA-ON |
+#
+# --- Quebec (CA-QC) ---
+weekday_onbefore | National Patriots' Day | 5 24 0 | public | CA-QC |
+fixed            | Saint-Jean-Baptiste    | 6 24   | public religious | CA-QC |
+nth_weekday      | Thanksgiving Day       | 10 2 0 | public | CA-QC |
+#
+# --- British Columbia (CA-BC) ---
+nth_weekday      | Family Day                            | 2 3 0  | public | CA-BC |
+weekday_onbefore | Victoria Day                          | 5 24 0 | public | CA-BC |
+nth_weekday      | British Columbia Day                  | 8 1 0  | public | CA-BC |
+fixed            | National Day for Truth and Reconciliation | 9 30 | public | CA-BC |
+nth_weekday      | Thanksgiving Day                      | 10 2 0 | public | CA-BC |
+fixed            | Remembrance Day                       | 11 11  | public | CA-BC |
+#
+# --- Alberta (CA-AB) ---
+nth_weekday      | Family Day       | 2 3 0  | public | CA-AB |
+weekday_onbefore | Victoria Day     | 5 24 0 | public | CA-AB |
+nth_weekday      | Thanksgiving Day | 10 2 0 | public | CA-AB |
+fixed            | Remembrance Day  | 11 11  | public | CA-AB |
+#
+# --- Manitoba (CA-MB) ---
+nth_weekday      | Louis Riel Day   | 2 3 0  | public | CA-MB |
+weekday_onbefore | Victoria Day     | 5 24 0 | public | CA-MB |
+fixed            | National Day for Truth and Reconciliation | 9 30 | public | CA-MB |
+nth_weekday      | Thanksgiving Day | 10 2 0 | public | CA-MB |
+#
+# --- Nova Scotia (CA-NS) ---
+nth_weekday      | Heritage Day    | 2 3 0 | public | CA-NS |
+fixed            | Remembrance Day | 11 11 | public | CA-NS |

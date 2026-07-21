@@ -499,6 +499,151 @@ def test_pt_municipal_gold_total():
 
 
 # ==========================================================================
+# Wave 1a: GB, DE, FR, ES, BR, CA (national + subdivisions).
+# Golds hand-derived from each country's cited primary source (see the .tab
+# header + papers/holidays/INDEX.md); movable days re-derived here via
+# easter(2024) + the documented offset (``_mov``), never read from the engine.
+# Full sourcing, subdivision scope decisions, and the documented reference
+# differential disagreements live in the per-country test modules
+# (test_holidays_<cc>.py), which own the differential + behavioural assertions.
+# ==========================================================================
+def _mov(offset):
+    """(2024, month, day) for a day at ``easter(2024) + offset`` (independent)."""
+    d = _E2024 + timedelta(days=offset)
+    return (2024, d.month, d.day)
+
+
+# --- GB: UK bank holidays (source: gov.uk/bank-holidays) ---
+_reg("GB", None, "New Year's Day", 2024, 1, 1)
+_reg("GB", None, "Good Friday", *_mov(-2))
+_reg("GB", None, "Early May Bank Holiday", 2024, 5, 6)   # 1st Monday of May
+_reg("GB", None, "Spring Bank Holiday", 2024, 5, 27)     # last Monday of May
+_reg("GB", None, "Christmas Day", 2024, 12, 25)
+_reg("GB", None, "Boxing Day", 2024, 12, 26)
+_reg("GB", "GB-EAW", "Easter Monday", *_mov(1))
+_reg("GB", "GB-EAW", "Summer Bank Holiday", 2024, 8, 26)  # last Monday of Aug
+_reg("GB", "GB-SCT", "2nd January", 2024, 1, 2)
+_reg("GB", "GB-SCT", "Summer Bank Holiday", 2024, 8, 5)   # 1st Monday of Aug
+_reg("GB", "GB-SCT", "St Andrew's Day", 2024, 11, 30)
+_reg("GB", "GB-NIR", "St Patrick's Day", 2024, 3, 17)
+_reg("GB", "GB-NIR", "Easter Monday", *_mov(1))
+_reg("GB", "GB-NIR", "Battle of the Boyne", 2024, 7, 12)
+_reg("GB", "GB-NIR", "Summer Bank Holiday", 2024, 8, 26)  # last Monday of Aug
+
+# --- DE: national nine + all 16 Länder (source: Land Feiertagsgesetze) ---
+_reg("DE", None, "Neujahr", 2024, 1, 1)
+_reg("DE", None, "Karfreitag", *_mov(-2))
+_reg("DE", None, "Ostermontag", *_mov(1))
+_reg("DE", None, "Erster Mai", 2024, 5, 1)
+_reg("DE", None, "Christi Himmelfahrt", *_mov(39))
+_reg("DE", None, "Pfingstmontag", *_mov(50))
+_reg("DE", None, "Tag der Deutschen Einheit", 2024, 10, 3)
+_reg("DE", None, "Erster Weihnachtstag", 2024, 12, 25)
+_reg("DE", None, "Zweiter Weihnachtstag", 2024, 12, 26)
+for _s in ("DE-BW", "DE-BY", "DE-ST"):
+    _reg("DE", _s, "Heilige Drei Könige", 2024, 1, 6)
+for _s in ("DE-BE", "DE-MV"):
+    _reg("DE", _s, "Internationaler Frauentag", 2024, 3, 8)
+_reg("DE", "DE-BB", "Ostersonntag", *_mov(0))
+_reg("DE", "DE-BB", "Pfingstsonntag", *_mov(49))
+for _s in ("DE-BW", "DE-BY", "DE-HE", "DE-NW", "DE-RP", "DE-SL"):
+    _reg("DE", _s, "Fronleichnam", *_mov(60))
+_reg("DE", "DE-SL", "Mariä Himmelfahrt", 2024, 8, 15)
+_reg("DE", "DE-TH", "Weltkindertag", 2024, 9, 20)
+for _s in ("DE-BB", "DE-HB", "DE-HH", "DE-MV", "DE-NI", "DE-SN", "DE-ST",
+           "DE-SH", "DE-TH"):
+    _reg("DE", _s, "Reformationstag", 2024, 10, 31)
+for _s in ("DE-BW", "DE-BY", "DE-NW", "DE-RP", "DE-SL"):
+    _reg("DE", _s, "Allerheiligen", 2024, 11, 1)
+_reg("DE", "DE-SN", "Buß- und Bettag", 2024, 11, 20)  # Wed on/before 22 Nov
+
+# --- FR: 11 national + Alsace-Moselle extras (source: service-public.fr) ---
+_reg("FR", None, "Jour de l'an", 2024, 1, 1)
+_reg("FR", None, "Lundi de Pâques", *_mov(1))
+_reg("FR", None, "Fête du Travail", 2024, 5, 1)
+_reg("FR", None, "Fête de la Victoire", 2024, 5, 8)
+_reg("FR", None, "Ascension", *_mov(39))
+_reg("FR", None, "Lundi de Pentecôte", *_mov(50))
+_reg("FR", None, "Fête nationale", 2024, 7, 14)
+_reg("FR", None, "Assomption", 2024, 8, 15)
+_reg("FR", None, "Toussaint", 2024, 11, 1)
+_reg("FR", None, "Armistice 1918", 2024, 11, 11)
+_reg("FR", None, "Noël", 2024, 12, 25)
+for _s in ("FR-57", "FR-6AE"):
+    _reg("FR", _s, "Vendredi saint", *_mov(-2))
+    _reg("FR", _s, "Saint Étienne", 2024, 12, 26)
+
+# --- ES: national fixed set only (source: Estatuto de los Trabajadores) ---
+_reg("ES", None, "Año Nuevo", 2024, 1, 1)
+_reg("ES", None, "Epifanía del Señor", 2024, 1, 6)
+_reg("ES", None, "Viernes Santo", *_mov(-2))
+_reg("ES", None, "Fiesta del Trabajo", 2024, 5, 1)
+_reg("ES", None, "Asunción de la Virgen", 2024, 8, 15)
+_reg("ES", None, "Fiesta Nacional de España", 2024, 10, 12)
+_reg("ES", None, "Todos los Santos", 2024, 11, 1)
+_reg("ES", None, "Día de la Constitución Española", 2024, 12, 6)
+_reg("ES", None, "Inmaculada Concepción", 2024, 12, 8)
+_reg("ES", None, "Natividad del Señor", 2024, 12, 25)
+
+# --- BR: national feriados + facultative Carnaval/Corpus (source: Planalto) ---
+_reg("BR", None, "Confraternização Universal", 2024, 1, 1)
+_reg("BR", None, "Sexta-feira Santa", *_mov(-2))
+_reg("BR", None, "Tiradentes", 2024, 4, 21)
+_reg("BR", None, "Dia do Trabalhador", 2024, 5, 1)
+_reg("BR", None, "Independência do Brasil", 2024, 9, 7)
+_reg("BR", None, "Nossa Senhora Aparecida", 2024, 10, 12)
+_reg("BR", None, "Finados", 2024, 11, 2)
+_reg("BR", None, "Proclamação da República", 2024, 11, 15)
+_reg("BR", None, "Dia Nacional de Zumbi e da Consciência Negra", 2024, 11, 20)
+_reg("BR", None, "Natal", 2024, 12, 25)
+_reg("BR", None, "Carnaval", *_mov(-47))
+_reg("BR", None, "Corpus Christi", *_mov(60))
+_reg("BR", "BR-SP", "Revolução Constitucionalista", 2024, 7, 9)
+_reg("BR", "BR-RJ", "São Jorge", 2024, 4, 23)
+
+# --- CA: federal + compact provincial sample (source: Holidays Act + provinces) ---
+_reg("CA", None, "New Year's Day", 2024, 1, 1)
+_reg("CA", None, "Good Friday", *_mov(-2))
+_reg("CA", None, "Canada Day", 2024, 7, 1)
+_reg("CA", None, "Labour Day", 2024, 9, 2)               # 1st Monday of Sept
+_reg("CA", None, "Christmas Day", 2024, 12, 25)
+_reg("CA", "CA-ON", "Family Day", 2024, 2, 19)           # 3rd Monday of Feb
+_reg("CA", "CA-ON", "Victoria Day", 2024, 5, 20)         # Monday preceding 25 May
+_reg("CA", "CA-ON", "Thanksgiving Day", 2024, 10, 14)    # 2nd Monday of Oct
+_reg("CA", "CA-ON", "Boxing Day", 2024, 12, 26)
+_reg("CA", "CA-QC", "National Patriots' Day", 2024, 5, 20)
+_reg("CA", "CA-QC", "Saint-Jean-Baptiste", 2024, 6, 24)
+_reg("CA", "CA-QC", "Thanksgiving Day", 2024, 10, 14)
+_reg("CA", "CA-BC", "Family Day", 2024, 2, 19)
+_reg("CA", "CA-BC", "Victoria Day", 2024, 5, 20)
+_reg("CA", "CA-BC", "British Columbia Day", 2024, 8, 5)  # 1st Monday of Aug
+_reg("CA", "CA-BC", "National Day for Truth and Reconciliation", 2024, 9, 30)
+_reg("CA", "CA-BC", "Thanksgiving Day", 2024, 10, 14)
+_reg("CA", "CA-BC", "Remembrance Day", 2024, 11, 11)
+_reg("CA", "CA-AB", "Family Day", 2024, 2, 19)
+_reg("CA", "CA-AB", "Victoria Day", 2024, 5, 20)
+_reg("CA", "CA-AB", "Thanksgiving Day", 2024, 10, 14)
+_reg("CA", "CA-AB", "Remembrance Day", 2024, 11, 11)
+_reg("CA", "CA-MB", "Louis Riel Day", 2024, 2, 19)
+_reg("CA", "CA-MB", "Victoria Day", 2024, 5, 20)
+_reg("CA", "CA-MB", "National Day for Truth and Reconciliation", 2024, 9, 30)
+_reg("CA", "CA-MB", "Thanksgiving Day", 2024, 10, 14)
+_reg("CA", "CA-NS", "Heritage Day", 2024, 2, 19)
+_reg("CA", "CA-NS", "Remembrance Day", 2024, 11, 11)
+
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in {"GB", "DE", "FR", "ES", "BR", "CA"}
+    for (y, m, d) in ymds
+])
+def test_w1a_gold(country, subdiv, name, year, month, day):
+    got = _dates_for(country, year, subdiv=subdiv)
+    assert got[(name, subdiv)] == AstroDate(year, month, day)
+
+
+# ==========================================================================
 # Structural enforcement: every rule in every holiday_data/*.tab needs a gold.
 # ==========================================================================
 def _every_tab_rule_key():

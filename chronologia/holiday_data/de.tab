@@ -1,0 +1,78 @@
+# civil-holidays v1
+# jurisdiction: DE
+# source: https://www.gesetze-bayern.de/Content/Document/BayFTG
+#   (Bavaria's Feiertagsgesetz, for the Catholic-Länder days: Heilige Drei
+#   Könige, Fronleichnam, Mariä Himmelfahrt, Allerheiligen) and
+#   https://gesetze.berlin.de/perma?j=FTG_BE (Berlin's Feiertagsgesetz, for
+#   Internationaler Frauentag). The 16 Länder each legislate their own list; the
+#   national nine (Neujahr, Karfreitag, Ostermontag, Tag der Arbeit, Christi
+#   Himmelfahrt, Pfingstmontag, Tag der Deutschen Einheit, and the two
+#   Weihnachtstage) are common to every Land. The per-Land splits of
+#   Reformationstag / Allerheiligen and the single-Land days (Weltkindertag TH,
+#   Buß- und Bettag SN, Mariä Himmelfahrt SL, Ostersonntag/Pfingstsonntag BB)
+#   were cross-checked against the all-Länder overview
+#   papers/holidays/de_feiertage_uebersicht.html and vacanza/holidays 0.101 (MIT).
+#   Subdivisions use ISO 3166-2 (DE-BW ... DE-TH). Germany applies no weekend
+#   substitution, so no observed policy is attached.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- nationwide (all 16 Länder) ---
+fixed  | Neujahr                    | 1 1   | public          |  |
+easter | Karfreitag                 | -2    | public religious |  |
+easter | Ostermontag                | 1     | public religious |  |
+fixed  | Erster Mai                 | 5 1   | public          |  |
+easter | Christi Himmelfahrt        | 39    | public religious |  |
+easter | Pfingstmontag              | 50    | public religious |  |
+fixed  | Tag der Deutschen Einheit  | 10 3  | public          |  |
+fixed  | Erster Weihnachtstag       | 12 25 | public religious |  |
+fixed  | Zweiter Weihnachtstag      | 12 26 | public religious |  |
+#
+# --- Heilige Drei Könige (Epiphany), 6 Jan: BW, BY, ST ---
+fixed  | Heilige Drei Könige | 1 6 | public religious | DE-BW |
+fixed  | Heilige Drei Könige | 1 6 | public religious | DE-BY |
+fixed  | Heilige Drei Könige | 1 6 | public religious | DE-ST |
+#
+# --- Internationaler Frauentag, 8 Mar: BE, MV ---
+fixed  | Internationaler Frauentag | 3 8 | public | DE-BE |
+fixed  | Internationaler Frauentag | 3 8 | public | DE-MV |
+#
+# --- Ostersonntag / Pfingstsonntag (statewide statutory): BB ---
+easter | Ostersonntag   | 0  | public religious | DE-BB |
+easter | Pfingstsonntag | 49 | public religious | DE-BB |
+#
+# --- Fronleichnam (Corpus Christi, Easter+60): the Catholic Länder ---
+easter | Fronleichnam | 60 | public religious | DE-BW |
+easter | Fronleichnam | 60 | public religious | DE-BY |
+easter | Fronleichnam | 60 | public religious | DE-HE |
+easter | Fronleichnam | 60 | public religious | DE-NW |
+easter | Fronleichnam | 60 | public religious | DE-RP |
+easter | Fronleichnam | 60 | public religious | DE-SL |
+#
+# --- Mariä Himmelfahrt (Assumption), 15 Aug: SL (statewide) ---
+fixed  | Mariä Himmelfahrt | 8 15 | public religious | DE-SL |
+#
+# --- Weltkindertag, 20 Sep: TH ---
+fixed  | Weltkindertag | 9 20 | public | DE-TH |
+#
+# --- Reformationstag, 31 Oct: BB, HB, HH, MV, NI, SN, ST, SH, TH ---
+fixed  | Reformationstag | 10 31 | public religious | DE-BB |
+fixed  | Reformationstag | 10 31 | public religious | DE-HB |
+fixed  | Reformationstag | 10 31 | public religious | DE-HH |
+fixed  | Reformationstag | 10 31 | public religious | DE-MV |
+fixed  | Reformationstag | 10 31 | public religious | DE-NI |
+fixed  | Reformationstag | 10 31 | public religious | DE-SN |
+fixed  | Reformationstag | 10 31 | public religious | DE-ST |
+fixed  | Reformationstag | 10 31 | public religious | DE-SH |
+fixed  | Reformationstag | 10 31 | public religious | DE-TH |
+#
+# --- Allerheiligen (All Saints), 1 Nov: BW, BY, NW, RP, SL ---
+fixed  | Allerheiligen | 11 1 | public religious | DE-BW |
+fixed  | Allerheiligen | 11 1 | public religious | DE-BY |
+fixed  | Allerheiligen | 11 1 | public religious | DE-NW |
+fixed  | Allerheiligen | 11 1 | public religious | DE-RP |
+fixed  | Allerheiligen | 11 1 | public religious | DE-SL |
+#
+# --- Buß- und Bettag (Wednesday on/before 22 Nov): SN ---
+weekday_onbefore | Buß- und Bettag | 11 22 2 | public religious | DE-SN |

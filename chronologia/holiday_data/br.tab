@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: BR
+# source: https://www.planalto.gov.br/ccivil_03/leis/l0662.htm
+#   (Lei 662/1949, feriados nacionais, as amended; local copy
+#   papers/holidays/br_lei662_planalto.html) and
+#   https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/l14759.htm
+#   (Lei 14.759/2023, which made 20 November — Dia da Consciência Negra — a
+#   national holiday effective 2024; local copy br_lei14759_consciencia_planalto.html).
+#   Cross-checked against vacanza/holidays 0.101 (MIT).
+#
+#   FACULTATIVE DAYS: Carnaval and Corpus Christi are not statutory national
+#   holidays (feriados) — they are pontos facultativos / observed religious days.
+#   The facultative status is carried in the CATEGORY: they are tagged
+#   "religious" only, NOT "public", so the public national set stays exactly the
+#   statutory feriados. Their movable dates derive from computus.
+#   Consciência Negra is emitted every year by FixedRule; before 2024 it was only
+#   a state/municipal holiday, so its 2023 occurrence is a documented
+#   reference-only differential entry (see test_holidays_br.py), adjudicated by
+#   Lei 14.759/2023's effective date.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- national feriados (Lei 662/1949 + Lei 14.759/2023) ---
+fixed  | Confraternização Universal                    | 1 1   | public          |  |
+easter | Sexta-feira Santa                             | -2    | public religious |  |
+fixed  | Tiradentes                                    | 4 21  | public          |  |
+fixed  | Dia do Trabalhador                            | 5 1   | public          |  |
+fixed  | Independência do Brasil                       | 9 7   | public          |  |
+fixed  | Nossa Senhora Aparecida                       | 10 12 | public religious |  |
+fixed  | Finados                                       | 11 2  | public religious |  |
+fixed  | Proclamação da República                      | 11 15 | public          |  |
+fixed  | Dia Nacional de Zumbi e da Consciência Negra  | 11 20 | public          |  |
+fixed  | Natal                                         | 12 25 | public religious |  |
+#
+# --- facultative national religious days (NOT statutory feriados) ---
+easter | Carnaval        | -47 | religious |  |
+easter | Corpus Christi  | 60  | religious |  |
+#
+# --- state examples (feriados estaduais) ---
+fixed  | Revolução Constitucionalista | 7 9  | regional | BR-SP |
+fixed  | São Jorge                    | 4 23 | regional religious | BR-RJ |
