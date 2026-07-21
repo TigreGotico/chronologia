@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chronologia"
-version = "0.1.0a1"
+dynamic = ["version"]
 description = "General-purpose calendrical and chronological core: unbounded datetime-compatible dates, half-open time spans, and a JDN calendar/era/regnal/cycle registry."
 readme = "README.md"
 license = { text = "Apache-2.0" }
@@ -49,6 +49,9 @@ dev = [
 
 [tool.setuptools]
 packages = ["chronologia", "chronologia.data", "chronologia.extract"]
+
+[tool.setuptools.dynamic]
+version = { attr = "chronologia.version.VERSION_STR" }
 
 [tool.setuptools.package-data]
 chronologia = ["py.typed", "calendar_data/*", "holiday_data/*", "locale/*/*.voc", "locale/*/*.json"]
