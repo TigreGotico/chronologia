@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chronologia"
+version = "0.1.0a1"
+description = "General-purpose calendrical and chronological core: unbounded datetime-compatible dates, half-open time spans, and a JDN calendar/era/regnal/cycle registry."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [{ name = "TigreGotico" }]
+keywords = ["calendar", "datetime", "julian-day", "eras", "chronology", "astronomical-year"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[tool.setuptools]
+packages = ["chronologia"]
+
+[tool.setuptools.package-data]
+chronologia = ["calendar_data/*"]
