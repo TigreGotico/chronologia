@@ -1,0 +1,27 @@
+# civil-holidays v1
+# jurisdiction: SE
+# source: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/lag-1989253-om-allmanna-helgdagar_sfs-1989-253
+#   (Lag (1989:253) om allmänna helgdagar. Local copy papers/holidays/se_holidays.md.)
+#   Names are official Swedish. Under Swedish law every Sunday is also an "allmän
+#   helgdag"; the reference package therefore lists all ~52 Sundays. We ship only
+#   the named holidays; the SE differential (test_holidays_se.py) compares against
+#   the reference set with the bare "Söndag" (Sunday) entries removed.
+#   Midsommardagen is the Saturday in 20–26 June (Saturday on/before 26 Jun);
+#   Alla helgons dag is the Saturday in 31 Oct–6 Nov (Saturday on/before 6 Nov).
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+fixed            | Nyårsdagen            | 1 1    | public          |  |
+fixed            | Trettondedag jul      | 1 6    | public religious |  |
+easter           | Långfredagen          | -2     | public religious |  |
+easter           | Påskdagen             | 0      | public religious |  |
+easter           | Annandag påsk         | 1      | public religious |  |
+fixed            | Första maj            | 5 1    | public          |  |
+easter           | Kristi himmelsfärdsdag | 39    | public religious |  |
+easter           | Pingstdagen           | 49     | public religious |  |
+fixed            | Sveriges nationaldag  | 6 6    | public          |  |
+weekday_onbefore | Midsommardagen        | 6 26 5 | public          |  |
+weekday_onbefore | Alla helgons dag      | 11 6 5 | public religious |  |
+fixed            | Juldagen              | 12 25  | public religious |  |
+fixed            | Annandag jul          | 12 26  | public religious |  |

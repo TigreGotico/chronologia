@@ -1177,6 +1177,21 @@ _reg("SK", None, "Štedrý deň", 2024, 12, 24)
 _reg("SK", None, "Prvý sviatok vianočný", 2024, 12, 25)
 _reg("SK", None, "Druhý sviatok vianočný", 2024, 12, 26)
 
+# --- SE: allmänna helgdagar (Swedish names) ---
+_reg("SE", None, "Nyårsdagen", 2024, 1, 1)
+_reg("SE", None, "Trettondedag jul", 2024, 1, 6)
+_reg("SE", None, "Långfredagen", *_mov(-2))
+_reg("SE", None, "Påskdagen", *_mov(0))
+_reg("SE", None, "Annandag påsk", *_mov(1))
+_reg("SE", None, "Första maj", 2024, 5, 1)
+_reg("SE", None, "Kristi himmelsfärdsdag", *_mov(39))
+_reg("SE", None, "Pingstdagen", *_mov(49))
+_reg("SE", None, "Sveriges nationaldag", 2024, 6, 6)
+_reg("SE", None, "Midsommardagen", 2024, 6, 22)   # Sat on/before 26 Jun
+_reg("SE", None, "Alla helgons dag", 2024, 11, 2)  # Sat on/before 6 Nov
+_reg("SE", None, "Juldagen", 2024, 12, 25)
+_reg("SE", None, "Annandag jul", 2024, 12, 26)
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
