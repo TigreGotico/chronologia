@@ -111,6 +111,14 @@ def test_seconds_offset_gap():
 
 
 PAIRS = [
+    ('15. avgusta 2020', 'august 15 2020'),
+    ('1. maja 1945', 'may 1 1945'),
+    ('29. februarja 2020', 'february 29 2020'),
+    ('10. aprila', 'april 10'),
+    ('3. januarja 2020', 'january 3 2020'),
+    ('2017-06-30', '2017-06-30'),
+    ('15:30', '15:30'),
+
     ("danes", "today"), ("jutri", "tomorrow"), ("včeraj", "yesterday"),
     ("čez 3 dni", "in 3 days"), ("čez 2 tedna", "in 2 weeks"),
     ("čez 5 let", "in 5 years"), ("naslednji petek", "next friday"),
