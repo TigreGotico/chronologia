@@ -1074,6 +1074,39 @@ for _s in ("AT-3", "AT-9"):
     _reg("AT", _s, "Heiliger Leopold", 2024, 11, 15)
 
 
+# --- CH: de-facto national 4 + documented 6-canton sample ---
+_reg("CH", None, "Neujahrstag", 2024, 1, 1)
+_reg("CH", None, "Auffahrt", *_mov(39))
+_reg("CH", None, "Nationalfeiertag", 2024, 8, 1)
+_reg("CH", None, "Weihnachten", 2024, 12, 25)
+# Cantonal (2024): movables via _mov, fixed literal.
+_CH_GF, _CH_EM, _CH_WM, _CH_FL = _mov(-2), _mov(1), _mov(50), _mov(60)
+for _s in ("CH-ZH", "CH-BE", "CH-LU", "CH-GE"):
+    _reg("CH", _s, "Karfreitag", *_CH_GF)
+for _s in ("CH-ZH", "CH-BE", "CH-LU", "CH-TI", "CH-GE"):
+    _reg("CH", _s, "Ostermontag", *_CH_EM)
+for _s in ("CH-ZH", "CH-BE", "CH-LU", "CH-TI", "CH-GE"):
+    _reg("CH", _s, "Pfingstmontag", *_CH_WM)
+for _s in ("CH-ZH", "CH-TI"):
+    _reg("CH", _s, "Tag der Arbeit", 2024, 5, 1)
+for _s in ("CH-ZH", "CH-BE", "CH-LU", "CH-TI"):
+    _reg("CH", _s, "Stephanstag", 2024, 12, 26)
+for _s in ("CH-BE", "CH-LU"):
+    _reg("CH", _s, "Berchtoldstag", 2024, 1, 2)
+for _s in ("CH-LU", "CH-TI", "CH-VS"):
+    _reg("CH", _s, "Fronleichnam", *_CH_FL)
+for _s in ("CH-LU", "CH-TI", "CH-VS"):
+    _reg("CH", _s, "Mariä Himmelfahrt", 2024, 8, 15)
+    _reg("CH", _s, "Allerheiligen", 2024, 11, 1)
+    _reg("CH", _s, "Mariä Empfängnis", 2024, 12, 8)
+for _s in ("CH-TI", "CH-VS"):
+    _reg("CH", _s, "Josefstag", 2024, 3, 19)
+_reg("CH", "CH-TI", "Heilige Drei Könige", 2024, 1, 6)
+_reg("CH", "CH-TI", "Peter und Paul", 2024, 6, 29)
+_reg("CH", "CH-GE", "Jeûne genevois", 2024, 9, 5)   # Thu after 1st Sun Sep
+_reg("CH", "CH-GE", "Restauration de la République", 2024, 12, 31)
+
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
