@@ -1,0 +1,128 @@
+{
+  "tokenizer": {
+    "split_contractions": false,
+    "ordinal_dot": true
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "NUM UNIT MARKER",
+        "MARKER of? NUM UNIT"
+      ]
+    },
+    "named_day": {
+      "orders": [
+        "DAY_WORD"
+      ]
+    },
+    "weekday_ref": {
+      "orders": [
+        "REL_MARKER WEEKDAY"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "article? DAY of MONTH of? YEAR?",
+        "article? DAY MONTH YEAR?",
+        "MONTH of? YEAR?",
+        "MONTH DAY? YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "nongregorian_date": {
+      "orders": [
+        "DAY of CAL_MONTH YEAR?",
+        "DAY CAL_MONTH YEAR?",
+        "CAL_MONTH DAY? YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "season_ref": {
+      "orders": [
+        "article? SEASON of YEAR",
+        "REL_MARKER SEASON",
+        "article? SEASON YEAR?"
+      ]
+    },
+    "scoped_ordinal": {
+      "orders": [
+        "article? ORD UNIT of MONTH YEAR?",
+        "article? ordlast UNIT of MONTH YEAR?",
+        "article? ORD UNIT of article? year_word YEAR?",
+        "article? ordlast UNIT of article? year_word YEAR?",
+        "article? ORD SCOPE_UNIT"
+      ]
+    },
+    "clock_time": {
+      "orders": [
+        "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM?",
+        "at HOUR of? article? MERIDIEM?",
+        "at? HOUR of? article? MERIDIEM",
+        "at? HOUR MERIDIEM",
+        "at? LANDMARK of? article? MERIDIEM?",
+        "CLOCK MERIDIEM?"
+      ],
+      "prefer_future": true
+    },
+    "era_bc": {
+      "orders": [
+        "NUM bc"
+      ]
+    },
+    "era_ad": {
+      "orders": [
+        "NUM ad",
+        "ad NUM"
+      ]
+    },
+    "era_bp": {
+      "orders": [
+        "NUM bp"
+      ]
+    },
+    "deep_time": {
+      "orders": [
+        "NUM SCALE of? year_word MARKER",
+        "MARKER NUM SCALE of? year_word"
+      ]
+    },
+    "month_fuzzy": {
+      "orders": [
+        "article? PART of? MONTH"
+      ]
+    },
+    "decade_ref": {
+      "orders": [
+        "PART? article? year_word NUM"
+      ]
+    },
+    "year_ref": {
+      "orders": [
+        "in GYEAR",
+        "article? year_word of? GYEAR",
+        "GYEAR"
+      ]
+    },
+    "iso_date": {
+      "orders": [
+        "ISO"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": true,
+    "hemisphere": null,
+    "prefer_future": true
+  },
+  "quantifiers": {
+    "1": [
+      "un",
+      "unha"
+    ]
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "hook": "chronologia.extract.numfold:fold_gl"
+}

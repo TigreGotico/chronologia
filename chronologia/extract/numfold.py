@@ -115,3 +115,187 @@ def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
                          is_number=True, value=num))
         i = j
     return _reindex(out)
+
+
+# ---------------------------------------------------------------------------
+# Romance spelled-number folding (pt / es / gl / ca)
+# ---------------------------------------------------------------------------
+#
+# The English fold above carries its own closed-class word list.  The Romance
+# languages share one mechanism: the number-word set is read straight from
+# ``ovos_number_parser``'s ``NumberVocabulary`` for the language, and a
+# maximal run of those words (joined by the language's "and" word) is folded
+# to a single digit token via ``extract_number_<lang>`` (ordinals included).
+#
+# Two classes of word are deliberately *withheld* from the run so the token
+# that distinguishes a construction survives intact:
+#
+#   * clock fractions (``meia`` / ``media`` / ``mig`` ...) -- their own
+#     ``FRACTION`` slot ("as tres e meia");
+#   * multiplier scale words (``mil`` / ``milhao`` / ``bilhao`` ...) -- the
+#     ``SCALE`` slot of deep time ("66 milhoes de anos atras").
+#
+# A per-language weekday blacklist keeps a feminine-ordinal surface that
+# doubles as a weekday name (pt "segunda"/"quarta"/"quinta"/"sexta") from
+# ever being read as a number.
+from importlib import import_module
+
+
+def _fem_forms(surf):
+    """Feminine ordinal surfaces of a masculine ordinal: ``o``->``a``
+    (primeiro->primeira) and a bare ``+a`` (tercer->tercera, segon->segona)
+    cover pt/es/gl and ca respectively.  Spurious candidates are harmless --
+    they never occur in real text."""
+    s = surf.lower()
+    forms = {s + "a"}
+    if s.endswith("o"):
+        forms.add(s[:-1] + "a")
+    return forms
+
+
+def _romance_numwords(vocab, blacklist):
+    """The closed set of spelled number-words the fold may absorb, built from
+    a ``NumberVocabulary``.  Cardinals, tens, hundreds and ordinals are in;
+    fractions, multiplier scales and the language's hundred particle stay in
+    but only when they are not scale words; blacklisted weekday-homographs
+    are removed."""
+    words = set()
+    for table in (vocab.UNITS, vocab.TENS, vocab.HUNDREDS,
+                  vocab.ORDINAL_UNITS, vocab.ORDINAL_TENS,
+                  vocab.ORDINAL_HUNDREDS):
+        words.update(v.lower() for v in table.values() if v)
+    words.update(k.lower() for k in vocab.ALT_SPELLINGS)
+    for gmap in vocab.GENDERED_SPELLINGS.values():
+        words.update(v.lower() for v in gmap.values() if v)
+    # feminine ordinals ("primeira", "terceira") -- generated o->a, then the
+    # weekday-homograph blacklist is applied below
+    for v in list(vocab.ORDINAL_UNITS.values()):
+        if v:
+            words.update(_fem_forms(v))
+    if vocab.HUNDRED_PARTICLE:
+        words.add(vocab.HUNDRED_PARTICLE.lower())
+    # withhold multiplier scale words (mil/milhao/bilhao...) and clock
+    # fractions so deep-time SCALE and clock FRACTION tokens survive
+    scales = set()
+    for table in (vocab.SHORT_SCALE, vocab.LONG_SCALE):
+        scales.update(v.lower() for v in table.values() if v)
+    fractions = set()
+    for table in (vocab.FRACTION, vocab.FRACTION_FEMALE):
+        fractions.update(v.lower() for v in table.values() if v)
+    words -= scales
+    words -= fractions
+    words -= {w.lower() for w in blacklist}
+    return frozenset(words)
+
+
+# abbreviations the tokenizer shatters on their dots/hyphens ("a.c." -> a,c;
+# "meio-dia" -> meio,dia).  The fold glues the fragments back into the single
+# token a marker/landmark slot binds.  Keyed by the fragment tuple, longest
+# match first; shared across the Romance locales (surfaces are the same).
+_ROMANCE_GLUE = {
+    ("a", "e", "c"): "aec", ("a", "c"): "ac", ("d", "c"): "dc",
+    ("e", "c"): "ec", ("a", "p"): "ap",
+    ("meio", "dia"): "meiodia", ("meia", "noite"): "meianoite",
+    ("migdia",): "migdia",
+}
+
+
+def _glue(tokens):
+    seqs = sorted(_ROMANCE_GLUE, key=len, reverse=True)
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        for seq in seqs:
+            k = len(seq)
+            if tuple(t.text for t in tokens[i:i + k]) == seq:
+                raw = "".join(t.raw for t in tokens[i:i + k])
+                out.append(Token(text=_ROMANCE_GLUE[seq], raw=raw, index=0))
+                i += k
+                break
+        else:
+            out.append(tokens[i])
+            i += 1
+    return tuple(out)
+
+
+def _make_romance_fold(lang_code, blacklist):
+    from ovos_number_parser.util import RomanceNumberExtractor
+    numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
+    vocab = next(v for v in vars(numbers_mod).values()
+                 if type(v).__name__ == "NumberVocabulary")
+    # the non-deprecated spoken-number reader; ``extract_number_<lang>`` is a
+    # thin deprecated wrapper over exactly this.
+    extractor = RomanceNumberExtractor(vocab)
+
+    def extract_fn(text, ordinals=True):
+        return extractor.extract_number(text, ordinals=ordinals)
+    numwords = _romance_numwords(vocab, blacklist)
+    joins = frozenset(j.lower() for j in vocab.JOIN_WORD)
+    # some ``extract_number_<lang>`` back-ends do not recognise the feminine
+    # ordinal surface ("tercera", "segona"); a direct surface->value map,
+    # built from the masculine ordinals plus their generated feminine forms,
+    # is the fallback for a single-token run the back-end rejects.
+    ordinal_value = {}
+    for table in (vocab.ORDINAL_UNITS, vocab.ORDINAL_TENS):
+        for val, surf in table.items():
+            if surf:
+                ordinal_value[surf.lower()] = val
+                for fem in _fem_forms(surf):
+                    ordinal_value[fem] = val
+    ordinal_value = {k: v for k, v in ordinal_value.items()
+                     if k in numwords}
+
+    def _is_numword(tok):
+        return tok.is_number or tok.text in numwords
+
+    def fold(tokens):
+        tokens = _glue(tokens)
+        out = []
+        i = 0
+        n = len(tokens)
+        while i < n:
+            if not _is_numword(tokens[i]):
+                out.append(tokens[i])
+                i += 1
+                continue
+            j = i
+            run = []
+            while j < n:
+                if _is_numword(tokens[j]):
+                    run.append(tokens[j])
+                    j += 1
+                elif (tokens[j].text in joins and run and j + 1 < n
+                      and _is_numword(tokens[j + 1])):
+                    run.append(tokens[j])
+                    j += 1
+                else:
+                    break
+            spelled = [t for t in run if not t.is_number]
+            if not spelled:
+                out.extend(run)
+                i = j
+                continue
+            text = " ".join(t.text for t in run)
+            value = extract_fn(text, ordinals=True)
+            if (value is False or value is None) and len(run) == 1:
+                value = ordinal_value.get(run[0].text, value)
+            if value is False or value is None:
+                out.extend(run)
+                i = j
+                continue
+            num = int(value) if float(value).is_integer() else float(value)
+            out.append(Token(text=str(num), raw=str(num), index=0,
+                             is_number=True, value=num))
+            i = j
+        return _reindex(out)
+
+    return fold
+
+
+# pt: feminine ordinals "segunda/quarta/quinta/sexta" are weekday names
+fold_pt = _make_romance_fold("pt", {"segunda", "quarta", "quinta", "sexta",
+                                    "terca", "terça"})
+fold_es = _make_romance_fold("es", set())
+fold_gl = _make_romance_fold("gl", set())
+fold_ca = _make_romance_fold("ca", set())
