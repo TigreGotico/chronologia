@@ -96,6 +96,7 @@ def _day_span(dt: datetime) -> DateSpan:
 DATE_CONSTRUCTIONS = frozenset({
     "calendar_date", "reckoned_date", "nongregorian_date", "iso_date",
     "weekday_ref", "named_day", "season_ref", "scoped_ordinal",
+    "scoped_bc", "scoped_ad",
     "regnal_date", "roman_date", "era_date",
     "era_bc", "era_ad", "era_bp", "deep_time", "named_period"})
 
@@ -510,6 +511,45 @@ class Resolver:
             else AstroDate.from_date(value)
         return Resolution(DateSpan(start, _unit_end(start, kind)),
                           self._consumed(match))
+
+    # -- scoped period on an era axis ("the 3rd century bc", "2nd century ad")
+
+    #: scope-word kind -> that period's length in whole years.  A scoped
+    #: period ("century") is this many years wide on either axis.
+    _SCOPE_YEARS = {"decade": 10, "century": 100, "millennium": 1000}
+
+    def _resolve_scoped_ad(self, match, anchor):
+        """"Nth SCOPE ad/ce": an explicit-AD scoped period.  Identical
+        semantics to the plain absolute scoped period ("the 3rd century")
+        -- the era marker only makes the AD axis explicit and consumes the
+        marker token so it never leaks into the remainder."""
+        n = int(match.slots["ORD"].value)
+        kind = self._scope_kind(match.slots["SCOPE_UNIT"])
+        value = get_date_ordinal(n, resolution=_ABSOLUTE[kind])
+        return self._ordinal_result(value, kind, match)
+
+    def _resolve_scoped_bc(self, match, anchor):
+        """"Nth SCOPE bc/bce": a scoped period on the *BC axis*.
+
+        The nth century BC spans the BC years ``(n-1)*100+1 .. n*100`` -- e.g.
+        the 3rd century BC is 300 BC..201 BC, astronomically ``[-299, -199)``.
+        Both edges are derived through the era registry (``before_christ``,
+        which counts years backwards from AD 1): the older edge is the
+        ``n*length``-th BC year, the younger edge the ``(n-1)*length``-th (the
+        first year already in the next, more-recent period), so consecutive
+        periods tile with no gap.  The span is one whole ``length`` wide.
+        """
+        from chronologia import resolve_era
+        n = int(match.slots["ORD"].value)
+        kind = self._scope_kind(match.slots["SCOPE_UNIT"])
+        length = self._SCOPE_YEARS[kind]
+        start = self._as_astro(resolve_era("before_christ", length * n))
+        end = self._as_astro(resolve_era("before_christ", length * (n - 1)))
+        return Resolution(DateSpan(start, end), self._consumed(match))
+
+    @staticmethod
+    def _as_astro(d) -> AstroDate:
+        return d if isinstance(d, AstroDate) else AstroDate.from_date(d)
 
     # -- regnal_date -------------------------------------------------------
 

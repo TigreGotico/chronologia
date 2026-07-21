@@ -25,6 +25,12 @@ PRECEDENCE: Dict[str, int] = {
     "era_bc": 1,
     "era_ad": 1,
     "era_bp": 1,
+    # a scoped period carrying an explicit era marker ("the 3rd century bc",
+    # "2nd century ad") is an era construction: it must outrank the plain
+    # scoped_ordinal that would otherwise claim the bare "3rd century" and
+    # strand the era marker in the remainder
+    "scoped_bc": 1,
+    "scoped_ad": 1,
     # regnal / roman constructions carry the most specific vocabulary, so
     # they win over the generic scoped/calendar families
     "regnal_date": 1,
