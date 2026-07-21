@@ -1,0 +1,32 @@
+# civil-holidays v1
+# jurisdiction: FR
+# source: https://www.service-public.fr/particuliers/vosdroits/F2405
+#   (French government jours fériés list; local copy
+#   papers/holidays/fr_jours_feries_service_public.html). The eleven national
+#   jours fériés (Code du travail art. L3133-1) apply everywhere; the départements
+#   of Alsace-Moselle keep two additional statutory days by local law
+#   (droit local d'Alsace-Moselle): Vendredi saint and Saint Étienne (26 Dec).
+#   Subdivisions: FR-57 = Moselle, FR-6AE = Alsace (Bas-Rhin + Haut-Rhin).
+#   France applies no weekend substitution.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed
+#
+# --- national (Code du travail art. L3133-1) ---
+fixed  | Jour de l'an          | 1 1   | public          |  |
+easter | Lundi de Pâques       | 1     | public religious |  |
+fixed  | Fête du Travail       | 5 1   | public          |  |
+fixed  | Fête de la Victoire   | 5 8   | public          |  |
+easter | Ascension             | 39    | public religious |  |
+easter | Lundi de Pentecôte    | 50    | public religious |  |
+fixed  | Fête nationale        | 7 14  | public          |  |
+fixed  | Assomption            | 8 15  | public religious |  |
+fixed  | Toussaint             | 11 1  | public religious |  |
+fixed  | Armistice 1918        | 11 11 | public          |  |
+fixed  | Noël                  | 12 25 | public religious |  |
+#
+# --- Alsace-Moselle local law (two extra days) ---
+easter | Vendredi saint | -2    | public religious | FR-57  |
+fixed  | Saint Étienne  | 12 26 | public religious | FR-57  |
+easter | Vendredi saint | -2    | public religious | FR-6AE |
+fixed  | Saint Étienne  | 12 26 | public religious | FR-6AE |
