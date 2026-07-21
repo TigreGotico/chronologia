@@ -1,0 +1,29 @@
+# civil-holidays v1
+# jurisdiction: IE
+# source: https://www.gov.ie/en/publication/e2200-public-holidays/
+#   (Ireland's public holidays under the Organisation of Working Time Act 1997
+#   and the Public Holiday Regulations. Local copy papers/holidays/ie_holidays.md.)
+#   St Brigid's Day became a public holiday in 2023 (Public Holiday
+#   (St Brigid's Day) Regulations 2023): the FIRST MONDAY of February, EXCEPT when
+#   1 February is a Friday, in which case 1 February itself. We model the first-
+#   Monday rule (nth_weekday 2 1 0) with from_year 2023; the Friday-1-Feb
+#   exception does not arise in 2023-2025 (1 Feb is Wed/Thu/Sat), and is noted in
+#   test_holidays_ie.py as the known limit. The four movable bank holidays are
+#   first/last Monday rules; Easter Monday is Western-computus relative.
+# retrieved: 2026-07-21
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid
+#
+fixed        | New Year's Day        | 1 1     | public          |  |  |
+nth_weekday  | Saint Brigid's Day    | 2 1 0   | public          |  |  | 2023-
+fixed        | Saint Patrick's Day   | 3 17    | public religious |  |  |
+easter       | Easter Monday         | 1       | public religious |  |  |
+nth_weekday  | May Day               | 5 1 0   | public          |  |  |
+nth_weekday  | June Bank Holiday     | 6 1 0   | public          |  |  |
+nth_weekday  | August Bank Holiday   | 8 1 0   | public          |  |  |
+nth_weekday  | October Bank Holiday  | 10 -1 0 | public          |  |  |
+fixed        | Christmas Day         | 12 25   | public religious |  |  |
+fixed        | Saint Stephen's Day   | 12 26   | public religious |  |  |
+#
+# --- One-off national public holiday ---
+one_off      | Day of Remembrance and Recognition | 2022 3 18 https://www.gov.ie/en/press-release/0dc4f-taoiseach-announces-once-off-public-holiday-in-2022/ | public |  |  |

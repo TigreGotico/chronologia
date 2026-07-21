@@ -1034,6 +1034,22 @@ _reg("GR", None, "Καθαρά Δευτέρα", 2023, 2, 27)
 _reg("GR", None, "Καθαρά Δευτέρα", 2025, 3, 3)
 
 
+# --- IE: public holidays (Organisation of Working Time Act 1997) ---
+_reg("IE", None, "New Year's Day", 2024, 1, 1)
+_reg("IE", None, "Saint Brigid's Day", 2024, 2, 5)   # 1st Mon Feb
+_reg("IE", None, "Saint Brigid's Day", 2023, 2, 6)
+_reg("IE", None, "Saint Brigid's Day", 2025, 2, 3)
+_reg("IE", None, "Saint Patrick's Day", 2024, 3, 17)
+_reg("IE", None, "Easter Monday", *_mov(1))
+_reg("IE", None, "May Day", 2024, 5, 6)              # 1st Mon May
+_reg("IE", None, "June Bank Holiday", 2024, 6, 3)    # 1st Mon Jun
+_reg("IE", None, "August Bank Holiday", 2024, 8, 5)  # 1st Mon Aug
+_reg("IE", None, "October Bank Holiday", 2024, 10, 28)  # last Mon Oct
+_reg("IE", None, "Christmas Day", 2024, 12, 25)
+_reg("IE", None, "Saint Stephen's Day", 2024, 12, 26)
+_reg("IE", None, "Day of Remembrance and Recognition", 2022, 3, 18)  # one_off
+
+
 @pytest.mark.parametrize("country,subdiv,name,year,month,day", [
     (c, s, n, y, m, d)
     for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
