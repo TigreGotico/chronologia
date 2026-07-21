@@ -1,0 +1,200 @@
+# chronologia named-period registry — International Chronostratigraphic Chart
+#
+# Source: ICS International Chronostratigraphic Chart, version 2023/09
+#   https://stratigraphy.org/ICSchart/ChronostratChart2023-09.pdf
+#   Local copy: ~/AgentWorkspaces/papers/standards/ics_chronostratigraphic_chart_2023-09.pdf
+# Numeric boundary ages: Macrostrat "international intervals" timescale
+#   (https://macrostrat.org/api/v2/defs/intervals, CC-BY 4.0), whose ages
+#   track the ICS 2023/09 chart (Jurassic 201.4->143.1 Ma, Phanerozoic base
+#   538.8 Ma, Holocene base 0.0117 Ma == 11.7 ka all verified against the chart).
+# Downloaded: 2026-07-21 (see ~/AgentWorkspaces/papers/standards/INDEX.md)
+#
+# CHART VERSION: 2023/09
+#
+# Ages are in millions of years (Ma) before the Before-Present epoch (AD 1950,
+# Stuiver & Polach 1977). Each entry is a chronostratigraphic unit spanning its
+# base (b_age, older) down to its top (t_age, younger). Endpoint AstroDate years
+# are 1950 - age*1e6, so the span lives on the deep-time BP axis; basis is
+# "tabulated". Published GSSP boundary uncertainties (b_unc/t_unc, Ma) are folded
+# OUTWARD into the endpoints (start widened to b_age+b_unc, end to t_age-t_unc),
+# so the span covers the full published uncertainty envelope. Uncertainties are
+# populated for the ratified GSSP boundaries cited in ICS 2023/09 / GTS2020 and
+# left 0.0 where the chart states no formal +/- (the mechanism, not exhaustive
+# coverage, is what these demonstrate). Parent hierarchy (eon>era>period>epoch>
+# age) is derived at load time by containment, not stored.
+#
+# Format: 7 tab-separated columns:
+#   key<TAB>name<TAB>level<TAB>b_age_ma<TAB>t_age_ma<TAB>b_unc_ma<TAB>t_unc_ma
+#   level in {eon, era, period, epoch, age}
+#
+key	name	level	b_age_ma	t_age_ma	b_unc_ma	t_unc_ma
+archean	Archean	eon	4031	2500	0.0	0.0
+proterozoic	Proterozoic	eon	2500	538.8	0.0	0.2
+phanerozoic	Phanerozoic	eon	538.8	0	0.2	0.0
+eoarchean	Eoarchean	era	4031	3600	0.0	0.0
+paleoarchean	Paleoarchean	era	3600	3200	0.0	0.0
+mesoarchean	Mesoarchean	era	3200	2800	0.0	0.0
+neoarchean	Neoarchean	era	2800	2500	0.0	0.0
+paleoproterozoic	Paleoproterozoic	era	2500	1600	0.0	0.0
+mesoproterozoic	Mesoproterozoic	era	1600	1000	0.0	0.0
+neoproterozoic	Neoproterozoic	era	1000	538.8	0.0	0.2
+paleozoic	Paleozoic	era	538.8	251.902	0.2	0.024
+mesozoic	Mesozoic	era	251.902	66	0.024	0.05
+cenozoic	Cenozoic	era	66	0	0.05	0.0
+siderian	Siderian	period	2500	2300	0.0	0.0
+rhyacian	Rhyacian	period	2300	2050	0.0	0.0
+orosirian	Orosirian	period	2050	1800	0.0	0.0
+statherian	Statherian	period	1800	1600	0.0	0.0
+calymmian	Calymmian	period	1600	1400	0.0	0.0
+ectasian	Ectasian	period	1400	1200	0.0	0.0
+stenian	Stenian	period	1200	1000	0.0	0.0
+tonian	Tonian	period	1000	720	0.0	0.0
+cryogenian	Cryogenian	period	720	635	0.0	0.0
+ediacaran	Ediacaran	period	635	538.8	0.0	0.2
+cambrian	Cambrian	period	538.8	486.85	0.2	0.0
+ordovician	Ordovician	period	486.85	443.1	0.0	0.0
+silurian	Silurian	period	443.1	419.62	0.0	0.0
+devonian	Devonian	period	419.62	358.86	0.0	0.0
+carboniferous	Carboniferous	period	358.86	298.9	0.0	0.15
+permian	Permian	period	298.9	251.902	0.15	0.024
+triassic	Triassic	period	251.902	201.4	0.024	0.2
+jurassic	Jurassic	period	201.4	143.1	0.2	0.0
+cretaceous	Cretaceous	period	143.1	66	0.0	0.05
+paleogene	Paleogene	period	66	23.04	0.05	0.0
+neogene	Neogene	period	23.04	2.58	0.0	0.0
+quaternary	Quaternary	period	2.58	0	0.0	0.0
+terreneuvian	Terreneuvian	epoch	538.8	521	0.2	0.0
+series_2	Series 2	epoch	521	506.5	0.0	0.0
+miaolingian	Miaolingian	epoch	506.5	497	0.0	0.0
+furongian	Furongian	epoch	497	486.85	0.0	0.0
+early_ordovician	Early Ordovician	epoch	486.85	471.3	0.0	0.0
+middle_ordovician	Middle Ordovician	epoch	471.3	458.2	0.0	0.0
+late_ordovician	Late Ordovician	epoch	458.2	443.1	0.0	0.0
+llandovery	Llandovery	epoch	443.1	432.9	0.0	0.0
+wenlock	Wenlock	epoch	432.9	426.7	0.0	0.0
+ludlow	Ludlow	epoch	426.7	422.7	0.0	0.0
+pridoli	Pridoli	epoch	422.7	419.62	0.0	0.0
+early_devonian	Early Devonian	epoch	419.62	393.47	0.0	0.0
+middle_devonian	Middle Devonian	epoch	393.47	382.31	0.0	0.0
+late_devonian	Late Devonian	epoch	382.31	358.86	0.0	0.0
+mississippian	Mississippian	epoch	358.86	323.4	0.0	0.0
+pennsylvanian	Pennsylvanian	epoch	323.4	298.9	0.0	0.15
+cisuralian	Cisuralian	epoch	298.9	274.4	0.15	0.0
+guadalupian	Guadalupian	epoch	274.4	259.51	0.0	0.0
+lopingian	Lopingian	epoch	259.51	251.902	0.0	0.024
+early_triassic	Early Triassic	epoch	251.902	246.7	0.024	0.0
+middle_triassic	Middle Triassic	epoch	246.7	237	0.0	0.0
+late_triassic	Late Triassic	epoch	237	201.4	0.0	0.2
+early_jurassic	Early Jurassic	epoch	201.4	174.7	0.2	0.0
+middle_jurassic	Middle Jurassic	epoch	174.7	161.5	0.0	0.0
+late_jurassic	Late Jurassic	epoch	161.5	143.1	0.0	0.0
+early_cretaceous	Early Cretaceous	epoch	143.1	100.5	0.0	0.0
+late_cretaceous	Late Cretaceous	epoch	100.5	66	0.0	0.05
+paleocene	Paleocene	epoch	66	56	0.05	0.0
+eocene	Eocene	epoch	56	33.9	0.0	0.0
+oligocene	Oligocene	epoch	33.9	23.04	0.0	0.0
+miocene	Miocene	epoch	23.04	5.333	0.0	0.0
+pliocene	Pliocene	epoch	5.333	2.58	0.0	0.0
+pleistocene	Pleistocene	epoch	2.58	0.0117	0.0	0.0
+holocene	Holocene	epoch	0.0117	0	0.0	0.0
+fortunian	Fortunian	age	538.8	529	0.2	0.0
+stage_2	Stage 2	age	529	521	0.0	0.0
+stage_3	Stage 3	age	521	514.5	0.0	0.0
+stage_4	Stage 4	age	514.5	506.5	0.0	0.0
+wuliuan	Wuliuan	age	506.5	504.5	0.0	0.0
+drumian	Drumian	age	504.5	500.5	0.0	0.0
+guzhangian	Guzhangian	age	500.5	497	0.0	0.0
+paibian	Paibian	age	497	494.2	0.0	0.0
+jiangshanian	Jiangshanian	age	494.2	491	0.0	0.0
+stage_10	Stage 10	age	491	486.85	0.0	0.0
+tremadocian	Tremadocian	age	486.85	477.1	0.0	0.0
+floian	Floian	age	477.1	471.3	0.0	0.0
+dapingian	Dapingian	age	471.3	469.4	0.0	0.0
+darriwilian	Darriwilian	age	469.4	458.2	0.0	0.0
+sandbian	Sandbian	age	458.2	452.8	0.0	0.0
+katian	Katian	age	452.8	445.2	0.0	0.0
+hirnantian	Hirnantian	age	445.2	443.1	0.0	0.0
+rhuddanian	Rhuddanian	age	443.1	440.5	0.0	0.0
+aeronian	Aeronian	age	440.5	438.6	0.0	0.0
+telychian	Telychian	age	438.6	432.9	0.0	0.0
+sheinwoodian	Sheinwoodian	age	432.9	430.6	0.0	0.0
+homerian	Homerian	age	430.6	426.7	0.0	0.0
+gorstian	Gorstian	age	426.7	425	0.0	0.0
+ludfordian	Ludfordian	age	425	422.7	0.0	0.0
+lochkovian	Lochkovian	age	419.62	413.02	0.0	0.0
+pragian	Pragian	age	413.02	410.62	0.0	0.0
+emsian	Emsian	age	410.62	393.47	0.0	0.0
+eifelian	Eifelian	age	393.47	387.95	0.0	0.0
+givetian	Givetian	age	387.95	382.31	0.0	0.0
+frasnian	Frasnian	age	382.31	372.15	0.0	0.0
+famennian	Famennian	age	372.15	358.86	0.0	0.0
+tournaisian	Tournaisian	age	358.86	346.7	0.0	0.0
+visean	Visean	age	346.7	330.3	0.0	0.0
+serpukhovian	Serpukhovian	age	330.3	323.4	0.0	0.0
+bashkirian	Bashkirian	age	323.4	315.2	0.0	0.0
+moscovian	Moscovian	age	315.2	307	0.0	0.0
+kasimovian	Kasimovian	age	307	303.7	0.0	0.0
+gzhelian	Gzhelian	age	303.7	298.9	0.0	0.15
+asselian	Asselian	age	298.9	293.52	0.15	0.0
+sakmarian	Sakmarian	age	293.52	290.1	0.0	0.0
+artinskian	Artinskian	age	290.1	283.3	0.0	0.0
+kungurian	Kungurian	age	283.3	274.4	0.0	0.0
+roadian	Roadian	age	274.4	266.9	0.0	0.0
+wordian	Wordian	age	266.9	264.28	0.0	0.0
+capitanian	Capitanian	age	264.28	259.51	0.0	0.0
+wuchiapingian	Wuchiapingian	age	259.51	254.14	0.0	0.0
+changhsingian	Changhsingian	age	254.14	251.902	0.0	0.024
+induan	Induan	age	251.902	249.9	0.024	0.0
+olenekian	Olenekian	age	249.9	246.7	0.0	0.0
+anisian	Anisian	age	246.7	241.464	0.0	0.0
+ladinian	Ladinian	age	241.464	237	0.0	0.0
+carnian	Carnian	age	237	227.3	0.0	0.0
+norian	Norian	age	227.3	205.7	0.0	0.0
+rhaetian	Rhaetian	age	205.7	201.4	0.0	0.2
+hettangian	Hettangian	age	201.4	199.5	0.2	0.0
+sinemurian	Sinemurian	age	199.5	192.9	0.0	0.0
+pliensbachian	Pliensbachian	age	192.9	184.2	0.0	0.0
+toarcian	Toarcian	age	184.2	174.7	0.0	0.0
+aalenian	Aalenian	age	174.7	170.9	0.0	0.0
+bajocian	Bajocian	age	170.9	168.2	0.0	0.0
+bathonian	Bathonian	age	168.2	165.3	0.0	0.0
+callovian	Callovian	age	165.3	161.5	0.0	0.0
+oxfordian	Oxfordian	age	161.5	154.8	0.0	0.0
+kimmeridgian	Kimmeridgian	age	154.8	149.2	0.0	0.0
+tithonian	Tithonian	age	149.2	143.1	0.0	0.0
+berriasian	Berriasian	age	143.1	137.05	0.0	0.0
+valanginian	Valanginian	age	137.05	132.6	0.0	0.0
+hauterivian	Hauterivian	age	132.6	125.77	0.0	0.0
+barremian	Barremian	age	125.77	121.4	0.0	0.0
+aptian	Aptian	age	121.4	113.2	0.0	0.0
+albian	Albian	age	113.2	100.5	0.0	0.0
+cenomanian	Cenomanian	age	100.5	93.9	0.0	0.0
+turonian	Turonian	age	93.9	89.8	0.0	0.0
+coniacian	Coniacian	age	89.8	85.7	0.0	0.0
+santonian	Santonian	age	85.7	83.6	0.0	0.0
+campanian	Campanian	age	83.6	72.2	0.0	0.0
+maastrichtian	Maastrichtian	age	72.2	66	0.0	0.05
+danian	Danian	age	66	61.66	0.05	0.0
+selandian	Selandian	age	61.66	59.24	0.0	0.0
+thanetian	Thanetian	age	59.24	56	0.0	0.0
+ypresian	Ypresian	age	56	48.07	0.0	0.0
+lutetian	Lutetian	age	48.07	41.03	0.0	0.0
+bartonian	Bartonian	age	41.03	37.71	0.0	0.0
+priabonian	Priabonian	age	37.71	33.9	0.0	0.0
+rupelian	Rupelian	age	33.9	27.3	0.0	0.0
+chattian	Chattian	age	27.3	23.04	0.0	0.0
+aquitanian	Aquitanian	age	23.04	20.45	0.0	0.0
+burdigalian	Burdigalian	age	20.45	15.98	0.0	0.0
+langhian	Langhian	age	15.98	13.82	0.0	0.0
+serravallian	Serravallian	age	13.82	11.63	0.0	0.0
+tortonian	Tortonian	age	11.63	7.246	0.0	0.0
+messinian	Messinian	age	7.246	5.333	0.0	0.0
+zanclean	Zanclean	age	5.333	3.6	0.0	0.0
+piacenzian	Piacenzian	age	3.6	2.58	0.0	0.0
+gelasian	Gelasian	age	2.58	1.8	0.0	0.0
+calabrian	Calabrian	age	1.8	0.774	0.0	0.0
+chibanian	Chibanian	age	0.774	0.129	0.0	0.0
+late_pleistocene	Late Pleistocene	age	0.129	0.0117	0.0	0.0
+greenlandian	Greenlandian	age	0.0117	0.0082	0.0	0.0
+northgrippian	Northgrippian	age	0.0082	0.0042	0.0	0.0
+meghalayan	Meghalayan	age	0.0042	0	0.0	0.0
