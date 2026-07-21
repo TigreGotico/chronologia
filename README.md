@@ -158,6 +158,20 @@ systems know UTC and TAI drift apart — 37 seconds so far), and even
 local *sun* time for history before timezones existed, when noon in
 every town was simply when the sun was overhead.
 
+Give it a date and a place and it computes the actual sunrise, sunset,
+solar noon, and the civil/nautical/astronomical twilights (the NOAA
+algorithm, accurate to about a minute). And it stays honest at the
+poles: north of the Arctic Circle in midsummer the sun never rises or
+sets, so instead of inventing a time you get a typed `NoSunEvent`:
+
+```python
+from chronologia import sun_events, NoSunEvent, AstroDate
+
+midsummer = sun_events(AstroDate(2024, 6, 21), 78.0, 15.0)  # Svalbard
+print(isinstance(midsummer.sunrise, NoSunEvent), midsummer.sunrise.kind)
+# True polar_day
+```
+
 ### Deep time, honestly
 
 "66 million years ago" and "66.043 million years ago" are different
