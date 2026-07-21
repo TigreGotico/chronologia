@@ -191,6 +191,372 @@ def test_bahai_round_trip_including_ayyam_i_ha():
         assert m in range(0, 20)     # month 0 == Ayyam-i-Ha
 
 
+# -- Coptic & Ethiopic: 12x30 + 5/6-day epagomenal 13th month ---------------
+
+def test_coptic_epoch():
+    c = CALENDARS["coptic"]
+    assert c.epoch_jdn == 1825030
+    assert c.to_jdn(1, 1, 1) == 1825030
+    # 1 Thoout AM 1 == 284-08-29 Julian (Era of the Martyrs / Diocletian)
+    assert jdn_to_julian(c.epoch_jdn) == (284, 8, 29)
+
+
+def test_coptic_new_year_1741():
+    # 1 Thoout AM 1741 == 2024-09-11 Gregorian (Coptic new year, Nayrouz)
+    c = CALENDARS["coptic"]
+    assert jdn_to_gregorian(c.to_jdn(1741, 1, 1)) == (2024, 9, 11)
+
+
+def test_ethiopian_epoch():
+    c = CALENDARS["ethiopian"]
+    assert c.epoch_jdn == 1724221
+    assert c.to_jdn(1, 1, 1) == 1724221
+    # 1 Maskaram EE 1 == 8-08-29 Julian (Incarnation era)
+    assert jdn_to_julian(c.epoch_jdn) == (8, 8, 29)
+
+
+def test_ethiopian_new_year_2017():
+    # 1 Maskaram EE 2017 (Enkutatash) == 2024-09-11 Gregorian
+    c = CALENDARS["ethiopian"]
+    assert jdn_to_gregorian(c.to_jdn(2017, 1, 1)) == (2024, 9, 11)
+
+
+def test_coptic_ethiopian_share_the_day_276_years_apart():
+    # Coptic and Ethiopic epochs are 276 Julian years apart, so the same JDN
+    # is numbered 276 years higher in the Ethiopic reckoning.
+    coptic, eth = CALENDARS["coptic"], CALENDARS["ethiopian"]
+    assert coptic.to_jdn(1741, 1, 1) == eth.to_jdn(2017, 1, 1)
+    assert eth.to_jdn(2017, 5, 13) - coptic.to_jdn(1741, 5, 13) == 0
+
+
+@pytest.mark.parametrize("key,epoch_year", [("coptic", 1741),
+                                            ("ethiopian", 2017)])
+def test_coptic_like_leap_epagomenal_sixth_day(key, epoch_year):
+    # year Y with Y % 4 == 3 is leap: month 13 has 6 days, else 5.
+    c = CALENDARS[key]
+    leap = epoch_year - (epoch_year % 4) + 3      # nearest leap year form
+    # the 6th epagomenal day exists in a leap year and round-trips as (Y,13,6)
+    assert c.from_jdn(c.to_jdn(leap, 13, 6)) == (leap, 13, 6)
+    common = leap + 1                              # (leap+1) % 4 == 0, common
+    # the day after (common, 13, 5) is (common+1, 1, 1): only 5 epagomenals
+    assert c.to_jdn(common, 13, 5) + 1 == c.to_jdn(common + 1, 1, 1)
+
+
+@pytest.mark.parametrize("key,epoch", [("coptic", 1825030),
+                                       ("ethiopian", 1724221)])
+def test_coptic_like_round_trip(key, epoch):
+    c = CALENDARS[key]
+    for jd in range(epoch, epoch + 700_000, 13):
+        y, m, d = c.from_jdn(jd)
+        assert c.to_jdn(y, m, d) == jd
+        assert 1 <= m <= 13 and 1 <= d <= 30
+
+
+@pytest.mark.parametrize("key", ["coptic", "ethiopian"])
+def test_coptic_like_proleptic_pre_epoch(key):
+    # proleptic (year <= 0) round-trips rather than raising, matching Julian.
+    c = CALENDARS[key]
+    for jd in range(c.epoch_jdn - 40_000, c.epoch_jdn, 7):
+        assert c.to_jdn(*c.from_jdn(jd)) == jd
+
+
+# -- Revised Julian (Milankovic 900-year rule) ------------------------------
+
+def test_revised_julian_leap_rule():
+    # century years leap only when Y % 900 in (200, 600)
+    assert cal._rj_leap(2000) and cal._rj_leap(2400)      # divisible by 400
+    assert cal._rj_leap(2900)                              # 2900 % 900 == 200
+    assert not cal._rj_leap(1900) and not cal._rj_leap(2100)
+    assert not cal._rj_leap(2800)                          # 2800 % 900 == 100
+    assert 218 == cal._rj_leaps_before(900) - cal._rj_leaps_before(0)
+
+
+def test_revised_julian_agrees_with_gregorian_1600_to_2800():
+    # identical from 1600-03-01 through 2800-02-28
+    c = CALENDARS["revised_julian"]
+    for y in range(1600, 2800):
+        for (m, d) in ((3, 1), (7, 15), (12, 31)):
+            assert c.to_jdn(y, m, d) == gregorian_to_jdn(y, m, d)
+    assert c.to_jdn(2800, 2, 28) == gregorian_to_jdn(2800, 2, 28)
+
+
+def test_revised_julian_diverges_from_gregorian_at_2800():
+    # 2800 is a Gregorian leap year but not a Revised Julian one, so from
+    # 2800-03-01 the Revised Julian date sits one JDN before the Gregorian.
+    c = CALENDARS["revised_julian"]
+    assert c.to_jdn(2800, 3, 1) == gregorian_to_jdn(2800, 3, 1) - 1
+    # Revised Julian has no 2800-02-29; Gregorian does
+    assert gregorian_to_jdn(2800, 3, 1) - gregorian_to_jdn(2800, 2, 28) == 2
+    assert c.to_jdn(2800, 3, 1) - c.to_jdn(2800, 2, 28) == 1
+
+
+def test_revised_julian_round_trip():
+    c = CALENDARS["revised_julian"]
+    for jd in range(1_900_000, 2_900_000, 13):
+        y, m, d = c.from_jdn(jd)
+        assert c.to_jdn(y, m, d) == jd
+        assert 1 <= m <= 12 and 1 <= d <= 31
+
+
+# -- Armenian (365-day vague year, no leap) ---------------------------------
+
+def test_armenian_epoch():
+    c = CALENDARS["armenian"]
+    assert c.epoch_jdn == 1922868
+    assert c.to_jdn(1, 1, 1) == 1922868
+    # 1 Navasard AE 1 == 552-07-11 Julian
+    assert jdn_to_julian(c.epoch_jdn) == (552, 7, 11)
+
+
+def test_armenian_no_leap_every_year_365_days():
+    c = CALENDARS["armenian"]
+    for y in range(1, 2000):
+        assert c.to_jdn(y + 1, 1, 1) - c.to_jdn(y, 1, 1) == 365
+
+
+@pytest.mark.parametrize("year,greg", [
+    (1462, (2012, 7, 24)),   # 1 Navasard AE 1462 (epoch-derived)
+    (1474, (2024, 7, 21)),   # 1 Navasard AE 1474
+    (1475, (2025, 7, 21)),   # 1 Navasard AE 1475
+])
+def test_armenian_new_year_drifts_vague_year(year, greg):
+    c = CALENDARS["armenian"]
+    assert jdn_to_gregorian(c.to_jdn(year, 1, 1)) == greg
+
+
+def test_armenian_epagomenal_month_13_has_five_days():
+    c = CALENDARS["armenian"]
+    assert c.from_jdn(c.to_jdn(5, 13, 5)) == (5, 13, 5)
+    # sixth epagomenal day does not exist: (Y,13,5)+1 == (Y+1,1,1)
+    assert c.to_jdn(5, 13, 5) + 1 == c.to_jdn(6, 1, 1)
+
+
+def test_armenian_round_trip_and_proleptic():
+    c = CALENDARS["armenian"]
+    for jd in range(c.epoch_jdn - 30_000, c.epoch_jdn + 600_000, 13):
+        y, m, d = c.from_jdn(jd)
+        assert c.to_jdn(y, m, d) == jd
+        assert 1 <= m <= 13 and 1 <= d <= 30
+
+
+# -- Maya Long Count (GMT-584283 correlation, mixed radix) ------------------
+
+def test_mayan_epoch_gmt_correlation():
+    # 0.0.0.0.0 == JDN 584283 == proleptic Gregorian -3113-08-11
+    assert cal.mayan_long_count_to_jdn(0, 0, 0, 0, 0) == 584283
+    assert jdn_to_gregorian(584283) == (-3113, 8, 11)
+
+
+def test_mayan_13_baktun_end_2012():
+    # 13.0.0.0.0 == JDN 2456283 == 2012-12-21 Gregorian
+    jd = cal.mayan_long_count_to_jdn(13, 0, 0, 0, 0)
+    assert jd == 2456283
+    assert jdn_to_gregorian(jd) == (2012, 12, 21)
+
+
+@pytest.mark.parametrize("lc,jdn", [
+    ((9, 0, 0, 0, 0), 584283 + 9 * 144000),    # 9.0.0.0.0 classic-era start
+    ((7, 16, 3, 2, 13), 584283 + 7 * 144000 + 16 * 7200 + 3 * 360 + 2 * 20 + 13),
+    ((13, 0, 8, 0, 0), 2456283 + 8 * 360),      # 13.0.8.0.0
+])
+def test_mayan_place_value_arithmetic(lc, jdn):
+    assert cal.mayan_long_count_to_jdn(*lc) == jdn
+    assert cal.mayan_long_count_from_jdn(jdn) == lc
+
+
+def test_mayan_positions_stay_in_radix():
+    for jd in range(584283, 584283 + 3_000_000, 997):
+        b, k, t, u, ki = cal.mayan_long_count_from_jdn(jd)
+        assert cal.mayan_long_count_to_jdn(b, k, t, u, ki) == jd
+        assert 0 <= k < 20 and 0 <= t < 20 and 0 <= u < 18 and 0 <= ki < 20
+
+
+def test_mayan_pre_epoch_negative_baktun_round_trips():
+    for jd in range(0, 584283, 4159):
+        lc = cal.mayan_long_count_from_jdn(jd)
+        assert lc[0] < 0                       # proleptic: negative baktun
+        assert cal.mayan_long_count_to_jdn(*lc) == jd
+
+
+def test_mayan_registry_view_matches_full_long_count():
+    # registry (tuncount, uinal, kin) view is the same JDN as the 5-place form
+    c = CALENDARS["mayan_long_count"]
+    assert c.epoch_jdn == 584283
+    for b, k, t, u, ki in [(13, 0, 0, 0, 0), (9, 12, 11, 5, 18)]:
+        full = cal.mayan_long_count_to_jdn(b, k, t, u, ki)
+        assert c.to_jdn(b * 400 + k * 20 + t, u, ki) == full
+        assert c.from_jdn(full) == (b * 400 + k * 20 + t, u, ki)
+
+
+def test_mayan_registry_round_trip():
+    c = CALENDARS["mayan_long_count"]
+    for jd in range(584283, 584283 + 2_000_000, 397):
+        y, m, d = c.from_jdn(jd)
+        assert c.to_jdn(y, m, d) == jd
+        assert 0 <= m < 18 and 0 <= d < 20
+
+
+# -- ISO 8601 week date (YYYY-Www-D) ----------------------------------------
+
+def test_iso_week_2026_w01_1():
+    # 2026-W01-1 (Monday of week 1) == 2025-12-29 Gregorian
+    c = CALENDARS["iso_week"]
+    assert jdn_to_gregorian(c.to_jdn(2026, 1, 1)) == (2025, 12, 29)
+    assert c.from_jdn(gregorian_to_jdn(2025, 12, 29)) == (2026, 1, 1)
+
+
+def test_iso_week_jan4_always_in_week1():
+    # the January-4 rule: 4 January is always in W01 of its own year
+    c = CALENDARS["iso_week"]
+    for y in range(1901, 2101):
+        iy, w, _ = c.from_jdn(gregorian_to_jdn(y, 1, 4))
+        assert (iy, w) == (y, 1)
+
+
+@pytest.mark.parametrize("greg,iso", [
+    ((2015, 1, 1), (2015, 1, 4)),    # Thursday -> W01 of 2015
+    ((2016, 1, 1), (2015, 53, 5)),   # Friday -> W53 of 2015
+    ((2005, 1, 1), (2004, 53, 6)),   # Saturday -> W53 of 2004
+    ((2021, 1, 3), (2020, 53, 7)),   # 2020 has a week 53
+])
+def test_iso_week_year_boundary_and_w53(greg, iso):
+    c = CALENDARS["iso_week"]
+    assert c.from_jdn(gregorian_to_jdn(*greg)) == iso
+    assert jdn_to_gregorian(c.to_jdn(*iso)) == greg
+
+
+def test_iso_week_2020_has_53_weeks_2021_has_52():
+    c = CALENDARS["iso_week"]
+    # W53 of 2020 exists and rolls into W01 of 2021
+    assert c.to_jdn(2020, 53, 7) + 1 == c.to_jdn(2021, 1, 1)
+    # 2021 has no W53: W52 rolls straight into 2022 W01
+    assert c.to_jdn(2021, 52, 7) + 1 == c.to_jdn(2022, 1, 1)
+
+
+def test_iso_week_round_trip():
+    c = CALENDARS["iso_week"]
+    for jd in range(2_200_000, 2_600_000, 13):
+        iy, w, wd = c.from_jdn(jd)
+        assert c.to_jdn(iy, w, wd) == jd
+        assert 1 <= w <= 53 and 1 <= wd <= 7
+
+
+# -- Solar Hijri (arithmetic 33-year cycle) ---------------------------------
+
+def test_solar_hijri_epoch():
+    c = CALENDARS["solar_hijri_arithmetic"]
+    assert c.epoch_jdn == 1948320
+    assert c.to_jdn(1, 1, 1) == 1948320
+    # 1 Farvardin AP 1 == 21 March 622 proleptic Gregorian (== 18 March 622 Julian)
+    assert jdn_to_gregorian(c.epoch_jdn) == (622, 3, 21)
+    assert jdn_to_julian(c.epoch_jdn) == (622, 3, 18)
+
+
+@pytest.mark.parametrize("ap_year,greg", [
+    (1399, (2020, 3, 20)),   # Nowruz 1399
+    (1400, (2021, 3, 21)),   # Nowruz 1400
+    (1403, (2024, 3, 20)),   # Nowruz 1403 (gold)
+    (1404, (2025, 3, 20)),   # Nowruz 1404
+])
+def test_solar_hijri_modern_nowruz(ap_year, greg):
+    c = CALENDARS["solar_hijri_arithmetic"]
+    assert jdn_to_gregorian(c.to_jdn(ap_year, 1, 1)) == greg
+
+
+def test_solar_hijri_leap_residues_18_not_17_variant():
+    # verified convention: residue 18 (not 17) reproduces AP 1404 Nowruz.
+    assert cal._solar_hijri_leap(18) and not cal._solar_hijri_leap(17)
+    # the {..,17,..} variant would place Nowruz 1404 one day late (2025-03-21);
+    # the shipped {..,18,..} form lands on 2025-03-20.
+    c = CALENDARS["solar_hijri_arithmetic"]
+    assert jdn_to_gregorian(c.to_jdn(1404, 1, 1)) == (2025, 3, 20)
+    assert 8 == sum(1 for r in range(33) if cal._solar_hijri_leap(r))
+
+
+def test_solar_hijri_month_lengths():
+    c = CALENDARS["solar_hijri_arithmetic"]
+    # months 1..6 have 31 days, 7..11 have 30, month 12 has 29 (30 in leap)
+    for y in (1403, 1404):        # 1404 % 33 == 18 -> leap; 1403 common
+        for m in range(1, 7):
+            assert c.to_jdn(y, m + 1, 1) - c.to_jdn(y, m, 1) == 31
+        for m in range(7, 12):
+            assert c.to_jdn(y, m + 1, 1) - c.to_jdn(y, m, 1) == 30
+    assert cal._solar_hijri_leap(1404) and not cal._solar_hijri_leap(1403)
+    assert c.to_jdn(1405, 1, 1) - c.to_jdn(1404, 12, 1) == 30   # Esfand 30 (leap)
+    assert c.to_jdn(1404, 1, 1) - c.to_jdn(1403, 12, 1) == 29   # Esfand 29 (common)
+
+
+def test_solar_hijri_round_trip_and_proleptic():
+    c = CALENDARS["solar_hijri_arithmetic"]
+    for jd in range(c.epoch_jdn - 40_000, c.epoch_jdn + 600_000, 13):
+        y, m, d = c.from_jdn(jd)
+        assert c.to_jdn(y, m, d) == jd
+        assert 1 <= m <= 12 and 1 <= d <= 31
+
+
+# -- Umm al-Qura (bounded lookup table) -------------------------------------
+
+def test_umm_al_qura_epoch():
+    c = CALENDARS["umm_al_qura"]
+    # 1 Muharram AH 1356 == 1937-03-14 Gregorian (start of the table)
+    assert c.epoch_jdn == 2428607
+    assert jdn_to_gregorian(c.to_jdn(1356, 1, 1)) == (1937, 3, 14)
+
+
+@pytest.mark.parametrize("hijri,greg", [
+    ((1445, 9, 1), (2024, 3, 11)),    # 1 Ramadan 1445 (gold, Saudi-announced)
+    ((1444, 10, 1), (2023, 4, 21)),   # 1 Shawwal 1444 (Eid al-Fitr 2023)
+    ((1440, 1, 1), (2018, 9, 11)),    # Islamic New Year 1440
+    ((1420, 1, 1), (1999, 4, 17)),    # 1 Muharram 1420
+    ((1500, 12, 1), (2077, 10, 18)),  # last tabulated month
+])
+def test_umm_al_qura_table_conversions(hijri, greg):
+    c = CALENDARS["umm_al_qura"]
+    assert jdn_to_gregorian(c.to_jdn(*hijri)) == greg
+    y, m, _ = hijri
+    assert c.from_jdn(gregorian_to_jdn(*greg)) == (y, m, 1)
+
+
+def test_umm_al_qura_months_are_29_or_30():
+    c = CALENDARS["umm_al_qura"]
+    for y in range(1420, 1501):
+        for m in range(1, 12):
+            assert c.to_jdn(y, m + 1, 1) - c.to_jdn(y, m, 1) in (29, 30)
+
+
+def test_umm_al_qura_out_of_range_raises():
+    c = CALENDARS["umm_al_qura"]
+    # before the table (AH < 1356) and after it (AH > 1500) -> ValueError,
+    # so callers can fall back to islamic_civil
+    with pytest.raises(ValueError):
+        c.to_jdn(1355, 12, 29)
+    with pytest.raises(ValueError):
+        c.to_jdn(1501, 1, 1)
+    with pytest.raises(ValueError):
+        c.from_jdn(c.epoch_jdn - 1)
+    with pytest.raises(ValueError):
+        c.from_jdn(c.to_jdn(1500, 12, 1) + 60)   # past the last month
+    # islamic_civil covers the same instant without raising (fallback works)
+    assert CALENDARS["islamic_civil"].from_jdn(c.to_jdn(1445, 9, 1))[0] == 1445
+
+
+def test_umm_al_qura_invalid_day_raises():
+    c = CALENDARS["umm_al_qura"]
+    with pytest.raises(ValueError):
+        c.to_jdn(1445, 9, 0)
+    with pytest.raises(ValueError):
+        c.to_jdn(1445, 9, 31)     # no Hijri month has 31 days
+
+
+def test_umm_al_qura_round_trip():
+    c = CALENDARS["umm_al_qura"]
+    lo, hi = c.to_jdn(1356, 1, 1), c.to_jdn(1500, 12, 1)
+    for jd in range(lo, hi, 7):
+        y, m, d = c.from_jdn(jd)
+        assert c.to_jdn(y, m, d) == jd
+        assert 1 <= m <= 12 and 1 <= d <= 30
+
+
 # -- generic registry invariants --------------------------------------------
 
 def test_every_calendar_epoch_is_day_one():

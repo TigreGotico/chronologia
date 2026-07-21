@@ -26,11 +26,17 @@ Python 3.10+.
   minute-wide one. Half-open so adjacent spans tile with no fenceposts — June
   ends exactly where July begins. `DateTimeResolution` is **derived** from the
   width, never asserted, which removes a whole class of tag-vs-value drift.
-- **`CALENDARS`** — a registry of arithmetic calendars, each an integer
-  inverse pair through the **Julian Day Number** hub: `to_jdn(y, m, d)` and
-  `from_jdn(jdn)`. Bundled: `julian`, `hebrew`, `islamic_civil`,
-  `french_republican`, `bahai`. Because everything reduces to JDN, conversions
-  compose freely.
+- **`CALENDARS`** — a registry of 16 calendars, each an integer inverse pair
+  through the **Julian Day Number** hub: `to_jdn(y, m, d)` and `from_jdn(jdn)`.
+  Twelve are closed-form arithmetic: `julian`, `hebrew`, `islamic_civil`,
+  `french_republican`, `bahai`, `coptic`, `ethiopian`, `revised_julian`,
+  `armenian`, `mayan_long_count`, `iso_week`, `solar_hijri_arithmetic`. Four
+  are `TabulatedCalendar`s backed by data files in `calendar_data/`:
+  `umm_al_qura`, `badi_2015`, `french_republican_equinox`, `chinese` — bounded
+  event tables with an out-of-range `CalendarRangeError` fallback contract and
+  an optional-ephemeris `register_event_provider` hook for extending past the
+  tabulated range. Because everything reduces to JDN, conversions compose
+  freely.
 - **`ERAS`** — year-numbering conventions attached to a calendar or an epoch:
   `before_christ` / `common_era` / `holocene` number the Gregorian year,
   `anno_mundi` is the Hebrew calendar's own numbering, `unix` and `julian_day`
@@ -46,12 +52,16 @@ Python 3.10+.
 
 `chronologia` implements **arithmetic** calendars — those whose leap and
 month-length rules are closed-form functions of the year, so conversion is a
-pure integer computation with no tables to ship. Calendars whose civil dates
-are fixed by **tabulation or observation** (e.g. sighting-based lunar
-calendars) belong in a data-backed layer loaded from `calendar_data/`; the
-package reserves that path but ships arithmetic calendars only at this stage.
-Calendars requiring live astronomical ephemerides are **out of scope** — this
-is a reckoning core, not an astronomy engine.
+pure integer computation with no tables to ship — and **tabulated** calendars,
+whose civil dates are fixed by observation or a published civil-authority
+schedule rather than a closed-form rule. Tabulated calendars load bounded
+event tables from `calendar_data/*.tab` files (each carrying its own
+provenance header), classify themselves via a `basis` attribute, raise
+`CalendarRangeError` outside their tabulated coverage, and accept an optional
+ephemeris `register_event_provider` callback for callers who want to extend
+coverage past the shipped table. Calendars requiring live astronomical
+ephemerides by default are **out of scope** — this is a reckoning core, not an
+astronomy engine.
 
 ## Quickstart
 
