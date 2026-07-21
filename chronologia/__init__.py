@@ -85,7 +85,6 @@ from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
 from chronologia.zone_timelines import (ClockSegment, ClockTimeline,
                                         ZoneDiscontinuity, ZoneNeverExisted,
                                         zone_history_start, zone_timeline)
-                                        civil_holidays, is_holiday)
 
 __version__ = "0.1.0a1"
 
