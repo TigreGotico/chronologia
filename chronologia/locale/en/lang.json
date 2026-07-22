@@ -100,7 +100,8 @@
   "conventions": {"week_start": "monday", "dmy": false, "hemisphere": null,
                   "prefer_future": true},
   "quantifiers": {"1": ["a", "an", "one"], "2": ["couple", "pair"],
-                  "3": ["few", "several"], "0.5": ["half"]},
+                  "3": ["few", "several"], "0.5": ["half"],
+                  "0.25": ["quarter", "quarters"]},
   "guards": {"bare_year_min_digits": 4},
   "hook": "chronologia.extract.numfold:fold_en"
 }

@@ -38,6 +38,8 @@ __all__ = [
     "ConstructionMatcher", "Resolver", "load_lang_spec",
     "ExplainTrace", "explain", "DateTimeEngine",
     "extract_timespan",
+    "extract_duration", "extract_timespans", "extract_recurrence",
+    "TimeMention",
 ]
 
 
@@ -289,3 +291,9 @@ def extract_timespan(
     remainder = " ".join(t.raw for t in tokens
                          if t.index not in consumed).strip()
     return res.value, remainder
+
+
+# N-series edges (durations, multi-mention, recurrence) live in their own
+# module; imported here so ``chronologia.extract`` is the single public edge.
+from chronologia.extract.nseries import (  # noqa: E402
+    TimeMention, extract_duration, extract_recurrence, extract_timespans)

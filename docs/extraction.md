@@ -573,6 +573,138 @@ The classes, from safest to most confusable:
   decade"), or a time word inside a frozen idiom ("burn the midnight oil")
   are bound literally.
 
+## Beyond a single span: durations, multiple mentions, recurrence
+
+`extract_timespan` answers "*which* stretch of the calendar does this phrase
+point at?" — one span. Three sibling edges answer the questions a single span
+cannot, and all three run on the **same** shared pipeline (the language
+tokeniser, the `ovos-number-parser` number fold, and the typed vocabulary
+maps), so every language is still data only.
+
+### How *long*? — `extract_duration`
+
+A **duration** is a *length* of time, not a place on the calendar: "half an
+hour" is thirty minutes wherever you start counting. `extract_duration`
+returns a plain [`datetime.timedelta`](https://docs.python.org/3/library/datetime.html#timedelta)
+and the leftover text — never a calendar span.
+
+```python
+from chronologia import extract_duration
+from datetime import timedelta
+
+length, remainder = extract_duration("an hour and a half", "en")
+assert length == timedelta(hours=1, minutes=30)
+assert remainder == ""
+
+# it sums every count it finds, and reads fractions
+assert extract_duration("2 days 4 hours", "en")[0] == timedelta(days=2, hours=4)
+assert extract_duration("quarter of an hour", "en")[0] == timedelta(minutes=15)
+assert extract_duration("three quarters of an hour", "en")[0] == timedelta(minutes=45)
+
+# spelled and digit numbers read alike (ovos-number-parser folds them first)
+assert extract_duration("ninety minutes", "en")[0] == timedelta(minutes=90)
+
+# leftover words come back untouched, for a caller to keep parsing
+assert extract_duration("wait 10 minutes", "en") == (timedelta(minutes=10), "wait")
+```
+
+It reads the **fixed-width** units — minute, hour, day, week, fortnight — that
+have one unambiguous length. A calendar unit whose length varies (a month is
+28–31 days, a year 365 or 366) is *not* a fixed duration, so a phrase naming
+one yields no duration and is returned to you in the remainder:
+
+```python
+from chronologia import extract_duration
+
+assert extract_duration("2 months", "en") is None
+# "second" is read as the ordinal (its far commoner sense) and there is no
+# fixed-width "second" duration unit, so the idiom yields no spurious 1-second
+# length — the homograph is resolved in favour of the dominant reading
+assert extract_duration("a second chance", "en") is None
+```
+
+It works the same in every language with locale data — the unit and fraction
+words are the only thing that changes:
+
+```python
+from chronologia import extract_duration
+from datetime import timedelta
+
+assert extract_duration("media hora", "es")[0] == timedelta(minutes=30)
+assert extract_duration("uma hora e meia", "pt")[0] == timedelta(hours=1, minutes=30)
+assert extract_duration("eine viertel stunde", "de")[0] == timedelta(minutes=15)
+assert extract_duration("deux heures et demie", "fr")[0] == timedelta(hours=2, minutes=30)
+```
+
+### How *many*? — `extract_timespans`
+
+One sentence can carry more than one date. Where `extract_timespan` collapses
+to the first, `extract_timespans` (plural) returns **all** non-overlapping
+mentions in reading order — each a `TimeMention` carrying its resolved `span`,
+the surface `text` it was read from, and its half-open `token_span` extent. A
+clock time right after a date composes onto that day, exactly as the single
+edge composes them.
+
+```python
+from chronologia import extract_timespans
+from datetime import datetime
+
+anchor = datetime(2017, 6, 27, 13, 4)   # a Tuesday
+mentions = extract_timespans("meet friday at 3 or monday at noon", "en", anchor)
+
+assert [m.text for m in mentions] == ["friday at 3", "monday at noon"]
+assert mentions[0].span.start.hour == 3     # friday 2017-06-30 03:00
+assert mentions[1].span.start.hour == 12    # monday 2017-07-03 12:00
+assert mentions[0].token_span == (1, 4)
+
+# a sentence with nothing temporal yields an empty list, never an error
+assert extract_timespans("nothing temporal here", "en", anchor) == []
+```
+
+### How *often*? — `extract_recurrence`
+
+A recurring phrase ("every friday", "the first monday of every month") maps
+onto the repo's RFC 5545 [`Recurrence`](recurrence.md) — the *same* rule object
+you can then expand into concrete dates with `occurrences`. `extract_recurrence`
+returns that rule and the leftover text; sub-day detail a date-level rule
+cannot carry ("daily *at 9*") stays in the remainder.
+
+```python
+from chronologia import extract_recurrence, occurrences
+from chronologia.astrodate import AstroDate
+
+rule, remainder = extract_recurrence("every other week", "en")
+assert rule.to_string() == "FREQ=WEEKLY;INTERVAL=2"
+assert remainder == ""
+
+# "first monday of every month" is an ordinal-weekday monthly rule ...
+rule, _ = extract_recurrence("first monday of every month", "en")
+assert rule.to_string() == "FREQ=MONTHLY;BYDAY=1MO"
+# ... and it is a real Recurrence, so you can expand it into dates
+first_three = list(occurrences(rule, AstroDate(2025, 1, 1), count=3))
+assert [d.start.day for d in first_three] == [6, 3, 3]   # Jan/Feb/Mar 2025
+
+# the time-of-day a date-level rule cannot hold is left in the remainder
+assert extract_recurrence("daily at 9", "en") == (
+    extract_recurrence("daily", "en")[0], "at 9")
+
+# a one-off reference is not a recurrence
+assert extract_recurrence("next friday", "en") is None
+```
+
+Like the others it is data-driven across languages — the weekday names, the
+`every` marker and the unit words come from the locale:
+
+```python
+from chronologia import extract_recurrence
+
+assert extract_recurrence("cada viernes", "es")[0].to_string() == "FREQ=WEEKLY;BYDAY=FR"
+assert extract_recurrence("jeden wochentag", "de")[0].to_string() == (
+    "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR")
+assert extract_recurrence("toutes les deux semaines", "fr")[0].to_string() == (
+    "FREQ=WEEKLY;INTERVAL=2")
+```
+
 ## How a language works — and how to add one
 
 Every language is **data only**. There is no per-language code: the engine
