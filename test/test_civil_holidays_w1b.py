@@ -2,10 +2,10 @@
 
 New engine machinery exercised by this batch (each with its own unit here):
 
-* :class:`~chronologia.EquinoxRule` — Japan's Shunbun/Shūbun no Hi, the March and
+* :class:`~chronologia.SolarEventRule` — Japan's Shunbun/Shūbun no Hi, the March and
   September equinox dates read in JST (UTC+9). Asserted against the Cabinet
   Office's own published 2024–2025 dates, not this function's output.
-* :class:`~chronologia.SolarTermRule` — China's Qingming, the Qingming solar term
+* :class:`~chronologia.SolarEventRule` — China's Qingming, the Qingming solar term
   read in CST (UTC+8). Asserted against the State Council listing.
 * the calendar-agnostic :class:`~chronologia.CalendarDateRule` resolution, now
   driving the ``chinese`` (lunisolar, Gregorian-numbered) and ``hebrew``
@@ -26,9 +26,9 @@ import datetime
 
 import pytest
 
-from chronologia import (AstroDate, CalendarDateRule, EquinoxRule,
+from chronologia import (AstroDate, CalendarDateRule, SolarEventRule,
                          IL_INDEPENDENCE_SHIFT, SATURDAY_SUNDAY_TO_MONDAY,
-                         SolarTermRule, holidays_for)
+                         holidays_for)
 
 
 def _obs(rule, year):
@@ -36,7 +36,7 @@ def _obs(rule, year):
 
 
 # ==========================================================================
-# EquinoxRule (Japan Shunbun / Shūbun no Hi)
+# SolarEventRule (Japan Shunbun / Shūbun no Hi)
 # ==========================================================================
 # Cabinet Office published dates (papers/holidays/jp_cabinet_office_shukujitsu.md).
 _CAO_EQUINOX = {
@@ -51,24 +51,26 @@ _CAO_EQUINOX = {
     (w, y, d) for (w, y), d in _CAO_EQUINOX.items()])
 def test_equinox_rule_matches_cabinet_office(which, year, expected):
     # JST = UTC+9: the equinox holiday is the equinox date reckoned in Japan.
-    got = _obs(EquinoxRule(which, 9), year)
+    got = _obs(SolarEventRule(which, 9), year)
     assert got[0][0] == expected
     assert got[0][1] == "exact"
 
 
 def test_equinox_rule_rejects_solstice():
+    # A solstice is not an equinox and not a modelled solar term, so it has no
+    # civil-holiday resolution here: the almanac lookup rejects it.
     with pytest.raises(ValueError):
-        EquinoxRule("june", 9)
+        _obs(SolarEventRule("june", 9), 2024)
 
 
 def test_equinox_rule_timezone_can_change_the_day():
     # The 2024 September equinox instant is ~03:44 UTC on the 22nd; in JST it is
     # the 22nd, and even at UTC it is the 22nd here — assert the JST civil day.
-    assert _obs(EquinoxRule("september", 9), 2024)[0][0] == AstroDate(2024, 9, 22)
+    assert _obs(SolarEventRule("september", 9), 2024)[0][0] == AstroDate(2024, 9, 22)
 
 
 # ==========================================================================
-# SolarTermRule (China Qingming)
+# SolarEventRule (China Qingming)
 # ==========================================================================
 @pytest.mark.parametrize("year,expected", [
     (2023, AstroDate(2023, 4, 5)),
@@ -77,14 +79,14 @@ def test_equinox_rule_timezone_can_change_the_day():
     (2026, AstroDate(2026, 4, 5)),
 ])
 def test_solar_term_rule_qingming(year, expected):
-    got = _obs(SolarTermRule("qingming", 8), year)  # CST = UTC+8
+    got = _obs(SolarEventRule("qingming", 8), year)  # CST = UTC+8
     assert got[0][0] == expected
     assert got[0][1] == "exact"
 
 
 def test_solar_term_rule_rejects_unknown_term():
     with pytest.raises(ValueError):
-        _obs(SolarTermRule("not_a_term", 8), 2024)
+        _obs(SolarEventRule("not_a_term", 8), 2024)
 
 
 # ==========================================================================

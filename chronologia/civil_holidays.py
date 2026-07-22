@@ -26,10 +26,11 @@ The kinds:
   (``-1`` = last) ``weekday`` of ``month``, optionally shifted ``post_offset``
   days (so "the Monday after the 2nd Sunday of July" is ``n=2, weekday=SUN,
   post_offset=1``); evaluated through the RRULE engine. Basis ``exact``.
-* :class:`WeekdayOnOrBeforeRule` ``(month, day, weekday)`` — the latest
-  ``weekday`` on or before a fixed ``(month, day)``, for "the Monday preceding
-  25 May"-style rules (Victoria Day) whose ordinal drifts year to year. Basis
-  ``exact``.
+* :class:`NearestWeekdayRule` ``(month, day, weekday, direction)`` — the nearest
+  ``weekday`` on or before (``direction=-1``) or on or after (``direction=+1``)
+  a fixed ``(month, day)``, for "the Monday preceding 25 May" (Victoria Day) or
+  "the next Monday on or after 6 Jan" (Colombia's Ley Emiliani) rules whose
+  ordinal drifts year to year. Basis ``exact``.
 * :class:`EasterOffsetRule` ``(offset_days, method)`` — a whole-day offset from
   the computed Easter Sunday (``method`` ∈ ``gregorian`` | ``julian_gregorian_date``).
   Because Easter is always a Sunday, every "n-th Monday/Thursday after Easter"
@@ -159,15 +160,13 @@ __all__ = [
     "CATEGORIES",
     "FixedRule",
     "NthWeekdayRule",
-    "WeekdayOnOrBeforeRule",
-    "WeekdayOnOrAfterRule",
+    "NearestWeekdayRule",
     "EasterOffsetRule",
     "CalendarDateRule",
     "DecreeTableRule",
     "OneOffRule",
     "ExcludeRule",
-    "EquinoxRule",
-    "SolarTermRule",
+    "SolarEventRule",
     "ObservedShift",
     "US_OBSERVED_SHIFT",
     "SUNDAY_TO_MONDAY",
@@ -326,51 +325,26 @@ class NthWeekdayRule:
 
 
 @dataclass(frozen=True)
-class WeekdayOnOrBeforeRule:
-    """The latest ``weekday`` falling on or before ``(month, day)`` each year.
+class NearestWeekdayRule:
+    """The nearest ``weekday`` on or before/after a fixed ``(month, day)``.
 
-    The minimal kind for "the Monday preceding a fixed date" rules that no
-    ``n``-th-weekday count can express, because the ordinal drifts year to year.
-    Canada's Victoria Day is "the Monday preceding 25 May" — equivalently the
-    Monday on or before 24 May — so ``WeekdayOnOrBeforeRule(5, 24, 0)``. Quebec's
-    National Patriots' Day shares that anchor; Saxony's Buß- und Bettag is the
-    Wednesday on or before 22 November, ``WeekdayOnOrBeforeRule(11, 22, 2)``.
+    The minimal kind for "the Monday preceding/following a fixed date" rules
+    that no ``n``-th-weekday count can express, because the ordinal drifts year
+    to year. ``direction`` is ``-1`` for *on or before* (the anchor's own
+    weekday counts) and ``+1`` for *on or after* — the two are exact mirrors, so
+    they share one kind with a signed direction rather than two near-identical
+    classes.
 
-    ``weekday`` is Monday==0 .. Sunday==6 (the :class:`AstroDate` convention).
-    Basis ``exact``.
-    """
-
-    month: int
-    day: int
-    weekday: int
-
-    def __post_init__(self) -> None:
-        if not 1 <= self.month <= 12:
-            raise ValueError(f"month out of range: {self.month}")
-        if not 1 <= self.day <= 31:
-            raise ValueError(f"day out of range: {self.day}")
-        if not 0 <= self.weekday <= 6:
-            raise ValueError(f"weekday out of range: {self.weekday}")
-
-    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
-        anchor = AstroDate(year, self.month, self.day)
-        delta = (anchor.weekday() - self.weekday) % 7
-        return ((anchor - timedelta(days=delta), BASIS_EXACT),)
-
-
-@dataclass(frozen=True)
-class WeekdayOnOrAfterRule:
-    """The earliest ``weekday`` falling on or after ``(month, day)`` each year.
-
-    The mirror of :class:`WeekdayOnOrBeforeRule`, and the minimal kind for
-    "move this holiday to the following Monday (unless it already is one)"
-    rules. Colombia's Ley 51 de 1983 ("Ley Emiliani") relocates a fixed list of
-    civil/religious holidays to the *next Monday on or after* their nominal
-    date: Reyes Magos (6 Jan), San José (19 Mar), San Pedro y San Pablo
-    (29 Jun), La Asunción (15 Aug), Día de la Raza (12 Oct), Todos los Santos
-    (1 Nov) and Independencia de Cartagena (11 Nov) — so ``weekday`` is Monday
-    (0). When the nominal date is already that weekday, it is unmoved (Reyes
-    2025 stays 6 Jan).
+    * ``direction == -1`` (on or before): Canada's Victoria Day is "the Monday
+      preceding 25 May" — the Monday on or before 24 May,
+      ``NearestWeekdayRule(5, 24, 0, -1)``. Quebec's National Patriots' Day
+      shares that anchor; Saxony's Buß- und Bettag is the Wednesday on or before
+      22 November, ``NearestWeekdayRule(11, 22, 2, -1)``.
+    * ``direction == +1`` (on or after): Colombia's Ley 51 de 1983 ("Ley
+      Emiliani") relocates a fixed list of holidays to the *next Monday on or
+      after* their nominal date (Reyes Magos, San José, …) —
+      ``NearestWeekdayRule(1, 6, 0, +1)`` and kin. When the nominal date is
+      already that weekday it is unmoved (Reyes 2025 stays 6 Jan).
 
     ``weekday`` is Monday==0 .. Sunday==6 (the :class:`AstroDate` convention).
     Basis ``exact``.
@@ -379,6 +353,7 @@ class WeekdayOnOrAfterRule:
     month: int
     day: int
     weekday: int
+    direction: int = -1
 
     def __post_init__(self) -> None:
         if not 1 <= self.month <= 12:
@@ -387,11 +362,18 @@ class WeekdayOnOrAfterRule:
             raise ValueError(f"day out of range: {self.day}")
         if not 0 <= self.weekday <= 6:
             raise ValueError(f"weekday out of range: {self.weekday}")
+        if self.direction not in (-1, 1):
+            raise ValueError(
+                f"direction must be -1 (on/before) or +1 (on/after), "
+                f"got {self.direction}")
 
     def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
         anchor = AstroDate(year, self.month, self.day)
-        delta = (self.weekday - anchor.weekday()) % 7
-        return ((anchor + timedelta(days=delta), BASIS_EXACT),)
+        if self.direction < 0:
+            delta = (anchor.weekday() - self.weekday) % 7
+        else:
+            delta = (self.weekday - anchor.weekday()) % 7
+        return ((anchor + timedelta(days=self.direction * delta), BASIS_EXACT),)
 
 
 @dataclass(frozen=True)
@@ -575,61 +557,40 @@ class ExcludeRule:
         return ()
 
 
-@dataclass(frozen=True)
-class EquinoxRule:
-    """The equinox holiday of ``year``, taken on its date in a civil timezone.
-
-    Japan's Shunbun no Hi (Vernal Equinox Day) and Shūbun no Hi (Autumnal
-    Equinox Day) are gazetted each February from the *astronomical* equinox
-    instant reckoned in Japan Standard Time (UTC+9). ``which`` is the cardinal
-    event name :func:`~chronologia.equinoxes.equinox` accepts (``"march"`` /
-    ``"september"``); ``tz_offset_hours`` is the civil offset the date is read
-    in. The instant comes from Meeus ch.27 arithmetic that reproduces the
-    Cabinet Office's published dates to within its own accuracy, so the whole
-    civil day is a firm date — basis ``exact``. (Because the gazette is the
-    legal authority, the ``.tab`` header cites it; the arithmetic only
-    *reproduces* it, and the golds assert the published dates, not this
-    function's output.)
-    """
-
-    which: str
-    tz_offset_hours: float = 0.0
-
-    def __post_init__(self) -> None:
-        # Delegate the ``which`` validation to the equinox engine on first use;
-        # only the two equinoxes (not the solstices) are civil holidays here.
-        if self.which not in ("march", "september"):
-            raise ValueError(
-                f"equinox holiday must be 'march' or 'september', "
-                f"got {self.which!r}")
-
-    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
-        span = equinox(year, self.which)
-        instant = span.start + span.width / 2 + timedelta(
-            hours=self.tz_offset_hours)
-        return ((AstroDate(instant.year, instant.month, instant.day),
-                 BASIS_EXACT),)
+_EQUINOX_EVENTS = ("march", "september")
 
 
 @dataclass(frozen=True)
-class SolarTermRule:
-    """A solar-term holiday of ``year``, taken on its date in a civil timezone.
+class SolarEventRule:
+    """A solar-instant holiday of ``year``, taken on its date in a civil timezone.
 
-    China's Qingming (Tomb-Sweeping Day) is not a lunar date but a *solar term*
-    (jieqi) — the day the Sun reaches ecliptic longitude 15°, reckoned in China
-    Standard Time (UTC+8). ``term`` is a name
-    :func:`~chronologia.equinoxes.solar_term` accepts (e.g. ``"qingming"``);
-    ``tz_offset_hours`` is the civil offset. Basis ``exact`` — the same
-    computed-date footing as :class:`EquinoxRule` and
-    :class:`EasterOffsetRule`. The State Council announcement remains the cited
-    legal authority in the ``.tab`` header.
+    An equinox or a solar term is the same thing to this engine: an astronomical
+    instant the Sun reaches, read as a civil day in a given timezone. Both feed
+    ``instant = span.start + span.width/2 + tz`` identically, so they share one
+    kind rather than two classes that differ only in which almanac function they
+    call. ``event`` selects it: ``"march"`` / ``"september"`` route through
+    :func:`~chronologia.equinoxes.equinox` (the two equinoxes — solstices are
+    not civil holidays here), any other name through
+    :func:`~chronologia.equinoxes.solar_term` (e.g. ``"qingming"``).
+    ``tz_offset_hours`` is the civil offset the date is read in. Basis ``exact``.
+
+    * Japan's Shunbun no Hi / Shūbun no Hi (``"march"`` / ``"september"``,
+      JST UTC+9) are gazetted from the Meeus ch.27 equinox instant; the ``.tab``
+      header cites the Cabinet Office gazette and the golds assert its published
+      dates, this arithmetic only reproduces them.
+    * China's Qingming (``"qingming"``, CST UTC+8) is the day the Sun reaches
+      ecliptic longitude 15°; the State Council announcement stays the cited
+      legal authority in the ``.tab`` header.
     """
 
-    term: str
+    event: str
     tz_offset_hours: float = 0.0
 
     def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
-        span = solar_term(year, self.term)
+        if self.event in _EQUINOX_EVENTS:
+            span = equinox(year, self.event)
+        else:
+            span = solar_term(year, self.event)
         instant = span.start + span.width / 2 + timedelta(
             hours=self.tz_offset_hours)
         return ((AstroDate(instant.year, instant.month, instant.day),
@@ -1131,21 +1092,20 @@ def _parse_kind(kind: str, args: str) -> RuleKind:
         post = int(parts[3]) if len(parts) > 3 else 0
         return NthWeekdayRule(month, n, wd, post)
     if kind == "weekday_onbefore":
-        return WeekdayOnOrBeforeRule(int(parts[0]), int(parts[1]), int(parts[2]))
+        return NearestWeekdayRule(int(parts[0]), int(parts[1]), int(parts[2]),
+                                  direction=-1)
     if kind == "weekday_onafter":
-        return WeekdayOnOrAfterRule(int(parts[0]), int(parts[1]), int(parts[2]))
+        return NearestWeekdayRule(int(parts[0]), int(parts[1]), int(parts[2]),
+                                  direction=+1)
     if kind == "easter":
         offset = int(parts[0])
         method = parts[1] if len(parts) > 1 else "gregorian"
         return EasterOffsetRule(offset, method)
     if kind == "calendar_date":
         return CalendarDateRule(parts[0], int(parts[1]), int(parts[2]))
-    if kind == "equinox":
+    if kind in ("equinox", "solar_term"):
         tz = float(parts[1]) if len(parts) > 1 else 0.0
-        return EquinoxRule(parts[0], tz)
-    if kind == "solar_term":
-        tz = float(parts[1]) if len(parts) > 1 else 0.0
-        return SolarTermRule(parts[0], tz)
+        return SolarEventRule(parts[0], tz)
     if kind == "decree":
         dates = []
         for token in parts:
