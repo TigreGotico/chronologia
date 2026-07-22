@@ -68,9 +68,11 @@ from chronologia.calendars import (CALENDARS, Calendar, TabulatedCalendar,
                                     gregorian_to_jdn, jdn_to_gregorian,
                                     julian_to_jdn)
 
-# Lower bound standing in for "the beginning of the timeline" — a plain int so
-# it orders against real JDNs; never itself a valid civil day.
+# Open sentinel bounds standing in for "before the timeline begins" / "after it
+# ends" — plain ints that order against every real JDN, never valid civil days.
+# (A real JDN is ~a few million; these are 10^15 out on either side.)
 _MIN_JDN = -(10 ** 15)
+_MAX_JDN = 10 ** 15
 
 # The proleptic Gregorian calendar as a JDN-hub Calendar, so a segment may name
 # "gregorian" without touching the arithmetic-only registry in calendars.py
@@ -223,7 +225,7 @@ class Timeline:
     def _seg_end(self, seg: TimelineSegment) -> int:
         """Exclusive upper JDN bound of ``seg`` (next segment's start)."""
         after = [s.start_jdn for s in self.segments if s.start_jdn > seg.start_jdn]
-        return min(after) if after else _MIN_JDN + 2 * 10 ** 15  # +inf-ish
+        return min(after) if after else _MAX_JDN  # last segment: open upper bound
 
     def calendar_at(self, jdn: int) -> str:
         """The ``calendar_key`` in force at ``jdn``."""
