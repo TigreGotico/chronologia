@@ -1,0 +1,36 @@
+# civil-holidays v1
+# jurisdiction: ME
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Montenegro
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in cnr via vacanza's own language support (language='cnr'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Nova godina (1)                          | 1 1                  | public          |  |  |  |
+fixed         | Nova godina (2)                          | 1 2                  | public          |  |  |  |
+fixed         | Praznik rada (1)                         | 5 1                  | public          |  |  |  |
+fixed         | Praznik rada (2)                         | 5 2                  | public          |  |  |  |
+fixed         | Dan nezavisnosti (1)                     | 5 21                 | public          |  |  |  |
+fixed         | Dan nezavisnosti (2)                     | 5 22                 | public          |  |  |  |
+fixed         | Dan državnosti (1)                       | 7 13                 | public          |  |  |  |
+fixed         | Dan državnosti (2)                       | 7 14                 | public          |  |  |  |
+fixed         | Dan državnosti (neradni dan)             | 7 15                 | public          |  |  |  |
+decree        | Njegošev dan (1)                         | 2024-11-13           | public          |  |  |  |
+decree        | Njegošev dan (2)                         | 2024-11-14           | public          |  |  |  |
+decree        | Njegošev dan                             | 2025-11-13           | public          |  |  |  |

@@ -1,0 +1,55 @@
+# civil-holidays v1
+# jurisdiction: VA
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Vatican_City
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in it via vacanza's own language support (language='it'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Solennità di Maria Santissima Madre di Dio | 1 1                  | public          |  |  |  |
+fixed         | Epifania del Signore                     | 1 6                  | public          |  |  |  |
+fixed         | Anniversario della istituzione dello Stato della Città del Vaticano | 2 11                 | public          |  |  |  |
+fixed         | Anniversario dell'Elezione del Santo Padre | 3 13                 | public          |  |  |  |
+fixed         | San Giuseppe                             | 3 19                 | public          |  |  |  |
+easter        | Giovedì Santo                            | -3 gregorian         | public          |  |  |  |
+easter        | Venerdì Santo                            | -2 gregorian         | public          |  |  |  |
+easter        | Sabato Santo                             | -1 gregorian         | public          |  |  |  |
+easter        | Pasqua di Resurrezione                   | 0 gregorian          | public          |  |  |  |
+easter        | Lunedì dell'Angelo                       | 1 gregorian          | public          |  |  |  |
+easter        | Martedì in Albis                         | 2 gregorian          | public          |  |  |  |
+decree        | Onomastico del Santo Padre               | 2024-4-23            | public          |  |  |  |
+fixed         | San Giuseppe Artigiano                   | 5 1                  | public          |  |  |  |
+easter        | Ascensione del Signore                   | 39 gregorian         | public          |  |  |  |
+easter        | Solennità della Pentecoste               | 49 gregorian         | public          |  |  |  |
+easter        | Solennità della Santissima Trinità       | 56 gregorian         | public          |  |  |  |
+easter        | Corpus Domini                            | 60 gregorian         | public          |  |  |  |
+fixed         | Santi Pietro e Paolo                     | 6 29                 | public          |  |  |  |
+fixed         | Vigilia dell'Assunzione di Maria Santissima | 8 14                 | public          |  |  |  |
+fixed         | Assunzione di Maria Santissima           | 8 15                 | public          |  |  |  |
+fixed         | Giorno Successivo all'Assunzione di Maria Santissima | 8 16                 | public          |  |  |  |
+fixed         | Tutti i Santi                            | 11 1                 | public          |  |  |  |
+fixed         | Tutti i Fedeli Defunti                   | 11 2                 | public          |  |  |  |
+fixed         | Immacolata Concezione                    | 12 8                 | public          |  |  |  |
+fixed         | Vigilia di Natale                        | 12 24                | public          |  |  |  |
+fixed         | Natale                                   | 12 25                | public          |  |  |  |
+fixed         | Santo Stefano                            | 12 26                | public          |  |  |  |
+fixed         | San Giovanni                             | 12 27                | public          |  |  |  |
+fixed         | Ultimo giorno dell'anno                  | 12 31                | public          |  |  |  |
+decree        | Onomastico del Santo Padre (1)           | 2025-4-23            | public          |  |  |  |
+decree        | Onomastico del Santo Padre (2)           | 2025-9-17            | public          |  |  |  |

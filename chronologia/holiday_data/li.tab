@@ -1,0 +1,41 @@
+# civil-holidays v1
+# jurisdiction: LI
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Liechtenstein
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in de via vacanza's own language support (language='de'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Neujahr                                  | 1 1                  | public          |  |  |  |
+fixed         | Heilige Drei Könige                      | 1 6                  | public          |  |  |  |
+fixed         | Mariä Lichtmess                          | 2 2                  | public          |  |  |  |
+fixed         | Josefstag                                | 3 19                 | public          |  |  |  |
+easter        | Ostersonntag                             | 0 gregorian          | public          |  |  |  |
+easter        | Ostermontag                              | 1 gregorian          | public          |  |  |  |
+fixed         | Tag der Arbeit                           | 5 1                  | public          |  |  |  |
+easter        | Auffahrt                                 | 39 gregorian         | public          |  |  |  |
+easter        | Pfingstsonntag                           | 49 gregorian         | public          |  |  |  |
+easter        | Pfingstmontag                            | 50 gregorian         | public          |  |  |  |
+easter        | Fronleichnam                             | 60 gregorian         | public          |  |  |  |
+fixed         | Staatsfeiertag                           | 8 15                 | public          |  |  |  |
+fixed         | Mariä Geburt                             | 9 8                  | public          |  |  |  |
+fixed         | Allerheiligen                            | 11 1                 | public          |  |  |  |
+fixed         | Mariä Empfängnis                         | 12 8                 | public          |  |  |  |
+fixed         | Weihnachten                              | 12 25                | public          |  |  |  |
+fixed         | Stephanstag                              | 12 26                | public          |  |  |  |

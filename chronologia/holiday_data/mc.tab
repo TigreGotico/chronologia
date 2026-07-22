@@ -1,0 +1,37 @@
+# civil-holidays v1
+# jurisdiction: MC
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Monaco
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in fr_MC via vacanza's own language support (language='fr_MC'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Le jour de l'An                          | 1 1                  | public          |  |  |  |
+fixed         | Le jour de la Sainte-Dévote              | 1 27                 | public          |  |  |  |
+easter        | Le Lundi de Pâques                       | 1 gregorian          | public          |  |  |  |
+fixed         | Le jour de la Fête du Travail            | 5 1                  | public          |  |  |  |
+easter        | Le jour de l'Ascension                   | 39 gregorian         | public          |  |  |  |
+easter        | Le Lundi de Pentecôte                    | 50 gregorian         | public          |  |  |  |
+easter        | Le jour de la Fête Dieu                  | 60 gregorian         | public          |  |  |  |
+fixed         | Le jour de l'Assomption                  | 8 15                 | public          |  |  |  |
+fixed         | Le jour de la Toussaint                  | 11 1                 | public          |  |  |  |
+fixed         | Le jour de la Fête de S.A.S. le Prince Souverain | 11 19                | public          |  |  |  |
+fixed         | Le jour de l'Immaculée Conception        | 12 8                 | public          |  |  |  |
+decree        | Le jour de l'Immaculée Conception (reporté) | 2024-12-9            | public          |  |  |  |
+fixed         | Le jour de Noël                          | 12 25                | public          |  |  |  |

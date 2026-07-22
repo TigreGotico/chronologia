@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: XK
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Kosovo
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in sq via vacanza's own language support (language='sq'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Viti i Ri (1)                            | 1 1                  | public          |  |  |  |
+fixed         | Viti i Ri (2)                            | 1 2                  | public          |  |  |  |
+fixed         | Krishtlindjet Ortodokse                  | 1 7                  | public          |  |  |  |
+decree        | Krishtlindjet Ortodokse (ditë pushimi e shtyrë) | 2024-1-8             | public          |  |  |  |
+fixed         | Dita e Pavarësisë së Republikës së Kosovës | 2 17                 | public          |  |  |  |
+decree        | Dita e Pavarësisë së Republikës së Kosovës (ditë pushimi e shtyrë) | 2024-2-19            | public          |  |  |  |
+easter        | Pashkët Katolike                         | 0 gregorian          | public          |  |  |  |
+easter        | Pashkët Katolike (ditë pushimi e shtyrë) | 1 gregorian          | public          |  |  |  |
+fixed         | Dita e Kushtetutës së Republikës së Kosovës | 4 9                  | public          |  |  |  |
+decree        | Bajrami i Madh, dita e parë (e vlerësuar) | 2024-4-10 2025-3-30  | public          |  |  |  |
+fixed         | Dita Ndërkombëtare e Punës               | 5 1                  | public          |  |  |  |
+easter        | Pashkët Ortodokse                        | 0 julian_gregorian_date | public          |  |  |  |
+easter        | Pashkët Ortodokse (ditë pushimi e shtyrë) | 1 julian_gregorian_date | public          |  |  |  |
+fixed         | Dita e Evropës                           | 5 9                  | public          |  |  |  |
+decree        | Bajrami i Vogël, dita e parë (e vlerësuar) | 2024-6-16 2025-6-6   | public          |  |  |  |
+decree        | Bajrami i Vogël, dita e parë (ditë pushimi e shtyrë, e vlerësuar) | 2024-6-17            | public          |  |  |  |
+fixed         | Krishtlindjet Katolike                   | 12 25                | public          |  |  |  |
+decree        | Bajrami i Madh, dita e parë (ditë pushimi e shtyrë, e vlerësuar) | 2025-3-31            | public          |  |  |  |

@@ -1,0 +1,36 @@
+# civil-holidays v1
+# jurisdiction: CV
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Cabo_Verde
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in pt_CV via vacanza's own language support (language='pt_CV'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Ano Novo                                 | 1 1                  | public          |  |  |  |
+fixed         | Dia da Liberdade e da Democracia         | 1 13                 | public          |  |  |  |
+fixed         | Dia da Nacionalidade e dos Heróis Nacionais | 1 20                 | public          |  |  |  |
+easter        | Quarta-feira de Cinzas                   | -46 gregorian        | public          |  |  |  |
+easter        | Sexta-feira Santa                        | -2 gregorian         | public          |  |  |  |
+easter        | Páscoa                                   | 0 gregorian          | public          |  |  |  |
+fixed         | Dia do Trabalhador                       | 5 1                  | public          |  |  |  |
+fixed         | Dia Mundial da Criança                   | 6 1                  | public          |  |  |  |
+fixed         | Dia da Independência Nacional            | 7 5                  | public          |  |  |  |
+fixed         | Dia da Assunção                          | 8 15                 | public          |  |  |  |
+fixed         | Dia de Todos os Santos                   | 11 1                 | public          |  |  |  |
+fixed         | Dia do Natal                             | 12 25                | public          |  |  |  |

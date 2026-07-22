@@ -1,0 +1,36 @@
+# civil-holidays v1
+# jurisdiction: EE
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Estonia
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in et via vacanza's own language support (language='et'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | uusaasta                                 | 1 1                  | public          |  |  |  |
+fixed         | iseseisvuspäev                           | 2 24                 | public          |  |  |  |
+easter        | suur reede                               | -2 gregorian         | public          |  |  |  |
+easter        | ülestõusmispühade 1. püha                | 0 gregorian          | public          |  |  |  |
+fixed         | kevadpüha                                | 5 1                  | public          |  |  |  |
+easter        | nelipühade 1. püha                       | 49 gregorian         | public          |  |  |  |
+fixed         | võidupüha                                | 6 23                 | public          |  |  |  |
+fixed         | jaanipäev                                | 6 24                 | public          |  |  |  |
+fixed         | taasiseseisvumispäev                     | 8 20                 | public          |  |  |  |
+fixed         | jõululaupäev                             | 12 24                | public          |  |  |  |
+fixed         | esimene jõulupüha                        | 12 25                | public          |  |  |  |
+fixed         | teine jõulupüha                          | 12 26                | public          |  |  |  |

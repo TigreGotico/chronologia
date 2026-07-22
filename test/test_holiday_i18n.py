@@ -265,6 +265,25 @@ _PRIMARY_LANG = {
     "MD": "ro", "MN": "mn", "BA": "bs", "LT": "lt", "AM": "hy", "AL": "sq",
     "JM": "en", "GM": "en", "QA": "ar", "NA": "en", "BW": "en", "GA": "fr",
     "LS": "en",
+    # batch-5 (the closing sweep -- 106 more jurisdictions to vacanza parity):
+    "AD": "ca", "AG": "en", "AI": "en", "AQ": "en", "AS": "en", "AW": "pap",
+    "AX": "fi", "BB": "en", "BH": "ar", "BL": "fr", "BM": "en", "BN": "ms",
+    "BQ": "nl", "BS": "en", "BT": "dz", "BZ": "en", "CC": "en", "CK": "en",
+    "CV": "pt", "CW": "pap", "CX": "en", "CY": "el", "DJ": "fr", "DM": "en",
+    "EE": "et", "EH": "ar", "FJ": "en", "FK": "en", "FM": "en", "FO": "fo",
+    "GD": "en", "GF": "fr", "GG": "en", "GI": "en", "GL": "kl", "GP": "fr",
+    "GQ": "es", "GS": "en", "GU": "en", "GW": "pt", "GY": "en", "HK": "zh",
+    "IM": "en", "IS": "is", "JE": "en", "KI": "en", "KM": "en", "KN": "en",
+    "KY": "en", "LB": "ar", "LC": "en", "LI": "de", "LR": "en", "LU": "lb",
+    "LV": "lv", "MC": "fr", "ME": "cnr", "MF": "fr", "MH": "en", "MK": "mk",
+    "MO": "zh", "MP": "en", "MQ": "fr", "MS": "en", "MT": "mt", "MU": "en",
+    "MV": "dv", "NC": "fr", "NF": "en", "NR": "en", "NU": "en", "OM": "ar",
+    "PF": "fr", "PM": "fr", "PN": "en", "PR": "en", "PS": "ar", "PW": "en",
+    "RE": "fr", "SB": "en", "SC": "en", "SH": "en", "SI": "sl", "SJ": "no",
+    "SM": "it", "SR": "nl", "ST": "pt", "SX": "nl", "SZ": "en", "TC": "en",
+    "TF": "fr", "TK": "en", "TL": "pt", "TO": "to", "TT": "en", "TV": "tvl",
+    "UM": "en", "VA": "it", "VC": "en", "VG": "en", "VI": "en", "VU": "en",
+    "WF": "fr", "WS": "en", "XK": "sq", "YT": "fr",
 }
 _MATRIX_LANGS = ("en", "pt", "es", "de", "fr")
 

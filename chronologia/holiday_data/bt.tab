@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: BT
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Bhutan
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in dz via vacanza's own language support (language='dz'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | དགུན་ཉི་ལྡོག་གི་ངལ་གསོལ།                 | 1 2                  | public          |  |  |  |
+decree        | སྔར་སྲོལ་འབུལ་བའི་ལོ་གསར་གྱི་ངལ་གསོལ།    | 2024-1-12 2025-1-30  | public          |  |  |  |
+decree        | གནམ་ལོ་གསར་ཚེས་ཀྱིས་དུས་སྟོན་ངལ་གསོལ། (1) | 2024-2-10 2025-2-28  | public          |  |  |  |
+decree        | གནམ་ལོ་གསར་ཚེས་ཀྱིས་དུས་སྟོན་ངལ་གསོལ། (2) | 2024-2-11 2025-3-1   | public          |  |  |  |
+fixed         | མི་དབང་མངའ་བདག་རིན་པོ་ཆེའི་འཁྲུངས་སྐར་དུས་ཆེན་ངལ་གསོལ། (1) | 2 21                 | public          |  |  |  |
+fixed         | མི་དབང་མངའ་བདག་རིན་པོ་ཆེའི་འཁྲུངས་སྐར་དུས་ཆེན་ངལ་གསོལ། (2) | 2 22                 | public          |  |  |  |
+fixed         | མི་དབང་མངའ་བདག་རིན་པོ་ཆེའི་འཁྲུངས་སྐར་དུས་ཆེན་ངལ་གསོལ། (3) | 2 23                 | public          |  |  |  |
+decree        | མཐུ་ཆེན་ཆོས་ཀྱི་རྒྱལ་པོའི་དུས་ཆེན་ངལ་གསོལ། | 2024-4-18 2025-5-7   | public          |  |  |  |
+fixed         | མི་དབང་འབྲུག་རྒྱལ་གསུམ་པའི་འཁྲུངས་སྐར་དུས་ཆེན་ངལ་གསོལ། | 5 2                  | public          |  |  |  |
+decree        | སངས་རྒྱས་བཅོམ་ལྡན་འདས་ཀྱི་དུས་ཆེན་ལྔ་འཛོམས་ངལ་གསོལ། | 2024-5-23 2025-6-11  | public          |  |  |  |
+decree        | ཨོ་རྒྱན་གུ་རུ་རིན་པོ་ཆེའི་འཁྲུངས་སྐར་དུས་ཆེན་ངལ་གསོ། | 2024-6-16 2025-7-5   | public          |  |  |  |
+decree        | སྟོན་པ་མཆོག་ཝ་ར་ན་སིར་བདེན་བཞིའི་ཆོས་འཁོར་བསྐོར་བའི་དུས་ཆེན་ངལ་གསོ། | 2024-7-10 2025-7-28  | public          |  |  |  |
+fixed         | རྒྱལ་ཡོངས་ཁྲུས་བབས་ངལ་གསོ།               | 9 23                 | public          |  |  |  |
+decree        | ལྷོ་མཚམས་ད་སའིན་ངལ་གསོ།                  | 2024-10-12 2025-10-2 | public          |  |  |  |
+fixed         | མི་དབང་མངའ་བདག་རིན་པོ་ཆེའི་གསེར་ཁྲི་མངའ་གསོལ་གྱི་དུས་ཆེན་ངལ་གསོལ། | 11 1                 | public          |  |  |  |
+fixed         | མི་དབང་འབྲུག་རྒྱལ་བཞི་པའི་འཁྲུངས་སྐར་དུས་ཆེན་ངལ་གསོལ། | 11 11                | public          |  |  |  |
+decree        | རྒྱལ་བ་ལྷ་ལས་བབས་པའི་དུས་ཆེན་ངལ་གསོ།     | 2024-11-22 2025-11-11 | public          |  |  |  |
+fixed         | རྒྱལ་ཡོངས་དུས་ཆེན་གྱི་ངལ་གསོལ།           | 12 17                | public          |  |  |  |

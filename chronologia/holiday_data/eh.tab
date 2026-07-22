@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: EH
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Western_Sahara
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in ar via vacanza's own language support (language='ar'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | إعلان الجمهورية العربية الصحراوية الديمقراطية | 2 27                 | public          |  |  |  |
+fixed         | يوم الشهيد الأول                         | 3 8                  | public          |  |  |  |
+decree        | عيد الفطر المبارك                        | 2024-4-10 2025-3-30  | public          |  |  |  |
+fixed         | تأسيس الجبهة الشعبية لتحرير الساقية الحمراء ووادي الذهب | 5 10                 | public          |  |  |  |
+fixed         | اندلاع الكفاح المسلح                     | 5 20                 | public          |  |  |  |
+fixed         | يوم الشهداء                              | 6 9                  | public          |  |  |  |
+decree        | عيد الأضحى المبارك                       | 2024-6-16 2025-6-6   | public          |  |  |  |
+fixed         | يوم الانتفاضة                            | 6 17                 | public          |  |  |  |
+decree        | رأس السنة الهجرية                        | 2024-7-7 2025-6-26   | public          |  |  |  |
+decree        | المولد النبوي الشريف                     | 2024-9-15 2025-9-4   | public          |  |  |  |
+fixed         | عيد الوحدة الوطنية                       | 10 12                | public          |  |  |  |

@@ -1,0 +1,36 @@
+# civil-holidays v1
+# jurisdiction: GI
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Gibraltar
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in en_GB via vacanza's own language support (language='en_GB'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
+decree        | Winter Midterm Bank Holiday              | 2024-2-12 2025-2-17  | public          |  |  |  |
+easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
+easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
+fixed         | Workers' Memorial Day                    | 4 28                 | public          |  |  |  |
+fixed         | May Day                                  | 5 1                  | public          |  |  |  |
+decree        | Spring Bank Holiday                      | 2024-5-27 2025-5-26  | public          |  |  |  |
+decree        | King's Birthday                          | 2024-6-17 2025-6-16  | public          |  |  |  |
+decree        | Late Summer Bank Holiday                 | 2024-8-26 2025-8-25  | public          |  |  |  |
+fixed         | Gibraltar National Day                   | 9 10                 | public          |  |  |  |
+fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
+fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

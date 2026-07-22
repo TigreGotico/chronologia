@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: GW
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Guinea_Bissau
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in pt_GW via vacanza's own language support (language='pt_GW'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Ano Novo                                 | 1 1                  | public          |  |  |  |
+fixed         | Dia dos Heróis Nacionais                 | 1 20                 | public          |  |  |  |
+fixed         | Dia do Início da Luta Armada             | 1 23                 | public          |  |  |  |
+fixed         | Dia Internacional da Mulher              | 3 8                  | public          |  |  |  |
+easter        | Páscoa                                   | 0 gregorian          | public          |  |  |  |
+decree        | Korité                                   | 2024-4-10 2025-3-30  | public          |  |  |  |
+fixed         | Dia do Trabalhador                       | 5 1                  | public          |  |  |  |
+decree        | Tabaski                                  | 2024-6-16 2025-6-6   | public          |  |  |  |
+fixed         | Dia de Pidjiguiti                        | 8 3                  | public          |  |  |  |
+fixed         | Dia da Independência                     | 9 24                 | public          |  |  |  |
+fixed         | Dia de Natal                             | 12 25                | public          |  |  |  |
