@@ -65,7 +65,8 @@ from chronologia.cosmology import (AGE_OF_UNIVERSE_ERA, COSMIC_PERIODS,
 from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
                                  AmbiguousPeriodError, NamedPeriod, calibrate_c14,
                                  candidates, children, lookup, subdivide)
-from chronologia.recurrence import (Recurrence, every, last_weekday_of_month,
+from chronologia.recurrence import (HolidayRecurrence, Recurrence, every,
+                                    last_weekday_of_month,
                                     nth_weekday_of_month, occurrences,
                                     parse_rrule)
 from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
@@ -106,6 +107,8 @@ from chronologia.civil_holidays import (CATEGORIES, IL_INDEPENDENCE_SHIFT,
 from chronologia.extract import (TimeMention, explain, extract_duration,
                                  extract_recurrence, extract_timespan,
                                  extract_timespans)
+from chronologia.events import Event, extract_event
+from chronologia.ical import from_ical, to_ical
 from chronologia.serialization import from_json, to_json
 
 __version__ = "0.1.0a1"
@@ -141,6 +144,11 @@ __all__ = [
     "extract_timespans",
     "extract_recurrence",
     "TimeMention",
+    # events (one utterance -> Event) and RFC 5545 iCalendar interop
+    "Event",
+    "extract_event",
+    "to_ical",
+    "from_ical",
     # eras
     "ERAS",
     "Era",
@@ -216,6 +224,7 @@ __all__ = [
     "CLDR_VERSION",
     # RFC 5545 recurrence rules (RRULE) over the JDN hub
     "Recurrence",
+    "HolidayRecurrence",
     "parse_rrule",
     "occurrences",
     "every",

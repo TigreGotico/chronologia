@@ -26,11 +26,47 @@ _CASES = [
     ("weekly", "FREQ=WEEKLY", ""),
     ("monthly", "FREQ=MONTHLY", ""),
     ("annually", "FREQ=YEARLY", ""),
-    ("daily at 9", "FREQ=DAILY", "at 9"),
     ("first monday of every month", "FREQ=MONTHLY;BYDAY=1MO", ""),
     ("last friday of every month", "FREQ=MONTHLY;BYDAY=-1FR", ""),
     ("the third thursday of november", "FREQ=YEARLY;BYMONTH=11;BYDAY=3TH", ""),
+    # date-anchored recurrence: the single-span engine reads the date part.
+    ("every 10th of may", "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10", ""),
+    ("every may 10", "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10", ""),
+    ("every year on may 10", "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10", ""),
+    ("the 10th of every month", "FREQ=MONTHLY;BYMONTHDAY=10", ""),
+    ("every month on the 10th", "FREQ=MONTHLY;BYMONTHDAY=10", ""),
+    ("the 1st of every month", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("every christmas", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
+    ("every halloween", "FREQ=YEARLY;BYMONTH=10;BYMONTHDAY=31", ""),
+    ("every valentines day", "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=14", ""),
+    ("every thanksgiving", "FREQ=YEARLY;BYMONTH=11;BYDAY=4TH", ""),
+    # clock pin: BYHOUR / BYMINUTE fold onto the rule.
+    ("daily at 9", "FREQ=DAILY;BYHOUR=9", ""),
+    ("every day at 9am", "FREQ=DAILY;BYHOUR=9", ""),
+    ("daily at noon", "FREQ=DAILY;BYHOUR=12", ""),
+    ("every day at midnight", "FREQ=DAILY;BYHOUR=0", ""),
+    ("every wednesday at 9", "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9", ""),
+    ("every wednesday at 9:30", "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9;BYMINUTE=30", ""),
+    ("every 10th of may at 9am", "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10;BYHOUR=9", ""),
 ]
+
+
+# Movable-feast recurrence: a real object whose occurrences() works but whose
+# to_string() refuses to lie (no RFC 5545 rule expresses a computus/lunar feast).
+from chronologia.recurrence import HolidayRecurrence   # noqa: E402
+
+
+@pytest.mark.parametrize("text,key", [
+    ("every easter", "easter"),
+    ("every good friday", "good_friday"),
+])
+def test_movable_holiday_recurrence(text, key):
+    got = extract_recurrence(text, LANG)
+    assert got is not None
+    assert got[0] == HolidayRecurrence(key)
+    assert got[1] == ""
+    with pytest.raises(ValueError):
+        got[0].to_string()
 
 
 @pytest.mark.parametrize("text,rrule,remainder", _CASES)
