@@ -1,0 +1,38 @@
+# civil-holidays v1
+# jurisdiction: GE
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Georgia_(country)
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column. The
+#   Orthodox Easter cluster (წითელი პარასკევი/დიდი შაბათი/აღდგომა/შავი
+#   ორშაბათი) uses chronologia's own julian_gregorian_date easter()
+#   method, whose -2/-1/0/+1 offsets were independently confirmed to hold
+#   in both 2024 and 2025. The 5/17 holiday was renamed by law between the
+#   two sample years (a generic "დღე" ("day off") placeholder in 2024,
+#   "ოჯახის სიწმინდისა..." (Family Purity Day) from 2025); the current
+#   (2025) name is used for the shared fixed date. A second, unrelated
+#   2025-08-29 generic "day off" is dropped as a bridge artifact.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | ახალი წელი (1)                         | 1 1 | public          |  |  |  |
+fixed         | ახალი წელი (2)                         | 1 2 | public          |  |  |  |
+fixed         | ქრისტეშობა                           | 1 7 | public          |  |  |  |
+fixed         | ნათლისღება                           | 1 19 | public          |  |  |  |
+fixed         | დედის დღე                            | 3 3 | public          |  |  |  |
+fixed         | ქალთა საერთაშორისო დღე                  | 3 8 | public          |  |  |  |
+fixed         | ეროვნული ერთიანობის დღე                  | 4 9 | public          |  |  |  |
+easter        | წითელი პარასკევი                       | -2 julian_gregorian_date | public          |  |  |  |
+easter        | დიდი შაბათი                          | -1 julian_gregorian_date | public          |  |  |  |
+easter        | აღდგომა                             | 0 julian_gregorian_date | public          |  |  |  |
+easter        | შავი ორშაბათი                         | 1 julian_gregorian_date | public          |  |  |  |
+fixed         | ფაშიზმზე გამარჯვების დღე                 | 5 9 | public          |  |  |  |
+fixed         | წმინდა ანდრია პირველწოდებულის დღე          | 5 12 | public          |  |  |  |
+fixed         | ოჯახის სიწმინდისა და მშობლების პატივისცემის დღე | 5 17 | public          |  |  |  |
+fixed         | დამოუკიდებლობის დღე                     | 5 26 | public          |  |  |  |
+fixed         | მარიამობა                            | 8 28 | public          |  |  |  |
+fixed         | მცხეთობის                            | 10 14 | public          |  |  |  |
+fixed         | გიორგობა                             | 11 23 | public          |  |  |  |

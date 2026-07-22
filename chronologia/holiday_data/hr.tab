@@ -1,0 +1,30 @@
+# civil-holidays v1
+# jurisdiction: HR
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Croatia
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Every rule here is a stable fixed calendar date or a chronologia
+#   easter() offset independently confirmed to hold in both 2024 and
+#   2025, including Tijelovo (Corpus Christi, Easter+60) which coincided
+#   with Statehood Day in 2024 and is kept as its own row regardless.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Nova godina                          | 1 1 | public          |  |  |  |
+fixed         | Bogojavljenje ili Sveta tri kralja        | 1 6 | public          |  |  |  |
+easter        | Uskrs                                | 0 | public          |  |  |  |
+easter        | Uskrsni ponedjeljak                     | 1 | public          |  |  |  |
+fixed         | Praznik rada                          | 5 1 | public          |  |  |  |
+fixed         | Dan državnosti                         | 5 30 | public          |  |  |  |
+easter        | Tijelovo                             | 60 | public          |  |  |  |
+fixed         | Dan antifašističke borbe                 | 6 22 | public          |  |  |  |
+fixed         | Dan pobjede i domovinske zahvalnosti i Dan hrvatskih branitelja | 8 5 | public          |  |  |  |
+fixed         | Velika Gospa                          | 8 15 | public          |  |  |  |
+fixed         | Svi sveti                            | 11 1 | public          |  |  |  |
+fixed         | Dan sjećanja na žrtve Domovinskog rata i Dan sjećanja na žrtvu Vukovara i Škabrnje | 11 18 | public          |  |  |  |
+fixed         | Božić                                | 12 25 | public          |  |  |  |
+fixed         | Sveti Stjepan                         | 12 26 | public          |  |  |  |

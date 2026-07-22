@@ -1,0 +1,26 @@
+# civil-holidays v1
+# jurisdiction: JM
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Jamaica
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names
+#   are English, Jamaica's official language, as vacanza publishes it.
+#   National Heroes Day (3rd Monday of October) has no fixed month/day
+#   stable across both sample years and is captured as 'decree' (explicit
+#   per-year dates, basis tabulated) for 2024-2025. Ash Wednesday/Good
+#   Friday/Easter Monday offsets from chronologia's own easter() were
+#   independently confirmed to hold in both 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | New Year's Day                        | 1 1 | public          |  |  |  |
+easter        | Ash Wednesday                          | -46 | public          |  |  |  |
+easter        | Good Friday                           | -2 | public          |  |  |  |
+easter        | Easter Monday                          | 1 | public          |  |  |  |
+fixed         | National Labour Day                     | 5 23 | public          |  |  |  |
+fixed         | Emancipation Day                       | 8 1 | public          |  |  |  |
+fixed         | Independence Day                       | 8 6 | public          |  |  |  |
+decree        | National Heroes Day                     | 2024-10-21 2025-10-20 | public          |  |  |  |
+fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
+fixed         | Boxing Day                            | 12 26 | public          |  |  |  |

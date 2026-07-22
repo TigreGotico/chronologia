@@ -1,0 +1,24 @@
+# civil-holidays v1
+# jurisdiction: CG
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_the_Republic_of_the_Congo
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Every rule here is a stable fixed calendar date or a chronologia
+#   easter() offset independently confirmed to hold in both 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Jour de l'An                          | 1 1 | public          |  |  |  |
+easter        | Lundi de Pâques                        | 1 | public          |  |  |  |
+fixed         | Fête du Travail                        | 5 1 | public          |  |  |  |
+easter        | Ascension                             | 39 | public          |  |  |  |
+easter        | Lundi de Pentecôte                      | 50 | public          |  |  |  |
+fixed         | Fête de la Réconciliation                | 6 10 | public          |  |  |  |
+fixed         | Fête Nationale                         | 8 15 | public          |  |  |  |
+fixed         | Toussaint                             | 11 1 | public          |  |  |  |
+fixed         | Jour de la République                   | 11 28 | public          |  |  |  |
+fixed         | Noël                                | 12 25 | public          |  |  |  |

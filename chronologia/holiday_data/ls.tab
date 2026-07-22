@@ -1,0 +1,25 @@
+# civil-holidays v1
+# jurisdiction: LS
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Lesotho
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names
+#   are English, one of Lesotho's two official languages, as vacanza
+#   publishes it. Every rule here is a stable fixed calendar date or a
+#   chronologia easter() offset independently confirmed to hold in both
+#   2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | New Year's Day                        | 1 1 | public          |  |  |  |
+fixed         | Moshoeshoe's Day                       | 3 11 | public          |  |  |  |
+easter        | Good Friday                           | -2 | public          |  |  |  |
+easter        | Easter Monday                          | 1 | public          |  |  |  |
+fixed         | Workers' Day                          | 5 1 | public          |  |  |  |
+easter        | Ascension Day                          | 39 | public          |  |  |  |
+fixed         | Africa/Heroes Day                       | 5 25 | public          |  |  |  |
+fixed         | King's Birthday                        | 7 17 | public          |  |  |  |
+fixed         | Independence Day                       | 10 4 | public          |  |  |  |
+fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
+fixed         | Boxing Day                            | 12 26 | public          |  |  |  |

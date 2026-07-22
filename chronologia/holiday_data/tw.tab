@@ -1,0 +1,33 @@
+# civil-holidays v1
+# jurisdiction: TW
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Taiwan
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable lunar-calendar holidays (Lunar New Year's Eve, Spring Festival,
+#   Dragon Boat Festival, Mid-Autumn Festival) with no closed-form rule
+#   modelled here are captured as 'decree' (explicit per-year dates, basis
+#   tabulated) for 2024-2025. Confucius's Birthday, Taiwan Retrocession Day
+#   and Constitution Day were only present in vacanza's 2025 data (not
+#   2024), so they are decreed for 2025 only -- an honest single-year gap
+#   rather than a fabricated 2024 date. Compensatory workday-bridge
+#   ("補假"/"補班") entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | 中華民國開國紀念日                           | 1 1 | public          |  |  |  |
+decree        | 農曆除夕                                | 2024-2-9 2025-1-28  | public          |  |  |  |
+decree        | 春節 (1)                              | 2024-2-10 2025-1-29 | public          |  |  |  |
+decree        | 春節 (2)                              | 2024-2-11 2025-1-30 | public          |  |  |  |
+decree        | 春節 (3)                              | 2024-2-12 2025-1-31 | public          |  |  |  |
+fixed         | 和平紀念日                               | 2 28 | public          |  |  |  |
+fixed         | 兒童節; 民族掃墓節                          | 4 4 | public          |  |  |  |
+decree        | 端午節                                 | 2024-6-10 2025-5-31 | public          |  |  |  |
+decree        | 中秋節                                 | 2024-9-17 2025-10-6 | public          |  |  |  |
+fixed         | 國慶日                                 | 10 10 | public          |  |  |  |
+decree        | 孔子誕辰紀念日                             | 2025-9-28            | public          |  |  |  |
+decree        | 臺灣光復暨金門古寧頭大捷紀念日                     | 2025-10-25           | public          |  |  |  |
+decree        | 行憲紀念日                               | 2025-12-25           | public          |  |  |  |

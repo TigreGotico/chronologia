@@ -1,0 +1,30 @@
+# civil-holidays v1
+# jurisdiction: NZ
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_New_Zealand
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names
+#   are English, New Zealand's official working language for holiday
+#   naming as vacanza publishes it; vacanza carries no separate te reo
+#   Māori rendering. King's Birthday (1st Monday of June), Labour Day
+#   (4th Monday of October) and Matariki (a lunar Māori new-year date with
+#   no closed-form civil rule) have no fixed month/day stable across both
+#   sample years and are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025. Good Friday/Easter Monday offsets from
+#   chronologia's own easter() were independently confirmed to hold in
+#   both 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | New Year's Day                        | 1 1 | public          |  |  |  |
+fixed         | Day after New Year's Day                 | 1 2 | public          |  |  |  |
+fixed         | Waitangi Day                          | 2 6 | public          |  |  |  |
+easter        | Good Friday                           | -2 | public          |  |  |  |
+easter        | Easter Monday                          | 1 | public          |  |  |  |
+fixed         | Anzac Day                             | 4 25 | public          |  |  |  |
+decree        | King's Birthday                        | 2024-6-3 2025-6-2   | public          |  |  |  |
+decree        | Matariki                              | 2024-6-28 2025-6-20 | public          |  |  |  |
+decree        | Labour Day                            | 2024-10-28 2025-10-27 | public          |  |  |  |
+fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
+fixed         | Boxing Day                            | 12 26 | public          |  |  |  |

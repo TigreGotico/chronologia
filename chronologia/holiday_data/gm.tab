@@ -1,0 +1,37 @@
+# civil-holidays v1
+# jurisdiction: GM
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_the_Gambia
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names
+#   are English, the Gambia's official language, as vacanza publishes it.
+#   Hijri holidays (Lialat-Ul-Qadr, Koriteh, Tobaski, Yawmul Ashura,
+#   Mawlid Nabi) have no closed-form rule modelled here and are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025.
+#   Good Friday/Easter Monday offsets from chronologia's own easter() were
+#   independently confirmed to hold in both 2024 and 2025. Every
+#   "(observed)" row is dropped as a workday-bridge artifact out of scope;
+#   the "(estimated)" annotation is stripped and merged into the base
+#   holiday name. Multi-day breaks are split into one row per calendar
+#   day, numbered "(1)"/"(2)".
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | New Year's Day                        | 1 1 | public          |  |  |  |
+fixed         | Independence Day                       | 2 18 | public          |  |  |  |
+easter        | Good Friday                           | -2 | public          |  |  |  |
+easter        | Easter Monday                          | 1 | public          |  |  |  |
+decree        | Lialat-Ul-Qadr                         | 2024-4-6 2025-3-27  | public          |  |  |  |
+decree        | Koriteh (1)                           | 2024-4-10 2025-3-30 | public          |  |  |  |
+decree        | Koriteh (2)                           | 2024-4-11 2025-3-31 | public          |  |  |  |
+fixed         | Labour Day                            | 5 1 | public          |  |  |  |
+fixed         | Africa Liberation Day                   | 5 25 | public          |  |  |  |
+decree        | Tobaski (1)                           | 2024-6-16 2025-6-6  | public          |  |  |  |
+decree        | Tobaski (2)                           | 2024-6-17 2025-6-7  | public          |  |  |  |
+decree        | Yawmul Ashura                         | 2024-7-16 2025-7-5  | public          |  |  |  |
+fixed         | July 22 Revolution Day                  | 7 22 | public          |  |  |  |
+fixed         | Feast of the Assumption                  | 8 15 | public          |  |  |  |
+decree        | Mawlid Nabi                           | 2024-9-16 2025-9-4  | public          |  |  |  |
+fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
+fixed         | Boxing Day                            | 12 26 | public          |  |  |  |

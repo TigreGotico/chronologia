@@ -1,0 +1,36 @@
+# civil-holidays v1
+# jurisdiction: NA
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Namibia
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names
+#   are English, Namibia's official language, as vacanza publishes it.
+#   Good Friday/Easter Monday/Ascension Day offsets from chronologia's own
+#   easter() were independently confirmed to hold in both 2024 and 2025.
+#   The 2024 state funeral for Dr. Hage Geingob and the 2025 state funeral
+#   for Dr. Sam Nujoma are one-time events, not a recurring holiday
+#   pattern (different name and date each year), and are dropped as out of
+#   scope; the 2024 General Election Day is kept as a one-off decree row,
+#   matching the precedent already set by South Korea's National Assembly
+#   election day. Genocide Remembrance Day only appears in vacanza's 2025
+#   data (not 2024), so it is decreed for 2025 only -- an honest
+#   single-year gap rather than a fabricated 2024 date. Every "(observed)"
+#   row is dropped as a workday-bridge artifact out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | New Year's Day                        | 1 1 | public          |  |  |  |
+fixed         | Independence Day                       | 3 21 | public          |  |  |  |
+easter        | Good Friday                           | -2 | public          |  |  |  |
+easter        | Easter Monday                          | 1 | public          |  |  |  |
+fixed         | Workers' Day                          | 5 1 | public          |  |  |  |
+fixed         | Cassinga Day                          | 5 4 | public          |  |  |  |
+easter        | Ascension Day                          | 39 | public          |  |  |  |
+fixed         | Africa Day                            | 5 25 | public          |  |  |  |
+decree        | Genocide Remembrance Day                 | 2025-5-28           | public          |  |  |  |
+decree        | General Election Day                    | 2024-11-27          | public          |  |  |  |
+fixed         | Heroes' Day                           | 8 26 | public          |  |  |  |
+fixed         | Day of the Namibian Women and International Human Rights Day | 9 10 | public          |  |  |  |
+fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
+fixed         | Family Day                           | 12 26 | public          |  |  |  |

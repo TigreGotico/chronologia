@@ -1,0 +1,37 @@
+# civil-holidays v1
+# jurisdiction: KP
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_North_Korea
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar holidays with no closed-form rule modelled here
+#   are captured as 'decree' (explicit per-year dates, basis tabulated) for
+#   2024-2025 -- silent outside those years rather than fabricated.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | 양력설                                 | 1 1 | public          |  |  |  |
+fixed         | 조선인민군창건일                            | 2 8 | public          |  |  |  |
+decree        | 설명절                                 | 2024-2-10 2025-1-29 | public          |  |  |  |
+fixed         | 광명성절 (1)                             | 2 16 | public          |  |  |  |
+fixed         | 광명성절 (2)                             | 2 17 | public          |  |  |  |
+decree        | 대보름                                 | 2024-2-24 2025-2-12 | public          |  |  |  |
+fixed         | 국제부녀절                               | 3 8 | public          |  |  |  |
+fixed         | 청명                                  | 4 4 | public          |  |  |  |
+fixed         | 태양절 (1)                              | 4 15 | public          |  |  |  |
+fixed         | 태양절 (2)                              | 4 16 | public          |  |  |  |
+fixed         | 조선인민혁명군 창건일                          | 4 25 | public          |  |  |  |
+fixed         | 전세계근로자들의 국제적명절                       | 5 1 | public          |  |  |  |
+fixed         | 조선소년단 창립절                            | 6 6 | public          |  |  |  |
+fixed         | 조국해방전쟁승리기념일                          | 7 27 | public          |  |  |  |
+fixed         | 조국해방절                               | 8 15 | public          |  |  |  |
+fixed         | 선군절                                 | 8 25 | public          |  |  |  |
+fixed         | 청년절                                 | 8 28 | public          |  |  |  |
+fixed         | 조선민주주의인민공화국창건일                       | 9 9 | public          |  |  |  |
+decree        | 추석                                  | 2024-9-17 2025-10-6 | public          |  |  |  |
+fixed         | 조선로동당창건일                            | 10 10 | public          |  |  |  |
+fixed         | 어머니날                                | 11 16 | public          |  |  |  |
+fixed         | 사회주의헌법절                             | 12 27 | public          |  |  |  |
