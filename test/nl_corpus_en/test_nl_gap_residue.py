@@ -30,7 +30,9 @@ def test_event_relative_returns_none(text):
 
 
 @pytest.mark.parametrize("text,idx", [
-    ('the monday after easter', 0),
+    # a leading weekday whose "after/before" reference is NOT a date the engine
+    # resolves ("the exam", "the meeting") stays a bare next-weekday, residue
+    # dropped -- the anchored-offset pass only fires on a resolvable reference
     ('the friday before the exam', 4),
     ('the tuesday before the meeting', 1),
     ('a week on tuesday', 1),

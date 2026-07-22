@@ -880,6 +880,83 @@ surface forms, and write a `lang.json` that sets the conventions and lists
 the constructions the language supports. Start by copying the closest
 existing language and replacing the surfaces — no Python required.
 
+## Anchored arithmetic — offsets from a reference date
+
+Some phrases do not name a date outright; they name one *relative to another
+date the sentence already contains*. "Two weeks after Easter" is Easter's
+date, shifted forward two weeks. "The Monday after Christmas" is the first
+Monday strictly after Christmas Day. The reference can be **anything the
+engine already resolves** — a holiday, a calendar date, a weekday reference —
+because anchored arithmetic works by *composition*: the reference is resolved
+first, then the offset is applied to its span. Nothing is re-parsed.
+
+Two shapes are read. A **signed unit offset** ("2 weeks after …", "3 days
+before …") shifts the reference by that many units, keeping the unit's width
+(a week-wide span stays week-wide). A **weekday roll** ("the Monday after …",
+"the Friday before …") lands on the named weekday strictly after — or strictly
+before — the reference, a day-wide span.
+
+```python
+from datetime import datetime
+from chronologia import extract_timespan
+
+anchor = datetime(2017, 6, 27)          # a Tuesday
+
+# Easter 2018 is Sunday 1 April; two weeks after is 15 April (week-wide).
+span, _ = extract_timespan("two weeks after easter", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2018, 4, 15)
+
+# Christmas 2017 is Monday 25 Dec; three days before is 22 Dec.
+span, _ = extract_timespan("3 days before christmas", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2017, 12, 22)
+
+# The Monday *after* Christmas (which is itself a Monday) is 1 Jan 2018.
+span, _ = extract_timespan("the monday after christmas", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2018, 1, 1)
+
+# The reference need not be a holiday — the same composition folds onto a
+# weekday reference, and works in every locale that names the markers.
+span, _ = extract_timespan("le vendredi avant pâques", "fr", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 30)
+span, _ = extract_timespan("3 dias antes do natal", "pt", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2017, 12, 22)
+```
+
+A bare marker with no offset in front of it is **not** anchored arithmetic —
+"after easter" is still just Easter, unchanged; the pass only fires when a
+resolvable reference carries an offset pre-amble.
+
+## Ordinal counting from now
+
+A weekday can also be *counted* from the anchor: "3 fridays from now" is the
+third Friday strictly after now, "2 mondays ago" the second Monday strictly
+before. "The weekend after next" skips the next weekend and takes the one
+following. These do not lean on a reference date — they count occurrences from
+"now" — so they resolve straight from the words.
+
+```python
+anchor = datetime(2017, 6, 27)          # Tuesday
+
+# Fridays after the anchor: 30 Jun, 7 Jul, 14 Jul — the third is 14 Jul.
+span, _ = extract_timespan("3 fridays from now", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2017, 7, 14)
+
+span, _ = extract_timespan("2 mondays ago", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2017, 6, 19)
+
+# "the weekend after next": this weekend is 1 Jul, next is 8 Jul, so the one
+# after next is 15 Jul — a two-day span, read in every locale's own words.
+span, _ = extract_timespan("the weekend after next", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2017, 7, 15)
+span, _ = extract_timespan("el fin de semana después del próximo", "es", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2017, 7, 15)
+```
+
+"N weekdays from now" is idiomatic English, Portuguese, Spanish and French
+(each in its own words — "3 sextas a partir de agora", "3 viernes a partir de
+ahora", "3 vendredis à partir de maintenant"); German has no clean trailing
+"from now" form for it, so German carries only "the weekend after next" here.
+
 ## The testing doctrine: a corpus first
 
 The contract this module is held to is not "the internals do X"; it is

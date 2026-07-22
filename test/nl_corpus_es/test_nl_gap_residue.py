@@ -22,9 +22,8 @@ def test_event_relative_returns_none(text):
 
 
 def test_leading_weekday_resolves_next():
-    # the leading bare weekday resolves to its next occurrence; the event
-    # residue ("después de pascua") the engine does not carry
-    ahead = (0 - ANCHOR.weekday()) % 7 or 7          # 0 == Monday (lunes)
-    exp = (ANCHOR + timedelta(days=ahead)).date()
+    # anchored-offset: the weekday strictly after the resolved reference.
+    # Pascua (next from the 2017-06-27 anchor) = Sun 2018-04-01, so the lunes
+    # after it is 2018-04-02.
     s = span('el lunes después de pascua').start
-    assert (s.year, s.month, s.day) == (exp.year, exp.month, exp.day)
+    assert (s.year, s.month, s.day) == (2018, 4, 2)
