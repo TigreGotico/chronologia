@@ -96,6 +96,47 @@ print(span.start.year, span.resolution.name)   # -65998050 EPOCH_GEOLOGICAL
 print(span.start_datetime)                      # None
 ```
 
+## The week of a date, and decades before Christ
+
+Two phrasings widen a date to the period a speaker really meant. **"the week
+of <date>"** resolves the date inside it and returns the whole seven-day week
+that contains it — aligned to the locale's `week_start` (Monday for the
+languages that carry the marker). The marker itself ("the week of", Portuguese
+"a semana de", German "die woche vom", French "la semaine du", ...) is a
+per-language fact; the widening is generic, so it wraps *any* date the engine
+already resolves:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+anchor = datetime(2017, 6, 27)
+span, remainder = extract_timespan("the week of july 20 2026", "en", anchor)
+print(span.start_datetime.date(), span.end_datetime.date())  # 2026-07-20 2026-07-27
+print(span.width.days)                                        # 7
+
+# same widening, driven only by each locale's own marker vocabulary
+pt, _ = extract_timespan("a semana de 20 de julho de 2026", "pt", anchor)
+de, _ = extract_timespan("die woche vom 20. juli 2026", "de", anchor)
+print(pt.start_datetime.date(), de.start_datetime.date())     # 2026-07-20 2026-07-20
+```
+
+**BC decades** name a decade by its base year the way "the 1990s" does, but on
+the BC axis. "the 300s bc" is the BC-labelled years 309..300 BC. The edges run
+through the same `before_christ` era registry the century form (`the 3rd
+century bc`) uses, so the two tile consistently — a decade-BC span is ten years
+wide:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+anchor = datetime(2017, 6, 27)
+span, _ = extract_timespan("the 300s bc", "en", anchor)
+print(span.start.year, span.end.year)   # -308 -298
+print(span.width.days)                   # 3652  (ten years, two leap days)
+```
+
 ## Seeing why a parse landed
 
 `explain` opens a debug window over the same pipeline: the tokens, every

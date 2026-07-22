@@ -28,7 +28,7 @@ from chronologia.extract.model import (Conventions, Direction, LangSpec,
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.pipeline import prematch_tokens
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
-                                              compose_date_clock)
+                                              compose_date_clock, _WEEK_START)
 from chronologia.extract.tokenizer import Tokenizer
 
 __all__ = [
@@ -238,6 +238,67 @@ def _trailing_meridiem(text, lang):
     return None
 
 
+def _week_span(start_astro, week_start_name: str) -> DateSpan:
+    """The locale-aligned seven-day week containing ``start_astro``.
+
+    ``week_start_name`` is the locale ``week_start`` convention (Monday for the
+    languages carrying the "week of" marker); the span begins on that weekday
+    on-or-before the given date and is a fixed seven days wide, so its width
+    reads WEEK.
+    """
+    idx = _WEEK_START.get(week_start_name, 0)
+    d = datetime(start_astro.year, start_astro.month, start_astro.day)
+    back = (d.weekday() - idx) % 7
+    week_start = d - timedelta(days=back)
+    s = AstroDate.from_datetime(week_start)
+    return DateSpan(s, s + timedelta(days=7))
+
+
+def _apply_week_of(tokens, resolved, spec):
+    """Widen a date immediately preceded by the "week of" marker to its week.
+
+    "the week of july 20" is resolved by the normal matcher as the inner date
+    (july 20); this pass then finds the locale's ``weekof`` marker stranded
+    right before that date -- claimed by no stronger construction -- and
+    replaces the day span with the calendar week (locale ``week_start``) that
+    contains it.  The marker is a per-locale fact (``marker_weekof.voc``); the
+    widening is generic (it wraps *any* date the engine already resolves).
+
+    It fires only when the marker tokens are consumed by no other match (so
+    "the first week of june", a scoped ordinal, is left untouched) and are not
+    preceded by a number (a defensive guard against a stranded ordinal such as
+    "the 2nd week of ...").
+    """
+    surfaces = spec.connectors.get("weekof")
+    if not surfaces:
+        return resolved
+    covered = set()
+    for m, _ in resolved:
+        covered.update(range(*m.span))
+    phrases = sorted((s.split() for s in surfaces), key=len, reverse=True)
+    out = []
+    for m, res in resolved:
+        widened = None
+        if m.construction in DATE_CONSTRUCTIONS:
+            begin = m.span[0]
+            for words in phrases:
+                j = begin - len(words)
+                if j < 0 or (j - 1 >= 0 and tokens[j - 1].is_number):
+                    continue
+                if any(k in covered for k in range(j, begin)):
+                    continue
+                if [t.text for t in tokens[j:begin]] == words:
+                    week = _week_span(res.value.start,
+                                      spec.conventions.week_start)
+                    consumed = tuple(sorted(set(res.consumed)
+                                            | set(range(j, begin))))
+                    widened = (m, Resolution(week, consumed))
+                    covered.update(range(j, begin))
+                    break
+        out.append(widened or (m, res))
+    return out
+
+
 def extract_timespan(
         text: str,
         lang: str = "en-us",
@@ -276,6 +337,8 @@ def extract_timespan(
             resolved.append((match, res))
     if not resolved:
         return None
+    # widen a date carrying the locale's "week of" marker to its whole week
+    resolved = _apply_week_of(tokens, resolved, engine.spec)
     # a lone date + lone clock in the same text compose (the minute-wide
     # clock time placed on the day the date names): "june 5th at 3pm"
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
