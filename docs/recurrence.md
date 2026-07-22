@@ -127,15 +127,44 @@ Supported rule parts (date-level recurrence): `FREQ` = `DAILY` / `WEEKLY` /
 weeks, honouring `WKST`), `BYYEARDAY`, `BYMONTHDAY` (including negatives),
 `BYDAY` (including ordinals such as `1MO` / `-1FR`), `BYSETPOS`, and `WKST`.
 
-Deliberately **out of scope**: the sub-day rule parts — `FREQ=HOURLY` /
-`MINUTELY` / `SECONDLY` and `BYHOUR` / `BYMINUTE` / `BYSECOND`. Each occurrence
-is a whole day, so a within-day recurrence has no meaning here; parsing one
-raises rather than dropping it silently. Every *civil* recurring rule — public
-holidays, elections, "the last working day of the month" — is date-level, which
-is why the date engine comes first.
+On top of that date skeleton the engine accepts a **time-of-day pin** —
+`BYHOUR` and `BYMINUTE` — so a civil rule spoken with a clock ("daily at 9")
+keeps its hour. When a clock is pinned each matched day expands to that time (a
+one-hour span, or a one-minute span when the minute is pinned too):
+
+```python
+rule = parse_rrule("FREQ=DAILY;BYHOUR=9")
+first = next(iter(occurrences(rule, AstroDate(2026, 1, 1), count=1)))
+print(first.start.hour)   # 9
+```
+
+Deliberately **out of scope**: the sub-day *frequencies* — `FREQ=HOURLY` /
+`MINUTELY` / `SECONDLY` and `BYSECOND`. A within-day *frequency* has no meaning
+for a civil calendar rule, so parsing one raises rather than dropping it
+silently:
 ```python
 try:
     parse_rrule("FREQ=HOURLY;COUNT=3")
 except ValueError as exc:
     print("sub-day rejected:", "out of scope" in str(exc))
+```
+
+## Movable feasts: `HolidayRecurrence`
+
+Some holidays recur every year yet have *no* RFC 5545 rule — Easter is a
+*computus*, the Islamic feasts a lunar-calendar lookup. `HolidayRecurrence` is
+the honest home for those: it expands to real dates through the holiday engine,
+but `to_string()` refuses to fabricate a rule.
+
+```python
+from chronologia.recurrence import HolidayRecurrence
+
+easter = HolidayRecurrence("easter")
+dates = list(easter.occurrences(AstroDate(2026, 1, 1), count=2))
+print([d.start.year for d in dates])   # [2026, 2027]
+
+try:
+    easter.to_string()
+except ValueError as exc:
+    print("no RRULE:", "movable feast" in str(exc))
 ```

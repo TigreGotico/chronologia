@@ -27,7 +27,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional, Tuple
 
 from chronologia.astrodate import DateSpan
-from chronologia.recurrence import Recurrence
+from chronologia.recurrence import HolidayRecurrence, Recurrence
 from chronologia.recurrence import every as _build_every
 from chronologia.recurrence import nth_weekday_of_month as _nth_weekday_of_month
 
@@ -279,7 +279,7 @@ def extract_recurrence(
         text: str,
         lang: str = "en-us",
         anchor: Optional[datetime] = None,
-) -> Optional[Tuple[Recurrence, str]]:
+) -> Optional[Tuple[object, str]]:
     """Map a recurring phrase onto an RFC 5545 :class:`~chronologia.recurrence.Recurrence`.
 
     Handles the civil recurrence idioms -- "every friday", "every other week",
@@ -288,12 +288,29 @@ def extract_recurrence(
     (and "the third thursday of november") -- reading weekday names, unit words
     and the ``every`` marker from the locale.
 
+    **Date-anchored** recurrence composes the *single-span engine* to read the
+    date part rather than re-implementing a date grammar:
+
+    * "every 10th of may" / "every may 10" / "every year on may 10" ->
+      ``YEARLY;BYMONTH=5;BYMONTHDAY=10`` (the day+month the engine resolves are
+      lifted onto ``BYMONTH``/``BYMONTHDAY``);
+    * "the 10th of every month" / "every month on the 10th" ->
+      ``MONTHLY;BYMONTHDAY=10``;
+    * "every christmas" -> the fixed holiday's real rule
+      ``YEARLY;BYMONTH=12;BYMONTHDAY=25``; a **movable** feast ("every easter",
+      "every eid al-fitr") -> a :class:`~chronologia.recurrence.HolidayRecurrence`
+      (it expands through the holiday engine but cannot serialize to an RRULE).
+
+    A **clock pin** is folded onto the rule: an "at 9" / "at 9:30" / "at noon"
+    trailing a rule sets ``BYHOUR`` (and ``BYMINUTE``) -- "daily at 9" ->
+    ``FREQ=DAILY;BYHOUR=9``, "every wednesday at 9:30" ->
+    ``FREQ=WEEKLY;BYDAY=WE;BYHOUR=9;BYMINUTE=30``.
+
     A trailing bound is folded onto the rule: an ``until``/``till`` marker plus
     a date sets ``UNTIL`` ("every friday until june"); a ``for`` marker plus a
     fixed-width duration sets ``COUNT`` -- the number of occurrences the
     duration spans at the rule's frequency ("daily for two weeks" -> COUNT=14,
-    "every monday for 6 weeks" -> COUNT=6).  Sub-day detail a date-level rule
-    cannot carry ("daily *at 9*") is left in the remainder.
+    "every monday for 6 weeks" -> COUNT=6).
 
     Returns ``(recurrence, remainder)`` or ``None`` when no recurrence is found.
     """
@@ -317,17 +334,59 @@ def extract_recurrence(
         rel_markers=spec.rel_markers,
         until_words=set(C.get("until", ())),
         for_words=set(C.get("recur_for", ())),
+        at_words=set(C.get("at", ())),
+        holidays=dict(spec.holidays),
+        lang=lang,
+        anchor=anchor,
     )
 
-    for finder in (_recur_nth_weekday, _recur_every, _recur_freq_word):
+    for finder in (_recur_nth_weekday, _recur_holiday, _recur_date_anchored,
+                   _recur_every, _recur_freq_word):
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
+            rec, consumed = _apply_clock(rec, consumed, ctx, lang, anchor)
             remainder = " ".join(t.raw for t in tokens
                                  if t.index not in consumed).strip()
             return rec, remainder
     return None
+
+
+def _apply_clock(rec, consumed, ctx, lang, anchor):
+    """Fold a trailing clock ("at 9", "at 9:30", "at noon") onto ``rec`` as a
+    ``BYHOUR``/``BYMINUTE`` pin, extending ``consumed`` over the clock (and a
+    leading ``at`` marker).
+
+    A :class:`~chronologia.recurrence.HolidayRecurrence` carries no clock pin,
+    so it is left untouched.  The clock is read by the *same* engine
+    ``clock_time`` construction the single-span edge uses (composition, not a
+    new grammar); its resolved minute-wide span supplies the hour and minute.
+    """
+    from dataclasses import replace as _replace
+    if isinstance(rec, HolidayRecurrence):
+        return rec, consumed
+    from chronologia.extract import _timespan_engine
+
+    engine = _timespan_engine(lang)
+    tokens = ctx.tokens
+    for m in engine.matcher.match(tokens):
+        if m.construction not in ("clock_time", "military_time"):
+            continue
+        if any(i in consumed for i in range(*m.span)):
+            continue
+        res = engine.resolver.resolve(m, anchor or datetime.now())
+        if res is None:
+            continue
+        c = res.value.start
+        rec = _replace(rec, byhour=(c.hour,),
+                       byminute=((c.minute,) if c.minute else ()))
+        lo, hi = m.span
+        while lo - 1 >= 0 and tokens[lo - 1].text in ctx.at_words \
+                and (lo - 1) not in consumed:
+            lo -= 1
+        return rec, consumed | set(range(lo, hi))
+    return rec, consumed
 
 
 def _apply_bounds(rec, consumed, ctx, lang, anchor):
@@ -394,6 +453,10 @@ class _RecurCtx:
     rel_markers: dict
     until_words: set = frozenset()
     for_words: set = frozenset()
+    at_words: set = frozenset()
+    holidays: dict = None
+    lang: str = "en-us"
+    anchor: Optional[datetime] = None
 
 
 def _freq_map(connectors):
@@ -488,4 +551,140 @@ def _recur_freq_word(ctx):
     for i, tok in enumerate(ctx.tokens):
         if tok.text in ctx.freq:
             return _build_every(ctx.freq[tok.text]), {i}
+    return None
+
+
+def _recur_holiday(ctx):
+    """``every <holiday>`` -> the holiday's yearly recurrence.
+
+    A *fixed*-date holiday (Christmas, New Year, Halloween) becomes a real
+    ``YEARLY;BYMONTH;BYMONTHDAY`` rule; an ``n``-th-weekday holiday
+    (Thanksgiving) a ``YEARLY;BYMONTH;BYDAY=<n><WD>`` rule -- both are genuine
+    RFC 5545 rules.  A **movable** feast (Easter and its cycle, the Islamic
+    ``eid`` feasts, Passover, Diwali ...) has no such rule, so it becomes a
+    :class:`~chronologia.recurrence.HolidayRecurrence`.
+    """
+    if not ctx.holidays:
+        return None
+    from chronologia.civil_holidays import (FixedRule, NthWeekdayRule,
+                                            WELL_KNOWN_BY_KEY)
+    t = ctx.tokens
+    n = len(t)
+    for i in range(n):
+        if t[i].text not in ctx.every:
+            continue
+        j = i + 1
+        while j < n and t[j].text in ctx.articles:
+            j += 1
+        if j >= n:
+            continue
+        key = ctx.holidays.get(t[j].text)
+        if key is None:
+            continue
+        wk = WELL_KNOWN_BY_KEY.get(key)
+        if wk is None:
+            continue
+        kind = wk.kind
+        consumed = set(range(i, j + 1))
+        if isinstance(kind, FixedRule):
+            return (_build_every("yearly", bymonth=kind.month,
+                                 bymonthday=kind.day), consumed)
+        if isinstance(kind, NthWeekdayRule) and kind.post_offset == 0:
+            return (_build_every("yearly", bymonth=kind.month,
+                                 byday=((kind.n, kind.weekday),)), consumed)
+        # movable feast: no RFC 5545 rule can express it.
+        return HolidayRecurrence(key), consumed
+    return None
+
+
+def _recur_date_anchored(ctx):
+    """Date-anchored recurrence, reusing the single-span engine for the date.
+
+    * ``every [year] [on] <date>``  -> ``YEARLY;BYMONTH;BYMONTHDAY``
+      ("every 10th of may", "every may 10", "every year on may 10");
+    * ``<day> of every month`` / ``every month [on the] <day>``
+      -> ``MONTHLY;BYMONTHDAY``.
+
+    The month/day are lifted from whatever the ``calendar_date`` construction
+    resolves -- no new date grammar is written here.
+    """
+    from chronologia.extract import _timespan_engine
+    from chronologia.extract.resolver import DATE_CONSTRUCTIONS  # noqa: F401
+
+    t = ctx.tokens
+    n = len(t)
+    engine = _timespan_engine(ctx.lang)
+    anchor = ctx.anchor or datetime.now()
+    if isinstance(anchor, datetime):
+        anchor = anchor.replace(tzinfo=None)
+    date_matches = [m for m in engine.matcher.match(t)
+                    if m.construction == "calendar_date"]
+
+    # -- monthly: a day-of-month tied to "every month" --------------------
+    for i in range(n):
+        if t[i].text not in ctx.every:
+            continue
+        j = i + 1
+        while j < n and t[j].text in ctx.articles:
+            j += 1
+        if not (j < n and t[j].text in ctx.units
+                and ctx.units[t[j].text] == "month"):
+            continue
+        # "every month (on)(the) <N>": the next number within a short window.
+        r = j + 1
+        steps = 0
+        while r < n and not t[r].is_number and steps < 3:
+            r += 1
+            steps += 1
+        if r < n and t[r].is_number and 1 <= int(t[r].value) <= 31:
+            return (_build_every("monthly", bymonthday=int(t[r].value)),
+                    set(range(i, r + 1)))
+        # "<N> of every month": the number just before the "every".
+        k = i - 1
+        while k >= 0 and (t[k].text in ctx.of_words or t[k].text in ctx.articles):
+            k -= 1
+        if k >= 0 and t[k].is_number and 1 <= int(t[k].value) <= 31:
+            start = k
+            while start - 1 >= 0 and t[start - 1].text in ctx.articles:
+                start -= 1
+            return (_build_every("monthly", bymonthday=int(t[k].value)),
+                    set(range(start, j + 1)))
+
+    # -- yearly: a full calendar date *immediately* after "every [year] [on]"
+    # The date must start right after the every-skeleton (articles, an optional
+    # year unit, and one optional filler such as "on") -- otherwise a date
+    # buried in a trailing bound clause ("every friday *until june*") would be
+    # misread as the anchor.
+    for i in range(n):
+        if t[i].text not in ctx.every:
+            continue
+        j = i + 1
+        while j < n and t[j].text in ctx.articles:
+            j += 1
+        if j < n and t[j].text in ctx.units and ctx.units[t[j].text] == "year":
+            j += 1
+        # the date must start at (or just after) the skeleton: the only tokens
+        # tolerated in the gap are articles or a short filler run ("on"/"in") --
+        # never a weekday, number or unit that would belong to a different rule.
+        dm = None
+        for m in date_matches:
+            if m.span[0] < j:
+                continue
+            gap = t[j:m.span[0]]
+            if len(gap) <= 2 and all(
+                    g.text in ctx.articles
+                    or (not g.is_number and g.text not in ctx.weekdays
+                        and g.text not in ctx.units and g.text not in ctx.every)
+                    for g in gap):
+                dm = m
+                break
+        if dm is None:
+            continue
+        res = engine.resolver.resolve(dm, anchor)
+        if res is None:
+            continue
+        start = res.value.start
+        return (_build_every("yearly", bymonth=start.month,
+                             bymonthday=start.day),
+                set(range(i, dm.span[1])))
     return None

@@ -32,7 +32,7 @@ from chronologia.civil_holidays import CivilHoliday
 from chronologia.edtf import EdtfDate
 from chronologia.mars import DarianDate, MarsDate
 from chronologia.periods import NamedPeriod
-from chronologia.recurrence import Recurrence
+from chronologia.recurrence import HolidayRecurrence, Recurrence
 
 __all__ = ["to_json", "from_json"]
 
@@ -45,6 +45,7 @@ _DECODERS: Dict[str, Callable[[dict], Any]] = {
     "EdtfDate": EdtfDate.from_json,
     "NamedPeriod": NamedPeriod.from_json,
     "Recurrence": Recurrence.from_json,
+    "HolidayRecurrence": HolidayRecurrence.from_json,
     "MarsDate": MarsDate.from_json,
     "DarianDate": DarianDate.from_json,
 }

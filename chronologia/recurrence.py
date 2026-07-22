@@ -8,8 +8,8 @@ by pure integer arithmetic on :class:`~chronologia.astrodate.AstroDate` /
 Julian-Day-Number math, a yearly rule iterates just as happily from the year
 -500 as from 2025: there is no ``datetime`` window and nothing overflows.
 
-Scope — **date-level recurrence only**
---------------------------------------
+Scope — date parts, plus a clock pin (``BYHOUR`` / ``BYMINUTE``)
+---------------------------------------------------------------
 This engine implements the *date*-generating rule parts of RFC 5545:
 
     ``FREQ`` (``DAILY`` / ``WEEKLY`` / ``MONTHLY`` / ``YEARLY``), ``INTERVAL``,
@@ -17,14 +17,16 @@ This engine implements the *date*-generating rule parts of RFC 5545:
     ``BYMONTHDAY``, ``BYDAY`` (including ordinals such as ``1MO`` / ``-1FR``),
     ``BYSETPOS`` and ``WKST``.
 
-The **sub-day** rule parts — ``FREQ=SECONDLY`` / ``MINUTELY`` / ``HOURLY`` and
-``BYHOUR`` / ``BYMINUTE`` / ``BYSECOND`` — are deliberately **out of scope**.
-Each occurrence is a whole day (a day-wide :class:`DateSpan`), so a within-day
-recurrence has no meaning here.  Parsing any of those parts raises
-``ValueError`` rather than silently dropping them.  A future revision may layer
-a time-of-day expansion on top; the date engine comes first because every
-civil recurring rule (holidays, elections, "the last working day of the
-month") is date-level.
+On top of that date skeleton it accepts a **time-of-day pin** — ``BYHOUR`` and
+``BYMINUTE`` — so a civil rule spoken with a clock ("daily at 9", "every
+Wednesday at 9:30") keeps its hour.  When neither is present each occurrence is
+a whole day (a day-wide :class:`DateSpan`), exactly as before; when ``BYHOUR``
+is present each matched day expands to that clock time, a one-hour span (or a
+one-minute span when ``BYMINUTE`` is also given).  The genuinely **sub-day
+frequencies** — ``FREQ=SECONDLY`` / ``MINUTELY`` / ``HOURLY`` — and
+``BYSECOND`` remain **out of scope** (a within-day *frequency* has no meaning
+for a civil calendar rule); parsing any of those still raises ``ValueError``
+rather than silently dropping it.
 
 DTSTART semantics — **strict RFC, not dateutil-compatible**
 -----------------------------------------------------------
@@ -55,6 +57,7 @@ at ``~/AgentWorkspaces/papers/standards/rfc5545_icalendar_recurrence.txt``;
 the enumerated example dates seed the gold test suite.
 """
 from dataclasses import dataclass, field
+from datetime import timedelta
 from typing import Any, Dict, Iterator, Optional, Tuple, Union
 
 from chronologia.astrodate import AstroDate, DateSpan, is_leap_year
@@ -63,6 +66,7 @@ from chronologia.calendars import (gregorian_to_jdn, iso_week_from_jdn,
 
 __all__ = [
     "Recurrence",
+    "HolidayRecurrence",
     "parse_rrule",
     "occurrences",
     "every",
@@ -191,6 +195,8 @@ class Recurrence:
     byyearday: Tuple[int, ...] = ()
     byweekno: Tuple[int, ...] = ()
     bysetpos: Tuple[int, ...] = ()
+    byhour: Tuple[int, ...] = ()
+    byminute: Tuple[int, ...] = ()
     wkst: int = 0
 
     def __post_init__(self):
@@ -228,6 +234,10 @@ class Recurrence:
                 for o, w in self.byday))
         if self.bysetpos:
             parts.append("BYSETPOS=" + ",".join(map(str, self.bysetpos)))
+        if self.byhour:
+            parts.append("BYHOUR=" + ",".join(map(str, self.byhour)))
+        if self.byminute:
+            parts.append("BYMINUTE=" + ",".join(map(str, self.byminute)))
         if self.wkst != 0:
             parts.append(f"WKST={_WD_CODE[self.wkst]}")
         return ";".join(parts)
@@ -278,6 +288,15 @@ def _validate(rec: Recurrence) -> None:
     for p in rec.bysetpos:
         if p == 0 or not -366 <= p <= 366:
             raise ValueError(f"BYSETPOS values must be -366..-1 or 1..366, got {p}")
+    for h in rec.byhour:
+        if not 0 <= h <= 23:
+            raise ValueError(f"BYHOUR values must be 0..23, got {h}")
+    for mn in rec.byminute:
+        if not 0 <= mn <= 59:
+            raise ValueError(f"BYMINUTE values must be 0..59, got {mn}")
+    if rec.byminute and not rec.byhour:
+        raise ValueError("BYMINUTE requires BYHOUR (a bare minute pin is "
+                         "ambiguous in this civil clock-pin engine)")
     for ordinal, wd in rec.byday:
         if wd not in range(7):
             raise ValueError(f"BYDAY weekday out of range: {wd}")
@@ -402,11 +421,14 @@ def parse_rrule(s: str) -> Recurrence:
     if "BYDAY" in fields:
         kwargs["byday"] = tuple(_parse_weekdaynum(t)
                                 for t in fields.pop("BYDAY").split(","))
-    for bad in ("BYHOUR", "BYMINUTE", "BYSECOND"):
-        if bad in fields:
-            raise ValueError(
-                f"{bad} is a sub-day rule part, out of scope for this "
-                "date-level engine (see module docstring)")
+    if "BYHOUR" in fields:
+        kwargs["byhour"] = _ints(fields.pop("BYHOUR"))
+    if "BYMINUTE" in fields:
+        kwargs["byminute"] = _ints(fields.pop("BYMINUTE"))
+    if "BYSECOND" in fields:
+        raise ValueError(
+            "BYSECOND is a sub-second rule part, out of scope for this "
+            "date-plus-clock-pin engine (see module docstring)")
     if fields:
         raise ValueError(f"unknown RRULE part(s): {sorted(fields)}")
     return Recurrence(**kwargs)
@@ -462,7 +484,8 @@ def every(freq: str, **by) -> Recurrence:
     for name in ("interval", "count", "until"):
         if name in by:
             kwargs[name] = by.pop(name)
-    for name in ("bymonth", "bymonthday", "byyearday", "byweekno", "bysetpos"):
+    for name in ("bymonth", "bymonthday", "byyearday", "byweekno", "bysetpos",
+                 "byhour", "byminute"):
         if name in by:
             kwargs[name] = _tup(by.pop(name))
     if "wkst" in by:
@@ -618,6 +641,26 @@ def _day_span(jdn: int) -> DateSpan:
     return DateSpan(start, end)
 
 
+def _spans_for_day(rec: Recurrence, jdn: int) -> Iterator[DateSpan]:
+    """The occurrence span(s) a matched day contributes.
+
+    With no clock pin this is the whole day (unchanged behaviour).  With
+    ``BYHOUR`` the day expands to that clock time — a one-hour span, or a
+    one-minute span when ``BYMINUTE`` also pins the minute.  Multiple pinned
+    hours/minutes expand to multiple spans per day, in chronological order.
+    """
+    if not rec.byhour:
+        yield _day_span(jdn)
+        return
+    y, m, d = jdn_to_gregorian(jdn)
+    minutes = rec.byminute or (0,)
+    width = timedelta(minutes=1) if rec.byminute else timedelta(hours=1)
+    for h in sorted(rec.byhour):
+        for mn in sorted(minutes):
+            start = AstroDate(y, m, d, h, mn)
+            yield DateSpan(start, start + width)
+
+
 def occurrences(rec: Recurrence, dtstart, until=None,
                 count: Optional[int] = None) -> Iterator[DateSpan]:
     """Expand ``rec`` from ``dtstart``, yielding day-wide :class:`DateSpan`\\ s.
@@ -668,11 +711,12 @@ def occurrences(rec: Recurrence, dtstart, until=None,
                 continue
             if until_key is not None and (jdn, start_tod) > until_key:
                 return
-            yield _day_span(jdn)
-            produced = True
-            emitted += 1
-            if eff_count is not None and emitted >= eff_count:
-                return
+            for span in _spans_for_day(rec, jdn):
+                yield span
+                produced = True
+                emitted += 1
+                if eff_count is not None and emitted >= eff_count:
+                    return
         if produced:
             empty_streak = 0
         else:
@@ -693,3 +737,105 @@ def _as_astro(value) -> AstroDate:
     except AttributeError:
         raise TypeError(
             f"expected AstroDate/date/datetime, got {type(value).__name__}")
+
+
+# --------------------------------------------------------------------------
+# Movable-feast recurrence — a Recurrence variant an RRULE cannot express.
+# --------------------------------------------------------------------------
+#: Consecutive years a holiday may fail to resolve (out of a tabulated
+#: calendar's range) before :meth:`HolidayRecurrence.occurrences` gives up —
+#: mirrors :data:`_MAX_EMPTY_PERIODS`, so an out-of-range feast stops instead of
+#: spinning forever.
+_MAX_EMPTY_YEARS = 400
+
+
+@dataclass(frozen=True)
+class HolidayRecurrence:
+    """The yearly recurrence of a **movable** civil holiday.
+
+    Some feasts recur every year yet have *no* RFC 5545 ``RRULE``: Easter and
+    its cycle (a computus, not a ``BY*`` rule), the Islamic ``eid`` feasts (a
+    lunar-calendar lookup), Passover, Diwali… Their date each year comes from
+    the holiday engine, not from integer ``BY*`` arithmetic, so no ``FREQ=...``
+    string can stand in for them.
+
+    This object stays *useful* — :meth:`occurrences` expands the real dates
+    through :data:`chronologia.civil_holidays.WELL_KNOWN_BY_KEY` — while being
+    **honest about serialization**: :meth:`to_string` raises rather than emit a
+    lie.  ``holiday_key`` is a stable well-known key (``"easter"``,
+    ``"eid_al_fitr"``).
+
+    A *fixed*-date holiday (Christmas, New Year) is **not** modelled here: it is
+    a real ``YEARLY;BYMONTH=..;BYMONTHDAY=..`` :class:`Recurrence`.  Only feasts
+    whose civil date genuinely moves year to year land in this class.
+    """
+
+    holiday_key: str
+
+    def __post_init__(self) -> None:
+        from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
+        if self.holiday_key not in WELL_KNOWN_BY_KEY:
+            raise ValueError(
+                f"unknown well-known holiday key: {self.holiday_key!r}")
+
+    def occurrences(self, dtstart, until=None,
+                    count: Optional[int] = None) -> Iterator[DateSpan]:
+        """Yield the holiday's own :class:`DateSpan` for each year on/after
+        ``dtstart``, bounded (as :func:`occurrences` is) by ``count``/``until``.
+
+        A year in which the feast does not resolve (outside a tabulated
+        calendar's published range) is silently skipped; after
+        :data:`_MAX_EMPTY_YEARS` consecutive misses the iterator stops rather
+        than loop forever.
+        """
+        from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
+        wk = WELL_KNOWN_BY_KEY[self.holiday_key]
+        dtstart = _as_astro(dtstart)
+        eff_until = _as_astro(until) if until is not None else None
+        if eff_until is None and count is None:
+            raise ValueError(
+                "unbounded holiday recurrence: pass count=... or until=...")
+        emitted = 0
+        empty = 0
+        year = dtstart.year
+        while True:
+            got = wk.span_for(year)
+            if got is not None:
+                span = got[0]
+                if span.start >= dtstart:
+                    if eff_until is not None and span.start > eff_until:
+                        return
+                    yield span
+                    emitted += 1
+                    empty = 0
+                    if count is not None and emitted >= count:
+                        return
+                else:
+                    empty = 0
+            else:
+                empty += 1
+                if empty > _MAX_EMPTY_YEARS:
+                    return
+            year += 1
+
+    def to_string(self) -> str:
+        raise ValueError(
+            f"holiday recurrence {self.holiday_key!r} is a movable feast with "
+            "no RFC 5545 RRULE (its civil date is computed by the holiday "
+            "engine, not by BY* arithmetic); expand it with occurrences() "
+            "instead of serializing it to a rule string")
+
+    def __str__(self) -> str:  # pragma: no cover - mirrors to_string
+        return self.to_string()
+
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready envelope carrying the holiday key."""
+        return {"type": "HolidayRecurrence", "holiday": self.holiday_key}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "HolidayRecurrence":
+        """Rebuild a :class:`HolidayRecurrence` from a :meth:`to_json` envelope."""
+        if data.get("type") != "HolidayRecurrence":
+            raise ValueError(
+                f"not a HolidayRecurrence envelope: {data.get('type')!r}")
+        return cls(data["holiday"])

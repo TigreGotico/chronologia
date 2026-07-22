@@ -873,8 +873,7 @@ assert extract_timespans("nothing temporal here", "en", anchor) == []
 A recurring phrase ("every friday", "the first monday of every month") maps
 onto the repo's RFC 5545 [`Recurrence`](recurrence.md) — the *same* rule object
 you can then expand into concrete dates with `occurrences`. `extract_recurrence`
-returns that rule and the leftover text; sub-day detail a date-level rule
-cannot carry ("daily *at 9*") stays in the remainder.
+returns that rule and the leftover text.
 
 ```python
 from chronologia import extract_recurrence, occurrences
@@ -891,12 +890,47 @@ assert rule.to_string() == "FREQ=MONTHLY;BYDAY=1MO"
 first_three = list(occurrences(rule, AstroDate(2025, 1, 1), count=3))
 assert [d.start.day for d in first_three] == [6, 3, 3]   # Jan/Feb/Mar 2025
 
-# the time-of-day a date-level rule cannot hold is left in the remainder
-assert extract_recurrence("daily at 9", "en") == (
-    extract_recurrence("daily", "en")[0], "at 9")
-
 # a one-off reference is not a recurrence
 assert extract_recurrence("next friday", "en") is None
+```
+
+**Date-anchored recurrence** reuses the single-span engine to read the date
+part, so "every 10th of may" and "every year on may 10" both fold into a
+`BYMONTH`/`BYMONTHDAY` yearly rule, and "the 10th of every month" into a monthly
+one — no new date grammar, just composition:
+
+```python
+from chronologia import extract_recurrence
+
+assert extract_recurrence("every 10th of may", "en")[0].to_string() == (
+    "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10")
+assert extract_recurrence("the 10th of every month", "en")[0].to_string() == (
+    "FREQ=MONTHLY;BYMONTHDAY=10")
+```
+
+**A clock pin** ("at 9", "at 9:30", "at noon") folds onto the rule as `BYHOUR`
+(and `BYMINUTE`) — the one civil time-of-day a recurring rule *does* carry:
+
+```python
+assert extract_recurrence("daily at 9", "en")[0].to_string() == (
+    "FREQ=DAILY;BYHOUR=9")
+assert extract_recurrence("every wednesday at 9:30", "en")[0].to_string() == (
+    "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9;BYMINUTE=30")
+```
+
+**Holidays** recur too. A *fixed*-date holiday becomes a real yearly rule; a
+*movable* feast (Easter, the Islamic `eid` feasts…) has no RFC 5545 rule, so it
+becomes a [`HolidayRecurrence`](recurrence.md) — an object that still expands to
+real dates but refuses to serialize to a rule string:
+
+```python
+from chronologia.recurrence import HolidayRecurrence
+
+assert extract_recurrence("every christmas", "en")[0].to_string() == (
+    "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25")
+
+movable, _ = extract_recurrence("every easter", "en")
+assert movable == HolidayRecurrence("easter")
 ```
 
 Like the others it is data-driven across languages — the weekday names, the

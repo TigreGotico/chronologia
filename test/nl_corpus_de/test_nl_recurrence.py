@@ -33,3 +33,43 @@ def test_recurrence(text, rrule, remainder):
 @pytest.mark.parametrize("text", ["freitag", "nächste woche"])
 def test_not_a_recurrence(text):
     assert extract_recurrence(text, LANG) is None
+
+
+# Date-anchored recurrence + clock pin (BYHOUR/BYMINUTE) + fixed-holiday rule.
+_ANCHORED_CASES = [
+    ("jeden 10. mai", "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10", ""),
+    ("jedes jahr am 10. mai", "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10", ""),
+    ("jeden 1. januar", "FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1", ""),
+    ("jeden 25. dezember", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
+    ("jeden monat am 10.", "FREQ=MONTHLY;BYMONTHDAY=10", ""),
+    ("täglich um 9", "FREQ=DAILY;BYHOUR=9", ""),
+    ("jeden tag um 9", "FREQ=DAILY;BYHOUR=9", ""),
+    ("jeden mittwoch um 9:30", "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9;BYMINUTE=30", ""),
+    ("jeden sonntag um 9", "FREQ=WEEKLY;BYDAY=SU;BYHOUR=9", ""),
+    ("jeden montag um 8", "FREQ=WEEKLY;BYDAY=MO;BYHOUR=8", ""),
+    ("täglich um mitternacht", "FREQ=DAILY;BYHOUR=0", ""),
+    ("jedes weihnachten", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
+]
+
+
+@pytest.mark.parametrize("text,rrule,remainder", _ANCHORED_CASES)
+def test_anchored_recurrence(text, rrule, remainder):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+
+
+from chronologia.recurrence import HolidayRecurrence   # noqa: E402
+
+
+@pytest.mark.parametrize("text,key", [
+    ("jedes ostern", "easter"),
+])
+def test_movable_holiday_recurrence(text, key):
+    got = extract_recurrence(text, LANG)
+    assert got is not None
+    assert got[0] == HolidayRecurrence(key)
+    assert got[1] == ""
+    with pytest.raises(ValueError):
+        got[0].to_string()

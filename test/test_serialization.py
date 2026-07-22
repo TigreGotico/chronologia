@@ -187,3 +187,24 @@ def test_heterogeneous_list_roundtrip():
     blob = json.dumps([to_json(v) for v in values])
     back = [from_json(d) for d in json.loads(blob)]
     assert back == values
+
+
+# -- Recurrence clock pin + HolidayRecurrence -------------------------------
+@pytest.mark.parametrize("rrule", [
+    "FREQ=DAILY;BYHOUR=9",
+    "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9;BYMINUTE=30",
+])
+def test_recurrence_clockpin_roundtrip(rrule):
+    rec = c.parse_rrule(rrule)
+    env = _roundtrip(rec)
+    assert env["type"] == "Recurrence"
+    assert env["rrule"] == rec.to_string()
+
+
+def test_holiday_recurrence_roundtrip():
+    from chronologia.recurrence import HolidayRecurrence
+    hr = HolidayRecurrence("easter")
+    env = _roundtrip(hr)
+    assert env["type"] == "HolidayRecurrence"
+    assert env["holiday"] == "easter"
+    assert c.from_json(env) == hr

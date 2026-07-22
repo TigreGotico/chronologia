@@ -472,7 +472,9 @@ def test_nth_weekday_of_month_monthly_variant():
     "FREQ=DAILY;COUNT=5;UNTIL=20200101",  # COUNT and UNTIL together
     "FREQ=HOURLY;COUNT=3",              # sub-day frequency
     "FREQ=SECONDLY",                    # sub-day frequency
-    "FREQ=DAILY;BYHOUR=9",              # sub-day BY part
+    "FREQ=DAILY;BYSECOND=0",            # sub-second BY part (out of scope)
+    "FREQ=DAILY;BYHOUR=24",             # hour out of range
+    "FREQ=DAILY;BYMINUTE=30",           # BYMINUTE without BYHOUR
     "FREQ=BOGUS",                       # unknown freq
     "FREQ=WEEKLY;BYDAY=1MO",            # ordinal BYDAY with WEEKLY
     "FREQ=DAILY;BYDAY=1MO",             # ordinal BYDAY with DAILY
@@ -534,3 +536,49 @@ def test_generalized_weekno_matches_iso_calendar_for_monday_wkst():
         iso_y, iso_w, _ = a.isocalendar()
         wy, wn, _ = _week_of(jdn, 0)
         assert (wy, wn) == (iso_y, iso_w)
+
+
+# --------------------------------------------------------------------------
+# Clock pin (BYHOUR / BYMINUTE) and movable-feast HolidayRecurrence.
+# --------------------------------------------------------------------------
+from chronologia.recurrence import HolidayRecurrence   # noqa: E402
+
+
+def test_byhour_expands_to_clocked_hour_span():
+    rule = parse_rrule("FREQ=DAILY;BYHOUR=9")
+    spans = list(occurrences(rule, AstroDate(2026, 1, 1), count=2))
+    assert [(s.start.hour, s.start.minute) for s in spans] == [(9, 0), (9, 0)]
+    # no BYMINUTE -> a one-hour span
+    assert spans[0].end - spans[0].start == timedelta(hours=1)
+
+
+def test_byhour_byminute_expands_to_minute_span():
+    rule = every("weekly", byday="WE", byhour=9, byminute=30)
+    assert rule.to_string() == "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9;BYMINUTE=30"
+    span = next(iter(occurrences(rule, AstroDate(2026, 1, 1), count=1)))
+    assert (span.start.hour, span.start.minute) == (9, 30)
+    assert span.end - span.start == timedelta(minutes=1)
+
+
+def test_byhour_rrule_roundtrips():
+    assert parse_rrule("FREQ=DAILY;BYHOUR=9;BYMINUTE=30").to_string() == (
+        "FREQ=DAILY;BYHOUR=9;BYMINUTE=30")
+
+
+def test_holiday_recurrence_expands_but_never_serializes():
+    hr = HolidayRecurrence("easter")
+    dates = [s.start for s in hr.occurrences(AstroDate(2026, 1, 1), count=2)]
+    assert [d.year for d in dates] == [2026, 2027]
+    assert dates[0].month == 4 and dates[0].day == 5   # Western Easter 2026
+    with pytest.raises(ValueError):
+        hr.to_string()
+
+
+def test_holiday_recurrence_unbounded_raises():
+    with pytest.raises(ValueError):
+        list(HolidayRecurrence("easter").occurrences(AstroDate(2026, 1, 1)))
+
+
+def test_holiday_recurrence_rejects_unknown_key():
+    with pytest.raises(ValueError):
+        HolidayRecurrence("not_a_real_holiday")
