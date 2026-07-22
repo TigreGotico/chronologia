@@ -60,5 +60,13 @@ def test_seconds_offset_gap():
     nomatch("za 45 sekúnd")
 
 
-def test_bare_weekday_alone():
-    nomatch("piatok")
+def test_bare_weekday_resolves_next():
+    # a bare weekday names its next strictly-future occurrence, a day-wide span
+    from datetime import timedelta
+    from ._corpus import span
+    ahead = (4 - ANCHOR.weekday()) % 7 or 7          # 4 == Friday (piatok)
+    s = (ANCHOR + timedelta(days=ahead)).date()
+    e = s + timedelta(days=1)
+    sp = span("piatok")
+    assert (sp.start.year, sp.start.month, sp.start.day) == (s.year, s.month, s.day)
+    assert (sp.end.year, sp.end.month, sp.end.day) == (e.year, e.month, e.day)

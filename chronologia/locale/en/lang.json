@@ -13,7 +13,7 @@
       "orders": ["indef? QUANT? UNIT from WEEKDAY",
                  "indef? NUM UNIT from WEEKDAY"]
     },
-    "weekday_ref": {"orders": ["REL_MARKER WEEKDAY"]},
+    "weekday_ref": {"orders": ["REL_MARKER WEEKDAY", "WEEKDAY"]},
     "rel_period": {"orders": ["REL_MARKER UNIT"]},
     "weekend_ref": {"orders": ["REL_MARKER WEEKEND", "article? WEEKEND"]},
     "calendar_date": {
