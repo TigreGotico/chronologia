@@ -57,31 +57,30 @@ def test_confusable_returns_none(text):
     nomatch(text)
 
 
+_RESOLVED = [
+    'потерянное десятилетие',
+    'в среде программистов',
+]
+
 _LIMITATIONS = [
     pytest.param(
         'апрель как имя',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'август как имя',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'весна народов',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'осень жизни',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
-    pytest.param(
-        'потерянное десятилетие',
-        marks=pytest.mark.xfail(reason='temporal unit in figurative use binds as a date; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'окружающая среда',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
-    pytest.param(
-        'в среде программистов',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'рождество пришло рано',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
 ]
 
 
@@ -103,3 +102,12 @@ def test_span_elsewhere(text, confusable):
     assert r is not None, f"{text!r} should bind its genuine temporal part"
     assert confusable in r[1], (
         f"confusable {confusable!r} should stay in remainder {r[1]!r}")
+
+
+
+@pytest.mark.parametrize("text", _RESOLVED)
+def test_confusable_now_none(text):
+    # formerly a documented limitation; the parser now correctly
+    # binds nothing here.  A strict tripwire would misfire, so this is
+    # a live positive assertion of the now-correct behaviour.
+    nomatch(text)

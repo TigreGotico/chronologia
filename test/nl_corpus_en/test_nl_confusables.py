@@ -50,52 +50,53 @@ def test_confusable_returns_none(text):
     nomatch(text)
 
 
+_RESOLVED = [
+    'a decade of neglect',
+]
+
 _LIMITATIONS = [
     pytest.param(
         'may I help you',
-        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=False)),
+        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
     pytest.param(
         'they march on washington',
-        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=False)),
+        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
     pytest.param(
         'an august presence',
-        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=False)),
+        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
     pytest.param(
         'march to your own beat',
-        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=False)),
+        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
     pytest.param(
         'may the force be with you',
-        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=False)),
+        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
     pytest.param(
         'she met april in the hallway',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'my dog is called august',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'will june be there',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'spring into action',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'fall for the trick',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
-    pytest.param(
-        'a decade of neglect',
-        marks=pytest.mark.xfail(reason='temporal unit in figurative use binds as a date; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'midnight oil',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
     pytest.param(
         'burn the midnight oil',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
     pytest.param(
         'sunday best',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'monday blues',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
 ]
 
 
@@ -117,3 +118,12 @@ def test_span_elsewhere(text, confusable):
     assert r is not None, f"{text!r} should bind its genuine temporal part"
     assert confusable in r[1], (
         f"confusable {confusable!r} should stay in remainder {r[1]!r}")
+
+
+
+@pytest.mark.parametrize("text", _RESOLVED)
+def test_confusable_now_none(text):
+    # formerly a documented limitation; the parser now correctly
+    # binds nothing here.  A strict tripwire would misfire, so this is
+    # a live positive assertion of the now-correct behaviour.
+    nomatch(text)

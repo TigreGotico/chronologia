@@ -48,16 +48,16 @@ def test_confusable_returns_none(text):
 _LIMITATIONS = [
     pytest.param(
         'مارس الرياضة',
-        marks=pytest.mark.xfail(reason='month homograph مارس ("he practiced") binds as March; disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph مارس ("he practiced") binds as March; disambiguation is downstream', strict=True)),
     pytest.param(
         'ربيع اسم جميل',
-        marks=pytest.mark.xfail(reason='season word ربيع used as a person name binds as spring; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word ربيع used as a person name binds as spring; downstream concern', strict=True)),
     pytest.param(
         'الصيف الحار',
-        marks=pytest.mark.xfail(reason='season word in a descriptive phrase binds as the season; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in a descriptive phrase binds as the season; downstream concern', strict=True)),
     pytest.param(
         'السبت المقدس',
-        marks=pytest.mark.xfail(reason='full weekday السبت ("Saturday") binds as the next Saturday inside the proper name "Holy Saturday"; the bare-weekday order resolves the day, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='full weekday السبت ("Saturday") binds as the next Saturday inside the proper name "Holy Saturday"; the bare-weekday order resolves the day, disambiguation is downstream', strict=True)),
 ]
 
 

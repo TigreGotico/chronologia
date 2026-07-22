@@ -72,7 +72,7 @@ def test_no_holiday_no_match(text):
     nomatch(text)
 
 
-@pytest.mark.xfail(reason="holiday/first-name homograph (Noël) out of scope")
+@pytest.mark.xfail(reason="holiday/first-name homograph (Noël) out of scope", strict=True)
 def test_name_homograph_should_not_bind():
     nomatch("mon ami noël est venu")
 

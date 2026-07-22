@@ -53,37 +53,36 @@ def test_confusable_returns_none(text):
     nomatch(text)
 
 
+_RESOLVED = [
+    'in ferlern desennium',
+    'goeiemoarn allegear',
+]
+
 _LIMITATIONS = [
     pytest.param(
         'juny as namme',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'augustus as foarnamme',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'july as namme',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'de maitiid fan de folken',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'de hjerst fan it libben',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
-    pytest.param(
-        'in ferlern desennium',
-        marks=pytest.mark.xfail(reason='temporal unit in figurative use binds as a date; downstream concern', strict=False)),
-    pytest.param(
-        'goeiemoarn allegear',
-        marks=pytest.mark.xfail(reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'betiid yn de moarn',
-        marks=pytest.mark.xfail(reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=False)),
+        marks=pytest.mark.xfail(reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=True)),
     pytest.param(
         'kryst kaam betiid',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
     pytest.param(
         'om de middei hinne',
-        marks=pytest.mark.xfail(reason='structurally-safe class unexpectedly binds; recorded as a limitation', strict=False)),
+        marks=pytest.mark.xfail(reason='structurally-safe class unexpectedly binds; recorded as a limitation', strict=True)),
 ]
 
 
@@ -105,3 +104,12 @@ def test_span_elsewhere(text, confusable):
     assert r is not None, f"{text!r} should bind its genuine temporal part"
     assert confusable in r[1], (
         f"confusable {confusable!r} should stay in remainder {r[1]!r}")
+
+
+
+@pytest.mark.parametrize("text", _RESOLVED)
+def test_confusable_now_none(text):
+    # formerly a documented limitation; the parser now correctly
+    # binds nothing here.  A strict tripwire would misfire, so this is
+    # a live positive assertion of the now-correct behaviour.
+    nomatch(text)
