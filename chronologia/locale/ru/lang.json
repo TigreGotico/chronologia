@@ -94,6 +94,14 @@
     "PART of? REL_MARKER UNIT",
     "PART of? UNIT REL_MARKER"
    ]
+  },
+  "holiday_ref": {
+   "orders": [
+    "REL_MARKER HOLIDAY",
+    "HOLIDAY YEAR",
+    "YEAR HOLIDAY",
+    "HOLIDAY"
+   ]
   }
  },
  "conventions": {
