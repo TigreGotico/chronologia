@@ -310,7 +310,10 @@ read as a flag: `chronologia convert --from julian --to gregorian -- -0043-03-15
 
 ## Reference
 
-Full guides for everything above live in [`docs/`](docs/):
+Full guides for everything above live in [`docs/`](docs/), mapped with a
+suggested reading order in [**docs/index.md**](docs/index.md). Prefer to learn
+by running code? The [`examples/`](examples/) directory is eight self-contained,
+self-checking scripts (`python examples/01_extract_basics.py`).
 
 | | |
 |---|---|
@@ -334,13 +337,28 @@ data-file headers. Where sources disagree, both versions ship under
 different names. Where sources are silent, the library says so instead
 of guessing.
 
-For spoken-language assistants,
-[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser) builds
-on this library — adding the voice-facing glue: speaking a date back out
-loud, session handling, and the legacy per-language helpers. If you need
-to *say* a date rather than *read* one, start there.
-
 **How this library was built**: see [docs/transparency.md](docs/transparency.md) — an honest account, failures included.
+
+## Related projects
+
+chronologia is part of the OpenVoiceOS family of language-processing libraries.
+Where this one *reads and reckons* dates, its neighbours handle the pieces
+around them:
+
+- **[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser)** —
+  the voice-facing layer for spoken-language assistants. It builds on
+  chronologia and adds the glue an assistant needs: *saying* a date back out
+  loud, session handling, and the legacy per-language helpers. If you need to
+  speak a date rather than read one, start there.
+- **[ovos-number-parser](https://github.com/OpenVoiceOS/ovos-number-parser)** —
+  the same idea for numbers: turns spelled-out numbers, ordinals, and fractions
+  into digits and back across many languages. chronologia uses it to read
+  spelled numbers inside a date phrase.
+- **[ovos-spec-tools](https://github.com/OpenVoiceOS/ovos-spec-tools)** — the
+  reference implementation of the OVOS formal specifications: a sentence
+  template expander, locale resource loader, dialog renderer, language matcher,
+  and locale linter. chronologia loads its per-language vocabulary files
+  through it.
 
 ## License
 
