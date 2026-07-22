@@ -63,6 +63,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
 
     months: Dict[str, int] = {}
     weekdays: Dict[str, int] = {}
+    weekday_full: Dict[str, int] = {}
     units: Dict[str, str] = {}
     named_days: Dict[str, int] = {}
     directions: Dict[str, int] = {}
@@ -109,8 +110,16 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
                             f"language {lang!r}")
                     cal_surface_owner[s] = cal_key
                     table[s] = int(num)
+        elif base.startswith("weekday_abbr_"):
+            # abbreviations bind the WEEKDAY slot (marker-ed orders) but NOT
+            # the bare-weekday order, so short forms that are also common words
+            # never resolve to a weekday on their own
+            idx = int(base[len("weekday_abbr_"):])
+            weekdays.update({s: idx for s in surfaces})
         elif base.startswith("weekday_"):
-            weekdays.update({s: int(base[len("weekday_"):]) for s in surfaces})
+            idx = int(base[len("weekday_"):])
+            weekdays.update({s: idx for s in surfaces})
+            weekday_full.update({s: idx for s in surfaces})
         elif base.startswith("unit_"):
             units.update({s: base[len("unit_"):] for s in surfaces})
         elif base.startswith("named_day_"):
@@ -224,4 +233,5 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         periods=periods, scales=scales, period_parts=period_parts,
         decade_words=decade_words, clock_landmarks=clock_landmarks,
         weekend_words=frozenset(weekend_words),
+        weekday_full=weekday_full,
         quantifiers=quantifiers)

@@ -160,6 +160,11 @@ class LangSpec:
     quantifiers: Mapping[str, float] = field(default_factory=dict)
     # weekend surface forms ("weekend", "fim de semana", "Wochenende", ...)
     weekend_words: FrozenSet[str] = field(default_factory=frozenset)
+    # full weekday names only, excluding abbreviations: the bare-weekday order
+    # binds against these so short abbreviation surfaces that collide with
+    # common words (de "so", nl "zo", es "mar") never resolve without a marker,
+    # while marker-ed orders still accept both via ``weekdays``
+    weekday_full: Mapping[str, int] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)

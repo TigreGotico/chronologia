@@ -17,7 +17,7 @@
     },
     "weekday_ref": {
       "orders": [
-        "WEEKDAY"
+        "WEEKDAYFULL"
       ]
     },
     "calendar_date": {

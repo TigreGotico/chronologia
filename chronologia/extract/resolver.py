@@ -257,7 +257,8 @@ class Resolver:
         return Resolution(_day_span(value), self._consumed(match))
 
     def _resolve_weekday_ref(self, match, anchor):
-        target = self.spec.weekdays[match.slots["WEEKDAY"].text]
+        wd_tok = match.slots.get("WEEKDAY") or match.slots["WEEKDAYFULL"]
+        target = self.spec.weekdays[wd_tok.text]
         rel_tok = match.slots.get("REL_MARKER")
         # A bare weekday ("friday") names the NEXT occurrence, strictly future:
         # the same prefer-future reckoning as an explicit "next", so when the
