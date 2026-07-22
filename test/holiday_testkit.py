@@ -1,9 +1,10 @@
 """Shared national-differential assertions for the per-country holiday suites.
 
-Per-holiday gold DATES live in the one shared registry ``HOLIDAY_GOLDS``
-(test_holiday_golds.py, which also owns the single structural enforcement test).
-This module carries only the differential machinery each country module reuses to
-compare our national set against the independent reference package.
+Per-holiday gold DATES are frozen in the per-jurisdiction data files under
+``test/holiday_golds/`` (walked, structurally enforced, and provenance-tiered by
+test_holiday_golds.py). This module carries only the differential machinery each
+country module reuses to compare our national set against the independent
+reference package.
 """
 from __future__ import annotations
 
