@@ -1147,6 +1147,34 @@ MARKET_ALIASES: Dict[str, str] = {
     "TAR": "XECB",
     # New York Stock Exchange -- vacanza's XNYS.
     "NYSE": "XNYS",
+    # Chicago Mercantile Exchange -- vacanza's XCME.
+    "CME": "XCME",
+    # Frankfurt Stock Exchange -- same calendar as Xetra, vacanza's XETR.
+    "XFRA": "XETR",
+    # SIX Swiss Exchange -- vacanza's XSWX.
+    "SIX": "XSWX",
+    # Toronto Stock Exchange -- vacanza's XTSE.
+    "TSX": "XTSE",
+    # Hong Kong Stock Exchange -- vacanza's XHKG.
+    "HKEX": "XHKG",
+    "SEHK": "XHKG",
+    # Japan Exchange Group -- vacanza's XJPX.
+    "JPX": "XJPX",
+    "TSE": "XJPX",
+    "OSE": "XJPX",
+    # Shenzhen Stock Exchange -- same calendar as Shanghai, vacanza's XSHG.
+    "XSHE": "XSHG",
+    "SSE": "XSHG",
+    "SZSE": "XSHG",
+    # National Stock Exchange of India / Bombay Stock Exchange -- same
+    # SEBI-gazetted calendar, vacanza's XBOM.
+    "BSE": "XBOM",
+    "XNSE": "XBOM",
+    "NSE": "XBOM",
+    # Brasil Bolsa Balcao -- vacanza's BVMF.
+    "B3": "BVMF",
+    # Bolsa Mexicana de Valores -- vacanza's XMEX.
+    "BMV": "XMEX",
 }
 
 

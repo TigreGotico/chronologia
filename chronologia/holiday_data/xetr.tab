@@ -1,0 +1,30 @@
+# civil-holidays v1
+# jurisdiction: XETR
+# source: https://web.archive.org/web/20250101000000*/https://www.xetra.com/xetra-en/trading/trading-calendar
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.german_stock_exchange -- an
+#   independent open-source reference maintained against Deutsche Boerse's
+#   own published trading-calendar rules for Xetra and the Frankfurt Stock
+#   Exchange (identical calendar, vacanza registers both XETR and XFRA
+#   codes for it; chronologia.civil_holidays.MARKET_ALIASES resolves XFRA
+#   onto this file rather than shipping a duplicate copy).
+#   XETR is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country, but
+#   its calendar follows Deutsche Boerse's own published German-language
+#   trading calendar (Neujahr, Karfreitag, ...) -- German is the correct
+#   primary language here, the same house rule already applied to DE.tab.
+#   No observed-shift is ever applied by vacanza for this market (weekend
+#   closures are simply omitted, not substituted): verified against vacanza
+#   0.101 output, none of 2024/2025/2026's dates land on a weekend that
+#   would require a substitute.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed  | Neujahr               | 1 1   | public          | |  |  |
+easter | Karfreitag            | -2    | public religious | |  |  |
+easter | Ostermontag            | 1     | public religious | |  |  |
+fixed  | Erster Mai            | 5 1   | public          | |  |  |
+fixed  | Heiligabend           | 12 24 | public          | |  |  |
+fixed  | Erster Weihnachtstag  | 12 25 | public religious | |  |  |
+fixed  | Zweiter Weihnachtstag | 12 26 | public religious | |  |  |
+fixed  | Silvester             | 12 31 | public          | |  |  |

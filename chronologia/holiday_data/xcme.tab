@@ -1,0 +1,34 @@
+# civil-holidays v1
+# jurisdiction: XCME
+# source: https://web.archive.org/web/20250101000000*/https://www.cmegroup.com/tools-information/holiday-calendar.html
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.chicago_mercantile_exchange --
+#   an independent open-source reference maintained against the CME's own
+#   published trading-holiday calendar.
+#   XCME is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country: it is
+#   the Chicago Mercantile Exchange's trading-holiday calendar. English is
+#   correct as the primary name here -- the CME publishes its calendar in
+#   English, and the calendar belongs to an exchange, not a country with its
+#   own official language.
+#   XCME shares 5 of NYSE's 10 closures (New Year's Day, Good Friday,
+#   Independence Day, Thanksgiving Day, Christmas Day) but omits MLK Day,
+#   Washington's Birthday, Memorial Day, Juneteenth and Labor Day -- CME
+#   trading floors stay open on those. No `us` observed-shift ever fires for
+#   XCME's fixed dates in vacanza 0.101's 2024-2026 output (New Year's Day
+#   and Christmas Day land on weekdays throughout the window; Independence
+#   Day's 2026 Saturday closure is simply omitted, not shifted -- verified
+#   against vacanza 0.101 output).
+#   The one-off "National Day of Mourning for former President Jimmy Carter"
+#   (2025-01-09, a Thursday) was a single proclaimed market closure with no
+#   recurrence -- modelled as `one_off`, not a rule.
+#   Every rule verified against vacanza 0.101 output for 2024, 2025 and 2026.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed       | New Year's Day       | 1 1                                                      | public          | |  |      |
+easter      | Good Friday          | -2                                                       | public religious | |  |      |
+fixed       | Independence Day     | 7 4                                                      | public          | |  |      |
+nth_weekday | Thanksgiving Day     | 11 4 3                                                   | public          | |  |      |
+fixed       | Christmas Day        | 12 25                                                    | public religious | |  |      |
+one_off     | National Day of Mourning for former President Jimmy Carter | 2025 1 9 https://www.cmegroup.com/tools-information/holiday-calendar.html | public | |  |  |

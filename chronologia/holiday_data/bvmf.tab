@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: BVMF
+# source: https://web.archive.org/web/20250101000000*/https://www.b3.com.br/en_us/solutions/platforms/puma-trading-system/for-members-and-brokers/trading-calendar/
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.b3_brazilian_stock_exchange --
+#   an independent open-source reference maintained against B3's own
+#   published trading-calendar. vacanza also registers this same calendar
+#   under the short code B3; chronologia.civil_holidays.MARKET_ALIASES
+#   resolves it onto this file rather than shipping a duplicate copy.
+#   BVMF is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country, but
+#   B3 (Brasil Bolsa Balcao) publishes its own trading calendar in
+#   Portuguese -- Portuguese (pt) is the correct primary language here,
+#   matching the house rule already applied to BR.tab. English names in
+#   this header comment are for orientation only; the shipped `name` column
+#   is the official Portuguese wording.
+#   Confraternizacao Universal, Tiradentes, Dia do Trabalhador,
+#   Independencia do Brasil, Nossa Senhora Aparecida, Finados, Proclamacao
+#   da Republica, Dia Nacional de Zumbi e da Consciencia Negra and Natal
+#   are Gregorian fixed dates -- shipped as real rules. No observed-shift
+#   ever fires: B3 simply does not trade on a weekend regardless (verified:
+#   2024 Independencia do Brasil/7 Sep and Proclamacao da Republica/15 Nov
+#   both land on Saturdays and are still listed by vacanza with their
+#   nominal date, unshifted). Carnaval (Easter-2 days) and Sexta-feira
+#   Santa/Corpus Christi (Easter-offset) have real Easter-relative rules.
+#   Every rule verified against vacanza 0.101 output for 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed  | Confraternização Universal                    | 1 1   | public          | |  |  |
+easter | Carnaval                                        | -48   | public          | |  |  |
+easter | Carnaval                                        | -47   | public          | |  |  |
+easter | Sexta-feira Santa                               | -2    | public religious | |  |  |
+fixed  | Tiradentes                                      | 4 21  | public          | |  |  |
+fixed  | Dia do Trabalhador                              | 5 1   | public          | |  |  |
+easter | Corpus Christi                                  | 60    | public religious | |  |  |
+fixed  | Independência do Brasil                         | 9 7   | public          | |  |  |
+fixed  | Nossa Senhora Aparecida                         | 10 12 | public religious | |  |  |
+fixed  | Finados                                         | 11 2  | public religious | |  |  |
+fixed  | Proclamação da República                        | 11 15 | public          | |  |  |
+fixed  | Dia Nacional de Zumbi e da Consciência Negra    | 11 20 | public          | |  |  |
+fixed  | Natal                                           | 12 25 | public religious | |  |  |

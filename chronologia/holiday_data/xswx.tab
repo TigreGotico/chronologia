@@ -1,0 +1,37 @@
+# civil-holidays v1
+# jurisdiction: XSWX
+# source: https://web.archive.org/web/20250101000000*/https://www.six-group.com/en/products-services/the-swiss-stock-exchange/market-data/trading/trading-calendar.html
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.swiss_stock_exchange -- an
+#   independent open-source reference maintained against SIX Swiss
+#   Exchange's own published trading-calendar rules. vacanza also registers
+#   this same calendar under the short code SIX;
+#   chronologia.civil_holidays.MARKET_ALIASES resolves it onto this file
+#   rather than shipping a duplicate copy.
+#   XSWX is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country, but
+#   SIX publishes its trading calendar in German (Neujahrstag,
+#   Berchtoldstag, ...) -- German is the correct primary language here.
+#   "Auffahrt" (Ascension Day, Easter+39) and "Pfingstmontag" (Whit Monday,
+#   Easter+50) are the two Easter-offset rules beyond Good Friday/Easter
+#   Monday; verified against vacanza 0.101 output for 2024/2025/2026
+#   (2024: Auffahrt 9 May, Pfingstmontag 20 May; 2025: Auffahrt 29 May,
+#   Pfingstmontag 9 Jun; 2026: Auffahrt 14 May, Pfingstmontag 25 May).
+#   No observed-shift ever fires: vacanza simply omits a nominal weekend
+#   date rather than substituting it (verified 2026: Nationalfeiertag
+#   1 Aug 2026 is a Saturday and is silently absent from vacanza's output).
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed  | Neujahrstag      | 1 1   | public          | |  |  |
+fixed  | Berchtoldstag    | 1 2   | public          | |  |  |
+easter | Karfreitag       | -2    | public religious | |  |  |
+easter | Ostermontag      | 1     | public religious | |  |  |
+fixed  | Tag der Arbeit   | 5 1   | public          | |  |  |
+easter | Auffahrt         | 39    | public religious | |  |  |
+easter | Pfingstmontag    | 50    | public religious | |  |  |
+fixed  | Nationalfeiertag | 8 1   | public          | |  |  |
+fixed  | Heiligabend      | 12 24 | public          | |  |  |
+fixed  | Weihnachten      | 12 25 | public religious | |  |  |
+fixed  | Stephanstag      | 12 26 | public religious | |  |  |
+fixed  | Vortag vor Neujahr | 12 31 | public        | |  |  |

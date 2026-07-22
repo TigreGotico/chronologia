@@ -1,0 +1,47 @@
+# civil-holidays v1
+# jurisdiction: XJPX
+# source: https://web.archive.org/web/20250101000000*/https://www.jpx.co.jp/english/corporate/about-jpx/calendar/index.html
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.japan_exchange_group -- an
+#   independent open-source reference maintained against the Japan
+#   Exchange Group's own published trading-calendar. vacanza also registers
+#   this calendar under the short codes JPX, TSE and OSE;
+#   chronologia.civil_holidays.MARKET_ALIASES resolves all three onto this
+#   file rather than shipping duplicate copies.
+#   XJPX is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country: it
+#   is JPX's own bank-holiday trading calendar. It closes on every
+#   Japanese national holiday -- the exact same 16 fixed/nth_weekday/
+#   equinox rules already shipped in jp.tab (see that file's header for the
+#   Cabinet Office citation and the jp_furikae substitute-holiday mechanics)
+#   -- PLUS the year-end/New-Year bank-holiday block (2/3 January, 31
+#   December) that has no national-holiday status but is a standing
+#   exchange closure under the Financial Instruments and Exchange Act. The
+#   national-holiday rows are duplicated here (not aliased to jp.tab)
+#   because XJPX's own citation and validity window is the exchange's
+#   trading calendar, not the civil one -- the two happen to share dates by
+#   construction, not by reference.
+#   English names below are vacanza 0.101's own `en_US` locale rendering.
+#   Every rule verified against vacanza 0.101 output for 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed       | New Year's Day           | 1 1   | public |  | jp_furikae |  |
+fixed       | Bank Holiday             | 1 2   | public |  |            |  |
+fixed       | Bank Holiday             | 1 3   | public |  |            |  |
+nth_weekday | Coming of Age Day        | 1 2 0 | public |  |            |  |
+fixed       | Foundation Day           | 2 11  | public |  | jp_furikae |  |
+fixed       | Emperor's Birthday       | 2 23  | public |  | jp_furikae |  |
+equinox     | Vernal Equinox Day       | march 9     | public |  | jp_furikae |  |
+fixed       | Showa Day                | 4 29  | public |  | jp_furikae |  |
+fixed       | Constitution Day         | 5 3   | public |  | jp_furikae |  |
+fixed       | Greenery Day             | 5 4   | public |  | jp_furikae |  |
+fixed       | Children's Day           | 5 5   | public |  | jp_furikae |  |
+nth_weekday | Marine Day               | 7 3 0 | public |  |            |  |
+fixed       | Mountain Day             | 8 11  | public |  | jp_furikae | 2016- |
+nth_weekday | Respect for the Aged Day | 9 3 0 | public |  |            |  |
+equinox     | Autumnal Equinox Day     | september 9 | public |  | jp_furikae |  |
+nth_weekday | Sports Day               | 10 2 0 | public |  |            |  |
+fixed       | Culture Day              | 11 3  | public |  | jp_furikae |  |
+fixed       | Labor Thanksgiving Day   | 11 23 | public |  | jp_furikae |  |
+fixed       | Bank Holiday             | 12 31 | public |  |            |  |

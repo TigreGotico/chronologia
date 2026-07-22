@@ -1,0 +1,50 @@
+# civil-holidays v1
+# jurisdiction: XBOM
+# source: https://web.archive.org/web/20250101000000*/https://www.bseindia.com/static/markets/marketinfo/listholi.aspx
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.national_stock_exchange_of_india
+#   -- an independent open-source reference maintained against SEBI's
+#   annually-gazetted trading-holiday notification, which the Bombay Stock
+#   Exchange and the National Stock Exchange of India both adopt jointly
+#   (identical calendar; vacanza registers it under XBOM, BSE, XNSE and
+#   NSE). chronologia.civil_holidays.MARKET_ALIASES resolves BSE, XNSE and
+#   NSE onto this file rather than shipping duplicate copies.
+#   XBOM is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country:
+#   both exchanges publish (and SEBI gazettes) their trading calendar in
+#   English, so English is correct as the primary name here.
+#   Five closures are Gregorian fixed dates (Republic Day, Maharashtra Day,
+#   Independence Day, Mahatma Gandhi Jayanti, Christmas Day) and one is
+#   Easter-offset (Good Friday) -- shipped as real rules. Every other
+#   closure follows the Hindu lunisolar calendar, the Islamic lunar
+#   calendar (Id-Ul-Fitr/Bakri Id/Muharram), or is a specific one-off SEBI
+#   addition for a given year (Dr. Baba Saheb Ambedkar Jayanti's 2025
+#   closure, 2025's combined "Dussehra; Mahatma Gandhi Jayanti" notice) --
+#   these have no fixed-arithmetic formula years in advance and are
+#   gazetted fresh by SEBI each year regardless. Shipped as honest
+#   `decree` rows tabulating the specific dates vacanza 0.101 resolves for
+#   2024 and 2025, the SEBI-gazetted reality rather than a fabricated
+#   formula.
+#   Every rule verified against vacanza 0.101 output for 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed  | Republic Day                   | 1 26  | public          | |  |  |
+easter | Good Friday                    | -2    | public religious | |  |  |
+fixed  | Maharashtra Day                | 5 1   | public          | |  |  |
+fixed  | Independence Day               | 8 15  | public          | |  |  |
+fixed  | Mahatma Gandhi Jayanti         | 10 2  | public          | |  |  |
+fixed  | Christmas Day                  | 12 25 | public religious | |  |  |
+decree | Maha Shivaratri                | 2024-3-8 2025-2-26 | public religious | |  |  |
+decree | Holi                           | 2024-3-25 2025-3-14 | public religious | |  |  |
+decree | Id-Ul-Fitr (Ramadan Eid)       | 2024-4-11 2025-3-31 | public religious | |  |  |
+decree | Ram Navami                     | 2024-4-17 | public religious | |  |  |
+decree | Bakri Id                       | 2024-6-17 | public religious | |  |  |
+decree | Muharram                       | 2024-7-17 | public religious | |  |  |
+decree | Diwali Laxmi Pujan             | 2024-11-1 2025-10-21 | public religious | |  |  |
+decree | Guru Nanak Jayanti              | 2024-11-15 2025-11-5 | public religious | |  |  |
+decree | Mahavir Jayanti                | 2025-4-10 | public religious | |  |  |
+decree | Dr. Baba Saheb Ambedkar Jayanti | 2025-4-14 | public          | |  |  |
+decree | Ganesh Chaturthi               | 2025-8-27 | public religious | |  |  |
+decree | Dussehra                       | 2025-10-2 | public religious | |  |  |
+decree | Diwali Balipratipada           | 2025-10-22 | public religious | |  |  |
