@@ -72,20 +72,10 @@ def _assert_never_raises(text, lang):
 # 1. Random unicode strings, per language.
 # --------------------------------------------------------------------------
 
-#: known-crashing inputs excluded from the generic property below and
-#: recorded explicitly further down (see "known crashes"), so this property
-#: documents the gap instead of going red on every run.
-_KNOWN_CRASH_INPUTS = {
-    "da": {"¹"}, "nb": {"¹"}, "nn": {"¹"},
-}
-
-
 @pytest.mark.parametrize("lang", LANGS)
 @given(text=st.text(min_size=0, max_size=200))
 @_FAST
 def test_random_unicode_never_crashes(lang, text):
-    if text in _KNOWN_CRASH_INPUTS.get(lang, ()):
-        pytest.skip("known crash, see test_known_crash_superscript_digit_nb_da_nn")
     _assert_never_raises(text, lang)
 
 
@@ -246,33 +236,17 @@ def test_extract_timespans_never_overlap_and_stay_ordered(lang):
 
 
 # --------------------------------------------------------------------------
-# Known crashes (minimized repro).
+# Regression: non-decimal Unicode digits (minimized repro).
 #
 # Found by ``test_random_unicode_never_crashes`` during authoring of this
 # suite: ``extract_timespan("¹", lang)`` (a bare superscript "1", U+00B9)
-# raises an uncaught ``ValueError`` for the "da"/"nb"/"nn" locales.
-#
-# Root cause lives *outside* chronologia, in the shared
-# ``ovos-number-parser`` dependency: ``numbers_nb.py``'s
-# ``_expand_compound_numbers`` -> ``_int_value`` helper checks
-# ``w.isdigit()`` (which Python considers ``True`` for Unicode superscript
-# digits such as "¹") and then calls the builtin ``int(w)`` on it, which
-# rejects the same string ("invalid literal for int() with base 10: '¹'")
-# -- an ``isdigit()``/``int()`` mismatch on a non-ASCII digit character, not
-# a chronologia bug. chronologia's own ``numfold.py`` propagates whatever
-# ``ovos-number-parser`` raises without a guard.
-#
-# This benchmark/fuzz task's scope is explicitly "do NOT touch the extract
-# engine" (chronologia/extract/*), and the fix belongs even further
-# upstream in ovos-number-parser, not in this repo at all -- so it is
-# recorded here as a documented, minimized xfail rather than patched.
+# used to raise an uncaught ``ValueError`` for the "da"/"nb"/"nn" locales --
+# an ``isdigit()``/``int()`` mismatch in the shared ``ovos-number-parser``
+# dependency, fixed upstream (OpenVoiceOS/ovos-number-parser#280, which
+# guards every ``int()`` call with ``isdecimal()``). Kept here as a
+# permanent regression check against the dependency.
 # --------------------------------------------------------------------------
 
 @pytest.mark.parametrize("lang", ["da", "nb", "nn"])
-@pytest.mark.xfail(
-    strict=True, raises=ValueError,
-    reason="ovos-number-parser numbers_nb.py: isdigit()/int() mismatch on "
-           "U+00B9 superscript '1' -- upstream bug, not in chronologia's "
-           "extract engine or in this repo's scope; see comment above.")
 def test_known_crash_superscript_digit_nb_da_nn(lang):
-    extract_timespan("¹", lang)
+    assert extract_timespan("¹", lang) is None
