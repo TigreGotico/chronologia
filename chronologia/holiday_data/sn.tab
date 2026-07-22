@@ -23,7 +23,7 @@
 fixed         | Jour de l'an                         | 1 1                  | public          |  |  |  |
 easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
 fixed         | Fête de l'Indépendance               | 4 4                  | public          |  |  |  |
-decree        | Journée de la Korité                 | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
+decree        | Journée de la Korité                 | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  || eid_al_fitr
 fixed         | Fête du Travail                      | 5 1                  | public          |  |  |  |
 easter        | Jeudi de l'Ascension                 | 39                   | public          |  |  |  |
 easter        | Lundi de Pentecôte                   | 50                   | public          |  |  |  |
@@ -31,11 +31,11 @@ decree        | Journée de la Tabaski                | 2024-6-17 2026-5-27 2027
 decree        | Tamxarit                             | 2024-7-17 2026-6-25 2027-6-15            | public          |  |  |  |
 fixed         | Assomption                           | 8 15                 | public          |  |  |  |
 decree        | Grand Magal de Touba                 | 2024-8-23 2026-8-1 2027-7-22            | public          |  |  |  |
-decree        | Journée du Maouloud                  | 2024-9-15 2026-8-25 2027-8-14            | public          |  |  |  |
+decree        | Journée du Maouloud                  | 2024-9-15 2026-8-25 2027-8-14            | public          |  |  |  || mawlid
 fixed         | Toussaint                            | 11 1                 | public          |  |  |  |
 fixed         | Noël                                 | 12 25                | public          |  |  |  |
 decree        | Journée de la Korité (observé)       | 2025-3-31            | public          |  |  |  |
-decree        | Journée de la Tabaski (estimé)       | 2025-6-6 2026-5-27 2027-5-16             | public          |  |  |  |
-decree        | Tamxarit (estimé)                    | 2025-7-5 2026-6-25 2027-6-15             | public          |  |  |  |
+decree        | Journée de la Tabaski (estimé)       | 2025-6-6 2026-5-27 2027-5-16             | public          |  |  |  || eid_al_adha
+decree        | Tamxarit (estimé)                    | 2025-7-5 2026-6-25 2027-6-15             | public          |  |  |  || ashura
 decree        | Grand Magal de Touba (estimé)        | 2025-8-12 2026-8-1 2027-7-22            | public          |  |  |  |
-decree        | Journée du Maouloud (estimé)         | 2025-9-4 2026-8-25 2027-8-14             | public          |  |  |  |
+decree        | Journée du Maouloud (estimé)         | 2025-9-4 2026-8-25 2027-8-14             | public          |  |  |  || mawlid

@@ -24,7 +24,7 @@
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | New Year's Day                                | 1 1 | public          |  |  |  |
-decree        | Chinese New Year (1)                          | 2024-2-10 2025-1-29 2026-2-17 2027-2-6 | public          |  |  |  |
+decree        | Chinese New Year (1)                          | 2024-2-10 2025-1-29 2026-2-17 2027-2-6 | public          |  |  |  || chinese_new_year
 decree        | Chinese New Year (2)                          | 2024-2-11 2025-1-30 2026-2-18 2027-2-7 | public          |  |  |  |
 decree        | Chinese New Year (observed)                   | 2024-2-12 2027-2-8 | public          |  |  |  |
 easter        | Good Friday                                   | -2 | public          |  |  |  |

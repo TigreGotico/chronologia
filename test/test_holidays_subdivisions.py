@@ -68,14 +68,11 @@ PENDING_COUNTRIES = {}
 #: Documented skip entries: a real vacanza differential that DONE_COUNTRIES
 #: deliberately does not backfill, and why.
 DOCUMENTED_SKIPS = {
-    ("US", "ND"): "vacanza's ND/UM omit Columbus Day vs the US default -- a "
-                  "SUBTRACTIVE gap (a subdivision that has FEWER holidays "
-                  "than the jurisdiction default). chronologia's rule model "
-                  "is additive-only (a subdiv row adds a holiday; there is "
-                  "no 'exclude this national holiday' rule kind), so this "
-                  "cannot be represented without an engine change, which is "
-                  "out of scope for this data-only batch.",
-    ("US", "UM"): "see US/ND -- same Columbus Day omission.",
+    # NOTE: US/ND and US/UM (Columbus Day) were subtractive skips here until the
+    # engine gained an `exclude` rule kind (see test_holidays_horizon_exclusion
+    # .py and us.tab's SUBTRACTIVE LAYER). They — and the broader set of states
+    # that drop Columbus Day / Washington's Birthday — are now expressed as
+    # exclude rows, so they are no longer skipped.
     ("DE", "Augsburg"): "'Augsburg' is a non-ISO city pseudo-code vacanza "
                   "carries alongside the 16 genuine ISO 3166-2 Länder codes "
                   "(Peter-und-Paul-Fest, a city-only observance) -- same "
@@ -1422,13 +1419,15 @@ def test_gb_eng_wls_untouched_eaw_code_still_works():
     assert "Summer Bank Holiday" in eaw
 
 
-def test_us_columbus_day_omission_is_a_documented_skip_not_silence():
-    assert ("US", "ND") in DOCUMENTED_SKIPS
-    assert ("US", "UM") in DOCUMENTED_SKIPS
-    # Sanity: chronologia still lists Columbus Day for US-ND (the
-    # subtractive gap this skip documents -- it's present, not excluded).
-    got = _dateset_for("US", "US-ND", 2024)
-    assert "Columbus Day" in got
+def test_us_columbus_day_omission_is_now_an_exclude_rule_not_a_skip():
+    """The former documented skip is now expressed: US-ND / US-UM DROP Columbus
+    Day (an `exclude` rule), while the nation keeps it."""
+    assert ("US", "ND") not in DOCUMENTED_SKIPS
+    assert ("US", "UM") not in DOCUMENTED_SKIPS
+    assert "Columbus Day" not in _dateset_for("US", "US-ND", 2024)
+    assert "Columbus Day" not in _dateset_for("US", "US-UM", 2024)
+    # The federal default still carries it (subtraction is subdivision-scoped).
+    assert "Columbus Day" in {h.name for h in holidays_for("US", 2024)}
 
 
 @pytest.mark.parametrize("country", sorted(set(c for c, _ in

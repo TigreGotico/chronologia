@@ -22,11 +22,11 @@ fixed         | Archbishop Janani Luwum Day        | 2 16                | publi
 fixed         | Women's Day                        | 3 8                 | public          |  |  |  |
 easter        | Good Friday                        | -2                  | public          |  |  |  |
 easter        | Easter Monday                      | 1                   | public          |  |  |  |
-decree        | Eid al-Fitr                        | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
+decree        | Eid al-Fitr                        | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  || eid_al_fitr
 fixed         | Labour Day                         | 5 1                 | public          |  |  |  |
 fixed         | Uganda Martyrs' Day                | 6 3                 | public          |  |  |  |
 fixed         | National Heroes' Day               | 6 9                 | public          |  |  |  |
-decree        | Eid al-Adha                        | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  |
+decree        | Eid al-Adha                        | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  || eid_al_adha
 fixed         | Independence Day                   | 10 9                | public          |  |  |  |
 fixed         | Christmas Day                      | 12 25               | public          |  |  |  |
 fixed         | Boxing Day                         | 12 26               | public          |  |  |  |

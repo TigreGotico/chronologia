@@ -23,7 +23,7 @@
 #
 
 fixed         | 一月一日                                     | 1 1                  | public          |  |  |  |
-decree        | 農曆年初一                                    | 2024-2-10 2025-1-29 2026-2-17 2027-2-6  | public          |  |  |  |
+decree        | 農曆年初一                                    | 2024-2-10 2025-1-29 2026-2-17 2027-2-6  | public          |  |  |  || chinese_new_year
 decree        | 農曆年初三                                    | 2024-2-12 2025-1-31 2026-2-19 2027-2-8  | public          |  |  |  |
 decree        | 農曆年初四                                    | 2024-2-13 2027-2-9            | public          |  |  |  |
 fixed         | 清明節                                      | 4 4                  | public          |  |  |  |
@@ -59,7 +59,7 @@ fixed  | 聖誕節後第一個周日 | 12 26 | optional |  |  |  |
 # that permits vacanza-derived data when flagged as such (retrieved
 # 2026-07-22). ---
 decree | 農曆年初四 | 2024-2-13 2027-2-9 | optional |  |  |  |
-decree | 農曆年初一 | 2024-2-10 2025-1-29 2026-2-17 2027-2-6 | optional |  |  |  |
+decree | 農曆年初一 | 2024-2-10 2025-1-29 2026-2-17 2027-2-6 | optional |  |  |  || chinese_new_year
 decree | 農曆年初三 | 2024-2-12 2025-1-31 2026-2-19 2027-2-8 | optional |  |  |  |
 decree | 耶穌受難節 | 2024-3-29 2025-4-18 | optional |  |  |  |
 decree | 耶穌受難節翌日 | 2024-3-30 2025-4-19 | optional |  |  |  |

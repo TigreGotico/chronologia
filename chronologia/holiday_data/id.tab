@@ -42,7 +42,7 @@ calendar_date | Tahun Baru Islam                     | islamic_civil 1 1   | pub
 calendar_date | Maulid Nabi Muhammad                 | islamic_civil 3 12  | public religious |  |
 #
 # --- decree-tabulated (Chinese / Balinese Saka / Buddhist / electoral) ---
-decree | Tahun Baru Imlek   | 2023-01-22 2024-02-10 2025-01-29 2026-02-17 | public religious |  |
+decree | Tahun Baru Imlek   | 2023-01-22 2024-02-10 2025-01-29 2026-02-17 | public religious |  ||  |  | chinese_new_year
 decree | Hari Suci Nyepi    | 2023-03-22 2024-03-11 2025-03-29 2026-03-19 2027-03-08 | public religious |  |
 decree | Hari Raya Waisak   | 2023-06-04 2024-05-23 2025-05-12 2026-05-31 | public religious |  |
 decree | Hari Pemilihan Umum          | 2024-02-14 | public |  |

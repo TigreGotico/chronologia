@@ -22,9 +22,9 @@ decree        | Constitution Day (observed)        | 2024-1-8            | publi
 fixed         | Independence Day                   | 3 6                 | public          |  |  |  |
 easter        | Good Friday                        | -2                  | public          |  |  |  |
 easter        | Easter Monday                      | 1                   | public          |  |  |  |
-decree        | Eid ul-Fitr                        | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
+decree        | Eid ul-Fitr                        | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  || eid_al_fitr
 fixed         | May Day                            | 5 1                 | public          |  |  |  |
-decree        | Eid ul-Adha                        | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  |
+decree        | Eid ul-Adha                        | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  || eid_al_adha
 fixed         | Founders' Day                      | 8 4                 | public          |  |  |  |
 fixed         | Kwame Nkrumah Memorial Day         | 9 21                | public          |  |  |  |
 decree        | Farmer's Day                       | 2024-12-6 2025-12-5 2026-12-4 2027-12-3 | public          |  |  |  |

@@ -20,13 +20,13 @@
 fixed         | Jour de l'an                          | 1 1 | public          |  |  |  |
 easter        | Pâques                                | 0 | public          |  |  |  |
 easter        | Lundi de Pâques                        | 1 | public          |  |  |  |
-decree        | Fin du Ramadan                         | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
+decree        | Fin du Ramadan                         | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  || eid_al_fitr
 fixed         | Journée des droits de la femme            | 4 17 | public          |  |  |  |
 fixed         | Fête du Travail                        | 5 1 | public          |  |  |  |
 easter        | Ascension                             | 39 | public          |  |  |  |
 easter        | Pentecôte                             | 49 | public          |  |  |  |
 easter        | Lundi de Pentecôte                      | 50 | public          |  |  |  |
-decree        | Fête du sacrifice                      | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  |
+decree        | Fête du sacrifice                      | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  || eid_al_adha
 fixed         | Assomption de Marie                     | 8 15 | public          |  |  |  |
 fixed         | Jour de l'indépendance                  | 8 16 | public          |  |  |  |
 fixed         | Fête de l'indépendance                  | 8 17 | public          |  |  |  |

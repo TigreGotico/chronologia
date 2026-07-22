@@ -24,15 +24,15 @@ fixed         | 1er janvier                          | 1 1                  | pu
 decree        | Victoire à la Coupe d'Afrique des Nations 2024 | 2024-2-12            | public          |  |  |  |
 easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
 decree        | Lendemain de la Nuit du Destin       | 2024-4-6 2025-3-27 2026-3-16 2027-3-6   | public          |  |  |  |
-decree        | Fête de fin du Ramadan               | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
+decree        | Fête de fin du Ramadan               | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  || eid_al_fitr
 fixed         | Fête du travail                      | 5 1                  | public          |  |  |  |
 easter        | Jour de l'Ascension                  | 39                   | public          |  |  |  |
 easter        | Lundi de Pentecôte                   | 50                   | public          |  |  |  |
-decree        | Fête de la Tabaski                   | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Fête de la Tabaski                   | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  || eid_al_adha
 decree        | Lendemain de la Fête de la Tabaski   | 2024-6-17 2027-5-17            | public          |  |  |  |
 fixed         | Fête Nationale                       | 8 7                  | public          |  |  |  |
 fixed         | Fête de l'Assomption                 | 8 15                 | public          |  |  |  |
-decree        | Lendemain de l'Anniversaire de la Naissance du Prophète Mahomet | 2024-9-15 2025-9-4 2026-8-25 2027-8-14   | public          |  |  |  |
+decree        | Lendemain de l'Anniversaire de la Naissance du Prophète Mahomet | 2024-9-15 2025-9-4 2026-8-25 2027-8-14   | public          |  |  |  || mawlid
 fixed         | Fête de la Toussaint                 | 11 1                 | public          |  |  |  |
 fixed         | Journée Nationale de la Paix         | 11 15                | public          |  |  |  |
 fixed         | Fête de Noël                         | 12 25                | public          |  |  |  |
