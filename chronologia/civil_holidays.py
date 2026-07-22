@@ -1118,9 +1118,27 @@ def load_calendar(path: str) -> HolidayCalendar:
 
 _CACHE: Dict[str, HolidayCalendar] = {}
 
+#: Financial-market jurisdiction codes are not ISO-3166-1 countries — they are
+#: institutions (a stock exchange, a central bank's settlement system, a
+#: futures exchange) that vacanza/holidays 0.101 registers under several
+#: interchangeable codes for the *same* calendar (its MIC/ticker plus any
+#: short-name aliases). Rather than duplicate one calendar's rules across
+#: several identical ``.tab`` files, each alias here resolves to the single
+#: canonical code that owns the shipped file. ``jurisdiction`` stays
+#: free-form (no 2-letter assumption anywhere in the loader), so this is a
+#: pure lookup layered in front of the ``.tab`` path resolution.
+MARKET_ALIASES: Dict[str, str] = {
+    # European Central Bank / TARGET2 settlement calendar -- vacanza's XECB.
+    "ECB": "XECB",
+    "TAR": "XECB",
+    # New York Stock Exchange -- vacanza's XNYS.
+    "NYSE": "XNYS",
+}
+
 
 def _calendar_for(jurisdiction: str) -> HolidayCalendar:
     key = jurisdiction.upper()
+    key = MARKET_ALIASES.get(key, key)
     if key not in _CACHE:
         path = os.path.join(_DATA_DIR, f"{key.lower()}.tab")
         if not os.path.exists(path):
