@@ -309,6 +309,23 @@ class Resolver:
                               self._consumed(match))
         return None
 
+    def _resolve_weekend_ref(self, match, anchor):
+        """"this/next/last weekend": the Saturday-Sunday of the anchor's
+        week, shifted a whole week per the relative marker.  A two-day span,
+        Saturday midnight to Monday midnight; the two-day width reads as the
+        weekend it names, not the seven-day week.
+        """
+        rel_tok = match.slots.get("REL_MARKER")
+        rel = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
+        base = _midnight(anchor)
+        start_idx = _WEEK_START.get(self.conventions.week_start, 0)
+        week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
+        saturday = week_start + timedelta(days=(5 - start_idx) % 7)
+        sat = saturday + timedelta(weeks=rel)
+        s = AstroDate.from_datetime(sat)
+        return Resolution(DateSpan(s, s + timedelta(days=2)),
+                          self._consumed(match))
+
     def _resolve_calendar_date(self, match, anchor):
         month = self.spec.months[match.slots["MONTH"].text]
         day_tok = match.slots.get("DAY")

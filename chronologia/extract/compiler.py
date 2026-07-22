@@ -64,6 +64,9 @@ PRECEDENCE: Dict[str, int] = {
     # "next week"/"this month"/"last year": the whole calendar period,
     # same tier as the weekday reference it generalises to coarser units
     "rel_period": 8,
+    # "this/next/last weekend": the named two-day span, a specific
+    # subdivision of the week that outranks a bare rel_period week
+    "weekend_ref": 8,
     # compound named-day / weekday offsets carry the 'after'/'from' connector
     # that a bare relative offset lacks, so they win the longer span
     "named_day_after": 8,

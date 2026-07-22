@@ -54,6 +54,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.text in spec.named_days
     if name == "REL_MARKER":
         return token.text in spec.rel_markers
+    if name == "WEEKEND":
+        return token.text in spec.weekend_words
     if name == "WEEKDAY":
         return token.text in spec.weekdays
     if name == "MONTH":

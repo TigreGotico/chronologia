@@ -32,7 +32,7 @@ import glob
 import json
 import os
 from importlib import import_module
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Set
 
 from ovos_spec_tools import LocaleResources
 
@@ -85,6 +85,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     period_parts: Dict[str, str] = {}
     decade_words: Dict[str, int] = {}
     clock_landmarks: Dict[str, int] = {}
+    weekend_words: Set[str] = set()
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
         base = os.path.basename(path)[:-len(".voc")]
@@ -172,6 +173,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             mins = int(base[len("clock_landmark_"):])
             for s in surfaces:
                 clock_landmarks[s] = mins
+        elif base == "special_weekend":
+            weekend_words.update(surfaces)
         elif base.startswith("cycle_"):
             # cycle_<key>_<n>.voc: day <n> (0-based) of the named day cycle
             key, _, num = base[len("cycle_"):].rpartition("_")
@@ -220,4 +223,5 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         regnal_names=regnal_names, roman_anchors=roman_anchors,
         periods=periods, scales=scales, period_parts=period_parts,
         decade_words=decade_words, clock_landmarks=clock_landmarks,
+        weekend_words=frozenset(weekend_words),
         quantifiers=quantifiers)
