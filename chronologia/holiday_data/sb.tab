@@ -33,3 +33,32 @@ decree        | King's Birthday                          | 2024-6-15 2025-6-13 2
 fixed         | Independence Day                         | 7 7                  | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | National Day of Thanksgiving             | 12 26                | public          |  |  |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# SB-CE
+fixed | Central Province Day | 6 29 | regional | SB-CE |  |  | 
+decree | Central Province Day (observed) | 2024-6-28 2025-6-30 | regional | SB-CE |  |  | 
+# SB-CH
+fixed | Choiseul Province Day (observed) | 2 26 | regional | SB-CH |  |  | 
+fixed | Choiseul Province Day | 2 25 | regional | SB-CH |  |  | 
+# SB-GU
+fixed | Guadalcanal Province Day | 8 1 | regional | SB-GU |  |  | 
+# SB-IS
+fixed | Isabel Province Day | 6 2 | regional | SB-IS |  |  | 
+fixed | Isabel Province Day (observed) | 6 3 | regional | SB-IS |  |  | 
+# SB-MK
+decree | Makira-Ulawa Province Day (observed) | 2024-8-2 2025-8-4 | regional | SB-MK |  |  | 
+fixed | Makira-Ulawa Province Day | 8 3 | regional | SB-MK |  |  | 
+# SB-ML
+fixed | Malaita Province Day | 8 15 | regional | SB-ML |  |  | 
+# SB-RB
+fixed | Rennell and Bellona Province Day | 7 20 | regional | SB-RB |  |  | 
+decree | Rennell and Bellona Province Day (observed) | 2024-7-19 2025-7-21 | regional | SB-RB |  |  | 
+# SB-TE
+fixed | Temotu Province Day | 6 8 | regional | SB-TE |  |  | 
+fixed | Temotu Province Day (observed) | 6 7 | regional | SB-TE |  |  | 
+easter | Whit Monday | 50 | regional religious | SB-TE |  |  | 
+fixed | Temotu Province Day (observed); Whit Monday | 6 9 | regional religious | SB-TE |  |  | 
+# SB-WE
+fixed | Western Province Day | 12 7 | regional | SB-WE |  |  | 
+decree | Western Province Day (observed) | 2024-12-6 2025-12-8 | regional | SB-WE |  |  | 

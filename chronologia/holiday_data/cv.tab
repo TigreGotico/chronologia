@@ -45,3 +45,53 @@ fixed         | Dia do Natal                             | 12 25                
 decree | Quinta-Feira Santa | 2024-3-28 2025-4-17 | optional |  |  |  |
 decree | Dia das Mães | 2024-5-12 2025-5-11 | optional |  |  |  |
 decree | Dia dos Pais | 2024-6-16 2025-6-15 | optional |  |  |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# CV-BR
+fixed | Dia do Município da Brava | 6 24 | regional | CV-BR |  |  | 
+# CV-BV
+fixed | Dia do Município da Boa Vista | 7 4 | regional | CV-BV |  |  | 
+# CV-CA
+fixed | Dia do Município de Santa Catarina de Santiago | 11 25 | regional religious | CV-CA |  |  | 
+# CV-CF
+fixed | Dia do Município de Santa Catarina do Fogo | 11 25 | regional religious | CV-CF |  |  | 
+# CV-CR
+fixed | Dia do Município de Santa Cruz | 7 25 | regional religious | CV-CR |  |  | 
+# CV-MA
+fixed | Dia do Município do Maio | 9 8 | regional | CV-MA |  |  | 
+# CV-MO
+fixed | Dia da Assunção; Dia do Município dos Mosteiros | 8 15 | regional | CV-MO |  |  | 
+# CV-PA
+fixed | Dia da Ilha de Santo Antão | 1 17 | regional religious | CV-PA |  |  | 
+fixed | Dia do Município do Paúl | 6 13 | regional | CV-PA |  |  | 
+# CV-PN
+fixed | Dia do Município do Porto Novo | 9 2 | regional | CV-PN |  |  | 
+fixed | Dia da Ilha de Santo Antão | 1 17 | regional religious | CV-PN |  |  | 
+# CV-PR
+fixed | Dia do Município da Praia | 5 19 | regional | CV-PR |  |  | 
+# CV-RB
+fixed | Dia do Município de Ribeira Brava | 12 6 | regional | CV-RB |  |  | 
+# CV-RG
+fixed | Dia da Ilha de Santo Antão | 1 17 | regional religious | CV-RG |  |  | 
+fixed | Dia do Município de Ribeira Grande | 5 7 | regional | CV-RG |  |  | 
+# CV-RS
+fixed | Dia do Município de Ribeira Grande de Santiago | 1 31 | regional | CV-RS |  |  | 
+# CV-SD
+fixed | Dia do Município de São Domingos | 3 13 | regional religious | CV-SD |  |  | 
+# CV-SF
+fixed | Dia do Município de São Filipe; Dia do Trabalhador | 5 1 | regional religious | CV-SF |  |  | 
+# CV-SL
+fixed | Dia do Município do Sal | 9 15 | regional | CV-SL |  |  | 
+# CV-SM
+fixed | Dia do Município de São Miguel | 9 29 | regional religious | CV-SM |  |  | 
+# CV-SO
+fixed | Dia do Município de São Lourenço dos Órgãos | 5 9 | regional religious | CV-SO |  |  | 
+# CV-SS
+fixed | Dia do Município de São Salvador do Mundo | 7 19 | regional religious | CV-SS |  |  | 
+# CV-SV
+easter | Terça-feira de Carnaval | -47 | regional religious | CV-SV |  |  | 
+fixed | Dia do Município de São Vicente | 1 22 | regional religious | CV-SV |  |  | 
+# CV-TA
+fixed | Dia do Município do Tarrafal de Santiago | 1 15 | regional | CV-TA |  |  | 
+# CV-TS
+fixed | Dia do Município do Tarrafal de São Nicolau | 8 2 | regional religious | CV-TS |  |  | 

@@ -33,3 +33,23 @@ fixed         | Tutokotasi (2)                           | 10 2                 
 decree        | Aso Tamaliki                             | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | public          |  |  |  |
 fixed         | Kilisimasi                               | 12 25                | public          |  |  |  |
 fixed         | Aso Faipele                              | 12 26                | public          |  |  |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# TV-FUN
+fixed | Te Aso o te Paula | 4 23 | regional | TV-FUN |  |  | 
+fixed | Aso o te matagi | 10 21 | regional | TV-FUN |  |  | 
+# TV-NIT
+fixed | Te Aso o te Setema | 9 17 | regional | TV-NIT |  |  | 
+# TV-NKF
+fixed | Te Aso O Tutasi | 2 11 | regional | TV-NKF |  |  | 
+# TV-NKL
+decree | Te Aso o te Tala Lei | 2024-5-10 2024-5-13 2025-5-10 2025-5-12 2026-5-10 2026-5-11 2027-5-10 | regional | TV-NKL |  |  | 
+# TV-NMA
+fixed | Te Po o Tefolaha | 1 8 | regional | TV-NMA |  |  | 
+fixed | Po Lahi | 2 3 | regional | TV-NMA |  |  | 
+# TV-NMG
+fixed | Aho o te Fakavae | 4 15 | regional | TV-NMG |  |  | 
+# TV-NUI
+fixed | Bogin te Ieka | 2 16 | regional | TV-NUI |  |  | 
+# TV-VAI
+fixed | Te Aso Fiafia | 11 25 | regional | TV-VAI |  |  | 

@@ -57,3 +57,76 @@ fixed  | Véspera de Ano-Novo | 12 31 | optional |  |  |  |
 # that permits vacanza-derived data when flagged as such (retrieved
 # 2026-07-22). ---
 decree | Início da Quaresma | 2024-2-14 2025-3-5 | optional |  |  |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# BR-AC
+decree | Assinatura do Tratado de Petrópolis | 2024-11-17 2025-11-17 2026-11-20 2027-11-19 | regional | BR-AC |
+fixed | Aniversário do Acre | 6 15 | regional | BR-AC | 
+decree | Dia da Amazônia | 2024-9-6 2025-9-5 2026-9-5 2027-9-5 | regional | BR-AC | 
+fixed | Dia Internacional da Mulher | 3 8 | regional | BR-AC | 
+decree | Dia do Evangélico | 2024-1-26 2025-1-24 2026-1-23 2027-1-23 | regional | BR-AC | 
+# BR-AL
+fixed | São Pedro | 6 29 | regional religious | BR-AL | 
+fixed | Emancipação Política de Alagoas | 9 16 | regional | BR-AL | 
+fixed | Dia do Evangélico | 11 30 | regional | BR-AL | 
+fixed | São João | 6 24 | regional religious | BR-AL | 
+# BR-AM
+fixed | Elevação do Amazonas à categoria de província | 9 5 | regional | BR-AM | 
+# BR-AP
+fixed | São José | 3 19 | regional religious | BR-AP | 
+fixed | São Tiago | 7 25 | regional religious | BR-AP | 
+fixed | Criação do Território Federal | 9 13 | regional | BR-AP | 
+# BR-BA
+fixed | Independência da Bahia | 7 2 | regional | BR-BA | 
+# BR-CE
+fixed | São José | 3 19 | regional religious | BR-CE | 
+fixed | Abolição da escravidão no Ceará | 3 25 | regional | BR-CE | 
+fixed | Nossa Senhora da Assunção | 8 15 | regional religious | BR-CE | 
+# BR-DF
+fixed | Dia do Evangélico | 11 30 | regional | BR-DF | 
+fixed | Fundação de Brasília; Tiradentes | 4 21 | regional | BR-DF | 
+# BR-ES
+easter | Nossa Senhora da Penha | 8 | regional religious | BR-ES | 
+# BR-GO
+fixed | Fundação da cidade de Goiás | 7 26 | regional | BR-GO | 
+fixed | Pedra fundamental de Goiânia | 10 24 | regional | BR-GO | 
+# BR-MA
+fixed | Adesão do Maranhão à independência do Brasil | 7 28 | regional | BR-MA | 
+# BR-MG
+fixed | Execução de Tiradentes; Tiradentes | 4 21 | regional | BR-MG | 
+# BR-MS
+fixed | Criação do Estado | 10 11 | regional | BR-MS | 
+# BR-PA
+fixed | Adesão do Grão-Pará à independência do Brasil | 8 15 | regional | BR-PA | 
+# BR-PB
+fixed | Fundação do Estado | 8 5 | regional | BR-PB | 
+# BR-PE
+fixed | Revolução Pernambucana de 1817 | 3 6 | regional | BR-PE | 
+# BR-PI
+fixed | Dia do Piauí | 10 19 | regional | BR-PI | 
+# BR-PR
+fixed | Nossa Senhora do Rocio; Proclamação da República | 11 15 | regional religious | BR-PR | 
+# BR-RJ
+easter | Carnaval | -47 | regional religious | BR-RJ | 
+fixed | São Jorge | 4 23 | regional religious | BR-RJ | 
+# BR-RN
+fixed | Mártires de Cunhaú e Uruaçu | 10 3 | regional | BR-RN | 
+fixed | Dia do Rio Grande do Norte | 8 7 | regional | BR-RN | 
+# BR-RO
+fixed | Dia do Evangélico | 6 18 | regional | BR-RO | 
+fixed | Criação do Estado | 1 4 | regional | BR-RO | 
+# BR-RR
+fixed | Criação do Estado | 10 5 | regional | BR-RR | 
+# BR-RS
+fixed | Dia do Gaúcho | 9 20 | regional | BR-RS | 
+# BR-SC
+decree | Dia de Santa Catarina de Alexandria | 2024-12-1 2025-11-30 2026-11-29 2027-11-28 | regional religious | BR-SC | 
+decree | Dia do Estado de Santa Catarina | 2024-8-11 2025-8-17 2026-8-16 2027-8-15 | regional religious | BR-SC | 
+# BR-SE
+fixed | Emancipação política de Sergipe | 7 8 | regional | BR-SE | 
+# BR-SP
+fixed | Revolução Constitucionalista | 7 9 | regional | BR-SP | 
+# BR-TO
+fixed | Dia da Autonomia | 3 18 | regional | BR-TO | 
+fixed | Criação do Estado | 10 5 | regional | BR-TO | 
+fixed | Nossa Senhora da Natividade | 9 8 | regional religious | BR-TO | 

@@ -99,3 +99,94 @@ decree | Bahag Bihu; Vaisakhadi | 2025-4-15 | optional |  |  |  |
 decree | Janmashtami (Smarta); Parsi New Year | 2025-8-15 | optional |  |  |  |
 decree | Dussehra (Mahashtami) | 2025-9-30 | optional |  |  |  |
 decree | Dussehra (Mahanavami) | 2025-10-1 | optional |  |  |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# IN-AN
+fixed | Milad-un-Nabi | 9 16 | regional religious | IN-AN | 
+decree | Milad-un-Nabi; Onam | 2025-9-5 2026-8-26 | regional religious | IN-AN | 
+easter | Onam | 168 | regional religious | IN-AN | 
+# IN-AP
+fixed | Andhra Pradesh Foundation Day | 11 1 | regional | IN-AP | 
+decree | Ugadi | 2024-4-9 2025-3-30 2026-3-19 2027-4-7 | regional religious | IN-AP | 
+# IN-AS
+fixed | Assam Day | 12 2 | regional | IN-AS | 
+decree | Magh Bihu | 2024-1-14 2025-1-14 2026-1-14 2027-1-15 | regional | IN-AS | 
+# IN-BR
+decree | Chhath Puja | 2024-11-7 2025-10-28 2026-11-15 2027-11-4 | regional | IN-BR | 
+fixed | Bihar Day | 3 22 | regional | IN-BR | 
+# IN-CG
+fixed | Chhattisgarh Foundation Day | 11 1 | regional | IN-CG | 
+# IN-DL
+decree | Chhath Puja | 2024-11-7 2025-10-28 2026-11-15 2027-11-4 | regional | IN-DL | 
+# IN-GA
+fixed | Goa Liberation Day | 12 19 | regional | IN-GA | 
+# IN-GJ
+decree | Diwali (Deepavali) | 2025-10-20 2026-11-8 2027-10-29 | regional religious | IN-GJ | 
+fixed | Diwali (Deepavali); Sardar Vallabhbhai Patel Jayanti | 10 31 | regional religious | IN-GJ | 
+decree | Uttarayan | 2024-1-14 2025-1-14 2026-1-14 2027-1-15 | regional | IN-GJ | 
+fixed | Independence Day; Parsi New Year (Shahenshahi) | 8 15 | regional | IN-GJ | 
+fixed | Gujarat Day | 5 1 | regional | IN-GJ | 
+fixed | Sardar Vallabhbhai Patel Jayanti | 10 31 | regional | IN-GJ | 
+# IN-HP
+fixed | Himachal Day | 4 15 | regional | IN-HP | 
+# IN-HR
+fixed | Haryana Foundation Day | 11 1 | regional | IN-HR | 
+# IN-JH
+decree | Chhath Puja | 2024-11-7 2025-10-28 2026-11-15 2027-11-4 | regional | IN-JH |
+fixed | Jharkhand Formation Day | 11 15 | regional | IN-JH | 
+fixed | Guru Nanak's Jayanti; Jharkhand Formation Day | 11 15 | regional | IN-JH | 
+decree | Guru Nanak's Jayanti | 2025-11-5 2026-11-24 2027-11-14 | regional | IN-JH | 
+# IN-KA
+fixed | Karnataka Rajyotsava | 11 1 | regional | IN-KA | 
+decree | Ugadi | 2024-4-9 2025-3-30 2026-3-19 2027-4-7 | regional religious | IN-KA | 
+# IN-KL
+fixed | Milad-un-Nabi | 9 16 | regional religious | IN-KL | 
+decree | Milad-un-Nabi; Onam | 2025-9-5 2026-8-26 | regional religious | IN-KL | 
+fixed | Kerala Foundation Day | 11 1 | regional | IN-KL | 
+easter | Onam | 168 | regional religious | IN-KL | 
+# IN-MH
+decree | Gudi Padwa | 2024-4-9 2025-3-30 2026-3-19 2027-4-7 | regional religious | IN-MH | 
+fixed | Chhatrapati Shivaji Maharaj Jayanti | 2 19 | regional | IN-MH | 
+fixed | Independence Day; Parsi New Year (Shahenshahi) | 8 15 | regional | IN-MH | 
+fixed | Maharashtra Day | 5 1 | regional | IN-MH | 
+# IN-MP
+fixed | Madhya Pradesh Foundation Day | 11 1 | regional | IN-MP | 
+# IN-MZ
+fixed | Mizoram State Day | 2 20 | regional | IN-MZ | 
+# IN-NL
+fixed | Nagaland State Inauguration Day | 12 1 | regional | IN-NL | 
+# IN-OD
+fixed | Maha Vishuva Sankranti / Pana Sankranti | 4 15 | regional | IN-OD | 
+fixed | Odisha Day (Utkala Dibasa) | 4 1 | regional | IN-OD | 
+# IN-PB
+decree | Guru Gobind Singh Jayanti | 2024-1-17 2025-1-6 2025-12-27 2027-1-15 | regional | IN-PB | 
+decree | Lohri | 2024-1-13 2025-1-13 2026-1-13 2027-1-14 | regional | IN-PB | 
+fixed | New Punjab Day | 11 1 | regional | IN-PB | 
+fixed | Vaisakhi | 4 13 | regional religious | IN-PB | 
+# IN-PY
+fixed | Puducherry De Jure Transfer Day | 8 16 | regional | IN-PY | 
+decree | Janmashtami (Vaishnava) | 2024-8-26 2026-9-4 2027-8-25 | regional | IN-PY | 
+fixed | Puducherry Liberation Day | 11 1 | regional | IN-PY | 
+fixed | Janmashtami (Vaishnava); Puducherry De Jure Transfer Day | 8 16 | regional | IN-PY | 
+# IN-RJ
+fixed | Rajasthan Day | 3 30 | regional | IN-RJ | 
+decree | Maharana Pratap Jayanti | 2024-6-9 2025-5-29 2026-6-17 2027-6-7 | regional | IN-RJ | 
+# IN-SK
+fixed | Sikkim State Day | 5 16 | regional | IN-SK | 
+# IN-TN
+decree | Pongal | 2024-1-15 2025-1-14 2026-1-14 2027-1-15 | regional religious | IN-TN | 
+decree | Thiruvalluvar Day / Mattu Pongal | 2024-1-16 2025-1-15 2026-1-15 2027-1-16 | regional religious | IN-TN | 
+fixed | Dr. B. R. Ambedkar's Jayanti; Puthandu (Tamil New Year) | 4 14 | regional | IN-TN | 
+decree | Uzhavar Thirunal | 2024-1-17 2025-1-16 2026-1-16 2027-1-17 | regional | IN-TN | 
+# IN-TS
+fixed | Bathukamma Festival; Mahatma Gandhi's Jayanti | 10 2 | regional | IN-TS | 
+fixed | Telangana Formation Day | 6 2 | regional | IN-TS | 
+decree | Bonalu | 2024-7-29 2025-7-21 2026-8-10 2027-8-2 | regional | IN-TS | 
+decree | Bathukamma Festival | 2025-9-21 2026-10-10 2027-9-29 | regional | IN-TS | 
+decree | Ugadi | 2024-4-9 2025-3-30 2026-3-19 2027-4-7 | regional religious | IN-TS | 
+# IN-UP
+decree | Chhath Puja | 2024-11-7 2025-10-28 2026-11-15 2027-11-4 | regional | IN-UP | 
+fixed | UP Formation Day | 1 24 | regional | IN-UP | 
+# IN-WB
+fixed | Rabindra Jayanti | 5 9 | regional | IN-WB | 
+fixed | Pohela Boishakh | 4 15 | regional | IN-WB | 

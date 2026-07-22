@@ -40,3 +40,127 @@ decree | Tahun Baharu Cina              | 2023-01-22 2024-02-10 2025-01-29 2026-
 decree | Tahun Baharu Cina (Hari Kedua) | 2023-01-23 2024-02-11 2025-01-30 2026-02-18 | public religious |  |
 decree | Hari Wesak                     | 2023-05-04 2024-05-22 2025-05-12 2026-05-31 | public religious |  |
 decree | Hari Deepavali                 | 2023-11-12 2024-10-31 2025-10-20 | public religious |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# MY-01
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-01 |  |  | 
+decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-01 |  |  | 
+decree | Hari Hol Almarhum Sultan Iskandar | 2024-8-11 2025-7-31 2026-7-21 | regional | MY-01 |  |  | 
+decree | Awal Ramadan | 2024-3-12 2025-3-2 2026-2-19 | regional | MY-01 |  |  | 
+fixed | Cuti Awal Ramadan | 3 3 | regional | MY-01 |  |  | 
+fixed | Hari Keputeraan Sultan Johor | 3 23 | regional | MY-01 |  |  | 
+# MY-02
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-02 |  |  | 
+decree | Israk dan Mikraj | 2024-2-8 2025-1-27 2026-1-17 | regional religious | MY-02 |  |  | 
+decree | Hari Keputeraan Sultan Kedah | 2024-6-30 2025-6-15 2026-6-21 2027-6-20 | regional | MY-02 |  |  | 
+decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-02 |  |  | 
+decree | Awal Ramadan | 2024-3-12 2025-3-2 2026-2-19 | regional | MY-02 |  |  | 
+fixed | Cuti Hari Keputeraan Nabi Muhammad S.A.W. | 9 7 | regional religious | MY-02 |  |  | 
+decree | Hari Raya Qurban (Hari Kedua) | 2024-6-18 2025-6-8 2026-5-28 | regional religious | MY-02 |  |  | 
+# MY-03
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-03 |  |  | 
+decree | Hari Keputeraan Sultan Kelantan | 2024-9-29 2024-9-30 2025-9-29 2025-9-30 2026-9-29 2026-9-30 2027-9-29 2027-9-30 | regional | MY-03 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-03 |  |  | 
+fixed | Cuti Hari Raya Qurban | 6 9 | regional religious | MY-03 |  |  | 
+fixed | Cuti Hari Kebangsaan | 9 1 | regional | MY-03 |  |  | 
+decree | Hari Raya Qurban (Hari Kedua) | 2024-6-18 2025-6-8 2026-5-28 | regional religious | MY-03 |  |  | 
+decree | Hari Arafah | 2024-6-16 2025-6-6 2026-5-26 | regional religious | MY-03 |  |  | 
+fixed | Cuti Tahun Baharu Cina | 2 12 | regional | MY-03 |  |  | 
+# MY-04
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-04 |  |  | 
+decree | Hari Raya Puasa (Hari Ketiga) | 2025-4-2 2026-3-23 | regional | MY-04 |  |  | 
+fixed | Cuti Hari Jadi Yang di-Pertua Negeri Melaka | 8 25 | regional | MY-04 |  |  | 
+fixed | Hari Pengisytiharan Tarikh Kemerdekaan | 2 20 | regional | MY-04 |  |  | 
+fixed | Awal Ramadan | 3 12 | regional | MY-04 |  |  | 
+fixed | Hari Jadi Yang di-Pertua Negeri Melaka | 8 24 | regional | MY-04 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-04 |  |  | 
+# MY-05
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-05 |  |  | 
+decree | Israk dan Mikraj | 2024-2-8 2025-1-27 2026-1-17 | regional religious | MY-05 |  |  | 
+decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-05 |  |  | 
+fixed | Hari Keputeraan Yang di-Pertuan Besar Negeri Sembilan | 1 14 | regional | MY-05 |  |  | 
+fixed | Cuti Hari Keputeraan Yang di-Pertuan Besar Negeri Sembilan | 1 15 | regional | MY-05 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-05 |  |  | 
+# MY-06
+fixed | Hari Keputeraan Sultan Pahang | 7 30 | regional | MY-06 |  |  | 
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-06 |  |  | 
+decree | Hari Wesak | 2025-5-12 2026-5-31 | regional | MY-06 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-06 |  |  | 
+fixed | Hari Hol Sultan Pahang; Hari Wesak | 5 22 | regional | MY-06 |  |  | 
+fixed | Hari Hol Sultan Pahang | 5 22 | regional | MY-06 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-06 |  |  | 
+# MY-07
+fixed | Awal Muharam; Hari Ulang Tahun Perisytiharan Tapak Warisan Dunia | 7 7 | regional | MY-07 |  |  | 
+decree | Hari Jadi Yang di-Pertua Negeri Pulau Pinang | 2024-7-13 2025-7-12 2026-7-11 2027-7-10 | regional | MY-07 |  |  | 
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-07 |  |  | 
+decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-07 |  |  | 
+fixed | Cuti Awal Muharam; Cuti Hari Ulang Tahun Perisytiharan Tapak Warisan Dunia | 7 8 | regional | MY-07 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-07 |  |  | 
+fixed | Hari Ulang Tahun Perisytiharan Tapak Warisan Dunia | 7 7 | regional | MY-07 |  |  | 
+decree | Awal Muharam | 2025-6-27 2026-6-17 | regional | MY-07 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-07 |  |  | 
+# MY-08
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-08 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-08 |  |  | 
+decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-08 |  |  | 
+decree | Hari Keputeraan Sultan Perak | 2024-11-1 2025-11-7 2026-11-6 2027-11-5 | regional | MY-08 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-08 |  |  | 
+# MY-09
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-09 |  |  | 
+decree | Israk dan Mikraj | 2024-2-8 2025-1-27 2026-1-17 | regional religious | MY-09 |  |  | 
+fixed | Hari Ulang Tahun Keputeraan Raja Perlis | 5 17 | regional | MY-09 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-09 |  |  | 
+fixed | Cuti Hari Raya Qurban (Hari Kedua) | 6 9 | regional religious | MY-09 |  |  | 
+decree | Hari Raya Qurban (Hari Kedua) | 2024-6-18 2025-6-8 2026-5-28 | regional religious | MY-09 |  |  | 
+# MY-10
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-10 |  |  | 
+fixed | Hari Keputeraan Sultan Selangor | 12 11 | regional | MY-10 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-10 |  |  | 
+decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-10 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-10 |  |  | 
+# MY-11
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-11 |  |  | 
+fixed | Hari Ulang Tahun Pertabalan Sultan Terengganu | 3 4 | regional | MY-11 |  |  | 
+fixed | Cuti Hari Keputeraan Sultan Terengganu | 4 27 | regional | MY-11 |  |  | 
+decree | Israk dan Mikraj | 2024-2-8 2025-1-27 2026-1-17 | regional religious | MY-11 |  |  | 
+fixed | Hari Keputeraan Sultan Terengganu | 4 26 | regional | MY-11 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-11 |  |  | 
+fixed | Cuti Hari Raya Qurban | 6 9 | regional religious | MY-11 |  |  | 
+fixed | Cuti Hari Kebangsaan | 9 1 | regional | MY-11 |  |  | 
+decree | Hari Raya Qurban (Hari Kedua) | 2024-6-18 2025-6-8 2026-5-28 | regional religious | MY-11 |  |  | 
+decree | Hari Arafah | 2024-6-16 2025-6-6 2026-5-26 | regional religious | MY-11 |  |  | 
+fixed | Cuti Tahun Baharu Cina | 2 12 | regional | MY-11 |  |  | 
+# MY-12
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-12 |  |  | 
+decree | Pesta Kaamatan | 2024-5-30 2024-5-31 2025-5-30 2025-5-31 2026-5-30 2027-5-30 2027-5-31 | regional | MY-12 |  |  | 
+decree | Hari Jadi Yang di-Pertua Negeri Sabah | 2024-10-5 2025-3-30 2026-3-30 2027-3-30 | regional | MY-12 |  |  | 
+fixed | Krismas (Eve) | 12 24 | regional | MY-12 |  |  | 
+easter | Good Friday | -2 | regional religious | MY-12 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-12 |  |  | 
+# MY-13
+decree | Cuti Perayaan Hari Gawai Dayak | 2024-6-4 2025-6-3 | regional | MY-13 |  |  | 
+decree | Hari Jadi Yang di-Pertua Negeri Sarawak | 2024-10-12 2025-10-11 2026-10-10 2027-10-9 | regional | MY-13 |  |  | 
+easter | Good Friday | -2 | regional religious | MY-13 |  |  | 
+fixed | Hari Kemerdekaan Sarawak | 7 22 | regional | MY-13 |  |  | 
+decree | Hari Keputeraan Rasmi Seri Paduka Baginda Yang di-Pertuan Agong | 2024-6-3 2026-6-1 2027-6-7 | regional | MY-13 |  |  | 
+decree | Hari Keputeraan Rasmi Seri Paduka Baginda Yang di-Pertuan Agong; Perayaan Hari Gawai Dayak | 2025-6-2 2026-6-1 | regional | MY-13 |  |  | 
+decree | Perayaan Hari Gawai Dayak | 2024-6-1 2024-6-2 2025-6-1 2026-6-2 2027-6-1 2027-6-2 | regional | MY-13 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-13 |  |  | 
+# MY-14
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-14 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-14 |  |  | 
+decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-14 |  |  | 
+fixed | Hari Wilayah Persekutuan | 2 1 | regional | MY-14 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-14 |  |  | 
+# MY-15
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-15 |  |  | 
+decree | Pesta Kaamatan | 2024-5-30 2024-5-31 2025-5-30 2025-5-31 2026-5-30 2027-5-30 2027-5-31 | regional | MY-15 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-15 |  |  | 
+fixed | Hari Wilayah Persekutuan | 2 1 | regional | MY-15 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-15 |  |  | 
+# MY-16
+decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-16 |  |  | 
+decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-16 |  |  | 
+decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-16 |  |  | 
+fixed | Hari Wilayah Persekutuan | 2 1 | regional | MY-16 |  |  | 
+fixed | Tahun Baharu | 1 1 | regional | MY-16 |  |  | 
