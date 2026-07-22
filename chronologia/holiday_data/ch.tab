@@ -76,3 +76,185 @@ easter  | Fronleichnam     | 60    | regional religious | CH-VS |
 fixed   | Mariä Himmelfahrt | 8 15 | regional religious | CH-VS |
 fixed   | Allerheiligen    | 11 1  | regional religious | CH-VS |
 fixed   | Mariä Empfängnis | 12 8  | regional religious | CH-VS |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# CH-AG
+easter | Ostermontag | 1 | regional religious | CH-AG | 
+fixed | Berchtoldstag | 1 2 | regional | CH-AG | 
+easter | Fronleichnam | 60 | regional religious | CH-AG | 
+easter | Pfingstmontag | 50 | regional religious | CH-AG | 
+easter | Karfreitag | -2 | regional religious | CH-AG | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-AG | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-AG | 
+fixed | Stephanstag | 12 26 | regional | CH-AG | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-AG | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-AG | 
+# CH-AI
+easter | Ostermontag | 1 | regional religious | CH-AI | 
+easter | Fronleichnam | 60 | regional religious | CH-AI | 
+easter | Pfingstmontag | 50 | regional religious | CH-AI | 
+easter | Karfreitag | -2 | regional religious | CH-AI | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-AI | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-AI | 
+fixed | Stephanstag | 12 26 | regional | CH-AI | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-AI | 
+# CH-AR
+easter | Ostermontag | 1 | regional religious | CH-AR | 
+easter | Pfingstmontag | 50 | regional religious | CH-AR | 
+easter | Karfreitag | -2 | regional religious | CH-AR | 
+fixed | Stephanstag | 12 26 | regional | CH-AR | 
+# CH-BE
+easter | Ostermontag | 1 | regional religious | CH-BE | 
+easter | Pfingstmontag | 50 | regional religious | CH-BE | 
+easter | Karfreitag | -2 | regional religious | CH-BE | 
+fixed | Stephanstag | 12 26 | regional | CH-BE | 
+fixed | Berchtoldstag | 1 2 | regional | CH-BE | 
+# CH-BL
+easter | Ostermontag | 1 | regional religious | CH-BL | 
+easter | Pfingstmontag | 50 | regional religious | CH-BL | 
+easter | Karfreitag | -2 | regional religious | CH-BL | 
+fixed | Stephanstag | 12 26 | regional | CH-BL | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-BL | 
+# CH-BS
+easter | Ostermontag | 1 | regional religious | CH-BS | 
+easter | Pfingstmontag | 50 | regional religious | CH-BS | 
+easter | Karfreitag | -2 | regional religious | CH-BS | 
+fixed | Stephanstag | 12 26 | regional | CH-BS | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-BS | 
+# CH-FR
+easter | Karfreitag | -2 | regional religious | CH-FR | 
+# CH-GE
+easter | Ostermontag | 1 | regional religious | CH-GE | 
+easter | Pfingstmontag | 50 | regional religious | CH-GE | 
+easter | Karfreitag | -2 | regional religious | CH-GE | 
+fixed | Wiederherstellung der Republik | 12 31 | regional | CH-GE | 
+decree | Genfer Bettag | 2024-9-5 2025-9-11 2026-9-10 2027-9-9 | regional | CH-GE | 
+# CH-GL
+easter | Ostermontag | 1 | regional religious | CH-GL | 
+easter | Karfreitag | -2 | regional religious | CH-GL | 
+easter | Pfingstmontag | 50 | regional religious | CH-GL | 
+fixed | Stephanstag | 12 26 | regional | CH-GL | 
+decree | Näfelser Fahrt | 2024-4-4 2025-4-3 2026-4-9 2027-4-1 | regional | CH-GL | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-GL | 
+# CH-GR
+easter | Ostermontag | 1 | regional religious | CH-GR | 
+easter | Pfingstmontag | 50 | regional religious | CH-GR | 
+fixed | Stephanstag | 12 26 | regional | CH-GR | 
+# CH-JU
+easter | Ostermontag | 1 | regional religious | CH-JU | 
+fixed | Berchtoldstag | 1 2 | regional | CH-JU | 
+easter | Fronleichnam | 60 | regional religious | CH-JU | 
+easter | Pfingstmontag | 50 | regional religious | CH-JU | 
+easter | Karfreitag | -2 | regional religious | CH-JU | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-JU | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-JU | 
+fixed | Fest der Unabhängigkeit | 6 23 | regional | CH-JU | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-JU | 
+# CH-LU
+easter | Ostermontag | 1 | regional religious | CH-LU | 
+easter | Fronleichnam | 60 | regional religious | CH-LU | 
+easter | Pfingstmontag | 50 | regional religious | CH-LU | 
+easter | Karfreitag | -2 | regional religious | CH-LU | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-LU | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-LU | 
+fixed | Stephanstag | 12 26 | regional | CH-LU | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-LU | 
+fixed | Berchtoldstag | 1 2 | regional | CH-LU | 
+# CH-NE
+easter | Fronleichnam | 60 | regional religious | CH-NE | 
+easter | Karfreitag | -2 | regional religious | CH-NE | 
+fixed | Jahrestag der Ausrufung der Republik | 3 1 | regional | CH-NE | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-NE | 
+# CH-NW
+easter | Fronleichnam | 60 | regional religious | CH-NW | 
+easter | Karfreitag | -2 | regional religious | CH-NW | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-NW | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-NW | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-NW | 
+fixed | Josefstag | 3 19 | regional | CH-NW | 
+# CH-OW
+easter | Fronleichnam | 60 | regional religious | CH-OW | 
+easter | Karfreitag | -2 | regional religious | CH-OW | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-OW | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-OW | 
+fixed | Bruder Klaus | 9 25 | regional | CH-OW | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-OW | 
+# CH-SG
+easter | Ostermontag | 1 | regional religious | CH-SG | 
+easter | Pfingstmontag | 50 | regional religious | CH-SG | 
+easter | Karfreitag | -2 | regional religious | CH-SG | 
+fixed | Stephanstag | 12 26 | regional | CH-SG | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-SG | 
+# CH-SH
+easter | Ostermontag | 1 | regional religious | CH-SH | 
+easter | Pfingstmontag | 50 | regional religious | CH-SH | 
+easter | Karfreitag | -2 | regional religious | CH-SH | 
+fixed | Stephanstag | 12 26 | regional | CH-SH | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-SH | 
+# CH-SO
+easter | Karfreitag | -2 | regional religious | CH-SO | 
+# CH-SZ
+easter | Ostermontag | 1 | regional religious | CH-SZ | 
+easter | Fronleichnam | 60 | regional religious | CH-SZ | 
+easter | Pfingstmontag | 50 | regional religious | CH-SZ | 
+easter | Karfreitag | -2 | regional religious | CH-SZ | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-SZ | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-SZ | 
+fixed | Stephanstag | 12 26 | regional | CH-SZ | 
+fixed | Heilige Drei Könige | 1 6 | regional religious | CH-SZ | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-SZ | 
+fixed | Josefstag | 3 19 | regional | CH-SZ | 
+# CH-TG
+easter | Ostermontag | 1 | regional religious | CH-TG | 
+easter | Karfreitag | -2 | regional religious | CH-TG | 
+easter | Pfingstmontag | 50 | regional religious | CH-TG | 
+fixed | Stephanstag | 12 26 | regional | CH-TG | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-TG | 
+fixed | Berchtoldstag | 1 2 | regional | CH-TG | 
+# CH-TI
+easter | Ostermontag | 1 | regional religious | CH-TI | 
+easter | Fronleichnam | 60 | regional religious | CH-TI | 
+easter | Pfingstmontag | 50 | regional religious | CH-TI | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-TI | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-TI | 
+fixed | Stephanstag | 12 26 | regional | CH-TI | 
+fixed | Heilige Drei Könige | 1 6 | regional religious | CH-TI | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-TI | 
+fixed | Peter und Paul | 6 29 | regional | CH-TI | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-TI | 
+fixed | Josefstag | 3 19 | regional | CH-TI | 
+# CH-UR
+easter | Ostermontag | 1 | regional religious | CH-UR | 
+easter | Fronleichnam | 60 | regional religious | CH-UR | 
+easter | Pfingstmontag | 50 | regional religious | CH-UR | 
+easter | Karfreitag | -2 | regional religious | CH-UR | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-UR | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-UR | 
+fixed | Stephanstag | 12 26 | regional | CH-UR | 
+fixed | Heilige Drei Könige | 1 6 | regional religious | CH-UR | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-UR | 
+fixed | Josefstag | 3 19 | regional | CH-UR | 
+# CH-VD
+easter | Ostermontag | 1 | regional religious | CH-VD | 
+easter | Pfingstmontag | 50 | regional religious | CH-VD | 
+easter | Karfreitag | -2 | regional religious | CH-VD | 
+decree | Bettagsmontag | 2024-9-16 2025-9-22 2026-9-21 2027-9-20 | regional | CH-VD | 
+fixed | Berchtoldstag | 1 2 | regional | CH-VD | 
+# CH-VS
+easter | Fronleichnam | 60 | regional religious | CH-VS | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-VS | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-VS | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-VS | 
+fixed | Josefstag | 3 19 | regional | CH-VS | 
+# CH-ZG
+easter | Fronleichnam | 60 | regional religious | CH-ZG | 
+easter | Karfreitag | -2 | regional religious | CH-ZG | 
+fixed | Mariä Empfängnis | 12 8 | regional religious | CH-ZG | 
+fixed | Mariä Himmelfahrt | 8 15 | regional religious | CH-ZG | 
+fixed | Allerheiligen | 11 1 | regional religious | CH-ZG | 
+# CH-ZH
+easter | Ostermontag | 1 | regional religious | CH-ZH | 
+easter | Pfingstmontag | 50 | regional religious | CH-ZH | 
+easter | Karfreitag | -2 | regional religious | CH-ZH | 
+fixed | Stephanstag | 12 26 | regional | CH-ZH | 
+fixed | Tag der Arbeit | 5 1 | regional | CH-ZH | 
