@@ -25,3 +25,25 @@ calendar_date | he:פסח ;; en:Pesach                                      | he
 calendar_date | he:שביעי של פסח ;; en:Pesach (Seventh Day)               | hebrew 1 21 | public religious |  |
 calendar_date | he:שבועות ;; en:Shavuot                                  | hebrew 3 6  | public religious |  |
 calendar_date | he:יום העצמאות ;; en:Yom Ha'atzmaut                      | hebrew 2 5  | public | | il_independence
+
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | he:חול המועד סוכות ;; en:Chol HaMoed Sukkot | 2024-10-18 2024-10-19 2024-10-20 2024-10-21 2024-10-22 2025-10-8 2025-10-9 2025-10-10 2025-10-11 2025-10-12 | optional |  |  |  |
+decree | he:סיגד ;; en:Sigd | 2024-11-30 2025-11-20 | optional |  |  |  |
+decree | he:פורים ;; en:Purim | 2024-3-24 2025-3-14 | optional |  |  |  |
+decree | he:חול המועד פסח ;; en:Chol HaMoed Pesach | 2024-4-24 2024-4-25 2024-4-26 2024-4-27 2024-4-28 2025-4-14 2025-4-15 2025-4-16 2025-4-17 2025-4-18 | optional |  |  |  |
+decree | he:יום הזיכרון לחללי מערכות ישראל ונפגעי פעולות האיבה (נצפה) ;; en:Yom HaZikaron (observed) | 2024-5-13 2025-4-30 | optional |  |  |  |
+decree | he:יום ירושלים ;; en:Jerusalem Day | 2024-6-5 2025-5-26 | optional |  |  |  |
+decree | he:תשעה באב ;; en:Tisha B'Av | 2024-8-13 2025-8-3 | optional |  |  |  |
+decree | he:חול המועד סוכות ;; en:Chol HaMoed Sukkot | 2024-10-18 2024-10-19 2024-10-20 2024-10-21 2024-10-22 2025-10-8 2025-10-9 2025-10-10 2025-10-11 2025-10-12 | school |  |  |  |
+decree | he:חנוכה ;; en:Hanukkah | 2024-12-26 2024-12-27 2024-12-28 2024-12-29 2024-12-30 2024-12-31 2025-1-1 2025-1-2 2025-12-15 2025-12-16 2025-12-17 2025-12-18 2025-12-19 2025-12-20 2025-12-21 2025-12-22 | school |  |  |  |
+decree | he:תענית אסתר (נצפה) ;; en:Fast of Esther (observed) | 2024-3-21 | school |  |  |  |
+decree | he:פורים ;; en:Purim | 2024-3-24 2025-3-14 | school |  |  |  |
+decree | he:חול המועד פסח ;; en:Chol HaMoed Pesach | 2024-4-24 2024-4-25 2024-4-26 2024-4-27 2024-4-28 2025-4-14 2025-4-15 2025-4-16 2025-4-17 2025-4-18 | school |  |  |  |
+decree | he:ל"ג בעומר ;; en:Lag BaOmer | 2024-5-26 2025-5-16 | school |  |  |  |
+decree | he:תענית אסתר ;; en:Fast of Esther | 2025-3-13 | school |  |  |  |

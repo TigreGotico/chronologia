@@ -34,3 +34,14 @@ decree        | Sikukuu ya Idd-ul-Fitr (inakadiriwa)| 2025-3-30           | publ
 decree        | Sikukuu ya Idd-ul-Fitr (inazingatiwa, inakadiriwa)| 2025-3-31           | public          |  |  |  |
 decree        | Siku ya Madaraka (imezingatiwa)    | 2025-6-2            | public          |  |  |  |
 fixed         | Siku ya Mazingira                  | 10 10               | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Diwali | 2024-10-31 2025-11-19 | hindu |  |  |  |
+decree | Idd-ul-Azha | 2024-6-17 | islamic |  |  |  |
+decree | Idd-ul-Azha (estimated) | 2025-6-6 | islamic |  |  |  |

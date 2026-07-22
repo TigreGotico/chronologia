@@ -197,6 +197,7 @@ CATEGORIES: FrozenSet[str] = frozenset({
     "armenian", "bank", "government", "half_day", "optional",
     "albanian", "bosnian", "roma", "serbian", "turkish", "vlach",
     "armed_forces", "hebrew", "islamic", "catholic", "orthodox", "unofficial",
+    "christian", "sabian", "yazidi", "hindu",
 })
 
 _EASTER_METHODS = ("gregorian", "julian_gregorian_date")

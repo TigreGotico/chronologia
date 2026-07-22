@@ -26,3 +26,25 @@ decree        | رأس السنة الهجرية                  | 2024-7-7 202
 decree        | عاشورة                             | 2024-7-16 2025-7-5  | public          |  |  |  |
 decree        | عيد المولد النبوي                  | 2024-9-15 2025-9-4  | public          |  |  |  |
 fixed         | عيد الثورة                         | 11 1                | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | عيد انتقال السيدة العذراء | 8 15 | christian |  |  |  |
+fixed  | عيد الميلاد | 12 25 | christian |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | إثنين الفصح | 2024-4-1 2025-4-21 | christian |  |  |  |
+decree | عيد الصعود | 2024-5-9 2025-5-29 | christian |  |  |  |
+decree | إثنين العنصرة | 2024-5-20 2025-6-9 | christian |  |  |  |
+decree | رأس السنة العبرية | 2024-10-3 2025-9-23 | hebrew |  |  |  |
+decree | يوم الغفران | 2024-10-12 2025-10-2 | hebrew |  |  |  |
+decree | عيد الفصح اليهودي | 2024-4-23 2025-4-13 | hebrew |  |  |  |

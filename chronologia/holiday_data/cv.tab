@@ -34,3 +34,14 @@ fixed         | Dia da Independência Nacional            | 7 5                 
 fixed         | Dia da Assunção                          | 8 15                 | public          |  |  |  |
 fixed         | Dia de Todos os Santos                   | 11 1                 | public          |  |  |  |
 fixed         | Dia do Natal                             | 12 25                | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Quinta-Feira Santa | 2024-3-28 2025-4-17 | optional |  |  |  |
+decree | Dia das Mães | 2024-5-12 2025-5-11 | optional |  |  |  |
+decree | Dia dos Pais | 2024-6-16 2025-6-15 | optional |  |  |  |

@@ -45,3 +45,57 @@ decree        | Dussehra          | 2023-10-24 2024-10-12 2025-10-2 2026-10-20 |
 decree        | Diwali (Deepavali)| 2023-11-12 2024-10-31 2025-10-20 2026-11-8 | public religious |  |
 decree        | Guru Nanak's Jayanti | 2023-11-27 2024-11-15 2025-11-5 2026-11-24 | public religious |  |
 decree        | Maha Shivaratri   | 2024-3-8 2025-2-26 2026-2-15             | public religious |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | New Year's Day | 1 1 | optional |  |  |  |
+fixed  | Shivaji's Jayanti | 2 19 | optional |  |  |  |
+fixed  | Vaisakhi | 4 13 | optional |  |  |  |
+fixed  | Guru Tegh Bahadur's Martyrdom Day | 11 24 | optional |  |  |  |
+fixed  | Christmas Eve | 12 24 | optional |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Guru Gobind Singh's Jayanti | 2024-1-17 2025-1-6 2025-12-27 | optional |  |  |  |
+decree | Lohri | 2024-1-13 | optional |  |  |  |
+decree | Makar Sankranti | 2024-1-14 | optional |  |  |  |
+decree | Magh Bihu; Pongal | 2024-1-15 | optional |  |  |  |
+decree | Basant Panchami / Sri Panchami | 2024-2-14 2025-2-2 | optional |  |  |  |
+decree | Guru Ravi Das's Jayanti | 2024-2-24 2025-2-12 | optional |  |  |  |
+decree | Swami Dayanand Saraswati's Jayanti | 2024-3-6 2025-2-23 | optional |  |  |  |
+decree | Maha Shivaratri | 2024-3-8 | optional |  |  |  |
+decree | Dolyatra; Holika Dahan | 2024-3-24 2025-3-13 | optional |  |  |  |
+decree | Chaitra Sukladi; Cheti Chand; Gudi Padwa; Ugadi | 2024-4-9 2025-3-30 | optional |  |  |  |
+decree | Bahag Bihu; Meshadi (Tamil New Year's Day); Vaisakhadi; Vishu | 2024-4-14 | optional |  |  |  |
+decree | Guru Rabindranath's Jayanti | 2024-5-8 2025-5-9 | optional |  |  |  |
+decree | Rath Yatra | 2024-7-7 2025-6-27 | optional |  |  |  |
+decree | Raksha Bandhan | 2024-8-19 2025-8-9 | optional |  |  |  |
+decree | Parsi New Year | 2024-8-15 | optional |  |  |  |
+decree | Onam | 2024-9-15 2025-9-5 | optional |  |  |  |
+decree | Ganesh Chaturthi / Vinayak Chaturthi | 2024-9-7 2025-8-27 | optional |  |  |  |
+decree | Dussehra (Saptami) | 2024-10-10 2025-9-29 | optional |  |  |  |
+decree | Dussehra (Mahanavami); Dussehra (Mahashtami) | 2024-10-11 | optional |  |  |  |
+decree | Maharishi Valmiki's Jayanti | 2024-10-17 2025-10-7 | optional |  |  |  |
+decree | Karaka Chaturthi (Karwa Chouth) | 2024-10-20 2025-10-10 | optional |  |  |  |
+decree | Naraka Chaturdashi | 2024-10-31 2025-10-20 | optional |  |  |  |
+decree | Govardhan Puja | 2024-11-2 2025-10-22 | optional |  |  |  |
+decree | Bhai Duj | 2024-11-3 2025-10-23 | optional |  |  |  |
+decree | Pratihar Shashthi or Surya Shashthi (Chhat Puja) | 2024-11-7 2025-10-28 | optional |  |  |  |
+decree | Hazarat Ali's Birthday | 2024-1-25 | optional |  |  |  |
+decree | Jamat-Ul-Vida | 2024-4-5 2025-3-28 | optional |  |  |  |
+decree | Easter Sunday | 2024-3-31 2025-4-20 | optional |  |  |  |
+decree | Hazarat Ali's Birthday; Magh Bihu; Makar Sankranti; Pongal | 2025-1-14 | optional |  |  |  |
+decree | Ram Navami | 2025-4-6 | optional |  |  |  |
+decree | Meshadi (Tamil New Year's Day); Vishu | 2025-4-14 | optional |  |  |  |
+decree | Bahag Bihu; Vaisakhadi | 2025-4-15 | optional |  |  |  |
+decree | Janmashtami (Smarta); Parsi New Year | 2025-8-15 | optional |  |  |  |
+decree | Dussehra (Mahashtami) | 2025-9-30 | optional |  |  |  |
+decree | Dussehra (Mahanavami) | 2025-10-1 | optional |  |  |  |

@@ -29,3 +29,28 @@ decree        | عاشوراء                            | 2024-7-16 2025-7-5  
 decree        | المولد النبوي الشريف               | 2024-9-15 2025-9-4  | public          |  |  |  |
 decree        | عيد الغدير                         | 2024-6-24 2025-6-15 | public          |  |  |  |
 fixed         | ذكرى جرائم البعث والأنفال والهجوم على حلبجة| 3 16                | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | عيد الميلاد | 12 25 | christian |  |  |  |
+fixed  | مولد النبي يحيى عليه السلام | 5 17 | sabian |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | أحد الفصح | 2024-3-31 2025-4-20 | christian |  |  |  |
+decree | إثنين الفصح | 2024-4-1 2025-4-21 | christian |  |  |  |
+decree | يوما عيد البنجة | 2024-7-21 2024-7-22 2024-7-23 2024-7-24 2025-7-21 2025-7-22 2025-7-23 2025-7-24 | sabian |  |  |  |
+decree | عيد الخليقة | 2024-3-13 2024-3-14 2024-3-15 2024-3-16 2024-3-17 2025-3-13 2025-3-14 2025-3-15 2025-3-16 2025-3-17 | sabian |  |  |  |
+decree | عيد الصغير | 2024-4-9 2024-4-10 2025-4-9 2025-4-10 | sabian |  |  |  |
+decree | رأس السنة الإيزيدية | 2024-4-17 2025-4-16 | yazidi |  |  |  |
+decree | مهرجان الصيف اليزيدي | 2024-8-2 2024-8-3 2025-8-2 2025-8-3 | yazidi |  |  |  |
+decree | عيد الجمعية | 2024-10-6 2024-10-7 2024-10-8 2024-10-9 2024-10-10 2024-10-11 2024-10-12 2024-10-13 2025-10-6 2025-10-7 2025-10-8 2025-10-9 2025-10-10 2025-10-11 2025-10-12 2025-10-13 | yazidi |  |  |  |
+decree | عيد إيزي | 2024-12-20 2025-12-19 | yazidi |  |  |  |

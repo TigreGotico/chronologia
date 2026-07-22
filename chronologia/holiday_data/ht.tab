@@ -36,3 +36,24 @@ fixed         | La Toussaint                         | 11 1                 | pu
 fixed         | Fête des Morts                       | 11 2                 | public          |  |  |  |
 fixed         | Commémoration de la Bataille de Vertières; Jour des Forces Armées | 11 18                | public          |  |  |  |
 fixed         | Noël                                 | 12 25                | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | Fête de la Souveraineté Nationale | 5 23 | optional |  |  |  |
+fixed  | Fête de Notre-Dame du Perpétuel Secours, patronne d'Haiti | 6 27 | optional |  |  |  |
+fixed  | Anniversaire de Naissance de Jean-Jacques Dessalines | 9 20 | optional |  |  |  |
+fixed  | Jour de la Découverte | 12 5 | optional |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Mercredi des Cendres | 2024-2-14 2025-3-5 | optional |  |  |  |
+decree | Jeudi Saint | 2024-3-28 2025-4-17 | optional |  |  |  |
+decree | Ascension | 2024-5-9 2025-5-29 | optional |  |  |  |

@@ -36,3 +36,21 @@ fixed         | Tots Sants                               | 11 1                 
 fixed         | Immaculada Concepció                     | 12 8                 | public          |  |  |  |
 fixed         | Nadal                                    | 12 25                | public          |  |  |  |
 fixed         | Sant Esteve                              | 12 26                | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | Vigília de Reis (a partir de les 13h) | 1 5 | government |  |  |  |
+fixed  | Vigília de Nadal (a partir de les 13h) | 12 24 | government |  |  |  |
+fixed  | Vigília de Cap d'Any (a partir de les 13h) | 12 31 | government |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Dijous Sant (a partir de les 13h) | 2024-3-28 2025-4-17 | government |  |  |  |
