@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction AU -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|ANZAC Day|2024|4|25|primary|source-restated (holiday_data/au.tab header + papers/holidays)
+|Australia Day|2024|1|26|primary|source-restated (holiday_data/au.tab header + papers/holidays)
+|Australia Day|2025|1|27|primary|source-restated (holiday_data/au.tab header + papers/holidays)
+|Boxing Day|2024|12|26|primary|source-restated (holiday_data/au.tab header + papers/holidays)
+|Christmas Day|2024|12|25|primary|source-restated (holiday_data/au.tab header + papers/holidays)
+|Easter Monday|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|New Year's Day|2024|1|1|primary|source-restated (holiday_data/au.tab header + papers/holidays)
+AU-ACT|Canberra Day|2024|3|11|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-ACT|King's Birthday|2024|6|10|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-ACT|Labour Day|2024|10|7|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-NSW|King's Birthday|2024|6|10|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-NSW|Labour Day|2024|10|7|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-NT|King's Birthday|2024|6|10|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-NT|May Day|2024|5|6|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-NT|Picnic Day|2024|8|5|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-QLD|King's Birthday|2024|10|7|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-QLD|Labour Day|2024|5|6|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-SA|King's Birthday|2024|6|10|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-SA|Labour Day|2024|10|7|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-TAS|Eight Hours Day|2024|3|11|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-TAS|King's Birthday|2024|6|10|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-VIC|King's Birthday|2024|6|10|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-VIC|Labour Day|2024|3|11|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-VIC|Melbourne Cup Day|2024|11|5|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-WA|King's Birthday|2023|9|25|self-evident|rule's own args in holiday_data/au.tab (no independent witness available)
+AU-WA|King's Birthday|2024|9|23|self-evident|rule's own args in holiday_data/au.tab (no independent witness available)
+AU-WA|King's Birthday|2025|9|29|self-evident|rule's own args in holiday_data/au.tab (no independent witness available)
+AU-WA|Labour Day|2024|3|4|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+AU-WA|Western Australia Day|2024|6|3|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)

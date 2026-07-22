@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction SJ -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Andre juledag|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Andre juledag|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Andre pinsedag|2024|5|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Andre pinsedag|2025|6|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Andre påskedag|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Andre påskedag|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Arbeidernes dag|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Arbeidernes dag|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Første juledag|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Første juledag|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Første nyttårsdag|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Første nyttårsdag|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Første pinsedag|2024|5|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Første pinsedag|2025|6|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Første påskedag|2024|3|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Første påskedag|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Grunnlovsdag|2024|5|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Grunnlovsdag|2025|5|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Kristi himmelfartsdag|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Kristi himmelfartsdag|2025|5|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Langfredag|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Langfredag|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Skjærtorsdag|2024|3|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Skjærtorsdag|2025|4|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

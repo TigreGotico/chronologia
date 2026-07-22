@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction TO -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Falaite Lelei|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Falaite Lelei|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Monite ʻo e Toetuʻu|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Monite ʻo e Toetuʻu|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho 2 ʻo e Kilisimasi|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho 2 ʻo e Kilisimasi|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Anzac|2024|4|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Anzac|2025|4|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Fakamanatu ʻo e Hilifaki Kalauni ʻo ʻEne ʻAfio ko Siaosi Tupou I (fakatokangaʻi)|2024|12|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Fakamanatu ʻo e Hilifaki Kalauni ʻo ʻEne ʻAfio ko Siaosi Tupou I (fakatokangaʻi)|2025|12|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Fakamanatu ʻo e Hilifaki Kalauni ʻo ʻEne ʻAfio ko Siaosi Tupou I (fakatokangaʻi)|2026|12|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Fakamanatu ʻo e Hilifaki Kalauni ʻo ʻEne ʻAfio ko Siaosi Tupou I (fakatokangaʻi)|2027|12|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Kilisimasi|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Kilisimasi|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Konisitutone|2024|11|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Konisitutone|2026|11|2|self-evident|rule's own args in holiday_data/to.tab (no independent witness available)
+|ʻAho Konisitutone|2027|11|8|self-evident|rule's own args in holiday_data/to.tab (no independent witness available)
+|ʻAho Konisitutone (fakatokangaʻi)|2025|11|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Konisitutone (fakatokangaʻi)|2026|11|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Konisitutone (fakatokangaʻi)|2027|11|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Tauʻataina (fakatokangaʻi)|2024|6|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Tauʻataina (fakatokangaʻi)|2025|6|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Tauʻataina (fakatokangaʻi)|2026|6|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho Tauʻataina (fakatokangaʻi)|2027|6|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho ʻAloʻi ʻo e ʻEa ki he Kalauni ʻo Tonga|2024|9|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho ʻAloʻi ʻo e ʻEa ki he Kalauni ʻo Tonga|2025|9|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho ʻAloʻi ʻo ʻEne ʻAfio ko e Tuʻi ʻo Tonga ʻoku lolotonga Pule|2024|7|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻAho ʻAloʻi ʻo ʻEne ʻAfio ko e Tuʻi ʻo Tonga ʻoku lolotonga Pule|2025|7|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻUluaki ʻAho ʻo e Taʻu Foʻou|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ʻUluaki ʻAho ʻo e Taʻu Foʻou|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

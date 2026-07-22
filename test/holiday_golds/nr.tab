@@ -1,0 +1,38 @@
+# Gold fixtures for jurisdiction NR -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Angam Day|2024|10|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Angam Day|2025|10|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Constitution Day|2024|5|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Constitution Day|2025|5|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Day following Christmas|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Day following Christmas|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Day following Independence Day|2024|2|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Day following Independence Day|2025|2|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Tuesday|2024|4|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Tuesday|2025|4|22|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ibumin Earoeni Day|2024|8|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ibumin Earoeni Day|2025|8|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2024|1|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2025|1|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|International Women's Day|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|International Women's Day|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|RONPHOS Handover|2024|7|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|RONPHOS Handover|2025|7|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Sir Hammer DeRoburt Day|2024|9|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Sir Hammer DeRoburt Day|2025|9|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction XSWX -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Auffahrt|2024|5|9|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Auffahrt|2025|5|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Berchtoldstag|2024|1|2|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Berchtoldstag|2025|1|2|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Heiligabend|2024|12|24|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Heiligabend|2025|12|24|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Karfreitag|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Karfreitag|2025|4|18|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Nationalfeiertag|2024|8|1|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Nationalfeiertag|2025|8|1|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Neujahrstag|2024|1|1|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Neujahrstag|2025|1|1|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Ostermontag|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Ostermontag|2025|4|21|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Pfingstmontag|2024|5|20|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Pfingstmontag|2025|6|9|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Stephanstag|2024|12|26|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Stephanstag|2025|12|26|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Tag der Arbeit|2024|5|1|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Tag der Arbeit|2025|5|1|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Vortag vor Neujahr|2024|12|31|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Vortag vor Neujahr|2025|12|31|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Weihnachten|2024|12|25|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)
+|Weihnachten|2025|12|25|primary|source-restated (holiday_data/xswx.tab header + papers/holidays)

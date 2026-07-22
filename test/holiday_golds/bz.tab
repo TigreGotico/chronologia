@@ -1,0 +1,37 @@
+# Gold fixtures for jurisdiction BZ -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Garifuna Settlement Day|2024|11|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Garifuna Settlement Day|2025|11|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|George Price Day|2024|1|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|George Price Day|2025|1|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Holy Saturday|2024|3|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Holy Saturday|2025|4|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2024|9|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2026|9|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2027|9|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Indigenous Peoples' Resistance Day|2024|10|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Indigenous Peoples' Resistance Day|2026|10|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Labour Day|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Labour Day|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Heroes and Benefactors Day|2024|3|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Heroes and Benefactors Day|2026|3|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Saint George's Caye Day|2024|9|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Saint George's Caye Day|2025|9|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

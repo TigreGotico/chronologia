@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction ST -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Ano Novo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ano Novo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Independência|2024|7|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Independência|2025|7|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Reforma Agrária|2024|9|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Reforma Agrária|2025|9|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia das Forças Armadas|2024|9|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia das Forças Armadas|2025|9|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia de São Tomé|2024|12|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia de São Tomé|2025|12|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Rei Amador|2024|1|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Rei Amador|2025|1|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Trabalhador|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Trabalhador|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia dos Mártires|2024|2|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia dos Mártires|2025|2|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Natal|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Natal|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+ST-P|Descobrimento da Ilha do Príncipe|2024|1|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+ST-P|Descobrimento da Ilha do Príncipe|2025|1|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+ST-P|Dia da Autonomia do Príncipe|2024|4|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+ST-P|Dia da Autonomia do Príncipe|2025|4|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+ST-P|Dia de São Lourenço|2024|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+ST-P|Dia de São Lourenço|2025|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

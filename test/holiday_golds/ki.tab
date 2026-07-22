@@ -1,0 +1,36 @@
+# Gold fixtures for jurisdiction KI -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Gospel Day|2024|7|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Gospel Day|2025|7|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Human Rights and Peace Day|2024|12|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Human Rights and Peace Day|2025|12|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|International Women's Day|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|International Women's Day|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Day (in honor of Unaine)|2024|7|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Day (in honor of Unaine)|2025|7|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Day (in honor of Unimwane)|2024|7|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Day (in honor of Unimwane)|2025|7|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Day - Independence Anniversary|2024|7|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Day - Independence Anniversary|2025|7|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Health Day|2024|4|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Health Day|2025|4|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Youth Day|2024|8|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Youth Day|2025|8|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

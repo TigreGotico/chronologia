@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction CD -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Fête des parents|2024|8|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête des parents|2025|8|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête du travail|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête du travail|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée commémorative du génocide Congolais|2024|8|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée commémorative du génocide Congolais|2025|8|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée de l'indépendance|2024|6|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée de l'indépendance|2025|6|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée de l'indépendance (observé)|2024|6|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée des Forces armées|2024|5|17|self-evident|rule's own args in holiday_data/cd.tab (no independent witness available)
+|Journée des Forces armées|2025|5|17|self-evident|rule's own args in holiday_data/cd.tab (no independent witness available)
+|Journée des Martyrs de l'indépendance|2024|1|4|self-evident|rule's own args in holiday_data/cd.tab (no independent witness available)
+|Journée des Martyrs de l'indépendance|2025|1|4|self-evident|rule's own args in holiday_data/cd.tab (no independent witness available)
+|Journée du combat de Simon Kimbangu et de la conscience africaine|2024|4|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée du combat de Simon Kimbangu et de la conscience africaine|2025|4|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée du combat de Simon Kimbangu et de la conscience africaine (observé)|2025|4|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée du héros national Laurent Désiré Kabila|2024|1|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée du héros national Laurent Désiré Kabila|2025|1|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée du héros national Patrice Emery Lumumba|2024|1|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée du héros national Patrice Emery Lumumba|2025|1|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nouvel an|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nouvel an|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Noël|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Noël|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction AM -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Անկախության օր|2024|9|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Անկախության օր|2025|9|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Աշխատանքի օր|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Աշխատանքի օր|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Բանակի օր|2024|1|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Բանակի օր|2025|1|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Կանանց տոն|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Կանանց տոն|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Հաղթանակի և Խաղաղության տոն|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Հաղթանակի և Խաղաղության տոն|2025|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Հայոց ցեղասպանության զոհերի հիշատակի օր|2024|4|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Հայոց ցեղասպանության զոհերի հիշատակի օր|2025|4|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Հանրապետության օր|2024|5|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Հանրապետության օր|2025|5|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Նոր տարվա գիշեր|2024|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Նոր տարվա գիշեր|2025|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Նոր տարվա օր (1)|2024|1|1|self-evident|rule's own args in holiday_data/am.tab (no independent witness available)
+|Նոր տարվա օր (1)|2025|1|1|self-evident|rule's own args in holiday_data/am.tab (no independent witness available)
+|Նոր տարվա օր (2)|2024|1|2|self-evident|rule's own args in holiday_data/am.tab (no independent witness available)
+|Նոր տարվա օր (2)|2025|1|2|self-evident|rule's own args in holiday_data/am.tab (no independent witness available)
+|Սահմանադրության օր|2024|7|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Սահմանադրության օր|2025|7|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Սուրբ Ծնունդ եւ Հայտնություն|2024|1|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Սուրբ Ծնունդ եւ Հայտնություն|2025|1|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

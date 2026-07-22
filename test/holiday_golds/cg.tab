@@ -1,0 +1,30 @@
+# Gold fixtures for jurisdiction CG -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Ascension|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ascension|2025|5|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête Nationale|2024|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête Nationale|2025|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête de la Réconciliation|2024|6|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête de la Réconciliation|2025|6|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête du Travail|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête du Travail|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de l'An|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de l'An|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de la République|2024|11|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de la République|2025|11|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lundi de Pentecôte|2024|5|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lundi de Pentecôte|2025|6|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lundi de Pâques|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lundi de Pâques|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Noël|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Noël|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Toussaint|2024|11|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Toussaint|2025|11|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

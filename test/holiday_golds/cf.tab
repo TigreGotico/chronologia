@@ -1,0 +1,42 @@
+# Gold fixtures for jurisdiction CF -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Ascension|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ascension|2025|5|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Assomption|2024|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Assomption|2025|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Aïd al-Adha|2024|6|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Aïd al-Adha|2025|6|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Aïd al-Adha|2026|5|27|self-evident|rule's own args in holiday_data/cf.tab (no independent witness available)
+|Aïd al-Adha|2027|5|16|self-evident|rule's own args in holiday_data/cf.tab (no independent witness available)
+|Aïd al-Fitr|2024|4|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Aïd al-Fitr|2025|3|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Aïd al-Fitr|2026|3|20|self-evident|rule's own args in holiday_data/cf.tab (no independent witness available)
+|Aïd al-Fitr|2027|3|9|self-evident|rule's own args in holiday_data/cf.tab (no independent witness available)
+|Fête du Travail|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête du Travail|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête nationale|2024|12|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fête nationale|2025|12|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de Noël|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de Noël|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de l'an|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de l'an|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de l'indépendance|2024|8|13|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jour de l'indépendance|2025|8|13|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée Barthélemy Boganda|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée Barthélemy Boganda|2025|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée de prière générale|2024|6|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Journée de prière générale|2025|6|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lundi de Pentecôte|2024|5|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lundi de Pentecôte|2025|6|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lundi de Pâques|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lundi de Pâques|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Toussaint|2024|11|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Toussaint|2025|11|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

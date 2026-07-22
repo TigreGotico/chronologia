@@ -1,0 +1,30 @@
+# Gold fixtures for jurisdiction XNYS -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Christmas Day|2024|12|25|primary|source-restated (holiday_data/xnys.tab header + papers/holidays)
+|Christmas Day|2025|12|25|primary|source-restated (holiday_data/xnys.tab header + papers/holidays)
+|Good Friday|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2025|4|18|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Independence Day|2024|7|4|primary|source-restated (holiday_data/xnys.tab header + papers/holidays)
+|Independence Day|2025|7|4|primary|source-restated (holiday_data/xnys.tab header + papers/holidays)
+|Juneteenth National Independence Day|2024|6|19|primary|source-restated (holiday_data/xnys.tab header + papers/holidays)
+|Juneteenth National Independence Day|2025|6|19|primary|source-restated (holiday_data/xnys.tab header + papers/holidays)
+|Labor Day|2024|9|2|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Labor Day|2025|9|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Martin Luther King Jr. Day|2024|1|15|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Martin Luther King Jr. Day|2025|1|20|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Memorial Day|2024|5|27|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Memorial Day|2025|5|26|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|New Year's Day|2024|1|1|primary|source-restated (holiday_data/xnys.tab header + papers/holidays)
+|New Year's Day|2025|1|1|primary|source-restated (holiday_data/xnys.tab header + papers/holidays)
+|Thanksgiving Day|2024|11|28|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Thanksgiving Day|2025|11|27|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Washington's Birthday|2024|2|19|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Washington's Birthday|2025|2|17|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)

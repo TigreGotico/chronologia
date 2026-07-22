@@ -1,0 +1,25 @@
+# Gold fixtures for jurisdiction SK -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Deň boja za slobodu a demokraciu|2024|11|17|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Deň vzniku Slovenskej republiky|2024|1|1|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Deň víťazstva nad fašizmom|2024|5|8|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Deň Ústavy Slovenskej republiky|2023|9|1|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Druhý sviatok vianočný|2024|12|26|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Prvý sviatok vianočný|2024|12|25|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Sedembolestná Panna Mária|2024|9|15|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Sviatok Všetkých svätých|2024|11|1|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Sviatok práce|2024|5|1|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Sviatok svätého Cyrila a svätého Metoda|2024|7|5|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Veľkonočný pondelok|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Veľký piatok|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Výročie Slovenského národného povstania|2024|8|29|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Zjavenie Pána (Traja králi)|2024|1|6|primary|source-restated (holiday_data/sk.tab header + papers/holidays)
+|Štedrý deň|2024|12|24|primary|source-restated (holiday_data/sk.tab header + papers/holidays)

@@ -1,0 +1,22 @@
+# Gold fixtures for jurisdiction XECB -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Christmas Day|2024|12|25|primary|source-restated (holiday_data/xecb.tab header + papers/holidays)
+|Christmas Day|2025|12|25|primary|source-restated (holiday_data/xecb.tab header + papers/holidays)
+|Christmas Holiday|2024|12|26|primary|source-restated (holiday_data/xecb.tab header + papers/holidays)
+|Christmas Holiday|2025|12|26|primary|source-restated (holiday_data/xecb.tab header + papers/holidays)
+|Easter Monday|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Easter Monday|2025|4|21|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2025|4|18|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Labour Day|2024|5|1|primary|source-restated (holiday_data/xecb.tab header + papers/holidays)
+|Labour Day|2025|5|1|primary|source-restated (holiday_data/xecb.tab header + papers/holidays)
+|New Year's Day|2024|1|1|primary|source-restated (holiday_data/xecb.tab header + papers/holidays)
+|New Year's Day|2025|1|1|primary|source-restated (holiday_data/xecb.tab header + papers/holidays)

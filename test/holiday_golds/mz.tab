@@ -1,0 +1,28 @@
+# Gold fixtures for jurisdiction MZ -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Dia Internacional dos Trabalhadores|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia Internacional dos Trabalhadores|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Família|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Família|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Fraternidade universal|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Fraternidade universal|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Independência Nacional|2024|6|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Independência Nacional|2025|6|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Mulher Moçambicana|2024|4|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Mulher Moçambicana|2025|4|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Paz e Reconciliação|2024|10|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Paz e Reconciliação|2025|10|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Vitória|2024|9|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Vitória|2025|9|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia das Forças Armadas de Libertação Nacional|2024|9|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia das Forças Armadas de Libertação Nacional|2025|9|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia dos Heróis Moçambicanos|2024|2|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia dos Heróis Moçambicanos|2025|2|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

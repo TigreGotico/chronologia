@@ -1,0 +1,35 @@
+# Gold fixtures for jurisdiction GG -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Liberation Day|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Liberation Day|2025|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|May Day Bank Holiday|2024|5|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|May Day Bank Holiday|2025|5|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|May Day Bank Holiday|2026|5|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|May Day Bank Holiday|2027|5|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Spring Bank Holiday|2024|5|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Spring Bank Holiday|2025|5|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Spring Bank Holiday|2026|5|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Spring Bank Holiday|2027|5|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Summer Bank Holiday|2024|8|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Summer Bank Holiday|2025|8|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Summer Bank Holiday|2026|8|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Summer Bank Holiday|2027|8|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|The visit of His Majesty King Charles III and Queen Camilla|2024|7|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

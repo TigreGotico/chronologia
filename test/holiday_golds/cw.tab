@@ -1,0 +1,38 @@
+# Gold fixtures for jurisdiction CW -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Aña Nobo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Aña Nobo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Bièrnèsantu|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Bièrnèsantu|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Di dos dia di Pasku di Nasementu|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Di dos dia di Pasku di Nasementu|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Di dos dia di Pasku di Resurekshon|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Di dos dia di Pasku di Resurekshon|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Asenshon|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Asenshon|2025|5|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Himno i Bandera|2024|7|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Himno i Bandera|2025|7|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Obrero|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Obrero|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Pais Kòrsou|2024|10|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Pais Kòrsou|2025|10|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Rey|2024|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Rey|2025|4|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Rey|2026|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Rey|2027|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dialuna despues di Carnaval Grandi|2024|2|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dialuna despues di Carnaval Grandi|2025|3|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Pasku di Nasementu|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Pasku di Nasementu|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Pasku di Resurekshon|2024|3|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Pasku di Resurekshon|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Vispu di Aña Nobo|2024|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Vispu di Aña Nobo|2025|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

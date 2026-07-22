@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction XHKG -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Ching Ming Festival|2024|4|4|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|Ching Ming Festival|2025|4|4|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|Christmas Day|2024|12|25|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|Christmas Day|2025|12|25|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|Chung Yeung Festival|2024|10|11|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|Chung Yeung Festival|2025|10|29|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|Easter Monday|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Easter Monday|2025|4|21|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2025|4|18|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Hong Kong Special Administrative Region Establishment Day|2024|7|1|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|Hong Kong Special Administrative Region Establishment Day|2025|7|1|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|Labour Day|2024|5|1|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|Labour Day|2025|5|1|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|Lunar New Year|2024|2|12|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|Lunar New Year|2024|2|13|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|Lunar New Year|2025|1|29|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|Lunar New Year|2025|1|30|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|Lunar New Year|2025|1|31|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|National Day|2024|10|1|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|National Day|2025|10|1|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|The Birthday of the Buddha|2024|5|15|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|The Birthday of the Buddha|2025|5|5|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|The day following the Chinese Mid-Autumn Festival|2024|9|18|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|The day following the Chinese Mid-Autumn Festival|2025|10|7|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)
+|The first day of January|2024|1|1|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|The first day of January|2025|1|1|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|The first weekday after Christmas Day|2024|12|26|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|The first weekday after Christmas Day|2025|12|26|primary|source-restated (holiday_data/xhkg.tab header + papers/holidays)
+|Tuen Ng Festival|2024|6|10|self-evident|rule's own args in holiday_data/xhkg.tab (no independent witness available)

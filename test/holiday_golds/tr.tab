@@ -1,0 +1,27 @@
+# Gold fixtures for jurisdiction TR -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Atatürk'ü Anma, Gençlik ve Spor Bayramı|2024|5|19|primary|source-restated (holiday_data/tr.tab header + papers/holidays)
+|Cumhuriyet Bayramı|2024|10|29|primary|source-restated (holiday_data/tr.tab header + papers/holidays)
+|Cumhuriyet Bayramı|2025|10|29|primary|source-restated (holiday_data/tr.tab header + papers/holidays)
+|Cumhuriyet Bayramı (saat 13.00'ten)|2024|10|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Cumhuriyet Bayramı (saat 13.00'ten)|2025|10|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Demokrasi ve Millî Birlik Günü|2024|7|15|primary|source-restated (holiday_data/tr.tab header + papers/holidays)
+|Emek ve Dayanışma Günü|2024|5|1|primary|source-restated (holiday_data/tr.tab header + papers/holidays)
+|Kurban Bayramı|2024|6|17|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Kurban Bayramı (saat 13.00'ten)|2024|6|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Kurban Bayramı (saat 13.00'ten)|2025|6|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ramazan Bayramı|2024|4|10|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Ramazan Bayramı|2025|3|31|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Ramazan Bayramı (saat 13.00'ten)|2024|4|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ramazan Bayramı (saat 13.00'ten)|2025|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ulusal Egemenlik ve Çocuk Bayramı|2024|4|23|primary|source-restated (holiday_data/tr.tab header + papers/holidays)
+|Yılbaşı|2024|1|1|primary|source-restated (holiday_data/tr.tab header + papers/holidays)
+|Zafer Bayramı|2024|8|30|primary|source-restated (holiday_data/tr.tab header + papers/holidays)

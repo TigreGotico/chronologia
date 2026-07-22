@@ -1,0 +1,20 @@
+# Gold fixtures for jurisdiction SA -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|اليوم الوطني|2024|9|23|primary|source-restated (holiday_data/sa.tab header + papers/holidays)
+|عطلة عيد الأضحى|2024|6|17|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|عطلة عيد الأضحى|2024|6|18|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|عطلة عيد الأضحى|2024|6|19|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|عطلة عيد الفطر|2024|4|11|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|عطلة عيد الفطر|2024|4|12|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|عيد الأضحى|2024|6|16|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|عيد الفطر|2024|4|10|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|يوم التأسيس|2024|2|22|primary|source-restated (holiday_data/sa.tab header + papers/holidays)
+|يوم عرفة|2024|6|15|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)

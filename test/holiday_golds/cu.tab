@@ -1,0 +1,30 @@
+# Gold fixtures for jurisdiction CU -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Conmemoración del asalto a Moncada (1)|2024|7|25|self-evident|rule's own args in holiday_data/cu.tab (no independent witness available)
+|Conmemoración del asalto a Moncada (1)|2025|7|25|self-evident|rule's own args in holiday_data/cu.tab (no independent witness available)
+|Conmemoración del asalto a Moncada (2)|2024|7|27|self-evident|rule's own args in holiday_data/cu.tab (no independent witness available)
+|Conmemoración del asalto a Moncada (2)|2025|7|27|self-evident|rule's own args in holiday_data/cu.tab (no independent witness available)
+|Día Internacional de los Trabajadores|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día Internacional de los Trabajadores|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Navidad|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Navidad|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Rebeldía Nacional|2024|7|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Rebeldía Nacional|2025|7|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Victoria|2024|1|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Victoria|2025|1|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fiesta de Fin de Año|2024|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fiesta de Fin de Año|2025|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Inicio de las Guerras de Independencia|2024|10|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Inicio de las Guerras de Independencia|2025|10|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Triunfo de la Revolución|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Triunfo de la Revolución|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

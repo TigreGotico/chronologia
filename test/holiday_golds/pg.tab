@@ -1,0 +1,32 @@
+# Gold fixtures for jurisdiction PG -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Sunday|2024|3|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Sunday|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Grand Chief Sir Michael Somare Remembrance Day|2024|2|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Grand Chief Sir Michael Somare Remembrance Day|2025|2|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2024|9|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2025|9|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|King's Birthday|2024|6|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|King's Birthday|2025|6|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Repentance Day|2024|8|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Repentance Day|2025|8|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Papua New Guinea Remembrance Day|2024|7|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Papua New Guinea Remembrance Day|2025|7|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

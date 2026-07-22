@@ -1,0 +1,26 @@
+# Gold fixtures for jurisdiction BE -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Allerheiligen|2024|11|1|primary|source-restated (holiday_data/be.tab header + papers/holidays)
+|Banksluitingsdag|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Banksluitingsdag|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dag van de Arbeid|2024|5|1|primary|source-restated (holiday_data/be.tab header + papers/holidays)
+|Goede Vrijdag|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Goede Vrijdag|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Kerstmis|2024|12|25|primary|source-restated (holiday_data/be.tab header + papers/holidays)
+|Nationale feestdag|2024|7|21|primary|source-restated (holiday_data/be.tab header + papers/holidays)
+|Nieuwjaar|2024|1|1|primary|source-restated (holiday_data/be.tab header + papers/holidays)
+|O. L. H. Hemelvaart|2024|5|9|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|O. L. V. Hemelvaart|2024|8|15|primary|source-restated (holiday_data/be.tab header + papers/holidays)
+|Paasmaandag|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Pinkstermaandag|2024|5|20|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Vrijdag na O. L. H. Hemelvaart|2024|5|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Vrijdag na O. L. H. Hemelvaart|2025|5|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Wapenstilstand|2024|11|11|primary|source-restated (holiday_data/be.tab header + papers/holidays)

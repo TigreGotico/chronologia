@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction BM -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Bermuda Day|2024|5|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Bermuda Day|2025|5|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Bermuda Day|2026|5|22|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Bermuda Day|2027|5|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Emancipation Day|2024|8|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Emancipation Day|2025|7|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Emancipation Day|2026|7|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Emancipation Day|2027|7|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Labour Day|2024|9|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Labour Day|2025|9|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Labour Day|2026|9|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Labour Day|2027|9|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Mary Prince Day|2024|8|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Mary Prince Day|2025|8|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Mary Prince Day|2026|7|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Mary Prince Day|2027|7|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Heroes Day|2024|6|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Heroes Day|2025|6|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Heroes Day|2026|6|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|National Heroes Day|2027|6|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Remembrance Day|2024|11|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Remembrance Day|2025|11|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

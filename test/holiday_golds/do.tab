@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction DO -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Año Nuevo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Año Nuevo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Corpus Christi|2024|5|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Corpus Christi|2025|6|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Duarte|2024|1|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Duarte|2025|1|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Duarte|2026|1|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Duarte|2027|1|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Independencia|2024|2|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Independencia|2025|2|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Navidad|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Navidad|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Altagracia|2024|1|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Altagracia|2025|1|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Constitución|2024|11|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Constitución|2025|11|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Constitución|2026|11|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Constitución|2027|11|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Restauración|2024|8|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Restauración|2025|8|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de las Mercedes|2024|9|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de las Mercedes|2025|9|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de los Santos Reyes|2024|1|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de los Santos Reyes|2025|1|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día del Trabajo|2024|4|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día del Trabajo|2025|5|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día del Trabajo|2026|5|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día del Trabajo|2027|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
