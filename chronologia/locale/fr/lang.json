@@ -4,7 +4,11 @@
     "ordinal_dot": false
   },
   "constructions": {
-    "decade_bc": {"orders": ["article? NUM plural bc"]},
+    "decade_bc": {
+      "orders": [
+        "article? NUM plural bc"
+      ]
+    },
     "relative_offset": {
       "orders": [
         "NUM UNIT MARKER",
@@ -108,16 +112,16 @@
     },
     "clock_time": {
       "orders": [
-        "CLOCK article? MERIDIEM?",
-        "at HOUR oclock CLOCKDIR article? FRACTION article? MERIDIEM?",
-        "HOUR oclock CLOCKDIR article? FRACTION article? MERIDIEM?",
-        "at HOUR oclock article? MERIDIEM?",
-        "HOUR oclock article? MERIDIEM?",
-        "at HOUR article? MERIDIEM?",
-        "HOUR article? MERIDIEM",
-        "at? LANDMARK",
-        "FRACTION CLOCKDIR HOUR MERIDIEM?",
-        "MINUTE CLOCKDIR HOUR MERIDIEM?"
+        "CLOCK article? MERIDIEM? ZONE?",
+        "at HOUR oclock CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
+        "HOUR oclock CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
+        "at HOUR oclock article? MERIDIEM? ZONE?",
+        "HOUR oclock article? MERIDIEM? ZONE?",
+        "at HOUR article? MERIDIEM? ZONE?",
+        "HOUR article? MERIDIEM ZONE?",
+        "at? LANDMARK ZONE?",
+        "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
+        "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?"
       ],
       "prefer_future": true
     },
@@ -201,6 +205,29 @@
         "HOLIDAY YEAR",
         "YEAR HOLIDAY",
         "HOLIDAY"
+      ]
+    },
+    "fuzzy_period": {
+      "orders": [
+        "article? PART of? article? UNIT",
+        "article? PART of? article? REL_MARKER UNIT",
+        "article? PART of? article? UNIT REL_MARKER",
+        "PART REL_MARKER UNIT"
+      ]
+    },
+    "quarter_ref": {
+      "orders": [
+        "q NUM YEAR?",
+        "article? ORD quarter_word of YEAR",
+        "article? ORD quarter_word YEAR?",
+        "REL_MARKER quarter_word",
+        "quarter_word REL_MARKER"
+      ]
+    },
+    "iso_week_ref": {
+      "orders": [
+        "week_num NUM of YEAR",
+        "week_num NUM YEAR?"
       ]
     }
   },

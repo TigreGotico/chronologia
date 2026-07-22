@@ -173,11 +173,17 @@ class TimeMention:
 
     ``span`` is its :class:`~chronologia.astrodate.DateSpan`; ``text`` the
     surface substring it was read from; ``token_span`` the half-open
-    ``(start, end)`` token extent in the tokenised sentence.
+    ``(start, end)`` token extent in the tokenised sentence; ``char_span`` the
+    half-open ``(start, end)`` **character** extent into the ORIGINAL
+    utterance, so ``utterance[char_span[0]:char_span[1]]`` recovers the exact
+    substring.  ``char_span`` is derived from the tokenizer's own recorded
+    offsets (never by re-searching the string); it is ``None`` only when the
+    mention's tokens were all engine-synthesised and carry no offset.
     """
     span: DateSpan
     text: str
     token_span: Tuple[int, int]
+    char_span: Optional[Tuple[int, int]] = None
 
 
 def extract_timespans(
@@ -226,8 +232,23 @@ def extract_timespans(
             continue
         out.append((match.span, res.value))
 
-    return [TimeMention(value, " ".join(t.raw for t in tokens[lo:hi]), (lo, hi))
+    return [TimeMention(value, " ".join(t.raw for t in tokens[lo:hi]), (lo, hi),
+                        _char_span(tokens, lo, hi))
             for (lo, hi), value in out]
+
+
+def _char_span(tokens, lo, hi):
+    """The character extent of ``tokens[lo:hi]`` in the original utterance.
+
+    Reads the first and last token's recorded tokenizer offsets -- never a
+    string re-search.  ``None`` when either edge token carries no offset (a
+    fully engine-synthesised mention)."""
+    if lo >= hi:
+        return None
+    start, end = tokens[lo].char_start, tokens[hi - 1].char_end
+    if start is None or end is None:
+        return None
+    return (start, end)
 
 
 def _prev_is_date(resolved, clock_match):
@@ -257,6 +278,7 @@ _UNIT_FREQ = {"day": "DAILY", "week": "WEEKLY", "month": "MONTHLY",
 def extract_recurrence(
         text: str,
         lang: str = "en-us",
+        anchor: Optional[datetime] = None,
 ) -> Optional[Tuple[Recurrence, str]]:
     """Map a recurring phrase onto an RFC 5545 :class:`~chronologia.recurrence.Recurrence`.
 
@@ -264,7 +286,13 @@ def extract_recurrence(
     "every 2 weeks", "every weekday", "daily"/"weekly"/"monthly"/"yearly", and
     the ordinal "first monday of every month" / "last friday of every month"
     (and "the third thursday of november") -- reading weekday names, unit words
-    and the ``every`` marker from the locale.  Sub-day detail a date-level rule
+    and the ``every`` marker from the locale.
+
+    A trailing bound is folded onto the rule: an ``until``/``till`` marker plus
+    a date sets ``UNTIL`` ("every friday until june"); a ``for`` marker plus a
+    fixed-width duration sets ``COUNT`` -- the number of occurrences the
+    duration spans at the rule's frequency ("daily for two weeks" -> COUNT=14,
+    "every monday for 6 weeks" -> COUNT=6).  Sub-day detail a date-level rule
     cannot carry ("daily *at 9*") is left in the remainder.
 
     Returns ``(recurrence, remainder)`` or ``None`` when no recurrence is found.
@@ -287,15 +315,67 @@ def extract_recurrence(
         weekdays=spec.weekdays,
         months=spec.months,
         rel_markers=spec.rel_markers,
+        until_words=set(C.get("until", ())),
+        for_words=set(C.get("recur_for", ())),
     )
 
     for finder in (_recur_nth_weekday, _recur_every, _recur_freq_word):
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
+            rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
             remainder = " ".join(t.raw for t in tokens
                                  if t.index not in consumed).strip()
             return rec, remainder
+    return None
+
+
+def _apply_bounds(rec, consumed, ctx, lang, anchor):
+    """Fold a trailing ``until <date>`` (-> UNTIL) or ``for <duration>``
+    (-> COUNT) bound onto ``rec``, extending ``consumed`` over the words it
+    reads.  A bound the engine cannot ground (an unparseable date, a
+    calendar-ambiguous duration under a MONTHLY/YEARLY rule) is left untouched
+    in the remainder rather than guessed."""
+    from dataclasses import replace as _replace
+    tokens = ctx.tokens
+    n = len(tokens)
+
+    def _tail(i):
+        return " ".join(t.raw for t in tokens[i + 1:])
+
+    for i in range(n):
+        if i in consumed or tokens[i].text not in ctx.until_words:
+            continue
+        from chronologia.extract import extract_timespan
+        got = extract_timespan(_tail(i), lang, anchor=anchor)
+        if got is not None:
+            rec = _replace(rec, until=got[0].start)
+            consumed = consumed | set(range(i, n))
+        break
+
+    for i in range(n):
+        if i in consumed or tokens[i].text not in ctx.for_words:
+            continue
+        dur = extract_duration(_tail(i), lang)
+        if dur is not None:
+            count = _count_from_duration(rec.freq, dur[0])
+            if count is not None:
+                rec = _replace(rec, count=count)
+                consumed = consumed | set(range(i, n))
+        break
+
+    return rec, consumed
+
+
+def _count_from_duration(freq, td):
+    """Occurrence count a fixed-width duration spans at ``freq``: one per day
+    for DAILY, one per whole week for WEEKLY.  MONTHLY/YEARLY need a
+    calendar-ambiguous duration the fixed-width extractor never yields, so they
+    return ``None`` (no COUNT bound)."""
+    if freq == "DAILY":
+        return td.days or None
+    if freq == "WEEKLY":
+        return (td.days // 7) or None
     return None
 
 
@@ -312,6 +392,8 @@ class _RecurCtx:
     weekdays: dict
     months: dict
     rel_markers: dict
+    until_words: set = frozenset()
+    for_words: set = frozenset()
 
 
 def _freq_map(connectors):

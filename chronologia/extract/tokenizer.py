@@ -23,6 +23,10 @@ from chronologia.extract.model import Token, TokenizerModes
 _ISO = r"\d{4}-\d{2}-\d{2}"
 _CLOCK = r"\d{1,2}:\d{2}(?::\d{2})?"
 _NUM = r"\d+(?:\.\d+)?"
+# a timezone acronym with an optional fixed signed offset kept as ONE token so
+# the sign survives ("utc+2", "gmt-5", bare "utc"); language-neutral, like the
+# ISO / clock literals above.  Named-city zones are deliberately out of scope.
+_ZONE = r"(?:utc|gmt)(?:[+-]\d{1,2}(?::?\d{2})?)?"
 
 
 class Tokenizer:
@@ -43,7 +47,7 @@ class Tokenizer:
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
-        parts = [_ISO, _CLOCK]
+        parts = [_ISO, _CLOCK, _ZONE]
         if modes.ordinal_dot:
             # a digit run followed by a dot that is not a decimal point
             parts.append(r"\d+\.(?!\d)")
@@ -56,16 +60,23 @@ class Tokenizer:
         tokens = []
         for i, m in enumerate(self._re.finditer(text.lower())):
             raw = m.group(0)
+            # match offsets are into ``text.lower()``; for the Latin-script
+            # locales this engine serves, lower-casing is length-preserving, so
+            # they are also the offsets into the original ``text``.
+            cs, ce = m.start(), m.end()
             is_literal = (re.fullmatch(_ISO, raw) is not None
                           or re.fullmatch(_CLOCK, raw) is not None)
             if not is_literal and re.match(r"\d", raw):
                 digits = raw.rstrip(".")
                 value = float(digits) if "." in digits else int(digits)
                 tokens.append(Token(text=raw.rstrip("."), raw=raw, index=i,
-                                    is_number=True, value=value))
+                                    is_number=True, value=value,
+                                    char_start=cs, char_end=ce))
             else:
-                tokens.append(Token(text=raw, raw=raw, index=i))
+                tokens.append(Token(text=raw, raw=raw, index=i,
+                                    char_start=cs, char_end=ce))
         # re-index sequentially (finditer index already sequential, but be
         # explicit so callers can trust index == position)
-        return tuple(Token(t.text, t.raw, i, t.is_number, t.value)
+        return tuple(Token(t.text, t.raw, i, t.is_number, t.value,
+                           t.char_start, t.char_end)
                      for i, t in enumerate(tokens))

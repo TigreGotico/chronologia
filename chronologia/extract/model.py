@@ -55,6 +55,13 @@ class Token:
     index: int
     is_number: bool = False
     value: Optional[float] = None
+    # half-open character extent ``[char_start, char_end)`` into the ORIGINAL
+    # utterance the tokenizer read, recorded from the regex match offsets.
+    # ``None`` on tokens the engine synthesised (a folded spelled number keeps
+    # the extent of the surface run it replaced).  Never recovered by string
+    # search -- it rides along from the one place that knows it, the tokenizer.
+    char_start: Optional[int] = None
+    char_end: Optional[int] = None
 
 
 @dataclass(frozen=True)
@@ -172,6 +179,10 @@ class LangSpec:
     holidays: Mapping[str, str] = field(default_factory=dict)
     # well-known holiday key -> provenance label ("PT:Natal"), for explain()
     holiday_sources: Mapping[str, str] = field(default_factory=dict)
+    # clock timezone surface -> base UTC offset in minutes ("utc"/"gmt" -> 0);
+    # a trailing signed offset on the surface token ("utc+2") is added at
+    # resolve time.  Facts from the ``clock_zone_<minutes>.voc`` convention.
+    clock_zones: Mapping[str, int] = field(default_factory=dict)
     # full weekday names only, excluding abbreviations: the bare-weekday order
     # binds against these so short abbreviation surfaces that collide with
     # common words (de "so", nl "zo", es "mar") never resolve without a marker,

@@ -41,6 +41,35 @@ def test_recurrence(text, rrule, remainder):
     assert got[1] == remainder
 
 
+# Bounded recurrence: an "until <date>" folds to UNTIL; a "for <duration>"
+# folds to COUNT -- the number of occurrences the fixed-width duration spans at
+# the rule's frequency (14 days -> 14 daily hits; 6 weeks -> 6 weekly hits).
+# The UNTIL date is resolved against a fixed anchor so the RRULE is stable.
+from datetime import datetime               # noqa: E402
+
+_BOUND_ANCHOR = datetime(2017, 6, 27, 13, 4)
+_BOUND_CASES = [
+    ("every friday until june", "FREQ=WEEKLY;UNTIL=20170601T000000;BYDAY=FR", ""),
+    ("every monday until december", "FREQ=WEEKLY;UNTIL=20171201T000000;BYDAY=MO", ""),
+    ("daily until 2020", "FREQ=DAILY;UNTIL=20200101T000000", ""),
+    ("every week till march", "FREQ=WEEKLY;UNTIL=20170301T000000", ""),
+    ("daily for two weeks", "FREQ=DAILY;COUNT=14", ""),
+    ("daily for a week", "FREQ=DAILY;COUNT=7", ""),
+    ("every day for 3 days", "FREQ=DAILY;COUNT=3", ""),
+    ("every monday for 6 weeks", "FREQ=WEEKLY;COUNT=6;BYDAY=MO", ""),
+    ("every friday for three weeks", "FREQ=WEEKLY;COUNT=3;BYDAY=FR", ""),
+    ("weekly for 4 weeks", "FREQ=WEEKLY;COUNT=4", ""),
+]
+
+
+@pytest.mark.parametrize("text,rrule,remainder", _BOUND_CASES)
+def test_bounded_recurrence(text, rrule, remainder):
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+
+
 # adversarial: a one-off reference is not a recurrence.
 @pytest.mark.parametrize("text", [
     "friday", "next friday", "in 3 days", "june 5th",

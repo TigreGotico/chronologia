@@ -91,6 +91,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     period_parts: Dict[str, str] = {}
     decade_words: Dict[str, int] = {}
     clock_landmarks: Dict[str, int] = {}
+    clock_zones: Dict[str, int] = {}
     weekend_words: Set[str] = set()
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
@@ -187,6 +188,10 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             mins = int(base[len("clock_landmark_"):])
             for s in surfaces:
                 clock_landmarks[s] = mins
+        elif base.startswith("clock_zone_"):
+            mins = int(base[len("clock_zone_"):])
+            for s in surfaces:
+                clock_zones[s] = mins
         elif base == "special_weekend":
             weekend_words.update(surfaces)
         elif base.startswith("cycle_"):
@@ -238,6 +243,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         regnal_names=regnal_names, roman_anchors=roman_anchors,
         periods=periods, scales=scales, period_parts=period_parts,
         decade_words=decade_words, clock_landmarks=clock_landmarks,
+        clock_zones=clock_zones,
         weekend_words=frozenset(weekend_words),
         weekday_full=weekday_full,
         quantifiers=quantifiers)
