@@ -12,7 +12,7 @@ the reference's favour:
   Sunday). Only Canada Day carries the Holidays Act Sunday->Monday shift; New
   Year's Day keeps its statutory nominal date.
 """
-from chronologia import AstroDate, WeekdayOnOrBeforeRule, holidays_for
+from chronologia import AstroDate, NearestWeekdayRule, holidays_for
 from holiday_testkit import assert_national_differential
 
 _J = "CA"
@@ -27,7 +27,7 @@ def test_national_differential_2023_2025():
 
 def test_victoria_day_is_monday_preceding_may_25():
     # Independent re-derivation: the latest Monday on or before 24 May.
-    rule = WeekdayOnOrBeforeRule(5, 24, 0)
+    rule = NearestWeekdayRule(5, 24, 0, -1)
     for year, expected in ((2023, (5, 22)), (2024, (5, 20)), (2025, (5, 19))):
         d = rule.observances(year)[0][0]
         assert (d.month, d.day) == expected
