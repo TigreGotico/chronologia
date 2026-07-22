@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+"""The fa<->en semantic-parity block: each pair resolves to the SAME span."""
+
+PARITY = [
+    ('فردا', 'tomorrow'),
+    ('دیروز', 'yesterday'),
+    ('امروز', 'today'),
+    ('پس\u200cفردا', 'day after tomorrow'),
+    ('2 هفته بعد', 'in 2 weeks'),
+    ('2 هفته پیش', '2 weeks ago'),
+    ('3 روز بعد', 'in 3 days'),
+    ('3 روز پیش', '3 days ago'),
+    ('5 سال بعد', 'in 5 years'),
+    ('10 سال پیش', '10 years ago'),
+    ('6 ماه بعد', 'in 6 months'),
+    ('2 ساعت بعد', 'in 2 hours'),
+    ('15 دقیقه بعد', 'in 15 minutes'),
+    ('5 ژوئن 2027', 'june 5 2027'),
+    ('20 ژوئیه 1969', 'july 20 1969'),
+    ('1 ژانویه 2000', 'january 1 2000'),
+    ('ژوئن 2027', 'june 2027'),
+    ('ژانویه 2020', 'january 2020'),
+    ('1999', '1999'),
+    ('2020', '2020'),
+    ('15:30', '15:30'),
+    ('سه\u200cشنبه آینده', 'next tuesday'),
+    ('جمعه گذشته', 'last friday'),
+    ('ظهر', 'noon'),
+    ('نیمه\u200cشب', 'midnight'),
+    ('44 پیش از میلاد', '44 bc'),
+    ('1492 میلادی', '1492 ad'),
+]

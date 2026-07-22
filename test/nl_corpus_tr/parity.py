@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+"""The tr<->en semantic-parity block: each pair resolves to the SAME span."""
+
+PARITY = [
+    ('yarın', 'tomorrow'),
+    ('dün', 'yesterday'),
+    ('bugün', 'today'),
+    ('öbür gün', 'day after tomorrow'),
+    ('2 hafta sonra', 'in 2 weeks'),
+    ('2 hafta önce', '2 weeks ago'),
+    ('3 gün sonra', 'in 3 days'),
+    ('3 gün önce', '3 days ago'),
+    ('5 yıl sonra', 'in 5 years'),
+    ('10 yıl önce', '10 years ago'),
+    ('6 ay sonra', 'in 6 months'),
+    ('2 saat sonra', 'in 2 hours'),
+    ('15 dakika sonra', 'in 15 minutes'),
+    ('5 haziran 2027', 'june 5 2027'),
+    ('20 temmuz 1969', 'july 20 1969'),
+    ('1 ocak 2000', 'january 1 2000'),
+    ('25 aralık 2025', 'december 25 2025'),
+    ('haziran 2027', 'june 2027'),
+    ('ocak 2020', 'january 2020'),
+    ('1999', '1999'),
+    ('2020', '2020'),
+    ('15:30', '15:30'),
+    ('gelecek salı', 'next tuesday'),
+    ('geçen cuma', 'last friday'),
+    ('öğle', 'noon'),
+    ('gece yarısı', 'midnight'),
+    ('44 mö', '44 bc'),
+    ('1492 ms', '1492 ad'),
+]

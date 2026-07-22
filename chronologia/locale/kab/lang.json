@@ -1,0 +1,47 @@
+{
+  "tokenizer": {
+    "split_contractions": false,
+    "ordinal_dot": false
+  },
+  "constructions": {
+    "named_day": {
+      "orders": [
+        "DAY_WORD"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "DAY of MONTH YEAR?",
+        "DAY MONTH YEAR?",
+        "MONTH DAY? YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK MERIDIEM?"
+      ],
+      "prefer_future": true
+    },
+    "year_ref": {
+      "orders": [
+        "GYEAR"
+      ]
+    },
+    "iso_date": {
+      "orders": [
+        "ISO"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": true,
+    "hemisphere": null,
+    "prefer_future": true
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "hook": "chronologia.extract.numfold:fold_kab"
+}

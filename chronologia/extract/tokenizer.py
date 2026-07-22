@@ -34,8 +34,12 @@ class Tokenizer:
         # otherwise they stay inside the word
         # letters; when contractions are NOT split, an apostrophe glues
         # letter runs into one word (d'aujourd'hui stays whole)
-        word = (r"[^\W\d]+" if modes.split_contractions
-                else r"[^\W\d]+(?:['’][^\W\d]+)*")
+        # a zero-width non-joiner / joiner (‌ / ‍) is an *intra-word*
+        # formatting mark in Persian and other scripts (سه‌شنبه "Tuesday" is one
+        # word), so it always glues letter runs -- never a token boundary.
+        zwj = r"(?:[‌‍][^\W\d]+)*"
+        word = (r"[^\W\d]+" + zwj if modes.split_contractions
+                else r"[^\W\d]+(?:['’‌‍][^\W\d]+)*")
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.

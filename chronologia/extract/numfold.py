@@ -299,6 +299,15 @@ fold_pt = _make_romance_fold("pt", {"segunda", "quarta", "quinta", "sexta",
 fold_es = _make_romance_fold("es", set())
 fold_gl = _make_romance_fold("gl", set())
 fold_ca = _make_romance_fold("ca", set())
+# an: "martes" (Tuesday) must never be read as a number; the Romance factory
+# folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
+fold_an = _make_romance_fold("an", {"martes"})
+# mwl (Mirandese): the feminine ordinals segunda/terça/quarta/quinta/sesta
+# are weekday names (segunda-feira ...) and sábado is Saturday -- none may be
+# read as a number.
+fold_mwl = _make_romance_fold(
+    "mwl", {"segunda", "terça", "terca", "quarta", "quinta", "sesta",
+            "sabado", "sábado"})
 
 
 
@@ -459,3 +468,37 @@ fold_fy = _lazy_germanic_fold(
     "ovos_number_parser.numbers_fy", "extract_number_fy",
     {"heal", "healwei", "kertier", "miljoen", "miljard", "tûzen"},
     ord_suffixes={"e", "de", "te"}, word_map=_FY_HOURS)
+
+
+# ---------------------------------------------------------------------------
+# Turkic / isolating spelled-number folding (tr / az / id / ms / kab)
+#
+# These families expose a single ``extract_number_<lang>`` reader (no
+# ``NumberVocabulary``), so the Germanic single-extractor fold applies
+# verbatim: a maximal run of number-words is joined and read to one digit
+# token, with clock-fraction and scale words withheld so the token that
+# distinguishes a construction survives.  ``extract_number_<lang>`` here has
+# signature ``(text, short_scale=True, ordinals=False)`` -- the fold's
+# ``value_of`` tries ``ordinals=True`` then the cardinal default, which the
+# extra ``short_scale`` positional default leaves untouched.
+# ---------------------------------------------------------------------------
+fold_tr = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_tr", "extract_number_tr",
+    {"yarım", "çeyrek", "bin", "milyon", "milyar"})
+fold_az = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_az", "extract_number_az",
+    {"yarım", "min", "milyon", "milyard"})
+fold_id = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_id", "extract_number_id",
+    {"setengah", "seperempat", "suku", "ribu", "juta", "miliar", "milyar"})
+fold_ms = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_id", "extract_number_ms",
+    {"setengah", "separuh", "suku", "ribu", "juta", "bilion", "miliar"})
+fold_kab = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_kab", "extract_number_kab",
+    {"azgen", "agim", "amelyun"})
+# fa (Persian): single extractor extract_number_fa(text, ordinals=False);
+# withhold the half/quarter clock words and the scale words.
+fold_fa = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_fa", "extract_number_fa",
+    {"نیم", "ربع", "چارک", "هزار", "میلیون", "میلیارد"})
