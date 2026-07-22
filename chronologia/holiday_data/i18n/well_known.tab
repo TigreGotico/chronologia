@@ -723,3 +723,25 @@ valentines      | az | sevgililər günü
 rosh_hashanah   | az | yəhudi yeni ili
 yom_kippur      | az | yom kippur
 hanukkah        | az | hanuka
+#
+# ===== Greek =====
+new_year               | el | πρωτοχρονιά ;; πρώτη του χρόνου
+epiphany               | el | θεοφάνεια ;; φώτα
+orthodox_good_friday   | el | μεγάλη παρασκευή
+orthodox_easter        | el | πάσχα ;; κυριακή του πάσχα
+orthodox_easter_monday | el | δευτέρα του πάσχα ;; δευτέρα της διακαινησίμου
+assumption             | el | κοίμηση της θεοτόκου ;; δεκαπενταύγουστος
+christmas_eve          | el | παραμονή χριστουγέννων
+christmas              | el | χριστούγεννα
+eid_al_fitr            | el | εΐντ αλ φιτρ
+ramadan                | el | ραμαζάνι
+rosh_hashanah          | el | εβραϊκή πρωτοχρονιά
+yom_kippur             | el | γιομ κιπούρ
+passover               | el | πέσαχ
+hanukkah               | el | χανουκά
+chinese_new_year       | el | κινέζικη πρωτοχρονιά
+nowruz                 | el | νορούζ
+diwali                 | el | ντιβάλι
+vesak                  | el | βεσάκ
+halloween              | el | χαλοουίν
+valentines             | el | αγίου βαλεντίνου ;; ημέρα των ερωτευμένων
