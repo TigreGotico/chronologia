@@ -77,7 +77,6 @@
     },
     "military_time": {
       "orders": [
-        "MILTIME hours",
         "MILTIMEZ"
       ],
       "prefer_future": true

@@ -49,7 +49,6 @@
     },
     "scoped_ordinal": {
       "orders": [
-        "ORD SEL_UNIT of SORD SCOPE_UNIT",
         "ORD SCOPE_UNIT"
       ]
     },
@@ -96,12 +95,6 @@
     "month_fuzzy": {
       "orders": [
         "PART MONTH"
-      ]
-    },
-    "half_period": {
-      "orders": [
-        "NUM half of GYEAR",
-        "NUM half of SCOPE_UNIT"
       ]
     },
     "quarter_ref": {
