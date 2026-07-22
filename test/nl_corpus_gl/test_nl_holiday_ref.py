@@ -73,7 +73,7 @@ def test_no_holiday_no_match(text):
     nomatch(text)
 
 
-@pytest.mark.xfail(reason="holiday/surname homograph (Nadal) out of scope")
+@pytest.mark.xfail(reason="holiday/surname homograph (Nadal) out of scope", strict=True)
 def test_name_homograph_should_not_bind():
     nomatch("o tenista nadal xogou")
 

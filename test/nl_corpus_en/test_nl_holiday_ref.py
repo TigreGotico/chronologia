@@ -109,7 +109,7 @@ def test_no_holiday_no_match(text):
 # "Easter" is also a given name/surname; with no calendar cue the engine still
 # binds the holiday.  Policy: homograph disambiguation is out of scope -> xfail.
 
-@pytest.mark.xfail(reason="holiday/person homograph disambiguation out of scope")
+@pytest.mark.xfail(reason="holiday/person homograph disambiguation out of scope", strict=True)
 def test_person_homograph_should_not_bind():
     nomatch("i met a woman named easter")
 

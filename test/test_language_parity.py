@@ -155,6 +155,90 @@ def test_non_reference_corpus_has_parity_block(lang):
          f"(need >= {MIN_PARITY})")
 
 
+def _load_module(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _parity_cases():
+    """Every semantic-parity pair across every non-reference corpus.
+
+    Yields ``(lang, a, b, anchor)`` tuples.  ``a`` and ``b`` are the two
+    phrases of a parity pair; one is the native phrase, the other the English
+    staple.  The corpus packages are historically inconsistent about which
+    slot holds which (some ship ``(native, english)``, some
+    ``(english, native)``), so the semantic guard below is deliberately
+    order-agnostic and does not depend on the convention.
+    """
+    cases = []
+    for lang in _LANGS:
+        if lang == REFERENCE_LANG:
+            continue
+        pkg = _PACKAGES[lang]
+        parity_file = os.path.join(pkg, "parity.py")
+        corpus_file = os.path.join(pkg, "_corpus.py")
+        if not (os.path.exists(parity_file) and os.path.exists(corpus_file)):
+            continue
+        pmod = _load_module(f"_parity_sem_{lang}", parity_file)
+        cmod = _load_module(f"_corpus_sem_{lang}", corpus_file)
+        anchor = getattr(cmod, "ANCHOR")
+        for a, b in getattr(pmod, "PARITY"):
+            cases.append((lang, a, b, anchor))
+    return cases
+
+
+_PARITY_CASES = _parity_cases()
+
+
+def _span(text, lang, anchor):
+    from chronologia import extract_timespan
+    r = extract_timespan(text, lang, anchor)
+    return None if r is None else (r[0].start, r[0].end)
+
+
+@pytest.mark.parametrize(
+    "lang,a,b,anchor", _PARITY_CASES,
+    ids=[f"{c[0]}:{c[1]}|{c[2]}" for c in _PARITY_CASES])
+def test_parity_pair_resolves_to_same_span(lang, a, b, anchor):
+    """The semantic teeth of the parity contract.
+
+    A parity pair is a native phrase and its English staple that *mean the
+    same thing*; the contract is that they resolve to the **same span** --
+    the same ``start`` AND the same ``end``, under the same anchor.  A
+    language that returns garbage (or ``None``, or a different span) for a
+    phrase it claims parity on must fail here, not slip through on a mere
+    case count.
+
+    The pair's slot order is not fixed across corpora, so we accept either
+    assignment of (native, english): one side must parse under ``lang`` and
+    the *other* under ``en`` to the identical span.  Garbage matches neither
+    assignment and fails.
+    """
+    a_lang = _span(a, lang, anchor)
+    b_en = _span(b, REFERENCE_LANG, anchor)
+    b_lang = _span(b, lang, anchor)
+    a_en = _span(a, REFERENCE_LANG, anchor)
+
+    forward = a_lang is not None and a_lang == b_en
+    reverse = b_lang is not None and b_lang == a_en
+    assert forward or reverse, (
+        f"parity broken for nl_corpus_{lang}: {a!r} / {b!r} do not resolve "
+        f"to the same span.\n"
+        f"  {a!r} as {lang} -> {a_lang}\n"
+        f"  {b!r} as en     -> {b_en}\n"
+        f"  {b!r} as {lang} -> {b_lang}\n"
+        f"  {a!r} as en     -> {a_en}")
+
+
+def test_parity_cases_were_discovered():
+    # guard the guard: if discovery silently yields nothing, the semantic
+    # test above would vacuously pass.  A real corpus set must produce cases.
+    assert len(_PARITY_CASES) >= MIN_PARITY, \
+        f"semantic-parity discovery collected only {len(_PARITY_CASES)} pairs"
+
+
 def test_guard_flags_an_empty_corpus(tmp_path):
     """Adversarial test of the guard mechanism itself.
 

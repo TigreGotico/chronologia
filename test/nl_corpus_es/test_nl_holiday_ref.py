@@ -72,7 +72,7 @@ def test_no_holiday_no_match(text):
     nomatch(text)
 
 
-@pytest.mark.xfail(reason="holiday/person homograph out of scope")
+@pytest.mark.xfail(reason="holiday/person homograph out of scope", strict=True)
 def test_person_homograph_should_not_bind():
     nomatch("conocí a una chica llamada pascua")
 

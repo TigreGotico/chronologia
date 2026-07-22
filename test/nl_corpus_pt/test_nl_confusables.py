@@ -52,43 +52,40 @@ def test_confusable_returns_none(text):
     nomatch(text)
 
 
+_RESOLVED = [
+    'de manhã cedo',
+    'a manhã seguinte',
+    'o senhor domingos chegou',
+]
+
 _LIMITATIONS = [
     pytest.param(
         'abril nome de menina',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'primavera dos povos',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'caiu no outono da vida',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'uma década perdida',
-        marks=pytest.mark.xfail(reason='temporal unit in figurative use binds as a date; downstream concern', strict=False)),
-    pytest.param(
-        'de manhã cedo',
-        marks=pytest.mark.xfail(reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=False)),
-    pytest.param(
-        'a manhã seguinte',
-        marks=pytest.mark.xfail(reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=False)),
+        marks=pytest.mark.xfail(reason='temporal unit in figurative use binds as a date; downstream concern', strict=True)),
     pytest.param(
         'domingo canta ópera lindamente',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
-    pytest.param(
-        'o senhor domingos chegou',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'domingo de ramos festa',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'terça é um nome',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'sexta sentido de taxa',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'o natal chegou cedo',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
 ]
 
 
@@ -110,3 +107,12 @@ def test_span_elsewhere(text, confusable):
     assert r is not None, f"{text!r} should bind its genuine temporal part"
     assert confusable in r[1], (
         f"confusable {confusable!r} should stay in remainder {r[1]!r}")
+
+
+
+@pytest.mark.parametrize("text", _RESOLVED)
+def test_confusable_now_none(text):
+    # formerly a documented limitation; the parser now correctly
+    # binds nothing here.  A strict tripwire would misfire, so this is
+    # a live positive assertion of the now-correct behaviour.
+    nomatch(text)

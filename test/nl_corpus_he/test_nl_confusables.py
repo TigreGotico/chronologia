@@ -51,16 +51,16 @@ def test_confusable_returns_none(text):
 _LIMITATIONS = [
     pytest.param(
         'תל אביב עיר גדולה',
-        marks=pytest.mark.xfail(reason='place name תל אביב carries the season word אביב ("spring") and binds as the season; a one-name adjacent guard would not generalise, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='place name תל אביב carries the season word אביב ("spring") and binds as the season; a one-name adjacent guard would not generalise, disambiguation is downstream', strict=True)),
     pytest.param(
         'הקיץ החם',
-        marks=pytest.mark.xfail(reason='season word in a descriptive phrase binds as the season; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word in a descriptive phrase binds as the season; downstream concern', strict=True)),
     pytest.param(
         'אביב חדש',
-        marks=pytest.mark.xfail(reason='season word אביב used as a name/metaphor binds as spring; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='season word אביב used as a name/metaphor binds as spring; downstream concern', strict=True)),
     pytest.param(
         'שבת שלום',
-        marks=pytest.mark.xfail(reason='full weekday שבת ("Saturday") binds as the next Saturday inside the greeting "Shabbat shalom"; the bare-weekday order resolves the day, disambiguation is downstream', strict=False)),
+        marks=pytest.mark.xfail(reason='full weekday שבת ("Saturday") binds as the next Saturday inside the greeting "Shabbat shalom"; the bare-weekday order resolves the day, disambiguation is downstream', strict=True)),
 ]
 
 

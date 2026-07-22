@@ -58,28 +58,23 @@ def test_confusable_returns_none(text):
     nomatch(text)
 
 
+_RESOLVED = [
+    'a népek tavasza',
+    'az élet ősze',
+    'egy elveszett évtized',
+    'hét mint szám',
+]
+
 _LIMITATIONS = [
     pytest.param(
         'április mint név',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=False)),
-    pytest.param(
-        'a népek tavasza',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
-    pytest.param(
-        'az élet ősze',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=False)),
-    pytest.param(
-        'egy elveszett évtized',
-        marks=pytest.mark.xfail(reason='temporal unit in figurative use binds as a date; downstream concern', strict=False)),
-    pytest.param(
-        'hét mint szám',
-        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=False)),
+        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'hét nap múlva',
-        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=False)),
+        marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
     pytest.param(
         'korán jött a karácsony',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=False)),
+        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
 ]
 
 
@@ -101,3 +96,12 @@ def test_span_elsewhere(text, confusable):
     assert r is not None, f"{text!r} should bind its genuine temporal part"
     assert confusable in r[1], (
         f"confusable {confusable!r} should stay in remainder {r[1]!r}")
+
+
+
+@pytest.mark.parametrize("text", _RESOLVED)
+def test_confusable_now_none(text):
+    # formerly a documented limitation; the parser now correctly
+    # binds nothing here.  A strict tripwire would misfire, so this is
+    # a live positive assertion of the now-correct behaviour.
+    nomatch(text)

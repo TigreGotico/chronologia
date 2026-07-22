@@ -72,7 +72,7 @@ def test_no_holiday_no_match(text):
     nomatch(text)
 
 
-@pytest.mark.xfail(reason="holiday/place homograph (Natal, Brazil) out of scope")
+@pytest.mark.xfail(reason="holiday/place homograph (Natal, Brazil) out of scope", strict=True)
 def test_place_homograph_should_not_bind():
     nomatch("vou para natal no brasil")
 
