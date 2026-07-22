@@ -9,6 +9,11 @@
         "DAY_WORD"
       ]
     },
+    "weekday_ref": {
+      "orders": [
+        "WEEKDAY"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "DAY of MONTH YEAR?",

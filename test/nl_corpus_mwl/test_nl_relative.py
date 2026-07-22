@@ -3,7 +3,9 @@
 
 Only a PAST-offset marker is citable: hai ("... ago", from *haber*).  No
 forward-offset ("in N ...") or weekday next/last marker was found in the
-sources, so those are intentionally absent -- an honest gap, not a fake."""
+sources, so those are intentionally absent -- an honest gap, not a fake.  A
+bare weekday, however, needs no marker: it names its next strictly-future
+occurrence, the language-agnostic default."""
 from datetime import timedelta
 import pytest
 from ._corpus import ANCHOR, start
@@ -35,10 +37,10 @@ def test_past_week_offsets(text, weeks):
 
 
 @pytest.mark.parametrize("text,wd", [
-    ("segunda feira", None), ("terça feira", None), ("sábado", None),
-    ("demingo", None)])
-def test_weekday_names_tokenize(text, wd):
-    # bare weekday names have no citable next/last marker in mwl, so they do
-    # not resolve to a span on their own; assert the engine returns cleanly.
-    from ._corpus import parse
-    assert parse(text) is None
+    ("segunda feira", 0), ("terça feira", 1), ("sábado", 5), ("demingo", 6)])
+def test_bare_weekday_resolves_next(text, wd):
+    # a bare weekday names its next strictly-future occurrence, a day-wide span
+    ahead = (wd - A.weekday()) % 7 or 7
+    exp = (A + timedelta(days=ahead)).date()
+    s = start(text)
+    assert (s.year, s.month, s.day) == (exp.year, exp.month, exp.day)
