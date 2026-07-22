@@ -100,11 +100,11 @@ which is exactly why they exist.
 
 | | |
 |---|---|
-| Pull requests merged into this repository | 74 |
-| Tests | ~27,400 (plus 121 language-parity checks) |
-| Natural-language corpus cases | ~9,100 across 42 languages |
+| Pull requests merged into this repository | 97 |
+| Tests | ~38,200 (plus 121 language-parity checks) |
+| Natural-language corpus cases | ~14,500 across 42 languages |
 | Calendars | 17 (+ zone/timeline adapters) |
-| Holiday jurisdictions | 260 (247 countries/territories, subdivisions, 14 financial markets) · ~4,750 rules · every rule golded |
-| Holiday name translations | 1,394 rows |
-| Documentation pages | 15, every code example executed by the suite |
-| Externally-found data errors | 2 (reported in module docstrings) |
+| Holiday jurisdictions | 260 (247 countries/territories with subdivisions, 14 financial markets) · ~5,400 rules · every rule golded |
+| Holiday name translations | 1,446 rows |
+| Documentation pages | 17, every code example executed by the suite |
+| Externally-found data errors | 4 (2 data tables, a gazette-verified rename pair, and an upstream number-parser crash — all reported at source) |
