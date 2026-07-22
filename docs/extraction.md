@@ -1186,6 +1186,29 @@ surface forms, and write a `lang.json` that sets the conventions and lists
 the constructions the language supports. Start by copying the closest
 existing language and replacing the surfaces — no Python required.
 
+### Performance — lazy, cached per-locale loading
+
+`import chronologia` reads **no** locale data: not one of the 40-plus
+`locale/<code>/` directories is touched at import. A language's vocabulary is
+read, expanded, and compiled into an engine the **first** time you call an
+`extract_*` function for it, and that engine is then cached for the lifetime
+of the process — a second call for the same language never re-reads a file.
+So an embedded voice target that speaks one language pays for one locale, not
+forty, and pays for it once. The cache is guarded by a lock, so concurrent
+first-calls from different threads are safe: each language is compiled exactly
+once, and every later call returns the identical engine.
+
+The first-call cost is dominated by expanding the language's `.voc` files. On
+a typical dev laptop, loading and compiling one locale is **~70–85 ms**
+regardless of locale size, and every subsequent extraction is well under a
+millisecond. Loading is **linear** in the number of vocabulary files: reading
+a locale builds its name→templates map once and expands each file against it,
+rather than re-scanning the whole locale tree per file.
+
+The civil-holiday engine loads the same way: a jurisdiction's `.tab` rule file
+is parsed and cached on first lookup (`holidays_for("PT", 2027)`), never at
+import, under its own lock.
+
 ## Anchored arithmetic — offsets from a reference date
 
 Some phrases do not name a date outright; they name one *relative to another
