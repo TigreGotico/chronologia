@@ -1,0 +1,93 @@
+{
+  "tokenizer": {
+    "split_contractions": true,
+    "ordinal_dot": true
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "MARKER of? NUM UNIT",
+        "NUM UNIT MARKER"
+      ]
+    },
+    "named_day": {
+      "orders": [
+        "DAY_WORD"
+      ]
+    },
+    "weekday_ref": {
+      "orders": [
+        "article? WEEKDAY REL_MARKER",
+        "REL_MARKER WEEKDAY"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "article? DAY of MONTH of? YEAR?",
+        "article? DAY MONTH YEAR?",
+        "MONTH of? YEAR?",
+        "MONTH DAY? YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "season_ref": {
+      "orders": [
+        "article? SEASON of YEAR",
+        "REL_MARKER SEASON",
+        "article? SEASON YEAR?"
+      ]
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK MERIDIEM?",
+        "at HOUR of? article? MERIDIEM?",
+        "at? LANDMARK of? article? MERIDIEM?"
+      ],
+      "prefer_future": true
+    },
+    "era_bc": {
+      "orders": [
+        "NUM bc"
+      ]
+    },
+    "era_ad": {
+      "orders": [
+        "NUM ad"
+      ]
+    },
+    "deep_time": {
+      "orders": [
+        "NUM SCALE of? year_word MARKER",
+        "MARKER NUM SCALE of? year_word"
+      ]
+    },
+    "year_ref": {
+      "orders": [
+        "article? year_word of? GYEAR",
+        "GYEAR"
+      ]
+    },
+    "iso_date": {
+      "orders": [
+        "ISO"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": true,
+    "hemisphere": null,
+    "prefer_future": true
+  },
+  "quantifiers": {
+    "1": [
+      "un",
+      "una",
+      "uno"
+    ]
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "hook": "chronologia.extract.numfold:fold_an"
+}

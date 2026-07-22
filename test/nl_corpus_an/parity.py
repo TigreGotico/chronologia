@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+"""The an<->en semantic-parity block: each pair resolves to the SAME span."""
+
+PARITY = [
+    ('demán', 'tomorrow'),
+    ('ayere', 'yesterday'),
+    ('hue', 'today'),
+    ('pasadoman', 'day after tomorrow'),
+    ('en 2 semanas', 'in 2 weeks'),
+    ('fa 2 semanas', '2 weeks ago'),
+    ('en 3 diyas', 'in 3 days'),
+    ('fa 3 diyas', '3 days ago'),
+    ('en 5 anyos', 'in 5 years'),
+    ('fa 10 anyos', '10 years ago'),
+    ('en 6 meses', 'in 6 months'),
+    ('5 de chunyo de 2027', 'june 5 2027'),
+    ('20 de chuliol de 1969', 'july 20 1969'),
+    ('1 de chinero de 2000', 'january 1 2000'),
+    ('chunyo de 2027', 'june 2027'),
+    ('chinero de 2020', 'january 2020'),
+    ('1999', '1999'),
+    ('2020', '2020'),
+    ('15:30', '15:30'),
+    ('o martes que viene', 'next tuesday'),
+    ('o viernes pasau', 'last friday'),
+    ('meydia', 'noon'),
+    ('meyanueyt', 'midnight'),
+    ('44 ac', '44 bc'),
+    ('1492 dc', '1492 ad'),
+    ("fa 66 millons d'anyos", '66 million years ago'),
+]

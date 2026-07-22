@@ -299,6 +299,11 @@ fold_pt = _make_romance_fold("pt", {"segunda", "quarta", "quinta", "sexta",
 fold_es = _make_romance_fold("es", set())
 fold_gl = _make_romance_fold("gl", set())
 fold_ca = _make_romance_fold("ca", set())
+# an: "martes" (Tuesday) must never be read as a number; the Romance factory
+# folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
+fold_an = _make_romance_fold("an", {"martes"})
+# mwl (Mirandese): "sábado"/"sabado" is a weekday, never a number.
+fold_mwl = _make_romance_fold("mwl", {"sabado", "sábado"})
 
 
 
