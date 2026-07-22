@@ -314,7 +314,12 @@ _US_2024 = {
 
 
 def test_us_2024_full_list():
-    got = {h.name: (h.date.month, h.date.day) for h in holidays_for("US", 2024)}
+    # "public" only: holidays_for's default (no categories filter) now also
+    # returns the vacanza-parity government/unofficial rows backfilled by
+    # test_holiday_categories.py, which this pre-existing federal-list check
+    # predates and is not about.
+    got = {h.name: (h.date.month, h.date.day)
+           for h in holidays_for("US", 2024, categories=("public",))}
     assert got == _US_2024
 
 
@@ -380,7 +385,12 @@ def test_is_civil_holiday_false():
 
 def test_is_civil_holiday_subdiv():
     assert is_civil_holiday(AstroDate(2024, 6, 13), "PT", subdiv="PT-LSB")
-    assert not is_civil_holiday(AstroDate(2024, 6, 13), "PT")
+    # "public" only: nationwide PT now also carries an "optional" category row
+    # for Dia de Santo António (test_holiday_categories.py's vacanza-parity
+    # backfill) -- this pre-existing check is about the statutory/public
+    # holiday, which stays Lisbon-only.
+    assert not is_civil_holiday(AstroDate(2024, 6, 13), "PT",
+                                categories=("public",))
 
 
 # --------------------------------------------------------------------------

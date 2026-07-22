@@ -48,17 +48,25 @@ zero rows added, tracked explicitly in ``ZERO_ROW_DONE_COUNTRIES`` so
 ``test_at_least_one_row_added_per_done_country`` doesn't misfire on a
 country that is legitimately done with nothing to backfill.
 
-The remaining ~33 vacanza countries with non-default categories (MK's
-Albanian/Bosnian/Hebrew/Islamic/Orthodox/Roma/Serbian/Turkish/Vlach
-denominational calendar, ME, TH's decree-shifted
-armed-forces/school/government days, US's federal
-``government``/``unofficial`` observances, and every remaining country whose
-extra-category holidays are Easter-relative, decree-tabulated, or otherwise
-year-varying) are NOT yet covered -- see ``PENDING_COUNTRIES``. The ratchet
-test below only asserts against ``DONE_COUNTRIES`` + any country vacanza
-itself reports as having an empty non-``public``/``workday`` category set;
-it is deliberately NOT a 100%-of-92 ratchet yet, and is documented as such
-so it does not silently claim more than it covers.
+A third and final wave backfills the remaining ~33 countries (LI..VI
+alphabetically, plus ME and MO which wave 2 had left pending): Montenegro's
+Catholic/Hebrew/Islamic/Orthodox denominational calendar, Macau's
+government/optional 補假 (observed-shift) table, Sweden's bank/de_facto/
+optional half-day-afternoon set, the US's federal ``government``/
+``unofficial`` observances, and every remaining country whose extra-category
+holidays are fixed, Easter-relative, or decree-tabulated. Same discipline as
+waves 1/2: stable Gregorian dates land ``fixed``; year-varying ones land as
+gazetted ``decree`` rows off vacanza's own 2024/2025 output.
+
+``UA`` is the one vacanza country excluded from ``VACANZA_CATEGORIES``
+outright rather than filed done-with-zero-rows: it declares only
+``workday`` and chronologia ships no ``ua.tab`` at all (its national
+calendar is suspended under martial law since 2022, the same call
+``test_holidays_batch4.py``/``test_holidays_batch5.py`` already made).
+
+``DONE_COUNTRIES`` now equals the entire ``VACANZA_CATEGORIES`` snapshot --
+the ratchet test below is a full 100%-of-92 ratchet (modulo ``UA``'s
+documented exclusion), not a partial one.
 """
 import os
 
@@ -82,7 +90,9 @@ SKIP_EMPTY_CATEGORY = {("BG", "half_day"), ("TH", "bank"),
                         ("AT", "protestant"), ("AU", "bank"), ("AU", "half_day"),
                         ("CH", "de_facto"), ("CH", "half_day"), ("CH", "optional"),
                         ("DE", "catholic"), ("DE", "school"),
-                        ("IQ", "hebrew"), ("IT", "half_day")}
+                        ("IQ", "hebrew"), ("IT", "half_day"),
+                        ("LK", "government"), ("PW", "armed_forces"),
+                        ("PW", "half_day"), ("US", "half_day")}
 
 #: Countries this batch confirmed have *no* non-workday category to backfill
 #: at all: every declared category is either bare ``workday`` (excluded
@@ -94,8 +104,9 @@ SKIP_EMPTY_CATEGORY = {("BG", "half_day"), ("TH", "bank"),
 ZERO_ROW_DONE_COUNTRIES = {
     # workday-only (VACANZA_CATEGORIES[cc] == ["workday"])
     "AM", "AZ", "BJ", "BY", "ET", "FJ", "KG",
+    "LY", "MN", "NP", "PH", "SI", "SK", "TG",
     # every declared category is SKIP_EMPTY_CATEGORY
-    "AE", "AU", "CH", "DE", "IT",
+    "AE", "AU", "CH", "DE", "IT", "PW",
 }
 
 # ==========================================================================
@@ -140,10 +151,19 @@ VACANZA_CATEGORIES = {
     "TH": ["armed_forces", "bank", "government", "school", "workday"],
     "TL": ["government", "workday"], "TR": ["half_day"], "TT": ["optional"],
     "TW": ["government", "optional", "school", "workday"], "TZ": ["bank"],
-    "UA": ["workday"], "UM": ["unofficial"],
+    "UM": ["unofficial"],
     "US": ["government", "half_day", "unofficial"], "UY": ["bank"],
     "VI": ["unofficial"], "YE": ["school", "workday"],
 }
+
+#: ``UA`` (Ukraine) is a bare ``workday``-only vacanza entry -- excluded from
+#: ``VACANZA_CATEGORIES`` outright rather than filed with zero rows, because
+#: chronologia ships *no* ``ua.tab`` at all: Ukraine's national holiday
+#: calendar has been suspended/altered under martial law since 2022, the same
+#: reason ``test_holidays_batch4.py``/``test_holidays_batch5.py`` already
+#: skip it wholesale (see their ``SKIP_LIST``). With no base file to add a
+#: category row to, "done with zero rows" would be a fiction; "not modeled at
+#: all" is the honest state, so it is out of scope here too.
 
 #: Countries this batch fully backfilled: every non-workday vacanza category
 #: for that country now has >=1 matching row in its .tab.
@@ -152,13 +172,16 @@ DONE_COUNTRIES = ("AD", "AE", "AM", "AR", "AS", "AT", "AU", "AX", "AZ", "BE",
                    "CW", "CY", "DE", "DK", "DZ", "EE", "EG", "ER", "ET", "FI",
                    "FJ", "FK", "FO", "GL", "GR", "GU", "HK", "HT", "ID", "IE",
                    "IL", "IN", "IQ", "IS", "IT", "JP", "KE", "KG", "KN", "KR",
-                   "LA", "LB", "MK", "PN", "PR", "SM", "TH", "TW", "YE")
+                   "LA", "LB", "LI", "LK", "LU", "LY", "ME", "MK", "MN", "MO",
+                   "MP", "NE", "NL", "NP", "PA", "PH", "PN", "PR", "PS", "PT",
+                   "PW", "PY", "QA", "SE", "SH", "SI", "SK", "SM", "SS", "TG",
+                   "TH", "TL", "TR", "TT", "TW", "TZ", "UM", "US", "UY", "VI",
+                   "YE")
 
-#: Not yet backfilled -- tracked so the ratchet test documents scope honestly
-#: instead of silently under-covering. Follow-up work, not part of this PR's
-#: "done" claim.
-PENDING_COUNTRIES = tuple(sorted(
-    set(VACANZA_CATEGORIES) - set(DONE_COUNTRIES)))
+#: This wave lands every remaining country -- ``PENDING_COUNTRIES`` from
+#: waves 1/2 is gone. The ratchet below now covers every vacanza country with
+#: non-default categories (modulo ``UA``'s documented total exclusion, see
+#: ``VACANZA_CATEGORIES``'s note).
 
 
 def _register_category_rows(country):
@@ -196,9 +219,13 @@ _ROWS_ADDED = {cc: _register_category_rows(cc) for cc in DONE_COUNTRIES}
 
 
 def _dateset_for(country, year, subdiv=None):
+    # Compared by calendar day, not full AstroDate: a half-day (``half_pm``)
+    # span's date carries an hour component (its [12:00, 24:00) start), same
+    # precedent as test_holiday_golds.py's US half-day rules.
     out = {}
     for h in holidays_for(country, year, subdiv):
-        out.setdefault((h.name, h.subdiv), set()).add(h.date)
+        out.setdefault((h.name, h.subdiv), set()).add(
+            (h.date.year, h.date.month, h.date.day))
     return out
 
 
@@ -210,7 +237,7 @@ def _dateset_for(country, year, subdiv=None):
 ])
 def test_category_gold(country, subdiv, name, year, month, day):
     got = _dateset_for(country, year, subdiv=subdiv)
-    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+    assert (year, month, day) in got.get((name, subdiv), set()), (
         f"{country}/{name!r} {year}: expected {year}-{month:02d}-{day:02d}, "
         f"got {sorted(got.get((name, subdiv), set()))}")
 
@@ -242,12 +269,12 @@ def test_category_ratchet_done_countries(country):
 
 
 def test_category_ratchet_scope_is_documented():
-    """The ratchet only covers DONE_COUNTRIES today; PENDING_COUNTRIES is the
-    explicit, non-silent follow-up list (not claimed done, not silently
-    dropped) -- this test just keeps the two lists in sync with the vacanza
-    snapshot above so neither list can quietly drift out of date."""
-    assert set(DONE_COUNTRIES) | set(PENDING_COUNTRIES) == set(VACANZA_CATEGORIES)
-    assert set(DONE_COUNTRIES) & set(PENDING_COUNTRIES) == set()
+    """Every vacanza country with a non-default category is now backfilled:
+    ``DONE_COUNTRIES`` covers the whole ``VACANZA_CATEGORIES`` snapshot (``UA``
+    is excluded from that snapshot outright, see its documented note above).
+    This keeps the ratchet from silently drifting out of sync with the
+    vacanza snapshot as new countries are ever added to it."""
+    assert set(DONE_COUNTRIES) == set(VACANZA_CATEGORIES)
 
 
 def test_at_least_one_row_added_per_done_country():
