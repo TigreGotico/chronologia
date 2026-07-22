@@ -1,0 +1,41 @@
+# civil-holidays v1
+# jurisdiction: XTSE
+# source: https://web.archive.org/web/20250101000000*/https://www.tsx.com/trading/calendars-and-trading-hours/calendar
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.toronto_stock_exchange -- an
+#   independent open-source reference maintained against the TSX's own
+#   published trading-calendar rules. vacanza also registers this same
+#   calendar under the short code TSX;
+#   chronologia.civil_holidays.MARKET_ALIASES resolves it onto this file
+#   rather than shipping a duplicate copy.
+#   XTSE is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country: it
+#   is the Toronto Stock Exchange's own trading-holiday calendar. English
+#   is correct as the primary name here -- the TSX publishes its calendar
+#   in English, and the calendar belongs to an exchange, not a country with
+#   its own official language.
+#   New Year's Day, Canada Day, Christmas Day and Boxing Day carry the
+#   `sat_sun_mon` observed policy (Saturday/Sunday -> following Monday),
+#   verified against vacanza 0.101 output for 2024, 2025 and 2026 (2026
+#   exercises Christmas Day's Friday-nominal no-shift and Boxing Day's
+#   Saturday-nominal shift to Monday 28 Dec 2026). KNOWN LIMITATION: in
+#   years where Christmas Day AND Boxing Day both land on a weekend (e.g.
+#   2021: Sat 25 / Sun 26), the TSX's real calendar cascades Boxing Day's
+#   observed date one day further (Tue 28, not Mon 27) to avoid colliding
+#   with Christmas Day's own observed Monday -- a chained "next available
+#   business day" rule this `sat_sun_mon` policy does not reproduce. This
+#   does not affect 2024, 2025 or 2026 (none has that collision), which is
+#   this file's verified window.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed       | New Year's Day   | 1 1    | public          | | sat_sun_mon |  |
+nth_weekday | Family Day       | 2 3 0  | public          | |  |  |
+easter      | Good Friday      | -2     | public religious | |  |  |
+weekday_onbefore | Victoria Day | 5 24 0 | public        | |  |  |
+fixed       | Canada Day       | 7 1    | public          | | sat_sun_mon |  |
+nth_weekday | Civic Holiday    | 8 1 0  | public          | |  |  |
+nth_weekday | Labour Day       | 9 1 0  | public          | |  |  |
+nth_weekday | Thanksgiving Day | 10 2 0 | public          | |  |  |
+fixed       | Christmas Day    | 12 25  | public religious | | sat_sun_mon |  |
+fixed       | Boxing Day       | 12 26  | public          | | sat_sun_mon |  |

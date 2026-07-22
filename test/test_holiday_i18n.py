@@ -287,7 +287,15 @@ _PRIMARY_LANG = {
     # financial markets (institutions, not countries -- English is their own
     # publishing language, not a translation fallback):
     "XECB": "en", "ECB": "en", "TAR": "en", "XNYS": "en", "NYSE": "en",
-    "IFEU": "en",
+    "IFEU": "en", "XCME": "en", "CME": "en", "XNAS": "en",
+    "XETR": "de", "XFRA": "de", "XSWX": "de", "SIX": "de",
+    "XTSE": "en", "TSX": "en",
+    "XHKG": "en", "HKEX": "en", "SEHK": "en",
+    "XJPX": "en", "JPX": "en", "TSE": "en", "OSE": "en",
+    "XSHG": "zh", "XSHE": "zh", "SSE": "zh", "SZSE": "zh",
+    "XBOM": "en", "BSE": "en", "XNSE": "en", "NSE": "en",
+    "BVMF": "pt", "B3": "pt",
+    "XMEX": "es", "BMV": "es",
 }
 _MATRIX_LANGS = ("en", "pt", "es", "de", "fr")
 

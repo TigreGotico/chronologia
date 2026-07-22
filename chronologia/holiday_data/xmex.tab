@@ -1,0 +1,47 @@
+# civil-holidays v1
+# jurisdiction: XMEX
+# source: https://web.archive.org/web/20250101000000*/https://www.bmv.com.mx/en/grupo-bmv/aviso-de-dias-inhabiles
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.mexican_stock_exchange -- an
+#   independent open-source reference maintained against the Bolsa
+#   Mexicana de Valores's own published trading-calendar, itself following
+#   the SHCP's (Secretaria de Hacienda y Credito Publico) annually
+#   gazetted bank-holiday calendar. vacanza also registers this same
+#   calendar under the short code BMV;
+#   chronologia.civil_holidays.MARKET_ALIASES resolves it onto this file
+#   rather than shipping a duplicate copy.
+#   XMEX is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country: the
+#   BMV publishes its own trading calendar in Spanish -- Spanish (es) is
+#   the correct primary language here.
+#   Año Nuevo, Día del Trabajo, Día de la Independencia and Navidad are
+#   Gregorian fixed dates. Jueves Santo/Viernes Santo (Maundy Thursday /
+#   Good Friday) are Easter-offset. Día de la Constitución (first Monday of
+#   February), Natalicio de Benito Juárez (third Monday of March) and Día
+#   de la Revolución (third Monday of November) are Mexico's own "ley del
+#   lunes" nth-weekday holidays (Ley Federal del Trabajo art. 74), verified
+#   against vacanza 0.101 output for 2024, 2025 AND 2026 (first Monday of
+#   February 2026 is 2 Feb; third Monday of March 2026 is 16 Mar; third
+#   Monday of November 2026 is 16 Nov).
+#   "Transmisión del Poder Ejecutivo Federal" (1 Oct 2024) is a one-off:
+#   the presidential-transition bank holiday only proclaimed once every
+#   six-year term. "Día del Empleado Bancario" (12 Dec) appeared in
+#   vacanza 0.101's 2024 and 2025 output but not its 2026 output -- rather
+#   than assume a fixed rule vacanza itself does not continue, it is
+#   shipped as an honest `decree` row for the two years actually verified.
+#   Every rule verified against vacanza 0.101 output for 2024 and 2025
+#   (nth_weekday rules cross-checked additionally against 2026).
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed       | Año Nuevo                                   | 1 1    | public          | |  |  |
+nth_weekday | Día de la Constitución                      | 2 1 0  | public          | |  |  |
+nth_weekday | Natalicio de Benito Juárez                  | 3 3 0  | public          | |  |  |
+easter      | Jueves Santo                                | -3     | public religious | |  |  |
+easter      | Viernes Santo                                | -2     | public religious | |  |  |
+fixed       | Día del Trabajo                             | 5 1    | public          | |  |  |
+fixed       | Día de la Independencia                     | 9 16   | public          | |  |  |
+nth_weekday | Día de la Revolución                        | 11 3 0 | public          | |  |  |
+fixed       | Navidad                                     | 12 25  | public religious | |  |  |
+one_off     | Transmisión del Poder Ejecutivo Federal     | 2024 10 1 https://www.bmv.com.mx/en/grupo-bmv/aviso-de-dias-inhabiles | public | |  |  |
+decree      | Día del Empleado Bancario                   | 2024-12-12 2025-12-12 | public | |  |  |

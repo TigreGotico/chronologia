@@ -1,0 +1,50 @@
+# civil-holidays v1
+# jurisdiction: XHKG
+# source: https://web.archive.org/web/20250101000000*/https://www.hkex.com.hk/Services/Trading-hours-and-Severe-Weather-Arrangements/Trading-Hours/Securities-Market
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.hong_kong_stock_exchange -- an
+#   independent open-source reference maintained against the Hong Kong
+#   Stock Exchange's own published trading-calendar. vacanza also registers
+#   this calendar under the short codes HKEX and SEHK;
+#   chronologia.civil_holidays.MARKET_ALIASES resolves both onto this file
+#   rather than shipping duplicate copies.
+#   XHKG is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country: it
+#   is the Hong Kong Exchanges and Clearing trading-holiday calendar. HKEX
+#   publishes bilingually (Chinese/English); English names below are
+#   vacanza 0.101's own `en_HK` locale rendering of the same calendar.
+#   MOST of this calendar has no fixed-arithmetic rule at all -- it follows
+#   the Chinese lunar calendar (Lunar New Year, Ching Ming, Tuen Ng, Mid-
+#   Autumn, Chung Yeung -- the last four fixed to specific days of the
+#   traditional Chinese lunar-solar calendar/24 solar terms, not a
+#   Gregorian formula) plus one Buddhist lunar date (the Buddha's
+#   Birthday). These are shipped as honest `decree` rows: the specific
+#   Gregorian dates HKEX's own calendar lands on in 2024 and 2025,
+#   tabulated from vacanza 0.101's output rather than computed -- there is
+#   no shorter honest representation for a lunar closure.
+#   The four Gregorian-computable closures (New Year's Day, Good Friday,
+#   Easter Monday, Christmas Day, plus National Day 1 Oct and SAR
+#   Establishment Day 1 Jul, which are fixed Gregorian dates) are shipped
+#   as real rules. "The first weekday after Christmas Day" is HKEX's
+#   in-lieu policy for a Christmas cluster that would otherwise collide
+#   with a weekend -- modelled here as the fixed 26 Dec date directly
+#   (verified: 2024 and 2025 both land it on a weekday, so no shift ever
+#   fires in this window).
+#   Every rule verified against vacanza 0.101 output for 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed  | The first day of January                        | 1 1  | public          | |  |  |
+easter | Good Friday                                      | -2   | public religious | |  |  |
+easter | Easter Monday                                    | 1    | public religious | |  |  |
+fixed  | Labour Day                                        | 5 1  | public          | |  |  |
+fixed  | Hong Kong Special Administrative Region Establishment Day | 7 1 | public | |  |  |
+fixed  | National Day                                      | 10 1 | public          | |  |  |
+fixed  | Christmas Day                                     | 12 25 | public religious | |  |  |
+fixed  | The first weekday after Christmas Day             | 12 26 | public religious | |  |  |
+decree | Lunar New Year                                    | 2024-2-12 2024-2-13 2025-1-29 2025-1-30 2025-1-31 | public | |  |  |
+decree | Ching Ming Festival                               | 2024-4-4 2025-4-4 | public          | |  |  |
+decree | The Birthday of the Buddha                        | 2024-5-15 2025-5-5 | public religious | |  |  |
+decree | Tuen Ng Festival                                  | 2024-6-10 | public        | |  |  |
+decree | The day following the Chinese Mid-Autumn Festival | 2024-9-18 2025-10-7 | public | |  |  |
+decree | Chung Yeung Festival                              | 2024-10-11 2025-10-29 | public | |  |  |

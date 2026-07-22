@@ -1,0 +1,45 @@
+# civil-holidays v1
+# jurisdiction: XSHG
+# source: https://web.archive.org/web/20250101000000*/http://english.sse.com.cn/start/trading/
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.china (as applied to the
+#   Shanghai and Shenzhen Stock Exchanges' shared trading calendar) -- an
+#   independent open-source reference maintained against China's State
+#   Council trading-holiday notice (each year's 放假安排 circular), which
+#   both exchanges adopt identically. vacanza also registers this same
+#   calendar under XSHE (Shenzhen) and SSE/SZSE;
+#   chronologia.civil_holidays.MARKET_ALIASES resolves XSHE, SSE and SZSE
+#   onto this file rather than shipping duplicate copies.
+#   XSHG is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country, and
+#   both exchanges publish their own calendar circular in Chinese --
+#   Chinese (zh) is the correct primary language here, matching the house
+#   rule already applied to CN.tab.
+#   The calendar has NO fixed-arithmetic shape at all: every closure is
+#   State-Council-decreed for that specific year, including the Gregorian
+#   New Year's Day date (fixed on the calendar but re-gazetted every year
+#   as a matter of form) and the compensatory 调休 "made-up workday"
+#   weekend-shuffle entries vacanza's own China calendar includes as
+#   holiday-adjacent notice text ("休息日（由 ... 调休）") -- these are NOT
+#   modelled here (see cn.tab's own header and test_civil_holidays_w1b.py:
+#   they shuffle ordinary workdays onto weekends rather than granting an
+#   actual market closure day, so they are out of scope for a holiday
+#   calendar). Every remaining entry -- New Year's Day, Chinese New Year's
+#   Eve and the Spring Festival block, Ching Ming/Tomb-Sweeping Day, Labour
+#   Day, the Dragon Boat Festival, the Mid-Autumn Festival and National
+#   Day's block -- is shipped as an honest `decree` row tabulating the
+#   specific Gregorian dates vacanza 0.101 resolves for 2024 and 2025.
+#   Every date verified against vacanza 0.101 output for 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+decree | zh:元旦 ;; en:New Year's Day        | 2024-1-1 2025-1-1 | public | |  |  |
+decree | zh:农历除夕 ;; en:Chinese New Year's Eve | 2024-2-9 2025-1-28 | public | |  |  |
+decree | zh:春节 ;; en:Spring Festival        | 2024-2-10 2024-2-11 2024-2-12 2025-1-29 2025-1-30 2025-1-31 | public | |  |  |
+decree | zh:春节（补假） ;; en:Spring Festival (makeup holiday) | 2024-2-13 2024-2-14 | public | |  |  |
+decree | zh:清明节 ;; en:Ching Ming Festival   | 2024-4-4 2025-4-4 | public | |  |  |
+decree | zh:劳动节 ;; en:Labour Day           | 2024-5-1 2025-5-1 2025-5-2 | public | |  |  |
+decree | zh:端午节 ;; en:Dragon Boat Festival  | 2024-6-10 2025-5-31 | public | |  |  |
+decree | zh:端午节（补假） ;; en:Dragon Boat Festival (makeup holiday) | 2025-6-2 | public | |  |  |
+decree | zh:中秋节 ;; en:Mid-Autumn Festival   | 2024-9-17 2025-10-6 | public | |  |  |
+decree | zh:国庆节 ;; en:National Day          | 2024-10-1 2024-10-2 2024-10-3 2025-10-1 2025-10-2 2025-10-3 | public | |  |  |
