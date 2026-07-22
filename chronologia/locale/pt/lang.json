@@ -134,6 +134,14 @@
     "1": [
       "um",
       "uma"
+    ],
+    "0.5": [
+      "meia",
+      "meio"
+    ],
+    "0.25": [
+      "quarto",
+      "quartos"
     ]
   },
   "guards": {

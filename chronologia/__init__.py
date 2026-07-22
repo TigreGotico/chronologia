@@ -103,7 +103,9 @@ from chronologia.civil_holidays import (CATEGORIES, IL_INDEPENDENCE_SHIFT,
                                         holidays_for, is_civil_holiday,
                                         load_calendar, load_translations,
                                         parse_name_cell)
-from chronologia.extract import explain, extract_timespan
+from chronologia.extract import (TimeMention, explain, extract_duration,
+                                 extract_recurrence, extract_timespan,
+                                 extract_timespans)
 from chronologia.serialization import from_json, to_json
 
 __version__ = "0.1.0a1"
@@ -134,6 +136,11 @@ __all__ = [
     # natural-language extraction (text -> DateSpan)
     "extract_timespan",
     "explain",
+    # extraction beyond a single span
+    "extract_duration",
+    "extract_timespans",
+    "extract_recurrence",
+    "TimeMention",
     # eras
     "ERAS",
     "Era",

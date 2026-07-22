@@ -134,6 +134,14 @@
     "1": [
       "un",
       "una"
+    ],
+    "0.5": [
+      "media",
+      "medio"
+    ],
+    "0.25": [
+      "cuarto",
+      "cuartos"
     ]
   },
   "guards": {
