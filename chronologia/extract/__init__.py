@@ -157,6 +157,16 @@ _RANGE_SINCE = ("since",)
 #: the stack -- everything past the first endpoint pair falls to the remainder.
 _DASH_GAP = re.compile(r"\s+-+\s+")
 
+#: the constructions a lone ``clock_time`` composes onto (its minute-wide time
+#: placed on the day the date names).  A single composable-date set so the
+#: synthesised day-wide results of the post-passes -- a business-day count
+#: ("in 5 business days at 3pm"), an anchor-relative weekday count ("3 fridays
+#: from now at noon"), the weekend-after-next -- fold with a trailing clock
+#: exactly as a matcher-native date does, rather than being second-class to the
+#: ``DATE_CONSTRUCTIONS`` the matcher itself emits.
+_COMPOSABLE_DATES = DATE_CONSTRUCTIONS | {
+    "business_days", "weekday_count", "weekend_after_next"}
+
 
 def _conn_surfaces(spec, name, defaults):
     """The connector ``name`` as word lists (longest first) for token matching.
@@ -238,8 +248,7 @@ def _extract_range(text, tokens, engine, anchor):
     fraction_words = set(spec.clock_fractions) | {"quarter", "half", "a quarter"}
 
     def endpoint(sub):
-        return (_resolve_endpoint(text, sub, engine, anchor)
-                or _bare_weekday_endpoint(sub, engine, anchor))
+        return _range_endpoint(text, sub, engine, anchor)
 
     # -- from A to B -------------------------------------------------------
     lead = _match_conn_at(tokens, 0, from_surf)
@@ -268,12 +277,61 @@ def _extract_range(text, tokens, engine, anchor):
     return None
 
 
+def _range_endpoint(text, sub, engine, anchor):
+    """A range endpoint carrying its *granularity kind* and whether its year was
+    pinned, so :func:`_compose_range` can roll it without fabricating.
+
+    Returns ``(span, remainder, kind, pinned)`` or ``None``.  ``kind`` is:
+
+    * ``"clock"`` -- a sub-day span (a time of day); its cycle is one day, so a
+      right endpoint that lands before the start ("10 pm to 2 am") rolls a day;
+    * ``"weekday"`` -- a bare weekday, a day-wide span whose cycle is one week
+      ("monday to friday"); it rolls a week;
+    * ``"dated"`` -- a calendar date / month / year / era, whose year was
+      already placed by the endpoint's own resolution (prefer_future).  A dated
+      endpoint is **never** day/week-rolled: rolling a fixed calendar date by
+      single days is exactly the fabrication that turned "june 12 2020 to june 5
+      2020" into a bogus one-day span.
+
+    ``pinned`` is True when the slice carries an explicit year (a year-magnitude
+    number).  A pinned endpoint's cycle is fixed, so the straddle pull-back that
+    repairs a bare, prefer_future-flung endpoint must not touch it.
+    """
+    pinned = any(t.is_number and t.value is not None and t.value >= 100
+                 for t in sub)
+    weekday = any(t.text in engine.spec.weekdays for t in sub)
+    got = _resolve_endpoint(text, sub, engine, anchor)
+    if got is not None:
+        span, rem = got
+        width = span.end - span.start
+        if width < timedelta(days=1):
+            kind = "clock"
+        elif width <= timedelta(days=1) and weekday:
+            kind = "weekday"
+        else:
+            kind = "dated"
+        return span, rem, kind, pinned
+    bw = _bare_weekday_endpoint(sub, engine, anchor)
+    if bw is not None:
+        return bw[0], bw[1], "weekday", pinned
+    return None
+
+
 def _compose_range(left_tok, right_tok, endpoint, spec):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
     they are dropped; each endpoint contributes its own leftover text.
-    ``endpoint(sub)`` returns ``(span, remainder)`` or ``None``."""
+    ``endpoint(sub)`` returns ``(span, remainder, kind, pinned)`` or ``None``.
+
+    The span runs from the left endpoint's start to the right endpoint's end.
+    When the right end lands at or before the start the endpoints sit in
+    different cycles; this is reconciled by rolling **only** cyclic endpoints
+    (a clock by its day, a bare weekday by its week) and, for a bare (unpinned)
+    date whose prefer_future flung it a year ahead of a straddled anchor, by
+    pulling the left endpoint back one year.  A pinned or dated endpoint is
+    never rolled -- so a genuinely reversed range ("june 12 2020 to june 5
+    2020") yields ``None`` rather than a fabricated span."""
     left = endpoint(left_tok)
     right = endpoint(right_tok)
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
@@ -284,31 +342,33 @@ def _compose_range(left_tok, right_tok, endpoint, spec):
             left = endpoint(tuple(left_tok) + (merid,))
     if left is None or right is None:
         return None
-    start = left[0].start
-    # end before start: the right endpoint wraps into the next cycle -- a clock
-    # crossing midnight ("10 pm to 2 am") rolls a day; a weekday ("monday to
-    # friday") rolls a week.  Roll the right span forward by its own granularity
-    # until it lands after the start.
-    step = (timedelta(days=1)
-            if right[0].end - right[0].start < timedelta(days=1)
-            else timedelta(days=7))
-    rolled = right[0]
-    for _ in range(8):
-        if rolled.end > start:
-            break
-        rolled = DateSpan(rolled.start + step, rolled.end + step)
-    end = rolled.end
-    # prefer-future asymmetry: a range that straddles the anchor -- its left
-    # endpoint just behind "now", its right just ahead -- resolves the left a
-    # whole year into the future (prefer_future) while the right stays put,
-    # inverting the span past what the week/day roll above can repair.  Pull the
-    # left endpoint back one year so both endpoints read in the same nearest
-    # cycle ("july 20 to july 25" spoken on july 22 stays this year).
-    if end < start:
+    left_span, right_span = left[0], right[0]
+    start = left_span.start
+    # roll a cyclic right endpoint forward into the same cycle as the start; a
+    # dated endpoint already carries its year, so it is left untouched.
+    end = right_span.end
+    if right[2] == "clock":
+        rolled = right_span
+        while rolled.end <= start:
+            rolled = DateSpan(rolled.start + timedelta(days=1),
+                              rolled.end + timedelta(days=1))
+        end = rolled.end
+    elif right[2] == "weekday":
+        rolled = right_span
+        while rolled.end <= start:
+            rolled = DateSpan(rolled.start + timedelta(days=7),
+                              rolled.end + timedelta(days=7))
+        end = rolled.end
+    # prefer-future asymmetry: a straddling range resolves its left endpoint a
+    # whole year ahead (prefer_future) while the right stays put, inverting the
+    # span.  Pull an unpinned left back one year so both read in the nearest
+    # cycle ("july 20 to july 25" on july 22 stays this year).  A pinned left
+    # (explicit year) is fixed and must not be pulled.
+    if end <= start and not left[3]:
         pulled = _minus_one_year(start)
-        if pulled is not None and pulled < right[0].end:
-            start, end = pulled, right[0].end
-    if end < start:
+        if pulled is not None and pulled < right_span.end:
+            start, end = pulled, right_span.end
+    if end <= start:
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
     return DateSpan(start, end), remainder
@@ -373,8 +433,21 @@ def _extract_open_range(text, tokens, engine, anchor):
             else None
 
     def since_span(ep):
-        return DateSpan(ep[0].start, now) if ep is not None \
-            and ep[0].start < now else None
+        # "since X" is PAST-anchored: it names the most recent occurrence of X
+        # at-or-before now, so a prefer_future endpoint resolution (which flings
+        # a near-past date a whole year forward -- "since july 6" -> next July)
+        # is pulled back cycle by cycle until it lands in the past.  This makes
+        # prefer_future a property the *construction* overrides, not a global
+        # toggle "since" has to fight.
+        if ep is None:
+            return None
+        start = ep[0].start
+        while start > now:
+            pulled = _minus_one_year(start)
+            if pulled is None:
+                break
+            start = pulled
+        return DateSpan(start, now) if start < now else None
 
     def lead(surf, build):
         # the marker leads; its tokens are dropped, the endpoint keeps its own
@@ -595,7 +668,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None):
     # clock time placed on the day the date names): "june 5th at 3pm"
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
     dates = [(m, r) for m, r in resolved
-             if m.construction in DATE_CONSTRUCTIONS]
+             if m.construction in _COMPOSABLE_DATES]
     if len(clocks) == 1 and len(dates) == 1:
         res = compose_date_clock(dates[0][1], clocks[0][1])
     else:
