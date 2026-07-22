@@ -87,6 +87,13 @@
     "week_num NUM of YEAR",
     "week_num NUM YEAR?"
    ]
+  },
+  "fuzzy_period": {
+   "orders": [
+    "PART of? UNIT",
+    "PART of? REL_MARKER UNIT",
+    "PART of? UNIT REL_MARKER"
+   ]
   }
  },
  "conventions": {
