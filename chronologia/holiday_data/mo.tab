@@ -32,3 +32,40 @@ decree        | 中秋節翌日                                    | 2024-9-18 2
 fixed         | 中華人民共和國國慶日                               | 10 1                 | public          |  |  |  |
 decree        | 重陽節                                      | 2024-10-11 2025-10-29 | public          |  |  |  |
 fixed         | 澳門特別行政區成立紀念日                             | 12 20                | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | 農曆除夕（下午） | 2024-2-9 2025-1-28 | government |  |  |  | 
+decree | 農曆正月初一的補假 | 2024-2-13 | government |  |  |  | 
+decree | 農曆正月初二的補假 | 2024-2-14 | government |  |  |  | 
+decree | 復活節前日 | 2024-3-30 2025-4-19 | government |  |  |  | 
+decree | 復活節前日的補假 | 2024-4-1 2025-4-21 | government |  |  |  | 
+decree | 佛誕節 | 2024-5-15 2025-5-5 | government |  |  |  | 
+decree | 端午節 | 2024-6-10 2025-5-31 | government |  |  |  | 
+decree | 端午節的補假 | 2025-6-2 | government |  |  |  | 
+fixed  | 中華人民共和國國慶日翌日 | 10 2 | government |  |  |  | 
+fixed  | 追思節 | 11 2 | government |  |  |  | 
+decree | 追思節的補假 | 2024-11-4 2025-11-3 | government |  |  |  | 
+fixed  | 聖母無原罪瞻禮 | 12 8 | government |  |  |  | 
+decree | 聖母無原罪瞻禮的補假 | 2024-12-9 | government |  |  |  | 
+fixed  | 冬至 | 12 21 | government |  |  |  | 
+decree | 澳門特別行政區成立紀念日的補假 | 2025-12-22 | government |  |  |  | 
+fixed  | 冬至的補假 | 12 23 | government |  |  |  | 
+fixed  | 聖誕節前日 | 12 24 | government |  |  |  | 
+fixed  | 聖誕節 | 12 25 | government |  |  |  | 
+fixed  | 除夕（下午） | 12 31 | government |  |  |  | 
+decree | 耶穌受難日 | 2024-3-29 2025-4-18 | optional |  |  |  | 
+decree | 復活節前日 | 2024-3-30 2025-4-19 | optional |  |  |  | 
+decree | 佛誕節 | 2024-5-15 2025-5-5 | optional |  |  |  | 
+decree | 端午節 | 2024-6-10 2025-5-31 | optional |  |  |  | 
+fixed  | 中華人民共和國國慶日翌日 | 10 2 | optional |  |  |  | 
+fixed  | 追思節 | 11 2 | optional |  |  |  | 
+fixed  | 聖母無原罪瞻禮 | 12 8 | optional |  |  |  | 
+fixed  | 冬至 | 12 21 | optional |  |  |  | 
+fixed  | 聖誕節前日 | 12 24 | optional |  |  |  | 
+fixed  | 聖誕節 | 12 25 | optional |  |  |  | 

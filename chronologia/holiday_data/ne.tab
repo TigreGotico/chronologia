@@ -37,3 +37,15 @@ fixed         | Noël                                 | 12 25                | p
 decree        | Korité (observé)                     | 2025-3-31            | public          |  |  |  |
 decree        | Lendemain de la Tabaski (observé)    | 2025-6-9             | public          |  |  |  |
 decree        | L'anniversaire de la proclamation de l'indépendance (observé) | 2025-8-4             | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | Ascension | 2024-5-9 2025-5-29 | optional |  |  |  | 
+decree | Lundi de Pentecôte | 2024-5-20 | optional |  |  |  | 
+fixed  | Assomption | 8 15 | optional |  |  |  | 
+fixed  | Toussaint | 11 1 | optional |  |  |  | 

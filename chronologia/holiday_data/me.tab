@@ -34,3 +34,26 @@ fixed         | Dan državnosti (neradni dan)             | 7 15                
 decree        | Njegošev dan (1)                         | 2024-11-13           | public          |  |  |  |
 decree        | Njegošev dan (2)                         | 2024-11-14           | public          |  |  |  |
 decree        | Njegošev dan                             | 2025-11-13           | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | Veliki petak | 2024-3-29 2025-4-18 | catholic |  |  |  | 
+decree | Uskrs | 2024-4-1 2025-4-21 | catholic |  |  |  | 
+fixed  | Svi Sveti | 11 1 | catholic |  |  |  | 
+fixed  | Badnji dan | 12 24 | catholic |  |  |  | 
+fixed  | Božić (1) | 12 25 | catholic |  |  |  | 
+fixed  | Božić (2) | 12 26 | catholic |  |  |  | 
+decree | Pasha | 2024-4-23 2024-4-24 2025-4-13 2025-4-14 | hebrew |  |  |  | 
+decree | Jom Kipur | 2024-10-12 2024-10-13 2025-10-2 2025-10-3 | hebrew |  |  |  | 
+decree | Ramazanski bajram | 2024-4-10 2024-4-11 2024-4-12 2025-3-30 2025-3-31 2025-4-1 | islamic |  |  |  | 
+decree | Kurbanski bajram | 2024-6-16 2024-6-17 2024-6-18 2025-6-6 2025-6-7 2025-6-8 | islamic |  |  |  | 
+fixed  | Badnji dan | 1 6 | orthodox |  |  |  | 
+fixed  | Božić (1) | 1 7 | orthodox |  |  |  | 
+fixed  | Božić (2) | 1 8 | orthodox |  |  |  | 
+decree | Veliki petak | 2024-5-3 2025-4-18 | orthodox |  |  |  | 
+decree | Uskrs | 2024-5-6 2025-4-21 | orthodox |  |  |  | 
