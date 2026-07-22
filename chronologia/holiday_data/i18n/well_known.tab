@@ -600,3 +600,211 @@ st_patricks        | fy | sint-patricksdei
 thanksgiving       | fy | thanksgiving
 mothers_day        | fy | memmedei
 fathers_day        | fy | heitedei
+# ===== Finnish =====
+new_year        | fi | uusivuosi ;; uudenvuodenpäivä
+new_year_eve    | fi | uudenvuodenaatto
+epiphany        | fi | loppiainen
+good_friday     | fi | pitkäperjantai
+easter          | fi | pääsiäinen ;; pääsiäissunnuntai
+easter_monday   | fi | toinen pääsiäispäivä ;; 2. pääsiäispäivä
+ascension       | fi | helatorstai
+pentecost       | fi | helluntai
+all_saints      | fi | pyhäinpäivä
+christmas_eve   | fi | jouluaatto
+christmas       | fi | joulu ;; joulupäivä
+boxing_day      | fi | tapaninpäivä
+eid_al_fitr     | fi | id al-fitr ;; eid
+ramadan         | fi | ramadan
+rosh_hashanah   | fi | juutalainen uusivuosi
+yom_kippur      | fi | jom kippur
+passover        | fi | pesah
+hanukkah        | fi | hanukka
+chinese_new_year| fi | kiinalainen uusivuosi
+nowruz          | fi | nowruz
+diwali          | fi | diwali
+vesak           | fi | vesak
+halloween       | fi | halloween
+valentines      | fi | ystävänpäivä
+#
+# ===== Estonian =====
+new_year        | et | uusaasta ;; uue aasta päev
+new_year_eve    | et | vana-aastaõhtu
+epiphany        | et | kolmekuningapäev
+good_friday     | et | suur reede
+easter          | et | lihavõtted ;; ülestõusmispühad
+easter_monday   | et | teine ülestõusmispüha
+ascension       | et | taevaminemispüha
+pentecost       | et | nelipühad
+all_saints      | et | hingedepäev
+christmas_eve   | et | jõululaupäev
+christmas       | et | jõulud ;; esimene jõulupüha
+boxing_day      | et | teine jõulupüha
+eid_al_fitr     | et | id al-fitr ;; eid
+ramadan         | et | ramadaan
+rosh_hashanah   | et | juudi uusaasta
+yom_kippur      | et | jom kippur
+passover        | et | paasapüha
+hanukkah        | et | hanukaa
+chinese_new_year| et | hiina uusaasta
+nowruz          | et | nowruz
+diwali          | et | diwali
+vesak           | et | vesak
+halloween       | et | halloween
+valentines      | et | sõbrapäev
+#
+# ===== Hungarian =====
+new_year        | hu | újév ;; újév napja
+new_year_eve    | hu | szilveszter
+epiphany        | hu | vízkereszt ;; háromkirályok
+good_friday     | hu | nagypéntek
+easter          | hu | húsvét ;; húsvétvasárnap
+easter_monday   | hu | húsvéthétfő
+ascension       | hu | mennybemenetel
+pentecost       | hu | pünkösd
+all_saints      | hu | mindenszentek
+christmas_eve   | hu | szenteste ;; karácsony este
+christmas       | hu | karácsony ;; karácsony napja
+boxing_day      | hu | karácsony másnapja
+eid_al_fitr     | hu | id al-fitr ;; ramadán vége
+ramadan         | hu | ramadán
+rosh_hashanah   | hu | zsidó újév
+yom_kippur      | hu | jom kippur
+passover        | hu | pészah
+hanukkah        | hu | hanuka
+chinese_new_year| hu | kínai újév
+nowruz          | hu | novruz
+diwali          | hu | diváli
+vesak           | hu | vészák
+halloween       | hu | halloween
+valentines      | hu | valentin-nap ;; bálint-nap
+#
+# ===== Turkish =====
+new_year        | tr | yılbaşı ;; yeni yıl
+epiphany        | tr | epifani
+good_friday     | tr | kutsal cuma
+easter          | tr | paskalya
+ascension       | tr | göğe yükseliş
+pentecost       | tr | pentikost
+christmas_eve   | tr | noel arifesi
+christmas       | tr | noel
+eid_al_fitr     | tr | ramazan bayramı ;; şeker bayramı
+eid_al_adha     | tr | kurban bayramı
+ramadan         | tr | ramazan
+islamic_new_year| tr | hicri yılbaşı
+ashura          | tr | aşure günü
+mawlid          | tr | mevlid kandili ;; mevlit
+rosh_hashanah   | tr | yahudi yeni yılı
+yom_kippur      | tr | yom kippur
+passover        | tr | hamursuz bayramı
+hanukkah        | tr | hanuka
+chinese_new_year| tr | çin yeni yılı
+nowruz          | tr | nevruz
+diwali          | tr | divali
+vesak           | tr | vesak
+halloween       | tr | cadılar bayramı
+valentines      | tr | sevgililer günü
+#
+# ===== Azerbaijani =====
+new_year        | az | yeni il
+christmas       | az | milad
+easter          | az | pasxa
+eid_al_fitr     | az | ramazan bayramı ;; orucluq bayramı
+eid_al_adha     | az | qurban bayramı
+ramadan         | az | ramazan
+islamic_new_year| az | hicri yeni il
+ashura          | az | aşura
+mawlid          | az | mövlud
+nowruz          | az | novruz ;; novruz bayramı
+chinese_new_year| az | çin yeni ili
+diwali          | az | divali
+vesak           | az | vesak
+halloween       | az | hellowin
+valentines      | az | sevgililər günü
+rosh_hashanah   | az | yəhudi yeni ili
+yom_kippur      | az | yom kippur
+hanukkah        | az | hanuka
+#
+# ===== Greek =====
+new_year               | el | πρωτοχρονιά ;; πρώτη του χρόνου
+epiphany               | el | θεοφάνεια ;; φώτα
+orthodox_good_friday   | el | μεγάλη παρασκευή
+orthodox_easter        | el | πάσχα ;; κυριακή του πάσχα
+orthodox_easter_monday | el | δευτέρα του πάσχα ;; δευτέρα της διακαινησίμου
+assumption             | el | κοίμηση της θεοτόκου ;; δεκαπενταύγουστος
+christmas_eve          | el | παραμονή χριστουγέννων
+christmas              | el | χριστούγεννα
+eid_al_fitr            | el | εΐντ αλ φιτρ
+ramadan                | el | ραμαζάνι
+rosh_hashanah          | el | εβραϊκή πρωτοχρονιά
+yom_kippur             | el | γιομ κιπούρ
+passover               | el | πέσαχ
+hanukkah               | el | χανουκά
+chinese_new_year       | el | κινέζικη πρωτοχρονιά
+nowruz                 | el | νορούζ
+diwali                 | el | ντιβάλι
+vesak                  | el | βεσάκ
+halloween              | el | χαλοουίν
+valentines             | el | αγίου βαλεντίνου ;; ημέρα των ερωτευμένων
+#
+# ===== Indonesian =====
+new_year        | id | tahun baru
+good_friday     | id | jumat agung
+easter          | id | paskah
+christmas       | id | natal ;; hari natal
+eid_al_fitr     | id | idul fitri ;; lebaran ;; hari raya idul fitri
+eid_al_adha     | id | idul adha ;; iduladha
+ramadan         | id | ramadan ;; ramadhan ;; bulan puasa
+islamic_new_year| id | tahun baru islam ;; tahun baru hijriah
+mawlid          | id | maulid nabi
+chinese_new_year| id | tahun baru imlek ;; imlek
+vesak           | id | waisak ;; hari waisak
+diwali          | id | deepavali ;; diwali
+halloween       | id | halloween
+valentines      | id | hari valentine
+#
+# ===== Malay =====
+new_year        | ms | tahun baru
+good_friday     | ms | jumaat agung
+easter          | ms | paskah
+christmas       | ms | krismas ;; hari krismas
+eid_al_fitr     | ms | hari raya aidilfitri ;; aidilfitri ;; hari raya puasa
+eid_al_adha     | ms | hari raya aidiladha ;; aidiladha ;; hari raya haji
+ramadan         | ms | ramadan ;; bulan puasa
+islamic_new_year| ms | maal hijrah ;; awal muharram
+mawlid          | ms | maulidur rasul
+chinese_new_year| ms | tahun baru cina
+vesak           | ms | hari wesak ;; wesak
+diwali          | ms | deepavali
+halloween       | ms | halloween
+valentines      | ms | hari valentine
+#
+# ===== Basque =====
+new_year        | eu | urte berri ;; urteberri
+epiphany        | eu | erregen eguna ;; errege eguna
+good_friday     | eu | ostiral santua
+easter          | eu | pazkoa ;; pazko igandea
+easter_monday   | eu | pazko astelehena
+ascension       | eu | igokundea
+assumption      | eu | andre maria ;; abuztuaren hamabosta
+all_saints      | eu | domu santu ;; santu guztien eguna
+christmas_eve   | eu | gabon gaua
+christmas       | eu | gabonak ;; eguberri
+eid_al_fitr     | eu | id al-fitr
+ramadan         | eu | ramadana
+chinese_new_year| eu | txinako urte berria
+nowruz          | eu | nowruz
+diwali          | eu | diwali
+vesak           | eu | vesak
+halloween       | eu | halloween ;; gau beltza
+valentines      | eu | san valentin ;; maitasunaren eguna
+#
+# ===== Kabyle =====
+new_year        | kab | aseggas amaynut
+christmas       | kab | lɛid n tlalit ;; krismas
+eid_al_fitr     | kab | lɛid ameẓyan ;; tafaska tameẓyant
+eid_al_adha     | kab | lɛid ameqqran ;; tafaska tameqqrant
+ramadan         | kab | ramḍan ;; uẓum
+islamic_new_year| kab | aseggas ihjrawan
+nowruz          | kab | nowruz
+diwali          | kab | diwali
+halloween       | kab | halloween
