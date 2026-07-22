@@ -47,3 +47,25 @@ decree | Hari Suci Nyepi    | 2023-03-22 2024-03-11 2025-03-29 | public religiou
 decree | Hari Raya Waisak   | 2023-06-04 2024-05-23 2025-05-12 | public religious |  |
 decree | Hari Pemilihan Umum          | 2024-02-14 | public |  |
 decree | Hari Pemilihan Kepala Daerah | 2024-11-27 | public |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | Cuti Bersama Hari Raya Natal | 12 26 | government |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Cuti Bersama Tahun Baru Imlek | 2024-2-9 2025-1-28 | government |  |  |  |
+decree | Cuti Bersama Hari Suci Nyepi | 2024-3-12 2025-3-28 | government |  |  |  |
+decree | Cuti Bersama Hari Raya Idul Fitri | 2024-4-8 2024-4-9 2024-4-12 2024-4-15 2025-4-2 2025-4-3 2025-4-4 2025-4-7 | government |  |  |  |
+decree | Cuti Bersama Kenaikan Yesus Kristus | 2024-5-10 2025-5-30 | government |  |  |  |
+decree | Cuti Bersama Hari Raya Waisak | 2024-5-24 2025-5-13 | government |  |  |  |
+decree | Cuti Bersama Hari Raya Idul Adha | 2024-6-18 2025-6-9 | government |  |  |  |
+decree | Cuti Bersama Hari Kemerdekaan Republik Indonesia | 2025-8-18 | government |  |  |  |

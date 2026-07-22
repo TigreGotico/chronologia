@@ -40,3 +40,20 @@ fixed   | Tag der Volksabstimmung    | 10 10 | regional          | AT-2 |
 fixed   | Heiliger Martin            | 11 11 | regional religious | AT-1 |
 fixed   | Heiliger Leopold           | 11 15 | regional religious | AT-3 |
 fixed   | Heiliger Leopold           | 11 15 | regional religious | AT-9 |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | Heiliger Abend | 12 24 | bank |  |  |  |
+fixed  | Silvester | 12 31 | bank |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Karfreitag | 2024-3-29 2025-4-18 | bank |  |  |  |

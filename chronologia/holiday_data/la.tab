@@ -28,3 +28,29 @@ fixed         | ວັນແມ່ຍິງສາກົນ                      
 decree        | ບຸນປີໃໝ່ລາວ                                   | 2024-4-13 2025-4-14 | public          |  |  |  |
 fixed         | ວັນກຳມະກອນສາກົນ                               | 5 1 | public          |  |  |  |
 fixed         | ວັນຊາດ                                        | 12 2 | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | ວັນສ້າງຕັ້ງທະນາຄານແຫ່ງ ສປປ ລາວ | 10 7 | bank |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | ສາມວັນລັດຖະການສຸດທ້າຍຂອງທຸກໆປີ | 2024-12-27 2024-12-30 2024-12-31 2025-12-29 2025-12-30 2025-12-31 | bank |  |  |  |
+decree | ວັນບຸນມາຂະບູຊາ | 2024-2-24 2025-2-12 | school |  |  |  |
+decree | ວັນບຸນວິສາຂະບູຊາ | 2024-5-22 2025-5-11 | school |  |  |  |
+decree | ວັນບຸນເຂົ້າພັນສາ | 2024-7-20 2025-7-10 | school |  |  |  |
+decree | ວັນບຸນຫໍ່ເຂົ້າປະດັບດິນ | 2024-9-2 2025-8-23 | school |  |  |  |
+decree | ວັນບຸນຫໍ່ເຂົ້າສະຫຼາກ | 2024-9-17 2025-9-7 | school |  |  |  |
+decree | ວັນບຸນອອກພັນສາ | 2024-10-17 | school |  |  |  |
+decree | ວັນບຸນຊ່ວງເຮືອ ນະຄອນຫຼວງວຽງຈັນ | 2024-10-18 2025-10-8 | school |  |  |  |
+decree | ວັນບຸນທາດຫລວງ | 2024-11-15 2025-11-5 | school |  |  |  |
+decree | ວັນຄູແຫ່ງຊາດ | 2024-10-7 | school |  |  |  |
+decree | ວັນຄູແຫ່ງຊາດ; ວັນບຸນອອກພັນສາ | 2025-10-7 | school |  |  |  |

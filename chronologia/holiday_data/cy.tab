@@ -37,3 +37,20 @@ fixed         | Ημέρα της Κυπριακής Ανεξαρτησίας   
 fixed         | Ημέρα του Όχι                            | 10 28                | public          |  |  |  |
 fixed         | Χριστούγεννα                             | 12 25                | public          |  |  |  |
 fixed         | Επομένη Χριστουγέννων                    | 12 26                | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | Παραμονή Χριστουγέννων | 12 24 | optional |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Τρίτη της Διακαινησίμου | 2024-5-7 2025-4-22 | bank |  |  |  |
+decree | Μεγάλο Σάββατο | 2024-5-4 2025-4-19 | optional |  |  |  |

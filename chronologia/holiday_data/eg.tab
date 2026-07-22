@@ -37,3 +37,21 @@ calendar_date | عيد الأضحى المبارك         | islamic_civil 12 11
 calendar_date | عيد الأضحى المبارك         | islamic_civil 12 12 | public religious |  |
 calendar_date | رأس السنة الهجرية          | islamic_civil 1 1   | public religious |  |
 calendar_date | المولد النبوي الشريف       | islamic_civil 3 12  | public religious |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | عيد تحرير طابا | 3 19 | school |  |  |  |
+fixed  | عيد الجلاء | 6 18 | school |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | عيد الفطر المبارك | 2024-4-9 2024-4-12 2025-3-29 2025-4-1 | government |  |  |  |
+decree | عيد الأضحى المبارك | 2024-6-19 2025-6-9 | government |  |  |  |

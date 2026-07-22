@@ -210,7 +210,11 @@ def test_il_differential_hebrew_holidays_match_package():
                "יום העצמאות": (5, 1)},
     }
     for year, expect in checks.items():
-        ours = _our_dates("IL", year)
+        # public only -- the vacanza-parity `optional`/`school` rows this
+        # project also carries for IL are a superset the bare package call
+        # below does not enumerate (categories=("public",) is its default).
+        ours = {(h.date.month, h.date.day)
+                for h in holidays_for("IL", year, categories=("public",))}
         for name, md in expect.items():
             got = [h for h in holidays_for("IL", year) if h.name == name]
             assert got and (got[0].date.month, got[0].date.day) == md, (
@@ -219,7 +223,7 @@ def test_il_differential_hebrew_holidays_match_package():
         # intermediate chol hamoed / minor days we do not).
         theirs = {(d.month, d.day)
                   for d in holidays_pkg.country_holidays("IL", years=year)}
-        assert set(ours) <= theirs, f"IL {year}: {set(ours) - theirs}"
+        assert ours <= theirs, f"IL {year}: {ours - theirs}"
 
 
 def test_il_independence_day_postponement_both_directions():

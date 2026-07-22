@@ -37,3 +37,35 @@ decree        | 重陽節                                      | 2024-10-11 2025
 fixed         | 聖誕節                                      | 12 25                | public          |  |  |  |
 fixed         | 聖誕節後第一個周日                                | 12 26                | public          |  |  |  |
 decree        | 農曆年初二                                    | 2025-1-30            | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | 一月一日 | 1 1 | optional |  |  |  |
+fixed  | 清明節 | 4 4 | optional |  |  |  |
+fixed  | 勞動節 | 5 1 | optional |  |  |  |
+fixed  | 香港特別行政區成立紀念日 | 7 1 | optional |  |  |  |
+fixed  | 國慶日 | 10 1 | optional |  |  |  |
+fixed  | 聖誕節 | 12 25 | optional |  |  |  |
+fixed  | 聖誕節後第一個周日 | 12 26 | optional |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | 農曆年初四 | 2024-2-13 | optional |  |  |  |
+decree | 農曆年初一 | 2024-2-10 2025-1-29 | optional |  |  |  |
+decree | 農曆年初三 | 2024-2-12 2025-1-31 | optional |  |  |  |
+decree | 耶穌受難節 | 2024-3-29 2025-4-18 | optional |  |  |  |
+decree | 耶穌受難節翌日 | 2024-3-30 2025-4-19 | optional |  |  |  |
+decree | 復活節星期一 | 2024-4-1 2025-4-21 | optional |  |  |  |
+decree | 佛誕 | 2024-5-15 2025-5-5 | optional |  |  |  |
+decree | 端午節 | 2024-6-10 2025-5-31 | optional |  |  |  |
+decree | 中秋節翌日 | 2024-9-18 2025-10-7 | optional |  |  |  |
+decree | 重陽節 | 2024-10-11 2025-10-29 | optional |  |  |  |
+decree | 農曆年初二 | 2025-1-30 | optional |  |  |  |

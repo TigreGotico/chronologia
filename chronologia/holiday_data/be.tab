@@ -22,3 +22,20 @@ fixed   | nl:O. L. V. Hemelvaart ;; fr:Assomption ;; de:Mariä Himmelfahrt | 8 1
 fixed   | nl:Allerheiligen ;; fr:Toussaint ;; de:Allerheiligen          | 11 1  | public religious |  |
 fixed   | nl:Wapenstilstand ;; fr:Armistice ;; de:Waffenstillstand      | 11 11 | public          |  |
 fixed   | nl:Kerstmis ;; fr:Noël ;; de:Weihnachten                      | 12 25 | public religious |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | Banksluitingsdag | 12 26 | bank |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Goede Vrijdag | 2024-3-29 2025-4-18 | bank |  |  |  |
+decree | Vrijdag na O. L. H. Hemelvaart | 2024-5-10 2025-5-30 | bank |  |  |  |

@@ -38,3 +38,32 @@ fixed         | Itsenäisyyspäivä                         | 12 6              
 fixed         | Jouluaatto                               | 12 24                | public          |  |  |  |
 fixed         | Joulupäivä                               | 12 25                | public          |  |  |  |
 fixed         | Tapaninpäivä                             | 12 26                | public          |  |  |  |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | Runebergin päivä | 2 5 | unofficial |  |  |  |
+fixed  | Minna Canthin päivä, tasa-arvon päivä | 3 19 | unofficial |  |  |  |
+fixed  | Mikael Agricolan päivä, suomen kielen päivä | 4 9 | unofficial |  |  |  |
+fixed  | Kansallinen veteraanipäivä | 4 27 | unofficial |  |  |  |
+fixed  | Eurooppa-päivä | 5 9 | unofficial |  |  |  |
+fixed  | J.V. Snellmanin päivä, suomalaisuuden päivä | 5 12 | unofficial |  |  |  |
+fixed  | Eino Leinon päivä, runon ja suven päivä | 7 6 | unofficial |  |  |  |
+fixed  | Miina Sillanpään ja kansalaisvaikuttamisen päivä | 10 1 | unofficial |  |  |  |
+fixed  | Aleksis Kiven päivä, suomalaisen kirjallisuuden päivä | 10 10 | unofficial |  |  |  |
+fixed  | YK:n päivä | 10 24 | unofficial |  |  |  |
+fixed  | Ruotsalaisuuden päivä, Kustaa Aadolfin päivä | 11 6 | unofficial |  |  |  |
+fixed  | Lapsen oikeuksien päivä | 11 20 | unofficial |  |  |  |
+fixed  | Jean Sibeliuksen päivä, suomalaisen musiikin päivä | 12 8 | unofficial |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Kaatuneitten muistopäivä | 2024-5-19 2025-5-18 | unofficial |  |  |  |
+decree | Suomen luonnon päivä | 2024-8-31 2025-8-30 | unofficial |  |  |  |

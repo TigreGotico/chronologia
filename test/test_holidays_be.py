@@ -25,5 +25,9 @@ def test_national_differential_2023_2025():
 
 
 def test_ten_legal_holidays_2024():
-    nat = [h for h in holidays_for(_J, 2024) if h.subdiv is None]
+    # public only -- this project also carries BE's vacanza-parity `bank`
+    # category (Goede Vrijdag/Vrijdag na O.L.H. Hemelvaart/Banksluitingsdag),
+    # a bank-holiday overlay distinct from the 10 statutory feestdagen.
+    nat = [h for h in holidays_for(_J, 2024, categories=("public",))
+           if h.subdiv is None]
     assert len(nat) == 10

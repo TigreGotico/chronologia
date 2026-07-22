@@ -33,9 +33,27 @@ fixed  | Dia Nacional de Zumbi e da Consciência Negra  | 11 20 | public        
 fixed  | Natal                                         | 12 25 | public religious |  |
 #
 # --- facultative national religious days (NOT statutory feriados) ---
-easter | Carnaval        | -47 | religious |  |
-easter | Corpus Christi  | 60  | religious |  |
+easter | Carnaval        | -47 | religious optional |  |
+easter | Corpus Christi  | 60  | religious optional |  |
 #
 # --- state examples (feriados estaduais) ---
 fixed  | Revolução Constitucionalista | 7 9  | regional | BR-SP |
 fixed  | São Jorge                    | 4 23 | regional religious | BR-RJ |
+
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed  | Dia do Servidor Público | 10 28 | optional |  |  |  |
+fixed  | Véspera de Natal | 12 24 | optional |  |  |  |
+fixed  | Véspera de Ano-Novo | 12 31 | optional |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Início da Quaresma | 2024-2-14 2025-3-5 | optional |  |  |  |
