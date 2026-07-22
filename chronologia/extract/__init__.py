@@ -636,7 +636,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     if opn is not None:
         return opn
     tokens = fold_tokens(raw, engine.spec, text)
-    core = _resolve_core(tokens, engine, anchor, enable, jurisdiction)
+    core = _resolve_core(tokens, engine, anchor, enable, jurisdiction, text)
     if core is None:
         return None
     span, consumed = core
@@ -645,7 +645,55 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     return span, remainder
 
 
-def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None):
+def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text):
+    """Build the composed-reference resolver threaded into the post-passes.
+
+    A post-pass (business-day / anchored-offset / week-of) locates its
+    reference by a flat position-keyed scan of the resolved-match list, which
+    only sees *matcher-native* references.  This callback is the additive
+    fallback for a reference that is itself a **composed** construction (an
+    offset "the monday after christmas", an nth-weekday-of-month, ...): it
+    recurses the token slice starting at ``start`` through the single-span
+    core -- the identical path a whole utterance takes -- and returns
+    ``(start_datetime, consumed_positions)`` where ``consumed_positions`` are
+    indices into the *original* ``tokens`` stream, or ``None``.
+
+    The recursion re-folds its slice, so the core hands back slice-local,
+    zero-based consumed positions; these are mapped back to original-stream
+    positions by character extent (a folded slice preserves each token's
+    ``char_start``/``char_end``), so the outer remainder stays correct even
+    when the fold merged tokens.
+    """
+    if text is None:
+        return None
+
+    def resolve_ref(start):
+        sub = tokens[start:]
+        if not sub:
+            return None
+        folded = fold_tokens(sub, engine.spec, text)
+        core = _resolve_core(folded, engine, anchor, enable, jurisdiction, text)
+        if core is None:
+            return None
+        span, consumed_local = core
+        intervals = [(folded[i].char_start, folded[i].char_end)
+                     for i in consumed_local
+                     if i < len(folded) and folded[i].char_start is not None]
+        orig = set()
+        for op in range(start, len(tokens)):
+            ot = tokens[op]
+            if ot.char_start is None or ot.char_end is None:
+                continue
+            if any(cs <= ot.char_start and ot.char_end <= ce
+                   for cs, ce in intervals):
+                orig.add(op)
+        return span.start, orig
+
+    return resolve_ref
+
+
+def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
+                  text=None):
     """The single-span resolution over an already-tokenized stream.
 
     The whole of the old ``extract_timespan`` body *below* range detection --
@@ -674,8 +722,10 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None):
     # Runs before the anchored-offset pass so a "N working days after <date>"
     # phrase composes on the resolved reference here, rather than being read as
     # a bare "N days after <date>" unit offset.
+    resolve_ref = _make_resolve_ref(tokens, engine, anchor, enable,
+                                     jurisdiction, text)
     resolved = apply_business_days(tokens, resolved, engine.spec, anchor,
-                                   jurisdiction)
+                                   jurisdiction, resolve_ref)
     # anchored arithmetic: rewrite a date reference carrying a stranded
     # "N units after"/"the weekday before" pre-amble (composition on the
     # already-resolved reference), then synthesise any anchor-relative

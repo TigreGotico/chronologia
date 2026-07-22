@@ -99,6 +99,8 @@
       "orders": [
         "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
         "article? ordlast SEL_UNIT of article? SORD SCOPE_UNIT",
+        "article? ORD WEEKDAY of MONTH YEAR?",
+        "article? ordlast WEEKDAY of MONTH YEAR?",
         "article? ORD UNIT of MONTH YEAR?",
         "article? ordlast UNIT of MONTH YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",
