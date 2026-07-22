@@ -74,6 +74,14 @@ def _collect_lang_gold(lang: str, path: str) -> List[GoldCase]:
 
     out = []
     for item in plugin.items:
+        # Business-day golds are computed with the ``jurisdiction=`` kwarg
+        # (and, in the composition tests, module anchors the collector cannot
+        # recover per-case). The adapter cannot reproduce those calls -- and
+        # the competitor engines have no jurisdiction concept at all -- so
+        # the comparison would be scoring different questions. Excluded, not
+        # hidden: the scoreboard documents this.
+        if "test_nl_business_days" in item.nodeid:
+            continue
         callspec = getattr(item, "callspec", None)
         if callspec is None:
             continue
