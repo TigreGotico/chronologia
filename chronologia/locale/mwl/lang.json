@@ -17,7 +17,15 @@
     },
     "weekday_ref": {
       "orders": [
+        "article? WEEKDAY REL_MARKER",
+        "REL_MARKER WEEKDAY",
         "WEEKDAYFULL"
+      ]
+    },
+    "rel_period": {
+      "orders": [
+        "REL_MARKER UNIT",
+        "article? UNIT REL_MARKER"
       ]
     },
     "calendar_date": {
@@ -32,12 +40,15 @@
     "season_ref": {
       "orders": [
         "article? SEASON of YEAR",
+        "REL_MARKER SEASON",
         "article? SEASON YEAR?"
       ]
     },
     "clock_time": {
       "orders": [
-        "CLOCK MERIDIEM?"
+        "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
+        "CLOCK MERIDIEM? ZONE?",
+        "at HOUR of? article? MERIDIEM? ZONE?"
       ],
       "prefer_future": true
     },
@@ -51,14 +62,55 @@
         "NUM ad"
       ]
     },
+    "deep_time": {
+      "orders": [
+        "NUM SCALE of? year_word MARKER",
+        "MARKER NUM SCALE of? year_word"
+      ]
+    },
     "year_ref": {
       "orders": [
+        "in GYEAR",
+        "article? year_word of? GYEAR",
         "GYEAR"
       ]
     },
     "iso_date": {
       "orders": [
         "ISO"
+      ]
+    },
+    "month_fuzzy": {
+      "orders": [
+        "article? PART of? MONTH"
+      ]
+    },
+    "decade_ref": {
+      "orders": [
+        "PART? article? year_word NUM"
+      ]
+    },
+    "fuzzy_period": {
+      "orders": [
+        "article? PART of? article? UNIT",
+        "article? PART of? article? REL_MARKER UNIT",
+        "article? PART of? article? UNIT REL_MARKER",
+        "PART REL_MARKER UNIT"
+      ]
+    },
+    "quarter_ref": {
+      "orders": [
+        "q NUM YEAR?",
+        "article? ORD quarter_word of YEAR",
+        "article? ORD quarter_word YEAR?",
+        "REL_MARKER quarter_word",
+        "quarter_word REL_MARKER"
+      ]
+    },
+    "iso_week_ref": {
+      "orders": [
+        "week_num NUM of YEAR",
+        "week_num NUM YEAR?"
       ]
     }
   },
