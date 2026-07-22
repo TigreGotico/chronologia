@@ -12,6 +12,10 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 #: (english, finnish) -- must produce identical spans.
 PAIRS = [
+    # rel_period / weekend / bare-weekday rollout
+    ('next week', 'ensi viikko'),
+    ('this weekend', 'viikonloppu'),
+    ('friday', 'perjantai'),
     ("today", "tänään"),
     ("yesterday", "eilen"),
     ("tomorrow", "huomenna"),

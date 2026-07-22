@@ -29,10 +29,11 @@ def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
     longest first so "late bronze age" wins over "bronze age".
 
     A period ("bronze age"), a named day ("day after tomorrow"), a clock
-    landmark ("gece yarısı"), a meridiem ("öğleden sonra") or a season can all
-    be written as several words; the tokenizer breaks them apart and this pass
-    glues each back into the single token its slot binds.  Numbers never
-    participate, so a merged surface is always a lexical token.
+    landmark ("gece yarısı"), a meridiem ("öğleden sonra"), a season or a
+    weekend word ("hafta sonu", "آخر هفته") can all be written as several
+    words; the tokenizer breaks them apart and this pass glues each back into
+    the single token its slot binds.  Numbers never participate, so a merged
+    surface is always a lexical token.
 
     Multiword *connectors* ("vor christus", "que vén") are excluded on
     purpose -- the matcher binds those natively via ``_connector_span``, so
@@ -41,7 +42,8 @@ def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
     for table in (spec.periods, spec.named_days, spec.clock_landmarks,
                   spec.meridiems, spec.seasons, spec.units, spec.months,
                   spec.weekdays, spec.rel_markers, spec.directions,
-                  spec.scope_units, spec.clock_fractions, spec.clock_dirs):
+                  spec.scope_units, spec.clock_fractions, spec.clock_dirs,
+                  spec.weekend_words):
         seen.update(s for s in table if " " in s)
     return tuple(sorted(seen, key=lambda s: len(s.split()), reverse=True))
 

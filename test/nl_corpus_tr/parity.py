@@ -2,6 +2,10 @@
 """The tr<->en semantic-parity block: each pair resolves to the SAME span."""
 
 PARITY = [
+    # rel_period / weekend / bare-weekday rollout
+    ('gelecek hafta', 'next week'),
+    ('hafta sonu', 'this weekend'),
+    ('cuma', 'friday'),
     ('yarın', 'tomorrow'),
     ('dün', 'yesterday'),
     ('bugün', 'today'),

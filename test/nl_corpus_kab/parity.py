@@ -2,6 +2,9 @@
 """The kab<->en semantic-parity block: each pair resolves to the SAME span."""
 
 PARITY = [
+    # rel_period / weekend / bare-weekday rollout
+    ('lǧemɛa', 'friday'),
+    ('letnayen', 'monday'),
     ('azekka', 'tomorrow'),
     ('iḍelli', 'yesterday'),
     ('assa', 'today'),

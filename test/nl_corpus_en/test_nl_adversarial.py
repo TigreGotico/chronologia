@@ -27,7 +27,7 @@ _NOMATCH = [
     "week", "day", "year", "decade", "century", "reiwa", "meiji",
     # near-misses that just miss a required slot ("in 2020" is now a real
     # bare-year reference -- see test_nl_calendar_dates.test_bare_year)
-    "the 5th", "the nineteenth of", "on monday the",
+    "the 5th", "the nineteenth of",
     "five", "fifth", "twenty", "a", "an", "the",
 ]
 
@@ -86,9 +86,14 @@ def test_may_is_a_month_not_a_modal():
     assert start("may").month == 5
 
 
-def test_lone_weekday_does_not_parse():
-    # weekday_ref requires next/last/this; bare "monday" is not a date
-    nomatch("monday")
+def test_lone_weekday_resolves_next():
+    # a bare weekday names its next strictly-future occurrence
+    from datetime import timedelta
+    from ._corpus import ANCHOR, span
+    ahead = (0 - ANCHOR.weekday()) % 7 or 7          # 0 == Monday
+    exp = (ANCHOR + timedelta(days=ahead)).date()
+    s = span("monday").start
+    assert (s.year, s.month, s.day) == (exp.year, exp.month, exp.day)
 
 
 def test_marker_without_number_does_not_parse():

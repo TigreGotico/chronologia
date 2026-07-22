@@ -2,6 +2,10 @@
 """The id<->en semantic-parity block: each pair resolves to the SAME span."""
 
 PARITY = [
+    # rel_period / weekend / bare-weekday rollout
+    ('minggu depan', 'next week'),
+    ('akhir pekan', 'this weekend'),
+    ('jumat', 'friday'),
     ('besok', 'tomorrow'),
     ('kemarin', 'yesterday'),
     ('hari ini', 'today'),

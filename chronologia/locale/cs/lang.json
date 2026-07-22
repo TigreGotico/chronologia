@@ -4,7 +4,7 @@
     "relative_offset": {"orders": ["NUM UNIT MARKER", "MARKER NUM UNIT",
                         "MARKER indef? UNIT", "indef? UNIT MARKER"]},
     "named_day": {"orders": ["DAY_WORD"]},
-    "weekday_ref": {"orders": ["REL_MARKER WEEKDAY"]},
+    "weekday_ref": {"orders": ["REL_MARKER WEEKDAY", "WEEKDAYFULL"]},
     "rel_period": {"orders": ["REL_MARKER UNIT"]},
     "weekend_ref": {"orders": ["REL_MARKER WEEKEND", "article? WEEKEND"]},
     "calendar_date": {

@@ -22,7 +22,8 @@
     },
     "weekday_ref": {
       "orders": [
-        "REL_MARKER WEEKDAY"
+        "REL_MARKER WEEKDAY",
+        "WEEKDAYFULL"
       ]
     },
     "rel_period": {"orders": ["REL_MARKER UNIT"]},

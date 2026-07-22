@@ -13,6 +13,10 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 #: (english, hungarian) -- must produce identical spans.
 PAIRS = [
+    # rel_period / weekend / bare-weekday rollout
+    ('next week', 'jövő hét'),
+    ('this weekend', 'hétvége'),
+    ('friday', 'péntek'),
     ("today", "ma"),
     ("yesterday", "tegnap"),
     ("tomorrow", "holnap"),

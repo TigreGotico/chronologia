@@ -46,7 +46,6 @@ _SAFE_NONE = [
     'στον πρώτο όροφο',
     'ώρα για φαγητό',
     'στροφή κατά το ήμισυ',
-    'τον περασμένο μήνα',
     'το μισό της ομάδας',
     'μικρή ποσότητα',
 ]
@@ -56,6 +55,20 @@ _SAFE_NONE = [
 def test_confusable_returns_none(text):
     # structurally safe: no count/modifier, nothing to bind.
     nomatch(text)
+
+
+def test_last_month_is_a_real_reference():
+    # "τον περασμένο μήνα" is not a confusable: it is last month, the whole
+    # calendar month preceding the anchor's, resolved by rel_period
+    from datetime import datetime
+    from dateutil.relativedelta import relativedelta
+    from ._corpus import ANCHOR, span
+    s = ANCHOR.replace(day=1, hour=0, minute=0, second=0, microsecond=0) \
+        - relativedelta(months=1)
+    e = s + relativedelta(months=1)
+    sp = span('τον περασμένο μήνα')
+    assert (sp.start.year, sp.start.month, sp.start.day) == (s.year, s.month, s.day)
+    assert (sp.end.year, sp.end.month, sp.end.day) == (e.year, e.month, e.day)
 
 
 _LIMITATIONS = [

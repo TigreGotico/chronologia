@@ -2,6 +2,9 @@
 """The mwl<->en semantic-parity block: each pair resolves to the SAME span."""
 
 PARITY = [
+    # rel_period / weekend / bare-weekday rollout
+    ('sesta feira', 'friday'),
+    ('segunda feira', 'monday'),
     ('manhana', 'tomorrow'),
     ('onte', 'yesterday'),
     ('hoije', 'today'),

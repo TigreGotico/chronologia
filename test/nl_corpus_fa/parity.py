@@ -2,6 +2,10 @@
 """The fa<->en semantic-parity block: each pair resolves to the SAME span."""
 
 PARITY = [
+    # rel_period / weekend / bare-weekday rollout
+    ('ماه آینده', 'next month'),
+    ('سال گذشته', 'last year'),
+    ('جمعه', 'friday'),
     ('فردا', 'tomorrow'),
     ('دیروز', 'yesterday'),
     ('امروز', 'today'),

@@ -6,7 +6,7 @@ from ._corpus import nomatch, parse, start
 
 @pytest.mark.parametrize("text", [
     "", "   ", "merhaba dünya", "beş", "gün", "ay",
-    "önce", "sonra", "salı çarşamba perşembe",
+    "önce", "sonra",
     "25:00", "saat 25", "32:99",
     "besok", "lusa", "kemarin",  # Indonesian/Malay must not leak
     "manyana", "demán",           # Aragonese must not leak

@@ -16,6 +16,10 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 #: (english, greek) -- must produce identical spans.
 PAIRS = [
+    # rel_period / weekend / bare-weekday rollout
+    ('next week', 'επόμενη εβδομάδα'),
+    ('this weekend', 'το σαββατοκύριακο'),
+    ('friday', 'παρασκευή'),
     ("today", "σήμερα"),
     ("yesterday", "χθες"),
     ("tomorrow", "αύριο"),

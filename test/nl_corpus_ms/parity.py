@@ -2,6 +2,10 @@
 """The ms<->en semantic-parity block: each pair resolves to the SAME span."""
 
 PARITY = [
+    # rel_period / weekend / bare-weekday rollout
+    ('minggu depan', 'next week'),
+    ('hujung minggu', 'this weekend'),
+    ('jumaat', 'friday'),
     ('esok', 'tomorrow'),
     ('semalam', 'yesterday'),
     ('hari ini', 'today'),
