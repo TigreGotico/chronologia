@@ -60,6 +60,46 @@ Three rules did most of the heavy lifting:
    code example in every documentation page is executed on every test
    run. Quality is enforced by the suite, not by promises.
 
+### Holiday gold provenance — and what each tier does and does not prove
+
+Every holiday rule is checked against a **frozen gold value** stored in a
+per-jurisdiction data file (`test/holiday_golds/<cc>.tab`). A single
+parameterised walker runs all of them against the engine, and a structural test
+reads the same files to enforce that every shipped rule has at least one gold.
+The files are order-free: running any one jurisdiction's subset is green on its
+own, with no import-order coupling.
+
+Each gold carries an explicit **provenance tier**, because not every "green"
+test proves the same thing, and we would rather say so plainly:
+
+- **primary** — the expected date is restated from a cited primary source (a
+  statute, gazette, or official listing), independent of the code. A wrong
+  engine result fails against the source. This is the strongest tier.
+- **computed** — the expected date is produced by an independent in-test
+  arithmetic derivation (Easter plus a documented offset, an nth-weekday
+  calculation, or a standalone Julian-day/Hijri conversion that imports nothing
+  from the engine). It proves the engine agrees with a second, separately
+  written calculation.
+- **witnessed** — the expected date is the *output of the independent vacanza
+  `holidays` package*, captured once and frozen with the package version. A
+  witnessed gold proves only that **we agree with an outside witness** — not
+  that either party is correct against the statute. Its value is that it is
+  independent of our own rule table: if a day, month, or subdivision is later
+  mis-transcribed into our `.tab` file, the engine's output diverges from the
+  frozen witnessed value and the test fails. That is the teeth this tier buys.
+- **self-evident** — the expected date is the rule's own argument (a fixed
+  row's month/day, or a decree row's listed gazette date) and no independent
+  witness was available. This is honest but tautological against the `.tab`
+  file: it guarantees the rule *has* a gold and that the engine reproduces its
+  own inputs, but it does **not** independently prove the date is correct. We
+  label these plainly rather than dressing them up as verification.
+
+The counts per jurisdiction and tier are printed by the suite and guarded by a
+ratchet against a frozen floor, so a tier's coverage can never silently shrink.
+Making provenance first-class turned thousands of previously self-referential
+holiday golds — where the expected date was read from the same rule the engine
+reads — into genuine differentials against the vacanza witness.
+
 Cross-validation ran throughout: our calendars against an independent
 open-source implementation (Chinese and Hebrew agreed exactly, 66/66
 and 16/16 — mutual corroboration), our extraction against `dateparser`
@@ -105,6 +145,7 @@ which is exactly why they exist.
 | Natural-language corpus cases | ~14,500 across 40 languages |
 | Calendars | 17 (+ zone/timeline adapters) |
 | Holiday jurisdictions | 260 (247 countries/territories with subdivisions, 14 financial markets) · ~5,400 rules · every rule golded |
+| Holiday gold fixtures | 11,936 frozen values, tiered by provenance (primary / computed / witnessed / self-evident); ~9,100 witnessed as genuine differentials against the vacanza reference |
 | Holiday name translations | 1,446 rows |
 | Documentation pages | 17, every code example executed by the suite |
 | Externally-found data errors | 4 (2 data tables, a gazette-verified rename pair, and an upstream number-parser crash — all reported at source) |
