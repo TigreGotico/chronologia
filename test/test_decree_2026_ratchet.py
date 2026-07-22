@@ -77,6 +77,14 @@ _SKIP = {
         "AT's vacanza class has no BANK category at all "
         "(ValueError: Category is not supported: BANK) -- Good Friday is "
         "bank-only in AT, so no category combination yields it.",
+    ("BA", "BA-BIH", "Ramazanski Bajram"):
+        "vacanza publishes BA's Islamic feasts for forecast years only "
+        "under the '(procijenjeno)' estimated name; the unannotated row "
+        "exists solely for the officially-confirmed 2024/2025 dates and "
+        "the estimated sibling row carries 2026/2027.",
+    ("BA", "BA-SRP", "Ramazanski Bajram"):
+        "same as BA-BIH: forecast years live on the '(procijenjeno)' "
+        "sibling row.",
 }
 
 

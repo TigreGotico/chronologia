@@ -39,4 +39,4 @@ fixed         | Navidad                                       | 12 25 | public  
 #     holidays/countries/el_salvador.py -- Fiesta de San Salvador is a
 #     multi-day patronal festival announced by decree each year (3 and 5
 #     August, both 2024 and 2025; not a stable single-day fixed rule).
-decree | Fiesta de San Salvador | 2024-8-3 2024-8-5 2025-8-3 2025-8-5 | public | SV-SS |
+decree | Fiesta de San Salvador | 2024-8-3 2024-8-5 2025-8-3 2025-8-5 2026-8-3 2026-8-5 2027-8-3 2027-8-5 | public | SV-SS |
