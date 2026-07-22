@@ -340,3 +340,26 @@ fixed  | Dia de Santo António | 6 13 | optional |  |  |  |
 fixed  | Véspera de Natal | 12 24 | optional |  |  |  | 
 fixed  | 26 de Dezembro | 12 26 | optional |  |  |  | 
 fixed  | Véspera de Ano Novo | 12 31 | optional |  |  |  | 
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101): PT-01..PT-18 district capitals ---
+# PT-20 and PT-30 (Açores/Madeira) already have hand-curated rows above (see
+# DOCUMENTED_SKIPS in test_holidays_subdivisions.py for the two vacanza
+# differentials deliberately not merged in).
+fixed | Dia de Santa Joana | 5 12 | regional religious | PT-01 |
+easter | Quinta-feira da Ascensão | 39 | regional | PT-02 |
+fixed | Dia de São João | 6 24 | regional religious | PT-03 |
+fixed | Dia de Nossa Senhora das Graças | 8 22 | regional religious | PT-04 |
+easter | Dia de Nossa Senhora de Mércoles | 16 | regional religious | PT-05 |
+fixed | Dia de Santa Isabel | 7 4 | regional religious | PT-06 |
+fixed | Dia de São Pedro | 6 29 | regional religious | PT-07 |
+fixed | Dia do Município de Faro | 9 7 | regional | PT-08 |
+fixed | Dia do Município da Guarda | 11 27 | regional | PT-09 |
+fixed | Dia do Município de Leiria | 5 22 | regional | PT-10 |
+fixed | Dia de Santo António | 6 13 | regional religious | PT-11 |
+fixed | Dia do Município de Portalegre | 5 23 | regional | PT-12 |
+fixed | Dia de São João | 6 24 | regional religious | PT-13 |
+fixed | Dia de São José | 3 19 | regional religious | PT-14 |
+fixed | Dia de Bocage | 9 15 | regional religious | PT-15 |
+fixed | Dia de Nossa Senhora da Agonia | 8 20 | regional religious | PT-16 |
+fixed | Dia de Santo António | 6 13 | regional religious | PT-17 |
+fixed | Dia de São Mateus | 9 21 | regional religious | PT-18 |

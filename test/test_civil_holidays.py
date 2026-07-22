@@ -266,14 +266,14 @@ def test_pt_castelo_de_vide_easter_monday_2024():
 def test_pt_covers_at_least_250_municipalities():
     cal = load_calendar(os.path.join(_DATA_DIR, "pt.tab"))
     munis = {r.subdiv for r in cal.rules
-             if r.subdiv and r.subdiv not in ("PT-30", "PT-20")}
+             if r.subdiv and r.subdiv not in ("PT-30", "PT-20", "PT-01", "PT-02", "PT-03", "PT-04", "PT-05", "PT-06", "PT-07", "PT-08", "PT-09", "PT-10", "PT-11", "PT-12", "PT-13", "PT-14", "PT-15", "PT-16", "PT-17", "PT-18")}
     assert len(munis) >= 250
 
 
 def test_pt_municipal_rules_are_category_municipal():
     cal = load_calendar(os.path.join(_DATA_DIR, "pt.tab"))
     for r in cal.rules:
-        if r.subdiv and r.subdiv not in ("PT-30", "PT-20"):
+        if r.subdiv and r.subdiv not in ("PT-30", "PT-20", "PT-01", "PT-02", "PT-03", "PT-04", "PT-05", "PT-06", "PT-07", "PT-08", "PT-09", "PT-10", "PT-11", "PT-12", "PT-13", "PT-14", "PT-15", "PT-16", "PT-17", "PT-18"):
             assert r.categories == frozenset({"municipal"})
 
 

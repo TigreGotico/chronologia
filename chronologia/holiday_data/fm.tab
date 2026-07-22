@@ -30,3 +30,32 @@ fixed         | Independence Day                         | 11 3                 
 fixed         | FSM Veterans of Foreign Wars Day         | 11 11                | public          |  |  |  |
 fixed         | Presidents Day                           | 11 23                | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# FM-KSA
+decree | Kosrae State Constitution Day (observed) | 2025-1-10 2026-1-12 | regional | FM-KSA |  |  | 
+fixed | Independence Day; Self Government Day | 11 3 | regional | FM-KSA |  |  | 
+fixed | Gospel Day | 8 21 | regional religious | FM-KSA |  |  | 
+fixed | Independence Day (observed); Self Government Day (observed) | 11 4 | regional | FM-KSA |  |  | 
+fixed | Kosrae Liberation Day | 9 8 | regional | FM-KSA |  |  | 
+fixed | Kosrae Liberation Day (observed) | 9 9 | regional | FM-KSA |  |  | 
+fixed | Kosrae State Constitution Day | 1 11 | regional | FM-KSA |  |  | 
+easter | Good Friday | -2 | regional religious | FM-KSA |  |  | 
+decree | Thanksgiving Day | 2024-11-28 2025-11-27 2026-11-26 2027-11-25 | regional religious | FM-KSA |  |  | 
+fixed | Kosrae Disability Day | 12 3 | regional | FM-KSA |  |  | 
+# FM-PNI
+fixed | Women's Day | 3 8 | regional | FM-PNI |  |  | 
+decree | Women's Day (observed) | 2025-3-7 2026-3-9 | regional | FM-PNI |  |  | 
+easter | Good Friday | -2 | regional religious | FM-PNI |  |  | 
+fixed | Micronesian Culture and Tradition Day (observed); Pohnpei Cultural Day (observed) | 4 1 | regional | FM-PNI |  |  | 
+fixed | Liberation Day | 9 11 | regional | FM-PNI |  |  | 
+fixed | Pohnpei Constitution Day | 11 8 | regional | FM-PNI |  |  | 
+fixed | Micronesian Culture and Tradition Day; Pohnpei Cultural Day | 3 31 | regional | FM-PNI |  |  | 
+decree | Pohnpei Constitution Day (observed) | 2025-11-7 2026-11-9 | regional | FM-PNI |  |  | 
+# FM-TRK
+fixed | State Charter Day | 9 26 | regional | FM-TRK |  |  | 
+fixed | Chuuk State Constitution Day | 10 1 | regional | FM-TRK |  |  | 
+# FM-YAP
+fixed | Yap Day | 3 1 | regional | FM-YAP |  |  | 
+decree | Yap Day (observed) | 2025-2-28 2026-3-2 | regional | FM-YAP |  |  | 
+fixed | Yap State Constitution Day | 12 24 | regional | FM-YAP |  |  | 
