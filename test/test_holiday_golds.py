@@ -129,6 +129,12 @@ def _every_tab_rule_key():
             continue
         cal = load_calendar(os.path.join(_DATA_DIR, fn))
         for rule in cal.rules:
+            # Exclude rules are subtractive: they remove an inherited holiday
+            # and produce no date to gold. Their effect (the named holiday is
+            # absent in the scoped subdivision, present nationally) is asserted
+            # by test_holidays_horizon_exclusion, not by a date gold here.
+            if type(getattr(rule, "kind", None)).__name__ == "ExcludeRule":
+                continue
             keys.append((cal.jurisdiction.upper(), rule.subdiv, rule.name))
     return keys
 
