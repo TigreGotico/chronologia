@@ -21,8 +21,17 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["UNIT REL_MARKER"]},
-    "weekend_ref": {"orders": ["WEEKEND REL_MARKER", "WEEKEND"]},
+    "rel_period": {
+      "orders": [
+        "UNIT REL_MARKER"
+      ]
+    },
+    "weekend_ref": {
+      "orders": [
+        "WEEKEND REL_MARKER",
+        "WEEKEND"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
@@ -68,5 +77,17 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_ms"
+  "hook": "chronologia.extract.numfold:fold_ms",
+  "quantifiers": {
+    "1": [
+      "satu"
+    ],
+    "0.5": [
+      "setengah",
+      "separuh"
+    ],
+    "0.25": [
+      "suku"
+    ]
+  }
 }

@@ -48,5 +48,17 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_kab"
+  "hook": "chronologia.extract.numfold:fold_kab",
+  "quantifiers": {
+    "1": [
+      "yiwen",
+      "yiwet"
+    ],
+    "0.5": [
+      "azgen"
+    ],
+    "0.25": [
+      "rrbeɛ"
+    ]
+  }
 }

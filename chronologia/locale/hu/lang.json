@@ -22,8 +22,18 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["REL_MARKER article? UNIT", "UNIT REL_MARKER"]},
-    "weekend_ref": {"orders": ["REL_MARKER WEEKEND", "WEEKEND"]},
+    "rel_period": {
+      "orders": [
+        "REL_MARKER article? UNIT",
+        "UNIT REL_MARKER"
+      ]
+    },
+    "weekend_ref": {
+      "orders": [
+        "REL_MARKER WEEKEND",
+        "WEEKEND"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "YEAR MONTH DAY?",
@@ -106,9 +116,22 @@
     "bare_half_to": true
   },
   "quantifiers": {
-    "1": ["egy"],
-    "2": ["pár"],
-    "3": ["néhány", "pár"]
+    "1": [
+      "egy"
+    ],
+    "2": [
+      "pár"
+    ],
+    "3": [
+      "néhány",
+      "pár"
+    ],
+    "0.5": [
+      "fél"
+    ],
+    "0.25": [
+      "negyed"
+    ]
   },
   "guards": {
     "bare_year_min_digits": 4

@@ -22,8 +22,18 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["REL_MARKER UNIT", "UNIT REL_MARKER"]},
-    "weekend_ref": {"orders": ["REL_MARKER WEEKEND", "WEEKEND"]},
+    "rel_period": {
+      "orders": [
+        "REL_MARKER UNIT",
+        "UNIT REL_MARKER"
+      ]
+    },
+    "weekend_ref": {
+      "orders": [
+        "REL_MARKER WEEKEND",
+        "WEEKEND"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
@@ -103,9 +113,23 @@
     "bare_half_to": true
   },
   "quantifiers": {
-    "1": ["yksi", "yhden"],
-    "2": ["pari"],
-    "3": ["muutama"]
+    "1": [
+      "yksi",
+      "yhden"
+    ],
+    "2": [
+      "pari"
+    ],
+    "3": [
+      "muutama"
+    ],
+    "0.5": [
+      "puoli"
+    ],
+    "0.25": [
+      "neljännes",
+      "vartti"
+    ]
   },
   "guards": {
     "bare_year_min_digits": 4

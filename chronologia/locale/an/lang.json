@@ -22,7 +22,12 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["REL_MARKER UNIT", "UNIT REL_MARKER"]},
+    "rel_period": {
+      "orders": [
+        "REL_MARKER UNIT",
+        "UNIT REL_MARKER"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "article? DAY of MONTH of? YEAR?",
@@ -86,6 +91,14 @@
       "un",
       "una",
       "uno"
+    ],
+    "0.5": [
+      "meya",
+      "meyo"
+    ],
+    "0.25": [
+      "quarto",
+      "quartos"
     ]
   },
   "guards": {

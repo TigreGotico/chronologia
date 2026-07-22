@@ -23,8 +23,18 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["article? REL_MARKER article? UNIT", "UNIT REL_MARKER"]},
-    "weekend_ref": {"orders": ["REL_MARKER article? WEEKEND", "article? WEEKEND"]},
+    "rel_period": {
+      "orders": [
+        "article? REL_MARKER article? UNIT",
+        "UNIT REL_MARKER"
+      ]
+    },
+    "weekend_ref": {
+      "orders": [
+        "REL_MARKER article? WEEKEND",
+        "article? WEEKEND"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
@@ -109,9 +119,26 @@
     "bare_half_to": false
   },
   "quantifiers": {
-    "1": ["ένα", "μια", "μία", "έναν"],
-    "2": ["ζευγάρι"],
-    "3": ["μερικά", "μερικές"]
+    "1": [
+      "ένα",
+      "μια",
+      "μία",
+      "έναν"
+    ],
+    "2": [
+      "ζευγάρι"
+    ],
+    "3": [
+      "μερικά",
+      "μερικές"
+    ],
+    "0.5": [
+      "μισή",
+      "μισό"
+    ],
+    "0.25": [
+      "τέταρτο"
+    ]
   },
   "guards": {
     "bare_year_min_digits": 4

@@ -26,8 +26,17 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["REL_MARKER UNIT"]},
-    "weekend_ref": {"orders": ["REL_MARKER WEEKEND", "article? WEEKEND"]},
+    "rel_period": {
+      "orders": [
+        "REL_MARKER UNIT"
+      ]
+    },
+    "weekend_ref": {
+      "orders": [
+        "REL_MARKER WEEKEND",
+        "article? WEEKEND"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "article? DAY MONTH YEAR?",
@@ -148,6 +157,9 @@
     ],
     "0.5": [
       "heal"
+    ],
+    "0.25": [
+      "kwart"
     ]
   },
   "guards": {

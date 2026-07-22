@@ -122,6 +122,11 @@
         "YEAR HOLIDAY",
         "HOLIDAY"
       ]
+    },
+    "decade_bc": {
+      "orders": [
+        "article? year_word NUM bc"
+      ]
     }
   },
   "conventions": {
@@ -134,6 +139,14 @@
     "1": [
       "un",
       "una"
+    ],
+    "0.5": [
+      "mitja",
+      "mig"
+    ],
+    "0.25": [
+      "quart",
+      "quarts"
     ]
   },
   "guards": {
