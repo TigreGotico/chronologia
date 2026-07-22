@@ -122,6 +122,12 @@ _RANGE_FROM = ("from",)
 _RANGE_TO = ("to", "until", "till", "through", "thru", "-")
 _RANGE_BETWEEN = ("between",)
 _RANGE_AND = ("and",)
+#: leading markers of an open-ended range -- "until friday" (open start,
+#: bounded below by "now") and "since 2019" (open end, bounded above by
+#: "now").  Languages add their own surfaces via the ``until``/``since``
+#: connectors; the English defaults keep English working with no locale data.
+_RANGE_UNTIL = ("until", "till", "through", "thru")
+_RANGE_SINCE = ("since",)
 
 
 def _range_words(spec, name, defaults):
@@ -205,10 +211,65 @@ def _extract_range(text, lang, anchor):
                 break
             rolled = DateSpan(rolled.start + step, rolled.end + step)
         end = rolled.end
+        # prefer-future asymmetry: a range that straddles the anchor -- its
+        # left endpoint just behind "now", its right just ahead -- resolves the
+        # left a whole year into the future (prefer_future) while the right
+        # stays put, inverting the span past what the week/day roll above can
+        # repair.  Pull the left endpoint back one year so both endpoints read
+        # in the same nearest cycle ("july 20 to july 25" spoken on july 22
+        # stays this year rather than leaping to the next).
+        if end < start:
+            pulled = _minus_one_year(start)
+            if pulled is not None and pulled < right[0].end:
+                start, end = pulled, right[0].end
         if end < start:
             continue
         rem = " ".join(p for p in (left[1], right[1]) if p).strip()
         return DateSpan(start, end), rem
+    return None
+
+
+def _minus_one_year(astro):
+    """The same day one calendar year earlier, or ``None`` when that day does
+    not exist (Feb 29) or falls out of the representable range."""
+    try:
+        return astro.replace(year=astro.year - 1)
+    except (ValueError, OverflowError):
+        return None
+
+
+def _extract_open_range(text, lang, anchor):
+    """An open-ended range: "until friday" (open start) / "since 2019" (open
+    end).  Only fires on a leading ``until``/``since`` marker whose remainder
+    parses as a date endpoint.
+
+    The known endpoint keeps the closed-range endpoint convention -- an
+    ``until`` endpoint contributes its ``.end`` (it is included in full, as the
+    right endpoint of "from A to B" is), a ``since`` endpoint its ``.start`` --
+    and the open side is pinned to the anchor instant ("now").  So "until
+    friday" is ``[now, friday_end)`` and "since 2019" is ``[2019-01-01, now)``.
+    """
+    spec = _timespan_engine(lang).spec
+    stripped = text.strip()
+    lowered = stripped.lower()
+    now = AstroDate.from_datetime(anchor)
+    until_words = set(_RANGE_UNTIL) | set(spec.connectors.get("until", ()))
+    since_words = set(_RANGE_SINCE) | set(spec.connectors.get("since", ()))
+
+    def _endpoint(rest):
+        return (extract_timespan(rest, lang, anchor)
+                or _bare_weekday_endpoint(rest, lang, anchor))
+
+    for w in sorted(until_words, key=len, reverse=True):
+        if w and lowered.startswith(w.lower() + " "):
+            ep = _endpoint(stripped[len(w):].strip())
+            if ep is not None and ep[0].end > now:
+                return DateSpan(now, ep[0].end), ep[1]
+    for w in sorted(since_words, key=len, reverse=True):
+        if w and lowered.startswith(w.lower() + " "):
+            ep = _endpoint(stripped[len(w):].strip())
+            if ep is not None and ep[0].start < now:
+                return DateSpan(ep[0].start, now), ep[1]
     return None
 
 
@@ -329,6 +390,9 @@ def extract_timespan(
     rng = _extract_range(text, lang, anchor)
     if rng is not None:
         return rng
+    opn = _extract_open_range(text, lang, anchor)
+    if opn is not None:
+        return opn
     tokens = engine.tokenize(text)
     resolved = []
     for match in engine.matcher.match(tokens):

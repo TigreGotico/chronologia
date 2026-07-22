@@ -8,7 +8,7 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import AstroDate, start_end, span, start, nomatch
+from ._corpus import AstroDate, start_end, span, start, nomatch, ANCHOR, ad
 
 
 def _d(s):
@@ -126,3 +126,84 @@ def test_shared_meridiem_range(text, sh, eh):
 def test_am_to_pm_range(text, sh, eh):
     ss, ee = start_end(text)
     assert ss.hour == sh and ee.hour == eh
+
+
+# -- prefer-future consistency: a range straddling "now" (anchor 2017-06-27)
+# keeps both endpoints in the same cycle instead of the left leaping a year --
+
+@pytest.mark.parametrize("text,s,e", [
+    # left endpoint just behind the anchor, right just ahead: stays in 2017
+    ("from june 20 to june 30", "2017-6-20", "2017-7-1"),
+    ("from june 25 to july 5", "2017-6-25", "2017-7-6"),        # cross-month
+    ("june 20 - june 30", "2017-6-20", "2017-7-1"),             # dash form
+    # both endpoints ahead of the anchor: plainly this year
+    ("from june 28 to june 30", "2017-6-28", "2017-7-1"),
+    ("from august 10 to september 20", "2017-8-10", "2017-9-21"),
+    # both endpoints behind the anchor: the whole range prefers next year
+    ("from june 1 to june 10", "2018-6-1", "2018-6-11"),
+    # cross-year spans must not invert (the end rolls into the next year)
+    ("from december 28 to january 3", "2017-12-28", "2018-1-4"),
+    ("from november 30 to february 2", "2017-11-30", "2018-2-3"),
+    # explicit years on both endpoints resolve verbatim
+    ("from march 3 2001 to march 9 2001", "2001-3-3", "2001-3-10"),
+    ("july 4 2020 - july 10 2020", "2020-7-4", "2020-7-11"),
+])
+def test_straddling_and_cross_year_range(text, s, e):
+    ss, ee = start_end(text)
+    assert ss == _d(s) and ee == _d(e)
+
+
+# -- holiday endpoints compose into a range like any other date -------------
+
+@pytest.mark.parametrize("text,s,e", [
+    ("from christmas to new year's day", "2017-12-25", "2018-1-2"),
+    ("from christmas eve to christmas", "2017-12-24", "2017-12-26"),
+])
+def test_holiday_to_holiday_range(text, s, e):
+    ss, ee = start_end(text)
+    assert ss == _d(s) and ee == _d(e)
+
+
+# -- open-ended ranges: one edge is the anchor instant ("now") --------------
+# convention: the known endpoint keeps the closed-range edge (an "until"
+# endpoint contributes its .end, a "since" endpoint its .start); the open side
+# is pinned to the anchor.
+
+def test_until_open_start():
+    # "until friday": from now through the whole of the next Friday
+    s, e = start_end("until friday")
+    assert s == ad(ANCHOR)                 # the anchor instant
+    assert e == AstroDate(2017, 7, 1)      # end of Friday 2017-06-30
+
+def test_through_open_start():
+    s, e = start_end("through july 4")
+    assert s == ad(ANCHOR)
+    assert e == AstroDate(2017, 7, 5)
+
+def test_since_open_end():
+    # "since 2010": from the start of 2010 up to now
+    s, e = start_end("since 2010")
+    assert s == AstroDate(2010, 1, 1)
+    assert e == ad(ANCHOR)
+
+
+# -- clock ranges are untouched by the date-range fixes ---------------------
+
+@pytest.mark.parametrize("text,sh,eh", [
+    ("from 2 pm to 6 pm", 14, 18),
+    ("between 10 am and 11 am", 10, 11),
+    ("from 9 am to 5 pm", 9, 17),
+])
+def test_clock_range_unchanged(text, sh, eh):
+    ss, ee = start_end(text)
+    assert ss.hour == sh and ee.hour == eh
+    assert (ee - ss).total_seconds() > 0
+
+
+# -- negatives: non-temporal endpoints never fabricate a range --------------
+
+@pytest.mark.parametrize("text", [
+    "from here to there", "from apple to orange", "from soup to nuts",
+])
+def test_non_temporal_range_is_none(text):
+    nomatch(text)
