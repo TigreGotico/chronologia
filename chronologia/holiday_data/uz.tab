@@ -1,17 +1,18 @@
 # civil-holidays v1
 # jurisdiction: UZ
-# source: https://en.wikipedia.org/wiki/Public_holidays_in_Uzbekistan
-#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
-#   (github.com/vacanza/holidays), an independent open-source reference
-#   maintained against each country's official calendar. Primary names are
-#   the jurisdiction's own official-language rendering as vacanza publishes
-#   it; English lands only in translations.tab, never in this column.
-#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
-#   rule modelled here are captured as 'decree' (explicit per-year dates,
-#   basis tabulated) for 2024-2025, the same honest
-#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
-#   outside those years rather than fabricated. 调休-style workday-bridge
-#   ('moved from ...') entries are dropped as out of scope.
+# source: https://lex.uz (Mehnat kodeksi, 77-modda) + annual presidential decrees
+#   PRIMARY-VERIFIED against the Labour Code of Uzbekistan, Art. 77
+#   (national non-working holidays: 1 Jan, 8 Mar, 21 Mar Navruz, 9 May,
+#   1 Sep, 1 Oct, 8 Dec + the two Eids). Fixed set confirmed; the annual
+#   presidential extra-rest-day decree and the lunar Eids modelled as decree.
+#   Provenance: structure/dates originally derived from vacanza/holidays
+#   0.101 (MIT) (github.com/vacanza/holidays); the PUBLIC set has now been
+#   cross-checked against the primary instrument above and found to match.
+#   Primary names are the jurisdiction's own official-language rendering;
+#   English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar holidays with no closed-form rule are captured as
+#   'decree' (explicit per-year dates) for 2024-2025 rather than fabricated;
+#   workday-bridge ('moved from ...') entries are dropped as out of scope.
 # retrieved: 2026-07-22
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed | valid | span
