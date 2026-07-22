@@ -21,7 +21,7 @@
 fixed         | Siku ya Mwaka Mpya                 | 1 1                 | public          |  |  |  |
 easter        | Ijumaa Kuu                         | -2                  | public          |  |  |  |
 easter        | Jumatatu ya Pasaka                 | 1                   | public          |  |  |  |
-decree        | Sikukuu ya Idd-ul-Fitr             | 2024-4-10 2026-3-20 2027-3-9           | public          |  |  |  |
+decree        | Sikukuu ya Idd-ul-Fitr             | 2024-4-10 2026-3-20 2027-3-9           | public          |  |  |  || eid_al_fitr
 fixed         | Siku ya Kazi                       | 5 1                 | public          |  |  |  |
 fixed         | Siku ya Madaraka                   | 6 1                 | public          |  |  |  |
 fixed         | Siku ya Mashujaa                   | 10 20               | public          |  |  |  |
@@ -31,7 +31,7 @@ fixed         | Siku ya Krismasi                   | 12 25               | publi
 fixed         | Siku ya Ndondi                     | 12 26               | public          |  |  |  |
 decree        | Siku ya Mashujaa (imezingatiwa)    | 2024-10-21          | public          |  |  |  |
 decree        | Siku ya Uzinduzi                   | 2024-11-1           | public          |  |  |  |
-decree        | Sikukuu ya Idd-ul-Fitr (inakadiriwa)| 2025-3-30 2026-3-20 2027-3-9           | public          |  |  |  |
+decree        | Sikukuu ya Idd-ul-Fitr (inakadiriwa)| 2025-3-30 2026-3-20 2027-3-9           | public          |  |  |  || eid_al_fitr
 decree        | Sikukuu ya Idd-ul-Fitr (inazingatiwa, inakadiriwa)| 2025-3-31           | public          |  |  |  |
 decree        | Siku ya Madaraka (imezingatiwa)    | 2025-6-2            | public          |  |  |  |
 fixed         | Siku ya Mazingira                  | 10 10               | public          |  |  |  |

@@ -23,7 +23,7 @@
 #
 
 fixed         | Nieuwjaarsdag                            | 1 1                  | public          |  |  |  |
-decree        | Chinees Nieuwjaar                        | 2024-2-10 2025-1-29 2026-2-17 2027-2-6  | public          |  |  |  |
+decree        | Chinees Nieuwjaar                        | 2024-2-10 2025-1-29 2026-2-17 2027-2-6  | public          |  |  |  || chinese_new_year
 decree        | Holi-Phagwa                              | 2024-3-25 2025-3-14 2026-3-3 2027-3-22  | public          |  |  |  |
 easter        | Goede Vrijdag                            | -2 gregorian         | public          |  |  |  |
 easter        | Tweede Paasdag                           | 1 gregorian          | public          |  |  |  |

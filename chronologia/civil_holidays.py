@@ -43,7 +43,17 @@ The kinds:
   may contain zero, one, or two occurrences (a short lunar year can fit two).
 * :class:`DecreeTableRule` ``(dates)`` — explicit per-year dates for holidays
   that have *no* rule (announced by decree each year, e.g. China's 调休 shift
-  days). Basis ``tabulated``: the honest kind for rule-less realities.
+  days). Basis ``tabulated``: the honest kind for rule-less realities. It knows
+  its own :meth:`~DecreeTableRule.horizon` (the span of years it tabulates); a
+  query past that horizon can be bridged by a :attr:`HolidayRule.predict`
+  annotation naming a :data:`WELL_KNOWN` computable rule (an Islamic feast on
+  the Umm al-Qura calendar, the Chinese lunisolar cluster) — the bridged date
+  carries basis ``predicted``. Genuinely gazette-only holidays (调休-adjacent
+  shifts, one-offs) have no computable mapping and stay honestly silent; the
+  gap is reported by :func:`coverage`, never hidden.
+* :class:`ExcludeRule` ``(target)`` — the engine's one *subtractive* kind: it
+  removes a named inherited holiday for a subdivision (US-ND / US-UM do not
+  observe Columbus Day). It emits no date; see :meth:`HolidayCalendar.holidays`.
 * :class:`OneOffRule` ``(year, month, day, citation)`` — a single dated
   occurrence that happened *once* and carries no recurrence: a coronation, a
   jubilee, a state funeral, a one-time proclaimed bank holiday. It resolves to
@@ -137,8 +147,8 @@ from types import MappingProxyType
 from typing import (Dict, FrozenSet, Iterable, Mapping, Optional, Protocol,
                     Tuple, runtime_checkable)
 
-from chronologia.astrodate import (BASIS_EXACT, BASIS_TABULATED, AstroDate,
-                                   DateSpan)
+from chronologia.astrodate import (BASIS_EXACT, BASIS_PREDICTED,
+                                   BASIS_TABULATED, AstroDate, DateSpan)
 from chronologia.calendars import CALENDARS, CalendarRangeError, gregorian_to_jdn
 from chronologia.computus import easter
 from chronologia.equinoxes import equinox, solar_term
@@ -155,6 +165,7 @@ __all__ = [
     "CalendarDateRule",
     "DecreeTableRule",
     "OneOffRule",
+    "ExcludeRule",
     "EquinoxRule",
     "SolarTermRule",
     "ObservedShift",
@@ -170,6 +181,11 @@ __all__ = [
     "CivilHoliday",
     "HolidayCalendar",
     "holidays_for",
+    "coverage",
+    "COVERAGE_FULL",
+    "COVERAGE_PARTIAL",
+    "COVERAGE_PREDICTED",
+    "COVERAGE_NONE",
     "WellKnownHoliday",
     "WELL_KNOWN",
     "WELL_KNOWN_BY_KEY",
@@ -468,6 +484,14 @@ class DecreeTableRule:
     ``dates`` maps a Gregorian ``year`` to its ``(month, day)`` — the honest
     kind for decree-driven realities (China's 调休 shift days, ad-hoc one-off
     observances). Basis ``tabulated``.
+
+    A decree table is authoritative only across the *span of years it
+    tabulates* — its :meth:`horizon`. A query outside that horizon is a silent
+    time bomb (asking a 2024–2027 table for 2028 yields nothing, and a bare
+    empty result is indistinguishable from "no such holiday"). The horizon is
+    exposed so the wrapping :class:`HolidayRule` can bridge past it via a
+    ``predict`` annotation (see :meth:`HolidayRule.resolve`) and so
+    :func:`coverage` can report the gap instead of trusting the silence.
     """
 
     dates: Tuple[Tuple[int, Tuple[int, int]], ...]
@@ -478,6 +502,11 @@ class DecreeTableRule:
             if y == year:
                 out.append((AstroDate(y, m, d), BASIS_TABULATED))
         return tuple(out)
+
+    def horizon(self) -> Optional[Tuple[int, int]]:
+        """The ``(min_year, max_year)`` this table tabulates (``None`` if empty)."""
+        years = [y for y, _ in self.dates]
+        return (min(years), max(years)) if years else None
 
 
 @dataclass(frozen=True)
@@ -515,6 +544,35 @@ class OneOffRule:
         if year != self.year:
             return ()
         return ((AstroDate(self.year, self.month, self.day), BASIS_TABULATED),)
+
+
+@dataclass(frozen=True)
+class ExcludeRule:
+    """A subtractive rule: it *removes* an inherited holiday, never adds a date.
+
+    The engine is otherwise additive — a subdivision row can only *add* a
+    holiday to the jurisdiction-wide set. But a real subdivision may observe
+    *fewer* holidays than its nation: North Dakota and the U.S. Minor Outlying
+    Islands do not observe Columbus Day, a federal holiday. That is
+    inexpressible with additive rules alone.
+
+    An ``ExcludeRule`` names the ``target`` holiday (by its exact ``name``) to
+    drop. It is meaningful only when scoped to a ``subdiv`` (or, in principle, a
+    category) on its wrapping :class:`HolidayRule`: when that subdivision is the
+    one being resolved, every inherited holiday whose name equals ``target`` is
+    removed from the result. It produces no date of its own — ``observances`` is
+    always empty — so it is invisible except through its subtractive effect,
+    applied by :meth:`HolidayCalendar.holidays`.
+    """
+
+    target: str
+
+    def __post_init__(self) -> None:
+        if not self.target.strip():
+            raise ValueError("ExcludeRule requires a target holiday name")
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        return ()
 
 
 @dataclass(frozen=True)
@@ -718,6 +776,16 @@ class HolidayRule:
     from_year: Optional[int] = None
     until_year: Optional[int] = None
     span_shape: str = "day"
+    #: Optional name of a :data:`WELL_KNOWN` holiday whose computable rule
+    #: *predicts* this holiday's date in years beyond a :class:`DecreeTableRule`
+    #: horizon. It bridges the silent time bomb: a decree table that tabulates
+    #: 2024–2027 with ``predict="eid_al_fitr"`` resolves 2028 through the
+    #: Umm al-Qura calendar with basis ``predicted`` instead of vanishing. Only
+    #: honest where a genuine computable mapping exists — a decree row is
+    #: annotated with a ``predict`` key only when the key's computed date
+    #: matches the tabulated dates for *every* year the row tabulates (proven by
+    #: construction, never guessed from the name). See :meth:`resolve`.
+    predict: Optional[str] = None
     #: Official-language name alternates, ``lang -> name`` (see
     #: :func:`parse_name_cell`). ``name`` is the primary (first) official name;
     #: this maps *every* official-language rendering the source publishes, and is
@@ -738,6 +806,9 @@ class HolidayRule:
                 and self.from_year > self.until_year):
             raise ValueError(
                 f"from_year {self.from_year} > until_year {self.until_year}")
+        if self.predict is not None and self.predict not in WELL_KNOWN_BY_KEY:
+            raise ValueError(
+                f"predict names unknown well-known key {self.predict!r}")
 
     def in_force(self, year: int) -> bool:
         """True when ``year`` is within this rule's validity range (inclusive)."""
@@ -747,11 +818,35 @@ class HolidayRule:
             return False
         return True
 
+    def past_horizon(self, year: int) -> bool:
+        """True when ``year`` is outside this rule's :class:`DecreeTableRule` horizon.
+
+        Only a decree-table kind has a horizon; any other kind (computable every
+        year) is never "past" one, so this is ``False`` for it.
+        """
+        horizon = getattr(self.kind, "horizon", None)
+        if horizon is None:
+            return False
+        bounds = horizon()
+        if bounds is None:
+            return False
+        return year < bounds[0] or year > bounds[1]
+
     def resolve(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
         if not self.in_force(year):
             return ()
+        obs = self.kind.observances(year)
+        # Bridge the horizon: a decree-tabulated holiday queried beyond the years
+        # it tabulates resolves through its ``predict`` well-known rule (the same
+        # computable calendar the feast really follows) with basis ``predicted``,
+        # rather than silently vanishing.
+        if not obs and self.predict is not None and self.past_horizon(year):
+            wk = WELL_KNOWN_BY_KEY.get(self.predict)
+            if wk is not None:
+                obs = tuple((date, BASIS_PREDICTED)
+                            for date, _ in wk.kind.observances(year))
         out = []
-        for date, basis in self.kind.observances(year):
+        for date, basis in obs:
             if self.observed is not None:
                 date = self.observed.apply(date)
             out.append((date, basis))
@@ -946,12 +1041,21 @@ class HolidayCalendar:
         """
         want = frozenset(categories) if categories is not None else None
         applicable = []
+        # Subtractive pass: an ExcludeRule scoped to the requested subdivision
+        # names an inherited holiday to drop (US-ND / US-UM omit Columbus Day).
+        # It is collected here — never emitted — so the additive pass below skips
+        # any holiday whose name it excludes.
+        excluded: set = set()
         for rule in self.rules:
             if rule.subdiv is not None and rule.subdiv != subdiv:
+                continue
+            if isinstance(rule.kind, ExcludeRule):
+                excluded.add(rule.kind.target)
                 continue
             if want is not None and not (rule.categories & want):
                 continue
             applicable.append(rule)
+        applicable = [r for r in applicable if r.name not in excluded]
 
         out = []
         # Nominal (base) occurrences first — they populate the ``taken`` set the
@@ -1030,6 +1134,8 @@ def _parse_kind(kind: str, args: str) -> RuleKind:
         y, m, d = int(parts[0]), int(parts[1]), int(parts[2])
         citation = " ".join(parts[3:])
         return OneOffRule(y, m, d, citation)
+    if kind == "exclude":
+        return ExcludeRule(args.strip())
     raise ValueError(f"unknown rule kind {kind!r}")
 
 
@@ -1057,13 +1163,16 @@ def load_calendar(path: str) -> HolidayCalendar:
     ``jurisdiction``, ``source`` (official URL) and ``retrieved`` (date) to be
     present — provenance is mandatory. Each data row is pipe-delimited::
 
-        kind | name | args | categories | subdiv | observed | valid | span
+        kind | name | args | categories | subdiv | observed | valid | span | predict
 
     * ``kind`` — ``fixed`` / ``nth_weekday`` / ``easter`` / ``calendar_date`` /
-      ``equinox`` / ``solar_term`` / ``decree`` / ``one_off`` (see the per-kind
-      classes for the ``args`` grammar). A ``one_off`` row's ``args`` is
-      ``<year> <month> <day> <citation…>`` — the citation is the rest of the
-      field and is mandatory.
+      ``equinox`` / ``solar_term`` / ``decree`` / ``one_off`` / ``exclude``
+      (see the per-kind classes for the ``args`` grammar). A ``one_off`` row's
+      ``args`` is ``<year> <month> <day> <citation…>`` — the citation is the
+      rest of the field and is mandatory. An ``exclude`` row's ``args`` is the
+      exact ``name`` of the inherited holiday to *remove* for its ``subdiv``
+      (the additive engine's one subtractive kind — see :class:`ExcludeRule`);
+      its own ``name`` column repeats that target for readability.
     * ``name`` — the official holiday name(s), verbatim from the cited source. A
       single plain name is the common case; a multi-official jurisdiction may
       give ``;;``-separated ``lang:``-tagged alternates (``zh:春节 ;; en:Spring
@@ -1082,6 +1191,10 @@ def load_calendar(path: str) -> HolidayCalendar:
       ``half_pm`` (the free afternoon ``[12:00, 24:00)`` — the "offices close at
       noon" pre-holiday half-day) or ``half_am`` (``[00:00, 12:00)``). The
       resolved :class:`CivilHoliday`'s span carries the real 12-hour width.
+    * ``predict`` — optional :data:`WELL_KNOWN` key naming the computable rule
+      that predicts a ``decree`` holiday's date beyond its tabulated horizon
+      (basis ``predicted``); empty = honest silence past the horizon. See
+      :attr:`HolidayRule.predict`.
     """
     meta: Dict[str, str] = {}
     rules = []
@@ -1106,6 +1219,7 @@ def load_calendar(path: str) -> HolidayCalendar:
             obs_name = cols[5] if len(cols) > 5 and cols[5] else None
             valid = cols[6] if len(cols) > 6 and cols[6] else None
             span_shape = cols[7] if len(cols) > 7 and cols[7] else "day"
+            predict = cols[8] if len(cols) > 8 and cols[8] else None
             # The observed column names either a relocating ObservedShift or an
             # in-lieu SubstitutePolicy (they are mutually exclusive per rule).
             observed = substitute = None
@@ -1127,6 +1241,7 @@ def load_calendar(path: str) -> HolidayCalendar:
                 from_year=from_year,
                 until_year=until_year,
                 span_shape=span_shape,
+                predict=predict,
                 names=names))
     missing = [h for h in _REQUIRED_HEADERS if h not in meta]
     if missing:
@@ -1221,6 +1336,59 @@ def holidays_for(jurisdiction: str, year: int, subdiv: Optional[str] = None,
     :raises KeyError: no data file for ``jurisdiction``.
     """
     return _calendar_for(jurisdiction).holidays(year, subdiv, categories)
+
+
+#: The four coverage verdicts :func:`coverage` reports (see its docstring).
+COVERAGE_FULL = "full"
+COVERAGE_PARTIAL = "partial"
+COVERAGE_PREDICTED = "predicted"
+COVERAGE_NONE = "none"
+
+
+def coverage(jurisdiction: str, year: int,
+             subdiv: Optional[str] = None) -> str:
+    """How well ``jurisdiction`` is covered for ``year`` — the horizon detector.
+
+    Decree-tabulated holidays (Islamic feasts, the Chinese cluster, gazette-only
+    shift days) are authoritative only across the years they tabulate. Past that
+    horizon a bare :func:`holidays_for` call can silently drop them, so a caller
+    who trusts the empty result is trusting a time bomb. ``coverage`` makes the
+    horizon inspectable, returning one of:
+
+    * ``"full"`` — no applicable decree rule is past its horizon this year
+      (everything resolves from a tabulated table or a computable rule).
+    * ``"predicted"`` — every applicable decree rule that *is* past its horizon
+      carries a ``predict`` annotation, so the year is fully bridged through the
+      calendars with basis ``predicted`` (no silent gap remains).
+    * ``"partial"`` — at least one applicable decree rule is past its horizon
+      with no prediction (a genuine gazette-only gap), while other holidays
+      still resolve.
+    * ``"none"`` — no holiday resolves for the year at all.
+
+    ``subdiv`` / no ``categories`` scoping matches :func:`holidays_for`.
+    """
+    cal = _calendar_for(jurisdiction)
+    resolved = cal.holidays(year, subdiv)
+    if not resolved:
+        return COVERAGE_NONE
+    past_unpredicted = False
+    past_predicted = False
+    for rule in cal.rules:
+        if rule.subdiv is not None and rule.subdiv != subdiv:
+            continue
+        if not rule.in_force(year):
+            continue
+        if not rule.past_horizon(year):
+            continue
+        if rule.predict is not None:
+            past_predicted = True
+        else:
+            past_unpredicted = True
+    if past_unpredicted:
+        return COVERAGE_PARTIAL
+    if past_predicted:
+        return COVERAGE_PREDICTED
+    return COVERAGE_FULL
 
 
 # --------------------------------------------------------------------------

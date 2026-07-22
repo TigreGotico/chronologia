@@ -24,12 +24,12 @@
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | New Year's Day                                | 1 1 | public          |  |  |  |
-decree        | Eid al-Fitr (1)                               | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
+decree        | Eid al-Fitr (1)                               | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  || eid_al_fitr
 decree        | Eid al-Fitr (2)                               | 2024-4-11 2025-3-31 2026-3-21 2027-3-10 | public          |  |  |  |
 fixed         | Labor Day                                     | 5 1 | public          |  |  |  |
 fixed         | Africa Day                                    | 5 25 | public          |  |  |  |
-decree        | Eid al-Adha (1)                               | 2024-6-16 2025-6-6 2026-5-27 2027-5-16 | public          |  |  |  |
+decree        | Eid al-Adha (1)                               | 2024-6-16 2025-6-6 2026-5-27 2027-5-16 | public          |  |  |  || eid_al_adha
 decree        | Eid al-Adha (2)                               | 2024-6-17 2025-6-7 2026-5-28 2027-5-17 | public          |  |  |  |
 decree        | Islamic New Year                              | 2024-7-7 2025-6-26 2026-6-16 2027-6-6 | public          |  |  |  |
-decree        | Mawlid al-Nabi                                | 2024-9-15 2025-9-4 2026-8-25 2027-8-14 | public          |  |  |  |
+decree        | Mawlid al-Nabi                                | 2024-9-15 2025-9-4 2026-8-25 2027-8-14 | public          |  |  |  || mawlid
 fixed         | Independence Day                              | 11 28 | public          |  |  |  |

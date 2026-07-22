@@ -23,10 +23,10 @@ fixed         | Festat e Vitit të Ri (2)                | 1 2 | public         
 fixed         | Dita e Verës                          | 3 14 | public          |  |  |  |
 fixed         | Dita e Nevruzit                        | 3 22 | public          |  |  |  |
 easter        | E diela e Pashkëve Katolike               | 0 | public          |  |  |  |
-decree        | Dita e Bajramit të Madh                  | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
+decree        | Dita e Bajramit të Madh                  | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  || eid_al_fitr
 fixed         | Dita Ndërkombëtare e Punëtorëve           | 5 1 | public          |  |  |  |
 easter        | E diela e Pashkëve Ortodokse              | 0 julian_gregorian_date | public          |  |  |  |
-decree        | Dita e Kurban Bajramit                   | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  |
+decree        | Dita e Kurban Bajramit                   | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  || eid_al_adha
 fixed         | Dita e Shenjtërimit të Shenjt Terezës      | 9 5 | public          |  |  |  |
 fixed         | Dita e Alfabetit                       | 11 22 | public          |  |  |  |
 fixed         | Dita Flamurit dhe e Pavarësisë            | 11 28 | public          |  |  |  |

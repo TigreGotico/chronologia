@@ -23,12 +23,12 @@
 fixed         | New Year's Day                       | 1 1                  | public          |  |  |  |
 fixed         | International Women's Day            | 3 8                  | public          |  |  |  |
 easter        | Easter Monday                        | 1                    | public          |  |  |  |
-decree        | Eid al-Fitr                          | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
+decree        | Eid al-Fitr                          | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  || eid_al_fitr
 fixed         | Labour Day                           | 5 1                  | public          |  |  |  |
-decree        | Eid al-Adha                          | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Eid al-Adha                          | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  || eid_al_adha
 fixed         | Independence Day                     | 8 11                 | public          |  |  |  |
 decree        | Independence Day (observed)          | 2024-8-12            | public          |  |  |  |
-decree        | Mawlid                               | 2024-9-15 2025-9-4 2026-8-25 2027-8-14   | public          |  |  |  |
+decree        | Mawlid                               | 2024-9-15 2025-9-4 2026-8-25 2027-8-14   | public          |  |  |  || mawlid
 fixed         | All Saints' Day                      | 11 1                 | public          |  |  |  |
 fixed         | Republic Day                         | 11 28                | public          |  |  |  |
 fixed         | Freedom and Democracy Day            | 12 1                 | public          |  |  |  |

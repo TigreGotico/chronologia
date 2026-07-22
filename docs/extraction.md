@@ -568,6 +568,30 @@ Because the calendar-table feasts inherit their calendar's published range,
 they are **silent outside it**: a year whose occurrence falls beyond the table
 yields no span at all (honest silence, never a wrong guess).
 
+**Decree horizons and prediction.** A decree table is authoritative only across
+the span of years it lists — its *horizon*. Silence past the horizon is a trap:
+asking a 2024–2027 table for 2028 returns nothing, indistinguishable from "no
+such holiday". Where a decree holiday really follows a computable calendar (the
+big Islamic feasts on Umm al-Qura, the Chinese lunisolar cluster) the row
+carries a `predict` annotation naming the well-known rule that bridges past the
+horizon, so 2028 resolves through the calendar with **basis `predicted`**
+instead of vanishing. The annotations are correct-by-construction: a row is
+annotated with a key only where that key's computed date equals the row's
+tabulated date for *every* listed year, so a jurisdiction whose gazetted
+observance diverges from the calendar is left honestly un-predicted. Genuinely
+gazette-only holidays (调休-adjacent shifts, one-offs) have no computable
+mapping and stay silent — but the gap is now *reported*, not hidden:
+`coverage(jurisdiction, year)` returns `full` / `predicted` / `partial` /
+`none` so a caller can detect the horizon instead of trusting the silence, and
+every resolved `CivilHoliday` carries its `basis`.
+
+**Subtractive `exclude` rules.** The engine is otherwise additive, but a
+subdivision may observe *fewer* holidays than its nation (US-ND and US-UM do not
+observe Columbus Day; Delaware and Florida do not observe Washington's
+Birthday). An `exclude` rule, scoped to a subdivision, removes a named inherited
+holiday — so the subdivision's set is the national set minus what it genuinely
+drops, verified against the reference database.
+
 ```python
 # each holiday in a language that actually names it.
 print(extract_timespan("when is eid", "en", now)[0].start)          # 2018-06-15

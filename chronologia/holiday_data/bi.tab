@@ -23,11 +23,11 @@
 fixed         | Jour de l'an                         | 1 1                  | public          |  |  |  |
 fixed         | Fête de l'Unité                      | 2 5                  | public          |  |  |  |
 fixed         | Commémoration de l'Assassinat du Président Cyprien Ntaryamira | 4 6                  | public          |  |  |  |
-decree        | Aid-El-Fithr                         | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
+decree        | Aid-El-Fithr                         | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  || eid_al_fitr
 fixed         | Fête Internationale du Travail       | 5 1                  | public          |  |  |  |
 easter        | Jour de l'Ascension                  | 39                   | public          |  |  |  |
 fixed         | Journée Nationale du Patriotisme et Commémoration de la Mort du Président Pierre Nkurunziza | 6 8                  | public          |  |  |  |
-decree        | Aid-El-Adha                          | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Aid-El-Adha                          | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  || eid_al_adha
 decree        | Aid-El-Adha (observé)                | 2024-6-17            | public          |  |  |  |
 fixed         | Anniversaire de l'Indépendance       | 7 1                  | public          |  |  |  |
 fixed         | Assomption                           | 8 15                 | public          |  |  |  |

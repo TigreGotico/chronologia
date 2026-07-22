@@ -335,3 +335,51 @@ fixed  | Halloween | 10 31 | unofficial |  |  |  |
 decree | Election Day | 2024-11-5 | unofficial |  |  |  | 
 fixed  | Christmas Eve | 12 24 | unofficial |  |  |  | 
 fixed  | New Year's Eve | 12 31 | unofficial |  |  |  | 
+#
+# ==========================================================================
+# SUBTRACTIVE LAYER (exclude rules) -- subdivisions that observe FEWER
+# holidays than the federal default.
+# ==========================================================================
+# The engine is otherwise additive: a subdivision row can only ADD a holiday.
+# But several states/territories genuinely DROP a federal holiday. An
+# `exclude` row (args = the exact federal `name` to remove, scoped to its
+# subdiv) expresses exactly that. Cross-checked one-for-one against
+# vacanza/holidays 0.101 (MIT) for 2024 and 2025: each listed subdivision's
+# `country_holidays(US, subdiv=code)` has NO holiday on the federal date and
+# no same-named substitute, i.e. a true subtraction (not a rename or a move).
+#
+# Columbus Day (2nd Mon of Oct) is not observed in these 28 states/territories
+# (many observe Indigenous Peoples' Day only where vacanza lists it under a
+# state row, which are NOT in this list; the ones here observe nothing that
+# day). Washington's Birthday (3rd Mon of Feb) is not observed in DE and FL.
+#
+exclude | Columbus Day | Columbus Day | public | US-AR |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-CA |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-CO |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-DE |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-FL |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-GU |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-HI |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-IA |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-KS |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-KY |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-LA |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-MI |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-MN |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-MS |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-NC |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-ND |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-NH |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-NV |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-OK |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-OR |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-SC |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-TN |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-TX |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-UM |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-VT |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-WA |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-WI |  |  |  | 
+exclude | Columbus Day | Columbus Day | public | US-WY |  |  |  | 
+exclude | Washington's Birthday | Washington's Birthday | public | US-DE |  |  |  | 
+exclude | Washington's Birthday | Washington's Birthday | public | US-FL |  |  |  | 

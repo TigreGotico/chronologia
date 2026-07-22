@@ -23,13 +23,13 @@
 fixed         | Fête du Nouvel An                    | 1 1                  | public          |  |  |  |
 decree        | Fête annuelle des religions traditionnelles | 2024-1-10 2025-1-9 2025-1-10 2026-1-8 2026-1-9 2027-1-7 2027-1-8 | public          |  |  |  |
 easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
-decree        | Jour du Ramadan (estimé)             | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
+decree        | Jour du Ramadan (estimé)             | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  || eid_al_fitr
 fixed         | Fête du Travail                      | 5 1                  | public          |  |  |  |
 easter        | Jour de l'Ascension                  | 39                   | public          |  |  |  |
 easter        | Lundi de Pentecôte                   | 50                   | public          |  |  |  |
-decree        | Jour de la Tabaski (estimé)          | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Jour de la Tabaski (estimé)          | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  || eid_al_adha
 fixed         | Fête Nationale                       | 8 1                  | public          |  |  |  |
 fixed         | Jour de l'Assomption                 | 8 15                 | public          |  |  |  |
-decree        | Journée Maouloud (estimé)            | 2024-9-15 2025-9-4 2026-8-25 2027-8-14   | public          |  |  |  |
+decree        | Journée Maouloud (estimé)            | 2024-9-15 2025-9-4 2026-8-25 2027-8-14   | public          |  |  |  || mawlid
 fixed         | La Toussaint                         | 11 1                 | public          |  |  |  |
 fixed         | Jour de Noël                         | 12 25                | public          |  |  |  |

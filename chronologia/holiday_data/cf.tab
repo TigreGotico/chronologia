@@ -18,7 +18,7 @@
 fixed         | Jour de l'an                          | 1 1 | public          |  |  |  |
 fixed         | Journée Barthélemy Boganda                | 3 29 | public          |  |  |  |
 easter        | Lundi de Pâques                        | 1 | public          |  |  |  |
-decree        | Aïd al-Fitr                           | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
+decree        | Aïd al-Fitr                           | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  || eid_al_fitr
 fixed         | Fête du Travail                        | 5 1 | public          |  |  |  |
 easter        | Ascension                             | 39 | public          |  |  |  |
 easter        | Lundi de Pentecôte                      | 50 | public          |  |  |  |
