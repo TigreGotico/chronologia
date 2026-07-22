@@ -2,7 +2,7 @@
 longest-span overlap resolution."""
 from engine_helpers import zz_engine
 
-from chronologia.extract.matcher import Candidate, ConstructionMatcher
+from chronologia.extract.matcher import MatchCandidate, ConstructionMatcher
 from chronologia.extract.model import Match
 
 
@@ -65,7 +65,7 @@ def test_empty_and_garbage_never_raise():
 
 
 def _cand(name, span, prec):
-    return Candidate(Match(name, span, {}), prec)
+    return MatchCandidate(Match(name, span, {}), prec)
 
 
 def test_select_longer_span_wins():

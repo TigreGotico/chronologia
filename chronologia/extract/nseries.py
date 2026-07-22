@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import List, Optional, Tuple
+from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
 from chronologia.recurrence import HolidayRecurrence, Recurrence
@@ -45,6 +45,16 @@ _DUR_UNIT_SECONDS = {
     "week": 604800,
     "fortnight": 1209600,
 }
+
+
+class DurationResult(NamedTuple):
+    """Return of :func:`extract_duration`: a length of time and the leftover text.
+
+    A plain 2-tuple ``(duration, remainder)`` for unpacking, plus the named
+    fields ``.duration`` (a :class:`datetime.timedelta`) and ``.remainder``.
+    """
+    duration: timedelta
+    remainder: str
 
 
 def _fraction_words(spec):
@@ -69,7 +79,7 @@ def _and_words(spec):
 def extract_duration(
         text: str,
         lang: str = "en-us",
-) -> Optional[Tuple[timedelta, str]]:
+) -> Optional[DurationResult]:
     """Extract a :class:`datetime.timedelta` length from ``text``.
 
     Reads the fixed-width units minute / hour / day / week / fortnight, summing
@@ -80,8 +90,9 @@ def extract_duration(
     "ninety minutes" read alike.
 
     Calendar-ambiguous units (month, year, decade, ...) are **not** durations
-    and are left in the remainder.  Returns ``(duration, remainder)`` or
-    ``None`` when the text names no fixed-width length.
+    and are left in the remainder.  Returns a :class:`DurationResult` -- a
+    ``(duration, remainder)`` named tuple (unpack it, or read ``.duration`` /
+    ``.remainder``) -- or ``None`` when the text names no fixed-width length.
     """
     from chronologia.extract import _timespan_engine
 
@@ -162,7 +173,7 @@ def extract_duration(
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
-    return timedelta(seconds=total), remainder
+    return DurationResult(timedelta(seconds=total), remainder)
 
 
 # --------------------------------------------------------------------------
@@ -287,11 +298,25 @@ _UNIT_FREQ = {"day": "DAILY", "week": "WEEKLY", "month": "MONTHLY",
               "year": "YEARLY", "fortnight": "WEEKLY"}
 
 
+class RecurrenceResult(NamedTuple):
+    """Return of :func:`extract_recurrence`: a rule and the leftover text.
+
+    A plain 2-tuple ``(recurrence, remainder)`` for unpacking, plus the named
+    fields ``.recurrence`` and ``.remainder``.  ``.recurrence`` is normally a
+    serialisable :class:`~chronologia.recurrence.Recurrence`; a **movable**
+    feast ("every easter") yields a
+    :class:`~chronologia.recurrence.HolidayRecurrence` instead (it expands to
+    real dates but has no RFC 5545 ``RRULE``).
+    """
+    recurrence: Union[Recurrence, HolidayRecurrence]
+    remainder: str
+
+
 def extract_recurrence(
         text: str,
         lang: str = "en-us",
         anchor: Optional[datetime] = None,
-) -> Optional[Tuple[object, str]]:
+) -> Optional[RecurrenceResult]:
     """Map a recurring phrase onto an RFC 5545 :class:`~chronologia.recurrence.Recurrence`.
 
     Handles the civil recurrence idioms -- "every friday", "every other week",
@@ -324,7 +349,9 @@ def extract_recurrence(
     duration spans at the rule's frequency ("daily for two weeks" -> COUNT=14,
     "every monday for 6 weeks" -> COUNT=6).
 
-    Returns ``(recurrence, remainder)`` or ``None`` when no recurrence is found.
+    Returns a :class:`RecurrenceResult` -- a ``(recurrence, remainder)`` named
+    tuple (unpack it, or read ``.recurrence`` / ``.remainder``) -- or ``None``
+    when no recurrence is found.
     """
     from chronologia.extract import _timespan_engine
 
@@ -362,7 +389,7 @@ def extract_recurrence(
             from chronologia.extract.pipeline import render_remainder
             remainder = render_remainder(text, [t for t in tokens
                                                 if t.index not in consumed])
-            return rec, remainder
+            return RecurrenceResult(rec, remainder)
     return None
 
 

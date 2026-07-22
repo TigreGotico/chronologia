@@ -104,7 +104,8 @@ from chronologia.civil_holidays import (CATEGORIES, IL_INDEPENDENCE_SHIFT,
                                         coverage, holidays_for, is_civil_holiday,
                                         load_calendar, load_translations,
                                         parse_name_cell)
-from chronologia.extract import (Candidate, TimeMention, explain,
+from chronologia.extract import (Candidate, DurationResult, RecurrenceResult,
+                                 TimeMention, TimeSpanResult, explain,
                                  extract_candidates, extract_duration,
                                  extract_recurrence, extract_timespan,
                                  extract_timespans)
@@ -142,11 +143,14 @@ __all__ = [
     "extract_candidates",
     "Candidate",
     "explain",
+    "TimeSpanResult",
     # extraction beyond a single span
     "extract_duration",
     "extract_timespans",
     "extract_recurrence",
     "TimeMention",
+    "DurationResult",
+    "RecurrenceResult",
     # events (one utterance -> Event) and RFC 5545 iCalendar interop
     "Event",
     "extract_event",
