@@ -183,6 +183,14 @@ ERAS = {
                         calendar="gregorian",
                         year_transform=lambda n: n - 5509,
                         year_start=(9, 1)),
+    # Ab urbe condita ("from the founding of the City"): the Varronian epoch
+    # dates Rome's foundation to 753 BC (astronomical -752), so AUC year 1 ==
+    # 753 BC and AUC 753 == 1 BC (astronomical 0).  A proleptic year count, not
+    # attached to a calendar; YEARS_SINCE reckons AUC N as astronomical year
+    # -752 + N - 1.  (Varro's date is the conventional one; Cato's 751 BC and
+    # Fabius Pictor's 748 BC are the historical alternatives, not used here.)
+    # Source: auc_varronian_era_reference.html.
+    "ab_urbe_condita": Era("ab_urbe_condita", AstroDate(-752, 1, 1)),
     # Olympiad era: a four-year cycle counted from the first Olympiad, 776 BC
     # (astronomical -775), each period beginning at midsummer (1 July).
     # Olympiad N begins in Gregorian year 4N - 779 (olympiad_era_reference.html).

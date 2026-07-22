@@ -10,7 +10,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from ._corpus import AstroDate, start, start_end, span
+from ._corpus import AstroDate, parse, start, start_end, span
 
 
 def _d(s):
@@ -91,3 +91,46 @@ def test_roman_counted(text, iso):
 ])
 def test_latin_ablative(text, iso):
     assert start(text) == _d(iso)
+
+
+# -- wart fix: a leading "the" on a Roman date is CONSUMED, not stranded ---
+
+@pytest.mark.parametrize("text", [
+    "the ides of march", "the kalends of april", "the nones of march",
+])
+def test_roman_article_is_consumed(text):
+    assert parse(text)[1] == ""
+
+
+# -- Roman-numeral counted days ("ad III kalends", not just "ad 3") --------
+
+@pytest.mark.parametrize("text,iso", [
+    ("ad III kalends of april", "2017-3-30"),
+    ("ad IV ides of march", "2017-3-12"),
+])
+def test_roman_counted_roman_numeral(text, iso):
+    assert start(text) == _d(iso)
+
+
+# -- regnal grammar over the Egyptian (low-chronology) rulers -------------
+# The registry holds three attested Egyptian chronology variants; the English
+# vocabulary surfaces the LOW variant (the conventional one).  Roman-numeral
+# ruler ordinals ("Ramesses II", "Thutmose III") are part of the ruler's NAME.
+# Ramesses II (low) acceded 1279 BC == astronomical -1278; regnal year N is
+# -1278 + N - 1.
+
+@pytest.mark.parametrize("text,astro_year", [
+    ("the fifth year of ramesses ii", -1274),
+    ("the 3rd year of the reign of ramesses ii", -1276),
+    ("regnal year 5 of thutmose iii", -1474),
+    ("ramesses ii 5", -1274),
+    ("amenhotep iii 2", -1389),
+])
+def test_regnal_egyptian(text, astro_year):
+    assert start(text).year == astro_year
+    assert parse(text)[1] == ""
+
+
+def test_regnal_article_is_consumed():
+    # the nengo "Nth year of" order also consumes a leading article now
+    assert parse("the tenth year of meiji")[1] == ""

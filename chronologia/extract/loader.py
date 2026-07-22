@@ -86,6 +86,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     cycle_positions: Dict[str, int] = {}
     regnal_names: Dict[str, tuple] = {}
     roman_anchors: Dict[str, str] = {}
+    archon_names: Dict[str, str] = {}
     periods: Dict[str, str] = {}
     scales: Dict[str, int] = {}
     period_parts: Dict[str, str] = {}
@@ -159,14 +160,28 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             kind = base[len("scope_unit_"):]
             scope_units.update({s: kind for s in surfaces})
         elif base.startswith("regnal_"):
-            # regnal_<seqkey>_<segname>.voc: segment of a regnal sequence
-            seqkey, _, segname = base[len("regnal_"):].partition("_")
+            # regnal_<seqkey>_<segname>.voc: segment of a regnal sequence.  The
+            # sequence key may itself contain underscores ("egyptian_low"), so
+            # match it against the registered keys greedily (longest prefix)
+            # rather than splitting on the first underscore.
+            from chronologia.regnal import REGNAL_SEQUENCES
+            rest = base[len("regnal_"):]
+            seqkey = max((k for k in REGNAL_SEQUENCES
+                          if rest == k or rest.startswith(k + "_")),
+                         key=len, default=rest.partition("_")[0])
+            segname = rest[len(seqkey) + 1:] if rest != seqkey else rest
             for s in surfaces:
                 regnal_names[s] = (seqkey, segname)
         elif base.startswith("roman_anchor_"):
             anchor_name = base[len("roman_anchor_"):]
             for s in surfaces:
                 roman_anchors[s] = anchor_name
+        elif base.startswith("archon_"):
+            # archon_<key>.voc: eponymous archon of Athens (key indexes
+            # chronologia.archons.ARCHONS)
+            archon_key = base[len("archon_"):]
+            for s in surfaces:
+                archon_names[s] = archon_key
         elif base.startswith("period_part_"):
             part = base[len("period_part_"):]
             for s in surfaces:
@@ -241,6 +256,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         day_cycles=day_cycles, cycle_positions=cycle_positions,
         day_subdivision=cfg.get("day_subdivision"),
         regnal_names=regnal_names, roman_anchors=roman_anchors,
+        archon_names=archon_names,
         periods=periods, scales=scales, period_parts=period_parts,
         decade_words=decade_words, clock_landmarks=clock_landmarks,
         clock_zones=clock_zones,

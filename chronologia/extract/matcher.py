@@ -124,6 +124,11 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.is_number and (token.value or 0) >= 0
     if name == "SEL_UNIT":
         return token.text in spec.scope_units or token.text in spec.units
+    if name == "CMUNIT":
+        # a century or millennium scope unit ONLY -- the postposed Romance
+        # ordinal ("século XII", "secolo XII") binds this, never a plain unit
+        # like "anno"/"semana" (which would hijack a year or ISO-week reading)
+        return spec.scope_units.get(token.text) in ("century", "millennium")
     if name == "SCOPE_UNIT":
         # the outer scope of an ordinal ("the third CENTURY") is never a
         # sub-day unit -- excluding hour/minute keeps "15 uur"/"15 uhr" a
@@ -140,6 +145,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.text in spec.regnal_names
     if name == "ANCHOR_DAY":
         return token.text in spec.roman_anchors
+    if name == "ARCHON":
+        return token.text in spec.archon_names
     if name == "PRIDIE":
         return token.text in spec.connectors.get("pridie", frozenset())
     # -- deep-time / named-period slots ------------------------------------

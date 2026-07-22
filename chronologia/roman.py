@@ -22,6 +22,7 @@ Source: ``roman_calendar_reckoning_reference.html``.
 """
 from __future__ import annotations
 
+import re
 from typing import Optional, Tuple
 
 from chronologia.calendars import jdn_to_julian, julian_to_jdn
@@ -29,6 +30,64 @@ from chronologia.calendars import jdn_to_julian, julian_to_jdn
 #: months whose Nones/Ides fall two days later (March, May, July, October).
 _LATE_MONTHS = frozenset({3, 5, 7, 10})
 ROMAN_ANCHORS = frozenset({"kalends", "nones", "ides"})
+
+#: additive value of each Roman-numeral letter.
+_ROMAN_VALUES = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+#: the six legal subtractive pairs (IV IX XL XC CD CM); no other smaller-
+#: before-larger arrangement is a well-formed classical numeral.
+_ROMAN_SUBTRACTIVE = frozenset({"IV", "IX", "XL", "XC", "CD", "CM"})
+
+
+def roman_to_int(text: str) -> Optional[int]:
+    """Parse a strict, well-formed Roman numeral (1..3999) to ``int``.
+
+    Case-sensitive on the caller's part is *not* enforced here -- the string
+    is upper-cased first -- but the numeral must be **canonical**: repetition
+    limits (``I``/``X``/``C``/``M`` at most three in a row, ``V``/``L``/``D``
+    never repeated) and only the six standard subtractive pairs are accepted.
+    A malformed or empty string (``"IIII"``, ``"VV"``, ``"IC"``, ``"MIX?"``)
+    yields ``None`` rather than a lenient reading, so the homograph guard in
+    the numeral fold never binds a value to a word that merely *looks* Roman.
+
+    Reuse point for every Roman-numeral surface in the engine (century
+    ordinals, regnal ordinals, classical year/date formulas): the numeral
+    math lives here, next to the Roman calendar reckoning.
+    """
+    s = text.upper()
+    if not s or any(ch not in _ROMAN_VALUES for ch in s):
+        return None
+    # repetition limits: I/X/C/M up to 3 in a row; V/L/D never doubled
+    if re.search(r"(IIII|XXXX|CCCC|MMMM|VV|LL|DD)", s):
+        return None
+    total = 0
+    i = 0
+    n = len(s)
+    while i < n:
+        if i + 1 < n and s[i:i + 2] in _ROMAN_SUBTRACTIVE:
+            total += _ROMAN_VALUES[s[i + 1]] - _ROMAN_VALUES[s[i]]
+            i += 2
+        elif i + 1 < n and _ROMAN_VALUES[s[i + 1]] > _ROMAN_VALUES[s[i]]:
+            return None                 # illegal subtractive arrangement (IL, IC)
+        else:
+            total += _ROMAN_VALUES[s[i]]
+            i += 1
+    # round-trip check rejects non-canonical forms that slipped through
+    return total if _int_to_roman(total) == s else None
+
+
+def _int_to_roman(n: int) -> str:
+    """Canonical Roman-numeral form of ``1 <= n <= 3999`` (empty otherwise)."""
+    if not (1 <= n <= 3999):
+        return ""
+    table = ((1000, "M"), (900, "CM"), (500, "D"), (400, "CD"),
+             (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
+             (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I"))
+    out = []
+    for value, sym in table:
+        while n >= value:
+            out.append(sym)
+            n -= value
+    return "".join(out)
 
 
 def _nones_day(month: int) -> int:

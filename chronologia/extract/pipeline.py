@@ -21,6 +21,7 @@ from typing import List, Tuple
 
 from chronologia.extract.model import LangSpec, Token
 from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.numfold_roman import fold_roman_numerals
 from chronologia.extract.tokenizer import Tokenizer
 
 
@@ -47,7 +48,8 @@ def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
                   spec.meridiems, spec.seasons, spec.units, spec.months,
                   spec.weekdays, spec.rel_markers, spec.directions,
                   spec.scope_units, spec.clock_fractions, spec.clock_dirs,
-                  spec.decade_words, spec.weekend_words, spec.holidays):
+                  spec.decade_words, spec.weekend_words, spec.holidays,
+                  spec.regnal_names, spec.archon_names):
         seen.update(s for s in table if " " in s)
     for cal in spec.calendar_months.values():
         seen.update(s for s in cal if " " in s)
@@ -89,4 +91,8 @@ def prematch_tokens(text: str, spec: LangSpec) -> Tuple[Token, ...]:
         Tokenizer(spec.tokenizer).tokenize(text))
     if spec.hook is not None:
         tokens = spec.hook(tokens)
+    # context-gated Roman-numeral ordinals ("século XII", "anno MMXX"): a
+    # spec-aware fold (it reads the language's own century/year vocabulary), so
+    # it runs here rather than in the per-language hook.
+    tokens = fold_roman_numerals(tokens, spec, text)
     return merge_multiword(tokens, multiword_surfaces(spec))
