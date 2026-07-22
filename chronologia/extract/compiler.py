@@ -56,6 +56,14 @@ PRECEDENCE: Dict[str, int] = {
     "month_fuzzy": 2,
     "half_period": 2,
     "month_day_ref": 2,
+    # a quarter ("Q3 2026") and an ISO week ("week 32") carry their own marker
+    # vocabulary, so they win the same-span tie over a bare year_ref on the digits
+    "quarter_ref": 2,
+    "iso_week_ref": 2,
+    # early/mid/late over a calendar UNIT ("early next week") must outrank the
+    # bare rel_period it wraps, which it does on span length; tier keeps it with
+    # the other fuzzy families
+    "fuzzy_period": 2,
     # a decade phrase ("the 1990s", "the nineties") carries the plural/word
     # marker that a bare year lacks, so it outranks year_ref for the same digits
     "decade_ref": 2,

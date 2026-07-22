@@ -957,6 +957,131 @@ assert (span.start.year, span.start.month, span.start.day) == (2017, 7, 15)
 ahora", "3 vendredis à partir de maintenant"); German has no clean trailing
 "from now" form for it, so German carries only "the weekend after next" here.
 
+## Quarters and ISO weeks
+
+A calendar **quarter** is three months. `Q3 2026`, "the third quarter of
+2026", a bare "the third quarter" (the anchor's year), and the relative
+"next / this / last quarter" all resolve to the three-month span:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime, timedelta
+
+anchor = datetime(2026, 3, 15)      # a Sunday, in Q1
+
+span, _ = extract_timespan("Q3 2026", "en", anchor)
+assert (span.start.year, span.start.month) == (2026, 7)
+assert (span.end.year, span.end.month) == (2026, 10)
+
+span, _ = extract_timespan("the third quarter", "en", anchor)   # anchor year
+assert span.start.year == 2026 and span.start.month == 7
+
+span, _ = extract_timespan("next quarter", "en", anchor)        # Q1 -> Q2
+assert span.start.month == 4
+
+# a quarter outside 1..4 is no quarter; "a quarter of an hour" stays a duration
+assert extract_timespan("Q5 2026", "en", anchor) is None
+```
+
+An **ISO-8601 week** is named "week 32" (the anchor's ISO year) or "week 32
+of 2026". ISO weeks are **Monday-based by the standard** — week 1 is the
+week containing the year's first Thursday — and this is *independent* of the
+locale's civil `week_start` convention, which only governs "this / next
+week". The span is the seven days `[Monday, next Monday)`:
+
+```python
+span, _ = extract_timespan("week 32 of 2026", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2026, 8, 3)  # a Monday
+assert (span.end - span.start) == timedelta(days=7)
+
+# a number naming no ISO week in the year does not fire
+assert extract_timespan("week 60", "en", anchor) is None
+```
+
+## Fuzzy sub-spans: early, mid, late
+
+"mid-July", "early next week", "the beginning of the month", "late 90s" name
+a *part* of a calendar period. The convention — the same one across every
+scale — is **thirds**: `early` / `mid` / `late` are the first / middle / last
+arithmetic third of the parent period ("beginning" and "start" are synonyms
+for early, "middle" for mid, "end" for late). The basis stays exact and the
+width is honest: a 31-day month thirds into ~10-day slices, a 7-day week into
+2-day-8-hour slices, so a third boundary can fall mid-day — and that exact
+instant is what you get back.
+
+```python
+span, _ = extract_timespan("the beginning of the month", "en", anchor)
+assert span.start.day == 1 and span.end.day == 11      # first third of March (31 days)
+
+span, _ = extract_timespan("mid-july", "en", anchor)
+assert span.start.day == 11 and span.end.day == 21     # middle third of July
+```
+
+The parent is the calendar container the phrase names: the anchor's current
+week / month / year, or the one a relative marker shifts to ("early next
+week"). `early bird` is not a date — it does not fire.
+
+## Timezone-qualified clock times
+
+A clock time trailed by `UTC` or `GMT` (optionally with a fixed signed
+offset) resolves to an **aware** span — its `tzinfo` carries the offset, so
+the same wall time in two zones is two different instants. Named-city zones
+are out of scope (there is no gazetteer): only UTC / GMT and a fixed offset
+resolve; a city word is left in the remainder and the time stays naive.
+
+```python
+span, _ = extract_timespan("3pm UTC", "en", anchor)
+assert span.start.utcoffset() == timedelta(0)
+
+span, _ = extract_timespan("3pm UTC+2", "en", anchor)
+assert span.start.utcoffset() == timedelta(hours=2)
+
+span, _ = extract_timespan("noon UTC-5", "en", anchor)
+assert span.start.utcoffset() == timedelta(hours=-5)
+
+# a bare clock with no zone stays naive
+assert extract_timespan("3pm", "en", anchor)[0].start.tzinfo is None
+```
+
+## Bounded recurrence: UNTIL and COUNT
+
+[`extract_recurrence`](recurrence.md) folds a trailing bound onto the rule.
+An `until` / `till` marker plus a date sets `UNTIL`; a `for` marker plus a
+fixed-width duration sets `COUNT` — the number of occurrences that duration
+spans at the rule's frequency (14 days of a daily rule is 14 hits; 6 weeks of
+a weekly rule is 6):
+
+```python
+from chronologia import extract_recurrence
+
+rec, _ = extract_recurrence("daily for two weeks", "en")
+assert rec.to_string() == "FREQ=DAILY;COUNT=14"
+
+rec, _ = extract_recurrence("every monday for 6 weeks", "en")
+assert rec.to_string() == "FREQ=WEEKLY;COUNT=6;BYDAY=MO"
+
+rec, _ = extract_recurrence("every friday until june", "en", datetime(2026, 1, 1))
+assert rec.until is not None       # UNTIL the resolved June date
+```
+
+## Character offsets: locating each mention in the utterance
+
+[`extract_timespans`](#beyond-a-single-span-durations-multiple-mentions-recurrence)
+— the multi-mention edge — tags each `TimeMention` with a `char_span`: a half-open
+`(start, end)` **character** range into the *original* utterance, taken from
+the tokenizer's own recorded offsets (never recovered by re-searching the
+string). So slicing the utterance with it recovers the exact substring the
+mention was read from, even after spelled-number folding rewrote the tokens:
+
+```python
+from chronologia.extract.nseries import extract_timespans
+
+utterance = "let's meet on 2026-07-05 at 3pm"
+mention = extract_timespans(utterance, "en", anchor)[0]
+cs, ce = mention.char_span
+assert utterance[cs:ce] == "2026-07-05 at 3pm"
+```
+
 ## The testing doctrine: a corpus first
 
 The contract this module is held to is not "the internals do X"; it is

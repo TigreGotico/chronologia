@@ -66,13 +66,19 @@ def merge_multiword(tokens: Tuple[Token, ...],
         for words, surface in phrases:
             n = len(words)
             if [t.text for t in tokens[i:i + n]] == words:
-                raw = " ".join(t.raw for t in tokens[i:i + n])
-                out.append(Token(text=surface, raw=raw, index=len(out)))
+                run = tokens[i:i + n]
+                raw = " ".join(t.raw for t in run)
+                # the merged token spans the whole surface run: its extent runs
+                # from the first constituent's start to the last's end.
+                out.append(Token(text=surface, raw=raw, index=len(out),
+                                 char_start=run[0].char_start,
+                                 char_end=run[-1].char_end))
                 i += n
                 break
         else:
             out.append(Token(tokens[i].text, tokens[i].raw, len(out),
-                             tokens[i].is_number, tokens[i].value))
+                             tokens[i].is_number, tokens[i].value,
+                             tokens[i].char_start, tokens[i].char_end))
             i += 1
     return tuple(out)
 

@@ -26,6 +26,7 @@ remains declared-but-unimplemented (era phrasing resolves through
 from __future__ import annotations
 
 import calendar
+import re
 from datetime import date, datetime, timedelta
 from typing import Optional
 
@@ -119,7 +120,8 @@ def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolutio
     d = date_res.value.start
     c = clock_res.value.start
     start = AstroDate(d.year, d.month, d.day,
-                      c.hour, c.minute, c.second, c.microsecond)
+                      c.hour, c.minute, c.second, c.microsecond,
+                      tzinfo=c.tzinfo)
     consumed = tuple(sorted(set(date_res.consumed) | set(clock_res.consumed)))
     return Resolution(DateSpan(start, start + timedelta(minutes=1)), consumed)
 
@@ -291,29 +293,103 @@ class Resolver:
         """
         kind = self.spec.units.get(match.slots["UNIT"].text)
         rel = self.spec.rel_markers[match.slots["REL_MARKER"].text]
+        span = self._period_span(kind, rel, anchor)
+        if span is None:
+            return None
+        return Resolution(span, self._consumed(match))
+
+    def _period_span(self, kind, rel, anchor):
+        """The whole calendar period of ``kind`` containing the anchor, shifted
+        by ``rel`` whole units.  Returns a :class:`DateSpan` for the civil
+        containers (day/week/month/year/decade/century/millennium), or ``None``
+        for a kind with no calendar container (sub-day units, the fortnight).
+
+        Shared by ``rel_period`` and ``fuzzy_period`` so "next week" and the
+        parent of "early next week" are the identical span."""
         if kind == "week":
             base = _midnight(anchor)
             start_idx = _WEEK_START.get(self.conventions.week_start, 0)
             back = (anchor.weekday() - start_idx) % 7
             week_start = base - timedelta(days=back) + timedelta(weeks=rel)
             s = AstroDate.from_datetime(week_start)
-            return Resolution(DateSpan(s, s + timedelta(days=7)),
-                              self._consumed(match))
+            return DateSpan(s, s + timedelta(days=7))
         if kind == "day":
             value = _midnight(anchor) + timedelta(days=rel)
-            return Resolution(_day_span(value), self._consumed(match))
+            return _day_span(value)
         if kind == "month":
             base = _add_months(_midnight(anchor).replace(day=1), rel)
-            return Resolution(_gregorian_month_span(base.year, base.month),
-                              self._consumed(match))
+            return _gregorian_month_span(base.year, base.month)
         steps = {"year": 1, "decade": 10, "century": 100, "millennium": 1000}
         if kind in steps:
             step = steps[kind]
             start_year = (anchor.year // step) * step + rel * step
             s = AstroDate(start_year, 1, 1)
-            return Resolution(DateSpan(s, _unit_end(s, kind)),
-                              self._consumed(match))
+            return DateSpan(s, _unit_end(s, kind))
         return None
+
+    def _resolve_fuzzy_period(self, match, anchor):
+        """"early/mid/late" (or "beginning/end of") a calendar period naming a
+        UNIT -- "the beginning of the month", "early next week", "late this
+        year".  The parent is the calendar period the UNIT names (anchor's
+        current one, or the one an optional REL_MARKER shifts to); the PART
+        slices it into the conventional first/middle/last third (edges rounded
+        by :func:`chronologia.subdivide`)."""
+        from chronologia import subdivide
+        kind = self.spec.units.get(match.slots["UNIT"].text)
+        if kind not in ("week", "month", "year", "decade", "century",
+                        "millennium"):
+            return None
+        rel_tok = match.slots.get("REL_MARKER")
+        rel = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
+        parent = self._period_span(kind, rel, anchor)
+        if parent is None:
+            return None
+        part = self.spec.period_parts[match.slots["PART"].text]
+        span = subdivide(parent, part)
+        return Resolution(DateSpan(span.start, span.end), self._consumed(match))
+
+    #: month index a calendar quarter (1..4) begins on.
+    def _resolve_quarter_ref(self, match, anchor):
+        """A calendar quarter: "Q3 2026", "the third quarter of 2026", "the
+        third quarter" (anchor year), "next/this/last quarter".  Quarter N
+        (1..4) is the three-month span ``[month 3N-2, month 3N+1)``.  A
+        REL_MARKER shifts by whole quarters from the anchor's current one.
+        Anything outside 1..4 does not name a quarter and the construction does
+        not fire."""
+        rel_tok = match.slots.get("REL_MARKER")
+        if rel_tok is not None:
+            rel = self.spec.rel_markers[rel_tok.text]
+            cur = (anchor.month - 1) // 3               # 0-based current quarter
+            total = cur + rel
+            year = anchor.year + total // 4
+            q = total % 4 + 1
+        else:
+            num_tok = match.slots.get("ORD") or match.slots.get("NUM")
+            q = int(num_tok.value)
+            if not 1 <= q <= 4:
+                return None
+            year_tok = match.slots.get("YEAR")
+            year = int(year_tok.value) if year_tok is not None else anchor.year
+        m = 3 * (q - 1) + 1
+        end_year, end_month = (year + 1, 1) if m + 3 > 12 else (year, m + 3)
+        return Resolution(DateSpan(AstroDate(year, m, 1),
+                                   AstroDate(end_year, end_month, 1)),
+                          self._consumed(match))
+
+    def _resolve_iso_week_ref(self, match, anchor):
+        """An ISO-8601 week: "week 32", "week 32 of 2026".  ISO weeks are
+        **Monday-based by the standard**, independent of the locale's civil
+        ``week_start`` convention (which only governs "this/next week"); week 1
+        is the week containing the year's first Thursday.  The span is the
+        seven days ``[Monday, next Monday)``.  A number naming no ISO week in
+        the year (0, or past the year's 52nd/53rd) does not fire."""
+        w = int(match.slots["NUM"].value)
+        year_tok = match.slots.get("YEAR")
+        year = int(year_tok.value) if year_tok is not None else anchor.year
+        monday = date.fromisocalendar(year, w, 1)       # ValueError -> None
+        s = AstroDate.from_date(monday)
+        return Resolution(DateSpan(s, s + timedelta(days=7)),
+                          self._consumed(match))
 
     def _resolve_weekend_ref(self, match, anchor):
         """"this/next/last weekend": the two-day weekend of the anchor's
@@ -922,8 +998,29 @@ class Resolver:
         if prefer_future and dt < anchor:
             dt = dt + timedelta(days=1)
         start = AstroDate.from_datetime(dt)
+        tz = self._zone_tzinfo(match.slots.get("ZONE"))
+        if tz is not None:
+            start = start.replace(tzinfo=tz)
         return Resolution(DateSpan(start, start + timedelta(minutes=1)),
                           self._consumed(match))
+
+    def _zone_tzinfo(self, zone_tok):
+        """Parse a bound ZONE token ("utc", "gmt", "utc+2", "gmt-5:30") into a
+        fixed-offset :class:`datetime.timezone`, or ``None`` when no zone is
+        present.  Named-city zones are out of scope: only UTC/GMT plus a fixed
+        signed offset resolve here."""
+        if zone_tok is None:
+            return None
+        from datetime import timezone
+        m = re.match(r"([a-z]+)([+-])?(\d{1,2})?:?(\d{2})?$", zone_tok.text)
+        base_min = self.spec.clock_zones.get(m.group(1), 0)
+        off = base_min
+        if m.group(2) is not None:
+            hh = int(m.group(3) or 0)
+            mm = int(m.group(4) or 0)
+            sign = 1 if m.group(2) == "+" else -1
+            off = base_min + sign * (hh * 60 + mm)
+        return timezone(timedelta(minutes=off))
 
     #: military "HHMM hours" / bare "0600" reuse the clock resolver verbatim.
     _resolve_military_time = _resolve_clock_time

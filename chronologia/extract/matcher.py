@@ -92,6 +92,12 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return raw[0] == "0" if name == "MILTIMEZ" else True
     if name == "LANDMARK":
         return token.text in spec.clock_landmarks
+    if name == "ZONE":
+        # the base acronym ("utc"/"gmt") must be a known zone surface; any
+        # trailing signed offset ("utc+2") rides on the same token and is
+        # parsed at resolve time.
+        base = re.match(r"[a-z]+", token.text)
+        return base is not None and base.group(0) in spec.clock_zones
     if name == "QUANT":
         return token.text in spec.quantifiers
     if name == "ISO":
