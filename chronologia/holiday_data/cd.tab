@@ -1,0 +1,31 @@
+# civil-holidays v1
+# jurisdiction: CD
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_the_Democratic_Republic_of_the_Congo
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Nouvel an                          | 1 1                 | public          |  |  |  |
+fixed         | Martyrs de l'indépendance          | 1 4                 | public          |  |  |  |
+fixed         | Journée du héros national Laurent Désiré Kabila| 1 16                | public          |  |  |  |
+fixed         | Journée du héros national Patrice Emery Lumumba| 1 17                | public          |  |  |  |
+fixed         | Journée du combat de Simon Kimbangu et de la conscience africaine| 4 6                 | public          |  |  |  |
+fixed         | Fête du travail                    | 5 1                 | public          |  |  |  |
+fixed         | Journée de la Révolution et des Forces Armées| 5 17                | public          |  |  |  |
+fixed         | Journée de l'indépendance          | 6 30                | public          |  |  |  |
+fixed         | Fête des parents                   | 8 1                 | public          |  |  |  |
+fixed         | Noël                               | 12 25               | public          |  |  |  |
+decree        | Journée de l'indépendance (observé)| 2024-6-29           | public          |  |  |  |
+fixed         | Journée commémorative du génocide Congolais| 8 2                 | public          |  |  |  |
+decree        | Journée du combat de Simon Kimbangu et de la conscience africaine (observé)| 2025-4-5            | public          |  |  |  |
