@@ -1,0 +1,113 @@
+{
+  "tokenizer": {
+    "split_contractions": false,
+    "ordinal_dot": true
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "MARKER NUM UNIT",
+        "MARKER indef? UNIT",
+        "NUM UNIT MARKER",
+        "UNIT NUM MARKER",
+        "indef? UNIT MARKER"
+      ]
+    },
+    "named_day": {
+      "orders": [
+        "DAY_WORD"
+      ]
+    },
+    "weekday_ref": {
+      "orders": [
+        "REL_MARKER WEEKDAY"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "YEAR MONTH DAY?",
+        "MONTH DAY?",
+        "DAY MONTH YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "season_ref": {
+      "orders": [
+        "REL_MARKER SEASON",
+        "YEAR SEASON",
+        "SEASON YEAR?"
+      ]
+    },
+    "scoped_ordinal": {
+      "orders": [
+        "ORD SEL_UNIT of SORD SCOPE_UNIT",
+        "ORD SCOPE_UNIT"
+      ]
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK MERIDIEM?",
+        "at HOUR MERIDIEM?",
+        "HOUR CLOCKDIR FRACTION MERIDIEM?",
+        "at? LANDMARK"
+      ],
+      "prefer_future": true
+    },
+    "era_bc": {
+      "orders": [
+        "NUM bc",
+        "bc NUM"
+      ]
+    },
+    "era_ad": {
+      "orders": [
+        "NUM ad",
+        "ad NUM"
+      ]
+    },
+    "deep_time": {
+      "orders": [
+        "ago NUM SCALE year_word",
+        "NUM SCALE year_word ago"
+      ]
+    },
+    "iso_date": {
+      "orders": [
+        "ISO"
+      ]
+    },
+    "year_ref": {
+      "orders": [
+        "year_word GYEAR",
+        "GYEAR"
+      ]
+    },
+    "month_fuzzy": {
+      "orders": [
+        "PART MONTH"
+      ]
+    },
+    "half_period": {
+      "orders": [
+        "NUM half of GYEAR",
+        "NUM half of SCOPE_UNIT"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": false,
+    "hemisphere": "north",
+    "prefer_future": true,
+    "bare_half_to": false
+  },
+  "quantifiers": {
+    "1": ["bat"],
+    "2": ["pare"],
+    "3": ["batzuk"]
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "hook": "chronologia.extract.numfold_agglutinative:fold_eu"
+}
