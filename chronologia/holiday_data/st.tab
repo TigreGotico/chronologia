@@ -31,3 +31,12 @@ fixed         | Dia das Forças Armadas                   | 9 6                 
 fixed         | Dia da Reforma Agrária                   | 9 30                 | public          |  |  |  |
 fixed         | Dia de São Tomé                          | 12 21                | public          |  |  |  |
 fixed         | Natal                                    | 12 25                | public          |  |  |  |
+#
+# --- Príncipe (ST-P): vacanza/holidays 0.101 (MIT)
+#     holidays/countries/sao_tome_and_principe.py -- autonomous region's own
+#     civic/religious holidays, fixed both years. The six numbered districts
+#     (ST-01..ST-06) carry no subdivision-specific holidays in vacanza --
+#     they resolve to the national default set and are omitted here.
+fixed | Descobrimento da Ilha do Príncipe | 1 17 | public | ST-P |
+fixed | Dia da Autonomia do Príncipe      | 4 29 | public | ST-P |
+fixed | Dia de São Lourenço               | 8 15 | public | ST-P |

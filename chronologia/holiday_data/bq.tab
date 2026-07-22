@@ -32,3 +32,15 @@ easter        | Hemelvaartsdag                           | 39 gregorian         
 easter        | Eerste Pinksterdag                       | 49 gregorian         | public          |  |  |  |
 fixed         | Eerste Kerstdag                          | 12 25                | public          |  |  |  |
 fixed         | Tweede Kerstdag                          | 12 26                | public          |  |  |  |
+#
+# --- Bonaire (BQ-BON) / Saba (BQ-SAB) / Sint Eustatius (BQ-STA):
+#     vacanza/holidays 0.101 (MIT) holidays/countries/netherlands.py --
+#     island-specific civic days. "Brugdag" (BQ-BON, 2025-05-02) is a
+#     workday-bridge artifact (literally "bridge day") and is deliberately
+#     omitted, matching the house rule against bridge-day rows.
+fixed  | Bonairedag         | 9 6   | public | BQ-BON |
+fixed  | Rincondag          | 4 30  | public | BQ-BON |
+decree | Dag na de carnavalsoptocht | 2024-7-29 2025-7-28 | public | BQ-SAB |
+decree | Sabadag                    | 2024-12-6 2025-12-5 | public | BQ-SAB |
+fixed  | Emancipatiedag     | 7 1   | public | BQ-STA |
+fixed  | Statiadag          | 11 16 | public | BQ-STA |

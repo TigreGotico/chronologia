@@ -51,3 +51,9 @@ decree | Día Nacional de las Iglesias Evangélicas y Protestantes | 2023-10-27 
 # 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
 # own country module). Names are vacanza's own (already-localized) labels.
 fixed | Feriado bancario | 12 31 | bank |  |
+#
+# --- Arica y Parinacota (CL-AP) / Ñuble (CL-NB): vacanza/holidays 0.101
+#     (MIT) holidays/countries/chile.py -- regional civic-anniversary
+#     holidays, fixed both years.
+fixed | Asalto y Toma del Morro de Arica | 6 7 | public | CL-AP |
+fixed | Nacimiento del Prócer de la Independencia (Chillán y Chillán Viejo) | 8 20 | public | CL-NB |

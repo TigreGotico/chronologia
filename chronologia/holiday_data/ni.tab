@@ -33,3 +33,9 @@ fixed         | Batalla de San Jacinto                        | 9 14 | public   
 fixed         | Día de la Independencia                       | 9 15 | public          |  |  |  |
 fixed         | Concepción de María                           | 12 8 | public          |  |  |  |
 fixed         | Navidad                                       | 12 25 | public          |  |  |  |
+#
+# --- Managua (NI-MN): vacanza/holidays 0.101 (MIT)
+#     holidays/countries/nicaragua.py -- Santo Domingo de Guzmán fiestas
+#     patronales, fixed both years.
+fixed | Bajada de Santo Domingo | 8 1  | public | NI-MN |
+fixed | Subida de Santo Domingo | 8 10 | public | NI-MN |

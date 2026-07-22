@@ -26,3 +26,44 @@ fixed         | Međunarodni praznik rada (2)              | 5 2 | public       
 easter        | Veliki petak (Pravoslavni)               | -2 julian_gregorian_date | public          |  |  |  |
 decree        | Kurban Bajram                          | 2024-6-16 2025-6-6  | public          |  |  |  |
 fixed         | Božić (Katolički)                      | 12 25 | public          |  |  |  |
+#
+# --- Federacija Bosne i Hercegovine (BA-BIH) / Brčko distrikt (BA-BRC) /
+#     Republika Srpska (BA-SRP): vacanza/holidays 0.101 (MIT)
+#     holidays/countries/bosnia_and_herzegovina.py -- each entity carries its
+#     own religious calendar (Catholic/Orthodox/Islamic) plus entity-specific
+#     civic days. Fixed rules stable both years; Ramazanski/Kurban Bajram
+#     (Islamic lunar) and the Easter-family days (whose Catholic/Orthodox
+#     labels co-occur only when the two computi coincide, as in 2025) are
+#     decree-tabulated 2024-2025 rather than modeled as rules.
+fixed  | Badnji dan (Katolički)                 | 12 24 | public religious | BA-BIH |
+fixed  | Badnji dan (Pravoslavni)               | 1 6   | public religious | BA-BIH |
+fixed  | Dan državnosti                         | 11 25 | public          | BA-BIH |
+fixed  | Dan nezavisnosti                       | 3 1   | public          | BA-BIH |
+fixed  | Dan pobjede nad fašizmom               | 5 9   | public          | BA-BIH |
+decree | Kurban Bajram (procijenjeno)           | 2024-6-17 2025-6-7 | public religious | BA-BIH |
+decree | Ramazanski Bajram                      | 2024-4-11 | public religious | BA-BIH |
+decree | Ramazanski Bajram (procijenjeno)       | 2025-3-31 | public religious | BA-BIH |
+decree | Uskrs (Katolički)                      | 2024-3-31 | public religious | BA-BIH |
+decree | Uskrs (Katolički); Vaskrs (Pravoslavni) | 2025-4-20 | public religious | BA-BIH |
+decree | Uskrsni ponedjeljak (Katolički); Uskrsni ponedjeljak (Pravoslavni) | 2025-4-21 | public religious | BA-BIH |
+decree | Uskrsni ponedjeljak (Pravoslavni)      | 2024-5-6 | public religious | BA-BIH |
+decree | Vaskrs (Pravoslavni)                   | 2024-5-5 | public religious | BA-BIH |
+decree | Veliki petak (Katolički)               | 2024-3-29 | public religious | BA-BIH |
+decree | Veliki petak (Katolički); Veliki petak (Pravoslavni) | 2025-4-18 | public religious | BA-BIH |
+decree | Božić (Pravoslavni) (slobodan dan)     | 2024-1-8 | public religious | BA-BRC |
+fixed  | Dan uspostavljanja Brčko distrikta     | 3 8   | public          | BA-BRC |
+fixed  | Badnji dan (Katolički)                 | 12 24 | public religious | BA-SRP |
+fixed  | Badnji dan (Pravoslavni)               | 1 6   | public religious | BA-SRP |
+fixed  | Dan pobjede nad fašizmom               | 5 9   | public          | BA-SRP |
+fixed  | Dan uspostave Opšteg okvirnog sporazuma za mir u Bosni i Hercegovini | 11 21 | public | BA-SRP |
+decree | Kurban Bajram (procijenjeno)           | 2024-6-17 2025-6-7 | public religious | BA-SRP |
+fixed  | Pravoslavna Nova godina                | 1 14  | public religious | BA-SRP |
+decree | Ramazanski Bajram                      | 2024-4-11 | public religious | BA-SRP |
+decree | Ramazanski Bajram (procijenjeno)       | 2025-3-31 | public religious | BA-SRP |
+decree | Uskrs (Katolički)                      | 2024-3-31 | public religious | BA-SRP |
+decree | Uskrs (Katolički); Vaskrs (Pravoslavni) | 2025-4-20 | public religious | BA-SRP |
+decree | Uskrsni ponedjeljak (Katolički); Uskrsni ponedjeljak (Pravoslavni) | 2025-4-21 | public religious | BA-SRP |
+decree | Uskrsni ponedjeljak (Pravoslavni)      | 2024-5-6 | public religious | BA-SRP |
+decree | Vaskrs (Pravoslavni)                   | 2024-5-5 | public religious | BA-SRP |
+decree | Veliki petak (Katolički)               | 2024-3-29 | public religious | BA-SRP |
+decree | Veliki petak (Katolički); Veliki petak (Pravoslavni) | 2025-4-18 | public religious | BA-SRP |
