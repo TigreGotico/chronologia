@@ -90,12 +90,21 @@ def _is_day_unit(tok: Token, spec: LangSpec) -> bool:
 
 
 def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
-              gap) -> Optional[Tuple[datetime, int, int, Set[int]]]:
+              gap, resolve_ref=None
+              ) -> Optional[Tuple[datetime, int, int, Set[int]]]:
     """A ``after``/``before`` reference sitting just past the business unit.
 
     Returns ``(base_datetime, sign, end_index, consumed_ids)`` when a
     directional marker at ``hi`` (modulo an article/of gap) is followed by a
     date-resolving submatch; otherwise ``None``.
+
+    The flat scan of ``resolved`` only sees matcher-native references.  When it
+    finds none at the reference position, ``resolve_ref`` (when threaded) is the
+    additive fallback: it recurses the reference token slice through the
+    single-span core, so a **composed** reference -- itself an offset ("the
+    monday after christmas"), an nth-weekday-of-month, ... -- also binds.  The
+    recursion returns consumed positions in the *original* stream, so the outer
+    remainder stays correct.
     """
     after = spec.connectors.get("after", frozenset())
     before = spec.connectors.get("before", frozenset())
@@ -111,18 +120,38 @@ def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
             p = k + len(w)
             while p < len(tokens) and tokens[p].text in gap:
                 p += 1
-            for m, r in resolved:
-                if m.construction in DATE_CONSTRUCTIONS and m.span[0] == p:
-                    s = r.value.start
-                    base = datetime(s.year, s.month, s.day)
-                    ids = set(range(m.span[0], m.span[1])) | set(range(hi, p))
-                    return base, sign, m.span[1], ids
+            flat = next(((m, r) for m, r in resolved
+                         if m.construction in DATE_CONSTRUCTIONS
+                         and m.span[0] == p), None)
+            # the composed-reference fallback: a reference that is itself a
+            # composed construction ("the monday after christmas") extends
+            # strictly beyond the bare matcher-native match the flat scan sees
+            # ("monday").  Recurse, and prefer it ONLY when it reaches further
+            # than the flat match -- so every reference the flat scan already
+            # covers in full keeps its exact binding.
+            if resolve_ref is not None and p < len(tokens):
+                got = resolve_ref(p)
+                if got is not None and got[1]:
+                    rec_end = max(got[1]) + 1
+                    if flat is None or rec_end > flat[0].span[1]:
+                        ref_start, consumed = got
+                        base = datetime(ref_start.year, ref_start.month,
+                                        ref_start.day)
+                        ids = set(consumed) | set(range(hi, p))
+                        return base, sign, rec_end, ids
+            if flat is not None:
+                m, r = flat
+                s = r.value.start
+                base = datetime(s.year, s.month, s.day)
+                ids = set(range(m.span[0], m.span[1])) | set(range(hi, p))
+                return base, sign, m.span[1], ids
     return None
 
 
 def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
                         anchor: datetime,
-                        jurisdiction: Optional[str]) -> List[Pair]:
+                        jurisdiction: Optional[str],
+                        resolve_ref=None) -> List[Pair]:
     """Rewrite a "in N business days" / "the next working day" / "N working
     days after <date>" phrase into its day-wide business-day span.
 
@@ -165,7 +194,7 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
         inwords = frozenset(spec.connectors.get("in", ()))
         while start - 1 >= 0 and tokens[start - 1].text in inwords:
             start -= 1
-        ref = _date_ref(tokens, hi, resolved, spec, gap)
+        ref = _date_ref(tokens, hi, resolved, spec, gap, resolve_ref)
         if ref is not None:
             base, sign, end, claimed = ref
             claimed = claimed | set(range(start, hi))

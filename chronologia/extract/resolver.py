@@ -48,6 +48,16 @@ from chronologia.extract.ranges import (_ABSOLUTE, _UNIT_OF_CENTURY,
                                         season_to_date)
 
 
+def _nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date:
+    """The ``n``-th ``weekday`` (Mon=0) of ``month``/``year``; ``n < 0`` counts
+    from the end (``-1`` = last).  Raises ``ValueError`` when the month has no
+    such occurrence (e.g. a 5th Monday that does not exist)."""
+    last = calendar.monthrange(year, month)[1]
+    days = [d for d in range(1, last + 1)
+            if date(year, month, d).weekday() == weekday]
+    return date(year, month, days[n if n < 0 else n - 1])
+
+
 def _add_months(dt: datetime, months: int) -> datetime:
     total = dt.month - 1 + months
     year = dt.year + total // 12
@@ -620,6 +630,17 @@ class Resolver:
         """
         ord_tok = match.slots.get("ORD")
         n = int(ord_tok.value) if ord_tok is not None else -1
+
+        wd_tok = match.slots.get("WEEKDAY")
+        if wd_tok is not None:                      # nth weekday of a month
+            target = self.spec.weekdays[wd_tok.text]
+            month = self.spec.months[match.slots["MONTH"].text]
+            year_tok = match.slots.get("YEAR")
+            year = int(year_tok.value) if year_tok else anchor.year
+            value = _nth_weekday_of_month(year, month, target, n)
+            start = AstroDate.from_date(value)
+            return Resolution(DateSpan(start, start + timedelta(days=1)),
+                              self._consumed(match))
 
         sord = match.slots.get("SORD")
         if sord is not None:                        # nested one level
