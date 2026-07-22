@@ -302,8 +302,12 @@ fold_ca = _make_romance_fold("ca", set())
 # an: "martes" (Tuesday) must never be read as a number; the Romance factory
 # folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
 fold_an = _make_romance_fold("an", {"martes"})
-# mwl (Mirandese): "sábado"/"sabado" is a weekday, never a number.
-fold_mwl = _make_romance_fold("mwl", {"sabado", "sábado"})
+# mwl (Mirandese): the feminine ordinals segunda/terça/quarta/quinta/sesta
+# are weekday names (segunda-feira ...) and sábado is Saturday -- none may be
+# read as a number.
+fold_mwl = _make_romance_fold(
+    "mwl", {"segunda", "terça", "terca", "quarta", "quinta", "sesta",
+            "sabado", "sábado"})
 
 
 
