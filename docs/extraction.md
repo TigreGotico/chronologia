@@ -80,6 +80,34 @@ print(span.start_datetime.date(), "->", span.end_datetime.date())
 (June 5–12 is already past the June-27 anchor, so it rolls to the next
 year — the engine prefers the future for bare calendar dates.)
 
+Both endpoints resolve in the **same** frame: the future preference is
+applied to the range as a whole, never to one endpoint alone. So a range
+that *straddles* the anchor keeps both edges in the current cycle instead
+of letting the left endpoint leap a year ahead of the right — spoken on
+July 22, "from july 20 to july 25" is this year's July 20–25, not next
+year's. A cross-year span like "from december 28 to january 3" simply rolls
+the *end* into the following year so it never inverts. Any endpoint that
+resolves to a date works — bare dates, dates with years, and holidays
+("from christmas to new year's day") all compose, in dash form too
+("july 20 - july 25").
+
+**Open-ended ranges** name a single endpoint and pin the other edge to the
+anchor ("now"). The named endpoint keeps the closed-range convention — the
+*until* endpoint contributes its end (it is included in full, like the right
+endpoint of "from A to B"), the *since* endpoint its start:
+
+```python
+extract_timespan("until friday", "en", datetime(2017, 6, 27, 13, 4))[0]
+# [2017-06-27 13:04, 2017-07-01)  -- now through the whole of Friday
+extract_timespan("since 2010", "en", datetime(2017, 6, 27, 13, 4))[0]
+# [2010-01-01, 2017-06-27 13:04)  -- start of 2010 up to now
+```
+
+The `until`/`through` (open start) and `since` (open end) surfaces are
+per-language range markers, so "bis freitag" / "seit 2010" (de), "jusqu'à
+vendredi" / "depuis 2010" (fr), "até sexta-feira" / "desde 2010" (pt) and
+"hasta viernes" / "desde 2010" (es) behave the same way.
+
 ## Deep time and other reckonings
 
 Because the extractor resolves against the full reckoning core, it reaches
@@ -508,7 +536,13 @@ because they compose *whole sub-parses* rather than bind tokens:
   (left edge of A to right edge of B, rolling B forward a day or a week if it
   wraps past A). This only fires when both sides parse on their own, which is
   what keeps "quarter to five" (a clock, not a range) from being read as
-  "quarter" → "five".
+  "quarter" → "five". If B rolled past A only because A's future preference
+  leaped it a whole year ahead (a range straddling the anchor), A is pulled
+  back one year instead, so both endpoints stay in one frame.
+- **Open-ended ranges** (`_extract_open_range`). A leading `until`/`through`
+  (open start) or `since` (open end) marker with a single parseable endpoint;
+  the open edge is the anchor instant and the endpoint keeps its closed-range
+  edge (an *until* endpoint's `.end`, a *since* endpoint's `.start`).
 - **Date ∩ clock composition** (the pass you saw in the worked trace). When a
   text yields exactly one lone date and one lone clock, they fold into a
   single minute-wide span on that day.
