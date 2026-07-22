@@ -4,7 +4,11 @@
     "ordinal_dot": false
   },
   "constructions": {
-    "decade_bc": {"orders": ["article? NUM plural bc"]},
+    "decade_bc": {
+      "orders": [
+        "article? NUM plural bc"
+      ]
+    },
     "relative_offset": {
       "orders": [
         "NUM UNIT MARKER",
@@ -103,7 +107,8 @@
         "article? ordlast UNIT of MONTH YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",
         "article? ordlast UNIT of article? year_word YEAR?",
-        "article? ORD SCOPE_UNIT"
+        "article? ORD SCOPE_UNIT",
+        "article? CMUNIT ORD"
       ]
     },
     "clock_time": {

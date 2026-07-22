@@ -39,6 +39,12 @@ PRECEDENCE: Dict[str, int] = {
     # they win over the generic scoped/calendar families
     "regnal_date": 1,
     "roman_date": 1,
+    # AUC / Olympiad / archon: specific era vocabulary, wins its span like the
+    # other era families
+    "era_auc": 1,
+    "olympiad_ref": 1,
+    "archon_ref": 1,
+    "roman_classical": 1,
     # a holiday reference ("christmas", "next easter", "natal 2020") carries a
     # named holiday surface, so on a LONGER span it wins ("christmas 2020" beats
     # a bare year_ref on "2020"). But some holiday surfaces are *also* calendar

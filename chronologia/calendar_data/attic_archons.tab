@@ -1,0 +1,25 @@
+# tabulated-dataset v1
+# key: attic_archons
+# basis: attested
+# source: "Archons of Athens", academickids.com encyclopedia (mirror of the
+#   Wikipedia list of Athenian eponymous archons), saved to
+#   ~/AgentWorkspaces/papers/calendars/attic_archons_reference.html.
+# note: The eponymous archon of Athens gave his name to the civil year, which
+#   ran from around midsummer (the month Hekatombaion, ~July) of the first BC
+#   year to midsummer of the next -- so each archon-year straddles two of our
+#   BC years (Solon 594/593).  Only securely-dated, unambiguously-named archons
+#   are listed; homographic or doubly-attested names (e.g. Callias, held in
+#   both 456/455 and 412/411) are omitted rather than guessed.  BC year is the
+#   EARLIER (opening) year of the archon-year; astronomical opening year is
+#   -(bc-1) and the span runs [1 Jul opening, 1 Jul next).
+# columns: key  bc_year  english_name
+solon        594  Solon
+hipparchus   496  Hipparchus
+themistocles 493  Themistocles
+diognetus    492  Diognetus
+phaenippus   490  Phaenippus
+aristides    489  Aristides
+calliades    480  Calliades
+pythodorus   432  Pythodorus
+nausinicus   378  Nausinicus
+eucleides    403  Eucleides

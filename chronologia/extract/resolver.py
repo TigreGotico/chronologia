@@ -104,7 +104,8 @@ DATE_CONSTRUCTIONS = frozenset({
     "weekday_ref", "named_day", "season_ref", "scoped_ordinal",
     "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
-    "era_bc", "era_ad", "era_bp", "deep_time", "named_period",
+    "era_bc", "era_ad", "era_bp", "era_auc", "olympiad_ref", "archon_ref",
+    "roman_classical", "deep_time", "named_period",
     "holiday_ref"})
 
 
@@ -634,7 +635,10 @@ class Resolver:
 
         unit_tok = match.slots.get("UNIT")
         if unit_tok is None:                        # absolute period
-            kind = self._scope_kind(match.slots["SCOPE_UNIT"])
+            # SCOPE_UNIT (preposed "the 21st century") or CMUNIT (postposed
+            # Romance "século XII") -- same absolute-period resolution
+            kind = self._scope_kind(
+                match.slots.get("SCOPE_UNIT") or match.slots["CMUNIT"])
             value = get_date_ordinal(n, resolution=_ABSOLUTE[kind])
             return self._ordinal_result(value, kind, match)
 
@@ -767,6 +771,22 @@ class Resolver:
         return Resolution(DateSpan(start, start + timedelta(days=1)),
                           self._consumed(match))
 
+    def _resolve_archon_ref(self, match, anchor):
+        """"in the archonship of Eucleides": the midsummer-to-midsummer span of
+        that eponymous archon-year (403/402 BC), from the attested Attic archon
+        table (:data:`chronologia.archons.ARCHONS`)."""
+        from chronologia.archons import ARCHONS
+        key = self.spec.archon_names[match.slots["ARCHON"].text]
+        start, end = ARCHONS[key]
+        return Resolution(DateSpan(start, end), self._consumed(match))
+
+    def _resolve_roman_classical(self, match, anchor):
+        """Raw-Latin date formula ("ante diem III kalends of april"): the same
+        inclusive-backward reckoning as :meth:`_resolve_roman_date`, exposed as
+        a separate construction so the ``classical`` group flag can gate it OFF
+        by default (the a.d.-count Latin surface is opt-in)."""
+        return self._resolve_roman_date(match, anchor)
+
     # -- cycle_ref (generalised weekday over any named day cycle) ----------
 
     def _resolve_cycle_ref(self, match, anchor):
@@ -845,6 +865,32 @@ class Resolver:
         n = int(match.slots["NUM"].value)
         return Resolution(self._era_span("before_present", n),
                           self._consumed(match))
+
+    def _resolve_era_auc(self, match, anchor):
+        """"753 ab urbe condita" / "AUC 753": the year-wide Gregorian span of
+        that ab-urbe-condita year, Varronian epoch (AUC 1 == 753 BC)."""
+        n = int((match.slots.get("NUM") or match.slots.get("ORD")).value)
+        return Resolution(self._era_span("ab_urbe_condita", n),
+                          self._consumed(match))
+
+    def _resolve_olympiad_ref(self, match, anchor):
+        """"the third olympiad" / "olympiad 87": the 4-year span of Olympiad N
+        from the 776 BC epoch.  An optional inner ORD ("the 2nd year of the
+        87th olympiad") narrows the span to that single year of the tetrad.
+        """
+        from chronologia.eras import resolve_era_year_span
+        onum = match.slots.get("ORD") or match.slots.get("NUM")
+        n = int(onum.value)
+        start, end = resolve_era_year_span("olympiad", n)
+        year_tok = match.slots.get("SORD")   # inner "Nth year of" ordinal
+        if year_tok is not None:
+            # year k of the 4-year Olympiad (1..4): the single year span
+            k = int(year_tok.value)
+            if not 1 <= k <= 4:
+                return None
+            start = AstroDate(start.year + k - 1, start.month, start.day)
+            end = AstroDate(start.year + 1, start.month, start.day)
+        return Resolution(DateSpan(start, end), self._consumed(match))
 
     # -- deep_time ("66 million years ago", "4.5 billion years ago") ------
 

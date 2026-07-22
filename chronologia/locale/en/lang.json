@@ -74,14 +74,17 @@
         "ad ORD ANCHOR_DAY of MONTH",
         "PRIDIE ANCHOR_DAY MONTH",
         "PRIDIE ANCHOR_DAY of MONTH",
-        "ANCHOR_DAY of MONTH",
-        "ANCHOR_DAY MONTH"
+        "article? ANCHOR_DAY of MONTH",
+        "article? ANCHOR_DAY MONTH"
       ]
     },
     "regnal_date": {
       "orders": [
         "ERANAME NUM",
-        "ORD year_word of ERANAME",
+        "article? ORD year_word of ERANAME",
+        "article? ORD year_word of article? reign of ERANAME",
+        "regnal year_word NUM of ERANAME",
+        "regnal year_word NUM of article? reign of ERANAME",
         "consulship of ERANAME"
       ]
     },
@@ -238,6 +241,34 @@
         "HOLIDAY YEAR",
         "YEAR HOLIDAY",
         "HOLIDAY"
+      ]
+    },
+    "era_auc": {
+      "orders": [
+        "NUM auc",
+        "auc NUM",
+        "ORD auc"
+      ]
+    },
+    "olympiad_ref": {
+      "orders": [
+        "olympiad NUM",
+        "article? ORD olympiad",
+        "article? SORD year_word of article? ORD olympiad"
+      ]
+    },
+    "roman_classical": {
+      "orders": [
+        "antediem ORD ANCHOR_DAY MONTH",
+        "antediem ORD ANCHOR_DAY of MONTH"
+      ],
+      "group": "classical"
+    },
+    "archon_ref": {
+      "orders": [
+        "in article? archonship of ARCHON",
+        "article? archonship of ARCHON",
+        "archon ARCHON"
       ]
     }
   },

@@ -158,6 +158,9 @@ class LangSpec:
     regnal_names: Mapping[str, Tuple[str, str]] = field(default_factory=dict)
     # Roman calendar-anchor surface -> anchor name (kalends/nones/ides)
     roman_anchors: Mapping[str, str] = field(default_factory=dict)
+    # Athenian eponymous-archon surface -> archon key (chronologia.archons.ARCHONS),
+    # from the archon_<key>.voc filename convention
+    archon_names: Mapping[str, str] = field(default_factory=dict)
     # deep-time / era vocab (facts from the filename convention)
     # named-period surface -> chronologia PERIODS key (geological/archaeological)
     periods: Mapping[str, str] = field(default_factory=dict)

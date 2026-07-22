@@ -368,6 +368,7 @@ def extract_timespan(
         lang: str = "en-us",
         anchor: Optional[datetime] = None,
         jurisdiction: Optional[str] = None,
+        enable: Tuple[str, ...] = (),
 ) -> Optional[Tuple[DateSpan, str]]:
     """Extract a :class:`~chronologia.DateSpan` from natural-language ``text``.
 
@@ -407,6 +408,14 @@ def extract_timespan(
     tokens = engine.tokenize(text)
     resolved = []
     for match in engine.matcher.match(tokens):
+        # construction-group gate: a construction tagged ``"group": <g>`` in
+        # lang.json is OFF unless ``g`` is in ``enable``.  The raw-Latin date
+        # formulas live in the ``"classical"`` group -- unambiguous everyday
+        # surfaces carry no group and are always on.
+        group = engine.spec.construction_flags.get(
+            match.construction, {}).get("group")
+        if group is not None and group not in enable:
+            continue
         res = engine.resolver.resolve(match, anchor)
         if res is not None:
             resolved.append((match, res))

@@ -124,6 +124,131 @@ print(span.start.year, span.resolution.name)   # -65998050 EPOCH_GEOLOGICAL
 print(span.start_datetime)                      # None
 ```
 
+## Historical references
+
+Humans date the past in ways `datetime` never dreamed of: a century in Roman
+numerals, a year "from the founding of Rome", an Olympiad, the archon a Greek
+year was named after, or a Roman calendar formula. The extractor reads them all
+and returns a real span — often a span whose edges fall centuries or millennia
+BC, so `start_datetime` is `None` and the `AstroDate` endpoints carry the value.
+
+Everything in this section resolves through the reckoning core (`chronologia.roman`,
+`chronologia.eras`, `chronologia.regnal`, `chronologia.archons`) — the extractor
+only recognises the surface; the arithmetic lives in one audited place.
+
+### Roman-numeral centuries (século XII, XIIe siècle, the XII century)
+
+Writing a century in Roman numerals is the *ordinary* written form across the
+Romance languages, and common in English:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+anchor = datetime(2017, 6, 27)
+
+extract_timespan("the XII century", "en", anchor)[0].start.year   # 1100
+extract_timespan("século XII",      "pt", anchor)[0].start.year   # 1100
+extract_timespan("siglo XII",       "es", anchor)[0].start.year   # 1100
+extract_timespan("secolo XII",      "it", anchor)[0].start.year   # 1100
+extract_timespan("XIIe siècle",     "fr", anchor)[0].start.year   # 1100
+```
+
+The Portuguese/Spanish/Italian form puts the numeral *after* the unit
+(`século XII`); French puts an ordinal-suffixed numeral *before* it
+(`XIIe siècle`, the `e` is the ordinal marker — `Ier` for the first). Both read
+to the same span. An explicit year in Roman numerals works too, beside a year
+word: `anno MMXX` and `year MMXX` both land on 2020.
+
+**Why a bare `V` or `mix` never becomes a number.** A Roman numeral is also an
+everyday word or letter — `mix`, `dix` ("ten" in French), `vi` ("I saw" in
+Portuguese), a bare `V` or `C`. Binding those to a value would be a disaster, so
+a Roman-numeral surface resolves **only** when two conditions hold together:
+
+1. its original spelling is **upper-case** and a well-formed numeral
+   (`chronologia.roman.roman_to_int`, which rejects `IIII`, `VV`, `IC`, …); and
+2. it sits **beside a gating context** — a century/millennium unit on either
+   side, a year marker just before, or a Roman calendar anchor just after.
+
+So `mix it up`, `dix ans`, `vi o filme`, `V for Vendetta` and a lone `MMXX` all
+resolve to nothing; only `century XII` / `XII century` / `anno MMXX` bind.
+
+### Ab urbe condita, Olympiads, and Attic archonships (English)
+
+```python
+# ab urbe condita — the Varronian epoch (AUC 1 = 753 BC, AUC 753 = 1 BC)
+extract_timespan("753 ab urbe condita", "en", anchor)[0].start.year   # 0  (1 BC)
+extract_timespan("AUC 753", "en", anchor)[0].start.year               # 0
+
+# Olympiads — a 4-year span from the 776 BC first Olympiad, opening at midsummer.
+# Olympiad 1 = 776–772 BC; Olympiad N opens in Gregorian year 4N−779.
+extract_timespan("the third olympiad", "en", anchor)[0].start   # AstroDate(-767, 7, 1)
+# an inner "Nth year of" narrows to one year of the tetrad:
+# Olympiad 87.2 = 431 BC, the outbreak of the Peloponnesian War
+extract_timespan("the 2nd year of the 87th olympiad", "en", anchor)[0].start  # -430-07-01
+
+# Attic eponymous archonships — the archon-year ran midsummer to midsummer
+extract_timespan("in the archonship of eucleides", "en", anchor)[0].start  # -402-07-01 (403/402 BC)
+```
+
+Only **securely-dated, unambiguously-named** archons are wired (Solon,
+Themistocles, Eucleides, Pythodorus, …), from a small primary-cited table
+(`chronologia/calendar_data/attic_archons.tab`). A name that was never an
+eponymous archon — *Pericles*, who held the generalship, not the archonship —
+is simply absent, so `in the archonship of pericles` resolves to nothing rather
+than to a guess.
+
+### Regnal years over a succession of reigns
+
+The `regnal_date` construction reads "the Nth year of a reign". The registry
+(`chronologia.regnal.REGNAL_SEQUENCES`) holds three attested kinds:
+
+| sequence key(s) | coverage | surfaced in English vocab |
+|---|---|---|
+| `nengo` | modern Japanese era names, Meiji → Reiwa | ✅ all five |
+| `consuls` | Roman consular *pairs* (eponymous years) | ❌ (registry only) |
+| `egyptian_high` / `egyptian_middle` / `egyptian_low` | New-Kingdom pharaohs in the three standard chronology variants | ✅ the **low** (conventional) variant |
+
+Rulers whose names carry a Roman-numeral ordinal (*Ramesses II*, *Thutmose III*)
+have that ordinal as part of the **name**, matched literally:
+
+```python
+# Ramesses II (low chronology) acceded 1279 BC; regnal year 5 = 1275 BC
+extract_timespan("the fifth year of ramesses ii", "en", anchor)[0].start.year   # -1274
+extract_timespan("the third year of reiwa", "en", anchor)[0].start.year          # 2021
+```
+
+Rulers the registry does **not** contain (Nero, Augustus, Elizabeth II, Louis
+XIV) do not resolve — the extractor wires only what the data attests, and the
+coverage table above is the whole of it.
+
+### The `classical` group flag — opt-in raw-Latin formulas
+
+Most historical surfaces above are *unambiguous* — nobody writes "the XII
+century" by accident — so they are **on by default**. The raw-Latin
+*ante-diem count* formula is different: `ante diem III kalendas apriles`
+("the 3rd day before the Kalends of April" = 30 March) is genuine classical
+Latin, but its bare, inflected surface is exotic enough that it should not fire
+unless asked for. It lives in the **`classical` construction group**, declared
+in `lang.json` (`"group": "classical"` on the construction) and gated OFF unless
+the caller opts in:
+
+```python
+text = "ante diem III kalendas apriles"
+
+extract_timespan(text, "en", anchor)                         # None  (off by default)
+extract_timespan(text, "en", anchor, enable=("classical",))  # 30 March span
+```
+
+**The doctrine.** A construction carrying a `"group": <name>` tag in `lang.json`
+is off unless `<name>` appears in the `enable=(...)` tuple passed to
+`extract_timespan`; a construction with no group tag is always on. The rule of
+thumb for *which* group a surface belongs in: **default-on surfaces are the ones
+a modern writer produces unambiguously** (Roman-numeral centuries, AUC,
+Olympiads, archonships, the everyday "ides of march"); **`classical`-gated
+surfaces are the raw, inflected Latin formulas** a classicist opts into. The
+flag threads through exactly like `jurisdiction` — one keyword argument, no
+change to the returned `(span, remainder)` shape.
+
 ## The week of a date, and decades before Christ
 
 Two phrasings widen a date to the period a speaker really meant. **"the week

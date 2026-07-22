@@ -10,7 +10,27 @@ parser-side; the reckoning values are the core.
 """
 import pytest
 
-from chronologia.roman import roman_to_julian
+from chronologia.roman import roman_to_int, roman_to_julian
+
+
+# -- roman_to_int: strict, canonical Roman-numeral parsing ----------------
+
+@pytest.mark.parametrize("text,value", [
+    ("I", 1), ("IV", 4), ("IX", 9), ("XII", 12), ("XIV", 14),
+    ("XL", 40), ("XC", 90), ("CD", 400), ("CM", 900),
+    ("MMXX", 2020), ("MCMLXXXIV", 1984), ("MMMCMXCIX", 3999),
+    ("iii", 3),                         # case-insensitive parse
+])
+def test_roman_to_int_valid(text, value):
+    assert roman_to_int(text) == value
+
+
+@pytest.mark.parametrize("text", [
+    "", "IIII", "VV", "LL", "DD", "IC", "IL", "XD", "IIX", "VX",
+    "MMMM", "ABC", "12", "X I",
+])
+def test_roman_to_int_rejects_malformed(text):
+    assert roman_to_int(text) is None
 
 
 # -- the canonical worked examples ---------------------------------------
