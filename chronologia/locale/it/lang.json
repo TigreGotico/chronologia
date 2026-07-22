@@ -113,16 +113,16 @@
     },
     "clock_time": {
       "orders": [
-        "CLOCK article? MERIDIEM?",
-        "at HOUR CLOCKDIR article? FRACTION article? MERIDIEM?",
-        "article HOUR CLOCKDIR article? FRACTION article? MERIDIEM?",
-        "oclock HOUR article? MERIDIEM?",
-        "at HOUR article? MERIDIEM?",
-        "article HOUR article? MERIDIEM",
-        "HOUR article? MERIDIEM",
-        "at? LANDMARK",
-        "FRACTION CLOCKDIR HOUR MERIDIEM?",
-        "MINUTE CLOCKDIR HOUR MERIDIEM?"
+        "CLOCK article? MERIDIEM? ZONE?",
+        "at HOUR CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
+        "article HOUR CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
+        "oclock HOUR article? MERIDIEM? ZONE?",
+        "at HOUR article? MERIDIEM? ZONE?",
+        "article HOUR article? MERIDIEM ZONE?",
+        "HOUR article? MERIDIEM ZONE?",
+        "at? LANDMARK ZONE?",
+        "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
+        "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?"
       ],
       "prefer_future": true
     },
@@ -205,6 +205,29 @@
         "HOLIDAY YEAR",
         "YEAR HOLIDAY",
         "HOLIDAY"
+      ]
+    },
+    "quarter_ref": {
+      "orders": [
+        "q NUM YEAR?",
+        "article? ORD quarter_word of YEAR",
+        "article? ORD quarter_word YEAR?",
+        "REL_MARKER quarter_word",
+        "quarter_word REL_MARKER"
+      ]
+    },
+    "iso_week_ref": {
+      "orders": [
+        "week_num NUM of YEAR",
+        "week_num NUM YEAR?"
+      ]
+    },
+    "fuzzy_period": {
+      "orders": [
+        "article? PART of? article? UNIT",
+        "article? PART of? article? REL_MARKER UNIT",
+        "article? PART of? article? UNIT REL_MARKER",
+        "PART REL_MARKER UNIT"
       ]
     }
   },
