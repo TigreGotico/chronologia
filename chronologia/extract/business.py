@@ -159,6 +159,12 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             count, start = 1, j
         else:
             continue
+        # swallow a leading "in" marker ("in 5 business days") into the claim so
+        # it does not strand in the remainder -- the clock ("... at 3pm") that
+        # composes onto this span must not see "in" as leftover text.
+        inwords = frozenset(spec.connectors.get("in", ()))
+        while start - 1 >= 0 and tokens[start - 1].text in inwords:
+            start -= 1
         ref = _date_ref(tokens, hi, resolved, spec, gap)
         if ref is not None:
             base, sign, end, claimed = ref
