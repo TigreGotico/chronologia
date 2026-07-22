@@ -15,7 +15,7 @@ from datetime import datetime
 from typing import Optional, Tuple
 
 from chronologia.extract.compiler import ConstructionCompiler
-from chronologia.extract.matcher import Candidate, ConstructionMatcher
+from chronologia.extract.matcher import MatchCandidate, ConstructionMatcher
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.pipeline import prematch_tokens
 from chronologia.extract.resolver import Resolver
@@ -62,7 +62,7 @@ class ExplainTrace:
         return self.report()
 
 
-def _reason(cand: Candidate, winners) -> str:
+def _reason(cand: MatchCandidate, winners) -> str:
     span = range(*cand.match.span)
     for w in winners:
         if any(i in range(*w.match.span) for i in span):

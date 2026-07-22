@@ -17,7 +17,7 @@ import os
 import re
 import threading
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, NamedTuple, Optional, Tuple
 
 from chronologia.astrodate import AstroDate, DateSpan
 from chronologia.extract.compiler import ConstructionCompiler
@@ -45,8 +45,18 @@ __all__ = [
     "ExplainTrace", "explain", "DateTimeEngine",
     "extract_timespan", "extract_candidates", "Candidate",
     "extract_duration", "extract_timespans", "extract_recurrence",
-    "TimeMention",
+    "TimeMention", "TimeSpanResult", "DurationResult", "RecurrenceResult",
 ]
+
+
+class TimeSpanResult(NamedTuple):
+    """Return of :func:`extract_timespan`: a span and the leftover text.
+
+    A plain 2-tuple ``(span, remainder)`` for unpacking, plus the named fields
+    ``.span`` (a :class:`~chronologia.astrodate.DateSpan`) and ``.remainder``.
+    """
+    span: DateSpan
+    remainder: str
 
 
 class DateTimeEngine:
@@ -606,7 +616,7 @@ def extract_timespan(
         anchor: Optional[datetime] = None,
         jurisdiction: Optional[str] = None,
         enable: Tuple[str, ...] = (),
-) -> Optional[Tuple[DateSpan, str]]:
+) -> Optional[TimeSpanResult]:
     """Extract a :class:`~chronologia.DateSpan` from natural-language ``text``.
 
     Returns the referential *width* of a date phrase: unlike a parser that
@@ -619,7 +629,9 @@ def extract_timespan(
     wall clock).  Only languages with locale data are supported; others
     raise :class:`NotImplementedError`.
 
-    Returns ``(span, remainder)`` or ``None`` when nothing matched.
+    Returns a :class:`TimeSpanResult` -- a ``(span, remainder)`` named tuple
+    (unpack it, or read ``.span`` / ``.remainder``) -- or ``None`` when nothing
+    matched.
 
     ``jurisdiction`` (an ISO country code such as ``'PT'``) scopes the
     business-day constructions ("in 5 business days", "the next working day"):
@@ -642,7 +654,8 @@ def extract_timespan(
     # the single-span core, or a lone endpoint's slice, re-uses these tokens --
     # the tokenizer is never run again on a substring.
     raw = pretokens(text, engine.spec)
-    return _resolve_span(text, raw, engine, anchor, enable, jurisdiction)
+    res = _resolve_span(text, raw, engine, anchor, enable, jurisdiction)
+    return None if res is None else TimeSpanResult(*res)
 
 
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
@@ -873,4 +886,5 @@ def extract_candidates(
 # N-series edges (durations, multi-mention, recurrence) live in their own
 # module; imported here so ``chronologia.extract`` is the single public edge.
 from chronologia.extract.nseries import (  # noqa: E402
-    TimeMention, extract_duration, extract_recurrence, extract_timespans)
+    DurationResult, RecurrenceResult, TimeMention, extract_duration,
+    extract_recurrence, extract_timespans)

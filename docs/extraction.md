@@ -24,7 +24,10 @@ which calendar the phrase is in.
 ## What comes back
 
 `extract_timespan(text, lang, anchor)` returns either `None` (nothing
-matched) or a `(span, remainder)` pair:
+matched) or a `TimeSpanResult` — a named 2-tuple of `(span, remainder)`. You
+can unpack it (`span, remainder = extract_timespan(...)`), index it
+(`result[0]`), or read the named fields (`result.span`, `result.remainder`) —
+all three access the same two values:
 
 - **`span`** is a [`DateSpan`](getting-started.md) — a half-open interval,
   *not* a single instant. A phrase names a stretch of time, and the span's
@@ -1092,6 +1095,10 @@ assert extract_duration("ninety minutes", "en")[0] == timedelta(minutes=90)
 assert extract_duration("wait 10 minutes", "en") == (timedelta(minutes=10), "wait")
 ```
 
+The return is a `DurationResult` — a named 2-tuple. Unpack it as
+`duration, remainder`, index it (`[0]`/`[1]`), or read `result.duration` /
+`result.remainder`; all three reach the same two values.
+
 It reads the **fixed-width** units — minute, hour, day, week, fortnight — that
 have one unambiguous length. A calendar unit whose length varies (a month is
 28–31 days, a year 365 or 366) is *not* a fixed duration, so a phrase naming
@@ -1170,6 +1177,10 @@ assert [d.start.day for d in first_three] == [6, 3, 3]   # Jan/Feb/Mar 2025
 # a one-off reference is not a recurrence
 assert extract_recurrence("next friday", "en") is None
 ```
+
+The return is a `RecurrenceResult` — a named 2-tuple. Unpack it as
+`recurrence, remainder`, index it (`[0]`/`[1]`), or read `result.recurrence` /
+`result.remainder`.
 
 **Date-anchored recurrence** reuses the single-span engine to read the date
 part, so "every 10th of may" and "every year on may 10" both fold into a

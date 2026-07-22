@@ -35,7 +35,7 @@ def _calendar_for_surface(spec: LangSpec, surface: str):
 
 
 @dataclass(frozen=True)
-class Candidate:
+class MatchCandidate:
     match: Match
     precedence: int
 
@@ -212,8 +212,8 @@ class ConstructionMatcher:
         self.compiled = compiled
         self.spec = compiled.spec
 
-    def _candidates(self, tokens: Tuple[Token, ...]) -> List[Candidate]:
-        out: List[Candidate] = []
+    def _candidates(self, tokens: Tuple[Token, ...]) -> List[MatchCandidate]:
+        out: List[MatchCandidate] = []
         for precedence, name, order in self.compiled.table:
             for start in range(len(tokens)):
                 ends = _walk(order.elements, tokens, 0, start, self.spec, {})
@@ -232,18 +232,18 @@ class ConstructionMatcher:
                         cal = f"{key} <{src}>" if key else None
                     else:
                         cal = None
-                    out.append(Candidate(
+                    out.append(MatchCandidate(
                         Match(name, (start, end), slots, calendar=cal),
                         precedence))
         return out
 
     @staticmethod
-    def _select(candidates: List[Candidate]) -> List[Candidate]:
+    def _select(candidates: List[MatchCandidate]) -> List[MatchCandidate]:
         ordered = sorted(candidates,
                          key=lambda c: (-c.match.length, c.precedence,
                                         c.match.span[0]))
         taken: set = set()
-        chosen: List[Candidate] = []
+        chosen: List[MatchCandidate] = []
         for cand in ordered:
             span = range(*cand.match.span)
             if any(i in taken for i in span):
