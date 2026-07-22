@@ -517,6 +517,21 @@ def test_impossible_rule_with_count_raises():
         list(occurrences(r, ad(2023, 1, 1)))
 
 
+def test_abusive_count_is_refused_at_construction():
+    # An untrusted RRULE (e.g. from from_ical) with a huge COUNT would enumerate
+    # for hours; it must be rejected when the Recurrence is built, before any
+    # expansion, so no abusive rule can exist to be enumerated later.
+    import time
+    t0 = time.monotonic()
+    with pytest.raises(ValueError, match="ceiling"):
+        parse_rrule("FREQ=DAILY;COUNT=1000000000")
+    assert time.monotonic() - t0 < 1.0
+    # the ceiling itself is a legal value; one above it is not
+    assert parse_rrule("FREQ=DAILY;COUNT=100000").count == 100000
+    with pytest.raises(ValueError, match="ceiling"):
+        parse_rrule("FREQ=DAILY;COUNT=100001")
+
+
 def test_occurrences_accepts_plain_date():
     r = parse_rrule("FREQ=DAILY;COUNT=2")
     got = [(s.start.year, s.start.month, s.start.day)

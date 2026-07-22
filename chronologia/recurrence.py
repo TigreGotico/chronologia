@@ -88,6 +88,13 @@ _MONTH_LEN = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 # on an impossible rule raises instead of spinning forever.
 _MAX_EMPTY_PERIODS = 20_000
 
+#: Sanity ceiling on ``COUNT``. A civil recurrence never legitimately repeats
+#: more than this (274 years of a daily rule); a larger value is malformed or
+#: hostile input (an untrusted ``RRULE:...COUNT=1000000000`` from ``from_ical``
+#: would otherwise enumerate for hours). Rejected at construction, so no
+#: ``Recurrence`` carrying an abusive count can exist.
+_MAX_COUNT = 100_000
+
 
 # --------------------------------------------------------------------------
 # Small JDN helpers (Monday == 0 weekday convention, matching AstroDate).
@@ -271,6 +278,10 @@ def _validate(rec: Recurrence) -> None:
         raise ValueError("COUNT and UNTIL MUST NOT both be present (RFC 5545)")
     if rec.count is not None and rec.count < 0:
         raise ValueError(f"COUNT must be >= 0, got {rec.count}")
+    if rec.count is not None and rec.count > _MAX_COUNT:
+        raise ValueError(
+            f"COUNT={rec.count} exceeds the civil-recurrence ceiling "
+            f"{_MAX_COUNT}; refusing a rule that would enumerate unboundedly")
     if rec.wkst not in range(7):
         raise ValueError(f"WKST must be a weekday 0..6, got {rec.wkst}")
     for m in rec.bymonth:
