@@ -239,6 +239,18 @@ class ConstructionMatcher:
 
     @staticmethod
     def _select(candidates: List[MatchCandidate]) -> List[MatchCandidate]:
+        """Pick the non-overlapping winners: longest span, then precedence.
+
+        This is the parse-winner contest, and it is deliberately
+        **resolution-independent** -- it runs on the raw enumerated candidates
+        before the resolver is consulted, so the winner stands even for
+        readings the resolver later declines.  It is *not* the same question as
+        confidence ranking (:func:`chronologia.extract.confidence.confidence`),
+        which scores already-*resolved* readings for the candidate API: the two
+        legitimately disagree (a bare ``calendar_date`` may out-score the
+        anchored-offset reading that wins the parse), and they are kept as two
+        explicit layers rather than one algorithm.  See ``docs/extraction.md``.
+        """
         ordered = sorted(candidates,
                          key=lambda c: (-c.match.length, c.precedence,
                                         c.match.span[0]))

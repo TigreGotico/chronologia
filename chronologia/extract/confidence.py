@@ -39,7 +39,8 @@ learning here and the number is emphatically **not** a probability (see
 """
 from __future__ import annotations
 
-from typing import Iterable, Mapping
+from dataclasses import dataclass
+from typing import Callable, Iterable, Iterator, Mapping, Optional
 
 from chronologia.astrodate import (BASIS_EXACT, BASIS_PREDICTED,
                                     BASIS_RECONSTRUCTED, BASIS_TABULATED)
@@ -130,3 +131,55 @@ def confidence(match: Match, resolution: Resolution, total_tokens: int,
     quality = (spec_f ** _W_SPEC * homo_f ** _W_HOMOGRAPH
                * fold_f ** _W_FOLD * basis_f ** _W_BASIS)
     return round(coverage * quality, 4)
+
+
+@dataclass(frozen=True)
+class ScoredCandidate:
+    """One matcher reading carried through resolution and scored.
+
+    This is the single structure every "scored reading" consumer shares.  It
+    bundles the three views the pipeline used to derive at separate call sites:
+
+    * ``match`` -- the enumerated :class:`~chronologia.extract.model.Match`
+      (a construction, its token span, and its bound slots);
+    * ``resolution`` -- what the resolver made of that reading against the
+      anchor (a :class:`~chronologia.extract.model.Resolution`); readings the
+      resolver rejects never become a ``ScoredCandidate`` at all;
+    * ``confidence`` -- the deterministic score in ``(0, 1]`` from
+      :func:`confidence`; **not** a probability.
+
+    Note this is distinct from the *parse winner* the matcher's
+    :meth:`~chronologia.extract.matcher.ConstructionMatcher._select` picks:
+    that selection is resolution-independent (longest span, then compiler
+    precedence) and runs before resolution is even attempted, because the
+    winner contest must stand even for readings the resolver later declines.
+    Confidence ranks *among resolved readings* for the candidate API; it does
+    not choose the parse winner.  The two are different questions, and keeping
+    them separate is deliberate -- see ``docs/extraction.md``.
+    """
+
+    match: Match
+    resolution: Resolution
+    confidence: float
+
+
+def score_candidates(matches: Iterable[Match],
+                     resolve: Callable[[Match], Optional[Resolution]],
+                     total_tokens: int,
+                     spec: LangSpec) -> Iterator[ScoredCandidate]:
+    """Resolve and score each reading -- the one place :func:`confidence` runs.
+
+    ``matches`` are enumerated readings (either the whole candidate set from
+    ``ConstructionMatcher._candidates`` for the ranked-candidate API, or the
+    already-selected winners from ``ConstructionMatcher.match`` for per-mention
+    scoring).  ``resolve`` maps a match to its resolution or ``None`` (the
+    anchor is already bound by the caller).  Readings the resolver rejects are
+    dropped; every survivor is yielded as a :class:`ScoredCandidate` carrying
+    its single :func:`confidence` score.
+    """
+    for match in matches:
+        res = resolve(match)
+        if res is None:
+            continue
+        yield ScoredCandidate(match, res,
+                              confidence(match, res, total_tokens, spec))

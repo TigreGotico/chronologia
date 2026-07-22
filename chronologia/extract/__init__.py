@@ -809,7 +809,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
 
 from dataclasses import dataclass as _dataclass  # noqa: E402
 
-from chronologia.extract.confidence import confidence as _confidence  # noqa: E402
+from chronologia.extract.confidence import score_candidates as _score_candidates  # noqa: E402
 
 
 @_dataclass(frozen=True)
@@ -862,16 +862,15 @@ def extract_candidates(
     total = len(tokens)
     scored = []
     seen = set()
-    for cand in engine.matcher._candidates(tokens):
-        match = cand.match
-        res = engine.resolver.resolve(match, anchor)
-        if res is None:
-            continue
+    matches = (c.match for c in engine.matcher._candidates(tokens))
+    for sc in _score_candidates(matches,
+                                lambda m: engine.resolver.resolve(m, anchor),
+                                total, engine.spec):
+        match, res, conf = sc.match, sc.resolution, sc.confidence
         key = (match.construction, match.span, res.value)
         if key in seen:
             continue
         seen.add(key)
-        conf = _confidence(match, res, total, engine.spec)
         consumed = set(res.consumed)
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
