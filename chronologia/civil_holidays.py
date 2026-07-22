@@ -1385,26 +1385,22 @@ def coverage(jurisdiction: str, year: int,
 # hand-authored per-language vocabulary file.
 # --------------------------------------------------------------------------
 @dataclass(frozen=True)
-class WellKnownHoliday:
-    """A globally well-known holiday keyed for cross-language reference.
+class _KnownHoliday:
+    """The shared contract of both well-known tiers: a keyed, datable rule.
 
-    ``key`` is a stable, language-neutral identifier (``christmas``,
-    ``easter``); ``kind`` is the canonical (Western) date rule, reusing the
-    same rule kinds every jurisdiction uses, so a movable holiday still
-    resolves through :func:`~chronologia.computus.easter` and never re-derives
-    date math.  ``anchor_jurisdiction`` / ``anchor_name`` name the real
-    jurisdiction + official native name the surfaces are harvested from (the
-    provenance ``explain`` traces); ``anchor_lang`` is the language of that
-    native name (so it is offered as a surface for its own language).
+    Both the cross-border first tier (:class:`WellKnownHoliday`) and the
+    locale-bound second tier (:class:`JurisdictionKnownHoliday`) are the same
+    thing at heart — a language-neutral ``key`` bound to a date ``kind`` and a
+    set of ``categories`` — differing only in their *binding* (one canonical
+    rule vs one rule chosen per locale). The common ``date_for`` / ``span_for``
+    resolution lives here once, so the resolver treats both tiers alike and
+    neither subclass re-implements the date math. Subclasses supply the
+    binding-specific provenance fields and their own ``span_shape``.
     """
 
     key: str
     kind: RuleKind
     categories: FrozenSet[str]
-    anchor_jurisdiction: str
-    anchor_name: str
-    anchor_lang: str
-    span_shape: str = "day"
 
     def date_for(self, year: int) -> Optional[Tuple[AstroDate, str]]:
         """The ``(AstroDate, basis)`` of this holiday in ``year`` (or None)."""
@@ -1418,6 +1414,26 @@ class WellKnownHoliday:
             return None
         date, basis = got
         return _shape_span(date, basis, self.span_shape), basis
+
+
+@dataclass(frozen=True)
+class WellKnownHoliday(_KnownHoliday):
+    """A globally well-known holiday keyed for cross-language reference.
+
+    ``key`` is a stable, language-neutral identifier (``christmas``,
+    ``easter``); ``kind`` is the canonical (Western) date rule, reusing the
+    same rule kinds every jurisdiction uses, so a movable holiday still
+    resolves through :func:`~chronologia.computus.easter` and never re-derives
+    date math.  ``anchor_jurisdiction`` / ``anchor_name`` name the real
+    jurisdiction + official native name the surfaces are harvested from (the
+    provenance ``explain`` traces); ``anchor_lang`` is the language of that
+    native name (so it is offered as a surface for its own language).
+    """
+
+    anchor_jurisdiction: str
+    anchor_name: str
+    anchor_lang: str
+    span_shape: str = "day"
 
 
 #: The curated global well-known set.  Each entry anchors on a jurisdiction
@@ -1624,33 +1640,20 @@ WELL_KNOWN_BY_KEY: Dict[str, WellKnownHoliday] = {w.key: w for w in WELL_KNOWN}
 # dishonest. A jurisdiction word would be required to disambiguate it.)
 # --------------------------------------------------------------------------
 @dataclass(frozen=True)
-class JurisdictionKnownHoliday:
+class JurisdictionKnownHoliday(_KnownHoliday):
     """A well-known holiday whose rule depends on the speaking ``lang``'s country.
 
     ``key`` is the language-neutral base identifier (``mothers_day``);
     ``lang`` is the locale this binding serves; ``kind`` is the rule that
     locale's jurisdiction default fixes. ``jurisdiction`` records the country
-    the default reflects (provenance for ``explain``). The date interface
-    mirrors :class:`WellKnownHoliday` so the resolver treats both tiers alike.
+    the default reflects (provenance for ``explain``). It shares
+    :class:`_KnownHoliday`'s date/span interface, so the resolver treats both
+    tiers alike.
     """
 
-    key: str
     lang: str
-    kind: RuleKind
-    categories: FrozenSet[str]
     jurisdiction: str
     span_shape: str = "day"
-
-    def date_for(self, year: int) -> Optional[Tuple[AstroDate, str]]:
-        obs = self.kind.observances(year)
-        return obs[0] if obs else None
-
-    def span_for(self, year: int) -> Optional[Tuple[DateSpan, str]]:
-        got = self.date_for(year)
-        if got is None:
-            return None
-        date, basis = got
-        return _shape_span(date, basis, self.span_shape), basis
 
 
 _MD_2SUN_MAY = NthWeekdayRule(5, 2, 6)   # 2nd Sunday of May
@@ -1664,25 +1667,25 @@ _UNOFF = frozenset({"unofficial"})
 #: The jurisdiction-bound second tier (see the block comment above).
 JURISDICTION_KNOWN: Tuple[JurisdictionKnownHoliday, ...] = (
     # Mother's Day — rule per the locale's jurisdiction default.
-    JurisdictionKnownHoliday("mothers_day", "en", _MD_2SUN_MAY, _UNOFF, "US"),
-    JurisdictionKnownHoliday("mothers_day", "de", _MD_2SUN_MAY, _UNOFF, "DE"),
-    JurisdictionKnownHoliday("mothers_day", "it", _MD_2SUN_MAY, _UNOFF, "IT"),
-    JurisdictionKnownHoliday("mothers_day", "nl", _MD_2SUN_MAY, _UNOFF, "NL"),
-    JurisdictionKnownHoliday("mothers_day", "pt", _MD_1SUN_MAY, _UNOFF, "PT"),
-    JurisdictionKnownHoliday("mothers_day", "es", _MD_1SUN_MAY, _UNOFF, "ES"),
-    JurisdictionKnownHoliday("mothers_day", "ca", _MD_1SUN_MAY, _UNOFF, "ES"),
-    JurisdictionKnownHoliday("mothers_day", "gl", _MD_1SUN_MAY, _UNOFF, "ES"),
-    JurisdictionKnownHoliday("mothers_day", "fr", _MD_LAST_SUN_MAY, _UNOFF, "FR"),
+    JurisdictionKnownHoliday("mothers_day", _MD_2SUN_MAY, _UNOFF, "en", "US"),
+    JurisdictionKnownHoliday("mothers_day", _MD_2SUN_MAY, _UNOFF, "de", "DE"),
+    JurisdictionKnownHoliday("mothers_day", _MD_2SUN_MAY, _UNOFF, "it", "IT"),
+    JurisdictionKnownHoliday("mothers_day", _MD_2SUN_MAY, _UNOFF, "nl", "NL"),
+    JurisdictionKnownHoliday("mothers_day", _MD_1SUN_MAY, _UNOFF, "pt", "PT"),
+    JurisdictionKnownHoliday("mothers_day", _MD_1SUN_MAY, _UNOFF, "es", "ES"),
+    JurisdictionKnownHoliday("mothers_day", _MD_1SUN_MAY, _UNOFF, "ca", "ES"),
+    JurisdictionKnownHoliday("mothers_day", _MD_1SUN_MAY, _UNOFF, "gl", "ES"),
+    JurisdictionKnownHoliday("mothers_day", _MD_LAST_SUN_MAY, _UNOFF, "fr", "FR"),
     # Father's Day — rule per the locale's jurisdiction default.
-    JurisdictionKnownHoliday("fathers_day", "en", _FD_3SUN_JUN, _UNOFF, "US"),
-    JurisdictionKnownHoliday("fathers_day", "fr", _FD_3SUN_JUN, _UNOFF, "FR"),
-    JurisdictionKnownHoliday("fathers_day", "nl", _FD_3SUN_JUN, _UNOFF, "NL"),
-    JurisdictionKnownHoliday("fathers_day", "pt", _FD_MAR19, _UNOFF, "PT"),
-    JurisdictionKnownHoliday("fathers_day", "es", _FD_MAR19, _UNOFF, "ES"),
-    JurisdictionKnownHoliday("fathers_day", "ca", _FD_MAR19, _UNOFF, "ES"),
-    JurisdictionKnownHoliday("fathers_day", "gl", _FD_MAR19, _UNOFF, "ES"),
-    JurisdictionKnownHoliday("fathers_day", "it", _FD_MAR19, _UNOFF, "IT"),
-    JurisdictionKnownHoliday("fathers_day", "de", _FD_ASCENSION, _UNOFF, "DE"),
+    JurisdictionKnownHoliday("fathers_day", _FD_3SUN_JUN, _UNOFF, "en", "US"),
+    JurisdictionKnownHoliday("fathers_day", _FD_3SUN_JUN, _UNOFF, "fr", "FR"),
+    JurisdictionKnownHoliday("fathers_day", _FD_3SUN_JUN, _UNOFF, "nl", "NL"),
+    JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "pt", "PT"),
+    JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "es", "ES"),
+    JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "ca", "ES"),
+    JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "gl", "ES"),
+    JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "it", "IT"),
+    JurisdictionKnownHoliday("fathers_day", _FD_ASCENSION, _UNOFF, "de", "DE"),
 )
 
 #: ``(key, lang) -> JurisdictionKnownHoliday`` for the resolver.
