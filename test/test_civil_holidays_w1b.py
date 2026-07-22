@@ -236,9 +236,13 @@ def test_il_independence_day_postponement_both_directions():
 
 
 def test_tr_differential_fixed_match_islamic_within_one_day():
-    # Fixed national days match the package exactly; the Islamic feast first-days
-    # agree to within +/-1 (islamic_civil arithmetic vs Diyanet). 2024: Ramazan
-    # ours 04-10 = Diyanet 04-10; Kurban ours 06-17 vs Diyanet 06-16 (+1).
+    # Fixed national days match the package exactly. Turkey's Islamic feasts are
+    # now `decree` rows carrying the exact Diyanet gazette dates (calculated
+    # years ahead, not moon-sighting estimates), so the feast first-days match
+    # the reference EXACTLY -- 2024: Ramazan 04-10, Kurban 06-16. (The <=1
+    # bound below is kept as a loose floor; it used to absorb a genuine +1
+    # islamic_civil tabular drift, e.g. Kurban 2024 ours 06-17 vs Diyanet
+    # 06-16, which the gazette decree rows have eliminated.)
     fixed = {(1, 1), (4, 23), (5, 1), (5, 19), (7, 15), (8, 30), (10, 29)}
     for year in (2024, 2025):
         ours = _our_dates("TR", year)

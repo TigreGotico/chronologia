@@ -2,13 +2,25 @@
 # jurisdiction: TR
 # source: Act No. 2429 on National Holidays and General Holidays (19 March 1981),
 #   tabulated at https://en.wikipedia.org/wiki/Public_holidays_in_Turkey
-# retrieved: 2026-07-21
+# source: Diyanet Isleri Baskanligi (Presidency of Religious Affairs) calculated
+#   dini gunler / resmi tatil calendar, cross-checked against published resmi
+#   tatil listings for 2024-2027 (takvim.com, momento.com.tr, vodafone.com.tr,
+#   turkcell.com.tr, yenisafak.com).
+# retrieved: 2026-07-22
 # notes:
-#   Fixed national days plus the two Islamic feasts. Ramazan Bayrami (Eid al-Fitr)
-#   is 3 days from 1 Shawwal; Kurban Bayrami (Eid al-Adha) is 4 days from 10 Dhu
-#   al-Hijja (both also have a half-day eve, not modelled). Islamic dates resolve
-#   through islamic_civil (arithmetic); Turkey's Diyanet civil calendar can differ
-#   by +/-1 day from the tabular date (the observation caveat).
+#   Fixed national days plus the two Islamic feasts. Turkey's two Islamic public
+#   holidays are NOT sighting estimates the library should approximate: the
+#   Diyanet fixes them years in advance from its CALCULATED (hisab) calendar and
+#   the government gazettes them under Act 2429, so they are exact legal dates.
+#   They are therefore modelled as `decree` rows carrying the gazetted Gregorian
+#   spans (Ramazan Bayrami = 3 full days from 1 Shawwal; Kurban Bayrami = 4 full
+#   days from 10 Dhu al-Hijja), each preceded by a half-day arefe eve (afternoon
+#   off). This replaces the earlier islamic_civil (arithmetic tabular) routing,
+#   which drifted +/-1 day from the gazette (e.g. it placed Kurban 2024 on
+#   06-17..20 with a 06-16 gap, whereas Turkey observed 06-16..19) -- for a
+#   gazette-dated holiday that drift is a factual error, not an observation
+#   caveat. (Genuinely sighting-dependent jurisdictions, where the date is only
+#   announced ~1 day ahead, remain estimated; Turkey is not one of them.)
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
@@ -22,14 +34,14 @@ fixed         | Demokrasi ve Millî Birlik Günü                         | 7 15
 fixed         | Zafer Bayramı                                          | 8 30  | public |  |
 fixed         | Cumhuriyet Bayramı                                     | 10 29 | public |  |
 #
-# --- Islamic (islamic_civil; +/-1 observation caveat) ---
-calendar_date | Ramazan Bayramı | islamic_civil 10 1  | public religious |  |
-calendar_date | Ramazan Bayramı | islamic_civil 10 2  | public religious |  |
-calendar_date | Ramazan Bayramı | islamic_civil 10 3  | public religious |  |
-calendar_date | Kurban Bayramı  | islamic_civil 12 10 | public religious |  |
-calendar_date | Kurban Bayramı  | islamic_civil 12 11 | public religious |  |
-calendar_date | Kurban Bayramı  | islamic_civil 12 12 | public religious |  |
-calendar_date | Kurban Bayramı  | islamic_civil 12 13 | public religious |  |
+# --- Islamic feasts (Diyanet gazette `decree`; exact legal dates, NOT estimates) ---
+# Gazetted Gregorian spans, cross-checked against Diyanet / resmi tatil listings:
+#   Ramazan Bayrami (3 full days): 2024-04-10..12, 2025-03-30..04-01,
+#     2026-03-20..22, 2027-03-09..11
+#   Kurban Bayrami (4 full days):  2024-06-16..19, 2025-06-06..09,
+#     2026-05-27..30, 2027-05-16..19
+decree | Ramazan Bayramı | 2024-4-10 2024-4-11 2024-4-12 2025-3-30 2025-3-31 2025-4-1 2026-3-20 2026-3-21 2026-3-22 2027-3-9 2027-3-10 2027-3-11 | public religious |  |
+decree | Kurban Bayramı  | 2024-6-16 2024-6-17 2024-6-18 2024-6-19 2025-6-6 2025-6-7 2025-6-8 2025-6-9 2026-5-27 2026-5-28 2026-5-29 2026-5-30 2027-5-16 2027-5-17 2027-5-18 2027-5-19 | public religious |  |
 
 # --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
 # Extra non-default-category rows cross-checked against vacanza/holidays
@@ -38,6 +50,8 @@ calendar_date | Kurban Bayramı  | islamic_civil 12 13 | public religious |  |
 # move year to year are gazetted `decree` tables of vacanza's own 2024/2025
 # dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
 # stripped. Names are vacanza's own (already-localized) labels.
-decree | Ramazan Bayramı (saat 13.00'ten) | 2024-4-9 2025-3-29 | half_day |  |  |  | half_pm
-decree | Kurban Bayramı (saat 13.00'ten) | 2024-6-15 2025-6-5 | half_day |  |  |  | half_pm
+# Arefe (bayram eve) half-days: afternoon off, the day before each feast's first
+# full day. Gazetted alongside the feasts (2024-2027) from the same Diyanet dates.
+decree | Ramazan Bayramı (saat 13.00'ten) | 2024-4-9 2025-3-29 2026-3-19 2027-3-8 | half_day |  |  |  | half_pm
+decree | Kurban Bayramı (saat 13.00'ten) | 2024-6-15 2025-6-5 2026-5-26 2027-5-15 | half_day |  |  |  | half_pm
 fixed  | Cumhuriyet Bayramı (saat 13.00'ten) | 10 28 | half_day |  |  |  | half_pm
