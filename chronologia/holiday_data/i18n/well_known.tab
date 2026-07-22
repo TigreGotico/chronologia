@@ -777,3 +777,34 @@ vesak           | ms | hari wesak ;; wesak
 diwali          | ms | deepavali
 halloween       | ms | halloween
 valentines      | ms | hari valentine
+#
+# ===== Basque =====
+new_year        | eu | urte berri ;; urteberri
+epiphany        | eu | erregen eguna ;; errege eguna
+good_friday     | eu | ostiral santua
+easter          | eu | pazkoa ;; pazko igandea
+easter_monday   | eu | pazko astelehena
+ascension       | eu | igokundea
+assumption      | eu | andre maria ;; abuztuaren hamabosta
+all_saints      | eu | domu santu ;; santu guztien eguna
+christmas_eve   | eu | gabon gaua
+christmas       | eu | gabonak ;; eguberri
+eid_al_fitr     | eu | id al-fitr
+ramadan         | eu | ramadana
+chinese_new_year| eu | txinako urte berria
+nowruz          | eu | nowruz
+diwali          | eu | diwali
+vesak           | eu | vesak
+halloween       | eu | halloween ;; gau beltza
+valentines      | eu | san valentin ;; maitasunaren eguna
+#
+# ===== Kabyle =====
+new_year        | kab | aseggas amaynut
+christmas       | kab | lɛid n tlalit ;; krismas
+eid_al_fitr     | kab | lɛid ameẓyan ;; tafaska tameẓyant
+eid_al_adha     | kab | lɛid ameqqran ;; tafaska tameqqrant
+ramadan         | kab | ramḍan ;; uẓum
+islamic_new_year| kab | aseggas ihjrawan
+nowruz          | kab | nowruz
+diwali          | kab | diwali
+halloween       | kab | halloween

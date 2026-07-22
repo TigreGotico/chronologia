@@ -24,7 +24,7 @@
     },
     "clock_time": {
       "orders": [
-        "CLOCK MERIDIEM?"
+        "CLOCK MERIDIEM? ZONE?"
       ],
       "prefer_future": true
     },
@@ -36,6 +36,23 @@
     "iso_date": {
       "orders": [
         "ISO"
+      ]
+    },
+    "quarter_ref": {
+      "orders": [
+        "q NUM YEAR?"
+      ]
+    },
+    "iso_week_ref": {
+      "orders": [
+        "week_num NUM YEAR?"
+      ]
+    },
+    "holiday_ref": {
+      "orders": [
+        "HOLIDAY YEAR",
+        "YEAR HOLIDAY",
+        "HOLIDAY"
       ]
     }
   },
