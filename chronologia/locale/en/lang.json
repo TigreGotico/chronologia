@@ -14,6 +14,7 @@
                  "indef? NUM UNIT from WEEKDAY"]
     },
     "weekday_ref": {"orders": ["REL_MARKER WEEKDAY"]},
+    "rel_period": {"orders": ["REL_MARKER UNIT"]},
     "calendar_date": {
       "orders": ["MONTH DAY? YEAR?", "DAY of MONTH YEAR?", "DAY MONTH YEAR?"],
       "prefer_future": true

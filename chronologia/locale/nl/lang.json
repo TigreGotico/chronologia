@@ -25,6 +25,7 @@
         "REL_MARKER WEEKDAY"
       ]
     },
+    "rel_period": {"orders": ["REL_MARKER UNIT"]},
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
