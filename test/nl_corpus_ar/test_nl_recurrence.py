@@ -15,6 +15,8 @@ _CASES = [
     ('سنويا', 'FREQ=YEARLY', ''),
     ('كل 2 أسبوع', 'FREQ=WEEKLY;INTERVAL=2', ''),
     ('كل 3 يوم', 'FREQ=DAILY;INTERVAL=3', ''),
+    ('كل يوم جمعة', 'FREQ=WEEKLY;BYDAY=FR', ''),
+    ('كل يوم الجمعة', 'FREQ=WEEKLY;BYDAY=FR', ''),
 ]
 
 
