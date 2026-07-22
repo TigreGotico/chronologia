@@ -18,7 +18,7 @@
 #   reduce to a single fixed or Easter-offset rule are split into one row
 #   per calendar day, numbered "(1)", "(2)", ....
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 
@@ -36,3 +36,11 @@ fixed         | Þjóðhátíðardagurinn                      | 6 17           
 decree        | Frídagur verslunarmanna                  | 2024-8-5 2025-8-4    | public          |  |  |  |
 fixed         | Jóladagur                                | 12 25                | public          |  |  |  |
 fixed         | Annar í jólum                            | 12 26                | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Aðfangadagur (frá kl. 13.00) | 12 24 | half_day |  |
+fixed | Gamlársdagur (frá kl. 13.00) | 12 31 | half_day |  |

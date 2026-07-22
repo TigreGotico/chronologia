@@ -13,7 +13,7 @@
 #   outside those years rather than fabricated. 调休-style workday-bridge
 #   ('moved from ...') entries are dropped as out of scope.
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | วันขึ้นปีใหม่                      | 1 1                 | public          |  |  |  |
@@ -46,3 +46,19 @@ decree        | ชดเชยวันฉัตรมงคล                
 decree        | ชดเชยวันอาสาฬหบูชา                 | 2024-7-22           | public          |  |  |  |
 decree        | ชดเชยวันเฉลิมพระชนมพรรษาพระบาทสมเด็จพระปรเมนทรรามาธิบดีศรีสินทรมหาวชิราลงกรณ พระวชิรเกล้าเจ้าอยู่หัว| 2024-7-29           | public          |  |  |  |
 decree        | ชดเชยวันนวมินทรมหาราช              | 2024-10-14          | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | วันกองทัพไทย | 1 18 | armed_forces |  |
+fixed | วันครู | 1 16 | school |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | วันพืชมงคล | 2024-5-10 2025-5-9 | government |  |

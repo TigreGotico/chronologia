@@ -13,7 +13,7 @@
 #   outside those years rather than fabricated. 调休-style workday-bridge
 #   ('moved from ...') entries are dropped as out of scope.
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | 신정연휴                               | 1 1                 | public          |  |  |  |
@@ -40,3 +40,10 @@ decree        | 국군의 날                              | 2024-10-1          
 decree        | 삼일절 대체 휴일                          | 2025-3-3            | public          |  |  |  |
 decree        | 대통령 선거일                            | 2025-6-3            | public          |  |  |  |
 decree        | 추석 대체 휴일                           | 2025-10-8           | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | 근로자의날 | 5 1 | bank |  |

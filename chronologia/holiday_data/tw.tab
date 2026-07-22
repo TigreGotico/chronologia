@@ -15,7 +15,7 @@
 #   rather than a fabricated 2024 date. Compensatory workday-bridge
 #   ("補假"/"補班") entries are dropped as out of scope.
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | 中華民國開國紀念日                           | 1 1 | public          |  |  |  |
@@ -31,3 +31,11 @@ fixed         | 國慶日                                 | 10 10 | public      
 decree        | 孔子誕辰紀念日                             | 2025-9-28            | public          |  |  |  |
 decree        | 臺灣光復暨金門古寧頭大捷紀念日                     | 2025-10-25           | public          |  |  |  |
 decree        | 行憲紀念日                               | 2025-12-25           | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | 勞動節 | 5 1 | optional |  |
+fixed | 軍人節 | 9 3 | optional |  |

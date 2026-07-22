@@ -16,7 +16,7 @@
 #   provinces/territories are future data. Canada Day carries the federal Holidays
 #   Act Sunday->Monday shift (sun_mon).
 # retrieved: 2026-07-21
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed
 #
 # Canada is officially bilingual federally, so the federal holidays carry both
@@ -63,3 +63,17 @@ nth_weekday      | Thanksgiving Day | 10 2 0 | public | CA-MB |
 # --- Nova Scotia (CA-NS) ---
 nth_weekday      | Heritage Day    | 2 3 0 | public | CA-NS |
 fixed            | Remembrance Day | 11 11 | public | CA-NS |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Boxing Day | 12 26 | optional |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying government-category subset; retrieved 2026-07-22) ---
+decree | National Day for Truth and Reconciliation | 2024-9-30 2025-9-30 | government |  |
+decree | Thanksgiving Day | 2024-10-14 2025-10-13 | government |  |
+decree | Remembrance Day | 2024-11-11 2025-11-11 | government |  |
+decree | Boxing Day | 2024-12-26 2025-12-26 | government |  |

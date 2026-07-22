@@ -257,8 +257,13 @@ def test_jp_differential_statutory_days_match_package():
     # model — matches the package on its date. The equinox holidays sit on the
     # Cabinet Office dates (2024 秋分の日 = 09-22) and their furikae substitute
     # (09-23) is emitted alongside, matching the package's own furikae entry.
+    # Scoped to the "public" category: JP also carries a "bank" category
+    # (banking-industry-only closure days, e.g. 1/2, 1/3, 12/31) added for
+    # vacanza category parity (test_holiday_categories.py) that is
+    # deliberately out of scope for this statutory-day differential.
     for year in (2024, 2025):
-        ours = set(_our_dates("JP", year))
+        ours = {(h.date.month, h.date.day)
+                for h in holidays_for("JP", year) if "public" in h.categories}
         pkg = holidays_pkg.country_holidays("JP", years=year)
         theirs = {(d.month, d.day) for d in pkg}
         assert ours <= theirs, f"JP {year} missing from package: {ours - theirs}"
@@ -277,9 +282,14 @@ def test_cn_differential_statutory_core_matches_package():
     # and separately labels the 调休 make-up days 休息日(...调休) / 补假. Our
     # statutory dates must each appear in the package; the package's EXTRA dates
     # are exactly the 调休 arrangements we hold out of scope.
+    # Scoped to the "public" category: CN also carries a "half_day" category
+    # (afternoon-off precursor days, e.g. 3/8, 5/4, 6/1, 8/1) added for
+    # vacanza category parity (test_holiday_categories.py) that is
+    # deliberately out of scope for this statutory-day differential.
     statutory_2024 = {(1, 1), (2, 10), (2, 11), (2, 12), (4, 4), (5, 1),
                       (6, 10), (9, 17), (10, 1), (10, 2), (10, 3)}
-    ours = set(_our_dates("CN", 2024))
+    ours = {(h.date.month, h.date.day)
+            for h in holidays_for("CN", 2024) if "public" in h.categories}
     assert ours == statutory_2024
     theirs = set(_pkg_dates("CN", 2024))
     assert ours <= theirs, f"statutory day missing from package: {ours - theirs}"

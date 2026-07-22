@@ -20,7 +20,7 @@
 #   ordinary workdays onto weekends rather than granting substitute holidays, so
 #   they are not holidays at all — see cn.tab and test_civil_holidays_w1b.py.
 #   Mountain Day is in force from 2016 (2014 amendment); its rule carries "2016-".
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed
 #
 # Names carry the official Japanese (ja) name as primary, English (en) alongside.
@@ -45,3 +45,12 @@ nth_weekday | ja:スポーツの日 ;; en:Sports Day              | 10 2 0 | pub
 # --- equinox holidays (JST = UTC+9) ---
 equinox     | ja:春分の日 ;; en:Vernal Equinox Day         | march 9     | public |  | jp_furikae
 equinox     | ja:秋分の日 ;; en:Autumnal Equinox Day       | september 9 | public |  | jp_furikae
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | ja:銀行休業日 ;; en:Bank Holiday | 1 2 | bank |  |
+fixed | ja:銀行休業日 ;; en:Bank Holiday | 1 3 | bank |  |
+fixed | ja:銀行休業日 ;; en:Bank Holiday | 12 31 | bank |  |

@@ -20,7 +20,7 @@
 #   day, numbered "(1)", "(2)", ... where they do not reduce to a single
 #   fixed or Easter-offset rule.
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | Año Nuevo                                     | 1 1 | public          |  |  |  |
@@ -32,3 +32,12 @@ decree        | Anexión del Partido de Nicoya a Costa Rica    | 2024-7-29 2025-
 decree        | Día de la Madre                               | 2024-8-19 2025-8-15 | public          |  |  |  |
 fixed         | Día de la Independencia                       | 9 15 | public          |  |  |  |
 fixed         | Navidad                                       | 12 25 | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Fiesta de Nuestra Señora de los Ángeles | 8 2 | optional |  |
+fixed | Día de la Persona Negra y la Cultura Afrocostarricense | 8 31 | optional |  |
+fixed | Día de la Abolición del Ejército | 12 1 | optional |  |

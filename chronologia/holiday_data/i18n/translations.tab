@@ -402,6 +402,27 @@ CN | 清明节 | pt | Festival de Qingming
 CN | 清明节 | es | Fiesta de Qingming
 CN | 清明节 | de | Qingming-Fest
 CN | 清明节 | fr | Fête de Qingming
+# --- vacanza/holidays 0.101 category-parity "half_day" rows (retrieved 2026-07-22) ---
+CN | 国际妇女节 | en | International Women's Day
+CN | 国际妇女节 | pt | Dia Internacional da Mulher
+CN | 国际妇女节 | es | Día Internacional de la Mujer
+CN | 国际妇女节 | de | Internationaler Frauentag
+CN | 国际妇女节 | fr | Journée internationale des femmes
+CN | 五四青年节 | en | Youth Day
+CN | 五四青年节 | pt | Dia da Juventude
+CN | 五四青年节 | es | Día de la Juventud
+CN | 五四青年节 | de | Jugendtag
+CN | 五四青年节 | fr | Journée de la jeunesse
+CN | 六一儿童节 | en | Children's Day
+CN | 六一儿童节 | pt | Dia da Criança
+CN | 六一儿童节 | es | Día del Niño
+CN | 六一儿童节 | de | Kindertag
+CN | 六一儿童节 | fr | Journée des enfants
+CN | 建军节 | en | Army Day
+CN | 建军节 | pt | Dia do Exército
+CN | 建军节 | es | Día del Ejército
+CN | 建军节 | de | Tag der Armee
+CN | 建军节 | fr | Journée de l'armée
 # ===== JP =====
 JP | 元日 | pt | Ano Novo
 JP | 元日 | es | Año Nuevo
@@ -467,6 +488,12 @@ JP | 秋分の日 | pt | Dia do Equinócio de Outono
 JP | 秋分の日 | es | Día del Equinoccio de Otoño
 JP | 秋分の日 | de | Tag der Herbst-Tagundnachtgleiche
 JP | 秋分の日 | fr | Jour de l'équinoxe d'automne
+# --- vacanza/holidays 0.101 category-parity "bank" row (retrieved 2026-07-22) ---
+JP | 銀行休業日 | en | Bank Holiday
+JP | 銀行休業日 | pt | Feriado Bancário
+JP | 銀行休業日 | es | Día Festivo Bancario
+JP | 銀行休業日 | de | Bankfeiertag
+JP | 銀行休業日 | fr | Jour férié bancaire
 # ===== IL =====
 IL | ראש השנה | pt | Rosh Hashanah
 IL | ראש השנה | es | Rosh Hashaná

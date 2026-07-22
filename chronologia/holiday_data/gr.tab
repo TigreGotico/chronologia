@@ -11,7 +11,7 @@
 #   Πνεύματος (Holy Spirit / Whit Monday, +50) = 24 Jun — the Orthodox reckoning
 #   flowing straight through the computus. Names are the official Greek.
 # retrieved: 2026-07-21
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed
 #
 fixed   | Πρωτοχρονιά                        | 1 1                    | public          |  |
@@ -26,3 +26,11 @@ fixed   | Κοίμηση της Θεοτόκου               | 8 15           
 fixed   | Ημέρα του Όχι                      | 10 28                  | public          |  |
 fixed   | Χριστούγεννα                       | 12 25                  | public religious |  |
 fixed   | Σύναξη της Υπεραγίας Θεοτόκου      | 12 26                  | public religious |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Παραμονή Χριστουγέννων | 12 24 | half_day |  |
+fixed | Παραμονή Πρωτοχρονιάς | 12 31 | half_day |  |
