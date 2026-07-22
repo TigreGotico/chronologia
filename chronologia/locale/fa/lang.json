@@ -68,6 +68,7 @@
   },
   "conventions": {
     "week_start": "saturday",
+    "weekend_start": 3,
     "dmy": true,
     "hemisphere": null,
     "prefer_future": true

@@ -28,23 +28,29 @@ def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
     """Every multiword vocabulary surface the tokenizer split on whitespace,
     longest first so "late bronze age" wins over "bronze age".
 
-    A period ("bronze age"), a named day ("day after tomorrow"), a clock
-    landmark ("gece yarısı"), a meridiem ("öğleden sonra"), a season or a
-    weekend word ("hafta sonu", "آخر هفته") can all be written as several
-    words; the tokenizer breaks them apart and this pass glues each back into
-    the single token its slot binds.  Numbers never participate, so a merged
-    surface is always a lexical token.
+    A period ("bronze age"), a named day ("day after tomorrow" / Arabic
+    "بعد غد"), a weekday (Hebrew "יום ראשון"), a clock landmark
+    ("gece yarısı" / "منتصف الليل"), a meridiem ("öğleden sonra"), a
+    season, a decade phrase (Hebrew "שנות השמונים"), a calendar month
+    (Levantine "تشرين الأول") or a weekend ("hafta sonu", "آخر هفته",
+    "סוף שבוע" / "نهاية الأسبوع") can all be written as several words; the
+    tokenizer breaks them apart and this pass glues each back into the single
+    token its slot binds.  Numbers never participate, so a merged surface is
+    always a lexical token.
 
-    Multiword *connectors* ("vor christus", "que vén") are excluded on
-    purpose -- the matcher binds those natively via ``_connector_span``, so
-    pre-merging them here would double-handle the surface."""
+    Multiword *connectors* ("vor christus", "قبل الميلاد", "que vén") are
+    excluded on purpose -- the matcher binds those natively via
+    ``_connector_span``, so pre-merging them here would double-handle the
+    surface."""
     seen = set()
     for table in (spec.periods, spec.named_days, spec.clock_landmarks,
                   spec.meridiems, spec.seasons, spec.units, spec.months,
                   spec.weekdays, spec.rel_markers, spec.directions,
                   spec.scope_units, spec.clock_fractions, spec.clock_dirs,
-                  spec.weekend_words):
+                  spec.decade_words, spec.weekend_words):
         seen.update(s for s in table if " " in s)
+    for cal in spec.calendar_months.values():
+        seen.update(s for s in cal if " " in s)
     return tuple(sorted(seen, key=lambda s: len(s.split()), reverse=True))
 
 
