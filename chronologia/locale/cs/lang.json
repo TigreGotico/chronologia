@@ -1,112 +1,112 @@
 {
-  "tokenizer": {
-    "split_contractions": false,
-    "ordinal_dot": true
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": true
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "NUM UNIT MARKER",
+    "MARKER NUM UNIT",
+    "MARKER indef? UNIT",
+    "indef? UNIT MARKER"
+   ]
   },
-  "constructions": {
-    "relative_offset": {
-      "orders": [
-        "NUM UNIT MARKER",
-        "MARKER NUM UNIT",
-        "MARKER indef? UNIT",
-        "indef? UNIT MARKER"
-      ]
-    },
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
-    "weekday_ref": {
-      "orders": [
-        "REL_MARKER WEEKDAY",
-        "WEEKDAYFULL"
-      ]
-    },
-    "rel_period": {
-      "orders": [
-        "REL_MARKER UNIT"
-      ]
-    },
-    "weekend_ref": {
-      "orders": [
-        "REL_MARKER WEEKEND",
-        "article? WEEKEND"
-      ]
-    },
-    "calendar_date": {
-      "orders": [
-        "DAY MONTH YEAR?",
-        "DAY of MONTH YEAR?",
-        "MONTH DAY? YEAR?"
-      ],
-      "prefer_future": true
-    },
-    "season_ref": {
-      "orders": [
-        "REL_MARKER SEASON",
-        "SEASON of YEAR",
-        "SEASON YEAR?"
-      ]
-    },
-    "clock_time": {
-      "orders": [
-        "CLOCK MERIDIEM?",
-        "at HOUR MERIDIEM?",
-        "HOUR oclock MERIDIEM?",
-        "HOUR MERIDIEM",
-        "at? LANDMARK",
-        "FRACTION CLOCKDIR HOUR MERIDIEM?",
-        "MINUTE CLOCKDIR HOUR MERIDIEM?"
-      ],
-      "prefer_future": true
-    },
-    "iso_date": {
-      "orders": [
-        "ISO"
-      ]
-    },
-    "year_ref": {
-      "orders": [
-        "in GYEAR",
-        "article? year_word GYEAR",
-        "GYEAR"
-      ]
-    },
-    "decade_ref": {
-      "orders": [
-        "PART? article? NUM plural",
-        "article? PART DECADE"
-      ]
-    },
-    "scoped_ordinal": {
-      "orders": [
-        "article? ORD SCOPE_UNIT",
-        "article? ORD UNIT of MONTH YEAR?"
-      ]
-    }
+  "named_day": {
+   "orders": [
+    "DAY_WORD"
+   ]
   },
-  "conventions": {
-    "week_start": "monday",
-    "dmy": true,
-    "hemisphere": "north",
-    "prefer_future": true
+  "weekday_ref": {
+   "orders": [
+    "REL_MARKER WEEKDAY",
+    "WEEKDAYFULL"
+   ]
   },
-  "quantifiers": {
-    "1": [
-      "jeden",
-      "jedna",
-      "jedno"
-    ],
-    "0.5": [
-      "půl"
-    ],
-    "0.25": [
-      "čtvrt"
-    ]
+  "rel_period": {
+   "orders": [
+    "REL_MARKER UNIT"
+   ]
   },
-  "guards": {
-    "bare_year_min_digits": 4
+  "weekend_ref": {
+   "orders": [
+    "REL_MARKER WEEKEND",
+    "article? WEEKEND"
+   ]
   },
-  "hook": "chronologia.extract.numfold_slavic:fold_cs"
+  "calendar_date": {
+   "orders": [
+    "DAY MONTH YEAR?",
+    "DAY of MONTH YEAR?",
+    "MONTH DAY? YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "season_ref": {
+   "orders": [
+    "REL_MARKER SEASON",
+    "SEASON of YEAR",
+    "SEASON YEAR?"
+   ]
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK MERIDIEM? ZONE?",
+    "at HOUR MERIDIEM? ZONE?",
+    "HOUR oclock MERIDIEM? ZONE?",
+    "HOUR MERIDIEM ZONE?",
+    "at? LANDMARK ZONE?",
+    "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
+    "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?"
+   ],
+   "prefer_future": true
+  },
+  "iso_date": {
+   "orders": [
+    "ISO"
+   ]
+  },
+  "year_ref": {
+   "orders": [
+    "in GYEAR",
+    "article? year_word GYEAR",
+    "GYEAR"
+   ]
+  },
+  "decade_ref": {
+   "orders": [
+    "PART? article? NUM plural",
+    "article? PART DECADE"
+   ]
+  },
+  "scoped_ordinal": {
+   "orders": [
+    "article? ORD SCOPE_UNIT",
+    "article? ORD UNIT of MONTH YEAR?"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": true,
+  "hemisphere": "north",
+  "prefer_future": true
+ },
+ "quantifiers": {
+  "1": [
+   "jeden",
+   "jedna",
+   "jedno"
+  ],
+  "0.5": [
+   "půl"
+  ],
+  "0.25": [
+   "čtvrt"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_slavic:fold_cs"
 }
