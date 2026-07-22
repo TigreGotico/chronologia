@@ -20,7 +20,7 @@
 #       one-off decrees granted only in qualifying years (2023, 2024).
 #   The remaining holidays are fixed Gregorian dates or Easter offsets.
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 # --- fixed / Easter ---
@@ -44,3 +44,10 @@ decree | San Pedro y San Pablo              | 2023-06-26 2024-06-29 2025-06-29 |
 decree | Fiestas Patrias                    | 2024-09-20 | public |  |
 decree | Día del Encuentro de dos Mundos    | 2023-10-09 2024-10-12 2025-10-12 | public |  |
 decree | Día Nacional de las Iglesias Evangélicas y Protestantes | 2023-10-27 2024-10-31 2025-10-31 | public religious |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Feriado bancario | 12 31 | bank |  |

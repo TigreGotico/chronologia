@@ -182,8 +182,22 @@ __all__ = [
 ]
 
 #: The documented category schema (see the module docstring).
-CATEGORIES: FrozenSet[str] = frozenset(
-    {"public", "regional", "municipal", "religious", "school"})
+#:
+#: The base five (``public``/``regional``/``municipal``/``religious``/
+#: ``school``) are this project's own taxonomy. The remainder mirror
+#: vacanza/holidays 0.101's per-country ``supported_categories`` labels
+#: verbatim (lower-cased, as vacanza already emits them) for the countries
+#: whose non-default categories this project has adopted parity rows for
+#: (see ``test/test_holiday_categories.py``) — ``workday`` (bridge/working-day
+#: markers) is deliberately excluded as out of scope, same as bridge days.
+CATEGORIES: FrozenSet[str] = frozenset({
+    "public", "regional", "municipal", "religious", "school",
+    # vacanza-parity labels (country-specific denominational/administrative
+    # subsets; see per-country .tab headers for citations)
+    "armenian", "bank", "government", "half_day", "optional",
+    "albanian", "bosnian", "roma", "serbian", "turkish", "vlach",
+    "armed_forces", "hebrew", "islamic", "catholic", "orthodox", "unofficial",
+})
 
 _EASTER_METHODS = ("gregorian", "julian_gregorian_date")
 

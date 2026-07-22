@@ -15,7 +15,7 @@
 #   fixed BY LAW to the third Monday of August, so it is an nth_weekday rule.
 #   Carnaval and the two Holy Week days are Easter offsets.
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 # --- fixed (inamovibles) / Easter ---
@@ -45,3 +45,27 @@ decree | Día de la Soberanía Nacional             | 2023-11-20 2024-11-18 2025
 #
 # --- decree-tabulated feriados con fines turísticos (annual bridge days) ---
 decree | Feriado con fines turísticos | 2023-05-26 2023-06-19 2023-10-13 2024-04-01 2024-06-21 2024-10-11 2025-05-02 2025-08-15 2025-11-21 | public |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Día de acción por la tolerancia y el respeto entre los pueblos | 4 24 | armenian |  |
+fixed | Día del Bancario | 11 6 | bank |  |
+fixed | Asueto bancario | 12 24 | bank |  |
+fixed | Asueto bancario | 12 31 | bank |  |
+fixed | Día del Trabajador del Estado | 6 27 | government |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Pascua Judía (Pésaj) | 2024-4-23 2024-4-24 2024-4-29 2024-4-30 2025-4-13 2025-4-14 2025-4-19 2025-4-20 | hebrew |  |
+decree | Año Nuevo Judío (Rosh Hashana) | 2024-10-3 2024-10-4 2025-9-23 2025-9-24 | hebrew |  |
+decree | Día del Perdón (Iom Kipur) | 2025-10-2 | hebrew |  |
+decree | Día posterior a la culminación del ayuno (Id Al-Fitr) | 2024-4-10 2025-3-31 | islamic |  |
+decree | Día de la Fiesta del Sacrificio (Id Al-Adha) | 2024-6-16 2025-6-10 | islamic |  |
+decree | Año Nuevo Musulmán (Hégira) | 2024-7-7 2025-6-26 | islamic |  |

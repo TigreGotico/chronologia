@@ -15,7 +15,7 @@
 #   own fixed 5/6 row independent of the movable Easter Monday it happened
 #   to fall on that year.
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | Нова година                           | 1 1 | public          |  |  |  |
@@ -31,3 +31,10 @@ fixed         | Ден на Независимостта на България  
 fixed         | Бъдни вечер                          | 12 24 | public          |  |  |  |
 fixed         | Рождество Христово (1)                  | 12 25 | public          |  |  |  |
 fixed         | Рождество Христово (2)                  | 12 26 | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Ден на народните будители | 11 1 | school |  |

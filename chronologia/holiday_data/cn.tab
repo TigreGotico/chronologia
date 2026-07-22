@@ -14,7 +14,7 @@
 #   weekends into workdays and designating nearby weekdays as rest days; those
 #   shifted rest/work days are per-year administrative arrangements, not holidays,
 #   and are deliberately not listed here (we list holidays, not shifted workdays).
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed
 #
 # Names carry the official Chinese (zh) name as primary, with an English (en)
@@ -35,3 +35,13 @@ calendar_date | zh:中秋节 ;; en:Mid-Autumn Festival       | chinese 8 15 | pu
 #
 # --- solar term (jieqi), UTC+8 ---
 solar_term    | zh:清明节 ;; en:Qingming Festival         | qingming 8   | public |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | zh:国际妇女节 ;; en:International Women's Day | 3 8 | half_day |  |
+fixed | zh:五四青年节 ;; en:Youth Day | 5 4 | half_day |  |
+fixed | zh:六一儿童节 ;; en:Children's Day | 6 1 | half_day |  |
+fixed | zh:建军节 ;; en:Army Day | 8 1 | half_day |  |
