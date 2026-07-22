@@ -76,3 +76,57 @@ def test_no_holiday_no_match(text):
 @pytest.mark.xfail(reason="holiday/surname homograph (Nadal) out of scope")
 def test_name_homograph_should_not_bind():
     nomatch("o tenista nadal xogou")
+
+
+# ==========================================================================
+# EXPANDED SET -- non-Christian / non-Western well-known holidays.
+# Anchor stays 2017-06-27 (Tuesday); bare = next occurrence on or after it.
+# Movable non-Gregorian dates come from independent published tables,
+# cross-checked against this engine's own tabulated calendars (Umm al-Qura,
+# arithmetic Hebrew, tabulated Chinese, arithmetic Solar Hijri) and, where no
+# closed form is modelled here (Diwali, Vesak), from the WELL_KNOWN decree
+# tables. Mother's/Father's Day use this locale's jurisdiction default.
+# ==========================================================================
+
+_EXPANDED = [
+    ('eid', (2018, 6, 15)),
+    ('ramadán', (2018, 5, 16)),
+    ('ano novo xudeu', (2017, 9, 21)),
+    ('yom kippur', (2017, 9, 30)),
+    ('pésaj', (2018, 3, 31)),
+    ('janucá', (2017, 12, 13)),
+    ('ano novo chinés', (2018, 2, 16)),
+    ('festa do medio outono', (2017, 10, 4)),
+    ('nowruz', (2018, 3, 21)),
+    ('diwali', (2017, 10, 19)),
+    ('vesak', (2018, 5, 29)),
+    ('samaín', (2017, 10, 31)),
+    ('san valentín', (2018, 2, 14)),
+    ('día da nai', (2018, 5, 6)),
+    ('día do pai', (2018, 3, 19)),
+    ('acción de grazas', (2017, 11, 23)),
+]
+
+
+@pytest.mark.parametrize("text,ymd", _EXPANDED)
+def test_bare_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+    assert span(text).width == timedelta(days=1)
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ('diwali 2026', (2026, 11, 8)),
+    ('ano novo chinés 2026', (2026, 2, 17)),
+    ('pésaj 2026', (2026, 4, 2)),
+])
+def test_explicit_year_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+
+
+@pytest.mark.parametrize("text", [
+    'o prezo do arroz subiu',
+    'unha cunca de sopa',
+    'unha reunión de traballo',
+])
+def test_expanded_no_match(text):
+    nomatch(text)

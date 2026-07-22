@@ -76,3 +76,57 @@ def test_no_holiday_no_match(text):
 @pytest.mark.xfail(reason="holiday/first-name homograph (Natale) out of scope")
 def test_name_homograph_should_not_bind():
     nomatch("un uomo di nome natale")
+
+
+# ==========================================================================
+# EXPANDED SET -- non-Christian / non-Western well-known holidays.
+# Anchor stays 2017-06-27 (Tuesday); bare = next occurrence on or after it.
+# Movable non-Gregorian dates come from independent published tables,
+# cross-checked against this engine's own tabulated calendars (Umm al-Qura,
+# arithmetic Hebrew, tabulated Chinese, arithmetic Solar Hijri) and, where no
+# closed form is modelled here (Diwali, Vesak), from the WELL_KNOWN decree
+# tables. Mother's/Father's Day use this locale's jurisdiction default.
+# ==========================================================================
+
+_EXPANDED = [
+    ('id al-fitr', (2018, 6, 15)),
+    ('capodanno islamico', (2017, 9, 21)),
+    ('rosh hashanah', (2017, 9, 21)),
+    ('yom kippur', (2017, 9, 30)),
+    ('pesach', (2018, 3, 31)),
+    ('hanukkah', (2017, 12, 13)),
+    ('capodanno cinese', (2018, 2, 16)),
+    ('festa di metà autunno', (2017, 10, 4)),
+    ('nowruz', (2018, 3, 21)),
+    ('diwali', (2017, 10, 19)),
+    ('vesak', (2018, 5, 29)),
+    ('halloween', (2017, 10, 31)),
+    ('san valentino', (2018, 2, 14)),
+    ('festa della mamma', (2018, 5, 13)),
+    ('festa del papà', (2018, 3, 19)),
+    ('giorno del ringraziamento', (2017, 11, 23)),
+]
+
+
+@pytest.mark.parametrize("text,ymd", _EXPANDED)
+def test_bare_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+    assert span(text).width == timedelta(days=1)
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ('diwali 2026', (2026, 11, 8)),
+    ('capodanno cinese 2026', (2026, 2, 17)),
+    ('pesach 2026', (2026, 4, 2)),
+])
+def test_explicit_year_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+
+
+@pytest.mark.parametrize("text", [
+    'il prezzo del riso è salito',
+    'una ciotola di zuppa',
+    'una riunione di lavoro',
+])
+def test_expanded_no_match(text):
+    nomatch(text)

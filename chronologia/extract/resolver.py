@@ -835,9 +835,14 @@ class Resolver:
         The result carries the holiday's own span shape (whole-day, or half-day
         where the rule is a half-day).
         """
-        from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
+        from chronologia.civil_holidays import (JURISDICTION_KNOWN_BY_KEY_LANG,
+                                                 WELL_KNOWN_BY_KEY)
         key = self.spec.holidays.get(match.slots["HOLIDAY"].text)
         wk = WELL_KNOWN_BY_KEY.get(key) if key is not None else None
+        if wk is None and key is not None:
+            # Second tier: the rule is chosen by the locale's jurisdiction
+            # default (mother's/father's day differ by country).
+            wk = JURISDICTION_KNOWN_BY_KEY_LANG.get((key, self.spec.lang))
         if wk is None:
             return None
         year_tok = match.slots.get("YEAR")

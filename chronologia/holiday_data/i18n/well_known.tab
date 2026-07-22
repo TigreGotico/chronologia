@@ -176,3 +176,242 @@ all_saints      | gl | día de todos os santos ;; todos os santos
 christmas_eve   | gl | noiteboa ;; véspera de nadal
 christmas       | gl | nadal ;; día de nadal
 boxing_day      | gl | santo estevo
+#
+# ==========================================================================
+# EXPANDED SET beyond the Christian/Western core: movable non-Gregorian
+# feasts (Islamic/Jewish/Chinese/Persian/Hindu/Buddhist), the Orthodox-Easter
+# cycle, secular fixed days, and the jurisdiction-bound tier (mother's/father's
+# day). Dates come from the engine's tabulated calendars (Umm al-Qura,
+# arithmetic Hebrew, tabulated Chinese, arithmetic Solar Hijri) or, where no
+# closed form is modelled (Diwali, Vesak), from decree tables in WELL_KNOWN.
+# Native-script surfaces for Arabic/Hebrew carry their own orthography.
+# ==========================================================================
+#
+# ===== English =====
+orthodox_easter    | en | orthodox easter ;; greek easter
+orthodox_good_friday | en | orthodox good friday
+orthodox_easter_monday | en | orthodox easter monday
+eid_al_fitr        | en | eid ;; eid al-fitr ;; eid ul-fitr ;; id al-fitr
+eid_al_adha        | en | eid al-adha ;; eid ul-adha ;; bakrid
+ramadan            | en | ramadan ;; start of ramadan
+islamic_new_year   | en | islamic new year ;; hijri new year
+ashura             | en | ashura ;; ashoura
+mawlid             | en | mawlid ;; milad un nabi ;; prophet's birthday
+rosh_hashanah      | en | rosh hashanah ;; rosh hashana
+yom_kippur         | en | yom kippur ;; day of atonement
+passover           | en | passover ;; pesach
+hanukkah           | en | hanukkah ;; chanukah ;; hannukah
+chinese_new_year   | en | chinese new year ;; lunar new year ;; spring festival
+mid_autumn         | en | mid-autumn festival ;; mid autumn festival ;; mooncake festival
+nowruz             | en | nowruz ;; norouz ;; persian new year
+diwali             | en | diwali ;; deepavali
+vesak              | en | vesak ;; buddha's birthday ;; wesak
+halloween          | en | halloween
+valentines         | en | valentine's day ;; valentines day ;; saint valentine's day
+st_patricks        | en | saint patrick's day ;; st patrick's day ;; st patricks day ;; st paddy's day
+thanksgiving       | en | thanksgiving ;; thanksgiving day
+mothers_day        | en | mother's day ;; mothers day
+fathers_day        | en | father's day ;; fathers day
+#
+# ===== Portuguese =====
+eid_al_fitr        | pt | eid ;; eid al-fitr ;; fim do ramadão
+eid_al_adha        | pt | eid al-adha ;; festa do sacrifício
+ramadan            | pt | ramadão ;; ramadan
+islamic_new_year   | pt | ano novo islâmico ;; ano novo muçulmano
+ashura             | pt | achura
+mawlid             | pt | mawlid
+rosh_hashanah      | pt | rosh hashaná ;; ano novo judaico
+yom_kippur         | pt | yom kippur ;; dia do perdão
+passover           | pt | pessach ;; páscoa judaica
+hanukkah           | pt | chanucá ;; hanucá
+chinese_new_year   | pt | ano novo chinês ;; ano novo lunar
+mid_autumn         | pt | festival do meio outono
+nowruz             | pt | nowruz ;; ano novo persa
+diwali             | pt | diwali
+vesak              | pt | vesak
+halloween          | pt | dia das bruxas ;; halloween
+valentines         | pt | dia dos namorados ;; são valentim
+st_patricks        | pt | dia de são patrício
+thanksgiving       | pt | ação de graças ;; dia de ação de graças
+mothers_day        | pt | dia da mãe
+fathers_day        | pt | dia do pai
+#
+# ===== Spanish =====
+eid_al_fitr        | es | eid ;; fiesta del fin del ayuno
+eid_al_adha        | es | fiesta del sacrificio ;; eid al-adha
+ramadan            | es | ramadán
+islamic_new_year   | es | año nuevo islámico ;; año nuevo musulmán
+ashura             | es | ashura
+mawlid             | es | mawlid
+rosh_hashanah      | es | rosh hashaná ;; año nuevo judío
+yom_kippur         | es | yom kipur ;; día del perdón
+passover           | es | pésaj ;; pascua judía
+hanukkah           | es | janucá ;; hanukkah
+chinese_new_year   | es | año nuevo chino ;; año nuevo lunar
+mid_autumn         | es | festival del medio otoño
+nowruz             | es | nowruz ;; año nuevo persa
+diwali             | es | diwali
+vesak              | es | vesak
+halloween          | es | halloween ;; noche de brujas
+valentines         | es | san valentín ;; día de san valentín ;; día de los enamorados
+st_patricks        | es | día de san patricio
+thanksgiving       | es | acción de gracias ;; día de acción de gracias
+mothers_day        | es | día de la madre
+fathers_day        | es | día del padre
+#
+# ===== German =====
+eid_al_fitr        | de | zuckerfest ;; eid al-fitr
+eid_al_adha        | de | opferfest ;; eid al-adha
+ramadan            | de | ramadan
+islamic_new_year   | de | islamisches neujahr
+ashura             | de | aschura
+mawlid             | de | mawlid
+rosh_hashanah      | de | rosch haschana ;; jüdisches neujahr
+yom_kippur         | de | jom kippur ;; versöhnungstag
+passover           | de | pessach
+hanukkah           | de | chanukka ;; hanukka
+chinese_new_year   | de | chinesisches neujahr ;; frühlingsfest
+mid_autumn         | de | mondfest
+nowruz             | de | nouruz ;; persisches neujahr
+diwali             | de | diwali
+vesak              | de | vesakh
+halloween          | de | halloween
+valentines         | de | valentinstag
+st_patricks        | de | sankt patrickstag
+thanksgiving       | de | thanksgiving
+mothers_day        | de | muttertag
+fathers_day        | de | vatertag
+#
+# ===== French =====
+eid_al_fitr        | fr | aïd el-fitr ;; aïd ;; fête de la rupture du jeûne
+eid_al_adha        | fr | aïd el-adha ;; aïd el-kébir ;; fête du sacrifice
+ramadan            | fr | ramadan
+islamic_new_year   | fr | nouvel an musulman ;; jour de l'an musulman
+ashura             | fr | achoura
+mawlid             | fr | mawlid ;; mouloud
+rosh_hashanah      | fr | roch hachana ;; nouvel an juif
+yom_kippur         | fr | yom kippour ;; grand pardon
+passover           | fr | pessah ;; pâque juive
+hanukkah           | fr | hanoucca ;; hanoukka
+chinese_new_year   | fr | nouvel an chinois ;; nouvel an lunaire
+mid_autumn         | fr | fête de la mi-automne ;; fête de la lune
+nowruz             | fr | norouz ;; nouvel an persan
+diwali             | fr | diwali ;; divali
+vesak              | fr | vesak
+halloween          | fr | halloween
+valentines         | fr | saint-valentin ;; la saint-valentin
+st_patricks        | fr | saint-patrick ;; la saint-patrick
+thanksgiving       | fr | thanksgiving ;; action de grâce
+mothers_day        | fr | fête des mères
+fathers_day        | fr | fête des pères
+#
+# ===== Italian =====
+eid_al_fitr        | it | id al-fitr ;; festa della rottura del digiuno
+eid_al_adha        | it | id al-adha ;; festa del sacrificio
+ramadan            | it | ramadan
+islamic_new_year   | it | capodanno islamico
+ashura             | it | ashura
+mawlid             | it | mawlid
+rosh_hashanah      | it | rosh hashanah ;; capodanno ebraico
+yom_kippur         | it | yom kippur ;; giorno dell'espiazione
+passover           | it | pesach ;; pasqua ebraica
+hanukkah           | it | hanukkah ;; chanukkah
+chinese_new_year   | it | capodanno cinese ;; capodanno lunare
+mid_autumn         | it | festa di metà autunno
+nowruz             | it | nowruz ;; capodanno persiano
+diwali             | it | diwali
+vesak              | it | vesak
+halloween          | it | halloween
+valentines         | it | san valentino
+st_patricks        | it | san patrizio
+thanksgiving       | it | giorno del ringraziamento ;; ringraziamento
+mothers_day        | it | festa della mamma
+fathers_day        | it | festa del papà
+#
+# ===== Dutch =====
+eid_al_fitr        | nl | suikerfeest ;; eid al-fitr
+eid_al_adha        | nl | offerfeest ;; eid al-adha
+ramadan            | nl | ramadan
+islamic_new_year   | nl | islamitisch nieuwjaar
+ashura             | nl | asjoera
+mawlid             | nl | mawlid
+rosh_hashanah      | nl | rosj hasjana ;; joods nieuwjaar
+yom_kippur         | nl | jom kipoer ;; grote verzoendag
+passover           | nl | pesach ;; joods pasen
+hanukkah           | nl | chanoeka ;; hanoeka
+chinese_new_year   | nl | chinees nieuwjaar ;; chinees lunair nieuwjaar
+mid_autumn         | nl | midherfstfestival ;; maanfeest
+nowruz             | nl | noroez ;; perzisch nieuwjaar
+diwali             | nl | diwali
+vesak              | nl | vesak
+halloween          | nl | halloween
+valentines         | nl | valentijnsdag
+st_patricks        | nl | sint-patricksdag
+thanksgiving       | nl | thanksgiving
+mothers_day        | nl | moederdag
+fathers_day        | nl | vaderdag
+#
+# ===== Catalan =====
+eid_al_fitr        | ca | id al-fitr
+eid_al_adha        | ca | festa del sacrifici
+ramadan            | ca | ramadà
+rosh_hashanah      | ca | any nou jueu
+yom_kippur         | ca | yom kippur
+passover           | ca | péssaj ;; pasqua jueva
+hanukkah           | ca | hanukà
+chinese_new_year   | ca | any nou xinès ;; any nou lunar
+mid_autumn         | ca | festa de la tardor
+nowruz             | ca | nowruz
+diwali             | ca | diwali
+vesak              | ca | vesak
+halloween          | ca | halloween ;; nit de les bruixes
+valentines         | ca | sant valentí ;; dia de sant valentí
+st_patricks        | ca | sant patrici
+thanksgiving       | ca | acció de gràcies
+mothers_day        | ca | dia de la mare
+fathers_day        | ca | dia del pare
+#
+# ===== Galician =====
+eid_al_fitr        | gl | eid
+eid_al_adha        | gl | festa do sacrificio
+ramadan            | gl | ramadán
+rosh_hashanah      | gl | ano novo xudeu
+yom_kippur         | gl | yom kippur
+passover           | gl | pésaj ;; pascua xudía
+hanukkah           | gl | janucá
+chinese_new_year   | gl | ano novo chinés ;; ano novo lunar
+mid_autumn         | gl | festa do medio outono
+nowruz             | gl | nowruz
+diwali             | gl | diwali
+vesak              | gl | vesak
+halloween          | gl | samaín ;; halloween
+valentines         | gl | san valentín ;; día dos namorados
+st_patricks        | gl | san patricio
+thanksgiving       | gl | acción de grazas
+mothers_day        | gl | día da nai
+fathers_day        | gl | día do pai
+#
+# ===== Arabic (native script) =====
+eid_al_fitr        | ar | عيد الفطر ;; العيد الصغير
+eid_al_adha        | ar | عيد الأضحى ;; العيد الكبير
+ramadan            | ar | رمضان ;; شهر رمضان
+islamic_new_year   | ar | رأس السنة الهجرية ;; السنة الهجرية
+ashura             | ar | عاشوراء
+mawlid             | ar | المولد النبوي ;; المولد
+rosh_hashanah      | ar | رأس السنة اليهودية
+yom_kippur         | ar | يوم الغفران
+passover           | ar | عيد الفصح اليهودي
+hanukkah           | ar | حانوكا
+chinese_new_year   | ar | رأس السنة الصينية
+nowruz             | ar | نوروز
+diwali             | ar | ديوالي
+#
+# ===== Hebrew (native script) =====
+rosh_hashanah      | he | ראש השנה
+yom_kippur         | he | יום כיפור ;; יום הכיפורים
+passover           | he | פסח ;; חג הפסח
+hanukkah           | he | חנוכה
+eid_al_fitr        | he | עיד אל-פיטר
+ramadan            | he | רמדאן
+chinese_new_year   | he | ראש השנה הסיני
+nowruz             | he | נורוז

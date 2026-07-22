@@ -112,3 +112,95 @@ def test_no_holiday_no_match(text):
 @pytest.mark.xfail(reason="holiday/person homograph disambiguation out of scope")
 def test_person_homograph_should_not_bind():
     nomatch("i met a woman named easter")
+
+
+# ==========================================================================
+# EXPANDED SET — non-Christian / non-Western well-known holidays.
+#
+# Anchor stays 2017-06-27 (Tuesday); bare = next occurrence on or after it.
+# Movable non-Gregorian dates are taken from independent published tables,
+# cross-checked against this engine's own tabulated calendar data:
+#
+#   Umm al-Qura (Islamic):  Eid al-Fitr 2018 = 15 Jun, 2026 = 20 Mar;
+#     Ramadan start 2018 = 16 May; Ashura 2017 = 30 Sep; Mawlid 2017 = 30 Nov;
+#     Islamic New Year 2017 = 21 Sep; Eid al-Adha 2017 = 1 Sep.
+#   Arithmetic Hebrew:  Rosh Hashanah 2017 = 21 Sep; Yom Kippur 2017 = 30 Sep;
+#     Passover 2018 = 31 Mar, 2026 = 2 Apr; Hanukkah 2017 = 13 Dec, 2026 = 5 Dec.
+#   Tabulated Chinese:  Chinese New Year 2018 = 16 Feb, 2026 = 17 Feb;
+#     Mid-Autumn 2017 = 4 Oct.
+#   Solar Hijri (Nowruz):  2018 = 21 Mar.  Orthodox Easter 2018 = 8 Apr.
+#   Decree tables (no closed form here):  Diwali 2017 = 19 Oct, 2026 = 8 Nov,
+#     2016 = 30 Oct;  Vesak 2018 = 29 May.
+#   Secular / US-rule:  Halloween 31 Oct; Valentine's 14 Feb; St Patrick's
+#     17 Mar; US Thanksgiving = 4th Thu Nov (2017 = 23 Nov, 2026 = 26 Nov);
+#     Mother's Day = 2nd Sun May (US, 2018 = 13 May); Father's Day = 3rd Sun
+#     Jun (US, 2018 = 17 Jun).
+# ==========================================================================
+
+_BARE_EXPANDED = [
+    ("eid", (2018, 6, 15)),
+    ("eid al-fitr", (2018, 6, 15)),
+    ("eid al-adha", (2017, 9, 1)),
+    ("islamic new year", (2017, 9, 21)),
+    ("ashura", (2017, 9, 30)),
+    ("mawlid", (2017, 11, 30)),
+    ("rosh hashanah", (2017, 9, 21)),
+    ("yom kippur", (2017, 9, 30)),
+    ("passover", (2018, 3, 31)),
+    ("hanukkah", (2017, 12, 13)),
+    ("chanukah", (2017, 12, 13)),
+    ("chinese new year", (2018, 2, 16)),
+    ("lunar new year", (2018, 2, 16)),
+    ("mid-autumn festival", (2017, 10, 4)),
+    ("nowruz", (2018, 3, 21)),
+    ("persian new year", (2018, 3, 21)),
+    ("diwali", (2017, 10, 19)),
+    ("vesak", (2018, 5, 29)),
+    ("orthodox easter", (2018, 4, 8)),
+    ("halloween", (2017, 10, 31)),
+    ("valentine's day", (2018, 2, 14)),
+    ("st patrick's day", (2018, 3, 17)),
+    ("thanksgiving", (2017, 11, 23)),
+    ("mother's day", (2018, 5, 13)),
+    ("father's day", (2018, 6, 17)),
+]
+
+
+@pytest.mark.parametrize("text,ymd", _BARE_EXPANDED)
+def test_bare_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+    assert span(text).width == timedelta(days=1)
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ("eid al-fitr 2026", (2026, 3, 20)),
+    ("diwali 2026", (2026, 11, 8)),
+    ("chinese new year 2026", (2026, 2, 17)),
+    ("hanukkah 2026", (2026, 12, 5)),
+    ("passover 2026", (2026, 4, 2)),
+    ("thanksgiving 2026", (2026, 11, 26)),
+])
+def test_explicit_year_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ("next hanukkah", (2017, 12, 13)),
+    ("last diwali", (2016, 10, 30)),
+    ("when is eid", (2018, 6, 15)),
+    ("when is thanksgiving", (2017, 11, 23)),
+    ("when is chinese new year", (2018, 2, 16)),
+])
+def test_rel_and_when_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+
+
+# -- negatives / confusables: no holiday word -> nothing binds -------------
+@pytest.mark.parametrize("text", [
+    "i love eating rice",
+    "the moon festival lights",     # "moon festival" is not a bound surface
+    "a bowl of noodles",
+    "the price of turkey went up",  # no "thanksgiving" surface present
+])
+def test_expanded_no_match(text):
+    nomatch(text)

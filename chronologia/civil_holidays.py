@@ -172,6 +172,10 @@ __all__ = [
     "WellKnownHoliday",
     "WELL_KNOWN",
     "WELL_KNOWN_BY_KEY",
+    "JurisdictionKnownHoliday",
+    "JURISDICTION_KNOWN",
+    "JURISDICTION_KNOWN_BY_KEY_LANG",
+    "JURISDICTION_KNOWN_KEYS",
     "load_well_known_aliases",
     "well_known_surfaces",
     "well_known_source",
@@ -1298,10 +1302,217 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
     WellKnownHoliday("boxing_day", FixedRule(12, 26),
                      frozenset({"public", "religious"}),
                      "NL", "Tweede Kerstdag", "nl"),
+
+    # ---- Orthodox-Easter cycle (Julian computus, already modelled) --------
+    # The Orthodox Pascha rendered on the civil calendar via
+    # ``EasterOffsetRule(..., "julian_gregorian_date")``.  Because Orthodox
+    # Easter is a real Sunday, the whole cycle reduces to integer offsets, just
+    # like the Western one — no new date math.  Basis ``exact``.
+    WellKnownHoliday("orthodox_easter", EasterOffsetRule(0, "julian_gregorian_date"),
+                     frozenset({"public", "religious", "orthodox"}),
+                     "GR", "Πάσχα", "el"),
+    WellKnownHoliday("orthodox_good_friday",
+                     EasterOffsetRule(-2, "julian_gregorian_date"),
+                     frozenset({"public", "religious", "orthodox"}),
+                     "GR", "Μεγάλη Παρασκευή", "el"),
+    WellKnownHoliday("orthodox_easter_monday",
+                     EasterOffsetRule(1, "julian_gregorian_date"),
+                     frozenset({"public", "religious", "orthodox"}),
+                     "GR", "Δευτέρα του Πάσχα", "el"),
+
+    # ---- Movable Islamic feasts (Umm al-Qura table, ``calendar_date``) ----
+    # These resolve through the tabulated Umm al-Qura calendar (basis
+    # ``tabulated``): inside its published range (AH 1356..1500, roughly
+    # 1937..2077 CE) the Gregorian date is looked up, never computed here; a
+    # year whose occurrence falls outside the table contributes NO date, so the
+    # reference is honestly silent out of range rather than fabricating one.
+    WellKnownHoliday("eid_al_fitr", CalendarDateRule("umm_al_qura", 10, 1),
+                     frozenset({"public", "religious", "islamic"}),
+                     "SA", "عيد الفطر", "ar"),
+    WellKnownHoliday("eid_al_adha", CalendarDateRule("umm_al_qura", 12, 10),
+                     frozenset({"public", "religious", "islamic"}),
+                     "SA", "عيد الأضحى", "ar"),
+    WellKnownHoliday("ramadan", CalendarDateRule("umm_al_qura", 9, 1),
+                     frozenset({"religious", "islamic"}),
+                     "SA", "رمضان", "ar"),
+    WellKnownHoliday("islamic_new_year", CalendarDateRule("umm_al_qura", 1, 1),
+                     frozenset({"public", "religious", "islamic"}),
+                     "SA", "رأس السنة الهجرية", "ar"),
+    WellKnownHoliday("ashura", CalendarDateRule("umm_al_qura", 1, 10),
+                     frozenset({"religious", "islamic"}),
+                     "SA", "عاشوراء", "ar"),
+    WellKnownHoliday("mawlid", CalendarDateRule("umm_al_qura", 3, 12),
+                     frozenset({"public", "religious", "islamic"}),
+                     "SA", "المولد النبوي", "ar"),
+
+    # ---- Movable Jewish feasts (arithmetic Hebrew calendar, ``calendar_date``)
+    # The Hebrew calendar here is the arithmetic (Hillel II) one, so its basis
+    # is ``exact`` — the civil date is derived, not looked up.  Each feast is a
+    # fixed Hebrew (month, day); a feast begins the preceding sunset, so the
+    # date is the first *full* civil day (the convention the published Jewish
+    # date tables tabulate).
+    WellKnownHoliday("rosh_hashanah", CalendarDateRule("hebrew", 7, 1),
+                     frozenset({"public", "religious", "hebrew"}),
+                     "IL", "ראש השנה", "he"),
+    WellKnownHoliday("yom_kippur", CalendarDateRule("hebrew", 7, 10),
+                     frozenset({"public", "religious", "hebrew"}),
+                     "IL", "יום כיפור", "he"),
+    WellKnownHoliday("passover", CalendarDateRule("hebrew", 1, 15),
+                     frozenset({"public", "religious", "hebrew"}),
+                     "IL", "פסח", "he"),
+    WellKnownHoliday("hanukkah", CalendarDateRule("hebrew", 9, 25),
+                     frozenset({"religious", "hebrew"}),
+                     "IL", "חנוכה", "he"),
+
+    # ---- Movable East-Asian feasts (tabulated Chinese calendar) -----------
+    # ``calendar_date`` against the tabulated Chinese lunisolar calendar
+    # (basis ``tabulated``, published range lunar years 1901..2099); silent
+    # outside the table, never computed here.
+    WellKnownHoliday("chinese_new_year", CalendarDateRule("chinese", 1, 1),
+                     frozenset({"public"}), "CN", "春节", "zh"),
+    WellKnownHoliday("mid_autumn", CalendarDateRule("chinese", 8, 15),
+                     frozenset({"public"}), "CN", "中秋节", "zh"),
+
+    # ---- Nowruz (Persian New Year) ----------------------------------------
+    # The March-equinox new year, taken here from the arithmetic Solar Hijri
+    # calendar (1 Farvardin) — the same calendar the ``fa``/``az`` locales
+    # already model, basis ``exact``.
+    WellKnownHoliday("nowruz", CalendarDateRule("solar_hijri_arithmetic", 1, 1),
+                     frozenset({"public"}), "IR", "نوروز", "fa"),
+
+    # ---- Decree-tabulated feasts (no closed form modelled here) -----------
+    # Diwali (Hindu, lunar Amanta/Purnimanta) and Vesak (Buddhist, full moon of
+    # Vaisakha) have no arithmetic calendar in this engine, so — per house
+    # style — they are ``DecreeTableRule`` with explicit published per-year
+    # dates (Diwali = Lakshmi Puja main day; Vesak = the UN/observed full-moon
+    # date).  Basis ``tabulated``; a year outside the listed range is honestly
+    # silent (the reference simply does not resolve), so out-of-range corpus
+    # cases are xfailed, not asserted to a fabricated date.
+    WellKnownHoliday("diwali", DecreeTableRule((
+        (2016, (10, 30)), (2017, (10, 19)), (2018, (11, 7)), (2019, (10, 27)),
+        (2020, (11, 14)), (2021, (11, 4)), (2022, (10, 24)), (2023, (11, 12)),
+        (2024, (10, 31)), (2025, (10, 20)), (2026, (11, 8)), (2027, (10, 29)),
+    )), frozenset({"religious", "hindu"}), "IN", "दिवाली", "hi"),
+    WellKnownHoliday("vesak", DecreeTableRule((
+        (2016, (5, 21)), (2017, (5, 10)), (2018, (5, 29)), (2019, (5, 18)),
+        (2020, (5, 7)), (2021, (5, 26)), (2022, (5, 16)), (2023, (5, 5)),
+        (2024, (5, 23)), (2025, (5, 12)), (2026, (5, 31)), (2027, (5, 20)),
+    )), frozenset({"religious"}), "LK", "Vesak", "en"),
+
+    # ---- Jurisdiction-invariant secular / cross-anglosphere fixed days ----
+    # These are the same rule everywhere they are spoken, so they need no
+    # per-locale tier: Halloween (31 Oct), St Valentine's (14 Feb) and
+    # St Patrick's (17 Mar, a statutory holiday in Ireland) are fixed Gregorian
+    # dates; Thanksgiving here is the **U.S.** rule (4th Thursday of November).
+    # Canada's Thanksgiving is the 2nd Monday of October — a genuinely
+    # different rule — so the ``thanksgiving`` surface is offered for ``en``
+    # only under the documented U.S. reading; a Canadian reference needs its own
+    # jurisdiction-scoped resolution (out of scope here, and NOT silently
+    # resolved to the U.S. date).
+    WellKnownHoliday("halloween", FixedRule(10, 31),
+                     frozenset({"unofficial"}), "US", "Halloween", "en"),
+    WellKnownHoliday("valentines", FixedRule(2, 14),
+                     frozenset({"unofficial"}), "US", "Valentine's Day", "en"),
+    WellKnownHoliday("st_patricks", FixedRule(3, 17),
+                     frozenset({"public", "religious"}),
+                     "IE", "Saint Patrick's Day", "en"),
+    WellKnownHoliday("thanksgiving", NthWeekdayRule(11, 4, 3),
+                     frozenset({"public"}), "US", "Thanksgiving", "en"),
 )
 
 #: ``key -> WellKnownHoliday`` for O(1) lookup by the resolver.
 WELL_KNOWN_BY_KEY: Dict[str, WellKnownHoliday] = {w.key: w for w in WELL_KNOWN}
+
+
+# --------------------------------------------------------------------------
+# Second tier — JURISDICTION-BOUND well-known holidays.
+#
+# Some holiday *names* only pick out a date once a jurisdiction is assumed: the
+# same colloquial name resolves to a DIFFERENT rule in different countries.
+# "Mother's Day" is the 2nd Sunday of May in the U.S./Germany/Italy/Netherlands,
+# the 1st Sunday of May in Portugal/Spain, and the last Sunday of May in France;
+# "Father's Day" is the 3rd Sunday of June in the U.S./France/Netherlands, but
+# 19 March (St Joseph) in Portugal/Spain/Italy and Ascension Day in Germany.
+# A single ``WELL_KNOWN`` entry (one key, one rule) cannot honestly carry that,
+# so these live in a second tier keyed by ``(key, lang)``: the rule offered for
+# a surface is chosen by the *locale's* documented jurisdiction default.
+#
+# Jurisdiction-default decisions (the fact each locale is bound to):
+#   pt->PT  es->ES  ca->ES  gl->ES  de->DE  fr->FR  it->IT  nl->NL  en->US
+# (``en`` is deliberately given the U.S. reading and no other; a multi-country
+# anglosphere name like "independence day" is NOT added here — it is left
+# unresolved because no single country is implied, and inventing one would be
+# dishonest. A jurisdiction word would be required to disambiguate it.)
+# --------------------------------------------------------------------------
+@dataclass(frozen=True)
+class JurisdictionKnownHoliday:
+    """A well-known holiday whose rule depends on the speaking ``lang``'s country.
+
+    ``key`` is the language-neutral base identifier (``mothers_day``);
+    ``lang`` is the locale this binding serves; ``kind`` is the rule that
+    locale's jurisdiction default fixes. ``jurisdiction`` records the country
+    the default reflects (provenance for ``explain``). The date interface
+    mirrors :class:`WellKnownHoliday` so the resolver treats both tiers alike.
+    """
+
+    key: str
+    lang: str
+    kind: RuleKind
+    categories: FrozenSet[str]
+    jurisdiction: str
+    span_shape: str = "day"
+
+    def date_for(self, year: int) -> Optional[Tuple[AstroDate, str]]:
+        obs = self.kind.observances(year)
+        return obs[0] if obs else None
+
+    def span_for(self, year: int) -> Optional[Tuple[DateSpan, str]]:
+        got = self.date_for(year)
+        if got is None:
+            return None
+        date, basis = got
+        return _shape_span(date, basis, self.span_shape), basis
+
+
+_MD_2SUN_MAY = NthWeekdayRule(5, 2, 6)   # 2nd Sunday of May
+_MD_1SUN_MAY = NthWeekdayRule(5, 1, 6)   # 1st Sunday of May
+_MD_LAST_SUN_MAY = NthWeekdayRule(5, -1, 6)  # last Sunday of May
+_FD_3SUN_JUN = NthWeekdayRule(6, 3, 6)   # 3rd Sunday of June
+_FD_MAR19 = FixedRule(3, 19)             # 19 March (St Joseph)
+_FD_ASCENSION = EasterOffsetRule(39)     # Ascension Day (Germany, Vatertag)
+_UNOFF = frozenset({"unofficial"})
+
+#: The jurisdiction-bound second tier (see the block comment above).
+JURISDICTION_KNOWN: Tuple[JurisdictionKnownHoliday, ...] = (
+    # Mother's Day — rule per the locale's jurisdiction default.
+    JurisdictionKnownHoliday("mothers_day", "en", _MD_2SUN_MAY, _UNOFF, "US"),
+    JurisdictionKnownHoliday("mothers_day", "de", _MD_2SUN_MAY, _UNOFF, "DE"),
+    JurisdictionKnownHoliday("mothers_day", "it", _MD_2SUN_MAY, _UNOFF, "IT"),
+    JurisdictionKnownHoliday("mothers_day", "nl", _MD_2SUN_MAY, _UNOFF, "NL"),
+    JurisdictionKnownHoliday("mothers_day", "pt", _MD_1SUN_MAY, _UNOFF, "PT"),
+    JurisdictionKnownHoliday("mothers_day", "es", _MD_1SUN_MAY, _UNOFF, "ES"),
+    JurisdictionKnownHoliday("mothers_day", "ca", _MD_1SUN_MAY, _UNOFF, "ES"),
+    JurisdictionKnownHoliday("mothers_day", "gl", _MD_1SUN_MAY, _UNOFF, "ES"),
+    JurisdictionKnownHoliday("mothers_day", "fr", _MD_LAST_SUN_MAY, _UNOFF, "FR"),
+    # Father's Day — rule per the locale's jurisdiction default.
+    JurisdictionKnownHoliday("fathers_day", "en", _FD_3SUN_JUN, _UNOFF, "US"),
+    JurisdictionKnownHoliday("fathers_day", "fr", _FD_3SUN_JUN, _UNOFF, "FR"),
+    JurisdictionKnownHoliday("fathers_day", "nl", _FD_3SUN_JUN, _UNOFF, "NL"),
+    JurisdictionKnownHoliday("fathers_day", "pt", _FD_MAR19, _UNOFF, "PT"),
+    JurisdictionKnownHoliday("fathers_day", "es", _FD_MAR19, _UNOFF, "ES"),
+    JurisdictionKnownHoliday("fathers_day", "ca", _FD_MAR19, _UNOFF, "ES"),
+    JurisdictionKnownHoliday("fathers_day", "gl", _FD_MAR19, _UNOFF, "ES"),
+    JurisdictionKnownHoliday("fathers_day", "it", _FD_MAR19, _UNOFF, "IT"),
+    JurisdictionKnownHoliday("fathers_day", "de", _FD_ASCENSION, _UNOFF, "DE"),
+)
+
+#: ``(key, lang) -> JurisdictionKnownHoliday`` for the resolver.
+JURISDICTION_KNOWN_BY_KEY_LANG: Dict[Tuple[str, str], JurisdictionKnownHoliday] = {
+    (j.key, j.lang): j for j in JURISDICTION_KNOWN}
+
+#: The set of second-tier base keys (``well_known.tab`` may name these too).
+JURISDICTION_KNOWN_KEYS: FrozenSet[str] = frozenset(
+    j.key for j in JURISDICTION_KNOWN)
 
 _WELL_KNOWN_FILE = os.path.join(_DATA_DIR, "i18n", "well_known.tab")
 
@@ -1332,7 +1543,7 @@ def load_well_known_aliases(path: str = _WELL_KNOWN_FILE
                 raise ValueError(
                     f"malformed well-known line (need 3 columns): {line!r}")
             key, lang, cell = cols[0], cols[1], cols[2]
-            if key not in WELL_KNOWN_BY_KEY:
+            if key not in WELL_KNOWN_BY_KEY and key not in JURISDICTION_KNOWN_KEYS:
                 raise ValueError(
                     f"well_known.tab names unknown holiday key {key!r}")
             surfaces = tuple(s.strip() for s in cell.split(";;") if s.strip())
@@ -1377,13 +1588,32 @@ def well_known_surfaces(lang: str) -> Dict[str, str]:
             surfaces.add(wk.anchor_name)
         for surface in surfaces:
             out[surface.strip().lower()] = wk.key
+    # Second tier: jurisdiction-bound holidays contribute a surface only in the
+    # locale they are bound to (its surfaces live under the base key in
+    # well_known.tab); the resolver picks the per-``(key, lang)`` rule.
+    for j in JURISDICTION_KNOWN:
+        if j.lang != lang.lower():
+            continue
+        for surface in aliases.get((j.key, lang.lower()), ()):
+            out[surface.strip().lower()] = j.key
     return out
 
 
-def well_known_source(key: str) -> str:
-    """The provenance label ``"JURIS:name"`` for a well-known ``key``."""
-    wk = WELL_KNOWN_BY_KEY[key]
-    return f"{wk.anchor_jurisdiction}:{wk.anchor_name}"
+def well_known_source(key: str, lang: Optional[str] = None) -> str:
+    """The provenance label ``"JURIS:name"`` for a well-known ``key``.
+
+    First-tier keys resolve straight from :data:`WELL_KNOWN_BY_KEY`; a
+    second-tier (jurisdiction-bound) key needs ``lang`` to pick the binding, and
+    its label is the bound country plus the base key.
+    """
+    wk = WELL_KNOWN_BY_KEY.get(key)
+    if wk is not None:
+        return f"{wk.anchor_jurisdiction}:{wk.anchor_name}"
+    if lang is not None:
+        j = JURISDICTION_KNOWN_BY_KEY_LANG.get((key, lang.lower()))
+        if j is not None:
+            return f"{j.jurisdiction}:{j.key}"
+    return f":{key}"
 
 
 def is_civil_holiday(date, jurisdiction: str,

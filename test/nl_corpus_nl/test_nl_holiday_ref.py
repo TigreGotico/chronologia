@@ -74,3 +74,58 @@ def test_no_holiday_no_match(text):
 @pytest.mark.xfail(reason="holiday/surname homograph out of scope")
 def test_name_homograph_should_not_bind():
     nomatch("de familie kerst woont hier")
+
+
+# ==========================================================================
+# EXPANDED SET -- non-Christian / non-Western well-known holidays.
+# Anchor stays 2017-06-27 (Tuesday); bare = next occurrence on or after it.
+# Movable non-Gregorian dates come from independent published tables,
+# cross-checked against this engine's own tabulated calendars (Umm al-Qura,
+# arithmetic Hebrew, tabulated Chinese, arithmetic Solar Hijri) and, where no
+# closed form is modelled here (Diwali, Vesak), from the WELL_KNOWN decree
+# tables. Mother's/Father's Day use this locale's jurisdiction default.
+# ==========================================================================
+
+_EXPANDED = [
+    ('suikerfeest', (2018, 6, 15)),
+    ('ramadan', (2018, 5, 16)),
+    ('islamitisch nieuwjaar', (2017, 9, 21)),
+    ('rosj hasjana', (2017, 9, 21)),
+    ('jom kipoer', (2017, 9, 30)),
+    ('pesach', (2018, 3, 31)),
+    ('chanoeka', (2017, 12, 13)),
+    ('chinees nieuwjaar', (2018, 2, 16)),
+    ('maanfeest', (2017, 10, 4)),
+    ('noroez', (2018, 3, 21)),
+    ('diwali', (2017, 10, 19)),
+    ('vesak', (2018, 5, 29)),
+    ('halloween', (2017, 10, 31)),
+    ('valentijnsdag', (2018, 2, 14)),
+    ('moederdag', (2018, 5, 13)),
+    ('vaderdag', (2018, 6, 17)),
+    ('offerfeest', (2017, 9, 1)),
+]
+
+
+@pytest.mark.parametrize("text,ymd", _EXPANDED)
+def test_bare_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+    assert span(text).width == timedelta(days=1)
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ('diwali 2026', (2026, 11, 8)),
+    ('chinees nieuwjaar 2026', (2026, 2, 17)),
+    ('pesach 2026', (2026, 4, 2)),
+])
+def test_explicit_year_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+
+
+@pytest.mark.parametrize("text", [
+    'de rijstprijs steeg',
+    'een kom soep',
+    'een werkvergadering',
+])
+def test_expanded_no_match(text):
+    nomatch(text)
