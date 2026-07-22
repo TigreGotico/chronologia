@@ -1,0 +1,34 @@
+# civil-holidays v1
+# jurisdiction: TZ
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Tanzania
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Mwaka Mpya                         | 1 1                 | public          |  |  |  |
+fixed         | Mapinduzi ya Zanzibar              | 1 12                | public          |  |  |  |
+easter        | Ijumaa Kuu                         | -2                  | public          |  |  |  |
+fixed         | Siku ya kumbukumbu ya Rais wa Kwanza wa Serikali ya Mapinduzi Zanzibar Sheikh Abeid Amani Karume| 4 7                 | public          |  |  |  |
+easter        | Jumatatu ya Pasaka                 | 1                   | public          |  |  |  |
+decree        | Eid El-Fitri                       | 2024-4-10 2024-4-11 2025-3-31 2025-4-1| public          |  |  |  |
+fixed         | Muungano wa Tanzania               | 4 26                | public          |  |  |  |
+fixed         | Sikukuu ya Wafanyakazi Ulimwenguni | 5 1                 | public          |  |  |  |
+decree        | Eid El Hajj                        | 2024-6-17 2025-6-7  | public          |  |  |  |
+fixed         | Sabasaba                           | 7 7                 | public          |  |  |  |
+fixed         | Sikukuu ya Wakulima                | 8 8                 | public          |  |  |  |
+decree        | Maulidi                            | 2024-9-16 2025-9-4  | public          |  |  |  |
+fixed         | Kumbukumbu ya Mwalimu Nyerere na Kilele cha mbio za Mwenge| 10 14               | public          |  |  |  |
+fixed         | Uhuru na Jamhuri                   | 12 9                | public          |  |  |  |
+fixed         | Kuzaliwa Kristo                    | 12 25               | public          |  |  |  |
+fixed         | Siku ya Kupeana Zawadi             | 12 26               | public          |  |  |  |

@@ -1,0 +1,31 @@
+# civil-holidays v1
+# jurisdiction: RO
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Romania
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+decree        | Anul Nou                           | 2024-1-1 2024-1-2 2025-1-1 2025-1-2| public          |  |  |  |
+fixed         | Ziua Unirii Principatelor Române   | 1 24                | public          |  |  |  |
+decree        | Vinerea Mare                       | 2024-5-3 2025-4-18  | public          |  |  |  |
+decree        | Paștele                            | 2024-5-5 2024-5-6 2025-4-20 2025-4-21| public          |  |  |  |
+fixed         | Ziua Muncii                        | 5 1                 | public          |  |  |  |
+fixed         | Ziua Copilului                     | 6 1                 | public          |  |  |  |
+decree        | Rusaliile                          | 2024-6-23 2024-6-24 2025-6-8 2025-6-9| public          |  |  |  |
+fixed         | Adormirea Maicii Domnului          | 8 15                | public          |  |  |  |
+fixed         | Sfântul Apostol Andrei, cel Întâi chemat, Ocrotitorul României| 11 30               | public          |  |  |  |
+fixed         | Ziua Națională a României          | 12 1                | public          |  |  |  |
+decree        | Crăciunul                          | 2024-12-25 2024-12-26 2025-12-25 2025-12-26| public          |  |  |  |
+fixed         | Botezul Domnului - Boboteaza       | 1 6                 | public          |  |  |  |
+fixed         | Soborul Sfântului Proroc Ioan Botezătorul| 1 7                 | public          |  |  |  |

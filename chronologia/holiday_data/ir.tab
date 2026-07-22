@@ -1,0 +1,44 @@
+# civil-holidays v1
+# jurisdiction: IR
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Iran
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+decree        | ولادت امام علی علیه السلام و روز پدر| 2024-1-25 2025-1-14 | public          |  |  |  |
+decree        | پیروزی انقلاب اسلامی               | 2024-2-11 2025-2-10 | public          |  |  |  |
+decree        | مبعث رسول اکرم (ص)                 | 2024-2-8 2025-1-28  | public          |  |  |  |
+decree        | ولادت حضرت قائم عجل الله تعالی فرجه و جشن نیمه شعبان| 2024-2-25 2025-2-14 | public          |  |  |  |
+decree        | روز ملی شدن صنعت نفت ایران         | 2024-3-19 2025-3-19 | public          |  |  |  |
+decree        | جشن نوروز                          | 2024-3-20 2025-3-21 | public          |  |  |  |
+decree        | عیدنوروز                           | 2024-3-21 2024-3-22 2024-3-23 2025-3-22 2025-3-23 2025-3-24| public          |  |  |  |
+decree        | روز جمهوری اسلامی                  | 2024-3-31 2025-4-1  | public          |  |  |  |
+decree        | روز طبیعت                          | 2024-4-1 2025-4-2   | public          |  |  |  |
+decree        | شهادت حضرت علی علیه السلام         | 2024-4-1 2025-3-22  | public          |  |  |  |
+decree        | عید سعید فطر                       | 2024-4-10 2025-3-31 | public          |  |  |  |
+decree        | تعطیل به مناسبت عید سعید فطر       | 2024-4-11 2025-4-1  | public          |  |  |  |
+decree        | شهادت امام جعفر صادق علیه السلام   | 2024-5-4 2025-4-24  | public          |  |  |  |
+decree        | رحلت حضرت امام خمینی               | 2024-6-3 2025-6-4   | public          |  |  |  |
+decree        | قیام 15 خرداد                      | 2024-6-4 2025-6-5   | public          |  |  |  |
+decree        | عید سعید قربان                     | 2024-6-17 2025-6-6  | public          |  |  |  |
+decree        | عید سعید غدیر خم                   | 2024-6-25 2025-6-14 | public          |  |  |  |
+decree        | تاسوعای حسینی                      | 2024-7-15 2025-7-5  | public          |  |  |  |
+decree        | عاشورای حسینی                      | 2024-7-16 2025-7-6  | public          |  |  |  |
+decree        | اربعین حسینی                       | 2024-8-25 2025-8-14 | public          |  |  |  |
+decree        | رحلت رسول اکرم؛شهادت امام حسن مجتبی علیه السلام| 2024-9-2 2025-8-22  | public          |  |  |  |
+decree        | شهادت امام رضا علیه السلام         | 2024-9-4 2025-8-24  | public          |  |  |  |
+decree        | شهادت امام حسن عسکری علیه السلام   | 2024-9-12 2025-9-1  | public          |  |  |  |
+decree        | میلاد رسول اکرم و امام جعفر صادق علیه السلام| 2024-9-21 2025-9-10 | public          |  |  |  |
+decree        | شهادت حضرت فاطمه زهرا سلام الله علیها| 2024-12-5 2025-11-24| public          |  |  |  |
+decree        | آخرین روز سال                      | 2025-3-20           | public          |  |  |  |

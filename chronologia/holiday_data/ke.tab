@@ -1,0 +1,36 @@
+# civil-holidays v1
+# jurisdiction: KE
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Kenya
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Siku ya Mwaka Mpya                 | 1 1                 | public          |  |  |  |
+easter        | Ijumaa Kuu                         | -2                  | public          |  |  |  |
+easter        | Jumatatu ya Pasaka                 | 1                   | public          |  |  |  |
+decree        | Sikukuu ya Idd-ul-Fitr             | 2024-4-10           | public          |  |  |  |
+fixed         | Siku ya Kazi                       | 5 1                 | public          |  |  |  |
+fixed         | Siku ya Madaraka                   | 6 1                 | public          |  |  |  |
+fixed         | Siku ya Utamaduni                  | 10 10               | public          |  |  |  |
+fixed         | Siku ya Mashujaa                   | 10 20               | public          |  |  |  |
+decree        | Siku ya Kitaifa ya Kupanda Miti    | 2024-5-10           | public          |  |  |  |
+fixed         | Siku ya Jamhuri                    | 12 12               | public          |  |  |  |
+fixed         | Siku ya Krismasi                   | 12 25               | public          |  |  |  |
+fixed         | Siku ya Ndondi                     | 12 26               | public          |  |  |  |
+decree        | Siku ya Mashujaa (imezingatiwa)    | 2024-10-21          | public          |  |  |  |
+decree        | Siku ya Uzinduzi                   | 2024-11-1           | public          |  |  |  |
+decree        | Sikukuu ya Idd-ul-Fitr (inakadiriwa)| 2025-3-30           | public          |  |  |  |
+decree        | Sikukuu ya Idd-ul-Fitr (inazingatiwa, inakadiriwa)| 2025-3-31           | public          |  |  |  |
+decree        | Siku ya Madaraka (imezingatiwa)    | 2025-6-2            | public          |  |  |  |
+fixed         | Siku ya Mazingira                  | 10 10               | public          |  |  |  |

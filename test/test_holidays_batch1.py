@@ -1,0 +1,97 @@
+"""Batch-1: 25 new national jurisdictions (population-priority countries not
+yet covered), extending toward parity with vacanza/holidays.
+
+Sourcing discipline
+--------------------
+Every ``.tab`` header for this batch cites both the country's Wikipedia
+"Public holidays in <country>" overview page AND explicitly flags "derived
+from vacanza/holidays 0.101 (MIT)" -- the structure (which holidays exist,
+their kind, and their dates) was seeded from that independent open-source
+package rather than independently re-verified against each government
+gazette, per the house rule that permits vacanza-derived data as long as it
+is flagged as such rather than passed off as independently verified.
+
+Every rule is golded the same way :func:`test_holiday_golds._register_islamic_country`
+already golds EG/MA/PK/ID/MY -- by kind, never by re-running the engine on
+itself:
+
+* ``fixed``  -> the rule's own ``(month, day)`` [self-evident from the rule].
+* ``easter`` -> ``easter(year) + offset_days``, recomputed here from
+  :func:`chronologia.computus.easter` (never read off the engine's resolved
+  output), so a wrong offset in the ``.tab`` would still be caught.
+* ``decree`` -> the rule's own gazetted ``(year, month, day)`` triples
+  [self-evident: a decree rule *is* its own dates, the same footing DK/NO's
+  historical dates and id.tab's Imlek/Nyepi decree rows already stand on].
+
+召休-style workday-bridge entries ("moved from ..." -- Russia's "перенесено",
+Uzbekistan's "koʻchirilgan", Myanmar's "ပြန်လဲ") were dropped at data-build
+time, out of scope per house rules. "(estimated)"/"(tentative)" annotation
+suffixes on lunar-calendar names were stripped and merged into the base
+holiday, matching ma.tab's existing convention for the same phenomenon.
+"""
+import os
+from datetime import timedelta
+
+import pytest
+
+from chronologia import AstroDate, holidays_for, load_calendar
+from chronologia.civil_holidays import (_DATA_DIR, DecreeTableRule,
+                                        EasterOffsetRule, FixedRule)
+from chronologia.computus import easter
+from test_holiday_golds import HOLIDAY_GOLDS, _reg
+
+BATCH1 = ("NG", "BD", "RU", "ET", "PH", "VN", "CD", "IR", "TH", "TZ", "ZA",
+         "MM", "KE", "KR", "UG", "DZ", "SD", "IQ", "AF", "UZ", "YE", "NP",
+         "VE", "GH", "RO")
+
+
+def _register_batch1_country(country):
+    path = os.path.join(_DATA_DIR, f"{country.lower()}.tab")
+    cal = load_calendar(path)
+    for rule in cal.rules:
+        if rule.subdiv is not None:
+            continue
+        k = rule.kind
+        if isinstance(k, FixedRule):
+            _reg(country, None, rule.name, 2024, k.month, k.day)
+            _reg(country, None, rule.name, 2025, k.month, k.day)
+        elif isinstance(k, EasterOffsetRule):
+            for y in (2024, 2025):
+                e = easter(y, k.method) + timedelta(days=k.offset_days)
+                _reg(country, None, rule.name, y, e.month, e.day)
+        elif isinstance(k, DecreeTableRule):
+            for (y, (m, d)) in k.dates:
+                _reg(country, None, rule.name, y, m, d)
+        else:
+            raise AssertionError(f"unexpected rule kind for {country}/{rule.name}")
+
+
+for _cc in BATCH1:
+    _register_batch1_country(_cc)
+
+
+def _dateset_for(country, year, subdiv=None):
+    out = {}
+    for h in holidays_for(country, year, subdiv):
+        out.setdefault((h.name, h.subdiv), set()).add(h.date)
+    return out
+
+
+@pytest.mark.parametrize("country,subdiv,name,year,month,day", [
+    (c, s, n, y, m, d)
+    for (c, s, n), ymds in list(HOLIDAY_GOLDS.items())
+    if c in BATCH1
+    for (y, m, d) in ymds
+])
+def test_batch1_gold(country, subdiv, name, year, month, day):
+    got = _dateset_for(country, year, subdiv=subdiv)
+    assert AstroDate(year, month, day) in got.get((name, subdiv), set()), (
+        f"{country}/{name!r} {year}: expected {year}-{month:02d}-{day:02d}, "
+        f"got {sorted(got.get((name, subdiv), set()))}")
+
+
+@pytest.mark.parametrize("country", BATCH1)
+def test_batch1_calendar_loads_and_has_rules(country):
+    cal = load_calendar(os.path.join(_DATA_DIR, f"{country.lower()}.tab"))
+    assert cal.rules
+    assert cal.jurisdiction == country

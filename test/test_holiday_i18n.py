@@ -241,6 +241,12 @@ _PRIMARY_LANG = {
     "IE": "en", "IT": "it", "MA": "ar", "MX": "es", "MY": "ms", "NL": "nl",
     "NO": "no", "PE": "es", "PK": "en", "PL": "pl", "SE": "sv", "SK": "sk",
     "UY": "es",
+    # batch-1 (25 new national jurisdictions):
+    "NG": "en", "BD": "bn", "RU": "ru", "ET": "am", "PH": "fil", "VN": "vi",
+    "CD": "fr", "IR": "fa", "TH": "th", "TZ": "sw", "ZA": "en", "MM": "my",
+    "KE": "sw", "KR": "ko", "UG": "en", "DZ": "ar", "SD": "ar", "IQ": "ar",
+    "AF": "fa", "UZ": "uz", "YE": "ar", "NP": "ne", "VE": "es", "GH": "en",
+    "RO": "ro",
 }
 _MATRIX_LANGS = ("en", "pt", "es", "de", "fr")
 

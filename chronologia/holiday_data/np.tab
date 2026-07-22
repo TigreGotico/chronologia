@@ -1,0 +1,54 @@
+# civil-holidays v1
+# jurisdiction: NP
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Nepal
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | पृथ्वी जयन्ती                      | 1 11                | public          |  |  |  |
+decree        | माघे संक्रान्ति                    | 2024-1-15 2025-1-14 | public          |  |  |  |
+decree        | सोनम ल्होछार                       | 2024-2-10 2025-1-30 | public          |  |  |  |
+decree        | शहीद दिवस                          | 2024-1-30 2025-1-29 | public          |  |  |  |
+decree        | महाशिवरात्रि                       | 2024-3-8 2025-2-26  | public          |  |  |  |
+fixed         | राष्ट्रिय प्रजातन्त्र दिवस         | 2 19                | public          |  |  |  |
+decree        | ग्याल्पो ल्होसार                   | 2024-3-11 2025-2-28 | public          |  |  |  |
+decree        | फागुपूर्णिमा                       | 2024-3-24 2025-3-13 | public          |  |  |  |
+decree        | फागुपूर्णिमा (तराई)                | 2024-3-25 2025-3-14 | public          |  |  |  |
+fixed         | अन्तर्राष्ट्रिय महिला दिवस         | 3 8                 | public          |  |  |  |
+decree        | राम नवमी                           | 2024-4-17 2025-4-6  | public          |  |  |  |
+decree        | नेपाली नयाँ वर्ष                   | 2024-4-13 2025-4-14 | public          |  |  |  |
+decree        | ईद (ईद उल फित्र)                   | 2024-4-11 2025-3-31 | public          |  |  |  |
+fixed         | अन्तर्राष्ट्रिय श्रम दिवस          | 5 1                 | public          |  |  |  |
+decree        | बुद्ध जयन्ती                       | 2024-5-23 2025-5-12 | public          |  |  |  |
+decree        | गणतन्त्र दिवस                      | 2024-5-28 2025-5-28 | public          |  |  |  |
+decree        | बकर ईद (ईद उल अजहा)                | 2024-6-17 2025-6-7  | public          |  |  |  |
+decree        | जनै पूर्णिमा                       | 2024-8-19 2025-8-9  | public          |  |  |  |
+decree        | श्रीकृष्ण जन्माष्टमी               | 2024-8-26 2025-8-16 | public          |  |  |  |
+decree        | संविधान दिवस                       | 2024-9-19 2025-9-19 | public          |  |  |  |
+decree        | घटस्थापना                          | 2024-10-3 2025-9-22 | public          |  |  |  |
+decree        | फुलपाती                            | 2024-10-10 2025-9-29| public          |  |  |  |
+decree        | महा अष्टमी                         | 2024-10-11 2025-9-30| public          |  |  |  |
+decree        | महा नवमी                           | 2024-10-11 2025-10-1| public          |  |  |  |
+decree        | विजया दशमी                         | 2024-10-12 2025-10-2| public          |  |  |  |
+decree        | एकादशी (दशैं)                      | 2024-10-13 2025-10-3| public          |  |  |  |
+decree        | दुवादशी (दशैं)                     | 2024-10-14 2025-10-4| public          |  |  |  |
+decree        | लक्ष्मीपूजा                        | 2024-10-31 2025-10-20| public          |  |  |  |
+decree        | गाई तिहार                          | 2024-11-1 2025-10-21| public          |  |  |  |
+decree        | गोवर्धन पूजा                       | 2024-11-2 2025-10-22| public          |  |  |  |
+decree        | म्ह पूजा                           | 2024-11-2 2025-10-22| public          |  |  |  |
+decree        | भाइटीका                            | 2024-11-3 2025-10-23| public          |  |  |  |
+decree        | तिहार बिदा                         | 2024-11-4 2025-10-24| public          |  |  |  |
+decree        | छठ पर्व                            | 2024-11-7 2025-10-27| public          |  |  |  |
+fixed         | क्रिसमसको दिन                      | 12 25               | public          |  |  |  |
+decree        | तमु ल्हाेसार                       | 2024-12-30 2025-12-30| public          |  |  |  |
