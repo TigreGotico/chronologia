@@ -152,8 +152,10 @@ _EU_HOUR_FORMS = {
     "seirak": 6, "zazpirak": 7, "zortzirak": 8, "bederatziak": 9,
     "hamarrak": 10, "hamaikak": 11, "hamabiak": 12,
 }
+# NB: a bare "k" is deliberately excluded -- it collides with the "k.a."/
+# "k.o." era abbreviations the tokenizer shears to a "k" fragment.
 _EU_NUM_SUFFIX = frozenset({
-    "a", "an", "ean", "ko", "ren", "k",
+    "a", "an", "ean", "n", "ko", "eko", "ren",
     "garren", "garrena", "garrenean",
 })
 _eu_numfold = _make_fold("eu", _EU_HOUR_FORMS)
