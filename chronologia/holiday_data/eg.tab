@@ -53,5 +53,5 @@ fixed  | عيد الجلاء | 6 18 | school |  |  |  |
 # `country_holidays(cc, categories=(...))` output, per the house rule
 # that permits vacanza-derived data when flagged as such (retrieved
 # 2026-07-22). ---
-decree | عيد الفطر المبارك | 2024-4-9 2024-4-12 2025-3-29 2025-4-1 | government |  |  |  |
-decree | عيد الأضحى المبارك | 2024-6-19 2025-6-9 | government |  |  |  |
+decree | عيد الفطر المبارك | 2024-4-9 2024-4-12 2025-3-29 2025-4-1 2026-3-20 2026-3-21 | government |  |  |  |
+decree | عيد الأضحى المبارك | 2024-6-19 2025-6-9 2026-5-27 2027-5-16 | government |  |  |  |

@@ -30,7 +30,7 @@ easter        | Sábado de Gloria                              | -1 | public    
 fixed         | Día de las Américas                           | 4 14 | public          |  |  |  |
 fixed         | Día del Trabajo                               | 5 1 | public          |  |  |  |
 fixed         | Día de la Independencia                       | 9 15 | public          |  |  |  |
-decree        | Semana Morazánica (1)                         | 2024-10-2 2025-10-1 | public          |  |  |  |
-decree        | Semana Morazánica (2)                         | 2024-10-3 2025-10-2 | public          |  |  |  |
-decree        | Semana Morazánica (3)                         | 2024-10-4 2025-10-3 | public          |  |  |  |
+decree        | Semana Morazánica (1)                         | 2024-10-2 2025-10-1 2026-10-7 2027-10-6 | public          |  |  |  |
+decree        | Semana Morazánica (2)                         | 2024-10-3 2025-10-2 2026-10-8 2027-10-7 | public          |  |  |  |
+decree        | Semana Morazánica (3)                         | 2024-10-4 2025-10-3 2026-10-9 2027-10-8 | public          |  |  |  |
 fixed         | Navidad                                       | 12 25 | public          |  |  |  |

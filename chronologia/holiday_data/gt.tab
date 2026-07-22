@@ -28,7 +28,7 @@ easter        | Jueves Santo                                  | -3 | public     
 easter        | Viernes Santo                                 | -2 | public          |  |  |  |
 easter        | Sábado Santo                                  | -1 | public          |  |  |  |
 fixed         | Día del Trabajo                               | 5 1 | public          |  |  |  |
-decree        | Día del Ejército                              | 2024-7-1 2025-6-30 | public          |  |  |  |
+decree        | Día del Ejército                              | 2024-7-1 2025-6-30 2026-6-29 2027-6-28 | public          |  |  |  |
 fixed         | Día de la Asunción                            | 8 15 | public          |  |  |  |
 fixed         | Día de la Independencia                       | 9 15 | public          |  |  |  |
 fixed         | Día de la Revolución                          | 10 20 | public          |  |  |  |

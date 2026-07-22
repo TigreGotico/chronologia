@@ -38,13 +38,13 @@ fixed  | Navidad                                                     | 12 25 | p
 # Monday, leaving Fri/Sat/Sun/Mon in place — San Martín's 17 Aug thus lands on
 # 21 Aug in 2023 (Thu) but stays on 17 Aug in 2024/2025 (Sat/Sun); Güemes'
 # 17 Jun likewise varies — so both are gazetted decree rows.)
-decree | Paso a la Inmortalidad del General Don José de San Martín       | 2023-08-21 2024-08-17 2025-08-17 | public |  |
-decree | Paso a la Inmortalidad del General Don Martín Miguel de Güemes | 2023-06-17 2024-06-17 2025-06-16 | public |  |
-decree | Día del Respeto a la Diversidad Cultural | 2023-10-16 2024-10-12 2025-10-12 | public |  |
-decree | Día de la Soberanía Nacional             | 2023-11-20 2024-11-18 2025-11-24 | public |  |
+decree | Paso a la Inmortalidad del General Don José de San Martín       | 2023-08-21 2024-08-17 2025-08-17 2026-08-17 2027-08-16 | public |  |
+decree | Paso a la Inmortalidad del General Don Martín Miguel de Güemes | 2023-06-17 2024-06-17 2025-06-16 2026-06-15 2027-06-21 | public |  |
+decree | Día del Respeto a la Diversidad Cultural | 2023-10-16 2024-10-12 2025-10-12 2026-10-12 2027-10-11 | public |  |
+decree | Día de la Soberanía Nacional             | 2023-11-20 2024-11-18 2025-11-24 2026-11-23 2027-11-20 | public |  |
 #
 # --- decree-tabulated feriados con fines turísticos (annual bridge days) ---
-decree | Feriado con fines turísticos | 2023-05-26 2023-06-19 2023-10-13 2024-04-01 2024-06-21 2024-10-11 2025-05-02 2025-08-15 2025-11-21 | public |  |
+decree | Feriado con fines turísticos | 2023-05-26 2023-06-19 2023-10-13 2024-04-01 2024-06-21 2024-10-11 2025-05-02 2025-08-15 2025-11-21 2026-03-23 2026-07-10 2026-12-07 | public |  |
 
 # --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
 # Extra non-default-category rows cross-checked against vacanza/holidays

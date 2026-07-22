@@ -29,13 +29,13 @@ fixed         | Novruz bayramı (2)                     | 3 21 | public         
 fixed         | Novruz bayramı (3)                     | 3 22 | public          |  |  |  |
 fixed         | Novruz bayramı (4)                     | 3 23 | public          |  |  |  |
 fixed         | Novruz bayramı (5)                     | 3 24 | public          |  |  |  |
-decree        | Ramazan bayrami (1)                    | 2024-4-10 2025-3-30 | public          |  |  |  |
-decree        | Ramazan bayrami (2)                    | 2024-4-11 2025-3-31 | public          |  |  |  |
+decree        | Ramazan bayrami (1)                    | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
+decree        | Ramazan bayrami (2)                    | 2024-4-11 2025-3-31 2026-3-21 2027-3-10 | public          |  |  |  |
 fixed         | Faşizm üzərində qələbə günü               | 5 9 | public          |  |  |  |
 fixed         | Müstəqillik Günü                       | 5 28 | public          |  |  |  |
 fixed         | Azərbaycan xalqının milli qurtuluş günü    | 6 15 | public          |  |  |  |
-decree        | Qurban bayrami (1)                     | 2024-6-16 2025-6-6  | public          |  |  |  |
-decree        | Qurban bayrami (2)                     | 2024-6-17 2025-6-7  | public          |  |  |  |
+decree        | Qurban bayrami (1)                     | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  |
+decree        | Qurban bayrami (2)                     | 2024-6-17 2025-6-7 2026-5-28 2027-5-17  | public          |  |  |  |
 fixed         | Azərbaycan Respublikasının Silahlı Qüvvələri günü | 6 26 | public          |  |  |  |
 decree        | Bələdiyyə seçkiləri                     | 2025-1-29           | public          |  |  |  |
 fixed         | Zəfər Günü                            | 11 8 | public          |  |  |  |

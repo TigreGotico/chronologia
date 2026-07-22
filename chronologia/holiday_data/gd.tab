@@ -29,9 +29,9 @@ easter        | Easter Monday                            | 1 gregorian          
 fixed         | Labour Day                               | 5 1                  | public          |  |  |  |
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
 easter        | Corpus Christi                           | 60 gregorian         | public          |  |  |  |
-decree        | Emancipation Day                         | 2024-8-5 2025-8-1    | public          |  |  |  |
-decree        | Carnival Monday                          | 2024-8-12 2025-8-11  | public          |  |  |  |
-decree        | Carnival Tuesday                         | 2024-8-13 2025-8-12  | public          |  |  |  |
+decree        | Emancipation Day                         | 2024-8-5 2025-8-1 2026-8-1 2027-8-1    | public          |  |  |  |
+decree        | Carnival Monday                          | 2024-8-12 2025-8-11 2026-8-10 2027-8-9  | public          |  |  |  |
+decree        | Carnival Tuesday                         | 2024-8-13 2025-8-12 2026-8-11 2027-8-10  | public          |  |  |  |
 fixed         | National Heroes' Day                     | 10 19                | public          |  |  |  |
 fixed         | Thanksgiving Day                         | 10 25                | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |

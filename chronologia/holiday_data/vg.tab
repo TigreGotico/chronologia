@@ -23,16 +23,16 @@
 #
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
-decree        | The Anniversary of the Birth of Hamilton Lavity Stoutt | 2024-3-4 2025-3-3    | public          |  |  |  |
+decree        | The Anniversary of the Birth of Hamilton Lavity Stoutt | 2024-3-4 2025-3-3 2026-3-2 2027-3-1    | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
-decree        | Sovereign's Birthday                     | 2024-6-14 2025-6-13  | public          |  |  |  |
-decree        | Virgin Islands Day                       | 2024-7-1 2025-7-7    | public          |  |  |  |
-decree        | Emancipation Monday                      | 2024-8-5 2025-8-4    | public          |  |  |  |
-decree        | Emancipation Tuesday                     | 2024-8-6 2025-8-5    | public          |  |  |  |
-decree        | Emancipation Wednesday                   | 2024-8-7 2025-8-6    | public          |  |  |  |
-decree        | Heroes and Foreparents Day               | 2024-10-21 2025-10-20 | public          |  |  |  |
-decree        | The Great March of 1949 and Restoration Day | 2024-11-25 2025-11-24 | public          |  |  |  |
+decree        | Sovereign's Birthday                     | 2024-6-14 2025-6-13 2026-6-12 2027-6-11  | public          |  |  |  |
+decree        | Virgin Islands Day                       | 2024-7-1 2025-7-7 2026-7-6 2027-7-5    | public          |  |  |  |
+decree        | Emancipation Monday                      | 2024-8-5 2025-8-4 2026-8-3 2027-8-2    | public          |  |  |  |
+decree        | Emancipation Tuesday                     | 2024-8-6 2025-8-5 2026-8-4 2027-8-3    | public          |  |  |  |
+decree        | Emancipation Wednesday                   | 2024-8-7 2025-8-6 2026-8-5 2027-8-4    | public          |  |  |  |
+decree        | Heroes and Foreparents Day               | 2024-10-21 2025-10-20 2026-10-19 2027-10-18 | public          |  |  |  |
+decree        | The Great March of 1949 and Restoration Day | 2024-11-25 2025-11-24 2026-11-23 2027-11-22 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

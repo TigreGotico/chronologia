@@ -22,14 +22,14 @@
 #
 fixed         | New Year's Day                       | 1 1                  | public          |  |  |  |
 fixed         | Robert Gabriel Mugabe National Youth Day | 2 21                 | public          |  |  |  |
-decree        | Good Friday                          | 2024-3-29            | public          |  |  |  |
+decree        | Good Friday                          | 2024-3-29 2026-4-3 2027-3-26            | public          |  |  |  |
 easter        | Easter Saturday                      | -1                   | public          |  |  |  |
 easter        | Easter Monday                        | 1                    | public          |  |  |  |
-decree        | Independence Day                     | 2024-4-18            | public          |  |  |  |
+decree        | Independence Day                     | 2024-4-18 2026-4-18 2027-4-18            | public          |  |  |  |
 fixed         | Workers' Day                         | 5 1                  | public          |  |  |  |
 fixed         | Africa Day                           | 5 25                 | public          |  |  |  |
-decree        | Zimbabwe Heroes' Day                 | 2024-8-12 2025-8-11  | public          |  |  |  |
-decree        | Defense Forces Day                   | 2024-8-13 2025-8-12  | public          |  |  |  |
+decree        | Zimbabwe Heroes' Day                 | 2024-8-12 2025-8-11 2026-8-10 2027-8-9  | public          |  |  |  |
+decree        | Defense Forces Day                   | 2024-8-13 2025-8-12 2026-8-11 2027-8-10  | public          |  |  |  |
 fixed         | Unity Day                            | 12 22                | public          |  |  |  |
 decree        | Unity Day (observed)                 | 2024-12-23           | public          |  |  |  |
 fixed         | Christmas Day                        | 12 25                | public          |  |  |  |

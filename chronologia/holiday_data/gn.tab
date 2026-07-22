@@ -22,13 +22,13 @@
 #
 fixed         | Fête du Nouvel an                    | 1 1                  | public          |  |  |  |
 easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
-decree        | Lendemain de la nuit Lailatoul Qadr  | 2024-4-6 2025-3-27   | public          |  |  |  |
-decree        | Jour de l'Aïd el-Fitr                | 2024-4-10 2025-3-31  | public          |  |  |  |
+decree        | Lendemain de la nuit Lailatoul Qadr  | 2024-4-6 2025-3-27 2026-3-16 2027-3-6   | public          |  |  |  |
+decree        | Jour de l'Aïd el-Fitr                | 2024-4-10 2025-3-31 2026-3-20 2027-3-9  | public          |  |  |  |
 fixed         | Fête du Travail                      | 5 1                  | public          |  |  |  |
 fixed         | Anniversaire de l'Union Africaine    | 5 25                 | public          |  |  |  |
-decree        | Jour de la Tabaski                   | 2024-6-16 2025-6-7   | public          |  |  |  |
-decree        | Lendemain de la Tabaski              | 2024-6-17 2025-6-8   | public          |  |  |  |
+decree        | Jour de la Tabaski                   | 2024-6-16 2025-6-7 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Lendemain de la Tabaski              | 2024-6-17 2025-6-8 2026-5-28 2027-5-17   | public          |  |  |  |
 fixed         | Assomption                           | 8 15                 | public          |  |  |  |
-decree        | Lendemain de la nuit du Maoloud      | 2024-9-15 2025-9-5   | public          |  |  |  |
+decree        | Lendemain de la nuit du Maoloud      | 2024-9-15 2025-9-5 2026-8-25 2027-8-14   | public          |  |  |  |
 fixed         | Fête anniversaire de l'indépendance de la Guinée | 10 2                 | public          |  |  |  |
 fixed         | Fête de Noël                         | 12 25                | public          |  |  |  |

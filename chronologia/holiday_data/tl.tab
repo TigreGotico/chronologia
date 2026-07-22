@@ -25,11 +25,11 @@
 fixed         | Dia de Ano Novo                          | 1 1                  | public          |  |  |  |
 fixed         | Dia dos Veteranos                        | 3 3                  | public          |  |  |  |
 easter        | Sexta-Feira Santa                        | -2 gregorian         | public          |  |  |  |
-decree        | Idul Fitri                               | 2024-4-10 2025-3-31  | public          |  |  |  |
+decree        | Idul Fitri                               | 2024-4-10 2025-3-31 2026-3-20 2027-3-9  | public          |  |  |  |
 fixed         | Dia Mundial do Trabalhador               | 5 1                  | public          |  |  |  |
 fixed         | Dia da Restauração da Independência      | 5 20                 | public          |  |  |  |
 easter        | Festa do Corpo de Deus                   | 60 gregorian         | public          |  |  |  |
-decree        | Idul Adha                                | 2024-6-17 2025-6-6   | public          |  |  |  |
+decree        | Idul Adha                                | 2024-6-17 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
 fixed         | Dia da Consulta Popular                  | 8 30                 | public          |  |  |  |
 fixed         | Dia de Todos os Santos                   | 11 1                 | public          |  |  |  |
 fixed         | Dia de Todos os Fiéis Defuntos           | 11 2                 | public          |  |  |  |

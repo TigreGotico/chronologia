@@ -36,15 +36,15 @@ fixed  | Independence Day               | 8 15  | public          | |  |  |
 fixed  | Mahatma Gandhi Jayanti         | 10 2  | public          | |  |  |
 fixed  | Christmas Day                  | 12 25 | public religious | |  |  |
 decree | Maha Shivaratri                | 2024-3-8 2025-2-26 | public religious | |  |  |
-decree | Holi                           | 2024-3-25 2025-3-14 | public religious | |  |  |
-decree | Id-Ul-Fitr (Ramadan Eid)       | 2024-4-11 2025-3-31 | public religious | |  |  |
-decree | Ram Navami                     | 2024-4-17 | public religious | |  |  |
-decree | Bakri Id                       | 2024-6-17 | public religious | |  |  |
-decree | Muharram                       | 2024-7-17 | public religious | |  |  |
-decree | Diwali Laxmi Pujan             | 2024-11-1 2025-10-21 | public religious | |  |  |
-decree | Guru Nanak Jayanti              | 2024-11-15 2025-11-5 | public religious | |  |  |
-decree | Mahavir Jayanti                | 2025-4-10 | public religious | |  |  |
-decree | Dr. Baba Saheb Ambedkar Jayanti | 2025-4-14 | public          | |  |  |
-decree | Ganesh Chaturthi               | 2025-8-27 | public religious | |  |  |
-decree | Dussehra                       | 2025-10-2 | public religious | |  |  |
-decree | Diwali Balipratipada           | 2025-10-22 | public religious | |  |  |
+decree | Holi                           | 2024-3-25 2025-3-14 2026-3-4 2027-3-22 | public religious | |  |  |
+decree | Id-Ul-Fitr (Ramadan Eid)       | 2024-4-11 2025-3-31 2027-3-10 | public religious | |  |  |
+decree | Ram Navami                     | 2024-4-17 2026-3-26 2027-4-15 | public religious | |  |  |
+decree | Bakri Id                       | 2024-6-17 2026-5-28 2027-5-17 | public religious | |  |  |
+decree | Muharram                       | 2024-7-17 2026-6-26 2027-6-16 | public religious | |  |  |
+decree | Diwali Laxmi Pujan             | 2024-11-1 2025-10-21 2027-10-29 | public religious | |  |  |
+decree | Guru Nanak Jayanti              | 2024-11-15 2025-11-5 2026-11-24 | public religious | |  |  |
+decree | Mahavir Jayanti                | 2025-4-10 2026-3-31 | public religious | |  |  |
+decree | Dr. Baba Saheb Ambedkar Jayanti | 2025-4-14 2026-4-14 2027-4-14 | public          | |  |  |
+decree | Ganesh Chaturthi               | 2025-8-27 2026-9-14 | public religious | |  |  |
+decree | Dussehra                       | 2025-10-2 2026-10-20 | public religious | |  |  |
+decree | Diwali Balipratipada           | 2025-10-22 2026-11-10 | public religious | |  |  |

@@ -24,7 +24,7 @@
 
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | King's Birthday                          | 2024-11-15 2025-11-14 | public          |  |  |  |
+decree        | King's Birthday                          | 2024-11-15 2025-11-14 2026-11-13 2027-11-12 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |
 

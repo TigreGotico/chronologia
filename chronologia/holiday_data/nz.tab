@@ -23,8 +23,8 @@ fixed         | Waitangi Day                          | 2 6 | public          | 
 easter        | Good Friday                           | -2 | public          |  |  |  |
 easter        | Easter Monday                          | 1 | public          |  |  |  |
 fixed         | Anzac Day                             | 4 25 | public          |  |  |  |
-decree        | King's Birthday                        | 2024-6-3 2025-6-2   | public          |  |  |  |
-decree        | Matariki                              | 2024-6-28 2025-6-20 | public          |  |  |  |
-decree        | Labour Day                            | 2024-10-28 2025-10-27 | public          |  |  |  |
+decree        | King's Birthday                        | 2024-6-3 2025-6-2 2026-6-1 2027-6-7   | public          |  |  |  |
+decree        | Matariki                              | 2024-6-28 2025-6-20 2026-7-10 2027-6-25 | public          |  |  |  |
+decree        | Labour Day                            | 2024-10-28 2025-10-27 2026-10-26 2027-10-25 | public          |  |  |  |
 fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
 fixed         | Boxing Day                            | 12 26 | public          |  |  |  |

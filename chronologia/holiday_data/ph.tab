@@ -22,20 +22,20 @@ decree        | Karagdagang Espesyal na Araw (Walang Trabajo)| 2024-2-9 2024-11-
 easter        | Huwebes Santo                      | -3                  | public          |  |  |  |
 easter        | Biyernes Santo                     | -2                  | public          |  |  |  |
 easter        | Sabado de Gloria                   | -1                  | public          |  |  |  |
-decree        | Araw ng Kagitingan                 | 2024-4-9 2025-4-9   | public          |  |  |  |
-decree        | Eid al-Fitr                        | 2024-4-10 2025-4-1  | public          |  |  |  |
+decree        | Araw ng Kagitingan                 | 2024-4-9 2025-4-9 2026-4-9 2027-4-9   | public          |  |  |  |
+decree        | Eid al-Fitr                        | 2024-4-10 2025-4-1 2026-3-20  | public          |  |  |  |
 fixed         | Araw ng Paggawa                    | 5 1                 | public          |  |  |  |
 fixed         | Araw ng Kalayaan                   | 6 12                | public          |  |  |  |
-decree        | Eid al-Adha                        | 2024-6-17 2025-6-6  | public          |  |  |  |
-decree        | Araw ng Kabayanihan ni Ninoy Aquino| 2024-8-23 2025-8-21 | public          |  |  |  |
-decree        | Araw ng mga Bayani                 | 2024-8-26 2025-8-25 | public          |  |  |  |
+decree        | Eid al-Adha                        | 2024-6-17 2025-6-6 2026-5-27  | public          |  |  |  |
+decree        | Araw ng Kabayanihan ni Ninoy Aquino| 2024-8-23 2025-8-21 2026-8-21 2027-8-21 | public          |  |  |  |
+decree        | Araw ng mga Bayani                 | 2024-8-26 2025-8-25 2026-8-31 2027-8-30 | public          |  |  |  |
 decree        | Araw ng Halalan (Walang Trabajo)   | 2025-5-12           | public          |  |  |  |
 fixed         | Araw ng mga Santo                  | 11 1                | public          |  |  |  |
-decree        | Araw ng Kabayanihan ni Bonifacio   | 2024-11-30 2025-11-30| public          |  |  |  |
+decree        | Araw ng Kabayanihan ni Bonifacio   | 2024-11-30 2025-11-30 2026-11-30 2027-11-30| public          |  |  |  |
 fixed         | Dakilang Kapistahan ng Kalinis-linisang Paglilihi sa Mahal na Birheng Maria| 12 8                | public          |  |  |  |
 fixed         | Pasko                              | 12 25               | public          |  |  |  |
 fixed         | Araw ng Kabayanihan ni Rizal       | 12 30               | public          |  |  |  |
 fixed         | Bisperas ng Bagong Taon            | 12 31               | public          |  |  |  |
-decree        | Bagong Taon ng mga Tsino           | 2024-2-10 2025-1-29 | public          |  |  |  |
+decree        | Bagong Taon ng mga Tsino           | 2024-2-10 2025-1-29 2026-2-17 2027-2-6 | public          |  |  |  |
 decree        | Bisperas ng Araw ng mga Santo      | 2025-10-31          | public          |  |  |  |
 fixed         | Bisperas ng Pasko                  | 12 24               | public          |  |  |  |

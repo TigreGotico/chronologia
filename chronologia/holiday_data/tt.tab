@@ -26,14 +26,14 @@ fixed         | New Year's Day                           | 1 1                  
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 fixed         | Spiritual Baptist Liberation Day         | 3 30                 | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | Eid-Ul-Fitr                              | 2024-4-10 2025-3-31  | public          |  |  |  |
+decree        | Eid-Ul-Fitr                              | 2024-4-10 2025-3-31 2026-3-20 2027-3-9  | public          |  |  |  |
 easter        | Corpus Christi                           | 60 gregorian         | public          |  |  |  |
 fixed         | Indian Arrival Day                       | 5 30                 | public          |  |  |  |
 fixed         | Labour Day                               | 6 19                 | public          |  |  |  |
 fixed         | African Emancipation Day                 | 8 1                  | public          |  |  |  |
 fixed         | Independence Day                         | 8 31                 | public          |  |  |  |
 fixed         | Republic Day                             | 9 24                 | public          |  |  |  |
-decree        | Divali                                   | 2024-10-31 2025-10-20 | public          |  |  |  |
+decree        | Divali                                   | 2024-10-31 2025-10-20 2026-11-08 2027-10-28 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |
 

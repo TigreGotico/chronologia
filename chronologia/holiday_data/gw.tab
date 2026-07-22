@@ -27,9 +27,9 @@ fixed         | Dia dos Heróis Nacionais                 | 1 20                
 fixed         | Dia do Início da Luta Armada             | 1 23                 | public          |  |  |  |
 fixed         | Dia Internacional da Mulher              | 3 8                  | public          |  |  |  |
 easter        | Páscoa                                   | 0 gregorian          | public          |  |  |  |
-decree        | Korité                                   | 2024-4-10 2025-3-30  | public          |  |  |  |
+decree        | Korité                                   | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
 fixed         | Dia do Trabalhador                       | 5 1                  | public          |  |  |  |
-decree        | Tabaski                                  | 2024-6-16 2025-6-6   | public          |  |  |  |
+decree        | Tabaski                                  | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
 fixed         | Dia de Pidjiguiti                        | 8 3                  | public          |  |  |  |
 fixed         | Dia da Independência                     | 9 24                 | public          |  |  |  |
 fixed         | Dia de Natal                             | 12 25                | public          |  |  |  |

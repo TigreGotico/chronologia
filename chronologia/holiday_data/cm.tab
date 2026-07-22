@@ -24,14 +24,14 @@ fixed         | New Year's Day                       | 1 1                  | pu
 fixed         | Youth Day                            | 2 11                 | public          |  |  |  |
 decree        | Youth Day (observed)                 | 2024-2-12            | public          |  |  |  |
 easter        | Good Friday                          | -2                   | public          |  |  |  |
-decree        | Eid al-Fitr                          | 2024-4-10 2025-3-30  | public          |  |  |  |
+decree        | Eid al-Fitr                          | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
 fixed         | Labour Day                           | 5 1                  | public          |  |  |  |
 easter        | Ascension Day                        | 39                   | public          |  |  |  |
 fixed         | National Day                         | 5 20                 | public          |  |  |  |
-decree        | Eid al-Adha                          | 2024-6-16 2025-6-6   | public          |  |  |  |
-decree        | Eid al-Adha (observed, estimated)    | 2024-6-17            | public          |  |  |  |
+decree        | Eid al-Adha                          | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Eid al-Adha (observed, estimated)    | 2024-6-17 2027-5-17            | public          |  |  |  |
 fixed         | Assumption Day                       | 8 15                 | public          |  |  |  |
-decree        | Mawlid                               | 2024-9-15 2025-9-4   | public          |  |  |  |
+decree        | Mawlid                               | 2024-9-15 2025-9-4 2026-8-25 2027-8-14   | public          |  |  |  |
 decree        | Mawlid (observed, estimated)         | 2024-9-16            | public          |  |  |  |
 fixed         | Christmas Day                        | 12 25                | public          |  |  |  |
 decree        | Eid al-Fitr (observed, estimated)    | 2025-3-31            | public          |  |  |  |

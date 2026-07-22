@@ -15,10 +15,10 @@
 #
 fixed         | 양력설                                 | 1 1 | public          |  |  |  |
 fixed         | 조선인민군창건일                            | 2 8 | public          |  |  |  |
-decree        | 설명절                                 | 2024-2-10 2025-1-29 | public          |  |  |  |
+decree        | 설명절                                 | 2024-2-10 2025-1-29 2026-2-17 2027-2-7 | public          |  |  |  |
 fixed         | 광명성절 (1)                             | 2 16 | public          |  |  |  |
 fixed         | 광명성절 (2)                             | 2 17 | public          |  |  |  |
-decree        | 대보름                                 | 2024-2-24 2025-2-12 | public          |  |  |  |
+decree        | 대보름                                 | 2024-2-24 2025-2-12 2026-3-3 2027-2-21 | public          |  |  |  |
 fixed         | 국제부녀절                               | 3 8 | public          |  |  |  |
 fixed         | 청명                                  | 4 4 | public          |  |  |  |
 fixed         | 태양절 (1)                              | 4 15 | public          |  |  |  |
@@ -31,7 +31,7 @@ fixed         | 조국해방절                               | 8 15 | public   
 fixed         | 선군절                                 | 8 25 | public          |  |  |  |
 fixed         | 청년절                                 | 8 28 | public          |  |  |  |
 fixed         | 조선민주주의인민공화국창건일                       | 9 9 | public          |  |  |  |
-decree        | 추석                                  | 2024-9-17 2025-10-6 | public          |  |  |  |
+decree        | 추석                                  | 2024-9-17 2025-10-6 2026-9-25 2027-9-15 | public          |  |  |  |
 fixed         | 조선로동당창건일                            | 10 10 | public          |  |  |  |
 fixed         | 어머니날                                | 11 16 | public          |  |  |  |
 fixed         | 사회주의헌법절                             | 12 27 | public          |  |  |  |

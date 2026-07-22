@@ -27,7 +27,7 @@ fixed         | New Year's Day                           | 1 1                  
 fixed         | Bounty Day                               | 1 23                 | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | King's Birthday                          | 2024-6-3 2025-6-2    | public          |  |  |  |
+decree        | King's Birthday                          | 2024-6-3 2025-6-2 2026-6-1 2027-6-7    | public          |  |  |  |
 fixed         | Pitcairn Day                             | 7 2                  | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

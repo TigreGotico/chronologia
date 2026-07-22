@@ -36,15 +36,15 @@ calendar_date | Muharram                   | islamic_civil 1 10  | public religi
 calendar_date | Milad-un-Nabi              | islamic_civil 3 12  | public religious |  |
 #
 # --- Hindu / Buddhist / Sikh / Jain lunisolar (per-year gazette DECREE data) ---
-decree        | Holi              | 2023-3-8 2024-3-25 2025-3-14 2026-3-4    | public religious |  |
-decree        | Ram Navami        | 2023-3-30 2024-4-17 2025-4-6 2026-3-26   | public religious |  |
-decree        | Mahavir Jayanti   | 2023-4-4 2024-4-21 2025-4-10 2026-3-31   | public religious |  |
-decree        | Buddha Purnima    | 2023-5-5 2024-5-23 2025-5-12 2026-5-1    | public religious |  |
-decree        | Janmashtami       | 2023-9-7 2024-8-26 2025-8-16 2026-9-4    | public religious |  |
-decree        | Dussehra          | 2023-10-24 2024-10-12 2025-10-2 2026-10-20 | public religious |  |
-decree        | Diwali (Deepavali)| 2023-11-12 2024-10-31 2025-10-20 2026-11-8 | public religious |  |
-decree        | Guru Nanak's Jayanti | 2023-11-27 2024-11-15 2025-11-5 2026-11-24 | public religious |  |
-decree        | Maha Shivaratri   | 2024-3-8 2025-2-26 2026-2-15             | public religious |  |
+decree        | Holi              | 2023-3-8 2024-3-25 2025-3-14 2026-3-4 2027-3-22    | public religious |  |
+decree        | Ram Navami        | 2023-3-30 2024-4-17 2025-4-6 2026-3-26 2027-4-15   | public religious |  |
+decree        | Mahavir Jayanti   | 2023-4-4 2024-4-21 2025-4-10 2026-3-31 2027-4-18   | public religious |  |
+decree        | Buddha Purnima    | 2023-5-5 2024-5-23 2025-5-12 2026-5-1 2027-5-20    | public religious |  |
+decree        | Janmashtami       | 2023-9-7 2024-8-26 2025-8-16 2026-9-4 2027-8-25    | public religious |  |
+decree        | Dussehra          | 2023-10-24 2024-10-12 2025-10-2 2026-10-20 2027-10-09 | public religious |  |
+decree        | Diwali (Deepavali)| 2023-11-12 2024-10-31 2025-10-20 2026-11-8 2027-10-29 | public religious |  |
+decree        | Guru Nanak's Jayanti | 2023-11-27 2024-11-15 2025-11-5 2026-11-24 2027-11-14 | public religious |  |
+decree        | Maha Shivaratri   | 2024-3-8 2025-2-26 2026-2-15 2027-3-6             | public religious |  |
 
 
 # --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
@@ -71,7 +71,7 @@ decree | Magh Bihu; Pongal | 2024-1-15 | optional |  |  |  |
 decree | Basant Panchami / Sri Panchami | 2024-2-14 2025-2-2 | optional |  |  |  |
 decree | Guru Ravi Das's Jayanti | 2024-2-24 2025-2-12 | optional |  |  |  |
 decree | Swami Dayanand Saraswati's Jayanti | 2024-3-6 2025-2-23 | optional |  |  |  |
-decree | Maha Shivaratri | 2024-3-8 | optional |  |  |  |
+decree | Maha Shivaratri | 2024-3-8 2027-3-6 | optional |  |  |  |
 decree | Dolyatra; Holika Dahan | 2024-3-24 2025-3-13 | optional |  |  |  |
 decree | Chaitra Sukladi; Cheti Chand; Gudi Padwa; Ugadi | 2024-4-9 2025-3-30 | optional |  |  |  |
 decree | Bahag Bihu; Meshadi (Tamil New Year's Day); Vaisakhadi; Vishu | 2024-4-14 | optional |  |  |  |
@@ -93,7 +93,7 @@ decree | Hazarat Ali's Birthday | 2024-1-25 | optional |  |  |  |
 decree | Jamat-Ul-Vida | 2024-4-5 2025-3-28 | optional |  |  |  |
 decree | Easter Sunday | 2024-3-31 2025-4-20 | optional |  |  |  |
 decree | Hazarat Ali's Birthday; Magh Bihu; Makar Sankranti; Pongal | 2025-1-14 | optional |  |  |  |
-decree | Ram Navami | 2025-4-6 | optional |  |  |  |
+decree | Ram Navami | 2025-4-6 2026-3-26 2027-4-15 | optional |  |  |  |
 decree | Meshadi (Tamil New Year's Day); Vishu | 2025-4-14 | optional |  |  |  |
 decree | Bahag Bihu; Vaisakhadi | 2025-4-15 | optional |  |  |  |
 decree | Janmashtami (Smarta); Parsi New Year | 2025-8-15 | optional |  |  |  |

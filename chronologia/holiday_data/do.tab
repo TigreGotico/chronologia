@@ -26,12 +26,12 @@
 fixed         | Año Nuevo                                     | 1 1 | public          |  |  |  |
 fixed         | Día de los Santos Reyes                       | 1 6 | public          |  |  |  |
 fixed         | Día de la Altagracia                          | 1 21 | public          |  |  |  |
-decree        | Día de Duarte                                 | 2024-1-29 2025-1-26 | public          |  |  |  |
+decree        | Día de Duarte                                 | 2024-1-29 2025-1-26 2026-1-26 2027-1-25 | public          |  |  |  |
 fixed         | Día de Independencia                          | 2 27 | public          |  |  |  |
 easter        | Viernes Santo                                 | -2 | public          |  |  |  |
-decree        | Día del Trabajo                               | 2024-4-29 2025-5-5 | public          |  |  |  |
+decree        | Día del Trabajo                               | 2024-4-29 2025-5-5 2026-5-4 2027-5-1 | public          |  |  |  |
 easter        | Corpus Christi                                | 60 | public          |  |  |  |
 fixed         | Día de la Restauración                        | 8 16 | public          |  |  |  |
 fixed         | Día de las Mercedes                           | 9 24 | public          |  |  |  |
-decree        | Día de la Constitución                        | 2024-11-4 2025-11-10 | public          |  |  |  |
+decree        | Día de la Constitución                        | 2024-11-4 2025-11-10 2026-11-9 2027-11-6 | public          |  |  |  |
 fixed         | Día de Navidad                                | 12 25 | public          |  |  |  |

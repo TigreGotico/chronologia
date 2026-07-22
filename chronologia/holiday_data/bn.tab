@@ -23,23 +23,23 @@
 #
 
 fixed         | Awal Tahun Masihi                        | 1 1                  | public          |  |  |  |
-decree        | Israk dan Mikraj                         | 2024-2-8 2025-1-27   | public          |  |  |  |
-decree        | Tahun Baru Cina                          | 2024-2-10 2025-1-29  | public          |  |  |  |
+decree        | Israk dan Mikraj                         | 2024-2-8 2025-1-27 2026-1-17   | public          |  |  |  |
+decree        | Tahun Baru Cina                          | 2024-2-10 2025-1-29 2026-2-17 2027-2-6  | public          |  |  |  |
 fixed         | Hari Kebangsaan                          | 2 23                 | public          |  |  |  |
 fixed         | Hari Kebangsaan (diperhatikan)           | 2 24                 | public          |  |  |  |
-decree        | Hari Pertama Berpuasa                    | 2024-3-12 2025-3-2   | public          |  |  |  |
-decree        | Hari Nuzul Al-Quran                      | 2024-3-28 2025-3-18  | public          |  |  |  |
-decree        | Hari Raya Aidil Fitri (1)                | 2024-4-10 2025-3-31  | public          |  |  |  |
-decree        | Hari Raya Aidil Fitri (2)                | 2024-4-11 2025-4-1   | public          |  |  |  |
-decree        | Hari Raya Aidil Fitri (3)                | 2024-4-12 2025-4-2   | public          |  |  |  |
-decree        | Hari Raya Aidil Fitri (diperhatikan)     | 2024-4-13            | public          |  |  |  |
+decree        | Hari Pertama Berpuasa                    | 2024-3-12 2025-3-2 2026-2-19   | public          |  |  |  |
+decree        | Hari Nuzul Al-Quran                      | 2024-3-28 2025-3-18 2026-3-7  | public          |  |  |  |
+decree        | Hari Raya Aidil Fitri (1)                | 2024-4-10 2025-3-31 2026-3-21 2027-3-9  | public          |  |  |  |
+decree        | Hari Raya Aidil Fitri (2)                | 2024-4-11 2025-4-1 2026-3-22 2027-3-10   | public          |  |  |  |
+decree        | Hari Raya Aidil Fitri (3)                | 2024-4-12 2025-4-2 2026-3-23 2027-3-11   | public          |  |  |  |
+decree        | Hari Raya Aidil Fitri (diperhatikan)     | 2024-4-13 2026-3-24            | public          |  |  |  |
 fixed         | Hari Angkatan Bersenjata Diraja Brunei   | 5 31                 | public          |  |  |  |
-decree        | Hari Angkatan Bersenjata Diraja Brunei (diperhatikan) | 2024-6-1             | public          |  |  |  |
-decree        | Hari Raya Aidil Adha                     | 2024-6-17 2025-6-7   | public          |  |  |  |
-decree        | Awal Tahun Hijrah                        | 2024-7-7 2025-6-27   | public          |  |  |  |
+decree        | Hari Angkatan Bersenjata Diraja Brunei (diperhatikan) | 2024-6-1 2026-6-1             | public          |  |  |  |
+decree        | Hari Raya Aidil Adha                     | 2024-6-17 2025-6-7 2026-5-27   | public          |  |  |  |
+decree        | Awal Tahun Hijrah                        | 2024-7-7 2025-6-27 2026-6-17   | public          |  |  |  |
 decree        | Awal Tahun Hijrah (diperhatikan)         | 2024-7-8 2025-6-28   | public          |  |  |  |
 fixed         | Hari Keputeraan KDYMM Sultan Brunei      | 7 15                 | public          |  |  |  |
-decree        | Maulidur Rasul                           | 2024-9-16 2025-9-5   | public          |  |  |  |
+decree        | Maulidur Rasul                           | 2024-9-16 2025-9-5 2026-8-25   | public          |  |  |  |
 fixed         | Hari Natal                               | 12 25                | public          |  |  |  |
 decree        | Hari Pertama Berpuasa (diperhatikan)     | 2025-3-3             | public          |  |  |  |
 decree        | Maulidur Rasul (diperhatikan)            | 2025-9-6             | public          |  |  |  |

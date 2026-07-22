@@ -24,13 +24,13 @@ fixed         | Jour de l'An                         | 1 1                  | pu
 fixed         | Journée de l'Armée                   | 1 20                 | public          |  |  |  |
 fixed         | Journée du 26 mars                   | 3 26                 | public          |  |  |  |
 easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
-decree        | Journée de la Fête du Ramadan        | 2024-4-9 2025-3-30   | public          |  |  |  |
+decree        | Journée de la Fête du Ramadan        | 2024-4-9 2025-3-30 2026-3-20 2027-3-9   | public          |  |  |  |
 fixed         | Fête du Travail                      | 5 1                  | public          |  |  |  |
 fixed         | Journée de l'Afrique                 | 5 25                 | public          |  |  |  |
-decree        | Journée de la Tabaski                | 2024-6-17 2025-6-7   | public          |  |  |  |
-decree        | Journée du Maouloud (Naissance du Prophète) | 2024-9-16            | public          |  |  |  |
+decree        | Journée de la Tabaski                | 2024-6-17 2025-6-7 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Journée du Maouloud (Naissance du Prophète) | 2024-9-16 2026-8-25 2027-8-14            | public          |  |  |  |
 fixed         | Fête Nationale de la République du Mali | 9 22                 | public          |  |  |  |
-decree        | Journée du Maouloud (Baptême du Prophète) | 2024-9-23            | public          |  |  |  |
+decree        | Journée du Maouloud (Baptême du Prophète) | 2024-9-23 2026-9-1 2027-8-21            | public          |  |  |  |
 fixed         | Fête de Noël                         | 12 25                | public          |  |  |  |
-decree        | Journée du Maouloud (Naissance du Prophète) (estimé) | 2025-9-4             | public          |  |  |  |
-decree        | Journée du Maouloud (Baptême du Prophète) (estimé) | 2025-9-11            | public          |  |  |  |
+decree        | Journée du Maouloud (Naissance du Prophète) (estimé) | 2025-9-4 2026-8-25 2027-8-14             | public          |  |  |  |
+decree        | Journée du Maouloud (Baptême du Prophète) (estimé) | 2025-9-11 2026-9-1 2027-8-21            | public          |  |  |  |

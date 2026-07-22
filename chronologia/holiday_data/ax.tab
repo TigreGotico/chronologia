@@ -31,9 +31,9 @@ fixed         | Vappu                                    | 5 1                  
 easter        | Helatorstai                              | 39 gregorian         | public          |  |  |  |
 easter        | Helluntaipäivä                           | 49 gregorian         | public          |  |  |  |
 fixed         | Ahvenanmaan itsehallintopäivä            | 6 9                  | public          |  |  |  |
-decree        | Juhannusaatto                            | 2024-6-21 2025-6-20  | public          |  |  |  |
-decree        | Juhannuspäivä                            | 2024-6-22 2025-6-21  | public          |  |  |  |
-decree        | Pyhäinpäivä                              | 2024-11-2 2025-11-1  | public          |  |  |  |
+decree        | Juhannusaatto                            | 2024-6-21 2025-6-20 2026-6-19 2027-6-25  | public          |  |  |  |
+decree        | Juhannuspäivä                            | 2024-6-22 2025-6-21 2026-6-20 2027-6-26  | public          |  |  |  |
+decree        | Pyhäinpäivä                              | 2024-11-2 2025-11-1 2026-10-31 2027-11-6  | public          |  |  |  |
 fixed         | Itsenäisyyspäivä                         | 12 6                 | public          |  |  |  |
 fixed         | Jouluaatto                               | 12 24                | public          |  |  |  |
 fixed         | Joulupäivä                               | 12 25                | public          |  |  |  |

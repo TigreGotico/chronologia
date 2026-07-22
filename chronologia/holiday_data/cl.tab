@@ -39,11 +39,11 @@ fixed  | Navidad                            | 12 25 | public religious |  |
 #
 # --- decree-tabulated movable / one-off feriados ---
 decree | Feriado nacional                   | 2023-01-02 | public |  |
-decree | Día Nacional de los Pueblos Indígenas | 2023-06-21 2024-06-20 2025-06-20 | public |  |
-decree | San Pedro y San Pablo              | 2023-06-26 2024-06-29 2025-06-29 | public religious |  |
-decree | Fiestas Patrias                    | 2024-09-20 | public |  |
-decree | Día del Encuentro de dos Mundos    | 2023-10-09 2024-10-12 2025-10-12 | public |  |
-decree | Día Nacional de las Iglesias Evangélicas y Protestantes | 2023-10-27 2024-10-31 2025-10-31 | public religious |  |
+decree | Día Nacional de los Pueblos Indígenas | 2023-06-21 2024-06-20 2025-06-20 2026-06-21 2027-06-21 | public |  |
+decree | San Pedro y San Pablo              | 2023-06-26 2024-06-29 2025-06-29 2026-06-29 2027-06-28 | public religious |  |
+decree | Fiestas Patrias                    | 2024-09-20 2027-09-17 | public |  |
+decree | Día del Encuentro de dos Mundos    | 2023-10-09 2024-10-12 2025-10-12 2026-10-12 2027-10-11 | public |  |
+decree | Día Nacional de las Iglesias Evangélicas y Protestantes | 2023-10-27 2024-10-31 2025-10-31 2026-10-31 2027-10-31 | public religious |  |
 
 # --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
 # Extra non-default-category rows cross-checked against vacanza/holidays

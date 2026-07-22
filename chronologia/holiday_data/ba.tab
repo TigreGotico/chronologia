@@ -20,11 +20,11 @@ fixed         | Nova godina (1)                       | 1 1 | public          | 
 fixed         | Nova godina (2)                       | 1 2 | public          |  |  |  |
 fixed         | Božić (Pravoslavni)                     | 1 7 | public          |  |  |  |
 easter        | Uskrsni ponedjeljak (Katolički)           | 1 | public          |  |  |  |
-decree        | Ramazanski Bajram                      | 2024-4-10 2025-3-30 | public          |  |  |  |
+decree        | Ramazanski Bajram                      | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
 fixed         | Međunarodni praznik rada (1)              | 5 1 | public          |  |  |  |
 fixed         | Međunarodni praznik rada (2)              | 5 2 | public          |  |  |  |
 easter        | Veliki petak (Pravoslavni)               | -2 julian_gregorian_date | public          |  |  |  |
-decree        | Kurban Bajram                          | 2024-6-16 2025-6-6  | public          |  |  |  |
+decree        | Kurban Bajram                          | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  |
 fixed         | Božić (Katolički)                      | 12 25 | public          |  |  |  |
 #
 # --- Federacija Bosne i Hercegovine (BA-BIH) / Brčko distrikt (BA-BRC) /

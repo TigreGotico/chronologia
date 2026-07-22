@@ -28,9 +28,9 @@ easter        | Good Friday                              | -2 gregorian         
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 decree        | May Bank Holiday                         | 2024-5-6             | public          |  |  |  |
 fixed         | Liberation Day                           | 5 9                  | public          |  |  |  |
-decree        | Spring Bank Holiday                      | 2024-5-27 2025-5-26  | public          |  |  |  |
+decree        | Spring Bank Holiday                      | 2024-5-27 2025-5-26 2026-5-25 2027-5-31  | public          |  |  |  |
 decree        | The visit of His Majesty King Charles III and Queen Camilla | 2024-7-15            | public          |  |  |  |
-decree        | Summer Bank Holiday                      | 2024-8-26 2025-8-25  | public          |  |  |  |
+decree        | Summer Bank Holiday                      | 2024-8-26 2025-8-25 2026-8-31 2027-8-30  | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |
-decree        | Early May Bank Holiday                   | 2025-5-5             | public          |  |  |  |
+decree        | Early May Bank Holiday                   | 2025-5-5 2026-5-4 2027-5-3             | public          |  |  |  |

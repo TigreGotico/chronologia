@@ -24,12 +24,12 @@
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | New Year's Day                                | 1 1 | public          |  |  |  |
-decree        | Isra' and Mi'raj                              | 2024-2-8 2025-1-27 | public          |  |  |  |
-decree        | Eid al-Fitr                                   | 2024-4-10 2025-3-30 | public          |  |  |  |
+decree        | Isra' and Mi'raj                              | 2024-2-8 2025-1-27 2026-1-16 2027-1-5 | public          |  |  |  |
+decree        | Eid al-Fitr                                   | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
 fixed         | Labour Day                                    | 5 1 | public          |  |  |  |
-decree        | Eid al-Adha                                   | 2024-6-16 2025-6-6 | public          |  |  |  |
+decree        | Eid al-Adha                                   | 2024-6-16 2025-6-6 2026-5-27 2027-5-16 | public          |  |  |  |
 fixed         | Independence Day                              | 6 26 | public          |  |  |  |
 fixed         | Republic Day                                  | 7 1 | public          |  |  |  |
-decree        | Islamic New Year                              | 2024-7-7 2025-6-26 | public          |  |  |  |
-decree        | Ashura                                        | 2024-7-16 2025-7-5 | public          |  |  |  |
-decree        | Prophet's Birthday                            | 2024-9-15 2025-9-4 | public          |  |  |  |
+decree        | Islamic New Year                              | 2024-7-7 2025-6-26 2026-6-16 2027-6-6 | public          |  |  |  |
+decree        | Ashura                                        | 2024-7-16 2025-7-5 2026-6-25 2027-6-15 | public          |  |  |  |
+decree        | Prophet's Birthday                            | 2024-9-15 2025-9-4 2026-8-25 2027-8-14 | public          |  |  |  |

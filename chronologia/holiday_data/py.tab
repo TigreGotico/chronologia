@@ -24,16 +24,16 @@
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | Año Nuevo                                     | 1 1 | public          |  |  |  |
-decree        | Día de los Héroes de la Patria                | 2024-3-1 2025-3-3 | public          |  |  |  |
+decree        | Día de los Héroes de la Patria                | 2024-3-1 2025-3-3 2026-3-1 2027-3-1 | public          |  |  |  |
 easter        | Jueves Santo                                  | -3 | public          |  |  |  |
 easter        | Viernes Santo                                 | -2 | public          |  |  |  |
 easter        | Domingo de Resurrección                       | 0 | public          |  |  |  |
 fixed         | Día de los Trabajadores                       | 5 1 | public          |  |  |  |
 fixed         | Feriado Nacional                              | 5 14 | public          |  |  |  |
 fixed         | Día de la Independencia Nacional              | 5 15 | public          |  |  |  |
-decree        | Día de la Paz del Chaco                       | 2024-6-10 2025-6-16 | public          |  |  |  |
+decree        | Día de la Paz del Chaco                       | 2024-6-10 2025-6-16 2026-6-12 2027-6-12 | public          |  |  |  |
 fixed         | Día de la Fundación de Asunción               | 8 15 | public          |  |  |  |
-decree        | Día de la Batalla de Boquerón                 | 2024-9-30 2025-9-29 | public          |  |  |  |
+decree        | Día de la Batalla de Boquerón                 | 2024-9-30 2025-9-29 2026-9-29 2027-9-29 | public          |  |  |  |
 fixed         | Día de la Virgen de Caacupé                   | 12 8 | public          |  |  |  |
 fixed         | Día de la Navidad                             | 12 25 | public          |  |  |  |
 
