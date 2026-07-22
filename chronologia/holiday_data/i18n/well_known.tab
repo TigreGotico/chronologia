@@ -651,3 +651,29 @@ diwali          | et | diwali
 vesak           | et | vesak
 halloween       | et | halloween
 valentines      | et | sõbrapäev
+#
+# ===== Hungarian =====
+new_year        | hu | újév ;; újév napja
+new_year_eve    | hu | szilveszter
+epiphany        | hu | vízkereszt ;; háromkirályok
+good_friday     | hu | nagypéntek
+easter          | hu | húsvét ;; húsvétvasárnap
+easter_monday   | hu | húsvéthétfő
+ascension       | hu | mennybemenetel
+pentecost       | hu | pünkösd
+all_saints      | hu | mindenszentek
+christmas_eve   | hu | szenteste ;; karácsony este
+christmas       | hu | karácsony ;; karácsony napja
+boxing_day      | hu | karácsony másnapja
+eid_al_fitr     | hu | id al-fitr ;; ramadán vége
+ramadan         | hu | ramadán
+rosh_hashanah   | hu | zsidó újév
+yom_kippur      | hu | jom kippur
+passover        | hu | pészah
+hanukkah        | hu | hanuka
+chinese_new_year| hu | kínai újév
+nowruz          | hu | novruz
+diwali          | hu | diváli
+vesak           | hu | vészák
+halloween       | hu | halloween
+valentines      | hu | valentin-nap ;; bálint-nap
