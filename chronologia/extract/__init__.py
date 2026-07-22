@@ -602,6 +602,33 @@ def extract_timespan(
     # the single-span core, or a lone endpoint's slice, re-uses these tokens --
     # the tokenizer is never run again on a substring.
     raw = pretokens(text, engine.spec)
+    return _resolve_span(text, raw, engine, anchor, enable, jurisdiction)
+
+
+def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
+    """The single recursive resolver over the token stream.
+
+    One entry, three composition cases tried in precedence order; each wider
+    case resolves its operand sub-spans by recursing back through this same
+    resolver's inner cases, so a bounded/open range is *one derivation* over
+    resolved sub-spans rather than a bolt-on run after the fact:
+
+    * **RANGE** ("from A to B" / "between A and B") -- the span from the left
+      endpoint's start to the right endpoint's end, each endpoint resolved by
+      recursing on its own token slice (:func:`_extract_range`);
+    * **OPEN_RANGE** ("until X" / "since X") -- one recursively-resolved
+      endpoint plus the "now" anchor (:func:`_extract_open_range`);
+    * **SINGLE** -- the single-span core: matcher/resolver plus the
+      business-day, anchored-offset, ordinal-count and week-of composition
+      cases, then the lone date + clock fold (:func:`_resolve_core`).
+
+    ``raw`` is the *pre-fold* stream (connectors still visible so a range
+    splits on the ``to``/``and`` the number fold would otherwise swallow); the
+    SINGLE case folds it.  A range/open-range endpoint recurses through the
+    SINGLE case only (via :func:`_resolve_endpoint`): endpoints are deliberately
+    **not** re-entered into range detection, so a pathological connector chain
+    cannot exhaust the stack.  Returns ``(span, remainder)`` or ``None``.
+    """
     rng = _extract_range(text, raw, engine, anchor)
     if rng is not None:
         return rng
