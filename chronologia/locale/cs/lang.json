@@ -5,6 +5,8 @@
                         "MARKER indef? UNIT", "indef? UNIT MARKER"]},
     "named_day": {"orders": ["DAY_WORD"]},
     "weekday_ref": {"orders": ["REL_MARKER WEEKDAY"]},
+    "rel_period": {"orders": ["REL_MARKER UNIT"]},
+    "weekend_ref": {"orders": ["REL_MARKER WEEKEND", "article? WEEKEND"]},
     "calendar_date": {
       "orders": ["DAY MONTH YEAR?", "DAY of MONTH YEAR?", "MONTH DAY? YEAR?"],
       "prefer_future": true

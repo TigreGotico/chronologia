@@ -55,6 +55,11 @@ def _add_months(dt: datetime, months: int) -> datetime:
     return dt.replace(year=year, month=month, day=day)
 
 
+#: week-start convention name -> Python weekday index (Monday=0)
+_WEEK_START = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
+               "friday": 4, "saturday": 5, "sunday": 6}
+
+
 def _midnight(dt: datetime) -> datetime:
     return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -265,6 +270,61 @@ class Resolver:
             week_start = base - timedelta(days=anchor.weekday())
             value = week_start + timedelta(days=target)
         return Resolution(_day_span(value), self._consumed(match))
+
+    def _resolve_rel_period(self, match, anchor):
+        """"next/last/this <period unit>": the whole calendar period that
+        contains the anchor -- the week, month, year, decade, ... -- shifted
+        by the relative marker.  Calendar-aligned and one-unit wide, so
+        "next week" tiles the seven days of the following week, "this month"
+        the anchor's own month, "last year" the preceding January-December.
+
+        The width IS the referential uncertainty (a seven-day span reads
+        WEEK, a year-wide span reads YEAR), matching the scoped-ordinal and
+        offset families.  Sub-day units and the fortnight have no calendar
+        container to align to, so they fall through to the offset family.
+        """
+        kind = self.spec.units.get(match.slots["UNIT"].text)
+        rel = self.spec.rel_markers[match.slots["REL_MARKER"].text]
+        if kind == "week":
+            base = _midnight(anchor)
+            start_idx = _WEEK_START.get(self.conventions.week_start, 0)
+            back = (anchor.weekday() - start_idx) % 7
+            week_start = base - timedelta(days=back) + timedelta(weeks=rel)
+            s = AstroDate.from_datetime(week_start)
+            return Resolution(DateSpan(s, s + timedelta(days=7)),
+                              self._consumed(match))
+        if kind == "day":
+            value = _midnight(anchor) + timedelta(days=rel)
+            return Resolution(_day_span(value), self._consumed(match))
+        if kind == "month":
+            base = _add_months(_midnight(anchor).replace(day=1), rel)
+            return Resolution(_gregorian_month_span(base.year, base.month),
+                              self._consumed(match))
+        steps = {"year": 1, "decade": 10, "century": 100, "millennium": 1000}
+        if kind in steps:
+            step = steps[kind]
+            start_year = (anchor.year // step) * step + rel * step
+            s = AstroDate(start_year, 1, 1)
+            return Resolution(DateSpan(s, _unit_end(s, kind)),
+                              self._consumed(match))
+        return None
+
+    def _resolve_weekend_ref(self, match, anchor):
+        """"this/next/last weekend": the Saturday-Sunday of the anchor's
+        week, shifted a whole week per the relative marker.  A two-day span,
+        Saturday midnight to Monday midnight; the two-day width reads as the
+        weekend it names, not the seven-day week.
+        """
+        rel_tok = match.slots.get("REL_MARKER")
+        rel = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
+        base = _midnight(anchor)
+        start_idx = _WEEK_START.get(self.conventions.week_start, 0)
+        week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
+        saturday = week_start + timedelta(days=(5 - start_idx) % 7)
+        sat = saturday + timedelta(weeks=rel)
+        s = AstroDate.from_datetime(sat)
+        return Resolution(DateSpan(s, s + timedelta(days=2)),
+                          self._consumed(match))
 
     def _resolve_calendar_date(self, match, anchor):
         month = self.spec.months[match.slots["MONTH"].text]

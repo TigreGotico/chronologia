@@ -27,7 +27,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, Mapping, Optional, Tuple
+from typing import Callable, FrozenSet, Mapping, Optional, Tuple
 
 from chronologia.astrodate import DateSpan
 
@@ -158,6 +158,8 @@ class LangSpec:
     clock_landmarks: Mapping[str, int] = field(default_factory=dict)
     # quantifier surface -> count ("a" -> 1, "couple" -> 2, "half" -> 0.5)
     quantifiers: Mapping[str, float] = field(default_factory=dict)
+    # weekend surface forms ("weekend", "fim de semana", "Wochenende", ...)
+    weekend_words: FrozenSet[str] = field(default_factory=frozenset)
 
 
 @dataclass(frozen=True)
