@@ -1,0 +1,28 @@
+# civil-holidays v1
+# jurisdiction: AF
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Afghanistan
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | روز آزادی                          | 2 15                | public          |  |  |  |
+decree        | اول رمضان                          | 2024-3-11 2025-3-1  | public          |  |  |  |
+decree        | عید فطر                            | 2024-4-10 2024-4-11 2024-4-12 2025-3-30 2025-3-31 2025-4-1| public          |  |  |  |
+fixed         | روز پیروزی مجاهدین                 | 4 28                | public          |  |  |  |
+decree        | روز عرفه                           | 2024-6-16 2025-6-6  | public          |  |  |  |
+decree        | عید قربانی                         | 2024-6-17 2024-6-18 2024-6-19 2025-6-7 2025-6-8 2025-6-9| public          |  |  |  |
+decree        | روز پیروزی امارت اسلامی            | 2024-8-14 2025-8-15 | public          |  |  |  |
+fixed         | روز استقلال افغانستان              | 8 19                | public          |  |  |  |
+fixed         | روز خروج آمریکایی ها               | 8 31                | public          |  |  |  |
+decree        | میلاد پیامبر                       | 2024-9-16 2025-9-5  | public          |  |  |  |
