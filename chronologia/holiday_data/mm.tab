@@ -1,0 +1,37 @@
+# civil-holidays v1
+# jurisdiction: MM
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Myanmar
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | လွတ်လပ်ရေးနေ့                      | 1 4                 | public          |  |  |  |
+fixed         | ပြည်ထောင်စုနေ့                     | 2 12                | public          |  |  |  |
+fixed         | တောင်သူလယ်သမားနေ့                  | 3 2                 | public          |  |  |  |
+decree        | တပေါင်းလပြည့်နေ့                   | 2024-3-24 2025-3-13 | public          |  |  |  |
+fixed         | တပ်မတော်နေ့                        | 3 27                | public          |  |  |  |
+decree        | မြန်မာနှစ်သစ်ကူး ရုံးပိတ်ရက်များ   | 2024-4-13 2024-4-14 2024-4-15 2024-4-16 2024-4-17 2024-4-18 2024-4-19 2024-4-20 2024-4-21 2025-4-13 2025-4-14 2025-4-15 2025-4-16 2025-4-17 2025-4-18 2025-4-19 2025-4-20 2025-4-21| public          |  |  |  |
+fixed         | မေဒေးနေ့                           | 5 1                 | public          |  |  |  |
+decree        | ကဆုန်လပြည့်နေ့                     | 2024-5-22 2025-5-11 | public          |  |  |  |
+decree        | အီဒုလ်အဿွဟာနေ့                     | 2024-6-17 2025-6-7  | public          |  |  |  |
+fixed         | အာဇာနည်နေ့                         | 7 19                | public          |  |  |  |
+decree        | ဝါဆိုလပြည့်နေ့                     | 2024-7-20 2025-7-9  | public          |  |  |  |
+decree        | သီတင်းကျွတ်ပိတ်ရက်များ             | 2024-10-16 2024-10-17 2024-10-18 2025-10-5 2025-10-6 2025-10-7| public          |  |  |  |
+decree        | ဒီပါဝလီနေ့                         | 2024-11-1 2025-10-21| public          |  |  |  |
+decree        | တန်ဆောင်တိုင်လပြည့်နေ့             | 2024-11-15 2025-11-4| public          |  |  |  |
+decree        | အမျိုးသားနေ့                       | 2024-11-25 2025-11-14| public          |  |  |  |
+fixed         | ခရစ္စမတ်နေ့                        | 12 25               | public          |  |  |  |
+decree        | ကရင်နှစ်သစ်ကူးနေ့                  | 2024-1-11 2024-12-30 2025-12-19| public          |  |  |  |
+fixed         | နိုင်ငံတကာနှစ်သစ်ကူးနေ့            | 1 1                 | public          |  |  |  |
+decree        | တရုတ်နှစ်သစ်ကူးနေ့                 | 2025-1-29           | public          |  |  |  |

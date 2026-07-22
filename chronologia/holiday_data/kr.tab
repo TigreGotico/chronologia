@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: KR
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_South_Korea
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | 신정연휴                               | 1 1                 | public          |  |  |  |
+decree        | 설날 전날                              | 2024-2-9 2025-1-28  | public          |  |  |  |
+decree        | 설날                                 | 2024-2-10 2025-1-29 | public          |  |  |  |
+decree        | 설날 다음날                             | 2024-2-11 2025-1-30 | public          |  |  |  |
+decree        | 설날 대체 휴일                           | 2024-2-12           | public          |  |  |  |
+fixed         | 삼일절                                | 3 1                 | public          |  |  |  |
+fixed         | 어린이날                               | 5 5                 | public          |  |  |  |
+decree        | 부처님오신날                             | 2024-5-15 2025-5-5  | public          |  |  |  |
+decree        | 부처님오신날 대체 휴일                       | 2025-5-6            | public          |  |  |  |
+fixed         | 현충일                                | 6 6                 | public          |  |  |  |
+fixed         | 광복절                                | 8 15                | public          |  |  |  |
+decree        | 추석 전날                              | 2024-9-16 2025-10-5 | public          |  |  |  |
+decree        | 추석                                 | 2024-9-17 2025-10-6 | public          |  |  |  |
+decree        | 추석 다음날                             | 2024-9-18 2025-10-7 | public          |  |  |  |
+decree        | 임시공휴일                              | 2025-1-27           | public          |  |  |  |
+fixed         | 개천절                                | 10 3                | public          |  |  |  |
+fixed         | 한글날                                | 10 9                | public          |  |  |  |
+fixed         | 기독탄신일                              | 12 25               | public          |  |  |  |
+decree        | 국회의원 선거일                           | 2024-4-10           | public          |  |  |  |
+fixed         | 어린이날 대체 휴일                         | 5 6                 | public          |  |  |  |
+decree        | 국군의 날                              | 2024-10-1           | public          |  |  |  |
+decree        | 삼일절 대체 휴일                          | 2025-3-3            | public          |  |  |  |
+decree        | 대통령 선거일                            | 2025-6-3            | public          |  |  |  |
+decree        | 추석 대체 휴일                           | 2025-10-8           | public          |  |  |  |
