@@ -194,7 +194,7 @@ def test_sunday_to_monday_leaves_saturday():
 
 def test_holiday_rule_applies_observed_shift():
     rule = HolidayRule("X", FixedRule(7, 4), frozenset({"public"}),
-                       observed=US_OBSERVED_SHIFT)
+                       shift=US_OBSERVED_SHIFT)
     assert rule.resolve(2021)[0][0] == AstroDate(2021, 7, 5)
 
 

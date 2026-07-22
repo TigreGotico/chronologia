@@ -145,7 +145,7 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from types import MappingProxyType
 from typing import (Dict, FrozenSet, Iterable, Mapping, Optional, Protocol,
-                    Tuple, runtime_checkable)
+                    Tuple, Union, runtime_checkable)
 
 from chronologia.astrodate import (BASIS_EXACT, BASIS_PREDICTED,
                                    BASIS_TABULATED, AstroDate, DateSpan)
@@ -677,14 +677,6 @@ IL_INDEPENDENCE_SHIFT = ObservedShift(((0, 1), (4, -1), (5, -2)))
 #: is a Sunday it is brought forward to Saturday 26 April (never postponed).
 NL_KINGSDAY_SHIFT = ObservedShift(((6, -1),))
 
-_OBSERVED_POLICIES: Dict[str, ObservedShift] = {
-    "us": US_OBSERVED_SHIFT,
-    "sun_mon": SUNDAY_TO_MONDAY,
-    "sat_sun_mon": SATURDAY_SUNDAY_TO_MONDAY,
-    "il_independence": IL_INDEPENDENCE_SHIFT,
-    "nl_kingsday": NL_KINGSDAY_SHIFT,
-}
-
 
 # --------------------------------------------------------------------------
 # Substitute-day (in-lieu) policy — ADDS a day, resolved calendar-wide.
@@ -746,7 +738,32 @@ GB_SUBSTITUTE = SubstitutePolicy((5, 6), skip_weekends=True,
 #: day a holiday (weekends are not skipped — a Saturday can be the substitute).
 JP_FURIKAE = SubstitutePolicy((6,), skip_weekends=False, label=" (振替休日)")
 
-_SUBSTITUTE_POLICIES: Dict[str, SubstitutePolicy] = {
+
+# --------------------------------------------------------------------------
+# One shift registry for the ``.tab`` ``observed`` column.
+# --------------------------------------------------------------------------
+#: A weekend-triggered date policy attached to a rule. There are two, kept as
+#: distinct classes on purpose because they act at *different points* with
+#: *different semantics* (the per-kind-class doctrine applied to shifts too):
+#:
+#: * :class:`ObservedShift` *relocates* the nominal day — applied per rule in
+#:   :meth:`HolidayRule.resolve`, since it needs nothing but the date itself.
+#: * :class:`SubstitutePolicy` *adds* a separate in-lieu day — applied
+#:   calendar-wide in :meth:`HolidayCalendar.holidays`, since the substitute
+#:   must skip days the rest of the year already took (the UK cascade).
+#:
+#: They are unified only where they were needlessly parallel: a single named
+#: registry and a single :attr:`HolidayRule.shift` field carry either, dispatched
+#: by type at the one point each applies — no twin dicts, no twin rule fields.
+ShiftPolicy = Union[ObservedShift, SubstitutePolicy]
+
+#: ``observed``-column name -> shift policy (relocating or in-lieu).
+_SHIFT_POLICIES: Dict[str, ShiftPolicy] = {
+    "us": US_OBSERVED_SHIFT,
+    "sun_mon": SUNDAY_TO_MONDAY,
+    "sat_sun_mon": SATURDAY_SUNDAY_TO_MONDAY,
+    "il_independence": IL_INDEPENDENCE_SHIFT,
+    "nl_kingsday": NL_KINGSDAY_SHIFT,
     "gb_substitute": GB_SUBSTITUTE,
     "jp_furikae": JP_FURIKAE,
 }
@@ -761,8 +778,9 @@ class HolidayRule:
 
     The ``kind`` is one of the per-kind frozen classes above; ``categories`` is
     a subset of :data:`CATEGORIES`; ``subdiv`` scopes the rule to a subdivision
-    (``None`` = jurisdiction-wide); ``observed`` optionally shifts the computed
-    date onto its observed day; ``substitute`` optionally grants an in-lieu day
+    (``None`` = jurisdiction-wide); ``shift`` optionally attaches a weekend
+    policy — an :class:`ObservedShift` that relocates the computed date onto its
+    observed day, or a :class:`SubstitutePolicy` that grants an in-lieu day
     (resolved calendar-wide, see :meth:`HolidayCalendar.holidays`); ``from_year``
     / ``until_year`` optionally bound the years the rule is in force (inclusive).
     """
@@ -771,8 +789,12 @@ class HolidayRule:
     kind: RuleKind
     categories: FrozenSet[str]
     subdiv: Optional[str] = None
-    observed: Optional[ObservedShift] = None
-    substitute: Optional[SubstitutePolicy] = None
+    #: An optional weekend policy — either an :class:`ObservedShift` (relocates
+    #: the nominal day, applied here in :meth:`resolve`) or a
+    #: :class:`SubstitutePolicy` (adds an in-lieu day, applied calendar-wide in
+    #: :meth:`HolidayCalendar.holidays`). One field for both; the applying site
+    #: dispatches by type.
+    shift: Optional[ShiftPolicy] = None
     from_year: Optional[int] = None
     until_year: Optional[int] = None
     span_shape: str = "day"
@@ -847,8 +869,8 @@ class HolidayRule:
                             for date, _ in wk.kind.observances(year))
         out = []
         for date, basis in obs:
-            if self.observed is not None:
-                date = self.observed.apply(date)
+            if isinstance(self.shift, ObservedShift):
+                date = self.shift.apply(date)
             out.append((date, basis))
         return tuple(out)
 
@@ -1074,16 +1096,16 @@ class HolidayCalendar:
                     basis=basis,
                     names=rule.names,
                     translations=trans))
-                if rule.substitute is not None:
+                if isinstance(rule.shift, SubstitutePolicy):
                     subst_work.append((date, basis, rule))
 
         taken = {h.span.start for h in out}
         for date, basis, rule in sorted(subst_work, key=lambda t: t[0]):
-            sub = rule.substitute.substitute_for(date, frozenset(taken))
+            sub = rule.shift.substitute_for(date, frozenset(taken))
             if sub is None:
                 continue
             taken.add(sub)
-            label = rule.substitute.label
+            label = rule.shift.label
             trans = _translations_for(self.jurisdiction, rule.name)
             out.append(CivilHoliday(
                 name=rule.name + label,
@@ -1220,15 +1242,15 @@ def load_calendar(path: str) -> HolidayCalendar:
             valid = cols[6] if len(cols) > 6 and cols[6] else None
             span_shape = cols[7] if len(cols) > 7 and cols[7] else "day"
             predict = cols[8] if len(cols) > 8 and cols[8] else None
-            # The observed column names either a relocating ObservedShift or an
-            # in-lieu SubstitutePolicy (they are mutually exclusive per rule).
-            observed = substitute = None
-            if obs_name in _OBSERVED_POLICIES:
-                observed = _OBSERVED_POLICIES[obs_name]
-            elif obs_name in _SUBSTITUTE_POLICIES:
-                substitute = _SUBSTITUTE_POLICIES[obs_name]
-            elif obs_name is not None:
-                raise ValueError(f"unknown observed/substitute policy {obs_name!r}")
+            # The observed column names one shift policy — a relocating
+            # ObservedShift or an in-lieu SubstitutePolicy; the applying site
+            # dispatches by type.
+            shift = None
+            if obs_name is not None:
+                shift = _SHIFT_POLICIES.get(obs_name)
+                if shift is None:
+                    raise ValueError(
+                        f"unknown observed/substitute policy {obs_name!r}")
             from_year, until_year = _parse_valid(valid)
             categories = frozenset(cats.split())
             rules.append(HolidayRule(
@@ -1236,8 +1258,7 @@ def load_calendar(path: str) -> HolidayCalendar:
                 kind=_parse_kind(kind, args),
                 categories=categories,
                 subdiv=subdiv,
-                observed=observed,
-                substitute=substitute,
+                shift=shift,
                 from_year=from_year,
                 until_year=until_year,
                 span_shape=span_shape,
