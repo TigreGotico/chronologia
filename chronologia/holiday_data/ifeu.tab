@@ -1,0 +1,27 @@
+# civil-holidays v1
+# jurisdiction: IFEU
+# source: https://web.archive.org/web/20241203121313/https://www.ice.com/publicdocs/futures/Trading_Schedule_Migrated_Liffe_Contracts.pdf
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.ice_futures_europe -- an
+#   independent open-source reference maintained against ICE's own published
+#   trading-schedule PDFs.
+#   IFEU is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country: it is
+#   ICE Futures Europe (the London-based derivatives exchange, formerly
+#   LIFFE). English is correct as the primary name here -- ICE publishes its
+#   trading calendar in English, and the calendar belongs to an exchange,
+#   not a country with its own official language.
+#   Observed-shift: a nominal Sunday holiday moves to the following Monday
+#   (verified 2023-01-01 Sun -> observed 2023-01-02 Mon, and 2022-12-25 Sun
+#   -> observed 2022-12-26 Mon, against vacanza 0.101 output). A nominal
+#   Saturday holiday is NOT substituted elsewhere (vacanza's SAT_TO_NONE) --
+#   harmless for a market calendar since Saturday is already a non-trading
+#   day, so the `sun_mon` policy alone reproduces every actual trading-day
+#   closure vacanza emits.
+#   Every rule verified against vacanza 0.101 output for both 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed  | New Year's Day | 1 1   | public          | | sun_mon |
+easter | Good Friday    | -2    | public religious | | |
+fixed  | Christmas Day  | 12 25 | public religious | | sun_mon |

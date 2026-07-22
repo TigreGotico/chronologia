@@ -284,6 +284,10 @@ _PRIMARY_LANG = {
     "TF": "fr", "TK": "en", "TL": "pt", "TO": "to", "TT": "en", "TV": "tvl",
     "UM": "en", "VA": "it", "VC": "en", "VG": "en", "VI": "en", "VU": "en",
     "WF": "fr", "WS": "en", "XK": "sq", "YT": "fr",
+    # financial markets (institutions, not countries -- English is their own
+    # publishing language, not a translation fallback):
+    "XECB": "en", "ECB": "en", "TAR": "en", "XNYS": "en", "NYSE": "en",
+    "IFEU": "en",
 }
 _MATRIX_LANGS = ("en", "pt", "es", "de", "fr")
 

@@ -1,0 +1,34 @@
+# civil-holidays v1
+# jurisdiction: XNYS
+# source: https://web.archive.org/web/20240118104341/https://www.nyse.com/publicdocs/nyse/regulation/nyse/NYSE_Rules.pdf
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.ny_stock_exchange -- an
+#   independent open-source reference maintained against the NYSE's own
+#   published trading-calendar rules.
+#   XNYS is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country: it is
+#   the New York Stock Exchange's trading-holiday calendar. English is
+#   correct as the primary name here -- the NYSE publishes its calendar in
+#   English, and the calendar belongs to an exchange, not a country with its
+#   own official language.
+#   Observed-shift is the same 5 U.S.C. 6103 rule already used for US.tab:
+#   Saturday observed the preceding Friday, Sunday observed the following
+#   Monday (the `us` policy). vacanza also registers this same calendar under
+#   the short code NYSE; chronologia.civil_holidays.MARKET_ALIASES resolves
+#   it onto this XNYS file rather than shipping a duplicate copy.
+#   Every rule verified against vacanza 0.101 output for 2024, 2025 and 2026
+#   (2026 exercises the `us` observed shift: 4 Jul 2026 is a Saturday, so
+#   Independence Day is observed Fri 3 Jul 2026).
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed       | New Year's Day                       | 1 1    | public          | | us |      |
+nth_weekday | Martin Luther King Jr. Day            | 1 3 0  | public          | |    |      |
+nth_weekday | Washington's Birthday                 | 2 3 0  | public          | |    |      |
+easter      | Good Friday                           | -2     | public religious | |  |      |
+nth_weekday | Memorial Day                          | 5 -1 0 | public          | |    |      |
+fixed       | Juneteenth National Independence Day  | 6 19   | public          | | us | 2022- |
+fixed       | Independence Day                      | 7 4    | public          | | us |      |
+nth_weekday | Labor Day                             | 9 1 0  | public          | |    |      |
+nth_weekday | Thanksgiving Day                      | 11 4 3 | public          | |    |      |
+fixed       | Christmas Day                         | 12 25  | public religious | | us |      |

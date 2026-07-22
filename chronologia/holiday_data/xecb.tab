@@ -1,0 +1,27 @@
+# civil-holidays v1
+# jurisdiction: XECB
+# source: https://en.wikipedia.org/wiki/TARGET2
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), financial.european_central_bank --
+#   an independent open-source reference maintained against the ECB's own
+#   published TARGET2 closing-day announcements.
+#   XECB is a FINANCIAL MARKET jurisdiction, not an ISO-3166-1 country: it is
+#   the European Central Bank's TARGET2 (Trans-European Automated Real-time
+#   Gross settlement Express Transfer) system, the euro-area interbank
+#   settlement calendar. English is correct as the primary name here -- the
+#   ECB publishes its TARGET2 closing-day list in English, and the calendar
+#   belongs to an institution, not a country with its own official language.
+#   vacanza also registers this same calendar under the short codes ECB and
+#   TAR; chronologia.civil_holidays.MARKET_ALIASES resolves both onto this
+#   XECB file rather than shipping duplicate copies.
+#   Every rule verified against vacanza 0.101 output for both 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed  | New Year's Day    | 1 1 | public          | | |
+easter | Good Friday       | -2  | public religious | | |
+easter | Easter Monday     | 1   | public religious | | |
+fixed  | Labour Day        | 5 1 | public          | | |
+fixed  | Christmas Day     | 12 25 | public religious | | |
+fixed  | Christmas Holiday | 12 26 | public        | | |
