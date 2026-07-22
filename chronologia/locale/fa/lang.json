@@ -50,9 +50,9 @@
     },
     "clock_time": {
       "orders": [
-        "CLOCK MERIDIEM?",
-        "at HOUR MERIDIEM?",
-        "at? LANDMARK"
+        "CLOCK MERIDIEM? ZONE?",
+        "at HOUR MERIDIEM? ZONE?",
+        "at? LANDMARK ZONE?"
       ],
       "prefer_future": true
     },
@@ -68,12 +68,43 @@
     },
     "year_ref": {
       "orders": [
+        "year_word GYEAR",
         "GYEAR"
       ]
     },
     "iso_date": {
       "orders": [
         "ISO"
+      ]
+    },
+    "month_fuzzy": {
+      "orders": [
+        "PART of? MONTH",
+        "PART MONTH"
+      ]
+    },
+    "holiday_ref": {
+      "orders": ["REL_MARKER HOLIDAY", "HOLIDAY REL_MARKER", "HOLIDAY YEAR", "YEAR HOLIDAY", "HOLIDAY"]
+    },
+    "fuzzy_period": {
+      "orders": [
+        "PART of? UNIT",
+        "PART of? UNIT REL_MARKER",
+        "PART of? REL_MARKER UNIT"
+      ]
+    },
+    "quarter_ref": {
+      "orders": [
+        "quarter_word ORD of? YEAR",
+        "quarter_word ORD YEAR?",
+        "quarter_word REL_MARKER",
+        "REL_MARKER quarter_word"
+      ]
+    },
+    "iso_week_ref": {
+      "orders": [
+        "week_num NUM of? YEAR",
+        "week_num NUM YEAR?"
       ]
     }
   },
