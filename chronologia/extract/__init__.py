@@ -473,8 +473,48 @@ def _extract_open_range(text, tokens, engine, anchor):
                     return span, ep[1]
         return None
 
-    return (lead(until_surf, until_span) or lead(since_surf, since_span)
-            or trail(until_surf, until_span) or trail(since_surf, since_span))
+    def affix(surf, build):
+        # an **affix** marker -- a bound suffix fused onto the date's final
+        # surface token (Hungarian "-ig": "péntekig" = "péntek" + "ig",
+        # "2026-ig").  Split a known affix off the last token and re-resolve the
+        # stripped host as the endpoint; accept ONLY when the host without the
+        # affix parses as a date, so a random word ending in the same letters
+        # ("nadrágig" = "trousers-until") never misfires.  Single-word affix
+        # surfaces only (a suffix is one morpheme).
+        last = tokens[-1]
+        host_text = last.text
+        for words in surf:
+            if len(words) != 1:
+                continue
+            a = words[0]
+            if len(a) < len(host_text) and host_text.endswith(a):
+                stripped = last.__class__(
+                    text=host_text[:-len(a)], raw=host_text[:-len(a)],
+                    index=last.index, is_number=last.is_number,
+                    value=last.value,
+                    char_start=last.char_start,
+                    char_end=(last.char_end - len(a)
+                              if last.char_end is not None else None))
+                ep = endpoint(tuple(tokens[:-1]) + (stripped,))
+                span = build(ep) if ep is not None else None
+                if span is not None:
+                    return span, ep[1]
+        return None
+
+    positions = spec.positions
+
+    def scan(role, surf, build):
+        # positionality drives which readings are attempted: a ``pre`` (default)
+        # marker leads; ``post`` trails; ``affix`` is a fused suffix.  ``pre``
+        # and ``post`` both keep the historical lead+trail fallback (behaviour-
+        # identical for every already-supported locale); ``affix`` adds the
+        # newly-unlocked fused-suffix reading on top.
+        pos = positions.get(role, "pre")
+        return (lead(surf, build) or trail(surf, build)
+                or (affix(surf, build) if pos == "affix" else None))
+
+    return (scan("until", until_surf, until_span)
+            or scan("since", since_surf, since_span))
 
 
 def _bare_weekday_endpoint(sub, engine, anchor):

@@ -141,7 +141,17 @@ CONSTRUCTION_FLAG_KEYS: FrozenSet[str] = frozenset({"prefer_future", "group"})
 
 TOP_LEVEL_KEYS: FrozenSet[str] = frozenset({
     "tokenizer", "constructions", "conventions", "quantifiers", "guards",
-    "hook", "lemmas", "suffix_strip", "day_subdivision"})
+    "hook", "lemmas", "suffix_strip", "day_subdivision", "positions"})
+
+#: marker roles whose POSITIONALITY may be declared -- the open-range and
+#: recurrence-bound framing words the engine scans for around a date.  Each maps
+#: to a per-locale ``marker_<role>.voc`` surface set.
+KNOWN_POSITION_ROLES: FrozenSet[str] = frozenset({"until", "since", "for"})
+
+#: where a marker sits relative to its date: ``pre`` leads it (default),
+#: ``post`` trails it as a separate bound word, ``affix`` is a suffix fused onto
+#: the date's final surface token.
+KNOWN_POSITIONS: FrozenSet[str] = frozenset({"pre", "post", "affix"})
 TOKENIZER_KEYS: FrozenSet[str] = frozenset({"split_contractions", "ordinal_dot"})
 CONVENTION_KEYS: FrozenSet[str] = frozenset({
     "week_start", "dmy", "hemisphere", "prefer_future", "bare_half_to",
@@ -197,6 +207,18 @@ def validate_config(cfg: dict, lang: str) -> List[str]:
     for key in cfg.get("guards", {}):
         if key not in GUARD_KEYS:
             errors.append(f"{ctx} unknown guards key {key!r}")
+
+    positions = cfg.get("positions", {})
+    if not isinstance(positions, dict):
+        errors.append(f"{ctx} 'positions' must be an object")
+    else:
+        for role, pos in positions.items():
+            if role not in KNOWN_POSITION_ROLES:
+                errors.append(f"{ctx} positions: unknown marker role {role!r} "
+                              f"(known: {sorted(KNOWN_POSITION_ROLES)})")
+            if pos not in KNOWN_POSITIONS:
+                errors.append(f"{ctx} positions[{role!r}]: unknown position "
+                              f"{pos!r} (known: {sorted(KNOWN_POSITIONS)})")
 
     for name, body in cfg.get("constructions", {}).items():
         where = f"{ctx} construction {name!r}"
@@ -271,6 +293,15 @@ def validate_reachability(spec, cfg: dict, lang: str) -> List[str]:
             if missing:
                 errors.append(f"{where}: unreachable -- no vocabulary for "
                               f"{', '.join(sorted(set(missing)))}")
+
+    # a declared marker positionality is dead unless the locale actually ships
+    # the role's marker surfaces (``marker_<role>.voc``): a ``post``/``affix``
+    # ``until`` with no ``marker_until`` vocabulary can never fire.
+    for role, pos in cfg.get("positions", {}).items():
+        if role in KNOWN_POSITION_ROLES and pos in KNOWN_POSITIONS \
+                and not spec.connectors.get(role):
+            errors.append(f"{ctx} positions[{role!r}]={pos!r}: unreachable -- "
+                          f"no marker_{role} vocabulary in this locale")
     return errors
 
 

@@ -108,16 +108,42 @@ per-language range markers, so "bis freitag" / "seit 2010" (de), "jusqu'à
 vendredi" / "depuis 2010" (fr), "até sexta-feira" / "desde 2010" (pt) and
 "hasta viernes" / "desde 2010" (es) behave the same way.
 
-A marker may **lead** its date or **trail** it. Many languages postpose the
-bound word — Finnish "perjantai asti" / "2020 saakka", Turkish "2020 kadar",
-Basque "ostirala arte", Azerbaijani "2020 qədər". The engine tries the leading
-reading first, then the postposed one, so a trailing marker resolves natively;
-whether a language leads or trails is simply which surface its `marker_until`
-vocabulary lists. (Basque `arte` is genuinely ambiguous — it means both "until"
-and "art" — so it only reads as the range marker when the head parses as a date
-endpoint; a bare "arte" is never a range. Turkish/Azerbaijani add a dative
-suffix to the date noun in careful speech, which is a downstream morphology
-concern; the engine reads the bare head.)
+### Marker positionality
+
+*Where* a marker sits relative to its date is a first-class per-language fact,
+declared as `positions` in `lang.json` (a role → position map over the
+open-range and recurrence-bound markers `until` / `since` / `for`). Three
+positions are recognised; the default, when a role is undeclared, is `pre`:
+
+- **`pre`** — the marker **leads** its date ("until friday", German "bis
+  freitag", French "jusqu'à vendredi"). The English/Romance default.
+- **`post`** — the marker is a **postposed bound word trailing** its date, the
+  native order for many agglutinative languages: Finnish "perjantai asti" /
+  "2020 saakka", Turkish "cumaya kadar", Basque "ostirala arte", Azerbaijani
+  "2020 qədər", Hungarian "2010 óta" (since). The engine scans for the marker
+  after the resolved endpoint.
+- **`affix`** — the marker is a **bound suffix fused onto the date's final
+  surface token**, with no space or separator. Hungarian's until case suffix
+  `-ig` is the canonical case: "péntekig" = "péntek" (Friday) + "ig",
+  "hétfőig", "2026-ig". The engine splits a known affix off the last token and
+  re-resolves the stripped host, and accepts the split **only when the host
+  without the affix parses as a date** — so a common word ending in the same
+  letters ("nadrágig" = "trousers-until") never misfires. A bare affix with no
+  host is never a range.
+
+The `positions` fact drives which readings the engine attempts; a language
+declares `until: affix` or `since: post` alongside the ordinary
+`marker_until` / `marker_since` vocabulary that lists the surface. This retired
+the earlier "documented limitation" list: the postposed open-range markers
+(Finnish `asti`/`saakka`, Turkish `kadar`, Basque `arte`, Azerbaijani `qədər`)
+and the Hungarian `-ig` affix and `óta` postposition now resolve natively
+rather than being noted as untranslatable order exceptions.
+
+Basque `arte` is genuinely ambiguous — it means both "until" and "art" — so it
+only reads as the range marker when the head parses as a date endpoint; a bare
+"arte" is never a range. Turkish/Azerbaijani add a dative suffix to the date
+noun in careful speech, which is a downstream morphology concern; the engine
+reads the bare head.
 
 ## Deep time and other reckonings
 

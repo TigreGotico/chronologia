@@ -107,6 +107,34 @@ def test_reachability_flags_missing_vocabulary():
     assert any("unreachable" in e and "SCALE" in e for e in errs)
 
 
+def test_positions_unknown_role_is_flagged():
+    errs = validate_config({"positions": {"nope": "post"}}, "xx")
+    assert any("unknown marker role 'nope'" in e for e in errs)
+
+
+def test_positions_unknown_position_is_flagged():
+    errs = validate_config({"positions": {"until": "sideways"}}, "xx")
+    assert any("unknown position 'sideways'" in e for e in errs)
+
+
+def test_positions_reachability_flags_missing_marker_vocab():
+    # declaring until=affix without any marker_until.voc surface is dead data
+    spec = load_lang_spec("en")
+    from dataclasses import replace
+    stripped = replace(spec, connectors={k: v for k, v in spec.connectors.items()
+                                          if k != "until"})
+    errs = validate_reachability(stripped, {"positions": {"until": "affix"}}, "en")
+    assert any("positions['until']" in e and "unreachable" in e for e in errs)
+
+
+def test_hu_declares_affix_and_post_positions():
+    # the flipped Hungarian exceptions: -ig is an affix until, óta a postposed
+    # since, both first-class facts on the loaded spec
+    spec = load_lang_spec("hu")
+    assert spec.positions.get("until") == "affix"
+    assert spec.positions.get("since") == "post"
+
+
 def test_validate_raises_loudly_with_context():
     with pytest.raises(LocaleSchemaError) as exc:
         validate({"constructions": {"named_day": {"orders": ["NOPE"]}}}, "xx")

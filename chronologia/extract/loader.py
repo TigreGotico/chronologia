@@ -279,7 +279,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         clock_zones=clock_zones,
         weekend_words=frozenset(weekend_words),
         weekday_full=weekday_full,
-        quantifiers=quantifiers)
+        quantifiers=quantifiers,
+        positions=cfg.get("positions", {}))
 
     # LOUD schema validation on load (behind the lazy per-language path): the
     # parsed config must be structurally sound AND every construction order must

@@ -1,4 +1,7 @@
 {
+  "positions": {
+    "until": "post"
+  },
   "tokenizer": {
     "split_contractions": false,
     "ordinal_dot": true
