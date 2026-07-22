@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*-
+"""The kab<->en semantic-parity block: each pair resolves to the SAME span."""
+
+PARITY = [
+    ('azekka', 'tomorrow'),
+    ('iḍelli', 'yesterday'),
+    ('assa', 'today'),
+    ('15:30', '15:30'),
+    ('09:00', '09:00'),
+    ('23:59', '23:59'),
+    ('06:15', '06:15'),
+    ('12:00', '12:00'),
+    ('3 yennayer 2027', 'january 3 2027'),
+    ('20 yulyu 1969', 'july 20 1969'),
+    ('1 yennayer 2000', 'january 1 2000'),
+    ('6 ɣuct 1945', 'august 6 1945'),
+    ('25 dujembeṛ 2025', 'december 25 2025'),
+    ('yunyu 2027', 'june 2027'),
+    ('yennayer 2020', 'january 2020'),
+    ('dujembeṛ 1999', 'december 1999'),
+    ('meɣres 2010', 'march 2010'),
+    ('yunyu', 'june'),
+    ('yennayer', 'january'),
+    ('ɣuct', 'august'),
+    ('tubeṛ', 'october'),
+    ('1999', '1999'),
+    ('2020', '2020'),
+    ('1969', '1969'),
+    ('1830', '1830'),
+]
