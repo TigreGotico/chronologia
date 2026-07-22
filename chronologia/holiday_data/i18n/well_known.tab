@@ -745,3 +745,35 @@ diwali                 | el | ντιβάλι
 vesak                  | el | βεσάκ
 halloween              | el | χαλοουίν
 valentines             | el | αγίου βαλεντίνου ;; ημέρα των ερωτευμένων
+#
+# ===== Indonesian =====
+new_year        | id | tahun baru
+good_friday     | id | jumat agung
+easter          | id | paskah
+christmas       | id | natal ;; hari natal
+eid_al_fitr     | id | idul fitri ;; lebaran ;; hari raya idul fitri
+eid_al_adha     | id | idul adha ;; iduladha
+ramadan         | id | ramadan ;; ramadhan ;; bulan puasa
+islamic_new_year| id | tahun baru islam ;; tahun baru hijriah
+mawlid          | id | maulid nabi
+chinese_new_year| id | tahun baru imlek ;; imlek
+vesak           | id | waisak ;; hari waisak
+diwali          | id | deepavali ;; diwali
+halloween       | id | halloween
+valentines      | id | hari valentine
+#
+# ===== Malay =====
+new_year        | ms | tahun baru
+good_friday     | ms | jumaat agung
+easter          | ms | paskah
+christmas       | ms | krismas ;; hari krismas
+eid_al_fitr     | ms | hari raya aidilfitri ;; aidilfitri ;; hari raya puasa
+eid_al_adha     | ms | hari raya aidiladha ;; aidiladha ;; hari raya haji
+ramadan         | ms | ramadan ;; bulan puasa
+islamic_new_year| ms | maal hijrah ;; awal muharram
+mawlid          | ms | maulidur rasul
+chinese_new_year| ms | tahun baru cina
+vesak           | ms | hari wesak ;; wesak
+diwali          | ms | deepavali
+halloween       | ms | halloween
+valentines      | ms | hari valentine
