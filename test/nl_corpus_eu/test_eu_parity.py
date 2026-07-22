@@ -12,6 +12,10 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 #: (english, basque) -- must produce identical spans.
 PAIRS = [
+    # rel_period / weekend / bare-weekday rollout
+    ('next week', 'datorren astea'),
+    ('this weekend', 'asteburua'),
+    ('friday', 'ostirala'),
     ("today", "gaur"),
     ("yesterday", "atzo"),
     ("tomorrow", "bihar"),
