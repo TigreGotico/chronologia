@@ -88,6 +88,11 @@ _BLN_OFFSET = 953
 #: the module docstring -- their mean-model error runs wider, ~23h).
 MOON_PHASE_ACCURACY = timedelta(hours=14)
 
+#: Microseconds in one civil day -- the hub the mean-lunation arithmetic
+#: rescales days to (matches ``astrodate._US_PER_DAY``); named here rather than
+#: repeated as a bare literal in each conversion.
+_US_PER_DAY = 86_400_000_000
+
 #: Phase name -> fraction of a lunation (0 == new, 1 == the next new moon).
 _PHASE_FRACTION = {
     "new": 0.0,
@@ -109,14 +114,12 @@ def _as_astrodate(instant) -> AstroDate:
 
 
 def _lunations_since_epoch(instant: AstroDate) -> float:
-    us_per_day = 86_400_000_000
-    days = (instant._total_us() - EPOCH_NEW_MOON._total_us()) / us_per_day
+    days = (instant._total_us() - EPOCH_NEW_MOON._total_us()) / _US_PER_DAY
     return days / MEAN_SYNODIC_MONTH_DAYS
 
 
 def _mean_instant_for_lunation(k: float) -> AstroDate:
-    us_per_day = 86_400_000_000
-    total_days_us = round(k * MEAN_SYNODIC_MONTH_DAYS * us_per_day)
+    total_days_us = round(k * MEAN_SYNODIC_MONTH_DAYS * _US_PER_DAY)
     return AstroDate._from_total_us(EPOCH_NEW_MOON._total_us() + total_days_us)
 
 
