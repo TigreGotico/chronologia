@@ -18,7 +18,7 @@
 #   reduce to a single fixed or Easter-offset rule are split into one row
 #   per calendar day, numbered "(1)", "(2)", ....
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 
@@ -39,3 +39,32 @@ fixed         | Ден на македонската револуционерн�
 fixed         | Свети Климент Охридски                   | 12 8                 | public          |  |  |  |
 decree        | Свети Климент Охридски (неработен ден)   | 2024-12-9            | public          |  |  |  |
 decree        | Рамазан Бајрам (неработен ден)           | 2025-3-31            | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Ден на Албанската азбука | 11 22 | albanian |  |
+fixed | Меѓународен ден на Бошњаците | 9 28 | bosnian |  |
+fixed | Меѓународен ден на Ромите | 4 8 | roma |  |
+fixed | Свети Сава | 1 27 | serbian |  |
+fixed | Ден на настава на турски јазик | 12 21 | turkish |  |
+fixed | Национален ден на Власите | 5 23 | vlach |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | Велигден | 2024-4-1 | catholic |  |
+decree | Сите Светци | 2024-11-1 2025-11-1 | catholic |  |
+decree | Божиќ | 2024-12-25 2025-12-25 | catholic |  |
+decree | Јом Кипур | 2024-10-12 2025-10-2 | hebrew |  |
+decree | Курбан Бајрам | 2024-6-16 2025-6-6 | islamic |  |
+decree | Бадник | 2024-1-6 2025-1-6 | orthodox |  |
+decree | Богојавление | 2024-1-19 2025-1-19 | orthodox |  |
+decree | Велики Петок | 2024-5-3 2025-4-18 | orthodox |  |
+decree | Духовден | 2024-6-21 2025-6-6 | orthodox |  |
+decree | Успение на Пресвета Богородица | 2024-8-28 2025-8-28 | orthodox |  |

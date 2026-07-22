@@ -18,7 +18,7 @@
 #   reduce to a single fixed or Easter-offset rule are split into one row
 #   per calendar day, numbered "(1)", "(2)", ....
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 
@@ -38,3 +38,29 @@ fixed         | Veterans Day                             | 11 11                
 fixed         | Puerto Rican Identity Day                | 11 19                | public          |  |  |  |
 decree        | Thanksgiving Day                         | 2024-11-28 2025-11-27 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Christmas Eve (from 12pm) | 12 24 | half_day |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | American Citizenship Day | 2024-3-2 2025-3-2 | government |  |
+decree | Christmas Eve | 2024-12-24 2025-12-24 | government |  |
+decree | National Day of Mourning for former President Jimmy Carter | 2025-1-9 | government |  |
+decree | Day After Christmas | 2025-12-26 | government |  |
+decree | Valentine's Day | 2024-2-14 2025-2-14 | unofficial |  |
+decree | Saint Patrick's Day | 2024-3-17 2025-3-17 | unofficial |  |
+decree | Easter Sunday | 2024-3-31 2025-4-20 | unofficial |  |
+decree | Mother's Day | 2024-5-12 2025-5-11 | unofficial |  |
+decree | Father's Day | 2024-6-16 2025-6-15 | unofficial |  |
+decree | Halloween | 2024-10-31 2025-10-31 | unofficial |  |
+decree | Christmas Eve | 2024-12-24 2025-12-24 | unofficial |  |
+decree | New Year's Eve | 2024-12-31 2025-12-31 | unofficial |  |

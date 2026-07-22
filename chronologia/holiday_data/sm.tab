@@ -18,7 +18,7 @@
 #   reduce to a single fixed or Easter-offset rule are split into one row
 #   per calendar day, numbered "(1)", "(2)", ....
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 
@@ -40,3 +40,11 @@ fixed         | Commemorazione dei defunti               | 11 2                 
 fixed         | Immacolata Concezione                    | 12 8                 | public          |  |  |  |
 fixed         | Natale                                   | 12 25                | public          |  |  |  |
 fixed         | Santo Stefano                            | 12 26                | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | Vigilia di Natale | 12 24 | bank |  |
+fixed | Ultimo dell'anno | 12 31 | bank |  |

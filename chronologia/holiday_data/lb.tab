@@ -18,7 +18,7 @@
 #   reduce to a single fixed or Easter-offset rule are split into one row
 #   per calendar day, numbered "(1)", "(2)", ....
 # retrieved: 2026-07-22
-# categories: public|regional|municipal|religious|school
+# categories: public|regional|municipal|religious|school (+ vacanza-parity labels, see below)
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 
@@ -42,3 +42,21 @@ decree        | ذكرى المولد النبوي الشريف                |
 fixed         | ذكرى الاستقلال                           | 11 22                | public          |  |  |  |
 fixed         | عيد الميلاد                              | 12 25                | public          |  |  |  |
 decree        | سبت النور للطائفة الأرثوذكسية            | 2025-4-19            | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025 (both years agree; dates are stable Gregorian fixed days per vacanza's
+# own country module). Names are vacanza's own (already-localized) labels.
+fixed | يوم ذكرى رفيق الحريري | 2 14 | government |  |
+fixed | ذكرى مأساة انفجار مرفأ بيروت | 8 4 | government |  |
+
+# --- vacanza/holidays 0.101 category parity, decree-tabulated
+# (year-varying: Easter/lunar/Hijri-relative or ephemeral) -- gazetted
+# 2024/2025 dates taken directly from vacanza/holidays 0.101 (MIT)
+# `country_holidays(cc, categories=(...))` output, per the house rule
+# that permits vacanza-derived data when flagged as such (retrieved
+# 2026-07-22). ---
+decree | يوم ذكرى رفيق الحريري | 2024-2-14 2025-2-14 | bank |  |
+decree | اثنين الفصح عند الطوائف الكاثوليكية | 2024-4-1 2025-4-21 | bank |  |
+decree | اثنين الفصح عند الطوائف الأرثوذكسية | 2024-5-6 2025-4-21 | bank |  |
