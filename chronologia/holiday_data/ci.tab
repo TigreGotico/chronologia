@@ -1,0 +1,39 @@
+# civil-holidays v1
+# jurisdiction: CI
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Ivory_Coast
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here (including one-off observed-shift days that only
+#   coincide with an Easter offset by chance in a single year) are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025,
+#   the same honest fallback id.tab/cn.tab already use for Imlek/Nyepi/shift
+#   days -- silent outside those years rather than fabricated. 'easter' is
+#   used only where the offset from Easter Sunday is consistent across both
+#   2024 and 2025. Workday-bridge ('ponte' in Portuguese-language sources,
+#   the same phenomenon Russia/Uzbekistan's 'moved' shift days represent)
+#   entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | 1er janvier                          | 1 1                  | public          |  |  |  |
+decree        | Victoire à la Coupe d'Afrique des Nations 2024 | 2024-2-12            | public          |  |  |  |
+easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
+decree        | Lendemain de la Nuit du Destin       | 2024-4-6 2025-3-27   | public          |  |  |  |
+decree        | Fête de fin du Ramadan               | 2024-4-10 2025-3-30  | public          |  |  |  |
+fixed         | Fête du travail                      | 5 1                  | public          |  |  |  |
+easter        | Jour de l'Ascension                  | 39                   | public          |  |  |  |
+easter        | Lundi de Pentecôte                   | 50                   | public          |  |  |  |
+decree        | Fête de la Tabaski                   | 2024-6-16 2025-6-6   | public          |  |  |  |
+decree        | Lendemain de la Fête de la Tabaski   | 2024-6-17            | public          |  |  |  |
+fixed         | Fête Nationale                       | 8 7                  | public          |  |  |  |
+fixed         | Fête de l'Assomption                 | 8 15                 | public          |  |  |  |
+decree        | Lendemain de l'Anniversaire de la Naissance du Prophète Mahomet | 2024-9-15 2025-9-4   | public          |  |  |  |
+fixed         | Fête de la Toussaint                 | 11 1                 | public          |  |  |  |
+fixed         | Journée Nationale de la Paix         | 11 15                | public          |  |  |  |
+fixed         | Fête de Noël                         | 12 25                | public          |  |  |  |
+decree        | Lendemain de la Fête de fin du Ramadan | 2025-3-31            | public          |  |  |  |

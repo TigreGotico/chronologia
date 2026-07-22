@@ -1,0 +1,38 @@
+# civil-holidays v1
+# jurisdiction: HT
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Haiti
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here (including one-off observed-shift days that only
+#   coincide with an Easter offset by chance in a single year) are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025,
+#   the same honest fallback id.tab/cn.tab already use for Imlek/Nyepi/shift
+#   days -- silent outside those years rather than fabricated. 'easter' is
+#   used only where the offset from Easter Sunday is consistent across both
+#   2024 and 2025. Workday-bridge ('ponte' in Portuguese-language sources,
+#   the same phenomenon Russia/Uzbekistan's 'moved' shift days represent)
+#   entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Fête de l'Indépendance Nationale; Nouvel An | 1 1                  | public          |  |  |  |
+fixed         | Jour des Aïeux                       | 1 2                  | public          |  |  |  |
+easter        | Carnaval                             | -49                  | public          |  |  |  |
+easter        | Lundi Gras                           | -48                  | public          |  |  |  |
+easter        | Mardi Gras                           | -47                  | public          |  |  |  |
+easter        | Vendredi Saint                       | -2                   | public          |  |  |  |
+easter        | Pâques                               | 0                    | public          |  |  |  |
+fixed         | Fête de l'Agriculture et du Travail  | 5 1                  | public          |  |  |  |
+fixed         | Fête du Drapeau et de l'Université   | 5 18                 | public          |  |  |  |
+easter        | Fête-Dieu                            | 60                   | public          |  |  |  |
+fixed         | Assomption de Marie                  | 8 15                 | public          |  |  |  |
+fixed         | Mort de Dessalines                   | 10 17                | public          |  |  |  |
+fixed         | La Toussaint                         | 11 1                 | public          |  |  |  |
+fixed         | Fête des Morts                       | 11 2                 | public          |  |  |  |
+fixed         | Commémoration de la Bataille de Vertières; Jour des Forces Armées | 11 18                | public          |  |  |  |
+fixed         | Noël                                 | 12 25                | public          |  |  |  |

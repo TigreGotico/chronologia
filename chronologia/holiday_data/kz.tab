@@ -1,0 +1,41 @@
+# civil-holidays v1
+# jurisdiction: KZ
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Kazakhstan
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here (including one-off observed-shift days that only
+#   coincide with an Easter offset by chance in a single year) are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025,
+#   the same honest fallback id.tab/cn.tab already use for Imlek/Nyepi/shift
+#   days -- silent outside those years rather than fabricated. 'easter' is
+#   used only where the offset from Easter Sunday is consistent across both
+#   2024 and 2025. Workday-bridge ('ponte' in Portuguese-language sources,
+#   the same phenomenon Russia/Uzbekistan's 'moved' shift days represent)
+#   entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+decree        | Жаңа жыл                             | 2024-1-1 2024-1-2 2025-1-1 2025-1-2 | public          |  |  |  |
+fixed         | Православиелік Рождество             | 1 7                  | public          |  |  |  |
+fixed         | Халықаралық әйелдер күні             | 3 8                  | public          |  |  |  |
+decree        | Наурыз мейрамы                       | 2024-3-21 2024-3-22 2024-3-23 2025-3-21 2025-3-22 2025-3-23 | public          |  |  |  |
+decree        | Наурыз мейрамы (қайта белгіленген демалыс) | 2024-3-25 2025-3-24 2025-3-25 | public          |  |  |  |
+fixed         | Қазақстан халқының бірлігі мерекесі  | 5 1                  | public          |  |  |  |
+fixed         | Отан Қорғаушы күні                   | 5 7                  | public          |  |  |  |
+decree        | Демалыс күні (04.05.2024 бастап ауыстырылды) | 2024-5-8             | public          |  |  |  |
+fixed         | Жеңіс күні                           | 5 9                  | public          |  |  |  |
+decree        | Құрбан айт                           | 2024-6-16 2025-6-6   | public          |  |  |  |
+fixed         | Астана күні                          | 7 6                  | public          |  |  |  |
+decree        | Астана күні (қайта белгіленген демалыс) | 2024-7-8 2025-7-7    | public          |  |  |  |
+fixed         | Қазақстан Республикасының Конституциясы күні | 8 30                 | public          |  |  |  |
+fixed         | Республика күні                      | 10 25                | public          |  |  |  |
+fixed         | Тəуелсіздік күні                     | 12 16                | public          |  |  |  |
+decree        | Демалыс күні (05.01.2025 бастап ауыстырылды) | 2025-1-3             | public          |  |  |  |
+decree        | Халықаралық әйелдер күні (қайта белгіленген демалыс) | 2025-3-10            | public          |  |  |  |
+decree        | Қазақстан Республикасының Конституциясы күні (қайта белгіленген демалыс) | 2025-9-1             | public          |  |  |  |
+decree        | Республика күні (қайта белгіленген демалыс) | 2025-10-27           | public          |  |  |  |

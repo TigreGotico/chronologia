@@ -1,0 +1,34 @@
+# civil-holidays v1
+# jurisdiction: AO
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Angola
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here (including one-off observed-shift days that only
+#   coincide with an Easter offset by chance in a single year) are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025,
+#   the same honest fallback id.tab/cn.tab already use for Imlek/Nyepi/shift
+#   days -- silent outside those years rather than fabricated. 'easter' is
+#   used only where the offset from Easter Sunday is consistent across both
+#   2024 and 2025. Workday-bridge ('ponte' in Portuguese-language sources,
+#   the same phenomenon Russia/Uzbekistan's 'moved' shift days represent)
+#   entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Dia do Ano Novo                      | 1 1                  | public          |  |  |  |
+fixed         | Dia do Início da Luta Armada de Libertação Nacional | 2 4                  | public          |  |  |  |
+easter        | Dia do Carnaval                      | -47                  | public          |  |  |  |
+fixed         | Dia Internacional da Mulher          | 3 8                  | public          |  |  |  |
+fixed         | Dia da Libertação da África Austral  | 3 23                 | public          |  |  |  |
+easter        | Sexta-Feira Santa                    | -2                   | public          |  |  |  |
+fixed         | Dia da Paz e Reconciliação Nacional  | 4 4                  | public          |  |  |  |
+fixed         | Dia Internacional do Trabalhador     | 5 1                  | public          |  |  |  |
+fixed         | Dia do Fundador da Nação e do Herói Nacional | 9 17                 | public          |  |  |  |
+fixed         | Dia dos Finados                      | 11 2                 | public          |  |  |  |
+fixed         | Dia da Independência Nacional        | 11 11                | public          |  |  |  |
+fixed         | Dia de Natal e da Família            | 12 25                | public          |  |  |  |

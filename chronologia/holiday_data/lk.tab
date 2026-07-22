@@ -1,0 +1,48 @@
+# civil-holidays v1
+# jurisdiction: LK
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Sri_Lanka
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here (including one-off observed-shift days that only
+#   coincide with an Easter offset by chance in a single year) are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025,
+#   the same honest fallback id.tab/cn.tab already use for Imlek/Nyepi/shift
+#   days -- silent outside those years rather than fabricated. 'easter' is
+#   used only where the offset from Easter Sunday is consistent across both
+#   2024 and 2025. Workday-bridge ('ponte' in Portuguese-language sources,
+#   the same phenomenon Russia/Uzbekistan's 'moved' shift days represent)
+#   entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+decree        | දෙමළ තෛපොංැලල් දිනය                  | 2024-1-15 2025-1-14  | public          |  |  |  |
+decree        | දුරුතු පුර පසළොස්වක පෝය දිනය         | 2024-1-25 2025-1-13  | public          |  |  |  |
+fixed         | නිදහස් සමරු දිනය                     | 2 4                  | public          |  |  |  |
+decree        | නවම් පුර පසළොස්වක පෝය දිනය           | 2024-2-23 2025-2-12  | public          |  |  |  |
+decree        | මහ සිවරාත්රි දිනය                    | 2024-3-8 2025-2-26   | public          |  |  |  |
+decree        | මැදින් පුර පසළොස්වක පෝය දිනය         | 2024-3-24 2025-3-13  | public          |  |  |  |
+easter        | මහ සිකුරාදා දිනය                     | -2                   | public          |  |  |  |
+decree        | ඊදුල් ෆීතර්                          | 2024-4-11 2025-3-31  | public          |  |  |  |
+decree        | සිංහල හා දෙමළ අලුත් අවුරුදු දිනට පෙර දිනය | 2024-4-12 2025-4-13  | public          |  |  |  |
+decree        | සිංහල හා දෙමළ අලුත් අවුරුදු දිනය     | 2024-4-13 2025-4-14  | public          |  |  |  |
+decree        | විශේෂ රජයේ නිවාඩු දිනය               | 2024-4-15 2024-9-29  | public          |  |  |  |
+decree        | බක් පුර පසළොස්වක පෝය දිනය            | 2024-4-23 2025-4-12  | public          |  |  |  |
+fixed         | ලොක කම්කරු දිනය                      | 5 1                  | public          |  |  |  |
+decree        | වෙසක් පුර පසළොස්වක පෝය දිනය          | 2024-5-23 2025-5-12  | public          |  |  |  |
+decree        | වෙසක් පුර පසළොස්වක පෝය දිනට පසු දිනය | 2024-5-24 2025-5-13  | public          |  |  |  |
+decree        | ඊදුල් අල්හා                          | 2024-6-17 2025-6-7   | public          |  |  |  |
+decree        | පොසොන් පුර පසළොස්වක පෝය දිනය         | 2024-6-21 2025-6-10  | public          |  |  |  |
+decree        | ඇසල පුර පසළොස්වක පෝය දිනය            | 2024-7-20 2025-7-10  | public          |  |  |  |
+decree        | නිකිණි පුර පසළොස්වක පෝය දිනය         | 2024-8-19 2025-8-8   | public          |  |  |  |
+decree        | නබි නායකතුමාගේ උපන් දිනය             | 2024-9-16 2025-9-5   | public          |  |  |  |
+decree        | බිනර පුර පසළොස්වක පෝය දිනය           | 2024-9-17 2025-9-7   | public          |  |  |  |
+decree        | වප් පුර පසළොස්වක පෝය දිනය            | 2024-10-17 2025-10-6 | public          |  |  |  |
+decree        | දීපවාලි උත්සව දිනය                   | 2024-10-31 2025-10-20 | public          |  |  |  |
+decree        | ඉල් පුර පසළොස්වක පෝය දිනය            | 2024-11-15 2025-11-5 | public          |  |  |  |
+decree        | උඳුවප් පුර පසළොස්වක පෝය දිනය         | 2024-12-14 2025-12-4 | public          |  |  |  |
+fixed         | නත්තල් උත්සව දිනය                    | 12 25                | public          |  |  |  |

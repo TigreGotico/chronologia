@@ -1,0 +1,31 @@
+# civil-holidays v1
+# jurisdiction: MZ
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Mozambique
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here (including one-off observed-shift days that only
+#   coincide with an Easter offset by chance in a single year) are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025,
+#   the same honest fallback id.tab/cn.tab already use for Imlek/Nyepi/shift
+#   days -- silent outside those years rather than fabricated. 'easter' is
+#   used only where the offset from Easter Sunday is consistent across both
+#   2024 and 2025. Workday-bridge ('ponte' in Portuguese-language sources,
+#   the same phenomenon Russia/Uzbekistan's 'moved' shift days represent)
+#   entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Dia da Fraternidade universal        | 1 1                  | public          |  |  |  |
+fixed         | Dia dos Heróis Moçambicanos          | 2 3                  | public          |  |  |  |
+fixed         | Dia da Mulher Moçambicana            | 4 7                  | public          |  |  |  |
+fixed         | Dia Internacional dos Trabalhadores  | 5 1                  | public          |  |  |  |
+fixed         | Dia da Independência Nacional        | 6 25                 | public          |  |  |  |
+fixed         | Dia da Vitória                       | 9 7                  | public          |  |  |  |
+fixed         | Dia das Forças Armadas de Libertação Nacional | 9 25                 | public          |  |  |  |
+fixed         | Dia da Paz e Reconciliação           | 10 4                 | public          |  |  |  |
+fixed         | Dia da Família                       | 12 25                | public          |  |  |  |

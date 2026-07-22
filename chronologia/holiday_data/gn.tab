@@ -1,0 +1,34 @@
+# civil-holidays v1
+# jurisdiction: GN
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Guinea
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here (including one-off observed-shift days that only
+#   coincide with an Easter offset by chance in a single year) are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025,
+#   the same honest fallback id.tab/cn.tab already use for Imlek/Nyepi/shift
+#   days -- silent outside those years rather than fabricated. 'easter' is
+#   used only where the offset from Easter Sunday is consistent across both
+#   2024 and 2025. Workday-bridge ('ponte' in Portuguese-language sources,
+#   the same phenomenon Russia/Uzbekistan's 'moved' shift days represent)
+#   entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Fête du Nouvel an                    | 1 1                  | public          |  |  |  |
+easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
+decree        | Lendemain de la nuit Lailatoul Qadr  | 2024-4-6 2025-3-27   | public          |  |  |  |
+decree        | Jour de l'Aïd el-Fitr                | 2024-4-10 2025-3-31  | public          |  |  |  |
+fixed         | Fête du Travail                      | 5 1                  | public          |  |  |  |
+fixed         | Anniversaire de l'Union Africaine    | 5 25                 | public          |  |  |  |
+decree        | Jour de la Tabaski                   | 2024-6-16 2025-6-7   | public          |  |  |  |
+decree        | Lendemain de la Tabaski              | 2024-6-17 2025-6-8   | public          |  |  |  |
+fixed         | Assomption                           | 8 15                 | public          |  |  |  |
+decree        | Lendemain de la nuit du Maoloud      | 2024-9-15 2025-9-5   | public          |  |  |  |
+fixed         | Fête anniversaire de l'indépendance de la Guinée | 10 2                 | public          |  |  |  |
+fixed         | Fête de Noël                         | 12 25                | public          |  |  |  |
