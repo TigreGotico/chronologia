@@ -71,6 +71,12 @@ class Conventions:
     dmy: bool = True
     hemisphere: Optional[str] = None
     prefer_future: bool = True
+    # First day of the two-day weekend, as a Python weekday() index
+    # (Monday=0).  The default 5 (Saturday) gives the Sat-Sun weekend of most
+    # Western locales; Israel and much of the Arab world rest Friday-Saturday,
+    # so their locales set 4 (Friday).  A fact, not logic -- the resolver
+    # reads it when building a weekend span.
+    weekend_start: int = 5
     # Continental-Germanic clock convention: a bare half-fraction names the
     # half *before* the stated hour ("halb neun" == 08:30, "half negen",
     # "halv nio"), the opposite of English "half nine" == 09:30.  A fact,
