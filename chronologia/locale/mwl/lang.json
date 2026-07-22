@@ -73,6 +73,14 @@
       "un",
       "ua",
       "uma"
+    ],
+    "0.5": [
+      "meia",
+      "meio"
+    ],
+    "0.25": [
+      "quarto",
+      "quartos"
     ]
   },
   "guards": {

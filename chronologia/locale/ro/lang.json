@@ -85,6 +85,7 @@
                  "PART? article? year_word DECADE",
                  "PART? article? DECADE"]
     },
+    "decade_bc": {"orders": ["article? NUM plural bc"]},
     "month_fuzzy": {"orders": ["PART MONTH"]},
     "month_day_ref": {
       "orders": ["article? ORD of article? month_word"],
@@ -98,7 +99,8 @@
   "conventions": {"week_start": "monday", "dmy": true, "hemisphere": "north",
                   "prefer_future": true},
   "quantifiers": {"1": ["un", "o"], "2": ["pereche"],
-                  "3": ["câțiva", "cativa", "câteva", "cateva"], "0.5": ["jumătate", "jumatate"]},
+                  "3": ["câțiva", "cativa", "câteva", "cateva"], "0.5": ["jumătate", "jumatate"],
+                  "0.25": ["sfert", "sferturi"]},
   "guards": {"bare_year_min_digits": 4},
   "hook": "chronologia.extract.numfold:fold_ro"
 }
