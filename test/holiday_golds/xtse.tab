@@ -1,0 +1,30 @@
+# Gold fixtures for jurisdiction XTSE -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|primary|source-restated (holiday_data/xtse.tab header + papers/holidays)
+|Boxing Day|2025|12|26|primary|source-restated (holiday_data/xtse.tab header + papers/holidays)
+|Canada Day|2024|7|1|primary|source-restated (holiday_data/xtse.tab header + papers/holidays)
+|Canada Day|2025|7|1|primary|source-restated (holiday_data/xtse.tab header + papers/holidays)
+|Christmas Day|2024|12|25|primary|source-restated (holiday_data/xtse.tab header + papers/holidays)
+|Christmas Day|2025|12|25|primary|source-restated (holiday_data/xtse.tab header + papers/holidays)
+|Civic Holiday|2024|8|5|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Civic Holiday|2025|8|4|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Family Day|2024|2|19|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Family Day|2025|2|17|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2025|4|18|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Labour Day|2024|9|2|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Labour Day|2025|9|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|New Year's Day|2024|1|1|primary|source-restated (holiday_data/xtse.tab header + papers/holidays)
+|New Year's Day|2025|1|1|primary|source-restated (holiday_data/xtse.tab header + papers/holidays)
+|Thanksgiving Day|2024|10|14|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Thanksgiving Day|2025|10|13|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Victoria Day|2024|5|20|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Victoria Day|2025|5|19|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)

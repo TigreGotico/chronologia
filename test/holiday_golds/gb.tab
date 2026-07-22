@@ -1,0 +1,41 @@
+# Gold fixtures for jurisdiction GB -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|primary|source-restated (holiday_data/gb.tab header + papers/holidays)
+|Boxing Day (substitute day)|2021|12|28|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Christmas Day|2024|12|25|primary|source-restated (holiday_data/gb.tab header + papers/holidays)
+|Christmas Day (substitute day)|2021|12|27|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Christmas Day (substitute day)|2022|12|27|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Coronation of King Charles III|2023|5|8|self-evident|rule's own args in holiday_data/gb.tab (no independent witness available)
+|Early May Bank Holiday|2024|5|6|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|New Year's Day|2024|1|1|primary|source-restated (holiday_data/gb.tab header + papers/holidays)
+|New Year's Day (substitute day)|2022|1|3|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|New Year's Day (substitute day)|2023|1|2|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Platinum Jubilee bank holiday|2022|6|3|self-evident|rule's own args in holiday_data/gb.tab (no independent witness available)
+|Spring Bank Holiday|2024|5|27|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|State Funeral of Queen Elizabeth II|2022|9|19|self-evident|rule's own args in holiday_data/gb.tab (no independent witness available)
+GB-EAW|Easter Monday|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+GB-EAW|Summer Bank Holiday|2024|8|26|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+GB-ENG|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+GB-ENG|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+GB-ENG|Late Summer Bank Holiday|2024|8|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+GB-ENG|Late Summer Bank Holiday|2025|8|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+GB-NIR|Battle of the Boyne|2024|7|12|primary|source-restated (holiday_data/gb.tab header + papers/holidays)
+GB-NIR|Easter Monday|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+GB-NIR|St Patrick's Day|2024|3|17|primary|source-restated (holiday_data/gb.tab header + papers/holidays)
+GB-NIR|Summer Bank Holiday|2024|8|26|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+GB-SCT|2nd January|2024|1|2|primary|source-restated (holiday_data/gb.tab header + papers/holidays)
+GB-SCT|St Andrew's Day|2024|11|30|primary|source-restated (holiday_data/gb.tab header + papers/holidays)
+GB-SCT|Summer Bank Holiday|2024|8|5|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+GB-WLS|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+GB-WLS|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+GB-WLS|Late Summer Bank Holiday|2024|8|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+GB-WLS|Late Summer Bank Holiday|2025|8|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

@@ -1,0 +1,38 @@
+# Gold fixtures for jurisdiction TJ -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Иди байналмилалии Наврӯз (1)|2024|3|21|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Иди байналмилалии Наврӯз (1)|2025|3|21|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Иди байналмилалии Наврӯз (2)|2024|3|22|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Иди байналмилалии Наврӯз (2)|2025|3|22|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Иди байналмилалии Наврӯз (3)|2024|3|23|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Иди байналмилалии Наврӯз (3)|2025|3|23|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Иди байналмилалии Наврӯз (4)|2024|3|24|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Иди байналмилалии Наврӯз (4)|2025|3|24|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Рӯзи Ваҳдати миллӣ|2024|6|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи Ваҳдати миллӣ|2025|6|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи Истиқлолияти давлатии Ҷумҳурии Тоҷикистон|2024|9|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи Истиқлолияти давлатии Ҷумҳурии Тоҷикистон|2025|9|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи Конститутсияи Ҷумҳурии Тоҷикистон|2024|11|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи Конститутсияи Ҷумҳурии Тоҷикистон|2025|11|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи Модар|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи Модар|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи иди Рамазон|2024|4|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи иди Рамазон|2025|3|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи иди Рамазон|2026|3|20|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Рӯзи иди Рамазон|2027|3|9|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Рӯзи иди Қурбон|2024|6|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи иди Қурбон|2025|6|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи иди Қурбон|2026|5|27|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Рӯзи иди Қурбон|2027|5|16|self-evident|rule's own args in holiday_data/tj.tab (no independent witness available)
+|Рӯзи Ғалаба дар Ҷанги Бузурги Ватанӣ|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Рӯзи Ғалаба дар Ҷанги Бузурги Ватанӣ|2025|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Соли Нав|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Соли Нав|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

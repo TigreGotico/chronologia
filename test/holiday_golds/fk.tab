@@ -1,0 +1,32 @@
+# Gold fixtures for jurisdiction FK -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Holiday|2024|12|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Holiday|2025|12|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Government Holiday|2024|12|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Government Holiday|2024|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Government Holiday|2025|12|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Government Holiday|2025|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|HM The King's Birthday|2024|11|14|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|HM The King's Birthday|2025|11|14|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Liberation Day|2024|6|14|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Liberation Day|2025|6|14|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Peat Cutting Day|2024|10|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Peat Cutting Day|2025|10|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Peat Cutting Day|2026|10|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Peat Cutting Day|2027|10|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

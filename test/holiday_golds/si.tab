@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction SI -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Marijino vnebovzetje|2024|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Marijino vnebovzetje|2025|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Prešernov dan, slovenski kulturni praznik|2024|2|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Prešernov dan, slovenski kulturni praznik|2025|2|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|binkoštna nedelja|2024|5|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|binkoštna nedelja|2025|6|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|božič|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|božič|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan državnosti|2024|6|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan državnosti|2025|6|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan reformacije|2024|10|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan reformacije|2025|10|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan samostojnosti in enotnosti|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan samostojnosti in enotnosti|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan spomina na mrtve|2024|11|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan spomina na mrtve|2025|11|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan upora proti okupatorju|2024|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|dan upora proti okupatorju|2025|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|novo leto (1)|2024|1|1|self-evident|rule's own args in holiday_data/si.tab (no independent witness available)
+|novo leto (1)|2025|1|1|self-evident|rule's own args in holiday_data/si.tab (no independent witness available)
+|novo leto (2)|2024|1|2|self-evident|rule's own args in holiday_data/si.tab (no independent witness available)
+|novo leto (2)|2025|1|2|self-evident|rule's own args in holiday_data/si.tab (no independent witness available)
+|praznik dela (1)|2024|5|1|self-evident|rule's own args in holiday_data/si.tab (no independent witness available)
+|praznik dela (1)|2025|5|1|self-evident|rule's own args in holiday_data/si.tab (no independent witness available)
+|praznik dela (2)|2024|5|2|self-evident|rule's own args in holiday_data/si.tab (no independent witness available)
+|praznik dela (2)|2025|5|2|self-evident|rule's own args in holiday_data/si.tab (no independent witness available)
+|velikonočna nedelja|2024|3|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|velikonočna nedelja|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|velikonočni ponedeljek|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|velikonočni ponedeljek|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

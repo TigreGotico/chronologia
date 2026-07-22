@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction AO -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Dia Internacional da Mulher|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia Internacional da Mulher|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia Internacional do Trabalhador|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia Internacional do Trabalhador|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Independência Nacional|2024|11|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Independência Nacional|2025|11|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Libertação da África Austral|2024|3|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Libertação da África Austral|2025|3|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Paz e Reconciliação Nacional|2024|4|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Paz e Reconciliação Nacional|2025|4|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia de Natal e da Família|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia de Natal e da Família|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Ano Novo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Ano Novo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Carnaval|2024|2|13|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Carnaval|2025|3|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Fundador da Nação e do Herói Nacional|2024|9|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Fundador da Nação e do Herói Nacional|2025|9|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Início da Luta Armada de Libertação Nacional|2024|2|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Início da Luta Armada de Libertação Nacional|2025|2|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia dos Finados|2024|11|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia dos Finados|2025|11|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Sexta-Feira Santa|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Sexta-Feira Santa|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

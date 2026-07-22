@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction TM -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Gurban baýramy|2024|6|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Gurban baýramy|2025|6|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Gurban baýramy|2026|5|27|self-evident|rule's own args in holiday_data/tm.tab (no independent witness available)
+|Gurban baýramy|2027|5|16|self-evident|rule's own args in holiday_data/tm.tab (no independent witness available)
+|Halkara Bitaraplyk güni|2024|12|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Halkara Bitaraplyk güni|2025|12|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Halkara zenanlar güni|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Halkara zenanlar güni|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Hatyra güni|2024|10|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Hatyra güni|2025|10|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Milli bahar baýramy (1)|2024|3|21|self-evident|rule's own args in holiday_data/tm.tab (no independent witness available)
+|Milli bahar baýramy (1)|2025|3|21|self-evident|rule's own args in holiday_data/tm.tab (no independent witness available)
+|Milli bahar baýramy (2)|2024|3|22|self-evident|rule's own args in holiday_data/tm.tab (no independent witness available)
+|Milli bahar baýramy (2)|2025|3|22|self-evident|rule's own args in holiday_data/tm.tab (no independent witness available)
+|Oraza baýramy|2024|4|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Oraza baýramy|2025|3|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Oraza baýramy|2026|3|20|self-evident|rule's own args in holiday_data/tm.tab (no independent witness available)
+|Oraza baýramy|2027|3|9|self-evident|rule's own args in holiday_data/tm.tab (no independent witness available)
+|Täze ýyl|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Täze ýyl|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Türkmenistanyň Garaşsyzlyk güni|2024|9|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Türkmenistanyň Garaşsyzlyk güni|2025|9|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Türkmenistanyň Konstitusiýasynyň we Döwlet baýdagynyň güni|2024|5|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Türkmenistanyň Konstitusiýasynyň we Döwlet baýdagynyň güni|2025|5|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

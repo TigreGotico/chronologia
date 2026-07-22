@@ -1,0 +1,26 @@
+# Gold fixtures for jurisdiction XETR -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Erster Mai|2024|5|1|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Erster Mai|2025|5|1|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Erster Weihnachtstag|2024|12|25|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Erster Weihnachtstag|2025|12|25|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Heiligabend|2024|12|24|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Heiligabend|2025|12|24|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Karfreitag|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Karfreitag|2025|4|18|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Neujahr|2024|1|1|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Neujahr|2025|1|1|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Ostermontag|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Ostermontag|2025|4|21|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Silvester|2024|12|31|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Silvester|2025|12|31|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Zweiter Weihnachtstag|2024|12|26|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)
+|Zweiter Weihnachtstag|2025|12|26|primary|source-restated (holiday_data/xetr.tab header + papers/holidays)

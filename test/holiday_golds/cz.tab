@@ -1,0 +1,23 @@
+# Gold fixtures for jurisdiction CZ -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|1. svátek vánoční|2024|12|25|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|2. svátek vánoční|2024|12|26|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Den boje za svobodu a demokracii|2024|11|17|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Den slovanských věrozvěstů Cyrila a Metoděje|2024|7|5|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Den upálení mistra Jana Husa|2024|7|6|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Den vzniku samostatného československého státu|2024|10|28|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Den vítězství|2024|5|8|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Den české státnosti|2024|9|28|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Nový rok|2024|1|1|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Svátek práce|2024|5|1|primary|source-restated (holiday_data/cz.tab header + papers/holidays)
+|Velikonoční pondělí|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Velký pátek|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Štědrý den|2024|12|24|primary|source-restated (holiday_data/cz.tab header + papers/holidays)

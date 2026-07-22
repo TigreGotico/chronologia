@@ -1,0 +1,36 @@
+# Gold fixtures for jurisdiction GW -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Ano Novo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ano Novo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia Internacional da Mulher|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia Internacional da Mulher|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Independência|2024|9|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia da Independência|2025|9|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia de Natal|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia de Natal|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia de Pidjiguiti|2024|8|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia de Pidjiguiti|2025|8|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Início da Luta Armada|2024|1|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Início da Luta Armada|2025|1|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Trabalhador|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia do Trabalhador|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia dos Heróis Nacionais|2024|1|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia dos Heróis Nacionais|2025|1|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Korité|2024|4|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Korité|2025|3|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Korité|2026|3|20|self-evident|rule's own args in holiday_data/gw.tab (no independent witness available)
+|Korité|2027|3|9|self-evident|rule's own args in holiday_data/gw.tab (no independent witness available)
+|Páscoa|2024|3|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Páscoa|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Tabaski|2024|6|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Tabaski|2025|6|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Tabaski|2026|5|27|self-evident|rule's own args in holiday_data/gw.tab (no independent witness available)
+|Tabaski|2027|5|16|self-evident|rule's own args in holiday_data/gw.tab (no independent witness available)

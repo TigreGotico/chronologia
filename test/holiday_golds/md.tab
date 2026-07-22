@@ -1,0 +1,36 @@
+# Gold fixtures for jurisdiction MD -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Anul Nou|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Anul Nou|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Limba noastră|2024|8|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Limba noastră|2025|8|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nașterea lui Iisus Hristos (Crăciunul pe stil nou)|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nașterea lui Iisus Hristos (Crăciunul pe stil nou)|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nașterea lui Iisus Hristos (Crăciunul pe stil vechi) (1)|2024|1|7|self-evident|rule's own args in holiday_data/md.tab (no independent witness available)
+|Nașterea lui Iisus Hristos (Crăciunul pe stil vechi) (1)|2025|1|7|self-evident|rule's own args in holiday_data/md.tab (no independent witness available)
+|Nașterea lui Iisus Hristos (Crăciunul pe stil vechi) (2)|2024|1|8|self-evident|rule's own args in holiday_data/md.tab (no independent witness available)
+|Nașterea lui Iisus Hristos (Crăciunul pe stil vechi) (2)|2025|1|8|self-evident|rule's own args in holiday_data/md.tab (no independent witness available)
+|Paștele (1)|2024|5|5|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Paștele (1)|2025|4|20|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Paștele (2)|2024|5|6|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Paștele (2)|2025|4|21|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Paștele blajinilor|2024|5|13|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Paștele blajinilor|2025|4|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ziua Europei; Ziua Victoriei și a comemorării eroilor căzuţi pentru Independenţa Patriei|2024|5|9|self-evident|rule's own args in holiday_data/md.tab (no independent witness available)
+|Ziua Europei; Ziua Victoriei și a comemorării eroilor căzuţi pentru Independenţa Patriei|2025|5|9|self-evident|rule's own args in holiday_data/md.tab (no independent witness available)
+|Ziua Ocrotirii Copilului|2024|6|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ziua Ocrotirii Copilului|2025|6|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ziua independenţei Republicii Moldova|2024|8|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ziua independenţei Republicii Moldova|2025|8|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ziua internatională a femeii|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ziua internatională a femeii|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ziua internaţională a solidarităţii oamenilor muncii|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ziua internaţională a solidarităţii oamenilor muncii|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

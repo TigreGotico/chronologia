@@ -1,0 +1,28 @@
+# Gold fixtures for jurisdiction GS -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Environment Day|2024|10|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Environment Day|2025|10|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Liberation Day|2024|4|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Liberation Day|2025|4|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Mid-winter Day|2024|6|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Mid-winter Day|2025|6|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Possession Day|2024|1|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Possession Day|2025|1|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Shackleton Day|2024|5|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Shackleton Day|2025|5|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

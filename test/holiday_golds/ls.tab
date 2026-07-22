@@ -1,0 +1,32 @@
+# Gold fixtures for jurisdiction LS -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Africa/Heroes Day|2024|5|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Africa/Heroes Day|2025|5|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ascension Day|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ascension Day|2025|5|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2024|10|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2025|10|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|King's Birthday|2024|7|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|King's Birthday|2025|7|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Moshoeshoe's Day|2024|3|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Moshoeshoe's Day|2025|3|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Workers' Day|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Workers' Day|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

@@ -1,0 +1,25 @@
+# Gold fixtures for jurisdiction IE -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|August Bank Holiday|2024|8|5|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Christmas Day|2024|12|25|primary|source-restated (holiday_data/ie.tab header + papers/holidays)
+|Day of Remembrance and Recognition|2022|3|18|self-evident|rule's own args in holiday_data/ie.tab (no independent witness available)
+|Easter Monday|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|June Bank Holiday|2024|6|3|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|May Day|2024|5|6|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|New Year's Day|2024|1|1|primary|source-restated (holiday_data/ie.tab header + papers/holidays)
+|October Bank Holiday|2024|10|28|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Saint Brigid's Day|2023|2|6|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Saint Brigid's Day|2024|2|5|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Saint Brigid's Day|2025|2|3|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Saint Patrick's Day|2024|3|17|primary|source-restated (holiday_data/ie.tab header + papers/holidays)
+|Saint Stephen's Day|2024|12|26|primary|source-restated (holiday_data/ie.tab header + papers/holidays)

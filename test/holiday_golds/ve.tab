@@ -1,0 +1,42 @@
+# Gold fixtures for jurisdiction VE -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Año Nuevo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Año Nuevo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Batalla de Carabobo|2024|6|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Batalla de Carabobo|2025|6|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Canonización de José Gregorio Hernández y la Madre Carmen Rendiles|2025|10|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Canonización de José Gregorio Hernández y la Madre Carmen Rendiles|2025|10|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Declaración de la Independencia|2024|4|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Declaración de la Independencia|2025|4|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia Mundial del Trabajador|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia Mundial del Trabajador|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Navidad|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Navidad|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Familia|2024|5|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Familia|2025|5|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Independencia|2024|7|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Independencia|2025|7|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Resistencia Indígena|2024|10|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Resistencia Indígena|2025|10|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fiesta de Fin de Año|2024|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fiesta de Fin de Año|2025|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jueves Santo|2024|3|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jueves Santo|2025|4|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lunes de Carnaval|2024|2|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Lunes de Carnaval|2025|3|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Martes de Carnaval|2024|2|13|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Martes de Carnaval|2025|3|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Natalicio de Simón Bolívar|2024|7|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Natalicio de Simón Bolívar|2025|7|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nochebuena|2024|12|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nochebuena|2025|12|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

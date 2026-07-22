@@ -1,0 +1,36 @@
+# Gold fixtures for jurisdiction AE -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|اليوم الوطني (1)|2024|12|2|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|اليوم الوطني (1)|2025|12|2|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|اليوم الوطني (2)|2024|12|3|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|اليوم الوطني (2)|2025|12|3|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|رأس السنة الميلادية|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|رأس السنة الميلادية|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|رأس السنة الهجرية|2024|7|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|رأس السنة الهجرية|2025|6|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|رأس السنة الهجرية|2026|6|16|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|رأس السنة الهجرية|2027|6|6|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|عيد الأضحى|2024|6|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|عيد الأضحى|2025|6|4|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|عيد الأضحى|2026|5|27|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|عيد الأضحى|2027|5|16|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|عيد الفطر|2024|4|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|عيد الفطر|2025|3|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|عيد الفطر|2026|3|20|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|عيد الفطر|2027|3|9|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|عيد المولد النبوي|2024|9|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|عيد المولد النبوي|2025|9|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|عيد المولد النبوي|2026|8|25|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|عيد المولد النبوي|2027|8|14|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|وقفة عرفة|2024|6|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|وقفة عرفة|2025|6|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|وقفة عرفة|2026|5|26|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)
+|وقفة عرفة|2027|5|15|self-evident|rule's own args in holiday_data/ae.tab (no independent witness available)

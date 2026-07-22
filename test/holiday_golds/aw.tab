@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction AW -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Aña Nobo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Aña Nobo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Bierna Santo|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Bierna Santo|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Di dos dia di Pasco di Nacemento|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Di dos dia di Pasco di Nacemento|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Di dos dia di Pasco di Resureccion|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Di dos dia di Pasco di Resureccion|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Asuncion|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Asuncion|2025|5|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Betico|2024|1|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Betico|2025|1|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Himno y Bandera|2024|3|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Himno y Bandera|2025|3|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Obrero|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Obrero|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Rey|2024|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Rey|2025|4|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Rey|2026|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dia di Rey|2027|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dialuna prome cu diaranson di shinish|2024|2|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dialuna prome cu diaranson di shinish|2025|3|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Pasco di Nacemento|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Pasco di Nacemento|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

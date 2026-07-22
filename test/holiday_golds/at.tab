@@ -1,0 +1,38 @@
+# Gold fixtures for jurisdiction AT -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Allerheiligen|2024|11|1|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+|Christi Himmelfahrt|2024|5|9|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Christtag|2024|12|25|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+|Fronleichnam|2024|5|30|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Heilige Drei Könige|2024|1|6|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+|Heiliger Abend|2024|12|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Heiliger Abend|2025|12|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Karfreitag|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Karfreitag|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Mariä Empfängnis|2024|12|8|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+|Mariä Himmelfahrt|2024|8|15|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+|Nationalfeiertag|2024|10|26|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+|Neujahr|2024|1|1|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+|Ostermontag|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Pfingstmontag|2024|5|20|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Silvester|2024|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Silvester|2025|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Staatsfeiertag|2024|5|1|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+|Stephanstag|2024|12|26|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-1|Heiliger Martin|2024|11|11|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-2|Tag der Volksabstimmung|2024|10|10|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-3|Heiliger Leopold|2024|11|15|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-4|Heiliger Florian|2024|5|4|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-5|Heiliger Rupert|2024|9|24|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-6|Heiliger Josef|2024|3|19|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-7|Heiliger Josef|2024|3|19|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-8|Heiliger Josef|2024|3|19|primary|source-restated (holiday_data/at.tab header + papers/holidays)
+AT-9|Heiliger Leopold|2024|11|15|primary|source-restated (holiday_data/at.tab header + papers/holidays)

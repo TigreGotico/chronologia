@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction BY -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Дзень Кастрычніцкай рэвалюцыі|2024|11|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Дзень Кастрычніцкай рэвалюцыі|2025|11|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Дзень Незалежнасці Рэспублікі Беларусь (Дзень Рэспублікі)|2024|7|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Дзень Незалежнасці Рэспублікі Беларусь (Дзень Рэспублікі)|2025|7|3|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Дзень Перамогі|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Дзень Перамогі|2025|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Дзень жанчын|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Дзень жанчын|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Каталiцкi Вялiкдзень|2024|3|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Каталiцкi Вялiкдзень|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Нараджэнне Хрыстова (каталіцкае Раство)|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Нараджэнне Хрыстова (каталіцкае Раство)|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Нараджэнне Хрыстова (праваслаўнае Раство)|2024|1|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Нараджэнне Хрыстова (праваслаўнае Раство)|2025|1|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Новы год (1)|2024|1|1|self-evident|rule's own args in holiday_data/by.tab (no independent witness available)
+|Новы год (1)|2025|1|1|self-evident|rule's own args in holiday_data/by.tab (no independent witness available)
+|Новы год (2)|2024|1|2|self-evident|rule's own args in holiday_data/by.tab (no independent witness available)
+|Новы год (2)|2025|1|2|self-evident|rule's own args in holiday_data/by.tab (no independent witness available)
+|Праваслаўны Вялiкдзень|2024|5|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Праваслаўны Вялiкдзень|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Радаўніца|2024|5|14|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Радаўніца|2025|4|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Свята працы|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Свята працы|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

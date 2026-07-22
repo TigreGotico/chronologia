@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction FJ -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boxing Day|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Boxing Day|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Christmas Day|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Diwali|2024|11|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Diwali|2025|10|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Diwali|2026|11|8|self-evident|rule's own args in holiday_data/fj.tab (no independent witness available)
+|Diwali|2027|10|29|self-evident|rule's own args in holiday_data/fj.tab (no independent witness available)
+|Easter Monday|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Monday|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Saturday|2024|3|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Easter Saturday|2025|4|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fiji Day|2024|10|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fiji Day|2025|10|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Girmit Day|2024|5|13|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Girmit Day|2025|5|12|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Girmit Day|2026|5|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Girmit Day|2027|5|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Good Friday|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Prophet Mohammed's Birthday|2024|9|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Prophet Mohammed's Birthday|2025|9|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Prophet Mohammed's Birthday|2026|8|25|self-evident|rule's own args in holiday_data/fj.tab (no independent witness available)
+|Prophet Mohammed's Birthday|2027|8|14|self-evident|rule's own args in holiday_data/fj.tab (no independent witness available)
+|Ratu Sir Lala Sukuna Day|2024|5|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ratu Sir Lala Sukuna Day|2025|5|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ratu Sir Lala Sukuna Day|2026|5|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ratu Sir Lala Sukuna Day|2027|5|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

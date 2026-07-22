@@ -1,0 +1,24 @@
+# Gold fixtures for jurisdiction PL -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Boże Narodzenie (drugi dzień)|2024|12|26|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Boże Narodzenie (pierwszy dzień)|2024|12|25|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Dzień Bożego Ciała|2024|5|30|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Narodowe Święto Niepodległości|2024|11|11|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Niedziela Wielkanocna|2024|3|31|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Nowy Rok|2024|1|1|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Poniedziałek Wielkanocny|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Uroczystość Wszystkich Świętych|2024|11|1|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Wigilia Bożego Narodzenia|2025|12|24|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Wniebowzięcie Najświętszej Marii Panny|2024|8|15|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Zielone Świątki|2024|5|19|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Święto Narodowe Trzeciego Maja|2024|5|3|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Święto Państwowe|2024|5|1|primary|source-restated (holiday_data/pl.tab header + papers/holidays)
+|Święto Trzech Króli|2024|1|6|primary|source-restated (holiday_data/pl.tab header + papers/holidays)

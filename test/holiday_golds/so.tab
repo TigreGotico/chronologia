@@ -1,0 +1,42 @@
+# Gold fixtures for jurisdiction SO -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Ashura|2024|7|16|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Ashura|2025|7|5|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Ashura|2026|6|25|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Ashura|2027|6|15|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Eid al-Adha|2024|6|16|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Eid al-Adha|2025|6|6|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Eid al-Adha|2026|5|27|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Eid al-Adha|2027|5|16|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Eid al-Fitr|2024|4|10|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Eid al-Fitr|2025|3|30|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Eid al-Fitr|2026|3|20|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Eid al-Fitr|2027|3|9|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Independence Day|2024|6|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Independence Day|2025|6|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Islamic New Year|2024|7|7|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Islamic New Year|2025|6|26|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Islamic New Year|2026|6|16|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Islamic New Year|2027|6|6|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Isra' and Mi'raj|2024|2|8|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Isra' and Mi'raj|2025|1|27|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Isra' and Mi'raj|2026|1|16|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Isra' and Mi'raj|2027|1|5|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Labour Day|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Labour Day|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|New Year's Day|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Prophet's Birthday|2024|9|15|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Prophet's Birthday|2025|9|4|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Prophet's Birthday|2026|8|25|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Prophet's Birthday|2027|8|14|self-evident|rule's own args in holiday_data/so.tab (no independent witness available)
+|Republic Day|2024|7|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Republic Day|2025|7|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

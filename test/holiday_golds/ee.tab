@@ -1,0 +1,42 @@
+# Gold fixtures for jurisdiction EE -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|esimene jõulupüha|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|esimene jõulupüha|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|iseseisvuspäev|2024|2|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|iseseisvuspäev|2025|2|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|jaanipäev|2024|6|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|jaanipäev|2025|6|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|jõululaupäev|2024|12|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|jõululaupäev|2025|12|24|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|kevadpüha|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|kevadpüha|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|nelipühade 1. püha|2024|5|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|nelipühade 1. püha|2025|6|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|pühade-eelne päev (tööpäev lüheneb 3 tunni võrra)|2024|2|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|pühade-eelne päev (tööpäev lüheneb 3 tunni võrra)|2024|6|22|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|pühade-eelne päev (tööpäev lüheneb 3 tunni võrra)|2024|12|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|pühade-eelne päev (tööpäev lüheneb 3 tunni võrra)|2024|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|pühade-eelne päev (tööpäev lüheneb 3 tunni võrra)|2025|2|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|pühade-eelne päev (tööpäev lüheneb 3 tunni võrra)|2025|6|22|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|pühade-eelne päev (tööpäev lüheneb 3 tunni võrra)|2025|12|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|pühade-eelne päev (tööpäev lüheneb 3 tunni võrra)|2025|12|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|suur reede|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|suur reede|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|taasiseseisvumispäev|2024|8|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|taasiseseisvumispäev|2025|8|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|teine jõulupüha|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|teine jõulupüha|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|uusaasta|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|uusaasta|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|võidupüha|2024|6|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|võidupüha|2025|6|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ülestõusmispühade 1. püha|2024|3|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|ülestõusmispühade 1. püha|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

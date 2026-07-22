@@ -1,0 +1,962 @@
+{
+ "AD": {
+  "witnessed": 50
+ },
+ "AE": {
+  "self-evident": 14,
+  "witnessed": 12
+ },
+ "AF": {
+  "self-evident": 10,
+  "witnessed": 30
+ },
+ "AG": {
+  "witnessed": 28
+ },
+ "AI": {
+  "witnessed": 39
+ },
+ "AL": {
+  "self-evident": 8,
+  "witnessed": 26
+ },
+ "AM": {
+  "self-evident": 4,
+  "witnessed": 20
+ },
+ "AO": {
+  "witnessed": 24
+ },
+ "AQ": {
+  "witnessed": 10
+ },
+ "AR": {
+  "witnessed": 171
+ },
+ "AS": {
+  "witnessed": 60
+ },
+ "AT": {
+  "computed": 4,
+  "primary": 18,
+  "witnessed": 6
+ },
+ "AU": {
+  "computed": 21,
+  "primary": 6,
+  "self-evident": 3
+ },
+ "AW": {
+  "witnessed": 24
+ },
+ "AX": {
+  "self-evident": 2,
+  "witnessed": 66
+ },
+ "AZ": {
+  "self-evident": 30,
+  "witnessed": 20
+ },
+ "BA": {
+  "self-evident": 15,
+  "witnessed": 44
+ },
+ "BB": {
+  "witnessed": 26
+ },
+ "BD": {
+  "self-evident": 3,
+  "witnessed": 52
+ },
+ "BE": {
+  "computed": 3,
+  "primary": 7,
+  "witnessed": 6
+ },
+ "BF": {
+  "computed": 4,
+  "self-evident": 34
+ },
+ "BG": {
+  "self-evident": 4,
+  "witnessed": 24
+ },
+ "BH": {
+  "self-evident": 40,
+  "witnessed": 8
+ },
+ "BI": {
+  "self-evident": 4,
+  "witnessed": 33
+ },
+ "BJ": {
+  "witnessed": 37
+ },
+ "BL": {
+  "witnessed": 24
+ },
+ "BM": {
+  "witnessed": 30
+ },
+ "BN": {
+  "self-evident": 12,
+  "witnessed": 42
+ },
+ "BO": {
+  "computed": 4,
+  "witnessed": 38
+ },
+ "BQ": {
+  "witnessed": 32
+ },
+ "BR": {
+  "computed": 3,
+  "primary": 11,
+  "witnessed": 96
+ },
+ "BS": {
+  "witnessed": 28
+ },
+ "BT": {
+  "self-evident": 14,
+  "witnessed": 44
+ },
+ "BVMF": {
+  "computed": 8,
+  "primary": 18
+ },
+ "BW": {
+  "witnessed": 32
+ },
+ "BY": {
+  "self-evident": 4,
+  "witnessed": 20
+ },
+ "BZ": {
+  "witnessed": 27
+ },
+ "CA": {
+  "computed": 18,
+  "primary": 10,
+  "witnessed": 94
+ },
+ "CC": {
+  "self-evident": 6,
+  "witnessed": 26
+ },
+ "CD": {
+  "self-evident": 4,
+  "witnessed": 20
+ },
+ "CF": {
+  "self-evident": 4,
+  "witnessed": 28
+ },
+ "CG": {
+  "witnessed": 20
+ },
+ "CH": {
+  "computed": 19,
+  "primary": 25,
+  "witnessed": 270
+ },
+ "CI": {
+  "witnessed": 40
+ },
+ "CK": {
+  "witnessed": 26
+ },
+ "CL": {
+  "witnessed": 56
+ },
+ "CM": {
+  "self-evident": 11,
+  "witnessed": 22
+ },
+ "CN": {
+  "computed": 9,
+  "primary": 5,
+  "witnessed": 8
+ },
+ "CO": {
+  "witnessed": 54
+ },
+ "CR": {
+  "self-evident": 3,
+  "witnessed": 27
+ },
+ "CU": {
+  "self-evident": 4,
+  "witnessed": 16
+ },
+ "CV": {
+  "witnessed": 82
+ },
+ "CW": {
+  "witnessed": 28
+ },
+ "CX": {
+  "self-evident": 12,
+  "witnessed": 24
+ },
+ "CY": {
+  "witnessed": 36
+ },
+ "CZ": {
+  "computed": 2,
+  "primary": 11
+ },
+ "DE": {
+  "computed": 13,
+  "primary": 26
+ },
+ "DJ": {
+  "witnessed": 43
+ },
+ "DK": {
+  "computed": 8,
+  "primary": 3,
+  "witnessed": 8
+ },
+ "DM": {
+  "witnessed": 28
+ },
+ "DO": {
+  "witnessed": 30
+ },
+ "DZ": {
+  "self-evident": 44,
+  "witnessed": 10
+ },
+ "EC": {
+  "witnessed": 41
+ },
+ "EE": {
+  "witnessed": 32
+ },
+ "EG": {
+  "computed": 24,
+  "self-evident": 16,
+  "witnessed": 54
+ },
+ "EH": {
+  "self-evident": 16,
+  "witnessed": 14
+ },
+ "ER": {
+  "self-evident": 12,
+  "witnessed": 28
+ },
+ "ES": {
+  "computed": 1,
+  "primary": 13,
+  "self-evident": 213
+ },
+ "ET": {
+  "self-evident": 6,
+  "witnessed": 36
+ },
+ "FI": {
+  "computed": 8,
+  "primary": 7,
+  "self-evident": 2,
+  "witnessed": 30
+ },
+ "FJ": {
+  "self-evident": 4,
+  "witnessed": 26
+ },
+ "FK": {
+  "witnessed": 22
+ },
+ "FM": {
+  "witnessed": 58
+ },
+ "FO": {
+  "witnessed": 34
+ },
+ "FR": {
+  "computed": 5,
+  "primary": 10,
+  "witnessed": 40
+ },
+ "GA": {
+  "self-evident": 4,
+  "witnessed": 32
+ },
+ "GB": {
+  "computed": 13,
+  "primary": 7,
+  "self-evident": 3,
+  "witnessed": 8
+ },
+ "GD": {
+  "witnessed": 34
+ },
+ "GE": {
+  "self-evident": 5,
+  "witnessed": 31
+ },
+ "GF": {
+  "witnessed": 24
+ },
+ "GG": {
+  "witnessed": 25
+ },
+ "GH": {
+  "self-evident": 8,
+  "witnessed": 31
+ },
+ "GI": {
+  "witnessed": 32
+ },
+ "GL": {
+  "witnessed": 32
+ },
+ "GM": {
+  "self-evident": 23,
+  "witnessed": 25
+ },
+ "GN": {
+  "self-evident": 10,
+  "witnessed": 24
+ },
+ "GP": {
+  "witnessed": 30
+ },
+ "GQ": {
+  "witnessed": 29
+ },
+ "GR": {
+  "computed": 6,
+  "primary": 8,
+  "witnessed": 4
+ },
+ "GS": {
+  "witnessed": 18
+ },
+ "GT": {
+  "witnessed": 24
+ },
+ "GU": {
+  "witnessed": 60
+ },
+ "GW": {
+  "self-evident": 4,
+  "witnessed": 22
+ },
+ "GY": {
+  "self-evident": 4,
+  "witnessed": 36
+ },
+ "HK": {
+  "witnessed": 50
+ },
+ "HN": {
+  "self-evident": 12,
+  "witnessed": 16
+ },
+ "HR": {
+  "witnessed": 28
+ },
+ "HT": {
+  "self-evident": 4,
+  "witnessed": 42
+ },
+ "HU": {
+  "self-evident": 4,
+  "witnessed": 22
+ },
+ "ID": {
+  "computed": 15,
+  "self-evident": 2,
+  "witnessed": 92
+ },
+ "IE": {
+  "computed": 8,
+  "primary": 4,
+  "self-evident": 1,
+  "witnessed": 2
+ },
+ "IFEU": {
+  "computed": 2,
+  "primary": 4
+ },
+ "IL": {
+  "computed": 12,
+  "witnessed": 50
+ },
+ "IM": {
+  "witnessed": 30
+ },
+ "IN": {
+  "computed": 5,
+  "primary": 5,
+  "self-evident": 22,
+  "witnessed": 177
+ },
+ "IQ": {
+  "self-evident": 70,
+  "witnessed": 32
+ },
+ "IR": {
+  "self-evident": 34,
+  "witnessed": 75
+ },
+ "IS": {
+  "witnessed": 36
+ },
+ "IT": {
+  "computed": 2,
+  "primary": 30,
+  "witnessed": 190
+ },
+ "JE": {
+  "witnessed": 25
+ },
+ "JM": {
+  "witnessed": 22
+ },
+ "JO": {
+  "witnessed": 49
+ },
+ "JP": {
+  "computed": 14,
+  "primary": 10,
+  "witnessed": 6
+ },
+ "KE": {
+  "computed": 4,
+  "self-evident": 31
+ },
+ "KG": {
+  "self-evident": 4,
+  "witnessed": 24
+ },
+ "KH": {
+  "witnessed": 67
+ },
+ "KI": {
+  "witnessed": 26
+ },
+ "KM": {
+  "self-evident": 32,
+  "witnessed": 14
+ },
+ "KN": {
+  "witnessed": 31
+ },
+ "KP": {
+  "self-evident": 8,
+  "witnessed": 42
+ },
+ "KR": {
+  "witnessed": 59
+ },
+ "KW": {
+  "self-evident": 32,
+  "witnessed": 6
+ },
+ "KY": {
+  "witnessed": 37
+ },
+ "KZ": {
+  "self-evident": 2,
+  "witnessed": 54
+ },
+ "LA": {
+  "self-evident": 1,
+  "witnessed": 40
+ },
+ "LB": {
+  "self-evident": 24,
+  "witnessed": 41
+ },
+ "LC": {
+  "witnessed": 28
+ },
+ "LI": {
+  "witnessed": 44
+ },
+ "LK": {
+  "witnessed": 74
+ },
+ "LR": {
+  "witnessed": 29
+ },
+ "LS": {
+  "witnessed": 22
+ },
+ "LT": {
+  "witnessed": 36
+ },
+ "LU": {
+  "witnessed": 28
+ },
+ "LV": {
+  "witnessed": 40
+ },
+ "LY": {
+  "self-evident": 31,
+  "witnessed": 17
+ },
+ "MA": {
+  "computed": 35,
+  "witnessed": 49
+ },
+ "MC": {
+  "witnessed": 25
+ },
+ "MD": {
+  "computed": 4,
+  "self-evident": 6,
+  "witnessed": 16
+ },
+ "ME": {
+  "self-evident": 60,
+  "witnessed": 5
+ },
+ "MF": {
+  "witnessed": 26
+ },
+ "MG": {
+  "witnessed": 36
+ },
+ "MH": {
+  "witnessed": 31
+ },
+ "MK": {
+  "computed": 1,
+  "self-evident": 34,
+  "witnessed": 30
+ },
+ "ML": {
+  "self-evident": 8,
+  "witnessed": 28
+ },
+ "MM": {
+  "self-evident": 3,
+  "witnessed": 97
+ },
+ "MN": {
+  "self-evident": 24,
+  "witnessed": 18
+ },
+ "MO": {
+  "witnessed": 65
+ },
+ "MP": {
+  "witnessed": 60
+ },
+ "MQ": {
+  "witnessed": 28
+ },
+ "MR": {
+  "self-evident": 24,
+  "witnessed": 8
+ },
+ "MS": {
+  "witnessed": 32
+ },
+ "MT": {
+  "witnessed": 28
+ },
+ "MU": {
+  "self-evident": 2,
+  "witnessed": 44
+ },
+ "MV": {
+  "self-evident": 20,
+  "witnessed": 42
+ },
+ "MW": {
+  "witnessed": 25
+ },
+ "MX": {
+  "witnessed": 22
+ },
+ "MY": {
+  "computed": 10,
+  "self-evident": 3,
+  "witnessed": 259
+ },
+ "MZ": {
+  "witnessed": 18
+ },
+ "NA": {
+  "witnessed": 28
+ },
+ "NC": {
+  "witnessed": 24
+ },
+ "NE": {
+  "self-evident": 12,
+  "witnessed": 38
+ },
+ "NF": {
+  "witnessed": 30
+ },
+ "NG": {
+  "self-evident": 6,
+  "witnessed": 32
+ },
+ "NI": {
+  "witnessed": 24
+ },
+ "NL": {
+  "computed": 6,
+  "primary": 5,
+  "witnessed": 1
+ },
+ "NO": {
+  "computed": 7,
+  "primary": 5
+ },
+ "NP": {
+  "self-evident": 4,
+  "witnessed": 128
+ },
+ "NR": {
+  "witnessed": 28
+ },
+ "NU": {
+  "witnessed": 26
+ },
+ "NZ": {
+  "witnessed": 52
+ },
+ "OM": {
+  "self-evident": 50,
+  "witnessed": 6
+ },
+ "PA": {
+  "witnessed": 28
+ },
+ "PE": {
+  "witnessed": 50
+ },
+ "PF": {
+  "witnessed": 30
+ },
+ "PG": {
+  "witnessed": 22
+ },
+ "PH": {
+  "computed": 6,
+  "self-evident": 46,
+  "witnessed": 4
+ },
+ "PK": {
+  "computed": 22,
+  "witnessed": 57
+ },
+ "PL": {
+  "computed": 4,
+  "primary": 10
+ },
+ "PM": {
+  "witnessed": 22
+ },
+ "PN": {
+  "witnessed": 20
+ },
+ "PR": {
+  "witnessed": 66
+ },
+ "PS": {
+  "self-evident": 64,
+  "witnessed": 30
+ },
+ "PT": {
+  "computed": 78,
+  "primary": 235,
+  "witnessed": 45
+ },
+ "PW": {
+  "witnessed": 28
+ },
+ "PY": {
+  "witnessed": 36
+ },
+ "QA": {
+  "self-evident": 24,
+  "witnessed": 11
+ },
+ "RE": {
+  "witnessed": 24
+ },
+ "RO": {
+  "witnessed": 52
+ },
+ "RS": {
+  "self-evident": 12,
+  "witnessed": 12
+ },
+ "RU": {
+  "witnessed": 42
+ },
+ "RW": {
+  "self-evident": 4,
+  "witnessed": 35
+ },
+ "SA": {
+  "computed": 8,
+  "primary": 2
+ },
+ "SB": {
+  "witnessed": 57
+ },
+ "SC": {
+  "witnessed": 26
+ },
+ "SD": {
+  "self-evident": 8,
+  "witnessed": 32
+ },
+ "SE": {
+  "computed": 7,
+  "primary": 6,
+  "witnessed": 28
+ },
+ "SG": {
+  "self-evident": 8,
+  "witnessed": 29
+ },
+ "SH": {
+  "witnessed": 23
+ },
+ "SI": {
+  "self-evident": 8,
+  "witnessed": 22
+ },
+ "SJ": {
+  "witnessed": 24
+ },
+ "SK": {
+  "computed": 2,
+  "primary": 13
+ },
+ "SL": {
+  "self-evident": 9,
+  "witnessed": 28
+ },
+ "SM": {
+  "self-evident": 4,
+  "witnessed": 36
+ },
+ "SN": {
+  "self-evident": 10,
+  "witnessed": 37
+ },
+ "SO": {
+  "self-evident": 24,
+  "witnessed": 8
+ },
+ "SR": {
+  "self-evident": 4,
+  "witnessed": 38
+ },
+ "SS": {
+  "self-evident": 10,
+  "witnessed": 28
+ },
+ "ST": {
+  "witnessed": 24
+ },
+ "SV": {
+  "witnessed": 26
+ },
+ "SX": {
+  "witnessed": 32
+ },
+ "SY": {
+  "self-evident": 9,
+  "witnessed": 47
+ },
+ "SZ": {
+  "witnessed": 22
+ },
+ "TC": {
+  "witnessed": 36
+ },
+ "TD": {
+  "self-evident": 11,
+  "witnessed": 21
+ },
+ "TF": {
+  "witnessed": 22
+ },
+ "TG": {
+  "self-evident": 6,
+  "witnessed": 26
+ },
+ "TH": {
+  "witnessed": 87
+ },
+ "TJ": {
+  "self-evident": 12,
+  "witnessed": 16
+ },
+ "TK": {
+  "witnessed": 12
+ },
+ "TL": {
+  "self-evident": 4,
+  "witnessed": 50
+ },
+ "TM": {
+  "self-evident": 8,
+  "witnessed": 16
+ },
+ "TN": {
+  "self-evident": 36,
+  "witnessed": 16
+ },
+ "TO": {
+  "self-evident": 2,
+  "witnessed": 28
+ },
+ "TR": {
+  "computed": 3,
+  "primary": 8,
+  "witnessed": 6
+ },
+ "TT": {
+  "self-evident": 2,
+  "witnessed": 34
+ },
+ "TV": {
+  "self-evident": 4,
+  "witnessed": 46
+ },
+ "TW": {
+  "self-evident": 14,
+  "witnessed": 33
+ },
+ "TZ": {
+  "self-evident": 6,
+  "witnessed": 36
+ },
+ "UG": {
+  "self-evident": 8,
+  "witnessed": 24
+ },
+ "UM": {
+  "witnessed": 48
+ },
+ "US": {
+  "computed": 6,
+  "primary": 10,
+  "self-evident": 3,
+  "witnessed": 477
+ },
+ "UY": {
+  "computed": 12,
+  "witnessed": 41
+ },
+ "UZ": {
+  "self-evident": 4,
+  "witnessed": 28
+ },
+ "VA": {
+  "self-evident": 4,
+  "witnessed": 59
+ },
+ "VC": {
+  "witnessed": 31
+ },
+ "VE": {
+  "witnessed": 32
+ },
+ "VG": {
+  "witnessed": 44
+ },
+ "VI": {
+  "witnessed": 65
+ },
+ "VN": {
+  "witnessed": 44
+ },
+ "VU": {
+  "witnessed": 28
+ },
+ "WF": {
+  "witnessed": 28
+ },
+ "WS": {
+  "witnessed": 28
+ },
+ "XBOM": {
+  "computed": 2,
+  "primary": 10,
+  "self-evident": 18
+ },
+ "XCME": {
+  "computed": 4,
+  "primary": 6,
+  "self-evident": 1
+ },
+ "XECB": {
+  "computed": 4,
+  "primary": 8
+ },
+ "XETR": {
+  "computed": 4,
+  "primary": 12
+ },
+ "XHKG": {
+  "computed": 4,
+  "primary": 12,
+  "self-evident": 14
+ },
+ "XJPX": {
+  "computed": 20,
+  "primary": 26
+ },
+ "XK": {
+  "self-evident": 4,
+  "witnessed": 33
+ },
+ "XMEX": {
+  "computed": 10,
+  "primary": 8,
+  "self-evident": 3
+ },
+ "XNAS": {
+  "computed": 12,
+  "primary": 8,
+  "self-evident": 1
+ },
+ "XNYS": {
+  "computed": 12,
+  "primary": 8
+ },
+ "XSHG": {
+  "self-evident": 28
+ },
+ "XSWX": {
+  "computed": 8,
+  "primary": 16
+ },
+ "XTSE": {
+  "computed": 12,
+  "primary": 8
+ },
+ "YE": {
+  "self-evident": 12,
+  "witnessed": 31
+ },
+ "YT": {
+  "witnessed": 24
+ },
+ "ZA": {
+  "witnessed": 27
+ },
+ "ZM": {
+  "witnessed": 40
+ },
+ "ZW": {
+  "self-evident": 1,
+  "witnessed": 34
+ }
+}

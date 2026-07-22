@@ -1,0 +1,34 @@
+# Gold fixtures for jurisdiction NI -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Año Nuevo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Año Nuevo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Batalla de San Jacinto|2024|9|14|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Batalla de San Jacinto|2025|9|14|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Concepción de María|2024|12|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Concepción de María|2025|12|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Independencia|2024|9|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Independencia|2025|9|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Madre|2024|5|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Madre|2025|5|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Revolución|2024|7|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Revolución|2025|7|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día del Trabajo|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día del Trabajo|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jueves Santo|2024|3|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jueves Santo|2025|4|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Navidad|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Navidad|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+NI-MN|Bajada de Santo Domingo|2024|8|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+NI-MN|Bajada de Santo Domingo|2025|8|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+NI-MN|Subida de Santo Domingo|2024|8|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+NI-MN|Subida de Santo Domingo|2025|8|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

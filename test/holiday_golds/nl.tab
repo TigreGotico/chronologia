@@ -1,0 +1,22 @@
+# Gold fixtures for jurisdiction NL -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Bevrijdingsdag|2024|5|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Eerste Kerstdag|2024|12|25|primary|source-restated (holiday_data/nl.tab header + papers/holidays)
+|Eerste Pinksterdag|2024|5|19|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Eerste paasdag|2024|3|31|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Goede Vrijdag|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Hemelvaartsdag|2024|5|9|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Koningsdag|2024|4|27|primary|source-restated (holiday_data/nl.tab header + papers/holidays)
+|Koningsdag|2025|4|26|primary|source-restated (holiday_data/nl.tab header + papers/holidays)
+|Nieuwjaarsdag|2024|1|1|primary|source-restated (holiday_data/nl.tab header + papers/holidays)
+|Tweede Kerstdag|2024|12|26|primary|source-restated (holiday_data/nl.tab header + papers/holidays)
+|Tweede Pinksterdag|2024|5|20|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Tweede paasdag|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)

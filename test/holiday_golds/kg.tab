@@ -1,0 +1,38 @@
+# Gold fixtures for jurisdiction KG -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Ата-Журтту коргоонун күнү|2024|2|23|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Аялдардын эл аралык күнү|2024|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Аялдардын эл аралык күнү|2025|3|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Жаңы жыл|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Жаңы жыл|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Жеңиш күнү|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Жеңиш күнү|2025|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Кошумча эс алуу күнү (1)|2025|1|3|self-evident|rule's own args in holiday_data/kg.tab (no independent witness available)
+|Кошумча эс алуу күнү (2)|2025|1|6|self-evident|rule's own args in holiday_data/kg.tab (no independent witness available)
+|Курман айт|2024|6|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Курман айт|2025|6|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Курман айт|2026|5|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Кыргыз Республикасынын Конституция күнү|2024|5|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Кыргыз Республикасынын Конституция күнү|2025|5|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Кыргыз Республикасынын Көз карандысыздыгынын күнү|2024|8|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Кыргыз Республикасынын Көз карандысыздыгынын күнү|2025|8|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Орозо айт|2024|4|10|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Орозо айт|2025|3|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Орозо айт|2026|3|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Тарых жана ата-бабаларды эскерүү күндөрү (1)|2024|11|7|self-evident|rule's own args in holiday_data/kg.tab (no independent witness available)
+|Тарых жана ата-бабаларды эскерүү күндөрү (2)|2024|11|8|self-evident|rule's own args in holiday_data/kg.tab (no independent witness available)
+|Ыйса Пайгамбардын туулган күнү|2024|1|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Ыйса Пайгамбардын туулган күнү|2025|1|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Элдик Апрель революциясы күнү|2024|4|7|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Элдик Нооруз майрамы|2024|3|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Элдик Нооруз майрамы|2025|3|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Эмгек майрамы|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Эмгек майрамы|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

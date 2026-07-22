@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction CR -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Anexión del Partido de Nicoya a Costa Rica|2024|7|29|self-evident|rule's own args in holiday_data/cr.tab (no independent witness available)
+|Anexión del Partido de Nicoya a Costa Rica|2025|7|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Anexión del Partido de Nicoya a Costa Rica|2026|7|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Anexión del Partido de Nicoya a Costa Rica|2027|7|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Año Nuevo|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Año Nuevo|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día Internacional del Trabajo|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día Internacional del Trabajo|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Juan Santamaría|2024|4|15|self-evident|rule's own args in holiday_data/cr.tab (no independent witness available)
+|Día de Juan Santamaría|2025|4|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Juan Santamaría|2026|4|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de Juan Santamaría|2027|4|11|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Abolición del Ejército|2024|12|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Abolición del Ejército|2025|12|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Independencia|2024|9|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Independencia|2025|9|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Madre|2024|8|19|self-evident|rule's own args in holiday_data/cr.tab (no independent witness available)
+|Día de la Madre|2025|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Madre|2026|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Madre|2027|8|15|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Persona Negra y la Cultura Afrocostarricense|2024|8|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Día de la Persona Negra y la Cultura Afrocostarricense|2025|8|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fiesta de Nuestra Señora de los Ángeles|2024|8|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Fiesta de Nuestra Señora de los Ángeles|2025|8|2|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jueves Santo|2024|3|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Jueves Santo|2025|4|17|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Navidad|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Navidad|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Viernes Santo|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

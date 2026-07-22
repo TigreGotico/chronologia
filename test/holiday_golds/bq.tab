@@ -1,0 +1,42 @@
+# Gold fixtures for jurisdiction BQ -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Dag van de Arbeid|2024|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Dag van de Arbeid|2025|5|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Eerste Kerstdag|2024|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Eerste Kerstdag|2025|12|25|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Eerste Paasdag|2024|3|31|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Eerste Paasdag|2025|4|20|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Eerste Pinksterdag|2024|5|19|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Eerste Pinksterdag|2025|6|8|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Goede Vrijdag|2024|3|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Goede Vrijdag|2025|4|18|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Hemelvaartsdag|2024|5|9|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Hemelvaartsdag|2025|5|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Koningsdag|2024|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Koningsdag|2025|4|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Koningsdag|2026|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Koningsdag|2027|4|27|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nieuwjaarsdag|2024|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Nieuwjaarsdag|2025|1|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Tweede Kerstdag|2024|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Tweede Kerstdag|2025|12|26|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Tweede Paasdag|2024|4|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+|Tweede Paasdag|2025|4|21|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-BON|Bonairedag|2024|9|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-BON|Bonairedag|2025|9|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-BON|Rincondag|2024|4|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-BON|Rincondag|2025|4|30|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-SAB|Dag na de carnavalsoptocht|2024|7|29|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-SAB|Dag na de carnavalsoptocht|2025|7|28|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-SAB|Sabadag|2024|12|6|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-SAB|Sabadag|2025|12|5|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-STA|Emancipatiedag|2024|7|1|witnessed|vacanza/holidays 0.101 output (independent of our .tab)
+BQ-STA|Statiadag|2024|11|16|witnessed|vacanza/holidays 0.101 output (independent of our .tab)

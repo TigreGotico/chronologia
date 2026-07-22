@@ -1,0 +1,40 @@
+# Gold fixtures for jurisdiction XBOM -- frozen, order-free.
+#
+# Provenance tiers (see docs/transparency.md):
+#   primary      -- source-restated, citation required
+#   computed     -- independent in-test arithmetic
+#   witnessed    -- vacanza/holidays 0.101 output (independent of our .tab)
+#   self-evident -- the rule's own args (no independent witness available)
+#
+# Columns: subdiv|name|year|month|day|provenance|source
+# (empty subdiv == jurisdiction-wide)
+|Bakri Id|2024|6|17|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Christmas Day|2024|12|25|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Christmas Day|2025|12|25|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Diwali Balipratipada|2025|10|22|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Diwali Laxmi Pujan|2024|11|1|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Diwali Laxmi Pujan|2025|10|21|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Dr. Baba Saheb Ambedkar Jayanti|2025|4|14|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Dussehra|2025|10|2|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Ganesh Chaturthi|2025|8|27|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Good Friday|2024|3|29|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Good Friday|2025|4|18|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)
+|Guru Nanak Jayanti|2024|11|15|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Guru Nanak Jayanti|2025|11|5|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Holi|2024|3|25|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Holi|2025|3|14|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Id-Ul-Fitr (Ramadan Eid)|2024|4|11|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Id-Ul-Fitr (Ramadan Eid)|2025|3|31|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Independence Day|2024|8|15|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Independence Day|2025|8|15|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Maha Shivaratri|2024|3|8|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Maha Shivaratri|2025|2|26|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Maharashtra Day|2024|5|1|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Maharashtra Day|2025|5|1|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Mahatma Gandhi Jayanti|2024|10|2|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Mahatma Gandhi Jayanti|2025|10|2|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Mahavir Jayanti|2025|4|10|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Muharram|2024|7|17|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Ram Navami|2024|4|17|self-evident|rule's own args in holiday_data/xbom.tab (no independent witness available)
+|Republic Day|2024|1|26|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
+|Republic Day|2025|1|26|primary|source-restated (holiday_data/xbom.tab header + papers/holidays)
