@@ -461,6 +461,51 @@ limitations, stated plainly:
   lone span) is the natural direction here; it is **not** promised, and today
   the contract is one span or `None`.
 
+### Known limitations: homographs and confusables
+
+A vocabulary maps a *surface form* to a temporal slot, and some surface
+forms are also ordinary words, names, or parts of an idiom. The matcher has
+no part-of-speech model and no world knowledge, so a token that *looks*
+temporal is bound as temporal even when a human clearly meant something
+else. Whether that binding is harmful is a **downstream (NLU/consumer)**
+decision — the phrase genuinely *contains* the word "March"; only the wider
+sentence says it is a verb. Consumers that cannot tolerate a spurious span
+should gate on surrounding context or reject spans whose remainder implies a
+non-temporal reading. The behaviour is fixed in the parser only where a
+cheap, local guard exists (an adjacent-token requirement, or narrowing an
+over-broad surface) that survives the full positive corpus; otherwise it is
+recorded, honestly, as an expected `xfail` in each language's
+`test_nl_confusables.py`.
+
+The classes, from safest to most confusable:
+
+- **Structurally safe — no false positive.** A unit word needs a count
+  ("second" alone is not a date; "in 3 seconds" is), a number word needs
+  something to count, an era initial needs a year, a scale word ("million",
+  "thousands") needs a magnitude. With the anchoring token absent there is
+  nothing to bind and the parser returns `None`. These are asserted as hard
+  `None` and are not a limitation.
+- **Weekday homographs.** Bare weekday names resolve to the next such
+  weekday by design, so a weekday word that is *also* a common noun or name
+  collides: Russian *среда* is both "Wednesday" and "environment"
+  (*окружающая среда*), Czech *ve středu* is both "on Wednesday" and "in the
+  centre", Spanish/Portuguese *Domingo* is both "Sunday" and a personal
+  name. Disambiguation is downstream; *окружающая* preceding *среда* is an
+  example of a context that a future cheap guard could key on.
+- **Month homographs as common words.** English *may* (modal), *march*
+  (verb), *august* (adjective); Czech *květen*/*srp*; Hungarian *hét* (also
+  "week"/"seven"). Bound as the month.
+- **Month homographs as names.** *April*, *June*, *August* as people or
+  pets; Portuguese *abril*, Dutch *juni*, Basque *apirila* likewise. Bound
+  as the month.
+- **Morning vs. tomorrow.** German *Morgen* ("morning") vs. *morgen*
+  ("tomorrow"), West Frisian *moarn*, Spanish/Galician *mañana*/*mañá* carry
+  both senses; lowercased, the temporal-adverb reading wins.
+- **Figurative and idiomatic time.** Season words in metaphor ("the autumn
+  of life", "spring into action"), a unit in a figure of speech ("a lost
+  decade"), or a time word inside a frozen idiom ("burn the midnight oil")
+  are bound literally.
+
 ## How a language works — and how to add one
 
 Every language is **data only**. There is no per-language code: the engine
