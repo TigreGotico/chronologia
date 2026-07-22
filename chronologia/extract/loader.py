@@ -32,9 +32,10 @@ import glob
 import json
 import os
 from importlib import import_module
+from pathlib import Path
 from typing import Callable, Dict, Optional, Set
 
-from ovos_spec_tools import LocaleResources
+from ovos_spec_tools import LocaleResources, expand, read_resource_file
 
 from dataclasses import replace
 
@@ -63,8 +64,23 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     with open(os.path.join(lang_dir, "lang.json"), encoding="utf-8") as fh:
         cfg = json.load(fh)
 
+    # Expand every ``.voc`` against the language's vocabulary map computed
+    # ONCE.  ``LocaleResources.load_vocabulary`` recomputes ``vocabularies()``
+    # -- an rglob over the whole locale tree plus a re-read of every file --
+    # on *each* call; with ~220 vocabulary files per locale that is quadratic
+    # (the tree is re-scanned once per file loaded).  We do the byte-identical
+    # expansion (``ovos_spec_tools.expand`` over the same name->templates map)
+    # but read the tree a single time, turning first-call locale loading from
+    # O(files^2) into O(files).
+    vocab_map = res.vocabularies(lang)
+
     def forms(base):
-        return [f.lower() for f in res.load_vocabulary(base, lang)]
+        samples: list = []
+        for template in read_resource_file(Path(lang_dir) / (base + ".voc")):
+            for sample in expand(template, vocab_map):
+                if sample not in samples:
+                    samples.append(sample)
+        return [f.lower() for f in samples]
 
     months: Dict[str, int] = {}
     weekdays: Dict[str, int] = {}

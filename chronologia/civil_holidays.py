@@ -130,6 +130,7 @@ from __future__ import annotations
 
 import os
 import re
+import threading
 from dataclasses import dataclass, field
 from datetime import timedelta
 from types import MappingProxyType
@@ -912,12 +913,15 @@ def load_translations(path: str = _TRANSLATIONS_FILE
 
 
 _TRANSLATIONS: Optional[Dict[Tuple[str, str], Dict[str, str]]] = None
+_TRANSLATIONS_LOCK = threading.Lock()
 
 
 def _translations_for(jurisdiction: str, name: str) -> Dict[str, str]:
     global _TRANSLATIONS
     if _TRANSLATIONS is None:
-        _TRANSLATIONS = load_translations()
+        with _TRANSLATIONS_LOCK:
+            if _TRANSLATIONS is None:
+                _TRANSLATIONS = load_translations()
     return _TRANSLATIONS.get((jurisdiction.upper(), name), {})
 
 
@@ -1136,6 +1140,10 @@ def load_calendar(path: str) -> HolidayCalendar:
 
 
 _CACHE: Dict[str, HolidayCalendar] = {}
+#: guards the lazy, per-jurisdiction ``.tab`` calendar cache so concurrent
+#: first-lookups of different jurisdictions from separate threads each parse
+#: their file exactly once.
+_CACHE_LOCK = threading.Lock()
 
 #: Financial-market jurisdiction codes are not ISO-3166-1 countries — they are
 #: institutions (a stock exchange, a central bank's settlement system, a
@@ -1186,12 +1194,18 @@ MARKET_ALIASES: Dict[str, str] = {
 def _calendar_for(jurisdiction: str) -> HolidayCalendar:
     key = jurisdiction.upper()
     key = MARKET_ALIASES.get(key, key)
-    if key not in _CACHE:
-        path = os.path.join(_DATA_DIR, f"{key.lower()}.tab")
-        if not os.path.exists(path):
-            raise KeyError(f"no holiday data for jurisdiction {jurisdiction!r}")
-        _CACHE[key] = load_calendar(path)
-    return _CACHE[key]
+    cal = _CACHE.get(key)
+    if cal is not None:
+        return cal
+    with _CACHE_LOCK:
+        cal = _CACHE.get(key)
+        if cal is None:
+            path = os.path.join(_DATA_DIR, f"{key.lower()}.tab")
+            if not os.path.exists(path):
+                raise KeyError(
+                    f"no holiday data for jurisdiction {jurisdiction!r}")
+            cal = _CACHE[key] = load_calendar(path)
+        return cal
 
 
 def holidays_for(jurisdiction: str, year: int, subdiv: Optional[str] = None,
@@ -1552,12 +1566,15 @@ def load_well_known_aliases(path: str = _WELL_KNOWN_FILE
 
 
 _WELL_KNOWN_ALIASES: Optional[Dict[Tuple[str, str], Tuple[str, ...]]] = None
+_WELL_KNOWN_LOCK = threading.Lock()
 
 
 def _well_known_aliases() -> Dict[Tuple[str, str], Tuple[str, ...]]:
     global _WELL_KNOWN_ALIASES
     if _WELL_KNOWN_ALIASES is None:
-        _WELL_KNOWN_ALIASES = load_well_known_aliases()
+        with _WELL_KNOWN_LOCK:
+            if _WELL_KNOWN_ALIASES is None:
+                _WELL_KNOWN_ALIASES = load_well_known_aliases()
     return _WELL_KNOWN_ALIASES
 
 

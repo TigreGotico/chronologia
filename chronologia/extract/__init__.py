@@ -13,7 +13,9 @@ compiler, matcher, resolver, loader) is shared and language-agnostic.
 """
 from __future__ import annotations
 
+import os
 import re
+import threading
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 
@@ -97,24 +99,37 @@ class DateTimeEngine:
 
 
 _TIMESPAN_ENGINES: Dict[str, "DateTimeEngine"] = {}
+#: guards the lazy, per-language engine cache.  The first ``extract_*`` call
+#: for a language loads *only* that locale (nothing at import), compiles its
+#: engine, and memoises it; the lock makes concurrent first-calls for
+#: different languages from separate threads safe (each locale is loaded once,
+#: and every later call for a language returns the identical cached engine).
+_ENGINE_LOCK = threading.Lock()
 
 
 def _timespan_engine(lang: str) -> "DateTimeEngine":
-    """Return the :class:`DateTimeEngine` for ``lang``.
+    """Return the memoised :class:`DateTimeEngine` for ``lang``.
 
-    Raises :class:`NotImplementedError` for languages that have no engine
-    locale data (``chronologia/locale/<code>/lang.json``).
+    Lazy and cached: the locale is loaded and compiled on first use and never
+    again.  Raises :class:`NotImplementedError` for languages that have no
+    engine locale data (``chronologia/locale/<code>/lang.json``).
     """
-    import os
-
     code = lang.split("-")[0].lower()
-    if code not in _TIMESPAN_ENGINES:
-        if not os.path.exists(os.path.join(LOCALE_DIR, code, "lang.json")):
-            raise NotImplementedError(
-                f"extract_timespan has no locale data for {lang!r}; only "
-                f"languages with locale/<code>/lang.json are supported so far")
-        _TIMESPAN_ENGINES[code] = DateTimeEngine(load_lang_spec(code))
-    return _TIMESPAN_ENGINES[code]
+    engine = _TIMESPAN_ENGINES.get(code)
+    if engine is not None:
+        return engine
+    with _ENGINE_LOCK:
+        # re-check under the lock: another thread may have built it while we
+        # waited, so a language is only ever compiled once
+        engine = _TIMESPAN_ENGINES.get(code)
+        if engine is None:
+            if not os.path.exists(os.path.join(LOCALE_DIR, code, "lang.json")):
+                raise NotImplementedError(
+                    f"extract_timespan has no locale data for {lang!r}; only "
+                    f"languages with locale/<code>/lang.json are supported so far")
+            engine = DateTimeEngine(load_lang_spec(code))
+            _TIMESPAN_ENGINES[code] = engine
+        return engine
 
 
 #: default (English) range framing words, always available so English
