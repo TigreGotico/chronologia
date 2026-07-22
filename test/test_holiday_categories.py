@@ -13,15 +13,15 @@ Sourcing discipline for this batch
 out of scope everywhere (bridge/working-day markers, same house rule that
 already excludes bridge days generally).
 
-This PR lands the first chunk -- the 25 countries in ``DONE_COUNTRIES`` whose
-non-default-category holidays are both (a) fixed Gregorian calendar dates and
-(b) stable across 2024 and 2025 in vacanza's own output, so they golded
-cleanly as ``fixed`` rows with no decree/easter derivation needed. Each row's
-name is vacanza's own (already country-localized) label; each ``.tab``'s new
-section is timestamped "retrieved 2026-07-22" and cites
-"vacanza/holidays 0.101 (MIT) category differential" as its source, per the
-same convention the file's existing header already uses for its public-set
-citation.
+This PR lands the first chunk -- the 25 countries in the wave-1 half of
+``DONE_COUNTRIES`` whose non-default-category holidays are both (a) fixed
+Gregorian calendar dates and (b) stable across 2024 and 2025 in vacanza's own
+output, so they golded cleanly as ``fixed`` rows with no decree/easter
+derivation needed. Each row's name is vacanza's own (already
+country-localized) label; each ``.tab``'s new section is timestamped
+"retrieved 2026-07-22" and cites "vacanza/holidays 0.101 (MIT) category
+differential" as its source, per the same convention the file's existing
+header already uses for its public-set citation.
 
 Every new row is golded here the same way ``test_holidays_batch1.py`` golds
 mechanically-seeded ``fixed`` rules: the gold IS the rule's own ``(month,
@@ -32,17 +32,33 @@ independent check is the "stable across 2024 AND 2025" gate applied before
 a row was ever written (a row that moved year to year was excluded from this
 batch, not force-fit as ``fixed``).
 
-The remaining ~67 vacanza countries with non-default categories (MK's
+A second chunk (wave 2) backfills the next 34 alphabetical
+``PENDING_COUNTRIES`` (AD..LA). Unlike wave 1, most of these countries'
+extra categories are Easter-relative, lunar/lunisolar, or otherwise
+year-varying, so they golded as ``decree`` rows instead: the gazetted
+``(year, month, day)`` triples vacanza itself reports for 2024 and 2025,
+the same honest fallback ``th.tab``/``id.tab`` already used in the base
+public set, and the same self-golding the registrar below already applies
+to ``DecreeTableRule`` (the gold IS the rule's own gazetted dates, not
+re-derived). Rows that *are* stable Gregorian dates both years still gold
+as ``fixed``, same as wave 1. A handful of wave-2 countries declare only
+``workday`` (out of scope everywhere) or declare categories vacanza itself
+reports as empty for both years -- these land in ``DONE_COUNTRIES`` with
+zero rows added, tracked explicitly in ``ZERO_ROW_DONE_COUNTRIES`` so
+``test_at_least_one_row_added_per_done_country`` doesn't misfire on a
+country that is legitimately done with nothing to backfill.
+
+The remaining ~33 vacanza countries with non-default categories (MK's
 Albanian/Bosnian/Hebrew/Islamic/Orthodox/Roma/Serbian/Turkish/Vlach
-denominational calendar, ME, IQ's Sabian/Yazidi days, TH's decree-shifted
-armed-forces/school/government days, US's federal ``government``/``unofficial``
-observances, and every country whose extra-category holidays are
-Easter-relative, decree-tabulated, or otherwise year-varying) are NOT yet
-covered -- see ``PENDING_COUNTRIES``. The ratchet test below only asserts
-against ``DONE_COUNTRIES`` + any country vacanza itself reports as having an
-empty non-``public``/``workday`` category set; it is deliberately NOT a
-100%-of-92 ratchet yet, and is documented as such so it does not silently
-claim more than it covers.
+denominational calendar, ME, TH's decree-shifted
+armed-forces/school/government days, US's federal
+``government``/``unofficial`` observances, and every remaining country whose
+extra-category holidays are Easter-relative, decree-tabulated, or otherwise
+year-varying) are NOT yet covered -- see ``PENDING_COUNTRIES``. The ratchet
+test below only asserts against ``DONE_COUNTRIES`` + any country vacanza
+itself reports as having an empty non-``public``/``workday`` category set;
+it is deliberately NOT a 100%-of-92 ratchet yet, and is documented as such
+so it does not silently claim more than it covers.
 """
 import os
 
@@ -61,7 +77,26 @@ from test_holiday_golds import HOLIDAY_GOLDS, _reg
 #: default" (it is *narrower*, not equal) -- tracked here explicitly instead
 #: of silently passing the ratchet.
 SKIP_EMPTY_CATEGORY = {("BG", "half_day"), ("TH", "bank"),
-                        ("TW", "government"), ("TW", "school")}
+                        ("TW", "government"), ("TW", "school"),
+                        ("AE", "government"), ("AE", "optional"),
+                        ("AT", "protestant"), ("AU", "bank"), ("AU", "half_day"),
+                        ("CH", "de_facto"), ("CH", "half_day"), ("CH", "optional"),
+                        ("DE", "catholic"), ("DE", "school"),
+                        ("IQ", "hebrew"), ("IT", "half_day")}
+
+#: Countries this batch confirmed have *no* non-workday category to backfill
+#: at all: every declared category is either bare ``workday`` (excluded
+#: everywhere) or lands in ``SKIP_EMPTY_CATEGORY`` for every one of its
+#: categories -- verified live via vacanza/holidays 0.101 the same way as
+#: every other row in this file. Nothing to gold, nothing to add; tracked so
+#: ``test_at_least_one_row_added_per_done_country`` doesn't misfire on a
+#: country that is legitimately "done" with zero rows.
+ZERO_ROW_DONE_COUNTRIES = {
+    # workday-only (VACANZA_CATEGORIES[cc] == ["workday"])
+    "AM", "AZ", "BJ", "BY", "ET", "FJ", "KG",
+    # every declared category is SKIP_EMPTY_CATEGORY
+    "AE", "AU", "CH", "DE", "IT",
+}
 
 # ==========================================================================
 # vacanza/holidays 0.101 supported_categories snapshot (captured live via
@@ -112,9 +147,12 @@ VACANZA_CATEGORIES = {
 
 #: Countries this batch fully backfilled: every non-workday vacanza category
 #: for that country now has >=1 matching row in its .tab.
-DONE_COUNTRIES = ("AR", "BG", "CA", "CL", "CN", "CR", "CW", "DK", "EE", "ER",
-                   "FK", "FO", "GL", "GR", "IS", "JP", "KR", "LB", "MK", "PN",
-                   "PR", "SM", "TH", "TW", "YE")
+DONE_COUNTRIES = ("AD", "AE", "AM", "AR", "AS", "AT", "AU", "AX", "AZ", "BE",
+                   "BG", "BJ", "BR", "BY", "CA", "CH", "CL", "CN", "CR", "CV",
+                   "CW", "CY", "DE", "DK", "DZ", "EE", "EG", "ER", "ET", "FI",
+                   "FJ", "FK", "FO", "GL", "GR", "GU", "HK", "HT", "ID", "IE",
+                   "IL", "IN", "IQ", "IS", "IT", "JP", "KE", "KG", "KN", "KR",
+                   "LA", "LB", "MK", "PN", "PR", "SM", "TH", "TW", "YE")
 
 #: Not yet backfilled -- tracked so the ratchet test documents scope honestly
 #: instead of silently under-covering. Follow-up work, not part of this PR's
@@ -214,4 +252,9 @@ def test_category_ratchet_scope_is_documented():
 
 def test_at_least_one_row_added_per_done_country():
     for cc in DONE_COUNTRIES:
+        if cc in ZERO_ROW_DONE_COUNTRIES:
+            assert _ROWS_ADDED[cc] == 0, (
+                f"{cc}: expected 0 rows (workday-only/all-SKIP_EMPTY), "
+                f"got {_ROWS_ADDED[cc]} -- update ZERO_ROW_DONE_COUNTRIES")
+            continue
         assert _ROWS_ADDED[cc] > 0, f"{cc}: no category rows registered"

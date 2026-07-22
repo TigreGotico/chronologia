@@ -21,7 +21,11 @@ def test_national_differential_2023_2025():
 
 
 def test_national_set_is_thirteen_no_good_friday():
-    nat = {h.name for h in holidays_for(_J, 2024) if h.subdiv is None}
+    # public only -- this project also carries AT's vacanza-parity `bank`
+    # category (Karfreitag/Heiliger Abend/Silvester), a bank-holiday overlay
+    # distinct from the 13 statutory Feiertage this test asserts.
+    nat = {h.name for h in holidays_for(_J, 2024, categories=("public",))
+           if h.subdiv is None}
     assert len(nat) == 13
     assert "Karfreitag" not in nat
 
