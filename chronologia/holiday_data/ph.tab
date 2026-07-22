@@ -1,0 +1,40 @@
+# civil-holidays v1
+# jurisdiction: PH
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_the_Philippines
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Bagong Taon                        | 1 1                 | public          |  |  |  |
+decree        | Karagdagang Espesyal na Araw (Walang Trabajo)| 2024-2-9 2024-11-2 2024-12-24 2025-7-27| public          |  |  |  |
+easter        | Huwebes Santo                      | -3                  | public          |  |  |  |
+easter        | Biyernes Santo                     | -2                  | public          |  |  |  |
+easter        | Sabado de Gloria                   | -1                  | public          |  |  |  |
+decree        | Araw ng Kagitingan                 | 2024-4-9 2025-4-9   | public          |  |  |  |
+decree        | Eid al-Fitr                        | 2024-4-10 2025-4-1  | public          |  |  |  |
+fixed         | Araw ng Paggawa                    | 5 1                 | public          |  |  |  |
+fixed         | Araw ng Kalayaan                   | 6 12                | public          |  |  |  |
+decree        | Eid al-Adha                        | 2024-6-17 2025-6-6  | public          |  |  |  |
+decree        | Araw ng Kabayanihan ni Ninoy Aquino| 2024-8-23 2025-8-21 | public          |  |  |  |
+decree        | Araw ng mga Bayani                 | 2024-8-26 2025-8-25 | public          |  |  |  |
+decree        | Araw ng Halalan (Walang Trabajo)   | 2025-5-12           | public          |  |  |  |
+fixed         | Araw ng mga Santo                  | 11 1                | public          |  |  |  |
+decree        | Araw ng Kabayanihan ni Bonifacio   | 2024-11-30 2025-11-30| public          |  |  |  |
+fixed         | Dakilang Kapistahan ng Kalinis-linisang Paglilihi sa Mahal na Birheng Maria| 12 8                | public          |  |  |  |
+fixed         | Pasko                              | 12 25               | public          |  |  |  |
+fixed         | Araw ng Kabayanihan ni Rizal       | 12 30               | public          |  |  |  |
+fixed         | Bisperas ng Bagong Taon            | 12 31               | public          |  |  |  |
+decree        | Bagong Taon ng mga Tsino           | 2024-2-10 2025-1-29 | public          |  |  |  |
+decree        | Bisperas ng Araw ng mga Santo      | 2025-10-31          | public          |  |  |  |
+fixed         | Bisperas ng Pasko                  | 12 24               | public          |  |  |  |

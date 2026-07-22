@@ -1,0 +1,31 @@
+# civil-holidays v1
+# jurisdiction: ET
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Ethiopia
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | የገና ወይም የልደት በዓል                   | 1 7                 | public          |  |  |  |
+decree        | የጥምቀት በዓል                          | 2024-1-20 2025-1-19 | public          |  |  |  |
+fixed         | የአድዋ ድል በዓል                        | 3 2                 | public          |  |  |  |
+decree        | የስቅለት በዓል                          | 2024-5-3 2025-4-18  | public          |  |  |  |
+decree        | የትንሳኤ(ፋሲካ) በዓል                     | 2024-5-5 2025-4-20  | public          |  |  |  |
+decree        | የኢድ አልፈጥር                          | 2024-4-10 2025-3-30 | public          |  |  |  |
+fixed         | የዓለም የሠራተኞች (የላብአደሮች) ቀን           | 5 1                 | public          |  |  |  |
+fixed         | የአርበኞች (የድል) ቀን በዓል                | 5 5                 | public          |  |  |  |
+fixed         | ደርግ የወደቀበት ቀን                      | 5 28                | public          |  |  |  |
+decree        | የኢድ አልአድሃ (አረፋ)                    | 2024-6-16 2025-6-6  | public          |  |  |  |
+decree        | የዘመን መለወጫ (እንቁጣጣሽ) በዓል             | 2024-9-11 2025-9-11 | public          |  |  |  |
+decree        | የመውሊድ በዓል                          | 2024-9-15 2025-9-5  | public          |  |  |  |
+decree        | የመስቀል በዓል                          | 2024-9-27 2025-9-27 | public          |  |  |  |

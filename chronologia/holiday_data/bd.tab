@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: BD
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Bangladesh
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest
+#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
+#   outside those years rather than fabricated. 调休-style workday-bridge
+#   ('moved from ...') entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | শহীদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস| 2 21                | public          |  |  |  |
+decree        | শবে বরাত                           | 2024-2-26 2025-2-15 | public          |  |  |  |
+fixed         | জাতির পিতা বঙ্গবন্ধু শেখ মুজিবুর রহমান এর জন্মদিবস| 3 17                | public          |  |  |  |
+fixed         | স্বাধীনতা দিবস                     | 3 26                | public          |  |  |  |
+fixed         | পহেলা বৈশাখ                        | 4 14                | public          |  |  |  |
+decree        | শবে কদর                            | 2024-4-7 2025-3-28  | public          |  |  |  |
+decree        | জুমাতুল বিদা                       | 2024-4-5 2025-3-28  | public          |  |  |  |
+decree        | ঈদুল ফিতর                          | 2024-4-10 2024-4-11 2024-4-12 2025-3-31 2025-4-1 2025-4-2| public          |  |  |  |
+fixed         | মে দিবস                            | 5 1                 | public          |  |  |  |
+decree        | ঈদুল আজহা                          | 2024-6-17 2024-6-18 2024-6-19 2025-6-7 2025-6-8 2025-6-9| public          |  |  |  |
+decree        | আশুরা                              | 2024-7-17 2025-7-6  | public          |  |  |  |
+fixed         | জাতীয় শোক দিবস                    | 8 15                | public          |  |  |  |
+decree        | ঈদে মিলাদুন্নবী                    | 2024-9-16 2025-9-6  | public          |  |  |  |
+fixed         | বিজয় দিবস                         | 12 16               | public          |  |  |  |
+fixed         | বড়দিন                             | 12 25               | public          |  |  |  |
+decree        | সাধারণ ছুটি                        | 2024-1-7 2024-8-5 2024-8-6 2024-8-7| public          |  |  |  |
+fixed         | জুলাই গণ-অভ্যুত্থান দিবস           | 8 5                 | public          |  |  |  |
