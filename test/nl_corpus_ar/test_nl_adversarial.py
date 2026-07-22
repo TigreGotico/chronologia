@@ -33,10 +33,15 @@ def test_dual_gap(text):
     nomatch(text)
 
 
-# -- a bare weekday is not a construction here (needs a rel-marker) ----------
-@pytest.mark.parametrize("text", ["الجمعة", "السبت", "الأحد"])
-def test_bare_weekday_no_parse(text):
-    nomatch(text)
+# -- a bare full weekday names its next strictly-future occurrence ----------
+@pytest.mark.parametrize("text,idx", [("الجمعة", 4), ("السبت", 5), ("الأحد", 6)])
+def test_bare_weekday_resolves_next(text, idx):
+    from datetime import timedelta
+    from ._corpus import ANCHOR, span
+    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    exp = (ANCHOR + timedelta(days=ahead)).date()
+    s = span(text).start
+    assert (s.year, s.month, s.day) == (exp.year, exp.month, exp.day)
 
 
 # -- adversarial: real dates that MUST survive tricky context ---------------

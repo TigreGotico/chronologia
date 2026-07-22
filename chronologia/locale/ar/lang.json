@@ -5,7 +5,7 @@
       "orders": ["MARKER NUM UNIT", "NUM UNIT MARKER"]
     },
     "named_day": {"orders": ["DAY_WORD"]},
-    "weekday_ref": {"orders": ["WEEKDAY REL_MARKER", "REL_MARKER WEEKDAY"]},
+    "weekday_ref": {"orders": ["WEEKDAY REL_MARKER", "REL_MARKER WEEKDAY", "WEEKDAYFULL"]},
     "rel_period": {"orders": ["UNIT REL_MARKER", "REL_MARKER UNIT"]},
     "weekend_ref": {"orders": ["WEEKEND REL_MARKER", "REL_MARKER WEEKEND",
                                "WEEKEND"]},
