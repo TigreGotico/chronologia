@@ -104,7 +104,8 @@ from chronologia.civil_holidays import (CATEGORIES, IL_INDEPENDENCE_SHIFT,
                                         holidays_for, is_civil_holiday,
                                         load_calendar, load_translations,
                                         parse_name_cell)
-from chronologia.extract import (TimeMention, explain, extract_duration,
+from chronologia.extract import (Candidate, TimeMention, explain,
+                                 extract_candidates, extract_duration,
                                  extract_recurrence, extract_timespan,
                                  extract_timespans)
 from chronologia.events import Event, extract_event
@@ -138,6 +139,8 @@ __all__ = [
     "register_event_provider",
     # natural-language extraction (text -> DateSpan)
     "extract_timespan",
+    "extract_candidates",
+    "Candidate",
     "explain",
     # extraction beyond a single span
     "extract_duration",

@@ -40,7 +40,7 @@ __all__ = [
     "Tokenizer", "TemporalNormaliser", "ConstructionCompiler",
     "ConstructionMatcher", "Resolver", "load_lang_spec",
     "ExplainTrace", "explain", "DateTimeEngine",
-    "extract_timespan",
+    "extract_timespan", "extract_candidates", "Candidate",
     "extract_duration", "extract_timespans", "extract_recurrence",
     "TimeMention",
 ]
@@ -447,6 +447,82 @@ def extract_timespan(
     remainder = " ".join(t.raw for t in tokens
                          if t.index not in consumed).strip()
     return res.value, remainder
+
+
+from dataclasses import dataclass as _dataclass  # noqa: E402
+
+from chronologia.extract.confidence import confidence as _confidence  # noqa: E402
+
+
+@_dataclass(frozen=True)
+class Candidate:
+    """One plausible reading the matcher considered, with its confidence.
+
+    Not just the selected winner: :func:`extract_candidates` surfaces the
+    runner-up parses the matcher already enumerated (before the longest-span /
+    precedence overlap resolution collapses them to one), each carrying the
+    :attr:`confidence` score that ranks it.
+
+    * ``span`` -- the :class:`~chronologia.astrodate.DateSpan` this reading
+      resolves to;
+    * ``remainder`` -- the text left over once this reading claims its tokens;
+    * ``confidence`` -- the deterministic score in ``(0, 1]``
+      (see :mod:`chronologia.extract.confidence`); **not** a probability;
+    * ``construction`` -- the trace name of the construction that matched
+      (``"calendar_date"``, ``"weekday_ref"``, ...).
+    """
+
+    span: DateSpan
+    remainder: str
+    confidence: float
+    construction: str
+
+
+def extract_candidates(
+        text: str,
+        lang: str = "en-us",
+        anchor: Optional[datetime] = None,
+        limit: int = 5,
+) -> List[Candidate]:
+    """Every plausible parse the matcher considered, ranked by confidence.
+
+    Where :func:`extract_timespan` returns only the single selected reading,
+    this exposes the **runner-ups** the matcher already enumerated -- each
+    candidate the backtracking walk produced before the longest-span /
+    precedence overlap resolution discards the losers -- resolved and scored.
+
+    Returns up to ``limit`` :class:`Candidate` (highest confidence first, ties
+    broken by earlier text position then longer span).  The list is empty when
+    nothing temporal was found.  ``anchor`` is the "now" relative phrases
+    resolve against (default: the wall clock).
+    """
+    engine = _timespan_engine(lang)
+    anchor = anchor or datetime.now()
+    if isinstance(anchor, datetime):
+        anchor = anchor.replace(tzinfo=None)
+    tokens = engine.tokenize(text)
+    total = len(tokens)
+    scored = []
+    seen = set()
+    for cand in engine.matcher._candidates(tokens):
+        match = cand.match
+        res = engine.resolver.resolve(match, anchor)
+        if res is None:
+            continue
+        key = (match.construction, match.span, res.value)
+        if key in seen:
+            continue
+        seen.add(key)
+        conf = _confidence(match, res, total, engine.spec)
+        consumed = set(res.consumed)
+        remainder = " ".join(t.raw for t in tokens
+                             if t.index not in consumed).strip()
+        # rank: confidence first, then earlier text position, then longer span
+        rank = (-conf, match.span[0], -match.length)
+        scored.append((rank, Candidate(res.value, remainder, conf,
+                                       match.construction)))
+    scored.sort(key=lambda e: e[0])
+    return [c for _, c in scored[:limit]]
 
 
 # N-series edges (durations, multi-mention, recurrence) live in their own
