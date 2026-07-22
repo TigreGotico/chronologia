@@ -31,6 +31,10 @@ PRECEDENCE: Dict[str, int] = {
     # strand the era marker in the remainder
     "scoped_bc": 1,
     "scoped_ad": 1,
+    # a base-number decade carrying a BC marker ("the 300s bc") is an era
+    # construction: it must outrank the bare decade/year reading and consume
+    # the marker so it never strands in the remainder
+    "decade_bc": 1,
     # regnal / roman constructions carry the most specific vocabulary, so
     # they win over the generic scoped/calendar families
     "regnal_date": 1,

@@ -4,6 +4,7 @@
     "ordinal_dot": false
   },
   "constructions": {
+    "decade_bc": {"orders": ["article? year_word NUM bc"]},
     "relative_offset": {
       "orders": [
         "NUM UNIT MARKER",

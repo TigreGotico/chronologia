@@ -101,7 +101,7 @@ def _day_span(dt: datetime) -> DateSpan:
 DATE_CONSTRUCTIONS = frozenset({
     "calendar_date", "reckoned_date", "nongregorian_date", "iso_date",
     "weekday_ref", "named_day", "season_ref", "scoped_ordinal",
-    "scoped_bc", "scoped_ad",
+    "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
     "era_bc", "era_ad", "era_bp", "deep_time", "named_period",
     "holiday_ref"})
@@ -614,6 +614,35 @@ class Resolver:
         length = self._SCOPE_YEARS[kind]
         start = self._as_astro(resolve_era("before_christ", length * n))
         end = self._as_astro(resolve_era("before_christ", length * (n - 1)))
+        return Resolution(DateSpan(start, end), self._consumed(match))
+
+    def _resolve_decade_bc(self, match, anchor):
+        """"the 300s bc" / "os anos 300 ac": a *base-number* decade on the BC
+        axis.
+
+        Unlike the ordinal ``scoped_bc`` decade ("the 2nd decade bc", counting
+        1st/2nd/... decade back from AD 1), this names a decade by its base
+        year the way an AD decade does ("the 1990s"): the BC-labelled years
+        ``N .. N+9`` -- the "three-hundreds BC" are 309..300 BC.
+
+        Convention (documented, tiled with ``scoped_bc``): both edges are
+        derived through the same ``before_christ`` era registry ``scoped_bc``
+        uses for its century boundaries, so the two families agree on where a
+        BC year sits.  The older edge (span start) is the ``(N+9)``-th BC year;
+        the younger edge (span end, exclusive) is the ``(N-1)``-th BC year --
+        the first year already in the next, more-recent decade -- so
+        consecutive decades tile with no gap.  In astronomical numbering
+        (``X`` BC == year ``1 - X``): "the 300s bc" -> ``[-308, -298)``, "the
+        290s bc" -> ``[-298, -288)``.  ``N`` must be a positive whole ten;
+        anything else does not name a decade and the construction does not
+        fire.
+        """
+        from chronologia import resolve_era
+        n = int(match.slots["NUM"].value)
+        if n < 10 or n % 10:
+            return None
+        start = self._as_astro(resolve_era("before_christ", n + 9))
+        end = self._as_astro(resolve_era("before_christ", n - 1))
         return Resolution(DateSpan(start, end), self._consumed(match))
 
     @staticmethod
