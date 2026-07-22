@@ -1,0 +1,36 @@
+# civil-holidays v1
+# jurisdiction: GT
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Guatemala
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this
+#   column. Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest fallback other batch
+#   files already use for their own lunar/Orthodox movables -- silent outside
+#   those years rather than fabricated. Workday-bridge ('puente'/'observado'
+#   extra day-off) entries are dropped as out of scope; where a jurisdiction's
+#   own substitute-holiday practice creates a genuinely separate day off
+#   (e.g. Sierra Leone's "(observed)" replacement day), that day is kept as
+#   its own named row, matching the precedent already set for South Korea's
+#   대체 휴일 substitute-holiday rows. Multi-day religious breaks (Eid,
+#   Nowruz, Lao New Year, Libyan Mawlid) are split into one row per calendar
+#   day, numbered "(1)", "(2)", ... where they do not reduce to a single
+#   fixed or Easter-offset rule.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Año Nuevo                                     | 1 1 | public          |  |  |  |
+easter        | Jueves Santo                                  | -3 | public          |  |  |  |
+easter        | Viernes Santo                                 | -2 | public          |  |  |  |
+easter        | Sábado Santo                                  | -1 | public          |  |  |  |
+fixed         | Día del Trabajo                               | 5 1 | public          |  |  |  |
+decree        | Día del Ejército                              | 2024-7-1 2025-6-30 | public          |  |  |  |
+fixed         | Día de la Asunción                            | 8 15 | public          |  |  |  |
+fixed         | Día de la Independencia                       | 9 15 | public          |  |  |  |
+fixed         | Día de la Revolución                          | 10 20 | public          |  |  |  |
+fixed         | Día de Todos los Santos                       | 11 1 | public          |  |  |  |
+fixed         | Día de Navidad                                | 12 25 | public          |  |  |  |

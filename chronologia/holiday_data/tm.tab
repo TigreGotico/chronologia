@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: TM
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Turkmenistan
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this
+#   column. Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here are captured as 'decree' (explicit per-year dates,
+#   basis tabulated) for 2024-2025, the same honest fallback other batch
+#   files already use for their own lunar/Orthodox movables -- silent outside
+#   those years rather than fabricated. Workday-bridge ('puente'/'observado'
+#   extra day-off) entries are dropped as out of scope; where a jurisdiction's
+#   own substitute-holiday practice creates a genuinely separate day off
+#   (e.g. Sierra Leone's "(observed)" replacement day), that day is kept as
+#   its own named row, matching the precedent already set for South Korea's
+#   대체 휴일 substitute-holiday rows. Multi-day religious breaks (Eid,
+#   Nowruz, Lao New Year, Libyan Mawlid) are split into one row per calendar
+#   day, numbered "(1)", "(2)", ... where they do not reduce to a single
+#   fixed or Easter-offset rule.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Täze ýyl                                      | 1 1 | public          |  |  |  |
+fixed         | Halkara zenanlar güni                         | 3 8 | public          |  |  |  |
+fixed         | Milli bahar baýramy (1)                       | 3 21 | public          |  |  |  |
+fixed         | Milli bahar baýramy (2)                       | 3 22 | public          |  |  |  |
+decree        | Oraza baýramy                                 | 2024-4-10 2025-3-30 | public          |  |  |  |
+fixed         | Türkmenistanyň Konstitusiýasynyň we Döwlet baýdagynyň güni | 5 18 | public          |  |  |  |
+decree        | Gurban baýramy                                | 2024-6-16 2025-6-6 | public          |  |  |  |
+fixed         | Türkmenistanyň Garaşsyzlyk güni               | 9 27 | public          |  |  |  |
+fixed         | Hatyra güni                                   | 10 6 | public          |  |  |  |
+fixed         | Halkara Bitaraplyk güni                       | 12 12 | public          |  |  |  |
