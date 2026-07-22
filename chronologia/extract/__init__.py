@@ -28,6 +28,7 @@ from chronologia.extract.model import (Conventions, Direction, LangSpec,
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.anchored import (apply_anchored_offset,
                                               apply_ordinal_count)
+from chronologia.extract.business import apply_business_days
 from chronologia.extract.pipeline import prematch_tokens
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_clock, _WEEK_START)
@@ -366,6 +367,7 @@ def extract_timespan(
         text: str,
         lang: str = "en-us",
         anchor: Optional[datetime] = None,
+        jurisdiction: Optional[str] = None,
 ) -> Optional[Tuple[DateSpan, str]]:
     """Extract a :class:`~chronologia.DateSpan` from natural-language ``text``.
 
@@ -380,6 +382,13 @@ def extract_timespan(
     raise :class:`NotImplementedError`.
 
     Returns ``(span, remainder)`` or ``None`` when nothing matched.
+
+    ``jurisdiction`` (an ISO country code such as ``'PT'``) scopes the
+    business-day constructions ("in 5 business days", "the next working day"):
+    a business day is a non-weekend weekday that is also not a public holiday of
+    that jurisdiction.  With ``jurisdiction=None`` the count is *holiday-blind*
+    -- weekend-aware but treating every weekday as a business day -- because
+    which weekdays are public holidays cannot be known without a jurisdiction.
 
     A "from A to B" / "between A and B" range yields the span from the start
     of the left sub-parse to the end of the right one (``june 5th to june
@@ -401,6 +410,13 @@ def extract_timespan(
         res = engine.resolver.resolve(match, anchor)
         if res is not None:
             resolved.append((match, res))
+    # business-day counting ("in 5 business days", "the next working day",
+    # "3 working days after christmas"); jurisdiction scopes the holiday lookup.
+    # Runs before the anchored-offset pass so a "N working days after <date>"
+    # phrase composes on the resolved reference here, rather than being read as
+    # a bare "N days after <date>" unit offset.
+    resolved = apply_business_days(tokens, resolved, engine.spec, anchor,
+                                   jurisdiction)
     # anchored arithmetic: rewrite a date reference carrying a stranded
     # "N units after"/"the weekday before" pre-amble (composition on the
     # already-resolved reference), then synthesise any anchor-relative
