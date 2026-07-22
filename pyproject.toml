@@ -33,17 +33,22 @@ dependencies = [
 chronologia = "chronologia.__main__:main"
 
 [project.optional-dependencies]
-# Test/dev extras: property-based fuzzing (test/test_properties.py) needs
-# Hypothesis; the rest of the suite runs on pytest alone.
+# Test/dev extras: property-based fuzzing (test/test_properties.py,
+# test/test_fuzz.py) needs Hypothesis; the differential benchmark
+# (benchmark/) needs dateparser and dateutil as comparison engines
+# (dateutil is already a runtime dependency); the rest of the suite runs
+# on pytest alone.
 test = [
     "pytest",
     "hypothesis>=6.0",
+    "dateparser>=1.1",
 ]
 
 [dependency-groups]
 dev = [
     "pytest",
     "hypothesis>=6.0",
+    "dateparser>=1.1",
     "mypy",
 ]
 
