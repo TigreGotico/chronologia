@@ -36,14 +36,6 @@
       ],
       "prefer_future": true
     },
-    "nongregorian_date": {
-      "orders": [
-        "DAY of CAL_MONTH YEAR?",
-        "DAY CAL_MONTH YEAR?",
-        "CAL_MONTH DAY? YEAR?"
-      ],
-      "prefer_future": true
-    },
     "season_ref": {
       "orders": [
         "article? SEASON of YEAR",

@@ -1222,6 +1222,43 @@ surface forms, and write a `lang.json` that sets the conventions and lists
 the constructions the language supports. Start by copying the closest
 existing language and replacing the surfaces — no Python required.
 
+### The locale data contract — validated on load
+
+A locale is not free-form data: it must satisfy a **schema** the engine
+derives from itself and checks the moment a language is loaded (see
+`chronologia/extract/schema.py`). Because this is checked eagerly, a broken
+locale fails **loudly** with the language code and the exact field at fault,
+rather than silently producing a construction that can never match. The
+contract is:
+
+- **Order strings use the fixed slot alphabet.** Every `orders` entry is a
+  space-separated sequence of *slots* (uppercase — `MONTH`, `NUM`, `SEASON`,
+  …) and *connector literals* (lowercase — `of`, `year_word`, `ago`). The
+  slot alphabet is exactly the set the matcher's `_bind` recognises; a
+  mistyped slot (`MOMTH`) is rejected. A trailing `?` marks a single optional
+  element (`YEAR?`); a `?` anywhere else is malformed.
+- **Every required slot must have vocabulary.** An order is *reachable* only
+  if each of its non-optional slots and connectors has a non-empty backing
+  `.voc` in this locale (`of` needs `marker_of.voc`, `SEASON` needs the
+  `season_*.voc` files, `CAL_MONTH` needs `month_<calendar>_<n>.voc`). An
+  order whose vocabulary was never translated is dead data and is reported —
+  drop the order, or supply the missing surfaces. Numeric/regex slots (`NUM`,
+  `YEAR`, `ORD`, `ISO`, …) need no vocabulary and are always reachable.
+- **Only known keys.** Unknown top-level keys, `conventions`/`tokenizer`/
+  `guards` keys, per-construction flags (only `prefer_future` and `group`),
+  construction names (must be a name the engine ranks), and `group` values
+  (only `classical` today) are all rejected.
+- **Quantifier keys are numeric strings.** Each key under `quantifiers` is the
+  numeric value its surface forms mean (`"2": ["couple", "pair"]`), so a
+  non-numeric key is rejected.
+
+Two further **data-quality** rules are enforced by the locale linter in
+`test/test_locale_schema.py` (a defect fails that language's case): a `.voc`
+must contain no **duplicate** surface and no surface that **normalises to
+empty**, and a non-English `period_part_*.voc` (the early/mid/late words) must
+not be left byte-identical to English — the tell-tale of an untranslated
+placeholder. Run `pytest test/test_locale_schema.py` after editing a locale.
+
 ### Performance — lazy, cached per-locale loading
 
 `import chronologia` reads **no** locale data: not one of the 40-plus

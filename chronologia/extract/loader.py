@@ -45,6 +45,7 @@ from chronologia.extract.compiler import parse_order
 from chronologia.extract.model import (Conventions, LangSpec,
                                            TokenizerModes)
 from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.schema import validate as validate_locale
 from chronologia.extract.tokenizer import Tokenizer
 
 LOCALE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "locale")
@@ -279,6 +280,13 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         weekend_words=frozenset(weekend_words),
         weekday_full=weekday_full,
         quantifiers=quantifiers)
+
+    # LOUD schema validation on load (behind the lazy per-language path): the
+    # parsed config must be structurally sound AND every construction order must
+    # be reachable given the vocabulary this locale actually ships.  Bad locale
+    # data raises here with locale+field context rather than silently disabling
+    # a construction.
+    validate_locale(cfg, lang, spec)
 
     # Holiday surfaces are FACTS harvested from the holidays engine's i18n
     # tables, then folded through the *same* tokenizer + normaliser the matcher

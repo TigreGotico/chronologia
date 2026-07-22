@@ -62,12 +62,6 @@
         "NUM ad"
       ]
     },
-    "deep_time": {
-      "orders": [
-        "NUM SCALE of? year_word MARKER",
-        "MARKER NUM SCALE of? year_word"
-      ]
-    },
     "year_ref": {
       "orders": [
         "in GYEAR",

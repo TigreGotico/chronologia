@@ -73,12 +73,6 @@
     "GYEAR"
    ]
   },
-  "decade_ref": {
-   "orders": [
-    "PART? article? NUM plural",
-    "article? PART DECADE"
-   ]
-  },
   "scoped_ordinal": {
    "orders": [
     "article? ORD SCOPE_UNIT",
