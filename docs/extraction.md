@@ -165,6 +165,70 @@ print(span.start.year, span.end.year)   # -308 -298
 print(span.width.days)                   # 3652  (ten years, two leap days)
 ```
 
+## Business days ("in 5 business days", "the next working day")
+
+A **business day** (or working day) is a calendar day that is neither a weekend
+day nor a public holiday. Two phrasings resolve to one:
+
+- **counting from now** — "in N business days", "N working days", and "the next
+  working day" (which is simply N=1) return the N-th business day *strictly
+  after* the anchor date, as a day-wide span;
+- **counting from a reference** — "3 working days after christmas", "two
+  business days before new year" count the same way, but from a date the engine
+  already resolved (any holiday or calendar date), reusing the same composition
+  as the rest of the anchored arithmetic.
+
+The weekend is the locale's own two-day rest period (the `weekend_start`
+convention — Saturday+Sunday by default, Friday+Saturday where a locale declares
+it), never hard-coded. The surfaces are a per-locale fact (`marker_business.voc`:
+`business`/`working`, `dia útil`, `día hábil`/`laborable`, `Werktag`/`Arbeitstag`,
+`jour ouvrable`/`ouvré`); the counting is generic.
+
+**The holiday calendar needs a jurisdiction.** Which weekdays are public
+holidays is not knowable without one, so `extract_timespan` takes an optional
+`jurisdiction` (an ISO country code). With it, public holidays of that
+jurisdiction are skipped (looked up through the shared civil-holiday engine — the
+holiday data is never re-derived here). **Without** it, the count is
+*holiday-blind*: weekend-aware, but every weekday is treated as a business day.
+This is an honest, documented default, not an oversight.
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+# a Wednesday; Christmas (Fri 25 Dec) and New Year (Fri 1 Jan) fall just ahead
+anchor = datetime(2026, 12, 23)
+
+# with a jurisdiction, Christmas Day and the weekend are skipped
+span, _ = extract_timespan("in 2 business days", "en", anchor, jurisdiction="PT")
+print(span.start_datetime.date())   # 2026-12-28  (Thu 24 counts, Fri 25 is Natal)
+
+# holiday-blind default: Christmas Day now counts as an ordinary weekday
+span, _ = extract_timespan("in 2 business days", "en", anchor)
+print(span.start_datetime.date())   # 2026-12-25
+
+# "the next working day" == N=1
+span, _ = extract_timespan("the next working day", "en", anchor, jurisdiction="PT")
+print(span.start_datetime.date())   # 2026-12-24
+
+# composition on a resolved reference — counted from Christmas, not "now"
+span, _ = extract_timespan("3 working days after christmas", "en", anchor,
+                           jurisdiction="PT")
+print(span.start_datetime.date())   # 2026-12-30  (Mon 28, Tue 29, Wed 30)
+
+# each locale in its own spoken form (día hábil, Werktag, jour ouvré, dia útil)
+for lang, phrase in [("pt", "em 2 dias úteis"), ("es", "en 2 días hábiles"),
+                     ("de", "in 2 Werktagen"), ("fr", "dans 2 jours ouvrés")]:
+    s, _ = extract_timespan(phrase, lang, anchor, jurisdiction=lang.upper())
+    print(lang, s.start_datetime.date())   # each -> 2026-12-28
+```
+
+On `ouvrable` vs `ouvré` (and similar fine distinctions elsewhere): French law
+separates *jours ouvrables* (all days bar the weekly rest day and holidays) from
+*jours ouvrés* (days actually worked). Chronologia does not model that
+payroll-grade split — both resolve to the same Monday-to-Friday-minus-holidays
+business day, the everyday sense a speaker means by "working day".
+
 ## Seeing why a parse landed
 
 `explain` opens a debug window over the same pipeline: the tokens, every
