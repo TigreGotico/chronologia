@@ -25,10 +25,25 @@ from chronologia.extract.tokenizer import Tokenizer
 
 
 def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
-    """Multiword period surfaces ("bronze age") the tokenizer splits, longest
-    first so "late bronze age" wins over "bronze age"."""
-    return tuple(sorted((s for s in spec.periods if " " in s),
-                        key=lambda s: len(s.split()), reverse=True))
+    """Every multiword vocabulary surface the tokenizer split on whitespace,
+    longest first so "late bronze age" wins over "bronze age".
+
+    A period ("bronze age"), a named day ("day after tomorrow"), a clock
+    landmark ("gece yarısı"), a meridiem ("öğleden sonra") or a season can all
+    be written as several words; the tokenizer breaks them apart and this pass
+    glues each back into the single token its slot binds.  Numbers never
+    participate, so a merged surface is always a lexical token.
+
+    Multiword *connectors* ("vor christus", "que vén") are excluded on
+    purpose -- the matcher binds those natively via ``_connector_span``, so
+    pre-merging them here would double-handle the surface."""
+    seen = set()
+    for table in (spec.periods, spec.named_days, spec.clock_landmarks,
+                  spec.meridiems, spec.seasons, spec.units, spec.months,
+                  spec.weekdays, spec.rel_markers, spec.directions,
+                  spec.scope_units, spec.clock_fractions, spec.clock_dirs):
+        seen.update(s for s in table if " " in s)
+    return tuple(sorted(seen, key=lambda s: len(s.split()), reverse=True))
 
 
 def merge_multiword(tokens: Tuple[Token, ...],
