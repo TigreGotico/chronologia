@@ -1,0 +1,114 @@
+{
+  "tokenizer": {
+    "split_contractions": false,
+    "ordinal_dot": true
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "NUM UNIT MARKER",
+        "indef? UNIT MARKER",
+        "MARKER NUM UNIT"
+      ]
+    },
+    "named_day": {
+      "orders": [
+        "DAY_WORD"
+      ]
+    },
+    "weekday_ref": {
+      "orders": [
+        "REL_MARKER WEEKDAY"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "YEAR MONTH DAY?",
+        "MONTH DAY YEAR?",
+        "MONTH DAY?"
+      ],
+      "prefer_future": true
+    },
+    "season_ref": {
+      "orders": [
+        "REL_MARKER SEASON",
+        "SEASON of YEAR",
+        "YEAR SEASON",
+        "SEASON YEAR?"
+      ]
+    },
+    "scoped_ordinal": {
+      "orders": [
+        "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
+        "article? ORD SCOPE_UNIT"
+      ]
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK MERIDIEM?",
+        "at HOUR MERIDIEM?",
+        "HOUR oclock MERIDIEM?",
+        "FRACTION HOUR MERIDIEM?",
+        "at? LANDMARK"
+      ],
+      "prefer_future": true
+    },
+    "era_bc": {
+      "orders": [
+        "bc NUM",
+        "NUM bc"
+      ]
+    },
+    "era_ad": {
+      "orders": [
+        "NUM ad",
+        "ad NUM"
+      ]
+    },
+    "deep_time": {
+      "orders": [
+        "NUM SCALE year_word ago",
+        "ago NUM SCALE year_word"
+      ]
+    },
+    "iso_date": {
+      "orders": [
+        "ISO"
+      ]
+    },
+    "year_ref": {
+      "orders": [
+        "in year_word GYEAR",
+        "article? year_word GYEAR",
+        "GYEAR"
+      ]
+    },
+    "month_fuzzy": {
+      "orders": [
+        "PART MONTH"
+      ]
+    },
+    "half_period": {
+      "orders": [
+        "article? NUM half of GYEAR",
+        "article? NUM half of article? SCOPE_UNIT"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": false,
+    "hemisphere": "north",
+    "prefer_future": true,
+    "bare_half_to": true
+  },
+  "quantifiers": {
+    "1": ["egy"],
+    "2": ["pár"],
+    "3": ["néhány", "pár"]
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "hook": "chronologia.extract.numfold_agglutinative:fold_hu"
+}

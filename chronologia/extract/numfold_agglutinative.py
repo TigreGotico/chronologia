@@ -113,8 +113,10 @@ _EL_FEM_HOURS = {
 fold_el = _make_fold("el", _EL_FEM_HOURS)
 
 
-# -- Hungarian: "hét" is both seven and week; never fold it to a number -----
-fold_hu = _make_fold("hu", exclude=frozenset({"hét"}))
+# -- Hungarian: "hét" is both seven and week; never fold it to a number.
+# "két" is the attributive form of 2 (the pronounce side emits "kettő"), so
+# it is supplied explicitly for the "két hét múlva" counting slot.
+fold_hu = _make_fold("hu", {"két": 2}, exclude=frozenset({"hét"}))
 
 
 # -- Finnish: genitive numerals used in the "N <unit> kuluttua/sitten" slot -
