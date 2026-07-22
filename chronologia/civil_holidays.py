@@ -169,6 +169,12 @@ __all__ = [
     "CivilHoliday",
     "HolidayCalendar",
     "holidays_for",
+    "WellKnownHoliday",
+    "WELL_KNOWN",
+    "WELL_KNOWN_BY_KEY",
+    "load_well_known_aliases",
+    "well_known_surfaces",
+    "well_known_source",
     "is_civil_holiday",
     "load_calendar",
     "load_translations",
@@ -1136,6 +1142,187 @@ def holidays_for(jurisdiction: str, year: int, subdiv: Optional[str] = None,
     :raises KeyError: no data file for ``jurisdiction``.
     """
     return _calendar_for(jurisdiction).holidays(year, subdiv, categories)
+
+
+# --------------------------------------------------------------------------
+# Globally well-known holidays — the movable/religious/civil set a *language*
+# binds for natural-language reference ("christmas", "when is easter", "next
+# christmas").  This is deliberately NOT "every rule in all 45 jurisdictions":
+# it is a small, curated set of holidays that are well-known *across* borders,
+# each anchored to one jurisdiction whose data file already carries its rule
+# and its official name.  Behaviour (the date math) stays in the rule kinds;
+# the surfaces a language speaks are FACTS harvested at load time from the
+# engine's existing i18n tables (official native names + ``translations.tab``)
+# plus a curated spoken-alias table (``i18n/well_known.tab``) — never a giant
+# hand-authored per-language vocabulary file.
+# --------------------------------------------------------------------------
+@dataclass(frozen=True)
+class WellKnownHoliday:
+    """A globally well-known holiday keyed for cross-language reference.
+
+    ``key`` is a stable, language-neutral identifier (``christmas``,
+    ``easter``); ``kind`` is the canonical (Western) date rule, reusing the
+    same rule kinds every jurisdiction uses, so a movable holiday still
+    resolves through :func:`~chronologia.computus.easter` and never re-derives
+    date math.  ``anchor_jurisdiction`` / ``anchor_name`` name the real
+    jurisdiction + official native name the surfaces are harvested from (the
+    provenance ``explain`` traces); ``anchor_lang`` is the language of that
+    native name (so it is offered as a surface for its own language).
+    """
+
+    key: str
+    kind: RuleKind
+    categories: FrozenSet[str]
+    anchor_jurisdiction: str
+    anchor_name: str
+    anchor_lang: str
+    span_shape: str = "day"
+
+    def date_for(self, year: int) -> Optional[Tuple[AstroDate, str]]:
+        """The ``(AstroDate, basis)`` of this holiday in ``year`` (or None)."""
+        obs = self.kind.observances(year)
+        return obs[0] if obs else None
+
+    def span_for(self, year: int) -> Optional[Tuple[DateSpan, str]]:
+        """The resolved ``(DateSpan, basis)`` for ``year`` (span shape applied)."""
+        got = self.date_for(year)
+        if got is None:
+            return None
+        date, basis = got
+        return _shape_span(date, basis, self.span_shape), basis
+
+
+#: The curated global well-known set.  Each entry anchors on a jurisdiction
+#: whose ``.tab`` file already carries the same rule and the official name.
+WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
+    WellKnownHoliday("new_year", FixedRule(1, 1),
+                     frozenset({"public"}), "PT", "Ano Novo", "pt"),
+    WellKnownHoliday("new_year_eve", FixedRule(12, 31),
+                     frozenset({"public"}), "US", "New Year's Eve", "en"),
+    WellKnownHoliday("epiphany", FixedRule(1, 6),
+                     frozenset({"public", "religious"}), "IT", "Epifania", "it"),
+    WellKnownHoliday("carnival", EasterOffsetRule(-47),
+                     frozenset({"public"}), "PT", "Carnaval", "pt"),
+    WellKnownHoliday("good_friday", EasterOffsetRule(-2),
+                     frozenset({"public", "religious"}),
+                     "PT", "Sexta-feira Santa", "pt"),
+    WellKnownHoliday("easter", EasterOffsetRule(0),
+                     frozenset({"public", "religious"}),
+                     "PT", "Domingo de Pascoa", "pt"),
+    WellKnownHoliday("easter_monday", EasterOffsetRule(1),
+                     frozenset({"public", "religious"}),
+                     "FR", "Lundi de Pâques", "fr"),
+    WellKnownHoliday("ascension", EasterOffsetRule(39),
+                     frozenset({"public", "religious"}), "FR", "Ascension", "fr"),
+    WellKnownHoliday("pentecost", EasterOffsetRule(49),
+                     frozenset({"public", "religious"}),
+                     "DE", "Pfingstsonntag", "de"),
+    WellKnownHoliday("whit_monday", EasterOffsetRule(50),
+                     frozenset({"public", "religious"}),
+                     "FR", "Lundi de Pentecôte", "fr"),
+    WellKnownHoliday("corpus_christi", EasterOffsetRule(60),
+                     frozenset({"public", "religious"}),
+                     "PT", "Corpo de Deus", "pt"),
+    WellKnownHoliday("assumption", FixedRule(8, 15),
+                     frozenset({"public", "religious"}),
+                     "PT", "Assuncao de Nossa Senhora", "pt"),
+    WellKnownHoliday("all_saints", FixedRule(11, 1),
+                     frozenset({"public", "religious"}),
+                     "PT", "Dia de Todos os Santos", "pt"),
+    WellKnownHoliday("christmas_eve", FixedRule(12, 24),
+                     frozenset({"public", "religious"}),
+                     "US", "Christmas Eve", "en"),
+    WellKnownHoliday("christmas", FixedRule(12, 25),
+                     frozenset({"public", "religious"}), "PT", "Natal", "pt"),
+    WellKnownHoliday("boxing_day", FixedRule(12, 26),
+                     frozenset({"public", "religious"}),
+                     "NL", "Tweede Kerstdag", "nl"),
+)
+
+#: ``key -> WellKnownHoliday`` for O(1) lookup by the resolver.
+WELL_KNOWN_BY_KEY: Dict[str, WellKnownHoliday] = {w.key: w for w in WELL_KNOWN}
+
+_WELL_KNOWN_FILE = os.path.join(_DATA_DIR, "i18n", "well_known.tab")
+
+
+def load_well_known_aliases(path: str = _WELL_KNOWN_FILE
+                            ) -> Dict[Tuple[str, str], Tuple[str, ...]]:
+    """Parse ``i18n/well_known.tab`` into ``(key, lang) -> (surface, ...)``.
+
+    **File format** (``# civil-holidays-well-known v1``).  ``#``-lines are
+    comments; each data row is pipe-delimited ``key | lang | surfaces``, where
+    ``surfaces`` is one or more ``;;``-separated spoken forms of the holiday in
+    that language ("christmas ;; christmas day ;; xmas").  These are the
+    curated *spoken aliases* — the colloquial names a person actually says —
+    kept as data, distinct from the official native names (in the ``.tab``
+    files) and the display translations (``translations.tab``).  A missing file
+    yields ``{}``.
+    """
+    out: Dict[Tuple[str, str], Tuple[str, ...]] = {}
+    if not os.path.exists(path):
+        return out
+    with open(path, encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.rstrip("\n")
+            if not line.strip() or line.lstrip().startswith("#"):
+                continue
+            cols = [c.strip() for c in line.split("|")]
+            if len(cols) < 3:
+                raise ValueError(
+                    f"malformed well-known line (need 3 columns): {line!r}")
+            key, lang, cell = cols[0], cols[1], cols[2]
+            if key not in WELL_KNOWN_BY_KEY:
+                raise ValueError(
+                    f"well_known.tab names unknown holiday key {key!r}")
+            surfaces = tuple(s.strip() for s in cell.split(";;") if s.strip())
+            out[(key, lang.lower())] = out.get((key, lang.lower()), ()) + surfaces
+    return out
+
+
+_WELL_KNOWN_ALIASES: Optional[Dict[Tuple[str, str], Tuple[str, ...]]] = None
+
+
+def _well_known_aliases() -> Dict[Tuple[str, str], Tuple[str, ...]]:
+    global _WELL_KNOWN_ALIASES
+    if _WELL_KNOWN_ALIASES is None:
+        _WELL_KNOWN_ALIASES = load_well_known_aliases()
+    return _WELL_KNOWN_ALIASES
+
+
+def well_known_surfaces(lang: str) -> Dict[str, str]:
+    """Every spoken surface -> well-known ``key`` for ``lang`` (lowercased).
+
+    The surfaces are *derived* — never hand-listed per locale — by unioning the
+    engine's existing i18n facts with the curated spoken-alias table:
+
+    * the curated spoken aliases (``i18n/well_known.tab``) for ``(key, lang)``;
+    * the anchor holiday's **display translation** for ``lang`` from
+      ``translations.tab`` (an existing i18n fact);
+    * the anchor holiday's **official native name** when ``lang`` is that
+      name's own language (the government's own word).
+
+    A language with no data for a holiday simply contributes no surface for it,
+    so the reference is honestly scoped to what the locale's language actually
+    names.
+    """
+    aliases = _well_known_aliases()
+    out: Dict[str, str] = {}
+    for wk in WELL_KNOWN:
+        surfaces = set(aliases.get((wk.key, lang.lower()), ()))
+        trans = _translations_for(wk.anchor_jurisdiction, wk.anchor_name)
+        if lang in trans:
+            surfaces.add(trans[lang])
+        if wk.anchor_lang == lang:
+            surfaces.add(wk.anchor_name)
+        for surface in surfaces:
+            out[surface.strip().lower()] = wk.key
+    return out
+
+
+def well_known_source(key: str) -> str:
+    """The provenance label ``"JURIS:name"`` for a well-known ``key``."""
+    wk = WELL_KNOWN_BY_KEY[key]
+    return f"{wk.anchor_jurisdiction}:{wk.anchor_name}"
 
 
 def is_civil_holiday(date, jurisdiction: str,

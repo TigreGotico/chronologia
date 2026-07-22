@@ -35,6 +35,10 @@ PRECEDENCE: Dict[str, int] = {
     # they win over the generic scoped/calendar families
     "regnal_date": 1,
     "roman_date": 1,
+    # a holiday reference ("christmas", "next easter", "natal 2020") carries the
+    # most specific vocabulary of all — a named holiday surface — so it wins the
+    # tie against any generic calendar/year construction over the same tokens
+    "holiday_ref": 1,
     # a bare "HHMM hours" would otherwise read as an "N-th hour" scoped
     # ordinal, so military time wins the same-span tie
     "military_time": 1,

@@ -103,7 +103,8 @@ DATE_CONSTRUCTIONS = frozenset({
     "weekday_ref", "named_day", "season_ref", "scoped_ordinal",
     "scoped_bc", "scoped_ad",
     "regnal_date", "roman_date", "era_date",
-    "era_bc", "era_ad", "era_bp", "deep_time", "named_period"})
+    "era_bc", "era_ad", "era_bp", "deep_time", "named_period",
+    "holiday_ref"})
 
 
 def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolution:
@@ -781,6 +782,76 @@ class Resolver:
         else:
             span = period.span
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
+
+    # -- holiday_ref -------------------------------------------------------
+
+    def _resolve_holiday_ref(self, match, anchor):
+        """"christmas" / "when is easter" / "next christmas" / "last easter" /
+        "natal 2020" -> the holiday's own :class:`DateSpan`.
+
+        The surface names a globally well-known holiday (``spec.holidays`` maps
+        it to a stable key); the date is produced by that holiday's canonical
+        rule in :data:`chronologia.civil_holidays.WELL_KNOWN` — a movable
+        holiday (easter and its cycle) still resolves through the computus
+        engine, never re-derived here.  Which *year*'s occurrence is chosen:
+
+        * an explicit ``YEAR`` slot -> that year;
+        * a ``next`` marker -> the strictly-future next occurrence;
+        * a ``last`` marker -> the most recent strictly-past occurrence;
+        * a ``this`` marker -> this anchor year's occurrence;
+        * bare (no marker) -> the next occurrence **on or after** the anchor
+          date (so on Christmas Day itself, "christmas" is that very day; the
+          day after, it is next year's).
+
+        The result carries the holiday's own span shape (whole-day, or half-day
+        where the rule is a half-day).
+        """
+        from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
+        key = self.spec.holidays.get(match.slots["HOLIDAY"].text)
+        wk = WELL_KNOWN_BY_KEY.get(key) if key is not None else None
+        if wk is None:
+            return None
+        year_tok = match.slots.get("YEAR")
+        rel_tok = match.slots.get("REL_MARKER")
+        if year_tok is not None:
+            year = int(year_tok.value)
+        else:
+            rel = (self.spec.rel_markers[rel_tok.text]
+                   if rel_tok is not None else None)
+            year = self._holiday_year(wk, anchor.date(), rel)
+            if year is None:
+                return None
+        got = wk.span_for(year)
+        if got is None:
+            return None
+        span, _basis = got
+        return Resolution(DateSpan(span.start, span.end), self._consumed(match))
+
+    @staticmethod
+    def _holiday_year(wk, anchor_date, rel):
+        """The Gregorian year of the occurrence selected by ``rel`` (or bare).
+
+        ``rel`` is None (bare, on-or-after), +1 (next, strictly future), -1
+        (last, strictly past) or 0 (this year).
+        """
+        def occ(y):
+            got = wk.date_for(y)
+            if got is None:
+                return None
+            d = got[0]
+            return date(d.year, d.month, d.day)
+
+        y = anchor_date.year
+        this_year = occ(y)
+        if this_year is None:
+            return None
+        if rel is None:                       # bare: next on-or-after anchor
+            return y if this_year >= anchor_date else y + 1
+        if rel > 0:                           # next: strictly future
+            return y if this_year > anchor_date else y + 1
+        if rel < 0:                           # last: most recent strictly past
+            return y if this_year < anchor_date else y - 1
+        return y                              # this: this anchor year
 
     # -- clock_time --------------------------------------------------------
 

@@ -166,6 +166,12 @@ class LangSpec:
     quantifiers: Mapping[str, float] = field(default_factory=dict)
     # weekend surface forms ("weekend", "fim de semana", "Wochenende", ...)
     weekend_words: FrozenSet[str] = field(default_factory=frozenset)
+    # holiday_ref surface -> well-known holiday key ("christmas", "easter");
+    # derived at load time from the holidays engine's i18n tables (native
+    # names + translations + curated spoken aliases), never hand-listed here
+    holidays: Mapping[str, str] = field(default_factory=dict)
+    # well-known holiday key -> provenance label ("PT:Natal"), for explain()
+    holiday_sources: Mapping[str, str] = field(default_factory=dict)
     # full weekday names only, excluding abbreviations: the bare-weekday order
     # binds against these so short abbreviation surfaces that collide with
     # common words (de "so", nl "zo", es "mar") never resolve without a marker,

@@ -92,6 +92,9 @@
     "half_period": {
       "orders": ["article? NUM half of GYEAR",
                  "article? NUM half of article? SCOPE_UNIT"]
+    },
+    "holiday_ref": {
+      "orders": ["REL_MARKER HOLIDAY", "HOLIDAY YEAR", "YEAR HOLIDAY", "HOLIDAY"]
     }
   },
   "conventions": {"week_start": "monday", "dmy": false, "hemisphere": null,

@@ -23,8 +23,17 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["REL_MARKER UNIT"]},
-    "weekend_ref": {"orders": ["REL_MARKER WEEKEND", "article? WEEKEND"]},
+    "rel_period": {
+      "orders": [
+        "REL_MARKER UNIT"
+      ]
+    },
+    "weekend_ref": {
+      "orders": [
+        "REL_MARKER WEEKEND",
+        "article? WEEKEND"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
@@ -131,6 +140,14 @@
       "orders": [
         "article? NUM half of GYEAR",
         "article? NUM half of article? SCOPE_UNIT"
+      ]
+    },
+    "holiday_ref": {
+      "orders": [
+        "REL_MARKER HOLIDAY",
+        "HOLIDAY YEAR",
+        "YEAR HOLIDAY",
+        "HOLIDAY"
       ]
     }
   },

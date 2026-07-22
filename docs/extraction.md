@@ -119,6 +119,69 @@ when a phrase parses to something you did not expect. `explain` runs the
 spelled-number fold and multiword merge — so its trace of a phrase reflects
 the real parse token-for-token, written-out numbers and all.
 
+## Holidays by name
+
+A **construction** is one named shape the extractor knows how to read (a
+calendar date, a relative offset, a season …); each has its own resolver that
+turns a match into a span. `holiday_ref` is the construction that reads a
+holiday spoken by *name* — "christmas", "when is easter", "next christmas" —
+and returns the holiday's own day-wide span. Movable feasts (Easter and its
+whole cycle) are computed through the same computus the rest of the library
+uses, so "easter" is a real date in any year, not a lookup table that runs out.
+
+The names a language recognises are **facts**, harvested at load time from the
+holidays engine's own name tables (official native names, display translations)
+plus a small curated table of spoken aliases — never hand-listed here. A
+locale binds the globally well-known set (Christmas, New Year, Epiphany, Easter
+and its cycle, Assumption, All Saints, Carnival …) in *its own language*, and
+nothing more: the reference is scoped to what people in that language actually
+say, not to every jurisdiction's full rule catalogue.
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+# a fixed anchor so the examples are reproducible: a Tuesday in June 2017
+now = datetime(2017, 6, 27)
+
+# a bare name -> the next occurrence on or after today.  Christmas is still
+# ahead this year, so it is this year's 25 December (a whole-day span).
+span, _ = extract_timespan("christmas", "en", now)
+print(span.start, span.width)          # 2017-12-25 00:00:00 1 day, 0:00:00
+
+# Easter has already passed in 2017 (16 April), so a bare "easter" rolls to
+# next year's — resolved through the computus engine, not a table.
+span, _ = extract_timespan("when is easter", "en", now)
+print(span.start.year, span.start.month, span.start.day)   # 2018 4 1
+
+# "next" is strictly future; "last" is the most recent past occurrence.
+print(extract_timespan("next christmas", "en", now)[0].start)   # 2017-12-25
+print(extract_timespan("last easter", "en", now)[0].start)      # 2017-04-16
+
+# an explicit year pins that year's occurrence, no roll.
+print(extract_timespan("easter 2020", "en", now)[0].start)      # 2020-04-12
+
+# the same meaning in other languages — each in its own spoken form.
+print(extract_timespan("natal", "pt", now)[0].start)            # 2017-12-25
+print(extract_timespan("quand est pâques", "fr", now)[0].start) # 2018-04-01
+print(extract_timespan("weihnachten", "de", now)[0].start)      # 2017-12-25
+```
+
+`explain` traces the binding: it shows which well-known holiday key the surface
+resolved to and the jurisdiction and official name the surface was harvested
+from, so you can always see *why* a word bound a holiday.
+
+```python
+from chronologia import explain
+from chronologia.extract import load_lang_spec
+from datetime import datetime
+
+trace = explain("next christmas", load_lang_spec("en"), datetime(2017, 6, 27))
+won = trace.winners[0]
+print(won.match.construction)          # holiday_ref
+print(won.match.calendar)              # christmas <PT:Natal>
+```
+
 ## How it actually works
 
 Think of the module as an **assembly line**. A sentence enters at one end
