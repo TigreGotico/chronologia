@@ -54,3 +54,22 @@ fixed  | Vigília de Cap d'Any (a partir de les 13h) | 12 31 | government |  |  
 # that permits vacanza-derived data when flagged as such (retrieved
 # 2026-07-22). ---
 decree | Dijous Sant (a partir de les 13h) | 2024-3-28 2025-4-17 | government |  |  |  |
+#
+# --- Canillo (AD-02) / La Massana (AD-04) / Ordino (AD-05) / Sant Julià de
+#     Lòria (AD-06) / Andorra la Vella (AD-07) / Escaldes-Engordany (AD-08):
+#     vacanza/holidays 0.101 (MIT) holidays/countries/andorra.py -- each
+#     parish's patron/foundation day. Multi-day "Festa Major" festivals and
+#     the movable Diada de Canòlich / Diada de la creació de la parròquia
+#     are decree-tabulated 2024-2025 (not stable single-day fixed rules).
+#     AD-03 (Encamp) carries no subdivision-specific holiday in vacanza and
+#     is omitted.
+fixed  | Sant Roc                               | 8 16 | public religious | AD-02 |
+fixed  | Sant Antoni                            | 1 17 | public religious | AD-04 |
+fixed  | Sant Pere                              | 6 29 | public religious | AD-05 |
+fixed  | Sant Julià                             | 1 7  | public religious | AD-06 |
+decree | Diada de Canòlich                      | 2024-5-25 2025-5-31 | public religious | AD-06 |
+decree | Festa Major de Sant Julià de Lòria      | 2024-7-29 2024-7-30 2025-7-28 2025-7-29 | public | AD-06 |
+decree | Festa Major d'Andorra la Vella          | 2024-8-3 2024-8-4 2024-8-5 2025-8-2 2025-8-3 2025-8-4 | public | AD-07 |
+fixed  | Sant Miquel d'Engolasters               | 5 7  | public religious | AD-08 |
+decree | Diada de la creació de la parròquia     | 2024-6-16 2025-6-15 | public | AD-08 |
+decree | Festa Major d'Escaldes-Engordany        | 2024-7-25 2024-7-26 2025-7-25 2025-7-26 | public | AD-08 |

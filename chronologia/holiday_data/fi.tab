@@ -56,3 +56,8 @@ fixed  | Jean Sibeliuksen päivä, suomalaisen musiikin päivä | 12 8 | unoffic
 # 2026-07-22). ---
 decree | Kaatuneitten muistopäivä | 2024-5-19 2025-5-18 | unofficial |  |  |  |
 decree | Suomen luonnon päivä | 2024-8-31 2025-8-30 | unofficial |  |  |  |
+#
+# --- Ahvenanmaa / Åland (FI-01): vacanza/holidays 0.101 (MIT)
+#     holidays/countries/finland.py -- Ahvenanmaan itsehallintopäivä (Åland's
+#     self-government day), fixed 9 June, stable 2024-2025.
+fixed | Ahvenanmaan itsehallintopäivä | 6 9 | public | FI-01 |

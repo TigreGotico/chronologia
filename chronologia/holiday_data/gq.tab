@@ -36,3 +36,8 @@ fixed         | Día de la Constitución                   | 8 15               
 fixed         | Día de la Independencia Nacional         | 10 12                | public          |  |  |  |
 fixed         | Festividad de la Inmaculada Concepción de María | 12 8                 | public          |  |  |  |
 fixed         | Día de Navidad                           | 12 25                | public          |  |  |  |
+#
+# --- Annobón (GQ-AN): vacanza/holidays 0.101 (MIT)
+#     holidays/countries/equatorial_guinea.py -- patron-saint feast, fixed
+#     both years.
+fixed | Fiesta Patronal de Annobón | 6 13 | public | GQ-AN |

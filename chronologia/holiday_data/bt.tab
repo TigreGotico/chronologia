@@ -40,3 +40,12 @@ fixed         | མི་དབང་མངའ་བདག་རིན་པོ�
 fixed         | མི་དབང་འབྲུག་རྒྱལ་བཞི་པའི་འཁྲུངས་སྐར་དུས་ཆེན་ངལ་གསོལ། | 11 11                | public          |  |  |  |
 decree        | རྒྱལ་བ་ལྷ་ལས་བབས་པའི་དུས་ཆེན་ངལ་གསོ།     | 2024-11-22 2025-11-11 | public          |  |  |  |
 fixed         | རྒྱལ་ཡོངས་དུས་ཆེན་གྱི་ངལ་གསོལ།           | 12 17                | public          |  |  |  |
+#
+# --- Thimphu (BT-15): vacanza/holidays 0.101 (MIT)
+#     holidays/countries/bhutan.py -- Thimphu Tshechu (3-day masked-dance
+#     festival) and Thimphu Drubchoe are lunar-calendar decreed dates;
+#     English names via vacanza's en_US locale for readability. 2025-10-02
+#     coincides with the Nepali "Dassain" holiday in vacanza's own naming.
+decree | Thimphu Drubchoe                | 2024-9-9 2025-9-28 | public | BT-15 |
+decree | Thimphu Tshechu                 | 2024-9-13 2024-9-14 2024-9-15 2025-10-3 2025-10-4 | public | BT-15 |
+decree | Dassain; Thimphu Tshechu        | 2025-10-2 | public | BT-15 |

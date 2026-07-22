@@ -37,3 +37,15 @@ fixed         | Boxing Day                               | 12 26                
 # stripped. Names are vacanza's own (already-localized) labels.
 fixed  | New Year's Day | 1 1 | government |  |  |  | 
 decree | Whit Monday | 2024-5-20 2025-6-9 | government |  |  |  | 
+#
+# --- Ascension Island (SH-AC) / Saint Helena (SH-HL) / Tristan da Cunha
+#     (SH-TA): vacanza/holidays 0.101 (MIT)
+#     holidays/countries/saint_helena_ascension_and_tristan_da_cunha.py.
+#     Ascension Day is Easter+39 (Thursday, computus-derived). Ratting Day
+#     (SH-TA) is a one-off-per-decree entry for 2025; not modeled 2024
+#     (vacanza has no 2024 occurrence).
+easter | Ascension Day     | 39   | public | SH-AC |
+fixed  | Saint Helena Day  | 5 21 | public | SH-HL |
+fixed  | Anniversary Day   | 8 14 | public | SH-TA |
+easter | Ascension Day     | 39   | public | SH-TA |
+decree | Ratting Day       | 2025-5-30 | public | SH-TA |
