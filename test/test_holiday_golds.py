@@ -423,7 +423,7 @@ def test_sa_islamic_golds_2024_independent_jdn_rederivation():
 #   * decree       -> the gazetted dates the .tab lists [independent-decree]
 # So this file, not the engine, is the witness for the tabulated Islamic dates.
 # ==========================================================================
-_ISLAMIC_YEARS = (2023, 2024, 2025)
+_ISLAMIC_YEARS = (2023, 2024, 2025, 2026, 2027)
 _HIJRI_LEAP = {2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29}
 
 
