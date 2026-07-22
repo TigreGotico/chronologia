@@ -502,3 +502,212 @@ fold_kab = _lazy_germanic_fold(
 fold_fa = _lazy_germanic_fold(
     "ovos_number_parser.numbers_fa", "extract_number_fa",
     {"نیم", "ربع", "چارک", "هزار", "میلیون", "میلیارد"})
+
+
+
+# ---------------------------------------------------------------------------
+# fr / it / ro / oc / ast: language-specific pre-passes layered on the shared
+# Romance fold factory.
+#
+# ``_make_romance_fold`` already owns spelled-number folding (compound
+# numbers, JOIN_WORD bridging, feminine ordinals, and the a.c./d.c. glue).
+# These five locales need small token-surgery pre-passes it does not provide:
+# elided proclitics split so a bare year-word binds ("d'annees" -> d annees),
+# fixed idiom phrases collapse to one connector ("il y a", "avanti cristo"),
+# French/Occitan "NhMM" clock notation folds to an HH:MM literal, and a digit
+# followed by an ordinal-suffix word merges ("1er" -> 1, "20-lea" -> 20).
+# "un/una" are blacklisted from folding so the clock fraction "meno un
+# quarto" keeps its article token.
+# ---------------------------------------------------------------------------
+
+def _elision_split(tokens, proclitics):
+    """Split a leading elided proclitic ("d'annees" -> "d", "annees").
+
+    Only the closed proclitic set splits, so a lexical apostrophe inside a
+    word ("aujourd'hui") stays whole."""
+    out = []
+    for t in tokens:
+        head, sep, tail = t.text.partition("'")
+        if not sep:
+            head, sep, tail = t.text.partition("’")
+        if sep and head in proclitics and tail:
+            out.append(Token(text=head, raw=head, index=0))
+            out.append(Token(text=tail, raw=tail, index=0))
+        else:
+            out.append(t)
+    return _reindex(out)
+
+
+def _collapse_phrase(tokens, words, surface):
+    """Collapse a fixed multiword sequence ("il y a") to one token."""
+    n = len(words)
+    out = []
+    i = 0
+    while i < len(tokens):
+        if [t.text for t in tokens[i:i + n]] == words:
+            raw = " ".join(t.raw for t in tokens[i:i + n])
+            out.append(Token(text=surface, raw=raw, index=0))
+            i += n
+        else:
+            out.append(tokens[i])
+            i += 1
+    return _reindex(out)
+
+
+def _collapse_h_clock(tokens):
+    """Fold French/Occitan "20h30"/"20h" into one ``HH:MM`` clock literal."""
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        nn = tokens[i + 2] if i + 2 < n else None
+        if (t.is_number and t.value is not None and 0 <= t.value <= 24
+                and float(t.value).is_integer() and nxt is not None
+                and nxt.text == "h"):
+            if (nn is not None and nn.is_number and nn.value is not None
+                    and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
+                lit = "%d:%02d" % (int(t.value), int(nn.value))
+                out.append(Token(text=lit, raw=lit, index=0))
+                i += 3
+                continue
+            lit = "%d:00" % int(t.value)
+            out.append(Token(text=lit, raw=lit, index=0))
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return _reindex(out)
+
+
+def _merge_digit_ordinal(tokens, suffixes):
+    """Drop a lone ordinal-suffix word after a digit ("1 er" -> 1)."""
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        if (t.is_number and nxt is not None and not nxt.is_number
+                and nxt.text in suffixes):
+            out.append(t)
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return _reindex(out)
+
+
+def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
+                          phrases=(), h_clock=False, ord_suffixes=frozenset(),
+                          fem_ord=None):
+    base = _make_romance_fold(lang_code, blacklist)
+    fem_ord = fem_ord or {}
+
+    def fold(tokens):
+        if proclitics:
+            tokens = _elision_split(tokens, proclitics)
+        for seq, surface in phrases:
+            tokens = _collapse_phrase(tokens, seq, surface)
+        if h_clock:
+            tokens = _collapse_h_clock(tokens)
+        if ord_suffixes:
+            tokens = _merge_digit_ordinal(tokens, ord_suffixes)
+        if fem_ord:
+            # feminine ordinals the number back-end rejects ("a doua",
+            # "la segunda") -- map the surface straight to its digit.
+            tokens = _reindex(tuple(
+                Token(text=str(fem_ord[t.text]), raw=t.raw, index=0,
+                      is_number=True, value=fem_ord[t.text])
+                if (not t.is_number and t.text in fem_ord) else t
+                for t in tokens))
+        return base(tokens)
+
+    return fold
+
+
+# -- French -----------------------------------------------------------------
+_FR_PHRASES = [
+    (["avant", "jésus", "christ"], "avjc"), (["avant", "jesus", "christ"], "avjc"),
+    (["avant", "notre", "ère"], "avjc"), (["avant", "notre", "ere"], "avjc"),
+    (["av", "j", "c"], "avjc"), (["av", "jc"], "avjc"),
+    (["après", "jésus", "christ"], "apjc"), (["apres", "jesus", "christ"], "apjc"),
+    (["de", "notre", "ère"], "apjc"), (["de", "notre", "ere"], "apjc"),
+    (["ap", "j", "c"], "apjc"), (["ap", "jc"], "apjc"),
+    (["il", "y", "a"], "ilya"),
+    (["avant", "hier"], "avanthier"),
+    (["apres", "demain"], "apresdemain"), (["après", "demain"], "apresdemain"),
+    (["week", "end"], "weekend"),
+]
+fold_fr = _romance_prepass_fold(
+    "fr", {"un", "une"},
+    proclitics=frozenset({"d", "l", "j", "n", "s", "c", "m", "t", "qu"}),
+    phrases=_FR_PHRASES, h_clock=True,
+    ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
+                            "nd", "nde", "d", "re", "es", "emes", "èmes"}))
+
+
+# -- Italian ----------------------------------------------------------------
+_IT_PHRASES = [
+    (["avanti", "cristo"], "ac"), (["dopo", "cristo"], "dc"),
+    (["avanti", "l", "era", "volgare"], "ac"), (["era", "volgare"], "dc"),
+    (["altro", "ieri"], "altroieri"), (["avanti", "ieri"], "avantieri"),
+    (["dopo", "domani"], "dopodomani"),
+    (["fine", "settimana"], "finesettimana"),
+]
+fold_it = _romance_prepass_fold(
+    "it", {"un", "uno", "una", "milioni", "miliardi", "mila"},
+    proclitics=frozenset({"l", "un", "d", "dell", "all", "nell", "dall",
+                          "sull", "quest", "quell", "c"}),
+    phrases=_IT_PHRASES)
+
+
+# -- Romanian ---------------------------------------------------------------
+_RO_PHRASES = [
+    (["înainte", "de", "hristos"], "ihr"), (["inainte", "de", "hristos"], "ihr"),
+    (["după", "hristos"], "dhr"), (["dupa", "hristos"], "dhr"),
+    (["î", "hr"], "ihr"), (["i", "hr"], "ihr"), (["d", "hr"], "dhr"),
+    (["miezul", "nopții"], "miezulnoptii"), (["miezul", "noptii"], "miezulnoptii"),
+    (["week", "end"], "weekend"),
+]
+fold_ro = _romance_prepass_fold(
+    "ro", {"un", "unu", "una", "o"},
+    phrases=_RO_PHRASES,
+    ord_suffixes=frozenset({"lea", "a", "ea", "le"}),
+    fem_ord={"doua": 2, "două": 2, "treia": 3, "patra": 4, "cincea": 5,
+             "șasea": 6, "sasea": 6, "șaptea": 7, "saptea": 7, "opta": 8,
+             "noua": 9, "zecea": 10})
+
+
+# -- Occitan ----------------------------------------------------------------
+_OC_PHRASES = [
+    (["abans", "jèsus", "crist"], "acn"), (["abans", "jesus", "crist"], "acn"),
+    (["aprèp", "jèsus", "crist"], "apc"), (["aprep", "jesus", "crist"], "apc"),
+    (["abans", "ièr"], "abansièr"), (["abans", "ier"], "abansièr"),
+    (["passat", "deman"], "passatdeman"), (["delà", "deman"], "passatdeman"),
+    (["que", "ven"], "queven"),
+    (["week", "end"], "weekend"),
+]
+fold_oc = _romance_prepass_fold(
+    "oc", {"un", "una"},
+    proclitics=frozenset({"l", "d", "un", "qu", "n", "s"}),
+    phrases=_OC_PHRASES, h_clock=True,
+    ord_suffixes=frozenset({"èr", "er", "n", "nd", "en", "ena", "a", "d"}))
+
+
+# -- Asturian ---------------------------------------------------------------
+_AST_PHRASES = [
+    (["enantes", "de", "cristu"], "adc"), (["antes", "de", "cristu"], "adc"),
+    (["dempués", "de", "cristu"], "ddc"), (["despues", "de", "cristu"], "ddc"),
+    (["pasáu", "mañana"], "trasmañana"), (["pasao", "mañana"], "trasmañana"),
+    (["que", "vien"], "quevien"),
+    (["fin", "de", "selmana"], "findeselmana"),
+]
+fold_ast = _romance_prepass_fold(
+    "ast", {"un", "una"},
+    proclitics=frozenset({"l", "d", "un", "n"}),
+    phrases=_AST_PHRASES,
+    fem_ord={"primera": 1, "segunda": 2, "tercera": 3, "cuarta": 4,
+             "quinta": 5, "sexta": 6, "séptima": 7, "septima": 7,
+             "octava": 8, "novena": 9, "décima": 10, "decima": 10})
