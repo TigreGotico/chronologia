@@ -21,7 +21,12 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["REL_MARKER UNIT", "UNIT REL_MARKER"]},
+    "rel_period": {
+      "orders": [
+        "REL_MARKER UNIT",
+        "UNIT REL_MARKER"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "article? DAY of MONTH of? YEAR?",
@@ -108,6 +113,14 @@
     "iso_date": {
       "orders": [
         "ISO"
+      ]
+    },
+    "holiday_ref": {
+      "orders": [
+        "REL_MARKER HOLIDAY",
+        "HOLIDAY YEAR",
+        "YEAR HOLIDAY",
+        "HOLIDAY"
       ]
     }
   },

@@ -47,7 +47,7 @@ def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
                   spec.meridiems, spec.seasons, spec.units, spec.months,
                   spec.weekdays, spec.rel_markers, spec.directions,
                   spec.scope_units, spec.clock_fractions, spec.clock_dirs,
-                  spec.decade_words, spec.weekend_words):
+                  spec.decade_words, spec.weekend_words, spec.holidays):
         seen.update(s for s in table if " " in s)
     for cal in spec.calendar_months.values():
         seen.update(s for s in cal if " " in s)

@@ -1,0 +1,178 @@
+# civil-holidays-well-known v1
+# source: spoken-aliases
+# retrieved: 2026-07-22
+# note:
+#   CURATED SPOKEN ALIASES for the globally well-known holiday set (see
+#   chronologia.civil_holidays.WELL_KNOWN). Each row lists the colloquial names
+#   a person actually SAYS for a holiday in one language - the surfaces the
+#   `holiday_ref` extraction construction binds ("christmas", "when is easter",
+#   "next christmas"). These are spoken forms kept as data, deliberately
+#   distinct from the official native names (in the per-jurisdiction .tab files)
+#   and the display translations (translations.tab). The engine harvests these
+#   at LangSpec-load time, unioned with the anchor holiday's translation and its
+#   own official native name, and folds them through the same normaliser the
+#   matcher uses. Surfaces carry their real orthography (accents included), and
+#   colloquial/short forms (xmas, Weihnachten) live here.
+# columns: key | lang | surface ;; surface ;; ...
+#
+# ===== English =====
+new_year        | en | new year's day ;; new years day
+new_year_eve    | en | new year's eve ;; new years eve
+epiphany        | en | epiphany ;; three kings day
+carnival        | en | carnival ;; mardi gras
+good_friday     | en | good friday
+easter          | en | easter ;; easter sunday
+easter_monday   | en | easter monday
+ascension       | en | ascension ;; ascension day
+pentecost       | en | pentecost ;; whitsun ;; whit sunday
+whit_monday     | en | whit monday ;; pentecost monday
+corpus_christi  | en | corpus christi
+assumption      | en | assumption ;; assumption day
+all_saints      | en | all saints day ;; all saints' day
+christmas_eve   | en | christmas eve
+christmas       | en | christmas ;; christmas day ;; xmas
+boxing_day      | en | boxing day
+#
+# ===== Portuguese =====
+new_year        | pt | ano novo ;; dia de ano novo
+new_year_eve    | pt | véspera de ano novo ;; passagem de ano
+epiphany        | pt | dia de reis ;; epifania
+carnival        | pt | carnaval ;; entrudo
+good_friday     | pt | sexta-feira santa
+easter          | pt | páscoa ;; domingo de páscoa
+easter_monday   | pt | segunda-feira de páscoa
+ascension       | pt | ascensão ;; quinta-feira da ascensão
+pentecost       | pt | pentecostes
+whit_monday     | pt | segunda-feira de pentecostes
+corpus_christi  | pt | corpo de deus ;; corpus christi
+assumption      | pt | assunção ;; assunção de nossa senhora
+all_saints      | pt | dia de todos os santos ;; todos os santos
+christmas_eve   | pt | véspera de natal ;; noite de natal
+christmas       | pt | natal ;; dia de natal
+boxing_day      | pt | dia de santo estêvão
+#
+# ===== Spanish =====
+new_year        | es | año nuevo ;; día de año nuevo
+new_year_eve    | es | nochevieja ;; fin de año
+epiphany        | es | día de reyes ;; reyes ;; epifanía
+carnival        | es | carnaval
+good_friday     | es | viernes santo
+easter          | es | pascua ;; domingo de pascua ;; domingo de resurrección
+easter_monday   | es | lunes de pascua
+ascension       | es | ascensión
+pentecost       | es | pentecostés
+whit_monday     | es | lunes de pentecostés
+corpus_christi  | es | corpus christi
+assumption      | es | asunción ;; asunción de la virgen
+all_saints      | es | día de todos los santos ;; todos los santos
+christmas_eve   | es | nochebuena ;; víspera de navidad
+christmas       | es | navidad ;; día de navidad ;; natividad
+boxing_day      | es | san esteban
+#
+# ===== German =====
+new_year        | de | neujahr ;; neujahrstag
+new_year_eve    | de | silvester
+epiphany        | de | heilige drei könige ;; dreikönigstag ;; epiphanias
+carnival        | de | karneval ;; fasching ;; fastnacht
+good_friday     | de | karfreitag
+easter          | de | ostern ;; ostersonntag
+easter_monday   | de | ostermontag
+ascension       | de | christi himmelfahrt ;; himmelfahrt
+pentecost       | de | pfingsten ;; pfingstsonntag
+whit_monday     | de | pfingstmontag
+corpus_christi  | de | fronleichnam
+assumption      | de | mariä himmelfahrt
+all_saints      | de | allerheiligen
+christmas_eve   | de | heiligabend ;; heiliger abend
+christmas       | de | weihnachten ;; weihnachtstag ;; erster weihnachtstag
+boxing_day      | de | zweiter weihnachtstag ;; stephanstag
+#
+# ===== French =====
+new_year        | fr | jour de l'an ;; nouvel an ;; premier de l'an
+new_year_eve    | fr | réveillon ;; saint-sylvestre
+epiphany        | fr | épiphanie ;; jour des rois
+carnival        | fr | carnaval ;; mardi gras
+good_friday     | fr | vendredi saint
+easter          | fr | pâques ;; dimanche de pâques
+easter_monday   | fr | lundi de pâques
+ascension       | fr | ascension ;; jeudi de l'ascension
+pentecost       | fr | pentecôte ;; dimanche de pentecôte
+whit_monday     | fr | lundi de pentecôte
+corpus_christi  | fr | fête-dieu
+assumption      | fr | assomption
+all_saints      | fr | toussaint ;; jour des morts
+christmas_eve   | fr | réveillon de noël ;; veille de noël
+christmas       | fr | noël ;; jour de noël
+boxing_day      | fr | saint-étienne
+#
+# ===== Italian =====
+new_year        | it | capodanno ;; primo dell'anno
+new_year_eve    | it | san silvestro ;; vigilia di capodanno
+epiphany        | it | epifania ;; befana
+carnival        | it | carnevale
+good_friday     | it | venerdì santo
+easter          | it | pasqua ;; domenica di pasqua
+easter_monday   | it | lunedì dell'angelo ;; pasquetta ;; lunedì di pasqua
+ascension       | it | ascensione
+pentecost       | it | pentecoste
+whit_monday     | it | lunedì di pentecoste
+corpus_christi  | it | corpus domini
+assumption      | it | assunzione ;; ferragosto
+all_saints      | it | ognissanti ;; tutti i santi
+christmas_eve   | it | vigilia di natale
+christmas       | it | natale ;; giorno di natale
+boxing_day      | it | santo stefano
+#
+# ===== Dutch =====
+new_year        | nl | nieuwjaar ;; nieuwjaarsdag
+new_year_eve    | nl | oudjaar ;; oudejaarsavond ;; oudejaarsdag
+epiphany        | nl | driekoningen
+carnival        | nl | carnaval
+good_friday     | nl | goede vrijdag
+easter          | nl | pasen ;; eerste paasdag
+easter_monday   | nl | paasmaandag
+ascension       | nl | hemelvaartsdag ;; hemelvaart
+pentecost       | nl | pinksteren ;; eerste pinksterdag
+whit_monday     | nl | pinkstermaandag
+corpus_christi  | nl | sacramentsdag
+assumption      | nl | maria-tenhemelopneming
+all_saints      | nl | allerheiligen
+christmas_eve   | nl | kerstavond
+christmas       | nl | kerstmis ;; eerste kerstdag ;; kerst
+boxing_day      | nl | tweede kerstdag
+#
+# ===== Catalan =====
+new_year        | ca | cap d'any ;; any nou
+new_year_eve    | ca | nit de cap d'any ;; vigília de cap d'any
+epiphany        | ca | reis ;; dia de reis ;; epifania
+carnival        | ca | carnaval ;; carnestoltes
+good_friday     | ca | divendres sant
+easter          | ca | pasqua ;; diumenge de pasqua
+easter_monday   | ca | dilluns de pasqua
+ascension       | ca | ascensió
+pentecost       | ca | pentecosta ;; pasqua granada
+whit_monday     | ca | dilluns de pentecosta
+corpus_christi  | ca | corpus
+assumption      | ca | assumpció ;; la mare de déu d'agost
+all_saints      | ca | tots sants ;; dia de tots sants
+christmas_eve   | ca | nit de nadal ;; vigília de nadal
+christmas       | ca | nadal ;; dia de nadal
+boxing_day      | ca | sant esteve
+#
+# ===== Galician =====
+new_year        | gl | aninovo ;; ano novo ;; día de aninovo
+new_year_eve    | gl | noitevella ;; fin de ano
+epiphany        | gl | día de reis ;; reis ;; epifanía
+carnival        | gl | entroido ;; carnaval
+good_friday     | gl | venres santo
+easter          | gl | pascua ;; domingo de pascua
+easter_monday   | gl | luns de pascua
+ascension       | gl | ascensión
+pentecost       | gl | pentecoste
+whit_monday     | gl | luns de pentecoste
+corpus_christi  | gl | corpus christi
+assumption      | gl | asunción
+all_saints      | gl | día de todos os santos ;; todos os santos
+christmas_eve   | gl | noiteboa ;; véspera de nadal
+christmas       | gl | nadal ;; día de nadal
+boxing_day      | gl | santo estevo

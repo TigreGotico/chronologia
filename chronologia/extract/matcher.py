@@ -60,6 +60,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.text in spec.weekdays
     if name == "WEEKDAYFULL":
         return token.text in spec.weekday_full
+    if name == "HOLIDAY":
+        return token.text in spec.holidays
     if name == "MONTH":
         return token.text in spec.months
     if name == "CAL_MONTH":
@@ -206,8 +208,17 @@ class ConstructionMatcher:
                     continue
                 end, slots = max(ends, key=lambda r: r[0])
                 if end > start:
-                    cal = (_calendar_for_surface(self.spec, slots["CAL_MONTH"].text)
-                           if "CAL_MONTH" in slots else None)
+                    if "CAL_MONTH" in slots:
+                        cal = _calendar_for_surface(
+                            self.spec, slots["CAL_MONTH"].text)
+                    elif "HOLIDAY" in slots:
+                        # trace the well-known binding (key + provenance) so
+                        # explain() shows which holiday and which source named it
+                        key = self.spec.holidays.get(slots["HOLIDAY"].text)
+                        src = self.spec.holiday_sources.get(key, "")
+                        cal = f"{key} <{src}>" if key else None
+                    else:
+                        cal = None
                     out.append(Candidate(
                         Match(name, (start, end), slots, calendar=cal),
                         precedence))

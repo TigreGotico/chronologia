@@ -36,10 +36,15 @@ from typing import Callable, Dict, Optional, Set
 
 from ovos_spec_tools import LocaleResources
 
+from dataclasses import replace
+
 from chronologia.calendars import CALENDARS
+from chronologia.civil_holidays import well_known_source, well_known_surfaces
 from chronologia.extract.compiler import parse_order
 from chronologia.extract.model import (Conventions, LangSpec,
                                            TokenizerModes)
+from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.tokenizer import Tokenizer
 
 LOCALE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "locale")
 
@@ -204,7 +209,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     conv = cfg.get("conventions", {})
     tok = cfg.get("tokenizer", {})
 
-    return LangSpec(
+    spec = LangSpec(
         lang=lang,
         months=months, weekdays=weekdays, units=units,
         named_days=named_days, directions=directions,
@@ -236,3 +241,26 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         weekend_words=frozenset(weekend_words),
         weekday_full=weekday_full,
         quantifiers=quantifiers)
+
+    # Holiday surfaces are FACTS harvested from the holidays engine's i18n
+    # tables, then folded through the *same* tokenizer + normaliser the matcher
+    # uses so a multi-word or inflected surface ("domingo de pascoa", "corpo de
+    # deus") is stored exactly as the token stream will present it.  The keys of
+    # the resulting map are canonical, space-joined normalised surfaces; the
+    # multiword-merge pass glues the multi-word ones back into one token.
+    holidays: Dict[str, str] = {}
+    holiday_sources: Dict[str, str] = {}
+    tokenizer = Tokenizer(spec.tokenizer)
+    normaliser = TemporalNormaliser(spec)
+    for surface, key in well_known_surfaces(lang).items():
+        toks = normaliser.normalise(tokenizer.tokenize(surface))
+        if spec.hook is not None:
+            # apply the same language hook (e.g. French elision split) the real
+            # pre-match pipeline runs, so a stored surface matches token-for-token
+            toks = spec.hook(toks)
+        if not toks:
+            continue
+        canon = " ".join(t.text for t in toks)
+        holidays[canon] = key
+        holiday_sources[key] = well_known_source(key)
+    return replace(spec, holidays=holidays, holiday_sources=holiday_sources)
