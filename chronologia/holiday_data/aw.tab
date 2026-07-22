@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: AW
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Aruba
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in pap_AW via vacanza's own language support (language='pap_AW'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Aña Nobo                                 | 1 1                  | public          |  |  |  |
+fixed         | Dia di Betico                            | 1 25                 | public          |  |  |  |
+easter        | Dialuna prome cu diaranson di shinish    | -48 gregorian        | public          |  |  |  |
+fixed         | Dia di Himno y Bandera                   | 3 18                 | public          |  |  |  |
+easter        | Bierna Santo                             | -2 gregorian         | public          |  |  |  |
+easter        | Di dos dia di Pasco di Resureccion       | 1 gregorian          | public          |  |  |  |
+decree        | Dia di Rey                               | 2024-4-27 2025-4-26  | public          |  |  |  |
+fixed         | Dia di Obrero                            | 5 1                  | public          |  |  |  |
+easter        | Dia di Asuncion                          | 39 gregorian         | public          |  |  |  |
+fixed         | Pasco di Nacemento                       | 12 25                | public          |  |  |  |
+fixed         | Di dos dia di Pasco di Nacemento         | 12 26                | public          |  |  |  |

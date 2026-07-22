@@ -1,0 +1,38 @@
+# civil-holidays v1
+# jurisdiction: VG
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_British_Virgin_Islands
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in en_VG via vacanza's own language support (language='en_VG'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
+decree        | The Anniversary of the Birth of Hamilton Lavity Stoutt | 2024-3-4 2025-3-3    | public          |  |  |  |
+easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
+easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
+easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
+decree        | Sovereign's Birthday                     | 2024-6-14 2025-6-13  | public          |  |  |  |
+decree        | Virgin Islands Day                       | 2024-7-1 2025-7-7    | public          |  |  |  |
+decree        | Emancipation Monday                      | 2024-8-5 2025-8-4    | public          |  |  |  |
+decree        | Emancipation Tuesday                     | 2024-8-6 2025-8-5    | public          |  |  |  |
+decree        | Emancipation Wednesday                   | 2024-8-7 2025-8-6    | public          |  |  |  |
+decree        | Heroes and Foreparents Day               | 2024-10-21 2025-10-20 | public          |  |  |  |
+decree        | The Great March of 1949 and Restoration Day | 2024-11-25 2025-11-24 | public          |  |  |  |
+fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
+fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

@@ -1,0 +1,39 @@
+# civil-holidays v1
+# jurisdiction: OM
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Oman
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in ar via vacanza's own language support (language='ar'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | اليوم الوطني لتولي السلطان               | 1 11                 | public          |  |  |  |
+decree        | الإسراء والمعراج                         | 2024-2-8 2025-1-27   | public          |  |  |  |
+decree        | عيد الفطر (1)                            | 2024-4-9 2025-3-29   | public          |  |  |  |
+decree        | عيد الفطر (2)                            | 2024-4-10 2025-3-30  | public          |  |  |  |
+decree        | عيد الفطر (3)                            | 2024-4-11 2025-3-31  | public          |  |  |  |
+decree        | عيد الفطر (4)                            | 2024-4-12 2025-4-1   | public          |  |  |  |
+decree        | عيد الأضحى (1)                           | 2024-6-16 2025-6-5   | public          |  |  |  |
+decree        | عيد الأضحى (2)                           | 2024-6-17 2025-6-6   | public          |  |  |  |
+decree        | عيد الأضحى (3)                           | 2024-6-18 2025-6-7   | public          |  |  |  |
+decree        | عيد الأضحى (4)                           | 2024-6-19 2025-6-8   | public          |  |  |  |
+decree        | رأس السنة الهجرية                        | 2024-7-7 2025-6-26   | public          |  |  |  |
+decree        | مولد النبي                               | 2024-9-15 2025-9-4   | public          |  |  |  |
+decree        | يوم وطني (1)                             | 2024-11-18 2025-11-20 | public          |  |  |  |
+decree        | يوم وطني (2)                             | 2024-11-19 2025-11-21 | public          |  |  |  |
+decree        | عيد الفطر (5)                            | 2025-4-2             | public          |  |  |  |

@@ -1,0 +1,40 @@
+# civil-holidays v1
+# jurisdiction: AX
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Aland_Islands
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in fi via vacanza's own language support (language='fi'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Uudenvuodenpäivä                         | 1 1                  | public          |  |  |  |
+fixed         | Loppiainen                               | 1 6                  | public          |  |  |  |
+easter        | Pitkäperjantai                           | -2 gregorian         | public          |  |  |  |
+easter        | Pääsiäispäivä                            | 0 gregorian          | public          |  |  |  |
+easter        | Toinen pääsiäispäivä                     | 1 gregorian          | public          |  |  |  |
+fixed         | Vappu                                    | 5 1                  | public          |  |  |  |
+easter        | Helatorstai                              | 39 gregorian         | public          |  |  |  |
+easter        | Helluntaipäivä                           | 49 gregorian         | public          |  |  |  |
+fixed         | Ahvenanmaan itsehallintopäivä            | 6 9                  | public          |  |  |  |
+decree        | Juhannusaatto                            | 2024-6-21 2025-6-20  | public          |  |  |  |
+decree        | Juhannuspäivä                            | 2024-6-22 2025-6-21  | public          |  |  |  |
+decree        | Pyhäinpäivä                              | 2024-11-2 2025-11-1  | public          |  |  |  |
+fixed         | Itsenäisyyspäivä                         | 12 6                 | public          |  |  |  |
+fixed         | Jouluaatto                               | 12 24                | public          |  |  |  |
+fixed         | Joulupäivä                               | 12 25                | public          |  |  |  |
+fixed         | Tapaninpäivä                             | 12 26                | public          |  |  |  |

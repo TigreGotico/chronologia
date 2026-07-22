@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: SM
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_San_Marino
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in it via vacanza's own language support (language='it'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Capodanno                                | 1 1                  | public          |  |  |  |
+fixed         | Epifania                                 | 1 6                  | public          |  |  |  |
+fixed         | Anniversario della Liberazione della Repubblica e Festa di Sant'Agata | 2 5                  | public          |  |  |  |
+fixed         | Anniversario dell'Arengo                 | 3 25                 | public          |  |  |  |
+easter        | Pasqua                                   | 0 gregorian          | public          |  |  |  |
+fixed         | Investitura Capitani Reggenti (1)        | 4 1                  | public          |  |  |  |
+easter        | Lunedì dell'angelo                       | 1 gregorian          | public          |  |  |  |
+fixed         | Festa dei lavoratori                     | 5 1                  | public          |  |  |  |
+easter        | Corpus Domini                            | 60 gregorian         | public          |  |  |  |
+fixed         | Anniversario della Caduta del Fascismo e Festa della Libertà | 7 28                 | public          |  |  |  |
+fixed         | Assunzione della B.V. Maria              | 8 15                 | public          |  |  |  |
+fixed         | San Marino, Anniversario di Fondazione della Repubblica | 9 3                  | public          |  |  |  |
+fixed         | Investitura Capitani Reggenti (2)        | 10 1                 | public          |  |  |  |
+fixed         | Tutti i Santi                            | 11 1                 | public          |  |  |  |
+fixed         | Commemorazione dei defunti               | 11 2                 | public          |  |  |  |
+fixed         | Immacolata Concezione                    | 12 8                 | public          |  |  |  |
+fixed         | Natale                                   | 12 25                | public          |  |  |  |
+fixed         | Santo Stefano                            | 12 26                | public          |  |  |  |

@@ -1,0 +1,45 @@
+# civil-holidays v1
+# jurisdiction: BN
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Brunei
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in ms via vacanza's own language support (language='ms'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Awal Tahun Masihi                        | 1 1                  | public          |  |  |  |
+decree        | Israk dan Mikraj                         | 2024-2-8 2025-1-27   | public          |  |  |  |
+decree        | Tahun Baru Cina                          | 2024-2-10 2025-1-29  | public          |  |  |  |
+fixed         | Hari Kebangsaan                          | 2 23                 | public          |  |  |  |
+fixed         | Hari Kebangsaan (diperhatikan)           | 2 24                 | public          |  |  |  |
+decree        | Hari Pertama Berpuasa                    | 2024-3-12 2025-3-2   | public          |  |  |  |
+decree        | Hari Nuzul Al-Quran                      | 2024-3-28 2025-3-18  | public          |  |  |  |
+decree        | Hari Raya Aidil Fitri (1)                | 2024-4-10 2025-3-31  | public          |  |  |  |
+decree        | Hari Raya Aidil Fitri (2)                | 2024-4-11 2025-4-1   | public          |  |  |  |
+decree        | Hari Raya Aidil Fitri (3)                | 2024-4-12 2025-4-2   | public          |  |  |  |
+decree        | Hari Raya Aidil Fitri (diperhatikan)     | 2024-4-13            | public          |  |  |  |
+fixed         | Hari Angkatan Bersenjata Diraja Brunei   | 5 31                 | public          |  |  |  |
+decree        | Hari Angkatan Bersenjata Diraja Brunei (diperhatikan) | 2024-6-1             | public          |  |  |  |
+decree        | Hari Raya Aidil Adha                     | 2024-6-17 2025-6-7   | public          |  |  |  |
+decree        | Awal Tahun Hijrah                        | 2024-7-7 2025-6-27   | public          |  |  |  |
+decree        | Awal Tahun Hijrah (diperhatikan)         | 2024-7-8 2025-6-28   | public          |  |  |  |
+fixed         | Hari Keputeraan KDYMM Sultan Brunei      | 7 15                 | public          |  |  |  |
+decree        | Maulidur Rasul                           | 2024-9-16 2025-9-5   | public          |  |  |  |
+fixed         | Hari Natal                               | 12 25                | public          |  |  |  |
+decree        | Hari Pertama Berpuasa (diperhatikan)     | 2025-3-3             | public          |  |  |  |
+decree        | Maulidur Rasul (diperhatikan)            | 2025-9-6             | public          |  |  |  |

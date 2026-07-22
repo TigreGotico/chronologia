@@ -1,0 +1,42 @@
+# civil-holidays v1
+# jurisdiction: TL
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Timor_Leste
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in pt_TL via vacanza's own language support (language='pt_TL'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | Dia de Ano Novo                          | 1 1                  | public          |  |  |  |
+fixed         | Dia dos Veteranos                        | 3 3                  | public          |  |  |  |
+easter        | Sexta-Feira Santa                        | -2 gregorian         | public          |  |  |  |
+decree        | Idul Fitri                               | 2024-4-10 2025-3-31  | public          |  |  |  |
+fixed         | Dia Mundial do Trabalhador               | 5 1                  | public          |  |  |  |
+fixed         | Dia da Restauração da Independência      | 5 20                 | public          |  |  |  |
+easter        | Festa do Corpo de Deus                   | 60 gregorian         | public          |  |  |  |
+decree        | Idul Adha                                | 2024-6-17 2025-6-6   | public          |  |  |  |
+fixed         | Dia da Consulta Popular                  | 8 30                 | public          |  |  |  |
+fixed         | Dia de Todos os Santos                   | 11 1                 | public          |  |  |  |
+fixed         | Dia de Todos os Fiéis Defuntos           | 11 2                 | public          |  |  |  |
+fixed         | Dia Nacional da Mulher                   | 11 3                 | public          |  |  |  |
+fixed         | Dia Nacional da Juventude                | 11 12                | public          |  |  |  |
+fixed         | Dia da Proclamação da Independência      | 11 28                | public          |  |  |  |
+fixed         | Dia da Memória                           | 12 7                 | public          |  |  |  |
+fixed         | Dia de Nossa Senhora da Imaculada Conceição, padroeira de Timor-Leste | 12 8                 | public          |  |  |  |
+fixed         | Dia de Natal                             | 12 25                | public          |  |  |  |
+fixed         | Dia dos Heróis Nacionais                 | 12 31                | public          |  |  |  |

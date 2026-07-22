@@ -1,0 +1,44 @@
+# civil-holidays v1
+# jurisdiction: LB
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Lebanon
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in ar via vacanza's own language support (language='ar'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | رأس السنة الميلادية                      | 1 1                  | public          |  |  |  |
+fixed         | عيد الميلاد عند الطوائف الارمنية الارثوذكسية | 1 6                  | public          |  |  |  |
+fixed         | عيد مار مارون                            | 2 9                  | public          |  |  |  |
+fixed         | عيد بشارة السيدة مريم العذراء            | 3 25                 | public          |  |  |  |
+easter        | الجمعة العظيمة عند الطوائف الكاثوليكية   | -2 gregorian         | public          |  |  |  |
+decree        | عيد الفطر (1)                            | 2024-4-10 2025-3-30  | public          |  |  |  |
+decree        | عيد الفطر (2)                            | 2024-4-11 2025-3-31  | public          |  |  |  |
+fixed         | عيد العمل                                | 5 1                  | public          |  |  |  |
+easter        | الجمعة العظيمة عند الطوائف الأرثوذكسية   | -2 julian_gregorian_date | public          |  |  |  |
+decree        | عيد الشهداء                              | 2024-5-5 2025-5-4    | public          |  |  |  |
+decree        | عيد المقاومة والتحرير                    | 2024-5-12 2025-5-11  | public          |  |  |  |
+decree        | عيد الأضحى (1)                           | 2024-6-16 2025-6-6   | public          |  |  |  |
+decree        | عيد الأضحى (2)                           | 2024-6-17 2025-6-7   | public          |  |  |  |
+decree        | عيد رأس السنة الهجرية                    | 2024-7-7 2025-6-26   | public          |  |  |  |
+decree        | عاشوراء                                  | 2024-7-16 2025-7-5   | public          |  |  |  |
+fixed         | عيد انتقال العذراء                       | 8 15                 | public          |  |  |  |
+decree        | ذكرى المولد النبوي الشريف                | 2024-9-15 2025-9-4   | public          |  |  |  |
+fixed         | ذكرى الاستقلال                           | 11 22                | public          |  |  |  |
+fixed         | عيد الميلاد                              | 12 25                | public          |  |  |  |
+decree        | سبت النور للطائفة الأرثوذكسية            | 2025-4-19            | public          |  |  |  |

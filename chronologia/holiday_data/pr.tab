@@ -1,0 +1,40 @@
+# civil-holidays v1
+# jurisdiction: PR
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Puerto_Rico
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Names are rendered
+#   in en_US via vacanza's own language support (language='en_US'), which
+#   is the jurisdiction's own official-language rendering as vacanza
+#   publishes it -- not independently re-verified against the government
+#   gazette, per the house rule that permits vacanza-derived data as long
+#   as it is flagged as such. Movable/lunar/lunisolar holidays with no
+#   closed-form rule modelled here are captured as 'decree' (explicit
+#   per-year dates) for 2024-2025, silent outside those years rather than
+#   fabricated. Observed/bridge/in-lieu shifted-day artifacts
+#   ("(observed)"/"(observado)"/"(observada)" suffixed rows) were dropped
+#   as out of scope; "(estimated)"-style annotation suffixes were stripped
+#   and merged into the base holiday. Multi-day clusters that do not
+#   reduce to a single fixed or Easter-offset rule are split into one row
+#   per calendar day, numbered "(1)", "(2)", ....
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+
+fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
+fixed         | Epiphany                                 | 1 6                  | public          |  |  |  |
+decree        | Martin Luther King Jr. Day               | 2024-1-15 2025-1-20  | public          |  |  |  |
+decree        | George Washington Day, Presidents' Day, and the Day of the Women and Men Heroes of Puerto Rico | 2024-2-19 2025-2-17  | public          |  |  |  |
+fixed         | Emancipation Day                         | 3 22                 | public          |  |  |  |
+easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
+decree        | Memorial Day                             | 2024-5-27 2025-5-26  | public          |  |  |  |
+fixed         | Juneteenth National Independence Day     | 6 19                 | public          |  |  |  |
+fixed         | Independence Day                         | 7 4                  | public          |  |  |  |
+fixed         | Puerto Rico Constitution Day             | 7 25                 | public          |  |  |  |
+decree        | Labor Day                                | 2024-9-2 2025-9-1    | public          |  |  |  |
+decree        | Columbus Day                             | 2024-10-14 2025-10-13 | public          |  |  |  |
+fixed         | Veterans Day                             | 11 11                | public          |  |  |  |
+fixed         | Puerto Rican Identity Day                | 11 19                | public          |  |  |  |
+decree        | Thanksgiving Day                         | 2024-11-28 2025-11-27 | public          |  |  |  |
+fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
