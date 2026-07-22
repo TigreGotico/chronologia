@@ -75,3 +75,58 @@ def test_no_holiday_no_match(text):
 @pytest.mark.xfail(reason="holiday/place homograph (Natal, Brazil) out of scope")
 def test_place_homograph_should_not_bind():
     nomatch("vou para natal no brasil")
+
+
+# ==========================================================================
+# EXPANDED SET -- non-Christian / non-Western well-known holidays.
+# Anchor stays 2017-06-27 (Tuesday); bare = next occurrence on or after it.
+# Movable non-Gregorian dates come from independent published tables,
+# cross-checked against this engine's own tabulated calendars (Umm al-Qura,
+# arithmetic Hebrew, tabulated Chinese, arithmetic Solar Hijri) and, where no
+# closed form is modelled here (Diwali, Vesak), from the WELL_KNOWN decree
+# tables. Mother's/Father's Day use this locale's jurisdiction default.
+# ==========================================================================
+
+_EXPANDED = [
+    ('eid al-fitr', (2018, 6, 15)),
+    ('ramadão', (2018, 5, 16)),
+    ('ano novo islâmico', (2017, 9, 21)),
+    ('rosh hashaná', (2017, 9, 21)),
+    ('yom kippur', (2017, 9, 30)),
+    ('pessach', (2018, 3, 31)),
+    ('chanucá', (2017, 12, 13)),
+    ('ano novo chinês', (2018, 2, 16)),
+    ('festival do meio outono', (2017, 10, 4)),
+    ('nowruz', (2018, 3, 21)),
+    ('diwali', (2017, 10, 19)),
+    ('vesak', (2018, 5, 29)),
+    ('dia das bruxas', (2017, 10, 31)),
+    ('dia dos namorados', (2018, 2, 14)),
+    ('dia da mãe', (2018, 5, 6)),
+    ('dia do pai', (2018, 3, 19)),
+    ('ação de graças', (2017, 11, 23)),
+]
+
+
+@pytest.mark.parametrize("text,ymd", _EXPANDED)
+def test_bare_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+    assert span(text).width == timedelta(days=1)
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ('diwali 2026', (2026, 11, 8)),
+    ('ano novo chinês 2026', (2026, 2, 17)),
+    ('pessach 2026', (2026, 4, 2)),
+])
+def test_explicit_year_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+
+
+@pytest.mark.parametrize("text", [
+    'o preço do arroz subiu',
+    'uma tigela de sopa',
+    'uma reunião de trabalho',
+])
+def test_expanded_no_match(text):
+    nomatch(text)

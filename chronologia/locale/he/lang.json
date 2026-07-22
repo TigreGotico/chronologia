@@ -36,7 +36,10 @@
     "year_ref": {
       "orders": ["year_word GYEAR", "GYEAR"]
     },
-    "iso_date": {"orders": ["ISO"]}
+    "iso_date": {"orders": ["ISO"]},
+    "holiday_ref": {
+      "orders": ["REL_MARKER HOLIDAY", "HOLIDAY YEAR", "YEAR HOLIDAY", "HOLIDAY"]
+    }
   },
   "conventions": {"week_start": "sunday", "weekend_start": 4, "dmy": true,
                   "hemisphere": null, "prefer_future": true},

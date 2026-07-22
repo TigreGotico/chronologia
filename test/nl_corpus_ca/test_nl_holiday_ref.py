@@ -75,3 +75,57 @@ def test_no_holiday_no_match(text):
 @pytest.mark.xfail(reason="holiday/surname homograph (Nadal) out of scope")
 def test_name_homograph_should_not_bind():
     nomatch("el partit de nadal")
+
+
+# ==========================================================================
+# EXPANDED SET -- non-Christian / non-Western well-known holidays.
+# Anchor stays 2017-06-27 (Tuesday); bare = next occurrence on or after it.
+# Movable non-Gregorian dates come from independent published tables,
+# cross-checked against this engine's own tabulated calendars (Umm al-Qura,
+# arithmetic Hebrew, tabulated Chinese, arithmetic Solar Hijri) and, where no
+# closed form is modelled here (Diwali, Vesak), from the WELL_KNOWN decree
+# tables. Mother's/Father's Day use this locale's jurisdiction default.
+# ==========================================================================
+
+_EXPANDED = [
+    ('id al-fitr', (2018, 6, 15)),
+    ('ramadà', (2018, 5, 16)),
+    ('any nou jueu', (2017, 9, 21)),
+    ('yom kippur', (2017, 9, 30)),
+    ('péssaj', (2018, 3, 31)),
+    ('hanukà', (2017, 12, 13)),
+    ('any nou xinès', (2018, 2, 16)),
+    ('festa de la tardor', (2017, 10, 4)),
+    ('nowruz', (2018, 3, 21)),
+    ('diwali', (2017, 10, 19)),
+    ('vesak', (2018, 5, 29)),
+    ('nit de les bruixes', (2017, 10, 31)),
+    ('sant valentí', (2018, 2, 14)),
+    ('dia de la mare', (2018, 5, 6)),
+    ('dia del pare', (2018, 3, 19)),
+    ('acció de gràcies', (2017, 11, 23)),
+]
+
+
+@pytest.mark.parametrize("text,ymd", _EXPANDED)
+def test_bare_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+    assert span(text).width == timedelta(days=1)
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ('diwali 2026', (2026, 11, 8)),
+    ('any nou xinès 2026', (2026, 2, 17)),
+    ('péssaj 2026', (2026, 4, 2)),
+])
+def test_explicit_year_expanded(text, ymd):
+    assert start(text) == AstroDate(*ymd)
+
+
+@pytest.mark.parametrize("text", [
+    "el preu de l'arròs va pujar",
+    'un bol de sopa',
+    'una reunió de feina',
+])
+def test_expanded_no_match(text):
+    nomatch(text)

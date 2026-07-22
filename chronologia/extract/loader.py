@@ -262,5 +262,5 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             continue
         canon = " ".join(t.text for t in toks)
         holidays[canon] = key
-        holiday_sources[key] = well_known_source(key)
+        holiday_sources[key] = well_known_source(key, lang)
     return replace(spec, holidays=holidays, holiday_sources=holiday_sources)

@@ -251,6 +251,74 @@ print(won.match.construction)          # holiday_ref
 print(won.match.calendar)              # christmas <PT:Natal>
 ```
 
+### Beyond the Western core — world holidays
+
+The well-known set is **not** only the Christian/Western calendar. It also
+binds the major movable feasts of other traditions, each resolved through a
+date mechanism the library already models — never re-derived, never invented:
+
+* **Islamic** (Eid al-Fitr, Eid al-Adha, Islamic New Year, Ashura, Mawlid):
+  a fixed date in the tabulated **Umm al-Qura** calendar. Basis `tabulated`.
+* **Jewish** (Rosh Hashanah, Yom Kippur, Passover, Hanukkah): a fixed date in
+  the arithmetic **Hebrew** calendar. Basis `exact`. The asserted day is the
+  first *full* civil day (a feast begins the preceding sunset).
+* **East-Asian** (Chinese/Lunar New Year, Mid-Autumn Festival): a fixed date in
+  the tabulated **Chinese** lunisolar calendar. Basis `tabulated`.
+* **Nowruz** (Persian New Year): 1 Farvardin in the arithmetic **Solar Hijri**
+  calendar (the March-equinox new year). Basis `exact`.
+* **Orthodox Easter and its cycle**: the Julian computus rendered on the civil
+  calendar (`julian_gregorian_date`) — the same engine as the Western one.
+* **Decree-tabulated feasts** (Diwali, Vesak): no closed-form calendar is
+  modelled here, so — honestly — they carry explicit published per-year dates
+  (a *decree table*). Outside the listed years the reference simply does not
+  resolve, rather than fabricating a date.
+
+Because the calendar-table feasts inherit their calendar's published range,
+they are **silent outside it**: a year whose occurrence falls beyond the table
+yields no span at all (honest silence, never a wrong guess).
+
+```python
+# each holiday in a language that actually names it.
+print(extract_timespan("when is eid", "en", now)[0].start)          # 2018-06-15
+print(extract_timespan("chinese new year", "en", now)[0].start)     # 2018-02-16
+print(extract_timespan("diwali 2026", "en", now)[0].start)          # 2026-11-08
+print(extract_timespan("hanukkah", "en", now)[0].start)             # 2017-12-13
+
+# native scripts resolve the same way (Arabic / Hebrew locales).
+print(extract_timespan("عيد الفطر", "ar", now)[0].start)             # 2018-06-15
+print(extract_timespan("חנוכה", "he", now)[0].start)                # 2017-12-13
+```
+
+### Jurisdiction-bound names — one word, many countries
+
+A few holiday *names* only pick out a date once a country is assumed, because
+the same word means a different rule in different places. **Mother's Day** is
+the 2nd Sunday of May in the US, Germany and Italy, the 1st Sunday of May in
+Portugal and Spain, and the last Sunday of May in France; **Father's Day** is
+the 3rd Sunday of June in the US and France but 19 March (St Joseph) in
+Portugal, Spain and Italy. These live in a second tier (`JURISDICTION_KNOWN`)
+keyed by `(name, language)`, so each locale resolves the name through *its own*
+jurisdiction default:
+
+```python
+print(extract_timespan("mother's day", "en", now)[0].start)   # 2018-05-13 (US: 2nd Sun May)
+print(extract_timespan("dia da mãe", "pt", now)[0].start)     # 2018-05-06 (PT: 1st Sun May)
+print(extract_timespan("fête des mères", "fr", now)[0].start) # 2018-05-27 (FR: last Sun May)
+```
+
+Names with no single implied country are deliberately **left unresolved**:
+"independence day" in English could mean any of dozens of nations, so it is not
+bound to one — a jurisdiction word would be needed to disambiguate it, and
+guessing would be dishonest. Thanksgiving binds the **US** rule (4th Thursday of
+November) for English; Canada's Thanksgiving (2nd Monday of October) is a
+genuinely different rule and is not silently resolved to the US date.
+
+One deliberate overlap: a word that is *both* a holiday and a calendar month
+(Ramadan is the Hijri month *and* the fast) resolves, when followed by a year,
+to the **calendar** reading (`ramadan 1446` is the Hijri month of year 1446 AH,
+not "the holiday in year 1446") — the calendar family wins that equal-length tie
+on purpose.
+
 ## How it actually works
 
 Think of the module as an **assembly line**. A sentence enters at one end

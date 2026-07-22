@@ -39,10 +39,16 @@ PRECEDENCE: Dict[str, int] = {
     # they win over the generic scoped/calendar families
     "regnal_date": 1,
     "roman_date": 1,
-    # a holiday reference ("christmas", "next easter", "natal 2020") carries the
-    # most specific vocabulary of all — a named holiday surface — so it wins the
-    # tie against any generic calendar/year construction over the same tokens
-    "holiday_ref": 1,
+    # a holiday reference ("christmas", "next easter", "natal 2020") carries a
+    # named holiday surface, so on a LONGER span it wins ("christmas 2020" beats
+    # a bare year_ref on "2020"). But some holiday surfaces are *also* calendar
+    # month names (Ramadan is both the holiday and the Hijri month) or overlap a
+    # calendar construction ("ramadan 1446" is a Hijri month+year, not a holiday
+    # in year 1446). On an EQUAL-length span the calendar family must win, so
+    # holiday_ref sits just below the reckoned/nongregorian and calendar_date
+    # tiers: a same-span calendar reading is preferred, a longer holiday span is
+    # not (the holiday surface has no calendar competitor of equal length there).
+    "holiday_ref": 6,
     # a bare "HHMM hours" would otherwise read as an "N-th hour" scoped
     # ordinal, so military time wins the same-span tie
     "military_time": 1,
