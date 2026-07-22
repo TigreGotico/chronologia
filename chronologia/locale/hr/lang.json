@@ -1,95 +1,124 @@
 {
-  "tokenizer": {
-    "split_contractions": false,
-    "ordinal_dot": true
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": true
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "NUM UNIT MARKER",
+    "MARKER NUM UNIT"
+   ]
   },
-  "constructions": {
-    "relative_offset": {
-      "orders": [
-        "NUM UNIT MARKER",
-        "MARKER NUM UNIT"
-      ]
-    },
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
-    "weekday_ref": {
-      "orders": [
-        "REL_MARKER WEEKDAY",
-        "WEEKDAYFULL"
-      ]
-    },
-    "rel_period": {
-      "orders": [
-        "REL_MARKER UNIT"
-      ]
-    },
-    "weekend_ref": {
-      "orders": [
-        "REL_MARKER WEEKEND",
-        "article? WEEKEND"
-      ]
-    },
-    "calendar_date": {
-      "orders": [
-        "DAY MONTH YEAR?",
-        "DAY of MONTH YEAR?",
-        "MONTH DAY? YEAR?"
-      ],
-      "prefer_future": true
-    },
-    "season_ref": {
-      "orders": [
-        "REL_MARKER SEASON",
-        "SEASON of YEAR",
-        "SEASON YEAR?"
-      ]
-    },
-    "clock_time": {
-      "orders": [
-        "CLOCK MERIDIEM?",
-        "at HOUR MERIDIEM?",
-        "HOUR MERIDIEM",
-        "at? LANDMARK"
-      ],
-      "prefer_future": true
-    },
-    "iso_date": {
-      "orders": [
-        "ISO"
-      ]
-    },
-    "year_ref": {
-      "orders": [
-        "in GYEAR",
-        "article? year_word GYEAR",
-        "GYEAR"
-      ]
-    }
+  "named_day": {
+   "orders": [
+    "DAY_WORD"
+   ]
   },
-  "conventions": {
-    "week_start": "monday",
-    "dmy": true,
-    "hemisphere": "north",
-    "prefer_future": true
+  "weekday_ref": {
+   "orders": [
+    "REL_MARKER WEEKDAY",
+    "WEEKDAYFULL"
+   ]
   },
-  "quantifiers": {
-    "1": [
-      "jedan",
-      "jedna",
-      "jedno"
-    ],
-    "0.5": [
-      "pola"
-    ],
-    "0.25": [
-      "četvrt"
-    ]
+  "rel_period": {
+   "orders": [
+    "REL_MARKER UNIT"
+   ]
   },
-  "guards": {
-    "bare_year_min_digits": 4
+  "weekend_ref": {
+   "orders": [
+    "REL_MARKER WEEKEND",
+    "article? WEEKEND"
+   ]
   },
-  "hook": "chronologia.extract.numfold_slavic:fold_hr"
+  "calendar_date": {
+   "orders": [
+    "DAY MONTH YEAR?",
+    "DAY of MONTH YEAR?",
+    "MONTH DAY? YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "season_ref": {
+   "orders": [
+    "REL_MARKER SEASON",
+    "SEASON of YEAR",
+    "SEASON YEAR?"
+   ]
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK MERIDIEM? ZONE?",
+    "at HOUR MERIDIEM? ZONE?",
+    "HOUR MERIDIEM ZONE?",
+    "at? LANDMARK ZONE?"
+   ],
+   "prefer_future": true
+  },
+  "iso_date": {
+   "orders": [
+    "ISO"
+   ]
+  },
+  "year_ref": {
+   "orders": [
+    "in GYEAR",
+    "article? year_word GYEAR",
+    "GYEAR"
+   ]
+  },
+  "quarter_ref": {
+   "orders": [
+    "q NUM YEAR?",
+    "ORD quarter_word YEAR?",
+    "REL_MARKER quarter_word",
+    "quarter_word REL_MARKER"
+   ]
+  },
+  "iso_week_ref": {
+   "orders": [
+    "week_num NUM of YEAR",
+    "week_num NUM YEAR?"
+   ]
+  },
+  "fuzzy_period": {
+   "orders": [
+    "PART of? UNIT",
+    "PART of? REL_MARKER UNIT",
+    "PART of? UNIT REL_MARKER"
+   ]
+  },
+  "holiday_ref": {
+   "orders": [
+    "REL_MARKER HOLIDAY",
+    "HOLIDAY YEAR",
+    "YEAR HOLIDAY",
+    "HOLIDAY"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": true,
+  "hemisphere": "north",
+  "prefer_future": true
+ },
+ "quantifiers": {
+  "1": [
+   "jedan",
+   "jedna",
+   "jedno"
+  ],
+  "0.5": [
+   "pola"
+  ],
+  "0.25": [
+   "četvrt"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_slavic:fold_hr"
 }

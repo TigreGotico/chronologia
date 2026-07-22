@@ -808,3 +808,114 @@ islamic_new_year| kab | aseggas ihjrawan
 nowruz          | kab | nowruz
 diwali          | kab | diwali
 halloween       | kab | halloween
+# ===== Bulgarian =====
+new_year           | bg | нова година
+new_year_eve       | bg | навечерие на нова година
+orthodox_easter    | bg | великден ;; възкресение
+orthodox_good_friday | bg | разпети петък ;; велики петък
+orthodox_easter_monday | bg | велики понеделник
+halloween          | bg | хелоуин
+valentines         | bg | свети валентин ;; ден на влюбените
+chinese_new_year   | bg | китайска нова година
+ramadan            | bg | рамазан ;; рамадан
+hanukkah           | bg | ханука
+passover           | bg | песах
+nowruz             | bg | навруз
+#
+# ===== Czech =====
+new_year           | cs | nový rok
+christmas          | cs | vánoce ;; boží hod vánoční
+christmas_eve      | cs | štědrý den ;; štědrý večer
+epiphany           | cs | tři králové
+easter             | cs | velikonoce ;; velikonoční neděle
+good_friday        | cs | velký pátek
+easter_monday      | cs | velikonoční pondělí
+all_saints         | cs | všech svatých ;; dušičky
+halloween          | cs | halloween
+valentines         | cs | valentýn ;; svatý valentýn
+carnival           | cs | masopust
+chinese_new_year   | cs | čínský nový rok
+#
+# ===== Croatian =====
+new_year           | hr | nova godina
+christmas          | hr | božić
+christmas_eve      | hr | badnjak ;; badnji dan
+epiphany           | hr | sveta tri kralja ;; bogojavljenje
+easter             | hr | uskrs ;; uskrsna nedjelja
+good_friday        | hr | veliki petak
+easter_monday      | hr | uskrsni ponedjeljak ;; uskršnji ponedjeljak
+all_saints         | hr | svi sveti
+halloween          | hr | noć vještica ;; halloween
+valentines         | hr | valentinovo
+carnival           | hr | karneval ;; poklade
+chinese_new_year   | hr | kineska nova godina
+#
+# ===== Polish =====
+new_year           | pl | nowy rok
+christmas          | pl | boże narodzenie ;; gwiazdka
+christmas_eve      | pl | wigilia
+epiphany           | pl | trzech króli ;; objawienie pańskie
+easter             | pl | wielkanoc ;; niedziela wielkanocna
+good_friday        | pl | wielki piątek
+easter_monday      | pl | poniedziałek wielkanocny ;; lany poniedziałek
+all_saints         | pl | wszystkich świętych
+halloween          | pl | halloween
+valentines         | pl | walentynki
+carnival           | pl | karnawał ;; ostatki
+chinese_new_year   | pl | chiński nowy rok
+#
+# ===== Russian =====
+new_year           | ru | новый год
+new_year_eve       | ru | канун нового года
+orthodox_easter    | ru | пасха ;; светлое христово воскресение
+orthodox_good_friday | ru | страстная пятница ;; великая пятница
+orthodox_easter_monday | ru | светлый понедельник
+halloween          | ru | хэллоуин ;; хеллоуин
+valentines         | ru | день святого валентина ;; день влюблённых
+chinese_new_year   | ru | китайский новый год
+ramadan            | ru | рамадан
+hanukkah           | ru | ханука
+passover           | ru | песах
+nowruz             | ru | навруз ;; новруз
+#
+# ===== Slovak =====
+new_year           | sk | nový rok
+christmas          | sk | vianoce
+christmas_eve      | sk | štedrý deň ;; štedrý večer
+epiphany           | sk | traja králi ;; zjavenie pána
+easter             | sk | veľká noc ;; veľkonočná nedeľa
+good_friday        | sk | veľký piatok
+easter_monday      | sk | veľkonočný pondelok
+all_saints         | sk | sviatok všetkých svätých ;; všetkých svätých
+halloween          | sk | halloween
+valentines         | sk | valentín ;; svätý valentín
+carnival           | sk | fašiangy
+chinese_new_year   | sk | čínsky nový rok
+#
+# ===== Slovenian =====
+new_year           | sl | novo leto
+christmas          | sl | božič
+christmas_eve      | sl | sveti večer ;; badnjak
+epiphany           | sl | sveti trije kralji
+easter             | sl | velika noč ;; velikonočna nedelja
+good_friday        | sl | veliki petek
+easter_monday      | sl | velikonočni ponedeljek
+all_saints         | sl | dan spomina na mrtve ;; vsi sveti
+halloween          | sl | noč čarovnic
+valentines         | sl | valentinovo
+carnival           | sl | pust
+chinese_new_year   | sl | kitajsko novo leto
+#
+# ===== Ukrainian =====
+new_year           | uk | новий рік
+new_year_eve       | uk | переддень нового року
+orthodox_easter    | uk | великдень ;; пасха
+orthodox_good_friday | uk | страсна п'ятниця ;; велика п'ятниця
+orthodox_easter_monday | uk | світлий понеділок
+halloween          | uk | гелловін ;; хелоуїн
+valentines         | uk | день святого валентина ;; день закоханих
+chinese_new_year   | uk | китайський новий рік
+ramadan            | uk | рамадан
+hanukkah           | uk | ханука
+passover           | uk | песах
+nowruz             | uk | новруз
