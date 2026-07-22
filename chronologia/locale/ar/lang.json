@@ -1,13 +1,46 @@
 {
   "tokenizer": {"split_contractions": false, "ordinal_dot": false},
   "constructions": {
-    "nongregorian_date": {
-      "orders": ["DAY CAL_MONTH YEAR?", "CAL_MONTH DAY? YEAR?"],
+    "relative_offset": {
+      "orders": ["MARKER NUM UNIT", "NUM UNIT MARKER"]
+    },
+    "named_day": {"orders": ["DAY_WORD"]},
+    "weekday_ref": {"orders": ["WEEKDAY REL_MARKER", "REL_MARKER WEEKDAY"]},
+    "rel_period": {"orders": ["UNIT REL_MARKER", "REL_MARKER UNIT"]},
+    "weekend_ref": {"orders": ["WEEKEND REL_MARKER", "REL_MARKER WEEKEND",
+                               "WEEKEND"]},
+    "calendar_date": {
+      "orders": ["DAY of MONTH YEAR?", "DAY MONTH YEAR?", "MONTH DAY? YEAR?"],
       "prefer_future": true
-    }
+    },
+    "nongregorian_date": {
+      "orders": ["DAY of CAL_MONTH YEAR?", "DAY CAL_MONTH YEAR?",
+                 "CAL_MONTH DAY? YEAR?"],
+      "prefer_future": true
+    },
+    "season_ref": {
+      "orders": ["SEASON of YEAR", "REL_MARKER SEASON", "SEASON YEAR?"]
+    },
+    "clock_time": {
+      "orders": ["at? CLOCK MERIDIEM?", "CLOCK MERIDIEM?",
+                 "at? HOUR MERIDIEM", "at? LANDMARK MERIDIEM?"],
+      "prefer_future": true
+    },
+    "era_bc": {"orders": ["NUM bc"]},
+    "era_ad": {"orders": ["NUM ad", "ad NUM"]},
+    "era_bp": {"orders": ["NUM bp"]},
+    "deep_time": {
+      "orders": ["MARKER NUM SCALE year_word", "NUM SCALE year_word MARKER"]
+    },
+    "month_fuzzy": {"orders": ["PART of MONTH", "PART MONTH"]},
+    "decade_ref": {"orders": ["PART? DECADE"]},
+    "year_ref": {
+      "orders": ["in GYEAR", "year_word GYEAR", "GYEAR"]
+    },
+    "iso_date": {"orders": ["ISO"]}
   },
-  "conventions": {"week_start": "saturday", "dmy": true, "hemisphere": null,
-                  "prefer_future": true},
-  "guards": {},
-  "hook": null
+  "conventions": {"week_start": "saturday", "weekend_start": 4, "dmy": true,
+                  "hemisphere": null, "prefer_future": true},
+  "guards": {"bare_year_min_digits": 4},
+  "hook": "chronologia.extract.numfold_semitic:fold_ar"
 }
