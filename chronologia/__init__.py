@@ -112,7 +112,7 @@ from chronologia.events import Event, extract_event
 from chronologia.ical import from_ical, to_ical
 from chronologia.serialization import from_json, to_json
 
-__version__ = "0.1.0a1"
+from chronologia.version import VERSION_STR as __version__
 
 __all__ = [
     # unbounded datetime-compatible point and half-open interval
