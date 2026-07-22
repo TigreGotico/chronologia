@@ -30,3 +30,19 @@ easter | Lunes de Carnaval               | -48   | public          |  |
 easter | Martes de Carnaval              | -47   | public          |  |
 easter | Jueves de Turismo               | -3    | public          |  |
 easter | Viernes de Turismo              | -2    | public          |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+fixed  | Día de los Niños | 1 6 | bank |  |  |  | 
+decree | Carnaval | 2024-2-12 2024-2-13 2025-3-3 2025-3-4 | bank |  |  |  | 
+decree | Semana de Turismo | 2024-3-25 2024-3-26 2024-3-27 2024-3-28 2024-3-29 2025-4-14 2025-4-15 2025-4-16 2025-4-17 2025-4-18 | bank |  |  |  | 
+decree | Desembarco de los 33 Orientales | 2024-4-22 2025-4-19 | bank |  |  |  | 
+fixed  | Batalla de Las Piedras | 5 18 | bank |  |  |  | 
+fixed  | Natalicio de Artigas | 6 19 | bank |  |  |  | 
+fixed  | Día de la Diversidad Cultural | 10 12 | bank |  |  |  | 
+fixed  | Día de los Difuntos | 11 2 | bank |  |  |  | 

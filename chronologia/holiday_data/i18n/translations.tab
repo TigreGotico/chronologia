@@ -1307,3 +1307,88 @@ US | Christmas Eve (half-day closing) | pt | Véspera de Natal (meio-dia)
 US | Christmas Eve (half-day closing) | es | Nochebuena (medio día)
 US | Christmas Eve (half-day closing) | de | Heiligabend (halber Tag)
 US | Christmas Eve (half-day closing) | fr | Veille de Noël (demi-journée)
+#
+# ===== vacanza/holidays 0.101 category-parity rows (retrieved 2026-07-22) =====
+PT | Dia de Santo António | en | Saint Anthony's Day
+PT | Dia de Santo António | es | Día de San Antonio
+PT | Dia de Santo António | de | Sankt-Antonius-Tag
+PT | Dia de Santo António | fr | Saint-Antoine
+PT | Véspera de Natal | en | Christmas Eve
+PT | Véspera de Natal | es | Nochebuena
+PT | Véspera de Natal | de | Heiligabend
+PT | Véspera de Natal | fr | Veille de Noël
+PT | 26 de Dezembro | en | 26 December
+PT | 26 de Dezembro | es | 26 de diciembre
+PT | 26 de Dezembro | de | 26. Dezember
+PT | 26 de Dezembro | fr | 26 décembre
+PT | Véspera de Ano Novo | en | New Year's Eve
+PT | Véspera de Ano Novo | es | Nochevieja
+PT | Véspera de Ano Novo | de | Silvester
+PT | Véspera de Ano Novo | fr | Réveillon du Nouvel An
+TR | Ramazan Bayramı (saat 13.00'ten) | en | Eid al-Fitr (from 1pm)
+TR | Ramazan Bayramı (saat 13.00'ten) | pt | Eid al-Fitr (a partir das 13h)
+TR | Ramazan Bayramı (saat 13.00'ten) | es | Eid al-Fitr (desde las 13h)
+TR | Ramazan Bayramı (saat 13.00'ten) | de | Ramadanfest (ab 13 Uhr)
+TR | Ramazan Bayramı (saat 13.00'ten) | fr | Aïd el-Fitr (à partir de 13h)
+TR | Kurban Bayramı (saat 13.00'ten) | en | Eid al-Adha (from 1pm)
+TR | Kurban Bayramı (saat 13.00'ten) | pt | Eid al-Adha (a partir das 13h)
+TR | Kurban Bayramı (saat 13.00'ten) | es | Eid al-Adha (desde las 13h)
+TR | Kurban Bayramı (saat 13.00'ten) | de | Opferfest (ab 13 Uhr)
+TR | Kurban Bayramı (saat 13.00'ten) | fr | Aïd el-Kébir (à partir de 13h)
+TR | Cumhuriyet Bayramı (saat 13.00'ten) | en | Republic Day (from 1pm)
+TR | Cumhuriyet Bayramı (saat 13.00'ten) | pt | Dia da República (a partir das 13h)
+TR | Cumhuriyet Bayramı (saat 13.00'ten) | es | Día de la República (desde las 13h)
+TR | Cumhuriyet Bayramı (saat 13.00'ten) | de | Tag der Republik (ab 13 Uhr)
+TR | Cumhuriyet Bayramı (saat 13.00'ten) | fr | Jour de la République (à partir de 13h)
+US | Christmas Eve | pt | Véspera de Natal
+US | Christmas Eve | es | Nochebuena
+US | Christmas Eve | de | Heiligabend
+US | Christmas Eve | fr | Veille de Noël
+US | National Day of Mourning for former President Jimmy Carter | pt | Dia Nacional de Luto pelo ex-Presidente Jimmy Carter
+US | National Day of Mourning for former President Jimmy Carter | es | Día Nacional de Luto por el expresidente Jimmy Carter
+US | National Day of Mourning for former President Jimmy Carter | de | Nationaler Trauertag für Ex-Präsident Jimmy Carter
+US | National Day of Mourning for former President Jimmy Carter | fr | Jour de deuil national pour l'ancien président Jimmy Carter
+US | Day After Christmas | pt | Dia Depois do Natal
+US | Day After Christmas | es | Día después de Navidad
+US | Day After Christmas | de | Tag nach Weihnachten
+US | Day After Christmas | fr | Lendemain de Noël
+US | Groundhog Day | pt | Dia da Marmota
+US | Groundhog Day | es | Día de la Marmota
+US | Groundhog Day | de | Murmeltiertag
+US | Groundhog Day | fr | Jour de la marmotte
+US | Valentine's Day | pt | Dia dos Namorados
+US | Valentine's Day | es | Día de San Valentín
+US | Valentine's Day | de | Valentinstag
+US | Valentine's Day | fr | Saint-Valentin
+US | Saint Patrick's Day | pt | Dia de São Patrício
+US | Saint Patrick's Day | es | Día de San Patricio
+US | Saint Patrick's Day | de | Sankt-Patrick's-Tag
+US | Saint Patrick's Day | fr | Saint-Patrick
+US | Good Friday | pt | Sexta-feira Santa
+US | Good Friday | es | Viernes Santo
+US | Good Friday | de | Karfreitag
+US | Good Friday | fr | Vendredi saint
+US | Easter Sunday | pt | Domingo de Páscoa
+US | Easter Sunday | es | Domingo de Pascua
+US | Easter Sunday | de | Ostersonntag
+US | Easter Sunday | fr | Dimanche de Pâques
+US | Mother's Day | pt | Dia das Mães
+US | Mother's Day | es | Día de la Madre
+US | Mother's Day | de | Muttertag
+US | Mother's Day | fr | Fête des Mères
+US | Father's Day | pt | Dia dos Pais
+US | Father's Day | es | Día del Padre
+US | Father's Day | de | Vatertag
+US | Father's Day | fr | Fête des Pères
+US | Halloween | pt | Halloween
+US | Halloween | es | Halloween
+US | Halloween | de | Halloween
+US | Halloween | fr | Halloween
+US | Election Day | pt | Dia da Eleição
+US | Election Day | es | Día de las Elecciones
+US | Election Day | de | Wahltag
+US | Election Day | fr | Jour de l'élection
+US | New Year's Eve | pt | Véspera de Ano Novo
+US | New Year's Eve | es | Nochevieja
+US | New Year's Eve | de | Silvester
+US | New Year's Eve | fr | Réveillon du Nouvel An

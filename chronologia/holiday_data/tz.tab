@@ -32,3 +32,12 @@ fixed         | Kumbukumbu ya Mwalimu Nyerere na Kilele cha mbio za Mwenge| 10 1
 fixed         | Uhuru na Jamhuri                   | 12 9                | public          |  |  |  |
 fixed         | Kuzaliwa Kristo                    | 12 25               | public          |  |  |  |
 fixed         | Siku ya Kupeana Zawadi             | 12 26               | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | Sikukuu ya Pasaka | 2024-3-31 2025-4-20 | bank |  |  |  | 

@@ -23,3 +23,12 @@ easter  | Eerste Pinksterdag   | 49    | public religious |  |
 easter  | Tweede Pinksterdag   | 50    | public religious |  |
 fixed   | Eerste Kerstdag      | 12 25 | public religious |  |
 fixed   | Tweede Kerstdag      | 12 26 | public religious |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | Bevrijdingsdag | 2024-5-5 | optional |  |  |  | 

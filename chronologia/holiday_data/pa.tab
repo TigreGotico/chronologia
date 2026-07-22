@@ -36,3 +36,13 @@ fixed         | Independencia de Panamá de España             | 11 28 | public
 fixed         | Día de la Madre                               | 12 8 | public          |  |  |  |
 fixed         | Día de Duelo Nacional                         | 12 20 | public          |  |  |  |
 fixed         | Navidad                                       | 12 25 | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | Lunes de Carnaval | 2024-2-12 2025-3-3 | bank |  |  |  | 
+decree | Día de los Símbolos Patrios | 2025-11-4 | bank |  |  |  | 

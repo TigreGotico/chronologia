@@ -327,3 +327,16 @@ easter | Ascensão de Jesus / Quinta-feira da Ascensão / Dia da Espiga | 39 | m
 easter | Pentecostes / Divino Espírito Santo | 50 | municipal | PT-VGS
 nth_weekday | Feira da Ladra | 10 1 5 2 | municipal | PT-VRM
 nth_weekday | Nossa Senhora da Alagada | 8 4 6 1 | municipal | PT-VVR
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | Carnaval | 2024-2-13 2025-3-4 | optional |  |  |  | 
+fixed  | Dia de Santo António | 6 13 | optional |  |  |  | 
+fixed  | Véspera de Natal | 12 24 | optional |  |  |  | 
+fixed  | 26 de Dezembro | 12 26 | optional |  |  |  | 
+fixed  | Véspera de Ano Novo | 12 31 | optional |  |  |  | 

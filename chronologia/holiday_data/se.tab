@@ -25,3 +25,33 @@ weekday_onbefore | Midsommardagen        | 6 26 5 | public          |  |
 weekday_onbefore | Alla helgons dag      | 11 6 5 | public religious |  |
 fixed            | Juldagen              | 12 25  | public religious |  |
 fixed            | Annandag jul          | 12 26  | public religious |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | Trettondagsafton (från kl. 14.00) | 2024-1-5 | bank |  |  |  | half_pm
+decree | Skärtorsdagen (från kl. 14.00) | 2024-3-28 2025-4-17 | bank |  |  |  | half_pm
+fixed  | Valborgsmässoafton (från kl. 14.00) | 4 30 | bank |  |  |  | half_pm
+decree | Dag före Kristi himmelsfärdsdag (från kl. 14.00) | 2024-5-8 2025-5-28 | bank |  |  |  | half_pm
+decree | Dag före Pingstafton (från kl. 14.00) | 2024-5-17 | bank |  |  |  | half_pm
+decree | Dag före Midsommarafton (från kl. 14.00) | 2024-6-20 2025-6-19 | bank |  |  |  | half_pm
+decree | Midsommarafton | 2024-6-21 2025-6-20 | bank |  |  |  | 
+decree | Allahelgonsafton (från kl. 14.00) | 2024-11-1 2025-10-31 | bank |  |  |  | half_pm
+fixed  | Dag före Julafton (från kl. 14.00) | 12 23 | bank |  |  |  | half_pm
+fixed  | Julafton | 12 24 | bank |  |  |  | 
+fixed  | Dag före Nyårsafton (från kl. 14.00) | 12 30 | bank |  |  |  | half_pm
+fixed  | Nyårsafton | 12 31 | bank |  |  |  | 
+decree | Midsommarafton | 2024-6-21 2025-6-20 | de_facto |  |  |  | 
+fixed  | Julafton | 12 24 | de_facto |  |  |  | 
+fixed  | Nyårsafton | 12 31 | de_facto |  |  |  | 
+decree | Trettondagsafton (från kl. 14.00) | 2024-1-5 | optional |  |  |  | half_pm
+decree | Skärtorsdagen (från kl. 14.00) | 2024-3-28 2025-4-17 | optional |  |  |  | half_pm
+decree | Påskafton | 2024-3-30 2025-4-19 | optional |  |  |  | 
+fixed  | Valborgsmässoafton (från kl. 14.00) | 4 30 | optional |  |  |  | half_pm
+decree | Klämdag | 2024-5-10 2025-5-30 | optional |  |  |  | 
+decree | Pingstafton | 2024-5-18 2025-6-7 | optional |  |  |  | 
+decree | Allahelgonsafton (från kl. 14.00) | 2024-11-1 2025-10-31 | optional |  |  |  | half_pm

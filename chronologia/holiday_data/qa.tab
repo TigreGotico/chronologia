@@ -26,3 +26,13 @@ decree        | عيد الأضحى (1)                        | 2024-6-16 2025-
 decree        | عيد الأضحى (2)                        | 2024-6-17 2025-6-7  | public          |  |  |  |
 decree        | عيد الأضحى (3)                        | 2024-6-18 2025-6-8  | public          |  |  |  |
 fixed         | اليوم الوطني لقطر                      | 12 18 | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+fixed  | رأس السنة الميلادية | 1 1 | bank |  |  |  | 
+decree | عطلة البنك | 2024-3-3 2025-3-2 | bank |  |  |  | 

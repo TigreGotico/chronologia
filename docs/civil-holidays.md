@@ -32,7 +32,7 @@ country and you miss both; ask the municipality and the real answer appears.
 ```python
 # Is 13 June 2024 a holiday? It depends where you live.
 santo_antonio = AstroDate(2024, 6, 13)
-assert not is_civil_holiday(santo_antonio, "PT")                 # not nationally
+assert not is_civil_holiday(santo_antonio, "PT", categories=("public",))  # not statutorily, nationally
 assert is_civil_holiday(santo_antonio, "PT", subdiv="PT-LSB")    # yes, in Lisbon
 
 # Porto's São João a fortnight later.

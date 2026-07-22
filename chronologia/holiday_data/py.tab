@@ -36,3 +36,12 @@ fixed         | Día de la Fundación de Asunción               | 8 15 | public
 decree        | Día de la Batalla de Boquerón                 | 2024-9-30 2025-9-29 | public          |  |  |  |
 fixed         | Día de la Virgen de Caacupé                   | 12 8 | public          |  |  |  |
 fixed         | Día de la Navidad                             | 12 25 | public          |  |  |  |
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+decree | Asueto de la Administración Pública | 2024-3-27 2024-12-24 2024-12-31 2025-4-16 | government |  |  |  | 

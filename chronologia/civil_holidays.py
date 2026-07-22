@@ -197,7 +197,7 @@ CATEGORIES: FrozenSet[str] = frozenset({
     "armenian", "bank", "government", "half_day", "optional",
     "albanian", "bosnian", "roma", "serbian", "turkish", "vlach",
     "armed_forces", "hebrew", "islamic", "catholic", "orthodox", "unofficial",
-    "christian", "sabian", "yazidi", "hindu",
+    "christian", "sabian", "yazidi", "hindu", "de_facto",
 })
 
 _EASTER_METHODS = ("gregorian", "julian_gregorian_date")
@@ -1387,14 +1387,17 @@ def well_known_source(key: str) -> str:
 
 
 def is_civil_holiday(date, jurisdiction: str,
-                     subdiv: Optional[str] = None) -> bool:
+                     subdiv: Optional[str] = None,
+                     categories: Optional[Iterable[str]] = None) -> bool:
     """True when ``date`` (AstroDate/date/datetime) is a civil holiday.
 
     Considers jurisdiction-wide holidays plus, when ``subdiv`` is given, that
-    subdivision's holidays.
+    subdivision's holidays. ``categories`` filters the same way
+    :func:`holidays_for` does (``None`` = every category, the historical
+    default).
     """
     point = AstroDate(date.year, date.month, date.day)
-    for holiday in holidays_for(jurisdiction, point.year, subdiv):
+    for holiday in holidays_for(jurisdiction, point.year, subdiv, categories):
         if holiday.span.contains(point):
             return True
     return False

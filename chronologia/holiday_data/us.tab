@@ -313,3 +313,25 @@ nth_weekday | President's Day | 2 3 0 | public | US-WY |
 #    Register EO documents cited in vacanza's united_states.py header.
 fixed  | Christmas Eve (from 12pm)          | 12 24                                | public | US-PR |  | 2003- | half_pm
 decree | Christmas Eve (half-day closing)   | 2002-12-24 2009-12-24 2015-12-24     | public |       |  |       | half_pm
+
+# --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
+# Extra non-default-category rows cross-checked against vacanza/holidays
+# 0.101 (MIT) `country_holidays(cc, categories=(...))` output for 2024 and
+# 2025. Stable Gregorian dates across both years land as `fixed`; rows that
+# move year to year are gazetted `decree` tables of vacanza's own 2024/2025
+# dates. "(estimated)"/"(procijenjeno)"-style annotation suffixes were
+# stripped. Names are vacanza's own (already-localized) labels.
+fixed  | Christmas Eve | 12 24 | government |  |  |  | 
+decree | National Day of Mourning for former President Jimmy Carter | 2025-1-9 | government |  |  |  | 
+decree | Day After Christmas | 2025-12-26 | government |  |  |  | 
+fixed  | Groundhog Day | 2 2 | unofficial |  |  |  | 
+fixed  | Valentine's Day | 2 14 | unofficial |  |  |  | 
+fixed  | Saint Patrick's Day | 3 17 | unofficial |  |  |  | 
+decree | Good Friday | 2024-3-29 2025-4-18 | unofficial |  |  |  | 
+decree | Easter Sunday | 2024-3-31 2025-4-20 | unofficial |  |  |  | 
+decree | Mother's Day | 2024-5-12 2025-5-11 | unofficial |  |  |  | 
+decree | Father's Day | 2024-6-16 2025-6-15 | unofficial |  |  |  | 
+fixed  | Halloween | 10 31 | unofficial |  |  |  | 
+decree | Election Day | 2024-11-5 | unofficial |  |  |  | 
+fixed  | Christmas Eve | 12 24 | unofficial |  |  |  | 
+fixed  | New Year's Eve | 12 31 | unofficial |  |  |  | 
