@@ -1481,6 +1481,52 @@ The reference language `en` is exempt from the parity-block requirement — it
 *is* the reference the others are measured against. Languages whose locale
 predates the convention simply have no package yet; adding one opts them in.
 
+## Internals: the token stream is the single currency
+
+Everything downstream of the tokenizer speaks **tokens**, never re-joined
+strings. A token carries its normalised text, its original surface, and the
+half-open character extent `[char_start, char_end)` of where it came from in the
+input. That extent is the load-bearing detail: it lets any stage point back at
+the exact characters a token was read from without ever searching the string
+again.
+
+The pipeline runs in two halves, split so a range can reuse it:
+
+- **`pretokens`** — tokenize then normalise. This is the *pre-fold* stream:
+  spelled numbers are still separate words and, crucially, the `and` / `to` that
+  frame a range are still their own tokens.
+- **`fold_tokens`** — the folding tail: the spelled-number fold, the
+  Roman-numeral fold, and the multiword-vocabulary merge. Folding a spelled
+  number merges the words around it, so `between 3 and 5` would collapse the
+  `and` away — which is exactly why range detection reads the *pre-fold* stream
+  and folds each endpoint's slice on its own instead.
+
+`extract_timespan` tokenizes **once** and threads that one stream through every
+stage:
+
+1. range detection (`from A to B`, `between A and B`, `A - B`) scans the
+   pre-fold stream for the first connector — a scan, never a recursion per
+   connector — and resolves each endpoint from a *slice* of that stream, folded
+   in isolation. No substring is re-tokenized, and a pathological connector
+   chain cannot exhaust the stack;
+2. open-range detection (`until friday`, `since 2019`) does the same with a
+   leading or postposed marker;
+3. the single-span core (`_resolve_core`) folds the whole stream, matches,
+   resolves, and runs the post-resolution passes (business days, anchored
+   offsets, ordinal counts, "week of" widening, date + clock composition) — all
+   of which transform match/resolution objects over that same stream, marking
+   which token positions they consumed.
+
+The **remainder** is then rendered from the tokens no construction claimed:
+`render_remainder` slices each run of consecutive unconsumed tokens straight out
+of the original text (so punctuation *inside* a run survives) and collapses
+whitespace. It is the single source of every leftover string the public edges
+return — `extract_timespan`, `extract_candidates`, `extract_duration`,
+`extract_recurrence` all route through it. Because the remainder is sliced from
+recorded extents rather than re-joined from token surfaces, there is no
+raw-string range regex left to re-scan the input, and no offset ever has to be
+recovered by searching.
+
 ## Speaking dates back out
 
 This module *reads* dates. To *say* one back to a user — voice-facing

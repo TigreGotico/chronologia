@@ -159,8 +159,9 @@ def extract_duration(
 
     if not found:
         return None
-    remainder = " ".join(t.raw for t in tokens
-                         if t.index not in consumed).strip()
+    from chronologia.extract.pipeline import render_remainder
+    remainder = render_remainder(text, [t for t in tokens
+                                        if t.index not in consumed])
     return timedelta(seconds=total), remainder
 
 
@@ -358,8 +359,9 @@ def extract_recurrence(
             rec, consumed = hit
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_clock(rec, consumed, ctx, lang, anchor)
-            remainder = " ".join(t.raw for t in tokens
-                                 if t.index not in consumed).strip()
+            from chronologia.extract.pipeline import render_remainder
+            remainder = render_remainder(text, [t for t in tokens
+                                                if t.index not in consumed])
             return rec, remainder
     return None
 

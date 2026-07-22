@@ -31,7 +31,8 @@ from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.anchored import (apply_anchored_offset,
                                               apply_ordinal_count)
 from chronologia.extract.business import apply_business_days
-from chronologia.extract.pipeline import prematch_tokens
+from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
+                                              pretokens, render_remainder)
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_clock, _WEEK_START)
 from chronologia.extract.tokenizer import Tokenizer
@@ -135,9 +136,12 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
 #: default (English) range framing words, always available so English
 #: behaviour is unchanged.  A language adds its own surfaces via the
 #: ``from``/``to``/``between``/``and`` connectors (``marker_from.voc`` ...),
-#: which are unioned in per language -- ranges are not English-only.
+#: which are unioned in per language -- ranges are not English-only.  ``"-"``
+#: is deliberately *not* a ``to`` word here: a hyphen is punctuation the
+#: tokenizer drops, so a dash range separator is detected on the character gap
+#: between two tokens instead (see :func:`_dash_between`).
 _RANGE_FROM = ("from",)
-_RANGE_TO = ("to", "until", "till", "through", "thru", "-")
+_RANGE_TO = ("to", "until", "till", "through", "thru")
 _RANGE_BETWEEN = ("between",)
 _RANGE_AND = ("and",)
 #: leading markers of an open-ended range -- "until friday" (open start,
@@ -147,104 +151,167 @@ _RANGE_AND = ("and",)
 _RANGE_UNTIL = ("until", "till", "through", "thru")
 _RANGE_SINCE = ("since",)
 
-
-def _range_words(spec, name, defaults):
-    forms = set(defaults)
-    forms |= set(spec.connectors.get(name, ()))
-    return tuple(sorted((re.escape(f) for f in forms if f),
-                        key=len, reverse=True))
-
-
-def _range_patterns(spec):
-    """(from-A-to-B, between-A-and-B) regexes for a language, most specific
-    first.  Framing words are the English defaults unioned with the
-    language's own ``from``/``to``/``between``/``and`` connector surfaces."""
-    to_alt = "|".join(_range_words(spec, "to", _RANGE_TO))
-    from_alt = "|".join(_range_words(spec, "from", _RANGE_FROM))
-    between_alt = "|".join(_range_words(spec, "between", _RANGE_BETWEEN))
-    and_alt = "|".join(_range_words(spec, "and", _RANGE_AND))
-    return (
-        re.compile(rf"^\s*(?:(?:{from_alt})\s+)?(.+?)\s+(?:{to_alt})\s+(.+?)\s*$",
-                   re.IGNORECASE),
-        re.compile(rf"^\s*(?:{between_alt})\s+(.+?)\s+(?:{and_alt})\s+(.+?)\s*$",
-                   re.IGNORECASE),
-    )
+#: a bare "A to B" is capped at two endpoints; a chain of range connectors
+#: ("monday to monday to monday ...") is *scanned* for the first split, never
+#: recursed once per connector, so a pathological connector run cannot exhaust
+#: the stack -- everything past the first endpoint pair falls to the remainder.
+_DASH_GAP = re.compile(r"\s+-+\s+")
 
 
-def _starts_with_any(lowered, words):
-    return any(lowered.startswith(w.lower() + " ") for w in words)
+def _conn_surfaces(spec, name, defaults):
+    """The connector ``name`` as word lists (longest first) for token matching.
+
+    The English defaults unioned with the language's own connector surfaces --
+    the same set the old regex alternated over, but kept as tokens so a
+    connector is recognised on the *stream*, never by scanning the raw string.
+    """
+    forms = set(defaults) | set(spec.connectors.get(name, ()))
+    return sorted((f.lower().split() for f in forms if f),
+                  key=len, reverse=True)
 
 
-def _extract_range(text, lang, anchor):
-    """A "from A to B" / "between A and B" span, endpoints from two parses.
+def _match_conn_at(tokens, i, surfaces):
+    """Token length of the (possibly multi-word) connector at ``i``; 0 if none."""
+    for words in surfaces:
+        n = len(words)
+        if i + n <= len(tokens) \
+                and [t.text for t in tokens[i:i + n]] == words:
+            return n
+    return 0
+
+
+def _dash_between(tokens, p, text):
+    """True when a whitespace-flanked hyphen sits in the gap before token ``p``.
+
+    A dash range separator ("junho - agosto", "5 de junho - 12 de junho") is
+    punctuation the tokenizer never emits, so it is read straight from the
+    character gap between the adjacent tokens' recorded extents -- linear and
+    anchored, no raw-string regex over the whole input."""
+    a, b = tokens[p - 1].char_end, tokens[p].char_start
+    if a is None or b is None:
+        return False
+    return _DASH_GAP.fullmatch(text[a:b]) is not None
+
+
+def _first_to_split(tokens, left_start, to_surf, text):
+    """First "to"-connector at a boundary after ``left_start``.
+
+    Returns ``(p, k)`` -- the connector begins at token ``p`` and spans ``k``
+    tokens (``k == 0`` for a dash gap, which consumes no token) -- with a
+    non-empty left (``tokens[left_start:p]``) and right side, or ``None``.
+    Scanning left to right and returning the first hit mirrors the old
+    non-greedy ``(.+?)`` that split on the *first* connector."""
+    n = len(tokens)
+    for p in range(left_start + 1, n):
+        k = _match_conn_at(tokens, p, to_surf)
+        if k and p + k < n:                       # word connector, right non-empty
+            return p, k
+        if _dash_between(tokens, p, text):        # dash gap, right is tokens[p:]
+            return p, 0
+    return None
+
+
+def _extract_range(text, tokens, engine, anchor):
+    """A "from A to B" / "between A and B" span, endpoints from two sub-parses.
+
+    Token-native: the connector is found on the *pre-fold* token stream (so the
+    number fold cannot swallow the ``and``/``to`` a range hinges on) and the two
+    endpoints are resolved from slices of that stream, each folded on its own --
+    never re-tokenized, never recursed back into range detection.  So a long
+    connector chain is scanned once for the first split rather than recursed once
+    per connector.
 
     Only fires when *both* sides parse on their own and the left edge is not
-    after the right; otherwise returns ``None`` so the normal single-span
-    path runs (this keeps "quarter to five" -- a clock, not a range -- from
-    being read as a range)."""
-    spec = _timespan_engine(lang).spec
-    patterns = _range_patterns(spec)
-    lowered = text.strip().lower()
-    between = _starts_with_any(lowered, _RANGE_BETWEEN + tuple(
-        spec.connectors.get("between", ())))
-    has_from = _starts_with_any(lowered, _RANGE_FROM + tuple(
-        spec.connectors.get("from", ())))
+    after the right; otherwise returns ``None`` so the normal single-span path
+    runs (this keeps "quarter to five" -- a clock, not a range -- from being
+    read as a range)."""
+    spec = engine.spec
+    n = len(tokens)
+    if n < 2:
+        return None
+    to_surf = _conn_surfaces(spec, "to", _RANGE_TO)
+    from_surf = _conn_surfaces(spec, "from", _RANGE_FROM)
+    between_surf = _conn_surfaces(spec, "between", _RANGE_BETWEEN)
+    and_surf = _conn_surfaces(spec, "and", _RANGE_AND)
     # lone clock-fraction words that a bare "A to B" must never treat as a
     # range endpoint (would hijack "quarter to five" / "čtvrt na päť")
     fraction_words = set(spec.clock_fractions) | {"quarter", "half", "a quarter"}
-    for pat in patterns:
-        m = pat.match(text)
-        if not m:
-            continue
-        left_txt, right_txt = m.group(1), m.group(2)
-        # a bare "A to B" (no from/between) is only trusted when neither side
-        # is a lone clock fraction word -- avoids hijacking "quarter to five"
-        if pat is patterns[0] and not (has_from or between):
-            if left_txt.strip().lower() in fraction_words:
-                continue
-        left = extract_timespan(left_txt, lang, anchor) \
-            or _bare_weekday_endpoint(left_txt, lang, anchor)
-        right = extract_timespan(right_txt, lang, anchor) \
-            or _bare_weekday_endpoint(right_txt, lang, anchor)
-        # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the
-        # right endpoint's trailing meridiem so both read on the same clock
-        if left is None and right is not None:
-            merid = _trailing_meridiem(right_txt, lang)
-            if merid is not None and left_txt.strip():
-                left = extract_timespan(f"{left_txt} {merid}", lang, anchor)
-        if left is None or right is None:
-            continue
-        start = left[0].start
-        end = right[0].end
-        # end before start: the right endpoint wraps into the next cycle --
-        # a clock crossing midnight ("10 pm to 2 am") rolls a day; a weekday
-        # ("monday to friday") rolls a week.  Roll the right span forward by
-        # its own granularity until it lands after the start.
-        step = (timedelta(days=1)
-                if right[0].end - right[0].start < timedelta(days=1)
-                else timedelta(days=7))
-        rolled = right[0]
-        for _ in range(8):
-            if rolled.end > start:
-                break
-            rolled = DateSpan(rolled.start + step, rolled.end + step)
-        end = rolled.end
-        # prefer-future asymmetry: a range that straddles the anchor -- its
-        # left endpoint just behind "now", its right just ahead -- resolves the
-        # left a whole year into the future (prefer_future) while the right
-        # stays put, inverting the span past what the week/day roll above can
-        # repair.  Pull the left endpoint back one year so both endpoints read
-        # in the same nearest cycle ("july 20 to july 25" spoken on july 22
-        # stays this year rather than leaping to the next).
-        if end < start:
-            pulled = _minus_one_year(start)
-            if pulled is not None and pulled < right[0].end:
-                start, end = pulled, right[0].end
-        if end < start:
-            continue
-        rem = " ".join(p for p in (left[1], right[1]) if p).strip()
-        return DateSpan(start, end), rem
+
+    def endpoint(sub):
+        return (_resolve_endpoint(text, sub, engine, anchor)
+                or _bare_weekday_endpoint(sub, engine, anchor))
+
+    # -- from A to B -------------------------------------------------------
+    lead = _match_conn_at(tokens, 0, from_surf)
+    split = _first_to_split(tokens, lead, to_surf, text)
+    if split is not None:
+        p, k = split
+        left_tok, right_tok = tokens[lead:p], tokens[p + k:]
+        # a bare "A to B" (no from/between) is only trusted when the left side
+        # is not a lone clock fraction word -- avoids hijacking "quarter to five"
+        between_lead = _match_conn_at(tokens, 0, between_surf)
+        left_words = " ".join(t.text for t in left_tok)
+        if lead or between_lead or left_words not in fraction_words:
+            got = _compose_range(left_tok, right_tok, endpoint, spec)
+            if got is not None:
+                return got
+
+    # -- between A and B ---------------------------------------------------
+    lead = _match_conn_at(tokens, 0, between_surf)
+    if lead:
+        split = _first_to_split(tokens, lead, and_surf, text)
+        if split is not None:
+            p, k = split
+            got = _compose_range(tokens[lead:p], tokens[p + k:], endpoint, spec)
+            if got is not None:
+                return got
     return None
+
+
+def _compose_range(left_tok, right_tok, endpoint, spec):
+    """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
+
+    A leading ``from``/``between`` and the connector are outside both slices, so
+    they are dropped; each endpoint contributes its own leftover text.
+    ``endpoint(sub)`` returns ``(span, remainder)`` or ``None``."""
+    left = endpoint(left_tok)
+    right = endpoint(right_tok)
+    # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
+    # endpoint's trailing meridiem so both read on the same clock
+    if left is None and right is not None and left_tok:
+        merid = _trailing_meridiem(right_tok, spec)
+        if merid is not None:
+            left = endpoint(tuple(left_tok) + (merid,))
+    if left is None or right is None:
+        return None
+    start = left[0].start
+    # end before start: the right endpoint wraps into the next cycle -- a clock
+    # crossing midnight ("10 pm to 2 am") rolls a day; a weekday ("monday to
+    # friday") rolls a week.  Roll the right span forward by its own granularity
+    # until it lands after the start.
+    step = (timedelta(days=1)
+            if right[0].end - right[0].start < timedelta(days=1)
+            else timedelta(days=7))
+    rolled = right[0]
+    for _ in range(8):
+        if rolled.end > start:
+            break
+        rolled = DateSpan(rolled.start + step, rolled.end + step)
+    end = rolled.end
+    # prefer-future asymmetry: a range that straddles the anchor -- its left
+    # endpoint just behind "now", its right just ahead -- resolves the left a
+    # whole year into the future (prefer_future) while the right stays put,
+    # inverting the span past what the week/day roll above can repair.  Pull the
+    # left endpoint back one year so both endpoints read in the same nearest
+    # cycle ("july 20 to july 25" spoken on july 22 stays this year).
+    if end < start:
+        pulled = _minus_one_year(start)
+        if pulled is not None and pulled < right[0].end:
+            start, end = pulled, right[0].end
+    if end < start:
+        return None
+    remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
+    return DateSpan(start, end), remainder
 
 
 def _minus_one_year(astro):
@@ -256,89 +323,106 @@ def _minus_one_year(astro):
         return None
 
 
-def _extract_open_range(text, lang, anchor):
+def _resolve_endpoint(text, sub, engine, anchor):
+    """Resolve a range endpoint from a slice of the *pre-fold* token stream.
+
+    The slice is folded on its own (its numbers fold in isolation, so a range's
+    two numeric endpoints never merge) and matched exactly as a whole utterance
+    is -- no substring is ever re-tokenized.  Returns ``(span, remainder)`` where
+    ``remainder`` is this endpoint's own leftover text (sliced from ``text`` by
+    the unconsumed tokens' recorded extents), or ``None``.
+    """
+    if not sub:
+        return None
+    folded = fold_tokens(tuple(sub), engine.spec, text)
+    core = _resolve_core(folded, engine, anchor)
+    if core is None:
+        return None
+    span, consumed = core
+    remainder = render_remainder(text, [t for t in folded
+                                        if t.index not in consumed])
+    return span, remainder
+
+
+def _extract_open_range(text, tokens, engine, anchor):
     """An open-ended range: "until friday" (open start) / "since 2019" (open
-    end).  Only fires on a leading ``until``/``since`` marker whose remainder
-    parses as a date endpoint.
+    end).  Only fires on an ``until``/``since`` marker whose remaining tokens
+    parse as a date endpoint.
 
     The known endpoint keeps the closed-range endpoint convention -- an
     ``until`` endpoint contributes its ``.end`` (it is included in full, as the
     right endpoint of "from A to B" is), a ``since`` endpoint its ``.start`` --
     and the open side is pinned to the anchor instant ("now").  So "until
     friday" is ``[now, friday_end)`` and "since 2019" is ``[2019-01-01, now)``.
+    The marker is found on the token stream, leading or postposed.
     """
-    spec = _timespan_engine(lang).spec
-    stripped = text.strip()
-    lowered = stripped.lower()
-    now = AstroDate.from_datetime(anchor)
-    until_words = set(_RANGE_UNTIL) | set(spec.connectors.get("until", ()))
-    since_words = set(_RANGE_SINCE) | set(spec.connectors.get("since", ()))
-
-    def _endpoint(rest):
-        return (extract_timespan(rest, lang, anchor)
-                or _bare_weekday_endpoint(rest, lang, anchor))
-
-    def _lead(words, build):
-        for w in sorted(words, key=len, reverse=True):
-            if w and lowered.startswith(w.lower() + " "):
-                ep = _endpoint(stripped[len(w):].strip())
-                got = build(ep)
-                if got is not None:
-                    return got
+    spec = engine.spec
+    n = len(tokens)
+    if n < 1:
         return None
+    now = AstroDate.from_datetime(anchor)
+    until_surf = _conn_surfaces(spec, "until", _RANGE_UNTIL)
+    since_surf = _conn_surfaces(spec, "since", _RANGE_SINCE)
 
-    def _trail(words, build):
+    def endpoint(sub):
+        return (_resolve_endpoint(text, sub, engine, anchor)
+                or _bare_weekday_endpoint(sub, engine, anchor))
+
+    def until_span(ep):
+        return DateSpan(now, ep[0].end) if ep is not None and ep[0].end > now \
+            else None
+
+    def since_span(ep):
+        return DateSpan(ep[0].start, now) if ep is not None \
+            and ep[0].start < now else None
+
+    def lead(surf, build):
+        # the marker leads; its tokens are dropped, the endpoint keeps its own
+        # leftover (the framing word is never part of the remainder)
+        k = _match_conn_at(tokens, 0, surf)
+        if not k:
+            return None
+        ep = endpoint(tokens[k:])
+        span = build(ep) if ep is not None else None
+        return (span, ep[1]) if span is not None else None
+
+    def trail(surf, build):
         # a **postposed** marker -- the bound word trailing its date, the
         # native order for Finnish ("perjantaihin asti"), Turkish
         # ("cumaya kadar"), Basque ("ostirala arte"), Azerbaijani
-        # ("cüməyə qədər").  The marker follows the date, so it is stripped
-        # from the end and the head parses as the endpoint.
-        for w in sorted(words, key=len, reverse=True):
-            wl = w.lower()
-            if wl and lowered.endswith(" " + wl):
-                ep = _endpoint(stripped[: len(stripped) - len(w)].strip())
-                got = build(ep)
-                if got is not None:
-                    return got
+        # ("cüməyə qədər").
+        for words in surf:
+            m = len(words)
+            if m and m < n and [t.text for t in tokens[n - m:]] == words:
+                ep = endpoint(tokens[:n - m])
+                span = build(ep) if ep is not None else None
+                if span is not None:
+                    return span, ep[1]
         return None
 
-    def _until(ep):
-        if ep is not None and ep[0].end > now:
-            return DateSpan(now, ep[0].end), ep[1]
-        return None
-
-    def _since(ep):
-        if ep is not None and ep[0].start < now:
-            return DateSpan(ep[0].start, now), ep[1]
-        return None
-
-    return (_lead(until_words, _until) or _lead(since_words, _since)
-            or _trail(until_words, _until) or _trail(since_words, _since))
+    return (lead(until_surf, until_span) or lead(since_surf, since_span)
+            or trail(until_surf, until_span) or trail(since_surf, since_span))
 
 
-def _bare_weekday_endpoint(text, lang, anchor):
+def _bare_weekday_endpoint(sub, engine, anchor):
     """A lone weekday ("monday") as a range endpoint only: a day-wide span for
     the next occurrence on or after the anchor day.  A bare weekday never
     parses on its own (too ambiguous) -- it is only trusted inside a range,
-    where the framing supplies the intent."""
-    engine = _timespan_engine(lang)
-    toks = engine.tokenize(text.strip())
-    if len(toks) != 1 or toks[0].text not in engine.spec.weekdays:
+    where the framing supplies the intent.  Reads a *token slice*."""
+    if len(sub) != 1 or sub[0].text not in engine.spec.weekdays:
         return None
-    ahead = (engine.spec.weekdays[toks[0].text] - anchor.weekday()) % 7
+    ahead = (engine.spec.weekdays[sub[0].text] - anchor.weekday()) % 7
     day = (anchor.replace(hour=0, minute=0, second=0, microsecond=0)
            + timedelta(days=ahead))
     start = AstroDate.from_datetime(day)
     return DateSpan(start, start + timedelta(days=1)), ""
 
 
-def _trailing_meridiem(text, lang):
-    """The am/pm surface word ending ``text``, or None -- for propagating a
-    shared meridiem onto a bare range endpoint."""
-    engine = _timespan_engine(lang)
-    toks = engine.tokenize(text)
-    if toks and toks[-1].text in engine.spec.meridiems:
-        return toks[-1].raw
+def _trailing_meridiem(sub, spec):
+    """The am/pm token ending a slice, or None -- for propagating a shared
+    meridiem onto a bare range endpoint."""
+    if sub and sub[-1].text in spec.meridiems:
+        return sub[-1]
     return None
 
 
@@ -439,13 +523,39 @@ def extract_timespan(
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
-    rng = _extract_range(text, lang, anchor)
+    # tokenize ONCE: the tokenizer regex runs a single time and the resulting
+    # stream is the shared currency.  Range/open-range detection reads the
+    # *pre-fold* stream (connectors still visible); folding the whole stream for
+    # the single-span core, or a lone endpoint's slice, re-uses these tokens --
+    # the tokenizer is never run again on a substring.
+    raw = pretokens(text, engine.spec)
+    rng = _extract_range(text, raw, engine, anchor)
     if rng is not None:
         return rng
-    opn = _extract_open_range(text, lang, anchor)
+    opn = _extract_open_range(text, raw, engine, anchor)
     if opn is not None:
         return opn
-    tokens = engine.tokenize(text)
+    tokens = fold_tokens(raw, engine.spec, text)
+    core = _resolve_core(tokens, engine, anchor, enable, jurisdiction)
+    if core is None:
+        return None
+    span, consumed = core
+    remainder = render_remainder(text, [t for t in tokens
+                                        if t.index not in consumed])
+    return span, remainder
+
+
+def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None):
+    """The single-span resolution over an already-tokenized stream.
+
+    The whole of the old ``extract_timespan`` body *below* range detection --
+    match, resolve, the business-day / anchored-offset / ordinal-count /
+    week-of post-passes, and the lone date + clock composition -- returning
+    ``(span, consumed)`` where ``consumed`` is the set of claimed token
+    positions (the caller renders the remainder from the unconsumed ones).
+    Factored out so a range endpoint resolves through the *identical* path a
+    whole utterance does, from a re-based slice of the same stream.
+    """
     resolved = []
     for match in engine.matcher.match(tokens):
         # construction-group gate: a construction tagged ``"group": <g>`` in
@@ -488,14 +598,10 @@ def extract_timespan(
              if m.construction in DATE_CONSTRUCTIONS]
     if len(clocks) == 1 and len(dates) == 1:
         res = compose_date_clock(dates[0][1], clocks[0][1])
-        match = dates[0][0]
     else:
         # earliest match in text order wins the public result
-        match, res = min(resolved, key=lambda mr: mr[0].span[0])
-    consumed = set(res.consumed)
-    remainder = " ".join(t.raw for t in tokens
-                         if t.index not in consumed).strip()
-    return res.value, remainder
+        _, res = min(resolved, key=lambda mr: mr[0].span[0])
+    return res.value, set(res.consumed)
 
 
 from dataclasses import dataclass as _dataclass  # noqa: E402
@@ -564,8 +670,8 @@ def extract_candidates(
         seen.add(key)
         conf = _confidence(match, res, total, engine.spec)
         consumed = set(res.consumed)
-        remainder = " ".join(t.raw for t in tokens
-                             if t.index not in consumed).strip()
+        remainder = render_remainder(text, [t for t in tokens
+                                            if t.index not in consumed])
         # rank: confidence first, then earlier text position, then longer span
         rank = (-conf, match.span[0], -match.length)
         scored.append((rank, Candidate(res.value, remainder, conf,
