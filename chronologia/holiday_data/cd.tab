@@ -1,28 +1,32 @@
 # civil-holidays v1
 # jurisdiction: CD
-# source: https://en.wikipedia.org/wiki/Public_holidays_in_the_Democratic_Republic_of_the_Congo
-#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
-#   (github.com/vacanza/holidays), an independent open-source reference
-#   maintained against each country's official calendar. Primary names are
-#   the jurisdiction's own official-language rendering as vacanza publishes
-#   it; English lands only in translations.tab, never in this column.
-#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
-#   rule modelled here are captured as 'decree' (explicit per-year dates,
-#   basis tabulated) for 2024-2025, the same honest
-#   fallback id.tab/cn.tab already use for Imlek/Nyepi/shift days -- silent
-#   outside those years rather than fabricated. 调休-style workday-bridge
-#   ('moved from ...') entries are dropped as out of scope.
+# source: https://www.droitcongolais.info/files/143.03.23_Ordonnance-du-30-mars-2023_jours-feries.pdf
+#   PRIMARY-VERIFIED against Ordonnance n 23-042 du 30 mars 2023 fixant la
+#   liste des jours feries legaux en RDC (J.O. RDC, 15 mai 2023): Art. 1er
+#   fixes the 10 jours feries legaux (names below match the gazette exactly),
+#   Art. 2 the Sunday -> jour precedent (preceding-day) shift. Mirrored at
+#   papers/holidays/cd_ordonnance_23-042_jours_feries.pdf.
+#   The 2 August 'Genocost' (Journee commemorative du genocide congolais) is
+#   NOT in Ord. 23-042; it was made chomee et payee nationwide by the Council
+#   of Ministers decision of 12 July 2024 (observed as a paid holiday from
+#   2024). Kept as a fixed public row on that basis.
+#   Provenance: structure and dates originally derived from vacanza/holidays
+#   0.101 (MIT) (github.com/vacanza/holidays); names/dates now cross-checked
+#   against the gazette above. Primary names are the jurisdiction's own
+#   official-language rendering; English lands only in translations.tab.
+#   Movable holidays with no closed-form rule are captured as 'decree'
+#   (explicit per-year dates) for 2024-2025 rather than fabricated.
 # retrieved: 2026-07-22
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | Nouvel an                          | 1 1                 | public          |  |  |  |
-fixed         | Martyrs de l'indépendance          | 1 4                 | public          |  |  |  |
+fixed         | Journée des Martyrs de l'indépendance| 1 4               | public          |  |  |  |
 fixed         | Journée du héros national Laurent Désiré Kabila| 1 16                | public          |  |  |  |
 fixed         | Journée du héros national Patrice Emery Lumumba| 1 17                | public          |  |  |  |
 fixed         | Journée du combat de Simon Kimbangu et de la conscience africaine| 4 6                 | public          |  |  |  |
 fixed         | Fête du travail                    | 5 1                 | public          |  |  |  |
-fixed         | Journée de la Révolution et des Forces Armées| 5 17                | public          |  |  |  |
+fixed         | Journée des Forces armées          | 5 17                | public          |  |  |  |
 fixed         | Journée de l'indépendance          | 6 30                | public          |  |  |  |
 fixed         | Fête des parents                   | 8 1                 | public          |  |  |  |
 fixed         | Noël                               | 12 25               | public          |  |  |  |
