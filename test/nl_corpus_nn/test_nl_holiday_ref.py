@@ -1,4 +1,4 @@
-"""Holiday references (nl) (``holiday_ref``).
+"""Holiday references (nn) (``holiday_ref``).
 
 Anchor 2017-06-27. Western computus (independent table): Easter 2017 = 16 Apr,
 2018 = 1 Apr, 2020 = 12 Apr. Bare rule = next occurrence on or after the anchor.
@@ -8,18 +8,18 @@ import pytest
 from ._corpus import ANCHOR, AstroDate, parse, span, start, nomatch
 
 _BARE = [
-    ('eerste kerstdag', (2017, 12, 25)),
-    ('kerstavond', (2017, 12, 24)),
-    ('nieuwjaar', (2018, 1, 1)),
-    ('oudejaarsavond', (2017, 12, 31)),
-    ('driekoningen', (2018, 1, 6)),
-    ('allerheiligen', (2017, 11, 1)),
-    ('pasen', (2018, 4, 1)),
-    ('goede vrijdag', (2018, 3, 30)),
-    ('paasmaandag', (2018, 4, 2)),
-    ('pinksteren', (2018, 5, 20)),
+    ('juledag', (2017, 12, 25)),
+    ('julaftan', (2017, 12, 24)),
+    ('nyttårsdag', (2018, 1, 1)),
+    ('nyttårsaftan', (2017, 12, 31)),
+    ('heilagtrekongarsdag', (2018, 1, 6)),
+    ('allehelgensdag', (2017, 11, 1)),
+    ('påske', (2018, 4, 1)),
+    ('langfredag', (2018, 3, 30)),
+    ('andre påskedag', (2018, 4, 2)),
+    ('pinse', (2018, 5, 20)),
     ('halloween', (2017, 10, 31)),
-    ('valentijnsdag', (2018, 2, 14)),
+    ('valentinsdag', (2018, 2, 14)),
 ]
 
 @pytest.mark.parametrize("text,ymd", _BARE)
@@ -28,15 +28,15 @@ def test_bare_holiday(text, ymd):
     assert span(text).width == timedelta(days=1)
 
 @pytest.mark.parametrize("text,ymd", [
-    ('volgende kerst', (2017, 12, 25)),
-    ('vorige kerst', (2016, 12, 25)),
+    ('neste juledag', (2017, 12, 25)),
+    ('førre juledag', (2016, 12, 25)),
 ])
 def test_next_last(text, ymd):
     assert start(text) == AstroDate(*ymd)
 
 def test_explicit_year():
-    assert start('pasen 2020') == AstroDate(*(2020, 4, 12))
+    assert start('påske 2020') == AstroDate(*(2020, 4, 12))
 
-@pytest.mark.parametrize("text", ['een vergadering over de begroting', 'de prijs van rijst steeg'])
+@pytest.mark.parametrize("text", ['eit møte om budsjettet', 'prisen på ris steg'])
 def test_no_holiday_no_match(text):
     nomatch(text)

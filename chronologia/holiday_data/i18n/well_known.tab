@@ -415,3 +415,188 @@ eid_al_fitr        | he | עיד אל-פיטר
 ramadan            | he | רמדאן
 chinese_new_year   | he | ראש השנה הסיני
 nowruz             | he | נורוז
+#
+# ===== Danish =====
+new_year           | da | nytårsdag ;; nytår
+new_year_eve       | da | nytårsaften
+epiphany           | da | helligtrekonger ;; hellig tre konger
+carnival           | da | fastelavn
+good_friday        | da | langfredag
+easter             | da | påske ;; påskedag ;; påskesøndag
+easter_monday      | da | anden påskedag ;; påskemandag
+ascension          | da | kristi himmelfartsdag ;; kristi himmelfart
+pentecost          | da | pinse ;; pinsedag
+whit_monday        | da | anden pinsedag ;; pinsemandag
+all_saints         | da | allehelgen ;; alle helgens dag
+christmas_eve      | da | juleaften ;; juleaftensdag
+christmas          | da | jul ;; juledag ;; første juledag
+boxing_day         | da | anden juledag
+eid_al_fitr        | da | eid al-fitr
+eid_al_adha        | da | eid al-adha
+ramadan            | da | ramadan
+islamic_new_year   | da | islamisk nytår
+ashura             | da | ashura
+mawlid             | da | mawlid
+rosh_hashanah      | da | rosh hashana ;; jødisk nytår
+yom_kippur         | da | yom kippur
+passover           | da | pesach ;; jødisk påske
+hanukkah           | da | hanukka ;; chanukka
+chinese_new_year   | da | kinesisk nytår
+mid_autumn         | da | månefesten
+nowruz             | da | nowruz ;; persisk nytår
+diwali             | da | diwali
+vesak              | da | vesak
+halloween          | da | halloween
+valentines         | da | valentinsdag
+st_patricks        | da | sankt patricks dag
+thanksgiving       | da | thanksgiving
+mothers_day        | da | mors dag
+fathers_day        | da | fars dag
+#
+# ===== Swedish =====
+new_year           | sv | nyårsdagen ;; nyår
+new_year_eve       | sv | nyårsafton
+epiphany           | sv | trettondedag jul ;; trettondagen
+carnival           | sv | fastlagen
+good_friday        | sv | långfredagen
+easter             | sv | påsk ;; påskdagen
+easter_monday      | sv | annandag påsk
+ascension          | sv | kristi himmelsfärds dag ;; kristi himmelsfärd
+pentecost          | sv | pingst ;; pingstdagen
+whit_monday        | sv | annandag pingst
+all_saints         | sv | alla helgons dag
+christmas_eve      | sv | julafton
+christmas          | sv | jul ;; juldagen
+boxing_day         | sv | annandag jul
+eid_al_fitr        | sv | eid al-fitr
+eid_al_adha        | sv | eid al-adha
+ramadan            | sv | ramadan
+islamic_new_year   | sv | islamiskt nyår
+ashura             | sv | ashura
+mawlid             | sv | mawlid
+rosh_hashanah      | sv | rosh hashana ;; judiskt nyår
+yom_kippur         | sv | jom kippur
+passover           | sv | pesach ;; judisk påsk
+hanukkah           | sv | chanukka ;; hanukka
+chinese_new_year   | sv | kinesiskt nyår
+mid_autumn         | sv | månfestivalen
+nowruz             | sv | nowruz ;; persiskt nyår
+diwali             | sv | diwali
+vesak              | sv | vesak
+halloween          | sv | halloween
+valentines         | sv | alla hjärtans dag
+st_patricks        | sv | sankt patriks dag
+thanksgiving       | sv | thanksgiving
+mothers_day        | sv | mors dag
+fathers_day        | sv | fars dag
+#
+# ===== Norwegian Bokmål =====
+new_year           | nb | nyttårsdag ;; nyttår
+new_year_eve       | nb | nyttårsaften
+epiphany           | nb | helligtrekongersdag
+carnival           | nb | karneval
+good_friday        | nb | langfredag
+easter             | nb | påske ;; første påskedag ;; påskedag
+easter_monday      | nb | andre påskedag ;; annen påskedag
+ascension          | nb | kristi himmelfartsdag
+pentecost          | nb | pinse ;; første pinsedag
+whit_monday        | nb | andre pinsedag
+all_saints         | nb | allehelgensdag
+christmas_eve      | nb | julaften
+christmas          | nb | jul ;; første juledag ;; juledag
+boxing_day         | nb | andre juledag ;; annen juledag
+eid_al_fitr        | nb | eid al-fitr
+eid_al_adha        | nb | eid al-adha
+ramadan            | nb | ramadan
+islamic_new_year   | nb | islamsk nyttår
+ashura             | nb | ashura
+mawlid             | nb | mawlid
+rosh_hashanah      | nb | rosh hashana ;; jødisk nyttår
+yom_kippur         | nb | jom kippur
+passover           | nb | pesach ;; jødisk påske
+hanukkah           | nb | hanukka ;; chanukka
+chinese_new_year   | nb | kinesisk nyttår
+mid_autumn         | nb | månefesten
+nowruz             | nb | nowruz ;; persisk nyttår
+diwali             | nb | diwali
+vesak              | nb | vesak
+halloween          | nb | halloween
+valentines         | nb | valentinsdag
+st_patricks        | nb | sankt patricks dag
+thanksgiving       | nb | thanksgiving
+mothers_day        | nb | morsdag
+fathers_day        | nb | farsdag
+#
+# ===== Norwegian Nynorsk =====
+new_year           | nn | nyttårsdag ;; nyttår
+new_year_eve       | nn | nyttårsaftan
+epiphany           | nn | heilagtrekongarsdag
+carnival           | nn | karneval
+good_friday        | nn | langfredag
+easter             | nn | påske ;; fyrste påskedag ;; påskedag
+easter_monday      | nn | andre påskedag
+ascension          | nn | kristi himmelfartsdag
+pentecost          | nn | pinse ;; fyrste pinsedag
+whit_monday        | nn | andre pinsedag
+all_saints         | nn | allehelgensdag
+christmas_eve      | nn | julaftan
+christmas          | nn | jul ;; fyrste juledag ;; juledag
+boxing_day         | nn | andre juledag
+eid_al_fitr        | nn | eid al-fitr
+eid_al_adha        | nn | eid al-adha
+ramadan            | nn | ramadan
+islamic_new_year   | nn | islamsk nyttår
+ashura             | nn | ashura
+mawlid             | nn | mawlid
+rosh_hashanah      | nn | rosh hashana ;; jødisk nyttår
+yom_kippur         | nn | jom kippur
+passover           | nn | pesach ;; jødisk påske
+hanukkah           | nn | hanukka ;; chanukka
+chinese_new_year   | nn | kinesisk nyttår
+mid_autumn         | nn | månefesten
+nowruz             | nn | nowruz ;; persisk nyttår
+diwali             | nn | diwali
+vesak              | nn | vesak
+halloween          | nn | halloween
+valentines         | nn | valentinsdag
+st_patricks        | nn | sankt patricks dag
+thanksgiving       | nn | thanksgiving
+mothers_day        | nn | morsdag
+fathers_day        | nn | farsdag
+#
+# ===== West Frisian =====
+new_year           | fy | nijjiersdei ;; nijjier
+new_year_eve       | fy | âldjiersjûn
+epiphany           | fy | driekeningen
+carnival           | fy | karnaval
+good_friday        | fy | goedfreed
+easter             | fy | peaske ;; earste peaskedei
+easter_monday      | fy | twadde peaskedei
+ascension          | fy | himelfeartsdei
+pentecost          | fy | pinkster ;; earste pinksterdei
+whit_monday        | fy | twadde pinksterdei
+all_saints         | fy | allerheljen
+christmas_eve      | fy | krystjûn
+christmas          | fy | kryst ;; krysttiid ;; earste krystdei
+boxing_day         | fy | twadde krystdei
+eid_al_fitr        | fy | eid al-fitr
+eid_al_adha        | fy | eid al-adha
+ramadan            | fy | ramadan
+islamic_new_year   | fy | islamitysk nijjier
+ashura             | fy | asjûra
+mawlid             | fy | mawlid
+rosh_hashanah      | fy | rosj hasjana ;; joadsk nijjier
+yom_kippur         | fy | jom kipoer
+passover           | fy | pesach ;; joadske peaske
+hanukkah           | fy | chanoeka ;; hanoeka
+chinese_new_year   | fy | sineesk nijjier
+mid_autumn         | fy | maanfeest
+nowruz             | fy | nowruz ;; perzysk nijjier
+diwali             | fy | diwali
+vesak              | fy | vesak
+halloween          | fy | halloween
+valentines         | fy | falentynsdei
+st_patricks        | fy | sint-patricksdei
+thanksgiving       | fy | thanksgiving
+mothers_day        | fy | memmedei
+fathers_day        | fy | heitedei

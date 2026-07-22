@@ -1,4 +1,4 @@
-"""Holiday references (nl) (``holiday_ref``).
+"""Holiday references (fy) (``holiday_ref``).
 
 Anchor 2017-06-27. Western computus (independent table): Easter 2017 = 16 Apr,
 2018 = 1 Apr, 2020 = 12 Apr. Bare rule = next occurrence on or after the anchor.
@@ -8,18 +8,18 @@ import pytest
 from ._corpus import ANCHOR, AstroDate, parse, span, start, nomatch
 
 _BARE = [
-    ('eerste kerstdag', (2017, 12, 25)),
-    ('kerstavond', (2017, 12, 24)),
-    ('nieuwjaar', (2018, 1, 1)),
-    ('oudejaarsavond', (2017, 12, 31)),
-    ('driekoningen', (2018, 1, 6)),
-    ('allerheiligen', (2017, 11, 1)),
-    ('pasen', (2018, 4, 1)),
-    ('goede vrijdag', (2018, 3, 30)),
-    ('paasmaandag', (2018, 4, 2)),
-    ('pinksteren', (2018, 5, 20)),
+    ('earste krystdei', (2017, 12, 25)),
+    ('krystjûn', (2017, 12, 24)),
+    ('nijjiersdei', (2018, 1, 1)),
+    ('âldjiersjûn', (2017, 12, 31)),
+    ('driekeningen', (2018, 1, 6)),
+    ('allerheljen', (2017, 11, 1)),
+    ('peaske', (2018, 4, 1)),
+    ('goedfreed', (2018, 3, 30)),
+    ('twadde peaskedei', (2018, 4, 2)),
+    ('pinkster', (2018, 5, 20)),
     ('halloween', (2017, 10, 31)),
-    ('valentijnsdag', (2018, 2, 14)),
+    ('falentynsdei', (2018, 2, 14)),
 ]
 
 @pytest.mark.parametrize("text,ymd", _BARE)
@@ -28,15 +28,15 @@ def test_bare_holiday(text, ymd):
     assert span(text).width == timedelta(days=1)
 
 @pytest.mark.parametrize("text,ymd", [
-    ('volgende kerst', (2017, 12, 25)),
-    ('vorige kerst', (2016, 12, 25)),
+    ('kommende kryst', (2017, 12, 25)),
+    ('ôfrûne kryst', (2016, 12, 25)),
 ])
 def test_next_last(text, ymd):
     assert start(text) == AstroDate(*ymd)
 
 def test_explicit_year():
-    assert start('pasen 2020') == AstroDate(*(2020, 4, 12))
+    assert start('peaske 2020') == AstroDate(*(2020, 4, 12))
 
-@pytest.mark.parametrize("text", ['een vergadering over de begroting', 'de prijs van rijst steeg'])
+@pytest.mark.parametrize("text", ['in gearkomste oer it budzjet', 'de priis fan rys stiek'])
 def test_no_holiday_no_match(text):
     nomatch(text)
