@@ -102,7 +102,7 @@ which is exactly why they exist.
 |---|---|
 | Pull requests merged into this repository | 97 |
 | Tests | ~38,200 (plus 121 language-parity checks) |
-| Natural-language corpus cases | ~14,500 across 42 languages |
+| Natural-language corpus cases | ~14,500 across 40 languages |
 | Calendars | 17 (+ zone/timeline adapters) |
 | Holiday jurisdictions | 260 (247 countries/territories with subdivisions, 14 financial markets) · ~5,400 rules · every rule golded |
 | Holiday name translations | 1,446 rows |
