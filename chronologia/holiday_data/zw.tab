@@ -1,0 +1,38 @@
+# civil-holidays v1
+# jurisdiction: ZW
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Zimbabwe
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Movable/lunar/lunisolar/estimated-date holidays with no closed-form
+#   rule modelled here (including one-off observed-shift days that only
+#   coincide with an Easter offset by chance in a single year) are captured
+#   as 'decree' (explicit per-year dates, basis tabulated) for 2024-2025,
+#   the same honest fallback id.tab/cn.tab already use for Imlek/Nyepi/shift
+#   days -- silent outside those years rather than fabricated. 'easter' is
+#   used only where the offset from Easter Sunday is consistent across both
+#   2024 and 2025. Workday-bridge ('ponte' in Portuguese-language sources,
+#   the same phenomenon Russia/Uzbekistan's 'moved' shift days represent)
+#   entries are dropped as out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | New Year's Day                       | 1 1                  | public          |  |  |  |
+fixed         | Robert Gabriel Mugabe National Youth Day | 2 21                 | public          |  |  |  |
+decree        | Good Friday                          | 2024-3-29            | public          |  |  |  |
+easter        | Easter Saturday                      | -1                   | public          |  |  |  |
+easter        | Easter Monday                        | 1                    | public          |  |  |  |
+decree        | Independence Day                     | 2024-4-18            | public          |  |  |  |
+fixed         | Workers' Day                         | 5 1                  | public          |  |  |  |
+fixed         | Africa Day                           | 5 25                 | public          |  |  |  |
+decree        | Zimbabwe Heroes' Day                 | 2024-8-12 2025-8-11  | public          |  |  |  |
+decree        | Defense Forces Day                   | 2024-8-13 2025-8-12  | public          |  |  |  |
+fixed         | Unity Day                            | 12 22                | public          |  |  |  |
+decree        | Unity Day (observed)                 | 2024-12-23           | public          |  |  |  |
+fixed         | Christmas Day                        | 12 25                | public          |  |  |  |
+fixed         | Boxing Day                           | 12 26                | public          |  |  |  |
+decree        | Good Friday; Independence Day        | 2025-4-18            | public          |  |  |  |
+decree        | Africa Day (observed)                | 2025-5-26            | public          |  |  |  |
