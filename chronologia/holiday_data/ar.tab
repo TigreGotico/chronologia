@@ -69,3 +69,60 @@ decree | Día del Perdón (Iom Kipur) | 2025-10-2 | hebrew |  |
 decree | Día posterior a la culminación del ayuno (Id Al-Fitr) | 2024-4-10 2025-3-31 | islamic |  |
 decree | Día de la Fiesta del Sacrificio (Id Al-Adha) | 2024-6-16 2025-6-10 | islamic |  |
 decree | Año Nuevo Musulmán (Hégira) | 2024-7-7 2025-6-26 | islamic |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# AR-A
+fixed | Dia de la memoria del Guerrero de la Independencia y Gobernador de la Provincia de Salta General Don Martín Miguel de Güemes; Paso a la Inmortalidad del General Don Martín Miguel de Güemes | 6 17 | regional religious | AR-A |  |  | 
+fixed | Aniversario de la Batalla de Salta | 2 20 | regional | AR-A |  |  | 
+fixed | Dia de la memoria del Guerrero de la Independencia y Gobernador de la Provincia de Salta General Don Martín Miguel de Güemes | 6 17 | regional religious | AR-A |  |  | 
+decree | Festividades del Señor y de la Virgen del Milagro | 2024-9-13 2024-9-14 2024-9-15 2025-9-13 2025-9-14 2025-9-15 2026-9-13 2026-9-14 2026-9-15 2027-9-13 2027-9-14 2027-9-15 | regional religious | AR-A |  |  | 
+decree | Paso a la Inmortalidad del General Don Martín Miguel de Güemes | 2025-6-16 2026-6-15 2027-6-21 | regional | AR-A |  |  | 
+# AR-D
+fixed | Día de San Luis Rey de Francia | 8 25 | regional religious | AR-D |  |  | 
+fixed | Día de la Exaltación de la Santa Cruz | 5 3 | regional religious | AR-D |  |  | 
+# AR-E
+fixed | Día Nacional de la Memoria por la Verdad y la Justicia; Día Provincial de la Memoria por la Verdad y la Justicia | 3 24 | regional | AR-E |  |  | 
+fixed | San Miguel Arcángel | 9 29 | regional religious | AR-E |  |  | 
+fixed | Conmemoración de la Batalla de Caseros | 2 3 | regional | AR-E |  |  | 
+fixed | Día del Trabajador Estatal | 6 27 | regional | AR-E |  |  | 
+# AR-F
+fixed | Día Nacional de la Memoria por la Verdad y la Justicia; Día de la Memoria por la Verdad y la Justicia | 3 24 | regional | AR-F |  |  | 
+fixed | Día del Tinkunaco Riojano | 12 31 | regional | AR-F |  |  | 
+fixed | Día de la fundación de La Rioja | 5 20 | regional | AR-F |  |  | 
+fixed | Día del Aniversario del Fallecimiento de Monseñor Enrique Angelelli | 8 4 | regional | AR-F |  |  | 
+fixed | Día del Aniversario del Fallecimiento de Ángel Vicente Peñaloza | 11 12 | regional | AR-F |  |  | 
+fixed | Día del fallecimiento de Juan Facundo Quiroga | 2 16 | regional | AR-F |  |  | 
+fixed | Día de la Autonomía Provincial | 3 1 | regional | AR-F |  |  | 
+# AR-J
+fixed | Día del Maestro | 9 11 | regional | AR-J |  |  | 
+# AR-K
+fixed | Autonomía de Catamarca | 8 25 | regional | AR-K |  |  | 
+fixed | Día del Milagro | 9 7 | regional | AR-K |  |  | 
+fixed | Natalicio de Fray Mamerto Esquiú | 5 11 | regional | AR-K |  |  | 
+# AR-M
+fixed | Día del Apóstol Santiago | 7 25 | regional | AR-M |  |  | 
+# AR-T
+fixed | Aniversario de la Batalla de Tucumán | 9 24 | regional | AR-T |  |  | 
+# AR-U
+fixed | Tehuelches y Mapuches declaran lealtad a la bandera Argentina | 11 3 | regional | AR-U |  |  | 
+fixed | Plebiscito 1902 Trevelin | 4 30 | regional | AR-U |  |  | 
+fixed | Día del Petróleo Nacional | 12 13 | regional | AR-U |  |  | 
+fixed | Aniversario del arribo de los primeros colonizadores galeses | 7 28 | regional | AR-U |  |  | 
+# AR-V
+fixed | Día del Genocidio Selk'Nam | 11 25 | regional | AR-V |  |  | 
+fixed | Día de la Provincia de Tierra del Fuego, Antártida e Islas del Atlántico Sur | 6 1 | regional | AR-V |  |  | 
+# AR-W
+fixed | Día del Aniversario del Fallecimiento del General Manuel José Joaquín del Corazón de Jesús Belgrano; Paso a la Inmortalidad del General Don Manuel Belgrano | 6 20 | regional | AR-W |  |  | 
+fixed | Día del Aniversario del Fallecimiento del General José Francisco de San Martín; Paso a la Inmortalidad del General Don José de San Martín | 8 17 | regional religious | AR-W |  |  | 
+# AR-Y
+fixed | Autonomía Política de Jujuy; Día de la Soberanía Nacional | 11 18 | regional | AR-Y |  |  | 
+fixed | Día de la Pachamama | 8 1 | regional | AR-Y |  |  | 
+fixed | Día del Éxodo Jujeño | 8 23 | regional | AR-Y |  |  | 
+fixed | Autonomía Política de Jujuy | 11 18 | regional | AR-Y |  |  | 
+fixed | Día de la Virgen del Rosario de Río Blanco y Paypaya | 10 7 | regional religious | AR-Y |  |  | 
+fixed | Día Grande de Jujuy | 4 27 | regional | AR-Y |  |  | 
+decree | Día de la Soberanía Nacional | 2025-11-24 2026-11-23 2027-11-20 | regional | AR-Y |  |  | 
+# AR-Z
+fixed | Conmemoración a los obreros fusilados en las Huelgas Patagónicas | 12 7 | regional | AR-Z |  |  | 
+fixed | Homenaje al Patrono de la Provincia San Juan Bosco | 8 16 | regional religious | AR-Z |  |  | 
+fixed | Día del Aniversario del Fallecimiento del ex Presidente de la Nación Doctor Néstor Carlos Kirchner | 10 27 | regional | AR-Z |  |  | 

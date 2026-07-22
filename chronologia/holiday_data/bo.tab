@@ -35,3 +35,23 @@ fixed         | Día de la Independencia de Bolivia            | 8 6 | public   
 fixed         | Día de la Dignidad Nacional                   | 10 17 | public          |  |  |  |
 fixed         | Día de Todos los Difuntos                     | 11 2 | public          |  |  |  |
 fixed         | Navidad                                       | 12 25 | public          |  |  |  |
+
+# --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
+# BO-B
+fixed | Día del departamento de Beni | 11 18 | regional | BO-B |  |  | 
+# BO-C
+fixed | Día del departamento de Cochabamba | 9 14 | regional | BO-C |  |  | 
+# BO-H
+fixed | Día del departamento de Chuquisaca | 5 25 | regional | BO-H |  |  | 
+# BO-L
+fixed | Día del departamento de La Paz | 7 16 | regional | BO-L |  |  | 
+# BO-N
+fixed | Día del departamento de Pando | 10 11 | regional | BO-N |  |  | 
+# BO-O
+easter | Carnaval de Oruro | -51 | regional religious | BO-O |  |  | 
+# BO-P
+fixed | Día del departamento de Potosí | 11 10 | regional | BO-P |  |  | 
+# BO-S
+fixed | Día del departamento de Santa Cruz | 9 24 | regional religious | BO-S |  |  | 
+# BO-T
+fixed | La Tablada | 4 15 | regional | BO-T |  |  | 
