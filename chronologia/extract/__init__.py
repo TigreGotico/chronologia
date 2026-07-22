@@ -26,6 +26,8 @@ from chronologia.extract.model import (Conventions, Direction, LangSpec,
                                            Match, Resolution, SlotElement,
                                            SlotOrder, Token, TokenizerModes)
 from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.anchored import (apply_anchored_offset,
+                                              apply_ordinal_count)
 from chronologia.extract.pipeline import prematch_tokens
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_clock, _WEEK_START)
@@ -399,6 +401,17 @@ def extract_timespan(
         res = engine.resolver.resolve(match, anchor)
         if res is not None:
             resolved.append((match, res))
+    # anchored arithmetic: rewrite a date reference carrying a stranded
+    # "N units after"/"the weekday before" pre-amble (composition on the
+    # already-resolved reference), then synthesise any anchor-relative
+    # ordinal-count phrase ("3 fridays from now") the bare matcher missed.
+    resolved = apply_anchored_offset(tokens, resolved, engine.spec)
+    count = apply_ordinal_count(tokens, engine.spec, anchor)
+    if count is not None:
+        claimed = set(range(*count[0].span))
+        resolved = [(m, r) for m, r in resolved
+                    if not any(i in claimed for i in range(*m.span))]
+        resolved.append(count)
     if not resolved:
         return None
     # widen a date carrying the locale's "week of" marker to its whole week
