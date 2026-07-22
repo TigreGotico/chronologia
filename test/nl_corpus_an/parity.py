@@ -2,6 +2,10 @@
 """The an<->en semantic-parity block: each pair resolves to the SAME span."""
 
 PARITY = [
+    # rel_period / weekend / bare-weekday rollout
+    ('semana que viene', 'next week'),
+    ('mes que viene', 'next month'),
+    ('viernes', 'friday'),
     ('demán', 'tomorrow'),
     ('ayere', 'yesterday'),
     ('hue', 'today'),
