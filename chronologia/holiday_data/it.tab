@@ -14,9 +14,20 @@
 #   MUNICIPAL patron-saint days (giorno del Santo Patrono): each comune's patron
 #   feast is a recognised local holiday (L. 260/1949 art. 2). We ship the patron
 #   feast of the 20 regional capitals as municipal-category entries keyed to the
-#   capital's ISO 3166-2 province code — the well-documented civic patrons rather
-#   than the reference's 114 province rows (documented choice: depth-with-citation
-#   over breadth). Dates cited in papers/holidays/it_holidays.md.
+#   capital's ISO 3166-2 province code, independently verified against
+#   papers/holidays/it_holidays.md and https://it.wikipedia.org/wiki/Santi_patroni_cattolici_delle_città_capoluogo_di_provincia_italiane.
+# --- Remaining province patron days (derived from vacanza/holidays 0.101, MIT) ---
+#   The other 87 of vacanza's 107 ISO 3166-2 province subdivisions (their 114
+#   count also lists 7 duplicate "city" rows for Andria/Barletta/Cesena/Forlì/
+#   Pesaro/Trani/Urbino sharing the same holidays as their parent province code
+#   BT/FC/PU — omitted here as non-ISO duplicates). Structure (which saint, which
+#   date, fixed vs movable) was seeded from vacanza's holidays/countries/italy.py
+#   rather than independently re-verified per comune against a gazette, per the
+#   house rule that permits vacanza-derived data as long as it is flagged as
+#   such. Cross-reference: https://it.wikipedia.org/wiki/Santi_patroni_cattolici_delle_città_capoluogo_di_provincia_italiane.
+#   Where an existing capital-province row's holiday differs from vacanza's for
+#   the same code (e.g. IT-PG), the pre-existing independently-verified row is
+#   kept as-is and vacanza's differing entry is not force-merged in.
 # retrieved: 2026-07-21
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
@@ -56,3 +67,98 @@ fixed   | San Gerardo di Potenza       | 5 30  | municipal religious | IT-PZ |
 fixed   | San Vitaliano                | 7 16  | municipal religious | IT-CZ |
 fixed   | Santa Rosalia                | 7 15  | municipal religious | IT-PA |
 fixed   | San Saturnino di Cagliari    | 10 30 | municipal religious | IT-CA |
+fixed  | San Gerlando                          | 2 25   | municipal religious | IT-AG |
+fixed  | San Baudolino                         | 11 10  | municipal religious | IT-AL |
+fixed  | Sant'Emidio                           | 8 5    | municipal religious | IT-AP |
+fixed  | San Donato d'Arezzo                   | 8 7    | municipal religious | IT-AR |
+nth_weekday| San Secondo di Asti                   | 5 1 1  | municipal religious | IT-AT |
+fixed  | San Modestino                         | 2 14   | municipal religious | IT-AV |
+fixed  | Sant'Alessandro di Bergamo            | 8 26   | municipal religious | IT-BG |
+fixed  | Santo Stefano                         | 12 26  | municipal religious | IT-BI |
+fixed  | San Martino                           | 11 11  | municipal religious | IT-BL |
+fixed  | San Bartolomeo apostolo               | 8 24   | municipal religious | IT-BN |
+nth_weekday| San Teodoro d'Amasea e San Lorenzo da Brindisi| 9 1 6  | municipal religious | IT-BR |
+fixed  | Santi Faustino e Giovita              | 2 15   | municipal religious | IT-BS |
+fixed  | San Nicola Pellegrino                 | 5 3    | municipal religious | IT-BT |
+nth_weekday| San Riccardo di Andria                | 9 3 6  | municipal religious | IT-BT |
+fixed  | San Ruggero                           | 12 30  | municipal religious | IT-BT |
+easter | Lunedì di Pentecoste                  | 50     | municipal religious | IT-BZ |
+fixed  | San Sebastiano                        | 1 20   | municipal religious | IT-CE |
+fixed  | San Giustino di Chieti                | 5 11   | municipal religious | IT-CH |
+fixed  | San Michele Arcangelo                 | 9 29   | municipal religious | IT-CL |
+fixed  | San Michele Arcangelo                 | 9 29   | municipal religious | IT-CN |
+fixed  | Sant'Abbondio                         | 8 31   | municipal religious | IT-CO |
+fixed  | Sant'Omobono                          | 11 13  | municipal religious | IT-CR |
+fixed  | Madonna del Pilerio                   | 2 12   | municipal religious | IT-CS |
+fixed  | Sant'Agata                            | 2 5    | municipal religious | IT-CT |
+fixed  | Madonna della Visitazione             | 7 2    | municipal religious | IT-EN |
+fixed  | Madonna del Fuoco                     | 2 4    | municipal religious | IT-FC |
+fixed  | San Giovanni Battista                 | 6 24   | municipal religious | IT-FC |
+fixed  | San Giorgio                           | 4 23   | municipal religious | IT-FE |
+fixed  | Madonna dei Sette Veli                | 3 22   | municipal religious | IT-FG |
+fixed  | Maria Santissima Assunta              | 8 15   | municipal religious | IT-FM |
+fixed  | Maria Santissima Assunta              | 8 16   | municipal religious | IT-FM |
+fixed  | San Silverio                          | 6 20   | municipal religious | IT-FR |
+fixed  | Santi Ilario e Taziano                | 3 16   | municipal religious | IT-GO |
+fixed  | San Lorenzo                           | 8 10   | municipal religious | IT-GR |
+fixed  | San Leonardo da Porto Maurizio        | 11 26  | municipal religious | IT-IM |
+fixed  | San Pietro Celestino                  | 5 19   | municipal religious | IT-IS |
+fixed  | San Dionigi                           | 10 9   | municipal religious | IT-KR |
+fixed  | San Nicola                            | 12 6   | municipal religious | IT-LC |
+fixed  | Sant'Oronzo                           | 8 26   | municipal religious | IT-LE |
+fixed  | Santa Giulia                          | 5 22   | municipal religious | IT-LI |
+fixed  | San Bassiano                          | 1 19   | municipal religious | IT-LO |
+fixed  | San Marco Evangelista                 | 4 25   | municipal religious | IT-LT |
+fixed  | Santa Maria Goretti                   | 7 6    | municipal religious | IT-LT |
+fixed  | San Paolino di Lucca                  | 7 12   | municipal religious | IT-LU |
+fixed  | San Giovanni Battista                 | 6 24   | municipal religious | IT-MB |
+fixed  | San Giuliano l'ospitaliere            | 8 31   | municipal religious | IT-MC |
+fixed  | Madonna della Lettera                 | 6 3    | municipal religious | IT-ME |
+fixed  | Sant'Anselmo da Baggio                | 3 18   | municipal religious | IT-MN |
+fixed  | San Geminiano                         | 1 31   | municipal religious | IT-MO |
+fixed  | San Francesco d'Assisi                | 10 4   | municipal religious | IT-MS |
+fixed  | Madonna della Bruna                   | 7 2    | municipal religious | IT-MT |
+fixed  | San Gaudenzio                         | 1 22   | municipal religious | IT-NO |
+fixed  | Nostra Signora della Neve             | 8 5    | municipal religious | IT-NU |
+fixed  | Sant'Archelao                         | 2 13   | municipal religious | IT-OR |
+fixed  | Sant'Antonino di Piacenza             | 7 4    | municipal religious | IT-PC |
+fixed  | Sant'Antonio di Padova                | 6 13   | municipal religious | IT-PD |
+fixed  | San Cetteo                            | 10 10  | municipal religious | IT-PE |
+fixed  | San Ranieri                           | 6 17   | municipal religious | IT-PI |
+fixed  | San Marco Evangelista                 | 4 25   | municipal religious | IT-PN |
+fixed  | Madonna delle Grazie                  | 9 8    | municipal religious | IT-PN |
+fixed  | Santo Stefano                         | 12 26  | municipal religious | IT-PO |
+fixed  | Sant'Ilario di Poitiers               | 1 13   | municipal religious | IT-PR |
+fixed  | San Jacopo                            | 7 25   | municipal religious | IT-PT |
+fixed  | San Crescentino                       | 6 1    | municipal religious | IT-PU |
+fixed  | San Terenzio di Pesaro                | 9 24   | municipal religious | IT-PU |
+fixed  | San Siro                              | 12 9   | municipal religious | IT-PV |
+fixed  | Sant'Apollinare                       | 7 23   | municipal religious | IT-RA |
+fixed  | San Giorgio                           | 4 23   | municipal religious | IT-RC |
+fixed  | San Prospero Vescovo                  | 11 24  | municipal religious | IT-RE |
+fixed  | San Giorgio Martire                   | 4 23   | municipal religious | IT-RG |
+fixed  | San Giovanni Battista                 | 8 29   | municipal religious | IT-RG |
+fixed  | Santa Barbara                         | 12 4   | municipal religious | IT-RI |
+fixed  | San Gaudenzio                         | 10 14  | municipal religious | IT-RN |
+fixed  | San Bellino                           | 11 26  | municipal religious | IT-RO |
+fixed  | San Matteo Evangelista                | 9 21   | municipal religious | IT-SA |
+fixed  | Sant'Ansano                           | 12 1   | municipal religious | IT-SI |
+fixed  | San Gervasio e San Protasio           | 6 19   | municipal religious | IT-SO |
+fixed  | San Giuseppe                          | 3 19   | municipal religious | IT-SP |
+fixed  | Santa Lucia                           | 12 13  | municipal religious | IT-SR |
+fixed  | San Nicola                            | 12 6   | municipal religious | IT-SS |
+nth_weekday| San Ponziano                          | 5 2 6 4| municipal religious | IT-SU |
+fixed  | Nostra Signora della Misericordia     | 3 18   | municipal religious | IT-SV |
+fixed  | San Cataldo                           | 5 10   | municipal religious | IT-TA |
+fixed  | San Berardo da Pagliara               | 12 19  | municipal religious | IT-TE |
+fixed  | Sant'Alberto degli Abati              | 8 7    | municipal religious | IT-TP |
+fixed  | San Valentino                         | 2 14   | municipal religious | IT-TR |
+fixed  | San Liberale                          | 4 27   | municipal religious | IT-TV |
+fixed  | Santi Ermacora e Fortunato            | 7 12   | municipal religious | IT-UD |
+fixed  | San Vittore il Moro                   | 5 8    | municipal religious | IT-VA |
+fixed  | San Vittore il Moro                   | 5 8    | municipal religious | IT-VB |
+fixed  | Sant'Eusebio di Vercelli              | 8 1    | municipal religious | IT-VC |
+fixed  | Madonna di Monte Berico               | 9 8    | municipal religious | IT-VI |
+fixed  | San Zeno                              | 5 21   | municipal religious | IT-VR |
+fixed  | Santa Rosa da Viterbo                 | 9 4    | municipal religious | IT-VT |
+fixed  | San Leoluca                           | 3 1    | municipal religious | IT-VV |

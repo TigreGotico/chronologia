@@ -8,9 +8,25 @@
 #   (droit local d'Alsace-Moselle): Vendredi saint and Saint Étienne (26 Dec).
 #   Subdivisions: FR-57 = Moselle, FR-6AE = Alsace (Bas-Rhin + Haut-Rhin).
 #   France applies no weekend substitution.
+# --- Overseas subdivisions (derived from vacanza/holidays 0.101, MIT) ---
+#   FR-971 Guadeloupe, FR-972 Martinique, FR-973 Guyane, FR-974 La Réunion,
+#   FR-976 Mayotte, FR-BL Saint-Barthélemy, FR-MF Saint-Martin, FR-NC
+#   Nouvelle-Calédonie, FR-PF Polynésie Française, FR-WF Wallis-et-Futuna each
+#   add their own "Abolition de l'esclavage" (Abolition of Slavery) date per
+#   Loi n° 83-550 du 30 juin 1983 and Décret n°83-1003 du 23 novembre 1983,
+#   plus territory-specific commemorations. Structure/dates seeded from
+#   vacanza's holidays/countries/france.py rather than independently
+#   re-verified per territory against a gazette, per the house rule that
+#   permits vacanza-derived data as long as it is flagged as such.
+#   FR-PF's autonomy holiday was replaced by Matāri'i from 2025 onward (Décret
+#   du 30 avril 2024) — modelled with a ``valid`` range on each row so both
+#   the retired and current holiday resolve correctly by year. FR-PM
+#   (Saint-Pierre-et-Miquelon) and FR-TF (Terres australes françaises) have no
+#   subdivision-specific holidays in vacanza and so are omitted (national
+#   calendar only).
 # retrieved: 2026-07-21
 # categories: public|regional|municipal|religious|school
-# columns: kind | name | args | categories | subdiv | observed
+# columns: kind | name | args | categories | subdiv | observed | valid
 #
 # --- national (Code du travail art. L3133-1) ---
 fixed  | Jour de l'an          | 1 1   | public          |  |
@@ -30,3 +46,24 @@ easter | Vendredi saint | -2    | public religious | FR-57  |
 fixed  | Saint Étienne  | 12 26 | public religious | FR-57  |
 easter | Vendredi saint | -2    | public religious | FR-6AE |
 fixed  | Saint Étienne  | 12 26 | public religious | FR-6AE |
+easter | Vendredi saint          | -2    | public religious | FR-971 |
+easter | Mi-Carême                | -24   | public religious | FR-971 |
+fixed  | Abolition de l'esclavage | 5 27  | public          | FR-971 |
+fixed  | Fête de Victor Schoelcher | 7 21 | public          | FR-971 |
+easter | Vendredi saint          | -2    | public religious | FR-972 |
+fixed  | Abolition de l'esclavage | 5 22  | public          | FR-972 |
+fixed  | Fête de Victor Schoelcher | 7 21 | public          | FR-972 |
+fixed  | Abolition de l'esclavage | 6 10  | public          | FR-973 |
+fixed  | Abolition de l'esclavage | 12 20 | public          | FR-974 |
+fixed  | Abolition de l'esclavage | 4 27  | public          | FR-976 |
+fixed  | Abolition de l'esclavage | 10 9  | public          | FR-BL  |
+fixed  | Abolition de l'esclavage | 5 28  | public          | FR-MF  |
+fixed  | Fête de Victor Schoelcher | 7 21 | public          | FR-MF  |
+fixed  | Fête de la Citoyenneté   | 9 24  | public          | FR-NC  | | 2004-
+easter | Vendredi saint          | -2    | public religious | FR-PF  |
+fixed  | Arrivée de l'Évangile    | 3 5   | public religious | FR-PF  |
+fixed  | Fête de l'autonomie      | 6 29  | public          | FR-PF  | | 1985-2024
+fixed  | Matāri'i                 | 11 20 | public          | FR-PF  | | 2025-
+fixed  | Saint Pierre Chanel      | 4 28  | public religious | FR-WF |
+fixed  | Saints Pierre et Paul   | 6 29  | public religious | FR-WF |
+fixed  | Fête du Territoire       | 7 29  | public          | FR-WF |
