@@ -41,9 +41,6 @@ def test_not_a_quarter(text):
                     and (e.year - s.year) * 12 + (e.month - s.month) == 3)
 
 
-@pytest.mark.xfail(reason="Persian spelled ordinals (سوم) are not folded to a "
-                          "number by the shared numfold; engine follow-up",
-                   strict=True)
 def test_spelled_ordinal_pending():
     s, e = start_end('سه‌ماهه سوم')
     assert s == AstroDate(2017, 7, 1) and e == AstroDate(2017, 10, 1)

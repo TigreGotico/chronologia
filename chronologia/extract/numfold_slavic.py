@@ -113,11 +113,27 @@ def _make_fold(lang: str) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
     return fold
 
 
-fold_cs = _make_fold("cs")
-fold_sk = _make_fold("sk")
-fold_pl = _make_fold("pl")
-fold_ru = _make_fold("ru")
-fold_uk = _make_fold("uk")
-fold_hr = _make_fold("hr")
-fold_sl = _make_fold("sl")
-fold_bg = _make_fold("bg")
+from chronologia.extract.numfold_ordinals import with_ordinals
+
+# Spelled ordinals the *quarter* (and scoped-ordinal) construction reads in its
+# ``ORD`` slot.  cs/sk/pl/uk/hr expose ``pronounce_ordinal_<lang>`` (masculine
+# nominative, the form the masculine quarter word "kvartál"/"kwartał"/"квартал"
+# agrees with), so ``with_ordinals`` derives them from the model.  ru/sl carry
+# no ordinal pronouncer, and bg agrees with the *neuter* "тримесечие", so those
+# three supply an explicit closed table (a fact of the language).
+_ORD_RU = {"первый": 1, "второй": 2, "третий": 3, "четвёртый": 4,
+           "четвертый": 4, "пятый": 5, "шестой": 6, "седьмой": 7,
+           "восьмой": 8, "девятый": 9, "десятый": 10}
+_ORD_SL = {"prvi": 1, "drugi": 2, "tretji": 3, "četrti": 4, "peti": 5,
+           "šesti": 6, "sedmi": 7, "osmi": 8, "deveti": 9, "deseti": 10}
+_ORD_BG = {"първо": 1, "второ": 2, "трето": 3, "четвърто": 4, "пето": 5,
+           "шесто": 6, "седмо": 7, "осмо": 8, "девето": 9, "десето": 10}
+
+fold_cs = with_ordinals(_make_fold("cs"), "cs")
+fold_sk = with_ordinals(_make_fold("sk"), "sk")
+fold_pl = with_ordinals(_make_fold("pl"), "pl")
+fold_ru = with_ordinals(_make_fold("ru"), "ru", _ORD_RU)
+fold_uk = with_ordinals(_make_fold("uk"), "uk")
+fold_hr = with_ordinals(_make_fold("hr"), "hr")
+fold_sl = with_ordinals(_make_fold("sl"), "sl", _ORD_SL)
+fold_bg = with_ordinals(_make_fold("bg"), "bg", _ORD_BG)

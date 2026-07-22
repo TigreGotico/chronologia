@@ -1334,6 +1334,22 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
                      frozenset({"public", "religious", "orthodox"}),
                      "GR", "Δευτέρα του Πάσχα", "el"),
 
+    # ---- Orthodox (Julian-calendar) Christmas -----------------------------
+    # The Nativity fixed at Julian December 25, rendered on the civil calendar
+    # through the registered ``julian`` calendar (NOT a hard-coded Gregorian
+    # Jan 7): the Julian->Gregorian offset the calendar carries lands it on
+    # Gregorian Jan 7 for 1900-2099 and Jan 6 in early 1900 — the repo's own
+    # Julian arithmetic, never a magic constant. Basis ``exact``.
+    # Bound to churches on the Julian calendar (RU/BG/UA/RS/GE ...). Greece and
+    # the other New-Calendar churches keep Christmas on Gregorian Dec 25, i.e.
+    # the plain ``christmas`` key — el is deliberately NOT an alias here.
+    WellKnownHoliday("orthodox_christmas", CalendarDateRule("julian", 12, 25),
+                     frozenset({"public", "religious", "orthodox"}),
+                     "RU", "Рождество Христово", "ru"),
+    WellKnownHoliday("orthodox_christmas_eve", CalendarDateRule("julian", 12, 24),
+                     frozenset({"religious", "orthodox"}),
+                     "RU", "Рождественский сочельник", "ru"),
+
     # ---- Movable Islamic feasts (Umm al-Qura table, ``calendar_date``) ----
     # These resolve through the tabulated Umm al-Qura calendar (basis
     # ``tabulated``): inside its published range (AH 1356..1500, roughly

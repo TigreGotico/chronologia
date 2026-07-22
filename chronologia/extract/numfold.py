@@ -25,6 +25,7 @@ from typing import Tuple
 from ovos_number_parser.numbers_en import extract_number_en
 
 from chronologia.extract.model import Token
+from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
 
 # closed class of English number-words the fold may absorb (cardinals +
 # ordinals + a few colloquial multipliers).  "half"/"quarter" are excluded
@@ -306,6 +307,11 @@ fold_ca = _make_romance_fold("ca", set())
 # an: "martes" (Tuesday) must never be read as a number; the Romance factory
 # folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
 fold_an = _make_romance_fold("an", {"martes"})
+# Aragonese apocopated ordinals ("primer", "tercer") the NumberVocabulary lists
+# only in their full form ("primero", "tercero"); the apocope is the surface a
+# noun phrase attests ("o tercer trimestre").  numbers_an carries no ordinal
+# pronouncer, so this is an explicit closed table.
+fold_an = _with_ordinals(fold_an, "an", {"primer": 1, "tercer": 3})
 # mwl (Mirandese): the feminine ordinals segunda/terça/quarta/quinta/sesta
 # are weekday names (segunda-feira ...) and sábado is Saturday -- none may be
 # read as a number.
@@ -508,6 +514,9 @@ fold_kab = _lazy_germanic_fold(
 fold_fa = _lazy_germanic_fold(
     "ovos_number_parser.numbers_fa", "extract_number_fa",
     {"نیم", "ربع", "چارک", "هزار", "میلیون", "میلیارد"})
+# Persian spelled ordinals ("سوم" third) fold to their digit so the quarter's
+# ``ORD`` slot binds; from the model's ``pronounce_ordinal_fa``.
+fold_fa = _with_ordinals(fold_fa, "fa")
 
 
 

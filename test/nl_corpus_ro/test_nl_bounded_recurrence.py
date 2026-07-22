@@ -18,9 +18,6 @@ def test_bounded_recurrence(text, rrule, remainder):
     assert got[0].to_string() == rrule
     assert got[1] == remainder
 
-@pytest.mark.xfail(reason="Romanian for-duration marker 'timp de' is multiword; "
-                          "recurrence COUNT matcher only consumes single-token markers",
-                   strict=True)
 def test_for_duration_count():
     got = extract_recurrence("fiecare vineri timp de 6 săptămâni", "ro", anchor=ANCHOR)
     assert got[0].to_string() == 'FREQ=WEEKLY;COUNT=6;BYDAY=FR'

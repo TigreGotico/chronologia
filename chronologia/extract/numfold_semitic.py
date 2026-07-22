@@ -95,7 +95,17 @@ _AR_NUM = frozenset({
     "ثمانون", "ثمانين", "تسعون", "تسعين",
     "مئة", "مائة", "مئتان", "مئتين",
 })
-fold_ar = _make_fold(extract_number_ar, _AR_NUM)
+from chronologia.extract.numfold_ordinals import with_ordinals
+
+# Arabic ordinals carry the definite article ال ("الثالث" the-third), which is
+# exactly the surface the quarter phrase "الربع الثالث" attests; the model's
+# ``pronounce_ordinal_ar`` emits that article-prefixed form.  الأول (first) and
+# الثاني (second) are withheld: they are the ordinal component of the Levantine
+# month names (تشرين الأول = October, كانون الثاني = January), so folding them
+# would erase the month.  Consequently a *spelled* Arabic Q1/Q2 does not fold
+# (Q3/Q4 and the digit/Latin-Q forms do) -- a documented, narrow limitation.
+fold_ar = with_ordinals(_make_fold(extract_number_ar, _AR_NUM), "ar",
+                        exclude=("الأول", "الثاني"))
 
 
 # -- Hebrew ------------------------------------------------------------------
@@ -108,4 +118,10 @@ _HE_NUM = frozenset({
     "עשר", "עשרה", "עשרים", "שלושים", "ארבעים", "חמישים",
     "שישים", "שבעים", "שמונים", "תשעים", "מאה", "מאתיים",
 })
+# Hebrew ordinals are NOT folded: the ordinal surfaces שני / שלישי / רביעי /
+# חמישי / שישי (2..6) are exactly the weekday names (Monday..Friday, from
+# יום שני ...), and ראשון (1) is Sunday.  Folding any of them to a digit would
+# destroy bare-weekday, recurrence and offset parsing.  Hebrew's spelled
+# ordinal quarter ("רבעון שלישי") therefore stays a documented xfail -- the
+# collision is total, so it cannot fold at the token level.
 fold_he = _make_fold(extract_number_he, _HE_NUM)

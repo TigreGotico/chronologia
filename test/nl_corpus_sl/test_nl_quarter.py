@@ -35,9 +35,6 @@ def test_not_a_quarter(text):
                     and (e.year - s.year) * 12 + (e.month - s.month) == 3)
 
 
-@pytest.mark.xfail(reason="ordinal-word quarter unsupported: sl number model "
-                          "does not fold ordinal words to a numeric ORD",
-                   strict=True)
 def test_ordinal_word_quarter():
     s, e = start_end("tretji kvartal 2026")
     assert s == AstroDate(2026, 7, 1) and e == AstroDate(2026, 10, 1)

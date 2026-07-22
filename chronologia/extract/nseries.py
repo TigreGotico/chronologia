@@ -400,39 +400,104 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
     return rec, consumed
 
 
+def _marker_runs(tokens, surfaces, consumed):
+    """Every ``(i, j)`` token span (unconsumed, contiguous) whose words are a
+    marker ``surface``.  A surface may be **multi-word** ("timp de",
+    "в продължение на", "po dobu"): it is compared word-for-word against the
+    token stream.  Longest surface first, so a multi-word marker wins over a
+    single-word prefix of it."""
+    n = len(tokens)
+    runs = []
+    for surf in sorted(surfaces, key=lambda s: -len(s.split())):
+        words = surf.lower().split()
+        k = len(words)
+        if not k:
+            continue
+        for i in range(n - k + 1):
+            span = range(i, i + k)
+            if any(x in consumed for x in span):
+                continue
+            if [tokens[x].text for x in span] == words:
+                runs.append((i, i + k))
+    return runs
+
+
+def _bound_payload(rec, consumed, tokens, marker, lang, anchor, grounder):
+    """Ground a bound whose ``marker`` (a ``(i, j)`` token span) sits either
+    *before* its payload (a leading marker: "until <date>", "timp de
+    <duration>") or *after* it (a postposed marker: Estonian "<duration>
+    jooksul", Frisian "<duration> lang").
+
+    The engine tries the leading reading first, then the postposed one, and
+    keeps whichever the ``grounder`` (date for UNTIL, duration for COUNT)
+    accepts.  Returns ``(new_rec, extra_consumed)`` or ``None``."""
+    i, j = marker
+    n = len(tokens)
+
+    # leading: payload is the unconsumed run to the right of the marker
+    lo, hi = j, n
+    while lo < hi and lo in consumed:
+        lo += 1
+    tail = " ".join(t.raw for t in tokens[lo:hi]
+                    if t.index not in consumed)
+    hit = grounder(rec, tail.strip()) if tail.strip() else None
+    if hit is not None:
+        return hit, set(range(i, n))
+
+    # postposed: payload is the unconsumed run to the left of the marker
+    hi2 = i
+    lo2 = hi2
+    while lo2 - 1 >= 0 and (lo2 - 1) not in consumed:
+        lo2 -= 1
+    head = " ".join(t.raw for t in tokens[lo2:hi2]
+                    if t.index not in consumed)
+    hit = grounder(rec, head.strip()) if head.strip() else None
+    if hit is not None:
+        return hit, set(range(lo2, j))
+    return None
+
+
 def _apply_bounds(rec, consumed, ctx, lang, anchor):
     """Fold a trailing ``until <date>`` (-> UNTIL) or ``for <duration>``
     (-> COUNT) bound onto ``rec``, extending ``consumed`` over the words it
     reads.  A bound the engine cannot ground (an unparseable date, a
     calendar-ambiguous duration under a MONTHLY/YEARLY rule) is left untouched
-    in the remainder rather than guessed."""
+    in the remainder rather than guessed.
+
+    Both markers may be **multi-word** ("timp de", "в продължение на") and may
+    be **postposed** -- the marker following the date/duration rather than
+    leading it (Finnish "asti"/"saakka", Estonian "jooksul", Frisian "lang").
+    Whether a language's marker leads or trails is a fact of that language's
+    surface; the engine tries the leading reading first, then the postposed
+    one, per marker."""
     from dataclasses import replace as _replace
+    from chronologia.extract import extract_timespan
     tokens = ctx.tokens
-    n = len(tokens)
 
-    def _tail(i):
-        return " ".join(t.raw for t in tokens[i + 1:])
+    def _ground_until(rec, text):
+        got = extract_timespan(text, lang, anchor=anchor)
+        if got is None:
+            return None
+        return _replace(rec, until=got[0].start)
 
-    for i in range(n):
-        if i in consumed or tokens[i].text not in ctx.until_words:
-            continue
-        from chronologia.extract import extract_timespan
-        got = extract_timespan(_tail(i), lang, anchor=anchor)
-        if got is not None:
-            rec = _replace(rec, until=got[0].start)
-            consumed = consumed | set(range(i, n))
-        break
+    def _ground_count(rec, text):
+        dur = extract_duration(text, lang)
+        if dur is None:
+            return None
+        count = _count_from_duration(rec.freq, dur[0])
+        if count is None:
+            return None
+        return _replace(rec, count=count)
 
-    for i in range(n):
-        if i in consumed or tokens[i].text not in ctx.for_words:
-            continue
-        dur = extract_duration(_tail(i), lang)
-        if dur is not None:
-            count = _count_from_duration(rec.freq, dur[0])
-            if count is not None:
-                rec = _replace(rec, count=count)
-                consumed = consumed | set(range(i, n))
-        break
+    for surfaces, grounder in ((ctx.until_words, _ground_until),
+                               (ctx.for_words, _ground_count)):
+        for marker in _marker_runs(tokens, surfaces, consumed):
+            got = _bound_payload(rec, consumed, tokens, marker, lang, anchor,
+                                 grounder)
+            if got is not None:
+                rec, extra = got
+                consumed = consumed | extra
+                break
 
     return rec, consumed
 

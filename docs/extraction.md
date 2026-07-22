@@ -108,6 +108,17 @@ per-language range markers, so "bis freitag" / "seit 2010" (de), "jusqu'à
 vendredi" / "depuis 2010" (fr), "até sexta-feira" / "desde 2010" (pt) and
 "hasta viernes" / "desde 2010" (es) behave the same way.
 
+A marker may **lead** its date or **trail** it. Many languages postpose the
+bound word — Finnish "perjantai asti" / "2020 saakka", Turkish "2020 kadar",
+Basque "ostirala arte", Azerbaijani "2020 qədər". The engine tries the leading
+reading first, then the postposed one, so a trailing marker resolves natively;
+whether a language leads or trails is simply which surface its `marker_until`
+vocabulary lists. (Basque `arte` is genuinely ambiguous — it means both "until"
+and "art" — so it only reads as the range marker when the head parses as a date
+endpoint; a bare "arte" is never a range. Turkish/Azerbaijani add a dative
+suffix to the date noun in careful speech, which is a downstream morphology
+concern; the engine reads the bare head.)
+
 ## Deep time and other reckonings
 
 Because the extractor resolves against the full reckoning core, it reaches
@@ -540,6 +551,14 @@ date mechanism the library already models — never re-derived, never invented:
   calendar (the March-equinox new year). Basis `exact`.
 * **Orthodox Easter and its cycle**: the Julian computus rendered on the civil
   calendar (`julian_gregorian_date`) — the same engine as the Western one.
+* **Orthodox (Julian) Christmas** and its eve: the Nativity fixed at Julian
+  December 25 (and 24), resolved through the registered `julian` calendar — so
+  the Julian→Gregorian offset the calendar already carries lands it on Gregorian
+  Jan 7 (Jan 6 for the eve) for 1900–2099, never a hard-coded constant. Bound to
+  the Julian-calendar churches (ru "рождество христово", bg "коледа", uk
+  "різдво"). Greece and the other New-Calendar churches keep Christmas on
+  Gregorian Dec 25 — the plain `christmas` key — so el is deliberately *not*
+  aliased to the Julian one.
 * **Decree-tabulated feasts** (Diwali, Vesak): no closed-form calendar is
   modelled here, so — honestly — they carry explicit published per-year dates
   (a *decree table*). Outside the listed years the reference simply does not
@@ -1124,6 +1143,23 @@ assert extract_recurrence("daily at 9", "en")[0].to_string() == (
     "FREQ=DAILY;BYHOUR=9")
 assert extract_recurrence("every wednesday at 9:30", "en")[0].to_string() == (
     "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9;BYMINUTE=30")
+```
+
+**A trailing bound** folds onto the rule: an `until` marker plus a date sets
+`UNTIL` ("every friday until june"); a `for` marker plus a fixed-width duration
+sets `COUNT` — the number of occurrences the duration spans at the rule's
+frequency ("daily for two weeks" → `COUNT=14`, "every monday for 6 weeks" →
+`COUNT=6`). Both markers may be **multi-word** and **postposed** — the marker
+following the date/duration rather than leading it — because languages express
+these bounds either way:
+
+```python
+# multi-word leading for-marker (Romanian "timp de", Russian "в течение")
+assert extract_recurrence("fiecare vineri timp de 6 săptămâni", "ro")[0].to_string() == (
+    "FREQ=WEEKLY;COUNT=6;BYDAY=FR")
+# postposed for-marker (Estonian "<duration> jooksul")
+assert extract_recurrence("iga esmaspäev 6 nädala jooksul", "et")[0].to_string() == (
+    "FREQ=WEEKLY;COUNT=6;BYDAY=MO")
 ```
 
 **Holidays** recur too. A *fixed*-date holiday becomes a real yearly rule; a
