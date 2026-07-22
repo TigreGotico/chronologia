@@ -191,6 +191,8 @@ boxing_day      | gl | santo estevo
 orthodox_easter    | en | orthodox easter ;; greek easter
 orthodox_good_friday | en | orthodox good friday
 orthodox_easter_monday | en | orthodox easter monday
+orthodox_christmas | en | orthodox christmas ;; russian christmas
+orthodox_christmas_eve | en | orthodox christmas eve
 eid_al_fitr        | en | eid ;; eid al-fitr ;; eid ul-fitr ;; id al-fitr
 eid_al_adha        | en | eid al-adha ;; eid ul-adha ;; bakrid
 ramadan            | en | ramadan ;; start of ramadan
@@ -814,6 +816,8 @@ new_year_eve       | bg | навечерие на нова година
 orthodox_easter    | bg | великден ;; възкресение
 orthodox_good_friday | bg | разпети петък ;; велики петък
 orthodox_easter_monday | bg | велики понеделник
+orthodox_christmas | bg | коледа ;; рождество христово ;; рождество
+orthodox_christmas_eve | bg | бъдни вечер
 halloween          | bg | хелоуин
 valentines         | bg | свети валентин ;; ден на влюбените
 chinese_new_year   | bg | китайска нова година
@@ -870,6 +874,8 @@ new_year_eve       | ru | канун нового года
 orthodox_easter    | ru | пасха ;; светлое христово воскресение
 orthodox_good_friday | ru | страстная пятница ;; великая пятница
 orthodox_easter_monday | ru | светлый понедельник
+orthodox_christmas | ru | рождество христово ;; рождество
+orthodox_christmas_eve | ru | рождественский сочельник ;; сочельник
 halloween          | ru | хэллоуин ;; хеллоуин
 valentines         | ru | день святого валентина ;; день влюблённых
 chinese_new_year   | ru | китайский новый год
@@ -912,6 +918,8 @@ new_year_eve       | uk | переддень нового року
 orthodox_easter    | uk | великдень ;; пасха
 orthodox_good_friday | uk | страсна п'ятниця ;; велика п'ятниця
 orthodox_easter_monday | uk | світлий понеділок
+orthodox_christmas | uk | різдво ;; різдво христове
+orthodox_christmas_eve | uk | святвечір
 halloween          | uk | гелловін ;; хелоуїн
 valentines         | uk | день святого валентина ;; день закоханих
 chinese_new_year   | uk | китайський новий рік

@@ -44,9 +44,6 @@ def test_not_a_quarter(text):
                     and (e.year - s.year) * 12 + (e.month - s.month) == 3)
 
 
-@pytest.mark.xfail(reason="Aragonese spelled ordinals (tercer) are not folded "
-                          "to a number by fold_an; engine follow-up",
-                   strict=True)
 def test_spelled_ordinal_pending():
     s, e = start_end('o tercer trimestre')
     assert s == AstroDate(2018, 7, 1) and e == AstroDate(2018, 10, 1)

@@ -14,9 +14,6 @@ def test_bounded_recurrence(text, rrule, remainder):
     assert got[0].to_string() == rrule
     assert got[1] == remainder
 
-@pytest.mark.xfail(reason="fy for-duration marker is multiword/absent; recurrence "
-                          "COUNT matcher only consumes single-token for-markers",
-                   strict=True)
 def test_for_duration_count():
     got = extract_recurrence('elke freed foar 6 wiken', "fy", anchor=ANCHOR)
     assert got[0].to_string() == "FREQ=WEEKLY;COUNT=6;BYDAY=FR"

@@ -18,9 +18,6 @@ def test_bounded_recurrence(text, rrule):
     assert got[1] == ""
 
 
-@pytest.mark.xfail(reason="multiword for-marker 'v obdobju' is not consumed as a "
-                          "recurrence bound, so COUNT does not fire (sl)",
-                   strict=True)
 def test_count_recurrence():
     got = extract_recurrence("vsak ponedeljek v obdobju 6 tednov", "sl", anchor=ANCHOR)
     assert got is not None and got[0].to_string() == "FREQ=WEEKLY;COUNT=6;BYDAY=MO"

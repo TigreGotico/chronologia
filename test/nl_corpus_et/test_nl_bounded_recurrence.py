@@ -1,7 +1,7 @@
 """Bounded recurrence (et): base rules plus an until-date (-> UNTIL) via the
-leading "kuni". A for-duration COUNT bound would need a leading for-word;
-Estonian marks it with the postposed "jooksul", which the engine's leading
-scan does not reach, so COUNT is a documented limitation here."""
+leading "kuni", and a for-duration COUNT via the **postposed** "jooksul"
+("<duration> jooksul" = for <duration>) -- the engine tries a leading marker
+then a postposed one, so Estonian's trailing bound word resolves natively."""
 from datetime import datetime
 import pytest
 from chronologia.extract import extract_recurrence
@@ -22,6 +22,13 @@ def test_bounded_recurrence(text, rrule, remainder):
     assert got is not None, f"{text!r} did not parse"
     assert got[0].to_string() == rrule
     assert got[1] == remainder
+
+def test_postposed_count_recurrence():
+    got = extract_recurrence("iga esmaspäev 6 nädala jooksul", "et", anchor=A)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=WEEKLY;COUNT=6;BYDAY=MO"
+    assert got[1] == ""
+
 
 @pytest.mark.parametrize("text", ["reede", "5 juuni"])
 def test_not_a_recurrence(text):

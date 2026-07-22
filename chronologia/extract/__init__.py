@@ -278,17 +278,42 @@ def _extract_open_range(text, lang, anchor):
         return (extract_timespan(rest, lang, anchor)
                 or _bare_weekday_endpoint(rest, lang, anchor))
 
-    for w in sorted(until_words, key=len, reverse=True):
-        if w and lowered.startswith(w.lower() + " "):
-            ep = _endpoint(stripped[len(w):].strip())
-            if ep is not None and ep[0].end > now:
-                return DateSpan(now, ep[0].end), ep[1]
-    for w in sorted(since_words, key=len, reverse=True):
-        if w and lowered.startswith(w.lower() + " "):
-            ep = _endpoint(stripped[len(w):].strip())
-            if ep is not None and ep[0].start < now:
-                return DateSpan(ep[0].start, now), ep[1]
-    return None
+    def _lead(words, build):
+        for w in sorted(words, key=len, reverse=True):
+            if w and lowered.startswith(w.lower() + " "):
+                ep = _endpoint(stripped[len(w):].strip())
+                got = build(ep)
+                if got is not None:
+                    return got
+        return None
+
+    def _trail(words, build):
+        # a **postposed** marker -- the bound word trailing its date, the
+        # native order for Finnish ("perjantaihin asti"), Turkish
+        # ("cumaya kadar"), Basque ("ostirala arte"), Azerbaijani
+        # ("cüməyə qədər").  The marker follows the date, so it is stripped
+        # from the end and the head parses as the endpoint.
+        for w in sorted(words, key=len, reverse=True):
+            wl = w.lower()
+            if wl and lowered.endswith(" " + wl):
+                ep = _endpoint(stripped[: len(stripped) - len(w)].strip())
+                got = build(ep)
+                if got is not None:
+                    return got
+        return None
+
+    def _until(ep):
+        if ep is not None and ep[0].end > now:
+            return DateSpan(now, ep[0].end), ep[1]
+        return None
+
+    def _since(ep):
+        if ep is not None and ep[0].start < now:
+            return DateSpan(ep[0].start, now), ep[1]
+        return None
+
+    return (_lead(until_words, _until) or _lead(since_words, _since)
+            or _trail(until_words, _until) or _trail(since_words, _since))
 
 
 def _bare_weekday_endpoint(text, lang, anchor):
