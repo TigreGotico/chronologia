@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+"""The ms<->en semantic-parity block: each pair resolves to the SAME span."""
+
+PARITY = [
+    ('esok', 'tomorrow'),
+    ('semalam', 'yesterday'),
+    ('hari ini', 'today'),
+    ('lusa', 'day after tomorrow'),
+    ('2 minggu lagi', 'in 2 weeks'),
+    ('2 minggu lepas', '2 weeks ago'),
+    ('3 hari lagi', 'in 3 days'),
+    ('5 hari lepas', '5 days ago'),
+    ('5 tahun lagi', 'in 5 years'),
+    ('10 tahun lepas', '10 years ago'),
+    ('6 bulan lagi', 'in 6 months'),
+    ('2 jam lagi', 'in 2 hours'),
+    ('15 minit lagi', 'in 15 minutes'),
+    ('17 julai 2026', 'july 17 2026'),
+    ('20 julai 1969', 'july 20 1969'),
+    ('1 januari 2000', 'january 1 2000'),
+    ('3 mac 2027', 'march 3 2027'),
+    ('jun 2027', 'june 2027'),
+    ('januari 2020', 'january 2020'),
+    ('1999', '1999'),
+    ('2020', '2020'),
+    ('15:30', '15:30'),
+    ('selasa depan', 'next tuesday'),
+    ('jumaat lepas', 'last friday'),
+    ('tengah hari', 'noon'),
+    ('tengah malam', 'midnight'),
+    ('44 sm', '44 bc'),
+    ('1492 m', '1492 ad'),
+]
