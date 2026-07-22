@@ -1,0 +1,43 @@
+# civil-holidays v1
+# jurisdiction: AZ
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Azerbaijan
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Ramazan/Qurban Bayrami (Hijri) have no closed-form rule modelled here
+#   and are captured as 'decree' (explicit per-year dates, basis
+#   tabulated) for 2024-2025. Generic "İstirahət günü" (substituted rest
+#   day) rows and every "(müşahidə olunur)" ("observed"/shifted) variant
+#   are dropped as workday-bridge artifacts out of scope, matching house
+#   rules. Presidential/municipal election days are kept as one-off decree
+#   rows, matching the precedent already set by South Korea's National
+#   Assembly election day. Novruz bayramı's five fixed calendar days are
+#   split into one row per day, numbered "(1)".."(5)".
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Yeni il bayramı (1)                    | 1 1 | public          |  |  |  |
+fixed         | Yeni il bayramı (2)                    | 1 2 | public          |  |  |  |
+fixed         | Ümumxalq hüzn günü                     | 1 20 | public          |  |  |  |
+decree        | Prezidenti seçkiləri                    | 2024-2-7            | public          |  |  |  |
+fixed         | Qadınlar günü                         | 3 8 | public          |  |  |  |
+fixed         | Novruz bayramı (1)                     | 3 20 | public          |  |  |  |
+fixed         | Novruz bayramı (2)                     | 3 21 | public          |  |  |  |
+fixed         | Novruz bayramı (3)                     | 3 22 | public          |  |  |  |
+fixed         | Novruz bayramı (4)                     | 3 23 | public          |  |  |  |
+fixed         | Novruz bayramı (5)                     | 3 24 | public          |  |  |  |
+decree        | Ramazan bayrami (1)                    | 2024-4-10 2025-3-30 | public          |  |  |  |
+decree        | Ramazan bayrami (2)                    | 2024-4-11 2025-3-31 | public          |  |  |  |
+fixed         | Faşizm üzərində qələbə günü               | 5 9 | public          |  |  |  |
+fixed         | Müstəqillik Günü                       | 5 28 | public          |  |  |  |
+fixed         | Azərbaycan xalqının milli qurtuluş günü    | 6 15 | public          |  |  |  |
+decree        | Qurban bayrami (1)                     | 2024-6-16 2025-6-6  | public          |  |  |  |
+decree        | Qurban bayrami (2)                     | 2024-6-17 2025-6-7  | public          |  |  |  |
+fixed         | Azərbaycan Respublikasının Silahlı Qüvvələri günü | 6 26 | public          |  |  |  |
+decree        | Bələdiyyə seçkiləri                     | 2025-1-29           | public          |  |  |  |
+fixed         | Zəfər Günü                            | 11 8 | public          |  |  |  |
+fixed         | Azərbaycan Respublikasının Dövlət bayrağı günü | 11 9 | public          |  |  |  |
+fixed         | Dünya azərbaycanlılarının həmrəyliyi günü  | 12 31 | public          |  |  |  |

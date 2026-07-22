@@ -1,0 +1,33 @@
+# civil-holidays v1
+# jurisdiction: BG
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Bulgaria
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column. The
+#   Orthodox Easter cluster (Велики петък/Велика събота/Великден) uses
+#   chronologia's own julian_gregorian_date easter() method, whose -2/-1/0
+#   offsets were independently confirmed to hold in both 2024 and 2025.
+#   "(почивен ден)"/"Неприсъствен ден" (generic day-off/observed) rows are
+#   dropped as workday-bridge artifacts out of scope; the one-off 2024
+#   "Великден; Гергьовден" coincidence is split so Гергьовден keeps its
+#   own fixed 5/6 row independent of the movable Easter Monday it happened
+#   to fall on that year.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Нова година                           | 1 1 | public          |  |  |  |
+fixed         | Ден на Освобождението на България от османско иго | 3 3 | public          |  |  |  |
+fixed         | Ден на труда и на международната работническа солидарност | 5 1 | public          |  |  |  |
+easter        | Велики петък                          | -2 julian_gregorian_date | public          |  |  |  |
+easter        | Велика събота                         | -1 julian_gregorian_date | public          |  |  |  |
+easter        | Великден                             | 0 julian_gregorian_date | public          |  |  |  |
+fixed         | Гергьовден, Ден на храбростта и Българската армия | 5 6 | public          |  |  |  |
+fixed         | Ден на светите братя Кирил и Методий, на българската азбука, просвета и култура и на славянската книжовност | 5 24 | public          |  |  |  |
+fixed         | Ден на Съединението                     | 9 6 | public          |  |  |  |
+fixed         | Ден на Независимостта на България         | 9 22 | public          |  |  |  |
+fixed         | Бъдни вечер                          | 12 24 | public          |  |  |  |
+fixed         | Рождество Христово (1)                  | 12 25 | public          |  |  |  |
+fixed         | Рождество Христово (2)                  | 12 26 | public          |  |  |  |

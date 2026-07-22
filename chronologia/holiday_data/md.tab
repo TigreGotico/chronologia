@@ -1,0 +1,29 @@
+# civil-holidays v1
+# jurisdiction: MD
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Moldova
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column. The
+#   Orthodox Easter cluster (Paștele Sunday/Monday and Paștele blajinilor)
+#   uses chronologia's own julian_gregorian_date easter() method, whose
+#   0/+1/+8 offsets were independently confirmed to hold in both 2024 and
+#   2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Anul Nou                             | 1 1 | public          |  |  |  |
+fixed         | Nașterea lui Iisus Hristos (Crăciunul pe stil vechi) (1) | 1 7 | public          |  |  |  |
+fixed         | Nașterea lui Iisus Hristos (Crăciunul pe stil vechi) (2) | 1 8 | public          |  |  |  |
+fixed         | Ziua internatională a femeii             | 3 8 | public          |  |  |  |
+easter        | Paștele (1)                          | 0 julian_gregorian_date | public          |  |  |  |
+easter        | Paștele (2)                          | 1 julian_gregorian_date | public          |  |  |  |
+easter        | Paștele blajinilor                     | 8 julian_gregorian_date | public          |  |  |  |
+fixed         | Ziua Europei; Ziua Victoriei și a comemorării eroilor căzuţi pentru Independenţa Patriei | 5 9 | public          |  |  |  |
+fixed         | Ziua internaţională a solidarităţii oamenilor muncii | 5 1 | public          |  |  |  |
+fixed         | Ziua Ocrotirii Copilului                | 6 1 | public          |  |  |  |
+fixed         | Ziua independenţei Republicii Moldova     | 8 27 | public          |  |  |  |
+fixed         | Limba noastră                         | 8 31 | public          |  |  |  |
+fixed         | Nașterea lui Iisus Hristos (Crăciunul pe stil nou) | 12 25 | public          |  |  |  |

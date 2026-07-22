@@ -1,0 +1,31 @@
+# civil-holidays v1
+# jurisdiction: KW
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Kuwait
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column. Every
+#   Hijri holiday has no closed-form rule modelled here and is captured as
+#   'decree' (explicit per-year dates, basis tabulated) for 2024-2025 --
+#   silent outside those years rather than fabricated; the "(تقديري)"
+#   ("estimated") annotation suffix is stripped and merged into the base
+#   holiday name. Multi-day Eid breaks are split into one row per calendar
+#   day, numbered "(1)".."(3)".
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | رأس السنة الميلادية                    | 1 1 | public          |  |  |  |
+decree        | ليلة المعراج                          | 2024-2-8 2025-1-27  | public          |  |  |  |
+fixed         | اليوم الوطني                         | 2 25 | public          |  |  |  |
+fixed         | يوم التحرير                          | 2 26 | public          |  |  |  |
+decree        | عيد الفطر (1)                         | 2024-4-10 2025-3-30 | public          |  |  |  |
+decree        | عيد الفطر (2)                         | 2024-4-11 2025-3-31 | public          |  |  |  |
+decree        | عيد الفطر (3)                         | 2024-4-12 2025-4-1  | public          |  |  |  |
+decree        | يوم عرفة                             | 2024-6-15 2025-6-5  | public          |  |  |  |
+decree        | عيد الأضحى (1)                        | 2024-6-16 2025-6-6  | public          |  |  |  |
+decree        | عيد الأضحى (2)                        | 2024-6-17 2025-6-7  | public          |  |  |  |
+decree        | عيد الأضحى (3)                        | 2024-6-18 2025-6-8  | public          |  |  |  |
+decree        | رأس السنة الهجرية                      | 2024-7-7 2025-6-26  | public          |  |  |  |
+decree        | عيد المولد النبوي                      | 2024-9-15 2025-9-4  | public          |  |  |  |

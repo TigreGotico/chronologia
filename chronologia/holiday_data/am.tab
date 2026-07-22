@@ -1,0 +1,26 @@
+# civil-holidays v1
+# jurisdiction: AM
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Armenia
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Every rule here is a stable fixed calendar date confirmed to hold in
+#   both 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Նոր տարվա օր (1)                       | 1 1 | public          |  |  |  |
+fixed         | Նոր տարվա օր (2)                       | 1 2 | public          |  |  |  |
+fixed         | Սուրբ Ծնունդ եւ Հայտնություն               | 1 6 | public          |  |  |  |
+fixed         | Բանակի օր                            | 1 28 | public          |  |  |  |
+fixed         | Կանանց տոն                           | 3 8 | public          |  |  |  |
+fixed         | Հայոց ցեղասպանության զոհերի հիշատակի օր     | 4 24 | public          |  |  |  |
+fixed         | Աշխատանքի օր                          | 5 1 | public          |  |  |  |
+fixed         | Հաղթանակի և Խաղաղության տոն                | 5 9 | public          |  |  |  |
+fixed         | Հանրապետության օր                       | 5 28 | public          |  |  |  |
+fixed         | Սահմանադրության օր                      | 7 5 | public          |  |  |  |
+fixed         | Անկախության օր                         | 9 21 | public          |  |  |  |
+fixed         | Նոր տարվա գիշեր                        | 12 31 | public          |  |  |  |

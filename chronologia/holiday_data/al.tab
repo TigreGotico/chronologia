@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: AL
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Albania
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Hijri holidays (Bajrami i Madh/Kurban Bajrami) have no closed-form
+#   rule modelled here and are captured as 'decree' (explicit per-year
+#   dates, basis tabulated) for 2024-2025. Catholic Easter uses
+#   chronologia's own gregorian easter() offset (0); Orthodox Easter uses
+#   the julian_gregorian_date method (offset 0), both independently
+#   confirmed to hold in 2024 and 2025. Every "(ditë pushimi e shtyrë)"
+#   ("shifted day off"/observed) row is dropped as a workday-bridge
+#   artifact out of scope.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Festat e Vitit të Ri (1)                | 1 1 | public          |  |  |  |
+fixed         | Festat e Vitit të Ri (2)                | 1 2 | public          |  |  |  |
+fixed         | Dita e Verës                          | 3 14 | public          |  |  |  |
+fixed         | Dita e Nevruzit                        | 3 22 | public          |  |  |  |
+easter        | E diela e Pashkëve Katolike               | 0 | public          |  |  |  |
+decree        | Dita e Bajramit të Madh                  | 2024-4-10 2025-3-30 | public          |  |  |  |
+fixed         | Dita Ndërkombëtare e Punëtorëve           | 5 1 | public          |  |  |  |
+easter        | E diela e Pashkëve Ortodokse              | 0 julian_gregorian_date | public          |  |  |  |
+decree        | Dita e Kurban Bajramit                   | 2024-6-16 2025-6-6  | public          |  |  |  |
+fixed         | Dita e Shenjtërimit të Shenjt Terezës      | 9 5 | public          |  |  |  |
+fixed         | Dita e Alfabetit                       | 11 22 | public          |  |  |  |
+fixed         | Dita Flamurit dhe e Pavarësisë            | 11 28 | public          |  |  |  |
+fixed         | Dita e Çlirimit                        | 11 29 | public          |  |  |  |
+fixed         | Dita Kombëtare e Rinisë                  | 12 8 | public          |  |  |  |
+fixed         | Krishtlindjet                         | 12 25 | public          |  |  |  |

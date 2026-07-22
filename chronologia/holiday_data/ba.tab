@@ -1,0 +1,28 @@
+# civil-holidays v1
+# jurisdiction: BA
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Bosnia_and_Herzegovina
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   Bosnian, the vacanza default rendering for this jurisdiction; English
+#   lands only in translations.tab, never in this column. Hijri holidays
+#   (Ramazanski/Kurban Bajram) have no closed-form rule modelled here and
+#   are captured as 'decree' (explicit per-year dates, basis tabulated)
+#   for 2024-2025. Orthodox Christmas/Good Friday use chronologia's own
+#   julian_gregorian_date easter() method for the movable Good Friday,
+#   whose -2 offset was independently confirmed to hold in both 2024 and
+#   2025; Catholic Easter Monday uses the Gregorian easter() +1 offset.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Nova godina (1)                       | 1 1 | public          |  |  |  |
+fixed         | Nova godina (2)                       | 1 2 | public          |  |  |  |
+fixed         | Božić (Pravoslavni)                     | 1 7 | public          |  |  |  |
+easter        | Uskrsni ponedjeljak (Katolički)           | 1 | public          |  |  |  |
+decree        | Ramazanski Bajram                      | 2024-4-10 2025-3-30 | public          |  |  |  |
+fixed         | Međunarodni praznik rada (1)              | 5 1 | public          |  |  |  |
+fixed         | Međunarodni praznik rada (2)              | 5 2 | public          |  |  |  |
+easter        | Veliki petak (Pravoslavni)               | -2 julian_gregorian_date | public          |  |  |  |
+decree        | Kurban Bajram                          | 2024-6-16 2025-6-6  | public          |  |  |  |
+fixed         | Božić (Katolički)                      | 12 25 | public          |  |  |  |

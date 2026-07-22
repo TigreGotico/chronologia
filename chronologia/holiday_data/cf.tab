@@ -1,0 +1,31 @@
+# civil-holidays v1
+# jurisdiction: CF
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_the_Central_African_Republic
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Aïd al-Fitr/al-Adha have no closed-form rule modelled here and are
+#   captured as 'decree' (explicit per-year dates, basis tabulated) for
+#   2024-2025. Every other rule is a stable fixed calendar date or a
+#   chronologia easter() offset independently confirmed to hold in both
+#   2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Jour de l'an                          | 1 1 | public          |  |  |  |
+fixed         | Journée Barthélemy Boganda                | 3 29 | public          |  |  |  |
+easter        | Lundi de Pâques                        | 1 | public          |  |  |  |
+decree        | Aïd al-Fitr                           | 2024-4-10 2025-3-30 | public          |  |  |  |
+fixed         | Fête du Travail                        | 5 1 | public          |  |  |  |
+easter        | Ascension                             | 39 | public          |  |  |  |
+easter        | Lundi de Pentecôte                      | 50 | public          |  |  |  |
+decree        | Aïd al-Adha                           | 2024-6-16 2025-6-7  | public          |  |  |  |
+fixed         | Journée de prière générale                | 6 30 | public          |  |  |  |
+fixed         | Jour de l'indépendance                  | 8 13 | public          |  |  |  |
+fixed         | Assomption                            | 8 15 | public          |  |  |  |
+fixed         | Toussaint                             | 11 1 | public          |  |  |  |
+fixed         | Fête nationale                         | 12 1 | public          |  |  |  |
+fixed         | Jour de Noël                          | 12 25 | public          |  |  |  |

@@ -1,0 +1,34 @@
+# civil-holidays v1
+# jurisdiction: LT
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Lithuania
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Mother's Day (1st Sunday of May) and Father's Day (1st Sunday of June)
+#   have no fixed month/day stable across both sample years and are
+#   captured as 'decree' (explicit per-year dates, basis tabulated) for
+#   2024-2025. Šv. Velykos/Antroji šv. Velykų diena offsets from
+#   chronologia's own easter() were independently confirmed to hold in
+#   both 2024 and 2025.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Naujųjų metų diena                     | 1 1 | public          |  |  |  |
+fixed         | Lietuvos valstybės atkūrimo diena          | 2 16 | public          |  |  |  |
+fixed         | Lietuvos nepriklausomybės atkūrimo diena    | 3 11 | public          |  |  |  |
+easter        | Šv. Velykos                          | 0 | public          |  |  |  |
+easter        | Antroji šv. Velykų diena                 | 1 | public          |  |  |  |
+fixed         | Tarptautinė darbo diena                  | 5 1 | public          |  |  |  |
+decree        | Motinos diena                         | 2024-5-5 2025-5-4   | public          |  |  |  |
+decree        | Tėvo diena                           | 2024-6-2 2025-6-1   | public          |  |  |  |
+fixed         | Rasos ir Joninių diena                   | 6 24 | public          |  |  |  |
+fixed         | Valstybės (Lietuvos karaliaus Mindaugo karūnavimo) ir Tautiškos giesmės diena | 7 6 | public          |  |  |  |
+fixed         | Žolinė (Švč. Mergelės Marijos ėmimo į dangų diena) | 8 15 | public          |  |  |  |
+fixed         | Visų Šventųjų diena                     | 11 1 | public          |  |  |  |
+fixed         | Mirusiųjų atminimo (Vėlinių) diena         | 11 2 | public          |  |  |  |
+fixed         | Kūčių diena                          | 12 24 | public          |  |  |  |
+fixed         | Šv. Kalėdų pirma diena                   | 12 25 | public          |  |  |  |
+fixed         | Šv. Kalėdų antra diena                   | 12 26 | public          |  |  |  |

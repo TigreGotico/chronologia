@@ -1,0 +1,35 @@
+# civil-holidays v1
+# jurisdiction: MN
+# source: https://en.wikipedia.org/wiki/Public_holidays_in_Mongolia
+#   Structure and dates derived from vacanza/holidays 0.101 (MIT)
+#   (github.com/vacanza/holidays), an independent open-source reference
+#   maintained against each country's official calendar. Primary names are
+#   the jurisdiction's own official-language rendering as vacanza publishes
+#   it; English lands only in translations.tab, never in this column.
+#   Lunar-calendar holidays (Tsagaan Sar, Buddha Day, Chinggis Khaan's
+#   birthday) have no closed-form rule modelled here and are captured as
+#   'decree' (explicit per-year dates, basis tabulated) for 2024-2025 --
+#   silent outside those years rather than fabricated. Multi-day breaks
+#   (Tsagaan Sar, Naadam) are split into one row per calendar day, numbered
+#   "(1)".."(6)". Naadam's six calendar days are identical in both 2024 and
+#   2025 and are therefore modelled as fixed rather than decree.
+# retrieved: 2026-07-22
+# categories: public|regional|municipal|religious|school
+# columns: kind | name | args | categories | subdiv | observed | valid | span
+#
+fixed         | Шинэ жил                             | 1 1 | public          |  |  |  |
+decree        | Цагаан сар (1)                        | 2024-2-10 2025-3-1  | public          |  |  |  |
+decree        | Цагаан сар (2)                        | 2024-2-11 2025-3-2  | public          |  |  |  |
+decree        | Цагаан сар (3)                        | 2024-2-12 2025-3-3  | public          |  |  |  |
+fixed         | Олон улсын эмэгтэйчүүдийн өдөр            | 3 8 | public          |  |  |  |
+decree        | Бурхан багшийн Их дүйчин өдөр             | 2024-5-23 2025-6-11 | public          |  |  |  |
+fixed         | Хүүхдийн баяр                         | 6 1 | public          |  |  |  |
+fixed         | Үндэсний их баяр наадам, Ардын хувьсгалын ойн баяр (1) | 7 10 | public          |  |  |  |
+fixed         | Үндэсний их баяр наадам, Ардын хувьсгалын ойн баяр (2) | 7 11 | public          |  |  |  |
+fixed         | Үндэсний их баяр наадам, Ардын хувьсгалын ойн баяр (3) | 7 12 | public          |  |  |  |
+fixed         | Үндэсний их баяр наадам, Ардын хувьсгалын ойн баяр (4) | 7 13 | public          |  |  |  |
+fixed         | Үндэсний их баяр наадам, Ардын хувьсгалын ойн баяр (5) | 7 14 | public          |  |  |  |
+fixed         | Үндэсний их баяр наадам, Ардын хувьсгалын ойн баяр (6) | 7 15 | public          |  |  |  |
+decree        | Их Эзэн Чингис хааны өдөр                | 2024-11-2 2025-11-21 | public          |  |  |  |
+fixed         | Бүгд Найрамдах Улс тунхагласан өдөр        | 11 26 | public          |  |  |  |
+fixed         | Үндэсний эрх чөлөө, тусгаар тогтнолоо сэргээсний баярын өдөр | 12 29 | public          |  |  |  |
