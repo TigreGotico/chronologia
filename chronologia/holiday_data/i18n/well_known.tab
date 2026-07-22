@@ -600,3 +600,54 @@ st_patricks        | fy | sint-patricksdei
 thanksgiving       | fy | thanksgiving
 mothers_day        | fy | memmedei
 fathers_day        | fy | heitedei
+# ===== Finnish =====
+new_year        | fi | uusivuosi ;; uudenvuodenpäivä
+new_year_eve    | fi | uudenvuodenaatto
+epiphany        | fi | loppiainen
+good_friday     | fi | pitkäperjantai
+easter          | fi | pääsiäinen ;; pääsiäissunnuntai
+easter_monday   | fi | toinen pääsiäispäivä ;; 2. pääsiäispäivä
+ascension       | fi | helatorstai
+pentecost       | fi | helluntai
+all_saints      | fi | pyhäinpäivä
+christmas_eve   | fi | jouluaatto
+christmas       | fi | joulu ;; joulupäivä
+boxing_day      | fi | tapaninpäivä
+eid_al_fitr     | fi | id al-fitr ;; eid
+ramadan         | fi | ramadan
+rosh_hashanah   | fi | juutalainen uusivuosi
+yom_kippur      | fi | jom kippur
+passover        | fi | pesah
+hanukkah        | fi | hanukka
+chinese_new_year| fi | kiinalainen uusivuosi
+nowruz          | fi | nowruz
+diwali          | fi | diwali
+vesak           | fi | vesak
+halloween       | fi | halloween
+valentines      | fi | ystävänpäivä
+#
+# ===== Estonian =====
+new_year        | et | uusaasta ;; uue aasta päev
+new_year_eve    | et | vana-aastaõhtu
+epiphany        | et | kolmekuningapäev
+good_friday     | et | suur reede
+easter          | et | lihavõtted ;; ülestõusmispühad
+easter_monday   | et | teine ülestõusmispüha
+ascension       | et | taevaminemispüha
+pentecost       | et | nelipühad
+all_saints      | et | hingedepäev
+christmas_eve   | et | jõululaupäev
+christmas       | et | jõulud ;; esimene jõulupüha
+boxing_day      | et | teine jõulupüha
+eid_al_fitr     | et | id al-fitr ;; eid
+ramadan         | et | ramadaan
+rosh_hashanah   | et | juudi uusaasta
+yom_kippur      | et | jom kippur
+passover        | et | paasapüha
+hanukkah        | et | hanukaa
+chinese_new_year| et | hiina uusaasta
+nowruz          | et | nowruz
+diwali          | et | diwali
+vesak           | et | vesak
+halloween       | et | halloween
+valentines      | et | sõbrapäev
