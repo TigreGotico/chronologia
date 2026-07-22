@@ -12,7 +12,7 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, span
+from ._corpus import ANCHOR, parse, span
 
 
 CASES = [
@@ -31,3 +31,25 @@ def test_bare_full_weekday(text, idx):
     sp = span(text)
     assert (sp.start.year, sp.start.month, sp.start.day) == (s.year, s.month, s.day)
     assert (sp.end.year, sp.end.month, sp.end.day) == (e.year, e.month, e.day)
+
+
+BE_CASES = [
+    ('ביום שלישי', 1),
+    ('ביום רביעי', 2),
+    ('ביום חמישי', 3),
+    ('ביום שישי', 4),
+    ('בשבת', 5),
+    ('ביום ראשון', 6),
+]
+
+
+@pytest.mark.parametrize("text,idx", BE_CASES)
+def test_be_prefixed_weekday_consumes_fully(text, idx):
+    """The preposition-fused 'on <weekday>' form (ב + יום/שבת) is one word in
+    Hebrew orthography; it must bind whole with an empty remainder.  Monday
+    ('ביום שני') is omitted for the same שני/2 homograph as above."""
+    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    s = (ANCHOR + timedelta(days=ahead)).date()
+    sp, remainder = parse(text)
+    assert remainder == ''
+    assert (sp.start.year, sp.start.month, sp.start.day) == (s.year, s.month, s.day)
