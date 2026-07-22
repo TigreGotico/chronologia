@@ -191,6 +191,16 @@ class LangSpec:
     # common words (de "so", nl "zo", es "mar") never resolve without a marker,
     # while marker-ed orders still accept both via ``weekdays``
     weekday_full: Mapping[str, int] = field(default_factory=dict)
+    # marker POSITIONALITY: role name (open-range / recurrence-bound marker,
+    # e.g. "until", "since", "for") -> where that marker sits relative to the
+    # date it frames -- "pre" (leads, the default), "post" (a postposed bound
+    # word trailing its date: Finnish "asti", Turkish "kadar", Basque "arte"),
+    # or "affix" (a bound suffix fused onto the date's final surface token:
+    # Hungarian "-ig", "péntekig" = "péntek" + "ig").  A role absent from this
+    # map is "pre".  The engine consults this fact so agglutinative /
+    # postpositional languages express these constructions natively instead of
+    # being documented exceptions.  Loaded from ``lang.json`` ``positions``.
+    positions: Mapping[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)

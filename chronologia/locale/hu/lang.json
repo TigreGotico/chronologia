@@ -144,6 +144,10 @@
     "prefer_future": true,
     "bare_half_to": true
   },
+  "positions": {
+    "until": "affix",
+    "since": "post"
+  },
   "quantifiers": {
     "1": [
       "egy"
