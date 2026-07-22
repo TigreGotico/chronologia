@@ -495,9 +495,13 @@ The classes, from safest to most confusable:
 - **Month homographs as common words.** English *may* (modal), *march*
   (verb), *august* (adjective); Czech *květen*/*srp*; Hungarian *hét* (also
   "week"/"seven"). Bound as the month.
-- **Month homographs as names.** *April*, *June*, *August* as people or
-  pets; Portuguese *abril*, Dutch *juni*, Basque *apirila* likewise. Bound
-  as the month.
+- **Month and season homographs as names.** *April*, *June*, *August* as
+  people or pets; Portuguese *abril*, Dutch *juni*, Basque *apirila*,
+  Arabic *مارس* ("he practiced" / March) and *ربيع* (a name / spring)
+  likewise. A **place name that carries a season word** is the same class:
+  Hebrew *תל אביב* ("Tel Aviv") contains *אביב* ("spring"). Bound as the
+  month or season -- an adjacent-token guard for one proper noun would not
+  generalise, so disambiguation stays downstream.
 - **Morning vs. tomorrow.** German *Morgen* ("morning") vs. *morgen*
   ("tomorrow"), West Frisian *moarn*, Spanish/Galician *mañana*/*mañá* carry
   both senses; lowercased, the temporal-adverb reading wins.
@@ -521,7 +525,12 @@ language is a directory under `chronologia/locale/<code>/`:
   where `<calendar>` must be a calendar the core knows.
 - **`lang.json`** — the one stanza per language: tokenizer options, the
   constructions this language enables, calendar conventions (day/month
-  order, hemisphere, week start), and an optional `hook`.
+  order, hemisphere, week start, and `weekend_start` — the first day of the
+  two-day weekend as a Monday=0 weekday index, default Saturday; Israel and
+  much of the Arab world set `4` for a Friday–Saturday weekend), and an
+  optional `hook`. The tokenizer is script-agnostic, so right-to-left
+  locales (Arabic, Hebrew) and mixed-direction strings — Western or
+  Arabic-Indic digits embedded in RTL text — need no special handling.
 
 The vocabulary files are loaded through **ovos-spec-tools**, the shared
 `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are
