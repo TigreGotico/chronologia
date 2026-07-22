@@ -36,7 +36,7 @@ writer's ``DTEND`` is correct).
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Optional, Union
 
@@ -61,12 +61,18 @@ class Event:
     * ``recurrence`` -- a :class:`~chronologia.recurrence.Recurrence` /
       :class:`~chronologia.recurrence.HolidayRecurrence`, or ``None`` for a
       one-off event.
+    * ``confidence`` -- the deterministic score in ``(0, 1]`` for the temporal
+      reading the event was built from (see
+      :mod:`chronologia.extract.confidence`); **not** a probability.  Excluded
+      from equality/hash (``compare=False``) so an event compares by what it
+      *is*, never by a derived score.
     """
 
     summary: str
     span: DateSpan
     duration: Optional[timedelta] = None
     recurrence: Optional[RecurrenceLike] = None
+    confidence: float = field(default=1.0, compare=False)
 
 
 def first_occurrence(recurrence: RecurrenceLike,
@@ -151,8 +157,8 @@ def extract_event(
     Returns an :class:`Event`, or ``None`` when the text carries neither a
     recurrence nor a datable span (there is no event to build).
     """
-    from chronologia.extract import (extract_duration, extract_recurrence,
-                                     extract_timespan)
+    from chronologia.extract import (extract_candidates, extract_duration,
+                                     extract_recurrence, extract_timespan)
 
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
@@ -169,9 +175,16 @@ def extract_event(
     if got_dur is not None:
         duration, remainder = got_dur
 
+    # A recurring event is rule-driven (a matched ``every`` marker is a strong,
+    # unambiguous signal), so it carries full confidence; a one-off inherits
+    # the confidence of the best plausible reading of the span-bearing text.
+    conf = 1.0
     if recurrence is not None:
         base = first_occurrence(recurrence, anchor)
     else:
+        cands = extract_candidates(remainder, lang, anchor=anchor)
+        if cands:
+            conf = cands[0].confidence
         got_span = extract_timespan(remainder, lang, anchor=anchor,
                                     jurisdiction=jurisdiction)
         if got_span is None:
@@ -190,4 +203,4 @@ def extract_event(
 
     summary = _clean_summary(remainder, lang)
     return Event(summary=summary, span=span, duration=duration,
-                 recurrence=recurrence)
+                 recurrence=recurrence, confidence=conf)

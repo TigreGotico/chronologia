@@ -252,6 +252,89 @@ when a phrase parses to something you did not expect. `explain` runs the
 spelled-number fold and multiword merge — so its trace of a phrase reflects
 the real parse token-for-token, written-out numbers and all.
 
+## How sure is it? Confidence and ranked candidates
+
+Every parse also carries a **confidence** — a number in `(0, 1]` saying how much
+the engine trusts that this reading is the one you meant. It is computed from
+signals the parse already produced and would otherwise throw away, and it is
+**deterministic**: the same text always scores the same. There is no machine
+learning anywhere in it.
+
+`extract_candidates` returns the ranked list of *every* plausible reading the
+matcher considered — not just the winner `extract_timespan` hands back, but the
+runner-ups too — each with its confidence and the leftover text:
+
+```python
+from chronologia.extract import extract_candidates
+from datetime import datetime
+
+for c in extract_candidates("june 2027", "en", datetime(2017, 6, 27)):
+    print(c.construction, round(c.confidence, 3), repr(c.remainder))
+# calendar_date 0.915 ''      -> the whole phrase read as a month+year
+# year_ref      0.457 'june'  -> a weaker reading: just "2027", "june" stranded
+```
+
+The confusable case scores low, exactly because the reading claims little of the
+sentence:
+
+```python
+c = extract_candidates("may the force be with you", "en")[0]
+print(c.construction, round(c.confidence, 3), repr(c.remainder))
+# calendar_date 0.152 'the force be with you'
+```
+
+`extract_timespans` (multi-mention) and `extract_event` also surface the score:
+each `TimeMention` and each `Event` now carries a `.confidence`. A mention
+buried in a long carrier sentence scores lower than the same phrase said on its
+own — the reading claims a smaller share of the words.
+
+### What the score is made of
+
+It is a **weighted product** of five factors, each a multiplier in `(0, 1]`
+where `1.0` means "no objection":
+
+```
+confidence = coverage · (specificity^0.40 · homograph^0.30 · fold^0.15 · basis^0.15)
+```
+
+* **coverage** — the fraction of the utterance's tokens the reading consumed
+  (`consumed / total`). It enters *linearly* because it is the strongest signal:
+  a fragment covering a quarter of the sentence is roughly a quarter as
+  trustworthy. This is what separates a real date phrase (covers everything)
+  from a stray homograph in a longer sentence (covers one word).
+* **specificity** — read straight off the construction precedence table
+  (`chronologia/extract/compiler.py`): an era, regnal or deep-time reading
+  carries the most specific vocabulary and scores highest; a bare year is the
+  least specific and scores lowest.
+* **homograph** — a penalty when the reading leans on a language's short
+  weekday-abbreviation surface (the forms like "mar", "so", "zo" that also read
+  as ordinary words). That set is the locale's own data — the abbreviations the
+  loader keeps out of the full weekday names — not a hand-listed lexicon.
+* **fold** — a plain digit ("5") is trusted over a spelled-out number the engine
+  folded ("five") over a multiword surface it glued back together ("bronze
+  age"); each rung down is a small penalty.
+* **basis** — the resolved span's own provenance: `exact` > `tabulated` >
+  `reconstructed` > `predicted` (see the deep-time section above).
+
+The four quality factors combine as a weighted geometric mean, so a single weak
+signal drags the whole score down the way a weak link should, and every input
+has a clear unit-interval reading.
+
+### What confidence is **not**
+
+It is **not a probability**. It does not estimate "the chance this parse is
+correct" and the numbers do not sum to one across candidates. It is a *relative
+trust score* built to **rank** readings and to **separate** genuine date phrases
+from look-alikes — nothing more. Do not threshold it as if 0.7 meant "70 %
+likely right"; do use it to prefer one candidate over another, or to decide a
+low-scoring lone match is not worth acting on without confirmation.
+
+The engine holds itself to that separation as a tested contract: across a sample
+of every language's gold corpus, a fully-claimed gold phrase scores at or above
+`0.75`, while across every language's *confusables* corpus (see "Known
+limitations") a look-alike that still parses stays at or below `0.70` — the two
+bands never overlap (`test/test_confidence.py`).
+
 ## Holidays by name
 
 A **construction** is one named shape the extractor knows how to read (a

@@ -22,7 +22,7 @@ class stays unwritable.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import List, Optional, Tuple
 
@@ -179,11 +179,18 @@ class TimeMention:
     substring.  ``char_span`` is derived from the tokenizer's own recorded
     offsets (never by re-searching the string); it is ``None`` only when the
     mention's tokens were all engine-synthesised and carry no offset.
+
+    ``confidence`` is the deterministic score in ``(0, 1]`` that this reading
+    is the intended one (see :mod:`chronologia.extract.confidence`); it is
+    **not** a probability.  It is excluded from equality/hash (``compare=False``)
+    so a mention still compares by its identity (span + extent), never by a
+    derived score.
     """
     span: DateSpan
     text: str
     token_span: Tuple[int, int]
     char_span: Optional[Tuple[int, int]] = None
+    confidence: float = field(default=1.0, compare=False)
 
 
 def extract_timespans(
@@ -203,6 +210,7 @@ def extract_timespans(
     Returns a list of :class:`TimeMention` (empty when nothing matched).
     """
     from chronologia.extract import _timespan_engine
+    from chronologia.extract.confidence import confidence as _confidence
     from chronologia.extract.resolver import (DATE_CONSTRUCTIONS,
                                               compose_date_clock)
 
@@ -211,6 +219,7 @@ def extract_timespans(
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
     tokens = engine.tokenize(text)
+    total = len(tokens)
 
     resolved = []
     for match in engine.matcher.match(tokens):
@@ -219,8 +228,9 @@ def extract_timespans(
             resolved.append((match, res))
     resolved.sort(key=lambda mr: mr[0].span[0])
 
-    out: List[Tuple[Tuple[int, int], DateSpan]] = []
+    out: List[Tuple[Tuple[int, int], DateSpan, float]] = []
     for match, res in resolved:
+        conf = _confidence(match, res, total, engine.spec)
         # a clock time right after a date mention composes onto that day
         if (match.construction == "clock_time" and out
                 and _prev_is_date(resolved, match)):
@@ -228,13 +238,14 @@ def extract_timespans(
             merged = compose_date_clock(prev_res, res)
             lo = min(prev_match.span[0], match.span[0])
             hi = max(prev_match.span[1], match.span[1])
-            out[-1] = ((lo, hi), merged.value)
+            # the composed mention is only as trusted as its weaker half
+            out[-1] = ((lo, hi), merged.value, min(out[-1][2], conf))
             continue
-        out.append((match.span, res.value))
+        out.append((match.span, res.value, conf))
 
     return [TimeMention(value, " ".join(t.raw for t in tokens[lo:hi]), (lo, hi),
-                        _char_span(tokens, lo, hi))
-            for (lo, hi), value in out]
+                        _char_span(tokens, lo, hi), conf)
+            for (lo, hi), value, conf in out]
 
 
 def _char_span(tokens, lo, hi):
