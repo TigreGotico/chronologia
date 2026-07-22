@@ -493,3 +493,8 @@ fold_ms = _lazy_germanic_fold(
 fold_kab = _lazy_germanic_fold(
     "ovos_number_parser.numbers_kab", "extract_number_kab",
     {"azgen", "agim", "amelyun"})
+# fa (Persian): single extractor extract_number_fa(text, ordinals=False);
+# withhold the half/quarter clock words and the scale words.
+fold_fa = _lazy_germanic_fold(
+    "ovos_number_parser.numbers_fa", "extract_number_fa",
+    {"نیم", "ربع", "چارک", "هزار", "میلیون", "میلیارد"})
