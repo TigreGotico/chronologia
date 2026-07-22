@@ -21,8 +21,18 @@
         "WEEKDAYFULL"
       ]
     },
-    "rel_period": {"orders": ["REL_MARKER UNIT", "UNIT REL_MARKER"]},
-    "weekend_ref": {"orders": ["REL_MARKER WEEKEND", "WEEKEND"]},
+    "rel_period": {
+      "orders": [
+        "REL_MARKER UNIT",
+        "UNIT REL_MARKER"
+      ]
+    },
+    "weekend_ref": {
+      "orders": [
+        "REL_MARKER WEEKEND",
+        "WEEKEND"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
@@ -77,5 +87,16 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_tr"
+  "hook": "chronologia.extract.numfold:fold_tr",
+  "quantifiers": {
+    "1": [
+      "bir"
+    ],
+    "0.5": [
+      "yarım"
+    ],
+    "0.25": [
+      "çeyrek"
+    ]
+  }
 }
