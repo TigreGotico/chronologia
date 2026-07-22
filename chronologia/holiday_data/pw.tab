@@ -28,9 +28,9 @@ fixed         | Youth Day                                | 3 15                 
 fixed         | Senior Citizens Day                      | 5 5                  | public          |  |  |  |
 fixed         | President's Day                          | 6 1                  | public          |  |  |  |
 fixed         | Constitution Day                         | 7 9                  | public          |  |  |  |
-decree        | Labor Day                                | 2024-9-2 2025-9-1    | public          |  |  |  |
+decree        | Labor Day                                | 2024-9-2 2025-9-1 2026-9-7 2027-9-6    | public          |  |  |  |
 fixed         | Independence Day                         | 10 1                 | public          |  |  |  |
 fixed         | United Nations Day                       | 10 24                | public          |  |  |  |
-decree        | Family Day                               | 2024-11-22 2025-11-28 | public          |  |  |  |
-decree        | Thanksgiving Day                         | 2024-11-28 2025-11-27 | public          |  |  |  |
+decree        | Family Day                               | 2024-11-22 2025-11-28 2026-11-27 2027-11-26 | public          |  |  |  |
+decree        | Thanksgiving Day                         | 2024-11-28 2025-11-27 2026-11-26 2027-11-25 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |

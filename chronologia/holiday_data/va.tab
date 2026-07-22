@@ -33,7 +33,7 @@ easter        | Sabato Santo                             | -1 gregorian         
 easter        | Pasqua di Resurrezione                   | 0 gregorian          | public          |  |  |  |
 easter        | Lunedì dell'Angelo                       | 1 gregorian          | public          |  |  |  |
 easter        | Martedì in Albis                         | 2 gregorian          | public          |  |  |  |
-decree        | Onomastico del Santo Padre               | 2024-4-23            | public          |  |  |  |
+decree        | Onomastico del Santo Padre               | 2024-4-23 2026-9-17 2027-9-17            | public          |  |  |  |
 fixed         | San Giuseppe Artigiano                   | 5 1                  | public          |  |  |  |
 easter        | Ascensione del Signore                   | 39 gregorian         | public          |  |  |  |
 easter        | Solennità della Pentecoste               | 49 gregorian         | public          |  |  |  |
@@ -51,5 +51,5 @@ fixed         | Natale                                   | 12 25                
 fixed         | Santo Stefano                            | 12 26                | public          |  |  |  |
 fixed         | San Giovanni                             | 12 27                | public          |  |  |  |
 fixed         | Ultimo giorno dell'anno                  | 12 31                | public          |  |  |  |
-decree        | Onomastico del Santo Padre (1)           | 2025-4-23            | public          |  |  |  |
+decree        | Onomastico del Santo Padre (1)           | 2025-4-23 2026-9-17 2027-9-17            | public          |  |  |  |
 decree        | Onomastico del Santo Padre (2)           | 2025-9-17            | public          |  |  |  |

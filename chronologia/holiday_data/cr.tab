@@ -26,10 +26,10 @@
 fixed         | Año Nuevo                                     | 1 1 | public          |  |  |  |
 easter        | Jueves Santo                                  | -3 | public          |  |  |  |
 easter        | Viernes Santo                                 | -2 | public          |  |  |  |
-decree        | Día de Juan Santamaría                        | 2024-4-15 2025-4-11 | public          |  |  |  |
+decree        | Día de Juan Santamaría                        | 2024-4-15 2025-4-11 2026-4-11 2027-4-11 | public          |  |  |  |
 fixed         | Día Internacional del Trabajo                 | 5 1 | public          |  |  |  |
-decree        | Anexión del Partido de Nicoya a Costa Rica    | 2024-7-29 2025-7-25 | public          |  |  |  |
-decree        | Día de la Madre                               | 2024-8-19 2025-8-15 | public          |  |  |  |
+decree        | Anexión del Partido de Nicoya a Costa Rica    | 2024-7-29 2025-7-25 2026-7-25 2027-7-25 | public          |  |  |  |
+decree        | Día de la Madre                               | 2024-8-19 2025-8-15 2026-8-15 2027-8-15 | public          |  |  |  |
 fixed         | Día de la Independencia                       | 9 15 | public          |  |  |  |
 fixed         | Navidad                                       | 12 25 | public          |  |  |  |
 

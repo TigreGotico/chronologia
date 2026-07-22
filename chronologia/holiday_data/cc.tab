@@ -27,10 +27,10 @@ fixed         | Australia Day                            | 1 26                 
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 fixed         | Act of Self Determination Day            | 4 6                  | public          |  |  |  |
-decree        | Eid al-Fitr                              | 2024-4-10 2025-3-31  | public          |  |  |  |
+decree        | Eid al-Fitr                              | 2024-4-10 2025-3-31 2026-3-20 2027-3-9  | public          |  |  |  |
 fixed         | ANZAC Day                                | 4 25                 | public          |  |  |  |
-decree        | King's Birthday                          | 2024-6-6 2025-6-9    | public          |  |  |  |
-decree        | Eid al-Adha                              | 2024-6-17 2025-6-7   | public          |  |  |  |
-decree        | Prophet's Birthday                       | 2024-9-16 2025-9-5   | public          |  |  |  |
+decree        | King's Birthday                          | 2024-6-6 2025-6-9 2026-6-8 2027-6-14    | public          |  |  |  |
+decree        | Eid al-Adha                              | 2024-6-17 2025-6-7 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Prophet's Birthday                       | 2024-9-16 2025-9-5 2026-8-25 2027-8-14   | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

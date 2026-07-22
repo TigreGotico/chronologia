@@ -24,15 +24,15 @@
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | New Year's Day                                | 1 1 | public          |  |  |  |
-decree        | Chinese New Year (1)                          | 2024-2-10 2025-1-29 | public          |  |  |  |
-decree        | Chinese New Year (2)                          | 2024-2-11 2025-1-30 | public          |  |  |  |
-decree        | Chinese New Year (observed)                   | 2024-2-12 | public          |  |  |  |
+decree        | Chinese New Year (1)                          | 2024-2-10 2025-1-29 2026-2-17 2027-2-6 | public          |  |  |  |
+decree        | Chinese New Year (2)                          | 2024-2-11 2025-1-30 2026-2-18 2027-2-7 | public          |  |  |  |
+decree        | Chinese New Year (observed)                   | 2024-2-12 2027-2-8 | public          |  |  |  |
 easter        | Good Friday                                   | -2 | public          |  |  |  |
-decree        | Hari Raya Puasa                               | 2024-4-10 2025-3-31 | public          |  |  |  |
+decree        | Hari Raya Puasa                               | 2024-4-10 2025-3-31 2026-3-21 2027-3-10 | public          |  |  |  |
 fixed         | Labour Day                                    | 5 1 | public          |  |  |  |
-decree        | Vesak Day                                     | 2024-5-22 2025-5-12 | public          |  |  |  |
-decree        | Hari Raya Haji                                | 2024-6-17 2025-6-7 | public          |  |  |  |
+decree        | Vesak Day                                     | 2024-5-22 2025-5-12 2026-5-31 2027-5-20 | public          |  |  |  |
+decree        | Hari Raya Haji                                | 2024-6-17 2025-6-7 2026-5-27 2027-5-17 | public          |  |  |  |
 fixed         | National Day                                  | 8 9 | public          |  |  |  |
-decree        | Deepavali                                     | 2024-10-31 2025-10-20 | public          |  |  |  |
+decree        | Deepavali                                     | 2024-10-31 2025-10-20 2026-11-08 2027-10-28 | public          |  |  |  |
 fixed         | Christmas Day                                 | 12 25 | public          |  |  |  |
 decree        | Polling Day                                   | 2025-5-3 | public          |  |  |  |

@@ -25,7 +25,7 @@
 fixed         | Нова Година                              | 1 1                  | public          |  |  |  |
 fixed         | Божиќ                                    | 1 7                  | public          |  |  |  |
 decree        | Божиќ (неработен ден)                    | 2024-1-8             | public          |  |  |  |
-decree        | Рамазан Бајрам                           | 2024-4-10 2025-3-30  | public          |  |  |  |
+decree        | Рамазан Бајрам                           | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
 decree        | Ден на изборите (1)                      | 2024-4-24            | public          |  |  |  |
 fixed         | Ден на трудот                            | 5 1                  | public          |  |  |  |
 easter        | Велигден                                 | 1 julian_gregorian_date | public          |  |  |  |
@@ -58,9 +58,9 @@ fixed | Национален ден на Власите | 5 23 | vlach |  |
 # `country_holidays(cc, categories=(...))` output, per the house rule
 # that permits vacanza-derived data when flagged as such (retrieved
 # 2026-07-22). ---
-decree | Велигден | 2024-4-1 | catholic |  |
+decree | Велигден | 2024-4-1 2026-4-13 2027-5-3 | catholic |  |
 decree | Сите Светци | 2024-11-1 2025-11-1 | catholic |  |
-decree | Божиќ | 2024-12-25 2025-12-25 | catholic |  |
+decree | Божиќ | 2024-12-25 2025-12-25 2026-01-07 2027-01-07 | catholic |  |
 decree | Јом Кипур | 2024-10-12 2025-10-2 | hebrew |  |
 decree | Курбан Бајрам | 2024-6-16 2025-6-6 | islamic |  |
 decree | Бадник | 2024-1-6 2025-1-6 | orthodox |  |

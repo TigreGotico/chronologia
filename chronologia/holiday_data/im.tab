@@ -25,10 +25,10 @@
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | May Day                                  | 2024-5-6 2025-5-5    | public          |  |  |  |
-decree        | Spring Bank Holiday                      | 2024-5-27 2025-5-26  | public          |  |  |  |
-decree        | TT Bank Holiday                          | 2024-6-7 2025-6-6    | public          |  |  |  |
-decree        | Tynwald Day                              | 2024-7-5 2025-7-7    | public          |  |  |  |
-decree        | Late Summer Bank Holiday                 | 2024-8-26 2025-8-25  | public          |  |  |  |
+decree        | May Day                                  | 2024-5-6 2025-5-5 2026-5-4 2027-5-3    | public          |  |  |  |
+decree        | Spring Bank Holiday                      | 2024-5-27 2025-5-26 2026-5-25 2027-5-31  | public          |  |  |  |
+decree        | TT Bank Holiday                          | 2024-6-7 2025-6-6 2026-6-5 2027-6-4    | public          |  |  |  |
+decree        | Tynwald Day                              | 2024-7-5 2025-7-7 2026-7-6 2027-7-5    | public          |  |  |  |
+decree        | Late Summer Bank Holiday                 | 2024-8-26 2025-8-25 2026-8-31 2027-8-30  | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

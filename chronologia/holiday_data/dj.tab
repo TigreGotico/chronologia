@@ -23,15 +23,15 @@
 #
 
 fixed         | Nouvel an                                | 1 1                  | public          |  |  |  |
-decree        | Al Isra et Al Mirague (estimé)           | 2024-2-8 2025-1-27   | public          |  |  |  |
-decree        | Eid al-Fitr (estimé)                     | 2024-4-10 2025-3-30  | public          |  |  |  |
-decree        | Eid al-Fitr deuxième jour (estimé)       | 2024-4-11 2025-3-31  | public          |  |  |  |
+decree        | Al Isra et Al Mirague (estimé)           | 2024-2-8 2025-1-27 2026-1-16 2027-1-5 2027-12-25   | public          |  |  |  |
+decree        | Eid al-Fitr (estimé)                     | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
+decree        | Eid al-Fitr deuxième jour (estimé)       | 2024-4-11 2025-3-31 2026-3-21 2027-3-10  | public          |  |  |  |
 fixed         | Fête du travail                          | 5 1                  | public          |  |  |  |
-decree        | Arafat (estimé)                          | 2024-6-15 2025-6-5   | public          |  |  |  |
-decree        | Eid al-Adha (estimé)                     | 2024-6-16 2025-6-6   | public          |  |  |  |
-decree        | Eid al-Adha deuxième jour (estimé)       | 2024-6-17 2025-6-7   | public          |  |  |  |
+decree        | Arafat (estimé)                          | 2024-6-15 2025-6-5 2026-5-26 2027-5-15   | public          |  |  |  |
+decree        | Eid al-Adha (estimé)                     | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Eid al-Adha deuxième jour (estimé)       | 2024-6-17 2025-6-7 2026-5-28 2027-5-17   | public          |  |  |  |
 fixed         | Fête de l'indépendance                   | 6 27                 | public          |  |  |  |
 fixed         | Fête de l'indépendance deuxième jour     | 6 28                 | public          |  |  |  |
-decree        | Nouvel an musulman (estimé)              | 2024-7-7 2025-6-26   | public          |  |  |  |
-decree        | Anniversaire du prophète Muhammad (estimé) | 2024-9-15 2025-9-4   | public          |  |  |  |
+decree        | Nouvel an musulman (estimé)              | 2024-7-7 2025-6-26 2026-6-16 2027-6-6   | public          |  |  |  |
+decree        | Anniversaire du prophète Muhammad (estimé) | 2024-9-15 2025-9-4 2026-8-25 2027-8-14   | public          |  |  |  |
 fixed         | Noël                                     | 12 25                | public          |  |  |  |

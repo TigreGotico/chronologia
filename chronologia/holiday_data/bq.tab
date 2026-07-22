@@ -26,7 +26,7 @@ fixed         | Nieuwjaarsdag                            | 1 1                  
 easter        | Goede Vrijdag                            | -2 gregorian         | public          |  |  |  |
 easter        | Eerste Paasdag                           | 0 gregorian          | public          |  |  |  |
 easter        | Tweede Paasdag                           | 1 gregorian          | public          |  |  |  |
-decree        | Koningsdag                               | 2024-4-27 2025-4-26  | public          |  |  |  |
+decree        | Koningsdag                               | 2024-4-27 2025-4-26 2026-4-27 2027-4-27  | public          |  |  |  |
 fixed         | Dag van de Arbeid                        | 5 1                  | public          |  |  |  |
 easter        | Hemelvaartsdag                           | 39 gregorian         | public          |  |  |  |
 easter        | Eerste Pinksterdag                       | 49 gregorian         | public          |  |  |  |
@@ -40,7 +40,7 @@ fixed         | Tweede Kerstdag                          | 12 26                
 #     omitted, matching the house rule against bridge-day rows.
 fixed  | Bonairedag         | 9 6   | public | BQ-BON |
 fixed  | Rincondag          | 4 30  | public | BQ-BON |
-decree | Dag na de carnavalsoptocht | 2024-7-29 2025-7-28 | public | BQ-SAB |
-decree | Sabadag                    | 2024-12-6 2025-12-5 | public | BQ-SAB |
+decree | Dag na de carnavalsoptocht | 2024-7-29 2025-7-28 2026-7-27 2027-7-26 | public | BQ-SAB |
+decree | Sabadag                    | 2024-12-6 2025-12-5 2026-12-4 2027-12-3 | public | BQ-SAB |
 fixed  | Emancipatiedag     | 7 1   | public | BQ-STA |
 fixed  | Statiadag          | 11 16 | public | BQ-STA |

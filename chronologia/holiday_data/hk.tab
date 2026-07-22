@@ -23,20 +23,20 @@
 #
 
 fixed         | 一月一日                                     | 1 1                  | public          |  |  |  |
-decree        | 農曆年初一                                    | 2024-2-10 2025-1-29  | public          |  |  |  |
-decree        | 農曆年初三                                    | 2024-2-12 2025-1-31  | public          |  |  |  |
-decree        | 農曆年初四                                    | 2024-2-13            | public          |  |  |  |
+decree        | 農曆年初一                                    | 2024-2-10 2025-1-29 2026-2-17 2027-2-6  | public          |  |  |  |
+decree        | 農曆年初三                                    | 2024-2-12 2025-1-31 2026-2-19 2027-2-8  | public          |  |  |  |
+decree        | 農曆年初四                                    | 2024-2-13 2027-2-9            | public          |  |  |  |
 fixed         | 清明節                                      | 4 4                  | public          |  |  |  |
 fixed         | 勞動節                                      | 5 1                  | public          |  |  |  |
-decree        | 佛誕                                       | 2024-5-15 2025-5-5   | public          |  |  |  |
-decree        | 端午節                                      | 2024-6-10 2025-5-31  | public          |  |  |  |
+decree        | 佛誕                                       | 2024-5-15 2025-5-5 2026-5-24 2027-5-13   | public          |  |  |  |
+decree        | 端午節                                      | 2024-6-10 2025-5-31 2026-6-19 2027-6-9  | public          |  |  |  |
 fixed         | 香港特別行政區成立紀念日                             | 7 1                  | public          |  |  |  |
-decree        | 中秋節翌日                                    | 2024-9-18 2025-10-7  | public          |  |  |  |
+decree        | 中秋節翌日                                    | 2024-9-18 2025-10-7 2026-9-26 2027-9-16  | public          |  |  |  |
 fixed         | 國慶日                                      | 10 1                 | public          |  |  |  |
-decree        | 重陽節                                      | 2024-10-11 2025-10-29 | public          |  |  |  |
+decree        | 重陽節                                      | 2024-10-11 2025-10-29 2026-10-18 2027-10-08 | public          |  |  |  |
 fixed         | 聖誕節                                      | 12 25                | public          |  |  |  |
 fixed         | 聖誕節後第一個周日                                | 12 26                | public          |  |  |  |
-decree        | 農曆年初二                                    | 2025-1-30            | public          |  |  |  |
+decree        | 農曆年初二                                    | 2025-1-30 2026-2-18            | public          |  |  |  |
 
 
 # --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
@@ -58,14 +58,14 @@ fixed  | 聖誕節後第一個周日 | 12 26 | optional |  |  |  |
 # `country_holidays(cc, categories=(...))` output, per the house rule
 # that permits vacanza-derived data when flagged as such (retrieved
 # 2026-07-22). ---
-decree | 農曆年初四 | 2024-2-13 | optional |  |  |  |
-decree | 農曆年初一 | 2024-2-10 2025-1-29 | optional |  |  |  |
-decree | 農曆年初三 | 2024-2-12 2025-1-31 | optional |  |  |  |
+decree | 農曆年初四 | 2024-2-13 2027-2-9 | optional |  |  |  |
+decree | 農曆年初一 | 2024-2-10 2025-1-29 2026-2-17 2027-2-6 | optional |  |  |  |
+decree | 農曆年初三 | 2024-2-12 2025-1-31 2026-2-19 2027-2-8 | optional |  |  |  |
 decree | 耶穌受難節 | 2024-3-29 2025-4-18 | optional |  |  |  |
 decree | 耶穌受難節翌日 | 2024-3-30 2025-4-19 | optional |  |  |  |
-decree | 復活節星期一 | 2024-4-1 2025-4-21 | optional |  |  |  |
-decree | 佛誕 | 2024-5-15 2025-5-5 | optional |  |  |  |
-decree | 端午節 | 2024-6-10 2025-5-31 | optional |  |  |  |
-decree | 中秋節翌日 | 2024-9-18 2025-10-7 | optional |  |  |  |
-decree | 重陽節 | 2024-10-11 2025-10-29 | optional |  |  |  |
-decree | 農曆年初二 | 2025-1-30 | optional |  |  |  |
+decree | 復活節星期一 | 2024-4-1 2025-4-21 2026-4-6 2027-3-29 | optional |  |  |  |
+decree | 佛誕 | 2024-5-15 2025-5-5 2026-5-24 2027-5-13 | optional |  |  |  |
+decree | 端午節 | 2024-6-10 2025-5-31 2026-6-19 2027-6-9 | optional |  |  |  |
+decree | 中秋節翌日 | 2024-9-18 2025-10-7 2026-9-26 2027-9-16 | optional |  |  |  |
+decree | 重陽節 | 2024-10-11 2025-10-29 2026-10-18 2027-10-08 | optional |  |  |  |
+decree | 農曆年初二 | 2025-1-30 2026-2-18 | optional |  |  |  |

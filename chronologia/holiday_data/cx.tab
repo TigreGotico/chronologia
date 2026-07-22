@@ -24,13 +24,13 @@
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
 fixed         | Australia Day                            | 1 26                 | public          |  |  |  |
-decree        | Chinese New Year (1)                     | 2024-2-10 2025-1-29  | public          |  |  |  |
-decree        | Chinese New Year (2)                     | 2024-2-11 2025-1-30  | public          |  |  |  |
-decree        | Labour Day                               | 2024-3-18 2025-3-24  | public          |  |  |  |
+decree        | Chinese New Year (1)                     | 2024-2-10 2025-1-29 2026-2-17 2027-2-6  | public          |  |  |  |
+decree        | Chinese New Year (2)                     | 2024-2-11 2025-1-30 2026-2-18 2027-2-7  | public          |  |  |  |
+decree        | Labour Day                               | 2024-3-18 2025-3-24 2026-3-16 2027-3-15  | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
-decree        | Hari Raya Puasa                          | 2024-4-10 2025-3-31  | public          |  |  |  |
+decree        | Hari Raya Puasa                          | 2024-4-10 2025-3-31 2026-3-20 2027-3-9  | public          |  |  |  |
 fixed         | ANZAC Day                                | 4 25                 | public          |  |  |  |
-decree        | Hari Raya Haji                           | 2024-6-17 2025-6-7   | public          |  |  |  |
-decree        | Territory Day                            | 2024-10-7 2025-10-6  | public          |  |  |  |
+decree        | Hari Raya Haji                           | 2024-6-17 2025-6-7 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Territory Day                            | 2024-10-7 2025-10-6 2026-10-5 2027-10-4  | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

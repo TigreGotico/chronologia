@@ -28,9 +28,9 @@ fixed         | The Day After New Year's Day             | 1 2                  
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Day After Good Friday                    | -1 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | Mother's Day                             | 2024-5-13 2025-5-12  | public          |  |  |  |
+decree        | Mother's Day                             | 2024-5-13 2025-5-12 2026-5-11 2027-5-10  | public          |  |  |  |
 fixed         | Independence Day                         | 6 1                  | public          |  |  |  |
-decree        | Father's Day                             | 2024-8-12 2025-8-11  | public          |  |  |  |
-decree        | White Sunday (Lotu a Tamaiti)            | 2024-10-14 2025-10-13 | public          |  |  |  |
+decree        | Father's Day                             | 2024-8-12 2025-8-11 2026-8-10 2027-8-9  | public          |  |  |  |
+decree        | White Sunday (Lotu a Tamaiti)            | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

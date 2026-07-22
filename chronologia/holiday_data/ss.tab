@@ -24,10 +24,10 @@ easter        | Good Friday                           | -2 | public          |  
 easter        | Holy Saturday                          | -1 | public          |  |  |  |
 easter        | Easter Sunday                          | 0 | public          |  |  |  |
 easter        | Easter Monday                          | 1 | public          |  |  |  |
-decree        | Eid al-Fitr                           | 2024-4-10 2025-3-31 | public          |  |  |  |
+decree        | Eid al-Fitr                           | 2024-4-10 2025-3-31 2026-3-20 2027-3-9 | public          |  |  |  |
 fixed         | International Labour Day                | 5 1 | public          |  |  |  |
 fixed         | SPLA Day                              | 5 16 | public          |  |  |  |
-decree        | Eid al-Adha                           | 2024-6-16 2025-6-6  | public          |  |  |  |
+decree        | Eid al-Adha                           | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  |
 fixed         | Independence Day                       | 7 9 | public          |  |  |  |
 fixed         | Martyrs' Day                          | 7 30 | public          |  |  |  |
 fixed         | Christmas Eve                         | 12 24 | public          |  |  |  |

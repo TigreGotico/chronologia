@@ -21,18 +21,18 @@
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | Año Nuevo                            | 1 1                  | public          |  |  |  |
-decree        | Carnaval                             | 2024-2-12 2024-2-13 2025-3-3 2025-3-4 | public          |  |  |  |
+decree        | Carnaval                             | 2024-2-12 2024-2-13 2025-3-3 2025-3-4 2026-2-16 2026-2-17 2027-2-8 2027-2-9 | public          |  |  |  |
 easter        | Viernes Santo                        | -2                   | public          |  |  |  |
 fixed         | Día del Trabajo                      | 5 1                  | public          |  |  |  |
-decree        | Día del Trabajo (observado)          | 2024-5-3 2025-5-2    | public          |  |  |  |
+decree        | Día del Trabajo (observado)          | 2024-5-3 2025-5-2 2027-4-30    | public          |  |  |  |
 fixed         | Batalla de Pichincha                 | 5 24                 | public          |  |  |  |
-decree        | Primer Grito de Independencia (observado) | 2024-8-9 2025-8-11   | public          |  |  |  |
+decree        | Primer Grito de Independencia (observado) | 2024-8-9 2025-8-11 2027-8-9   | public          |  |  |  |
 fixed         | Primer Grito de Independencia        | 8 10                 | public          |  |  |  |
 fixed         | Independencia de Guayaquil           | 10 9                 | public          |  |  |  |
-decree        | Independencia de Guayaquil (observado) | 2024-10-11 2025-10-10 | public          |  |  |  |
-decree        | Día de Difuntos (observado)          | 2024-11-1 2025-11-4  | public          |  |  |  |
+decree        | Independencia de Guayaquil (observado) | 2024-10-11 2025-10-10 2027-10-08 | public          |  |  |  |
+decree        | Día de Difuntos (observado)          | 2024-11-1 2025-11-4 2027-11-1  | public          |  |  |  |
 fixed         | Día de Difuntos                      | 11 2                 | public          |  |  |  |
 fixed         | Independencia de Cuenca              | 11 3                 | public          |  |  |  |
 decree        | Independencia de Cuenca (observado)  | 2024-11-4            | public          |  |  |  |
 fixed         | Navidad                              | 12 25                | public          |  |  |  |
-decree        | Batalla de Pichincha (observado)     | 2025-5-23            | public          |  |  |  |
+decree        | Batalla de Pichincha (observado)     | 2025-5-23 2026-5-25            | public          |  |  |  |

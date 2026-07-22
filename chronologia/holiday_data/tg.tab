@@ -21,14 +21,14 @@
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | Jour de l'an                         | 1 1                  | public          |  |  |  |
-decree        | Ramadan                              | 2024-3-11 2025-3-1   | public          |  |  |  |
+decree        | Ramadan                              | 2024-3-11 2025-3-1 2026-2-18 2027-2-8   | public          |  |  |  |
 easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
-decree        | l'Aïd El-Fitr                        | 2024-4-10 2025-3-30  | public          |  |  |  |
+decree        | l'Aïd El-Fitr                        | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
 fixed         | Fête de l'indépendance               | 4 27                 | public          |  |  |  |
 fixed         | Fête du travail                      | 5 1                  | public          |  |  |  |
 easter        | Fête de l'Ascension                  | 39                   | public          |  |  |  |
 easter        | Lundi de Pentecôte                   | 50                   | public          |  |  |  |
-decree        | Tabaski                              | 2024-6-16 2025-6-7   | public          |  |  |  |
+decree        | Tabaski                              | 2024-6-16 2025-6-7 2026-5-27 2027-5-16   | public          |  |  |  |
 fixed         | Fête des Martyrs                     | 6 21                 | public          |  |  |  |
 fixed         | Assomption                           | 8 15                 | public          |  |  |  |
 fixed         | Toussaint                            | 11 1                 | public          |  |  |  |

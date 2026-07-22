@@ -22,16 +22,16 @@
 #
 fixed         | Jour de l'An                         | 1 1                  | public          |  |  |  |
 easter        | Lundi de Pâques                      | 1                    | public          |  |  |  |
-decree        | Laylat al-Qadr                       | 2024-4-6 2025-3-27   | public          |  |  |  |
-decree        | Korité                               | 2024-4-9 2025-3-30   | public          |  |  |  |
+decree        | Laylat al-Qadr                       | 2024-4-6 2025-3-27 2026-3-16 2027-3-6   | public          |  |  |  |
+decree        | Korité                               | 2024-4-9 2025-3-30 2026-3-20 2027-3-9   | public          |  |  |  |
 fixed         | Fête nationale de la Concorde        | 4 24                 | public          |  |  |  |
 fixed         | Journée internationale du travail    | 5 1                  | public          |  |  |  |
-decree        | Tabaski                              | 2024-6-16 2025-6-7   | public          |  |  |  |
-decree        | Lendemain de la Tabaski              | 2024-6-17 2025-6-8   | public          |  |  |  |
-decree        | Jour de l'An musulman                | 2024-7-6 2025-6-27   | public          |  |  |  |
+decree        | Tabaski                              | 2024-6-16 2025-6-7 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Lendemain de la Tabaski              | 2024-6-17 2025-6-8 2026-5-28 2027-5-17   | public          |  |  |  |
+decree        | Jour de l'An musulman                | 2024-7-6 2025-6-27 2026-6-16 2027-6-6   | public          |  |  |  |
 fixed         | Anniversaire du coup d'État du CNSP  | 7 26                 | public          |  |  |  |
 fixed         | L'anniversaire de la proclamation de l'indépendance | 8 3                  | public          |  |  |  |
-decree        | Mouloud                              | 2024-9-16 2025-9-5   | public          |  |  |  |
+decree        | Mouloud                              | 2024-9-16 2025-9-5 2026-8-25 2027-8-14   | public          |  |  |  |
 fixed         | Fête nationale                       | 12 18                | public          |  |  |  |
 fixed         | Noël                                 | 12 25                | public          |  |  |  |
 decree        | Korité (observé)                     | 2025-3-31            | public          |  |  |  |

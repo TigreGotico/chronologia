@@ -26,13 +26,13 @@ fixed         | Nieuwjaarsdag                            | 1 1                  
 easter        | Goede Vrijdag                            | -2 gregorian         | public          |  |  |  |
 easter        | Eerste paasdag                           | 0 gregorian          | public          |  |  |  |
 easter        | Tweede paasdag                           | 1 gregorian          | public          |  |  |  |
-decree        | Koningsdag                               | 2024-4-27 2025-4-26  | public          |  |  |  |
+decree        | Koningsdag                               | 2024-4-27 2025-4-26 2026-4-27 2027-4-27  | public          |  |  |  |
 fixed         | Carnavalsdag                             | 4 30                 | public          |  |  |  |
 fixed         | Dag van de Arbeid                        | 5 1                  | public          |  |  |  |
 easter        | Hemelvaartsdag                           | 39 gregorian         | public          |  |  |  |
 easter        | Eerste Pinksterdag                       | 49 gregorian         | public          |  |  |  |
 fixed         | Dag van de Bevrijding                    | 7 1                  | public          |  |  |  |
-decree        | Dag van de Constitutie                   | 2024-10-14 2025-10-13 | public          |  |  |  |
+decree        | Dag van de Constitutie                   | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | public          |  |  |  |
 fixed         | Sint-Maartensdag                         | 11 11                | public          |  |  |  |
 fixed         | Eerste Kerstdag                          | 12 25                | public          |  |  |  |
 fixed         | Tweede Kerstdag                          | 12 26                | public          |  |  |  |

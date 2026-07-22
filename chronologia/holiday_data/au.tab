@@ -34,7 +34,7 @@ nth_weekday | Labour Day      | 5 1 0  | public | AU-QLD |
 #
 # --- Western Australia ---
 # King's Birthday is proclaimed annually (no fixed rule): decree data.
-decree      | King's Birthday      | 2023-9-25 2024-9-23 2025-9-29 2026-9-28 | public | AU-WA |
+decree      | King's Birthday      | 2023-9-25 2024-9-23 2025-9-29 2026-9-28 2027-9-27 | public | AU-WA |
 nth_weekday | Western Australia Day | 6 1 0 | public | AU-WA |
 nth_weekday | Labour Day           | 3 1 0  | public | AU-WA |
 #

@@ -25,18 +25,18 @@
 #
 fixed         | New Year's Day                                | 1 1 | public          |  |  |  |
 fixed         | Orthodox Christmas                            | 1 7 | public          |  |  |  |
-decree        | Epiphany                                      | 2024-1-20 2025-1-19 | public          |  |  |  |
+decree        | Epiphany                                      | 2024-1-20 2025-1-19 2026-1-19 2027-1-19 | public          |  |  |  |
 fixed         | Women's Day                                   | 3 8 | public          |  |  |  |
-decree        | Eid al-Fitr                                   | 2024-4-10 2025-3-30 | public          |  |  |  |
+decree        | Eid al-Fitr                                   | 2024-4-10 2025-3-30 2026-3-20 2027-3-9 | public          |  |  |  |
 fixed         | International Workers' Day                    | 5 1 | public          |  |  |  |
 easter        | Good Friday                                   | -2 julian_gregorian_date | public          |  |  |  |
 easter        | Orthodox Easter                               | 0 julian_gregorian_date | public          |  |  |  |
 fixed         | Independence Day                              | 5 24 | public          |  |  |  |
-decree        | Eid al-Adha                                   | 2024-6-16 2025-6-6 | public          |  |  |  |
+decree        | Eid al-Adha                                   | 2024-6-16 2025-6-6 2026-5-27 2027-5-16 | public          |  |  |  |
 fixed         | Martyrs' Day                                  | 6 20 | public          |  |  |  |
 fixed         | Revolution Day                                | 9 1 | public          |  |  |  |
 fixed         | Ethiopian New Year                            | 9 11 | public          |  |  |  |
-decree        | Prophet's Birthday                            | 2024-9-15 2025-9-4 | public          |  |  |  |
+decree        | Prophet's Birthday                            | 2024-9-15 2025-9-4 2026-8-25 2027-8-14 | public          |  |  |  |
 fixed         | Finding of the True Cross                     | 9 27 | public          |  |  |  |
 
 # --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---

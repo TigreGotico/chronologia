@@ -23,18 +23,18 @@
 #
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
-decree        | Martin Luther King Jr. Day               | 2024-1-15 2025-1-20  | public          |  |  |  |
-decree        | Washington's Birthday                    | 2024-2-19 2025-2-17  | public          |  |  |  |
-decree        | Guam Discovery Day                       | 2024-3-4 2025-3-3    | public          |  |  |  |
+decree        | Martin Luther King Jr. Day               | 2024-1-15 2025-1-20 2026-1-19 2027-1-18  | public          |  |  |  |
+decree        | Washington's Birthday                    | 2024-2-19 2025-2-17 2026-2-16 2027-2-15  | public          |  |  |  |
+decree        | Guam Discovery Day                       | 2024-3-4 2025-3-3 2026-3-2 2027-3-1    | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
-decree        | Memorial Day                             | 2024-5-27 2025-5-26  | public          |  |  |  |
+decree        | Memorial Day                             | 2024-5-27 2025-5-26 2026-5-25 2027-5-31  | public          |  |  |  |
 fixed         | Juneteenth National Independence Day     | 6 19                 | public          |  |  |  |
 fixed         | Independence Day                         | 7 4                  | public          |  |  |  |
 fixed         | Liberation Day (Guam)                    | 7 21                 | public          |  |  |  |
-decree        | Labor Day                                | 2024-9-2 2025-9-1    | public          |  |  |  |
+decree        | Labor Day                                | 2024-9-2 2025-9-1 2026-9-7 2027-9-6    | public          |  |  |  |
 fixed         | All Souls' Day                           | 11 2                 | public          |  |  |  |
 fixed         | Veterans Day                             | 11 11                | public          |  |  |  |
-decree        | Thanksgiving Day                         | 2024-11-28 2025-11-27 | public          |  |  |  |
+decree        | Thanksgiving Day                         | 2024-11-28 2025-11-27 2026-11-26 2027-11-25 | public          |  |  |  |
 fixed         | Lady of Camarin Day                      | 12 8                 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 
@@ -56,7 +56,7 @@ fixed  | New Year's Eve | 12 31 | unofficial |  |  |  |
 # `country_holidays(cc, categories=(...))` output, per the house rule
 # that permits vacanza-derived data when flagged as such (retrieved
 # 2026-07-22). ---
-decree | Good Friday | 2024-3-29 2025-4-18 | unofficial |  |  |  |
+decree | Good Friday | 2024-3-29 2025-4-18 2026-4-3 2027-3-26 | unofficial |  |  |  |
 decree | Easter Sunday | 2024-3-31 2025-4-20 | unofficial |  |  |  |
 decree | Mother's Day | 2024-5-12 2025-5-11 | unofficial |  |  |  |
 decree | Father's Day | 2024-6-16 2025-6-15 | unofficial |  |  |  |

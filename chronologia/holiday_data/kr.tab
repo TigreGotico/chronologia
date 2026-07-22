@@ -18,19 +18,19 @@
 # columns: kind | name | args | categories | subdiv | observed | valid | span
 #
 fixed         | 신정연휴                               | 1 1                 | public          |  |  |  |
-decree        | 설날 전날                              | 2024-2-9 2025-1-28  | public          |  |  |  |
-decree        | 설날                                 | 2024-2-10 2025-1-29 | public          |  |  |  |
-decree        | 설날 다음날                             | 2024-2-11 2025-1-30 | public          |  |  |  |
-decree        | 설날 대체 휴일                           | 2024-2-12           | public          |  |  |  |
+decree        | 설날 전날                              | 2024-2-9 2025-1-28 2026-2-16 2027-2-6  | public          |  |  |  |
+decree        | 설날                                 | 2024-2-10 2025-1-29 2026-2-17 2027-2-7 | public          |  |  |  |
+decree        | 설날 다음날                             | 2024-2-11 2025-1-30 2026-2-18 2027-2-8 | public          |  |  |  |
+decree        | 설날 대체 휴일                           | 2024-2-12 2027-2-9           | public          |  |  |  |
 fixed         | 삼일절                                | 3 1                 | public          |  |  |  |
 fixed         | 어린이날                               | 5 5                 | public          |  |  |  |
-decree        | 부처님오신날                             | 2024-5-15 2025-5-5  | public          |  |  |  |
-decree        | 부처님오신날 대체 휴일                       | 2025-5-6            | public          |  |  |  |
+decree        | 부처님오신날                             | 2024-5-15 2025-5-5 2026-5-24 2027-5-13  | public          |  |  |  |
+decree        | 부처님오신날 대체 휴일                       | 2025-5-6 2026-5-25            | public          |  |  |  |
 fixed         | 현충일                                | 6 6                 | public          |  |  |  |
 fixed         | 광복절                                | 8 15                | public          |  |  |  |
-decree        | 추석 전날                              | 2024-9-16 2025-10-5 | public          |  |  |  |
-decree        | 추석                                 | 2024-9-17 2025-10-6 | public          |  |  |  |
-decree        | 추석 다음날                             | 2024-9-18 2025-10-7 | public          |  |  |  |
+decree        | 추석 전날                              | 2024-9-16 2025-10-5 2026-9-24 2027-9-14 | public          |  |  |  |
+decree        | 추석                                 | 2024-9-17 2025-10-6 2026-9-25 2027-9-15 | public          |  |  |  |
+decree        | 추석 다음날                             | 2024-9-18 2025-10-7 2026-9-26 2027-9-16 | public          |  |  |  |
 decree        | 임시공휴일                              | 2025-1-27           | public          |  |  |  |
 fixed         | 개천절                                | 10 3                | public          |  |  |  |
 fixed         | 한글날                                | 10 9                | public          |  |  |  |
@@ -38,7 +38,7 @@ fixed         | 기독탄신일                              | 12 25            
 decree        | 국회의원 선거일                           | 2024-4-10           | public          |  |  |  |
 fixed         | 어린이날 대체 휴일                         | 5 6                 | public          |  |  |  |
 decree        | 국군의 날                              | 2024-10-1           | public          |  |  |  |
-decree        | 삼일절 대체 휴일                          | 2025-3-3            | public          |  |  |  |
+decree        | 삼일절 대체 휴일                          | 2025-3-3 2026-3-2            | public          |  |  |  |
 decree        | 대통령 선거일                            | 2025-6-3            | public          |  |  |  |
 decree        | 추석 대체 휴일                           | 2025-10-8           | public          |  |  |  |
 

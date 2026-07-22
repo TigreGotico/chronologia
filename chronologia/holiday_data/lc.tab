@@ -31,7 +31,7 @@ fixed         | Labour Day                               | 5 1                  
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
 easter        | Corpus Christi                           | 60 gregorian         | public          |  |  |  |
 fixed         | Emancipation Day                         | 8 1                  | public          |  |  |  |
-decree        | Thanksgiving Day                         | 2024-10-7 2025-10-6  | public          |  |  |  |
+decree        | Thanksgiving Day                         | 2024-10-7 2025-10-6 2026-10-5 2027-10-4  | public          |  |  |  |
 fixed         | National Day                             | 12 13                | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

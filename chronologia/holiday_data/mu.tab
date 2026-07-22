@@ -24,17 +24,17 @@
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
 fixed         | Day after New Year's Day                 | 1 2                  | public          |  |  |  |
-decree        | Thaipoosam Cavadee                       | 2024-1-25 2025-2-11  | public          |  |  |  |
+decree        | Thaipoosam Cavadee                       | 2024-1-25 2025-2-11 2026-2-2 2027-1-22  | public          |  |  |  |
 fixed         | Abolition of Slavery                     | 2 1                  | public          |  |  |  |
-decree        | Chinese Spring Festival                  | 2024-2-10 2025-1-29  | public          |  |  |  |
-decree        | Maha Shivaratree                         | 2024-3-8 2025-2-26   | public          |  |  |  |
+decree        | Chinese Spring Festival                  | 2024-2-10 2025-1-29 2026-2-17 2027-2-6  | public          |  |  |  |
+decree        | Maha Shivaratree                         | 2024-3-8 2025-2-26 2026-2-15 2027-3-6   | public          |  |  |  |
 fixed         | Independence and Republic Day            | 3 12                 | public          |  |  |  |
-decree        | Ougadi                                   | 2024-4-9 2025-3-30   | public          |  |  |  |
-decree        | Eid-ul-Fitr                              | 2024-4-11 2025-4-1   | public          |  |  |  |
+decree        | Ougadi                                   | 2024-4-9 2025-3-30 2026-3-19 2027-4-7   | public          |  |  |  |
+decree        | Eid-ul-Fitr                              | 2024-4-11 2025-4-1 2026-3-21 2027-3-10   | public          |  |  |  |
 fixed         | Labour Day                               | 5 1                  | public          |  |  |  |
-decree        | Assumption of the Blessed Virgin Mary    | 2024-8-15            | public          |  |  |  |
-decree        | Ganesh Chaturthi                         | 2024-9-8 2025-8-28   | public          |  |  |  |
-decree        | Divali                                   | 2024-10-31 2025-10-20 | public          |  |  |  |
+decree        | Assumption of the Blessed Virgin Mary    | 2024-8-15 2026-8-15            | public          |  |  |  |
+decree        | Ganesh Chaturthi                         | 2024-9-8 2025-8-28 2026-9-14 2027-9-4   | public          |  |  |  |
+decree        | Divali                                   | 2024-10-31 2025-10-20 2026-11-08 2027-10-29 | public          |  |  |  |
 fixed         | Arrival of Indentured Labourers          | 11 2                 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
-decree        | All Saints' Day                          | 2025-11-1            | public          |  |  |  |
+decree        | All Saints' Day                          | 2025-11-1 2027-11-1            | public          |  |  |  |

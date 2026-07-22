@@ -31,12 +31,12 @@ decree        | Dita e Pavarësisë së Republikës së Kosovës (ditë pushimi 
 easter        | Pashkët Katolike                         | 0 gregorian          | public          |  |  |  |
 easter        | Pashkët Katolike (ditë pushimi e shtyrë) | 1 gregorian          | public          |  |  |  |
 fixed         | Dita e Kushtetutës së Republikës së Kosovës | 4 9                  | public          |  |  |  |
-decree        | Bajrami i Madh, dita e parë (e vlerësuar) | 2024-4-10 2025-3-30  | public          |  |  |  |
+decree        | Bajrami i Madh, dita e parë (e vlerësuar) | 2024-4-10 2025-3-30 2026-3-20 2027-3-9  | public          |  |  |  |
 fixed         | Dita Ndërkombëtare e Punës               | 5 1                  | public          |  |  |  |
 easter        | Pashkët Ortodokse                        | 0 julian_gregorian_date | public          |  |  |  |
 easter        | Pashkët Ortodokse (ditë pushimi e shtyrë) | 1 julian_gregorian_date | public          |  |  |  |
 fixed         | Dita e Evropës                           | 5 9                  | public          |  |  |  |
-decree        | Bajrami i Vogël, dita e parë (e vlerësuar) | 2024-6-16 2025-6-6   | public          |  |  |  |
-decree        | Bajrami i Vogël, dita e parë (ditë pushimi e shtyrë, e vlerësuar) | 2024-6-17            | public          |  |  |  |
+decree        | Bajrami i Vogël, dita e parë (e vlerësuar) | 2024-6-16 2025-6-6 2026-5-27 2027-5-16   | public          |  |  |  |
+decree        | Bajrami i Vogël, dita e parë (ditë pushimi e shtyrë, e vlerësuar) | 2024-6-17 2027-5-17            | public          |  |  |  |
 fixed         | Krishtlindjet Katolike                   | 12 25                | public          |  |  |  |
 decree        | Bajrami i Madh, dita e parë (ditë pushimi e shtyrë, e vlerësuar) | 2025-3-31            | public          |  |  |  |

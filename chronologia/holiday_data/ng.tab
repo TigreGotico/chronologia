@@ -20,13 +20,13 @@
 fixed         | New Year's Day                     | 1 1                 | public          |  |  |  |
 easter        | Good Friday                        | -2                  | public          |  |  |  |
 easter        | Easter Monday                      | 1                   | public          |  |  |  |
-decree        | Id el Fitr                         | 2024-4-10 2025-3-30 | public          |  |  |  |
-decree        | Id el Fitr Holiday                 | 2024-4-11 2025-3-31 | public          |  |  |  |
+decree        | Id el Fitr                         | 2024-4-10 2025-3-30 2026-3-19 | public          |  |  |  |
+decree        | Id el Fitr Holiday                 | 2024-4-11 2025-3-31 2026-3-20 | public          |  |  |  |
 fixed         | Workers' Day                       | 5 1                 | public          |  |  |  |
 fixed         | Democracy Day                      | 6 12                | public          |  |  |  |
-decree        | Id el Kabir                        | 2024-6-16 2025-6-6  | public          |  |  |  |
-decree        | Id el Kabir Holiday                | 2024-6-17 2025-6-7  | public          |  |  |  |
-decree        | Id el Maulud                       | 2024-9-16 2025-9-5  | public          |  |  |  |
+decree        | Id el Kabir                        | 2024-6-16 2025-6-6 2026-5-28 2027-5-17  | public          |  |  |  |
+decree        | Id el Kabir Holiday                | 2024-6-17 2025-6-7 2026-5-29 2027-5-18  | public          |  |  |  |
+decree        | Id el Maulud                       | 2024-9-16 2025-9-5 2026-8-26 2027-8-15  | public          |  |  |  |
 fixed         | National Day                       | 10 1                | public          |  |  |  |
 fixed         | Christmas Day                      | 12 25               | public          |  |  |  |
 fixed         | Boxing Day                         | 12 26               | public          |  |  |  |

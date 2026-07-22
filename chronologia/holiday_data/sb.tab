@@ -29,7 +29,7 @@ easter        | Holy Saturday                            | -1 gregorian         
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 decree        | Public Holiday                           | 2024-4-17            | public          |  |  |  |
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
-decree        | King's Birthday                          | 2024-6-15 2025-6-13  | public          |  |  |  |
+decree        | King's Birthday                          | 2024-6-15 2025-6-13 2026-6-19 2027-6-18  | public          |  |  |  |
 fixed         | Independence Day                         | 7 7                  | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | National Day of Thanksgiving             | 12 26                | public          |  |  |  |

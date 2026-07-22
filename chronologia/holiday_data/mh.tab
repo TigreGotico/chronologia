@@ -27,11 +27,11 @@ fixed         | New Year's Day                           | 1 1                  
 fixed         | Nuclear Victims Remembrance Day          | 3 1                  | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 fixed         | Constitution Day                         | 5 1                  | public          |  |  |  |
-decree        | Fisherman's Day                          | 2024-7-5 2025-7-4    | public          |  |  |  |
-decree        | Dri-jerbal Day                           | 2024-9-6 2025-9-5    | public          |  |  |  |
-decree        | Manit Day                                | 2024-9-27 2025-9-26  | public          |  |  |  |
+decree        | Fisherman's Day                          | 2024-7-5 2025-7-4 2026-7-3 2027-7-2    | public          |  |  |  |
+decree        | Dri-jerbal Day                           | 2024-9-6 2025-9-5 2026-9-4 2027-9-3    | public          |  |  |  |
+decree        | Manit Day                                | 2024-9-27 2025-9-26 2026-9-25 2027-9-24  | public          |  |  |  |
 fixed         | President's Day                          | 11 17                | public          |  |  |  |
 decree        | President's Day Holiday                  | 2024-11-18           | public          |  |  |  |
-decree        | Gospel Day                               | 2024-12-6 2025-12-5  | public          |  |  |  |
+decree        | Gospel Day                               | 2024-12-6 2025-12-5 2026-12-4 2027-12-3  | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
-decree        | Nuclear Victims Remembrance Day Holiday  | 2025-2-28            | public          |  |  |  |
+decree        | Nuclear Victims Remembrance Day Holiday  | 2025-2-28 2026-3-2            | public          |  |  |  |

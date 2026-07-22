@@ -25,14 +25,14 @@
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
 fixed         | George Price Day                         | 1 15                 | public          |  |  |  |
-decree        | National Heroes and Benefactors Day      | 2024-3-9             | public          |  |  |  |
+decree        | National Heroes and Benefactors Day      | 2024-3-9 2026-3-9             | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Holy Saturday                            | -1 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 fixed         | Labour Day                               | 5 1                  | public          |  |  |  |
 fixed         | Saint George's Caye Day                  | 9 10                 | public          |  |  |  |
-decree        | Independence Day                         | 2024-9-21            | public          |  |  |  |
-decree        | Indigenous Peoples' Resistance Day       | 2024-10-12           | public          |  |  |  |
+decree        | Independence Day                         | 2024-9-21 2026-9-21 2027-9-21            | public          |  |  |  |
+decree        | Indigenous Peoples' Resistance Day       | 2024-10-12 2026-10-12           | public          |  |  |  |
 fixed         | Garifuna Settlement Day                  | 11 19                | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |
