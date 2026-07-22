@@ -677,3 +677,49 @@ diwali          | hu | diváli
 vesak           | hu | vészák
 halloween       | hu | halloween
 valentines      | hu | valentin-nap ;; bálint-nap
+#
+# ===== Turkish =====
+new_year        | tr | yılbaşı ;; yeni yıl
+epiphany        | tr | epifani
+good_friday     | tr | kutsal cuma
+easter          | tr | paskalya
+ascension       | tr | göğe yükseliş
+pentecost       | tr | pentikost
+christmas_eve   | tr | noel arifesi
+christmas       | tr | noel
+eid_al_fitr     | tr | ramazan bayramı ;; şeker bayramı
+eid_al_adha     | tr | kurban bayramı
+ramadan         | tr | ramazan
+islamic_new_year| tr | hicri yılbaşı
+ashura          | tr | aşure günü
+mawlid          | tr | mevlid kandili ;; mevlit
+rosh_hashanah   | tr | yahudi yeni yılı
+yom_kippur      | tr | yom kippur
+passover        | tr | hamursuz bayramı
+hanukkah        | tr | hanuka
+chinese_new_year| tr | çin yeni yılı
+nowruz          | tr | nevruz
+diwali          | tr | divali
+vesak           | tr | vesak
+halloween       | tr | cadılar bayramı
+valentines      | tr | sevgililer günü
+#
+# ===== Azerbaijani =====
+new_year        | az | yeni il
+christmas       | az | milad
+easter          | az | pasxa
+eid_al_fitr     | az | ramazan bayramı ;; orucluq bayramı
+eid_al_adha     | az | qurban bayramı
+ramadan         | az | ramazan
+islamic_new_year| az | hicri yeni il
+ashura          | az | aşura
+mawlid          | az | mövlud
+nowruz          | az | novruz ;; novruz bayramı
+chinese_new_year| az | çin yeni ili
+diwali          | az | divali
+vesak           | az | vesak
+halloween       | az | hellowin
+valentines      | az | sevgililər günü
+rosh_hashanah   | az | yəhudi yeni ili
+yom_kippur      | az | yom kippur
+hanukkah        | az | hanuka
