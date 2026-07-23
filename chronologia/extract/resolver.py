@@ -74,6 +74,18 @@ def _pivot_two_digit_year(tok) -> int:
     return n
 
 
+def _pivot_year_str(raw: str) -> int:
+    """The same two-digit ``%y`` pivot as :func:`_pivot_two_digit_year`, but for
+    a bare digit *substring* (the year component of a numeric slash/dash date)
+    rather than a slot token: exactly two digits pivot (69-99 -> 1969-1999,
+    00-68 -> 2000-2068); three or four digits are the explicit year as written.
+    """
+    n = int(raw)
+    if len(raw) == 2:
+        return 2000 + n if n <= 68 else 1900 + n
+    return n
+
+
 def _nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date:
     """The ``n``-th ``weekday`` (Mon=0) of ``month``/``year``; ``n < 0`` counts
     from the end (``-1`` = last).  Raises ``ValueError`` when the month has no
@@ -137,6 +149,7 @@ def _day_span(dt: datetime) -> DateSpan:
 #: clock_time in the same text composes onto the day these select.
 DATE_CONSTRUCTIONS = frozenset({
     "calendar_date", "reckoned_date", "nongregorian_date", "iso_date",
+    "numeric_date",
     "weekday_ref", "named_day", "season_ref", "scoped_ordinal",
     "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
@@ -578,6 +591,44 @@ class Resolver:
     def _resolve_iso_date(self, match, anchor):
         y, m, d = (int(p) for p in match.slots["ISO"].text.split("-"))
         start = AstroDate(y, m, d)                       # ValueError -> None
+        return Resolution(DateSpan(start, start + timedelta(days=1)),
+                          self._consumed(match))
+
+    def _resolve_numeric_date(self, match, anchor):
+        """A numeric slash/dash date ("12/11/2024", "5-6-24"), day-wide.
+
+        The two leading components map to day/month by the locale's ``dmy``
+        convention: dmy=true reads day-first ("15/06/2024" = 15 June),
+        dmy=false reads month-first ("06/15/2024" = 15 June via the swap
+        below).  The year component is 4-digit as written, 2-digit through the
+        POSIX ``%y`` pivot.
+
+        Ambiguity guard: when the component the locale flag would read as the
+        *month* exceeds 12 while the other is a valid month (<= 12), the two
+        are swapped -- "13/12/2024" is unambiguously 13 December even in a
+        month-first locale (this mirrors dateutil's dayfirst heuristic).  When
+        both components are <= 12 ("01/02/03") the locale flag decides, no
+        swap.  Any component that still names no real calendar date (month > 12,
+        day 0, day-in-month impossible like 31/02) resolves to None rather than
+        being fabricated -- ``AstroDate`` raises ``ValueError`` for the bad day.
+        """
+        a, b, y = re.split(r"[/-]", match.slots["NUMDATE"].text)
+        year = _pivot_year_str(y)
+        first, second = int(a), int(b)
+        if self.spec.conventions.dmy:
+            day, month = first, second
+        else:
+            month, day = first, second
+        # unambiguous swap: the flagged month can't be a month but the other
+        # component is a valid one -> the surface must be day-first here
+        if month > 12 and day <= 12:
+            day, month = month, day
+        if not 1 <= month <= 12:
+            return None
+        try:
+            start = AstroDate(year, month, day)          # bad day -> ValueError
+        except ValueError:
+            return None
         return Resolution(DateSpan(start, start + timedelta(days=1)),
                           self._consumed(match))
 

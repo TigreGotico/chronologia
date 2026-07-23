@@ -64,6 +64,7 @@
     "ISO"
    ]
   },
+  "numeric_date": {"orders": ["NUMDATE"]},
   "year_ref": {
    "orders": [
     "in GYEAR",

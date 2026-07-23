@@ -88,6 +88,11 @@
         "ISO"
       ]
     },
+    "numeric_date": {
+      "orders": [
+        "NUMDATE"
+      ]
+    },
     "year_ref": {
       "orders": [
         "in year_word GYEAR",

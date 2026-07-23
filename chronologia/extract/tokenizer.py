@@ -21,6 +21,14 @@ from typing import Tuple
 from chronologia.extract.model import Token, TokenizerModes
 
 _ISO = r"\d{4}-\d{2}-\d{2}"
+# a numeric slash/dash separated date ("12/11/2024", "5-6-24"): two 1-2 digit
+# components and a 2-4 digit year, kept whole so the matcher binds it as one
+# ``NUMDATE`` slot.  Requiring the third (year) component and two separators
+# keeps a bare fraction/score ("1/2") from ever reading as a date.  Dot is
+# deliberately excluded -- it collides with the decimal-number and
+# ordinal-dot shapes.  The component->day/month order is a resolve-time,
+# per-locale (dmy) decision; the tokenizer stays language-neutral.
+_NUMDATE = r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}"
 _CLOCK = r"\d{1,2}:\d{2}(?::\d{2})?"
 _NUM = r"\d+(?:\.\d+)?"
 # a timezone acronym with an optional fixed signed offset kept as ONE token so
@@ -47,7 +55,7 @@ class Tokenizer:
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
-        parts = [_ISO, _CLOCK, _ZONE]
+        parts = [_ISO, _NUMDATE, _CLOCK, _ZONE]
         if modes.ordinal_dot:
             # a digit run followed by a dot that is not a decimal point
             parts.append(r"\d+\.(?!\d)")
@@ -65,6 +73,7 @@ class Tokenizer:
             # they are also the offsets into the original ``text``.
             cs, ce = m.start(), m.end()
             is_literal = (re.fullmatch(_ISO, raw) is not None
+                          or re.fullmatch(_NUMDATE, raw) is not None
                           or re.fullmatch(_CLOCK, raw) is not None)
             if not is_literal and re.match(r"\d", raw):
                 digits = raw.rstrip(".")

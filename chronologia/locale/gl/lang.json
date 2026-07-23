@@ -107,6 +107,11 @@
         "ISO"
       ]
     },
+    "numeric_date": {
+      "orders": [
+        "NUMDATE"
+      ]
+    },
     "holiday_ref": {
       "orders": [
         "REL_MARKER HOLIDAY",
