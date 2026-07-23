@@ -31,6 +31,15 @@ from ._corpus import span, start, nomatch, AstroDate
     ("neuf heures et demie", 2017, 6, 28, 9, 30),
     ("dix heures moins le quart", 2017, 6, 28, 9, 45),
     ("huit heures et quart", 2017, 6, 28, 8, 15),
+    # landmark + fraction: "midi"/"minuit" compose with a trailing additive
+    # half/quarter exactly as a bare hour does (Academie francaise, 8e ed.,
+    # art. "demi": "Midi et demi, minuit et demi"; corroborated by the OQLF).
+    ("midi et demi", 2017, 6, 28, 12, 30),
+    ("minuit et demi", 2017, 6, 28, 0, 30),
+    ("midi et quart", 2017, 6, 28, 12, 15),
+    ("minuit et quart", 2017, 6, 28, 0, 15),
+    # landmark + "moins le quart" (subtractive) -- "midi moins le quart" = 11:45
+    ("midi moins le quart", 2017, 6, 28, 11, 45),
 ])
 def test_clock(text, y, mo, d, h, mi):
     assert start(text) == AstroDate(y, mo, d, h, mi)
