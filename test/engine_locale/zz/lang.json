@@ -47,7 +47,8 @@
                  "FRACTION CLOCKDIR HOUR MERIDIEM?", "HOUR oclock MERIDIEM?"],
       "prefer_future": true
     },
-    "iso_date": {"orders": ["ISO"]}
+    "iso_date": {"orders": ["ISO"]},
+    "numeric_date": {"orders": ["NUMDATE"]}
   },
   "conventions": {"week_start": "monday", "dmy": true, "hemisphere": null,
                   "prefer_future": true},

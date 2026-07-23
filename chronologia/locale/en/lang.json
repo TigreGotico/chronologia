@@ -184,6 +184,11 @@
         "ISO"
       ]
     },
+    "numeric_date": {
+      "orders": [
+        "NUMDATE"
+      ]
+    },
     "hebrew_new_year": {
       "orders": [
         "article? hebrew new year_word YEAR"

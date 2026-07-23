@@ -81,6 +81,11 @@
         "ISO"
       ]
     },
+    "numeric_date": {
+      "orders": [
+        "NUMDATE"
+      ]
+    },
     "month_fuzzy": {
       "orders": [
         "article? PART of? MONTH"

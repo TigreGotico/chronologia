@@ -78,6 +78,11 @@
         "ISO"
       ]
     },
+    "numeric_date": {
+      "orders": [
+        "NUMDATE"
+      ]
+    },
     "quarter_ref": {
       "orders": [
         "q NUM YEAR?",
