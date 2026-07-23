@@ -447,13 +447,15 @@ def extract_recurrence(
         on_words=set(C.get("on", ())),
         once_words=set(C.get("recur_once", ())),
         per_words=set(C.get("recur_per", ())),
+        habitual_words=set(C.get("recur_habitual", ())),
         holidays=dict(spec.holidays),
         lang=lang,
         anchor=anchor,
     )
 
     for finder in (_recur_nth_weekday, _recur_holiday, _recur_date_anchored,
-                   _recur_once, _recur_every, _recur_freq_word):
+                   _recur_once, _recur_every, _recur_freq_word,
+                   _recur_habitual_weekday):
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
@@ -636,6 +638,7 @@ class _RecurCtx:
     on_words: set = frozenset()
     once_words: set = frozenset()
     per_words: set = frozenset()
+    habitual_words: set = frozenset()
     holidays: dict = None
     lang: str = "en-us"
     anchor: Optional[datetime] = None
@@ -736,11 +739,20 @@ def _of_month_tail(ctx, r):
 
 
 def _recur_once(ctx):
-    """``once a <unit> [on <weekday>]`` -> the plain per-period frequency.
+    """``[one] once a <unit> [on <weekday>]`` -> the plain per-period frequency.
 
     "Once per period" *is* "every period": one occurrence per week is exactly
     ``FREQ=WEEKLY``, so the count word adds no RRULE part of its own.  An
     optional trailing "on <weekday>" pins the day (``BYDAY``).
+
+    The ``once`` marker may be **multi-word** and may be a bare *counter noun*
+    that only means "once" when a count of one precedes it: English writes one
+    word ("once"), Portuguese writes the count plus the noun ("uma vez", one
+    time).  The marker is therefore matched as a word run (longest first, as
+    every multi-word marker in this module is), and a **number one**
+    immediately before it is read as part of the phrase.  A count *other* than
+    one before the marker is rejected outright, so "duas vezes por semana"
+    (twice a week) stays unread.
 
     Only the count *one* maps cleanly.  "twice a week" / "three times a month"
     are frequency-**counts** needing a different RRULE shape (BYSETPOS or a
@@ -750,10 +762,11 @@ def _recur_once(ctx):
     """
     t = ctx.tokens
     n = len(t)
-    for i in range(n):
-        if t[i].text not in ctx.once_words:
-            continue
-        j = i + 1
+    for i, j in sorted(_marker_runs(t, ctx.once_words, set())):
+        if i - 1 >= 0 and t[i - 1].is_number:
+            if float(t[i - 1].value) != 1.0:
+                continue  # "duas vezes por semana": a per-period *count*
+            i -= 1
         while j < n and (t[j].text in ctx.articles or t[j].text in ctx.per_words):
             j += 1
         if not (j < n and t[j].text in ctx.units):
@@ -792,12 +805,13 @@ def _recur_every(ctx):
         j = i + 1
         interval = 1
         num_val = num_idx = None
+        saw_article = False
         # an article, an "other" marker and an explicit count may appear in any
         # order before the target noun ("every other week", "toutes les deux
         # semaines", "cada dos semanas").
         while j < n:
             if t[j].text in ctx.articles:
-                j += 1
+                saw_article, j = True, j + 1
             elif t[j].text in ctx.other:
                 interval, j = 2, j + 1
             elif t[j].is_number:
@@ -847,6 +861,24 @@ def _recur_every(ctx):
                 return (_build_every("monthly", bymonthday=num_val),
                         set(range(i, end)))
 
+        # -- "every the days <N> [of the month]" -> BYMONTHDAY ---------------
+        # A *day* unit carrying a trailing day number is a day-of-month rule,
+        # not a daily one: "todos os dias 1" (the 1st of every month) against
+        # "todos os dias" (every day).  The trailing number is the only thing
+        # that tells them apart, so the bare form keeps its DAILY reading and
+        # only the numbered one diverts here.
+        #
+        # The determiner is *required*: the reading fires on the articled form
+        # ("todos **os** dias 1") and not on the bare one ("todo dia 1"), which
+        # a native European Portuguese speaker rejects for this sense.  English
+        # never writes an article after "every", so this is unreachable there.
+        if (saw_article and num_val is None
+                and j + 1 < n and t[j].text in ctx.units
+                and ctx.units[t[j].text] == "day"
+                and t[j + 1].is_number and 1 <= int(t[j + 1].value) <= 31):
+            return (_build_every("monthly", bymonthday=int(t[j + 1].value)),
+                    set(range(i, _of_month_tail(ctx, j + 2))))
+
         if j >= n:
             continue
         iv = {"interval": interval} if interval != 1 else {}
@@ -894,6 +926,63 @@ def _recur_freq_word(ctx):
         if byday is None:
             continue
         return _build_every("weekly", byday=byday), {i - 1, i}
+    return None
+
+
+def _recur_habitual_weekday(ctx):
+    """``<habitual preposition> <weekday>`` -> ``WEEKLY;BYDAY=<weekday>``.
+
+    Some languages mark a habitual weekday with a **preposition** rather than
+    a quantifier: European Portuguese "à segunda-feira" / "às segundas-feiras"
+    (on Mondays) is the ordinary way to say "every monday", in both the
+    singular and the plural.  Source: Ciberdúvidas da Língua Portuguesa,
+    «À(s) segunda(s)-feira(s)», Eunice Marta, 1 June 2012 --
+    https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/as-segundas-feiras/31385
+    -- which answers that both numbers convey "all Mondays" and that it is the
+    **preposition** that carries the habitual sense: a bare article does not.
+
+    Three things follow from that, and each is load-bearing here:
+
+    * The marker is its own ``recur_habitual`` vocabulary, holding only the
+      ``a + article`` contractions (pt à/às/ao/aos).  It deliberately does
+      **not** hold the ``em + article`` ones (na/no/nas/nos): "na
+      segunda-feira" is *on Monday*, one particular date, and that a-vs-em
+      contrast is exactly the distinction the source draws.  Keeping them in
+      separate vocabularies makes the wrong reading unwritable rather than
+      merely unlikely.
+    * The same contraction is also the clock marker ("às 9" = at nine), so the
+      rule fires only when a **weekday** follows.  A number after it is a
+      clock time and is left for the clock pin to read, which is what lets one
+      sentence carry both uses.
+    * A weekday plural is recognised **only** in this position (the surface
+      plus its ``-s`` plural, derived, not listed).  Bare plural weekday
+      surfaces cannot go into the global weekday vocabulary -- pt "domingos"
+      is also a common surname, and a bare "sextas" makes unrelated
+      ordinal-count readings match -- but under an explicit habitual
+      preposition there is no such ambiguity.
+
+    Runs **last** of the finders: a phrase that already reads as a fuller rule
+    ("uma vez por semana à segunda") is claimed by that rule first, so this
+    only ever fires on the bare habitual phrase.
+    """
+    if not ctx.habitual_words:
+        return None
+    t = ctx.tokens
+    n = len(t)
+    # the weekday surfaces this position accepts: the vocabulary's own, plus
+    # the regular "-s" plural of each single-word surface ("domingo" ->
+    # "domingos", "segundas feiras" is already vocabulary).
+    surfaces = dict(ctx.weekdays)
+    for surf, wd in ctx.weekdays.items():
+        surfaces.setdefault(surf + "s", wd)
+    for i in range(n - 1):
+        if t[i].text not in ctx.habitual_words:
+            continue
+        wd = surfaces.get(t[i + 1].text)
+        if wd is None:
+            continue
+        return (_build_every("weekly", byday=((None, wd),)),
+                set(range(i, i + 2)))
     return None
 
 
@@ -987,7 +1076,13 @@ def _recur_date_anchored(ctx):
             k -= 1
         if k >= 0 and t[k].is_number and 1 <= int(t[k].value) <= 31:
             start = k
-            while start - 1 >= 0 and t[start - 1].text in ctx.articles:
+            # swallow a leading determiner and an explicit "day" unit naming
+            # the number ("no dia 1 de cada mês", on day 1 of every month --
+            # the same rule English writes as "on the 1st of every month").
+            while start - 1 >= 0 and (
+                    t[start - 1].text in ctx.articles
+                    or (t[start - 1].text in ctx.units
+                        and ctx.units[t[start - 1].text] == "day")):
                 start -= 1
             return (_build_every("monthly", bymonthday=int(t[k].value)),
                     set(range(start, j + 1)))

@@ -102,3 +102,225 @@ def test_movable_holiday_recurrence(text, key):
     assert got[1] == ""
     with pytest.raises(ValueError):
         got[0].to_string()
+
+
+# --------------------------------------------------------------------------
+# "uma vez ..." framing and the plural day-of-month form.
+#
+# Every surface below was confirmed natural by a native European Portuguese
+# speaker; nothing here is a translation-by-analogy of the English forms.
+# --------------------------------------------------------------------------
+_ONCE_CASES = [
+    # "uma vez por <unidade>" -- one occurrence per period *is* that period's
+    # plain frequency, so the count word adds no RRULE part of its own.
+    ("uma vez por dia", "FREQ=DAILY", ""),
+    ("uma vez por semana", "FREQ=WEEKLY", ""),
+    ("uma vez por mês", "FREQ=MONTHLY", ""),
+    ("uma vez por ano", "FREQ=YEARLY", ""),
+    # European Portuguese also contracts the preposition with the article:
+    # "à semana", "ao mês".
+    ("uma vez à semana", "FREQ=WEEKLY", ""),
+    ("uma vez ao mês", "FREQ=MONTHLY", ""),
+    ("uma vez ao dia", "FREQ=DAILY", ""),
+    ("uma vez ao ano", "FREQ=YEARLY", ""),
+    # a weekday pins the day, exactly as English "once a week on monday".
+    ("uma vez por semana à segunda", "FREQ=WEEKLY;BYDAY=MO", ""),
+    ("uma vez por semana à segunda-feira", "FREQ=WEEKLY;BYDAY=MO", ""),
+    # ... and the clock pin still folds on top of it.
+    ("uma vez por semana à segunda às 9", "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9", ""),
+]
+
+
+_DAY_OF_MONTH_CASES = [
+    # The plural is what a speaker uses here: the rule is not about one
+    # specific day, so "todos os dias 1" reads as "the 1st of every month".
+    ("todos os dias 1", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("todos os dias 15", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+    ("todos os dias 1 do mês", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("todos os dias 15 do mês", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+    ("no dia 1 de cada mês", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("no dia 15 de cada mês", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+]
+
+
+@pytest.mark.parametrize("text,rrule,remainder",
+                         _ONCE_CASES + _DAY_OF_MONTH_CASES)
+def test_once_and_day_of_month(text, rrule, remainder):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+
+
+def test_todos_os_dias_still_means_daily():
+    """The collision guard: "todos os dias" on its own is DAILY.
+
+    Only a *trailing day number* diverts it to a day-of-month rule, so the
+    bare phrase must keep the reading it has always had."""
+    got = extract_recurrence("todos os dias", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=DAILY"
+    assert got[1] == ""
+
+
+def test_singular_day_number_is_not_a_day_of_month_rule():
+    """"todo dia 1" is not the natural surface for this sense (a native
+    speaker uses the plural), so the day number is *not* read as a
+    BYMONTHDAY: the phrase keeps its plain DAILY reading and the stray
+    number is left in the remainder."""
+    got = extract_recurrence("todo dia 1", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=DAILY"
+    assert got[1] == "1"
+
+
+@pytest.mark.parametrize("text", [
+    # a per-period *count* above one needs a different RRULE shape
+    # (BYSETPOS / per-period COUNT) than the plain frequency, so it is left
+    # unread rather than forced into a wrong interval.
+    "duas vezes por semana",
+    "três vezes por mês",
+    # the count phrase alone names no period at all
+    "uma vez",
+    "uma vez por",
+    # a bare day number is a date, not a rule
+    "dia 1",
+    "no dia 1",
+])
+def test_once_adversarial_not_a_recurrence(text):
+    assert extract_recurrence(text, LANG) is None
+
+
+# --------------------------------------------------------------------------
+# Plural nth-weekday: the canonical pt surface for a recurring set.
+#
+# Native-speaker ruling from the repo owner: Portuguese marks the recurring
+# set with the PLURAL throughout -- plural article, plural ordinal, plural
+# weekday, plus the "do mês" tail.  The singular names one particular
+# occasion.  This is the same correction the owner applied to "todo dia 1".
+#
+# It also composes cleanly with the conservative rule from #217: the natural
+# pt form already carries the explicit "do mês" tail, so the ordinal-vs-
+# interval ambiguity that forced English to wait for positive evidence simply
+# does not arise here -- every ordinal from two upwards is already unambiguous.
+# --------------------------------------------------------------------------
+_PLURAL_NTH_WEEKDAY_CASES = [
+    ("todas as terceiras quintas-feiras do mês", "FREQ=MONTHLY;BYDAY=3TH"),
+    ("todas as primeiras segundas-feiras do mês", "FREQ=MONTHLY;BYDAY=1MO"),
+    ("todas as últimas sextas-feiras do mês", "FREQ=MONTHLY;BYDAY=-1FR"),
+    ("todas as últimas quartas-feiras do mês", "FREQ=MONTHLY;BYDAY=-1WE"),
+    ("todas as primeiras sextas-feiras do mês", "FREQ=MONTHLY;BYDAY=1FR"),
+    ("todas as terceiras terças-feiras do mês", "FREQ=MONTHLY;BYDAY=3TU"),
+    ("todas as terceiras quartas-feiras do mês", "FREQ=MONTHLY;BYDAY=3WE"),
+    ("todas as primeiras terças-feiras do mês", "FREQ=MONTHLY;BYDAY=1TU"),
+    ("todas as últimas segundas-feiras do mês", "FREQ=MONTHLY;BYDAY=-1MO"),
+]
+
+
+@pytest.mark.parametrize("text,rrule", _PLURAL_NTH_WEEKDAY_CASES)
+def test_plural_nth_weekday(text, rrule):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == ""
+
+
+def test_plural_weekday_is_never_folded_to_a_number():
+    """"segundas"/"quintas" are weekday names in the plural exactly as they
+    are in the singular, so the plural-ordinal fold must not eat them."""
+    got = extract_recurrence("todas as segundas-feiras", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=WEEKLY;BYDAY=MO"
+
+
+@pytest.mark.parametrize("text", [
+    # plural ordinals are folded, but the surfaces that are ordinary nouns
+    # this engine reads ("segundos" seconds, "quartos" the clock quarter)
+    # are held back and so name no recurrence on their own.
+    "segundos", "dois quartos",
+    # the ordinals that ARE weekday names ("segundas" 2nd/Mondays, "quartas"
+    # 4th/Wednesdays, "quintas" 5th/Thursdays) stay weekdays, so the plural
+    # nth-weekday reading is not available for those counts -- the phrase
+    # reads as the weekday it names rather than being guessed either way.
+    "todas as quintas quintas-feiras do mês",
+])
+def test_plural_ordinal_noun_homographs_are_not_recurrences(text):
+    got = extract_recurrence(text, LANG)
+    assert got is None or got[1] != ""
+
+
+# --------------------------------------------------------------------------
+# The European Portuguese habitual weekday, marked by the PREPOSITION.
+#
+# Source: Ciberdúvidas da Língua Portuguesa, «À(s) segunda(s)-feira(s)»,
+# Eunice Marta, 1 June 2012 --
+# https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/as-segundas-feiras/31385
+#
+# Asked which of «"As segundas-feiras faço ginástica" ou "a segunda-feira faço
+# ginástica"» expresses "all Mondays", the consultant answers that BOTH the
+# singular and the plural convey it -- «À segunda-feira faço ginástica», «Às
+# segundas-feiras faço ginástica» -- and that the construction requires the
+# preposition: the bare article does not give the habitual reading.  This is
+# the ordinary EP way to say "every monday", so it must parse as one.
+# --------------------------------------------------------------------------
+_HABITUAL_CASES = [
+    # -feira compounds, singular then plural
+    ("à segunda-feira", "FREQ=WEEKLY;BYDAY=MO"),
+    ("às segundas-feiras", "FREQ=WEEKLY;BYDAY=MO"),
+    ("à terça-feira", "FREQ=WEEKLY;BYDAY=TU"),
+    ("às terças-feiras", "FREQ=WEEKLY;BYDAY=TU"),
+    ("à quarta-feira", "FREQ=WEEKLY;BYDAY=WE"),
+    ("às quartas-feiras", "FREQ=WEEKLY;BYDAY=WE"),
+    ("à quinta-feira", "FREQ=WEEKLY;BYDAY=TH"),
+    ("às quintas-feiras", "FREQ=WEEKLY;BYDAY=TH"),
+    ("à sexta-feira", "FREQ=WEEKLY;BYDAY=FR"),
+    ("às sextas-feiras", "FREQ=WEEKLY;BYDAY=FR"),
+    # sábado / domingo are not -feira days and take the masculine ao/aos
+    ("ao sábado", "FREQ=WEEKLY;BYDAY=SA"),
+    ("aos sábados", "FREQ=WEEKLY;BYDAY=SA"),
+    ("ao domingo", "FREQ=WEEKLY;BYDAY=SU"),
+    ("aos domingos", "FREQ=WEEKLY;BYDAY=SU"),
+    # the -feira noun is routinely dropped in speech
+    ("à segunda", "FREQ=WEEKLY;BYDAY=MO"),
+    ("às segundas", "FREQ=WEEKLY;BYDAY=MO"),
+    ("às sextas", "FREQ=WEEKLY;BYDAY=FR"),
+]
+
+
+@pytest.mark.parametrize("text,rrule", _HABITUAL_CASES)
+def test_habitual_weekday(text, rrule):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == ""
+
+
+@pytest.mark.parametrize("text", [
+    # "em + article" is a single date -- "na segunda-feira" is *on Monday*,
+    # the monday coming, not a rule.  The a-vs-em contrast is exactly the
+    # distinction the Ciberduvidas answer draws, so the two prepositions live
+    # in separate vocabularies and this reading is structurally unreachable.
+    "na segunda-feira", "no domingo", "no sábado", "nas segundas-feiras",
+    # a bare article carries no habitual sense either (per the same source)
+    "a segunda-feira",
+])
+def test_em_preposition_is_not_a_recurrence(text):
+    assert extract_recurrence(text, LANG) is None
+
+
+def test_habitual_preposition_does_not_swallow_the_clock():
+    """"às" is also the clock marker ("às 9" = at nine).  The habitual rule
+    fires only before a WEEKDAY, so one sentence can carry both uses."""
+    got = extract_recurrence("às segundas-feiras às 9", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9"
+    assert got[1] == ""
+    # a lone clock time is no recurrence at all
+    assert extract_recurrence("às 9", LANG) is None
+
+
+def test_bare_plural_weekday_is_still_a_surname():
+    """The plural weekday surface is accepted ONLY under the habitual
+    preposition, so "domingos" on its own stays the surname it also is."""
+    assert extract_recurrence("o senhor domingos chegou", LANG) is None
+    assert extract_recurrence("domingos", LANG) is None
