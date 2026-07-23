@@ -23,16 +23,12 @@ already-numeric token and leaves it untouched.
 """
 from __future__ import annotations
 
-from dataclasses import replace
 from functools import lru_cache
 from importlib import import_module
 from typing import Callable, Dict, Optional, Tuple
 
 from chronologia.extract.model import Token
-
-
-def _reindex(tokens) -> Tuple[Token, ...]:
-    return tuple(replace(t, index=i) for i, t in enumerate(tokens))
+from chronologia.extract.numfold_engine import reindex as _reindex
 
 
 @lru_cache(maxsize=None)

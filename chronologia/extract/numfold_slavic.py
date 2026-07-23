@@ -21,12 +21,12 @@ Each ``fold_<lang>`` is wired as the language ``hook`` in
 """
 from __future__ import annotations
 
-from dataclasses import replace
 from functools import lru_cache
 from importlib import import_module
 from typing import Callable, FrozenSet, Tuple
 
 from chronologia.extract.model import Token
+from chronologia.extract.numfold_engine import NumberGrammar, make_fold
 
 # Oblique/declined number forms the number model does not emit from its
 # nominative pronunciation but that the corpora attest.  Closed class,
@@ -71,48 +71,13 @@ def _extract(lang: str, text: str):
         return False
 
 
-def _reindex(tokens) -> Tuple[Token, ...]:
-    return tuple(replace(t, index=i) for i, t in enumerate(tokens))
-
-
 def _make_fold(lang: str) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
-    def _is_numword(tok: Token) -> bool:
-        return tok.is_number or tok.text in _numwords(lang)
-
-    def fold(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        out = []
-        i = 0
-        n = len(tokens)
-        while i < n:
-            if not _is_numword(tokens[i]):
-                out.append(tokens[i])
-                i += 1
-                continue
-            j = i
-            run = []
-            while j < n and _is_numword(tokens[j]):
-                run.append(tokens[j])
-                j += 1
-            spelled = [t for t in run if not t.is_number]
-            if not spelled:
-                out.extend(run)
-                i = j
-                continue
-            text = " ".join(t.text for t in run)
-            value = _extract(lang, text)
-            if value is False or value is None:
-                out.extend(run)
-                i = j
-                continue
-            num = int(value) if float(value).is_integer() else float(value)
-            out.append(Token(text=str(num), raw=str(num), index=0,
-                             is_number=True, value=num,
-                             char_start=run[0].char_start,
-                             char_end=run[-1].char_end))
-            i = j
-        return _reindex(out)
-
-    return fold
+    """A bare cardinal fold: run membership from the model-derived word set,
+    value read back through ``extract_number_<lang>``.  No connector, no
+    fallback -- just the shared engine over this family's data."""
+    return make_fold(NumberGrammar(
+        is_number=lambda tok: tok.is_number or tok.text in _numwords(lang),
+        extract=lambda text: _extract(lang, text)))
 
 
 from chronologia.extract.numfold_ordinals import with_ordinals

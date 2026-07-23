@@ -25,6 +25,8 @@ from typing import Tuple
 from ovos_number_parser.numbers_en import extract_number_en
 
 from chronologia.extract.model import Token
+from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
+                                                    reindex as _reindex)
 from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
 
 # closed class of English number-words the fold may absorb (cardinals +
@@ -58,12 +60,8 @@ def _is_numword(tok: Token) -> bool:
     return tok.is_number or tok.text in _NUMWORDS
 
 
-def _reindex(tokens) -> Tuple[Token, ...]:
-    return tuple(replace(t, index=i) for i, t in enumerate(tokens))
-
-
-def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-    # -- pass 1: merge a digit followed by a lone ordinal suffix (5 th -> 5)
+def _merge_en_ord_suffix(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Pre-pass: merge a digit followed by a lone ordinal suffix (5 th -> 5)."""
     merged = []
     i = 0
     while i < len(tokens):
@@ -76,48 +74,17 @@ def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             continue
         merged.append(t)
         i += 1
+    return tuple(merged)
 
-    # -- pass 2: fold maximal runs of spelled number-words to a digit token
-    out = []
-    i = 0
-    n = len(merged)
-    while i < n:
-        if not _is_numword(merged[i]):
-            out.append(merged[i])
-            i += 1
-            continue
-        j = i
-        run = []
-        while j < n:
-            if _is_numword(merged[j]):
-                run.append(merged[j])
-                j += 1
-            elif (merged[j].text == "and" and run and j + 1 < n
-                  and _is_numword(merged[j + 1])):
-                run.append(merged[j])   # internal "and": one hundred and five
-                j += 1
-            else:
-                break
-        # a run that is a single already-digit token needs no folding
-        spelled = [t for t in run if not t.is_number]
-        if not spelled:
-            out.extend(run)
-            i = j
-            continue
-        text = " ".join(t.text for t in run if t.text != "and")
-        value = extract_number_en(text, ordinals=True)
-        if value is False or value is None:
-            out.extend(run)
-            i = j
-            continue
-        num = int(value) if float(value).is_integer() else float(value)
-        raw = str(num)
-        out.append(Token(text=str(num), raw=raw, index=0,
-                         is_number=True, value=num,
-                         char_start=run[0].char_start,
-                         char_end=run[-1].char_end))
-        i = j
-    return _reindex(out)
+
+# English: closed-class membership, an internal "and" that continues a run but
+# is dropped from the text the back-end reads ("one hundred and five").
+fold_en = make_fold(NumberGrammar(
+    is_number=_is_numword,
+    extract=lambda text: extract_number_en(text, ordinals=True),
+    joiner=lambda tok: tok.text == "and",
+    joiner_in_text=False,
+    pre=_merge_en_ord_suffix))
 
 
 # ---------------------------------------------------------------------------
@@ -249,53 +216,16 @@ def _make_romance_fold(lang_code, blacklist):
     ordinal_value = {k: v for k, v in ordinal_value.items()
                      if k in numwords}
 
-    def _is_numword(tok):
-        return tok.is_number or tok.text in numwords
-
-    def fold(tokens):
-        tokens = _glue(tokens)
-        out = []
-        i = 0
-        n = len(tokens)
-        while i < n:
-            if not _is_numword(tokens[i]):
-                out.append(tokens[i])
-                i += 1
-                continue
-            j = i
-            run = []
-            while j < n:
-                if _is_numword(tokens[j]):
-                    run.append(tokens[j])
-                    j += 1
-                elif (tokens[j].text in joins and run and j + 1 < n
-                      and _is_numword(tokens[j + 1])):
-                    run.append(tokens[j])
-                    j += 1
-                else:
-                    break
-            spelled = [t for t in run if not t.is_number]
-            if not spelled:
-                out.extend(run)
-                i = j
-                continue
-            text = " ".join(t.text for t in run)
-            value = extract_fn(text, ordinals=True)
-            if (value is False or value is None) and len(run) == 1:
-                value = ordinal_value.get(run[0].text, value)
-            if value is False or value is None:
-                out.extend(run)
-                i = j
-                continue
-            num = int(value) if float(value).is_integer() else float(value)
-            out.append(Token(text=str(num), raw=str(num), index=0,
-                             is_number=True, value=num,
-                             char_start=run[0].char_start,
-                             char_end=run[-1].char_end))
-            i = j
-        return _reindex(out)
-
-    return fold
+    # the a.c./d.c. glue runs first, then the shared engine: run membership
+    # from the vocab-derived word set, the language's JOIN_WORD as the internal
+    # connector (kept in the back-end text), and the feminine-ordinal map as the
+    # single-token fallback the back-end rejects.
+    return make_fold(NumberGrammar(
+        is_number=lambda tok: tok.is_number or tok.text in numwords,
+        extract=lambda text: extract_fn(text, ordinals=True),
+        joiner=lambda tok: tok.text in joins,
+        single_fallback=ordinal_value.get,
+        pre=_glue))
 
 
 # pt: feminine ordinals "segunda/quarta/quinta/sexta" are weekday names
@@ -362,7 +292,7 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None):
         v = value_of(tok.text)
         return v is not None and v is not False
 
-    def fold(tokens):
+    def pre(tokens):
         # pass -1: rewrite fixed word->value surfaces to digit tokens.  Used
         # for the Frisian inflected "coming-hour" forms ("fiven" -> 5,
         # "fjouweren" -> 4) that the number parser does not recognise but the
@@ -391,40 +321,10 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None):
                 merged.append(t)
                 i += 1
             tokens = tuple(merged)
+        return tokens
 
-        out = []
-        i = 0
-        n = len(tokens)
-        while i < n:
-            if not is_numword(tokens[i]):
-                out.append(tokens[i])
-                i += 1
-                continue
-            j = i
-            run = []
-            while j < n and is_numword(tokens[j]):
-                run.append(tokens[j])
-                j += 1
-            spelled = [t for t in run if not t.is_number]
-            if not spelled:
-                out.extend(run)
-                i = j
-                continue
-            text = " ".join(t.text for t in run)
-            value = value_of(text)
-            if value is None or value is False:
-                out.extend(run)
-                i = j
-                continue
-            num = int(value) if float(value).is_integer() else float(value)
-            out.append(Token(text=str(num), raw=str(num), index=0,
-                             is_number=True, value=num,
-                             char_start=run[0].char_start,
-                             char_end=run[-1].char_end))
-            i = j
-        return _reindex(out)
-
-    return fold
+    return make_fold(NumberGrammar(
+        is_number=is_numword, extract=value_of, pre=pre))
 
 
 def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),

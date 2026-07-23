@@ -20,66 +20,20 @@ A pure ``tuple[Token] -> tuple[Token]`` transform, re-indexed so
 """
 from __future__ import annotations
 
-from dataclasses import replace
-from typing import Tuple
-
 from ovos_number_parser.numbers_ar import extract_number_ar
 from ovos_number_parser.numbers_he import extract_number_he
 
-from chronologia.extract.model import Token
-
-
-def _reindex(tokens) -> Tuple[Token, ...]:
-    return tuple(replace(t, index=i) for i, t in enumerate(tokens))
+from chronologia.extract.numfold_engine import NumberGrammar, make_fold
 
 
 def _make_fold(extract_fn, numwords):
+    """A curated-set cardinal fold with the Arabic/Hebrew "و" (and) as the
+    internal run connector ("خمسة وعشرون")."""
     numset = frozenset(numwords)
-
-    def _is_numword(tok):
-        return tok.is_number or tok.text in numset
-
-    def fold(tokens):
-        out = []
-        i = 0
-        n = len(tokens)
-        while i < n:
-            if not _is_numword(tokens[i]):
-                out.append(tokens[i])
-                i += 1
-                continue
-            j = i
-            run = []
-            while j < n:
-                if _is_numword(tokens[j]):
-                    run.append(tokens[j])
-                    j += 1
-                elif (tokens[j].text == "و" and run and j + 1 < n
-                      and _is_numword(tokens[j + 1])):
-                    run.append(tokens[j])   # internal "and": خمسة وعشرون
-                    j += 1
-                else:
-                    break
-            spelled = [t for t in run if not t.is_number]
-            if not spelled:
-                out.extend(run)
-                i = j
-                continue
-            text = " ".join(t.text for t in run)
-            value = extract_fn(text)
-            if value is False or value is None:
-                out.extend(run)
-                i = j
-                continue
-            num = int(value) if float(value).is_integer() else float(value)
-            out.append(Token(text=str(num), raw=str(num), index=0,
-                             is_number=True, value=num,
-                             char_start=run[0].char_start,
-                             char_end=run[-1].char_end))
-            i = j
-        return _reindex(out)
-
-    return fold
+    return make_fold(NumberGrammar(
+        is_number=lambda tok: tok.is_number or tok.text in numset,
+        extract=extract_fn,
+        joiner=lambda tok: tok.text == "و"))
 
 
 # -- Arabic ------------------------------------------------------------------
