@@ -222,7 +222,7 @@ def extract_timespans(
     Returns a list of :class:`TimeMention` (empty when nothing matched).
     """
     from chronologia.extract import _timespan_engine
-    from chronologia.extract.confidence import confidence as _confidence
+    from chronologia.extract.confidence import score_candidates
     from chronologia.extract.resolver import (DATE_CONSTRUCTIONS,
                                               compose_date_clock)
 
@@ -233,16 +233,15 @@ def extract_timespans(
     tokens = engine.tokenize(text)
     total = len(tokens)
 
-    resolved = []
-    for match in engine.matcher.match(tokens):
-        res = engine.resolver.resolve(match, anchor)
-        if res is not None:
-            resolved.append((match, res))
-    resolved.sort(key=lambda mr: mr[0].span[0])
+    scored = list(score_candidates(
+        engine.matcher.match(tokens),
+        lambda m: engine.resolver.resolve(m, anchor), total, engine.spec))
+    scored.sort(key=lambda sc: sc.match.span[0])
+    resolved = [(sc.match, sc.resolution) for sc in scored]
 
     out: List[Tuple[Tuple[int, int], DateSpan, float]] = []
-    for match, res in resolved:
-        conf = _confidence(match, res, total, engine.spec)
+    for sc in scored:
+        match, res, conf = sc.match, sc.resolution, sc.confidence
         # a clock time right after a date mention composes onto that day
         if (match.construction == "clock_time" and out
                 and _prev_is_date(resolved, match)):
