@@ -36,6 +36,28 @@ clear "1.0 == no objection" reading.  The result lies in ``(0, 1]``,
 monotone in every signal, and is fully deterministic -- there is **no** machine
 learning here and the number is emphatically **not** a probability (see
 ``docs/extraction.md``).
+
+The exponents ``a=0.40`` (spec), ``b=0.30`` (homograph), ``c=0.15`` (fold),
+``d=0.15`` (basis) are a **declared ordering prior**, not a fitted model. They
+were chosen, not learned: nothing in this file estimates them from data, and
+no dataset backs them the way a regression coefficient would. They encode one
+human judgement -- when two readings differ by exactly one defect apiece, a
+specificity problem (the matcher picked a construction whose own vocabulary
+argues it is the *wrong* reading) should discount trust more than a homograph
+risk (a plausible reading leaning on an ambiguous short surface), which in
+turn should discount more than a fold or basis wrinkle (the same fact stated
+less directly, or dated by a coarser method) -- ``spec > homograph > fold ~
+basis``. Swap in any other exponents that preserve that ranking and still sum
+to 1 and the scorer's *behaviour* is unchanged in kind, only in degree; that
+is the point of naming this a prior rather than a magic constant. The one
+property this module guarantees mechanically -- proved in
+``test/test_confidence_monotonicity.py``, not merely asserted here -- is
+**monotonicity**: raising any single factor while holding the rest fixed never
+lowers ``confidence``, and strictly raises it unless that factor is already
+saturated at ``1.0``. The prior's *ordering* (that a specificity defect costs
+more than a same-sized fold/basis defect) is also proved there as a concrete
+inequality; calibration against real corpora (the separation between gold and
+confusable scores) is a separate contract owned by ``test/test_confidence.py``.
 """
 from __future__ import annotations
 
