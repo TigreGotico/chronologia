@@ -12,7 +12,9 @@
     "relative_offset": {
       "orders": [
         "NUM UNIT MARKER",
-        "MARKER of? NUM UNIT"
+        "MARKER offsetlink? NUM QUANT of? UNIT",
+        "MARKER offsetlink? NUM of? UNIT",
+        "MARKER offsetlink? QUANT of? UNIT"
       ]
     },
     "named_day": {

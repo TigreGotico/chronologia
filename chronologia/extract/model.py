@@ -175,6 +175,12 @@ class LangSpec:
     # scoped_ordinal unit vocab beyond the day/week/month units map
     # (decade/century/millennium surface -> kind); reuses ``units`` for the rest
     scope_units: Mapping[str, str] = field(default_factory=dict)
+    # bare-unit implied-one vocab (surface -> unit kind): the case form a
+    # relative offset with no count takes when the count is an implied one
+    # ("через неделю" = in a/one week).  Languages without an article encode
+    # only the grammatical singular here so an inflected plural/genitive
+    # near-miss ("через недели") stays unmatched; empty for most languages.
+    singular_units: Mapping[str, str] = field(default_factory=dict)
     ordinal_suffixes: Tuple[str, ...] = ()
     # weekday cycle binding: cycle name a weekday_ref order resolves against
     # (default None == the calendar's canonical 7-day week)
