@@ -51,13 +51,12 @@ def test_foreign_not_matched(text):
     assert r is None or r[0].start.date() == ANCHOR.date()
 
 
-# recorded engine gaps
-def test_halfto_idiom_gap():
-    # "полдесятого" = 9:30 (half-TO the tenth); no direction word -> must not
-    # fabricate 10:30
+def test_halfto_idiom_resolves():
+    # "полдесятого" = 9:30 (half-TO the tenth), now handled by the
+    # ordinal-toward-hour clock (bare_half_to); see test_ru_toward_clock.
     r = parse("полдесятого")
-    if r is not None:
-        assert (r[0].start.hour, r[0].start.minute) != (10, 30)
+    assert r is not None
+    assert (r[0].start.hour, r[0].start.minute) == (9, 30)
 
 
 def test_seconds_offset_gap():

@@ -1,0 +1,7 @@
+# Polish toward-hour HALF: "wpół do dziewiątej" == half toward nine == 08:30
+# (bare_half_to + toward_hour_12h; the "do" is the ordinary "to" connector).
+# NB Polish splits the system: only the HALF counts toward the coming hour;
+# the QUARTER uses the ordinary past/to reading (see clock_fraction_15), so
+# bare_quarter_to is deliberately NOT set.  Citation: Poradnia Językowa PWN
+# (sjp.pwn.pl) and PAN Wielki słownik języka polskiego (wsjp.pl), "wpół do".
+wpół

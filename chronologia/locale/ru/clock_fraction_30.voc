@@ -1,0 +1,7 @@
+# Russian toward-hour clock: the half NAMES the coming hour with a genitive
+# ordinal -- "половина девятого" (also contracted "полдевятого") == half OF
+# the ninth == 08:30.  Handled by the bare_half_to + toward_hour_12h
+# conventions.  Citation: gramota.ru (Russian State Language reference
+# service), telling the time -- "половина <genitive ordinal>" counts toward
+# the coming hour.
+половина

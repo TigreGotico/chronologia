@@ -1,11 +1,9 @@
 """Russian clock times: digit clocks and the "N часов <meridiem>" form.
 
-Half-convention finding: colloquial Russian tells half hours *forward to* the
-next hour -- "полдесятого" / "половина десятого" ("half of the tenth") is
-9:30, a half-TO idiom like German "halb zehn".  It is a single word (or
-half + genitive ordinal) with no explicit direction token, so the engine's
-FRACTION+CLOCKDIR clock cannot express it; recorded as a gap
-(test_nl_adversarial).  Digit and "часов"-anchored times are covered here.
+Half-convention: colloquial Russian tells half hours *forward to* the next
+hour -- "полдесятого" / "половина десятого" ("half of the tenth") is 9:30, a
+half-TO idiom like German "halb zehn".  This ordinal-toward-hour clock is
+covered in test_ru_toward_clock; digit and "часов"-anchored times are here.
 """
 from datetime import timedelta
 

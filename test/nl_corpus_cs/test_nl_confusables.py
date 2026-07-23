@@ -36,6 +36,7 @@ _SAFE_NONE = [
     'napůl tak zlé',
     'polovina pravdy',
     'půl kila chleba',
+    'otočka o půl',
     'čtvrtina populace',
     'milion důvodů',
     'tisíce lidí',
@@ -81,9 +82,9 @@ _LIMITATIONS = [
     pytest.param(
         'vánoce přišly brzy',
         marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
-    pytest.param(
-        'otočka o půl',
-        marks=pytest.mark.xfail(reason='structurally-safe class unexpectedly binds; recorded as a limitation', strict=True)),
+    # 'otočka o půl' ("a turn by a half") no longer binds: "půl" is now the
+    # clock half-word (FRACTION), not a cardinal 0.5, and there is no hour for
+    # it to count toward -- so the confusable is correctly declined.
 ]
 
 
