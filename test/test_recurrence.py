@@ -532,6 +532,39 @@ def test_abusive_count_is_refused_at_construction():
         parse_rrule("FREQ=DAILY;COUNT=100001")
 
 
+def test_far_until_with_no_count_trips_emission_cap_not_count_check():
+    # A count-field pre-check alone would wave this through: no COUNT is
+    # declared at all.  It is the far UNTIL that makes materialisation
+    # expensive, and only a during-generation counter catches it.
+    from chronologia.recurrence import _MAX_EMITTED_OCCURRENCES
+    r = parse_rrule("FREQ=DAILY;UNTIL=99991231T000000Z")
+    assert r.count is None
+    with pytest.raises(ValueError, match="ceiling"):
+        list(occurrences(r, ad(2023, 1, 1)))
+
+
+def test_unbounded_rule_succeeds_when_windowed():
+    # The same "forever" rule that test_unbounded_rule_without_limit_raises
+    # refuses to fully materialise succeeds once the caller supplies an
+    # explicit window.
+    r = parse_rrule("FREQ=DAILY")
+    got = ymd(r, ad(2023, 1, 1), until=ad(2023, 1, 10))
+    assert got == [(2023, 1, d) for d in range(1, 11)]
+
+
+def test_call_level_count_at_emission_cap_succeeds_one_over_raises():
+    # A caller-supplied count= is not validated at construction (only the
+    # rule's own declared COUNT is), so the during-generation counter is the
+    # only thing standing between this and an abusive materialisation.
+    from chronologia.recurrence import _MAX_EMITTED_OCCURRENCES
+    r = parse_rrule("FREQ=DAILY")
+    got = ymd(r, ad(2023, 1, 1), count=_MAX_EMITTED_OCCURRENCES)
+    assert len(got) == _MAX_EMITTED_OCCURRENCES
+    with pytest.raises(ValueError, match="ceiling"):
+        list(occurrences(r, ad(2023, 1, 1),
+                         count=_MAX_EMITTED_OCCURRENCES + 1))
+
+
 def test_occurrences_accepts_plain_date():
     r = parse_rrule("FREQ=DAILY;COUNT=2")
     got = [(s.start.year, s.start.month, s.start.day)

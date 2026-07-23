@@ -88,12 +88,30 @@ _MONTH_LEN = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 # on an impossible rule raises instead of spinning forever.
 _MAX_EMPTY_PERIODS = 20_000
 
-#: Sanity ceiling on ``COUNT``. A civil recurrence never legitimately repeats
-#: more than this (274 years of a daily rule); a larger value is malformed or
-#: hostile input (an untrusted ``RRULE:...COUNT=1000000000`` from ``from_ical``
-#: would otherwise enumerate for hours). Rejected at construction, so no
-#: ``Recurrence`` carrying an abusive count can exist.
+#: Sanity ceiling on a *declared* ``COUNT``. A civil recurrence never
+#: legitimately repeats more than this (274 years of a daily rule); a larger
+#: value is malformed or hostile input (an untrusted
+#: ``RRULE:...COUNT=1000000000`` from ``from_ical`` would otherwise enumerate
+#: for hours). Rejected at construction as a cheap fast-path, so no
+#: ``Recurrence`` carrying an abusive declared count can exist. This is *not*
+#: the authoritative guard: COUNT is only one of several ways an expansion can
+#: turn expensive (a small/absent COUNT with a far ``UNTIL``, or a call-level
+#: ``count=`` override, are just as capable of materialising a huge number of
+#: occurrences). The authoritative bound is :data:`_MAX_EMITTED_OCCURRENCES`,
+#: enforced during generation in :func:`occurrences` itself.
 _MAX_COUNT = 100_000
+
+#: Hard ceiling on the number of occurrences :func:`occurrences` (and
+#: :meth:`HolidayRecurrence.occurrences`) will actually *emit* for a single
+#: expansion, enforced occurrence-by-occurrence as they are generated — not by
+#: inspecting the rule's declared ``COUNT``. This is what actually bounds the
+#: memory/time cost of materialisation: a rule with a small or absent COUNT
+#: but a distant ``UNTIL`` (or a caller-supplied ``count=``/``until=`` that
+#: bypasses the declared-COUNT fast-path above) is just as able to blow up
+#: materialisation as an abusive declared COUNT, and this catches it too.
+#: Kept equal to :data:`_MAX_COUNT` so behaviour for any rule that already
+#: passed the declared-COUNT check is unchanged.
+_MAX_EMITTED_OCCURRENCES = 100_000
 
 
 # --------------------------------------------------------------------------
@@ -723,9 +741,15 @@ def occurrences(rec: Recurrence, dtstart, until=None,
             if until_key is not None and (jdn, start_tod) > until_key:
                 return
             for span in _spans_for_day(rec, jdn):
+                emitted += 1
+                if emitted > _MAX_EMITTED_OCCURRENCES:
+                    raise ValueError(
+                        f"recurrence exceeded the materialisation ceiling of "
+                        f"{_MAX_EMITTED_OCCURRENCES} emitted occurrences "
+                        "(bounded by the actual expansion, not just the "
+                        f"declared COUNT); rule: {rec.to_string()}")
                 yield span
                 produced = True
-                emitted += 1
                 if eff_count is not None and emitted >= eff_count:
                     return
         if produced:
@@ -816,8 +840,13 @@ class HolidayRecurrence:
                 if span.start >= dtstart:
                     if eff_until is not None and span.start > eff_until:
                         return
-                    yield span
                     emitted += 1
+                    if emitted > _MAX_EMITTED_OCCURRENCES:
+                        raise ValueError(
+                            "holiday recurrence exceeded the materialisation "
+                            f"ceiling of {_MAX_EMITTED_OCCURRENCES} emitted "
+                            f"occurrences (holiday: {self.holiday_key!r})")
+                    yield span
                     empty = 0
                     if count is not None and emitted >= count:
                         return
