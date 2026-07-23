@@ -67,8 +67,16 @@ _CASES = [
     ("every last friday", "FREQ=MONTHLY;BYDAY=-1FR", ""),
     ("every first friday", "FREQ=MONTHLY;BYDAY=1FR", ""),
     ("every last monday", "FREQ=MONTHLY;BYDAY=-1MO", ""),
-    ("every third thursday", "FREQ=MONTHLY;BYDAY=3TH", ""),
+    # from two upwards a bare ordinal+weekday is the interval reading ("every
+    # third thursday" = every three thursdays); the month-of reading needs the
+    # explicit tail.  Only "first" is unambiguous, an interval of one being
+    # degenerate.
+    ("every third thursday", "FREQ=WEEKLY;INTERVAL=3;BYDAY=TH", ""),
+    ("every third thursday of the month", "FREQ=MONTHLY;BYDAY=3TH", ""),
+    ("every second tuesday", "FREQ=WEEKLY;INTERVAL=2;BYDAY=TU", ""),
     ("every second tuesday of the month", "FREQ=MONTHLY;BYDAY=2TU", ""),
+    ("every first friday", "FREQ=MONTHLY;BYDAY=1FR", ""),
+    ("every first friday of the month", "FREQ=MONTHLY;BYDAY=1FR", ""),
     ("every last friday at 5pm", "FREQ=MONTHLY;BYDAY=-1FR;BYHOUR=17", ""),
     # Elliptical day-of-month: "every 1st" == "every 1st of the month" ==
     # the already-working "the 1st of every month".

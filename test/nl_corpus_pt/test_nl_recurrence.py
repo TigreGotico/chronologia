@@ -28,7 +28,9 @@ _CASES = [
     ("toda última segunda-feira", "FREQ=MONTHLY;BYDAY=-1MO", ""),
     ("toda primeira segunda-feira", "FREQ=MONTHLY;BYDAY=1MO", ""),
     ("cada primeira sexta-feira", "FREQ=MONTHLY;BYDAY=1FR", ""),
-    ("toda terceira quinta-feira", "FREQ=MONTHLY;BYDAY=3TH", ""),
+    # as in English, an ordinal of two or upwards leaves the two readings
+    # competing, so the month-of reading waits for the explicit tail.
+    ("toda terceira quinta-feira do mês", "FREQ=MONTHLY;BYDAY=3TH", ""),
 ]
 
 
