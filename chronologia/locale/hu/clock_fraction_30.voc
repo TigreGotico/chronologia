@@ -1,1 +1,5 @@
+# Hungarian counting-toward-the-hour clock: "fel <H>" == half of the way
+# toward hour H, i.e. (H-1):30 -- "fel kilenc" == 08:30 (half before nine).
+# Citation: Rounds, Carol H. "Hungarian: An Essential Grammar", 2nd ed.,
+# Routledge 2009, sec. on telling the time; Wiktionary "fel" (Hungarian).
 fél

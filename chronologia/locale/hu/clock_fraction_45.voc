@@ -1,1 +1,6 @@
+# Hungarian counting-toward-the-hour clock: "haromnegyed <H>" == three
+# quarters of the way toward hour H, i.e. (H-1):45 -- "haromnegyed kilenc"
+# == 08:45.  Citation: Rounds, Carol H. "Hungarian: An Essential Grammar",
+# 2nd ed., Routledge 2009, sec. on telling the time; Wiktionary
+# "haromnegyed" (Hungarian), sense "three quarters toward the named hour".
 háromnegyed

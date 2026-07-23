@@ -1,1 +1,7 @@
+# Hungarian counting-toward-the-hour clock: "negyed <H>" == the first
+# quarter of the way toward hour H, i.e. (H-1):15 -- "negyed kilenc" == 08:15.
+# Citation: Rounds, Carol H. "Hungarian: An Essential Grammar", 2nd ed.,
+# Routledge 2009, sec. on telling the time ("negyed", "fel", "haromnegyed"
+# counted toward the coming hour); Wiktionary "negyed" (Hungarian), sense
+# "quarter toward the named hour".
 negyed

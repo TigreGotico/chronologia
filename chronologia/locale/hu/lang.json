@@ -142,7 +142,8 @@
     "dmy": false,
     "hemisphere": "north",
     "prefer_future": true,
-    "bare_half_to": true
+    "bare_half_to": true,
+    "bare_quarter_to": true
   },
   "positions": {
     "until": "affix",

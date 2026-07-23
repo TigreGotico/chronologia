@@ -1,1 +1,6 @@
+# Estonian counting-toward-the-hour clock: "kolmveerand <H>" == three
+# quarters of the way toward hour H, i.e. (H-1):45 -- "kolmveerand uheksa"
+# == 08:45.  Citation: Erelt, Mati (ed.) "Estonian Language", Estonian
+# Academy Publishers 2003, time-expression sec.; EKI "Sonaveeb" entry
+# "kolmveerand", clock sense.
 kolmveerand

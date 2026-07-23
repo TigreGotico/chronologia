@@ -1154,12 +1154,20 @@ class Resolver:
                 # Continental-Germanic "halb neun"/"halv nio" == the half
                 # *before* nine (08:30).  Only the half-fraction takes this
                 # bare form; a bare quarter ("viertel neun") is regionally
-                # ambiguous, so it is rejected rather than guessed.
+                # ambiguous, so it is rejected rather than guessed -- UNLESS
+                # the locale runs the Finno-Ugric counting-toward-the-hour
+                # system (bare_quarter_to), where every fraction names that
+                # much of the way toward the coming hour and so the quarters
+                # are unambiguous: Hungarian "negyed kilenc" == 08:15,
+                # "haromnegyed kilenc" == 08:45; Estonian "veerand uheksa" /
+                # "kolmveerand uheksa" likewise.  In both readings the stated
+                # hour is the *coming* one, so minute == the fraction offset
+                # applied to the previous hour.
                 offset = self.spec.clock_fractions[frac_tok.text]
-                if offset != 30:
+                if offset != 30 and not self.spec.conventions.bare_quarter_to:
                     return None
                 hour -= 1
-                minute = 30
+                minute = offset
             if hour < 0:            # "quarter to midnight" underflows -> 23:45
                 hour += 24
         meridiem = match.slots.get("MERIDIEM")
