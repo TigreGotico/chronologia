@@ -102,3 +102,90 @@ def test_movable_holiday_recurrence(text, key):
     assert got[1] == ""
     with pytest.raises(ValueError):
         got[0].to_string()
+
+
+# --------------------------------------------------------------------------
+# "uma vez ..." framing and the plural day-of-month form.
+#
+# Every surface below was confirmed natural by a native European Portuguese
+# speaker; nothing here is a translation-by-analogy of the English forms.
+# --------------------------------------------------------------------------
+_ONCE_CASES = [
+    # "uma vez por <unidade>" -- one occurrence per period *is* that period's
+    # plain frequency, so the count word adds no RRULE part of its own.
+    ("uma vez por dia", "FREQ=DAILY", ""),
+    ("uma vez por semana", "FREQ=WEEKLY", ""),
+    ("uma vez por mês", "FREQ=MONTHLY", ""),
+    ("uma vez por ano", "FREQ=YEARLY", ""),
+    # European Portuguese also contracts the preposition with the article:
+    # "à semana", "ao mês".
+    ("uma vez à semana", "FREQ=WEEKLY", ""),
+    ("uma vez ao mês", "FREQ=MONTHLY", ""),
+    ("uma vez ao dia", "FREQ=DAILY", ""),
+    ("uma vez ao ano", "FREQ=YEARLY", ""),
+    # a weekday pins the day, exactly as English "once a week on monday".
+    ("uma vez por semana à segunda", "FREQ=WEEKLY;BYDAY=MO", ""),
+    ("uma vez por semana à segunda-feira", "FREQ=WEEKLY;BYDAY=MO", ""),
+    # ... and the clock pin still folds on top of it.
+    ("uma vez por semana à segunda às 9", "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9", ""),
+]
+
+
+_DAY_OF_MONTH_CASES = [
+    # The plural is what a speaker uses here: the rule is not about one
+    # specific day, so "todos os dias 1" reads as "the 1st of every month".
+    ("todos os dias 1", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("todos os dias 15", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+    ("todos os dias 1 do mês", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("todos os dias 15 do mês", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+    ("no dia 1 de cada mês", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("no dia 15 de cada mês", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+]
+
+
+@pytest.mark.parametrize("text,rrule,remainder",
+                         _ONCE_CASES + _DAY_OF_MONTH_CASES)
+def test_once_and_day_of_month(text, rrule, remainder):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+
+
+def test_todos_os_dias_still_means_daily():
+    """The collision guard: "todos os dias" on its own is DAILY.
+
+    Only a *trailing day number* diverts it to a day-of-month rule, so the
+    bare phrase must keep the reading it has always had."""
+    got = extract_recurrence("todos os dias", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=DAILY"
+    assert got[1] == ""
+
+
+def test_singular_day_number_is_not_a_day_of_month_rule():
+    """"todo dia 1" is not the natural surface for this sense (a native
+    speaker uses the plural), so the day number is *not* read as a
+    BYMONTHDAY: the phrase keeps its plain DAILY reading and the stray
+    number is left in the remainder."""
+    got = extract_recurrence("todo dia 1", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=DAILY"
+    assert got[1] == "1"
+
+
+@pytest.mark.parametrize("text", [
+    # a per-period *count* above one needs a different RRULE shape
+    # (BYSETPOS / per-period COUNT) than the plain frequency, so it is left
+    # unread rather than forced into a wrong interval.
+    "duas vezes por semana",
+    "três vezes por mês",
+    # the count phrase alone names no period at all
+    "uma vez",
+    "uma vez por",
+    # a bare day number is a date, not a rule
+    "dia 1",
+    "no dia 1",
+])
+def test_once_adversarial_not_a_recurrence(text):
+    assert extract_recurrence(text, LANG) is None

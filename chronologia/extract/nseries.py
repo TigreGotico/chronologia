@@ -736,11 +736,20 @@ def _of_month_tail(ctx, r):
 
 
 def _recur_once(ctx):
-    """``once a <unit> [on <weekday>]`` -> the plain per-period frequency.
+    """``[one] once a <unit> [on <weekday>]`` -> the plain per-period frequency.
 
     "Once per period" *is* "every period": one occurrence per week is exactly
     ``FREQ=WEEKLY``, so the count word adds no RRULE part of its own.  An
     optional trailing "on <weekday>" pins the day (``BYDAY``).
+
+    The ``once`` marker may be **multi-word** and may be a bare *counter noun*
+    that only means "once" when a count of one precedes it: English writes one
+    word ("once"), Portuguese writes the count plus the noun ("uma vez", one
+    time).  The marker is therefore matched as a word run (longest first, as
+    every multi-word marker in this module is), and a **number one**
+    immediately before it is read as part of the phrase.  A count *other* than
+    one before the marker is rejected outright, so "duas vezes por semana"
+    (twice a week) stays unread.
 
     Only the count *one* maps cleanly.  "twice a week" / "three times a month"
     are frequency-**counts** needing a different RRULE shape (BYSETPOS or a
@@ -750,10 +759,11 @@ def _recur_once(ctx):
     """
     t = ctx.tokens
     n = len(t)
-    for i in range(n):
-        if t[i].text not in ctx.once_words:
-            continue
-        j = i + 1
+    for i, j in sorted(_marker_runs(t, ctx.once_words, set())):
+        if i - 1 >= 0 and t[i - 1].is_number:
+            if float(t[i - 1].value) != 1.0:
+                continue  # "duas vezes por semana": a per-period *count*
+            i -= 1
         while j < n and (t[j].text in ctx.articles or t[j].text in ctx.per_words):
             j += 1
         if not (j < n and t[j].text in ctx.units):
@@ -792,12 +802,13 @@ def _recur_every(ctx):
         j = i + 1
         interval = 1
         num_val = num_idx = None
+        saw_article = False
         # an article, an "other" marker and an explicit count may appear in any
         # order before the target noun ("every other week", "toutes les deux
         # semaines", "cada dos semanas").
         while j < n:
             if t[j].text in ctx.articles:
-                j += 1
+                saw_article, j = True, j + 1
             elif t[j].text in ctx.other:
                 interval, j = 2, j + 1
             elif t[j].is_number:
@@ -846,6 +857,24 @@ def _recur_every(ctx):
             if end > j or _is_ordinal_surface(t[num_idx]):
                 return (_build_every("monthly", bymonthday=num_val),
                         set(range(i, end)))
+
+        # -- "every the days <N> [of the month]" -> BYMONTHDAY ---------------
+        # A *day* unit carrying a trailing day number is a day-of-month rule,
+        # not a daily one: "todos os dias 1" (the 1st of every month) against
+        # "todos os dias" (every day).  The trailing number is the only thing
+        # that tells them apart, so the bare form keeps its DAILY reading and
+        # only the numbered one diverts here.
+        #
+        # The determiner is *required*: the reading fires on the articled form
+        # ("todos **os** dias 1") and not on the bare one ("todo dia 1"), which
+        # a native European Portuguese speaker rejects for this sense.  English
+        # never writes an article after "every", so this is unreachable there.
+        if (saw_article and num_val is None
+                and j + 1 < n and t[j].text in ctx.units
+                and ctx.units[t[j].text] == "day"
+                and t[j + 1].is_number and 1 <= int(t[j + 1].value) <= 31):
+            return (_build_every("monthly", bymonthday=int(t[j + 1].value)),
+                    set(range(i, _of_month_tail(ctx, j + 2))))
 
         if j >= n:
             continue
@@ -987,7 +1016,13 @@ def _recur_date_anchored(ctx):
             k -= 1
         if k >= 0 and t[k].is_number and 1 <= int(t[k].value) <= 31:
             start = k
-            while start - 1 >= 0 and t[start - 1].text in ctx.articles:
+            # swallow a leading determiner and an explicit "day" unit naming
+            # the number ("no dia 1 de cada mês", on day 1 of every month --
+            # the same rule English writes as "on the 1st of every month").
+            while start - 1 >= 0 and (
+                    t[start - 1].text in ctx.articles
+                    or (t[start - 1].text in ctx.units
+                        and ctx.units[t[start - 1].text] == "day")):
                 start -= 1
             return (_build_every("monthly", bymonthday=int(t[k].value)),
                     set(range(start, j + 1)))
