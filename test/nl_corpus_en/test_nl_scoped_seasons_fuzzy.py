@@ -124,6 +124,49 @@ def test_season(text, s):
     assert span(text).width.days >= 89        # ~3 months
 
 
+# -- two-digit year pivot (POSIX / C strptime %y) -------------------------
+
+# A bare two-digit written year is read through the fixed strptime %y pivot:
+# 69-99 -> 1969-1999, 00-68 -> 2000-2068 (Python `time.strptime` / POSIX).
+# The pivot fires ONLY on an exactly-two-digit run, so a 3+-digit or era-
+# marked year is never rewritten.  (The '69 apostrophe is dropped by the
+# tokenizer, so "'69" and "69" reach the engine identically.)
+@pytest.mark.parametrize("text,s", [
+    ("summer of 69", "1969-6-1"),          # 69 -> 1969
+    ("the summer of '69", "1969-6-1"),     # apostrophe dropped, same year
+    ("winter of 99", "1999-12-1"),         # 99 -> 1999
+    ("fall of 85", "1985-9-1"),            # 85 -> 1985
+])
+def test_two_digit_year_pivot_1900s(text, s):
+    assert start(text) == _d(s)
+
+
+# the 68/69 boundary of the pivot, and the low half mapping to the 2000s
+@pytest.mark.parametrize("text,s", [
+    ("summer of 68", "2068-6-1"),          # 68 -> 2068 (high edge of 2000s)
+    ("summer of 69", "1969-6-1"),          # 69 -> 1969 (low edge of 1900s)
+    ("summer of 44", "2044-6-1"),          # 00-68 -> 2000s
+])
+def test_two_digit_year_pivot_boundary(text, s):
+    assert start(text) == _d(s)
+
+
+# ADVERSARIAL: the pivot must NOT touch a 3+-digit year, an era-marked year,
+# or a value too small to bind the YEAR slot at all.
+def test_two_digit_pivot_scoping():
+    # 3-digit explicit year: unchanged, NOT pivoted to 2500 or 1500
+    assert start("summer of 500") == _d("500-6-1")
+    # an era-marked year keeps its literal magnitude (44 BC -> year -43 astro)
+    from ._corpus import span
+    assert span("44 BC").start.year == -43
+    # a value < 32 never binds the YEAR slot, so it is not a pivotable year:
+    # "spring of 05" falls back to the bare (anchor-year) season, remainder
+    # keeps "of 05" -- single/low-digit "summer of 3" edge is moot by design.
+    from ._corpus import parse
+    r = parse("spring of 05")
+    assert r is not None and r[0].start.year == 2017 and "05" in r[1]
+
+
 # -- fuzzy edges: new constructions, deferred -----------------------------
 
 # -- fuzzy month thirds (early/mid/late <month>) --------------------------
