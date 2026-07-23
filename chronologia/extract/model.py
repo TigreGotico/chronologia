@@ -110,6 +110,16 @@ class Conventions:
     # et" == 00:30, Frisian "healwei ienen") leave it off.  A fact, not logic --
     # the resolver reads it only when the toward-hour subtraction hits zero.
     toward_hour_12h: bool = False
+    # British-colloquial additive bare half: a bare half-fraction names the half
+    # *past* the stated hour ("half nine" == 09:30), the OPPOSITE direction of
+    # the Continental-Germanic bare_half_to ("halb neun" == 08:30).  Only the
+    # half takes this colloquial form -- "quarter nine" is not English, so a
+    # bare quarter is rejected.  Distinct from bare_half_to (toward the hour)
+    # and from the explicit "half past nine" (which the CLOCKDIR path already
+    # handles).  A fact, not logic -- the resolver reads it when a bare FRACTION
+    # binds with no CLOCKDIR.  Source: Cambridge Dictionary, "half past";
+    # British native-speaker consensus that "half nine" == "half past nine".
+    bare_half_past: bool = False
 
 
 @dataclass(frozen=True)

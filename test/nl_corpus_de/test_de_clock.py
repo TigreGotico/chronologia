@@ -73,12 +73,20 @@ def test_quarter_explicit_direction(text, h, mi):
     assert start(text) == clk(h, mi)
 
 
-# a BARE quarter has no unambiguous meaning in Standard German -> rejected,
-# never guessed (would be a regional 8:15/8:45 reading).
-@pytest.mark.parametrize("text", ["viertel neun", "dreiviertel neun",
-                                  "viertel zehn"])
-def test_bare_quarter_rejected(text):
-    nomatch(text)
+# == REGIONAL bare quarters: South/East German + Austrian toward-the-hour ==
+# "viertel neun" == 08:15, "dreiviertel neun" == 08:45 -- three/one quarter of
+# the way toward the coming hour, exactly like "halb neun" == 08:30 names the
+# half toward it.  Western/northern German never says these bare forms (it uses
+# "viertel nach/vor"), so enabling them only ADDS readings for strings that were
+# previously unparsed -- no collision with the vor/nach path (asserted above).
+# Source: Bastian Sick, "Zwiebelfisch: Von Viertel nach acht bis viertel neun".
+@pytest.mark.parametrize("text,h,mi", [
+    ("viertel neun", 8, 15), ("dreiviertel neun", 8, 45),
+    ("viertel zehn", 9, 15), ("dreiviertel zehn", 9, 45),
+    ("viertel drei", 2, 15), ("dreiviertel eins", 0, 45),
+])
+def test_bare_quarter_regional_toward_hour(text, h, mi):
+    assert start(text) == clk(h, mi)
 
 
 # == arbitrary minute "N vor/nach H" ======================================

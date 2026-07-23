@@ -1,0 +1,10 @@
+# South/East German and Austrian toward-the-hour quarters (REGIONAL): a bare
+# "dreiviertel <H>" names three quarters of the way toward hour H, i.e.
+# (H-1):45 -- "dreiviertel neun" == 08:45, alongside bare "viertel neun" ==
+# 08:15 and "halb neun" == 08:30. Western/northern German never uses these bare
+# forms (it says "viertel nach acht" / "viertel vor neun", the CLOCKDIR path),
+# so enabling the bare quarters only ADDS readings for strings that were
+# unparsed before -- no collision with the "nach"/"vor" forms.
+# Source: Bastian Sick, "Zwiebelfisch: Von Viertel nach acht bis viertel neun"
+# (Spiegel Online / Der Dativ ist dem Genitiv sein Tod, Bd. 3).
+dreiviertel

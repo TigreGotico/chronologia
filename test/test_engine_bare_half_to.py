@@ -41,9 +41,23 @@ def test_english_half_nine_stays_half_past():
     assert (s.hour, s.minute) == (9, 30)
 
 
-def test_bare_quarter_is_rejected():
-    # only the half fraction takes the bare-to form
-    assert extract_timespan("viertel neun", "de", ANCHOR) is None
+def test_de_bare_quarter_is_regional_toward_hour():
+    # de now runs the regional South/East German + Austrian toward-hour
+    # quarters (bare_quarter_to): "viertel neun" == 08:15 (Bastian Sick).
+    s = extract_timespan("viertel neun", "de", ANCHOR)[0].start
+    assert (s.hour, s.minute) == (8, 15)
+
+
+def test_en_bare_quarter_is_rejected():
+    # English colloquial takes only the additive bare half ("half nine"),
+    # never a bare quarter -- "quarter nine" is not English.
+    assert extract_timespan("quarter nine", "en", ANCHOR) is None
+
+
+def test_en_bare_half_is_additive():
+    # British colloquial "half nine" == 09:30, opposite of de "halb neun".
+    s = extract_timespan("half nine", "en", ANCHOR)[0].start
+    assert (s.hour, s.minute) == (9, 30)
 
 
 def test_multiword_connector_bc():

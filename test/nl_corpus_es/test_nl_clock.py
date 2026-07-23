@@ -45,5 +45,16 @@ def test_noon():
     assert start("mediodía") == clk(12, 0)
 
 
+# noon + additive fraction: "mediodía y media" == 12:30, exactly as a bare hour
+# composes "y media" (half past).  Bare "mediodía" stays 12:00.
+# Source: RAE, Diccionario, "y media" (la una y media, mediodía y media).
+@pytest.mark.parametrize("text,h,mi", [
+    ("mediodía y media", 12, 30), ("mediodia y media", 12, 30),
+    ("mediodía y cuarto", 12, 15),
+])
+def test_noon_fraction(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
 def test_midnight():
     assert start("medianoche") == clk(0, 0)

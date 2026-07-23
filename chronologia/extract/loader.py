@@ -271,6 +271,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             bare_half_to=conv.get("bare_half_to", False),
             bare_quarter_to=conv.get("bare_quarter_to", False),
             toward_hour_12h=conv.get("toward_hour_12h", False),
+            bare_half_past=conv.get("bare_half_past", False),
             weekend_start=conv.get("weekend_start", 5)),
         tokenizer=TokenizerModes(
             split_contractions=tok.get("split_contractions", False),

@@ -120,6 +120,7 @@
         "at HOUR article? MERIDIEM? ZONE?",
         "article HOUR article? MERIDIEM ZONE?",
         "HOUR article? MERIDIEM ZONE?",
+        "at? LANDMARK CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
         "at? LANDMARK ZONE?",
         "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
         "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?"

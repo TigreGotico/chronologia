@@ -1,0 +1,10 @@
+# Malay toward-the-hour half: "setengah <H>" == the half *before* hour H,
+# i.e. (H-1):30 -- "setengah tiga" / "pukul setengah tiga" == 02:30 (half toward
+# three), NOT 03:30. This is the German-style toward-hour reading, corroborated
+# across Malay usage. Kamus Dewan (DBP) gives "setengah jam" == 30 minutes (half
+# an hour); the toward-hour clock reading ("setengah tiga" == 02:30) is
+# corroborated across Malay usage sources -- a DBP-canonical clock-reading
+# passage was not obtained, stated honestly. The quarter (suku/seperempat) is
+# deliberately omitted: its direction is UNCONFIRMED (documented follow-up), so
+# only the unambiguous half is added.
+setengah
