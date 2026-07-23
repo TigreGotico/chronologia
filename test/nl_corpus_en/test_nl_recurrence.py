@@ -61,6 +61,34 @@ _CASES = [
     ("every wednesday at 9", "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9", ""),
     ("every wednesday at 9:30", "FREQ=WEEKLY;BYDAY=WE;BYHOUR=9;BYMINUTE=30", ""),
     ("every 10th of may at 9am", "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10;BYHOUR=9", ""),
+    # Elliptical nth-weekday: people drop the "of the month" tail in speech.
+    # "every last friday" means what "every last friday of the month" means --
+    # the tail is redundant once "every" has framed the phrase as recurring.
+    ("every last friday", "FREQ=MONTHLY;BYDAY=-1FR", ""),
+    ("every first friday", "FREQ=MONTHLY;BYDAY=1FR", ""),
+    ("every last monday", "FREQ=MONTHLY;BYDAY=-1MO", ""),
+    ("every third thursday", "FREQ=MONTHLY;BYDAY=3TH", ""),
+    ("every second tuesday of the month", "FREQ=MONTHLY;BYDAY=2TU", ""),
+    ("every last friday at 5pm", "FREQ=MONTHLY;BYDAY=-1FR;BYHOUR=17", ""),
+    # Elliptical day-of-month: "every 1st" == "every 1st of the month" ==
+    # the already-working "the 1st of every month".
+    ("every 1st of the month", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("every 1st", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("every 15th", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+    ("every 15th of the month", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+    ("every 1st at 9", "FREQ=MONTHLY;BYMONTHDAY=1;BYHOUR=9", ""),
+    # "once a <unit>": one occurrence per period IS the plain per-period
+    # frequency -- once a week is exactly FREQ=WEEKLY, so the count word
+    # contributes no RRULE part of its own.
+    ("once a day", "FREQ=DAILY", ""),
+    ("once a week", "FREQ=WEEKLY", ""),
+    ("once a month", "FREQ=MONTHLY", ""),
+    ("once a year", "FREQ=YEARLY", ""),
+    ("once per week", "FREQ=WEEKLY", ""),
+    ("once a week on monday", "FREQ=WEEKLY;BYDAY=MO", ""),
+    ("once a week on friday", "FREQ=WEEKLY;BYDAY=FR", ""),
+    ("once a week on monday at 9", "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9", ""),
+    ("once a day at 9:30", "FREQ=DAILY;BYHOUR=9;BYMINUTE=30", ""),
 ]
 
 
@@ -123,6 +151,39 @@ def test_bounded_recurrence(text, rrule, remainder):
 @pytest.mark.parametrize("text", [
     "friday", "next friday", "in 3 days", "june 5th",
     "I went to the office", "the weekend was fun",
+    # The elliptical readings fire ONLY under an explicit "every": without it
+    # these are single dates, not rules.  "last friday" is the friday just
+    # gone; "the 1st" is one day of one month.
+    "last friday", "the last friday", "the 1st", "the 15th", "first friday",
+    "the first friday", "on the 1st",
+    # a frequency *count* above one has no single-RRULE reading (it needs
+    # BYSETPOS / per-period COUNT), so it is left unread rather than guessed
+    # into a wrong interval.
+    "twice a week", "three times a month", "twice a day",
+    # a bare count word with no period names nothing.
+    "once", "once a", "once a friday",
 ])
 def test_not_a_recurrence(text):
+    assert extract_recurrence(text, LANG) is None
+
+
+# A cardinal count before a UNIT is an INTERVAL, never a day-of-month: the
+# elliptical BYMONTHDAY reading must never swallow "every 2 weeks".  A bare
+# cardinal with no unit and no ordinal surface ("every 2") is not evidence
+# enough for either reading and stays unread.
+@pytest.mark.parametrize("text,rrule", [
+    ("every 2 weeks", "FREQ=WEEKLY;INTERVAL=2"),
+    ("every 3 weeks", "FREQ=WEEKLY;INTERVAL=3"),
+    ("every 2 days", "FREQ=DAILY;INTERVAL=2"),
+    ("every 2 months", "FREQ=MONTHLY;INTERVAL=2"),
+    ("every 6 months", "FREQ=MONTHLY;INTERVAL=6"),
+])
+def test_cardinal_plus_unit_stays_an_interval(text, rrule):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+
+
+@pytest.mark.parametrize("text", ["every 2", "every 5"])
+def test_bare_cardinal_under_every_is_not_a_day_of_month(text):
     assert extract_recurrence(text, LANG) is None
