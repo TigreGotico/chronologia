@@ -21,6 +21,7 @@ from chronologia.extract.model import (LangSpec, Match, SlotElement,
                                            Token)
 
 _ISO = re.compile(r"\d{4}-\d{2}-\d{2}|\d{4}/\d{1,2}/\d{1,2}|\d{4}-\d{2}")
+_ISOWEEK = re.compile(r"\d{4}-[wW]\d{2}(?:-\d)?")
 _NUMDATE = re.compile(r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}")
 _CLOCK = re.compile(r"\d{1,2}:\d{2}(?::\d{2})?")
 
@@ -107,6 +108,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.text in spec.quantifiers
     if name == "ISO":
         return _ISO.fullmatch(token.text) is not None
+    if name == "ISOWEEK":
+        return _ISOWEEK.fullmatch(token.text) is not None
     if name == "NUMDATE":
         return _NUMDATE.fullmatch(token.text) is not None
     # -- clock_time slots --------------------------------------------------
