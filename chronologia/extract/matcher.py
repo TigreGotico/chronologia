@@ -20,7 +20,7 @@ from chronologia.extract.compiler import CompiledSpec
 from chronologia.extract.model import (LangSpec, Match, SlotElement,
                                            Token)
 
-_ISO = re.compile(r"\d{4}-\d{2}-\d{2}")
+_ISO = re.compile(r"\d{4}-\d{2}-\d{2}|\d{4}/\d{1,2}/\d{1,2}|\d{4}-\d{2}")
 _NUMDATE = re.compile(r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}")
 _CLOCK = re.compile(r"\d{1,2}:\d{2}(?::\d{2})?")
 
