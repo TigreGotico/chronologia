@@ -267,6 +267,67 @@ def fold_pt(tokens):
     if segment:
         out.extend(_fold_pt_base(tuple(segment)))
     return _reindex(tuple(out))
+
+
+# Portuguese marks a *recurring set* with the plural throughout: "todas as
+# terceiras quintas-feiras do mes" (every third thursday of the month) carries
+# a plural article, a plural ordinal and a plural weekday, where the singular
+# would name one particular occasion.  The plural feminine ordinal is the same
+# closed morphological class as its singular, so it is derived from the number
+# vocabulary (feminine form + "s") rather than listed by hand.
+#
+# Both genders are folded, because the weekday the ordinal agrees with picks
+# the gender: "as terceiras quintas-feiras" (feminine, a weekday in -feira)
+# against "os primeiros sabados" (masculine, saturday/sunday).
+#
+# Two classes of surface are held back.  The weekday homographs are skipped in
+# the plural for exactly the reason they are blacklisted in the singular --
+# "quintas" is Thursday, never five -- which also leaves "segundas" alone so
+# "todas as segundas-feiras" stays a weekday.  And the masculine plurals that
+# are ordinary nouns the fold must not eat are excluded by name: "segundos" is
+# seconds and "quartos" is the clock quarter, both of which other constructions
+# in this engine bind as words.
+_PT_WEEKDAY_ORDINALS = frozenset({"segunda", "terca", "terça", "quarta",
+                                  "quinta", "sexta"})
+#: masculine plural ordinals that are homographs of a noun this engine reads.
+_PT_ORDINAL_NOUN_HOMOGRAPHS = frozenset({"segundos", "quartos"})
+
+
+def _pt_plural_ordinals():
+    from ovos_number_parser import numbers_pt
+    vocab = next(v for v in vars(numbers_pt).values()
+                 if type(v).__name__ == "NumberVocabulary")
+    out = {}
+    for val, surf in vocab.ORDINAL_UNITS.items():
+        if not surf:
+            continue
+        for form in _fem_forms(surf) | {surf.lower()}:
+            if form in _PT_WEEKDAY_ORDINALS:
+                continue
+            plural = form + "s"
+            if plural in _PT_ORDINAL_NOUN_HOMOGRAPHS:
+                continue
+            out[plural] = val
+    return out
+
+
+def _pt_ordinal_fold(fold):
+    """Wrap ``fold`` so *only* the plural ordinals above are pre-folded.
+
+    ``with_ordinals`` merges the model-derived ``pronounce_ordinal_pt`` map by
+    default, whose **singular** entries are homographs this engine binds as
+    words -- "quarto" is the clock quarter ("as tres e quarto", "um quarto de
+    hora") and "segundo" is a second.  Folding those to digits would take the
+    clock fraction and duration constructions apart, so every model-derived
+    surface is excluded and the plural table is the whole contribution.
+    """
+    plurals = _pt_plural_ordinals()
+    from chronologia.extract.numfold_ordinals import _pron_ordinal_map
+    exclude = set(_pron_ordinal_map("pt")) - set(plurals)
+    return _with_ordinals(fold, "pt", plurals, exclude=exclude)
+
+
+fold_pt = _pt_ordinal_fold(fold_pt)
 fold_es = _make_romance_fold("es", set())
 fold_gl = _make_romance_fold("gl", set())
 fold_ca = _make_romance_fold("ca", set())

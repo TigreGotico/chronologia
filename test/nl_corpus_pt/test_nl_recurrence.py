@@ -189,3 +189,61 @@ def test_singular_day_number_is_not_a_day_of_month_rule():
 ])
 def test_once_adversarial_not_a_recurrence(text):
     assert extract_recurrence(text, LANG) is None
+
+
+# --------------------------------------------------------------------------
+# Plural nth-weekday: the canonical pt surface for a recurring set.
+#
+# Native-speaker ruling from the repo owner: Portuguese marks the recurring
+# set with the PLURAL throughout -- plural article, plural ordinal, plural
+# weekday, plus the "do mês" tail.  The singular names one particular
+# occasion.  This is the same correction the owner applied to "todo dia 1".
+#
+# It also composes cleanly with the conservative rule from #217: the natural
+# pt form already carries the explicit "do mês" tail, so the ordinal-vs-
+# interval ambiguity that forced English to wait for positive evidence simply
+# does not arise here -- every ordinal from two upwards is already unambiguous.
+# --------------------------------------------------------------------------
+_PLURAL_NTH_WEEKDAY_CASES = [
+    ("todas as terceiras quintas-feiras do mês", "FREQ=MONTHLY;BYDAY=3TH"),
+    ("todas as primeiras segundas-feiras do mês", "FREQ=MONTHLY;BYDAY=1MO"),
+    ("todas as últimas sextas-feiras do mês", "FREQ=MONTHLY;BYDAY=-1FR"),
+    ("todas as últimas quartas-feiras do mês", "FREQ=MONTHLY;BYDAY=-1WE"),
+    ("todas as primeiras sextas-feiras do mês", "FREQ=MONTHLY;BYDAY=1FR"),
+    ("todas as terceiras terças-feiras do mês", "FREQ=MONTHLY;BYDAY=3TU"),
+    ("todas as terceiras quartas-feiras do mês", "FREQ=MONTHLY;BYDAY=3WE"),
+    ("todas as primeiras terças-feiras do mês", "FREQ=MONTHLY;BYDAY=1TU"),
+    ("todas as últimas segundas-feiras do mês", "FREQ=MONTHLY;BYDAY=-1MO"),
+]
+
+
+@pytest.mark.parametrize("text,rrule", _PLURAL_NTH_WEEKDAY_CASES)
+def test_plural_nth_weekday(text, rrule):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == ""
+
+
+def test_plural_weekday_is_never_folded_to_a_number():
+    """"segundas"/"quintas" are weekday names in the plural exactly as they
+    are in the singular, so the plural-ordinal fold must not eat them."""
+    got = extract_recurrence("todas as segundas-feiras", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=WEEKLY;BYDAY=MO"
+
+
+@pytest.mark.parametrize("text", [
+    # plural ordinals are folded, but the surfaces that are ordinary nouns
+    # this engine reads ("segundos" seconds, "quartos" the clock quarter)
+    # are held back and so name no recurrence on their own.
+    "segundos", "dois quartos",
+    # the ordinals that ARE weekday names ("segundas" 2nd/Mondays, "quartas"
+    # 4th/Wednesdays, "quintas" 5th/Thursdays) stay weekdays, so the plural
+    # nth-weekday reading is not available for those counts -- the phrase
+    # reads as the weekday it names rather than being guessed either way.
+    "todas as quintas quintas-feiras do mês",
+])
+def test_plural_ordinal_noun_homographs_are_not_recurrences(text):
+    got = extract_recurrence(text, LANG)
+    assert got is None or got[1] != ""
