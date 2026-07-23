@@ -162,8 +162,13 @@ class TestExactValues(unittest.TestCase):
         self.assertEqual(b.strftime("%Y-%m-%d"), "2020-01-03")
         self.assertEqual(b.strftime("%j"), "003")
         self.assertEqual(b.strftime("%W"), datetime(2020, 1, 3).strftime("%W"))
+        # %A/%B are computed from AstroDate's own weekday/month arithmetic,
+        # so they are supported even out of datetime's range.
+        self.assertEqual(a.strftime("%A"),
+                         ("Monday", "Tuesday", "Wednesday", "Thursday",
+                          "Friday", "Saturday", "Sunday")[a.weekday()])
         with self.assertRaises(ValueError):
-            a.strftime("%A")   # weekday name is not year-width-safe
+            a.strftime("%Q")   # not a supported directive
 
 
 class TestAwareSemantics(unittest.TestCase):
