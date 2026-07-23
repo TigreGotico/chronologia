@@ -445,13 +445,15 @@ def extract_recurrence(
         at_words=set(C.get("at", ())),
         weekend_word=set(C.get("weekend", ())),
         on_words=set(C.get("on", ())),
+        once_words=set(C.get("recur_once", ())),
+        per_words=set(C.get("recur_per", ())),
         holidays=dict(spec.holidays),
         lang=lang,
         anchor=anchor,
     )
 
     for finder in (_recur_nth_weekday, _recur_holiday, _recur_date_anchored,
-                   _recur_every, _recur_freq_word):
+                   _recur_once, _recur_every, _recur_freq_word):
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
@@ -632,6 +634,8 @@ class _RecurCtx:
     at_words: set = frozenset()
     weekend_word: set = frozenset()
     on_words: set = frozenset()
+    once_words: set = frozenset()
+    per_words: set = frozenset()
     holidays: dict = None
     lang: str = "en-us"
     anchor: Optional[datetime] = None
@@ -697,8 +701,89 @@ def _recur_nth_weekday(ctx):
     return None
 
 
+def _is_ordinal_surface(tok):
+    """Whether a folded number token was written as an **ordinal**.
+
+    The number fold normalises "1st" / "1º" / "1.º" to the value ``1``, but the
+    tokenizer keeps the original surface in ``raw``.  An ordinal surface is
+    digits followed by a non-digit tail ("1st", "10th", "1º"); a bare cardinal
+    ("2") has no tail, and a decimal ("1.5") ends in digits.  This is a surface
+    fact, so it reads the same in any language that writes ordinals as a
+    digit run plus a suffix -- no per-language table.
+    """
+    import re
+    if not tok.is_number:
+        return False
+    return bool(re.fullmatch(r"\d+\D+", tok.raw.strip().lower()))
+
+
+def _of_month_tail(ctx, r):
+    """End index after an optional ``of [the|every] month`` tail at ``r``.
+
+    Returns ``r`` unchanged when there is no such tail -- the tail is *allowed*
+    but never *required*, which is exactly what makes the elliptical "every
+    last friday" read like its fuller sibling "every last friday of the month".
+    """
+    t = ctx.tokens
+    n = len(t)
+    if r < n and t[r].text in ctx.of_words:
+        k = r + 1
+        while k < n and (t[k].text in ctx.articles or t[k].text in ctx.every):
+            k += 1
+        if k < n and t[k].text in ctx.units and ctx.units[t[k].text] == "month":
+            return k + 1
+    return r
+
+
+def _recur_once(ctx):
+    """``once a <unit> [on <weekday>]`` -> the plain per-period frequency.
+
+    "Once per period" *is* "every period": one occurrence per week is exactly
+    ``FREQ=WEEKLY``, so the count word adds no RRULE part of its own.  An
+    optional trailing "on <weekday>" pins the day (``BYDAY``).
+
+    Only the count *one* maps cleanly.  "twice a week" / "three times a month"
+    are frequency-**counts** needing a different RRULE shape (BYSETPOS or a
+    per-period COUNT) than the plain frequency here, so they are deliberately
+    left unread rather than forced into a wrong interval -- the same line
+    ``_freq_map`` draws for the "twice a week" sense of "biweekly".
+    """
+    t = ctx.tokens
+    n = len(t)
+    for i in range(n):
+        if t[i].text not in ctx.once_words:
+            continue
+        j = i + 1
+        while j < n and (t[j].text in ctx.articles or t[j].text in ctx.per_words):
+            j += 1
+        if not (j < n and t[j].text in ctx.units):
+            continue
+        unit = ctx.units[t[j].text]
+        kw = {}
+        if unit == "fortnight":
+            freq, kw = "WEEKLY", {"interval": 2}
+        else:
+            freq = _UNIT_FREQ.get(unit)
+        if freq is None:
+            continue
+        end = j + 1
+        # optional "on <weekday>": "once a week on monday".
+        if (end + 1 < n and t[end].text in ctx.on_words
+                and t[end + 1].text in ctx.weekdays):
+            kw["byday"] = ((None, ctx.weekdays[t[end + 1].text]),)
+            end += 2
+        return _build_every(freq, **kw), set(range(i, end))
+    return None
+
+
 def _recur_every(ctx):
-    """``every [other|N] (<weekday> | <unit> | weekday-word)``."""
+    """``every [other|N] (<weekday> | <unit> | weekday-word)``, plus the
+    **elliptical** nth-weekday / day-of-month readings that drop the
+    "of the month" tail ("every last friday", "every 1st").
+
+    The ellipsis fires only under an explicit ``every`` marker: a bare "last
+    friday" is a single past date, not a recurrence, and stays unread here.
+    """
     t = ctx.tokens
     n = len(t)
     for i in range(n):
@@ -706,6 +791,7 @@ def _recur_every(ctx):
             continue
         j = i + 1
         interval = 1
+        num_val = num_idx = None
         # an article, an "other" marker and an explicit count may appear in any
         # order before the target noun ("every other week", "toutes les deux
         # semaines", "cada dos semanas").
@@ -715,9 +801,44 @@ def _recur_every(ctx):
             elif t[j].text in ctx.other:
                 interval, j = 2, j + 1
             elif t[j].is_number:
-                interval, j = int(t[j].value), j + 1
+                interval = num_val = int(t[j].value)
+                num_idx, j = j, j + 1
             else:
                 break
+
+        # -- ellipsis: "every last <weekday>" --------------------------------
+        # a "last" relative marker (never a count, so `interval` is untouched)
+        # directly before a weekday is the -1st weekday of the month, exactly
+        # as "the last friday of every month" already reads.
+        if (num_val is None and j + 1 < n
+                and t[j].text in ctx.rel_markers
+                and ctx.rel_markers[t[j].text] == -1
+                and t[j + 1].text in ctx.weekdays):
+            wd = ctx.weekdays[t[j + 1].text]
+            return (_nth_weekday_of_month(-1, wd),
+                    set(range(i, _of_month_tail(ctx, j + 2))))
+
+        # -- ellipsis: "every <ordinal> <weekday>" ---------------------------
+        # a count directly before a weekday can only be an ordinal ("every
+        # first friday"): there is no unit for it to be an interval of.
+        if num_val is not None and j < n and t[j].text in ctx.weekdays:
+            wd = ctx.weekdays[t[j].text]
+            return (_nth_weekday_of_month(num_val, wd),
+                    set(range(i, _of_month_tail(ctx, j + 1))))
+
+        # -- ellipsis: "every <ordinal> [of the month]" -> BYMONTHDAY --------
+        # A count *followed by a unit* is an interval ("every 2 weeks") and is
+        # never read here.  Otherwise the count is a day of the month, but only
+        # on positive evidence: an explicit "of the month" tail, or an ordinal
+        # surface ("1st").  A bare cardinal ("every 2") stays unread rather
+        # than being guessed into a BYMONTHDAY.
+        if (num_val is not None and 1 <= num_val <= 31
+                and not (j < n and t[j].text in ctx.units)):
+            end = _of_month_tail(ctx, j)
+            if end > j or _is_ordinal_surface(t[num_idx]):
+                return (_build_every("monthly", bymonthday=num_val),
+                        set(range(i, end)))
+
         if j >= n:
             continue
         iv = {"interval": interval} if interval != 1 else {}

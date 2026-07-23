@@ -18,7 +18,34 @@ _CASES = [
     ("anualmente", "FREQ=YEARLY", ""),
     ("diariamente", "FREQ=DAILY", ""),
     ("a primeira segunda-feira de cada mês", "FREQ=MONTHLY;BYDAY=1MO", ""),
+    # Elliptical nth-weekday: the "do mês" tail is dropped in speech, exactly
+    # as English drops "of the month".  The reading is engine-side and
+    # language-agnostic -- it needs no pt vocabulary beyond the "último"
+    # relative marker and the ordinal fold the locale already ships.
+    ("toda última sexta-feira", "FREQ=MONTHLY;BYDAY=-1FR", ""),
+    ("toda última sexta-feira do mês", "FREQ=MONTHLY;BYDAY=-1FR", ""),
+    ("cada última sexta-feira", "FREQ=MONTHLY;BYDAY=-1FR", ""),
+    ("toda última segunda-feira", "FREQ=MONTHLY;BYDAY=-1MO", ""),
+    ("toda primeira segunda-feira", "FREQ=MONTHLY;BYDAY=1MO", ""),
+    ("cada primeira sexta-feira", "FREQ=MONTHLY;BYDAY=1FR", ""),
+    ("toda terceira quinta-feira", "FREQ=MONTHLY;BYDAY=3TH", ""),
 ]
+
+
+# adversarial: without the "todo/toda/cada" framing these are single past
+# dates, not rules -- "última sexta-feira" is the friday just gone.
+@pytest.mark.parametrize("text", [
+    "última sexta-feira", "a última sexta-feira", "primeira sexta-feira",
+])
+def test_not_a_recurrence(text):
+    assert extract_recurrence(text, LANG) is None
+
+
+# a cardinal before a unit stays an INTERVAL, never a day-of-month.
+def test_cardinal_plus_unit_stays_an_interval():
+    got = extract_recurrence("cada duas semanas", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=WEEKLY;INTERVAL=2"
 
 
 @pytest.mark.parametrize("text,rrule,remainder", _CASES)
