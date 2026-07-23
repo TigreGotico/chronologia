@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """Ranges.  Dash-framed ranges parse language-agnostically; the word-framed
-Romance forms ("de junho a agosto", "entre ... e ...") need range framings
-the engine only ships in English -- those are xfail'd with that reason."""
+Romance forms ("de junho a agosto", "entre ... e ...") parse too -- the "from"
+lead ("de"/"desde") and "to"/"between" connectors ship per-locale, so range
+framing is not English-only.  Because Portuguese "a" is a hyper-common
+preposition ("às três", "vamos a Lisboa"), a bare "A a B" is only trusted as a
+range when a "from" lead disambiguates it -- the adversarial cases pin that down."""
 import pytest
 
 from ._corpus import AstroDate, start_end, nomatch
@@ -17,12 +20,33 @@ def test_dash_range(text, s, e):
     assert ss == AstroDate(*s) and ee == AstroDate(*e)
 
 
-@pytest.mark.xfail(reason="engine range framings (from/to/between/and) are "
-                          "English-only; Romance 'de X a Y' unsupported",
-                   strict=True)
-def test_word_framed_range():
-    ss, ee = start_end("de junho a agosto")
-    assert ss == AstroDate(2017, 6, 1) and ee == AstroDate(2017, 9, 1)
+@pytest.mark.parametrize("text,s,e", [
+    ("de junho a agosto", (2017, 6, 1), (2017, 9, 1)),
+    ("de junho até agosto", (2017, 6, 1), (2017, 9, 1)),
+    ("entre junho e agosto", (2017, 6, 1), (2017, 9, 1)),
+    ("de 5 de junho a 12 de junho", (2018, 6, 5), (2018, 6, 13)),
+])
+def test_word_framed_range(text, s, e):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(*s) and ee == AstroDate(*e)
+
+
+# -- adversarial: the "a" trap.  "a" is also the clock preposition ("às três"),
+# so a bare "<month> a <time>" / "às três" must NEVER become a bounded range;
+# without a "from" lead the "a"-connector is untrusted and the normal single-span
+# path runs (a minute-wide clock span), while a non-temporal endpoint is nomatch.
+def test_a_trap_bare_month_plus_time_is_single_span():
+    ss, ee = start_end("junho às três")
+    assert ss == AstroDate(2017, 6, 1, 3, 0) and ee == AstroDate(2017, 6, 1, 3, 1)
+
+
+def test_a_trap_clock_sentence_is_single_span():
+    ss, ee = start_end("o concerto é às três")
+    assert ss == AstroDate(2017, 6, 28, 3, 0) and ee == AstroDate(2017, 6, 28, 3, 1)
+
+
+def test_a_trap_non_temporal_place_is_nomatch():
+    nomatch("vamos a Lisboa")
 
 
 from ._corpus import ANCHOR, ad  # noqa: E402

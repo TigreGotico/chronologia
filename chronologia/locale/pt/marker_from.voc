@@ -1,1 +1,11 @@
+# Portuguese range "from" lead -- opens a bounded or open interval and, crucially,
+# disambiguates the hyper-common preposition "a" (marker_to) as a genuine range
+# boundary: a bare "A a B" is only trusted as a range when a "from" lead is present.
+# "de": Priberam s.v. "de" (preposicao) -- origem / ponto de partida, correlativa
+#   de "a" ("de junho a agosto"). Ciberduvidas, construcao "de ... a".
+# "desde": Priberam s.v. "desde" (preposicao) -- ponto de origem no tempo ou
+#   espaco ("desde 2010"). https://dicionario.priberam.org/desde
+# "a partir de": Priberam -- locucao prepositiva, ponto de inicio.
 a partir de
+de
+desde
