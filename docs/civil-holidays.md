@@ -105,6 +105,22 @@ far = {h.display_name("en") for h in holidays_for("SA", 2100)}
 assert far == {"Founding Day", "National Day"}   # Eid dropped, honestly
 ```
 
+A decree table past its horizon is different: by default the engine *predicts*
+the date through a computable rule and marks it `basis="predicted"`. That is
+honest, but a caller who never inspects `.basis` silently mixes a fabricated
+future date in with facts. Pass `strict_horizon=True` to require
+authoritative-only results — past a decree row's own horizon it returns nothing
+rather than a predicted date, while computable holidays (fixed dates, weekday
+rules) are unaffected:
+
+```python
+lenient = {h.name for h in holidays_for("BJ", 2028)}
+strict = {h.name for h in holidays_for("BJ", 2028, strict_horizon=True)}
+assert "Jour du Ramadan (estimé)" in lenient        # predicted past horizon
+assert "Jour du Ramadan (estimé)" not in strict     # refused under strict
+assert "Fête du Nouvel An" in strict                # fixed date, always kept
+```
+
 ## Observed shifts
 
 When a fixed holiday lands on a weekend it is often *observed* on a nearby

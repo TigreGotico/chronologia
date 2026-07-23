@@ -815,15 +815,29 @@ class HolidayRule:
             return False
         return year < bounds[0] or year > bounds[1]
 
-    def resolve(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+    def resolve(self, year: int, strict_horizon: bool = False
+                ) -> Tuple[Tuple[AstroDate, str], ...]:
+        """Resolve this rule for ``year`` into ``(AstroDate, basis)`` pairs.
+
+        By default (``strict_horizon=False``) a decree-tabulated holiday queried
+        beyond its :meth:`past_horizon` is *predicted* through its ``predict``
+        well-known rule (basis ``predicted``) rather than vanishing. Pass
+        ``strict_horizon=True`` to require authoritative-only results: past this
+        rule's tabulated horizon it returns ``()`` instead of a predicted date.
+        The horizon is per-rule, so only a decree-table rule that is genuinely
+        past *its own* horizon is refused — a computable kind (fixed,
+        nth-weekday, Easter-offset, …) has no horizon and is never refused.
+        """
         if not self.in_force(year):
             return ()
         obs = self.kind.observances(year)
         # Bridge the horizon: a decree-tabulated holiday queried beyond the years
         # it tabulates resolves through its ``predict`` well-known rule (the same
         # computable calendar the feast really follows) with basis ``predicted``,
-        # rather than silently vanishing.
-        if not obs and self.predict is not None and self.past_horizon(year):
+        # rather than silently vanishing. Strict callers opt out of the bridge
+        # and take the honest silence instead of a predicted date.
+        if (not strict_horizon and not obs and self.predict is not None
+                and self.past_horizon(year)):
             wk = WELL_KNOWN_BY_KEY.get(self.predict)
             if wk is not None:
                 obs = tuple((date, BASIS_PREDICTED)
@@ -1013,7 +1027,8 @@ class HolidayCalendar:
     retrieved: str = ""
 
     def holidays(self, year: int, subdiv: Optional[str] = None,
-                 categories: Optional[Iterable[str]] = None
+                 categories: Optional[Iterable[str]] = None,
+                 strict_horizon: bool = False
                  ) -> Tuple[CivilHoliday, ...]:
         """Resolve every applicable rule for ``year`` into :class:`CivilHoliday`.
 
@@ -1021,6 +1036,12 @@ class HolidayCalendar:
         jurisdiction-wide (``subdiv is None``) *or* its ``subdiv`` matches the
         requested one. ``categories`` keeps only holidays sharing at least one
         of the requested categories.
+
+        ``strict_horizon`` (default ``False``) requires authoritative-only
+        results: a decree-tabulated holiday past its own horizon is *omitted*
+        instead of being predicted (basis ``predicted``). Every computable
+        holiday (fixed date, nth-weekday, Easter-offset, …) is unaffected — it
+        has no horizon and always resolves. See :meth:`HolidayRule.resolve`.
         """
         want = frozenset(categories) if categories is not None else None
         applicable = []
@@ -1047,7 +1068,7 @@ class HolidayCalendar:
         subst_work = []  # (nominal_date, rule) awaiting a substitute day
         for rule in applicable:
             trans = _translations_for(self.jurisdiction, rule.name)
-            for date, basis in rule.resolve(year):
+            for date, basis in rule.resolve(year, strict_horizon=strict_horizon):
                 out.append(CivilHoliday(
                     name=rule.name,
                     span=_shape_span(date, basis, rule.span_shape),
@@ -1305,7 +1326,8 @@ def _calendar_for(jurisdiction: str) -> HolidayCalendar:
 
 
 def holidays_for(jurisdiction: str, year: int, subdiv: Optional[str] = None,
-                 categories: Optional[Iterable[str]] = None
+                 categories: Optional[Iterable[str]] = None,
+                 strict_horizon: bool = False
                  ) -> Tuple[CivilHoliday, ...]:
     """Every civil holiday in ``jurisdiction`` for ``year`` (objects out).
 
@@ -1314,9 +1336,16 @@ def holidays_for(jurisdiction: str, year: int, subdiv: Optional[str] = None,
     one requested category. Returns a chronologically sorted tuple of
     :class:`CivilHoliday`.
 
+    ``strict_horizon`` (default ``False``) requires authoritative-only results:
+    a decree-tabulated holiday past its own horizon is omitted rather than
+    predicted (basis ``predicted``). Use it when a fabricated future date mixed
+    in with facts would be worse than an honest gap; computable holidays are
+    unaffected. See :func:`coverage` to inspect the horizon.
+
     :raises KeyError: no data file for ``jurisdiction``.
     """
-    return _calendar_for(jurisdiction).holidays(year, subdiv, categories)
+    return _calendar_for(jurisdiction).holidays(
+        year, subdiv, categories, strict_horizon=strict_horizon)
 
 
 #: The four coverage verdicts :func:`coverage` reports (see its docstring).

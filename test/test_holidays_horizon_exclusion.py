@@ -35,7 +35,8 @@ import os
 import pytest
 
 from chronologia import AstroDate, coverage, holidays_for
-from chronologia.astrodate import BASIS_PREDICTED, BASIS_TABULATED
+from chronologia.astrodate import (BASIS_EXACT, BASIS_PREDICTED,
+                                    BASIS_TABULATED)
 from chronologia.civil_holidays import (COVERAGE_FULL, COVERAGE_NONE,
                                         COVERAGE_PARTIAL, COVERAGE_PREDICTED,
                                         DecreeTableRule, ExcludeRule,
@@ -173,6 +174,99 @@ def test_coverage_distinguishes_horizon_from_silence():
     while a listed year is 'full'."""
     assert coverage("MY", 2025) == COVERAGE_FULL
     assert coverage("MY", 2028) == COVERAGE_PARTIAL
+
+
+# ==========================================================================
+# R6 -- strict_horizon: opt-in authoritative-only mode (refuse, don't predict).
+#
+# The predict bridge is honest but silent: a caller who ignores `.basis` gets a
+# fabricated future date mixed in with facts. `strict_horizon=True` lets a
+# caller require authoritative-only results -- past a decree row's OWN horizon
+# it returns nothing rather than a predicted date. It is additive: the lenient
+# default is unchanged, and computable holidays (no horizon) are never refused.
+#
+# Hand-derived values: Brunei's Chinese-New-Year decree ends at its horizon and
+# is predict-annotated (chinese_new_year); 2028 (26 Jan 2028, the shipped
+# calendar's own value) is past it. The FixedRule/DecreeTableRule constructions
+# below use tables the test itself authors, so their expected outputs are read
+# straight off the constructed data, not off the engine.
+# ==========================================================================
+def test_lenient_default_predicts_past_horizon_unchanged():
+    """Baseline: without the flag, 2028 still yields the predicted date."""
+    got = {h.name: h for h in holidays_for("BN", 2028)}
+    assert "Tahun Baru Cina" in got
+    assert got["Tahun Baru Cina"].basis == BASIS_PREDICTED
+    assert got["Tahun Baru Cina"].date == AstroDate(2028, 1, 26)
+
+
+def test_strict_refuses_the_same_query_past_horizon():
+    """Same jurisdiction/year as above -- strict omits the predicted holiday."""
+    got = {h.name for h in holidays_for("BN", 2028, strict_horizon=True)}
+    assert "Tahun Baru Cina" not in got
+
+
+def test_strict_still_returns_authoritative_dates_before_horizon():
+    """A listed (in-horizon) year is authoritative -- strict must NOT refuse it,
+    and it stays basis tabulated (never predicted)."""
+    got = {h.name: h for h in holidays_for("BN", 2025, strict_horizon=True)}
+    assert "Tahun Baru Cina" in got
+    assert got["Tahun Baru Cina"].basis == BASIS_TABULATED
+
+
+def test_strict_exactly_on_horizon_is_not_refused():
+    """Boundary: the last tabulated year is authoritative, not past the horizon.
+    The table ends 2027; strict at 2027 returns the tabulated date, at 2028 () --
+    while lenient 2028 predicts. Refusal begins strictly AFTER the last year."""
+    rule = HolidayRule(
+        "x", DecreeTableRule(((2024, (4, 10)), (2025, (3, 30)),
+                              (2026, (3, 20)), (2027, (3, 9)))),
+        frozenset({"public"}), predict="eid_al_fitr")
+    assert rule.resolve(2027, strict_horizon=True) == (
+        (AstroDate(2027, 3, 9), BASIS_TABULATED),)
+    assert rule.resolve(2028, strict_horizon=True) == ()
+    # Lenient still bridges 2028 -- the default is untouched.
+    lenient = rule.resolve(2028)
+    assert len(lenient) == 1 and lenient[0][1] == BASIS_PREDICTED
+
+
+def test_strict_refusal_is_per_rule_not_global():
+    """Two decree rows with DIFFERENT horizons, queried for the SAME year 2029:
+    the row whose horizon ended 2027 is refused, the row tabulating through 2030
+    is still authoritative and returns its 2029 date. Strict refuses per-rule."""
+    short = HolidayRule(
+        "short", DecreeTableRule(((2026, (3, 20)), (2027, (3, 9)))),
+        frozenset({"public"}), predict="eid_al_fitr")
+    long = HolidayRule(
+        "long", DecreeTableRule(((2028, (2, 26)), (2029, (2, 15)),
+                                 (2030, (2, 5)))),
+        frozenset({"public"}), predict="eid_al_fitr")
+    assert short.past_horizon(2029) and not long.past_horizon(2029)
+    assert short.resolve(2029, strict_horizon=True) == ()
+    assert long.resolve(2029, strict_horizon=True) == (
+        (AstroDate(2029, 2, 15), BASIS_TABULATED),)
+
+
+def test_strict_never_refuses_computable_holidays():
+    """A fixed / nth-weekday holiday has no horizon: it is computable forever,
+    so strict must resolve it for any year, however far out."""
+    from chronologia.civil_holidays import FixedRule, NthWeekdayRule
+    fixed = HolidayRule("New Year", FixedRule(1, 1), frozenset({"public"}))
+    assert fixed.resolve(9999, strict_horizon=True) == (
+        (AstroDate(9999, 1, 1), BASIS_EXACT),)
+    # First Monday of September 9999 -- computable, unaffected by strict.
+    labor = HolidayRule("Labor Day", NthWeekdayRule(9, 1, 0, 0),
+                        frozenset({"public"}))
+    assert len(labor.resolve(9999, strict_horizon=True)) == 1
+
+
+def test_strict_keeps_computable_holidays_while_dropping_predicted():
+    """Integration: at a past-horizon year strict drops the predicted Islamic
+    feast but keeps the fixed civil holidays (Benin: New Year 1 Jan is fixed)."""
+    lenient = {h.name for h in holidays_for("BJ", 2028)}
+    strict = {h.name for h in holidays_for("BJ", 2028, strict_horizon=True)}
+    assert "Fête du Nouvel An" in strict          # fixed -- kept
+    assert "Jour du Ramadan (estimé)" in lenient  # predicted -- present lenient
+    assert "Jour du Ramadan (estimé)" not in strict  # ...refused under strict
 
 
 # ==========================================================================
