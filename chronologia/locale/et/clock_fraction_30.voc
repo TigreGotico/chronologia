@@ -1,1 +1,5 @@
+# Estonian counting-toward-the-hour clock: "pool <H>" == half of the way
+# toward hour H, i.e. (H-1):30 -- "pool uheksa" == 08:30 (half before nine).
+# Citation: Erelt, Mati (ed.) "Estonian Language", Estonian Academy
+# Publishers 2003, time-expression sec.; EKI "Sonaveeb" entry "pool".
 pool

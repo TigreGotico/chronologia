@@ -90,6 +90,17 @@ class Conventions:
     # not logic -- the resolver reads it when a FRACTION binds with no
     # explicit CLOCKDIR.
     bare_half_to: bool = False
+    # Finno-Ugric "counting-toward-the-hour" clock convention: a bare
+    # fraction names that fraction *of the way toward* the stated (coming)
+    # hour, so the quarter forms are unambiguous -- Hungarian "negyed
+    # kilenc" == 08:15, "haromnegyed kilenc" == 08:45; Estonian "veerand
+    # uheksa" == 08:15, "kolmveerand uheksa" == 08:45 -- alongside the half
+    # ("fel kilenc"/"pool uheksa" == 08:30).  Distinct from bare_half_to:
+    # the Continental-Germanic family shares the half but a bare quarter
+    # ("viertel neun") is regionally ambiguous there, so only these
+    # full-system locales opt in.  A fact, not logic -- the resolver reads
+    # it when a FRACTION binds with no explicit CLOCKDIR.
+    bare_quarter_to: bool = False
 
 
 @dataclass(frozen=True)

@@ -4,14 +4,14 @@ handled by the bare_half_to convention.  Digit times, the délben/éjfél
 landmarks and "H óra" whole hours are also asserted.
 
 The quarter/three-quarter counting forms ("negyed kilenc" 8:15,
-"háromnegyed kilenc" 8:45) are a KNOWN ENGINE GAP: bare_half_to only takes
-the half, so those are xfailed rather than asserted wrongly.
+"háromnegyed kilenc" 8:45) run the same counting-toward-the-hour system as
+the half (bare_quarter_to convention) and are asserted directly.
 """
 from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, start, parse
+from ._corpus import ANCHOR, ad, start, nomatch
 
 
 def _next_time(h, mi):
@@ -58,12 +58,22 @@ def test_landmarks(text, h, mi):
     assert start(text) == _next_time(h, mi)
 
 
-@pytest.mark.xfail(reason="bare_half_to only resolves the half; quarter/"
-                          "three-quarter counting-toward is unsupported",
-                   strict=True)
 @pytest.mark.parametrize("text,h,mi", [
-    ("negyed kilenc", 8, 15),
-    ("háromnegyed kilenc", 8, 45),
+    ("negyed kilenc", 8, 15),       # a quarter toward nine
+    ("háromnegyed kilenc", 8, 45),  # three quarters toward nine
+    ("negyed tíz", 9, 15),
+    ("háromnegyed tizenkettő", 11, 45),
+    ("negyed nyolc", 7, 15),
 ])
-def test_quarter_toward_hour_gap(text, h, mi):
+def test_quarter_toward_coming_hour(text, h, mi):
     assert start(text) == _next_time(h, mi)
+
+
+@pytest.mark.parametrize("text", [
+    "negyed",           # bare fraction, no hour -- must not crash or resolve
+    "háromnegyed",
+])
+def test_bare_fraction_without_hour_is_not_a_clock(text):
+    # A fraction word with no hour to count toward is not a clock reading;
+    # the engine must decline it, not raise.
+    nomatch(text)

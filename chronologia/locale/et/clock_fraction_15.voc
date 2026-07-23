@@ -1,1 +1,6 @@
+# Estonian counting-toward-the-hour clock: "veerand <H>" == a quarter of the
+# way toward hour H, i.e. (H-1):15 -- "veerand uheksa" == 08:15.  Citation:
+# Erelt, Mati (ed.) "Estonian Language", Linguistica Uralica Suppl. Series 1,
+# Estonian Academy Publishers 2003, time-expression sec.; EKI Eesti Keele
+# Instituut "Sonaveeb" entry "veerand", clock sense.
 veerand

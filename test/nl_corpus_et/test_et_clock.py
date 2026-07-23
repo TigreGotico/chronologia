@@ -4,14 +4,14 @@ bare_half_to.  Digit times, "kell H" whole hours and the keskpäev/kesköö
 landmarks are also asserted.
 
 The quarter/three-quarter counting forms ("veerand üheksa" 8:15,
-"kolmveerand üheksa" 8:45) are a KNOWN ENGINE GAP: bare_half_to takes only
-the half, so those are xfailed rather than asserted wrongly.
+"kolmveerand üheksa" 8:45) run the same counting-toward-the-hour system as
+the half (bare_quarter_to convention) and are asserted directly.
 """
 from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, start
+from ._corpus import ANCHOR, ad, start, nomatch
 
 
 def _next_time(h, mi):
@@ -58,12 +58,22 @@ def test_landmarks(text, h, mi):
     assert start(text) == _next_time(h, mi)
 
 
-@pytest.mark.xfail(reason="bare_half_to only resolves the half; veerand/"
-                          "kolmveerand counting-toward is unsupported",
-                   strict=True)
 @pytest.mark.parametrize("text,h,mi", [
-    ("veerand üheksa", 8, 15),
-    ("kolmveerand üheksa", 8, 45),
+    ("veerand üheksa", 8, 15),       # a quarter toward nine
+    ("kolmveerand üheksa", 8, 45),   # three quarters toward nine
+    ("veerand kümme", 9, 15),
+    ("kolmveerand kaksteist", 11, 45),
+    ("veerand kaheksa", 7, 15),
 ])
-def test_quarter_toward_hour_gap(text, h, mi):
+def test_quarter_toward_coming_hour(text, h, mi):
     assert start(text) == _next_time(h, mi)
+
+
+@pytest.mark.parametrize("text", [
+    "veerand",          # bare fraction, no hour -- must not crash or resolve
+    "kolmveerand",
+])
+def test_bare_fraction_without_hour_is_not_a_clock(text):
+    # A fraction word with no hour to count toward is not a clock reading;
+    # the engine must decline it, not raise.
+    nomatch(text)
