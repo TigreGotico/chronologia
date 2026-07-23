@@ -92,6 +92,7 @@
         "ISO"
       ]
     },
+    "iso_week_date": {"orders": ["ISOWEEK"]},
     "numeric_date": {
       "orders": [
         "NUMDATE"

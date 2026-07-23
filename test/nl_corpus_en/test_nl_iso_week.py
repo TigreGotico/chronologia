@@ -26,6 +26,12 @@ _CASES = [
     ("week 10 of 1999", 1999, 10),
     ("week 40 of 2024", 2024, 40),
     ("week 7 of 2030", 2030, 7),
+    # the ordinal prose surface names the same week as the cardinal one
+    ("the 10th week of 2024", 2024, 10),
+    ("the 32nd week of 2026", 2026, 32),
+    ("the 53rd week of 2020", 2020, 53),
+    ("the tenth week of 2024", 2024, 10),
+    ("the 1st week of 2026", 2026, 1),
 ]
 
 
@@ -42,6 +48,8 @@ def test_iso_week(text, iy, iw):
 # 2017 has only 52 ISO weeks, so "week 53" (no year) is out of range.
 @pytest.mark.parametrize("text", [
     "week 0", "week 60", "week 99 of 2020", "week 53",
+    # an in-shape ordinal naming no ISO week refuses just like the cardinal
+    "the 53rd week of 2024", "the 99th week of 2024",
 ])
 def test_not_an_iso_week(text):
     nomatch(text)

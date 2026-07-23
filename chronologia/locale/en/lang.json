@@ -210,6 +210,7 @@
         "ISO"
       ]
     },
+    "iso_week_date": {"orders": ["ISOWEEK"]},
     "numeric_date": {
       "orders": [
         "NUMDATE"
@@ -260,7 +261,8 @@
     "iso_week_ref": {
       "orders": [
         "week_num NUM of YEAR",
-        "week_num NUM YEAR?"
+        "week_num NUM YEAR?",
+        "article? ORD week_num of YEAR"
       ]
     },
     "month_day_ref": {

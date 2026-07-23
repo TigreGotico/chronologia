@@ -75,6 +75,10 @@ PRECEDENCE: Dict[str, int] = {
     "decade_ref": 2,
     "season_ref": 3,
     "iso_date": 4,
+    # the ISO-8601 week designator literal ("2024-W10", "2024-W10-1"): a full
+    # literal like the ISO date it sits beside, and it must outrank any bare
+    # year_ref reading of its leading digits
+    "iso_week_date": 4,
     # a numeric slash/dash date ("12/11/2024") is a full literal date, same
     # tier as the ISO literal it sits beside
     "numeric_date": 4,

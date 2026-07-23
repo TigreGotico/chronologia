@@ -28,6 +28,17 @@ from chronologia.extract.model import Token, TokenizerModes
 # per-locale dmy swap ever applies here.  The four-digit lead and required
 # separator keep a bare year, fraction or decimal from ever matching.
 _ISO = r"\d{4}-\d{2}-\d{2}|\d{4}/\d{1,2}/\d{1,2}|\d{4}-\d{2}"
+# the ISO-8601 week designator (ISO 8601 §4.4.4.2): ``YYYY-Www`` for the week
+# itself and ``YYYY-Www-D`` for one weekday inside it (D = 1..7, Monday..Sunday).
+# The literal ``W`` is what makes this shape unmistakable -- it can never be
+# confused with the all-digit _ISO calendar literal or with _NUMDATE, so the
+# three stay mutually exclusive by construction.  The standard writes ``W``
+# uppercase; lowercase ``w`` is accepted as permissive input (the tokenizer
+# lower-cases before matching anyway) and collides with nothing, since no other
+# literal shape allows a letter between two digit runs.  Matched AHEAD of _ISO
+# and _NUMDATE so the week designator is never split into a bare year plus
+# leftovers -- the silent-wrong reading this literal exists to prevent.
+_ISOWEEK = r"\d{4}-[wW]\d{2}(?:-\d)?"
 # a numeric slash/dash separated date ("12/11/2024", "5-6-24"): two 1-2 digit
 # components and a 2-4 digit year, kept whole so the matcher binds it as one
 # ``NUMDATE`` slot.  Requiring the third (year) component and two separators
@@ -62,7 +73,7 @@ class Tokenizer:
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
-        parts = [_ISO, _NUMDATE, _CLOCK, _ZONE]
+        parts = [_ISOWEEK, _ISO, _NUMDATE, _CLOCK, _ZONE]
         if modes.ordinal_dot:
             # a digit run followed by a dot that is not a decimal point
             parts.append(r"\d+\.(?!\d)")
@@ -79,7 +90,8 @@ class Tokenizer:
             # locales this engine serves, lower-casing is length-preserving, so
             # they are also the offsets into the original ``text``.
             cs, ce = m.start(), m.end()
-            is_literal = (re.fullmatch(_ISO, raw) is not None
+            is_literal = (re.fullmatch(_ISOWEEK, raw) is not None
+                          or re.fullmatch(_ISO, raw) is not None
                           or re.fullmatch(_NUMDATE, raw) is not None
                           or re.fullmatch(_CLOCK, raw) is not None)
             if not is_literal and re.match(r"\d", raw):

@@ -585,11 +585,59 @@ class Resolver:
         ``week_start`` convention (which only governs "this/next week"); week 1
         is the week containing the year's first Thursday.  The span is the
         seven days ``[Monday, next Monday)``.  A number naming no ISO week in
-        the year (0, or past the year's 52nd/53rd) does not fire."""
-        w = int(match.slots["NUM"].value)
+        the year (0, or past the year's 52nd/53rd) does not fire.
+
+        The week number arrives either as a cardinal (``NUM`` -- "week 10 of
+        2024") or as an ordinal in the prose form (``ORD`` -- "the 10th week of
+        2024"); the two surfaces name the same week and MUST resolve to the
+        identical span.
+        """
+        num_tok = match.slots.get("NUM") or match.slots["ORD"]
+        w = int(num_tok.value)
         year_tok = match.slots.get("YEAR")
         year = int(year_tok.value) if year_tok is not None else anchor.year
         monday = date.fromisocalendar(year, w, 1)       # ValueError -> None
+        s = AstroDate.from_date(monday)
+        return Resolution(DateSpan(s, s + timedelta(days=7)),
+                          self._consumed(match))
+
+    def _resolve_iso_week_date(self, match, anchor):
+        """The ISO-8601 **week designator** literal (ISO 8601 §4.4.4.2):
+        ``YYYY-Www`` (a whole week) and ``YYYY-Www-D`` (one day of it).
+
+        Per the standard, weeks begin on **Monday** and week 01 is the week
+        containing the year's first Thursday -- equivalently, the week
+        containing 4 January.  The year in the literal is the *ISO week-numbering
+        year*, which is not the calendar year at the boundaries: a long year has
+        53 weeks, and ``2020-W53`` legitimately starts 2020-12-28 and runs into
+        January 2021.  All of that arithmetic is delegated to
+        :meth:`datetime.date.fromisocalendar`, the standard-conforming
+        implementation, so no ISO week rule is restated here.
+
+        Spans: ``YYYY-Www`` -> the seven days ``[Monday, next Monday)``;
+        ``YYYY-Www-D`` -> the single day for ISO weekday ``D`` (1 = Monday
+        .. 7 = Sunday).
+
+        **Refusal policy.** A literal that names no week or no weekday resolves
+        to ``None`` -- the construction simply does not fire -- rather than
+        degrading to some wider reading.  ``2024-W53`` (2024 has only 52 ISO
+        weeks), ``2024-W00``, ``2024-W99``, ``2024-W10-0`` and ``2024-W10-8``
+        are all ``None``.  Returning the enclosing year for these would be a
+        confidently wrong answer, which is worse than no answer at all.
+        """
+        raw = match.slots["ISOWEEK"].text
+        head, _, tail = raw.partition("-w") if "-w" in raw else raw.partition("-W")
+        year, week = int(head), int(tail[:2])
+        weekday = tail[3:]
+        if weekday:
+            d = int(weekday)
+            if not 1 <= d <= 7:
+                return None
+            day = date.fromisocalendar(year, week, d)   # ValueError -> None
+            s = AstroDate.from_date(day)
+            return Resolution(DateSpan(s, s + timedelta(days=1)),
+                              self._consumed(match))
+        monday = date.fromisocalendar(year, week, 1)    # ValueError -> None
         s = AstroDate.from_date(monday)
         return Resolution(DateSpan(s, s + timedelta(days=7)),
                           self._consumed(match))
