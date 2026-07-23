@@ -30,7 +30,8 @@ import re
 from datetime import date, datetime, timedelta
 from typing import Optional
 
-from chronologia.astrodate import AstroDate, DateSpan
+from chronologia.astrodate import AstroDate, BASIS_RECONSTRUCTED, DateSpan
+from chronologia.dayparts import daypart_span
 from chronologia.calendars import (CALENDARS, gregorian_to_jdn,
                                         jdn_to_gregorian)
 from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, US_PER_DAY,
@@ -162,6 +163,38 @@ def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolutio
     return Resolution(DateSpan(start, start + timedelta(minutes=1)), consumed)
 
 
+def _daypart_band(day: AstroDate, name: str) -> DateSpan:
+    """The conventional time-of-day band ``name`` on the civil ``day``.
+
+    The boundaries come from :func:`chronologia.dayparts.daypart_span` (Unicode
+    CLDR 47 day-period rules, locale ``en``): morning ``[06:00, 12:00)``,
+    afternoon ``[12:00, 18:00)``, evening ``[18:00, 21:00)``, night
+    ``[21:00, 06:00)`` (crossing midnight into the next civil day).  The result
+    carries ``BASIS_RECONSTRUCTED``, never ``exact``: a day-part is a
+    conventional cultural boundary, not a clock reading the speaker gave, so the
+    span must not claim the exactness a spoken "at 6am" would.
+    """
+    band = daypart_span(AstroDate(day.year, day.month, day.day), name)
+    return DateSpan(band.start, band.end, BASIS_RECONSTRUCTED)
+
+
+def compose_date_daypart(date_res: Resolution, daypart_res: Resolution,
+                         name: str) -> Resolution:
+    """Narrow a resolved day to the ``name`` day-part band on that day.
+
+    The date construction ("yesterday", "tomorrow") supplies the civil day (its
+    span's left edge); ``name`` supplies the band.  "yesterday morning" is the
+    morning band of yesterday, replacing the whole-day span the bare date would
+    yield -- the fix for the silent daypart drop.  A midnight-crosser (night)
+    reaches into the following civil day, so "tomorrow night" runs tomorrow
+    21:00 -> the day after 06:00.
+    """
+    d = date_res.value.start
+    band = _daypart_band(d, name)
+    consumed = tuple(sorted(set(date_res.consumed) | set(daypart_res.consumed)))
+    return Resolution(band, consumed)
+
+
 def _astro_add_years(start: AstroDate, years: int) -> AstroDate:
     """``start`` advanced by whole years (day/month preserved, Feb 29 clamped)."""
     day = 28 if (start.month == 2 and start.day == 29
@@ -267,6 +300,28 @@ class Resolver:
         offset = self.spec.named_days[match.slots["DAY_WORD"].text]
         value = _midnight(anchor) + timedelta(days=offset)
         return Resolution(_day_span(value), self._consumed(match))
+
+    def _resolve_daypart_ref(self, match, anchor):
+        """A time-of-day band ("morning", "night") on a deictically-selected day.
+
+        A bare daypart ("in the morning", "tonight") and "this <daypart>" both
+        name TODAY's band; "last <daypart>" the band a day earlier, "next
+        <daypart>" a day later -- the ``this/last/next`` marker read as a **day**
+        offset (0/-1/+1), not the week offset it means for a calendar period.
+        This is what makes "last night" the night that just ended: the night
+        band anchored to yesterday, ``[yesterday 21:00, today 06:00)``, reaching
+        through midnight into today's small hours.  "tonight" is a lexical
+        today+night surface (it carries no marker).
+
+        When a same-text date construction is present ("yesterday morning"),
+        the engine composes instead (:func:`compose_date_daypart`); this
+        standalone reading is the deictic-only path.
+        """
+        name = self.spec.dayparts[match.slots["DAYPART"].text]
+        rel_tok = match.slots.get("REL_MARKER")
+        off = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
+        day = AstroDate.from_datetime(_midnight(anchor) + timedelta(days=off))
+        return Resolution(_daypart_band(day, name), self._consumed(match))
 
     def _named_day_offset(self, match, anchor, step):
         """"the day after/before <named day>": one day past/short of a named

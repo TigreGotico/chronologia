@@ -183,6 +183,10 @@ class LangSpec:
     decade_words: Mapping[str, int] = field(default_factory=dict)
     # clock-landmark surface -> minutes since midnight ("noon" -> 720)
     clock_landmarks: Mapping[str, int] = field(default_factory=dict)
+    # daypart surface -> canonical day-part name ("morning", "night"); the band
+    # itself lives in chronologia.dayparts (CLDR-cited), keyed by that name.
+    # Facts from the ``daypart_<name>.voc`` filename convention.
+    dayparts: Mapping[str, str] = field(default_factory=dict)
     # quantifier surface -> count ("a" -> 1, "couple" -> 2, "half" -> 0.5)
     quantifiers: Mapping[str, float] = field(default_factory=dict)
     # weekend surface forms ("weekend", "fim de semana", "Wochenende", ...)

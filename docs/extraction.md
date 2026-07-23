@@ -860,6 +860,53 @@ pass that folds the lone date and lone clock into one span is the one thing it
 does *not* show, because that pass lives above the grammar (see below).
 `explain` remains the right tool for understanding *why a candidate lost*.
 
+### Time-of-day dayparts ("this morning", "yesterday morning", "tonight")
+
+A **daypart** names a conventional band *within* a day — morning, afternoon,
+evening, night — and `daypart_ref` resolves one against the anchor. The bands
+are the Unicode CLDR 47 day-period rules (locale `en`), the same source
+[`chronologia.dayparts`](../chronologia/dayparts.py) cites:
+
+| daypart | band |
+|---------|------|
+| morning | `[06:00, 12:00)` |
+| afternoon | `[12:00, 18:00)` |
+| evening | `[18:00, 21:00)` |
+| night | `[21:00, 06:00)` — crosses midnight into the next day |
+
+A daypart is a cultural boundary, not a clock reading the speaker gave, so its
+span is tagged `reconstructed` (never `exact` the way "at 6am" is) — it does not
+claim a precision nobody stated.
+
+Two ways a daypart resolves:
+
+- **Deictic on its own.** "this morning" is today's morning band; "tonight" is
+  today's night band (running into tomorrow's small hours); "last night" is the
+  night that just ended — yesterday's night band, `[yesterday 21:00, today
+  06:00)`. A bare "morning" defaults to today.
+- **Bound to a named day.** "yesterday morning" is the morning band of
+  *yesterday*; "tomorrow night" is tomorrow's night band. The composition pass
+  folds a lone daypart onto a lone date construction exactly as it folds a lone
+  clock — narrowing the whole day the date names down to the band, rather than
+  leaving the daypart word stranded in the remainder.
+
+```python
+from datetime import datetime
+from chronologia import extract_timespan
+
+anchor = datetime(2024, 3, 6, 12, 0)                 # Wednesday noon
+span, _ = extract_timespan("yesterday morning", "en", anchor)
+print(span.start_datetime, "->", span.end_datetime)
+# 2024-03-05 06:00:00 -> 2024-03-05 12:00:00
+print(span.basis)                                    # reconstructed
+```
+
+`noon` and `midnight` remain clock *landmarks* (minute-wide, `exact`), not
+dayparts. And `at dawn` / `at dusk` are deliberately **not** dayparts: they are
+astronomical solar events, location-dependent, so the engine does not fake them
+with a nominal civil-twilight hour — the [solar machinery](../chronologia/solar.py)
+places them once a location is supplied.
+
 ### Precedence: the verbatim order
 
 Precedence is **not** the first tie-breaker — span length is. Two candidates
@@ -878,7 +925,7 @@ matter:
 | 5 | `reckoned_date`, `nongregorian_date` |
 | 6 | `calendar_date`, `subdivision_time`, `year_ref` |
 | 7 | `clock_time` |
-| 8 | `weekday_ref`, `cycle_ref`, `named_day_after`, `named_day_before`, `weekday_offset` |
+| 8 | `weekday_ref`, `cycle_ref`, `daypart_ref`, `named_day_after`, `named_day_before`, `weekday_offset` |
 | 9 | `relative_offset` |
 | 10 | `named_day` |
 

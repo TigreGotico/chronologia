@@ -106,6 +106,7 @@ SLOT_VOCAB_ATTR: Dict[str, str] = {
     "WEEKDAYFULL": "weekday_full",
     "MONTH": "months",
     "LANDMARK": "clock_landmarks",
+    "DAYPART": "dayparts",
     "ZONE": "clock_zones",
     "QUANT": "quantifiers",
     "FRACTION": "clock_fractions",
