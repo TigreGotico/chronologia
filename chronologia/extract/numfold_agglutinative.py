@@ -28,15 +28,17 @@ from importlib import import_module
 from typing import Callable, Dict, FrozenSet, Tuple
 
 from chronologia.extract.model import Token
-
-
-def _reindex(tokens) -> Tuple[Token, ...]:
-    return tuple(replace(t, index=i) for i, t in enumerate(tokens))
+from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
 
 
 def _make_fold(lang: str, extra_values: Dict[str, float] | None = None,
                exclude: FrozenSet[str] = frozenset()
                ) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
+    """A cardinal fold whose word set is derived from the model's own
+    pronunciation, augmented by an ``extra`` map of oblique/hour surfaces the
+    pronouncer does not emit (also the single-token fallback value source) and
+    minus ``exclude`` homographs.  The model import is deferred to first call.
+    """
     extra = {k.lower(): v for k, v in (extra_values or {}).items()}
     holder: dict = {}
 
@@ -53,54 +55,22 @@ def _make_fold(lang: str, extra_values: Dict[str, float] | None = None,
                 pass
         words |= set(extra)
         words -= exclude
-        return frozenset(words), extract
 
-    def _ready():
-        if "words" not in holder:
-            holder["words"], holder["extract"] = _load()
-        return holder["words"], holder["extract"]
-
-    def _is_numword(tok: Token, words) -> bool:
-        return tok.is_number or tok.text in words
+        def value_of(text):
+            try:
+                return extract(text)
+            except Exception:
+                return False
+        return make_fold(NumberGrammar(
+            is_number=lambda tok: tok.is_number or tok.text in words,
+            extract=value_of,
+            single_fallback=extra.get))
 
     def fold(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        words, extract = _ready()
-        out = []
-        i = 0
-        n = len(tokens)
-        while i < n:
-            if not _is_numword(tokens[i], words):
-                out.append(tokens[i])
-                i += 1
-                continue
-            j = i
-            run = []
-            while j < n and _is_numword(tokens[j], words):
-                run.append(tokens[j])
-                j += 1
-            spelled = [t for t in run if not t.is_number]
-            if not spelled:
-                out.extend(run)
-                i = j
-                continue
-            text = " ".join(t.text for t in run)
-            try:
-                value = extract(text)
-            except Exception:
-                value = False
-            if (value is False or value is None) and len(run) == 1:
-                value = extra.get(run[0].text)
-            if value is False or value is None:
-                out.extend(run)
-                i = j
-                continue
-            num = int(value) if float(value).is_integer() else float(value)
-            out.append(Token(text=str(num), raw=str(num), index=0,
-                             is_number=True, value=num,
-                             char_start=run[0].char_start,
-                             char_end=run[-1].char_end))
-            i = j
-        return _reindex(out)
+        f = holder.get("fold")
+        if f is None:
+            f = holder["fold"] = _load()
+        return f(tokens)
 
     return fold
 
@@ -179,4 +149,4 @@ def fold_eu(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             continue
         merged.append(t)
         i += 1
-    return _eu_numfold(_reindex(tuple(merged)))
+    return _eu_numfold(reindex(tuple(merged)))
