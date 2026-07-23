@@ -819,12 +819,20 @@ def _recur_every(ctx):
                     set(range(i, _of_month_tail(ctx, j + 2))))
 
         # -- ellipsis: "every <ordinal> <weekday>" ---------------------------
-        # a count directly before a weekday can only be an ordinal ("every
-        # first friday"): there is no unit for it to be an interval of.
+        # "every first friday" is the 1st friday of the month: an *interval* of
+        # one would be degenerate (plain "every friday"), so the ordinal is the
+        # only reading that carries meaning.
+        #
+        # From two upwards the two readings genuinely compete -- "every third
+        # tuesday" is every third tuesday (a 3-week interval) as readily as the
+        # third tuesday of the month -- so the monthly reading fires only on the
+        # positive evidence of an explicit "of the month" tail.  Without it the
+        # count falls through to the interval reading below.
         if num_val is not None and j < n and t[j].text in ctx.weekdays:
-            wd = ctx.weekdays[t[j].text]
-            return (_nth_weekday_of_month(num_val, wd),
-                    set(range(i, _of_month_tail(ctx, j + 1))))
+            end = _of_month_tail(ctx, j + 1)
+            if num_val == 1 or end > j + 1:
+                wd = ctx.weekdays[t[j].text]
+                return _nth_weekday_of_month(num_val, wd), set(range(i, end))
 
         # -- ellipsis: "every <ordinal> [of the month]" -> BYMONTHDAY --------
         # A count *followed by a unit* is an interval ("every 2 weeks") and is
