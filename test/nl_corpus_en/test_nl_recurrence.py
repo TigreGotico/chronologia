@@ -26,6 +26,19 @@ _CASES = [
     ("weekly", "FREQ=WEEKLY", ""),
     ("monthly", "FREQ=MONTHLY", ""),
     ("annually", "FREQ=YEARLY", ""),
+    # single-word frequency adverbs and the weekday/weekend sets: no new
+    # mechanism -- these bind the same lone-freq-word / weekly-BYDAY reading
+    # as "daily"/"weekly"/"every weekday" above.
+    ("fortnightly", "FREQ=WEEKLY;INTERVAL=2", ""),
+    # "biweekly" is ambiguous in careful usage (Merriam-Webster's usage note:
+    # both "every two weeks" and "twice a week" are attested); this resolver
+    # takes the standard scheduling/RRULE convention -- every two weeks --
+    # same as "fortnightly".  The rarer "twice a week" (a frequency-*count*
+    # reading, not a plain INTERVAL bump) is a documented follow-up.
+    ("biweekly", "FREQ=WEEKLY;INTERVAL=2", ""),
+    ("quarterly", "FREQ=MONTHLY;INTERVAL=3", ""),
+    ("on weekdays", "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR", ""),
+    ("on weekends", "FREQ=WEEKLY;BYDAY=SA,SU", ""),
     ("first monday of every month", "FREQ=MONTHLY;BYDAY=1MO", ""),
     ("last friday of every month", "FREQ=MONTHLY;BYDAY=-1FR", ""),
     ("the third thursday of november", "FREQ=YEARLY;BYMONTH=11;BYDAY=3TH", ""),
@@ -109,6 +122,7 @@ def test_bounded_recurrence(text, rrule, remainder):
 # adversarial: a one-off reference is not a recurrence.
 @pytest.mark.parametrize("text", [
     "friday", "next friday", "in 3 days", "june 5th",
+    "I went to the office", "the weekend was fun",
 ])
 def test_not_a_recurrence(text):
     assert extract_recurrence(text, LANG) is None

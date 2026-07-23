@@ -372,6 +372,8 @@ def extract_recurrence(
         until_words=set(C.get("until", ())),
         for_words=set(C.get("recur_for", ())),
         at_words=set(C.get("at", ())),
+        weekend_word=set(C.get("weekend", ())),
+        on_words=set(C.get("on", ())),
         holidays=dict(spec.holidays),
         lang=lang,
         anchor=anchor,
@@ -557,17 +559,35 @@ class _RecurCtx:
     until_words: set = frozenset()
     for_words: set = frozenset()
     at_words: set = frozenset()
+    weekend_word: set = frozenset()
+    on_words: set = frozenset()
     holidays: dict = None
     lang: str = "en-us"
     anchor: Optional[datetime] = None
 
 
 def _freq_map(connectors):
+    """Lone frequency adverbs -> ``(FREQ, interval)``.
+
+    ``biweekly``/``fortnightly`` follow the standard scheduling/RRULE
+    convention of "every two weeks" (``WEEKLY;INTERVAL=2``) -- the sense
+    Merriam-Webster's usage note calls the more common reading of
+    "biweekly", as opposed to the rarer "twice a week" sense (which this
+    resolver does not attempt: a frequency-*count* reading needs a
+    different RRULE shape -- BYSETPOS/COUNT-per-period -- than the plain
+    INTERVAL bump every other adverb here needs, so it is left as a
+    documented follow-up rather than forced in).  ``quarterly`` is a
+    calendar quarter, i.e. every three months (``MONTHLY;INTERVAL=3``).
+    """
     out = {}
     for key, freq in (("freq_daily", "DAILY"), ("freq_weekly", "WEEKLY"),
                       ("freq_monthly", "MONTHLY"), ("freq_yearly", "YEARLY")):
         for s in connectors.get(key, ()):
-            out[s] = freq
+            out[s] = (freq, 1)
+    for s in connectors.get("freq_biweekly", ()):
+        out[s] = ("WEEKLY", 2)
+    for s in connectors.get("freq_quarterly", ()):
+        out[s] = ("MONTHLY", 3)
     return out
 
 
@@ -650,10 +670,30 @@ def _recur_every(ctx):
 
 
 def _recur_freq_word(ctx):
-    """A lone ``daily`` / ``weekly`` / ``monthly`` / ``yearly`` word."""
-    for i, tok in enumerate(ctx.tokens):
+    """A lone ``daily`` / ``weekly`` / ``monthly`` / ``yearly`` / ``quarterly``
+    / ``biweekly`` / ``fortnightly`` word, or ``[on] weekdays`` / ``[on]
+    weekends``."""
+    t = ctx.tokens
+    for i, tok in enumerate(t):
         if tok.text in ctx.freq:
-            return _build_every(ctx.freq[tok.text]), {i}
+            freq, interval = ctx.freq[tok.text]
+            iv = {"interval": interval} if interval != 1 else {}
+            return _build_every(freq, **iv), {i}
+    for i, tok in enumerate(t):
+        # "on" is *required* here (not merely swallowed if present): a bare
+        # "weekday"/"weekend" names a single day ("it's a weekday", "the
+        # weekend was fun"), not a recurrence -- only the explicit "on
+        # weekdays"/"on weekends" adverbial reads as one.
+        if i - 1 < 0 or t[i - 1].text not in ctx.on_words:
+            continue
+        byday = None
+        if tok.text in ctx.weekday_word:
+            byday = tuple((None, k) for k in range(5))  # MO..FR
+        elif tok.text in ctx.weekend_word:
+            byday = ((None, 5), (None, 6))  # SA, SU
+        if byday is None:
+            continue
+        return _build_every("weekly", byday=byday), {i - 1, i}
     return None
 
 
