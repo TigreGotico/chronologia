@@ -42,7 +42,7 @@ from chronologia.extract.model import (Conventions, LangSpec, Match,
                                            Resolution)
 from chronologia.extract.ranges import (_ABSOLUTE, _UNIT_OF_CENTURY,
                                         _UNIT_OF_MILLENNIUM, _UNIT_OF_MONTH,
-                                        _UNIT_OF_YEAR, DateTimeResolution,
+                                        _UNIT_OF_YEAR,
                                         Hemisphere, Season, get_date_ordinal,
                                         last_season_date, next_season_date,
                                         season_to_date)

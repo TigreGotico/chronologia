@@ -223,8 +223,7 @@ def extract_timespans(
     """
     from chronologia.extract import _timespan_engine
     from chronologia.extract.confidence import score_candidates
-    from chronologia.extract.resolver import (DATE_CONSTRUCTIONS,
-                                              compose_date_clock)
+    from chronologia.extract.resolver import compose_date_clock
 
     engine = _timespan_engine(lang)
     anchor = anchor or datetime.now()
@@ -713,7 +712,6 @@ def _recur_date_anchored(ctx):
     resolves -- no new date grammar is written here.
     """
     from chronologia.extract import _timespan_engine
-    from chronologia.extract.resolver import DATE_CONSTRUCTIONS  # noqa: F401
 
     t = ctx.tokens
     n = len(t)
