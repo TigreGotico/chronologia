@@ -33,6 +33,33 @@ def test_hour_fraction(text, h, mi):
     assert start(text) == clk(h, mi)
 
 
+# Additive quarter with the explicit numeral: "e um quarto" == the same 15
+# minutes past as the bare "e quarto".  The "um" is the article Portuguese
+# places before "quarto" (cf. Italian "e un quarto").
+# Source: Ciberdúvidas da Língua Portuguesa, "as horas" ("são quatro e um
+# quarto").
+@pytest.mark.parametrize("text,h,mi", [
+    ("quatro e um quarto", 4, 15),
+    ("às quatro e um quarto", 4, 15),
+    ("nove e um quarto", 9, 15),
+])
+def test_hour_plus_um_quarto(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
+# Subtractive clock: "HORA menos ..." counts back from the coming hour --
+# "duas menos um quarto" == 1:45, "quatro menos vinte" == 3:40.  Standard
+# European Portuguese (native-speaker confirmed); cf. Ciberdúvidas "as horas".
+@pytest.mark.parametrize("text,h,mi", [
+    ("duas menos um quarto", 1, 45),
+    ("às duas menos um quarto", 1, 45),   # was silent-wrong 02:00
+    ("quatro menos vinte", 3, 40),
+    ("quatro menos dez", 3, 50),
+])
+def test_hour_minus(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
 def test_afternoon_meridiem():
     assert start("às três da tarde") == clk(15, 0)
 
