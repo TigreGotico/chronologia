@@ -101,6 +101,15 @@ class Conventions:
     # full-system locales opt in.  A fact, not logic -- the resolver reads
     # it when a FRACTION binds with no explicit CLOCKDIR.
     bare_quarter_to: bool = False
+    # Twelve-hour reckoning for the toward-hour clock: when a bare toward-hour
+    # fraction counts toward the *first* hour ("pol enih" == half toward one),
+    # the previous hour is spoken as twelve, not zero -- so the reading is
+    # 12:30, not 00:30.  Slovenian, Russian, Polish and Czech colloquial speech
+    # all render it this way ("pol enih"/"половина первого"/"wpol do pierwszej"/
+    # "pul prvni" == 12:30).  The 24h-reckoning Germanic locales (Danish "halv
+    # et" == 00:30, Frisian "healwei ienen") leave it off.  A fact, not logic --
+    # the resolver reads it only when the toward-hour subtraction hits zero.
+    toward_hour_12h: bool = False
 
 
 @dataclass(frozen=True)

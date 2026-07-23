@@ -56,6 +56,7 @@
     "HOUR oclock MERIDIEM? ZONE?",
     "HOUR MERIDIEM ZONE?",
     "at? LANDMARK ZONE?",
+    "FRACTION HOUR MERIDIEM? ZONE?",
     "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
     "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?"
    ],
@@ -113,7 +114,9 @@
   "week_start": "monday",
   "dmy": true,
   "hemisphere": "north",
-  "prefer_future": true
+  "prefer_future": true,
+  "bare_half_to": true,
+  "toward_hour_12h": true
  },
  "quantifiers": {
   "1": [

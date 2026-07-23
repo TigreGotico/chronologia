@@ -2,12 +2,10 @@
 prefer_future roll.  Digit clocks, the "N ráno/odpoledne/večer" day-part
 meridiems, and noon/midnight landmarks.
 
-Half-convention finding: colloquial Czech tells half hours *forward to* the
-next hour -- "půl desáté" ("half of the tenth") is 9:30, a half-TO idiom like
-German "halb zehn".  It carries no explicit direction word, so the engine's
-FRACTION+CLOCKDIR clock cannot express it from a bare ordinal hour; the
-half-TO idiom is a recorded engine gap (see test_nl_adversarial).  Explicit
-digit and day-part times are covered here.
+Half-convention: colloquial Czech tells half hours *forward to* the next hour
+-- "půl desáté" ("half of the tenth") is 9:30, a half-TO idiom like German
+"halb zehn".  This ordinal-toward-hour clock is covered in
+test_cs_toward_clock; explicit digit and day-part times are covered here.
 """
 from datetime import timedelta
 

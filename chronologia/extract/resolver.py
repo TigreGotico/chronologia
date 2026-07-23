@@ -1254,6 +1254,11 @@ class Resolver:
                     return None
                 hour -= 1
                 minute = offset
+                # Slavic/12h reckoning: half toward the first hour is 12:30,
+                # not 00:30 ("pol enih", "polovina pervogo") -- the previous
+                # hour is spoken as twelve.
+                if hour == 0 and self.spec.conventions.toward_hour_12h:
+                    hour = 12
             if hour < 0:            # "quarter to midnight" underflows -> 23:45
                 hour += 24
         meridiem = match.slots.get("MERIDIEM")

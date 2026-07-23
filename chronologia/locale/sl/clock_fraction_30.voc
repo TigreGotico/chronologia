@@ -1,0 +1,6 @@
+# Slovenian toward-hour HALF: "pol devetih" == half toward the ninth == 08:30,
+# "ob pol enih" == half toward one == 12:30 (bare_half_to + toward_hour_12h;
+# "ob" is the ordinary "at" connector).  Citation: ZRC SAZU Jezikovna
+# svetovalnica (Fran/ISJFR), telling the time -- "pol <genitive plural
+# ordinal>" counts toward the coming hour.
+pol
