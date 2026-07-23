@@ -1454,6 +1454,39 @@ class Resolver:
         elif miltime is not None:
             raw = miltime.raw.rstrip(".")
             hour, minute, second = int(raw[:2]), int(raw[2:]), 0
+        elif match.slots.get("QUARTS") is not None:
+            # Catalan *sistema de campanar* -- the traditional bell-tower
+            # reckoning, which counts quarters already struck **toward** the
+            # named hour, and is numerically incompatible with the additive
+            # *sistema de rellotge* the same language also uses:
+            #
+            #     un quart de deu    == 09:15   (rellotge: les nou i quart)
+            #     dos quarts de deu  == 09:30   (rellotge: les nou i mitja)
+            #     tres quarts de deu == 09:45   (rellotge: les deu menys quart)
+            #
+            # The named hour is the one being *approached*, so the value is
+            # (hour - 1) + N*15 minutes -- "un quart de deu" is 9:15, never
+            # 10:15.  Worked example: "un quart d'una" names one o'clock with
+            # one quarter struck -> 12:15, the twelve-hour name of the
+            # preceding hour (campanar is inherently a 12-hour reckoning).
+            #
+            # Source: Optimot / Nova gramatica (IEC), "Les hores en catala:
+            # sistema de campanar i sistema de rellotge",
+            # https://aplicacions.llengua.gencat.cat/llc/AppJava/index.html?action=Principal&method=detall&input_cercar=hores&numPagina=1&database=FITXES_PUB&idFont=12802&idHit=12802&tipusFont=Fitxes+de+l%27Optimot
+            # and Diputacio de Barcelona, "Sistema tradicional o de campanar",
+            # https://llengua.diba.cat/sistema-tradicional-o-de-campanar
+            second = 0
+            quarters = int(match.slots["QUARTS"].value or 0)
+            hour = int(match.slots["HOUR"].value)
+            # There is no fourth quarter -- four quarters is simply the hour
+            # itself ("una hora"), and no zeroth quarter exists either.  Both
+            # are refused rather than guessed.
+            if not 1 <= quarters <= 3 or not 1 <= hour <= 12:
+                return None
+            hour -= 1
+            if hour == 0:
+                hour = 12
+            minute = quarters * 15
         else:
             second = 0
             # base hour/minute: a landmark ("midnight" 0, "noon" 720) or a

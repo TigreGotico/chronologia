@@ -54,6 +54,7 @@
     },
     "clock_time": {
       "orders": [
+        "at? QUARTS quarters of HOUR of? article? MERIDIEM? ZONE?",
         "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
         "at HOUR of? article? MERIDIEM? ZONE?",
         "at? HOUR of? article? MERIDIEM ZONE?",
