@@ -77,6 +77,197 @@ def _merge_en_ord_suffix(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return tuple(merged)
 
 
+# ---------------------------------------------------------------------------
+# spelled calendar years ("two thousand and one", "nineteen ninety-nine")
+# ---------------------------------------------------------------------------
+#
+# The generic fold above withholds the multiplier scale words on purpose, so a
+# spoken year built on one ("two thousand and one") reaches the matcher as
+# ``[2, thousand, and, 1]`` -- the year construction binds the leading 2000 and
+# silently drops the rest.  And a spoken year *pair* ("nineteen ninety-nine")
+# is one maximal run of number-words, which the back-end reads as the single
+# number 99, destroying the century/decade structure.
+#
+# Neither can be fixed by widening the generic run (that would eat the SCALE
+# token deep time depends on).  This pass is a dedicated pre-pass instead: it
+# recognises the three English *year* shapes, emits one digit token for each,
+# and leaves every other reading of the same words untouched.
+
+_CARD_ONES = {w: i + 1 for i, w in enumerate(_ONES)}      # one..nineteen
+_CARD_TENS = {w: (i + 2) * 10 for i, w in enumerate(_TENS)}  # twenty..ninety
+_CARDINALS = frozenset(_CARD_ONES) | frozenset(_CARD_TENS)
+_YEAR_SCALES = {"hundred": 100, "thousand": 1000}
+
+
+def _en_voc(base):
+    """Surfaces of an English ``.voc``, read from the locale data itself."""
+    from pathlib import Path
+
+    from ovos_spec_tools import expand, read_resource_file
+
+    lang_dir = Path(__file__).resolve().parent.parent / "locale" / "en"
+    out = set()
+    for template in read_resource_file(lang_dir / (base + ".voc")):
+        out.update(s.lower() for s in expand(template, {}))
+    return out
+
+
+def _year_cues():
+    """Tokens that explicitly announce a calendar year -- the ``year`` marker
+    behind "the year ..." and the ``in`` preposition, both read from the
+    English locale vocabulary rather than hardcoded here."""
+    return _en_voc("marker_year_word") | _en_voc("marker_in")
+
+
+def _unit_words():
+    """Every offset-unit surface ("years", "days", ...).  A scale construction
+    followed by one of these is the deep-time / offset frame, not a year."""
+    from pathlib import Path
+    words = set()
+    lang_dir = Path(__file__).resolve().parent.parent / "locale" / "en"
+    for path in sorted(lang_dir.glob("unit_*.voc")):
+        words |= _en_voc(path.name[:-len(".voc")])
+    return words
+
+
+_CUE_WORDS = None
+_UNIT_WORDS = None
+
+
+def _cue_words():
+    global _CUE_WORDS
+    if _CUE_WORDS is None:
+        _CUE_WORDS = frozenset(_year_cues())
+    return _CUE_WORDS
+
+
+def _units():
+    global _UNIT_WORDS
+    if _UNIT_WORDS is None:
+        _UNIT_WORDS = frozenset(_unit_words())
+    return _UNIT_WORDS
+
+
+def _card_run(tokens):
+    """Value of a run of plain cardinal words, or ``None``.
+
+    Only the two shapes English spells a 0-99 component with are accepted: a
+    single word ("nine", "ninety", "nineteen") and tens+ones ("ninety nine").
+    Anything else ("five five", "twenty twenty") is *not* a number component
+    and is refused rather than guessed at."""
+    words = [t.text for t in tokens]
+    if len(words) == 1:
+        w = words[0]
+        if w in _CARD_ONES:
+            return _CARD_ONES[w]
+        return _CARD_TENS.get(w)
+    if (len(words) == 2 and words[0] in _CARD_TENS
+            and words[1] in _CARD_ONES and _CARD_ONES[words[1]] < 10):
+        return _CARD_TENS[words[0]] + _CARD_ONES[words[1]]
+    return None
+
+
+def _take_cardinals(tokens, i, limit=2):
+    """Longest run (<= ``limit`` tokens) of cardinal words starting at ``i``."""
+    j = i
+    while j < len(tokens) and j - i < limit and tokens[j].text in _CARDINALS:
+        j += 1
+    return j
+
+
+def _year_token(value, first, last):
+    return Token(text=str(value), raw=str(value), index=0, is_number=True,
+                 value=value, char_start=first.char_start,
+                 char_end=last.char_end)
+
+
+def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Fold a spelled English calendar year into one digit token.
+
+    Three shapes, all requiring the leading component to be *spelled* (a digit
+    "10 thousand" is left alone -- it is the deep-time SCALE frame):
+
+    ``<n> hundred [and] [<m>]``
+        ``n`` in 10..99 -- "nineteen hundred" (1900), "nineteen hundred and
+        five" (1905).  ``n`` below ten is not a century prefix, so "one
+        hundred and five" keeps its plain-number reading.
+
+    ``<n> thousand [and] [<m>]``
+        "two thousand" (2000), "two thousand and one" (2001), "two thousand
+        and twenty four" (2024).  Unambiguous: the digit form ``2001`` already
+        reads as a year, so the spelled form must too -- no cue needed.
+
+    ``<c> <y>`` (year pair, **explicit year cue required**)
+        "nineteen ninety-nine" (1999), "twenty twenty-four" (2024).  A bare
+        pair is genuinely ambiguous with a plain number, so it only reads as a
+        year after a cue word ("in ...", "the year ..." -- taken from the
+        locale vocabulary).  ``c`` must be a single teen/tens word (10..99)
+        and ``y`` must itself be 10..99: a bare ones suffix is refused, both
+        because "in twenty five days" is a count and because English spells
+        that year with "oh" ("nineteen oh five").
+
+    Refusals are deliberate, never a guess: any component outside 0..99, a
+    further scale word riding on the construction ("two thousand and one
+    hundred thousand"), a run that is not a well-formed 0-99 component
+    ("ninety nine ninety nine"), or a unit word closing the phrase ("two
+    thousand years ago" -- deep time) all leave the tokens untouched, and the
+    sentence resolves to nothing rather than to a fabricated year.
+    """
+    out = []
+    i = 0
+    n = len(tokens)
+    cues = _cue_words()
+    units = _units()
+    while i < n:
+        tok = tokens[i]
+        if tok.text not in _CARDINALS or (out and out[-1].is_number):
+            out.append(tok)
+            i += 1
+            continue
+        head_end = _take_cardinals(tokens, i)
+        head = _card_run(tokens[i:head_end])
+        end = None
+        value = None
+        if head is not None and head_end < n and tokens[head_end].text in _YEAR_SCALES:
+            scale = _YEAR_SCALES[tokens[head_end].text]
+            if scale == 1000 or 10 <= head <= 99:
+                j = head_end + 1
+                if j < n and tokens[j].text == "and" and j + 1 < n:
+                    j += 1
+                tail_end = _take_cardinals(tokens, j)
+                tail = _card_run(tokens[j:tail_end]) if tail_end > j else 0
+                if tail is not None and tail < scale:
+                    value, end = head * scale + tail, max(tail_end, head_end + 1)
+        elif out and out[-1].text in cues:
+            # year pair: the century prefix is a *single* teen/tens word, the
+            # rest of the run is the 10..99 remainder
+            century = _card_run(tokens[i:i + 1])
+            if century is not None and 10 <= century <= 99:
+                tail_end = _take_cardinals(tokens, i + 1)
+                tail = (_card_run(tokens[i + 1:tail_end])
+                        if tail_end > i + 1 else None)
+                if tail is not None and 10 <= tail <= 99:
+                    value, end = century * 100 + tail, tail_end
+        if value is None:
+            out.append(tok)
+            i += 1
+            continue
+        # a scale word riding on the construction, or a unit word closing it,
+        # means this was never a year -- refuse rather than fabricate one
+        if end < n and (tokens[end].text in _SCALES
+                        or tokens[end].text in units):
+            out.append(tok)
+            i += 1
+            continue
+        out.append(_year_token(value, tokens[i], tokens[end - 1]))
+        i = end
+    return _reindex(out)
+
+
+def _pre_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    return _fold_spelled_year(_merge_en_ord_suffix(tokens))
+
+
 # English: closed-class membership, an internal "and" that continues a run but
 # is dropped from the text the back-end reads ("one hundred and five").
 fold_en = make_fold(NumberGrammar(
@@ -84,7 +275,7 @@ fold_en = make_fold(NumberGrammar(
     extract=lambda text: extract_number_en(text, ordinals=True),
     joiner=lambda tok: tok.text == "and",
     joiner_in_text=False,
-    pre=_merge_en_ord_suffix))
+    pre=_pre_en))
 
 
 # ---------------------------------------------------------------------------
