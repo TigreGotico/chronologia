@@ -1,1 +1,11 @@
+# Spanish range "from" lead -- opens a bounded or open interval and, crucially,
+# disambiguates the hyper-common preposition "a" (marker_to) as a genuine range
+# boundary: a bare "A a B" is only trusted as a range when a "from" lead is present.
+# "de": RAE/DPD s.v. "de" (preposicion) -- punto de partida / origen, correlativa
+#   de "a" ("de junio a agosto"). Diccionario panhispanico de dudas (RAE-ASALE).
+# "desde": RAE, DLE s.v. "desde" (preposicion) -- punto de origen en el tiempo o
+#   el espacio ("desde junio", "desde 2010"). https://dle.rae.es/desde
+# "a partir de": RAE -- locucion prepositiva, punto de comienzo.
 a partir de
+de
+desde

@@ -256,6 +256,14 @@ def _extract_range(text, tokens, engine, anchor):
     # lone clock-fraction words that a bare "A to B" must never treat as a
     # range endpoint (would hijack "quarter to five" / "čtvrt na päť")
     fraction_words = set(spec.clock_fractions) | {"quarter", "half", "a quarter"}
+    # a "to" surface that is *also* the language's ``at`` marker is a hyper-common
+    # preposition (Spanish/Portuguese "a" -- "a las 3", "vamos a Madrid") and so
+    # is only trusted as a range boundary when an explicit ``from`` lead ("de",
+    # "desde") disambiguates it: a bare "A a B" must not fabricate a range out of
+    # "junio a las tres".  English "to"/"until" are not ``at`` markers, so this
+    # set is empty for English and every other language leaves bare ranges intact.
+    lead_required = {s.lower() for s in spec.connectors.get("to", ())
+                     if s in spec.connectors.get("at", ())}
 
     def endpoint(sub):
         return _range_endpoint(text, sub, engine, anchor)
@@ -266,11 +274,15 @@ def _extract_range(text, tokens, engine, anchor):
     if split is not None:
         p, k = split
         left_tok, right_tok = tokens[lead:p], tokens[p + k:]
-        # a bare "A to B" (no from/between) is only trusted when the left side
-        # is not a lone clock fraction word -- avoids hijacking "quarter to five"
+        # a bare "A to B" (no from/between) is only trusted when the left side is
+        # not a lone clock fraction word (avoids hijacking "quarter to five") AND
+        # the connector is not an ``at``-ambiguous preposition (avoids fabricating
+        # "junio a las tres" into a range); either trap is disarmed by a lead.
         between_lead = _match_conn_at(tokens, 0, between_surf)
         left_words = " ".join(t.text for t in left_tok)
-        if lead or between_lead or left_words not in fraction_words:
+        conn_words = " ".join(t.text for t in tokens[p:p + k]).lower()
+        if lead or between_lead or (left_words not in fraction_words
+                                    and conn_words not in lead_required):
             got = _compose_range(left_tok, right_tok, endpoint, spec)
             if got is not None:
                 return got
