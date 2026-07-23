@@ -33,6 +33,26 @@ def test_hour_fraction(text, h, mi):
     assert start(text) == clk(h, mi)
 
 
+# Subtractive minutes: "las HORA menos MINUTE" counts back from the coming
+# hour, exactly as the quarter does -- "las diez menos veinte" == 9:40.  The
+# pattern generalises past the quarter to any minute count.
+# Source: RAE, Diccionario panhispánico de dudas, "hora": «las diez menos
+# veinte» = 9:40.
+@pytest.mark.parametrize("text,h,mi", [
+    ("las cuatro menos veinte", 3, 40),
+    ("las diez menos veinte", 9, 40),
+    ("las cuatro menos diez", 3, 50),
+    ("las dos menos cuarto", 1, 45),      # fraction path unchanged
+])
+def test_hour_minus_minutes(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
+def test_bare_hour_unchanged():
+    # adversarial: the bare hour must not absorb a phantom offset.
+    assert start("las cuatro") == clk(4, 0)
+
+
 def test_afternoon_meridiem():
     assert start("las tres de la tarde") == clk(15, 0)
 

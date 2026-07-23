@@ -6,3 +6,7 @@ no
 na
 nos
 nas
+# indefinite article, needed for the clock fraction "um quarto"/"uma"
+# (cf. Italian "un quarto"); Ciberdúvidas da Língua Portuguesa, "as horas".
+um
+uma

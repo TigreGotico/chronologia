@@ -229,8 +229,44 @@ def _make_romance_fold(lang_code, blacklist):
 
 
 # pt: feminine ordinals "segunda/quarta/quinta/sexta" are weekday names
-fold_pt = _make_romance_fold("pt", {"segunda", "quarta", "quinta", "sexta",
-                                    "terca", "terça"})
+_fold_pt_base = _make_romance_fold("pt", {"segunda", "quarta", "quinta", "sexta",
+                                          "terca", "terça"})
+
+# Portuguese writes the clock quarter with an explicit article -- "quatro e um
+# quarto" == 4:15, "duas menos um quarto" == 1:45 -- where the "um"/"uma" is the
+# article of "um quarto" (a quarter), not a number.  The spelled-number fold
+# would otherwise read "quatro e um" as 5 (the JOIN_WORD "e") or fold the lone
+# "um" to the digit 1, both of which lose the article the clock grammar needs.
+# Unlike Italian/French (which blacklist "un" outright), Portuguese still spells
+# "vinte e um" == 21 with a standalone "um", so the article cannot be removed
+# from the number vocabulary wholesale -- it is protected only in the one place
+# it is unambiguously an article: directly before the "quarto" fraction word.
+# The stream is folded around such an "um", leaving "vinte e um dias" == 21
+# untouched.  Source: Ciberdúvidas da Língua Portuguesa, "as horas".
+_PT_QUARTER_SURFACES = frozenset({"quarto", "quartos"})
+
+
+def fold_pt(tokens):
+    protected = {
+        i for i, t in enumerate(tokens)
+        if t.text in ("um", "uma") and i + 1 < len(tokens)
+        and tokens[i + 1].text in _PT_QUARTER_SURFACES
+    }
+    if not protected:
+        return _fold_pt_base(tokens)
+    out = []
+    segment = []
+    for i, t in enumerate(tokens):
+        if i in protected:
+            if segment:
+                out.extend(_fold_pt_base(tuple(segment)))
+                segment = []
+            out.append(t)
+        else:
+            segment.append(t)
+    if segment:
+        out.extend(_fold_pt_base(tuple(segment)))
+    return _reindex(tuple(out))
 fold_es = _make_romance_fold("es", set())
 fold_gl = _make_romance_fold("gl", set())
 fold_ca = _make_romance_fold("ca", set())
