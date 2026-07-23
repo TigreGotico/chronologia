@@ -48,6 +48,31 @@ from chronologia.extract.ranges import (_ABSOLUTE, _UNIT_OF_CENTURY,
                                         season_to_date)
 
 
+def _pivot_two_digit_year(tok) -> int:
+    """Read a ``YEAR`` slot token as an integer year, pivoting a *bare
+    two-digit* run through the POSIX / C ``strptime`` ``%y`` convention.
+
+    A two-digit written year is inherently ambiguous ("the summer of 69" is
+    1969, not the year 69).  We adopt the same fixed pivot the C library and
+    Python's :func:`time.strptime` use for ``%y``: values **69-99 map to
+    1969-1999** and **00-68 map to 2000-2068** (see the Python `time`
+    documentation and the POSIX ``strptime`` specification).
+
+    The pivot fires **only** when the raw digit run is exactly two characters,
+    so an explicit three-or-more-digit year ("summer of 500", "in 2024") and
+    an era-marked year (handled by the separate era resolvers, e.g. "44 BC")
+    are never rewritten.  A single-digit surface never reaches this slot at
+    all -- the ``YEAR`` matcher only binds a bare number when its value is
+    >= 32 or it has >= 4 digits -- so no one-digit pivot is possible here and
+    the "summer of 3 -> 2003?" edge is moot by construction.
+    """
+    n = int(tok.value)
+    raw = tok.raw.lstrip("'").rstrip(".")
+    if raw.isdigit() and len(raw) == 2:
+        return 2000 + n if n <= 68 else 1900 + n
+    return n
+
+
 def _nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date:
     """The ``n``-th ``weekday`` (Mon=0) of ``month``/``year``; ``n < 0`` counts
     from the end (``-1`` = last).  Raises ``ValueError`` when the month has no
@@ -380,7 +405,8 @@ class Resolver:
             if not 1 <= q <= 4:
                 return None
             year_tok = match.slots.get("YEAR")
-            year = int(year_tok.value) if year_tok is not None else anchor.year
+            year = (_pivot_two_digit_year(year_tok)
+                    if year_tok is not None else anchor.year)
         m = 3 * (q - 1) + 1
         end_year, end_month = (year + 1, 1) if m + 3 > 12 else (year, m + 3)
         return Resolution(DateSpan(AstroDate(year, m, 1),
@@ -430,7 +456,7 @@ class Resolver:
         prefer_future = self.spec.construction_flags.get(
             "calendar_date", {}).get("prefer_future", False)
         if year_tok:
-            year = int(year_tok.value)
+            year = _pivot_two_digit_year(year_tok)
         else:
             year = anchor.year
         value = datetime(year, month, day)          # raises on impossible
@@ -459,7 +485,7 @@ class Resolver:
             match.construction, {}).get("prefer_future", False)
         anchor_jdn = gregorian_to_jdn(anchor.year, anchor.month, anchor.day)
         if year_tok:
-            year = int(year_tok.value)
+            year = _pivot_two_digit_year(year_tok)
         else:
             year = calendar.from_jdn(anchor_jdn)[0]     # anchor's calendar year
         jdn = calendar.to_jdn(year, month, day)
@@ -495,7 +521,7 @@ class Resolver:
         """"the hebrew new year N": Rosh Hashanah of Hebrew year N -- 1 Tishrei
         (month 7 in the Nisan-first month numbering this calendar uses),
         day-wide, converted through the Hebrew calendar's JDN hub."""
-        year = int(match.slots["YEAR"].value)
+        year = _pivot_two_digit_year(match.slots["YEAR"])
         cal = CALENDARS["hebrew"]
         start = AstroDate(*jdn_to_gregorian(cal.to_jdn(year, 7, 1)))
         return Resolution(DateSpan(start, start + timedelta(days=1)),
@@ -636,7 +662,7 @@ class Resolver:
             target = self.spec.weekdays[wd_tok.text]
             month = self.spec.months[match.slots["MONTH"].text]
             year_tok = match.slots.get("YEAR")
-            year = int(year_tok.value) if year_tok else anchor.year
+            year = _pivot_two_digit_year(year_tok) if year_tok else anchor.year
             value = _nth_weekday_of_month(year, month, target, n)
             start = AstroDate.from_date(value)
             return Resolution(DateSpan(start, start + timedelta(days=1)),
@@ -665,7 +691,7 @@ class Resolver:
 
         unit_kind = self.spec.units[unit_tok.text]
         year_tok = match.slots.get("YEAR")
-        year = int(year_tok.value) if year_tok else anchor.year
+        year = _pivot_two_digit_year(year_tok) if year_tok else anchor.year
         month_tok = match.slots.get("MONTH")
         if month_tok is not None:                   # month-scoped
             month = self.spec.months[month_tok.text]
@@ -851,7 +877,8 @@ class Resolver:
         year_tok = match.slots.get("YEAR")
         rel_tok = match.slots.get("REL_MARKER")
         if year_tok is not None:
-            start = season_to_date(season, int(year_tok.value), hemi)
+            start = season_to_date(season,
+                                   _pivot_two_digit_year(year_tok), hemi)
         elif rel_tok is not None and self.spec.rel_markers[rel_tok.text] > 0:
             start = next_season_date(season, ref, hemi)
         elif rel_tok is not None and self.spec.rel_markers[rel_tok.text] < 0:
@@ -991,7 +1018,7 @@ class Resolver:
         year_tok = match.slots.get("YEAR")
         rel_tok = match.slots.get("REL_MARKER")
         if year_tok is not None:
-            year = int(year_tok.value)
+            year = _pivot_two_digit_year(year_tok)
         else:
             rel = (self.spec.rel_markers[rel_tok.text]
                    if rel_tok is not None else None)
