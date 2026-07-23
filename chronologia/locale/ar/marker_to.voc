@@ -1,0 +1,9 @@
+# Arabic range "to" boundary -- the term / upper limit of a bounded interval,
+# correlative of "from" (من) in "من ... إلى ...".
+# "إلى" (ilā): W. Wright, *A Grammar of the Arabic Language*, 3rd ed., vol. II,
+#   §46 -- إلى marks the end point / limit reached ("إلى يوم الأحد"), correlative
+#   of من.  Badawi, Carter & Gully, *Modern Written Arabic*, §2.9.
+# "الى": the same preposition written without the hamza, a ubiquitous
+#   orthographic variant (mirrors marker_until.voc, which lists both forms).
+إلى
+الى

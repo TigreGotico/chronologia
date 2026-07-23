@@ -1,0 +1,10 @@
+# Arabic range "from" lead -- opens a bounded or open interval, the correlative
+# of "to" (إلى) in the standard "من ... إلى ..." range framing ("from January to
+# March").  Written as a free word (من), never a proclitic, so it tokenizes as
+# its own token.
+# "من" (min): W. Wright, *A Grammar of the Arabic Language*, 3rd ed., vol. II,
+#   §46 (prepositions) -- من marks the starting point / origin in time and
+#   space, correlative of إلى ("من يوم الجمعة إلى يوم الأحد").
+# Also: Badawi, Carter & Gully, *Modern Written Arabic: A Comprehensive Grammar*
+#   (Routledge), §2.9 -- من ... إلى as the standard bounded-range construction.
+من

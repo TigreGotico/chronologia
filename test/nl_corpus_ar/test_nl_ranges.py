@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Ranges.  Dash-framed ranges parse language-agnostically; the word-framed
-Arabic form ("من يناير إلى مارس") needs range framings the engine only ships
-in English, so it is xfail'd with that reason."""
+Arabic form ("من يناير إلى مارس") parses too -- the "from" lead (من) and the
+"to" connector (إلى) ship per-locale (marker_from/marker_to), so range framing
+is not English-only.  من / إلى are free words, so they tokenize as their own
+tokens; the earlier date is always the span start, never inverted by
+right-to-left reading order."""
 import pytest
 
-from ._corpus import AstroDate, start_end
+from ._corpus import AstroDate, start_end, nomatch
 
 
 @pytest.mark.parametrize("text,s,e", [
@@ -17,9 +20,18 @@ def test_dash_range(text, s, e):
     assert ss == AstroDate(*s) and ee == AstroDate(*e)
 
 
-@pytest.mark.xfail(reason="engine range framings (from/to) are English-only; "
-                          "Arabic 'من X إلى Y' unsupported",
-                   strict=True)
-def test_word_framed_range():
-    ss, ee = start_end("من يناير إلى مارس")
-    assert ss == AstroDate(2017, 1, 1) and ee == AstroDate(2017, 4, 1)
+@pytest.mark.parametrize("text,s,e", [
+    ("من يناير إلى مارس", (2017, 1, 1), (2017, 4, 1)),
+    ("من يونيو إلى أغسطس", (2017, 6, 1), (2017, 9, 1)),
+    ("من 15 يناير إلى 20 يناير", (2018, 1, 15), (2018, 1, 21)),
+])
+def test_word_framed_range(text, s, e):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(*s) and ee == AstroDate(*e)
+
+
+# -- adversarial: a bare range connector with no valid endpoints must not crash
+# and must not fabricate a span.
+@pytest.mark.parametrize("text", ["من", "إلى", "بين", "من إلى"])
+def test_bare_connector_is_nomatch(text):
+    nomatch(text)

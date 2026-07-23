@@ -1,0 +1,12 @@
+# Hebrew range "from" lead -- opens a bounded or open interval, the correlative
+# of "to" (עד) in the standard "מ... עד..." range framing ("from January to
+# March").  Hebrew "from" is the proclitic מ־ (mi-/me-); attached to its noun in
+# running text ("מינואר") it also appears set off by a maqaf/hyphen
+# ("מ-ינואר"), which the tokenizer treats as a separator, leaving מ as its own
+# token.  The free form מן is listed for completeness.
+# מ־ / מן (min): L. Glinert, *The Grammar of Modern Hebrew* (Cambridge UP),
+#   §9.2 -- the inseparable preposition מ־ "from", correlative of עד "until/to"
+#   in ranges of time ("מ... עד..."); מן is its free literary form.
+# Also: Academy of the Hebrew Language, rulings on the vocalisation of מ־.
+מ
+מן
