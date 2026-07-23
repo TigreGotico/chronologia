@@ -247,3 +247,80 @@ def test_plural_weekday_is_never_folded_to_a_number():
 def test_plural_ordinal_noun_homographs_are_not_recurrences(text):
     got = extract_recurrence(text, LANG)
     assert got is None or got[1] != ""
+
+
+# --------------------------------------------------------------------------
+# The European Portuguese habitual weekday, marked by the PREPOSITION.
+#
+# Source: Ciberdúvidas da Língua Portuguesa, «À(s) segunda(s)-feira(s)»,
+# Eunice Marta, 1 June 2012 --
+# https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/as-segundas-feiras/31385
+#
+# Asked which of «"As segundas-feiras faço ginástica" ou "a segunda-feira faço
+# ginástica"» expresses "all Mondays", the consultant answers that BOTH the
+# singular and the plural convey it -- «À segunda-feira faço ginástica», «Às
+# segundas-feiras faço ginástica» -- and that the construction requires the
+# preposition: the bare article does not give the habitual reading.  This is
+# the ordinary EP way to say "every monday", so it must parse as one.
+# --------------------------------------------------------------------------
+_HABITUAL_CASES = [
+    # -feira compounds, singular then plural
+    ("à segunda-feira", "FREQ=WEEKLY;BYDAY=MO"),
+    ("às segundas-feiras", "FREQ=WEEKLY;BYDAY=MO"),
+    ("à terça-feira", "FREQ=WEEKLY;BYDAY=TU"),
+    ("às terças-feiras", "FREQ=WEEKLY;BYDAY=TU"),
+    ("à quarta-feira", "FREQ=WEEKLY;BYDAY=WE"),
+    ("às quartas-feiras", "FREQ=WEEKLY;BYDAY=WE"),
+    ("à quinta-feira", "FREQ=WEEKLY;BYDAY=TH"),
+    ("às quintas-feiras", "FREQ=WEEKLY;BYDAY=TH"),
+    ("à sexta-feira", "FREQ=WEEKLY;BYDAY=FR"),
+    ("às sextas-feiras", "FREQ=WEEKLY;BYDAY=FR"),
+    # sábado / domingo are not -feira days and take the masculine ao/aos
+    ("ao sábado", "FREQ=WEEKLY;BYDAY=SA"),
+    ("aos sábados", "FREQ=WEEKLY;BYDAY=SA"),
+    ("ao domingo", "FREQ=WEEKLY;BYDAY=SU"),
+    ("aos domingos", "FREQ=WEEKLY;BYDAY=SU"),
+    # the -feira noun is routinely dropped in speech
+    ("à segunda", "FREQ=WEEKLY;BYDAY=MO"),
+    ("às segundas", "FREQ=WEEKLY;BYDAY=MO"),
+    ("às sextas", "FREQ=WEEKLY;BYDAY=FR"),
+]
+
+
+@pytest.mark.parametrize("text,rrule", _HABITUAL_CASES)
+def test_habitual_weekday(text, rrule):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == ""
+
+
+@pytest.mark.parametrize("text", [
+    # "em + article" is a single date -- "na segunda-feira" is *on Monday*,
+    # the monday coming, not a rule.  The a-vs-em contrast is exactly the
+    # distinction the Ciberduvidas answer draws, so the two prepositions live
+    # in separate vocabularies and this reading is structurally unreachable.
+    "na segunda-feira", "no domingo", "no sábado", "nas segundas-feiras",
+    # a bare article carries no habitual sense either (per the same source)
+    "a segunda-feira",
+])
+def test_em_preposition_is_not_a_recurrence(text):
+    assert extract_recurrence(text, LANG) is None
+
+
+def test_habitual_preposition_does_not_swallow_the_clock():
+    """"às" is also the clock marker ("às 9" = at nine).  The habitual rule
+    fires only before a WEEKDAY, so one sentence can carry both uses."""
+    got = extract_recurrence("às segundas-feiras às 9", LANG)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9"
+    assert got[1] == ""
+    # a lone clock time is no recurrence at all
+    assert extract_recurrence("às 9", LANG) is None
+
+
+def test_bare_plural_weekday_is_still_a_surname():
+    """The plural weekday surface is accepted ONLY under the habitual
+    preposition, so "domingos" on its own stays the surname it also is."""
+    assert extract_recurrence("o senhor domingos chegou", LANG) is None
+    assert extract_recurrence("domingos", LANG) is None

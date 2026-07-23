@@ -447,13 +447,15 @@ def extract_recurrence(
         on_words=set(C.get("on", ())),
         once_words=set(C.get("recur_once", ())),
         per_words=set(C.get("recur_per", ())),
+        habitual_words=set(C.get("recur_habitual", ())),
         holidays=dict(spec.holidays),
         lang=lang,
         anchor=anchor,
     )
 
     for finder in (_recur_nth_weekday, _recur_holiday, _recur_date_anchored,
-                   _recur_once, _recur_every, _recur_freq_word):
+                   _recur_once, _recur_every, _recur_freq_word,
+                   _recur_habitual_weekday):
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
@@ -636,6 +638,7 @@ class _RecurCtx:
     on_words: set = frozenset()
     once_words: set = frozenset()
     per_words: set = frozenset()
+    habitual_words: set = frozenset()
     holidays: dict = None
     lang: str = "en-us"
     anchor: Optional[datetime] = None
@@ -923,6 +926,63 @@ def _recur_freq_word(ctx):
         if byday is None:
             continue
         return _build_every("weekly", byday=byday), {i - 1, i}
+    return None
+
+
+def _recur_habitual_weekday(ctx):
+    """``<habitual preposition> <weekday>`` -> ``WEEKLY;BYDAY=<weekday>``.
+
+    Some languages mark a habitual weekday with a **preposition** rather than
+    a quantifier: European Portuguese "à segunda-feira" / "às segundas-feiras"
+    (on Mondays) is the ordinary way to say "every monday", in both the
+    singular and the plural.  Source: Ciberdúvidas da Língua Portuguesa,
+    «À(s) segunda(s)-feira(s)», Eunice Marta, 1 June 2012 --
+    https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/as-segundas-feiras/31385
+    -- which answers that both numbers convey "all Mondays" and that it is the
+    **preposition** that carries the habitual sense: a bare article does not.
+
+    Three things follow from that, and each is load-bearing here:
+
+    * The marker is its own ``recur_habitual`` vocabulary, holding only the
+      ``a + article`` contractions (pt à/às/ao/aos).  It deliberately does
+      **not** hold the ``em + article`` ones (na/no/nas/nos): "na
+      segunda-feira" is *on Monday*, one particular date, and that a-vs-em
+      contrast is exactly the distinction the source draws.  Keeping them in
+      separate vocabularies makes the wrong reading unwritable rather than
+      merely unlikely.
+    * The same contraction is also the clock marker ("às 9" = at nine), so the
+      rule fires only when a **weekday** follows.  A number after it is a
+      clock time and is left for the clock pin to read, which is what lets one
+      sentence carry both uses.
+    * A weekday plural is recognised **only** in this position (the surface
+      plus its ``-s`` plural, derived, not listed).  Bare plural weekday
+      surfaces cannot go into the global weekday vocabulary -- pt "domingos"
+      is also a common surname, and a bare "sextas" makes unrelated
+      ordinal-count readings match -- but under an explicit habitual
+      preposition there is no such ambiguity.
+
+    Runs **last** of the finders: a phrase that already reads as a fuller rule
+    ("uma vez por semana à segunda") is claimed by that rule first, so this
+    only ever fires on the bare habitual phrase.
+    """
+    if not ctx.habitual_words:
+        return None
+    t = ctx.tokens
+    n = len(t)
+    # the weekday surfaces this position accepts: the vocabulary's own, plus
+    # the regular "-s" plural of each single-word surface ("domingo" ->
+    # "domingos", "segundas feiras" is already vocabulary).
+    surfaces = dict(ctx.weekdays)
+    for surf, wd in ctx.weekdays.items():
+        surfaces.setdefault(surf + "s", wd)
+    for i in range(n - 1):
+        if t[i].text not in ctx.habitual_words:
+            continue
+        wd = surfaces.get(t[i + 1].text)
+        if wd is None:
+            continue
+        return (_build_every("weekly", byday=((None, wd),)),
+                set(range(i, i + 2)))
     return None
 
 
