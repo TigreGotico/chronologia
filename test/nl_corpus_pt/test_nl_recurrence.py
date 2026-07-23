@@ -225,6 +225,60 @@ def test_plural_nth_weekday(text, rrule):
     assert got[1] == ""
 
 
+# --------------------------------------------------------------------------
+# The same plural nth-weekday frame for "sábado"/"domingo", which are not
+# "-feira" compounds and so have no plural surface in the weekday vocabulary.
+#
+# The plural is licensed POSITIONALLY, not globally: it is read only when an
+# "every" determiner ("todos os") plus an ordinal or a "último" marker sits
+# directly before it.  A surname cannot occupy that slot, so "domingos" the
+# name is untouched -- see the guards below.
+#
+# European Portuguese takes the article throughout ("todos os ..."); the
+# article-less Brazilian forms remain accepted input but are not canonical.
+# Source: Ciberduvidas, «Todo dia e todos os dias» --
+# https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/todo-dia-e-todos-os-dias/23627
+# --------------------------------------------------------------------------
+_NON_FEIRA_PLURAL_CASES = [
+    ("todos os últimos domingos do mês", "FREQ=MONTHLY;BYDAY=-1SU"),
+    ("todos os primeiros sábados do mês", "FREQ=MONTHLY;BYDAY=1SA"),
+    ("todos os últimos sábados do mês", "FREQ=MONTHLY;BYDAY=-1SA"),
+    ("todos os primeiros domingos do mês", "FREQ=MONTHLY;BYDAY=1SU"),
+    ("todos os terceiros domingos do mês", "FREQ=MONTHLY;BYDAY=3SU"),
+    ("todos os terceiros sábados do mês", "FREQ=MONTHLY;BYDAY=3SA"),
+    # "first"/"last" need no tail (the #217 rule), exactly as the -feira days
+    ("todos os últimos domingos", "FREQ=MONTHLY;BYDAY=-1SU"),
+    ("todos os primeiros sábados", "FREQ=MONTHLY;BYDAY=1SA"),
+    ("cada último domingo", "FREQ=MONTHLY;BYDAY=-1SU"),
+    # the dropped "-feira" plural in the same frame
+    ("todas as últimas segundas do mês", "FREQ=MONTHLY;BYDAY=-1MO"),
+]
+
+
+@pytest.mark.parametrize("text,rrule", _NON_FEIRA_PLURAL_CASES)
+def test_non_feira_plural_nth_weekday(text, rrule):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == ""
+
+
+@pytest.mark.parametrize("text", [
+    # #217's rule is engine-wide and is NOT weakened here: from two upwards
+    # the bare (tail-less) ordinal stays ambiguous and is left unread.
+    "todos os terceiros domingos", "todos os terceiros sábados",
+    # without the "every" determiner the plural is not licensed at all
+    "os últimos domingos do mês", "últimos domingos do mês",
+    "primeiros sábados do mês",
+    # bare plurals: "Domingos" is a common pt surname / given name
+    "domingos", "sábados", "o senhor domingos chegou",
+    # and the ordinal-count corpus is untouched
+    "3 sextas",
+])
+def test_plural_weekday_licensing_guards(text):
+    assert extract_recurrence(text, LANG) is None
+
+
 def test_plural_weekday_is_never_folded_to_a_number():
     """"segundas"/"quintas" are weekday names in the plural exactly as they
     are in the singular, so the plural-ordinal fold must not eat them."""
