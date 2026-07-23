@@ -669,14 +669,44 @@ def _freq_map(connectors):
     return out
 
 
+def _weekday_here(ctx, tok, plural_ok):
+    """The weekday a token names, optionally allowing a derived ``-s`` plural.
+
+    Weekday plurals are **positionally licensed**, never global.  Some plural
+    weekday surfaces are ambiguous out of context -- pt "domingos" is also a
+    common surname, and a bare "sextas" makes unrelated ordinal-count readings
+    match -- so they cannot enter the weekday vocabulary.  Inside a frame that
+    a surname could not occupy (an ``every`` determiner plus an ordinal or a
+    "last" marker directly before the word) the ambiguity is gone, and the
+    plural is read there and only there.
+
+    The plural is *derived* (surface + ``-s``), not listed, so it follows the
+    vocabulary automatically; the compound weekdays that pluralise both
+    elements ("quintas-feiras") are already listed surfaces.
+    """
+    wd = ctx.weekdays.get(tok.text)
+    if wd is not None or not plural_ok:
+        return wd
+    s = tok.text
+    return ctx.weekdays.get(s[:-1]) if s.endswith("s") else None
+
+
 def _recur_nth_weekday(ctx):
     """``<ordinal|last> <weekday> of [every] (month|<month name>)``."""
     t = ctx.tokens
     n = len(t)
     for w in range(1, n):
-        if t[w].text not in ctx.weekdays:
+        # a derived plural is licensed only under an "every" determiner, which
+        # must sit in the article run leading into the ordinal.
+        li0 = w - 1
+        start0 = li0
+        while start0 > 0 and (t[start0 - 1].text in ctx.articles
+                              or t[start0 - 1].text in ctx.every):
+            start0 -= 1
+        plural_ok = any(t[k].text in ctx.every for k in range(start0, li0))
+        wd = _weekday_here(ctx, t[w], plural_ok)
+        if wd is None:
             continue
-        wd = ctx.weekdays[t[w].text]
         li = w - 1
         ordn = None
         if t[li].is_number:
@@ -827,8 +857,8 @@ def _recur_every(ctx):
         if (num_val is None and j + 1 < n
                 and t[j].text in ctx.rel_markers
                 and ctx.rel_markers[t[j].text] == -1
-                and t[j + 1].text in ctx.weekdays):
-            wd = ctx.weekdays[t[j + 1].text]
+                and _weekday_here(ctx, t[j + 1], True) is not None):
+            wd = _weekday_here(ctx, t[j + 1], True)
             return (_nth_weekday_of_month(-1, wd),
                     set(range(i, _of_month_tail(ctx, j + 2))))
 
@@ -842,10 +872,10 @@ def _recur_every(ctx):
         # third tuesday of the month -- so the monthly reading fires only on the
         # positive evidence of an explicit "of the month" tail.  Without it the
         # count falls through to the interval reading below.
-        if num_val is not None and j < n and t[j].text in ctx.weekdays:
+        if num_val is not None and j < n:
+            wd = _weekday_here(ctx, t[j], True)
             end = _of_month_tail(ctx, j + 1)
-            if num_val == 1 or end > j + 1:
-                wd = ctx.weekdays[t[j].text]
+            if wd is not None and (num_val == 1 or end > j + 1):
                 return _nth_weekday_of_month(num_val, wd), set(range(i, end))
 
         # -- ellipsis: "every <ordinal> [of the month]" -> BYMONTHDAY --------
