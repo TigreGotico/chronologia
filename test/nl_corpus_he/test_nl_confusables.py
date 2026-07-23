@@ -15,7 +15,7 @@ weekday -- which needs a relative marker to form a construction) are asserted
 as hard ``None``. The residue -- a season word inside a proper name
 (תל אביב "Tel Aviv" carries אביב "spring") or a figurative season use -- are
 *documented limitations*: the parser binds the token, disambiguation is a
-downstream concern. They are marked ``xfail`` (non-strict). A cheap
+downstream concern. They are marked ``xfail(strict=True)``. A cheap
 adjacent-token guard for one proper noun would not generalise, so the
 policy-consistent record is the limitation, matching the season-name/metaphor
 xfails in the other locales. See the "Known limitations" section of

@@ -15,8 +15,10 @@ initials, scale words) are asserted as hard ``None``. The residue -- bare
 month/weekday content-word homographs, morning/tomorrow, figurative season
 and unit uses, idioms -- are *documented limitations*: the parser binds the
 token, disambiguation is a downstream (NLU/consumer) concern. They are
-marked ``xfail`` (non-strict) so the file records the honest behaviour and
-flips to green the day a guard or a downstream policy resolves them. See the
+marked ``xfail(strict=True)`` so the file records the honest behaviour and
+fails loudly (an XPASS) the day a guard or a downstream policy resolves
+them -- forcing the case to be promoted to a real assertion rather than
+silently starting to pass. See the
 "Known limitations" section of docs/extraction.md.
 """
 import pytest

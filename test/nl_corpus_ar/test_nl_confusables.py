@@ -15,7 +15,7 @@ weekday -- which needs a relative marker to form a construction) are asserted
 as hard ``None``. The residue -- bare month/season content-word homographs
 (مارس "he practiced" == March, ربيع a name == spring) -- are *documented
 limitations*: the parser binds the token, disambiguation is a downstream
-concern. They are marked ``xfail`` (non-strict). See the "Known limitations"
+concern. They are marked ``xfail(strict=True)``. See the "Known limitations"
 section of docs/extraction.md.
 """
 import pytest
