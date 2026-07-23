@@ -48,6 +48,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.is_number
     if name == "UNIT":
         return token.text in spec.units
+    if name == "USG":
+        return token.text in spec.singular_units
     if name in ("MARKER", "DIRECTION_MARKER"):
         return token.text in spec.directions
     if name == "DAY_WORD":

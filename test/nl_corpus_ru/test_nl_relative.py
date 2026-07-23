@@ -104,6 +104,47 @@ def test_sentence_offset(text, delta):
     assert start(text) == ad(ANCHOR + delta)
 
 
+# -- bare singular unit = implied one ------------------------------------
+# Russian has no indefinite article, so "через" + an accusative-singular unit
+# with no count reads as +1 of that unit ("через неделю" = in a week), the
+# East-Slavic parallel to English "in a week".  Only the accusative singular
+# (gramota.ru: через governs the accusative) fires the implied one; an
+# inflected plural/genitive near-miss carries no count and must not offset.
+
+@pytest.mark.parametrize("text,delta", [
+    ("через неделю", timedelta(weeks=1)),
+    ("через день", timedelta(days=1)),
+    ("через месяц", relativedelta(months=1)),
+    ("через год", relativedelta(years=1)),
+    ("через час", timedelta(hours=1)),
+    ("через минуту", timedelta(minutes=1)),
+])
+def test_implied_one_future(text, delta):
+    assert start(text) == ad(ANCHOR + delta)
+
+
+@pytest.mark.parametrize("text,delta", [
+    ("напомни мне через неделю", timedelta(weeks=1)),
+    ("перезвоню через час", timedelta(hours=1)),
+])
+def test_implied_one_in_sentence(text, delta):
+    assert start(text) == ad(ANCHOR + delta)
+
+
+# an explicit count still wins its own path -- the bare form never shadows it
+def test_explicit_count_still_offsets():
+    assert start("через 3 дня") == ad(ANCHOR + timedelta(days=3))
+
+
+# adversarial: the count is only implied for the accusative singular; a
+# plural/genitive near-miss ("через недели") carries no count and a bare unit
+# with no marker ("неделю") must never fabricate an offset.
+def test_implied_one_rejects_nonsingular():
+    nomatch("через недели")
+    nomatch("неделю")
+    nomatch("через дни")
+
+
 # -- named days ----------------------------------------------------------
 
 @pytest.mark.parametrize("word,off", [("сегодня", 0), ("завтра", 1),

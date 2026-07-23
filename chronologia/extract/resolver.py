@@ -266,16 +266,25 @@ class Resolver:
         """The count of a relative offset: an explicit NUM, else a quantifier
         ("a"=1, "couple"=2, "half"=0.5), else an implicit 1 ("a week ago")."""
         num_tok = match.slots.get("NUM")
+        quant_tok = match.slots.get("QUANT")
+        # A NUM and a QUANT together read as a product of the two ("three
+        # quarters of an hour" = 3 x 0.25 hour); a lone slot is taken as-is,
+        # and a bare unit ("in a week", "через неделю") is an implicit one.
+        if num_tok is not None and quant_tok is not None:
+            return float(num_tok.value) * self.spec.quantifiers[quant_tok.text]
         if num_tok is not None:
             return float(num_tok.value)
-        quant_tok = match.slots.get("QUANT")
         if quant_tok is not None:
             return self.spec.quantifiers[quant_tok.text]
         return 1.0
 
     def _resolve_relative_offset(self, match, anchor):
         qty = self._offset_quantity(match)
-        unit = self.spec.units[match.slots["UNIT"].text]
+        usg_tok = match.slots.get("USG")
+        if usg_tok is not None:
+            unit = self.spec.singular_units[usg_tok.text]
+        else:
+            unit = self.spec.units[match.slots["UNIT"].text]
         sign = self.spec.directions[match.slots["MARKER"].text]
         step = sign * qty
         if unit == "minute":

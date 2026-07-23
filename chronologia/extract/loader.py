@@ -88,6 +88,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     weekdays: Dict[str, int] = {}
     weekday_full: Dict[str, int] = {}
     units: Dict[str, str] = {}
+    singular_units: Dict[str, str] = {}
     named_days: Dict[str, int] = {}
     directions: Dict[str, int] = {}
     rel_markers: Dict[str, int] = {}
@@ -146,6 +147,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             idx = int(base[len("weekday_"):])
             weekdays.update({s: idx for s in surfaces})
             weekday_full.update({s: idx for s in surfaces})
+        elif base.startswith("unit1_"):
+            singular_units.update({s: base[len("unit1_"):] for s in surfaces})
         elif base.startswith("unit_"):
             units.update({s: base[len("unit_"):] for s in surfaces})
         elif base.startswith("named_day_"):
@@ -257,6 +260,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     spec = LangSpec(
         lang=lang,
         months=months, weekdays=weekdays, units=units,
+        singular_units=singular_units,
         named_days=named_days, directions=directions,
         rel_markers=rel_markers, connectors=connectors,
         calendar_months={k: dict(v) for k, v in calendar_months.items()},

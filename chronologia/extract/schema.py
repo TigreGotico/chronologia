@@ -97,6 +97,7 @@ DUAL_UNIT_SLOTS: FrozenSet[str] = frozenset({"SEL_UNIT", "SCOPE_UNIT"})
 #: derived from the holidays engine, not a ``.voc``) are not reachability-checked.
 SLOT_VOCAB_ATTR: Dict[str, str] = {
     "UNIT": "units",
+    "USG": "singular_units",
     "MARKER": "directions",
     "DIRECTION_MARKER": "directions",
     "DAY_WORD": "named_days",
