@@ -20,6 +20,7 @@ new_year        | en | new year's day ;; new years day
 new_year_eve    | en | new year's eve ;; new years eve
 epiphany        | en | epiphany ;; three kings day
 carnival        | en | carnival ;; mardi gras
+palm_sunday     | en | palm sunday
 good_friday     | en | good friday
 easter          | en | easter ;; easter sunday
 easter_monday   | en | easter monday
@@ -38,6 +39,7 @@ new_year        | pt | ano novo ;; dia de ano novo
 new_year_eve    | pt | véspera de ano novo ;; passagem de ano
 epiphany        | pt | dia de reis ;; epifania
 carnival        | pt | carnaval ;; entrudo
+palm_sunday     | pt | domingo de ramos
 good_friday     | pt | sexta-feira santa
 easter          | pt | páscoa ;; domingo de páscoa
 easter_monday   | pt | segunda-feira de páscoa
@@ -56,6 +58,7 @@ new_year        | es | año nuevo ;; día de año nuevo
 new_year_eve    | es | nochevieja ;; fin de año
 epiphany        | es | día de reyes ;; reyes ;; epifanía
 carnival        | es | carnaval
+palm_sunday     | es | domingo de ramos
 good_friday     | es | viernes santo
 easter          | es | pascua ;; domingo de pascua ;; domingo de resurrección
 easter_monday   | es | lunes de pascua
@@ -74,6 +77,7 @@ new_year        | de | neujahr ;; neujahrstag
 new_year_eve    | de | silvester
 epiphany        | de | heilige drei könige ;; dreikönigstag ;; epiphanias
 carnival        | de | karneval ;; fasching ;; fastnacht
+palm_sunday     | de | palmsonntag
 good_friday     | de | karfreitag
 easter          | de | ostern ;; ostersonntag
 easter_monday   | de | ostermontag
@@ -92,6 +96,7 @@ new_year        | fr | jour de l'an ;; nouvel an ;; premier de l'an
 new_year_eve    | fr | réveillon ;; saint-sylvestre
 epiphany        | fr | épiphanie ;; jour des rois
 carnival        | fr | carnaval ;; mardi gras
+palm_sunday     | fr | dimanche des rameaux ;; les rameaux
 good_friday     | fr | vendredi saint
 easter          | fr | pâques ;; dimanche de pâques
 easter_monday   | fr | lundi de pâques
@@ -110,6 +115,7 @@ new_year        | it | capodanno ;; primo dell'anno
 new_year_eve    | it | san silvestro ;; vigilia di capodanno
 epiphany        | it | epifania ;; befana
 carnival        | it | carnevale
+palm_sunday     | it | domenica delle palme
 good_friday     | it | venerdì santo
 easter          | it | pasqua ;; domenica di pasqua
 easter_monday   | it | lunedì dell'angelo ;; pasquetta ;; lunedì di pasqua
@@ -128,6 +134,7 @@ new_year        | nl | nieuwjaar ;; nieuwjaarsdag
 new_year_eve    | nl | oudjaar ;; oudejaarsavond ;; oudejaarsdag
 epiphany        | nl | driekoningen
 carnival        | nl | carnaval
+palm_sunday     | nl | palmzondag ;; palmpasen
 good_friday     | nl | goede vrijdag
 easter          | nl | pasen ;; eerste paasdag
 easter_monday   | nl | paasmaandag
@@ -146,6 +153,7 @@ new_year        | ca | cap d'any ;; any nou
 new_year_eve    | ca | nit de cap d'any ;; vigília de cap d'any
 epiphany        | ca | reis ;; dia de reis ;; epifania
 carnival        | ca | carnaval ;; carnestoltes
+palm_sunday     | ca | diumenge de rams
 good_friday     | ca | divendres sant
 easter          | ca | pasqua ;; diumenge de pasqua
 easter_monday   | ca | dilluns de pasqua
@@ -164,6 +172,7 @@ new_year        | gl | aninovo ;; ano novo ;; día de aninovo
 new_year_eve    | gl | noitevella ;; fin de ano
 epiphany        | gl | día de reis ;; reis ;; epifanía
 carnival        | gl | entroido ;; carnaval
+palm_sunday     | gl | domingo de ramos
 good_friday     | gl | venres santo
 easter          | gl | pascua ;; domingo de pascua
 easter_monday   | gl | luns de pascua
@@ -423,6 +432,7 @@ new_year           | da | nytårsdag ;; nytår
 new_year_eve       | da | nytårsaften
 epiphany           | da | helligtrekonger ;; hellig tre konger
 carnival           | da | fastelavn
+palm_sunday     | da | palmesøndag
 good_friday        | da | langfredag
 easter             | da | påske ;; påskedag ;; påskesøndag
 easter_monday      | da | anden påskedag ;; påskemandag
@@ -460,6 +470,7 @@ new_year           | sv | nyårsdagen ;; nyår
 new_year_eve       | sv | nyårsafton
 epiphany           | sv | trettondedag jul ;; trettondagen
 carnival           | sv | fastlagen
+palm_sunday     | sv | palmsöndagen
 good_friday        | sv | långfredagen
 easter             | sv | påsk ;; påskdagen
 easter_monday      | sv | annandag påsk
@@ -497,6 +508,7 @@ new_year           | nb | nyttårsdag ;; nyttår
 new_year_eve       | nb | nyttårsaften
 epiphany           | nb | helligtrekongersdag
 carnival           | nb | karneval
+palm_sunday     | nb | palmesøndag
 good_friday        | nb | langfredag
 easter             | nb | påske ;; første påskedag ;; påskedag
 easter_monday      | nb | andre påskedag ;; annen påskedag
@@ -534,6 +546,7 @@ new_year           | nn | nyttårsdag ;; nyttår
 new_year_eve       | nn | nyttårsaftan
 epiphany           | nn | heilagtrekongarsdag
 carnival           | nn | karneval
+palm_sunday     | nn | palmesundag
 good_friday        | nn | langfredag
 easter             | nn | påske ;; fyrste påskedag ;; påskedag
 easter_monday      | nn | andre påskedag
@@ -571,6 +584,7 @@ new_year           | fy | nijjiersdei ;; nijjier
 new_year_eve       | fy | âldjiersjûn
 epiphany           | fy | driekeningen
 carnival           | fy | karnaval
+palm_sunday     | fy | palmsnein
 good_friday        | fy | goedfreed
 easter             | fy | peaske ;; earste peaskedei
 easter_monday      | fy | twadde peaskedei
@@ -606,6 +620,7 @@ fathers_day        | fy | heitedei
 new_year        | fi | uusivuosi ;; uudenvuodenpäivä
 new_year_eve    | fi | uudenvuodenaatto
 epiphany        | fi | loppiainen
+palm_sunday     | fi | palmusunnuntai
 good_friday     | fi | pitkäperjantai
 easter          | fi | pääsiäinen ;; pääsiäissunnuntai
 easter_monday   | fi | toinen pääsiäispäivä ;; 2. pääsiäispäivä
@@ -632,6 +647,7 @@ valentines      | fi | ystävänpäivä
 new_year        | et | uusaasta ;; uue aasta päev
 new_year_eve    | et | vana-aastaõhtu
 epiphany        | et | kolmekuningapäev
+palm_sunday     | et | palmipuudepüha
 good_friday     | et | suur reede
 easter          | et | lihavõtted ;; ülestõusmispühad
 easter_monday   | et | teine ülestõusmispüha
@@ -658,6 +674,7 @@ valentines      | et | sõbrapäev
 new_year        | hu | újév ;; újév napja
 new_year_eve    | hu | szilveszter
 epiphany        | hu | vízkereszt ;; háromkirályok
+palm_sunday     | hu | virágvasárnap
 good_friday     | hu | nagypéntek
 easter          | hu | húsvét ;; húsvétvasárnap
 easter_monday   | hu | húsvéthétfő
@@ -750,6 +767,7 @@ valentines             | el | αγίου βαλεντίνου ;; ημέρα τω
 #
 # ===== Indonesian =====
 new_year        | id | tahun baru
+palm_sunday     | id | minggu palma
 good_friday     | id | jumat agung
 easter          | id | paskah
 christmas       | id | natal ;; hari natal
@@ -766,6 +784,7 @@ valentines      | id | hari valentine
 #
 # ===== Malay =====
 new_year        | ms | tahun baru
+palm_sunday     | ms | ahad palma
 good_friday     | ms | jumaat agung
 easter          | ms | paskah
 christmas       | ms | krismas ;; hari krismas
@@ -783,6 +802,7 @@ valentines      | ms | hari valentine
 # ===== Basque =====
 new_year        | eu | urte berri ;; urteberri
 epiphany        | eu | erregen eguna ;; errege eguna
+palm_sunday     | eu | erramu igandea
 good_friday     | eu | ostiral santua
 easter          | eu | pazkoa ;; pazko igandea
 easter_monday   | eu | pazko astelehena
@@ -832,6 +852,7 @@ christmas          | cs | vánoce ;; boží hod vánoční
 christmas_eve      | cs | štědrý den ;; štědrý večer
 epiphany           | cs | tři králové
 easter             | cs | velikonoce ;; velikonoční neděle
+palm_sunday     | cs | květná neděle
 good_friday        | cs | velký pátek
 easter_monday      | cs | velikonoční pondělí
 all_saints         | cs | všech svatých ;; dušičky
@@ -846,6 +867,7 @@ christmas          | hr | božić
 christmas_eve      | hr | badnjak ;; badnji dan
 epiphany           | hr | sveta tri kralja ;; bogojavljenje
 easter             | hr | uskrs ;; uskrsna nedjelja
+palm_sunday     | hr | cvjetnica
 good_friday        | hr | veliki petak
 easter_monday      | hr | uskrsni ponedjeljak ;; uskršnji ponedjeljak
 all_saints         | hr | svi sveti
@@ -860,6 +882,7 @@ christmas          | pl | boże narodzenie ;; gwiazdka
 christmas_eve      | pl | wigilia
 epiphany           | pl | trzech króli ;; objawienie pańskie
 easter             | pl | wielkanoc ;; niedziela wielkanocna
+palm_sunday     | pl | niedziela palmowa
 good_friday        | pl | wielki piątek
 easter_monday      | pl | poniedziałek wielkanocny ;; lany poniedziałek
 all_saints         | pl | wszystkich świętych
@@ -890,6 +913,7 @@ christmas          | sk | vianoce
 christmas_eve      | sk | štedrý deň ;; štedrý večer
 epiphany           | sk | traja králi ;; zjavenie pána
 easter             | sk | veľká noc ;; veľkonočná nedeľa
+palm_sunday     | sk | kvetná nedeľa
 good_friday        | sk | veľký piatok
 easter_monday      | sk | veľkonočný pondelok
 all_saints         | sk | sviatok všetkých svätých ;; všetkých svätých
@@ -904,6 +928,7 @@ christmas          | sl | božič
 christmas_eve      | sl | sveti večer ;; badnjak
 epiphany           | sl | sveti trije kralji
 easter             | sl | velika noč ;; velikonočna nedelja
+palm_sunday     | sl | cvetna nedelja
 good_friday        | sl | veliki petek
 easter_monday      | sl | velikonočni ponedeljek
 all_saints         | sl | dan spomina na mrtve ;; vsi sveti
