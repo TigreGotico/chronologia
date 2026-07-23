@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Dict, FrozenSet, List, Optional
+from typing import Dict, FrozenSet, List
 
 from chronologia.extract.compiler import PRECEDENCE, UNIMPLEMENTED
 

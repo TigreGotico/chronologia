@@ -18,7 +18,7 @@ from typing import Dict, List, Tuple
 
 from chronologia.extract.compiler import CompiledSpec
 from chronologia.extract.model import (LangSpec, Match, SlotElement,
-                                           SlotOrder, Token)
+                                           Token)
 
 _ISO = re.compile(r"\d{4}-\d{2}-\d{2}")
 _CLOCK = re.compile(r"\d{1,2}:\d{2}(?::\d{2})?")
