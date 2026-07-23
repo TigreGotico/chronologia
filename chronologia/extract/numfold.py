@@ -394,9 +394,41 @@ fold_fy = _lazy_germanic_fold(
 # ``value_of`` tries ``ordinals=True`` then the cardinal default, which the
 # extra ``short_scale`` positional default leaves untouched.
 # ---------------------------------------------------------------------------
-fold_tr = _lazy_germanic_fold(
+# Turkish spoken-clock hours carry the case suffix the direction word agrees
+# with -- accusative (-ı/-i/-u/-ü) before "geçe" (past), dative (-e/-a) before
+# "kala" (to).  ``extract_number_tr`` reads only the bare cardinal, so these
+# inflected surfaces (which the pronounce side never emits) are mapped back to
+# their hour value here; the accusative/dative distinction is redundant with
+# the mandatory geçe/kala word and so is safely collapsed to the digit.
+# 1..10 as single tokens ("saat dokuzu beş geçe" = 9:05, "yediye çeyrek kala"
+# = 6:45); 11/12 ("on bir"/"on iki") inflect their final word (biri/ikiyi),
+# so the "on" + mapped-final-word run folds through the cardinal reader.
+_TR_HOURS = {
+    "biri": 1, "ikiyi": 2, "üçü": 3, "dördü": 4, "beşi": 5,
+    "altıyı": 6, "yediyi": 7, "sekizi": 8, "dokuzu": 9, "onu": 10,
+    "bire": 1, "ikiye": 2, "üçe": 3, "dörde": 4, "beşe": 5,
+    "altıya": 6, "yediye": 7, "sekize": 8, "dokuza": 9, "ona": 10,
+}
+_tr_numfold = _lazy_germanic_fold(
     "ovos_number_parser.numbers_tr", "extract_number_tr",
-    {"yarım", "çeyrek", "bin", "milyon", "milyar"})
+    # "buçuk" (=30, the additive half-past word) and "çeyrek" (=15) are held
+    # out of the number run so the FRACTION slot binds them ("üç buçuk" =
+    # 3:30) instead of folding to 3.5.
+    {"yarım", "çeyrek", "buçuk", "bin", "milyon", "milyar"})
+
+
+def fold_tr(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Turkish fold: cardinal run fold, then map the case-marked spoken-clock
+    hour to its digit.  The hour map runs *after* the cardinal fold so the
+    mapped hour does not merge with a following bare-minute cardinal:
+    "dokuzu beş geçe" must stay [9][5][geçe] (9:05), not fold to one number.
+    """
+    folded = _tr_numfold(tokens)
+    out = [replace(t, text=str(_TR_HOURS[t.text]), is_number=True,
+                   value=_TR_HOURS[t.text])
+           if (not t.is_number and t.text in _TR_HOURS) else t
+           for t in folded]
+    return _reindex(tuple(out))
 fold_az = _lazy_germanic_fold(
     "ovos_number_parser.numbers_az", "extract_number_az",
     {"yarım", "min", "milyon", "milyard"})

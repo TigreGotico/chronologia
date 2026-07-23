@@ -54,6 +54,9 @@
       "orders": [
         "CLOCK MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
+        "HOUR MINUTE CLOCKDIR MERIDIEM? ZONE?",
+        "HOUR FRACTION CLOCKDIR MERIDIEM? ZONE?",
+        "HOUR FRACTION MERIDIEM? ZONE?",
         "at? LANDMARK ZONE?"
       ],
       "prefer_future": true
@@ -113,7 +116,8 @@
     "week_start": "monday",
     "dmy": true,
     "hemisphere": null,
-    "prefer_future": true
+    "prefer_future": true,
+    "bare_half_past": true
   },
   "guards": {
     "bare_year_min_digits": 4

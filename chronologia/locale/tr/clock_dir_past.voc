@@ -1,0 +1,6 @@
+# Turkish spoken-clock "past" marker -- "geçe" (additive), with the hour in
+# the ACCUSATIVE case: "saat dokuzu beş geçe" = 9:05, "üçü çeyrek geçe" = 3:15,
+# "üçü yirmi geçe" = 3:20. Order is HOUR(-acc) MINUTE/FRACTION geçe.
+# Source: Türk Dil Kurumu (TDK), Güncel Türkçe Sözlük, s.v. "geçe"
+# (belirtilen zamandan sonra; "saati beş geçe").
+geçe
