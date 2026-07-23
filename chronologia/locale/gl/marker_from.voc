@@ -1,0 +1,12 @@
+# Galician range "from" lead -- opens a bounded or open interval and, crucially,
+# disambiguates the hyper-common preposition "a" (marker_to) as a genuine range
+# boundary: a bare "A a B" is only trusted as a range when a "from" lead is present.
+# "de": DRAG (Dicionario da Real Academia Galega), s.v. "de" (preposicion) --
+#   orixe / punto de partida, correlativa de "a" ("de xuno a agosto").
+# "desde": DRAG, s.v. "desde" (preposicion) -- punto de orixe no tempo ou no
+#   espazo ("desde 2010"). Normas ortograficas e morfoloxicas do idioma galego
+#   (RAG/ILG).
+# "a partir de": DRAG -- locucion prepositiva, punto de comezo.
+a partir de
+de
+desde

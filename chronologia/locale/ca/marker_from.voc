@@ -1,0 +1,11 @@
+# Catalan range "from" lead -- opens a bounded or open interval and, crucially,
+# disambiguates the hyper-common preposition "a" (marker_to) as a genuine range
+# boundary: a bare "A a B" is only trusted as a range when a "from" lead is present.
+# "de": DIEC2 (IEC), s.v. "de" (preposicio) -- origen / punt de partenca,
+#   correlativa d'"a" ("de juny a agost"). Optimot, fitxa "de ... a".
+# "des de": GEIEC / Gramatica de la llengua catalana (IEC), s.v. "des de"
+#   (locucio prepositiva) -- punt d'origen en el temps o l'espai ("des de 2010").
+# "a partir de": Optimot -- locucio prepositiva, punt de comencament.
+a partir de
+de
+des de
