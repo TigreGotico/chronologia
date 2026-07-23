@@ -253,9 +253,80 @@ def extract_timespans(
             continue
         out.append((match.span, res.value, conf))
 
+    # a "from A to B" / "between A and B" pair of mentions is ONE range span,
+    # not two loose endpoints: collapse adjacent mentions the single-span range
+    # detector accepts, reusing the identical machinery so list-vs-range ("monday
+    # and wednesday" stays two, "between monday and wednesday" becomes one) is
+    # decided exactly as the single edge decides it.
+    out = _merge_ranges(out, tokens, text, engine, anchor)
+
     return [TimeMention(value, " ".join(t.raw for t in tokens[lo:hi]), (lo, hi),
                         _char_span(tokens, lo, hi), conf)
             for (lo, hi), value, conf in out]
+
+
+def _merge_ranges(out, tokens, text, engine, anchor):
+    """Collapse each adjacent mention pair the single-span range detector reads
+    as one "from A to B" / "between A and B" span into a single range mention.
+
+    The pass reuses :func:`~chronologia.extract._extract_range` verbatim: for a
+    consecutive pair it slices the *pre-fold* token stream over the region from
+    the left mention (extended left over a leading ``from``/``between``
+    connector when one sits right before it) to the right mention, and offers
+    that slice to the range detector.  A slice the detector accepts becomes one
+    mention (span from the range, token/char extent widened to cover the
+    connectors); a slice it rejects -- a bare "and"/"or" list, two unrelated
+    clauses -- leaves both mentions untouched.  A merged pair consumes both
+    endpoints, so a range never chains into a third mention ("from monday to
+    friday, then next tuesday" -> the range plus next tuesday, two mentions).
+    """
+    if len(out) < 2:
+        return out
+    from chronologia.extract import (_conn_surfaces, _extract_range,
+                                      _RANGE_BETWEEN, _RANGE_FROM)
+    from chronologia.extract.pipeline import pretokens
+
+    spec = engine.spec
+    raw = pretokens(text, spec)
+    # leads that open a range, longest first, ``between`` before ``from`` so a
+    # between-led "and" is reachable; both are matched as whole token runs.
+    leads = (_conn_surfaces(spec, "between", _RANGE_BETWEEN)
+             + _conn_surfaces(spec, "from", _RANGE_FROM))
+
+    def _lead_start(a_lo):
+        # the token index at which a ``from``/``between`` connector immediately
+        # preceding mention ``a_lo`` begins, or ``a_lo`` when there is none.
+        for words in leads:
+            k = len(words)
+            if a_lo - k >= 0 \
+                    and [t.text for t in tokens[a_lo - k:a_lo]] == words:
+                return a_lo - k
+        return a_lo
+
+    def _slice(cs, ce):
+        return tuple(t for t in raw
+                     if t.char_start is not None and t.char_end is not None
+                     and t.char_start >= cs and t.char_end <= ce)
+
+    merged = []
+    i = 0
+    while i < len(out):
+        if i + 1 < len(out):
+            (a_lo, a_hi), _, a_conf = out[i]
+            (b_lo, b_hi), _, b_conf = out[i + 1]
+            lead_lo = _lead_start(a_lo)
+            cs = tokens[lead_lo].char_start
+            ce = tokens[b_hi - 1].char_end
+            if cs is not None and ce is not None:
+                got = _extract_range(text, _slice(cs, ce), engine, anchor)
+                if got is not None:
+                    merged.append(((lead_lo, b_hi), got[0],
+                                   min(a_conf, b_conf)))
+                    i += 2
+                    continue
+        merged.append(out[i])
+        i += 1
+    return merged
 
 
 def _char_span(tokens, lo, hi):
