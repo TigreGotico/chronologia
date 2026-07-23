@@ -26,6 +26,7 @@ saying how trustworthy it is (`exact`, `tabulated`, `reconstructed`,
 | Guide | What it gives you |
 |---|---|
 | [extraction.md](extraction.md) | `extract_timespan` — turn a phrase into the exact span it means; how the per-language vocabulary works, and how to add a language. |
+| [adding-a-language.md](adding-a-language.md) | A friendly, step-by-step guide to teaching chronologia a new language — written so a bilingual speaker who is not a programmer can follow it. Mostly editing small word-list files. |
 | [events.md](events.md) | Pulling a titled event (summary + time) out of a sentence and exporting it as an `.ics` calendar file. |
 | [recurrence.md](recurrence.md) | Repeating rules ("every third Tuesday") via the RFC 5545 RRULE grammar, expanded to concrete dates. |
 | [edtf.md](edtf.md) | Extended Date/Time Format — cataloguing-style approximate and uncertain dates ("probably the 1890s"). |
