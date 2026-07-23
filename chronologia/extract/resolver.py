@@ -1236,6 +1236,17 @@ class Resolver:
                     hour -= 1
                     minute = 60 - offset
             elif (frac_tok is not None and dir_tok is None
+                    and self.spec.conventions.bare_half_past):
+                # British-colloquial additive bare half: "half nine" == 09:30,
+                # i.e. half *past* the stated hour (the opposite of the
+                # Continental-Germanic "halb neun" == 08:30).  Only the half is
+                # colloquial; "quarter nine" is not English, so a bare quarter
+                # is rejected rather than guessed.
+                offset = self.spec.clock_fractions[frac_tok.text]
+                if offset != 30:
+                    return None
+                minute = offset
+            elif (frac_tok is not None and dir_tok is None
                     and self.spec.conventions.bare_half_to):
                 # Continental-Germanic "halb neun"/"halv nio" == the half
                 # *before* nine (08:30).  Only the half-fraction takes this

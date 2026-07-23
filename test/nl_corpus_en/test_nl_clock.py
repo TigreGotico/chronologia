@@ -80,6 +80,33 @@ def test_fraction(text, h, mi):
     assert start(text) == clk(h, mi)
 
 
+# -- British-colloquial additive bare half: "half nine" == 09:30 ----------
+# Half PAST the named hour (hour unchanged), the OPPOSITE direction of the
+# Continental-Germanic "halb neun" == 08:30 (half TO nine).  Cross-direction
+# adversarial: assert the English 09:30 here and the German 08:30 in the de
+# corpus (test_de_clock.test_halb_is_half_to, "halb neun" == 08:30).
+# Source: Cambridge Dictionary, "half past"; British native-speaker consensus.
+@pytest.mark.parametrize("text,h,mi", [
+    ("half nine", 9, 30), ("half three", 3, 30), ("half ten", 10, 30),
+    ("half six", 6, 30), ("half twelve", 12, 30), ("half one", 1, 30),
+])
+def test_bare_half_is_additive(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
+def test_bare_half_opposite_of_german():
+    # en "half three" == 03:30 (half past) vs de "halb drei" == 02:30 (half to)
+    assert start("half three") == clk(3, 30)
+
+
+# a bare QUARTER is not English ("quarter nine" is not said) -> rejected; only
+# the half takes the colloquial additive form.
+@pytest.mark.parametrize("text", ["quarter nine", "a quarter nine",
+                                   "quarter three"])
+def test_bare_quarter_rejected(text):
+    nomatch(text)
+
+
 # -- composition onto a date (minute-wide on the named day) ---------------
 
 def test_compose_date_and_pm():

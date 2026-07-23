@@ -66,6 +66,7 @@
         "at HOUR of? article? MERIDIEM? ZONE?",
         "at? HOUR of? article? MERIDIEM ZONE?",
         "at? HOUR MERIDIEM ZONE?",
+        "at? LANDMARK CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
         "at? LANDMARK of? article? MERIDIEM? ZONE?",
         "CLOCK MERIDIEM? ZONE?"
       ],

@@ -43,12 +43,17 @@ def test_impossible_date(text):
         assert res[0].start.day <= 31
 
 
-# -- bare quarter forms are regionally ambiguous -> rejected --------------
-
-@pytest.mark.parametrize("text", ["viertel neun", "dreiviertel sieben",
-                                  "viertel elf"])
-def test_bare_quarter_rejected(text):
-    nomatch(text)
+# -- bare quarter forms: South/East German + Austrian toward-the-hour ------
+# "viertel neun" == 08:15, "dreiviertel sieben" == 06:45 -- the regional
+# toward-hour reading (Bastian Sick, "Zwiebelfisch"), now enabled.  Western
+# German uses "viertel nach/vor" instead; the bare forms only ADD readings for
+# strings that were previously unparsed, so no vor/nach collision.
+@pytest.mark.parametrize("text,h,mi", [
+    ("viertel neun", 8, 15), ("dreiviertel sieben", 6, 45),
+    ("viertel elf", 10, 15),
+])
+def test_bare_quarter_regional_toward_hour(text, h, mi):
+    assert (start(text).hour, start(text).minute) == (h, mi)
 
 
 # -- a two-digit "year" is guarded off (needs 4 digits) -------------------

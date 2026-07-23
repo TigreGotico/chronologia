@@ -45,5 +45,15 @@ def test_noon():
     assert start("meio-dia") == clk(12, 0)
 
 
+# noon + additive fraction: "meio-dia e meia" == 12:30, exactly as a bare hour
+# composes "e meia".  Bare "meio-dia" stays 12:00.
+# Source: Ciberdúvidas da Língua Portuguesa ("meio-dia e meia" == 12:30).
+@pytest.mark.parametrize("text,h,mi", [
+    ("meio-dia e meia", 12, 30), ("meio-dia e quarto", 12, 15),
+])
+def test_noon_fraction(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
 def test_midnight():
     assert start("meia-noite") == clk(0, 0)

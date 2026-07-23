@@ -23,6 +23,12 @@ from ._corpus import span, start, AstroDate
     ("alle quattro meno un quarto", 2017, 6, 28, 3, 45),
     ("le tre e mezza", 2017, 6, 28, 3, 30),
     ("alle otto e un quarto", 2017, 6, 28, 8, 15),
+    # noon + additive fraction: "mezzogiorno e mezzo" == 12:30, exactly as a
+    # bare hour composes "e mezza/e mezzo".  Bare "mezzogiorno" stays 12:00.
+    # Source: Accademia della Crusca ("mezzogiorno e mezzo", "la mezza").
+    ("mezzogiorno e mezzo", 2017, 6, 28, 12, 30),
+    ("a mezzogiorno e mezzo", 2017, 6, 28, 12, 30),
+    ("mezzogiorno e un quarto", 2017, 6, 28, 12, 15),
 ])
 def test_clock(text, y, mo, d, h, mi):
     assert start(text) == AstroDate(y, mo, d, h, mi)
