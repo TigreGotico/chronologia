@@ -1,0 +1,6 @@
+# Turkish "and-a-half" clock word -- "buçuk" = 30 minutes, ADDITIVE on the
+# named (current) hour ("üç buçuk" = 3:30, "yedi buçuk" = 7:30). A dedicated
+# half-past word, not the generic half fraction.
+# Source: Türk Dil Kurumu (TDK), Güncel Türkçe Sözlük, s.v. "buçuk"
+# (bir bütünü oluşturan iki yarımdan biri; saat yarımı).
+buçuk

@@ -1,0 +1,7 @@
+# Turkish spoken-clock "to" marker -- "kala" (subtractive from the named/next
+# hour), with the hour in the DATIVE case: "saat yediye çeyrek kala" = 6:45
+# (quarter to seven), "dörde yirmi kala" = 3:40 (twenty to four). Order is
+# HOUR(-dat) MINUTE/FRACTION kala.
+# Source: Türk Dil Kurumu (TDK), Güncel Türkçe Sözlük, s.v. "kala"
+# (belirtilen zamana varmaya belli bir süre varken; "saat üçe on kala").
+kala
