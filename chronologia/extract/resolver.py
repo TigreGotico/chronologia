@@ -645,9 +645,13 @@ class Resolver:
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     def _resolve_month_day_ref(self, match, anchor):
-        """"the first of the month": the Nth day of the current month, rolled
-        to next month when that day has already passed (prefer_future)."""
-        day = int(match.slots["ORD"].value)
+        """"the first of the month" / "on the 3rd": the Nth day of the current
+        month, rolled to next month when that day has already passed
+        (prefer_future).  The bare-preposition orders ("on the 3rd", "by the
+        5th") bind a *digit* day-of-month ordinal via the NORD slot; the
+        "of month_word" order binds a general ORD."""
+        ord_tok = match.slots.get("ORD") or match.slots["NORD"]
+        day = int(ord_tok.value)
         value = datetime(anchor.year, anchor.month, day)   # raises -> None
         prefer_future = self.spec.construction_flags.get(
             "month_day_ref", {}).get("prefer_future", False)

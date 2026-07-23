@@ -43,6 +43,22 @@ _SAFE_NONE = [
     'a million reasons',
     'thousands of people',
     'billions of stars',
+    # ordinal homographs -- NOT days-of-month.  Spelled ordinals never bind as
+    # a day (only *digit* ordinals behind an "on"/"by" signal do), so even the
+    # preposition-signalled forms below stay a safe None.
+    'the first time',
+    'the third option',
+    'the second chance',
+    'he finished third',
+    'he came in first',
+    'the 100th customer',
+    'first things first',
+    'the first of many',
+    'on the third floor',
+    'on the first try',
+    'on the second thought',
+    'on the first attempt',
+    'based on the first option',
 ]
 
 
