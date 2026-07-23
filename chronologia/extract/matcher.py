@@ -122,6 +122,16 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.text in spec.seasons
     if name in ("ORD", "SORD"):
         return token.is_number and (token.value or 0) >= 1
+    if name == "NORD":
+        # a *digit* day-of-month ordinal ("3rd", "15th") -- the surface run
+        # still carries its ordinal suffix, so ``raw`` is not all-digits.
+        # Spelled ordinals ("first", "third") fold to a bare-digit ``raw``
+        # and are deliberately excluded: "on the third floor"/"on the first
+        # try" are homographs, not dates.  A plain cardinal ("3") is excluded
+        # for the same reason.  Range-capped 1..31 (a day-of-month).
+        raw = token.raw.rstrip(".")
+        return (token.is_number and 1 <= (token.value or 0) <= 31
+                and raw[:1].isdigit() and not raw.isdigit())
     if name in ("SUBH", "SUBM", "SUBS"):
         return token.is_number and (token.value or 0) >= 0
     if name == "SEL_UNIT":

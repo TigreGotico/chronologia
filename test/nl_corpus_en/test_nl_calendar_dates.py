@@ -142,6 +142,38 @@ def test_first_of_the_month(text, d):
     assert start(text) == d
 
 
+# -- "on/by the Nth": preposition-signalled bare day-of-month -------------
+#
+# A leading date preposition ("on"/"by") makes a bare *digit* ordinal a
+# day-of-month: the Nth of the anchor's current month, prefer_future rolling
+# a day already past into next month.  Anchor is Tuesday 2017-06-27, so the
+# 28th/30th are still ahead this June and the 3rd/5th/15th have passed.
+@pytest.mark.parametrize("text,d", [
+    ("on the 28th", AstroDate(2017, 6, 28)),    # still ahead of the 27th
+    ("on the 30th", AstroDate(2017, 6, 30)),
+    ("on the 3rd", AstroDate(2017, 7, 3)),      # passed -> next month
+    ("on the 5th", AstroDate(2017, 7, 5)),
+    ("on the 15th", AstroDate(2017, 7, 15)),
+    ("by the 28th", AstroDate(2017, 6, 28)),
+    ("by the 5th", AstroDate(2017, 7, 5)),      # "by monday" semantics: prefer_future
+    ("meet me on the 29th", AstroDate(2017, 6, 29)),
+])
+def test_on_the_nth_day_of_month(text, d):
+    s, e = start_end(text)
+    assert s == d
+    assert e == d + timedelta(days=1)           # a day-wide span
+
+
+# adversarial: bare digit ordinals are a day-of-month ONLY behind an "on"/"by"
+# signal.  Truly bare "the Nth" stays an honest, unresolved boundary (never a
+# silent-wrong date) -- resolving it risks the ordinal homograph trap.
+@pytest.mark.parametrize("text", [
+    "the 15th", "the 25th", "the 3rd", "the 5th",
+])
+def test_bare_nth_without_preposition_does_not_bind(text):
+    nomatch(text)
+
+
 # -- bare / marked calendar year (year-wide span) -------------------------
 
 @pytest.mark.parametrize("text,year", [

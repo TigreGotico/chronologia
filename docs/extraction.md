@@ -1106,6 +1106,19 @@ The classes, from safest to most confusable:
   of life", "spring into action"), a unit in a figure of speech ("a lost
   decade"), or a time word inside a frozen idiom ("burn the midnight oil")
   are bound literally.
+- **Bare ordinals as a day-of-month.** An ordinal with no month ("the 15th",
+  "the first") is ambiguous: "the first time", "the third option", "the 100th
+  customer", "he came in first" are ordinals, not dates. The parser resolves a
+  bare ordinal to a day-of-month **only behind a leading date preposition** —
+  `on the Nth` / `by the Nth` — and **only for the digit form** ("on the 3rd",
+  "by the 15th"); a spelled ordinal ("on the first try", "on the third floor")
+  and a preposition-less ordinal ("the 15th") stay unbound. Semantics mirror
+  `month_day_ref`'s "the Nth of the month": the Nth of the anchor's current
+  month, day-wide, with `prefer_future` rolling a day already past into next
+  month — at Wednesday 2024-03-06, "on the 25th" → 2024-03-25 (still ahead),
+  "on the 3rd" → 2024-04-03 (passed, rolls forward). "by the Nth" carries the
+  same prefer-future reckoning as "by monday". A day the current month cannot
+  hold (an impossible date) simply does not bind.
 
 ## Beyond a single span: durations, multiple mentions, recurrence
 

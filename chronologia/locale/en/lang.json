@@ -233,7 +233,9 @@
     },
     "month_day_ref": {
       "orders": [
-        "article? ORD of article? month_word"
+        "article? ORD of article? month_word",
+        "on article? NORD",
+        "by article? NORD"
       ],
       "prefer_future": true
     },
