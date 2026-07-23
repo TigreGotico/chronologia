@@ -119,6 +119,13 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.is_number and 0 <= (token.value or 0) <= 24
     if name == "MINUTE":
         return token.is_number and 0 <= (token.value or 0) <= 59
+    if name == "QUARTS":
+        # the quarter *count* of the Catalan sistema de campanar ("dos quarts
+        # de deu"): how many quarters of the coming hour have already struck.
+        # Bound generously (0..9) so a nonsense count still binds here and is
+        # refused explicitly by the resolver, rather than falling through to
+        # some other construction that would guess a time.
+        return token.is_number and 0 <= (token.value or 0) <= 9
     if name == "FRACTION":
         return token.text in spec.clock_fractions
     if name == "CLOCKDIR":

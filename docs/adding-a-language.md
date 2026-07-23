@@ -273,6 +273,41 @@ your language always says the direction word out loud — leave them all off (th
 default). The plain-language question to ask yourself is: *"In my language, does
 'half nine' mean 8:30 or 9:30?"* — and set the flag accordingly.
 
+### Counting quarters toward the hour ("dos quarts de deu")
+
+Some languages don't just shift the hour — they *count* how many quarters of the
+coming hour have already struck. Catalan's traditional **sistema de campanar**
+is the clearest case, and Catalan speaks it alongside the ordinary additive
+clock, so both have to work at once:
+
+| Catalan | Time | Same time, ordinary clock |
+|---|---|---|
+| `un quart de deu` | 09:15 | `les nou i quart` |
+| `dos quarts de deu` | 09:30 | `les nou i mitja` |
+| `tres quarts de deu` | 09:45 | `les deu menys quart` |
+
+The named hour is the one being *approached*, so the reading is
+`(hour − 1) + N×15` minutes — `un quart de deu` is quarter past **nine**. The
+hour before one is spoken as twelve, so `un quart d'una` is 12:15.
+
+This is a different *shape*, not a flag: it needs its own word list and its own
+construction order.
+
+| File | Put in it |
+|---|---|
+| `marker_quarters.voc` | your word for "quarter(s)" in this counting sense, all inflections (Catalan: `quart`, `quarts`) |
+
+Then add the order to `clock_time` in `lang.json`, before the other clock
+orders:
+
+```json
+"at? QUARTS quarters of HOUR of? article? MERIDIEM? ZONE?"
+```
+
+`QUARTS` binds the count. Only one, two and three quarters exist — a fourth
+quarter is just the whole hour, so counts outside 1–3 are refused rather than
+guessed.
+
 ---
 
 ## Tier 3 — the rich stuff
