@@ -34,7 +34,8 @@ from chronologia.extract.business import apply_business_days
 from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
                                               pretokens, render_remainder)
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
-                                              compose_date_clock, _WEEK_START)
+                                              compose_date_clock,
+                                              compose_date_daypart, _WEEK_START)
 from chronologia.extract.tokenizer import Tokenizer
 
 __all__ = [
@@ -88,19 +89,27 @@ class DateTimeEngine:
         pairs = [(m, r) for m, r in pairs if r is not None]
         return self._compose(pairs)
 
-    @staticmethod
-    def _compose(pairs) -> List[Resolution]:
-        """Fold a lone clock_time onto a lone date construction (date span
-        intersect clock -> minute span on that date); otherwise return every
-        resolution in text order."""
+    def _compose(self, pairs) -> List[Resolution]:
+        """Fold a lone clock_time (or a lone daypart) onto a lone date
+        construction -- date span intersect clock -> minute span, or date narrowed
+        to a daypart band -- otherwise return every resolution in text order."""
         clocks = [(m, r) for m, r in pairs if m.construction == "clock_time"]
+        dayparts = [(m, r) for m, r in pairs
+                    if m.construction == "daypart_ref"]
         dates = [(m, r) for m, r in pairs
                  if m.construction in DATE_CONSTRUCTIONS]
+        merged = second = None
         if len(clocks) == 1 and len(dates) == 1:
-            merged = compose_date_clock(dates[0][1], clocks[0][1])
-            drop = {id(clocks[0][0]), id(dates[0][0])}
+            merged, second = compose_date_clock(dates[0][1], clocks[0][1]), \
+                clocks[0][0]
+        elif len(dayparts) == 1 and len(dates) == 1 and not clocks:
+            name = self.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
+            merged, second = compose_date_daypart(
+                dates[0][1], dayparts[0][1], name), dayparts[0][0]
+        if merged is not None:
+            drop = {id(second), id(dates[0][0])}
             kept = [(m, r) for m, r in pairs if id(m) not in drop]
-            start = min(dates[0][0].span[0], clocks[0][0].span[0])
+            start = min(dates[0][0].span[0], second.span[0])
             out = [(start, merged)] + [(m.span[0], r) for m, r in kept]
             return [r for _, r in sorted(out, key=lambda e: e[0])]
         return [r for _, r in pairs]
@@ -811,8 +820,16 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
     dates = [(m, r) for m, r in resolved
              if m.construction in _COMPOSABLE_DATES]
+    # a lone daypart + lone date compose too: the band narrows the day the date
+    # names ("yesterday morning" -> yesterday's morning band), fixing the silent
+    # drop where the daypart word used to strand in the remainder.
+    dayparts = [(m, r) for m, r in resolved
+                if m.construction == "daypart_ref"]
     if len(clocks) == 1 and len(dates) == 1:
         res = compose_date_clock(dates[0][1], clocks[0][1])
+    elif len(dayparts) == 1 and len(dates) == 1 and not clocks:
+        name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
+        res = compose_date_daypart(dates[0][1], dayparts[0][1], name)
     else:
         # earliest match in text order wins the public result
         _, res = min(resolved, key=lambda mr: mr[0].span[0])

@@ -14,6 +14,7 @@ filename                meaning
 ``weekday_<n>.voc``     weekday index ``n`` (0 == Monday)
 ``unit_<kind>.voc``     offset unit ``kind`` (day/week/month/year/...)
 ``named_day_<off>.voc`` named day at day-offset ``off`` (signed)
+``daypart_<name>.voc`` surfaces naming the time-of-day band ``name``
 ``marker_past.voc``     direction marker, sign -1
 ``marker_future.voc``   direction marker, sign +1
 ``marker_next.voc``     relative marker, +1 week
@@ -109,6 +110,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     period_parts: Dict[str, str] = {}
     decade_words: Dict[str, int] = {}
     clock_landmarks: Dict[str, int] = {}
+    dayparts: Dict[str, str] = {}
     clock_zones: Dict[str, int] = {}
     weekend_words: Set[str] = set()
 
@@ -220,6 +222,12 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             mins = int(base[len("clock_landmark_"):])
             for s in surfaces:
                 clock_landmarks[s] = mins
+        elif base.startswith("daypart_"):
+            # daypart_<name>.voc: surfaces naming the time-of-day band <name>
+            # (band boundaries live in chronologia.dayparts, CLDR-cited)
+            name = base[len("daypart_"):]
+            for s in surfaces:
+                dayparts[s] = name
         elif base.startswith("clock_zone_"):
             mins = int(base[len("clock_zone_"):])
             for s in surfaces:
@@ -277,6 +285,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         archon_names=archon_names,
         periods=periods, scales=scales, period_parts=period_parts,
         decade_words=decade_words, clock_landmarks=clock_landmarks,
+        dayparts=dayparts,
         clock_zones=clock_zones,
         weekend_words=frozenset(weekend_words),
         weekday_full=weekday_full,

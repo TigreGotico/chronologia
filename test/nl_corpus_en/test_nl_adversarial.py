@@ -68,12 +68,16 @@ def test_absurdly_long_with_trailing_date():
 # -- ambiguity guards: an embedded real date is still found ---------------
 
 def test_embedded_date_extracted_not_the_noise():
-    # "tomorrow" is the only date token; the rest is remainder
+    # "tomorrow morning" is a date + daypart: the daypart narrows the day to
+    # its morning band (CLDR 06:00-12:00), not the whole day, and both words
+    # are consumed -- "the meeting" is the only noise left in the remainder.
     r = parse("the meeting tomorrow morning")
     assert r is not None
     assert r[0].start == ad((ANCHOR + timedelta(days=1)).replace(
-        hour=0, minute=0))
-    assert "tomorrow" not in r[1]
+        hour=6, minute=0))
+    assert r[0].end == ad((ANCHOR + timedelta(days=1)).replace(
+        hour=12, minute=0))
+    assert "tomorrow" not in r[1] and "morning" not in r[1]
 
 
 def test_number_in_non_date_context_ignored():

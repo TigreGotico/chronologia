@@ -92,6 +92,11 @@ PRECEDENCE: Dict[str, int] = {
     # "next week"/"this month"/"last year": the whole calendar period,
     # same tier as the weekday reference it generalises to coarser units
     "rel_period": 8,
+    # "this morning"/"tonight"/"yesterday morning": a time-of-day band on a
+    # deictically-selected day.  Same tier as the weekday/period references it
+    # sits beside; a bare daypart composes onto a same-text date construction
+    # (narrowing it to the band) exactly as a lone clock_time does.
+    "daypart_ref": 8,
     # "this/next/last weekend": the named two-day span, a specific
     # subdivision of the week that outranks a bare rel_period week
     "weekend_ref": 8,
