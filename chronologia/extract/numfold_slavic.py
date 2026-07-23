@@ -106,7 +106,9 @@ def _make_fold(lang: str) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
                 continue
             num = int(value) if float(value).is_integer() else float(value)
             out.append(Token(text=str(num), raw=str(num), index=0,
-                             is_number=True, value=num))
+                             is_number=True, value=num,
+                             char_start=run[0].char_start,
+                             char_end=run[-1].char_end))
             i = j
         return _reindex(out)
 
