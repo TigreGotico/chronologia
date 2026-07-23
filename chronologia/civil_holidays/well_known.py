@@ -99,6 +99,17 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
                      frozenset({"public", "religious"}), "IT", "Epifania", "it"),
     WellKnownHoliday("carnival", EasterOffsetRule(-47),
                      frozenset({"public"}), "PT", "Carnaval", "pt"),
+    # Palm Sunday — the Sunday before Easter (Easter -7), opening Holy Week.
+    # A computable Western liturgical date fixed by the same Easter computus as
+    # Good Friday; the Roman Missal / General Roman Calendar defines it as
+    # "Dominica in Palmis de Passione Domini", the sixth Sunday of Lent. It is a
+    # liturgical (not civil day-off) observance, so it carries only
+    # ``religious`` — never ``public``. Easter 2024 = 31 Mar, so Palm Sunday
+    # 2024 = 24 Mar (verified against the 2024 liturgical calendar,
+    # USCCB/Roman Missal). Anchored on ``en`` for its English surface.
+    WellKnownHoliday("palm_sunday", EasterOffsetRule(-7),
+                     frozenset({"religious"}),
+                     "VA", "Palm Sunday", "en"),
     WellKnownHoliday("good_friday", EasterOffsetRule(-2),
                      frozenset({"public", "religious"}),
                      "PT", "Sexta-feira Santa", "pt"),

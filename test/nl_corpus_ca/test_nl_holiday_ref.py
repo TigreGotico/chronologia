@@ -19,6 +19,7 @@ _BARE = [
     ("tots sants", (2017, 11, 1)),
     ("pasqua", (2018, 4, 1)),
     ("diumenge de pasqua", (2018, 4, 1)),
+    ("diumenge de rams", (2018, 3, 25)),   # Palm Sunday = Easter 2018 (1 Apr) - 7
     ("divendres sant", (2018, 3, 30)),
     ("dilluns de pasqua", (2018, 4, 2)),
     ("ascensió", (2018, 5, 10)),

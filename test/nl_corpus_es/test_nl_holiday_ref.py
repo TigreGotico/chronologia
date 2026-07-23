@@ -20,6 +20,7 @@ _BARE = [
     ("asunción", (2017, 8, 15)),
     ("todos los santos", (2017, 11, 1)),
     ("pascua", (2018, 4, 1)),
+    ("domingo de ramos", (2018, 3, 25)),   # Palm Sunday = Easter 2018 (1 Apr) - 7
     ("viernes santo", (2018, 3, 30)),
     ("ascensión", (2018, 5, 10)),
     ("corpus christi", (2018, 5, 31)),

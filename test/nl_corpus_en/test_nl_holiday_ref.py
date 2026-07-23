@@ -14,7 +14,7 @@ Pentecost = Easter+49, Corpus Christi = Easter+60, Carnival/Mardi Gras =
 Easter-47.  The "bare" rule is *next occurrence on or after the anchor*: a
 holiday already past in 2017 rolls to 2018.
 """
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -204,3 +204,61 @@ def test_rel_and_when_expanded(text, ymd):
 ])
 def test_expanded_no_match(text):
     nomatch(text)
+
+
+# ==========================================================================
+# PALM SUNDAY — the Sunday before Easter (Easter -7), the sixth Sunday of Lent
+# ("Dominica in Palmis de Passione Domini", General Roman Calendar / Roman
+# Missal).  A computable Western liturgical date, fixed by the same Gregorian
+# computus as Good Friday.  Dates below are hand-derived from an independent
+# Western computus table (Easter Sunday) and cross-checked against a published
+# liturgical calendar:
+#
+#   Easter Sunday   2024 = 31 Mar -> Palm Sunday 24 Mar 2024
+#                   2025 = 20 Apr -> Palm Sunday 13 Apr 2025
+#                   2018 =  1 Apr -> Palm Sunday 25 Mar 2018
+# ==========================================================================
+
+def _at(text, anchor_ymd):
+    r = parse(text, datetime(*anchor_ymd))
+    assert r is not None, f"{text!r} did not parse"
+    return r
+
+
+def test_palm_sunday_2024_from_march_anchor():
+    # The regression: "palm sunday" must NOT degrade to a bare next Sunday.
+    r = _at("palm sunday", (2024, 3, 6))
+    assert r[0].start == AstroDate(2024, 3, 24)
+    assert r[0].width == timedelta(days=1)
+    assert r[1].strip() == ""          # "palm" is NOT dropped to the remainder
+
+
+def test_palm_sunday_second_year():
+    r = _at("palm sunday 2025", (2024, 3, 6))
+    assert r[0].start == AstroDate(2025, 4, 13)
+    assert r[0].width == timedelta(days=1)
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ("palm sunday", (2018, 3, 25)),          # 2018 already-past -> next year
+    ("when is palm sunday", (2018, 3, 25)),
+    ("palm sunday 2024", (2024, 3, 24)),
+    ("palm sunday 2025", (2025, 4, 13)),
+])
+def test_palm_sunday_corpus(text, ymd):
+    # default corpus anchor 2017-06-27 (Palm Sunday 2017 = 9 Apr, past -> 2018)
+    assert start(text) == AstroDate(*ymd)
+
+
+def test_palm_sunday_is_liturgical_not_a_day_off():
+    # Adversarial: Palm Sunday is a religious observance, never a civil day off,
+    # so it must carry `religious` and must NOT be a `public` holiday.
+    from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
+    wk = WELL_KNOWN_BY_KEY["palm_sunday"]
+    assert "religious" in wk.categories
+    assert "public" not in wk.categories
+
+
+def test_bare_friday_still_plain_weekday():
+    # "friday" alone stays the plain next weekday, unaffected by holiday keys.
+    assert start("friday", datetime(2024, 3, 6)) == AstroDate(2024, 3, 8)
