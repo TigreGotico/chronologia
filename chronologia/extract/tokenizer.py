@@ -20,7 +20,14 @@ from typing import Tuple
 
 from chronologia.extract.model import Token, TokenizerModes
 
-_ISO = r"\d{4}-\d{2}-\d{2}"
+# ISO-8601 year-first calendar literals, kept whole: a full date -- dash
+# ("2017-06-30") or slash ("2024/03/06", 1-2 digit month/day) -- and the
+# day-less year-month ("2024-03", dash only, as ISO-8601 writes it).  A
+# 4-digit-leading, year-first surface is unambiguously Y-M-D in EVERY
+# locale, so -- unlike the day/month-ambiguous _NUMDATE below -- no
+# per-locale dmy swap ever applies here.  The four-digit lead and required
+# separator keep a bare year, fraction or decimal from ever matching.
+_ISO = r"\d{4}-\d{2}-\d{2}|\d{4}/\d{1,2}/\d{1,2}|\d{4}-\d{2}"
 # a numeric slash/dash separated date ("12/11/2024", "5-6-24"): two 1-2 digit
 # components and a 2-4 digit year, kept whole so the matcher binds it as one
 # ``NUMDATE`` slot.  Requiring the third (year) component and two separators

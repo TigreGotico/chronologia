@@ -678,7 +678,31 @@ class Resolver:
     _resolve_nongregorian_date = _resolve_reckoned_date
 
     def _resolve_iso_date(self, match, anchor):
-        y, m, d = (int(p) for p in match.slots["ISO"].text.split("-"))
+        """An ISO-8601 year-first literal: full date or day-less year-month.
+
+        Three literal shapes reach this one resolver (all year-first, so
+        component order is always Y-M-D, locale-independent):
+
+        * ``YYYY-MM-DD`` / ``YYYY/MM/DD`` -> a **day-wide** span, exactly as
+          the strict ISO date always did;
+        * ``YYYY-MM`` (the ISO year-month, dash only) -> the **month-wide**
+          span the named month occupies, reusing the same
+          :func:`_gregorian_month_span` width "June 2027" and ``calendar_date``
+          use.  A month outside 1..12 names no month, so "2024-13" resolves to
+          ``None`` (the construction does not fire) rather than silently
+          collapsing to the bare year.
+
+        An impossible day ("2024/02/31") raises ``ValueError`` from
+        ``AstroDate`` and :meth:`resolve` turns it into ``None``.
+        """
+        parts = re.split(r"[/-]", match.slots["ISO"].text)
+        if len(parts) == 2:                              # year-month, no day
+            y, m = int(parts[0]), int(parts[1])
+            if not 1 <= m <= 12:
+                return None
+            return Resolution(_gregorian_month_span(y, m),
+                              self._consumed(match))
+        y, m, d = (int(p) for p in parts)
         start = AstroDate(y, m, d)                       # ValueError -> None
         return Resolution(DateSpan(start, start + timedelta(days=1)),
                           self._consumed(match))
