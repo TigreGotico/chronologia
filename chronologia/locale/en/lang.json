@@ -41,6 +41,30 @@
         "indef? NUM UNIT from WEEKDAY"
       ]
     },
+    "named_day_span_idiom": {
+      "orders": [
+        "indef? QUANT? UNIT DAY_WORD",
+        "indef? NUM UNIT DAY_WORD"
+      ]
+    },
+    "named_day_offset_from": {
+      "orders": [
+        "indef? QUANT? UNIT from DAY_WORD",
+        "indef? NUM UNIT from DAY_WORD"
+      ]
+    },
+    "sametime_shift": {
+      "orders": [
+        "thisdeixis time REL_MARKER UNIT",
+        "thisdeixis time REL_MARKER WEEKDAY",
+        "thisdeixis time DAY_WORD"
+      ]
+    },
+    "holiday_eve": {
+      "orders": [
+        "article? eve of article? HOLIDAY"
+      ]
+    },
     "weekday_ref": {
       "orders": [
         "REL_MARKER WEEKDAY",
@@ -111,6 +135,8 @@
         "article? ordlast UNIT of MONTH YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",
         "article? ordlast UNIT of article? year_word YEAR?",
+        "article? ORD UNIT of REL_MARKER? article? SCOPE_UNIT",
+        "article? ordlast UNIT of REL_MARKER? article? SCOPE_UNIT",
         "article? ORD SCOPE_UNIT"
       ]
     },

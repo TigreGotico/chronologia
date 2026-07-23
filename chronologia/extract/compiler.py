@@ -108,6 +108,18 @@ PRECEDENCE: Dict[str, int] = {
     "named_day_after": 8,
     "named_day_before": 8,
     "weekday_offset": 8,
+    # "a week today"/"a month from tomorrow"/"this time last year": composed
+    # offsets onto a named day or the anchor instant.  They carry the extra
+    # unit/"from"/"this time" vocabulary a bare named_day or relative_offset
+    # lacks, so on the longer span they win the same-anchor tie.
+    "named_day_span_idiom": 8,
+    "named_day_offset_from": 8,
+    "sametime_shift": 8,
+    # "the eve of christmas": the day before a named holiday.  Carries the
+    # "eve of" vocabulary on top of the holiday surface, so it outranks the
+    # bare holiday_ref that would otherwise claim just the holiday and strand
+    # "eve of" in the remainder.
+    "holiday_eve": 5,
     "relative_offset": 9,
     "named_day": 10,
 }

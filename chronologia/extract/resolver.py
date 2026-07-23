@@ -372,6 +372,95 @@ class Resolver:
         value = _midnight(anchor) + timedelta(days=ahead, weeks=weeks)
         return Resolution(_day_span(value), self._consumed(match))
 
+    #: whole-day offset units (a named-day idiom only shifts by whole days).
+    _DAY_UNIT_DAYS = {"day": 1, "week": 7, "fortnight": 14}
+
+    def _named_day_base(self, match, anchor):
+        """Midnight of the day a DAY_WORD ("today"/"tomorrow"/...) names."""
+        offset = self.spec.named_days[match.slots["DAY_WORD"].text]
+        return _midnight(anchor) + timedelta(days=offset)
+
+    def _resolve_named_day_span_idiom(self, match, anchor):
+        """British/Irish idiom "a week today", "a fortnight tomorrow", "two
+        weeks today": N whole-day units *after* the day a DAY_WORD names.
+        "a week today" is one week from today, "a week tomorrow" one week from
+        tomorrow (Cambridge/Collins)."""
+        unit_kind = self.spec.units[match.slots["UNIT"].text]
+        days = self._DAY_UNIT_DAYS.get(unit_kind)
+        if days is None:                            # only day-granular units
+            return None
+        qty = self._offset_quantity(match)
+        value = self._named_day_base(match, anchor) + timedelta(days=days * qty)
+        return Resolution(_day_span(value), self._consumed(match))
+
+    def _resolve_named_day_offset_from(self, match, anchor):
+        """"a month from tomorrow", "two months from today", "a week from
+        tomorrow": N units after the day a DAY_WORD names -- the named-day
+        counterpart of "3 weeks from monday"."""
+        unit_kind = self.spec.units[match.slots["UNIT"].text]
+        qty = self._offset_quantity(match)
+        base = self._named_day_base(match, anchor)
+        if unit_kind == "month":
+            value = _add_months(base, int(qty))
+        elif unit_kind == "year":
+            value = _add_months(base, int(qty) * 12)
+        else:
+            days = self._DAY_UNIT_DAYS.get(unit_kind)
+            if days is None:
+                return None
+            value = base + timedelta(days=days * qty)
+        return Resolution(_day_span(value), self._consumed(match))
+
+    def _resolve_sametime_shift(self, match, anchor):
+        """"this time last year", "this time next week", "this time tomorrow":
+        the anchor's exact instant (its time-of-day preserved) shifted by the
+        named period -- a minute-wide moment, like any other time-carrying
+        reference."""
+        dw_tok = match.slots.get("DAY_WORD")
+        if dw_tok is not None:
+            value = anchor + timedelta(days=self.spec.named_days[dw_tok.text])
+            return Resolution(_point_span(value, "minute"),
+                              self._consumed(match))
+        rel = self.spec.rel_markers[match.slots["REL_MARKER"].text]
+        wd_tok = match.slots.get("WEEKDAY")
+        if wd_tok is not None:                       # "this time next monday"
+            target = self.spec.weekdays[wd_tok.text]
+            if rel > 0:
+                shift = (target - anchor.weekday()) % 7 or 7
+            elif rel < 0:
+                shift = -((anchor.weekday() - target) % 7 or 7)
+            else:
+                shift = target - anchor.weekday()
+            value = anchor + timedelta(days=shift)
+            return Resolution(_point_span(value, "minute"),
+                              self._consumed(match))
+        kind = self.spec.units[match.slots["UNIT"].text]
+        if kind == "day":
+            value = anchor + timedelta(days=rel)
+        elif kind == "week":
+            value = anchor + timedelta(weeks=rel)
+        elif kind == "fortnight":
+            value = anchor + timedelta(weeks=2 * rel)
+        elif kind == "month":
+            value = _add_months(anchor, rel)
+        elif kind == "year":
+            value = _add_months(anchor, rel * 12)
+        else:
+            return None
+        return Resolution(_point_span(value, "minute"), self._consumed(match))
+
+    def _resolve_holiday_eve(self, match, anchor):
+        """"the eve of christmas", "eve of the new year": the day before a
+        named holiday.  Reuses the holiday's own occurrence selection, then
+        steps one whole day back (Christmas Eve is the eve of Christmas)."""
+        holiday = self._resolve_holiday_ref(match, anchor)
+        if holiday is None:
+            return None
+        span = holiday.value
+        return Resolution(
+            DateSpan(span.start - timedelta(days=1), span.end - timedelta(days=1)),
+            self._consumed(match))
+
     def _resolve_weekday_ref(self, match, anchor):
         wd_tok = match.slots.get("WEEKDAY") or match.slots["WEEKDAYFULL"]
         target = self.spec.weekdays[wd_tok.text]
@@ -812,11 +901,28 @@ class Resolver:
         year_tok = match.slots.get("YEAR")
         year = _pivot_two_digit_year(year_tok) if year_tok else anchor.year
         month_tok = match.slots.get("MONTH")
-        if month_tok is not None:                   # month-scoped
+        scope_tok = match.slots.get("SCOPE_UNIT")
+        if month_tok is not None:                   # month-scoped (named month)
             month = self.spec.months[month_tok.text]
             res = _UNIT_OF_MONTH[unit_kind]
             value = get_date_ordinal(n, date(year, month, 1), res)
-        else:                                       # year-scoped
+        elif scope_tok is not None:                 # anchor-relative period
+            # "the last day of (the|this|next|last) month/year": the scope word
+            # names the anchor's own calendar period, shifted by an optional
+            # this/next/last marker, NOT a named month.
+            scope_kind = self.spec.units.get(scope_tok.text)
+            rel_tok = match.slots.get("REL_MARKER")
+            rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
+            if scope_kind == "month":
+                base = _add_months(_midnight(anchor).replace(day=1), rel)
+                value = get_date_ordinal(n, date(base.year, base.month, 1),
+                                         _UNIT_OF_MONTH[unit_kind])
+            elif scope_kind == "year":
+                value = get_date_ordinal(n, date(anchor.year + rel, 1, 1),
+                                         _UNIT_OF_YEAR[unit_kind])
+            else:                                   # week/decade/... -> no fit
+                return None
+        else:                                       # year-scoped (year_word)
             res = _UNIT_OF_YEAR[unit_kind]
             value = get_date_ordinal(n, date(year, 1, 1), res)
         return self._ordinal_result(value, unit_kind, match)
