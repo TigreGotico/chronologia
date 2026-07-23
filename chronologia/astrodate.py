@@ -49,6 +49,16 @@ _US_PER_DAY = 86_400_000_000
 
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
+# strftime %A/%a/%B/%b name tables (proleptic Gregorian, locale-independent).
+_WEEKDAY_NAMES_FULL = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+                       "Saturday", "Sunday")
+_WEEKDAY_NAMES_ABBR = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+_MONTH_NAMES_FULL = ("January", "February", "March", "April", "May", "June",
+                     "July", "August", "September", "October", "November",
+                     "December")
+_MONTH_NAMES_ABBR = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
+                     "Sep", "Oct", "Nov", "Dec")
+
 
 def is_leap_year(year: int) -> bool:
     """Proleptic Gregorian leap rule, valid for any year including <= 0.
@@ -383,9 +393,12 @@ class AstroDate:
     def strftime(self, fmt: str) -> str:
         """Format the year-width-safe directive subset of ``strftime``.
 
-        Supports ``%Y %m %d %H %M %S %f %j %W`` (and ``%%``); every other
-        directive is rejected, because C ``strftime`` truncates or refuses
-        the out-of-range years this type exists to carry.
+        Supports ``%Y %y %m %d %H %M %S %f %j %W %A %a %B %b %p`` (and
+        ``%%``); every other directive is rejected, because C ``strftime``
+        truncates or refuses the out-of-range years this type exists to
+        carry.  Weekday/month names are computed from AstroDate's own
+        ``weekday()``/JDN arithmetic (never from a real ``datetime``), so
+        they stay correct for years far outside 1..9999.
         """
         out = []
         i = 0
@@ -403,6 +416,8 @@ class AstroDate:
                 out.append("%")
             elif code == "Y":
                 out.append(self._year_field())
+            elif code == "y":
+                out.append(f"{self.year % 100:02d}")
             elif code == "m":
                 out.append(f"{self.month:02d}")
             elif code == "d":
@@ -422,11 +437,37 @@ class AstroDate:
                 doy = self.toordinal() - AstroDate(self.year, 1, 1).toordinal() + 1
                 jan1_wd = AstroDate(self.year, 1, 1).weekday()
                 out.append(f"{(doy + jan1_wd - 1) // 7:02d}")
+            elif code == "A":
+                out.append(_WEEKDAY_NAMES_FULL[self.weekday()])
+            elif code == "a":
+                out.append(_WEEKDAY_NAMES_ABBR[self.weekday()])
+            elif code == "B":
+                out.append(_MONTH_NAMES_FULL[self.month - 1])
+            elif code == "b":
+                out.append(_MONTH_NAMES_ABBR[self.month - 1])
+            elif code == "p":
+                out.append("AM" if self.hour < 12 else "PM")
             else:
                 raise ValueError(
                     f"strftime directive %{code} is not year-width-safe; "
-                    f"AstroDate supports %Y %m %d %H %M %S %f %j %W")
+                    f"AstroDate supports %Y %y %m %d %H %M %S %f %j %W "
+                    f"%A %a %B %b %p")
         return "".join(out)
+
+    def __format__(self, format_spec: str) -> str:
+        """``format(astrodate, spec)`` -- datetime-compatible formatting.
+
+        An empty ``format_spec`` (``f"{a}"``, ``str.format`` with no spec)
+        keeps the pre-existing behaviour of falling back to :meth:`__str__`
+        (``isoformat()``).  A non-empty spec is routed through
+        :meth:`strftime`, which computes every field -- including
+        out-of-range years and their weekday/month names -- from AstroDate's
+        own arithmetic, never by constructing a real ``datetime`` (which
+        cannot hold years outside 1..9999).
+        """
+        if not format_spec:
+            return str(self)
+        return self.strftime(format_spec)
 
     # -- arithmetic --------------------------------------------------------
     def _total_us(self) -> int:
