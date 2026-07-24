@@ -196,6 +196,12 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         "two thousand" (2000), "two thousand and one" (2001), "two thousand
         and twenty four" (2024).  Unambiguous: the digit form ``2001`` already
         reads as a year, so the spelled form must too -- no cue needed.
+        ``n`` is a single spelled word, one..nineteen, which is how English
+        names a year's thousands ("two thousand ten", and "twelve thousand"
+        for the Human-Era form the digit path's five-digit years exist for).
+        A tens-and-ones head is a quantity rather than a year name -- nobody
+        calls a year "ninety nine thousand" -- so it keeps its plain-number
+        reading and the sentence resolves to nothing.
 
     ``<c> <y>`` (year pair, **explicit year cue required**)
         "nineteen ninety-nine" (1999), "twenty twenty-four" (2024).  A bare
@@ -230,7 +236,8 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         value = None
         if head is not None and head_end < n and tokens[head_end].text in _YEAR_SCALES:
             scale = _YEAR_SCALES[tokens[head_end].text]
-            if scale == 1000 or 10 <= head <= 99:
+            head_ok = (1 <= head <= 19 if scale == 1000 else 10 <= head <= 99)
+            if head_ok:
                 j = head_end + 1
                 if j < n and tokens[j].text == "and" and j + 1 < n:
                     j += 1

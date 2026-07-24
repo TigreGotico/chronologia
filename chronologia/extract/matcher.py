@@ -36,6 +36,16 @@ def _calendar_for_surface(spec: LangSpec, surface: str):
     return None
 
 
+#: The years a bare numeral may name.  A written year is a 4-5 digit run, so
+#: the window is 1000..99999: four digits for the Common Era, five for the
+#: Human/Holocene Era form (HE = CE + 10000, see :mod:`chronologia.eras`) that
+#: "the year 12000" is written in.  Every path that reads a year from a plain
+#: number -- digits here, a spelled composition in the number fold, a
+#: NUM x SCALE phrase in the resolver -- measures against this one window, so
+#: a magnitude no digit year could carry is refused rather than resolved.
+GYEAR_MIN, GYEAR_MAX = 1000, 99999
+
+
 @dataclass(frozen=True)
 class MatchCandidate:
     match: Match
@@ -77,13 +87,13 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.is_number and ((token.value or 0) >= 32
                                     or len(token.raw.rstrip(".")) >= 4)
     if name == "GYEAR":
-        # a standalone Gregorian year: a bare 4-5 digit run (1000-99999), so
-        # small integers ("5", "123") and digit soup ("1234567890") never read
-        # as a year when nothing else anchors them
+        # a standalone Gregorian year: a bare digit run inside the GYEAR
+        # window, so small integers ("5", "123") and digit soup
+        # ("1234567890") never read as a year when nothing else anchors them
         raw = token.raw.rstrip(".")
         # a leading zero marks a clock reading ("0600"), never a year
-        return (token.is_number and raw.isdigit() and 4 <= len(raw) <= 5
-                and raw[0] != "0")
+        return (token.is_number and raw.isdigit() and raw[0] != "0"
+                and GYEAR_MIN <= int(raw) <= GYEAR_MAX)
     if name in ("MILTIME", "MILTIMEZ"):
         raw = token.raw.rstrip(".")
         if not (token.is_number and raw.isdigit() and len(raw) == 4):

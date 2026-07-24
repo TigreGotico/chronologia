@@ -125,3 +125,34 @@ def test_thousand_years_ago_is_still_deep_time():
 def test_plain_offsets_unchanged():
     assert start("five days ago") == AstroDate(2017, 6, 22, 13, 4)
     assert start("in five days") == AstroDate(2017, 7, 2, 13, 4)
+
+
+# -- the magnitude bound ---------------------------------------------------
+
+@pytest.mark.parametrize("text", [
+    "ninety nine thousand",
+    "twenty thousand",
+    "the year ninety nine thousand",
+    "the year twelve million",
+    "the year two billion",
+    "ninety nine thousand and one",
+])
+def test_out_of_range_magnitude_is_not_a_year(text):
+    """A magnitude no written year could carry is not a year.
+
+    A digit year is a 4-5 digit run, so 99000 is as far as the digit path
+    reaches and a scale word reaches far past it; and English names a year's
+    thousands with a single word ("two thousand ten", "twelve thousand"), not
+    with a tens-and-ones head.  Both refusals yield no span rather than a
+    confident wrong one."""
+    nomatch(text)
+
+
+@pytest.mark.parametrize("text,year", [
+    ("twelve thousand", 12000),
+    ("nineteen thousand", 19000),
+    ("the year twelve thousand", 12000),
+])
+def test_five_digit_years_still_read(text, year):
+    """The Human-Era form the five-digit digit years exist for."""
+    _year(text, year)
