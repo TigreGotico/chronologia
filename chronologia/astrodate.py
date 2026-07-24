@@ -45,6 +45,9 @@ _KEEP = object()
 
 # JDN of RD 1 (proleptic Gregorian 0001-01-01); ordinal = jdn - this.
 _RD_TO_JDN = 1721425
+#: joins the two ends of a span; an en dash, never a hyphen (see DateSpan.__str__)
+_TO = " – "
+
 _US_PER_DAY = 86_400_000_000
 
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -914,10 +917,15 @@ class DateSpan:
 
         A span that is exactly one whole calendar day collapses to just that
         date (``2020-01-01``); two endpoints falling on the same day share
-        one date with a time range (``2020-01-01 09:00-17:00``); anything
+        one date with a time range (``2020-01-01 09:00 – 17:00``); anything
         wider spells out both full timestamps.  A timezone offset on an
         endpoint rides along with its time, so an aware span still reads
         unambiguously instead of silently dropping the zone.
+
+        The endpoints are joined by an en dash rather than a hyphen so that a
+        hyphen never means two things at once: an aware span would otherwise
+        read ``09:00-04:00 - 17:00-04:00``, where the eye cannot tell the
+        offset's sign from the range's separator.
         """
         start, end = self.start, self.end
 
@@ -946,13 +954,14 @@ class DateSpan:
                        and (end.hour, end.minute, end.second, end.microsecond) == midnight)
         if at_midnight and self._delta_us == _US_PER_DAY:
             return date_part(start)
+        if not self._delta_us:          # a zero-width span names one instant
+            return f"{date_part(start)} {time_part(start)}"
         if same_day:
-            return f"{date_part(start)} {time_part(start)}-{time_part(end)}" \
-                if start.utcoffset() is None and end.utcoffset() is None \
-                else f"{date_part(start)} {time_part(start)} - {time_part(end)}"
+            return f"{date_part(start)} {time_part(start)}{_TO}{time_part(end)}"
         if at_midnight:
-            return f"{date_part(start)} - {date_part(end)}"
-        return f"{date_part(start)} {time_part(start)} - {date_part(end)} {time_part(end)}"
+            return f"{date_part(start)}{_TO}{date_part(end)}"
+        return (f"{date_part(start)} {time_part(start)}{_TO}"
+                f"{date_part(end)} {time_part(end)}")
 
     @staticmethod
     def _instant_us(point: AstroDate) -> int:
