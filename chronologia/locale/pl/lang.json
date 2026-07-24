@@ -59,6 +59,8 @@
    ],
    "prefer_future": true
   },
+  "era_bc": {"orders": ["NUM bc"]},
+  "era_ad": {"orders": ["NUM ad"]},
   "iso_date": {
    "orders": [
     "ISO"
