@@ -1,0 +1,7 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [18:00, 22:00).
+# Sources: dexonline, Dictionarul explicativ al limbii romane
+# (https://dexonline.ro/definitie/dupa-amiaza).
+seară
+seara

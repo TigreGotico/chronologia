@@ -60,7 +60,6 @@ def test_confusable_returns_none(text):
 _RESOLVED = [
     'een verloren decennium',
     'goedemorgen samen',
-    'vroeg in de ochtend',
 ]
 
 _LIMITATIONS = [

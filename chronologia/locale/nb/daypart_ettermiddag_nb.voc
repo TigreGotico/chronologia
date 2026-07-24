@@ -1,0 +1,8 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale no
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [12:00, 18:00).
+# Sources: Bokmalsordboka, Sprakradet and the University of Bergen
+# (https://ordbokene.no/bm/search?q=formiddag), which gives formiddag as
+# the "tid mellom frokost og klokka tolv eller middagstid".
+ettermiddag
+ettermiddagen

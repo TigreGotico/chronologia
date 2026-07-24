@@ -1,11 +1,13 @@
 """Day-part registry and DateSpan algebra.
 
-Boundary gold values are the Unicode CLDR 47 Day Period Rules (see
-``chronologia/dayparts.py`` and the papers-library copy at
-``standards/cldr47_day_period_rules.html``): en morning [06,12), afternoon
-[12,18), evening [18,21), night [21,06); es tarde [12,20). The algebra section
-asserts the interval-algebra identities (commutativity of intersect/union, the
-half-open tiling law) directly, not against any library.
+The default bands are chronologia's own English convention -- morning [06,12),
+afternoon [12,18), evening [18,21), night [21,06) -- and are *not* CLDR, which
+starts English morning at 00:00 and runs no wrapping night. The per-language
+bands are the Unicode CLDR 47 Day Period Rules (see ``chronologia/dayparts.py``
+and the papers-library copy at ``standards/cldr47_day_period_rules.html``): es
+tarde [12,20). The algebra section asserts the interval-algebra identities
+(commutativity of intersect/union, the half-open tiling law) directly, not
+against any library.
 """
 import unittest
 from datetime import date, datetime, time, timedelta
@@ -48,13 +50,26 @@ class TestDefaults(unittest.TestCase):
         self.assertEqual(daypart_span(TUE, "morning").end,
                          daypart_span(TUE, "afternoon").start)
 
-    def test_defaults_have_no_region(self):
+    def test_defaults_have_no_language(self):
         for name in ("morning", "afternoon", "evening", "night",
                      "noon", "midnight"):
+            self.assertIsNone(lookup(name).lang)
+
+    def test_defaults_have_no_region_under_the_old_spelling(self):
+        # ``region`` is the pre-rename name of ``lang`` and still reads.
+        for name in ("morning", "afternoon", "evening", "night"):
             self.assertIsNone(lookup(name).region)
 
-    def test_source_is_cited(self):
-        self.assertIn("CLDR", lookup("morning").source)
+    def test_default_source_does_not_claim_cldr(self):
+        # The default set is chronologia's English convention, not CLDR en; a
+        # wrong citation would be worse than none, so the string must not
+        # borrow CLDR's authority.
+        source = lookup("morning").source
+        self.assertNotIn("CLDR", source)
+        self.assertIn("chronologia", source)
+
+    def test_language_rows_cite_cldr(self):
+        self.assertIn("CLDR", lookup("tarde", "es").source)
 
     def test_registry_keys(self):
         self.assertIn("morning", DAY_PARTS)

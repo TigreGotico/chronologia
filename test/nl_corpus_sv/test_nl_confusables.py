@@ -41,7 +41,6 @@ _SAFE_NONE = [
     'en miljon skäl',
     'tusentals människor',
     'uppgående sol',
-    'tidigt på morgonen',
     'en sekund av tystnad',
     'de flesta människor',
     'ett par dagar',

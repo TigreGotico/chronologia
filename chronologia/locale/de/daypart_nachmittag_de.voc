@@ -1,0 +1,9 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale de
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [13:00, 18:00).
+# Sources: Duden (https://www.duden.de/rechtschreibung/Vormittag), which
+# gives Vormittag as the "Zeit zwischen Morgen und Mittag".
+# The Nachmittag opens at 13:00, after the hour-wide Mittag, not at noon
+# the way English afternoon does.
+nachmittag
+nachmittags

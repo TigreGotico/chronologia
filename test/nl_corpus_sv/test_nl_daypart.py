@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+"""Swedish time-of-day dayparts: morgon, formiddag, eftermiddag, kvall, natt.
+
+The Nordic day has five bands, with a short morgon handing over to a
+formiddag that English cannot name in one word: natt ``[00:00, 05:00)``,
+morgon ``[05:00, 10:00)``, formiddag ``[10:00, 12:00)``, eftermiddag
+``[12:00, 18:00)``, kvall ``[18:00, 24:00)``.
+
+The boundaries are the Unicode CLDR 47 day-period rules for locale ``sv``
+(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+transcribed in :mod:`chronologia.dayparts`. They are *not* English's: asserting
+the exact span is the whole point of this file, because a band that silently
+took English's hours would still look like a working day-part.
+
+Anchor: Tuesday 2017-06-27 13:04. Every band carries
+``BASIS_RECONSTRUCTED`` -- a day-part is a cultural boundary, not a clock
+reading the speaker gave.
+"""
+import pytest
+
+from chronologia.astrodate import BASIS_RECONSTRUCTED
+
+from ._corpus import ANCHOR, AstroDate, parse, span  # noqa: F401
+
+
+def _band(text, start, end):
+    s = span(text)
+    assert (s.start, s.end) == (start, end), f"{text!r} resolved to {s}"
+    assert s.basis == BASIS_RECONSTRUCTED, f"{text!r} basis {s.basis!r}"
+
+
+_BANDS = [
+    ('denna morgon', AstroDate(2017, 6, 27, 5, 0), AstroDate(2017, 6, 27, 10, 0)),
+    ('tidigt på morgonen', AstroDate(2017, 6, 27, 5, 0), AstroDate(2017, 6, 27, 10, 0)),
+    ('imorgon morgon', AstroDate(2017, 6, 28, 5, 0), AstroDate(2017, 6, 28, 10, 0)),
+    ('i förmiddag', AstroDate(2017, 6, 27, 10, 0), AstroDate(2017, 6, 27, 12, 0)),
+    ('i eftermiddag', AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 18, 0)),
+    ('imorgon eftermiddag', AstroDate(2017, 6, 28, 12, 0), AstroDate(2017, 6, 28, 18, 0)),
+    ('i kväll', AstroDate(2017, 6, 27, 18, 0), AstroDate(2017, 6, 28)),
+    ('igår kväll', AstroDate(2017, 6, 26, 18, 0), AstroDate(2017, 6, 27)),
+    ('imorgon kväll', AstroDate(2017, 6, 28, 18, 0), AstroDate(2017, 6, 29)),
+    ('i natt', AstroDate(2017, 6, 27), AstroDate(2017, 6, 27, 5, 0)),
+]
+
+
+@pytest.mark.parametrize("text,start,end", _BANDS)
+def test_daypart_band(text, start, end):
+    _band(text, start, end)
+
+
+def test_bare_named_day_is_still_a_whole_day():
+    """Swedish writes tomorrow "imorgon", one token, so the bare "morgon" band
+    word never shadows it -- the Danish and Norwegian locales, which do list a
+    bare "morgen"/"morgon" as tomorrow, had to leave that band out."""
+    s = span('imorgon')
+    assert (s.start, s.end) == (AstroDate(2017, 6, 28), AstroDate(2017, 6, 29))
+
+
+@pytest.mark.parametrize("text", [
+    '',
+    '   ',
+    '!!!',
+    'asdf qwer zxcv',
+    '1234567890',
+    'god kväll',
+    'kväll',
+    'natt natt natt',
+])
+def test_adversarial_never_raises(text):
+    """Garbage, bare day-part words and non-temporal uses must be survivable.
+
+    The contract is that nothing here raises; a sentence may legitimately bind
+    a band or bind nothing, and both are recorded in the cases that assert a
+    result. What must never happen is an exception escaping the parser.
+    """
+    parse(text)

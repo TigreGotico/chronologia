@@ -55,8 +55,6 @@ def test_confusable_returns_none(text):
 
 
 _RESOLVED = [
-    'de manhã cedo',
-    'a manhã seguinte',
     'o senhor domingos chegou',
 ]
 

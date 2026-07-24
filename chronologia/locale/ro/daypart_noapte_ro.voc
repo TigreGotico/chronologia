@@ -1,0 +1,11 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [22:00, 05:00).
+# Sources: dexonline, Dictionarul explicativ al limbii romane
+# (https://dexonline.ro/definitie/dupa-amiaza).
+# The chart lists noapte twice, at 00:00 and again at 22:00: one band
+# split only by the start-time notation, joined here into the single
+# midnight-crossing night it is. Romanian is the only language of the
+# thirteen where that join fires.
+noapte
+noaptea

@@ -1,0 +1,9 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale nl
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [06:00, 12:00).
+# Sources: Algemeen Nederlands Woordenboek, Instituut voor de Nederlandse
+# Taal (https://anw.ivdnt.org/article/ochtend).
+# "vanochtend" is a single-word today+ochtend surface, the Dutch shape of
+# English "tonight", and the ANW carries it as its own entry.
+ochtend
+vanochtend

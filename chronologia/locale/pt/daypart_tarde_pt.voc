@@ -1,0 +1,12 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale pt
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [12:00, 19:00).
+# Sources: Dicionario Priberam da Lingua Portuguesa
+# (https://dicionario.priberam.org/manha), which gives manha as the
+# "periodo de tempo entre o amanhecer e o meio-dia". The entry marks no
+# European/Brazilian split for these words, and none is made here: both
+# varieties say manha, tarde, noite and madrugada alike.
+# "tarde" is also the adverb "late", so the bare word is not read as the
+# day-part: it needs an article, "de" or "a" in front, which is how the
+# band is actually said ("a tarde", "de tarde", "esta tarde").
+tarde

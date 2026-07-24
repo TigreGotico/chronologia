@@ -1,0 +1,9 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale de
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [10:00, 12:00).
+# Sources: Duden (https://www.duden.de/rechtschreibung/Vormittag), which
+# gives Vormittag as the "Zeit zwischen Morgen und Mittag".
+# German splits what English runs together as one morning, and Vormittag
+# is the half English has no word for at all.
+vormittag
+vormittags
