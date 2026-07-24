@@ -138,6 +138,26 @@ resolves to a date works — bare dates, dates with years, and holidays
 ("from christmas to new year's day") all compose, in dash form too
 ("july 20 - july 25").
 
+**The month may be named once for the pair.** "del 5 al 12 de junio" (es),
+"du 5 au 12 juin" (fr), "dal 5 al 12 giugno" (it), "с 5 по 12 июня" (ru) and
+the English "June 5 to 12" all read as 5–12 June: the endpoint that carries
+only a bare day is read through its partner's own words, so the day is never
+dropped. This is one rule over the token stream — the partner's slice is
+rebuilt with its numeral replaced — so the language's own glue ("de", "di")
+and word order come along without a per-locale spelling. Two bare numbers
+lend each other nothing, which is why "from 9 to 5" is still a working day
+and "quarter to five" is still a clock.
+
+**A language's "until" word closes a range as well as opening one.** English
+"until" is both the open marker ("until friday") and a `to` connector ("from
+june 5 until june 12"); every language's `marker_until` surface now does the
+same job, so Persian "از ۵ ژوئن تا ۱۲ ژوئن", Indonesian "5 Juni sampai 12
+Juni" and Malay "12 Jun hingga 20 Jun" are the closed ranges they say rather
+than open ones running to "now". The named limit is included, matching the
+open-range convention below and the sources those languages state it with —
+Ожегов s.v. «по» II.1 ("Отпуск по воскресенье"), KBBI s.v. *sampai* sense 6
+("perjanjian itu berlaku sampai tahun depan"), Kamus Dewan s.v. *hingga*.
+
 **Open-ended ranges** name a single endpoint and pin the other edge to the
 anchor ("now"). The named endpoint keeps the closed-range convention — the
 *until* endpoint contributes its end (it is included in full, like the right

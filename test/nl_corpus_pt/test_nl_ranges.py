@@ -93,3 +93,37 @@ def test_desde_open_end():
 @pytest.mark.parametrize("text", ["de maçã a laranja", "de aqui a ali"])
 def test_non_temporal_range_is_none(text):
     nomatch(text)
+
+
+# -- the shared-month range: the month named ONCE for the pair ---------------
+# Naming the month once is the default written form of a date range in the
+# Romance languages (RAE, Ortografia de la lengua espanola 5.2.5.1, and its
+# counterparts), and the endpoint carrying only the bare day used to be thrown
+# away -- the span collapsed onto the dated endpoint alone.  The bare day is
+# read through its partner's own words, so both forms now agree.
+
+@pytest.mark.parametrize("text", [
+    "de 5 a 12 de junho",
+    "de 5 de junho a 12 de junho",
+    "do 5 ao 12 de junho",
+])
+def test_shared_month_range_reads_both_days(text):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(2018, 6, 5) and ee == AstroDate(2018, 6, 13)
+
+
+def test_shared_month_range_crosses_the_year():
+    ss, ee = start_end("de 28 a 31 de dezembro")
+    assert ss == AstroDate(2017, 12, 28) and ee == AstroDate(2018, 1, 1)
+
+
+def test_a_without_a_from_lead_is_not_a_range():
+    ss, ee = start_end("o concerto é às três")
+    assert ss == AstroDate(2017, 6, 28, 3, 0)
+    assert ee == AstroDate(2017, 6, 28, 3, 1)
+
+
+@pytest.mark.parametrize("text", ["do ao", "de 5 a", "vamos do pão ao vinho"])
+def test_shared_month_garbage_never_raises(text):
+    from ._corpus import parse
+    parse(text)

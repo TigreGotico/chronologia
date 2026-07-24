@@ -7,7 +7,7 @@ framing is not English-only.  Because Spanish "a" is a hyper-common preposition
 a "from" lead disambiguates it -- the adversarial cases below pin that down."""
 import pytest
 
-from ._corpus import AstroDate, start_end, nomatch
+from ._corpus import AstroDate, start_end, nomatch, parse
 
 
 @pytest.mark.parametrize("text,s,e", [
@@ -89,3 +89,61 @@ def test_desde_open_end():
 @pytest.mark.parametrize("text", ["de manzana a naranja", "de aquí a allí"])
 def test_non_temporal_range_is_none(text):
     nomatch(text)
+
+
+# -- the shared-month range: the month named ONCE for the pair ---------------
+# Naming the month once is the default written form of a date range in the
+# Romance languages (RAE, Ortografia de la lengua espanola 5.2.5.1, and its
+# counterparts), and the endpoint carrying only the bare day used to be thrown
+# away -- the span collapsed onto the dated endpoint alone.  The bare day is
+# read through its partner's own words, so both forms now agree.
+
+@pytest.mark.parametrize("text", [
+    "del 5 al 12 de junio",
+    "del 5 de junio al 12 de junio",
+    "de 5 a 12 de junio",
+    "desde el 5 de junio hasta el 12 de junio",
+])
+def test_shared_month_range_reads_both_days(text):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(2018, 6, 5) and ee == AstroDate(2018, 6, 13)
+
+
+@pytest.mark.parametrize("text,s,e", [
+    ("del 28 de junio al 3 de julio", (2017, 6, 28), (2017, 7, 4)),
+    ("del 28 de diciembre al 3 de enero", (2017, 12, 28), (2018, 1, 4)),
+    ("del 5 al 12 de agosto", (2017, 8, 5), (2017, 8, 13)),
+])
+def test_del_al_crosses_month_and_year(text, s, e):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(*s) and ee == AstroDate(*e)
+
+
+def test_del_al_consumes_its_framing_words():
+    r = parse("del 5 al 12 de junio")
+    assert r.remainder == ""
+
+
+# -- adversarial: "al" is also the clock preposition, and a reversed or
+# nonsensical pair must stay refused rather than fabricate a span.
+def test_al_without_a_from_lead_is_not_a_range():
+    # no "del" lead, so the "al" connector stays untrusted and the sentence
+    # reads as the single clock span it is
+    ss, ee = start_end("la cita es al mediodía")
+    assert ss == AstroDate(2017, 6, 28, 12, 0)
+    assert ee == AstroDate(2017, 6, 28, 12, 1)
+
+
+def test_del_al_reversed_pinned_dates_fabricate_nothing():
+    # both endpoints carry an explicit year, so neither may be rolled and the
+    # range refuses; the ordinary single-span path reads the first date and
+    # leaves the second in the remainder rather than inventing an interval
+    r = parse("del 12 de junio de 2020 al 5 de junio de 2020")
+    assert r.span.start == AstroDate(2020, 6, 12)
+    assert r.span.end == AstroDate(2020, 6, 13)
+    assert "5 de junio de 2020" in r.remainder
+
+
+@pytest.mark.parametrize("text", ["del al", "del 5 al", "del pan al vino"])
+def test_del_al_garbage_never_raises(text):
+    parse(text)

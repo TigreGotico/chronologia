@@ -339,7 +339,19 @@ def _extract_range(text, tokens, engine, anchor):
     n = len(tokens)
     if n < 2:
         return None
-    to_surf = _conn_surfaces(spec, "to", _RANGE_TO)
+    # a language's ``until`` word *is* its closed-range terminator: English
+    # says so in the defaults above, where "until"/"till"/"through" are ``to``
+    # words as much as "to" is.  Many locales declare their terminator only in
+    # ``marker_until`` -- Persian "تا", Indonesian "sampai", Malay "hingga" --
+    # and a closed range said with one of those used to fall through to the
+    # OPEN reading, returning "from the left endpoint to now": a strictly
+    # wider span than was uttered, with the stated terminator left in the
+    # remainder.  Unioning the two connectors makes the word bind on both
+    # readings in every language at once.  The open reading is untouched: a
+    # leading marker sits at token 0, where :func:`_first_to_split` cannot
+    # split because that would leave the left endpoint empty.
+    to_surf = _conn_surfaces(
+        spec, "to", _RANGE_TO + tuple(spec.connectors.get("until", ())))
     from_surf = _conn_surfaces(spec, "from", _RANGE_FROM)
     between_surf = _conn_surfaces(spec, "between", _RANGE_BETWEEN)
     and_surf = _conn_surfaces(spec, "and", _RANGE_AND)
@@ -352,11 +364,21 @@ def _extract_range(text, tokens, engine, anchor):
     # "desde") disambiguates it: a bare "A a B" must not fabricate a range out of
     # "junio a las tres".  English "to"/"until" are not ``at`` markers, so this
     # set is empty for English and every other language leaves bare ranges intact.
-    lead_required = {s.lower() for s in spec.connectors.get("to", ())
-                     if s in spec.connectors.get("at", ())}
+    at_words = set(spec.connectors.get("at", ()))
+    lead_required = {s.lower()
+                     for s in set(spec.connectors.get("to", ()))
+                     | set(spec.connectors.get("until", ()))
+                     if s in at_words}
 
     def endpoint(sub):
         return _range_endpoint(text, sub, engine, anchor)
+
+    def borrowed(sub):
+        # a slice carrying tokens lent by the other endpoint; resolved through
+        # the synthetic-token path so the lent words, which have no extent of
+        # their own here, cannot surface in this endpoint's remainder
+        return _range_endpoint(text, sub, engine, anchor,
+                               resolve=_variant_endpoint)
 
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
@@ -385,7 +407,8 @@ def _extract_range(text, tokens, engine, anchor):
                 got = _compose_clock_range(text, left_tok, right_tok,
                                            engine, anchor)
             if got is None:
-                got = _compose_range(left_tok, right_tok, endpoint, spec)
+                got = _compose_range(left_tok, right_tok, endpoint,
+                                     borrowed, spec)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -400,13 +423,14 @@ def _extract_range(text, tokens, engine, anchor):
             got = _compose_clock_range(text, left_tok, right_tok,
                                        engine, anchor)
             if got is None:
-                got = _compose_range(left_tok, right_tok, endpoint, spec)
+                got = _compose_range(left_tok, right_tok, endpoint,
+                                     borrowed, spec)
             if got is not None:
                 return _with_prefix(got, prefix)
     return None
 
 
-def _range_endpoint(text, sub, engine, anchor):
+def _range_endpoint(text, sub, engine, anchor, resolve=None):
     """A range endpoint carrying its *granularity kind* and whether its year was
     pinned, so :func:`_compose_range` can roll it without fabricating.
 
@@ -425,11 +449,17 @@ def _range_endpoint(text, sub, engine, anchor):
     ``pinned`` is True when the slice carries an explicit year (a year-magnitude
     number).  A pinned endpoint's cycle is fixed, so the straddle pull-back that
     repairs a bare, prefer_future-flung endpoint must not touch it.
+
+    ``resolve`` names which reader the slice goes through; it defaults to the
+    plain one and is swapped for :func:`_variant_endpoint` when the slice
+    carries tokens lent by the other endpoint, whose text belongs to that
+    endpoint and so must not reach this one's remainder.
     """
+    resolve = resolve or _resolve_endpoint
     pinned = any(t.is_number and t.value is not None and t.value >= 100
                  for t in sub)
     weekday = any(t.text in engine.spec.weekdays for t in sub)
-    got = _resolve_endpoint(text, sub, engine, anchor)
+    got = resolve(text, sub, engine, anchor)
     if got is not None:
         span, rem = got
         width = span.end - span.start
@@ -670,7 +700,53 @@ def _compose_clock_range(text, left_tok, right_tok, engine, anchor):
     return None
 
 
-def _compose_range(left_tok, right_tok, endpoint, spec):
+def _lone_numeral(sub):
+    """The single token of a slice that is nothing but one numeral, else None.
+
+    Such an endpoint says a number and nothing else, so on its own it names no
+    calendar field at all; it is the shape that has to look to its partner.
+    """
+    return sub[0] if len(sub) == 1 and sub[0].is_number \
+        and sub[0].value is not None else None
+
+
+def _shared_context(bare, donor):
+    """``donor``'s slice with its numeral swapped for the ``bare`` endpoint's.
+
+    Naming the month once for a pair of days is the *default* written form of
+    a date range in the Romance languages -- "del 5 al 12 de junio" (RAE,
+    Ortografia de la lengua espanola 5.2.5.1), "du 5 au 12 juin", "dal 5 al 12
+    giugno" -- and English writes it too ("June 5 to 12").  The endpoint left
+    holding only a bare day cannot be read on its own, so the pair used to
+    lose it: the range collapsed onto the dated endpoint and returned a
+    one-day span, or ran from the dated endpoint to the anchor instant.
+
+    The repair is to read the bare endpoint through its partner's own words.
+    The donor slice is rebuilt with its numeral replaced by the bare one, so
+    "12 de junio" lends "5" everything except the day and "June 5" lends "12"
+    the month that precedes it.  Word order and the language's own glue ("de",
+    "di") come along unexamined, which is why this one rule serves every
+    locale instead of forty spellings of the same special case.
+
+    It fires only when the donor holds exactly one numeral beside at least one
+    other word.  One numeral means there is no question which field the bare
+    endpoint stands in for, and the other word is the context there would
+    otherwise be nothing to borrow -- so two bare numerals ("from 9 to 5")
+    lend each other nothing and keep their existing clock reading.  The lent
+    tokens are synthesised without a character extent, because they belong to
+    the *other* endpoint's stretch of the utterance and must never be billed
+    to this one's remainder.
+    """
+    nums = [i for i, t in enumerate(donor)
+            if t.is_number and t.value is not None]
+    if len(nums) != 1 or len(donor) < 2:
+        return None
+    return tuple(bare if i == nums[0]
+                 else Token(text=t.text, raw=t.raw, index=-1 - i)
+                 for i, t in enumerate(donor))
+
+
+def _compose_range(left_tok, right_tok, endpoint, borrowed, spec):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -687,6 +763,22 @@ def _compose_range(left_tok, right_tok, endpoint, spec):
     2020") yields ``None`` rather than a fabricated span."""
     left = endpoint(left_tok)
     right = endpoint(right_tok)
+    # one endpoint written as a bare number against a partner that names a
+    # month is that month's day, and nothing else -- there is no second
+    # reading of "del 5 al 12 de junio" in which the 5 is not the fifth of
+    # June.  So the borrowed reading is preferred over whatever the lone
+    # numeral resolved to by itself (a day of the *current* month, an hour),
+    # which is where the endpoint was previously being thrown away.  See
+    # :func:`_shared_context` for the conditions that keep it narrow.
+    bare_left, bare_right = _lone_numeral(left_tok), _lone_numeral(right_tok)
+    if bare_left is not None and bare_right is None:
+        shared = _shared_context(bare_left, right_tok)
+        if shared is not None:
+            left = borrowed(shared) or left
+    elif bare_right is not None and bare_left is None:
+        shared = _shared_context(bare_right, left_tok)
+        if shared is not None:
+            right = borrowed(shared) or right
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
     # endpoint's trailing meridiem so both read on the same clock
     if left is None and right is not None and left_tok:
