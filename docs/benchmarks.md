@@ -40,6 +40,12 @@ running any of the three engines and copying their output. That
 independence is what makes the comparison meaningful: nobody is grading
 an engine against its own answer key.
 
+That said, the corpus is still chronologia's own — the sentences were
+written to exercise the phrasings chronologia set out to read, not sampled
+independently of it — so the comparison is self-selected in chronologia's
+favour, and the score should be read as "how chronologia does on the
+phrasings it was built for," not a neutral, third-party benchmark.
+
 `benchmark/adapter.py` does the pulling. It uses pytest's own collection
 machinery to walk every `test/nl_corpus_*/` package and gather every
 parametrized test case shaped `(text, expected)` where `expected` is a

@@ -532,11 +532,11 @@ that Friday; no wage was paid; the day is a hole in the civil record. That is a
 from chronologia import TIMELINES, NeverExisted
 
 samoa = TIMELINES["samoa_2011"]
-gone = samoa.to_jdn((2011, 12, 30))          # ask for the deleted Friday
+gone = samoa.date(2011, 12, 30)               # ask for the deleted Friday
 print(type(gone).__name__)                    # NeverExisted
 print(gone.discontinuity.kind.name)           # SKIP
 # the days on either side are now neighbours — one day apart, not two:
-print(samoa.to_jdn((2011, 12, 31)) - samoa.to_jdn((2011, 12, 29)))   # 1
+print((samoa.date(2011, 12, 31) - samoa.date(2011, 12, 29)).days)   # 1
 ```
 
 Samoa, the Philippines (which deleted 31 December 1844), and Alaska (whose 1867

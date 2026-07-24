@@ -45,6 +45,9 @@ _KEEP = object()
 
 # JDN of RD 1 (proleptic Gregorian 0001-01-01); ordinal = jdn - this.
 _RD_TO_JDN = 1721425
+#: joins the two ends of a span; an en dash, never a hyphen (see DateSpan.__str__)
+_TO = " – "
+
 _US_PER_DAY = 86_400_000_000
 
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -908,6 +911,57 @@ class DateSpan:
         if self.basis not in _BASIS_RANK:
             raise ValueError(f"unknown basis {self.basis!r}; expected one of "
                              f"{sorted(_BASIS_RANK)}")
+
+    def __str__(self) -> str:
+        """A compact, human-legible rendering (``__repr__`` stays unambiguous).
+
+        A span that is exactly one whole calendar day collapses to just that
+        date (``2020-01-01``); two endpoints falling on the same day share
+        one date with a time range (``2020-01-01 09:00 – 17:00``); anything
+        wider spells out both full timestamps.  A timezone offset on an
+        endpoint rides along with its time, so an aware span still reads
+        unambiguously instead of silently dropping the zone.
+
+        The endpoints are joined by an en dash rather than a hyphen so that a
+        hyphen never means two things at once: an aware span would otherwise
+        read ``09:00-04:00 - 17:00-04:00``, where the eye cannot tell the
+        offset's sign from the range's separator.
+        """
+        start, end = self.start, self.end
+
+        def date_part(d: AstroDate) -> str:
+            return f"{d._year_field()}-{d.month:02d}-{d.day:02d}"
+
+        def time_part(d: AstroDate) -> str:
+            s = f"{d.hour:02d}:{d.minute:02d}"
+            if d.second or d.microsecond:
+                s += f":{d.second:02d}"
+                if d.microsecond:
+                    s += f".{d.microsecond:06d}"
+            off = d.utcoffset()
+            if off is not None:
+                total = _td_us(off) // 1_000_000
+                sign = "+" if total >= 0 else "-"
+                total = abs(total)
+                hh, rem = divmod(total, 3600)
+                mm, ss = divmod(rem, 60)
+                s += f"{sign}{hh:02d}:{mm:02d}" + (f":{ss:02d}" if ss else "")
+            return s
+
+        midnight = (0, 0, 0, 0)
+        same_day = (start.year, start.month, start.day) == (end.year, end.month, end.day)
+        at_midnight = ((start.hour, start.minute, start.second, start.microsecond) == midnight
+                       and (end.hour, end.minute, end.second, end.microsecond) == midnight)
+        if at_midnight and self._delta_us == _US_PER_DAY:
+            return date_part(start)
+        if not self._delta_us:          # a zero-width span names one instant
+            return f"{date_part(start)} {time_part(start)}"
+        if same_day:
+            return f"{date_part(start)} {time_part(start)}{_TO}{time_part(end)}"
+        if at_midnight:
+            return f"{date_part(start)}{_TO}{date_part(end)}"
+        return (f"{date_part(start)} {time_part(start)}{_TO}"
+                f"{date_part(end)} {time_part(end)}")
 
     @staticmethod
     def _instant_us(point: AstroDate) -> int:

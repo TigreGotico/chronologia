@@ -110,14 +110,14 @@ count. And the reforms landed in different years in different countries: Britain
 each calendar meets every other at the day-number underneath.
 
 ```python
-from chronologia import julian_to_jdn, gregorian_to_jdn, TIMELINES, REGNAL_SEQUENCES
+from chronologia import CALENDARS, AstroDate, TIMELINES, REGNAL_SEQUENCES
 
 # "How many days between a Julian-dated event and a Gregorian-dated one?"
 # An action reported in a Russian (Old Style / Julian) dispatch as 19 Aug 1700,
 # and a treaty dated in a Western (New Style / Gregorian) chancery as 10 Sep 1700.
-old_style = julian_to_jdn(1700, 8, 19)
-new_style = gregorian_to_jdn(1700, 9, 10)
-print("days apart:", new_style - old_style)
+old_style = CALENDARS["julian"].date(1700, 8, 19)
+new_style = AstroDate(1700, 9, 10)
+print("days apart:", (new_style - old_style).days)
 # days apart: 11
 
 # Done the naive way — subtracting the calendar numbers as if both were the
