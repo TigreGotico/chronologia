@@ -58,7 +58,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Mapping, Optional, Tuple, Union
+from typing import (Callable, Dict, List, Mapping, Optional, Tuple, Union)
 
 # JDN of RD 1 (proleptic Gregorian 0001-01-01) minus the RD value itself:
 # JDN(noon integer) = RD + 1721425.  Verified: gregorian_to_jdn(1, 1, 1) ==
@@ -808,6 +808,75 @@ def _month_field(month: int, leap: int) -> int:
 
 
 # --------------------------------------------------------------------------
+# Field validation: month/day bounds derived from each calendar's own rules.
+# --------------------------------------------------------------------------
+# A calendar's legal ``(year, month, day)`` triples are exactly the ones its
+# own ``from_jdn`` hands back, so the bounds are *derived* rather than tabled:
+# a triple is legal iff it survives the JDN round trip
+# ``from_jdn(to_jdn(y, m, d)) == (y, m, d)``.  That is the same law the
+# property tests assert, so nothing that round-trips today can be rejected
+# here, and every irregular case comes out right for free -- the Hebrew 13th
+# month of a leap year, the 5/6-day Coptic/Ethiopic and Armenian/Egyptian
+# epagomenal month, the French Republican complementary days, Badí'
+# Ayyám-i-Há, ISO week 53, and the 0-based Maya uinal/kin positions.
+#
+# The fast path is one round trip.  Only when that fails does the slow path
+# probe the neighbourhood to report the concrete valid range in the message.
+
+_PROBE_DAYS = range(-1, 42)         # widest plausible day/kin span, plus edges
+
+
+def _accepts(cal, year: int, month: int, day: int) -> bool:
+    """Whether ``cal`` genuinely represents ``(year, month, day)``."""
+    try:
+        jdn = cal.to_jdn(year, month, day)
+        return cal.from_jdn(jdn) == (year, month, day)
+    except Exception:               # out of domain / out of table / overflow
+        return False
+
+
+def _valid_months(cal, year: int) -> List[int]:
+    """Month numbers ``cal`` accepts in ``year`` (probed, error path only)."""
+    return [m for m in range(-1, cal.month_count + 2)
+            if any(_accepts(cal, year, m, d) for d in _PROBE_DAYS)]
+
+
+def _valid_days(cal, year: int, month: int) -> List[int]:
+    return [d for d in _PROBE_DAYS if _accepts(cal, year, month, d)]
+
+
+def _range_text(values: List[int]) -> str:
+    return f"{values[0]}..{values[-1]}"
+
+
+def _validate_fields(cal, year: int, month: int, day: int) -> None:
+    """Raise ``ValueError`` unless ``(year, month, day)`` is a real date.
+
+    Silent-wrong is the failure this prevents: without it a typo such as
+    month 99 or day 0 flows straight through the arithmetic and yields a
+    confident, plausible-looking -- and wrong -- Gregorian instant.
+    """
+    if _accepts(cal, year, month, day):
+        return
+    months = _valid_months(cal, year)
+    if not months:
+        raise ValueError(
+            f"{cal.key} year {year} is outside the calendar's domain")
+    if month not in months:
+        raise ValueError(
+            f"{cal.key} month {month} out of range for year {year}; "
+            f"expected {_range_text(months)}")
+    days = _valid_days(cal, year, month)
+    if not days:                    # defensive: month listed but no legal day
+        raise ValueError(
+            f"{cal.key} month {month} out of range for year {year}; "
+            f"expected {_range_text(months)}")
+    raise ValueError(
+        f"{cal.key} day {day} out of range for {year}-{month}; "
+        f"expected {_range_text(days)}")
+
+
+# --------------------------------------------------------------------------
 # Friendly object facade: CalendarDate (objects in, objects out).
 # --------------------------------------------------------------------------
 # The JDN plumbing above is the internal architecture; callers should never
@@ -979,6 +1048,14 @@ class TabulatedCalendar:
         from chronologia.astrodate import AstroDate
         return AstroDate(*jdn_to_gregorian(self.to_jdn(year, month, day)))
 
+    def validate(self, year: int, month: int, day: int) -> None:
+        """Raise unless ``(year, month, day)`` is a real date in the table.
+
+        The table *is* the bound here, so this is ``to_jdn``'s own check: an
+        unknown month or a day past the tabulated month length raises
+        :class:`CalendarRangeError` (a ``ValueError``)."""
+        self.to_jdn(year, month, day)
+
     def from_astro(self, moment) -> "CalendarDate":
         """The :class:`CalendarDate` this calendar assigns to an instant.
 
@@ -1097,9 +1174,19 @@ class Calendar:
         Object-returning sugar over the ``to_jdn`` + ``jdn_to_gregorian``
         plumbing, so ``CALENDARS["hebrew"].date(5786, 7, 1)`` yields the
         AstroDate directly instead of a bare JDN.
+
+        Raises ``ValueError`` naming the valid range when ``month`` or ``day``
+        is not a real field of this calendar in ``year``.
         """
         from chronologia.astrodate import AstroDate
+        self.validate(year, month, day)
         return AstroDate(*jdn_to_gregorian(self.to_jdn(year, month, day)))
+
+    def validate(self, year: int, month: int, day: int) -> None:
+        """Raise ``ValueError`` unless ``(year, month, day)`` is a real date in
+        this calendar; bounds are derived from the calendar's own arithmetic
+        (see :func:`_validate_fields`)."""
+        _validate_fields(self, year, month, day)
 
     def from_astro(self, moment) -> "CalendarDate":
         """The :class:`CalendarDate` this calendar assigns to an instant.

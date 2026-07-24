@@ -570,3 +570,141 @@ def test_before_epoch_raises_for_lunisolar_and_solar():
     for key in ("islamic_civil", "french_republican"):
         with pytest.raises(ValueError):
             CALENDARS[key].from_jdn(CALENDARS[key].epoch_jdn - 5)
+
+
+# --------------------------------------------------------------------------
+# Field validation: no calendar may silently accept an impossible month/day.
+# --------------------------------------------------------------------------
+# Driven off the ``CALENDARS`` registry so a newly registered calendar cannot
+# skip validation.  Bounds are never hardcoded here either: each calendar is
+# asked, through its own arithmetic, which months and days it really has in a
+# probe year taken from inside its domain.
+
+def _probe_year(c):
+    """A year comfortably inside ``c``'s domain (tabulated ones are bounded)."""
+    return c.from_jdn(c.epoch_jdn + 400)[0]
+
+
+def _months_of(c, year):
+    return cal._valid_months(c, year)
+
+
+def _days_of(c, year, month):
+    return cal._valid_days(c, year, month)
+
+
+@pytest.mark.parametrize("key", sorted(CALENDARS))
+def test_calendar_rejects_impossible_month(key):
+    c = CALENDARS[key]
+    year = _probe_year(c)
+    months = _months_of(c, year)
+    assert months, f"{key}: probe year {year} has no valid month"
+    for bad in (months[0] - 1, months[-1] + 1, 99, -5):
+        with pytest.raises(ValueError) as exc:
+            c.date(year, bad, 1)
+        assert key in str(exc.value)
+
+
+@pytest.mark.parametrize("key", sorted(CALENDARS))
+def test_calendar_rejects_impossible_day(key):
+    c = CALENDARS[key]
+    year = _probe_year(c)
+    month = _months_of(c, year)[0]
+    days = _days_of(c, year, month)
+    assert days, f"{key}: {year}-{month} has no valid day"
+    for bad in (days[0] - 1, days[-1] + 1, 99):
+        with pytest.raises(ValueError) as exc:
+            c.date(year, month, bad)
+        assert key in str(exc.value)
+
+
+@pytest.mark.parametrize("key", sorted(CALENDARS))
+def test_calendar_accepts_every_month_edge(key):
+    """First and last day of the first and last month still convert -- the
+    guard against an over-strict rule quietly rejecting a legal date."""
+    c = CALENDARS[key]
+    year = _probe_year(c)
+    months = _months_of(c, year)
+    for month in (months[0], months[-1]):
+        days = _days_of(c, year, month)
+        for day in (days[0], days[-1]):
+            assert c.date(year, month, day) is not None
+
+
+@pytest.mark.parametrize("key", sorted(CALENDARS))
+def test_calendar_validation_matches_from_calendar(key):
+    """``AstroDate.from_calendar`` is the same construction path."""
+    from chronologia.astrodate import AstroDate
+    c = CALENDARS[key]
+    year = _probe_year(c)
+    month = _months_of(c, year)[0]
+    assert AstroDate.from_calendar(key, year, month, 1) == c.date(year, month, 1)
+    with pytest.raises(ValueError):
+        AstroDate.from_calendar(key, year, 99, 1)
+
+
+# -- the irregular months a naive 1..12 / 1..31 check would wrongly reject ---
+
+def test_hebrew_leap_year_has_a_thirteenth_month():
+    # 5784 AM is a leap year (Adar I + Adar II) -> 13 months; 5785 is not.
+    assert cal._hebrew_leap(5784) and not cal._hebrew_leap(5785)
+    assert CALENDARS["hebrew"].date(5784, 13, 1) is not None
+    with pytest.raises(ValueError, match="expected 1..12"):
+        CALENDARS["hebrew"].date(5785, 13, 1)
+
+
+def test_coptic_and_ethiopic_epagomenal_month():
+    # month 13 is the short epagomenal month: 5 days, 6 when year % 4 == 3.
+    for key in ("coptic", "ethiopian"):
+        c = CALENDARS[key]
+        assert c.date(1739, 13, 5) is not None          # 1739 % 4 == 3 -> 6 days
+        assert c.date(1739, 13, 6) is not None
+        assert c.date(1740, 13, 5) is not None
+        with pytest.raises(ValueError, match="expected 1..5"):
+            c.date(1740, 13, 6)
+
+
+def test_armenian_and_egyptian_have_five_epagomenal_days():
+    # the vague year never leaps: month 13 is always exactly 5 days.
+    for key in ("armenian", "egyptian"):
+        c = CALENDARS[key]
+        assert c.date(1400, 13, 5) is not None
+        with pytest.raises(ValueError, match="expected 1..5"):
+            c.date(1400, 13, 6)
+
+
+def test_french_republican_complementary_days():
+    # month 13 (les sans-culottides) is 5 days, 6 in a sextile year.
+    c = CALENDARS["french_republican"]
+    assert cal._fr_sextile(3) and not cal._fr_sextile(2)
+    assert c.date(3, 13, 6) is not None
+    assert c.date(2, 13, 5) is not None
+    with pytest.raises(ValueError, match="expected 1..5"):
+        c.date(2, 13, 6)
+
+
+def test_bahai_ayyam_i_ha_is_month_zero():
+    # Ayyám-i-Há sits between months 18 and 19 and is addressed as month 0;
+    # it is 4 or 5 days long, unlike the nineteen 19-day months.
+    c = CALENDARS["bahai"]
+    assert c.date(172, 0, 4) is not None
+    assert c.date(172, 19, 19) is not None
+    with pytest.raises(ValueError, match="expected 1..19"):
+        c.date(172, 19, 20)
+
+
+def test_iso_week_53_exists_only_in_long_years():
+    c = CALENDARS["iso_week"]
+    assert c.date(2020, 53, 7) is not None      # 2020 is a 53-week ISO year
+    with pytest.raises(ValueError, match="expected 1..52"):
+        c.date(2021, 53, 1)
+
+
+def test_mayan_positions_are_zero_based():
+    # uinal 0..17 and kin 0..19 -- day/month 0 is legal here, unlike elsewhere.
+    c = CALENDARS["mayan_long_count"]
+    assert c.date(1000, 0, 0) is not None
+    with pytest.raises(ValueError, match="expected 0..17"):
+        c.date(1000, 18, 0)
+    with pytest.raises(ValueError, match="expected 0..19"):
+        c.date(1000, 0, 20)
