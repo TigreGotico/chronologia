@@ -207,3 +207,57 @@ def test_clock_range_unchanged(text, sh, eh):
 ])
 def test_non_temporal_range_is_none(text):
     nomatch(text)
+
+
+# -- the shared-month range: the month named ONCE for the pair ---------------
+# The marginal English form ("June 5 to 12") of what is the default written
+# form across Romance.  It used to lose the range entirely: the bare "12" made
+# no endpoint, and the sentence fell through to the subtractive clock reading
+# ("five to twelve"), returning a minute-wide span in the small hours.  The
+# bare number is now read through its partner's own words.
+@pytest.mark.parametrize("text", [
+    "June 5 to 12",
+    "June 5 to June 12",
+    "5 June to 12 June",
+    "from June 5 to 12",
+])
+def test_shared_month_range_reads_both_days(text):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(2018, 6, 5) and ee == AstroDate(2018, 6, 13)
+
+
+def test_shared_month_range_crosses_the_year():
+    ss, ee = start_end("December 28 to 31")
+    assert ss == AstroDate(2017, 12, 28) and ee == AstroDate(2018, 1, 1)
+
+
+# -- adversarial: two bare numbers lend each other nothing, so every existing
+# clock reading of "A to B" survives untouched.
+def test_subtractive_clock_still_wins_with_no_month_in_sight():
+    ss, ee = start_end("quarter to five")
+    assert ss == AstroDate(2017, 6, 28, 4, 45)
+    assert ee == AstroDate(2017, 6, 28, 4, 46)
+
+
+def test_bare_hour_range_is_still_a_working_day():
+    ss, ee = start_end("from 9 to 5")
+    assert ss == AstroDate(2017, 6, 28, 9, 0)
+    assert ee == AstroDate(2017, 6, 28, 17, 1)
+
+
+def test_borrowed_meridiem_still_wins():
+    ss, ee = start_end("between 3 and 5 pm")
+    assert ss == AstroDate(2017, 6, 27, 15, 0)
+    assert ee == AstroDate(2017, 6, 27, 17, 1)
+
+
+def test_reversed_pinned_dates_still_refuse_to_compose():
+    # the right endpoint is pinned and earlier: no roll, no borrow, no span
+    r = span("june 12 2020 to june 5 2020")
+    assert r.start == AstroDate(2020, 6, 12) and r.end == AstroDate(2020, 6, 13)
+
+
+@pytest.mark.parametrize("text", ["June to", "to 12", "June 5 to", "5 to 12"])
+def test_shared_month_garbage_never_raises(text):
+    from ._corpus import parse
+    parse(text)
