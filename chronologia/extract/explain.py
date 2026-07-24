@@ -17,7 +17,7 @@ from typing import Optional, Tuple
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.matcher import MatchCandidate, ConstructionMatcher
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
-from chronologia.extract.pipeline import prematch_tokens
+from chronologia.extract.pipeline import prematch_tokens, require_text
 from chronologia.extract.resolver import Resolver
 
 # module-level compiler so repeated explain() calls reuse the cache
@@ -75,6 +75,9 @@ def _reason(cand: MatchCandidate, winners) -> str:
 
 
 def explain(text: str, spec: LangSpec, anchor: datetime) -> ExplainTrace:
+    """Trace of the parse of ``text``, which must be a ``str`` as it is for
+    every public extractor; anything else raises :class:`TypeError`."""
+    require_text(text, "explain")
     compiled = _COMPILER.compile(spec)
     # the identical pre-match pipeline extract_timespan runs (normalise +
     # language hook + multiword merge), so the trace reflects the real parse

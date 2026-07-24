@@ -156,9 +156,15 @@ def extract_event(
 
     Returns an :class:`Event`, or ``None`` when the text carries neither a
     recurrence nor a datable span (there is no event to build).
+
+    ``text`` must be a ``str``; anything else raises :class:`TypeError`.
+    Text that carries no event, the empty string included, returns ``None``.
     """
     from chronologia.extract import (extract_candidates, extract_duration,
                                      extract_recurrence, extract_timespan)
+    from chronologia.extract.pipeline import require_text
+
+    require_text(text, "extract_event")
 
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):

@@ -37,6 +37,29 @@ all three access the same two values:
 - **`remainder`** is the leftover text the parse did not consume — the
   words around the date, so a caller can see what was and was not a date.
 
+## What goes in, and what raises
+
+Every extractor — `extract_timespan`, `extract_timespans`, `extract_duration`,
+`extract_recurrence`, `extract_candidates`, `extract_event` — takes text as a
+`str`. Handing one anything else is a mistake in the calling program, and it
+raises a `TypeError` naming the contract rather than letting an internal
+error surface further down. Text the library cannot read is a different
+matter entirely: the empty string, a whitespace run, or a sentence with no
+date in it all return the extractor's empty result — `None` for the ones that
+return a single value, an empty list for the ones that return several.
+
+```python
+from chronologia import extract_timespan
+
+assert extract_timespan("", "en") is None
+assert extract_timespan("the quick brown fox", "en") is None
+
+try:
+    extract_timespan(None, "en")
+except TypeError as err:
+    print(err)          # extract_timespan() reads text: expected str, ...
+```
+
 ```python
 from chronologia import extract_timespan
 from datetime import datetime
@@ -65,6 +88,27 @@ print(soon.start_datetime)   # 2017-06-30 13:04:00
 
 winter, _ = extract_timespan("next winter", "en", anchor)
 print(winter.start_datetime.date())   # 2017-12-01
+```
+
+A season is read against the season the anchor falls in, not against the
+calendar year. Someone saying "last summer" in July means the summer that has
+finished, never the one they are standing in, and "next summer" is the one
+after that. The December-starting winter runs into the new year, so in
+January the winter in progress is the one that began the previous December:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+july = datetime(2017, 7, 15)
+assert extract_timespan("last summer", "en", july).span.start.year == 2016
+assert extract_timespan("this summer", "en", july).span.start.year == 2017
+assert extract_timespan("next summer", "en", july).span.start.year == 2018
+
+january = datetime(2018, 1, 15)
+assert extract_timespan("last winter", "en", january).span.start.year == 2016
+assert extract_timespan("this winter", "en", january).span.start.year == 2017
+assert extract_timespan("next winter", "en", january).span.start.year == 2018
 ```
 
 A range framed with "from A to B" or "between A and B" spans from the start

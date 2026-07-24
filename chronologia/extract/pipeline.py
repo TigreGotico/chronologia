@@ -28,6 +28,28 @@ from chronologia.extract.tokenizer import Tokenizer
 _WS = re.compile(r"\s+")
 
 
+def require_text(text, caller: str) -> str:
+    """The input contract of every public extractor, checked once at the edge.
+
+    An extractor reads text, so anything that is not a ``str`` -- ``None``,
+    a number, a ``bytes`` blob -- is a mistake in the calling program, and
+    the library says so with a :class:`TypeError` that names the contract
+    instead of letting an internal ``AttributeError`` leak out several
+    frames later.  Text the library simply cannot read, the empty string
+    included, is an ordinary answer of "nothing here" and returns the
+    extractor's empty result.
+
+    Checking here, at the one place text enters the pipeline, is what keeps
+    the internals free of type tests.
+    """
+    if not isinstance(text, str):
+        raise TypeError(
+            f"{caller}() reads text: expected str, got "
+            f"{type(text).__name__}; unreadable text returns the empty "
+            f"result rather than raising")
+    return text
+
+
 def render_remainder(text: str, tokens) -> str:
     """The leftover text of the *unconsumed* ``tokens``, read from ``text``.
 
