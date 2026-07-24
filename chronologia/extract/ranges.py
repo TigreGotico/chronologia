@@ -186,24 +186,71 @@ def season_to_date(season: Season, year: Optional[Union[int, date]] = None,
     return date(day=1, month=seasons[season][0], year=year)
 
 
+def _season_occurrence(season: Season, year: int,
+                       hemisphere: Hemisphere) -> DateRange:
+    """Half-open ``[start, end)`` of the ``year`` occurrence of ``season``.
+
+    A meteorological season is three months wide, so the December-starting
+    season ends on March 1st of the following year; every deictic reading
+    below is expressed in terms of this span rather than the start date
+    alone, which is what makes the year-wrapping season behave like the
+    other three.
+    """
+    start = season_to_date(season, year, hemisphere)
+    return start, start + relativedelta(months=3)
+
+
 def next_season_date(season: Season, ref_date: Optional[date] = None,
                      hemisphere: Hemisphere = Hemisphere.NORTH) -> date:
-    """Next start date of ``season`` on or after ``ref_date``."""
+    """Start date of the first occurrence of ``season`` still to begin.
+
+    A speaker standing inside a season never means it by "next": the
+    occurrence has to start strictly after the reference date, so on the
+    first day of summer "next summer" is already the summer of the
+    following year.
+    """
     ref_date = _as_date(ref_date or datetime.now().date())
-    start = season_to_date(season, ref_date, hemisphere)
-    if ref_date <= start:
-        return start
-    return season_to_date(season, ref_date.year + 1, hemisphere)
+    for year in range(ref_date.year - 1, ref_date.year + 3):
+        start, _ = _season_occurrence(season, year, hemisphere)
+        if start > ref_date:
+            return start
+    raise ValueError(f"no future occurrence of {season}")
 
 
 def last_season_date(season: Season, ref_date: Optional[date] = None,
                      hemisphere: Hemisphere = Hemisphere.NORTH) -> date:
-    """Most recent start date of ``season`` before ``ref_date``."""
+    """Start date of the most recent occurrence of ``season`` that is over.
+
+    "Last summer" said in July means the summer that has finished, never
+    the one the speaker is living through, so the occurrence must have
+    ended on or before the reference date.  The same reading places "last
+    winter" in January two Decembers back, because the December just gone
+    is still running.
+    """
     ref_date = _as_date(ref_date or datetime.now().date())
-    start = season_to_date(season, ref_date, hemisphere)
-    if ref_date <= start:
-        return season_to_date(season, ref_date.year - 1, hemisphere)
-    return start
+    for year in range(ref_date.year + 1, ref_date.year - 3, -1):
+        start, end = _season_occurrence(season, year, hemisphere)
+        if end <= ref_date:
+            return start
+    raise ValueError(f"no completed occurrence of {season}")
+
+
+def current_season_date(season: Season, ref_date: Optional[date] = None,
+                        hemisphere: Hemisphere = Hemisphere.NORTH) -> date:
+    """Start date of the occurrence of ``season`` a speaker means by "this".
+
+    While the reference date falls inside an occurrence, that occurrence is
+    the one meant -- in January "this winter" is the winter that began in
+    December, not the one that begins eleven months later.  Outside the
+    season the calendar year decides, so in July "this winter" is the
+    winter that December brings.
+    """
+    ref_date = _as_date(ref_date or datetime.now().date())
+    for year in (ref_date.year - 1, ref_date.year):
+        start, end = _season_occurrence(season, year, hemisphere)
+        if start <= ref_date < end:
+            return start
+    return season_to_date(season, ref_date, hemisphere)
 
 
 def get_season_range(ref_date: Optional[date] = None,

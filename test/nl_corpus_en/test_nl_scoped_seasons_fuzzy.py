@@ -7,7 +7,7 @@ periods follow the calendar convention baked into the reckoning core (the
 21st century is 2000-2100).  The genuinely-fuzzy phrasings that need new
 constructions are xfail'd.
 """
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -122,6 +122,57 @@ def test_season(text, s):
     ss = start(text)
     assert ss == _d(s)
     assert span(text).width.days >= 89        # ~3 months
+
+
+# -- season deixis is read against the season the anchor falls in ---------
+
+# "Last summer" said in July is the summer that has finished, never the one
+# the speaker is standing in, and "next summer" is the one after that.  The
+# December-starting winter is the interesting case: it runs into the new
+# year, so in mid-January the winter in progress began the previous
+# December and "last winter" reaches back a further twelve months.
+
+_SEASON_DEIXIS = [
+    # anchor inside summer
+    ("2017-6-27", "last summer", "2016-6-1"),
+    ("2017-6-27", "this summer", "2017-6-1"),
+    ("2017-6-27", "next summer", "2018-6-1"),
+    ("2017-6-27", "last spring", "2017-3-1"),
+    ("2017-6-27", "last autumn", "2016-9-1"),
+    ("2017-6-27", "last winter", "2016-12-1"),
+    ("2017-6-27", "next winter", "2017-12-1"),
+    # anchor before summer, inside spring
+    ("2017-4-10", "last summer", "2016-6-1"),
+    ("2017-4-10", "this summer", "2017-6-1"),
+    ("2017-4-10", "next summer", "2017-6-1"),
+    ("2017-4-10", "last spring", "2016-3-1"),
+    ("2017-4-10", "this spring", "2017-3-1"),
+    ("2017-4-10", "next spring", "2018-3-1"),
+    ("2017-4-10", "last winter", "2016-12-1"),
+    # anchor after summer, inside autumn
+    ("2017-10-5", "last summer", "2017-6-1"),
+    ("2017-10-5", "next summer", "2018-6-1"),
+    ("2017-10-5", "last autumn", "2016-9-1"),
+    ("2017-10-5", "this autumn", "2017-9-1"),
+    ("2017-10-5", "next autumn", "2018-9-1"),
+    # anchor inside the winter that began the previous December
+    ("2018-1-15", "last winter", "2016-12-1"),
+    ("2018-1-15", "this winter", "2017-12-1"),
+    ("2018-1-15", "next winter", "2018-12-1"),
+    ("2018-1-15", "last autumn", "2017-9-1"),
+    ("2018-1-15", "last summer", "2017-6-1"),
+    # anchor inside the same winter, on the December side of the boundary
+    ("2017-12-15", "last winter", "2016-12-1"),
+    ("2017-12-15", "this winter", "2017-12-1"),
+    ("2017-12-15", "next winter", "2018-12-1"),
+    ("2017-12-15", "last autumn", "2017-9-1"),
+]
+
+
+@pytest.mark.parametrize("anchor,text,s", _SEASON_DEIXIS)
+def test_season_deixis(anchor, text, s):
+    y, m, dd = (int(x) for x in anchor.split("-"))
+    assert start(text, datetime(y, m, dd, 13, 4)) == _d(s)
 
 
 # -- two-digit year pivot (POSIX / C strptime %y) -------------------------

@@ -46,6 +46,7 @@ from chronologia.extract.ranges import (_ABSOLUTE, _UNIT_OF_CENTURY,
                                         _UNIT_OF_MILLENNIUM, _UNIT_OF_MONTH,
                                         _UNIT_OF_YEAR,
                                         Hemisphere, Season, get_date_ordinal,
+                                        current_season_date,
                                         last_season_date, next_season_date,
                                         season_to_date)
 
@@ -1182,6 +1183,11 @@ class Resolver:
         season's first day; the hemisphere is the language's ``hemisphere``
         convention (a fact), so the same vocabulary resolves correctly north
         and south of the equator.
+
+        The ``this``/``last``/``next`` markers are read against the season
+        the anchor falls in, not against the calendar year: a speaker inside
+        a season means that season by "this", the one already over by
+        "last", and the one still to begin by "next".
         """
         season = Season[self.spec.seasons[match.slots["SEASON"].text].upper()]
         hemi = (Hemisphere.SOUTH if self.conventions.hemisphere == "south"
@@ -1197,7 +1203,7 @@ class Resolver:
         elif rel_tok is not None and self.spec.rel_markers[rel_tok.text] < 0:
             start = last_season_date(season, ref, hemi)
         else:                                       # this / bare
-            start = season_to_date(season, ref, hemi)
+            start = current_season_date(season, ref, hemi)
         start_dt = datetime(start.year, start.month, start.day)
         span_start = AstroDate.from_datetime(start_dt)
         end = AstroDate.from_datetime(_add_months(start_dt, 3))

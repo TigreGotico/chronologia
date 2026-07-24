@@ -67,6 +67,27 @@ winter, _ = extract_timespan("next winter", "en", anchor)
 print(winter.start_datetime.date())   # 2017-12-01
 ```
 
+A season is read against the season the anchor falls in, not against the
+calendar year. Someone saying "last summer" in July means the summer that has
+finished, never the one they are standing in, and "next summer" is the one
+after that. The December-starting winter runs into the new year, so in
+January the winter in progress is the one that began the previous December:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+july = datetime(2017, 7, 15)
+assert extract_timespan("last summer", "en", july).span.start.year == 2016
+assert extract_timespan("this summer", "en", july).span.start.year == 2017
+assert extract_timespan("next summer", "en", july).span.start.year == 2018
+
+january = datetime(2018, 1, 15)
+assert extract_timespan("last winter", "en", january).span.start.year == 2016
+assert extract_timespan("this winter", "en", january).span.start.year == 2017
+assert extract_timespan("next winter", "en", january).span.start.year == 2018
+```
+
 A range framed with "from A to B" or "between A and B" spans from the start
 of the left endpoint to the end of the right one:
 
