@@ -1,7 +1,6 @@
 # Hebrew abbreviates a weekday as the day noun plus the letter standing for
-# its ordinal number -- יום חמישי is written יום ה׳ ("Days of week on Hebrew
+# its ordinal number -- יום שבת is written יום ש׳ ("Days of week on Hebrew
 # calendar", Wikipedia).  The letter carries a geresh in print; the tokenizer
 # strips it, so the surface listed here is the bare letter.
-חמישי
-יום ה
-ביום ה
+יום ש
+ביום ש
