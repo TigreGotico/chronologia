@@ -183,6 +183,7 @@
     "decade_ref": {
       "orders": [
         "PART? article? NUM plural",
+        "PART? article? year_plural DNUM",
         "PART? article? year_word DECADE",
         "PART? article? DECADE"
       ]

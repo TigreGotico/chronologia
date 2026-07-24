@@ -863,7 +863,8 @@ class Resolver:
         wide.  An optional early/mid/late PART slices it into thirds via
         :func:`chronologia.subdivide`."""
         base = self._decade_start(match.slots.get("DECADE"),
-                                  match.slots.get("NUM"), anchor)
+                                  match.slots.get("NUM")
+                                  or match.slots.get("DNUM"), anchor)
         if base is None:
             return None
         span = DateSpan(AstroDate(base, 1, 1), AstroDate(base + 10, 1, 1))

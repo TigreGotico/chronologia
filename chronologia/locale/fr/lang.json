@@ -190,9 +190,7 @@
     "decade_ref": {
       "orders": [
         "PART? article? NUM plural",
-        "PART? article? year_word DECADE",
-        "article? year_word PART DECADE",
-        "PART? article? DECADE"
+        "PART? article? year_plural DNUM"
       ]
     },
     "month_fuzzy": {

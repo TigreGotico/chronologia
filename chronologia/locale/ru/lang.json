@@ -77,8 +77,9 @@
   },
   "decade_ref": {
    "orders": [
-    "article? DECADE",
-    "article? PART DECADE"
+    "article? DECADE year_plural?",
+    "article? PART DECADE year_plural?",
+    "PART? NUM plural year_plural?"
    ]
   },
   "quarter_ref": {

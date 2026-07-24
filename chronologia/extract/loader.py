@@ -77,9 +77,13 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     vocab_map = res.vocabularies(lang)
 
     # The tokenizer emits letter runs and DISCARDS punctuation, so a shipped
-    # surface written with internal dots ("μ.μ.", "π. χ.", "ap. j.-c.") can
-    # never equal a token's text -- it is dead vocabulary by construction, and
-    # the slot it feeds silently falls into the remainder.  Every surface is
+    # surface written with internal punctuation ("μ.μ.", "π. χ.", "ap. j.-c.",
+    # "week-end") can never equal a token's text -- it is dead vocabulary by
+    # construction, and the slot it feeds silently falls into the remainder.
+    # The hyphen is as fatal as the dot and less obvious about it: English
+    # "week-end" split into "week" and "end", the unit noun "week" claimed the
+    # first half and the second was stranded, so "this week-end" quietly read
+    # as the whole week.  Every surface is
     # therefore ALSO registered in its token-canonical form: the surface run
     # through this language's own tokenizer, tokens space-joined -- exactly the
     # canonicalisation the holiday surfaces below already use.  Multi-token
@@ -103,8 +107,6 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
                     samples.append(sample)
         out = [f.lower() for f in samples]
         for f in list(out):
-            if "." not in f:
-                continue
             canon = _canonical(f)
             if canon and canon not in out:
                 out.append(canon)
