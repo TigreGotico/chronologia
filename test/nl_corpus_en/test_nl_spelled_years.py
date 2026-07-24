@@ -14,7 +14,7 @@ Three shapes reach the same year-wide span a digit year does:
 """
 import pytest
 
-from ._corpus import AstroDate, nomatch, span, start
+from ._corpus import AstroDate, nomatch, parse, span, start
 
 
 def _year(text, y):
@@ -130,29 +130,69 @@ def test_plain_offsets_unchanged():
 # -- the magnitude bound ---------------------------------------------------
 
 @pytest.mark.parametrize("text", [
-    "ninety nine thousand",
-    "twenty thousand",
-    "the year ninety nine thousand",
     "the year twelve million",
     "the year two billion",
-    "ninety nine thousand and one",
+    "one hundred thousand",
 ])
 def test_out_of_range_magnitude_is_not_a_year(text):
     """A magnitude no written year could carry is not a year.
 
-    A digit year is a 4-5 digit run, so 99000 is as far as the digit path
-    reaches and a scale word reaches far past it; and English names a year's
-    thousands with a single word ("two thousand ten", "twelve thousand"), not
-    with a tens-and-ones head.  Both refusals yield no span rather than a
-    confident wrong one."""
+    A digit year is a 4-5 digit run, so 99999 is as far as the digit path
+    reaches while a scale word reaches far past it.  Outside that window the
+    phrase yields no span rather than a confident wrong one."""
     nomatch(text)
 
 
 @pytest.mark.parametrize("text,year", [
     ("twelve thousand", 12000),
     ("nineteen thousand", 19000),
+    ("twenty thousand", 20000),
+    ("ninety nine thousand", 99000),
     ("the year twelve thousand", 12000),
 ])
 def test_five_digit_years_still_read(text, year):
-    """The Human-Era form the five-digit digit years exist for."""
+    """The Human-Era form the five-digit digit years exist for.
+
+    The thousands head is not restricted to the words a Common-Era year is
+    spelled with: the window is the digit path's, so "twenty thousand" reads
+    exactly as ``20000`` does."""
     _year(text, year)
+
+
+@pytest.mark.parametrize("text,digits", [
+    ("nine hundred and ninety nine", "999"),
+    ("one thousand", "1000"),
+    ("twenty thousand", "20000"),
+    ("one hundred thousand", "100000"),
+])
+def test_spelled_and_digit_agree_at_the_window_edges(text, digits):
+    """Either both forms name the year or neither does.
+
+    The window is 1000..99999 -- four digits for the Common Era, five for the
+    Human-Era form -- and the spelled path is measured against the same
+    bound, so the two never disagree about whether a magnitude is a year."""
+    spelled = parse(text)
+    digit = parse(digits)
+    assert (spelled is None) == (digit is None)
+    if digit is not None:
+        assert (spelled[0].start, spelled[0].end) == (digit[0].start,
+                                                     digit[0].end)
+
+
+# -- the deep-time boundary ------------------------------------------------
+
+@pytest.mark.parametrize("text,year", [
+    ("ninety nine thousand years ago", -97050),
+    ("twenty thousand years ago", -18050),
+    ("twelve thousand years ago", -10050),
+    ("two thousand years ago", -50),
+    ("10 thousand years ago", -8050),
+    ("66 million years ago", -65_998_050),
+    ("sixty six million years ago", -65_998_050),
+])
+def test_years_ago_is_read_as_an_offset_not_a_year(text, year):
+    """A magnitude inside the year window is still an offset when "years
+    ago" closes it: the trailing unit marker is the discriminator, never the
+    size of the number.  "ninety nine thousand" names the year 99000, while
+    "ninety nine thousand years ago" counts back from the anchor."""
+    assert start(text) == AstroDate(year, 1, 1)
