@@ -12,7 +12,7 @@ the hour taking the case it agrees with:
   "yediye çeyrek kala" = 6:45, "dörde yirmi kala" = 3:40 (20 min before 4:00).
 """
 import pytest
-from ._corpus import ANCHOR, nomatch, start
+from ._corpus import ANCHOR, nomatch, parse, start
 
 
 @pytest.mark.parametrize("text,h,m", [
@@ -39,6 +39,30 @@ def test_bucuk_half_past(text, h, m):
     assert (s.hour, s.minute) == (h, m)
 
 
+# The hour-introducing noun "saat" frames the whole clock reading, and TDK
+# makes "buçuk" an adjective joined to the cardinal before it, so adding
+# "saat" must not split the numeral and lose the thirty minutes.
+@pytest.mark.parametrize("text,h,m", [
+    ("saat üç buçuk", 3, 30),
+    ("saat 3 buçuk", 3, 30),
+    ("saat yedi buçuk", 7, 30),
+    ("toplantı saat dokuz buçuk", 9, 30),
+    ("saat on iki buçuk", 12, 30)])
+def test_saat_bucuk_half_past(text, h, m):
+    s = start(text)
+    assert (s.hour, s.minute) == (h, m)
+    assert parse(text).remainder in ("", "toplantı")
+
+
+# The framing word alone still names the whole hour: "saat üç" is 3:00, and
+# reading half past into it would be the mirror of the bug above.
+@pytest.mark.parametrize("text,h", [
+    ("saat üç", 3), ("saat dokuz", 9), ("saat on iki", 12)])
+def test_saat_without_bucuk_is_the_whole_hour(text, h):
+    s = start(text)
+    assert (s.hour, s.minute) == (h, 0)
+
+
 # -- "geçe": accusative hour + minute/fraction past (TDK s.v. "geçe") -------
 @pytest.mark.parametrize("text,h,m", [
     ("dokuzu beş geçe", 9, 5),
@@ -61,7 +85,54 @@ def test_kala_to(text, h, m):
     assert (s.hour, s.minute) == (h, m)
 
 
+# "saat" frames the geçe/kala readings too, so it belongs to the time phrase
+# and never survives into the leftover text.
+@pytest.mark.parametrize("text", [
+    "saat dokuzu beş geçe", "saat üçe on kala", "saat üçe çeyrek kala",
+    "saat üç buçuk"])
+def test_saat_is_part_of_the_clock_phrase(text):
+    assert parse(text).remainder == ""
+
+
+# -- the daypart adverbial, which Turkish puts before the time phrase -------
+# "öğleden sonra saat üç" is the plain order; the postposed one is the marked
+# variant.  Both must read the same afternoon hour, because dropping the
+# marker is not a missed parse but a twelve-hour error.
+@pytest.mark.parametrize("text,h", [
+    ("öğleden sonra saat üç", 15),
+    ("saat üç öğleden sonra", 15),
+    ("akşam saat sekiz", 20),
+    ("saat sekiz akşam", 20),
+    ("öğleden sonra 3", 15),
+    ("öğleden sonra saat 3", 15),
+    ("sabah saat dokuz", 9),
+    ("saat dokuz sabah", 9)])
+def test_daypart_marker_either_side(text, h):
+    s = start(text)
+    assert (s.hour, s.minute) == (h, 0)
+    assert parse(text).remainder == ""
+
+
+@pytest.mark.parametrize("text,h,m", [
+    ("öğleden sonra saat üç buçuk", 15, 30),
+    ("saat üç buçuk öğleden sonra", 15, 30),
+    ("akşam saat sekize on kala", 19, 50),
+    ("öğleden sonra 15:30", 15, 30)])
+def test_daypart_marker_over_a_full_reading(text, h, m):
+    s = start(text)
+    assert (s.hour, s.minute) == (h, m)
+
+
+def test_bare_hour_without_daypart_stays_on_the_named_hour():
+    # No marker, no twelve-hour shift: the hour is read exactly as named.
+    s = start("saat üç")
+    assert (s.hour, s.minute) == (3, 0)
+
+
 # -- adversarial: bare direction/fraction words are not a time --------------
-@pytest.mark.parametrize("text", ["buçuk", "geçe", "kala", "beş geçe"])
+@pytest.mark.parametrize("text", [
+    "buçuk", "geçe", "kala", "beş geçe",
+    # the daypart marker licenses a bare hour, but names no time by itself
+    "öğleden sonra", "akşam", "sabah", "öğleden sonra saat"])
 def test_bare_clock_words_nomatch(text):
     nomatch(text)

@@ -31,3 +31,17 @@ CASES = [
 def test_bare_weekday(text, idx):
     sp = span(text)
     assert (sp.start, sp.end) == _expected(idx)
+
+
+# The classifier form is the same day name and reckons identically.
+CLASSIFIER_CASES = [
+    ('hari jumat', 4),
+    ('hari senin', 0),
+    ('hari minggu', 6),
+]
+
+
+@pytest.mark.parametrize("text,idx", CLASSIFIER_CASES)
+def test_weekday_with_hari_classifier(text, idx):
+    sp = span(text)
+    assert (sp.start, sp.end) == _expected(idx)

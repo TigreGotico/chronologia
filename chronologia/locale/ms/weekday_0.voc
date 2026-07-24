@@ -1,1 +1,10 @@
+# Malay names a weekday with the classifier "hari" in front of it: Kamus Dewan
+# defines Isnin as "hari kedua dlm seminggu, selepas hari Ahad" and Ahad as
+# "hari pertama dlm seminggu selepas hari Sabtu, hari minggu", spelling the
+# classifier out every time (Kamus Dewan Edisi Keempat, Dewan Bahasa dan
+# Pustaka).  Listing the classifier form as a surface is what keeps "setiap
+# hari Isnin" from being read as "setiap hari" (every day) with the weekday
+# discarded; bare "setiap hari" still means daily, because both readings are
+# real.
 isnin
+hari isnin

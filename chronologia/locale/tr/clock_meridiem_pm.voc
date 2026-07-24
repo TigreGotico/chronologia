@@ -1,2 +1,8 @@
+# Turkish puts the daypart adverbial in FRONT of the time phrase it scopes:
+# "öğleden sonra saat üç" is the plain way to say three in the afternoon, and
+# TDK carries the mirror compound "akşam saati" (zarf, = akşamleyin) with the
+# daypart word leading the hour noun (Güncel Türkçe Sözlük, s.v. "akşam",
+# https://sozluk.gov.tr/). The postposed order occurs too, so the clock
+# construction reads the marker on either side of the hour.
 akşam
 öğleden sonra

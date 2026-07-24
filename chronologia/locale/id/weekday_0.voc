@@ -1,1 +1,9 @@
+# Indonesian names a weekday with the classifier "hari" in front of it: KBBI
+# defines Senin as "hari ke-2 dalam jangka waktu satu minggu" and every other
+# day name the same way, so "hari Senin" is one name and not the noun "hari"
+# followed by something else (KBBI, Badan Pengembangan dan Pembinaan Bahasa).
+# Listing the classifier form as a surface is what keeps "setiap hari Senin"
+# from being read as "setiap hari" (every day) with the weekday discarded;
+# bare "setiap hari" still means daily, because both readings are real.
 senin
+hari senin
