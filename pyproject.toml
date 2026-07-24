@@ -36,12 +36,14 @@ chronologia = "chronologia.__main__:main"
 # Test/dev extras: property-based fuzzing (test/test_properties.py,
 # test/test_fuzz.py) needs Hypothesis; the differential benchmark
 # (benchmark/) needs dateparser and dateutil as comparison engines
-# (dateutil is already a runtime dependency); the rest of the suite runs
+# (dateutil is already a runtime dependency); test/test_packaging.py builds a
+# real wheel and imports it, so it needs `build`; the rest of the suite runs
 # on pytest alone.
 test = [
     "pytest",
     "hypothesis>=6.0",
     "dateparser>=1.1",
+    "build>=1.0",
 ]
 
 [dependency-groups]
@@ -49,11 +51,19 @@ dev = [
     "pytest",
     "hypothesis>=6.0",
     "dateparser>=1.1",
+    "build>=1.0",
     "mypy",
 ]
 
-[tool.setuptools]
-packages = ["chronologia", "chronologia.data", "chronologia.extract"]
+# Discovered, never hand-listed: a hand-written package list silently drops a
+# subpackage the day someone splits a module into one, and every test still
+# passes because the editable install reads the source tree rather than the
+# built artefact.  That is exactly how chronologia.civil_holidays came to be
+# missing from the wheel, which made the *whole* library unimportable once
+# installed (chronologia/__init__.py imports from it).  test_packaging.py
+# builds a wheel and imports it in a clean interpreter to keep it that way.
+[tool.setuptools.packages.find]
+include = ["chronologia*"]
 
 [tool.setuptools.dynamic]
 version = { attr = "chronologia.version.VERSION_STR" }
