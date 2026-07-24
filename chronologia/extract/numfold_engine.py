@@ -67,7 +67,25 @@ class NumberGrammar:
 def make_fold(grammar: NumberGrammar
               ) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
     """Build the spelled-number fold for ``grammar`` -- the one implementation."""
-    is_number = grammar.is_number
+    spelled = grammar.is_number
+
+    def is_number(tok: Token) -> bool:
+        """Run membership, with the tokenizer's refusals honoured.
+
+        A digit surface that reaches this pass *without* a number reading was
+        refused one on purpose -- it is the year of a date-shaped run that
+        bound no date ("2024/03", "15.06.20201"), and reading it alone is the
+        silent wrong the tokenizer just declined to commit.  Several languages
+        decide run membership by asking their number back-end what a surface is
+        worth, and the back-ends happily read "2024" out of any digits, which
+        would hand the refused numeral straight back.  This pass exists for
+        *spelled* numbers; digits are the tokenizer's business, so its verdict
+        stands.
+        """
+        if not tok.is_number and tok.text.isdigit():
+            return False
+        return spelled(tok)
+
     joiner = grammar.joiner
     extract = grammar.extract
     fallback = grammar.single_fallback

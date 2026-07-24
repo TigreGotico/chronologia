@@ -307,7 +307,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             weekend_start=conv.get("weekend_start", 5)),
         tokenizer=TokenizerModes(
             split_contractions=tok.get("split_contractions", False),
-            ordinal_dot=tok.get("ordinal_dot", False)),
+            ordinal_dot=tok.get("ordinal_dot", False),
+            dotted_date=tok.get("dotted_date", False)),
         guards=cfg.get("guards", {}),
         hook=_resolve_dotted(cfg.get("hook")),
         clock_fractions=clock_fractions, meridiems=meridiems,

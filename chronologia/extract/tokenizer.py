@@ -21,7 +21,8 @@ from typing import Tuple
 from chronologia.extract.model import Token, TokenizerModes
 
 # ISO-8601 year-first calendar literals, kept whole: a full date -- dash
-# ("2017-06-30") or slash ("2024/03/06", 1-2 digit month/day) -- and the
+# ("2017-06-30"), slash ("2024/03/06", 1-2 digit month/day) or dot
+# ("2020.06.15", the form Hungarian mandates) -- and the
 # day-less year-month ("2024-03", dash only, as ISO-8601 writes it).  A
 # 4-digit-leading, year-first surface is unambiguously Y-M-D in EVERY
 # locale, so -- unlike the day/month-ambiguous _NUMDATE below -- no
@@ -39,7 +40,16 @@ from chronologia.extract.model import Token, TokenizerModes
 # The year-month alternative additionally refuses a following "-<digit>": that
 # is the head of a longer dashed run ("2026-07-244"), and reading a month out
 # of its first seven characters is the same stranded-tail wrong.
+# The dotted alternative is the Hungarian civil form: the Academy's
+# orthography (AkH. 297) and MSZ ISO 8601 both write the date year-first with
+# dots, "2020.06.15".  It needs no per-locale switch for the same reason the
+# dashed and slashed forms do not -- a four-digit lead is year-first
+# everywhere -- and it cannot collide with a decimal number or a thousands
+# group, because both of those are refused by the two required dots and by the
+# "(?!\.\d)" guard, which keeps the literal from reading the head of a longer
+# dotted run ("1990.12.31.5" is not a date with a spare fraction).
 _ISO = (r"\d{4}-\d{2}-\d{2}(?!\d)|\d{4}/\d{1,2}/\d{1,2}(?!\d)"
+        r"|\d{4}\.\d{1,2}\.\d{1,2}(?!\d)(?!\.\d)"
         r"|\d{4}-\d{2}(?!\d)(?!-\d)")
 # the ISO-8601 week designator (ISO 8601 §4.4.4.2): ``YYYY-Www`` for the week
 # itself and ``YYYY-Www-D`` for one weekday inside it (D = 1..7, Monday..Sunday).
@@ -61,19 +71,95 @@ _ISOWEEK = r"\d{4}-[wW]\d{1,2}(?:-\d)?(?!\d)"
 # a numeric slash/dash separated date ("12/11/2024", "5-6-24"): two 1-2 digit
 # components and a 2-4 digit year, kept whole so the matcher binds it as one
 # ``NUMDATE`` slot.  Requiring the third (year) component and two separators
-# keeps a bare fraction/score ("1/2") from ever reading as a date.  Dot is
-# deliberately excluded -- it collides with the decimal-number and
-# ordinal-dot shapes.  The component->day/month order is a resolve-time,
-# per-locale (dmy) decision; the tokenizer stays language-neutral.
+# keeps a bare fraction/score ("1/2") from ever reading as a date.  The
+# component->day/month order is a resolve-time, per-locale (dmy) decision; the
+# tokenizer stays language-neutral.
 # same all-or-nothing boundary guard as _ISO: "12/11/20244" is not a date with
 # a spare digit, it is not a date at all.
 _NUMDATE = r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}(?!\d)"
+# the same date written with dots, "15.06.2020" -- the official civil form of
+# German (DIN 5008), Russian and Ukrainian (GOST R 6.30-2003), Polish, Czech
+# and Slovak (CSN 01 6910), Finnish and Estonian (SFS 4175, which drops the
+# leading zeros: "15.6.2020"), Turkish (TDK), Dutch, Danish, Norwegian,
+# Slovene, Croatian and Romanian.  It is enabled by the per-language
+# ``dotted_date`` tokenizer mode rather than always, because a locale that has
+# no dotted convention must keep reading "06.15.2020" as the two numbers it is;
+# English in particular writes the dot in neither order.
+#
+# The dot was excluded here for a long time, on the grounds that it collides
+# with the decimal-number and ordinal-dot shapes.  The collision is real but
+# the exclusion did not produce the refusal it was meant to: "15.06.2020" fell
+# through to the bare-number rule, the year matched alone, and the caller got a
+# confident whole-year span with "15.06" stranded in the remainder -- silently
+# wrong for the most ordinary way most of Europe writes a date.  Three
+# components with two dots is what keeps the shape apart from both colliders: a
+# decimal ("2.5") and a thousands group ("1.000", "1.000.000" in German) never
+# carry two dots with a 1-2 digit head and a 2-4 digit tail, and an ordinal dot
+# ("15. Juni") is followed by a space and a word, never by a digit.  The literal
+# is matched ahead of the ordinal-dot and bare-number rules so the whole date
+# binds as one token instead of being eaten piecewise.
+#
+# Both boundary guards are load-bearing, exactly as in _ISO.  "(?!\d)" refuses
+# a longer digit run ("15.06.20201"), and "(?!\.\d)" refuses the head of a
+# longer dotted run, so "1.2.3.4" and "1.15.06.2020" name no date at all
+# instead of yielding a date plus a stranded tail.
+_DOTDATE = r"\d{1,2}\.\d{1,2}\.\d{2,4}(?!\d)(?!\.\d)"
+# what the ``NUMDATE`` slot accepts: either separator style.  The matcher and
+# the resolver read this one name, so there is a single source of truth for the
+# shape and the day/month order stays the locale's ``dmy`` decision.
+_NUMDATE_ANY = f"(?:{_NUMDATE})|(?:{_DOTDATE})"
 _CLOCK = r"\d{1,2}:\d{2}(?::\d{2})?(?!\d)"
 _NUM = r"\d+(?:\.\d+)?"
 # a timezone acronym with an optional fixed signed offset kept as ONE token so
 # the sign survives ("utc+2", "gmt-5", bare "utc"); language-neutral, like the
 # ISO / clock literals above.  Named-city zones are deliberately out of scope.
 _ZONE = r"(?:utc|gmt)(?:[+-]\d{1,2}(?::?\d{2})?)?"
+#: the characters that glue the components of a written date together.
+_DATE_SEPS = "./-"
+
+
+def _adjacent_group(text: str, sep: int, step: int) -> int:
+    """How many digits sit on the far side of the separator at ``sep``.
+
+    Zero when there is no separator there or nothing but non-digits beyond it,
+    which is how a trailing "1914-" or an ordinary hyphenated word tells itself
+    apart from a date component.
+    """
+    if not 0 <= sep < len(text) or text[sep] not in _DATE_SEPS:
+        return 0
+    i, n = sep + step, 0
+    while 0 <= i < len(text) and text[i].isdigit():
+        n += 1
+        i += step
+    return n
+
+
+def _year_inside_a_broken_date(text: str, start: int, digits: str) -> bool:
+    """Is this four-digit-or-longer numeral visibly part of a date-shaped run?
+
+    A numeral that is glued by a dot, slash or dash to a digit group of some
+    other length is a component of a date somebody wrote, not a year standing
+    on its own.  When the run around it failed to bind as a date literal --
+    because the language has no dotted convention ("15.06.2020" in French),
+    because a component names nothing real ("31.02.2020"), or because the digit
+    run continues past the literal's shape ("15.06.20201", "2026-071") -- the
+    honest answer is that nothing was read.  Reading the year alone out of the
+    wreckage is the same silent wrong the dotted literal exists to end: the
+    caller gets a confident whole-year span and no sign that the day and the
+    month were dropped on the floor.  So the numeral gives up its number
+    reading entirely and binds no slot, and the phrase resolves to nothing.
+
+    The one glued shape that is not wreckage is the written year range: a tight
+    hyphen between two four-digit numbers, "1914-1918", where both sides are
+    years and neither is a day or a month.  No calendar component but a year is
+    written with four digits, so an equal-length four-digit neighbour is the
+    exact and only exemption.
+    """
+    if len(digits) < 4 or not digits.isdigit():
+        return False
+    left = _adjacent_group(text, start - 1, -1)
+    right = _adjacent_group(text, start + len(digits), 1)
+    return bool((left and left != 4) or (right and right != 4))
 
 
 class Tokenizer:
@@ -95,6 +181,10 @@ class Tokenizer:
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
         parts = [_ISOWEEK, _ISO, _NUMDATE, _CLOCK, _ZONE]
+        if modes.dotted_date:
+            # ahead of the ordinal-dot and bare-number rules below, so a
+            # dotted date binds whole rather than being read as a number
+            parts.insert(3, _DOTDATE)
         if modes.ordinal_dot:
             # a digit run followed by a dot that is not a decimal point
             parts.append(r"\d+\.(?!\d)")
@@ -105,7 +195,8 @@ class Tokenizer:
         if not text:
             return ()
         tokens = []
-        for i, m in enumerate(self._re.finditer(text.lower())):
+        low = text.lower()
+        for i, m in enumerate(self._re.finditer(low)):
             raw = m.group(0)
             # match offsets are into ``text.lower()``; for the Latin-script
             # locales this engine serves, lower-casing is length-preserving, so
@@ -113,10 +204,16 @@ class Tokenizer:
             cs, ce = m.start(), m.end()
             is_literal = (re.fullmatch(_ISOWEEK, raw) is not None
                           or re.fullmatch(_ISO, raw) is not None
-                          or re.fullmatch(_NUMDATE, raw) is not None
+                          or re.fullmatch(_NUMDATE_ANY, raw) is not None
                           or re.fullmatch(_CLOCK, raw) is not None)
             if not is_literal and re.match(r"\d", raw):
                 digits = raw.rstrip(".")
+                if _year_inside_a_broken_date(low, cs, digits):
+                    # the surface stays exactly as written -- only its number
+                    # reading is withdrawn, so no year slot can bind it
+                    tokens.append(Token(text=raw, raw=raw, index=i,
+                                        char_start=cs, char_end=ce))
+                    continue
                 value = float(digits) if "." in digits else int(digits)
                 tokens.append(Token(text=raw.rstrip("."), raw=raw, index=i,
                                     is_number=True, value=value,

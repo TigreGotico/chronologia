@@ -27,7 +27,7 @@ from chronologia.extract.model import (LangSpec, Match, SlotElement,
 # a slot that accepts more than the tokenizer emits can never fire anyway.
 _ISO = re.compile(tokenizer._ISO)
 _ISOWEEK = re.compile(tokenizer._ISOWEEK)
-_NUMDATE = re.compile(tokenizer._NUMDATE)
+_NUMDATE = re.compile(tokenizer._NUMDATE_ANY)
 _CLOCK = re.compile(tokenizer._CLOCK)
 
 

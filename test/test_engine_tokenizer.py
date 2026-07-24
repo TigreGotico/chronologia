@@ -86,3 +86,39 @@ def test_digits_past_a_literal_break_it_up(text, expected):
                                   "12/11/2024", "15:30", "2026-w01"])
 def test_literals_at_their_exact_length_still_bind(text):
     assert _texts(Tokenizer(TokenizerModes()).tokenize(text)) == [text]
+
+
+# A four-digit numeral glued by a dot, slash or dash to a digit group of some
+# other length is a component of a date somebody wrote, not a year standing on
+# its own.  When the run around it binds no date literal, the numeral keeps its
+# surface but gives up its number reading, so no year slot can pick it out of
+# the wreckage and answer with a whole-year span the writer never asked for.
+@pytest.mark.parametrize("text,year", [
+    ("15.06.2020", "2020"),      # a dotted date in a language without them
+    ("15.06.20201", "20201"),    # a digit run past the shape
+    ("12/11/20244", "20244"),
+    ("2024/03", "2024"),         # a slashed year-month is not an ISO one
+    ("2026-071", "2026"),
+])
+def test_a_year_glued_into_a_broken_date_is_not_a_number(text, year):
+    toks = Tokenizer(TokenizerModes()).tokenize(text)
+    glued = [t for t in toks if t.text == year]   # the surface is kept whole
+    assert glued and not any(t.is_number for t in glued)
+    assert all(t.value is None for t in glued)
+
+
+@pytest.mark.parametrize("text", ["1914-1918", "2020-2021"])
+def test_a_four_digit_neighbour_leaves_the_year_a_number(text):
+    """The written year range is the one glued shape that is not wreckage:
+    no calendar component but a year is written with four digits, so two
+    four-digit numbers around a tight hyphen are two years."""
+    toks = Tokenizer(TokenizerModes()).tokenize(text)
+    assert all(t.is_number for t in toks)
+
+
+@pytest.mark.parametrize("text", ["2.5", "1.000", "1914-", "-1918", "covid-19"])
+def test_ordinary_numerals_keep_their_number_reading(text):
+    """A decimal, a thousands group, a dangling hyphen and a hyphenated word
+    glue nothing to a year, so none of them lose anything."""
+    toks = Tokenizer(TokenizerModes()).tokenize(text)
+    assert any(t.is_number for t in toks)

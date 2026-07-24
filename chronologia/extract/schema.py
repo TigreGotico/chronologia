@@ -154,7 +154,8 @@ KNOWN_POSITION_ROLES: FrozenSet[str] = frozenset({"until", "since", "for"})
 #: ``post`` trails it as a separate bound word, ``affix`` is a suffix fused onto
 #: the date's final surface token.
 KNOWN_POSITIONS: FrozenSet[str] = frozenset({"pre", "post", "affix"})
-TOKENIZER_KEYS: FrozenSet[str] = frozenset({"split_contractions", "ordinal_dot"})
+TOKENIZER_KEYS: FrozenSet[str] = frozenset({"split_contractions", "ordinal_dot",
+                                          "dotted_date"})
 CONVENTION_KEYS: FrozenSet[str] = frozenset({
     "week_start", "dmy", "hemisphere", "prefer_future", "bare_half_to",
     "bare_quarter_to", "toward_hour_12h", "bare_half_past", "weekend_start"})

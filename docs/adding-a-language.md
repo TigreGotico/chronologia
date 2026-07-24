@@ -462,9 +462,14 @@ conventions. You will almost always start by copying an existing one.
 
 It has four parts worth understanding:
 
-**1. `tokenizer`** — two on/off switches for how text is chopped into words.
-Most languages leave both `false`. (`split_contractions` splits words like
-French *l'année*; `ordinal_dot` treats "3." as an ordinal, used in German.)
+**1. `tokenizer`** — three on/off switches for how text is chopped into
+words. Most languages leave them all `false`. (`split_contractions` splits
+words like French *l'année*; `ordinal_dot` treats "3." as an ordinal, used in
+German; `dotted_date` reads the continental numeric date "15.06.2020" as one
+date, and belongs to every language whose everyday written date has that
+shape — German, Russian, Polish, Czech, Finnish, Turkish, Dutch and their
+neighbours — but not to a language that writes the numeric date only with
+slashes.)
 
 **2. `constructions`** — this is the heart of it. A **construction** is a
 *recipe* for one kind of date phrase, and each recipe lists the **word order**
