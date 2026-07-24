@@ -1,0 +1,12 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale sv
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [05:00, 10:00).
+# Sources: Svensk ordbok utgiven av Svenska Akademien
+# (https://svenska.se/so/?id=115794), which gives eftermiddag as the
+# "del av dagen som infaller mellan lunchtiden och kvallen".
+# The definite singular is listed beside the bare noun because it is the
+# everyday form ("i eftermiddagen", "under kvallen").
+# The Nordic morgon is short -- five hours, handing over to formiddag well
+# before noon -- and is not English's six-hour morning.
+morgon
+morgonen
