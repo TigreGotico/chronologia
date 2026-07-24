@@ -335,6 +335,61 @@ and copy the pattern for the one feature you want.
 
 ---
 
+## Tier 4 — recurrence ("every Friday", "the third Tuesday of every month")
+
+A locale that stops at Tier 3 can read a single date, but not a *repeating*
+one — "every Friday", "daily at 9", "the third Tuesday of every month" all
+name a rule, not a single day, and that rule is the RFC 5545 `RRULE` grammar
+covered in [recurrence.md](recurrence.md). This tier is what teaches your
+language the words that name a recurrence; the RRULE machinery itself is
+shared engine code, so — same as everywhere else in this guide — you are
+only supplying vocabulary.
+
+### The `every` / `other` markers
+
+| File | Put in it |
+|---|---|
+| `marker_every.voc` | "every" / "each" (as in "every Friday", "every 2 weeks") |
+| `marker_recur_other.voc` | "other" / "alternate" (as in "every **other** week") |
+
+### The frequency adverbs
+
+Some recurrences are said as a single adverb rather than "every + unit":
+
+| File | Put in it |
+|---|---|
+| `marker_freq_daily.voc` | "daily" |
+| `marker_freq_weekly.voc` | "weekly" |
+| `marker_freq_monthly.voc` | "monthly" |
+| `marker_freq_yearly.voc` | "yearly" / "annually" |
+| `marker_freq_biweekly.voc` | "biweekly" / "fortnightly" — read as *every two weeks*, the more common sense (Merriam-Webster's usage note), not "twice a week" |
+| `marker_freq_quarterly.voc` | "quarterly" — every three months |
+
+### The recurrence-specific markers
+
+| File | Put in it |
+|---|---|
+| `marker_recur_once.voc` | "once" (as in "once a week") |
+| `marker_recur_per.voc` | "per" (as in "twice per month") |
+| `marker_recur_for.voc` | "for" (as in "every Monday **for** 6 weeks" — bounds the rule with a `COUNT`) |
+| `marker_until.voc` | "until" / "till" (as in "every Friday **until** June" — bounds the rule with an `UNTIL`) |
+| `marker_weekday.voc` | the class noun "weekday(s)" (as in "every weekday", distinct from any one named weekday) |
+| `marker_recur_habitual.voc` | (optional) a habitual preposition some languages use instead of "every" before a weekday — Portuguese marks it with `à` / `às` / `ao` / `aos` ("**à** segunda" = "on Mondays, habitually") |
+
+`special_weekend.voc` (Tier 3) and the weekday/month files (Tier 1) do double
+duty here — "every weekend", "every Friday", and "the third Tuesday of
+November" all resolve through the same weekday and month vocabulary you
+already wrote; there is nothing new to add for those.
+
+With these files in place, chronologia reads "every Friday", "every other
+week", "daily", "once a week on Monday", "the last Monday of May", and the
+bounded forms "every Monday for 6 weeks" / "every Friday until June" in your
+language, resolving to the same `Recurrence` object [recurrence.md](recurrence.md)
+describes — worth reading if you want to see what the rule looks like once
+your words are folded onto it.
+
+---
+
 ## `lang.json` explained gently
 
 `lang.json` is the one non-`.voc` file. It is a small **settings** file that
