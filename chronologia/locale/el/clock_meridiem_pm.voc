@@ -1,2 +1,10 @@
+# Greek post-meridiem marker.  "μ.μ." abbreviates "μετά μεσημβρίαν" ("after
+# midday") and is the standard written abbreviation for afternoon/evening clock
+# times: Λεξικό της Κοινής Νεοελληνικής (Ίδρυμα Μανόλη Τριανταφυλλίδη, ΙΝΣ /
+# ΑΠΘ 1998), s.v. "μ.μ."; Triantafyllidis, Νεοελληνική Γραμματική §403
+# (time expressions).
+# The dot-less "μμ" is the same abbreviation written without its abbreviation
+# points -- the ordinary informal rendering in digital text (SMS, chat, forms).
 μ.μ.
 μ. μ.
+μμ

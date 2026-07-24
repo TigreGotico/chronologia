@@ -76,13 +76,39 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     # O(files^2) into O(files).
     vocab_map = res.vocabularies(lang)
 
+    # The tokenizer emits letter runs and DISCARDS punctuation, so a shipped
+    # surface written with internal dots ("μ.μ.", "π. χ.", "ap. j.-c.") can
+    # never equal a token's text -- it is dead vocabulary by construction, and
+    # the slot it feeds silently falls into the remainder.  Every surface is
+    # therefore ALSO registered in its token-canonical form: the surface run
+    # through this language's own tokenizer, tokens space-joined -- exactly the
+    # canonicalisation the holiday surfaces below already use.  Multi-token
+    # canonical forms ("μ μ") are glued back by ``pipeline.merge_multiword``,
+    # the same pass that binds "bronze age" or "öğleden sonra"; multiword
+    # connectors are bound natively by the matcher's ``_connector_span``.  The
+    # original dotted surface is kept as well, so nothing that matched before
+    # stops matching.
+    surface_tokenizer = Tokenizer(TokenizerModes(
+        split_contractions=cfg.get("tokenizer", {}).get("split_contractions", False),
+        ordinal_dot=cfg.get("tokenizer", {}).get("ordinal_dot", False)))
+
+    def _canonical(surface: str) -> str:
+        return " ".join(t.text for t in surface_tokenizer.tokenize(surface))
+
     def forms(base):
         samples: list = []
         for template in read_resource_file(Path(lang_dir) / (base + ".voc")):
             for sample in expand(template, vocab_map):
                 if sample not in samples:
                     samples.append(sample)
-        return [f.lower() for f in samples]
+        out = [f.lower() for f in samples]
+        for f in list(out):
+            if "." not in f:
+                continue
+            canon = _canonical(f)
+            if canon and canon not in out:
+                out.append(canon)
+        return out
 
     months: Dict[str, int] = {}
     weekdays: Dict[str, int] = {}
