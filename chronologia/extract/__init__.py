@@ -240,6 +240,62 @@ def _first_to_split(tokens, left_start, to_surf, text):
     return None
 
 
+def _find_conn(tokens, surfaces):
+    """``(pos, k)`` of the first connector from ``surfaces``, or ``None``.
+
+    The range lead ("from", "between") is not always utterance-initial -- it
+    is routinely preceded by a subject ("the shop is open from 9 to 5") or by
+    a scoping qualifier ("next week from monday to friday").  Anchoring the
+    lead scan at token 0 left that pre-text *inside* the left endpoint slice,
+    where it could be swallowed by an unrelated construction ("week from
+    monday" read as a week reference, re-anchoring the whole range a week
+    late).  Scanning for the lead wherever it sits keeps the endpoint slices
+    to the endpoints, and the pre-lead text goes to the remainder where it
+    belongs.
+    """
+    for i in range(len(tokens)):
+        k = _match_conn_at(tokens, i, surfaces)
+        if k:
+            return i, k
+    return None
+
+
+def _lead_at(tokens, surfaces, spec):
+    """Where the range lead sits: ``(pos, k)`` or ``None``.
+
+    Utterance-initial for any surface, anywhere for a surface that cannot be
+    mistaken for a date particle (see :func:`_unambiguous_lead`).
+    """
+    k = _match_conn_at(tokens, 0, surfaces)
+    if k:
+        return 0, k
+    return _find_conn(tokens, _unambiguous_lead(spec, surfaces))
+
+
+def _unambiguous_lead(spec, surfaces):
+    """``surfaces`` minus those that double as a date particle.
+
+    A lead is only worth hunting for mid-utterance when its surface says
+    "range" wherever it appears.  The Romance ``de`` is both the range lead
+    ("de juny a agost") and the genitive that glues a date together ("5 de
+    juny"), so scanning for it would split "5 de juny - 12 de juny" at the
+    genitive and throw the day away.  Such a surface stays trusted only
+    utterance-initially, where nothing precedes it to be a date.  English
+    ``from`` is no one's particle, so it is scanned for freely.
+    """
+    particles = set(spec.connectors.get("of", ())) \
+        | set(spec.connectors.get("at", ()))
+    return [w for w in surfaces if " ".join(w) not in particles]
+
+
+def _with_prefix(got, prefix):
+    """Prepend the pre-lead text to a composed range's remainder."""
+    if got is None or not prefix:
+        return got
+    span, rem = got
+    return span, (prefix + " " + rem).strip() if rem else prefix
+
+
 def _extract_range(text, tokens, engine, anchor):
     """A "from A to B" / "between A and B" span, endpoints from two sub-parses.
 
@@ -278,33 +334,50 @@ def _extract_range(text, tokens, engine, anchor):
         return _range_endpoint(text, sub, engine, anchor)
 
     # -- from A to B -------------------------------------------------------
-    lead = _match_conn_at(tokens, 0, from_surf)
-    split = _first_to_split(tokens, lead, to_surf, text)
+    at_from = _lead_at(tokens, from_surf, spec)
+    at_between = _lead_at(tokens, between_surf, spec)
+    lead_at, lead = at_from if at_from is not None else (0, 0)
+    split = _first_to_split(tokens, lead_at + lead, to_surf, text)
     if split is not None:
         p, k = split
-        left_tok, right_tok = tokens[lead:p], tokens[p + k:]
+        left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
         # a bare "A to B" (no from/between) is only trusted when the left side is
         # not a lone clock fraction word (avoids hijacking "quarter to five") AND
         # the connector is not an ``at``-ambiguous preposition (avoids fabricating
         # "junio a las tres" into a range); either trap is disarmed by a lead.
-        between_lead = _match_conn_at(tokens, 0, between_surf)
+        led = bool(lead) or at_between is not None
         left_words = " ".join(t.text for t in left_tok)
         conn_words = " ".join(t.text for t in tokens[p:p + k]).lower()
-        if lead or between_lead or (left_words not in fraction_words
-                                    and conn_words not in lead_required):
-            got = _compose_range(left_tok, right_tok, endpoint, spec)
+        if led or (left_words not in fraction_words
+                   and conn_words not in lead_required):
+            prefix = render_remainder(text, list(tokens[:lead_at])) \
+                if lead else ""
+            # an explicit lead licenses the bare-hour reading of a numeric
+            # endpoint ("from 9 to 5"), which must be tried *before* the
+            # generic composition so a borrowed meridiem cannot roll a day.
+            got = None
+            if led:
+                got = _compose_clock_range(text, left_tok, right_tok,
+                                           engine, anchor)
+            if got is None:
+                got = _compose_range(left_tok, right_tok, endpoint, spec)
             if got is not None:
-                return got
+                return _with_prefix(got, prefix)
 
     # -- between A and B ---------------------------------------------------
-    lead = _match_conn_at(tokens, 0, between_surf)
-    if lead:
-        split = _first_to_split(tokens, lead, and_surf, text)
+    if at_between is not None:
+        lead_at, lead = at_between
+        split = _first_to_split(tokens, lead_at + lead, and_surf, text)
         if split is not None:
             p, k = split
-            got = _compose_range(tokens[lead:p], tokens[p + k:], endpoint, spec)
+            left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
+            prefix = render_remainder(text, list(tokens[:lead_at]))
+            got = _compose_clock_range(text, left_tok, right_tok,
+                                       engine, anchor)
+            if got is None:
+                got = _compose_range(left_tok, right_tok, endpoint, spec)
             if got is not None:
-                return got
+                return _with_prefix(got, prefix)
     return None
 
 
@@ -348,6 +421,230 @@ def _range_endpoint(text, sub, engine, anchor):
     return None
 
 
+#: the hours a bare numeral may name on a 12-hour clock
+_BARE_HOUR = (1, 12)
+
+
+def _align_awareness(left_span, right_span):
+    """The two endpoint spans read on a common UTC offset.
+
+    A zone literal binds to the endpoint that carries it ("from noon to 3:30
+    utc+2"), leaving the other endpoint naive -- and comparing a naive to an
+    aware value raises :class:`TypeError`, which the public extractors
+    (documented as "returns ``None``, never raises") must never surface.
+
+    A range is one interval, so its two ends are read on **one** clock: the
+    naive endpoint is taken to be a *wall clock in the zone the other endpoint
+    names*.  "from noon to 3:30 utc+2" is noon UTC+2 to 3:30 UTC+2 -- the
+    reading a speaker intends when they name the zone once for the pair.  The
+    wall-clock reading is preserved (the offset is *attached*, never
+    converted), so no stated time is silently shifted.  When neither or both
+    endpoints are aware the pair is already common and is returned untouched.
+    """
+    lz = left_span.start.tzinfo
+    rz = right_span.start.tzinfo
+    if (lz is None) == (rz is None):
+        return left_span, right_span
+    zone = rz if lz is None else lz
+
+    def attach(span):
+        if span.start.tzinfo is not None:
+            return span
+        return DateSpan(span.start.replace(tzinfo=zone),
+                        span.end.replace(tzinfo=zone))
+
+    return attach(left_span), attach(right_span)
+
+
+def _roll_after(span, start, step):
+    """``span`` advanced by whole ``step``s until it ends after ``start``.
+
+    The cycle count is computed arithmetically rather than stepped.  Stepping
+    cost the *day distance* between the endpoints, which the utterance chooses
+    freely via its year -- "from june 12 9999 to 3:30" spun ~2.9 million
+    iterations (~45 s) inside a synchronous intent parse.  The answer is a
+    division, so it is O(1) whatever the distance.
+    """
+    delta = start - span.end
+    if delta < timedelta(0):
+        return span
+    n = delta // step + 1
+    return DateSpan(span.start + n * step, span.end + n * step)
+
+
+def _dateless_clock(sub, spec):
+    """True when the slice names *only* an hour (plus its meridiem).
+
+    Such an endpoint carries no day of its own, so it is the one that gets
+    placed on the other endpoint's day.
+    """
+    return not [t for t in sub
+                if not (t.is_number and t.value is not None)
+                and t.text not in spec.meridiems]
+
+
+def _bare_hour_pos(sub, spec):
+    """Index in ``sub`` of a lone hour written *without* a meridiem, else None.
+
+    The slice must carry exactly one integer 1..12 and no am/pm word of its
+    own -- "9" in "from 9 to 5", "5" in "5 on tuesday".  A clock literal
+    ("09:00") is a single lexical token and is not a bare number, so an
+    explicit time is never second-guessed.
+    """
+    nums = [i for i, t in enumerate(sub) if t.is_number and t.value is not None]
+    if len(nums) != 1 or any(t.text in spec.meridiems for t in sub):
+        return None
+    v = sub[nums[0]].value
+    if v != int(v) or not _BARE_HOUR[0] <= int(v) <= _BARE_HOUR[1]:
+        return None
+    return nums[0]
+
+
+def _meridiem_surfaces(spec):
+    """The shortest ``(am, pm)`` surface the language spells a half-day with."""
+    def pick(offset):
+        forms = sorted((s for s, off in spec.meridiems.items() if off == offset),
+                       key=len)
+        return forms[0] if forms else None
+    return pick(0), pick(12)
+
+
+def _with_meridiem(sub, pos, surface):
+    """``sub`` with ``surface`` spliced in right after the hour at ``pos``.
+
+    The spliced tokens are synthetic: they carry no character extent, which is
+    exactly how :func:`_variant_endpoint` keeps them out of the remainder.
+    """
+    extra = tuple(Token(text=w, raw=w, index=-1 - i)
+                  for i, w in enumerate(surface.split()))
+    return tuple(sub[:pos + 1]) + extra + tuple(sub[pos + 1:])
+
+
+def _variant_endpoint(text, sub, engine, anchor):
+    """:func:`_resolve_endpoint` over a slice carrying synthesised tokens.
+
+    Identical to the real path except that the remainder is rendered from the
+    *original* tokens only -- a synthesised meridiem has no extent in the
+    utterance and must never surface as leftover text.
+    """
+    folded = fold_tokens(tuple(sub), engine.spec, text)
+    core = _resolve_core(folded, engine, anchor)
+    if core is None:
+        return None
+    span, consumed = core
+    left = [t for t in folded
+            if t.index not in consumed and t.char_start is not None]
+    return span, render_remainder(text, left)
+
+
+def _numeral_is_free(text, sub, engine, anchor, pos):
+    """Whether the numeral at ``pos`` is unclaimed by the slice's own reading.
+
+    A numeral that the endpoint already spends on a date field is not
+    available to be re-read as an hour.  Catalan "de 5 de juny a 12 de juny"
+    is the case that matters: each endpoint holds exactly one numeral and no
+    meridiem, so it *looks* like a bare hour, but the 5 is the day of June --
+    re-reading it produced "1 June at 05:00", a silent-wrong that threw the
+    day away.  In "from 9 to 5" (and in "5 on tuesday", where the reading is
+    the weekday and the 5 is left over) the numeral is genuinely spare, so
+    the hour reading stands.
+    """
+    folded = fold_tokens(tuple(sub), engine.spec, text)
+    core = _resolve_core(folded, engine, anchor)
+    if core is None:                # nothing read it at all -- it is free
+        return True
+    _, consumed = core
+    numerals = [t for t in folded if t.is_number and t.value is not None]
+    return not numerals or numerals[0].index not in consumed
+
+
+def _clock_candidates(text, sub, engine, anchor, borrow=None):
+    """Ordered clock readings of one endpoint slice.
+
+    The literal reading first, then -- only for a slice whose hour is written
+    bare -- the borrowed meridiem (the one the *other* endpoint spells out),
+    then am, then pm.  Preference order is the whole point: the borrowed
+    meridiem stays first, so "between 3 and 5 pm" keeps reading 15:00, and the
+    am/pm fallbacks exist only for the pairings the borrow cannot satisfy.
+    Readings a day or wider are not clocks and are dropped.
+    """
+    spec = engine.spec
+    out = []
+    got = _resolve_endpoint(text, sub, engine, anchor)
+    if got is not None:
+        out.append(got)
+    pos = _bare_hour_pos(sub, spec)
+    if pos is not None and _numeral_is_free(text, sub, engine, anchor, pos):
+        am, pm = _meridiem_surfaces(spec)
+        order = [s for s in (borrow, am, pm) if s is not None]
+        seen = set()
+        for surf in order:
+            if surf in seen:
+                continue
+            seen.add(surf)
+            v = _variant_endpoint(text, _with_meridiem(sub, pos, surf),
+                                  engine, anchor)
+            if v is not None:
+                out.append(v)
+    return [c for c in out if c[0].end - c[0].start < timedelta(days=1)]
+
+
+def _rebase(span, day):
+    """``span`` moved to the calendar day of ``day``, keeping its wall clock."""
+    start = span.start.replace(year=day.year, month=day.month, day=day.day)
+    return DateSpan(start, start + (span.end - span.start))
+
+
+def _compose_clock_range(text, left_tok, right_tok, engine, anchor):
+    """A clock range one of whose endpoints writes its hour bare, or ``None``.
+
+    An explicit ``from``/``between`` lead says "these two are the ends of one
+    interval", which licenses two readings a bare numeral never gets on its
+    own: it is an **hour** ("from 9 to 5" is a working day, not "nine minutes
+    to five"), and its meridiem is whichever one makes the pair a single
+    coherent interval.
+
+    The precedence rule: try the endpoint readings in preference order --
+    literal first, then the meridiem borrowed from the other endpoint, then
+    am, then pm -- and take the **first pairing that fits inside one day**.
+    The dateless endpoint is placed on the other's day, so no reading is
+    accepted at the price of a day roll.  "from 9 to 5 pm" therefore reads
+    09:00-17:00 rather than borrowing the ``pm`` into a 20-hour span, while
+    "between 3 and 5 pm" still borrows it, because there the borrow fits.
+
+    Returns ``None`` -- deliberately, so the generic composition and then the
+    plain single-span path (including the subtractive clock, which is correct
+    English wherever no lead frames a range) get their turn -- whenever no
+    pairing fits.  Fires only when an endpoint's hour is actually bare, so an
+    explicit range ("from 9am to 5pm", "from 09:00 to 17:00") is untouched.
+    """
+    spec = engine.spec
+    if _bare_hour_pos(left_tok, spec) is None \
+            and _bare_hour_pos(right_tok, spec) is None:
+        return None
+    borrow = _trailing_meridiem(right_tok, spec)
+    lefts = _clock_candidates(text, left_tok, engine, anchor,
+                              borrow.text if borrow is not None else None)
+    rights = _clock_candidates(text, right_tok, engine, anchor)
+    if not lefts or not rights:
+        return None
+    # the endpoint with no day of its own is the one that moves; when both are
+    # dateless the right joins the left, matching the generic composition's
+    # left-anchored reading ("from 9am to 5pm" and "from 9 to 5" agree).
+    move_left = _dateless_clock(left_tok, spec) \
+        and not _dateless_clock(right_tok, spec)
+    day = timedelta(days=1)
+    for lspan, lrem in lefts:
+        for rspan, rrem in rights:
+            ls, rs = _align_awareness(lspan, rspan)
+            ls, rs = (_rebase(ls, rs.start), rs) if move_left \
+                else (ls, _rebase(rs, ls.start))
+            if ls.start < rs.end <= ls.start + day:
+                rem = " ".join(p for p in (lrem, rrem) if p).strip()
+                return DateSpan(ls.start, rs.end), rem
+    return None
+
+
 def _compose_range(left_tok, right_tok, endpoint, spec):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
@@ -373,23 +670,19 @@ def _compose_range(left_tok, right_tok, endpoint, spec):
             left = endpoint(tuple(left_tok) + (merid,))
     if left is None or right is None:
         return None
-    left_span, right_span = left[0], right[0]
+    # one interval is read on one clock: a zone named on a single endpoint
+    # governs both, so the two ends stay comparable (see _align_awareness).
+    left_span, right_span = _align_awareness(left[0], right[0])
     start = left_span.start
     # roll a cyclic right endpoint forward into the same cycle as the start; a
-    # dated endpoint already carries its year, so it is left untouched.
+    # dated endpoint already carries its year, so it is left untouched.  The
+    # roll is arithmetic (see _roll_after): the cycle count is chosen by the
+    # utterance's year, so stepping it made a far-future range a hang.
     end = right_span.end
     if right[2] == "clock":
-        rolled = right_span
-        while rolled.end <= start:
-            rolled = DateSpan(rolled.start + timedelta(days=1),
-                              rolled.end + timedelta(days=1))
-        end = rolled.end
+        end = _roll_after(right_span, start, timedelta(days=1)).end
     elif right[2] == "weekday":
-        rolled = right_span
-        while rolled.end <= start:
-            rolled = DateSpan(rolled.start + timedelta(days=7),
-                              rolled.end + timedelta(days=7))
-        end = rolled.end
+        end = _roll_after(right_span, start, timedelta(days=7)).end
     # prefer-future asymmetry: a straddling range resolves its left endpoint a
     # whole year ahead (prefer_future) while the right stays put, inverting the
     # span.  Pull an unpinned left back one year so both read in the nearest
