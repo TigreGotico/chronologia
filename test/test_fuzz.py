@@ -25,6 +25,7 @@ from __future__ import annotations
 import os
 import random
 import string
+from datetime import timedelta
 
 import pytest
 from hypothesis import HealthCheck, given, settings
@@ -250,3 +251,44 @@ def test_extract_timespans_never_overlap_and_stay_ordered(lang):
 @pytest.mark.parametrize("lang", ["da", "nb", "nn"])
 def test_known_crash_superscript_digit_nb_da_nn(lang):
     assert extract_timespan("¹", lang) is None
+
+
+# --------------------------------------------------------------------------
+# Regression: duration count overflows the C types timedelta is built from.
+#
+# ``extract_duration("99999999999999999999 days", lang="en")`` used to raise
+# an uncaught ``OverflowError`` ("Python int too large to convert to C
+# int") because the summed second count no longer fits the C long
+# ``timedelta`` stores internally, even though the parsed number itself
+# fits a Python float just fine. A digit run of a few hundred characters
+# ("1" * 400) overflows earlier still, in the plain ``float()`` conversion
+# of the parsed count ("int too large to convert to float"), independent of
+# whether a duration unit even follows it.  Neither is a real-world length,
+# so both are unrepresentable input and must come back as ``None`` -- the
+# same honest "no match" every other extractor gives for text it cannot
+# express -- never a raised exception.  Language-independent: the shared
+# numeral-folding path is what overflows, not any per-locale grammar.
+# --------------------------------------------------------------------------
+
+def test_duration_overflow_returns_none_not_raise():
+    assert extract_duration("99999999999999999999 days", lang="en") is None
+    assert extract_duration("1" * 400, lang="en") is None
+    assert extract_duration("1" * 400 + " days", lang="en") is None
+
+
+def test_duration_large_but_representable_still_works():
+    result = extract_duration("1000000 days", lang="en")
+    assert result is not None
+    assert result.duration == timedelta(days=1_000_000)
+
+
+def test_duration_at_the_timedelta_max_boundary():
+    # timedelta.max is the largest length timedelta(seconds=...) can hold;
+    # one day past it must fail to construct and come back as None instead
+    # of propagating the OverflowError.
+    at_max = extract_duration(f"{timedelta.max.days} days", lang="en")
+    assert at_max is not None
+    assert at_max.duration == timedelta(days=timedelta.max.days)
+
+    past_max = extract_duration(f"{timedelta.max.days + 1} days", lang="en")
+    assert past_max is None

@@ -138,17 +138,25 @@ def extract_duration(
                 count, j = 1.0, j + 1
         if count is None and j < n:
             if tokens[j].is_number:
-                count, j = float(tokens[j].value), j + 1
+                # A digit run hundreds of characters long folds to an int no
+                # C double can hold ("1" * 400): float() itself overflows
+                # before a unit is even matched.  Such a count names no real
+                # length, so the token is treated as if it weren't numeric
+                # and scanning moves on, rather than raising past the caller.
+                try:
+                    count, j = float(tokens[j].value), j + 1
+                except OverflowError:
+                    count, j = None, i + 1
                 # a fraction word right after the count multiplies it: "three
                 # quarters (of an hour)", "eine viertel stunde" (a quarter hour)
-                if j < n and tokens[j].text in fracs:
+                if count is not None and j < n and tokens[j].text in fracs:
                     count, j = count * fracs[tokens[j].text], j + 1
             elif tokens[j].text in fracs:
                 count, j = fracs[tokens[j].text], j + 1
             elif tokens[j].text in spec.quantifiers:
                 count, j = spec.quantifiers[tokens[j].text], j + 1
         if count is None:
-            i += 1
+            i = max(i + 1, j)
             continue
         # "one and a half hours": the fraction precedes the unit.
         add, j = _read_additive(j)
@@ -178,7 +186,16 @@ def extract_duration(
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
-    return DurationResult(timedelta(seconds=total), remainder)
+    # A count within float range can still sum to more seconds than a C int
+    # (or timedelta.max, ~999999999 days) can represent -- e.g. a plain
+    # digit-run count like 99999999999999999999 days.  That names a real
+    # number but not a representable duration, so it is reported as None:
+    # the honest "I can't express this length" rather than a raised error
+    # or a silently wrong clamp to some arbitrary huge-but-wrong value.
+    try:
+        return DurationResult(timedelta(seconds=total), remainder)
+    except OverflowError:
+        return None
 
 
 # --------------------------------------------------------------------------
