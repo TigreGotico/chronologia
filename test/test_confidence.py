@@ -12,18 +12,22 @@ Three contracts are exercised here:
    that never participates in equality (so the equality-based corpora keep
    passing).
 
-3. **Calibration = separation** (the real contract).  Walking a sample of every
-   language's gold corpus (via the benchmark adapter's collection trick), a
-   fully-claimed gold phrase scores at or above a floor; walking every
-   language's *confusables* corpus, a confusable text that still yields a
-   candidate scores at or below a ceiling that sits **below** the gold floor.
-   The gap between the two bands -- not any absolute number -- is what is
-   asserted.  Achieved margins are printed for the record.
+3. **Calibration = a gold floor that prose cannot erode** (the real contract).
+   Walking a sample of every language's gold corpus (via the benchmark
+   adapter's collection trick), a fully-claimed gold phrase scores at or above
+   a floor -- and scores there whether it is said alone or buried in a
+   conversational sentence, which is what makes the number safe to threshold.
+   The achieved minimum is printed for the record.
+
+   There is deliberately no matching *ceiling* over the confusables corpus.  A
+   confusable that still parses -- "fall for the trick", "christmas came early"
+   -- yields a reading identical to the real one, and telling those apart takes
+   the sentence's meaning, which the extractor does not have; the confusables
+   corpus documents exactly that as a downstream concern.  A ceiling could only
+   be met by charging the reading for the words around it, which is precisely
+   what confidence must not do.
 """
 import os
-import sys
-
-import pytest
 
 from datetime import datetime
 
@@ -35,15 +39,20 @@ from chronologia.extract.confidence import (confidence, homograph_surfaces,
                                             specificity_factor)
 from chronologia.events import extract_event
 
-# --- separation thresholds --------------------------------------------------
-# A fully-claimed gold phrase must clear GOLD_FLOOR; a confusable that still
-# yields a candidate must stay at or below CONFUSABLE_CEIL; and the two bands
-# must not overlap (CONFUSABLE_CEIL < GOLD_FLOOR).  Observed on the corpora at
-# authoring time: gold min ~0.85, confusable max ~0.65 -- comfortably separated.
+# --- the gold floor ---------------------------------------------------------
+# A fully-claimed gold phrase must clear GOLD_FLOOR.  Observed on the corpora at
+# authoring time: gold min ~0.85, with comfortable headroom over the floor.
 GOLD_FLOOR = 0.75
-CONFUSABLE_CEIL = 0.70
+
+# How far apart two scorings of the same date expression may drift when the
+# prose around it grows.  They are expected to be identical; the tolerance is
+# there so a future signal that reads the neighbouring tokens has room to say
+# something small, not room to collapse the score.
+PROSE_TOLERANCE = 0.05
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
+
+ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 
 # ===========================================================================
@@ -89,6 +98,71 @@ class TestScoreShape:
 
     def test_empty_on_nothing(self):
         assert extract_candidates("the quick brown fox", "en") == []
+
+
+# ===========================================================================
+# 1b. Prose invariance: confidence scores the reading, not the utterance.
+# ===========================================================================
+# The same date expression, carried by ever more ordinary conversation.  The
+# extraction is identical in all five -- one unambiguous "tomorrow" -- so the
+# score must be too.  A consumer thresholding confidence (an intent pipeline is
+# the one that matters) would otherwise throw away correct readings for no
+# reason but the speaker's verbosity.
+_PROSE = [
+    "tomorrow",
+    "meet tomorrow",
+    "lets meet up tomorrow if that works",
+    "i was thinking that maybe we could meet up tomorrow if that works",
+    "i was thinking that maybe we could possibly meet up tomorrow if that "
+    "works for you at all really",
+]
+
+
+class TestProseInvariance:
+    def test_score_survives_the_prose_around_it(self):
+        confs = []
+        for text in _PROSE:
+            cands = extract_candidates(text, "en", ANCHOR)
+            assert cands, text
+            best = max(cands, key=lambda c: c.confidence)
+            assert best.confidence >= GOLD_FLOOR, (text, best.confidence)
+            confs.append(best.confidence)
+        assert max(confs) - min(confs) <= PROSE_TOLERANCE, confs
+
+    def test_every_language_gold_phrase_survives_a_carrier_sentence(self):
+        # The carrier is deliberately meaningless filler in each language's
+        # script; what matters is that it is not date-like, so it must not
+        # register at all.
+        for lang, phrase, carrier in [
+                ("en", "tomorrow", "i think we could maybe %s if you like"),
+                ("pt", "amanha", "acho que talvez possamos %s se quiseres"),
+                ("de", "morgen", "ich denke wir koennten vielleicht %s"),
+        ]:
+            alone = extract_candidates(phrase, lang, ANCHOR)
+            carried = extract_candidates(carrier % phrase, lang, ANCHOR)
+            assert alone and carried, (lang, phrase)
+            assert abs(alone[0].confidence
+                       - carried[0].confidence) <= PROSE_TOLERANCE, lang
+
+    def test_ambiguous_scores_below_unambiguous(self):
+        # "june 2027" states its year; the runner-up reading that keeps only
+        # "2027" and strands "june" explains less of the same date phrase, and
+        # a lone weekday still beats both partial readings of it.
+        cands = extract_candidates("june 2027", "en", ANCHOR)
+        full = [c for c in cands if c.remainder == ""]
+        partial = [c for c in cands if c.remainder]
+        assert full and partial
+        assert min(c.confidence for c in full) > max(c.confidence
+                                                     for c in partial)
+
+    def test_candidate_order_is_unchanged_by_the_fix(self):
+        # The three readings of "tomorrow at 3pm", in the order they have
+        # always ranked: the fullest clock reading, the bare "3pm", then the
+        # named day that explains only one token of the four-token phrase.
+        cands = extract_candidates("tomorrow at 3pm", "en", ANCHOR)
+        assert [c.construction for c in cands] == ["clock_time", "clock_time",
+                                                   "named_day"]
+        assert [round(c.confidence, 3) for c in cands] == [0.674, 0.45, 0.213]
 
 
 class TestSignals:
@@ -142,42 +216,8 @@ class TestSurfaceFields:
 
 
 # ===========================================================================
-# 3. Calibration: the separation contract.
+# 3. Calibration: the gold floor.
 # ===========================================================================
-def _confusable_texts(lang):
-    """Collect the confusables-corpus sentences for ``lang`` (param ``text``
-    with no ``expected``), reusing the benchmark adapter's collection trick."""
-    path = os.path.join(_HERE, f"nl_corpus_{lang}", "test_nl_confusables.py")
-    if not os.path.exists(path):
-        return []
-
-    class _Collect:
-        def __init__(self):
-            self.items = []
-
-        def pytest_collection_modifyitems(self, items):
-            self.items.extend(items)
-
-    plugin = _Collect()
-    devnull = open(os.devnull, "w")
-    stdout, sys.stdout = sys.stdout, devnull
-    try:
-        pytest.main(["--collect-only", "-q", "-p", "no:cacheprovider", path],
-                    plugins=[plugin])
-    finally:
-        sys.stdout = stdout
-        devnull.close()
-    texts = set()
-    for item in plugin.items:
-        cs = getattr(item, "callspec", None)
-        if cs is None:
-            continue
-        p = cs.params
-        if "text" in p and isinstance(p["text"], str) and "expected" not in p:
-            texts.add(p["text"])
-    return sorted(texts)
-
-
 def _gold_full_cover_conf(gc):
     """The best confidence among the candidates that fully claim the gold text
     (empty remainder), or ``None`` when the parse is a composed construction
@@ -189,12 +229,7 @@ def _gold_full_cover_conf(gc):
     return max(full) if full else None
 
 
-def test_bands_do_not_overlap():
-    assert CONFUSABLE_CEIL < GOLD_FLOOR
-
-
-def test_gold_and_confusables_are_separated(capsys):
-    # --- gold: fully-claimed phrases clear the floor ------------------------
+def test_gold_clears_the_floor(capsys):
     gold_min = {}
     gold_worst = {}
     for gc in collect_gold_cases(all_langs()):
@@ -205,39 +240,25 @@ def test_gold_and_confusables_are_separated(capsys):
             gold_min[gc.lang] = conf
             gold_worst[gc.lang] = gc.text
     assert gold_min, "no full-cover gold cases collected"
-    gold_floor_hits = {l: c for l, c in gold_min.items() if c < GOLD_FLOOR}
-    assert not gold_floor_hits, (
+    floor_hits = {l: c for l, c in gold_min.items() if c < GOLD_FLOOR}
+    assert not floor_hits, (
         f"gold parses below floor {GOLD_FLOOR}: "
-        f"{[(l, round(gold_min[l], 3), gold_worst[l]) for l in gold_floor_hits]}")
-
-    # --- confusables: any yielding candidate stays under the ceiling --------
-    conf_max = {}
-    conf_worst = {}
-    conf_langs = [l for l in all_langs()
-                  if os.path.exists(os.path.join(
-                      _HERE, f"nl_corpus_{l}", "test_nl_confusables.py"))]
-    for lang in conf_langs:
-        for text in _confusable_texts(lang):
-            cands = extract_candidates(text, lang, datetime(2017, 6, 27, 13, 4),
-                                       limit=1)
-            if not cands:
-                continue
-            c = cands[0].confidence
-            if lang not in conf_max or c > conf_max[lang]:
-                conf_max[lang] = c
-                conf_worst[lang] = text
-    assert conf_max, "no confusables corpora collected"
-    ceil_hits = {l: c for l, c in conf_max.items() if c > CONFUSABLE_CEIL}
-    assert not ceil_hits, (
-        f"confusables above ceiling {CONFUSABLE_CEIL}: "
-        f"{[(l, round(conf_max[l], 3), conf_worst[l]) for l in ceil_hits]}")
-
-    # --- the separation is the contract: report the achieved margin ---------
-    g_min = min(gold_min.values())
-    c_max = max(conf_max.values())
-    assert g_min > c_max, (
-        f"gold floor {g_min:.3f} must exceed confusable ceiling {c_max:.3f}")
+        f"{[(l, round(gold_min[l], 3), gold_worst[l]) for l in floor_hits]}")
     with capsys.disabled():
-        print(f"\n[confidence separation] gold-min={g_min:.3f} over "
-              f"{len(gold_min)} langs; confusable-max={c_max:.3f} over "
-              f"{len(conf_max)} langs; achieved margin={g_min - c_max:.3f}")
+        g_min = min(gold_min.values())
+        print(f"\n[confidence floor] gold-min={g_min:.3f} over "
+              f"{len(gold_min)} langs; floor={GOLD_FLOOR} "
+              f"(headroom {g_min - GOLD_FLOOR:.3f})")
+
+
+def test_confusables_that_parse_are_not_punished_for_their_sentence():
+    """A look-alike the parser cannot disambiguate keeps the score its reading
+    earns.  The old scorer pushed these down purely because the sentence around
+    them was long, which made confidence a statement about the utterance; the
+    contract now is that they score like the reading they actually are, and
+    disambiguation is the consumer's job."""
+    lone = extract_candidates("christmas", "en", datetime(2017, 6, 27, 13, 4))
+    carried = extract_candidates("christmas came early that year", "en",
+                                 datetime(2017, 6, 27, 13, 4))
+    assert lone and carried
+    assert abs(lone[0].confidence - carried[0].confidence) <= PROSE_TOLERANCE

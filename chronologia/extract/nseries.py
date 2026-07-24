@@ -230,11 +230,10 @@ def extract_timespans(
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
     tokens = engine.tokenize(text)
-    total = len(tokens)
 
     scored = list(score_candidates(
         engine.matcher.match(tokens),
-        lambda m: engine.resolver.resolve(m, anchor), total, engine.spec))
+        lambda m: engine.resolver.resolve(m, anchor), engine.spec))
     scored.sort(key=lambda sc: sc.match.span[0])
     resolved = [(sc.match, sc.resolution) for sc in scored]
 

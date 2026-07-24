@@ -439,19 +439,20 @@ for c in extract_candidates("june 2027", "en", datetime(2017, 6, 27)):
 # year_ref      0.457 'june'  -> a weaker reading: just "2027", "june" stranded
 ```
 
-The confusable case scores low, exactly because the reading claims little of the
-sentence:
+The score answers "how sure are we of this reading", not "how much of the
+sentence did it explain". A phrase read the same way scores the same however
+much ordinary conversation surrounds it:
 
 ```python
-c = extract_candidates("may the force be with you", "en")[0]
-print(c.construction, round(c.confidence, 3), repr(c.remainder))
-# calendar_date 0.152 'the force be with you'
+for text in ("tomorrow", "meet me tomorrow if that works for you at all"):
+    print(round(extract_candidates(text, "en")[0].confidence, 3))
+# 0.85
+# 0.85
 ```
 
 `extract_timespans` (multi-mention) and `extract_event` also surface the score:
-each `TimeMention` and each `Event` now carries a `.confidence`. A mention
-buried in a long carrier sentence scores lower than the same phrase said on its
-own — the reading claims a smaller share of the words.
+each `TimeMention` and each `Event` carries a `.confidence`, and each mention is
+scored on its own reading rather than on its share of the carrier sentence.
 
 ### What the score is made of
 
@@ -462,11 +463,13 @@ where `1.0` means "no objection":
 confidence = coverage · (specificity^0.40 · homograph^0.30 · fold^0.15 · basis^0.15)
 ```
 
-* **coverage** — the fraction of the utterance's tokens the reading consumed
-  (`consumed / total`). It enters *linearly* because it is the strongest signal:
-  a fragment covering a quarter of the sentence is roughly a quarter as
-  trustworthy. This is what separates a real date phrase (covers everything)
-  from a stray homograph in a longer sentence (covers one word).
+* **coverage** — the share of the *date-bearing region* the reading claimed.
+  The region is the contiguous run of tokens some reading wanted; it stops at
+  the first word nothing temporal was found in, so the prose around a date is
+  never counted against it. Coverage enters *linearly* because it is the
+  strongest signal: of two readings of "tomorrow at 3pm", the one explaining
+  three of the four tokens is trusted roughly twice as far as the one
+  explaining two.
 * **specificity** — read straight off the construction precedence table
   (`chronologia/extract/compiler.py`): an era, regnal or deep-time reading
   carries the most specific vocabulary and scores highest; a bare year is the
@@ -489,16 +492,19 @@ has a clear unit-interval reading.
 
 It is **not a probability**. It does not estimate "the chance this parse is
 correct" and the numbers do not sum to one across candidates. It is a *relative
-trust score* built to **rank** readings and to **separate** genuine date phrases
-from look-alikes — nothing more. Do not threshold it as if 0.7 meant "70 %
-likely right"; do use it to prefer one candidate over another, or to decide a
-low-scoring lone match is not worth acting on without confirmation.
+trust score* built to **rank** readings — nothing more. Do not threshold it as
+if 0.7 meant "70 % likely right"; do use it to prefer one candidate over
+another, or to decide a partial reading is not worth acting on without
+confirmation.
 
-The engine holds itself to that separation as a tested contract: across a sample
-of every language's gold corpus, a fully-claimed gold phrase scores at or above
-`0.75`, while across every language's *confusables* corpus (see "Known
-limitations") a look-alike that still parses stays at or below `0.70` — the two
-bands never overlap (`test/test_confidence.py`).
+It is also **not a judgement about the sentence**. A look-alike the parser
+cannot tell from a real date — "christmas came early", "fall for the trick" —
+is read as confidently as the real thing, because the reading genuinely is the
+same one; telling the two apart needs the sentence's meaning, which belongs to
+the consumer (see "Known limitations"). What the engine does hold itself to as
+a tested contract is a floor: across a sample of every language's gold corpus,
+a fully-claimed gold phrase scores at or above `0.75` however long the sentence
+carrying it is (`test/test_confidence.py`).
 
 ## Holidays by name
 

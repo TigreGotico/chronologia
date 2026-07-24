@@ -3,10 +3,16 @@
 Every signal fed in here is *already computed* by the pipeline and would
 otherwise be thrown away the moment the matcher picks a winner:
 
-* **token coverage** -- how much of the utterance the construction actually
-  consumed (``match.length / total_tokens``).  A whole phrase that binds every
-  token ("next friday") is trusted; a single homograph token stranded in a
-  six-word sentence ("*may* the force be with you") is not;
+* **coverage of the date-bearing region** -- how much of the temporal material
+  around it the construction actually claimed: its own token span over the
+  width of the contiguous run of tokens some reading wanted
+  (``match.length / extent``, see :func:`temporal_extent`).  A reading that
+  leaves part of that run unexplained is the weaker of the readings competing
+  over it; prose the parse walked past because it had nothing temporal to say
+  is not part of the run and cannot lower anything.  This is what keeps
+  confidence a statement about the *reading* rather than about the utterance --
+  "tomorrow" is read exactly as confidently in a twenty-word sentence as it is
+  alone;
 * **construction specificity** -- derived straight from the compiler
   ``PRECEDENCE`` order (era/regnal/roman carry the most specific vocabulary and
   sit lowest; a bare ``year_ref`` is the least specific).  Lower rank == more
@@ -27,8 +33,9 @@ Combination -- a *weighted product*, not a sum or a learned model
 ``confidence = coverage * (spec^a * homograph^b * fold^c * basis^d)``
 
 with ``a + b + c + d == 1``.  Coverage enters **linearly** (it is the dominant,
-most discriminating signal: a fragment that covers a quarter of the text is a
-quarter as trustworthy) and the four quality signals enter as a weighted
+most discriminating signal: a reading that claims a quarter of what its rival
+claims of the same text is a quarter as trustworthy) and the four quality
+signals enter as a weighted
 geometric mean bounded in ``(0, 1]``.  A product is chosen over a sum so that a
 single collapsing signal (coverage -> 0) drags the whole score down the way a
 weak link should, and because every factor is a unit-interval multiplier with a
@@ -136,15 +143,57 @@ def _fold_factor(tokens: Iterable[Token]) -> float:
     return factor
 
 
-def confidence(match: Match, resolution: Resolution, total_tokens: int,
+def temporal_extent(matches: Iterable[Match]) -> Mapping[int, int]:
+    """Width of the date-bearing region each match sits in, by match index.
+
+    A reading answers for the temporal material around it, never for the
+    sentence that happens to surround it.  The region is the contiguous run of
+    tokens some reading claims -- matches that overlap or merely touch belong
+    to the same run -- and it stops at the first token no reading wanted, which
+    is exactly where the date-bearing material ends and the prose resumes.  So
+    "at 3pm" in "tomorrow at 3pm" is measured against the whole four-token
+    phrase it leaves partly unexplained, while "tomorrow" buried in twenty
+    words of hedging is measured against itself alone: the hedging is not
+    temporal material it failed to account for.
+    """
+    matches = list(matches)
+    bounds = sorted((m.span for m in matches))
+    regions = []
+    for start, end in bounds:
+        if regions and start <= regions[-1][1]:
+            regions[-1][1] = max(regions[-1][1], end)
+        else:
+            regions.append([start, end])
+    extents = {}
+    for i, match in enumerate(matches):
+        for start, end in regions:
+            if start <= match.span[0] < end:
+                extents[i] = end - start
+                break
+    return extents
+
+
+def confidence(match: Match, resolution: Resolution, extent: int,
                spec: LangSpec) -> float:
     """Confidence in ``(0, 1]`` that ``match`` is the intended reading.
 
+    This scores *how sure we are of the reading*, not how much of the utterance
+    the reading accounts for.  Prose that is not date-like -- everything the
+    parse walked past because it had nothing temporal to say -- leaves the
+    score untouched, so "tomorrow" is read with the same confidence whether it
+    stands alone or trails twenty words of conversational hedging.  What does
+    lower the score is doubt about the reading itself: a rival reading of the
+    same stretch of text claiming more of it (``extent``, the width of the
+    date-bearing region from :func:`temporal_extent`), a construction whose own
+    vocabulary is generic, a bound surface that collides with a common word, a
+    fact stated indirectly, or a span dated by a coarser method.
+
     All signals are already-computed by-products of the parse; see the module
     docstring for the formula and its justification.  Deterministic, no ML, and
-    **not** a probability.
+    **not** a probability -- a consumer may threshold it, but may not read it
+    as "correct 85% of the time".
     """
-    total = total_tokens or 1
+    total = extent or 1
     coverage = min(max(match.length / total, 1e-6), 1.0)
     spec_f = specificity_factor(match.construction)
     homo_f = _homograph_factor(match.slots, homograph_surfaces(spec))
@@ -187,7 +236,6 @@ class ScoredCandidate:
 
 def score_candidates(matches: Iterable[Match],
                      resolve: Callable[[Match], Optional[Resolution]],
-                     total_tokens: int,
                      spec: LangSpec) -> Iterator[ScoredCandidate]:
     """Resolve and score each reading -- the one place :func:`confidence` runs.
 
@@ -198,10 +246,16 @@ def score_candidates(matches: Iterable[Match],
     anchor is already bound by the caller).  Readings the resolver rejects are
     dropped; every survivor is yielded as a :class:`ScoredCandidate` carrying
     its single :func:`confidence` score.
+
+    The readings are materialised before scoring because each one is scored
+    against the date-bearing region it sits in (see :func:`temporal_extent`),
+    which is a fact about the set and not about any single match.
     """
-    for match in matches:
+    matches = list(matches)
+    extents = temporal_extent(matches)
+    for i, match in enumerate(matches):
         res = resolve(match)
         if res is None:
             continue
         yield ScoredCandidate(match, res,
-                              confidence(match, res, total_tokens, spec))
+                              confidence(match, res, extents[i], spec))
