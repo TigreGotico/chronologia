@@ -108,6 +108,10 @@ def _add_months(dt: datetime, months: int) -> datetime:
 _WEEK_START = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
                "friday": 4, "saturday": 5, "sunday": 6}
 
+#: the parts of an ISO-8601 week designator token ("2026-W01", "2026-W1-3")
+_ISOWEEK_PARTS = re.compile(r"(?P<year>\d{4})-[wW](?P<week>\d{1,2})"
+                            r"(?:-(?P<weekday>\d))?")
+
 
 def _midnight(dt: datetime) -> datetime:
     return dt.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -626,9 +630,12 @@ class Resolver:
         confidently wrong answer, which is worse than no answer at all.
         """
         raw = match.slots["ISOWEEK"].text
-        head, _, tail = raw.partition("-w") if "-w" in raw else raw.partition("-W")
-        year, week = int(head), int(tail[:2])
-        weekday = tail[3:]
+        # the week number is one or two digits (the standard pads it, real
+        # writing often does not), so the parts are read by shape rather than
+        # by fixed offsets into the literal.
+        parts = _ISOWEEK_PARTS.fullmatch(raw)
+        year, week = int(parts["year"]), int(parts["week"])
+        weekday = parts["weekday"]
         if weekday:
             d = int(weekday)
             if not 1 <= d <= 7:
