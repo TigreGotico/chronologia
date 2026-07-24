@@ -422,41 +422,14 @@ def extract_recurrence(
     tuple (unpack it, or read ``.recurrence`` / ``.remainder``) -- or ``None``
     when no recurrence is found.
     """
-    from chronologia.extract import _timespan_engine
+    ctx = _recur_ctx(text, lang, anchor)
+    tokens = ctx.tokens
 
-    engine = _timespan_engine(lang)
-    spec = engine.spec
-    tokens = engine.tokenize(text)
-    C = spec.connectors
-    ctx = _RecurCtx(
-        tokens=tokens,
-        every=set(C.get("every", ())),
-        other=set(C.get("recur_other", ())),
-        weekday_word=set(C.get("weekday", ())),
-        articles=_article_words(spec),
-        of_words=set(C.get("of", ())),
-        freq=_freq_map(C),
-        units=spec.units,
-        weekdays=spec.weekdays,
-        months=spec.months,
-        rel_markers=spec.rel_markers,
-        until_words=set(C.get("until", ())),
-        for_words=set(C.get("recur_for", ())),
-        at_words=set(C.get("at", ())),
-        weekend_word=set(C.get("weekend", ())),
-        weekend_start=spec.conventions.weekend_start,
-        on_words=set(C.get("on", ())),
-        once_words=set(C.get("recur_once", ())),
-        per_words=set(C.get("recur_per", ())),
-        habitual_words=set(C.get("recur_habitual", ())),
-        holidays=dict(spec.holidays),
-        lang=lang,
-        anchor=anchor,
-    )
-
-    for finder in (_recur_nth_weekday, _recur_holiday, _recur_date_anchored,
-                   _recur_once, _recur_every, _recur_freq_word,
-                   _recur_habitual_weekday):
+    # first match wins; the order of ``_FINDERS`` is load-bearing -- see the
+    # constraints recorded where it is defined.
+    # first match wins; the order of ``_FINDERS`` is load-bearing -- see the
+    # constraints recorded where it is defined.
+    for finder in _FINDERS:
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
@@ -467,6 +440,8 @@ def extract_recurrence(
                                                 if t.index not in consumed])
             return RecurrenceResult(rec, remainder)
     return None
+
+
 
 
 def _apply_clock(rec, consumed, ctx, lang, anchor):
@@ -644,6 +619,44 @@ class _RecurCtx:
     holidays: dict = None
     lang: str = "en-us"
     anchor: Optional[datetime] = None
+
+
+def _recur_ctx(text, lang, anchor):
+    """Build the recurrence context for ``text`` -- the shared input every
+    finder reads.  Split out so a finder can be exercised on its own (the
+    finder-order test does exactly that)."""
+    from chronologia.extract import _timespan_engine
+
+    engine = _timespan_engine(lang)
+    spec = engine.spec
+    tokens = engine.tokenize(text)
+    C = spec.connectors
+    ctx = _RecurCtx(
+        tokens=tokens,
+        every=set(C.get("every", ())),
+        other=set(C.get("recur_other", ())),
+        weekday_word=set(C.get("weekday", ())),
+        articles=_article_words(spec),
+        of_words=set(C.get("of", ())),
+        freq=_freq_map(C),
+        units=spec.units,
+        weekdays=spec.weekdays,
+        months=spec.months,
+        rel_markers=spec.rel_markers,
+        until_words=set(C.get("until", ())),
+        for_words=set(C.get("recur_for", ())),
+        at_words=set(C.get("at", ())),
+        weekend_word=set(C.get("weekend", ())),
+        weekend_start=spec.conventions.weekend_start,
+        on_words=set(C.get("on", ())),
+        once_words=set(C.get("recur_once", ())),
+        per_words=set(C.get("recur_per", ())),
+        habitual_words=set(C.get("recur_habitual", ())),
+        holidays=dict(spec.holidays),
+        lang=lang,
+        anchor=anchor,
+    )
+    return ctx
 
 
 def _freq_map(connectors):
@@ -1185,3 +1198,30 @@ def _recur_date_anchored(ctx):
                              bymonthday=start.day),
                 set(range(i, dm.span[1])))
     return None
+
+
+# Recurrence finders, first match wins.  The order below is load-bearing, and
+# it is NOT the order the functions are defined in above, so tidying the
+# file into definition order would silently change what these phrases mean.
+# Two constraints hold, measured by reordering this tuple against the whole
+# recurrence corpus (every adjacent swap passes; the two moves named here do
+# not) -- and enforced by ``test/test_recurrence_finder_order.py``:
+#
+# * ``_recur_every`` must run AFTER the specific finders.  It is a greedy
+#   catch-all: an ``every`` marker plus almost any following count or unit
+#   satisfies it, so run first it claims the determiner out of a *longer*
+#   specific frame and strands the rest in the remainder -- "every 10th of may"
+#   (a yearly date, not a monthly one), "first monday of every month",
+#   "jeden 25. dezember", "el 10 de cada mes", "le 10 de chaque mois",
+#   "no dia 15 de cada mês".
+# * ``_recur_habitual_weekday`` must run LAST.  A habitual phrase carries a
+#   frequency *count* ("uma vez por semana à segunda" -- once a week, on
+#   monday) whose weekday tail belongs to the more specific reading; run first
+#   it wins the weekday alone and drops the count.
+#
+# The remaining five are mutually commutable -- their frames do not overlap --
+# so there is no precedence ranking to state here, only those two edges.  A
+# table for seven functions would invent structure that is not there.
+_FINDERS = (_recur_nth_weekday, _recur_holiday, _recur_date_anchored,
+            _recur_once, _recur_every, _recur_freq_word,
+            _recur_habitual_weekday)
