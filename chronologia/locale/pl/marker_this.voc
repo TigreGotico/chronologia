@@ -1,5 +1,17 @@
+# Polish "this" demonstrative, the full pronominal paradigm.  "w tym tygodniu"
+# is the instrumental/locative "tym", "tego roku" the genitive.  The dative
+# "temu" is deliberately withheld: in Polish "temu" is the ago-marker ("dwa dni
+# temu"), so admitting it here would read a past offset as a present one.
+# Regular pronoun declension per the PWN inflection rules.
+# https://sjp.pwn.pl/zasady/
 ten
-ta
-tę
-to
+tego
 tym
+ta
+tej
+tę
+tą
+to
+te
+tych
+tymi

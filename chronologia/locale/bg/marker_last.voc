@@ -1,6 +1,25 @@
+# Bulgarian "last/previous" determiner.  Bulgarian has no case, but the
+# adjective agrees in gender and number and carries the postposed definite
+# article, so each of "миналият/миналия" (m), "миналата" (f), "миналото" (n)
+# and "миналите" (pl) occurs; the full-article masculine "миналият" is the
+# subject form, the short "миналия" the object form.  Институт за български
+# език, БАН -- *Официален правописен речник на българския език*, членуване.
+# https://ibl.bas.bg/rechnik/
 минал
 минала
+минало
+минали
+миналият
 миналия
 миналата
+миналото
+миналите
 предишен
+предишният
 предишния
+предишна
+предишната
+предишно
+предишното
+предишни
+предишните
