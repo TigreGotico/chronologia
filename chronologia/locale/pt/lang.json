@@ -34,6 +34,13 @@
         "UNIT REL_MARKER"
       ]
     },
+    "weekend_ref": {
+      "orders": [
+        "REL_MARKER WEEKEND",
+        "article? WEEKEND REL_MARKER",
+        "article? WEEKEND"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "article? DAY of MONTH of? YEAR?",
