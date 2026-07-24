@@ -23,6 +23,7 @@ from dataclasses import replace
 from typing import Tuple
 
 from ovos_number_parser.numbers_en import extract_number_en
+from ovos_number_parser.numbers_fr import extract_number_fr
 
 from chronologia.extract.matcher import GYEAR_MAX, GYEAR_MIN
 from chronologia.extract.model import Token
@@ -392,18 +393,22 @@ def _glue(tokens):
     return tuple(out)
 
 
-def _make_romance_fold(lang_code, blacklist):
+def _make_romance_fold(lang_code, blacklist, reader=None,
+                       extra_numwords=frozenset()):
     from ovos_number_parser.util import RomanceNumberExtractor
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
     vocab = next(v for v in vars(numbers_mod).values()
                  if type(v).__name__ == "NumberVocabulary")
-    # the non-deprecated spoken-number reader; ``extract_number_<lang>`` is a
-    # thin deprecated wrapper over exactly this.
+    # the shared spoken-number reader; for most Romance languages
+    # ``extract_number_<lang>`` is a thin wrapper over exactly this, and a
+    # language whose wrapper adds a real hook passes that wrapper as ``reader``.
     extractor = RomanceNumberExtractor(vocab)
 
     def extract_fn(text, ordinals=True):
+        if reader is not None:
+            return reader(text, ordinals=ordinals)
         return extractor.extract_number(text, ordinals=ordinals)
-    numwords = _romance_numwords(vocab, blacklist)
+    numwords = _romance_numwords(vocab, blacklist) | frozenset(extra_numwords)
     joins = frozenset(j.lower() for j in vocab.JOIN_WORD)
     # some ``extract_number_<lang>`` back-ends do not recognise the feminine
     # ordinal surface ("tercera", "segona"); a direct surface->value map,
@@ -848,8 +853,10 @@ def _merge_digit_ordinal(tokens, suffixes):
 
 def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                           phrases=(), h_clock=False, ord_suffixes=frozenset(),
-                          fem_ord=None):
-    base = _make_romance_fold(lang_code, blacklist)
+                          fem_ord=None, reader=None,
+                          extra_numwords=frozenset()):
+    base = _make_romance_fold(lang_code, blacklist, reader=reader,
+                              extra_numwords=extra_numwords)
     fem_ord = fem_ord or {}
 
     def fold(tokens):
@@ -887,8 +894,25 @@ _FR_PHRASES = [
     (["apres", "demain"], "apresdemain"), (["après", "demain"], "apresdemain"),
     (["week", "end"], "weekend"),
 ]
+# French composes its tens above sixty rather than naming them: eighty is
+# four twenties ("quatre-vingts") and ninety is eighty plus ten
+# ("quatre-vingt-dix"), a vigesimal reading the shared Romance extractor does
+# not perform -- it adds the components instead and returns 24 and 34.  The
+# French wrapper is the one that carries the vigesimal collapse, so French
+# reads its numbers through the wrapper.  Without it every French phrase built
+# on 80 or 90 -- "les années quatre-vingt", "quatre-vingts ans" -- parsed as a
+# different number or not at all.  Source: Académie française, "quatre-vingts"
+# (9e éd.), https://www.dictionnaire-academie.fr/article/A9Q0152
 fold_fr = _romance_prepass_fold(
     "fr", {"un", "une"},
+    reader=lambda text, ordinals=True: extract_number_fr(
+        text, ordinals=ordinals),
+    # "vingt" and "cent" take the plural -s exactly when they close a round
+    # number -- "quatre-vingts", "deux cents", but "quatre-vingt-un" and "deux
+    # cent un" -- and the shared vocabulary lists only the singular, so the
+    # prescribed spelling of 80 and 200 fell out of the run and left the
+    # leading "quatre"/"deux" behind as the whole number.
+    extra_numwords=frozenset({"vingts", "cents"}),
     proclitics=frozenset({"d", "l", "j", "n", "s", "c", "m", "t", "qu"}),
     phrases=_FR_PHRASES, h_clock=True,
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",

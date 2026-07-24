@@ -27,6 +27,21 @@ def test_decade_is_ten_years_wide():
     assert span("anii 1980").width == timedelta(days=3653)
 
 
+@pytest.mark.parametrize("text,y0", [
+    ("anii optzeci", 1980),
+    ("anii nouăzeci", 1990),
+    ("anii treizeci", 1930),
+    ("în anii șaptezeci", 1970),
+])
+def test_spelled_decade(text, y0):
+    assert start_end(text) == (AstroDate(y0, 1, 1), AstroDate(y0 + 10, 1, 1))
+
+
+def test_bare_cardinal_is_still_a_number():
+    # "optzeci de ani" counts eighty years; it is not the eighties
+    nomatch("optzeci de euro")
+
+
 def test_bare_year_is_still_a_year():
     assert start_end("în 1980") == (AstroDate(1980, 1, 1),
                                     AstroDate(1981, 1, 1))

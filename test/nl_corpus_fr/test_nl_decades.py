@@ -32,6 +32,27 @@ def test_decade_is_ten_years_wide():
     assert span("les années 1980").width == timedelta(days=3653)
 
 
+@pytest.mark.parametrize("text,y0", [
+    ("les années quatre-vingt", 1980),
+    ("les années quatre-vingts", 1980),
+    ("les années quatre-vingt-dix", 1990),
+    ("les années soixante-dix", 1970),
+    ("les années trente", 1930),
+])
+def test_spelled_decade(text, y0):
+    # the Académie writes the spelled decade with an invariable numeral ("Les
+    # années quatre-vingt", 9e éd. s.v. quatre-vingts), and both spellings are
+    # current, so both read as the same ten years
+    assert start_end(text) == (AstroDate(y0, 1, 1), AstroDate(y0 + 10, 1, 1))
+
+
+def test_bare_cardinal_is_still_a_number():
+    # "quatre-vingts" alone is the number eighty: four twenties, not the
+    # eighties, and it counts the years of an offset like any other number
+    assert start_end("il y a quatre-vingts ans")[0] == AstroDate(
+        1937, 6, 27, 13, 4)
+
+
 def test_bare_year_is_still_a_year():
     # no plural frame, so "en 1980" stays the single year it names
     assert start_end("en 1980") == (AstroDate(1980, 1, 1),
