@@ -3,4 +3,11 @@
 # half-past word, not the generic half fraction.
 # Source: Türk Dil Kurumu (TDK), Güncel Türkçe Sözlük, s.v. "buçuk"
 # (bir bütünü oluşturan iki yarımdan biri; saat yarımı).
+# TDK lists buçuk as an ADJECTIVE meaning "... ve yarım" -- it joins the
+# preceding cardinal into one numeral ("Üç buçuk senedir...", Peyami Safa),
+# so "üç buçuk" is a single reading of the clock and not an hour with a
+# stray word after it. The hour-introducing noun "saat" (TDK s.v. "saat":
+# "bir işin yapıldığı belli bir zaman") frames that whole reading, which is
+# why the "at HOUR FRACTION" order exists: "saat üç buçuk" is 3:30, not
+# 3:00 with "buçuk" left over.
 buçuk
