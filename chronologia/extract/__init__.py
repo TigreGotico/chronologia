@@ -1181,13 +1181,12 @@ def extract_candidates(
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
     tokens = engine.tokenize(text)
-    total = len(tokens)
     scored = []
     seen = set()
     matches = (c.match for c in engine.matcher._candidates(tokens))
     for sc in _score_candidates(matches,
                                 lambda m: engine.resolver.resolve(m, anchor),
-                                total, engine.spec):
+                                engine.spec):
         match, res, conf = sc.match, sc.resolution, sc.confidence
         key = (match.construction, match.span, res.value)
         if key in seen:
