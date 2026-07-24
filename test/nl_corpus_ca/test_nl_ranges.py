@@ -59,3 +59,37 @@ def test_desde_open_end():
     s, e = start_end("des de 2010")
     assert s == AstroDate(2010, 1, 1)
     assert e == ad(ANCHOR)
+
+
+# -- the shared-month range: the month named ONCE for the pair ---------------
+# Naming the month once is the default written form of a date range in the
+# Romance languages (RAE, Ortografia de la lengua espanola 5.2.5.1, and its
+# counterparts), and the endpoint carrying only the bare day used to be thrown
+# away -- the span collapsed onto the dated endpoint alone.  The bare day is
+# read through its partner's own words, so both forms now agree.
+
+@pytest.mark.parametrize("text", [
+    "del 5 al 12 de juny",
+    "del 5 de juny al 12 de juny",
+    "de 5 a 12 de juny",
+])
+def test_shared_month_range_reads_both_days(text):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(2018, 6, 5) and ee == AstroDate(2018, 6, 13)
+
+
+def test_del_al_crosses_the_year():
+    ss, ee = start_end("del 28 de desembre al 3 de gener")
+    assert ss == AstroDate(2017, 12, 28) and ee == AstroDate(2018, 1, 4)
+
+
+def test_al_without_a_from_lead_is_not_a_range():
+    ss, ee = start_end("el concert és a les tres")
+    assert ss == AstroDate(2017, 6, 28, 3, 0)
+    assert ee == AstroDate(2017, 6, 28, 3, 1)
+
+
+@pytest.mark.parametrize("text", ["del al", "del 5 al", "anem del pa al vi"])
+def test_del_al_garbage_never_raises(text):
+    from ._corpus import parse
+    parse(text)
