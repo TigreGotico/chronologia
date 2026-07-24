@@ -37,3 +37,10 @@ def test_iso_week_date_literal_de():
                                   "2026-W0"])
 def test_out_of_range_refuses_de(text):
     nomatch(text)
+
+
+def test_written_year_range_de():
+    """A hyphen between two four-digit years is punctuation, not vocabulary,
+    so the written year range reads the same in German as in English."""
+    s, e = start_end("1914-1918")
+    assert (s, e) == (AstroDate(1914, 1, 1), AstroDate(1919, 1, 1))

@@ -176,6 +176,10 @@ _RANGE_SINCE = ("since",)
 #: the stack -- everything past the first endpoint pair falls to the remainder.
 _DASH_GAP = re.compile(r"\s+-+\s+")
 
+#: an unspaced dash gap, as a written year range is set ("1914-1918"); the en
+#: and em dashes are included because typeset prose uses them for exactly this.
+_TIGHT_DASH = re.compile(r"[-–—]")
+
 #: the constructions a lone ``clock_time`` composes onto (its minute-wide time
 #: placed on the day the date names).  A single composable-date set so the
 #: synthesised day-wide results of the post-passes -- a business-day count
@@ -209,17 +213,37 @@ def _match_conn_at(tokens, i, surfaces):
     return 0
 
 
+def _is_written_year(token):
+    """True for a bare four-digit number -- the shape a written year range uses."""
+    return (token.is_number and token.raw is not None
+            and len(token.raw) == 4 and token.raw.isdigit())
+
+
 def _dash_between(tokens, p, text):
-    """True when a whitespace-flanked hyphen sits in the gap before token ``p``.
+    """True when a hyphen in the gap before token ``p`` separates two range
+    endpoints.
 
     A dash range separator ("junho - agosto", "5 de junho - 12 de junho") is
     punctuation the tokenizer never emits, so it is read straight from the
     character gap between the adjacent tokens' recorded extents -- linear and
-    anchored, no raw-string regex over the whole input."""
+    anchored, no raw-string regex over the whole input.
+
+    Spaced, the dash is unambiguous.  Tight ("1914-1918") it is only trusted
+    between two four-digit numbers, which is what makes the rule safe: every
+    other hyphenated numeric shape a date can wear is lexed as one token before
+    this code ever sees it (an ISO date "2026-07-24", an ISO year-month
+    "2026-07", a numeric date "5-6-24", an ISO week "2026-W01" -- all leave no
+    gap at all), and no calendar component other than a year is written with
+    four digits.  So "12-15" is not a range, "2026-07" is still a month, and
+    "1914-1918" reads as the range it is instead of being refused."""
     a, b = tokens[p - 1].char_end, tokens[p].char_start
     if a is None or b is None:
         return False
-    return _DASH_GAP.fullmatch(text[a:b]) is not None
+    gap = text[a:b]
+    if _DASH_GAP.fullmatch(gap) is not None:
+        return True
+    return (_TIGHT_DASH.fullmatch(gap) is not None
+            and _is_written_year(tokens[p - 1]) and _is_written_year(tokens[p]))
 
 
 def _first_to_split(tokens, left_start, to_surf, text):
