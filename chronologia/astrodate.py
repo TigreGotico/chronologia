@@ -373,10 +373,14 @@ class AstroDate:
         instant of the Ides of March 44 BC — no JDN threading at the call
         site.  Raises ``KeyError`` on an unknown ``key`` and
         :class:`~chronologia.calendars.CalendarRangeError` for a tabulated
-        calendar queried out of range.
+        calendar queried out of range.  A ``month``/``day`` that is not a real
+        field of the calendar in ``year`` raises ``ValueError`` naming the
+        valid range, rather than silently converting a typo.
         """
         from chronologia.calendars import CALENDARS
-        jdn = CALENDARS[key].to_jdn(year, month, day)
+        cal = CALENDARS[key]
+        cal.validate(year, month, day)
+        jdn = cal.to_jdn(year, month, day)
         return cls(*jdn_to_gregorian(jdn))
 
     def to_calendar(self, key: str):
