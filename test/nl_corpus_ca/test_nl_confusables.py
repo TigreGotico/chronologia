@@ -55,9 +55,10 @@ def test_confusable_returns_none(text):
     nomatch(text)
 
 
-_RESOLVED = [
-    'al matí ben aviat',
-]
+# Empty since "al matí ben aviat" stopped being a no-match: Catalan now reads
+# the matí band, so the sentence belongs in the day-part corpus, where its span
+# is asserted, rather than here among the tokens that must bind nothing.
+_RESOLVED = []
 
 _LIMITATIONS = [
     pytest.param(
@@ -111,7 +112,8 @@ def test_span_elsewhere(text, confusable):
 
 
 
-@pytest.mark.parametrize("text", _RESOLVED)
+@pytest.mark.skipif(not _RESOLVED, reason="no Catalan no-match residue left")
+@pytest.mark.parametrize("text", _RESOLVED or [""])
 def test_confusable_now_none(text):
     # formerly a documented limitation; the parser now correctly
     # binds nothing here.  A strict tripwire would misfire, so this is

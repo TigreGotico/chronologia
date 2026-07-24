@@ -1,0 +1,8 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [00:00, 04:00).
+# Sources: Tresor de la langue francaise informatise, CNRTL
+# (https://www.cnrtl.fr/definition/apres-midi).
+# The nuit is the small hours, before the matin opens -- not an
+# English-shaped night beginning the previous evening.
+nuit

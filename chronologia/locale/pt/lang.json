@@ -127,7 +127,11 @@
         "ISO"
       ]
     },
-    "iso_week_date": {"orders": ["ISOWEEK"]},
+    "iso_week_date": {
+      "orders": [
+        "ISOWEEK"
+      ]
+    },
     "numeric_date": {
       "orders": [
         "NUMDATE"
@@ -162,6 +166,16 @@
       "orders": [
         "week_num NUM of YEAR",
         "week_num NUM YEAR?"
+      ]
+    },
+    "daypart_ref": {
+      "orders": [
+        "REL_MARKER DAYPART",
+        "article DAYPART",
+        "of DAYPART",
+        "at DAYPART",
+        "during DAYPART",
+        "article? DAYPART REL_MARKER"
       ]
     }
   },

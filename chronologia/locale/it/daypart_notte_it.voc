@@ -1,0 +1,12 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale it
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [00:00, 06:00).
+# Sources: Vocabolario Treccani
+# (https://www.treccani.it/vocabolario/pomeriggio/), which gives
+# pomeriggio as "la parte del giorno compresa tra il mezzodi e il
+# tramonto del sole".
+# The notte is the small hours of the named day. "domani notte" is
+# therefore tomorrow 00:00-06:00: the sera holds the hours to midnight,
+# so the notte has nowhere else to be, and re-cutting it to English's
+# wrapping night would contradict the chart it comes from.
+notte
