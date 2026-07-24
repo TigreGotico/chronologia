@@ -32,6 +32,12 @@
         "WEEKEND"
       ]
     },
+    "season_ref": {
+      "orders": [
+        "SEASON REL_MARKER",
+        "SEASON YEAR?"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
