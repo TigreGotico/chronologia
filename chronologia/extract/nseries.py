@@ -444,6 +444,7 @@ def extract_recurrence(
         for_words=set(C.get("recur_for", ())),
         at_words=set(C.get("at", ())),
         weekend_word=set(C.get("weekend", ())),
+        weekend_start=spec.conventions.weekend_start,
         on_words=set(C.get("on", ())),
         once_words=set(C.get("recur_once", ())),
         per_words=set(C.get("recur_per", ())),
@@ -635,6 +636,7 @@ class _RecurCtx:
     for_words: set = frozenset()
     at_words: set = frozenset()
     weekend_word: set = frozenset()
+    weekend_start: int = 5
     on_words: set = frozenset()
     once_words: set = frozenset()
     per_words: set = frozenset()
@@ -667,6 +669,19 @@ def _freq_map(connectors):
     for s in connectors.get("freq_quarterly", ()):
         out[s] = ("MONTHLY", 3)
     return out
+
+
+def _weekend_byday(ctx):
+    """The locale's weekend as a ``BYDAY`` tuple.
+
+    The weekend is not Saturday+Sunday everywhere -- the locale ships a
+    ``weekend_start`` convention (Thursday in ``ar``/``he``, Friday in ``fa``)
+    and the weekend is the two days running from it.  Deriving the pair here
+    keeps every weekend reading -- "on weekends", "every weekend" -- on the one
+    convention the business-day and anchored-span code already reads.
+    """
+    s = ctx.weekend_start
+    return ((None, s % 7), (None, (s + 1) % 7))
 
 
 def _weekday_here(ctx, tok, plural_ok):
@@ -923,6 +938,13 @@ def _recur_every(ctx):
         if t[j].text in ctx.weekday_word:
             byday = tuple((None, k) for k in range(5))
             return _build_every("weekly", byday=byday, **iv), set(range(i, j + 1))
+        # the sibling class noun: "every weekend" is the very same determiner
+        # plus class-noun frame as "every weekday", and reads the same way.
+        # The days come from the locale's own weekend convention, not from a
+        # hardcoded SA+SU.
+        if t[j].text in ctx.weekend_word:
+            return (_build_every("weekly", byday=_weekend_byday(ctx), **iv),
+                    set(range(i, j + 1)))
         if t[j].text in ctx.weekdays:
             wd = ctx.weekdays[t[j].text]
             return (_build_every("weekly", byday=((None, wd),), **iv),
@@ -960,7 +982,7 @@ def _recur_freq_word(ctx):
         if tok.text in ctx.weekday_word:
             byday = tuple((None, k) for k in range(5))  # MO..FR
         elif tok.text in ctx.weekend_word:
-            byday = ((None, 5), (None, 6))  # SA, SU
+            byday = _weekend_byday(ctx)
         if byday is None:
             continue
         return _build_every("weekly", byday=byday), {i - 1, i}

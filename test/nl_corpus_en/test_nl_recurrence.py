@@ -237,3 +237,25 @@ def test_ordinal_readings_around_the_weekday_ruling(text, rrule):
     assert got is not None, f"{text!r} did not parse as a recurrence"
     assert got[0].to_string() == rrule
     assert got[1] == ""
+
+
+# "weekend" is the sibling class noun of "weekday" and reads in the same
+# determiner + class-noun frame; the days come from the locale's weekend
+# convention (Saturday+Sunday in en).  The bare noun still names one weekend,
+# not a rule, so it stays unread without "on" or "every".
+@pytest.mark.parametrize("text,rrule", [
+    ("every weekend", "FREQ=WEEKLY;BYDAY=SA,SU"),
+    ("on weekends", "FREQ=WEEKLY;BYDAY=SA,SU"),
+    ("every weekday", "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"),
+    ("on weekdays", "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"),
+])
+def test_weekend_and_weekday_class_nouns(text, rrule):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == ""
+
+
+@pytest.mark.parametrize("text", ["weekend", "weekends", "the weekend was fun"])
+def test_bare_weekend_is_not_a_recurrence(text):
+    assert extract_recurrence(text, LANG) is None
