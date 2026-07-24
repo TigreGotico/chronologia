@@ -27,7 +27,20 @@ from chronologia.extract.model import Token, TokenizerModes
 # locale, so -- unlike the day/month-ambiguous _NUMDATE below -- no
 # per-locale dmy swap ever applies here.  The four-digit lead and required
 # separator keep a bare year, fraction or decimal from ever matching.
-_ISO = r"\d{4}-\d{2}-\d{2}|\d{4}/\d{1,2}/\d{1,2}|\d{4}-\d{2}"
+#
+# Every alternative ends in a ``(?!\d)`` boundary guard, and this is what keeps
+# the literal honest rather than merely tidy.  Without it a digit run that is
+# NOT an ISO literal still matches a prefix of one and the tail is stranded in
+# the remainder: "1914-1918", an ordinary written year range, matched the
+# year-month alternative as "1914-19" (month 19, so the whole reading was
+# refused) and "2026-071" read as July 2026 with a stray "1" left over.  The
+# guard makes the literal all-or-nothing, so a digit run that continues past
+# the shape falls through to the plain-number rule where it belongs.
+# The year-month alternative additionally refuses a following "-<digit>": that
+# is the head of a longer dashed run ("2026-07-244"), and reading a month out
+# of its first seven characters is the same stranded-tail wrong.
+_ISO = (r"\d{4}-\d{2}-\d{2}(?!\d)|\d{4}/\d{1,2}/\d{1,2}(?!\d)"
+        r"|\d{4}-\d{2}(?!\d)(?!-\d)")
 # the ISO-8601 week designator (ISO 8601 §4.4.4.2): ``YYYY-Www`` for the week
 # itself and ``YYYY-Www-D`` for one weekday inside it (D = 1..7, Monday..Sunday).
 # The literal ``W`` is what makes this shape unmistakable -- it can never be
@@ -38,7 +51,13 @@ _ISO = r"\d{4}-\d{2}-\d{2}|\d{4}/\d{1,2}/\d{1,2}|\d{4}-\d{2}"
 # literal shape allows a letter between two digit runs.  Matched AHEAD of _ISO
 # and _NUMDATE so the week designator is never split into a bare year plus
 # leftovers -- the silent-wrong reading this literal exists to prevent.
-_ISOWEEK = r"\d{4}-[wW]\d{2}(?:-\d)?"
+# The standard pads the week number to two digits, but ``2026-W1`` is written
+# often enough that refusing it re-opened exactly that silent wrong: the ``W1``
+# was stranded and the bare year 2026 came back as a confident answer.  One or
+# two digits are therefore accepted, and the closing ``(?!\d)`` keeps the
+# padded form from matching only a prefix of a longer run ("2026-W123" names no
+# week and must not read as week 12).
+_ISOWEEK = r"\d{4}-[wW]\d{1,2}(?:-\d)?(?!\d)"
 # a numeric slash/dash separated date ("12/11/2024", "5-6-24"): two 1-2 digit
 # components and a 2-4 digit year, kept whole so the matcher binds it as one
 # ``NUMDATE`` slot.  Requiring the third (year) component and two separators
@@ -46,8 +65,10 @@ _ISOWEEK = r"\d{4}-[wW]\d{2}(?:-\d)?"
 # deliberately excluded -- it collides with the decimal-number and
 # ordinal-dot shapes.  The component->day/month order is a resolve-time,
 # per-locale (dmy) decision; the tokenizer stays language-neutral.
-_NUMDATE = r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}"
-_CLOCK = r"\d{1,2}:\d{2}(?::\d{2})?"
+# same all-or-nothing boundary guard as _ISO: "12/11/20244" is not a date with
+# a spare digit, it is not a date at all.
+_NUMDATE = r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}(?!\d)"
+_CLOCK = r"\d{1,2}:\d{2}(?::\d{2})?(?!\d)"
 _NUM = r"\d+(?:\.\d+)?"
 # a timezone acronym with an optional fixed signed offset kept as ONE token so
 # the sign survives ("utc+2", "gmt-5", bare "utc"); language-neutral, like the

@@ -16,7 +16,7 @@ from datetime import date, timedelta
 import pytest
 
 from chronologia.astrodate import AstroDate
-from ._corpus import start_end, nomatch, span
+from ._corpus import start_end, nomatch, parse, span
 
 
 def _ad(d):
@@ -31,6 +31,11 @@ _WEEKS = [
     ("2024-W52", 2024, 52),          # 2024's LAST ISO week -- it has only 52
     ("2026-W32", 2026, 32),
     ("1999-W10", 1999, 10),
+    # the standard pads the week number, real writing often does not; an
+    # unpadded week used to strand its "W1" and hand back the whole year
+    ("2026-W1", 2026, 1),
+    ("2026-w1", 2026, 1),
+    ("2024-W9", 2024, 9),
     # 2020 is a 53-week ISO year and W53 spans the new year: 2020-12-28..2021-01-04
     ("2020-W53", 2020, 53),
 ]
@@ -57,6 +62,7 @@ _DAYS = [
     ("2024-W10-4", 2024, 10, 4),
     ("2024-W10-7", 2024, 10, 7),     # 7 = Sunday
     ("2024-w10-1", 2024, 10, 1),
+    ("2026-W1-3", 2026, 1, 3),       # unpadded week, with a weekday
     ("2020-W53-1", 2020, 53, 1),
     ("2020-W53-7", 2020, 53, 7),     # falls in January 2021
 ]
@@ -110,9 +116,23 @@ def test_prose_ordinal_and_cardinal_agree():
     "2024-W10-8",
     "2024-W10-0",
     "2020-W54",
+    "2026-W0",       # unpadded, and week 0 exists in no year
 ])
 def test_out_of_range_refuses(text):
     nomatch(text)
+
+
+def test_padded_and_unpadded_weeks_agree():
+    """"2026-W1" and "2026-W01" are the same week written two ways."""
+    assert span("2026-W1") == span("2026-W01")
+
+
+def test_a_run_of_digits_past_the_week_names_no_week():
+    """"2026-W123" is not week 12 with a stray 3: the literal is
+    all-or-nothing, so a trailing digit stops it matching at all rather than
+    yielding a confident reading of a week nobody wrote."""
+    r = parse("2026-W123")
+    assert r is None or r[0] != span("2026-W12")
 
 
 def test_week_counts_are_what_the_standard_says():

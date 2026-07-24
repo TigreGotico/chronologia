@@ -1,4 +1,6 @@
 """Tokenizer stage: mode flags and number/iso detection."""
+import pytest
+
 from chronologia.extract import Tokenizer, TokenizerModes
 
 
@@ -55,3 +57,32 @@ def test_garbage_never_raises():
     toks = Tokenizer(TokenizerModes(split_contractions=True, ordinal_dot=True)
                      ).tokenize("!!! ??? --- ...")
     assert toks == ()
+
+
+def test_iso_week_token_kept_whole_padded_or_not():
+    tok = Tokenizer(TokenizerModes())
+    assert _texts(tok.tokenize("2026-W01")) == ["2026-w01"]
+    assert _texts(tok.tokenize("2026-W1")) == ["2026-w1"]
+    assert _texts(tok.tokenize("2026-W1-3")) == ["2026-w1-3"]
+
+
+# A digit run that continues past a literal's shape is not that literal with a
+# spare digit -- it is not that literal at all.  Without the trailing boundary
+# guard each of these bound a prefix and stranded the tail, which is how the
+# ordinary written year range "1914-1918" came to be read as month 19 of 1914.
+@pytest.mark.parametrize("text,expected", [
+    ("1914-1918", ["1914", "1918"]),
+    ("2026-071", ["2026", "071"]),
+    ("2026-07-244", ["2026", "07", "244"]),
+    ("12/11/20244", ["12", "11", "20244"]),
+    ("15:305", ["15", "305"]),
+    ("2026-W123", ["2026", "w", "123"]),
+])
+def test_digits_past_a_literal_break_it_up(text, expected):
+    assert _texts(Tokenizer(TokenizerModes()).tokenize(text)) == expected
+
+
+@pytest.mark.parametrize("text", ["2017-06-30", "2024/03/06", "2024-03",
+                                  "12/11/2024", "15:30", "2026-w01"])
+def test_literals_at_their_exact_length_still_bind(text):
+    assert _texts(Tokenizer(TokenizerModes()).tokenize(text)) == [text]

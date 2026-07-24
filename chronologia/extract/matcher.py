@@ -16,14 +16,19 @@ import re
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
+from chronologia.extract import tokenizer
 from chronologia.extract.compiler import CompiledSpec
 from chronologia.extract.model import (LangSpec, Match, SlotElement,
                                            Token)
 
-_ISO = re.compile(r"\d{4}-\d{2}-\d{2}|\d{4}/\d{1,2}/\d{1,2}|\d{4}-\d{2}")
-_ISOWEEK = re.compile(r"\d{4}-[wW]\d{2}(?:-\d)?")
-_NUMDATE = re.compile(r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}")
-_CLOCK = re.compile(r"\d{1,2}:\d{2}(?::\d{2})?")
+# the literal shapes a slot may bind are exactly the shapes the tokenizer kept
+# whole, so they are compiled from the tokenizer's own patterns rather than
+# restated here -- a second copy of a regex this subtle drifts out of step, and
+# a slot that accepts more than the tokenizer emits can never fire anyway.
+_ISO = re.compile(tokenizer._ISO)
+_ISOWEEK = re.compile(tokenizer._ISOWEEK)
+_NUMDATE = re.compile(tokenizer._NUMDATE)
+_CLOCK = re.compile(tokenizer._CLOCK)
 
 
 def _calendar_for_surface(spec: LangSpec, surface: str):

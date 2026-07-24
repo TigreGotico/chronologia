@@ -18,6 +18,7 @@ from ._corpus import start_end, nomatch
     ("2024-W10", 2024, 10),
     ("2024-w10", 2024, 10),
     ("2020-W53", 2020, 53),
+    ("2026-W1", 2026, 1),        # unpadded week number, as often written
 ])
 def test_iso_week_literal_de(text, iy, iw):
     monday = date.fromisocalendar(iy, iw, 1)
@@ -32,6 +33,14 @@ def test_iso_week_date_literal_de():
     assert (s, e) == (AstroDate(2024, 3, 4), AstroDate(2024, 3, 5))
 
 
-@pytest.mark.parametrize("text", ["2024-W53", "2024-W00", "2024-W10-8"])
+@pytest.mark.parametrize("text", ["2024-W53", "2024-W00", "2024-W10-8",
+                                  "2026-W0"])
 def test_out_of_range_refuses_de(text):
     nomatch(text)
+
+
+def test_written_year_range_de():
+    """A hyphen between two four-digit years is punctuation, not vocabulary,
+    so the written year range reads the same in German as in English."""
+    s, e = start_end("1914-1918")
+    assert (s, e) == (AstroDate(1914, 1, 1), AstroDate(1919, 1, 1))
