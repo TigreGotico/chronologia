@@ -1015,16 +1015,16 @@ Why the adjacent pairs are ordered the way they are:
   specific calendar reference; anything more specific that also covers the
   digits must win.
 
-You can watch a real same-span precedence decision — here `military_time`
-beats `scoped_ordinal` on the identical span `(0, 2)`:
+You can watch a real precedence decision — here `military_time`
+beats `year_ref` because it covers the longer span `(0, 2)` versus `(0, 1)`:
 
 ```python
 from chronologia import explain
 from chronologia.extract import load_lang_spec
 
 print(explain("1500 hours", load_lang_spec("en"), datetime(2024, 1, 1)).report())
-# ... MATCH military_time span=(0, 2) ...
-# ... lost  scoped_ordinal span=(0, 2): overlaps military_time span=(0, 2) of higher precedence
+# ... MATCH military_time span=(0, 2) slots={'MILTIME': '1500'} -> 2024-01-01 15:00 – 15:01 ...
+# ... lost  year_ref span=(0, 1): overlaps military_time span=(0, 2) which is longer
 ```
 
 **Why the grammar needs an era tail — a worked lesson.** Precedence only
