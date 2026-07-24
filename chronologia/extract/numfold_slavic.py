@@ -179,6 +179,171 @@ def _split_ru_pol(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return reindex(out) if changed else tokens
 
 
+# -- calendar day: the declined ordinal that names the day of the month -------
+# Slavic says a date with an ordinal agreeing with an elided day noun, in the
+# case the sentence puts it in: the citation form is the genitive masculine
+# ("trzeciego maja", "třetího prosince", "третьего декабря"), and the month name
+# stands in the genitive beside it.  Bulgarian, having lost its cases, uses the
+# bare masculine ("трети декември").  These surfaces are a closed morphological
+# class the cardinal back-end does not read, so each language supplies its own
+# table -- the same shape as the toward-hour tables above, and the same reason.
+#
+# Days 21..31 are compound.  Which element carries the ordinal is a fact of the
+# individual language, not of the family: Polish, Czech and Slovak decline both
+# elements ("dwudziestego trzeciego"), Russian, Ukrainian, Croatian and
+# Bulgarian leave the tens a plain cardinal and inflect only the unit ("двадцать
+# третьего", "dvadeset trećeg", "двадесет и трети"), and Slovene writes the
+# whole numeral as one word with the unit first ("triindvajsetega").  So a
+# language declares its ordinal surfaces in ``ords`` and, where the tens element
+# is a bare cardinal, in ``tens_prefix``; the rewrite below adds the two.
+# Folding only the unit and dropping the tens would answer the third of the
+# month when the speaker said the twenty-third, which is the whole failure this
+# table exists to prevent.
+#
+# Citations, per language:
+#   pl -- PWN, *Poradnia językowa*, "Zapis daty": the day is read as a genitive
+#         ordinal and the month name is always genitive.
+#         https://sjp.pwn.pl/poradnia/haslo/Zapis-daty;16535.html
+#   cs -- Internetová jazyková příručka, ÚJČ AV ČR: skloňování řadových
+#         číslovek, vzor "mladý"/"jarní".  https://prirucka.ujc.cas.cz/?id=310
+#   sk -- Jazykovedný ústav Ľ. Štúra SAV, Morfológia slovenského jazyka:
+#         skloňovanie radových čísloviek.  https://slovnik.juls.savba.sk/
+#   hr -- Institut za hrvatski jezik / Hrvatski jezični portal: sklonidba
+#         rednih brojeva, with the attested -og/-oga variants.
+#         https://hjp.znanje.hr/
+#   sl -- Fran (ZRC SAZU), SSKJ2: vrstilni števniki, one-word 21..31.
+#         https://fran.si/
+#   bg -- Институт за български език, БАН, *Официален правописен речник*:
+#         редни числителни имена.  https://ibl.bas.bg/rechnik/
+#   ru -- Грамота.ру, "Как правильно употреблять числительные": the day stands
+#         in the genitive and only the last element of a compound inflects.
+#         https://gramota.ru/biblioteka/spravochniki/pismovnik/kak-pravilno-upotreblyat-chislitelnye
+#   uk -- *Український правопис* (2019), відмінювання порядкових числівників.
+#         https://nus.org.ua/wp-content/uploads/2019/05/Ukr.-pravopys-2019-1.pdf
+_DAY_PL = {
+    "pierwszego": 1, "drugiego": 2, "trzeciego": 3, "czwartego": 4,
+    "piątego": 5, "szóstego": 6, "siódmego": 7, "ósmego": 8,
+    "dziewiątego": 9, "dziesiątego": 10, "jedenastego": 11, "dwunastego": 12,
+    "trzynastego": 13, "czternastego": 14, "piętnastego": 15,
+    "szesnastego": 16, "siedemnastego": 17, "osiemnastego": 18,
+    "dziewiętnastego": 19, "dwudziestego": 20, "trzydziestego": 30}
+_DAY_CS = {
+    "prvního": 1, "prvého": 1, "druhého": 2, "třetího": 3, "čtvrtého": 4,
+    "pátého": 5, "šestého": 6, "sedmého": 7, "osmého": 8, "devátého": 9,
+    "desátého": 10, "jedenáctého": 11, "dvanáctého": 12, "třináctého": 13,
+    "čtrnáctého": 14, "patnáctého": 15, "šestnáctého": 16, "sedmnáctého": 17,
+    "osmnáctého": 18, "devatenáctého": 19, "dvacátého": 20, "třicátého": 30}
+_DAY_SK = {
+    "prvého": 1, "druhého": 2, "tretieho": 3, "štvrtého": 4,
+    "piateho": 5, "šiesteho": 6, "siedmeho": 7, "ôsmeho": 8, "deviateho": 9,
+    "desiateho": 10, "jedenásteho": 11, "dvanásteho": 12, "trinásteho": 13,
+    "štrnásteho": 14, "pätnásteho": 15, "šestnásteho": 16,
+    "sedemnásteho": 17, "osemnásteho": 18, "devätnásteho": 19,
+    "dvadsiateho": 20, "tridsiateho": 30}
+_DAY_HR = {}
+for _stem, _v in (("prv", 1), ("drug", 2), ("treć", 3), ("četvrt", 4),
+                  ("pet", 5), ("šest", 6), ("sedm", 7), ("osm", 8),
+                  ("devet", 9), ("deset", 10), ("jedanaest", 11),
+                  ("dvanaest", 12), ("trinaest", 13), ("četrnaest", 14),
+                  ("petnaest", 15), ("šesnaest", 16), ("sedamnaest", 17),
+                  ("osamnaest", 18), ("devetnaest", 19), ("dvadeset", 20),
+                  ("trideset", 30)):
+    # Croatian admits the short and the long genitive ending alike.
+    _DAY_HR[_stem + ("eg" if _stem == "treć" else "og")] = _v
+    _DAY_HR[_stem + ("ega" if _stem == "treć" else "oga")] = _v
+_DAY_SL = {
+    "prvega": 1, "drugega": 2, "tretjega": 3, "četrtega": 4, "petega": 5,
+    "šestega": 6, "sedmega": 7, "osmega": 8, "devetega": 9, "desetega": 10,
+    "enajstega": 11, "dvanajstega": 12, "trinajstega": 13,
+    "štirinajstega": 14, "petnajstega": 15, "šestnajstega": 16,
+    "sedemnajstega": 17, "osemnajstega": 18, "devetnajstega": 19,
+    "dvajsetega": 20, "enaindvajsetega": 21, "dvaindvajsetega": 22,
+    "triindvajsetega": 23, "štiriindvajsetega": 24, "petindvajsetega": 25,
+    "šestindvajsetega": 26, "sedemindvajsetega": 27, "osemindvajsetega": 28,
+    "devetindvajsetega": 29, "tridesetega": 30, "enaintridesetega": 31}
+_DAY_BG = {
+    "първи": 1, "втори": 2, "трети": 3, "четвърти": 4, "пети": 5,
+    "шести": 6, "седми": 7, "осми": 8, "девети": 9, "десети": 10,
+    "единадесети": 11, "единайсети": 11, "дванадесети": 12, "дванайсети": 12,
+    "тринадесети": 13, "тринайсети": 13, "четиринадесети": 14,
+    "четиринайсети": 14, "петнадесети": 15, "петнайсети": 15,
+    "шестнадесети": 16, "шестнайсети": 16, "седемнадесети": 17,
+    "седемнайсети": 17, "осемнадесети": 18, "осемнайсети": 18,
+    "деветнадесети": 19, "деветнайсети": 19, "двадесети": 20,
+    "двайсети": 20, "тридесети": 30, "трийсети": 30}
+_DAY_RU = {
+    "первого": 1, "второго": 2, "третьего": 3, "четвёртого": 4,
+    "четвертого": 4, "пятого": 5, "шестого": 6, "седьмого": 7,
+    "восьмого": 8, "девятого": 9, "десятого": 10, "одиннадцатого": 11,
+    "двенадцатого": 12, "тринадцатого": 13, "четырнадцатого": 14,
+    "пятнадцатого": 15, "шестнадцатого": 16, "семнадцатого": 17,
+    "восемнадцатого": 18, "девятнадцатого": 19, "двадцатого": 20,
+    "тридцатого": 30}
+_DAY_UK = {
+    "першого": 1, "другого": 2, "третього": 3, "четвертого": 4,
+    "шостого": 6, "сьомого": 7, "восьмого": 8, "десятого": 10,
+    "одинадцятого": 11, "дванадцятого": 12, "тринадцятого": 13,
+    "чотирнадцятого": 14, "шістнадцятого": 16, "сімнадцятого": 17,
+    "вісімнадцятого": 18, "двадцятого": 20, "тридцятого": 30}
+# Ukrainian spells 5, 9, 15 and 19 with an apostrophe, which is typed as either
+# the straight or the typographic character; both surfaces reach the fold.
+for _apo in ("'", "’"):
+    _DAY_UK.update({f"п{_apo}ятого": 5, f"дев{_apo}ятого": 9,
+                    f"п{_apo}ятнадцятого": 15, f"дев{_apo}ятнадцятого": 19})
+
+
+def _day_rewrite(ords: dict, tens_prefix: dict = None,
+                 joiner: tuple = ()) -> Callable:
+    """A pre-fold pass turning the declined day-of-month ordinal into the digit
+    its ``DAY`` slot binds, adding a compound ``tens + unit`` pair into the one
+    number it names.  Runs before the cardinal fold so a cardinal tens element
+    is claimed by the compound rather than folded on its own."""
+    ords = dict(ords)
+    tens = dict(tens_prefix or {})
+    tens.update({w: v for w, v in ords.items() if v in (20, 30)})
+
+    def _num(t: Token, value: int, end: Token = None) -> Token:
+        return Token(text=str(value), raw=str(value), index=t.index,
+                     is_number=True, value=value, char_start=t.char_start,
+                     char_end=(end or t).char_end)
+
+    def rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        out, i, n, changed = [], 0, len(tokens), False
+        while i < n:
+            t = tokens[i]
+            if t.is_number:
+                out.append(t)
+                i += 1
+                continue
+            if t.text in tens:
+                j = i + 1
+                if j < n and tokens[j].text in joiner:
+                    j += 1
+                if j < n and ords.get(tokens[j].text, 0) in range(1, 10):
+                    out.append(_num(t, tens[t.text] + ords[tokens[j].text],
+                                    tokens[j]))
+                    i, changed = j + 1, True
+                    continue
+            if t.text in ords:
+                out.append(_num(t, ords[t.text]))
+                i, changed = i + 1, True
+                continue
+            out.append(t)
+            i += 1
+        return reindex(out) if changed else tokens
+
+    return rewrite
+
+
+# The tens element that stays a bare cardinal, per language.  It is folded only
+# as part of a compound day; on its own it is an ordinary cardinal and belongs
+# to the cardinal fold ("двадцать пять минут" must still read twenty-five).
+_TENS_RU = {"двадцать": 20, "тридцать": 30}
+_TENS_UK = {"двадцять": 20, "тридцять": 30}
+_TENS_HR = {"dvadeset": 20, "trideset": 30}
+_TENS_BG = {"двадесет": 20, "двайсет": 20, "тридесет": 30, "трийсет": 30}
+
+
 def _compose(*passes: Callable) -> Callable:
     def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         for p in passes:
@@ -187,13 +352,25 @@ def _compose(*passes: Callable) -> Callable:
     return run
 
 
-fold_cs = _compose(with_ordinals(_make_fold("cs"), "cs"), _hour_rewrite(_HOUR_CS))
-fold_sk = with_ordinals(_make_fold("sk"), "sk")
-fold_pl = _compose(with_ordinals(_make_fold("pl"), "pl"), _hour_rewrite(_HOUR_PL))
-fold_ru = _compose(_split_ru_pol, with_ordinals(_make_fold("ru"), "ru", _ORD_RU),
+# The day-ordinal pass leads, so a compound day claims its cardinal tens before
+# the cardinal fold can take that tens for a bare number; the toward-hour pass
+# still trails, because its surfaces must not merge with the fraction word.
+fold_cs = _compose(_day_rewrite(_DAY_CS),
+                   with_ordinals(_make_fold("cs"), "cs"),
+                   _hour_rewrite(_HOUR_CS))
+fold_sk = _compose(_day_rewrite(_DAY_SK), with_ordinals(_make_fold("sk"), "sk"))
+fold_pl = _compose(_day_rewrite(_DAY_PL),
+                   with_ordinals(_make_fold("pl"), "pl"),
+                   _hour_rewrite(_HOUR_PL))
+fold_ru = _compose(_split_ru_pol, _day_rewrite(_DAY_RU, _TENS_RU),
+                   with_ordinals(_make_fold("ru"), "ru", _ORD_RU),
                    _hour_rewrite(_HOUR_RU))
-fold_uk = with_ordinals(_make_fold("uk"), "uk")
-fold_hr = with_ordinals(_make_fold("hr"), "hr")
-fold_sl = _compose(with_ordinals(_make_fold("sl"), "sl", _ORD_SL),
+fold_uk = _compose(_day_rewrite(_DAY_UK, _TENS_UK),
+                   with_ordinals(_make_fold("uk"), "uk"))
+fold_hr = _compose(_day_rewrite(_DAY_HR, _TENS_HR, ("i",)),
+                   with_ordinals(_make_fold("hr"), "hr"))
+fold_sl = _compose(_day_rewrite(_DAY_SL),
+                   with_ordinals(_make_fold("sl"), "sl", _ORD_SL),
                    _hour_rewrite(_HOUR_SL))
-fold_bg = with_ordinals(_make_fold("bg"), "bg", _ORD_BG)
+fold_bg = _compose(_day_rewrite(_DAY_BG, _TENS_BG, ("и",)),
+                   with_ordinals(_make_fold("bg"), "bg", _ORD_BG))
