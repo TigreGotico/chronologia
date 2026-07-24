@@ -114,6 +114,52 @@ _NUM = r"\d+(?:\.\d+)?"
 # the sign survives ("utc+2", "gmt-5", bare "utc"); language-neutral, like the
 # ISO / clock literals above.  Named-city zones are deliberately out of scope.
 _ZONE = r"(?:utc|gmt)(?:[+-]\d{1,2}(?::?\d{2})?)?"
+#: the characters that glue the components of a written date together.
+_DATE_SEPS = "./-"
+
+
+def _adjacent_group(text: str, sep: int, step: int) -> int:
+    """How many digits sit on the far side of the separator at ``sep``.
+
+    Zero when there is no separator there or nothing but non-digits beyond it,
+    which is how a trailing "1914-" or an ordinary hyphenated word tells itself
+    apart from a date component.
+    """
+    if not 0 <= sep < len(text) or text[sep] not in _DATE_SEPS:
+        return 0
+    i, n = sep + step, 0
+    while 0 <= i < len(text) and text[i].isdigit():
+        n += 1
+        i += step
+    return n
+
+
+def _year_inside_a_broken_date(text: str, start: int, digits: str) -> bool:
+    """Is this four-digit-or-longer numeral visibly part of a date-shaped run?
+
+    A numeral that is glued by a dot, slash or dash to a digit group of some
+    other length is a component of a date somebody wrote, not a year standing
+    on its own.  When the run around it failed to bind as a date literal --
+    because the language has no dotted convention ("15.06.2020" in French),
+    because a component names nothing real ("31.02.2020"), or because the digit
+    run continues past the literal's shape ("15.06.20201", "2026-071") -- the
+    honest answer is that nothing was read.  Reading the year alone out of the
+    wreckage is the same silent wrong the dotted literal exists to end: the
+    caller gets a confident whole-year span and no sign that the day and the
+    month were dropped on the floor.  So the numeral gives up its number
+    reading entirely and binds no slot, and the phrase resolves to nothing.
+
+    The one glued shape that is not wreckage is the written year range: a tight
+    hyphen between two four-digit numbers, "1914-1918", where both sides are
+    years and neither is a day or a month.  No calendar component but a year is
+    written with four digits, so an equal-length four-digit neighbour is the
+    exact and only exemption.
+    """
+    if len(digits) < 4 or not digits.isdigit():
+        return False
+    left = _adjacent_group(text, start - 1, -1)
+    right = _adjacent_group(text, start + len(digits), 1)
+    return bool((left and left != 4) or (right and right != 4))
 
 
 class Tokenizer:
@@ -149,7 +195,8 @@ class Tokenizer:
         if not text:
             return ()
         tokens = []
-        for i, m in enumerate(self._re.finditer(text.lower())):
+        low = text.lower()
+        for i, m in enumerate(self._re.finditer(low)):
             raw = m.group(0)
             # match offsets are into ``text.lower()``; for the Latin-script
             # locales this engine serves, lower-casing is length-preserving, so
@@ -161,6 +208,12 @@ class Tokenizer:
                           or re.fullmatch(_CLOCK, raw) is not None)
             if not is_literal and re.match(r"\d", raw):
                 digits = raw.rstrip(".")
+                if _year_inside_a_broken_date(low, cs, digits):
+                    # the surface stays exactly as written -- only its number
+                    # reading is withdrawn, so no year slot can bind it
+                    tokens.append(Token(text=raw, raw=raw, index=i,
+                                        char_start=cs, char_end=ce))
+                    continue
                 value = float(digits) if "." in digits else int(digits)
                 tokens.append(Token(text=raw.rstrip("."), raw=raw, index=i,
                                     is_number=True, value=value,

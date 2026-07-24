@@ -145,9 +145,10 @@ def test_day_first_numeric_date_still_dmy():
         == AstroDate(2024, 12, 11)
 
 
-def test_slash_year_month_is_out_of_scope_bare_year():
-    # "2024/03" (slash year-month) is deliberately not an ISO year-month; the
-    # engine reads the leading year only, as before -- documented follow-up.
-    r = extract_timespan("2024/03", "en-us", ANCHOR)
-    assert r.span.start == AstroDate(2024, 1, 1)
-    assert r.span.end == AstroDate(2025, 1, 1)
+def test_slash_year_month_is_out_of_scope_and_refused():
+    # "2024/03" is deliberately not an ISO year-month -- ISO-8601 writes that
+    # shape with a dash -- so there is nothing here to read.  The engine used
+    # to answer with the leading year alone and strand the "03", which told the
+    # caller a whole year had been asked for when a month had been.  A numeral
+    # visibly glued into a date-shaped run no longer reads as a lone year.
+    assert extract_timespan("2024/03", "en-us", ANCHOR) is None

@@ -50,15 +50,19 @@ def test_malformed_dotted_run_refuses_hu(text):
     nomatch(text)
 
 
-def test_longer_digit_run_is_not_this_date_hu():
-    """The all-or-nothing boundary guard the other numeric literals carry:
-    "2020.06.155" is not 15 June with a spare digit, and "2020.06.15.5" is
-    not 15 June with a spare fraction."""
-    for text in ("2020.06.155", "2020.06.15.5"):
-        r = parse(text)
-        if r is not None:
-            assert (r[0].start, r[0].end) != (AstroDate(2020, 6, 15),
-                                              AstroDate(2020, 6, 16))
+@pytest.mark.parametrize("text", [
+    "2020.06.155",      # a digit run that continues past the shape
+    "2020.06.15.5",
+    "2024/03",          # a slashed year-month is not an ISO year-month
+    "2026-071",
+])
+def test_a_broken_date_is_not_a_bare_year_hu(text):
+    """The all-or-nothing boundary guard the numeric literals carry, followed
+    through to the answer.  A run like this binds no date, and the year inside
+    it does not get to be read on its own either -- answering "2020" here would
+    hand the caller a whole-year span with the day and the month silently gone.
+    One rule for every separator: dot, slash and dash alike."""
+    nomatch(text)
 
 
 def test_a_thousands_group_is_not_a_date_hu():
