@@ -80,3 +80,24 @@ def test_weekday_next():
     exp = (ANCHOR + timedelta(days=ahead)).replace(hour=0, minute=0,
                                                    second=0, microsecond=0)
     assert start("pròxim dilluns") == ad(exp)
+
+
+# --- postfix "last <weekday>" idiom regression (bug: flipped to next) ---
+from datetime import datetime as _dt  # noqa: E402
+from ._corpus import parse as _parse  # noqa: E402
+
+_FRI = _dt(2026, 7, 24, 12, 0)  # anchor: Friday
+
+@pytest.mark.parametrize("text,y,m,d", [
+    ("dimarts passat", 2026, 7, 21),      # postfix last
+    ("proxim dimarts", 2026, 7, 28),      # prefix next
+    ("dimarts que ve", 2026, 7, 28),      # postfix next
+    ("dimarts", 2026, 7, 28),             # bare weekday -> next
+    ("setmana passada", 2026, 7, 13),     # unit noun, unaffected
+])
+def test_weekday_postfix_idiom(text, y, m, d):
+    assert start(text, _FRI) == ad(_dt(y, m, d))
+
+@pytest.mark.parametrize("text", ["dimarts passat", "dimarts que ve"])
+def test_weekday_postfix_marker_consumed(text):
+    assert _parse(text, _FRI).remainder == ""
