@@ -2,12 +2,19 @@
 conventional sub-day band, and the deictic forms ("this morning", "tonight",
 "last night") resolve on their own.
 
-Bands are the Unicode CLDR 47 day-period rules (locale ``en``), the same source
-:mod:`chronologia.dayparts` cites: morning ``[06:00, 12:00)``, afternoon
+Bands are chronologia's own English convention, the default set
+:mod:`chronologia.dayparts` ships -- morning ``[06:00, 12:00)``, afternoon
 ``[12:00, 18:00)``, evening ``[18:00, 21:00)``, night ``[21:00, 06:00)``
 (crossing midnight into the next civil day).  Every band is
 ``BASIS_RECONSTRUCTED`` -- a daypart is a cultural boundary, not a clock reading
 the speaker gave, so it must never claim the exactness of "at 6am".
+
+These hours are not CLDR's, and the difference is deliberate rather than an
+oversight: CLDR's ``en`` rows open morning at 00:00 and never wrap night, while
+an English speaker saying "this morning" at 02:00 does not mean it and saying
+"tonight" does mean the hours after midnight.  The shipped convention is what
+the library has always resolved to, so it stays; CLDR is cited for the
+per-language bands, where it is exact.
 
 Anchor: Wednesday 2024-03-06 12:00.  Two regressions guarded here:
 
