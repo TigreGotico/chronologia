@@ -200,6 +200,25 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.text in spec.period_parts
     if name == "DECADE":
         return token.text in spec.decade_words
+    if name == "DNUM":
+        # a numeral that *names* a decade, for the languages whose decade
+        # phrase is a framing year-word plus a plain number ("les années 1980",
+        # "gli anni ottanta", "anii optzeci").  A decade opens on a whole ten,
+        # so only a whole ten binds here: either a bare tens the nearest-past
+        # century convention places ("les années 80"), or a four-digit year
+        # that is itself the base of its decade ("les années 1980").  The same
+        # framing word introduces an ordinary run of years -- "les années
+        # 1914-1918" are the war years, not a decade -- and refusing 1914 here
+        # rather than in the resolver is what leaves that reading to the
+        # range machinery, since the parse winner is chosen before any
+        # construction is resolved.
+        if not token.is_number or token.value is None:
+            return False
+        n = token.value
+        if not float(n).is_integer() or int(n) % 10:
+            return False
+        n = int(n)
+        return 0 <= n <= 90 or GYEAR_MIN <= n <= GYEAR_MAX
     return False
 
 

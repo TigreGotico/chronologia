@@ -138,7 +138,8 @@
     },
     "decade_ref": {
       "orders": [
-        "article? PART? DECADE"
+        "article? PART? DECADE year_plural?",
+        "PART? article? NUM plural year_plural?"
       ]
     },
     "month_fuzzy": {

@@ -20,6 +20,36 @@ def test_decade(text, y0):
     assert start_end(text) == (AstroDate(y0, 1, 1), AstroDate(y0 + 10, 1, 1))
 
 
+# -- digit decades ("die 1980er Jahre") -----------------------------------
+#
+# Duden glosses "Achtzigerjahre" (in digits "80er-Jahre"/"80er Jahre") as
+# "die Jahre 80 bis 89 eines bestimmten Jahrhunderts umfassendes Jahrzehnt",
+# so the -er ending on the numeral names the ten-year span, not the year the
+# digits spell.
+
+@pytest.mark.parametrize("text,y0", [
+    ("die 1980er", 1980), ("die 1980er jahre", 1980),
+    ("die 1990er jahre", 1990), ("die 1920er jahre", 1920),
+    ("in den 1970er jahren", 1970), ("die 80er jahre", 1980),
+])
+def test_digit_decade(text, y0):
+    assert start_end(text) == (AstroDate(y0, 1, 1), AstroDate(y0 + 10, 1, 1))
+
+
+def test_bare_year_is_still_a_year():
+    # without the -er ending the digits stay the single year they spell
+    assert start_end("im jahr 1980") == (AstroDate(1980, 1, 1),
+                                         AstroDate(1981, 1, 1))
+
+
+def test_decade_garbage_ending_is_no_decade():
+    # a bogus ending is not the -er of a decade: the digits fall back to the
+    # plain year and the junk lands in the remainder rather than raising
+    assert start_end("die 1980xy ???") == (AstroDate(1980, 1, 1),
+                                           AstroDate(1981, 1, 1))
+    nomatch("xyz ???")
+
+
 # -- ranges "von A bis B" -------------------------------------------------
 
 def test_range_von_bis_days():
