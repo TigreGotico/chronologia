@@ -37,6 +37,29 @@ all three access the same two values:
 - **`remainder`** is the leftover text the parse did not consume — the
   words around the date, so a caller can see what was and was not a date.
 
+## What goes in, and what raises
+
+Every extractor — `extract_timespan`, `extract_timespans`, `extract_duration`,
+`extract_recurrence`, `extract_candidates`, `extract_event` — takes text as a
+`str`. Handing one anything else is a mistake in the calling program, and it
+raises a `TypeError` naming the contract rather than letting an internal
+error surface further down. Text the library cannot read is a different
+matter entirely: the empty string, a whitespace run, or a sentence with no
+date in it all return the extractor's empty result — `None` for the ones that
+return a single value, an empty list for the ones that return several.
+
+```python
+from chronologia import extract_timespan
+
+assert extract_timespan("", "en") is None
+assert extract_timespan("the quick brown fox", "en") is None
+
+try:
+    extract_timespan(None, "en")
+except TypeError as err:
+    print(err)          # extract_timespan() reads text: expected str, ...
+```
+
 ```python
 from chronologia import extract_timespan
 from datetime import datetime

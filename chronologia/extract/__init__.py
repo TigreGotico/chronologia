@@ -32,7 +32,8 @@ from chronologia.extract.anchored import (apply_anchored_offset,
                                               apply_ordinal_count)
 from chronologia.extract.business import apply_business_days
 from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
-                                              pretokens, render_remainder)
+                                              pretokens, render_remainder,
+                                              require_text)
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_clock,
                                               compose_date_daypart, _WEEK_START)
@@ -981,7 +982,12 @@ def extract_timespan(
     A "from A to B" / "between A and B" range yields the span from the start
     of the left sub-parse to the end of the right one (``june 5th to june
     12th`` -> a seven-day span); the endpoints are two independent parses.
+
+    ``text`` must be a ``str``; anything else raises :class:`TypeError`.
+    Text that names nothing temporal, the empty string included, returns
+    ``None``.
     """
+    require_text(text, "extract_timespan")
     engine = _timespan_engine(lang)
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
@@ -1199,7 +1205,12 @@ def extract_candidates(
     broken by earlier text position then longer span).  The list is empty when
     nothing temporal was found.  ``anchor`` is the "now" relative phrases
     resolve against (default: the wall clock).
+
+    ``text`` must be a ``str``; anything else raises :class:`TypeError`.
+    Text that names nothing temporal, the empty string included, returns an
+    empty list.
     """
+    require_text(text, "extract_candidates")
     engine = _timespan_engine(lang)
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):

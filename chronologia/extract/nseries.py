@@ -27,6 +27,7 @@ from datetime import datetime, timedelta
 from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
+from chronologia.extract.pipeline import require_text
 from chronologia.recurrence import HolidayRecurrence, Recurrence
 from chronologia.recurrence import every as _build_every
 from chronologia.recurrence import nth_weekday_of_month as _nth_weekday_of_month
@@ -93,7 +94,11 @@ def extract_duration(
     and are left in the remainder.  Returns a :class:`DurationResult` -- a
     ``(duration, remainder)`` named tuple (unpack it, or read ``.duration`` /
     ``.remainder``) -- or ``None`` when the text names no fixed-width length.
+
+    ``text`` must be a ``str``; anything else raises :class:`TypeError`.
+    Text that names no length, the empty string included, returns ``None``.
     """
+    require_text(text, "extract_duration")
     from chronologia.extract import _timespan_engine
 
     engine = _timespan_engine(lang)
@@ -220,7 +225,12 @@ def extract_timespans(
     as the single-span edge composes them.
 
     Returns a list of :class:`TimeMention` (empty when nothing matched).
+
+    ``text`` must be a ``str``; anything else raises :class:`TypeError`.
+    Text that names nothing temporal, the empty string included, returns an
+    empty list.
     """
+    require_text(text, "extract_timespans")
     from chronologia.extract import _timespan_engine
     from chronologia.extract.confidence import score_candidates
     from chronologia.extract.resolver import compose_date_clock
@@ -420,7 +430,12 @@ def extract_recurrence(
     Returns a :class:`RecurrenceResult` -- a ``(recurrence, remainder)`` named
     tuple (unpack it, or read ``.recurrence`` / ``.remainder``) -- or ``None``
     when no recurrence is found.
+
+    ``text`` must be a ``str``; anything else raises :class:`TypeError`.
+    Text that names no recurrence, the empty string included, returns
+    ``None``.
     """
+    require_text(text, "extract_recurrence")
     ctx = _recur_ctx(text, lang, anchor)
     tokens = ctx.tokens
 
