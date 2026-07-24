@@ -195,3 +195,45 @@ def test_cardinal_plus_unit_stays_an_interval(text, rrule):
 @pytest.mark.parametrize("text", ["every 2", "every 5"])
 def test_bare_cardinal_under_every_is_not_a_day_of_month(text):
     assert extract_recurrence(text, LANG) is None
+
+
+# A bare ordinal + weekday under "every" is the INTERVAL reading from two
+# upwards ("every third tuesday" = every three tuesdays); only "first" and
+# "last" fire the monthly nth-weekday reading bare, and the monthly reading
+# from two upwards needs an explicit "of the month" tail.  That ruling is a
+# fact about the *phrase*, so the digit surface and the spelled surface must
+# land on the same rule -- and neither may drop the weekday to the remainder.
+@pytest.mark.parametrize("digit,spelled,rrule", [
+    ("every 2nd friday", "every second friday", "FREQ=WEEKLY;INTERVAL=2;BYDAY=FR"),
+    ("every 3rd tuesday", "every third tuesday", "FREQ=WEEKLY;INTERVAL=3;BYDAY=TU"),
+    ("every 4th monday", "every fourth monday", "FREQ=WEEKLY;INTERVAL=4;BYDAY=MO"),
+    ("every 2nd sunday", "every second sunday", "FREQ=WEEKLY;INTERVAL=2;BYDAY=SU"),
+    ("every 3rd saturday", "every third saturday", "FREQ=WEEKLY;INTERVAL=3;BYDAY=SA"),
+])
+def test_digit_and_spelled_ordinal_weekday_agree(digit, spelled, rrule):
+    for text in (digit, spelled):
+        got = extract_recurrence(text, LANG)
+        assert got is not None, f"{text!r} did not parse as a recurrence"
+        assert got[0].to_string() == rrule, text
+        assert got[1] == "", f"{text!r} stranded {got[1]!r} in the remainder"
+
+
+# The ordinal-weekday ruling must not cost the readings that surround it: a
+# bare ordinal with no weekday is still a day of the month, an explicit "of
+# the month" tail still buys the monthly nth-weekday reading, and "first" /
+# "last" still fire bare.
+@pytest.mark.parametrize("text,rrule", [
+    ("every 1st", "FREQ=MONTHLY;BYMONTHDAY=1"),
+    ("every 15th", "FREQ=MONTHLY;BYMONTHDAY=15"),
+    ("every 3rd tuesday of the month", "FREQ=MONTHLY;BYDAY=3TU"),
+    ("every 2nd friday of the month", "FREQ=MONTHLY;BYDAY=2FR"),
+    ("every first friday", "FREQ=MONTHLY;BYDAY=1FR"),
+    ("every 1st friday", "FREQ=MONTHLY;BYDAY=1FR"),
+    ("every last friday", "FREQ=MONTHLY;BYDAY=-1FR"),
+    ("every 2 weeks", "FREQ=WEEKLY;INTERVAL=2"),
+])
+def test_ordinal_readings_around_the_weekday_ruling(text, rrule):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == ""

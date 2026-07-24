@@ -884,8 +884,16 @@ def _recur_every(ctx):
         # on positive evidence: an explicit "of the month" tail, or an ordinal
         # surface ("1st").  A bare cardinal ("every 2") stays unread rather
         # than being guessed into a BYMONTHDAY.
+        #
+        # A count followed by a *weekday* is likewise never a day of the month:
+        # "every 3rd tuesday" names tuesdays, not the 3rd of the month with a
+        # stray weekday left over.  The ordinal surface must not buy an escape
+        # here that the spelled surface ("every third tuesday") does not get --
+        # both fall through to the interval reading below, which is the ruling
+        # the elliptical nth-weekday branch above already applies.
         if (num_val is not None and 1 <= num_val <= 31
-                and not (j < n and t[j].text in ctx.units)):
+                and not (j < n and t[j].text in ctx.units)
+                and not (j < n and _weekday_here(ctx, t[j], True) is not None)):
             end = _of_month_tail(ctx, j)
             if end > j or _is_ordinal_surface(t[num_idx]):
                 return (_build_every("monthly", bymonthday=num_val),
