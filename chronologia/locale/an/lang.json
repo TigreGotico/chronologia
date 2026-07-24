@@ -44,6 +44,12 @@
         "article? SEASON YEAR?"
       ]
     },
+    "scoped_ordinal": {
+      "orders": [
+        "article? ORD UNIT of MONTH YEAR?",
+        "article? ORD UNIT of article? year_word YEAR?"
+      ]
+    },
     "clock_time": {
       "orders": [
         "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
