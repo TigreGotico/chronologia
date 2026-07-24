@@ -23,7 +23,7 @@ from __future__ import annotations
 from ovos_number_parser.numbers_ar import extract_number_ar
 from ovos_number_parser.numbers_he import extract_number_he
 
-from chronologia.extract.numfold_engine import NumberGrammar, make_fold
+from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
 
 
 def _make_fold(extract_fn, numwords):
@@ -80,4 +80,52 @@ _HE_NUM = frozenset({
 # destroy bare-weekday, recurrence and offset parsing.  Hebrew's spelled
 # ordinal quarter ("רבעון שלישי") therefore stays a documented xfail -- the
 # collision is total, so it cannot fold at the token level.
-fold_he = _make_fold(extract_number_he, _HE_NUM)
+_fold_he_run = _make_fold(extract_number_he, _HE_NUM)
+
+# The one cardinal that is also a weekday name.  שני is the construct form of
+# שניים "two" *and* the ordinal "second", and Hebrew names its weekdays by
+# ordinal -- יום שני is literally "second day", Monday (Hebrew Wikipedia,
+# "שבוע": the day names follow their ordinal number as in Genesis 1, only the
+# seventh keeping the name שבת).  Reading it as the digit 2 is what silently
+# turned "כל יום שני" (every Monday) into a confident FREQ=DAILY.
+_HE_SHENI = "שני"
+# The day noun the weekday name is built on, in the surfaces the weekday
+# vocabulary lists (bare and with the ב- "on" prefix).
+_HE_DAY_NOUN = frozenset({"יום", "ביום"})
+
+
+def _he_counts_a_noun(tokens, i):
+    """Whether ``שני`` at index ``i`` can be the cardinal "two" here.
+
+    A cardinal in the **construct state** binds the noun it counts and cannot
+    stand without it: "שני ימים" is two days, but nothing counts two in
+    "כל שני" -- there the word is the ordinal, i.e. Monday.  So the cardinal
+    reading needs a following word, and it must not be the ordinal's own day
+    noun ("יום שני"), where the weekday reading is the only one available.
+    """
+    if i and tokens[i - 1].text in _HE_DAY_NOUN:
+        return False
+    return i + 1 < len(tokens) and not tokens[i + 1].is_number
+
+
+def fold_he(tokens):
+    """The Hebrew cardinal fold, holding ``שני`` back where it names Monday.
+
+    The shared run scanner decides membership one token at a time, which is
+    all every other language needs; the שני homograph is settled by the words
+    around it instead.  The stream is therefore split at each weekday שני and
+    the scanner run over the remaining segments, so a real count ("לפני שני
+    ימים", two days ago) still folds while the weekday survives to be glued
+    onto its day noun by the multiword pass.
+    """
+    out = []
+    segment = []
+    for i, tok in enumerate(tokens):
+        if tok.text == _HE_SHENI and not _he_counts_a_noun(tokens, i):
+            out.extend(_fold_he_run(tuple(segment)))
+            out.append(tok)
+            segment = []
+        else:
+            segment.append(tok)
+    out.extend(_fold_he_run(tuple(segment)))
+    return reindex(tuple(out))

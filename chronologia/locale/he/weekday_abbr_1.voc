@@ -1,1 +1,7 @@
+# Hebrew abbreviates a weekday as the day noun plus the letter standing for
+# its ordinal number -- יום שלישי is written יום ג׳ ("Days of week on Hebrew
+# calendar", Wikipedia).  The letter carries a geresh in print; the tokenizer
+# strips it, so the surface listed here is the bare letter.
 שלישי
+יום ג
+ביום ג

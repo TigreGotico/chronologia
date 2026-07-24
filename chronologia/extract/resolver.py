@@ -39,6 +39,7 @@ from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, US_PER_DAY,
 from chronologia.regnal import REGNAL_SEQUENCES
 from chronologia.roman import roman_to_julian
 from chronologia.extract.compiler import UNIMPLEMENTED
+from chronologia.extract.matcher import GYEAR_MAX, GYEAR_MIN
 from chronologia.extract.model import (Conventions, LangSpec, Match,
                                            Resolution)
 from chronologia.extract.ranges import (_ABSOLUTE, _UNIT_OF_CENTURY,
@@ -806,16 +807,24 @@ class Resolver:
     def _resolve_year_ref(self, match, anchor):
         """A bare calendar year ("2027", "in 1995", "the year 2000"): a
         year-wide span ``[Jan 1 y, Jan 1 y+1)``.  The GYEAR slot only binds a
-        bare 4-5 digit run, so plain small integers never read as years.  A
-        spelled "year NUM SCALE" ("the year twelve thousand") multiplies the
-        NUM by its scale word -- safe here because the scale word is reserved
-        for deep time only in the "... years ago" framing."""
+        bare digit run inside the GYEAR window, so plain small integers never
+        read as years.  A spelled "year NUM SCALE" ("the year twelve
+        thousand") multiplies the NUM by its scale word -- safe here because
+        the scale word is reserved for deep time only in the "... years ago"
+        framing.
+
+        The product is held to the same window the digit form is: a scale
+        word carries any magnitude ("the year two billion"), and a year no
+        digit numeral could name is not a year, so it resolves to nothing
+        instead of to a span of the year 2000000000."""
         gyear = match.slots.get("GYEAR")
         if gyear is not None:
             year = int(gyear.value)
         else:
             year = int(match.slots["NUM"].value) * self.spec.scales[
                 match.slots["SCALE"].text]
+            if not GYEAR_MIN <= year <= GYEAR_MAX:
+                return None
         return Resolution(DateSpan(AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1)),
                           self._consumed(match))
 

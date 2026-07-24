@@ -24,6 +24,7 @@ from typing import Tuple
 
 from ovos_number_parser.numbers_en import extract_number_en
 
+from chronologia.extract.matcher import GYEAR_MAX, GYEAR_MIN
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
                                                     reindex as _reindex)
@@ -196,6 +197,12 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         "two thousand" (2000), "two thousand and one" (2001), "two thousand
         and twenty four" (2024).  Unambiguous: the digit form ``2001`` already
         reads as a year, so the spelled form must too -- no cue needed.
+        ``n`` runs 1..99, so the composed year covers the same
+        ``GYEAR_MIN..GYEAR_MAX`` window a digit year does: "twenty thousand"
+        reads exactly as ``20000`` does, and a spelled year outside the
+        window resolves to nothing just as the digits would.  The magnitude
+        is never what tells a year from deep time -- a closing unit word is
+        ("ninety nine thousand years ago" stays an offset, refused below).
 
     ``<c> <y>`` (year pair, **explicit year cue required**)
         "nineteen ninety-nine" (1999), "twenty twenty-four" (2024).  A bare
@@ -230,6 +237,9 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         value = None
         if head is not None and head_end < n and tokens[head_end].text in _YEAR_SCALES:
             scale = _YEAR_SCALES[tokens[head_end].text]
+            # the century prefix must be a real one (10..99); the thousands
+            # head is unrestricted because the window check below is what
+            # bounds the composition, exactly as it bounds the digit form
             if scale == 1000 or 10 <= head <= 99:
                 j = head_end + 1
                 if j < n and tokens[j].text == "and" and j + 1 < n:
@@ -237,7 +247,9 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
                 tail_end = _take_cardinals(tokens, j)
                 tail = _card_run(tokens[j:tail_end]) if tail_end > j else 0
                 if tail is not None and tail < scale:
-                    value, end = head * scale + tail, max(tail_end, head_end + 1)
+                    composed = head * scale + tail
+                    if GYEAR_MIN <= composed <= GYEAR_MAX:
+                        value, end = composed, max(tail_end, head_end + 1)
         elif out and out[-1].text in cues:
             # year pair: the century prefix is a *single* teen/tens word, the
             # rest of the run is the 10..99 remainder

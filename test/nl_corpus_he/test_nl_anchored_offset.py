@@ -6,8 +6,8 @@ resolved reference.  Anchor 2017-06-27 (Tuesday); פסח 2018 = Saturday
 
 Hebrew duals (יומיים "two days") are not folded to a number by the shared
 numfold, so counts use an explicit digit or the singular ``שבוע`` (one).
-Weekday rolls use the forms with a distinct surface (ראשון/חמישי/שישי); שני
-"Monday" collides with שני "second" and is avoided."""
+Weekday rolls read the day-noun form, Monday ("יום שני") included -- the day
+noun is what tells the ordinal apart from the cardinal "two"."""
 from datetime import date, timedelta
 import pytest
 from chronologia.astrodate import AstroDate
@@ -34,6 +34,7 @@ def test_unit_offset(text, expected):
     ("יום ראשון אחרי פסח", date(2018, 4, 1)),
     ("יום שישי אחרי פסח", date(2018, 4, 6)),
     ("יום חמישי אחרי פסח", date(2018, 4, 5)),
+    ("יום שני אחרי פסח", date(2018, 4, 2)),
     ("יום ראשון לפני פסח", date(2018, 3, 25)),
 ])
 def test_weekday_roll(text, expected):
