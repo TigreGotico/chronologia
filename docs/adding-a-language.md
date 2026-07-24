@@ -237,9 +237,73 @@ optional; add them when you're ready.
 | `daypart_night.voc` | words for the night band |
 
 A **landmark** is a named clock instant; the number in the file name is the
-minutes past midnight. A **daypart** names a stretch of the day (morning,
-evening, night); the exact hours of each band are defined once in shared code,
-so you only supply the *words*.
+minutes past midnight. A **daypart** names a stretch of the day.
+
+Here is the part that surprises people: **the hours are not the same in every
+language, and you must not assume English's.** Spanish runs one *tarde* from
+noon until eight in the evening, across what English splits into afternoon and
+evening. German has six bands, and *Nachmittag* does not start at noon. Swedish
+and Norwegian have a *förmiddag* / *formiddag* — a late-morning band English
+cannot name in one word at all. So the bands are **data**, listed per language
+in `chronologia/dayparts.py`, and your job is to say what your language's bands
+actually are.
+
+Two steps, then:
+
+1. **Find your language's bands.** The `chronologia/dayparts.py` file holds the
+   ones already known, each transcribed from the [Unicode CLDR day-period
+   chart](https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+   which lists them for a great many languages. If yours is there, add its rows
+   the same way, citing the chart. If it is not, use your national dictionary or
+   language academy and cite that instead — and if you cannot find a source,
+   leave the band out. An honest gap is much better than invented hours.
+2. **Name the `.voc` file after the band.** A band that belongs to one language
+   is registered under a key like `tarde_es` or `kveld_nb`, and the file is
+   `daypart_tarde_es.voc`. Only a band shared by every language — English's
+   plain `morning`, `afternoon`, `evening`, `night` — uses the bare name.
+
+Two traps worth knowing before you write the files:
+
+- **One word per surface.** A day-part surface has to be a single token, so a
+  hyphenated or two-word name (French *après-midi*, Romanian *după-amiază*)
+  cannot be listed; the tokenizer splits it. Those bands stay registered
+  without vocabulary rather than being faked.
+- **Watch for a word that already means something else.** If your day-part word
+  is also your word for *tomorrow* (Spanish *mañana*, German *morgen*) or for
+  *noon* (Dutch *middag*), listing it plainly would quietly break the reading
+  people actually mean. See the licensing note below.
+
+### When a daypart word is also another word
+
+Spanish *mañana* is both "morning" and "tomorrow". If you simply list it, then
+"mañana" on its own stops meaning tomorrow — a silent, wrong answer, which is
+the one thing this library will not ship.
+
+The fix is to **license the day-part reading positionally**: leave the bare
+`DAYPART` order out of your `daypart_ref` construction, so the word is read as
+a day-part only in a position where the other meaning cannot occur. Spanish
+says *esta mañana*, *por la mañana*, *de mañana* — always with a demonstrative,
+an article or a preposition — so those orders are listed and the bare one is
+not:
+
+```text
+"daypart_ref": {
+  "orders": [
+    "REL_MARKER DAYPART",   ← "esta mañana"
+    "article DAYPART",      ← "por la mañana"
+    "of DAYPART"            ← "de mañana"
+  ]
+}
+```
+
+Bare "mañana" then keeps its tomorrow reading, and "mañana por la tarde" still
+reads as tomorrow afternoon.
+
+If your language has no such position — German says *heute Morgen* with nothing
+in front of the word — then there is no honest way to list it, and the band
+ships with no vocabulary. German keeps *Vormittag*, *Nachmittag*, *Abend* and
+*Nacht*, and gives up *Morgen*. Losing one phrase is a fair price for never
+turning "morgen" into the wrong day.
 
 ### The clock-fraction words and the convention flags
 
