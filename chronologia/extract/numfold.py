@@ -440,6 +440,42 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
 _fold_pt_base = _make_romance_fold("pt", {"segunda", "quarta", "quinta", "sexta",
                                           "terca", "terça"})
 
+
+def _license_weekday_ordinal(tokens, mapping, units):
+    """Read a weekday-homograph ordinal as its digit before a period noun.
+
+    The feminine ordinals a Romance language blacklists from the number fold
+    are blacklisted because each is also the name of a weekday -- Portuguese
+    "segunda" is at once the ordinal "second" and Monday (segunda-feira).  The
+    blacklist protects the weekday reading everywhere, but directly before the
+    week noun the weekday reading is not available: "a segunda semana de março"
+    is the second week of March, never Monday, because a weekday name does not
+    take a following "semana".  In that one position the homograph is licensed
+    to its digit so the "nth week of a month" composition can bind it, the same
+    positional licensing that lets the plural weekday surface be read only in
+    the syntactic slot that disambiguates it.
+    """
+    out = []
+    n = len(tokens)
+    for i, tok in enumerate(tokens):
+        nxt = tokens[i + 1] if i + 1 < n else None
+        if (not tok.is_number and tok.text in mapping
+                and nxt is not None and nxt.text in units):
+            value = mapping[tok.text]
+            out.append(Token(text=str(value), raw=tok.raw, index=0,
+                             is_number=True, value=value))
+        else:
+            out.append(tok)
+    return _reindex(tuple(out))
+
+
+#: The week nouns of Portuguese, the position that licenses the ordinal
+#: reading of a weekday-homograph ordinal.
+_PT_WEEK_UNITS = frozenset({"semana", "semanas"})
+#: weekday-homograph feminine ordinal -> its value.  "terça" (Tuesday) is not
+#: listed: the third ordinal is "terceira", no homograph, and it already folds.
+_PT_ORDINAL_BEFORE_WEEK = {"segunda": 2, "quarta": 4, "quinta": 5, "sexta": 6}
+
 # Portuguese writes the clock quarter with an explicit article -- "quatro e um
 # quarto" == 4:15, "duas menos um quarto" == 1:45 -- where the "um"/"uma" is the
 # article of "um quarto" (a quarter), not a number.  The spelled-number fold
@@ -455,6 +491,8 @@ _PT_QUARTER_SURFACES = frozenset({"quarto", "quartos"})
 
 
 def fold_pt(tokens):
+    tokens = _license_weekday_ordinal(tokens, _PT_ORDINAL_BEFORE_WEEK,
+                                      _PT_WEEK_UNITS)
     protected = {
         i for i, t in enumerate(tokens)
         if t.text in ("um", "uma") and i + 1 < len(tokens)
