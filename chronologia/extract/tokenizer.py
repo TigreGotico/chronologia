@@ -21,7 +21,8 @@ from typing import Tuple
 from chronologia.extract.model import Token, TokenizerModes
 
 # ISO-8601 year-first calendar literals, kept whole: a full date -- dash
-# ("2017-06-30") or slash ("2024/03/06", 1-2 digit month/day) -- and the
+# ("2017-06-30"), slash ("2024/03/06", 1-2 digit month/day) or dot
+# ("2020.06.15", the form Hungarian mandates) -- and the
 # day-less year-month ("2024-03", dash only, as ISO-8601 writes it).  A
 # 4-digit-leading, year-first surface is unambiguously Y-M-D in EVERY
 # locale, so -- unlike the day/month-ambiguous _NUMDATE below -- no
@@ -39,7 +40,16 @@ from chronologia.extract.model import Token, TokenizerModes
 # The year-month alternative additionally refuses a following "-<digit>": that
 # is the head of a longer dashed run ("2026-07-244"), and reading a month out
 # of its first seven characters is the same stranded-tail wrong.
+# The dotted alternative is the Hungarian civil form: the Academy's
+# orthography (AkH. 297) and MSZ ISO 8601 both write the date year-first with
+# dots, "2020.06.15".  It needs no per-locale switch for the same reason the
+# dashed and slashed forms do not -- a four-digit lead is year-first
+# everywhere -- and it cannot collide with a decimal number or a thousands
+# group, because both of those are refused by the two required dots and by the
+# "(?!\.\d)" guard, which keeps the literal from reading the head of a longer
+# dotted run ("1990.12.31.5" is not a date with a spare fraction).
 _ISO = (r"\d{4}-\d{2}-\d{2}(?!\d)|\d{4}/\d{1,2}/\d{1,2}(?!\d)"
+        r"|\d{4}\.\d{1,2}\.\d{1,2}(?!\d)(?!\.\d)"
         r"|\d{4}-\d{2}(?!\d)(?!-\d)")
 # the ISO-8601 week designator (ISO 8601 §4.4.4.2): ``YYYY-Www`` for the week
 # itself and ``YYYY-Www-D`` for one weekday inside it (D = 1..7, Monday..Sunday).
@@ -61,13 +71,43 @@ _ISOWEEK = r"\d{4}-[wW]\d{1,2}(?:-\d)?(?!\d)"
 # a numeric slash/dash separated date ("12/11/2024", "5-6-24"): two 1-2 digit
 # components and a 2-4 digit year, kept whole so the matcher binds it as one
 # ``NUMDATE`` slot.  Requiring the third (year) component and two separators
-# keeps a bare fraction/score ("1/2") from ever reading as a date.  Dot is
-# deliberately excluded -- it collides with the decimal-number and
-# ordinal-dot shapes.  The component->day/month order is a resolve-time,
-# per-locale (dmy) decision; the tokenizer stays language-neutral.
+# keeps a bare fraction/score ("1/2") from ever reading as a date.  The
+# component->day/month order is a resolve-time, per-locale (dmy) decision; the
+# tokenizer stays language-neutral.
 # same all-or-nothing boundary guard as _ISO: "12/11/20244" is not a date with
 # a spare digit, it is not a date at all.
 _NUMDATE = r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}(?!\d)"
+# the same date written with dots, "15.06.2020" -- the official civil form of
+# German (DIN 5008), Russian and Ukrainian (GOST R 6.30-2003), Polish, Czech
+# and Slovak (CSN 01 6910), Finnish and Estonian (SFS 4175, which drops the
+# leading zeros: "15.6.2020"), Turkish (TDK), Dutch, Danish, Norwegian,
+# Slovene, Croatian and Romanian.  It is enabled by the per-language
+# ``dotted_date`` tokenizer mode rather than always, because a locale that has
+# no dotted convention must keep reading "06.15.2020" as the two numbers it is;
+# English in particular writes the dot in neither order.
+#
+# The dot was excluded here for a long time, on the grounds that it collides
+# with the decimal-number and ordinal-dot shapes.  The collision is real but
+# the exclusion did not produce the refusal it was meant to: "15.06.2020" fell
+# through to the bare-number rule, the year matched alone, and the caller got a
+# confident whole-year span with "15.06" stranded in the remainder -- silently
+# wrong for the most ordinary way most of Europe writes a date.  Three
+# components with two dots is what keeps the shape apart from both colliders: a
+# decimal ("2.5") and a thousands group ("1.000", "1.000.000" in German) never
+# carry two dots with a 1-2 digit head and a 2-4 digit tail, and an ordinal dot
+# ("15. Juni") is followed by a space and a word, never by a digit.  The literal
+# is matched ahead of the ordinal-dot and bare-number rules so the whole date
+# binds as one token instead of being eaten piecewise.
+#
+# Both boundary guards are load-bearing, exactly as in _ISO.  "(?!\d)" refuses
+# a longer digit run ("15.06.20201"), and "(?!\.\d)" refuses the head of a
+# longer dotted run, so "1.2.3.4" and "1.15.06.2020" name no date at all
+# instead of yielding a date plus a stranded tail.
+_DOTDATE = r"\d{1,2}\.\d{1,2}\.\d{2,4}(?!\d)(?!\.\d)"
+# what the ``NUMDATE`` slot accepts: either separator style.  The matcher and
+# the resolver read this one name, so there is a single source of truth for the
+# shape and the day/month order stays the locale's ``dmy`` decision.
+_NUMDATE_ANY = f"(?:{_NUMDATE})|(?:{_DOTDATE})"
 _CLOCK = r"\d{1,2}:\d{2}(?::\d{2})?(?!\d)"
 _NUM = r"\d+(?:\.\d+)?"
 # a timezone acronym with an optional fixed signed offset kept as ONE token so
@@ -95,6 +135,10 @@ class Tokenizer:
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
         parts = [_ISOWEEK, _ISO, _NUMDATE, _CLOCK, _ZONE]
+        if modes.dotted_date:
+            # ahead of the ordinal-dot and bare-number rules below, so a
+            # dotted date binds whole rather than being read as a number
+            parts.insert(3, _DOTDATE)
         if modes.ordinal_dot:
             # a digit run followed by a dot that is not a decimal point
             parts.append(r"\d+\.(?!\d)")
@@ -113,7 +157,7 @@ class Tokenizer:
             cs, ce = m.start(), m.end()
             is_literal = (re.fullmatch(_ISOWEEK, raw) is not None
                           or re.fullmatch(_ISO, raw) is not None
-                          or re.fullmatch(_NUMDATE, raw) is not None
+                          or re.fullmatch(_NUMDATE_ANY, raw) is not None
                           or re.fullmatch(_CLOCK, raw) is not None)
             if not is_literal and re.match(r"\d", raw):
                 digits = raw.rstrip(".")

@@ -69,6 +69,12 @@ class TokenizerModes:
     """Per-language tokenizer switches (facts from ``lang.json``)."""
     split_contractions: bool = False
     ordinal_dot: bool = False
+    # the language writes its everyday numeric date with dots
+    # ("15.06.2020"), so that surface is read as one date literal instead of
+    # as loose numbers.  Off by default: a language with no dotted
+    # convention -- English above all -- must keep reading those digits as
+    # the numbers they are.
+    dotted_date: bool = False
 
 
 @dataclass(frozen=True)

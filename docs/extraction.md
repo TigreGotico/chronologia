@@ -793,8 +793,8 @@ isolation:
 **1. Tokenizer** (`tokenizer.py`). Text → `tuple[Token]`. It lower-cases,
 splits on a small regex, and keeps ISO literals (`2017-06-30`) and clock
 literals (`15:30`) whole. Digit runs become numeric tokens; everything else
-is language-neutral. Two per-language switches (`split_contractions`,
-`ordinal_dot`) come from `lang.json`.
+is language-neutral. Three per-language switches (`split_contractions`,
+`ordinal_dot`, `dotted_date`) come from `lang.json`.
 
 **2. Normaliser** (`normaliser.py`). `Token → Token`, closed-class
 morphology only: a lemma map (`tygodni → tydzien`) then rule-based suffix

@@ -740,8 +740,9 @@ class Resolver:
         Three literal shapes reach this one resolver (all year-first, so
         component order is always Y-M-D, locale-independent):
 
-        * ``YYYY-MM-DD`` / ``YYYY/MM/DD`` -> a **day-wide** span, exactly as
-          the strict ISO date always did;
+        * ``YYYY-MM-DD`` / ``YYYY/MM/DD`` / ``YYYY.MM.DD`` (the Hungarian
+          civil form) -> a **day-wide** span, exactly as the strict ISO date
+          always did;
         * ``YYYY-MM`` (the ISO year-month, dash only) -> the **month-wide**
           span the named month occupies, reusing the same
           :func:`_gregorian_month_span` width "June 2027" and ``calendar_date``
@@ -752,7 +753,7 @@ class Resolver:
         An impossible day ("2024/02/31") raises ``ValueError`` from
         ``AstroDate`` and :meth:`resolve` turns it into ``None``.
         """
-        parts = re.split(r"[/-]", match.slots["ISO"].text)
+        parts = re.split(r"[/.-]", match.slots["ISO"].text)
         if len(parts) == 2:                              # year-month, no day
             y, m = int(parts[0]), int(parts[1])
             if not 1 <= m <= 12:
@@ -765,7 +766,11 @@ class Resolver:
                           self._consumed(match))
 
     def _resolve_numeric_date(self, match, anchor):
-        """A numeric slash/dash date ("12/11/2024", "5-6-24"), day-wide.
+        """A numeric date ("12/11/2024", "5-6-24", "15.06.2020"), day-wide.
+
+        The separator carries no meaning here -- slash, dash and the dotted
+        continental form all reach this one resolver, and which of them a
+        language writes is settled in the tokenizer.
 
         The two leading components map to day/month by the locale's ``dmy``
         convention: dmy=true reads day-first ("15/06/2024" = 15 June),
@@ -782,7 +787,7 @@ class Resolver:
         day 0, day-in-month impossible like 31/02) resolves to None rather than
         being fabricated -- ``AstroDate`` raises ``ValueError`` for the bad day.
         """
-        a, b, y = re.split(r"[/-]", match.slots["NUMDATE"].text)
+        a, b, y = re.split(r"[/.-]", match.slots["NUMDATE"].text)
         year = _pivot_year_str(y)
         first, second = int(a), int(b)
         if self.spec.conventions.dmy:

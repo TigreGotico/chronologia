@@ -1,7 +1,8 @@
 {
  "tokenizer": {
   "split_contractions": false,
-  "ordinal_dot": false
+  "ordinal_dot": false,
+  "dotted_date": true
  },
  "constructions": {
   "relative_offset": {
