@@ -1,7 +1,16 @@
+# Russian "year".  The noun is suppletive: the plural is built on the stem
+# лет-/год-, and the locative "в году" differs from the plain prepositional
+# "о годе".  "лето" (summer) is deliberately absent even though "лет" belongs
+# here -- the instrumental "летом" is the season, not the year, and lives in
+# season_summer.  Грамота.ру, "Склонение существительных": тип "год".
 год
 года
-лет
-годы
 году
+годе
 годом
+годы
+годов
+лет
+годам
+годах
 годами
