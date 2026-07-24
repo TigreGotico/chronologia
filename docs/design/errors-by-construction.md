@@ -130,7 +130,73 @@ site to occur at. And each language exposes exactly one number-reading entry
 point; the direct call into the shared extractor that skipped the French wrapper
 is made private, so "call the wrong back-end" is not a reachable state.
 
-## What does not change
+## Emitting an incomplete reading: residue, not a low score
+
+A fair objection to the veto: refusing outright throws away information. If a
+parse bound most of an utterance and stranded one qualifier, some consumer — a
+search index that wants recall, not precision — might still want the partial
+answer. Why not emit the span with a very low confidence score and let the
+consumer filter by threshold?
+
+Because a stranded reading is not a *less certain* answer, it is a *wrong-scoped*
+one, and a single scalar cannot say which. `2026-W1` that strands `W1` does not
+mean "probably 2026"; it means **all of 2026** — a span fifty times too wide that
+merely happens to contain the right one. Scoring that 0.1 does not turn a wrong
+boundary into an uncertain right one; it lets a wrong boundary survive at a
+discount, and the consumer that keeps it is not getting a fuzzy answer, it is
+getting a confidently wrong one.
+
+Worse, one number would have to carry two opposite situations. Genuine ambiguity
+among *complete* readings ("tomorrow at 3pm" has several valid candidates) and an
+*incomplete* parse that dropped a narrowing qualifier are not points on the same
+scale — the first says "pick the best or ask", the second says "the scope is
+wrong". A consumer thresholding on a scalar cannot tell them apart, and folding
+incompleteness into the score re-commits the exact mistake the confidence rework
+just undid: coverage leaking into certainty.
+
+So the two signals stay separate, and the consumer's real need is met with
+structure rather than a smeared number:
+
+- **Confidence** measures ambiguity among *complete* readings, and nothing else.
+  A homograph with two valid readings scores lower; an incomplete parse does not
+  touch it.
+- **Residue** is the typed record of what a reading could not account for. It is
+  not free text and it is not a score — it is the classified leftover, and its
+  being non-empty *is* the "incomplete" signal.
+
+The default single-best entry point vetoes: it returns the honest answer or
+`None`, and that is what makes the wrong-scope class unwritable for the majority
+of callers who want exactly that. The richer entry point (`extract_candidates`)
+exposes the partial reading **and its residue together** — the span it could bind
+next to the `W1` it could not. A recall-oriented consumer opts in and uses the
+partial span *knowing* temporal material was left over; a precision-oriented one
+sees a non-empty residue and discards. Neither has to guess a threshold to
+distinguish stranding from ambiguity, because stranding is represented as
+residue, not as a low score. The information the veto would otherwise discard is
+preserved — just in the shape that says what it actually is.
+
+## The selector is the real work
+
+A prototype of the two invariants — ambiguity-preserving lexing and the residue
+veto — was built as a 466-line miniature over five languages and four
+constructions, and both held cleanly with no per-language special-casing: the
+Hebrew/Indonesian/Portuguese collisions resolved by construction, and a
+deliberate attempt to construct the `2026 + stranded W1` answer refused at
+instantiation time. That is the encouraging half.
+
+The instructive half is what the miniature had to simplify, because it names
+where the cost actually is. The veto eliminates *wrong* readings but does not
+*pick* among the surviving *valid* ones — that is the selector, and at the full
+set of constructions the selector is where ambiguity really lives, covered by
+neither headline invariant. And the miniature's "any temporal residue anywhere"
+veto does not survive a multi-mention utterance; the real engine needs the veto
+scoped to material *adjacent* to the match. Those two — a principled selector and
+local veto scoping — are the genuine unsolved work, not the invariants that
+frame them.
+
+This is why the sequencing below is staged and why the veto's arrival is
+budgeted rather than cheap: turning it on flips currently-green *lossy* spans to
+`None`, and each of those is a hand adjudication, not an automatic win.
 
 The bones are good and the freeze should keep them. The **JDN hub** — every
 calendar, era and timeline converting only to and from a single integer line —
@@ -169,8 +235,19 @@ API, and to land the structural invariants where they are cheap.
   representation change, and it is exactly what the declarative engine is for.
   It lands as that engine matures, behind the now-frozen API, proven step by step
   against the corpus — the redesign without the big bang.
+- The **selector and local veto scoping** — the work the prototype deferred. This
+  is the true cost centre (an estimated month against the full corpus), and it is
+  what makes the residue veto and ambiguity-preserving lexing usable at 46
+  constructions rather than at 4. It ships alongside class 2, one construction
+  family at a time.
 - Class 4, the total construction matrix, ships with the engine's schema so a new
   locale cannot under-implement silently.
+
+The prototype lives on the throwaway `experiment/pure-engine-spike` branch under
+`experiments/pure_engine/` — 466 lines, a runnable `evaluate.py`, and a
+`FINDINGS.md`. It is evidence, not a foundation: keep it as the thing that proved
+the invariants hold and located the selector as the real work, and build the
+production version into the declarative engine rather than growing the miniature.
 
 The test is not whether the engine is beautiful. It is whether, a year after
 1.0, the adversarial audit that found twelve defects in an afternoon finds
