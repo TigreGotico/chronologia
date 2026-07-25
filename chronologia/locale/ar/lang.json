@@ -15,13 +15,6 @@
         "DAY_WORD"
       ]
     },
-    "weekday_ref": {
-      "orders": [
-        "WEEKDAY REL_MARKER",
-        "REL_MARKER WEEKDAY",
-        "WEEKDAYFULL"
-      ]
-    },
     "rel_period": {
       "orders": [
         "UNIT REL_MARKER",
@@ -157,5 +150,8 @@
     "0.25": [
       "ربع"
     ]
+  },
+  "base_grammar": {
+    "marker_position": "post"
   }
 }

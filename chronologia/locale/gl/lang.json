@@ -15,14 +15,6 @@
         "DAY_WORD"
       ]
     },
-    "weekday_ref": {
-      "orders": [
-        "REL_MARKER WEEKDAY",
-        "article? WEEKDAY REL_MARKER",
-        "article? WEEKDAYFULL REL_MARKER",
-        "WEEKDAYFULL"
-      ]
-    },
     "rel_period": {
       "orders": [
         "REL_MARKER UNIT",
@@ -192,5 +184,8 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_gl"
+  "hook": "chronologia.extract.numfold:fold_gl",
+  "base_grammar": {
+    "marker_position": "post"
+  }
 }

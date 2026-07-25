@@ -62,6 +62,34 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast UNIT of REL_MARKER? article? SCOPE_UNIT",
         "article? ORD SCOPE_UNIT",
     ],
+    # "last/next <weekday>" and a bare full weekday name meaning its next
+    # occurrence.  The prefix form ("REL_MARKER WEEKDAY" -- "last Friday") and
+    # the bare full-weekday form ("WEEKDAYFULL" -- "Friday" -> next Friday) are
+    # the language-neutral core every locale shares.  The postposed idiom
+    # ("el viernes pasado", "marțea trecută" -- the marker TRAILS the weekday)
+    # is not universal, so it is gated behind the ``marker_position`` knob
+    # rather than shipped in the base: a locale that does not postpose must not
+    # gain a trailing-marker order that could mis-parse.
+    "weekday_ref": [
+        "REL_MARKER WEEKDAY",
+        "WEEKDAYFULL",
+    ],
+}
+
+# ---------------------------------------------------------------------------
+# Knob-generated orders.  A construction's postfix (marker-trailing) variants
+# are appended by ``merge_orders`` only when the locale sets
+# ``marker_position: post`` (or ``both``) -- see the KNOB SCHEMA note on
+# ``marker_position``.  The article is OPTIONAL, so an article-less language
+# ("marțea trecută") matches the same order without shipping an article; the
+# Romance article-bearing idiom ("el viernes pasado") is the richest shared
+# form and is what these orders encode.
+# ---------------------------------------------------------------------------
+MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
+    "weekday_ref": [
+        "article? WEEKDAY REL_MARKER",
+        "article? WEEKDAYFULL REL_MARKER",
+    ],
 }
 
 # ---------------------------------------------------------------------------
@@ -131,6 +159,7 @@ def merge_orders(cfg: Mapping,
     disable = set(bg.get("disable", ()))
     override = bg.get("override", {})
     extend = bg.get("extend", {})
+    marker_position = bg.get("marker_position", "pre")
 
     out: Dict[str, List[str]] = {name: list(orders)
                                  for name, orders in inline_orders.items()}
@@ -138,6 +167,17 @@ def merge_orders(cfg: Mapping,
         if name in disable:
             continue
         contrib = list(override.get(name, base_orders))
+        # ``marker_position`` gates the postposed (marker-trailing) variants.
+        # ``pre`` (default): base orders only -- the marker precedes its slot.
+        # ``post`` / ``both``: append the construction's postfix orders so a
+        # trailing marker ("<weekday> last") also matches.  The base prefix
+        # orders are ALWAYS retained (they are in ``base_orders``), so ``post``
+        # and ``both`` accept the marker in either position and coincide for
+        # ``weekday_ref``; ``both`` names that symmetry explicitly while
+        # ``post`` reads as the locale's dominant idiom.  The distinction is
+        # reserved for any future construction whose base is itself postposed.
+        if marker_position in ("post", "both"):
+            contrib += MARKER_POSTFIX_ORDERS.get(name, [])
         contrib += list(extend.get(name, ()))
         merged = out.get(name, [])
         merged = list(merged) + [o for o in contrib if o not in merged]
