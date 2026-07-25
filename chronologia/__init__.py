@@ -27,8 +27,9 @@ from chronologia.dayparts import (CLDR_VERSION, DAY_PARTS, DayPart,
                                   UnknownDayPartError, daypart_span)
 from chronologia.edtf import (EdtfDate, EdtfParseError, format_edtf,
                              parse_edtf)
-from chronologia.eras import (ERAS, Era, EraCounting, astro_year_range,
-                              resolve_bp, resolve_era, resolve_era_year_span)
+from chronologia.eras import (ERAS, ERA_ALIASES, HEAT_DEATH_YEAR, Era,
+                              EraCounting, astro_year_range, resolve_bp,
+                              resolve_era, resolve_era_year_span)
 from chronologia.axes import (AXES, EARTH_DAY_SECONDS, MARS_SOL_RATIO,
                               MARS_SOL_SECONDS, TimeAxis, astro_from_jd, jd_of)
 from chronologia.leapseconds import (GPS_EPOCH, LEAP_SECONDS,
@@ -158,6 +159,8 @@ __all__ = [
     "from_ical",
     # eras
     "ERAS",
+    "ERA_ALIASES",
+    "HEAT_DEATH_YEAR",
     "Era",
     "EraCounting",
     "astro_year_range",

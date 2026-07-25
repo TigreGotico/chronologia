@@ -45,7 +45,7 @@ from decimal import Decimal
 from typing import Dict, Union
 
 from chronologia.astrodate import AstroDate, DateSpan
-from chronologia.eras import (EraCounting, _BP_UNITS,
+from chronologia.eras import (EraCounting, HEAT_DEATH_YEAR, _BP_UNITS,
                               _astrodate_years_before_present)
 from chronologia.periods import NamedPeriod
 
@@ -62,7 +62,16 @@ __all__ = [
     "age_of_universe_gyr",
     "COSMIC_PERIODS",
     "HUBBLE_TIME_GYR",
+    "HEAT_DEATH_YEAR",
 ]
+
+# The heat death of the universe — the physics-imposed upper bound on a
+# meaningful date — is defined at the date-resolution chokepoint in
+# :mod:`chronologia.eras` (where the warning fires) and re-exported here so it
+# sits alongside the other cosmological constants.  ~10^100 years after the Big
+# Bang, the Dark-Era evaporation of the largest supermassive black holes (Adams
+# & Laughlin 1997, Rev. Mod. Phys. 69, 337).  Imported above; listed in
+# ``__all__`` so ``from chronologia.cosmology import HEAT_DEATH_YEAR`` works.
 
 # --------------------------------------------------------------------------
 # The age of the universe as a span-valued epoch (Planck 2018)
