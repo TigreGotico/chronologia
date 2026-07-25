@@ -81,8 +81,8 @@
         "ad ORD ANCHOR_DAY of MONTH",
         "PRIDIE ANCHOR_DAY MONTH",
         "PRIDIE ANCHOR_DAY of MONTH",
-        "ANCHOR_DAY of MONTH",
-        "ANCHOR_DAY MONTH"
+        "article? ANCHOR_DAY of MONTH",
+        "article? ANCHOR_DAY MONTH"
       ]
     },
     "regnal_date": {

@@ -179,6 +179,12 @@
         "during DAYPART",
         "article? DAYPART REL_MARKER"
       ]
+    },
+    "roman_date": {
+      "orders": [
+        "article? ANCHOR_DAY of MONTH",
+        "article? ANCHOR_DAY MONTH"
+      ]
     }
   },
   "conventions": {

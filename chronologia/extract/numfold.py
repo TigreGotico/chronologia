@@ -537,6 +537,40 @@ _PT_WEEKDAY_ORDINALS = frozenset({"segunda", "terca", "terça", "quarta",
                                   "quinta", "sexta"})
 #: masculine plural ordinals that are homographs of a noun this engine reads.
 _PT_ORDINAL_NOUN_HOMOGRAPHS = frozenset({"segundos", "quartos"})
+#: plural feminine ordinals that are homographs of a Roman-calendar anchor.
+#: "nonas" is at once the ninth-plural ordinal and the vernacular Nones; it is
+#: held back from the plural-ordinal fold and licensed to the digit 9 by
+#: :func:`_license_pt_nonas` everywhere except the anchor frame ("as nonas de
+#: julho"), where it must survive as the word so ``roman_date`` binds it.
+_PT_ANCHOR_ORDINAL_HOMOGRAPHS = frozenset({"nonas"})
+#: pt "of" prepositions (plain and article-fused) that introduce the month in
+#: the Roman-anchor frame -- the position that licenses the Nones reading.
+_PT_OF_PREP = frozenset({"de", "do", "da", "dos", "das", "d"})
+
+
+def _license_pt_nonas(tokens):
+    """Positionally read the homograph "nonas".
+
+    Portuguese "nonas" is at once the feminine plural ordinal "ninth" and the
+    vernacular name of the Roman *Nones*.  The two readings split by position:
+    the anchor is followed by an "of" preposition introducing the month ("as
+    nonas **de** julho"), the ordinal is not ("as nonas semanas").  "nonas" is
+    withheld from the plural-ordinal fold (see :data:`_PT_ANCHOR_ORDINAL_HOMOGRAPHS`)
+    and licensed back to the digit 9 here in every position that is **not** the
+    anchor frame, so ``roman_date`` binds the Nones while the plain ordinal
+    still folds.
+    """
+    out = list(tokens)
+    n = len(out)
+    for i, t in enumerate(out):
+        if t.is_number or t.text != "nonas":
+            continue
+        nxt = out[i + 1] if i + 1 < n else None
+        if nxt is not None and nxt.text in _PT_OF_PREP:
+            continue
+        out[i] = Token(text="9", raw=t.raw, index=0, is_number=True,
+                       value=9, char_start=t.char_start, char_end=t.char_end)
+    return _reindex(tuple(out))
 
 
 def _pt_plural_ordinals():
@@ -552,6 +586,8 @@ def _pt_plural_ordinals():
                 continue
             plural = form + "s"
             if plural in _PT_ORDINAL_NOUN_HOMOGRAPHS:
+                continue
+            if plural in _PT_ANCHOR_ORDINAL_HOMOGRAPHS:
                 continue
             out[plural] = val
     return out
@@ -574,6 +610,13 @@ def _pt_ordinal_fold(fold):
 
 
 fold_pt = _pt_ordinal_fold(fold_pt)
+_fold_pt_ordinal = fold_pt
+
+
+def fold_pt(tokens):  # noqa: F811 -- final wrap adds Nones licensing
+    return _license_pt_nonas(_fold_pt_ordinal(tokens))
+
+
 fold_es = _make_romance_fold("es", set())
 fold_gl = _make_romance_fold("gl", set())
 fold_ca = _make_romance_fold("ca", set())
