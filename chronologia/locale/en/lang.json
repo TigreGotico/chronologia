@@ -125,21 +125,6 @@
         "SEASON YEAR?"
       ]
     },
-    "scoped_ordinal": {
-      "orders": [
-        "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
-        "article? ordlast SEL_UNIT of article? SORD SCOPE_UNIT",
-        "article? ORD WEEKDAY of MONTH YEAR?",
-        "article? ordlast WEEKDAY of MONTH YEAR?",
-        "article? ORD UNIT of MONTH YEAR?",
-        "article? ordlast UNIT of MONTH YEAR?",
-        "article? ORD UNIT of article? year_word YEAR?",
-        "article? ordlast UNIT of article? year_word YEAR?",
-        "article? ORD UNIT of REL_MARKER? article? SCOPE_UNIT",
-        "article? ordlast UNIT of REL_MARKER? article? SCOPE_UNIT",
-        "article? ORD SCOPE_UNIT"
-      ]
-    },
     "scoped_bc": {
       "orders": [
         "article? ORD SCOPE_UNIT bc"

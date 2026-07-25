@@ -95,17 +95,6 @@
         "SEASON YEAR?"
       ]
     },
-    "scoped_ordinal": {
-      "orders": [
-        "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
-        "article? ordlast SEL_UNIT of article? SORD SCOPE_UNIT",
-        "article? ORD UNIT of MONTH YEAR?",
-        "article? ordlast UNIT of MONTH YEAR?",
-        "article? ORD UNIT of article? year_word YEAR?",
-        "article? ordlast UNIT of article? year_word YEAR?",
-        "article? ORD SCOPE_UNIT"
-      ]
-    },
     "clock_time": {
       "orders": [
         "CLOCK article? MERIDIEM? ZONE?",

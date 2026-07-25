@@ -52,17 +52,6 @@
         "article? SEASON YEAR?"
       ]
     },
-    "scoped_ordinal": {
-      "orders": [
-        "article? ORD WEEKDAY of MONTH YEAR?",
-        "article? ordlast WEEKDAY of MONTH YEAR?",
-        "article? ORD UNIT of MONTH YEAR?",
-        "article? ordlast UNIT of MONTH YEAR?",
-        "article? ORD UNIT of article? year_word YEAR?",
-        "article? ordlast UNIT of article? year_word YEAR?",
-        "article? ORD SCOPE_UNIT"
-      ]
-    },
     "clock_time": {
       "orders": [
         "at? QUARTS quarters of HOUR of? article? MERIDIEM? ZONE?",

@@ -59,18 +59,6 @@
         "article? SEASON YEAR?"
       ]
     },
-    "scoped_ordinal": {
-      "orders": [
-        "article? ORD WEEKDAY of MONTH YEAR?",
-        "article? ordlast WEEKDAY of MONTH YEAR?",
-        "article? ORD UNIT of MONTH YEAR?",
-        "article? ordlast UNIT of MONTH YEAR?",
-        "article? ORD UNIT of article? year_word YEAR?",
-        "article? ordlast UNIT of article? year_word YEAR?",
-        "article? ORD SCOPE_UNIT",
-        "article? CMUNIT ORD"
-      ]
-    },
     "clock_time": {
       "orders": [
         "at? HOUR CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
@@ -210,5 +198,12 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_pt"
+  "hook": "chronologia.extract.numfold:fold_pt",
+  "base_grammar": {
+    "extend": {
+      "scoped_ordinal": [
+        "article? CMUNIT ORD"
+      ]
+    }
+  }
 }

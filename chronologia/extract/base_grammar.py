@@ -1,0 +1,217 @@
+"""A shared BASE GRAMMAR of construction orders that every locale inherits.
+
+Historically each ``locale/<code>/lang.json`` declared its ``constructions``
+order-data standalone: the same abstract order strings (``"article? ORD
+WEEKDAY of MONTH YEAR?"`` ...) were copy-pasted into every locale, and were
+*silently missing* wherever nobody added them.  ``scoped_ordinal`` -- "the Nth
+<weekday> of <month>", "the 3rd century" -- shipped in only 27 of 40 locales,
+and each gap was a separate per-language bug fixed by hand, one PR at a time.
+
+This module replaces that with a single source of truth.  ``BASE_GRAMMAR``
+holds the default orders for a construction, expressed in the abstract slots
+that already work language-neutrally (``ORD`` / ``WEEKDAY`` / ``MONTH`` /
+``SCOPE_UNIT`` / ``SEL_UNIT`` / ``article`` / ``of`` / ...).  Every locale
+inherits them; a locale supplies only its genuine exceptions through a small
+``base_grammar`` block in its ``lang.json``:
+
+* ``disable: [name]``          -- opt a base construction out entirely.
+* ``override: {name: [orders]}`` -- REPLACE the base orders (a genuinely
+                                    different word order, e.g. Hebrew's
+                                    postposed ordinal, Slavic genitive "of").
+* ``extend: {name: [orders]}``   -- APPEND locale-specific orders on top of
+                                    the inherited base (an extra accepted form,
+                                    e.g. Spanish/Italian/Portuguese ``CMUNIT
+                                    ORD`` for postposed compound-unit ordinals).
+
+An inline ``constructions`` block for a base construction still works and is
+merged too: its orders are UNIONED with the base contribution, never replaced,
+so a locale can never LOSE an order it already shipped.  That union is the
+**additive-superset guarantee** the loader upholds and ``test_base_grammar``
+proves: the refactor only ever *adds* matching power.
+
+The knob schema below records the typological axes the exceptions fall on --
+so the long tail stays a handful of named dimensions, not 40 bespoke order
+lists.  This PR realises ``scoped_ordinal`` through the escape hatches
+(``disable`` / ``override`` / ``extend``); later PRs migrate more
+constructions and fold the repeated patterns into the enum knobs.
+"""
+from __future__ import annotations
+
+from typing import Dict, List, Mapping, Sequence
+
+# ---------------------------------------------------------------------------
+# The base grammar.  Only ``scoped_ordinal`` lives here this PR (more
+# constructions migrate in later PRs).  The orders are the richest set in the
+# tree -- harvested verbatim from ``en`` -- using the abstract slots the
+# resolver already binds language-neutrally.  A leading ``article?`` is
+# OPTIONAL, so an article-less language (Estonian, Basque) matches the same
+# orders without shipping an article: ``article?`` covers the article-less
+# surface.
+# ---------------------------------------------------------------------------
+BASE_GRAMMAR: Dict[str, List[str]] = {
+    "scoped_ordinal": [
+        "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
+        "article? ordlast SEL_UNIT of article? SORD SCOPE_UNIT",
+        "article? ORD WEEKDAY of MONTH YEAR?",
+        "article? ordlast WEEKDAY of MONTH YEAR?",
+        "article? ORD UNIT of MONTH YEAR?",
+        "article? ordlast UNIT of MONTH YEAR?",
+        "article? ORD UNIT of article? year_word YEAR?",
+        "article? ordlast UNIT of article? year_word YEAR?",
+        "article? ORD UNIT of REL_MARKER? article? SCOPE_UNIT",
+        "article? ordlast UNIT of REL_MARKER? article? SCOPE_UNIT",
+        "article? ORD SCOPE_UNIT",
+    ],
+}
+
+# ---------------------------------------------------------------------------
+# KNOB SCHEMA -- the typological axes the per-locale exceptions collapse onto.
+# Documented here as the target vocabulary for ``base_grammar`` blocks; this PR
+# expresses ``scoped_ordinal``'s exceptions through the escape hatches below,
+# and later PRs fold the repeated patterns into these enum knobs so 40 files
+# stop shipping the same duplicated order string.
+#
+#   marker_position : pre | post | both
+#       Whether a REL_MARKER may trail its slot ("lunes que viene").  ``both``
+#       auto-generates the postposed variant of every marker-bearing order.
+#   ordinal_position : pre | post
+#       Postposed ordinal ("WEEKDAY ORD of MONTH" in Hebrew; compound-unit
+#       "CMUNIT ORD" in Romance).
+#   article : optional-leading | none
+#       Whether base orders carry a leading ``article?`` (Romance/Germanic yes;
+#       article-less Slavic/Semitic/Uralic no).  ``article?`` already covers the
+#       article-less surface, so ``none`` is informational for this PR.
+#   connector : word | genitive | none
+#       How "of" binds MONTH.  Genitive-case languages (Polish *marca*, Russian,
+#       Bulgarian) express "of March" morphologically and drop the connector
+#       word -- their order is "article? ORD WEEKDAY MONTH", realised here as an
+#       ``override``.
+#
+# ESCAPE HATCHES (the true long tail, realised this PR):
+#   disable / override / extend -- see the module docstring.
+# ---------------------------------------------------------------------------
+KNOB_SCHEMA: Dict[str, frozenset] = {
+    "marker_position": frozenset({"pre", "post", "both"}),
+    "ordinal_position": frozenset({"pre", "post"}),
+    "article": frozenset({"optional-leading", "none"}),
+    "connector": frozenset({"word", "genitive", "none"}),
+}
+
+#: recognised keys inside a ``lang.json`` ``base_grammar`` block.
+BASE_GRAMMAR_KEYS: frozenset = frozenset(
+    {"disable", "override", "extend"} | set(KNOB_SCHEMA))
+
+
+class TotalityError(AssertionError):
+    """A locale is silently missing a base construction it did not opt out of.
+
+    The standalone-per-locale scheme could not raise this: an absent
+    construction was indistinguishable from a deliberate omission.  With a
+    shared base, absence is a load-time error unless the locale explicitly
+    ``disable``s the construction.
+    """
+
+
+def merge_orders(cfg: Mapping,
+                 inline_orders: Mapping[str, Sequence[str]]
+                 ) -> Dict[str, List[str]]:
+    """Merge the base-grammar orders into a locale's inline orders.
+
+    ``inline_orders`` is ``{construction -> [raw order strings]}`` taken from
+    the locale's own ``constructions`` block.  For every base construction the
+    locale did not ``disable``, its base contribution (``override`` replaces the
+    base orders, ``extend`` appends to them) is UNIONED onto whatever the locale
+    already declared inline -- appended, dedup'd, never dropping an inline
+    order.  The result is therefore an additive superset of the locale's inline
+    orders for every base construction.
+
+    Returns ``{construction -> [raw order strings]}`` ready for ``parse_order``.
+    """
+    bg = cfg.get("base_grammar", {})
+    disable = set(bg.get("disable", ()))
+    override = bg.get("override", {})
+    extend = bg.get("extend", {})
+
+    out: Dict[str, List[str]] = {name: list(orders)
+                                 for name, orders in inline_orders.items()}
+    for name, base_orders in BASE_GRAMMAR.items():
+        if name in disable:
+            continue
+        contrib = list(override.get(name, base_orders))
+        contrib += list(extend.get(name, ()))
+        merged = out.get(name, [])
+        merged = list(merged) + [o for o in contrib if o not in merged]
+        out[name] = merged
+    return out
+
+
+def _order_covers(effective: str, dev: str) -> bool:
+    """Does effective order ``effective`` match everything ``dev`` matched?
+
+    True when ``dev``'s element sequence can be obtained from ``effective`` by
+    dropping zero or more of ``effective``'s OPTIONAL elements -- i.e. the base
+    order is ``dev`` plus (only) extra optional elements, so it accepts every
+    surface ``dev`` accepted.  A leading ``article?`` on a base order covering
+    an article-less locale's ``ORD SCOPE_UNIT`` is the canonical case.
+    """
+    if effective == dev:
+        return True
+    eff = effective.split()
+    want = [tok for tok in dev.split()]
+    i = 0
+    for tok in eff:
+        if i < len(want) and tok.rstrip("?") == want[i].rstrip("?"):
+            i += 1
+        elif tok.endswith("?"):
+            continue                # skip an optional element not in dev
+        else:
+            return False            # a required element dev lacks -> no cover
+    return i == len(want)
+
+
+def assert_additive_superset(lang: str,
+                             dev_orders: Sequence[str],
+                             effective_orders: Sequence[str]) -> List[str]:
+    """Return the dev orders NOT covered by any effective order for ``lang``.
+
+    An empty list means the merge is an additive superset for this locale: it
+    only ever added matching power.  See :func:`_order_covers`.
+    """
+    missing = []
+    for dev in dev_orders:
+        if not any(_order_covers(eff, dev) for eff in effective_orders):
+            missing.append(dev)
+    return missing
+
+
+def effective_construction_names(cfg: Mapping,
+                                 inline_orders: Mapping[str, Sequence[str]]
+                                 ) -> set:
+    """The construction names a locale ends up with after the base merge."""
+    return set(merge_orders(cfg, inline_orders))
+
+
+def assert_totality(specs: Mapping[str, Mapping]) -> None:
+    """Raise :class:`TotalityError` unless every locale has every base
+    construction (via inheritance, an ``override``, or an inline block) or
+    explicitly ``disable``s it.
+
+    ``specs`` maps ``lang -> {"cfg": cfg, "orders": {name: [raw]}}`` where
+    ``orders`` are the locale's EFFECTIVE (post-merge) orders and ``cfg`` its
+    parsed ``lang.json``.  No silent absence: a construction missing without an
+    explicit ``disable`` is a load-time error.
+    """
+    gaps = []
+    for lang in sorted(specs):
+        entry = specs[lang]
+        disable = set(entry["cfg"].get("base_grammar", {}).get("disable", ()))
+        present = {name for name, orders in entry["orders"].items() if orders}
+        for name in BASE_GRAMMAR:
+            if name in disable:
+                continue            # explicit opt-out: allowed
+            if name not in present:
+                gaps.append(f"{lang}: missing base construction {name!r} "
+                            f"(and did not disable it)")
+    if gaps:
+        raise TotalityError(
+            "base-grammar totality check failed:\n  " + "\n  ".join(gaps))

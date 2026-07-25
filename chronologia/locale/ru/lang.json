@@ -138,5 +138,10 @@
  "guards": {
   "bare_year_min_digits": 4
  },
- "hook": "chronologia.extract.numfold_slavic:fold_ru"
+ "hook": "chronologia.extract.numfold_slavic:fold_ru",
+ "base_grammar": {
+  "disable": [
+   "scoped_ordinal"
+  ]
+ }
 }

@@ -22,11 +22,6 @@
     "WEEKDAYFULL"
    ]
   },
-  "scoped_ordinal": {
-   "orders": [
-    "article? ORD WEEKDAY MONTH YEAR?"
-   ]
-  },
   "rel_period": {
    "orders": [
     "REL_MARKER UNIT"
@@ -135,5 +130,12 @@
  "guards": {
   "bare_year_min_digits": 4
  },
- "hook": "chronologia.extract.numfold_slavic:fold_pl"
+ "hook": "chronologia.extract.numfold_slavic:fold_pl",
+ "base_grammar": {
+  "override": {
+   "scoped_ordinal": [
+    "article? ORD WEEKDAY MONTH YEAR?"
+   ]
+  }
+ }
 }
