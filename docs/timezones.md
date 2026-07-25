@@ -301,7 +301,7 @@ and the *current* zone rule is projected onto it:
 
 ```python
 far = AstroDate(5_000_000, 6, 1, 12, 0, tzinfo=ny)
-print(far.utcoffset())    # -4:00:00 — today's US DST rule, projected forward
+print(far.utcoffset())    # -1 day, 20:00:00 — today's US DST rule, projected forward
 ```
 
 Read this for exactly what it is: a **convention**, not a prediction. Nobody

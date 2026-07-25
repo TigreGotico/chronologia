@@ -29,6 +29,12 @@ dependencies = [
     "ovos-spec-tools>=1.5.0a1",
 ]
 
+[project.urls]
+Homepage = "https://github.com/TigreGotico/chronologia"
+Repository = "https://github.com/TigreGotico/chronologia"
+Documentation = "https://github.com/TigreGotico/chronologia/tree/dev/docs"
+Issues = "https://github.com/TigreGotico/chronologia/issues"
+
 [project.scripts]
 chronologia = "chronologia.__main__:main"
 
