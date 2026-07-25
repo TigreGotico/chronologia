@@ -225,23 +225,17 @@ GOLD_ERA_EPOCHS = {
     "rata_die": date(1, 1, 1),
     "lilian": date(1582, 10, 15),
     "julian_day": AstroDate(-4713, 11, 25),  # JD 1 = day after JD 0
-    # year-count offsets (year 1, 1 January)
-    "julian_period": AstroDate(-4712),
-    "assyrian": AstroDate(-4749),
-    "kali_yuga": AstroDate(-3101),
-    "anno_lucis": AstroDate(-3999),
-    "seleucid": AstroDate(-311),
-    "spanish_era": AstroDate(-37),
-    "vikrama": AstroDate(-56),
-    "saka": date(78, 1, 1),
-    "discordian": AstroDate(-1165),
-    "bengali_san": date(594, 1, 1),
-    "burmese": date(639, 1, 1),
-    "kollam": date(825, 1, 1),
-    "nepal_sambat": date(880, 1, 1),
+    # year-count offsets — Gregorian/tropical-year-aligned, at the era's TRUE
+    # civil new-year (month, day), NOT a lazy 1 January
+    "julian_period": AstroDate(-4712, 1, 1),
+    "assyrian": AstroDate(-4749, 4, 1),          # Kha b-Nisan, 1 April
+    "anno_lucis": AstroDate(-3999, 1, 1),
+    "spanish_era": AstroDate(-37, 1, 1),
+    "saka": date(78, 3, 22),                     # Chaitra 1
+    "discordian": AstroDate(-1165, 1, 1),
     "positivist": date(1789, 1, 1),
-    "rattanakosin": date(1782, 1, 1),
-    "era_fascista": date(1922, 1, 1),
+    "rattanakosin": date(1782, 4, 6),            # founding of Bangkok
+    "era_fascista": date(1922, 10, 28),          # March on Rome
     "minguo": date(1912, 1, 1),
     "juche": date(1912, 1, 1),
     "after_dianetics": date(1950, 1, 1),
@@ -279,6 +273,24 @@ class TestEraGoldEpochs(unittest.TestCase):
     def test_lilian_reform_day(self):
         self.assertEqual(resolve_era("lilian", 1), date(1582, 10, 15))
         self.assertEqual(resolve_era("lilian", 2), date(1582, 10, 16))
+
+    def test_offset_eras_use_true_civil_new_year(self):
+        # not a lazy 1 January: each begins at its cited civil new-year and the
+        # next era year is exactly one Gregorian year later (fixed offset)
+        self.assertEqual(resolve_era("saka", 1949), date(2026, 3, 22))
+        self.assertEqual(resolve_era("assyrian", 6776), date(2026, 4, 1))
+        self.assertEqual(resolve_era("era_fascista", 104), date(2025, 10, 28))
+        self.assertEqual(resolve_era("rattanakosin", 245), date(2026, 4, 6))
+
+    def test_drifting_lunisolar_eras_are_not_registered(self):
+        # applied consistently with Yazdegerd: a lunisolar/sidereal era whose
+        # year drifts against the Gregorian year is NOT a fixed-offset era
+        for key in ("vikrama", "kali_yuga", "seleucid", "bengali_san",
+                    "burmese", "kollam", "nepal_sambat", "yazdegerd"):
+            with self.subTest(era=key):
+                self.assertNotIn(key, ERAS)
+                with self.assertRaises(KeyError):
+                    resolve_era(key, 1)
 
 
 class TestEraAliases(unittest.TestCase):

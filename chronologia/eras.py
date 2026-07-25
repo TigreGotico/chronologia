@@ -256,81 +256,90 @@ ERAS = {
                   day_epoch_jdn=2299160),
 
     # ------------------------------------------------------------------
-    # Year-count offsets (YEARS_SINCE): each is a well-known integer offset
-    # from the Common Era.  As with ``buddhist`` above, the epoch is placed on
-    # 1 January of its Gregorian year — a proleptic year-granular convention;
-    # eras whose own new year falls elsewhere carry a note to that effect.
+    # Year-count offsets (YEARS_SINCE): a constant integer offset from the
+    # Common Era.  ONLY eras whose year is Gregorian/tropical-year-aligned are
+    # registered here — the offset is then EXACT and the epoch is the era's
+    # TRUE civil new-year (month, day), which resolve_era honours.  Lunisolar
+    # eras, whose year drifts against the Gregorian year, are deliberately NOT
+    # offset eras (a fixed-date offset would be false precision); they are
+    # listed in the discard note below and await their own calendars.py backing.
     # ------------------------------------------------------------------
-    # Julian Period (Scaliger): year 1 = 4713 BC = astronomical -4712; the
-    # year-count companion of the ``julian_day`` day-count above.  (Wikipedia,
-    # "Julian day"/"Julian Period".)
+    # Julian Period (Scaliger): a Julian-calendar year count, 1 January new
+    # year; year 1 = 4713 BC = astronomical -4712, the year-count companion of
+    # the ``julian_day`` day-count above.  (Wikipedia, "Julian day".)
     "julian_period": Era("julian_period", AstroDate(-4712, 1, 1)),
-    # Assyrian calendar: modern Assyrian year = CE + 4750, year 1 = 4750 BC =
-    # astronomical -4749 (new year 1 Nisan/1 April by convention).  (Wikipedia,
-    # "Assyrian calendar".)
-    "assyrian": Era("assyrian", AstroDate(-4749, 1, 1)),
-    # Kali Yuga (Hindu): traditional epoch 3102 BC = astronomical -3101 (the
-    # reckoning began at the midnight/​dawn of 17-18 February 3102 BC).
-    # (Wikipedia, "Kali Yuga".)
-    "kali_yuga": Era("kali_yuga", AstroDate(-3101, 1, 1)),
-    # Anno Lucis ("Year of Light", Freemasonry): A.L. = CE + 4000, year 1 =
-    # 4000 BC = astronomical -3999 (a rounded Ussher creation date).
+    # Assyrian calendar: modern Assyrian year = CE + 4750, a Gregorian-aligned
+    # reckoning whose new year is Kha b-Nisan, fixed at 1 April; year 1 =
+    # 1 April 4750 BC = astronomical -4749-04-01.  (Wikipedia, "Assyrian
+    # calendar": Kha b-Nisan, 1 April.)
+    "assyrian": Era("assyrian", AstroDate(-4749, 4, 1)),
+    # Anno Lucis ("Year of Light", Freemasonry): A.L. = CE + 4000, a plain
+    # Gregorian-year offset (1 January), year 1 = 4000 BC = astronomical -3999.
     # (Wikipedia, "Anno Lucis".)
     "anno_lucis": Era("anno_lucis", AstroDate(-3999, 1, 1)),
-    # Seleucid era / Anno Graecorum: epoch 312 BC = astronomical -311 (the
-    # Macedonian autumn reckoning of Seleucus I's reconquest of Babylon).
-    # (Wikipedia, "Seleucid era".)
-    "seleucid": Era("seleucid", AstroDate(-311, 1, 1)),
-    # Spanish era / Era of Caesar: epoch 38 BC = astronomical -37, long used in
-    # Iberia (Era = CE + 38).  (Wikipedia, "Spanish era".)
+    # Spanish era / Era of Caesar: a Julian-calendar year count (1 January new
+    # year) long used in Iberia, Era = CE + 38; year 1 = 38 BC = astronomical
+    # -37.  (Wikipedia, "Spanish era".)
     "spanish_era": Era("spanish_era", AstroDate(-37, 1, 1)),
-    # Vikrama Samvat: epoch 57 BC = astronomical -56 (Hindu year = CE + 57).
-    # (Wikipedia, "Vikram Samvat".)
-    "vikrama": Era("vikrama", AstroDate(-56, 1, 1)),
-    # Saka era (Indian national calendar): epoch 78 CE (Saka = CE - 78; its own
-    # new year is Chaitra 1 ≈ 22 March, here placed on 1 January proleptically —
-    # an exact Saka new year would need a Saka calendar).  (Wikipedia, "Shaka
-    # era".)
-    "saka": Era("saka", AstroDate(78, 1, 1)),
+    # Saka era (Indian national calendar): the reformed calendar is a tropical
+    # SOLAR calendar, Gregorian-year-aligned, whose new year Chaitra 1 is fixed
+    # at 22 March (21 March in Gregorian leap years); year 1 = 78-03-22.
+    # (Wikipedia, "Indian national calendar".)
+    "saka": Era("saka", AstroDate(78, 3, 22)),
     # Discordian era: YOLD = CE + 1166, and the Discordian year is aligned to
-    # the Gregorian one (five 73-day seasons begin 1 January), so year 1 =
-    # 1166 BC = astronomical -1165 on 1 January is exact.  (Principia Discordia.)
+    # the Gregorian one (five 73-day seasons begin 1 January, St. Tib's Day as
+    # the leap day), so year 1 = 1166 BC = astronomical -1165 on 1 January is
+    # exact.  (Principia Discordia.)
     "discordian": Era("discordian", AstroDate(-1165, 1, 1)),
-    # Bengali San (Bengali calendar): year = CE - 593/594; year 1 = 594 CE
-    # (new year Pohela Boishakh ~mid-April, placed on 1 Jan proleptically).
-    # (Wikipedia, "Bengali calendars".)
-    "bengali_san": Era("bengali_san", AstroDate(594, 1, 1)),
-    # Burmese era: year = CE - 638; year 1 = 639 CE (new year ~mid-April
-    # Thingyan, placed on 1 Jan proleptically).  (Wikipedia, "Burmese calendar".)
-    "burmese": Era("burmese", AstroDate(639, 1, 1)),
-    # Kollam / Malayalam era: year = CE - 824/825; year 1 = 825 CE (new year
-    # Chingam ~August, placed on 1 Jan proleptically).  (Wikipedia, "Kollam era".)
-    "kollam": Era("kollam", AstroDate(825, 1, 1)),
-    # Nepal Sambat: year = CE - 879/880; year 1 = 880 CE (new year ~Oct/Nov,
-    # placed on 1 Jan proleptically).  (Wikipedia, "Nepal Sambat".)
-    "nepal_sambat": Era("nepal_sambat", AstroDate(880, 1, 1)),
-    # Positivist era (Auguste Comte): year 1 = 1789 CE, "the Great Crisis" /
-    # founding of the positive age.  (Wikipedia, "Positivist calendar".)
+    # Positivist era (Auguste Comte): a Gregorian-aligned 13-month calendar
+    # beginning 1 January; year 1 = 1789 CE, "the Great Crisis".  (Wikipedia,
+    # "Positivist calendar".)
     "positivist": Era("positivist", AstroDate(1789, 1, 1)),
-    # Rattanakosin Sok (Bangkok/Ratanakosin era): year 1 = 1782 CE, the founding
-    # of Bangkok; the "National" Thai era of R.S. dating.  (Wikipedia,
-    # "Rattanakosin Kingdom".)
-    "rattanakosin": Era("rattanakosin", AstroDate(1782, 1, 1)),
-    # Era Fascista: year I began with the March on Rome, 29 October 1922, so
-    # year 1 = 1922 CE (new year 29 October, placed on 1 Jan proleptically).
-    # (Wikipedia, "Era Fascista".)
-    "era_fascista": Era("era_fascista", AstroDate(1922, 1, 1)),
-    # Republic of China / Minguo era: year 1 = 1912 CE (founding of the ROC);
-    # also the "Chinese Republican" reckoning.  (Wikipedia, "Republic of China
+    # Rattanakosin Sok (R.S.): the Thai SOLAR (suriyakati) era counted from the
+    # founding of Bangkok, 6 April 1782; the tropical-solar year tracks the
+    # Gregorian year, so year 1 = 1782-04-06.  (Wikipedia, "Rattanakosin
+    # Kingdom": founding 6 April 1782.)
+    "rattanakosin": Era("rattanakosin", AstroDate(1782, 4, 6)),
+    # Era Fascista: Gregorian-aligned, its year beginning with the March on
+    # Rome, 28 October 1922; year 1 (Anno I) = 1922-10-28.  (Wikipedia, "Era
+    # Fascista".)
+    "era_fascista": Era("era_fascista", AstroDate(1922, 10, 28)),
+    # Republic of China / Minguo era: the Gregorian calendar with a re-based
+    # year number (1 January new year), year 1 = 1912 CE (founding of the ROC);
+    # the "Chinese Republican" reckoning.  (Wikipedia, "Republic of China
     # calendar".)
     "minguo": Era("minguo", AstroDate(1912, 1, 1)),
-    # Juche era (DPRK): year 1 = 1912 CE, the birth year of Kim Il-sung.
-    # (Wikipedia, "Juche calendar".)
+    # Juche era (DPRK): the Gregorian calendar re-numbered from Kim Il-sung's
+    # birth year, 1 January new year; year 1 = 1912 CE.  (Wikipedia, "Juche
+    # calendar".)
     "juche": Era("juche", AstroDate(1912, 1, 1)),
-    # After Dianetics (A.D., Scientology): year 1 = 1950 CE, the publication of
-    # "Dianetics".  (Wikipedia, "Timeline of Scientology".)
+    # After Dianetics (A.D., Scientology): a Gregorian-year offset from the 1950
+    # publication of "Dianetics"; year 1 = 1950 CE.  (Wikipedia, "Timeline of
+    # Scientology".)
     "after_dianetics": Era("after_dianetics", AstroDate(1950, 1, 1)),
 }
+
+
+#: **Deliberately NOT registered — lunisolar / sidereal eras whose year drifts
+#: against the Gregorian year.**  Each would need its own calendar in
+#: :mod:`chronologia.calendars` to resolve exactly; a fixed-date integer offset
+#: would be false precision (the same defect that keeps the Yazdegerd wandering
+#: era out).  Recorded here so the omission is explicit, not forgotten:
+#:
+#: * ``vikrama`` (Vikram Samvat) — Hindu lunisolar; the year drifts.
+#: * ``kali_yuga`` — Hindu lunisolar / traditional; the year drifts.
+#: * ``seleucid`` (Anno Graecorum) — classically Babylonian/Hebrew lunisolar;
+#:   its epoch (spring 311 BC vs autumn 312 BC) and calendar are ambiguous.
+#: * ``bengali_san`` — traditional Bengali lunisolar-derived; drifts.
+#: * ``burmese`` — Burmese lunisolar (Thingyan new year drifts).
+#: * ``kollam`` (Malayalam) — sidereal-solar; precession drags its new year
+#:   against the tropical/Gregorian year (~1 day per ~70 yr).
+#: * ``nepal_sambat`` — lunisolar; drifts.
+#: * ``yazdegerd`` — Zoroastrian 365-day wandering year (no leap); drifts a full
+#:   day every four years.
+_DRIFTING_ERAS_NEEDING_CALENDARS = (
+    "vikrama", "kali_yuga", "seleucid", "bengali_san", "burmese", "kollam",
+    "nepal_sambat", "yazdegerd")
 
 
 #: Surface-name aliases that resolve to an existing epoch instead of a new
@@ -560,5 +569,12 @@ def resolve_era(era: Union[str, Era], value: Union[int, float]
     else:  # YEARS_SINCE: era year 1 is the epoch year
         year = era.epoch.year + value - 1
 
-    result = AstroDate(year, 1, 1)
+    # A Gregorian-aligned offset era begins each year at its epoch's civil
+    # (month, day) — the true new-year date, not a lazy 1 January.  These eras
+    # track the Gregorian/tropical year with a constant integer offset, so the
+    # (month, day) is fixed and the result is exact; only genuinely
+    # solar/Gregorian-aligned eras are registered as offsets (lunisolar eras,
+    # whose year drifts against the Gregorian year, are NOT — they would need
+    # their own calendar in calendars.py).
+    result = AstroDate(year, era.epoch.month, era.epoch.day)
     return _warn_if_past_heat_death(result.date() or result)
