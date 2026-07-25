@@ -977,17 +977,69 @@ _IT_PHRASES = [
     (["dopo", "domani"], "dopodomani"),
     (["fine", "settimana"], "finesettimana"),
 ]
-fold_it = _romance_prepass_fold(
-    # "prima" is the feminine ordinal "first" *and* the directional marker
-    # "before" ("3 giorni prima del 5 aprile" == three days before 5 April);
-    # blacklisting it from the number fold protects the "before" reading the
-    # anchored-offset composition needs, exactly as Portuguese blacklists its
-    # weekday-homograph ordinals.  The unambiguous masculine "primo" still
-    # folds to 1.
+#: the di-family prepositions (plain and article-fused) that introduce the
+#: reference date after the before-marker "prima" -- "prima di gennaio",
+#: "prima del 5 aprile".  "d"/"dell" are the elision-split heads of "d'"/
+#: "dell'".
+_IT_OFFSET_PREP = frozenset({"di", "del", "dello", "della", "dell", "dei",
+                             "degli", "delle", "d"})
+
+
+def _license_it_prima(tokens):
+    """Positionally read the homograph "prima".
+
+    Italian "prima" is at once the feminine ordinal "first" and the
+    directional marker "before"; a blanket number-fold would erase the
+    marker, a blanket blacklist would erase the ordinal.  The two readings
+    are distinguishable by position, so "prima" is blacklisted from the
+    general fold (see :func:`fold_it`) and licensed to the digit 1 *only*
+    where it is the ordinal -- i.e. everywhere it is **not** in the offset
+    frame.  It is the before-marker when it either
+
+    * is immediately followed by a di-family preposition introducing the
+      reference date ("prima **di** gennaio", "prima **del** 5 aprile"), or
+    * closes a ``[NUM] UNIT`` duration ("3 giorni **prima** del ...",
+      "tre giorni **prima** ...") -- the token before it a (non-number) unit
+      word, the one before that a number;
+
+    and the ordinal "first" otherwise ("**prima** settimana", "la **prima**
+    domenica", "**prima** quindicina"), where it folds to 1 so the ordinal
+    constructions bind it.  The rule keys off the preposition and the
+    NUM+UNIT shape, never a hard-coded month or unit list, so it generalises.
+    """
+    out = list(tokens)
+    n = len(out)
+    for i, t in enumerate(out):
+        if t.is_number or t.text != "prima":
+            continue
+        nxt = out[i + 1] if i + 1 < n else None
+        prev = out[i - 1] if i - 1 >= 0 else None
+        prev2 = out[i - 2] if i - 2 >= 0 else None
+        is_before_marker = (
+            (nxt is not None and nxt.text in _IT_OFFSET_PREP)
+            or (prev is not None and not prev.is_number
+                and prev2 is not None and prev2.is_number))
+        if not is_before_marker:
+            out[i] = Token(text="1", raw=t.raw, index=0, is_number=True,
+                           value=1, char_start=t.char_start,
+                           char_end=t.char_end)
+    return _reindex(tuple(out))
+
+
+# "prima" is the feminine ordinal "first" *and* the directional marker
+# "before"; it is blacklisted from the general number fold (so the offset
+# composition can read the marker) and positionally licensed back to the digit
+# 1 in ordinal position by ``_license_it_prima``.  The unambiguous masculine
+# "primo" still folds to 1 in the general pass.
+_fold_it_base = _romance_prepass_fold(
     "it", {"un", "uno", "una", "milioni", "miliardi", "mila", "prima"},
     proclitics=frozenset({"l", "un", "d", "dell", "all", "nell", "dall",
                           "sull", "quest", "quell", "c"}),
     phrases=_IT_PHRASES)
+
+
+def fold_it(tokens):
+    return _license_it_prima(_fold_it_base(tokens))
 
 
 # -- Romanian ---------------------------------------------------------------
