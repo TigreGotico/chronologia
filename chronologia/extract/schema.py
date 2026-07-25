@@ -143,7 +143,8 @@ CONSTRUCTION_FLAG_KEYS: FrozenSet[str] = frozenset({"prefer_future", "group"})
 
 TOP_LEVEL_KEYS: FrozenSet[str] = frozenset({
     "tokenizer", "constructions", "conventions", "quantifiers", "guards",
-    "hook", "lemmas", "suffix_strip", "day_subdivision", "positions"})
+    "hook", "lemmas", "suffix_strip", "day_subdivision", "positions",
+    "base_grammar"})
 
 #: marker roles whose POSITIONALITY may be declared -- the open-range and
 #: recurrence-bound framing words the engine scans for around a date.  Each maps
@@ -210,6 +211,31 @@ def validate_config(cfg: dict, lang: str) -> List[str]:
     for key in cfg.get("guards", {}):
         if key not in GUARD_KEYS:
             errors.append(f"{ctx} unknown guards key {key!r}")
+
+    bg = cfg.get("base_grammar", {})
+    if not isinstance(bg, dict):
+        errors.append(f"{ctx} 'base_grammar' must be an object")
+    else:
+        from chronologia.extract.base_grammar import (BASE_GRAMMAR,
+                                                          BASE_GRAMMAR_KEYS,
+                                                          KNOB_SCHEMA)
+        for key in bg:
+            if key not in BASE_GRAMMAR_KEYS:
+                errors.append(f"{ctx} unknown base_grammar key {key!r} "
+                              f"(known: {sorted(BASE_GRAMMAR_KEYS)})")
+        for name in bg.get("disable", []):
+            if name not in BASE_GRAMMAR:
+                errors.append(f"{ctx} base_grammar disable names non-base "
+                              f"construction {name!r}")
+        for section in ("override", "extend"):
+            for name in bg.get(section, {}):
+                if name not in BASE_GRAMMAR:
+                    errors.append(f"{ctx} base_grammar {section} names non-base "
+                                  f"construction {name!r}")
+        for knob, val in KNOB_SCHEMA.items():
+            if knob in bg and bg[knob] not in val:
+                errors.append(f"{ctx} base_grammar[{knob!r}]={bg[knob]!r} "
+                              f"unknown (known: {sorted(val)})")
 
     positions = cfg.get("positions", {})
     if not isinstance(positions, dict):

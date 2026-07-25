@@ -42,6 +42,7 @@ from dataclasses import replace
 
 from chronologia.calendars import CALENDARS
 from chronologia.civil_holidays import well_known_source, well_known_surfaces
+from chronologia.extract.base_grammar import merge_orders
 from chronologia.extract.compiler import parse_order
 from chronologia.extract.model import (Conventions, LangSpec,
                                            TokenizerModes)
@@ -277,8 +278,16 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     quantifiers = {s: float(val) for val, forms_ in cfg.get("quantifiers", {}).items()
                    for s in forms_}
 
-    orders = {name: tuple(parse_order(name, raw) for raw in body["orders"])
-              for name, body in cfg.get("constructions", {}).items()}
+    # Merge the shared BASE GRAMMAR (a construction's default orders, inherited
+    # by every locale) onto this locale's inline ``constructions`` orders,
+    # honouring its ``base_grammar`` block (disable / override / extend).  The
+    # merge is an ADDITIVE SUPERSET: a base order is only ever appended, so a
+    # locale can never lose an inline order it already declared.
+    inline_orders = {name: list(body["orders"])
+                     for name, body in cfg.get("constructions", {}).items()}
+    merged_orders = merge_orders(cfg, inline_orders)
+    orders = {name: tuple(parse_order(name, raw) for raw in raws)
+              for name, raws in merged_orders.items()}
     flags = {name: {k: v for k, v in body.items() if k != "orders"}
              for name, body in cfg.get("constructions", {}).items()}
 
