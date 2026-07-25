@@ -417,6 +417,36 @@ The library computes this per month (`chronologia.roman._ides_day` /
 composition above is correct for every month, not just the famous March
 case.
 
+**Inclusive counting is a property of the Latin idiom, not of the "N days
+before" offset — the surface you write picks the convention.** Classical
+Latin counted *inclusively*, with the anchor day itself as day 1, and that
+convention fires **only** when you write the raw Latin ante-diem formula
+(opt-in via `enable=("classical",)`, see above): `ante diem III kalendas
+apriles` is the *3rd* day counting inclusively from the Kalends of April,
+landing on March 30th, and `pridie kalendas apriles` ("the day before the
+Kalends") lands on March 31st. The vernacular "N days before/after
+`<anchor>`" phrasing, by contrast, is **plain, non-inclusive arithmetic** —
+exactly like "3 days before christmas" — in every language, and is *not* the
+Roman count: "3 days before the kalends of april" and "the third day before
+the kalends of april" both land on March 29th, one day earlier than the
+Latin idiom's "3rd day":
+
+```python
+extract_timespan("ante diem III kalendas apriles", "en", anchor,
+                  enable=("classical",))[0].start_datetime
+# 2017-03-30  (Roman inclusive count)
+
+extract_timespan("pridie kalendas apriles", "en", anchor,
+                  enable=("classical",))[0].start_datetime
+# 2017-03-31  (Roman inclusive count)
+
+extract_timespan("3 days before the kalends of april", "en", anchor)[0].start_datetime
+# 2017-03-29  (plain, non-inclusive offset)
+
+extract_timespan("the third day before the kalends of april", "en", anchor)[0].start_datetime
+# 2017-03-29  (plain, non-inclusive offset -- same value as above)
+```
+
 ## The week of a date, and decades before Christ
 
 Two phrasings widen a date to the period a speaker really meant. **"the week

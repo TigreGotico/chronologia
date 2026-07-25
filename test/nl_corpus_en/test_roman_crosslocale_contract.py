@@ -47,3 +47,21 @@ def test_classical_formula_off_by_default():
 def test_vernacular_offset_composition(text, iso):
     got = _start(text)
     assert (got.year, got.month, got.day) == iso
+
+
+# -- inclusive (Roman/Latin) vs plain (vernacular) counting never converge -
+
+def test_classical_inclusive_count_vs_vernacular_plain_offset_stay_distinct():
+    # the Latin idiom counts inclusively (anchor day = day 1): "ante diem
+    # III kalendas apriles" is the Roman *3rd* day -> March 30th.
+    classical = _start("ante diem III kalendas apriles", enable=("classical",))
+    assert (classical.year, classical.month, classical.day) == (2017, 3, 30)
+
+    # the vernacular "N days before" offset is plain, non-inclusive
+    # arithmetic -- one day earlier than the Latin idiom's "3rd" day.
+    vernacular = _start("the third day before the kalends of april")
+    assert (vernacular.year, vernacular.month, vernacular.day) == (2017, 3, 29)
+
+    # the two conventions must never silently collapse onto the same date
+    assert (classical.year, classical.month, classical.day) != \
+        (vernacular.year, vernacular.month, vernacular.day)
