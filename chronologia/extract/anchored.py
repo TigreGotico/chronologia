@@ -91,6 +91,7 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
     Two shapes: a unit offset (``[article] [NUM|QUANT] UNIT``) or a weekday
     roll (``[article] WEEKDAY``).  Returns a descriptor or ``None``.
     """
+    lead = spec.connectors.get("offset_lead", frozenset())
     j = c0 - 1
     if j < 0:
         return None
@@ -106,6 +107,11 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
             elif p.text in spec.quantifiers:
                 qty, start = spec.quantifiers[p.text], j - 1
         if start - 1 >= 0 and tokens[start - 1].text in gap:
+            start -= 1
+        # a lead-in preposition heading the offset phrase ("**cu** 3 zile
+        # înainte de ...", Romanian "with three days before"): consumed so it
+        # is not stranded in the remainder.
+        if start - 1 >= 0 and tokens[start - 1].text in lead:
             start -= 1
         return {"kind": "unit", "unit": unit, "qty": qty, "start": start}
     if tj.text in spec.weekdays:
