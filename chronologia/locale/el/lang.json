@@ -19,7 +19,8 @@
     },
     "weekday_ref": {
       "orders": [
-        "REL_MARKER WEEKDAY",
+        "article? REL_MARKER article? WEEKDAY",
+        "article? WEEKDAY REL_MARKER",
         "WEEKDAYFULL"
       ]
     },

@@ -102,6 +102,25 @@ def test_weekday_ref(text, expected):
     assert start(text) == ad(expected)
 
 
+# -- "ostatni" past-weekday determiner (bug: the marker was missing from the
+#    vocabulary, so it stranded and the weekday flipped to NEXT) -----------
+
+@pytest.mark.parametrize("text,expected", [
+    ("ostatni piątek", _MID - timedelta(days=4)),        # last Fri 06-23
+    ("ostatni poniedziałek", _MID - timedelta(days=1)),  # last Mon 06-26
+    ("ostatnia środa", _MID - timedelta(days=6)),        # last Wed 06-21
+    ("zeszły piątek", _MID - timedelta(days=4)),         # regression: still last
+    ("przyszły piątek", _MID + timedelta(days=3)),       # regression: still next
+])
+def test_weekday_ref_ostatni(text, expected):
+    assert start(text) == ad(expected)
+
+
+@pytest.mark.parametrize("text", ["ostatni piątek", "ostatnia środa"])
+def test_ostatni_marker_consumed(text):
+    assert parse(text)[1] == ""
+
+
 # deposited NON_MATCHES: marker or number alone is not an offset
 def test_offset_needs_marker():
     nomatch("za tygodnie")

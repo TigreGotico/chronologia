@@ -1,8 +1,9 @@
 # Polish "last/previous" determiner, the full adjectival paradigm.  The temporal
 # phrase is locative in ordinary speech -- "w zeszłym tygodniu", "w ubiegłym
 # miesiącu", "w poprzednim roku" -- so listing the nominative alone left the
-# normal register unreadable.  Hard-stem "zeszły"/"ubiegły" and soft-stem
-# "poprzedni" follow the regular adjective declension described in the PWN
+# normal register unreadable.  Hard-stem "zeszły"/"ubiegły", soft-stem
+# "poprzedni" and soft-stem "ostatni" ("ostatni piątek" = last Friday) follow
+# the regular adjective declension described in the PWN
 # *Wielki słownik ortograficzny* rules on inflection.
 # https://sjp.pwn.pl/zasady/
 zeszły
@@ -35,3 +36,13 @@ poprzednią
 poprzednie
 poprzednich
 poprzednimi
+ostatni
+ostatniego
+ostatniemu
+ostatnim
+ostatnia
+ostatniej
+ostatnią
+ostatnie
+ostatnich
+ostatnimi

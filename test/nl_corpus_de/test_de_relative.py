@@ -79,6 +79,26 @@ def test_weekday_ref(text, date):
     assert start(text) == AstroDate(*date)
 
 
+# -- "vorig-" / "vergangen-" past-weekday determiners (bug: unknown marker
+#    was stranded and the weekday flipped to the NEXT occurrence) ----------
+
+@pytest.mark.parametrize("text,date", [
+    ("vorigen mittwoch", (2017, 6, 21)), ("vergangenen mittwoch", (2017, 6, 21)),
+    ("vorigen freitag", (2017, 6, 23)), ("vergangenen montag", (2017, 6, 26)),
+    ("letzten mittwoch", (2017, 6, 21)),   # regression: "letzt-" still works
+    ("nächsten mittwoch", (2017, 6, 28)),  # regression: next still works
+])
+def test_weekday_ref_vorig(text, date):
+    from ._corpus import AstroDate
+    assert start(text) == AstroDate(*date)
+
+
+@pytest.mark.parametrize("text", ["vorigen mittwoch", "vergangenen montag"])
+def test_weekday_vorig_marker_consumed(text):
+    from ._corpus import parse
+    assert parse(text)[1] == ""
+
+
 # -- adversarial: prose that is not a date ---------------------------------
 
 @pytest.mark.parametrize("text", ["vor allem", "in ordnung", "nach hause"])

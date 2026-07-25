@@ -84,6 +84,23 @@ def test_weekday_ref(text, expected):
     assert start(text) == ad(expected)
 
 
+# -- articulated (definite-article) weekday form "marțea trecută/viitoare"
+#    (bug: the articulated surface was absent from the weekday vocabulary,
+#     so "marțea trecută" did not parse at all) ---------------------------
+
+@pytest.mark.parametrize("text,expected", [
+    ("marțea trecută", _MID - timedelta(days=7)),    # last Tue 06-20
+    ("marțea viitoare", _MID + timedelta(days=7)),   # next Tue 07-04
+    ("lunea trecută", _MID - timedelta(days=1)),     # last Mon 06-26
+    ("joia viitoare", _MID + timedelta(days=2)),     # next Thu 06-29
+    ("vinerea trecută", _MID - timedelta(days=4)),   # last Fri 06-23
+    ("marți trecut", _MID - timedelta(days=7)),      # regression: bare form
+    ("luni viitoare", _MID + timedelta(days=6)),     # regression: bare form
+])
+def test_weekday_ref_articulated(text, expected):
+    assert start(text) == ad(expected)
+
+
 def test_widths():
     assert span("mâine").width == timedelta(days=1)
     assert span("peste 2 săptămâni").width == timedelta(weeks=1)
