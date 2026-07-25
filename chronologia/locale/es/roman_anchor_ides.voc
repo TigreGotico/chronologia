@@ -1,0 +1,5 @@
+# Spanish vernacular Roman-calendar anchor names.
+# Source: Wikipedia "Calendario romano" (es), "Divisiones del mes":
+#   "Las calendas (kalendae) ... Las nonas (nonae) ... Los idus (idus)".
+#   https://es.wikipedia.org/wiki/Calendario_romano
+idus

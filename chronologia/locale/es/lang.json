@@ -174,6 +174,12 @@
         "article DAYPART",
         "of DAYPART"
       ]
+    },
+    "roman_date": {
+      "orders": [
+        "article? ANCHOR_DAY of MONTH",
+        "article? ANCHOR_DAY MONTH"
+      ]
     }
   },
   "conventions": {
