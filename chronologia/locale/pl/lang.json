@@ -22,6 +22,11 @@
     "WEEKDAYFULL"
    ]
   },
+  "scoped_ordinal": {
+   "orders": [
+    "article? ORD WEEKDAY MONTH YEAR?"
+   ]
+  },
   "rel_period": {
    "orders": [
     "REL_MARKER UNIT"
