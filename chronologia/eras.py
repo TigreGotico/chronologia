@@ -31,10 +31,13 @@ Only results that ``datetime`` cannot represent become :class:`AstroDate`;
 everything in range is returned as plain ``datetime.date`` / ``datetime``
 so existing consumers never see the new type unless they parse era phrases.
 """
+import logging
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Callable, Optional, Tuple, Union
+
+_log = logging.getLogger(__name__)
 
 from chronologia.astrodate import AstroDate, DateSpan, is_leap_year
 from chronologia.calendars import (CALENDARS, Calendar, gregorian_to_jdn,
@@ -117,6 +120,12 @@ class Era:
     #: number of calendar years one era "year" spans; 1 for ordinary eras,
     #: 4 for the Olympiad (a four-year cycle counted from the first Olympiad).
     year_length: int = 1
+    #: JDN one *below* day 1 of a DAYS_SINCE era, so day ``n`` resolves to
+    #: ``julian_day_to_date(day_epoch_jdn + n)``.  ``None`` (the Julian-day era)
+    #: means the counted value *is itself* the JDN (no shift).  Rata Die counts
+    #: from R.D. 1 = 0001-01-01 (proleptic Gregorian), the Lilian date from
+    #: L.D. 1 = 1582-10-15 (the Gregorian reform day).
+    day_epoch_jdn: Optional[int] = None
 
 
 # The (month, day) at which a calendar's year begins in ITS OWN numbering,
@@ -198,7 +207,184 @@ ERAS = {
                     calendar="gregorian",
                     year_transform=lambda n: 4 * n - 779,
                     year_start=(7, 1), year_length=4),
+
+    # ------------------------------------------------------------------
+    # Calendar-backed eras — resolved EXACTLY through calendars.py, never a
+    # Gregorian approximation.  Each numbers its own calendar's year 1.
+    # ------------------------------------------------------------------
+    # Armenian era: year 1 begins 11 July 552 (Julian) = 13 July 552
+    # (proleptic Gregorian), the epoch of the Armenian calendar's 365-day
+    # wandering year.  (Wikipedia, "Armenian calendar": era of 552 AD.)
+    "armenian": Era("armenian", AstroDate(552, 7, 13), calendar="armenian"),
+    # Coptic Era of the Martyrs / Diocletian (Anno Martyrum): year 1 = 1 Thout
+    # AM 1 = 29 August 284 (Julian epoch of Diocletian's accession), the Coptic
+    # calendar's own numbering.  (Wikipedia, "Era of the Martyrs".)
+    "diocletian": Era("diocletian", AstroDate(284, 8, 29), calendar="coptic"),
+    # Ethiopian Incarnation Era (Amete Mihret, "Year of Grace"): the civil
+    # Ethiopian calendar's own numbering, year 1 = 29 August 8 (Julian) =
+    # 8-08-27 proleptic Gregorian.  (Wikipedia, "Ethiopian calendar".)
+    "amete_mihret": Era("amete_mihret", AstroDate(8, 8, 27),
+                        calendar="ethiopian"),
+    # Islamic Hijri era (Anno Hegirae): year 1 = 1 Muharram AH 1 = 16 July 622
+    # (Julian) = 622-07-19 proleptic Gregorian, the tabular civil-Hijri epoch.
+    # (Wikipedia, "Islamic calendar".)
+    "hijri": Era("hijri", AstroDate(622, 7, 19), calendar="islamic_civil"),
+    # Solar Hijri / Jalali era: year 1 begins at the vernal-equinox Nowruz of
+    # 622, 622-03-21 proleptic Gregorian, the Iranian solar calendar's epoch
+    # (same Hijra year as the lunar count).  (Wikipedia, "Solar Hijri calendar".)
+    "solar_hijri": Era("solar_hijri", AstroDate(622, 3, 21),
+                       calendar="solar_hijri_arithmetic"),
+    # Era of Nabonassar: the Egyptian 365-day civil calendar counted from the
+    # accession of Nabonassar, 26 February 747 BC (Julian) = -746-02-18
+    # proleptic Gregorian — the epoch Ptolemy reckons from in the Almagest.
+    # (Wikipedia, "Era of Nabonassar".)
+    "nabonassar": Era("nabonassar", AstroDate(-746, 2, 18),
+                      calendar="egyptian"),
+
+    # ------------------------------------------------------------------
+    # Day-count eras (DAYS_SINCE): a running day number, not a year count.
+    # ------------------------------------------------------------------
+    # Rata Die: fixed-day count with R.D. 1 = 0001-01-01 proleptic Gregorian
+    # (Reingold & Dershowitz, "Calendrical Calculations"); day n resolves to
+    # JDN 1721425 + n.  Epoch AstroDate is the R.D.-1 date for the record.
+    "rata_die": Era("rata_die", AstroDate(1, 1, 1), EraCounting.DAYS_SINCE,
+                    day_epoch_jdn=1721425),
+    # Lilian date: day count with L.D. 1 = 15 October 1582, the first day of the
+    # Gregorian calendar (Bruce G. Ohms, IBM Systems Journal 25(1), 1986); day n
+    # resolves to JDN 2299160 + n.
+    "lilian": Era("lilian", AstroDate(1582, 10, 15), EraCounting.DAYS_SINCE,
+                  day_epoch_jdn=2299160),
+
+    # ------------------------------------------------------------------
+    # Year-count offsets (YEARS_SINCE): each is a well-known integer offset
+    # from the Common Era.  As with ``buddhist`` above, the epoch is placed on
+    # 1 January of its Gregorian year — a proleptic year-granular convention;
+    # eras whose own new year falls elsewhere carry a note to that effect.
+    # ------------------------------------------------------------------
+    # Julian Period (Scaliger): year 1 = 4713 BC = astronomical -4712; the
+    # year-count companion of the ``julian_day`` day-count above.  (Wikipedia,
+    # "Julian day"/"Julian Period".)
+    "julian_period": Era("julian_period", AstroDate(-4712, 1, 1)),
+    # Assyrian calendar: modern Assyrian year = CE + 4750, year 1 = 4750 BC =
+    # astronomical -4749 (new year 1 Nisan/1 April by convention).  (Wikipedia,
+    # "Assyrian calendar".)
+    "assyrian": Era("assyrian", AstroDate(-4749, 1, 1)),
+    # Kali Yuga (Hindu): traditional epoch 3102 BC = astronomical -3101 (the
+    # reckoning began at the midnight/​dawn of 17-18 February 3102 BC).
+    # (Wikipedia, "Kali Yuga".)
+    "kali_yuga": Era("kali_yuga", AstroDate(-3101, 1, 1)),
+    # Anno Lucis ("Year of Light", Freemasonry): A.L. = CE + 4000, year 1 =
+    # 4000 BC = astronomical -3999 (a rounded Ussher creation date).
+    # (Wikipedia, "Anno Lucis".)
+    "anno_lucis": Era("anno_lucis", AstroDate(-3999, 1, 1)),
+    # Seleucid era / Anno Graecorum: epoch 312 BC = astronomical -311 (the
+    # Macedonian autumn reckoning of Seleucus I's reconquest of Babylon).
+    # (Wikipedia, "Seleucid era".)
+    "seleucid": Era("seleucid", AstroDate(-311, 1, 1)),
+    # Spanish era / Era of Caesar: epoch 38 BC = astronomical -37, long used in
+    # Iberia (Era = CE + 38).  (Wikipedia, "Spanish era".)
+    "spanish_era": Era("spanish_era", AstroDate(-37, 1, 1)),
+    # Vikrama Samvat: epoch 57 BC = astronomical -56 (Hindu year = CE + 57).
+    # (Wikipedia, "Vikram Samvat".)
+    "vikrama": Era("vikrama", AstroDate(-56, 1, 1)),
+    # Saka era (Indian national calendar): epoch 78 CE (Saka = CE - 78; its own
+    # new year is Chaitra 1 ≈ 22 March, here placed on 1 January proleptically —
+    # an exact Saka new year would need a Saka calendar).  (Wikipedia, "Shaka
+    # era".)
+    "saka": Era("saka", AstroDate(78, 1, 1)),
+    # Discordian era: YOLD = CE + 1166, and the Discordian year is aligned to
+    # the Gregorian one (five 73-day seasons begin 1 January), so year 1 =
+    # 1166 BC = astronomical -1165 on 1 January is exact.  (Principia Discordia.)
+    "discordian": Era("discordian", AstroDate(-1165, 1, 1)),
+    # Bengali San (Bengali calendar): year = CE - 593/594; year 1 = 594 CE
+    # (new year Pohela Boishakh ~mid-April, placed on 1 Jan proleptically).
+    # (Wikipedia, "Bengali calendars".)
+    "bengali_san": Era("bengali_san", AstroDate(594, 1, 1)),
+    # Burmese era: year = CE - 638; year 1 = 639 CE (new year ~mid-April
+    # Thingyan, placed on 1 Jan proleptically).  (Wikipedia, "Burmese calendar".)
+    "burmese": Era("burmese", AstroDate(639, 1, 1)),
+    # Kollam / Malayalam era: year = CE - 824/825; year 1 = 825 CE (new year
+    # Chingam ~August, placed on 1 Jan proleptically).  (Wikipedia, "Kollam era".)
+    "kollam": Era("kollam", AstroDate(825, 1, 1)),
+    # Nepal Sambat: year = CE - 879/880; year 1 = 880 CE (new year ~Oct/Nov,
+    # placed on 1 Jan proleptically).  (Wikipedia, "Nepal Sambat".)
+    "nepal_sambat": Era("nepal_sambat", AstroDate(880, 1, 1)),
+    # Positivist era (Auguste Comte): year 1 = 1789 CE, "the Great Crisis" /
+    # founding of the positive age.  (Wikipedia, "Positivist calendar".)
+    "positivist": Era("positivist", AstroDate(1789, 1, 1)),
+    # Rattanakosin Sok (Bangkok/Ratanakosin era): year 1 = 1782 CE, the founding
+    # of Bangkok; the "National" Thai era of R.S. dating.  (Wikipedia,
+    # "Rattanakosin Kingdom".)
+    "rattanakosin": Era("rattanakosin", AstroDate(1782, 1, 1)),
+    # Era Fascista: year I began with the March on Rome, 29 October 1922, so
+    # year 1 = 1922 CE (new year 29 October, placed on 1 Jan proleptically).
+    # (Wikipedia, "Era Fascista".)
+    "era_fascista": Era("era_fascista", AstroDate(1922, 1, 1)),
+    # Republic of China / Minguo era: year 1 = 1912 CE (founding of the ROC);
+    # also the "Chinese Republican" reckoning.  (Wikipedia, "Republic of China
+    # calendar".)
+    "minguo": Era("minguo", AstroDate(1912, 1, 1)),
+    # Juche era (DPRK): year 1 = 1912 CE, the birth year of Kim Il-sung.
+    # (Wikipedia, "Juche calendar".)
+    "juche": Era("juche", AstroDate(1912, 1, 1)),
+    # After Dianetics (A.D., Scientology): year 1 = 1950 CE, the publication of
+    # "Dianetics".  (Wikipedia, "Timeline of Scientology".)
+    "after_dianetics": Era("after_dianetics", AstroDate(1950, 1, 1)),
 }
+
+
+#: Surface-name aliases that resolve to an existing epoch instead of a new
+#: registry entry.  "Anno Domini", "after Christ", the "Christian"/"Calendar"
+#: era, plain "AD"/"CE", and Thelemic/Masonic "Era Vulgaris" all denote the
+#: Common Era — the same year-1 epoch as :data:`ERAS`\ ``["common_era"]``, so
+#: they alias it rather than duplicate the entry.
+ERA_ALIASES = {
+    "anno_domini": "common_era",
+    "after_christ": "common_era",
+    "christian_era": "common_era",
+    "calendar_era": "common_era",
+    "ad": "common_era",
+    "ce": "common_era",
+    "era_vulgaris": "common_era",
+}
+
+
+# --------------------------------------------------------------------------
+# The heat death of the universe: the physics-imposed upper bound on a date
+# --------------------------------------------------------------------------
+#: Astronomical year of the heat death of the universe: ~10^100 years after the
+#: Big Bang, set by the evaporation of the most massive supermassive black holes
+#: in the Dark Era (Adams & Laughlin 1997, "A dying universe: the long-term fate
+#: and evolution of astrophysical objects", Rev. Mod. Phys. 69, 337).  The Big
+#: Bang's ~1.4x10^10-year offset from year 0 is utterly negligible at this
+#: scale, so the bound is taken as astronomical year 10^100.  AstroDate years
+#: are unbounded Python ints, so dates *past* this remain representable — but
+#: resolving one trips an :func:`logging.warning` easter egg (see
+#: ``_warn_if_past_heat_death``): there are no clocks left to read them.
+HEAT_DEATH_YEAR = 10 ** 100
+
+#: Fires the heat-death warning at most once per process (tasteful, not spammy).
+_heat_death_warned = False
+
+
+def _warn_if_past_heat_death(result: Union[date, datetime, "AstroDate"]
+                             ) -> Union[date, datetime, "AstroDate"]:
+    """Emit the heat-death easter-egg warning when ``result`` is past the bound.
+
+    Only :class:`AstroDate` can carry a year beyond :data:`HEAT_DEATH_YEAR`
+    (``datetime`` caps at 9999), so plain dates never trip it.  Passes
+    ``result`` straight through — the library still supports these dates.
+    """
+    global _heat_death_warned
+    year = getattr(result, "year", 0)
+    if year > HEAT_DEATH_YEAR and not _heat_death_warned:
+        _heat_death_warned = True
+        _log.warning(
+            "resolved a date in astronomical year %s — past the heat death of "
+            "the universe (~10^100 yr, Adams & Laughlin 1997, Rev. Mod. Phys. "
+            "69, 337). Entropy is maximal, the last black holes have evaporated "
+            "into the Dark Era, and no clocks remain to read this date.", year)
+    return result
 
 
 def julian_day_to_date(jd: int) -> Union[date, AstroDate]:
@@ -343,7 +529,7 @@ def resolve_era(era: Union[str, Era], value: Union[int, float]
     :class:`AstroDate` otherwise.  Never raises ``OverflowError``.
     """
     if isinstance(era, str):
-        era = ERAS[era]
+        era = ERAS[ERA_ALIASES.get(era, era)]
 
     if era.calendar is not None:
         # calendar-backed era: resolve EXACTLY to the start of the named
@@ -351,7 +537,8 @@ def resolve_era(era: Union[str, Era], value: Union[int, float]
         cal = _ERA_CALENDARS[era.calendar]
         cyear = _era_native_year(era, value)
         start_month, start_day = _era_year_start(era)
-        return julian_day_to_date(cal.to_jdn(cyear, start_month, start_day))
+        return _warn_if_past_heat_death(
+            julian_day_to_date(cal.to_jdn(cyear, start_month, start_day)))
 
     if era.counting == EraCounting.SECONDS_SINCE:
         # sub-year precision is meaningful here; epochs are in range
@@ -360,9 +547,12 @@ def resolve_era(era: Union[str, Era], value: Union[int, float]
         return epoch + timedelta(seconds=value)
 
     if era.counting == EraCounting.DAYS_SINCE:
-        # julian_day is the only day-counted era; its origin is baked into
-        # the conversion algorithm rather than derived from the epoch field
-        return julian_day_to_date(int(value))
+        # day-counted eras: ``julian_day`` counts the JDN itself (no shift);
+        # Rata Die / Lilian shift by a fixed ``day_epoch_jdn`` so their day 1
+        # lands on the cited calendar day.
+        jdn = int(value) if era.day_epoch_jdn is None \
+            else era.day_epoch_jdn + int(value)
+        return _warn_if_past_heat_death(julian_day_to_date(jdn))
 
     value = int(value)
     if era.counting == EraCounting.YEARS_BEFORE:
@@ -371,4 +561,4 @@ def resolve_era(era: Union[str, Era], value: Union[int, float]
         year = era.epoch.year + value - 1
 
     result = AstroDate(year, 1, 1)
-    return result.date() or result
+    return _warn_if_past_heat_death(result.date() or result)

@@ -4,13 +4,15 @@ Reference values are cited to the canonical sources saved under
 ``~/AgentWorkspaces/papers/calendars/`` (see the module docstrings in
 eras.py); nothing here is pinned to another library's output.
 """
+import logging
 import unittest
 from datetime import date, datetime, timezone
 
 from chronologia import DateTimeResolution
-from chronologia.eras import (AstroDate, ERAS, astro_year_range,
-                                   is_leap_year, julian_day_to_date,
-                                   resolve_era)
+from chronologia import eras as eras_mod
+from chronologia.eras import (AstroDate, ERAS, ERA_ALIASES, HEAT_DEATH_YEAR,
+                                   astro_year_range, is_leap_year,
+                                   julian_day_to_date, resolve_era)
 
 
 class TestAstroDateBasics(unittest.TestCase):
@@ -196,6 +198,132 @@ class TestResolveEra(unittest.TestCase):
     def test_era_epochs_registry_consistency(self):
         for key, era in ERAS.items():
             self.assertEqual(key, era.key)
+
+
+#: One gold "year-1 (or day-1) epoch" per registered era, each value taken from
+#: the citation in its ``eras.py`` comment.  Calendar-backed eras resolve
+#: EXACTLY through calendars.py; offset eras land on 1 January proleptically;
+#: day-count eras give their day-1 civil date.  Keyed by era key -> expected
+#: ``resolve_era(key, 1)`` result.
+GOLD_ERA_EPOCHS = {
+    # already-existing eras (regression anchors)
+    "common_era": date(1, 1, 1),
+    "before_christ": AstroDate(0),
+    "before_present": AstroDate(1949),
+    "holocene": AstroDate(-9999),
+    "anno_mundi": AstroDate(-3760, 9, 7),
+    "buddhist": AstroDate(-542),
+    "ab_urbe_condita": AstroDate(-752),
+    # calendar-backed additions (exact, proleptic Gregorian)
+    "armenian": AstroDate(552, 7, 13),
+    "diocletian": AstroDate(284, 8, 29),
+    "amete_mihret": AstroDate(8, 8, 27),
+    "hijri": AstroDate(622, 7, 19),
+    "solar_hijri": AstroDate(622, 3, 21),
+    "nabonassar": AstroDate(-746, 2, 18),
+    # day-count additions (day 1)
+    "rata_die": date(1, 1, 1),
+    "lilian": date(1582, 10, 15),
+    "julian_day": AstroDate(-4713, 11, 25),  # JD 1 = day after JD 0
+    # year-count offsets (year 1, 1 January)
+    "julian_period": AstroDate(-4712),
+    "assyrian": AstroDate(-4749),
+    "kali_yuga": AstroDate(-3101),
+    "anno_lucis": AstroDate(-3999),
+    "seleucid": AstroDate(-311),
+    "spanish_era": AstroDate(-37),
+    "vikrama": AstroDate(-56),
+    "saka": date(78, 1, 1),
+    "discordian": AstroDate(-1165),
+    "bengali_san": date(594, 1, 1),
+    "burmese": date(639, 1, 1),
+    "kollam": date(825, 1, 1),
+    "nepal_sambat": date(880, 1, 1),
+    "positivist": date(1789, 1, 1),
+    "rattanakosin": date(1782, 1, 1),
+    "era_fascista": date(1922, 1, 1),
+    "minguo": date(1912, 1, 1),
+    "juche": date(1912, 1, 1),
+    "after_dianetics": date(1950, 1, 1),
+}
+
+
+class TestEraGoldEpochs(unittest.TestCase):
+    def test_every_era_has_a_gold_epoch(self):
+        # parametrized-over-the-registry: a newly added era cannot skip a gold
+        # assertion.  ``unix`` is second-counted (tested separately), so it is
+        # the one deliberate exemption.
+        missing = set(ERAS) - set(GOLD_ERA_EPOCHS) - {"unix",
+                                                       "byzantine_am",
+                                                       "french_republican",
+                                                       "bahai", "olympiad"}
+        self.assertEqual(missing, set(),
+                         f"eras with no gold epoch: {sorted(missing)}")
+
+    def test_gold_epochs_resolve(self):
+        for key, expected in GOLD_ERA_EPOCHS.items():
+            with self.subTest(era=key):
+                self.assertEqual(resolve_era(key, 1), expected)
+
+    def test_calendar_backed_current_year_samples(self):
+        # a second point each for the calendar-backed additions, to guard the
+        # offset as well as the epoch (values via calendars.py)
+        self.assertEqual(resolve_era("hijri", 1447), date(2025, 6, 27))
+        self.assertEqual(resolve_era("solar_hijri", 1404), date(2025, 3, 20))
+
+    def test_rata_die_matches_gregorian_ordinal(self):
+        # R.D. n == proleptic Gregorian ordinal n (Reingold & Dershowitz)
+        self.assertEqual(resolve_era("rata_die", date(2025, 7, 25).toordinal()),
+                         date(2025, 7, 25))
+
+    def test_lilian_reform_day(self):
+        self.assertEqual(resolve_era("lilian", 1), date(1582, 10, 15))
+        self.assertEqual(resolve_era("lilian", 2), date(1582, 10, 16))
+
+
+class TestEraAliases(unittest.TestCase):
+    def test_aliases_resolve_to_common_era(self):
+        for alias in ERA_ALIASES:
+            with self.subTest(alias=alias):
+                self.assertEqual(ERA_ALIASES[alias], "common_era")
+                self.assertEqual(resolve_era(alias, 2026),
+                                 resolve_era("common_era", 2026))
+        # spot-check the returned value is the plain date, not a duplicate epoch
+        self.assertEqual(resolve_era("anno_domini", 2026), date(2026, 1, 1))
+        self.assertEqual(resolve_era("ce", 1), date(1, 1, 1))
+
+
+class TestHeatDeath(unittest.TestCase):
+    def setUp(self):
+        # the warning is single-fire per process; reset so this test controls it
+        eras_mod._heat_death_warned = False
+
+    def tearDown(self):
+        eras_mod._heat_death_warned = False
+
+    def test_date_past_heat_death_warns_once(self):
+        past = HEAT_DEATH_YEAR + 10 ** 50
+        with self.assertLogs("chronologia.eras", level="WARNING") as cm:
+            result = resolve_era("common_era", past)
+        self.assertEqual(result, AstroDate(past))
+        self.assertEqual(len(cm.output), 1)
+        self.assertIn("heat death", cm.output[0].lower())
+        self.assertIn("Adams", cm.output[0])
+        # single-fire: a second resolution past the bound stays silent
+        logger = logging.getLogger("chronologia.eras")
+        with self.assertRaises(AssertionError):
+            with self.assertLogs("chronologia.eras", level="WARNING"):
+                resolve_era("common_era", past + 1)
+
+    def test_normal_date_does_not_warn(self):
+        logger = logging.getLogger("chronologia.eras")
+        with self.assertRaises(AssertionError):
+            with self.assertLogs("chronologia.eras", level="WARNING"):
+                resolve_era("common_era", 12025)
+        # even a very large but pre-heat-death year stays silent
+        with self.assertRaises(AssertionError):
+            with self.assertLogs("chronologia.eras", level="WARNING"):
+                resolve_era("common_era", 10 ** 90)
 
 
 if __name__ == "__main__":
