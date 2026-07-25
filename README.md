@@ -254,7 +254,12 @@ Marcellus" (how Romans named their years), "Year 5 of Ramesses II" — in
 library gives you all three rather than pretending Egyptologists agree.
 Even the full Roman date grammar works: *ante diem III Kalendas
 Apriles* is March 30th, counted the way Romans counted — inclusively,
-backwards from the Kalends.
+backwards from the Kalends. The everyday Kalends/Nones/Ides now read in
+ten living languages (es, pt, ca, gl, it, fr, ast, ro, de, nl), not only
+Latin/English, and compose with ordinary "N days before …" phrasing for
+free: `extract_timespan("os idos de março", "pt", anchor)` and
+`extract_timespan("3 dias antes das calendas de abril", "pt", anchor)`
+both resolve, the second landing on March 29th.
 
 ## What it will NOT do (on purpose)
 

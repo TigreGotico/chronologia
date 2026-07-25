@@ -353,6 +353,100 @@ surfaces are the raw, inflected Latin formulas** a classicist opts into. The
 flag threads through exactly like `jurisdiction` — one keyword argument, no
 change to the returned `(span, remainder)` shape.
 
+### Kalends, Nones, Ides -- in the reader's own language
+
+"The ides of march" is the everyday, default-on surface for the Roman
+within-month anchors, and it does not stop at English or Latin. The extractor
+reads Kalends, Nones, and Ides as **vernacular phrases**, each in that
+language's own words, across es, pt, ca, gl, it, fr, ast, ro, de, and nl:
+
+```python
+anchor = datetime(2017, 6, 27, 13, 4)
+
+extract_timespan("the ides of march", "en", anchor)[0].start_datetime   # 2017-03-15
+extract_timespan("os idos de março",  "pt", anchor)[0].start_datetime   # 2017-03-15
+extract_timespan("los idus de marzo", "es", anchor)[0].start_datetime   # 2017-03-15
+extract_timespan("le idi di marzo",   "it", anchor)[0].start_datetime   # 2017-03-15
+extract_timespan("die Iden des März", "de", anchor)[0].start_datetime   # 2017-03-15
+```
+
+Every surface is attested, not invented: each `roman_anchor_kalends.voc` /
+`roman_anchor_nones.voc` / `roman_anchor_ides.voc` file
+(`chronologia/locale/<lang>/`) carries a header citing that language's
+Wikipedia "Roman calendar" article (e.g. `pt/roman_anchor_ides.voc` cites
+`pt.wikipedia.org/wiki/Calendário_romano`; `nl` cites the dedicated
+`Nonen (kalender)` / `Iden (kalender)` articles) as the source for the word
+it wires.
+
+**The distinctive part is composition, not the vocabulary.** These anchors
+are just another named reference point to the same anchored-arithmetic engine
+that resolves "3 days before christmas" (see below), so **any** offset
+composes with **any** anchor in **any** of the eleven languages, for free --
+nothing month-specific or language-specific had to be taught to the offset
+logic:
+
+```python
+extract_timespan("a week before the ides of march", "en", anchor)[0].start_datetime
+# 2017-03-08
+
+extract_timespan("3 dias antes das calendas de abril", "pt", anchor)[0].start_datetime
+# 2017-03-29
+
+extract_timespan("une semaine avant les ides de mars", "fr", anchor)[0].start_datetime
+# 2017-03-08
+
+extract_timespan("de Nonen van juli", "nl", anchor)[0].start_datetime
+# 2017-07-07
+```
+
+**The honest detail: Ides and Nones move.** They are not always "the 15th"
+and "the 7th" -- the Roman calendar puts the Ides on the 15th only in March,
+May, July, and October; every other month it falls on the 13th. The Nones is
+always the 8th day before the Ides (inclusive Roman counting), so it lands on
+the 7th in those four months and the 5th elsewhere. `los idus de abril`
+resolves to April 13th, not the 15th, because April is not one of the four
+long months:
+
+```python
+extract_timespan("los idus de abril", "es", anchor)[0].start_datetime   # 2017-04-13
+extract_timespan("los idus de marzo", "es", anchor)[0].start_datetime   # 2017-03-15
+```
+
+The library computes this per month (`chronologia.roman._ides_day` /
+`_nones_day`) rather than hard-coding a single day-of-month, so the
+composition above is correct for every month, not just the famous March
+case.
+
+**Inclusive counting is a property of the Latin idiom, not of the "N days
+before" offset — the surface you write picks the convention.** Classical
+Latin counted *inclusively*, with the anchor day itself as day 1, and that
+convention fires **only** when you write the raw Latin ante-diem formula
+(opt-in via `enable=("classical",)`, see above): `ante diem III kalendas
+apriles` is the *3rd* day counting inclusively from the Kalends of April,
+landing on March 30th, and `pridie kalendas apriles` ("the day before the
+Kalends") lands on March 31st. The vernacular "N days before/after
+`<anchor>`" phrasing, by contrast, is **plain, non-inclusive arithmetic** —
+exactly like "3 days before christmas" — in every language, and is *not* the
+Roman count: "3 days before the kalends of april" and "the third day before
+the kalends of april" both land on March 29th, one day earlier than the
+Latin idiom's "3rd day":
+
+```python
+extract_timespan("ante diem III kalendas apriles", "en", anchor,
+                  enable=("classical",))[0].start_datetime
+# 2017-03-30  (Roman inclusive count)
+
+extract_timespan("pridie kalendas apriles", "en", anchor,
+                  enable=("classical",))[0].start_datetime
+# 2017-03-31  (Roman inclusive count)
+
+extract_timespan("3 days before the kalends of april", "en", anchor)[0].start_datetime
+# 2017-03-29  (plain, non-inclusive offset)
+
+extract_timespan("the third day before the kalends of april", "en", anchor)[0].start_datetime
+# 2017-03-29  (plain, non-inclusive offset -- same value as above)
+```
+
 ## The week of a date, and decades before Christ
 
 Two phrasings widen a date to the period a speaker really meant. **"the week
