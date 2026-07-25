@@ -17,13 +17,6 @@
         "DAY_WORD"
       ]
     },
-    "weekday_ref": {
-      "orders": [
-        "article? REL_MARKER article? WEEKDAY",
-        "article? WEEKDAY REL_MARKER",
-        "WEEKDAYFULL"
-      ]
-    },
     "rel_period": {
       "orders": [
         "article? REL_MARKER article? UNIT",
@@ -173,5 +166,13 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_agglutinative:fold_el"
+  "hook": "chronologia.extract.numfold_agglutinative:fold_el",
+  "base_grammar": {
+    "marker_position": "post",
+    "extend": {
+      "weekday_ref": [
+        "article? REL_MARKER article? WEEKDAY"
+      ]
+    }
+  }
 }
