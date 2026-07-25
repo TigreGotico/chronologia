@@ -111,6 +111,31 @@ def test_weekday_ref(text, y, mo, d):
     assert start(text) == ad(datetime(y, mo, d))
 
 
+# -- postfix relative-clause idiom "η Τρίτη που πέρασε / που έρχεται" -------
+# (bug: the postposed "που πέρασε" was stranded and the weekday defaulted to
+#  the NEXT occurrence, flipping the direction).
+
+@pytest.mark.parametrize("text,y,mo,d", [
+    ("την τρίτη που πέρασε", 2017, 6, 20),    # last Tue, with article
+    ("η τρίτη που πέρασε", 2017, 6, 20),
+    ("τρίτη που πέρασε", 2017, 6, 20),        # no article
+    ("την τρίτη που έρχεται", 2017, 7, 4),    # next Tue
+    ("η τρίτη που έρχεται", 2017, 7, 4),
+    ("την προηγούμενη τρίτη", 2017, 6, 20),   # prefix, leading article consumed
+])
+def test_weekday_postfix_idiom(text, y, mo, d):
+    from datetime import datetime
+    assert start(text) == ad(datetime(y, mo, d))
+
+
+@pytest.mark.parametrize("text", [
+    "την τρίτη που πέρασε", "τρίτη που έρχεται", "την προηγούμενη τρίτη",
+])
+def test_weekday_marker_consumed(text):
+    from ._corpus import parse
+    assert parse(text)[1] == ""
+
+
 def test_bare_number_no_unit_nomatch():
     nomatch("είκοσι τρεις")
 
