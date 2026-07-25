@@ -22,11 +22,6 @@
         "WEEKDAYFULL"
       ]
     },
-    "scoped_ordinal": {
-      "orders": [
-        "article? WEEKDAY ORD of MONTH YEAR?"
-      ]
-    },
     "rel_period": {
       "orders": [
         "UNIT REL_MARKER",
@@ -155,5 +150,12 @@
     "0.25": [
       "רבע"
     ]
+  },
+  "base_grammar": {
+    "extend": {
+      "scoped_ordinal": [
+        "article? WEEKDAY ORD of MONTH YEAR?"
+      ]
+    }
   }
 }

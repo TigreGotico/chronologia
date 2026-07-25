@@ -99,20 +99,6 @@
         "SEASON YEAR?"
       ]
     },
-    "scoped_ordinal": {
-      "orders": [
-        "article? ORD WEEKDAY of MONTH YEAR?",
-        "article? ordlast WEEKDAY of MONTH YEAR?",
-        "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
-        "article? ordlast SEL_UNIT of article? SORD SCOPE_UNIT",
-        "article? ORD UNIT of MONTH YEAR?",
-        "article? ordlast UNIT of MONTH YEAR?",
-        "article? ORD UNIT of article? year_word YEAR?",
-        "article? ordlast UNIT of article? year_word YEAR?",
-        "article? ORD SCOPE_UNIT",
-        "article? CMUNIT ORD"
-      ]
-    },
     "clock_time": {
       "orders": [
         "CLOCK article? MERIDIEM? ZONE?",
@@ -278,5 +264,12 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_it"
+  "hook": "chronologia.extract.numfold:fold_it",
+  "base_grammar": {
+    "extend": {
+      "scoped_ordinal": [
+        "article? CMUNIT ORD"
+      ]
+    }
+  }
 }

@@ -79,12 +79,6 @@
     "GYEAR"
    ]
   },
-  "scoped_ordinal": {
-   "orders": [
-    "article? ORD SCOPE_UNIT",
-    "article? ORD UNIT of MONTH YEAR?"
-   ]
-  },
   "quarter_ref": {
    "orders": [
     "q NUM YEAR?",

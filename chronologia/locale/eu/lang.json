@@ -54,12 +54,6 @@
         "SEASON YEAR?"
       ]
     },
-    "scoped_ordinal": {
-      "orders": [
-        "ORD SEL_UNIT of SORD SCOPE_UNIT",
-        "ORD SCOPE_UNIT"
-      ]
-    },
     "clock_time": {
       "orders": [
         "CLOCK MERIDIEM? ZONE?",
