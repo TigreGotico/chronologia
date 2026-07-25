@@ -55,6 +55,7 @@
     },
     "scoped_ordinal": {
       "orders": [
+        "article? ORD WEEKDAY of MONTH YEAR?",
         "article? ORD SEL_UNIT of article? SORD SCOPE_UNIT",
         "article? ORD UNIT of MONTH YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",
