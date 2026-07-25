@@ -154,6 +154,56 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
     return None
 
 
+def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
+                        dir_phrases, gap) -> Optional[Pair]:
+    """Compose an offset onto ``match``/``res`` when the directional marker is
+    a **postposition** trailing the reference date, as in Hungarian
+    ("3 nappal <date> előtt") and Basque ("<date> baino 3 egun lehenago").
+
+    The ``[NUM] UNIT`` pre-amble sits either *between* the date and the trailing
+    marker ("<date> baino **3 egun** lehenago", Basque/Turkish word order) or,
+    when nothing separates them, *before* the date ("**3 nappal** <date>
+    előtt", Hungarian).  Both are read by the same backward pre-amble parser;
+    only its starting point differs.
+    """
+    e = match.span[1]
+    # the trailing marker sits at or past the date's end -- immediately after
+    # it (Hungarian "N UNIT <date> **előtt**") or past the pre-amble the date
+    # is compared against (Basque "<date> baino N egun **lehenago**", Turkish
+    # "<date> N gün **önce**").  Scan forward for the first marker phrase.
+    for k in range(e, len(tokens)):
+        for sign, words in dir_phrases:
+            n = len(words)
+            if [t.text for t in tokens[k:k + n]] != words:
+                continue
+            end = k + n
+            # pre-amble read backward from the marker: the between-words shape
+            # ("<date> [lead] N UNIT <marker>") when the reading reaches back
+            # exactly to the date's end; otherwise (nothing between) the
+            # leading shape ("N UNIT <date> <marker>"), read backward from the
+            # date's own start instead.
+            pre = _parse_preamble(tokens, k, spec, gap)
+            if pre is not None and pre["start"] == e:
+                lo = match.span[0]
+            else:
+                pre = _parse_preamble(tokens, match.span[0], spec, gap)
+                if pre is None:
+                    continue
+                lo = pre["start"]
+            s = res.value.start
+            base = datetime(s.year, s.month, s.day)
+            if pre["kind"] == "unit":
+                value = _shift(base, pre["unit"], sign * pre["qty"])
+                span = _point_span(value, pre["unit"])
+            else:
+                span = _day_span(_roll_weekday(base, pre["weekday"], sign))
+            consumed = tuple(sorted(set(res.consumed) | set(range(lo, end))))
+            new_match = Match(match.construction, (lo, end),
+                              match.slots, match.calendar)
+            return new_match, Resolution(span, consumed)
+    return None
+
+
 def apply_anchored_offset(tokens, resolved: List[Pair],
                           spec: LangSpec) -> List[Pair]:
     """Rewrite every date reference carrying a stranded offset pre-amble.
@@ -173,10 +223,12 @@ def apply_anchored_offset(tokens, resolved: List[Pair],
     for match, res in resolved:
         if match.construction not in DATE_CONSTRUCTIONS:
             continue
-        got = _try_offset(tokens, match, res, spec, dir_phrases, gap)
+        got = (_try_offset(tokens, match, res, spec, dir_phrases, gap)
+               or _try_offset_postfix(tokens, match, res, spec,
+                                      dir_phrases, gap))
         if got is not None:
             composed[id(match)] = got
-            claimed.update(range(got[0].span[0], match.span[0]))
+            claimed.update(set(range(*got[0].span)) - set(range(*match.span)))
     if not composed:
         return resolved
     out: List[Pair] = []

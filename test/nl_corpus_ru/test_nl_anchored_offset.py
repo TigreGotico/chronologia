@@ -42,3 +42,16 @@ def test_weekday_roll_is_day_wide():
 @pytest.mark.parametrize("text", ["рабочая встреча"])
 def test_no_reference_no_offset(text):
     nomatch(text)
+
+
+# -- circumfix frame "за N дней до <date>" / "через N дней после <date>" ----
+# the offset phrase is led by "за"/"через" and the direction is marked by
+# "до" (before) / "после" (after); the lead-in must not be stranded.
+@pytest.mark.parametrize("text,expected", [
+    ("за 3 дня до 5 апреля", date(2018, 4, 2)),
+    ("через 3 дня после 5 апреля", date(2018, 4, 8)),
+])
+def test_circumfix_offset(text, expected):
+    from ._corpus import parse
+    assert start(text) == _ad(expected)
+    assert parse(text).remainder == ""
