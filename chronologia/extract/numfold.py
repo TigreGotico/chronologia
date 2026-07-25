@@ -821,8 +821,20 @@ def _elision_split(tokens, proclitics):
         if not sep:
             head, sep, tail = t.text.partition("’")
         if sep and head in proclitics and tail:
-            out.append(Token(text=head, raw=head, index=0))
-            out.append(Token(text=tail, raw=tail, index=0))
+            # keep each half's character extent into the original utterance --
+            # the proclitic occupies the head chars, the elided word the tail
+            # chars past the apostrophe -- so a mention built on the split word
+            # ("d'abril") still recovers a char span instead of ``None``.
+            cs, ce = t.char_start, t.char_end
+            if cs is None or ce is None:
+                h_start = h_end = w_start = None
+            else:
+                h_start, h_end, w_start = cs, cs + len(head), ce - len(tail)
+            out.append(Token(text=head, raw=head, index=0,
+                             char_start=h_start, char_end=h_end))
+            out.append(Token(text=tail, raw=tail, index=0,
+                             char_start=w_start, char_end=ce if cs is not None
+                             else None))
         else:
             out.append(t)
     return _reindex(out)
@@ -966,7 +978,13 @@ _IT_PHRASES = [
     (["fine", "settimana"], "finesettimana"),
 ]
 fold_it = _romance_prepass_fold(
-    "it", {"un", "uno", "una", "milioni", "miliardi", "mila"},
+    # "prima" is the feminine ordinal "first" *and* the directional marker
+    # "before" ("3 giorni prima del 5 aprile" == three days before 5 April);
+    # blacklisting it from the number fold protects the "before" reading the
+    # anchored-offset composition needs, exactly as Portuguese blacklists its
+    # weekday-homograph ordinals.  The unambiguous masculine "primo" still
+    # folds to 1.
+    "it", {"un", "uno", "una", "milioni", "miliardi", "mila", "prima"},
     proclitics=frozenset({"l", "un", "d", "dell", "all", "nell", "dall",
                           "sull", "quest", "quell", "c"}),
     phrases=_IT_PHRASES)
