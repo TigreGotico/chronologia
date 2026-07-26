@@ -367,6 +367,38 @@ for _apo in ("'", "’"):
                     f"п{_apo}ятнадцятого": 15, f"дев{_apo}ятнадцятого": 19})
 
 
+# -- calendar day, NEUTER NOMINATIVE ------------------------------------------
+# East Slavic also names the day of the month in the bare NOMINATIVE, where the
+# ordinal is NEUTER, agreeing with the elided neuter noun число ("сегодня
+# пятнадцатое апреля" = today is the fifteenth of April; "п'ятнадцяте квітня").
+# ``pronounce_ordinal_<lang>`` carries no such form (ru/uk expose no ordinal
+# pronouncer at all) and the genitive #273 tables above hold only the -ого/-ого
+# forms, so the neuter nominative stranded and the whole month was returned --
+# a silent wrong answer.  These closed tables own the neuter nominative for the
+# date-relevant range 1..31 (tens 20/30 fold on their own; the compound 21..29,
+# 31 compose through the bare-cardinal tens прefix _TENS_RU/_TENS_UK, exactly as
+# the genitive day fold does).
+#   ru -- Розенталь, Справочник по правописанию: порядковые числительные,
+#         средний род, ед. ч., им. п. "первое ... тридцать первое".
+#   uk -- Український правопис (2019): порядкові числівники, середній рід
+#         "перше ... тридцять перше".
+_DAY_RU_NEUTER = {
+    "первое": 1, "второе": 2, "третье": 3, "четвёртое": 4, "четвертое": 4,
+    "пятое": 5, "шестое": 6, "седьмое": 7, "восьмое": 8, "девятое": 9,
+    "десятое": 10, "одиннадцатое": 11, "двенадцатое": 12, "тринадцатое": 13,
+    "четырнадцатое": 14, "пятнадцатое": 15, "шестнадцатое": 16,
+    "семнадцатое": 17, "восемнадцатое": 18, "девятнадцатое": 19,
+    "двадцатое": 20, "тридцатое": 30}
+_DAY_UK_NEUTER = {
+    "перше": 1, "друге": 2, "третє": 3, "четверте": 4, "шосте": 6,
+    "сьоме": 7, "восьме": 8, "десяте": 10, "одинадцяте": 11, "дванадцяте": 12,
+    "тринадцяте": 13, "чотирнадцяте": 14, "шістнадцяте": 16, "сімнадцяте": 17,
+    "вісімнадцяте": 18, "двадцяте": 20, "тридцяте": 30}
+for _apo in ("'", "’"):
+    _DAY_UK_NEUTER.update({f"п{_apo}яте": 5, f"дев{_apo}яте": 9,
+                           f"п{_apo}ятнадцяте": 15, f"дев{_apo}ятнадцяте": 19})
+
+
 def _day_rewrite(ords: dict, tens_prefix: dict = None,
                  joiner: tuple = ()) -> Callable:
     """A pre-fold pass turning the declined day-of-month ordinal into the digit
@@ -438,11 +470,12 @@ fold_sk = _compose(_day_rewrite(_DAY_SK),
 fold_pl = _compose(_day_rewrite(_DAY_PL),
                    with_ordinals(_make_fold("pl"), "pl", _FEM_ORD_PL),
                    _hour_rewrite(_HOUR_PL))
-fold_ru = _compose(_split_ru_pol, _day_rewrite(_DAY_RU, _TENS_RU),
+fold_ru = _compose(_split_ru_pol,
+                   _day_rewrite({**_DAY_RU, **_DAY_RU_NEUTER}, _TENS_RU),
                    with_ordinals(_make_fold("ru"), "ru",
                                  {**_ORD_RU, **_FEM_ORD_RU}),
                    _hour_rewrite(_HOUR_RU))
-fold_uk = _compose(_day_rewrite(_DAY_UK, _TENS_UK),
+fold_uk = _compose(_day_rewrite({**_DAY_UK, **_DAY_UK_NEUTER}, _TENS_UK),
                    with_ordinals(_make_fold("uk"), "uk", _FEM_ORD_UK))
 fold_hr = _compose(_day_rewrite(_DAY_HR, _TENS_HR, ("i",)),
                    with_ordinals(_make_fold("hr"), "hr", _FEM_ORD_HR))

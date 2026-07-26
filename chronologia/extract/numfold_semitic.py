@@ -54,6 +54,75 @@ _AR_NUM = frozenset({
 })
 from chronologia.extract.numfold_ordinals import with_ordinals
 
+
+# -- ordinal TEEN fold (11..19), a two-word run -------------------------------
+# The Semitic ordinal teens are written as two words -- an inflected unit
+# ordinal followed by the teen word عشر / עשר ("الخامس عشر" the-fifteenth,
+# "החמישה עשר").  The unit word carries the definite article, so it is NOT in
+# the curated *cardinal* set (خمسة/חמישה are; الخامس/החמישה are not), and the
+# single-token ordinal pre-pass (``with_ordinals``) cannot see a two-word run.
+# The result was that the leading ordinal folded to its UNIT value (الخامس -> 5)
+# while the teen word عشر folded to 10 on its own, and the date bound the unit
+# (April 5 / April 10) -- a silent wrong answer.
+#
+# ovos-number-parser already reads the *joined* two-word run correctly
+# (``extract_number_<lang>("الخامس عشر", ordinals=True) == 15``), so this
+# pre-pass -- run BEFORE ``with_ordinals`` and the cardinal fold -- detects the
+# [unit-ordinal][teen-word] pair and folds it to that value.  Gated on an
+# explicit first-word set so nothing but a genuine ordinal teen can fire, and
+# the month-name ordinals الأول/الثاني are untouched (they are the teen fold's
+# concern only when عشر follows, which the Levantine month names never do).
+_AR_TEEN_SECOND = frozenset({"عشر", "عشرة"})
+_AR_TEEN_FIRST = frozenset({
+    # masculine, with the definite article (the attested date surface)
+    "الحادي", "الثاني", "الثالث", "الرابع", "الخامس", "السادس", "السابع",
+    "الثامن", "التاسع",
+    # feminine, with the definite article ("الخامسة عشرة")
+    "الحادية", "الثانية", "الثالثة", "الرابعة", "الخامسة", "السادسة",
+    "السابعة", "الثامنة", "التاسعة",
+    # article-less variants
+    "حادي", "ثاني", "ثالث", "رابع", "خامس", "سادس", "سابع", "ثامن", "تاسع",
+})
+_HE_TEEN_SECOND = frozenset({"עשר", "עשרה"})
+_HE_TEEN_FIRST = frozenset({
+    # definite (ה-prefixed) unit words -- the stranded surface
+    "האחד", "השניים", "השנים", "השלושה", "הארבעה", "החמישה", "השישה",
+    "השבעה", "השמונה", "התשעה",
+    # feminine definite ("החמש עשרה")
+    "האחת", "השלוש", "הארבע", "החמש", "השש", "השבע", "השמונה", "התשע",
+})
+
+
+def _teen_fold(extract_fn, first_words, second_words):
+    """Fold a [unit-ordinal][teen-word] pair to its 11..19 value."""
+    def rewrite(tokens):
+        out, i, n, changed = [], 0, len(tokens), False
+        while i < n:
+            t = tokens[i]
+            if (not t.is_number and t.text in first_words and i + 1 < n
+                    and tokens[i + 1].text in second_words):
+                try:
+                    v = extract_fn(t.text + " " + tokens[i + 1].text,
+                                   ordinals=True)
+                except Exception:
+                    v = False
+                if v is not False and v is not None and 11 <= v <= 19:
+                    out.append(Token(text=str(int(v)), raw=str(int(v)),
+                                     index=t.index, is_number=True,
+                                     value=int(v), char_start=t.char_start,
+                                     char_end=tokens[i + 1].char_end))
+                    i, changed = i + 2, True
+                    continue
+            out.append(t)
+            i += 1
+        return reindex(tuple(out)) if changed else tokens
+    return rewrite
+
+
+_ar_teen_fold = _teen_fold(extract_number_ar, _AR_TEEN_FIRST, _AR_TEEN_SECOND)
+_he_teen_fold = _teen_fold(extract_number_he, _HE_TEEN_FIRST, _HE_TEEN_SECOND)
+
+
 # Arabic ordinals carry the definite article ال ("الثالث" the-third), which is
 # exactly the surface the quarter phrase "الربع الثالث" attests; the model's
 # ``pronounce_ordinal_ar`` emits that article-prefixed form.  الأول (first) and
@@ -61,8 +130,13 @@ from chronologia.extract.numfold_ordinals import with_ordinals
 # month names (تشرين الأول = October, كانون الثاني = January), so folding them
 # would erase the month.  Consequently a *spelled* Arabic Q1/Q2 does not fold
 # (Q3/Q4 and the digit/Latin-Q forms do) -- a documented, narrow limitation.
-fold_ar = with_ordinals(_make_fold(extract_number_ar, _AR_NUM), "ar",
-                        exclude=("الأول", "الثاني"))
+_fold_ar_base = with_ordinals(_make_fold(extract_number_ar, _AR_NUM), "ar",
+                              exclude=("الأول", "الثاني"))
+
+
+def fold_ar(tokens):
+    """Fold the ordinal teen (11..19) first, then the cardinal/ordinal fold."""
+    return _fold_ar_base(_ar_teen_fold(tokens))
 
 
 # -- Hebrew ------------------------------------------------------------------
@@ -166,7 +240,8 @@ _fold_he_cardinal = fold_he
 
 
 def fold_he(tokens):  # noqa: F811  -- wrap the cardinal fold with the fem ordinal
-    """Fold the feminine ordinal (מחצית's "first/second") before the cardinal
-    fold, then run the cardinal fold: the two never overlap (the ordinal is a
-    lone token), and the weekday-masculine ordinals stay untouched."""
-    return _fold_he_cardinal(_he_ordinal_rewrite(tokens))
+    """Fold the ordinal teen (11..19) and the feminine ordinal (מחצית's
+    "first/second") before the cardinal fold, then run the cardinal fold: none
+    overlap (each is its own run), and the weekday-masculine ordinals stay
+    untouched."""
+    return _fold_he_cardinal(_he_ordinal_rewrite(_he_teen_fold(tokens)))
