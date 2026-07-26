@@ -185,8 +185,10 @@ else is built on. The other guides go deeper, gently:
   happened twice, and February 30th.
 - **[deep-time.md](deep-time.md)** — geological periods, archaeology, and
   radiocarbon dating.
-- **[time-and-zones.md](time-and-zones.md)** — daylight saving, leap seconds,
-  and sundials.
+- **[sun-moon-and-seasons.md](sun-moon-and-seasons.md)** — sunrise, twilights,
+  moon phases, seasons, unequal hours, leap seconds, and sundials.
+- **[timezones.md](timezones.md)** — daylight-saving folds and gaps, and reading
+  any `zoneinfo` zone as a timeline.
 - **[eras-and-rulers.md](eras-and-rulers.md)** — BC/AD, emperors, consuls, and
   the Roman way of counting days.
 - **[design.md](design.md)** — the developer's tour of how it all fits

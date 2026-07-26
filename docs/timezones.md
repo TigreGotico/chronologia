@@ -8,9 +8,9 @@ it in only at a handful of clearly marked doors. This page walks through why,
 where those doors are, how to wire the library up to the real world's zone
 data, and how it compares to the other tools you might reach for.
 
-If you have not yet read [Time and zones](time-and-zones.md), that page tells
-the wider story — daylight saving, leap seconds, sundials, local mean time.
-This one drills into the zones themselves.
+Its companion, [Sun, moon, and seasons](sun-moon-and-seasons.md), tells the
+natural-time story — sunrise, twilights, moon phases, sundials, local mean time,
+and leap seconds. This one drills into the political zones themselves.
 
 ## Why everyone hates timezones
 

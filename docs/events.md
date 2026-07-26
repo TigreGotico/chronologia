@@ -16,7 +16,7 @@ as a small, immutable record with four parts:
 
 - **`summary`** — the human label, the "what" ("my weekly meeting"). Free text.
 - **`span`** — *when the first occurrence happens*. A
-  [`DateSpan`](time-and-zones.md) is a half-open interval `[start, end)`: it
+  [`DateSpan`](getting-started.md) is a half-open interval `[start, end)`: it
   carries both edges, so it knows an event is 30 minutes long, or a whole day.
 - **`duration`** — an explicit length (a `datetime.timedelta`), when the text
   named one ("for 30 minutes"). It may be `None`; the span still knows its own
@@ -148,5 +148,5 @@ except ValueError:
   expand it into dates.
 - [Extraction](extraction.md) — the natural-language edges (`extract_timespan`,
   `extract_duration`, `extract_recurrence`) that `extract_event` composes.
-- [Time and zones](time-and-zones.md) — what a `DateSpan` is and how its two
+- [Getting started](getting-started.md) — what a `DateSpan` is and how its two
   edges carry the referential width of a phrase.

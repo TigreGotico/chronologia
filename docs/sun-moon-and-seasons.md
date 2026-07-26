@@ -1,113 +1,19 @@
-# Time and zones
+# Sun, moon, and seasons
 
-The calendars in this library answer "which day?". This page is about the
-messier questions *inside* a day: what happens at the two ragged edges of
-daylight saving time, why "tomorrow" is sometimes not 24 hours away, why your
-phone and a GPS satellite quietly disagree by eighteen seconds, and why a
-sundial and a clock rarely agree at all. None of these are bugs. They are
-honest facts about time, and the library reports them honestly.
+The calendars in this library answer "which day?". This page is about
+*natural* time — the sky the calendar was built to track. Where does the sun
+actually rise, and when do its twilights begin and end? What did an "hour" mean
+before mechanical clocks, when it stretched and shrank with the seasons? When
+is the real solstice, the true full moon, the local noon a sundial reads? And
+why do atomic clocks and the turning Earth drift apart, so that every few years
+a leap second must reconcile them? None of these are bugs. They are honest
+facts about time, and the library reports them honestly.
 
-## The clocks that lie twice a year
-
-Twice a year, in places that keep daylight saving time, the clock does
-something strange.
-
-**In autumn it "falls back".** At 2 AM the clock jumps back to 1 AM, so the
-hour from 1:00 to 2:00 happens *twice*. If you say "1:30 AM that night", you
-have named **two different moments**, an hour apart. Picture it:
-
-```
-first  1:00 ── 1:30 ── 2:00 ─┐
-1 AM                          │  clock jumps back to 1:00
-second 1:00 ── 1:30 ── 2:00   ┘
-       └── "1:30 AM" lives here twice ──┘
-```
-
-**In spring it "springs forward".** At 2 AM the clock jumps to 3 AM, so the
-hour from 2:00 to 3:00 *never happens*. "2:30 AM" that night names **no moment
-at all.**
-
-Ask the library to resolve a wall-clock reading against a real zone and it
-gives you the honest answer for each case. When a time happens twice, you get
-both instants:
-
-```python
-from zoneinfo import ZoneInfo
-from chronologia import resolve_wall_clock
-
-ny = ZoneInfo("America/New_York")
-earlier, later = resolve_wall_clock(2024, 11, 3, 1, 30, ny)   # fall-back night
-print(earlier.isoformat())
-# 2024-11-03T01:30:00-04:00
-print(later.isoformat())
-# 2024-11-03T01:30:00-05:00
-```
-
-Same wall clock, `01:30` both times — but the first is still on summer time
-(four hours behind UTC) and the second on winter time (five hours behind), so
-they are genuinely an hour apart.
-
-When a time never happens, you get a `NeverExisted` — the same "here is why,
-not an error" value the [timelines](timelines.md) guide describes:
-
-```python
-gap = resolve_wall_clock(2024, 3, 10, 2, 30, ny)   # spring-forward morning
-print(gap.discontinuity.kind.name)
-# SKIP
-```
-
-And an ordinary, unambiguous time simply comes back as a single dated instant:
-
-```python
-noon = resolve_wall_clock(2024, 6, 1, 12, 0, ny)
-print(noon.isoformat())
-# 2024-06-01T12:00:00-04:00
-```
-
-## "This time tomorrow" is not "in 24 hours"
-
-Those ragged edges make an ordinary phrase ambiguous. When you say "this time
-tomorrow", do you mean *the same reading on the clock face* (which might be 23
-or 25 real hours away), or *exactly 24 hours of real time from now* (which
-might land on a different clock reading)? These are two different questions,
-and the library makes you choose rather than guessing.
-
-`civil_add` walks the **civil** calendar — same clock reading, next day — and
-tells you the true elapsed time. Cross an autumn fall-back and "tomorrow at
-00:30" is really **25 hours** away, because a whole extra hour was lived
-through:
-
-```python
-from datetime import timedelta, timezone
-from chronologia import AstroDate, civil_add
-
-start = AstroDate(2024, 11, 3, 0, 30, tzinfo=ny)   # just before fall-back
-civil = civil_add(start, days=1, zone=ny)
-print(civil.isoformat(), round((civil - start).total_seconds() / 3600, 1))
-# 2024-11-04T00:30:00-05:00 25.0
-```
-
-The **absolute** question — "in exactly 24 hours" — keeps the real duration
-fixed and lets the clock reading fall where it may. Twenty-four real hours
-after that same start lands at **23:30**, an hour earlier on the face, because
-of the extra hour that was inserted:
-
-```python
-absolute = (start.astimezone(timezone.utc) + timedelta(hours=24)).astimezone(ny)
-print(absolute.isoformat(), round((absolute - start).total_seconds() / 3600, 1))
-# 2024-11-03T23:30:00-05:00 24.0
-```
-
-In spring it goes the other way — "this time tomorrow" across a spring-forward
-is only **23 hours** away, because an hour was skipped:
-
-```python
-spring_start = AstroDate(2024, 3, 10, 0, 30, tzinfo=ny)
-spring_civil = civil_add(spring_start, days=1, zone=ny)
-print(spring_civil.isoformat(),
-      round((spring_civil - spring_start).total_seconds() / 3600, 1))
-# 2024-03-11T00:30:00-04:00 23.0
-```
+> **Daylight saving time lives elsewhere.** The twice-a-year clock that "lies" —
+> the fall-back hour that happens twice, the spring-forward hour that never
+> happens, and wall-clock arithmetic across them — is a *political* fact about
+> zones, not a natural one about the sky. It is owned by
+> [timezones.md](timezones.md); `resolve_wall_clock` and `civil_add` live there.
 
 ## Leap seconds: why GPS and your phone disagree
 
@@ -397,9 +303,13 @@ anchor's future is `"predicted"` (a forward model); one in its past is
 happened) — the same reconstructed/predicted split deep-time spans use
 elsewhere in this library, just applied at hour granularity instead of
 geological granularity:
+
+```python
 past_full = previous_phase(datetime(2024, 8, 1), "full")
 print(past_full.basis)
 # reconstructed
+```
+
 **The accuracy bound is measured, not assumed.** Cross-checked against the
 US Naval Observatory's published 2024 phase table, the mean model's largest
 new/full-moon miss is about 14 hours — hence `MOON_PHASE_ACCURACY`. Quarter
@@ -409,16 +319,24 @@ omits an extra periodic correction that mean new/full moon mostly cancels —
 a known asymmetry of the simple model, not a bug.
 Every lunation is also numbered, in the older Brown convention almanacs used
 1923-1983:
+
+```python
 from chronologia import lunation_number
 print(lunation_number(datetime(2024, 1, 11, 11, 57)))
 # 1250
+```
+
 Ask for a phase name outside the four recognised ones and you get a clear
 error rather than a silent nonsense result:
+
+```python
 try:
     next_phase(datetime(2024, 1, 1), "waxing_gibbous")
 except ValueError as exc:
     print("rejected:", exc)
 # rejected: unknown moon phase 'waxing_gibbous'; expected one of ['first_quarter', 'full', 'last_quarter', 'new']
+```
+
 ## When does summer actually start? Depends whom you ask
 
 Meteorologists, astronomers, and the Sun itself give three different answers.
@@ -725,8 +643,6 @@ day attach as another named school — but the library will not invent one.
 
 | tool | what it does |
 |---|---|
-| `resolve_wall_clock(y, m, d, h, mi, zone)` | resolve a wall time against a DST zone: one instant, a `(earlier, later)` pair (fall-back), or a `NeverExisted` (spring-forward gap) |
-| `civil_add(point, *, years, months, days, zone, timeline)` | calendar-aware arithmetic; with a DST `zone` a "day" is the true 23/24/25 hours |
 | `utc_tai_offset(instant)` | cumulative seconds TAI leads UTC (1972 onward) |
 | `utc_to_tai` / `tai_to_utc` / `utc_to_gps` / `gps_to_utc` | convert between the real timescales |
 | `is_leap_second_day(day)` | was a leap second inserted on this UTC date? |
