@@ -35,12 +35,6 @@
         "indef? NUM UNIT from WEEKDAY"
       ]
     },
-    "rel_period": {
-      "orders": [
-        "article? UNIT REL_MARKER",
-        "article? REL_MARKER UNIT"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER WEEKEND",
@@ -250,6 +244,11 @@
   },
   "hook": "chronologia.extract.numfold:fold_ast",
   "base_grammar": {
-    "marker_position": "post"
+    "marker_position": "post",
+    "override": {
+      "rel_period": [
+        "article? REL_MARKER UNIT"
+      ]
+    }
   }
 }

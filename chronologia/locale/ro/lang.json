@@ -41,12 +41,6 @@
         "WEEKDAY REL_MARKER"
       ]
     },
-    "rel_period": {
-      "orders": [
-        "article? UNIT REL_MARKER",
-        "article? REL_MARKER UNIT"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER WEEKEND",
@@ -261,5 +255,17 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_ro"
+  "hook": "chronologia.extract.numfold:fold_ro",
+  "base_grammar": {
+    "override": {
+      "rel_period": [
+        "article? REL_MARKER UNIT"
+      ]
+    },
+    "extend": {
+      "rel_period": [
+        "article? UNIT REL_MARKER"
+      ]
+    }
+  }
 }

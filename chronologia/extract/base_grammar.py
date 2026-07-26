@@ -74,21 +74,43 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "REL_MARKER WEEKDAY",
         "WEEKDAYFULL",
     ],
+    # "last/next <unit>" -- "last week", "next month", "this year".  The prefix
+    # form ("REL_MARKER UNIT" -- the marker LEADS the unit) is the
+    # language-neutral core every locale shares.  The postposed idiom
+    # ("semana pasada", "mês que vem" -- the marker TRAILS the unit) is not
+    # universal, so it lives in ``MARKER_POSTFIX_ORDERS`` gated behind the
+    # ``marker_position`` knob, exactly like ``weekday_ref``: a locale that does
+    # not postpose must not gain a trailing-marker order that could mis-parse.
+    # An article inside the prefix (Romance "la semana que viene", Greek's
+    # doubly-articled form, Hungarian's medial article) is a per-locale
+    # exception carried by ``override`` -- the shared prefix stays article-less.
+    "rel_period": [
+        "REL_MARKER UNIT",
+    ],
 }
 
 # ---------------------------------------------------------------------------
-# Knob-generated orders.  A construction's postfix (marker-trailing) variants
-# are appended by ``merge_orders`` only when the locale sets
-# ``marker_position: post`` (or ``both``) -- see the KNOB SCHEMA note on
-# ``marker_position``.  The article is OPTIONAL, so an article-less language
-# ("marțea trecută") matches the same order without shipping an article; the
-# Romance article-bearing idiom ("el viernes pasado") is the richest shared
-# form and is what these orders encode.
+# Knob-generated orders, keyed BY CONSTRUCTION.  A construction's postfix
+# (marker-trailing) variants are appended by ``merge_orders`` -- for whichever
+# construction it is merging -- only when the locale sets
+# ``marker_position: post`` (or ``both``); see the KNOB SCHEMA note on
+# ``marker_position``.  The postfix order set is PER-CONSTRUCTION (a weekday
+# trails its marker as "<weekday> <marker>", a unit as "<unit> <marker>"), so
+# the one ``marker_position`` knob a locale sets appends the RIGHT postfix set
+# for each postposing construction it inherits.  Adding a new postposing
+# construction is therefore a single new entry here -- no change to
+# ``merge_orders`` or the knob.  The article is OPTIONAL, so an article-less
+# language ("marțea trecută", "minggu lalu") matches the same order without
+# shipping an article; the Romance article-bearing idiom ("el viernes pasado",
+# "la semana pasada") is the richest shared form and is what these encode.
 # ---------------------------------------------------------------------------
 MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
     "weekday_ref": [
         "article? WEEKDAY REL_MARKER",
         "article? WEEKDAYFULL REL_MARKER",
+    ],
+    "rel_period": [
+        "article? UNIT REL_MARKER",
     ],
 }
 
