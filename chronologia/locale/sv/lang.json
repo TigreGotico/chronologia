@@ -120,12 +120,6 @@
       ],
       "prefer_future": true
     },
-    "half_period": {
-      "orders": [
-        "article? NUM half of GYEAR",
-        "article? NUM half of article? SCOPE_UNIT"
-      ]
-    },
     "quarter_ref": {
       "orders": [
         "q NUM YEAR?",

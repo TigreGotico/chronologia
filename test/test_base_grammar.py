@@ -418,6 +418,52 @@ def test_marker_position_gates_postfix_orders():
             == merge_orders({"base_grammar": {"marker_position": "both"}}, {}))
 
 
+# --- the pre-refactor (dev) half_period orders, per locale ------------------
+# Frozen snapshot of what every locale declared inline on `dev` BEFORE
+# half_period inherited the base grammar.  Only 16/40 locales had it (the other
+# ~24 SILENTLY returned the whole year/period and stranded "first half"); those
+# gain the construction for free from the base now.  Fifteen declared exactly
+# the shared en orders; ``eu`` declared the article-less variant, which the base
+# ``article?`` orders cover (dropping the optional article).
+DEV_HALF_PERIOD = {
+    'ast': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'da': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'de': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'el': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'en': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'eu': ['NUM half of GYEAR', 'NUM half of SCOPE_UNIT'],
+    'fr': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'fy': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'hu': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'it': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'nb': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'nl': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'nn': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'oc': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'ro': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+    'sv': ['article? NUM half of GYEAR', 'article? NUM half of article? SCOPE_UNIT'],
+}
+
+
+@pytest.mark.parametrize("lang", _LANGS)
+def test_additive_superset_half_period(lang):
+    """Every dev half_period order is still covered after the base merge.
+
+    Proves the migration only ADDED matching power: the 16 locales that shipped
+    half_period inline keep every order (``eu``'s article-less orders are
+    covered by the base ``article?`` orders), and the ~24 that lacked it gain
+    the construction for free instead of silently stranding "first half".
+    """
+    dev = DEV_HALF_PERIOD.get(lang, [])
+    if not dev:
+        return                          # gained half_period for free; nothing to lose
+    effective = _effective_orders(lang, "half_period")
+    missing = assert_additive_superset(lang, dev, effective)
+    assert not missing, (
+        f"{lang}: base-grammar merge DROPPED half_period orders "
+        f"(not additive): {missing}\n  effective={effective}")
+
+
 @pytest.mark.parametrize("lang", _LANGS)
 def test_additive_superset_scoped_ordinal(lang):
     """Every dev scoped_ordinal order is still covered by the effective orders.

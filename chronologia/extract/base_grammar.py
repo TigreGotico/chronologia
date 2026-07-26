@@ -111,6 +111,26 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "REL_MARKER SEASON",
         "article? SEASON YEAR?",
     ],
+    # "the first/second half of <period>" ("the first half of 2020" -> Jan-Jun;
+    # "the second half of the century").  ``NUM`` binds the ordinal (first/second
+    # -> 1/2), the literal ``half`` binds the locale's period-noun surface
+    # (``marker_half``: en "half", es "mitad", de "Hälfte", it "metà"), ``of``
+    # the connector, and the period is either a Gregorian ``GYEAR`` or a
+    # ``SCOPE_UNIT`` (decade/century/millennium).  These two orders are the
+    # language-neutral core every locale shares -- harvested verbatim from the
+    # richest inline set (``en``); a leading ``article?`` carries the Romance/
+    # Germanic "la première moitié" / "die erste Hälfte" without a locale
+    # shipping an article, and ``article?`` equally covers the article-less
+    # surface (Basque "lehen erdia"), so an article-less locale matches the same
+    # orders.  Word orders that genuinely differ -- the Slavic connector-less
+    # genitive ("первая половина 2020", no "of" word), the Semitic postposed
+    # ordinal ("النصف الأول"), the Turkic/Uralic year-first possessive
+    # ("2020'nin ilk yarısı") -- are NOT expressible by adding a base order and
+    # stay a per-locale exception (``override``/``extend``) or a follow-up.
+    "half_period": [
+        "article? NUM half of GYEAR",
+        "article? NUM half of article? SCOPE_UNIT",
+    ],
 }
 
 # ---------------------------------------------------------------------------

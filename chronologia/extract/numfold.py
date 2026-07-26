@@ -1007,6 +1007,12 @@ fold_fr = _romance_prepass_fold(
     # leading "quatre"/"deux" behind as the whole number.
     extra_numwords=frozenset({"vingts", "cents"}),
     proclitics=frozenset({"d", "l", "j", "n", "s", "c", "m", "t", "qu"}),
+    # feminine ordinals the number back-end rejects but that agree with a
+    # feminine noun the constructions bind ("la premiere/première moitié",
+    # "la seconde moitié").  "seconde" is unambiguous in French date text --
+    # French has no time-unit "seconde" vocabulary here -- so it maps straight to
+    # 2 like the Spanish/Romanian feminine tables above.
+    fem_ord={"première": 1, "premiere": 1, "seconde": 2},
     phrases=_FR_PHRASES, h_clock=True,
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
