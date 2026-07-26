@@ -172,12 +172,6 @@
       ],
       "prefer_future": true
     },
-    "half_period": {
-      "orders": [
-        "article? NUM half of GYEAR",
-        "article? NUM half of article? SCOPE_UNIT"
-      ]
-    },
     "holiday_ref": {
       "orders": [
         "REL_MARKER HOLIDAY",

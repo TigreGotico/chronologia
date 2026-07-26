@@ -84,12 +84,6 @@
         "PART MONTH"
       ]
     },
-    "half_period": {
-      "orders": [
-        "NUM half of GYEAR",
-        "NUM half of SCOPE_UNIT"
-      ]
-    },
     "quarter_ref": {
       "orders": [
         "q NUM YEAR?",
