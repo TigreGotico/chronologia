@@ -109,8 +109,11 @@
  },
  "hook": "chronologia.extract.numfold_slavic:fold_hr",
  "base_grammar": {
-  "disable": [
-   "scoped_ordinal"
-  ]
+  "override": {
+   "scoped_ordinal": [
+    "article? ORD WEEKDAY MONTH YEAR?",
+    "article? ORD UNIT MONTH YEAR?"
+   ]
+  }
  }
 }
