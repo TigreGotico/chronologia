@@ -225,6 +225,14 @@ class Tokenizer:
                     tokens.append(Token(text=raw, raw=raw, index=i,
                                         char_start=cs, char_end=ce))
                     continue
+                # A digit run longer than any real date/duration value
+                # (year, day, count) carries no temporal meaning; withdraw its
+                # number reading rather than let int()/float() choke on it
+                # (CPython caps int(str) at 4300 digits -> ValueError).
+                if len(digits.replace(".", "")) > 18:
+                    tokens.append(Token(text=raw, raw=raw, index=i,
+                                        char_start=cs, char_end=ce))
+                    continue
                 value = float(digits) if "." in digits else int(digits)
                 tokens.append(Token(text=raw.rstrip("."), raw=raw, index=i,
                                     is_number=True, value=value,
