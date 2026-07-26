@@ -42,6 +42,14 @@ PRECEDENCE: Dict[str, int] = {
     # AUC / Olympiad / archon: specific era vocabulary, wins its span like the
     # other era families
     "era_auc": 1,
+    # calendar-backed era-year surfaces: resolve through the era registry's
+    # epoch (Saka/Byzantine Anno Mundi/Holocene), so they win the era tie and
+    # consume the era name rather than stranding it for a bare year_ref
+    "era_saka": 1,
+    "era_byzantine": 1,
+    "era_holocene": 1,
+    # "eve of <Roman anchor>" must outrank the bare roman_date it wraps
+    "roman_eve": 1,
     "olympiad_ref": 1,
     "archon_ref": 1,
     "roman_classical": 1,

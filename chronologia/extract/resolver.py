@@ -1250,6 +1250,40 @@ class Resolver:
         return Resolution(self._era_span("ab_urbe_condita", n),
                           self._consumed(match))
 
+    def _resolve_era_saka(self, match, anchor):
+        """"in Saka 1900": the Gregorian year-span of that Saka year, resolved
+        through the era registry's epoch (Saka 1 == AD 78), so the epoch offset
+        is applied instead of reading the literal number as a Gregorian year."""
+        n = int(match.slots["NUM"].value)
+        return Resolution(self._era_span("saka", n), self._consumed(match))
+
+    def _resolve_era_byzantine(self, match, anchor):
+        """"the year 6260 of the Byzantine era": the Byzantine (Creation) Anno
+        Mundi year, resolved through its epoch (AM 1 == 5509 BC), not the
+        literal number."""
+        n = int(match.slots["NUM"].value)
+        return Resolution(self._era_span("byzantine_am", n),
+                          self._consumed(match))
+
+    def _resolve_era_holocene(self, match, anchor):
+        """"the Holocene year 12026": the Human/Holocene Era year (HE == CE +
+        10000), resolved through the registry to its CE year."""
+        n = int(match.slots["NUM"].value)
+        return Resolution(self._era_span("holocene", n), self._consumed(match))
+
+    def _resolve_roman_eve(self, match, anchor):
+        """"the eve of the Ides of March": the day before a Roman-anchor date.
+        Reuses the Roman-anchor resolution, then steps one whole day back --
+        the same -1-day offset the holiday eve applies."""
+        roman = self._resolve_roman_date(match, anchor)
+        if roman is None:
+            return None
+        span = roman.value
+        return Resolution(
+            DateSpan(span.start - timedelta(days=1),
+                     span.end - timedelta(days=1)),
+            self._consumed(match))
+
     def _resolve_olympiad_ref(self, match, anchor):
         """"the third olympiad" / "olympiad 87": the 4-year span of Olympiad N
         from the 776 BC epoch.  An optional inner ORD ("the 2nd year of the

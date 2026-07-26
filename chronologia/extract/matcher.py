@@ -282,6 +282,17 @@ class ConstructionMatcher:
                     continue
                 end, slots = max(ends, key=lambda r: r[0])
                 if end > start:
+                    # "the year 1 am" is the Anno Mundi era marker, not the
+                    # 01:00 ante-meridiem clock: veto a bare HOUR+MERIDIEM
+                    # clock reading whose hour sits immediately after a
+                    # year-word ("year"/"years"), so the clock parser never
+                    # captures the era-marked value.
+                    if (name == "clock_time" and "MERIDIEM" in slots
+                            and "CLOCK" not in slots and start > 0
+                            and tokens[start - 1].text
+                            in self.spec.connectors.get(
+                                "year_word", frozenset())):
+                        continue
                     if "CAL_MONTH" in slots:
                         cal = _calendar_for_surface(
                             self.spec, slots["CAL_MONTH"].text)

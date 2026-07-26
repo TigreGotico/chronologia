@@ -1175,6 +1175,16 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     span, consumed = core
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
+    # A half-open span whose start falls before the datetime era (year <= 0)
+    # but whose end lands on a representable year projects to (None, date) --
+    # a malformed None-start span.  When such a partial parse also strands
+    # text (an era-year phrase the core could not fully consume, e.g.
+    # "in the year 1 BC"), the reading is untrustworthy: refuse it cleanly
+    # rather than surface the broken half-open span.
+    if (remainder.strip()
+            and span.start_datetime is None
+            and span.end_datetime is not None):
+        return None
     return span, remainder
 
 

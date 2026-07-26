@@ -59,6 +59,12 @@
         "article? eve of article? HOLIDAY"
       ]
     },
+    "roman_eve": {
+      "orders": [
+        "on? article? eve of article? ANCHOR_DAY of MONTH",
+        "on? article? eve of article? ANCHOR_DAY MONTH"
+      ]
+    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER WEEKEND",
@@ -153,6 +159,25 @@
       "orders": [
         "NUM bp",
         "NUM year_word before present"
+      ]
+    },
+    "era_saka": {
+      "orders": [
+        "in? article? saka year_word? NUM",
+        "NUM saka"
+      ]
+    },
+    "era_byzantine": {
+      "orders": [
+        "in? article? year_word NUM of? article? byzantine",
+        "in? article? byzantine year_word? NUM",
+        "NUM byzantine"
+      ]
+    },
+    "era_holocene": {
+      "orders": [
+        "in? article? holocene year_word? NUM",
+        "NUM holocene"
       ]
     },
     "deep_time": {
