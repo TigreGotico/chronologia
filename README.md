@@ -20,8 +20,7 @@ print(span.start_datetime.date())   # 2025-03-15
 ```
 
 That is the whole point of a *span*: a phrase names a stretch of time,
-not an instant. The rest of this README is the reckoning engine that the
-extractor resolves against.
+not an instant.
 
 Ever wondered…
 
@@ -47,57 +46,6 @@ natural-language layer adds two small helpers — **ovos-number-parser**
 (spelled numbers → digits) and **ovos-spec-tools** (loads each language's
 vocabulary files).
 
-## Your first three lines
-
-When does the Hebrew year 5786 begin?
-
-```python
-from chronologia import CALENDARS
-
-hebrew = CALENDARS["hebrew"]
-print(hebrew.date(5786, 7, 1))   # 2025-09-23T00:00:00
-```
-
-That's September 23rd, 2025 — the real Rosh Hashanah. No lookup
-service, no approximation: the library computes it from the same
-arithmetic rules the Hebrew calendar itself is defined by.
-
-### How did that work?
-
-One trick powers everything here. Every day that has ever existed gets
-a plain number — its **Julian Day Number** — day 1, day 2, day 3…
-counting on forever in both directions. Every calendar in the library
-knows how to turn its own dates into that number and back again. So
-*any* calendar can talk to *any* other calendar by meeting at the
-number in the middle. Seventeen calendars are built in — Hebrew,
-Islamic, Chinese, Coptic, Ethiopian, Maya, French Revolutionary,
-ancient Egyptian, and more (full list at the bottom).
-
-## Dates that don't fit in `datetime`
-
-Python's `datetime` stops at year 1. History doesn't. This library's
-`AstroDate` works just like a `datetime` — same methods, same
-comparisons, you can mix the two freely — but its year is unlimited:
-
-```python
-from chronologia import AstroDate
-from datetime import datetime
-
-# The Ides of March, 44 BC — a date in the ROMAN (Julian) calendar,
-# so we let the Julian calendar say which day it really was:
-ides = AstroDate.from_calendar("julian", -43, 3, 15)
-print(ides.weekday())               # 2  — Caesar was assassinated on a Wednesday
-print(ides < datetime(2020, 1, 1))  # True — compares freely with datetime
-```
-
-Two small things just happened, and both matter. First: historians say
-"44 BC", but astronomers give the year 0 to 1 BC so the arithmetic has
-no gap — 44 BC is year −43; you only ever notice this before year 1.
-Second: ancient dates were written in *their* calendar, not ours — the
-Roman "March 15" lands on what our modern calendar, projected backwards,
-would call March 13. The library keeps both straight, because that's
-exactly the kind of thing humans get silently wrong.
-
 ## Nobody means midnight
 
 When someone says **"June 2027"**, they mean the whole month — not one
@@ -121,145 +69,11 @@ published table (`"tabulated"`), *pieced together* by historians
 (`"predicted"`)? The Jurassic above says `tabulated` — it comes straight
 from the official geological chart, uncertainties included.
 
-Even a plain word like **"morning"** is a span, and — this matters — it
-is a *convention* a culture agrees on, not a fact about the sun. So the
-library keeps day-part boundaries as region-tagged data (from the Unicode
-CLDR day-period rules) and hands you the span on a real date. English
-splits the afternoon off from the evening at 18:00; Spanish runs one
-*tarde* straight through to 20:00:
-
-```python
-from datetime import date
-from chronologia import daypart_span
-
-tuesday = date(2027, 6, 8)
-print(daypart_span(tuesday, "afternoon").end.isoformat())         # 2027-06-08T18:00:00
-print(daypart_span(tuesday, "tarde", region="es").end.isoformat())  # 2027-06-08T20:00:00
-
-# "tuesday night" belongs to Tuesday, yet ends on Wednesday morning:
-night = daypart_span(tuesday, "night")
-print(night.start.isoformat(), "->", night.end.isoformat())
-# 2027-06-08T21:00:00 -> 2027-06-09T06:00:00
-```
-
-## Stories the library can tell
-
-### The ten days that never happened
-
-In October 1582, Pope Gregory XIII fixed the slowly-drifting calendar
-by deleting ten days: in Rome, October 4th was followed directly by
-October 15th. Ask this library about one of the deleted days and it
-doesn't crash or guess — it tells you *that date never existed there,
-and why*:
-
-```python
-from chronologia import TIMELINES
-
-rome = TIMELINES["rome_1582"]
-print(rome.date(1582, 10, 9))
-# NeverExisted(label=1582-10-09, discontinuity=SKIP: Oct 4 → Oct 15,
-#              citation='Inter gravissimas (1582)')
-```
-
-Different countries made the jump in different centuries — Britain in
-1752 (eleven days by then), Russia in 1918 (thirteen). That's why the
-"October Revolution" of October 25th, 1917 happened on what most of the
-world called November 7th:
-
-```python
-russia = TIMELINES["russia_1918"]
-print(russia.date(1917, 10, 25))   # 1917-11-07T00:00:00
-```
-
-And Sweden, after botching a gradual transition, needed a one-off
-**February 30th** in 1712 to get back in step. The library knows that
-day too — everywhere else, it was March 11th.
-
-### Clocks lie twice a year
-
-When clocks "fall back" in autumn, 1:30 AM happens **twice** that
-night; when they "spring forward", 2:30 AM **never happens at all**.
-Ask for a wall-clock time in a zone and get the honest answer — both
-instants, or "that time didn't exist":
-
-```python
-from zoneinfo import ZoneInfo
-from chronologia import resolve_wall_clock
-
-ny = ZoneInfo("America/New_York")
-resolve_wall_clock(2024, 11, 3, 1, 30, ny)   # → two instants (the fold)
-resolve_wall_clock(2024, 3, 10, 2, 30, ny)   # → NeverExisted (the gap)
-```
-
-"This time tomorrow" across one of those edges is really a 23- or
-25-hour day. `civil_add` keeps the wall clock and tells you the true
-duration; plain `+ timedelta` stays exactly 24 hours. You choose which
-question you're asking — the library never silently picks for you.
-
-There's more where that came from: leap seconds (the reason precise
-systems know UTC and TAI drift apart — 37 seconds so far), and even
-local *sun* time for history before timezones existed, when noon in
-every town was simply when the sun was overhead.
-
-Give it a date and a place and it computes the actual sunrise, sunset,
-solar noon, and the civil/nautical/astronomical twilights (the NOAA
-algorithm, accurate to about a minute). And it stays honest at the
-poles: north of the Arctic Circle in midsummer the sun never rises or
-sets, so instead of inventing a time you get a typed `NoSunEvent`:
-
-```python
-from chronologia import sun_events, NoSunEvent, AstroDate
-
-midsummer = sun_events(AstroDate(2024, 6, 21), 78.0, 15.0)  # Svalbard
-print(isinstance(midsummer.sunrise, NoSunEvent), midsummer.sunrise.kind)
-# True polar_day
-```
-
-From those solar events it also builds the **unequal hours** the pre-clock
-world lived by — `temporal_hour_span` divides daylight into a fixed count, so a
-Roman daytime hour stretches to ~76 minutes at Rome in June and shrinks to ~46
-in December — plus the sunset-anchored Italian and sunrise-anchored Babylonian
-clock counts (`convention_time`).
-On the same machinery it computes Islamic prayer times as *named
-conventions* — `mwl`, `isna`, `egyptian_gas`, `umm_al_qura_makkah`,
-`karachi` — each a published school with its own Fajr/Isha depression
-angles (and a per-call Shafi'i/Hanafi Asr factor); the library computes
-what the angles imply and never rules on which school is right, returning
-a typed `NoSunEvent` for the white-night latitudes where a depression
-angle is never reached.
-
-### Deep time, honestly
-
-"66 million years ago" and "66.043 million years ago" are different
-claims — the first is rounded to the nearest million, the second is
-precise to the thousand. The library reads precision from how you wrote
-the number, and the span's width says exactly what you claimed:
-
-```python
-from chronologia import resolve_bp
-resolve_bp("66", "Ma")       # a span one million years wide
-resolve_bp("66.043", "Ma")   # a span one thousand years wide
-```
-
-Radiocarbon dates get the same honesty: a "3500 BP" radiocarbon age is
-**not** 3500 calendar years (radiocarbon clocks run uneven);
-`calibrate_c14(3500)` converts through the published calibration curve
-and answers with a span around 1900 BC, labelled `reconstructed`.
-
-### Emperors, popes, and consuls
-
-"Reiwa 7" (Japan's current era), "the consulship of Lentulus and
-Marcellus" (how Romans named their years), "Year 5 of Ramesses II" — in
-**three competing scholarly chronologies, 25 years apart**, and the
-library gives you all three rather than pretending Egyptologists agree.
-Even the full Roman date grammar works: *ante diem III Kalendas
-Apriles* is March 30th, counted the way Romans counted — inclusively,
-backwards from the Kalends. The everyday Kalends/Nones/Ides now read in
-ten living languages (es, pt, ca, gl, it, fr, ast, ro, de, nl), not only
-Latin/English, and compose with ordinary "N days before …" phrasing for
-free: `extract_timespan("os idos de março", "pt", anchor)` and
-`extract_timespan("3 dias antes das calendas de abril", "pt", anchor)`
-both resolve, the second landing on March 29th.
+Under the hood, one trick powers everything: every day that has ever
+existed gets a plain number — its **Julian Day Number** — so *any* of the
+seventeen built-in calendars can talk to any other by meeting at the
+number in the middle. See [docs/getting-started.md](docs/getting-started.md)
+for the three ideas the whole library is built from.
 
 ## What it will NOT do (on purpose)
 
@@ -284,6 +98,51 @@ pretend otherwise:
 
 One rule covers all of it: **a span's width and basis always tell the
 truth about what is knowable.**
+
+## Stories the library can tell
+
+Each of these is a full worked guide in [`docs/`](docs/) — here is just
+the hook and where to read it.
+
+- **The ten days that never happened.** In October 1582 Pope Gregory
+  deleted ten days; Britain lost eleven in 1752, Russia thirteen in 1918
+  (which is why the "October" Revolution fell in November), and Sweden
+  needed a one-off **February 30th** in 1712. Ask for a deleted day and
+  you get a typed `NeverExisted`, not a crash → [docs/timelines.md](docs/timelines.md).
+- **Clocks that lie twice a year.** When clocks "fall back", 1:30 AM
+  happens twice; when they "spring forward", 2:30 AM never happens at
+  all. Resolve a wall-clock time and get the honest answer — both
+  instants, or "that time didn't exist" → [docs/timezones.md](docs/timezones.md).
+- **The sun, the sundial, and the pre-clock day.** Real sunrise, sunset,
+  solar noon and the three twilights (NOAA algorithm, ~1 minute), local
+  *mean* time from before timezones, the unequal hours the Roman world
+  lived by, Islamic prayer times as named conventions, moon phases and
+  the astronomical seasons — plus leap seconds, the reconciliation of
+  atomic and astronomical time → [docs/sun-moon-and-seasons.md](docs/sun-moon-and-seasons.md).
+- **Deep time, honestly.** "66 million years ago" and "66.043 million"
+  are different *claims*, and the span's width says which you made;
+  radiocarbon ages calibrate through the published curve →
+  [docs/deep-time.md](docs/deep-time.md).
+- **Emperors, popes, and consuls.** "Reiwa 7", "the consulship of
+  Lentulus and Marcellus", "Year 5 of Ramesses II" in three competing
+  scholarly chronologies — plus the full Roman Kalends/Nones/Ides
+  grammar in ten living languages → [docs/eras-and-rulers.md](docs/eras-and-rulers.md).
+- **Beyond Earth.** Mars Sol Date, the Darian calendar, rover
+  mission-sols, a span-valued Big Bang epoch and Sagan's Cosmic Calendar
+  → [docs/mars-and-beyond.md](docs/mars-and-beyond.md).
+
+Even a plain word like **"morning"** is a span — and a *convention* a
+culture agrees on, not a fact about the sun. English splits afternoon
+from evening at 18:00; Spanish runs one *tarde* through to 20:00:
+
+```python
+from datetime import date
+from chronologia import daypart_span
+
+tuesday = date(2027, 6, 8)
+print(daypart_span(tuesday, "afternoon").end.isoformat())            # 2027-06-08T18:00:00
+print(daypart_span(tuesday, "tarde", region="es").end.isoformat())  # 2027-06-08T20:00:00
+```
 
 ## Command line
 
@@ -324,17 +183,16 @@ self-checking scripts (`python examples/01_extract_basics.py`).
 |---|---|
 | **Who is this for?** | [**docs/use-cases.md**](docs/use-cases.md) — worked programs for archivists, historians, archaeologists, faith communities, astronomers, engineers, and voice assistants — start here |
 | Reading human dates | [**docs/extraction.md**](docs/extraction.md) — `extract_timespan` turns a phrase into a span; how the per-language vocabulary works and how to add a language |
-| 17 calendars | Gregorian, Julian, Revised Julian, Hebrew, Islamic (arithmetic + the Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican (arithmetic + historical equinox), Bahá'í (arithmetic + true equinox), ISO week |
-| Timelines | 13 jurisdictions' calendar reforms and dateline hops — Rome, Britain, Sweden, Russia, Greece, Japan, plus the days Samoa, the Philippines and Alaska deleted or re-lived at the International Date Line; and `zone_timeline`, which reads any `zoneinfo` zone as a timeline (a DST fall-back *is* a `REPEAT`, a spring-forward a `SKIP`) |
-| Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one |
-| Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present |
-| Regnal years | Japanese nengō, Roman consuls, Egyptian chronologies |
-| Recurrence | [RFC 5545 RRULE](docs/recurrence.md) — "every third Tuesday", Labor Day, Friday the 13th — parsed and expanded as pure JDN arithmetic into day-wide `DateSpan`s, unbounded in either direction of the year axis |
-| Civil holidays | [public/regional/municipal holidays](docs/civil-holidays.md) as computed rules (fixed, nth-weekday, Easter-offset, another-calendar date, per-year decree) with observed-shift policies — Portugal at municipal depth (~300 concelhos), US federal, Saudi Arabia via the Umm al-Qura table; honest `tabulated` basis and honest omission outside a table's range |
-| Time itself | [timezones](docs/timezones.md) with honest fall-back/spring-forward handling, leap seconds (UTC/TAI/GPS), historical local mean time, the French Revolution's 10-hour clock |
-| Moon phases | mean-lunation arithmetic (new/first-quarter/full/last-quarter) as a `DateSpan` with a measured accuracy bound and honest reconstructed/predicted basis |
-| Beyond Earth | [Mars and beyond](docs/mars-and-beyond.md) — Mars Sol Date, Coordinated Mars Time, the Darian calendar and rover mission-sol counts, all riding one generalized `TimeAxis`; the natural lunar cycle and the withheld Coordinated Lunar Time; and cosmology — a span-valued Big Bang epoch, redshift→lookback time as Planck-vs-SH0ES variants (the Hubble tension), and Sagan's Cosmic Calendar |
-| How does it compare? | [**docs/benchmarks.md**](docs/benchmarks.md) — a standing differential benchmark against `dateparser` and `dateutil` on the repo's own hand-derived natural-language corpora, honestly reported (`benchmark/run.py` / `benchmark/SCOREBOARD.md`) |
+| 17 calendars | Gregorian, Julian, Hebrew, Islamic (arithmetic + Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican, Bahá'í, ISO week, and more — [docs/calendars.md](docs/calendars.md) |
+| Timelines | 13 jurisdictions' calendar reforms and dateline hops — Rome, Britain, Sweden, Russia, Greece, Japan, plus the days Samoa, the Philippines and Alaska deleted or re-lived at the International Date Line — [docs/timelines.md](docs/timelines.md) |
+| Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one — [docs/deep-time.md](docs/deep-time.md) |
+| Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present; regnal years (Japanese nengō, Roman consuls, Egyptian chronologies) — [docs/eras-and-rulers.md](docs/eras-and-rulers.md) |
+| Recurrence | [RFC 5545 RRULE](docs/recurrence.md) — "every third Tuesday", Labor Day, Friday the 13th — parsed and expanded as pure JDN arithmetic into day-wide `DateSpan`s |
+| Civil holidays | [public/regional/municipal holidays](docs/civil-holidays.md) as computed rules with observed-shift policies — Portugal at municipal depth (~300 concelhos), US federal, Saudi Arabia |
+| Time, sun & sky | [sun, moon & seasons](docs/sun-moon-and-seasons.md) — sunrise/sunset/twilights, unequal hours, prayer times, moon phases, solstices/equinoxes, local mean time, leap seconds, and the French Revolution's 10-hour clock |
+| Timezones | [timezones](docs/timezones.md) — reading any `zoneinfo` zone as a timeline with honest fall-back/spring-forward handling |
+| Beyond Earth | [Mars and beyond](docs/mars-and-beyond.md) — Mars Sol Date, Coordinated Mars Time, the Darian calendar, and cosmology (a span-valued Big Bang epoch, the Hubble tension, Sagan's Cosmic Calendar) |
+| How does it compare? | [**docs/benchmarks.md**](docs/benchmarks.md) — a standing differential benchmark against `dateparser` and `dateutil` on the repo's own hand-derived corpora |
 
 Every algorithm and every number in the data files is transcribed from
 a cited published source — citations sit in the module docstrings and
@@ -351,19 +209,18 @@ Where this one *reads and reckons* dates, its neighbours handle the pieces
 around them:
 
 - **[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser)** —
-  the voice-facing layer for spoken-language assistants. It builds on
-  chronologia and adds the glue an assistant needs: *saying* a date back out
-  loud, session handling, and the legacy per-language helpers. If you need to
-  speak a date rather than read one, start there.
+  the voice-facing layer. It builds on chronologia and adds the glue an
+  assistant needs: *saying* a date back out loud, session handling, and the
+  legacy per-language helpers. If you need to speak a date rather than read
+  one, start there.
 - **[ovos-number-parser](https://github.com/OpenVoiceOS/ovos-number-parser)** —
-  the same idea for numbers: turns spelled-out numbers, ordinals, and fractions
-  into digits and back across many languages. chronologia uses it to read
-  spelled numbers inside a date phrase.
+  the same idea for numbers: spelled-out numbers, ordinals and fractions to
+  digits and back, across many languages. chronologia uses it to read spelled
+  numbers inside a date phrase.
 - **[ovos-spec-tools](https://github.com/OpenVoiceOS/ovos-spec-tools)** — the
-  reference implementation of the OVOS formal specifications: a sentence
-  template expander, locale resource loader, dialog renderer, language matcher,
-  and locale linter. chronologia loads its per-language vocabulary files
-  through it.
+  reference implementation of the OVOS formal specifications (template
+  expander, locale loader, dialog renderer, language matcher, linter).
+  chronologia loads its per-language vocabulary files through it.
 
 ## License
 
