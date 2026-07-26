@@ -29,6 +29,7 @@ from typing import Callable, Dict, FrozenSet, Tuple
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
+from chronologia.extract.numfold_ordinals import with_ordinals
 
 
 def _make_fold(lang: str, extra_values: Dict[str, float] | None = None,
@@ -89,6 +90,13 @@ fold_el = _make_fold("el", _EL_FEM_HOURS)
 # "két" is the attributive form of 2 (the pronounce side emits "kettő"), so
 # it is supplied explicitly for the "két hét múlva" counting slot.
 fold_hu = _make_fold("hu", {"két": 2}, exclude=frozenset({"hét"}))
+# Hungarian spells the day-of-month with a single-token ordinal that the
+# cardinal back-end does not read ("tizenötödike április" = the 15th of April);
+# ``pronounce_ordinal_hu`` emits every 1..31 as one word (tizenegyedik,
+# huszonegyedik ...), so ``with_ordinals`` derives the whole range from the
+# model.  "hét" (week/seven) is never an ordinal surface, so the exclude above
+# is unaffected.  Magyar helyesírás (Akadémiai): sorszámnevek.
+fold_hu = with_ordinals(fold_hu, "hu")
 
 
 # -- Finnish: genitive numerals used in the "N <unit> kuluttua/sitten" slot -
@@ -102,6 +110,13 @@ _FI_GENITIVE = {
     "puolen": 0.5, "puolentoista": 1.5,
 }
 fold_fi = _make_fold("fi", _FI_GENITIVE)
+# Finnish spells the day-of-month with a single-token ordinal the cardinal
+# back-end does not read in date position ("viidestoista huhtikuuta" = the 15th
+# of April).  ``pronounce_ordinal_fi`` emits every 1..31 as one compound word
+# (ensimmäinen, viidestoista, kahdeskymmenesensimmäinen ...), so ``with_ordinals``
+# derives the whole range from the model.  Iso suomen kielioppi (VISK) §770:
+# järjestysluvut.
+fold_fi = with_ordinals(fold_fi, "fi")
 
 
 # -- Estonian: genitive numerals used in the "N <unit> pärast/tagasi" slot --
@@ -111,6 +126,13 @@ _ET_GENITIVE = {
     "poole": 0.5, "pooleteist": 1.5,
 }
 fold_et = _make_fold("et", _ET_GENITIVE)
+# Estonian spells the day-of-month with an ordinal the cardinal back-end does
+# not read ("viieteistkümnes aprill" = the 15th of April).  ``pronounce_ordinal_et``
+# emits 1..20 and 30 as one word (esimene, viieteistkümnes, kolmekümnes) but the
+# compound tens 21..29/31 as two words ("kahekümne esimene"), which the
+# single-token ordinal pre-pass cannot fold; those remain a documented deferral.
+# Eesti keele käsiraamat (EKI): järgarvsõnad.
+fold_et = with_ordinals(fold_et, "et")
 
 
 # -- Basque: date words carry the case, not a preposition -------------------

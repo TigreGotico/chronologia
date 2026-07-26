@@ -750,10 +750,24 @@ fold_nl = _lazy_germanic_fold(
 fold_sv = _lazy_germanic_fold(
     "ovos_number_parser.numbers_sv", "extract_number_sv",
     {"halv", "kvart", "miljon", "miljoner", "miljard", "miljarder", "tusen"})
+# Swedish spells the day-of-month with a single-token ordinal that
+# ``extract_number_sv`` does not read (it returns False for "femtonde",
+# "tjugotredje" ...), so the Germanic value-probe fold leaves it stranded and
+# the whole month is returned.  ``pronounce_ordinal_sv`` DOES emit every 1..31
+# as one word (första, femtonde, tjugoförsta, tjugotredje, trettioförsta ...),
+# so chronologia owns the ordinal locally by inverting that pronouncer.  SAOL
+# (Svenska Akademiens ordlista): ordningstal.
+fold_sv = _with_ordinals(fold_sv, "sv")
 fold_da = _lazy_germanic_fold(
     "ovos_number_parser.numbers_da", "extract_number_da",
     {"halv", "halvdel", "halvdelen", "kvart", "million", "millioner",
      "milliard", "milliarder", "tusind"})
+# Danish: ``extract_number_da`` returns False for the spelled ordinals
+# ("femtende", "enogtyvende" ...) -- the release-blocked ovos-number-parser
+# path -- so chronologia owns them by inverting ``pronounce_ordinal_da``, which
+# emits every 1..31 as one word (første, femtende, enogtyvende, treogtyvende,
+# enogtredivte ...).  Retskrivningsordbogen (Dansk Sprognævn): ordenstal.
+fold_da = _with_ordinals(fold_da, "da")
 fold_nb = _lazy_germanic_fold(
     "ovos_number_parser.numbers_nb", "extract_number_nb",
     {"halv", "halvdel", "halvdelen", "kvart", "million", "millioner",
