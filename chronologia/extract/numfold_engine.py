@@ -28,7 +28,22 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any, Callable, Optional, Tuple
 
+import re
+
 from chronologia.extract.model import Token
+from chronologia.extract import tokenizer as _tok
+
+# The whole-literal shapes the tokenizer keeps as one non-number token: an ISO
+# week designator, an ISO calendar literal, a numeric/dotted civil date and a
+# clock.  A spelled-number fold must never re-read a number out of one of
+# these -- its back-end will happily pull "15" out of the dotted date
+# "15. 6. 2020" (the spaced civil form) or "2024" out of "2024/03", handing the
+# caller a number the tokenizer deliberately declined to expose and stranding
+# the rest of the literal.  Bare digit runs are already refused below; this
+# covers the separator-bearing literals, which are not ``.isdigit()``.
+_LITERAL = re.compile(
+    "|".join(f"(?:{p})" for p in (_tok._ISOWEEK, _tok._ISO,
+                                  _tok._NUMDATE_ANY, _tok._CLOCK)))
 
 
 def reindex(tokens) -> Tuple[Token, ...]:
@@ -83,6 +98,12 @@ def make_fold(grammar: NumberGrammar
         stands.
         """
         if not tok.is_number and tok.text.isdigit():
+            return False
+        # a whole date/clock literal the tokenizer bound (the spaced dotted
+        # civil date "15. 6. 2020", an ISO literal, a clock): the back-end can
+        # read a number out of its first component, but the tokenizer chose to
+        # keep it whole, and that verdict stands here too.
+        if not tok.is_number and _LITERAL.fullmatch(tok.text):
             return False
         return spelled(tok)
 

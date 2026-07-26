@@ -787,7 +787,11 @@ class Resolver:
         day 0, day-in-month impossible like 31/02) resolves to None rather than
         being fabricated -- ``AstroDate`` raises ``ValueError`` for the bad day.
         """
-        a, b, y = re.split(r"[/.-]", match.slots["NUMDATE"].text)
+        # the dotted civil date may be written with a space after each dot
+        # ("15. 6. 2020"); strip the separator's surrounding whitespace so each
+        # component is bare digits and the two-digit year pivot still measures
+        # length correctly.
+        a, b, y = re.split(r"\s*[/.-]\s*", match.slots["NUMDATE"].text.strip())
         year = _pivot_year_str(y)
         first, second = int(a), int(b)
         if self.spec.conventions.dmy:
