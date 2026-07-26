@@ -1,0 +1,7 @@
+# Kabyle time-of-day words. Surfaces attested by native speaker
+# athmanemokraoui (TigreGotico/chronologia#265, collaborator).
+# Band boundaries fall back to chronologia's default day-period convention
+# (Kabyle-specific clock boundaries were not provided).
+# tameddit = (late) afternoon / evening.
+tameddit
+tameddit-a

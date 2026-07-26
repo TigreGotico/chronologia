@@ -1,0 +1,9 @@
+# Kabyle time-of-day words. Surfaces attested by native speaker
+# athmanemokraoui (TigreGotico/chronologia#265, collaborator).
+# Band boundaries fall back to chronologia's default day-period convention
+# (Kabyle-specific clock boundaries were not provided).
+# ṣṣbeḥ / taṣebḥit = morning; -a = proximal deictic ("this morning").
+ṣṣbeḥ
+taṣebḥit
+ṣṣbeḥ-a
+taṣebḥit-a
