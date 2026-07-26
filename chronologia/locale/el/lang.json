@@ -155,7 +155,10 @@
   },
   "hook": "chronologia.extract.numfold_agglutinative:fold_el",
   "base_grammar": {
-    "marker_position": "post",
+    "marker_position": {
+      "weekday_ref": "post",
+      "rel_period": "post"
+    },
     "override": {
       "rel_period": [
         "article? REL_MARKER article? UNIT"

@@ -119,6 +119,9 @@
   },
   "base_grammar": {
     "season_year_order": "year_first",
-    "marker_position": "post"
+    "marker_position": {
+      "weekday_ref": "post",
+      "rel_period": "post"
+    }
   }
 }
