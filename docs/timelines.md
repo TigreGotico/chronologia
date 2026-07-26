@@ -86,7 +86,7 @@ Sometimes a reform runs the *other* way and a label happens **twice**. The
 cleanest everyday version of this is the autumn clock change: when the clocks
 "fall back", 1:30 AM comes around a second time, so "1:30 AM" that night names
 two different instants an hour apart. (Time zones handle this case; see
-[time-and-zones.md](time-and-zones.md), where `resolve_wall_clock` returns the
+[timezones.md](timezones.md), where `resolve_wall_clock` returns the
 pair of instants for exactly this reason.) The same shape appears in calendar
 history — for instance when a territory changes which side of the
 International Date Line it sits on, and lives one calendar date over again.

@@ -291,7 +291,7 @@ movable feasts that follow Easter) is in
 including exactly where the Islamic and Chinese calendars stop rather than drift
 — are in [calendars.md](calendars.md). Prayer conventions, the unequal hours of
 the pre-clock world, and sunrise/sunset are in
-[time-and-zones.md](time-and-zones.md).
+[sun-moon-and-seasons.md](sun-moon-and-seasons.md).
 
 ---
 
@@ -357,7 +357,7 @@ time. That is exactly the habit of mind an astronomy class should leave with.
 
 **What else you'll want.** Equinoxes, solstices, solar terms, moon phases with
 their measured accuracy bounds, and sunrise/sunset with twilight are in
-[time-and-zones.md](time-and-zones.md). Mars Sol Date, Coordinated Mars Time, the
+[sun-moon-and-seasons.md](sun-moon-and-seasons.md). Mars Sol Date, Coordinated Mars Time, the
 Darian calendar, mission-sol counts, and the cosmology (redshift → lookback time,
 the Hubble tension, the Cosmic Calendar) are in
 [mars-and-beyond.md](mars-and-beyond.md).
@@ -432,7 +432,7 @@ January, because the week calendar knows its own rule.
 
 **What else you'll want.** Timezone folds and gaps, `civil_add` versus raw
 `timedelta`, the full leap-second / UTC / TAI / GPS story, and historical local
-mean time are all in [time-and-zones.md](time-and-zones.md) and
+mean time are all in [sun-moon-and-seasons.md](sun-moon-and-seasons.md) and
 [timezones.md](timezones.md). Reading any `zoneinfo` zone as a discontinuity
 timeline (`zone_timeline`) is in [timelines.md](timelines.md). Span algebra —
 `overlaps`, `intersect`, `union`, `gap`, `contains` — is the toolkit under all of

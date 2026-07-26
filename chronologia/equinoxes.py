@@ -80,7 +80,7 @@ deliberately the *alternative* to the meteorological seasons used elsewhere
 (fixed three-month blocks starting on the first of March/June/September/
 December, convenient for climate statistics).  Both conventions are in common
 use; the astronomical one ties each season to a real solar event, the
-meteorological one to whole calendar months.  See ``docs/time-and-zones.md``.
+meteorological one to whole calendar months.  See ``docs/sun-moon-and-seasons.md``.
 """
 from __future__ import annotations
 
@@ -309,7 +309,7 @@ def astronomical_season_span(year: int, season: str,
     This is the **astronomical** season convention, the alternative to the
     **meteorological** seasons (fixed three-month blocks from the first of
     March/June/September/December) used for climate statistics -- both are in
-    common use; see ``docs/time-and-zones.md``.
+    common use; see ``docs/sun-moon-and-seasons.md``.
 
     >>> from chronologia.equinoxes import astronomical_season_span
     >>> sp = astronomical_season_span(2024, "spring")

@@ -6,56 +6,62 @@ Ramadan 1446", "next winter", "66 million years ago"), and it *computes* across
 every calendar and system of reckoning humanity has used — offline, without
 guessing, and honest about what cannot be known.
 
-This page is a map. You do not have to read the guides in order, but the order
-below is the gentlest path from "never seen it" to "building on it". A few terms
-recur everywhere and are worth meeting once: a **span** is a stretch of time
-(a start and an end), not an instant; every span carries a one-word **basis**
-saying how trustworthy it is (`exact`, `tabulated`, `reconstructed`,
+**Start here:** if you are new, read [use-cases.md](use-cases.md) to see whether
+the library is for you, then [getting-started.md](getting-started.md) for the
+three ideas everything is built from. Everything else you can read on demand.
+
+Three terms recur everywhere and are worth meeting once: a **span** is a stretch
+of time (a start and an end), not an instant; every span carries a one-word
+**basis** saying how trustworthy it is (`exact`, `tabulated`, `reconstructed`,
 `predicted`); and the whole engine converts through the **Julian Day Number
 (JDN)** — a single integer naming each day on an endless number line.
 
-## Suggested reading order
+## The guides, grouped
 
-### 1. Start here
+### Orientation
 | Guide | What it gives you |
 |---|---|
-| [use-cases.md](use-cases.md) | Worked programs for archivists, historians, archaeologists, faith communities, astronomers, engineers, and voice assistants. If you are not sure the library is for you, read this first. |
-| [getting-started.md](getting-started.md) | The three ideas the whole library is built from — the JDN number line, the `AstroDate` point, and the `DateSpan` interval — taught from zero. |
+| [use-cases.md](use-cases.md) | Worked programs for archivists, historians, archaeologists, faith communities, astronomers, engineers, and voice assistants. The best first read. |
+| [getting-started.md](getting-started.md) | The three primitives — the JDN number line, the `AstroDate` point, and the `DateSpan` interval — taught from zero. |
 
-### 2. Reading dates written by humans
+### Reading dates written by humans
 | Guide | What it gives you |
 |---|---|
-| [extraction.md](extraction.md) | `extract_timespan` — turn a phrase into the exact span it means; how the per-language vocabulary works, and how to add a language. |
-| [adding-a-language.md](adding-a-language.md) | A friendly, step-by-step guide to teaching chronologia a new language — written so a bilingual speaker who is not a programmer can follow it. Mostly editing small word-list files. |
+| [extraction.md](extraction.md) | `extract_timespan` — turn a phrase into the exact span it means; how the per-language vocabulary works. |
+| [adding-a-language.md](adding-a-language.md) | A step-by-step guide to teaching chronologia a new language, written so a bilingual non-programmer can follow it. |
 | [events.md](events.md) | Pulling a titled event (summary + time) out of a sentence and exporting it as an `.ics` calendar file. |
 | [recurrence.md](recurrence.md) | Repeating rules ("every third Tuesday") via the RFC 5545 RRULE grammar, expanded to concrete dates. |
 | [edtf.md](edtf.md) | Extended Date/Time Format — cataloguing-style approximate and uncertain dates ("probably the 1890s"). |
 
-### 3. Calendars and how years are counted
+### Calendars & eras
 | Guide | What it gives you |
 |---|---|
 | [calendars.md](calendars.md) | All 17 built-in calendars in plain language, how to convert in and out, and how far each can be trusted. |
-| [eras-and-rulers.md](eras-and-rulers.md) | Year-numbering conventions (Anno Mundi, Hijri, Holocene…), regnal years (Japanese nengō, Roman consuls), and full Roman date grammar. |
-| [timelines.md](timelines.md) | Calendar reforms and date-line hops: the ten days deleted in 1582, Sweden's February 30th, the October Revolution. |
+| [eras-and-rulers.md](eras-and-rulers.md) | Year-numbering conventions (Anno Mundi, Hijri, Holocene…), regnal years (Japanese nengō, Roman consuls, Egyptian chronologies), and the full Roman date grammar. |
 
-### 4. Deep time and the sky
+### Time, sun & sky
+| Guide | What it gives you |
+|---|---|
+| [sun-moon-and-seasons.md](sun-moon-and-seasons.md) | Natural time: sunrise/sunset and the twilights, unequal hours, prayer times, moon phases, solstices/equinoxes and seasons, local mean time, the decimal clock, dayparts, and leap seconds. |
+
+### Timezones & timelines
+| Guide | What it gives you |
+|---|---|
+| [timezones.md](timezones.md) | The political clock: daylight-saving folds and gaps, wall-clock arithmetic, and reading any `zoneinfo` zone as a timeline of discontinuities. |
+| [timelines.md](timelines.md) | Calendar reforms and date-line hops: the ten days deleted in 1582, Sweden's February 30th, the October Revolution, Samoa's lost Friday. |
+
+### Deep time & cosmology
 | Guide | What it gives you |
 |---|---|
 | [deep-time.md](deep-time.md) | Geological and archaeological periods, "Before Present" ages, and radiocarbon calibration — honest to the megayear. |
-| [mars-and-beyond.md](mars-and-beyond.md) | Mars Sol Date, the Darian calendar, lunar cycles, and a span-valued Big Bang epoch. |
+| [mars-and-beyond.md](mars-and-beyond.md) | Mars Sol Date, the Darian calendar, lunar cycles, a span-valued Big Bang epoch, and Sagan's Cosmic Calendar. |
 
-### 5. Time inside a day
-| Guide | What it gives you |
-|---|---|
-| [time-and-zones.md](time-and-zones.md) | Daylight-saving folds and gaps, leap seconds, historical local mean solar time, pre-clock unequal hours. |
-| [timezones.md](timezones.md) | How the library reads any `zoneinfo` zone as a timeline of discontinuities. |
-
-### 6. Holidays
+### Holidays
 | Guide | What it gives you |
 |---|---|
 | [civil-holidays.md](civil-holidays.md) | Public, regional, and municipal holidays computed from published rules, per jurisdiction, with honest `tabulated` basis and honest omission outside a table's range. |
 
-### 7. Under the hood
+### Reference & meta
 | Guide | What it gives you |
 |---|---|
 | [design.md](design.md) | The developer's tour: the JDN hub, the type system, and — importantly — what the library refuses to do and why. |
