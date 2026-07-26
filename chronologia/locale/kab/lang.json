@@ -33,7 +33,11 @@
         "ISO"
       ]
     },
-    "iso_week_date": {"orders": ["ISOWEEK"]},
+    "iso_week_date": {
+      "orders": [
+        "ISOWEEK"
+      ]
+    },
     "numeric_date": {
       "orders": [
         "NUMDATE"
@@ -55,13 +59,19 @@
         "YEAR HOLIDAY",
         "HOLIDAY"
       ]
+    },
+    "weekend_ref": {
+      "orders": [
+        "article? WEEKEND"
+      ]
     }
   },
   "conventions": {
     "week_start": "monday",
     "dmy": true,
     "hemisphere": null,
-    "prefer_future": true
+    "prefer_future": true,
+    "weekend_start": 4
   },
   "guards": {
     "bare_year_min_digits": 4
