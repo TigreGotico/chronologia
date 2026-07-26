@@ -20,12 +20,6 @@
         "WEEKEND"
       ]
     },
-    "season_ref": {
-      "orders": [
-        "SEASON REL_MARKER",
-        "SEASON YEAR?"
-      ]
-    },
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
@@ -122,6 +116,11 @@
     "marker_position": "post",
     "override": {
       "rel_period": []
+    },
+    "extend": {
+      "season_ref": [
+        "SEASON REL_MARKER"
+      ]
     }
   }
 }

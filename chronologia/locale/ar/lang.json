@@ -38,13 +38,6 @@
       ],
       "prefer_future": true
     },
-    "season_ref": {
-      "orders": [
-        "SEASON of YEAR",
-        "REL_MARKER SEASON",
-        "SEASON YEAR?"
-      ]
-    },
     "clock_time": {
       "orders": [
         "at? CLOCK MERIDIEM? ZONE?",

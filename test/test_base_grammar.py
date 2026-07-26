@@ -19,6 +19,7 @@ import pytest
 from chronologia.extract import load_lang_spec
 from chronologia.extract.base_grammar import (BASE_GRAMMAR,
                                                  MARKER_POSTFIX_ORDERS,
+                                                 SEASON_YEAR_FIRST_ORDERS,
                                                  TotalityError,
                                                  assert_additive_superset,
                                                  assert_totality, merge_orders)
@@ -169,6 +170,117 @@ DEV_REL_PERIOD = {
     'tr': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
     'uk': ['REL_MARKER UNIT'],
 }
+
+
+# --- the pre-refactor (dev) season_ref orders, per locale -------------------
+# Frozen snapshot of what every locale declared inline on `dev` BEFORE
+# season_ref inherited the base grammar.  38/40 locales had it (``fa`` and
+# ``kab`` ship no season vocabulary, so they gain the -- unreachable -- base
+# orders for free).  The shared base ("REL_MARKER SEASON" prefix, connector-word
+# "article? SEASON of YEAR", trailing "article? SEASON YEAR?") plus, where the
+# locale sets ``season_year_order: year_first``, the "YEAR SEASON" order, and --
+# for the two postposing locales -- an ``extend``ed "SEASON REL_MARKER", must
+# cover every one of these dev orders.
+DEV_SEASON_REF = {
+    'an': ['article? SEASON of YEAR', 'REL_MARKER SEASON', 'article? SEASON YEAR?'],
+    'ar': ['SEASON of YEAR', 'REL_MARKER SEASON', 'SEASON YEAR?'],
+    'ast': ['SEASON of YEAR', 'REL_MARKER SEASON', 'SEASON YEAR?'],
+    'az': ['REL_MARKER SEASON', 'SEASON YEAR?', 'YEAR SEASON'],
+    'bg': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'ca': ['article? SEASON of YEAR', 'REL_MARKER SEASON', 'article? SEASON YEAR?'],
+    'cs': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'da': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'de': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'el': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'en': ['SEASON of YEAR', 'REL_MARKER SEASON', 'SEASON YEAR?'],
+    'es': ['article? SEASON of YEAR', 'REL_MARKER SEASON', 'article? SEASON YEAR?'],
+    'et': ['REL_MARKER SEASON', 'SEASON YEAR?'],
+    'eu': ['REL_MARKER SEASON', 'YEAR SEASON', 'SEASON YEAR?'],
+    'fr': ['SEASON of YEAR', 'REL_MARKER SEASON', 'SEASON YEAR?'],
+    'fy': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'gl': ['article? SEASON of YEAR', 'REL_MARKER SEASON', 'article? SEASON YEAR?'],
+    'he': ['SEASON of YEAR', 'REL_MARKER SEASON', 'SEASON YEAR?'],
+    'hr': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'hu': ['REL_MARKER SEASON', 'SEASON of YEAR', 'YEAR SEASON', 'SEASON YEAR?'],
+    'id': ['SEASON REL_MARKER', 'SEASON YEAR?'],
+    'it': ['SEASON of YEAR', 'REL_MARKER SEASON', 'SEASON YEAR?'],
+    'ms': ['SEASON REL_MARKER', 'SEASON YEAR?'],
+    'mwl': ['article? SEASON of YEAR', 'REL_MARKER SEASON', 'article? SEASON YEAR?'],
+    'nb': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'nl': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'nn': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'oc': ['SEASON of YEAR', 'REL_MARKER SEASON', 'SEASON YEAR?'],
+    'pl': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'pt': ['article? SEASON of YEAR', 'REL_MARKER SEASON', 'article? SEASON YEAR?'],
+    'ro': ['SEASON of YEAR', 'REL_MARKER SEASON', 'SEASON YEAR?'],
+    'ru': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'sk': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'sl': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'sv': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+    'tr': ['REL_MARKER SEASON', 'SEASON YEAR?', 'YEAR SEASON'],
+    'uk': ['REL_MARKER SEASON', 'SEASON of YEAR', 'SEASON YEAR?'],
+}
+
+
+@pytest.mark.parametrize("lang", _LANGS)
+def test_additive_superset_season_ref(lang):
+    """Every dev season_ref order is still covered after the base merge.
+
+    Proves the shared base plus the ``season_year_order`` year-first order and
+    the two postposing locales' ``extend``ed "SEASON REL_MARKER" reproduce --
+    never drop -- what each locale parsed on dev.
+    """
+    dev = DEV_SEASON_REF.get(lang, [])
+    if not dev:
+        return                          # gained season_ref for free; nothing to lose
+    effective = _effective_orders(lang, "season_ref")
+    missing = assert_additive_superset(lang, dev, effective)
+    assert not missing, (
+        f"{lang}: base-grammar merge DROPPED season_ref orders "
+        f"(not additive): {missing}\n  effective={effective}")
+
+
+def test_season_year_order_gates_year_first_order():
+    """``season_year_order`` gates the YEAR-first season order independently.
+
+    ``season_first`` (default) keeps only the base SEASON-first orders;
+    ``year_first`` and ``both`` append season_ref's "YEAR SEASON" while
+    retaining the base season-first orders (so they coincide for season_ref,
+    whose base is always kept).
+    """
+    base = BASE_GRAMMAR["season_ref"]
+    year_first = SEASON_YEAR_FIRST_ORDERS["season_ref"]
+
+    default = merge_orders({}, {})["season_ref"]
+    assert default == base                              # no year-first by default
+    assert not any(o in default for o in year_first)
+
+    for order in ("year_first", "both"):
+        got = merge_orders({"base_grammar": {"season_year_order": order}},
+                           {})["season_ref"]
+        for o in base:                                  # season-first base kept
+            assert o in got
+        for o in year_first:                            # year-first appended
+            assert o in got
+    # year_first and both coincide for season_ref (base season-first always kept)
+    assert (merge_orders({"base_grammar": {"season_year_order": "year_first"}}, {})
+            == merge_orders({"base_grammar": {"season_year_order": "both"}}, {}))
+
+
+def test_season_ref_not_gated_by_marker_position():
+    """season_ref is intentionally NOT in the shared ``marker_position`` postfix.
+
+    Only ``id``/``ms`` postpose a season; 16 other ``marker_position: post``
+    locales postpose weekday/period but NOT season, so a shared postfix would
+    hijack their bare-"SEASON" parse (the #253/#254 collision class).  The
+    postposed season order is therefore a per-locale ``extend``, and setting
+    ``marker_position: post`` must NOT add any season_ref order.
+    """
+    assert "season_ref" not in MARKER_POSTFIX_ORDERS
+    pre = merge_orders({}, {})["season_ref"]
+    post = merge_orders({"base_grammar": {"marker_position": "post"}},
+                        {})["season_ref"]
+    assert post == pre                                  # marker_position is a no-op here
 
 
 @pytest.mark.parametrize("lang", _LANGS)

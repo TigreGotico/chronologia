@@ -107,13 +107,6 @@
         "consulship of ERANAME"
       ]
     },
-    "season_ref": {
-      "orders": [
-        "SEASON of YEAR",
-        "REL_MARKER SEASON",
-        "SEASON YEAR?"
-      ]
-    },
     "scoped_bc": {
       "orders": [
         "article? ORD SCOPE_UNIT bc"
