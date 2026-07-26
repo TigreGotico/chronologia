@@ -1,2 +1,9 @@
+# Turkish 3rd-person possessive suffix -(s)I marks the season in the
+# year-first construction ("2020 sonbaharı" == "2020's autumn"). "sonbahar"
+# ends in a consonant with a back unrounded last vowel (a), giving -ı:
+# sonbaharı. "güz" ends in a consonant with a front rounded last vowel (ü),
+# giving -ü: güzü. TDK, İyelik ekleri: https://sozluk.gov.tr
 sonbahar
+sonbaharı
 güz
+güzü
