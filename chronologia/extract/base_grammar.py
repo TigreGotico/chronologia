@@ -97,15 +97,15 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # base.  The year-first order ("YEAR SEASON" -- Turkic/Basque "2024 yaz")
     # lives in ``SEASON_YEAR_FIRST_ORDERS`` behind the ``season_year_order``
     # knob, which ≥2 locales share.  The postposed relative marker ("SEASON
-    # REL_MARKER" -- Indonesian/Malay "musim panas lalu") is deliberately NOT
-    # tied to the shared ``marker_position`` knob: only ``id`` and ``ms``
-    # postpose a season, while 16 other ``marker_position: post`` locales (all
-    # Romance -- they postpose weekday/period but NOT season) would have the
-    # trailing-marker order hijack their bare-"SEASON" parse ("el verano
-    # pasado" flipping from the deictic summer to "last summer") -- the
-    # collision class #253/#254 documented.  So the two postposing locales
-    # carry "SEASON REL_MARKER" as a per-locale ``extend`` instead, exactly as
-    # #255 kept ro/hu's asymmetric rel_period postposing off ``weekday_ref``.
+    # REL_MARKER" -- Romance "el verano pasado", Semitic "الصيف الماضي",
+    # Austronesian "musim panas lalu") lives in ``MARKER_POSTFIX_ORDERS`` gated
+    # behind ``marker_position``, exactly like ``weekday_ref``/``rel_period``.
+    # Season postposing is INDEPENDENT of weekday/period postposing -- Romance
+    # and Semitic postpose all three, but Greek/Turkic postpose weekday/period
+    # while keeping the season marker PREPOSED ("το περασμένο καλοκαίρι",
+    # "geçen yaz").  A locale therefore opts season postfix in or out on its
+    # own via the PER-CONSTRUCTION ``marker_position`` mapping; a scalar
+    # ``post`` (Romance/Semitic) enables it for every construction at once.
     "season_ref": [
         "article? SEASON of YEAR",
         "REL_MARKER SEASON",
@@ -136,6 +136,17 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
     "rel_period": [
         "article? UNIT REL_MARKER",
     ],
+    # "last/next <season>" postposed -- the marker TRAILS the season
+    # ("el verano pasado", "l'été dernier", "الصيف الماضي", "musim panas
+    # lalu").  Whether a locale postposes its season is INDEPENDENT of whether
+    # it postposes weekday/period: Romance and Semitic postpose all three,
+    # while Greek/Turkic postpose weekday/period but keep the season marker
+    # PREPOSED ("το περασμένο καλοκαίρι", "geçen yaz").  That split is exactly
+    # why ``marker_position`` is per-construction: a locale opts season postfix
+    # in (or out) on its own, without disturbing weekday/period.
+    "season_ref": [
+        "article? SEASON REL_MARKER",
+    ],
 }
 
 # ---------------------------------------------------------------------------
@@ -162,9 +173,18 @@ SEASON_YEAR_FIRST_ORDERS: Dict[str, List[str]] = {
 # and later PRs fold the repeated patterns into these enum knobs so 40 files
 # stop shipping the same duplicated order string.
 #
-#   marker_position : pre | post | both
-#       Whether a REL_MARKER may trail its slot ("lunes que viene").  ``both``
-#       auto-generates the postposed variant of every marker-bearing order.
+#   marker_position : pre | post | both  -- OR a per-construction mapping
+#                     {construction: pre|post|both}
+#       Whether a REL_MARKER may trail its slot ("el viernes pasado").  As a
+#       SCALAR it applies to every postfix-capable construction (weekday_ref,
+#       rel_period, season_ref) at once -- the Romance/Semitic case, which
+#       postpose all three.  As a MAPPING it sets the axis per construction
+#       (a construction absent from the mapping defaults to ``pre``) -- the
+#       Greek/Turkic case, which postpose weekday/period but keep the season
+#       marker preposed: ``{"weekday_ref": "post", "rel_period": "post"}``.
+#       ``both`` names the symmetry (base is retained) explicitly; ``post``
+#       reads as the locale's dominant idiom.  See ``MARKER_POSTFIX_ORDERS``
+#       for the per-construction postfix order sets.
 #   season_year_order : season_first | year_first | both
 #       Whether ``season_ref`` accepts a YEAR-first surface ("2024 yaz",
 #       "2024ko uda").  The base is SEASON-first ("summer 2024"), always kept;
@@ -233,6 +253,20 @@ def merge_orders(cfg: Mapping,
     marker_position = bg.get("marker_position", "pre")
     season_year_order = bg.get("season_year_order", "season_first")
 
+    def _marker_pos(name: str) -> str:
+        """Resolve the ``marker_position`` for one construction.
+
+        The knob is EITHER a scalar (``pre`` | ``post`` | ``both``) applied to
+        every postfix-capable construction, OR a per-construction mapping
+        ``{construction: pre|post|both}`` overriding individual constructions
+        (a construction absent from the mapping defaults to ``pre``).  A locale
+        that postposes weekday/period but not season (Greek, Turkic) sets the
+        mapping; a locale that postposes all of them keeps the scalar.
+        """
+        if isinstance(marker_position, Mapping):
+            return marker_position.get(name, "pre")
+        return marker_position
+
     out: Dict[str, List[str]] = {name: list(orders)
                                  for name, orders in inline_orders.items()}
     for name, base_orders in BASE_GRAMMAR.items():
@@ -248,7 +282,7 @@ def merge_orders(cfg: Mapping,
         # ``weekday_ref``; ``both`` names that symmetry explicitly while
         # ``post`` reads as the locale's dominant idiom.  The distinction is
         # reserved for any future construction whose base is itself postposed.
-        if marker_position in ("post", "both"):
+        if _marker_pos(name) in ("post", "both"):
             contrib += MARKER_POSTFIX_ORDERS.get(name, [])
         # ``season_year_order`` gates the YEAR-first season surface, exactly as
         # ``marker_position`` gates the postposed marker.  ``season_first``

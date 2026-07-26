@@ -233,8 +233,20 @@ def validate_config(cfg: dict, lang: str) -> List[str]:
                     errors.append(f"{ctx} base_grammar {section} names non-base "
                                   f"construction {name!r}")
         for knob, val in KNOB_SCHEMA.items():
-            if knob in bg and bg[knob] not in val:
-                errors.append(f"{ctx} base_grammar[{knob!r}]={bg[knob]!r} "
+            if knob not in bg:
+                continue
+            knobval = bg[knob]
+            if knob == "marker_position" and isinstance(knobval, dict):
+                # per-construction mapping {construction: pre|post|both}
+                for name, pos in knobval.items():
+                    if name not in BASE_GRAMMAR:
+                        errors.append(f"{ctx} base_grammar[{knob!r}] names "
+                                      f"non-base construction {name!r}")
+                    if pos not in val:
+                        errors.append(f"{ctx} base_grammar[{knob!r}][{name!r}]="
+                                      f"{pos!r} unknown (known: {sorted(val)})")
+            elif knobval not in val:
+                errors.append(f"{ctx} base_grammar[{knob!r}]={knobval!r} "
                               f"unknown (known: {sorted(val)})")
 
     positions = cfg.get("positions", {})

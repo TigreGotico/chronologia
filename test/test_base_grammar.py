@@ -267,20 +267,76 @@ def test_season_year_order_gates_year_first_order():
             == merge_orders({"base_grammar": {"season_year_order": "both"}}, {}))
 
 
-def test_season_ref_not_gated_by_marker_position():
-    """season_ref is intentionally NOT in the shared ``marker_position`` postfix.
+def test_marker_position_gates_season_ref_postfix():
+    """``marker_position`` gates the season_ref postfix, per construction.
 
-    Only ``id``/``ms`` postpose a season; 16 other ``marker_position: post``
-    locales postpose weekday/period but NOT season, so a shared postfix would
-    hijack their bare-"SEASON" parse (the #253/#254 collision class).  The
-    postposed season order is therefore a per-locale ``extend``, and setting
-    ``marker_position: post`` must NOT add any season_ref order.
+    Fixes a silent-wrong: season_ref used to be OUT of the postfix set, so the
+    Romance postposed idiom ("el verano pasado" -- the marker TRAILS the
+    season) never matched and stranded the marker, resolving to *this* season
+    instead of last/next.  season_ref now carries its own postfix order behind
+    ``marker_position`` exactly like weekday_ref/rel_period; a scalar ``post``
+    enables it, and the base season-first orders are always retained.
     """
-    assert "season_ref" not in MARKER_POSTFIX_ORDERS
+    base = BASE_GRAMMAR["season_ref"]
+    postfix = MARKER_POSTFIX_ORDERS["season_ref"]
+    assert postfix                                      # season_ref now postfixes
+
     pre = merge_orders({}, {})["season_ref"]
-    post = merge_orders({"base_grammar": {"marker_position": "post"}},
-                        {})["season_ref"]
-    assert post == pre                                  # marker_position is a no-op here
+    assert pre == base                                  # no postfix by default
+    assert not any(o in pre for o in postfix)
+
+    for pos in ("post", "both"):
+        got = merge_orders({"base_grammar": {"marker_position": pos}},
+                           {})["season_ref"]
+        for o in base:                                  # base season orders kept
+            assert o in got
+        for o in postfix:                               # postfix appended
+            assert o in got
+
+
+def test_marker_position_mapping_is_per_construction():
+    """``marker_position`` accepts a per-construction mapping.
+
+    Greek/Turkic postpose weekday/period but keep the season marker PREPOSED
+    ("geçen yaz"), so they set ``marker_position`` to a mapping that opts
+    weekday_ref/rel_period into ``post`` while leaving season_ref at its ``pre``
+    default -- the split a locale-wide scalar could not express.
+    """
+    cfg = {"base_grammar": {"marker_position": {"weekday_ref": "post",
+                                                "rel_period": "post"}}}
+    got = merge_orders(cfg, {})
+    # weekday/period get their postfix orders...
+    for o in MARKER_POSTFIX_ORDERS["weekday_ref"]:
+        assert o in got["weekday_ref"]
+    for o in MARKER_POSTFIX_ORDERS["rel_period"]:
+        assert o in got["rel_period"]
+    # ...but season_ref, absent from the mapping, stays pre (no postfix).
+    assert got["season_ref"] == merge_orders({}, {})["season_ref"]
+    for o in MARKER_POSTFIX_ORDERS["season_ref"]:
+        assert o not in got["season_ref"]
+
+    # a mapping opting season in DOES add the season postfix
+    cfg2 = {"base_grammar": {"marker_position": {"season_ref": "post"}}}
+    got2 = merge_orders(cfg2, {})
+    for o in MARKER_POSTFIX_ORDERS["season_ref"]:
+        assert o in got2["season_ref"]
+    # ...and leaves weekday/period at their pre default
+    assert got2["weekday_ref"] == BASE_GRAMMAR["weekday_ref"]
+
+
+def test_scalar_marker_position_unchanged_for_weekday_and_period():
+    """The per-construction change is byte-identical for scalar-knob locales.
+
+    A scalar ``post`` must still produce exactly the same weekday_ref and
+    rel_period orders it did before season_ref joined the postfix set -- the
+    only added contribution is season_ref's own postfix.
+    """
+    scalar = merge_orders({"base_grammar": {"marker_position": "post"}}, {})
+    mapping = merge_orders(
+        {"base_grammar": {"marker_position": {"weekday_ref": "post",
+                                              "rel_period": "post",
+                                              "season_ref": "post"}}}, {})
+    assert scalar == mapping             # scalar == the equivalent full mapping
 
 
 @pytest.mark.parametrize("lang", _LANGS)
