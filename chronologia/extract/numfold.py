@@ -277,8 +277,227 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return _reindex(out)
 
 
+# ---------------------------------------------------------------------------
+# spelled multi-word cardinal *offsets* ("a hundred years ago")
+# ---------------------------------------------------------------------------
+#
+# The generic fold withholds the scale words so the deep-time SCALE slot
+# survives, and ``_fold_spelled_year`` deliberately refuses the offset frame (a
+# scale construction closed by a unit word).  That leaves "a hundred years ago"
+# reaching the matcher as ``[a, hundred, years, ago]`` -- the "hundred" stranded
+# and the offset read as a bare one.  This pass is the exact complement: it
+# folds a *spelled* hundred cardinal into one digit token **only** when a unit
+# word closes it (the offset frame), so "a hundred years ago" reads like "100
+# years ago".  Only the hundred scale composes: thousand and up are the SCALE
+# slot of the deep-time / Before-Present offset ("two thousand years ago",
+# "sixty-six million years ago"), which the resolver reads from the surviving
+# scale word, so they are left untouched and keep reaching that span.
+_SCALE_MULT = {"hundred": 100}
+_EN_ARTICLES = frozenset({"a", "an", "the"})
+
+
+def _card_value(tok: Token):
+    """Value of a single *spelled* 0-99 cardinal word, or ``None``.
+
+    Digit tokens are deliberately refused: "10 thousand years ago" is left to
+    the deep-time SCALE path exactly as ``_fold_spelled_year`` leaves it."""
+    if tok.is_number:
+        return None
+    return _CARD_ONES.get(tok.text, _CARD_TENS.get(tok.text))
+
+
+def _read_scale_number(tokens, i):
+    """Fold ``[a|an] [<0-99>] hundred [and] [<0-99>]`` starting at ``i`` into
+    ``(value, end)``; ``(None, i)`` when it is not such a run.
+
+    Only the hundred scale composes -- thousand, million and up are the
+    deep-time / Before-Present SCALE and stop the run, so they never fold
+    here."""
+    n = len(tokens)
+    j = i
+    total = 0
+    current = 0
+    seen_scale = False
+    started = False
+    while j < n:
+        t = tokens[j].text
+        if (t in _EN_ARTICLES and not started
+                and j + 1 < n and tokens[j + 1].text in _SCALE_MULT):
+            current, started = 1, True
+            j += 1
+            continue
+        cv = _card_value(tokens[j])
+        if cv is not None:
+            current = cv if current == 0 else current + cv
+            started = True
+            j += 1
+            continue
+        if t in _SCALE_MULT:
+            scale = _SCALE_MULT[t]
+            if current == 0:
+                current = 1
+            if scale >= 1000:
+                total += current * scale
+                current = 0
+            else:
+                current *= scale
+            seen_scale = True
+            started = True
+            j += 1
+            continue
+        if t == "and" and started and j + 1 < n:
+            j += 1
+            continue
+        break
+    if not seen_scale:
+        return None, i
+    return total + current, j
+
+
+def _fold_scale_offset(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Fold a spelled hundred/thousand cardinal into a digit token when a unit
+    word closes it -- the plain-offset frame ("a hundred years ago")."""
+    units = _units()
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        if tokens[i].text in _CARDINALS or tokens[i].text in _EN_ARTICLES:
+            value, end = _read_scale_number(tokens, i)
+            if (value is not None and end < n
+                    and tokens[end].text in units):
+                out.append(_year_token(value, tokens[i], tokens[end - 1]))
+                i = end
+                continue
+        out.append(tokens[i])
+        i += 1
+    return _reindex(out)
+
+
+# ---------------------------------------------------------------------------
+# spelled fractions in the relative/duration frame ("two and a half hours ago")
+# ---------------------------------------------------------------------------
+#
+# Fraction words ("half", "quarter") are excluded from the generic fold because
+# they own the clock FRACTION slot ("half past three").  In the offset/duration
+# frame -- a fraction bound to a length unit -- they must instead compose into
+# the count: "two and a half hours" is 2.5 hours, "three quarters of an hour"
+# 0.75, "half a year" half a year.  This pass folds exactly that frame (a unit
+# word closes it) into one decimal count token; clock fractions, which are
+# followed by "past"/"to"/a clock number rather than a unit, never match.
+#
+# A fractional *year* count has no decimal offset reading (the resolver steps
+# whole months), so a year fraction that lands on a whole month is emitted as
+# that month count instead: "half a year" -> "6 months".
+_EN_FRACS = {"half": 0.5, "quarter": 0.25, "quarters": 0.25}
+
+
+def _fraction_number(value, first, last):
+    v = int(value) if float(value).is_integer() else value
+    return Token(text=str(v), raw=str(v), index=0, is_number=True,
+                 value=v, char_start=first.char_start, char_end=last.char_end)
+
+
+def _read_plain_count(tokens, i):
+    """A leading count at ``i``: a digit token or a spelled 0-99 run -> value,
+    end.  ``(None, i)`` when neither."""
+    n = len(tokens)
+    if i < n and tokens[i].is_number:
+        return float(tokens[i].value), i + 1
+    end = _take_cardinals(tokens, i)
+    if end > i:
+        v = _card_run(tokens[i:end])
+        if v is not None:
+            return float(v), end
+    return None, i
+
+
+def _fold_offset_fraction(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    units = _units()
+    year_words = _en_voc("unit_year")
+    # only the *indefinite* article introduces a duration ("half a year", "an
+    # hour and a half"); the definite "the" marks the partitive sub-span
+    # construction ("the first half of *the* century"), which is not a length
+    # and must be left for its own resolver.
+    frac_articles = frozenset({"a", "an"})
+    filler = frac_articles | {"of"}
+    out = []
+    i = 0
+    n = len(tokens)
+
+    def skip_filler(k):
+        while k < n and tokens[k].text in filler:
+            k += 1
+        return k
+
+    while i < n:
+        count, j = _read_plain_count(tokens, i)
+        lead_article = False
+        if count is None and tokens[i].text in frac_articles:
+            count, j, lead_article = 1.0, i + 1, True
+        combined = None
+        unit_pos = None
+        end = None
+        if count is not None:
+            # count "and a half" ... unit  (additive, fraction before unit)
+            if j < n and tokens[j].text == "and":
+                k = j + 1
+                while k < n and tokens[k].text in frac_articles:
+                    k += 1
+                if k < n and tokens[k].text in _EN_FRACS:
+                    k2 = skip_filler(k + 1)
+                    if k2 < n and tokens[k2].text in units:
+                        combined, unit_pos, end = (
+                            count + _EN_FRACS[tokens[k].text], k2, k2 + 1)
+            # count fraction ... unit  (multiplicative, "three quarters of ...")
+            if combined is None and j < n and tokens[j].text in _EN_FRACS:
+                k2 = skip_filler(j + 1)
+                if k2 < n and tokens[k2].text in units:
+                    combined, unit_pos, end = (
+                        count * _EN_FRACS[tokens[j].text], k2, k2 + 1)
+            # count unit "and a half"  (fraction trails the unit)
+            if combined is None:
+                k2 = skip_filler(j)
+                if k2 < n and tokens[k2].text in units:
+                    m = k2 + 1
+                    if m < n and tokens[m].text == "and":
+                        m += 1
+                        while m < n and tokens[m].text in frac_articles:
+                            m += 1
+                        if m < n and tokens[m].text in _EN_FRACS:
+                            combined, unit_pos, end = (
+                                count + _EN_FRACS[tokens[m].text], k2, m + 1)
+        # bare fraction ... unit  ("half a year", "a quarter of an hour")
+        if combined is None and tokens[i].text in _EN_FRACS:
+            k2 = skip_filler(i + 1)
+            if k2 < n and tokens[k2].text in units:
+                combined, unit_pos, end = _EN_FRACS[tokens[i].text], k2, k2 + 1
+        if combined is None:
+            out.append(tokens[i])
+            i += 1
+            continue
+        unit_tok = tokens[unit_pos]
+        # a fractional year has no decimal offset -- express it in whole months
+        if unit_tok.text in year_words and not float(combined).is_integer():
+            months = combined * 12
+            if not float(months).is_integer():
+                out.append(tokens[i])
+                i += 1
+                continue
+            out.append(_fraction_number(months, tokens[i], tokens[end - 1]))
+            out.append(Token(text="months", raw="months", index=0,
+                             char_start=unit_tok.char_start,
+                             char_end=unit_tok.char_end))
+        else:
+            out.append(_fraction_number(combined, tokens[i], tokens[end - 1]))
+            out.append(unit_tok)
+        i = end
+    return _reindex(out)
+
+
 def _pre_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-    return _fold_spelled_year(_merge_en_ord_suffix(tokens))
+    folded = _fold_spelled_year(_merge_en_ord_suffix(tokens))
+    return _fold_offset_fraction(_fold_scale_offset(folded))
 
 
 # English: closed-class membership, an internal "and" that continues a run but
