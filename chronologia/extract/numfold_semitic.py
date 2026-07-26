@@ -23,6 +23,7 @@ from __future__ import annotations
 from ovos_number_parser.numbers_ar import extract_number_ar
 from ovos_number_parser.numbers_he import extract_number_he
 
+from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
 
 
@@ -129,3 +130,43 @@ def fold_he(tokens):
             segment.append(tok)
     out.extend(_fold_he_run(tuple(segment)))
     return reindex(tuple(out))
+
+
+# -- feminine ordinals 1/2 that agree with the "half" noun מחצית ---------------
+# Hebrew names its weekdays by the MASCULINE ordinal (יום ראשון = Sunday, יום
+# שני = Monday), which is exactly why the cardinal fold withholds those forms.
+# The half noun מחצית is FEMININE, so "the first/second half" takes the FEMININE
+# ordinal -- ראשונה / שנייה -- which is NOT a weekday name and collides with
+# nothing, so it folds safely to the digit the half_period ``NUM`` slot binds.
+# Both spellings of "second" (שנייה full plene / שניה) and the definite ה- form
+# the attested surface uses ("המחצית הראשונה") are listed.  Only 1 and 2: a half
+# admits no ordinal past the second.  Even-Shoshan, מילון אבן-שושן, and the
+# Academy of the Hebrew Language: ראשונה / שנייה — שם מספר סודר, נקבה.
+_HE_ORD_FEM = {
+    "ראשונה": 1, "הראשונה": 1,
+    "שנייה": 2, "השנייה": 2, "שניה": 2, "השניה": 2,
+}
+
+
+def _he_ordinal_rewrite(tokens):
+    out, changed = [], False
+    for t in tokens:
+        if not t.is_number and t.text in _HE_ORD_FEM:
+            v = _HE_ORD_FEM[t.text]
+            out.append(Token(text=str(v), raw=str(v), index=t.index,
+                             is_number=True, value=v,
+                             char_start=t.char_start, char_end=t.char_end))
+            changed = True
+        else:
+            out.append(t)
+    return reindex(tuple(out)) if changed else tokens
+
+
+_fold_he_cardinal = fold_he
+
+
+def fold_he(tokens):  # noqa: F811  -- wrap the cardinal fold with the fem ordinal
+    """Fold the feminine ordinal (מחצית's "first/second") before the cardinal
+    fold, then run the cardinal fold: the two never overlap (the ordinal is a
+    lone token), and the weekday-masculine ordinals stay untouched."""
+    return _fold_he_cardinal(_he_ordinal_rewrite(tokens))

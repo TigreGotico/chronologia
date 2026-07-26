@@ -815,6 +815,12 @@ def fold_tr(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
            if (not t.is_number and t.text in _TR_HOURS) else t
            for t in folded]
     return _reindex(tuple(out))
+# Turkish ordinals so the ``NUM`` slot of "2020'nin ilk/ikinci yarısı" binds:
+# ``pronounce_ordinal_tr`` emits birinci/ikinci ..., and "ilk" -- the ordinary
+# word for "first/initial" that the half phrase actually uses -- is added as the
+# one surface the pronouncer does not cover.  TDK Güncel Türkçe Sözlük: "ilk" =
+# birinci; "ikinci" = sıra sayı sıfatı.  https://sozluk.gov.tr
+fold_tr = _with_ordinals(fold_tr, "tr", {"ilk": 1})
 fold_az = _lazy_germanic_fold(
     "ovos_number_parser.numbers_az", "extract_number_az",
     {"yarım", "min", "milyon", "milyard"})

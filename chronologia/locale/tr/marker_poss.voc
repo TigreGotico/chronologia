@@ -1,0 +1,13 @@
+# Turkish genitive suffix -(n)In marking the possessor year in "2020'nin ilk
+# yarısı" ("2020's first half"): the tokenizer splits it off the apostrophe as a
+# standalone token, so it is bound as the optional connector ``poss`` in the
+# year-first half_period order.  TDK, İmla Kılavuzu: ilgi durumu eki -(n)In with
+# vowel harmony (nin/nın/nun/nün).  https://sozluk.gov.tr
+nin
+nın
+nun
+nün
+ın
+in
+un
+ün

@@ -136,6 +136,9 @@
     "extend": {
       "scoped_ordinal": [
         "article? WEEKDAY ORD of MONTH YEAR?"
+      ],
+      "half_period": [
+        "half NUM of? GYEAR"
       ]
     }
   }
