@@ -135,13 +135,6 @@
         "week_num NUM YEAR?"
       ]
     },
-    "daypart_ref": {
-      "orders": [
-        "REL_MARKER DAYPART",
-        "article DAYPART",
-        "of DAYPART"
-      ]
-    },
     "roman_date": {
       "orders": [
         "article? ANCHOR_DAY of MONTH",
@@ -179,6 +172,13 @@
   },
   "base_grammar": {
     "marker_position": "post",
+    "override": {
+      "daypart_ref": [
+        "REL_MARKER DAYPART",
+        "article DAYPART",
+        "of DAYPART"
+      ]
+    },
     "extend": {
       "scoped_ordinal": [
         "article? CMUNIT ORD"

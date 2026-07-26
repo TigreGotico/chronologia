@@ -150,12 +150,6 @@
         "YEAR HOLIDAY",
         "HOLIDAY"
       ]
-    },
-    "daypart_ref": {
-      "orders": [
-        "REL_MARKER DAYPART",
-        "DAYPART"
-      ]
     }
   },
   "conventions": {

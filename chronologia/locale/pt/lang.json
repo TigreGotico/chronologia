@@ -137,16 +137,6 @@
         "week_num NUM YEAR?"
       ]
     },
-    "daypart_ref": {
-      "orders": [
-        "REL_MARKER DAYPART",
-        "article DAYPART",
-        "of DAYPART",
-        "at DAYPART",
-        "during DAYPART",
-        "article? DAYPART REL_MARKER"
-      ]
-    },
     "roman_date": {
       "orders": [
         "article? ANCHOR_DAY of MONTH",
@@ -180,6 +170,16 @@
   "hook": "chronologia.extract.numfold:fold_pt",
   "base_grammar": {
     "marker_position": "post",
+    "override": {
+      "daypart_ref": [
+        "REL_MARKER DAYPART",
+        "article DAYPART",
+        "of DAYPART",
+        "at DAYPART",
+        "during DAYPART",
+        "article? DAYPART REL_MARKER"
+      ]
+    },
     "extend": {
       "scoped_ordinal": [
         "article? CMUNIT ORD"

@@ -202,12 +202,6 @@
         "article? PART of? article? UNIT REL_MARKER",
         "PART REL_MARKER UNIT"
       ]
-    },
-    "daypart_ref": {
-      "orders": [
-        "REL_MARKER DAYPART",
-        "DAYPART"
-      ]
     }
   },
   "conventions": {

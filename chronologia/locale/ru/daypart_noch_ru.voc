@@ -1,0 +1,8 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale ru
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as ночь [00:00, 04:00).
+# Surface: the instrumental adverb "ночью" ("at night"), the form these deictic
+# phrases use ("сегодня ночью", "вчера ночью").
+# Source: Wiktionary, "ночью" (adverb, instrumental of ночь)
+# https://ru.wiktionary.org/wiki/ночью
+ночью

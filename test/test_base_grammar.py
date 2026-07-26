@@ -481,6 +481,67 @@ def test_additive_superset_scoped_ordinal(lang):
         f"(not additive): {missing}\n  effective={effective}")
 
 
+# --- the pre-refactor (dev) daypart_ref orders, per locale -----------------
+# Frozen snapshot of what every locale declared inline on `dev` BEFORE
+# daypart_ref inherited the base grammar.  Only 14/40 locales had it; the other
+# 26 SILENTLY returned the whole day and stranded the daypart word ("сегодня
+# утром" -> whole day 2017-06-27, "утром" dropped).  Those 26 gain the two
+# shared orders ("REL_MARKER DAYPART", "DAYPART") for free from the base now.
+# The three Iberian locales whose morning word is a homograph of "tomorrow"
+# (es "mañana", gl "mañá", pt's guarded set) ``override`` daypart_ref to drop
+# the bare "DAYPART" order, so the base bare form can never hijack their
+# tomorrow parse -- their effective orders are exactly the dev list below.
+DEV_DAYPART_REF = {
+    'da': ['REL_MARKER DAYPART', 'DAYPART'],
+    'de': ['REL_MARKER DAYPART', 'DAYPART'],
+    'en': ['REL_MARKER DAYPART', 'DAYPART'],
+    'es': ['REL_MARKER DAYPART', 'article DAYPART', 'of DAYPART'],
+    'fr': ['REL_MARKER DAYPART', 'DAYPART'],
+    'gl': ['REL_MARKER DAYPART', 'article DAYPART', 'of DAYPART', 'at DAYPART', 'during DAYPART'],
+    'it': ['REL_MARKER DAYPART', 'DAYPART'],
+    'nb': ['REL_MARKER DAYPART', 'DAYPART'],
+    'nl': ['REL_MARKER DAYPART', 'DAYPART'],
+    'nn': ['REL_MARKER DAYPART', 'DAYPART'],
+    'pt': ['REL_MARKER DAYPART', 'article DAYPART', 'of DAYPART', 'at DAYPART', 'during DAYPART', 'article? DAYPART REL_MARKER'],
+    'ro': ['REL_MARKER DAYPART', 'DAYPART'],
+    'sv': ['REL_MARKER DAYPART', 'DAYPART'],
+    'ca': ['REL_MARKER DAYPART', 'DAYPART'],
+}
+
+
+@pytest.mark.parametrize("lang", _LANGS)
+def test_additive_superset_daypart_ref(lang):
+    """Every dev daypart_ref order is still covered after the base merge.
+
+    Proves the migration only ADDED matching power: the 14 locales that shipped
+    daypart_ref inline keep every order (es/gl/pt via an ``override`` that drops
+    the bare "DAYPART" their tomorrow-homograph morning word must not gain), and
+    the 26 that lacked it gain the construction for free instead of silently
+    stranding the daypart word.
+    """
+    dev = DEV_DAYPART_REF.get(lang, [])
+    if not dev:
+        return                          # gained daypart_ref for free; nothing to lose
+    effective = _effective_orders(lang, "daypart_ref")
+    missing = assert_additive_superset(lang, dev, effective)
+    assert not missing, (
+        f"{lang}: base-grammar merge DROPPED daypart_ref orders "
+        f"(not additive): {missing}\n  effective={effective}")
+
+
+def test_es_gl_pt_daypart_ref_omit_the_bare_order():
+    """The tomorrow-homograph locales must NOT inherit the bare "DAYPART".
+
+    es "mañana"/gl "mañá" are also the word for *tomorrow*; a bare-band reading
+    would hijack that parse.  Their ``override`` keeps the article/connector
+    forms and drops the bare order, so "DAYPART" alone never fires for them.
+    """
+    for lang in ("es", "gl", "pt"):
+        eff = _effective_orders(lang, "daypart_ref")
+        assert "DAYPART" not in eff, f"{lang} unexpectedly gained bare DAYPART"
+        assert "REL_MARKER DAYPART" in eff
+
+
 def test_totality_every_locale_has_every_base_construction():
     """No locale is silently missing a base construction it did not disable."""
     specs = {}

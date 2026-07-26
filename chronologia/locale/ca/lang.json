@@ -133,12 +133,6 @@
         "PART REL_MARKER UNIT"
       ]
     },
-    "daypart_ref": {
-      "orders": [
-        "REL_MARKER DAYPART",
-        "DAYPART"
-      ]
-    },
     "roman_date": {
       "orders": [
         "article? ANCHOR_DAY of MONTH",
