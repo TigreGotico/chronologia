@@ -153,6 +153,28 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "month_fuzzy": [
         "article? PART of? MONTH",
     ],
+    # "this morning", "tonight", "yesterday evening", "tomorrow afternoon" --
+    # a time-of-day band selected deictically.  ``DAYPART`` binds the locale's
+    # daypart surface (``daypart_<key>.voc`` -- en "morning/afternoon/evening/
+    # night", ru "утром/днём/вечером/ночью"), and the resolver narrows the
+    # anchored day to that band via :func:`chronologia.dayparts.daypart_span`,
+    # whose boundaries are CLDR day-period data.  Two orders are the
+    # language-neutral core every locale shares: the relative-marker prefix
+    # ("REL_MARKER DAYPART" -- "this morning") and the bare band ("DAYPART" --
+    # "in the morning", and, composed with a same-text ``named_day``,
+    # "yesterday evening" = named_day + bare daypart).  Historically only 14 of
+    # 40 locales declared these; the other 26 SILENTLY returned the whole day
+    # and stranded the daypart word ("сегодня утром" -> whole day, "утром"
+    # dropped).  The bare "DAYPART" order is NOT universal-safe: where the
+    # morning word is a homograph of "tomorrow" (Spanish "mañana", Galician
+    # "mañá", Portuguese carries its own guarded set) the bare reading would
+    # hijack the tomorrow parse, so those locales ``override`` daypart_ref to
+    # drop the bare order -- exactly the reason es/gl/pt keep an explicit order
+    # list instead of inheriting the base bare form.
+    "daypart_ref": [
+        "REL_MARKER DAYPART",
+        "DAYPART",
+    ],
 }
 
 # ---------------------------------------------------------------------------

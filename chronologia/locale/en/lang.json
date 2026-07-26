@@ -19,12 +19,6 @@
         "DAY_WORD"
       ]
     },
-    "daypart_ref": {
-      "orders": [
-        "REL_MARKER DAYPART",
-        "DAYPART"
-      ]
-    },
     "named_day_after": {
       "orders": [
         "article? indef? UNIT after DAY_WORD"

@@ -40,7 +40,6 @@ _SAFE_NONE = [
     'миллион причин',
     'тысячи людей',
     'восходящее солнце',
-    'рано утром',
     'секунда тишины',
     'большинство людей',
     'пара дней',
@@ -95,6 +94,10 @@ def test_documented_limitation(text):
 _SPAN_ELSEWHERE = [
     ('маленькая деталь через 3 дня', 'деталь'),
     ('миллион причин через 2 недели', 'миллион'),
+    # "рано утром" ("early in the morning"): the daypart adverb "утром" now
+    # binds the morning band (a correct reading), leaving the intensifier
+    # "рано" in the remainder -- it is a morning reference, not a confusable.
+    ('рано утром', 'рано'),
 ]
 
 

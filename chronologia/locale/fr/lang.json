@@ -202,12 +202,6 @@
         "week_num NUM of YEAR",
         "week_num NUM YEAR?"
       ]
-    },
-    "daypart_ref": {
-      "orders": [
-        "REL_MARKER DAYPART",
-        "DAYPART"
-      ]
     }
   },
   "conventions": {

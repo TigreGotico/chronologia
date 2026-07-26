@@ -332,6 +332,14 @@ _LANGUAGES: List[DayPart] = [
     _p("foremiddag", (10, 0), (12, 0), "nn", _cldr("no")),
     _p("ettermiddag", (12, 0), (18, 0), "nn", _cldr("no")),
     _p("kveld", (18, 0), (0, 0), "nn", _cldr("no")),
+    # ru: the four-band Russian day.  "вечер" runs all the way to midnight and
+    # "ночь" is the small hours (00:00-04:00), not a midnight-crosser -- the
+    # same Abend/Nacht shape German draws, with the morning opening two hours
+    # before English at 04:00.
+    _p("noch", (0, 0), (4, 0), "ru", _cldr("ru")),
+    _p("utro", (4, 0), (12, 0), "ru", _cldr("ru")),
+    _p("den", (12, 0), (18, 0), "ru", _cldr("ru")),
+    _p("vecher", (18, 0), (0, 0), "ru", _cldr("ru")),
 ]
 
 #: Deprecated alias for :data:`_LANGUAGES`, from when the tag was miscalled a
