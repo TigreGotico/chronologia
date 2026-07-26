@@ -87,6 +87,30 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "rel_period": [
         "REL_MARKER UNIT",
     ],
+    # "last/next <season>" ("next winter"), "<season> of <year>" ("summer of
+    # 2024") and the bare "<season> <year>?" ("summer 2024", or a deictic
+    # "summer" on its own).  These three -- the relative-marker prefix, the
+    # connector-word "of YEAR", and the trailing optional YEAR -- are the
+    # language-neutral core every locale shares; a leading ``article?`` on the
+    # year forms carries the Romance "el verano de 2024" without a locale
+    # shipping an article.  Two idioms are NOT universal and stay out of the
+    # base.  The year-first order ("YEAR SEASON" -- Turkic/Basque "2024 yaz")
+    # lives in ``SEASON_YEAR_FIRST_ORDERS`` behind the ``season_year_order``
+    # knob, which ≥2 locales share.  The postposed relative marker ("SEASON
+    # REL_MARKER" -- Indonesian/Malay "musim panas lalu") is deliberately NOT
+    # tied to the shared ``marker_position`` knob: only ``id`` and ``ms``
+    # postpose a season, while 16 other ``marker_position: post`` locales (all
+    # Romance -- they postpose weekday/period but NOT season) would have the
+    # trailing-marker order hijack their bare-"SEASON" parse ("el verano
+    # pasado" flipping from the deictic summer to "last summer") -- the
+    # collision class #253/#254 documented.  So the two postposing locales
+    # carry "SEASON REL_MARKER" as a per-locale ``extend`` instead, exactly as
+    # #255 kept ro/hu's asymmetric rel_period postposing off ``weekday_ref``.
+    "season_ref": [
+        "article? SEASON of YEAR",
+        "REL_MARKER SEASON",
+        "article? SEASON YEAR?",
+    ],
 }
 
 # ---------------------------------------------------------------------------
@@ -115,6 +139,23 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
 }
 
 # ---------------------------------------------------------------------------
+# Knob-generated orders for the YEAR-first season surface, keyed BY
+# CONSTRUCTION.  ``merge_orders`` appends these only when the locale sets
+# ``season_year_order: year_first`` (or ``both``); see the KNOB SCHEMA note on
+# ``season_year_order``.  The base ``season_ref`` orders are SEASON-first
+# ("summer 2024"); Turkic and Basque also (or instead) put the year first
+# ("2024 yaz", "2024ko uda").  A locale that does not accept the year-first
+# surface must not gain a "YEAR SEASON" order that could mis-parse a bare
+# "YEAR" phrase, so it stays out of the base and behind the knob -- exactly
+# like ``marker_position`` gates the postposed marker.
+# ---------------------------------------------------------------------------
+SEASON_YEAR_FIRST_ORDERS: Dict[str, List[str]] = {
+    "season_ref": [
+        "YEAR SEASON",
+    ],
+}
+
+# ---------------------------------------------------------------------------
 # KNOB SCHEMA -- the typological axes the per-locale exceptions collapse onto.
 # Documented here as the target vocabulary for ``base_grammar`` blocks; this PR
 # expresses ``scoped_ordinal``'s exceptions through the escape hatches below,
@@ -124,6 +165,13 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
 #   marker_position : pre | post | both
 #       Whether a REL_MARKER may trail its slot ("lunes que viene").  ``both``
 #       auto-generates the postposed variant of every marker-bearing order.
+#   season_year_order : season_first | year_first | both
+#       Whether ``season_ref`` accepts a YEAR-first surface ("2024 yaz",
+#       "2024ko uda").  The base is SEASON-first ("summer 2024"), always kept;
+#       ``year_first`` / ``both`` append the "YEAR SEASON" order so the
+#       year-leading idiom also matches.  ``both`` names the symmetry (base
+#       season-first is always retained) explicitly; ``year_first`` reads as
+#       the locale's dominant idiom.
 #   ordinal_position : pre | post
 #       Postposed ordinal ("WEEKDAY ORD of MONTH" in Hebrew; compound-unit
 #       "CMUNIT ORD" in Romance).
@@ -142,6 +190,7 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
 # ---------------------------------------------------------------------------
 KNOB_SCHEMA: Dict[str, frozenset] = {
     "marker_position": frozenset({"pre", "post", "both"}),
+    "season_year_order": frozenset({"season_first", "year_first", "both"}),
     "ordinal_position": frozenset({"pre", "post"}),
     "article": frozenset({"optional-leading", "none"}),
     "connector": frozenset({"word", "genitive", "none"}),
@@ -182,6 +231,7 @@ def merge_orders(cfg: Mapping,
     override = bg.get("override", {})
     extend = bg.get("extend", {})
     marker_position = bg.get("marker_position", "pre")
+    season_year_order = bg.get("season_year_order", "season_first")
 
     out: Dict[str, List[str]] = {name: list(orders)
                                  for name, orders in inline_orders.items()}
@@ -200,6 +250,13 @@ def merge_orders(cfg: Mapping,
         # reserved for any future construction whose base is itself postposed.
         if marker_position in ("post", "both"):
             contrib += MARKER_POSTFIX_ORDERS.get(name, [])
+        # ``season_year_order`` gates the YEAR-first season surface, exactly as
+        # ``marker_position`` gates the postposed marker.  ``season_first``
+        # (default): base season-first orders only.  ``year_first`` / ``both``:
+        # append "YEAR SEASON" so the year-leading idiom also matches; the
+        # base season-first orders are always retained.
+        if season_year_order in ("year_first", "both"):
+            contrib += SEASON_YEAR_FIRST_ORDERS.get(name, [])
         contrib += list(extend.get(name, ()))
         merged = out.get(name, [])
         merged = list(merged) + [o for o in contrib if o not in merged]

@@ -30,13 +30,6 @@
       ],
       "prefer_future": true
     },
-    "season_ref": {
-      "orders": [
-        "REL_MARKER SEASON",
-        "SEASON YEAR?",
-        "YEAR SEASON"
-      ]
-    },
     "clock_time": {
       "orders": [
         "CLOCK MERIDIEM? ZONE?",
@@ -125,6 +118,7 @@
     ]
   },
   "base_grammar": {
+    "season_year_order": "year_first",
     "marker_position": "post"
   }
 }

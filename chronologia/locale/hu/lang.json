@@ -30,14 +30,6 @@
       ],
       "prefer_future": true
     },
-    "season_ref": {
-      "orders": [
-        "REL_MARKER SEASON",
-        "SEASON of YEAR",
-        "YEAR SEASON",
-        "SEASON YEAR?"
-      ]
-    },
     "clock_time": {
       "orders": [
         "CLOCK MERIDIEM? ZONE?",
@@ -160,6 +152,7 @@
   },
   "hook": "chronologia.extract.numfold_agglutinative:fold_hu",
   "base_grammar": {
+    "season_year_order": "year_first",
     "override": {
       "rel_period": [
         "REL_MARKER article? UNIT"
