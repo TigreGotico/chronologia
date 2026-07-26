@@ -142,6 +142,9 @@
     "extend": {
       "month_fuzzy": [
         "MONTH PART"
+      ],
+      "half_period": [
+        "GYEAR poss? NUM half"
       ]
     }
   }

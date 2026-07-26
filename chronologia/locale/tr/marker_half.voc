@@ -1,1 +1,8 @@
+# Turkish period noun "half" for "<year>'s first/second half" (half_period).
+# "yarı"/"yarısı": TDK Güncel Türkçe Sözlük -- "yarı" = bir bütünü oluşturan iki
+#   eşit parçadan her biri; "yarısı" = yarı + 3. tekil iyelik eki, as in
+#   "2020'nin ilk yarısı".  https://sozluk.gov.tr  (search: yarı)
+# "yarım" is the standalone half-fraction kept for the clock/quantifier path.
 yarım
+yarı
+yarısı

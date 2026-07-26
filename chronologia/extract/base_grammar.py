@@ -122,14 +122,22 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # Germanic "la première moitié" / "die erste Hälfte" without a locale
     # shipping an article, and ``article?`` equally covers the article-less
     # surface (Basque "lehen erdia"), so an article-less locale matches the same
-    # orders.  Word orders that genuinely differ -- the Slavic connector-less
-    # genitive ("первая половина 2020", no "of" word), the Semitic postposed
-    # ordinal ("النصف الأول"), the Turkic/Uralic year-first possessive
-    # ("2020'nin ilk yarısı") -- are NOT expressible by adding a base order and
-    # stay a per-locale exception (``override``/``extend``) or a follow-up.
+    # orders.  The connector ``of?`` is OPTIONAL, so the ONE order carries BOTH
+    # the prepositional connector ("first half OF 2020", Bulgarian "на") AND the
+    # Slavic connector-less genitive ("первая половина 2020", "erste Hälfte
+    # 2020" -- no "of" word), inheriting cleanly into de/ru/pl/uk/cs/bg with no
+    # per-locale order.  Two word orders still genuinely differ and stay a
+    # per-locale ``extend``: the Semitic POSTPOSED ordinal ("النصف الأول من
+    # 2020" -- half then ordinal) and the Turkic YEAR-first possessive
+    # ("2020'nin ilk yarısı" -- year, then ordinal-half).  (A locale whose
+    # feminine ordinal the numfold does not yet emit -- the Slavic "первая/
+    # pierwsza/perша/první" family -- supplies that surface as a fold entry;
+    # Arabic's النصف ordinal الأول/الثاني is withheld from the fold as a
+    # Levantine month-name homograph, so spelled Arabic first/second half stays
+    # the same documented xfail as spelled Q1/Q2.)
     "half_period": [
-        "article? NUM half of GYEAR",
-        "article? NUM half of article? SCOPE_UNIT",
+        "article? NUM half of? GYEAR",
+        "article? NUM half of? article? SCOPE_UNIT",
     ],
     # "early/mid/late <month>" ("early March" -> the first third of March, a
     # ~10-day span; "late December" -> the last third).  ``PART`` binds the

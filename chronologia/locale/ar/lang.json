@@ -139,6 +139,11 @@
     ]
   },
   "base_grammar": {
-    "marker_position": "post"
+    "marker_position": "post",
+    "extend": {
+      "half_period": [
+        "half NUM of? GYEAR"
+      ]
+    }
   }
 }

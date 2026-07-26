@@ -135,6 +135,33 @@ _HOUR_PL = {  # genitive/locative feminine ("do/po ...") + nominative ("za ...")
     "jedenasta": 11, "dwunasta": 12}
 
 
+# -- feminine nominative ordinals 1/2 that agree with the "half" period noun ----
+# "half" is a feminine noun across the family (половина / połowa / polovina /
+# половина), so "the first/second half" carries the FEMININE nominative ordinal
+# ("первая половина", "pierwsza połowa", "перша половина", "první polovina",
+# "първата половина").  ``pronounce_ordinal_<lang>`` emits only the MASCULINE
+# nominative (pierwszy/drugi ...), and ru/bg carry no ordinal pronouncer at all,
+# so the feminine surface the half_period ``NUM`` slot needs is not derived --
+# it is supplied here as a closed two-entry table (a fact of the language), the
+# same shape and reason as the day/hour ordinal tables above.  Only 1 and 2 are
+# listed: "half" admits no ordinal past the second.  Citations per language:
+#   ru -- Розенталь, *Справочник по правописанию*, склонение порядковых
+#         числительных: "первая/вторая" — женский род, ед. ч., им. п.
+#   pl -- PWN, *Słownik języka polskiego*: "pierwsza/druga" — liczebnik
+#         porządkowy, rodzaj żeński.  https://sjp.pwn.pl/
+#   uk -- *Український правопис* (2019): порядкові числівники, жіночий рід
+#         "перша/друга".
+#   cs -- Internetová jazyková příručka (ÚJČ AV ČR): řadové číslovky,
+#         "první/druhá" — rod ženský.  https://prirucka.ujc.cas.cz/
+#   bg -- Институт за български език (БАН): редни числителни, женски род
+#         "първа/втора" и членувано "първата/втората".  https://ibl.bas.bg/
+_HALF_FEM_RU = {"первая": 1, "вторая": 2}
+_HALF_FEM_PL = {"pierwsza": 1, "druga": 2}
+_HALF_FEM_UK = {"перша": 1, "друга": 2}
+_HALF_FEM_CS = {"první": 1, "druhá": 2}
+_HALF_FEM_BG = {"първа": 1, "втора": 2, "първата": 1, "втората": 2}
+
+
 def _hour_rewrite(hourmap: dict) -> Callable:
     """A post-fold pass folding a lone toward-hour ordinal surface to its
     digit.  Runs after the cardinal fold so the (number-word) fraction and the
@@ -356,21 +383,23 @@ def _compose(*passes: Callable) -> Callable:
 # the cardinal fold can take that tens for a bare number; the toward-hour pass
 # still trails, because its surfaces must not merge with the fraction word.
 fold_cs = _compose(_day_rewrite(_DAY_CS),
-                   with_ordinals(_make_fold("cs"), "cs"),
+                   with_ordinals(_make_fold("cs"), "cs", _HALF_FEM_CS),
                    _hour_rewrite(_HOUR_CS))
 fold_sk = _compose(_day_rewrite(_DAY_SK), with_ordinals(_make_fold("sk"), "sk"))
 fold_pl = _compose(_day_rewrite(_DAY_PL),
-                   with_ordinals(_make_fold("pl"), "pl"),
+                   with_ordinals(_make_fold("pl"), "pl", _HALF_FEM_PL),
                    _hour_rewrite(_HOUR_PL))
 fold_ru = _compose(_split_ru_pol, _day_rewrite(_DAY_RU, _TENS_RU),
-                   with_ordinals(_make_fold("ru"), "ru", _ORD_RU),
+                   with_ordinals(_make_fold("ru"), "ru",
+                                 {**_ORD_RU, **_HALF_FEM_RU}),
                    _hour_rewrite(_HOUR_RU))
 fold_uk = _compose(_day_rewrite(_DAY_UK, _TENS_UK),
-                   with_ordinals(_make_fold("uk"), "uk"))
+                   with_ordinals(_make_fold("uk"), "uk", _HALF_FEM_UK))
 fold_hr = _compose(_day_rewrite(_DAY_HR, _TENS_HR, ("i",)),
                    with_ordinals(_make_fold("hr"), "hr"))
 fold_sl = _compose(_day_rewrite(_DAY_SL),
                    with_ordinals(_make_fold("sl"), "sl", _ORD_SL),
                    _hour_rewrite(_HOUR_SL))
 fold_bg = _compose(_day_rewrite(_DAY_BG, _TENS_BG, ("и",)),
-                   with_ordinals(_make_fold("bg"), "bg", _ORD_BG))
+                   with_ordinals(_make_fold("bg"), "bg",
+                                 {**_ORD_BG, **_HALF_FEM_BG}))

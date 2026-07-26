@@ -1,1 +1,6 @@
+# Polish period noun "half" for "first/second half of <year>" (half_period).
+# "połowa": PWN, Słownik języka polskiego -- "połowa" = jedna z dwóch równych
+#   części całości ("pierwsza połowa roku").  https://sjp.pwn.pl/slowniki/po%C5%82owa
+# "pół" is the bound/prefixal form kept for the clock half-hour path.
 pół
+połowa
