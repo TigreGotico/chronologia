@@ -135,31 +135,79 @@ _HOUR_PL = {  # genitive/locative feminine ("do/po ...") + nominative ("za ...")
     "jedenasta": 11, "dwunasta": 12}
 
 
-# -- feminine nominative ordinals 1/2 that agree with the "half" period noun ----
-# "half" is a feminine noun across the family (половина / połowa / polovina /
-# половина), so "the first/second half" carries the FEMININE nominative ordinal
-# ("первая половина", "pierwsza połowa", "перша половина", "první polovina",
-# "първата половина").  ``pronounce_ordinal_<lang>`` emits only the MASCULINE
-# nominative (pierwszy/drugi ...), and ru/bg carry no ordinal pronouncer at all,
-# so the feminine surface the half_period ``NUM`` slot needs is not derived --
-# it is supplied here as a closed two-entry table (a fact of the language), the
-# same shape and reason as the day/hour ordinal tables above.  Only 1 and 2 are
-# listed: "half" admits no ordinal past the second.  Citations per language:
+# -- feminine nominative ordinals that agree with a feminine temporal noun ------
+# Several date-relevant period nouns are FEMININE across the family, and the
+# ordinal that selects one of them carries the feminine nominative ending, which
+# ``pronounce_ordinal_<lang>`` never emits (it gives only the MASCULINE
+# nominative pierwszy/drugi..., and ru/bg carry no ordinal pronouncer at all).
+# So the feminine surface is supplied here as a closed table -- the same shape
+# and reason as the day/hour ordinal tables above.  It feeds every feminine
+# period noun the extractor reads: the "half" (половина / połowa / polovina /
+# половина), the ru/bg feminine "week" (неделя / седмица, "третья неделя
+# апреля" = the third week of April), the feminine "quarter"/"decade"/"tenth"
+# (четверть / декада ...), etc.  The two-entry version shipped in #264 folded
+# only 1st/2nd, so "третья неделя апреля" (3rd week) stranded and the whole
+# month was returned -- a silent wrong answer.  The table now spans the full
+# date-relevant range 1..12 (weeks 1-5, decades/thirds 1-3, and higher to be
+# safe), so every feminine period ordinal folds to its digit.  Owning these
+# surfaces locally is also what keeps ovos-number-parser from misreading the
+# ordinal as a fraction (вторая -> 0.5, третья -> 0.333): the fold turns the
+# word into an integer token BEFORE the cardinal back-end ever sees it.
+# Citations, per language (feminine ordinal числительные / liczebniki):
 #   ru -- Розенталь, *Справочник по правописанию*, склонение порядковых
-#         числительных: "первая/вторая" — женский род, ед. ч., им. п.
-#   pl -- PWN, *Słownik języka polskiego*: "pierwsza/druga" — liczebnik
-#         porządkowy, rodzaj żeński.  https://sjp.pwn.pl/
+#         числительных: женский род, ед. ч., им. п. "первая ... двенадцатая".
+#   pl -- PWN, *Słownik języka polskiego*: liczebnik porządkowy, rodzaj żeński
+#         "pierwsza ... dwunasta".  https://sjp.pwn.pl/
 #   uk -- *Український правопис* (2019): порядкові числівники, жіночий рід
-#         "перша/друга".
-#   cs -- Internetová jazyková příručka (ÚJČ AV ČR): řadové číslovky,
-#         "první/druhá" — rod ženský.  https://prirucka.ujc.cas.cz/
+#         "перша ... дванадцята".
+#   cs -- Internetová jazyková příručka (ÚJČ AV ČR): řadové číslovky, rod ženský
+#         "první ... dvanáctá".  https://prirucka.ujc.cas.cz/
+#   sk -- Jazykovedný ústav Ľ. Štúra SAV, Morfológia slovenského jazyka: radové
+#         číslovky, ženský rod "prvá ... dvanásta".  https://slovnik.juls.savba.sk/
+#   sl -- Fran (ZRC SAZU), SSKJ2: vrstilni števniki, ženski spol
+#         "prva ... dvanajsta".  https://fran.si/
+#   hr -- Institut za hrvatski jezik / Hrvatski jezični portal: redni brojevi,
+#         ženski rod "prva ... dvanaesta".  https://hjp.znanje.hr/
 #   bg -- Институт за български език (БАН): редни числителни, женски род
-#         "първа/втора" и членувано "първата/втората".  https://ibl.bas.bg/
-_HALF_FEM_RU = {"первая": 1, "вторая": 2}
-_HALF_FEM_PL = {"pierwsza": 1, "druga": 2}
-_HALF_FEM_UK = {"перша": 1, "друга": 2}
-_HALF_FEM_CS = {"první": 1, "druhá": 2}
-_HALF_FEM_BG = {"първа": 1, "втора": 2, "първата": 1, "втората": 2}
+#         "първа ... дванадесета" и членувано "първата ... дванадесетата".
+#         https://ibl.bas.bg/
+_FEM_ORD_RU = {
+    "первая": 1, "вторая": 2, "третья": 3, "четвёртая": 4, "четвертая": 4,
+    "пятая": 5, "шестая": 6, "седьмая": 7, "восьмая": 8, "девятая": 9,
+    "десятая": 10, "одиннадцатая": 11, "двенадцатая": 12}
+_FEM_ORD_PL = {
+    "pierwsza": 1, "druga": 2, "trzecia": 3, "czwarta": 4, "piąta": 5,
+    "szósta": 6, "siódma": 7, "ósma": 8, "dziewiąta": 9, "dziesiąta": 10,
+    "jedenasta": 11, "dwunasta": 12}
+_FEM_ORD_UK = {
+    "перша": 1, "друга": 2, "третя": 3, "четверта": 4, "шоста": 6,
+    "сьома": 7, "восьма": 8, "десята": 10, "одинадцята": 11, "дванадцята": 12}
+# Ukrainian spells 5 and 9 with an apostrophe (straight or typographic).
+for _apo in ("'", "’"):
+    _FEM_ORD_UK.update({f"п{_apo}ята": 5, f"дев{_apo}ята": 9})
+_FEM_ORD_CS = {
+    "první": 1, "druhá": 2, "třetí": 3, "čtvrtá": 4, "pátá": 5, "šestá": 6,
+    "sedmá": 7, "osmá": 8, "devátá": 9, "desátá": 10, "jedenáctá": 11,
+    "dvanáctá": 12}
+_FEM_ORD_SK = {
+    "prvá": 1, "druhá": 2, "tretia": 3, "štvrtá": 4, "piata": 5, "šiesta": 6,
+    "siedma": 7, "ôsma": 8, "deviata": 9, "desiata": 10, "jedenásta": 11,
+    "dvanásta": 12}
+_FEM_ORD_SL = {
+    "prva": 1, "druga": 2, "tretja": 3, "četrta": 4, "peta": 5, "šesta": 6,
+    "sedma": 7, "osma": 8, "deveta": 9, "deseta": 10, "enajsta": 11,
+    "dvanajsta": 12}
+_FEM_ORD_HR = {
+    "prva": 1, "druga": 2, "treća": 3, "četvrta": 4, "peta": 5, "šesta": 6,
+    "sedma": 7, "osma": 8, "deveta": 9, "deseta": 10, "jedanaesta": 11,
+    "dvanaesta": 12}
+_FEM_ORD_BG = {
+    "първа": 1, "втора": 2, "трета": 3, "четвърта": 4, "пета": 5, "шеста": 6,
+    "седма": 7, "осма": 8, "девета": 9, "десета": 10, "единадесета": 11,
+    "единайсета": 11, "дванадесета": 12, "дванайсета": 12}
+# Bulgarian selects a period noun with the *definite* article (-ата): "третата
+# седмица" = the third week.  Fold those definite feminine surfaces too.
+_FEM_ORD_BG.update({w + "та": v for w, v in dict(_FEM_ORD_BG).items()})
 
 
 def _hour_rewrite(hourmap: dict) -> Callable:
@@ -383,23 +431,25 @@ def _compose(*passes: Callable) -> Callable:
 # the cardinal fold can take that tens for a bare number; the toward-hour pass
 # still trails, because its surfaces must not merge with the fraction word.
 fold_cs = _compose(_day_rewrite(_DAY_CS),
-                   with_ordinals(_make_fold("cs"), "cs", _HALF_FEM_CS),
+                   with_ordinals(_make_fold("cs"), "cs", _FEM_ORD_CS),
                    _hour_rewrite(_HOUR_CS))
-fold_sk = _compose(_day_rewrite(_DAY_SK), with_ordinals(_make_fold("sk"), "sk"))
+fold_sk = _compose(_day_rewrite(_DAY_SK),
+                   with_ordinals(_make_fold("sk"), "sk", _FEM_ORD_SK))
 fold_pl = _compose(_day_rewrite(_DAY_PL),
-                   with_ordinals(_make_fold("pl"), "pl", _HALF_FEM_PL),
+                   with_ordinals(_make_fold("pl"), "pl", _FEM_ORD_PL),
                    _hour_rewrite(_HOUR_PL))
 fold_ru = _compose(_split_ru_pol, _day_rewrite(_DAY_RU, _TENS_RU),
                    with_ordinals(_make_fold("ru"), "ru",
-                                 {**_ORD_RU, **_HALF_FEM_RU}),
+                                 {**_ORD_RU, **_FEM_ORD_RU}),
                    _hour_rewrite(_HOUR_RU))
 fold_uk = _compose(_day_rewrite(_DAY_UK, _TENS_UK),
-                   with_ordinals(_make_fold("uk"), "uk", _HALF_FEM_UK))
+                   with_ordinals(_make_fold("uk"), "uk", _FEM_ORD_UK))
 fold_hr = _compose(_day_rewrite(_DAY_HR, _TENS_HR, ("i",)),
-                   with_ordinals(_make_fold("hr"), "hr"))
+                   with_ordinals(_make_fold("hr"), "hr", _FEM_ORD_HR))
 fold_sl = _compose(_day_rewrite(_DAY_SL),
-                   with_ordinals(_make_fold("sl"), "sl", _ORD_SL),
+                   with_ordinals(_make_fold("sl"), "sl",
+                                 {**_ORD_SL, **_FEM_ORD_SL}),
                    _hour_rewrite(_HOUR_SL))
 fold_bg = _compose(_day_rewrite(_DAY_BG, _TENS_BG, ("и",)),
                    with_ordinals(_make_fold("bg"), "bg",
-                                 {**_ORD_BG, **_HALF_FEM_BG}))
+                                 {**_ORD_BG, **_FEM_ORD_BG}))
