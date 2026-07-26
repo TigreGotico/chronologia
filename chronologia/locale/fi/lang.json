@@ -20,12 +20,6 @@
         "DAY_WORD"
       ]
     },
-    "rel_period": {
-      "orders": [
-        "REL_MARKER UNIT",
-        "UNIT REL_MARKER"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER WEEKEND",
@@ -154,5 +148,12 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_agglutinative:fold_fi"
+  "hook": "chronologia.extract.numfold_agglutinative:fold_fi",
+  "base_grammar": {
+    "extend": {
+      "rel_period": [
+        "article? UNIT REL_MARKER"
+      ]
+    }
+  }
 }

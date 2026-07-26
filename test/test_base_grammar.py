@@ -121,6 +121,95 @@ DEV_WEEKDAY_REF = {
 }
 
 
+# --- the pre-refactor (dev) rel_period orders, per locale -------------------
+# Frozen snapshot of what every locale declared inline on `dev` BEFORE
+# rel_period inherited the base grammar.  39/40 locales had it (``kab`` ships no
+# relative markers, so it gains the -- unreachable -- base order for free).  The
+# shared prefix ``REL_MARKER UNIT`` plus, where the locale postposes, the
+# ``rel_period`` postfix order ``article? UNIT REL_MARKER`` (or a locale
+# ``override`` for an article-bearing prefix) must cover every dev order.
+DEV_REL_PERIOD = {
+    'an': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'ar': ['UNIT REL_MARKER', 'REL_MARKER UNIT'],
+    'ast': ['article? UNIT REL_MARKER', 'article? REL_MARKER UNIT'],
+    'az': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'bg': ['REL_MARKER UNIT'],
+    'ca': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'cs': ['REL_MARKER UNIT'],
+    'da': ['REL_MARKER UNIT'],
+    'de': ['REL_MARKER UNIT'],
+    'el': ['article? REL_MARKER article? UNIT', 'UNIT REL_MARKER'],
+    'en': ['REL_MARKER UNIT'],
+    'es': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'et': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'eu': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'fa': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'fi': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'fr': ['article? UNIT REL_MARKER', 'article? REL_MARKER UNIT'],
+    'fy': ['REL_MARKER UNIT'],
+    'gl': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'he': ['UNIT REL_MARKER', 'REL_MARKER UNIT'],
+    'hr': ['REL_MARKER UNIT'],
+    'hu': ['REL_MARKER article? UNIT', 'UNIT REL_MARKER'],
+    'id': ['UNIT REL_MARKER'],
+    'it': ['article? UNIT REL_MARKER', 'article? REL_MARKER UNIT'],
+    'ms': ['UNIT REL_MARKER'],
+    'mwl': ['REL_MARKER UNIT', 'article? UNIT REL_MARKER'],
+    'nb': ['REL_MARKER UNIT'],
+    'nl': ['REL_MARKER UNIT'],
+    'nn': ['REL_MARKER UNIT'],
+    'oc': ['article? UNIT REL_MARKER', 'article? REL_MARKER UNIT'],
+    'pl': ['REL_MARKER UNIT'],
+    'pt': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'ro': ['article? UNIT REL_MARKER', 'article? REL_MARKER UNIT'],
+    'ru': ['REL_MARKER UNIT'],
+    'sk': ['REL_MARKER UNIT'],
+    'sl': ['REL_MARKER UNIT'],
+    'sv': ['REL_MARKER UNIT'],
+    'tr': ['REL_MARKER UNIT', 'UNIT REL_MARKER'],
+    'uk': ['REL_MARKER UNIT'],
+}
+
+
+@pytest.mark.parametrize("lang", _LANGS)
+def test_additive_superset_rel_period(lang):
+    """Every dev rel_period order is still covered after the base merge.
+
+    Proves the shared prefix plus the per-construction ``marker_position``
+    postfix orders (and the article-prefix ``override`` locales) reproduce --
+    never drop -- what each locale parsed on dev.
+    """
+    dev = DEV_REL_PERIOD.get(lang, [])
+    if not dev:
+        return                          # gained rel_period for free; nothing to lose
+    effective = _effective_orders(lang, "rel_period")
+    missing = assert_additive_superset(lang, dev, effective)
+    assert not missing, (
+        f"{lang}: base-grammar merge DROPPED rel_period orders "
+        f"(not additive): {missing}\n  effective={effective}")
+
+
+def test_marker_position_gates_rel_period_postfix():
+    """``marker_position`` gates the rel_period postfix independently.
+
+    The postfix order set is PER-CONSTRUCTION: ``post`` appends rel_period's own
+    ``article? UNIT REL_MARKER`` (not weekday_ref's), and ``pre`` keeps only the
+    shared ``REL_MARKER UNIT`` prefix.
+    """
+    base = BASE_GRAMMAR["rel_period"]
+    postfix = MARKER_POSTFIX_ORDERS["rel_period"]
+    pre = merge_orders({}, {})["rel_period"]
+    assert pre == base
+    assert not any(o in pre for o in postfix)
+    for pos in ("post", "both"):
+        got = merge_orders({"base_grammar": {"marker_position": pos}},
+                           {})["rel_period"]
+        for o in base:
+            assert o in got
+        for o in postfix:
+            assert o in got
+
+
 @pytest.mark.parametrize("lang", _LANGS)
 def test_additive_superset_weekday_ref(lang):
     """Every dev weekday_ref order is still covered after the base merge.

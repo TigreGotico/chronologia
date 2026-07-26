@@ -15,12 +15,6 @@
         "DAY_WORD"
       ]
     },
-    "rel_period": {
-      "orders": [
-        "REL_MARKER UNIT",
-        "UNIT REL_MARKER"
-      ]
-    },
     "calendar_date": {
       "orders": [
         "article? DAY of MONTH of? YEAR?",

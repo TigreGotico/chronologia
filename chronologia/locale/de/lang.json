@@ -23,11 +23,6 @@
         "DAY_WORD"
       ]
     },
-    "rel_period": {
-      "orders": [
-        "REL_MARKER UNIT"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER WEEKEND",

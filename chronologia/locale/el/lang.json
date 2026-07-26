@@ -17,12 +17,6 @@
         "DAY_WORD"
       ]
     },
-    "rel_period": {
-      "orders": [
-        "article? REL_MARKER article? UNIT",
-        "UNIT REL_MARKER"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER article? WEEKEND",
@@ -169,6 +163,11 @@
   "hook": "chronologia.extract.numfold_agglutinative:fold_el",
   "base_grammar": {
     "marker_position": "post",
+    "override": {
+      "rel_period": [
+        "article? REL_MARKER article? UNIT"
+      ]
+    },
     "extend": {
       "weekday_ref": [
         "article? REL_MARKER article? WEEKDAY"

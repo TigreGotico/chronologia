@@ -14,11 +14,6 @@
         "DAY_WORD"
       ]
     },
-    "rel_period": {
-      "orders": [
-        "UNIT REL_MARKER"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "WEEKEND REL_MARKER",
@@ -125,6 +120,9 @@
     ]
   },
   "base_grammar": {
-    "marker_position": "post"
+    "marker_position": "post",
+    "override": {
+      "rel_period": []
+    }
   }
 }
