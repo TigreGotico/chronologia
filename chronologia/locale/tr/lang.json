@@ -138,6 +138,11 @@
     "marker_position": {
       "weekday_ref": "post",
       "rel_period": "post"
+    },
+    "extend": {
+      "month_fuzzy": [
+        "MONTH PART"
+      ]
     }
   }
 }

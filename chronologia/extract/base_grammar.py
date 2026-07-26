@@ -131,6 +131,28 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? NUM half of GYEAR",
         "article? NUM half of article? SCOPE_UNIT",
     ],
+    # "early/mid/late <month>" ("early March" -> the first third of March, a
+    # ~10-day span; "late December" -> the last third).  ``PART`` binds the
+    # locale's fuzzy period-part surface (``period_part_early/mid/late.voc`` --
+    # en "early/mid/late", de "Anfang/Mitte/Ende", ru "начало/середина/конец"),
+    # ``MONTH`` the month, and the resolver slices the Gregorian month into
+    # thirds via :func:`chronologia.subdivide`.  This single order is the
+    # language-neutral core every locale shares -- harvested from the richest
+    # inline set (Romance ``article? PART of? MONTH``): a leading ``article?``
+    # carries the Romance/Germanic determiner without a locale shipping an
+    # article, ``article?`` equally covers the article-less surface, and the
+    # optional ``of?`` covers BOTH the connector-less genitive ("PART MONTH":
+    # en/de "early March", Slavic "начало марта" with a genitive month) AND the
+    # prepositional connector ("PART of MONTH": Scandinavian "begyndelsen af
+    # marts", Bulgarian "началото на март" with ``на`` bound as ``of``).  The
+    # one order therefore inherits cleanly into the pre-posed-PART locales
+    # (Germanic, Romance, all Slavic bar none, Austronesian id/ms) with no
+    # per-locale exception.  The genuinely different word order -- the Turkic
+    # POSTPOSED possessive ("mart başı", MONTH then PART) -- is not expressible
+    # by adding a leading-``article?`` order and stays a per-locale ``extend``.
+    "month_fuzzy": [
+        "article? PART of? MONTH",
+    ],
 }
 
 # ---------------------------------------------------------------------------
