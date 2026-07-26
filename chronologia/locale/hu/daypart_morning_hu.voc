@@ -1,0 +1,7 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as the morning band.
+# Surface: adverbs 'in the morning' / 'in the forenoon' -- the deictic form these phrases use.
+# Source: Wiktionary, reggel — https://en.wiktionary.org/wiki/reggel ; délelőtt — https://en.wiktionary.org/wiki/délelőtt
+reggel
+délelőtt

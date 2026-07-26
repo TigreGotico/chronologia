@@ -16,7 +16,6 @@ from ._corpus import nomatch, span, start_end, AstroDate
     "בעוד",                   # a lone future marker
     "בשעה",                   # "at hour" with no reading
     "12345678",              # digit soup: too long to be a year
-    "בבוקר",                  # a bare day-part word, no hour
     "חמש",                    # a lone spelled number, no unit/marker
 ])
 def test_no_spurious_parse(text):

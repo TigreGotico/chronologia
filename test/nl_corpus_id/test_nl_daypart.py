@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+"""Indonesian time-of-day dayparts (CLDR 47 day-period bands, locale id).
+
+On ``dev`` these deictic phrases SILENTLY returned the whole day and stranded
+the daypart word; this file pins the correct CLDR band. Bands and the cited
+single-token surfaces are wired in chronologia/dayparts.py and the
+``daypart_*_id.voc`` vocabulary. Anchor: Tuesday 2017-06-27 13:04.
+"""
+from datetime import datetime
+
+import pytest
+
+from chronologia.astrodate import BASIS_RECONSTRUCTED
+
+from ._corpus import AstroDate, parse, span  # noqa: F401
+
+#: pinned to the mission anchor (Tuesday 13:04) so the asserted bands are
+#: reproducible regardless of the corpus helper's own default anchor.
+A = datetime(2017, 6, 27, 13, 4)
+
+
+_BANDS = [
+    ('pagi', AstroDate(2017, 6, 27), AstroDate(2017, 6, 27, 10, 0)),
+    ('kemarin sore', AstroDate(2017, 6, 26, 15, 0), AstroDate(2017, 6, 26, 18, 0)),
+    ('besok siang', AstroDate(2017, 6, 28, 10, 0), AstroDate(2017, 6, 28, 15, 0)),
+    ('malam', AstroDate(2017, 6, 27, 18, 0), AstroDate(2017, 6, 28)),
+]
+
+
+@pytest.mark.parametrize("text,start,end", _BANDS)
+def test_daypart_band(text, start, end):
+    s = span(text, A)
+    assert (s.start, s.end) == (start, end), f"{text!r} resolved to {s}"
+    assert s.basis == BASIS_RECONSTRUCTED, f"{text!r} basis {s.basis!r}"
+
+
+@pytest.mark.parametrize("text", ['', '   ', '!!!', 'zzz qqq', '1234567890'])
+def test_adversarial_never_raises(text):
+    parse(text, A)

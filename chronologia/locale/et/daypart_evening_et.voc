@@ -1,0 +1,6 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale et
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as the evening band.
+# Surface: adessive adverb 'in the evening' -- the deictic form these phrases use.
+# Source: Wiktionary, õhtu — https://en.wiktionary.org/wiki/õhtu (adessive õhtul)
+õhtul

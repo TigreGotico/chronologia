@@ -40,7 +40,6 @@ _SAFE_NONE = [
     'milion powodów',
     'tysiące ludzi',
     'wschodzące słońce',
-    'wcześnie rano',
     'sekunda ciszy',
     'większość ludzi',
     'kilka dni',
@@ -67,6 +66,9 @@ _RESOLVED = [
 ]
 
 _LIMITATIONS = [
+    pytest.param(
+        'wcześnie rano',
+        marks=pytest.mark.xfail(reason='daypart adverb now binds as the CLDR time-of-day band (the daypart silent-drop fix); the intensifier is not modelled, disambiguation is downstream', strict=True)),
     pytest.param(
         'kwiecień jako imię',
         marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),

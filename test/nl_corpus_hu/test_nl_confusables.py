@@ -40,7 +40,6 @@ _SAFE_NONE = [
     'egymillió ok',
     'emberek ezrei',
     'felkelő nap',
-    'kora reggel',
     'egy másodperc csend',
     'a legtöbb ember',
     'néhány nap',
@@ -68,6 +67,9 @@ _RESOLVED = [
 ]
 
 _LIMITATIONS = [
+    pytest.param(
+        'kora reggel',
+        marks=pytest.mark.xfail(reason='daypart adverb now binds as the CLDR time-of-day band (the daypart silent-drop fix); the intensifier is not modelled, disambiguation is downstream', strict=True)),
     pytest.param(
         'április mint név',
         marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),

@@ -98,4 +98,6 @@ def test_bare_number_no_unit_nomatch():
 
 
 def test_gibberish_nomatch():
-    nomatch("minden reggel almát eszem")
+    # true gibberish with no temporal token (the former "minden reggel almát
+    # eszem" now binds the daypart 'reggel' -- see test_hu_adversarial.py).
+    nomatch("qwrt zxcv plmn")

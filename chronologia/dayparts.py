@@ -113,6 +113,19 @@ Per-language conventions, all from the CLDR 47 chart above:
   formiddag/føremiddag ``[10:00, 12:00)``, ettermiddag ``[12:00, 18:00)``,
   kveld ``[18:00, 24:00)``.
 
+Eighteen further locales (``ar az bg cs el et eu fa he hr hu id ms pl sk sl
+tr uk``) are transcribed the same way, but collapsed into chronologia's own
+four-band model — ``morning`` (CLDR morning1+morning2), ``afternoon``
+(afternoon1/2), ``evening`` (evening1) and ``night`` (night1, joined with a
+00:00 night2 into one midnight-crossing band) — because these locales are
+consumed through the deictic ``daypart_ref`` grammar ("this morning",
+"yesterday evening"), which speaks that four-band vocabulary.  The bands are
+always shipped; a band whose only natural surface is multi-word (Czech ``v
+noci``, Polish ``po południu``, Turkish ``öğleden sonra``, Malay ``tengah
+hari``) carries no ``daypart_*.voc`` yet, exactly as French ``après-midi``
+already does, and a few locales (``az`` ``el``) ship the bands but hold their
+surfaces for native review.
+
 ``Vormittag``, ``förmiddag``, ``formiddag``, ``føremiddag`` and ``migdia`` have
 no English name at all, which is why they are stored under their own names
 rather than folded into ``morning`` or ``noon``.  Inventing an English label
@@ -340,6 +353,111 @@ _LANGUAGES: List[DayPart] = [
     _p("utro", (4, 0), (12, 0), "ru", _cldr("ru")),
     _p("den", (12, 0), (18, 0), "ru", _cldr("ru")),
     _p("vecher", (18, 0), (0, 0), "ru", _cldr("ru")),
+    # ------------------------------------------------------------------
+    # CLDR 46/47 day-period bands for 18 further locales, each a mechanical
+    # transcription of that locale's CLDR rows collapsed into chronologia's
+    # four-band model: morning1+morning2 -> morning, afternoon1/2 -> afternoon,
+    # evening1 -> evening, night1(+night2) -> night (joined into one
+    # midnight-crossing band where the chart splits it at 00:00).  The band
+    # boundaries are always shipped even where no single-token deictic surface
+    # exists for a band (a band with a multi-word surface -- Czech "v noci",
+    # Polish "po poludniu" -- carries no ``daypart_*.voc`` yet, exactly as
+    # French "apres-midi" already does).
+    # uk: evening runs to midnight, night is the small hours (like ru).
+    _p("morning", (4, 0), (12, 0), "uk", _cldr("uk")),
+    _p("afternoon", (12, 0), (18, 0), "uk", _cldr("uk")),
+    _p("evening", (18, 0), (0, 0), "uk", _cldr("uk")),
+    _p("night", (0, 0), (4, 0), "uk", _cldr("uk")),
+    # hr
+    _p("morning", (4, 0), (12, 0), "hr", _cldr("hr")),
+    _p("afternoon", (12, 0), (18, 0), "hr", _cldr("hr")),
+    _p("evening", (18, 0), (21, 0), "hr", _cldr("hr")),
+    _p("night", (21, 0), (4, 0), "hr", _cldr("hr")),
+    # sl
+    _p("morning", (6, 0), (12, 0), "sl", _cldr("sl")),
+    _p("afternoon", (12, 0), (18, 0), "sl", _cldr("sl")),
+    _p("evening", (18, 0), (22, 0), "sl", _cldr("sl")),
+    _p("night", (22, 0), (6, 0), "sl", _cldr("sl")),
+    # cs (night = "v noci", multi-word: band shipped, no voc)
+    _p("morning", (4, 0), (12, 0), "cs", _cldr("cs")),
+    _p("afternoon", (12, 0), (18, 0), "cs", _cldr("cs")),
+    _p("evening", (18, 0), (22, 0), "cs", _cldr("cs")),
+    _p("night", (22, 0), (4, 0), "cs", _cldr("cs")),
+    # sk (night = "v noci", multi-word: band shipped, no voc)
+    _p("morning", (4, 0), (12, 0), "sk", _cldr("sk")),
+    _p("afternoon", (12, 0), (18, 0), "sk", _cldr("sk")),
+    _p("evening", (18, 0), (22, 0), "sk", _cldr("sk")),
+    _p("night", (22, 0), (4, 0), "sk", _cldr("sk")),
+    # hu: reggel+delelott -> morning, ejjel+hajnal -> night (wraps to dawn).
+    _p("morning", (6, 0), (12, 0), "hu", _cldr("hu")),
+    _p("afternoon", (12, 0), (18, 0), "hu", _cldr("hu")),
+    _p("evening", (18, 0), (21, 0), "hu", _cldr("hu")),
+    _p("night", (21, 0), (6, 0), "hu", _cldr("hu")),
+    # bg: the long morning runs to 14:00.
+    _p("morning", (4, 0), (14, 0), "bg", _cldr("bg")),
+    _p("afternoon", (14, 0), (18, 0), "bg", _cldr("bg")),
+    _p("evening", (18, 0), (22, 0), "bg", _cldr("bg")),
+    _p("night", (22, 0), (4, 0), "bg", _cldr("bg")),
+    # pl (afternoon "po poludniu" and night "w nocy" are multi-word: bands
+    # shipped, no voc; morning "rano" and evening "wieczorem" carry surfaces).
+    _p("morning", (6, 0), (12, 0), "pl", _cldr("pl")),
+    _p("afternoon", (12, 0), (18, 0), "pl", _cldr("pl")),
+    _p("evening", (18, 0), (21, 0), "pl", _cldr("pl")),
+    _p("night", (21, 0), (6, 0), "pl", _cldr("pl")),
+    # id: morning opens at midnight (CLDR "pagi" 00:00-10:00); no wrap.
+    _p("morning", (0, 0), (10, 0), "id", _cldr("id")),
+    _p("afternoon", (10, 0), (15, 0), "id", _cldr("id")),
+    _p("evening", (15, 0), (18, 0), "id", _cldr("id")),
+    _p("night", (18, 0), (0, 0), "id", _cldr("id")),
+    # ms: afternoon "tengah hari" is multi-word (band shipped, no voc); the
+    # morning ("pagi") swallows the 00:00-01:00 "tengah malam" sliver.
+    _p("morning", (0, 0), (12, 0), "ms", _cldr("ms")),
+    _p("afternoon", (12, 0), (14, 0), "ms", _cldr("ms")),
+    _p("evening", (14, 0), (19, 0), "ms", _cldr("ms")),
+    _p("night", (19, 0), (0, 0), "ms", _cldr("ms")),
+    # tr: afternoon "ogleden sonra" is multi-word (band shipped, no voc).
+    _p("morning", (6, 0), (12, 0), "tr", _cldr("tr")),
+    _p("afternoon", (12, 0), (19, 0), "tr", _cldr("tr")),
+    _p("evening", (19, 0), (21, 0), "tr", _cldr("tr")),
+    _p("night", (21, 0), (6, 0), "tr", _cldr("tr")),
+    # et
+    _p("morning", (5, 0), (12, 0), "et", _cldr("et")),
+    _p("afternoon", (12, 0), (18, 0), "et", _cldr("et")),
+    _p("evening", (18, 0), (23, 0), "et", _cldr("et")),
+    _p("night", (23, 0), (5, 0), "et", _cldr("et")),
+    # he: afternoon2 "achar ha-tzohorayim" is multi-word; the single-word
+    # "batzohorayim" surfaces the whole afternoon.  night folds the dawn band.
+    _p("morning", (6, 0), (12, 0), "he", _cldr("he")),
+    _p("afternoon", (12, 0), (18, 0), "he", _cldr("he")),
+    _p("evening", (18, 0), (22, 0), "he", _cldr("he")),
+    _p("night", (22, 0), (6, 0), "he", _cldr("he")),
+    # fa: Persian draws no distinct evening -- afternoon (bad-az-zohr / asr)
+    # runs to 19:00 and night (shab) takes over to the small hours.
+    _p("morning", (1, 0), (12, 0), "fa", _cldr("fa")),
+    _p("afternoon", (12, 0), (19, 0), "fa", _cldr("fa")),
+    _p("night", (19, 0), (1, 0), "fa", _cldr("fa")),
+    # eu: morning opens at midnight; night 21:00-24:00, no wrap.
+    _p("morning", (0, 0), (12, 0), "eu", _cldr("eu")),
+    _p("afternoon", (12, 0), (19, 0), "eu", _cldr("eu")),
+    _p("evening", (19, 0), (21, 0), "eu", _cldr("eu")),
+    _p("night", (21, 0), (0, 0), "eu", _cldr("eu")),
+    # ar: evening runs to midnight, night is the small hours 00:00-03:00.
+    _p("morning", (3, 0), (12, 0), "ar", _cldr("ar")),
+    _p("afternoon", (12, 0), (18, 0), "ar", _cldr("ar")),
+    _p("evening", (18, 0), (0, 0), "ar", _cldr("ar")),
+    _p("night", (0, 0), (3, 0), "ar", _cldr("ar")),
+    # az: night wraps 19:00 -> 04:00.  Surfaces held for native review (the
+    # morning word "seher" is a near-homograph of "sabah" = tomorrow).
+    _p("morning", (4, 0), (12, 0), "az", _cldr("az")),
+    _p("afternoon", (12, 0), (17, 0), "az", _cldr("az")),
+    _p("evening", (17, 0), (19, 0), "az", _cldr("az")),
+    _p("night", (19, 0), (4, 0), "az", _cldr("az")),
+    # el: surfaces held for native review (the deictic forms carry an article
+    # -- "to proi" -- that strands as a separate token here).
+    _p("morning", (4, 0), (12, 0), "el", _cldr("el")),
+    _p("afternoon", (12, 0), (17, 0), "el", _cldr("el")),
+    _p("evening", (17, 0), (20, 0), "el", _cldr("el")),
+    _p("night", (20, 0), (4, 0), "el", _cldr("el")),
 ]
 
 #: Deprecated alias for :data:`_LANGUAGES`, from when the tag was miscalled a
