@@ -133,10 +133,36 @@ _he_teen_fold = _teen_fold(extract_number_he, _HE_TEEN_FIRST, _HE_TEEN_SECOND)
 _fold_ar_base = with_ordinals(_make_fold(extract_number_ar, _AR_NUM), "ar",
                               exclude=("الأول", "الثاني"))
 
+# Rule A, confirmed by native speaker athmanemokraoui (TigreGotico/chronologia
+# #268): الأول (first) / الثاني (second) ARE the ordinal in every position
+# EXCEPT immediately after a Levantine solar month-name prefix
+# (تشرين الأول = October, كانون الثاني = January, جمادى الأولى, ربيع الأول),
+# where they form the month name.  They are withheld from the base fold above
+# (which is global and cannot see the preceding word) and licensed back to the
+# ordinal here in every non-month position, so "النصف الأول من 2020" (first
+# half) and "الربع الأول" (first quarter) read while تشرين الأول stays October.
+_AR_MONTH_ORD_PREFIX = frozenset({"تشرين", "كانون", "جمادى", "ربيع"})
+_AR_MONTH_ORDINAL = {"الأول": 1, "الأولى": 1, "الثاني": 2, "الثانية": 2}
+
+
+def _ar_month_ordinal_license(tokens):
+    out = list(tokens)
+    for i, t in enumerate(out):
+        if t.is_number or t.text not in _AR_MONTH_ORDINAL:
+            continue
+        prev = out[i - 1] if i > 0 else None
+        if prev is not None and prev.text in _AR_MONTH_ORD_PREFIX:
+            continue  # part of a month name -- leave the surface untouched
+        v = _AR_MONTH_ORDINAL[t.text]
+        out[i] = Token(text=str(v), raw=str(v), index=t.index, is_number=True,
+                       value=v, char_start=t.char_start, char_end=t.char_end)
+    return tuple(out)
+
 
 def fold_ar(tokens):
-    """Fold the ordinal teen (11..19) first, then the cardinal/ordinal fold."""
-    return _fold_ar_base(_ar_teen_fold(tokens))
+    """Fold the ordinal teen (11..19) first, then the cardinal/ordinal fold,
+    then license الأول/الثاني positionally (Rule A, #268)."""
+    return _ar_month_ordinal_license(_fold_ar_base(_ar_teen_fold(tokens)))
 
 
 # -- Hebrew ------------------------------------------------------------------
