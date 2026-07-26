@@ -41,7 +41,6 @@ _SAFE_NONE = [
     'milion důvodů',
     'tisíce lidí',
     'vycházející slunce',
-    'brzy ráno',
     'vteřina ticha',
     'většina lidí',
     'pár dní',
@@ -64,6 +63,9 @@ _RESOLVED = [
 ]
 
 _LIMITATIONS = [
+    pytest.param(
+        'brzy ráno',
+        marks=pytest.mark.xfail(reason='daypart adverb now binds as the CLDR time-of-day band (the daypart silent-drop fix); the intensifier is not modelled, disambiguation is downstream', strict=True)),
     pytest.param(
         'duben jako jméno',
         marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),

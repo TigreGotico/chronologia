@@ -40,7 +40,6 @@ _SAFE_NONE = [
     'milijon razlogov',
     'tisoče ljudi',
     'vzhajajoče sonce',
-    'zgodaj zjutraj',
     'sekunda tišine',
     'večina ljudi',
     'nekaj dni',
@@ -66,6 +65,9 @@ _RESOLVED = [
 ]
 
 _LIMITATIONS = [
+    pytest.param(
+        'zgodaj zjutraj',
+        marks=pytest.mark.xfail(reason='daypart adverb now binds as the CLDR time-of-day band (the daypart silent-drop fix); the intensifier is not modelled, disambiguation is downstream', strict=True)),
     pytest.param(
         'april kot ime',
         marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),

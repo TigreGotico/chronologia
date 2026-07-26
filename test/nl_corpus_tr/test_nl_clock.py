@@ -132,7 +132,9 @@ def test_bare_hour_without_daypart_stays_on_the_named_hour():
 # -- adversarial: bare direction/fraction words are not a time --------------
 @pytest.mark.parametrize("text", [
     "buçuk", "geçe", "kala", "beş geçe",
-    # the daypart marker licenses a bare hour, but names no time by itself
-    "öğleden sonra", "akşam", "sabah", "öğleden sonra saat"])
+    # the multi-word afternoon marker licenses a bare hour but names no time
+    # by itself.  "sabah"/"akşam" are NOT here: they now name a CLDR daypart
+    # band (see test_nl_daypart.py), so they parse -- just not as a clock time.
+    "öğleden sonra", "öğleden sonra saat"])
 def test_bare_clock_words_nomatch(text):
     nomatch(text)
