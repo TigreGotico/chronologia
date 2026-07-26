@@ -1,0 +1,6 @@
+# Arabic time-of-day surfaces. Forms confirmed by native speaker
+# athmanemokraoui (TigreGotico/chronologia#268). Band boundaries:
+# Unicode CLDR 47 Day Period Rules, locale ar (in chronologia/dayparts.py).
+# evening (المساء): مساء أمس / مساء الأمس
+المساء
+مساء
