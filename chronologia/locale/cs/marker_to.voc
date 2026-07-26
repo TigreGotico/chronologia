@@ -1,1 +1,7 @@
+# Czech range "to" connector (od A do B; A az B).
+# "az": Internetova jazykova prirucka (UJC AV CR) s.v. "az" -- spojka
+#   vymezujici horni mez rozpeti ("tri az ctyri dny", "3. az 10. cervence"),
+#   i.e. the "to/up to" of a numeric or calendar range.
+#   https://prirucka.ujc.cas.cz/?slovo=az
 do
+až

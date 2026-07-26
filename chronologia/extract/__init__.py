@@ -243,8 +243,18 @@ def _dash_between(tokens, p, text):
     gap = text[a:b]
     if _DASH_GAP.fullmatch(gap) is not None:
         return True
-    return (_TIGHT_DASH.fullmatch(gap) is not None
-            and _is_written_year(tokens[p - 1]) and _is_written_year(tokens[p]))
+    if _TIGHT_DASH.fullmatch(gap) is None:
+        return False
+    # A tight dash between two written years is the set year range ("1914-1918").
+    if _is_written_year(tokens[p - 1]) and _is_written_year(tokens[p]):
+        return True
+    # A tight dash between two plain numerals is the day-range shorthand of the
+    # languages that write it that way ("3-10 Temmuz", "3.-10. heinaekuuta").
+    # It is safe to trust here because the *composition* still has to succeed:
+    # a bare "12-15" leaves both endpoints unresolvable with no month to share,
+    # so it never becomes a range -- only a pair where one side lends the other
+    # a month (see :func:`_shared_context`) composes.
+    return tokens[p - 1].is_number and tokens[p].is_number
 
 
 def _first_to_split(tokens, left_start, to_surf, text):
@@ -373,6 +383,9 @@ def _extract_range(text, tokens, engine, anchor):
     def endpoint(sub):
         return _range_endpoint(text, sub, engine, anchor)
 
+    def bare_of(sub):
+        return _bare_numeral(text, sub, engine, anchor)
+
     def borrowed(sub):
         # a slice carrying tokens lent by the other endpoint; resolved through
         # the synthetic-token path so the lent words, which have no extent of
@@ -408,7 +421,7 @@ def _extract_range(text, tokens, engine, anchor):
                                            engine, anchor)
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
-                                     borrowed, spec)
+                                     borrowed, spec, bare_of)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -424,7 +437,7 @@ def _extract_range(text, tokens, engine, anchor):
                                        engine, anchor)
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
-                                     borrowed, spec)
+                                     borrowed, spec, bare_of)
             if got is not None:
                 return _with_prefix(got, prefix)
     return None
@@ -710,6 +723,36 @@ def _lone_numeral(sub):
         and sub[0].value is not None else None
 
 
+def _bare_numeral(text, sub, engine, anchor):
+    """The single numeral of a slice that names no date of its own, else None.
+
+    The lone-numeral shape ("del 5 al 12 de junio", where "5" is nothing but a
+    digit) is the clean case, but a bare range day is routinely written with a
+    determiner in front -- Spanish "entre el 3 y el 10 de julio", English
+    "between the 3rd and the 10th of july".  That slice holds exactly one
+    numeral and still names no calendar field on its own (``el 3`` does not
+    resolve), so it too must borrow its partner's month.  The article is not
+    lent -- only the numeral goes into :func:`_shared_context` -- so it never
+    reaches the remainder, and a slice that *does* resolve by itself (a real
+    date, a bare weekday) is left to its own reading.
+    """
+    nums = [t for t in sub if t.is_number and t.value is not None]
+    if len(nums) != 1:
+        return None
+    if len(sub) == 1:
+        return nums[0]
+    # a slice carrying a unit is a duration, not a bare day -- "za 3 dnya do 5
+    # aprelya" ("3 days before April 5") is an anchored offset whose "za 3 dnya"
+    # names three days, not the 3rd.  Such a slice must keep its own reading, so
+    # it is never lent its partner's month.
+    units = set(engine.spec.units) | set(engine.spec.singular_units)
+    if any(t.text in units for t in sub):
+        return None
+    if _resolve_endpoint(text, sub, engine, anchor) is None:
+        return nums[0]
+    return None
+
+
 def _shared_context(bare, donor):
     """``donor``'s slice with its numeral swapped for the ``bare`` endpoint's.
 
@@ -746,7 +789,8 @@ def _shared_context(bare, donor):
                  for i, t in enumerate(donor))
 
 
-def _compose_range(left_tok, right_tok, endpoint, borrowed, spec):
+def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
+                   bare_of=_lone_numeral):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -770,7 +814,7 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec):
     # numeral resolved to by itself (a day of the *current* month, an hour),
     # which is where the endpoint was previously being thrown away.  See
     # :func:`_shared_context` for the conditions that keep it narrow.
-    bare_left, bare_right = _lone_numeral(left_tok), _lone_numeral(right_tok)
+    bare_left, bare_right = bare_of(left_tok), bare_of(right_tok)
     if bare_left is not None and bare_right is None:
         shared = _shared_context(bare_left, right_tok)
         if shared is not None:
