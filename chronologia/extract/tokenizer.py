@@ -103,7 +103,18 @@ _NUMDATE = r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}(?!\d)"
 # a longer digit run ("15.06.20201"), and "(?!\.\d)" refuses the head of a
 # longer dotted run, so "1.2.3.4" and "1.15.06.2020" name no date at all
 # instead of yielding a date plus a stranded tail.
-_DOTDATE = r"\d{1,2}\.\d{1,2}\.\d{2,4}(?!\d)(?!\.\d)"
+# The same national standards that write "15.06.2020" write it in running
+# prose with a single space after each dot -- "15. 6. 2020" is the everyday
+# German (DIN 5008), Czech/Slovak (CSN/STN 01 6910), Finnish, Russian etc.
+# form.  Without the optional space the three dotted-with-space pieces fall
+# apart on the whitespace split into "15.", "6." and "2020"; the ordinal-dot
+# rule ate the first two, the year matched alone, and the caller got a
+# confident whole-year span with "15. 6." stranded -- the very silent wrong the
+# space-less literal exists to end.  A single optional space after each interior
+# dot keeps the shape one token.  The 2-4 digit year still anchors the pattern,
+# so a bare "15. 6." (two ordinals, no year) matches nothing and fabricates no
+# date, and the two boundary guards are unchanged.
+_DOTDATE = r"\d{1,2}\. ?\d{1,2}\. ?\d{2,4}(?!\d)(?!\.\d)"
 # what the ``NUMDATE`` slot accepts: either separator style.  The matcher and
 # the resolver read this one name, so there is a single source of truth for the
 # shape and the day/month order stays the locale's ``dmy`` decision.

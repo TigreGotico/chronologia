@@ -34,6 +34,20 @@ def test_dotted_date_unpadded_cs():
                                       AstroDate(2020, 6, 16))
 
 
+@pytest.mark.parametrize("text", ["15. 6. 2020", "15. 06. 2020"])
+def test_dotted_date_spaced_cs(text):
+    """CSN 01 6910 writes the everyday date with a space after each dot,
+    "15. 6. 2020"; the spaced surface names the same day and must not strand
+    the day-and-month while returning the bare year."""
+    assert start_end(text) == (AstroDate(2020, 6, 15), AstroDate(2020, 6, 16))
+
+
+def test_spaced_pair_without_a_year_is_not_a_date_cs():
+    """"15. 6." is two ordinals, not a date: with no four-digit year to
+    anchor the pattern nothing may be fabricated."""
+    nomatch("15. 6.")
+
+
 def test_dotted_date_day_over_twelve_cs():
     """Day first, so the day may exceed twelve and the month may not."""
     assert start_end("31.12.1999") == (AstroDate(1999, 12, 31),

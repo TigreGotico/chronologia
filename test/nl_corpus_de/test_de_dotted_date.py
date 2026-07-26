@@ -34,6 +34,33 @@ def test_dotted_date_unpadded_de():
                                       AstroDate(2020, 6, 16))
 
 
+@pytest.mark.parametrize("text", ["15. 6. 2020", "15. 06. 2020", "15.6. 2020"])
+def test_dotted_date_spaced_de(text):
+    """DIN 5008 writes the everyday date with a space after each dot,
+    "15. 6. 2020"; the spaced surface names the same day the space-less form
+    does and must not strand the day-and-month while returning the bare year."""
+    assert start_end(text) == (AstroDate(2020, 6, 15), AstroDate(2020, 6, 16))
+
+
+def test_dotted_date_spaced_in_a_sentence_de():
+    s, e = start_end('das Treffen am 15. 6. 2020')
+    assert (s, e) == (AstroDate(2020, 6, 15), AstroDate(2020, 6, 16))
+    assert parse('das Treffen am 15. 6. 2020')[1] == 'das Treffen am'
+
+
+def test_dotted_date_spaced_two_digit_year_de():
+    """The spaced form pivots a two-digit year exactly like the space-less one."""
+    assert start_end("15. 6. 20") == (AstroDate(2020, 6, 15),
+                                      AstroDate(2020, 6, 16))
+
+
+def test_spaced_pair_without_a_year_is_not_a_date_de():
+    """"15. 6." is two ordinals, not a date: with no four-digit year to anchor
+    the pattern nothing may be fabricated."""
+    nomatch("15. 6.")
+    nomatch("am 15. 6. kommen wir")
+
+
 def test_dotted_date_day_over_twelve_de():
     """Day first, so the day may exceed twelve and the month may not."""
     assert start_end("31.12.1999") == (AstroDate(1999, 12, 31),
