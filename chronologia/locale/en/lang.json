@@ -187,9 +187,7 @@
         "in? article? buddhist year_word? NUM MONTH",
         "in? article? buddhist year_word? NUM",
         "NUM buddhist MONTH",
-        "NUM buddhist",
-        "NUM be MONTH",
-        "NUM be"
+        "NUM buddhist"
       ]
     },
     "deep_time": {
