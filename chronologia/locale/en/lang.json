@@ -297,6 +297,14 @@
       ]
     }
   },
+  "base_grammar": {
+    "extend": {
+      "half_period": [
+        "h NUM GYEAR",
+        "GYEAR h NUM"
+      ]
+    }
+  },
   "conventions": {
     "week_start": "monday",
     "dmy": false,
