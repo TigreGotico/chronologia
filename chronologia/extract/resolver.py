@@ -1626,6 +1626,13 @@ class Resolver:
     #: military "HHMM hours" / bare "0600" reuse the clock resolver verbatim.
     _resolve_military_time = _resolve_clock_time
 
+    #: "<hour[:min]> this <daypart>" ("2:30 this afternoon", "3 this morning"):
+    #: the daypart word binds the MERIDIEM slot (afternoon/evening -> pm,
+    #: morning -> am), so the reading resolves through the shared clock path.
+    #: It carries no ``prefer_future`` flag, so the wall time stays on TODAY --
+    #: "this afternoon" is this calendar day's afternoon even when already past.
+    _resolve_clock_this_daypart = _resolve_clock_time
+
     def _resolve_subdivision_time(self, match, anchor):
         """A clock reading in an alternative day subdivision, rescaled to civil
         time by exact day-fraction arithmetic.
