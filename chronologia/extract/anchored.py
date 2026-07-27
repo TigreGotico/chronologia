@@ -33,7 +33,7 @@ from chronologia.astrodate import AstroDate, DateSpan
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _WEEK_START,
                                               _add_months, _day_span,
-                                              _midnight, _point_span)
+                                              _midnight)
 
 Pair = Tuple[Match, Resolution]
 
@@ -143,7 +143,10 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
         base = datetime(s.year, s.month, s.day)
         if pre["kind"] == "unit":
             value = _shift(base, pre["unit"], sign * pre["qty"])
-            span = _point_span(value, pre["unit"])
+            # the offset amount governs the SHIFT, never the result width:
+            # "a week after X" is the single civil day one week from X, not a
+            # week-wide span.  Every unit resolves to that one shifted day.
+            span = _day_span(value)
         else:
             span = _day_span(_roll_weekday(base, pre["weekday"], sign))
         start = pre["start"]
@@ -194,7 +197,9 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
             base = datetime(s.year, s.month, s.day)
             if pre["kind"] == "unit":
                 value = _shift(base, pre["unit"], sign * pre["qty"])
-                span = _point_span(value, pre["unit"])
+                # the offset governs the SHIFT, not the width: the single
+                # shifted civil day, for every unit (see _try_offset).
+                span = _day_span(value)
             else:
                 span = _day_span(_roll_weekday(base, pre["weekday"], sign))
             consumed = tuple(sorted(set(res.consumed) | set(range(lo, end))))
