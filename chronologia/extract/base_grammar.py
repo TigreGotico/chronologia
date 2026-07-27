@@ -54,6 +54,8 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast SEL_UNIT of article? SORD SCOPE_UNIT",
         "article? ORD WEEKDAY of MONTH YEAR?",
         "article? ordlast WEEKDAY of MONTH YEAR?",
+        "article? ORD WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
+        "article? ordlast WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
         "article? ORD UNIT of MONTH YEAR?",
         "article? ordlast UNIT of MONTH YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",

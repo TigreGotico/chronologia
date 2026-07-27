@@ -255,7 +255,7 @@
     },
     "month_day_ref": {
       "orders": [
-        "article? ORD of article? month_word",
+        "article? ORD of article? REL_MARKER? month_word",
         "on article? NORD",
         "by article? NORD"
       ],
