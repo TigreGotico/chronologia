@@ -89,7 +89,20 @@ fold_el = _make_fold("el", _EL_FEM_HOURS)
 # -- Hungarian: "hét" is both seven and week; never fold it to a number.
 # "két" is the attributive form of 2 (the pronounce side emits "kettő"), so
 # it is supplied explicitly for the "két hét múlva" counting slot.
-fold_hu = _make_fold("hu", {"két": 2}, exclude=frozenset({"hét"}))
+# The clock hour "at N o'clock" glues the temporal case suffix -kor onto the
+# cardinal ("háromkor" = at three), which the pronounce back-end does not emit;
+# given as one-token surfaces so "délután háromkor" reads a clock hour.  "hétkor"
+# (at seven) is a distinct surface from the excluded "hét" (week/seven), so the
+# exclude above is unaffected.  Source: Wiktionary, -kor
+# (https://en.wiktionary.org/wiki/-kor#Hungarian), temporal case suffix; the
+# cardinals are the standard telling-time forms (Magyar helyesírás, Akadémiai).
+_HU_KOR_HOURS = {
+    "egykor": 1, "kettőkor": 2, "háromkor": 3, "négykor": 4, "ötkor": 5,
+    "hatkor": 6, "hétkor": 7, "nyolckor": 8, "kilenckor": 9, "tízkor": 10,
+    "tizenegykor": 11, "tizenkettőkor": 12,
+}
+fold_hu = _make_fold("hu", {"két": 2, **_HU_KOR_HOURS},
+                     exclude=frozenset({"hét"}))
 # Hungarian spells the day-of-month with a single-token ordinal that the
 # cardinal back-end does not read ("tizenötödike április" = the 15th of April);
 # ``pronounce_ordinal_hu`` emits every 1..31 as one word (tizenegyedik,
@@ -109,7 +122,17 @@ _FI_GENITIVE = {
     "yhdeksäntoista": 19, "kahdenkymmenen": 20,
     "puolen": 0.5, "puolentoista": 1.5,
 }
-fold_fi = _make_fold("fi", _FI_GENITIVE)
+# Finnish tells the clock hour with the ablative "-lta/-ltä" ("kello kolmelta"
+# = at three o'clock); the ablative numeral is a single word the cardinal
+# back-end does not read, so the 1..12 telling-time forms are given explicitly.
+# Source: Wiktionary, -lta (https://en.wiktionary.org/wiki/-lta#Finnish),
+# ablative case; VISK §1237 (kellonajat) for the telling-time use.
+_FI_ABLATIVE_HOURS = {
+    "yhdeltä": 1, "kahdelta": 2, "kolmelta": 3, "neljältä": 4, "viideltä": 5,
+    "kuudelta": 6, "seitsemältä": 7, "kahdeksalta": 8, "yhdeksältä": 9,
+    "kymmeneltä": 10, "yhdeltätoista": 11, "kahdeltatoista": 12,
+}
+fold_fi = _make_fold("fi", {**_FI_GENITIVE, **_FI_ABLATIVE_HOURS})
 # Finnish spells the day-of-month with a single-token ordinal the cardinal
 # back-end does not read in date position ("viidestoista huhtikuuta" = the 15th
 # of April).  ``pronounce_ordinal_fi`` emits every 1..31 as one compound word
@@ -145,6 +168,15 @@ _EU_HOUR_FORMS = {
     "ordubata": 1, "ordubiak": 2, "hirurak": 3, "laurak": 4, "bostak": 5,
     "seirak": 6, "zazpirak": 7, "zortzirak": 8, "bederatziak": 9,
     "hamarrak": 10, "hamaikak": 11, "hamabiak": 12,
+    # inessive "at N o'clock" ("hiruretan" = at three); the plural hour numeral
+    # carries the -etan case, so it is one word the cardinal back-end does not
+    # read.  1 and 2 are two-word forms ("ordu batean", "ordu bietan") and fold
+    # via the case-suffix pre-pass, not here.  Source: Wiktionary, -etan
+    # (https://en.wiktionary.org/wiki/-etan#Basque), inessive plural; Euskara
+    # batua telling-time forms (Euskaltzaindia, orduak).
+    "hiruretan": 3, "lauretan": 4, "bostetan": 5, "seietan": 6,
+    "zazpietan": 7, "zortzietan": 8, "bederatzietan": 9, "hamarretan": 10,
+    "hamaiketan": 11, "hamabietan": 12,
 }
 # NB: a bare "k" is deliberately excluded -- it collides with the "k.a."/
 # "k.o." era abbreviations the tokenizer shears to a "k" fragment.
