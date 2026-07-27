@@ -86,6 +86,6 @@ def test_finders_tuple_is_the_documented_order():
     """The shipped order, spelled out -- a reorder must be a deliberate edit."""
     assert [f.__name__ for f in nseries._FINDERS] == [
         "_recur_nth_weekday", "_recur_holiday", "_recur_date_anchored",
-        "_recur_once", "_recur_every", "_recur_freq_word",
+        "_recur_once", "_recur_on_weekdays", "_recur_every", "_recur_freq_word",
         "_recur_habitual_weekday",
     ]

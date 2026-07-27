@@ -464,6 +464,17 @@ def extract_recurrence(
     ctx = _recur_ctx(text, lang, anchor)
     tokens = ctx.tokens
 
+    # A placement-free rate ("twice a week", "twice daily") names a frequency
+    # *count per period* -- and RFC 5545 has no such part: COUNT is a total,
+    # not a per-period rate.  Fabricating BYDAY (inventing Mon/Wed/Fri the
+    # speaker never said) would corrupt any round-trip, so a bare rate is
+    # refused outright rather than stranded into a misleading DAILY partial.
+    # A rate that *does* name its days ("twice a week on monday") is a placed
+    # reading and is left for the on-weekday finder below.
+    if any(tok.text in ctx.rate_words for tok in tokens) \
+            and _recur_on_weekdays(ctx) is None:
+        return None
+
     # first match wins; the order of ``_FINDERS`` is load-bearing -- see the
     # constraints recorded where it is defined.
     # first match wins; the order of ``_FINDERS`` is load-bearing -- see the
@@ -655,6 +666,8 @@ class _RecurCtx:
     once_words: set = frozenset()
     per_words: set = frozenset()
     habitual_words: set = frozenset()
+    and_words: set = frozenset()
+    rate_words: set = frozenset()
     holidays: dict = None
     lang: str = "en-us"
     anchor: Optional[datetime] = None
@@ -691,6 +704,8 @@ def _recur_ctx(text, lang, anchor):
         once_words=set(C.get("recur_once", ())),
         per_words=set(C.get("recur_per", ())),
         habitual_words=set(C.get("recur_habitual", ())),
+        and_words=set(C.get("and", ())),
+        rate_words=set(C.get("recur_rate", ())),
         holidays=dict(spec.holidays),
         lang=lang,
         anchor=anchor,
@@ -886,6 +901,98 @@ def _recur_once(ctx):
     return None
 
 
+def _collect_weekdays(ctx, start, plural_ok):
+    """Read a run of weekday names beginning at ``start`` -> ``(days, end)``.
+
+    A recurrence enumeration lists its days with the language's ``and``/``&``
+    connective (and, in prose, commas -- which the tokenizer already drops):
+    "monday, wednesday and friday", "tuesday and thursday".  The run is read
+    day-by-day, skipping any ``and`` connectors between them, so every named
+    weekday is collected rather than only the first.  ``days`` is the list of
+    weekday codes in reading order; ``end`` the index just past the last day.
+    Returns ``None`` when ``start`` is not a weekday at all.
+    """
+    t = ctx.tokens
+    n = len(t)
+    wd = _weekday_here(ctx, t[start], plural_ok) if start < n else None
+    if wd is None:
+        return None
+    days = [wd]
+    end = start + 1
+    while True:
+        k = end
+        while k < n and t[k].text in ctx.and_words:
+            k += 1
+        nxt = _weekday_here(ctx, t[k], plural_ok) if k < n else None
+        if nxt is None:
+            break
+        days.append(nxt)
+        end = k + 1
+    return days, end
+
+
+def _leading_rate_span(ctx, on_idx):
+    """Token span of a redundant "<N> times a <period>" rate leading into an
+    ``on <weekdays>`` placement, or the empty set when there is none.
+
+    "3 times a week on monday, wednesday and friday" names its days outright,
+    so the rate is redundant with the placement and RFC 5545 expresses only
+    the days (``BYDAY=MO,WE,FR``).  The rate is consumed -- not stranded in the
+    remainder -- but only when the whole region before ``on`` is a rate: a
+    period unit plus a count (a number, or a ``twice``/``thrice`` rate word),
+    with nothing else temporal (a weekday, month or ``every`` never appear in a
+    rate).  Anything else is left untouched.
+    """
+    t = ctx.tokens
+    if on_idx <= 0:
+        return set()
+    seg = range(0, on_idx)
+    has_count = any(t[k].is_number or t[k].text in ctx.rate_words for k in seg)
+    has_unit = any(t[k].text in ctx.units
+                   and ctx.units[t[k].text] in _UNIT_FREQ for k in seg)
+    benign = all(
+        t[k].is_number or t[k].text in ctx.rate_words
+        or t[k].text in ctx.articles or t[k].text in ctx.per_words
+        or t[k].text in ctx.units
+        or not (t[k].text in ctx.weekdays or t[k].text in ctx.every
+                or t[k].text in ctx.months or t[k].text in ctx.freq)
+        for k in seg)
+    if has_count and has_unit and benign:
+        return set(seg)
+    return set()
+
+
+def _recur_on_weekdays(ctx):
+    """``on <weekday>[, <weekday> ...]`` -> ``WEEKLY;BYDAY=<days>``.
+
+    The English habitual "on mondays" / "on mondays, wednesdays and fridays"
+    is a weekly rule on the named days -- the plural weekday surface (or a
+    two-or-more-day list) is what marks it as a recurrence rather than a single
+    coming date ("on monday" alone stays a one-off, unread here).  Weekday
+    plurals are read positionally, exactly as the ``every``/habitual frames
+    read them, never entering the global weekday vocabulary.
+
+    A redundant rate leading into the placement ("3 times a week on monday,
+    wednesday and friday") is consumed rather than blocking the parse.
+    """
+    t = ctx.tokens
+    n = len(t)
+    for i in range(n):
+        if t[i].text not in ctx.on_words:
+            continue
+        got = _collect_weekdays(ctx, i + 1, True)
+        if got is None:
+            continue
+        days, end = got
+        singular_first = t[i + 1].text in ctx.weekdays
+        if len(days) < 2 and singular_first and not _leading_rate_span(ctx, i):
+            continue  # "on monday": a single coming date, not a rule
+        byday = tuple((None, wd) for wd in days)
+        consumed = set(range(i, end)) | _leading_rate_span(ctx, i)
+        return _build_every("weekly", byday=byday), consumed
+    return None
+
+
 def _recur_every(ctx):
     """``every [other|N] (<weekday> | <unit> | weekday-word)``, plus the
     **elliptical** nth-weekday / day-of-month readings that drop the
@@ -998,9 +1105,10 @@ def _recur_every(ctx):
             return (_build_every("weekly", byday=_weekend_byday(ctx), **iv),
                     set(range(i, j + 1)))
         if t[j].text in ctx.weekdays:
-            wd = ctx.weekdays[t[j].text]
-            return (_build_every("weekly", byday=((None, wd),), **iv),
-                    set(range(i, j + 1)))
+            days, end = _collect_weekdays(ctx, j, True)
+            byday = tuple((None, wd) for wd in days)
+            return (_build_every("weekly", byday=byday, **iv),
+                    set(range(i, end)))
         if t[j].text in ctx.units:
             unit = ctx.units[t[j].text]
             if unit == "fortnight":
@@ -1262,5 +1370,5 @@ def _recur_date_anchored(ctx):
 # so there is no precedence ranking to state here, only those two edges.  A
 # table for seven functions would invent structure that is not there.
 _FINDERS = (_recur_nth_weekday, _recur_holiday, _recur_date_anchored,
-            _recur_once, _recur_every, _recur_freq_word,
+            _recur_once, _recur_on_weekdays, _recur_every, _recur_freq_word,
             _recur_habitual_weekday)
