@@ -213,7 +213,8 @@
         "in GYEAR",
         "article? year_word GYEAR",
         "GYEAR",
-        "article? year_word NUM SCALE"
+        "article? year_word NUM SCALE",
+        "PART GYEAR"
       ]
     },
     "decade_ref": {
