@@ -213,6 +213,10 @@ class Tokenizer:
             # locales this engine serves, lower-casing is length-preserving, so
             # they are also the offsets into the original ``text``.
             cs, ce = m.start(), m.end()
+            # lower-casing is length-preserving for the Latin-script locales
+            # here, so the same offsets index the ORIGINAL text: record whether
+            # the surface opened with a capital (proper-noun positional guard).
+            cap = cs < len(text) and text[cs] != low[cs]
             is_literal = (re.fullmatch(_ISOWEEK, raw) is not None
                           or re.fullmatch(_ISO, raw) is not None
                           or re.fullmatch(_NUMDATE_ANY, raw) is not None
@@ -239,9 +243,10 @@ class Tokenizer:
                                     char_start=cs, char_end=ce))
             else:
                 tokens.append(Token(text=raw, raw=raw, index=i,
-                                    char_start=cs, char_end=ce))
+                                    char_start=cs, char_end=ce, cap=cap))
         # re-index sequentially (finditer index already sequential, but be
         # explicit so callers can trust index == position)
         return tuple(Token(t.text, t.raw, i, t.is_number, t.value,
-                           t.char_start, t.char_end)
+                           t.char_start, t.char_end, t.cap,
+                           prev_cap=(tokens[i - 1].cap if i > 0 else False))
                      for i, t in enumerate(tokens))

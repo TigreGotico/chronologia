@@ -130,6 +130,7 @@
         "FRACTION HOUR MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
         "HOUR MERIDIEM ZONE?",
+        "at? HOUR in? article? MERIDIEM ZONE?",
         "at? LANDMARK ZONE?",
         "FRACTION CLOCKDIR LANDMARK ZONE?",
         "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?",
@@ -301,7 +302,8 @@
     "dmy": false,
     "hemisphere": null,
     "prefer_future": true,
-    "bare_half_past": true
+    "bare_half_past": true,
+    "daypart_proper_noun_guard": true
   },
   "quantifiers": {
     "1": [

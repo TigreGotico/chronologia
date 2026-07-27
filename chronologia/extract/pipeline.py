@@ -129,13 +129,15 @@ def merge_multiword(tokens: Tuple[Token, ...],
                 # from the first constituent's start to the last's end.
                 out.append(Token(text=surface, raw=raw, index=len(out),
                                  char_start=run[0].char_start,
-                                 char_end=run[-1].char_end))
+                                 char_end=run[-1].char_end, cap=run[0].cap,
+                                 prev_cap=run[0].prev_cap))
                 i += n
                 break
         else:
             out.append(Token(tokens[i].text, tokens[i].raw, len(out),
                              tokens[i].is_number, tokens[i].value,
-                             tokens[i].char_start, tokens[i].char_end))
+                             tokens[i].char_start, tokens[i].char_end,
+                             tokens[i].cap, tokens[i].prev_cap))
             i += 1
     return tuple(out)
 

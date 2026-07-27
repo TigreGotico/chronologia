@@ -293,6 +293,22 @@ class ConstructionMatcher:
                             in self.spec.connectors.get(
                                 "year_word", frozenset())):
                         continue
+                    # Positional licensing for the bare-daypart reading: a
+                    # capitalised daypart word that is the tail of a capitalised
+                    # multi-word phrase ("Guy Fawkes Night", "Twelfth Night") is
+                    # a proper-noun holiday name, not the night band -- refuse
+                    # the bare "DAYPART" order so the daypart never hijacks the
+                    # noun and strands the rest of the name.  Only the BARE form
+                    # (no REL_MARKER licensing it) is guarded; "this Night" is
+                    # not.  Gated on the locale convention so noun-capitalising
+                    # languages are unaffected.
+                    if (name == "daypart_ref" and "DAYPART" in slots
+                            and "REL_MARKER" not in slots
+                            and self.spec.conventions.daypart_proper_noun_guard
+                            and start > 0
+                            and tokens[start].cap
+                            and tokens[start].prev_cap):
+                        continue
                     if "CAL_MONTH" in slots:
                         cal = _calendar_for_surface(
                             self.spec, slots["CAL_MONTH"].text)
