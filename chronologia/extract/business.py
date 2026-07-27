@@ -52,8 +52,8 @@ from typing import List, Optional, Set, Tuple
 from chronologia.civil_holidays import is_civil_holiday
 from chronologia.extract.anchored import _gap_words
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
-from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _day_span,
-                                              _midnight)
+from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
+                                              _day_span, _midnight)
 
 Pair = Tuple[Match, Resolution]
 
@@ -87,6 +87,36 @@ def _nth_business_day(base: datetime, n: int, sign: int, weekend_start: int,
 
 def _is_day_unit(tok: Token, spec: LangSpec) -> bool:
     return spec.units.get(tok.text) == "day"
+
+
+def _month_scope(tokens, hi: int, spec: LangSpec, gap, anchor: datetime
+                 ) -> Optional[Tuple[datetime, int, Set[int]]]:
+    """A trailing "of (this|next|last) month" scope on a business-day count.
+
+    "the first business day of next month" scopes the count to a calendar
+    month rather than the anchor: the nth business day *of that month*.
+    Returns ``(base, end_index, consumed_ids)`` where ``base`` is the day
+    before the scoped month's first, so ``_nth_business_day(base, n, +1)``
+    lands on the nth business day inside the month; otherwise ``None``.
+    """
+    month_words = spec.connectors.get("month_word", frozenset())
+    if not month_words:
+        return None
+    scan_gap = gap | frozenset(spec.connectors.get("of", ()))
+    k = hi
+    while k < len(tokens) and tokens[k].text in scan_gap:
+        k += 1
+    rel = 0
+    if k < len(tokens) and tokens[k].text in spec.rel_markers:
+        rel = spec.rel_markers[tokens[k].text]
+        k += 1
+    while k < len(tokens) and tokens[k].text in scan_gap:
+        k += 1
+    if k >= len(tokens) or tokens[k].text not in month_words:
+        return None
+    first = _add_months(datetime(anchor.year, anchor.month, 1), rel)
+    base = first - timedelta(days=1)
+    return base, k + 1, set(range(hi, k + 1))
 
 
 def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
@@ -194,6 +224,18 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
         inwords = frozenset(spec.connectors.get("in", ()))
         while start - 1 >= 0 and tokens[start - 1].text in inwords:
             start -= 1
+        scope = _month_scope(tokens, hi, spec, gap, anchor)
+        if scope is not None:
+            base, end, scope_ids = scope
+            value = _nth_business_day(base, count, 1, weekend_start,
+                                      jurisdiction)
+            claimed = set(range(start, hi)) | scope_ids
+            pair = (Match("business_days", (start, end), {}),
+                    Resolution(_day_span(value), tuple(sorted(claimed))))
+            kept = [(m, r) for m, r in resolved
+                    if not (set(range(*m.span)) & claimed)]
+            kept.append(pair)
+            return kept
         ref = _date_ref(tokens, hi, resolved, spec, gap, resolve_ref)
         if ref is not None:
             base, sign, end, claimed = ref

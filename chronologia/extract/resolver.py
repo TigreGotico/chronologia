@@ -906,10 +906,18 @@ class Resolver:
         "of month_word" order binds a general ORD."""
         ord_tok = match.slots.get("ORD") or match.slots["NORD"]
         day = int(ord_tok.value)
-        value = datetime(anchor.year, anchor.month, day)   # raises -> None
+        rel_tok = match.slots.get("REL_MARKER")
+        rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
+        base = _add_months(datetime(anchor.year, anchor.month, 1), rel)
+        try:
+            value = datetime(base.year, base.month, day)
+        except ValueError:                          # no such day -> None
+            return None
         prefer_future = self.spec.construction_flags.get(
             "month_day_ref", {}).get("prefer_future", False)
-        if prefer_future and value < _midnight(anchor):
+        # an explicit this/next/last marker names the month outright; only the
+        # bare "the Nth of the month" rolls forward when the day has passed.
+        if rel == 0 and prefer_future and value < _midnight(anchor):
             value = _add_months(value, 1)
         return Resolution(_day_span(value), self._consumed(match))
 
@@ -973,9 +981,24 @@ class Resolver:
         wd_tok = match.slots.get("WEEKDAY")
         if wd_tok is not None:                      # nth weekday of a month
             target = self.spec.weekdays[wd_tok.text]
-            month = self.spec.months[match.slots["MONTH"].text]
-            year_tok = match.slots.get("YEAR")
-            year = _pivot_two_digit_year(year_tok) if year_tok else anchor.year
+            month_tok = match.slots.get("MONTH")
+            if month_tok is not None:               # named month ("... of June")
+                month = self.spec.months[month_tok.text]
+                year_tok = match.slots.get("YEAR")
+                year = (_pivot_two_digit_year(year_tok) if year_tok
+                        else anchor.year)
+            else:                                   # relative-month scope
+                # "... of (the|this|next|last) month": the scope word names the
+                # anchor's own calendar month, shifted by an optional
+                # this/next/last marker, NOT a named month.
+                scope_tok = match.slots.get("SCOPE_UNIT")
+                if (scope_tok is None
+                        or self.spec.units.get(scope_tok.text) != "month"):
+                    return None
+                rel_tok = match.slots.get("REL_MARKER")
+                rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
+                base = _add_months(_midnight(anchor).replace(day=1), rel)
+                year, month = base.year, base.month
             value = _nth_weekday_of_month(year, month, target, n)
             start = AstroDate.from_date(value)
             return Resolution(DateSpan(start, start + timedelta(days=1)),
