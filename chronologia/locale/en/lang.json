@@ -99,6 +99,7 @@
     },
     "regnal_date": {
       "orders": [
+        "ERANAME NUM MONTH",
         "ERANAME NUM",
         "article? ORD year_word of ERANAME",
         "article? ORD year_word of article? reign of ERANAME",
@@ -179,6 +180,14 @@
       "orders": [
         "in? article? holocene year_word? NUM",
         "NUM holocene"
+      ]
+    },
+    "era_buddhist": {
+      "orders": [
+        "in? article? buddhist year_word? NUM MONTH",
+        "in? article? buddhist year_word? NUM",
+        "NUM buddhist MONTH",
+        "NUM buddhist"
       ]
     },
     "deep_time": {

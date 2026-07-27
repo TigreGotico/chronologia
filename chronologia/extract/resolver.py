@@ -159,7 +159,8 @@ DATE_CONSTRUCTIONS = frozenset({
     "weekday_ref", "named_day", "season_ref", "scoped_ordinal",
     "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
-    "era_bc", "era_ad", "era_bp", "era_auc", "olympiad_ref", "archon_ref",
+    "era_bc", "era_ad", "era_bp", "era_auc", "era_buddhist",
+    "olympiad_ref", "archon_ref",
     "roman_classical", "deep_time", "named_period",
     "holiday_ref"})
 
@@ -1146,7 +1147,11 @@ class Resolver:
         span = seq.year_span(segname, n)
         if span is None:
             return None
-        return Resolution(DateSpan(*span), self._consumed(match))
+        # an adjacent calendar month ("Reiwa 2 May") narrows the reign-year
+        # span to that Gregorian month of the resolved year, the same
+        # named-month binding "May 2020" uses.
+        narrowed = self._narrow_to_month(DateSpan(*span), match)
+        return Resolution(narrowed, self._consumed(match))
 
     # -- roman_date (Kalends / Nones / Ides) -------------------------------
 
@@ -1299,6 +1304,28 @@ class Resolver:
         10000), resolved through the registry to its CE year."""
         n = int(match.slots["NUM"].value)
         return Resolution(self._era_span("holocene", n), self._consumed(match))
+
+    def _resolve_era_buddhist(self, match, anchor):
+        """"Buddhist Era 2560" / "2560 BE": the Gregorian year-span of that
+        Buddhist-Era year, resolved through the registry's epoch (BE == CE +
+        543, so BE 2560 == AD 2017), not the literal number.  An adjacent
+        calendar month ("Buddhist Era 2560 May") narrows the span to that
+        month of the resolved Gregorian year (see :meth:`_narrow_to_month`)."""
+        n = int(match.slots["NUM"].value)
+        span = self._era_span("buddhist", n)
+        return Resolution(self._narrow_to_month(span, match),
+                          self._consumed(match))
+
+    def _narrow_to_month(self, span, match):
+        """Narrow a whole-year era span to a single month when the match
+        carries a MONTH slot; otherwise return the year span unchanged.  The
+        month is the same named-month binding a plain "May 2020" uses -- the
+        Gregorian month of the era-resolved year."""
+        month_tok = match.slots.get("MONTH")
+        if month_tok is None:
+            return span
+        month = self.spec.months[month_tok.text]
+        return _gregorian_month_span(span.start.year, month)
 
     def _resolve_roman_eve(self, match, anchor):
         """"the eve of the Ides of March": the day before a Roman-anchor date.
