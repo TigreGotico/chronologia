@@ -40,6 +40,7 @@ from chronologia.recurrence import nth_weekday_of_month as _nth_weekday_of_month
 #: they are deliberately *not* durations -- a phrase naming one yields no
 #: duration and is left in the remainder.  The fixed set below tiles exactly.
 _DUR_UNIT_SECONDS = {
+    "second": 1,
     "minute": 60,
     "hour": 3600,
     "day": 86400,
@@ -183,6 +184,13 @@ def extract_duration(
 
     if not found:
         return None
+    # A connective "and" bridging two consumed components ("two hours *and*
+    # fifteen minutes") is part of the compound, not leftover text: fold it in
+    # so the remainder carries only genuinely non-duration words.
+    for k in range(1, n - 1):
+        if (k not in consumed and tokens[k].text in and_words
+                and k - 1 in consumed and k + 1 in consumed):
+            consumed.add(k)
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])

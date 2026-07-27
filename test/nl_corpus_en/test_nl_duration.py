@@ -34,10 +34,24 @@ _CASES = [
     ("an hour and a half", timedelta(hours=1, minutes=30)),
     ("one and a half hours", timedelta(hours=1, minutes=30)),
     ("two and a half hours", timedelta(hours=2, minutes=30)),
+    # seconds (fixed-width, second-precise)
+    ("30 seconds", timedelta(seconds=30)),
+    ("5 sec", timedelta(seconds=5)),
+    ("45 secs", timedelta(seconds=45)),
     # compound
     ("2 days 4 hours", timedelta(days=2, hours=4)),
     ("1 hour 30 minutes", timedelta(hours=1, minutes=30)),
     ("5 days 6 hours 30 minutes", timedelta(days=5, hours=6, minutes=30)),
+    # compound: every component sums -- trailing parts must not be dropped.
+    ("a minute and thirty seconds", timedelta(minutes=1, seconds=30)),
+    ("two hours and fifteen minutes", timedelta(hours=2, minutes=15)),
+    ("one hour thirty minutes", timedelta(hours=1, minutes=30)),
+    ("three days and twelve hours", timedelta(days=3, hours=12)),
+    ("1 hour 2 minutes 3 seconds", timedelta(hours=1, minutes=2, seconds=3)),
+    # the "and a half" idiom is HALF OF THE PRECEDING UNIT, distinct from
+    # "and <n> <smaller-unit>": both must land on 90s / 5400s respectively.
+    ("a minute and a half", timedelta(minutes=1, seconds=30)),
+    ("an hour and a half", timedelta(hours=1, minutes=30)),
 ]
 
 
