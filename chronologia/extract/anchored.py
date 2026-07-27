@@ -355,8 +355,80 @@ def _weekend_after_next(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     return None
 
 
+def _nth_weekday_after_daymonth(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
+    """"the <ordinal> <weekday> after the <day-of-month>": the N-th ``weekday``
+    whose date is strictly greater than that day-of-month.
+
+    The day-of-month names the anchor's OWN calendar month (a within-month
+    reference -- "the 15th" here is *this* month's 15th, not a prefer-future
+    roll), and the ordinal selects which occurrence of the weekday past it:
+    "the first Friday after the 15th" is the 1st Friday whose date > the 15th,
+    "the second ..." the 2nd.  A missing ordinal means the first.
+
+    Without this the bare matcher reads the weekday as a stray ``weekday_ref``
+    (its own next occurrence) and strands the ordinal and the day-of-month in
+    the remainder -- a silent-wrong.  Composed here (rather than by the offset
+    pass) because the anchor day-of-month does not itself resolve to a bare
+    date, so there is no reference match to roll from; the weekday-stepping
+    reuses :func:`_nth_weekday`, the same helper the count constructions use.
+    """
+    after = spec.connectors.get("after", frozenset())
+    if not after:
+        return None
+    gap = _gap_words(spec)
+    n = len(tokens)
+    for i, t in enumerate(tokens):
+        wd = _weekday_of(t.text, spec)
+        if wd is None:
+            continue
+        k = i + 1
+        an = _match_at(tokens, k, after)          # "after" (possibly multiword)
+        if not an:
+            continue
+        k += an
+        while k < n and tokens[k].text in gap:    # skip article/of gap
+            k += 1
+        if k >= n:
+            continue
+        dtok = tokens[k]                          # the day-of-month digit
+        if not (dtok.is_number and dtok.value is not None):
+            continue
+        day = int(dtok.value)
+        if not 1 <= day <= 31:
+            continue
+        # only a BARE day-of-month anchors here.  A day followed by a month
+        # ("monday after 1 april") is a full calendar date the offset pass
+        # already rolls the weekday onto -- leave it to that pass rather than
+        # re-reading the day as *this* month's.
+        m = k + 1
+        while m < n and tokens[m].text in gap:
+            m += 1
+        if m < n and tokens[m].text in spec.months:
+            continue
+        # an optional ordinal ("first"/"second" -> 1/2, folded to a digit)
+        # leads the weekday; absent, the first occurrence is meant.
+        start, count = i, 1
+        j = i - 1
+        if j >= 0 and tokens[j].is_number and tokens[j].value is not None:
+            val = int(tokens[j].value)
+            if val >= 1:
+                count, start = val, j
+        if start - 1 >= 0 and tokens[start - 1].text in gap:  # leading article
+            start -= 1
+        try:
+            base = datetime(anchor.year, anchor.month, day)
+        except ValueError:                        # no such day this month
+            continue
+        value = _nth_weekday(base, wd, count, 1)
+        end = k + 1
+        return (Match("nth_weekday_after", (start, end), {}),
+                Resolution(_day_span(value), tuple(range(start, end))))
+    return None
+
+
 def apply_ordinal_count(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     """The anchor-relative counting constructions (weekday count, weekend
-    after next); the first that fires wins."""
+    after next, Nth weekday after a day-of-month); the first that fires wins."""
     return (_count_weekday(tokens, spec, anchor)
-            or _weekend_after_next(tokens, spec, anchor))
+            or _weekend_after_next(tokens, spec, anchor)
+            or _nth_weekday_after_daymonth(tokens, spec, anchor))
