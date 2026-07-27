@@ -141,8 +141,32 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
     # -- clock_time slots --------------------------------------------------
     if name == "CLOCK":
         return _CLOCK.fullmatch(token.text) is not None
+    if name in ("DOTCLOCK", "PADCLOCK"):
+        # the dot as a clock separator -- the British/European 24-hour
+        # timetable form "HH.MM" ("the 07.42 to London", "departs at 15.30").
+        # The tokenizer reads a dotted run as a decimal number ("07.42" ->
+        # value 7.42), so the shape is recovered from the surviving ``raw``:
+        # a valid wall clock, hour 0..23 and minute 00..59, spelled with a
+        # single interior dot.  PADCLOCK additionally requires the zero-padded
+        # two-digit hour of the timetable convention -- the stricter form used
+        # where the licensing cue is only a leading article, so "the 3.14
+        # release" keeps its decimal reading while "the 09.15 departure" reads
+        # as a clock.  Licensing lives in the grammar orders (a leading "at",
+        # a trailing meridiem, or an article on the padded form); an uncued
+        # bare decimal binds no clock order and stays a number.
+        m = re.fullmatch(r"(\d{1,2})\.(\d{2})", token.raw)
+        if m is None:
+            return False
+        hh, mm = int(m.group(1)), int(m.group(2))
+        if not (0 <= hh <= 23 and 0 <= mm <= 59):
+            return False
+        return len(m.group(1)) == 2 if name == "PADCLOCK" else True
     if name == "HOUR":
-        return token.is_number and 0 <= (token.value or 0) <= 24
+        # an hour is an integer count -- a dotted decimal ("7.42") is the
+        # timetable clock's HH.MM, handled by DOTCLOCK, not an hour whose
+        # fractional minutes get silently truncated to :00.
+        return (token.is_number and "." not in token.raw
+                and 0 <= (token.value or 0) <= 24)
     if name == "MINUTE":
         return token.is_number and 0 <= (token.value or 0) <= 59
     if name == "QUARTS":

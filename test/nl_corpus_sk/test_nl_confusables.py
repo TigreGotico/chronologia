@@ -61,6 +61,10 @@ _RESOLVED = [
     'stratené desaťročie',
     'v strede pozornosti',
     'životné prostredie',
+    # "o pol" -- the fraction word "pol" (0.5) used to truncate into HOUR=0
+    # and bind a spurious midnight; the dotted-clock fix rejects a non-integer
+    # HOUR, so the bare fraction now correctly binds no clock.
+    'otočka o pol',
 ]
 
 _LIMITATIONS = [
@@ -79,9 +83,6 @@ _LIMITATIONS = [
     pytest.param(
         'vianoce prišli skoro',
         marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
-    pytest.param(
-        'otočka o pol',
-        marks=pytest.mark.xfail(reason='structurally-safe class unexpectedly binds; recorded as a limitation', strict=True)),
 ]
 
 

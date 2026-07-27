@@ -63,6 +63,10 @@ _RESOLVED = [
     'środowisko naturalne',
     'w środku uwagi',
     'święta przyszły wcześnie',
+    # "o pół" -- the fraction word "pół" (0.5) used to truncate into HOUR=0
+    # and bind a spurious midnight; the dotted-clock fix rejects a non-integer
+    # HOUR, so the bare fraction now correctly binds no clock.
+    'obrót o pół',
 ]
 
 _LIMITATIONS = [
@@ -78,9 +82,6 @@ _LIMITATIONS = [
     pytest.param(
         'jesień życia',
         marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
-    pytest.param(
-        'obrót o pół',
-        marks=pytest.mark.xfail(reason='structurally-safe class unexpectedly binds; recorded as a limitation', strict=True)),
 ]
 
 
