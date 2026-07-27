@@ -287,6 +287,16 @@ def extract_timespans(
             continue
         out.append((match.span, res.value, conf))
 
+    # a list of ordinals sharing one trailing scope ("the 2nd, 4th and 6th of
+    # July", "the 5th and the 3rd of the month") names one date per ordinal --
+    # the shared "of July"/"of the month" distributes to each.  The matcher only
+    # binds the *last* ordinal (the one the scope actually abuts), leaving the
+    # earlier bare ordinals unmatched; this re-resolves each of them against the
+    # same scope and emits a mention, so a three-ordinal list yields three dates
+    # instead of silently keeping only the last.
+    out.extend(_distribute_shared_scope(scored, tokens, engine, anchor))
+    out.sort(key=lambda e: e[0][0])
+
     # a "from A to B" / "between A and B" pair of mentions is ONE range span,
     # not two loose endpoints: collapse adjacent mentions the single-span range
     # detector accepts, reusing the identical machinery so list-vs-range ("monday
@@ -380,6 +390,71 @@ def _merge_ranges(out, tokens, text, engine, anchor):
         merged.append(out[i])
         i += 1
     return merged
+
+
+#: the day/ordinal constructions a shared trailing scope distributes across --
+#: "the 2nd, 4th and 6th of July" (calendar_date, DAY+MONTH) and "the 5th and
+#: the 3rd of the month" (month_day_ref, ORD + "of the month").  Both name one
+#: day-in-a-month whose leading token is the day number, so a preceding bare
+#: ordinal composes with the same scope to name another date in the same month.
+_SHARED_SCOPE_CONSTRUCTIONS = {"calendar_date", "month_day_ref"}
+
+
+def _distribute_shared_scope(scored, tokens, engine, anchor):
+    """Re-resolve each earlier ordinal in a shared-trailing-scope list.
+
+    Only English triggers this: the list connectors and articles walked over
+    ("and"/"or", "the"/"a") are English surfaces, and gating here keeps every
+    other locale byte-identical.  For a matched day-in-a-month mention whose
+    day is the first token of its span, the tokens after that day are the
+    *scope* ("of July", "of the month"); a run of bare ordinal number tokens
+    immediately before the mention -- separated only by list connectors and
+    articles -- each compose with that scope into their own date mention.
+
+    A genuine range ("from the 2nd to the 6th of July") never reaches here: the
+    range detector binds "from"/"to"/"between" natively and this reads only a
+    bare ``and``/``or`` list.  Returns extra ``(token_span, DateSpan, conf)``
+    tuples for the caller to fold into the mention list.
+    """
+    if not engine.spec.lang.split("-")[0].lower() == "en":
+        return []
+    from chronologia.extract.numfold_engine import reindex
+
+    connectors = {"and", "or"}
+    articles = {"the", "a", "an"}
+    claimed = {i for sc in scored
+               for i in range(sc.match.span[0], sc.match.span[1])}
+    extra = []
+    for sc in scored:
+        match = sc.match
+        if match.construction not in _SHARED_SCOPE_CONSTRUCTIONS:
+            continue
+        lo, hi = match.span
+        day_idx = next((i for i in range(lo, hi) if tokens[i].is_number), None)
+        if day_idx is None:
+            continue
+        scope = tokens[day_idx + 1:hi]
+        if not scope:
+            continue
+        # walk left over the bare ordinal list, skipping connectors/articles
+        j = lo - 1
+        while j >= 0:
+            tok = tokens[j]
+            if tok.is_number and j not in claimed:
+                synth = reindex((tok,) + tuple(scope))
+                sm = list(engine.matcher.match(synth))
+                got = next((m for m in sm
+                            if m.construction == match.construction), None)
+                if got is not None:
+                    res = engine.resolver.resolve(got, anchor)
+                    if res is not None:
+                        extra.append(((j, j + 1), res.value, sc.confidence))
+            elif tok.text in connectors or tok.text in articles:
+                pass
+            else:
+                break
+            j -= 1
+    return extra
 
 
 def _char_span(tokens, lo, hi):

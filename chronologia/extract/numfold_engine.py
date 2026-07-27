@@ -136,8 +136,13 @@ def make_fold(grammar: NumberGrammar
                     j += 1
                 else:
                     break
-            # a run that is already a single digit token needs no folding
-            spelled = [t for t in run if not t.is_number]
+            # a run with no spelled number-word needs no folding: its members
+            # are already complete digit numbers, and merging two of them
+            # ("2019 2020", "2 and 4") would fabricate a single wrong value out
+            # of a list of distinct dates.  The joiner ("and"/"e") is not a
+            # spelled number-word, so a pure-digit run bridged by one still
+            # folds nothing -- each digit stays its own token for the matcher.
+            spelled = [t for t in run if not t.is_number and not joiner(t)]
             if not spelled:
                 out.extend(run)
                 i = j
