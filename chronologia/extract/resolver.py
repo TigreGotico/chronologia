@@ -564,27 +564,45 @@ class Resolver:
         (1..4) is the three-month span ``[month 3N-2, month 3N+1)``.  A
         REL_MARKER shifts by whole quarters from the anchor's current one.
         Anything outside 1..4 does not name a quarter and the construction does
-        not fire."""
+        not fire.
+
+        An optional ``PART`` ("end of Q3", "start of the quarter") narrows the
+        whole quarter to its first/middle/last third via the same span-native
+        :func:`chronologia.subdivide` the month/year fuzzy narrowings use; an
+        ``ordlast`` day selector ("last day of the quarter", "last day of Q3")
+        returns the single final civil day of the quarter."""
         rel_tok = match.slots.get("REL_MARKER")
+        num_tok = match.slots.get("ORD") or match.slots.get("NUM")
         if rel_tok is not None:
             rel = self.spec.rel_markers[rel_tok.text]
             cur = (anchor.month - 1) // 3               # 0-based current quarter
             total = cur + rel
             year = anchor.year + total // 4
             q = total % 4 + 1
-        else:
-            num_tok = match.slots.get("ORD") or match.slots.get("NUM")
+        elif num_tok is not None:
             q = int(num_tok.value)
             if not 1 <= q <= 4:
                 return None
             year_tok = match.slots.get("YEAR")
             year = (_pivot_two_digit_year(year_tok)
                     if year_tok is not None else anchor.year)
+        else:                                           # bare "the quarter"
+            q = (anchor.month - 1) // 3 + 1              # anchor's own quarter
+            year = anchor.year
         m = 3 * (q - 1) + 1
         end_year, end_month = (year + 1, 1) if m + 3 > 12 else (year, m + 3)
-        return Resolution(DateSpan(AstroDate(year, m, 1),
-                                   AstroDate(end_year, end_month, 1)),
-                          self._consumed(match))
+        span = DateSpan(AstroDate(year, m, 1), AstroDate(end_year, end_month, 1))
+        part_tok = match.slots.get("PART")
+        if part_tok is not None:
+            from chronologia import subdivide
+            span = subdivide(span, self.spec.period_parts[part_tok.text])
+            return Resolution(DateSpan(span.start, span.end),
+                              self._consumed(match))
+        unit_tok = match.slots.get("UNIT")               # "last day of ..."
+        if unit_tok is not None and self.spec.units.get(unit_tok.text) == "day":
+            last = span.end + timedelta(days=-1)
+            return Resolution(DateSpan(last, span.end), self._consumed(match))
+        return Resolution(span, self._consumed(match))
 
     def _resolve_iso_week_ref(self, match, anchor):
         """An ISO-8601 week: "week 32", "week 32 of 2026".  ISO weeks are

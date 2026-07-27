@@ -223,7 +223,9 @@
         "article? year_word GYEAR",
         "GYEAR",
         "article? year_word NUM SCALE",
-        "PART GYEAR"
+        "PART GYEAR",
+        "PART of? article? fiscal? year_word GYEAR",
+        "article? GYEAR fiscal? year_word PART"
       ]
     },
     "decade_ref": {
@@ -252,7 +254,13 @@
         "article? ORD quarter_word of YEAR",
         "article? ORD quarter_word YEAR?",
         "REL_MARKER quarter_word",
-        "quarter_word REL_MARKER"
+        "quarter_word REL_MARKER",
+        "PART of? q NUM YEAR?",
+        "PART of? article? ORD quarter_word YEAR?",
+        "PART of? article? quarter_word",
+        "article? ordlast UNIT of? q NUM YEAR?",
+        "article? ordlast UNIT of? article? ORD quarter_word YEAR?",
+        "article? ordlast UNIT of? article? quarter_word"
       ]
     },
     "iso_week_ref": {
