@@ -20,6 +20,55 @@ from typing import Tuple
 
 from chronologia.extract.model import Token, TokenizerModes
 
+# Typography a real user pastes in -- from a word processor, a CJK keyboard,
+# a Romance-language document -- that is the same character as an ASCII one to
+# the eye but a different codepoint to the matcher.  Left unmapped each is a
+# silent wrong: a curly "o’clock" fails the straight-apostrophe vocab lookup,
+# a fullwidth "5：30" strands its minutes, a no-break space splits a date in
+# two.  A TARGETED table (never blanket NFKC) is used on purpose: every entry
+# below is a strict 1:1 codepoint substitution, so the pass is
+# length-preserving and the character offsets the tokenizer hands downstream
+# (used to slice the remainder out of the ORIGINAL text) stay valid.  NFKC is
+# neither length-preserving (½ -> "1⁄2", ² -> "2", ﷺ -> a long expansion) nor
+# safe for the scripts this engine serves -- it would recompose combining
+# marks on month names and could disturb RTL text -- so it is rejected.
+# Arabic-Indic digits (٠-٩) are deliberately absent: they are NOT fullwidth,
+# the numeric tokenizer already reads them, and mapping them would be a
+# regression, not a fix.
+_UNICODE_FOLD = {
+    # curly single quotes / apostrophe / prime -> straight apostrophe
+    "\u2018": "'", "\u2019": "'", "\u02bc": "'", "\u2032": "'",
+    # curly / low double quotes -> straight quote
+    "\u201c": '"', "\u201d": '"', "\u201e": '"', "\u201f": '"',
+    # fullwidth digits U+FF10..FF19 -> ASCII 0..9
+    **{chr(0xFF10 + d): str(d) for d in range(10)},
+    # fullwidth punctuation used to glue date/clock components -> ASCII
+    "\uff1a": ":", "\uff0c": ",", "\uff0e": ".", "\uff0f": "/",
+    "\uff0d": "-", "\uff01": "!", "\uff1b": ";",
+    # no-break, narrow-no-break, figure, thin spaces, ideographic space
+    # -> ordinary space
+    "\u00a0": " ", "\u202f": " ", "\u2007": " ", "\u2009": " ",
+    "\u3000": " ",
+}
+_UNICODE_TABLE = str.maketrans(_UNICODE_FOLD)
+# the º / ª ordinal indicators (Spanish/Portuguese/Italian "1º de abril" = the
+# 1st) glued to a digit, with the optional RAE dot ("1.º"): read as the day
+# number by dropping the indicator.  Only after a digit, so a bare "Nº" or a
+# lone ª is untouched.  The replacement pads with spaces of equal length,
+# keeping the pass length-preserving like the table above.
+_ORDINAL_IND = re.compile(r"(\d)(\.?[ºª])")
+
+
+def normalise_unicode(text: str) -> str:
+    """Length-preserving typographic fold applied before tokenizing.
+
+    Every substitution is one codepoint for one codepoint (or an equal-length
+    run for the ordinal indicator), so character offsets into the result line
+    up exactly with the original text the remainder is later sliced from.
+    """
+    text = text.translate(_UNICODE_TABLE)
+    return _ORDINAL_IND.sub(lambda m: m.group(1) + " " * len(m.group(2)), text)
+
 # ISO-8601 year-first calendar literals, kept whole: a full date -- dash
 # ("2017-06-30"), slash ("2024/03/06", 1-2 digit month/day) or dot
 # ("2020.06.15", the form Hungarian mandates) -- and the
@@ -206,7 +255,12 @@ class Tokenizer:
         if not text:
             return ()
         tokens = []
-        low = text.lower()
+        # typographic fold first: curly quotes, fullwidth forms, no-break
+        # spaces and digit+º/ª ordinal indicators become their ASCII twin
+        # BEFORE matching.  It is strictly length-preserving (see
+        # ``normalise_unicode``), so the offsets below still index the caller's
+        # original text one-for-one and the remainder slices out verbatim.
+        low = normalise_unicode(text).lower()
         for i, m in enumerate(self._re.finditer(low)):
             raw = m.group(0)
             # match offsets are into ``text.lower()``; for the Latin-script
