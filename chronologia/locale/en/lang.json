@@ -286,6 +286,13 @@
         "HOLIDAY"
       ]
     },
+    "solar_event": {
+      "orders": [
+        "article? SEASON EVENT YEAR?",
+        "article? SOLARQUAL EVENT YEAR?",
+        "article? MONTH EVENT YEAR?"
+      ]
+    },
     "era_auc": {
       "orders": [
         "NUM auc",

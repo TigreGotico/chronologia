@@ -156,7 +156,7 @@ def _day_span(dt: datetime) -> DateSpan:
 DATE_CONSTRUCTIONS = frozenset({
     "calendar_date", "reckoned_date", "nongregorian_date", "iso_date",
     "numeric_date",
-    "weekday_ref", "named_day", "season_ref", "scoped_ordinal",
+    "weekday_ref", "named_day", "season_ref", "solar_event", "scoped_ordinal",
     "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
     "era_bc", "era_ad", "era_bp", "era_auc", "era_buddhist",
@@ -1270,6 +1270,71 @@ class Resolver:
         span_start = AstroDate.from_datetime(start_dt)
         end = AstroDate.from_datetime(_add_months(start_dt, 3))
         return Resolution(DateSpan(span_start, end), self._consumed(match))
+
+    # -- solar_event (equinoxes / solstices) -------------------------------
+
+    _MONTH_CARDINAL = {3: "march", 6: "june", 9: "september", 12: "december"}
+
+    def _resolve_solar_event(self, match, anchor):
+        """"the summer solstice", "vernal equinox 2017", "march equinox 2000".
+
+        A season-qualified (or month-named) equinox/solstice resolves to the
+        astronomical event's civil DAY, computed by the Meeus ch.27 machinery
+        in :mod:`chronologia.equinoxes` -- a location-independent instant,
+        unlike sunrise/sunset (which need coordinates and are unsupported).
+        The whole-day span mirrors a single-day holiday; the minute-level
+        instant precision is documented in ``chronologia.equinoxes``.
+
+        The qualifier names which of the four cardinal events is meant.  A
+        season word ("summer") is read hemisphere-aware, exactly as
+        ``season_ref`` is: the event that OPENS that astronomical season (north
+        summer -> June solstice, south summer -> December solstice).  The formal
+        names "vernal"/"autumnal" (SOLARQUAL) map to spring/autumn; a month name
+        ("June solstice", "March equinox") names its cardinal event directly.
+        A pairing whose event word contradicts its qualifier ("summer equinox")
+        does not resolve.
+
+        Which year:
+
+        * an explicit ``YEAR`` slot -> that year;
+        * bare (no year) -> the next occurrence ON OR AFTER the anchor date,
+          exactly as a bare holiday: from an anchor past the June solstice,
+          "the summer solstice" is next year's.
+
+        A BARE "the solstice"/"the equinox" with no qualifier does not match
+        this construction at all (no order lacks the qualifier), so it stays
+        unresolved -- the event is ambiguous between the two solstices/equinoxes.
+        """
+        from chronologia.equinoxes import (CARDINAL_KIND, equinox_instant,
+                                           season_cardinal)
+        kind = self.spec.solar_events[match.slots["EVENT"].text]
+        hemi = ("south" if self.conventions.hemisphere == "south"
+                else "north")
+        month_tok = match.slots.get("MONTH")
+        if month_tok is not None:
+            which = self._MONTH_CARDINAL.get(self.spec.months[month_tok.text])
+            if which is None:
+                return None
+        else:
+            qual_tok = match.slots.get("SEASON")
+            if qual_tok is not None:
+                season = self.spec.seasons[qual_tok.text]
+            else:
+                season = self.spec.solar_quals[match.slots["SOLARQUAL"].text]
+            which = season_cardinal(season, hemi)
+        if CARDINAL_KIND[which] != kind:
+            return None
+        year_tok = match.slots.get("YEAR")
+        if year_tok is not None:
+            year = _pivot_two_digit_year(year_tok)
+        else:
+            ref = anchor.date()
+            inst = equinox_instant(ref.year, which)
+            year = (ref.year if date(inst.year, inst.month, inst.day) >= ref
+                    else ref.year + 1)
+        inst = equinox_instant(year, which)
+        return Resolution(_day_span(datetime(inst.year, inst.month, inst.day)),
+                          self._consumed(match))
 
     # -- era_date family (BC / AD / before-present), year-wide -------------
 
