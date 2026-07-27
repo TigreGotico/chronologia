@@ -77,10 +77,14 @@ def test_weekday_roll(text, expected):
     assert start(text) == _ad(expected)
 
 
-# -- referential width: a unit offset keeps the unit's width --------------
+# -- referential width: an offset resolves to the single shifted day ------
+# The offset amount governs the SHIFT, never the result width: "2 weeks after
+# easter" is the single civil day 14 days after easter, not a 14-day span.
+# (Previously this asserted a week-wide span -- that was the silent-wrong; see
+# test_nl_anchored_offset_point.)
 
-def test_week_offset_is_week_wide():
-    assert span("2 weeks after easter").width == timedelta(days=7)
+def test_week_offset_is_day_wide():
+    assert span("2 weeks after easter").width == timedelta(days=1)
 
 
 def test_day_offset_is_day_wide():

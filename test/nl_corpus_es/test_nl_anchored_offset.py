@@ -45,8 +45,11 @@ def test_weekday_roll(text, expected):
     assert start(text) == _ad(expected)
 
 
-def test_week_offset_is_week_wide():
-    assert span("2 semanas después de pascua").width == timedelta(days=7)
+# an offset resolves to the single shifted day, not a period-wide span:
+# the offset amount is the SHIFT, never the result width (was days=7,
+# a silent-wrong -- see en test_nl_anchored_offset_point).
+def test_week_offset_is_day_wide():
+    assert span("2 semanas después de pascua").width == timedelta(days=1)
 
 
 def test_weekday_roll_is_day_wide():
