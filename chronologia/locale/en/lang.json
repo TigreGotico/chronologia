@@ -142,7 +142,8 @@
     "military_time": {
       "orders": [
         "MILTIME hours",
-        "MILTIMEZ"
+        "MILTIMEZ",
+        "MILTIMENZ miltime_zone"
       ],
       "prefer_future": true
     },

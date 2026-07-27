@@ -162,6 +162,11 @@ DATE_CONSTRUCTIONS = frozenset({
     "era_bc", "era_ad", "era_bp", "era_auc", "era_buddhist",
     "olympiad_ref", "archon_ref",
     "roman_classical", "deep_time", "named_period",
+    # a day-of-month reference ("on the 15th", "by the 15th") resolves to a
+    # whole day (its own prefer-future month choice); it composes with a lone
+    # clock exactly as any other date does, so "5pm on the 15th" places the
+    # clock on that day instead of dropping the day and timing the anchor's.
+    "month_day_ref",
     "holiday_ref"})
 
 
@@ -1650,7 +1655,8 @@ class Resolver:
 
     def _clock_hms(self, match):
         clock = match.slots.get("CLOCK")
-        miltime = match.slots.get("MILTIME") or match.slots.get("MILTIMEZ")
+        miltime = (match.slots.get("MILTIME") or match.slots.get("MILTIMEZ")
+                   or match.slots.get("MILTIMENZ"))
         landmark = match.slots.get("LANDMARK")
         if clock is not None:
             parts = [int(p) for p in clock.text.split(":")]
