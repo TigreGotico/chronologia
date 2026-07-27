@@ -842,8 +842,14 @@ class Resolver:
                 match.slots["SCALE"].text]
             if not GYEAR_MIN <= year <= GYEAR_MAX:
                 return None
-        return Resolution(DateSpan(AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1)),
-                          self._consumed(match))
+        span = DateSpan(AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+        # An optional early/mid/late PART narrows the year to that third
+        # ("late 2017"), the same span-native narrowing decade/month fuzzy use.
+        part_tok = match.slots.get("PART")
+        if part_tok is not None:
+            from chronologia import subdivide
+            span = subdivide(span, self.spec.period_parts[part_tok.text])
+        return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     def _decade_start(self, decade_tok, num_tok, anchor):
         """The Gregorian year a decade phrase begins on.
