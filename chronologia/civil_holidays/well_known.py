@@ -107,12 +107,41 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
     # ``religious`` — never ``public``. Easter 2024 = 31 Mar, so Palm Sunday
     # 2024 = 24 Mar (verified against the 2024 liturgical calendar,
     # USCCB/Roman Missal). Anchored on ``en`` for its English surface.
+    # Ash Wednesday — the first day of Lent, Easter -46 (46 days before Easter,
+    # counting the Sundays; the Roman Missal / General Roman Calendar,
+    # "Feria IV Cinerum"). Purely liturgical, so ``religious`` only. Easter 2018
+    # = 1 Apr, so Ash Wednesday 2018 = 14 Feb (verified against the 2018
+    # liturgical calendar). NOTE its name embeds "Wednesday" — the feast surface
+    # is longer/more specific than the bare weekday and must win over it.
+    WellKnownHoliday("ash_wednesday", EasterOffsetRule(-46),
+                     frozenset({"religious"}),
+                     "VA", "Ash Wednesday", "en"),
+    # Palm Sunday — the Sunday before Easter (Easter -7), opening Holy Week.
+    # A computable Western liturgical date fixed by the same Easter computus as
+    # Good Friday; the Roman Missal / General Roman Calendar defines it as
+    # "Dominica in Palmis de Passione Domini", the sixth Sunday of Lent. It is a
+    # liturgical (not civil day-off) observance, so it carries only
+    # ``religious`` — never ``public``. Easter 2024 = 31 Mar, so Palm Sunday
+    # 2024 = 24 Mar (verified against the 2024 liturgical calendar,
+    # USCCB/Roman Missal). Anchored on ``en`` for its English surface.
     WellKnownHoliday("palm_sunday", EasterOffsetRule(-7),
                      frozenset({"religious"}),
                      "VA", "Palm Sunday", "en"),
+    # Maundy (Holy) Thursday — the Thursday of Holy Week, Easter -3, when the
+    # Mass of the Lord's Supper is celebrated ("Feria V in Cena Domini").
+    # Liturgical only. Easter 2018 = 1 Apr -> 29 Mar 2018. Name embeds
+    # "Thursday" — same longest-match precedence as Ash Wednesday.
+    WellKnownHoliday("maundy_thursday", EasterOffsetRule(-3),
+                     frozenset({"religious"}),
+                     "VA", "Maundy Thursday", "en"),
     WellKnownHoliday("good_friday", EasterOffsetRule(-2),
                      frozenset({"public", "religious"}),
                      "PT", "Sexta-feira Santa", "pt"),
+    # Holy Saturday — the Saturday of Holy Week, Easter -1, the Easter Vigil
+    # ("Sabbatum Sanctum"). Liturgical only. Easter 2018 = 1 Apr -> 31 Mar 2018.
+    WellKnownHoliday("holy_saturday", EasterOffsetRule(-1),
+                     frozenset({"religious"}),
+                     "VA", "Holy Saturday", "en"),
     WellKnownHoliday("easter", EasterOffsetRule(0),
                      frozenset({"public", "religious"}),
                      "PT", "Domingo de Pascoa", "pt"),
@@ -127,6 +156,12 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
     WellKnownHoliday("whit_monday", EasterOffsetRule(50),
                      frozenset({"public", "religious"}),
                      "FR", "Lundi de Pentecôte", "fr"),
+    # Trinity Sunday — the Sunday after Pentecost, Easter +56 ("Dominica
+    # Sanctissimae Trinitatis"). Liturgical only. Easter 2018 = 1 Apr -> 27 May
+    # 2018. Name embeds "Sunday" — same longest-match precedence.
+    WellKnownHoliday("trinity_sunday", EasterOffsetRule(56),
+                     frozenset({"religious"}),
+                     "VA", "Trinity Sunday", "en"),
     WellKnownHoliday("corpus_christi", EasterOffsetRule(60),
                      frozenset({"public", "religious"}),
                      "PT", "Corpo de Deus", "pt"),
