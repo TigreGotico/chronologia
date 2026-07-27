@@ -132,12 +132,19 @@
         "HOUR oclock MERIDIEM? ZONE?",
         "HOUR MERIDIEM ZONE?",
         "at? HOUR in? article? MERIDIEM ZONE?",
+        "at? FRACTION HOUR in? article? MERIDIEM ZONE?",
         "at? LANDMARK ZONE?",
         "FRACTION CLOCKDIR LANDMARK ZONE?",
         "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?",
         "MINUTE CLOCKDIR LANDMARK ZONE?"
       ],
       "prefer_future": true
+    },
+    "clock_this_daypart": {
+      "orders": [
+        "at? CLOCK thisdeixis MERIDIEM ZONE?",
+        "at? HOUR thisdeixis MERIDIEM ZONE?"
+      ]
     },
     "military_time": {
       "orders": [

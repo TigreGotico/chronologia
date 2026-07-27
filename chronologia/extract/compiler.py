@@ -108,6 +108,10 @@ PRECEDENCE: Dict[str, int] = {
     # "1990s") must win the tie, so year_ref sits just below calendar_date
     "year_ref": 6,
     "clock_time": 7,
+    # "<hour> this <daypart>": a clock reading whose daypart word supplies the
+    # am/pm meridiem, carrying the extra "this <daypart>" vocabulary over a bare
+    # clock_time, so it wins the longer span ("3 this afternoon" over "3").
+    "clock_this_daypart": 7,
     "weekday_ref": 8,
     "cycle_ref": 8,
     # "next week"/"this month"/"last year": the whole calendar period,
