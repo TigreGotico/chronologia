@@ -1182,6 +1182,43 @@ def extract_timespan(
     return None if res is None else TimeSpanResult(*res)
 
 
+# A temporal reference GOVERNED BY a negation/exclusion particle ("not
+# tomorrow", "any day but Friday", "except Sundays") is NOT a positive date:
+# resolving it positively hands back the exact day the user told us to avoid --
+# an inverted, hazardous result a scheduler would act on.  Per the residue-veto
+# design (docs/design/errors-by-construction.md, #244: "no fabricated date...
+# return None, never a wrong span") such a reference is refused (-> None).
+#
+# The trigger is a negation/exclusion word standing in the residue that GOVERNS
+# the reference (sits to its left).  A BOUND phrase ("not before Monday", "no
+# later than Friday", "not until Tuesday") is a legitimately resolvable
+# constraint, NOT an exclusion: a bound-preposition between the negation and the
+# date (before/after/until/by/earlier/later/past) vetoes the veto, leaving those
+# phrases byte-identical.  English trigger vocab only for now.
+_EN_EXCLUSION_TRIGGERS = frozenset(
+    {"not", "no", "except", "unless", "but", "than"})
+_EN_BOUND_GUARD = frozenset(
+    {"before", "after", "until", "till", "by", "earlier", "later", "past"})
+
+
+def _exclusion_vetoes(governing_text: str, lang: str) -> bool:
+    """True when a negation/exclusion particle governs the reference to its
+    right (the text before the span carries a trigger and no bound preposition).
+
+    ``governing_text`` is the residue lying immediately before the matched
+    reference.  A bound preposition anywhere in it means the phrase is a bound,
+    not an exclusion, and is left untouched.
+    """
+    if lang != "en":
+        return False
+    words = re.findall(r"[a-z']+", governing_text.lower())
+    if not words:
+        return False
+    if any(w in _EN_BOUND_GUARD for w in words):
+        return False
+    return any(w in _EN_EXCLUSION_TRIGGERS for w in words)
+
+
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     """The single recursive resolver over the token stream.
 
@@ -1217,6 +1254,13 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     if core is None:
         return None
     span, consumed = core
+    # veto a reference governed by a leading negation/exclusion particle: the
+    # residue to the left of the winning span carries the trigger.
+    span_starts = [tokens[i].char_start for i in consumed
+                   if i < len(tokens) and tokens[i].char_start is not None]
+    if span_starts and _exclusion_vetoes(text[:min(span_starts)],
+                                          engine.spec.lang):
+        return None
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)
@@ -1418,6 +1462,12 @@ def extract_candidates(
             continue
         seen.add(key)
         consumed = set(res.consumed)
+        # skip a reading governed by a leading negation/exclusion particle
+        # ("not tomorrow"): the excluded reference is not a positive date.
+        starts = [tokens[i].char_start for i in consumed
+                  if i < len(tokens) and tokens[i].char_start is not None]
+        if starts and _exclusion_vetoes(text[:min(starts)], engine.spec.lang):
+            continue
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
         # rank: confidence first, then earlier text position, then longer span

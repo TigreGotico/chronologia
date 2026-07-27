@@ -294,9 +294,28 @@ def extract_timespans(
     # decided exactly as the single edge decides it.
     out = _merge_ranges(out, tokens, text, engine, anchor)
 
+    # drop any mention governed by a leading negation/exclusion particle ("not
+    # tomorrow", "any day but Friday"): the excluded reference is not a positive
+    # date.  The governing residue is the text between the previous mention and
+    # this one, so a bound ("not before Monday") is left untouched.
+    from chronologia.extract import _exclusion_vetoes
+    kept = []
+    prev_end = 0
+    for (lo, hi), value, conf in out:
+        cs = _char_span(tokens, lo, hi)
+        start = cs[0] if cs else None
+        if (start is not None
+                and _exclusion_vetoes(text[prev_end:start], engine.spec.lang)):
+            if cs:
+                prev_end = cs[1]
+            continue
+        if cs:
+            prev_end = cs[1]
+        kept.append(((lo, hi), value, conf))
+
     return [TimeMention(value, " ".join(t.raw for t in tokens[lo:hi]), (lo, hi),
                         _char_span(tokens, lo, hi), conf)
-            for (lo, hi), value, conf in out]
+            for (lo, hi), value, conf in kept]
 
 
 def _merge_ranges(out, tokens, text, engine, anchor):
