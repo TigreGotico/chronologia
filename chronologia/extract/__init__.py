@@ -475,6 +475,67 @@ def _extract_range(text, tokens, engine, anchor):
     return None
 
 
+#: the surfaces "now" resolves from -- the anchor instant.  Kept as a connector
+#: (``marker_now.voc`` -> ``spec.connectors["now"]``) so a locale supplies its
+#: own; the English defaults carry the bare word and its "right now" intensifier.
+_NOW_WORDS = ("now", "right now")
+
+
+def _now_surfaces(spec):
+    return _conn_surfaces(spec, "now", _NOW_WORDS)
+
+
+def _is_now_slice(sub, spec):
+    """True when ``sub`` is *exactly* a "now" surface ("now" / "right now").
+
+    Matched whole-slice only, so it never fires inside a longer phrase ("now and
+    then", "for now"): those carry extra tokens and so are not a bare "now".
+    """
+    if not sub:
+        return False
+    words = [t.text.lower() for t in sub]
+    return any(words == w for w in _now_surfaces(spec))
+
+
+def _now_span(anchor):
+    """The anchor instant as a zero-width span ("now" is a point, not a band)."""
+    now = AstroDate.from_datetime(anchor)
+    return DateSpan(now, now)
+
+
+#: the bare English surfaces for New Year's Day that carry NO "day"/"eve" tail.
+#: Held in code, NOT as a well-known spoken alias, on purpose: a "new year"
+#: holiday surface would be folded into a single multiword token and so would
+#: shadow the ``hebrew_new_year`` construction ("the hebrew new year 5786"),
+#: whose grammar needs "new" and "year" as separate slots.  Matching the bare
+#: surface here -- only as a whole endpoint slice or a whole standalone
+#: utterance -- resolves "from Christmas to New Year" and a lone "New Year"
+#: without touching the token fold.  "new year's day"/"new years day" keep
+#: resolving through the ordinary holiday path.
+_NEW_YEAR_WORDS = (("new", "year"), ("new", "years"))
+
+
+def _is_new_year_slice(sub, spec):
+    """True when ``sub`` is exactly the bare "new year"/"new years" surface."""
+    if not sub:
+        return False
+    words = tuple(t.text.lower() for t in sub)
+    return words in _NEW_YEAR_WORDS
+
+
+def _new_year_span(anchor):
+    """New Year's Day (Jan 1) as a whole-day span, the occurrence on or after
+    the anchor date -- the same choice a bare holiday reference makes."""
+    from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
+    wk = WELL_KNOWN_BY_KEY.get("new_year")
+    year = anchor.year
+    got = wk.date_for(year)
+    if got is not None and got[0] < anchor.date():
+        year += 1
+    span, _basis = wk.span_for(year)
+    return DateSpan(span.start, span.end)
+
+
 def _range_endpoint(text, sub, engine, anchor, resolve=None):
     """A range endpoint carrying its *granularity kind* and whether its year was
     pinned, so :func:`_compose_range` can roll it without fabricating.
@@ -500,6 +561,18 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None):
     carries tokens lent by the other endpoint, whose text belongs to that
     endpoint and so must not reach this one's remainder.
     """
+    # "now" as an endpoint is the anchor instant: a fixed point, never rolled or
+    # year-pulled (kind "dated", pinned).  Wiring it here is what lets "from now
+    # to X" / "between now and X" compose as [anchor, X] instead of collapsing to
+    # X's point when the "now" endpoint failed to resolve.
+    if _is_now_slice(sub, engine.spec):
+        return _now_span(anchor), "", "dated", True
+    # a bare "new year" endpoint is New Year's Day -- a fixed calendar date, so
+    # dated and pinned (never rolled).  This is what binds the trailing holiday
+    # of "from Christmas to New Year" instead of dropping it and collapsing the
+    # range onto Christmas.
+    if _is_new_year_slice(sub, engine.spec):
+        return _new_year_span(anchor), "", "dated", True
     resolve = resolve or _resolve_endpoint
     pinned = any(t.is_number and t.value is not None and t.value >= 100
                  for t in sub)
@@ -1249,6 +1322,13 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     opn = _extract_open_range(text, raw, engine, anchor)
     if opn is not None:
         return opn
+    # bare "now" / "right now" is the anchor instant, a zero-width span; a bare
+    # "new year" is New Year's Day.  Both are recognised whole-utterance only, so
+    # neither fires inside a longer phrase ("now and then", "hebrew new year").
+    if _is_now_slice(raw, engine.spec):
+        return _now_span(anchor), ""
+    if _is_new_year_slice(raw, engine.spec):
+        return _new_year_span(anchor), ""
     tokens = fold_tokens(raw, engine.spec, text)
     core = _resolve_core(tokens, engine, anchor, enable, jurisdiction, text)
     if core is None:
