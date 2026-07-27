@@ -109,6 +109,17 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         # MILTIMEZ (the bare, no-"hours" form) only fires with a leading zero,
         # so "1500" stays a year while "0600" reads as a clock
         return raw[0] == "0" if name == "MILTIMEZ" else True
+    if name == "MILTIMENZ":
+        # a bare four-digit HHMM whose leading digit is NOT zero -- the shape
+        # that reads as a year on its own ("1500"), licensed to a clock only
+        # when a military zone qualifier follows ("1500 Zulu", "1500Z").  The
+        # leading-zero forms are already MILTIMEZ, so excluding them here keeps
+        # "0800Z"/"0300 Zulu" resolving through their existing order, unchanged.
+        raw = token.raw.rstrip(".")
+        if not (token.is_number and raw.isdigit() and len(raw) == 4):
+            return False
+        hh, mm = int(raw[:2]), int(raw[2:])
+        return 0 <= hh <= 23 and 0 <= mm <= 59 and raw[0] != "0"
     if name == "LANDMARK":
         return token.text in spec.clock_landmarks
     if name == "DAYPART":

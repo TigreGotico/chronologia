@@ -83,7 +83,8 @@ SLOT_ALPHABET: FrozenSet[str] = _derive_slot_alphabet()
 #: bind no per-locale vocabulary.
 NUMERIC_SLOTS: FrozenSet[str] = frozenset({
     "NUM", "DNUM", "DAY", "YEAR", "GYEAR", "ORD", "SORD", "SUBH", "SUBM", "SUBS",
-    "HOUR", "MINUTE", "QUARTS", "MILTIME", "MILTIMEZ", "CLOCK", "ISO", "ISOWEEK", "NUMDATE"})
+    "HOUR", "MINUTE", "QUARTS", "MILTIME", "MILTIMEZ", "MILTIMENZ",
+    "CLOCK", "ISO", "ISOWEEK", "NUMDATE"})
 
 #: uppercase slots that actually bind a *connector* surface set, not a value map.
 CONNECTOR_SLOTS: Dict[str, str] = {"PRIDIE": "pridie"}
