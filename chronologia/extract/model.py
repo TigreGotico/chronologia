@@ -200,6 +200,11 @@ class LangSpec:
     clock_dirs: Mapping[str, int] = field(default_factory=dict)       # past +1 / to -1
     # season_ref slot vocab (surface -> canonical season name)
     seasons: Mapping[str, str] = field(default_factory=dict)
+    # solar_event slot vocab: EVENT surface -> kind ("solstice"/"equinox");
+    # SOLARQUAL surface -> canonical season name for the formal equinox names
+    # (vernal -> spring, autumnal -> autumn) that are NOT plain season words
+    solar_events: Mapping[str, str] = field(default_factory=dict)
+    solar_quals: Mapping[str, str] = field(default_factory=dict)
     # scoped_ordinal unit vocab beyond the day/week/month units map
     # (decade/century/millennium surface -> kind); reuses ``units`` for the rest
     scope_units: Mapping[str, str] = field(default_factory=dict)

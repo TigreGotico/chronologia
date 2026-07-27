@@ -150,6 +150,10 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
     # -- season_ref / scoped_ordinal slots ---------------------------------
     if name == "SEASON":
         return token.text in spec.seasons
+    if name == "EVENT":
+        return token.text in spec.solar_events
+    if name == "SOLARQUAL":
+        return token.text in spec.solar_quals
     if name in ("ORD", "SORD"):
         return token.is_number and (token.value or 0) >= 1
     if name == "NORD":

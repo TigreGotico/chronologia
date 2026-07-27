@@ -293,6 +293,57 @@ _SEASON_SPANS = {
 #: ``fall`` is accepted as a synonym for ``autumn``.
 _SEASON_ALIASES = {"fall": "autumn"}
 
+#: Which cardinal event each event name IS -- the March/September events are
+#: equinoxes, the June/December events solstices (Meeus ch.27).  Used to reject
+#: a mismatched pairing ("summer equinox", "spring solstice").
+CARDINAL_KIND = {
+    "march": "equinox", "september": "equinox",
+    "june": "solstice", "december": "solstice",
+}
+
+
+def equinox_instant(year: int, which: str = "march") -> AstroDate:
+    """The civil instant of the ``which`` equinox/solstice of ``year``.
+
+    The single :class:`~chronologia.astrodate.AstroDate` at the Meeus ch.27
+    cardinal-event moment (civil UTC, TT before 1972; see the module
+    docstring), accurate to :data:`EQUINOX_ACCURACY`.  This is the point
+    :func:`equinox` centres its span on, exposed for callers that want the
+    instant's civil DAY rather than the reconstructed span.
+
+    :raises ValueError: unknown ``which`` or ``year`` outside
+        :data:`VALID_YEAR_RANGE`.
+    """
+    if which not in _JDE0_COEFFS:
+        raise ValueError(
+            f"unknown event {which!r}; expected one of "
+            f"{sorted(_JDE0_COEFFS)}")
+    return _cardinal_instant(year, which)
+
+
+def season_cardinal(season: str, hemisphere: str = "north") -> str:
+    """The cardinal event (march/june/september/december) that OPENS ``season``.
+
+    Each astronomical season begins at one equinox or solstice -- northern
+    spring at the March equinox, summer at the June solstice, and so on; the
+    southern hemisphere pairs the same solar events with the opposite seasons.
+    That opening event IS the equinox/solstice a speaker means by "the
+    <season> solstice"/"the <season> equinox".  Derived from
+    :data:`_SEASON_SPANS` (the season's start event), so the two never drift.
+
+    :raises ValueError: unknown ``season`` or ``hemisphere``.
+    """
+    if hemisphere not in _SEASON_SPANS:
+        raise ValueError(
+            f"unknown hemisphere {hemisphere!r}; expected 'north' or 'south'")
+    key = _SEASON_ALIASES.get(season, season)
+    table = _SEASON_SPANS[hemisphere]
+    if key not in table:
+        raise ValueError(
+            f"unknown season {season!r}; expected one of "
+            "'spring', 'summer', 'autumn'/'fall', 'winter'")
+    return table[key][0]
+
 
 def astronomical_season_span(year: int, season: str,
                              hemisphere: str = "north") -> DateSpan:

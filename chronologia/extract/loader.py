@@ -128,6 +128,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     meridiems: Dict[str, int] = {}
     clock_dirs: Dict[str, int] = {}
     seasons: Dict[str, str] = {}
+    solar_events: Dict[str, str] = {}
+    solar_quals: Dict[str, str] = {}
     scope_units: Dict[str, str] = {}
     ordinal_suffixes: list = []
     day_cycles: Dict[str, str] = {}
@@ -207,6 +209,17 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         elif base.startswith("season_"):
             name = base[len("season_"):]
             seasons.update({s: name for s in surfaces})
+        elif base.startswith("solar_event_"):
+            # solar_event_<kind>.voc: the astronomical-event word, kind is
+            # "solstice" or "equinox" (chronologia.equinoxes, Meeus ch.27)
+            kind = base[len("solar_event_"):]
+            solar_events.update({s: kind for s in surfaces})
+        elif base.startswith("solar_qual_"):
+            # solar_qual_<season>.voc: a formal equinox qualifier that is NOT a
+            # plain season word (vernal -> spring, autumnal -> autumn), so it
+            # binds only the solar_event construction and never season_ref
+            name = base[len("solar_qual_"):]
+            solar_quals.update({s: name for s in surfaces})
         elif base.startswith("scope_unit_"):
             kind = base[len("scope_unit_"):]
             scope_units.update({s: kind for s in surfaces})
@@ -323,7 +336,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         guards=cfg.get("guards", {}),
         hook=_resolve_dotted(cfg.get("hook")),
         clock_fractions=clock_fractions, meridiems=meridiems,
-        clock_dirs=clock_dirs, seasons=seasons, scope_units=scope_units,
+        clock_dirs=clock_dirs, seasons=seasons,
+        solar_events=solar_events, solar_quals=solar_quals,
+        scope_units=scope_units,
         ordinal_suffixes=tuple(ordinal_suffixes),
         day_cycles=day_cycles, cycle_positions=cycle_positions,
         day_subdivision=cfg.get("day_subdivision"),

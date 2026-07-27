@@ -82,6 +82,11 @@ PRECEDENCE: Dict[str, int] = {
     # a decade phrase ("the 1990s", "the nineties") carries the plural/word
     # marker that a bare year lacks, so it outranks year_ref for the same digits
     "decade_ref": 2,
+    # a solar event ("the summer solstice", "march equinox 2000") carries the
+    # event word on top of the season/month qualifier, so on its longer span it
+    # wins over the bare season_ref that would otherwise claim just the season
+    # word and strand "solstice"/"equinox" in the remainder
+    "solar_event": 2,
     "season_ref": 3,
     "iso_date": 4,
     # the ISO-8601 week designator literal ("2024-W10", "2024-W10-1"): a full

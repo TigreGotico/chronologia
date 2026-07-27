@@ -114,6 +114,8 @@ SLOT_VOCAB_ATTR: Dict[str, str] = {
     "CLOCKDIR": "clock_dirs",
     "MERIDIEM": "meridiems",
     "SEASON": "seasons",
+    "EVENT": "solar_events",
+    "SOLARQUAL": "solar_quals",
     "CMUNIT": "scope_units",
     "CYCLE_DAY": "cycle_positions",
     "ERANAME": "regnal_names",
