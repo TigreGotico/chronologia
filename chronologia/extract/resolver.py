@@ -493,6 +493,86 @@ class Resolver:
             value = week_start + timedelta(days=target)
         return Resolution(_day_span(value), self._consumed(match))
 
+    def _resolve_before_last(self, match, anchor):
+        """"the <X> before last" -- the X two occurrences into the past: the
+        most recent past X, then one whole period earlier.  "the Tuesday
+        before last" is the Tuesday before *last* Tuesday (last Tuesday minus a
+        week); "the week before last" the week before *last* week; "the night
+        before last" the night two nights ago.  The trailing marker must be the
+        BACKWARD one ("last") -- "X before next" is not this idiom, so a
+        non-``-1`` marker declines the reading and lets the sub-parts stand."""
+        if self.spec.rel_markers[match.slots["REL_MARKER"].text] != -1:
+            return None
+        base = _midnight(anchor)
+        wd_tok = match.slots.get("WEEKDAY")
+        if wd_tok is not None:
+            target = self.spec.weekdays[wd_tok.text]
+            back = (anchor.weekday() - target) % 7 or 7          # last occurrence
+            value = base - timedelta(days=back + 7)              # one more back
+            return Resolution(_day_span(value), self._consumed(match))
+        dp_tok = match.slots.get("DAYPART")
+        if dp_tok is not None:
+            name = self.spec.dayparts[dp_tok.text]
+            day = AstroDate.from_datetime(base - timedelta(days=2))
+            return Resolution(_daypart_band(day, name), self._consumed(match))
+        kind = self.spec.units.get(match.slots["UNIT"].text)
+        span = self._period_span(kind, -2, anchor)
+        if span is None:
+            return None
+        return Resolution(span, self._consumed(match))
+
+    def _resolve_after_next(self, match, anchor):
+        """"the <X> after next" -- skip one occurrence ahead (next-next): "the
+        day after next" is the anchor + 2 days, "the morning after next" the
+        morning of that day, "the week after next" the week after *next* week.
+        The trailing marker must be the FORWARD one ("next")."""
+        if self.spec.rel_markers[match.slots["REL_MARKER"].text] != 1:
+            return None
+        base = _midnight(anchor)
+        dp_tok = match.slots.get("DAYPART")
+        if dp_tok is not None:
+            name = self.spec.dayparts[dp_tok.text]
+            day = AstroDate.from_datetime(base + timedelta(days=2))
+            return Resolution(_daypart_band(day, name), self._consumed(match))
+        kind = self.spec.units.get(match.slots["UNIT"].text)
+        if kind == "day":
+            return Resolution(_day_span(base + timedelta(days=2)),
+                              self._consumed(match))
+        # Coarser "the <unit> after next" (week/month) is a DEFERRED gap: the
+        # repo deliberately returns None for "the week after next" (an offset
+        # the grammar does not spell -- see test_nl_gap_residue), so declining
+        # the reading here preserves that contract rather than fabricating a
+        # span.  Only the day-granular "day after next" is resolved.
+        return None
+
+    def _resolve_weekday_ago(self, match, anchor):
+        """"a <weekday> ago" -- the most recent PAST occurrence of the weekday,
+        the same reckoning as "last <weekday>" ("a Monday ago" == "last
+        Monday").  The "... ago" framing looks back exactly like "a week
+        ago"."""
+        target = self.spec.weekdays[match.slots["WEEKDAY"].text]
+        back = (anchor.weekday() - target) % 7 or 7              # strictly past
+        value = _midnight(anchor) - timedelta(days=back)
+        return Resolution(_day_span(value), self._consumed(match))
+
+    def _resolve_unit_ago_weekday(self, match, anchor):
+        """"a week ago Tuesday", "a fortnight ago Monday" -- the named weekday
+        of the week that was N units ago.  The week/fortnight offset picks the
+        target week (a whole-day granular back-shift); the weekday then pins the
+        exact day WITHIN that week's Monday-start seven days.  The weekday is
+        consumed and actually consulted, so the result is that weekday, not the
+        offset's landing day."""
+        kind = self.spec.units.get(match.slots["UNIT"].text)
+        weeks = {"week": 1, "fortnight": 2}.get(kind)
+        if weeks is None:
+            return None
+        qty = int(self._offset_quantity(match))
+        base = _midnight(anchor) - timedelta(weeks=weeks * qty)
+        target = self.spec.weekdays[match.slots["WEEKDAY"].text]
+        week_start = base - timedelta(days=base.weekday())       # Monday of week
+        value = week_start + timedelta(days=target)
+        return Resolution(_day_span(value), self._consumed(match))
+
     def _resolve_rel_period(self, match, anchor):
         """"next/last/this <period unit>": the whole calendar period that
         contains the anchor -- the week, month, year, decade, ... -- shifted
