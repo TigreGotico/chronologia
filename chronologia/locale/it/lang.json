@@ -85,6 +85,8 @@
         "CLOCK article? MERIDIEM? ZONE?",
         "at HOUR CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
         "article HOUR CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
+        "at HOUR CLOCKDIR article? MINUTE article? MERIDIEM? ZONE?",
+        "article HOUR CLOCKDIR article? MINUTE article? MERIDIEM? ZONE?",
         "oclock HOUR article? MERIDIEM? ZONE?",
         "at HOUR article? MERIDIEM? ZONE?",
         "article HOUR article? MERIDIEM ZONE?",
@@ -228,6 +230,10 @@
     "0.5": [
       "mezza",
       "mezzo"
+    ],
+    "0.25": [
+      "quarto",
+      "quarti"
     ]
   },
   "guards": {

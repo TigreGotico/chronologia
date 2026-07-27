@@ -85,6 +85,8 @@
         "CLOCK article? MERIDIEM? ZONE?",
         "at HOUR oclock CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
         "HOUR oclock CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
+        "at HOUR oclock CLOCKDIR article? MINUTE article? MERIDIEM? ZONE?",
+        "HOUR oclock CLOCKDIR article? MINUTE article? MERIDIEM? ZONE?",
         "at HOUR oclock of? article? MERIDIEM? ZONE?",
         "HOUR oclock of? article? MERIDIEM? ZONE?",
         "at HOUR article? MERIDIEM? ZONE?",
