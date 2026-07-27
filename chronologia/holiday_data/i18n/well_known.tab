@@ -19,9 +19,13 @@
 new_year        | en | new year's day ;; new years day
 new_year_eve    | en | new year's eve ;; new years eve
 epiphany        | en | epiphany ;; three kings day
-carnival        | en | carnival ;; mardi gras
+carnival        | en | carnival ;; mardi gras ;; shrove tuesday ;; pancake day
+ash_wednesday   | en | ash wednesday
 palm_sunday     | en | palm sunday
+maundy_thursday | en | maundy thursday ;; holy thursday
 good_friday     | en | good friday
+holy_saturday   | en | holy saturday ;; easter eve
+trinity_sunday  | en | trinity sunday
 easter          | en | easter ;; easter sunday
 easter_monday   | en | easter monday
 ascension       | en | ascension ;; ascension day
@@ -39,8 +43,11 @@ new_year        | pt | ano novo ;; dia de ano novo
 new_year_eve    | pt | véspera de ano novo ;; passagem de ano
 epiphany        | pt | dia de reis ;; epifania
 carnival        | pt | carnaval ;; entrudo
+ash_wednesday   | pt | quarta-feira de cinzas
 palm_sunday     | pt | domingo de ramos
+maundy_thursday | pt | quinta-feira santa
 good_friday     | pt | sexta-feira santa
+holy_saturday   | pt | sábado santo ;; sábado de aleluia
 easter          | pt | páscoa ;; domingo de páscoa
 easter_monday   | pt | segunda-feira de páscoa
 ascension       | pt | ascensão ;; quinta-feira da ascensão
@@ -57,9 +64,12 @@ boxing_day      | pt | dia de santo estêvão
 new_year        | es | año nuevo ;; día de año nuevo
 new_year_eve    | es | nochevieja ;; fin de año
 epiphany        | es | día de reyes ;; reyes ;; epifanía
-carnival        | es | carnaval
+carnival        | es | carnaval ;; martes de carnaval
+ash_wednesday   | es | miércoles de ceniza
 palm_sunday     | es | domingo de ramos
+maundy_thursday | es | jueves santo
 good_friday     | es | viernes santo
+holy_saturday   | es | sábado santo
 easter          | es | pascua ;; domingo de pascua ;; domingo de resurrección
 easter_monday   | es | lunes de pascua
 ascension       | es | ascensión
