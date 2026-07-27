@@ -332,6 +332,23 @@ class ConstructionMatcher:
                             in self.spec.connectors.get(
                                 "year_word", frozenset())):
                         continue
+                    # A subtractive-clock reading ("6 to 8" == 6 minutes to
+                    # eight) whose hour is immediately followed by a DURATION
+                    # unit is not a clock at all: "6 to 8 hours" / "5 to 10
+                    # minutes" name an interval length, not a time of day.
+                    # Reading them as a clock fabricated a bogus time (07:54)
+                    # and stranded the unit -- so "cook for 6 to 8 hours" was
+                    # returned as a minute-wide span.  Veto the CLOCKDIR reading
+                    # when a duration unit trails the match, so the phrase stays
+                    # a duration(-range) and extract_timespan defers to
+                    # extract_duration.  A real clock range carries no trailing
+                    # unit ("6 to 8 pm", "from 9 to 5"), so this is untouched.
+                    if (name == "clock_time" and "CLOCKDIR" in slots
+                            and end < len(tokens)
+                            and tokens[end].text in (
+                                set(self.spec.units)
+                                | set(self.spec.singular_units))):
+                        continue
                     # Positional licensing for the bare-daypart reading: a
                     # capitalised daypart word that is the tail of a capitalised
                     # multi-word phrase ("Guy Fawkes Night", "Twelfth Night") is
