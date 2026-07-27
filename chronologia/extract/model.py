@@ -62,6 +62,17 @@ class Token:
     # search -- it rides along from the one place that knows it, the tokenizer.
     char_start: Optional[int] = None
     char_end: Optional[int] = None
+    # Whether the token's FIRST character was upper-case in the original
+    # utterance (``text``/``raw`` are lower-cased for matching, so the case is
+    # recorded here at tokenise time).  Read for the proper-noun positional
+    # guard on the bare-daypart reading; ``False`` on synthesised tokens.
+    cap: bool = False
+    # Whether the token IMMEDIATELY PRECEDING this one (in the original
+    # utterance, before number folding) opened with a capital.  Recorded at
+    # tokenise time so it survives the fold that would otherwise turn a spelled
+    # capitalised predecessor into a bare digit ("Twelfth" -> "12"), letting the
+    # proper-noun guard fire on "Twelfth Night" as well as "Bonfire Night".
+    prev_cap: bool = False
 
 
 @dataclass(frozen=True)
@@ -126,6 +137,17 @@ class Conventions:
     # binds with no CLOCKDIR.  Source: Cambridge Dictionary, "half past";
     # British native-speaker consensus that "half nine" == "half past nine".
     bare_half_past: bool = False
+    # Positional licensing for the bare-daypart reading: refuse to read a bare
+    # DAYPART word ("Night") as a time-of-day band when it is the CAPITALISED
+    # tail of a capitalised multi-word phrase -- a proper-noun holiday name such
+    # as "Guy Fawkes Night", "Bonfire Night", "Twelfth Night".  Without this the
+    # daypart hijacks the noun, stranding the rest of the name and returning
+    # tonight's band for a phrase that names no daypart at all.  Set only for
+    # languages that capitalise proper nouns but NOT common nouns (English);
+    # noun-capitalising languages (German) leave it off, since there a leading
+    # capital does not distinguish a proper noun.  A fact, not logic -- the
+    # matcher reads it, mirroring the es/gl/pt bare-daypart drop for "mañana".
+    daypart_proper_noun_guard: bool = False
 
 
 @dataclass(frozen=True)
