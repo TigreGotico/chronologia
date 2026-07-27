@@ -1745,10 +1745,16 @@ class Resolver:
         miltime = (match.slots.get("MILTIME") or match.slots.get("MILTIMEZ")
                    or match.slots.get("MILTIMENZ"))
         landmark = match.slots.get("LANDMARK")
+        dotclock = match.slots.get("DOTCLOCK") or match.slots.get("PADCLOCK")
         if clock is not None:
             parts = [int(p) for p in clock.text.split(":")]
             hour, minute = parts[0], parts[1]
             second = parts[2] if len(parts) > 2 else 0
+        elif dotclock is not None:
+            # the timetable "HH.MM" -- read the wall clock from the dotted raw
+            # the tokenizer preserved (the number reading truncated it to HH)
+            hh, mm = dotclock.raw.split(".")
+            hour, minute, second = int(hh), int(mm), 0
         elif miltime is not None:
             raw = miltime.raw.rstrip(".")
             hour, minute, second = int(raw[:2]), int(raw[2:]), 0

@@ -150,6 +150,9 @@
     "clock_time": {
       "orders": [
         "CLOCK MERIDIEM? ZONE?",
+        "at DOTCLOCK MERIDIEM? ZONE?",
+        "DOTCLOCK MERIDIEM ZONE?",
+        "article PADCLOCK MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
         "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
