@@ -181,6 +181,19 @@ _DASH_GAP = re.compile(r"\s+-+\s+")
 #: and em dashes are included because typeset prose uses them for exactly this.
 _TIGHT_DASH = re.compile(r"[-–—]")
 
+#: a slash gap, the ISO-8601 §4.4.1 time-interval separator ("2020/2021",
+#: "2020-04/2020-06").  Unlike the dash, the slash also glues the components of
+#: an English numeric date ("06/15/2020"), so it is trusted as an interval
+#: separator ONLY between two year-first ISO endpoints (see ``_dash_between``).
+_SLASH_GAP = re.compile(r"/")
+
+#: a year-first ISO date endpoint -- a bare four-digit year ("2020") or an ISO
+#: calendar/year-month literal the tokenizer kept whole ("2020-04",
+#: "2020-06-15").  This is the ONLY shape a "/" is trusted to join into an
+#: interval, so a numeric date whose first component is not a four-digit year
+#: ("04/2020", "2020/04", "2024/03") is never mistaken for one.
+_ISO_YEAR_FIRST = re.compile(r"\d{4}(?:-\d{1,2}){0,2}")
+
 #: the constructions a lone ``clock_time`` composes onto (its minute-wide time
 #: placed on the day the date names).  A single composable-date set so the
 #: synthesised day-wide results of the post-passes -- a business-day count
@@ -220,6 +233,17 @@ def _is_written_year(token):
             and len(token.raw) == 4 and token.raw.isdigit())
 
 
+def _is_iso_year_first_token(token):
+    """True when ``token`` is a year-first ISO endpoint ("2020", "2020-04").
+
+    A "/" is the ISO-8601 interval separator, but it is also the English
+    numeric-date separator, so it is only trusted as a separator between two of
+    these -- both sides being year-first is what tells the interval apart from
+    a numeric date (see :func:`_dash_between`)."""
+    return (token.raw is not None
+            and _ISO_YEAR_FIRST.fullmatch(token.raw) is not None)
+
+
 def _dash_between(tokens, p, text):
     """True when a hyphen in the gap before token ``p`` separates two range
     endpoints.
@@ -243,6 +267,14 @@ def _dash_between(tokens, p, text):
     gap = text[a:b]
     if _DASH_GAP.fullmatch(gap) is not None:
         return True
+    # the ISO-8601 time-interval separator "/": trusted only between two
+    # year-first ISO endpoints ("2020/2021", "2020-04/2020-06"), so the English
+    # numeric date ("06/15/2020") and a lone slashed pair ("04/2020",
+    # "2020/04") -- neither of which is two year-first ISO dates -- are left to
+    # the numeric-date reading untouched.
+    if _SLASH_GAP.fullmatch(gap) is not None:
+        return (_is_iso_year_first_token(tokens[p - 1])
+                and _is_iso_year_first_token(tokens[p]))
     if _TIGHT_DASH.fullmatch(gap) is None:
         return False
     # A tight dash between two written years is the set year range ("1914-1918").
