@@ -47,6 +47,30 @@
         "indef? NUM UNIT from DAY_WORD"
       ]
     },
+    "before_last": {
+      "orders": [
+        "article? WEEKDAY before REL_MARKER",
+        "article UNIT before REL_MARKER",
+        "article DAYPART before REL_MARKER"
+      ]
+    },
+    "after_next": {
+      "orders": [
+        "article UNIT after REL_MARKER",
+        "article DAYPART after REL_MARKER"
+      ]
+    },
+    "weekday_ago": {
+      "orders": [
+        "indef? WEEKDAY ago"
+      ]
+    },
+    "unit_ago_weekday": {
+      "orders": [
+        "indef? QUANT? UNIT ago WEEKDAY",
+        "indef? NUM UNIT ago WEEKDAY"
+      ]
+    },
     "sametime_shift": {
       "orders": [
         "thisdeixis time REL_MARKER UNIT",

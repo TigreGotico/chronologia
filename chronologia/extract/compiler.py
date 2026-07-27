@@ -137,6 +137,14 @@ PRECEDENCE: Dict[str, int] = {
     "named_day_span_idiom": 8,
     "named_day_offset_from": 8,
     "sametime_shift": 8,
+    # backward relative-day idioms -- "the <X> before last" / "the <X> after
+    # next" / "a <weekday> ago" / "<N-unit> ago <weekday>".  Each carries the
+    # trailing "before last"/"after next"/"ago" vocabulary a bare weekday_ref or
+    # relative_offset lacks, so on the longer span it wins the same-anchor tie.
+    "before_last": 8,
+    "after_next": 8,
+    "weekday_ago": 8,
+    "unit_ago_weekday": 8,
     # "the eve of christmas": the day before a named holiday.  Carries the
     # "eve of" vocabulary on top of the holiday surface, so it outranks the
     # bare holiday_ref that would otherwise claim just the holiday and strand
