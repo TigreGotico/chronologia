@@ -311,6 +311,47 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
                      "IE", "Saint Patrick's Day", "en"),
     WellKnownHoliday("thanksgiving", NthWeekdayRule(11, 4, 3),
                      frozenset({"public"}), "US", "Thanksgiving", "en"),
+
+    # ---- English quarter-days + Scottish term-days (fixed Gregorian) -------
+    # The traditional English legal/church calendar's fixed feast-days on which
+    # rents fell due and terms ran.  Each is a FIXED Gregorian date (NOT
+    # Easter-relative), so it reuses ``FixedRule`` exactly like Christmas, and
+    # carries only ``religious`` (a traditional feast, never a civil day-off).
+    # The four English quarter-days are Lady Day (25 Mar), Midsummer (24 Jun),
+    # Michaelmas (29 Sep) and Christmas (25 Dec, already carried as
+    # ``christmas``).  Dates verified against the General Roman Calendar and the
+    # standard English legal calendar.
+    #
+    # Lady Day = 25 Mar, the Feast of the Annunciation of the Blessed Virgin
+    # Mary; also the English civil New Year until 1752 and a rent quarter-day.
+    # Its surface embeds "Day" — the feast name is longer/more specific than a
+    # bare "day" reading and must win longest-match, as Ash Wednesday does over
+    # "Wednesday".
+    WellKnownHoliday("lady_day", FixedRule(3, 25),
+                     frozenset({"religious"}), "GB", "Lady Day", "en"),
+    # Midsummer Day = 24 Jun, the Nativity of St John the Baptist; quarter-day.
+    WellKnownHoliday("midsummer", FixedRule(6, 24),
+                     frozenset({"religious"}), "GB", "Midsummer Day", "en"),
+    # Michaelmas = 29 Sep, the Feast of St Michael and All Angels; quarter-day
+    # and the Michaelmas legal/academic term.
+    WellKnownHoliday("michaelmas", FixedRule(9, 29),
+                     frozenset({"religious"}), "GB", "Michaelmas", "en"),
+    # Candlemas = 2 Feb, the Presentation of the Lord (Purification of the
+    # Virgin); a Scottish term-day.
+    WellKnownHoliday("candlemas", FixedRule(2, 2),
+                     frozenset({"religious"}), "GB", "Candlemas", "en"),
+    # Lammas (Lammas Day) = 1 Aug, the loaf-mass harvest feast; Scottish
+    # term-day.
+    WellKnownHoliday("lammas", FixedRule(8, 1),
+                     frozenset({"religious"}), "GB", "Lammas Day", "en"),
+    # Martinmas = 11 Nov, the Feast of St Martin of Tours; Scottish term-day.
+    WellKnownHoliday("martinmas", FixedRule(11, 11),
+                     frozenset({"religious"}), "GB", "Martinmas", "en"),
+    # NOTE Twelfth Night (5 Jan, eve of the Epiphany) is deliberately NOT added:
+    # "Twelfth Night" is pinned as a proper noun that must resolve to None (not a
+    # daypart "night") by test_clock_daypart_night_fixes; adding it as a holiday
+    # would collide with that contract.  Epiphany itself (6 Jan) is already
+    # carried as ``epiphany``.
 )
 
 #: ``key -> WellKnownHoliday`` for O(1) lookup by the resolver.

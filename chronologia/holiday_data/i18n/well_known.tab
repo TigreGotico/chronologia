@@ -233,6 +233,13 @@ st_patricks        | en | saint patrick's day ;; st patrick's day ;; st patricks
 thanksgiving       | en | thanksgiving ;; thanksgiving day
 mothers_day        | en | mother's day ;; mothers day
 fathers_day        | en | father's day ;; fathers day
+# English quarter-days + Scottish term-days (fixed-date traditional feasts)
+lady_day           | en | lady day
+midsummer          | en | midsummer ;; midsummer day
+michaelmas         | en | michaelmas ;; michaelmas day
+candlemas          | en | candlemas
+lammas             | en | lammas ;; lammas day
+martinmas          | en | martinmas
 #
 # ===== Portuguese =====
 eid_al_fitr        | pt | eid ;; eid al-fitr ;; fim do ramadão
