@@ -719,6 +719,18 @@ def _compose_clock_range(text, left_tok, right_tok, engine, anchor):
     explicit range ("from 9am to 5pm", "from 09:00 to 17:00") is untouched.
     """
     spec = engine.spec
+    # a bare number governed by a trailing DURATION unit is a duration, not a
+    # clock -- "6 to 8 hours" / "5 to 10 minutes" name an interval length, not
+    # two times of day.  Reading them as hours fabricated a bogus clock span
+    # ("cook for 6 to 8 hours" -> 07:54) and stranded the unit in the
+    # remainder.  A unit anywhere in either endpoint slice vetoes the clock
+    # reading, so the phrase falls through to ``None`` and defers to
+    # :func:`extract_duration`.  A genuine clock range never carries a duration
+    # unit ("6 to 8 pm", "from 9 to 5"), so this leaves every real range intact.
+    units = set(spec.units) | set(spec.singular_units)
+    if any(t.text in units for t in left_tok) \
+            or any(t.text in units for t in right_tok):
+        return None
     if _bare_hour_pos(left_tok, spec) is None \
             and _bare_hour_pos(right_tok, spec) is None:
         return None
