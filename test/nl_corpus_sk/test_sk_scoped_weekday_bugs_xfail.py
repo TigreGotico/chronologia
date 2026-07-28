@@ -51,8 +51,7 @@ def _last_weekday(y, m, weekday):
     return d.replace(day=last - ((d.weekday() - weekday) % 7))
 
 
-@pytest.mark.xfail(strict=True, reason="locative month strands to whole year")
-@pytest.mark.parametrize("text,y,m", [
+@pytest.mark.parametrize("text,y,m", [  # fixed by PR #354 (locative month)
     ("v marci 2020", 2020, 3),
     ("v januári 2019", 2019, 1),
     ("v decembri 2021", 2021, 12),
@@ -61,8 +60,7 @@ def test_locative_month_year(text, y, m):
     assert start_end(text) == _month(y, m)
 
 
-@pytest.mark.xfail(strict=True, reason="ordinal-weekday-of-month not scoped")
-@pytest.mark.parametrize("text,y,m,wd,n", [
+@pytest.mark.parametrize("text,y,m,wd,n", [  # fixed by PR #354 (scoped ordinal)
     ("tretí pondelok v marci 2020", 2020, 3, 0, 3),
     ("prvý pondelok v marci 2020", 2020, 3, 0, 1),
     ("druhá streda v apríli 2019", 2019, 4, 2, 2),
