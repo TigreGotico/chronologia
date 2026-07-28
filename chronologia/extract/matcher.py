@@ -142,7 +142,11 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         # trailing signed offset ("utc+2") rides on the same token and is
         # parsed at resolve time.
         base = re.match(r"[a-z]+", token.text)
-        return base is not None and base.group(0) in spec.clock_zones
+        if base is not None:
+            return base.group(0) in spec.clock_zones
+        # a bare RFC/ISO signed numeric offset ("-0500", "+05:30") is a zone
+        # with no acronym; its fixed offset is parsed at resolve time.
+        return re.fullmatch(r"[+-](?:0\d|1[0-4]):?[0-5]\d", token.text) is not None
     if name == "QUANT":
         return token.text in spec.quantifiers
     if name == "ISO":
