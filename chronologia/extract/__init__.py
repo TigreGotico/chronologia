@@ -946,20 +946,32 @@ def _shared_context(bare, donor):
     "di") come along unexamined, which is why this one rule serves every
     locale instead of forty spellings of the same special case.
 
-    It fires only when the donor holds exactly one numeral beside at least one
-    other word.  One numeral means there is no question which field the bare
-    endpoint stands in for, and the other word is the context there would
-    otherwise be nothing to borrow -- so two bare numerals ("from 9 to 5")
-    lend each other nothing and keep their existing clock reading.  The lent
-    tokens are synthesised without a character extent, because they belong to
-    the *other* endpoint's stretch of the utterance and must never be billed
+    It fires only when the donor holds exactly one *day* numeral beside at
+    least one other word.  One day numeral means there is no question which
+    field the bare endpoint stands in for, and the other word is the context
+    there would otherwise be nothing to borrow -- so two bare numerals ("from
+    9 to 5") lend each other nothing and keep their existing clock reading.  A
+    trailing year the donor carries ("12 June 2020") is *not* the field being
+    swapped: it too belongs to both days, so it stays in place and is borrowed
+    along with the month, lending the month AND year to the bare endpoint in
+    one step (the day-range analogue of #323's month-range year-lending).  The
+    lent tokens are synthesised without a character extent, because they belong
+    to the *other* endpoint's stretch of the utterance and must never be billed
     to this one's remainder.
     """
-    nums = [i for i, t in enumerate(donor)
-            if t.is_number and t.value is not None]
-    if len(nums) != 1 or len(donor) < 2:
+    days = [i for i, t in enumerate(donor)
+            if t.is_number and t.value is not None and t.value < 100]
+    if len(days) != 1 or len(donor) < 2:
         return None
-    return tuple(bare if i == nums[0]
+    # a word donor token (the month, its "de"/"of" glue) is re-synthesised from
+    # its text so it re-folds cleanly; a *number* donor token -- the trailing
+    # year kept in place -- is carried by :func:`replace` so its folded numeric
+    # value survives (a fresh text-only Token would strip the year to nothing
+    # and leave the borrower yearless).  Both lose their character extent: they
+    # belong to the other endpoint and must never reach this one's remainder.
+    return tuple(bare if i == days[0]
+                 else replace(t, index=-1 - i, char_start=None, char_end=None)
+                 if t.is_number
                  else Token(text=t.text, raw=t.raw, index=-1 - i)
                  for i, t in enumerate(donor))
 
@@ -1030,14 +1042,17 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # which is where the endpoint was previously being thrown away.  See
     # :func:`_shared_context` for the conditions that keep it narrow.
     bare_left, bare_right = bare_of(left_tok), bare_of(right_tok)
+    shared_left = shared_right = False
     if bare_left is not None and bare_right is None:
         shared = _shared_context(bare_left, right_tok)
         if shared is not None:
             left = borrowed(shared) or left
+            shared_left = True
     elif bare_right is not None and bare_left is None:
         shared = _shared_context(bare_right, left_tok)
         if shared is not None:
             right = borrowed(shared) or right
+            shared_right = True
     # a single trailing year is lent to the endpoint that lacks one, so "from
     # January to March 2020" reads both months in 2020 (see :func:`_lend_year`);
     # a range whose endpoints each name their own year is left per-endpoint.  It
@@ -1045,14 +1060,19 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # (a month/date placed in the anchor year), never to one that fails to
     # resolve -- lending a year to a non-date word ("... to Cairo") would let
     # the lone year resolve as a whole-year reference and fabricate a range.
+    # a bare endpoint that borrowed its partner's month through
+    # :func:`_shared_context` already carried that partner's trailing year
+    # along with the month (the shared "12 June 2020" lends both to the "5"),
+    # so it must not be year-lent a second time from its own bare numeral --
+    # that would rebuild "5 2020" and clobber the shared reading.
     left_year, right_year = _endpoint_year(left_tok), _endpoint_year(right_tok)
     if right_year is not None and left_year is None \
-            and left is not None and left[2] == "dated":
+            and left is not None and left[2] == "dated" and not shared_left:
         lent = _lend_year(left_tok, right_tok)
         if lent is not None:
             left = borrowed(lent) or left
     elif left_year is not None and right_year is None \
-            and right is not None and right[2] == "dated":
+            and right is not None and right[2] == "dated" and not shared_right:
         lent = _lend_year(right_tok, left_tok)
         if lent is not None:
             right = borrowed(lent) or right

@@ -14,11 +14,9 @@ Gaps captured (anchor Tuesday 2017-06-27 13:04):
   (11 listopada), Boże Ciało (movable, Easter + 60), and the named feast
   "Konstytucji 3 Maja" (the numeric "3 maja" parses but the feast name is
   stranded).
-* Explicit-year intra-month day range "od 5 do 12 czerwca 2019" fails to bind
-  the year and strands "5 do".
-
-("ostatni <weekday> <month(gen)> <year>", last weekday of a named month, now
-binds -- see ``test_pl_last_weekday_of_month.py``.)
+(Explicit-year intra-month day ranges and "ostatni <weekday> <month> <year>"
+now both bind -- see ``test_nl_day_range_year.py`` and
+``test_pl_last_weekday_of_month.py``.)
 """
 from datetime import date, timedelta
 
@@ -37,7 +35,6 @@ _FIXED_GAPS = [
     ("święto niepodległości 2021", date(2021, 11, 11)),
     ("boże ciało 2021", _E2021 + timedelta(days=60)),  # 2021-06-03
     ("konstytucji 3 maja 2021", date(2021, 5, 3)),
-    ("od 5 do 12 czerwca 2019", date(2019, 6, 5)),
 ]
 
 
@@ -47,4 +44,15 @@ def test_known_gap(phrase, gold):
     r = parse(phrase)
     assert r is not None
     assert r[0].start == AstroDate(gold.year, gold.month, gold.day)
+    assert r[1] == ""
+
+
+def test_explicit_year_intra_month_day_range_binds_both_endpoints():
+    # "od 5 do 12 czerwca 2019": the trailing month AND year are named once for
+    # the pair and now lend to BOTH day endpoints -- the year no longer binds
+    # only to "12" and "5 do" no longer strands in the residue.
+    r = parse("od 5 do 12 czerwca 2019")
+    assert r is not None
+    assert r[0].start == AstroDate(2019, 6, 5)
+    assert r[0].end == AstroDate(2019, 6, 13)
     assert r[1] == ""

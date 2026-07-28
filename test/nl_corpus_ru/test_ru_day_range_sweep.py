@@ -48,11 +48,11 @@ def test_day_range(text, y, m, a, b):
     assert en == AstroDate(exp_end.year, exp_end.month, exp_end.day)
 
 
-@pytest.mark.xfail(reason="'с A по B <month> <year>' mis-parses: the explicit "
-                          "year is not bound to the range and residue leaks "
-                          "('5 по'). No-year form is correct. BUG, deferred.",
-                   strict=True)
-def test_day_range_with_year_broken():
+def test_day_range_with_year_binds_both_endpoints():
+    # "с A по B <month> <year>": the trailing month AND year are named once for
+    # the pair and now lend to BOTH day endpoints (the day-range analogue of the
+    # month-range year-lending).  Previously the year bound only to the right
+    # day and the left "5 по" leaked into the residue.
     st, en = start_end("с 5 по 12 июня 2019")
     assert st == AstroDate(2019, 6, 5)
     assert en == AstroDate(2019, 6, 13)
