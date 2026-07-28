@@ -1377,6 +1377,21 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
             frag = text[cs:ce]
             if extract_timespan(frag, engine.spec.lang, anchor) is None:
                 return None                          # impossible stranded date
+    # The same veto for the connector-less "<number> <month>" order (Italian
+    # "32 aprile", German "32. April", Russian "32 апреля"): a bare numeral
+    # too large to be any month's day (> 31) that could not bind as a
+    # day-of-month is left stranded while the month resolves alone -- the day
+    # silently dropped.  When such a numeral abuts the winning span and does
+    # not itself name a valid date (a stranded year "2019" resolves on its own
+    # and is left untouched), the reading is a fabricated impossible date.
+    for i, t in enumerate(tokens):
+        if t.index in consumed or not t.is_number or t.value is None \
+                or t.value != int(t.value) or t.value <= 31:
+            continue
+        abuts = ((i > 0 and tokens[i - 1].index in consumed)
+                 or (i + 1 < len(tokens) and tokens[i + 1].index in consumed))
+        if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:
+            return None                              # impossible day-of-month
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)
