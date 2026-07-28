@@ -252,10 +252,12 @@ def test_decade(text, s, e):
     assert ss == AstroDate(s, 1, 1) and ee == AstroDate(e, 1, 1)
 
 
-# fuzzy thirds of a ten-year decade (10/3 yr each, via chronologia subdivide)
+# fuzzy thirds of a ten-year decade, snapped to whole years (a decade is only
+# decade-precise -- the ~3.33/6.67-year cuts round to years 3/7, giving a clean
+# 3/4/3-year early/mid/late with no fractional-day boundaries)
 @pytest.mark.parametrize("text,s,e", [
-    ("early 1980s", 1980, 1983), ("mid 1980s", 1983, 1986),
-    ("late 2020s", 2026, 2030), ("the early nineties", 1990, 1993),
+    ("early 1980s", 1980, 1983), ("mid 1980s", 1983, 1987),
+    ("late 2020s", 2027, 2030), ("the early nineties", 1990, 1993),
 ])
 def test_decade_fuzzy(text, s, e):
     ss, ee = start_end(text)
