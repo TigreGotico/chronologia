@@ -209,11 +209,63 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
     return None
 
 
+#: hard backstop against any pathological non-convergence of the fixpoint
+#: iteration; deep real phrases need only ~depth passes, well under this.
+_FIXPOINT_CAP = 32
+
+
+def _one_offset_pass(tokens, resolved: List[Pair], spec: LangSpec,
+                     dir_phrases, gap) -> Tuple[List[Pair], int]:
+    """A single composition pass over ``resolved``.
+
+    Returns ``(out, grown)`` where ``grown`` is the number of tokens the
+    composed matches gained this pass (0 when nothing composed) -- the
+    progress signal the fixpoint loop iterates on.
+    """
+    composed = {}
+    claimed = set()
+    grown = 0
+    for match, res in resolved:
+        if match.construction not in DATE_CONSTRUCTIONS:
+            continue
+        got = (_try_offset(tokens, match, res, spec, dir_phrases, gap)
+               or _try_offset_postfix(tokens, match, res, spec,
+                                      dir_phrases, gap))
+        if got is not None:
+            gained = set(range(*got[0].span)) - set(range(*match.span))
+            if not gained:
+                # composed but consumed no new token: not real progress -- a
+                # composition that would re-consume the same span would loop
+                # forever, so treat it as a no-op and leave the match be.
+                continue
+            composed[id(match)] = got
+            claimed.update(gained)
+            grown += len(gained)
+    if not composed:
+        return resolved, 0
+    out: List[Pair] = []
+    for match, res in resolved:
+        if id(match) in composed:
+            out.append(composed[id(match)])
+        elif not any(i in claimed for i in range(*match.span)):
+            out.append((match, res))
+    return out, grown
+
+
 def apply_anchored_offset(tokens, resolved: List[Pair],
                           spec: LangSpec) -> List[Pair]:
-    """Rewrite every date reference carrying a stranded offset pre-amble.
+    """Rewrite every date reference carrying a stranded offset pre-amble,
+    iterating the composition to a **fixpoint**.
 
-    A stray sub-match over the pre-amble (a bare weekday read as its own
+    A single pass composes exactly one outer offset pre-amble onto each date
+    reference ("the day after <ref>").  Nesting of arbitrary depth ("the day
+    after the day after the day after tomorrow") needs one pass per layer, so
+    the pass is repeated until a pass composes nothing new (the result equals
+    its input) -- each iteration strictly consuming more tokens, absorbing one
+    further outer layer.  Depth<=2 and non-nested phrases are unchanged: their
+    second pass finds nothing to compose and stops immediately.
+
+    A stray sub-match over a pre-amble (a bare weekday read as its own
     ``weekday_ref``, say) is dropped so the composed reference wins.
     """
     after = spec.connectors.get("after", frozenset())
@@ -223,26 +275,15 @@ def apply_anchored_offset(tokens, resolved: List[Pair],
     gap = _gap_words(spec)
     dir_phrases = ([(1, w) for w in _phrases(after)]
                    + [(-1, w) for w in _phrases(before)])
-    composed = {}
-    claimed = set()
-    for match, res in resolved:
-        if match.construction not in DATE_CONSTRUCTIONS:
-            continue
-        got = (_try_offset(tokens, match, res, spec, dir_phrases, gap)
-               or _try_offset_postfix(tokens, match, res, spec,
-                                      dir_phrases, gap))
-        if got is not None:
-            composed[id(match)] = got
-            claimed.update(set(range(*got[0].span)) - set(range(*match.span)))
-    if not composed:
-        return resolved
-    out: List[Pair] = []
-    for match, res in resolved:
-        if id(match) in composed:
-            out.append(composed[id(match)])
-        elif not any(i in claimed for i in range(*match.span)):
-            out.append((match, res))
-    return out
+    # iterate to a fixpoint: a pass that grows nothing (grown == 0) is the
+    # signal to stop; the strictly-monotonic token growth guarantees
+    # termination, with _FIXPOINT_CAP as a hard backstop.
+    for _ in range(_FIXPOINT_CAP):
+        resolved, grown = _one_offset_pass(tokens, resolved, spec,
+                                           dir_phrases, gap)
+        if grown == 0:
+            break
+    return resolved
 
 
 # -- feature 2: ordinal counting from the anchor --------------------------
