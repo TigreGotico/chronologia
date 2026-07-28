@@ -73,7 +73,7 @@ def test_range_months():
 
 def test_range_zwischen_und():
     s, e = start_end("zwischen juni und august 2020")
-    assert s == AstroDate(2017, 6, 1)     # bare left month -> anchor year
+    assert s == AstroDate(2020, 6, 1)     # bare left month borrows the trailing year (2020)
     assert e == AstroDate(2020, 9, 1)
 
 
