@@ -91,21 +91,28 @@ def _is_day_unit(tok: Token, spec: LangSpec) -> bool:
 
 def _month_scope(tokens, hi: int, spec: LangSpec, gap, anchor: datetime
                  ) -> Optional[Tuple[datetime, int, Set[int]]]:
-    """A trailing "of (this|next|last) month" scope on a business-day count.
+    """A trailing "of <month>" scope on a business-day count.
 
-    "the first business day of next month" scopes the count to a calendar
-    month rather than the anchor: the nth business day *of that month*.
-    Returns ``(base, end_index, consumed_ids)`` where ``base`` is the day
-    before the scoped month's first, so ``_nth_business_day(base, n, +1)``
-    lands on the nth business day inside the month; otherwise ``None``.
+    "the first business day of next month" / "the third working day of July"
+    scopes the count to a calendar month rather than the anchor.  The month is
+    either **named** ("of July", this anchor year) or **relative** ("of
+    this|next|last month", "of the month").  Returns ``(first, end_index,
+    consumed_ids)`` where ``first`` is midnight of that month's first day (so
+    the caller derives the nth or last business day inside it); otherwise
+    ``None``.
     """
-    month_words = spec.connectors.get("month_word", frozenset())
-    if not month_words:
-        return None
     scan_gap = gap | frozenset(spec.connectors.get("of", ()))
     k = hi
     while k < len(tokens) and tokens[k].text in scan_gap:
         k += 1
+    # named month: "of July"
+    if k < len(tokens) and tokens[k].text in spec.months:
+        month = spec.months[tokens[k].text]
+        return datetime(anchor.year, month, 1), k + 1, set(range(hi, k + 1))
+    # relative month: "of (this|next|last) month" / "of the month"
+    month_words = spec.connectors.get("month_word", frozenset())
+    if not month_words:
+        return None
     rel = 0
     if k < len(tokens) and tokens[k].text in spec.rel_markers:
         rel = spec.rel_markers[tokens[k].text]
@@ -115,12 +122,37 @@ def _month_scope(tokens, hi: int, spec: LangSpec, gap, anchor: datetime
     if k >= len(tokens) or tokens[k].text not in month_words:
         return None
     first = _add_months(datetime(anchor.year, anchor.month, 1), rel)
-    base = first - timedelta(days=1)
-    return base, k + 1, set(range(hi, k + 1))
+    return first, k + 1, set(range(hi, k + 1))
+
+
+def _dom_ref(tokens, p: int, spec: LangSpec, anchor: datetime
+             ) -> Optional[Tuple[datetime, int]]:
+    """A bare day-of-month reference ("the 1st", "the 15th") at position ``p``.
+
+    Reuses the ``month_day_ref`` prefer-future resolution: the Nth day of the
+    anchor's month, rolled to next month when that day has already passed.
+    Returns ``(value, end_index)`` where ``value`` is midnight of the resolved
+    date and ``end_index`` is one past the ordinal token; otherwise ``None``.
+    """
+    if p >= len(tokens):
+        return None
+    tok = tokens[p]
+    if not (tok.is_number and tok.value and 1 <= int(tok.value) <= 31):
+        return None
+    day = int(tok.value)
+    try:
+        value = datetime(anchor.year, anchor.month, day)
+    except ValueError:
+        return None
+    prefer_future = spec.construction_flags.get(
+        "month_day_ref", {}).get("prefer_future", False)
+    if prefer_future and value < _midnight(anchor):
+        value = _add_months(value, 1)
+    return value, p + 1
 
 
 def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
-              gap, resolve_ref=None
+              gap, anchor: datetime, resolve_ref=None
               ) -> Optional[Tuple[datetime, int, int, Set[int]]]:
     """A ``after``/``before`` reference sitting just past the business unit.
 
@@ -175,6 +207,13 @@ def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
                 base = datetime(s.year, s.month, s.day)
                 ids = set(range(m.span[0], m.span[1])) | set(range(hi, p))
                 return base, sign, m.span[1], ids
+            # last-resort: a bare day-of-month reference ("after the 1st") that
+            # does not resolve standalone -- reuse the prefer-future day-of-month
+            # rule so the count runs from that date.
+            dom = _dom_ref(tokens, p, spec, anchor)
+            if dom is not None:
+                base, dom_end = dom
+                return base, sign, dom_end, set(range(hi, dom_end))
     return None
 
 
@@ -194,6 +233,8 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
     gap = _gap_words(spec) | frozenset(spec.connectors.get("article", ())) \
         | frozenset(spec.connectors.get("in", ()))
     nextw = frozenset(s for s, v in spec.rel_markers.items() if v > 0)
+    lastw = frozenset(s for s, v in spec.rel_markers.items() if v < 0)
+    artwords = frozenset(spec.connectors.get("article", ()))
     weekend_start = spec.conventions.weekend_start
     n = len(tokens)
     for i, t in enumerate(tokens):
@@ -213,9 +254,12 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             j -= 1
         if j >= 0 and tokens[j].is_number and tokens[j].value \
                 and tokens[j].value >= 1:
-            count, start = int(tokens[j].value), j
+            count, start, mode = int(tokens[j].value), j, "nth"
         elif j >= 0 and tokens[j].text in nextw:
-            count, start = 1, j
+            count, start, mode = 1, j, "nth"
+        elif j >= 0 and tokens[j].text in lastw:
+            # "the last business day" -- only meaningful scoped to a month.
+            count, start, mode = 1, j, "last"
         else:
             continue
         # swallow a leading "in" marker ("in 5 business days") into the claim so
@@ -226,17 +270,32 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             start -= 1
         scope = _month_scope(tokens, hi, spec, gap, anchor)
         if scope is not None:
-            base, end, scope_ids = scope
-            value = _nth_business_day(base, count, 1, weekend_start,
-                                      jurisdiction)
-            claimed = set(range(start, hi)) | scope_ids
-            pair = (Match("business_days", (start, end), {}),
+            first, end, scope_ids = scope
+            if mode == "last":
+                # last business day of the month == first business day strictly
+                # before the first of the *next* month.
+                value = _nth_business_day(_add_months(first, 1), 1, -1,
+                                          weekend_start, jurisdiction)
+            else:
+                value = _nth_business_day(first - timedelta(days=1), count, 1,
+                                          weekend_start, jurisdiction)
+            # a scoped phrase reads as one unit -- swallow its leading article
+            # ("the last working day of ...") so the remainder is clean.
+            s0 = start
+            while s0 - 1 >= 0 and tokens[s0 - 1].text in artwords:
+                s0 -= 1
+            claimed = set(range(s0, hi)) | scope_ids
+            pair = (Match("business_days", (s0, end), {}),
                     Resolution(_day_span(value), tuple(sorted(claimed))))
             kept = [(m, r) for m, r in resolved
                     if not (set(range(*m.span)) & claimed)]
             kept.append(pair)
             return kept
-        ref = _date_ref(tokens, hi, resolved, spec, gap, resolve_ref)
+        if mode == "last":
+            # "the last business day" with no month scope is not a count we can
+            # resolve -- leave it for weaker passes rather than guessing.
+            continue
+        ref = _date_ref(tokens, hi, resolved, spec, gap, anchor, resolve_ref)
         if ref is not None:
             base, sign, end, claimed = ref
             claimed = claimed | set(range(start, hi))
