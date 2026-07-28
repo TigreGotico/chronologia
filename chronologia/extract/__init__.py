@@ -17,6 +17,7 @@ import os
 import re
 import threading
 from datetime import datetime, timedelta
+from dataclasses import replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
 
 from chronologia.astrodate import AstroDate, DateSpan
@@ -963,6 +964,46 @@ def _shared_context(bare, donor):
                  for i, t in enumerate(donor))
 
 
+def _endpoint_year(sub):
+    """The slice's single year-magnitude numeral, else None.
+
+    A number of at least three digits is the year token an endpoint carries
+    (the same test :func:`_range_endpoint` uses for ``pinned``); a slice with
+    exactly one names its own year and a slice with none looks to its partner
+    for one.  Two such numbers (a numeric range "from 100 to 500") name no
+    single year, so nothing is lent.
+    """
+    yrs = [t for t in sub
+           if t.is_number and t.value is not None and t.value >= 100]
+    return yrs[0] if len(yrs) == 1 else None
+
+
+def _lend_year(bare, donor):
+    """``bare``'s slice with the ``donor``'s trailing year appended.
+
+    A range that names the year once for a pair of months -- "from January to
+    March 2020", "de enero a marzo de 2020" -- is the ordinary written form,
+    exactly as #236's shared month is ("del 5 al 12 de junio").  The endpoint
+    left without a year would otherwise resolve in the anchor (or prefer-future)
+    year, stranding the pair in two different years; the repair lends the
+    donor's single year to the yearless endpoint so both read in it.  The lent
+    token is synthesised without a character extent -- it belongs to the *other*
+    endpoint's stretch of the utterance and must never reach this one's
+    remainder -- and is appended after the yearless slice so the language's own
+    "MONTH YEAR" order (and its "de"/"of" glue in the donor) reads it.  It fires
+    only when the donor holds exactly one year and the borrower none, so a range
+    whose endpoints each carry their own year ("from December 2019 to March
+    2020") is left per-endpoint.
+    """
+    year = _endpoint_year(donor)
+    if year is None:
+        return None
+    # keep the year's numeric value (so the "MONTH YEAR" order reads it) but
+    # strip its character extent -- the token belongs to the other endpoint.
+    lent = replace(year, index=-1 - len(bare), char_start=None, char_end=None)
+    return tuple(bare) + (lent,)
+
+
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
@@ -997,6 +1038,24 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         shared = _shared_context(bare_right, left_tok)
         if shared is not None:
             right = borrowed(shared) or right
+    # a single trailing year is lent to the endpoint that lacks one, so "from
+    # January to March 2020" reads both months in 2020 (see :func:`_lend_year`);
+    # a range whose endpoints each name their own year is left per-endpoint.  It
+    # is lent only to an endpoint that *already* names a dated span of its own
+    # (a month/date placed in the anchor year), never to one that fails to
+    # resolve -- lending a year to a non-date word ("... to Cairo") would let
+    # the lone year resolve as a whole-year reference and fabricate a range.
+    left_year, right_year = _endpoint_year(left_tok), _endpoint_year(right_tok)
+    if right_year is not None and left_year is None \
+            and left is not None and left[2] == "dated":
+        lent = _lend_year(left_tok, right_tok)
+        if lent is not None:
+            left = borrowed(lent) or left
+    elif left_year is not None and right_year is None \
+            and right is not None and right[2] == "dated":
+        lent = _lend_year(right_tok, left_tok)
+        if lent is not None:
+            right = borrowed(lent) or right
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
     # endpoint's trailing meridiem so both read on the same clock
     if left is None and right is not None and left_tok:
