@@ -346,6 +346,18 @@ _DAY_BG = {
     "седемнайсети": 17, "осемнадесети": 18, "осемнайсети": 18,
     "деветнадесети": 19, "деветнайсети": 19, "двадесети": 20,
     "двайсети": 20, "тридесети": 30, "трийсети": 30}
+# Bulgarian carries the DEFINITE article on the masculine ordinal when it
+# selects a masculine noun -- "първият понеделник" (the first Monday),
+# "третият вторник".  The full article is -ият and the short/colloquial
+# variant -ия; both are current, and both attach to the bare -и ordinal
+# (първи -> първият / първия).  Without them the definite ordinal stranded
+# and the weekday+month were silently dropped.  Fold every definite surface
+# to the same digit as its bare -и form.  (Официален правопис на българския
+# език, БАН 2012: членуване на редните числителни имена, мъжки род ед. ч. --
+# пълен член -ият, кратък член -ия.)
+_BG_DEF_BASE = {w: v for w, v in _DAY_BG.items() if w.endswith("и")}
+_DAY_BG.update({w + "ят": v for w, v in _BG_DEF_BASE.items()})
+_DAY_BG.update({w + "я": v for w, v in _BG_DEF_BASE.items()})
 _DAY_RU = {
     "первого": 1, "второго": 2, "третьего": 3, "четвёртого": 4,
     "четвертого": 4, "пятого": 5, "шестого": 6, "седьмого": 7,
