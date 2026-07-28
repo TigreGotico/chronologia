@@ -355,6 +355,42 @@ def _weekend_after_next(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     return None
 
 
+def _weekday_after_next(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
+    """"the <weekday> after next": the occurrence of the weekday one week past
+    its next one -- next <weekday> + 7 days.
+
+    The same skip-one "after next" family as "the day/weekend after next"
+    (#303/#307), extended to the WEEKDAY unit.  The bare matcher reads the
+    weekday as its own ``weekday_ref`` (next occurrence) and strands "the
+    after next" -- a silent-wrong that pointed "the Saturday after next" at
+    *next* Saturday instead of the one after.  Composed here beside the
+    weekend skip-one so both share the anchor-relative machinery.
+    """
+    after = spec.connectors.get("after", frozenset())
+    if not after:
+        return None
+    nextw = frozenset(s for s, v in spec.rel_markers.items() if v > 0)
+    gap = _gap_words(spec)
+    n = len(tokens)
+    for i, t in enumerate(tokens):
+        wd = _weekday_of(t.text, spec)
+        if wd is None or i + 1 >= n:
+            continue
+        an = _match_at(tokens, i + 1, after)          # "after" (possibly multiword)
+        if not an:
+            continue
+        k = i + 1 + an
+        while k < n and tokens[k].text in gap:        # article/of gap before "next"
+            k += 1
+        if k < n and tokens[k].text in nextw:
+            start = i - 1 if i - 1 >= 0 and tokens[i - 1].text in gap else i
+            value = _nth_weekday(anchor, wd, 1, 1) + timedelta(days=7)
+            match = Match("weekday_after_next", (start, k + 1), {})
+            return match, Resolution(_day_span(value),
+                                     tuple(range(start, k + 1)))
+    return None
+
+
 def _weekend_before_last(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     """"the weekend before last": the mirror of ``_weekend_after_next`` -- two
     weekends into the PAST, the weekend before *last* weekend (rel == -2).
@@ -502,6 +538,7 @@ def apply_ordinal_count(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     """The anchor-relative counting constructions (weekday count, weekend
     after next, Nth weekday after a day-of-month); the first that fires wins."""
     return (_count_weekday(tokens, spec, anchor)
+            or _weekday_after_next(tokens, spec, anchor)
             or _weekend_after_next(tokens, spec, anchor)
             or _weekend_before_last(tokens, spec, anchor)
             or _weekend_ago(tokens, spec, anchor)
