@@ -292,9 +292,15 @@ class Tokenizer:
                                         char_start=cs, char_end=ce))
                     continue
                 value = float(digits) if "." in digits else int(digits)
+                # an apostrophe immediately before the digit run is the strong
+                # two-digit-year cue ("'42", "the '90s").  The apostrophe folds
+                # to ASCII in ``low`` and is not part of the number match, so
+                # record it here -- it is the only surviving trace.
+                apos = cs > 0 and low[cs - 1] == "'"
                 tokens.append(Token(text=raw.rstrip("."), raw=raw, index=i,
                                     is_number=True, value=value,
-                                    char_start=cs, char_end=ce))
+                                    char_start=cs, char_end=ce,
+                                    apostrophe=apos))
             else:
                 tokens.append(Token(text=raw, raw=raw, index=i,
                                     char_start=cs, char_end=ce, cap=cap))
@@ -302,5 +308,6 @@ class Tokenizer:
         # explicit so callers can trust index == position)
         return tuple(Token(t.text, t.raw, i, t.is_number, t.value,
                            t.char_start, t.char_end, t.cap,
-                           prev_cap=(tokens[i - 1].cap if i > 0 else False))
+                           prev_cap=(tokens[i - 1].cap if i > 0 else False),
+                           apostrophe=t.apostrophe)
                      for i, t in enumerate(tokens))

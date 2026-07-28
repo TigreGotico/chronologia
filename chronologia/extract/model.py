@@ -73,6 +73,13 @@ class Token:
     # capitalised predecessor into a bare digit ("Twelfth" -> "12"), letting the
     # proper-noun guard fire on "Twelfth Night" as well as "Bonfire Night".
     prev_cap: bool = False
+    # Whether a number token was IMMEDIATELY preceded by an apostrophe in the
+    # original utterance ("'42", "the '90s").  The tokenizer drops the leading
+    # apostrophe from ``raw`` (it is a separator, not part of the digit run),
+    # so this flag is the only surviving record that the digits carried the
+    # apostrophe cue -- the strong signal that licenses a bare two-digit year
+    # even when its value is below the year matcher's usual >=32 threshold.
+    apostrophe: bool = False
 
 
 @dataclass(frozen=True)
