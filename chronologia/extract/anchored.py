@@ -355,6 +355,78 @@ def _weekend_after_next(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     return None
 
 
+def _weekend_before_last(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
+    """"the weekend before last": the mirror of ``_weekend_after_next`` -- two
+    weekends into the PAST, the weekend before *last* weekend (rel == -2).
+
+    The bare matcher reads only "the weekend" (its own ``weekend_ref``, rel 0
+    == this/upcoming weekend) and strands "before last" -- a silent-wrong that
+    pointed the phrase at the future.  Composed here beside the forward
+    skip-one so the two directions share one anchor-relative weekend engine.
+    """
+    before = spec.connectors.get("before", frozenset())
+    if not before or not spec.weekend_words:
+        return None
+    lastw = frozenset(s for s, v in spec.rel_markers.items() if v < 0)
+    gap = _gap_words(spec)
+    n = len(tokens)
+    for i, t in enumerate(tokens):
+        if t.text not in spec.weekend_words or i + 1 >= n \
+                or tokens[i + 1].text not in before:
+            continue
+        k = i + 2
+        while k < n and tokens[k].text in gap:      # article/of gap before "last"
+            k += 1
+        if k < n and tokens[k].text in lastw:
+            start = i - 1 if i - 1 >= 0 and tokens[i - 1].text in gap else i
+            match = Match("weekend_before_last", (start, k + 1), {})
+            return match, Resolution(_weekend_span(anchor, spec, -2),
+                                     tuple(range(start, k + 1)))
+    return None
+
+
+def _weekend_ago(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
+    """"<N> weekends ago" / "a weekend ago": the weekend N whole weekends before
+    the anchor's own weekend (rel == -N).  "one/a weekend ago" == last weekend
+    (rel -1); "two weekends ago" the weekend before that (rel -2).
+
+    Mirrors ``_count_weekday`` ("2 mondays ago") for the weekend unit, which
+    the bare matcher otherwise read as an upcoming ``weekend_ref`` with the
+    count word stranded.
+    """
+    if not spec.weekend_words:
+        return None
+    ago = (frozenset(spec.connectors.get("ago", ()))
+           | frozenset(s for s, v in spec.directions.items() if v < 0))
+    if not ago:
+        return None
+    indef = frozenset(spec.connectors.get("indef", ()))
+    n = len(tokens)
+    for i, t in enumerate(tokens):
+        if t.text not in spec.weekend_words:
+            continue
+        a = _match_at(tokens, i + 1, ago)
+        if not a:
+            continue
+        end = i + 1 + a
+        # the count preceding the weekend word: a digit ("two"), a quantifier
+        # ("a"/"couple"), or an indefinite article ("a weekend ago" == one).
+        start, qty = i, 1
+        j = i - 1
+        if j >= 0 and tokens[j].is_number and tokens[j].value is not None:
+            qty, start = int(tokens[j].value), j
+        elif j >= 0 and tokens[j].text in spec.quantifiers:
+            qty, start = int(spec.quantifiers[tokens[j].text]), j
+        elif j >= 0 and tokens[j].text in indef:
+            start = j
+        if qty < 1:
+            continue
+        match = Match("weekend_ago", (start, end), {})
+        return match, Resolution(_weekend_span(anchor, spec, -qty),
+                                 tuple(range(start, end)))
+    return None
+
+
 def _nth_weekday_after_daymonth(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     """"the <ordinal> <weekday> after the <day-of-month>": the N-th ``weekday``
     whose date is strictly greater than that day-of-month.
@@ -431,4 +503,6 @@ def apply_ordinal_count(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     after next, Nth weekday after a day-of-month); the first that fires wins."""
     return (_count_weekday(tokens, spec, anchor)
             or _weekend_after_next(tokens, spec, anchor)
+            or _weekend_before_last(tokens, spec, anchor)
+            or _weekend_ago(tokens, spec, anchor)
             or _nth_weekday_after_daymonth(tokens, spec, anchor))

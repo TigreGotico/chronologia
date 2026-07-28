@@ -202,7 +202,8 @@ _ISO_YEAR_FIRST = re.compile(r"\d{4}(?:-\d{1,2}){0,2}")
 #: exactly as a matcher-native date does, rather than being second-class to the
 #: ``DATE_CONSTRUCTIONS`` the matcher itself emits.
 _COMPOSABLE_DATES = DATE_CONSTRUCTIONS | {
-    "business_days", "weekday_count", "weekend_after_next"}
+    "business_days", "weekday_count", "weekend_after_next",
+    "weekend_before_last", "weekend_ago"}
 
 
 def _conn_surfaces(spec, name, defaults):
