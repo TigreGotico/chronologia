@@ -312,6 +312,19 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
             bound = dict(slots)
             bound[el.name] = tokens[ti]
             results += _walk(elements, tokens, ei + 1, ti + 1, spec, bound)
+            # A digit ordinal the language writes with a hyphenated
+            # inflectional suffix ("5-е", "2-го") tokenises as the number plus
+            # a stray suffix letter; absorb that trailing suffix so the numeral
+            # binds its day-of-month / Nth-weekday slot exactly as the spelled
+            # ordinal ("второе") does.  Only fires where a language declares the
+            # suffix surfaces (ordinal_suffix connector, Russian and kin); the
+            # decade "1980-е годы" still matches through its own plural slot on
+            # the non-absorbing path, so nothing changes there.
+            suffixes = spec.connectors.get("ordinal_suffix")
+            if (suffixes and tokens[ti].is_number
+                    and ti + 1 < len(tokens)
+                    and tokens[ti + 1].text in suffixes):
+                results += _walk(elements, tokens, ei + 1, ti + 2, spec, bound)
     else:
         consumed = _connector_span(el.name, tokens, ti, spec)
         if consumed:
