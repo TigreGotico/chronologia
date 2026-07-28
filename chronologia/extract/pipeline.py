@@ -137,7 +137,8 @@ def merge_multiword(tokens: Tuple[Token, ...],
             out.append(Token(tokens[i].text, tokens[i].raw, len(out),
                              tokens[i].is_number, tokens[i].value,
                              tokens[i].char_start, tokens[i].char_end,
-                             tokens[i].cap, tokens[i].prev_cap))
+                             tokens[i].cap, tokens[i].prev_cap,
+                             tokens[i].apostrophe))
             i += 1
     return tuple(out)
 

@@ -177,26 +177,28 @@ def test_season_deixis(anchor, text, s):
 
 # -- two-digit year pivot (POSIX / C strptime %y) -------------------------
 
-# A bare two-digit written year is read through the fixed strptime %y pivot:
-# 69-99 -> 1969-1999, 00-68 -> 2000-2068 (Python `time.strptime` / POSIX).
-# The pivot fires ONLY on an exactly-two-digit run, so a 3+-digit or era-
-# marked year is never rewritten.  (The '69 apostrophe is dropped by the
-# tokenizer, so "'69" and "69" reach the engine identically.)
+# A bare two-digit written year is read through the anchor-relative sliding
+# window [anchor_year - 80, anchor_year + 19] (email.utils / dateutil), NOT a
+# fixed pivot: exactly one of 19YY / 20YY lands in the window and wins.  For
+# anchor 2017 the window is 1937..2036.  The pivot fires ONLY on an
+# exactly-two-digit run, so a 3+-digit or era-marked year is never rewritten.
 @pytest.mark.parametrize("text,s", [
-    ("summer of 69", "1969-6-1"),          # 69 -> 1969
-    ("the summer of '69", "1969-6-1"),     # apostrophe dropped, same year
-    ("winter of 99", "1999-12-1"),         # 99 -> 1999
-    ("fall of 85", "1985-9-1"),            # 85 -> 1985
+    ("summer of 69", "1969-6-1"),          # 2069 outside -> 1969
+    ("the summer of '69", "1969-6-1"),     # apostrophe cue, same year
+    ("winter of 99", "1999-12-1"),         # 2099 outside -> 1999
+    ("fall of 85", "1985-9-1"),            # 2085 outside -> 1985
 ])
 def test_two_digit_year_pivot_1900s(text, s):
     assert start(text) == _d(s)
 
 
-# the 68/69 boundary of the pivot, and the low half mapping to the 2000s
+# the window edges for anchor 2017 (1937..2036): 36 is the last 2000s year,
+# 37 falls to 1937 because 2037 is past the window's high edge.
 @pytest.mark.parametrize("text,s", [
-    ("summer of 68", "2068-6-1"),          # 68 -> 2068 (high edge of 2000s)
-    ("summer of 69", "1969-6-1"),          # 69 -> 1969 (low edge of 1900s)
-    ("summer of 44", "2044-6-1"),          # 00-68 -> 2000s
+    ("summer of 36", "2036-6-1"),          # 2036 inside window (high edge)
+    ("summer of 37", "1937-6-1"),          # 2037 outside -> 1937
+    ("summer of 68", "1968-6-1"),          # 2068 outside -> 1968
+    ("summer of 44", "1944-6-1"),          # 2044 outside -> 1944
 ])
 def test_two_digit_year_pivot_boundary(text, s):
     assert start(text) == _d(s)

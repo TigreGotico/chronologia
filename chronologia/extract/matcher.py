@@ -89,13 +89,26 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
     if name == "DAY":
         return token.is_number and 1 <= (token.value or 0) <= 31
     if name == "YEAR":
+        # a bare number reads as a year when it is too big to be a day/count
+        # (>=32) or written with >=4 digits; an apostrophe cue ("'20", "'08")
+        # licenses even a small two-digit run as a year -- it is the strong
+        # signal a two-digit year was intended, so it is not silently dropped.
         return token.is_number and ((token.value or 0) >= 32
-                                    or len(token.raw.rstrip(".")) >= 4)
+                                    or len(token.raw.rstrip(".")) >= 4
+                                    or (token.apostrophe
+                                        and len(token.raw.rstrip(".")) == 2))
     if name == "GYEAR":
         # a standalone Gregorian year: a bare digit run inside the GYEAR
         # window, so small integers ("5", "123") and digit soup
         # ("1234567890") never read as a year when nothing else anchors them
         raw = token.raw.rstrip(".")
+        # an apostrophe two-digit run is a bare year on its own ("'99", "in
+        # '05"): the apostrophe licenses it even though it falls below the
+        # 4-digit GYEAR window -- the resolver pivots it through the anchor
+        # window.  A leading zero here is a written year digit ("'05"), not a
+        # clock reading, so it is allowed for the apostrophe form only.
+        if token.apostrophe and raw.isdigit() and len(raw) == 2:
+            return True
         # a leading zero marks a clock reading ("0600"), never a year
         return (token.is_number and raw.isdigit() and raw[0] != "0"
                 and GYEAR_MIN <= int(raw) <= GYEAR_MAX)
