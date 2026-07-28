@@ -712,6 +712,91 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
         pre=_glue))
 
 
+# ---------------------------------------------------------------------------
+# deep-time SCALE-frame licensing for the Romance folds
+# ---------------------------------------------------------------------------
+#
+# Two surfaces the general Romance fold deliberately leaves alone must become
+# numbers in the one frame that precedes a deep-time SCALE word:
+#
+#   * the INDEFINITE ARTICLE ("un"/"une"/"um") -- blacklisted from the fold
+#     because it is the everyday article ("un jour", "um dia"); directly before
+#     a scale word it is the number one ("un milliard", "un billón d'anos"), the
+#     same positional licensing English does in ``_fold_article_magnitude``;
+#   * the THOUSAND word ("mil") directly before a MILLION word -- the long-scale
+#     languages spell 10^9 as a multiword "mil millones"/"mil milhões"; folding
+#     "mil" to the numeral 1000 lets the deep-time order read it as NUM=1000
+#     SCALE=million (1000 Ma = 10^9), reusing the numeral machinery whole.
+#
+# Both fire ONLY in the scale frame (the very next token is a scale word), so
+# every other "un"/"mil" reading is untouched.
+def _romance_scale_frame(lang_code, article_ones,
+                         million_extra=frozenset(), scale_extra=frozenset()):
+    """Wrap a Romance fold with the deep-time SCALE-frame number licensing.
+
+    ``article_ones`` are the language's indefinite-article surfaces (the
+    number one before a scale word).  The thousand/million/scale word sets are
+    read from the language's ``NumberVocabulary`` (short + long scale); the
+    vocabulary lists only singular scale words, so ``million_extra`` supplies
+    the plural million surfaces the multiword 10^9 ("mil millones", "mil
+    milhões") actually uses, and ``scale_extra`` any further billion-cognate
+    surfaces the article-one frame must recognise.
+    """
+    numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
+    vocab = next(v for v in vars(numbers_mod).values()
+                 if type(v).__name__ == "NumberVocabulary")
+    thousand, million, scale_all = set(), set(million_extra), set(scale_extra)
+    scale_all |= set(million_extra)
+    for table in (vocab.SHORT_SCALE, vocab.LONG_SCALE):
+        for factor, surf in table.items():
+            if not surf:
+                continue
+            s = surf.lower()
+            scale_all.add(s)
+            if factor == 1_000:
+                thousand.add(s)
+            elif factor == 1_000_000:
+                million.add(s)
+
+    def prepass(tokens):
+        out = []
+        n = len(tokens)
+        i = 0
+        while i < n:
+            t = tokens[i]
+            nxt = tokens[i + 1] if i + 1 < n else None
+            nxt_txt = nxt.text if nxt is not None else None
+            if (not t.is_number and nxt is not None and not nxt.is_number
+                    and t.text in article_ones and nxt_txt in scale_all):
+                out.append(_scale_num_token(1, t))
+                i += 1
+                continue
+            if (not t.is_number and nxt is not None and not nxt.is_number
+                    and t.text in thousand and nxt_txt in million):
+                out.append(_scale_num_token(1_000, t))
+                i += 1
+                continue
+            out.append(t)
+            i += 1
+        return _reindex(tuple(out))
+
+    return prepass
+
+
+def _scale_num_token(value, like):
+    """A numeral token of ``value`` carrying ``like``'s character extent."""
+    return Token(text=str(value), raw=like.raw, index=0, is_number=True,
+                 value=value, char_start=like.char_start,
+                 char_end=like.char_end)
+
+
+def _with_scale_frame(fold, lang_code, article_ones,
+                      million_extra=frozenset(), scale_extra=frozenset()):
+    prepass = _romance_scale_frame(lang_code, article_ones,
+                                   million_extra, scale_extra)
+    return lambda tokens: fold(prepass(tokens))
+
+
 # pt: feminine ordinals "segunda/quarta/quinta/sexta" are weekday names
 _fold_pt_base = _make_romance_fold("pt", {"segunda", "quarta", "quinta", "sexta",
                                           "terca", "terça"})
@@ -893,9 +978,24 @@ def fold_pt(tokens):  # noqa: F811 -- final wrap adds Nones licensing
     return _license_pt_nonas(_fold_pt_ordinal(tokens))
 
 
+# deep-time SCALE-frame licensing: "um bilião"/"mil milhões de anos"
+fold_pt = _with_scale_frame(fold_pt, "pt", frozenset({"um", "uma"}),
+                            million_extra=frozenset({"milhões", "milhoes",
+                                                     "milhão", "milhao"}))
+
+
 fold_es = _make_romance_fold("es", set())
 fold_gl = _make_romance_fold("gl", set())
 fold_ca = _make_romance_fold("ca", set())
+# deep-time SCALE-frame licensing (article-one + multiword "mil <million>")
+fold_es = _with_scale_frame(fold_es, "es", frozenset({"un", "una"}),
+                            million_extra=frozenset({"millones", "millon",
+                                                     "millón"}))
+fold_gl = _with_scale_frame(fold_gl, "gl", frozenset({"un", "unha"}),
+                            million_extra=frozenset({"millóns", "millons",
+                                                     "millón", "millon"}))
+fold_ca = _with_scale_frame(fold_ca, "ca", frozenset({"un", "una"}),
+                            million_extra=frozenset({"milions", "milió"}))
 # an: "martes" (Tuesday) must never be read as a number; the Romance factory
 # folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
 fold_an = _make_romance_fold("an", {"martes"})
@@ -1017,11 +1117,15 @@ _FY_HOURS = {"ienen": 1, "twaen": 2, "trijen": 3, "fjouweren": 4, "fiven": 5,
 # Per-language stop-sets: clock fractions + scale words that must not fold.
 fold_de = _lazy_germanic_fold(
     "ovos_number_parser.numbers_de", "extract_number_de",
+    # "billion"/"billionen" is the long-scale 10^12 word (German Billion); it is
+    # withheld here so it survives as the deep-time SCALE slot instead of being
+    # read as a plain number by the value-probe.
     {"halb", "viertel", "dreiviertel", "million", "millionen",
-     "milliarde", "milliarden", "tausend"})
+     "milliarde", "milliarden", "billion", "billionen", "tausend"})
 fold_nl = _lazy_germanic_fold(
     "ovos_number_parser.numbers_nl", "extract_number_nl",
-    {"half", "kwart", "miljoen", "miljard", "duizend"},
+    # "biljoen" = 10^12 (Dutch long scale), withheld so the SCALE slot survives.
+    {"half", "kwart", "miljoen", "miljard", "biljoen", "duizend"},
     ord_suffixes={"e", "de", "ste", "te"})
 fold_sv = _lazy_germanic_fold(
     "ovos_number_parser.numbers_sv", "extract_number_sv",
@@ -1312,6 +1416,8 @@ fold_fr = _romance_prepass_fold(
     phrases=_FR_PHRASES, h_clock=True,
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
+# deep-time SCALE-frame licensing: "un milliard/un billion d'années"
+fold_fr = _with_scale_frame(fold_fr, "fr", frozenset({"un", "une"}))
 
 
 # -- Italian ----------------------------------------------------------------
@@ -1387,6 +1493,10 @@ def fold_it(tokens):
     return _license_it_prima(_fold_it_base(tokens))
 
 
+# deep-time SCALE-frame licensing: "un miliardo/un bilione di anni fa"
+fold_it = _with_scale_frame(fold_it, "it", frozenset({"un", "uno", "una"}))
+
+
 # -- Romanian ---------------------------------------------------------------
 _RO_PHRASES = [
     (["înainte", "de", "hristos"], "ihr"), (["inainte", "de", "hristos"], "ihr"),
@@ -1402,6 +1512,8 @@ fold_ro = _romance_prepass_fold(
     fem_ord={"doua": 2, "două": 2, "treia": 3, "patra": 4, "cincea": 5,
              "șasea": 6, "sasea": 6, "șaptea": 7, "saptea": 7, "opta": 8,
              "noua": 9, "zecea": 10})
+# deep-time SCALE-frame licensing: "un miliard/un bilion de ani în urmă"
+fold_ro = _with_scale_frame(fold_ro, "ro", frozenset({"un", "unu", "una", "o"}))
 
 
 # -- Occitan ----------------------------------------------------------------
