@@ -9,8 +9,8 @@ and are dropped from the sweep -- the parser returns ``None`` for those (see
 :func:`test_nonexistent_fifth_is_no_match`), so asserting a date would be
 dishonest.
 
-Ordinals eerste..vijfde bind.  "laatste" (last) does NOT bind in this locale
-and is captured as a strict xfail below -- a documented defect, not silent gold.
+Ordinals eerste..vijfde bind, and so does "laatste" (last) -- the last-of-month
+reading is exercised below.
 
 Anchor: Tuesday 2017-06-27 13:04.
 """
@@ -89,10 +89,7 @@ def test_nonexistent_fifth_is_no_match(phrase):
     assert parse(phrase) is None
 
 
-@pytest.mark.xfail(reason="BUG: 'laatste <weekday> van <maand>' (last-of-month) "
-                          "does not bind; the ordinal 'laatste' is dropped and "
-                          "the bare weekday resolves relative to the anchor.",
-                   strict=True)
 def test_laatste_weekday_of_month_binds():
+    # "de laatste zaterdag van augustus" binds the last-of-month reading.
     # Gold (independent): last Saturday of August 2019 = 2019-08-31.
     assert start("de laatste zaterdag van augustus 2019") == AstroDate(2019, 8, 31)
