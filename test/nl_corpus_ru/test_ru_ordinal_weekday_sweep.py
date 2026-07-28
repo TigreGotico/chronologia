@@ -8,9 +8,8 @@ masculine for понедельник/вторник/четверг, feminine for
 neuter for воскресенье.
 
 Gold is an independent calendar walk (``_nth_weekday`` below), never the
-parser.  Only ordinals 1..4 are swept -- the "последний" (last) reading is
-broken in the engine (see the xfail marker in ``test_last_weekday_broken``)
-and is deferred.  Anchor 2017-06-27."""
+parser.  Ordinals 1..4 are swept, and the "последний" (last) reading binds
+the last-of-month span (see ``test_last_weekday_binds``).  Anchor 2017-06-27."""
 from datetime import date, timedelta
 
 import pytest
@@ -73,11 +72,7 @@ def test_ordinal_weekday_of_month(text, y, m, dd):
     assert en == AstroDate(nxt.year, nxt.month, nxt.day)
 
 
-@pytest.mark.xfail(reason="'последний' (last weekday) mis-parses: the ordinal "
-                          "is dropped and residue leaks -- deferred.",
-                   strict=True)
-def test_last_weekday_broken():
-    # последний понедельник мая 2020 -> should be 2020-05-25; engine returns a
-    # bogus anchor-relative span with 'последний мая 2020' residue.
+def test_last_weekday_binds():
+    # последний понедельник мая 2020 -> the last Monday of May 2020 = 2020-05-25.
     st, _ = start_end("последний понедельник мая 2020")
     assert st == AstroDate(2020, 5, 25)
