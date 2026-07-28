@@ -9,13 +9,14 @@ committed -- the asserted value is what a Polish speaker means.
 
 Gaps captured (anchor Tuesday 2017-06-27 13:04):
 
-* Major Polish PUBLIC holidays absent from the registry -- Święto Pracy
-  (1 maja), Wniebowzięcie NMP (15 sierpnia), Święto Niepodległości
-  (11 listopada), Boże Ciało (movable, Easter + 60), and the named feast
-  "Konstytucji 3 Maja" (the numeric "3 maja" parses but the feast name is
-  stranded).
-(Explicit-year intra-month day ranges and "ostatni <weekday> <month> <year>"
-now both bind -- see ``test_nl_day_range_year.py`` and
+* Boże Ciało (Corpus Christi, movable Easter + 60): the ``corpus_christi`` key
+  exists but carries no Polish spoken surface yet, so "boże ciało" strands.
+
+(Święto Pracy, Wniebowzięcie NMP, Święto Niepodległości and the named feast
+"Konstytucji 3 Maja" were formerly listed here as registry gaps; they now bind
+by name -- promoted to ``test_nl_national_holidays_2.py`` and asserted below.
+Explicit-year intra-month day ranges and "ostatni <weekday> <month> <year>"
+also both bind -- see ``test_nl_day_range_year.py`` and
 ``test_pl_last_weekday_of_month.py``.)
 """
 from datetime import date, timedelta
@@ -30,17 +31,29 @@ _E2021 = easter(2021)  # 2021-04-04
 
 # (phrase, correct start date, expected-clean-residue?)
 _FIXED_GAPS = [
-    ("święto pracy 2021", date(2021, 5, 1)),
-    ("wniebowzięcie 2021", date(2021, 8, 15)),
-    ("święto niepodległości 2021", date(2021, 11, 11)),
     ("boże ciało 2021", _E2021 + timedelta(days=60)),  # 2021-06-03
-    ("konstytucji 3 maja 2021", date(2021, 5, 3)),
 ]
 
 
 @pytest.mark.xfail(strict=True, reason="known pl gap: see module docstring")
 @pytest.mark.parametrize("phrase,gold", _FIXED_GAPS, ids=[c[0] for c in _FIXED_GAPS])
 def test_known_gap(phrase, gold):
+    r = parse(phrase)
+    assert r is not None
+    assert r[0].start == AstroDate(gold.year, gold.month, gold.day)
+    assert r[1] == ""
+
+
+# Formerly strict-xfail registry gaps, now bound by name (round-2 national
+# holidays). Kept here as an explicit-year regression pin alongside the primary
+# assertions in ``test_nl_national_holidays_2.py``.
+@pytest.mark.parametrize("phrase,gold", [
+    ("święto pracy 2021", date(2021, 5, 1)),
+    ("wniebowzięcie 2021", date(2021, 8, 15)),
+    ("święto niepodległości 2021", date(2021, 11, 11)),
+    ("konstytucji 3 maja 2021", date(2021, 5, 3)),
+])
+def test_former_gap_now_binds(phrase, gold):
     r = parse(phrase)
     assert r is not None
     assert r[0].start == AstroDate(gold.year, gold.month, gold.day)

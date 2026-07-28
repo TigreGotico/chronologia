@@ -457,6 +457,192 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
     # longest-match so a bare "april" reading never strands a "fools day" tail.
     WellKnownHoliday("april_fools", FixedRule(4, 1),
                      frozenset({"unofficial"}), "US", "April Fools' Day", "en"),
+
+    # ---- National / civil fixed-date holidays (round 2: pl uk cs ru nl de sv
+    #      tr fi hu da nb el ro) --------------------------------------------
+    # A second sweep of NATIONAL and CIVIL observances that native reviewers of
+    # the Slavic / Uralic / Hellenic / Turkic / Nordic corpora bind by name.
+    # Each is a FIXED Gregorian date reusing ``FixedRule`` exactly like the
+    # feasts above; the spoken surfaces (incl. the inflected forms reviewers
+    # cited) live per-locale in ``i18n/well_known.tab``. Statutory days off carry
+    # ``public``; a traditional feast that is not a day off carries ``religious``
+    # or ``unofficial``. Multi-word names bind as ONE holiday and win
+    # longest-match over the bare month / "day" / weekday tokens they embed.
+    # Holidays already carried by a shared key (Labour Day = 1 May ->
+    # ``labour_day``; Assumption = 15 Aug -> ``assumption``; All Saints = 1 Nov
+    # -> ``all_saints``; Epiphany = 6 Jan -> ``epiphany``; New Year = 1 Jan ->
+    # ``new_year``; the 8 May V-E Day -> ``ve_day``) only gain a per-locale
+    # surface in the ``.tab`` and are NOT re-keyed here.
+
+    # Poland. Konstytucji 3 Maja = 3 May (Constitution of 3 May 1791, the
+    # world's second written constitution; public holiday, Dz.U. 1990). Święto
+    # Niepodległości = 11 Nov (National Independence Day, 1918; Dz.U. 1937 /
+    # 1989). Distinct from the 11 Nov ``armistice`` (FR) though same date.
+    WellKnownHoliday("poland_constitution_day", FixedRule(5, 3),
+                     frozenset({"public"}), "PL",
+                     "Święto Konstytucji 3 Maja", "pl"),
+    WellKnownHoliday("poland_independence_day", FixedRule(11, 11),
+                     frozenset({"public"}), "PL",
+                     "Narodowe Święto Niepodległości", "pl"),
+
+    # Ukraine. День незалежності = 24 Aug (Independence Day, 1991). День
+    # Конституції = 28 Jun (Constitution Day, 1996). День захисників і
+    # захисниць = 14 Oct (Defenders Day; decree since 2014, statute 2021).
+    WellKnownHoliday("ukraine_independence_day", FixedRule(8, 24),
+                     frozenset({"public"}), "UA",
+                     "День незалежності України", "uk"),
+    WellKnownHoliday("ukraine_constitution_day", FixedRule(6, 28),
+                     frozenset({"public"}), "UA",
+                     "День Конституції України", "uk"),
+    WellKnownHoliday("ukraine_defenders_day", FixedRule(10, 14),
+                     frozenset({"public"}), "UA",
+                     "День захисників і захисниць України", "uk"),
+
+    # Международный женский день / Міжнародний жіночий день = 8 Mar
+    # (International Women's Day; a public day off in RU, UA and much of the
+    # former USSR). Shared RU/UA key.
+    WellKnownHoliday("womens_day", FixedRule(3, 8),
+                     frozenset({"public"}), "RU",
+                     "Международный женский день", "ru"),
+    # День Победы / День перемоги = 9 May (the Soviet/post-Soviet Victory Day,
+    # a full day later than the Western 8 May ``ve_day`` — a genuinely
+    # different civil date, hence its own key). Shared RU/UA key.
+    WellKnownHoliday("victory_day_east", FixedRule(5, 9),
+                     frozenset({"public"}), "RU", "День Победы", "ru"),
+
+    # Czechia. Cyril a Metoděj = 5 Jul (Saints Cyril & Methodius). Jan Hus =
+    # 6 Jul (burning of Jan Hus, 1415). Den české státnosti = 28 Sep (St
+    # Wenceslas / Czech Statehood). Vznik samostatného čs. státu = 28 Oct
+    # (Czechoslovak independence, 1918). Boj za svobodu a demokracii = 17 Nov
+    # (Struggle for Freedom and Democracy, 1939/1989). All public holidays
+    # (zákon č. 245/2000 Sb.).
+    WellKnownHoliday("cyril_methodius_day", FixedRule(7, 5),
+                     frozenset({"public", "religious"}), "CZ",
+                     "Den slovanských věrozvěstů Cyrila a Metoděje", "cs"),
+    WellKnownHoliday("jan_hus_day", FixedRule(7, 6),
+                     frozenset({"public"}), "CZ",
+                     "Den upálení mistra Jana Husa", "cs"),
+    WellKnownHoliday("czech_statehood_day", FixedRule(9, 28),
+                     frozenset({"public"}), "CZ",
+                     "Den české státnosti", "cs"),
+    WellKnownHoliday("czechoslovak_state_day", FixedRule(10, 28),
+                     frozenset({"public"}), "CZ",
+                     "Den vzniku samostatného československého státu", "cs"),
+    WellKnownHoliday("czech_freedom_day", FixedRule(11, 17),
+                     frozenset({"public"}), "CZ",
+                     "Den boje za svobodu a demokracii", "cs"),
+
+    # Russia. День России = 12 Jun (Russia Day, 1990). День защитника
+    # Отечества = 23 Feb (Defender of the Fatherland Day). День народного
+    # единства = 4 Nov (Unity Day). Public holidays (Labour Code art. 112).
+    WellKnownHoliday("russia_day", FixedRule(6, 12),
+                     frozenset({"public"}), "RU", "День России", "ru"),
+    WellKnownHoliday("defender_of_fatherland_day", FixedRule(2, 23),
+                     frozenset({"public"}), "RU",
+                     "День защитника Отечества", "ru"),
+    WellKnownHoliday("russia_unity_day", FixedRule(11, 4),
+                     frozenset({"public"}), "RU",
+                     "День народного единства", "ru"),
+
+    # Netherlands. Koningsdag = 27 Apr (King's Day, King Willem-Alexander's
+    # birthday; public holiday). Bevrijdingsdag = 5 May (Liberation Day, 1945).
+    # Sinterklaas = 5 Dec (St Nicholas' Eve; a folk gift-giving day, not a
+    # statutory day off -> ``unofficial``).
+    WellKnownHoliday("netherlands_kings_day", FixedRule(4, 27),
+                     frozenset({"public"}), "NL", "Koningsdag", "nl"),
+    WellKnownHoliday("netherlands_liberation_day", FixedRule(5, 5),
+                     frozenset({"public"}), "NL", "Bevrijdingsdag", "nl"),
+    WellKnownHoliday("sinterklaas", FixedRule(12, 5),
+                     frozenset({"unofficial"}), "NL", "Sinterklaas", "nl"),
+
+    # Germany. Tag der Deutschen Einheit = 3 Oct (German Unity Day, 1990; the
+    # sole nationwide statutory holiday). Nikolaustag = 6 Dec (St Nicholas'
+    # Day; a customary feast, not a day off -> ``religious``). Tag der Arbeit
+    # (1 May) is the shared ``labour_day``.
+    WellKnownHoliday("german_unity_day", FixedRule(10, 3),
+                     frozenset({"public"}), "DE",
+                     "Tag der Deutschen Einheit", "de"),
+    WellKnownHoliday("nikolaus", FixedRule(12, 6),
+                     frozenset({"religious"}), "DE", "Nikolaustag", "de"),
+
+    # Sweden. Sveriges nationaldag = 6 Jun (National Day, 1523/1809; public
+    # holiday since 2005). Trettondedag jul (6 Jan) is the shared ``epiphany``.
+    WellKnownHoliday("sweden_national_day", FixedRule(6, 6),
+                     frozenset({"public"}), "SE", "Sveriges nationaldag", "sv"),
+
+    # Turkey. Cumhuriyet Bayramı = 29 Oct (Republic Day, 1923). Zafer Bayramı
+    # = 30 Aug (Victory Day, 1922). Ulusal Egemenlik ve Çocuk Bayramı = 23 Apr
+    # (National Sovereignty & Children's Day, 1920). Atatürk'ü Anma, Gençlik ve
+    # Spor Bayramı = 19 May (Commemoration of Atatürk, Youth & Sports Day).
+    # Demokrasi ve Millî Birlik Günü = 15 Jul (Democracy & National Unity Day,
+    # 2016). Public holidays.
+    WellKnownHoliday("turkey_republic_day", FixedRule(10, 29),
+                     frozenset({"public"}), "TR", "Cumhuriyet Bayramı", "tr"),
+    WellKnownHoliday("turkey_victory_day", FixedRule(8, 30),
+                     frozenset({"public"}), "TR", "Zafer Bayramı", "tr"),
+    WellKnownHoliday("turkey_sovereignty_day", FixedRule(4, 23),
+                     frozenset({"public"}), "TR",
+                     "Ulusal Egemenlik ve Çocuk Bayramı", "tr"),
+    WellKnownHoliday("turkey_youth_day", FixedRule(5, 19),
+                     frozenset({"public"}), "TR",
+                     "Atatürk'ü Anma, Gençlik ve Spor Bayramı", "tr"),
+    WellKnownHoliday("turkey_democracy_day", FixedRule(7, 15),
+                     frozenset({"public"}), "TR",
+                     "Demokrasi ve Millî Birlik Günü", "tr"),
+
+    # Finland. Itsenäisyyspäivä = 6 Dec (Independence Day, 1917). Vappu (1 May)
+    # is the shared ``labour_day``; Loppiainen (6 Jan) the shared ``epiphany``.
+    WellKnownHoliday("finland_independence_day", FixedRule(12, 6),
+                     frozenset({"public"}), "FI", "Itsenäisyyspäivä", "fi"),
+
+    # Hungary. Nemzeti ünnep (1848) = 15 Mar (1848 Revolution). Az
+    # államalapítás ünnepe = 20 Aug (St Stephen / State Foundation). Az 1956-os
+    # forradalom emléknapja = 23 Oct (1956 Revolution). A munka ünnepe (1 May)
+    # is the shared ``labour_day``. Public holidays.
+    WellKnownHoliday("hungary_1848_day", FixedRule(3, 15),
+                     frozenset({"public"}), "HU", "Nemzeti ünnep", "hu"),
+    WellKnownHoliday("hungary_state_foundation_day", FixedRule(8, 20),
+                     frozenset({"public"}), "HU",
+                     "Az államalapítás ünnepe", "hu"),
+    WellKnownHoliday("hungary_1956_day", FixedRule(10, 23),
+                     frozenset({"public"}), "HU",
+                     "Az 1956-os forradalom emléknapja", "hu"),
+
+    # Denmark. Grundlovsdag = 5 Jun (Constitution Day, 1849; a partial day off,
+    # widely observed -> ``public``).
+    WellKnownHoliday("denmark_constitution_day", FixedRule(6, 5),
+                     frozenset({"public"}), "DK", "Grundlovsdag", "da"),
+
+    # Norway. Grunnlovsdag / syttende mai = 17 May (Constitution Day, 1814;
+    # the national day). Arbeidernes dag (1 May) is the shared ``labour_day``.
+    WellKnownHoliday("norway_constitution_day", FixedRule(5, 17),
+                     frozenset({"public"}), "NO", "Grunnlovsdag", "nb"),
+
+    # Greece. 25η Μαρτίου = 25 Mar (Independence Day, 1821; also the
+    # Annunciation -> ``public religious``). Επέτειος του Όχι / 28η Οκτωβρίου =
+    # 28 Oct ("Ohi Day", 1940). Πρωτομαγιά (1 May) is the shared ``labour_day``;
+    # Θεοφάνεια (6 Jan) the shared ``epiphany``.
+    WellKnownHoliday("greece_independence_day", FixedRule(3, 25),
+                     frozenset({"public", "religious"}), "GR",
+                     "Εικοστή Πέμπτη Μαρτίου", "el"),
+    WellKnownHoliday("greece_ohi_day", FixedRule(10, 28),
+                     frozenset({"public"}), "GR", "Επέτειος του Όχι", "el"),
+
+    # Romania. Ziua Copilului = 1 Jun (Children's Day; public holiday since
+    # 2017). Ziua Națională = 1 Dec (National Day / Great Union, 1918; distinct
+    # from the 1 Dec ``portugal_restoration_day``). Unirea Principatelor =
+    # 24 Jan (Union of the Principalities, 1859). Anul Nou (1 Jan) is the shared
+    # ``new_year``; Ziua Muncii (1 May) the shared ``labour_day``; Adormirea
+    # (15 Aug) the shared ``assumption``.
+    WellKnownHoliday("romania_childrens_day", FixedRule(6, 1),
+                     frozenset({"public"}), "RO", "Ziua Copilului", "ro"),
+    WellKnownHoliday("romania_national_day", FixedRule(12, 1),
+                     frozenset({"public"}), "RO",
+                     "Ziua Națională a României", "ro"),
+    WellKnownHoliday("romania_union_day", FixedRule(1, 24),
+                     frozenset({"public"}), "RO",
+                     "Ziua Unirii Principatelor Române", "ro"),
+
     # NOTE Twelfth Night (5 Jan, eve of the Epiphany) is deliberately NOT added:
     # "Twelfth Night" is pinned as a proper noun that must resolve to None (not a
     # daypart "night") by test_clock_daypart_night_fixes; adding it as a holiday
@@ -610,18 +796,38 @@ def well_known_surfaces(lang: str) -> Dict[str, str]:
     A language with no data for a holiday simply contributes no surface for it,
     so the reference is honestly scoped to what the locale's language actually
     names.
+
+    Surface precedence: a curated spoken alias or the anchor's own official
+    native name is *authoritative* for the language and always wins; a
+    **display translation** of a foreign holiday is only a fallback that fills
+    a surface no authoritative source already claims. National/civil days make
+    this matter — Portugal's own "dia da república" (a pt alias for the 5 Oct
+    ``portugal_republic_day``) must not be shadowed by the pt display
+    translation of Turkey's 29 Oct ``turkey_republic_day`` ("Dia da
+    República"). Authoritative-wins keeps each language bound to the day it
+    actually speaks of, while a translation still supplies surfaces for a
+    foreign holiday the language names no other way.
     """
     aliases = _well_known_aliases()
     out: Dict[str, str] = {}
+    authoritative: set = set()
+    translated: list = []
     for wk in WELL_KNOWN:
         surfaces = set(aliases.get((wk.key, lang.lower()), ()))
-        trans = _translations_for(wk.anchor_jurisdiction, wk.anchor_name)
-        if lang in trans:
-            surfaces.add(trans[lang])
         if wk.anchor_lang == lang:
             surfaces.add(wk.anchor_name)
         for surface in surfaces:
-            out[surface.strip().lower()] = wk.key
+            canon = surface.strip().lower()
+            out[canon] = wk.key
+            authoritative.add(canon)
+        trans = _translations_for(wk.anchor_jurisdiction, wk.anchor_name)
+        if lang in trans:
+            translated.append((trans[lang].strip().lower(), wk.key))
+    # Display translations fill only the surfaces no authoritative source owns
+    # (later translations still win over earlier ones, as before).
+    for canon, key in translated:
+        if canon not in authoritative:
+            out[canon] = key
     # Second tier: jurisdiction-bound holidays contribute a surface only in the
     # locale they are bound to (its surfaces live under the base key in
     # well_known.tab); the resolver picks the per-``(key, lang)`` rule.

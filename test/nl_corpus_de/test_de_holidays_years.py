@@ -75,14 +75,13 @@ def test_holiday_year(text, d):
     assert sp.end == AstroDate(nxt.year, nxt.month, nxt.day)
 
 
-def test_multiword_official_name_plus_year_strands():
-    """The official multi-word names do not bind a trailing year.
-
-    "Tag der Arbeit 2019" leaves the whole 2019 year as the span and strands
-    the name in the remainder -- so the everyday "erster Mai 2019" is the form
-    that resolves to 1 May. Recorded here as a known limitation.
+def test_multiword_official_name_plus_year_binds():
+    """The official multi-word name now binds a trailing year (round-2 civil
+    holidays): "Tag der Arbeit 2019" resolves to 1 May 2019, just like the
+    everyday "erster Mai 2019".
     """
     r = parse("tag der arbeit 2019")
     assert r is not None
-    assert r[0].start != AstroDate(2019, 5, 1)   # NOT the holiday -- the year
+    assert r[0].start == AstroDate(2019, 5, 1)
+    assert r[1] == ""
     assert span("erster mai 2019").start == AstroDate(2019, 5, 1)
