@@ -177,6 +177,12 @@ DATE_CONSTRUCTIONS = frozenset({
     "calendar_date", "reckoned_date", "nongregorian_date", "iso_date",
     "numeric_date",
     "weekday_ref", "named_day", "season_ref", "solar_event", "scoped_ordinal",
+    # the named-day offset idioms ("the day after tomorrow", "the day before
+    # yesterday") resolve to a whole day, so a further stranded "the day
+    # after/before" pre-amble composes onto them exactly as onto any other
+    # date -- letting the double nest "the day after the day after tomorrow"
+    # step one more day past the inner result instead of stranding the outer.
+    "named_day_after", "named_day_before",
     "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
     "era_bc", "era_ad", "era_bp", "era_auc", "era_buddhist",
