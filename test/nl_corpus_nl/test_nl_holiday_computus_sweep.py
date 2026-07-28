@@ -113,7 +113,9 @@ def test_holiday_year(phrase, gold):
 
 
 @pytest.mark.parametrize("phrase", [
-    "koningsdag 2020", "bevrijdingsdag 2019", "sinterklaas 2021",
+    # koningsdag / bevrijdingsdag / sinterklaas now bind (round-2 civil
+    # holidays) -- see test_nl_national_holidays_2.py. aswoensdag /
+    # dodenherdenking remain unregistered coverage gaps.
     "aswoensdag 2020", "dodenherdenking 2020",
 ])
 def test_unregistered_holiday_leaves_year(phrase):

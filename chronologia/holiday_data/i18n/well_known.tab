@@ -1023,3 +1023,89 @@ groundhog_day            | en | groundhog day ;; groundhog's day
 earth_day                | en | earth day
 all_souls                | en | all souls' day ;; all souls day
 april_fools              | en | april fools' day ;; april fools day ;; april fool's day
+#
+# ===== National / civil holidays, round 2 (pl uk cs ru nl de sv tr fi hu da nb el ro) =====
+# Spoken surfaces (incl. the inflected forms native reviewers cited) for the
+# fixed-date national/civil holidays added in the round-2 sweep. Holidays that
+# share a cross-border key gain only a per-locale surface here (labour_day =
+# 1 May; assumption = 15 Aug; ve_day = 8 May; new_year = 1 Jan).
+#
+# --- Polish ---
+labour_day               | pl | święto pracy
+assumption               | pl | wniebowzięcie ;; wniebowzięcie najświętszej maryi panny
+poland_constitution_day  | pl | konstytucji 3 maja ;; święto konstytucji 3 maja
+poland_independence_day  | pl | święto niepodległości ;; narodowe święto niepodległości ;; dzień niepodległości
+#
+# --- Ukrainian ---
+labour_day               | uk | день праці ;; міжнародний день праці
+ukraine_independence_day | uk | день незалежності ;; день незалежності україни
+ukraine_constitution_day | uk | день конституції ;; день конституції україни
+ukraine_defenders_day    | uk | день захисника ;; день захисників ;; день захисників і захисниць
+womens_day               | uk | міжнародний жіночий день ;; жіночий день
+victory_day_east         | uk | день перемоги
+#
+# --- Czech ---
+labour_day               | cs | svátek práce
+ve_day                   | cs | den vítězství
+cyril_methodius_day      | cs | cyril a metoděj ;; svatý cyril a metoděj ;; den slovanských věrozvěstů
+jan_hus_day              | cs | jan hus ;; den upálení mistra jana husa
+czech_statehood_day      | cs | den české státnosti ;; svatý václav
+czechoslovak_state_day   | cs | vznik čsr ;; vznik československa ;; den vzniku samostatného československého státu
+czech_freedom_day        | cs | boj za svobodu ;; den boje za svobodu a demokracii
+#
+# --- Russian ---
+womens_day               | ru | международный женский день ;; женский день
+victory_day_east         | ru | день победы
+russia_day               | ru | день россии
+defender_of_fatherland_day | ru | день защитника отечества ;; день защитника
+russia_unity_day         | ru | день народного единства
+#
+# --- Dutch ---
+netherlands_kings_day    | nl | koningsdag ;; koninginnedag
+netherlands_liberation_day | nl | bevrijdingsdag
+sinterklaas              | nl | sinterklaas ;; pakjesavond
+#
+# --- German ---
+labour_day               | de | tag der arbeit
+german_unity_day         | de | tag der deutschen einheit ;; tag der einheit
+nikolaus                 | de | nikolaus ;; nikolaustag ;; sankt nikolaus
+#
+# --- Swedish ---
+sweden_national_day      | sv | sveriges nationaldag ;; nationaldagen ;; svenska flaggans dag
+#
+# --- Turkish ---
+turkey_republic_day      | tr | cumhuriyet bayramı
+turkey_victory_day       | tr | zafer bayramı
+turkey_sovereignty_day   | tr | ulusal egemenlik ve çocuk bayramı ;; ulusal egemenlik bayramı ;; çocuk bayramı
+turkey_youth_day         | tr | atatürk'ü anma gençlik ve spor bayramı ;; gençlik ve spor bayramı
+turkey_democracy_day     | tr | demokrasi ve millî birlik günü ;; demokrasi günü
+#
+# --- Finnish ---
+labour_day               | fi | vappu
+finland_independence_day | fi | itsenäisyyspäivä
+#
+# --- Hungarian ---
+labour_day               | hu | a munka ünnepe ;; munka ünnepe
+hungary_1848_day         | hu | nemzeti ünnep ;; 1848-as forradalom ;; az 1848-as forradalom emléknapja
+hungary_state_foundation_day | hu | államalapítás ünnepe ;; az államalapítás ünnepe ;; szent istván ünnepe
+hungary_1956_day         | hu | 1956-os forradalom ;; az 1956-os forradalom emléknapja
+#
+# --- Danish ---
+denmark_constitution_day | da | grundlovsdag
+#
+# --- Norwegian (Bokmål) ---
+labour_day               | nb | arbeidernes dag
+norway_constitution_day  | nb | grunnlovsdag ;; syttende mai ;; nasjonaldagen
+#
+# --- Greek ---
+labour_day               | el | πρωτομαγιά ;; εργατική πρωτομαγιά
+greece_independence_day  | el | 25η μαρτίου ;; εικοστή πέμπτη μαρτίου ;; ευαγγελισμός της θεοτόκου
+greece_ohi_day           | el | 28η οκτωβρίου ;; επέτειος του όχι ;; ημέρα του όχι ;; του όχι
+#
+# --- Romanian ---
+new_year                 | ro | anul nou
+labour_day               | ro | ziua muncii
+assumption               | ro | adormirea maicii domnului ;; sfânta maria mare
+romania_childrens_day    | ro | ziua copilului ;; ziua internațională a copilului
+romania_national_day     | ro | ziua națională ;; ziua națională a româniei ;; ziua marii uniri
+romania_union_day        | ro | unirea principatelor ;; ziua unirii principatelor române ;; mica unire

@@ -75,8 +75,8 @@ def test_holiday_year(text, exp):
 @pytest.mark.xfail(strict=True, reason="holiday not resolved: parser returns "
                    "the whole year instead of the day")
 @pytest.mark.parametrize("text,exp", [
-    ("grundlovsdag 2020", date(2020, 6, 5)),
-    ("grundlovsdag 2021", date(2021, 6, 5)),
+    # grundlovsdag now binds (round-2 civil holidays) -- see
+    # test_da_national_holidays_2.py; skærtorsdag / store bededag remain gaps.
     ("skærtorsdag 2020", _easter(2020) - timedelta(days=3)),
     ("skærtorsdag 2021", _easter(2021) - timedelta(days=3)),
     ("store bededag 2020", _easter(2020) + timedelta(days=26)),
