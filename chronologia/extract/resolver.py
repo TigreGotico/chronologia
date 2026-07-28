@@ -1599,6 +1599,17 @@ class Resolver:
         from chronologia import resolve_bp
         num = match.slots["NUM"]
         factor = self.spec.scales[match.slots["SCALE"].text]
+        if num.article:
+            # the indefinite-article form ("a million years ago") is a
+            # colloquial count-from-now offset, not a geological measurement:
+            # a single-year point at ``anchor.year - count*scale``, never the
+            # numeral form's sig-fig span.
+            year = anchor.year - int(num.value) * factor
+            start = AstroDate(year, anchor.month, anchor.day,
+                              anchor.hour, anchor.minute)
+            end = AstroDate(year + 1, anchor.month, anchor.day,
+                            anchor.hour, anchor.minute)
+            return Resolution(DateSpan(start, end), self._consumed(match))
         unit = self._BP_SCALE_UNITS.get(factor)
         if unit is not None:
             span = resolve_bp(num.text, unit)

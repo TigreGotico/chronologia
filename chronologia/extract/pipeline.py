@@ -18,6 +18,7 @@ exists to prevent.
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from typing import List, Tuple
 
 from chronologia.extract.model import LangSpec, Token
@@ -134,11 +135,7 @@ def merge_multiword(tokens: Tuple[Token, ...],
                 i += n
                 break
         else:
-            out.append(Token(tokens[i].text, tokens[i].raw, len(out),
-                             tokens[i].is_number, tokens[i].value,
-                             tokens[i].char_start, tokens[i].char_end,
-                             tokens[i].cap, tokens[i].prev_cap,
-                             tokens[i].apostrophe))
+            out.append(replace(tokens[i], index=len(out)))
             i += 1
     return tuple(out)
 

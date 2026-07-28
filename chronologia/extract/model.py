@@ -80,6 +80,15 @@ class Token:
     # apostrophe cue -- the strong signal that licenses a bare two-digit year
     # even when its value is below the year matcher's usual >=32 threshold.
     apostrophe: bool = False
+    # Whether this number token was composed from an INDEFINITE ARTICLE deep-time
+    # magnitude ("a million years ago", "a hundred thousand years ago") rather
+    # than a spoken numeral.  The article form is a colloquial count-from-now
+    # offset -- a single-year point at ``anchor - count*scale`` -- while the
+    # numeral form ("66 million", "two thousand") is the geological
+    # Before-Present measurement with its sig-fig span.  Set by
+    # ``_fold_article_magnitude`` and read by the deep-time resolver, which is
+    # the only place that tells the two readings apart once the count is a digit.
+    article: bool = False
 
 
 @dataclass(frozen=True)

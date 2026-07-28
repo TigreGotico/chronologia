@@ -354,6 +354,62 @@ def _read_scale_number(tokens, i):
     return total + current, j
 
 
+# ---------------------------------------------------------------------------
+# indefinite-article deep-time magnitudes ("a million years ago")
+# ---------------------------------------------------------------------------
+#
+# The generic fold withholds thousand/million/billion/trillion so the deep-time
+# SCALE slot survives ("66 million years ago").  But an *indefinite article*
+# leading that scale ("a million years ago", "a hundred thousand years ago")
+# reaches the matcher as ``[a, million, years, ago]`` -- "a" is no numeral, so
+# the deep-time order "NUM SCALE year_word ago" never binds, the scale strands,
+# and the offset reads as a bare one year.  This pass supplies the missing
+# count: it emits a single digit token (the article's implicit 1, times any
+# interior "hundred") flagged ``article=True`` and *keeps the scale word* so the
+# deep-time order binds.  The resolver reads the flag to resolve the article
+# form as a colloquial count-from-now point rather than the numeral form's
+# geological Before-Present span.  Only the indefinite article fires it: a
+# spoken numeral ("two million", "sixty-six million") keeps its numeral reading
+# and its Before-Present span.
+_BP_SCALE_WORDS = {"thousand": 1_000, "million": 1_000_000,
+                   "billion": 1_000_000_000, "trillion": 1_000_000_000_000}
+_INDEF_ARTICLES = frozenset({"a", "an"})
+
+
+def _fold_article_magnitude(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Fold ``[a|an] [<0-99>] [hundred] SCALE year_word`` into an article-count
+    token plus the surviving SCALE word (thousand/million/billion/trillion)."""
+    units = _units()
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        if tokens[i].text in _INDEF_ARTICLES:
+            j = i + 1
+            count = 1
+            # an optional interior "<0-99> [hundred]" multiplier ("a hundred
+            # thousand", "a two hundred billion")
+            cv = _card_value(tokens[j]) if j < n else None
+            if cv is not None:
+                count = cv
+                j += 1
+            if j < n and tokens[j].text == "hundred":
+                count = (count or 1) * 100
+                j += 1
+            if (j < n and tokens[j].text in _BP_SCALE_WORDS
+                    and j + 1 < n and tokens[j + 1].text in units):
+                scale_tok = tokens[j]
+                out.append(replace(
+                    _year_token(count, tokens[i], tokens[j - 1]),
+                    article=True))
+                out.append(scale_tok)
+                i = j + 1
+                continue
+        out.append(tokens[i])
+        i += 1
+    return _reindex(out)
+
+
 def _fold_scale_offset(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """Fold a spelled hundred/thousand cardinal into a digit token when a unit
     word closes it -- the plain-offset frame ("a hundred years ago")."""
@@ -497,6 +553,7 @@ def _fold_offset_fraction(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 
 def _pre_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     folded = _fold_spelled_year(_merge_en_ord_suffix(tokens))
+    folded = _fold_article_magnitude(folded)
     return _fold_offset_fraction(_fold_scale_offset(folded))
 
 
