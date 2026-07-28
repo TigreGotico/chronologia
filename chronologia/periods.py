@@ -277,32 +277,57 @@ _CHART_WORD = {"early": "early", "mid": "middle", "middle": "middle",
                "late": "late"}
 
 
-def _arithmetic_subdivide(span: DateSpan, part: str) -> DateSpan:
+def _snap_boundary(dt: AstroDate, snap: str) -> AstroDate:
+    """Snap an interpolated *interior* subdivision boundary to the nearest
+    whole calendar unit, removing the false sub-unit precision that raw
+    elapsed-time interpolation of a coarse span produces.
+
+    ``snap`` is ``"year"`` (a decade/century/millennium fuzzy third snaps to
+    the nearest January 1st) or ``"month"`` (a single-year fuzzy third snaps to
+    the nearest month start).  The span endpoints themselves are already clean
+    and are never routed through here; only the interior cut points are.
+    """
+    if snap == "year":
+        lo = AstroDate(dt.year, 1, 1)
+        hi = AstroDate(dt.year + 1, 1, 1)
+    elif snap == "month":
+        lo = AstroDate(dt.year, dt.month, 1)
+        hi = (AstroDate(dt.year + 1, 1, 1) if dt.month == 12
+              else AstroDate(dt.year, dt.month + 1, 1))
+    else:
+        return dt
+    t = dt._total_us()
+    return lo if (t - lo._total_us()) <= (hi._total_us() - t) else hi
+
+
+def _arithmetic_subdivide(span: DateSpan, part: str,
+                          snap: Optional[str] = None) -> DateSpan:
     part_key = part.strip().lower().replace(" ", "_")
     start_us = span.start._total_us()
     total = span._delta_us
     basis = combine_basis(span.basis)
+
+    def cut(offset_us: int) -> AstroDate:
+        point = AstroDate._from_total_us(start_us + offset_us)
+        return _snap_boundary(point, snap) if snap else point
+
     if part_key in _THIRDS:
         idx = _THIRDS[part_key]
-        a = span.start if idx == 0 else AstroDate._from_total_us(
-            start_us + total * idx // 3)
-        b = span.end if idx == 2 else AstroDate._from_total_us(
-            start_us + total * (idx + 1) // 3)
+        a = span.start if idx == 0 else cut(total * idx // 3)
+        b = span.end if idx == 2 else cut(total * (idx + 1) // 3)
         return DateSpan(a, b, basis=basis)
     if part_key in _HALVES:
         idx = _HALVES[part_key]
         if idx == 0:
-            return DateSpan(span.start,
-                            AstroDate._from_total_us(start_us + total // 2),
-                            basis=basis)
-        return DateSpan(AstroDate._from_total_us(start_us + total // 2),
-                        span.end, basis=basis)
+            return DateSpan(span.start, cut(total // 2), basis=basis)
+        return DateSpan(cut(total // 2), span.end, basis=basis)
     raise ValueError(
         f"unknown subdivision {part!r}; expected one of "
         f"early/mid/late or first-half/second-half")
 
 
-def subdivide(target: Union[NamedPeriod, DateSpan], part: str) -> DateSpan:
+def subdivide(target: Union[NamedPeriod, DateSpan], part: str,
+              snap: Optional[str] = None) -> DateSpan:
     """Return the early/mid/late (or first-/second-half) part of ``target``.
 
     ``target`` is a :class:`DateSpan` or a :class:`NamedPeriod`. For a bare
@@ -315,6 +340,13 @@ def subdivide(target: Union[NamedPeriod, DateSpan], part: str) -> DateSpan:
     wins over arithmetic: ``subdivide(PERIODS["jurassic"], "late")`` returns
     the **Late Jurassic** span (161.5→143.1 Ma), *not* the last third of the
     Jurassic. Basis propagates through :func:`combine_basis` (parent ∘ child).
+
+    ``snap`` (``"year"`` or ``"month"``) rounds the *interior* thirds/halves
+    boundaries of an arithmetic slice to the nearest whole calendar unit,
+    dropping the false sub-unit precision raw elapsed-time interpolation
+    produces for a coarse span (a decade/century snaps to whole years, a single
+    year to whole months). The default ``None`` keeps the exact-interpolation
+    behaviour (deep-time and chart subdivisions are unaffected).
     """
     if isinstance(target, NamedPeriod):
         word = _CHART_WORD.get(part.strip().lower())
@@ -326,9 +358,9 @@ def subdivide(target: Union[NamedPeriod, DateSpan], part: str) -> DateSpan:
                         child.span.start, child.span.end,
                         basis=combine_basis(target.span.basis,
                                             child.span.basis))
-        return _arithmetic_subdivide(target.span, part)
+        return _arithmetic_subdivide(target.span, part, snap)
     if isinstance(target, DateSpan):
-        return _arithmetic_subdivide(target, part)
+        return _arithmetic_subdivide(target, part, snap)
     raise TypeError("subdivide target must be a NamedPeriod or DateSpan")
 
 

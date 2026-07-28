@@ -659,7 +659,13 @@ class Resolver:
         if parent is None:
             return None
         part = self.spec.period_parts[match.slots["PART"].text]
-        span = subdivide(parent, part)
+        # Snap the interior thirds of an era-scale period (decade/century/
+        # millennium) to whole years so a coarse-precision phrase yields no
+        # fractional-day boundaries; week/month/year keep their finer native
+        # cuts.
+        snap = {"decade": "year", "century": "year",
+                "millennium": "year"}.get(kind)
+        span = subdivide(parent, part, snap=snap)
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     #: month index a calendar quarter (1..4) begins on.
@@ -1004,7 +1010,10 @@ class Resolver:
     def _resolve_decade_ref(self, match, anchor):
         """A decade span ("the 1990s", "the nineties", "the 90s"): ten years
         wide.  An optional early/mid/late PART slices it into thirds via
-        :func:`chronologia.subdivide`."""
+        :func:`chronologia.subdivide`, whose interior cuts are snapped to whole
+        years (a decade is only decade-precise -- no fractional-day
+        boundaries): early = first ~3 years, mid = middle ~4, late = last ~3
+        ("the mid-2000s" -> 2003..2007)."""
         base = self._decade_start(match.slots.get("DECADE"),
                                   match.slots.get("NUM")
                                   or match.slots.get("DNUM"), anchor)
@@ -1014,7 +1023,8 @@ class Resolver:
         part_tok = match.slots.get("PART")
         if part_tok is not None:
             from chronologia import subdivide
-            span = subdivide(span, self.spec.period_parts[part_tok.text])
+            span = subdivide(span, self.spec.period_parts[part_tok.text],
+                             snap="year")
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     def _resolve_month_fuzzy(self, match, anchor):
@@ -1153,6 +1163,20 @@ class Resolver:
             kind = self._scope_kind(
                 match.slots.get("SCOPE_UNIT") or match.slots["CMUNIT"])
             value = get_date_ordinal(n, resolution=_ABSOLUTE[kind])
+            part_tok = match.slots.get("PART")
+            if part_tok is not None:
+                # "the mid-20th century": narrow the whole period to its
+                # early/mid/late third, interior cuts snapped to whole years
+                # (a century is only century-precise -- no fractional-day
+                # boundaries).
+                from chronologia import subdivide
+                start = value if isinstance(value, AstroDate) \
+                    else AstroDate.from_date(value)
+                whole = DateSpan(start, _unit_end(start, kind))
+                span = subdivide(whole, self.spec.period_parts[part_tok.text],
+                                 snap="year")
+                return Resolution(DateSpan(span.start, span.end),
+                                  self._consumed(match))
             return self._ordinal_result(value, kind, match)
 
         unit_kind = self.spec.units[unit_tok.text]

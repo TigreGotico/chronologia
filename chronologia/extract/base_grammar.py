@@ -62,6 +62,12 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast UNIT of article? year_word YEAR?",
         "article? ORD UNIT of REL_MARKER? article? SCOPE_UNIT",
         "article? ordlast UNIT of REL_MARKER? article? SCOPE_UNIT",
+        # a fuzzy early/mid/late PART on an absolute ordinal period ("the
+        # mid-20th century", "the early 21st century") -- narrows the whole
+        # period to its first/middle/last third (resolver snaps to whole
+        # years).  Must precede the bare "ORD SCOPE_UNIT" so the PART is not
+        # stranded and the whole century returned.
+        "article? PART ORD SCOPE_UNIT",
         "article? ORD SCOPE_UNIT",
     ],
     # "last/next <weekday>" and a bare full weekday name meaning its next
