@@ -99,7 +99,9 @@
       "orders": [
         "MONTH DAY? YEAR?",
         "DAY of MONTH YEAR?",
-        "DAY MONTH YEAR?"
+        "DAY MONTH YEAR?",
+        "on article? DAY of MONTH YEAR?",
+        "by article? DAY of MONTH YEAR?"
       ],
       "prefer_future": true
     },
