@@ -1736,14 +1736,35 @@ class Resolver:
                           self._consumed(match))
 
     def _zone_tzinfo(self, zone_tok):
-        """Parse a bound ZONE token ("utc", "gmt", "utc+2", "gmt-5:30") into a
-        fixed-offset :class:`datetime.timezone`, or ``None`` when no zone is
-        present.  Named-city zones are out of scope: only UTC/GMT plus a fixed
-        signed offset resolve here."""
+        """Parse a bound ZONE token into a fixed-offset
+        :class:`datetime.timezone`, or ``None`` when no zone is present.
+
+        Three shapes resolve, all to a *fixed* offset:
+
+        * ``"utc"`` / ``"gmt"`` optionally with a signed offset ("utc+2",
+          "gmt-5:30") -- the acronym's base offset (0 for UTC/GMT) plus the tail.
+        * a curated set of common, **unambiguous** zone abbreviations
+          ("est", "cet", "jst", ...) whose fixed offset lives in the
+          ``clock_zone_<minutes>.voc`` tables.  These are deliberately a
+          simplification: FIXED offsets, NOT DST-aware IANA zones, and the
+          curated set excludes genuinely ambiguous abbreviations (IST, ACST,
+          CST-as-China, ...), which stay in the remainder rather than guess.
+        * a bare RFC/ISO signed numeric offset ("-0500", "+05:30", "-08:00"):
+          hours = the leading digits, minutes = the trailing two.
+
+        Named-city / region words ("Berlin", "Eastern time") are out of scope --
+        they never bind here and leave the wall time naive."""
         if zone_tok is None:
             return None
         from datetime import timezone
-        m = re.match(r"([a-z]+)([+-])?(\d{1,2})?:?(\d{2})?$", zone_tok.text)
+        text = zone_tok.text
+        # bare signed numeric offset: no acronym, sign + digits only.
+        num = re.fullmatch(r"([+-])(\d{1,2}):?(\d{2})", text)
+        if num is not None:
+            sign = 1 if num.group(1) == "+" else -1
+            off = sign * (int(num.group(2)) * 60 + int(num.group(3)))
+            return timezone(timedelta(minutes=off))
+        m = re.match(r"([a-z]+)([+-])?(\d{1,2})?:?(\d{2})?$", text)
         base_min = self.spec.clock_zones.get(m.group(1), 0)
         off = base_min
         if m.group(2) is not None:

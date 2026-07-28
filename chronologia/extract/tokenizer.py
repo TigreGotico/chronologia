@@ -174,6 +174,14 @@ _NUM = r"\d+(?:\.\d+)?"
 # the sign survives ("utc+2", "gmt-5", bare "utc"); language-neutral, like the
 # ISO / clock literals above.  Named-city zones are deliberately out of scope.
 _ZONE = r"(?:utc|gmt)(?:[+-]\d{1,2}(?::?\d{2})?)?"
+# a bare RFC/ISO signed numeric offset kept as ONE token ("-0500", "+05:30",
+# "-08:00") so the sign survives to resolve time.  The hour is bound 00..14 and
+# the minute 00..59 -- the real range of a UTC offset -- so a signed year or a
+# hyphenated year ("-1918", "mid-2017") is NOT mistaken for an offset.  The
+# negative lookbehind additionally keeps a tight numeric range ("1400-1000")
+# from being read as an offset (the sign must not follow a digit); the trailing
+# guard forbids a fifth digit.
+_NUMOFFSET = r"(?<!\d)[+-](?:0\d|1[0-4]):?[0-5]\d(?!\d)"
 #: the characters that glue the components of a written date together.
 _DATE_SEPS = "./-"
 
@@ -240,7 +248,7 @@ class Tokenizer:
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
-        parts = [_ISOWEEK, _ISO, _NUMDATE, _CLOCK, _ZONE]
+        parts = [_ISOWEEK, _ISO, _NUMDATE, _CLOCK, _ZONE, _NUMOFFSET]
         if modes.dotted_date:
             # ahead of the ordinal-dot and bare-number rules below, so a
             # dotted date binds whole rather than being read as a number
