@@ -50,8 +50,7 @@ _LAST = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason="sl scoped-ordinal-weekday not wired")
-@pytest.mark.parametrize("text,y,m,wd,ordw", _NTH)
+@pytest.mark.parametrize("text,y,m,wd,ordw", _NTH)  # fixed by PR #354
 def test_nth_weekday_of_month(text, y, m, wd, ordw):
     d0 = _nth_weekday(y, m, WD[wd], ORD[ordw])
     s, e = start_end(text)
