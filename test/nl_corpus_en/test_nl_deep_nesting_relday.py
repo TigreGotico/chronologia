@@ -13,9 +13,9 @@ Two silent-wrong families are pinned here:
 * **"the day after the day after tomorrow"** -- the outer "the day
   after/before" now composes onto the inner named-day idiom's resolved
   date instead of stranding, so the DOUBLE nest steps one more whole day
-  past the inner result.  Triple+ nesting is a deferred gap (the offset
-  pass composes a single layer): "the day after the day after the day
-  after tomorrow" still strands its outermost "the day after".
+  past the inner result.  The offset pass iterates to a fixpoint, so
+  triple+ nesting ("the day after the day after the day after tomorrow")
+  composes every outer layer instead of stranding.
 """
 from datetime import timedelta
 
@@ -83,10 +83,11 @@ def test_single_named_day_unchanged(text, expected):
 
 # -- deferred: triple+ nesting composes only a single outer layer ---------
 
-def test_triple_nest_deferred_strands_outermost():
-    # honest DEFERRAL: the offset pass composes one layer, so the double
-    # nest resolves (06-30) but the outermost "the day after" is stranded.
+def test_triple_nest_composes_to_fixpoint():
+    # the offset pass now iterates to a fixpoint, so every outer "the day
+    # after" layer composes: tomorrow(06-28) +1 +1 +1 -> 07-01, nothing
+    # stranded.  (See test_nl_nested_offset_fixpoint for arbitrary N.)
     r = parse("the day after the day after the day after tomorrow")
     assert r is not None
-    assert r[0].start == ad(_MID + timedelta(days=3))         # 2017-06-30
-    assert r[1] == "the day after"
+    assert r[0].start == ad(_MID + timedelta(days=4))         # 2017-07-01
+    assert r[1] == ""
