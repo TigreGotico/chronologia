@@ -638,6 +638,83 @@ def _romance_numwords(vocab, blacklist):
     return frozenset(words)
 
 
+#: definite articles (incl. elided "l") *per locale* -- the position that
+#: licenses the *ordinal* reading of an ordinal-fraction homograph.  The scoped
+#: ordinal is always "il/el/o/la <ordinal> <weekday|unit>"; the clock fraction
+#: is "un/e <quarto>", never introduced by a definite article, so keying the
+#: fold off a preceding definite article leaves every clock fraction byte-
+#: identical.  Kept per-locale on purpose: a surface that is a definite article
+#: in one Romance language ("i" = Italian masculine plural article) is the
+#: coordinator "and" in another (Catalan "les tres **i** quart"), so a merged
+#: set would mis-license a clock fraction.  A fact of the languages, kept tiny.
+_ROMANCE_DEFINITE = {
+    "it": frozenset({"il", "lo", "la", "i", "gli", "le", "l"}),
+    "es": frozenset({"el", "la", "los", "las"}),
+    "ca": frozenset({"el", "la", "els", "les", "l"}),
+    "gl": frozenset({"o", "a", "os", "as"}),
+    "pt": frozenset({"o", "a", "os", "as"}),
+    "fr": frozenset({"le", "la", "les", "l"}),
+    "oc": frozenset({"lo", "la", "los", "las", "les", "l"}),
+    "an": frozenset({"o", "a", "os", "as", "lo", "la", "los", "las", "l"}),
+    "mwl": frozenset({"l", "la", "lo", "ls", "las", "los"}),
+    "ro": frozenset(),
+}
+
+
+def _homograph_ordinal_map(vocab, blacklist):
+    """Surface -> value for the *ordinal* reading of every ordinal-unit
+    surface that is also a *fraction* word ("terzo"/"quarto"/"cuarto" =
+    third/fourth *and* a-third/a-quarter).  These are dropped from the
+    number-fold's word set (see :func:`_romance_numwords`) so the clock
+    FRACTION slot keeps them, which silently disabled the ``scoped_ordinal``
+    ("il quarto giovedì di novembre") reading for every ordinal a language
+    happens to spell like its fraction.  A blacklisted weekday-homograph
+    (Portuguese feminine "quarta" = Wednesday) is excluded -- its ordinal /
+    weekday ambiguity is a separate, positionally-licensed concern."""
+    fractions = set()
+    for table in (vocab.FRACTION, vocab.FRACTION_FEMALE):
+        fractions.update(v.lower() for v in table.values() if v)
+    black = {w.lower() for w in blacklist}
+    out = {}
+    for val, surf in vocab.ORDINAL_UNITS.items():
+        if not surf:
+            continue
+        for s in {surf.lower()} | _fem_forms(surf):
+            if s in fractions and s not in black:
+                out[s] = val
+    return out
+
+
+def _license_ordinal_fraction(tokens, homomap, definite):
+    """Positionally read an ordinal-fraction homograph ("quarto"/"cuarto").
+
+    The surface is the scoped ordinal ("**il quarto** giovedì", "**la cuarta**
+    semana") directly after a definite article, and the clock quarter ("tre **e
+    quarto**", "un **quarto** d'ora") everywhere else.  Only the definite-
+    article frame folds to the digit so ``scoped_ordinal`` binds it; every
+    clock-fraction frame keeps the bare word for the FRACTION slot, so the fold
+    is byte-identical there.  The positive licence also survives a fold that
+    segments the stream around a protected article (Portuguese "um quarto"):
+    a segment stripped of its article no longer sees the definite article and
+    correctly stays the fraction word."""
+    if not homomap or not definite:
+        return tokens
+    out = list(tokens)
+    changed = False
+    for i, t in enumerate(out):
+        if t.is_number or t.text not in homomap:
+            continue
+        prev = out[i - 1] if i - 1 >= 0 else None
+        if prev is None or prev.text not in definite:
+            continue  # not the scoped-ordinal frame -- leave for FRACTION
+        val = homomap[t.text]
+        out[i] = Token(text=str(val), raw=t.raw, index=0, is_number=True,
+                       value=val, char_start=t.char_start,
+                       char_end=t.char_end)
+        changed = True
+    return _reindex(tuple(out)) if changed else tokens
+
+
 # abbreviations the tokenizer shatters on their dots/hyphens ("a.c." -> a,c;
 # "meio-dia" -> meio,dia).  The fold glues the fragments back into the single
 # token a marker/landmark slot binds.  Keyed by the fragment tuple, longest
@@ -704,12 +781,24 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
     # from the vocab-derived word set, the language's JOIN_WORD as the internal
     # connector (kept in the back-end text), and the feminine-ordinal map as the
     # single-token fallback the back-end rejects.
-    return make_fold(NumberGrammar(
+    base = make_fold(NumberGrammar(
         is_number=lambda tok: tok.is_number or tok.text in numwords,
         extract=lambda text: extract_fn(text, ordinals=True),
         joiner=lambda tok: tok.text in joins,
         single_fallback=ordinal_value.get,
         pre=_glue))
+    # ordinal-fraction homographs ("quarto" = fourth *and* a-quarter) are held
+    # out of ``numwords`` above so the clock FRACTION slot keeps them; license
+    # the ordinal reading back positionally (outside the "un quarto" fraction
+    # frame) so the scoped_ordinal construction can bind higher ordinals.
+    homomap = _homograph_ordinal_map(vocab, blacklist)
+    definite = _ROMANCE_DEFINITE.get(lang_code, frozenset())
+    if not homomap or not definite:
+        return base
+
+    def folded(tokens):
+        return base(_license_ordinal_fraction(tokens, homomap, definite))
+    return folded
 
 
 # ---------------------------------------------------------------------------

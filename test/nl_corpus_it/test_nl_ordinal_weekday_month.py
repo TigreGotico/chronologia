@@ -4,11 +4,11 @@
 Gold is computed in-file by walking the calendar (``datetime`` only), never by
 the parser. Anchor Tue 2017-06-27, so a bare month binds its 2017 occurrence.
 
-Coverage note: this engine currently resolves ``primo`` / ``secondo`` and
-``ultimo`` correctly but mis-binds ``terzo`` / ``quarto`` (it drops the weekday
-and lands on an anchor-relative day in the wrong month). Those two ordinals are
-pinned as strict xfail below so the corpus records the defect without asserting
-a gold we would then have to consider "passing"; see the campaign BUG report.
+Every ordinal 1st..5th and ``ultimo`` resolves the Nth weekday of the named
+month. ``terzo`` / ``quarto`` / ``quinto`` are spelled like the Italian
+fraction ("un quarto" = a quarter), which once held them out of the number
+fold and silently dropped the weekday; they are pinned here alongside the low
+ordinals that always worked.
 """
 from datetime import date, timedelta
 
@@ -30,8 +30,11 @@ def _nth_weekday(year, month, weekday, n):
     return days[-1] if n == -1 else days[n - 1]
 
 
-# (italian ordinal word, n) for the ordinals the engine handles
-_ORD_OK = [("primo", 1), ("secondo", 2), ("ultimo", -1)]
+# (italian ordinal word, n) -- the low ordinals plus the fraction-homograph
+# ordinals terzo/quarto that once dropped the weekday; every month in the
+# matrix has at least four occurrences of each weekday, so n<=4 always exists
+_ORD_OK = [("primo", 1), ("secondo", 2), ("terzo", 3), ("quarto", 4),
+           ("ultimo", -1)]
 
 _OK_CASES = []
 for _art, _wd, _wdname in [("il", 0, "lunedì"), ("il", 1, "martedì"),
@@ -55,7 +58,5 @@ def test_ordinal_weekday_ok(text, gold):
     ("il quarto giovedì di novembre", AstroDate(2017, 11, 23)),
     ("il terzo martedì di luglio", AstroDate(2017, 7, 18)),
 ])
-@pytest.mark.xfail(reason="BUG: terzo/quarto weekday-of-month drops the weekday "
-                          "and lands in the wrong month", strict=True)
-def test_ordinal_weekday_terzo_quarto_bug(text, gold):
+def test_ordinal_weekday_terzo_quarto(text, gold):
     assert start(text) == gold
