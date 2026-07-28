@@ -6,7 +6,7 @@ import pytest
 from ._corpus import ANCHOR, parse, start, start_end, span, nomatch, AstroDate
 
 
-@pytest.mark.parametrize("text,s,e", [('van 5 juni tot 12 juni', (2018, 6, 5), (2018, 6, 13)), ('5 juni tot 12 juni', (2018, 6, 5), (2018, 6, 13)), ('van maart 2020 tot juni 2020', (2020, 3, 1), (2020, 7, 1)), ('van 1990 tot 2000', (1990, 1, 1), (2001, 1, 1)), ('tussen juni en augustus 2020', (2017, 6, 1), (2020, 9, 1))])
+@pytest.mark.parametrize("text,s,e", [('van 5 juni tot 12 juni', (2018, 6, 5), (2018, 6, 13)), ('5 juni tot 12 juni', (2018, 6, 5), (2018, 6, 13)), ('van maart 2020 tot juni 2020', (2020, 3, 1), (2020, 7, 1)), ('van 1990 tot 2000', (1990, 1, 1), (2001, 1, 1)), ('tussen juni en augustus 2020', (2020, 6, 1), (2020, 9, 1))])
 def test_range(text, s, e):
     assert start_end(text) == (AstroDate(*s), AstroDate(*e))
 

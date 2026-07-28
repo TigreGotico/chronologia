@@ -1053,12 +1053,17 @@ class Resolver:
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     def _resolve_month_fuzzy(self, match, anchor):
-        """"early/mid/late <month>": the early/mid/late third of that month
-        (this anchor year), sliced by :func:`chronologia.subdivide`."""
+        """"early/mid/late <month>": the early/mid/late third of that month,
+        sliced by :func:`chronologia.subdivide`.  An explicit trailing year
+        ("early March 2019") places the third in THAT year; without one the
+        month is the anchor year's."""
         from chronologia import subdivide
         month = self.spec.months[match.slots["MONTH"].text]
         part = self.spec.period_parts[match.slots["PART"].text]
-        span = subdivide(_gregorian_month_span(anchor.year, month), part)
+        year_tok = match.slots.get("YEAR")
+        year = (_pivot_two_digit_year(year_tok, anchor.year)
+                if year_tok is not None else anchor.year)
+        span = subdivide(_gregorian_month_span(year, month), part)
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     def _resolve_month_day_ref(self, match, anchor):

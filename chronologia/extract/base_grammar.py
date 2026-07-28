@@ -167,7 +167,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # POSTPOSED possessive ("mart başı", MONTH then PART) -- is not expressible
     # by adding a leading-``article?`` order and stays a per-locale ``extend``.
     "month_fuzzy": [
-        "article? PART of? MONTH",
+        "article? PART of? MONTH YEAR?",
     ],
     # "this morning", "tonight", "yesterday evening", "tomorrow afternoon" --
     # a time-of-day band selected deictically.  ``DAYPART`` binds the locale's
