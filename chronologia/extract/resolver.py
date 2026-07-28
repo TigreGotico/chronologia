@@ -293,7 +293,8 @@ class Resolver:
         self.spec = spec
         self.conventions: Conventions = spec.conventions
 
-    def resolve(self, match: Match, anchor: datetime) -> Optional[Resolution]:
+    def resolve(self, match: Match, anchor: datetime,
+                scale_mode: str = "short") -> Optional[Resolution]:
         if match.construction in UNIMPLEMENTED:
             raise NotImplementedError(
                 f"construction {match.construction!r} is declared but not "
@@ -304,9 +305,27 @@ class Resolver:
             raise NotImplementedError(
                 f"no resolver for construction {match.construction!r}")
         try:
+            # deep time is the only construction whose reading depends on the
+            # dialect short/long scale (the billion-cognate is 10^9 short, 10^12
+            # long); every other handler ignores the mode.
+            if match.construction == "deep_time":
+                return self._resolve_deep_time(match, anchor, scale_mode)
             return handler(match, anchor)
         except (ValueError, OverflowError, KeyError):
             return None
+
+    def _scale_factor(self, surface: str, scale_mode: str) -> int:
+        """The multiplier of a SCALE surface under the active dialect scale.
+
+        The dialect-ambiguous billion-cognate is registered in
+        ``spec.scales_by_mode[mode]`` (10^9 short, 10^12 long); every
+        unambiguous scale word (thousand/million/milliard-cognate) lives only in
+        the base ``spec.scales`` map.  The mode table wins when it has the word.
+        """
+        by_mode = self.spec.scales_by_mode.get(scale_mode, {})
+        if surface in by_mode:
+            return by_mode[surface]
+        return self.spec.scales[surface]
 
     def _consumed(self, match: Match):
         return tuple(range(*match.span))
@@ -1592,7 +1611,7 @@ class Resolver:
     #: what :func:`chronologia.resolve_bp` must see.
     _BP_SCALE_UNITS = {1_000: "ka", 1_000_000: "Ma", 1_000_000_000: "Ga"}
 
-    def _resolve_deep_time(self, match, anchor):
+    def _resolve_deep_time(self, match, anchor, scale_mode="short"):
         """Numeric deep time via the radiocarbon before-present convention.
 
         The value is ``NUM x SCALE`` years before present (1950).  The span's
@@ -1604,7 +1623,7 @@ class Resolver:
         """
         from chronologia import resolve_bp
         num = match.slots["NUM"]
-        factor = self.spec.scales[match.slots["SCALE"].text]
+        factor = self._scale_factor(match.slots["SCALE"].text, scale_mode)
         if num.article:
             # the indefinite-article form ("a million years ago") is a
             # colloquial count-from-now offset, not a geological measurement:

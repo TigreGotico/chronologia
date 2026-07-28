@@ -139,6 +139,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     archon_names: Dict[str, str] = {}
     periods: Dict[str, str] = {}
     scales: Dict[str, int] = {}
+    scales_by_mode: Dict[str, Dict[str, int]] = {"short": {}, "long": {}}
     period_parts: Dict[str, str] = {}
     decade_words: Dict[str, int] = {}
     clock_landmarks: Dict[str, int] = {}
@@ -256,9 +257,28 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             for s in surfaces:
                 periods[s] = key
         elif base.startswith("scale_"):
-            factor = int(base[len("scale_"):])
+            # ``scale_<value>.voc``       -> mode-independent surface (base)
+            # ``scale_<value>.short.voc`` -> surface valid under the SHORT scale
+            # ``scale_<value>.long.voc``  -> surface valid under the LONG scale
+            # The dialect-ambiguous billion-cognate ships in BOTH a short file
+            # (10^9) and a long file (10^12); the resolver reads the active
+            # mode's table first, falling back to the base ``scales`` map.  Every
+            # surface -- base or mode-tagged -- is unioned into ``scales`` so the
+            # SCALE slot binds it whatever the mode.
+            rest = base[len("scale_"):]
+            mode = None
+            for suffix in ("short", "long"):
+                if rest.endswith("." + suffix):
+                    mode = suffix
+                    rest = rest[: -len("." + suffix)]
+                    break
+            factor = int(rest)
             for s in surfaces:
-                scales[s] = factor
+                if mode is None:
+                    scales[s] = factor
+                else:
+                    scales_by_mode[mode][s] = factor
+                    scales.setdefault(s, factor)
         elif base.startswith("decade_word_"):
             tens = int(base[len("decade_word_"):])
             for s in surfaces:
@@ -344,7 +364,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         day_subdivision=cfg.get("day_subdivision"),
         regnal_names=regnal_names, roman_anchors=roman_anchors,
         archon_names=archon_names,
-        periods=periods, scales=scales, period_parts=period_parts,
+        periods=periods, scales=scales,
+        scales_by_mode={m: dict(t) for m, t in scales_by_mode.items()},
+        period_parts=period_parts,
         decade_words=decade_words, clock_landmarks=clock_landmarks,
         dayparts=dayparts,
         clock_zones=clock_zones,

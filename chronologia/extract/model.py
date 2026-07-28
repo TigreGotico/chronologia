@@ -249,8 +249,17 @@ class LangSpec:
     # deep-time / era vocab (facts from the filename convention)
     # named-period surface -> chronologia PERIODS key (geological/archaeological)
     periods: Mapping[str, str] = field(default_factory=dict)
-    # scale-word surface -> multiplier ("million" -> 1_000_000)
+    # scale-word surface -> multiplier ("million" -> 1_000_000).  Holds every
+    # scale surface (the union across dialect scales) so the SCALE slot binds
+    # regardless of the active short/long dialect; a surface whose value is
+    # dialect-dependent (the "billion"-cognate) additionally appears in
+    # ``scales_by_mode`` and the resolver reads that first.
     scales: Mapping[str, int] = field(default_factory=dict)
+    # dialect short/long scale overrides: mode ("short"/"long") -> surface ->
+    # multiplier.  The AMBIGUOUS billion-cognate ("billion", "billón",
+    # "bilione", "bilião"/"bilhão", "bilió", ...) resolves to 10^9 under the
+    # short scale and 10^12 under the long scale; the active mode picks.
+    scales_by_mode: Mapping[str, Mapping[str, int]] = field(default_factory=dict)
     # subdivision-word surface -> chronologia subdivide part (early/mid/late)
     period_parts: Mapping[str, str] = field(default_factory=dict)
     # spoken-decade surface -> tens digit ("nineties" -> 90)

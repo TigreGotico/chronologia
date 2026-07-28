@@ -153,6 +153,62 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
         return engine
 
 
+# ---------------------------------------------------------------------------
+# per-dialect short/long scale default (deep time: "a billion years ago")
+# ---------------------------------------------------------------------------
+#
+# The short vs long scale ("billion" = 10^9 short, 10^12 long) is orthogonal to
+# the locale's number/date grammar -- the SAME base locale data serves every
+# region -- but the dialect default differs by naming country.  A full BCP-47
+# code selects the dialect (``pt-BR`` short, ``pt-PT`` long) while loading the
+# same base voc; a bare code is the naming country's own norm.  An explicit
+# ``scale=`` kwarg hard-overrides both.  Precedence: explicit kwarg > region
+# subtag > bare-code naming-country default.  Sources: Wikipedia, "Long and
+# short scales" (per-language sections).
+#
+#: bare language codes whose naming country uses the LONG scale.  Continental
+#: European Romance/Germanic (billion = 10^12; 10^9 is milliard/mil-millions):
+#: pt(=pt-PT), es (RAE), fr (France), it, ca, gl, ro; de, nl, da, sv, nb, nn.
+_LONG_SCALE_LANGS = frozenset({
+    "pt", "es", "fr", "it", "ca", "gl", "ro",
+    "de", "nl", "da", "sv", "nb", "nn",
+})
+#: explicit region dialects that override (or pin) the bare-code default.
+#: pt-BR and en are short; en-GB has been short since the 1974 UK Treasury
+#: switch (Hansard, HC Deb 20 Dec 1974); the continental *-<region> variants
+#: pin their long default so a caller can be explicit.
+_REGION_SCALE = {
+    "pt-pt": "long", "pt-br": "short",
+    "es-es": "long", "fr-fr": "long", "de-de": "long",
+    "it-it": "long", "nl-nl": "long",
+    "en-gb": "short", "en-us": "short",
+}
+#: every language not otherwise classified defaults to the SHORT scale -- the
+#: modern SI-aligned trend and the reading English (the fallback base) already
+#: uses.  A locale with no dialect-tagged scale voc resolves identically under
+#: either mode, so this default is byte-neutral for them; it only bites the
+#: languages that actually ship ``scale_*.short.voc`` / ``.long.voc`` data.
+
+
+def _resolve_scale_mode(lang: str, scale):
+    """The active short/long scale for ``lang`` given an optional ``scale``.
+
+    ``scale`` (``"short"``/``"long"``/``None``) hard-overrides when set;
+    otherwise a full BCP-47 region subtag picks the dialect and a bare code
+    falls back to its naming country's norm.  Returns ``"short"`` or ``"long"``.
+    """
+    if scale is not None:
+        if scale not in ("short", "long"):
+            raise ValueError(
+                f"scale must be 'short', 'long' or None, not {scale!r}")
+        return scale
+    key = lang.strip().lower().replace("_", "-")
+    if key in _REGION_SCALE:
+        return _REGION_SCALE[key]
+    base = key.split("-")[0]
+    return "long" if base in _LONG_SCALE_LANGS else "short"
+
+
 #: default (English) range framing words, always available so English
 #: behaviour is unchanged.  A language adds its own surfaces via the
 #: ``from``/``to``/``between``/``and`` connectors (``marker_from.voc`` ...),
@@ -364,7 +420,7 @@ def _with_prefix(got, prefix):
     return span, (prefix + " " + rem).strip() if rem else prefix
 
 
-def _extract_range(text, tokens, engine, anchor):
+def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     """A "from A to B" / "between A and B" span, endpoints from two sub-parses.
 
     Token-native: the connector is found on the *pre-fold* token stream (so the
@@ -414,7 +470,7 @@ def _extract_range(text, tokens, engine, anchor):
                      if s in at_words}
 
     def endpoint(sub):
-        return _range_endpoint(text, sub, engine, anchor)
+        return _range_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
 
     def bare_of(sub):
         return _bare_numeral(text, sub, engine, anchor)
@@ -424,7 +480,7 @@ def _extract_range(text, tokens, engine, anchor):
         # the synthetic-token path so the lent words, which have no extent of
         # their own here, cannot surface in this endpoint's remainder
         return _range_endpoint(text, sub, engine, anchor,
-                               resolve=_variant_endpoint)
+                               resolve=_variant_endpoint, scale_mode=scale_mode)
 
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
@@ -537,7 +593,7 @@ def _new_year_span(anchor):
     return DateSpan(span.start, span.end)
 
 
-def _range_endpoint(text, sub, engine, anchor, resolve=None):
+def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short"):
     """A range endpoint carrying its *granularity kind* and whether its year was
     pinned, so :func:`_compose_range` can roll it without fabricating.
 
@@ -578,7 +634,7 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None):
     pinned = any(t.is_number and t.value is not None and t.value >= 100
                  for t in sub)
     weekday = any(t.text in engine.spec.weekdays for t in sub)
-    got = resolve(text, sub, engine, anchor)
+    got = resolve(text, sub, engine, anchor, scale_mode=scale_mode)
     if got is not None:
         span, rem = got
         width = span.end - span.start
@@ -694,7 +750,7 @@ def _with_meridiem(sub, pos, surface):
     return tuple(sub[:pos + 1]) + extra + tuple(sub[pos + 1:])
 
 
-def _variant_endpoint(text, sub, engine, anchor):
+def _variant_endpoint(text, sub, engine, anchor, scale_mode="short"):
     """:func:`_resolve_endpoint` over a slice carrying synthesised tokens.
 
     Identical to the real path except that the remainder is rendered from the
@@ -702,7 +758,7 @@ def _variant_endpoint(text, sub, engine, anchor):
     utterance and must never surface as leftover text.
     """
     folded = fold_tokens(tuple(sub), engine.spec, text)
-    core = _resolve_core(folded, engine, anchor)
+    core = _resolve_core(folded, engine, anchor, scale_mode=scale_mode)
     if core is None:
         return None
     span, consumed = core
@@ -986,7 +1042,7 @@ def _minus_one_year(astro):
         return None
 
 
-def _resolve_endpoint(text, sub, engine, anchor):
+def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     """Resolve a range endpoint from a slice of the *pre-fold* token stream.
 
     The slice is folded on its own (its numbers fold in isolation, so a range's
@@ -998,7 +1054,7 @@ def _resolve_endpoint(text, sub, engine, anchor):
     if not sub:
         return None
     folded = fold_tokens(tuple(sub), engine.spec, text)
-    core = _resolve_core(folded, engine, anchor)
+    core = _resolve_core(folded, engine, anchor, scale_mode=scale_mode)
     if core is None:
         return None
     span, consumed = core
@@ -1007,7 +1063,7 @@ def _resolve_endpoint(text, sub, engine, anchor):
     return span, remainder
 
 
-def _extract_open_range(text, tokens, engine, anchor):
+def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
     """An open-ended range: "until friday" (open start) / "since 2019" (open
     end).  Only fires on an ``until``/``since`` marker whose remaining tokens
     parse as a date endpoint.
@@ -1028,7 +1084,7 @@ def _extract_open_range(text, tokens, engine, anchor):
     since_surf = _conn_surfaces(spec, "since", _RANGE_SINCE)
 
     def endpoint(sub):
-        return (_resolve_endpoint(text, sub, engine, anchor)
+        return (_resolve_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
                 or _bare_weekday_endpoint(sub, engine, anchor))
 
     def until_span(ep):
@@ -1209,6 +1265,7 @@ def extract_timespan(
         anchor: Optional[datetime] = None,
         jurisdiction: Optional[str] = None,
         enable: Tuple[str, ...] = (),
+        scale: Optional[str] = None,
 ) -> Optional[TimeSpanResult]:
     """Extract a :class:`~chronologia.DateSpan` from natural-language ``text``.
 
@@ -1237,12 +1294,20 @@ def extract_timespan(
     of the left sub-parse to the end of the right one (``june 5th to june
     12th`` -> a seven-day span); the endpoints are two independent parses.
 
+    ``scale`` selects the short/long scale that disambiguates a deep-time
+    "billion"-cognate ("a billion years ago" is 10^9 short, 10^12 long):
+    ``"short"`` or ``"long"`` hard-override, ``None`` (default) takes the
+    dialect norm keyed off ``lang`` -- a full BCP-47 region subtag picks the
+    dialect (``pt-BR`` short, ``pt-PT`` long) while loading the same base
+    locale, a bare code its naming country's norm.
+
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns
     ``None``.
     """
     require_text(text, "extract_timespan")
     engine = _timespan_engine(lang)
+    scale_mode = _resolve_scale_mode(lang, scale)
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
@@ -1252,7 +1317,8 @@ def extract_timespan(
     # the single-span core, or a lone endpoint's slice, re-uses these tokens --
     # the tokenizer is never run again on a substring.
     raw = pretokens(text, engine.spec)
-    res = _resolve_span(text, raw, engine, anchor, enable, jurisdiction)
+    res = _resolve_span(text, raw, engine, anchor, enable, jurisdiction,
+                        scale_mode)
     return None if res is None else TimeSpanResult(*res)
 
 
@@ -1293,7 +1359,8 @@ def _exclusion_vetoes(governing_text: str, lang: str) -> bool:
     return any(w in _EN_EXCLUSION_TRIGGERS for w in words)
 
 
-def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
+def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
+                  scale_mode="short"):
     """The single recursive resolver over the token stream.
 
     One entry, three composition cases tried in precedence order; each wider
@@ -1317,10 +1384,10 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     **not** re-entered into range detection, so a pathological connector chain
     cannot exhaust the stack.  Returns ``(span, remainder)`` or ``None``.
     """
-    rng = _extract_range(text, raw, engine, anchor)
+    rng = _extract_range(text, raw, engine, anchor, scale_mode)
     if rng is not None:
         return rng
-    opn = _extract_open_range(text, raw, engine, anchor)
+    opn = _extract_open_range(text, raw, engine, anchor, scale_mode)
     if opn is not None:
         return opn
     # bare "now" / "right now" is the anchor instant, a zero-width span; a bare
@@ -1331,7 +1398,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     if _is_new_year_slice(raw, engine.spec):
         return _new_year_span(anchor), ""
     tokens = fold_tokens(raw, engine.spec, text)
-    core = _resolve_core(tokens, engine, anchor, enable, jurisdiction, text)
+    core = _resolve_core(tokens, engine, anchor, enable, jurisdiction, text,
+                         scale_mode)
     if core is None:
         return None
     span, consumed = core
@@ -1407,7 +1475,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     return span, remainder
 
 
-def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text):
+def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text,
+                      scale_mode="short"):
     """Build the composed-reference resolver threaded into the post-passes.
 
     A post-pass (business-day / anchored-offset / week-of) locates its
@@ -1434,7 +1503,8 @@ def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text):
         if not sub:
             return None
         folded = fold_tokens(sub, engine.spec, text)
-        core = _resolve_core(folded, engine, anchor, enable, jurisdiction, text)
+        core = _resolve_core(folded, engine, anchor, enable, jurisdiction, text,
+                             scale_mode)
         if core is None:
             return None
         span, consumed_local = core
@@ -1455,7 +1525,7 @@ def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text):
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
-                  text=None):
+                  text=None, scale_mode="short"):
     """The single-span resolution over an already-tokenized stream.
 
     The whole of the old ``extract_timespan`` body *below* range detection --
@@ -1476,7 +1546,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
             match.construction, {}).get("group")
         if group is not None and group not in enable:
             continue
-        res = engine.resolver.resolve(match, anchor)
+        res = engine.resolver.resolve(match, anchor, scale_mode)
         if res is not None:
             resolved.append((match, res))
     # business-day counting ("in 5 business days", "the next working day",
@@ -1485,7 +1555,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     # phrase composes on the resolved reference here, rather than being read as
     # a bare "N days after <date>" unit offset.
     resolve_ref = _make_resolve_ref(tokens, engine, anchor, enable,
-                                     jurisdiction, text)
+                                     jurisdiction, text, scale_mode)
     resolved = apply_business_days(tokens, resolved, engine.spec, anchor,
                                    jurisdiction, resolve_ref)
     # anchored arithmetic: rewrite a date reference carrying a stranded
@@ -1558,6 +1628,7 @@ def extract_candidates(
         lang: str = "en-us",
         anchor: Optional[datetime] = None,
         limit: int = 5,
+        scale: Optional[str] = None,
 ) -> List[Candidate]:
     """Every plausible parse the matcher considered, ranked by confidence.
 
@@ -1577,6 +1648,7 @@ def extract_candidates(
     """
     require_text(text, "extract_candidates")
     engine = _timespan_engine(lang)
+    scale_mode = _resolve_scale_mode(lang, scale)
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
@@ -1585,7 +1657,8 @@ def extract_candidates(
     seen = set()
     matches = (c.match for c in engine.matcher._candidates(tokens))
     for sc in _score_candidates(matches,
-                                lambda m: engine.resolver.resolve(m, anchor),
+                                lambda m: engine.resolver.resolve(
+                                    m, anchor, scale_mode),
                                 engine.spec):
         match, res, conf = sc.match, sc.resolution, sc.confidence
         key = (match.construction, match.span, res.value)

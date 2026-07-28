@@ -239,6 +239,7 @@ def extract_timespans(
         text: str,
         lang: str = "en-us",
         anchor: Optional[datetime] = None,
+        scale: Optional[str] = None,
 ) -> List[TimeMention]:
     """Every non-overlapping temporal mention in ``text``, in reading order.
 
@@ -256,11 +257,12 @@ def extract_timespans(
     empty list.
     """
     require_text(text, "extract_timespans")
-    from chronologia.extract import _timespan_engine
+    from chronologia.extract import _timespan_engine, _resolve_scale_mode
     from chronologia.extract.confidence import score_candidates
     from chronologia.extract.resolver import compose_date_clock
 
     engine = _timespan_engine(lang)
+    scale_mode = _resolve_scale_mode(lang, scale)
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
@@ -268,7 +270,7 @@ def extract_timespans(
 
     scored = list(score_candidates(
         engine.matcher.match(tokens),
-        lambda m: engine.resolver.resolve(m, anchor), engine.spec))
+        lambda m: engine.resolver.resolve(m, anchor, scale_mode), engine.spec))
     scored.sort(key=lambda sc: sc.match.span[0])
     resolved = [(sc.match, sc.resolution) for sc in scored]
 
