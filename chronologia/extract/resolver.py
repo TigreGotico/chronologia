@@ -88,14 +88,19 @@ def _pivot_year_str(raw: str) -> int:
     return n
 
 
-def _nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date:
+def _nth_weekday_of_month(year: int, month: int, weekday: int,
+                          n: int) -> Optional[date]:
     """The ``n``-th ``weekday`` (Mon=0) of ``month``/``year``; ``n < 0`` counts
-    from the end (``-1`` = last).  Raises ``ValueError`` when the month has no
-    such occurrence (e.g. a 5th Monday that does not exist)."""
+    from the end (``-1`` = last).  Returns ``None`` when the month has no such
+    occurrence (e.g. a 5th Monday of a February with only four) -- a
+    non-existent day is vetoed, never fabricated, and the API never raises."""
     last = calendar.monthrange(year, month)[1]
     days = [d for d in range(1, last + 1)
             if date(year, month, d).weekday() == weekday]
-    return date(year, month, days[n if n < 0 else n - 1])
+    idx = n if n < 0 else n - 1
+    if not -len(days) <= idx < len(days):
+        return None
+    return date(year, month, days[idx])
 
 
 def _add_months(dt: datetime, months: int) -> datetime:
@@ -1104,6 +1109,8 @@ class Resolver:
                 base = _add_months(_midnight(anchor).replace(day=1), rel)
                 year, month = base.year, base.month
             value = _nth_weekday_of_month(year, month, target, n)
+            if value is None:                       # no such Nth weekday
+                return None
             start = AstroDate.from_date(value)
             return Resolution(DateSpan(start, start + timedelta(days=1)),
                               self._consumed(match))

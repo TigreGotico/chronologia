@@ -317,22 +317,34 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
     if resolution == DateTimeResolution.DAY_OF_YEAR:
         if ordinal == -1:
             return date(year=ref_date.year, day=31, month=12)
-        return date(year=ref_date.year, day=1, month=1) + \
+        value = date(year=ref_date.year, day=1, month=1) + \
             timedelta(days=ordinal - 1)
+        if value.year != ref_date.year:             # e.g. 366th day of 2017
+            raise ValueError(f"year {ref_date.year} has no day {ordinal}")
+        return value
     if resolution == DateTimeResolution.DAY_OF_DECADE:
         if ordinal == -1:
             return date(year=_decade + 9, day=31, month=12)
-        return date(year=_decade, day=1, month=1) + \
+        value = date(year=_decade, day=1, month=1) + \
             timedelta(days=ordinal - 1)
+        if not _decade <= value.year <= _decade + 9:
+            raise ValueError(f"decade {_decade}s has no day {ordinal}")
+        return value
     if resolution == DateTimeResolution.DAY_OF_CENTURY:
         if ordinal == -1:
             return date(year=_century + 99, day=31, month=12)
-        return date(year=_century, day=1, month=1) + \
+        value = date(year=_century, day=1, month=1) + \
             timedelta(days=ordinal - 1)
+        if not _century <= value.year <= _century + 99:
+            raise ValueError(f"century {_century} has no day {ordinal}")
+        return value
     if resolution == DateTimeResolution.DAY_OF_MILLENNIUM:
         if ordinal == -1:
             return date(year=_mil + 999, day=31, month=12)
-        return date(year=_mil, day=1, month=1) + timedelta(days=ordinal - 1)
+        value = date(year=_mil, day=1, month=1) + timedelta(days=ordinal - 1)
+        if not _mil <= value.year <= _mil + 999:
+            raise ValueError(f"millennium {_mil} has no day {ordinal}")
+        return value
 
     if resolution == DateTimeResolution.WEEK:
         if ordinal < 0:

@@ -1341,6 +1341,41 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None):
     if span_starts and _exclusion_vetoes(text[:min(span_starts)],
                                           engine.spec.lang):
         return None
+    # Impossible-date veto (residue-veto design, #244): a stranded
+    # "<number> of ..." fragment in the remainder -- a day-of-month qualifier
+    # the core could not bind because the day is impossible (a 32nd, the 29th
+    # of a non-leap February, the Nth day of a year that is too short) -- is
+    # proof the reading is incomplete.  Rather than fabricate a broader
+    # plausible span (the whole month or year) and drop the day, refuse the
+    # parse.
+    #
+    # The trigger is an UNCONSUMED numeral immediately followed by an
+    # UNCONSUMED "of" connector.  Two shapes veto:
+    #   * the "of" abuts the winning span (its next token was consumed) -- the
+    #     day qualifier was trying to bind to the very span that won
+    #     ("the 32nd of February 2017" -> "February 2017" + "the 32nd of");
+    #   * the fragment stands alone but does NOT itself resolve to a valid
+    #     date ("the 29th of February" in a non-leap year).
+    # A stranded but VALID date (a second mention, "... al 5 de junio de 2020")
+    # resolves on its own and is left in the remainder untouched.
+    of_surfaces = set(engine.spec.connectors.get("of", ()))
+    for i in range(len(tokens) - 1):
+        if not (tokens[i].index not in consumed and tokens[i].is_number
+                and tokens[i + 1].index not in consumed
+                and tokens[i + 1].text in of_surfaces):
+            continue
+        if i + 2 < len(tokens) and tokens[i + 2].index in consumed:
+            return None                              # qualifier abuts winner
+        cs = tokens[i].char_start
+        ce = None
+        for t in tokens[i:]:
+            if t.index in consumed or t.char_start is None:
+                break
+            ce = t.char_end
+        if cs is not None and ce is not None:
+            frag = text[cs:ce]
+            if extract_timespan(frag, engine.spec.lang, anchor) is None:
+                return None                          # impossible stranded date
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)
