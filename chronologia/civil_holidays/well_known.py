@@ -347,6 +347,116 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
     # Martinmas = 11 Nov, the Feast of St Martin of Tours; Scottish term-day.
     WellKnownHoliday("martinmas", FixedRule(11, 11),
                      frozenset({"religious"}), "GB", "Martinmas", "en"),
+
+    # ---- National / civil fixed-date holidays (es / fr / it / pt / en) ------
+    # Major NATIONAL and CIVIL observances several locales bind by name. Each is
+    # a FIXED Gregorian date, so it reuses ``FixedRule`` exactly like the feasts
+    # above; the surfaces the locales speak live in ``i18n/well_known.tab``. A
+    # public day-off carries ``public``; a religious feast that is also a civil
+    # day off carries ``public religious``; a purely liturgical commemoration
+    # carries ``religious``; a folk/observance day (not a statutory day off)
+    # carries ``unofficial`` — mirroring how the sibling entries above are
+    # categorised. Multi-word names bind as ONE holiday and win longest-match
+    # over the bare month/"day"/weekday tokens they embed.
+
+    # International Workers' Day / Labour Day = 1 May. A public holiday across
+    # continental Europe (ES "Día del Trabajador", FR "Fête du Travail",
+    # IT "Festa del Lavoro", PT "Dia do Trabalhador") and the folk "May Day" in
+    # the anglosphere. (Source: national labour-day statutes; ILO.) Anchored on
+    # the ES official name (which carries NO ``translations.tab`` row) on
+    # purpose: the FR/IT/PT names auto-translate to en/de "Labour Day" /
+    # "Tag der Arbeit", but the anglosphere/German "Labour Day"/"Labor Day" is a
+    # DIFFERENT rule (1st Monday of Sep in the US, etc.), so those surfaces must
+    # NOT be harvested. Every 1-May surface is listed explicitly per locale in
+    # ``well_known.tab`` instead (en carries only "may day").
+    WellKnownHoliday("labour_day", FixedRule(5, 1),
+                     frozenset({"public"}), "ES", "Día del Trabajador", "es"),
+    # Immaculate Conception = 8 Dec, the Solemnity of the Immaculate Conception
+    # of the Blessed Virgin Mary; a Catholic holy day of obligation and a public
+    # holiday in ES, IT and PT. (Source: General Roman Calendar; national
+    # holiday laws.) Both civil and religious -> ``public religious``.
+    WellKnownHoliday("immaculate_conception", FixedRule(12, 8),
+                     frozenset({"public", "religious"}),
+                     "ES", "Inmaculada Concepción", "es"),
+    # Fiesta Nacional de España / Día de la Hispanidad = 12 Oct (Spain's national
+    # day, commemorating 1492). (Source: Ley 18/1987.) Public holiday.
+    WellKnownHoliday("hispanic_day", FixedRule(10, 12),
+                     frozenset({"public"}), "ES", "Fiesta Nacional de España",
+                     "es"),
+    # Día de la Constitución = 6 Dec (Spanish Constitution Day, 1978
+    # referendum). (Source: Spanish public-holiday calendar.) Public holiday.
+    WellKnownHoliday("spain_constitution_day", FixedRule(12, 6),
+                     frozenset({"public"}), "ES", "Día de la Constitución",
+                     "es"),
+    # Festa della Liberazione = 25 Apr (Italy's Liberation Day, 1945).
+    # (Source: Italian national-holiday law, D.Lgs. 1946.) Public holiday.
+    WellKnownHoliday("italy_liberation_day", FixedRule(4, 25),
+                     frozenset({"public"}), "IT", "Festa della Liberazione",
+                     "it"),
+    # Festa della Repubblica = 2 Jun (Italian Republic Day, 1946 referendum).
+    # (Source: Italian national-holiday law.) Public holiday.
+    WellKnownHoliday("italy_republic_day", FixedRule(6, 2),
+                     frozenset({"public"}), "IT", "Festa della Repubblica",
+                     "it"),
+    # Dia da Liberdade = 25 Apr (Portugal's Freedom Day, the 1974 Carnation
+    # Revolution). (Source: Lei n.º 7/74.) Public holiday. A DIFFERENT event
+    # from Italy's Liberation Day though the same civil date, hence its own key.
+    WellKnownHoliday("portugal_freedom_day", FixedRule(4, 25),
+                     frozenset({"public"}), "PT", "Dia da Liberdade", "pt"),
+    # Dia de Portugal, de Camões e das Comunidades = 10 Jun (Portugal Day).
+    # (Source: Portuguese public-holiday law.) Public holiday.
+    WellKnownHoliday("portugal_day", FixedRule(6, 10),
+                     frozenset({"public"}), "PT", "Dia de Portugal", "pt"),
+    # Implantação da República = 5 Oct (Portuguese Republic Day, 1910).
+    # (Source: Portuguese public-holiday law.) Public holiday.
+    WellKnownHoliday("portugal_republic_day", FixedRule(10, 5),
+                     frozenset({"public"}), "PT", "Implantação da República",
+                     "pt"),
+    # Restauração da Independência = 1 Dec (Restoration of Independence, 1640).
+    # (Source: Portuguese public-holiday law.) Public holiday.
+    WellKnownHoliday("portugal_restoration_day", FixedRule(12, 1),
+                     frozenset({"public"}),
+                     "PT", "Restauração da Independência", "pt"),
+    # Fête Nationale française = 14 Jul (Bastille Day, 1789/1790). (Source: loi
+    # du 6 juillet 1880.) Public holiday.
+    WellKnownHoliday("bastille_day", FixedRule(7, 14),
+                     frozenset({"public"}), "FR", "Fête Nationale", "fr"),
+    # Fête de la Victoire = 8 May (Victoire 1945, V-E Day). (Source: loi
+    # n° 81-893 du 2 octobre 1981.) Public holiday.
+    WellKnownHoliday("ve_day", FixedRule(5, 8),
+                     frozenset({"public"}), "FR", "Fête de la Victoire", "fr"),
+    # Armistice = 11 Nov (Armistice of 1918 / Remembrance Day). A public holiday
+    # in France; the anglosphere Remembrance/Armistice Day observance shares the
+    # date. (Source: French public-holiday law; Commonwealth Remembrance Day.)
+    WellKnownHoliday("armistice", FixedRule(11, 11),
+                     frozenset({"public"}), "FR", "Armistice", "fr"),
+    # Juneteenth = 19 Jun (U.S. Juneteenth National Independence Day, federal
+    # holiday since 2021). (Source: Pub. L. 117-17.) Public holiday.
+    WellKnownHoliday("juneteenth", FixedRule(6, 19),
+                     frozenset({"public"}), "US", "Juneteenth", "en"),
+    # Cinco de Mayo = 5 May (commemorates the 1862 Battle of Puebla; a widely
+    # observed cultural day in the U.S.). NOT a U.S. federal day off, so
+    # ``unofficial``. Its name embeds "Mayo" (the Spanish/Italian month name) —
+    # the full holiday surface must win longest-match over the bare month token.
+    WellKnownHoliday("cinco_de_mayo", FixedRule(5, 5),
+                     frozenset({"unofficial"}), "US", "Cinco de Mayo", "en"),
+    # Groundhog Day = 2 Feb (North American folk observance). ``unofficial``.
+    WellKnownHoliday("groundhog_day", FixedRule(2, 2),
+                     frozenset({"unofficial"}), "US", "Groundhog Day", "en"),
+    # Earth Day = 22 Apr (environmental observance since 1970). ``unofficial``.
+    WellKnownHoliday("earth_day", FixedRule(4, 22),
+                     frozenset({"unofficial"}), "US", "Earth Day", "en"),
+    # All Souls' Day = 2 Nov, the Commemoration of All the Faithful Departed
+    # ("In Commemoratione Omnium Fidelium Defunctorum"); a liturgical feast the
+    # day after All Saints'. Purely liturgical -> ``religious``. (Source:
+    # General Roman Calendar.)
+    WellKnownHoliday("all_souls", FixedRule(11, 2),
+                     frozenset({"religious"}), "VA", "All Souls' Day", "en"),
+    # April Fools' Day = 1 Apr (folk day of pranks). ``unofficial``. Its name
+    # embeds the month "April" and the word "Day" — the full surface must win
+    # longest-match so a bare "april" reading never strands a "fools day" tail.
+    WellKnownHoliday("april_fools", FixedRule(4, 1),
+                     frozenset({"unofficial"}), "US", "April Fools' Day", "en"),
     # NOTE Twelfth Night (5 Jan, eve of the Epiphany) is deliberately NOT added:
     # "Twelfth Night" is pinned as a proper noun that must resolve to None (not a
     # daypart "night") by test_clock_daypart_night_fixes; adding it as a holiday

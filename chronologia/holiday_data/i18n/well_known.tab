@@ -978,3 +978,48 @@ ashura             | fa | عاشورا
 christmas          | fa | کریسمس ;; کریسمس
 islamic_new_year   | fa | سال نو هجری
 chinese_new_year   | fa | سال نو چینی
+#
+# ==========================================================================
+# NATIONAL / CIVIL fixed-date holidays (es / fr / it / pt / en). Spoken
+# surfaces for the WELL_KNOWN national/civil entries. Multi-word names bind as
+# one holiday and win longest-match over the bare month/"day"/weekday tokens
+# they embed. NOTE en "labour_day" carries ONLY "may day" / "international
+# workers' day": the U.S. "Labor Day" is the 1st Monday of September, a
+# different rule, so it is deliberately NOT offered as a 1-May surface.
+# ==========================================================================
+#
+# ===== Spanish =====
+labour_day               | es | día del trabajador ;; día del trabajo ;; primero de mayo
+immaculate_conception    | es | inmaculada concepción ;; la inmaculada ;; día de la inmaculada
+hispanic_day             | es | fiesta nacional ;; día de la hispanidad ;; fiesta nacional de españa
+spain_constitution_day   | es | día de la constitución ;; día de la constitución española
+#
+# ===== French =====
+labour_day               | fr | fête du travail ;; premier mai
+bastille_day             | fr | fête nationale ;; quatorze juillet ;; le quatorze juillet
+armistice                | fr | armistice ;; jour de l'armistice ;; le onze novembre
+ve_day                   | fr | victoire 1945 ;; fête de la victoire ;; le huit mai
+#
+# ===== Italian =====
+labour_day               | it | festa del lavoro ;; primo maggio
+immaculate_conception    | it | immacolata ;; immacolata concezione
+italy_liberation_day     | it | festa della liberazione ;; anniversario della liberazione
+italy_republic_day       | it | festa della repubblica
+#
+# ===== Portuguese =====
+labour_day               | pt | dia do trabalhador ;; dia do trabalho ;; primeiro de maio
+immaculate_conception    | pt | imaculada conceição ;; nossa senhora da conceição
+portugal_freedom_day     | pt | dia da liberdade ;; vinte e cinco de abril
+portugal_day             | pt | dia de portugal ;; dia de camões
+portugal_republic_day    | pt | implantação da república ;; dia da república
+portugal_restoration_day | pt | restauração da independência ;; dia da restauração
+#
+# ===== English =====
+labour_day               | en | may day ;; international workers' day
+armistice                | en | armistice ;; armistice day ;; remembrance day
+juneteenth               | en | juneteenth
+cinco_de_mayo            | en | cinco de mayo
+groundhog_day            | en | groundhog day ;; groundhog's day
+earth_day                | en | earth day
+all_souls                | en | all souls' day ;; all souls day
+april_fools              | en | april fools' day ;; april fools day ;; april fool's day
