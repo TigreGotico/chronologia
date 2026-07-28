@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-"""BUG guard: definite-article ordinal + weekday-of-month does NOT bind (bg).
+"""Definite-article ordinal + weekday-of-month (bg).
 
-The short ordinal forms bind correctly ("трети понеделник на март 2019" -> the
-3rd Monday), but the definite masculine long forms ("първият", "вторият",
-"третият") silently DROP the weekday and the whole month/year tail: the
-weekday token is stranded in the residue and a bogus anchor-relative day is
-returned instead.  Reproductions (anchor 2017-06-27):
+The short ordinal forms bind ("трети понеделник на март 2019" -> the 3rd
+Monday), and so now do the definite masculine long forms ("първият",
+"вторият", "третият") and their short-article variants ("първия", ...): the
+definite surfaces fold to the same digit as the bare ``-и`` ordinal (numfold
+``fold_bg``), so ORD+WEEKDAY+MONTH bind and resolve to the true Nth weekday.
 
-    "първият понеделник на март 2019"  -> 2017-07-03, residue "първият на март 2019"
-    "третият вторник на юни 2017"      -> 2017-07-04, residue "третият на юни 2017"
-
-These are pinned as strict xfails so the corpus never ships a wrong gold; when
-the definite-article path is wired to bind like the short forms, these flip to
-XPASS and must be promoted to real assertions.
+Gold is the true Nth weekday of the named month by independent calendar
+arithmetic (calendar.monthrange), never the parser.  Definite-article forms:
+Официален правопис на българския език (БАН 2012), членуване на редните
+числителни имена, мъжки род ед. ч. -- пълен член -ият, кратък член -ия.
 """
 import calendar
 from datetime import date
@@ -48,9 +46,6 @@ def _cases():
 CASES = _cases()
 
 
-@pytest.mark.xfail(reason="definite-article ordinal drops the weekday; "
-                          "ordinal-weekday-of-month does not bind (BUG)",
-                   strict=True)
 @pytest.mark.parametrize("phrase,gold", CASES, ids=[c[0] for c in CASES])
 def test_definite_ordinal_weekday_binds(phrase, gold):
     s = span(phrase)

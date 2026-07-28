@@ -110,5 +110,14 @@
  "guards": {
   "bare_year_min_digits": 4
  },
+ "base_grammar": {
+  "extend": {
+   "scoped_ordinal": [
+    "article? ORD WEEKDAY MONTH YEAR?",
+    "article? ordlast WEEKDAY MONTH YEAR?",
+    "article? ORD UNIT MONTH YEAR?"
+   ]
+  }
+ },
  "hook": "chronologia.extract.numfold_slavic:fold_sl"
 }
