@@ -46,12 +46,10 @@ def test_ordinal_weekday_of_month(text, exp):
     assert span(text).width == timedelta(days=1)
 
 
-@pytest.mark.xfail(strict=True, reason="'sidste <weekday> i <month>' not "
-                   "resolved: parser strands the phrase back onto the anchor")
 @pytest.mark.parametrize("text,exp", [
     ("sidste mandag i marts 2020", date(2020, 3, 30)),
     ("sidste fredag i maj 2021", date(2021, 5, 28)),
     ("sidste søndag i november 2019", date(2019, 11, 24)),
 ])
-def test_last_weekday_of_month_xfail(text, exp):
+def test_last_weekday_of_month(text, exp):  # was xfail; fixed by PR #336
     assert start(text) == AstroDate(exp.year, exp.month, exp.day)

@@ -62,13 +62,11 @@ def test_explicit_year_range(text, s, e):
     assert start_end(text) == (s, e)
 
 
-@pytest.mark.xfail(strict=True, reason="compact range with trailing year drops "
-                   "the start day, collapsing onto the end day")
 @pytest.mark.parametrize("text,s,e", [
     ("5.-12. juni 2020", AstroDate(2020, 6, 5),
      AstroDate(2020, 6, 12) + timedelta(days=1)),
     ("fra 3. til 9. maj 2020", AstroDate(2020, 5, 3),
      AstroDate(2020, 5, 9) + timedelta(days=1)),
 ])
-def test_compact_range_with_year_xfail(text, s, e):
+def test_compact_range_with_year(text, s, e):  # was xfail; fixed by PR #335
     assert start_end(text) == (s, e)
