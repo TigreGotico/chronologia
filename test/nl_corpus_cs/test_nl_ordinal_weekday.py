@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
-"""Ordinal-weekday-of-month (cs) -- KNOWN BUG, strict xfail.
+"""Ordinal-weekday-of-month (cs) -- LOCATIVE and bare-GENITIVE month-scope.
 
 "třetí pondělí v březnu 2020" ("the third Monday in March 2020") and its
 bare-genitive twin "třetí pondělí března 2020" are the ordinary Czech ways to
-name the Nth weekday of a month.  On ``dev`` the parser silently drops both the
-month and the weekday: it reads only the ordinal and returns the Nth day of the
-anchor week (e.g. 2017-07-03), stranding "pondělí" and "březnu 2020".  The only
-surface that resolves is the *ungrammatical* "v + genitive" ("v března"), which
-no Czech speaker would write.
+name the Nth weekday of a month.  Both now bind ORD+WEEKDAY+MONTH and resolve
+to the true Nth weekday of the named month: the locative form via the base
+``of MONTH`` order (``v`` = the ``of`` connector, month in the locative case,
+added to the month surfaces), the bare-genitive form via the connector-less
+``ORD WEEKDAY MONTH`` order (``base_grammar.extend``), mirroring pl/ru/uk.
 
 Gold is the true Nth weekday of the named month, computed here by independent
 calendar arithmetic (calendar.monthrange / weekday walk), never the parser.
-These are strict xfails: when the bug is fixed they flip to xpass and this file
-must be promoted to plain asserts.
+Case forms: Internetová jazyková příručka (ÚJČ AV ČR), skloňování názvů
+měsíců -- 6. pád (lokál) "v lednu ... v prosinci", 2. pád (genitiv) "ledna
+... prosince".
 """
 from datetime import datetime, timedelta
 import pytest
@@ -50,9 +51,6 @@ def _ids(cases, prep):
     return [f"{o} {w} {prep}{m}/{y}" for o, _, w, _, m, y in cases]
 
 
-@pytest.mark.xfail(reason="ordinal-weekday-of-month drops month+weekday, "
-                          "returns Nth day of anchor week (BUG)",
-                   strict=True)
 @pytest.mark.parametrize("ordw,n,wdw,wd,m,y", _CASES,
                          ids=_ids(_CASES, "v-"))
 def test_locative_form(ordw, n, wdw, wd, m, y):
@@ -60,9 +58,6 @@ def test_locative_form(ordw, n, wdw, wd, m, y):
     assert start(f"{ordw} {wdw} v {_LOC[m]} {y}") == gold
 
 
-@pytest.mark.xfail(reason="ordinal-weekday-of-month drops month+weekday, "
-                          "returns Nth day of anchor week (BUG)",
-                   strict=True)
 @pytest.mark.parametrize("ordw,n,wdw,wd,m,y", _CASES,
                          ids=_ids(_CASES, "gen-"))
 def test_bare_genitive_form(ordw, n, wdw, wd, m, y):
