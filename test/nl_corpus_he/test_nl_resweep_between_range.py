@@ -11,16 +11,17 @@ parser.  The ``ו`` coordinator must be set off by a maqaf/hyphen
 (``ומרץ``, no hyphen) is a real, documented gap -- xfail'd below with the
 correct gold, not asserted as passing.
 
-The alternative closing marker ``ל-`` (also cited as "standard" in
-``marker_to.voc``'s prose) is probed too and found to silently drop the
-second endpoint at every granularity (month, year, and full date) -- a
-systematic bug, xfail'd with correct gold rather than swept as if it worked.
+The alternative closing marker ``ל-`` (cited as "standard" in Glinert §9.2
+alongside the ו-coordinated form) is exercised too, both after a ``בין``
+between-lead and after a ``מ-``/``מן`` from-lead: the dative-homograph
+proclitic is licensed as a range terminal only when such a lead precedes it,
+so a bare ``ל-<noun>`` dative is left untouched.
 """
 from datetime import date, timedelta
 
 import pytest
 
-from ._corpus import AstroDate, start_end
+from ._corpus import AstroDate, nomatch, parse, start_end
 
 _MONTHS = {
     1: "ינואר", 2: "פברואר", 3: "מרץ", 4: "אפריל", 5: "מאי", 6: "יוני",
@@ -102,35 +103,85 @@ def test_between_fused_and_pending():
     assert ee == AstroDate(2017, 4, 1)
 
 
-# -- known gap: ל- as the "between" closing marker drops the 2nd endpoint ---
-@pytest.mark.xfail(reason="marker_to.voc's own prose calls 'בין ... ל...' "
-                          "standard alongside the ו-coordinated form, but the "
-                          "engine only wires marker_and (ו) to marker_between, "
-                          "not marker_to (עד/ל); 'ל-<endpoint>' after בין is "
-                          "silently dropped and the range collapses to a "
-                          "single day/month/year at the first endpoint",
-                   strict=True)
-def test_between_lamed_month_pending():
+# -- ל- as the "between" closing marker binds the 2nd endpoint ---------------
+# marker_to.voc's prose (and Glinert §9.2) call "בין ... ל..." standard
+# alongside the ו-coordinated form.  The proclitic ל־ ("to") is a dative
+# homograph, so it is licensed as a range terminal only after a from-lead
+# (מ־/מן) or a between-lead (בין) -- the same lead-required guard the Romance
+# directional "a" uses.  A between-lead is present here, so all three
+# granularities bind their second endpoint.
+def test_between_lamed_month():
     ss, ee = start_end("בין ינואר ל-אפריל")
     assert ss == AstroDate(2017, 1, 1)
     assert ee == AstroDate(2017, 5, 1)
 
 
-@pytest.mark.xfail(reason="same ל- closing-marker gap as "
-                          "test_between_lamed_month_pending, at the bare-year "
-                          "granularity",
-                   strict=True)
-def test_between_lamed_year_pending():
+def test_between_lamed_year():
     ss, ee = start_end("בין 2015 ל-2018")
     assert ss == AstroDate(2015, 1, 1)
     assert ee == AstroDate(2019, 1, 1)
 
 
-@pytest.mark.xfail(reason="same ל- closing-marker gap as "
-                          "test_between_lamed_month_pending, at the full "
-                          "day-level date granularity",
-                   strict=True)
-def test_between_lamed_full_date_pending():
+def test_between_lamed_full_date():
     ss, ee = start_end("בין 15 בינואר 2020 ל-20 בינואר 2020")
     assert ss == AstroDate(2020, 1, 15)
     assert ee == AstroDate(2020, 1, 21)
+
+
+# -- מ-X ל-Y : the "from X to Y" framing with the ל- terminal ----------------
+# The canonical Hebrew temporal range is "מ... עד..." (from ... until ...); the
+# proclitic ל־ terminal ("מ־ינואר ל־אפריל") is the equally common colloquial
+# variant.  The from-lead (מ־/מן) licenses ל־ as a range terminal.  RTL: the
+# earlier date reads first and is the start; end is exclusive (day after the
+# last day, first day of the month after the last month, Jan 1 of the year
+# after the last year).  Gold is independent civil-calendar arithmetic.
+@pytest.mark.parametrize("y1,y2", [
+    (2015, 2018), (1990, 2000), (2001, 2002), (2020, 2030), (1948, 1967),
+])
+def test_from_lamed_year_range(y1, y2):
+    ss, ee = start_end(f"מ-{y1} ל-{y2}")
+    assert ss == AstroDate(y1, 1, 1)
+    assert ee == AstroDate(y2 + 1, 1, 1)
+
+
+@pytest.mark.parametrize("m1,y1,m2,y2", _MY_PAIRS)
+def test_from_lamed_month_year_range(m1, y1, m2, y2):
+    text = f"מ-{_MONTHS[m1]} {y1} ל-{_MONTHS[m2]} {y2}"
+    ny, nm = _next_month(y2, m2)
+    ss, ee = start_end(text)
+    assert ss == AstroDate(y1, m1, 1)
+    assert ee == AstroDate(ny, nm, 1)
+
+
+@pytest.mark.parametrize("d1,m1,y1,d2,m2,y2", _DAY_PAIRS)
+def test_from_lamed_full_date_range(d1, m1, y1, d2, m2, y2):
+    text = f"מ-{d1} {_MONTHS_B[m1]} {y1} ל-{d2} {_MONTHS_B[m2]} {y2}"
+    s = date(y1, m1, d1)
+    e = date(y2, m2, d2) + timedelta(days=1)
+    ss, ee = start_end(text)
+    assert ss == AstroDate(s.year, s.month, s.day)
+    assert ee == AstroDate(e.year, e.month, e.day)
+
+
+# -- the מן free-form from-lead licenses ל- just as the proclitic מ- does -----
+def test_from_lamed_year_range_min_leadform():
+    ss, ee = start_end("מן 2015 ל-2018")
+    assert ss == AstroDate(2015, 1, 1)
+    assert ee == AstroDate(2019, 1, 1)
+
+
+# -- guard: bare ל- with NO from/between lead is the dative, never a range ----
+# "ל-3 שעות" ("for 3 hours"), "נסעתי ל-2020" ("I drove to[wards] 2020") carry
+# no from/between lead, so the ל- terminal must not fire and fabricate a range.
+def test_bare_lamed_dative_is_not_a_range():
+    nomatch("ל-3 שעות")
+
+
+def test_bare_lamed_no_lead_single_year_untouched():
+    # a lone year after a bare dative ל- resolves to that year as a single
+    # span; the ל- must NOT turn it into a range with a fabricated second end.
+    r = parse("נסעתי ל-2020")
+    if r is not None:
+        s = r[0]
+        assert s.start == AstroDate(2020, 1, 1)
+        assert s.end == AstroDate(2021, 1, 1)
