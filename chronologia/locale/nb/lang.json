@@ -109,6 +109,11 @@
         "article? year_word NUM SCALE"
       ]
     },
+    "decade_ref": {
+      "orders": [
+        "NUM plural"
+      ]
+    },
     "month_fuzzy": {
       "orders": [
         "PART of MONTH",
