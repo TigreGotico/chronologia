@@ -52,8 +52,6 @@ def test_gece_yarisi_is_next_midnight():
     assert start("gecə yarısı", A) == AstroDate(2017, 6, 28, 0, 0)
 
 
-@pytest.mark.xfail(strict=True, reason="locative -də hour form 'saat üçdə' is "
-                   "not recognised; should read as 03:00 like 'saat üç'")
 def test_locative_hour_suffix_should_parse():
     # 'saat üçdə' = 'at three o'clock' — idiomatic az; currently no-parse.
     assert start("saat üçdə", A).hour == 3

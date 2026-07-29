@@ -51,8 +51,5 @@ def test_sehér_morning_keeps_hour_digit(h):
     assert start("səhər saat %d" % h, A) == g
 
 
-@pytest.mark.xfail(strict=True, reason="'gecə' (night) is not recognised as a "
-                   "daypart marker: 'gecə saat doqquz' should be 21:00 but "
-                   "resolves to 09:00 with 'gecə' left over")
 def test_gece_night_marker_should_shift():
     assert start("gecə saat doqquz", A).hour == 21

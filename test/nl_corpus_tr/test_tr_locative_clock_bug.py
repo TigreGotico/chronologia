@@ -28,7 +28,6 @@ _LOCATIVE = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason="locative-case hour (-te/-de) not parsed")
 @pytest.mark.parametrize("text,h", _LOCATIVE)
 def test_locative_hour(text, h):
     r = parse(text, A)

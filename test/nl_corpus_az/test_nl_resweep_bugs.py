@@ -12,11 +12,6 @@ from chronologia.astrodate import AstroDate
 from ._corpus import parse
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "Locative-suffixed spelled clock hour ('saat <ədəd>-də') fails to parse "
-    "at all -- returns None. The bare form 'saat üç' correctly resolves to "
-    "the next 03:00 after the anchor (2017-06-28T03:00); the '-də' locative "
-    "suffix on the spelled number breaks the match entirely."))
 def test_locative_spelled_clock_hour():
     r = parse("saat üçdə")
     assert r is not None
