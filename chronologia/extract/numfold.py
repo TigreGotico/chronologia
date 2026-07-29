@@ -657,6 +657,7 @@ _ROMANCE_DEFINITE = {
     "fr": frozenset({"le", "la", "les", "l"}),
     "oc": frozenset({"lo", "la", "los", "las", "les", "l"}),
     "an": frozenset({"o", "a", "os", "as", "lo", "la", "los", "las", "l"}),
+    "ast": frozenset({"el", "la", "lo", "los", "les", "l"}),
     "mwl": frozenset({"l", "la", "lo", "ls", "las", "los"}),
     "ro": frozenset(),
 }
