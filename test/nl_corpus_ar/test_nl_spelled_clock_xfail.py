@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
-"""KNOWN BUG (strict-xfail): spelled-out clock hours do not resolve.
+"""FIXED (was strict-xfail): the spelled feminine ordinal clock hour resolves.
 
-A digit clock hour works ("8 صباحا" -> 08:00), but the *spelled* feminine
-ordinal hour الثامنة / التاسعة ("the eighth/ninth [hour]") is not recognised as
-a clock reference:
+A digit clock hour worked ("8 صباحا" -> 08:00); the *spelled* feminine ordinal
+hour الثامنة / التاسعة ("the eighth/ninth [hour]") used to be dropped and the
+utterance returned None.  ``numfold_semitic._ar_clock_hour_fold`` now folds the
+feminine ordinal hour الواحدة..الثانية عشرة (1..12) to a CLOCK ``H:00`` token in
+an unambiguous clock context (after الساعة, or before an am/pm daypart), and the
+shared daypart->meridiem shift produces the 24-hour reading:
 
-    الساعة الثامنة صباحا   -> None            (expected 08:00, minute-wide)
-    التاسعة صباحا          -> None            (expected 09:00, minute-wide)
-    الساعة الثامنة         -> None            (expected 08:00, minute-wide)
-    الثامنة مساء           -> evening band 18:00-21:00, drops "الثامنة"
-                                              (expected 20:00, minute-wide)
+    الساعة الثامنة صباحا   -> 08:00
+    التاسعة صباحا          -> 09:00
+    الساعة الثامنة         -> 08:00   (meridiem-optional CLOCK order)
+    الثامنة مساء           -> 20:00
 
 Gold (independent arithmetic, minute-wide span with the prefer_future roll):
 08:00/09:00 are still ahead of the 13:04 anchor tomorrow; 20:00 is still ahead
-today.  Marked xfail(strict) so the day the parser learns spelled clock hours,
-this flips to a failure and the assertions become live regression guards.
-
-For the human reviewer: confirm the spelled feminine ordinal hour forms
-(الواحدة، الثانية، الثالثة … الثانية عشرة) are the idiomatic MSA way to say
-clock hours, and that meridiem particles صباحا/مساء select AM/PM as encoded."""
+today.  These assertions are now live regression guards."""
 from datetime import timedelta
 
 import pytest
@@ -33,7 +30,6 @@ def _clk(h, mi=0):
     return ad(dt)
 
 
-@pytest.mark.xfail(strict=True, reason="spelled clock hour الثامنة not parsed")
 @pytest.mark.parametrize("text,h", [
     ("الساعة الثامنة صباحا", 8),
     ("التاسعة صباحا", 9),
