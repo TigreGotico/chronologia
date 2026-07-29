@@ -1,0 +1,9 @@
+# The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,
+# not a uniform +12 PM shift: "pukul satu malam"/"jam satu malam" (one at
+# night) is 01:00, "pukul sebelas malam" (eleven at night) is 23:00, twelve
+# is midnight 00:00.  Small hours 1..5 stay AM, evening hours 6..11 are PM,
+# twelve is midnight (band-split in resolver _clock_hms).  Evening "malam"
+# opens at 18:00 (CLDR id night [18:00, 00:00), transcribed in chronologia/
+# dayparts.py); the small hours read as "malam" colloquially.  Source:
+# Wiktionary, malam (https://en.wiktionary.org/wiki/malam).
+malam

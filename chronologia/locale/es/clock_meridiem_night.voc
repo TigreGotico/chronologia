@@ -1,0 +1,9 @@
+# The NIGHT daypart is a BAND that crosses midnight in colloquial clock
+# usage, not a uniform +12 PM shift: "la una de la noche" is 01:00 and "las
+# doce de la noche" is midnight 00:00, while "las diez de la noche" is 22:00.
+# Small hours 1..5 stay AM, evening hours 6..11 are PM, twelve is midnight
+# (the band-split lives in the resolver _clock_hms).  The AM ceiling follows
+# the madrugada band [00:00, 06:00) transcribed for es in chronologia/
+# dayparts.py; colloquial "de la noche" for the small hours: RAE/DPD, s.v.
+# "noche" (https://dle.rae.es/noche).
+noche

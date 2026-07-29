@@ -3,10 +3,13 @@
 
 Idiomatic Dutch disambiguates a bare 12-hour reading with a trailing
 "'s <daypart>s" phrase.  The afternoon/evening half (middag [12:00, 18:00),
-avond [18:00, 24:00)) is pm and adds twelve; the morning/night half
-(ochtend [06:00, 12:00), nacht [00:00, 06:00)) is am and leaves the hour,
-rewriting only the noon/midnight edge.  Bands: Unicode CLDR 47 Day Period
-Rules, locale nl (transcribed in chronologia.dayparts).
+avond [18:00, 24:00)) is pm and adds twelve; the morning half
+(ochtend [06:00, 12:00)) is am and leaves the hour.  "'s nachts" is a
+midnight-crossing BAND, not a flat am shift: the small hours 1..5 stay AM
+("drie uur 's nachts" == 03:00), the late-night hours 6..11 are PM ("elf uur
+'s nachts" == 23:00) and twelve is midnight ("twaalf uur 's nachts" ==
+00:00).  AM ceiling follows the CLDR nl nacht band [00:00, 06:00).  Bands:
+Unicode CLDR 47 Day Period Rules, locale nl (transcribed in chronologia.dayparts).
 
 Gold is hand-derived from the sentence, never pinned from the engine.
 Anchor: Tuesday 2017-06-27 13:04.
@@ -29,9 +32,16 @@ def _am(h):
     return 0 if h == 12 else h
 
 
+def _night(h):
+    # midnight-crossing band: 12 -> midnight, 1..5 stay AM, 6..11 go PM
+    if h == 12:
+        return 0
+    return h if h <= 5 else h + 12
+
+
 @pytest.mark.parametrize("h", sorted(_HOURS))
 @pytest.mark.parametrize("part,shift", [("avonds", _pm), ("middags", _pm),
-                                        ("ochtends", _am), ("nachts", _am)])
+                                        ("ochtends", _am), ("nachts", _night)])
 def test_hour_times_daypart(h, part, shift):
     text = f"{_HOURS[h]} uur 's {part}"
     assert span(text).start == clk(shift(h), 0)

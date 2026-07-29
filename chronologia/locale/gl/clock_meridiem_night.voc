@@ -1,0 +1,8 @@
+# The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,
+# not a uniform +12 PM shift: "unha da noite" is 01:00, "dez da noite" is
+# 22:00, twelve is midnight 00:00.  Small hours 1..5 stay AM, evening hours
+# 6..11 are PM, twelve is midnight (band-split in resolver _clock_hms).  AM
+# ceiling follows the madrugada band [00:00, 06:00) transcribed for gl in
+# chronologia/dayparts.py; Dicionario da Real Academia Galega, s.v. "noite"
+# (https://academia.gal/dicionario).
+noite

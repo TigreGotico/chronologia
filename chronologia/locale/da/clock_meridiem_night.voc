@@ -1,0 +1,8 @@
+# The NIGHT daypart is a midnight-crossing BAND, not the morning/night AM
+# half it was previously grouped in: "klokken tre om natten" (three at night)
+# is 03:00 but "klokken elleve om natten" (eleven at night) is 23:00, and
+# twelve is midnight 00:00.  Small hours 1..5 stay AM, late-night hours 6..11
+# are PM, twelve is midnight (the band-split lives in the resolver
+# _clock_hms).  The AM ceiling follows the CLDR da nat band [00:00, 05:00)
+# transcribed for da in chronologia/dayparts.py.
+natten

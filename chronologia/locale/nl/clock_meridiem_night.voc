@@ -1,0 +1,8 @@
+# The NIGHT daypart is a midnight-crossing BAND, not the morning/night AM
+# half it was previously grouped in: "drie uur 's nachts" (three at night) is
+# 03:00 but "elf uur 's nachts" (eleven at night) is 23:00, and "twaalf uur
+# 's nachts" is midnight 00:00.  Small hours 1..5 stay AM, late-night hours
+# 6..11 are PM, twelve is midnight (the band-split lives in the resolver
+# _clock_hms).  The AM ceiling follows the CLDR nl nacht band [00:00, 06:00)
+# transcribed for nl in chronologia/dayparts.py.
+nachts

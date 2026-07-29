@@ -1,0 +1,8 @@
+# The NIGHT daypart is a midnight-crossing BAND, not a uniform +12 PM shift:
+# one at night is 01:00 and eleven at night is 23:00, twelve is midnight
+# 00:00.  Small hours 1..5 stay AM, evening hours 6..11 are PM, twelve is
+# midnight (the band-split lives in the resolver _clock_hms).  The AM ceiling
+# follows the CLDR he night band [22:00, 06:00) transcribed for he in
+# chronologia/dayparts.py (morning opens at 06:00).  Surface: ba-layla, the
+# deictic "at night" (cf. daypart_night_he.voc).
+בלילה
