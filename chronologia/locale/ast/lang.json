@@ -45,6 +45,7 @@
     "calendar_date": {
       "orders": [
         "MONTH DAY? YEAR?",
+        "MONTH of? YEAR?",
         "DAY of? MONTH YEAR?",
         "DAY MONTH YEAR?"
       ],

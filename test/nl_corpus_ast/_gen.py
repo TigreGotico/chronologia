@@ -17,9 +17,10 @@ MON = {1: "xineru", 2: "febreru", 3: "marzu", 4: "abril", 5: "mayu",
 WD = {0: "llunes", 1: "martes", 2: "miércoles", 3: "xueves",
       4: "vienres", 5: "sábadu", 6: "domingu"}
 
-#: ordinals that the Romance number-extractor resolves for ast (1..3);
-#: 4+ (cuartu/quintu) are still broken -- see test_nl_year_month_bug.
-ORD = {1: "primeru", 2: "segundu", 3: "terceru"}
+#: ordinals the Romance number-extractor resolves for ast (1..5).  cuartu/quintu
+#: are fraction homographs; their ordinal reading is positionally licensed by a
+#: preceding definite article (see numfold ``_ROMANCE_DEFINITE['ast']``).
+ORD = {1: "primeru", 2: "segundu", 3: "terceru", 4: "cuartu", 5: "quintu"}
 
 #: seasons -> (start_month, end_month) in a normal (non-wrapping) year
 SEAS = {"primavera": (3, 6), "branu": (6, 9), "seronda": (9, 12),

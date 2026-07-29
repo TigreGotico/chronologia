@@ -1,7 +1,6 @@
 """Ordinal weekday-of-month: ``el terceru llunes de marzu`` (issue #326).
 
-Only ordinals 1..3 (primeru/segundu/terceru) resolve for Asturian; 4th+ are
-still broken (documented in test_nl_year_month).  Without an explicit year the
+Ordinals 1..5 (primeru..quintu) resolve for Asturian.  Without an explicit year the
 month resolves inside the anchor year 2017; a trailing ``de <year>`` pins it.
 """
 from datetime import datetime, timedelta

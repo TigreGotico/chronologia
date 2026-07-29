@@ -35,6 +35,15 @@ def test_month_year(year, m, word):
     assert e == ad(_first_next_month(year, m))
 
 
+# --- <month> de <year> (connector "de") --------------------------------------
+@pytest.mark.parametrize("year", _MY_YEARS)
+@pytest.mark.parametrize("m,word", sorted(MON.items()))
+def test_month_de_year(year, m, word):
+    s, e = start_end(f"{word} de {year}")
+    assert s == ad(datetime(year, m, 1))
+    assert e == ad(_first_next_month(year, m))
+
+
 # --- bare month resolves to the anchor year ----------------------------------
 @pytest.mark.parametrize("m,word", sorted(MON.items()))
 def test_bare_month_anchor_year(m, word):
