@@ -126,6 +126,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     cal_surface_owner: Dict[str, str] = {}   # surface -> calendar, collision guard
     clock_fractions: Dict[str, int] = {}
     meridiems: Dict[str, int] = {}
+    night_meridiems: Set[str] = set()
     clock_dirs: Dict[str, int] = {}
     seasons: Dict[str, str] = {}
     solar_events: Dict[str, str] = {}
@@ -215,6 +216,14 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             meridiems.update({s: 0 for s in surfaces})
         elif base == "clock_meridiem_pm":
             meridiems.update({s: 12 for s in surfaces})
+        elif base == "clock_meridiem_night":
+            # The NIGHT daypart is a BAND crossing midnight, not a uniform +12
+            # PM shift: "the one at night" is 01:00, not 13:00.  Surfaces are
+            # unioned into ``meridiems`` (value unused) so the MERIDIEM slot
+            # binds them, and tracked in ``night_meridiems`` so the resolver
+            # applies the midnight-crossing band-split instead of a flat offset.
+            meridiems.update({s: 12 for s in surfaces})
+            night_meridiems.update(surfaces)
         elif base == "clock_dir_past":
             clock_dirs.update({s: 1 for s in surfaces})
         elif base == "clock_dir_to":
@@ -368,6 +377,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         guards=cfg.get("guards", {}),
         hook=_resolve_dotted(cfg.get("hook")),
         clock_fractions=clock_fractions, meridiems=meridiems,
+        night_meridiems=frozenset(night_meridiems),
         clock_dirs=clock_dirs, seasons=seasons,
         solar_events=solar_events, solar_quals=solar_quals,
         scope_units=scope_units,

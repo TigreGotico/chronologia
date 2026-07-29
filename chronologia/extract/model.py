@@ -213,6 +213,12 @@ class LangSpec:
     # clock_time slot vocab (surface -> value), all facts from filename convention
     clock_fractions: Mapping[str, int] = field(default_factory=dict)  # -> minutes
     meridiems: Mapping[str, int] = field(default_factory=dict)        # -> hour offset
+    # NIGHT meridiem surfaces (ar ليل, az gecə): the night daypart is a BAND
+    # that crosses midnight, not a uniform +12 PM shift.  Small hours stay AM,
+    # evening hours go PM, twelve is midnight -- the band-split lives in the
+    # resolver (_clock_hms).  A surface here is also present in ``meridiems`` so
+    # the MERIDIEM slot binds it; its numeric offset there is unused.
+    night_meridiems: FrozenSet[str] = field(default_factory=frozenset)
     clock_dirs: Mapping[str, int] = field(default_factory=dict)       # past +1 / to -1
     # season_ref slot vocab (surface -> canonical season name)
     seasons: Mapping[str, str] = field(default_factory=dict)
