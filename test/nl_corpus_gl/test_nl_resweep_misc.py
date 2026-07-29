@@ -6,20 +6,23 @@ clock idioms ("e cuarto"/"e media"/"menos cuarto"/"en punto" crossed with
 <year>"), and month-thirds with an explicit trailing year.  Gold is
 independent arithmetic in every case.  Anchor Tue 2017-06-27, 13:04.
 
-Two real parser gaps surface here and are pinned as strict xfail with the
+One real parser gap surfaces here and is pinned as strict xfail with the
 correct gold rather than silently dropped:
   * "cuarto trimestre de <year>" collapses to Q1 instead of Q4 -- "cuarto"
     here is likely mis-bound as the clock quarter-hour word rather than the
     4th-quarter ordinal.
-  * "principios de <month> de <year>" / "finais de <month> de <year>" both
-    ignore the trailing explicit year and resolve against the anchor year
-    (2017) instead.
+
+"principios/finais de <month> de <year>" (month-thirds with a trailing
+explicit year) used to ignore that year and resolve against the anchor year
+(2017) instead -- FIXED. The equal-thirds boundaries below are computed by
+independent date arithmetic (never consulting the parser); see
+test_nl_month_thirds_year.py for the dedicated early/mid/late sweep.
 """
-from datetime import timedelta
+from datetime import datetime
 
 import pytest
 
-from ._corpus import AstroDate, start, start_end
+from ._corpus import AstroDate, ad, start, start_end
 
 # -- full DMY, fresh years -----------------------------------------------
 _DMY = [
@@ -215,38 +218,30 @@ def test_fourth_quarter_fresh_years_xfail(text, s, e):
 
 
 # -- month-thirds with an explicit trailing year ----------------------------
-_MT_XFAIL = [
-    ('principios de xaneiro de 2041', (2041, 1, 1)),
-    ('finais de xaneiro de 2041', (2041, 2, 1)),
-    ('principios de febreiro de 2041', (2041, 2, 1)),
-    ('finais de febreiro de 2041', (2041, 3, 1)),
-    ('principios de marzo de 2041', (2041, 3, 1)),
-    ('finais de marzo de 2041', (2041, 4, 1)),
-    ('principios de abril de 2041', (2041, 4, 1)),
-    ('finais de abril de 2041', (2041, 5, 1)),
-    ('principios de maio de 2041', (2041, 5, 1)),
-    ('finais de maio de 2041', (2041, 6, 1)),
-    ('principios de xuño de 2041', (2041, 6, 1)),
-    ('finais de xuño de 2041', (2041, 7, 1)),
-    ('principios de xullo de 2041', (2041, 7, 1)),
-    ('finais de xullo de 2041', (2041, 8, 1)),
-    ('principios de agosto de 2041', (2041, 8, 1)),
-    ('finais de agosto de 2041', (2041, 9, 1)),
-    ('principios de setembro de 2041', (2041, 9, 1)),
-    ('finais de setembro de 2041', (2041, 10, 1)),
-    ('principios de outubro de 2041', (2041, 10, 1)),
-    ('finais de outubro de 2041', (2041, 11, 1)),
-    ('principios de novembro de 2041', (2041, 11, 1)),
-    ('finais de novembro de 2041', (2041, 12, 1)),
-    ('principios de decembro de 2041', (2041, 12, 1)),
-    ('finais de decembro de 2041', (2042, 1, 1)),
+def _thirds(year, month):
+    """(early, late) as independent (start, end) AstroDate pairs -- equal
+    thirds of the Gregorian month, computed without consulting the parser."""
+    first = datetime(year, month, 1)
+    nxt = datetime(year + 1, 1, 1) if month == 12 else datetime(year, month + 1, 1)
+    third = (nxt - first) / 3
+    b1, b2 = first + third, first + 2 * third
+    return {
+        "principios": (ad(first), ad(b1)),
+        "finais": (ad(b2), ad(nxt)),
+    }
+
+
+_MT = [
+    (word, month, f'{word} de {name} de 2041')
+    for month, name in enumerate(
+        ('xaneiro', 'febreiro', 'marzo', 'abril', 'maio', 'xuño', 'xullo',
+         'agosto', 'setembro', 'outubro', 'novembro', 'decembro'),
+        start=1,
+    )
+    for word in ('principios', 'finais')
 ]
 
 
-@pytest.mark.xfail(
-    reason="'principios/finais de <month> de <year>' ignores the trailing explicit year and resolves against the anchor year (2017) instead",
-    strict=True,
-)
-@pytest.mark.parametrize("text,ymd", _MT_XFAIL)
-def test_month_thirds_explicit_year_xfail(text, ymd):
-    assert start(text) == AstroDate(*ymd)
+@pytest.mark.parametrize("word,month,text", _MT)
+def test_month_thirds_explicit_year(word, month, text):
+    assert start_end(text) == _thirds(2041, month)[word]
