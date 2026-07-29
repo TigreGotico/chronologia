@@ -51,6 +51,18 @@ _UNICODE_FOLD = {
     "\u3000": " ",
 }
 _UNICODE_TABLE = str.maketrans(_UNICODE_FOLD)
+# The zero-width non-joiner (U+200C) and joiner (U+200D) are *intra-word*
+# formatting marks: Persian orthography writes a compound word's parts with a
+# ZWNJ to suppress the cursive join ("پنج‌شنبه" Thursday, "سه‌شنبه" Tuesday),
+# yet the very same word is routinely typed without it ("پنجشنبه").  Both
+# spellings are the same word, so the ZWNJ/ZWJ is dropped from the token's
+# MATCHING key while the raw surface (and therefore the character offsets the
+# tokenizer hands downstream) keeps it verbatim -- offsets are taken from
+# ``char_start``/``char_end`` into the original text, never from ``text``, so
+# folding the key is offset-safe.  The loader tokenises its vocab surfaces
+# through this same class, so a voc entry written WITH a ZWNJ is registered in
+# its folded (ZWNJ-free) form as well; a user's either spelling then matches.
+_INTRAWORD_ZW = dict.fromkeys((0x200C, 0x200D))
 # the º / ª ordinal indicators (Spanish/Portuguese/Italian "1º de abril" = the
 # 1st) glued to a digit, with the optional RAE dot ("1.º"): read as the day
 # number by dropping the indicator.  Only after a digit, so a bare "Nº" or a
@@ -310,8 +322,8 @@ class Tokenizer:
                                     char_start=cs, char_end=ce,
                                     apostrophe=apos))
             else:
-                tokens.append(Token(text=raw, raw=raw, index=i,
-                                    char_start=cs, char_end=ce, cap=cap))
+                tokens.append(Token(text=raw.translate(_INTRAWORD_ZW), raw=raw,
+                                    index=i, char_start=cs, char_end=ce, cap=cap))
         # re-index sequentially (finditer index already sequential, but be
         # explicit so callers can trust index == position)
         return tuple(Token(t.text, t.raw, i, t.is_number, t.value,
