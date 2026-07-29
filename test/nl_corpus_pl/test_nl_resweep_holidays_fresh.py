@@ -9,12 +9,11 @@ This module adds four FIXED-date state/religious holidays --
 (Aug 15), Święto Niepodległości (Nov 11) -- swept across TWENTY fresh years
 (2010-2019 and 2026-2035, none overlapping the first-pass 2020-2025 window).
 
-It also documents two known engine gaps as strict xfails with independently
-correct gold: "boże ciało" (Corpus Christi, Easter + 60 days by the Western
-computus) and "drugi dzień świąt" / "drugi dzień bożego narodzenia" (Boxing
-Day, Dec 26) do not resolve against an explicit year -- the engine falls back
-to a bare-year parse and leaves the holiday phrase as unconsumed residual
-text.
+It also sweeps two formerly-missing pl surfaces with independently correct
+gold: "boże ciało" (Corpus Christi, Easter + 60 days by the Western computus)
+and "drugi dzień świąt" / "drugi dzień bożego narodzenia" (Boxing Day / second
+Christmas day, Dec 26). Both now bind against an explicit year and consume the
+whole phrase (registered as the ``corpus_christi`` / ``boxing_day`` pl surfaces).
 
 Anchor: Tuesday 2017-06-27 13:04.
 """
@@ -74,9 +73,6 @@ def _boze_cialo_gap_cases():
 _BOZE_CIALO_GAPS = _boze_cialo_gap_cases()
 
 
-@pytest.mark.xfail(strict=True, reason="known pl gap: 'boże ciało' + explicit "
-                    "year does not bind -- engine falls back to a bare-year "
-                    "parse and leaves the phrase as residual text")
 @pytest.mark.parametrize("text,gold", _BOZE_CIALO_GAPS, ids=[c[0] for c in _BOZE_CIALO_GAPS])
 def test_boze_cialo_year_gap(text, gold):
     assert start(text) == AstroDate(gold.year, gold.month, gold.day)
@@ -87,9 +83,6 @@ _BOXING_DAY_GAPS = [(f"drugi dzień świąt {y}", date(y, 12, 26)) for y in _GAP
     [(f"drugi dzień bożego narodzenia {y}", date(y, 12, 26)) for y in _GAP_YEARS]
 
 
-@pytest.mark.xfail(strict=True, reason="known pl gap: Boxing Day idioms + "
-                    "explicit year do not bind -- engine falls back to a "
-                    "bare-year parse and leaves the phrase as residual text")
 @pytest.mark.parametrize("text,gold", _BOXING_DAY_GAPS, ids=[c[0] for c in _BOXING_DAY_GAPS])
 def test_boxing_day_year_gap(text, gold):
     assert start(text) == AstroDate(gold.year, gold.month, gold.day)
