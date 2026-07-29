@@ -1001,7 +1001,25 @@ class Resolver:
                 match.slots["SCALE"].text]
             if not GYEAR_MIN <= year <= GYEAR_MAX:
                 return None
-        span = DateSpan(AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+        # Dual-calendar locales (fa) read a bare full-digit year on their
+        # PRIMARY civil calendar, not literal Gregorian: contemporary Persian
+        # "1402" is Solar-Hijri 1402 (2023-03-21..2024-03-21), never medieval
+        # Gregorian 1402 AD.  The reading is bounded to the civil Solar-Hijri
+        # window so Gregorian-scale years (e.g. "2024") stay Gregorian, and the
+        # explicit میلادی/AD marker escapes through the separate era_ad
+        # construction and is unaffected.  Apostrophe two-digit years never
+        # take this path.
+        flags = self.spec.construction_flags.get("year_ref", {})
+        cal_key = flags.get("calendar")
+        lo, hi = flags.get("calendar_year_range", (0, -1))
+        if (cal_key and gyear is not None and not gyear.apostrophe
+                and lo <= year <= hi):
+            calendar = CALENDARS[cal_key]
+            start = AstroDate(*jdn_to_gregorian(calendar.to_jdn(year, 1, 1)))
+            end = AstroDate(*jdn_to_gregorian(calendar.to_jdn(year + 1, 1, 1)))
+            span = DateSpan(start, end)
+        else:
+            span = DateSpan(AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
         # An optional early/mid/late PART narrows the year to that third
         # ("late 2017"), the same span-native narrowing decade/month fuzzy use.
         part_tok = match.slots.get("PART")

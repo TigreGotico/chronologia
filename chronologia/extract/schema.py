@@ -142,7 +142,8 @@ KNOWN_CONSTRUCTIONS: FrozenSet[str] = frozenset(PRECEDENCE) | UNIMPLEMENTED
 KNOWN_GROUPS: FrozenSet[str] = frozenset({"classical"})
 
 #: per-construction flag keys (everything besides ``orders``).
-CONSTRUCTION_FLAG_KEYS: FrozenSet[str] = frozenset({"prefer_future", "group"})
+CONSTRUCTION_FLAG_KEYS: FrozenSet[str] = frozenset(
+    {"prefer_future", "group", "calendar", "calendar_year_range"})
 
 TOP_LEVEL_KEYS: FrozenSet[str] = frozenset({
     "tokenizer", "constructions", "conventions", "quantifiers", "guards",
