@@ -57,7 +57,9 @@
       "orders": [
         "year_word GYEAR",
         "GYEAR"
-      ]
+      ],
+      "calendar": "solar_hijri_arithmetic",
+      "calendar_year_range": [1200, 1500]
     },
     "iso_date": {
       "orders": [
