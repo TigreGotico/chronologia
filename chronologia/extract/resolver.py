@@ -2009,9 +2009,25 @@ class Resolver:
                 hour += 24
         meridiem = match.slots.get("MERIDIEM")
         if meridiem is not None:
-            off = self.spec.meridiems[meridiem.text]
-            if off == 12 and hour < 12:
-                hour += 12
-            elif off == 0 and hour == 12:
-                hour = 0
+            if meridiem.text in self.spec.night_meridiems:
+                # NIGHT is a daypart BAND that crosses midnight, not a uniform
+                # +12 PM shift.  "the one at night" is 01:00 (not 13:00) and
+                # "twelve at night" is midnight 00:00 (not noon).  The band
+                # splits the named 12-hour clock into: small hours 1..5 stay
+                # AM (01..05), evening hours 6..11 are PM (18..23), and twelve
+                # is midnight.  The AM/PM cut at 5|6 follows Arabic usage,
+                # where ليل covers the small hours as AM and the late evening
+                # as PM (cf. CLDR day-period bands for ar: night starts at
+                # 00:00 and morning at ~06:00).
+                if hour == 12:
+                    hour = 0
+                elif 6 <= hour <= 11:
+                    hour += 12
+                # hours 1..5 keep their AM value unchanged
+            else:
+                off = self.spec.meridiems[meridiem.text]
+                if off == 12 and hour < 12:
+                    hour += 12
+                elif off == 0 and hour == 12:
+                    hour = 0
         return hour, minute, second

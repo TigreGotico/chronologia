@@ -1,0 +1,7 @@
+# "gecə" (night) scopes the clock to the NIGHT band, which crosses midnight --
+# it is NOT a uniform +12 PM shift.  "gecə saat üçdə" is three at night 03:00
+# (small hours, AM), while "gecə saat doqquz" is nine at night 21:00 (late
+# evening, PM); "gecə saat on iki" is midnight 00:00.  The resolver applies the
+# midnight-crossing band-split (small hours 1..5 -> AM, evening 6..11 -> PM,
+# twelve -> midnight).  (Azərbaycan dilinin izahlı lüğəti, s.v. "gecə".)
+gecə
