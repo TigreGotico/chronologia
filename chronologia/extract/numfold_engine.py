@@ -70,6 +70,15 @@ class NumberGrammar:
     ``single_fallback`` -- for a one-token run the back-end rejects, a
                       surface->value lookup (returns ``None`` when absent).
     ``pre``        -- an optional token-stream pre-pass run before the scan.
+    ``bridge_ok``  -- optional gate on a joiner bridge: given the value read so
+                      far and the value of the atom the joiner introduces, is
+                      the join a genuine additive continuation of the *same*
+                      number (``vinte e cinco`` == 25)?  When it returns False
+                      the run is cut at the joiner: each side folds on its own
+                      and the joiner survives as its own token, so a spoken
+                      clock minute ("sete e vinte" == 7 + a MINUTE of 20) is no
+                      longer swallowed into a single wrong numeral.  Left None
+                      (the default) every joiner bridges, exactly as before.
     """
     is_number: Callable[[Token], bool]
     extract: Callable[[str], Any]
@@ -77,6 +86,7 @@ class NumberGrammar:
     joiner_in_text: bool = True
     single_fallback: Optional[Callable[[str], Any]] = None
     pre: Optional[Callable[[Tuple[Token, ...]], Tuple[Token, ...]]] = None
+    bridge_ok: Optional[Callable[[float, float], bool]] = None
 
 
 def make_fold(grammar: NumberGrammar
@@ -112,6 +122,73 @@ def make_fold(grammar: NumberGrammar
     fallback = grammar.single_fallback
     keep_joiner = grammar.joiner_in_text
     pre = grammar.pre
+    bridge_ok = grammar.bridge_ok
+
+    def _value_of(run):
+        """The back-end value of a homogeneous run, with the single-token
+        ordinal fallback -- ``None`` when the back-end reads no number."""
+        if keep_joiner:
+            text = " ".join(t.text for t in run)
+        else:
+            text = " ".join(t.text for t in run if not joiner(t))
+        value = extract(text)
+        if ((value is False or value is None) and fallback is not None
+                and len(run) == 1):
+            fb = fallback(run[0].text)
+            if fb is not None:
+                value = fb
+        return None if value is False or value is None else value
+
+    def _fold_run(run, into):
+        """Fold one homogeneous run (no non-additive cuts) into ``into``."""
+        value = _value_of(run)
+        if value is None:
+            into.extend(run)
+            return
+        num = int(value) if float(value).is_integer() else float(value)
+        into.append(Token(text=str(num), raw=str(num), index=0,
+                          is_number=True, value=num,
+                          char_start=run[0].char_start,
+                          char_end=run[-1].char_end))
+
+    def _segment(run, into):
+        """Split ``run`` at every joiner the ``bridge_ok`` gate rejects, then
+        fold each segment on its own.  A rejected joiner survives as its own
+        token so the clock grammar can read it as a CLOCKDIR connector."""
+        seg = []          # tokens of the current additive number
+        seg_val = None
+        k = 0
+        m = len(run)
+        while k < m:
+            tok = run[k]
+            if joiner(tok) and seg:
+                atom = []
+                j = k + 1
+                while j < m and not joiner(run[j]):
+                    atom.append(run[j])
+                    j += 1
+                combined = seg + [tok] + atom
+                comb_val = _value_of(combined)
+                atom_val = _value_of(atom)
+                if (comb_val is not None and seg_val is not None
+                        and atom_val is not None
+                        and comb_val == seg_val + atom_val
+                        and bridge_ok(seg_val, atom_val)):
+                    seg, seg_val = combined, comb_val
+                    k = j
+                    continue
+                # non-additive joiner: close the segment, pass the joiner
+                # through untouched, resume with the following atom.
+                _fold_run(seg, into)
+                into.append(tok)
+                seg, seg_val = atom, atom_val
+                k = j
+                continue
+            seg.append(tok)
+            seg_val = _value_of(seg)
+            k += 1
+        if seg:
+            _fold_run(seg, into)
 
     def fold(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         if pre is not None:
@@ -147,25 +224,10 @@ def make_fold(grammar: NumberGrammar
                 out.extend(run)
                 i = j
                 continue
-            if keep_joiner:
-                text = " ".join(t.text for t in run)
+            if bridge_ok is not None:
+                _segment(run, out)
             else:
-                text = " ".join(t.text for t in run if not joiner(t))
-            value = extract(text)
-            if ((value is False or value is None) and fallback is not None
-                    and len(run) == 1):
-                fb = fallback(run[0].text)
-                if fb is not None:
-                    value = fb
-            if value is False or value is None:
-                out.extend(run)
-                i = j
-                continue
-            num = int(value) if float(value).is_integer() else float(value)
-            out.append(Token(text=str(num), raw=str(num), index=0,
-                             is_number=True, value=num,
-                             char_start=run[0].char_start,
-                             char_end=run[-1].char_end))
+                _fold_run(run, out)
             i = j
         return reindex(out)
 
