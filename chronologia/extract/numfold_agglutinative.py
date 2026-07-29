@@ -76,6 +76,48 @@ def _make_fold(lang: str, extra_values: Dict[str, float] | None = None,
     return fold
 
 
+def _with_bare_case_hour(fold: Callable[[Tuple[Token, ...]], Tuple[Token, ...]],
+                         hours: Dict[str, float], at_surface: str,
+                         skip_before: FrozenSet[str] = frozenset()
+                         ) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
+    """Wrap a ``fold`` so a bare CASE-SUFFIXED clock hour binds its HOUR.
+
+    The colloquial telling-time numeral drops the "o'clock" word and glues the
+    temporal/ablative/inessive case suffix straight onto the cardinal -- hu
+    "háromkor" (at three), fi "kolmelta", eu "hiruretan".  The cardinal back-end
+    does not read the glued form, and folding it to a bare number would leave the
+    clock frame no cue at all: standalone the digit binds nothing (returns None),
+    and after a daypart lead the numeral is stranded and only the band comes back.
+
+    The one glued token is split into a synthetic ``at`` marker followed by the
+    hour number, so the universal "at HOUR" clock order (present in every locale)
+    binds it -- standalone and after a daypart/meridiem lead ("MERIDIEM at? HOUR").
+    The marker carries an empty ``raw`` and a zero-width extent, so it never
+    reaches the remainder text.  It is suppressed when the hour already trails an
+    explicit clock marker (Finnish "kello kolmelta"), keeping that frame's parse
+    byte-identical.  ``at_surface`` must be a surface in the locale's
+    ``marker_at.voc``; ``hours`` is the ``{glued surface: value}`` telling-time map.
+    """
+    def pre(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        out = []
+        for i, t in enumerate(tokens):
+            value = None if t.is_number else hours.get(t.text)
+            if value is None:
+                out.append(t)
+                continue
+            num = int(value) if float(value).is_integer() else float(value)
+            led = i > 0 and tokens[i - 1].text in skip_before
+            if not led:
+                out.append(Token(text=at_surface, raw="", index=0,
+                                 char_start=t.char_start,
+                                 char_end=t.char_start))
+            out.append(replace(t, text=str(num), raw=t.raw,
+                               is_number=True, value=num))
+        return fold(reindex(tuple(out)))
+
+    return pre
+
+
 # -- Greek: feminine clock-hour numerals agree with the elided ώρα ----------
 # extract_number_el already reads most; the run-membership gate needs the
 # feminine surfaces the *pronounce* side (neuter) does not emit.
@@ -144,7 +186,7 @@ _HU_KOR_HOURS = {
     "hatkor": 6, "hétkor": 7, "nyolckor": 8, "kilenckor": 9, "tízkor": 10,
     "tizenegykor": 11, "tizenkettőkor": 12,
 }
-fold_hu = _make_fold("hu", {"két": 2, **_HU_KOR_HOURS},
+fold_hu = _make_fold("hu", {"két": 2},
                      exclude=frozenset({"hét"}))
 # Hungarian spells the day-of-month with a single-token ordinal that the
 # cardinal back-end does not read ("tizenötödike április" = the 15th of April);
@@ -153,6 +195,11 @@ fold_hu = _make_fold("hu", {"két": 2, **_HU_KOR_HOURS},
 # model.  "hét" (week/seven) is never an ordinal surface, so the exclude above
 # is unaffected.  Magyar helyesírás (Akadémiai): sorszámnevek.
 fold_hu = with_ordinals(fold_hu, "hu")
+# The bare "-kor" telling-time forms (háromkor, nyolckor, ...) drop "óra" and
+# glue -kor onto the numeral; split them so "at HOUR" binds ("kor" is the hu
+# marker_at surface).  "N órakor" keeps its own "órakor" oclock token and is
+# untouched here.
+fold_hu = _with_bare_case_hour(fold_hu, _HU_KOR_HOURS, "kor")
 
 
 # -- Finnish: genitive numerals used in the "N <unit> kuluttua/sitten" slot -
@@ -175,7 +222,7 @@ _FI_ABLATIVE_HOURS = {
     "kuudelta": 6, "seitsemältä": 7, "kahdeksalta": 8, "yhdeksältä": 9,
     "kymmeneltä": 10, "yhdeltätoista": 11, "kahdeltatoista": 12,
 }
-fold_fi = _make_fold("fi", {**_FI_GENITIVE, **_FI_ABLATIVE_HOURS})
+fold_fi = _make_fold("fi", {**_FI_GENITIVE})
 # Finnish spells the day-of-month with a single-token ordinal the cardinal
 # back-end does not read in date position ("viidestoista huhtikuuta" = the 15th
 # of April).  ``pronounce_ordinal_fi`` emits every 1..31 as one compound word
@@ -183,6 +230,12 @@ fold_fi = _make_fold("fi", {**_FI_GENITIVE, **_FI_ABLATIVE_HOURS})
 # derives the whole range from the model.  Iso suomen kielioppi (VISK) §770:
 # järjestysluvut.
 fold_fi = with_ordinals(fold_fi, "fi")
+# The bare ablative telling-time forms (kolmelta, yhdeksältä, ...) drop "kello"
+# and carry -lta/-ltä alone; split them so "at HOUR" binds ("kello" is the fi
+# marker_at surface).  When "kello" is already spoken ("kello kolmelta") the
+# synthetic marker is suppressed so that frame stays byte-identical.
+fold_fi = _with_bare_case_hour(fold_fi, _FI_ABLATIVE_HOURS, "kello",
+                               skip_before=frozenset({"kello", "klo"}))
 
 
 # -- Estonian: genitive numerals used in the "N <unit> pärast/tagasi" slot --
@@ -211,12 +264,17 @@ _EU_HOUR_FORMS = {
     "ordubata": 1, "ordubiak": 2, "hirurak": 3, "laurak": 4, "bostak": 5,
     "seirak": 6, "zazpirak": 7, "zortzirak": 8, "bederatziak": 9,
     "hamarrak": 10, "hamaikak": 11, "hamabiak": 12,
-    # inessive "at N o'clock" ("hiruretan" = at three); the plural hour numeral
-    # carries the -etan case, so it is one word the cardinal back-end does not
-    # read.  1 and 2 are two-word forms ("ordu batean", "ordu bietan") and fold
-    # via the case-suffix pre-pass, not here.  Source: Wiktionary, -etan
-    # (https://en.wiktionary.org/wiki/-etan#Basque), inessive plural; Euskara
-    # batua telling-time forms (Euskaltzaindia, orduak).
+}
+# inessive "at N o'clock" ("hiruretan" = at three); the plural hour numeral
+# carries the -etan case, so it is one word the cardinal back-end does not read
+# AND, with the "o'clock" word dropped, it leaves the clock frame no cue.  Split
+# to a synthetic "at" ("etan" is the eu marker_at surface) + the hour digit so
+# "at HOUR" / "MERIDIEM at? HOUR" binds it standalone and after a daypart lead.
+# 1 and 2 are two-word forms ("ordu batean", "ordu bietan") and fold via the
+# case-suffix pre-pass, not here.  Source: Wiktionary, -etan
+# (https://en.wiktionary.org/wiki/-etan#Basque), inessive plural; Euskara batua
+# telling-time forms (Euskaltzaindia, orduak).
+_EU_INESSIVE_HOURS = {
     "hiruretan": 3, "lauretan": 4, "bostetan": 5, "seietan": 6,
     "zazpietan": 7, "zortzietan": 8, "bederatzietan": 9, "hamarretan": 10,
     "hamaiketan": 11, "hamabietan": 12,
@@ -257,3 +315,7 @@ def fold_eu(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 # explicitly.  Source: Euskaltzaindia, zenbaki ordinalak (lehen(engo), bigarren,
 # hirugarren ...).
 fold_eu = with_ordinals(fold_eu, "eu", {"lehen": 1, "lehenengo": 1})
+# Bind the bare inessive telling-time hour ("hiruretan" = at three) the same way
+# hu/fi bind their glued clock hours: split to a synthetic "at" + the hour digit
+# so "at HOUR" (and "MERIDIEM at? HOUR" after "goizeko"/"arratsaldeko") binds it.
+fold_eu = _with_bare_case_hour(fold_eu, _EU_INESSIVE_HOURS, "etan")
