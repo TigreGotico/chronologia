@@ -925,6 +925,8 @@ easter             | pl | wielkanoc ;; niedziela wielkanocna
 palm_sunday     | pl | niedziela palmowa
 good_friday        | pl | wielki piątek
 easter_monday      | pl | poniedziałek wielkanocny ;; lany poniedziałek
+corpus_christi     | pl | boże ciało ;; uroczystość najświętszego ciała i krwi chrystusa
+boxing_day         | pl | drugi dzień świąt bożego narodzenia ;; drugi dzień bożego narodzenia ;; drugi dzień świąt ;; drugie święto bożego narodzenia ;; święty szczepan
 all_saints         | pl | wszystkich świętych
 halloween          | pl | halloween
 valentines         | pl | walentynki

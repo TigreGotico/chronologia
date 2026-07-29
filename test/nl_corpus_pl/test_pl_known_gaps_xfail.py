@@ -7,10 +7,11 @@ a green tripwire (the suite goes red the moment the behaviour is corrected, so
 the assertion can be promoted to a normal test).  No wrong gold is ever
 committed -- the asserted value is what a Polish speaker means.
 
-Gaps captured (anchor Tuesday 2017-06-27 13:04):
+Formerly-captured gaps, now bound (anchor Tuesday 2017-06-27 13:04):
 
 * Boże Ciało (Corpus Christi, movable Easter + 60): the ``corpus_christi`` key
-  exists but carries no Polish spoken surface yet, so "boże ciało" strands.
+  now carries the Polish spoken surface "boże ciało", so it binds and consumes
+  the whole phrase against an explicit year -- promoted to a normal assertion.
 
 (Święto Pracy, Wniebowzięcie NMP, Święto Niepodległości and the named feast
 "Konstytucji 3 Maja" were formerly listed here as registry gaps; they now bind
@@ -35,7 +36,6 @@ _FIXED_GAPS = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason="known pl gap: see module docstring")
 @pytest.mark.parametrize("phrase,gold", _FIXED_GAPS, ids=[c[0] for c in _FIXED_GAPS])
 def test_known_gap(phrase, gold):
     r = parse(phrase)
