@@ -137,6 +137,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.text in spec.clock_landmarks
     if name == "DAYPART":
         return token.text in spec.dayparts
+    if name == "DPDEIX":
+        return token.text in spec.daypart_deictics
     if name == "ZONE":
         # the base acronym ("utc"/"gmt") must be a known zone surface; any
         # trailing signed offset ("utc+2") rides on the same token and is

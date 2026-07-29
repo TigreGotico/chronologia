@@ -120,6 +120,13 @@
     "extend": {
       "season_ref": [
         "SEASON REL_MARKER"
+      ],
+      "scoped_ordinal": [
+        "WEEKDAY ORD MONTH YEAR?"
+      ],
+      "daypart_ref": [
+        "DPDEIX DAYPART",
+        "DAYPART REL_MARKER"
       ]
     }
   }

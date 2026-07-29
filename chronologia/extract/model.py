@@ -270,6 +270,11 @@ class LangSpec:
     # itself lives in chronologia.dayparts (CLDR-cited), keyed by that name.
     # Facts from the ``daypart_<name>.voc`` filename convention.
     dayparts: Mapping[str, str] = field(default_factory=dict)
+    # deictic daypart selector surface -> "past"/"future": a marker that picks
+    # the nearest past/future occurrence of a time-of-day band rather than a
+    # fixed day offset (Indonesian "tadi"/"nanti").  Facts from the
+    # ``marker_daypart_past.voc``/``marker_daypart_future.voc`` filenames.
+    daypart_deictics: Mapping[str, str] = field(default_factory=dict)
     # quantifier surface -> count ("a" -> 1, "couple" -> 2, "half" -> 0.5)
     quantifiers: Mapping[str, float] = field(default_factory=dict)
     # weekend surface forms ("weekend", "fim de semana", "Wochenende", ...)

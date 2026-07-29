@@ -22,13 +22,14 @@ _WRONG = [
     # "tadi malam" = last night = YESTERDAY evening; parser gives tonight.
     ("tadi malam", AstroDate(2017, 6, 26, 18, 0)),
     # ordinal-weekday-of-month: "Senin ketiga Maret 2019" = the third Monday of
-    # March 2019 = 2019-03-18; parser folds the bare weekday and strands the
-    # ordinal + month (homograph handling tracked in #228/#237).
+    # March 2019 = 2019-03-18. Indonesian word order is WEEKDAY + ORDINAL +
+    # MONTH (unlike the Romance ORD WEEKDAY of MONTH); fixed by the id
+    # ``scoped_ordinal`` "WEEKDAY ORD MONTH YEAR?" order plus spelled-ordinal
+    # folding ("ketiga" -> 3). Now green.
     ("Senin ketiga Maret 2019", AstroDate(2019, 3, 18)),
 ]
 
 
-@pytest.mark.xfail(strict=True, reason="id: mis-resolved deictic / ordinal-weekday")
 @pytest.mark.parametrize("text,gold_start", _WRONG)
 def test_wrong_resolution(text, gold_start):
     assert span(text, A).start == gold_start
@@ -38,7 +39,6 @@ def test_wrong_resolution(text, gold_start):
 _RESIDUE = ["pagi ini", "tadi pagi", "nanti malam"]
 
 
-@pytest.mark.xfail(strict=True, reason="id: daypart deictic strands a modifier word")
 @pytest.mark.parametrize("text", _RESIDUE)
 def test_daypart_deictic_fully_consumed(text):
     r = parse(text, A)

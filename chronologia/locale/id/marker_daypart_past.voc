@@ -1,0 +1,5 @@
+# Deictic daypart selector: the NEAREST PAST occurrence of a time-of-day band.
+# "tadi pagi" = this (past) morning (today, already begun); "tadi malam" = last
+# night (tonight's band has not begun, so the nearest past night is yesterday's).
+# Source: Wiktionary, tadi — https://en.wiktionary.org/wiki/tadi
+tadi
