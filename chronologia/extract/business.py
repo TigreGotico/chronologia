@@ -53,7 +53,8 @@ from chronologia.civil_holidays import is_civil_holiday
 from chronologia.extract.anchored import _gap_words
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
-                                              _day_span, _midnight)
+                                              _day_span, _midnight,
+                                              _pivot_two_digit_year)
 
 Pair = Tuple[Match, Resolution]
 
@@ -89,26 +90,55 @@ def _is_day_unit(tok: Token, spec: LangSpec) -> bool:
     return spec.units.get(tok.text) == "day"
 
 
+def _is_year_token(tok: Token) -> bool:
+    """True when ``tok`` reads as a written year, mirroring the ``YEAR`` slot
+    matcher: a bare number too big to be a day/count (>=32), written with >=4
+    digits, or a two-digit run carrying the apostrophe cue ("'19")."""
+    if not tok.is_number:
+        return False
+    raw = tok.raw.rstrip(".")
+    return ((tok.value or 0) >= 32 or len(raw) >= 4
+            or (tok.apostrophe and len(raw.lstrip("'")) == 2))
+
+
+def _trailing_year(tokens, p: int, spec: LangSpec, scan_gap, anchor: datetime
+                   ) -> Optional[Tuple[int, int]]:
+    """An explicit year sitting just past a named month ("of March 2019", "de
+    marzo de 2019"), modulo an article/of gap.  Returns ``(year, end_index)``
+    with ``end_index`` one past the year token; otherwise ``None``."""
+    k = p
+    while k < len(tokens) and tokens[k].text in scan_gap:
+        k += 1
+    if k < len(tokens) and _is_year_token(tokens[k]):
+        return _pivot_two_digit_year(tokens[k], anchor.year), k + 1
+    return None
+
+
 def _month_scope(tokens, hi: int, spec: LangSpec, gap, anchor: datetime
                  ) -> Optional[Tuple[datetime, int, Set[int]]]:
     """A trailing "of <month>" scope on a business-day count.
 
     "the first business day of next month" / "the third working day of July"
     scopes the count to a calendar month rather than the anchor.  The month is
-    either **named** ("of July", this anchor year) or **relative** ("of
-    this|next|last month", "of the month").  Returns ``(first, end_index,
-    consumed_ids)`` where ``first`` is midnight of that month's first day (so
-    the caller derives the nth or last business day inside it); otherwise
-    ``None``.
+    either **named** ("of July", anchor year -- or an explicit trailing year,
+    "of March 2019") or **relative** ("of this|next|last month", "of the
+    month").  Returns ``(first, end_index, consumed_ids)`` where ``first`` is
+    midnight of that month's first day (so the caller derives the nth or last
+    business day inside it); otherwise ``None``.
     """
     scan_gap = gap | frozenset(spec.connectors.get("of", ()))
     k = hi
     while k < len(tokens) and tokens[k].text in scan_gap:
         k += 1
-    # named month: "of July"
+    # named month: "of July", optionally with an explicit year "of March 2019"
     if k < len(tokens) and tokens[k].text in spec.months:
         month = spec.months[tokens[k].text]
-        return datetime(anchor.year, month, 1), k + 1, set(range(hi, k + 1))
+        year = anchor.year
+        end = k + 1
+        yr = _trailing_year(tokens, k + 1, spec, scan_gap, anchor)
+        if yr is not None:
+            year, end = yr
+        return datetime(year, month, 1), end, set(range(hi, end))
     # relative month: "of (this|next|last) month" / "of the month"
     month_words = spec.connectors.get("month_word", frozenset())
     if not month_words:

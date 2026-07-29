@@ -80,3 +80,31 @@ def test_ancho_de_un_dia():
 def test_negativos(text):
     nomatch(text)
     nomatch(text, "ES")
+
+
+# -- día hábil de un mes NOMBRADO + AÑO explícito --------------------------
+# El año explícito debe vincularse: la cuenta se acota al mes nombrado de ESE
+# año, no al año del ancla.  Oro por aritmética lunes-viernes independiente
+# (sin jurisdicción, ciego a festivos).
+#
+#   marzo 2019:  1 vie  4 lun  5 mar          -> 3er hábil = 5 mar
+#   enero 2020:  1 mié (1er hábil)            -> 1er hábil = 1 ene
+#   junio 2018: 29 vie = último hábil de junio
+
+@pytest.mark.parametrize("text,expected", [
+    ("el tercer día hábil de marzo de 2019", date(2019, 3, 5)),
+    ("el primer día laborable de enero de 2020", date(2020, 1, 1)),
+    ("el último día hábil de junio de 2018", date(2018, 6, 29)),
+])
+def test_dia_habil_mes_nombrado_con_anio(text, expected):
+    assert start(text) == _ad(expected)
+
+
+@pytest.mark.parametrize("text", [
+    "el tercer día hábil de marzo de 2019",
+    "el último día hábil de junio de 2018",
+])
+def test_anio_no_queda_suelto(text):
+    r = extract_timespan(text, "es", ANCHOR)
+    assert not any(ch.isdigit() for ch in r[1]), \
+        f"{text!r} dejó suelto un año: {r[1]!r}"

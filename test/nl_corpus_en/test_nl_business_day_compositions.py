@@ -60,6 +60,49 @@ def test_business_day_of_month(text, expected):
     assert start(text) == _ad(expected)
 
 
+# -- (A') Nth / last business day of a NAMED month + EXPLICIT year ---------
+# The explicit trailing year must bind: the count is scoped to the named month
+# of THAT year, not the anchor year.  Gold by independent Mon-Fri arithmetic
+# (holiday-blind, no jurisdiction).
+#
+#   March 2019:  1 Fri  2 Sat  3 Sun  4 Mon  5 Tue  -> 3rd biz = Mar 5
+#   Jan   2020:  1 Wed(1st biz)  2 Thu(2nd)          -> 1st biz = Jan 1
+#   June  2018: 29 Fri = last business day of June 2018
+#   Dec   2021: 31 Fri = last business day
+#   Feb   2016:  1 Mon(1st) 2 Tue 3 Wed(3rd)         -> 3rd biz = Feb 3
+
+@pytest.mark.parametrize("text,expected", [
+    ("the third working day of March 2019", date(2019, 3, 5)),
+    ("the first business day of January 2020", date(2020, 1, 1)),
+    ("the last working day of June 2018", date(2018, 6, 29)),
+    ("the last business day of December 2021", date(2021, 12, 31)),
+    ("the third business day of February 2016", date(2016, 2, 3)),
+])
+def test_business_day_of_named_month_with_year(text, expected):
+    assert start(text) == _ad(expected)
+
+
+@pytest.mark.parametrize("text", [
+    "the third working day of March 2019",
+    "the last working day of June 2018",
+])
+def test_year_not_stranded(text):
+    assert not any(ch.isdigit() for ch in rem(text)), \
+        f"{text!r} stranded a year: {rem(text)!r}"
+
+
+# -- yearless + relative-month stay byte-identical (anchor-relative) --------
+
+@pytest.mark.parametrize("text,expected", [
+    ("the third working day of March", date(2017, 3, 3)),        # anchor 2017
+    ("the third business day of July", date(2017, 7, 5)),
+    ("the last working day of this month", date(2017, 6, 30)),
+    ("the last business day of next month", date(2017, 7, 31)),
+])
+def test_yearless_and_relative_month_unchanged(text, expected):
+    assert start(text) == _ad(expected)
+
+
 # -- (B) N business days after/before a day-of-month reference -------------
 
 @pytest.mark.parametrize("text,expected", [
