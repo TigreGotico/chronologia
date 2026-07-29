@@ -247,3 +247,13 @@ def fold_eu(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         merged.append(t)
         i += 1
     return _eu_numfold(reindex(tuple(merged)))
+
+
+# Basque spells the ordinal-weekday-of-month selector with a spelled ordinal the
+# cardinal back-end does not read ("martxoaren hirugarren astelehena" = the third
+# Monday of March).  ``pronounce_ordinal_eu`` emits the ``-garren`` series
+# (bigarren, hirugarren, laugarren ...) and ``lehenengo`` for 1; the short first
+# ordinal ``lehen`` is the attested idiom the pronouncer omits, so it is supplied
+# explicitly.  Source: Euskaltzaindia, zenbaki ordinalak (lehen(engo), bigarren,
+# hirugarren ...).
+fold_eu = with_ordinals(fold_eu, "eu", {"lehen": 1, "lehenengo": 1})
