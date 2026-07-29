@@ -163,11 +163,18 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # marts", Bulgarian "началото на март" with ``на`` bound as ``of``).  The
     # one order therefore inherits cleanly into the pre-posed-PART locales
     # (Germanic, Romance, all Slavic bar none, Austronesian id/ms) with no
-    # per-locale exception.  The genuinely different word order -- the Turkic
-    # POSTPOSED possessive ("mart başı", MONTH then PART) -- is not expressible
-    # by adding a leading-``article?`` order and stays a per-locale ``extend``.
+    # per-locale exception.  A trailing explicit year ("early March 2019",
+    # "início de março de 2019") places the third inside the NAMED year; the
+    # optional ``of?`` BEFORE ``YEAR?`` covers BOTH the connector-less trailing
+    # year (Germanic/Italian "marzo 2019") AND the Romance connector one
+    # ("março DE 2019", "marzo DE 2019" -- the ``de``/``del`` bound as ``of``),
+    # and both stay optional so the yearless form ("early March") is unchanged.
+    # The genuinely different word order -- the Uralic/Turkic POSTPOSED
+    # possessive ("mart başı", "március eleje", MONTH then PART) -- is not
+    # expressible by adding a leading-``article?`` order and stays a per-locale
+    # ``extend``; those locales carry the trailing ``YEAR?`` on their own order.
     "month_fuzzy": [
-        "article? PART of? MONTH YEAR?",
+        "article? PART of? MONTH of? YEAR?",
     ],
     # "this morning", "tonight", "yesterday evening", "tomorrow afternoon" --
     # a time-of-day band selected deictically.  ``DAYPART`` binds the locale's

@@ -10,10 +10,11 @@ so a future fix flips these green automatically.
    test_nl_resweep_clock.py in this directory, which sweep exactly that
    vocabulary and nothing else).
 
-2. "início/meados/fim de <mês>" (month-thirds, test_nl_month_thirds.py) does
-   not accept a trailing explicit year -- "início de março de 2020" resolves
-   the third inside the ANCHOR's year (2017) and leaves "de 2020" as unread
-   residue in the parse, instead of resolving inside 2020.
+2. "início/meados/fim de <mês> de <ano>" (month-thirds with a trailing
+   explicit year) now places the third inside the NAMED year -- the former
+   silent-wrong (third resolved in the anchor's 2017, "de 2020" left as unread
+   residue) is FIXED; the pin below asserts the correct 2020 span.  See
+   test_nl_month_thirds_year.py for the full early/mid/late sweep.
 """
 from datetime import timedelta
 
@@ -42,10 +43,9 @@ def test_additive_ten_minutes_with_meridiem_not_supported_yet():
     assert start("às três e dez da tarde") == ad(dt)
 
 
-@pytest.mark.xfail(strict=True, reason="month-thirds ignores a trailing "
-                    "explicit year; resolves within the anchor's own year "
-                    "(2017) instead of the named 2020")
-def test_month_third_explicit_year_not_supported_yet():
+def test_month_third_explicit_year_binds_named_year():
+    # Fixed: "início/meados/fim de <mês> de <ano>" now places the third inside
+    # the NAMED year (was: resolved in the anchor's own 2017, year stranded).
     s, e = start_end("início de março de 2020")
     assert s == AstroDate(2020, 3, 1)
     assert e == AstroDate(2020, 3, 11, 8, 0)

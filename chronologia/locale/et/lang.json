@@ -78,7 +78,7 @@
     },
     "month_fuzzy": {
       "orders": [
-        "MONTH PART"
+        "MONTH PART YEAR?"
       ]
     },
     "quarter_ref": {
