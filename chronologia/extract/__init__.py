@@ -450,8 +450,16 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     # readings in every language at once.  The open reading is untouched: a
     # leading marker sits at token 0, where :func:`_first_to_split` cannot
     # split because that would leave the left endpoint empty.
+    # a "to" surface that is licensed ONLY after an explicit from/between lead
+    # -- a directional/dative preposition too common to trust unconditionally
+    # (Hebrew proclitic ל־ "to/for": "מ־ינואר ל־אפריל" is a range, a bare
+    # "ל־3 שעות" is not).  A locale declares these via ``marker_to_after_from``;
+    # they join the range terminators so the split can find them, and join the
+    # lead-required guard below so a bare "A ל B" never fabricates a range.
+    lead_only_to = tuple(spec.connectors.get("to_after_from", ()))
     to_surf = _conn_surfaces(
-        spec, "to", _RANGE_TO + tuple(spec.connectors.get("until", ())))
+        spec, "to",
+        _RANGE_TO + tuple(spec.connectors.get("until", ())) + lead_only_to)
     from_surf = _conn_surfaces(spec, "from", _RANGE_FROM)
     between_surf = _conn_surfaces(spec, "between", _RANGE_BETWEEN)
     and_surf = _conn_surfaces(spec, "and", _RANGE_AND)
@@ -469,6 +477,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                      for s in set(spec.connectors.get("to", ()))
                      | set(spec.connectors.get("until", ()))
                      if s in at_words}
+    lead_required |= {s.lower() for s in lead_only_to}
 
     def endpoint(sub):
         return _range_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)

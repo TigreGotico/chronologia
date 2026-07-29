@@ -1,0 +1,26 @@
+# Hebrew range "to" boundary that is licensed ONLY after an explicit "from"
+# lead (מ־/מן) or a "between" lead (בין) -- the proclitic ל־ ("to/for").
+#
+# ל־ is the everyday directional/dative preposition ("נסעתי לתל אביב" -- "I
+# travelled to Tel Aviv"; "נתתי לו" -- "I gave to him"), a homograph that is
+# FAR more common as a plain preposition than as a range terminal.  Registered
+# globally as a range "to" marker it would fabricate a range out of any bare
+# "ל־<noun>", so it is kept out of the unconditional ``marker_to`` set (which
+# holds only עד, the unambiguous "from...until..." terminal) and gated here:
+# the engine wires these surfaces as range terminators only when a from-lead
+# (מ־/מן) or a between-lead (בין) sits earlier in the span, exactly the
+# lead-required guard the Romance directional "a" uses ("de junio a agosto"
+# fires; a bare "junio a las tres" does not).  So "מ־ינואר ל־אפריל" /
+# "בין ינואר ל־אפריל" resolve as ranges, while a bare "ל־3 שעות" ("for 3
+# hours") is left untouched.
+#
+# The proclitic attaches to its noun in running text ("לאפריל"); set off by a
+# maqaf/hyphen ("ל-אפריל") the tokenizer leaves ל as its own token, which is
+# the surface matched here.  The fused form is deliberately NOT split.
+# "ל־" (le-/la-): L. Glinert, *The Grammar of Modern Hebrew* (Cambridge UP),
+#   §9.2, §12 -- the inseparable preposition ל־ "to, for"; in the alternative
+#   temporal-range framing "מ... ל..." it is the terminal correlative of מ־
+#   "from" (Glinert notes "בין ... ל..." as the equally standard between-form
+#   alongside "בין ... ו...").
+# Also: Academy of the Hebrew Language, s.v. ל־.
+ל
