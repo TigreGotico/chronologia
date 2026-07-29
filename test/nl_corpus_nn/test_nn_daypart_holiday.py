@@ -76,13 +76,10 @@ def test_holiday_computus(text, d):
     assert start_end(text) == (AD(d), AD(d + timedelta(days=1)))
 
 
-# ---- BUG DOCUMENTATION: "<decade>-talet" collapses to a single year ----
-# "1990-talet" means the decade 1990-1999 (span 1990-01-01 .. 2000-01-01),
-# but the nn locale resolves it to the single year 1990.  Strict-xfail with
-# the CORRECT gold so the day it starts passing this flips to a failure.
-@pytest.mark.xfail(strict=True, reason="nn: <decade>-talet resolves to a "
-                                       "single year, not the full decade")
+# ---- "<decade>-talet" resolves to the full decade span ----
+# "1990-talet" means the decade 1990-1999 (span 1990-01-01 .. 2000-01-01).
+# The nn locale binds the "-talet" definite decade suffix to decade_ref.
 @pytest.mark.parametrize("dec", [1920, 1950, 1980, 1990, 2000, 2010])
-def test_decade_span_bug(dec):
+def test_decade_span(dec):
     assert start_end(f"{dec}-talet") == (AstroDate(dec, 1, 1),
                                          AstroDate(dec + 10, 1, 1))
