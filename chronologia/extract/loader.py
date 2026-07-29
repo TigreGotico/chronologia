@@ -144,6 +144,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     decade_words: Dict[str, int] = {}
     clock_landmarks: Dict[str, int] = {}
     dayparts: Dict[str, str] = {}
+    daypart_deictics: Dict[str, str] = {}
     clock_zones: Dict[str, int] = {}
     weekend_words: Set[str] = set()
 
@@ -196,6 +197,17 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             rel_markers.update({s: -1 for s in surfaces})
         elif base == "marker_this":
             rel_markers.update({s: 0 for s in surfaces})
+        elif base == "marker_daypart_past":
+            # deictic daypart selector picking the NEAREST PAST occurrence of a
+            # time-of-day band (Indonesian "tadi" -- "tadi pagi" = this (past)
+            # morning, "tadi malam" = last night); the day it lands on is not a
+            # fixed offset but depends on whether today's band has begun.
+            daypart_deictics.update({s: "past" for s in surfaces})
+        elif base == "marker_daypart_future":
+            # deictic daypart selector picking the NEAREST FUTURE occurrence of a
+            # time-of-day band (Indonesian "nanti" -- "nanti malam" = tonight,
+            # "nanti pagi" = tomorrow morning).
+            daypart_deictics.update({s: "future" for s in surfaces})
         elif base.startswith("clock_fraction_"):
             n = int(base[len("clock_fraction_"):])
             clock_fractions.update({s: n for s in surfaces})
@@ -369,6 +381,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         period_parts=period_parts,
         decade_words=decade_words, clock_landmarks=clock_landmarks,
         dayparts=dayparts,
+        daypart_deictics=daypart_deictics,
         clock_zones=clock_zones,
         weekend_words=frozenset(weekend_words),
         weekday_full=weekday_full,

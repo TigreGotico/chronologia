@@ -1441,6 +1441,11 @@ def fold_az(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 fold_id = _lazy_germanic_fold(
     "ovos_number_parser.numbers_id", "extract_number_id",
     {"setengah", "seperempat", "suku", "ribu", "juta", "miliar", "milyar"})
+# Indonesian spelled ordinals ("ketiga" third) fold to their digit so the
+# scoped_ordinal ``ORD`` slot binds ("Senin ketiga Maret" = the third Monday of
+# March); from the model's ``pronounce_ordinal_id`` (ke- prefix), plus the
+# alternative first-ordinal surface "kesatu" the pronouncer spells "pertama".
+fold_id = _with_ordinals(fold_id, "id", {"kesatu": 1})
 fold_ms = _lazy_germanic_fold(
     "ovos_number_parser.numbers_id", "extract_number_ms",
     {"setengah", "separuh", "suku", "ribu", "juta", "bilion", "miliar"})

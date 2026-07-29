@@ -397,6 +397,26 @@ class Resolver:
         standalone reading is the deictic-only path.
         """
         name = self.spec.dayparts[match.slots["DAYPART"].text]
+        dpx_tok = match.slots.get("DPDEIX")
+        if dpx_tok is not None:
+            # deictic daypart ("tadi pagi"/"nanti malam"): the marker names the
+            # NEAREST past/future occurrence of the band, so the day it lands on
+            # depends on whether today's band edge has passed the anchor.  This
+            # is what makes Indonesian "tadi pagi" = this morning (today's
+            # morning already began) but "tadi malam" = last night (tonight's
+            # band has not begun, so the nearest past night is yesterday's).
+            kind = self.spec.daypart_deictics[dpx_tok.text]
+            now = AstroDate.from_datetime(anchor)
+            band = _daypart_band(AstroDate.from_datetime(_midnight(anchor)), name)
+            if kind == "past" and band.start > now:
+                band = _daypart_band(
+                    AstroDate.from_datetime(_midnight(anchor) - timedelta(days=1)),
+                    name)
+            elif kind == "future" and band.start < now:
+                band = _daypart_band(
+                    AstroDate.from_datetime(_midnight(anchor) + timedelta(days=1)),
+                    name)
+            return Resolution(band, self._consumed(match))
         rel_tok = match.slots.get("REL_MARKER")
         off = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
         day = AstroDate.from_datetime(_midnight(anchor) + timedelta(days=off))
