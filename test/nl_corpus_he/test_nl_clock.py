@@ -40,6 +40,19 @@ def test_evening_meridiem(text, h):
     assert start(text) == clk(h, 0)
 
 
+# "ba-layla" (at night) is a midnight-crossing BAND, not a uniform +12 PM
+# shift: the small hours 1..5 stay AM, the late-night hours 6..11 go PM and
+# twelve is midnight 00:00.  AM ceiling follows the CLDR he night band
+# [22:00, 06:00) (morning opens at 06:00).  Gold hand-derived, never read
+# back from the parser.
+@pytest.mark.parametrize("text,h24", [
+    ("1 בלילה", 1), ("3 בלילה", 3), ("5 בלילה", 5),
+    ("6 בלילה", 18), ("10 בלילה", 22), ("12 בלילה", 0),
+])
+def test_night_band(text, h24):
+    assert start(text) == clk(h24, 0)
+
+
 def test_noon():
     assert start("צהריים") == clk(12, 0)
 

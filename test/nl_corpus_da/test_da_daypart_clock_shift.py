@@ -3,10 +3,13 @@
 
 Danish disambiguates a bare 12-hour reading with a trailing "om
 <daypart>en".  The afternoon/evening half (eftermiddag [12:00, 18:00),
-aften [18:00, 24:00)) is pm and adds twelve; the morning/night half
-(nat [00:00, 05:00), formiddag [10:00, 12:00)) is am and leaves the hour,
-rewriting only the noon/midnight edge.  Bands: Unicode CLDR 47 Day Period
-Rules, locale da (transcribed in chronologia.dayparts).
+aften [18:00, 24:00)) is pm and adds twelve; the morning half
+(formiddag [10:00, 12:00)) is am and leaves the hour.  "om natten" is a
+midnight-crossing BAND, not a flat am shift: the small hours 1..5 stay AM
+("klokken tre om natten" == 03:00), the late-night hours 6..11 are PM
+("klokken elleve om natten" == 23:00) and twelve is midnight 00:00.  AM
+ceiling follows the CLDR da nat band [00:00, 05:00).  Bands: Unicode CLDR 47
+Day Period Rules, locale da (transcribed in chronologia.dayparts).
 
 Gold is hand-derived from the sentence, never pinned from the engine.
 Anchor: Tuesday 2017-06-27 13:04.
@@ -36,9 +39,16 @@ def _am(h):
     return 0 if h == 12 else h
 
 
+def _night(h):
+    # midnight-crossing band: 12 -> midnight, 1..5 stay AM, 6..11 go PM
+    if h == 12:
+        return 0
+    return h if h <= 5 else h + 12
+
+
 @pytest.mark.parametrize("h", sorted(_HOURS))
 @pytest.mark.parametrize("part,shift", [("eftermiddagen", _pm), ("aftenen", _pm),
-                                        ("formiddagen", _am), ("natten", _am)])
+                                        ("formiddagen", _am), ("natten", _night)])
 def test_hour_times_daypart(h, part, shift):
     text = f"klokken {_HOURS[h]} om {part}"
     assert span(text).start == clk(shift(h), 0)

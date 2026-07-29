@@ -6,6 +6,12 @@ clock idioms ("e cuarto"/"e media"/"menos cuarto"/"en punto" crossed with
 <year>"), and month-thirds with an explicit trailing year.  Gold is
 independent arithmetic in every case.  Anchor Tue 2017-06-27, 13:04.
 
+"da noite" is a midnight-crossing BAND, not a uniform +12 PM shift: the
+small hours 1..5 stay AM and only the evening hours 6..11 go PM (AM ceiling
+follows the gl madrugada band [00:00, 06:00)).  So "ás N menos cuarto da
+noite" places (N-1):45 in the small hours for the low N rows -- e.g. "ás 4
+menos cuarto da noite" is 03:45, not 15:45.
+
 "cuarto trimestre de <year>" once collapsed to Q1 -- "cuarto" (the ordinal
 4th) is spelled like the clock quarter-hour fraction word and was withheld
 from the number fold -- now FIXED: the ordinal reading is licensed directly
@@ -101,27 +107,27 @@ def _clk(y, mo, d, h, mi):
 _CLOCK = [
     ('ás 1 e cuarto da mañá', (2017, 6, 28, 1, 15)),
     ('ás 1 e media da tarde', (2017, 6, 27, 13, 30)),
-    ('ás 1 menos cuarto da noite', (2017, 6, 28, 12, 45)),
+    ('ás 1 menos cuarto da noite', (2017, 6, 28, 0, 45)),
     ('ás 1 en punto da mañá', (2017, 6, 28, 1, 0)),
     ('ás 2 e cuarto da mañá', (2017, 6, 28, 2, 15)),
     ('ás 2 e media da tarde', (2017, 6, 27, 14, 30)),
-    ('ás 2 menos cuarto da noite', (2017, 6, 27, 13, 45)),
+    ('ás 2 menos cuarto da noite', (2017, 6, 28, 1, 45)),
     ('ás 2 en punto da mañá', (2017, 6, 28, 2, 0)),
     ('ás 3 e cuarto da mañá', (2017, 6, 28, 3, 15)),
     ('ás 3 e media da tarde', (2017, 6, 27, 15, 30)),
-    ('ás 3 menos cuarto da noite', (2017, 6, 27, 14, 45)),
+    ('ás 3 menos cuarto da noite', (2017, 6, 28, 2, 45)),
     ('ás 3 en punto da mañá', (2017, 6, 28, 3, 0)),
     ('ás 4 e cuarto da mañá', (2017, 6, 28, 4, 15)),
     ('ás 4 e media da tarde', (2017, 6, 27, 16, 30)),
-    ('ás 4 menos cuarto da noite', (2017, 6, 27, 15, 45)),
+    ('ás 4 menos cuarto da noite', (2017, 6, 28, 3, 45)),
     ('ás 4 en punto da mañá', (2017, 6, 28, 4, 0)),
     ('ás 5 e cuarto da mañá', (2017, 6, 28, 5, 15)),
     ('ás 5 e media da tarde', (2017, 6, 27, 17, 30)),
-    ('ás 5 menos cuarto da noite', (2017, 6, 27, 16, 45)),
+    ('ás 5 menos cuarto da noite', (2017, 6, 28, 4, 45)),
     ('ás 5 en punto da mañá', (2017, 6, 28, 5, 0)),
     ('ás 6 e cuarto da mañá', (2017, 6, 28, 6, 15)),
     ('ás 6 e media da tarde', (2017, 6, 27, 18, 30)),
-    ('ás 6 menos cuarto da noite', (2017, 6, 27, 17, 45)),
+    ('ás 6 menos cuarto da noite', (2017, 6, 28, 5, 45)),
     ('ás 6 en punto da mañá', (2017, 6, 28, 6, 0)),
     ('ás 7 e cuarto da mañá', (2017, 6, 28, 7, 15)),
     ('ás 7 e media da tarde', (2017, 6, 27, 19, 30)),

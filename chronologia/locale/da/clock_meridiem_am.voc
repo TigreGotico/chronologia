@@ -1,9 +1,9 @@
-# Postposed daypart words that keep a bare 12-hour clock reading in the
-# morning/night half (meridiem offset 0), the am counterpart of
-# clock_meridiem_pm.voc.  "klokken tre om natten" == 03:00, "klokken ni om
-# formiddagen" == 09:00; only the noon/midnight edge is rewritten (12 -> 0).
-# Bands: Unicode CLDR 47 Day Period Rules, locale da -- nat [00:00, 05:00),
-# morgen [05:00, 10:00) and formiddag [10:00, 12:00) are the am half.
-natten
+# Postposed morning daypart words that keep a bare 12-hour clock reading in
+# the AM half (meridiem offset 0), the am counterpart of
+# clock_meridiem_pm.voc.  "klokken ni om formiddagen" == 09:00; only the noon
+# edge is rewritten (12 -> 0).  Bands: Unicode CLDR 47 Day Period Rules,
+# locale da -- morgen [05:00, 10:00) and formiddag [10:00, 12:00) are the am
+# half.  ("natten" is NOT here: the night daypart crosses midnight -- see
+# clock_meridiem_night.voc.)
 morgenen
 formiddagen

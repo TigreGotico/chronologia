@@ -82,12 +82,16 @@ def _tarde_cases():
 
 
 def _noche_cases():
+    # "de la noche" is a midnight-crossing BAND, not a uniform +12 PM shift:
+    # the small hours 1..5 stay AM ("la una de la noche" == 01:00) and the
+    # evening hours 6..11 are PM ("las diez de la noche" == 22:00).  AM ceiling
+    # follows the es madrugada band [00:00, 06:00); RAE/DPD s.v. "noche".
     # doce excluded: "las doce de la noche" is an ambiguous idiom, dropped.
     out = []
     for nw, h in _NUM:
         if h == 12:
             continue
-        out.append((f"las {nw} de la noche", clk(h + 12, 0)))
+        out.append((f"las {nw} de la noche", clk(h if h <= 5 else h + 12, 0)))
     return out
 
 

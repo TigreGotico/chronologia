@@ -9,7 +9,12 @@ period instead of am/pm, and the four words map onto the 24-clock as:
     da madrugada  -> hour as spoken   (01..05, the small hours)
     da manhã      -> hour as spoken   (06..11)
     da tarde      -> hour + 12        (13..18)
-    da noite      -> hour + 12        (19..23)
+    da noite      -> midnight-crossing BAND: 1..5 stay AM (01..05),
+                     6..11 go PM (18..23), twelve is midnight 00:00
+
+"da noite" is NOT a uniform +12 shift: "uma da noite" is 01:00, not 13:00
+(the everyday spoken form; Dicionário Priberam, s.v. "noite").  The AM
+ceiling follows the pt madrugada band [00:00, 06:00).
 
 The minute-wide span then takes the ordinary prefer_future roll: an hour
 already past today lands tomorrow, an hour still ahead stays today.  Anchor is
@@ -30,16 +35,24 @@ from ._corpus import ANCHOR, ad, start, span
 _NUM = {1: "uma", 2: "duas", 3: "três", 4: "quatro", 5: "cinco", 6: "seis",
         7: "sete", 8: "oito", 9: "nove", 10: "dez", 11: "onze"}
 
-#: (period word, hour offset applied to the spoken numeral)
-_PERIODS = {"madrugada": 0, "manhã": 0, "tarde": 12, "noite": 12}
+#: (period word, hour offset applied to the spoken numeral); noite is a
+#: band-split, handled specially in _cases() rather than a flat offset.
+_PERIODS = {"madrugada": 0, "manhã": 0, "tarde": 12, "noite": None}
 
 #: idiomatic hour ranges per period (EP spoken usage)
 _HOURS = {
     "madrugada": range(1, 6),   # 1..5
     "manhã": range(6, 12),      # 6..11
     "tarde": range(1, 7),       # 1..6  -> 13..18
-    "noite": range(7, 12),      # 7..11 -> 19..23
+    "noite": range(1, 12),      # 1..5 stay AM, 6..11 -> 18..23 (band)
 }
+
+
+def _night(h):
+    # midnight-crossing band: 12 -> midnight, 1..5 stay AM, 6..11 go PM
+    if h == 12:
+        return 0
+    return h if h <= 5 else h + 12
 
 
 def _clk(hour):
@@ -55,7 +68,8 @@ def _cases():
         for h in _HOURS[period]:
             art = "à" if h == 1 else "às"
             text = f"{art} {_NUM[h]} da {period}"
-            out.append((text, _clk(h + off)))
+            gold = _clk(_night(h)) if period == "noite" else _clk(h + off)
+            out.append((text, gold))
     return out
 
 

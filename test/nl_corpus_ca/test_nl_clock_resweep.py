@@ -12,10 +12,13 @@ Two families, both anchored 2017-06-27 13:04 with prefer_future roll:
    (h-1):45 by the ordinary quarter-to convention.
 2. "les/la <hour> <dayperiod>" -- del matí / de la tarda / del vespre / de
    la nit -- swept across all 12 hours.  Gold uses the standard 12h->24h
-   AM/PM correspondence: matí keeps h mod 12 (12 -> 0, midnight); the three
-   afternoon/evening/night periods use h if h==12 else h+12 (noon stays
-   noon).  This is the ordinary civil-time convention, not something
-   inferred from the parser.
+   AM/PM correspondence: matí keeps h mod 12 (12 -> 0, midnight); tarda and
+   vespre use h if h==12 else h+12.  "de la nit" is a midnight-crossing BAND,
+   not a uniform +12: the small hours 1..5 stay AM ("la una de la nit" ==
+   01:00), the evening hours 6..11 are PM ("les deu de la nit" == 22:00) and
+   twelve is midnight 00:00.  AM ceiling follows the ca madrugada band
+   [00:00, 06:00); DIEC2 s.v. "nit".  This is the ordinary civil-time
+   convention, not something inferred from the parser.
 """
 from datetime import datetime, timedelta
 
@@ -72,11 +75,18 @@ def test_hour_fraction_all_hours(text, h, mi):
 # family 2: del matí / de la tarda / del vespre / de la nit, all 12 hours.
 # ---------------------------------------------------------------------------
 
+def _nit(h):
+    # midnight-crossing band: 12 -> midnight, 1..5 stay AM, 6..11 go PM
+    if h == 12:
+        return 0
+    return h if h <= 5 else h + 12
+
+
 _PERIODS = [
     ("del matí", lambda h: h % 12),
     ("de la tarda", lambda h: h if h == 12 else h + 12),
     ("del vespre", lambda h: h if h == 12 else h + 12),
-    ("de la nit", lambda h: h if h == 12 else h + 12),
+    ("de la nit", _nit),
 ]
 
 
