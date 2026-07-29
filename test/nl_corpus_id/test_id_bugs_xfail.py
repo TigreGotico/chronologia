@@ -17,9 +17,8 @@ A = datetime(2017, 6, 27, 13, 4)
 
 # -- wrong resolution: the resolved instant itself is incorrect ---------------
 _WRONG = [
-    # "kemarin dulu" (also "kemarin dahulu") = the day before yesterday (-2);
-    # parser resolves it to plain "kemarin" (-1) and strands "dulu".
-    ("kemarin dulu", AstroDate(2017, 6, 25)),
+    # NOTE: "kemarin dulu"/"kemarin dahulu" (day before yesterday, -2) was fixed
+    # and is now pinned green in test_nl_relative.py::test_named_days.
     # "tadi malam" = last night = YESTERDAY evening; parser gives tonight.
     ("tadi malam", AstroDate(2017, 6, 26, 18, 0)),
     # ordinal-weekday-of-month: "Senin ketiga Maret 2019" = the third Monday of

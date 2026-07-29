@@ -9,7 +9,11 @@ A = ANCHOR
 
 @pytest.mark.parametrize("text,days", [
     ("besok", 1), ("kemarin", -1), ("hari ini", 0), ("lusa", 2),
-    ("kemarin lusa", -2)])
+    ("kemarin lusa", -2),
+    # "kemarin dulu" / "kemarin dahulu" = the day before yesterday (-2), the
+    # standard idiom alongside "kemarin lusa". Regression pin: bare "kemarin"
+    # above must stay -1 and not be swallowed by the compound.
+    ("kemarin dulu", -2), ("kemarin dahulu", -2)])
 def test_named_days(text, days):
     exp = (A + timedelta(days=days)).date()
     assert (start(text).month, start(text).day) == (exp.month, exp.day)
