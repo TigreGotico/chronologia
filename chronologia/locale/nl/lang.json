@@ -43,11 +43,11 @@
     "clock_time": {
       "orders": [
         "CLOCK MERIDIEM? ZONE?",
-        "at HOUR MERIDIEM? ZONE?",
-        "HOUR oclock MERIDIEM? ZONE?",
-        "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
-        "FRACTION HOUR MERIDIEM? ZONE?",
-        "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?",
+        "at HOUR s? MERIDIEM? ZONE?",
+        "HOUR oclock s? MERIDIEM? ZONE?",
+        "FRACTION CLOCKDIR HOUR s? MERIDIEM? ZONE?",
+        "FRACTION HOUR s? MERIDIEM? ZONE?",
+        "MINUTE CLOCKDIR HOUR s? MERIDIEM? ZONE?",
         "MINUTE CLOCKDIR LANDMARK ZONE?",
         "at? LANDMARK ZONE?",
         "FRACTION CLOCKDIR LANDMARK ZONE?",

@@ -1,0 +1,9 @@
+# Postposed daypart words that keep a bare 12-hour clock reading in the
+# morning/night half (meridiem offset 0), the am counterpart of
+# clock_meridiem_pm.voc.  "drie uur 's nachts" == 03:00, "acht uur 's
+# ochtends" == 08:00; only the noon/midnight edge is rewritten (12 -> 0).
+# Bands: Unicode CLDR 47 Day Period Rules, locale nl -- ochtend/morning
+# [06:00, 12:00) and nacht/night [00:00, 06:00) are the am half.
+ochtends
+morgens
+nachts
