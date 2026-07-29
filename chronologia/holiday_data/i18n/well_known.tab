@@ -195,6 +195,9 @@ all_saints      | gl | día de todos os santos ;; todos os santos
 christmas_eve   | gl | noiteboa ;; véspera de nadal
 christmas       | gl | nadal ;; día de nadal
 boxing_day      | gl | santo estevo
+labour_day      | gl | día do traballo ;; día do traballador
+galicia_letras_day | gl | día das letras galegas ;; letras galegas
+galicia_day     | gl | día de galicia ;; santiago ;; día de santiago ;; santiago apóstolo
 #
 # ==========================================================================
 # EXPANDED SET beyond the Christian/Western core: movable non-Gregorian
@@ -450,6 +453,8 @@ new_year_eve       | da | nytårsaften
 epiphany           | da | helligtrekonger ;; hellig tre konger
 carnival           | da | fastelavn
 palm_sunday     | da | palmesøndag
+maundy_thursday    | da | skærtorsdag
+denmark_great_prayer_day | da | store bededag ;; storebededag
 good_friday        | da | langfredag
 easter             | da | påske ;; påskedag ;; påskesøndag
 easter_monday      | da | anden påskedag ;; påskemandag
@@ -756,6 +761,10 @@ diwali          | az | divali
 vesak           | az | vesak
 halloween       | az | hellowin
 valentines      | az | sevgililər günü
+womens_day      | az | qadınlar günü ;; beynəlxalq qadınlar günü
+azerbaijan_republic_day  | az | respublika günü
+azerbaijan_independence_day | az | müstəqillik günü ;; müstəqilliyin bərpası günü
+azerbaijan_flag_day      | az | bayraq günü ;; dövlət bayrağı günü
 rosh_hashanah   | az | yəhudi yeni ili
 yom_kippur      | az | yom kippur
 hanukkah        | az | hanuka
@@ -788,6 +797,8 @@ palm_sunday     | id | minggu palma
 good_friday     | id | jumat agung
 easter          | id | paskah
 christmas       | id | natal ;; hari natal
+labour_day      | id | hari buruh
+indonesia_independence_day | id | hari kemerdekaan
 eid_al_fitr     | id | idul fitri ;; lebaran ;; hari raya idul fitri
 eid_al_adha     | id | idul adha ;; iduladha
 ramadan         | id | ramadan ;; ramadhan ;; bulan puasa
@@ -855,6 +866,12 @@ orthodox_good_friday | bg | разпети петък ;; велики петък
 orthodox_easter_monday | bg | велики понеделник
 orthodox_christmas | bg | коледа ;; рождество христово ;; рождество
 orthodox_christmas_eve | bg | бъдни вечер
+labour_day             | bg | ден на труда ;; ден на труда и на международната работническа солидарност
+bulgaria_liberation_day   | bg | ден на освобождението ;; ден на освобождението на българия от османско иго
+bulgaria_st_georges_day   | bg | гергьовден ;; ден на храбростта и българската армия
+bulgaria_education_day    | bg | ден на българската просвета ;; ден на светите братя кирил и методий ;; ден на славянската писменост
+bulgaria_unification_day  | bg | съединение ;; ден на съединението
+bulgaria_independence_day | bg | ден на независимостта ;; ден на независимостта на българия
 halloween          | bg | хелоуин
 valentines         | bg | свети валентин ;; ден на влюбените
 chinese_new_year   | bg | китайска нова година
@@ -888,6 +905,12 @@ palm_sunday     | hr | cvjetnica
 good_friday        | hr | veliki petak
 easter_monday      | hr | uskrsni ponedjeljak ;; uskršnji ponedjeljak
 all_saints         | hr | svi sveti
+boxing_day         | hr | sveti stjepan ;; sv. stjepan
+labour_day         | hr | praznik rada
+assumption         | hr | velika gospa
+croatia_statehood_day    | hr | dan državnosti
+croatia_antifascist_day  | hr | dan antifašističke borbe
+croatia_victory_day      | hr | dan pobjede ;; dan pobjede i domovinske zahvalnosti ;; dan pobjede i domovinske zahvalnosti i dan hrvatskih branitelja
 halloween          | hr | noć vještica ;; halloween
 valentines         | hr | valentinovo
 carnival           | hr | karneval ;; poklade
@@ -949,6 +972,13 @@ palm_sunday     | sl | cvetna nedelja
 good_friday        | sl | veliki petek
 easter_monday      | sl | velikonočni ponedeljek
 all_saints         | sl | dan spomina na mrtve ;; vsi sveti
+labour_day         | sl | praznik dela
+assumption         | sl | marijino vnebovzetje ;; veliki šmaren
+slovenia_culture_day | sl | prešernov dan ;; slovenski kulturni praznik
+slovenia_uprising_day | sl | dan upora proti okupatorju
+slovenia_statehood_day | sl | dan državnosti
+reformation_day    | sl | dan reformacije
+slovenia_independence_unity_day | sl | dan samostojnosti in enotnosti ;; dan samostojnosti
 halloween          | sl | noč čarovnic
 valentines         | sl | valentinovo
 carnival           | sl | pust
@@ -1104,6 +1134,10 @@ greece_ohi_day           | el | 28η οκτωβρίου ;; επέτειος το
 #
 # --- Romanian ---
 new_year                 | ro | anul nou
+christmas                | ro | crăciun ;; ziua de crăciun
+boxing_day               | ro | a doua zi de crăciun
+orthodox_easter          | ro | paște ;; paști ;; sfintele paști ;; duminica paștelui
+orthodox_good_friday     | ro | vinerea mare ;; sfânta vineri
 labour_day               | ro | ziua muncii
 assumption               | ro | adormirea maicii domnului ;; sfânta maria mare
 romania_childrens_day    | ro | ziua copilului ;; ziua internațională a copilului

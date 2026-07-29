@@ -100,15 +100,6 @@ _CASES_BROKEN = [
 ]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "BUG: sl fixed-date holiday names (other than novo leto/božič/dan "
-        "spomina na mrtve) are not matched -- only the trailing year is "
-        "parsed and the holiday name is left as residue, so the engine "
-        "returns the whole-year span instead of the single civil day."
-    ),
-)
 @pytest.mark.parametrize("text,y,m,d", _CASES_BROKEN)
 def test_holiday_fixed_broken(text, y, m, d):
     d0 = datetime(y, m, d)

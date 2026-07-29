@@ -643,6 +643,127 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
                      frozenset({"public"}), "RO",
                      "Ziua Unirii Principatelor Române", "ro"),
 
+    # ---- National / movable holidays (round 3: sl hr bg ro az id da gl) -----
+    # A third sweep of NATIONAL and CIVIL observances native reviewers of the
+    # Slovene / Croatian / Bulgarian / Azerbaijani / Indonesian / Danish /
+    # Galician corpora bind by name, each degrading today to a bare-year span.
+    # Fixed Gregorian days reuse ``FixedRule``; the one movable (Danish Store
+    # Bededag) reuses ``EasterOffsetRule``. Holidays already carried by a shared
+    # key (Labour Day 1 May -> ``labour_day``; Assumption 15 Aug ->
+    # ``assumption``; 26 Dec -> ``boxing_day``; Women's Day 8 Mar ->
+    # ``womens_day``; Christmas 25 Dec -> ``christmas``; Maundy Thursday ->
+    # ``maundy_thursday``; Orthodox Easter/Good Friday -> ``orthodox_easter`` /
+    # ``orthodox_good_friday``) only gain a per-locale surface in
+    # ``well_known.tab`` and are NOT re-keyed here. Multi-word names bind as ONE
+    # holiday and win longest-match over the bare month / "day" tokens.
+
+    # Slovenia (Zakon o praznikih in dela prostih dnevih v RS, ZPDPD). Prešernov
+    # dan, slovenski kulturni praznik = 8 Feb (Culture Day, Prešeren's death).
+    # Dan upora proti okupatorju = 27 Apr (Day of Uprising Against Occupation,
+    # 1941). Dan državnosti = 25 Jun (Statehood Day, 1991). Dan reformacije =
+    # 31 Oct (Reformation Day). Dan samostojnosti in enotnosti = 26 Dec
+    # (Independence and Unity Day, 1990 plebiscite; a DIFFERENT holiday from the
+    # 26 Dec ``boxing_day``, hence its own key). Public holidays.
+    WellKnownHoliday("slovenia_culture_day", FixedRule(2, 8),
+                     frozenset({"public"}), "SI",
+                     "Prešernov dan, slovenski kulturni praznik", "sl"),
+    WellKnownHoliday("slovenia_uprising_day", FixedRule(4, 27),
+                     frozenset({"public"}), "SI",
+                     "dan upora proti okupatorju", "sl"),
+    WellKnownHoliday("slovenia_statehood_day", FixedRule(6, 25),
+                     frozenset({"public"}), "SI", "dan državnosti", "sl"),
+    WellKnownHoliday("reformation_day", FixedRule(10, 31),
+                     frozenset({"public", "religious"}), "SI",
+                     "dan reformacije", "sl"),
+    WellKnownHoliday("slovenia_independence_unity_day", FixedRule(12, 26),
+                     frozenset({"public"}), "SI",
+                     "dan samostojnosti in enotnosti", "sl"),
+
+    # Croatia (Zakon o blagdanima, spomendanima i neradnim danima u RH, NN
+    # 110/2019). Dan državnosti = 30 May (Statehood Day; a genuinely DIFFERENT
+    # rule from Slovenia's 25 Jun ``slovenia_statehood_day`` though the spoken
+    # name coincides, so its surface is bound to ``hr`` only). Dan
+    # antifašističke borbe = 22 Jun (Anti-Fascist Struggle Day, 1941). Dan
+    # pobjede i domovinske zahvalnosti i Dan hrvatskih branitelja = 5 Aug
+    # (Victory and Homeland Thanksgiving Day, 1995). Public holidays.
+    WellKnownHoliday("croatia_statehood_day", FixedRule(5, 30),
+                     frozenset({"public"}), "HR", "Dan državnosti", "hr"),
+    WellKnownHoliday("croatia_antifascist_day", FixedRule(6, 22),
+                     frozenset({"public"}), "HR",
+                     "Dan antifašističke borbe", "hr"),
+    WellKnownHoliday("croatia_victory_day", FixedRule(8, 5),
+                     frozenset({"public"}), "HR",
+                     "Dan pobjede i domovinske zahvalnosti i Dan hrvatskih "
+                     "branitelja", "hr"),
+
+    # Bulgaria (Labour Code / Кодекс на труда art. 154). Ден на Освобождението
+    # на България от османско иго = 3 Mar (Liberation Day, 1878). Гергьовден,
+    # Ден на храбростта и Българската армия = 6 May (St George's / Army Day).
+    # Ден на светите братя Кирил и Методий... българската просвета = 24 May
+    # (Bulgarian Education and Culture, Slavonic Literature Day). Ден на
+    # Съединението = 6 Sep (Unification Day, 1885). Ден на Независимостта на
+    # България = 22 Sep (Independence Day, 1908). Public holidays, fixed
+    # Gregorian civil dates.
+    WellKnownHoliday("bulgaria_liberation_day", FixedRule(3, 3),
+                     frozenset({"public"}), "BG",
+                     "Ден на Освобождението на България от османско иго", "bg"),
+    WellKnownHoliday("bulgaria_st_georges_day", FixedRule(5, 6),
+                     frozenset({"public"}), "BG",
+                     "Гергьовден, Ден на храбростта и Българската армия", "bg"),
+    WellKnownHoliday("bulgaria_education_day", FixedRule(5, 24),
+                     frozenset({"public"}), "BG",
+                     "Ден на светите братя Кирил и Методий, на българската "
+                     "азбука, просвета и култура и на славянската книжовност",
+                     "bg"),
+    WellKnownHoliday("bulgaria_unification_day", FixedRule(9, 6),
+                     frozenset({"public"}), "BG", "Ден на Съединението", "bg"),
+    WellKnownHoliday("bulgaria_independence_day", FixedRule(9, 22),
+                     frozenset({"public"}), "BG",
+                     "Ден на Независимостта на България", "bg"),
+
+    # Azerbaijan (Labour Code / Əmək Məcəlləsi art. 105). Respublika Günü =
+    # 28 May (Republic Day, 1918 Azerbaijan Democratic Republic). Müstəqillik
+    # Günü = 18 Oct (Independence Day, 1991 restoration of statehood; a distinct
+    # event and date from the 28 May Republic Day). Dövlət Bayrağı Günü = 9 Nov
+    # (National Flag Day). Public holidays.
+    WellKnownHoliday("azerbaijan_republic_day", FixedRule(5, 28),
+                     frozenset({"public"}), "AZ", "Respublika Günü", "az"),
+    WellKnownHoliday("azerbaijan_independence_day", FixedRule(10, 18),
+                     frozenset({"public"}), "AZ", "Müstəqillik Günü", "az"),
+    WellKnownHoliday("azerbaijan_flag_day", FixedRule(11, 9),
+                     frozenset({"public"}), "AZ",
+                     "Azərbaycan Respublikasının Dövlət bayrağı günü", "az"),
+
+    # Indonesia (national holiday decrees / Keppres). Hari Kemerdekaan =
+    # 17 Aug (Independence Day, 1945). Public holiday. (Hari Buruh, 1 May, is
+    # the shared ``labour_day``.)
+    WellKnownHoliday("indonesia_independence_day", FixedRule(8, 17),
+                     frozenset({"public"}), "ID", "Hari Kemerdekaan", "id"),
+
+    # Denmark (Lov om helligdage). Store Bededag ("Great Prayer Day") = the 4th
+    # Friday after Easter = Easter + 26 days (first Friday after Easter is
+    # Easter+5; +21 for three more weeks). A MOVABLE Easter-linked civil day
+    # off, so it reuses ``EasterOffsetRule`` exactly like the Ascension/Whit
+    # cycle. (Verified: Easter 2020 = 12 Apr -> 8 May 2020; Easter 2021 = 4 Apr
+    # -> 30 Apr 2021.) Abolished as a public holiday from 2024 but historically
+    # and colloquially the named day. (Skærtorsdag, Maundy Thursday, is the
+    # shared ``maundy_thursday``.)
+    WellKnownHoliday("denmark_great_prayer_day", EasterOffsetRule(26),
+                     frozenset({"public", "religious"}), "DK",
+                     "Store bededag", "da"),
+
+    # Galicia (Estatuto de Autonomía de Galicia; Xunta de Galicia calendar).
+    # Día das Letras Galegas = 17 May (Galician Literature Day). Día de Galicia
+    # / Santiago Apóstol = 25 Jul (Galician National Day, St James the Apostle).
+    # Public holidays in the autonomous community. (Día do Traballo, 1 May, is
+    # the shared ``labour_day``.)
+    WellKnownHoliday("galicia_letras_day", FixedRule(5, 17),
+                     frozenset({"public"}), "ES", "Día das Letras Galegas",
+                     "gl"),
+    WellKnownHoliday("galicia_day", FixedRule(7, 25),
+                     frozenset({"public", "religious"}), "ES",
+                     "Día de Galicia", "gl"),
+
     # NOTE Twelfth Night (5 Jan, eve of the Epiphany) is deliberately NOT added:
     # "Twelfth Night" is pinned as a proper noun that must resolve to None (not a
     # daypart "night") by test_clock_daypart_night_fixes; adding it as a holiday

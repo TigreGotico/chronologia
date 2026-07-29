@@ -165,10 +165,6 @@ _UNSUPPORTED = [
 ]
 
 
-@pytest.mark.xfail(
-    reason="Galicia-specific civic holiday not implemented in the gl holiday table (falls back to a bare-year span instead of the literal civic date)",
-    strict=True,
-)
 @pytest.mark.parametrize("text,ymd", _UNSUPPORTED)
 def test_galician_civic_holiday_not_yet_supported(text, ymd):
     assert start(text) == AstroDate(*ymd)

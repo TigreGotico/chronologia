@@ -54,12 +54,6 @@ _XFAIL_CASES = [(f"{h} {y}", y, m, d)
                  for h, m, d in _UNREGISTERED for y in _XFAIL_YEARS]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="holiday name not in the shared registry; parser matches only "
-           "the bare year token and returns the whole-year span instead of "
-           "the named calendar day",
-)
 @pytest.mark.parametrize("text,y,m,d", _XFAIL_CASES,
                          ids=[c[0] for c in _XFAIL_CASES])
 def test_national_holiday_not_yet_registered(text, y, m, d):

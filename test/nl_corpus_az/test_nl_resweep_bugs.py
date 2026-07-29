@@ -24,12 +24,6 @@ def test_locative_spelled_clock_hour():
     assert (s.year, s.month, s.day, s.hour, s.minute) == (2017, 6, 28, 3, 0)
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "Azerbaijani secular fixed holidays from holiday_data/az.tab (e.g. "
-    "'Qadınlar günü' = 8 March) are not resolved to their tabulated date "
-    "when named with an explicit year: 'qadınlar günü 2020' degrades to the "
-    "whole calendar year 2020-01-01..2021-01-01 instead of the single day "
-    "2020-03-08..2020-03-09. The bare form (no year) does not parse at all."))
 def test_fixed_secular_holiday_with_year():
     r = parse("qadınlar günü 2020")
     assert r is not None
