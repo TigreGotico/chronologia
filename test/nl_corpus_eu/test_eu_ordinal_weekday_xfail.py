@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-"""BUG (strict xfail): Basque ordinal-weekday-in-month is not resolved.
+"""Basque ordinal-weekday-in-month resolves to the exact day.
 
 "2018ko martxoaren hirugarren astelehena" ("the third Monday of March 2018")
-should land on 2018-03-19.  On ``dev`` the engine binds only the month and
-silently strands the "hirugarren astelehena" tail, returning the whole month.
-These strict xfails pin the correct independently-computed day so the day the
-feature is wired the guard flips to a hard pass.
+lands on 2018-03-19.  The Basque surface is postposed -- MONTH-genitive then
+ORDINAL then WEEKDAY-absolutive, year (``-ko``) leading -- wired via the
+``scoped_ordinal`` order "YEAR? MONTH ORD WEEKDAY" plus spelled-ordinal folding
+(lehen(engo)/bigarren/hirugarren ...).  Each case pins the independently
+computed day.
 """
 from datetime import date, datetime, timedelta
 
@@ -35,7 +36,6 @@ CASES = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason="ordinal-weekday-in-month unresolved on dev")
 @pytest.mark.parametrize("y,mo,ordw,wdw", CASES)
 def test_ordinal_weekday(y, mo, ordw, wdw):
     text = f"{y}ko {MONTH_GEN[mo]} {ordw} {wdw}"
