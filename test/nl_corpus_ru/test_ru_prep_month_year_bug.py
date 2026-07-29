@@ -38,9 +38,6 @@ def _end(y, m):
     return AstroDate(y, m + 1, 1)
 
 
-@pytest.mark.xfail(strict=True,
-                   reason="в <month-prep> <year> drops the month, returns "
-                          "the whole year (silent-year bug)")
 @pytest.mark.parametrize("text,m,y", _CASES, ids=[c[0] for c in _CASES])
 def test_prep_month_year_should_be_that_month(text, m, y):
     st, en = start_end(text)
