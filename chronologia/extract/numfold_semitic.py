@@ -159,10 +159,77 @@ def _ar_month_ordinal_license(tokens):
     return tuple(out)
 
 
+# -- feminine ordinal CLOCK hour fold ----------------------------------------
+# Arabic tells clock hours with the FEMININE ordinal -- الثامنة ("the eighth
+# [hour]") is eight o'clock, not the cardinal ثمانية.  These forms carry the
+# definite article and are never in the curated cardinal set, so the base fold
+# left them stranded and a spelled clock time ("الساعة الثامنة صباحا",
+# "الثامنة مساء") did not parse at all.  In an unambiguous CLOCK context --
+# immediately after the o'clock word الساعة, or immediately before an am/pm
+# daypart particle -- fold the feminine ordinal hour الواحدة..الثانية عشرة
+# (1..12) to a CLOCK "H:00" token.  The meridiem-optional clock orders then
+# resolve it, and the shared daypart->meridiem shift turns it into the 24-hour
+# reading (الثامنة مساء -> 20:00).  Gated on the clock context so every
+# non-clock use -- the #268/#279 date ordinals الأول/الثاني, spelled cardinals,
+# quarters -- stays byte-identical.
+_AR_CLOCK_AT = frozenset({"الساعة", "الساعه"})
+_AR_CLOCK_MERIDIEM = frozenset({
+    "صباحا", "صباحاً", "الصباح", "فجرا", "فجراً",
+    "مساء", "مساءً", "المساء", "ظهرا", "ظهراً",
+    "عصرا", "عصراً", "ليلا", "ليلاً",
+})
+_AR_FEM_HOUR = {
+    "الواحدة": 1, "الثانية": 2, "الثالثة": 3, "الرابعة": 4, "الخامسة": 5,
+    "السادسة": 6, "السابعة": 7, "الثامنة": 8, "التاسعة": 9, "العاشرة": 10,
+}
+# the two-word teen hours -- [feminine unit ordinal][عشرة]: الحادية عشرة (11),
+# الثانية عشرة (12).  المصرية reckoning never spells past twelve o'clock.
+_AR_FEM_HOUR_TEEN = {"الحادية": 11, "الثانية": 12}
+
+
+def _ar_clock_token(hour, first, last):
+    text = "%d:00" % hour
+    return Token(text=text, raw=text, index=first.index,
+                 char_start=first.char_start, char_end=last.char_end)
+
+
+def _ar_clock_hour_fold(tokens):
+    """Fold a feminine ordinal hour (1..12) to a CLOCK ``H:00`` token when it
+    stands in an unambiguous clock context (after الساعة, or before a daypart
+    meridiem particle)."""
+    out, i, n, changed = [], 0, len(tokens), False
+    while i < n:
+        t = tokens[i]
+        prev_at = i > 0 and tokens[i - 1].text in _AR_CLOCK_AT
+        # two-word teen hour: الحادية عشرة (11) / الثانية عشرة (12)
+        if (not t.is_number and t.text in _AR_FEM_HOUR_TEEN and i + 1 < n
+                and tokens[i + 1].text == "عشرة"):
+            after = tokens[i + 2] if i + 2 < n else None
+            if prev_at or (after is not None
+                           and after.text in _AR_CLOCK_MERIDIEM):
+                out.append(_ar_clock_token(_AR_FEM_HOUR_TEEN[t.text],
+                                           t, tokens[i + 1]))
+                i, changed = i + 2, True
+                continue
+        # single-word hour الواحدة..العاشرة
+        if not t.is_number and t.text in _AR_FEM_HOUR:
+            after = tokens[i + 1] if i + 1 < n else None
+            if prev_at or (after is not None
+                           and after.text in _AR_CLOCK_MERIDIEM):
+                out.append(_ar_clock_token(_AR_FEM_HOUR[t.text], t, t))
+                i, changed = i + 1, True
+                continue
+        out.append(t)
+        i += 1
+    return reindex(tuple(out)) if changed else tokens
+
+
 def fold_ar(tokens):
-    """Fold the ordinal teen (11..19) first, then the cardinal/ordinal fold,
-    then license الأول/الثاني positionally (Rule A, #268)."""
-    return _ar_month_ordinal_license(_fold_ar_base(_ar_teen_fold(tokens)))
+    """Fold the feminine ordinal clock hour first (in clock context only), then
+    the ordinal teen (11..19), then the cardinal/ordinal fold, then license
+    الأول/الثاني positionally (Rule A, #268)."""
+    return _ar_month_ordinal_license(
+        _fold_ar_base(_ar_teen_fold(_ar_clock_hour_fold(tokens))))
 
 
 # -- Hebrew ------------------------------------------------------------------
