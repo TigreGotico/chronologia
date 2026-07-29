@@ -1360,12 +1360,62 @@ _tr_numfold = _lazy_germanic_fold(
     {"yarım", "çeyrek", "buçuk", "bin", "milyon", "milyar"})
 
 
+# Turkic locative case marks "at <hour>" on the clock numeral: Turkish "saat
+# üçte" (at three), Azerbaijani "saat üçdə".  The suffix harmonises for
+# backness and preceding-consonant voicing -- tr -te/-ta/-de/-da, az
+# -tə/-ta/-də/-da -- and ``extract_number_<lang>`` does not read the inflected
+# surface: it silently mis-reads "üçte"/"üçdə" as the fraction 1/3 (0.333), so
+# the HOUR slot never binds and the whole span is dropped.  This mirrors the
+# fi ablative ("kello kolmelta"), eu inessive ("hiruretan") and hu temporal
+# ("háromkor") clock folds already in the agglutinative batch, and the
+# accusative/dative geçe/kala fold just below: fold the case-suffixed hour
+# back to its bare cardinal so the ordinary number path binds it.  Sources:
+# Wiktionary, -də/-da (Azerbaijani) and -de/-te (Turkish) locative case; the
+# suffixed numeral is the everyday telling-time form (TDK Güncel Türkçe
+# Sözlük "saat"; Azərbaycan dilinin izahlı lüğəti "saat").
+#
+# Fired only in the clock frame (a "saat" hour-noun token present) and only
+# when the stripped stem reads as a bare 0..23 cardinal, so bare numbers,
+# dates and any non-clock word ending in these letters stay byte-identical.
+# The strip runs *before* the cardinal run-fold so a compound hour folds
+# through it: "on birde" -> "on" + "bir" -> 11, "on ikide" -> 12.
+_TR_LOCATIVE_SUFFIXES = ("tə", "də", "te", "ta", "de", "da")
+
+
+def _strip_locative_hour(tokens, lang):
+    if not any(t.text == "saat" for t in tokens):
+        return tokens
+    import importlib
+    extract = getattr(importlib.import_module(
+        "ovos_number_parser.numbers_" + lang), "extract_number_" + lang)
+    out = []
+    for t in tokens:
+        if not t.is_number:
+            w = t.text
+            for suf in _TR_LOCATIVE_SUFFIXES:
+                if w.endswith(suf) and len(w) > len(suf):
+                    stem = w[:-len(suf)]
+                    try:
+                        val = extract(stem)
+                    except Exception:
+                        val = False
+                    if (isinstance(val, (int, float))
+                            and not isinstance(val, bool)
+                            and float(val) == int(val) and 0 <= val <= 23):
+                        t = replace(t, text=stem)
+                    break
+        out.append(t)
+    return tuple(out)
+
+
 def fold_tr(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-    """Turkish fold: cardinal run fold, then map the case-marked spoken-clock
-    hour to its digit.  The hour map runs *after* the cardinal fold so the
-    mapped hour does not merge with a following bare-minute cardinal:
-    "dokuzu beş geçe" must stay [9][5][geçe] (9:05), not fold to one number.
+    """Turkish fold: strip a locative-case clock hour ("saat üçte" -> "üç"),
+    cardinal run fold, then map the case-marked spoken-clock hour to its digit.
+    The hour map runs *after* the cardinal fold so the mapped hour does not
+    merge with a following bare-minute cardinal: "dokuzu beş geçe" must stay
+    [9][5][geçe] (9:05), not fold to one number.
     """
+    tokens = _strip_locative_hour(tokens, "tr")
     folded = _tr_numfold(tokens)
     out = [replace(t, text=str(_TR_HOURS[t.text]), is_number=True,
                    value=_TR_HOURS[t.text])
@@ -1378,9 +1428,15 @@ def fold_tr(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 # one surface the pronouncer does not cover.  TDK Güncel Türkçe Sözlük: "ilk" =
 # birinci; "ikinci" = sıra sayı sıfatı.  https://sozluk.gov.tr
 fold_tr = _with_ordinals(fold_tr, "tr", {"ilk": 1})
-fold_az = _lazy_germanic_fold(
+_az_numfold = _lazy_germanic_fold(
     "ovos_number_parser.numbers_az", "extract_number_az",
     {"yarım", "min", "milyon", "milyard"})
+
+
+def fold_az(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Azerbaijani fold: strip the locative-case clock hour ("saat üçdə" ->
+    "üç") before the cardinal run-fold, then fold as usual."""
+    return _az_numfold(_strip_locative_hour(tokens, "az"))
 fold_id = _lazy_germanic_fold(
     "ovos_number_parser.numbers_id", "extract_number_id",
     {"setengah", "seperempat", "suku", "ribu", "juta", "miliar", "milyar"})
