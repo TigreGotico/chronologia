@@ -6,9 +6,9 @@ months [3N-2 .. 3N], hand-derived, never the parser.
 
 "terzo"/"quarto trimestre" hit the same fraction-homograph bug documented in
 test_nl_ordinal_weekday_month.py (terzo/quarto spelled like "un terzo"/"un quarto"
-the fraction) -- but here it was never fixed for trimestre: both words fall through
-to the bare-year full-span reading instead of binding the quarter ordinal. Pinned
-as strict xfail with the CORRECT quarter-boundary gold, not the wrong observed one."""
+the fraction) -- now FIXED for trimestre too: the ordinal reading is licensed
+directly before the quarter noun so both words bind the quarter ordinal, while
+the clock/duration fraction readings stay byte-identical."""
 import pytest
 from ._corpus import start_end, AstroDate
 
@@ -68,7 +68,13 @@ def test_quarter_resweep(text, s, e):
     assert start_end(text) == (s, e)
 
 
-_XFAIL_CASES = [
+# "terzo"/"quarto trimestre <anno>" now bind the quarter ordinal: the ordinal
+# reading of the fraction-homograph ("un terzo"/"un quarto") is licensed
+# directly before the quarter noun "trimestre" (fix:
+# numfold._license_ordinal_fraction quarter-word frame), while every clock/
+# duration fraction reading ("un quarto d'ora", "le tre e un quarto") is
+# untouched.  Gold is the correct quarter boundary, hand-derived.
+_ORDINAL_TRIMESTRE_CASES = [
     ('terzo trimestre 2015', AstroDate(2015, 7, 1, 0, 0), AstroDate(2015, 10, 1, 0, 0)),
     ('quarto trimestre 2015', AstroDate(2015, 10, 1, 0, 0), AstroDate(2016, 1, 1, 0, 0)),
     ('terzo trimestre 2016', AstroDate(2016, 7, 1, 0, 0), AstroDate(2016, 10, 1, 0, 0)),
@@ -87,8 +93,7 @@ _XFAIL_CASES = [
     ('quarto trimestre 2033', AstroDate(2033, 10, 1, 0, 0), AstroDate(2034, 1, 1, 0, 0)),
 ]
 
-@pytest.mark.parametrize("text,s,e", _XFAIL_CASES)
-@pytest.mark.xfail(strict=True, reason="terzo/quarto trimestre: fraction-homograph ordinal ('un terzo'/'un quarto') falls through to the bare-year full-span reading instead of binding the quarter, same bug class as ordinal-weekday terzo/quarto once had -- gold below is the correct quarter boundary")
-def test_quarter_resweep_trimestre_ordinal_xfail(text, s, e):
+@pytest.mark.parametrize("text,s,e", _ORDINAL_TRIMESTRE_CASES)
+def test_quarter_resweep_trimestre_ordinal(text, s, e):
     assert start_end(text) == (s, e)
 
