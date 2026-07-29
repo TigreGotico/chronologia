@@ -1922,6 +1922,16 @@ class Resolver:
                 else:                                           # to (before)
                     hour -= 1
                     minute = 60 - offset
+                    # 12-hour reckoning: minutes/quarter *to* one o'clock are
+                    # spoken as twelve-something ("une heure moins le quart" =
+                    # 12:45), so the hour that rolls back from 1 to 0 surfaces
+                    # as 12, not 00 -- but only where the locale reckons the
+                    # clock in 12 hours (French), not the Germanic 24-hour
+                    # "kvart i ett" == 00:45.  A landmark base (noon 12 -> 11,
+                    # midnight 0 -> -1 -> 23) never lands on 0 here, so this
+                    # only ever fires for the spelled hour 1.
+                    if hour == 0 and self.spec.conventions.toward_hour_12h:
+                        hour = 12
             elif (frac_tok is not None and dir_tok is None
                     and self.spec.conventions.bare_half_past):
                 # British-colloquial additive bare half: "half nine" == 09:30,

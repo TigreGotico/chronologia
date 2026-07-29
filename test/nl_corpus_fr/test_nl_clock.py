@@ -40,9 +40,35 @@ from ._corpus import span, start, nomatch, AstroDate
     ("minuit et quart", 2017, 6, 28, 0, 15),
     # landmark + "moins le quart" (subtractive) -- "midi moins le quart" = 11:45
     ("midi moins le quart", 2017, 6, 28, 11, 45),
+    # landmark + bare-minute subtraction -- "midi/minuit moins N" reads the
+    # offset, not only the quarter idiom
+    ("midi moins vingt", 2017, 6, 28, 11, 40),
+    ("midi moins dix", 2017, 6, 28, 11, 50),
+    ("minuit moins cinq", 2017, 6, 27, 23, 55),
+    ("minuit moins vingt", 2017, 6, 27, 23, 40),
+    # the singular hour "une heure" (1 o'clock) composes with fraction,
+    # meridiem and subtractive suffixes like every other hour; a minute *to*
+    # one o'clock is spoken twelve-something in French 12h reckoning
+    ("à une heure", 2017, 6, 28, 1, 0),
+    ("une heure et quart", 2017, 6, 28, 1, 15),
+    ("une heure et demie", 2017, 6, 28, 1, 30),
+    ("une heure du matin", 2017, 6, 28, 1, 0),
+    ("une heure de l'après-midi", 2017, 6, 28, 13, 0),
+    ("une heure moins le quart", 2017, 6, 28, 12, 45),
+    ("une heure moins dix", 2017, 6, 28, 12, 50),
 ])
 def test_clock(text, y, mo, d, h, mi):
     assert start(text) == AstroDate(y, mo, d, h, mi)
+
+
+def test_une_heure_stays_a_week_duration_elsewhere():
+    # "une" is only the hour 1 directly before "heure(s)"; "une semaine"
+    # stays the indefinite-article duration (a week), not "1 week o'clock"
+    assert start("à une heure") == AstroDate(2017, 6, 28, 1, 0)
+    from ._corpus import parse
+    # a bare "une semaine" is a duration phrase, never a clock time
+    res = parse("une semaine")
+    assert res is None or res[0].start.hour == 0
 
 
 def test_clock_is_minute_wide():

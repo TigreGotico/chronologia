@@ -13,16 +13,16 @@ Gold is plain naive-time arithmetic against the anchor (Tuesday 2017-06-27
 spelled hour; "moins N" subtracts N minutes from the stated hour, rolling the
 hour back by one.
 
-Two adversarial gaps surfaced by this sweep and are pinned as strict xfail
-with the arithmetically-correct gold (never the parser's own wrong answer):
+Two adversarial gaps surfaced by this sweep are now closed and swept green
+below (they were pinned as strict xfail with the arithmetically-correct gold
+until the fix landed):
 
-* the hour word "une heure" (1 o'clock) does not compose with any fraction or
-  meridiem suffix -- the parser drops the whole phrase (returns no match, or
-  for the plain meridiem forms silently mis-reads the hour).
-* "midi moins N" / "minuit moins N" only recognise the quarter idiom ("moins
-  le quart"); a bare minute count after midi/minuit is left as unconsumed
-  leftover and the span resolves to bare midi/minuit instead of the offset
-  time.
+* the hour word "une heure" (1 o'clock) now composes with every fraction and
+  meridiem suffix -- the feminine "une" is position-licensed to HOUR=1 only
+  directly before "heure(s)", so it binds the clock the way "deux heures"
+  does while the indefinite article ("une semaine") stays a duration.
+* "midi moins N" / "minuit moins N" now subtract a bare minute count from the
+  landmark, not only the quarter idiom ("moins le quart").
 """
 import pytest
 
@@ -40,18 +40,18 @@ def test_clock_resweep(text, ymdhm):
     assert start(text) == AstroDate(y, mo, d, h, mi), f"{text!r}"
 
 
-# -- known gaps: "une heure" (1 o'clock) never composes with a fraction or
-# meridiem suffix; "midi/minuit moins N" only recognises the quarter idiom.
-# Gold below is the arithmetically-correct reading, never the parser's own
-# (wrong) output.
+# -- formerly-pinned gaps, now composed: the singular hour name "une heure"
+# (1 o'clock) reads as HOUR=1 in every fraction/meridiem/subtractive frame the
+# other hours already take (the feminine "une" was left unfolded to protect
+# the indefinite article "une semaine", so it is position-licensed to 1 only
+# directly before "heure(s)"); and "midi/minuit moins N" subtracts a bare
+# minute count from the landmark, not only the quarter idiom.  French reckons
+# the clock in twelve hours, so a minute *to* one o'clock is spoken as
+# twelve-something ("une heure moins le quart" == 12:45).
+_COMPOSED = [('une heure et quart', [2017, 6, 28, 1, 15]), ('une heure et demie', [2017, 6, 28, 1, 30]), ('une heure moins le quart', [2017, 6, 28, 12, 45]), ('une heure du matin', [2017, 6, 28, 1, 0]), ('une heure du soir', [2017, 6, 28, 13, 0]), ("une heure de l'après-midi", [2017, 6, 28, 13, 0]), ('une heure moins cinq', [2017, 6, 28, 12, 55]), ('une heure moins dix', [2017, 6, 28, 12, 50]), ('une heure moins vingt', [2017, 6, 28, 12, 40]), ('une heure moins vingt-cinq', [2017, 6, 28, 12, 35]), ('midi moins cinq', [2017, 6, 28, 11, 55]), ('midi moins dix', [2017, 6, 28, 11, 50]), ('midi moins vingt', [2017, 6, 28, 11, 40]), ('minuit moins cinq', [2017, 6, 27, 23, 55]), ('minuit moins dix', [2017, 6, 27, 23, 50]), ('minuit moins vingt', [2017, 6, 27, 23, 40])]
 
-_XFAIL = [('une heure et quart', [2017, 6, 28, 1, 15]), ('une heure et demie', [2017, 6, 28, 1, 30]), ('une heure moins le quart', [2017, 6, 28, 12, 45]), ('une heure du matin', [2017, 6, 28, 1, 0]), ('une heure du soir', [2017, 6, 28, 13, 0]), ("une heure de l'après-midi", [2017, 6, 28, 13, 0]), ('une heure moins cinq', [2017, 6, 28, 12, 55]), ('une heure moins dix', [2017, 6, 28, 12, 50]), ('une heure moins vingt', [2017, 6, 28, 12, 40]), ('une heure moins vingt-cinq', [2017, 6, 28, 12, 35]), ('midi moins cinq', [2017, 6, 28, 11, 55]), ('midi moins dix', [2017, 6, 28, 11, 50]), ('midi moins vingt', [2017, 6, 28, 11, 40]), ('minuit moins cinq', [2017, 6, 27, 23, 55]), ('minuit moins dix', [2017, 6, 27, 23, 50]), ('minuit moins vingt', [2017, 6, 27, 23, 40])]
 
-
-@pytest.mark.parametrize("text,ymdhm", _XFAIL)
-@pytest.mark.xfail(strict=True, reason=(
-    "known gap: 'une heure' does not compose with fraction/meridiem "
-    "suffixes, and 'midi/minuit moins N' only recognises the quarter idiom"))
-def test_clock_resweep_known_gaps(text, ymdhm):
+@pytest.mark.parametrize("text,ymdhm", _COMPOSED)
+def test_clock_resweep_une_heure_and_landmark_moins(text, ymdhm):
     y, mo, d, h, mi = ymdhm
     assert start(text) == AstroDate(y, mo, d, h, mi), f"{text!r}"
