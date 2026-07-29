@@ -53,9 +53,6 @@ _UNREGISTERED_BARE = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason="id: hari buruh/hari kemerdekaan not "
-                    "wired into the holiday registry -- bare mention returns "
-                    "no match instead of folding to the next occurrence")
 @pytest.mark.parametrize("text,gold", _UNREGISTERED_BARE)
 def test_unregistered_holiday_bare_should_fold(text, gold):
     assert start(text, A) == gold
@@ -67,10 +64,6 @@ _UNREGISTERED_YEAR = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason="id: hari buruh/hari kemerdekaan + "
-                    "explicit year mis-resolves to the WHOLE calendar year "
-                    "(the year is parsed as a bare-year span and the holiday "
-                    "name is stranded) instead of the single named day")
 @pytest.mark.parametrize("text,gold", _UNREGISTERED_YEAR)
 def test_unregistered_holiday_with_year_should_be_single_day(text, gold):
     s = span(text, A)

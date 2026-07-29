@@ -72,11 +72,9 @@ def test_holiday_year(text, exp):
     assert span(text).width == timedelta(days=1)
 
 
-@pytest.mark.xfail(strict=True, reason="holiday not resolved: parser returns "
-                   "the whole year instead of the day")
 @pytest.mark.parametrize("text,exp", [
-    # grundlovsdag now binds (round-2 civil holidays) -- see
-    # test_da_national_holidays_2.py; skærtorsdag / store bededag remain gaps.
+    # skærtorsdag (maundy_thursday) and store bededag (denmark_great_prayer_day,
+    # Easter+26) now bind -- round-3 movable Danish holidays.
     ("skærtorsdag 2020", _easter(2020) - timedelta(days=3)),
     ("skærtorsdag 2021", _easter(2021) - timedelta(days=3)),
     ("store bededag 2020", _easter(2020) + timedelta(days=26)),

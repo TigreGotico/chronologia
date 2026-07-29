@@ -89,8 +89,6 @@ def test_movable_holiday_year_fresh(text, exp):
     assert span(text).width == timedelta(days=1)
 
 
-@pytest.mark.xfail(strict=True, reason="holiday not resolved: parser returns "
-                   "the whole year instead of the day")
 @pytest.mark.parametrize("text,exp", _XFAIL_CASES)
 def test_unresolved_holiday_xfail_fresh(text, exp):
     assert start(text) == AstroDate(exp.year, exp.month, exp.day)

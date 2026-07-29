@@ -54,10 +54,6 @@ _DEGRADED_CASES = [(f"{name} {y}", y, mm, dd)
                     for name, mm, dd in _DEGRADED for y in _YEARS]
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "hr: explicit-year holiday form drops the holiday text and folds to a "
-    "bare-year span (<year>-01-01) instead of the holiday's fixed date; "
-    "gold is the correct holiday date, never the parser's degraded output"))
 @pytest.mark.parametrize("phrase,y,mm,dd", _DEGRADED_CASES,
                           ids=[c[0] for c in _DEGRADED_CASES])
 def test_holiday_explicit_year_degrades_resweep(phrase, y, mm, dd):
