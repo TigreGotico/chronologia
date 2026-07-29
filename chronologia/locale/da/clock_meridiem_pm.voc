@@ -1,0 +1,9 @@
+# Postposed daypart words that put a bare 12-hour clock reading into the
+# afternoon/evening half (meridiem offset +12), exactly as the de locale's
+# "nachmittags"/"abends" already do.  Danish trails these definite surfaces
+# after the "om" particle ("kvart over tre om eftermiddagen" == 15:15,
+# "klokken otte om aftenen" == 20:00).
+# Bands: Unicode CLDR 47 Day Period Rules, locale da -- eftermiddag
+# [12:00, 18:00) and aften [18:00, 24:00) are the pm half.
+eftermiddagen
+aftenen

@@ -1,0 +1,5 @@
+# The fossilised Dutch genitive particle "'s" (from "des") that introduces a
+# postposed daypart ("'s avonds", "'s middags", "'s nachts", "'s ochtends").
+# The tokenizer strips the apostrophe, so the surface reaching the grammar is
+# a bare "s"; the clock orders consume it optionally before the meridiem word.
+s

@@ -1,0 +1,9 @@
+# Postposed daypart words that put a bare 12-hour clock reading into the
+# afternoon/evening half (meridiem offset +12), exactly as the de locale's
+# "nachmittags"/"abends" already do.  These are the Dutch genitive surfaces
+# that trail a clock reading after the fossilised "'s" particle
+# ("acht uur 's avonds" == 20:00, "drie uur 's middags" == 15:00).
+# Bands: Unicode CLDR 47 Day Period Rules, locale nl -- middag/afternoon
+# [12:00, 18:00) and avond/evening [18:00, 24:00) are the pm half.
+middags
+avonds
