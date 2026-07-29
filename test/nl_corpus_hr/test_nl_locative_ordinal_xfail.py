@@ -43,8 +43,7 @@ _CASES = [(f"{_ORD[o]} ponedjeljak u {_LOC[m]} {y}", y, m, o)
           for o in _ORD]
 
 
-@pytest.mark.xfail(strict=True, reason="hr locative 'u <month>' scope not bound (cf. #354)")
-@pytest.mark.parametrize("phrase,y,m,o", _CASES, ids=[c[0] for c in _CASES])
+@pytest.mark.parametrize("phrase,y,m,o", _CASES, ids=[c[0] for c in _CASES])  # fixed: hr locative scope
 def test_locative_ordinal_weekday(phrase, y, m, o):
     gold = _nth_monday(y, m, o)
     r = parse(phrase)

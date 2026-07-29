@@ -58,8 +58,7 @@ def test_nth_weekday_of_month(text, y, m, wd, ordw):
     assert e == ad(d0 + timedelta(days=1))
 
 
-@pytest.mark.xfail(strict=True, reason="sl scoped-ordinal-weekday not wired")
-@pytest.mark.parametrize("text,y,m,wd", _LAST)
+@pytest.mark.parametrize("text,y,m,wd", _LAST)  # fixed: Slovene "zadnji" ordlast
 def test_last_weekday_of_month(text, y, m, wd):
     d0 = _last_weekday(y, m, WD[wd])
     s, e = start_end(text)
