@@ -83,7 +83,50 @@ _EL_FEM_HOURS = {
     "μία": 1, "τρεις": 3, "τέσσερις": 4,
     "δεκατρείς": 13, "δεκατέσσερις": 14,
 }
-fold_el = _make_fold("el", _EL_FEM_HOURS)
+_el_numfold = _make_fold("el", _EL_FEM_HOURS)
+
+# -- Greek: the written day-of-month is a digit + ordinal ending -------------
+# "5η Μαρτίου" (the 5th of March), "της 5ης Μαρτίου" (of the 5th of March).
+# A Greek τακτικό αριθμητικό (ordinal) inflects for gender/case; when spelled
+# with a digit the ending rides on the numeral ("5η", "5ος", "5ου").  The
+# day-of-month agrees with the feminine ημέρα, so "Nη"/"Nης" are the everyday
+# forms, but the masculine/neuter/plural endings are the same closed class and
+# are folded too so any digit-ordinal binds its numeral.  Source: Νεοελληνική
+# Γραμματική (Τριανταφυλλίδης), τακτικά αριθμητικά; Πύλη για την Ελληνική Γλώσσα
+# (greek-language.gr) ordinal-ending paradigm.
+#
+# The tokenizer shears the ending off the digit ("5η" -> "5", "η"), so a number
+# immediately followed by a bare ordinal-ending fragment folds back to the
+# number and the DAY/NUM slot binds.  The merge is gated on ADJACENCY (no space
+# between the two source tokens): "η"/"ο"/"οι" are also the feminine/neuter
+# definite articles, and "5 η ώρα" ("5 o'clock", article present) must keep its
+# separate article token -- only the glued "5η" is an ordinal.
+_EL_ORD_SUFFIX = frozenset({
+    "η", "ης", "ην",              # feminine (day agrees with ημέρα): nom/gen/acc
+    "ος", "ου", "ο", "ον",       # masculine / neuter
+    "οι", "ων", "ους", "ες",     # plural forms
+})
+
+
+def fold_el(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    merged = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        if (t.is_number and nxt is not None and not nxt.is_number
+                and nxt.text in _EL_ORD_SUFFIX
+                and t.char_end is not None and nxt.char_start is not None
+                and nxt.char_start == t.char_end):
+            merged.append(replace(t, raw=t.raw + nxt.raw,
+                                  char_end=nxt.char_end
+                                  if nxt.char_end is not None else t.char_end))
+            i += 2
+            continue
+        merged.append(t)
+        i += 1
+    return _el_numfold(reindex(tuple(merged)))
 
 
 # -- Hungarian: "hét" is both seven and week; never fold it to a number.
