@@ -1606,6 +1606,37 @@ _FR_PHRASES = [
     (["apres", "demain"], "apresdemain"), (["après", "demain"], "apresdemain"),
     (["week", "end"], "weekend"),
 ]
+#: the oclock surfaces that turn a preceding "un"/"une" into the hour 1.
+_FR_HEURE = frozenset({"heure", "heures"})
+
+
+def _license_fr_une_heure(tokens):
+    """Read "un"/"une" as the hour 1 directly before "heure(s)".
+
+    French "une" is at once the feminine indefinite article ("une semaine" =
+    a week) and the feminine cardinal one, and the shared number back-end
+    leaves both "un" and "une" unfolded so the article reading survives
+    ("il y a une semaine").  On the clock, though, the hour name is spoken
+    exactly like the article -- "une heure" is one o'clock, and every
+    fraction/meridiem/subtractive frame built on it ("une heure et quart",
+    "une heure moins le quart", "une heure du matin") needs the 1 to bind the
+    HOUR slot the way "deux heures" already does.  The two readings are
+    distinguishable by position: the cardinal is the "un"/"une" immediately
+    before the oclock word "heure(s)", and the article everywhere else.  Only
+    that position is licensed to the digit 1, so "une semaine" and every other
+    article use stays byte-identical.
+    """
+    out = list(tokens)
+    n = len(out)
+    for i, t in enumerate(out):
+        if t.is_number or t.text not in ("un", "une"):
+            continue
+        nxt = out[i + 1] if i + 1 < n else None
+        if nxt is not None and nxt.text in _FR_HEURE:
+            out[i] = replace(t, text="1", is_number=True, value=1)
+    return _reindex(tuple(out))
+
+
 # French composes its tens above sixty rather than naming them: eighty is
 # four twenties ("quatre-vingts") and ninety is eighty plus ten
 # ("quatre-vingt-dix"), a vigesimal reading the shared Romance extractor does
@@ -1637,6 +1668,14 @@ fold_fr = _romance_prepass_fold(
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
 # deep-time SCALE-frame licensing: "un milliard/un billion d'années"
 fold_fr = _with_scale_frame(fold_fr, "fr", frozenset({"un", "une"}))
+# clock-frame licensing: "une heure" (one o'clock) and every fraction/meridiem/
+# subtractive frame built on it -- "un"/"une" reads as the hour 1 before
+# "heure(s)", the article everywhere else.
+_fold_fr_scaled = fold_fr
+
+
+def fold_fr(tokens):  # noqa: F811 -- final wrap adds une-heure licensing
+    return _fold_fr_scaled(_license_fr_une_heure(tokens))
 
 
 # -- Italian ----------------------------------------------------------------
