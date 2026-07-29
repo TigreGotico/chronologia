@@ -19,6 +19,7 @@ they are their own ``FRACTION`` slot vocabulary and must survive intact.
 """
 from __future__ import annotations
 
+import os
 from dataclasses import replace
 from typing import Tuple
 
@@ -685,28 +686,64 @@ def _homograph_ordinal_map(vocab, blacklist):
     return out
 
 
-def _license_ordinal_fraction(tokens, homomap, definite):
+#: locale root, for reading a language's ``marker_quarter_word.voc`` (the
+#: calendar-quarter noun -- "trimestre") at fold-build time.
+_LOCALE_ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "locale")
+
+
+def _quarter_word_surfaces(lang_code):
+    """The calendar-quarter noun surfaces ("trimestre"/"trimestres") of a
+    language, read from ``locale/<lang>/marker_quarter_word.voc``.
+
+    This is the *second* position (besides a preceding definite article) that
+    licenses the ordinal reading of an ordinal-fraction homograph: an ordinal
+    number-word directly before the quarter noun is the quarter selector
+    ("cuarto **trimestre**" = fourth quarter), never the clock/duration
+    fraction, which is never followed by "trimestre".  Read from the same
+    vocabulary the ``quarter_ref`` construction binds so the two never drift."""
+    path = os.path.join(_LOCALE_ROOT, lang_code, "marker_quarter_word.voc")
+    if not os.path.exists(path):
+        return frozenset()
+    out = set()
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            surf = line.strip()
+            if surf and not surf.startswith("#"):
+                out.add(surf.lower())
+    return frozenset(out)
+
+
+def _license_ordinal_fraction(tokens, homomap, definite, quarter_words=frozenset()):
     """Positionally read an ordinal-fraction homograph ("quarto"/"cuarto").
 
     The surface is the scoped ordinal ("**il quarto** giovedì", "**la cuarta**
-    semana") directly after a definite article, and the clock quarter ("tre **e
-    quarto**", "un **quarto** d'ora") everywhere else.  Only the definite-
-    article frame folds to the digit so ``scoped_ordinal`` binds it; every
-    clock-fraction frame keeps the bare word for the FRACTION slot, so the fold
-    is byte-identical there.  The positive licence also survives a fold that
-    segments the stream around a protected article (Portuguese "um quarto"):
-    a segment stripped of its article no longer sees the definite article and
-    correctly stays the fraction word."""
-    if not homomap or not definite:
+    semana") directly after a definite article, the quarter selector ("**cuarto
+    trimestre** de 2040" = fourth quarter) directly before the calendar-quarter
+    noun, and the clock quarter ("tre **e quarto**", "un **quarto** d'ora")
+    everywhere else.  Only the two ordinal frames -- a preceding definite
+    article, or a following quarter noun -- fold to the digit so
+    ``scoped_ordinal`` / ``quarter_ref`` bind it; every clock-fraction frame
+    keeps the bare word for the FRACTION slot, so the fold is byte-identical
+    there (a fraction word is never followed by "trimestre" nor, in the
+    duration frame "un quarto de hora", introduced by a definite article).  The
+    positive licence also survives a fold that segments the stream around a
+    protected article (Portuguese "um quarto"): a segment stripped of its
+    article no longer sees the definite article and correctly stays the
+    fraction word."""
+    if not homomap or (not definite and not quarter_words):
         return tokens
     out = list(tokens)
     changed = False
+    n = len(out)
     for i, t in enumerate(out):
         if t.is_number or t.text not in homomap:
             continue
         prev = out[i - 1] if i - 1 >= 0 else None
-        if prev is None or prev.text not in definite:
-            continue  # not the scoped-ordinal frame -- leave for FRACTION
+        nxt = out[i + 1] if i + 1 < n else None
+        after_article = prev is not None and prev.text in definite
+        before_quarter = nxt is not None and nxt.text in quarter_words
+        if not after_article and not before_quarter:
+            continue  # not an ordinal frame -- leave for FRACTION
         val = homomap[t.text]
         out[i] = Token(text=str(val), raw=t.raw, index=0, is_number=True,
                        value=val, char_start=t.char_start,
@@ -747,7 +784,7 @@ def _glue(tokens):
 
 
 def _make_romance_fold(lang_code, blacklist, reader=None,
-                       extra_numwords=frozenset()):
+                       extra_numwords=frozenset(), extra_homograph=None):
     from ovos_number_parser.util import RomanceNumberExtractor
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
     vocab = next(v for v in vars(numbers_mod).values()
@@ -791,13 +828,21 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
     # out of ``numwords`` above so the clock FRACTION slot keeps them; license
     # the ordinal reading back positionally (outside the "un quarto" fraction
     # frame) so the scoped_ordinal construction can bind higher ordinals.
-    homomap = _homograph_ordinal_map(vocab, blacklist)
+    homomap = dict(_homograph_ordinal_map(vocab, blacklist))
+    # some languages spell the quarter ordinal with a surface their own number
+    # vocabulary does not list as an ordinal ("quarto" in Aragonese, whose
+    # ordinal-4 is "cuatreno" and whose fraction-4 is "cuarto"); an explicit
+    # homograph entry licenses that surface in the ordinal frames only.
+    if extra_homograph:
+        homomap.update(extra_homograph)
     definite = _ROMANCE_DEFINITE.get(lang_code, frozenset())
-    if not homomap or not definite:
+    quarter_words = _quarter_word_surfaces(lang_code)
+    if not homomap or (not definite and not quarter_words):
         return base
 
     def folded(tokens):
-        return base(_license_ordinal_fraction(tokens, homomap, definite))
+        return base(_license_ordinal_fraction(tokens, homomap, definite,
+                                              quarter_words))
     return folded
 
 
@@ -1087,7 +1132,13 @@ fold_ca = _with_scale_frame(fold_ca, "ca", frozenset({"un", "una"}),
                             million_extra=frozenset({"milions", "milió"}))
 # an: "martes" (Tuesday) must never be read as a number; the Romance factory
 # folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
-fold_an = _make_romance_fold("an", {"martes"})
+# an: "quarto" (the qu- spelling) is the idiomatic masculine ordinal 4th before
+# "trimestre", but numbers_an lists ordinal-4 only as "cuatreno" and fraction-4
+# as "cuarto", so "quarto" is unknown to the vocabulary; an explicit homograph
+# entry licenses it to the digit 4 in the ordinal frames (definite article /
+# before the quarter noun) only, leaving the "cuarto" quarter-hour fraction
+# ("un cuarto de hora") untouched.
+fold_an = _make_romance_fold("an", {"martes"}, extra_homograph={"quarto": 4})
 # Aragonese apocopated ordinals ("primer", "tercer") the NumberVocabulary lists
 # only in their full form ("primero", "tercero"); the apocope is the surface a
 # noun phrase attests ("o tercer trimestre").  numbers_an carries no ordinal

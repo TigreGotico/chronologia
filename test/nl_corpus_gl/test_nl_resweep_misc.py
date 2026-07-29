@@ -6,11 +6,10 @@ clock idioms ("e cuarto"/"e media"/"menos cuarto"/"en punto" crossed with
 <year>"), and month-thirds with an explicit trailing year.  Gold is
 independent arithmetic in every case.  Anchor Tue 2017-06-27, 13:04.
 
-One real parser gap surfaces here and is pinned as strict xfail with the
-correct gold rather than silently dropped:
-  * "cuarto trimestre de <year>" collapses to Q1 instead of Q4 -- "cuarto"
-    here is likely mis-bound as the clock quarter-hour word rather than the
-    4th-quarter ordinal.
+"cuarto trimestre de <year>" once collapsed to Q1 -- "cuarto" (the ordinal
+4th) is spelled like the clock quarter-hour fraction word and was withheld
+from the number fold -- now FIXED: the ordinal reading is licensed directly
+before the quarter noun "trimestre" while the clock/room readings stay intact.
 
 "principios/finais de <month> de <year>" (month-thirds with a trailing
 explicit year) used to ignore that year and resolve against the anchor year
@@ -193,7 +192,12 @@ def test_quarter_fresh_years(text, s, e):
     assert ss == AstroDate(*s) and ee == AstroDate(*e)
 
 
-_QUARTER_XFAIL = [
+# "cuarto trimestre de <year>" now folds correctly: the ordinal reading of the
+# ordinal-fraction homograph "cuarto" is licensed directly before the quarter
+# noun "trimestre" (fix: numfold._license_ordinal_fraction quarter-word frame).
+# The clock/room readings of bare "cuarto" stay untouched (see
+# test_nl_confusables and the "e cuarto"/"menos cuarto" clock rows above).
+_QUARTER_Q4 = [
     ('cuarto trimestre de 2040', (2040, 10, 1), (2041, 1, 1)),
     ('cuarto trimestre de 2041', (2041, 10, 1), (2042, 1, 1)),
     ('cuarto trimestre de 2042', (2042, 10, 1), (2043, 1, 1)),
@@ -207,12 +211,8 @@ _QUARTER_XFAIL = [
 ]
 
 
-@pytest.mark.xfail(
-    reason="'cuarto trimestre de <year>' collapses to Q1 (2017) instead of Q4 of the named year -- 'cuarto' likely mis-binds to the clock quarter-hour word",
-    strict=True,
-)
-@pytest.mark.parametrize("text,s,e", _QUARTER_XFAIL)
-def test_fourth_quarter_fresh_years_xfail(text, s, e):
+@pytest.mark.parametrize("text,s,e", _QUARTER_Q4)
+def test_fourth_quarter_fresh_years(text, s, e):
     ss, ee = start_end(text)
     assert ss == AstroDate(*s) and ee == AstroDate(*e)
 
