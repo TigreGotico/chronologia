@@ -156,6 +156,10 @@
     "extend": {
       "rel_period": [
         "UNIT REL_MARKER"
+      ],
+      "scoped_ordinal": [
+        "YEAR MONTH ORD WEEKDAY",
+        "MONTH ORD WEEKDAY"
       ]
     }
   }

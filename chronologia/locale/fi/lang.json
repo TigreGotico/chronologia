@@ -147,6 +147,9 @@
     "extend": {
       "rel_period": [
         "article? UNIT REL_MARKER"
+      ],
+      "scoped_ordinal": [
+        "MONTH ORD WEEKDAY YEAR?"
       ]
     }
   }
