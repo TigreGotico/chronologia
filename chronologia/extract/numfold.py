@@ -746,6 +746,28 @@ def _glue(tokens):
     return tuple(out)
 
 
+def _romance_additive_join(left, right):
+    """Is ``left e right`` a genuine additive continuation of one Romance
+    numeral (``vinte e cinco`` == 25), rather than two separate numbers the
+    ``e`` merely stands between (``sete e vinte`` == seven, *e* twenty)?
+
+    The connective ``e`` fills the next place of a *round* base: a tens word
+    from twenty up ("vinte e cinco"), or a hundred/thousand ("cento e vinte",
+    "mil e quinhentos").  The rule, in place-value terms: the running value is
+    a multiple of ten of at least twenty, and the joined atom is smaller than
+    the base's lowest occupied place -- so a unit (< 10) may follow a ten, a
+    two-digit remainder (< 100) may follow a hundred, and so on.  Teen bases
+    (``dez e cinco``) and unit bases (``sete e vinte``) are excluded, which is
+    exactly what leaves a spoken clock minute for the MINUTE slot.
+    """
+    if left < 20 or left % 10 != 0 or right <= 0:
+        return False
+    place = 10
+    while left % (place * 10) == 0:
+        place *= 10
+    return right < place
+
+
 def _make_romance_fold(lang_code, blacklist, reader=None,
                        extra_numwords=frozenset()):
     from ovos_number_parser.util import RomanceNumberExtractor
@@ -786,7 +808,8 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
         extract=lambda text: extract_fn(text, ordinals=True),
         joiner=lambda tok: tok.text in joins,
         single_fallback=ordinal_value.get,
-        pre=_glue))
+        pre=_glue,
+        bridge_ok=_romance_additive_join))
     # ordinal-fraction homographs ("quarto" = fourth *and* a-quarter) are held
     # out of ``numwords`` above so the clock FRACTION slot keeps them; license
     # the ordinal reading back positionally (outside the "un quarto" fraction
