@@ -70,8 +70,7 @@ def test_ordinal_weekday_of_month(text, y, m, wd, n):
     assert start_end(text) == _day(d.year, d.month, d.day)
 
 
-@pytest.mark.xfail(strict=True, reason="last-weekday-of-month not scoped")
-@pytest.mark.parametrize("text,y,m,wd", [
+@pytest.mark.parametrize("text,y,m,wd", [  # fixed: Slovak "posledný" ordlast
     ("posledný piatok v júni", 2017, 6, 4),
     ("posledná nedeľa v októbri 2021", 2021, 10, 6),
     ("posledný pondelok v marci 2020", 2020, 3, 0),
