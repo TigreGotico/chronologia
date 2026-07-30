@@ -10,11 +10,6 @@
         "MARKER of? NUM UNIT"
       ]
     },
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER WEEKEND",
@@ -81,21 +76,6 @@
         "in GYEAR",
         "article? year_word of? GYEAR",
         "GYEAR"
-      ]
-    },
-    "iso_date": {
-      "orders": [
-        "ISO"
-      ]
-    },
-    "iso_week_date": {
-      "orders": [
-        "ISOWEEK"
-      ]
-    },
-    "numeric_date": {
-      "orders": [
-        "NUMDATE"
       ]
     },
     "holiday_ref": {

@@ -9,11 +9,6 @@
         "NUM UNIT MARKER"
       ]
     },
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "WEEKEND REL_MARKER",
@@ -49,17 +44,6 @@
     "year_ref": {
       "orders": [
         "GYEAR"
-      ]
-    },
-    "iso_date": {
-      "orders": [
-        "ISO"
-      ]
-    },
-    "iso_week_date": {"orders": ["ISOWEEK"]},
-    "numeric_date": {
-      "orders": [
-        "NUMDATE"
       ]
     },
     "quarter_ref": {

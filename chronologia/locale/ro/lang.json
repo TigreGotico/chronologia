@@ -15,27 +15,6 @@
         "indef? NUM of? indef? UNIT MARKER"
       ]
     },
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
-    "named_day_after": {
-      "orders": [
-        "article? indef? UNIT after DAY_WORD"
-      ]
-    },
-    "named_day_before": {
-      "orders": [
-        "article? indef? UNIT before DAY_WORD"
-      ]
-    },
-    "weekday_offset": {
-      "orders": [
-        "indef? QUANT? UNIT from WEEKDAY",
-        "indef? NUM UNIT from WEEKDAY"
-      ]
-    },
     "weekday_ref": {
       "orders": [
         "WEEKDAY REL_MARKER"
@@ -126,26 +105,6 @@
         "NUM of? SCALE of? year_word MARKER",
         "MARKER NUM of? SCALE of? year_word",
         "NUM of? SCALE of? year_word before present"
-      ]
-    },
-    "named_period": {
-      "orders": [
-        "in? during? article? PART? PERIOD"
-      ]
-    },
-    "iso_date": {
-      "orders": [
-        "ISO"
-      ]
-    },
-    "iso_week_date": {
-      "orders": [
-        "ISOWEEK"
-      ]
-    },
-    "numeric_date": {
-      "orders": [
-        "NUMDATE"
       ]
     },
     "year_ref": {

@@ -12,11 +12,6 @@
         "indef? UNIT MARKER"
       ]
     },
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER article? WEEKEND",
@@ -58,17 +53,6 @@
       "orders": [
         "ago NUM SCALE year_word",
         "NUM SCALE year_word ago"
-      ]
-    },
-    "iso_date": {
-      "orders": [
-        "ISO"
-      ]
-    },
-    "iso_week_date": {"orders": ["ISOWEEK"]},
-    "numeric_date": {
-      "orders": [
-        "NUMDATE"
       ]
     },
     "year_ref": {

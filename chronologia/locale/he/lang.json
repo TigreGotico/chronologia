@@ -10,11 +10,6 @@
         "NUM UNIT MARKER"
       ]
     },
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "WEEKEND REL_MARKER",
@@ -80,11 +75,13 @@
         "GYEAR"
       ]
     },
-    "iso_date": {"orders": ["ISO"]},
-    "iso_week_date": {"orders": ["ISOWEEK"]},
-    "numeric_date": {"orders": ["NUMDATE"]},
     "holiday_ref": {
-      "orders": ["REL_MARKER HOLIDAY", "HOLIDAY YEAR", "YEAR HOLIDAY", "HOLIDAY"]
+      "orders": [
+        "REL_MARKER HOLIDAY",
+        "HOLIDAY YEAR",
+        "YEAR HOLIDAY",
+        "HOLIDAY"
+      ]
     },
     "fuzzy_period": {
       "orders": [

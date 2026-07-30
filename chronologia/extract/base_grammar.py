@@ -31,22 +31,40 @@ proves: the refactor only ever *adds* matching power.
 
 The knob schema below records the typological axes the exceptions fall on --
 so the long tail stays a handful of named dimensions, not 40 bespoke order
-lists.  This PR realises ``scoped_ordinal`` through the escape hatches
-(``disable`` / ``override`` / ``extend``); later PRs migrate more
-constructions and fold the repeated patterns into the enum knobs.
+lists.  ``scoped_ordinal`` realises the escape hatches (``disable`` /
+``override`` / ``extend``) directly; ``weekday_ref`` / ``rel_period`` /
+``season_ref`` fold the postposed-marker and year-first idioms into the
+``marker_position`` / ``season_year_order`` knobs; ``half_period`` /
+``month_fuzzy`` / ``daypart_ref`` add optional connectors/articles that
+inherit cleanly with no knob at all; and ``named_day`` / ``iso_date`` /
+``iso_week_date`` / ``numeric_date`` / ``named_period`` / ``weekday_offset`` /
+``named_day_after`` / ``named_day_before`` migrate with no per-locale
+exception whatsoever.  Later PRs migrate the remaining constructions that
+still have genuine per-locale divergence.
 """
 from __future__ import annotations
 
 from typing import Dict, List, Mapping, Sequence
 
 # ---------------------------------------------------------------------------
-# The base grammar.  Only ``scoped_ordinal`` lives here this PR (more
-# constructions migrate in later PRs).  The orders are the richest set in the
-# tree -- harvested verbatim from ``en`` -- using the abstract slots the
-# resolver already binds language-neutrally.  A leading ``article?`` is
-# OPTIONAL, so an article-less language (Estonian, Basque) matches the same
-# orders without shipping an article: ``article?`` covers the article-less
-# surface.
+# The base grammar.  ``scoped_ordinal``, ``weekday_ref``, ``rel_period``,
+# ``season_ref``, ``half_period``, ``month_fuzzy`` and ``daypart_ref`` migrated
+# in earlier PRs; this PR adds ``named_day``, ``iso_date``, ``iso_week_date``,
+# ``numeric_date`` (pure DRY -- all 40 locales already declared these
+# identically, so migrating changes no locale's matching power) and
+# ``named_period``, ``weekday_offset``, ``named_day_after``, ``named_day_before``
+# (gap-fills -- a minority of locales declared these identically; the base
+# closes the silent gap in the rest, the same additive-superset move as
+# ``daypart_ref``).  The orders are the richest set in the tree -- harvested
+# verbatim from ``en`` (or, where ``en`` lacked the construction, from whichever
+# locale declared it) -- using the abstract slots the resolver already binds
+# language-neutrally.  A leading ``article?`` is OPTIONAL, so an article-less
+# language (Estonian, Basque) matches the same orders without shipping an
+# article: ``article?`` covers the article-less surface.  More constructions
+# with genuine per-locale divergence (``calendar_date``, ``clock_time``,
+# ``year_ref``, ``relative_offset``, ...) stay per-locale for now; they were
+# surveyed and found to disagree across locales enough that migrating them
+# would need more overrides than the DRY win is worth.
 # ---------------------------------------------------------------------------
 BASE_GRAMMAR: Dict[str, List[str]] = {
     "scoped_ordinal": [
@@ -197,6 +215,64 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "daypart_ref": [
         "REL_MARKER DAYPART",
         "DAYPART",
+    ],
+    # A bare deictic day word -- "today", "tomorrow", "yesterday".  ``DAY_WORD``
+    # binds the locale's own vocabulary (``named_day_<key>.voc``).  All 40
+    # locales already declared this construction with the IDENTICAL single
+    # order, so migrating it changes no locale's matching power at all -- pure
+    # DRY, not a gap-fill.
+    "named_day": [
+        "DAY_WORD",
+    ],
+    # A bare ISO-8601 calendar date ("2024-03-05"). ``ISO`` binds the whole
+    # dashed numeral, which is locale-INDEPENDENT by construction (the ISO
+    # standard has no translated surface).  All 40 locales already declared
+    # this construction with the identical single order -- pure DRY.
+    "iso_date": [
+        "ISO",
+    ],
+    # A bare ISO-8601 week date ("2024-W10-2"). ``ISOWEEK`` binds the whole
+    # token, locale-independent for the same reason as ``iso_date``.  All 40
+    # locales already declared this construction identically -- pure DRY.
+    "iso_week_date": [
+        "ISOWEEK",
+    ],
+    # A bare slash/dot numeric date ("05/03/2024", "05.03.2024").  ``NUMDATE``
+    # binds the whole numeral token; the DMY/MDY reading is resolved from the
+    # locale's ``conventions.dmy`` flag elsewhere, not from the order string.
+    # All 40 locales already declared this construction identically -- pure
+    # DRY.
+    "numeric_date": [
+        "NUMDATE",
+    ],
+    # A bare named period phrase ("during the summer", "in the Renaissance").
+    # ``PERIOD`` binds the locale's named-period vocabulary, and the optional
+    # leading ``in?``/``during?``/``article?``/``PART?`` is the language-
+    # neutral core every locale that declared this construction already
+    # shared verbatim (13 of 40).  Migrating closes the silent gap in the
+    # other 27, which previously fell through to no match at all rather than
+    # mis-parsing a competing construction.
+    "named_period": [
+        "in? during? article? PART? PERIOD",
+    ],
+    # "N <unit> from <weekday>" ("two weeks from Tuesday").  Declared
+    # identically (both a spelled-``NUM`` and a digit-``QUANT`` order) in the 6
+    # locales that had it; the base closes the gap in the other 34.
+    "weekday_offset": [
+        "indef? QUANT? UNIT from WEEKDAY",
+        "indef? NUM UNIT from WEEKDAY",
+    ],
+    # "the day after <named day>" ("the day after tomorrow"). Declared
+    # identically in the 6 locales that had it; the base closes the gap in the
+    # other 34.
+    "named_day_after": [
+        "article? indef? UNIT after DAY_WORD",
+    ],
+    # "the day before <named day>" ("the day before yesterday"). Declared
+    # identically in the 6 locales that had it; the base closes the gap in the
+    # other 34.
+    "named_day_before": [
+        "article? indef? UNIT before DAY_WORD",
     ],
 }
 
