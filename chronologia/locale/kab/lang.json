@@ -4,11 +4,6 @@
     "ordinal_dot": false
   },
   "constructions": {
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
     "calendar_date": {
       "orders": [
         "DAY of MONTH YEAR?",
@@ -26,21 +21,6 @@
     "year_ref": {
       "orders": [
         "GYEAR"
-      ]
-    },
-    "iso_date": {
-      "orders": [
-        "ISO"
-      ]
-    },
-    "iso_week_date": {
-      "orders": [
-        "ISOWEEK"
-      ]
-    },
-    "numeric_date": {
-      "orders": [
-        "NUMDATE"
       ]
     },
     "quarter_ref": {

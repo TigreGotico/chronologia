@@ -9,11 +9,6 @@
         "NUM UNIT MARKER"
       ]
     },
-    "named_day": {
-      "orders": [
-        "DAY_WORD"
-      ]
-    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER WEEKEND",
@@ -59,15 +54,11 @@
         "GYEAR"
       ],
       "calendar": "solar_hijri_arithmetic",
-      "calendar_year_range": [1200, 1500]
-    },
-    "iso_date": {
-      "orders": [
-        "ISO"
+      "calendar_year_range": [
+        1200,
+        1500
       ]
     },
-    "iso_week_date": {"orders": ["ISOWEEK"]},
-    "numeric_date": {"orders": ["NUMDATE"]},
     "month_fuzzy": {
       "orders": [
         "PART of? MONTH",
@@ -75,7 +66,13 @@
       ]
     },
     "holiday_ref": {
-      "orders": ["REL_MARKER HOLIDAY", "HOLIDAY REL_MARKER", "HOLIDAY YEAR", "YEAR HOLIDAY", "HOLIDAY"]
+      "orders": [
+        "REL_MARKER HOLIDAY",
+        "HOLIDAY REL_MARKER",
+        "HOLIDAY YEAR",
+        "YEAR HOLIDAY",
+        "HOLIDAY"
+      ]
     },
     "fuzzy_period": {
       "orders": [
