@@ -196,5 +196,5 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_de"
+  "hook": "chronologia.extract.numfold_germanic:fold_de"
 }

@@ -165,7 +165,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_es",
+  "hook": "chronologia.extract.numfold_romance:fold_es",
   "lemmas": {
     "primer": "primero",
     "tercer": "tercero"

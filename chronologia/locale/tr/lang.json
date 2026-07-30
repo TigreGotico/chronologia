@@ -121,7 +121,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_tr",
+  "hook": "chronologia.extract.numfold_turkic:fold_tr",
   "quantifiers": {
     "1": [
       "bir"

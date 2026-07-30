@@ -239,7 +239,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_it",
+  "hook": "chronologia.extract.numfold_romance:fold_it",
   "base_grammar": {
     "marker_position": "post",
     "override": {
