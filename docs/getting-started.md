@@ -11,10 +11,104 @@ follow along.
 pip install chronologia
 ```
 
-That is everything. The calendrical core is pure standard library; the
-natural-language layer adds two small helpers (ovos-number-parser and
-ovos-spec-tools), installed automatically with the line above. It never
-talks to the internet. You need Python 3.10 or newer.
+That is everything. You need Python 3.10 or newer. The reckoning core is pure
+standard library; the natural-language layer adds two small pure-Python helpers
+— **ovos-number-parser** (spelled numbers → digits) and **ovos-spec-tools**
+(loads each language's vocabulary). Nothing here ever talks to the internet.
+
+## Your first extraction (60 seconds)
+
+The single most common thing to do with chronologia is turn a phrase a human
+wrote into the stretch of time it means. That is `extract_timespan`. Copy this,
+run it, and you have used the library:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+now = datetime(2017, 6, 27, 13, 4)   # a Tuesday — "now" for relative phrases
+span, remainder = extract_timespan("let's meet next Friday", "en", now)
+
+print(span.start_datetime.date())   # 2017-06-30
+print(remainder)                    # let's meet
+```
+
+`extract_timespan(text, language, now)` hands back two things: the **span** it
+found (a stretch of time — here, all of that Friday) and the **remainder**, the
+words that were not part of the date. That is the whole loop: text in, a real
+span out.
+
+## Common recipes
+
+Six things you will reach for constantly. Each is a few lines and runs as-is.
+
+**Get the start and end of a phrase.** A span is an interval, so it has both —
+and its `width` tells you how precise the phrase was.
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+span, _ = extract_timespan("June 2027", "en", datetime(2017, 6, 27))
+print(span.start_datetime.date(), "→", span.end_datetime.date())  # 2027-06-01 → 2027-07-01
+print(span.width)                                                  # 30 days, 0:00:00
+```
+
+**Read a date in another language.** Pass the language code; the vocabulary
+does the rest. chronologia speaks 40 languages.
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+span, _ = extract_timespan("el próximo viernes", "es", datetime(2017, 6, 27, 13, 4))
+print(span.start_datetime.date())   # 2017-06-30
+```
+
+**Look up a holiday.** Holidays are *computed* from published rules, so any
+in-range year works with no download.
+
+```python
+from chronologia import holidays_for
+
+christmas = [h for h in holidays_for("US", 2024) if h.name == "Christmas Day"][0]
+print(christmas.span.start_datetime.date())   # 2024-12-25
+```
+
+**Measure a bare duration.** A length of time with no start comes back as a
+plain `datetime.timedelta`.
+
+```python
+from chronologia import extract_duration
+
+length, _ = extract_duration("two and a half hours", "en")
+print(length)   # 2:30:00
+```
+
+**Expand a recurring rule.** Read "every other Monday" into a rule, then ask
+for its next few dates.
+
+```python
+from chronologia import extract_recurrence, occurrences
+from datetime import datetime
+
+anchor = datetime(2017, 6, 27, 13, 4)
+rule, _ = extract_recurrence("every other Monday", "en", anchor)
+dates = [s.start_datetime.date().isoformat() for s in occurrences(rule, dtstart=anchor, count=3)]
+print(dates)   # ['2017-07-10', '2017-07-24', '2017-08-07']
+```
+
+**Convert a date into another calendar.** Ask a calendar for a date and get
+back an ordinary date object — no integers to thread.
+
+```python
+from chronologia import CALENDARS
+
+print(CALENDARS["hebrew"].date(5786, 7, 1))   # 2025-09-23T00:00:00  (Rosh Hashanah)
+```
+
+That is enough to be useful today. The rest of this page explains the three
+ideas underneath these calls, so the library never surprises you.
 
 ## The one big idea: give every day a number
 

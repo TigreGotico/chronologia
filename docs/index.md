@@ -6,9 +6,19 @@ Ramadan 1446", "next winter", "66 million years ago"), and it *computes* across
 every calendar and system of reckoning humanity has used — offline, without
 guessing, and honest about what cannot be known.
 
-**Start here:** if you are new, read [use-cases.md](use-cases.md) to see whether
-the library is for you, then [getting-started.md](getting-started.md) for the
-three ideas everything is built from. Everything else you can read on demand.
+**Two ways in — pick your track:**
+
+- **New here? Want a quick win.** Go straight to
+  [getting-started.md](getting-started.md): a copy-paste first extraction, six
+  common recipes, then the three ideas everything is built from — taught from
+  zero. Browse [use-cases.md](use-cases.md) to see worked programs for your
+  field.
+- **Building on the library? Want the full surface.** Start with
+  [design.md](design.md) — the JDN hub, the four value types, the scope
+  boundaries, and what the library refuses to do and why — then dive into any
+  reference guide below. The public API is grouped and importable straight from
+  `chronologia` (the toolbox is listed at the end of
+  [getting-started.md](getting-started.md)).
 
 Three terms recur everywhere and are worth meeting once: a **span** is a stretch
 of time (a start and an end), not an instant; every span carries a one-word
