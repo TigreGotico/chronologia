@@ -24,7 +24,7 @@ which calendar the phrase is in.
 ## What comes back
 
 `extract_timespan(text, lang, anchor)` returns either `None` (nothing
-matched) or a `TimeSpanResult` — a named 2-tuple of `(span, remainder)`. You
+matched) or a `DateSpanResult` — a named 2-tuple of `(span, remainder)`. You
 can unpack it (`span, remainder = extract_timespan(...)`), index it
 (`result[0]`), or read the named fields (`result.span`, `result.remainder`) —
 all three access the same two values:

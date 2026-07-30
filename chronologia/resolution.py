@@ -26,6 +26,18 @@ class DateTimeResolution(Enum):
     ``UNIT_OF_SCOPE`` counts inside the scope containing the reference
     date; ``BEFORE_PRESENT_UNIT`` counts backwards from the before-present
     reference epoch (January 1st 1950, as in radiocarbon dating).
+
+    Not every member is *emitted* by :attr:`DateSpan.resolution`. Width
+    derivation reports only the plain magnitude tiers -- ``DAY``, ``WEEK``,
+    ``MONTH``, ``YEAR``, ``DECADE``, ``CENTURY``, ``MILLENNIUM`` and the
+    deep-time tiers (``PERIOD_GEOLOGICAL`` .. ``EON``) -- because a bare width
+    cannot tell a calendar-aligned week from an arbitrary seven-day span. The
+    compound ``UNIT_OF_SCOPE`` and ``BEFORE_PRESENT_UNIT`` members are a
+    *classification and input vocabulary*: callers pass them in to compute a
+    scoped or before-present range (see
+    :mod:`chronologia.extract.ranges`), and scoped-ordinal resolution names
+    them explicitly. They are a legitimate part of the public enum, just not
+    values ``DateSpan.resolution`` derives from width alone.
     """
     DAY = 0
     DAY_OF_MONTH = 1
