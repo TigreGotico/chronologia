@@ -163,7 +163,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_ca",
+  "hook": "chronologia.extract.numfold_romance:fold_ca",
   "base_grammar": {
     "marker_position": "post"
   }
