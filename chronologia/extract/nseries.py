@@ -28,6 +28,10 @@ from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
 from chronologia.extract.pipeline import require_text
+from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
+                                          _conn_surfaces, _exclusion_vetoes,
+                                          _extract_range, _resolve_scale_mode,
+                                          _timespan_engine, extract_timespan)
 from chronologia.recurrence import HolidayRecurrence, Recurrence
 from chronologia.recurrence import every as _build_every
 from chronologia.recurrence import nth_weekday_of_month as _nth_weekday_of_month
@@ -100,8 +104,6 @@ def extract_duration(
     Text that names no length, the empty string included, returns ``None``.
     """
     require_text(text, "extract_duration")
-    from chronologia.extract import _timespan_engine
-
     engine = _timespan_engine(lang)
     spec = engine.spec
     tokens = engine.tokenize(text)
@@ -257,7 +259,6 @@ def extract_timespans(
     empty list.
     """
     require_text(text, "extract_timespans")
-    from chronologia.extract import _timespan_engine, _resolve_scale_mode
     from chronologia.extract.confidence import score_candidates
     from chronologia.extract.resolver import compose_date_clock
 
@@ -310,7 +311,6 @@ def extract_timespans(
     # tomorrow", "any day but Friday"): the excluded reference is not a positive
     # date.  The governing residue is the text between the previous mention and
     # this one, so a bound ("not before Monday") is left untouched.
-    from chronologia.extract import _exclusion_vetoes
     kept = []
     prev_end = 0
     for (lo, hi), value, conf in out:
@@ -347,8 +347,6 @@ def _merge_ranges(out, tokens, text, engine, anchor):
     """
     if len(out) < 2:
         return out
-    from chronologia.extract import (_conn_surfaces, _extract_range,
-                                      _RANGE_BETWEEN, _RANGE_FROM)
     from chronologia.extract.pipeline import pretokens
 
     spec = engine.spec
@@ -603,8 +601,6 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
     from dataclasses import replace as _replace
     if isinstance(rec, HolidayRecurrence):
         return rec, consumed
-    from chronologia.extract import _timespan_engine
-
     engine = _timespan_engine(lang)
     tokens = ctx.tokens
     for m in engine.matcher.match(tokens):
@@ -697,7 +693,6 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
     surface; the engine tries the leading reading first, then the postposed
     one, per marker."""
     from dataclasses import replace as _replace
-    from chronologia.extract import extract_timespan
     tokens = ctx.tokens
 
     def _ground_until(rec, text):
@@ -773,8 +768,6 @@ def _recur_ctx(text, lang, anchor):
     """Build the recurrence context for ``text`` -- the shared input every
     finder reads.  Split out so a finder can be exercised on its own (the
     finder-order test does exactly that)."""
-    from chronologia.extract import _timespan_engine
-
     engine = _timespan_engine(lang)
     spec = engine.spec
     tokens = engine.tokenize(text)
@@ -1356,8 +1349,6 @@ def _recur_date_anchored(ctx):
     The month/day are lifted from whatever the ``calendar_date`` construction
     resolves -- no new date grammar is written here.
     """
-    from chronologia.extract import _timespan_engine
-
     t = ctx.tokens
     n = len(t)
     engine = _timespan_engine(ctx.lang)
