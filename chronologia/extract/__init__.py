@@ -45,21 +45,31 @@ __all__ = [
     "SlotElement", "SlotOrder", "Token", "TokenizerModes",
     "Tokenizer", "TemporalNormaliser", "ConstructionCompiler",
     "ConstructionMatcher", "Resolver", "load_lang_spec",
-    "ExplainTrace", "explain", "DateTimeEngine",
+    "ExplainTrace", "explain",
     "extract_timespan", "extract_candidates", "Candidate",
     "extract_duration", "extract_timespans", "extract_recurrence",
-    "TimeMention", "TimeSpanResult", "DurationResult", "RecurrenceResult",
+    "TimeMention", "DateSpanResult", "TimeSpanResult", "DurationResult",
+    "RecurrenceResult",
 ]
 
 
-class TimeSpanResult(NamedTuple):
+class DateSpanResult(NamedTuple):
     """Return of :func:`extract_timespan`: a span and the leftover text.
 
     A plain 2-tuple ``(span, remainder)`` for unpacking, plus the named fields
     ``.span`` (a :class:`~chronologia.astrodate.DateSpan`) and ``.remainder``.
+    Named ``DateSpanResult`` because it wraps a :class:`DateSpan`; sibling of
+    :class:`DurationResult` / :class:`RecurrenceResult`.
     """
     span: DateSpan
     remainder: str
+
+
+#: Deprecated former name of :class:`DateSpanResult`, kept as an alias through
+#: the 1.x line. The wrapped payload is a ``DateSpan``, so the "DateSpan" name
+#: is the coherent one; ``TimeSpanResult`` still imports and ``isinstance``-checks
+#: identically (same type). Prefer :class:`DateSpanResult`.
+TimeSpanResult = DateSpanResult
 
 
 class DateTimeEngine:
@@ -1354,7 +1364,7 @@ def extract_timespan(
         jurisdiction: Optional[str] = None,
         enable: Tuple[str, ...] = (),
         scale: Optional[str] = None,
-) -> Optional[TimeSpanResult]:
+) -> Optional[DateSpanResult]:
     """Extract a :class:`~chronologia.DateSpan` from natural-language ``text``.
 
     Returns the referential *width* of a date phrase: unlike a parser that
@@ -1367,7 +1377,7 @@ def extract_timespan(
     wall clock).  Only languages with locale data are supported; others
     raise :class:`NotImplementedError`.
 
-    Returns a :class:`TimeSpanResult` -- a ``(span, remainder)`` named tuple
+    Returns a :class:`DateSpanResult` -- a ``(span, remainder)`` named tuple
     (unpack it, or read ``.span`` / ``.remainder``) -- or ``None`` when nothing
     matched.
 
@@ -1407,7 +1417,7 @@ def extract_timespan(
     raw = pretokens(text, engine.spec)
     res = _resolve_span(text, raw, engine, anchor, enable, jurisdiction,
                         scale_mode)
-    return None if res is None else TimeSpanResult(*res)
+    return None if res is None else DateSpanResult(*res)
 
 
 # A temporal reference GOVERNED BY a negation/exclusion particle ("not

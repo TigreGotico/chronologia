@@ -105,8 +105,8 @@ from chronologia.civil_holidays import (CATEGORIES, IL_INDEPENDENCE_SHIFT,
                                         coverage, holidays_for, is_civil_holiday,
                                         load_calendar, load_translations,
                                         parse_name_cell)
-from chronologia.extract import (Candidate, DurationResult, RecurrenceResult,
-                                 TimeMention, TimeSpanResult, explain,
+from chronologia.extract import (Candidate, DateSpanResult, DurationResult,
+                                 RecurrenceResult, TimeMention, explain,
                                  extract_candidates, extract_duration,
                                  extract_recurrence, extract_timespan,
                                  extract_timespans)
@@ -144,7 +144,7 @@ __all__ = [
     "extract_candidates",
     "Candidate",
     "explain",
-    "TimeSpanResult",
+    "DateSpanResult",
     # extraction beyond a single span
     "extract_duration",
     "extract_timespans",
@@ -369,3 +369,19 @@ __all__ = [
     "load_translations",
     "parse_name_cell",
 ]
+
+#: Deprecated public names kept importable through the 1.x line -> their
+#: replacement. Accessing one emits a DeprecationWarning and returns the new
+#: object (see :pep:`562`).
+_DEPRECATED_NAMES = {"TimeSpanResult": "DateSpanResult"}
+
+
+def __getattr__(name):
+    replacement = _DEPRECATED_NAMES.get(name)
+    if replacement is not None:
+        import warnings
+        warnings.warn(
+            f"chronologia.{name} is deprecated; use chronologia.{replacement}",
+            DeprecationWarning, stacklevel=2)
+        return globals()[replacement]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
