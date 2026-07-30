@@ -3,8 +3,6 @@
 # Source: IANA/IETF leap-seconds.list (mirrors the IERS Bulletin C / USNO
 # TAI-UTC series), https://data.iana.org/time-zones/data/leap-seconds.list
 # Downloaded: 2026-07-21
-# Local copy cited at: ~/AgentWorkspaces/papers/standards/leap-seconds.list
-# (see ~/AgentWorkspaces/papers/standards/INDEX.md)
 #
 # Format: two tab-separated columns per data row:
 #   effective_utc_date<TAB>cumulative_tai_minus_utc_seconds

@@ -1,7 +1,7 @@
 """Era year-start not on 1 January: the Byzantine Anno Mundi reckoning.
 
 The Byzantine (Creation) era numbers the Gregorian calendar but begins its
-civil year on 1 September (byzantine_calendar_reference.html: epoch 1 Sep
+civil year on 1 September (Wikipedia, "Byzantine calendar": epoch 1 Sep
 5509 BC; AD 2026 -> AM 7535 after 1 September).  ``resolve_era_year_span``
 returns the half-open [start, next-start) span, so era years tile with no
 gap across the September boundary.

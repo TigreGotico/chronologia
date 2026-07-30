@@ -10,16 +10,15 @@ computation -- so results always come with the stated bound
 :data:`MOON_PHASE_ACCURACY` and an explicit :attr:`~chronologia.astrodate.
 DateSpan.basis`.
 
-**Source (downloaded, cited)**, both mirrored into
-``papers/standards/`` (see that directory's ``INDEX.md``):
+**Source (cited)**:
 
-* ``moon_new_moon_wikipedia.html`` (Wikipedia, "New moon") -- states the
+* Wikipedia, "New moon" -- states the
   present-day mean synodic month as ``29.530589`` days (:data:`MEAN_SYNODIC_MONTH_DAYS`,
   quoted verbatim), and that a single lunation's *true* length ranges
   ``29.26`` to ``29.80`` days (a 12.96-hour spread) because the Sun's
   gravity perturbs the Moon's eccentric orbit -- the physical reason mean
   arithmetic cannot be exact.
-* ``moon_lunation_number_wikipedia.html`` (Wikipedia, "Lunation Number")
+* Wikipedia, "Lunation Number"
   -- states, verbatim: "Lunation 0 began on the first new moon of 2000
   (approx. 18:14 UTC, 6 January 2000)" for Jean Meeus's Lunation Number
   (Meeus, *Astronomical Algorithms*, 2nd ed., 1998) -- the epoch this
@@ -33,9 +32,8 @@ DateSpan.basis`.
 
 **Accuracy.** ``MOON_PHASE_ACCURACY`` (:data:`MOON_PHASE_ACCURACY` ==
 14 hours) bounds mean-vs-true new/full moon: cross-checked here against
-the US Naval Observatory's published 2024 phase table (``papers/standards/
-moon_phases_usno_2024.json``, US Naval Observatory Astronomical
-Applications API, ``https://aa.usno.navy.mil/api/moon/phases/year``,
+the US Naval Observatory's published 2024 phase table (US Naval Observatory
+Astronomical Applications API, ``https://aa.usno.navy.mil/api/moon/phases/year``,
 downloaded 2026-07-21) -- the largest new/full deviation across all 25
 new+full instants in that table is 14h11m (2024-08-04 New Moon), matching
 the ~14h bound. **Quarter phases (first/last) are not covered by this

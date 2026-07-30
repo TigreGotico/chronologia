@@ -10,8 +10,7 @@ angles imply and no more.
 
 **Source.**  Definitions, per-convention angles, and the hour-angle / shadow
 formulas transcribe the PrayTimes reference documentation --
-``papers/standards/praytimes_calculation_methods.html`` (mirror of
-https://praytimes.org/calculation).  The Fajr/Isha depression-angle table and
+https://praytimes.org/calculation.  The Fajr/Isha depression-angle table and
 the Asr shadow factors (1 = majority/Shafi'i, 2 = Hanafi) are quoted verbatim
 in :data:`CONVENTIONS` and :data:`ASR_METHODS` citations.
 
@@ -117,8 +116,7 @@ class AsrMethod:
     citation: str
 
 
-_PRAYTIMES = ("PrayTimes, https://praytimes.org/calculation, "
-              "papers/standards/praytimes_calculation_methods.html")
+_PRAYTIMES = "PrayTimes, https://praytimes.org/calculation"
 
 #: The published Fajr/Isha conventions, quoted from the PrayTimes methods table
 #: ("Convention / Fajr Angle / Isha Angle").  Each carries the source verbatim.

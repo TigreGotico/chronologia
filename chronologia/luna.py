@@ -19,7 +19,7 @@ with defining such a standard by the end of 2026, precisely because clocks on
 the Moon do not tick at Earth's rate: a lunar clock runs about **58.7
 microseconds per Earth-day faster** than one on Earth's surface (general- and
 special-relativistic terms combined), plus smaller periodic variations
-(``papers/standards/ltc_coordinated_lunar_time_wikipedia.html``, verbatim).
+(Wikipedia, "Coordinated Lunar Time", quoted verbatim).
 Until the standard publishes there is no defensible zero point and no adopted
 rate convention, so :func:`ltc_offset` raises :class:`NotImplementedError`
 rather than ship a fabricated civil offset.  :data:`LTC_STATUS` records the
@@ -52,15 +52,14 @@ __all__ = [
 #: SI seconds in a mean lunar (solar) day.  The Moon is tidally locked, so a
 #: surface observer's mean solar day equals one mean synodic month:
 #: ``MEAN_SYNODIC_MONTH_DAYS * 86400`` == 2,551,442.9 s (29.530589 days;
-#: ``papers/standards/moon_new_moon_wikipedia.html`` for the month length).
+#: Wikipedia, "New moon", for the month length).
 #: This is the natural lunar cycle the ``lunar`` axis counts — a documented
 #: astronomical fact, not a civil convention.
 LUNAR_DAY_SECONDS = MEAN_SYNODIC_MONTH_DAYS * EARTH_DAY_SECONDS
 
 #: Relativistic drift of a lunar-surface clock relative to an Earth-surface
 #: clock: **58.7 microseconds per Earth-day faster** (Wikipedia, "Coordinated
-#: Lunar Time", ``papers/standards/ltc_coordinated_lunar_time_wikipedia.html``,
-#: quoted verbatim: "24 hours on the Moon being 58.7 microseconds ...
+#: Lunar Time", quoted verbatim: "24 hours on the Moon being 58.7 microseconds ...
 #: faster").  The value the spec rounds to "~56 µs/day"; the cited source
 #: figure is 58.7, which is the number used here.  This is *why* a lunar time
 #: standard is needed and *why* no naive Earth-clock offset is correct.
@@ -95,8 +94,8 @@ class LunarTimeStandardStatus:
 
 
 #: The pending-standard record for Coordinated Lunar Time.  Fields are cited to
-#: ``papers/standards/ltc_coordinated_lunar_time_wikipedia.html`` (see
-#: ``INDEX.md``): the White House OSTP directive of 2 April 2024 tasking NASA
+#: Wikipedia, "Coordinated Lunar Time": the White House OSTP directive of
+#: 2 April 2024 tasking NASA
 #: with a lunar time standard, and the 58.7 µs/Earth-day relativistic drift
 #: that makes an Earth clock the wrong clock on the Moon.
 LTC_STATUS = LunarTimeStandardStatus(
@@ -107,8 +106,7 @@ LTC_STATUS = LunarTimeStandardStatus(
             "Standardization), tasking a lunar time standard by end of 2026",
     mandate_date=date(2024, 4, 2),
     drift_microseconds_per_day=LTC_DRIFT_MICROSECONDS_PER_DAY,
-    source="Wikipedia, 'Coordinated Lunar Time' "
-           "(papers/standards/ltc_coordinated_lunar_time_wikipedia.html)",
+    source="Wikipedia, 'Coordinated Lunar Time'",
 )
 
 

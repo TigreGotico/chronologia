@@ -1,8 +1,8 @@
 # Transparency: how this library was built
 
 This library was written by AI, orchestrated by AI, and directed by a
-human — most of it in one very long working session. You deserve to know
-that, and to know how it worked. This page is the honest account.
+human. You deserve to know that, and to know how it worked. This page is
+the honest account.
 
 ## Who did what
 
@@ -25,16 +25,16 @@ who reads this will close the tab" — they were right). They contributed
 data directly too — the Portuguese municipal holiday tables began as
 their hand-curated research.
 
-**An orchestrating AI** (Anthropic's Claude) worked the gaps in that
-design: filled in the unresolved parts (the out-of-range representation
-became `AstroDate`; the resolution concept became span width), extended
-the architecture to domains the original didn't reach (calendars,
-timelines, deep time, the sky, Mars), planned the work, split it into
-missions, reviewed every result, and merged nothing it had not
-independently re-verified. **Dozens of subordinate AI agents** each
-executed one mission — one language, one calendar family, one country
-batch, one documentation pass — in isolated git worktrees, under
-written rules, with their work gated by tests before merging.
+**An orchestrating AI** worked the gaps in that design: filled in the
+unresolved parts (the out-of-range representation became `AstroDate`; the
+resolution concept became span width), extended the architecture to
+domains the original didn't reach (calendars, timelines, deep time, the
+sky, Mars), planned the work, split it into scoped units of work, reviewed
+every result, and merged nothing it had not independently re-verified.
+**Subordinate AI agents** each executed one scoped unit — one language,
+one calendar family, one country batch, one documentation pass — in
+isolation, under written rules, with their work gated by tests before
+merging.
 
 ## The method
 
@@ -135,17 +135,3 @@ confidence.
 The test suite, the citations in every module, and the executable
 documentation are the parts of this story you can check yourself —
 which is exactly why they exist.
-
-## The numbers (at the time of writing)
-
-| | |
-|---|---|
-| Pull requests merged into this repository | 97 |
-| Tests | ~38,200 (plus 121 language-parity checks) |
-| Natural-language corpus cases | ~14,500 across 40 languages |
-| Calendars | 17 (+ zone/timeline adapters) |
-| Holiday jurisdictions | 260 (247 countries/territories with subdivisions, 14 financial markets) · ~5,400 rules · every rule golded |
-| Holiday gold fixtures | 11,936 frozen values, tiered by provenance (primary / computed / witnessed / self-evident); ~9,100 witnessed as genuine differentials against the vacanza reference |
-| Holiday name translations | 1,446 rows |
-| Documentation pages | 17, every code example executed by the suite |
-| Externally-found data errors | 4 (2 data tables, a gazette-verified rename pair, and an upstream number-parser crash — all reported at source) |

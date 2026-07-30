@@ -10,10 +10,9 @@ result is a :class:`~chronologia.astrodate.DateSpan` whose width is the stated
 accuracy and whose :attr:`~chronologia.astrodate.DateSpan.basis` records that
 it is a reconstruction from theory rather than an observation.
 
-**Sources (downloaded, cited)**, mirrored into ``papers/standards/`` (see that
-directory's ``INDEX.md``):
+**Sources (cited)**:
 
-* ``meeus_equinox_solstice_astroalgorithms4python.py`` -- Jean Meeus,
+* Jean Meeus,
   *Astronomical Algorithms* (2nd ed., 1998, Willmann-Bell), chapter 27
   "Equinoxes and Solstices", reproduced verbatim in the open-source
   AstroAlgorithms4Python ``equinox.py``.  Carries the full coefficient set

@@ -1,13 +1,12 @@
 """Tests for Meeus equinox/solstice, astronomical seasons and solar terms.
 
 Gold cardinal-event instants are Fred Espenak / AstroPixels' published
-Universal-Time table (``papers/standards/equinoxes_solstices_2001-2100_
-astropixels.html``, downloaded 2026-07-21) -- real published astronomical
+Universal-Time table (downloaded 2026-07-21) -- real published astronomical
 events, cross-checked against the Meeus ch.27 arithmetic within
 :data:`~chronologia.equinoxes.EQUINOX_ACCURACY`. Solar-term golds trace to the
 conventional jieqi table (Wikipedia, "Solar term"; lichun ~ Feb 4). The Meeus
-coefficients and their stated accuracy trace to the mirrored sources named in
-``chronologia/equinoxes.py`` and ``papers/standards/INDEX.md``.
+coefficients and their stated accuracy trace to the sources named in
+``chronologia/equinoxes.py``.
 """
 import unittest
 from datetime import datetime, timedelta

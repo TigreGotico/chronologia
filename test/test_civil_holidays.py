@@ -1,7 +1,7 @@
 """Civil holidays: rule kinds, the Portugal municipal pilot, US and SA golds.
 
-Golds are hand-derived from primary sources cited in
-``~/AgentWorkspaces/papers/holidays/`` (the OPM/Wikipedia federal list, the
+Golds are hand-derived from primary sources
+(the OPM/Wikipedia federal list, the
 Público-holidays-in-Portugal page carrying Código do Trabalho art. 234, and the
 Umm al-Qura table already in the calendar registry). Includes rule-kind units,
 the observed-shift golds, calendar_date out-of-range behaviour, subdivision and

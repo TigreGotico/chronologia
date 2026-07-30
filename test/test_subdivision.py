@@ -4,7 +4,7 @@ parser exercised through its ``subdivision_time`` engine stage.
 
 The day divides into 10 decimal hours / 100 decimal minutes / 100 decimal
 seconds; rescaling to civil time is exact to the microsecond
-(french_republican_reference.html).  The parser's start/width AstroDate
+(Wikipedia, "French Republican calendar").  The parser's start/width AstroDate
 spans are engine composition; the exact ``units_to_us`` / ``unit_width_us``
 values they rest on are the core, asserted directly here.
 """

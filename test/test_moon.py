@@ -1,13 +1,12 @@
 """Tests for mean-lunation moon-phase arithmetic.
 
 Gold new/full moon instants are the US Naval Observatory's published 2024
-phase table (``papers/standards/moon_phases_usno_2024.json``, USNO
+phase table (USNO
 Astronomical Applications API, downloaded 2026-07-21) -- real published
 astronomical events, cross-checked against this module's mean-arithmetic
 model within :data:`~chronologia.moon.MOON_PHASE_ACCURACY`. The Meeus
 Lunation Number epoch and the Brown Lunation Number epoch/offset trace to
-Wikipedia's "Lunation Number" article (``moon_lunation_number_wikipedia.html``,
-quoted verbatim in ``chronologia/moon.py``).
+Wikipedia's "Lunation Number" article (quoted verbatim in ``chronologia/moon.py``).
 """
 import unittest
 from datetime import datetime, timedelta

@@ -30,20 +30,17 @@ from a conversion library:
 * Gregorian/Julian JDN pair -- Fliegel & Van Flandern (1968), CACM 11(10):657,
   the integer algorithm reproduced in the Explanatory Supplement to the
   Astronomical Almanac (Richards).  Cross-checked against the USNO Julian
-  Date reference (``~/AgentWorkspaces/papers/calendars/usno_julian_date.html``).
+  Date reference.
 * Islamic (tabular/civil) and Hebrew (molad + dechiyot) -- Dershowitz &
   Reingold, "Calendrical Calculations", Software--Practice & Experience
-  20(9):899-928 (1990), transcribed from the Lisp in that paper
-  (``~/AgentWorkspaces/papers/calendars/reingold_dershowitz_1990_calendrical_calculations.pdf``);
+  20(9):899-928 (1990), transcribed from the Lisp in that paper;
   the paper works in "absolute dates" (RD, fixed day count with RD 1 =
   proleptic Gregorian 0001-01-01), converted to JDN here by the constant
   ``JDN = RD + 1721425``.
 * French Republican (Romme arithmetic variant) and Bahá'í (arithmetic
   Badí', pre-2015 Gregorian-locked Naw-Rúz) -- the arithmetic rules and
-  epochs from the downloaded reference tables
-  (``~/AgentWorkspaces/papers/calendars/french_republican_reference.html``,
-  ``bahai_calendar_reference.html``), both built directly on the Gregorian
-  JDN conversion above.
+  epochs from the published reference tables, both built directly on the
+  Gregorian JDN conversion above.
 
 Hebrew month numbering (documented decision): this module uses the
 **ecclesiastical / biblical** numbering of Dershowitz & Reingold, Nisan = 1
@@ -360,9 +357,8 @@ def bahai_from_jdn(jdn: int) -> Tuple[int, int, int]:
 # falls in the year *preceding* the Julian bissextile, so their new year keeps
 # a fixed Julian date.  Algorithm and epochs transcribed from Dershowitz &
 # Reingold, "Calendrical Calculations", chapter 4 (Coptic and Ethiopic),
-# reproduced in the 1990 SP&E paper's companion material
-# (``~/AgentWorkspaces/papers/calendars/reingold_dershowitz_1990_calendrical_calculations.pdf``);
-# epochs cross-checked against the downloaded reference tables.
+# reproduced in the 1990 SP&E paper's companion material;
+# epochs cross-checked against published reference tables.
 #
 # Coptic epoch: 1 Thoout AM 1 (Era of the Martyrs / Diocletian) == 284-08-29
 # Julian == JDN 1825030.  Ethiopic epoch (Incarnation era): 1 Maskaram EE 1 ==

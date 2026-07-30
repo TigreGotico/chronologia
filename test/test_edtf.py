@@ -2,7 +2,7 @@
 
 Every string in ``SPEC_EXAMPLES`` is an example lifted verbatim from the
 Library of Congress EDTF specification
-(``papers/standards/edtf_loc_datetime.html``, spec dated 2019-02-04); the
+(https://www.loc.gov/standards/datetime/, spec dated 2019-02-04); the
 comment on each names the level and section it comes from.  The golds are
 hand-derived from the spec's prose, never from the parser's own output.
 """

@@ -21,15 +21,15 @@ what that machinery assumed, and this module adds exactly those two mechanisms:
    variants** and makes :func:`lookback_time` take a ``cosmology=`` argument, so
    the disagreement is expressed by calling it twice.
 
-Sources (downloaded, cited; see ``papers/standards/INDEX.md``):
+Sources (cited):
 
-* ``planck2018_parameters_arxiv_1807.06209.html`` — Planck 2018 (arXiv:1807.06209):
+* Planck 2018 (arXiv:1807.06209):
   H0 = 67.4 ± 0.5 km/s/Mpc, Ωm = 0.315 ± 0.007 (flat ⇒ ΩΛ = 0.685).
-* ``age_of_the_universe_wikipedia.html`` — the Planck 2018 age 13.787 ± 0.020 Gyr.
-* ``shoes_riess2022_arxiv_2112.04510.html`` — Riess et al. 2022 (SH0ES):
+* Wikipedia, "Age of the universe" — the Planck 2018 age 13.787 ± 0.020 Gyr.
+* Riess et al. 2022 (SH0ES, arXiv:2112.04510):
   H0 = 73.04 ± 1.04 km/s/Mpc, a 5σ tension with Planck.
-* ``recombination_cosmology_wikipedia.html`` — recombination at ~380,000 yr.
-* ``chronology_of_the_universe_wikipedia.html`` — Planck-epoch and reionization
+* Wikipedia, "Recombination (cosmology)" — recombination at ~380,000 yr.
+* Wikipedia, "Chronology of the universe" — Planck-epoch and reionization
   boundary times.
 
 The lookback integral is flat-ΛCDM only and neglects radiation; that limit is
@@ -212,13 +212,11 @@ class CosmologyParams:
 COSMOLOGIES: Dict[str, CosmologyParams] = {
     "planck2018": CosmologyParams(
         "planck2018", 67.4, 0.315, 0.685,
-        "Planck 2018 (arXiv:1807.06209); "
-        "papers/standards/planck2018_parameters_arxiv_1807.06209.html"),
+        "Planck 2018 (arXiv:1807.06209)"),
     "shoes2022": CosmologyParams(
         "shoes2022", 73.04, 0.315, 0.685,
         "Riess et al. 2022 SH0ES (arXiv:2112.04510), H0 only; Ωm/ΩΛ from the "
-        "flat-ΛCDM concordance; "
-        "papers/standards/shoes_riess2022_arxiv_2112.04510.html"),
+        "flat-ΛCDM concordance"),
 }
 
 #: The Hubble time (Gyr) of the default cosmology, exposed for docs/examples.
@@ -364,9 +362,8 @@ def lookback_time(z: Union[int, float, str, Decimal],
 # --------------------------------------------------------------------------
 # Named cosmological periods on the Before-Present axis
 # --------------------------------------------------------------------------
-_COSMO_SOURCE = ("Wikipedia cosmology chronology "
-                 "(papers/standards/chronology_of_the_universe_wikipedia.html, "
-                 "recombination_cosmology_wikipedia.html)")
+_COSMO_SOURCE = ("Wikipedia, \"Chronology of the universe\" and "
+                 "\"Recombination (cosmology)\"")
 
 
 def _cosmic_period(key: str, name: str, since_start, since_end,
@@ -402,8 +399,7 @@ COSMIC_PERIODS: Dict[str, NamedPeriod] = {
     # The first 380,000 years, ending at recombination / photon decoupling.
     "recombination": _cosmic_period(
         "recombination", "Recombination era", 0, 380, "ka",
-        "Wikipedia, 'Recombination (cosmology)' "
-        "(papers/standards/recombination_cosmology_wikipedia.html): "
+        "Wikipedia, 'Recombination (cosmology)': "
         "t_rec ~= 380,000 yr after the Big Bang"),
     # Reionization: ~150 Myr to 1 Gyr after the Big Bang.
     "reionization": _cosmic_period(

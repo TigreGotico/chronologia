@@ -36,27 +36,25 @@ The boundary rule: predictable from the calendar's own law → it belongs to the
 calendar; it took a pope / parliament / tsar / emperor → it belongs to a
 timeline.  Timezone shifts (Samoa 2011) are *not* discontinuities.
 
-Sources (downloaded under ``~/AgentWorkspaces/papers/calendars/``):
+Sources:
 
-* ``gregorian_adoption_reference.html`` — Wikipedia, "Adoption of the Gregorian
+* Wikipedia, "Adoption of the Gregorian
   calendar": "the day after Thursday, 4 October 1582 was dated as Friday, 15
   October 1582"; the Catholic states of the Holy Roman Empire, the Italian
   principalities, Poland–Lithuania, and Spain–Portugal were first to adopt.
-* ``old_new_style_dates_reference.html`` — Wikipedia, "Old Style and New Style
-  dates": England's civil year began on 25 March (Lady Day) until 1751; dual
-  dating "1731/32" for dates between 1 January and 24 March under the two
-  reckonings.
-* ``calendar_new_style_act_1750_reference.html`` — Wikipedia, "Calendar (New
-  Style) Act 1750": 1 January 1752 fixed as new-year's day (1751 ran 25 March
-  – 31 December), and Wednesday 2 September 1752 followed by Thursday 14
-  September 1752 (eleven days omitted).
-* ``swedish_calendar_reference.html`` — Wikipedia, "Swedish calendar": in use 1
-  March 1700 – 30 February 1712, "one day ahead of the Julian calendar and ten
-  days behind the Gregorian"; Sweden reverted to the Julian calendar in 1712
-  (via the double leap day 30 February 1712) and adopted the Gregorian in 1753.
-* ``japanese_calendar_reference.html`` — Wikipedia, "Japanese calendar":
-  Gregorian introduced in 1873; the Tenpō lunisolar calendar was the reference
-  calendar 1844–1872, before the switch at Meiji 6 = 1 January 1873.
+* Wikipedia, "Old Style and New Style dates": England's civil year began on
+  25 March (Lady Day) until 1751; dual dating "1731/32" for dates between
+  1 January and 24 March under the two reckonings.
+* Wikipedia, "Calendar (New Style) Act 1750": 1 January 1752 fixed as
+  new-year's day (1751 ran 25 March – 31 December), and Wednesday 2 September
+  1752 followed by Thursday 14 September 1752 (eleven days omitted).
+* Wikipedia, "Swedish calendar": in use 1 March 1700 – 30 February 1712, "one
+  day ahead of the Julian calendar and ten days behind the Gregorian"; Sweden
+  reverted to the Julian calendar in 1712 (via the double leap day
+  30 February 1712) and adopted the Gregorian in 1753.
+* Wikipedia, "Japanese calendar": Gregorian introduced in 1873; the Tenpō
+  lunisolar calendar was the reference calendar 1844–1872, before the switch
+  at Meiji 6 = 1 January 1873.
 """
 from __future__ import annotations
 
@@ -371,8 +369,8 @@ def proleptic(calendar_key: str) -> Timeline:
 
 
 # -- rome_1582 and the initial Catholic-adopter group (es/pt/it/pl) --------
-# gregorian_adoption_reference.html: "the day after Thursday, 4 October 1582
-# was dated as Friday, 15 October 1582"; Spain–Portugal, the Italian
+# Wikipedia, "Adoption of the Gregorian calendar": "the day after Thursday,
+# 4 October 1582 was dated as Friday, 15 October 1582"; Spain–Portugal, the Italian
 # principalities and Poland–Lithuania switched with the Papal States.
 _ROME_SEAM = gregorian_to_jdn(1582, 10, 15)  # == julian_to_jdn(1582,10,4) + 1
 rome_1582 = Timeline(
@@ -381,11 +379,12 @@ rome_1582 = Timeline(
      TimelineSegment(_ROME_SEAM, "gregorian")),
     (Discontinuity(_ROME_SEAM, DiscontinuityKind.SKIP,
                    (1582, 10, 4), (1582, 10, 15),
-                   "Inter gravissimas (1582); gregorian_adoption_reference.html"),))
+                   "Inter gravissimas (1582); Wikipedia, "
+                   "\"Adoption of the Gregorian calendar\""),))
 
 
 # -- britain_1752: SKIP + RELABEL year-start (25 March -> 1 January) --------
-# calendar_new_style_act_1750_reference.html: 1 January 1752 fixed as new
+# Wikipedia, "Calendar (New Style) Act 1750": 1 January 1752 fixed as new
 # year's day (1751 ran 25 March – 31 December); Wednesday 2 September 1752 was
 # followed by Thursday 14 September 1752.
 _BRIT_YEARSTART = julian_to_jdn(1752, 1, 1)   # civil year turns over here now
@@ -397,17 +396,16 @@ britain_1752 = Timeline(
      TimelineSegment(_BRIT_SEAM, "gregorian", year_start=(1, 1))),
     (Discontinuity(_BRIT_YEARSTART, DiscontinuityKind.RELABEL,
                    (1751, 12, 31), (1752, 1, 1),
-                   "Calendar (New Style) Act 1750; "
-                   "calendar_new_style_act_1750_reference.html"),
+                   "Calendar (New Style) Act 1750"),
      Discontinuity(_BRIT_SEAM, DiscontinuityKind.SKIP,
                    (1752, 9, 2), (1752, 9, 14),
-                   "Calendar (New Style) Act 1750; "
-                   "calendar_new_style_act_1750_reference.html")))
+                   "Calendar (New Style) Act 1750")))
 
 
 # -- russia_1918: SKIP 1–13 February 1918 (Julian -> Gregorian) ------------
 # Decree of the Council of People's Commissars, 24 Jan 1918 (Julian): the day
-# after 31 January 1918 was to be 14 February 1918. gregorian_adoption_reference.html.
+# after 31 January 1918 was to be 14 February 1918. Wikipedia, "Adoption of
+# the Gregorian calendar".
 _RUSSIA_SEAM = gregorian_to_jdn(1918, 2, 14)  # == julian_to_jdn(1918,1,31) + 1
 russia_1918 = Timeline(
     "russia_1918",
@@ -415,12 +413,11 @@ russia_1918 = Timeline(
      TimelineSegment(_RUSSIA_SEAM, "gregorian")),
     (Discontinuity(_RUSSIA_SEAM, DiscontinuityKind.SKIP,
                    (1918, 1, 31), (1918, 2, 14),
-                   "Sovnarkom decree, 24 Jan 1918; "
-                   "gregorian_adoption_reference.html"),))
+                   "Sovnarkom decree, 24 Jan 1918"),))
 
 
 # -- greece_1923: SKIP 16–28 February 1923 (Julian -> Gregorian) -----------
-# gregorian_adoption_reference.html: Greece's civil switch, the day after 15
+# Wikipedia, "Adoption of the Gregorian calendar": Greece's civil switch, the day after 15
 # February 1923 (Julian) was 1 March 1923 (Gregorian).
 _GREECE_SEAM = gregorian_to_jdn(1923, 3, 1)  # == julian_to_jdn(1923,2,15) + 1
 greece_1923 = Timeline(
@@ -429,12 +426,11 @@ greece_1923 = Timeline(
      TimelineSegment(_GREECE_SEAM, "gregorian")),
     (Discontinuity(_GREECE_SEAM, DiscontinuityKind.SKIP,
                    (1923, 2, 15), (1923, 3, 1),
-                   "Greek civil adoption, 1923; "
-                   "gregorian_adoption_reference.html"),))
+                   "Greek civil adoption, 1923"),))
 
 
 # -- sweden_1700_1712: the gradual mess, modelled to what the source pins ---
-# swedish_calendar_reference.html: the Swedish calendar was in use 1 March 1700
+# Wikipedia, "Swedish calendar": the Swedish calendar was in use 1 March 1700
 # – 30 February 1712, "one day ahead of the Julian calendar and ten days behind
 # the Gregorian"; Sweden reverted to the Julian calendar in 1712 via the double
 # leap day 30 February 1712, and adopted the Gregorian in 1753.
@@ -460,16 +456,14 @@ sweden_1700_1712 = Timeline(
      TimelineSegment(_SWED_SEAM, "gregorian")),
     (Discontinuity(_SWED_INSERT, DiscontinuityKind.INSERT,
                    (1712, 2, 28), (1712, 2, 30),
-                   "double leap day 30 Feb 1712; "
-                   "swedish_calendar_reference.html"),
+                   "double leap day 30 Feb 1712"),
      Discontinuity(_SWED_SEAM, DiscontinuityKind.SKIP,
                    (1753, 2, 17), (1753, 3, 1),
-                   "Swedish Gregorian adoption 1753; "
-                   "swedish_calendar_reference.html")))
+                   "Swedish Gregorian adoption 1753")))
 
 
 # -- japan_1873: lunisolar -> Gregorian at Meiji 6 = 1 January 1873 ---------
-# japanese_calendar_reference.html: the Gregorian calendar was introduced in
+# Wikipedia, "Japanese calendar": the Gregorian calendar was introduced in
 # 1873; the Tenpō lunisolar calendar (1844–1872) was the reference calendar
 # before the switch.  Meiji 5, 12th month, day 2 (lunisolar) was the last day,
 # directly followed by Meiji 6 = 1 January 1873 (Gregorian).
@@ -486,8 +480,7 @@ japan_1873 = Timeline(
      TimelineSegment(_JAPAN_SEAM, "gregorian")),
     (Discontinuity(_JAPAN_SEAM, DiscontinuityKind.RELABEL,
                    (1872, 12, 2), (1873, 1, 1),
-                   "Meiji Council of State decree 337 (1872); "
-                   "japanese_calendar_reference.html"),))
+                   "Meiji Council of State decree 337 (1872)"),))
 
 
 # --------------------------------------------------------------------------
@@ -503,7 +496,7 @@ japan_1873 = Timeline(
 # --------------------------------------------------------------------------
 
 # -- samoa_2011: SKIP Friday 30 December 2011 (westward IDL hop) ------------
-# samoa_dateline_reference.html: "the entire calendar day of Friday, 30
+# Wikipedia, "Time in Samoa" (2011 dateline change): "the entire calendar day of Friday, 30
 # December 2011" was skipped — Thursday 29 December was followed directly by
 # Saturday 31 December — as Samoa moved from UTC-11 to UTC+13, redrawing the
 # International Date Line to share the calendar day of its trading partners.
@@ -517,12 +510,11 @@ samoa_2011 = Timeline(
      TimelineSegment(_SAMOA_SEAM, "gregorian", jdn_shift=-1)),
     (Discontinuity(_SAMOA_SEAM, DiscontinuityKind.SKIP,
                    (2011, 12, 29), (2011, 12, 31),
-                   "UTC-11 -> UTC+13 (Pacific/Apia); Samoa dateline change 2011; "
-                   "samoa_dateline_reference.html"),))
+                   "UTC-11 -> UTC+13 (Pacific/Apia); Samoa dateline change 2011"),))
 
 
 # -- philippines_1844: SKIP Tuesday 31 December 1844 (westward IDL hop) -----
-# philippines_dateline_reference.html: Governor-General Narciso Claveria y
+# Wikipedia, "Time in the Philippines" (1844 dateline change): Governor-General Narciso Claveria y
 # Zaldua decreed that "Tuesday, December 31, 1844, should be removed from the
 # Philippine calendar" — Monday 30 December was followed by Wednesday 1 January
 # 1845 — as the islands left the western-hemisphere date reckoning inherited
@@ -537,13 +529,12 @@ philippines_1844 = Timeline(
      TimelineSegment(_PHIL_SEAM, "gregorian", jdn_shift=-1)),
     (Discontinuity(_PHIL_SEAM, DiscontinuityKind.SKIP,
                    (1844, 12, 30), (1845, 1, 1),
-                   "westward IDL hop (Asia/Manila); Claveria decree 1844; "
-                   "philippines_dateline_reference.html"),))
+                   "westward IDL hop (Asia/Manila); Claveria decree 1844"),))
 
 
 # -- alaska_1867: the double event — REPEAT + Julian->Gregorian switch ------
 # The only place in this registry where two discontinuity kinds meet at one
-# seam.  international_date_line_reference.html: the transfer of Russian America
+# seam.  Wikipedia, "International Date Line": the transfer of Russian America
 # took place on the solar afternoon Europe reckoned as Saturday 19 October 1867
 # (Gregorian).  Sitka had been keeping the Julian calendar, so its last day
 # under Russian rule was **Friday, 6 October 1867 (Julian)**; and because Alaska
@@ -551,7 +542,7 @@ philippines_1844 = Timeline(
 # the transfer day was relabelled one weekday back — **Friday, 18 October 1867
 # (Gregorian)**, "now known as Alaska Day".  So a Friday was directly followed
 # by a Friday (the eastward IDL step repeated the weekday) while the calendar
-# jumped Julian->Gregorian (alaska_purchase_reference.html: "the Julian calendar
+# jumped Julian->Gregorian (Wikipedia, "Alaska Purchase": "the Julian calendar
 # in the 19th century was 12 days behind the Gregorian").
 #
 # Modelled faithfully, per those sources, as BOTH kinds at the single seam:
@@ -575,11 +566,11 @@ alaska_1867 = Timeline(
     (Discontinuity(_ALASKA_SEAM, DiscontinuityKind.REPEAT,
                    (1867, 10, 6), (1867, 10, 18),
                    "Friday -> Friday, eastward IDL step (America/Sitka); "
-                   "Alaska transfer 1867; international_date_line_reference.html"),
+                   "Alaska transfer 1867; Wikipedia, \"International Date Line\""),
      Discontinuity(_ALASKA_SEAM, DiscontinuityKind.SKIP,
                    (1867, 10, 6), (1867, 10, 18),
                    "Julian -> Gregorian, 7-17 Oct 1867 omitted; "
-                   "alaska_purchase_reference.html")))
+                   "Wikipedia, \"Alaska Purchase\"")))
 
 
 #: The timeline registry.  The initial Catholic-adopter group (Spain, Portugal,
