@@ -317,7 +317,7 @@ def extract_timespans(
         cs = _char_span(tokens, lo, hi)
         start = cs[0] if cs else None
         if (start is not None
-                and _exclusion_vetoes(text[prev_end:start], engine.spec.lang)):
+                and _exclusion_vetoes(text[prev_end:start], engine.spec)):
             if cs:
                 prev_end = cs[1]
             continue

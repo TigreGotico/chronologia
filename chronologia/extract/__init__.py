@@ -1423,28 +1423,29 @@ def extract_timespan(
 # constraint, NOT an exclusion: a bound-preposition between the negation and the
 # date (before/after/until/by/earlier/later/past) vetoes the veto, leaving those
 # phrases byte-identical.  English trigger vocab only for now.
-_EN_EXCLUSION_TRIGGERS = frozenset(
-    {"not", "no", "except", "unless", "but", "than"})
-_EN_BOUND_GUARD = frozenset(
-    {"before", "after", "until", "till", "by", "earlier", "later", "past"})
-
-
-def _exclusion_vetoes(governing_text: str, lang: str) -> bool:
+def _exclusion_vetoes(governing_text: str, spec) -> bool:
     """True when a negation/exclusion particle governs the reference to its
     right (the text before the span carries a trigger and no bound preposition).
 
     ``governing_text`` is the residue lying immediately before the matched
-    reference.  A bound preposition anywhere in it means the phrase is a bound,
-    not an exclusion, and is left untouched.
+    reference.  A bound preposition (``spec.exclusion_bound_guards``) anywhere in
+    it means the phrase is a bound ("before friday"), not an exclusion, and is
+    left untouched.  Both vocabularies are per-locale data (``marker_exclusion``
+    / ``marker_exclusion_bound``); a locale that declares no triggers makes the
+    guard a no-op there rather than silently applying English particles.
+
+    Tokenisation is Unicode letter-runs so the guard works for non-Latin scripts
+    once a locale supplies the vocabulary.
     """
-    if lang != "en":
+    triggers = spec.exclusion_triggers
+    if not triggers:
         return False
-    words = re.findall(r"[a-z']+", governing_text.lower())
+    words = re.findall(r"[^\W\d_]+", governing_text.lower(), re.UNICODE)
     if not words:
         return False
-    if any(w in _EN_BOUND_GUARD for w in words):
+    if any(w in spec.exclusion_bound_guards for w in words):
         return False
-    return any(w in _EN_EXCLUSION_TRIGGERS for w in words)
+    return any(w in triggers for w in words)
 
 
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
@@ -1496,7 +1497,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     span_starts = [tokens[i].char_start for i in consumed
                    if i < len(tokens) and tokens[i].char_start is not None]
     if span_starts and _exclusion_vetoes(text[:min(span_starts)],
-                                          engine.spec.lang):
+                                          engine.spec):
         return None
     # Impossible-date veto (residue-veto design, #244): a stranded
     # "<number> of ..." fragment in the remainder -- a day-of-month qualifier
@@ -1758,7 +1759,7 @@ def extract_candidates(
         # ("not tomorrow"): the excluded reference is not a positive date.
         starts = [tokens[i].char_start for i in consumed
                   if i < len(tokens) and tokens[i].char_start is not None]
-        if starts and _exclusion_vetoes(text[:min(starts)], engine.spec.lang):
+        if starts and _exclusion_vetoes(text[:min(starts)], engine.spec):
             continue
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])

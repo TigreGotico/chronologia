@@ -148,6 +148,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     daypart_deictics: Dict[str, str] = {}
     clock_zones: Dict[str, int] = {}
     weekend_words: Set[str] = set()
+    exclusion_triggers: Set[str] = set()
+    exclusion_bound_guards: Set[str] = set()
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
         base = os.path.basename(path)[:-len(".voc")]
@@ -155,13 +157,23 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         if base.startswith("month_"):
             rest = base[len("month_"):]
             if rest.isdigit():
-                months.update({s: int(rest) for s in surfaces})
+                n = int(rest)
+                if not 1 <= n <= 12:
+                    raise ValueError(
+                        f"{base}.voc: Gregorian month number {n} out of "
+                        f"range 1..12")
+                months.update({s: n for s in surfaces})
             else:                          # month_<calendar>_<n>.voc
                 cal_key, _, num = rest.rpartition("_")
                 if cal_key not in CALENDARS:
                     raise ValueError(
                         f"{base}.voc names unknown calendar {cal_key!r}; "
                         f"known: {sorted(CALENDARS)}")
+                month_count = CALENDARS[cal_key].month_count
+                if not num.isdigit() or not 1 <= int(num) <= month_count:
+                    raise ValueError(
+                        f"{base}.voc: month number {num!r} out of range "
+                        f"1..{month_count} for calendar {cal_key!r}")
                 table = calendar_months.setdefault(cal_key, {})
                 for s in surfaces:
                     if s in cal_surface_owner and cal_surface_owner[s] != cal_key:
@@ -176,9 +188,15 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             # the bare-weekday order, so short forms that are also common words
             # never resolve to a weekday on their own
             idx = int(base[len("weekday_abbr_"):])
+            if not 0 <= idx <= 6:
+                raise ValueError(
+                    f"{base}.voc: weekday index {idx} out of range 0..6")
             weekdays.update({s: idx for s in surfaces})
         elif base.startswith("weekday_"):
             idx = int(base[len("weekday_"):])
+            if not 0 <= idx <= 6:
+                raise ValueError(
+                    f"{base}.voc: weekday index {idx} out of range 0..6")
             weekdays.update({s: idx for s in surfaces})
             weekday_full.update({s: idx for s in surfaces})
         elif base.startswith("unit1_"):
@@ -320,6 +338,10 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
                 clock_zones[s] = mins
         elif base == "special_weekend":
             weekend_words.update(surfaces)
+        elif base == "marker_exclusion":
+            exclusion_triggers.update(s.lower() for s in surfaces)
+        elif base == "marker_exclusion_bound":
+            exclusion_bound_guards.update(s.lower() for s in surfaces)
         elif base.startswith("cycle_"):
             # cycle_<key>_<n>.voc: day <n> (0-based) of the named day cycle
             key, _, num = base[len("cycle_"):].rpartition("_")
@@ -394,6 +416,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         daypart_deictics=daypart_deictics,
         clock_zones=clock_zones,
         weekend_words=frozenset(weekend_words),
+        exclusion_triggers=frozenset(exclusion_triggers),
+        exclusion_bound_guards=frozenset(exclusion_bound_guards),
         weekday_full=weekday_full,
         quantifiers=quantifiers,
         positions=cfg.get("positions", {}))

@@ -285,6 +285,14 @@ class LangSpec:
     quantifiers: Mapping[str, float] = field(default_factory=dict)
     # weekend surface forms ("weekend", "fim de semana", "Wochenende", ...)
     weekend_words: FrozenSet[str] = field(default_factory=frozenset)
+    #: negation/exception particles that, when they govern a bare reference to
+    #: their right ("not tomorrow", "excepto el lunes"), veto it as a *positive*
+    #: date -- the residue-veto safety guard against handing back an excluded
+    #: day. Empty for a locale that has not declared them (the guard is then a
+    #: no-op there). ``exclusion_bound_guards`` are prepositions whose presence
+    #: means the phrase is a *bound* ("before friday"), not an exclusion.
+    exclusion_triggers: FrozenSet[str] = field(default_factory=frozenset)
+    exclusion_bound_guards: FrozenSet[str] = field(default_factory=frozenset)
     # holiday_ref surface -> well-known holiday key ("christmas", "easter");
     # derived at load time from the holidays engine's i18n tables (native
     # names + translations + curated spoken aliases), never hand-listed here

@@ -83,3 +83,29 @@ def test_cross_calendar_surface_collision_is_a_load_error(tmp_path):
         "month_hebrew_7.voc": "clash\n"})
     with pytest.raises(ValueError, match="claimed by both calendars"):
         load_lang_spec("xx", root)
+
+
+def test_gregorian_month_out_of_range_is_a_load_error(tmp_path):
+    root = _write_locale(tmp_path, {"month_13.voc": "zmonth\n"})
+    with pytest.raises(ValueError, match="month number 13 out of range 1..12"):
+        load_lang_spec("xx", root)
+
+
+def test_weekday_out_of_range_is_a_load_error(tmp_path):
+    root = _write_locale(tmp_path, {"weekday_7.voc": "zday\n"})
+    with pytest.raises(ValueError, match="weekday index 7 out of range 0..6"):
+        load_lang_spec("xx", root)
+
+
+def test_calendar_month_out_of_range_is_a_load_error(tmp_path):
+    # hebrew has 13 months; month 14 is impossible and must fail loudly.
+    root = _write_locale(tmp_path, {"month_hebrew_14.voc": "zadar\n"})
+    with pytest.raises(ValueError, match="out of range 1..13"):
+        load_lang_spec("xx", root)
+
+
+def test_calendar_month_at_upper_bound_loads(tmp_path):
+    # hebrew month 13 (Adar II) is legitimate and must NOT be rejected.
+    root = _write_locale(tmp_path, {"month_hebrew_13.voc": "zadar2\n"})
+    spec = load_lang_spec("xx", root)
+    assert spec.calendar_months["hebrew"]["zadar2"] == 13

@@ -430,6 +430,8 @@ def resolve_era_year_span(era: Union[str, Era], value: Union[int, float]
     calendar's own JDN hub, so the span is exact.
     """
     if isinstance(era, str):
+        if era not in ERAS:
+            raise ValueError(f"unknown era {era!r}; known: {sorted(ERAS)}")
         era = ERAS[era]
     if era.calendar is None:
         raise ValueError(f"era {era.key!r} is not calendar-backed; "
@@ -535,7 +537,11 @@ def resolve_era(era: Union[str, Era], value: Union[int, float]
     :class:`AstroDate` otherwise.  Never raises ``OverflowError``.
     """
     if isinstance(era, str):
-        era = ERAS[ERA_ALIASES.get(era, era)]
+        key = ERA_ALIASES.get(era, era)
+        if key not in ERAS:
+            raise ValueError(
+                f"unknown era {era!r}; known: {sorted(ERAS)}")
+        era = ERAS[key]
 
     if era.calendar is not None:
         # calendar-backed era: resolve EXACTLY to the start of the named

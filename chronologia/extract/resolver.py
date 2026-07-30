@@ -130,6 +130,16 @@ def _add_months(dt: datetime, months: int) -> datetime:
 _WEEK_START = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
                "friday": 4, "saturday": 5, "sunday": 6}
 
+
+class ResolverInvariant(Exception):
+    """A handler reached a state that a consistent grammar/locale should make
+    unreachable (an exhaustive elif fell through on an unmapped unit/kind).
+
+    This is a bug in the engine or locale data, NOT "this text is not a date".
+    It deliberately does NOT derive from ``ValueError``/``KeyError`` so the
+    dispatch's degrade-to-``None`` guard never swallows it -- a mis-mapped unit
+    surfaces loudly in tests instead of silently dropping a date."""
+
 #: the parts of an ISO-8601 week designator token ("2026-W01", "2026-W1-3")
 _ISOWEEK_PARTS = re.compile(r"(?P<year>\d{4})-[wW](?P<week>\d{1,2})"
                             r"(?:-(?P<weekday>\d))?")
@@ -161,7 +171,7 @@ def _point_span(dt: datetime, unit: str) -> DateSpan:
     elif unit == "year":
         end = AstroDate.from_datetime(_add_months(dt, 12))
     else:
-        raise ValueError(f"unsupported offset unit {unit!r}")
+        raise ResolverInvariant(f"unsupported offset unit {unit!r}")
     return DateSpan(start, end)
 
 
@@ -276,7 +286,7 @@ def _unit_end(start: AstroDate, kind: str) -> AstroDate:
     if kind in steps:
         return _astro_add_years(AstroDate(start.year, start.month, start.day),
                                 steps[kind])
-    raise ValueError(f"unsupported scoped unit {kind!r}")
+    raise ResolverInvariant(f"unsupported scoped unit {kind!r}")
 
 
 def _gregorian_month_span(year: int, month: int) -> DateSpan:
@@ -312,6 +322,17 @@ class Resolver:
                 return self._resolve_deep_time(match, anchor, scale_mode)
             return handler(match, anchor)
         except (ValueError, OverflowError, KeyError):
+            # "This reading does not resolve to a real date" -- an out-of-range
+            # or calendar-invalid value (day 31 of a 30-day month, a year beyond
+            # datetime's reach: ValueError/OverflowError), or a slot whose
+            # surface has no entry in the map a handler consults (KeyError is
+            # load-bearing decline control flow in several handlers, e.g. a
+            # cross-slot lookup that legitimately misses). All three DECLINE the
+            # reading rather than raise to the caller.
+            #
+            # NOT caught: ResolverInvariant -- an exhaustive elif falling through
+            # on an unmapped unit/kind is an engine/locale-data BUG, and must
+            # fail loudly here instead of silently dropping a date.
             return None
 
     def _scale_factor(self, surface: str, scale_mode: str) -> int:
@@ -372,7 +393,7 @@ class Resolver:
         elif unit == "year":
             value = _add_months(anchor, int(step) * 12)
         else:
-            raise ValueError(f"unsupported offset unit {unit!r}")
+            raise ResolverInvariant(f"unsupported offset unit {unit!r}")
         return Resolution(_point_span(value, unit), self._consumed(match))
 
     def _resolve_named_day(self, match, anchor):
@@ -553,9 +574,10 @@ class Resolver:
         elif rel < 0:    # last
             back = (anchor.weekday() - target) % 7 or 7
             value = base - timedelta(days=back)
-        else:            # this: within the current (monday-start) week
-            week_start = base - timedelta(days=anchor.weekday())
-            value = week_start + timedelta(days=target)
+        else:            # this: within the current week (honouring week_start)
+            start_idx = _WEEK_START.get(self.conventions.week_start, 0)
+            week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
+            value = week_start + timedelta(days=(target - start_idx) % 7)
         return Resolution(_day_span(value), self._consumed(match))
 
     def _resolve_before_last(self, match, anchor):
@@ -634,8 +656,9 @@ class Resolver:
         qty = int(self._offset_quantity(match))
         base = _midnight(anchor) - timedelta(weeks=weeks * qty)
         target = self.spec.weekdays[match.slots["WEEKDAY"].text]
-        week_start = base - timedelta(days=base.weekday())       # Monday of week
-        value = week_start + timedelta(days=target)
+        start_idx = _WEEK_START.get(self.conventions.week_start, 0)
+        week_start = base - timedelta(days=(base.weekday() - start_idx) % 7)
+        value = week_start + timedelta(days=(target - start_idx) % 7)
         return Resolution(_day_span(value), self._consumed(match))
 
     def _resolve_rel_period(self, match, anchor):

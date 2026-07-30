@@ -101,7 +101,7 @@ def test_decree_horizon_reports_min_max_year():
 
 
 def test_past_horizon_predicate():
-    rule = HolidayRule("x", DecreeTableRule(((2024, (1, 1)), (2027, (1, 1)))),
+    rule = HolidayRule("x", DecreeTableRule(((2024, (4, 10)), (2027, (3, 9)))),
                        frozenset({"public"}), predict="eid_al_fitr")
     assert not rule.past_horizon(2024)
     assert not rule.past_horizon(2027)
@@ -237,13 +237,13 @@ def test_strict_refusal_is_per_rule_not_global():
         "short", DecreeTableRule(((2026, (3, 20)), (2027, (3, 9)))),
         frozenset({"public"}), predict="eid_al_fitr")
     long = HolidayRule(
-        "long", DecreeTableRule(((2028, (2, 26)), (2029, (2, 15)),
-                                 (2030, (2, 5)))),
+        "long", DecreeTableRule(((2028, (2, 26)), (2029, (2, 14)),
+                                 (2030, (2, 4)))),
         frozenset({"public"}), predict="eid_al_fitr")
     assert short.past_horizon(2029) and not long.past_horizon(2029)
     assert short.resolve(2029, strict_horizon=True) == ()
     assert long.resolve(2029, strict_horizon=True) == (
-        (AstroDate(2029, 2, 15), BASIS_TABULATED),)
+        (AstroDate(2029, 2, 14), BASIS_TABULATED),)
 
 
 def test_strict_never_refuses_computable_holidays():

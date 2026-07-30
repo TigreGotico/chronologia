@@ -85,9 +85,33 @@ class HolidayRule:
                 and self.from_year > self.until_year):
             raise ValueError(
                 f"from_year {self.from_year} > until_year {self.until_year}")
-        if self.predict is not None and self.predict not in WELL_KNOWN_BY_KEY:
-            raise ValueError(
-                f"predict names unknown well-known key {self.predict!r}")
+        if self.predict is not None:
+            if self.predict not in WELL_KNOWN_BY_KEY:
+                raise ValueError(
+                    f"predict names unknown well-known key {self.predict!r}")
+            # The horizon bridge is only honest where the predicting rule
+            # reproduces the table's OWN dates for every year the table
+            # tabulates (docstring invariant "matches ... for every year ...,
+            # proven by construction"). Enforce it at load: if the computable
+            # rule disagrees with a tabulated year, extrapolating it past the
+            # horizon would fabricate a date the table itself contradicts.
+            wk = WELL_KNOWN_BY_KEY[self.predict]
+            horizon = getattr(self.kind, "horizon", None)
+            bounds = horizon() if callable(horizon) else None
+            if bounds is not None:
+                for y in range(bounds[0], bounds[1] + 1):
+                    tabulated = {d for d, _ in self.kind.observances(y)}
+                    if not tabulated:
+                        continue
+                    predicted = {d for d, _ in wk.kind.observances(y)}
+                    if tabulated != predicted:
+                        raise ValueError(
+                            f"predict {self.predict!r} for {self.name!r} "
+                            f"disagrees with the tabulated date(s) in {y}: "
+                            f"tabulated {sorted(map(str, tabulated))}, predicted "
+                            f"{sorted(map(str, predicted))}. Bridging past "
+                            f"{bounds[1]} with this key would fabricate a date "
+                            f"the table itself contradicts.")
 
     def in_force(self, year: int) -> bool:
         """True when ``year`` is within this rule's validity range (inclusive)."""
