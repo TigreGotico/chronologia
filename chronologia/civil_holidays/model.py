@@ -14,6 +14,7 @@ import-time dependency from this module on the well-known tier.
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from datetime import timedelta
 from types import MappingProxyType
@@ -23,6 +24,8 @@ from chronologia.astrodate import BASIS_PREDICTED, AstroDate, DateSpan
 
 from .rules import CATEGORIES, RuleKind
 from .shifts import ObservedShift, ShiftPolicy
+
+_log = logging.getLogger(__name__)
 
 
 # --------------------------------------------------------------------------
@@ -105,13 +108,24 @@ class HolidayRule:
                         continue
                     predicted = {d for d, _ in wk.kind.observances(y)}
                     if tabulated != predicted:
-                        raise ValueError(
-                            f"predict {self.predict!r} for {self.name!r} "
-                            f"disagrees with the tabulated date(s) in {y}: "
-                            f"tabulated {sorted(map(str, tabulated))}, predicted "
-                            f"{sorted(map(str, predicted))}. Bridging past "
-                            f"{bounds[1]} with this key would fabricate a date "
-                            f"the table itself contradicts.")
+                        # The predictor disagrees with a tabulated year, so
+                        # extrapolating it past the horizon would fabricate a
+                        # date the table itself contradicts. DROP the bridge
+                        # (honest silence past the horizon, like an un-annotated
+                        # row) and warn -- never take down the whole
+                        # jurisdiction's in-horizon tabulated data for a
+                        # post-horizon metadata mismatch. Shipped data must have
+                        # zero such mismatches; that is asserted loudly in CI by
+                        # test_annotations_are_correct_by_construction_across_the_horizon.
+                        _log.warning(
+                            "predict %r for %r disagrees with the tabulated "
+                            "date(s) in %d (tabulated %s, predicted %s); "
+                            "dropping the horizon bridge -- honest silence past "
+                            "%d instead.", self.predict, self.name, y,
+                            sorted(map(str, tabulated)),
+                            sorted(map(str, predicted)), bounds[1])
+                        object.__setattr__(self, "predict", None)
+                        break
 
     def in_force(self, year: int) -> bool:
         """True when ``year`` is within this rule's validity range (inclusive)."""

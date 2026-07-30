@@ -264,6 +264,7 @@ def load_calendar(path: str) -> HolidayCalendar:
     """
     meta: Dict[str, str] = {}
     rules = []
+    saw_version = False
     with open(path, encoding="utf-8") as fh:
         for raw in fh:
             line = raw.rstrip("\n")
@@ -271,13 +272,14 @@ def load_calendar(path: str) -> HolidayCalendar:
                 continue
             if line.lstrip().startswith("#"):
                 body = line.lstrip()[1:].strip()
-                if body.startswith("civil-holidays") and ":" not in body:
+                if body.lower().startswith("civil-holidays") and ":" not in body:
                     version = body[len("civil-holidays"):].strip()
-                    if version and version not in _SUPPORTED_SCHEMA_VERSIONS:
+                    if version not in _SUPPORTED_SCHEMA_VERSIONS:
                         raise ValueError(
                             f"{os.path.basename(path)}: unsupported "
                             f"civil-holidays schema version {version!r}; this "
                             f"build reads {sorted(_SUPPORTED_SCHEMA_VERSIONS)}")
+                    saw_version = True
                 elif ":" in body:
                     k, v = body.split(":", 1)
                     meta.setdefault(k.strip(), v.strip())
@@ -315,6 +317,10 @@ def load_calendar(path: str) -> HolidayCalendar:
                 span_shape=span_shape,
                 predict=predict,
                 names=names))
+    if not saw_version:
+        raise ValueError(
+            f"{os.path.basename(path)}: missing '# civil-holidays <version>' "
+            f"schema banner (expected one of {sorted(_SUPPORTED_SCHEMA_VERSIONS)})")
     missing = [h for h in _REQUIRED_HEADERS if h not in meta]
     if missing:
         raise ValueError(

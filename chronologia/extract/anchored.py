@@ -157,6 +157,13 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
     return None
 
 
+#: how far past a date's end a trailing directional postposition may sit: the
+#: marker plus a short "[lead] N UNIT" pre-amble and a small gap. Bounds the
+#: forward scan so untrusted input can't drive it quadratic (a real postfix
+#: offset marker is ~1-4 tokens past the date; this is deliberately generous).
+_POSTFIX_SCAN_WINDOW = 24
+
+
 def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
                         dir_phrases, gap) -> Optional[Pair]:
     """Compose an offset onto ``match``/``res`` when the directional marker is
@@ -173,8 +180,12 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
     # the trailing marker sits at or past the date's end -- immediately after
     # it (Hungarian "N UNIT <date> **előtt**") or past the pre-amble the date
     # is compared against (Basque "<date> baino N egun **lehenago**", Turkish
-    # "<date> N gün **önce**").  Scan forward for the first marker phrase.
-    for k in range(e, len(tokens)):
+    # "<date> N gün **önce**").  Scan forward for the first marker phrase, but
+    # only within a bounded window: a directional postposition governs the date
+    # it trails, so it can only sit a few tokens past it (marker + a short
+    # "[lead] N UNIT" pre-amble + gap).  Scanning to end-of-stream made this
+    # O(tokens) per resolved match -> O(tokens^2) overall on untrusted input.
+    for k in range(e, min(len(tokens), e + _POSTFIX_SCAN_WINDOW)):
         for sign, words in dir_phrases:
             n = len(words)
             if [t.text for t in tokens[k:k + n]] != words:

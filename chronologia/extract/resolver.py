@@ -166,10 +166,18 @@ def _point_span(dt: datetime, unit: str) -> DateSpan:
         end = AstroDate.from_datetime(dt + timedelta(days=7))
     elif unit == "fortnight":
         end = AstroDate.from_datetime(dt + timedelta(days=14))
+    elif unit == "second":
+        end = AstroDate.from_datetime(dt + timedelta(seconds=1))
     elif unit == "month":
         end = AstroDate.from_datetime(_add_months(dt, 1))
     elif unit == "year":
         end = AstroDate.from_datetime(_add_months(dt, 12))
+    elif unit == "decade":
+        end = AstroDate.from_datetime(_add_months(dt, 120))
+    elif unit == "century":
+        end = AstroDate.from_datetime(_add_months(dt, 1200))
+    elif unit == "millennium":
+        end = AstroDate.from_datetime(_add_months(dt, 12000))
     else:
         raise ResolverInvariant(f"unsupported offset unit {unit!r}")
     return DateSpan(start, end)
@@ -388,10 +396,18 @@ class Resolver:
             value = anchor + timedelta(weeks=step)
         elif unit == "fortnight":
             value = anchor + timedelta(weeks=2 * step)
+        elif unit == "second":
+            value = anchor + timedelta(seconds=step)
         elif unit == "month":
             value = _add_months(anchor, int(step))
         elif unit == "year":
             value = _add_months(anchor, int(step) * 12)
+        elif unit == "decade":
+            value = _add_months(anchor, int(step) * 120)
+        elif unit == "century":
+            value = _add_months(anchor, int(step) * 1200)
+        elif unit == "millennium":
+            value = _add_months(anchor, int(step) * 12000)
         else:
             raise ResolverInvariant(f"unsupported offset unit {unit!r}")
         return Resolution(_point_span(value, unit), self._consumed(match))
