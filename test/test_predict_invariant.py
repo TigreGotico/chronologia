@@ -26,15 +26,23 @@ def test_predict_agreeing_with_table_loads():
     assert rule.predict == "all_saints"
 
 
-def test_predict_disagreeing_with_table_is_a_load_error():
-    with pytest.raises(ValueError, match="disagrees with the tabulated"):
-        HolidayRule(
+def test_predict_disagreeing_with_table_drops_the_bridge(caplog):
+    # A predictor that disagrees with a tabulated year must NOT take down the
+    # rule (its in-horizon dates are authoritative). The bridge is dropped
+    # (predict -> None, honest silence past horizon) with a warning, rather than
+    # raising and aborting the whole calendar's load.
+    import logging
+    with caplog.at_level(logging.WARNING):
+        rule = HolidayRule(
             name="All Saints (mis-tabulated)",
             # 2025 tabulated as 11-02, but all_saints computes 11-01 -> mismatch
             kind=DecreeTableRule(dates=((2024, (11, 1)), (2025, (11, 2)))),
             categories=_CATS,
             predict="all_saints",
         )
+    assert rule.predict is None
+    assert rule.resolve(2026) == ()          # honest silence past the horizon
+    assert any("disagrees with the tabulated" in r.message for r in caplog.records)
 
 
 def test_predict_unknown_key_is_a_load_error():

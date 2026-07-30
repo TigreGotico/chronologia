@@ -92,7 +92,11 @@ def test_concurrent_first_calls_different_langs(monkeypatch):
     succeed with the right engine -- the cache lock serialises the compiles
     without deadlocking or cross-wiring specs."""
     import chronologia.extract as ex
-    monkeypatch.setattr(ex, "_TIMESPAN_ENGINES", {})
+    import chronologia.extract.timespan as ts
+    # the cache + its lock live in timespan.py; patch there, not the facade
+    # alias re-exported into chronologia.extract, or _timespan_engine (whose
+    # globals are timespan.py's) keeps using the real, warm cache.
+    monkeypatch.setattr(ts, "_TIMESPAN_ENGINES", {})
 
     langs = ["en", "de", "fr", "es", "nl", "pt", "ru"]
     results = {}
@@ -123,7 +127,11 @@ def test_concurrent_first_calls_same_lang_compiled_once(monkeypatch):
     """Ten threads racing to first-load the *same* language all receive the one
     identical engine object -- the double-checked lock compiles it once."""
     import chronologia.extract as ex
-    monkeypatch.setattr(ex, "_TIMESPAN_ENGINES", {})
+    import chronologia.extract.timespan as ts
+    # the cache + its lock live in timespan.py; patch there, not the facade
+    # alias re-exported into chronologia.extract, or _timespan_engine (whose
+    # globals are timespan.py's) keeps using the real, warm cache.
+    monkeypatch.setattr(ts, "_TIMESPAN_ENGINES", {})
 
     seen = []
     errors = []
