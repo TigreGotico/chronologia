@@ -3,8 +3,7 @@
 # Source: IntCal20 Northern Hemisphere atmospheric 14C calibration curve,
 #   Reimer et al. 2020, Radiocarbon 62, doi:10.1017/RDC.2020.41
 #   https://intcal.org/curves/intcal20.14c
-#   Local copy: ~/AgentWorkspaces/papers/standards/intcal20_northern_hemisphere_reimer_et_al_2020.14c
-# Downloaded: 2026-07-21 (see ~/AgentWorkspaces/papers/standards/INDEX.md)
+# Downloaded: 2026-07-21
 #
 # COARSENESS / HONESTY NOTE: this is the full 1-yr IntCal20 curve DECIMATED to
 # every 100th cal-BP sample (0..55000 cal BP). It exists to demonstrate that

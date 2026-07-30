@@ -20,7 +20,7 @@ is bounded above by the successor's accession (Meiji 45 =
 calendar, so the clean Gregorian-year identity holds only from Meiji 6 on;
 earlier Meiji years are approximate under this arithmetic model.
 
-Source: ``japanese_nengo_reference.html`` (accession dates of the modern
+Source: Wikipedia, "Japanese era name" (accession dates of the modern
 nengō).
 """
 from __future__ import annotations
@@ -80,7 +80,7 @@ def _jdn(y, m, d):
 #: filename convention that binds vocabulary to a segment.
 REGNAL_SEQUENCES = {
     # Modern Japanese nengō, Meiji -> Reiwa (accession dates from
-    # japanese_nengo_reference.html); Reiwa is open-ended.
+    # Wikipedia, "Japanese era name"); Reiwa is open-ended.
     "nengo": RegnalSequence("nengo", (
         ("meiji", _jdn(1868, 10, 23)),
         ("taisho", _jdn(1912, 7, 30)),
@@ -92,7 +92,7 @@ REGNAL_SEQUENCES = {
     # each entering office on 1 January (proleptic Gregorian year label).  A
     # small demonstrative subset of well-attested pairs (BC years are
     # astronomical: 59 BC == -58); the full fasti are later data work.  Source:
-    # roman_consular_fasti_reference.html.
+    # Wikipedia, "List of Roman consuls".
     "consuls": RegnalSequence("consuls", (
         ("cicero_hybrida", _jdn(-62, 1, 1)),        # 63 BC
         ("caesar_bibulus", _jdn(-58, 1, 1)),        # 59 BC

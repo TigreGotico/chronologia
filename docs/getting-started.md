@@ -11,8 +11,10 @@ follow along.
 pip install chronologia
 ```
 
-That is everything. It is pure Python, has no dependencies, and never talks
-to the internet. You need Python 3.10 or newer.
+That is everything. The calendrical core is pure standard library; the
+natural-language layer adds two small helpers (ovos-number-parser and
+ovos-spec-tools), installed automatically with the line above. It never
+talks to the internet. You need Python 3.10 or newer.
 
 ## The one big idea: give every day a number
 

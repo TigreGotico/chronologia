@@ -2,7 +2,7 @@
 Julian calendar, against the fixed anchor datetime(2017, 6, 27) (year 2017).
 
 Day-wide spans; the returned month/day are the Julian-calendar (Roman)
-labels.  Values follow roman_calendar_reckoning_reference.html."""
+labels.  Values follow Wikipedia, "Roman calendar"."""
 import pytest
 from engine_helpers import ANCHOR, zz_engine
 

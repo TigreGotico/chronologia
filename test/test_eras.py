@@ -1,7 +1,6 @@
 """Tests for chronologia.eras — AstroDate, year ranges, era resolution.
 
-Reference values are cited to the canonical sources saved under
-``~/AgentWorkspaces/papers/calendars/`` (see the module docstrings in
+Reference values are cited to canonical sources (see the module docstrings in
 eras.py); nothing here is pinned to another library's output.
 """
 import logging
@@ -117,7 +116,7 @@ class TestJulianDay(unittest.TestCase):
     def test_epoch(self):
         # JD 0 begins 1 January 4713 BC proleptic Julian = 24 November
         # 4714 BC proleptic Gregorian = astronomical -4713-11-24
-        # (USNO, papers/calendars/usno_julian_date.html)
+        # (USNO, "Converting Between Julian Dates and Gregorian Calendar Dates")
         d = julian_day_to_date(0)
         self.assertIsInstance(d, AstroDate)
         self.assertEqual((d.year, d.month, d.day), (-4713, 11, 24))

@@ -2,24 +2,24 @@
 
 Gold values are the documented skipped-label lists and dual dates of the
 Gregorian-adoption family, cross-checked against the JDN hub.  Sources are
-cited per case; all live under ``~/AgentWorkspaces/papers/calendars/``.
+cited per case (see ``chronologia/timelines.py``).
 
 Per-timeline gold summary
 -------------------------
 * rome_1582 — day after Julian 4 Oct 1582 is Gregorian 15 Oct 1582; labels
-  5–14 Oct 1582 never existed (gregorian_adoption_reference.html).
+  5–14 Oct 1582 never existed (Wikipedia, "Adoption of the Gregorian calendar").
 * britain_1752 — Julian 2 Sep 1752 followed by Gregorian 14 Sep 1752 (SKIP
   3–13 Sep); civil year turned over 25 March until 1752, so "24 Feb 1731" is
   astronomical Julian 1732, dual-dated 1731/32
-  (calendar_new_style_act_1750_reference.html, old_new_style_dates_reference.html).
+  (Wikipedia, "Calendar (New Style) Act 1750", "Old Style and New Style dates").
 * russia_1918 — the October Revolution: 25 Oct 1917 (Julian in force) is the
   same instant as proleptic Gregorian 7 Nov 1917; SKIP 1–13 Feb 1918
-  (gregorian_adoption_reference.html).
-* greece_1923 — SKIP 16–28 Feb 1923 (gregorian_adoption_reference.html).
+  (Wikipedia, "Adoption of the Gregorian calendar").
+* greece_1923 — SKIP 16–28 Feb 1923 (Wikipedia, "Adoption of the Gregorian calendar").
 * sweden_1700_1712 — the double leap day 30 Feb 1712 exists and is the day
-  Gregorian calls 1712-03-11 (swedish_calendar_reference.html).
+  Gregorian calls 1712-03-11 (Wikipedia, "Swedish calendar").
 * japan_1873 — switch at Meiji 6 = 1 Jan 1873; pre-1873 lunisolar segment is
-  out of the registry (japanese_calendar_reference.html).
+  out of the registry (Wikipedia, "Japanese calendar").
 """
 import pytest
 

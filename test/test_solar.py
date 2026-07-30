@@ -1,8 +1,7 @@
 """Tests for :mod:`chronologia.solar` (NOAA arithmetic solar events).
 
 Gold values are cross-checked against the NOAA Global Monitoring solar
-calculator (the same engine transcribed in
-``papers/standards/noaa_general_solar_position_calculations.pdf``) and against
+calculator (the same engine transcribed in ``chronologia/solar.py``) and against
 independently checkable astronomical facts (equinox sunrise near local 06:00,
 equator ~12 h days, published sunrise tables).  The stated accuracy bound is
 +/- one minute (:data:`chronologia.solar.SOLAR_ACCURACY`), so gold comparisons

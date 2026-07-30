@@ -20,9 +20,9 @@ Two ``kind`` s cover the space:
 
 Sources (downloaded, cited):
 
-* French Republican décade -- ``french_republican_reference.html`` (the
+* French Republican décade -- Wikipedia, "French Republican calendar" (the
   30-day month divided into three ten-day décades, days primidi..décadi).
-* Nundinal cycle -- ``roman_nundinal_cycle_reference.html`` (the ancient
+* Nundinal cycle -- Wikipedia, "Nundinal cycle" (the ancient
   eight-day market cycle, free-running and continuous).  Its *length* and
   free-running character are historically grounded; the absolute *phase*
   (which JDN carries letter A) was already uncertain in antiquity, so the
@@ -120,7 +120,7 @@ class DaySubdivision:
 DAY_SUBDIVISIONS = {
     # French Republican decimal time (décret of 1793): 10 decimal hours per
     # day, 100 decimal minutes per hour, 100 decimal seconds per minute
-    # (french_republican_reference.html).
+    # (Wikipedia, "French Republican calendar").
     "french_decimal": DaySubdivision("french_decimal", {
         "hour": Fraction(1, 10),
         "minute": Fraction(1, 1000),

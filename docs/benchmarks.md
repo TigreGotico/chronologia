@@ -55,11 +55,11 @@ which the type check naturally filters out). No language is special-cased
 by name — add a new `nl_corpus_xx/` package to the test suite and the
 benchmark picks its cases up automatically next run.
 
-At the time of writing this pulls **1002 gold cases across 21
-languages** (languages whose corpus package happens to use the
-`text,expected` convention; corpora that only use other parametrize
+This pulls every gold case from the corpora that use the
+`text,expected` convention (corpora that only use other parametrize
 shapes, such as semantic-parity `(xx_text, en_text)` pairs, are not yet
-walked by this adapter — see Caveats).
+walked by this adapter — see Caveats). The count grows automatically as
+corpora are added.
 
 ## How scoring works
 

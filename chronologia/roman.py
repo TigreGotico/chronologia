@@ -18,7 +18,8 @@ use), through ``calendars.julian_to_jdn`` / ``jdn_to_julian``; the returned
 ``(year, month, day)`` is the Julian-calendar date, so 30 March reads as
 month 3 day 30 -- the Roman date's own labels, not a Gregorian shift.
 
-Source: ``roman_calendar_reckoning_reference.html``.
+Source: Wikipedia, "Roman calendar" (day reckoning by Kalends, Nones and
+Ides).
 """
 from __future__ import annotations
 

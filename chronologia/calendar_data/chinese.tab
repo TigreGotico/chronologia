@@ -8,7 +8,7 @@
 #   (www.hko.gov.hk/en/gts/time/conversion.htm and .../calendar/text/files/).
 #   HKO computes month starts from the astronomical new moon (Beijing/Chinese
 #   standard-time midnight boundary); a leap month appears as a repeated month
-#   number. Files archived under papers/calendars/hko_gregorian_lunar/.
+#   number.
 # retrieved: 2026-07-21
 # coverage: lunar years 1901 .. 2099 (Chinese New Year 2100 is the terminal sentinel; a complete lunar year has 12 or 13 months of 29 or 30 days)
 # generation: for every month-start line in each T{year}e.txt (the lunar-date

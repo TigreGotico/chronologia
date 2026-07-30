@@ -3,7 +3,7 @@
 Era years count as Gregorian calendar years (from Meiji 6 / 1873 on),
 clamped to the reign segment: the accession year begins at the accession
 date and the last year of a closed era ends at the successor's accession
-(japanese_nengo_reference.html)."""
+(Wikipedia, "Japanese era name")."""
 import pytest
 from engine_helpers import ANCHOR, zz_engine
 

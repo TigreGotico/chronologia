@@ -12,8 +12,7 @@ archon is *attested*, never interpolated, and a name held in two different
 years (Callias: 456/455 and 412/411) is left out rather than bound to a guess.
 This is a small, demonstrative subset, not the full fasti.
 
-Source: ``attic_archons.tab`` (see its header; primary list saved to
-``~/AgentWorkspaces/papers/calendars/attic_archons_reference.html``).
+Source: ``attic_archons.tab`` (see its header for the primary source).
 """
 from __future__ import annotations
 

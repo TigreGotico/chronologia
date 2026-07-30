@@ -28,11 +28,9 @@ about 9.14 degrees W has a *negative* longitude and a *negative* (behind
 UTC) offset.
 
 Source for the equation of time: Honsberg & Bowden, "Solar Time"
-(PVCDROM / PVEducation), a mirror of the NOAA/Woolf closed-form
-approximation --
-``chronologia/../ (papers/standards/equation_of_time_pvcdrom_solar_time.html)``.
-It states the formula is accurate to within half a minute; that bound is
-exposed as :data:`EOT_ACCURACY`.
+(PVCDROM / PVEducation), transcribing the NOAA/Woolf closed-form
+approximation. It states the formula is accurate to within half a minute;
+that bound is exposed as :data:`EOT_ACCURACY`.
 """
 from __future__ import annotations
 
@@ -140,8 +138,7 @@ def equation_of_time(d) -> timedelta:
     """Equation of time on a given date, as a :class:`~datetime.timedelta`.
 
     Transcribes the closed-form approximation from Honsberg & Bowden,
-    "Solar Time" (PVCDROM / PVEducation),
-    ``papers/standards/equation_of_time_pvcdrom_solar_time.html``::
+    "Solar Time" (PVCDROM / PVEducation)::
 
         EoT = 9.87 * sin(2B) - 7.53 * cos(B) - 1.5 * sin(B)   [minutes]
         B   = (360 / 365) * (day_of_year - 81)                [degrees]

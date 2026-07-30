@@ -9,8 +9,7 @@ uncertainty*), so EDTF maps onto this engine almost one-to-one.
 
 Reference: Library of Congress, "Extended Date/Time Format (EDTF)
 Specification", https://www.loc.gov/standards/datetime/ (spec dated
-2019-02-04), archived in the papers library as
-``papers/standards/edtf_loc_datetime.html``.  Every example string in that
+2019-02-04).  Every example string in that
 document is exercised by ``test/test_edtf.py`` and every design decision below
 cites it.
 

@@ -37,6 +37,27 @@ all three access the same two values:
 - **`remainder`** is the leftover text the parse did not consume — the
   words around the date, so a caller can see what was and was not a date.
 
+## Supported languages
+
+Pass any of these ISO codes as the `lang` argument. Each corresponds to a
+vocabulary bundle under `chronologia/locale/<code>/`; asking for a code with
+no bundle raises `NotImplementedError` naming the missing locale.
+
+| | | | | |
+|---|---|---|---|---|
+| `an` Aragonese | `ar` Arabic | `ast` Asturian | `az` Azerbaijani | `bg` Bulgarian |
+| `ca` Catalan | `cs` Czech | `da` Danish | `de` German | `el` Greek |
+| `en` English | `es` Spanish | `et` Estonian | `eu` Basque | `fa` Persian |
+| `fi` Finnish | `fr` French | `fy` West Frisian | `gl` Galician | `he` Hebrew |
+| `hr` Croatian | `hu` Hungarian | `id` Indonesian | `it` Italian | `kab` Kabyle |
+| `ms` Malay | `mwl` Mirandese | `nb` Norwegian Bokmål | `nl` Dutch | `nn` Norwegian Nynorsk |
+| `oc` Occitan | `pl` Polish | `pt` Portuguese | `ro` Romanian | `ru` Russian |
+| `sk` Slovak | `sl` Slovenian | `sv` Swedish | `tr` Turkish | `uk` Ukrainian |
+
+English carries the widest grammar; coverage of the more specialised
+constructions (regnal years, classical Roman date formulas, deep-time eras)
+varies by language and is noted where it applies below.
+
 ## What goes in, and what raises
 
 Every extractor — `extract_timespan`, `extract_timespans`, `extract_duration`,

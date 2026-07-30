@@ -2,8 +2,7 @@
 
 Gold instants and the table itself are cited from the IANA/IETF
 ``leap-seconds.list`` mirror of the IERS Bulletin C series (see
-``chronologia/data/leap_seconds.tab``'s provenance header and
-``~/AgentWorkspaces/papers/standards/INDEX.md``).
+``chronologia/data/leap_seconds.tab``'s provenance header).
 """
 import unittest
 from datetime import date, datetime, timedelta, timezone

@@ -3,8 +3,7 @@
 the out-of-range fallback contract, and the optional-ephemeris provider hook.
 
 Each table carries its own provenance header (source URL, retrieval date,
-coverage range) in its ``.tab`` file and an entry in
-``~/AgentWorkspaces/papers/calendars/INDEX.md``; gold values below are
+coverage range) in its ``.tab`` file; gold values below are
 published, independently checkable dates stated with their meaning.
 """
 import pytest
@@ -86,7 +85,7 @@ def test_tabulated_month_field_encoding_is_ordinary_for_umm_al_qura():
 # -- badi_2015: true-equinox Bahá'í (official Bahá'í World Centre table) -------
 # Naw-Rúz = the Tehran day containing the vernal equinox; dates from the
 # official "Badí' dates 172 to 221 BE" table
-# (papers/calendars/bahai_dates_172-221_uhj.pdf).
+# (bahai-library.com/pdf/uhj/uhj_bahai_dates_172-221.pdf).
 
 def test_badi_2015_is_tabulated_with_bahai_fallback():
     c = CALENDARS["badi_2015"]

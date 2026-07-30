@@ -22,6 +22,15 @@ print(span.start_datetime.date())   # 2025-03-15
 That is the whole point of a *span*: a phrase names a stretch of time,
 not an instant.
 
+When a string contains no date at all, `extract_timespan` returns `None`
+(rather than raising), so guard before unpacking on untrusted input:
+
+```python
+result = extract_timespan("no date here", "en", datetime(2024, 1, 1))
+if result is not None:
+    span, _ = result
+```
+
 Ever wondered…
 
 - what day **"the 15th of Ramadan"** falls on this year?
@@ -45,6 +54,11 @@ Python 3.10+. The calendrical core is pure standard library; the
 natural-language layer adds two small helpers — **ovos-number-parser**
 (spelled numbers → digits) and **ovos-spec-tools** (loads each language's
 vocabulary files).
+
+**Status.** chronologia is in **alpha**: the public API surface named in
+`chronologia.__all__` is what you build against, and it is covered by an
+extensive test suite, but signatures may still change ahead of a 1.0 that
+freezes them. Pin a version if you need stability across upgrades.
 
 ## Nobody means midnight
 

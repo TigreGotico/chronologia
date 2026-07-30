@@ -4,7 +4,7 @@ assertions the parser exercised through its ``regnal_date`` engine stage.
 Era years count as Gregorian calendar years (Meiji 6 / 1873 onward), clamped
 to the reign segment: the accession year begins at the accession date, and
 the last year of a closed era ends at the successor's accession
-(japanese_nengo_reference.html).  Rewritten against ``RegnalSequence.
+(Wikipedia, "Japanese era name").  Rewritten against ``RegnalSequence.
 year_span`` directly -- the natural-language phrasings ("the Nth year of
 <era>") are parser-side vocabulary; the asserted year spans are the core.
 """

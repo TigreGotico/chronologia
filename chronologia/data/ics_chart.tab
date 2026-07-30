@@ -2,12 +2,11 @@
 #
 # Source: ICS International Chronostratigraphic Chart, version 2023/09
 #   https://stratigraphy.org/ICSchart/ChronostratChart2023-09.pdf
-#   Local copy: ~/AgentWorkspaces/papers/standards/ics_chronostratigraphic_chart_2023-09.pdf
 # Numeric boundary ages: Macrostrat "international intervals" timescale
 #   (https://macrostrat.org/api/v2/defs/intervals, CC-BY 4.0), whose ages
 #   track the ICS 2023/09 chart (Jurassic 201.4->143.1 Ma, Phanerozoic base
 #   538.8 Ma, Holocene base 0.0117 Ma == 11.7 ka all verified against the chart).
-# Downloaded: 2026-07-21 (see ~/AgentWorkspaces/papers/standards/INDEX.md)
+# Downloaded: 2026-07-21
 #
 # CHART VERSION: 2023/09
 #

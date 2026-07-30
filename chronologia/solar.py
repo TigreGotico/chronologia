@@ -1,9 +1,8 @@
 """Arithmetic solar events: sunrise, sunset, solar noon, and twilights.
 
 Transcribes the NOAA *General Solar Position Calculations* / *Sunrise/Sunset
-Calculations* (NOAA Global Monitoring Division) closed-form algorithm --
-``papers/standards/noaa_general_solar_position_calculations.pdf`` (mirror of
-the NOAA Global Monitoring solar-calculator, ``noaa_solar_calculator_details.html``).
+Calculations* (NOAA Global Monitoring Division) closed-form algorithm,
+per the NOAA Global Monitoring solar calculator.
 Given a calendar date, latitude, and longitude the algorithm yields the day's
 sunrise, sunset, solar noon, and the three standard twilight boundaries
 (civil / nautical / astronomical, at solar depression -6 / -12 / -18 degrees).

@@ -137,8 +137,7 @@ _CALENDAR_YEAR_START = {"hebrew": (7, 1)}
 
 #: Language-agnostic era registry.  Keys are stable identifiers that
 #: per-language vocabularies map surface forms onto ("avant J.-C." ->
-#: "before_christ").  Epochs are cited to canonical sources saved under
-#: ``~/AgentWorkspaces/papers/calendars/`` where noted.
+#: "before_christ").  Epochs are cited to canonical sources where noted.
 ERAS = {
     # Common/Christian era.  Era year 1 == astronomical year 1 by definition
     # of astronomical numbering.
@@ -149,18 +148,16 @@ ERAS = {
                          EraCounting.YEARS_BEFORE),
     # Radiocarbon "Before Present": present fixed at AD 1950.
     # Stuiver & Polach 1977, "Discussion: Reporting of 14C Data",
-    # Radiocarbon 19(3):355-363 (papers/calendars/
-    # stuiver_polach_1977_reporting_c14_data.pdf).
+    # Radiocarbon 19(3):355-363.
     "before_present": Era("before_present", AstroDate(1950, 1, 1),
                           EraCounting.YEARS_BEFORE),
     # Unix time: seconds since 1970-01-01T00:00:00Z, "the Epoch" per
-    # POSIX.1-2017 §4.16 (papers/calendars/opengroup_epoch_seconds.html).
+    # POSIX.1-2017 §4.16.
     "unix": Era("unix", AstroDate(1970, 1, 1),
                 EraCounting.SECONDS_SINCE),
     # Julian day number: JD 0 begins Greenwich noon, 1 January 4713 BC
     # proleptic *Julian* calendar = astronomical -4712 (USNO, "Converting
-    # Between Julian Dates and Gregorian Calendar Dates",
-    # papers/calendars/usno_julian_date.html).  Resolution to a Gregorian
+    # Between Julian Dates and Gregorian Calendar Dates").  Resolution to a Gregorian
     # date is done by integer algorithm, not epoch arithmetic — see
     # julian_day_to_date().
     "julian_day": Era("julian_day", AstroDate(-4712, 1, 1),
@@ -186,7 +183,7 @@ ERAS = {
     # Byzantine (Creation) Anno Mundi: a year-numbering *on the Gregorian
     # calendar* whose civil year begins 1 September; AM n begins 1 September
     # of Gregorian year n - 5509, so AM 7535 spans 2026-09-01..2027-09-01
-    # (byzantine_calendar_reference.html: epoch 1 Sep 5509 BC, current-year
+    # (Wikipedia, "Byzantine calendar": epoch 1 Sep 5509 BC, current-year
     # worked example AD 2026 -> AM 7535 after 1 September).
     "byzantine_am": Era("byzantine_am", AstroDate(-5508, 9, 1),
                         calendar="gregorian",
@@ -198,11 +195,11 @@ ERAS = {
     # attached to a calendar; YEARS_SINCE reckons AUC N as astronomical year
     # -752 + N - 1.  (Varro's date is the conventional one; Cato's 751 BC and
     # Fabius Pictor's 748 BC are the historical alternatives, not used here.)
-    # Source: auc_varronian_era_reference.html.
+    # Source: Wikipedia, "Ab urbe condita".
     "ab_urbe_condita": Era("ab_urbe_condita", AstroDate(-752, 1, 1)),
     # Olympiad era: a four-year cycle counted from the first Olympiad, 776 BC
     # (astronomical -775), each period beginning at midsummer (1 July).
-    # Olympiad N begins in Gregorian year 4N - 779 (olympiad_era_reference.html).
+    # Olympiad N begins in Gregorian year 4N - 779 (Wikipedia, "Olympiad").
     "olympiad": Era("olympiad", AstroDate(-775, 7, 1),
                     calendar="gregorian",
                     year_transform=lambda n: 4 * n - 779,

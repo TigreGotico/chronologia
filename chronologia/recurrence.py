@@ -52,9 +52,8 @@ therefore impossible by accident; ask for a ``count`` or an ``until``.
 Citations
 ---------
 IETF RFC 5545 §3.3.10 (RECUR grammar, the expand/limit dependency table and the
-BYDAY notes) and §3.8.5.3 (the worked example corpus).  A downloaded copy lives
-at ``~/AgentWorkspaces/papers/standards/rfc5545_icalendar_recurrence.txt``;
-the enumerated example dates seed the gold test suite.
+BYDAY notes) and §3.8.5.3 (the worked example corpus).  The enumerated example
+dates seed the gold test suite.
 """
 from dataclasses import dataclass, field
 from datetime import timedelta

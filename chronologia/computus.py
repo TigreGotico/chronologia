@@ -18,10 +18,9 @@ calendars have drifted 13 days apart, and the two lunar tables differ as well,
 so the Julian Easter usually falls one to five weeks after the Gregorian one —
 occasionally they coincide (2025 is such a year).
 
-**Sources (downloaded, cited)**, mirrored into ``papers/standards/`` (see that
-directory's ``INDEX.md``):
+**Sources (cited)**:
 
-* ``computus_wikipedia.html`` (Wikipedia, "Computus"; ``Date_of_Easter``
+* Wikipedia, "Computus" (``Date_of_Easter``
   redirects here) — carries the two formulations transcribed below verbatim:
   the **"Anonymous Gregorian algorithm"** (also called the Meeus/Jones/Butcher
   algorithm, given by Jean Meeus in *Astronomical Algorithms* and traceable to
@@ -29,8 +28,7 @@ directory's ``INDEX.md``):
   and day of Western Easter; and **"Meeus's Julian algorithm"** (Meeus,
   *Astronomical Algorithms*), which yields the **Julian**-calendar month and
   day of Orthodox Easter.  Both are pure integer arithmetic.
-* ``moveable_feast_wikipedia.html`` (Wikipedia, "Moveable feast") and
-  ``liturgical_year_wikipedia.html`` (Wikipedia, "Liturgical year") — the
+* Wikipedia, "Moveable feast" and Wikipedia, "Liturgical year" — the
   liturgical-calendar references for the day-offsets of the feasts computed
   from Easter (Ash Wednesday "46 days before Easter", Ascension "40 days after"
   i.e. the 39-day offset counting Easter as day 0, Pentecost the seventh Sunday

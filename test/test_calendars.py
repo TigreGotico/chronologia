@@ -1,14 +1,12 @@
 """Pure arithmetic-calendar conversions: JDN round-trip sweeps and gold
 values transcribed from downloaded canonical sources.
 
-Sources (``~/AgentWorkspaces/papers/calendars/``):
+Sources:
 
-* ``reingold_dershowitz_1990_calendrical_calculations.pdf`` -- Dershowitz &
-  Reingold, "Calendrical Calculations", SP&E 20(9):899-928 (1990): the
-  Gregorian/Julian/Islamic/Hebrew algorithms.
-* ``usno_julian_date.html`` -- U.S. Naval Observatory Julian Date reference
-  (J2000.0 = JDN 2451545).
-* ``french_republican_reference.html`` / ``bahai_calendar_reference.html``
+* Dershowitz & Reingold, "Calendrical Calculations", SP&E 20(9):899-928
+  (1990): the Gregorian/Julian/Islamic/Hebrew algorithms.
+* U.S. Naval Observatory Julian Date reference (J2000.0 = JDN 2451545).
+* Wikipedia, "French Republican calendar" / "Bahá'í calendar"
   -- arithmetic rules, epochs and worked dates for the two solar calendars.
 
 Every asserted Gregorian value below is a published, independently
