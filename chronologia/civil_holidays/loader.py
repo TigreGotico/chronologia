@@ -27,6 +27,10 @@ from .shifts import SubstitutePolicy, _SHIFT_POLICIES
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                          "holiday_data")
 _REQUIRED_HEADERS = ("jurisdiction", "source", "retrieved")
+#: civil-holidays .tab schema versions this build can read. A file whose
+#: ``# civil-holidays <version>`` banner is not listed here fails loudly rather
+#: than being silently mis-parsed after a format evolution.
+_SUPPORTED_SCHEMA_VERSIONS = frozenset({"v1"})
 _TRANSLATIONS_FILE = os.path.join(_DATA_DIR, "i18n", "translations.tab")
 
 
@@ -267,7 +271,14 @@ def load_calendar(path: str) -> HolidayCalendar:
                 continue
             if line.lstrip().startswith("#"):
                 body = line.lstrip()[1:].strip()
-                if ":" in body:
+                if body.startswith("civil-holidays") and ":" not in body:
+                    version = body[len("civil-holidays"):].strip()
+                    if version and version not in _SUPPORTED_SCHEMA_VERSIONS:
+                        raise ValueError(
+                            f"{os.path.basename(path)}: unsupported "
+                            f"civil-holidays schema version {version!r}; this "
+                            f"build reads {sorted(_SUPPORTED_SCHEMA_VERSIONS)}")
+                elif ":" in body:
                     k, v = body.split(":", 1)
                     meta.setdefault(k.strip(), v.strip())
                 continue

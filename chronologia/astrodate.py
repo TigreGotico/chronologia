@@ -865,16 +865,16 @@ def combine_basis(*bases: str) -> str:
 # :class:`~chronologia.resolution.DateTimeResolution` for the threshold
 # rationale.  ``EON`` is the open-topped fallback.
 _RESOLUTION_BY_WIDTH = (
-    (1.0, DateTimeResolution.DAY),
-    (7.0, DateTimeResolution.WEEK),
-    (31.0, DateTimeResolution.MONTH),
-    (366.0, DateTimeResolution.YEAR),
-    (3653.0, DateTimeResolution.DECADE),
-    (36525.0, DateTimeResolution.CENTURY),
-    (3_652_500.0, DateTimeResolution.MILLENNIUM),          # up to ~10 kyr
-    (3_652_500_000.0, DateTimeResolution.EPOCH_GEOLOGICAL),  # ~10 kyr..10 Myr
-    (36_525_000_000.0, DateTimeResolution.PERIOD_GEOLOGICAL),  # ..100 Myr
-    (182_625_000_000.0, DateTimeResolution.ERA_GEOLOGICAL),  # ..~500 Myr
+    (1, DateTimeResolution.DAY),
+    (7, DateTimeResolution.WEEK),
+    (31, DateTimeResolution.MONTH),
+    (366, DateTimeResolution.YEAR),
+    (3653, DateTimeResolution.DECADE),
+    (36525, DateTimeResolution.CENTURY),
+    (3_652_500, DateTimeResolution.MILLENNIUM),          # up to ~10 kyr
+    (3_652_500_000, DateTimeResolution.EPOCH_GEOLOGICAL),  # ~10 kyr..10 Myr
+    (36_525_000_000, DateTimeResolution.PERIOD_GEOLOGICAL),  # ..100 Myr
+    (182_625_000_000, DateTimeResolution.ERA_GEOLOGICAL),  # ..~500 Myr
 )
 
 
@@ -1012,11 +1012,22 @@ class DateSpan:
 
         Computed straight from the microsecond delta so a geological width
         (which has no ``timedelta``) is classified without overflow; ``EON``
-        is the open-topped fallback above the largest threshold.
+        is the open-topped fallback above the largest threshold. The comparison
+        is exact integer microseconds -- no float -- so a width sitting exactly
+        on a threshold classifies deterministically.
+
+        Deliberately lossy by design: resolution answers *how wide*, not *what
+        kind*. A width is bucketed to the nearest magnitude tier, so a quarter
+        (91 days) reports ``YEAR``, a fortnight (14 days) ``MONTH``, and a
+        weekend ``WEEK``; width cannot distinguish a Monday-aligned calendar
+        week from an arbitrary seven-day window. This is intentional -- it is
+        what makes a stored resolution that disagrees with the endpoints
+        *unrepresentable* -- not a bug. Callers needing "what kind" carry that
+        as their own fact, not off ``resolution``.
         """
-        days = self._delta_us / float(_US_PER_DAY)
+        delta = self._delta_us
         for limit, res in _RESOLUTION_BY_WIDTH:
-            if days <= limit:
+            if delta <= limit * _US_PER_DAY:
                 return res
         return DateTimeResolution.EON
 

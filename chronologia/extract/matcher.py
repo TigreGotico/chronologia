@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from chronologia.extract import tokenizer
 from chronologia.extract.compiler import CompiledSpec
@@ -304,16 +304,34 @@ def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
 
 def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
           ei: int, ti: int, spec: LangSpec,
-          slots: Dict[str, Token]) -> List[Tuple[int, Dict[str, Token]]]:
+          slots: Dict[str, Token]) -> Optional[Tuple[int, Dict[str, Token]]]:
+    """The single longest completion of ``elements`` from token ``ti``.
+
+    Returns the ``(end, slots)`` with the greatest end position, or ``None`` if
+    the elements cannot be matched from here. Branches are explored in a fixed
+    order (bind, suffix-absorb, optional-skip) and ties are broken toward the
+    earlier branch -- identical to ``max(all_completions, key=end)`` with
+    Python's first-maximal tie-break, since that max is associative. Keeping
+    only the running best (rather than materialising every completion) turns the
+    exponential *space* of an order with many optional slots into O(depth), and
+    avoids the list-concatenation churn on the hot path.
+    """
     if ei == len(elements):
-        return [(ti, dict(slots))]
+        return (ti, dict(slots))
     el = elements[ei]
-    results: List[Tuple[int, Dict[str, Token]]] = []
+    best: Optional[Tuple[int, Dict[str, Token]]] = None
+
+    def consider(cand: Optional[Tuple[int, Dict[str, Token]]]) -> None:
+        nonlocal best
+        # strict ``>`` keeps the earlier branch on a tie (first-maximal)
+        if cand is not None and (best is None or cand[0] > best[0]):
+            best = cand
+
     if el.is_slot:
         if ti < len(tokens) and _bind(el, tokens[ti], spec):
             bound = dict(slots)
             bound[el.name] = tokens[ti]
-            results += _walk(elements, tokens, ei + 1, ti + 1, spec, bound)
+            consider(_walk(elements, tokens, ei + 1, ti + 1, spec, bound))
             # A digit ordinal the language writes with a hyphenated
             # inflectional suffix ("5-е", "2-го") tokenises as the number plus
             # a stray suffix letter; absorb that trailing suffix so the numeral
@@ -326,15 +344,15 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
             if (suffixes and tokens[ti].is_number
                     and ti + 1 < len(tokens)
                     and tokens[ti + 1].text in suffixes):
-                results += _walk(elements, tokens, ei + 1, ti + 2, spec, bound)
+                consider(_walk(elements, tokens, ei + 1, ti + 2, spec, bound))
     else:
         consumed = _connector_span(el.name, tokens, ti, spec)
         if consumed:
-            results += _walk(elements, tokens, ei + 1, ti + consumed, spec,
-                             slots)
+            consider(_walk(elements, tokens, ei + 1, ti + consumed, spec,
+                           slots))
     if el.optional:
-        results += _walk(elements, tokens, ei + 1, ti, spec, slots)
-    return results
+        consider(_walk(elements, tokens, ei + 1, ti, spec, slots))
+    return best
 
 
 class ConstructionMatcher:
@@ -348,10 +366,10 @@ class ConstructionMatcher:
         out: List[MatchCandidate] = []
         for precedence, name, order in self.compiled.table:
             for start in range(len(tokens)):
-                ends = _walk(order.elements, tokens, 0, start, self.spec, {})
-                if not ends:
+                best = _walk(order.elements, tokens, 0, start, self.spec, {})
+                if best is None:
                     continue
-                end, slots = max(ends, key=lambda r: r[0])
+                end, slots = best
                 if end > start:
                     # "the year 1 am" is the Anno Mundi era marker, not the
                     # 01:00 ante-meridiem clock: veto a bare HOUR+MERIDIEM
