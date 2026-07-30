@@ -423,3 +423,42 @@ class SolarEventRule:
             hours=self.tz_offset_hours)
         return ((AstroDate(instant.year, instant.month, instant.day),
                  BASIS_EXACT),)
+
+
+@dataclass(frozen=True)
+class TransitionRule:
+    """A holiday whose observance rule CHANGED on known years -- a civil date
+    moved or replaced by legislation. ``segments`` is an ascending tuple of
+    ``(from_year, RuleKind)``; ``observances(year)`` picks the latest segment
+    whose ``from_year <= year`` (honest silence before the first). The past is
+    exact, so each year resolves through the rule that was actually in force
+    then, rather than one date retro-/post-dated across the reform.
+
+    Example -- Ukraine's Christmas, moved from the Julian 25 December (civil
+    7 January) to the Gregorian 25 December by Law No. 3258-IX, effective 2023::
+
+        TransitionRule((
+            (1,    CalendarDateRule("julian", 12, 25)),   # ..2022  -> Jan 7
+            (2023, FixedRule(12, 25)),                    # 2023..  -> Dec 25
+        ))
+    """
+
+    segments: Tuple[Tuple[int, RuleKind], ...]
+
+    def __post_init__(self) -> None:
+        if not self.segments:
+            raise ValueError("TransitionRule needs at least one segment")
+        years = [fy for fy, _ in self.segments]
+        if years != sorted(years) or len(set(years)) != len(years):
+            raise ValueError(
+                f"TransitionRule segments need strictly ascending from_year, "
+                f"got {years}")
+
+    def observances(self, year: int) -> Tuple[Tuple[AstroDate, str], ...]:
+        chosen = None
+        for from_year, rule in self.segments:
+            if year >= from_year:
+                chosen = rule
+            else:
+                break
+        return chosen.observances(year) if chosen is not None else ()

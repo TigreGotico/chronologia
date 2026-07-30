@@ -281,11 +281,24 @@ def _fr_year_length(year: int) -> int:
     return 366 if _fr_sextile(year) else 365
 
 
+def _fr_days_before(year: int) -> int:
+    """Days from An I Vendemiaire 1 to year ``year`` Vendemiaire 1 -- the
+    closed-form value of ``sum(_fr_year_length(y) for y in range(1, year))``,
+    so conversion is O(1) rather than O(year) (a huge Python-big-int year no
+    longer drives an unbounded loop)."""
+    if year <= 1:
+        return 0
+    # 365 days per year plus one for each sextile year in [1, year-1]. Year Y
+    # is sextile iff Y+1 is a Gregorian leap year, so the extra-day count is the
+    # number of Gregorian leap years in [2, year].
+    greg_leaps = year // 4 - year // 100 + year // 400
+    return 365 * (year - 1) + greg_leaps
+
+
 def french_republican_to_jdn(year: int, month: int, day: int) -> int:
     """(year, month, day) -> JDN.  Months 1..12 have 30 days; the five or
     six complementary days (sansculottides) are addressed as month 13."""
-    offset = sum(_fr_year_length(y) for y in range(1, year))
-    offset += (month - 1) * 30 + (day - 1)
+    offset = _fr_days_before(year) + (month - 1) * 30 + (day - 1)
     return _FR_EPOCH_JDN + offset
 
 
@@ -293,10 +306,14 @@ def french_republican_from_jdn(jdn: int) -> Tuple[int, int, int]:
     offset = jdn - _FR_EPOCH_JDN
     if offset < 0:
         raise ValueError("date precedes the French Republican epoch")
-    year = 1
-    while offset >= _fr_year_length(year):
-        offset -= _fr_year_length(year)
+    # Estimate the year from the mean length (365.2425 d), then correct with the
+    # O(1) cumulative -- bounds the loop to a couple of steps instead of O(year).
+    year = max(1, (offset * 10_000) // 3_652_425 + 1)
+    while _fr_days_before(year) > offset:
+        year -= 1
+    while _fr_days_before(year + 1) <= offset:
         year += 1
+    offset -= _fr_days_before(year)
     if offset < 360:
         return year, offset // 30 + 1, offset % 30 + 1
     return year, 13, offset - 360 + 1     # complementary day

@@ -19,7 +19,7 @@ from ._corpus import AstroDate, span, start
 # holiday surface -> (month, day)
 _HOLIDAYS = {
     "новий рік": (1, 1),
-    "різдво": (1, 7),
+    "різдво": (12, 25),   # OCU switch 2023; every year in this sweep is >= 2023
     "міжнародний жіночий день": (3, 8),
     "день праці": (5, 1),
     "день перемоги": (5, 9),

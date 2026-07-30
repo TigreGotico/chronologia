@@ -272,7 +272,9 @@ def load_calendar(path: str) -> HolidayCalendar:
                 continue
             if line.lstrip().startswith("#"):
                 body = line.lstrip()[1:].strip()
-                if body.lower().startswith("civil-holidays") and ":" not in body:
+                low = body.lower()
+                if ((low == "civil-holidays" or low.startswith("civil-holidays "))
+                        and ":" not in body):
                     version = body[len("civil-holidays"):].strip()
                     if version not in _SUPPORTED_SCHEMA_VERSIONS:
                         raise ValueError(

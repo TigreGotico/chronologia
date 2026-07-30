@@ -26,7 +26,7 @@ from chronologia.astrodate import AstroDate, DateSpan
 from .loader import _DATA_DIR, _translations_for
 from .model import _shape_span
 from .rules import (CalendarDateRule, DecreeTableRule, EasterOffsetRule,
-                    FixedRule, NthWeekdayRule, RuleKind)
+                    FixedRule, NthWeekdayRule, RuleKind, TransitionRule)
 
 from dataclasses import dataclass
 
@@ -203,15 +203,48 @@ WELL_KNOWN: Tuple[WellKnownHoliday, ...] = (
     # Jan 7): the Julian->Gregorian offset the calendar carries lands it on
     # Gregorian Jan 7 for 1900-2099 and Jan 6 in early 1900 — the repo's own
     # Julian arithmetic, never a magic constant. Basis ``exact``.
-    # Bound to churches on the Julian calendar (RU/BG/UA/RS/GE ...). Greece and
-    # the other New-Calendar churches keep Christmas on Gregorian Dec 25, i.e.
-    # the plain ``christmas`` key — el is deliberately NOT an alias here.
+    # Bound to churches on the Julian calendar (RU/RS/GE) or whose civil
+    # Christmas date is year-dependent and cannot be modelled here (see below).
+    # The Revised-Julian churches whose Christmas has been Gregorian Dec 25 for
+    # the whole modern range keep the plain ``christmas`` key: Greece (el),
+    # Romania (ro), Bulgaria (bg, Revised Julian since 1968) — matching each
+    # country's civil Dec-25 public holiday.
+    #
+    # Ukraine is the hard case. Its civil Christmas was MOVED by law -- Jan 7
+    # through 2022, Gregorian Dec 25 from 2023 (OCU + Law 3258-IX). That is NOT
+    # a new calendar and NOT a timeline discontinuity (no day was dropped; both
+    # dates always existed on the Gregorian calendar): it is a year-gated
+    # holiday-rule change. The canonical model is the per-jurisdiction ``.tab``
+    # layer -- two same-name ``HolidayRule`` rows with disjoint ``valid`` ranges
+    # (cf. fr.tab's Fête-de-l'autonomie -> Matāri'i, or Juneteenth's ``2021-``).
+    # This well-known NAME layer is single-rule and year-agnostic, so it cannot
+    # be right for uk across years (Dec 25 breaks pre-2023, Jan 7 breaks
+    # post-2023). Until a ``ua.tab`` carries the year-accurate two-row
+    # transition, ``uk`` stays aliased to ``orthodox_christmas`` (its pre-reform
+    # date and the native-verified corpus's position).
     WellKnownHoliday("orthodox_christmas", CalendarDateRule("julian", 12, 25),
                      frozenset({"public", "religious", "orthodox"}),
                      "RU", "Рождество Христово", "ru"),
     WellKnownHoliday("orthodox_christmas_eve", CalendarDateRule("julian", 12, 24),
                      frozenset({"religious", "orthodox"}),
                      "RU", "Рождественский сочельник", "ru"),
+    # Ukraine's Christmas transitioned with the OCU calendar switch: the Julian
+    # feast (civil 7 Jan) through 2022, Gregorian 25 Dec from 2023. A
+    # TransitionRule makes the NAME layer resolve the date actually in force for
+    # the queried year -- the past is exact. (Porting reference: vacanza's
+    # ukraine.py, MIT. The civil day-off nuances it also encodes -- both dates
+    # counted 2017-2023, public holidays suspended under martial law from 2022 --
+    # are day-off questions for a future ua.tab, not the feast date.)
+    WellKnownHoliday("christmas_ua",
+                     TransitionRule(((1, CalendarDateRule("julian", 12, 25)),
+                                     (2023, FixedRule(12, 25)))),
+                     frozenset({"public", "religious", "orthodox"}),
+                     "UA", "Різдво Христове", "uk"),
+    WellKnownHoliday("christmas_eve_ua",
+                     TransitionRule(((1, CalendarDateRule("julian", 12, 24)),
+                                     (2023, FixedRule(12, 24)))),
+                     frozenset({"religious", "orthodox"}),
+                     "UA", "Святвечір", "uk"),
 
     # ---- Movable Islamic feasts (Umm al-Qura table, ``calendar_date``) ----
     # These resolve through the tabulated Umm al-Qura calendar (basis

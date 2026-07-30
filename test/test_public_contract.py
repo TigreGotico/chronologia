@@ -47,6 +47,9 @@ def test_public_extractors_never_raise_unexpectedly(text):
     ("a century ago", "1917-06-27"),
     ("5 centuries ago", "1517-06-27"),
     ("in 3 decades", "2047-06-27"),
+    ("2 millennia ago", "0017-06-27"),   # lock millennium (year 2017-2000)
+    ("in 1 millennium", "3017-06-27"),
+    ("30 seconds ago", "2017-06-27"),    # lock second (same day, sub-minute)
 ])
 def test_large_unit_offsets_resolve(text, expected):
     r = extract_timespan(text, "en", _ANCHOR)

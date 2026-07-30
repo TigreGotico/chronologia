@@ -864,8 +864,8 @@ new_year_eve       | bg | навечерие на нова година
 orthodox_easter    | bg | великден ;; възкресение
 orthodox_good_friday | bg | разпети петък ;; велики петък
 orthodox_easter_monday | bg | велики понеделник
-orthodox_christmas | bg | коледа ;; рождество христово ;; рождество
-orthodox_christmas_eve | bg | бъдни вечер
+christmas | bg | коледа ;; рождество христово ;; рождество
+christmas_eve | bg | бъдни вечер
 labour_day             | bg | ден на труда ;; ден на труда и на международната работническа солидарност
 bulgaria_liberation_day   | bg | ден на освобождението ;; ден на освобождението на българия от османско иго
 bulgaria_st_georges_day   | bg | гергьовден ;; ден на храбростта и българската армия
@@ -992,8 +992,8 @@ new_year_eve       | uk | переддень нового року
 orthodox_easter    | uk | великдень ;; пасха
 orthodox_good_friday | uk | страсна п'ятниця ;; велика п'ятниця
 orthodox_easter_monday | uk | світлий понеділок
-orthodox_christmas | uk | різдво ;; різдво христове
-orthodox_christmas_eve | uk | святвечір
+christmas_ua | uk | різдво ;; різдво христове
+christmas_eve_ua | uk | святвечір
 halloween          | uk | гелловін ;; хелоуїн
 valentines         | uk | день святого валентина ;; день закоханих
 chinese_new_year   | uk | китайський новий рік
