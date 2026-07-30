@@ -152,6 +152,13 @@ class TestResolveEra(unittest.TestCase):
         self.assertEqual(d, date(2026, 1, 1))
         self.assertNotIsInstance(d, AstroDate)
 
+    def test_unknown_era_message_names_the_bad_key(self):
+        # contract consistency with resolve_bp: a bad era name is a documented
+        # ValueError naming the offending key, not a bare KeyError.
+        with self.assertRaises(ValueError) as ctx:
+            resolve_era("nonexistent_era", 100)
+        self.assertIn("nonexistent_era", str(ctx.exception))
+
     def test_before_present(self):
         # present = AD 1950 (Stuiver & Polach 1977)
         self.assertEqual(resolve_era("before_present", 100), date(1850, 1, 1))
@@ -190,8 +197,8 @@ class TestResolveEra(unittest.TestCase):
         self.assertEqual(resolve_era("before_present", -1000000),
                          AstroDate(1001950))
 
-    def test_unknown_era_raises_keyerror(self):
-        with self.assertRaises(KeyError):
+    def test_unknown_era_raises_valueerror(self):
+        with self.assertRaises(ValueError):
             resolve_era("jurassic", 1)
 
     def test_era_epochs_registry_consistency(self):
@@ -288,7 +295,7 @@ class TestEraGoldEpochs(unittest.TestCase):
                     "burmese", "kollam", "nepal_sambat", "yazdegerd"):
             with self.subTest(era=key):
                 self.assertNotIn(key, ERAS)
-                with self.assertRaises(KeyError):
+                with self.assertRaises(ValueError):
                     resolve_era(key, 1)
 
 
