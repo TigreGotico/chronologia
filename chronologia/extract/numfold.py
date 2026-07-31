@@ -362,7 +362,11 @@ def _read_scale_number(tokens, i):
             continue
         break
     if not seen_scale:
-        return None, i
+        # No scale word in this cardinal run, so it can never fold here. Report
+        # how far the scan reached (``j``) so the caller can skip the whole run
+        # in one step instead of re-scanning from every start position -- a run
+        # of pure cardinals ("ninety nine ...") was O(n^2) otherwise.
+        return None, j
     return total + current, j
 
 
@@ -435,6 +439,13 @@ def _fold_scale_offset(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             if (value is not None and end < n
                     and tokens[end].text in units):
                 out.append(_year_token(value, tokens[i], tokens[end - 1]))
+                i = end
+                continue
+            if value is None and end > i:
+                # a pure cardinal run with no scale word: nothing here can fold,
+                # so pass it through in one step (avoids O(n^2) re-scanning of a
+                # long spelled-number run).
+                out.extend(tokens[i:end])
                 i = end
                 continue
         out.append(tokens[i])

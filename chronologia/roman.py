@@ -18,8 +18,17 @@ use), through ``calendars.julian_to_jdn`` / ``jdn_to_julian``; the returned
 ``(year, month, day)`` is the Julian-calendar date, so 30 March reads as
 month 3 day 30 -- the Roman date's own labels, not a Gregorian shift.
 
+SIMPLIFICATION (documented): in a leap year February is reckoned with the
+**proleptic-Julian** intercalation -- the extra day is 29 February, appended
+to the end of the month -- rather than the authentic Roman *bissextum*, which
+doubled ``a.d. VI Kalendas Martias`` (24 February) and named both the 24th and
+the intercalary day "a.d. VI". As a result the ante-diem count for dates in
+leap-year February follows the modern proleptic-Julian day-count, not the
+historical doubled-day scheme (which cannot map to a single ``(y, m, d)``
+anyway). Common years and every other month are unaffected.
+
 Source: Wikipedia, "Roman calendar" (day reckoning by Kalends, Nones and
-Ides).
+Ides); "Julian calendar" (the bissextile intercalation).
 """
 from __future__ import annotations
 

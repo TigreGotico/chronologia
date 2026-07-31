@@ -511,10 +511,11 @@ def test_bounded_rule_iterates_without_call_limit():
 
 
 def test_impossible_rule_with_count_raises():
-    # Feb never has a 30th: a count-limited call cannot be satisfied.
-    r = parse_rrule("FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=30;COUNT=1")
+    # Feb never has a 30th: the statically-impossible month/day pair is now
+    # rejected up front at construction (was only caught after scanning tens of
+    # thousands of empty periods).
     with pytest.raises(ValueError, match="never"):
-        list(occurrences(r, ad(2023, 1, 1)))
+        parse_rrule("FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=30;COUNT=1")
 
 
 def test_abusive_count_is_refused_at_construction():

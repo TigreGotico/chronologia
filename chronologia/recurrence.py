@@ -307,6 +307,17 @@ def _validate(rec: Recurrence) -> None:
     for d in rec.bymonthday:
         if d == 0 or not -31 <= d <= 31:
             raise ValueError(f"BYMONTHDAY values must be -31..-1 or 1..31, got {d}")
+    # Reject a rule whose fixed month/day pairs can NEVER occur (e.g. 30
+    # February): otherwise it produces nothing and only trips the empty-period
+    # backstop after scanning tens of thousands of periods -- CPU an attacker
+    # can spend cheaply. A negative day (-1 = last day) is always satisfiable.
+    if rec.bymonth and rec.bymonthday:
+        _MAX_DAYS = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+        if not any(d < 0 or d <= _MAX_DAYS[m - 1]
+                   for m in rec.bymonth for d in rec.bymonthday):
+            raise ValueError(
+                f"BYMONTH={rec.bymonth} with BYMONTHDAY={rec.bymonthday} can "
+                "never occur (e.g. 30 February); the rule matches no date")
     for d in rec.byyearday:
         if d == 0 or not -366 <= d <= 366:
             raise ValueError(f"BYYEARDAY values must be -366..-1 or 1..366, got {d}")
