@@ -143,6 +143,32 @@ def _islamic_month_length(month: int, year: int) -> int:
     return 29
 
 
+def _year_containing(elapsed: int, start_of_year, seed: int,
+                     longest_year: int) -> int:
+    """The calendar year whose first day is the last one at or before
+    ``elapsed`` (an absolute day count), from a ``seed`` estimate.
+
+    ``start_of_year(y)`` is the absolute day of year ``y``'s first day, monotone
+    increasing in ``y``.  A fixed rough divisor drifts LINEARLY with the year
+    magnitude, so a bare +-1 correction turns a large (but valid) year into a
+    multi-second linear scan; jumping by ``error // longest_year`` (an
+    under-jump, so it never overshoots) converges in O(log magnitude) for any
+    year.  The closing +-1 loops guarantee the exact year, so the seed and the
+    jumps only have to get roughly there.
+    """
+    year = seed
+    for _ in range(200):          # a backstop; real convergence is O(log)
+        err = elapsed - start_of_year(year)
+        if 0 <= err < longest_year:
+            break
+        year += err // longest_year or (1 if err > 0 else -1)
+    while start_of_year(year + 1) <= elapsed:
+        year += 1
+    while start_of_year(year) > elapsed:
+        year -= 1
+    return year
+
+
 def _abs_from_islamic(year: int, month: int, day: int) -> int:
     return (day + 29 * (month - 1) + month // 2
             + (year - 1) * 354 + (3 + 11 * year) // 30
@@ -152,9 +178,8 @@ def _abs_from_islamic(year: int, month: int, day: int) -> int:
 def _islamic_from_abs(rd: int) -> Tuple[int, int, int]:
     if rd < _ISLAMIC_EPOCH_RD:
         raise ValueError("date precedes the Islamic epoch")
-    year = (rd - _ISLAMIC_EPOCH_RD) // 355 + 1
-    while _abs_from_islamic(year + 1, 1, 1) <= rd:
-        year += 1
+    year = _year_containing(rd, lambda y: _abs_from_islamic(y, 1, 1),
+                            (rd - _ISLAMIC_EPOCH_RD) // 355 + 1, 356)
     month = 1
     while (month < 12 and
            _abs_from_islamic(year, month, _islamic_month_length(month, year)) < rd):
@@ -239,9 +264,8 @@ def _abs_from_hebrew(year: int, month: int, day: int) -> int:
 
 
 def _hebrew_from_abs(rd: int) -> Tuple[int, int, int]:
-    year = (rd - _HEBREW_ABS_OFFSET) // 366
-    while _abs_from_hebrew(year + 1, 7, 1) <= rd:
-        year += 1
+    year = _year_containing(rd, lambda y: _abs_from_hebrew(y, 7, 1),
+                            (rd - _HEBREW_ABS_OFFSET) // 366, 386)
     start = 1 if rd >= _abs_from_hebrew(year, 1, 1) else 7
     month = start
     while _abs_from_hebrew(year, month,
@@ -472,11 +496,8 @@ _RJ_EPOCH_JDN = (gregorian_to_jdn(2000, 1, 1)
 
 
 def revised_julian_from_jdn(jdn: int) -> Tuple[int, int, int]:
-    year = (jdn - _RJ_EPOCH_JDN) // 366 + 1
-    while revised_julian_to_jdn(year + 1, 1, 1) <= jdn:
-        year += 1
-    while revised_julian_to_jdn(year, 1, 1) > jdn:
-        year -= 1
+    year = _year_containing(jdn, lambda y: revised_julian_to_jdn(y, 1, 1),
+                            (jdn - _RJ_EPOCH_JDN) // 366 + 1, 367)
     yday = jdn - revised_julian_to_jdn(year, 1, 1) + 1
     month = 1
     while month < 12 and _rj_year_day(year, month + 1, 1) <= yday:
@@ -709,11 +730,8 @@ def solar_hijri_to_jdn(year: int, month: int, day: int) -> int:
 
 
 def solar_hijri_from_jdn(jdn: int) -> Tuple[int, int, int]:
-    year = (jdn - _SOLAR_HIJRI_EPOCH_JDN) // 366 + 1
-    while solar_hijri_to_jdn(year + 1, 1, 1) <= jdn:
-        year += 1
-    while solar_hijri_to_jdn(year, 1, 1) > jdn:
-        year -= 1
+    year = _year_containing(jdn, lambda y: solar_hijri_to_jdn(y, 1, 1),
+                            (jdn - _SOLAR_HIJRI_EPOCH_JDN) // 366 + 1, 367)
     yday = jdn - solar_hijri_to_jdn(year, 1, 1) + 1
     if yday <= 186:
         month = (yday - 1) // 31 + 1
