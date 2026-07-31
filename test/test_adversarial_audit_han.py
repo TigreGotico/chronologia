@@ -219,3 +219,47 @@ def test_extract_candidates_still_exposes_runner_ups():
     cs = extract_candidates("March 2 at 3pm", "en", datetime(2017, 6, 27, 13, 4))
     assert len(cs) > 1
     assert all(0 < c.confidence <= 1 for c in cs)
+
+
+# ===== han adversarial audit round 3 (2026-07-31) =====
+
+def test_ical_rejects_out_of_range_years_instead_of_malformed_output():
+    """E1: RFC 5545 dates are years 0001-9999; a BC or >=10000 year has no valid
+    iCal form, so to_ical must raise (not emit '-0440315'/'123450101' that no
+    client, including the reader, can parse)."""
+    from chronologia.astrodate import AstroDate, DateSpan
+    from chronologia.ical import Event, to_ical, from_ical
+    def ev(y):
+        return Event(summary="x", span=DateSpan(AstroDate(y, 3, 15),
+                                                AstroDate(y, 3, 16)))
+    for y in (2024, 1, 9999):                    # in range -> round-trips
+        assert from_ical(to_ical(ev(y))) == ev(y)
+    for y in (-44, 0, 12345):                    # out of range -> clear error
+        with pytest.raises(ValueError):
+            to_ical(ev(y))
+
+
+def test_candidates_do_not_leak_group_gated_constructions():
+    """B1: extract_candidates' runner-up enumeration must honour the same
+    construction-group gate the composed loop does -- no classical-group (or any
+    group-gated) construction may appear that extract_timespan would not return."""
+    from chronologia import extract_candidates
+    from chronologia.extract.loader import load_lang_spec
+    spec = load_lang_spec("en")
+    A = datetime(2017, 6, 27, 13, 4)
+    for text in ("june", "march 2", "antediem V kalends june", "tomorrow at 3pm"):
+        cs = extract_candidates(text, "en", A)
+        gated = [c.construction for c in cs
+                 if spec.construction_flags.get(c.construction, {}).get("group")]
+        assert not gated, f"{text!r}: leaked group-gated {gated}"
+
+
+@pytest.mark.parametrize("text", [
+    "yesterday morning", "june 5th at 3pm", "March 2 at 3pm", "Monday morning"])
+def test_composed_primary_has_the_highest_confidence(text):
+    """B2: the composed primary is scored over its FULL span, so its confidence
+    is at least that of every partial reading it was built from -- a threshold/
+    re-sorting consumer can no longer prefer a worse partial by score."""
+    from chronologia import extract_candidates
+    cs = extract_candidates(text, "en", datetime(2017, 6, 27, 13, 4))
+    assert cs and cs[0].confidence == max(c.confidence for c in cs)

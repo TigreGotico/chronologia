@@ -1940,20 +1940,27 @@ def extract_candidates(
         composed.append(ocount)
     if composed:
         composed = _apply_week_of(tokens, composed, engine.spec)
-    composed_res = {id(m): r for m, r in composed}
     # The composed WINNER (date+clock / date+daypart / weekday-label) that
     # _resolve_core selects -- surfaced here via the SAME _compose helper so the
     # candidate set always contains extract_timespan's exact answer, not just
-    # the un-composed parts.  The representative match's resolution is overridden
-    # to the composed one, and its consumed set (plus any weekday-label tokens)
-    # is remembered so the remainder excludes everything the winner folded in.
+    # the un-composed parts.  The representative sub-match is widened to span the
+    # WHOLE composed reading and mapped to the composed resolution, so
+    # confidence() scores its full coverage (not just the sub-part -- otherwise a
+    # bare partial reading can carry a higher confidence VALUE than the correct
+    # composed answer); its consumed set (plus any weekday-label tokens) is
+    # remembered so the remainder excludes everything the winner folded in.
     label_extra = {}
     primary = None
     if composed:
         win_res, win_label, rep = _compose(composed, engine)
-        composed_res[id(rep)] = win_res
-        label_extra[id(rep)] = set(win_res.consumed) | win_label
-        primary = id(rep)   # extract_timespan's selected answer -> rank it first
+        consumed_all = set(win_res.consumed) | win_label
+        lo, hi = min(consumed_all), max(consumed_all) + 1
+        wide = replace(rep, span=(lo, hi))
+        composed = [(wide, win_res) if m is rep else (m, r)
+                    for m, r in composed]
+        label_extra[id(wide)] = consumed_all
+        primary = id(wide)   # extract_timespan's selected answer -> rank it first
+    composed_res = {id(m): r for m, r in composed}
 
     def _resolve_one(m):
         if id(m) in composed_res:
@@ -1962,8 +1969,14 @@ def extract_candidates(
 
     scored = []
     seen = set()
-    matches = ([m for m, _ in composed]
-               + [c.match for c in engine.matcher._candidates(tokens)])
+    # the runner-up enumeration must honour the SAME construction-group gate the
+    # composed loop does -- otherwise a group-gated construction (the classical
+    # Latin grammar, off by default) leaks in as a candidate that extract_timespan
+    # would never return.
+    runner_ups = [c.match for c in engine.matcher._candidates(tokens)
+                  if engine.spec.construction_flags.get(
+                      c.match.construction, {}).get("group") is None]
+    matches = [m for m, _ in composed] + runner_ups
     for sc in _score_candidates(matches, _resolve_one, engine.spec):
         match, res, conf = sc.match, sc.resolution, sc.confidence
         is_composed = id(match) in composed_res
