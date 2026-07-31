@@ -155,13 +155,13 @@ class TestProseInvariance:
         assert min(c.confidence for c in full) > max(c.confidence
                                                      for c in partial)
 
-    def test_composed_reading_ranks_first_confidence_values_invariant(self):
+    def test_composed_reading_ranks_first_with_full_coverage_confidence(self):
         # "tomorrow at 3pm": the COMPOSED reading (tomorrow 15:00 -- exactly what
-        # extract_timespan returns) now ranks FIRST (candidates agree with the
-        # single-winner API), ahead of the two bare clock readings and the bare
-        # named day.  The #229 confidence VALUES are unchanged -- prose
-        # invariance holds -- so the fullest clock reading is still 0.674; only
-        # the composed primary is lifted to the top of the order.
+        # extract_timespan returns) ranks FIRST (candidates agree with the
+        # single-winner API) AND now carries the highest confidence, 0.85,
+        # because it is scored over its FULL span (both "tomorrow" and "3pm"),
+        # not just the representative sub-match.  The two bare clock readings and
+        # the bare named day keep their #229-invariant partial-coverage scores.
         from chronologia import extract_timespan
         cands = extract_candidates("tomorrow at 3pm", "en", ANCHOR)
         ts = extract_timespan("tomorrow at 3pm", "en", ANCHOR)
@@ -170,7 +170,9 @@ class TestProseInvariance:
         assert [c.construction for c in cands] == [
             "named_day", "clock_time", "clock_time", "named_day"]
         assert [round(c.confidence, 3) for c in cands] == [
-            0.213, 0.674, 0.45, 0.213]
+            0.85, 0.674, 0.45, 0.213]
+        # the composed primary is the highest-confidence reading, not just first
+        assert cands[0].confidence == max(c.confidence for c in cands)
 
 
 class TestSignals:

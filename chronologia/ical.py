@@ -92,11 +92,25 @@ def _fold(line: str) -> str:
     return (_CRLF + " ").join(chunks)
 
 
+def _check_ical_year(a: AstroDate) -> None:
+    """RFC 5545 DATE/DATE-TIME is exactly four unsigned digits -- years
+    0001..9999.  AstroDate is proleptic and unbounded, so a BC year (which would
+    emit an invalid leading '-') or a >=10000 year (five digits) has NO valid
+    iCal form; raise a clear error rather than emit malformed text that no
+    calendar client -- including our own reader -- can parse back."""
+    if not 1 <= a.year <= 9999:
+        raise ValueError(
+            f"iCal (RFC 5545) dates are limited to years 0001-9999; cannot "
+            f"serialize year {a.year}")
+
+
 def _fmt_date(a: AstroDate) -> str:
+    _check_ical_year(a)
     return f"{a.year:04d}{a.month:02d}{a.day:02d}"
 
 
 def _fmt_datetime(a: AstroDate) -> str:
+    _check_ical_year(a)
     return (f"{a.year:04d}{a.month:02d}{a.day:02d}"
             f"T{a.hour:02d}{a.minute:02d}{a.second:02d}")
 
