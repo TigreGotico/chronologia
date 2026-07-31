@@ -190,3 +190,32 @@ def test_ca_computable_holidays_no_longer_vanish_after_2027(subdiv, name, years)
     #  bounded decree tables -- they are category-parity annotations of holidays
     #  that already resolve computably provincially, not the primary source; the
     #  category-parity design keeps them fixed/decree, per test_holiday_categories.)
+
+
+@pytest.mark.parametrize("text", [
+    "March 2 at 3pm", "june 5th at 3pm",      # date + clock
+    "Monday morning", "yesterday morning",     # weekday/named-day + daypart
+    "Monday March 2", "Monday March 2 morning at 3pm",  # weekday-label (+clock)
+    "5 days after christmas", "in 5 business days", "3 fridays from now",  # offsets
+])
+def test_extract_candidates_top_equals_extract_timespan(text):
+    """B1/B2: extract_candidates ran the post-passes but not the COMPOSE block,
+    so its #1 candidate could differ from extract_timespan for the very phrases
+    composition exists for.  Both now go through the shared _compose helper, so
+    the top candidate is exactly extract_timespan's selected reading (while the
+    un-composed runner-ups are still exposed below it)."""
+    from chronologia import extract_candidates
+    A = datetime(2017, 6, 27, 13, 4)
+    ts = extract_timespan(text, "en", A)
+    cs = extract_candidates(text, "en", A)
+    assert ts is not None and cs, text
+    assert str(cs[0].span.start).replace("T", " ") == str(ts[0].start_datetime)
+    assert cs[0].remainder == getattr(ts, "remainder", "")
+
+
+def test_extract_candidates_still_exposes_runner_ups():
+    # the composed primary is #1 but the alternative readings remain visible
+    from chronologia import extract_candidates
+    cs = extract_candidates("March 2 at 3pm", "en", datetime(2017, 6, 27, 13, 4))
+    assert len(cs) > 1
+    assert all(0 < c.confidence <= 1 for c in cs)

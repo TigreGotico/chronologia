@@ -1751,6 +1751,59 @@ def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text,
     return resolve_ref
 
 
+def _compose(resolved, engine):
+    """Pick the single winning reading from the post-passed ``resolved`` matches.
+
+    Returns ``(res, label_consumed, rep)``:
+
+    * a lone date + lone clock compose (the minute-wide clock placed on the day
+      the date names): "june 5th at 3pm";
+    * a lone daypart + lone date compose (the band narrows the day the date
+      names): "yesterday morning";
+    * a bare weekday next to a lone LITERAL calendar date is a LABEL on it
+      ("Monday, March 2"): the date is authoritative -- it becomes the date the
+      clock/daypart composes onto (and wins outright otherwise) and the
+      weekday's tokens are folded into ``label_consumed`` so the label never
+      strands.  ``weekday_ref`` is itself a composable date (so "Monday at 3pm"
+      takes a clock), so a genuine date+weekday pair shows up as one weekday and
+      one NON-weekday date;
+    * otherwise the earliest match in text order wins.
+
+    ``rep`` is the match that best represents the winner -- used by
+    :func:`extract_candidates` to score the composed reading -- so the two
+    public APIs never disagree on the composed primary.
+    """
+    clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
+    dates = [(m, r) for m, r in resolved
+             if m.construction in _COMPOSABLE_DATES]
+    dayparts = [(m, r) for m, r in resolved
+                if m.construction == "daypart_ref"]
+    weekdays = [(m, r) for m, r in resolved
+                if m.construction == "weekday_ref"]
+    non_weekday_dates = [(m, r) for m, r in dates
+                         if m.construction != "weekday_ref"]
+    label_consumed = set()
+    if (len(weekdays) == 1 and len(non_weekday_dates) == 1
+            and non_weekday_dates[0][0].construction
+            in _WEEKDAY_LABELABLE_DATES):
+        eff_dates = non_weekday_dates
+        label_consumed = set(range(*weekdays[0][0].span))
+    else:
+        eff_dates = dates
+    if len(clocks) == 1 and len(eff_dates) == 1:
+        res = compose_date_clock(eff_dates[0][1], clocks[0][1])
+        rep = eff_dates[0][0]
+    elif len(dayparts) == 1 and len(eff_dates) == 1 and not clocks:
+        name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
+        res = compose_date_daypart(eff_dates[0][1], dayparts[0][1], name)
+        rep = eff_dates[0][0]
+    elif label_consumed and not clocks and not dayparts:
+        rep, res = eff_dates[0]
+    else:
+        rep, res = min(resolved, key=lambda mr: mr[0].span[0])
+    return res, label_consumed, rep
+
+
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                   text=None, scale_mode="short"):
     """The single-span resolution over an already-tokenized stream.
@@ -1800,49 +1853,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         return None
     # widen a date carrying the locale's "week of" marker to its whole week
     resolved = _apply_week_of(tokens, resolved, engine.spec)
-    # a lone date + lone clock in the same text compose (the minute-wide
-    # clock time placed on the day the date names): "june 5th at 3pm"
-    clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
-    dates = [(m, r) for m, r in resolved
-             if m.construction in _COMPOSABLE_DATES]
-    # a lone daypart + lone date compose too: the band narrows the day the date
-    # names ("yesterday morning" -> yesterday's morning band), fixing the silent
-    # drop where the daypart word used to strand in the remainder.
-    dayparts = [(m, r) for m, r in resolved
-                if m.construction == "daypart_ref"]
-    # a bare weekday sitting next to an explicit calendar date is a LABEL on it
-    # ("Monday, March 2"), not a second date.  weekday_ref is itself a
-    # composable date (so "Monday at 3pm" takes a clock), so a genuine date+
-    # weekday pair shows up as one weekday and one NON-weekday date.  When that
-    # is the shape, the EXPLICIT date is authoritative: it becomes the date the
-    # clock/daypart composes onto (and wins outright when neither is present),
-    # and the weekday's tokens are folded into the consumed set so the label is
-    # never stranded -- whether or not a clock/daypart is also present (the
-    # earlier fix missed "Monday March 2 at 3pm", which fell through to the bare
-    # weekday and dropped both the date and the clock).
-    weekdays = [(m, r) for m, r in resolved
-                if m.construction == "weekday_ref"]
-    non_weekday_dates = [(m, r) for m, r in dates
-                         if m.construction != "weekday_ref"]
-    label_consumed = set()
-    if (len(weekdays) == 1 and len(non_weekday_dates) == 1
-            and non_weekday_dates[0][0].construction
-            in _WEEKDAY_LABELABLE_DATES):
-        eff_dates = non_weekday_dates
-        label_consumed = set(range(*weekdays[0][0].span))
-    else:
-        eff_dates = dates
-    if len(clocks) == 1 and len(eff_dates) == 1:
-        res = compose_date_clock(eff_dates[0][1], clocks[0][1])
-    elif len(dayparts) == 1 and len(eff_dates) == 1 and not clocks:
-        name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
-        res = compose_date_daypart(eff_dates[0][1], dayparts[0][1], name)
-    elif label_consumed and not clocks and not dayparts:
-        # weekday label on an explicit date, nothing else: the date wins.
-        res = eff_dates[0][1]
-    else:
-        # earliest match in text order wins the public result
-        _, res = min(resolved, key=lambda mr: mr[0].span[0])
+    res, label_consumed, _ = _compose(resolved, engine)
     return res.value, set(res.consumed) | label_consumed
 
 
@@ -1930,6 +1941,19 @@ def extract_candidates(
     if composed:
         composed = _apply_week_of(tokens, composed, engine.spec)
     composed_res = {id(m): r for m, r in composed}
+    # The composed WINNER (date+clock / date+daypart / weekday-label) that
+    # _resolve_core selects -- surfaced here via the SAME _compose helper so the
+    # candidate set always contains extract_timespan's exact answer, not just
+    # the un-composed parts.  The representative match's resolution is overridden
+    # to the composed one, and its consumed set (plus any weekday-label tokens)
+    # is remembered so the remainder excludes everything the winner folded in.
+    label_extra = {}
+    primary = None
+    if composed:
+        win_res, win_label, rep = _compose(composed, engine)
+        composed_res[id(rep)] = win_res
+        label_extra[id(rep)] = set(win_res.consumed) | win_label
+        primary = id(rep)   # extract_timespan's selected answer -> rank it first
 
     def _resolve_one(m):
         if id(m) in composed_res:
@@ -1947,7 +1971,7 @@ def extract_candidates(
         if key in seen:
             continue
         seen.add(key)
-        consumed = set(res.consumed)
+        consumed = label_extra.get(id(match), set(res.consumed))
         # skip a reading governed by a leading negation/exclusion particle
         # ("not tomorrow"): the excluded reference is not a positive date.
         starts = [tokens[i].char_start for i in consumed
@@ -1956,10 +1980,12 @@ def extract_candidates(
             continue
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
-        # rank: confidence first, then a composed reading ahead of the bare
-        # partial it was built from (so "5 days after christmas" outranks the
-        # raw Christmas), then earlier text position, then longer span
-        rank = (-conf, 0 if is_composed else 1, match.span[0], -match.length)
+        # rank: the composed PRIMARY (extract_timespan's own selected reading)
+        # is first so the two APIs agree on the top answer; then confidence, a
+        # composed reading ahead of the bare partial it was built from, earlier
+        # text position, and longer span.
+        rank = (0 if id(match) == primary else 1, -conf,
+                0 if is_composed else 1, match.span[0], -match.length)
         scored.append((rank, Candidate(res.value, remainder, conf,
                                        match.construction)))
     scored.sort(key=lambda e: e[0])

@@ -155,14 +155,22 @@ class TestProseInvariance:
         assert min(c.confidence for c in full) > max(c.confidence
                                                      for c in partial)
 
-    def test_candidate_order_is_unchanged_by_the_fix(self):
-        # The three readings of "tomorrow at 3pm", in the order they have
-        # always ranked: the fullest clock reading, the bare "3pm", then the
-        # named day that explains only one token of the four-token phrase.
+    def test_composed_reading_ranks_first_confidence_values_invariant(self):
+        # "tomorrow at 3pm": the COMPOSED reading (tomorrow 15:00 -- exactly what
+        # extract_timespan returns) now ranks FIRST (candidates agree with the
+        # single-winner API), ahead of the two bare clock readings and the bare
+        # named day.  The #229 confidence VALUES are unchanged -- prose
+        # invariance holds -- so the fullest clock reading is still 0.674; only
+        # the composed primary is lifted to the top of the order.
+        from chronologia import extract_timespan
         cands = extract_candidates("tomorrow at 3pm", "en", ANCHOR)
-        assert [c.construction for c in cands] == ["clock_time", "clock_time",
-                                                   "named_day"]
-        assert [round(c.confidence, 3) for c in cands] == [0.674, 0.45, 0.213]
+        ts = extract_timespan("tomorrow at 3pm", "en", ANCHOR)
+        assert str(cands[0].span.start).replace("T", " ") \
+            == str(ts[0].start_datetime)
+        assert [c.construction for c in cands] == [
+            "named_day", "clock_time", "clock_time", "named_day"]
+        assert [round(c.confidence, 3) for c in cands] == [
+            0.213, 0.674, 0.45, 0.213]
 
 
 class TestSignals:
