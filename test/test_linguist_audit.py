@@ -86,3 +86,20 @@ def test_until_weekday_genitive_resolves(text, lang):
     r = extract_timespan(text, lang, _TUE)
     assert r is not None
     assert r[0].end_datetime.date().isoformat() == "2017-07-01"
+
+
+def test_since_last_weekday_is_a_real_past_span():
+    # "since last friday" at Tue 2017-06-27: [2017-06-23, 2017-06-27)
+    r = extract_timespan("since last friday", "en", _TUE)
+    assert r is not None
+    assert r[0].start_datetime.date().isoformat() == "2017-06-23"
+    assert r[0].end_datetime.date().isoformat() == "2017-06-27"
+
+
+@pytest.mark.parametrize("text", ["since this friday", "since next monday"])
+def test_since_future_qualified_weekday_never_fabricates_year_old_span(text):
+    # A qualified weekday that resolves to the FUTURE is contradictory for a
+    # "since" range.  It must NOT be pulled back a whole year (the old bug gave
+    # a ~2016 start); refuse instead, leaving at worst an honest partial parse.
+    r = extract_timespan(text, "en", _TUE)
+    assert r is None or r[0].start_datetime >= datetime(2017, 1, 1)

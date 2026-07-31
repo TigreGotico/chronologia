@@ -4,9 +4,11 @@ years disjoint from test_nl_holiday_ref.py (which only pins year 2020).
 
 "нова година <year>" / "бъдни вечер <year>" / "коледа <year>" are registered
 in the shared holiday registry and resolve to a fixed month/day WITHIN the
-stated year (verified against the registry's own Julian-cycle convention
-already pinned in test_nl_holiday_ref.py: Christmas Eve = Jan 6, Christmas =
-Jan 7). Gold below matches that registry, never the parser's own output for
+stated year (verified against the registry's own convention already pinned in
+test_nl_holiday_ref.py: the Bulgarian Orthodox Church has followed the Revised
+Julian calendar since 1968, so Christmas Eve = Dec 24, Christmas = Dec 25 --
+not the Julian Jan 6/Jan 7 of the Russian/Serbian churches). Gold below matches
+that registry, never the parser's own output for
 a *new* year -- only the (month, day) mapping is reused, the year is fresh
 per case.
 

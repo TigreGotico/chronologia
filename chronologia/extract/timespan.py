@@ -1190,6 +1190,15 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
         if wk is not None:
             start = wk[0].start
+        elif any(t.text in spec.weekdays for t in sub):
+            # a QUALIFIED weekday ("this friday", "next monday"): it recurs
+            # WEEKLY, so the yearly pull-back below would fling a future
+            # occurrence ~a year into the past.  "since last friday" already
+            # sits in the past and is used as-is; "since <future weekday>" is
+            # contradictory -- refuse rather than fabricate a year-old span.
+            start = ep[0].start
+            if start > now:
+                return None
         else:
             start = ep[0].start
             while start > now:
