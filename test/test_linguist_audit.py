@@ -148,6 +148,35 @@ def test_since_until_directional_range(text, start, end, rem):
     assert getattr(r, "remainder", "") == rem   # "since" consumed, not stranded
 
 
+@pytest.mark.parametrize("hh,mm,text,start", [
+    # a bare time-of-day recurs DAILY: "since noon" at 09:00 is YESTERDAY noon
+    # (most recent past occurrence), never a year ago (the old year-pull bug).
+    (9, 0, "since noon", "2017-06-26T12:00:00"),
+    (9, 0, "since 3pm", "2017-06-26T15:00:00"),
+    (15, 0, "since noon", "2017-06-27T12:00:00"),   # after noon -> today noon
+    (9, 0, "since 8:30am", "2017-06-27T08:30:00"),  # earlier today -> today
+])
+def test_since_bare_clock_rolls_by_day_not_year(hh, mm, text, start):
+    r = extract_timespan(text, "en", datetime(2017, 6, 27, hh, mm))
+    assert r is not None
+    assert r[0].start_datetime.isoformat() == start
+
+
+def test_since_quarter_is_a_yearly_anniversary():
+    # a quarter recurs YEARLY, like "since july 6": most recent past Q3 start.
+    r = extract_timespan("since q3", "en", _TUE)
+    assert r is not None
+    assert r[0].start_datetime.date().isoformat() == "2016-07-01"
+
+
+def test_since_dated_clock_stays_yearly_not_daily():
+    # a clock time WITH a calendar date ("june 5 at noon") is a yearly
+    # anniversary, not a daily recurrence -- rolled back by a year, not a day.
+    r = extract_timespan("since june 5 at noon", "en", _TUE)
+    assert r is not None
+    assert r[0].start_datetime.isoformat() == "2017-06-05T12:00:00"
+
+
 def test_plain_from_to_range_stays_forward():
     # the directional path must NOT touch a plain "from A to B": both endpoints
     # still roll forward (next Monday .. next Friday), no past-anchoring.

@@ -1161,9 +1161,10 @@ def _since_start(ep, sub, engine, anchor, now):
     explicit year ("2019") -- names one fixed point: in the past it opens the
     span directly, in the FUTURE it is contradictory and returns ``None``
     (never pulled back into a point the user never named).  Only an
-    underspecified anniversary (bare "july 6", "christmas"), whose year
-    prefer_future guessed forward, is pulled back a year at a time until it
-    lands in the past.
+    underspecified endpoint whose prefer_future guessed the wrong cycle forward
+    (bare "july 6", "christmas", "q3", a bare clock time) is rolled back by its
+    OWN cycle -- a year for a date/quarter, a DAY for a time-of-day -- until it
+    lands at-or-before now.
     """
     spec = engine.spec
     wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
@@ -1181,12 +1182,19 @@ def _since_start(ep, sub, engine, anchor, now):
         # A DEFINITE endpoint: a qualified weekday ("this/next friday"), a
         # now-relative day ("tomorrow"), a direction-qualified period ("next
         # month", "this year") or an explicit year ("2019").  None of these is
-        # an underspecified anniversary prefer_future flung forward, so never
-        # year-pull it: in the past it opens the span, in the future "since" it
-        # is contradictory and is refused.
+        # an underspecified reference prefer_future flung forward, so never
+        # roll it: in the past it opens the span, in the future "since" it is
+        # contradictory and is refused.
         return start if start <= now else None
+    # An underspecified recurring reference.  Roll back by its OWN cycle: a bare
+    # time-of-day (a sub-day-wide span with no calendar-date word) recurs DAILY,
+    # so "since noon" at 9am is yesterday noon -- NOT a year ago; everything else
+    # (a bare month/day, a holiday, a quarter) is a yearly anniversary.
+    is_clock = (ep[0].end - ep[0].start < timedelta(days=1)
+                and not any(t.text in spec.months for t in sub))
     while start > now:
-        pulled = _minus_one_year(start)
+        pulled = (start + timedelta(days=-1) if is_clock
+                  else _minus_one_year(start))
         if pulled is None:
             break
         start = pulled
