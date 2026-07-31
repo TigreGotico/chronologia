@@ -1630,6 +1630,14 @@ class Resolver:
         n = int(match.slots["NUM"].value)
         return Resolution(self._era_span("holocene", n), self._consumed(match))
 
+    def _resolve_era_anno_mundi(self, match, anchor):
+        """"anno mundi 5786": the (Hebrew) Anno Mundi / year-of-Creation year,
+        resolved through its epoch (AM 1 == 3761 BC, the Hebrew calendar's
+        Tishrei-based year), not the literal number."""
+        n = int(match.slots["NUM"].value)
+        return Resolution(self._era_span("anno_mundi", n),
+                          self._consumed(match))
+
     def _resolve_era_buddhist(self, match, anchor):
         """"Buddhist Era 2560" / "2560 BE": the Gregorian year-span of that
         Buddhist-Era year, resolved through the registry's epoch (BE == CE +
