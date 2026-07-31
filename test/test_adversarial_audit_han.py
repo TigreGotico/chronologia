@@ -106,3 +106,27 @@ def test_explain_compiler_does_not_serve_a_stale_table_for_a_new_spec():
     mod._COMPILER._cache.clear()
     assert len(mod.explain("next friday", stripped, _A).winners) == 0
     assert len(mod.explain("next friday", spec, _A).winners) == 1
+
+
+# -- CA .tab redundant-decree cleanup (follow-up to DATA-002) --------------
+@pytest.mark.parametrize("subdiv", [
+    "CA-ON", "CA-QC", "CA-BC", "CA-AB", "CA-MB", "CA-NS",
+    "CA-NT", "CA-NU", "CA-SK", "CA-YT", None])
+def test_ca_no_same_scope_holiday_duplicates(subdiv):
+    """The Canadian .tab listed several holidays as BOTH a computed rule and a
+    redundant decree table for the same (name, subdiv); the decree rows were
+    removed (the rule already covers those years and beyond).  No holiday may
+    now appear twice within the SAME scope -- (name, subdiv, date).  National
+    and provincial rows for the same day remain legitimately distinct."""
+    from collections import Counter
+    hs = holidays_for("CA", 2024, subdiv=subdiv)
+    dup = {k: v for k, v in Counter(
+        (h.name, h.subdiv, h.span.start.date()) for h in hs).items() if v > 1}
+    assert not dup, f"{subdiv}: same-scope duplicate holidays: {dup}"
+
+
+def test_ca_thanksgiving_survives_past_the_old_decree_horizon():
+    # the removed decree tables stopped at 2027; the nth_weekday rule extrapolates
+    thx = [h for h in holidays_for("CA", 2035, subdiv="CA-AB")
+           if h.name == "Thanksgiving Day"]
+    assert thx and thx[0].span.start.month == 10   # 2nd Monday of October
