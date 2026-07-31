@@ -367,3 +367,15 @@ def test_edtfdate_is_frozen():
     ed = parse_edtf("1985")
     with pytest.raises(Exception):
         ed.uncertain = True
+
+
+@pytest.mark.parametrize("s,lo,hi", [
+    ("-19XX", -1999, -1899),   # negative + trailing-X used to crash (sign inverted lo/hi)
+    ("-156X", -1569, -1559),
+    ("199X", 1990, 2000),      # positive unchanged
+    ("-1985", -1985, -1984),   # plain negative unchanged
+])
+def test_negative_year_with_unspecified_digits_parses(s, lo, hi):
+    d = parse_edtf(s)
+    assert d is not None
+    assert d.span.start.year == lo and d.span.end.year == hi
