@@ -1,0 +1,7 @@
+# Band boundaries: Netherlands day-period convention (Unicode CLDR nl); West
+# Frisian is co-official in Fryslan and shares it. CLDR ships no fy day-period
+# rules. Surfaces: Frysk Wurdboek (Fryske Akademy, gtb.ivdnt.org).
+# 'moarns' = 's morgens / in the morning; the morning band is [06:00, 12:00).
+# NOTE: the bare noun 'moarn' is NOT listed -- it means "tomorrow" (named_day_1),
+# so only the adverbial 'moarns' names the daypart.
+moarns

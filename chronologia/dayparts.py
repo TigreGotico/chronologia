@@ -165,6 +165,13 @@ def _cldr(lang: str) -> str:
 #: (which starts morning at 00:00 and does not wrap night).  See the module
 #: docstring for why the shipped default is kept rather than re-cut.
 _CHRONOLOGIA_EN = "chronologia English day-part convention (see module docs)"
+#: West Frisian has no CLDR day-period rules; it shares the Netherlands
+#: convention, so the band boundaries are Dutch (CLDR nl) and the surfaces are
+#: Frisian (Frysk Wurdboek, Fryske Akademy).
+_FY_NL_SHARED = (
+    "West Frisian shares the Netherlands day-period convention (no CLDR fy "
+    "rules exist); boundaries from " + _cldr("nl") + ", surfaces from the "
+    "Frysk Wurdboek (Fryske Akademy)")
 
 
 class UnknownDayPartError(KeyError):
@@ -319,6 +326,15 @@ _LANGUAGES: List[DayPart] = [
     _p("ochtend", (6, 0), (12, 0), "nl", _cldr("nl")),
     _p("middag", (12, 0), (18, 0), "nl", _cldr("nl")),
     _p("avond", (18, 0), (0, 0), "nl", _cldr("nl")),
+    # fy (West Frisian): CLDR ships no fy day-period rules, but West Frisian is
+    # co-official in Fryslan (Netherlands) and follows the same clock-of-day
+    # convention as Dutch, so the boundaries are nl's; the surfaces are Frisian
+    # (Frysk Wurdboek, Fryske Akademy).  Band names are ASCII (as elsewhere);
+    # the Frisian surfaces carry the diacritics in the .voc files.
+    _p("nacht", (0, 0), (6, 0), "fy", _FY_NL_SHARED),
+    _p("moarns", (6, 0), (12, 0), "fy", _FY_NL_SHARED),
+    _p("middeis", (12, 0), (18, 0), "fy", _FY_NL_SHARED),
+    _p("joun", (18, 0), (0, 0), "fy", _FY_NL_SHARED),
     # sv/da/nb/nn: the Nordic five-band day, with a short "morgon" and a
     # separate late-morning band before noon.  Swedish and Danish open the
     # morning at 05:00; Norwegian at 06:00.
