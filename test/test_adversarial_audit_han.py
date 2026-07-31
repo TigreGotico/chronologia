@@ -169,3 +169,24 @@ def test_arabic_azzahira_is_noon_not_the_afternoon_band():
     band = extract_timespan("بعد الظهر", "ar", A)
     assert band is not None
     assert band[0].start_datetime.hour == 12 and band[0].width.total_seconds() == 6 * 3600
+
+
+@pytest.mark.parametrize("subdiv,name,years", [
+    ("CA-SK", "Thanksgiving Day", (2024, 2030, 2035)),
+    ("CA-YT", "Discovery Day", (2024, 2030, 2035)),
+    ("CA-NT", "Victoria Day", (2024, 2030, 2035)),
+    ("CA-NB", "New Brunswick Day", (2024, 2030, 2035)),
+    ("CA-PE", "Islander Day", (2024, 2030, 2035)),
+])
+def test_ca_computable_holidays_no_longer_vanish_after_2027(subdiv, name, years):
+    """DATA-CA-1: NT/NU/SK/YT/NB/PE statutory holidays were encoded as decree
+    tables ending 2027, so they vanished past the horizon.  Re-expressed as the
+    same computable rules the Wave-1 provinces use, they now resolve every year."""
+    from chronologia.civil_holidays import holidays_for
+    for y in years:
+        assert any(h.name == name for h in holidays_for("CA", y, subdiv=subdiv)), \
+            f"{name} missing for {subdiv} in {y}"
+    # (The federal "government"-category annotation rows are deliberately left as
+    #  bounded decree tables -- they are category-parity annotations of holidays
+    #  that already resolve computably provincially, not the primary source; the
+    #  category-parity design keeps them fixed/decree, per test_holiday_categories.)
