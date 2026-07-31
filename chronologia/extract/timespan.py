@@ -262,6 +262,16 @@ _COMPOSABLE_DATES = DATE_CONSTRUCTIONS | {
     "business_days", "weekday_count", "weekend_after_next",
     "weekend_before_last", "weekend_ago"}
 
+#: A weekday next to one of these LITERAL calendar dates is read as a restated
+#: label of it ("Monday, March 2" -> March 2, weekday consumed).  A DERIVED date
+#: (a business-day / anchored-offset / ordinal-count / holiday result) is NOT
+#: labelable: a weekday beside it is a separate mention, not a restatement, and
+#: swallowing it would silently drop a token that may even name a different day
+#: than the computed date lands on.
+_WEEKDAY_LABELABLE_DATES = frozenset({
+    "calendar_date", "month_day_ref", "iso_date", "numeric_date",
+    "reckoned_date", "nongregorian_date"})
+
 
 def _conn_surfaces(spec, name, defaults):
     """The connector ``name`` as word lists (longest first) for token matching.
@@ -1815,7 +1825,9 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     non_weekday_dates = [(m, r) for m, r in dates
                          if m.construction != "weekday_ref"]
     label_consumed = set()
-    if len(weekdays) == 1 and len(non_weekday_dates) == 1:
+    if (len(weekdays) == 1 and len(non_weekday_dates) == 1
+            and non_weekday_dates[0][0].construction
+            in _WEEKDAY_LABELABLE_DATES):
         eff_dates = non_weekday_dates
         label_consumed = set(range(*weekdays[0][0].span))
     else:

@@ -2,5 +2,8 @@
 # athmanemokraoui (TigreGotico/chronologia#268). Band boundaries:
 # Unicode CLDR 47 Day Period Rules, locale ar (in chronologia/dayparts.py).
 # afternoon / after-noon
+# NOTE: الظهيرة (midday/noon) is NOT listed here -- it is the noon point (the
+# 12:00 clock-landmark in clock_landmark_720.voc), not the afternoon band, so
+# listing it here was dead (the noon reading always won).  Only بعد الظهر
+# ("after noon") names the [12:00, 18:00) afternoon band.
 بعد الظهر
-الظهيرة

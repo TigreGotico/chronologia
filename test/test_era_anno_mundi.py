@@ -32,6 +32,18 @@ def test_anno_mundi_year_resolves_through_its_epoch(text):
     assert getattr(r, "remainder", "") == ""
 
 
+def test_anno_mundi_span_end_is_calendar_exact_not_a_gregorian_year():
+    # AM is Hebrew-calendar-backed (variable-length years), so the span must end
+    # at the true NEXT Rosh Hashanah, not the naive same-day-plus-one-Gregorian-
+    # year (which was ~11 days too late).  Gold from the calendar-exact primitive.
+    from chronologia.eras import resolve_era_year_span
+    gstart, gend = resolve_era_year_span("anno_mundi", 5786)
+    r = extract_timespan("anno mundi 5786", "en", _A)
+    assert r is not None
+    assert r[0].start_datetime.date() == gstart
+    assert r[0].end_datetime.date() == gend        # 2026-09-12, not 2026-09-23
+
+
 def test_anno_mundi_older_year():
     r = extract_timespan("in anno mundi 5000", "en", _A)
     assert r is not None

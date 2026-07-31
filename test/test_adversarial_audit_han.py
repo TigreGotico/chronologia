@@ -130,3 +130,42 @@ def test_ca_thanksgiving_survives_past_the_old_decree_horizon():
     thx = [h for h in holidays_for("CA", 2035, subdiv="CA-AB")
            if h.name == "Thanksgiving Day"]
     assert thx and thx[0].span.start.month == 10   # 2nd Monday of October
+
+
+# ===== han adversarial audit round 2 (2026-07-31) =====
+
+def test_weekday_not_swallowed_as_label_on_a_computed_date():
+    """B3: the weekday-label rule ("Monday, March 2" -> the date, weekday
+    consumed) must apply ONLY to a literal calendar date -- not to a DERIVED
+    date (business-days / offset).  "in 5 business days on Monday" lands on a
+    Tuesday, so "Monday" is a separate mention: it must stay VISIBLE in the
+    remainder, never be silently swallowed."""
+    from chronologia import extract_timespan
+    A = datetime(2017, 6, 27, 13, 4)
+    for text in ("in 5 business days on Monday", "Monday in 5 business days"):
+        r = extract_timespan(text, "en", A)
+        assert r is not None
+        # honest either way: the answer IS a Monday, or "Monday" stays visible in
+        # the remainder.  The old bug returned a Tuesday (the business-days date)
+        # with "Monday" silently swallowed -- that must never happen.
+        is_monday = r[0].start_datetime.weekday() == 0
+        stranded = "monday" in getattr(r, "remainder", "").lower()
+        assert is_monday or stranded, \
+            f"{text!r}: 'Monday' silently swallowed (start={r[0].start_datetime}, rem={r.remainder!r})"
+    # the label rule still fires for a genuine literal date
+    r = extract_timespan("Monday March 2", "en", A)
+    assert r[0].start_datetime.date().isoformat() == "2018-03-02"
+    assert getattr(r, "remainder", "") == ""
+
+
+def test_arabic_azzahira_is_noon_not_the_afternoon_band():
+    """DATA-AR-1: الظهيرة (midday) is the noon clock-landmark, not the afternoon
+    band; only بعد الظهر names [12:00, 18:00)."""
+    from chronologia import extract_timespan
+    A = datetime(2017, 6, 27, 13, 4)
+    noon = extract_timespan("الظهيرة", "ar", A)
+    assert noon is not None and noon[0].start_datetime.hour == 12
+    assert noon[0].width.total_seconds() <= 60          # a point, not a 6h band
+    band = extract_timespan("بعد الظهر", "ar", A)
+    assert band is not None
+    assert band[0].start_datetime.hour == 12 and band[0].width.total_seconds() == 6 * 3600

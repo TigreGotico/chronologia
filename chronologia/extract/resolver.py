@@ -1582,6 +1582,18 @@ class Resolver:
 
     def _era_span(self, era, n):
         from chronologia import resolve_era
+        from chronologia.eras import ERAS, Era, resolve_era_year_span
+        era_obj = era if isinstance(era, Era) else ERAS[era]
+        if era_obj.calendar:
+            # A CALENDAR-BACKED era (Anno Mundi numbers the Hebrew calendar's
+            # own, variable-length years) does NOT start its next year on the
+            # same Gregorian month/day one year later, so a naive +1 Gregorian
+            # year gives a span that is days too long.  Advance the NATIVE
+            # calendar year through the JDN hub instead (calendar-exact).
+            start, end = resolve_era_year_span(era_obj, n)
+            return DateSpan(start, end)
+        # a plain offset era (BC/AD, BP, Saka, Holocene, Buddhist, AUC) steps
+        # exactly one Gregorian year.
         d = resolve_era(era, n)
         start = d if isinstance(d, AstroDate) else AstroDate.from_date(d)
         end = AstroDate(start.year + 1, start.month, start.day)
