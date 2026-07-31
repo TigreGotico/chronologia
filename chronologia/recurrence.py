@@ -638,6 +638,43 @@ def _apply_setpos(rec: Recurrence, days: list) -> list:
     return sorted(picked)
 
 
+def _has_finer_day_part(rec: Recurrence) -> bool:
+    """Whether any BY part can select a day other than DTSTART's own month/day
+    -- byweekno/byyearday/bymonthday/byday all can, so their presence forbids
+    the DTSTART-default day/month narrowing below."""
+    return bool(rec.byweekno or rec.byyearday or rec.bymonthday or rec.byday)
+
+
+def _candidate_months(rec: Recurrence, dtstart: AstroDate):
+    """The months a YEARLY period must test -- a SUPERSET of the matching ones.
+
+    ``bymonth`` is a hard limit (:func:`_matches` line for ``bymonth``), and a
+    bare YEARLY with no day-selecting part only ever matches DTSTART's month
+    (the YEARLY default in :func:`_matches`), so scanning the other eleven is
+    pure waste.  Narrowing here never drops a match -- ``_keep`` still decides."""
+    if rec.bymonth:
+        return sorted(rec.bymonth)
+    if not _has_finer_day_part(rec):
+        return [dtstart.month]
+    return list(range(1, 13))
+
+
+def _candidate_days_in_month(rec: Recurrence, y: int, m: int,
+                             dtstart: AstroDate):
+    """The day-of-month numbers to test in month ``(y, m)`` -- a SUPERSET of the
+    matching ones.  Positive ``bymonthday`` is a hard limit (so only those days
+    can match, when no byweekno/byyearday could select others); a bare rule with
+    no day-selecting part matches only DTSTART's day.  Otherwise the whole month
+    is scanned (byday/negative-monthday/byyearday/byweekno need it)."""
+    dim = _days_in_month(y, m)
+    if (rec.bymonthday and all(x > 0 for x in rec.bymonthday)
+            and not rec.byyearday and not rec.byweekno):
+        return [x for x in rec.bymonthday if 1 <= x <= dim]
+    if not _has_finer_day_part(rec):
+        return [dtstart.day] if dtstart.day <= dim else []
+    return list(range(1, dim + 1))
+
+
 def _period_iter(rec: Recurrence, dtstart: AstroDate):
     """Yield ``(period_start_jdn, sorted_matching_jdns)`` for each interval,
     forever.  The caller bounds it with count/until."""
@@ -661,16 +698,22 @@ def _period_iter(rec: Recurrence, dtstart: AstroDate):
     elif freq == "MONTHLY":
         y, m = dtstart.year, dtstart.month
         while True:
-            days = [_jdn(y, m, d) for d in range(1, _days_in_month(y, m) + 1)]
+            days = [_jdn(y, m, d)
+                    for d in _candidate_days_in_month(rec, y, m, dtstart)]
             yield _jdn(y, m, 1), _keep(days)
             total = (y * 12 + (m - 1)) + rec.interval
             y, m = total // 12, total % 12 + 1
     else:  # YEARLY
         y = dtstart.year
         while True:
-            jan1 = _jdn(y, 1, 1)
-            days = list(range(jan1, jan1 + _days_in_year(y)))
-            yield jan1, _keep(days)
+            # only the candidate months/days, not all 365/366 -- a sparse rule
+            # ("every 29th of february") otherwise runs _matches over a full year
+            # per hit, so a large COUNT costs O(365 * count / hit-rate) wall time
+            # even though the emitted-occurrence ceiling is never reached.
+            days = [_jdn(y, m, d)
+                    for m in _candidate_months(rec, dtstart)
+                    for d in _candidate_days_in_month(rec, y, m, dtstart)]
+            yield _jdn(y, 1, 1), _keep(sorted(days))
             y += rec.interval
 
 
