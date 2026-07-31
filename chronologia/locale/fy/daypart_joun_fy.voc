@@ -1,0 +1,7 @@
+# Band boundaries: Netherlands day-period convention (Unicode CLDR nl); West
+# Frisian is co-official in Fryslan and shares it. CLDR ships no fy day-period
+# rules. Surfaces: Frysk Wurdboek (Fryske Akademy, gtb.ivdnt.org).
+# 'juns' (jûns) = 's avonds / in the evening; 'jun' (jûn) = evening.
+# The evening band is [18:00, 24:00), running to midnight.
+jûns
+jûn

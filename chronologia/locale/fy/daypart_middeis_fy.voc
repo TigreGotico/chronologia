@@ -1,0 +1,7 @@
+# Band boundaries: Netherlands day-period convention (Unicode CLDR nl); West
+# Frisian is co-official in Fryslan and shares it. CLDR ships no fy day-period
+# rules. Surfaces: Frysk Wurdboek (Fryske Akademy, gtb.ivdnt.org).
+# 'middeis' = 's middags / in the afternoon; the afternoon band is [12:00, 18:00).
+# NOTE: the bare noun 'middei' is NOT listed -- it is midday/noon (the 12:00
+# clock-landmark), a point, not the afternoon band.
+middeis

@@ -1,0 +1,6 @@
+# Band boundaries: Netherlands day-period convention (Unicode CLDR nl); West
+# Frisian is co-official in Fryslan and shares it. CLDR ships no fy day-period
+# rules. Surfaces: Frysk Wurdboek (Fryske Akademy, gtb.ivdnt.org).
+# 'nachts' = 's nachts / at night; the night band is [00:00, 06:00).
+nachts
+nacht
