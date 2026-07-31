@@ -733,3 +733,23 @@ def test_calendardate_from_json_impossible_date_raises_on_astro():
          "month": 13, "day": 1})
     with pytest.raises(ValueError):
         _ = cd.astro
+
+
+@pytest.mark.parametrize("name", [
+    "islamic_civil", "hebrew", "revised_julian", "solar_hijri_arithmetic"])
+def test_from_jdn_is_not_linear_scan_on_large_years(name):
+    """These four calendars had an O(year) linear correction loop in from_jdn,
+    so a large (but valid, proleptic-supported) year cost seconds-to-minutes -- a
+    DoS reachable from parsed text.  A proportional-jump seed makes it O(log);
+    correctness (the JDN round-trip) is unchanged."""
+    import time
+    from chronologia.calendars import CALENDARS
+    c = CALENDARS[name]
+    # round-trip stays exact across a wide range incl. a huge year
+    for y in (1, 100, 5786, 9999, 10 ** 6, 10 ** 9, 10 ** 12):
+        j = c.to_jdn(y, 1, 1)
+        assert c.from_jdn(j) == (y, 1, 1)
+    # and a huge-year from_jdn completes promptly (was multi-second/hang)
+    t = time.time()
+    c.from_jdn(c.to_jdn(10 ** 12, 6, 1))
+    assert time.time() - t < 1.0
