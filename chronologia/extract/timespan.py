@@ -1879,14 +1879,49 @@ def extract_candidates(
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
     tokens = engine.tokenize(text)
+    # Composed readings: the business-day / anchored-offset / ordinal-count
+    # post-passes extract_timespan runs are re-run here so the candidate set can
+    # never disagree with the single-winner API -- without this, "in 5 business
+    # days" / "3 fridays from now" returned [] (a reading exists) and
+    # "5 days after christmas" ranked Christmas Day itself top, silently dropping
+    # "5 days after".  Mirrors the post-pass block of _resolve_core (the
+    # single-span hot path is deliberately left untouched).
+    composed = []
+    for m in engine.matcher.match(tokens):
+        group = engine.spec.construction_flags.get(
+            m.construction, {}).get("group")
+        if group is not None:
+            continue          # classical group is off for the default API
+        r = engine.resolver.resolve(m, anchor, scale_mode)
+        if r is not None:
+            composed.append((m, r))
+    resolve_ref = _make_resolve_ref(tokens, engine, anchor, (), None, text,
+                                    scale_mode)
+    composed = apply_business_days(tokens, composed, engine.spec, anchor, None,
+                                   resolve_ref)
+    composed = apply_anchored_offset(tokens, composed, engine.spec)
+    ocount = apply_ordinal_count(tokens, engine.spec, anchor)
+    if ocount is not None:
+        claimed = set(range(*ocount[0].span))
+        composed = [(m, r) for m, r in composed
+                    if not any(i in claimed for i in range(*m.span))]
+        composed.append(ocount)
+    if composed:
+        composed = _apply_week_of(tokens, composed, engine.spec)
+    composed_res = {id(m): r for m, r in composed}
+
+    def _resolve_one(m):
+        if id(m) in composed_res:
+            return composed_res[id(m)]
+        return engine.resolver.resolve(m, anchor, scale_mode)
+
     scored = []
     seen = set()
-    matches = (c.match for c in engine.matcher._candidates(tokens))
-    for sc in _score_candidates(matches,
-                                lambda m: engine.resolver.resolve(
-                                    m, anchor, scale_mode),
-                                engine.spec):
+    matches = ([m for m, _ in composed]
+               + [c.match for c in engine.matcher._candidates(tokens)])
+    for sc in _score_candidates(matches, _resolve_one, engine.spec):
         match, res, conf = sc.match, sc.resolution, sc.confidence
+        is_composed = id(match) in composed_res
         key = (match.construction, match.span, res.value)
         if key in seen:
             continue
@@ -1900,8 +1935,10 @@ def extract_candidates(
             continue
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
-        # rank: confidence first, then earlier text position, then longer span
-        rank = (-conf, match.span[0], -match.length)
+        # rank: confidence first, then a composed reading ahead of the bare
+        # partial it was built from (so "5 days after christmas" outranks the
+        # raw Christmas), then earlier text position, then longer span
+        rank = (-conf, 0 if is_composed else 1, match.span[0], -match.length)
         scored.append((rank, Candidate(res.value, remainder, conf,
                                        match.construction)))
     scored.sort(key=lambda e: e[0])
