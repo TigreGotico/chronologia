@@ -1113,6 +1113,13 @@ def _recur_every(ctx):
             else:
                 break
 
+        # "every 0 <unit>" names no valid recurrence: an interval must be >= 1.
+        # Report it as None (the honest "this expresses no recurrence") rather
+        # than letting the 0 reach Recurrence's validator and raise -- extract_*
+        # never raises on user text.
+        if num_val is not None and num_val < 1:
+            return None
+
         # -- ellipsis: "every last <weekday>" --------------------------------
         # a "last" relative marker (never a count, so `interval` is untouched)
         # directly before a weekday is the -1st weekday of the month, exactly

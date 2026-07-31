@@ -641,3 +641,18 @@ def test_count_zero_yields_no_occurrences():
     assert list(occurrences(every("daily", count=0), AstroDate(2024, 1, 1))) == []
     # sanity: COUNT=1 still yields exactly one
     assert len(list(occurrences(every("daily", count=1), AstroDate(2024, 1, 1)))) == 1
+
+
+def test_extract_recurrence_every_zero_interval_returns_none_not_crash():
+    """"every 0 <unit>" names no valid recurrence (an interval must be >= 1).
+    It must return None, never let the 0 reach Recurrence's validator and raise
+    -- extract_recurrence never raises on user text."""
+    from chronologia import extract_recurrence
+    from datetime import datetime
+    A = datetime(2017, 6, 27, 13, 4)
+    for text in ("every 0 days", "every 0 weeks", "every 0 months",
+                 "every 0 years", "every 0 friday"):
+        assert extract_recurrence(text, anchor=A) is None
+    # a valid interval still parses
+    r = extract_recurrence("every 2 weeks", anchor=A)
+    assert r is not None and r.recurrence.interval == 2
