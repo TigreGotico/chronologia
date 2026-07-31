@@ -177,6 +177,30 @@ def test_since_dated_clock_stays_yearly_not_daily():
     assert r[0].start_datetime.isoformat() == "2017-06-05T12:00:00"
 
 
+@pytest.mark.parametrize("text,lang", [
+    ("Monday, March 2", "en"),
+    ("Monday March 2", "en"),
+    ("March 2 Monday", "en"),
+    ("lunes 2 de marzo", "es"),
+])
+def test_weekday_label_on_explicit_date_yields_the_date(text, lang):
+    # a weekday sitting next to an explicit calendar date is a confirming LABEL,
+    # not a second date: the date is authoritative and the weekday is consumed
+    # (was: the bare weekday won by text position and stranded the date).
+    r = extract_timespan(text, lang, _TUE)
+    assert r is not None
+    assert r[0].start_datetime.date().isoformat() == "2018-03-02"
+    assert getattr(r, "remainder", "") == ""   # weekday label not stranded
+
+
+def test_weekday_plus_clock_still_composes_onto_the_weekday():
+    # the label rule must NOT hijack "Monday at 3pm" -- with no explicit date,
+    # the clock composes onto the weekday as before.
+    r = extract_timespan("Monday at 3pm", "en", _TUE)
+    assert r is not None
+    assert r[0].start_datetime.isoformat() == "2017-07-03T15:00:00"
+
+
 def test_plain_from_to_range_stays_forward():
     # the directional path must NOT touch a plain "from A to B": both endpoints
     # still roll forward (next Monday .. next Friday), no past-anchoring.
