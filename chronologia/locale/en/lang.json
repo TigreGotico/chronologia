@@ -336,7 +336,8 @@
     "hemisphere": null,
     "prefer_future": true,
     "bare_half_past": true,
-    "daypart_proper_noun_guard": true
+    "daypart_proper_noun_guard": true,
+    "since_directional": true
   },
   "quantifiers": {
     "1": [
