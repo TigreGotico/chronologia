@@ -1791,11 +1791,28 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     # drop where the daypart word used to strand in the remainder.
     dayparts = [(m, r) for m, r in resolved
                 if m.construction == "daypart_ref"]
+    # a bare weekday sitting next to an explicit calendar date is a LABEL on it
+    # ("Monday, March 2"), not a second date.  weekday_ref is itself a
+    # composable date (so "Monday at 3pm" takes a clock), so a genuine date+
+    # weekday pair shows up as one weekday and one NON-weekday date.
+    weekdays = [(m, r) for m, r in resolved
+                if m.construction == "weekday_ref"]
+    non_weekday_dates = [(m, r) for m, r in dates
+                         if m.construction != "weekday_ref"]
     if len(clocks) == 1 and len(dates) == 1:
         res = compose_date_clock(dates[0][1], clocks[0][1])
     elif len(dayparts) == 1 and len(dates) == 1 and not clocks:
         name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
         res = compose_date_daypart(dates[0][1], dayparts[0][1], name)
+    elif (len(weekdays) == 1 and len(non_weekday_dates) == 1
+          and not clocks and not dayparts):
+        # the explicit date is authoritative and wins; the weekday is a
+        # confirming label, CONSUMED so it is not stranded in the remainder.
+        # Without this the bare weekday won by text position ("Monday" precedes
+        # "March 2") and silently dropped the date the user actually gave.
+        res = replace(non_weekday_dates[0][1], consumed=tuple(sorted(
+            set(non_weekday_dates[0][1].consumed)
+            | set(range(*weekdays[0][0].span)))))
     else:
         # earliest match in text order wins the public result
         _, res = min(resolved, key=lambda mr: mr[0].span[0])
