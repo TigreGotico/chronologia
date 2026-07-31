@@ -739,6 +739,12 @@ def occurrences(rec: Recurrence, dtstart, until=None,
                                  eff_until.second, eff_until.microsecond))
 
     emitted = 0
+    # COUNT=0 is a legal, deliberately-distinct value (_validate rejects only
+    # count < 0): "repeat zero times" yields nothing.  The per-item cutoff below
+    # runs AFTER a yield, so without this guard the first candidate always slips
+    # out and COUNT=0 behaves like COUNT=1.
+    if eff_count is not None and eff_count <= 0:
+        return
     empty_streak = 0
     for period_start, day_set in _period_iter(rec, dtstart):
         if until_jdn is not None and period_start > until_jdn:

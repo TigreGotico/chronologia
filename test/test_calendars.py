@@ -706,3 +706,30 @@ def test_mayan_positions_are_zero_based():
         c.date(1000, 18, 0)
     with pytest.raises(ValueError, match="expected 0..19"):
         c.date(1000, 0, 20)
+
+
+# -- CalendarDate validates before converting (no silent-wrong instants) -----
+
+def test_calendardate_astro_rejects_impossible_dates():
+    """CalendarDate.astro must apply the same validate() gate as Calendar.date();
+    otherwise an impossible date silently yields a plausible, WRONG instant
+    (31 Ramadan wrapping into month 10, Adar II of a non-leap Hebrew year, etc.)."""
+    from chronologia.calendars import CalendarDate
+    for calendar, y, m, d in [
+        ("islamic_civil", 1445, 9, 31),   # Ramadan has no 31st day
+        ("hebrew", 5785, 13, 1),          # 5785 is not a leap year: no Adar II
+        ("french_republican", 5, 0, 1),   # month 0 does not exist
+    ]:
+        with pytest.raises(ValueError):
+            _ = CalendarDate(calendar, y, m, d).astro
+    # a valid date still converts
+    assert CalendarDate("islamic_civil", 1445, 9, 30).astro is not None
+
+
+def test_calendardate_from_json_impossible_date_raises_on_astro():
+    from chronologia.calendars import CalendarDate
+    cd = CalendarDate.from_json(
+        {"type": "CalendarDate", "calendar": "hebrew", "year": 5785,
+         "month": 13, "day": 1})
+    with pytest.raises(ValueError):
+        _ = cd.astro

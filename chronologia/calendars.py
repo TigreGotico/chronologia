@@ -934,6 +934,13 @@ class CalendarDate:
         """The Gregorian-proleptic instant of this date, as an ``AstroDate``."""
         from chronologia.astrodate import AstroDate
         cal = CALENDARS[self.calendar]
+        # validate first: without this an impossible date (31 Ramadan, Adar II
+        # of a non-leap Hebrew year, month 0) would flow straight into to_jdn
+        # and come back a confident, plausible-looking -- and WRONG -- Gregorian
+        # instant, the exact silent-wrong Calendar.date()/validate() exists to
+        # prevent.  CalendarDate (incl. from_json on untrusted data) is a second
+        # door to the same arithmetic and must share the same gate.
+        cal.validate(self.year, self.month, self.day)
         return AstroDate(*jdn_to_gregorian(
             cal.to_jdn(self.year, self.month, self.day)))
 
