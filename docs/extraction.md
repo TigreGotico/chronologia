@@ -765,14 +765,21 @@ date mechanism the library already models — never re-derived, never invented:
   calendar (the March-equinox new year). Basis `exact`.
 * **Orthodox Easter and its cycle**: the Julian computus rendered on the civil
   calendar (`julian_gregorian_date`) — the same engine as the Western one.
-* **Orthodox (Julian) Christmas** and its eve: the Nativity fixed at Julian
-  December 25 (and 24), resolved through the registered `julian` calendar — so
-  the Julian→Gregorian offset the calendar already carries lands it on Gregorian
-  Jan 7 (Jan 6 for the eve) for 1900–2099, never a hard-coded constant. Bound to
-  the Julian-calendar churches (ru "рождество христово", bg "коледа", uk
-  "різдво"). Greece and the other New-Calendar churches keep Christmas on
-  Gregorian Dec 25 — the plain `christmas` key — so el is deliberately *not*
-  aliased to the Julian one.
+* **Orthodox Christmas** and its eve. Which calendar a country keeps it on is a
+  civil fact, and three cases are modelled distinctly:
+  * **Still on the Julian calendar** (ru "рождество христово", and Serbia /
+    Georgia): the Nativity fixed at Julian December 25 (and 24), resolved
+    through the registered `julian` calendar — so the offset the calendar
+    already carries lands it on Gregorian Jan 7 (Jan 6 for the eve) for
+    1900–2099, never a hard-coded constant.
+  * **Revised-Julian / New-Calendar** — Gregorian Dec 25 (the plain `christmas`
+    key): Greece (el), Romania (ro) and Bulgaria (bg "коледа", Revised Julian
+    since 1968). These are deliberately *not* aliased to the Julian one.
+  * **Moved by law within the modern era** — Ukraine (uk "різдво"): its civil
+    Christmas was Julian (civil Jan 7) through 2022 and Gregorian Dec 25 from
+    2023 (OCU calendar switch). This is a *year-gated* holiday, so "різдво 2020"
+    resolves to Jan 7 and "різдво 2024" to Dec 25 — the date actually in force
+    for the queried year, not one date retro-/post-dated across the reform.
 * **Decree-tabulated feasts** (Diwali, Vesak): no closed-form calendar is
   modelled here, so — honestly — they carry explicit published per-year dates
   (a *decree table*). Outside the listed years the reference simply does not
@@ -879,6 +886,12 @@ The core stations — `Tokenizer`, `TemporalNormaliser`, `ConstructionMatcher`,
 language. `DateTimeEngine` is the facade that wires them together for one
 language; `extract_timespan` is the public front door that adds the range
 and composition passes on top.
+
+> **Note** — `DateTimeEngine` and the per-stage classes below are shown here to
+> illustrate the pipeline; they are internal, not part of the public API (not in
+> `chronologia.__all__`), and may change without notice. Build on
+> `extract_timespan` and the other public entry points; use `explain()` (below)
+> for a stable introspection trace.
 
 ### The values that flow down the line
 
@@ -993,14 +1006,17 @@ clock — each claiming only the tokens it can bind:
 ```python
 for m in engine.matcher.match(toks):
     print(m.construction, m.span, {k: v.text for k, v in m.slots.items()})
-# calendar_date (5, 8) {'DAY': '5', 'MONTH': 'june'}
+# calendar_date (3, 8) {'DAY': '5', 'MONTH': 'june'}
 # clock_time    (9, 12) {'FRACTION': 'half', 'CLOCKDIR': 'past', 'HOUR': '9'}
 ```
 
-`calendar_date` binds `DAY of MONTH` (tokens 5–7) and resolves to the
+`calendar_date` matches the whole span `(3, 8)` — "on the 5 of june", the
+literal `on`/`the`/`of` connective tokens included — while binding the slots
+`DAY` (token 5) and `MONTH` (token 7), and resolves to the
 day-wide span `2024-06-05`. `clock_time` binds `FRACTION CLOCKDIR HOUR`
 ("half past 9") and resolves to the minute-wide span `09:30`. The words
-`the meeting is on the` and `at` bind nothing.
+`the meeting is` and `at` bind nothing (the leading `on the` is consumed inside
+the date's match span).
 
 Now the **composition pass** in `extract_timespan` notices exactly one lone
 date and one lone clock in the same text and folds them together —
@@ -1014,7 +1030,7 @@ span, remainder = extract_timespan(sentence, "en", datetime(2024, 1, 1))
 print(span.start_datetime, "->", span.end_datetime)
 # 2024-06-05 09:30:00 -> 2024-06-05 09:31:00
 print(span.width)        # 0:01:00   (a minute wide — the clock's precision)
-print(repr(remainder))   # 'the meeting is on the at'
+print(repr(remainder))   # 'the meeting is at'
 ```
 
 The result is the minute-wide span at half past nine on the fifth of June,

@@ -1003,11 +1003,11 @@ passover           | uk | песах
 nowruz             | uk | новруз
 # ===== Persian / Farsi (native script) =====
 nowruz             | fa | نوروز ;; عید نوروز
-eid_al_fitr        | fa | عید فطر ;; عید فطر
+eid_al_fitr        | fa | عید فطر
 eid_al_adha        | fa | عید قربان
 ramadan            | fa | ماه رمضان ;; رمضان
 ashura             | fa | عاشورا
-christmas          | fa | کریسمس ;; کریسمس
+christmas          | fa | کریسمس
 islamic_new_year   | fa | سال نو هجری
 chinese_new_year   | fa | سال نو چینی
 #
