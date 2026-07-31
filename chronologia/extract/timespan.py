@@ -1175,25 +1175,28 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         return (_resolve_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
                 or _bare_weekday_endpoint(sub, engine, anchor))
 
-    def until_span(ep):
+    def until_span(ep, sub):
         return DateSpan(now, ep[0].end) if ep is not None and ep[0].end > now \
             else None
 
-    def since_span(ep):
+    def since_span(ep, sub):
         # "since X" is PAST-anchored: it names the most recent occurrence of X
-        # at-or-before now, so a prefer_future endpoint resolution (which flings
-        # a near-past date a whole year forward -- "since july 6" -> next July)
-        # is pulled back cycle by cycle until it lands in the past.  This makes
-        # prefer_future a property the *construction* overrides, not a global
-        # toggle "since" has to fight.
+        # at-or-before now.  A bare weekday recurs WEEKLY, so resolve it backward
+        # directly (0..6 days back); anything else (a dated endpoint whose
+        # prefer_future flung it a year forward -- "since july 6" -> next July)
+        # is pulled back a year at a time until it lands in the past.
         if ep is None:
             return None
-        start = ep[0].start
-        while start > now:
-            pulled = _minus_one_year(start)
-            if pulled is None:
-                break
-            start = pulled
+        wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
+        if wk is not None:
+            start = wk[0].start
+        else:
+            start = ep[0].start
+            while start > now:
+                pulled = _minus_one_year(start)
+                if pulled is None:
+                    break
+                start = pulled
         return DateSpan(start, now) if start < now else None
 
     def lead(surf, build):
@@ -1203,7 +1206,7 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         if not k:
             return None
         ep = endpoint(tokens[k:])
-        span = build(ep) if ep is not None else None
+        span = build(ep, tokens[k:]) if ep is not None else None
         return (span, ep[1]) if span is not None else None
 
     def trail(surf, build):
@@ -1215,7 +1218,7 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             m = len(words)
             if m and m < n and [t.text for t in tokens[n - m:]] == words:
                 ep = endpoint(tokens[:n - m])
-                span = build(ep) if ep is not None else None
+                span = build(ep, tokens[:n - m]) if ep is not None else None
                 if span is not None:
                     return span, ep[1]
         return None
@@ -1242,8 +1245,9 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                     char_start=last.char_start,
                     char_end=(last.char_end - len(a)
                               if last.char_end is not None else None))
-                ep = endpoint(tuple(tokens[:-1]) + (stripped,))
-                span = build(ep) if ep is not None else None
+                sub_a = tuple(tokens[:-1]) + (stripped,)
+                ep = endpoint(sub_a)
+                span = build(ep, sub_a) if ep is not None else None
                 if span is not None:
                     return span, ep[1]
         return None
@@ -1264,16 +1268,25 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             or scan("since", since_surf, since_span))
 
 
-def _bare_weekday_endpoint(sub, engine, anchor):
+def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
     """A lone weekday ("monday") as a range endpoint only: a day-wide span for
-    the next occurrence on or after the anchor day.  A bare weekday never
-    parses on its own (too ambiguous) -- it is only trusted inside a range,
-    where the framing supplies the intent.  Reads a *token slice*."""
+    the next occurrence on or after the anchor day, or -- with ``backward`` --
+    the most recent occurrence at or before it.  A bare weekday never parses on
+    its own (too ambiguous); it is only trusted inside a range, where the framing
+    supplies the intent.  Reads a *token slice*.
+
+    ``backward`` matters for "since <weekday>": a weekday recurs WEEKLY, so the
+    most recent past occurrence is 0..6 days back -- resolving it directly avoids
+    the yearly pull-back flinging it ~a year into the past."""
     if len(sub) != 1 or sub[0].text not in engine.spec.weekdays:
         return None
-    ahead = (engine.spec.weekdays[sub[0].text] - anchor.weekday()) % 7
+    target = engine.spec.weekdays[sub[0].text]
+    if backward:
+        delta = -((anchor.weekday() - target) % 7)   # most recent, on-or-before
+    else:
+        delta = (target - anchor.weekday()) % 7       # next, on-or-after
     day = (anchor.replace(hour=0, minute=0, second=0, microsecond=0)
-           + timedelta(days=ahead))
+           + timedelta(days=delta))
     start = AstroDate.from_datetime(day)
     return DateSpan(start, start + timedelta(days=1)), ""
 
