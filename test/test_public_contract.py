@@ -49,9 +49,10 @@ def test_public_extractors_never_raise_unexpectedly(text):
     ("in 3 decades", "2047-06-27"),
     ("2 millennia ago", "0017-06-27"),   # lock millennium (year 2017-2000)
     ("in 1 millennium", "3017-06-27"),
-    ("30 seconds ago", "2017-06-27"),    # lock second (same day, sub-minute)
+    ("30 seconds ago", "2017-06-27T13:03:30"),   # lock SECOND precision, not just the day
 ])
 def test_large_unit_offsets_resolve(text, expected):
     r = extract_timespan(text, "en", _ANCHOR)
     assert r is not None
-    assert r[0].start_datetime.date().isoformat() == expected
+    got = r[0].start_datetime
+    assert (got.isoformat()[:19] if 'T' in expected else got.date().isoformat()) == expected

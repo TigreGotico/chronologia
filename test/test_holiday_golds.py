@@ -218,9 +218,17 @@ def test_gold_total_not_below_floor():
 # ==========================================================================
 # --- US federal / state ---
 def _us_subdiv_rules():
-    """(subdiv_code, name) for every subdivision rule row in us.tab."""
+    """(subdiv_code, name) for every subdivision rule row in us.tab.
+
+    ExcludeRule rows are subtractive (they REMOVE an inherited holiday for a
+    subdivision) and produce no date, so they carry no gold -- skip them exactly
+    as ``_every_tab_rule_key`` does, or the parametrisation KeyErrors on the
+    excluded (subdiv, name) pairs (the long-standing 'flaky' Columbus-Day /
+    Washington's-Birthday failures were this, not test-order coupling)."""
     cal = load_calendar(os.path.join(_DATA_DIR, "us.tab"))
-    return [(r.subdiv, r.name) for r in cal.rules if r.subdiv is not None]
+    return [(r.subdiv, r.name) for r in cal.rules
+            if r.subdiv is not None
+            and type(getattr(r, "kind", None)).__name__ != "ExcludeRule"]
 
 
 def test_us_juneteenth_year_gated_federal_from_2021():

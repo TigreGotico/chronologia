@@ -16,3 +16,14 @@ def test_resolver_invariant_is_not_swallowed_by_dispatch():
     # into a silent None -- the exact failure mode it exists to prevent.
     assert not issubclass(ResolverInvariant, (ValueError, OverflowError, KeyError))
     assert issubclass(ResolverInvariant, Exception)
+
+
+def test_resolver_invariant_actually_raised_on_unmapped_unit():
+    # Drive the real fallthrough: _point_span's exhaustive elif raises
+    # ResolverInvariant on an unmapped unit, and it is NOT one of the swallowed
+    # types, so it propagates rather than degrading to a silent None.
+    from datetime import datetime
+    import pytest
+    from chronologia.extract import resolver as _r
+    with pytest.raises(_r.ResolverInvariant):
+        _r._point_span(datetime(2017, 6, 27), "fortnightly_nonsense_unit")
