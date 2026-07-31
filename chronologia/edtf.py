@@ -202,7 +202,12 @@ def _x_range(field: str):
         raise NotImplementedError(
             f"non-trailing unspecified digit in {field!r}: the value set is "
             f"non-contiguous and cannot be one DateSpan")
-    return int(field.replace("X", "0")), int(field.replace("X", "9"))
+    # X->0 and X->9 bound the run, but for a NEGATIVE field the sign inverts
+    # their order (-19XX: X->0 gives -1900, X->9 gives -1999, and -1900 > -1999),
+    # so order them rather than returning (lo, hi) with lo > hi (which would
+    # crash the DateSpan ordering invariant instead of parsing "-19XX").
+    a, b = int(field.replace("X", "0")), int(field.replace("X", "9"))
+    return (a, b) if a <= b else (b, a)
 
 
 def _sig_year_span(value: int, sig: int) -> DateSpan:
