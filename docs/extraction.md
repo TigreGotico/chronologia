@@ -937,7 +937,8 @@ same whether the writer typed `5` or `five`. It deliberately does **not**
 fold `half`/`quarter` (those are clock fractions) or scale words like
 `million` (those separate deep time from a plain offset).
 
-**4. Multiword merge** (`DateTimeEngine._merge_multiword`). Vocabulary
+**4. Multiword merge** (`chronologia.extract.pipeline.merge_multiword`,
+reached through `fold_tokens`). Vocabulary
 surfaces that contain spaces ("bronze age") get glued back into a single
 token, longest phrase first, so one slot can bind them.
 
@@ -1113,7 +1114,7 @@ places them once a location is supplied.
 Precedence is **not** the first tie-breaker — span length is. Two candidates
 only reach the precedence comparison when they cover an **equally long**
 overlapping span. The order lives in `PRECEDENCE` in `compiler.py` (lower
-rank = higher priority); here it is, verbatim, with a note on the pairs that
+rank = higher priority); here are the ranks that matter, with a note on the pairs that
 matter:
 
 | rank | constructions |
@@ -1187,7 +1188,7 @@ ties; it never substitutes for a missing rule.
 
 ### The assembly passes: ranges and composition
 
-Two behaviours live in `extract/__init__.py`, **above** the token grammar,
+Two behaviours live in `chronologia/extract/timespan.py`, **above** the token grammar,
 because they compose *whole sub-parses* rather than bind tokens:
 
 - **Ranges** (`_extract_range`). "from A to B" / "between A and B" is
