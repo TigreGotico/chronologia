@@ -656,3 +656,39 @@ def test_extract_recurrence_every_zero_interval_returns_none_not_crash():
     # a valid interval still parses
     r = extract_recurrence("every 2 weeks", anchor=A)
     assert r is not None and r.recurrence.interval == 2
+
+
+def test_sparse_yearly_expansion_is_narrowed_not_brute_forced():
+    """A sparse YEARLY rule ("every 29th of february") must expand by its own
+    BY parts, not by scanning all 365 days per year -- otherwise a large COUNT
+    within the sanity ceiling costs ~O(365 * count) wall time.  Correctness is
+    the guard here (identical results); the narrowing is what makes it cheap."""
+    from chronologia.recurrence import occurrences, every
+    # leap day: only leap Februaries, non-leap years skipped (not fabricated)
+    leaps = [o.start for o in occurrences(every("yearly", bymonth=2,
+                                                bymonthday=29),
+                                          AstroDate(2020, 1, 1), count=4)]
+    assert [(d.year, d.month, d.day) for d in leaps] == [
+        (2020, 2, 29), (2024, 2, 29), (2028, 2, 29), (2032, 2, 29)]
+    # a large count that used to cost ~seconds now completes promptly and
+    # returns exactly that many correct occurrences (functional bound on cost)
+    got = list(occurrences(every("yearly", bymonth=2, bymonthday=29),
+                           AstroDate(2020, 1, 1), count=1000))
+    assert len(got) == 1000
+    assert all(o.start.month == 2 and o.start.day == 29 for o in got)
+
+
+@pytest.mark.parametrize("rec_kwargs,dtstart,first", [
+    ({"freq": "yearly"}, (2020, 3, 4), (2020, 3, 4)),          # bare yearly
+    ({"freq": "monthly"}, (2020, 1, 15), (2020, 1, 15)),        # bare monthly
+    ({"freq": "yearly", "bymonthday": 29}, (2020, 1, 1), (2020, 1, 29)),
+    ({"freq": "yearly", "bymonth": (3, 6, 9, 12), "bymonthday": 15},
+     (2020, 1, 1), (2020, 3, 15)),
+    ({"freq": "monthly", "bymonthday": -1}, (2020, 1, 1), (2020, 1, 31)),
+])
+def test_narrowed_yearly_monthly_first_occurrence(rec_kwargs, dtstart, first):
+    # the DTSTART-default and bymonth/bymonthday narrowing must not shift the
+    # first occurrence off its correct day.
+    from chronologia.recurrence import occurrences, every
+    o = next(iter(occurrences(every(**rec_kwargs), AstroDate(*dtstart), count=1)))
+    assert (o.start.year, o.start.month, o.start.day) == first
