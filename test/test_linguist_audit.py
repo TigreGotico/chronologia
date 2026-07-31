@@ -201,6 +201,18 @@ def test_weekday_plus_clock_still_composes_onto_the_weekday():
     assert r[0].start_datetime.isoformat() == "2017-07-03T15:00:00"
 
 
+@pytest.mark.parametrize("text", ["Monday March 2 at 3pm", "Monday, March 2 at 3pm"])
+def test_weekday_label_with_clock_keeps_date_and_clock(text):
+    # weekday LABEL + explicit date + clock: the date is authoritative and the
+    # clock composes onto it; the weekday is consumed. (Regression: the label
+    # branch used to be skipped whenever a clock was present, so the bare
+    # weekday won and dropped both the date and the clock.)
+    r = extract_timespan(text, "en", _TUE)
+    assert r is not None
+    assert r[0].start_datetime.isoformat() == "2018-03-02T15:00:00"
+    assert getattr(r, "remainder", "") == ""
+
+
 def test_plain_from_to_range_stays_forward():
     # the directional path must NOT touch a plain "from A to B": both endpoints
     # still roll forward (next Monday .. next Friday), no past-anchoring.
