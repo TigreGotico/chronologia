@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import os
 import threading
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Dict, Iterable, Optional, Tuple
 
 from .model import CivilHoliday, HolidayRule, _day_span, _shape_span
@@ -162,6 +162,24 @@ class HolidayCalendar:
                 names={lang: text + label for lang, text in rule.names.items()},
                 translations={lang: text + label
                               for lang, text in trans.items()}))
+        # Collapse rows that resolved to the SAME (name, date, subdiv, basis)
+        # and differ only in CATEGORY -- a holiday the data lists once per
+        # category (e.g. HK Chinese New Year as both public and optional) -- into
+        # one entry carrying the union of categories, so a consumer never sees a
+        # literal duplicate.  Rows that differ in subdiv or basis (a national
+        # plus a subdivision declaration, or a computed vs tabulated source of
+        # the same day) are left distinct: they carry genuinely different civil
+        # scope/provenance, not redundancy.
+        merged = {}
+        for h in out:
+            key = (h.name, h.span.start, h.subdiv, h.basis)
+            if key in merged:
+                prev = merged[key]
+                merged[key] = replace(prev,
+                                      categories=prev.categories | h.categories)
+            else:
+                merged[key] = h
+        out = list(merged.values())
         out.sort(key=lambda h: (h.span.start, h.name))
         return tuple(out)
 

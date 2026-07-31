@@ -182,15 +182,21 @@ class ConstructionCompiler:
     """Compiles and caches a :class:`CompiledSpec` per language."""
 
     def __init__(self):
-        self._cache: Dict[str, CompiledSpec] = {}
+        # keyed by lang for the fast path, but the cached spec's IDENTITY is
+        # verified before reuse: the module-level compiler behind explain() is
+        # shared across every LangSpec, so a second, differently-configured spec
+        # for the same lang code (a custom/overridden or hot-reloaded locale)
+        # must recompile rather than be served the first spec's stale table.
+        self._cache: Dict[str, Tuple[LangSpec, CompiledSpec]] = {}
 
     def compile(self, spec: LangSpec) -> CompiledSpec:
-        if spec.lang in self._cache:
-            return self._cache[spec.lang]
+        cached = self._cache.get(spec.lang)
+        if cached is not None and cached[0] is spec:
+            return cached[1]
         entries = [(PRECEDENCE.get(name, 99), name, order)
                    for name, orders in spec.orders.items()
                    for order in orders]
         entries.sort(key=lambda e: e[0])
         compiled = CompiledSpec(spec=spec, table=tuple(entries))
-        self._cache[spec.lang] = compiled
+        self._cache[spec.lang] = (spec, compiled)
         return compiled
