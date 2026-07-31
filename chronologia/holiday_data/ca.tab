@@ -76,25 +76,14 @@ fixed | Boxing Day | 12 26 | optional |  |
 decree | National Day for Truth and Reconciliation | 2024-9-30 2025-9-30 | government |  |
 decree | Thanksgiving Day | 2024-10-14 2025-10-13 | government |  |
 decree | Remembrance Day | 2024-11-11 2025-11-11 | government |  |
-decree | Boxing Day | 2024-12-26 2025-12-26 | government |  |
 
 # --- Wave 2 subdivision backfill (vacanza/holidays 0.101) ---
 # CA-AB
 fixed | Remembrance Day | 11 11 | regional | CA-AB | 
-decree | Victoria Day | 2024-5-20 2025-5-19 2026-5-18 2027-5-24 | regional | CA-AB | 
-decree | Family Day | 2024-2-19 2025-2-17 2026-2-16 2027-2-15 | regional | CA-AB | 
-decree | Thanksgiving Day | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | regional religious | CA-AB | 
 # CA-BC
-decree | British Columbia Day | 2024-8-5 2025-8-4 2026-8-3 2027-8-2 | regional | CA-BC | 
-decree | Thanksgiving Day | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | regional religious | CA-BC | 
 fixed | National Day for Truth and Reconciliation | 9 30 | regional | CA-BC | 
-decree | Victoria Day | 2024-5-20 2025-5-19 2026-5-18 2027-5-24 | regional | CA-BC | 
-decree | Family Day | 2024-2-19 2025-2-17 2026-2-16 2027-2-15 | regional | CA-BC | 
 fixed | Remembrance Day | 11 11 | regional | CA-BC | 
 # CA-MB
-decree | Victoria Day | 2024-5-20 2025-5-19 2026-5-18 2027-5-24 | regional | CA-MB | 
-decree | Thanksgiving Day | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | regional religious | CA-MB | 
-decree | Louis Riel Day | 2024-2-19 2025-2-17 2026-2-16 2027-2-15 | regional | CA-MB | 
 fixed | National Day for Truth and Reconciliation | 9 30 | regional | CA-MB | 
 # CA-NB
 fixed | Remembrance Day | 11 11 | regional | CA-NB | 
@@ -104,7 +93,6 @@ decree | New Brunswick Day | 2024-8-5 2025-8-4 2026-8-3 2027-8-2 | regional | CA
 fixed | Remembrance Day | 11 11 | regional | CA-NL | 
 fixed | Canada Day; Memorial Day | 7 1 | regional | CA-NL | 
 # CA-NS
-decree | Heritage Day | 2024-2-19 2025-2-17 2026-2-16 2027-2-15 | regional | CA-NS | 
 fixed | Remembrance Day | 11 11 | regional | CA-NS | 
 # CA-NT
 fixed | National Aboriginal Day | 6 21 | regional | CA-NT | 
@@ -121,18 +109,13 @@ decree | Thanksgiving Day | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | region
 decree | Victoria Day | 2024-5-20 2025-5-19 2026-5-18 2027-5-24 | regional | CA-NU | 
 fixed | Remembrance Day | 11 11 | regional | CA-NU | 
 # CA-ON
-decree | Family Day | 2024-2-19 2025-2-17 2026-2-16 2027-2-15 | regional | CA-ON | 
-decree | Victoria Day | 2024-5-20 2025-5-19 2026-5-18 2027-5-24 | regional | CA-ON | 
 fixed | Boxing Day | 12 26 | regional | CA-ON | 
-decree | Thanksgiving Day | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | regional religious | CA-ON | 
 # CA-PE
 fixed | Remembrance Day | 11 11 | regional | CA-PE | 
 decree | Islander Day | 2024-2-19 2025-2-17 2026-2-16 2027-2-15 | regional | CA-PE | 
 fixed | National Day for Truth and Reconciliation | 9 30 | regional | CA-PE | 
 # CA-QC
 fixed | Saint Jean Baptiste Day | 6 24 | regional | CA-QC | 
-decree | National Patriots' Day | 2024-5-20 2025-5-19 2026-5-18 2027-5-24 | regional | CA-QC | 
-decree | Thanksgiving Day | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | regional religious | CA-QC | 
 # CA-SK
 decree | Thanksgiving Day | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | regional religious | CA-SK | 
 decree | Victoria Day | 2024-5-20 2025-5-19 2026-5-18 2027-5-24 | regional | CA-SK | 
