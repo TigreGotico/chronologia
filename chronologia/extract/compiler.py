@@ -48,6 +48,7 @@ PRECEDENCE: Dict[str, int] = {
     "era_saka": 1,
     "era_byzantine": 1,
     "era_holocene": 1,
+    "era_anno_mundi": 1,
     "era_buddhist": 1,
     # "eve of <Roman anchor>" must outrank the bare roman_date it wraps
     "roman_eve": 1,

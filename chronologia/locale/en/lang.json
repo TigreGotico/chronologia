@@ -1,368 +1,374 @@
 {
-  "tokenizer": {
-    "split_contractions": false,
-    "ordinal_dot": false
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": false
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "NUM UNIT MARKER",
+    "MARKER NUM UNIT",
+    "MARKER indef? QUANT? of? indef? UNIT",
+    "MARKER indef? NUM of? indef? UNIT",
+    "indef? QUANT? of? indef? UNIT MARKER",
+    "indef? NUM of? indef? UNIT MARKER"
+   ]
   },
-  "constructions": {
-    "relative_offset": {
-      "orders": [
-        "NUM UNIT MARKER",
-        "MARKER NUM UNIT",
-        "MARKER indef? QUANT? of? indef? UNIT",
-        "MARKER indef? NUM of? indef? UNIT",
-        "indef? QUANT? of? indef? UNIT MARKER",
-        "indef? NUM of? indef? UNIT MARKER"
-      ]
-    },
-    "named_day_span_idiom": {
-      "orders": [
-        "indef? QUANT? UNIT DAY_WORD",
-        "indef? NUM UNIT DAY_WORD"
-      ]
-    },
-    "named_day_offset_from": {
-      "orders": [
-        "indef? QUANT? UNIT from DAY_WORD",
-        "indef? NUM UNIT from DAY_WORD"
-      ]
-    },
-    "before_last": {
-      "orders": [
-        "article? WEEKDAY before REL_MARKER",
-        "article UNIT before REL_MARKER",
-        "article DAYPART before REL_MARKER"
-      ]
-    },
-    "after_next": {
-      "orders": [
-        "article UNIT after REL_MARKER",
-        "article DAYPART after REL_MARKER"
-      ]
-    },
-    "weekday_ago": {
-      "orders": [
-        "indef? WEEKDAY ago"
-      ]
-    },
-    "unit_ago_weekday": {
-      "orders": [
-        "indef? QUANT? UNIT ago WEEKDAY",
-        "indef? NUM UNIT ago WEEKDAY"
-      ]
-    },
-    "sametime_shift": {
-      "orders": [
-        "thisdeixis time REL_MARKER UNIT",
-        "thisdeixis time REL_MARKER WEEKDAY",
-        "thisdeixis time DAY_WORD"
-      ]
-    },
-    "holiday_eve": {
-      "orders": [
-        "article? eve of article? HOLIDAY"
-      ]
-    },
-    "roman_eve": {
-      "orders": [
-        "on? article? eve of article? ANCHOR_DAY of MONTH",
-        "on? article? eve of article? ANCHOR_DAY MONTH"
-      ]
-    },
-    "weekend_ref": {
-      "orders": [
-        "REL_MARKER WEEKEND",
-        "article? WEEKEND"
-      ]
-    },
-    "calendar_date": {
-      "orders": [
-        "MONTH DAY? YEAR?",
-        "DAY of MONTH YEAR?",
-        "DAY MONTH YEAR?",
-        "on article? DAY of MONTH YEAR?",
-        "by article? DAY of MONTH YEAR?"
-      ],
-      "prefer_future": true
-    },
-    "nongregorian_date": {
-      "orders": [
-        "CAL_MONTH DAY? YEAR?",
-        "DAY of CAL_MONTH YEAR?",
-        "DAY CAL_MONTH YEAR?"
-      ],
-      "prefer_future": true
-    },
-    "roman_date": {
-      "orders": [
-        "ad ORD ANCHOR_DAY MONTH",
-        "ad ORD ANCHOR_DAY of MONTH",
-        "PRIDIE ANCHOR_DAY MONTH",
-        "PRIDIE ANCHOR_DAY of MONTH",
-        "article? ANCHOR_DAY of MONTH",
-        "article? ANCHOR_DAY MONTH"
-      ]
-    },
-    "regnal_date": {
-      "orders": [
-        "ERANAME NUM MONTH",
-        "ERANAME NUM",
-        "article? ORD year_word of ERANAME",
-        "article? ORD year_word of article? reign of ERANAME",
-        "regnal year_word NUM of ERANAME",
-        "regnal year_word NUM of article? reign of ERANAME",
-        "consulship of ERANAME"
-      ]
-    },
-    "scoped_bc": {
-      "orders": [
-        "article? ORD SCOPE_UNIT bc"
-      ]
-    },
-    "scoped_ad": {
-      "orders": [
-        "article? ORD SCOPE_UNIT ad"
-      ]
-    },
-    "decade_bc": {
-      "orders": [
-        "article? NUM plural bc"
-      ]
-    },
-    "clock_time": {
-      "orders": [
-        "CLOCK MERIDIEM? ZONE?",
-        "at DOTCLOCK MERIDIEM? ZONE?",
-        "DOTCLOCK MERIDIEM ZONE?",
-        "article PADCLOCK MERIDIEM? ZONE?",
-        "at HOUR MERIDIEM? ZONE?",
-        "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
-        "FRACTION HOUR MERIDIEM? ZONE?",
-        "HOUR oclock MERIDIEM? ZONE?",
-        "HOUR MERIDIEM ZONE?",
-        "at? HOUR in? article? MERIDIEM ZONE?",
-        "at? FRACTION HOUR in? article? MERIDIEM ZONE?",
-        "at? LANDMARK ZONE?",
-        "FRACTION CLOCKDIR LANDMARK ZONE?",
-        "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?",
-        "MINUTE CLOCKDIR LANDMARK ZONE?"
-      ],
-      "prefer_future": true
-    },
-    "clock_this_daypart": {
-      "orders": [
-        "at? CLOCK thisdeixis MERIDIEM ZONE?",
-        "at? HOUR thisdeixis MERIDIEM ZONE?"
-      ]
-    },
-    "military_time": {
-      "orders": [
-        "MILTIME hours",
-        "MILTIMEZ",
-        "MILTIMENZ miltime_zone"
-      ],
-      "prefer_future": true
-    },
-    "era_bc": {
-      "orders": [
-        "NUM bc"
-      ]
-    },
-    "era_ad": {
-      "orders": [
-        "NUM ad",
-        "ad NUM"
-      ]
-    },
-    "era_bp": {
-      "orders": [
-        "NUM bp",
-        "NUM year_word before present"
-      ]
-    },
-    "era_saka": {
-      "orders": [
-        "in? article? saka year_word? NUM",
-        "NUM saka"
-      ]
-    },
-    "era_byzantine": {
-      "orders": [
-        "in? article? year_word NUM of? article? byzantine",
-        "in? article? byzantine year_word? NUM",
-        "NUM byzantine"
-      ]
-    },
-    "era_holocene": {
-      "orders": [
-        "in? article? holocene year_word? NUM",
-        "NUM holocene"
-      ]
-    },
-    "era_buddhist": {
-      "orders": [
-        "in? article? buddhist year_word? NUM MONTH",
-        "in? article? buddhist year_word? NUM",
-        "NUM buddhist MONTH",
-        "NUM buddhist"
-      ]
-    },
-    "deep_time": {
-      "orders": [
-        "NUM SCALE year_word ago",
-        "NUM SCALE year_word before present"
-      ]
-    },
-    "hebrew_new_year": {
-      "orders": [
-        "article? hebrew new year_word YEAR"
-      ]
-    },
-    "year_ref": {
-      "orders": [
-        "in GYEAR",
-        "article? year_word GYEAR",
-        "GYEAR",
-        "article? year_word NUM SCALE",
-        "PART GYEAR",
-        "PART of? article? fiscal? year_word GYEAR",
-        "article? GYEAR fiscal? year_word PART"
-      ]
-    },
-    "decade_ref": {
-      "orders": [
-        "PART? article? NUM plural",
-        "PART? article? DECADE",
-        "article? PART DECADE"
-      ]
-    },
-    "month_fuzzy": {
-      "orders": [
-        "PART MONTH"
-      ]
-    },
-    "fuzzy_period": {
-      "orders": [
-        "article? PART of? article? UNIT",
-        "article? PART of? article? REL_MARKER UNIT",
-        "article? PART of? article? UNIT REL_MARKER",
-        "PART REL_MARKER UNIT"
-      ]
-    },
-    "quarter_ref": {
-      "orders": [
-        "q NUM YEAR?",
-        "article? ORD quarter_word of YEAR",
-        "article? ORD quarter_word YEAR?",
-        "REL_MARKER quarter_word",
-        "quarter_word REL_MARKER",
-        "PART of? q NUM YEAR?",
-        "PART of? article? ORD quarter_word YEAR?",
-        "PART of? article? quarter_word",
-        "article? ordlast UNIT of? q NUM YEAR?",
-        "article? ordlast UNIT of? article? ORD quarter_word YEAR?",
-        "article? ordlast UNIT of? article? quarter_word"
-      ]
-    },
-    "iso_week_ref": {
-      "orders": [
-        "week_num NUM of YEAR",
-        "week_num NUM YEAR?",
-        "article? ORD week_num of YEAR"
-      ]
-    },
-    "month_day_ref": {
-      "orders": [
-        "article? ORD of article? REL_MARKER? month_word",
-        "on article? NORD",
-        "by article? NORD"
-      ],
-      "prefer_future": true
-    },
-    "holiday_ref": {
-      "orders": [
-        "REL_MARKER HOLIDAY",
-        "HOLIDAY YEAR",
-        "YEAR HOLIDAY",
-        "HOLIDAY"
-      ]
-    },
-    "solar_event": {
-      "orders": [
-        "article? SEASON EVENT YEAR?",
-        "article? SOLARQUAL EVENT YEAR?",
-        "article? MONTH EVENT YEAR?"
-      ]
-    },
-    "era_auc": {
-      "orders": [
-        "NUM auc",
-        "auc NUM",
-        "ORD auc"
-      ]
-    },
-    "olympiad_ref": {
-      "orders": [
-        "olympiad NUM",
-        "article? ORD olympiad",
-        "article? SORD year_word of article? ORD olympiad"
-      ]
-    },
-    "roman_classical": {
-      "orders": [
-        "antediem ORD ANCHOR_DAY MONTH",
-        "antediem ORD ANCHOR_DAY of MONTH"
-      ],
-      "group": "classical"
-    },
-    "archon_ref": {
-      "orders": [
-        "in article? archonship of ARCHON",
-        "article? archonship of ARCHON",
-        "archon ARCHON"
-      ]
-    }
+  "named_day_span_idiom": {
+   "orders": [
+    "indef? QUANT? UNIT DAY_WORD",
+    "indef? NUM UNIT DAY_WORD"
+   ]
   },
-  "base_grammar": {
-    "extend": {
-      "half_period": [
-        "h NUM GYEAR",
-        "GYEAR h NUM"
-      ]
-    }
+  "named_day_offset_from": {
+   "orders": [
+    "indef? QUANT? UNIT from DAY_WORD",
+    "indef? NUM UNIT from DAY_WORD"
+   ]
   },
-  "conventions": {
-    "week_start": "monday",
-    "dmy": false,
-    "hemisphere": null,
-    "prefer_future": true,
-    "bare_half_past": true,
-    "daypart_proper_noun_guard": true,
-    "since_directional": true
+  "before_last": {
+   "orders": [
+    "article? WEEKDAY before REL_MARKER",
+    "article UNIT before REL_MARKER",
+    "article DAYPART before REL_MARKER"
+   ]
   },
-  "quantifiers": {
-    "1": [
-      "a",
-      "an",
-      "one"
-    ],
-    "2": [
-      "couple",
-      "pair"
-    ],
-    "3": [
-      "few",
-      "several"
-    ],
-    "0.5": [
-      "half"
-    ],
-    "0.25": [
-      "quarter",
-      "quarters"
-    ]
+  "after_next": {
+   "orders": [
+    "article UNIT after REL_MARKER",
+    "article DAYPART after REL_MARKER"
+   ]
   },
-  "guards": {
-    "bare_year_min_digits": 4
+  "weekday_ago": {
+   "orders": [
+    "indef? WEEKDAY ago"
+   ]
   },
-  "hook": "chronologia.extract.numfold:fold_en"
+  "unit_ago_weekday": {
+   "orders": [
+    "indef? QUANT? UNIT ago WEEKDAY",
+    "indef? NUM UNIT ago WEEKDAY"
+   ]
+  },
+  "sametime_shift": {
+   "orders": [
+    "thisdeixis time REL_MARKER UNIT",
+    "thisdeixis time REL_MARKER WEEKDAY",
+    "thisdeixis time DAY_WORD"
+   ]
+  },
+  "holiday_eve": {
+   "orders": [
+    "article? eve of article? HOLIDAY"
+   ]
+  },
+  "roman_eve": {
+   "orders": [
+    "on? article? eve of article? ANCHOR_DAY of MONTH",
+    "on? article? eve of article? ANCHOR_DAY MONTH"
+   ]
+  },
+  "weekend_ref": {
+   "orders": [
+    "REL_MARKER WEEKEND",
+    "article? WEEKEND"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "MONTH DAY? YEAR?",
+    "DAY of MONTH YEAR?",
+    "DAY MONTH YEAR?",
+    "on article? DAY of MONTH YEAR?",
+    "by article? DAY of MONTH YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "nongregorian_date": {
+   "orders": [
+    "CAL_MONTH DAY? YEAR?",
+    "DAY of CAL_MONTH YEAR?",
+    "DAY CAL_MONTH YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "roman_date": {
+   "orders": [
+    "ad ORD ANCHOR_DAY MONTH",
+    "ad ORD ANCHOR_DAY of MONTH",
+    "PRIDIE ANCHOR_DAY MONTH",
+    "PRIDIE ANCHOR_DAY of MONTH",
+    "article? ANCHOR_DAY of MONTH",
+    "article? ANCHOR_DAY MONTH"
+   ]
+  },
+  "regnal_date": {
+   "orders": [
+    "ERANAME NUM MONTH",
+    "ERANAME NUM",
+    "article? ORD year_word of ERANAME",
+    "article? ORD year_word of article? reign of ERANAME",
+    "regnal year_word NUM of ERANAME",
+    "regnal year_word NUM of article? reign of ERANAME",
+    "consulship of ERANAME"
+   ]
+  },
+  "scoped_bc": {
+   "orders": [
+    "article? ORD SCOPE_UNIT bc"
+   ]
+  },
+  "scoped_ad": {
+   "orders": [
+    "article? ORD SCOPE_UNIT ad"
+   ]
+  },
+  "decade_bc": {
+   "orders": [
+    "article? NUM plural bc"
+   ]
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK MERIDIEM? ZONE?",
+    "at DOTCLOCK MERIDIEM? ZONE?",
+    "DOTCLOCK MERIDIEM ZONE?",
+    "article PADCLOCK MERIDIEM? ZONE?",
+    "at HOUR MERIDIEM? ZONE?",
+    "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
+    "FRACTION HOUR MERIDIEM? ZONE?",
+    "HOUR oclock MERIDIEM? ZONE?",
+    "HOUR MERIDIEM ZONE?",
+    "at? HOUR in? article? MERIDIEM ZONE?",
+    "at? FRACTION HOUR in? article? MERIDIEM ZONE?",
+    "at? LANDMARK ZONE?",
+    "FRACTION CLOCKDIR LANDMARK ZONE?",
+    "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?",
+    "MINUTE CLOCKDIR LANDMARK ZONE?"
+   ],
+   "prefer_future": true
+  },
+  "clock_this_daypart": {
+   "orders": [
+    "at? CLOCK thisdeixis MERIDIEM ZONE?",
+    "at? HOUR thisdeixis MERIDIEM ZONE?"
+   ]
+  },
+  "military_time": {
+   "orders": [
+    "MILTIME hours",
+    "MILTIMEZ",
+    "MILTIMENZ miltime_zone"
+   ],
+   "prefer_future": true
+  },
+  "era_bc": {
+   "orders": [
+    "NUM bc"
+   ]
+  },
+  "era_ad": {
+   "orders": [
+    "NUM ad",
+    "ad NUM"
+   ]
+  },
+  "era_bp": {
+   "orders": [
+    "NUM bp",
+    "NUM year_word before present"
+   ]
+  },
+  "era_saka": {
+   "orders": [
+    "in? article? saka year_word? NUM",
+    "NUM saka"
+   ]
+  },
+  "era_byzantine": {
+   "orders": [
+    "in? article? year_word NUM of? article? byzantine",
+    "in? article? byzantine year_word? NUM",
+    "NUM byzantine"
+   ]
+  },
+  "era_holocene": {
+   "orders": [
+    "in? article? holocene year_word? NUM",
+    "NUM holocene"
+   ]
+  },
+  "era_anno_mundi": {
+   "orders": [
+    "in? article? anno_mundi year_word? NUM",
+    "in? article? year_word? NUM anno_mundi"
+   ]
+  },
+  "era_buddhist": {
+   "orders": [
+    "in? article? buddhist year_word? NUM MONTH",
+    "in? article? buddhist year_word? NUM",
+    "NUM buddhist MONTH",
+    "NUM buddhist"
+   ]
+  },
+  "deep_time": {
+   "orders": [
+    "NUM SCALE year_word ago",
+    "NUM SCALE year_word before present"
+   ]
+  },
+  "hebrew_new_year": {
+   "orders": [
+    "article? hebrew new year_word YEAR"
+   ]
+  },
+  "year_ref": {
+   "orders": [
+    "in GYEAR",
+    "article? year_word GYEAR",
+    "GYEAR",
+    "article? year_word NUM SCALE",
+    "PART GYEAR",
+    "PART of? article? fiscal? year_word GYEAR",
+    "article? GYEAR fiscal? year_word PART"
+   ]
+  },
+  "decade_ref": {
+   "orders": [
+    "PART? article? NUM plural",
+    "PART? article? DECADE",
+    "article? PART DECADE"
+   ]
+  },
+  "month_fuzzy": {
+   "orders": [
+    "PART MONTH"
+   ]
+  },
+  "fuzzy_period": {
+   "orders": [
+    "article? PART of? article? UNIT",
+    "article? PART of? article? REL_MARKER UNIT",
+    "article? PART of? article? UNIT REL_MARKER",
+    "PART REL_MARKER UNIT"
+   ]
+  },
+  "quarter_ref": {
+   "orders": [
+    "q NUM YEAR?",
+    "article? ORD quarter_word of YEAR",
+    "article? ORD quarter_word YEAR?",
+    "REL_MARKER quarter_word",
+    "quarter_word REL_MARKER",
+    "PART of? q NUM YEAR?",
+    "PART of? article? ORD quarter_word YEAR?",
+    "PART of? article? quarter_word",
+    "article? ordlast UNIT of? q NUM YEAR?",
+    "article? ordlast UNIT of? article? ORD quarter_word YEAR?",
+    "article? ordlast UNIT of? article? quarter_word"
+   ]
+  },
+  "iso_week_ref": {
+   "orders": [
+    "week_num NUM of YEAR",
+    "week_num NUM YEAR?",
+    "article? ORD week_num of YEAR"
+   ]
+  },
+  "month_day_ref": {
+   "orders": [
+    "article? ORD of article? REL_MARKER? month_word",
+    "on article? NORD",
+    "by article? NORD"
+   ],
+   "prefer_future": true
+  },
+  "holiday_ref": {
+   "orders": [
+    "REL_MARKER HOLIDAY",
+    "HOLIDAY YEAR",
+    "YEAR HOLIDAY",
+    "HOLIDAY"
+   ]
+  },
+  "solar_event": {
+   "orders": [
+    "article? SEASON EVENT YEAR?",
+    "article? SOLARQUAL EVENT YEAR?",
+    "article? MONTH EVENT YEAR?"
+   ]
+  },
+  "era_auc": {
+   "orders": [
+    "NUM auc",
+    "auc NUM",
+    "ORD auc"
+   ]
+  },
+  "olympiad_ref": {
+   "orders": [
+    "olympiad NUM",
+    "article? ORD olympiad",
+    "article? SORD year_word of article? ORD olympiad"
+   ]
+  },
+  "roman_classical": {
+   "orders": [
+    "antediem ORD ANCHOR_DAY MONTH",
+    "antediem ORD ANCHOR_DAY of MONTH"
+   ],
+   "group": "classical"
+  },
+  "archon_ref": {
+   "orders": [
+    "in article? archonship of ARCHON",
+    "article? archonship of ARCHON",
+    "archon ARCHON"
+   ]
+  }
+ },
+ "base_grammar": {
+  "extend": {
+   "half_period": [
+    "h NUM GYEAR",
+    "GYEAR h NUM"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": false,
+  "hemisphere": null,
+  "prefer_future": true,
+  "bare_half_past": true,
+  "daypart_proper_noun_guard": true,
+  "since_directional": true
+ },
+ "quantifiers": {
+  "1": [
+   "a",
+   "an",
+   "one"
+  ],
+  "2": [
+   "couple",
+   "pair"
+  ],
+  "3": [
+   "few",
+   "several"
+  ],
+  "0.5": [
+   "half"
+  ],
+  "0.25": [
+   "quarter",
+   "quarters"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold:fold_en"
 }
