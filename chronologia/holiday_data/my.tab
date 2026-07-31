@@ -91,7 +91,7 @@ fixed | Hari Hol Sultan Pahang | 5 22 | regional | MY-06 |  |  |
 fixed | Tahun Baharu | 1 1 | regional | MY-06 |  |  | 
 # MY-07
 fixed | Awal Muharam; Hari Ulang Tahun Perisytiharan Tapak Warisan Dunia | 7 7 | regional | MY-07 |  |  | 
-decree | Hari Jadi Yang di-Pertua Negeri Pulau Pinang | 2024-7-13 2025-7-12 2026-7-11 2027-7-10 | regional | MY-07 |  |  | 
+nth_weekday | Hari Jadi Yang di-Pertua Negeri Pulau Pinang | 7 2 5 | regional | MY-07 |  |  | 
 decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-07 |  |  | 
 decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-07 |  |  | 
 fixed | Cuti Awal Muharam; Cuti Hari Ulang Tahun Perisytiharan Tapak Warisan Dunia | 7 8 | regional | MY-07 |  |  | 
@@ -103,7 +103,7 @@ fixed | Tahun Baharu | 1 1 | regional | MY-07 |  |  |
 decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-08 |  |  | 
 decree | Hari Nuzul Al-Quran | 2024-3-28 2025-3-18 2026-3-7 | regional religious | MY-08 |  |  | 
 decree | Hari Thaipusam | 2024-1-25 2025-2-11 2026-2-1 2027-1-22 | regional religious | MY-08 |  |  | 
-decree | Hari Keputeraan Sultan Perak | 2024-11-1 2025-11-7 2026-11-6 2027-11-5 | regional | MY-08 |  |  | 
+nth_weekday | Hari Keputeraan Sultan Perak | 11 1 4 | regional | MY-08 |  |  | 
 fixed | Tahun Baharu | 1 1 | regional | MY-08 |  |  | 
 # MY-09
 decree | Hari Deepavali | 2024-10-31 2025-10-20 2026-11-8 2027-10-28 | regional religious | MY-09 |  |  | 
@@ -138,12 +138,12 @@ fixed | Krismas (Eve) | 12 24 | regional | MY-12 |  |  |
 easter | Good Friday | -2 | regional religious | MY-12 |  |  | 
 fixed | Tahun Baharu | 1 1 | regional | MY-12 |  |  | 
 # MY-13
-decree | Cuti Perayaan Hari Gawai Dayak | 2024-6-4 2025-6-3 | regional | MY-13 |  |  | 
-decree | Hari Jadi Yang di-Pertua Negeri Sarawak | 2024-10-12 2025-10-11 2026-10-10 2027-10-9 | regional | MY-13 |  |  | 
+nth_weekday | Cuti Perayaan Hari Gawai Dayak | 6 1 1 | regional | MY-13 |  |  | 
+nth_weekday | Hari Jadi Yang di-Pertua Negeri Sarawak | 10 2 5 | regional | MY-13 |  |  | 
 easter | Good Friday | -2 | regional religious | MY-13 |  |  | 
 fixed | Hari Kemerdekaan Sarawak | 7 22 | regional | MY-13 |  |  | 
 decree | Hari Keputeraan Rasmi Seri Paduka Baginda Yang di-Pertuan Agong | 2024-6-3 2026-6-1 2027-6-7 | regional | MY-13 |  |  | 
-decree | Hari Keputeraan Rasmi Seri Paduka Baginda Yang di-Pertuan Agong; Perayaan Hari Gawai Dayak | 2025-6-2 2026-6-1 | regional | MY-13 |  |  | 
+nth_weekday | Hari Keputeraan Rasmi Seri Paduka Baginda Yang di-Pertuan Agong; Perayaan Hari Gawai Dayak | 6 1 0 | regional | MY-13 |  |  | 
 decree | Perayaan Hari Gawai Dayak | 2024-6-1 2024-6-2 2025-6-1 2026-6-2 2027-6-1 2027-6-2 | regional | MY-13 |  |  | 
 fixed | Tahun Baharu | 1 1 | regional | MY-13 |  |  | 
 # MY-14

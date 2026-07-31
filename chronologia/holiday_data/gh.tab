@@ -27,10 +27,10 @@ fixed         | May Day                            | 5 1                 | publi
 decree        | Eid ul-Adha                        | 2024-6-16 2025-6-6 2026-5-27 2027-5-16  | public          |  |  |  || eid_al_adha
 fixed         | Founders' Day                      | 8 4                 | public          |  |  |  |
 fixed         | Kwame Nkrumah Memorial Day         | 9 21                | public          |  |  |  |
-decree        | Farmer's Day                       | 2024-12-6 2025-12-5 2026-12-4 2027-12-3 | public          |  |  |  |
+nth_weekday | Farmer's Day | 12 1 4 | public |  |  |  | 
 fixed         | Christmas Day                      | 12 25               | public          |  |  |  |
 fixed         | Boxing Day                         | 12 26               | public          |  |  |  |
 decree        | Eid ul-Adha (observed, estimated)  | 2024-6-17 2027-5-17           | public          |  |  |  |
 decree        | Founders' Day (observed)           | 2024-8-5            | public          |  |  |  |
-decree        | Kwame Nkrumah Memorial Day (observed)| 2024-9-23 2025-9-22 | public          |  |  |  |
+nth_weekday | Kwame Nkrumah Memorial Day (observed) | 9 4 0 | public |  |  |  | 
 decree        | Eid ul-Fitr (observed, estimated)  | 2025-3-31           | public          |  |  |  |

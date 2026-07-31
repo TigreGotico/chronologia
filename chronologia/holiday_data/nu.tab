@@ -27,9 +27,9 @@ fixed         | Takai Commission Holiday                 | 1 2                  
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 fixed         | ANZAC Day                                | 4 25                 | public          |  |  |  |
-decree        | King's Birthday                          | 2024-6-3 2025-6-2 2026-6-1 2027-6-7    | public          |  |  |  |
+nth_weekday | King's Birthday | 6 1 0 | public |  |  |  | 
 fixed         | Constitution Day                         | 10 19                | public          |  |  |  |
 fixed         | Constitution Day Holiday                 | 10 20                | public          |  |  |  |
-decree        | Peniamina Gospel Day                     | 2024-10-28 2025-10-27 2026-10-26 2027-10-25 | public          |  |  |  |
+nth_weekday | Peniamina Gospel Day | 10 -1 0 | public |  |  |  | 
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

@@ -27,8 +27,8 @@ fixed         | New Year's Day                           | 1 1                  
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Saturday                          | -1 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | Girmit Day                               | 2024-5-13 2025-5-12 2026-5-11 2027-5-17  | public          |  |  |  |
-decree        | Ratu Sir Lala Sukuna Day                 | 2024-5-31 2025-5-30 2026-5-29 2027-5-28  | public          |  |  |  |
+weekday_onbefore | Girmit Day | 5 17 0 | public |  |  |  | 
+nth_weekday | Ratu Sir Lala Sukuna Day | 5 -1 4 | public |  |  |  | 
 decree        | Prophet Mohammed's Birthday              | 2024-9-16 2025-9-6 2026-8-25 2027-8-14   | public          |  |  |  |
 fixed         | Fiji Day                                 | 10 10                | public          |  |  |  |
 decree        | Diwali                                   | 2024-11-1 2025-10-21 2026-11-8 2027-10-29 | public          |  |  |  |

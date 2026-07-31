@@ -29,8 +29,8 @@ fixed         | Fetin'ny asa                         | 5 1                  | pu
 easter        | Fiakaran'ny Jesosy kristy tany an-danitra | 39                   | public          |  |  |  |
 easter        | Pentekosta                           | 49                   | public          |  |  |  |
 easter        | Alatsinain'ny pentekosta             | 50                   | public          |  |  |  |
-decree        | Fetin'ny reny                        | 2024-5-26 2025-5-25 2026-5-31 2027-5-30  | public          |  |  |  |
-decree        | Fetin'ny ray                         | 2024-6-16 2025-6-15 2026-6-21 2027-6-20  | public          |  |  |  |
+nth_weekday | Fetin'ny reny | 5 -1 6 | public |  |  |  | 
+nth_weekday | Fetin'ny ray | 6 3 6 | public |  |  |  | 
 fixed         | Fetin'ny fahaleovantena              | 6 26                 | public          |  |  |  |
 fixed         | Fiakaran'ny Masina Maria tany an-danitra | 8 15                 | public          |  |  |  |
 fixed         | Fetin'ny olo-masina                  | 11 1                 | public          |  |  |  |

@@ -63,6 +63,6 @@ nth_weekday    | Summer Bank Holiday     | 8 -1 0 | public          | GB-NIR |
 #     Holiday is the last Monday of August (2024-2025 only; year extension is
 #     the concurrent branch's job).
 easter         | Easter Monday               | 1      | public          | GB-ENG |
-decree         | Late Summer Bank Holiday    | 2024-8-26 2025-8-25 2026-8-31 2027-8-30 | public | GB-ENG |
+nth_weekday | Late Summer Bank Holiday | 8 -1 0 | public | GB-ENG | 
 easter         | Easter Monday               | 1      | public          | GB-WLS |
-decree         | Late Summer Bank Holiday    | 2024-8-26 2025-8-25 2026-8-31 2027-8-30 | public | GB-WLS |
+nth_weekday | Late Summer Bank Holiday | 8 -1 0 | public | GB-WLS | 

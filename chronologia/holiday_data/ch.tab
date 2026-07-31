@@ -128,7 +128,7 @@ easter | Ostermontag | 1 | regional religious | CH-GE |
 easter | Pfingstmontag | 50 | regional religious | CH-GE | 
 easter | Karfreitag | -2 | regional religious | CH-GE | 
 fixed | Wiederherstellung der Republik | 12 31 | regional | CH-GE | 
-decree | Genfer Bettag | 2024-9-5 2025-9-11 2026-9-10 2027-9-9 | regional | CH-GE | 
+weekday_onbefore | Genfer Bettag | 9 11 3 | regional | CH-GE | 
 # CH-GL
 easter | Ostermontag | 1 | regional religious | CH-GL | 
 easter | Karfreitag | -2 | regional religious | CH-GL | 
@@ -238,7 +238,7 @@ fixed | Josefstag | 3 19 | regional | CH-UR |
 easter | Ostermontag | 1 | regional religious | CH-VD | 
 easter | Pfingstmontag | 50 | regional religious | CH-VD | 
 easter | Karfreitag | -2 | regional religious | CH-VD | 
-decree | Bettagsmontag | 2024-9-16 2025-9-22 2026-9-21 2027-9-20 | regional | CH-VD | 
+weekday_onbefore | Bettagsmontag | 9 22 0 | regional | CH-VD | 
 fixed | Berchtoldstag | 1 2 | regional | CH-VD | 
 # CH-VS
 easter | Fronleichnam | 60 | regional religious | CH-VS | 

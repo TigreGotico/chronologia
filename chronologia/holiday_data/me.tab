@@ -33,7 +33,7 @@ fixed         | Dan državnosti (2)                       | 7 14                
 fixed         | Dan državnosti (neradni dan)             | 7 15                 | public          |  |  |  |
 decree        | Njegošev dan (1)                         | 2024-11-13 2026-11-13 2027-11-13           | public          |  |  |  |
 decree        | Njegošev dan (2)                         | 2024-11-14           | public          |  |  |  |
-decree        | Njegošev dan                             | 2025-11-13 2026-11-13 2027-11-13           | public          |  |  |  |
+fixed | Njegošev dan | 11 13 | public |  |  |  | 
 
 # --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---
 # Extra non-default-category rows cross-checked against vacanza/holidays

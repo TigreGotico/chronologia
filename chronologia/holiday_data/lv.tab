@@ -29,8 +29,8 @@ easter        | Otrās Lieldienas                         | 1 gregorian         
 fixed         | Darba svētki                             | 5 1                  | public          |  |  |  |
 fixed         | Latvijas Republikas Satversmes sapulces sasaukšanas diena | 5 1                  | public          |  |  |  |
 fixed         | Latvijas Republikas Neatkarības atjaunošanas diena | 5 4                  | public          |  |  |  |
-decree        | Latvijas Republikas Neatkarības atjaunošanas diena (brīvdiena) | 2024-5-6 2025-5-5    | public          |  |  |  |
-decree        | Mātes diena                              | 2024-5-12 2025-5-11 2026-5-10 2027-5-9  | public          |  |  |  |
+nth_weekday | Latvijas Republikas Neatkarības atjaunošanas diena (brīvdiena) | 5 1 0 | public |  |  |  | 
+nth_weekday | Mātes diena | 5 2 6 | public |  |  |  | 
 easter        | Vasarsvētki                              | 49 gregorian         | public          |  |  |  |
 fixed         | Līgo diena                               | 6 23                 | public          |  |  |  |
 fixed         | Jāņu diena                               | 6 24                 | public          |  |  |  |

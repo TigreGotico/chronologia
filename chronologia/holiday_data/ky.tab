@@ -23,15 +23,15 @@
 #
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
-decree        | National Heroes Day                      | 2024-1-22 2025-1-27 2026-1-26 2027-1-25  | public          |  |  |  |
+weekday_onbefore | National Heroes Day | 1 27 0 | public |  |  |  | 
 easter        | Ash Wednesday                            | -46 gregorian        | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | Emancipation Day                         | 2024-5-6 2025-5-5 2026-5-4 2027-5-3    | public          |  |  |  |
-decree        | Discovery Day                            | 2024-5-20 2025-5-19 2026-5-18 2027-5-17  | public          |  |  |  |
-decree        | King's Birthday                          | 2024-6-17 2025-6-23 2026-6-22 2027-6-21  | public          |  |  |  |
-decree        | Constitution Day                         | 2024-7-1 2025-7-7 2026-7-6 2027-7-5    | public          |  |  |  |
-decree        | Remembrance Day                          | 2024-11-11 2025-11-10 2026-11-09 2027-11-08 | public          |  |  |  |
+nth_weekday | Emancipation Day | 5 1 0 | public |  |  |  | 
+nth_weekday | Discovery Day | 5 3 0 | public |  |  |  | 
+weekday_onbefore | King's Birthday | 6 23 0 | public |  |  |  | 
+nth_weekday | Constitution Day | 7 1 0 | public |  |  |  | 
+nth_weekday | Remembrance Day | 11 2 0 | public |  |  |  | 
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |
 decree        | General Election Day                     | 2025-4-30            | public          |  |  |  |

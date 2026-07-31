@@ -263,3 +263,47 @@ def test_composed_primary_has_the_highest_confidence(text):
     from chronologia import extract_candidates
     cs = extract_candidates(text, "en", datetime(2017, 6, 27, 13, 4))
     assert cs and cs[0].confidence == max(c.confidence for c in cs)
+
+
+# ---------------------------------------------------------------------------
+# Round 4 (han holiday-data audit): DATA-001 -- computable holidays that were
+# staged as horizon-limited decree tables used to VANISH the year after their
+# last tabulated entry.  They are now real computable rules (fixed / easter /
+# nth_weekday / weekday_onbefore), verified to reproduce every formerly-
+# tabulated date, so they extend indefinitely.
+# ---------------------------------------------------------------------------
+import pytest as _pytest
+from chronologia.civil_holidays import holidays_for, coverage
+
+
+@_pytest.mark.parametrize("cc,subdiv,name,year", [
+    ("ES", "ES-AN", "Día de Andalucía", 2027),      # fixed 2-28; horizon was 2026
+    ("ES", "ES-AN", "Día de Andalucía", 2035),
+    ("ES", "ES-CN", "Día de Canarias", 2030),        # fixed 5-30
+    ("GB", "GB-ENG", "Late Summer Bank Holiday", 2028),  # nth_weekday last-Mon-Aug
+    ("GB", "GB-ENG", "Late Summer Bank Holiday", 2040),
+])
+def test_computable_holiday_no_longer_vanishes_past_old_horizon(cc, subdiv, name, year):
+    names = {h.name for h in holidays_for(cc, year, subdiv=subdiv)}
+    assert name in names, f"{cc}/{subdiv}/{name} vanished at {year}"
+
+
+def test_converted_regional_holiday_restores_full_coverage():
+    # ES-AN carried a fixed regional holiday as a decree ending 2026; 2027 used
+    # to report coverage 'partial' (a holiday silently missing).  Now full.
+    assert coverage("ES", 2027, "ES-AN") == "full"
+
+
+def test_converted_easter_holiday_tracks_easter():
+    # Jueves Santo (Maundy Thursday) was a decree table; now easter -3.
+    from datetime import date, timedelta
+    def easter(y):
+        a=y%19;b=y//100;c=y%100;d=b//4;e=b%4;f=(b+8)//25;g=(b-f+1)//3
+        h=(19*a+b-d-g+15)%30;i=c//4;k=c%4;l=(32+2*e+2*i-h-k)%7
+        m=(a+11*h+22*l)//451;mo=(h+l-7*m+114)//31;da=((h+l-7*m+114)%31)+1
+        return date(y,mo,da)
+    for yr in (2029, 2033):
+        got = {h.name: h.date for h in holidays_for("ES", yr, subdiv="ES-AN")}
+        assert "Jueves Santo" in got
+        exp = easter(yr) - timedelta(days=3)   # Maundy Thursday
+        assert (got["Jueves Santo"].month, got["Jueves Santo"].day) == (exp.month, exp.day)
