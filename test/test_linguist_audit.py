@@ -100,6 +100,8 @@ def test_since_last_weekday_is_a_real_past_span():
     "since this friday", "since next monday",   # qualified weekday, future
     "since tomorrow",                           # now-relative day, always future
     "since 2019",                               # explicit future year
+    "since next month", "since next week",      # direction-qualified period, future
+    "since next year",
 ])
 def test_since_future_definite_endpoint_never_fabricates_year_old_span(text):
     # A DEFINITE future endpoint (qualified weekday / now-relative day / explicit
@@ -124,3 +126,32 @@ def test_since_past_or_anniversary_endpoint_opens_a_real_span(text, start, end):
     assert r is not None
     assert r[0].start_datetime.date().isoformat() == start
     assert r[0].end_datetime.date().isoformat() == end
+
+
+# --- "since A until B": a DIRECTIONAL range -- "since" past-anchors the start,
+#     "until" future-anchors the end (relative to that start), so the "since"
+#     marker is consumed rather than stranded and the span is not both-forward.
+@pytest.mark.parametrize("text,start,end,rem", [
+    # anchor Tue 2017-06-27: last Monday 06-26 through the following Friday 06-30
+    ("since monday until friday", "2017-06-26", "2017-07-01", ""),
+    # yesterday (06-26) through the Friday after it
+    ("since yesterday until friday", "2017-06-26", "2017-07-01", ""),
+    # dated: the recent-past week, NOT a year-long span -- the end is the June 12
+    # AFTER the past-anchored June 5 start, not next year's
+    ("since june 5 until june 12", "2017-06-05", "2017-06-13", ""),
+])
+def test_since_until_directional_range(text, start, end, rem):
+    r = extract_timespan(text, "en", _TUE)
+    assert r is not None
+    assert r[0].start_datetime.date().isoformat() == start
+    assert r[0].end_datetime.date().isoformat() == end
+    assert getattr(r, "remainder", "") == rem   # "since" consumed, not stranded
+
+
+def test_plain_from_to_range_stays_forward():
+    # the directional path must NOT touch a plain "from A to B": both endpoints
+    # still roll forward (next Monday .. next Friday), no past-anchoring.
+    r = extract_timespan("from monday to friday", "en", _TUE)
+    assert r is not None
+    assert r[0].start_datetime.date().isoformat() == "2017-07-03"
+    assert r[0].end_datetime.date().isoformat() == "2017-07-08"

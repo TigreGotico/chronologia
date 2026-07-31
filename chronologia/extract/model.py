@@ -164,6 +164,17 @@ class Conventions:
     # capital does not distinguish a proper noun.  A fact, not logic -- the
     # matcher reads it, mirroring the es/gl/pt bare-daypart drop for "mañana".
     daypart_proper_noun_guard: bool = False
+    # "since A until B" is a DIRECTIONAL range: "since" past-anchors the start
+    # (its most recent past occurrence) while "until" places the end at-or-after
+    # that start, so "since monday until friday" reads [last monday, next
+    # friday] rather than the both-forward [next monday, next friday] of a plain
+    # "from A to B".  Set ONLY for languages whose "since" marker is genuinely
+    # past-anchored AND distinct from the forward "from" (English "since").
+    # Left off by default because many languages spell "from" and "since" with
+    # ONE word that opens a FORWARD closed range (Persian «از», Mirandese "zde",
+    # the Romance "desde"/"de") -- there "since A until B" is an ordinary forward
+    # interval and must NOT be past-anchored.  A linguistic fact, not logic.
+    since_directional: bool = False
 
 
 @dataclass(frozen=True)

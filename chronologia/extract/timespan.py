@@ -1151,6 +1151,113 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     return span, remainder
 
 
+def _since_start(ep, sub, engine, anchor, now):
+    """The start instant of a "since <endpoint>" span, or ``None``.
+
+    "since X" is PAST-anchored: it names the most recent occurrence of X
+    at-or-before now.  A bare weekday recurs WEEKLY, so resolve it backward
+    directly (0..6 days back).  A DEFINITE endpoint -- a qualified weekday
+    ("this/next friday"), a now-relative day word ("tomorrow", "today"), or an
+    explicit year ("2019") -- names one fixed point: in the past it opens the
+    span directly, in the FUTURE it is contradictory and returns ``None``
+    (never pulled back into a point the user never named).  Only an
+    underspecified anniversary (bare "july 6", "christmas"), whose year
+    prefer_future guessed forward, is pulled back a year at a time until it
+    lands in the past.
+    """
+    spec = engine.spec
+    wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
+    if wk is not None:
+        return wk[0].start
+    if ep is None:
+        return None
+    start = ep[0].start
+    if (any(t.text in spec.weekdays for t in sub)
+            or any(t.text in spec.named_days for t in sub)
+            or any(t.text in spec.rel_markers for t in sub)
+            or any(t.text in spec.directions for t in sub)
+            or any(t.is_number and t.value is not None and t.value >= 100
+                   for t in sub)):
+        # A DEFINITE endpoint: a qualified weekday ("this/next friday"), a
+        # now-relative day ("tomorrow"), a direction-qualified period ("next
+        # month", "this year") or an explicit year ("2019").  None of these is
+        # an underspecified anniversary prefer_future flung forward, so never
+        # year-pull it: in the past it opens the span, in the future "since" it
+        # is contradictory and is refused.
+        return start if start <= now else None
+    while start > now:
+        pulled = _minus_one_year(start)
+        if pulled is None:
+            break
+        start = pulled
+    return start
+
+
+def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short"):
+    """A range whose start marker is "since" and whose end marker is "until":
+    "since monday until friday".
+
+    Distinct from a plain closed "from A to B", where both endpoints roll
+    FORWARD: here "since" past-anchors the START (its most recent past
+    occurrence) while "until" future-anchors the END, so "since monday until
+    friday" reads ``[last monday, next friday]`` rather than ``[next monday,
+    next friday]``.  Fires only on a LEADING "since" marker with a following
+    terminator, so bare "since X" (no terminator -> open since) and "from A to
+    B" (no leading since) are both untouched.
+    """
+    spec = engine.spec
+    # opt-in per locale: only languages whose "since" is genuinely past-anchored
+    # AND distinct from a forward "from" read "since A until B" directionally.
+    # Languages that spell from/since with one forward word (Persian «از»,
+    # Mirandese "zde", Romance "desde"/"de") keep the plain closed-range reading.
+    if not spec.conventions.since_directional:
+        return None
+    n = len(tokens)
+    if n < 3:
+        return None
+    now = AstroDate.from_datetime(anchor)
+    since_surf = _conn_surfaces(spec, "since", _RANGE_SINCE)
+    k = _match_conn_at(tokens, 0, since_surf)
+    if not k:
+        return None
+    to_surf = _conn_surfaces(
+        spec, "to", _RANGE_TO + tuple(spec.connectors.get("until", ())))
+    split = _first_to_split(tokens, k, to_surf, text)
+    if split is None:
+        return None
+    p, m = split
+    left_tok, right_tok = tokens[k:p], tokens[p + m:]
+    if not left_tok or not right_tok:
+        return None
+
+    def endpoint(sub, at):
+        return (_resolve_endpoint(text, sub, engine, at, scale_mode=scale_mode)
+                or _bare_weekday_endpoint(sub, engine, at))
+
+    left_ep = endpoint(left_tok, anchor)
+    start = _since_start(left_ep, left_tok, engine, anchor, now)
+    if start is None:
+        return None
+    start_dt = start.datetime()
+    if start_dt is None:
+        return None
+    # Resolve the "until" end relative to the past-anchored START, not to now:
+    # the first occurrence of the right endpoint at-or-after start.  This is
+    # what keeps "since june 5 until june 12" a recent-past week rather than
+    # letting "until june 12" roll a year forward on its own, and it is correct
+    # for every endpoint kind (a weekday lands within the week, a dated
+    # anniversary within the year).
+    right_ep = endpoint(right_tok, start_dt)
+    if right_ep is None:
+        return None
+    end = right_ep[0].end
+    if start >= end:
+        return None
+    remainder = " ".join(r for r in ((left_ep[1] if left_ep else ""),
+                                     right_ep[1]) if r).strip()
+    return DateSpan(start, end), remainder
+
+
 def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
     """An open-ended range: "until friday" (open start) / "since 2019" (open
     end).  Only fires on an ``until``/``since`` marker whose remaining tokens
@@ -1180,39 +1287,9 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             else None
 
     def since_span(ep, sub):
-        # "since X" is PAST-anchored: it names the most recent occurrence of X
-        # at-or-before now.  A bare weekday recurs WEEKLY, so resolve it backward
-        # directly (0..6 days back); anything else (a dated endpoint whose
-        # prefer_future flung it a year forward -- "since july 6" -> next July)
-        # is pulled back a year at a time until it lands in the past.
-        if ep is None:
-            return None
-        wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
-        if wk is not None:
-            start = wk[0].start
-        elif (any(t.text in spec.weekdays for t in sub)
-              or any(t.text in spec.named_days for t in sub)
-              or any(t.is_number and t.value is not None and t.value >= 100
-                     for t in sub)):
-            # A DEFINITE endpoint -- a qualified weekday ("this/next friday"), a
-            # now-relative day word ("tomorrow", "today"), or an explicit year
-            # ("2019") -- names one fixed point.  If it already sits in the past
-            # it opens the "since" span directly; if it is in the FUTURE, "since"
-            # it is contradictory, so refuse (an honest partial parse) rather
-            # than pull it back a year into a point the user never named.  Only
-            # an underspecified anniversary (bare "july 6", "christmas"), whose
-            # year prefer_future guessed forward, earns the annual pull-back.
-            start = ep[0].start
-            if start > now:
-                return None
-        else:
-            start = ep[0].start
-            while start > now:
-                pulled = _minus_one_year(start)
-                if pulled is None:
-                    break
-                start = pulled
-        return DateSpan(start, now) if start < now else None
+        start = _since_start(ep, sub, engine, anchor, now)
+        return DateSpan(start, now) if start is not None and start < now \
+            else None
 
     def lead(surf, build):
         # the marker leads; its tokens are dropped, the endpoint keeps its own
@@ -1501,6 +1578,12 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     **not** re-entered into range detection, so a pathological connector chain
     cannot exhaust the stack.  Returns ``(span, remainder)`` or ``None``.
     """
+    # a "since A until B" directional range is tried FIRST: its leading "since"
+    # would otherwise let the plain closed-range path split on "until" and roll
+    # both endpoints forward, silently dropping "since"'s past-anchoring.
+    dir_rng = _extract_directional_range(text, raw, engine, anchor, scale_mode)
+    if dir_rng is not None:
+        return dir_rng
     rng = _extract_range(text, raw, engine, anchor, scale_mode)
     if rng is not None:
         return rng
