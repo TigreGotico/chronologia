@@ -647,10 +647,19 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     got = resolve(text, sub, engine, anchor, scale_mode=scale_mode)
     if got is not None:
         span, rem = got
-        width = span.end - span.start
-        if width < timedelta(days=1):
+        try:
+            width = span.end - span.start
+            sub_day = width < timedelta(days=1)
+            day_wide = width <= timedelta(days=1)
+        except OverflowError:
+            # a deep-time endpoint (a geological epoch spanning millions of
+            # years) overflows datetime subtraction -- it is trivially a "dated"
+            # (wider-than-a-day) span, so classify it as such instead of letting
+            # the OverflowError escape the never-raise public contract.
+            sub_day = day_wide = False
+        if sub_day:
             kind = "clock"
-        elif width <= timedelta(days=1) and weekday:
+        elif day_wide and weekday:
             kind = "weekday"
         else:
             kind = "dated"

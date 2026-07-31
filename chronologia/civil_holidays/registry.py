@@ -173,7 +173,15 @@ def is_civil_holiday(date, jurisdiction: str,
     default).
     """
     point = AstroDate(date.year, date.month, date.day)
-    for holiday in holidays_for(jurisdiction, point.year, subdiv, categories):
-        if holiday.span.contains(point):
-            return True
+    # an observed shift can relocate a holiday into an ADJACENT calendar year --
+    # New Year's Day, when 1 Jan is a Saturday, is observed on 31 Dec of the
+    # PREVIOUS year (e.g. NYSE/Nasdaq closed Fri 31 Dec 2021) -- and that
+    # observance lives in the next year's bucket.  Consult the neighbouring
+    # years too, filtering by span.contains, so a cross-year shift is not a
+    # false negative.  span.contains only matches the query day, so a genuine
+    # neighbour-year holiday can never be a false positive here.
+    for y in (point.year - 1, point.year, point.year + 1):
+        for holiday in holidays_for(jurisdiction, y, subdiv, categories):
+            if holiday.span.contains(point):
+                return True
     return False

@@ -155,13 +155,22 @@ def make_fold(grammar: NumberGrammar
         """Split ``run`` at every joiner the ``bridge_ok`` gate rejects, then
         fold each segment on its own.  A rejected joiner survives as its own
         token so the clock grammar can read it as a CLOCKDIR connector."""
+        unset = object()  # "seg_val not yet computed" -- distinct from a real None
         seg = []          # tokens of the current additive number
-        seg_val = None
+        seg_val = unset
         k = 0
         m = len(run)
         while k < m:
             tok = run[k]
             if joiner(tok) and seg:
+                # seg_val is only ever READ here, at a joiner boundary, so it is
+                # computed LAZILY -- recomputing _value_of(seg) after every plain
+                # token append made a long joiner-less number-word run (untrusted
+                # input, e.g. "um um um ...") cost O(n^2): a join + full back-end
+                # re-parse of the growing prefix per token.  Now the prefix is
+                # parsed once, when a joiner actually needs its value.
+                if seg_val is unset:
+                    seg_val = _value_of(seg)
                 atom = []
                 j = k + 1
                 while j < m and not joiner(run[j]):
@@ -185,7 +194,7 @@ def make_fold(grammar: NumberGrammar
                 k = j
                 continue
             seg.append(tok)
-            seg_val = _value_of(seg)
+            seg_val = unset   # invalidate; recomputed lazily at the next joiner
             k += 1
         if seg:
             _fold_run(seg, into)
