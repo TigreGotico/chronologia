@@ -96,10 +96,31 @@ def test_since_last_weekday_is_a_real_past_span():
     assert r[0].end_datetime.date().isoformat() == "2017-06-27"
 
 
-@pytest.mark.parametrize("text", ["since this friday", "since next monday"])
-def test_since_future_qualified_weekday_never_fabricates_year_old_span(text):
-    # A qualified weekday that resolves to the FUTURE is contradictory for a
-    # "since" range.  It must NOT be pulled back a whole year (the old bug gave
-    # a ~2016 start); refuse instead, leaving at worst an honest partial parse.
+@pytest.mark.parametrize("text", [
+    "since this friday", "since next monday",   # qualified weekday, future
+    "since tomorrow",                           # now-relative day, always future
+    "since 2019",                               # explicit future year
+])
+def test_since_future_definite_endpoint_never_fabricates_year_old_span(text):
+    # A DEFINITE future endpoint (qualified weekday / now-relative day / explicit
+    # year) is contradictory for a "since" range.  It must NOT be pulled back a
+    # whole year (the old bug gave ~2016 / a 2017 pull-back); the "since" span is
+    # refused, leaving at worst an honest partial parse whose own span is never
+    # a fabricated year in the past.
     r = extract_timespan(text, "en", _TUE)
     assert r is None or r[0].start_datetime >= datetime(2017, 1, 1)
+
+
+@pytest.mark.parametrize("text,start,end", [
+    ("since yesterday", "2017-06-26", "2017-06-27"),   # past relative day
+    ("since july 6", "2016-07-06", "2017-06-27"),       # underspecified anniversary
+    ("since christmas", "2016-12-25", "2017-06-27"),    # holiday anniversary
+])
+def test_since_past_or_anniversary_endpoint_opens_a_real_span(text, start, end):
+    # The mirror of the refusal: a genuinely-past relative day opens directly,
+    # and an underspecified anniversary whose year prefer_future guessed forward
+    # is pulled back to its most recent past occurrence -- these MUST keep working.
+    r = extract_timespan(text, "en", _TUE)
+    assert r is not None
+    assert r[0].start_datetime.date().isoformat() == start
+    assert r[0].end_datetime.date().isoformat() == end

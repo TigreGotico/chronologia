@@ -1190,12 +1190,18 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
         if wk is not None:
             start = wk[0].start
-        elif any(t.text in spec.weekdays for t in sub):
-            # a QUALIFIED weekday ("this friday", "next monday"): it recurs
-            # WEEKLY, so the yearly pull-back below would fling a future
-            # occurrence ~a year into the past.  "since last friday" already
-            # sits in the past and is used as-is; "since <future weekday>" is
-            # contradictory -- refuse rather than fabricate a year-old span.
+        elif (any(t.text in spec.weekdays for t in sub)
+              or any(t.text in spec.named_days for t in sub)
+              or any(t.is_number and t.value is not None and t.value >= 100
+                     for t in sub)):
+            # A DEFINITE endpoint -- a qualified weekday ("this/next friday"), a
+            # now-relative day word ("tomorrow", "today"), or an explicit year
+            # ("2019") -- names one fixed point.  If it already sits in the past
+            # it opens the "since" span directly; if it is in the FUTURE, "since"
+            # it is contradictory, so refuse (an honest partial parse) rather
+            # than pull it back a year into a point the user never named.  Only
+            # an underspecified anniversary (bare "july 6", "christmas"), whose
+            # year prefer_future guessed forward, earns the annual pull-back.
             start = ep[0].start
             if start > now:
                 return None

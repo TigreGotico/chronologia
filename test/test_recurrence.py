@@ -631,3 +631,13 @@ def test_holiday_recurrence_unbounded_raises():
 def test_holiday_recurrence_rejects_unknown_key():
     with pytest.raises(ValueError):
         HolidayRecurrence("not_a_real_holiday")
+
+
+def test_count_zero_yields_no_occurrences():
+    """COUNT=0 is a legal value (distinct from unbounded) and means 'repeat zero
+    times' -- it must yield an empty iterator, not the one occurrence a naive
+    post-yield cutoff leaks."""
+    from chronologia.recurrence import occurrences, every
+    assert list(occurrences(every("daily", count=0), AstroDate(2024, 1, 1))) == []
+    # sanity: COUNT=1 still yields exactly one
+    assert len(list(occurrences(every("daily", count=1), AstroDate(2024, 1, 1)))) == 1
