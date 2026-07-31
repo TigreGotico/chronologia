@@ -31,7 +31,7 @@ fixed         | Labour Day                               | 5 1                  
 fixed         | Arrival Day                              | 5 5                  | public          |  |  |  |
 fixed         | Independence Day                         | 5 26                 | public          |  |  |  |
 decree        | Eid-Ul-Azha                              | 2024-6-17 2025-6-7 2026-5-28 2027-5-17   | public          |  |  |  |
-decree        | CARICOM Day                              | 2024-7-1 2025-7-7 2026-7-6 2027-7-5    | public          |  |  |  |
+nth_weekday | CARICOM Day | 7 1 0 | public |  |  |  | 
 fixed         | Emancipation Day                         | 8 1                  | public          |  |  |  |
 decree        | Youman Nabi                              | 2024-9-16 2025-9-5 2026-8-26 2027-8-15   | public          |  |  |  |
 decree        | Deepavali                                | 2024-10-31 2025-10-20 2026-11-08 2027-10-29 | public          |  |  |  |

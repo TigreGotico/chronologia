@@ -28,9 +28,9 @@ fixed         | Majority Rule Day                        | 1 10                 
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
-decree        | Randol Fawkes Labour Day                 | 2024-6-7 2025-6-6 2026-6-5 2027-6-4    | public          |  |  |  |
+nth_weekday | Randol Fawkes Labour Day | 6 1 4 | public |  |  |  | 
 fixed         | Independence Day                         | 7 10                 | public          |  |  |  |
-decree        | Emancipation Day                         | 2024-8-5 2025-8-4 2026-8-3 2027-8-2    | public          |  |  |  |
-decree        | National Heroes Day                      | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | public          |  |  |  |
+nth_weekday | Emancipation Day | 8 1 0 | public |  |  |  | 
+nth_weekday | National Heroes Day | 10 2 0 | public |  |  |  | 
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

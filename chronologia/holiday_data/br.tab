@@ -121,7 +121,7 @@ fixed | Criação do Estado | 10 5 | regional | BR-RR |
 fixed | Dia do Gaúcho | 9 20 | regional | BR-RS | 
 # BR-SC
 decree | Dia de Santa Catarina de Alexandria | 2024-12-1 2025-11-30 2026-11-29 2027-11-28 | regional religious | BR-SC | 
-decree | Dia do Estado de Santa Catarina | 2024-8-11 2025-8-17 2026-8-16 2027-8-15 | regional religious | BR-SC | 
+weekday_onbefore | Dia do Estado de Santa Catarina | 8 17 6 | regional religious | BR-SC | 
 # BR-SE
 fixed | Emancipação política de Sergipe | 7 8 | regional | BR-SE | 
 # BR-SP

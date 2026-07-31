@@ -32,8 +32,8 @@ decree        | Eid al-Adha                          | 2024-6-16 2025-6-6 2026-5
 decree        | Eid al-Adha (yizihijwe)              | 2024-6-17            | public          |  |  |  |
 fixed         | Umunsi w'Ubwigenge                   | 7 1                  | public          |  |  |  |
 fixed         | Umunsi wo Kwibohora                  | 7 4                  | public          |  |  |  |
-decree        | Umunsi w'Umuganura                   | 2024-8-2 2025-8-1 2026-8-7 2027-8-6    | public          |  |  |  |
+nth_weekday | Umunsi w'Umuganura | 8 1 4 | public |  |  |  | 
 fixed         | Ijyanwa mu Ijuru rya Bikiramariya    | 8 15                 | public          |  |  |  |
 fixed         | Noheli                               | 12 25                | public          |  |  |  |
 fixed         | Umunsi ukurikira Noheli              | 12 26                | public          |  |  |  |
-decree        | Umunsi w'Intwari (yizihijwe)         | 2025-2-3 2026-2-2             | public          |  |  |  |
+nth_weekday | Umunsi w'Intwari (yizihijwe) | 2 1 0 | public |  |  |  | 

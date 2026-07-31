@@ -43,7 +43,7 @@ fixed  | National Day                                      | 10 1 | public      
 fixed  | Christmas Day                                     | 12 25 | public religious | |  |  |
 fixed  | The first weekday after Christmas Day             | 12 26 | public religious | |  |  |
 decree | Lunar New Year                                    | 2024-2-12 2024-2-13 2025-1-29 2025-1-30 2025-1-31 | public | |  |  |
-decree | Ching Ming Festival                               | 2024-4-4 2025-4-4 | public          | |  |  |
+fixed | Ching Ming Festival | 4 4 | public |  |  |  | 
 decree | The Birthday of the Buddha                        | 2024-5-15 2025-5-5 | public religious | |  |  |
 decree | Tuen Ng Festival                                  | 2024-6-10 | public        | |  |  |
 decree | The day following the Chinese Mid-Autumn Festival | 2024-9-18 2025-10-7 | public | |  |  |

@@ -44,4 +44,4 @@ fixed       | Día de la Independencia                     | 9 16   | public    
 nth_weekday | Día de la Revolución                        | 11 3 0 | public          | |  |  |
 fixed       | Navidad                                     | 12 25  | public religious | |  |  |
 one_off     | Transmisión del Poder Ejecutivo Federal     | 2024 10 1 https://www.bmv.com.mx/en/grupo-bmv/aviso-de-dias-inhabiles | public | |  |  |
-decree      | Día del Empleado Bancario                   | 2024-12-12 2025-12-12 | public | |  |  |
+fixed | Día del Empleado Bancario | 12 12 | public |  |  |  | 

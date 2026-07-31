@@ -23,14 +23,14 @@
 #
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
-decree        | Winter Midterm Bank Holiday              | 2024-2-12 2025-2-17 2026-2-16 2027-2-15  | public          |  |  |  |
+weekday_onbefore | Winter Midterm Bank Holiday | 2 17 0 | public |  |  |  | 
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 fixed         | Workers' Memorial Day                    | 4 28                 | public          |  |  |  |
 fixed         | May Day                                  | 5 1                  | public          |  |  |  |
-decree        | Spring Bank Holiday                      | 2024-5-27 2025-5-26 2026-5-25 2027-5-31  | public          |  |  |  |
-decree        | King's Birthday                          | 2024-6-17 2025-6-16 2026-6-15 2027-6-14  | public          |  |  |  |
-decree        | Late Summer Bank Holiday                 | 2024-8-26 2025-8-25 2026-8-31 2027-8-30  | public          |  |  |  |
+nth_weekday | Spring Bank Holiday | 5 -1 0 | public |  |  |  | 
+weekday_onbefore | King's Birthday | 6 17 0 | public |  |  |  | 
+nth_weekday | Late Summer Bank Holiday | 8 -1 0 | public |  |  |  | 
 fixed         | Gibraltar National Day                   | 9 10                 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

@@ -40,6 +40,8 @@ import pytest
 
 from chronologia import AstroDate, holidays_for, load_calendar
 from chronologia.civil_holidays import (_DATA_DIR, DecreeTableRule,
+                                        NearestWeekdayRule,
+                                        NthWeekdayRule,
                                         EasterOffsetRule, FixedRule)
 from chronologia.computus import easter
 from test_holiday_golds import HOLIDAY_GOLDS, _reg
@@ -66,6 +68,13 @@ def _register_batch3_country(country):
         elif isinstance(k, DecreeTableRule):
             for (y, (m, d)) in k.dates:
                 _reg(country, None, rule.name, y, m, d)
+        elif isinstance(k, (NthWeekdayRule, NearestWeekdayRule)):
+            # computable recurrences (converted from horizon-limited decree
+            # tables in the DATA-001 fix); evaluate the rule for the same two
+            # registration years, same as every other computable kind.
+            for y in (2024, 2025):
+                for ad, _ in k.observances(y):
+                    _reg(country, None, rule.name, y, ad.month, ad.day)
         else:
             raise AssertionError(f"unexpected rule kind for {country}/{rule.name}")
 

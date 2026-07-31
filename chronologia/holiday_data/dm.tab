@@ -28,9 +28,9 @@ easter        | Carnival Monday                          | -48 gregorian        
 easter        | Carnival Tuesday                         | -47 gregorian        | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | Labour Day                               | 2024-5-6 2025-5-5 2026-5-4 2027-5-3    | public          |  |  |  |
+nth_weekday | Labour Day | 5 1 0 | public |  |  |  | 
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
-decree        | Emancipation Day                         | 2024-8-5 2025-8-4 2026-8-3 2027-8-2    | public          |  |  |  |
+nth_weekday | Emancipation Day | 8 1 0 | public |  |  |  | 
 fixed         | Independence Day                         | 11 3                 | public          |  |  |  |
 fixed         | National Day of Community Service        | 11 4                 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |

@@ -31,7 +31,7 @@ fixed         | National Heroes Day                      | 4 28                 
 fixed         | May Day                                  | 5 1                  | public          |  |  |  |
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
 fixed         | Emancipation Day                         | 8 1                  | public          |  |  |  |
-decree        | Kadooment Day                            | 2024-8-5 2025-8-4 2026-8-3 2027-8-2    | public          |  |  |  |
+nth_weekday | Kadooment Day | 8 1 0 | public |  |  |  | 
 fixed         | Independence Day                         | 11 30                | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |

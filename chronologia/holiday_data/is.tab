@@ -27,13 +27,13 @@ easter        | Skírdagur                                | -3 gregorian        
 easter        | Föstudagurinn langi                      | -2 gregorian         | public          |  |  |  |
 easter        | Páskadagur                               | 0 gregorian          | public          |  |  |  |
 easter        | Annar í páskum                           | 1 gregorian          | public          |  |  |  |
-decree        | Sumardagurinn fyrsti                     | 2024-4-25 2025-4-24 2026-4-23 2027-4-22  | public          |  |  |  |
+weekday_onbefore | Sumardagurinn fyrsti | 4 25 3 | public |  |  |  | 
 fixed         | Verkalýðsdagurinn                        | 5 1                  | public          |  |  |  |
 easter        | Uppstigningardagur                       | 39 gregorian         | public          |  |  |  |
 easter        | Hvítasunnudagur                          | 49 gregorian         | public          |  |  |  |
 easter        | Annar í hvítasunnu                       | 50 gregorian         | public          |  |  |  |
 fixed         | Þjóðhátíðardagurinn                      | 6 17                 | public          |  |  |  |
-decree        | Frídagur verslunarmanna                  | 2024-8-5 2025-8-4 2026-8-3 2027-8-2    | public          |  |  |  |
+nth_weekday | Frídagur verslunarmanna | 8 1 0 | public |  |  |  | 
 fixed         | Jóladagur                                | 12 25                | public          |  |  |  |
 fixed         | Annar í jólum                            | 12 26                | public          |  |  |  |
 

@@ -21,6 +21,6 @@ easter        | Easter Monday                          | 1 | public          |  
 fixed         | National Labour Day                     | 5 23 | public          |  |  |  |
 fixed         | Emancipation Day                       | 8 1 | public          |  |  |  |
 fixed         | Independence Day                       | 8 6 | public          |  |  |  |
-decree        | National Heroes Day                     | 2024-10-21 2025-10-20 2026-10-19 2027-10-18 | public          |  |  |  |
+nth_weekday | National Heroes Day | 10 3 0 | public |  |  |  | 
 fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
 fixed         | Boxing Day                            | 12 26 | public          |  |  |  |

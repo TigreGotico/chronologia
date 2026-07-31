@@ -23,9 +23,9 @@ fixed         | Waitangi Day                          | 2 6 | public          | 
 easter        | Good Friday                           | -2 | public          |  |  |  |
 easter        | Easter Monday                          | 1 | public          |  |  |  |
 fixed         | Anzac Day                             | 4 25 | public          |  |  |  |
-decree        | King's Birthday                        | 2024-6-3 2025-6-2 2026-6-1 2027-6-7   | public          |  |  |  |
+nth_weekday | King's Birthday | 6 1 0 | public |  |  |  | 
 decree        | Matariki                              | 2024-6-28 2025-6-20 2026-7-10 2027-6-25 | public          |  |  |  |
-decree        | Labour Day                            | 2024-10-28 2025-10-27 2026-10-26 2027-10-25 | public          |  |  |  |
+nth_weekday | Labour Day | 10 -1 0 | public |  |  |  | 
 fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
 fixed         | Boxing Day                            | 12 26 | public          |  |  |  |
 
@@ -33,24 +33,24 @@ fixed         | Boxing Day                            | 12 26 | public          
 # NZ-AUK
 decree | Auckland Anniversary Day | 2024-1-29 2025-1-27 2026-1-26 2027-2-1 | regional | NZ-AUK |  |  | 
 # NZ-CAN
-decree | Canterbury Anniversary Day | 2024-11-15 2025-11-14 2026-11-13 2027-11-12 | regional | NZ-CAN |  |  | 
+weekday_onbefore | Canterbury Anniversary Day | 11 15 4 | regional | NZ-CAN |  |  | 
 # NZ-CIT
 decree | Chatham Islands Anniversary Day | 2024-12-2 2025-12-1 2026-11-30 2027-11-29 | regional | NZ-CIT |  |  | 
 # NZ-HKB
-decree | Hawke's Bay Anniversary Day | 2024-10-25 2025-10-24 2026-10-23 2027-10-22 | regional | NZ-HKB |  |  | 
+weekday_onbefore | Hawke's Bay Anniversary Day | 10 25 4 | regional | NZ-HKB |  |  | 
 # NZ-MBH
-decree | Marlborough Anniversary Day | 2024-11-4 2025-11-3 2026-11-2 2027-11-1 | regional | NZ-MBH |  |  | 
+nth_weekday | Marlborough Anniversary Day | 11 1 0 | regional | NZ-MBH |  |  | 
 # NZ-NSN
 decree | Nelson Anniversary Day | 2024-1-29 2025-2-3 2026-2-2 2027-2-1 | regional | NZ-NSN |  |  | 
 # NZ-NTL
 decree | Auckland Anniversary Day | 2024-1-29 2025-1-27 2026-1-26 2027-2-1 | regional | NZ-NTL |  |  | 
 # NZ-OTA
-decree | Otago Anniversary Day | 2024-3-25 2025-3-24 2026-3-23 2027-3-22 | regional | NZ-OTA |  |  | 
+weekday_onbefore | Otago Anniversary Day | 3 25 0 | regional | NZ-OTA |  |  | 
 # NZ-STL
 easter | Southland Anniversary Day | 2 | regional | NZ-STL |  |  | 
 # NZ-TKI
-decree | Taranaki Anniversary Day | 2024-3-11 2025-3-10 2026-3-9 2027-3-8 | regional | NZ-TKI |  |  | 
+nth_weekday | Taranaki Anniversary Day | 3 2 0 | regional | NZ-TKI |  |  | 
 # NZ-WGN
-decree | Wellington Anniversary Day | 2024-1-22 2025-1-20 2026-1-19 2027-1-25 | regional | NZ-WGN |  |  | 
+weekday_onbefore | Wellington Anniversary Day | 1 25 0 | regional | NZ-WGN |  |  | 
 # NZ-WTC
 decree | West Coast Anniversary Day | 2024-12-2 2025-12-1 2026-11-30 2027-11-29 | regional | NZ-WTC |  |  | 

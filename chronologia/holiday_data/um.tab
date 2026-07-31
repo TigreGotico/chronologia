@@ -23,14 +23,14 @@
 #
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
-decree        | Martin Luther King Jr. Day               | 2024-1-15 2025-1-20 2026-1-19 2027-1-18  | public          |  |  |  |
-decree        | Washington's Birthday                    | 2024-2-19 2025-2-17 2026-2-16 2027-2-15  | public          |  |  |  |
-decree        | Memorial Day                             | 2024-5-27 2025-5-26 2026-5-25 2027-5-31  | public          |  |  |  |
+nth_weekday | Martin Luther King Jr. Day | 1 3 0 | public |  |  |  | 
+nth_weekday | Washington's Birthday | 2 3 0 | public |  |  |  | 
+nth_weekday | Memorial Day | 5 -1 0 | public |  |  |  | 
 fixed         | Juneteenth National Independence Day     | 6 19                 | public          |  |  |  |
 fixed         | Independence Day                         | 7 4                  | public          |  |  |  |
-decree        | Labor Day                                | 2024-9-2 2025-9-1 2026-9-7 2027-9-6    | public          |  |  |  |
+nth_weekday | Labor Day | 9 1 0 | public |  |  |  | 
 fixed         | Veterans Day                             | 11 11                | public          |  |  |  |
-decree        | Thanksgiving Day                         | 2024-11-28 2025-11-27 2026-11-26 2027-11-25 | public          |  |  |  |
+nth_weekday | Thanksgiving Day | 11 -1 3 | public |  |  |  | 
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 
 # --- vacanza/holidays 0.101 category parity (retrieved 2026-07-22) ---

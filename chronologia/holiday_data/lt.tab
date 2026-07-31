@@ -22,8 +22,8 @@ fixed         | Lietuvos nepriklausomybės atkūrimo diena    | 3 11 | public   
 easter        | Šv. Velykos                          | 0 | public          |  |  |  |
 easter        | Antroji šv. Velykų diena                 | 1 | public          |  |  |  |
 fixed         | Tarptautinė darbo diena                  | 5 1 | public          |  |  |  |
-decree        | Motinos diena                         | 2024-5-5 2025-5-4 2026-5-3 2027-5-2   | public          |  |  |  |
-decree        | Tėvo diena                           | 2024-6-2 2025-6-1 2026-6-7 2027-6-6   | public          |  |  |  |
+nth_weekday | Motinos diena | 5 1 6 | public |  |  |  | 
+nth_weekday | Tėvo diena | 6 1 6 | public |  |  |  | 
 fixed         | Rasos ir Joninių diena                   | 6 24 | public          |  |  |  |
 fixed         | Valstybės (Lietuvos karaliaus Mindaugo karūnavimo) ir Tautiškos giesmės diena | 7 6 | public          |  |  |  |
 fixed         | Žolinė (Švč. Mergelės Marijos ėmimo į dangų diena) | 8 15 | public          |  |  |  |

@@ -50,86 +50,86 @@ fixed  | Natividad del Señor             | 12 25 | public religious |  | sun_mo
 #
 # --- autonomous-community (comunidad autónoma) layer: BOE decree tables ---
 # --- Andalucía (ES-AN) ---
-decree | Día de Andalucía | 2023-2-28 2024-2-28 2025-2-28 2026-2-28 | regional | ES-AN |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-AN |
+fixed | Día de Andalucía | 2 28 | regional | ES-AN | 
+easter | Jueves Santo | -3 | regional religious | ES-AN | 
 # --- Aragón (ES-AR) ---
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-AR |
+easter | Jueves Santo | -3 | regional religious | ES-AR | 
 decree | San Jorge/Día de Aragón | 2023-4-24 2024-4-23 2025-4-23 2026-4-23 | regional religious | ES-AR |
 # --- Asturias (ES-AS) ---
 decree | Día de Asturias | 2023-9-8 2024-9-9 2025-9-8 2026-9-8 2027-9-8 | regional | ES-AS |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-AS |
+easter | Jueves Santo | -3 | regional religious | ES-AS | 
 # --- Illes Balears (ES-IB) ---
 decree | es:Día de les Illes Balears ;; ca:Dia de les Illes Balears | 2023-3-1 2024-3-1 2025-3-1 2026-3-2 2027-3-1 | regional | ES-IB |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-IB |
+easter | Jueves Santo | -3 | regional religious | ES-IB | 
 decree | Lunes de Pascua | 2023-4-10 2024-4-1 2026-4-6 2027-3-29 | regional religious | ES-IB |
-decree | San Esteban | 2025-12-26 2026-12-26 | regional religious | ES-IB |
+fixed | San Esteban | 12 26 | regional religious | ES-IB | 
 # --- Canarias (ES-CN) ---
-decree | Día de Canarias | 2023-5-30 2024-5-30 2025-5-30 2026-5-30 | regional | ES-CN |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-CN |
+fixed | Día de Canarias | 5 30 | regional | ES-CN | 
+easter | Jueves Santo | -3 | regional religious | ES-CN | 
 # --- Cantabria (ES-CB) ---
 decree | Día de las Instituciones de Cantabria | 2023-7-28 2025-7-28 2026-7-28 2027-7-28 | regional | ES-CB |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-CB |
+easter | Jueves Santo | -3 | regional religious | ES-CB | 
 decree | La Bien Aparecida | 2023-9-15 2025-9-15 2026-9-15 2027-9-15 | regional religious | ES-CB |
 decree | Lunes de Pascua | 2024-4-1 | regional religious | ES-CB |
 decree | Santiago Apóstol/Día Nacional de Galicia | 2024-7-25 | regional religious | ES-CB |
 # --- Castilla-La Mancha (ES-CM) ---
-decree | Corpus Christi | 2023-6-8 2024-5-30 2025-6-19 2026-6-4 2027-5-27 | regional religious | ES-CM |
+easter | Corpus Christi | 60 | regional religious | ES-CM | 
 decree | Día de Castilla-La Mancha | 2023-5-31 2024-5-31 2025-5-31 2027-5-31 | regional | ES-CM |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-CM |
+easter | Jueves Santo | -3 | regional religious | ES-CM | 
 decree | Lunes de Pascua | 2026-4-6 | regional religious | ES-CM |
 # --- Castilla y León (ES-CL) ---
-decree | Fiesta de Castilla y León | 2024-4-23 2025-4-23 2026-4-23 2027-4-23 | regional | ES-CL |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-CL |
+fixed | Fiesta de Castilla y León | 4 23 | regional | ES-CL | 
+easter | Jueves Santo | -3 | regional religious | ES-CL | 
 decree | Santiago Apóstol/Día Nacional de Galicia | 2023-7-25 | regional religious | ES-CL |
 # --- Cataluña (ES-CT) ---
-decree | es:Fiesta Nacional de Cataluña ;; ca:Diada Nacional de Catalunya | 2023-9-11 2024-9-11 2025-9-11 2026-9-11 2027-9-11 | regional | ES-CT |
-decree | Lunes de Pascua | 2023-4-10 2024-4-1 2025-4-21 2026-4-6 2027-3-29 | regional religious | ES-CT |
-decree | San Esteban | 2023-12-26 2024-12-26 2025-12-26 2026-12-26 | regional religious | ES-CT |
-decree | San Juan | 2023-6-24 2024-6-24 2025-6-24 2026-6-24 2027-6-24 | regional religious | ES-CT |
+fixed | es:Fiesta Nacional de Cataluña ;; ca:Diada Nacional de Catalunya | 9 11 | regional | ES-CT | 
+easter | Lunes de Pascua | 1 | regional religious | ES-CT | 
+fixed | San Esteban | 12 26 | regional religious | ES-CT | 
+fixed | San Juan | 6 24 | regional religious | ES-CT | 
 # --- Extremadura (ES-EX) ---
 decree | Día de Extremadura | 2023-9-8 2025-9-8 2026-9-8 2027-9-8 | regional | ES-EX |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-EX |
-decree | Martes de Carnaval | 2023-2-21 2024-2-13 | regional | ES-EX |
+easter | Jueves Santo | -3 | regional religious | ES-EX | 
+easter | Martes de Carnaval | -47 | regional | ES-EX | 
 # --- Galicia (ES-GA) ---
 decree | es:Día de las Letras Gallegas ;; gl:Día das Letras Galegas | 2023-5-17 2024-5-17 2025-5-17 2027-5-17 | regional | ES-GA |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-GA |
+easter | Jueves Santo | -3 | regional religious | ES-GA | 
 decree | San José | 2026-3-19 | regional religious | ES-GA |
 decree | San Juan | 2026-6-24 | regional religious | ES-GA |
-decree | Santiago Apóstol/Día Nacional de Galicia | 2023-7-25 2024-7-25 2025-7-25 2026-7-25 | regional religious | ES-GA |
+fixed | Santiago Apóstol/Día Nacional de Galicia | 7 25 | regional religious | ES-GA | 
 # --- Comunidad de Madrid (ES-MD) ---
-decree | Fiesta de la Comunidad de Madrid | 2023-5-2 2024-5-2 2025-5-2 2026-5-2 | regional | ES-MD |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-MD |
+fixed | Fiesta de la Comunidad de Madrid | 5 2 | regional | ES-MD | 
+easter | Jueves Santo | -3 | regional religious | ES-MD | 
 decree | San José | 2023-3-20 2027-3-19 | regional religious | ES-MD |
-decree | Santiago Apóstol/Día Nacional de Galicia | 2024-7-25 2025-7-25 | regional religious | ES-MD |
+fixed | Santiago Apóstol/Día Nacional de Galicia | 7 25 | regional religious | ES-MD | 
 # --- Región de Murcia (ES-MC) ---
 decree | Día de la Región de Murcia | 2023-6-9 2025-6-9 2026-6-9 2027-6-9 | regional | ES-MC |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-MC |
-decree | San José | 2024-3-19 2025-3-19 2026-3-19 2027-3-19 | regional religious | ES-MC |
+easter | Jueves Santo | -3 | regional religious | ES-MC | 
+fixed | San José | 3 19 | regional religious | ES-MC | 
 # --- C. Foral de Navarra (ES-NC) ---
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-NC |
-decree | Lunes de Pascua | 2023-4-10 2024-4-1 2025-4-21 2026-4-6 2027-3-29 | regional religious | ES-NC |
+easter | Jueves Santo | -3 | regional religious | ES-NC | 
+easter | Lunes de Pascua | 1 | regional religious | ES-NC | 
 decree | San José | 2026-3-19 | regional religious | ES-NC |
-decree | Santiago Apóstol/Día Nacional de Galicia | 2023-7-25 2024-7-25 2025-7-25 | regional religious | ES-NC |
+fixed | Santiago Apóstol/Día Nacional de Galicia | 7 25 | regional religious | ES-NC | 
 # --- País Vasco (ES-PV) ---
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-PV |
-decree | Lunes de Pascua | 2023-4-10 2024-4-1 2025-4-21 2026-4-6 2027-3-29 | regional religious | ES-PV |
-decree | San José | 2026-3-19 2027-3-19 | regional religious | ES-PV |
-decree | Santiago Apóstol/Día Nacional de Galicia | 2023-7-25 2024-7-25 2025-7-25 2026-7-25 | regional religious | ES-PV |
+easter | Jueves Santo | -3 | regional religious | ES-PV | 
+easter | Lunes de Pascua | 1 | regional religious | ES-PV | 
+fixed | San José | 3 19 | regional religious | ES-PV | 
+fixed | Santiago Apóstol/Día Nacional de Galicia | 7 25 | regional religious | ES-PV | 
 # --- La Rioja (ES-RI) ---
 decree | Día de La Rioja | 2023-6-9 2024-6-10 2025-6-9 2026-6-9 2027-6-9 | regional | ES-RI |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-RI |
-decree | Lunes de Pascua | 2023-4-10 2024-4-1 2025-4-21 2026-4-6 2027-3-29 | regional religious | ES-RI |
+easter | Jueves Santo | -3 | regional religious | ES-RI | 
+easter | Lunes de Pascua | 1 | regional religious | ES-RI | 
 # --- Comunitat Valenciana (ES-VC) ---
-decree | es:Día de la Comunitat Valenciana ;; ca:Dia de la Comunitat Valenciana | 2023-10-9 2024-10-9 2025-10-9 2026-10-9 2027-10-9 | regional | ES-VC |
-decree | Lunes de Pascua | 2023-4-10 2024-4-1 2025-4-21 2026-4-6 2027-3-29 | regional religious | ES-VC |
-decree | San José | 2024-3-19 2025-3-19 2026-3-19 2027-3-19 | regional religious | ES-VC |
-decree | San Juan | 2023-6-24 2024-6-24 2025-6-24 2026-6-24 2027-6-24 | regional religious | ES-VC |
+fixed | es:Día de la Comunitat Valenciana ;; ca:Dia de la Comunitat Valenciana | 10 9 | regional | ES-VC | 
+easter | Lunes de Pascua | 1 | regional religious | ES-VC | 
+fixed | San José | 3 19 | regional religious | ES-VC | 
+fixed | San Juan | 6 24 | regional religious | ES-VC | 
 # --- Ceuta (ES-CE) ---
 decree | Día de Ceuta | 2023-9-2 2026-9-2 2027-9-2 | regional | ES-CE |
 decree | Fiesta del Sacrificio (Aid al-Adha) | 2023-6-29 2024-6-17 2025-6-6 2026-5-27 | regional religious | ES-CE |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-CE |
-decree | Nuestra Señora de África | 2023-8-5 2024-8-5 2025-8-5 2026-8-5 2027-8-5 | regional religious | ES-CE |
+easter | Jueves Santo | -3 | regional religious | ES-CE | 
+fixed | Nuestra Señora de África | 8 5 | regional religious | ES-CE | 
 # --- Melilla (ES-ML) ---
 decree | Fiesta del Aid al-Fitr | 2023-4-21 2025-3-31 2026-3-20 | regional religious | ES-ML |
 decree | Fiesta del Sacrificio (Aid al-Adha) | 2023-6-29 2024-6-17 2025-6-6 2026-5-27 | regional religious | ES-ML |
-decree | Jueves Santo | 2023-4-6 2024-3-28 2025-4-17 2026-4-2 2027-3-25 | regional religious | ES-ML |
+easter | Jueves Santo | -3 | regional religious | ES-ML | 

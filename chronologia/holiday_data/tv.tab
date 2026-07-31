@@ -25,12 +25,12 @@
 fixed         | Tausaga Fou                              | 1 1                  | public          |  |  |  |
 easter        | Aso toe tu                               | -2 gregorian         | public          |  |  |  |
 easter        | Toe Tu aso gafua                         | 1 gregorian          | public          |  |  |  |
-decree        | Te Aso o te Tala Lei                     | 2024-5-13 2025-5-12 2026-5-11 2027-5-10  | public          |  |  |  |
-decree        | Asofanau Tupu                            | 2024-6-8 2025-6-14 2026-6-13 2027-6-12   | public          |  |  |  |
-decree        | Aso tupulaga                             | 2024-8-5 2025-8-4 2026-8-3 2027-8-2    | public          |  |  |  |
+nth_weekday | Te Aso o te Tala Lei | 5 2 0 | public |  |  |  | 
+nth_weekday | Asofanau Tupu | 6 2 5 | public |  |  |  | 
+nth_weekday | Aso tupulaga | 8 1 0 | public |  |  |  | 
 fixed         | Tutokotasi (1)                           | 10 1                 | public          |  |  |  |
 fixed         | Tutokotasi (2)                           | 10 2                 | public          |  |  |  |
-decree        | Aso Tamaliki                             | 2024-10-14 2025-10-13 2026-10-12 2027-10-11 | public          |  |  |  |
+nth_weekday | Aso Tamaliki | 10 2 0 | public |  |  |  | 
 fixed         | Kilisimasi                               | 12 25                | public          |  |  |  |
 fixed         | Aso Faipele                              | 12 26                | public          |  |  |  |
 

@@ -26,11 +26,11 @@ fixed         | New Year's Day                           | 1 1                  
 fixed         | Saint Patrick's Day                      | 3 17                 | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | Labour Day                               | 2024-5-6 2025-5-5 2026-5-4 2027-5-3    | public          |  |  |  |
+nth_weekday | Labour Day | 5 1 0 | public |  |  |  | 
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
-decree        | King's Birthday                          | 2024-6-17 2025-6-16 2026-6-15 2027-6-14  | public          |  |  |  |
-decree        | Day of Prayer and Thanksgiving           | 2024-7-10 2025-7-9 2026-7-8 2027-7-14   | public          |  |  |  |
-decree        | Emancipation Day                         | 2024-8-5 2025-8-4 2026-8-3 2027-8-2    | public          |  |  |  |
+weekday_onbefore | King's Birthday | 6 17 0 | public |  |  |  | 
+nth_weekday | Day of Prayer and Thanksgiving | 7 2 2 | public |  |  |  | 
+nth_weekday | Emancipation Day | 8 1 0 | public |  |  |  | 
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                               | 12 26                | public          |  |  |  |
 fixed         | Festival Day                             | 12 31                | public          |  |  |  |

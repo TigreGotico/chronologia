@@ -26,10 +26,10 @@
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-decree        | Labour Day                               | 2024-5-6 2025-5-5 2026-5-4 2027-5-3    | public          |  |  |  |
+nth_weekday | Labour Day | 5 1 0 | public |  |  |  | 
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
-decree        | Carnival Monday                          | 2024-8-5 2025-8-4 2026-8-3 2027-8-2    | public          |  |  |  |
-decree        | Carnival Tuesday                         | 2024-8-6 2025-8-5 2026-8-4 2027-8-3    | public          |  |  |  |
+nth_weekday | Carnival Monday | 8 1 0 | public |  |  |  | 
+nth_weekday | Carnival Tuesday | 8 1 1 | public |  |  |  | 
 fixed         | Independence Day                         | 11 1                 | public          |  |  |  |
 fixed         | Sir Vere Cornwall Bird Snr. Day          | 12 9                 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |

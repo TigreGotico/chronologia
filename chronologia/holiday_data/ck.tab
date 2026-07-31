@@ -27,8 +27,8 @@ fixed         | Day after New Year's Day                 | 1 2                  
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
 fixed         | Anzac Day                                | 4 25                 | public          |  |  |  |
-decree        | Sovereign's Birthday                     | 2024-6-3 2025-6-2 2026-6-1 2027-6-7    | public          |  |  |  |
-decree        | Ra o te Ui Ariki                         | 2024-7-5 2025-7-4 2026-7-3 2027-7-2    | public          |  |  |  |
+nth_weekday | Sovereign's Birthday | 6 1 0 | public |  |  |  | 
+nth_weekday | Ra o te Ui Ariki | 7 1 4 | public |  |  |  | 
 fixed         | Constitution Day                         | 8 4                  | public          |  |  |  |
 fixed         | Cook Islands Gospel Day                  | 10 26                | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |

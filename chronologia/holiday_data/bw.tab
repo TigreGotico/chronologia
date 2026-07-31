@@ -26,8 +26,8 @@ easter        | Easter Monday                          | 1 | public          |  
 fixed         | Labour Day                            | 5 1 | public          |  |  |  |
 easter        | Ascension Day                          | 39 | public          |  |  |  |
 fixed         | Sir Seretse Khama Day                   | 7 1 | public          |  |  |  |
-decree        | President's Day                        | 2024-7-15 2025-7-21 2026-7-20 2027-7-19 | public          |  |  |  |
-decree        | President's Day Holiday                  | 2024-7-16 2025-7-22 2026-7-21 2027-7-20 | public          |  |  |  |
+nth_weekday | President's Day | 7 3 0 | public |  |  |  | 
+weekday_onbefore | President's Day Holiday | 7 22 1 | public |  |  |  | 
 fixed         | Botswana Day                          | 9 30 | public          |  |  |  |
 fixed         | Botswana Day Holiday                    | 10 1 | public          |  |  |  |
 fixed         | Christmas Day                         | 12 25 | public          |  |  |  |

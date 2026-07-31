@@ -76,7 +76,7 @@ fixed | Dia de la memoria del Guerrero de la Independencia y Gobernador de la Pr
 fixed | Aniversario de la Batalla de Salta | 2 20 | regional | AR-A |  |  | 
 fixed | Dia de la memoria del Guerrero de la Independencia y Gobernador de la Provincia de Salta General Don Martín Miguel de Güemes | 6 17 | regional religious | AR-A |  |  | 
 decree | Festividades del Señor y de la Virgen del Milagro | 2024-9-13 2024-9-14 2024-9-15 2025-9-13 2025-9-14 2025-9-15 2026-9-13 2026-9-14 2026-9-15 2027-9-13 2027-9-14 2027-9-15 | regional religious | AR-A |  |  | 
-decree | Paso a la Inmortalidad del General Don Martín Miguel de Güemes | 2025-6-16 2026-6-15 2027-6-21 | regional | AR-A |  |  | 
+nth_weekday | Paso a la Inmortalidad del General Don Martín Miguel de Güemes | 6 3 0 | regional | AR-A |  |  | 
 # AR-D
 fixed | Día de San Luis Rey de Francia | 8 25 | regional religious | AR-D |  |  | 
 fixed | Día de la Exaltación de la Santa Cruz | 5 3 | regional religious | AR-D |  |  | 

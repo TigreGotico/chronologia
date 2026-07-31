@@ -29,7 +29,7 @@ easter        | Easter Monday                        | 1                    | pu
 fixed         | Labour Day                           | 5 1                  | public          |  |  |  |
 fixed         | Kamuzu Day                           | 5 14                 | public          |  |  |  |
 fixed         | Independence Day                     | 7 6                  | public          |  |  |  |
-decree        | Independence Day (observed)          | 2024-7-8 2025-7-7    | public          |  |  |  |
+weekday_onbefore | Independence Day (observed) | 7 8 0 | public |  |  |  | 
 fixed         | Mother's Day                         | 10 15                | public          |  |  |  |
 fixed         | Christmas Day                        | 12 25                | public          |  |  |  |
 fixed         | Boxing Day                           | 12 26                | public          |  |  |  |
