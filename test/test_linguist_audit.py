@@ -220,3 +220,24 @@ def test_plain_from_to_range_stays_forward():
     assert r is not None
     assert r[0].start_datetime.date().isoformat() == "2017-07-03"
     assert r[0].end_datetime.date().isoformat() == "2017-07-08"
+
+
+# --- extract_candidates must run the same business-day / anchored-offset /
+#     ordinal-count post-passes as extract_timespan, so the two never disagree ---
+@pytest.mark.parametrize("text", [
+    "in 5 business days",          # apply_business_days
+    "3 fridays from now",          # apply_ordinal_count
+    "5 days after christmas",      # apply_anchored_offset onto a holiday
+    "3 days before the Kalends of March",
+])
+def test_extract_candidates_agrees_with_extract_timespan_on_composed_readings(text):
+    from chronologia import extract_candidates
+    ts = extract_timespan(text, "en", _TUE)
+    cs = extract_candidates(text, "en", _TUE)
+    assert ts is not None
+    assert cs, f"{text!r}: candidates empty but a reading exists"
+    # the top candidate must be the composed reading extract_timespan returns,
+    # not the bare partial (was: [] or Christmas Day for "5 days after christmas")
+    assert cs[0].span.start == ts[0].start
+    for c in cs:
+        assert 0 < c.confidence <= 1
