@@ -529,3 +529,26 @@ def test_range_candidate_confidence_not_laundered_from_unrelated_reading():
     # the trailing unrelated ISO literal (not consumed by the range) must not
     # raise the range's own confidence
     assert op_a[0].confidence == op_c[0].confidence
+
+
+# --- R8 strftime %W off-by-one when Jan 1 is a Monday -------------------------
+def test_strftime_W_matches_stdlib_including_monday_jan1():
+    from chronologia.astrodate import AstroDate
+    from datetime import date
+    # years starting on Monday (jan1_wd==0) were one week short
+    for y in (2018, 2024, 1, 2029):
+        for (m, d) in [(1, 1), (1, 7), (1, 8), (6, 15), (12, 31)]:
+            assert AstroDate(y, m, d).strftime("%W") == date(y, m, d).strftime("%W")
+
+
+# --- R8 bare clock range with a trailing meridiem uses the am/pm fallback -----
+def test_bare_clock_range_with_meridiem_no_bogus_day_roll():
+    from chronologia import extract_timespan
+    # "9 to 5 pm" (no from/between) must read 09:00-17:00, like "from 9 to 5 pm",
+    # not borrow pm onto 9 (21:00) and roll 5pm to the next day (~20h span).
+    s, _ = extract_timespan("9 to 5 pm", "en", _A)
+    assert (s.start.hour, s.start.day) == (9, 28)
+    assert (s.end.hour, s.end.day) == (17, 28)
+    # a meridiem-less "9 to 5" stays the subtractive clock ("nine minutes to 5")
+    s2, _ = extract_timespan("9 to 5", "en", _A)
+    assert (s2.start.hour, s2.start.minute) == (4, 51)

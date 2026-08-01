@@ -525,7 +525,15 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             # endpoint ("from 9 to 5"), which must be tried *before* the
             # generic composition so a borrowed meridiem cannot roll a day.
             got = None
-            if led:
+            # an explicit lead ("from 9 to 5") OR a trailing meridiem that
+            # already frames the pair as clock times ("9 to 5 pm") licenses the
+            # bare-hour reading with its am/pm fallback, which must be tried
+            # *before* the generic composition so a borrowed meridiem cannot
+            # roll a bogus ~20h day-crossing span (9->21:00, then 5pm rolled to
+            # tomorrow).  A bare "9 to 5" with no meridiem stays the subtractive
+            # clock ("nine minutes to five"), untouched.
+            if led or _trailing_meridiem(right_tok, spec) is not None \
+                    or _trailing_meridiem(left_tok, spec) is not None:
                 got = _compose_clock_range(text, left_tok, right_tok,
                                            engine, anchor)
             if got is None:
@@ -1507,6 +1515,14 @@ def extract_timespan(
     ``anchor`` is the "now" relative phrases resolve against (default: the
     wall clock).  Only languages with locale data are supported; others
     raise :class:`NotImplementedError`.
+
+    **Time zones.** Resolution is *wall-clock*: the anchor is read as a local
+    civil time and the returned :class:`~chronologia.DateSpan` is naive.  A
+    tz-aware ``anchor`` has its ``tzinfo`` dropped (its wall-clock fields are
+    used as-is), so "tomorrow at 3pm" is 15:00 on the anchor's clock regardless
+    of zone, and a relative offset ("in 20 hours") is wall-clock arithmetic that
+    does **not** apply DST transitions.  Localize the naive result yourself if
+    you need an absolute instant.
 
     Returns a :class:`DateSpanResult` -- a ``(span, remainder)`` named tuple
     (unpack it, or read ``.span`` / ``.remainder``) -- or ``None`` when nothing
