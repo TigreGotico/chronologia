@@ -56,7 +56,7 @@ BYDAY notes) and §3.8.5.3 (the worked example corpus).  The enumerated example
 dates seed the gold test suite.
 """
 from dataclasses import dataclass, field
-from datetime import timedelta
+from datetime import date as _date, datetime as _datetime, timedelta
 from typing import Any, Dict, Iterator, Optional, Tuple, Union
 
 from chronologia.astrodate import AstroDate, DateSpan, is_leap_year
@@ -825,12 +825,19 @@ def occurrences(rec: Recurrence, dtstart, until=None,
 def _as_astro(value) -> AstroDate:
     if isinstance(value, AstroDate):
         return value
-    # date / datetime duck-typing: read the calendar fields.
-    try:
+    # A datetime carries a time-of-day that the wall-clock UNTIL comparison
+    # depends on (occurrences() compares each instant, not just its date), so it
+    # must be preserved -- dropping it read every datetime dtstart/until as
+    # midnight and let occurrences past the cutoff slip through.  A plain date
+    # has no time and stays at midnight.  (datetime is a subclass of date, so it
+    # is tested first.)
+    if isinstance(value, _datetime):
+        return AstroDate(value.year, value.month, value.day, value.hour,
+                         value.minute, value.second, value.microsecond)
+    if isinstance(value, _date):
         return AstroDate(value.year, value.month, value.day)
-    except AttributeError:
-        raise TypeError(
-            f"expected AstroDate/date/datetime, got {type(value).__name__}")
+    raise TypeError(
+        f"expected AstroDate/date/datetime, got {type(value).__name__}")
 
 
 # --------------------------------------------------------------------------
