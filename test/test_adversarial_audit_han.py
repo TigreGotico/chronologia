@@ -981,3 +981,22 @@ def test_strftime_y_directive_for_negative_year():
     # CE years unchanged
     assert AstroDate(2017, 6, 27).strftime("%y") == "17"
     assert AstroDate(5, 1, 1).strftime("%y") == "05"
+
+
+# --- R20 EC1: Russian/Ukrainian feminine "one" in compounds folds correctly --
+def test_slavic_feminine_one_compound():
+    """"двадцать одна минута" is 21 minutes: the feminine "одна" (agreeing with
+    the feminine noun минута) must be a number-run member, or the compound folds
+    to N-1 (20)."""
+    from datetime import timedelta
+    from chronologia import extract_duration
+    assert extract_duration("двадцать одна минута", "ru")[0] == timedelta(minutes=21)
+    assert extract_duration("сорок одна минута", "ru")[0] == timedelta(minutes=41)
+    assert extract_duration("сто одна минута", "ru")[0] == timedelta(minutes=101)
+    assert extract_duration("двадцать одну минуту", "ru")[0] == timedelta(minutes=21)
+    assert extract_duration("тридцять одна хвилина", "uk")[0] == timedelta(minutes=31)
+    assert extract_duration("двадцять одна хвилина", "uk")[0] == timedelta(minutes=21)
+    # unchanged: bare one, masculine compound, feminine two
+    assert extract_duration("одна минута", "ru")[0] == timedelta(minutes=1)
+    assert extract_duration("двадцать один день", "ru")[0] == timedelta(days=21)
+    assert extract_duration("двадцать две минуты", "ru")[0] == timedelta(minutes=22)

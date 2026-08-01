@@ -39,8 +39,13 @@ _EXTRA: dict = {
     "cs": {"dva", "dvě", "dvou", "tři", "čtyři"},
     "sk": {"dva", "dve", "dvoch", "tri", "štyri", "pol"},
     "pl": {"dwa", "dwie", "dwóch", "trzy", "cztery", "pół"},
-    "ru": {"два", "две", "двух", "три", "пол"},
-    "uk": {"два", "дві", "двох", "три", "пів"},
+    # "one" agrees in gender/case with its noun; the model pronounces only the
+    # masculine nominative "один"/"один", so the feminine forms (required before
+    # feminine unit nouns like минута/секунда/хвилина) never enter the run set
+    # and every compound ending in 1 folded to N-1.  Add the feminine
+    # nominative/accusative/oblique, mirroring the "два"/"две"/"двух" trio.
+    "ru": {"два", "две", "двух", "три", "пол", "одна", "одну", "одной"},
+    "uk": {"два", "дві", "двох", "три", "пів", "одна", "одну", "одної"},
     "hr": {"dva", "dvije", "tri", "pola", "pol"},
     "sl": {"dva", "dve", "tri", "pol"},
     "bg": {"два", "две", "три", "половин"},
