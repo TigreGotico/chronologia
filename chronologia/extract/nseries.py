@@ -27,7 +27,7 @@ from datetime import datetime, timedelta
 from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
-from chronologia.extract.pipeline import require_text
+from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _conn_surfaces, _exclusion_vetoes,
                                           _extract_range, _resolve_scale_mode,
@@ -828,6 +828,14 @@ class _RecurCtx:
     holidays: dict = None
     lang: str = "en-us"
     anchor: Optional[datetime] = None
+    #: the *pre-fold* token stream (numbers not yet merged across ``and``).
+    #: A finder that must see an ordinal *list* -- "first and third monday" --
+    #: reads this, because the number fold collapses that run to a single token
+    #: before any folded-stream finder sees it (the same reason range detection
+    #: reads the pre-fold stream).
+    pretokens: tuple = ()
+    #: the spec, kept so a pre-fold finder can fold a lone ordinal on its own.
+    spec: object = None
 
 
 def _recur_ctx(text, lang, anchor):
@@ -864,6 +872,8 @@ def _recur_ctx(text, lang, anchor):
         holidays=dict(spec.holidays),
         lang=lang,
         anchor=anchor,
+        pretokens=pretokens(text, spec),
+        spec=spec,
     )
     return ctx
 
@@ -929,7 +939,16 @@ def _weekday_here(ctx, tok, plural_ok):
 
 
 def _recur_nth_weekday(ctx):
-    """``<ordinal|last> <weekday> of [every] (month|<month name>)``."""
+    """``<ordinal|last> <weekday> of [every] (month|<month name>)``.
+
+    The weekday slot is either a *named* weekday ("the last friday of every
+    month" -> ``BYDAY=-1FR``) or the business-day class noun ("the last weekday
+    of every month" -> the canonical last-business-day idiom
+    ``BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1``).  The class-noun reading only fires
+    with an explicit ordinal/"last" marker and the ``of [every] month`` tail --
+    the bare "every weekday" (a plain weekly workweek) is left to
+    :func:`_recur_every`.
+    """
     t = ctx.tokens
     n = len(t)
     for w in range(1, n):
@@ -941,8 +960,9 @@ def _recur_nth_weekday(ctx):
                               or t[start0 - 1].text in ctx.every):
             start0 -= 1
         plural_ok = any(t[k].text in ctx.every for k in range(start0, li0))
-        wd = _weekday_here(ctx, t[w], plural_ok)
-        if wd is None:
+        business = t[w].text in ctx.weekday_word
+        wd = None if business else _weekday_here(ctx, t[w], plural_ok)
+        if wd is None and not business:
             continue
         li = w - 1
         ordn = None
@@ -964,10 +984,135 @@ def _recur_nth_weekday(ctx):
                              or t[start - 1].text in ctx.every):
             start -= 1
         if r < n and t[r].text in ctx.months:
-            rec = _nth_weekday_of_month(ordn, wd, month=ctx.months[t[r].text])
+            if business:
+                rec = _business_day_of_month(ordn, month=ctx.months[t[r].text])
+            else:
+                rec = _nth_weekday_of_month(ordn, wd,
+                                            month=ctx.months[t[r].text])
             return rec, set(range(start, r + 1))
         if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "month":
+            if business:
+                return _business_day_of_month(ordn), set(range(start, r + 1))
             return _nth_weekday_of_month(ordn, wd), set(range(start, r + 1))
+    return None
+
+
+def _business_day_of_month(ordn, month=None):
+    """The ``ordn``-th business day of the month as a ``BYSETPOS`` rule.
+
+    The canonical RFC 5545 idiom for "the last (or first) weekday of the
+    month": ``BYDAY=MO,TU,WE,TH,FR`` selects the workweek and ``BYSETPOS``
+    picks the ``ordn``-th of that set within each period ("last weekday" ->
+    ``BYSETPOS=-1``).  With ``month`` given it restricts to a single calendar
+    month (a yearly rule), mirroring :func:`_nth_weekday_of_month`.
+    """
+    byday = tuple((None, k) for k in range(5))  # MO..FR
+    if month is not None:
+        return _build_every("yearly", bymonth=month, byday=byday,
+                            bysetpos=(ordn,))
+    return _build_every("monthly", byday=byday, bysetpos=(ordn,))
+
+
+def _fold_group_value(ctx, group):
+    """The integer a pre-fold ordinal group folds to, or ``None``.
+
+    One list element may be one pre-fold token (spelled "first") or several (a
+    digit ordinal "1st" tokenizes as ``1`` + ``st``, the suffix a separate
+    token that only the number fold rejoins).  Folding the group's slice on its
+    own -- exactly as range detection folds a lone endpoint slice -- recovers
+    the value in both shapes.  Returns ``None`` unless the group folds to a
+    single positive integer.
+    """
+    if not group:
+        return None
+    raw = " ".join(t.raw for t in group)
+    folded = fold_tokens(tuple(group), ctx.spec, raw)
+    if len(folded) != 1 or not folded[0].is_number:
+        return None
+    val = folded[0].value
+    return int(val) if float(val) == int(val) and int(val) > 0 else None
+
+
+#: tokens that bound the ordinal region to the left of the weekday -- the frame
+#: words that can never be part of an ordinal ("of the month", a determiner,
+#: another weekday, a unit or month name).
+def _list_region_stop(ctx, tok):
+    return (tok.text in ctx.articles or tok.text in ctx.every
+            or tok.text in ctx.of_words or tok.text in ctx.on_words
+            or tok.text in ctx.weekdays or tok.text in ctx.units
+            or tok.text in ctx.months)
+
+
+def _recur_nth_weekday_list(ctx):
+    """``<ord> and <ord> [and <ord>...] <weekday> [of [every] month]``.
+
+    A *list* of ordinal weekdays -- "the first and third monday of every month"
+    -- is one BYDAY list under RFC 5545 3.3.10: ``BYDAY=1MO,3MO``.  The number
+    fold merges the ordinal run across the ``and`` connector ("first and third"
+    -> a single token ``3``) before any folded-stream finder can see the list,
+    so this finder reads the *pre-fold* stream (:attr:`_RecurCtx.pretokens`) --
+    the same workaround range detection uses -- recovers each ordinal by folding
+    its ``and``-separated group in isolation, and maps the recovered span back
+    onto the folded tokens for the consumed set.
+
+    An ordinal *list* implies the monthly nth-weekday reading whether or not the
+    "of the month" tail is present (a list cannot be an INTERVAL), so the tail
+    is optional -- consistent with the single-ordinal "the third tuesday of the
+    month" being monthly, and never fabricating the bogus INTERVAL the folded
+    stream would otherwise yield.
+    """
+    p = ctx.pretokens
+    n = len(p)
+    for w in range(1, n):
+        wd = ctx.weekdays.get(p[w].text)
+        if wd is None:
+            continue
+        # the ordinal region is the block of tokens just left of the weekday,
+        # bounded by the frame words that can never be part of an ordinal.
+        lo = w
+        while lo > 0 and not _list_region_stop(ctx, p[lo - 1]):
+            lo -= 1
+        block = p[lo:w]
+        if not block:
+            continue
+        # split the block on ``and`` into list elements, folding each group.
+        groups, cur = [], []
+        for tok in block:
+            if tok.text in ctx.and_words:
+                groups.append(cur)
+                cur = []
+            else:
+                cur.append(tok)
+        groups.append(cur)
+        vals = [_fold_group_value(ctx, g) for g in groups]
+        if len(vals) < 2 or any(v is None for v in vals):
+            continue
+        # a determiner/article run may lead into the first ordinal.
+        start = lo
+        while start > 0 and (p[start - 1].text in ctx.articles
+                             or p[start - 1].text in ctx.every):
+            start -= 1
+        # optional "of [the|every] month" tail after the weekday.
+        end = w
+        r = w + 1
+        if r < n and p[r].text in ctx.of_words:
+            m = r + 1
+            while m < n and (p[m].text in ctx.every
+                             or p[m].text in ctx.articles):
+                m += 1
+            if m < n and p[m].text in ctx.units \
+                    and ctx.units[p[m].text] == "month":
+                end = m
+        cs = p[start].char_start
+        ce = p[end].char_end
+        if cs is None or ce is None:
+            continue
+        byday = tuple((v, wd) for v in vals)
+        rec = _build_every("monthly", byday=byday)
+        consumed = {tok.index for tok in ctx.tokens
+                    if tok.char_start is not None and tok.char_end is not None
+                    and tok.char_start >= cs and tok.char_end <= ce}
+        return rec, consumed
     return None
 
 
@@ -1544,6 +1689,7 @@ def _recur_date_anchored(ctx):
 # The remaining five are mutually commutable -- their frames do not overlap --
 # so there is no precedence ranking to state here, only those two edges.  A
 # table for seven functions would invent structure that is not there.
-_FINDERS = (_recur_nth_weekday, _recur_holiday, _recur_date_anchored,
+_FINDERS = (_recur_nth_weekday_list, _recur_nth_weekday, _recur_holiday,
+            _recur_date_anchored,
             _recur_once, _recur_on_weekdays, _recur_every, _recur_freq_word,
             _recur_habitual_weekday)
