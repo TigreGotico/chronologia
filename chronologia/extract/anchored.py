@@ -559,11 +559,15 @@ def _nth_weekday_after_daymonth(tokens, spec: LangSpec, anchor) -> Optional[Pair
         # only a BARE day-of-month anchors here.  A day followed by a month
         # ("monday after 1 april") is a full calendar date the offset pass
         # already rolls the weekday onto -- leave it to that pass rather than
-        # re-reading the day as *this* month's.
+        # re-reading the day as *this* month's.  A day followed by a WEEKDAY is
+        # not a day-of-month at all but an ordinal count on that weekday ("the
+        # 2nd MONDAY"): reading its "2" as June 2 fabricated a wrong date, so
+        # bail here too and let the ordinal-weekday reading (or None) stand.
         m = k + 1
         while m < n and tokens[m].text in gap:
             m += 1
-        if m < n and tokens[m].text in spec.months:
+        if m < n and (tokens[m].text in spec.months
+                      or tokens[m].text in spec.weekdays):
             continue
         # an optional ordinal ("first"/"second" -> 1/2, folded to a digit)
         # leads the weekday; absent, the first occurrence is meant.
