@@ -769,3 +769,34 @@ def test_italian_fused_thousands_fold():
     # space-separated and bare forms unchanged
     assert extract_duration("due mila giorni", "it").duration.days == 2000
     assert extract_duration("mille giorni", "it").duration.days == 1000
+
+
+# --- R14 cross-locale ±2 relative-day idioms (missing named_day_2/-2 files) ---
+def test_cross_locale_day_after_before_idioms():
+    from chronologia import extract_timespan
+    _A2 = _A  # Tue 27 Jun 2017
+    cases = [
+        ("demà passat", "ca", 29), ("despús-demà", "ca", 29),      # +2
+        ("abans-d'ahir", "ca", 25), ("despús-ahir", "ca", 25),     # -2
+        ("pasado mañá", "gl", 29),                                 # +2
+        ("завчера", "bg", 25), ("онзи ден", "bg", 25),             # -2
+        ("kelmarin dulu", "ms", 25),                               # -2
+    ]
+    for idiom, lang, day in cases:
+        s, rem = extract_timespan(idiom, lang, _A2)
+        assert s is not None and s.start.day == day and rem == "", (idiom, lang, s)
+    # existing +/-1 forms unchanged
+    assert extract_timespan("demà", "ca", _A2)[0].start.day == 28
+    assert extract_timespan("ahir", "ca", _A2)[0].start.day == 26
+
+
+# --- R14 D1: an ordinal weekday ("2nd monday") is not mis-read as a day-of-month
+def test_nth_weekday_after_does_not_misread_ordinal_weekday_as_day():
+    from chronologia import extract_timespan
+    # "the tuesday after the 2nd monday": the old code read the "2" of "2nd
+    # monday" as June 2 and returned a fabricated date; it must not do that.
+    s, _ = extract_timespan("the tuesday after the 2nd monday", "en", _A)
+    assert not (s.start.month == 6 and s.start.day == 2)   # no bogus "day 2"
+    # genuine "weekday after the <day-of-month>" still works
+    assert extract_timespan("the monday after the 15th", "en", _A)[0].start.day == 19
+    assert extract_timespan("tuesday after april 1", "en", _A)[0].start.day == 3
