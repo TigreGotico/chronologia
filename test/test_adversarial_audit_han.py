@@ -909,3 +909,46 @@ def test_leading_fraction_scales_following_count():
     assert extract_duration("half a day", "en")[0] == timedelta(hours=12)
     assert extract_duration("a hundred days", "en")[0] == timedelta(days=100)
     assert extract_duration("three quarters of an hour", "en")[0] == timedelta(minutes=45)
+
+
+# --- R18 E1: spoken-hour meridiem for subtractive "to twelve am/pm" ----------
+def test_subtractive_to_twelve_meridiem_side_of_noon():
+    """"a quarter to twelve pm" is a quarter to NOON (11:45), not 23:45: the
+    meridiem must attach to the SPOKEN hour (12), not the value after the "to"
+    rollback decrements it to 11."""
+    from chronologia import extract_timespan
+    def hm(p):
+        r = extract_timespan(p, "en", _A); return (r.span.start.hour, r.span.start.minute)
+    assert hm("quarter to twelve pm") == (11, 45)   # quarter to noon
+    assert hm("quarter to twelve am") == (23, 45)   # quarter to midnight
+    assert hm("quarter to one pm") == (12, 45)
+    assert hm("quarter to eleven pm") == (22, 45)
+    # bare meridiem hours unchanged
+    assert hm("twelve pm") == (12, 0)
+    assert hm("twelve am") == (0, 0)
+    assert hm("half past twelve pm") == (12, 30)
+    assert hm("half past twelve am") == (0, 30)
+
+
+# --- R18 V1: business-days offset declines an unresolvable reference ---------
+def test_business_days_before_unresolved_reference_declines():
+    """"N business days before/after <X>" where <X> does not resolve must NOT
+    silently compute N business days FORWARD from the anchor (dropping the
+    marker and inverting a "before"); it declines, like the plain offset path."""
+    from chronologia import extract_timespan
+    assert extract_timespan("2 business days before new year", "en", _A) is None
+    assert extract_timespan("3 business days after new year", "en", _A) is None
+    # a resolvable reference and the bare form are unaffected
+    assert extract_timespan("2 business days before christmas", "en", _A) is not None
+    assert extract_timespan("in 3 business days", "en", _A)[0].start.day == 30
+
+
+# --- R18 DATA-002: Romania Epiphany / St John only from 2024 -----------------
+def test_romania_epiphany_only_from_2024():
+    from chronologia.civil_holidays import holidays_for
+    names_2023 = {h.name for h in holidays_for("RO", 2023)}
+    names_2024 = {h.name for h in holidays_for("RO", 2024)}
+    assert "Botezul Domnului - Boboteaza" not in names_2023
+    assert "Botezul Domnului - Boboteaza" in names_2024
+    assert "Soborul Sfântului Proroc Ioan Botezătorul" not in names_2023
+    assert "Soborul Sfântului Proroc Ioan Botezătorul" in names_2024

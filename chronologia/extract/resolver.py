@@ -1973,6 +1973,11 @@ class Resolver:
         return Resolution(DateSpan(start, end), self._consumed(match))
 
     def _clock_hms(self, match):
+        # the hour AS SPOKEN, captured before any subtractive "to"/bare-half
+        # rollback in the spelled-clock paths below; None here means the branch
+        # never rolls the hour back (digit/military clocks), so the meridiem can
+        # safely read it as the final hour (defaulted just before that block).
+        spoken_hour = None
         clock = match.slots.get("CLOCK")
         miltime = (match.slots.get("MILTIME") or match.slots.get("MILTIMEZ")
                    or match.slots.get("MILTIMENZ"))
@@ -2019,6 +2024,7 @@ class Resolver:
             # are refused rather than guessed.
             if not 1 <= quarters <= 3 or not 1 <= hour <= 12:
                 return None
+            spoken_hour = hour
             hour -= 1
             if hour == 0:
                 hour = 12
@@ -2031,6 +2037,10 @@ class Resolver:
                 hour, minute = divmod(self.spec.clock_landmarks[landmark.text], 60)
             else:
                 hour, minute = int(match.slots["HOUR"].value), 0
+            # the meridiem attaches to the spoken hour, before any subtractive
+            # "to"/bare-half rollback decrements it ("a quarter to twelve pm" is
+            # a quarter to NOON = 11:45, not 23:45).
+            spoken_hour = hour
             frac_tok = match.slots.get("FRACTION")
             min_tok = match.slots.get("MINUTE")
             dir_tok = match.slots.get("CLOCKDIR")
@@ -2091,6 +2101,10 @@ class Resolver:
                 hour += 24
         meridiem = match.slots.get("MERIDIEM")
         if meridiem is not None:
+            # digit/military clocks never roll the hour back, so their spoken
+            # hour IS the final hour.
+            if spoken_hour is None:
+                spoken_hour = hour
             if meridiem.text in self.spec.night_meridiems:
                 # NIGHT is a daypart BAND that crosses midnight, not a uniform
                 # +12 PM shift.  "the one at night" is 01:00 (not 13:00) and
@@ -2108,8 +2122,13 @@ class Resolver:
                 # hours 1..5 keep their AM value unchanged
             else:
                 off = self.spec.meridiems[meridiem.text]
-                if off == 12 and hour < 12:
-                    hour += 12
-                elif off == 0 and hour == 12:
-                    hour = 0
+                # decide the +/-12 shift from the SPOKEN hour's 12h meaning, then
+                # apply it to the (possibly rolled-back) hour, so a subtractive
+                # "to twelve pm/am" lands the right side of noon/midnight.  "pm"
+                # promotes a spoken 1..11 into the afternoon (12 pm is already
+                # noon); "am" demotes a spoken 12 (midnight) by 12 hours.
+                if off == 12 and spoken_hour < 12:
+                    hour = (hour + 12) % 24
+                elif off == 0 and spoken_hour == 12:
+                    hour = (hour - 12) % 24
         return hour, minute, second
