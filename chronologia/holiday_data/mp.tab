@@ -35,7 +35,7 @@ nth_weekday | Commonwealth Cultural Day | 10 2 0 | public |  |  |  |
 fixed         | Citizenship Day                          | 11 4                 | public          |  |  |  |
 decree        | Election Day                             | 2024-11-5 2026-11-3            | public          |  |  |  |
 fixed         | Veterans Day                             | 11 11                | public          |  |  |  |
-nth_weekday | Thanksgiving Day | 11 -1 3 | public |  |  |  | 
+nth_weekday | Thanksgiving Day | 11 4 3 | public |  |  |  | 
 fixed         | Constitution Day                         | 12 8                 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 

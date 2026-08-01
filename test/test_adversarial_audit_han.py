@@ -333,3 +333,80 @@ def test_redundant_decree_merges_category_into_computable_holiday():
     assert len(gf) == 1                       # not two rows
     assert gf[0].basis == "exact"             # strongest basis kept
     assert {"public", "unofficial"} <= gf[0].categories   # both categories kept
+
+
+# ===========================================================================
+# Round 5 (fresh-roster han audit)
+# ===========================================================================
+from datetime import datetime as _datetime
+_A = _datetime(2017, 6, 27, 13, 4)   # a Tuesday
+
+
+# --- D2: "since <weekday> <clock>" is PAST-anchored, like a bare weekday -----
+def test_since_weekday_with_clock_rolls_back_to_most_recent():
+    from chronologia import extract_timespan
+    span, rem = extract_timespan("since monday 3pm", "en", _A)
+    # most recent Monday 3pm at-or-before Tue 27 Jun 13:04 is Mon 26 Jun 15:00
+    assert (span.start.year, span.start.month, span.start.day, span.start.hour) \
+        == (2017, 6, 26, 15)
+    assert span.end.day == 27 and span.end.hour == 13          # open to "now"
+    assert rem == ""                                            # "since" consumed
+
+
+def test_since_weekday_clock_two_sided_range():
+    from chronologia import extract_timespan
+    span, rem = extract_timespan("since monday 3pm until friday 5pm", "en", _A)
+    assert (span.start.month, span.start.day, span.start.hour) == (6, 26, 15)
+    assert (span.end.month, span.end.day) == (6, 30)           # Fri 30 Jun
+    assert rem == ""
+
+
+def test_since_bare_weekday_and_qualified_weekday_unchanged():
+    from chronologia import extract_timespan
+    s1, _ = extract_timespan("since monday", "en", _A)
+    assert (s1.start.month, s1.start.day) == (6, 26)
+    s2, _ = extract_timespan("since friday 9am", "en", _A)     # Fri 23 Jun 9am
+    assert (s2.start.month, s2.start.day, s2.start.hour) == (6, 23, 9)
+
+
+# --- B1: "at <hour> o'clock" no longer strands the o'clock marker -----------
+def test_at_oclock_does_not_strand_marker_en():
+    from chronologia import extract_timespan
+    _, rem = extract_timespan("at 3 o'clock", "en", _A)
+    assert rem == ""
+    _, rem2 = extract_timespan("meet at 3 o'clock sharp", "en", _A)
+    assert "o'clock" not in rem2 and "oclock" not in rem2
+
+
+def test_at_oclock_does_not_strand_marker_de():
+    from chronologia import extract_timespan
+    _, rem = extract_timespan("morgen um 15 uhr", "de", _A)
+    assert "uhr" not in rem
+
+
+# --- Holiday rule corrections (nth-weekday, not weekday_onbefore / last) -----
+def test_holiday_nth_weekday_corrections_hold_past_divergence():
+    from chronologia.civil_holidays import holidays_for
+    import datetime as dt
+    def nth(y, m, n, wd):
+        d = dt.date(y, m, 1)
+        while d.weekday() != wd:
+            d += dt.timedelta(days=1)
+        return d + dt.timedelta(days=7 * (n - 1))
+    # KY National Heroes Day is the 4th Monday of January (Cayman statute); the
+    # US territories' Thanksgiving is the 4th Thursday of November (5 USC 6103,
+    # matching the vacanza-witnessed us.tab).  Both used to degrade past 2027 --
+    # KY to the 3rd Monday, the territories to a 5th Thursday.  (GI/MS/NF King's
+    # Birthday is deliberately NOT here: it is the Monday on/before 17 June per
+    # the vacanza reference, not the 3rd Monday.)
+    cases = [
+        ("KY", "National Heroes Day", 2030, nth(2030, 1, 4, 0)),   # 4th Mon Jan
+        ("GU", "Thanksgiving Day", 2029, nth(2029, 11, 4, 3)),     # 4th Thu Nov
+        ("VI", "Thanksgiving Day", 2035, nth(2035, 11, 4, 3)),
+        ("PR", "Thanksgiving Day", 2029, nth(2029, 11, 4, 3)),
+    ]
+    for cc, name, yr, exp in cases:
+        got = {h.name: h.date for h in holidays_for(cc, yr)}
+        assert name in got, f"{cc}/{name} {yr} missing"
+        assert (got[name].month, got[name].day) == (exp.month, exp.day), \
+            f"{cc}/{name} {yr}: {got[name]} != {exp}"

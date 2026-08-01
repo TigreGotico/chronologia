@@ -34,7 +34,7 @@ fixed         | Liberation Day (Guam)                    | 7 21                 
 nth_weekday | Labor Day | 9 1 0 | public |  |  |  | 
 fixed         | All Souls' Day                           | 11 2                 | public          |  |  |  |
 fixed         | Veterans Day                             | 11 11                | public          |  |  |  |
-nth_weekday | Thanksgiving Day | 11 -1 3 | public |  |  |  | 
+nth_weekday | Thanksgiving Day | 11 4 3 | public |  |  |  | 
 fixed         | Lady of Camarin Day                      | 12 8                 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
 

@@ -32,5 +32,5 @@ nth_weekday | Labor Day | 9 1 0 | public |  |  |  |
 fixed         | Independence Day                         | 10 1                 | public          |  |  |  |
 fixed         | United Nations Day                       | 10 24                | public          |  |  |  |
 weekday_onbefore | Family Day | 11 28 4 | public |  |  |  | 
-nth_weekday | Thanksgiving Day | 11 -1 3 | public |  |  |  | 
+nth_weekday | Thanksgiving Day | 11 4 3 | public |  |  |  | 
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
