@@ -592,3 +592,39 @@ def test_candidates_agree_on_meridiem_clock_range_top():
         cands = extract_candidates(t, "en", _A)
         assert cands and cands[0].span.start == s.start \
             and cands[0].span.end == s.end, t
+
+
+# --- R10 B2: "ramadan <Gregorian year>" is the holiday, not AH-year reckoned ---
+def test_ramadan_gregorian_year_is_holiday_not_far_future_hijri():
+    from chronologia import extract_timespan
+    # AH 2027 would be 2588 CE; the reckoned candidate is vetoed (year beyond the
+    # umm_al_qura table) so holiday_ref wins: Ramadan 2027 starts 2027-02-08.
+    s, _ = extract_timespan("ramadan 2027", "en-us", _A)
+    assert s.start.year == 2027 and s.start.month == 2
+    # genuine Hijri years still read as reckoned dates (unbounded arithmetic)
+    assert extract_timespan("ramadan 1446", "en-us", _A)[0].start.year == 2025
+    assert extract_timespan("ramadan 1000", "en-us", _A)[0].start.year == 1592
+
+
+# --- R10 Hungarian possessive day-ordinal folds ("-e"/"-én") -----------------
+def test_hungarian_possessive_day_ordinal_folds():
+    from chronologia import extract_timespan
+    for text, day in [("április tizenötödike", 15), ("április tizenötödikén", 15),
+                      ("május huszonegyedike", 21), ("március harmincegyedike", 31),
+                      ("április elseje", 1)]:
+        s, _ = extract_timespan(text, "hu", _A)
+        assert s is not None and s.start.day == day, (text, s)
+    # bare ordinal + digit forms unaffected
+    assert extract_timespan("április tizenötödik", "hu", _A)[0].start.day == 15
+
+
+# --- R10 Estonian compound tens-ordinal folds (21-29, 31) --------------------
+def test_estonian_compound_ordinal_folds():
+    from chronologia import extract_timespan
+    for text, day in [("kahekümne esimene aprill", 21),
+                      ("kahekümne üheksas mai", 29),
+                      ("kolmekümne esimene mai", 31)]:
+        s, _ = extract_timespan(text, "et", _A)
+        assert s is not None and s.start.day == day, (text, s)
+    # a bare unit ordinal is still day 1, not merged
+    assert extract_timespan("esimene aprill", "et", _A)[0].start.day == 1
