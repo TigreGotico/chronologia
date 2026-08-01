@@ -172,6 +172,7 @@ def extract_duration(
     while i < n:
         j = i
         count = None
+        frac_lead = False
         # a leading article: "a day" -> count 1; "a couple of days" -> skip it.
         if tokens[j].text in articles:
             if j + 1 < n and (tokens[j + 1].is_number
@@ -200,7 +201,7 @@ def extract_duration(
                 if count is not None and j < n and tokens[j].text in fracs:
                     count, j = count * fracs[tokens[j].text], j + 1
             elif tokens[j].text in fracs:
-                count, j = fracs[tokens[j].text], j + 1
+                count, j, frac_lead = fracs[tokens[j].text], j + 1, True
             elif tokens[j].text in spec.quantifiers:
                 count, j = spec.quantifiers[tokens[j].text], j + 1
         if count is None:
@@ -212,6 +213,26 @@ def extract_duration(
             count += add
         while j < n and tokens[j].text in filler:
             j += 1
+        # "half of a hundred days" = 0.5 * 100: a leading fraction ("half"/
+        # "quarter") may scale an explicit following count -- across the "of a"
+        # filler already skipped above -- rather than an implicit 1.  Guarded to
+        # the fraction-lead case so a plain "a hundred days" (count 1 from a
+        # number) is untouched, and "half a day" (unit directly after) is too.
+        if frac_lead and j < n:
+            scaled = _read_scale(j)
+            if scaled is not None:
+                count *= scaled[0]
+                j = scaled[1]
+                while j < n and tokens[j].text in filler:
+                    j += 1
+            elif tokens[j].is_number and tokens[j].value is not None:
+                try:
+                    count *= float(tokens[j].value)
+                    j += 1
+                except OverflowError:
+                    pass
+                while j < n and tokens[j].text in filler:
+                    j += 1
         if (j < n and tokens[j].text in spec.units
                 and spec.units[tokens[j].text] in _DUR_UNIT_SECONDS):
             unit = spec.units[tokens[j].text]
