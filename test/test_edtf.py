@@ -379,3 +379,16 @@ def test_negative_year_with_unspecified_digits_parses(s, lo, hi):
     d = parse_edtf(s)
     assert d is not None
     assert d.span.start.year == lo and d.span.end.year == hi
+
+
+@pytest.mark.parametrize("s", [
+    "2001-13-01", "2001-99-01", "2001-14-15", "2001-00-01",   # EC1: bad month in Y-M-D
+    "1985-01-01T25:00:00", "1985-01-01T00:60:00",             # EC2: bad time-of-day
+    "1985-01-01T00:00:60", "1985-01-01T00:00:00+99:00",       # EC2: bad second / offset
+    "9999-99-99T00:00:00",
+])
+def test_out_of_range_components_raise_edtf_parse_error_not_bare(s):
+    # The documented contract is EdtfParseError for malformed input; these used
+    # to leak a bare IndexError (Y-M-D month) / ValueError (datetime component).
+    with pytest.raises(EdtfParseError):
+        parse_edtf(s)
