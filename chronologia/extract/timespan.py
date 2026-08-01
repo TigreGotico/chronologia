@@ -2029,11 +2029,16 @@ def extract_candidates(
         range_kind = "open_range"
     if range_ans is not None:
         rspan, rrem = range_ans
-        # the range is at least as certain as its best-supported endpoint and,
-        # unlike the endpoints, covers the whole phrase -- so it takes the top
-        # confidence already earned on this text (a bare default when it stands
-        # alone).
-        rconf = max([c.confidence for _, c in scored], default=0.9)
+        # the range's confidence reflects ITS OWN support: the strongest
+        # endpoint reading that falls WITHIN its span -- never the strongest
+        # unrelated construction elsewhere in the text (a trailing ISO literal
+        # the range does not even consume must not launder its score in).
+        within = [c for _, c in scored
+                  if c.span.start >= rspan.start and c.span.end <= rspan.end]
+        rconf = max([c.confidence for c in within], default=0.9)
+        # drop a single candidate that resolved to the SAME span, so the
+        # identical span is not shown twice ("since 2019" and its bare year
+        # reading); endpoints strictly inside the range stay as runner-ups.
         scored = [(rk, c) for rk, c in scored
                   if not (c.span.start == rspan.start
                           and c.span.end == rspan.end)]
