@@ -865,3 +865,19 @@ def test_ical_allday_until_is_date_only():
     assert "RRULE:FREQ=DAILY;UNTIL=20170705\r\n" in ics or \
            "RRULE:FREQ=DAILY;UNTIL=20170705" in ics
     assert "UNTIL=20170705T000000" not in ics
+
+
+# --- R17 E1: leading fraction scales an explicit following count -------------
+def test_leading_fraction_scales_following_count():
+    """"half of a hundred days" is 0.5*100 = 50 days, not the full 100 with the
+    fraction silently dropped into the remainder."""
+    from datetime import timedelta
+    from chronologia import extract_duration
+    assert extract_duration("half of a hundred days", "en")[0] == timedelta(days=50)
+    assert extract_duration("quarter of two hundred days", "en")[0] == timedelta(days=50)
+    assert extract_duration("half of two hundred minutes", "en")[0] == timedelta(minutes=100)
+    assert extract_duration("half of one thousand days", "en")[0] == timedelta(days=500)
+    # the plain / unit-adjacent forms are unchanged
+    assert extract_duration("half a day", "en")[0] == timedelta(hours=12)
+    assert extract_duration("a hundred days", "en")[0] == timedelta(days=100)
+    assert extract_duration("three quarters of an hour", "en")[0] == timedelta(minutes=45)
