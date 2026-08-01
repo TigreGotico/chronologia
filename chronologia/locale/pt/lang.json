@@ -94,6 +94,11 @@
         "HOLIDAY"
       ]
     },
+    "solar_event": {
+      "orders": [
+        "article? EVENT of SEASON YEAR?"
+      ]
+    },
     "fuzzy_period": {
       "orders": [
         "article? PART of? article? UNIT",
