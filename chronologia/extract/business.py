@@ -181,6 +181,26 @@ def _dom_ref(tokens, p: int, spec: LangSpec, anchor: datetime
     return value, p + 1
 
 
+def _has_dir_marker(tokens, hi: int, spec: LangSpec, gap) -> bool:
+    """Whether an ``after``/``before`` directional marker sits just past ``hi``
+    (modulo an article/of gap), regardless of whether its reference resolves.
+
+    Distinguishes a bare "in N business days" (no marker -> anchor-relative
+    fallback is right) from "N business days before <X>" whose reference failed
+    to resolve (a marker IS present -> declining is right, not guessing forward
+    from the anchor)."""
+    k = hi
+    while k < len(tokens) and tokens[k].text in gap:
+        k += 1
+    surfaces = (spec.connectors.get("after", frozenset())
+                | spec.connectors.get("before", frozenset()))
+    for surface in surfaces:
+        w = surface.split()
+        if [t.text for t in tokens[k:k + len(w)]] == w:
+            return True
+    return False
+
+
 def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
               gap, anchor: datetime, resolve_ref=None
               ) -> Optional[Tuple[datetime, int, int, Set[int]]]:
@@ -329,6 +349,14 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
         if ref is not None:
             base, sign, end, claimed = ref
             claimed = claimed | set(range(start, hi))
+        elif _has_dir_marker(tokens, hi, spec, gap):
+            # "N business days before/after <X>" was written but <X> did not
+            # resolve (e.g. a holiday special-cased outside `resolved`).  Decline
+            # rather than silently computing N business days FORWARD from the
+            # anchor -- that drops the marker, inverts a "before", and fabricates
+            # an unrelated date.  The plain (non-business) offset path already
+            # returns None for the same input; match it.
+            continue
         else:
             base, sign, end = anchor, 1, hi
             claimed = set(range(start, hi))
