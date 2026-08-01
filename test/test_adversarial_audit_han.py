@@ -800,3 +800,18 @@ def test_nth_weekday_after_does_not_misread_ordinal_weekday_as_day():
     # genuine "weekday after the <day-of-month>" still works
     assert extract_timespan("the monday after the 15th", "en", _A)[0].start.day == 19
     assert extract_timespan("tuesday after april 1", "en", _A)[0].start.day == 3
+
+
+# --- R15 D3: "the last N days of X" is not the ordinal Nth day ----------------
+def test_last_n_days_of_scope_not_misread_as_ordinal_day():
+    from chronologia import extract_timespan
+    # a rel-marker before a scoped-ordinal means the number is a COUNT, not the
+    # ordinal day-of-month; "the last two days of the month" must not return the
+    # 2nd day (June 2).
+    s = extract_timespan("the last two days of the month", "en", _A)
+    assert s is None or not (s[0].start.month == 6 and s[0].start.day == 2)
+    # legitimate scoped-ordinal readings are unaffected
+    assert extract_timespan("the last day of the month", "en", _A)[0].start.day == 30
+    assert extract_timespan("the 2nd day of the month", "en", _A)[0].start.day == 2
+    assert extract_timespan("the last friday of june", "en", _A)[0].start.day == 30
+    assert extract_timespan("last saturday of february 2016", "en", _A)[0].start.day == 27
