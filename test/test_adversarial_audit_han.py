@@ -413,13 +413,16 @@ def test_holiday_nth_weekday_corrections_hold_past_divergence():
 
 
 # --- R6 duration: unfolded scale-number tail, and folded-fraction additive ---
-def test_duration_scale_tail_is_not_silently_truncated():
-    # "one thousand five hundred hours" folds to [1, thousand, 500, hours];
-    # reading the trailing 500 as the count would answer 500h for 1500h, so the
-    # phrase is left unread (honest None) rather than silently truncated.
+def test_duration_scale_tail_is_composed_not_truncated():
+    # "one thousand five hundred hours" folds to [1, thousand, 500, hours]; the
+    # thousand-scale word is withheld from the generic fold (deep-time frame) but
+    # a fixed-width duration has no deep-time reading, so it is composed to the
+    # true 1500h -- not the truncated 500h, and not honest-None.
     from chronologia import extract_duration
-    assert extract_duration("one thousand five hundred hours", "en-us") is None
-    assert extract_duration("two thousand five hundred minutes", "en-us") is None
+    assert extract_duration("one thousand five hundred hours", "en-us") \
+        .duration.total_seconds() == 1500 * 3600
+    assert extract_duration("two thousand five hundred minutes", "en-us") \
+        .duration.total_seconds() == 2500 * 60
     # legit hundred-scale counts are unaffected
     assert extract_duration("five hundred hours", "en-us").duration.total_seconds() \
         == 500 * 3600
@@ -666,3 +669,26 @@ def test_bare_clock_range_with_trailing_weekday_scopes_both_endpoints():
     assert (s2.start.day, s2.start.hour) == (3, 9)
     s3, _ = extract_timespan("9am to 5pm", "en", _A)
     assert (s3.start.month, s3.start.day) == (6, 28)   # anchor's own next day
+
+
+# --- R11 numfold thousand-scale: composed to the TRUE value, az no bogus span -
+def test_thousand_scale_duration_is_composed_across_locales():
+    from chronologia import extract_duration, extract_timespan
+    from datetime import datetime
+    r = datetime(2017, 6, 27, 13, 4)
+    # a spelled thousand-scale word is withheld from the generic fold (deep-time
+    # frame) but a fixed-width duration composes it: "bin beş yüz gün" = 1500,
+    # "mil e quinhentos dias" = 1500 -- the true value, not the truncated 500.
+    assert extract_duration("bin beş yüz gün önce", "tr").duration.days == 1500
+    assert extract_duration("mil e quinhentos dias atrás", "pt").duration.days == 1500
+    assert extract_duration("mil días", "es").duration.days == 1000
+    assert extract_duration("dois mil dias", "pt").duration.days == 2000
+    assert extract_duration("iki min gün əvvəl", "az").duration.days == 2000
+    # small durations are unaffected
+    assert extract_duration("3 gün önce", "tr").duration.days == 3
+    assert extract_duration("há 3 dias", "pt").duration.days == 3
+    # az "il əvvəl" (year + bare "ago" postposition) must NOT fabricate a span;
+    # the locative early-of-year form still resolves.
+    assert extract_timespan("il əvvəl", "az", r) is None
+    assert extract_timespan("min il əvvəl", "az", r) is None
+    assert extract_timespan("il əvvəlində", "az", r) is not None

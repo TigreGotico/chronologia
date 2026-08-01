@@ -114,6 +114,38 @@ def extract_duration(
     filler = articles | of_words
     n = len(tokens)
 
+    def _read_scale(k):
+        """A thousand-scale count at ``k`` -> ``(value, end)`` or ``None``.
+
+        The spelled thousand words ("mil", "bin", "thousand") are withheld from
+        the generic number fold because they head the deep-time frame ("mil
+        milhões de anos"), so a duration count built on one is not folded for us.
+        A fixed-width duration has no deep-time reading, so compose it here:
+        ``mil`` = 1000, ``dois mil`` = 2000, ``mil e quinhentos`` = 1500,
+        ``bin beş yüz`` = 1500 (an optional leading multiplier, the scale word,
+        then an optional trailing hundreds chunk across an optional connector).
+        """
+        j = k
+        mult = None
+        if j < n and tokens[j].is_number:
+            try:
+                mult = float(tokens[j].value)
+            except (TypeError, ValueError, OverflowError):
+                return None
+            j += 1
+        if j >= n or tokens[j].text not in spec.scales:
+            return None
+        val = (mult if mult is not None else 1.0) * spec.scales[tokens[j].text]
+        j += 1
+        end = j + 1 if j < n and tokens[j].text in and_words else j
+        if end < n and tokens[end].is_number:
+            try:
+                val += float(tokens[end].value)
+                j = end + 1
+            except (TypeError, ValueError, OverflowError):
+                pass
+        return val, j
+
     def _read_additive(k):
         """`` and a half`` / `` and a quarter`` at index ``k`` -> (frac, end)."""
         j = k
@@ -148,19 +180,12 @@ def extract_duration(
             else:
                 count, j = 1.0, j + 1
         if count is None and j < n:
-            if tokens[j].is_number and j > 0 and tokens[j - 1].text in spec.scales:
-                # A scale word the folder left unfolded (thousand/million/... --
-                # the deep-time SCALE frame) sitting immediately before this
-                # count means the count is only the TAIL of a larger spelled
-                # number: "one thousand five hundred hours" folds to
-                # [1, thousand, 500, hours], and reading the 500 would silently
-                # answer 500 h for 1500 h.  Treat the token as non-numeric so
-                # the phrase is left unread -- the honest "I can't express this"
-                # rather than a wrong partial (cf. the digit-run overflow guard
-                # below).
-                i = max(i + 1, j)
-                continue
-            if tokens[j].is_number:
+            # a thousand-scale count ("mil e quinhentos dias" = 1500 days) --
+            # composed here because the fold withholds the scale word (below).
+            scaled = _read_scale(j)
+            if scaled is not None:
+                count, j = scaled
+            elif tokens[j].is_number:
                 # A digit run hundreds of characters long folds to an int no
                 # C double can hold ("1" * 400): float() itself overflows
                 # before a unit is even matched.  Such a count names no real
