@@ -48,7 +48,7 @@ def _make_fold(lang: str, extra_values: Dict[str, float] | None = None,
         pron = getattr(mod, "pronounce_number_" + lang)
         extract = getattr(mod, "extract_number_" + lang)
         words = set()
-        for n in range(0, 100):
+        for n in range(0, 101):
             try:
                 for w in str(pron(n)).lower().replace("-", " ").split():
                     words.add(w)
