@@ -73,6 +73,17 @@ def _romance_numwords(vocab, blacklist):
                   vocab.ORDINAL_UNITS, vocab.ORDINAL_TENS,
                   vocab.ORDINAL_HUNDREDS):
         words.update(v.lower() for v in table.values() if v)
+    # Feminine hundreds ("duzentas", "quinhentas", "quinientas") -- the vocab's
+    # HUNDREDS are masculine-only and GENDERED_SPELLINGS covers just 1/2, but
+    # 200-900 in pt/es/gl regularly agree -os -> -as with a feminine unit
+    # ("quinhentas horas").  The backend already parses the feminine surface;
+    # this is a pure surface-set gap.  "cem"/"cien"/"cen" (100) is invariable
+    # and does not end in "-os", so it is untouched; other Romance hundreds
+    # (ca "dos-cents", it "cento", ro "sute", fr "cent") do not end in "-os".
+    for v in vocab.HUNDREDS.values():
+        s = (v or "").lower()
+        if s.endswith("os"):
+            words.add(s[:-2] + "as")
     words.update(k.lower() for k in vocab.ALT_SPELLINGS)
     for gmap in vocab.GENDERED_SPELLINGS.values():
         words.update(v.lower() for v in gmap.values() if v)
@@ -924,8 +935,38 @@ _fold_it_base = _romance_prepass_fold(
     phrases=_IT_PHRASES)
 
 
+def _split_it_fused_mila(tokens):
+    """Split Italian's fused round-thousand spelling ("duemila", "diecimila")
+    into the multiplier and the scale particle ("due"/"dieci", "mila"), so the
+    existing ``[NUM] mila`` composition in ``nseries._read_scale`` binds it
+    exactly as it already binds the space-separated "due mila".  The prefix is
+    validated through ``extract_number_it`` itself -- not a hand-listed table --
+    so it generalises to every multiplier the backend understands and cannot
+    mis-split an unrelated word (the only Italian surface ending in "mila" is
+    the bare scale word "mila", excluded here)."""
+    from ovos_number_parser.numbers_it import extract_number_it
+    out = []
+    changed = False
+    for t in tokens:
+        if not t.is_number and t.text.endswith("mila") and t.text != "mila":
+            prefix = t.text[:-4]
+            val = extract_number_it(prefix, ordinals=False) if prefix else False
+            if isinstance(val, (int, float)) and val:
+                cs, ce = t.char_start, t.char_end
+                p_end = cs + len(prefix) if cs is not None else None
+                m_start = ce - 4 if ce is not None else None
+                out.append(Token(text=prefix, raw=prefix, index=0,
+                                 char_start=cs, char_end=p_end))
+                out.append(Token(text="mila", raw="mila", index=0,
+                                 char_start=m_start, char_end=ce))
+                changed = True
+                continue
+        out.append(t)
+    return _reindex(tuple(out)) if changed else tokens
+
+
 def fold_it(tokens):
-    return _license_it_prima(_fold_it_base(tokens))
+    return _license_it_prima(_fold_it_base(_split_it_fused_mila(tokens)))
 
 
 # deep-time SCALE-frame licensing: "un miliardo/un bilione di anni fa"

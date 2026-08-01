@@ -105,6 +105,11 @@ def _check_ical_year(a: AstroDate) -> None:
 
 
 def _fmt_date(a: AstroDate) -> str:
+    # All-day (VALUE=DATE) events are floating by RFC 5545: they carry no time
+    # and no zone.  A tz-aware all-day span's offset is therefore dropped -- and
+    # deliberately NOT normalised to UTC the way a timed instant is, since a UTC
+    # shift could move the whole day (2024-03-01 00:00+05:00 is still the
+    # "1 March" all-day event, not 29 February).  The calendar day is preserved.
     _check_ical_year(a)
     return f"{a.year:04d}{a.month:02d}{a.day:02d}"
 
