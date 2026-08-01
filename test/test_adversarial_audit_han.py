@@ -692,3 +692,36 @@ def test_thousand_scale_duration_is_composed_across_locales():
     assert extract_timespan("il əvvəl", "az", r) is None
     assert extract_timespan("min il əvvəl", "az", r) is None
     assert extract_timespan("il əvvəlində", "az", r) is not None
+
+
+# --- R12 broad sweep + calendars ---------------------------------------------
+def test_spanish_pasado_manana_is_day_after_tomorrow():
+    from chronologia import extract_timespan
+    # "pasado mañana" = day after tomorrow (2017-06-29 from Tue 27 Jun), NOT
+    # parsed as "pasado"(last)+"mañana"(morning) = yesterday morning.
+    s, _ = extract_timespan("pasado mañana", "es", _A)
+    assert (s.start.month, s.start.day) == (6, 29)
+    # the daypart/marker uses of the same words are unaffected
+    assert extract_timespan("esta mañana", "es", _A)[0].start.hour == 6
+    assert extract_timespan("el mes pasado", "es", _A)[0].start.month == 5
+
+
+def test_arabic_baad_azzuhr_composes_pm_clock():
+    from chronologia import extract_timespan
+    # "الساعة الثالثة بعد الظهر" = 3 PM (today 15:00, still future vs 13:04), not
+    # 3 AM tomorrow with the PM marker stranded.
+    s, rem = extract_timespan("الساعة الثالثة بعد الظهر", "ar", _A)
+    assert (s.start.day, s.start.hour) == (27, 15) and "بعد" not in rem
+    # bare afternoon daypart band is unchanged
+    b, _ = extract_timespan("بعد الظهر", "ar", _A)
+    assert (b.start.hour, b.end.hour) == (12, 18)
+
+
+def test_saka_era_matches_canonical_gregorian_correspondence():
+    from chronologia.eras import resolve_era
+    from datetime import date
+    # Gregorian = Saka + 78 (Saka 1879 = 22 Mar 1957, the adoption epoch);
+    # Chaitra 1 shifts to 21 March in a Gregorian leap year.
+    assert resolve_era("saka", 1879) == date(1957, 3, 22)
+    assert resolve_era("saka", 1947) == date(2025, 3, 22)     # common year
+    assert resolve_era("saka", 1946) == date(2024, 3, 21)     # leap year -> 21

@@ -126,6 +126,10 @@ class Era:
     #: from R.D. 1 = 0001-01-01 (proleptic Gregorian), the Lilian date from
     #: L.D. 1 = 1582-10-15 (the Gregorian reform day).
     day_epoch_jdn: Optional[int] = None
+    #: the new-year (month, day) shifts one day EARLIER in a Gregorian leap
+    #: year.  The reformed Saka (Indian national) calendar's Chaitra 1 is
+    #: 22 March in a common year and 21 March in a Gregorian leap year.
+    leap_shifts_new_year: bool = False
 
 
 # The (month, day) at which a calendar's year begins in ITS OWN numbering,
@@ -279,10 +283,12 @@ ERAS = {
     # -37.  (Wikipedia, "Spanish era".)
     "spanish_era": Era("spanish_era", AstroDate(-37, 1, 1)),
     # Saka era (Indian national calendar): the reformed calendar is a tropical
-    # SOLAR calendar, Gregorian-year-aligned, whose new year Chaitra 1 is fixed
-    # at 22 March (21 March in Gregorian leap years); year 1 = 78-03-22.
+    # SOLAR calendar, Gregorian-year-aligned, whose new year Chaitra 1 is
+    # 22 March (21 March in Gregorian leap years).  Gregorian = Saka + 78 (Saka
+    # 1879 = 22 March 1957, the adoption epoch; the current Saka 1946 began 2024),
+    # so era year 1 = 79-03-22 in the year-1-based YEARS_SINCE counting.
     # (Wikipedia, "Indian national calendar".)
-    "saka": Era("saka", AstroDate(78, 3, 22)),
+    "saka": Era("saka", AstroDate(79, 3, 22), leap_shifts_new_year=True),
     # Discordian era: YOLD = CE + 1166, and the Discordian year is aligned to
     # the Gregorian one (five 73-day seasons begin 1 January, St. Tib's Day as
     # the leap day), so year 1 = 1166 BC = astronomical -1165 on 1 January is
@@ -587,5 +593,8 @@ def resolve_era(era: Union[str, Era], value: Union[int, float]
     # solar/Gregorian-aligned eras are registered as offsets (lunisolar eras,
     # whose year drifts against the Gregorian year, are NOT — they would need
     # their own calendar in calendars.py).
-    result = AstroDate(year, era.epoch.month, era.epoch.day)
+    day = era.epoch.day
+    if era.leap_shifts_new_year and is_leap_year(year):
+        day -= 1
+    result = AstroDate(year, era.epoch.month, day)
     return _warn_if_past_heat_death(result.date() or result)

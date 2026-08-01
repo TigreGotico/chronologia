@@ -237,7 +237,7 @@ GOLD_ERA_EPOCHS = {
     "assyrian": AstroDate(-4749, 4, 1),          # Kha b-Nisan, 1 April
     "anno_lucis": AstroDate(-3999, 1, 1),
     "spanish_era": AstroDate(-37, 1, 1),
-    "saka": date(78, 3, 22),                     # Chaitra 1
+    "saka": date(79, 3, 22),                     # Chaitra 1 (year 1 = 79 CE)
     "discordian": AstroDate(-1165, 1, 1),
     "positivist": date(1789, 1, 1),
     "rattanakosin": date(1782, 4, 6),            # founding of Bangkok
@@ -283,7 +283,7 @@ class TestEraGoldEpochs(unittest.TestCase):
     def test_offset_eras_use_true_civil_new_year(self):
         # not a lazy 1 January: each begins at its cited civil new-year and the
         # next era year is exactly one Gregorian year later (fixed offset)
-        self.assertEqual(resolve_era("saka", 1949), date(2026, 3, 22))
+        self.assertEqual(resolve_era("saka", 1949), date(2027, 3, 22))
         self.assertEqual(resolve_era("assyrian", 6776), date(2026, 4, 1))
         self.assertEqual(resolve_era("era_fascista", 104), date(2025, 10, 28))
         self.assertEqual(resolve_era("rattanakosin", 245), date(2026, 4, 6))
