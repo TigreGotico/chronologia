@@ -815,3 +815,53 @@ def test_last_n_days_of_scope_not_misread_as_ordinal_day():
     assert extract_timespan("the 2nd day of the month", "en", _A)[0].start.day == 2
     assert extract_timespan("the last friday of june", "en", _A)[0].start.day == 30
     assert extract_timespan("last saturday of february 2016", "en", _A)[0].start.day == 27
+
+
+# --- R16: adversarial wave 16 -----------------------------------------------
+def test_scoped_century_bc_ad_keeps_era_under_part():
+    """"the mid 5th century BC" must stay on the BC axis, not silently drop the
+    era word and return a positive-year AD span."""
+    from chronologia import extract_timespan
+    early = extract_timespan("the early 5th century BC", "en", _A)
+    assert early[0].start.year == -499 and early[0].end.year == -466
+    assert early.remainder == ""                       # "BC" consumed
+    late = extract_timespan("the late 2nd century BC", "en", _A)
+    assert late[0].start.year == -132 and late[0].end.year == -99
+    ad = extract_timespan("the mid 5th century AD", "en", _A)
+    assert ad[0].start.year == 433 and ad.remainder == ""
+    # plain (part-less) scoped BC/AD unchanged
+    plain = extract_timespan("5th century BC", "en", _A)
+    assert plain[0].start.year == -499 and plain[0].end.year == -399
+
+
+def test_french_plural_weekday_recurrence():
+    """"tous les lundis" (the standard French "every Monday") must read WEEKLY,
+    not fall through to a spurious YEARLY-on-a-month reading."""
+    from chronologia import extract_recurrence
+    r = extract_recurrence("tous les lundis", "fr", _A)
+    assert r is not None and r[0].to_string() == "FREQ=WEEKLY;BYDAY=MO"
+    # bounded with the French "jusqu'en <month>" until-marker
+    b = extract_recurrence("tous les lundis jusqu'en août", "fr", _A)
+    assert b is not None
+    assert b[0].to_string() == "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO"
+    # the yearly-date reading ("tous les 10 mai") must still win where meant
+    y = extract_recurrence("tous les 10 mai", "fr", _A)
+    assert y[0].to_string() == "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10"
+
+
+def test_ical_allday_until_is_date_only():
+    """RFC 5545 3.3.10: an all-day (VALUE=DATE) event's RRULE UNTIL must be a
+    bare DATE, matching DTSTART -- not a DATE-TIME."""
+    from datetime import datetime
+    from chronologia import to_ical
+    from chronologia.events import Event
+    from chronologia.astrodate import AstroDate, DateSpan
+    from chronologia.recurrence import every
+    span = DateSpan(AstroDate(2017, 6, 27), AstroDate(2017, 6, 28))
+    ev = Event(summary="Standup", span=span, duration=None,
+               recurrence=every("daily", until=AstroDate(2017, 7, 5)))
+    ics = to_ical(ev)
+    assert "DTSTART;VALUE=DATE:20170627" in ics
+    assert "RRULE:FREQ=DAILY;UNTIL=20170705\r\n" in ics or \
+           "RRULE:FREQ=DAILY;UNTIL=20170705" in ics
+    assert "UNTIL=20170705T000000" not in ics

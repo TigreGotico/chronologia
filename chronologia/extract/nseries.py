@@ -1245,8 +1245,22 @@ def _recur_every(ctx):
         if t[j].text in ctx.weekend_word:
             return (_build_every("weekly", byday=_weekend_byday(ctx), **iv),
                     set(range(i, j + 1)))
-        if t[j].text in ctx.weekdays:
-            days, end = _collect_weekdays(ctx, j, True)
+        # A derived weekday plural ("tous les lundis", "todas as segundas") is
+        # licensed here: this is already the "every"-determiner frame, so the
+        # same positional licence _recur_nth_weekday uses applies, and the guard
+        # goes through _weekday_here (which strips the -s) rather than the bare
+        # weekday dict -- otherwise the plural is invisible and the phrase
+        # silently misreads (French "tous les lundis ..." fell through to a
+        # YEARLY date reading).  The plural is licensed ONLY for the plain
+        # "every <weekday>" frame (no ordinal count): a tail-less ordinal plus a
+        # plural weekday ("todos os terceiros domingos") stays deliberately
+        # ambiguous per #217 and must fall through to None, so when a count was
+        # read the strict bare-dict check applies (the singular still gets its
+        # interval reading, the plural is left unread).
+        allow_plural = num_val is None
+        if (t[j].text in ctx.weekdays
+                or (allow_plural and _weekday_here(ctx, t[j], True) is not None)):
+            days, end = _collect_weekdays(ctx, j, allow_plural)
             byday = tuple((None, wd) for wd in days)
             return (_build_every("weekly", byday=byday, **iv),
                     set(range(i, end)))
@@ -1469,7 +1483,8 @@ def _recur_date_anchored(ctx):
             gap = t[j:m.span[0]]
             if len(gap) <= 2 and all(
                     g.text in ctx.articles
-                    or (not g.is_number and g.text not in ctx.weekdays
+                    or (not g.is_number
+                        and _weekday_here(ctx, g, True) is None
                         and g.text not in ctx.units and g.text not in ctx.every)
                     for g in gap):
                 dm = m

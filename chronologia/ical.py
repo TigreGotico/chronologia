@@ -40,6 +40,7 @@ broken input (no ``VEVENT``, no ``DTSTART``, an unparhseable value).
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Union
 
@@ -194,6 +195,12 @@ def to_ical(obj: Union[Event, DateSpan, Recurrence, HolidayRecurrence]) -> str:
     if event.recurrence is not None:
         # HolidayRecurrence.to_string() raises for movable feasts -- propagate.
         rrule = event.recurrence.to_string()
+        # RFC 5545 3.3.10: UNTIL MUST share DTSTART's value type.  For an
+        # all-day (VALUE=DATE) event the RRULE's canonical UNTIL still carries
+        # the midnight time suffix (the recurrence string form always does);
+        # drop it here so the emitted UNTIL is a bare DATE, matching DTSTART.
+        if _is_all_day(event.span):
+            rrule = re.sub(r"(UNTIL=\d{8})T\d{6}Z?", r"\1", rrule)
 
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", f"PRODID:{_PRODID}",
              "BEGIN:VEVENT",
