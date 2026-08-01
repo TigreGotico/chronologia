@@ -648,3 +648,21 @@ def test_occurrences_datetime_dtstart_keeps_time_for_until_cutoff():
                            datetime(2017, 6, 27, 20, 0, 0),
                            until=datetime(2017, 6, 29, 5, 0, 0)))
     assert len(occ) == 2   # 06-29 20:00 is after the 05:00 cutoff -> excluded
+
+
+# --- R11 timespan: a trailing weekday on the RIGHT range endpoint scopes both -
+def test_bare_clock_range_with_trailing_weekday_scopes_both_endpoints():
+    from chronologia import extract_timespan
+    # "9am to 5pm on monday": the Monday on the right endpoint applies to the
+    # left bare clock too -- Monday 09:00-17:00, not a ~6-day span from the
+    # anchor's day to Monday.
+    for t in ["9am to 5pm on monday", "9am to 5pm monday",
+              "from 9am to 5pm on monday"]:
+        s, _ = extract_timespan(t, "en", _A)
+        assert (s.start.month, s.start.day, s.start.hour) == (7, 3, 9), t
+        assert (s.end.month, s.end.day, s.end.hour) == (7, 3, 17), t
+    # the mirror (weekday on the left) and plain clock ranges are unchanged
+    s2, _ = extract_timespan("monday 9am to 5pm", "en", _A)
+    assert (s2.start.day, s2.start.hour) == (3, 9)
+    s3, _ = extract_timespan("9am to 5pm", "en", _A)
+    assert (s3.start.month, s3.start.day) == (6, 28)   # anchor's own next day

@@ -1123,7 +1123,25 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # one interval is read on one clock: a zone named on a single endpoint
     # governs both, so the two ends stay comparable (see _align_awareness).
     left_span, right_span = _align_awareness(left[0], right[0])
-    start = left_span.start
+    # A date on the RIGHT endpoint ("9am to 5pm ON MONDAY") scopes the whole
+    # pair -- the mirror of "MONDAY 9am to 5pm" (date on the left, already
+    # handled by the roll-into-the-left's-cycle below).  A "5pm on monday"
+    # endpoint resolves to a sub-day span, so it is classified "clock" and its
+    # Monday would otherwise be ignored while the bare LEFT clock ("9am") landed
+    # on the anchor's own day, fabricating a multi-day span.  When the right
+    # carries a weekday/month and the left is a bare dateless clock, place the
+    # left clock on the right's day.
+    right_dated = any(t.text in spec.weekdays for t in right_tok) \
+        or any(t.text in spec.months for t in right_tok)
+    left_bare_clock = left[2] == "clock" \
+        and not any(t.text in spec.weekdays for t in left_tok) \
+        and not any(t.text in spec.months for t in left_tok)
+    if right_dated and left_bare_clock:
+        rs, ls = right_span.start, left_span.start
+        start = AstroDate(rs.year, rs.month, rs.day, ls.hour, ls.minute,
+                          ls.second, ls.microsecond)
+    else:
+        start = left_span.start
     # roll a cyclic right endpoint forward into the same cycle as the start; a
     # dated endpoint already carries its year, so it is left untouched.  The
     # roll is arithmetic (see _roll_after): the cycle count is chosen by the
