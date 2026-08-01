@@ -628,3 +628,23 @@ def test_estonian_compound_ordinal_folds():
         assert s is not None and s.start.day == day, (text, s)
     # a bare unit ordinal is still day 1, not merged
     assert extract_timespan("esimene aprill", "et", _A)[0].start.day == 1
+
+
+# --- R11 recurrence: occurrences() preserves a datetime's time-of-day --------
+def test_occurrences_datetime_dtstart_keeps_time_for_until_cutoff():
+    from datetime import datetime
+    from chronologia.recurrence import parse_rrule, occurrences
+    from chronologia.astrodate import AstroDate
+    rec = parse_rrule("FREQ=DAILY;UNTIL=20170627T000000")
+    # a 23:00 dtstart is AFTER the 00:00 wall-clock cutoff, so it is excluded --
+    # and a datetime input must behave identically to the AstroDate input (the
+    # time-of-day used to be silently dropped to midnight for datetimes).
+    dt = list(occurrences(rec, datetime(2017, 6, 27, 23, 0, 0)))
+    ad = list(occurrences(rec, AstroDate(2017, 6, 27, 23, 0, 0)))
+    assert dt == ad == []
+    # a call-level until= override honours the time-of-day too
+    from chronologia.recurrence import every
+    occ = list(occurrences(every("daily", count=100),
+                           datetime(2017, 6, 27, 20, 0, 0),
+                           until=datetime(2017, 6, 29, 5, 0, 0)))
+    assert len(occ) == 2   # 06-29 20:00 is after the 05:00 cutoff -> excluded
