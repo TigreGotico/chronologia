@@ -952,3 +952,32 @@ def test_romania_epiphany_only_from_2024():
     assert "Botezul Domnului - Boboteaza" in names_2024
     assert "Soborul Sfântului Proroc Ioan Botezătorul" not in names_2023
     assert "Soborul Sfântului Proroc Ioan Botezătorul" in names_2024
+
+
+# --- R19: EDTF reversed interval must raise, not accept a zero-width span ----
+def test_edtf_reversed_interval_raises():
+    """A reversed EDTF interval ("2004-01/2003-12") is malformed per ISO 8601-2
+    and must raise EdtfParseError -- not silently return a zero-width span at the
+    later endpoint (the off-by-one the non-strict DateSpan guard let through)."""
+    import pytest as _pytest
+    from chronologia.edtf import parse_edtf, EdtfParseError
+    for s in ("2004-01/2003-12", "2004-01-01/2003-12-31", "2005/2004-12",
+              "1985/1980"):
+        with _pytest.raises(EdtfParseError):
+            parse_edtf(s)
+    # valid intervals (ascending, equal, qualified) are unaffected
+    assert parse_edtf("2004-01/2004-03").span.start.month == 1
+    assert parse_edtf("2004/2004").span.start.year == 2004
+    assert parse_edtf("1984?/2004").span.start.year == 1984
+
+
+# --- R19 B1: %y for a BCE/negative year is the magnitude's last two digits ---
+def test_strftime_y_directive_for_negative_year():
+    """AstroDate.strftime('%y') must give the last two digits of the year
+    magnitude, not Python's negative-modulo artifact (-44 %% 100 == 56)."""
+    from chronologia.astrodate import AstroDate
+    assert AstroDate(-44, 3, 15).strftime("%y") == "44"
+    assert AstroDate(-1, 1, 1).strftime("%y") == "01"
+    # CE years unchanged
+    assert AstroDate(2017, 6, 27).strftime("%y") == "17"
+    assert AstroDate(5, 1, 1).strftime("%y") == "05"

@@ -424,7 +424,12 @@ class AstroDate:
             elif code == "Y":
                 out.append(self._year_field())
             elif code == "y":
-                out.append(f"{self.year % 100:02d}")
+                # last two digits of the year MAGNITUDE: Python's % on a
+                # negative year returns the wrong two-digit value (-44 % 100 ==
+                # 56), silently corrupting %y for BCE/proleptic years this type
+                # exists to carry.  abs() gives the intended digits (|-44| -> 44)
+                # and is identical for CE years.
+                out.append(f"{abs(self.year) % 100:02d}")
             elif code == "m":
                 out.append(f"{self.month:02d}")
             elif code == "d":
