@@ -481,3 +481,51 @@ def test_extract_candidates_surfaces_range_readings_as_primary():
         assert (cands[0].span.start == span.start
                 and cands[0].span.end == span.end), \
             f"{t}: top candidate disagrees with extract_timespan"
+
+
+# --- R7 iCal timezone (E1): a tz-aware instant serializes as UTC+Z, not floating
+def test_ical_serializes_tzaware_as_utc_z_not_floating():
+    from chronologia.astrodate import AstroDate, DateSpan
+    from chronologia.ical import to_ical, from_ical
+    from datetime import timezone, timedelta
+    a = AstroDate(2024, 6, 1, 10, 30, 0, tzinfo=timezone(timedelta(hours=5)))
+    b = AstroDate(2024, 6, 1, 12, 30, 0, tzinfo=timezone(timedelta(hours=5)))
+    lines = to_ical(DateSpan(a, b))
+    # +05:00 10:30 is 05:30 UTC, written with a trailing Z (not floating)
+    assert "DTSTART:20240601T053000Z" in lines
+    # round-trip preserves the instant AND the UTC zone
+    ev = from_ical(lines)
+    assert ev.span.start.hour == 5 and ev.span.start.tzinfo is not None
+    assert ev.span.start.utcoffset().total_seconds() == 0
+    # a naive AstroDate stays floating (no Z)
+    naive = to_ical(DateSpan(AstroDate(2024, 6, 1, 10, 30, 0),
+                             AstroDate(2024, 6, 1, 11, 0, 0)))
+    assert "DTSTART:20240601T103000" in naive and "103000Z" not in naive
+
+
+# --- R7 Niue Peniamina Gospel Day (nth/last class) = 4th Monday of October -----
+def test_niue_peniamina_gospel_day_is_fourth_monday():
+    from chronologia.civil_holidays import holidays_for
+    import datetime as dt
+    for yr in (2028, 2029, 2035):
+        d = dt.date(yr, 10, 1)
+        while d.weekday() != 0:
+            d += dt.timedelta(days=1)
+        fourth = d + dt.timedelta(days=21)
+        got = [h.date for h in holidays_for("NU", yr)
+               if h.name == "Peniamina Gospel Day"]
+        assert got and (got[0].month, got[0].day) == (fourth.month, fourth.day)
+
+
+# --- R7 range candidate confidence (D1): not laundered from unrelated text -----
+def test_range_candidate_confidence_not_laundered_from_unrelated_reading():
+    from chronologia.extract import extract_candidates
+    alone = extract_candidates("since monday", "en", _A)
+    carried = extract_candidates(
+        "since monday, exactly 2020-06-15T10:00:00", "en", _A)
+    op_a = [c for c in alone if c.construction == "open_range"]
+    op_c = [c for c in carried if c.construction == "open_range"]
+    assert op_a and op_c
+    # the trailing unrelated ISO literal (not consumed by the range) must not
+    # raise the range's own confidence
+    assert op_a[0].confidence == op_c[0].confidence

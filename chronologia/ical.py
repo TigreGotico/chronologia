@@ -40,7 +40,7 @@ broken input (no ``VEVENT``, no ``DTSTART``, an unparhseable value).
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Union
 
 from chronologia.astrodate import AstroDate, DateSpan
@@ -110,9 +110,17 @@ def _fmt_date(a: AstroDate) -> str:
 
 
 def _fmt_datetime(a: AstroDate) -> str:
-    _check_ical_year(a)
+    # A tz-aware instant must NOT be written as a floating local time (RFC 5545
+    # §3.3.5): that silently re-reads as a different wall clock in every other
+    # zone.  Normalise any offset to UTC and emit the trailing "Z"; a naive
+    # AstroDate stays floating (no suffix), as before.
+    zulu = ""
+    if a.tzinfo is not None:
+        a = a.astimezone(timezone.utc)
+        zulu = "Z"
+    _check_ical_year(a)   # the UTC shift can cross a year boundary
     return (f"{a.year:04d}{a.month:02d}{a.day:02d}"
-            f"T{a.hour:02d}{a.minute:02d}{a.second:02d}")
+            f"T{a.hour:02d}{a.minute:02d}{a.second:02d}{zulu}")
 
 
 def _is_all_day(span: DateSpan) -> bool:
@@ -228,7 +236,9 @@ def _unfold(text: str) -> list:
 def _parse_ical_value(value: str, is_date: bool) -> AstroDate:
     """Parse a ``DATE`` (``YYYYMMDD``) or ``DATE-TIME`` (``YYYYMMDDTHHMMSS`` with
     an optional trailing ``Z``) into an :class:`AstroDate` (naive/floating)."""
-    v = value.strip().rstrip("Zz")
+    raw = value.strip()
+    is_utc = raw[-1:] in ("Z", "z")   # trailing Z marks a UTC DATE-TIME
+    v = raw.rstrip("Zz")
     date_part, _, time_part = v.partition("T")
     if len(date_part) != 8 or not date_part.isdigit():
         raise ValueError(f"malformed iCal date: {value!r}")
@@ -238,7 +248,8 @@ def _parse_ical_value(value: str, is_date: bool) -> AstroDate:
     if len(time_part) != 6 or not time_part.isdigit():
         raise ValueError(f"malformed iCal time: {value!r}")
     return AstroDate(y, mo, d, int(time_part[:2]), int(time_part[2:4]),
-                     int(time_part[4:6]))
+                     int(time_part[4:6]),
+                     tzinfo=timezone.utc if is_utc else None)
 
 
 def _split_property(line: str):
