@@ -123,6 +123,14 @@ def extract_duration(
                 j += 1
             if j < n and tokens[j].text in fracs:
                 return fracs[tokens[j].text], j + 1
+            # A fraction the folder already turned into a numeric token (German
+            # "eine halbe" -> 0.5) is invisible to the surface-word lookup
+            # above, so "eine Stunde und eine halbe" would drop the half.  Read
+            # a folded proper fraction (0 < value < 1) here too, matching the
+            # English "... and a half" idiom across the inflecting languages.
+            if (j < n and tokens[j].is_number and tokens[j].value is not None
+                    and 0 < tokens[j].value < 1):
+                return float(tokens[j].value), j + 1
         return None, k
 
     total = 0.0
@@ -140,6 +148,18 @@ def extract_duration(
             else:
                 count, j = 1.0, j + 1
         if count is None and j < n:
+            if tokens[j].is_number and j > 0 and tokens[j - 1].text in spec.scales:
+                # A scale word the folder left unfolded (thousand/million/... --
+                # the deep-time SCALE frame) sitting immediately before this
+                # count means the count is only the TAIL of a larger spelled
+                # number: "one thousand five hundred hours" folds to
+                # [1, thousand, 500, hours], and reading the 500 would silently
+                # answer 500 h for 1500 h.  Treat the token as non-numeric so
+                # the phrase is left unread -- the honest "I can't express this"
+                # rather than a wrong partial (cf. the digit-run overflow guard
+                # below).
+                i = max(i + 1, j)
+                continue
             if tokens[j].is_number:
                 # A digit run hundreds of characters long folds to an int no
                 # C double can hold ("1" * 400): float() itself overflows

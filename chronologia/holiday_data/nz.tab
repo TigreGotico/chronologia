@@ -25,7 +25,7 @@ easter        | Easter Monday                          | 1 | public          |  
 fixed         | Anzac Day                             | 4 25 | public          |  |  |  |
 nth_weekday | King's Birthday | 6 1 0 | public |  |  |  | 
 decree        | Matariki                              | 2024-6-28 2025-6-20 2026-7-10 2027-6-25 | public          |  |  |  |
-nth_weekday | Labour Day | 10 -1 0 | public |  |  |  | 
+nth_weekday | Labour Day | 10 4 0 | public |  |  |  | 
 fixed         | Christmas Day                         | 12 25 | public          |  |  |  |
 fixed         | Boxing Day                            | 12 26 | public          |  |  |  |
 

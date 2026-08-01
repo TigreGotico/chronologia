@@ -2010,5 +2010,34 @@ def extract_candidates(
                 0 if is_composed else 1, match.span[0], -match.length)
         scored.append((rank, Candidate(res.value, remainder, conf,
                                        match.construction)))
+    # Range and open-range readings ("june 5 to june 12", "between monday and
+    # friday", "since 2019", "until friday") are composed by _resolve_span the
+    # same way extract_timespan resolves them, but the matcher core never
+    # enumerates them -- so without this the ranked candidates omit
+    # extract_timespan's own answer entirely and top-rank a stray single-
+    # endpoint reading instead.  Detect the range on the SAME pre-fold stream
+    # extract_timespan uses and surface it as the PRIMARY candidate (rank 0),
+    # dropping any single candidate whose span the range subsumes so the same
+    # span is not shown twice.
+    raw = pretokens(text, engine.spec)
+    range_ans = _extract_directional_range(text, raw, engine, anchor,
+                                           scale_mode) \
+        or _extract_range(text, raw, engine, anchor, scale_mode)
+    range_kind = "date_range"
+    if range_ans is None:
+        range_ans = _extract_open_range(text, raw, engine, anchor, scale_mode)
+        range_kind = "open_range"
+    if range_ans is not None:
+        rspan, rrem = range_ans
+        # the range is at least as certain as its best-supported endpoint and,
+        # unlike the endpoints, covers the whole phrase -- so it takes the top
+        # confidence already earned on this text (a bare default when it stands
+        # alone).
+        rconf = max([c.confidence for _, c in scored], default=0.9)
+        scored = [(rk, c) for rk, c in scored
+                  if not (c.span.start == rspan.start
+                          and c.span.end == rspan.end)]
+        scored.append(((0, -rconf, 0, 0, -len(tokens)),
+                       Candidate(rspan, rrem, rconf, range_kind)))
     scored.sort(key=lambda e: e[0])
     return [c for _, c in scored[:limit]]
