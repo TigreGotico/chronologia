@@ -115,12 +115,12 @@
     },
     "scoped_bc": {
       "orders": [
-        "article? ORD SCOPE_UNIT bc"
+        "article? PART? ORD SCOPE_UNIT bc"
       ]
     },
     "scoped_ad": {
       "orders": [
-        "article? ORD SCOPE_UNIT ad"
+        "article? PART? ORD SCOPE_UNIT ad"
       ]
     },
     "decade_bc": {

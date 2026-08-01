@@ -1336,7 +1336,21 @@ class Resolver:
         n = int(match.slots["ORD"].value)
         kind = self._scope_kind(match.slots["SCOPE_UNIT"])
         value = get_date_ordinal(n, resolution=_ABSOLUTE[kind])
+        part_tok = match.slots.get("PART")
+        if part_tok is not None:                    # "the mid 3rd century AD"
+            return self._scoped_part(value, kind, part_tok, match)
         return self._ordinal_result(value, kind, match)
+
+    def _scoped_part(self, value, kind, part_tok, match):
+        """Narrow an absolute scoped period to its early/mid/late third,
+        interior cuts snapped to whole years (shared by the AD and BC axes)."""
+        from chronologia import subdivide
+        start = value if isinstance(value, AstroDate) \
+            else AstroDate.from_date(value)
+        whole = DateSpan(start, _unit_end(start, kind))
+        span = subdivide(whole, self.spec.period_parts[part_tok.text],
+                         snap="year")
+        return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     def _resolve_scoped_bc(self, match, anchor):
         """"Nth SCOPE bc/bce": a scoped period on the *BC axis*.
@@ -1355,6 +1369,15 @@ class Resolver:
         length = self._SCOPE_YEARS[kind]
         start = self._as_astro(resolve_era("before_christ", length * n))
         end = self._as_astro(resolve_era("before_christ", length * (n - 1)))
+        part_tok = match.slots.get("PART")
+        if part_tok is not None:                    # "the early 5th century BC"
+            from chronologia import subdivide
+            # "early" is chronologically-first (the oldest years); subdivide by
+            # wall-time gives that -- the earlier third sits at the span start.
+            span = subdivide(DateSpan(start, end),
+                             self.spec.period_parts[part_tok.text], snap="year")
+            return Resolution(DateSpan(span.start, span.end),
+                              self._consumed(match))
         return Resolution(DateSpan(start, end), self._consumed(match))
 
     def _resolve_decade_bc(self, match, anchor):
