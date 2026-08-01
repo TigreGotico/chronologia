@@ -443,7 +443,13 @@ class AstroDate:
             elif code == "W":
                 doy = self.toordinal() - AstroDate(self.year, 1, 1).toordinal() + 1
                 jan1_wd = AstroDate(self.year, 1, 1).weekday()
-                out.append(f"{(doy + jan1_wd - 1) // 7:02d}")
+                # Week 01 is the first week with a Monday; days before that
+                # first Monday are week 00 (POSIX/glibc %W, matching stdlib).
+                # The old `(doy + jan1_wd - 1)//7` was one week short whenever
+                # Jan 1 was itself a Monday (jan1_wd == 0).
+                first_monday = 1 + (7 - jan1_wd) % 7
+                week = 0 if doy < first_monday else (doy - first_monday) // 7 + 1
+                out.append(f"{week:02d}")
             elif code == "A":
                 out.append(_WEEKDAY_NAMES_FULL[self.weekday()])
             elif code == "a":
