@@ -865,3 +865,31 @@ def test_ical_allday_until_is_date_only():
     assert "RRULE:FREQ=DAILY;UNTIL=20170705\r\n" in ics or \
            "RRULE:FREQ=DAILY;UNTIL=20170705" in ics
     assert "UNTIL=20170705T000000" not in ics
+
+
+def test_french_un_compound_tail_folds_as_cardinal():
+    """R17: French "un"/"une" is blacklisted from the number vocabulary so it
+    stays the indefinite article ("un jour") and the clock-fraction article
+    ("un quart d'heure").  That blacklist truncated every compound number that
+    *ends* in one -- "vingt et un" read as 1, "cent un" dropped the "un"
+    entirely.  The un-compound licensing reads "un"/"une" as the cardinal 1 in
+    exactly the tail position (directly after a number, or across "et" from
+    one) so the compound composes, while every article use stays untouched."""
+    from datetime import timedelta
+    # compound tails now fold: <tens> et un, hundreds/thousands un, vigesimal
+    assert extract_duration("vingt et un jours", "fr").duration == timedelta(days=21)
+    assert extract_duration("trente et un jours", "fr").duration == timedelta(days=31)
+    assert extract_duration("soixante et un jours", "fr").duration == timedelta(days=61)
+    assert extract_duration("cent un jours", "fr").duration == timedelta(days=101)
+    assert extract_duration("quatre-vingt-un jours", "fr").duration == timedelta(days=81)
+    assert extract_duration("deux cent un jours", "fr").duration == timedelta(days=201)
+    assert extract_duration("mille un jours", "fr").duration == timedelta(days=1001)
+    assert extract_duration("cent vingt et un jours", "fr").duration == timedelta(days=121)
+    # feminine tail before the hour unit: "vingt et une heures" == 21 hours
+    assert extract_duration("vingt et une heures", "fr").duration == timedelta(hours=21)
+    # no regression: the article readings stay byte-identical
+    assert extract_duration("un jour", "fr").duration == timedelta(days=1)
+    assert extract_duration("une heure", "fr").duration == timedelta(hours=1)
+    assert extract_duration("un quart d heure", "fr").duration == timedelta(minutes=15)
+    assert extract_duration("une semaine", "fr").duration == timedelta(days=7)
+    assert extract_duration("une heure et demie", "fr").duration == timedelta(hours=1, minutes=30)
