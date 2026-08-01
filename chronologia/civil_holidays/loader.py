@@ -15,6 +15,7 @@ import threading
 from dataclasses import dataclass, replace
 from typing import Dict, Iterable, Optional, Tuple
 
+from chronologia.astrodate import _BASIS_RANK
 from .model import CivilHoliday, HolidayRule, _day_span, _shape_span
 from .rules import (CalendarDateRule, DecreeTableRule, EasterOffsetRule,
                     ExcludeRule, FixedRule, NearestWeekdayRule, NthWeekdayRule,
@@ -162,20 +163,27 @@ class HolidayCalendar:
                 names={lang: text + label for lang, text in rule.names.items()},
                 translations={lang: text + label
                               for lang, text in trans.items()}))
-        # Collapse rows that resolved to the SAME (name, date, subdiv, basis)
-        # and differ only in CATEGORY -- a holiday the data lists once per
-        # category (e.g. HK Chinese New Year as both public and optional) -- into
-        # one entry carrying the union of categories, so a consumer never sees a
-        # literal duplicate.  Rows that differ in subdiv or basis (a national
-        # plus a subdivision declaration, or a computed vs tabulated source of
-        # the same day) are left distinct: they carry genuinely different civil
-        # scope/provenance, not redundancy.
+        # Collapse rows that resolved to the SAME civil day (name, span, subdiv)
+        # and differ only in CATEGORY or in PROVENANCE into one entry carrying
+        # the union of categories and the most authoritative basis.  A holiday
+        # the data lists once per category (HK Chinese New Year as both public
+        # and optional) and a computable holiday that a redundant decree table
+        # re-states only to attach a secondary category (GU Good Friday as
+        # `unofficial`, PT Carnaval as `optional`, LB Hariri Day as `bank`) are
+        # the same day, not two holidays -- a consumer must never see a literal
+        # duplicate.  Basis is NOT part of the identity: the same day computed
+        # AND tabulated is one holiday, kept at its strongest basis (exact >
+        # tabulated > predicted).  Rows that differ in subdiv (a national plus a
+        # subdivision declaration) or in span width (a full day plus a half-day)
+        # stay distinct -- genuinely different civil scope or referent.
         merged = {}
         for h in out:
-            key = (h.name, h.span.start, h.subdiv, h.basis)
+            key = (h.name, h.span.start, h.span.end, h.subdiv)
             if key in merged:
                 prev = merged[key]
-                merged[key] = replace(prev,
+                keep = h if (_BASIS_RANK.get(h.basis, 9)
+                             < _BASIS_RANK.get(prev.basis, 9)) else prev
+                merged[key] = replace(keep,
                                       categories=prev.categories | h.categories)
             else:
                 merged[key] = h

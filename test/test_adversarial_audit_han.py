@@ -307,3 +307,29 @@ def test_converted_easter_holiday_tracks_easter():
         assert "Jueves Santo" in got
         exp = easter(yr) - timedelta(days=3)   # Maundy Thursday
         assert (got["Jueves Santo"].month, got["Jueves Santo"].day) == (exp.month, exp.day)
+
+
+# ---------------------------------------------------------------------------
+# Round 4 (han holiday-data audit): DATA-002 -- a holiday emitted TWICE because
+# a computable rule (basis exact) and a redundant decree that re-states it only
+# to attach a secondary category (basis tabulated) both fired.  They are one
+# civil day: holidays_for must collapse them, keeping the strongest basis and
+# unioning categories.
+# ---------------------------------------------------------------------------
+def test_no_holiday_emitted_twice_on_the_same_day():
+    from chronologia.civil_holidays import holidays_for
+    from collections import Counter
+    for cc in ("GU", "PT", "MK", "LB", "EG", "US", "ES", "GB", "HK", "DE"):
+        for yr in (2024, 2025, 2026, 2027):
+            counts = Counter((h.name, h.date, h.subdiv, h.span.end)
+                             for h in holidays_for(cc, yr))
+            dups = [k for k, n in counts.items() if n > 1]
+            assert not dups, f"{cc} {yr}: duplicate holiday emissions {dups}"
+
+
+def test_redundant_decree_merges_category_into_computable_holiday():
+    from chronologia.civil_holidays import holidays_for
+    gf = [h for h in holidays_for("GU", 2024) if h.name == "Good Friday"]
+    assert len(gf) == 1                       # not two rows
+    assert gf[0].basis == "exact"             # strongest basis kept
+    assert {"public", "unofficial"} <= gf[0].categories   # both categories kept
