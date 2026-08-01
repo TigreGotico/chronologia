@@ -725,3 +725,47 @@ def test_saka_era_matches_canonical_gregorian_correspondence():
     assert resolve_era("saka", 1879) == date(1957, 3, 22)
     assert resolve_era("saka", 1947) == date(2025, 3, 22)     # common year
     assert resolve_era("saka", 1946) == date(2024, 3, 21)     # leap year -> 21
+
+
+# --- R13 Portuguese "depois de amanhã" = day after tomorrow (was tomorrow) ----
+def test_portuguese_depois_de_amanha_is_day_after_tomorrow():
+    from chronologia import extract_timespan
+    s, rem = extract_timespan("depois de amanhã", "pt", _A)
+    assert (s.start.month, s.start.day) == (6, 29) and rem == ""
+    # the -2 form and bare tomorrow are unchanged
+    assert extract_timespan("anteontem", "pt", _A)[0].start.day == 25
+    assert extract_timespan("amanhã", "pt", _A)[0].start.day == 28
+
+
+# --- R13 cosmology: negative "years since Big Bang" is rejected ---------------
+def test_resolve_cosmic_rejects_negative_years_since_big_bang():
+    import pytest as _pt
+    from chronologia.cosmology import resolve_cosmic
+    with _pt.raises(ValueError):
+        resolve_cosmic(-5, "Ga")     # before the Big Bang -> nonsensical
+    # zero and positive are fine
+    assert resolve_cosmic(0, "Ga") is not None
+    assert resolve_cosmic(13, "Ga") is not None
+
+
+# --- R13 numfold: Romance feminine hundreds + Italian fused thousands fold ----
+def test_romance_feminine_hundreds_fold():
+    from chronologia import extract_duration
+    assert extract_duration("mil e quinhentas horas", "pt").duration.total_seconds() \
+        == 1500 * 3600
+    assert extract_duration("quinientas horas", "es").duration.total_seconds() \
+        == 500 * 3600
+    assert extract_duration("cincocentas horas", "gl").duration.total_seconds() \
+        == 500 * 3600
+    # masculine and invariable "cem" unaffected
+    assert extract_duration("quinhentos dias", "pt").duration.days == 500
+    assert extract_duration("cem dias", "pt").duration.days == 100
+
+
+def test_italian_fused_thousands_fold():
+    from chronologia import extract_duration
+    assert extract_duration("duemila giorni", "it").duration.days == 2000
+    assert extract_duration("diecimila giorni", "it").duration.days == 10000
+    # space-separated and bare forms unchanged
+    assert extract_duration("due mila giorni", "it").duration.days == 2000
+    assert extract_duration("mille giorni", "it").duration.days == 1000

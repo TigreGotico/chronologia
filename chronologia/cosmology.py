@@ -166,6 +166,13 @@ def resolve_cosmic(years_since_big_bang: Union[int, float, str, Decimal],
     if not dval.is_finite():
         raise ValueError(
             f"invalid cosmic value {years_since_big_bang!r}: must be finite")
+    if dval < 0:
+        # "years since the Big Bang" starts at t = 0; a negative value would
+        # place the date before the Big Bang itself.  Reject it, mirroring the
+        # z >= 0 guard on the sibling lookback_gyr.
+        raise ValueError(
+            f"invalid cosmic value {years_since_big_bang!r}: years since the "
+            f"Big Bang cannot be negative")
     mult = _BP_UNITS[unit]
     since_years = dval * mult
     value_bin = Decimal(1).scaleb(int(dval.as_tuple().exponent)) * mult
