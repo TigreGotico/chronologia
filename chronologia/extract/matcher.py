@@ -416,6 +416,20 @@ class ConstructionMatcher:
                             and tokens[start].cap
                             and tokens[start].prev_cap):
                         continue
+                    # "the last TWO days of the month" is not "the 2nd day of
+                    # the month": a rel-marker ("last"/"next"/"this") sitting
+                    # UNCONSUMED immediately before a scoped-ordinal match means
+                    # the number is a COUNT under that modifier ("last two" -- a
+                    # 2-day span), not the ordinal day-of-month the ORD slot
+                    # read.  Reading it fabricated June 2 for "the last two days
+                    # of the month".  Veto the candidate so the mis-read
+                    # cardinal-as-ordinal reading is not returned (honest None
+                    # over silently-wrong); the legitimate "the last day" /
+                    # "the 2nd day" (only an article before the match, the
+                    # modifier bound INSIDE the order) is untouched.
+                    if (name == "scoped_ordinal" and start > 0
+                            and tokens[start - 1].text in self.spec.rel_markers):
+                        continue
                     if "CAL_MONTH" in slots:
                         cal = _calendar_for_surface(
                             self.spec, slots["CAL_MONTH"].text)
