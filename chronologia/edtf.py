@@ -287,16 +287,24 @@ def _parse_datetime(tok: str) -> DateSpan:
         raise EdtfParseError(f"malformed EDTF date/time: {tok!r}")
     y, mo, d, hh, mm, ss, frac, off = m.groups()
     micro = int((frac or "").ljust(6, "0")) if frac else 0
-    zone = None
-    if off == "Z":
-        zone = timezone.utc
-    elif off:
-        sign = -1 if off[0] == "-" else 1
-        parts = off[1:].split(":")
-        secs = int(parts[0]) * 3600 + (int(parts[1]) * 60 if len(parts) > 1 else 0)
-        zone = timezone(timedelta(seconds=sign * secs))
-    start = AstroDate(int(y), int(mo), int(d), int(hh), int(mm), int(ss),
-                      micro, tzinfo=zone)
+    # The regex fixes the shape but not the ranges (month 99, hour 25, offset
+    # +99:00); the zone constructor and AstroDate validate them and raise
+    # ValueError, which must be surfaced as the documented EdtfParseError, not
+    # leaked to callers that catch only EdtfParseError.
+    try:
+        zone = None
+        if off == "Z":
+            zone = timezone.utc
+        elif off:
+            sign = -1 if off[0] == "-" else 1
+            parts = off[1:].split(":")
+            secs = int(parts[0]) * 3600 + (int(parts[1]) * 60
+                                           if len(parts) > 1 else 0)
+            zone = timezone(timedelta(seconds=sign * secs))
+        start = AstroDate(int(y), int(mo), int(d), int(hh), int(mm), int(ss),
+                          micro, tzinfo=zone)
+    except ValueError as exc:
+        raise EdtfParseError(f"malformed EDTF date/time {tok!r}: {exc}") from exc
     step = timedelta(microseconds=1) if frac else timedelta(seconds=1)
     return DateSpan(start, start + step)
 
@@ -400,6 +408,11 @@ def _parse_ymd(year_field: str, month_field: str, day_field: str) -> DateSpan:
             "a day within a wildcarded/ranged year or month is non-contiguous")
 
     y, m = year.start.year, m_lo
+    # `_parse_ym` range-checks the month; the Y-M-D path must too, else a field
+    # like "13".."99" indexes _days_in_month out of bounds with a bare
+    # IndexError instead of the documented EdtfParseError.
+    if not 1 <= m <= 12:
+        raise EdtfParseError(f"month field {month_field!r} out of range")
     limit = _days_in_month(y, m)
     dx = _x_range(day_field)
     if dx is None:

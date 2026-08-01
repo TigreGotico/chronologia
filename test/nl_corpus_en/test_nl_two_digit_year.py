@@ -122,6 +122,9 @@ def test_four_digit_years_unchanged(text, year):
 def test_apostrophe_not_a_year_false_positive():
     # "summer's end" -- the 's is possessive, no digit follows
     assert parse("summer's end") is None
-    # "o'clock" carries no two-digit-year reading
+    # "o'clock" carries no two-digit-year reading: "at 3 o'clock" reads as the
+    # 3 o'clock TIME (o'clock consumed as the clock marker, never as a spurious
+    # '<year>), so the result -- if any -- is an hour-3 clock span, not a year.
     r = parse("at 3 o'clock")
-    assert r is None or "o'clock" in r[1]
+    assert r is None or (r[0].start.hour == 3
+                         and "clock" not in r[1] and "'" not in r[1])

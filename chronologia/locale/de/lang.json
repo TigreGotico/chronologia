@@ -36,6 +36,7 @@
       "orders": [
         "CLOCK MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
+        "at HOUR oclock MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
         "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",

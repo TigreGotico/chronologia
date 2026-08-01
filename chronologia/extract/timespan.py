@@ -1192,19 +1192,28 @@ def _since_start(ep, sub, engine, anchor, now):
     if ep is None:
         return None
     start = ep[0].start
-    if (any(t.text in spec.weekdays for t in sub)
-            or any(t.text in spec.named_days for t in sub)
+    if (any(t.text in spec.named_days for t in sub)
             or any(t.text in spec.rel_markers for t in sub)
             or any(t.text in spec.directions for t in sub)
             or any(t.is_number and t.value is not None and t.value >= 100
                    for t in sub)):
-        # A DEFINITE endpoint: a qualified weekday ("this/next friday"), a
-        # now-relative day ("tomorrow"), a direction-qualified period ("next
-        # month", "this year") or an explicit year ("2019").  None of these is
-        # an underspecified reference prefer_future flung forward, so never
-        # roll it: in the past it opens the span, in the future "since" it is
-        # contradictory and is refused.
+        # A DEFINITE endpoint: a now-relative day ("tomorrow"), a
+        # direction/rel-qualified reference ("next month", "this friday") or an
+        # explicit year ("2019").  A QUALIFIED weekday lands here too, via its
+        # own direction/rel token.  None of these is an underspecified reference
+        # prefer_future flung forward, so never roll it: in the past it opens
+        # the span, in the future "since" it is contradictory and is refused.
         return start if start <= now else None
+    if any(t.text in spec.weekdays for t in sub):
+        # An UNqualified weekday (the bare-weekday-alone case is handled by
+        # _bare_weekday_endpoint above; this is a weekday carrying a clock, e.g.
+        # "monday 3pm").  It recurs WEEKLY, so roll the whole endpoint --
+        # weekday and time-of-day together -- back one week at a time until it
+        # lands at-or-before now.  Rolling by a DAY (the clock branch below)
+        # would strand it on the wrong weekday.
+        while start > now:
+            start = start + timedelta(days=-7)
+        return start
     # An underspecified recurring reference.  Roll back by its OWN cycle: a bare
     # time-of-day (a sub-day-wide span with no calendar-date word) recurs DAILY,
     # so "since noon" at 9am is yesterday noon -- NOT a year ago; everything else

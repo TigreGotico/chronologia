@@ -23,7 +23,7 @@
 #
 
 fixed         | New Year's Day                           | 1 1                  | public          |  |  |  |
-weekday_onbefore | National Heroes Day | 1 27 0 | public |  |  |  | 
+nth_weekday | National Heroes Day | 1 4 0 | public |  |  |  | 
 easter        | Ash Wednesday                            | -46 gregorian        | public          |  |  |  |
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
