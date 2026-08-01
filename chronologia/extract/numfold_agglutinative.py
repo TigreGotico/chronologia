@@ -194,7 +194,31 @@ fold_hu = _make_fold("hu", {"két": 2},
 # huszonegyedik ...), so ``with_ordinals`` derives the whole range from the
 # model.  "hét" (week/seven) is never an ordinal surface, so the exclude above
 # is unaffected.  Magyar helyesírás (Akadémiai): sorszámnevek.
-fold_hu = with_ordinals(fold_hu, "hu")
+def _hu_day_ord_extra() -> Dict[str, int]:
+    """The possessive day-of-month ordinal ("május tizenötödike" / "-én" = the
+    15th) that the bare ordinal map misses: ``pronounce_ordinal_hu`` emits only
+    the bare "-dik" form, so append the possessive -e/-én (front vowel harmony)
+    or -a/-án (back), read straight off the ordinal's own "-Vdik" vowel -- the
+    harmony the pronouncer already chose, so mixed-vowel stems (huszonegyedike,
+    front) come out right.  n=1 is suppletive (elseje/elsején, not elsőe)."""
+    pron = getattr(import_module("ovos_number_parser.numbers_hu"),
+                   "pronounce_ordinal_hu")
+    out: Dict[str, int] = {}
+    for n in range(1, 32):
+        try:
+            bare = str(pron(n)).strip().lower()
+        except Exception:
+            continue
+        if not bare.endswith("dik"):        # első
+            out["elseje"] = out["elsején"] = n
+            continue
+        front = bare[-4] in "eéiíöőüű"
+        out[bare + ("e" if front else "a")] = n
+        out[bare + ("én" if front else "án")] = n
+    return out
+
+
+fold_hu = with_ordinals(fold_hu, "hu", extra=_hu_day_ord_extra())
 # The bare "-kor" telling-time forms (háromkor, nyolckor, ...) drop "óra" and
 # glue -kor onto the numeral; split them so "at HOUR" binds ("kor" is the hu
 # marker_at surface).  "N órakor" keeps its own "órakor" oclock token and is
@@ -247,11 +271,19 @@ _ET_GENITIVE = {
 fold_et = _make_fold("et", _ET_GENITIVE)
 # Estonian spells the day-of-month with an ordinal the cardinal back-end does
 # not read ("viieteistkümnes aprill" = the 15th of April).  ``pronounce_ordinal_et``
-# emits 1..20 and 30 as one word (esimene, viieteistkümnes, kolmekümnes) but the
-# compound tens 21..29/31 as two words ("kahekümne esimene"), which the
-# single-token ordinal pre-pass cannot fold; those remain a documented deferral.
+# emits 1..20 and 30 as one word (esimene, viieteistkümnes, kolmekümnes) and the
+# compound tens 21..29/31 as two words ("kahekümne esimene").  A tens-prefix
+# pre-pass (the same one the Slavic family uses) merges "TENS UNIT" into one day
+# token before the single-token ordinal fold runs; a bare unit ("esimene
+# aprill") is left alone because the rewrite only fires when a tens word leads.
 # Eesti keele käsiraamat (EKI): järgarvsõnad.
-fold_et = with_ordinals(fold_et, "et")
+from chronologia.extract.numfold_ordinals import _pron_ordinal_map as _pom
+from chronologia.extract.numfold_slavic import (_compose as _sl_compose,
+                                                _day_rewrite as _sl_day_rewrite)
+_ET_TENS_ORD = {"kahekümne": 20, "kolmekümne": 30}
+fold_et = _sl_compose(
+    _sl_day_rewrite(dict(_pom("et")), _ET_TENS_ORD),
+    with_ordinals(fold_et, "et"))
 
 
 # -- Basque: date words carry the case, not a preposition -------------------

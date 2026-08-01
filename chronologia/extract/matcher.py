@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
 from chronologia.extract import tokenizer
+from chronologia.calendars import CALENDARS
 from chronologia.extract.compiler import CompiledSpec
 from chronologia.extract.model import (LangSpec, Match, SlotElement,
                                            Token)
@@ -418,6 +419,25 @@ class ConstructionMatcher:
                     if "CAL_MONTH" in slots:
                         cal = _calendar_for_surface(
                             self.spec, slots["CAL_MONTH"].text)
+                        # A calendar with a bounded tabulated sibling (umm_al_qura
+                        # backs the unbounded islamic_civil arithmetic) must not
+                        # read a YEAR beyond that table as a genuine reckoned
+                        # year: "ramadan 2027" is the Gregorian-2027 occurrence of
+                        # the holiday, not AH 2027 (2588 CE).  Dropping the
+                        # reckoned candidate lets the holiday_ref reading win the
+                        # selection.  Past/near AH years stay on the arithmetic
+                        # path ("ramadan 1446", "ramadan 1000" are untouched).
+                        if cal is not None and "YEAR" in slots:
+                            sib = next((c for c in CALENDARS.values()
+                                        if getattr(c, "fallback", None) == cal
+                                        and getattr(c, "labels", None)), None)
+                            try:
+                                _yr = int(slots["YEAR"].value)
+                            except (TypeError, ValueError):
+                                _yr = None
+                            if (sib is not None and _yr is not None
+                                    and _yr > max(y for y, _ in sib.labels)):
+                                continue
                     elif "HOLIDAY" in slots:
                         # trace the well-known binding (key + provenance) so
                         # explain() shows which holiday and which source named it
