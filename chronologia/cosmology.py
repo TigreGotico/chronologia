@@ -41,7 +41,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Dict, Union
 
 from chronologia.astrodate import AstroDate, DateSpan
@@ -157,7 +157,15 @@ def resolve_cosmic(years_since_big_bang: Union[int, float, str, Decimal],
     if unit not in _BP_UNITS:
         raise ValueError(f"unknown cosmic unit {unit!r}; expected one of "
                          f"{sorted(_BP_UNITS)}")
-    dval = Decimal(str(years_since_big_bang))
+    try:
+        dval = Decimal(str(years_since_big_bang))
+    except InvalidOperation as exc:
+        raise ValueError(
+            f"invalid cosmic value {years_since_big_bang!r}: not a number"
+        ) from exc
+    if not dval.is_finite():
+        raise ValueError(
+            f"invalid cosmic value {years_since_big_bang!r}: must be finite")
     mult = _BP_UNITS[unit]
     since_years = dval * mult
     value_bin = Decimal(1).scaleb(int(dval.as_tuple().exponent)) * mult

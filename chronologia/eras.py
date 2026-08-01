@@ -34,7 +34,7 @@ so existing consumers never see the new type unless they parse era phrases.
 import logging
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Callable, Optional, Tuple, Union
 
 _log = logging.getLogger(__name__)
@@ -519,7 +519,15 @@ def resolve_bp(value: Union[int, float, str, Decimal], unit: str = "a"
     if unit not in _BP_UNITS:
         raise ValueError(f"unknown BP unit {unit!r}; expected one of "
                          f"{sorted(_BP_UNITS)}")
-    dval = Decimal(str(value))
+    # value is documented as acceptable as a str, so a malformed literal
+    # ("abc") or a non-finite float (nan/inf) must be a clean ValueError, not
+    # the raw decimal.InvalidOperation (an ArithmeticError) / int() leak.
+    try:
+        dval = Decimal(str(value))
+    except InvalidOperation as exc:
+        raise ValueError(f"invalid BP value {value!r}: not a number") from exc
+    if not dval.is_finite():
+        raise ValueError(f"invalid BP value {value!r}: must be finite")
     mult = _BP_UNITS[unit]
     years_before = dval * mult
     precision_years = Decimal(1).scaleb(int(dval.as_tuple().exponent)) * mult

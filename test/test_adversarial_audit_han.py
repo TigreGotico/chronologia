@@ -410,3 +410,74 @@ def test_holiday_nth_weekday_corrections_hold_past_divergence():
         assert name in got, f"{cc}/{name} {yr} missing"
         assert (got[name].month, got[name].day) == (exp.month, exp.day), \
             f"{cc}/{name} {yr}: {got[name]} != {exp}"
+
+
+# --- R6 duration: unfolded scale-number tail, and folded-fraction additive ---
+def test_duration_scale_tail_is_not_silently_truncated():
+    # "one thousand five hundred hours" folds to [1, thousand, 500, hours];
+    # reading the trailing 500 as the count would answer 500h for 1500h, so the
+    # phrase is left unread (honest None) rather than silently truncated.
+    from chronologia import extract_duration
+    assert extract_duration("one thousand five hundred hours", "en-us") is None
+    assert extract_duration("two thousand five hundred minutes", "en-us") is None
+    # legit hundred-scale counts are unaffected
+    assert extract_duration("five hundred hours", "en-us").duration.total_seconds() \
+        == 500 * 3600
+
+
+def test_duration_additive_half_parity_across_inflecting_languages():
+    from chronologia import extract_duration
+    from datetime import timedelta
+    # German inflects "half" to "halbe", which the folder turns into a 0.5 token;
+    # the "... und eine halbe" idiom must still add 30 min, like en/fr.
+    assert extract_duration("eine stunde und eine halbe", "de-de").duration \
+        == timedelta(minutes=90)
+    assert extract_duration("zwei stunden und eine halbe", "de-de").duration \
+        == timedelta(minutes=150)
+    assert extract_duration("an hour and a half", "en-us").duration \
+        == timedelta(minutes=90)
+
+
+# --- R6 deep-time resolvers: clean ValueError on malformed / non-finite -------
+def test_resolve_bp_and_cosmic_reject_bad_values_as_valueerror():
+    import pytest as _pt
+    from chronologia.eras import resolve_bp
+    from chronologia.cosmology import resolve_cosmic
+    for bad in ("abc", float("nan"), float("inf"), float("-inf")):
+        with _pt.raises(ValueError):
+            resolve_bp(bad, "Ma")
+        with _pt.raises(ValueError):
+            resolve_cosmic(bad, "ka")
+    # documented string input still works
+    assert resolve_bp("66", "Ma").start.year == -65998050
+
+
+# --- R6 NZ Labour Day is the FOURTH Monday of October (Holidays Act 2003 s44) -
+def test_nz_labour_day_is_fourth_monday_not_last():
+    from chronologia.civil_holidays import holidays_for
+    import datetime as dt
+    for yr in (2028, 2029, 2035):          # 5-Monday Octobers: 4th != last
+        d = dt.date(yr, 10, 1)
+        while d.weekday() != 0:
+            d += dt.timedelta(days=1)
+        fourth = d + dt.timedelta(days=21)
+        got = [h.date for h in holidays_for("NZ", yr) if h.name == "Labour Day"]
+        assert got and (got[0].month, got[0].day) == (fourth.month, fourth.day)
+
+
+# --- R6 B1: extract_candidates must surface range/open-range readings ---------
+def test_extract_candidates_surfaces_range_readings_as_primary():
+    from chronologia import extract_timespan
+    from chronologia.extract import extract_candidates
+    for t in ["june 5 to june 12", "between monday and friday",
+              "until friday", "from 9 to 5", "since 2019"]:
+        span, _ = extract_timespan(t, "en", _A)
+        cands = extract_candidates(t, "en", _A, limit=5)
+        assert cands, t
+        # extract_timespan's own answer is present AND ranked first (the two
+        # APIs must agree on the top reading)
+        assert any(c.span.start == span.start and c.span.end == span.end
+                   for c in cands), f"{t}: range answer missing from candidates"
+        assert (cands[0].span.start == span.start
+                and cands[0].span.end == span.end), \
+            f"{t}: top candidate disagrees with extract_timespan"
