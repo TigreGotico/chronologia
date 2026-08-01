@@ -57,7 +57,7 @@ def _numwords(lang: str) -> FrozenSet[str]:
     mod = _model(lang)
     pron = getattr(mod, f"pronounce_number_{lang}")
     words = set()
-    for n in range(0, 100):
+    for n in range(0, 101):
         try:
             for w in str(pron(n)).lower().replace("-", " ").split():
                 words.add(w)

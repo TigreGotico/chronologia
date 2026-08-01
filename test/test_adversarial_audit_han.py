@@ -552,3 +552,43 @@ def test_bare_clock_range_with_meridiem_no_bogus_day_roll():
     # a meridiem-less "9 to 5" stays the subtractive clock ("nine minutes to 5")
     s2, _ = extract_timespan("9 to 5", "en", _A)
     assert (s2.start.hour, s2.start.minute) == (4, 51)
+
+
+# --- R9 numfold: "hundred" word recognized (was excluded by range(0,100)) -----
+def test_numfold_hundred_word_recognized_across_families():
+    from chronologia import extract_timespan
+    from datetime import datetime, timedelta
+    r = datetime(2017, 6, 27, 13, 4)
+    # +100 days / +100 minutes must resolve, not vanish or default to +1 day
+    assert extract_timespan("через сто дней", "ru", r)[0].start.day == 5      # Oct 5
+    assert extract_timespan("через сто дней", "ru", r)[0].start.month == 10
+    assert extract_timespan("za sto minut", "pl", r)[0].start.hour == 14      # 14:44
+    assert extract_timespan("száz nap múlva", "hu", r)[0].start.month == 10
+    assert extract_timespan("sata päivän kuluttua", "fi", r)[0].start.month == 10
+
+
+# --- R9 D3: a distant clock/daypart must NOT fold onto a date across junk -----
+def test_compose_requires_adjacency_no_distant_clock_bleed():
+    from chronologia import extract_timespan
+    # "and also 10:00" is separated from monday by unrelated tokens -> the clock
+    # must NOT attach; monday stays day-wide and 10:00 lands in the remainder.
+    s, rem = extract_timespan("since monday and also 10:00", "en", _A)
+    assert (s.start.month, s.start.day, s.start.hour) == (6, 26, 0)
+    assert "10:00" in rem
+    s2, rem2 = extract_timespan("from monday to friday and also 10:00", "en", _A)
+    assert (s2.start.day, s2.end.day) == (3, 8)      # Mon 3 Jul .. Sat 8 Jul
+    assert "10:00" in rem2
+    # adjacent composition still works
+    s3, _ = extract_timespan("since monday 3pm", "en", _A)
+    assert (s3.start.day, s3.start.hour) == (26, 15)
+
+
+# --- R9 clock-range: extract_candidates top == extract_timespan for N to M pm -
+def test_candidates_agree_on_meridiem_clock_range_top():
+    from chronologia import extract_timespan
+    from chronologia.extract import extract_candidates
+    for t in ["5 to 9 am", "11 to 1 pm", "monday 9 to 5 pm", "9 to 5 pm"]:
+        s, _ = extract_timespan(t, "en", _A)
+        cands = extract_candidates(t, "en", _A)
+        assert cands and cands[0].span.start == s.start \
+            and cands[0].span.end == s.end, t

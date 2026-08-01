@@ -1776,7 +1776,7 @@ def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text,
     return resolve_ref
 
 
-def _compose(resolved, engine):
+def _compose(resolved, engine, tokens):
     """Pick the single winning reading from the post-passed ``resolved`` matches.
 
     Returns ``(res, label_consumed, rep)``:
@@ -1807,18 +1807,51 @@ def _compose(resolved, engine):
                 if m.construction == "weekday_ref"]
     non_weekday_dates = [(m, r) for m, r in dates
                          if m.construction != "weekday_ref"]
+    # Composition is only legitimate when the two parts are ADJACENT -- a lone
+    # clock/daypart/weekday-label folds onto a date only if nothing unrelated
+    # sits between them.  Otherwise a distant time bleeds across arbitrary text
+    # ("since monday and also 10:00" must NOT read Monday 10:00; "from A to B
+    # and also 10:00" must not collapse to that clock).  A token between the two
+    # spans is allowed only when it is itself consumed by one of the resolved
+    # matches (the daypart in "monday morning at 3pm") or is a bare glue
+    # connector (at / on / of / the -- the clock usually already absorbs "at").
+    spec = engine.spec
+    # Glue = function words that legitimately join a date to a time within one
+    # reference (at / on / of / the, a daypart preposition like Spanish "por la
+    # mañana", French "du" in "le matin du 3 mars").  A surface is glue if it
+    # belongs to ANY connector key that is not a pure SEPARATOR -- the
+    # conjunctions and range words that join two DISTINCT references (and / or /
+    # to / from / between / until / since).  Keyed this way, a preposition that
+    # doubles as a separator surface (French "du" is also "from", Catalan "al"
+    # is also "to") stays glue via its non-separator sense, while "and"/"y" --
+    # which appear ONLY under a separator key -- correctly break adjacency.
+    _sep_keys = {"and", "or", "to", "from", "between", "until", "since"}
+    _glue = {s for _k, _vals in spec.connectors.items()
+             if _k not in _sep_keys for s in _vals}
+    _covered = set()
+    for m, _r in resolved:
+        _covered.update(range(*m.span))
+
+    def _adjacent(a, b):
+        (lo, hi) = sorted((a.span, b.span))
+        return all(i in _covered or tokens[i].text in _glue
+                   for i in range(lo[1], hi[0]))
+
     label_consumed = set()
     if (len(weekdays) == 1 and len(non_weekday_dates) == 1
             and non_weekday_dates[0][0].construction
-            in _WEEKDAY_LABELABLE_DATES):
+            in _WEEKDAY_LABELABLE_DATES
+            and _adjacent(non_weekday_dates[0][0], weekdays[0][0])):
         eff_dates = non_weekday_dates
         label_consumed = set(range(*weekdays[0][0].span))
     else:
         eff_dates = dates
-    if len(clocks) == 1 and len(eff_dates) == 1:
+    if (len(clocks) == 1 and len(eff_dates) == 1
+            and _adjacent(eff_dates[0][0], clocks[0][0])):
         res = compose_date_clock(eff_dates[0][1], clocks[0][1])
         rep = eff_dates[0][0]
-    elif len(dayparts) == 1 and len(eff_dates) == 1 and not clocks:
+    elif (len(dayparts) == 1 and len(eff_dates) == 1 and not clocks
+            and _adjacent(eff_dates[0][0], dayparts[0][0])):
         name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
         res = compose_date_daypart(eff_dates[0][1], dayparts[0][1], name)
         rep = eff_dates[0][0]
@@ -1878,7 +1911,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         return None
     # widen a date carrying the locale's "week of" marker to its whole week
     resolved = _apply_week_of(tokens, resolved, engine.spec)
-    res, label_consumed, _ = _compose(resolved, engine)
+    res, label_consumed, _ = _compose(resolved, engine, tokens)
     return res.value, set(res.consumed) | label_consumed
 
 
@@ -1977,7 +2010,7 @@ def extract_candidates(
     label_extra = {}
     primary = None
     if composed:
-        win_res, win_label, rep = _compose(composed, engine)
+        win_res, win_label, rep = _compose(composed, engine, tokens)
         consumed_all = set(win_res.consumed) | win_label
         lo, hi = min(consumed_all), max(consumed_all) + 1
         wide = replace(rep, span=(lo, hi))
@@ -2058,7 +2091,11 @@ def extract_candidates(
         scored = [(rk, c) for rk, c in scored
                   if not (c.span.start == rspan.start
                           and c.span.end == rspan.end)]
-        scored.append(((0, -rconf, 0, 0, -len(tokens)),
+        # rank the range STRICTLY first (-1): it is extract_timespan's own
+        # answer, and must beat a meridiem-blind subtractive clock_time reading
+        # of the same phrase ("5 to 9 am") that would otherwise tie on
+        # confidence and win by insertion order, leaving the two APIs disagreeing.
+        scored.append(((-1, -rconf, 0, 0, -len(tokens)),
                        Candidate(rspan, rrem, rconf, range_kind)))
     scored.sort(key=lambda e: e[0])
     return [c for _, c in scored[:limit]]
