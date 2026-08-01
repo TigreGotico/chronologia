@@ -797,6 +797,67 @@ _FR_PHRASES = [
 #: the oclock surfaces that turn a preceding "un"/"une" into the hour 1.
 _FR_HEURE = frozenset({"heure", "heures"})
 
+#: the coordinator that joins the unit "un" to a French tens word in 21..71
+#: ("vingt **et** un", "soixante **et** onze") -- the one connector that can
+#: sit between the tens number and the licensed cardinal tail.
+_FR_ET = frozenset({"et"})
+
+
+def _fr_is_number_word(tok):
+    """Is ``tok`` a spelled/parsed French number to the left of a "un" tail?
+
+    A left neighbour that already carries a numeric reading (a folded digit
+    run, "quatre-vingt" pre-folded to 80) or whose surface the French number
+    back-end reads as a cardinal ("vingt", "cent", "mille", "deux") -- read
+    with ``ordinals=False`` so an ordinal homograph ("premier") never counts.
+    """
+    if tok is None:
+        return False
+    if tok.is_number:
+        return True
+    value = extract_number_fr(tok.text, ordinals=False)
+    return value is not False and value is not None
+
+
+def _license_fr_un_compound(tokens):
+    """Read "un"/"une" as the cardinal 1 when it is the *tail of a numeric
+    compound*, the inverse of the blacklist that keeps it an article.
+
+    French drops "un"/"une" from the spelled-number vocabulary so the everyday
+    indefinite article and the clock-fraction article survive the fold ("un
+    jour" = a day, "un quart d'heure" = a quarter hour, "une semaine" = a
+    week).  That same blacklist silently truncates every compound number that
+    *ends* in one -- "vingt et un" (21), "cent un" (101), "quatre-vingt-un"
+    (81), "deux cent un" (201), "mille un" (1001) -- because the run-builder
+    cannot extend across the missing "un".  The two readings are separable by
+    position exactly as Portuguese separates its "um" article (see
+    :func:`fold_pt`): the cardinal is the "un"/"une" whose left neighbour is a
+    number, either directly ("cent un", "quatre-vingt-un") or across the
+    coordinator "et" whose own left neighbour is a number ("vingt et un",
+    "cent vingt et un").  In that position -- and only there -- the surface is
+    marked a number so the shared extractor composes it additively (cent + 1 =
+    101, vingt et 1 = 21) and the following unit binds; everywhere else the
+    article stays byte-identical.  The *word* surface is kept (only
+    ``is_number``/``value`` are set), because the shared run-folder re-reads
+    the run's joined text through the number back-end, which composes "cent un"
+    but not the digit-mixed "cent 1".
+    """
+    out = list(tokens)
+    n = len(out)
+    changed = False
+    for i, t in enumerate(out):
+        if t.is_number or t.text not in ("un", "une"):
+            continue
+        prev = out[i - 1] if i - 1 >= 0 else None
+        if prev is not None and prev.text in _FR_ET:
+            left = out[i - 2] if i - 2 >= 0 else None
+        else:
+            left = prev
+        if _fr_is_number_word(left):
+            out[i] = replace(t, is_number=True, value=1)
+            changed = True
+    return _reindex(tuple(out)) if changed else tokens
+
 
 def _license_fr_une_heure(tokens):
     """Read "un"/"une" as the hour 1 directly before "heure(s)".
@@ -862,8 +923,9 @@ fold_fr = _with_scale_frame(fold_fr, "fr", frozenset({"un", "une"}))
 _fold_fr_scaled = fold_fr
 
 
-def fold_fr(tokens):  # noqa: F811 -- final wrap adds une-heure licensing
-    return _fold_fr_scaled(_license_fr_une_heure(tokens))
+def fold_fr(tokens):  # noqa: F811 -- final wrap adds une-heure + un-compound
+    return _fold_fr_scaled(
+        _license_fr_une_heure(_license_fr_un_compound(tokens)))
 
 
 # -- Italian ----------------------------------------------------------------
