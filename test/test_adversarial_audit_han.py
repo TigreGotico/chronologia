@@ -893,3 +893,19 @@ def test_french_un_compound_tail_folds_as_cardinal():
     assert extract_duration("un quart d heure", "fr").duration == timedelta(minutes=15)
     assert extract_duration("une semaine", "fr").duration == timedelta(days=7)
     assert extract_duration("une heure et demie", "fr").duration == timedelta(hours=1, minutes=30)
+
+
+# --- R17 E1: leading fraction scales an explicit following count -------------
+def test_leading_fraction_scales_following_count():
+    """"half of a hundred days" is 0.5*100 = 50 days, not the full 100 with the
+    fraction silently dropped into the remainder."""
+    from datetime import timedelta
+    from chronologia import extract_duration
+    assert extract_duration("half of a hundred days", "en")[0] == timedelta(days=50)
+    assert extract_duration("quarter of two hundred days", "en")[0] == timedelta(days=50)
+    assert extract_duration("half of two hundred minutes", "en")[0] == timedelta(minutes=100)
+    assert extract_duration("half of one thousand days", "en")[0] == timedelta(days=500)
+    # the plain / unit-adjacent forms are unchanged
+    assert extract_duration("half a day", "en")[0] == timedelta(hours=12)
+    assert extract_duration("a hundred days", "en")[0] == timedelta(days=100)
+    assert extract_duration("three quarters of an hour", "en")[0] == timedelta(minutes=45)
