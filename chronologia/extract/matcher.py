@@ -94,10 +94,16 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         # (>=32) or written with >=4 digits; an apostrophe cue ("'20", "'08")
         # licenses even a small two-digit run as a year -- it is the strong
         # signal a two-digit year was intended, so it is not silently dropped.
+        # The length checks measure the DIGIT run, not the raw: a 2-digit
+        # ordinal ("10th") is 4 raw chars (two digits + "th") and used to sneak
+        # "March 5th, 10th" into a bogus GYEAR=10 reading, yet a language year
+        # surface carries its own suffix too (Basque "2020ko" = "of 2020"), so
+        # counting digits keeps the real 4-digit year while rejecting the
+        # 2-digit ordinal.
+        n_digits = sum(c.isdigit() for c in token.raw)
         return token.is_number and ((token.value or 0) >= 32
-                                    or len(token.raw.rstrip(".")) >= 4
-                                    or (token.apostrophe
-                                        and len(token.raw.rstrip(".")) == 2))
+                                    or n_digits >= 4
+                                    or (token.apostrophe and n_digits == 2))
     if name == "GYEAR":
         # a standalone Gregorian year: a bare digit run inside the GYEAR
         # window, so small integers ("5", "123") and digit soup
