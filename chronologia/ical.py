@@ -340,6 +340,8 @@ def from_ical(text: str) -> Event:
     in_event = False
     seen_event = False
     dtstart = dtend = None
+    naive_start = naive_end = None
+    start_tzid = None
     start_is_date = end_is_date = False
     rrule = None
     summary = ""
@@ -357,13 +359,14 @@ def from_ical(text: str) -> Event:
         if name == "DTSTART":
             start_is_date = params.get("value", "").upper() == "DATE" \
                 or "T" not in value
-            dtstart = _zoned(_parse_ical_value(value, start_is_date),
-                             params.get("tzid"), start_is_date)
+            start_tzid = params.get("tzid")
+            naive_start = _parse_ical_value(value, start_is_date)
+            dtstart = _zoned(naive_start, start_tzid, start_is_date)
         elif name == "DTEND":
             end_is_date = params.get("value", "").upper() == "DATE" \
                 or "T" not in value
-            dtend = _zoned(_parse_ical_value(value, end_is_date),
-                           params.get("tzid"), end_is_date)
+            naive_end = _parse_ical_value(value, end_is_date)
+            dtend = _zoned(naive_end, params.get("tzid"), end_is_date)
         elif name == "RRULE":
             rrule = parse_rrule(value)
         elif name == "SUMMARY":
@@ -376,5 +379,26 @@ def from_ical(text: str) -> Event:
     if dtend is None:
         # A DATE with no DTEND is one day; a DATE-TIME with none is zero width.
         dtend = dtstart + timedelta(days=1) if start_is_date else dtstart
+    # A DST spring-forward GAP wall time (02:30 on a US spring-forward day) never
+    # existed; _zoned resolves it to a concrete pushed-forward instant.  Applied
+    # independently to each endpoint that push can collapse or invert a positive
+    # interval -- DTSTART 02:30 and DTEND 03:30 both resolve to 03:30 EDT, a
+    # zero-duration event.  When zoning has non-positively ordered a pair the
+    # source wrote in positive order, re-anchor DTEND at the event's true elapsed
+    # length: add the nominal wall duration to DTSTART's *absolute* instant (in
+    # UTC, where there is no gap to re-cross -- a wall-clock add would just walk
+    # back into the gap and collide again), then express it back in DTSTART's
+    # zone.  Ordinary events and the fall-back-ambiguous case never enter here.
+    if (not start_is_date and not end_is_date
+            and naive_start is not None and naive_end is not None
+            and dtend <= dtstart and naive_end > naive_start):
+        end_utc = dtstart.astimezone(timezone.utc) + (naive_end - naive_start)
+        dtend = end_utc
+        if start_tzid is not None:
+            try:
+                from zoneinfo import ZoneInfo
+                dtend = end_utc.astimezone(ZoneInfo(start_tzid))
+            except Exception:
+                dtend = end_utc
     span = DateSpan(dtstart, dtend)
     return Event(summary=summary, span=span, duration=None, recurrence=rrule)
