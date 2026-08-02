@@ -1154,6 +1154,82 @@ def test_cardinal_plural_unit_is_not_the_ordinal_day_of_month():
     assert _start("the first decade of the 21st century") == (2000, 1, 1)
 
 
+def test_month_day_not_bare_hour_morning():
+    """"June 15 in the morning" is the 15th's morning, not the anchor day.
+
+    The "at? HOUR in? article? MERIDIEM" clock order bound the day-of-month
+    number "15" as a bare HOUR and its 4-token span out-spanned the 2-token
+    "June 15" calendar_date in the parse-winner contest, so the clock hijacked
+    the day and the anchor's day (June 27) supplied the date -- 15:00 with
+    "June" stranded.  A bare hour sitting immediately after a month surface is
+    a date, so the clock reading is vetoed and the date wins.
+    """
+    r = extract_timespan("June 15 in the morning", "en", _A)
+    assert r is not None
+    assert (r.span.start.year, r.span.start.month, r.span.start.day) == (2018, 6, 15)
+    assert r.span.start.hour == 6  # the morning band of the 15th, not 15:00
+
+    # bare hours with NO preceding month stay clocks
+    def _hour(text):
+        r = extract_timespan(text, "en", _A)
+        assert r is not None, text
+        return r.span.start.hour
+
+    assert _hour("3pm") == 15
+    assert _hour("at 3pm") == 15
+    assert _hour("10 in the morning") == 10
+
+    # a real date + clock composition after a month still composes
+    r = extract_timespan("June 15 at 3pm", "en", _A)
+    assert (r.span.start.month, r.span.start.day, r.span.start.hour) == (6, 15, 15)
+
+    # a bare date after a month stays a whole day
+    r = extract_timespan("June 15", "en", _A)
+    assert (r.span.start.month, r.span.start.day) == (6, 15)
+    assert r.span.start.hour == 0
+
+
+def test_week_of_does_not_collapse_to_clock():
+    """"the week of June 15 at 3pm" keeps the week; the clock stays uncomposed.
+
+    The week-of post-pass widens June 15 to its seven-day calendar week, but
+    the composer then read only the widened span's start and placed a
+    one-minute 3pm reading on the Monday -- silently discarding the week AND
+    swallowing the clock tokens (empty remainder).  A week is a span, not a
+    day: a pinpoint clock/daypart must not compose onto it, so the week stands
+    and the time is stranded in the remainder.
+    """
+    def _week(text, lang):
+        r = extract_timespan(text, lang, _A)
+        assert r is not None, text
+        return r
+
+    r = _week("the week of June 15 at 3pm", "en")
+    assert (r.span.start.year, r.span.start.month, r.span.start.day) == (2018, 6, 11)
+    assert (r.span.end.year, r.span.end.month, r.span.end.day) == (2018, 6, 18)
+    assert r.span.start.hour == 0 and r.span.end.hour == 0  # a 7-day span
+    assert r.remainder.strip() != ""  # the clock did not silently vanish
+
+    r = _week("the week of June 15 in the morning", "en")
+    assert (r.span.start.month, r.span.start.day) == (6, 11)
+    assert (r.span.end.month, r.span.end.day) == (6, 18)
+    assert r.remainder.strip() != ""
+
+    # cross-locale: same collapse existed in es
+    r = _week("la semana del 15 de junio a las 3", "es")
+    assert (r.span.start.month, r.span.start.day) == (6, 11)
+    assert (r.span.end.month, r.span.end.day) == (6, 18)
+
+    # the bare "week of X" still gives the 7-day span (unchanged)
+    r = _week("the week of June 15", "en")
+    assert (r.span.start.month, r.span.start.day) == (6, 11)
+    assert (r.span.end.month, r.span.end.day) == (6, 18)
+
+    # a normal date + clock composition is untouched
+    r = extract_timespan("June 15 at 3pm", "en", _A)
+    assert (r.span.start.month, r.span.start.day, r.span.start.hour) == (6, 15, 15)
+
+
 # --- R23 F1: Spanish exclusion/negation parity ("no mañana" -> None) ----------
 def test_spanish_exclusion_parity():
     """Spanish lacked exclusion vocabulary, so "no mañana" ("not tomorrow")
