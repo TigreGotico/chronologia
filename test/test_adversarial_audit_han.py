@@ -1345,3 +1345,21 @@ def test_timeline_insert_shadowed_label_is_never_existed():
     # the inserted day itself and ordinary days still resolve
     assert isinstance(TIMELINES["sweden_1700_1712"].to_jdn((1712, 2, 30)), int)
     assert isinstance(TIMELINES["sweden_1700_1712"].to_jdn((1712, 1, 1)), int)
+
+
+# --- R27: an ordinal surface ("10th") must not bind as a YEAR -----------------
+def test_ordinal_surface_does_not_bind_as_year():
+    """"March 5th, 10th" used to read "10th" as GYEAR=10 (year 10 AD, empty
+    remainder) because the "th" suffix made the 2-digit raw 4 chars long,
+    passing the ">=4 digit year" check.  An ordinal surface is a day, never a
+    year -- it must fall back to the date-list reading."""
+    from chronologia import extract_timespan
+    r = extract_timespan("March 5th, 10th", "en", _A)
+    assert r is not None and r.span.start.year != 10
+    assert r.span.start.month == 3 and r.span.start.day == 5   # like "5th and 10th"
+    # real years, pivots, decades, and day+year are unaffected
+    assert extract_timespan("March 5, 2020", "en", _A).span.start.year == 2020
+    assert extract_timespan("March 5th 2020", "en", _A).span.start.year == 2020
+    assert extract_timespan("March 5th, 99", "en", _A).span.start.year == 1999
+    assert extract_timespan("15th of March 2020", "en", _A).span.start.year == 2020
+    assert extract_timespan("the summer of 69", "en", _A).span.start.year == 1969
