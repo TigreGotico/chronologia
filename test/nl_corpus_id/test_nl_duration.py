@@ -33,3 +33,19 @@ def test_duration(text, expected):
 @pytest.mark.parametrize("text", ['2 juni', 'tidak ada waktu di sini'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
+
+
+@pytest.mark.parametrize("text,expected", [
+    ('dua puluh lima hari', timedelta(days=25)),   # tens: dua puluh lima
+    ('dua belas hari', timedelta(days=12)),         # teens: dua belas
+    ('dua ratus hari', timedelta(days=200)),        # hundreds: dua ratus
+    ('tiga ratus lima puluh hari', timedelta(days=350)),
+    ('seratus dua puluh lima hari', timedelta(days=125)),
+])
+def test_duration_multiplier_compounds(text, expected):
+    # Indonesian builds numbers with bare multiplier words (puluh=ten,
+    # ratus=hundred, belas=-teen) that have no standalone value, so the per-token
+    # value probe severed the run at them and hundreds/tens returned None (or a
+    # wrong trailing component). They are now admitted to the run as join words.
+    got = extract_duration(text, LANG)
+    assert got is not None and got[0] == expected
