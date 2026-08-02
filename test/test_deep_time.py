@@ -308,6 +308,26 @@ class TestAstroDateDeepTimeArithmetic(unittest.TestCase):
         self.assertEqual(AstroDate(2020, 1, 2) - timedelta(days=1),
                          AstroDate(2020, 1, 1))
 
+    def test_rsub_deep_time_returns_wideduration(self):
+        # datetime - AstroDate(far year) must mirror AstroDate - datetime and
+        # fall back to WideDuration on overflow instead of raising OverflowError.
+        from datetime import datetime as _dt
+        far = AstroDate(3_000_000, 1, 1)
+        anchor = _dt(2020, 1, 1)
+        w = anchor - far
+        self.assertIsInstance(w, WideDuration)
+        self.assertEqual(w._total_us(),
+                         AstroDate(2020, 1, 1)._total_us() - far._total_us())
+        # exact negation of the mirror operation, at microsecond precision
+        self.assertEqual(w._total_us(), -(far - anchor)._total_us())
+
+    def test_rsub_in_range_still_timedelta(self):
+        from datetime import datetime as _dt
+        d = _dt(2020, 1, 1) - AstroDate(2019, 1, 1)
+        self.assertIsInstance(d, timedelta)
+        self.assertNotIsInstance(d, WideDuration)
+        self.assertEqual(d, timedelta(days=365))
+
 
 if __name__ == "__main__":
     unittest.main()
