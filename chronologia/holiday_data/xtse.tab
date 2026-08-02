@@ -13,18 +13,18 @@
 #   is correct as the primary name here -- the TSX publishes its calendar
 #   in English, and the calendar belongs to an exchange, not a country with
 #   its own official language.
-#   New Year's Day, Canada Day, Christmas Day and Boxing Day carry the
-#   `sat_sun_mon` observed policy (Saturday/Sunday -> following Monday),
-#   verified against vacanza 0.101 output for 2024, 2025 and 2026 (2026
-#   exercises Christmas Day's Friday-nominal no-shift and Boxing Day's
-#   Saturday-nominal shift to Monday 28 Dec 2026). KNOWN LIMITATION: in
-#   years where Christmas Day AND Boxing Day both land on a weekend (e.g.
-#   2021: Sat 25 / Sun 26), the TSX's real calendar cascades Boxing Day's
-#   observed date one day further (Tue 28, not Mon 27) to avoid colliding
-#   with Christmas Day's own observed Monday -- a chained "next available
-#   business day" rule this `sat_sun_mon` policy does not reproduce. This
-#   does not affect 2024, 2025 or 2026 (none has that collision), which is
-#   this file's verified window.
+#   New Year's Day and Canada Day carry the `sat_sun_mon` observed policy
+#   (Saturday/Sunday -> following Monday). Christmas Day and Boxing Day
+#   carry `sat_sun_mon_cascade` -- the same weekend relocation, but resolved
+#   calendar-wide so the pair cascades: in years where Christmas Day AND
+#   Boxing Day both land on a weekend (e.g. 2021: Sat 25 / Sun 26; 2022;
+#   2027) the second closure moves one further business day (Christmas ->
+#   Mon 27, Boxing -> Tue 28) instead of colliding on a single Monday, as a
+#   stock exchange does not trade weekends and lists only the observed
+#   weekday closure. Verified against vacanza 0.101 output for 2021, 2022,
+#   2024, 2025, 2026 and 2027 (2026 exercises Christmas Day's Friday-nominal
+#   no-shift and Boxing Day's Saturday-nominal cascade to Monday 28 Dec
+#   2026; 2021/2022/2027 exercise the two-on-a-weekend cascade).
 # retrieved: 2026-07-22
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed | valid | span
@@ -37,5 +37,5 @@ fixed       | Canada Day       | 7 1    | public          | | sat_sun_mon |  |
 nth_weekday | Civic Holiday    | 8 1 0  | public          | |  |  |
 nth_weekday | Labour Day       | 9 1 0  | public          | |  |  |
 nth_weekday | Thanksgiving Day | 10 2 0 | public          | |  |  |
-fixed       | Christmas Day    | 12 25  | public religious | | sat_sun_mon |  |
-fixed       | Boxing Day       | 12 26  | public          | | sat_sun_mon |  |
+fixed       | Christmas Day    | 12 25  | public religious | | sat_sun_mon_cascade |  |
+fixed       | Boxing Day       | 12 26  | public          | | sat_sun_mon_cascade |  |
