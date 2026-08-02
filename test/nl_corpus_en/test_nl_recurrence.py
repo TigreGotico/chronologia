@@ -259,3 +259,35 @@ def test_weekend_and_weekday_class_nouns(text, rrule):
 @pytest.mark.parametrize("text", ["weekend", "weekends", "the weekend was fun"])
 def test_bare_weekend_is_not_a_recurrence(text):
     assert extract_recurrence(text, LANG) is None
+
+
+import datetime as _dt
+
+
+@pytest.mark.parametrize("anchor", [
+    _dt.datetime(2017, 6, 27, 13, 4),   # non-leap year
+    _dt.datetime(2020, 1, 1),           # leap year
+])
+@pytest.mark.parametrize("text", ["every 29th of february", "every february 29th"])
+def test_leap_day_recurrence_is_anchor_independent(text, anchor):
+    # A recurring date is well-formed independently of whether the anchor's own
+    # year contains it: "every 29th of february" must be the leap-day rule
+    # YEARLY;BYMONTH=2;BYMONTHDAY=29 whatever the anchor.  Regression: the yearly
+    # branch resolved the date to a concrete datetime, which is None in a
+    # non-leap year, so the frame was dropped and the greedy catch-all mis-read
+    # it as MONTHLY;BYMONTHDAY=29 (firing 11x a year).
+    got = extract_recurrence(text, LANG, anchor=anchor)
+    assert got is not None
+    assert got[0].to_string() == "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=29"
+    assert got[1] == ""
+
+
+@pytest.mark.parametrize("text", [
+    "every 31st of april",    # April never has a 31st
+    "every 30th of february",
+])
+def test_impossible_recurring_date_is_no_recurrence(text):
+    # A named date that recurs in no year is not a recurrence -- and must NOT
+    # fall through to a wrong MONTHLY;BYMONTHDAY rule.
+    assert extract_recurrence(text, LANG,
+                              anchor=_dt.datetime(2017, 6, 27, 13, 4)) is None

@@ -643,6 +643,12 @@ def extract_recurrence(
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
+            # a finder may CLAIM its frame yet name no valid recurrence (an
+            # impossible recurring date, "every 31st of april"): it returns a
+            # None rule so the greedy catch-alls after it do not re-read the
+            # same tokens into a wrong rule.  The claim is authoritative -- stop.
+            if rec is None:
+                return None
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_clock(rec, consumed, ctx, lang, anchor)
             from chronologia.extract.pipeline import render_remainder
@@ -1657,13 +1663,29 @@ def _recur_date_anchored(ctx):
                 break
         if dm is None:
             continue
-        res = engine.resolver.resolve(dm, anchor)
-        if res is None:
+        # Read the month/day straight from the matched calendar_date slots
+        # rather than resolving to a concrete datetime: a *recurring* date is
+        # well-formed independently of whether the anchor's own year contains
+        # it, so "every 29th of february" (a leap-day rule) must map to
+        # YEARLY;BYMONTH=2;BYMONTHDAY=29 whatever the anchor.  The single-span
+        # resolver builds datetime(anchor.year, 2, 29) and returns None in a
+        # non-leap year, which used to drop this frame and let the greedy
+        # _recur_every catch-all mis-read it as a monthly BYMONTHDAY firing 11x
+        # a year.
+        month_tok = dm.slots.get("MONTH")
+        if month_tok is None or month_tok.text not in engine.spec.months:
             continue
-        start = res.value.start
-        return (_build_every("yearly", bymonth=start.month,
-                             bymonthday=start.day),
-                set(range(i, dm.span[1])))
+        month = engine.spec.months[month_tok.text]
+        day_tok = dm.slots.get("DAY")
+        day = int(day_tok.value) if day_tok else 1
+        try:
+            rule = _build_every("yearly", bymonth=month, bymonthday=day)
+        except ValueError:
+            # the named date recurs in no year ("every 31st of april").  This is
+            # still the specific yearly-date frame -- consume it and report no
+            # recurrence, rather than fall through to a wrong MONTHLY;BYMONTHDAY.
+            return (None, set(range(i, dm.span[1])))
+        return (rule, set(range(i, dm.span[1])))
     return None
 
 
