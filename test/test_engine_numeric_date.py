@@ -144,3 +144,23 @@ def test_zz_numeric_date_swap_and_two_digit_year():
 @pytest.mark.parametrize("text", ["13/13/2024", "31/02/2024", "00/00/00"])
 def test_zz_numeric_date_impossible_none(text):
     _none(zz_engine(), text)
+
+
+def test_en_region_subtag_selects_dmy_vs_mdy():
+    # English is the one base language whose numeric day/month order splits by
+    # region: US mdy, the rest of the anglosphere dmy. '03/04/2020' is March 4
+    # in en-us but 3 April in en-gb/au/nz/ie/in/za. The bare 'en' keeps the US
+    # default. Regression: _timespan_engine collapsed every en-* to bare 'en'.
+    import datetime
+    from chronologia import extract_timespan
+    A = datetime.datetime(2017, 6, 27, 13, 4)
+    for lang in ("en-gb", "en-au", "en-nz", "en-ie", "en-in", "en-za"):
+        r = extract_timespan("03/04/2020", lang, A)
+        assert (r.span.start.month, r.span.start.day) == (4, 3), lang
+    for lang in ("en-us", "en"):
+        r = extract_timespan("03/04/2020", lang, A)
+        assert (r.span.start.month, r.span.start.day) == (3, 4), lang
+    # unambiguous forms and the >12 swap are region-invariant
+    for lang in ("en-us", "en-gb"):
+        assert extract_timespan("15/06/2020", lang, A).span.start.month == 6
+        assert extract_timespan("13/12/2024", lang, A).span.start.day == 13
