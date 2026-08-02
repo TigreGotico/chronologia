@@ -33,3 +33,14 @@ def test_duration(text, expected):
 @pytest.mark.parametrize("text", ['2 június', 'semmi időbeli itt'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
+
+
+@pytest.mark.parametrize("text,expected", [
+    ('kétszáz nap', timedelta(days=200)),
+    ('ötszáz nap', timedelta(days=500)),
+])
+def test_duration_spelled_hundreds(text, expected):
+    # The model-derived run set was built 0..100, so single-token hundred words
+    # (kétszáz=200) never folded and returned None. The 0..999 sweep admits them.
+    got = extract_duration(text, LANG)
+    assert got is not None and got[0] == expected

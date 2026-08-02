@@ -33,3 +33,15 @@ def test_duration(text, expected):
 @pytest.mark.parametrize("text", ['2 ιουνίου', 'τίποτα χρονικό εδώ'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
+
+
+@pytest.mark.parametrize("text,expected", [
+    ('διακόσιες μέρες', timedelta(days=200)),   # feminine hundreds (μέρα is fem.)
+    ('πεντακόσιες μέρες', timedelta(days=500)),
+    ('εννιακόσιες μέρες', timedelta(days=900)),
+])
+def test_duration_spelled_feminine_hundreds(text, expected):
+    # pronounce_number_el emits only the neuter hundred; the feminine forms that
+    # agree with feminine unit nouns folded to None until added to the run set.
+    got = extract_duration(text, LANG)
+    assert got is not None and got[0] == expected
