@@ -33,3 +33,21 @@ def test_duration(text, expected):
 @pytest.mark.parametrize("text", ['2 يونيو', 'لا شيء زمني هنا'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
+
+
+# Arabic writes the "and" conjunction glued onto the next word ("خمسة وعشرون"),
+# so a spelled compound 21-99 (and hundred+tens) used to stall after its first
+# word and return None.  The glued cardinal surfaces now fold correctly.
+_WAW_CASES = [
+    ('خمسة وعشرين يوما', timedelta(days=25)),
+    ('واحد وعشرين يوما', timedelta(days=21)),
+    ('ثلاثة وثلاثين يوما', timedelta(days=33)),
+    ('مئة وخمسة وعشرين يوما', timedelta(days=125)),
+]
+
+
+@pytest.mark.parametrize("text,expected", _WAW_CASES)
+def test_duration_waw_glued_compound(text, expected):
+    got = extract_duration(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a duration"
+    assert got[0] == expected

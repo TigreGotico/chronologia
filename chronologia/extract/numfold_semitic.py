@@ -52,6 +52,15 @@ _AR_NUM = frozenset({
     "ثمانون", "ثمانين", "تسعون", "تسعين",
     "مئة", "مائة", "مئتان", "مئتين",
 })
+# Arabic writes the conjunction و ("and") GLUED onto the word it precedes, with
+# no space -- "خمسة وعشرون" (twenty-five) tokenises as [خمسة][وعشرون], not
+# [خمسة][و][عشرون].  The bare-"و" run connector above therefore never fires on
+# real Arabic text, so a spelled compound 21-99 (and hundred+tens, "مئة وخمسة
+# وعشرون") stalled after its first word and the rest was stranded -- a flat
+# None for the whole utterance.  ovos_number_parser reads the glued run
+# correctly (extract_number_ar("خمسة وعشرون") == 25, "مئة وخمسة وعشرون" == 125),
+# so admit every و-glued cardinal surface to the run set as well.
+_AR_NUM_WAW = frozenset("و" + w for w in _AR_NUM)
 from chronologia.extract.numfold_ordinals import with_ordinals
 
 
@@ -130,7 +139,8 @@ _he_teen_fold = _teen_fold(extract_number_he, _HE_TEEN_FIRST, _HE_TEEN_SECOND)
 # month names (تشرين الأول = October, كانون الثاني = January), so folding them
 # would erase the month.  Consequently a *spelled* Arabic Q1/Q2 does not fold
 # (Q3/Q4 and the digit/Latin-Q forms do) -- a documented, narrow limitation.
-_fold_ar_base = with_ordinals(_make_fold(extract_number_ar, _AR_NUM), "ar",
+_fold_ar_base = with_ordinals(
+    _make_fold(extract_number_ar, _AR_NUM | _AR_NUM_WAW), "ar",
                               exclude=("الأول", "الثاني"))
 
 # Rule A, confirmed by native speaker athmanemokraoui (TigreGotico/chronologia
