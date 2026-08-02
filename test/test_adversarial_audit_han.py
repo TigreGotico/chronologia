@@ -1363,3 +1363,30 @@ def test_ordinal_surface_does_not_bind_as_year():
     assert extract_timespan("March 5th, 99", "en", _A).span.start.year == 1999
     assert extract_timespan("15th of March 2020", "en", _A).span.start.year == 2020
     assert extract_timespan("the summer of 69", "en", _A).span.start.year == 1969
+
+
+# --- R29 B: a year lent across a range must roll a wrapped endpoint's year ----
+def test_range_year_lend_rolls_wrapped_endpoint():
+    """"from december 2020 to march" lends 2020 to the bare "march", reading it
+    in 2020 -- before december -- so the range reversed and the whole "to march"
+    clause was silently dropped (bare "December 2020" with remainder "from to
+    march").  When the lent year reverses the pair, the borrowed endpoint rolls
+    into the adjacent year so the range reads forward.  Symmetric for a lent
+    left endpoint; non-wrapping lends are unchanged."""
+    from chronologia import extract_timespan
+    r = extract_timespan("from december 2020 to march", "en-us", _A)
+    assert (str(r.span.start.date()), str(r.span.end.date())) \
+        == ("2020-12-01", "2021-04-01") and r.remainder == ""
+    # mirror: the year on the RIGHT, bare month on the LEFT, rolls the left back
+    l = extract_timespan("from december to march 2021", "en-us", _A)
+    assert (str(l.span.start.date()), str(l.span.end.date())) \
+        == ("2020-12-01", "2021-04-01")
+    # non-wrapping lends stay in the single lent year
+    assert str(extract_timespan("from january 2020 to march", "en-us", _A)
+               .span.end.date()) == "2020-04-01"
+    assert str(extract_timespan("from march 2020 to december", "en-us", _A)
+               .span.end.date()) == "2021-01-01"
+    # both endpoints already carry their own year -- untouched
+    b = extract_timespan("from december 2019 to march 2020", "en-us", _A)
+    assert (str(b.span.start.date()), str(b.span.end.date())) \
+        == ("2019-12-01", "2020-04-01")
