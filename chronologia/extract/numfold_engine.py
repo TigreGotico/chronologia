@@ -140,11 +140,38 @@ def make_fold(grammar: NumberGrammar
         return None if value is False or value is None else value
 
     def _fold_run(run, into):
-        """Fold one homogeneous run (no non-additive cuts) into ``into``."""
+        """Fold one homogeneous run (no non-additive cuts) into ``into``.
+
+        A consumption guard defends against a back-end that silently drops a
+        leading component and returns only a trailing one.  In every positional
+        number-naming system the leading word is the most significant, so when
+        the run opens with a *magnitude* (its first token is worth >= 100 on its
+        own) a genuinely-consumed run is worth at least that magnitude ("two
+        thousand [and] twenty four" 2024 >= 2000, "two hundred fifty" 250 >=
+        200).  When the folded value is instead *smaller* than that leading
+        magnitude, the back-end dropped it (Dutch "tweeduizend vierentwintig" ->
+        24, dropping the 2000): stamping one token over the whole run would
+        commit a confidently-wrong value with an empty remainder.  Cut instead
+        -- peel the first token as its own number and re-fold the rest -- so the
+        un-consumed magnitude survives as an honest, non-empty remainder.
+
+        The >= 100 magnitude gate is what keeps the guard off legitimate
+        sub-unit composites whose value is *meant* to fall below the first
+        token: the fraction idiom "eine halbe" (a half = 0.5 < the 1 of "eine")
+        and the implied-multiplier "hundred twenty three" (123, whose first
+        token "hundred" is 100 and 123 is not below it) both fold untouched.
+        """
         value = _value_of(run)
         if value is None:
             into.extend(run)
             return
+        if len(run) > 1:
+            first_val = _value_of(run[:1])
+            if (first_val is not None and first_val >= 100
+                    and value < first_val):
+                _fold_run(run[:1], into)
+                _fold_run(run[1:], into)
+                return
         num = int(value) if float(value).is_integer() else float(value)
         into.append(Token(text=str(num), raw=str(num), index=0,
                           is_number=True, value=num,
