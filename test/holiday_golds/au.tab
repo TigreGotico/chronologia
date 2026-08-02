@@ -10,7 +10,7 @@
 # (empty subdiv == jurisdiction-wide)
 |ANZAC Day|2024|4|25|primary|source-restated (holiday_data/au.tab header + papers/holidays)
 |Australia Day|2024|1|26|primary|source-restated (holiday_data/au.tab header + papers/holidays)
-|Australia Day|2025|1|27|primary|source-restated (holiday_data/au.tab header + papers/holidays)
+|Australia Day|2025|1|26|primary|source-restated (holiday_data/au.tab header + papers/holidays)
 |Boxing Day|2024|12|26|primary|source-restated (holiday_data/au.tab header + papers/holidays)
 |Christmas Day|2024|12|25|primary|source-restated (holiday_data/au.tab header + papers/holidays)
 |Easter Monday|2024|4|1|computed|independent in-test arithmetic (easter/nth-weekday/calendar conversion)

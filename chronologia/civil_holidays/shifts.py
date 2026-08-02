@@ -127,6 +127,14 @@ GB_SUBSTITUTE = SubstitutePolicy((5, 6), skip_weekends=True,
 #: Japan 振替休日: a national holiday on a Sunday makes the following non-holiday
 #: day a holiday (weekends are not skipped — a Saturday can be the substitute).
 JP_FURIKAE = SubstitutePolicy((6,), skip_weekends=False, label=" (振替休日)")
+#: Australian in-lieu rule: New Year, Christmas and Boxing Day landing on a
+#: Saturday or Sunday keep their nominal date and grant an *additional* holiday
+#: on the next free weekday — the reference lib labels it " (observed)". Like the
+#: UK rule the Christmas/Boxing pair cascades (25/26 Dec on a weekend give two
+#: distinct substitutes), which is why it must ADD rather than relocate: the old
+#: relocating ``sat_sun_mon`` shift collided the pair onto one Monday and dropped
+#: both nominal dates.
+AU_SUBSTITUTE = SubstitutePolicy((5, 6), skip_weekends=True, label=" (observed)")
 
 
 # --------------------------------------------------------------------------
@@ -159,4 +167,5 @@ _SHIFT_POLICIES: Dict[str, ShiftPolicy] = {
     "nl_kingsday": NL_KINGSDAY_SHIFT,
     "gb_substitute": GB_SUBSTITUTE,
     "jp_furikae": JP_FURIKAE,
+    "au_substitute": AU_SUBSTITUTE,
 }
