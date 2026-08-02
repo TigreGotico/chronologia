@@ -34,6 +34,13 @@ _REQUIRED_HEADERS = ("jurisdiction", "source", "retrieved")
 _SUPPORTED_SCHEMA_VERSIONS = frozenset({"v1"})
 _TRANSLATIONS_FILE = os.path.join(_DATA_DIR, "i18n", "translations.tab")
 
+#: Categories whose days do not displace a statutory substitute/observed holiday.
+#: A day tagged *only* with one of these is an informational closure (a bank /
+#: market non-trading day such as Japan's 三が日 銀行休業日), not a public holiday,
+#: so a furikae / observed-day cascade rolls *onto* it rather than past it.  A
+#: day that also carries any other category (``public`` …) still blocks.
+_NONBLOCKING_FOR_SUBSTITUTE = frozenset({"bank"})
+
 
 def load_translations(path: str = _TRANSLATIONS_FILE
                       ) -> Dict[Tuple[str, str], Dict[str, str]]:
@@ -171,11 +178,21 @@ class HolidayCalendar:
                 basis=basis,
                 names=rule.names,
                 translations=trans))
+        # A substitute is displaced only by a genuine holiday, never by a day
+        # that is merely a bank/market closure: Japan's 振替休日 rolls to the next
+        # day that is not itself a 国民の祝日 (祝日法 第3条第2項), and the 三が日 bank
+        # closures on Jan 2/3 are not 祝日, so a Sunday 元日's substitute is the
+        # Monday Jan 2, not Jan 4 two days past them.  Build the substitute pass
+        # its own blocking set from the emitted holidays (public days, religious
+        # and government observances, prior substitutes, relocate targets) minus
+        # days that are *only* an informational closure.
+        subst_taken = {h.span.start for h in out
+                       if not h.categories <= _NONBLOCKING_FOR_SUBSTITUTE}
         for date, basis, rule in sorted(subst_work, key=lambda t: t[0]):
-            sub = rule.shift.substitute_for(date, frozenset(taken))
+            sub = rule.shift.substitute_for(date, frozenset(subst_taken))
             if sub is None:
                 continue
-            taken.add(sub)
+            subst_taken.add(sub)
             label = rule.shift.label
             trans = _translations_for(self.jurisdiction, rule.name)
             out.append(CivilHoliday(
