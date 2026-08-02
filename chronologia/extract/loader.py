@@ -370,20 +370,37 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     conv = cfg.get("conventions", {})
     tok = cfg.get("tokenizer", {})
 
-    # A unit surface is a grammatical PLURAL when another same-kind surface,
-    # plus an ``-s``/``-es`` ending, spells it (day+s -> days, fortnight+s ->
-    # fortnights, min+s -> mins).  The relation IS the plural, so it never
-    # mis-flags a singular; a language whose plurals are not ``-s`` produces an
-    # empty set and its scoped-ordinal readings are left untouched.  Both the
-    # ``units`` and ``scope_units`` maps feed the check so a plural SEL_UNIT is
-    # caught too.
+    # ``plural_units`` collects every unit surface that is NOT a singular unit
+    # word, so the scoped-ordinal resolver can veto "the two <unit>s of June" (a
+    # bare COUNT) while still resolving "the second <unit> of June" (a true
+    # ordinal).  Both ``units`` and ``scope_units`` feed the check so a plural
+    # SEL_UNIT is caught too.
+    #
+    # Preferred derivation -- correct by construction: when a locale ships
+    # explicit ``unit1_<kind>.voc`` singular vocab (``singular_units``), a
+    # surface is plural iff it is a real unit surface that is NOT one of those
+    # listed singulars.  This covers non-``-s`` plurals -- Italian giorno/giorni,
+    # Dutch dag/dagen, Russian case-based день/дня -- and never mis-flags the
+    # German genitive-singular jahres/monats, because a locale's own listed
+    # singulars decide the split.
+    #
+    # Fallback -- ``-s``/``-es`` morphology: for a locale WITHOUT ``unit1_``
+    # files (en/es/fr/de/pt), a unit surface is plural when another same-kind
+    # surface plus an ``-s``/``-es`` ending spells it (day+s -> days,
+    # fortnight+s -> fortnights).  The relation IS the plural, so it never
+    # mis-flags a singular; a non-``-s`` language with no ``unit1_`` files
+    # produces an empty set and its scoped readings are left untouched.
     _all_units = {**units, **scope_units}
-    plural_units = frozenset(
-        s for s, kind in _all_units.items()
-        if (s.endswith("s")
-            and ((s[:-1] in _all_units and _all_units[s[:-1]] == kind)
-                 or (s.endswith("es") and s[:-2] in _all_units
-                     and _all_units[s[:-2]] == kind))))
+    if singular_units:
+        plural_units = frozenset(
+            s for s in _all_units if s not in singular_units)
+    else:
+        plural_units = frozenset(
+            s for s, kind in _all_units.items()
+            if (s.endswith("s")
+                and ((s[:-1] in _all_units and _all_units[s[:-1]] == kind)
+                     or (s.endswith("es") and s[:-2] in _all_units
+                         and _all_units[s[:-2]] == kind))))
 
     spec = LangSpec(
         lang=lang,

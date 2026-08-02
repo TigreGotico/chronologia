@@ -1231,10 +1231,10 @@ class Resolver:
         # signal that "the two days of June" is a count, not "the 2nd day".
         # Refuse the reading (honest None, exactly as an out-of-range ordinal
         # already resolves) instead of fabricating June 2.  ``plural_units`` is
-        # derived from ``-s`` morphology, so it is empty for a non-``-s``
-        # language and leaves its scoped readings untouched; the singular "the
-        # second day", "the third week", "the 100th day of the year" are
-        # likewise never in it.
+        # every unit surface a locale does NOT list as singular (from its
+        # ``unit1_`` vocab), falling back to ``-s`` morphology for locales that
+        # ship no such vocab; either way the singular "the second day", "the
+        # third week", "the 100th day of the year" are never in it.
         sel_tok = (match.slots.get("UNIT") or match.slots.get("SEL_UNIT"))
         if sel_tok is not None and sel_tok.text in self.spec.plural_units:
             return None
