@@ -1390,3 +1390,32 @@ def test_range_year_lend_rolls_wrapped_endpoint():
     b = extract_timespan("from december 2019 to march 2020", "en-us", _A)
     assert (str(b.span.start.date()), str(b.span.end.date())) \
         == ("2019-12-01", "2020-04-01")
+
+
+# --- R33: recursive impossible-date veto must not blow up exponentially -------
+def test_impossible_date_veto_is_not_exponential():
+    """The veto re-parses a stranded fragment through the public extract_timespan,
+    which re-enters the veto; a self-similar input ("5th of june 5th of june ...")
+    used to recurse 2**n times (a few hundred chars hung for hours). A re-entrancy
+    guard bounds it to one linear pass."""
+    import time
+    from chronologia import extract_timespan
+    text = "5th of june " * 40   # would be astronomically slow pre-fix
+    t0 = time.perf_counter()
+    extract_timespan(text, "en-us", _A)
+    assert time.perf_counter() - t0 < 5.0
+
+
+# --- R33: an out-of-range "Nth month/week of the year" must refuse, not wrap ---
+def test_out_of_range_scoped_ordinal_of_year_is_none():
+    """A year has 12 months / 52-53 weeks; "the 13th month of the year" is
+    contradictory and must return None, not January of the next year."""
+    from chronologia import extract_timespan
+    for text in ("the 13th month of the year", "the 20th month of the year",
+                 "the 53rd week of the year"):
+        assert extract_timespan(text, "en-us", _A) is None, text
+    # valid ordinals still resolve
+    assert extract_timespan("the 12th month of the year", "en-us", _A) \
+        .span.start.month == 12
+    assert extract_timespan("the 3rd month of the year", "en-us", _A) \
+        .span.start.month == 3

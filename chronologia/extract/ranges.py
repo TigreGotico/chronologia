@@ -366,6 +366,14 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
         if ordinal == -1:
             _day = ref_date.replace(day=31, month=12)
         else:
+            # A year has 52 or 53 ISO weeks; anything past that is not a week OF
+            # this year but a wrap into the next -- refuse it (ValueError -> None
+            # at the resolver) rather than fabricate "the 53rd week of 2017" as
+            # 2018-W1.  Dec 28 is always in the year's last ISO week.
+            max_week = ref_date.replace(month=12, day=28).isocalendar()[1]
+            if not 1 <= ordinal <= max_week:
+                raise ValueError(
+                    f"a {ref_date.year}-week year has no week {ordinal}")
             _day = ref_date.replace(day=1, month=1) + \
                 relativedelta(weeks=ordinal) - timedelta(days=1)
         return get_week_range(_day)[0]
@@ -400,6 +408,11 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
     if resolution == DateTimeResolution.MONTH_OF_YEAR:
         if ordinal == -1:
             return ref_date.replace(month=12, day=1)
+        # A year has 12 months; "the 13th month of the year" is contradictory,
+        # not January of the next year -- refuse it (ValueError -> None) rather
+        # than fabricate a wrapped date.
+        if not 1 <= ordinal <= 12:
+            raise ValueError(f"a year has 12 months, not {ordinal}")
         return ref_date.replace(day=1, month=1) + \
             relativedelta(months=ordinal - 1)
     if resolution == DateTimeResolution.MONTH_OF_DECADE:
