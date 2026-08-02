@@ -1566,7 +1566,8 @@ def _apply_week_of(tokens, resolved, spec):
                                       spec.conventions.week_start)
                     consumed = tuple(sorted(set(res.consumed)
                                             | set(range(j, begin))))
-                    widened = (m, Resolution(week, consumed))
+                    widened = (m, Resolution(week, consumed,
+                                             week_widened=True))
                     covered.update(range(j, begin))
                     break
         out.append(widened or (m, res))
@@ -1939,11 +1940,20 @@ def _compose(resolved, engine, tokens):
         label_consumed = set(range(*weekdays[0][0].span))
     else:
         eff_dates = dates
-    if (len(clocks) == 1 and len(eff_dates) == 1
+    # A week-of-widened date is a seven-day span, not a day: composing a
+    # pinpoint clock (or a daypart band) onto it would silently collapse the
+    # week back to one minute (or one band) on its Monday and swallow the clock
+    # tokens whole -- "the week of June 15 at 3pm" would read 2018-06-11 15:00
+    # with an empty remainder, discarding the week.  Refuse the composition so
+    # the week stands and the clock/daypart stays UNCOMPOSED in the remainder
+    # (a non-empty remainder honestly signals the un-placed time).
+    _week = len(eff_dates) == 1 and eff_dates[0][1].week_widened
+    if (not _week and len(clocks) == 1 and len(eff_dates) == 1
             and _adjacent(eff_dates[0][0], clocks[0][0])):
         res = compose_date_clock(eff_dates[0][1], clocks[0][1])
         rep = eff_dates[0][0]
-    elif (len(dayparts) == 1 and len(eff_dates) == 1 and not clocks
+    elif (not _week and len(dayparts) == 1 and len(eff_dates) == 1
+            and not clocks
             and _adjacent(eff_dates[0][0], dayparts[0][0])):
         name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
         res = compose_date_daypart(eff_dates[0][1], dayparts[0][1], name)

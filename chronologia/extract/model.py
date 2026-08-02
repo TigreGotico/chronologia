@@ -367,3 +367,9 @@ class Resolution:
     """
     value: DateSpan
     consumed: Tuple[int, ...]
+    #: set by the "week of X" post-pass when it widens an inner date to its
+    #: seven-day calendar week.  A widened week is a span, not a day: a lone
+    #: clock/daypart must NOT compose a pinpoint time onto it ("the week of
+    #: June 15 at 3pm" is not a one-minute reading), so the composer reads this
+    #: flag to keep the week and strand the clock in the remainder instead.
+    week_widened: bool = False

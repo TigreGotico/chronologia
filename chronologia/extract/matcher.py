@@ -430,6 +430,26 @@ class ConstructionMatcher:
                     if (name == "scoped_ordinal" and start > 0
                             and tokens[start - 1].text in self.spec.rel_markers):
                         continue
+                    # A bare hour that is really a day-of-month is a date, not
+                    # a clock: "June 15 in the morning" tokenises the day number
+                    # "15" as a HOUR under the "at? HOUR in? article? MERIDIEM"
+                    # order, whose 4-token span then out-spans the 2-token
+                    # "June 15" calendar_date in _select -- so the clock hijacks
+                    # the day-of-month and strands the month.  A HOUR sitting
+                    # immediately after a MONTH surface (modulo one unconsumed
+                    # article, "June the 15 ...") is not a time of day; veto the
+                    # clock reading so the calendar_date wins.  A real clock
+                    # after a month ("June 15 at 3pm") leads with "at", so its
+                    # HOUR is preceded by that connector (or the day number),
+                    # never a bare month, and stays untouched.
+                    if name == "clock_time" and "HOUR" in slots:
+                        _hi = slots["HOUR"].index - 1
+                        _art = self.spec.connectors.get(
+                            "article", frozenset())
+                        if _hi >= 0 and tokens[_hi].text in _art:
+                            _hi -= 1
+                        if _hi >= 0 and tokens[_hi].text in self.spec.months:
+                            continue
                     if "CAL_MONTH" in slots:
                         cal = _calendar_for_surface(
                             self.spec, slots["CAL_MONTH"].text)
