@@ -1000,3 +1000,26 @@ def test_slavic_feminine_one_compound():
     assert extract_duration("одна минута", "ru")[0] == timedelta(minutes=1)
     assert extract_duration("двадцать один день", "ru")[0] == timedelta(days=21)
     assert extract_duration("двадцать две минуты", "ru")[0] == timedelta(minutes=22)
+
+
+# --- R22 B1: extract_candidates must apply the same impossible-date veto ------
+def test_candidates_agree_with_timespan_on_impossible_date_veto():
+    """extract_candidates must not surface a fabricated reading that
+    extract_timespan refuses via the stranded-impossible-date veto: "the ides of
+    march 44 BC" strands "44 BC", so the roman_date 2017 reading is a fabricated
+    date -- extract_timespan returns None and extract_candidates must not rank
+    that 2017 reading first (the two APIs must agree on the top answer)."""
+    from chronologia import extract_timespan, extract_candidates
+    assert extract_timespan("the ides of march 44 BC", "en", _A) is None
+    cands = extract_candidates("the ides of march 44 BC", "en", _A)
+    # no surfaced candidate may be the fabricated roman_date 2017-03-15 reading
+    for c in cands:
+        if c.construction == "roman_date" and c.span is not None:
+            assert c.span.start.year != 2017, "fabricated 2017 ides re-surfaced"
+    # the 32nd-of-february fabrication is likewise refused by both APIs
+    assert extract_timespan("the 32nd of february 2017", "en", _A) is None
+    # legitimate readings are NOT over-vetoed: both APIs still agree
+    assert extract_timespan("the ides of march", "en", _A) is not None
+    ic = extract_candidates("the ides of march", "en", _A)
+    assert ic and ic[0].span.start.month == 3 and ic[0].span.start.day == 15
+    assert extract_candidates("the 5th of june 2020", "en", _A)[0].span.start.day == 5

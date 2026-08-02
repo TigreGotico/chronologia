@@ -1623,6 +1623,53 @@ def _exclusion_vetoes(governing_text: str, spec) -> bool:
     return any(w in triggers for w in words)
 
 
+def _impossible_date_veto(tokens, consumed, text, engine, anchor):
+    """Whether the winning reading strands an IMPOSSIBLE day-of-month numeral --
+    proof the parse is incomplete and must be refused (residue-veto design,
+    #244) rather than surfaced as a fabricated broader span with the day dropped.
+
+    Two shapes trigger:
+      * an unconsumed numeral immediately followed by an unconsumed "of"
+        connector, where either the "of" abuts the winning span or the
+        "<number> of ..." fragment does not itself resolve to a valid date
+        ("the 32nd of February 2017", "the 29th of February" in a non-leap year);
+      * the connector-less "<number> <month>" order (Italian "32 aprile",
+        German "32. April", Russian "32 апреля"): a bare numeral > 31 that abuts
+        the winning span and does not itself name a valid date.
+    A stranded but VALID date (a second mention, "... al 5 de junio de 2020")
+    resolves on its own and does not veto.  Shared by _resolve_span (the
+    single-winner path) and extract_candidates so the two public APIs never
+    disagree on the top answer.
+    """
+    of_surfaces = set(engine.spec.connectors.get("of", ()))
+    for i in range(len(tokens) - 1):
+        if not (tokens[i].index not in consumed and tokens[i].is_number
+                and tokens[i + 1].index not in consumed
+                and tokens[i + 1].text in of_surfaces):
+            continue
+        if i + 2 < len(tokens) and tokens[i + 2].index in consumed:
+            return True                              # qualifier abuts winner
+        cs = tokens[i].char_start
+        ce = None
+        for t in tokens[i:]:
+            if t.index in consumed or t.char_start is None:
+                break
+            ce = t.char_end
+        if cs is not None and ce is not None:
+            frag = text[cs:ce]
+            if extract_timespan(frag, engine.spec.lang, anchor) is None:
+                return True                          # impossible stranded date
+    for i, t in enumerate(tokens):
+        if t.index in consumed or not t.is_number or t.value is None \
+                or t.value != int(t.value) or t.value <= 31:
+            continue
+        abuts = ((i > 0 and tokens[i - 1].index in consumed)
+                 or (i + 1 < len(tokens) and tokens[i + 1].index in consumed))
+        if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:
+            return True                              # impossible day-of-month
+    return False
+
+
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
                   scale_mode="short"):
     """The single recursive resolver over the token stream.
@@ -1697,39 +1744,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     #     date ("the 29th of February" in a non-leap year).
     # A stranded but VALID date (a second mention, "... al 5 de junio de 2020")
     # resolves on its own and is left in the remainder untouched.
-    of_surfaces = set(engine.spec.connectors.get("of", ()))
-    for i in range(len(tokens) - 1):
-        if not (tokens[i].index not in consumed and tokens[i].is_number
-                and tokens[i + 1].index not in consumed
-                and tokens[i + 1].text in of_surfaces):
-            continue
-        if i + 2 < len(tokens) and tokens[i + 2].index in consumed:
-            return None                              # qualifier abuts winner
-        cs = tokens[i].char_start
-        ce = None
-        for t in tokens[i:]:
-            if t.index in consumed or t.char_start is None:
-                break
-            ce = t.char_end
-        if cs is not None and ce is not None:
-            frag = text[cs:ce]
-            if extract_timespan(frag, engine.spec.lang, anchor) is None:
-                return None                          # impossible stranded date
-    # The same veto for the connector-less "<number> <month>" order (Italian
-    # "32 aprile", German "32. April", Russian "32 апреля"): a bare numeral
-    # too large to be any month's day (> 31) that could not bind as a
-    # day-of-month is left stranded while the month resolves alone -- the day
-    # silently dropped.  When such a numeral abuts the winning span and does
-    # not itself name a valid date (a stranded year "2019" resolves on its own
-    # and is left untouched), the reading is a fabricated impossible date.
-    for i, t in enumerate(tokens):
-        if t.index in consumed or not t.is_number or t.value is None \
-                or t.value != int(t.value) or t.value <= 31:
-            continue
-        abuts = ((i > 0 and tokens[i - 1].index in consumed)
-                 or (i + 1 < len(tokens) and tokens[i + 1].index in consumed))
-        if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:
-            return None                              # impossible day-of-month
+    if _impossible_date_veto(tokens, consumed, text, engine, anchor):
+        return None
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)
@@ -2066,6 +2082,13 @@ def extract_candidates(
         starts = [tokens[i].char_start for i in consumed
                   if i < len(tokens) and tokens[i].char_start is not None]
         if starts and _exclusion_vetoes(text[:min(starts)], engine.spec):
+            continue
+        # the same impossible-date veto _resolve_span applies to the single
+        # winner: a candidate that strands an impossible day-of-month numeral
+        # ("the ides of march 44 BC" -> roman_date + a stranded "44 BC") is a
+        # fabricated reading extract_timespan refuses, so it must not be surfaced
+        # here either -- otherwise the two public APIs disagree on the top answer.
+        if _impossible_date_veto(tokens, consumed, text, engine, anchor):
             continue
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
