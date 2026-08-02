@@ -1153,16 +1153,21 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # so it must not be year-lent a second time from its own bare numeral --
     # that would rebuild "5 2020" and clobber the shared reading.
     left_year, right_year = _endpoint_year(left_tok), _endpoint_year(right_tok)
+    left_lent = right_lent = False
     if right_year is not None and left_year is None \
             and left is not None and left[2] == "dated" and not shared_left:
         lent = _lend_year(left_tok, right_tok)
         if lent is not None:
-            left = borrowed(lent) or left
+            new_left = borrowed(lent)
+            if new_left is not None:
+                left, left_lent = new_left, True
     elif left_year is not None and right_year is None \
             and right is not None and right[2] == "dated" and not shared_right:
         lent = _lend_year(right_tok, left_tok)
         if lent is not None:
-            right = borrowed(lent) or right
+            new_right = borrowed(lent)
+            if new_right is not None:
+                right, right_lent = new_right, True
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
     # endpoint's trailing meridiem so both read on the same clock
     if left is None and right is not None and left_tok:
@@ -1211,6 +1216,22 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         pulled = _minus_one_year(start)
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
+    # a year lent across the range (one endpoint named the pair's single year)
+    # reads the borrowed month in the donor's own year, which reverses the span
+    # when the two months sit on opposite sides of the calendar -- "from
+    # december 2020 to march" reads march in 2020, before december.  Roll the
+    # LENT endpoint into the adjacent year so the pair reads forward: the right
+    # borrower one year on ("to march 2021"), the left borrower one year back
+    # ("from december 2020 ...").  The donor keeps its explicit year, and a
+    # non-reversing lend (january 2020 to march) never reaches here.
+    if end <= start and right_lent:
+        rolled = _plus_one_year(end)
+        if rolled is not None and rolled > start:
+            end = rolled
+    elif end <= start and left_lent:
+        pulled = _minus_one_year(start)
+        if pulled is not None and pulled < end:
+            start = pulled
     if end <= start and "deep_time" in (left[2], right[2]):
         # a reversed range that involves a DEEP-TIME endpoint ("from the
         # neolithic to the oligocene") is not a civil ordering error -- deep
@@ -1231,6 +1252,15 @@ def _minus_one_year(astro):
     not exist (Feb 29) or falls out of the representable range."""
     try:
         return astro.replace(year=astro.year - 1)
+    except (ValueError, OverflowError):
+        return None
+
+
+def _plus_one_year(astro):
+    """The same day one calendar year later, or ``None`` when that day does not
+    exist (Feb 29) or falls out of the representable range."""
+    try:
+        return astro.replace(year=astro.year + 1)
     except (ValueError, OverflowError):
         return None
 
