@@ -48,7 +48,14 @@ def _make_fold(lang: str, extra_values: Dict[str, float] | None = None,
         pron = getattr(mod, "pronounce_number_" + lang)
         extract = getattr(mod, "extract_number_" + lang)
         words = set()
-        for n in range(0, 101):
+        # Pronounce through 999, not just 100: the single-token hundred words
+        # 200..900 ("kétszáz", "kaksisataa", "kakssada", "διακόσια", "berrehun")
+        # only appear when a number >= 200 is pronounced, so a run set built from
+        # 0..100 alone silently dropped every spelled hundred and returned None
+        # for "kétszáz nap" (two hundred days).  The 100..999 sweep adds only
+        # those hundred words (tens/units are already covered by 0..99), so the
+        # set stays a closed class of genuine number-words.
+        for n in range(0, 1000):
             try:
                 for w in str(pron(n)).lower().replace("-", " ").split():
                     words.add(w)
@@ -125,7 +132,23 @@ _EL_FEM_HOURS = {
     "μία": 1, "τρεις": 3, "τέσσερις": 4,
     "δεκατρείς": 13, "δεκατέσσερις": 14,
 }
-_el_numfold = _make_fold("el", _EL_FEM_HOURS)
+# Greek hundreds inflect for gender; ``pronounce_number_el`` emits only the
+# NEUTER form (διακόσια), so the FEMININE hundreds that agree with feminine unit
+# nouns ("διακόσιες μέρες" -- 200 days, μέρα being feminine) and the MASCULINE
+# hundreds ("διακόσιοι μήνες") never entered the model-derived run set and folded
+# to None.  ``extract_number_el`` reads every gender correctly, so the surfaces
+# only need to be present in the run set; the neuter forms already arrive via
+# the 0..999 pronunciation sweep.
+_EL_HUNDREDS = {
+    "διακόσιες": 200, "τριακόσιες": 300, "τετρακόσιες": 400,
+    "πεντακόσιες": 500, "εξακόσιες": 600, "εφτακόσιες": 700,
+    "επτακόσιες": 700, "οχτακόσιες": 800, "οκτακόσιες": 800,
+    "εννιακόσιες": 900,
+    "διακόσιοι": 200, "τριακόσιοι": 300, "τετρακόσιοι": 400,
+    "πεντακόσιοι": 500, "εξακόσιοι": 600, "επτακόσιοι": 700,
+    "οκτακόσιοι": 800, "εννιακόσιοι": 900,
+}
+_el_numfold = _make_fold("el", {**_EL_FEM_HOURS, **_EL_HUNDREDS})
 
 # -- Greek: the written day-of-month is a digit + ordinal ending -------------
 # "5η Μαρτίου" (the 5th of March), "της 5ης Μαρτίου" (of the 5th of March).
@@ -317,7 +340,15 @@ _EU_NUM_SUFFIX = frozenset({
     "a", "an", "ean", "n", "ko", "eko", "ren",
     "garren", "garrena", "garrenean",
 })
-_eu_numfold = _make_fold("eu", _EU_HOUR_FORMS)
+# Basque spells its compound hundreds with the conjunction "eta" ("ehun eta
+# hogei" = 120), so pronouncing 100..999 pulls the bare connector "eta" into the
+# derived word set.  But "eta" is ALSO the hour<->fraction connector of the
+# spoken clock ("bostak eta erdi" = half past five); left in the number set it
+# lets the fold swallow the clock's "eta" and the whole clock stops resolving.
+# Exclude it: single-token hundreds ("berrehun" = 200) still fold, and a spaced
+# "eta"-joined compound >= 101 never folded before this file taught the sweep to
+# reach past 100, so nothing is lost.
+_eu_numfold = _make_fold("eu", _EU_HOUR_FORMS, exclude=frozenset({"eta"}))
 
 
 def fold_eu(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:

@@ -33,3 +33,15 @@ def test_duration(text, expected):
 @pytest.mark.parametrize("text", ['2 ekainaren', 'ezer denborazkorik hemen'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
+
+
+@pytest.mark.parametrize("text,expected", [
+    ('berrehun egun', timedelta(days=200)),
+    ('hirurehun egun', timedelta(days=300)),
+    ('bostehun egun', timedelta(days=500)),
+])
+def test_duration_spelled_hundreds(text, expected):
+    # Single-token Basque hundreds fold; the compound connector "eta" is excluded
+    # from the number set so the spoken clock ("bostak eta erdi") still resolves.
+    got = extract_duration(text, LANG)
+    assert got is not None and got[0] == expected
