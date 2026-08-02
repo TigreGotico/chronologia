@@ -546,8 +546,9 @@ ovos-number-parser ships a `extract_number_<your code>` function for it.
 
 **Languages with a number backend today** (spelled-out numbers work):
 
-> ar, az, bg, ca, cs, da, de, el, en, es, et, eu, fa, fi, fr, fy, gl, he, hr,
-> hu, id, it, kab, ms, nb, nl, nn, pl, ru, sk, sl, sv, tr, uk
+> an, ar, ast, az, bg, ca, cs, da, de, el, en, es, et, eu, fa, fi, fr, fy, gl,
+> he, hr, hu, id, it, kab, ms, mwl, nb, nl, nn, oc, pl, pt, ro, ru, sk, sl, sv,
+> tr, uk
 
 **If your language is on that list:** set `hook` in `lang.json` to the matching
 `fold_<code>` function (see the existing languages for the exact name — most
