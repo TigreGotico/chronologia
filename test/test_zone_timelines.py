@@ -248,16 +248,35 @@ def test_philippines_seam_day_carries_jan1_label():
 
 
 def test_alaska_friday_followed_by_friday():
+    # The Julian->Gregorian catch-up (+12) and the eastward dateline step (-1)
+    # net to +11, so the last Julian day (6 October) and the first Gregorian day
+    # (18 October, "Alaska Day") share ONE solar JDN — the doubled Friday.  That
+    # shared day surfaces as its outgoing Julian label; the next solar day is the
+    # ordinary Gregorian 19 October, with NO permanent offset.
     tl = TIMELINES["alaska_1867"]
-    seam = gregorian_to_jdn(1867, 10, 19)   # first Gregorian-reckoned day
-    assert tl.from_jdn(seam - 1).as_tuple() == (1867, 10, 6)    # Julian
-    assert tl.from_jdn(seam).as_tuple() == (1867, 10, 18)       # Gregorian
+    shared = julian_to_jdn(1867, 10, 6)         # == gregorian_to_jdn(1867,10,18)
+    assert tl.from_jdn(shared).as_tuple() == (1867, 10, 6)       # Julian side
+    assert tl.from_jdn(shared + 1).as_tuple() == (1867, 10, 19)  # aligned again
 
 
 def test_alaska_two_labels_share_a_friday_jdn():
     # 6 Oct (Julian) and 18 Oct (Gregorian) both resolve, each through its own
     # calendar, to the SAME JDN — hence the same weekday: the repeated Friday.
     assert julian_to_jdn(1867, 10, 6) == gregorian_to_jdn(1867, 10, 18)
+    # ...and the timeline honours it: both civil labels map to that one JDN.
+    tl = TIMELINES["alaska_1867"]
+    assert tl.to_jdn((1867, 10, 6)) == tl.to_jdn((1867, 10, 18)) \
+        == julian_to_jdn(1867, 10, 6)
+
+
+def test_alaska_modern_dates_have_no_permanent_offset():
+    # Regression: the post-1867 Gregorian segment must NOT carry a persistent
+    # jdn_shift.  A 21st-century Alaskan date is exactly its proleptic-Gregorian
+    # label — no drift leaking out of the one-time 1867 seam.
+    from chronologia.astrodate import AstroDate
+    tl = TIMELINES["alaska_1867"]
+    assert tl.date(2017, 6, 27) == AstroDate(2017, 6, 27)
+    assert tl.from_astro(AstroDate(2017, 6, 27)).as_tuple() == (2017, 6, 27)
 
 
 def test_alaska_days_consecutive_across_the_seam():

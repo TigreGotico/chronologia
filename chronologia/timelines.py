@@ -19,8 +19,11 @@ Model
   - **SKIP** — labels that never existed (Rome: 5–14 October 1582; Britain:
     3–13 September 1752).  The two calendars straddling the seam both place the
     queried label across it, so no JDN ever bore it.
-  - **REPEAT** — one label, two JDNs (Alaska 1867): :meth:`Timeline.to_jdn`
-    yields the two-candidate tuple (the existing two-JDN indeterminacy).
+  - **REPEAT** — a day lived twice.  The fall-back form is *one label, two
+    JDNs*: :meth:`Timeline.to_jdn` yields the two-candidate tuple.  Alaska
+    1867's *weekday* form is the mirror image — *two labels, one JDN*: the last
+    Julian day and the first Gregorian day share a solar JDN, so both civil
+    labels resolve to it.
   - **INSERT** — a label no calendar in force generates (Sweden, 30 February
     1712), supplied as a timeline-level label override on a single JDN.
   - **RELABEL** — a year-start / numbering change (England, 25 March → 1
@@ -84,7 +87,7 @@ _TL_CALENDARS: Dict[str, Union[Calendar, TabulatedCalendar]] = {
 class DiscontinuityKind(Enum):
     """The four ways a civil label-mapping can jump (see module docstring)."""
     SKIP = "skip"        # labels that never existed
-    REPEAT = "repeat"    # one label, two JDNs
+    REPEAT = "repeat"    # a day lived twice (one label/two JDNs, or two labels/one JDN)
     INSERT = "insert"    # a label no calendar in force generates
     RELABEL = "relabel"  # year-start / numbering change
 
@@ -169,13 +172,14 @@ class TimelineSegment:
     of days: :meth:`Timeline.from_jdn` reads the calendar at ``jdn - jdn_shift``
     and :meth:`Timeline.to_jdn` places a label at ``calendar_jdn + jdn_shift``.
     It is ``0`` for every ordinary reform (a calendar switch already re-aligns
-    the labels by construction).  It earns its keep only for a **same-calendar
-    civil-day edit** — an International-Date-Line hop that deletes or re-lives a
-    day without changing the calendar: a westward skip (Samoa 2011, Philippines
-    1844) shifts the post-seam segment ``-1`` so the surviving days close ranks
-    (the seam day borrows the *next* calendar label), and an eastward repeat
-    (Alaska 1867's Gregorian segment) shifts ``+1`` so the seam day carries the
-    *previous* calendar label — the mechanism that lets one weekday recur.
+    the labels by construction) and for Alaska 1867 (whose Julian->Gregorian
+    catch-up and eastward dateline step cancel, leaving no permanent offset —
+    its doubled Friday is carried by a REPEAT discontinuity, not a shift).  It
+    earns its keep only for a **same-calendar civil-day edit** — an
+    International-Date-Line hop that deletes a day without changing the calendar:
+    a westward skip (Samoa 2011, Philippines 1844) shifts the post-seam segment
+    ``-1`` so the surviving days close ranks (the seam day borrows the *next*
+    calendar label).
     """
     start_jdn: int
     calendar_key: str
@@ -286,6 +290,21 @@ class Timeline:
         for d in self.discontinuities:
             if d.kind is DiscontinuityKind.INSERT and d.after_label == label:
                 return d.jdn
+
+        # A *weekday* REPEAT (Alaska 1867) records two distinct civil labels the
+        # same solar day wore -- the outgoing calendar's ``before_label`` and the
+        # incoming calendar's ``after_label`` -- which resolve, each through its
+        # own calendar, to the SAME JDN.  The outgoing label lands on a segment
+        # by construction; the incoming label's own calendar would place it on
+        # that shared JDN but outside its (post-seam) segment, so it has no
+        # segment home.  Route it to the shared JDN through ``before_label``.
+        # (A fall-back REPEAT carries one label on both sides -- before == after
+        # -- and is left to the two-candidate segment scan below.)
+        for d in self.discontinuities:
+            if (d.kind is DiscontinuityKind.REPEAT
+                    and d.before_label != d.after_label
+                    and label == d.after_label):
+                return self.to_jdn(d.before_label)
 
         answers: List[int] = []
         shadowing_insert = None
@@ -561,23 +580,30 @@ philippines_1844 = Timeline(
 # in the 19th century was 12 days behind the Gregorian").
 #
 # Modelled faithfully, per those sources, as BOTH kinds at the single seam:
-#   * a **calendar-switch segment boundary** at the first Gregorian day, Julian
-#     before it, Gregorian after — the 11 intervening Gregorian dates (7–17
+#   * a **calendar-switch segment boundary** at the first post-seam Gregorian
+#     day (Julian before it, Gregorian after) with **no** ``jdn_shift`` — the
+#     eastward IDL step and the Julian->Gregorian catch-up cancel, so Alaska
+#     leaves the seam aligned with the rest of the US Gregorian calendar and
+#     carries NO permanent day offset (a modern Alaskan date is exactly its
+#     proleptic-Gregorian label); the 11 intervening Gregorian dates (7–17
 #     October 1867) that no Alaskan civil day bore therefore read as a SKIP;
-#   * the Gregorian segment carries ``jdn_shift=+1`` (the eastward IDL step: one
-#     JDN "behind" astronomical Gregorian), which is exactly what makes the two
-#     civil labels 6-Oct-Julian and 18-Oct-Gregorian resolve, *each through its
-#     own calendar*, to the same JDN — hence the same weekday — while sitting on
-#     two consecutive real solar days: the **REPEAT**.
+#   * the **REPEAT** records the doubled Friday: because the Julian->Gregorian
+#     gap (+12) and the eastward dateline step (-1) net to +11, the last Julian
+#     day and the first Gregorian day share one solar JDN — 6-Oct-Julian and
+#     18-Oct-Gregorian resolve, *each through its own calendar*, to the SAME JDN
+#     (``julian_to_jdn(1867,10,6) == gregorian_to_jdn(1867,10,18)``), hence the
+#     same weekday: one Friday wearing two civil labels.
 # Unlike an ordinary fall-back REPEAT (one label, two JDNs, returned by to_jdn
-# as a two-candidate tuple), Alaska's is a *weekday* repeat: it is recorded as a
-# REPEAT :class:`Discontinuity`, not surfaced through to_jdn, because the two
-# Fridays share their calendar JDN rather than sharing a civil label.
-_ALASKA_SEAM = gregorian_to_jdn(1867, 10, 19)  # first Gregorian-reckoned day
+# as a two-candidate tuple), Alaska's is a *weekday* repeat — two labels, one
+# JDN.  ``from_jdn`` surfaces the outgoing Julian label ("6 October") on that
+# shared day; ``to_jdn`` maps BOTH labels to it (the incoming "18 October",
+# homeless in its own post-seam segment, is routed to the shared JDN via the
+# REPEAT discontinuity), so ``to_jdn((1867,10,6)) == to_jdn((1867,10,18))``.
+_ALASKA_SEAM = gregorian_to_jdn(1867, 10, 19)  # first ordinary Gregorian day
 alaska_1867 = Timeline(
     "alaska_1867",
     (TimelineSegment(_MIN_JDN, "julian"),
-     TimelineSegment(_ALASKA_SEAM, "gregorian", jdn_shift=1)),
+     TimelineSegment(_ALASKA_SEAM, "gregorian")),
     (Discontinuity(_ALASKA_SEAM, DiscontinuityKind.REPEAT,
                    (1867, 10, 6), (1867, 10, 18),
                    "Friday -> Friday, eastward IDL step (America/Sitka); "
