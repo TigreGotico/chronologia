@@ -33,3 +33,17 @@ def test_duration(text, expected):
 @pytest.mark.parametrize("text", ['2 июня', 'ничего временного здесь'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
+
+
+# Spelled hundreds 200-999 ("двести", "триста", ...) only appear when a number
+# >= 200 is pronounced, so the model-derived run set (built 0..100) dropped them
+# and returned None.  The 0..999 sweep now admits the hundred-words.
+@pytest.mark.parametrize("text,expected", [
+    ('двести дней', timedelta(days=200)),
+    ('триста дней', timedelta(days=300)),
+    ('девятьсот дней', timedelta(days=900)),
+])
+def test_duration_spelled_hundreds(text, expected):
+    got = extract_duration(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a duration"
+    assert got[0] == expected

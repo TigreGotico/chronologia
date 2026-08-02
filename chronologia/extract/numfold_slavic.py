@@ -62,7 +62,14 @@ def _numwords(lang: str) -> FrozenSet[str]:
     mod = _model(lang)
     pron = getattr(mod, f"pronounce_number_{lang}")
     words = set()
-    for n in range(0, 101):
+    # Pronounce through 999, not just 100: the hundred-words 200..900
+    # ("двести", "триста", "dwieście", ...) only ever appear when a number
+    # >= 200 is spoken, so a run set built from 0..100 alone silently dropped
+    # every spelled hundred and returned None for "двести дней" (two hundred
+    # days) across all eight Slavic locales.  The 100..999 sweep adds only those
+    # hundred-words (the tens/units are already covered by 0..99), so the set
+    # stays a closed class of genuine number-words -- no over-folding risk.
+    for n in range(0, 1000):
         try:
             for w in str(pron(n)).lower().replace("-", " ").split():
                 words.add(w)
