@@ -1041,3 +1041,37 @@ def test_deep_time_reverse_range_spans_both_endpoints():
     # forward deep-time and civil/clock/weekday ranges unaffected
     assert extract_timespan("from the jurassic to the neolithic", "en", _A) is not None
     assert extract_timespan("from june 5 to june 12", "en", _A).span.start.month == 6
+
+
+# --- R17: a bare cardinal + plural unit is a count, not the ordinal day -------
+def test_cardinal_plural_unit_is_not_the_ordinal_day_of_month():
+    """"the two days of June" is a COUNT ("two days"), not "the 2nd day of June".
+
+    The number fold collapses the spelled ordinal "second" and the cardinal
+    "two" to one token, so unit plurality is the only surviving signal: a
+    scoped-ordinal selection ("the Nth <unit> of ...") is grammatically
+    singular, so a PLURAL unit in that frame can never be the ordinal
+    day-of-month.  The mis-read had fabricated June 2.
+    """
+    def _day2(text):
+        r = extract_timespan(text, "en", _A)
+        return r is not None and r.span.start.month == 6 and r.span.start.day == 2
+
+    # the bug: neither phrasing may resolve to June 2 any more
+    assert not _day2("the two days of June")
+    assert not _day2("two days of June")
+
+    # every singular ordinal-selection reading MUST stay correct
+    def _start(text):
+        r = extract_timespan(text, "en", _A)
+        assert r is not None, text
+        return (r.span.start.year, r.span.start.month, r.span.start.day)
+
+    assert _start("the second day of June") == (2017, 6, 2)
+    assert _start("the 2nd day of June") == (2017, 6, 2)
+    assert _start("the 100th day of the year") == (2017, 4, 10)
+    assert _start("the last day of the month") == (2017, 6, 30)
+    assert _start("the third week of June") == (2017, 6, 19)
+    assert _start("the 21st century") == (2000, 1, 1)
+    assert _start("the 3rd quarter of 2018") == (2018, 7, 1)
+    assert _start("the first decade of the 21st century") == (2000, 1, 1)
