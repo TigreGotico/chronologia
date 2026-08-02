@@ -566,7 +566,11 @@ class AstroDate:
         if left[0] != right[0]:
             raise TypeError("can't subtract offset-naive and offset-aware "
                             "AstroDate/datetime values")
-        return timedelta(microseconds=right[1] - left[1])
+        delta_us = right[1] - left[1]
+        try:
+            return timedelta(microseconds=delta_us)
+        except OverflowError:
+            return WideDuration._from_us(delta_us)
 
     # -- comparison & equality --------------------------------------------
     def __eq__(self, other):
