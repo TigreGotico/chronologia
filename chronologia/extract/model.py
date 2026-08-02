@@ -247,6 +247,18 @@ class LangSpec:
     # only the grammatical singular here so an inflected plural/genitive
     # near-miss ("через недели") stays unmatched; empty for most languages.
     singular_units: Mapping[str, str] = field(default_factory=dict)
+    # unit/scope-unit surfaces that are a grammatical PLURAL of a singular
+    # surface of the SAME kind (day/days, hour/hours, fortnight/fortnights).
+    # Derived at load time from the vocab (a surface that is another same-kind
+    # surface plus an ``-s``/``-es`` ending), never hand-listed, so it is
+    # populated only for the ``-s``-plural languages and stays empty elsewhere.
+    # A scoped-ordinal selection ("the Nth <unit> of ...") is grammatically
+    # singular in every language, so a plural unit in that frame is a COUNT,
+    # not an ordinal day-of-month -- the matcher vetoes the scoped_ordinal
+    # reading when the bound unit is one of these ("the two days of June" is
+    # not June 2).  Empty for a non-``-s`` language leaves that reading
+    # untouched, so the derivation can never wrongly veto there.
+    plural_units: frozenset = frozenset()
     ordinal_suffixes: Tuple[str, ...] = ()
     # weekday cycle binding: cycle name a weekday_ref order resolves against
     # (default None == the calendar's canonical 7-day week)
