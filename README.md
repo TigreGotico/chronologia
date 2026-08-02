@@ -222,13 +222,17 @@ the library exists at all — and because you should be able to judge the work
 without having to trust either the AI or the maintainer.
 
 **Why it could only be built this way.** A library that reads dates in around
-forty languages and reckons across seventeen calendars needs command of
-grammar, number-words, calendar arithmetic and holiday law in every one of
-them. No single maintainer speaks all of those languages, and commissioning a
-native-speaker linguist for each was never realistic for an open-source
-project — that is exactly the barrier that has kept libraries like this narrow.
-What *is* realistic is to hold AI to a discipline strict enough that breadth
-never buys itself with correctness:
+forty languages — with the goal of *every* language over time, the way the
+sibling [orthography2ipa](https://github.com/TigreGotico/orthography2ipa)
+project is already 1000+ languages strong — needs command of grammar,
+number-words, calendar arithmetic and holiday law in each one. No single
+maintainer speaks that many languages, and commissioning a native-speaker
+linguist for each was never realistic for an open-source project — that is
+exactly the barrier that has kept libraries like this narrow, and stuck at a
+handful of major languages. What *is* realistic is to hold AI to a discipline
+strict enough that breadth never buys itself with correctness, so that adding
+the next language is a bounded, verifiable unit of work rather than an act of
+faith:
 
 - **Cite or refuse.** Every algorithm is transcribed from a named, downloaded
   source — a linguistics paper, a calendrical reference, a statute or gazette —
