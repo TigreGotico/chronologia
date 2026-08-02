@@ -264,6 +264,42 @@ def _parse_ical_value(value: str, is_date: bool) -> AstroDate:
                      tzinfo=timezone.utc if is_utc else None)
 
 
+def _zoned(dt: AstroDate, tzid: Optional[str], is_date: bool) -> AstroDate:
+    """Anchor a floating ``DATE-TIME`` to its ``TZID`` zone (RFC 5545 3.2.19).
+
+    A ``DTSTART;TZID=America/New_York:...`` value parses as a naive wall clock;
+    the ``TZID`` names the IANA zone it belongs to, which real producers (Google
+    Calendar, Outlook) use far more than a bare ``Z`` UTC value.  Attach that
+    zone so the reader does not silently return a floating time with the wrong
+    offset.  A ``DATE`` (all-day, floating by RFC) and an already-UTC value
+    (trailing ``Z``) are left untouched; an unknown zone stays floating rather
+    than raising, keeping the parse lenient."""
+    if tzid is None or is_date or dt.tzinfo is not None:
+        return dt
+    try:
+        from zoneinfo import ZoneInfo
+        zone = ZoneInfo(tzid)
+    except Exception:
+        return dt   # unknown zone: stay floating, never raise
+    # route through the library's honest DST resolution so the attached zone is
+    # always self-consistent with the instant: a unique wall time gets the real
+    # IANA zone; an ambiguous fall-back time takes the LATER occurrence (matching
+    # the daypart-anchoring convention); a spring-forward gap time (which never
+    # existed) keeps zoneinfo's push-forward default -- a malformed but concrete
+    # instant an Event can still carry.
+    from chronologia.astrodate import resolve_wall_clock
+    resolved = resolve_wall_clock(dt.year, dt.month, dt.day, dt.hour,
+                                  dt.minute, zone)
+    if isinstance(resolved, AstroDate):
+        base = resolved
+    elif isinstance(resolved, tuple):
+        base = resolved[1]              # later of the two fall-back occurrences
+    else:                              # NeverExisted (gap): concrete fallback
+        base = dt.replace(tzinfo=zone)
+    # resolve_wall_clock works to minute precision; carry the seconds back.
+    return base.replace(second=dt.second, microsecond=dt.microsecond)
+
+
 def _split_property(line: str):
     """``NAME;PARAM=..:VALUE`` -> ``(name, params, value)`` (params lowercased
     keys).  The value may itself contain ``:`` (an RRULE never does; a URL
@@ -277,7 +313,11 @@ def _split_property(line: str):
     for p in parts[1:]:
         if "=" in p:
             k, _, val = p.partition("=")
-            params[k.lower()] = val.upper()
+            # keep the parameter VALUE's original case: an IANA TZID
+            # ("America/New_York") is case-sensitive, so it must not be
+            # upper-cased.  Callers that compare a value ("VALUE=DATE") upper-
+            # case at the comparison site instead.
+            params[k.lower()] = val
     return name, params, value
 
 
@@ -308,11 +348,15 @@ def from_ical(text: str) -> Event:
         if not in_event:
             continue
         if name == "DTSTART":
-            start_is_date = params.get("value") == "DATE" or "T" not in value
-            dtstart = _parse_ical_value(value, start_is_date)
+            start_is_date = params.get("value", "").upper() == "DATE" \
+                or "T" not in value
+            dtstart = _zoned(_parse_ical_value(value, start_is_date),
+                             params.get("tzid"), start_is_date)
         elif name == "DTEND":
-            end_is_date = params.get("value") == "DATE" or "T" not in value
-            dtend = _parse_ical_value(value, end_is_date)
+            end_is_date = params.get("value", "").upper() == "DATE" \
+                or "T" not in value
+            dtend = _zoned(_parse_ical_value(value, end_is_date),
+                           params.get("tzid"), end_is_date)
         elif name == "RRULE":
             rrule = parse_rrule(value)
         elif name == "SUMMARY":
