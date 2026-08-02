@@ -251,5 +251,63 @@ class TestResolveBP(unittest.TestCase):
         self.assertEqual(resolve_bp(Decimal("66"), "Ma").start.year, -65_998_050)
 
 
+# --------------------------------------------------------------------------
+# Deep-time arithmetic on AstroDate: subtraction overflow -> WideDuration,
+# and AstroDate +/- WideDuration advancing an unbounded date.
+# --------------------------------------------------------------------------
+class TestAstroDateDeepTimeArithmetic(unittest.TestCase):
+    A = AstroDate(-65_000_000, 1, 1)
+    B = AstroDate(-45_000_000, 1, 1)
+
+    def test_subtract_deep_time_dates_returns_wideduration(self):
+        w = self.B - self.A
+        self.assertIsInstance(w, WideDuration)
+        # exact microsecond magnitude, independent of the mean-year split
+        self.assertEqual(w._total_us(),
+                         self.B._total_us() - self.A._total_us())
+
+    def test_subtract_reversed_is_negative_wideduration(self):
+        w = self.A - self.B
+        self.assertIsInstance(w, WideDuration)
+        self.assertEqual(w._total_us(),
+                         self.A._total_us() - self.B._total_us())
+        self.assertLess(w, timedelta(0))
+
+    def test_add_wideduration_round_trips(self):
+        w = self.B - self.A
+        self.assertEqual(self.A + w, self.B)
+        self.assertEqual(w + self.A, self.B)  # __radd__
+
+    def test_subtract_wideduration_round_trips(self):
+        w = self.B - self.A
+        self.assertEqual(self.B - w, self.A)
+
+    def test_add_wideduration_lands_far_outside_datetime_range(self):
+        w = self.B - self.A
+        result = AstroDate(-45_000_000, 1, 1) - w
+        self.assertEqual(result.year, -65_000_000)
+        self.assertFalse(result.in_datetime_range)
+
+    def test_wideduration_arithmetic_preserves_tzinfo(self):
+        from datetime import timezone
+        aware = AstroDate(-65_000_000, 1, 1, tzinfo=timezone.utc)
+        w = self.B - self.A
+        self.assertEqual((aware + w).tzinfo, timezone.utc)
+        self.assertEqual((aware - w).tzinfo, timezone.utc)
+
+    # -- in-range behaviour must stay byte-identical -----------------------
+    def test_in_range_subtraction_still_timedelta(self):
+        d = AstroDate(2020, 1, 1) - AstroDate(2019, 1, 1)
+        self.assertIsInstance(d, timedelta)
+        self.assertNotIsInstance(d, WideDuration)
+        self.assertEqual(d, timedelta(days=365))  # 2019 is not a leap year
+
+    def test_in_range_timedelta_addition_unchanged(self):
+        self.assertEqual(AstroDate(2020, 1, 1) + timedelta(days=1),
+                         AstroDate(2020, 1, 2))
+        self.assertEqual(AstroDate(2020, 1, 2) - timedelta(days=1),
+                         AstroDate(2020, 1, 1))
+
+
 if __name__ == "__main__":
     unittest.main()

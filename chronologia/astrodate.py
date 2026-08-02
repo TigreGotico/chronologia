@@ -531,6 +531,9 @@ class AstroDate:
         if isinstance(other, timedelta):
             return (AstroDate._from_total_us(self._total_us() + _td_us(other))
                     .replace(tzinfo=self.tzinfo))
+        if isinstance(other, WideDuration):
+            return (AstroDate._from_total_us(self._total_us() + other._total_us())
+                    .replace(tzinfo=self.tzinfo))
         return NotImplemented
 
     __radd__ = __add__
@@ -539,6 +542,9 @@ class AstroDate:
         if isinstance(other, timedelta):
             return (AstroDate._from_total_us(self._total_us() - _td_us(other))
                     .replace(tzinfo=self.tzinfo))
+        if isinstance(other, WideDuration):
+            return (AstroDate._from_total_us(self._total_us() - other._total_us())
+                    .replace(tzinfo=self.tzinfo))
         right = self._operand_key(other)
         if right is None:
             return NotImplemented
@@ -546,7 +552,11 @@ class AstroDate:
         if left[0] != right[0]:
             raise TypeError("can't subtract offset-naive and offset-aware "
                             "AstroDate/datetime values")
-        return timedelta(microseconds=left[1] - right[1])
+        delta_us = left[1] - right[1]
+        try:
+            return timedelta(microseconds=delta_us)
+        except OverflowError:
+            return WideDuration._from_us(delta_us)
 
     def __rsub__(self, other):
         right = self._operand_key(other)
