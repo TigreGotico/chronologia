@@ -29,13 +29,15 @@
 fixed          | en:New Year's Day ;; cy:Dydd Calan               | 1 1    | public          |  | gb_substitute
 easter         | en:Good Friday ;; cy:Dydd Gwener y Groglith      | -2     | public religious |  |
 nth_weekday    | en:Early May Bank Holiday ;; cy:Gŵyl Banc Calan Mai | 5 1 0  | public          |  |
-nth_weekday    | en:Spring Bank Holiday ;; cy:Gŵyl Banc y Gwanwyn | 5 -1 0 | public          |  |
+nth_weekday    | en:Spring Bank Holiday ;; cy:Gŵyl Banc y Gwanwyn | 5 -1 0 | public          |  |  | -2021 |
+nth_weekday    | en:Spring Bank Holiday ;; cy:Gŵyl Banc y Gwanwyn | 5 -1 0 | public          |  |  | 2023- |
 fixed          | en:Christmas Day ;; cy:Dydd Nadolig              | 12 25  | public religious |  | gb_substitute
 fixed          | en:Boxing Day ;; cy:Gŵyl San Steffan            | 12 26  | public          |  | gb_substitute
 #
 # --- One-off royal / national bank holidays (one_off; each carries its gov.uk
 #     proclamation citation). These were additional bank holidays granted for a
 #     single year only and never recur. gov.uk lists them in the year's table.
+one_off        | en:Spring Bank Holiday ;; cy:Gŵyl Banc y Gwanwyn | 2022 6 2  https://www.gov.uk/bank-holidays | public |  |
 one_off        | Platinum Jubilee bank holiday   | 2022 6 3  https://www.gov.uk/bank-holidays  | public |  |
 one_off        | State Funeral of Queen Elizabeth II | 2022 9 19 https://www.gov.uk/government/news/bank-holiday-announced-for-her-majesty-queen-elizabeth-iis-state-funeral-on-monday-19-september | public |  |
 one_off        | Coronation of King Charles III  | 2023 5 8  https://www.gov.uk/government/news/extra-bank-holiday-to-mark-the-coronation-of-king-charles-iii | public |  |
