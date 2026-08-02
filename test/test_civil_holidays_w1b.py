@@ -288,6 +288,24 @@ def test_jp_furikae_substitute_now_emitted():
     assert dates[(9, 23)] == "秋分の日 (振替休日)"  # substitute, added
 
 
+def test_jp_furikae_not_blocked_by_bank_closures():
+    # A Sunday 元日's 振替休日 is Monday Jan 2 (祝日法 第3条第2項: the next day that is
+    # not itself a 国民の祝日).  The 三が日 銀行休業日 on Jan 2/3 are "bank"-only rows,
+    # not 祝日, so the furikae must land ON Jan 2, not roll two days past them to
+    # Jan 4.  Regression: the substitute cascade used to block on every emitted
+    # day, letting the bank closures displace the furikae to Jan 4.
+    for year in (2017, 2023, 2012, 2034):   # years where Jan 1 is a Sunday
+        dates = [(h.date.month, h.date.day, h.name)
+                 for h in holidays_for("JP", year)
+                 if h.date.month == 1 and h.date.day <= 4]
+        assert (1, 2, "元日 (振替休日)") in dates, f"JP {year}: furikae not on Jan 2"
+        assert not any(d == (1, 4) for d in
+                       [(m, dd) for m, dd, _ in dates]), \
+            f"JP {year}: furikae wrongly on Jan 4"
+        # the bank closures are still emitted alongside, just no longer blocking
+        assert (1, 2, "銀行休業日") in dates and (1, 3, "銀行休業日") in dates
+
+
 def test_cn_differential_statutory_core_matches_package():
     # The package labels statutory days 元旦/春节/清明节/劳动节/端午节/中秋节/国庆节
     # and separately labels the 调休 make-up days 休息日(...调休) / 补假. Our
