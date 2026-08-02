@@ -4,20 +4,25 @@
 #   (Fair Work Ombudsman national + state/territory public holidays) and the
 #   Western Australia King's Birthday proclamations
 #   https://www.wa.gov.au/service/employment/public-holidays/public-holidays-western-australia
-#   Australia Day, New Year, Christmas and Boxing Day are observed the following
-#   Monday when they fall on a weekend (sat_sun_mon).
+#   When New Year, Christmas or Boxing Day fall on a Saturday or Sunday the
+#   nominal date is KEPT and an additional in-lieu day is granted on the next
+#   free weekday (au_substitute); the Christmas/Boxing pair cascades to two
+#   distinct weekdays and never collides. Australia Day (1 Jan 26) keeps its
+#   nominal date nationally even on a weekend (no national in-lieu day); the
+#   per-state Monday relocation of Australia Day is state legislation not
+#   modelled at the national level here.
 # retrieved: 2026-07-21
 # categories: public|regional|municipal|religious|school
 # columns: kind | name | args | categories | subdiv | observed
 #
 # --- national ---
-fixed       | New Year's Day  | 1 1    | public          |       | sat_sun_mon
-fixed       | Australia Day   | 1 26   | public          |       | sat_sun_mon
+fixed       | New Year's Day  | 1 1    | public          |       | au_substitute
+fixed       | Australia Day   | 1 26   | public          |       |
 easter      | Good Friday     | -2     | public religious |       |
 easter      | Easter Monday   | 1      | public religious |       |
 fixed       | ANZAC Day       | 4 25   | public          |       |
-fixed       | Christmas Day   | 12 25  | public religious |       | sat_sun_mon
-fixed       | Boxing Day      | 12 26  | public religious |       | sat_sun_mon
+fixed       | Christmas Day   | 12 25  | public religious |       | au_substitute
+fixed       | Boxing Day      | 12 26  | public religious |       | au_substitute
 #
 # --- New South Wales ---
 nth_weekday | King's Birthday | 6 2 0  | public | AU-NSW |

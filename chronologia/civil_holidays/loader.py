@@ -276,7 +276,8 @@ def load_calendar(path: str) -> HolidayCalendar:
     * ``subdiv`` — optional subdivision code (empty = jurisdiction-wide).
     * ``observed`` — optional named policy: a relocating shift (``us`` /
       ``sun_mon`` / ``sat_sun_mon`` / ``il_independence``) OR an in-lieu
-      substitute (``gb_substitute`` / ``jp_furikae``); empty = none.
+      substitute (``gb_substitute`` / ``jp_furikae`` / ``au_substitute``);
+      empty = none.
     * ``valid`` — optional validity range (``"2024-"`` / ``"-2015"`` /
       ``"2016-2020"`` / ``"2024"``; empty = always in force).
     * ``span`` — optional span shape: ``day`` (default, a whole-day holiday),

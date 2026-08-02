@@ -183,12 +183,13 @@ def _our_dates(cc, year, subdiv=None):
 
 
 def test_au_differential_national_2024_2025():
-    # Adjudication of the one structural divergence: when a national holiday
-    # falls on a weekend, our observed-shift *relocates* the day (Sun New Year
-    # 2023-01-01 -> Mon 01-02), whereas the package keeps the nominal weekend
-    # date *and* adds a separate "additional day" on the Monday. So the two
-    # agree exactly on every package holiday that already lands on a weekday;
-    # the weekend ones are the expected, documented offset.
+    # When New Year / Christmas / Boxing Day fall on a weekend we now keep the
+    # nominal date and ADD a separate " (observed)" in-lieu day (au_substitute),
+    # matching the package's own additive convention (the package likewise keeps
+    # the weekend date and adds a substitute for its subdivisions). Every package
+    # weekday holiday is therefore reproduced exactly. Australia Day keeps its
+    # nominal 26 Jan nationally on a weekend (the package's national list does the
+    # same; only its per-state lists relocate it to the Monday).
     for year in (2023, 2024, 2025):
         ours = set(_our_dates("AU", year))
         for (m, d), name in _pkg_dates("AU", year).items():
@@ -357,6 +358,48 @@ def test_in_differential_islamic_within_one_day():
                     year, ours[0].date.month, ours[0].date.day)
                     - pkg_by_name[name]).days)
                 assert delta <= 1, f"IN {year} {name}: offset {delta} days"
+
+
+def test_au_weekend_christmas_boxing_add_cascading_substitutes_no_collision():
+    # Regression for the sat_sun_mon collision bug: in 2021 Christmas Day (Sat
+    # 25 Dec) and Boxing Day (Sun 26 Dec) must each KEEP their nominal date and
+    # ADD a cascading in-lieu day -- 27 Dec "Christmas Day (observed)" and, since
+    # the 27th is taken, 28 Dec "Boxing Day (observed)". The old relocating shift
+    # collided both onto 27 Dec and dropped 25/26 entirely.
+    got = {(h.date.month, h.date.day): h.name for h in holidays_for("AU", 2021)}
+    assert got[(12, 25)] == "Christmas Day"            # nominal kept
+    assert got[(12, 26)] == "Boxing Day"               # nominal kept
+    assert got[(12, 27)] == "Christmas Day (observed)"  # substitute added
+    assert got[(12, 28)] == "Boxing Day (observed)"     # cascaded, no collision
+    # No holiday vanished and nothing collided: four distinct days, four names.
+    dec = [h for h in holidays_for("AU", 2021) if h.date.month == 12]
+    assert {(h.date.day, h.name) for h in dec} == {
+        (25, "Christmas Day"), (26, "Boxing Day"),
+        (27, "Christmas Day (observed)"), (28, "Boxing Day (observed)")}
+    # The reference package agrees for any subdivision that observes the pair.
+    pkg = _pkg_dates("AU", 2021, subdiv="NSW")
+    assert pkg[(12, 27)] == "Christmas Day (observed)"
+    assert pkg[(12, 28)] == "Boxing Day (observed)"
+
+
+def test_au_new_years_day_weekend_keeps_nominal_and_adds_observed():
+    # New Year on a weekend: keep 1 Jan and add the " (observed)" Monday, never
+    # relocate. 2022-01-01 is a Saturday -> substitute Monday 2022-01-03.
+    got = {(h.date.month, h.date.day): h.name for h in holidays_for("AU", 2022)}
+    assert got[(1, 1)] == "New Year's Day"
+    assert got[(1, 3)] == "New Year's Day (observed)"
+
+
+def test_au_australia_day_2025_keeps_nominal_matching_reference():
+    # Regression: Australia Day 2025 (Sun 26 Jan) must KEEP 26 Jan nationally,
+    # not relocate to 27 Jan (which dropped the statutory date). The reference
+    # package's national list likewise keeps 26 Jan.
+    ours = [h for h in holidays_for("AU", 2025) if h.name == "Australia Day"]
+    assert len(ours) == 1
+    assert (ours[0].date.month, ours[0].date.day) == (1, 26)
+    pkg = _pkg_dates("AU", 2025)  # national reference: no subdiv
+    assert pkg[(1, 26)] == "Australia Day"
+    assert (1, 27) not in pkg
 
 
 def test_au_differential_wa_kings_birthday_decree_matches_package():
