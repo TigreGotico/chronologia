@@ -28,7 +28,7 @@ fixed         | The Day After New Year's Day             | 1 2                  
 easter        | Good Friday                              | -2 gregorian         | public          |  |  |  |
 easter        | Day After Good Friday                    | -1 gregorian         | public          |  |  |  |
 easter        | Easter Monday                            | 1 gregorian          | public          |  |  |  |
-nth_weekday | Mother's Day | 5 2 0 | public |  |  |  | 
+nth_weekday | Mother's Day | 5 2 6 1 | public |  |  |  | 
 fixed         | Independence Day                         | 6 1                  | public          |  |  |  |
 nth_weekday | Father's Day | 8 2 0 | public |  |  |  | 
 nth_weekday | White Sunday (Lotu a Tamaiti) | 10 2 0 | public |  |  |  | 

@@ -428,3 +428,28 @@ def test_au_differential_wa_kings_birthday_decree_matches_package():
         ours = [h for h in holidays_for("AU", year, subdiv="AU-WA")
                 if h.name == "King's Birthday"]
         assert ours and (ours[0].date.month, ours[0].date.day) == md
+
+
+@pytest.mark.parametrize("cc,year,first,second", [
+    # A consecutive two-day festival: the second day is "first day + 1", so it
+    # must never fall BEFORE the first.  These were encoded as independent
+    # nth_weekday rules of the *next* weekday index (2nd Tuesday, not 2nd Monday
+    # +1), so in a year where the Nth Tuesday precedes the Nth Monday the second
+    # day landed a week early.  2023 is such a year (August/May start on Tue/Mon).
+    ("ZW", 2023, "Zimbabwe Heroes' Day", "Defense Forces Day"),
+    ("GD", 2023, "Carnival Monday", "Carnival Tuesday"),
+    ("AG", 2023, "Carnival Monday", "Carnival Tuesday"),
+    ("VG", 2023, "Emancipation Monday", "Emancipation Tuesday"),
+    ("KN", 2023, "Emancipation Day", "Culturama Day - Last Lap"),
+])
+def test_consecutive_festival_second_day_follows_first(cc, year, first, second):
+    days = {h.name: h.span.start for h in holidays_for(cc, year)}
+    assert (days[second] - days[first]).days == 1, \
+        f"{cc} {year}: {second} not the day after {first}"
+
+
+def test_samoa_mothers_day_is_monday_after_second_sunday():
+    # Statute: the Monday following the 2nd Sunday of May.  In 2023 the 2nd
+    # Sunday is May 14, so Mother's Day is May 15 -- not the 2nd Monday (May 8).
+    days = {h.name: h.span.start for h in holidays_for("WS", 2023)}
+    assert (days["Mother's Day"].month, days["Mother's Day"].day) == (5, 15)

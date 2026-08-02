@@ -30,8 +30,8 @@ easter        | Whit Monday                              | 50 gregorian         
 nth_weekday | Sovereign's Birthday | 6 2 4 | public |  |  |  | 
 nth_weekday | Virgin Islands Day | 7 1 0 | public |  |  |  | 
 nth_weekday | Emancipation Monday | 8 1 0 | public |  |  |  | 
-nth_weekday | Emancipation Tuesday | 8 1 1 | public |  |  |  | 
-nth_weekday | Emancipation Wednesday | 8 1 2 | public |  |  |  | 
+nth_weekday | Emancipation Tuesday | 8 1 0 1 | public |  |  |  | 
+nth_weekday | Emancipation Wednesday | 8 1 0 2 | public |  |  |  | 
 nth_weekday | Heroes and Foreparents Day | 10 3 0 | public |  |  |  | 
 weekday_onbefore | The Great March of 1949 and Restoration Day | 11 25 0 | public |  |  |  | 
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
