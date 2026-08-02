@@ -1152,3 +1152,29 @@ def test_cardinal_plural_unit_is_not_the_ordinal_day_of_month():
     assert _start("the 21st century") == (2000, 1, 1)
     assert _start("the 3rd quarter of 2018") == (2018, 7, 1)
     assert _start("the first decade of the 21st century") == (2000, 1, 1)
+
+
+# --- R23 F1: Spanish exclusion/negation parity ("no mañana" -> None) ----------
+def test_spanish_exclusion_parity():
+    """Spanish lacked exclusion vocabulary, so "no mañana" ("not tomorrow")
+    handed back tomorrow's date instead of vetoing -- a scheduler could act on
+    the exact day it was told to avoid.  Parity with en/de/fr/it/pt."""
+    from chronologia import extract_timespan
+    assert extract_timespan("no mañana", "es", _A) is None
+    assert extract_timespan("no domingo", "es", _A) is None
+    assert extract_timespan("excepto el lunes", "es", _A) is None
+    # a plain positive date is unaffected
+    assert extract_timespan("mañana", "es", _A)[0].start.day == 28
+
+
+# --- R23 F2: leading past marker in the weekday-count ("hace 2 lunes") --------
+def test_leading_past_marker_weekday_count():
+    """Romance puts the past particle first ("hace 2 lunes" == 2 mondays ago);
+    the trailing-only scan missed it and returned the NEXT monday instead."""
+    from chronologia import extract_timespan
+    assert extract_timespan("hace 2 lunes", "es", _A)[0].start.isoformat()[:10] == "2017-06-19"
+    assert extract_timespan("il y a 2 lundis", "fr", _A)[0].start.isoformat()[:10] == "2017-06-19"
+    # trailing-marker and future forms unchanged
+    assert extract_timespan("2 mondays ago", "en", _A)[0].start.isoformat()[:10] == "2017-06-19"
+    assert extract_timespan("3 fridays from now", "en", _A)[0].start.isoformat()[:10] == "2017-07-14"
+    assert extract_timespan("3 viernes a partir de ahora", "es", _A)[0].start.isoformat()[:10] == "2017-07-14"

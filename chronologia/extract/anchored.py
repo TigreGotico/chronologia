@@ -356,16 +356,25 @@ def _count_weekday(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
         p = w + 1
         ago_n = _match_at(tokens, p, ago)
         if ago_n:
-            sign, end = -1, p + ago_n
+            sign, start, end = -1, i, p + ago_n
+        elif (i > 0 and tokens[i - 1].text in ago
+                and tokens[w].text not in spec.units):
+            # a LEADING past marker before the count: Romance puts the past
+            # particle first ("hace 2 lunes" == 2 mondays ago, "il y a 2
+            # lundis"), where the trailing scan never sees it.  Consume it too.
+            # Skip when the "weekday" is ALSO a unit surface: Romanian "luni" is
+            # both Monday and "months", and "acum 2 luni" is 2 MONTHS ago -- let
+            # the unit-offset reading win rather than fabricate a Monday count.
+            sign, start, end = -1, i - 1, p
         else:
             from_n = _match_at(tokens, p, from_words)
             pres_n = _match_at(tokens, p + from_n, present) if from_n else 0
             if not pres_n:
                 continue
-            sign, end = 1, p + from_n + pres_n
+            sign, start, end = 1, i, p + from_n + pres_n
         value = _nth_weekday(anchor, wd, int(t.value), sign)
-        return (Match("weekday_count", (i, end), {}),
-                Resolution(_day_span(value), tuple(range(i, end))))
+        return (Match("weekday_count", (start, end), {}),
+                Resolution(_day_span(value), tuple(range(start, end))))
     return None
 
 
