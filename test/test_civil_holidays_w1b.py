@@ -453,3 +453,18 @@ def test_samoa_mothers_day_is_monday_after_second_sunday():
     # Sunday is May 14, so Mother's Day is May 15 -- not the 2nd Monday (May 8).
     days = {h.name: h.span.start for h in holidays_for("WS", 2023)}
     assert (days["Mother's Day"].month, days["Mother's Day"].day) == (5, 15)
+
+
+def test_gb_2022_spring_bank_holiday_relocated_for_jubilee():
+    # For the 2022 Platinum Jubilee the Spring Bank Holiday was statutorily moved
+    # from the last Monday of May (30 May) to Thursday 2 June (gov.uk). It must
+    # appear once, on 2 June, not on 30 May.
+    spring = [h.span.start for h in holidays_for("GB", 2022)
+              if "Spring Bank Holiday" in h.name]
+    assert len(spring) == 1
+    assert (spring[0].month, spring[0].day) == (6, 2)
+    # ordinary years keep the last Monday of May
+    for y, day in [(2021, 31), (2023, 29), (2024, 27)]:
+        s = [h.span.start for h in holidays_for("GB", y)
+             if "Spring Bank Holiday" in h.name]
+        assert (s[0].month, s[0].day) == (5, day)

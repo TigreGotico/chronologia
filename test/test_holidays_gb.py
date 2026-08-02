@@ -10,27 +10,21 @@ The one-off royal/special bank holidays the reference lists — the 2022 Platinu
 Jubilee (3 Jun), the 2022 State Funeral of Queen Elizabeth II (19 Sep) and the
 2023 Coronation of King Charles III (8 May) — are now modelled as ``one_off``
 rules (gb.tab, each with its gov.uk citation), so they agree with the reference
-in their year and are silent otherwise. The only remaining documented
-disagreement is the reference's special *relocation* of the 2022 Spring Bank
-Holiday:
-
-* 2022 our-only 30 May: our Spring Bank Holiday sits on its recurring last-Monday-
-  of-May date; the reference moved it to 2 Jun 2022 for the Platinum Jubilee.
-* 2022 ref-only 2 Jun: that specially-relocated Spring Bank Holiday. We keep the
-  recurring rule rather than model a one-year relocation of an existing holiday;
-  the added one-off Jubilee day is the documented extra day.
+in their year and are silent otherwise. The reference's special *relocation* of
+the 2022 Spring Bank Holiday from its recurring last-Monday-of-May date (30 May)
+to Thursday 2 Jun for the Platinum Jubilee is now modelled too (the recurring
+rule is split around 2022 and a 2022 one-off carries the relocated date), so it
+agrees with the reference and there are no remaining disagreements.
 
 The 2021 Christmas/Boxing substitute cascade (Sat 25 Dec -> Mon 27, Sun 26 Dec ->
 Tue 28) and the 2023 New Year substitute (Sun 1 Jan -> Mon 2 Jan) agree with the
-reference exactly; 2021, 2023, 2024 and 2025 have no disagreements at all.
+reference exactly; 2021 through 2025 have no disagreements at all.
 """
 from chronologia import AstroDate, holidays_for
 from holiday_testkit import assert_national_differential
 
 _J = "GB"
-_DISAGREEMENTS = {
-    2022: {"our_only": {(5, 30)}, "ref_only": {(6, 2)}},
-}
+_DISAGREEMENTS = {}
 
 
 def test_national_differential_2021_2025():
