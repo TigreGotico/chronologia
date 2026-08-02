@@ -214,7 +214,41 @@ data-file headers. Where sources disagree, both versions ship under
 different names. Where sources are silent, the library says so instead
 of guessing.
 
-**How this library was built**: see [docs/transparency.md](docs/transparency.md) — an honest account, failures included.
+## Built by AI, held to account by tests
+
+chronologia was written and orchestrated by AI, directed and reviewed by a
+human maintainer. That is stated plainly here because the method is the reason
+the library exists at all — and because you should be able to judge the work
+without having to trust either the AI or the maintainer.
+
+**Why it could only be built this way.** A library that reads dates in around
+forty languages and reckons across seventeen calendars needs command of
+grammar, number-words, calendar arithmetic and holiday law in every one of
+them. No single maintainer speaks all of those languages, and commissioning a
+native-speaker linguist for each was never realistic for an open-source
+project — that is exactly the barrier that has kept libraries like this narrow.
+What *is* realistic is to hold AI to a discipline strict enough that breadth
+never buys itself with correctness:
+
+- **Cite or refuse.** Every algorithm is transcribed from a named, downloaded
+  source — a linguistics paper, a calendrical reference, a statute or gazette —
+  and every gold test value is derived by hand or from an independent source,
+  never from the code under test. Where sources disagree, both readings ship
+  under different names; where no citable source exists, the feature is
+  *refused* and the gap documented. The library says "not known" rather than
+  guess.
+- **Natural-language, test-driven.** For everything a human types, the test
+  came first: thousands of real phrases with hand-derived expected spans, per
+  language, plus adversarial cases written to break the parser. A wrong answer
+  is the top-priority bug before any new feature — and a semantic-parity block
+  checks every language against English span-for-span, so a language nobody on
+  the team speaks is still held to exactly the same bar as the ones they do.
+
+Neither claim asks for your trust: the citations sit in the source and the
+data-file headers, and the test suite — well over a hundred thousand checks —
+either passes on every commit or it doesn't. The full account, including who
+did what and what the process got wrong along the way, is in
+[**docs/transparency.md**](docs/transparency.md).
 
 ## Related projects
 
