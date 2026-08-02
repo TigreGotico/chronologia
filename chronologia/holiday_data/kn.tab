@@ -30,7 +30,7 @@ easter        | Easter Monday                            | 1 gregorian          
 nth_weekday | Labour Day | 5 1 0 | public |  |  |  | 
 easter        | Whit Monday                              | 50 gregorian         | public          |  |  |  |
 nth_weekday | Emancipation Day | 8 1 0 | public |  |  |  | 
-nth_weekday | Culturama Day - Last Lap | 8 1 1 | public |  |  |  | 
+nth_weekday | Culturama Day - Last Lap | 8 1 0 1 | public |  |  |  | 
 fixed         | National Heroes Day                      | 9 16                 | public          |  |  |  |
 fixed         | Independence Day                         | 9 19                 | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |

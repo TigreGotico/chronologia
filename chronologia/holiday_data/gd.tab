@@ -31,7 +31,7 @@ easter        | Whit Monday                              | 50 gregorian         
 easter        | Corpus Christi                           | 60 gregorian         | public          |  |  |  |
 decree        | Emancipation Day                         | 2024-8-5 2025-8-1 2026-8-1 2027-8-1    | public          |  |  |  |
 nth_weekday | Carnival Monday | 8 2 0 | public |  |  |  | 
-nth_weekday | Carnival Tuesday | 8 2 1 | public |  |  |  | 
+nth_weekday | Carnival Tuesday | 8 2 0 1 | public |  |  |  | 
 fixed         | National Heroes' Day                     | 10 19                | public          |  |  |  |
 fixed         | Thanksgiving Day                         | 10 25                | public          |  |  |  |
 fixed         | Christmas Day                            | 12 25                | public          |  |  |  |
