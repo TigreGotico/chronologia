@@ -288,6 +288,7 @@ class Timeline:
                 return d.jdn
 
         answers: List[int] = []
+        shadowing_insert = None
         for seg in self.segments:
             if seg.calendar_key not in _TL_CALENDARS:
                 continue
@@ -296,7 +297,18 @@ class Timeline:
             except (ValueError, KeyError):
                 continue
             if jdn in self._insert_jdns:
-                continue  # that JDN is claimed by an INSERT override
+                # that JDN is claimed by an INSERT override -- the label is
+                # SHADOWED by the inserted day (Sweden's phantom "29 February
+                # 1712": the Julian calendar yields that JDN, but the timeline
+                # displays it as "30 February").  Remember the INSERT so a
+                # zero-candidate result returns a typed NeverExisted rather than
+                # raising, per the module's no-raise-for-bad-labels contract.
+                if shadowing_insert is None:
+                    shadowing_insert = next(
+                        (d for d in self.discontinuities
+                         if d.kind is DiscontinuityKind.INSERT
+                         and d.jdn == jdn), None)
+                continue
             lo, hi = seg.start_jdn, self._seg_end(seg)
             if lo <= jdn < hi and jdn not in answers:
                 answers.append(jdn)
@@ -305,6 +317,9 @@ class Timeline:
             return answers[0]
         if len(answers) >= 2:
             return cast(Tuple[int, int], tuple(sorted(answers)))
+
+        if shadowing_insert is not None:
+            return NeverExisted(label, shadowing_insert)
 
         # No segment bore this label — is it inside a SKIP window?
         for d in self.discontinuities:

@@ -1298,3 +1298,50 @@ def test_edtf_january_month_precision_not_a_degenerate_interval():
     assert format_edtf(parse_edtf("176X")) == "176X"
     assert format_edtf(parse_edtf("17XX")) == "17XX"
     assert format_edtf(parse_edtf("1760-01-15")) == "1760-01-15"
+
+
+# --- R25 E2: from_ical honours the TZID parameter -----------------------------
+def test_from_ical_tzid_anchors_the_zone():
+    """A DTSTART;TZID=America/New_York:... value must read back anchored to that
+    IANA zone, not as a floating naive time (RFC 5545 3.2.19)."""
+    from zoneinfo import ZoneInfo
+    from chronologia import from_ical
+    text = ("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:x\r\n"
+            "DTSTART;TZID=America/New_York:20170627T130400\r\n"
+            "DTEND;TZID=America/New_York:20170627T140400\r\n"
+            "END:VEVENT\r\nEND:VCALENDAR\r\n")
+    ev = from_ical(text)
+    assert ev.span.start.tzinfo == ZoneInfo("America/New_York")
+    assert ev.span.start.utcoffset().total_seconds() == -4 * 3600  # EDT
+    # UTC Z, all-day VALUE=DATE, and an unknown zone are unaffected/lenient
+    utc = from_ical("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:y\r\n"
+                    "DTSTART:20170627T130400Z\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n")
+    assert utc.span.start.utcoffset().total_seconds() == 0
+    allday = from_ical("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:z\r\n"
+                       "DTSTART;VALUE=DATE:20170627\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n")
+    assert allday.span.start.tzinfo is None
+
+    # honest DST: an ambiguous fall-back wall time takes the LATER occurrence
+    # (matching daypart anchoring), not zoneinfo's silent fold=0 earlier one.
+    def _ny(dt):
+        e = from_ical(f"BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:f\r\n"
+                      f"DTSTART;TZID=America/New_York:{dt}\r\n"
+                      f"END:VEVENT\r\nEND:VCALENDAR\r\n")
+        return e.span.start
+    fold = _ny("20171105T013000")            # 01:30 occurs twice on fall-back
+    assert fold.utcoffset().total_seconds() == -5 * 3600   # EST, the later one
+    # seconds survive the minute-precision DST resolution
+    assert _ny("20170627T130437").second == 37
+
+
+# --- R25 B2: a label shadowed by an INSERT returns NeverExisted, not a raise --
+def test_timeline_insert_shadowed_label_is_never_existed():
+    """Sweden's phantom "29 February 1712" is shadowed by the inserted double
+    leap day (displayed as 30 February); it must return a typed NeverExisted,
+    not raise OutOfTimeline (the module's no-raise-for-bad-labels contract)."""
+    from chronologia.timelines import TIMELINES, NeverExisted
+    r = TIMELINES["sweden_1700_1712"].to_jdn((1712, 2, 29))
+    assert isinstance(r, NeverExisted)
+    # the inserted day itself and ordinary days still resolve
+    assert isinstance(TIMELINES["sweden_1700_1712"].to_jdn((1712, 2, 30)), int)
+    assert isinstance(TIMELINES["sweden_1700_1712"].to_jdn((1712, 1, 1)), int)
