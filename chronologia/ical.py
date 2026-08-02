@@ -313,6 +313,13 @@ def _split_property(line: str):
     for p in parts[1:]:
         if "=" in p:
             k, _, val = p.partition("=")
+            # a param value may be a DQUOTE-wrapped quoted-string (RFC 5545
+            # 3.1: param-value = paramtext / quoted-string) -- strip the quotes
+            # so a quoted TZID ("America/New_York") resolves to its zone instead
+            # of being looked up verbatim (with the quotes) and silently
+            # dropped to a floating time.
+            if len(val) >= 2 and val[0] == '"' and val[-1] == '"':
+                val = val[1:-1]
             # keep the parameter VALUE's original case: an IANA TZID
             # ("America/New_York") is case-sensitive, so it must not be
             # upper-cased.  Callers that compare a value ("VALUE=DATE") upper-

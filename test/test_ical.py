@@ -167,3 +167,22 @@ def test_from_ical_ignores_unknown_and_needs_vevent():
     ev = from_ical(good)
     assert ev.summary == "picnic"
     assert ev.span == DateSpan(AstroDate(2026, 6, 5), AstroDate(2026, 6, 6))
+
+
+def test_from_ical_quoted_tzid_param_resolves_zone():
+    # A DQUOTE-wrapped param value is valid RFC 5545 (param-value =
+    # paramtext / quoted-string).  A quoted TZID must be unquoted before the
+    # zone lookup, otherwise ZoneInfo('"America/New_York"') fails and the time
+    # silently falls back to floating (naive).  Regression: _split_property kept
+    # the surrounding quotes.
+    quoted = (
+        "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\n"
+        "DTSTART;TZID=\"America/New_York\":20260615T140000\r\n"
+        "DTEND;TZID=\"America/New_York\":20260615T150000\r\n"
+        "END:VEVENT\r\nEND:VCALENDAR\r\n")
+    ev = from_ical(quoted)
+    assert ev.span.start.tzinfo is not None
+    assert str(ev.span.start.tzinfo) == "America/New_York"
+    # unquoted TZID is unaffected
+    unquoted = quoted.replace('"America/New_York"', "America/New_York")
+    assert str(from_ical(unquoted).span.start.tzinfo) == "America/New_York"
