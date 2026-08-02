@@ -1714,6 +1714,9 @@ def _exclusion_vetoes(governing_text: str, spec) -> bool:
     return any(w in triggers for w in words)
 
 
+_veto_reentry = threading.local()
+
+
 def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     """Whether the winning reading strands an IMPOSSIBLE day-of-month numeral --
     proof the parse is incomplete and must be refused (residue-veto design,
@@ -1731,7 +1734,24 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     resolves on its own and does not veto.  Shared by _resolve_span (the
     single-winner path) and extract_candidates so the two public APIs never
     disagree on the top answer.
+    A thread-local re-entrancy guard bounds the self-similar blow-up: both
+    trigger shapes re-parse a stranded fragment through the public
+    ``extract_timespan`` ("does this resolve to a real date?"), which re-enters
+    this veto; a self-similar input ("5th of june 5th of june ...") would
+    otherwise recurse ``2**n`` times.  The inner fragment only needs to know
+    whether it RESOLVES, not whether it is itself impossible, so the veto is
+    skipped while already inside it (one level is enough).
     """
+    if getattr(_veto_reentry, "active", False):
+        return False
+    _veto_reentry.active = True
+    try:
+        return _impossible_date_veto_inner(tokens, consumed, text, engine, anchor)
+    finally:
+        _veto_reentry.active = False
+
+
+def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
     of_surfaces = set(engine.spec.connectors.get("of", ()))
     for i in range(len(tokens) - 1):
         if not (tokens[i].index not in consumed and tokens[i].is_number
