@@ -23,7 +23,7 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
 
-from chronologia.astrodate import AstroDate, DateSpan
+from chronologia.astrodate import AstroDate, DateSpan, WideDuration
 from chronologia.extract.anchored import (apply_anchored_offset,
                                               apply_ordinal_count)
 from chronologia.extract.business import apply_business_days
@@ -711,18 +711,19 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     if got is not None:
         span, rem = got
         deep_time = False
-        try:
-            width = span.end - span.start
-            sub_day = width < timedelta(days=1)
-            day_wide = width <= timedelta(days=1)
-        except OverflowError:
+        width = span.end - span.start
+        if isinstance(width, WideDuration):
             # a deep-time endpoint (a geological epoch spanning millions of
-            # years) overflows datetime subtraction.  It is a wider-than-a-day
-            # span (so never clock/weekday), and its own "deep_time" kind lets
-            # _compose_range treat a reversed range spanning it as an acyclic
-            # interval to swap rather than a civil ordering error to refuse.
+            # years) is wider than any timedelta, so subtracting its endpoints
+            # yields a WideDuration.  It is a wider-than-a-day span (so never
+            # clock/weekday), and its own "deep_time" kind lets _compose_range
+            # treat a reversed range spanning it as an acyclic interval to swap
+            # rather than a civil ordering error to refuse.
             sub_day = day_wide = False
             deep_time = True
+        else:
+            sub_day = width < timedelta(days=1)
+            day_wide = width <= timedelta(days=1)
         if sub_day:
             kind = "clock"
         elif day_wide and weekday:
