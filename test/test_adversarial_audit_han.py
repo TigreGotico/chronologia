@@ -1041,3 +1041,40 @@ def test_deep_time_reverse_range_spans_both_endpoints():
     # forward deep-time and civil/clock/weekday ranges unaffected
     assert extract_timespan("from the jurassic to the neolithic", "en", _A) is not None
     assert extract_timespan("from june 5 to june 12", "en", _A).span.start.month == 6
+
+
+# --- R22a: spelled ordinal LIST across "and" is not folded into one date ------
+def test_spelled_ordinal_list_across_and_keeps_first():
+    """"first and third of June" is a LIST of the 1st and the 3rd; the English
+    spelled-number fold must not merge "first and third" across "and" and read
+    it as the bare last ordinal (June 3, "first" erased).  The additive "and"
+    is genuine only after a magnitude >= 100 ("one hundred and five"), never
+    between two small ordinals.  Accept None, or a June-3 reading only while
+    "first" is still visible in a non-empty remainder, or a real two-date span
+    -- but never a silent June 3 with "first" erased."""
+    from chronologia import extract_timespan
+    r = extract_timespan("first and third of June", "en", _A)
+    if r is not None:
+        d = r.span.start.day
+        if d == 3:
+            # June 3 is only acceptable if "first" was NOT silently swallowed
+            assert "first" in r.remainder, "'first' silently erased from a list"
+    # the genuine magnitude-additive folds are unchanged (not turned into lists)
+    from chronologia.extract.numfold import fold_en
+    from chronologia.extract.pipeline import pretokens
+    from chronologia.extract.loader import load_lang_spec
+    _spec = load_lang_spec("en")
+    def _folded(text):
+        return " ".join(t.text for t in fold_en(pretokens(text, _spec)))
+    # the ordinal LIST is cut at "and" -- BOTH ordinals survive, "first" is not
+    # swallowed into a lone "3" the way it was before the bridge gate.
+    assert _folded("first and third of June") == "1 and 3 of june"
+    # every genuine magnitude-additive fold is byte-for-byte unchanged by the
+    # gate (these are exactly the pre-fix outputs).
+    assert _folded("one hundred and five") == "1 hundred and 5"
+    assert _folded("two hundred and fifty") == "2 hundred and 50"
+    assert _folded("a thousand and one") == "a thousand and 1"
+    assert _folded("one hundred and first") == "1 hundred and 1"
+    # spelled years still fold to their single value, untouched by the gate
+    assert _folded("nineteen eighty four") == "84"
+    assert _folded("twenty twenty") == "20"

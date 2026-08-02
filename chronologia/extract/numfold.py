@@ -582,11 +582,19 @@ def _pre_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 
 # English: closed-class membership, an internal "and" that continues a run but
 # is dropped from the text the back-end reads ("one hundred and five").
+# The additive "and" is only genuine after a magnitude of at least 100
+# ("one hundred AND five" == 105, "two hundred and fifty", "a thousand and
+# one").  Between two small numbers or two ordinals it is a LIST, not an
+# additive ("first and third of June" is the 1st and the 3rd, never the 3rd),
+# so the bridge is refused and the run is cut at the "and" -- each side folds on
+# its own and the "and" survives, instead of the back-end silently reading the
+# joined run as its last ordinal and erasing the first.
 fold_en = make_fold(NumberGrammar(
     is_number=_is_numword,
     extract=lambda text: extract_number_en(text, ordinals=True),
     joiner=lambda tok: tok.text == "and",
     joiner_in_text=False,
+    bridge_ok=lambda so_far, atom: so_far >= 100 and atom < so_far,
     pre=_pre_en))
 
 
