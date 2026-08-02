@@ -612,7 +612,8 @@ fold_en = make_fold(NumberGrammar(
 # an explicit stop-set per language.
 # ---------------------------------------------------------------------------
 
-def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None):
+def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None,
+                        join_words=()):
     """Build a ``tuple[Token] -> tuple[Token]`` fold for a Germanic language.
 
     ``extract_fn`` is the language's ``ovos_number_parser`` extractor; the
@@ -622,6 +623,7 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None):
     fractions and scale words).
     """
     stop = frozenset(stop_words)
+    joinset = frozenset(join_words)
     suffixes = frozenset(ord_suffixes)
     wmap = dict(word_map or {})
 
@@ -636,6 +638,15 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None):
             return True
         if tok.text in stop:
             return False
+        # a bare multiplier word that BUILDS a number but has no standalone value
+        # (Indonesian/Malay "puluh" ten, "ratus" hundred, "belas" -teen): the
+        # per-token value probe below reads it as False, which would sever the
+        # run at it ("dua ratus" -> [dua][ratus] -> nothing), so admit it to the
+        # run explicitly.  Its value comes from the back-end reading the joined
+        # run ("dua ratus" == 200); a stray one folds to nothing (value None) and
+        # is left untouched.
+        if tok.text in joinset:
+            return True
         v = value_of(tok.text)
         return v is not None and v is not False
 
@@ -675,7 +686,7 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None):
 
 
 def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),
-                        word_map=None):
+                        word_map=None, join_words=()):
     """Defer the ``ovos_number_parser`` import to first call (keeps locale
     load cheap and import-order-independent)."""
     holder = {}
@@ -686,14 +697,16 @@ def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),
             import importlib
             extract_fn = getattr(importlib.import_module(module_name), fn_name)
             f = holder["f"] = _make_germanic_fold(extract_fn, stop_words,
-                                                  ord_suffixes, word_map)
+                                                  ord_suffixes, word_map,
+                                                  join_words)
         return f(tokens)
 
     return fold
 
 fold_id = _lazy_germanic_fold(
     "ovos_number_parser.numbers_id", "extract_number_id",
-    {"setengah", "seperempat", "suku", "ribu", "juta", "miliar", "milyar"})
+    {"setengah", "seperempat", "suku", "ribu", "juta", "miliar", "milyar"},
+    join_words={"puluh", "ratus", "belas"})
 # Indonesian spelled ordinals ("ketiga" third) fold to their digit so the
 # scoped_ordinal ``ORD`` slot binds ("Senin ketiga Maret" = the third Monday of
 # March); from the model's ``pronounce_ordinal_id`` (ke- prefix), plus the
@@ -701,7 +714,8 @@ fold_id = _lazy_germanic_fold(
 fold_id = _with_ordinals(fold_id, "id", {"kesatu": 1})
 fold_ms = _lazy_germanic_fold(
     "ovos_number_parser.numbers_id", "extract_number_ms",
-    {"setengah", "separuh", "suku", "ribu", "juta", "bilion", "miliar"})
+    {"setengah", "separuh", "suku", "ribu", "juta", "bilion", "miliar"},
+    join_words={"puluh", "ratus", "belas"})
 fold_kab = _lazy_germanic_fold(
     "ovos_number_parser.numbers_kab", "extract_number_kab",
     {"azgen", "agim", "amelyun"})
