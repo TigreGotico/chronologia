@@ -932,6 +932,26 @@ def test_xtse_christmas_and_boxing_day(year):
     assert got["Boxing Day"] == _sat_sun_mon_observed(AstroDate(year, 12, 26))
 
 
+@pytest.mark.parametrize("year,christmas,boxing", [
+    # Christmas AND Boxing both on a weekend: Christmas relocates to Monday,
+    # Boxing cascades one further business day so the pair never collides.
+    (2021, (12, 27), (12, 28)),   # Sat 25 -> Mon 27, Sun 26 -> Tue 28
+    (2027, (12, 27), (12, 28)),   # same shape as 2021
+    # Christmas (Sun 25) relocates onto Boxing's own weekday (Mon 26), so Boxing
+    # must bump forward too even though its nominal is a weekday.
+    (2022, (12, 26), (12, 27)),   # Sun 25 -> Mon 26, Mon 26 -> Tue 27
+])
+def test_xtse_christmas_boxing_weekend_collision_cascade(year, christmas, boxing):
+    # Regression for the relocating-cascade fix: the exchange lists only the
+    # observed weekday closure (no weekend nominal) and the two closures must be
+    # DISTINCT days. Independently arithmetic-verified above and matches
+    # holidays.financial_holidays('XTSE') for these years.
+    got = _dates_for("XTSE", year)
+    assert got["Christmas Day"] == AstroDate(year, *christmas)
+    assert got["Boxing Day"] == AstroDate(year, *boxing)
+    assert got["Christmas Day"] != got["Boxing Day"]     # no collision
+
+
 # ==========================================================================
 # XHKG (Hong Kong Stock Exchange) -- Gregorian fixed/easter rules plus
 # honest `decree` rows for the Chinese-lunar and Buddhist-lunar closures.

@@ -20,7 +20,7 @@ from .model import CivilHoliday, HolidayRule, _day_span, _shape_span
 from .rules import (CalendarDateRule, DecreeTableRule, EasterOffsetRule,
                     ExcludeRule, FixedRule, NearestWeekdayRule, NthWeekdayRule,
                     OneOffRule, RuleKind, SolarEventRule, parse_name_cell)
-from .shifts import SubstitutePolicy, _SHIFT_POLICIES
+from .shifts import RelocateShift, SubstitutePolicy, _SHIFT_POLICIES
 
 # --------------------------------------------------------------------------
 # Translations layer.
@@ -130,9 +130,17 @@ class HolidayCalendar:
         # substitute pass rolls forward past, so a substitute never collides with
         # another holiday (the UK Christmas/Boxing cascade, Japan furikae).
         subst_work = []  # (nominal_date, rule) awaiting a substitute day
+        reloc_work = []  # (nominal_date, rule) awaiting a relocating cascade
         for rule in applicable:
             trans = _translations_for(self.jurisdiction, rule.name)
             for date, basis in rule.resolve(year, strict_horizon=strict_horizon):
+                # A RelocateShift MOVES the nominal onto its observed weekday and
+                # keeps NO nominal (a stock exchange lists only the observed
+                # closure). Defer it to the calendar-wide relocate pass so a
+                # colliding pair cascades to distinct days.
+                if isinstance(rule.shift, RelocateShift):
+                    reloc_work.append((date, basis, rule))
+                    continue
                 out.append(CivilHoliday(
                     name=rule.name,
                     span=_shape_span(date, basis, rule.span_shape),
@@ -146,6 +154,23 @@ class HolidayCalendar:
                     subst_work.append((date, basis, rule))
 
         taken = {h.span.start for h in out}
+        # Relocating cascade pass: move each nominal onto its observed weekday,
+        # skipping days already taken so a colliding pair (TSX Christmas/Boxing)
+        # lands on two distinct weekdays instead of one. Sorted by nominal date so
+        # the earlier holiday claims its slot first.
+        for date, basis, rule in sorted(reloc_work, key=lambda t: t[0]):
+            target = rule.shift.observed_for(date, frozenset(taken))
+            taken.add(target)
+            trans = _translations_for(self.jurisdiction, rule.name)
+            out.append(CivilHoliday(
+                name=rule.name,
+                span=_shape_span(target, basis, rule.span_shape),
+                jurisdiction=self.jurisdiction,
+                subdiv=rule.subdiv,
+                categories=rule.categories,
+                basis=basis,
+                names=rule.names,
+                translations=trans))
         for date, basis, rule in sorted(subst_work, key=lambda t: t[0]):
             sub = rule.shift.substitute_for(date, frozenset(taken))
             if sub is None:
