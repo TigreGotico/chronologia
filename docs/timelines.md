@@ -73,7 +73,7 @@ answer = rome.date(1582, 10, 9)           # one of the deleted days
 print(answer.discontinuity.kind.name)
 # SKIP
 print(answer.discontinuity.citation)
-# Inter gravissimas (1582); gregorian_adoption_reference.html
+# Inter gravissimas (1582); Wikipedia, "Adoption of the Gregorian calendar"
 ```
 
 `NeverExisted` is the library "telling you why, not failing" — it is a real
