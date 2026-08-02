@@ -684,6 +684,48 @@ def test_thousand_scale_duration_is_composed_across_locales():
     assert extract_duration("mil días", "es").duration.days == 1000
     assert extract_duration("dois mil dias", "pt").duration.days == 2000
     assert extract_duration("iki min gün əvvəl", "az").duration.days == 2000
+    # R33: the same thousand-scale composition must hold in every supported
+    # locale, not only the four that first shipped scale_1000.voc.  Each of
+    # these locales previously returned a flat None for the spelled form while
+    # the digit control parsed; a scale_1000.voc listing the (often declined)
+    # thousand surface(s) re-composes it in _read_scale.
+    r33 = [
+        # Romance: "mil" is invariant.
+        ("mil diyas", "an", 1000),
+        ("mil dies", "ca", 1000),
+        ("dous mil días", "gl", 2000),
+        ("mil días", "gl", 1000),
+        ("dous mil dies", "mwl", 2000),
+        # Slavic: the thousand word is declined by the preceding count.
+        ("тысяча дней", "ru", 1000),
+        ("две тысячи дней", "ru", 2000),
+        ("пять тысяч дней", "ru", 5000),
+        ("tysiąc dni", "pl", 1000),
+        ("dwa tysiące dni", "pl", 2000),
+        ("pięć tysięcy dni", "pl", 5000),
+        ("tisíc dní", "cs", 1000),
+        ("dva tisíce dní", "cs", 2000),
+        ("tisíc dní", "sk", 1000),
+        ("dva tisíce dní", "sk", 2000),
+        ("tisoč dni", "sl", 1000),
+        ("dva tisoč dni", "sl", 2000),
+        ("тисяча днів", "uk", 1000),
+        ("дві тисячі днів", "uk", 2000),
+        ("хиляда дни", "bg", 1000),
+        ("две хиляди дни", "bg", 2000),
+        ("tisuća dana", "hr", 1000),
+        ("dvije tisuće dana", "hr", 2000),
+        # Austronesian: "ribu"; "seribu" is a glued single token that folds to
+        # 1000 on its own, so it exercises the plain-number path.
+        ("seribu hari", "id", 1000),
+        ("dua ribu hari", "id", 2000),
+        ("seribu hari", "ms", 1000),
+        ("dua ribu hari", "ms", 2000),
+    ]
+    for phrase, lang, days in r33:
+        got = extract_duration(phrase, lang)
+        assert got is not None, (phrase, lang)
+        assert got.duration.days == days, (phrase, lang, got.duration.days, days)
     # small durations are unaffected
     assert extract_duration("3 gün önce", "tr").duration.days == 3
     assert extract_duration("há 3 dias", "pt").duration.days == 3
