@@ -431,6 +431,33 @@ def _with_prefix(got, prefix):
     return span, (prefix + " " + rem).strip() if rem else prefix
 
 
+def _crosses_midnight(span):
+    """True when ``span``'s wall clock ends on a later calendar day than it
+    starts -- it only became a band by rolling across midnight."""
+    sd, ed = span.start_datetime, span.end_datetime
+    return sd is not None and ed is not None and ed.date() > sd.date()
+
+
+def _subtractive_clock_complete(text, sub, engine, anchor):
+    """True when ``sub`` resolves whole as one sub-day clock time.
+
+    The subtractive clock ("ten to eight pm" == ten minutes to eight) reads the
+    entire slice as a single time of day.  When the SINGLE core consumes every
+    token of the slice that carries text into a span narrower than a day, that
+    reading is both available and complete -- proof the slice is one clock, not
+    two range endpoints.  Used only to veto a clock-*range* that descended into
+    a cross-midnight band (see :func:`_extract_range`)."""
+    folded = fold_tokens(tuple(sub), engine.spec, text)
+    core = _resolve_core(folded, engine, anchor)
+    if core is None:
+        return False
+    span, consumed = core
+    if span.end - span.start >= timedelta(days=1):
+        return False
+    return all(t.index in consumed
+               for t in folded if t.char_start is not None)
+
+
 def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     """A "from A to B" / "between A and B" span, endpoints from two sub-parses.
 
@@ -539,6 +566,24 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of)
+            # A bare (unled) "MINUTE to HOUR pm" is the subtractive clock
+            # ("ten to eight pm" == ten minutes to eight pm == 19:50), not a
+            # range.  Read as two endpoints the same-meridiem pair descends
+            # (10pm > 8pm), so the composed span only exists by rolling the
+            # right end across midnight -- an absurd ~22h cross-midnight band
+            # that would still preempt the correct minute-wide clock.  When the
+            # whole slice resolves cleanly as one sub-day clock (the subtractive
+            # reading is available AND complete) and the composed range only
+            # spans by crossing midnight, the range is that misreading: bail so
+            # the single-span path returns the subtractive clock.  An explicit
+            # lead ("from 10 pm to 8 am") is a deliberate range and is untouched,
+            # as is any ascending same-day pair ("5 to 9 am", "8 to 11 pm"),
+            # which never crosses midnight.
+            if got is not None and not led \
+                    and _crosses_midnight(got[0]) \
+                    and _subtractive_clock_complete(
+                        text, tokens[lead_at + lead:], engine, anchor):
+                return None
             if got is not None:
                 return _with_prefix(got, prefix)
 

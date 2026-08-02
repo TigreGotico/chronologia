@@ -1041,3 +1041,43 @@ def test_deep_time_reverse_range_spans_both_endpoints():
     # forward deep-time and civil/clock/weekday ranges unaffected
     assert extract_timespan("from the jurassic to the neolithic", "en", _A) is not None
     assert extract_timespan("from june 5 to june 12", "en", _A).span.start.month == 6
+
+
+# --- R18: subtractive clock must beat an absurd cross-midnight clock range ----
+def test_subtractive_clock_beats_descending_meridiem_range():
+    """"ten to eight pm" is the subtractive clock (ten minutes to eight pm ==
+    19:50), not a range.  Read as two endpoints the same-meridiem pair descends
+    (10pm > 8pm), so the range only became a span by rolling the right end a day
+    forward -- an absurd ~22h band (22:00 -> 20:01 next day) that used to preempt
+    the correct minute-wide clock.  A bare (unled) descending same-meridiem pair
+    whose whole slice reads as one clock must yield the subtractive clock."""
+    from chronologia import extract_timespan
+
+    def hm(t):
+        r = extract_timespan(t, "en", _A)
+        assert r is not None and r.span is not None and r.remainder == ""
+        s = r.span.start
+        return s.hour, s.minute
+
+    assert hm("ten to eight pm") == (19, 50)
+    assert hm("twenty to twelve pm") == (11, 40)
+    assert hm("ten to twelve pm") == (11, 50)
+    # no meridiem still reads as the subtractive clock, unchanged
+    assert hm("ten to eight") == (7, 50)
+    assert hm("quarter to five") == (4, 45)
+
+    # ASCENDING same-day clock ranges are real ranges and stay ranges: the pair
+    # never crosses midnight, so the bail never fires.
+    def span(t):
+        r = extract_timespan(t, "en", _A)
+        assert r is not None and r.span is not None
+        return r.span.start, r.span.end
+
+    a, b = span("5 to 9 am")
+    assert (a.hour, b.hour) == (5, 9)
+    a, b = span("8 to 11 pm")
+    assert (a.hour, b.hour) == (20, 23)
+    # an explicit lead is a deliberate range even across midnight: "from 10 pm
+    # to 8 am" is a legit overnight span (no single subtractive reading), kept.
+    a, b = span("from 10 pm to 8 am")
+    assert (a.hour, a.day) == (22, 27) and (b.hour, b.day) == (8, 28)
