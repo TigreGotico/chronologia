@@ -1023,3 +1023,21 @@ def test_candidates_agree_with_timespan_on_impossible_date_veto():
     ic = extract_candidates("the ides of march", "en", _A)
     assert ic and ic[0].span.start.month == 3 and ic[0].span.start.day == 15
     assert extract_candidates("the 5th of june 2020", "en", _A)[0].span.start.day == 5
+
+
+# --- R21: reverse-chronological deep-time ranges span both endpoints ----------
+def test_deep_time_reverse_range_spans_both_endpoints():
+    """"from the neolithic to the oligocene" (left younger than right) is not a
+    civil ordering error -- deep time is acyclic -- so it names the same span as
+    the forward "from the oligocene to the neolithic", not a broken partial."""
+    from chronologia import extract_timespan
+    fwd = extract_timespan("from the oligocene to the neolithic", "en", _A)
+    rev = extract_timespan("from the neolithic to the oligocene", "en", _A)
+    assert rev is not None and rev.remainder == ""
+    assert (rev.span.start, rev.span.end) == (fwd.span.start, fwd.span.end)
+    # a civil reversed range (no deep-time endpoint) is still NOT swapped
+    civ = extract_timespan("june 12 2020 to june 5 2020", "en", _A)
+    assert civ is None or "june 5" in civ.remainder
+    # forward deep-time and civil/clock/weekday ranges unaffected
+    assert extract_timespan("from the jurassic to the neolithic", "en", _A) is not None
+    assert extract_timespan("from june 5 to june 12", "en", _A).span.start.month == 6

@@ -665,20 +665,25 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     got = resolve(text, sub, engine, anchor, scale_mode=scale_mode)
     if got is not None:
         span, rem = got
+        deep_time = False
         try:
             width = span.end - span.start
             sub_day = width < timedelta(days=1)
             day_wide = width <= timedelta(days=1)
         except OverflowError:
             # a deep-time endpoint (a geological epoch spanning millions of
-            # years) overflows datetime subtraction -- it is trivially a "dated"
-            # (wider-than-a-day) span, so classify it as such instead of letting
-            # the OverflowError escape the never-raise public contract.
+            # years) overflows datetime subtraction.  It is a wider-than-a-day
+            # span (so never clock/weekday), and its own "deep_time" kind lets
+            # _compose_range treat a reversed range spanning it as an acyclic
+            # interval to swap rather than a civil ordering error to refuse.
             sub_day = day_wide = False
+            deep_time = True
         if sub_day:
             kind = "clock"
         elif day_wide and weekday:
             kind = "weekday"
+        elif deep_time:
+            kind = "deep_time"
         else:
             kind = "dated"
         return span, rem, kind, pinned
@@ -1160,6 +1165,15 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         pulled = _minus_one_year(start)
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
+    if end <= start and "deep_time" in (left[2], right[2]):
+        # a reversed range that involves a DEEP-TIME endpoint ("from the
+        # neolithic to the oligocene") is not a civil ordering error -- deep
+        # time is acyclic, with no year-wraparound -- so it names the interval
+        # spanning both endpoints, exactly as the forward "from the oligocene to
+        # the neolithic" already does.  Swap to [older start, younger end].  A
+        # civil reversed range ("june 12 to june 5") has no deep-time endpoint
+        # and is left to fail below.
+        start, end = right_span.start, left_span.end
     if end <= start:
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
