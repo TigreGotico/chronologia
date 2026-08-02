@@ -1081,3 +1081,74 @@ def test_subtractive_clock_beats_descending_meridiem_range():
     # to 8 am" is a legit overnight span (no single subtractive reading), kept.
     a, b = span("from 10 pm to 8 am")
     assert (a.hour, a.day) == (22, 27) and (b.hour, b.day) == (8, 28)
+
+
+# --- R22a: spelled ordinal LIST across "and" is not folded into one date ------
+def test_spelled_ordinal_list_across_and_keeps_first():
+    """"first and third of June" is a LIST of the 1st and the 3rd; the English
+    spelled-number fold must not merge "first and third" across "and" and read
+    it as the bare last ordinal (June 3, "first" erased).  The additive "and"
+    is genuine only after a magnitude >= 100 ("one hundred and five"), never
+    between two small ordinals.  Accept None, or a June-3 reading only while
+    "first" is still visible in a non-empty remainder, or a real two-date span
+    -- but never a silent June 3 with "first" erased."""
+    from chronologia import extract_timespan
+    r = extract_timespan("first and third of June", "en", _A)
+    if r is not None:
+        d = r.span.start.day
+        if d == 3:
+            # June 3 is only acceptable if "first" was NOT silently swallowed
+            assert "first" in r.remainder, "'first' silently erased from a list"
+    # the genuine magnitude-additive folds are unchanged (not turned into lists)
+    from chronologia.extract.numfold import fold_en
+    from chronologia.extract.pipeline import pretokens
+    from chronologia.extract.loader import load_lang_spec
+    _spec = load_lang_spec("en")
+    def _folded(text):
+        return " ".join(t.text for t in fold_en(pretokens(text, _spec)))
+    # the ordinal LIST is cut at "and" -- BOTH ordinals survive, "first" is not
+    # swallowed into a lone "3" the way it was before the bridge gate.
+    assert _folded("first and third of June") == "1 and 3 of june"
+    # every genuine magnitude-additive fold is byte-for-byte unchanged by the
+    # gate (these are exactly the pre-fix outputs).
+    assert _folded("one hundred and five") == "1 hundred and 5"
+    assert _folded("two hundred and fifty") == "2 hundred and 50"
+    assert _folded("a thousand and one") == "a thousand and 1"
+    assert _folded("one hundred and first") == "1 hundred and 1"
+    # spelled years still fold to their single value, untouched by the gate
+    assert _folded("nineteen eighty four") == "84"
+    assert _folded("twenty twenty") == "20"
+
+
+# --- R17: a bare cardinal + plural unit is a count, not the ordinal day -------
+def test_cardinal_plural_unit_is_not_the_ordinal_day_of_month():
+    """"the two days of June" is a COUNT ("two days"), not "the 2nd day of June".
+
+    The number fold collapses the spelled ordinal "second" and the cardinal
+    "two" to one token, so unit plurality is the only surviving signal: a
+    scoped-ordinal selection ("the Nth <unit> of ...") is grammatically
+    singular, so a PLURAL unit in that frame can never be the ordinal
+    day-of-month.  The mis-read had fabricated June 2.
+    """
+    def _day2(text):
+        r = extract_timespan(text, "en", _A)
+        return r is not None and r.span.start.month == 6 and r.span.start.day == 2
+
+    # the bug: neither phrasing may resolve to June 2 any more
+    assert not _day2("the two days of June")
+    assert not _day2("two days of June")
+
+    # every singular ordinal-selection reading MUST stay correct
+    def _start(text):
+        r = extract_timespan(text, "en", _A)
+        assert r is not None, text
+        return (r.span.start.year, r.span.start.month, r.span.start.day)
+
+    assert _start("the second day of June") == (2017, 6, 2)
+    assert _start("the 2nd day of June") == (2017, 6, 2)
+    assert _start("the 100th day of the year") == (2017, 4, 10)
+    assert _start("the last day of the month") == (2017, 6, 30)
+    assert _start("the third week of June") == (2017, 6, 19)
+    assert _start("the 21st century") == (2000, 1, 1)
+    assert _start("the 3rd quarter of 2018") == (2018, 7, 1)
+    assert _start("the first decade of the 21st century") == (2000, 1, 1)

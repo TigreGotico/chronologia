@@ -370,6 +370,21 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     conv = cfg.get("conventions", {})
     tok = cfg.get("tokenizer", {})
 
+    # A unit surface is a grammatical PLURAL when another same-kind surface,
+    # plus an ``-s``/``-es`` ending, spells it (day+s -> days, fortnight+s ->
+    # fortnights, min+s -> mins).  The relation IS the plural, so it never
+    # mis-flags a singular; a language whose plurals are not ``-s`` produces an
+    # empty set and its scoped-ordinal readings are left untouched.  Both the
+    # ``units`` and ``scope_units`` maps feed the check so a plural SEL_UNIT is
+    # caught too.
+    _all_units = {**units, **scope_units}
+    plural_units = frozenset(
+        s for s, kind in _all_units.items()
+        if (s.endswith("s")
+            and ((s[:-1] in _all_units and _all_units[s[:-1]] == kind)
+                 or (s.endswith("es") and s[:-2] in _all_units
+                     and _all_units[s[:-2]] == kind))))
+
     spec = LangSpec(
         lang=lang,
         months=months, weekdays=weekdays, units=units,
@@ -404,6 +419,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         clock_dirs=clock_dirs, seasons=seasons,
         solar_events=solar_events, solar_quals=solar_quals,
         scope_units=scope_units,
+        plural_units=plural_units,
         ordinal_suffixes=tuple(ordinal_suffixes),
         day_cycles=day_cycles, cycle_positions=cycle_positions,
         day_subdivision=cfg.get("day_subdivision"),

@@ -1223,6 +1223,22 @@ class Resolver:
         ord_tok = match.slots.get("ORD")
         n = int(ord_tok.value) if ord_tok is not None else -1
 
+        # A scoped-ordinal selection ("the Nth <unit> of ...") names ONE unit
+        # and is grammatically SINGULAR in every language, so a PLURAL selected
+        # unit is a bare COUNT, never the ordinal day-of-month the ORD slot
+        # read.  The number fold collapses the spelled ordinal "second" and the
+        # cardinal "two" to one token, so unit plurality is the only surviving
+        # signal that "the two days of June" is a count, not "the 2nd day".
+        # Refuse the reading (honest None, exactly as an out-of-range ordinal
+        # already resolves) instead of fabricating June 2.  ``plural_units`` is
+        # derived from ``-s`` morphology, so it is empty for a non-``-s``
+        # language and leaves its scoped readings untouched; the singular "the
+        # second day", "the third week", "the 100th day of the year" are
+        # likewise never in it.
+        sel_tok = (match.slots.get("UNIT") or match.slots.get("SEL_UNIT"))
+        if sel_tok is not None and sel_tok.text in self.spec.plural_units:
+            return None
+
         wd_tok = match.slots.get("WEEKDAY")
         if wd_tok is not None:                      # nth weekday of a month
             target = self.spec.weekdays[wd_tok.text]
