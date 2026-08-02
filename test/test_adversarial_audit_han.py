@@ -1152,3 +1152,31 @@ def test_cardinal_plural_unit_is_not_the_ordinal_day_of_month():
     assert _start("the 21st century") == (2000, 1, 1)
     assert _start("the 3rd quarter of 2018") == (2018, 7, 1)
     assert _start("the first decade of the 21st century") == (2000, 1, 1)
+
+
+# --- R23: non-Latin plurals veto the count reading too ------------------------
+def test_cardinal_plural_unit_is_a_count_across_non_latin_plurals():
+    """"N <plural-unit> of <month>" is a COUNT, not "the Nth day", in locales
+    whose plural is not a bare ``-s`` -- Italian giorno/giorni, Dutch dag/dagen,
+    Russian case-based день/дня.  The plural-unit veto derives from each
+    locale's explicit ``unit1_`` singular vocab, so these read None while their
+    genuine singular ordinal ("il secondo giorno", "второй день") still resolve.
+    """
+    def _day2(text, lang):
+        r = extract_timespan(text, lang, _A)
+        return r is not None and r.span.start.month == 6 and r.span.start.day == 2
+
+    # the bug: the plural/count phrasing must NOT resolve to June 2
+    assert not _day2("i due giorni di giugno", "it")
+    assert not _day2("de twee dagen van juni", "nl")
+    assert not _day2("два дня июня", "ru")
+
+    # the genuine singular ordinal selection MUST stay correct
+    def _start(text, lang):
+        r = extract_timespan(text, lang, _A)
+        assert r is not None, text
+        return (r.span.start.year, r.span.start.month, r.span.start.day)
+
+    assert _start("il secondo giorno di giugno", "it") == (2017, 6, 2)
+    assert _start("de tweede dag van juni", "nl") == (2017, 6, 2)
+    assert _start("второй день июня", "ru") == (2017, 6, 2)
