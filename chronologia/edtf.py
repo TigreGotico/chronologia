@@ -516,11 +516,16 @@ def _parse_interval(s: str) -> EdtfDate:
     redt = _parse_single(right)
     # a reversed interval (start component chronologically after the end
     # component) is malformed per ISO 8601-2 / EDTF, which requires start <= end.
-    # Compare the two components' START instants: relying on DateSpan's
-    # start > end guard misses the off-by-one case where the right component's
-    # EXCLUSIVE end lands exactly on the left component's inclusive start
-    # ("2004-01/2003-12" -> a spurious zero-width span at 2004-01).
-    if ledt.span.start > redt.span.start:
+    # Reject only when the left component starts at or after the right
+    # component's EXCLUSIVE end -- the true empty/reversed test.  Comparing the
+    # two START instants instead wrongly rejects a valid forward interval whose
+    # right endpoint is COARSER than the left ("2004-06/2004" = June 2004 through
+    # the end of 2004, a legitimate ISO 8601-2 mixed-granularity interval): the
+    # year's own start (2004-01-01) precedes June's, yet the interval
+    # [2004-06-01, 2005-01-01) is non-empty.  The >= end test still rejects the
+    # genuinely reversed/zero-width case ("2004-01/2003-12": left start
+    # 2004-01-01 == right end 2004-01-01).
+    if ledt.span.start >= redt.span.end:
         raise EdtfParseError(f"interval start is after its end: {s!r}")
     unc = ledt.uncertain or redt.uncertain
     appr = ledt.approximate or redt.approximate

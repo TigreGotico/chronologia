@@ -392,3 +392,23 @@ def test_out_of_range_components_raise_edtf_parse_error_not_bare(s):
     # to leak a bare IndexError (Y-M-D month) / ValueError (datetime component).
     with pytest.raises(EdtfParseError):
         parse_edtf(s)
+
+
+def test_mixed_granularity_forward_interval_accepted():
+    # A forward interval whose right endpoint is COARSER than the left
+    # ("2004-06/2004" = June 2004 through the end of 2004) is a valid ISO 8601-2
+    # interval; the year's own start precedes June's, but the resolved span
+    # [2004-06-01, 2005-01-01) is non-empty. Regression: the reversed-interval
+    # guard compared the two START instants and wrongly rejected it.
+    import datetime as _dt
+    for s, start, end in [
+        ("2004-06/2004", _dt.date(2004, 6, 1), _dt.date(2005, 1, 1)),
+        ("2004-11/2004", _dt.date(2004, 11, 1), _dt.date(2005, 1, 1)),
+        ("2004-06-15/2004", _dt.date(2004, 6, 15), _dt.date(2005, 1, 1)),
+    ]:
+        r = parse_edtf(s)
+        assert (r.span.start.date(), r.span.end.date()) == (start, end), s
+    # genuinely reversed / zero-width intervals are still rejected
+    for s in ("2004-01/2003-12", "2004/2003", "2004-06/2004-05"):
+        with pytest.raises(EdtfParseError):
+            parse_edtf(s)
