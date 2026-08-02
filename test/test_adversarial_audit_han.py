@@ -1282,3 +1282,19 @@ def test_leading_past_marker_weekday_count():
     assert extract_timespan("2 mondays ago", "en", _A)[0].start.isoformat()[:10] == "2017-06-19"
     assert extract_timespan("3 fridays from now", "en", _A)[0].start.isoformat()[:10] == "2017-07-14"
     assert extract_timespan("3 viernes a partir de ahora", "es", _A)[0].start.isoformat()[:10] == "2017-07-14"
+
+
+# --- R24: format_edtf renders a January month-precision span as one token -----
+def test_edtf_january_month_precision_not_a_degenerate_interval():
+    """A one-month January span must format to the single reduced-precision
+    token "YYYY-01", not the degenerate interval "YYYY-01/YYYY-01" (the month=1
+    guard used to fall through to the year/decade block and fail)."""
+    from chronologia.edtf import parse_edtf, format_edtf
+    for t in ("1760-01", "1950-01", "2020-01", "-0099-01", "0044-01"):
+        assert format_edtf(parse_edtf(t)) == t, t
+    # the other precisions are unchanged
+    assert format_edtf(parse_edtf("1760-02")) == "1760-02"
+    assert format_edtf(parse_edtf("1760")) == "1760"
+    assert format_edtf(parse_edtf("176X")) == "176X"
+    assert format_edtf(parse_edtf("17XX")) == "17XX"
+    assert format_edtf(parse_edtf("1760-01-15")) == "1760-01-15"

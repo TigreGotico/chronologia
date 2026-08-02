@@ -568,11 +568,17 @@ def _span_token(span: DateSpan):
         return _day_str(s)
     if s.day != 1:
         return None
-    # month precision
+    # month precision (ANY month, January included): a one-calendar-month span
+    # ends on the first of the next month.  This must be checked before the
+    # year/decade block, or a January month-span (month == 1) would fall through
+    # to it, fail the full-year test, and be emitted as a degenerate interval
+    # "YYYY-01/YYYY-01" instead of the single token "YYYY-01".
     ny, nm = _next_month(s.year, s.month)
+    if e == AstroDate(ny, nm, 1):
+        return _month_str(s)
     if s.month != 1:
-        return _month_str(s) if e == AstroDate(ny, nm, 1) else None
-    # year / decade / century (month == 1, day == 1)
+        return None
+    # year / decade / century (month == 1, day == 1, and not a one-month span)
     if e == AstroDate(s.year + 1, 1, 1):
         return _year_str(s.year)
     if 0 <= s.year <= 9999:
