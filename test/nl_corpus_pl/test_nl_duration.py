@@ -33,3 +33,13 @@ def test_duration(text, expected):
 @pytest.mark.parametrize("text", ['2 czerwca', 'nic czasowego tutaj'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
+
+
+@pytest.mark.parametrize("text,expected", [
+    ('dwieście dni', timedelta(days=200)),
+    ('trzysta dni', timedelta(days=300)),
+])
+def test_duration_spelled_hundreds(text, expected):
+    got = extract_duration(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a duration"
+    assert got[0] == expected
