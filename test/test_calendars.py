@@ -753,3 +753,19 @@ def test_from_jdn_is_not_linear_scan_on_large_years(name):
     t = time.time()
     c.from_jdn(c.to_jdn(10 ** 12, 6, 1))
     assert time.time() - t < 1.0
+
+
+def test_hebrew_adar_ii_nl_binds_month_13_not_12():
+    # "Adar Bet"/"Adar II"/"Adar Sheni" (the Hebrew leap month) must bind to
+    # month 13, not silently match bare "Adar" (month 12) and strand the
+    # disambiguator. 5784 is a leap year; Adar II 15 == 2024-03-25.
+    import chronologia as _c
+    for text in ("15 Adar Bet 5784", "15 Adar II 5784", "15 Adar Sheni 5784"):
+        r = _c.extract_timespan(text, "en")
+        assert r is not None and r.remainder == "", text
+        assert (r.span.start.year, r.span.start.month, r.span.start.day) \
+            == (2024, 3, 25), text
+    # bare "Adar" stays Adar I (month 12): 2024-02-24
+    r12 = _c.extract_timespan("15 Adar 5784", "en")
+    assert (r12.span.start.year, r12.span.start.month, r12.span.start.day) \
+        == (2024, 2, 24)
