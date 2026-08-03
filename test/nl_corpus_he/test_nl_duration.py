@@ -20,6 +20,11 @@ _CASES = [
     ('רבע שעה', timedelta(minutes=15)),
     ('2 ימים 4 שעה', timedelta(days=2, hours=4)),
     ('1 שעה 30 דקות', timedelta(hours=1, minutes=30)),
+    # dual-noun "two hours/days/weeks" fused into a single word (2 x unit)
+    ('שעתיים ו-30 דקות', timedelta(hours=2, minutes=30)),
+    ('שעתיים', timedelta(hours=2)),
+    ('יומיים', timedelta(days=2)),
+    ('שבועיים', timedelta(weeks=2)),
 ]
 
 

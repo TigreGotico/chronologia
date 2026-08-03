@@ -173,6 +173,24 @@ def extract_duration(
         j = i
         count = None
         frac_lead = False
+        # A Semitic dual-noun unit fuses the count "two" with the unit into one
+        # token (Arabic ساعتان / ساعتين == two hours, Hebrew שעתיים) -- there is
+        # no separate "two" word to read, so it is handled up front as exactly
+        # (2 x unit).  A trailing "... and a half" still attaches ("ساعتان
+        # ونصف"), matching the ordinary count-then-unit path below.
+        dual = spec.dual_units.get(tokens[i].text)
+        if dual is not None and dual in _DUR_UNIT_SECONDS:
+            secs = 2.0 * _DUR_UNIT_SECONDS[dual]
+            end = i + 1
+            add2, end2 = _read_additive(end)
+            if add2 is not None:
+                secs += add2 * _DUR_UNIT_SECONDS[dual]
+                end = end2
+            total += secs
+            found = True
+            consumed.update(range(i, end))
+            i = end
+            continue
         # a leading article: "a day" -> count 1; "a couple of days" -> skip it.
         if tokens[j].text in articles:
             if j + 1 < n and (tokens[j + 1].is_number

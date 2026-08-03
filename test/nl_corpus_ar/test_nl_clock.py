@@ -6,7 +6,7 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, start, span
+from ._corpus import ANCHOR, ad, remainder, start, span
 
 
 def clk(h, mi, s=0):
@@ -46,3 +46,34 @@ def test_noon():
 
 def test_midnight():
     assert start("منتصف الليل") == clk(0, 0)
+
+
+# -- spoken clock fractions: HOUR-then-CLOCKDIR-then-FRACTION -----------------
+# Arabic hangs the fraction off the hour with the glued "و" (and, past) or the
+# spaced "إلا" (less, to): "الثالثة والنصف" == 03:30 (mirror of "half past
+# three"), "العاشرة والربع" == 10:15, "الواحدة إلا ربع" == 00:45.
+@pytest.mark.parametrize("text,h,mi", [
+    ("الساعة الثالثة والنصف", 3, 30),
+    ("الساعة العاشرة والربع", 10, 15),
+    ("الساعة الثامنة والنصف", 8, 30),
+    ("الساعة الواحدة الا ربع", 0, 45),
+    ("الساعة الثانية إلا ربع", 1, 45),
+])
+def test_clock_fraction(text, h, mi):
+    assert start(text) == clk(h, mi)
+    assert remainder(text) == ""
+
+
+# the day-part particle still shifts the fractional reading across noon.
+@pytest.mark.parametrize("text,h,mi", [
+    ("الساعة الثالثة والنصف صباحا", 3, 30),
+    ("الساعة الثالثة والنصف مساء", 15, 30),
+    ("الساعة العاشرة والربع مساء", 22, 15),
+])
+def test_clock_fraction_meridiem(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
+# a bare hour with no fraction is unchanged.
+def test_clock_hour_no_fraction():
+    assert start("الساعة الثالثة") == clk(3, 0)

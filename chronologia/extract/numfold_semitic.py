@@ -234,12 +234,49 @@ def _ar_clock_hour_fold(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
+import re as _re
+
+_CLOCK_TEXT = _re.compile(r"\d{1,2}:\d{2}(?::\d{2})?$")
+# The clock-fraction surfaces (matching clock_fraction_{30,15}.voc), bare of the
+# article and of the "و" (and) proclitic.  Arabic writes that connective GLUED
+# onto the fraction it precedes, so "الساعة الثالثة والنصف" tokenises as
+# [CLOCK][والنصف] -- one fused token that is neither a CLOCKDIR nor a FRACTION,
+# which stranded the fraction and returned the bare hour.  The subtractive
+# "إلا" (to) is written with a space and needs no split.
+_AR_CLOCK_FRACTION = frozenset({"النصف", "نصف", "الربع", "ربع"})
+
+
+def _ar_clock_fraction_split(tokens):
+    """Split a "و"-glued clock fraction ("والنصف" -> "و" + "النصف") when it
+    directly follows a folded CLOCK ``H:MM`` token, so the past-direction
+    connective surfaces as its own CLOCKDIR token and the fraction as FRACTION.
+    Gated on the preceding CLOCK so nothing but a spoken clock fraction fires,
+    keeping every و-glued cardinal ("وعشرون") untouched."""
+    out, changed = [], False
+    for t in tokens:
+        if (not t.is_number and len(t.text) > 1 and t.text[0] == "و"
+                and t.text[1:] in _AR_CLOCK_FRACTION and out
+                and _CLOCK_TEXT.match(out[-1].text)):
+            waw = Token(text="و", raw="و", index=t.index,
+                        char_start=t.char_start, char_end=t.char_start + 1)
+            frac = Token(text=t.text[1:], raw=t.text[1:], index=t.index,
+                         char_start=t.char_start + 1, char_end=t.char_end)
+            out.append(waw)
+            out.append(frac)
+            changed = True
+        else:
+            out.append(t)
+    return reindex(tuple(out)) if changed else tokens
+
+
 def fold_ar(tokens):
-    """Fold the feminine ordinal clock hour first (in clock context only), then
-    the ordinal teen (11..19), then the cardinal/ordinal fold, then license
-    الأول/الثاني positionally (Rule A, #268)."""
+    """Fold the feminine ordinal clock hour first (in clock context only), split
+    a "و"-glued trailing clock fraction off it, then the ordinal teen (11..19),
+    the cardinal/ordinal fold, then license الأول/الثاني positionally
+    (Rule A, #268)."""
     return _ar_month_ordinal_license(
-        _fold_ar_base(_ar_teen_fold(_ar_clock_hour_fold(tokens))))
+        _fold_ar_base(_ar_teen_fold(
+            _ar_clock_fraction_split(_ar_clock_hour_fold(tokens)))))
 
 
 # -- Hebrew ------------------------------------------------------------------
