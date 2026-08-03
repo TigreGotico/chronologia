@@ -261,3 +261,18 @@ def test_reversed_pinned_dates_still_refuse_to_compose():
 def test_shared_month_garbage_never_raises(text):
     from ._corpus import parse
     parse(text)
+
+
+def test_since_until_new_year_and_now_stay_backward():
+    # "since christmas until new year": the "since" left endpoint is past-anchored
+    # (last christmas), and the "until new year" right endpoint must resolve --
+    # the "now"/"new year" special surfaces resolve in the directional-range
+    # path too now, so the range stays the backward Dec 25 -> Jan 2 span instead
+    # of silently downgrading to a forward range with "since" dropped.
+    s, e = start_end("since christmas until new year")
+    assert (s.year, s.month, s.day) == (2016, 12, 25)
+    assert (e.year, e.month, e.day) == (2017, 1, 2)
+    # "since X until now" ends at the anchor instant
+    s2, e2 = start_end("since christmas until now")
+    assert (s2.year, s2.month, s2.day) == (2016, 12, 25)
+    assert e2 == ad(ANCHOR)

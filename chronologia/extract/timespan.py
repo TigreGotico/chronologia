@@ -1416,6 +1416,17 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
         return None
 
     def endpoint(sub, at):
+        # the "now" and "new year" special surfaces resolve only in
+        # _range_endpoint (the closed/open-range paths); wire them here too so a
+        # directional "since christmas until new year" / "... until now" keeps
+        # its backward "since" reading and binds the trailing endpoint, instead
+        # of failing to resolve the right side and silently downgrading to a
+        # plain forward range with "since" dropped.  "now" is always the anchor
+        # instant; "new year" is the first Jan 1 at or after `at`.
+        if _is_now_slice(sub, engine.spec):
+            return _now_span(anchor), ""
+        if _is_new_year_slice(sub, engine.spec):
+            return _new_year_span(at), ""
         return (_resolve_endpoint(text, sub, engine, at, scale_mode=scale_mode)
                 or _bare_weekday_endpoint(sub, engine, at))
 
