@@ -182,7 +182,7 @@ _NUMDATE = r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}(?!\d)"
 # dot keeps the shape one token.  The 2-4 digit year still anchors the pattern,
 # so a bare "15. 6." (two ordinals, no year) matches nothing and fabricates no
 # date, and the two boundary guards are unchanged.
-_DOTDATE = r"\d{1,2}\. ?\d{1,2}\. ?\d{2,4}(?!\d)(?!\.\d)"
+_DOTDATE = r"(?<!\d\.)(?<!\d\. )\d{1,2}\. ?\d{1,2}\. ?\d{2,4}(?!\d)(?!\.\d)"
 # what the ``NUMDATE`` slot accepts: either separator style.  The matcher and
 # the resolver read this one name, so there is a single source of truth for the
 # shape and the day/month order stays the locale's ``dmy`` decision.
