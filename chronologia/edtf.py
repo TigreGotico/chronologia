@@ -222,8 +222,15 @@ def _sig_year_span(value: int, sig: int) -> DateSpan:
     if trailing <= 0:
         return _year_span(value, value + 1)
     p = 10 ** trailing
-    lo = (value // p) * p
-    return _year_span(lo, lo + p)
+    # Truncate on the MAGNITUDE, then re-apply the sign: signed floor division
+    # rounds toward -inf, so for a negative year "(value // p) * p" lands on the
+    # wrong block ("-1950S2" gave [-2000, -1900) instead of the [-1999, -1899)
+    # that its equivalent "-19XX" yields).  Mirror the negative handling of
+    # _x_range: -19XX's block is [-1999, -1899), i.e. -(1999) .. -(1899).
+    mag_lo = (abs(value) // p) * p
+    if value < 0:
+        return _year_span(-(mag_lo + p) + 1, -mag_lo + 1)
+    return _year_span(mag_lo, mag_lo + p)
 
 
 _YEAR_TOKEN = re.compile(r"^Y(-?\d+)(?:E(\d+))?(?:S(\d+))?$")

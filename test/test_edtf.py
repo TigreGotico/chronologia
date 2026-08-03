@@ -412,3 +412,22 @@ def test_mixed_granularity_forward_interval_accepted():
     for s in ("2004-01/2003-12", "2004/2003", "2004-06/2004-05"):
         with pytest.raises(EdtfParseError):
             parse_edtf(s)
+
+
+def test_negative_year_significant_digits_matches_x_form():
+    # "-1950S2" (significant-digits) must denote the same year block as its
+    # equivalent "-19XX" (unspecified-digits): [-1999, -1899). Regression: signed
+    # floor division rounded toward -inf, giving [-2000, -1900) -- a whole
+    # century-block shift, the sibling of the already-fixed _x_range bug.
+    for s_form, x_form in [("-1950S2", "-19XX"), ("-1200S2", "-12XX")]:
+        s = parse_edtf(s_form).span
+        x = parse_edtf(x_form).span
+        assert (s.start.year, s.end.year) == (x.start.year, x.end.year), s_form
+    assert (parse_edtf("-1950S2").span.start.year,
+            parse_edtf("-1950S2").span.end.year) == (-1999, -1899)
+    # the Y-prefixed exponent form is likewise magnitude-truncated
+    assert (parse_edtf("Y-3388E2S3").span.start.year,
+            parse_edtf("Y-3388E2S3").span.end.year) == (-338999, -337999)
+    # positive significant-digit spans are unchanged
+    assert (parse_edtf("1950S2").span.start.year,
+            parse_edtf("1950S2").span.end.year) == (1900, 2000)
