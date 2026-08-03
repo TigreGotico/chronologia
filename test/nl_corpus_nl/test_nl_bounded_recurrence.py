@@ -17,3 +17,17 @@ def test_bounded_recurrence(text, rrule, remainder):
 @pytest.mark.parametrize("text", ['vrijdag', '5 juni'])
 def test_not_a_recurrence(text):
     assert extract_recurrence(text, "nl", anchor=ANCHOR) is None
+
+
+import datetime as _dt_r41
+
+
+@pytest.mark.parametrize("text,rrule", [
+    ('elke 2 weken op dinsdag', 'FREQ=WEEKLY;INTERVAL=2;BYDAY=TU'),
+    ('elke 3 maanden op de 5e', 'FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=5'),
+])
+def test_every_n_unit_with_trailing_placement(text, rrule):
+    got = extract_recurrence(text, "nl", anchor=_dt_r41.datetime(2017, 6, 28, 13, 4))
+    assert got is not None
+    assert got[0].to_string() == rrule
+    assert got[1] == ""
