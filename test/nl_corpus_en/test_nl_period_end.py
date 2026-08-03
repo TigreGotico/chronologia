@@ -83,3 +83,17 @@ def test_last_day_of_period(text, y, m, d):
     assert (s, e) == (AstroDate(y, m, d),
                       AstroDate(y, m, d) + timedelta(days=1)), \
         f"{text!r} -> {(s, e)}"
+
+
+@pytest.mark.parametrize("text,start,end", [
+    ("the end of 2020", AstroDate(2020, 9, 1), AstroDate(2021, 1, 1)),
+    ("end of 2020", AstroDate(2020, 9, 1), AstroDate(2021, 1, 1)),
+    ("the end of the year 2020", AstroDate(2020, 9, 1), AstroDate(2021, 1, 1)),
+    ("the beginning of 2020", AstroDate(2020, 1, 1), AstroDate(2020, 5, 2)),
+])
+def test_part_of_bare_year_narrows(text, start, end):
+    # "the end of 2020" must narrow to the last third of 2020, like "end 2020"
+    # and "end of year 2020" already do -- the of-connector + bare-year order was
+    # missing, so it fell through to the whole year with the narrowing stranded
+    # (and "the end of the year 2020" even resolved to the anchor year).
+    assert start_end(text) == (start, end)

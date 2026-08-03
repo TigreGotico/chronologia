@@ -230,8 +230,8 @@
         "article? year_word GYEAR",
         "GYEAR",
         "article? year_word NUM SCALE",
-        "PART GYEAR",
-        "PART of? article? fiscal? year_word GYEAR",
+        "article? PART of? GYEAR",
+        "article? PART of? article? fiscal? year_word GYEAR",
         "article? GYEAR fiscal? year_word PART"
       ]
     },
