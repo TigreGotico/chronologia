@@ -142,6 +142,19 @@ def test_first_of_the_month(text, d):
     assert start(text) == d
 
 
+# The prefer-future roll of "the Nth of the month" must land on the next month
+# that actually HAS that day-of-month, not day-clamp: from a Jan-31 anchor, "by
+# the 30th" (Jan 30 already passed) skips February (no 30th) to March 30 -- the
+# old blind +1-month clamped it to Feb 28, silently relabelling the day.
+@pytest.mark.parametrize("text,anchor,d", [
+    ("by the 30th", datetime(2017, 1, 31, 13, 4), AstroDate(2017, 3, 30)),
+    ("on the 29th", datetime(2017, 1, 31, 13, 4), AstroDate(2017, 3, 29)),  # 2017 Feb no 29
+    ("by the 31st", datetime(2017, 4, 15, 13, 4), AstroDate(2017, 5, 31)),  # Apr no 31 -> May
+])
+def test_month_day_roll_skips_months_without_the_day(text, anchor, d):
+    assert start(text, anchor) == d
+
+
 # -- "on/by the Nth": preposition-signalled bare day-of-month -------------
 #
 # A leading date preposition ("on"/"by") makes a bare *digit* ordinal a
