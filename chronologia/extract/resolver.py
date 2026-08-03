@@ -1170,16 +1170,33 @@ class Resolver:
         rel_tok = match.slots.get("REL_MARKER")
         rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
         base = _add_months(datetime(anchor.year, anchor.month, 1), rel)
-        try:
-            value = datetime(base.year, base.month, day)
-        except ValueError:                          # no such day -> None
-            return None
         prefer_future = self.spec.construction_flags.get(
             "month_day_ref", {}).get("prefer_future", False)
+        try:
+            value = datetime(base.year, base.month, day)
+        except ValueError:
+            value = None                            # day absent in this month
         # an explicit this/next/last marker names the month outright; only the
-        # bare "the Nth of the month" rolls forward when the day has passed.
-        if rel == 0 and prefer_future and value < _midnight(anchor):
-            value = _add_months(value, 1)
+        # bare "the Nth of the month" rolls forward -- to the next month that
+        # actually HAS this day-of-month -- when the day is absent this month or
+        # has already passed.  A blind +1-month _add_months would day-clamp ("the
+        # 30th" past a Jan-31 anchor clamps Feb 30 -> Feb 28, silently
+        # relabelling the day); walk forward instead (a 31st skips the short
+        # months to the next long one).
+        roll = rel == 0 and prefer_future and (
+            value is None or value < _midnight(anchor))
+        if roll:
+            for step in range(1, 13):
+                nxt = _add_months(datetime(base.year, base.month, 1), step)
+                try:
+                    value = datetime(nxt.year, nxt.month, day)
+                    break
+                except ValueError:
+                    continue
+            else:
+                return None
+        if value is None:                           # no roll and day is absent
+            return None
         return Resolution(_day_span(value), self._consumed(match))
 
     #: scope-word kind -> that period's length in whole years.
