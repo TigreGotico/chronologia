@@ -1461,3 +1461,41 @@ def test_out_of_range_scoped_ordinal_of_year_is_none():
         .span.start.month == 12
     assert extract_timespan("the 3rd month of the year", "en-us", _A) \
         .span.start.month == 3
+
+
+# --- R38: a reversed bare-date civil range must not fabricate a ~year span ----
+def test_reversed_bare_date_range_does_not_fabricate_wide_span():
+    """"june 12 to june 5": both bare endpoints prefer_future to the SAME next
+    year and reverse there (12 > 5).  The straddle pull-back (which pulls a
+    left flung a year AHEAD of a near-anchor right) must not fire here -- pulling
+    only the left back a year fabricated a bogus [2017-06-12, 2018-06-06) ~360-day
+    span.  A genuine same-cycle reversal falls to the single-span reading."""
+    from chronologia import extract_timespan
+    r = extract_timespan("june 12 to june 5", "en", _A)
+    assert r is not None
+    assert (r.span.end - r.span.start).days <= 2      # single day, not a year
+    assert r.span.start.month == 6 and r.span.start.day == 12
+    # the genuine straddle (left flung past a near-anchor right) still repairs
+    from datetime import datetime as _dt
+    s = extract_timespan("july 20 to july 25", "en", _dt(2017, 7, 22, 13, 4))
+    assert (str(s.span.start.date()), str(s.span.end.date())) \
+        == ("2017-07-20", "2017-07-26")
+    # ascending bare range and year-boundary crossing are unaffected
+    assert extract_timespan("june 5 to june 12", "en", _A).span.start.day == 5
+    yb = extract_timespan("december 28 to january 3", "en", _A)
+    assert (str(yb.span.start.date()), str(yb.span.end.date())) \
+        == ("2017-12-28", "2018-01-04")
+
+
+# --- R38: the 5th/6th week of a month must resolve when it exists -------------
+def test_week_of_month_accepts_fifth_and_sixth_weeks():
+    """A month spans 4-6 Mon-Sun weeks; the old hard cap of 4 wrongly refused
+    the common 5th week.  March 2021 (opens on a Monday) has a real 5th week
+    Mar 29-Apr 4; a nonexistent 6th week is still refused, as is February's 5th."""
+    from chronologia import extract_timespan
+    r = extract_timespan("the 5th week of march 2021", "en", _A)
+    assert (str(r.span.start.date()), str(r.span.end.date())) \
+        == ("2021-03-29", "2021-04-05")
+    assert extract_timespan("the 6th week of march 2021", "en", _A) is None
+    assert extract_timespan("the 5th week of february 2021", "en", _A) is None
+    assert extract_timespan("the 4th week of february 2021", "en", _A) is not None

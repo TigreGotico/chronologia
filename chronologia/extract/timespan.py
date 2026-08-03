@@ -1235,7 +1235,17 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # span.  Pull an unpinned left back one year so both read in the nearest
     # cycle ("july 20 to july 25" on july 22 stays this year).  A pinned left
     # (explicit year) is fixed and must not be pulled.
-    if end <= start and not left[3]:
+    if end <= start and not left[3] \
+            and start.year != right_span.start.year:
+        # The straddle repair only applies when the two endpoints landed in
+        # DIFFERENT cycles: prefer_future flung the left a year ahead of a right
+        # that stayed near the anchor ("july 20 to july 25" on july 22 -> left
+        # 2018, right 2017), so pulling the left back unifies them in the near
+        # cycle.  When BOTH endpoints were flung to the SAME future year and the
+        # range is still reversed there ("june 12 to june 5" -- both 2018, 12 >
+        # 5), it is a genuine reversal, not a straddle; pulling only the left
+        # back a year would fabricate a bogus ~year-wide span, so leave it to
+        # fail below (None -> the single-span fallback reads the left date).
         pulled = _minus_one_year(start)
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
