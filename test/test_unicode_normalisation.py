@@ -104,3 +104,18 @@ def test_french_curly_apostrophe_phrase():
 ])
 def test_plain_forms_unchanged(text, lang):
     assert _span(text, lang) is not None
+
+
+def test_turkish_dotted_capital_i_preserves_offsets():
+    # Turkish capital İ (U+0130) lower-cases to i + COMBINING DOT ABOVE (two
+    # codepoints), which broke the tokenizer's length-preserving invariant and
+    # shifted every remainder char after it. Folding İ->i keeps offsets aligned.
+    from chronologia.extract.tokenizer import normalise_unicode
+    text = "İzmir 5 Haziran 2020 günü"
+    assert len(normalise_unicode(text)) == len(text)
+    r = extract_timespan(text, "tr", datetime(2017, 6, 27, 13, 4))
+    assert r is not None
+    assert (r.span.start.year, r.span.start.month, r.span.start.day) \
+        == (2020, 6, 5)
+    # the remainder is sliced correctly from the original text (the 'g' survives)
+    assert r.remainder == "İzmir günü"
