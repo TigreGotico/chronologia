@@ -34,6 +34,18 @@ def test_dotted_date_unpadded_de():
                                       AstroDate(2020, 6, 16))
 
 
+@pytest.mark.parametrize("text", ["1. 15.06.2020", "5. 5.6.2020", "3. 15. 6. 2020"])
+def test_numbered_list_item_before_a_date_still_reads_de(text):
+    """A numbered-list marker ("1.", "5.") in front of a genuine dotted date is
+    an ordinal item number, not part of the date -- the date after it must bind,
+    with the list marker left in the remainder.  The malformed-run leading guard
+    "(?<!\\d\\.)" must refuse only the GLUED head "1.15.06.2020" (no space), never
+    a spaced "digit. " list item before a real date."""
+    s, e = start_end(text)
+    assert (s, e) == (AstroDate(2020, 6, 15), AstroDate(2020, 6, 16)) \
+        or (s, e) == (AstroDate(2020, 6, 5), AstroDate(2020, 6, 6))
+
+
 @pytest.mark.parametrize("text", ["15. 6. 2020", "15. 06. 2020", "15.6. 2020"])
 def test_dotted_date_spaced_de(text):
     """DIN 5008 writes the everyday date with a space after each dot,

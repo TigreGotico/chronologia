@@ -181,8 +181,13 @@ _NUMDATE = r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}(?!\d)"
 # space-less literal exists to end.  A single optional space after each interior
 # dot keeps the shape one token.  The 2-4 digit year still anchors the pattern,
 # so a bare "15. 6." (two ordinals, no year) matches nothing and fabricates no
-# date, and the two boundary guards are unchanged.
-_DOTDATE = r"(?<!\d\.)(?<!\d\. )\d{1,2}\. ?\d{1,2}\. ?\d{2,4}(?!\d)(?!\.\d)"
+# date, and the trailing boundary guards are unchanged.
+# The leading "(?<!\d\.)" refuses a date whose head is glued to a preceding
+# "digit." -- so "1.15.06.2020" stays a malformed run (its "15.06.2020" tail
+# does not bind).  It is deliberately NOT extended to a spaced "digit. " form:
+# a numbered-list item before a real date -- "1. 15.06.2020", "5. 5.6.2020" --
+# is a genuine date the guard must let through, not shred.
+_DOTDATE = r"(?<!\d\.)\d{1,2}\. ?\d{1,2}\. ?\d{2,4}(?!\d)(?!\.\d)"
 # what the ``NUMDATE`` slot accepts: either separator style.  The matcher and
 # the resolver read this one name, so there is a single source of truth for the
 # shape and the day/month order stays the locale's ``dmy`` decision.

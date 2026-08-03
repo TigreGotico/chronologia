@@ -172,6 +172,23 @@ def test_es_comma_decimal_dot_thousands(text, expected):
     assert _dur(text, "es") == expected
 
 
+@pytest.mark.parametrize("text,lang", [
+    ("1,5 godziny", "pl"),   # Polish
+    ("1,5 hodiny", "sk"),    # Slovak
+    ("1,5 години", "uk"),    # Ukrainian
+    ("1,5 часа", "bg"),      # Bulgarian
+    ("1,5 sata", "hr"),      # Croatian
+    ("1,5 ure", "sl"),       # Slovenian
+])
+def test_slavic_comma_is_decimal_not_thousands(text, lang):
+    # These six locales write the decimal fraction with a comma (SI/local
+    # standard, same as their close siblings cs/ru which were already flagged).
+    # Before decimal_comma was set they read "1,5" as two numbers and dropped
+    # the leading digit -- "1,5 hours" silently became 5h.  The comma must read
+    # as the decimal point, so "1,5 <hours>" is an hour and a half.
+    assert _dur(text, lang) == timedelta(hours=1, minutes=30)
+
+
 def test_de_dotted_date_not_confused_with_thousands():
     # "15.06.2020" is a German civil date, NOT a thousands-grouped number,
     # while "1.500" in the same locale IS 1500 -- the dotted-date literal and
