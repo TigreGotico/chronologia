@@ -20,6 +20,12 @@ _CASES = [
     ('ربع ساعة', timedelta(minutes=15)),
     ('2 يوم 4 ساعة', timedelta(days=2, hours=4)),
     ('1 ساعة 30 دقائق', timedelta(hours=1, minutes=30)),
+    # dual-noun "two hours/days/weeks" fused into a single word (2 x unit)
+    ('ساعتان و30 دقيقة', timedelta(hours=2, minutes=30)),
+    ('ساعتين و30 دقيقة', timedelta(hours=2, minutes=30)),
+    ('ساعتان', timedelta(hours=2)),
+    ('يومين', timedelta(days=2)),
+    ('أسبوعين', timedelta(weeks=2)),
 ]
 
 

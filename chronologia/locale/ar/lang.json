@@ -35,6 +35,8 @@
     },
     "clock_time": {
       "orders": [
+        "at? CLOCK CLOCKDIR FRACTION MERIDIEM? ZONE?",
+        "CLOCK CLOCKDIR FRACTION MERIDIEM? ZONE?",
         "at? CLOCK MERIDIEM? ZONE?",
         "CLOCK MERIDIEM? ZONE?",
         "at? HOUR MERIDIEM ZONE?",

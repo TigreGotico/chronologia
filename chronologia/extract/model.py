@@ -241,6 +241,13 @@ class LangSpec:
     # scoped_ordinal unit vocab beyond the day/week/month units map
     # (decade/century/millennium surface -> kind); reuses ``units`` for the rest
     scope_units: Mapping[str, str] = field(default_factory=dict)
+    # dual-noun unit vocab (surface -> unit kind): Semitic languages fuse the
+    # count "two" with the unit into a single dual noun -- Arabic ساعتان /
+    # ساعتين ("two hours"), يومين ("two days"), Hebrew שעתיים, יומיים -- with no
+    # separate "two" word anywhere in the number vocabulary.  A surface here is
+    # read by the duration engine as exactly (2 x unit); it is deliberately NOT
+    # folded into ``units`` so no other grammar order (offset/timespan) sees it.
+    dual_units: Mapping[str, str] = field(default_factory=dict)
     # bare-unit implied-one vocab (surface -> unit kind): the case form a
     # relative offset with no count takes when the count is an implied one
     # ("через неделю" = in a/one week).  Languages without an article encode

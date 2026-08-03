@@ -132,6 +132,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     solar_events: Dict[str, str] = {}
     solar_quals: Dict[str, str] = {}
     scope_units: Dict[str, str] = {}
+    dual_units: Dict[str, str] = {}
     ordinal_suffixes: list = []
     day_cycles: Dict[str, str] = {}
     cycle_positions: Dict[str, int] = {}
@@ -201,6 +202,10 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             weekday_full.update({s: idx for s in surfaces})
         elif base.startswith("unit1_"):
             singular_units.update({s: base[len("unit1_"):] for s in surfaces})
+        elif base.startswith("unit_dual_"):
+            # dual-noun unit surface (Semitic ساعتان / שעתיים == "two hours");
+            # read as (2 x unit) by the duration engine, kept out of ``units``.
+            dual_units.update({s: base[len("unit_dual_"):] for s in surfaces})
         elif base.startswith("unit_"):
             units.update({s: base[len("unit_"):] for s in surfaces})
         elif base.startswith("named_day_"):
@@ -436,6 +441,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         clock_dirs=clock_dirs, seasons=seasons,
         solar_events=solar_events, solar_quals=solar_quals,
         scope_units=scope_units,
+        dual_units=dual_units,
         plural_units=plural_units,
         ordinal_suffixes=tuple(ordinal_suffixes),
         day_cycles=day_cycles, cycle_positions=cycle_positions,

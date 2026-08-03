@@ -2003,6 +2003,33 @@ class Resolver:
             parts = [int(p) for p in clock.text.split(":")]
             hour, minute = parts[0], parts[1]
             second = parts[2] if len(parts) > 2 else 0
+            # A trailing spoken fraction after a folded CLOCK hour: Arabic tells
+            # the hour first ("الساعة الثالثة" -> CLOCK 3:00) and hangs the
+            # fraction off it in HOUR-CLOCKDIR-FRACTION order -- "الثالثة والنصف"
+            # (three and-a-half == 03:30), "العاشرة والربع" (ten and-a-quarter ==
+            # 10:15), "الواحدة إلا ربع" (one less-a-quarter == 00:45).  This is
+            # the mirror of English's "half past three"; the CLOCK branch reads
+            # the bare hour, so the fraction offset is applied here, reusing the
+            # shared clock_fractions/clock_dirs spec maps.  The meridiem below
+            # reads the hour AS SPOKEN, so a subtractive "to" rollback lands on
+            # the right side of noon/midnight.
+            frac_tok = match.slots.get("FRACTION")
+            dir_tok = match.slots.get("CLOCKDIR")
+            if frac_tok is not None and dir_tok is not None:
+                spoken_hour = hour
+                offset = self.spec.clock_fractions[frac_tok.text]
+                if self.spec.clock_dirs[dir_tok.text] > 0:      # past ("و")
+                    minute += offset
+                else:                                           # to ("إلا")
+                    hour -= 1
+                    minute = 60 - offset
+                    # 12-hour reckoning spells the pre-one hour as twelve
+                    # ("الواحدة إلا ربع" == 12:45); the default 24-hour reckoning
+                    # keeps 00:45.  A landmark base never reaches 0 here.
+                    if hour == 0 and self.spec.conventions.toward_hour_12h:
+                        hour = 12
+                    elif hour < 0:
+                        hour += 24
         elif dotclock is not None:
             # the timetable "HH.MM" -- read the wall clock from the dotted raw
             # the tokenizer preserved (the number reading truncated it to HH)
