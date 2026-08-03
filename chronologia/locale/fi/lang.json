@@ -3,6 +3,7 @@
     "until": "post"
   },
   "tokenizer": {
+    "decimal_comma": true,
     "split_contractions": false,
     "ordinal_dot": true,
     "dotted_date": true
