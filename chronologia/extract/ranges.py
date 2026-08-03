@@ -357,10 +357,17 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
         if ordinal == -1:
             _day = get_month_range(ref_date)[1]
         else:
-            if not 0 < ordinal <= 4:
-                raise ValueError("months only have 4 weeks")
+            if ordinal <= 0:
+                raise ValueError(f"a month has no week {ordinal}")
             _day = ref_date.replace(day=1) + relativedelta(weeks=ordinal) - \
                 timedelta(days=1)
+            # A month spans 4, 5 or even 6 Mon-Sun weeks (Mar 2021 opens on a
+            # Monday and runs Mar 1-7 .. Mar 29-Apr 4), so the old hard cap of 4
+            # wrongly refused the common 5th/6th week.  Accept the ordinal iff
+            # the week it lands on still intersects the month; a week that has
+            # rolled entirely past the month's last day is out of range.
+            if get_week_range(_day)[0] > get_month_range(ref_date)[1]:
+                raise ValueError(f"month {ref_date:%Y-%m} has no week {ordinal}")
         return get_week_range(_day)[0]
     if resolution == DateTimeResolution.WEEK_OF_YEAR:
         if ordinal == -1:
