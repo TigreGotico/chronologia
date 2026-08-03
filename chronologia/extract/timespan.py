@@ -1727,25 +1727,29 @@ def extract_timespan(
 # design (docs/design/errors-by-construction.md, #244: "no fabricated date...
 # return None, never a wrong span") such a reference is refused (-> None).
 #
-# The trigger is a negation/exclusion word standing in the residue that GOVERNS
-# the reference (sits to its left).  A BOUND phrase ("not before Monday", "no
-# later than Friday", "not until Tuesday") is a legitimately resolvable
-# constraint, NOT an exclusion: a bound-preposition between the negation and the
-# date (before/after/until/by/earlier/later/past) vetoes the veto, leaving those
-# phrases byte-identical.  English trigger vocab only for now.
+# The trigger is a negation/exclusion word that GOVERNS the reference: it must
+# sit in the CONTIGUOUS run of unconsumed tokens IMMEDIATELY before the span,
+# reachable across only the function/scope words the exclusion idiom naturally
+# skips (the trigger itself, a bound guard, a scope/quantifier word, a
+# connector/article, or a copula filler).  The run STOPS at the first content
+# word ("no wait, Tuesday" -> "wait" blocks) or a sentence-ending punctuation
+# ("No cats allowed. See you Tuesday." -> the "." blocks), so a trigger lying in
+# a different clause or sentence never reaches the reference.  A BOUND phrase
+# ("not before Monday", "no later than Friday", "not until Tuesday") is a
+# legitimately resolvable constraint, NOT an exclusion: a bound preposition in
+# the run vetoes the veto, leaving those phrases byte-identical.  English trigger
+# vocab only for now.
 def _exclusion_vetoes(governing_text: str, spec) -> bool:
-    """True when a negation/exclusion particle governs the reference to its
-    right (the text before the span carries a trigger and no bound preposition).
+    """True when a negation/exclusion particle governs the reference to its right
+    (the given residue carries a trigger and no bound preposition).
 
-    ``governing_text`` is the residue lying immediately before the matched
-    reference.  A bound preposition (``spec.exclusion_bound_guards``) anywhere in
-    it means the phrase is a bound ("before friday"), not an exclusion, and is
-    left untouched.  Both vocabularies are per-locale data (``marker_exclusion``
-    / ``marker_exclusion_bound``); a locale that declares no triggers makes the
-    guard a no-op there rather than silently applying English particles.
-
-    Tokenisation is Unicode letter-runs so the guard works for non-Latin scripts
-    once a locale supplies the vocabulary.
+    ``governing_text`` must ALREADY be bounded to the residue immediately before
+    the matched reference (the ``nseries`` list path passes the gap between two
+    adjacent mentions).  A bound preposition (``spec.exclusion_bound_guards``)
+    anywhere in it means the phrase is a bound ("before friday"), not an
+    exclusion.  The single-span and candidate paths use
+    :func:`_exclusion_governing_veto` instead, which derives the bounded region
+    from the token stream rather than trusting the caller to slice it.
     """
     triggers = spec.exclusion_triggers
     if not triggers:
@@ -1756,6 +1760,74 @@ def _exclusion_vetoes(governing_text: str, spec) -> bool:
     if any(w in spec.exclusion_bound_guards for w in words):
         return False
     return any(w in triggers for w in words)
+
+
+def _sentence_boundary_between(text, start, end) -> bool:
+    """True when a sentence-ending punctuation (``.!?;`` or a newline) sits in
+    the raw gap ``text[start:end]`` separating two adjacent tokens."""
+    if start is None or end is None or end <= start:
+        return False
+    return any(c in ".!?;\n" for c in text[start:end])
+
+
+def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
+    """True when a negation/exclusion particle GOVERNS the winning reference and
+    the phrase is not a resolvable bound.
+
+    The governing region is the maximal run of unconsumed tokens IMMEDIATELY
+    before the span (leftmost consumed token) in which every token is skippable
+    -- a trigger, a bound guard, a scope/quantifier word, a connector/article, or
+    a copula filler.  The walk stops at the first content word or a sentence
+    boundary, so a trigger in another clause or sentence does not reach the date.
+
+    A bound preposition anywhere in the run (``spec.exclusion_bound_guards``)
+    marks a resolvable bound ("no later than Friday") -> no veto.  A hard trigger
+    (a negation or a prepositional exclusion: not/no/except/unless/than and the
+    per-locale equivalents) vetoes whenever it governs.  A coordinating trigger
+    (``spec.exclusion_coord``, English "but") vetoes only when the run also
+    carries a scope word ("every day but Tuesday" -> exclude Tuesday); standing
+    alone it is a clause conjunction ("... but Tuesday is free") or a discourse
+    opener ("But Tuesday works") and vetoes nothing.
+
+    Vocabularies are per-locale data; a locale that declares no triggers makes
+    the guard a no-op there rather than silently applying English particles.
+    """
+    triggers = spec.exclusion_triggers
+    if not triggers or not consumed:
+        return False
+    span_start = min(consumed)
+    skippable = set(triggers) | set(spec.exclusion_bound_guards) \
+        | set(spec.exclusion_scope) | set(spec.exclusion_coord) \
+        | set(spec.exclusion_filler)
+    for forms in spec.connectors.values():
+        skippable |= set(forms)
+    run = []
+    next_start = tokens[span_start].char_start if span_start < len(tokens) else None
+    i = span_start - 1
+    while i >= 0:
+        tok = tokens[i]
+        if tok.index in consumed:
+            i -= 1
+            continue
+        if _sentence_boundary_between(text, tok.char_end, next_start):
+            break
+        w = tok.text.lower()
+        if w not in skippable:
+            break
+        run.append(w)
+        next_start = tok.char_start
+        i -= 1
+    if not run:
+        return False
+    words = set(run)
+    if words & set(spec.exclusion_bound_guards):
+        return False
+    hard = set(triggers) - set(spec.exclusion_coord)
+    if words & hard:
+        return True
+    if (words & set(spec.exclusion_coord)) and (words & set(spec.exclusion_scope)):
+        return True
+    return False
 
 
 _veto_reentry = threading.local()
@@ -1925,12 +1997,10 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     if core is None:
         return None
     span, consumed = core
-    # veto a reference governed by a leading negation/exclusion particle: the
-    # residue to the left of the winning span carries the trigger.
-    span_starts = [tokens[i].char_start for i in consumed
-                   if i < len(tokens) and tokens[i].char_start is not None]
-    if span_starts and _exclusion_vetoes(text[:min(span_starts)],
-                                          engine.spec):
+    # veto a reference governed by a leading negation/exclusion particle: a
+    # trigger reachable across only the skippable run immediately before the span
+    # (a whole-prefix scan would falsely veto a trigger in another clause).
+    if _exclusion_governing_veto(tokens, consumed, text, engine.spec):
         return None
     # Impossible-date veto (residue-veto design, #244): a stranded
     # "<number> of ..." fragment in the remainder -- a day-of-month qualifier
@@ -2302,10 +2372,10 @@ def extract_candidates(
         seen.add(key)
         consumed = label_extra.get(id(match), set(res.consumed))
         # skip a reading governed by a leading negation/exclusion particle
-        # ("not tomorrow"): the excluded reference is not a positive date.
-        starts = [tokens[i].char_start for i in consumed
-                  if i < len(tokens) and tokens[i].char_start is not None]
-        if starts and _exclusion_vetoes(text[:min(starts)], engine.spec):
+        # ("not tomorrow"): the excluded reference is not a positive date.  The
+        # SAME bounded governing-region logic as the single-winner path, so the
+        # two public APIs agree on which readings are vetoed.
+        if _exclusion_governing_veto(tokens, consumed, text, engine.spec):
             continue
         # the same impossible-date veto _resolve_span applies to the single
         # winner: a candidate that strands an impossible day-of-month numeral

@@ -83,3 +83,36 @@ def test_plain_references_unchanged(text, start, end, rem):
     assert str(r.span.start) == start
     assert str(r.span.end) == end
     assert r.remainder == rem
+
+
+# --- adjacency: a trigger must GOVERN the reference to veto it ---------------
+# A trigger lying in another clause or sentence, or separated by a content word,
+# does NOT govern the date and must not veto it (the veto used to scan the whole
+# prefix and falsely returned None). "next Tuesday" resolves to 2017-07-04.
+@pytest.mark.parametrize("text", [
+    "no wait, Tuesday",                     # "wait" (content) blocks "no"
+    "But Tuesday works for me",             # discourse-opening "but", no scope
+    "I have a meeting but Tuesday is free",  # "but" is a clause conjunction here
+    "I have no idea if Tuesday works",       # "idea" (content) blocks "no"
+    "No cats allowed. See you Tuesday.",     # trigger in a prior sentence
+])
+def test_non_governing_trigger_does_not_veto(text):
+    r = extract_timespan(text, "en", ANCHOR)
+    assert r is not None
+    assert r.span.start.date().isoformat() == "2017-07-04"
+    # both public APIs must agree the reading survives
+    assert extract_candidates(text, "en", ANCHOR) != []
+
+
+# The adjacent-exclusion idiom still vetoes: "but"/"except" governed by a scope
+# word ("every day but X", "any day except X"), and a trigger reachable across
+# only function words ("unless it is Tuesday").
+@pytest.mark.parametrize("text", [
+    "every day but Tuesday",
+    "any day except Sunday",
+    "anything but Monday",
+    "unless it is Tuesday",
+])
+def test_adjacent_exclusion_still_vetoes(text):
+    assert extract_timespan(text, "en", ANCHOR) is None
+    assert extract_candidates(text, "en", ANCHOR) == []
