@@ -149,6 +149,20 @@ def extract_duration(
     def _read_additive(k):
         """`` and a half`` / `` and a quarter`` at index ``k`` -> (frac, end)."""
         j = k
+        # A Semitic waw/vav conjunction fuses onto the following fraction word as
+        # ONE token (Arabic ونصف = و+نصف "and a half", Hebrew וחצي): the tokenizer
+        # splits this clitic before a digit but not before a letter word, so the
+        # standalone-conjunction test below misses it and the fraction is
+        # dropped ("ساعتان ونصف" -> 2:00 instead of 2:30).  Recognise the fused
+        # form directly, gated on the remainder being a known fraction word so
+        # only <and-word><fraction> matches (a common و-prefixed word like واحد
+        # does not fire).
+        if j < n:
+            for aw in and_words:
+                txt = tokens[j].text
+                if txt.startswith(aw) and len(txt) > len(aw) \
+                        and txt[len(aw):] in fracs:
+                    return fracs[txt[len(aw):]], j + 1
         if j < n and tokens[j].text in and_words:
             j += 1
             while j < n and tokens[j].text in articles:

@@ -57,3 +57,15 @@ def test_duration_waw_glued_compound(text, expected):
     got = extract_duration(text, LANG)
     assert got is not None, f"{text!r} did not parse as a duration"
     assert got[0] == expected
+
+
+# The waw conjunction fuses onto the fraction word (ونصف = و+نصف), so the
+# trailing "... and a half/quarter" idiom must attach off the fused token.
+@pytest.mark.parametrize("text,expected", [
+    ('ساعتان ونصف', timedelta(hours=2, minutes=30)),
+    ('ساعتان وربع', timedelta(hours=2, minutes=15)),
+    ('1 ساعة ونصف', timedelta(hours=1, minutes=30)),
+])
+def test_duration_waw_fused_fraction(text, expected):
+    got = extract_duration(text, LANG)
+    assert got is not None and got[0] == expected
