@@ -520,9 +520,15 @@ def every(freq: str, **by) -> Recurrence:
     def _tup(v):
         return (v,) if isinstance(v, int) else tuple(v)
 
-    for name in ("interval", "count", "until"):
+    for name in ("interval", "count"):
         if name in by:
             kwargs[name] = by.pop(name)
+    if "until" in by:
+        # Coerce a caller-supplied date/datetime to AstroDate (the field's
+        # declared type), exactly as parse_rrule and occurrences() do -- a plain
+        # date otherwise reaches to_string()/occurrences() and crashes on the
+        # missing .hour.
+        kwargs["until"] = _as_astro(by.pop("until"))
     for name in ("bymonth", "bymonthday", "byyearday", "byweekno", "bysetpos",
                  "byhour", "byminute"):
         if name in by:

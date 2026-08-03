@@ -692,3 +692,19 @@ def test_narrowed_yearly_monthly_first_occurrence(rec_kwargs, dtstart, first):
     from chronologia.recurrence import occurrences, every
     o = next(iter(occurrences(every(**rec_kwargs), AstroDate(*dtstart), count=1)))
     assert (o.start.year, o.start.month, o.start.day) == first
+
+
+def test_every_coerces_date_and_datetime_until():
+    # every()'s until= must accept a plain date/datetime (a pythonic-constructor
+    # convenience) and coerce to AstroDate, like parse_rrule/occurrences do.
+    # Regression: a plain date reached to_string()/occurrences() and crashed on
+    # the missing .hour.
+    import datetime as _dt
+    from chronologia.recurrence import every
+    from chronologia.astrodate import AstroDate
+    r = every("daily", until=_dt.date(2024, 1, 5))
+    assert isinstance(r.until, AstroDate)
+    assert r.to_string() == "FREQ=DAILY;UNTIL=20240105T000000"
+    r2 = every("daily", until=_dt.datetime(2024, 1, 5, 9, 0))
+    assert isinstance(r2.until, AstroDate)
+    assert r2.to_string() == "FREQ=DAILY;UNTIL=20240105T090000"
