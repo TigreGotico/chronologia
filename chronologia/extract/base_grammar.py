@@ -163,7 +163,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # the same documented xfail as spelled Q1/Q2.)
     "half_period": [
         "article? NUM half of? GYEAR",
-        "article? NUM half of? article? SCOPE_UNIT",
+        "article? NUM half of? REL_MARKER? article? SCOPE_UNIT",
     ],
     # "early/mid/late <month>" ("early March" -> the first third of March, a
     # ~10-day span; "late December" -> the last third).  ``PART`` binds the
