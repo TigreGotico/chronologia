@@ -291,3 +291,22 @@ def test_impossible_recurring_date_is_no_recurrence(text):
     # fall through to a wrong MONTHLY;BYMONTHDAY rule.
     assert extract_recurrence(text, LANG,
                               anchor=_dt.datetime(2017, 6, 27, 13, 4)) is None
+
+
+import datetime as _dt2
+
+
+@pytest.mark.parametrize("text,rrule", [
+    ("every 2 weeks on tuesday", "FREQ=WEEKLY;INTERVAL=2;BYDAY=TU"),
+    ("every 3 months on the 5th", "FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=5"),
+    ("every 6 months on the 15th", "FREQ=MONTHLY;INTERVAL=6;BYMONTHDAY=15"),
+])
+def test_every_n_unit_with_trailing_placement(text, rrule):
+    # "every N <unit>" may carry a trailing "on <weekday>" / "on the <Nth>" that
+    # pins the day. Regression: the units branch of _recur_every ignored it, so
+    # BYDAY/BYMONTHDAY were dropped, the qualifier stranded in the remainder, and
+    # occurrences() silently fell back to the anchor's own weekday/day.
+    got = extract_recurrence(text, LANG, anchor=_dt2.datetime(2017, 6, 28, 13, 4))
+    assert got is not None
+    assert got[0].to_string() == rrule
+    assert got[1] == ""
