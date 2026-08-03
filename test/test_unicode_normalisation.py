@@ -119,3 +119,69 @@ def test_turkish_dotted_capital_i_preserves_offsets():
         == (2020, 6, 5)
     # the remainder is sliced correctly from the original text (the 'g' survives)
     assert r.remainder == "İzmir günü"
+
+
+# --------------------------------------------------------------------------
+# Locale-aware number grouping / decimal separator (r50b).
+#
+# The SAME two characters ',' and '.' mean OPPOSITE things per locale: in
+# English (and he/ms) '.' is the decimal point and ',' groups thousands, so
+# "12,000" == 12000 and "1,234.5" == 1234.5; in Continental-European locales
+# (de/es/it/fr/pt/...) it is the reverse, so "1.500" == 1500 and "1.234,5" ==
+# 1234.5.  The number tokenizer used to be language-neutral and split the
+# grouped surface, binding a confident-but-wrong fragment (an English
+# "12,000 days" resolved to 0, a German "1,5 Stunden" to 5h).  These pin the
+# per-locale reading and that dotted dates / ordinals are not confused for it.
+from datetime import timedelta
+
+from chronologia import extract_duration
+
+
+def _dur(text, lang):
+    r = extract_duration(text, lang)
+    return r.duration if r is not None else None
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("in 12,000 days", timedelta(days=12000)),   # comma = thousands
+    ("1,500 days", timedelta(days=1500)),
+    ("1,234.5 days", timedelta(days=1234, hours=12)),
+    ("1.5 hours", timedelta(hours=1, minutes=30)),  # dot = decimal
+    ("2.5 hours", timedelta(hours=2, minutes=30)),
+])
+def test_en_dot_decimal_comma_thousands(text, expected):
+    assert _dur(text, "en-us") == expected
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("1,5 Stunden", timedelta(hours=1, minutes=30)),   # comma = decimal
+    ("2,5 Stunden", timedelta(hours=2, minutes=30)),
+    ("1.500 Stunden", timedelta(hours=1500)),          # dot = thousands
+    ("1.234,5 Stunden", timedelta(hours=1234, minutes=30)),
+])
+def test_de_comma_decimal_dot_thousands(text, expected):
+    assert _dur(text, "de") == expected
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("1,5 horas", timedelta(hours=1, minutes=30)),   # comma = decimal
+    ("1.500 dias", timedelta(days=1500)),            # dot = thousands
+    ("mil dias", timedelta(days=1000)),              # spelled word, unaffected
+])
+def test_es_comma_decimal_dot_thousands(text, expected):
+    assert _dur(text, "es") == expected
+
+
+def test_de_dotted_date_not_confused_with_thousands():
+    # "15.06.2020" is a German civil date, NOT a thousands-grouped number,
+    # while "1.500" in the same locale IS 1500 -- the dotted-date literal and
+    # the number rule must stay mutually exclusive.
+    got = _span("15.06.2020", "de")
+    assert got is not None and (got[0].year, got[0].month, got[0].day) == (2020, 6, 15)
+
+
+def test_de_trailing_dot_ordinal_still_reads():
+    # "5. Juni 2020" -- the trailing-dot ordinal must not be read as an
+    # incomplete decimal.
+    got = _span("5. Juni 2020", "de")
+    assert got is not None and (got[0].month, got[0].day) == (6, 5)

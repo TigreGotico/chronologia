@@ -102,6 +102,15 @@ class TokenizerModes:
     # convention -- English above all -- must keep reading those digits as
     # the numbers they are.
     dotted_date: bool = False
+    # the language groups thousands with a dot and marks the decimal with a
+    # comma ("1.234,5" == 1234.5), the Continental-European convention shared
+    # by de/es/it/fr/pt/nl/pl/ru/... .  Off by default -- the dot-decimal
+    # convention of English (and Hebrew, Malay), where the comma groups
+    # thousands ("1,234.5" == 1234.5).  A fact, not logic: the tokenizer reads
+    # it to decide which of ',' / '.' inside a digit run is the decimal point
+    # and which merely groups thousands, so the SAME two characters are read
+    # oppositely per locale instead of silently splitting the number.
+    decimal_comma: bool = False
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,6 @@
 {
   "tokenizer": {
+    "decimal_comma": true,
     "split_contractions": false,
     "ordinal_dot": false,
     "dotted_date": true

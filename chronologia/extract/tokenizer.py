@@ -221,7 +221,8 @@ def _adjacent_group(text: str, sep: int, step: int) -> int:
     return n
 
 
-def _year_inside_a_broken_date(text: str, start: int, digits: str) -> bool:
+def _year_inside_a_broken_date(text: str, start: int, end: int,
+                               digits: str) -> bool:
     """Is this four-digit-or-longer numeral visibly part of a date-shaped run?
 
     A numeral that is glued by a dot, slash or dash to a digit group of some
@@ -245,7 +246,10 @@ def _year_inside_a_broken_date(text: str, start: int, digits: str) -> bool:
     if len(digits) < 4 or not digits.isdigit():
         return False
     left = _adjacent_group(text, start - 1, -1)
-    right = _adjacent_group(text, start + len(digits), 1)
+    # ``end`` is the surface's char_end, not ``start + len(digits)`` -- a
+    # thousands-grouped surface ("12,000") is longer than its digit string
+    # ("12000"), so the right-neighbour must be probed just past the SURFACE.
+    right = _adjacent_group(text, end, 1)
     return bool((left and left != 4) or (right and right != 4))
 
 
@@ -275,7 +279,24 @@ class Tokenizer:
         if modes.ordinal_dot:
             # a digit run followed by a dot that is not a decimal point
             parts.append(r"\d+\.(?!\d)")
-        parts += [_NUM, word]
+        # The number rule is locale-aware: the SAME two characters group
+        # thousands or mark the decimal in OPPOSITE roles per locale, so the
+        # grouped surface binds as ONE token instead of being split into a
+        # confident-but-wrong fragment.  A grouping run is one-or-more
+        # exactly-three-digit groups after a 1-3 digit head; the decimal tail
+        # is optional.  The plain "\d+" alternative (with only the decimal
+        # tail) still matches an ungrouped run, so nothing that parsed before
+        # stops parsing.  Both forms keep the whole surface in ``raw``; only
+        # the VALUE string is transformed downstream, so char offsets are
+        # untouched.
+        if modes.decimal_comma:
+            # Continental European: '.' groups thousands, ',' is the decimal.
+            num = r"\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?"
+        else:
+            # English (and he/ms): ',' groups thousands, '.' is the decimal.
+            num = r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?"
+        self._decimal_comma = modes.decimal_comma
+        parts += [num, word]
         self._re = re.compile("|".join(parts), re.UNICODE)
 
     def tokenize(self, text: str) -> Tuple[Token, ...]:
@@ -303,8 +324,19 @@ class Tokenizer:
                           or re.fullmatch(_NUMDATE_ANY, raw) is not None
                           or re.fullmatch(_CLOCK, raw) is not None)
             if not is_literal and re.match(r"\d", raw):
-                digits = raw.rstrip(".")
-                if _year_inside_a_broken_date(low, cs, digits):
+                # Map the surface to a plain numeric string: strip the grouping
+                # separator, map the decimal separator to '.'.  Which char is
+                # which is the locale's convention -- comma-decimal locales
+                # group with '.' and decimal with ',', dot-decimal locales the
+                # reverse.  ``digits`` is therefore separator-free with '.' the
+                # only (decimal) dot, so ``isdigit()`` is True exactly for an
+                # integer surface and the year/overflow guards read it cleanly.
+                surface = raw.rstrip(".")
+                if self._decimal_comma:
+                    digits = surface.replace(".", "").replace(",", ".")
+                else:
+                    digits = surface.replace(",", "")
+                if _year_inside_a_broken_date(low, cs, ce, digits):
                     # the surface stays exactly as written -- only its number
                     # reading is withdrawn, so no year slot can bind it
                     tokens.append(Token(text=raw, raw=raw, index=i,
