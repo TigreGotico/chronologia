@@ -1684,11 +1684,23 @@ def _recur_date_anchored(ctx):
         if r < n and t[r].is_number and 1 <= int(t[r].value) <= 31:
             return (_build_every("monthly", bymonthday=int(t[r].value)),
                     set(range(i, r + 1)))
-        # "<N> of every month": the number just before the "every".
+        # "<N> of every month" / "the last [day] of every month": the ordinal
+        # (or the "last" marker) just before the "every".  An explicit "day"
+        # noun may sit between the ordinal and "of" ("the first day of every
+        # month", "the 15th day of every month") -- skip it so the ordinal is
+        # still reached, mirroring the leading-"day" swallow below.
         k = i - 1
-        while k >= 0 and (t[k].text in ctx.of_words or t[k].text in ctx.articles):
+        while k >= 0 and (t[k].text in ctx.of_words or t[k].text in ctx.articles
+                          or (t[k].text in ctx.units
+                              and ctx.units[t[k].text] == "day")):
             k -= 1
+        day_val = None
         if k >= 0 and t[k].is_number and 1 <= int(t[k].value) <= 31:
+            day_val = int(t[k].value)
+        elif (k >= 0 and t[k].text in ctx.rel_markers
+              and ctx.rel_markers[t[k].text] == -1):
+            day_val = -1          # "the last [day] of every month" -> month end
+        if day_val is not None:
             start = k
             # swallow a leading determiner and an explicit "day" unit naming
             # the number ("no dia 1 de cada mês", on day 1 of every month --
@@ -1698,7 +1710,7 @@ def _recur_date_anchored(ctx):
                     or (t[start - 1].text in ctx.units
                         and ctx.units[t[start - 1].text] == "day")):
                 start -= 1
-            return (_build_every("monthly", bymonthday=int(t[k].value)),
+            return (_build_every("monthly", bymonthday=day_val),
                     set(range(start, j + 1)))
 
     # -- yearly: a full calendar date *immediately* after "every [year] [on]"
