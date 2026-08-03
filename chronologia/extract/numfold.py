@@ -23,24 +23,25 @@ Wired as a language ``hook`` in each locale's ``lang.json`` and applied by
 ``tuple[Token] -> tuple[Token]`` transform, re-indexed so ``Token.index``
 stays contiguous.
 
-The English value is read from
-:func:`ovos_number_parser.numbers_en.extract_number_en` (``ordinals=True``);
-the fold owns only *which* tokens form a run.  Clock fractions ("half",
-"quarter") are deliberately **not** number-words here -- they are their own
-``FRACTION`` slot vocabulary and must survive intact.
+The English value is read by the native ``numlex`` reader (a
+:class:`~chronologia.extract.numlex.NumberLexicon` consolidating the tables
+below plus :func:`~chronologia.extract.numlex.read_run`, see
+``docs/design/native-number-lexicon.md``); the fold owns only *which* tokens
+form a run.  Clock fractions ("half", "quarter") are deliberately **not**
+number-words here -- they are their own ``FRACTION`` slot vocabulary and must
+survive intact.
 """
 from __future__ import annotations
 
 from dataclasses import replace
 from typing import Tuple
 
-from ovos_number_parser.numbers_en import extract_number_en
-
 from chronologia.extract.matcher import GYEAR_MAX, GYEAR_MIN
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
                                                     reindex as _reindex)
 from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
+from chronologia.extract.numlex import Entry, NumberLexicon, Role, read_run
 
 
 # closed class of English number-words the fold may absorb (cardinals +
@@ -70,8 +71,51 @@ _NUMWORDS = frozenset(_ONES + _TENS + _ORD_ONES + _ORD_TENS
 _ORD_SUFFIXES = frozenset({"st", "nd", "rd", "th"})
 
 
+# ---------------------------------------------------------------------------
+# native English NumberLexicon -- consolidates the tables above (already
+# ONP-free) into the surface -> Entry table the native reader composes.
+# See docs/design/native-number-lexicon.md (P0).  "dozen"/"score" are
+# PARTICLE (no standalone value -- `extract_number_en` itself refuses them
+# alone: extract_number_en("dozen") is False), kept only so run-membership
+# (a pure lexicon lookup) still admits them exactly as `_NUMWORDS` did.
+# ---------------------------------------------------------------------------
+_EN_SCALE_VALUES = {"hundred": 100, "thousand": 1000, "million": 1_000_000,
+                    "billion": 1_000_000_000, "trillion": 1_000_000_000_000}
+_EN_ORD_SCALE_VALUES = {"hundredth": 100, "thousandth": 1000,
+                        "millionth": 1_000_000, "billionth": 1_000_000_000}
+
+
+def _build_en_lexicon() -> NumberLexicon:
+    entries = {}
+    for i, w in enumerate(_ONES):
+        role = Role.UNIT if i < 9 else Role.TEEN
+        entries[w] = [Entry(i + 1, role, frozenset())]
+    for i, w in enumerate(_TENS):
+        entries[w] = [Entry((i + 2) * 10, Role.TEN, frozenset())]
+    for i, w in enumerate(_ORD_ONES):
+        entries[w] = [Entry(i + 1, Role.ORDINAL, frozenset({"ordinal", "unit"}))]
+    for i, w in enumerate(_ORD_TENS):
+        entries[w] = [Entry((i + 2) * 10, Role.ORDINAL, frozenset({"ordinal", "ten"}))]
+    for w, v in _EN_ORD_SCALE_VALUES.items():
+        entries[w] = [Entry(v, Role.ORDINAL, frozenset({"ordinal", "scale"}))]
+    entries["zero"] = [Entry(0, Role.UNIT, frozenset())]
+    entries["couple"] = [Entry(2, Role.UNIT, frozenset())]
+    entries["dozen"] = [Entry(None, Role.PARTICLE, frozenset())]
+    entries["score"] = [Entry(None, Role.PARTICLE, frozenset())]
+    return NumberLexicon(entries, join_word="and")
+
+
+_EN_LEXICON = _build_en_lexicon()
+
+
 def _is_numword(tok: Token) -> bool:
-    return tok.is_number or tok.text in _NUMWORDS
+    return tok.is_number or tok.text in _EN_LEXICON
+
+
+def _extract_en(text: str):
+    """Native replacement for ``extract_number_en(text, ordinals=True)``."""
+    value = read_run(text.split(), _EN_LEXICON, ordinals=True)
+    return False if value is None else value
 
 
 def _merge_en_ord_suffix(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
@@ -591,7 +635,7 @@ def _pre_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 # joined run as its last ordinal and erasing the first.
 fold_en = make_fold(NumberGrammar(
     is_number=_is_numword,
-    extract=lambda text: extract_number_en(text, ordinals=True),
+    extract=_extract_en,
     joiner=lambda tok: tok.text == "and",
     joiner_in_text=False,
     bridge_ok=lambda so_far, atom: so_far >= 100 and atom < so_far,

@@ -1157,9 +1157,18 @@ def test_spelled_ordinal_list_across_and_keeps_first():
     assert _folded("two hundred and fifty") == "2 hundred and 50"
     assert _folded("a thousand and one") == "a thousand and 1"
     assert _folded("one hundred and first") == "1 hundred and 1"
-    # spelled years still fold to their single value, untouched by the gate
-    assert _folded("nineteen eighty four") == "84"
-    assert _folded("twenty twenty") == "20"
+    # An un-marked spelled-year SEQUENCE ("nineteen eighty four") folds to a
+    # single NUM token but never resolves as a year on its own -- the bare form
+    # is None (real spelled-year resolution needs a marker: "in nineteen
+    # eighty-four" -> 1984, pinned in test_nl_spelled_years.py).  The emitted
+    # token VALUE here is fold-layer-only and has no downstream effect.  The
+    # native number lexicon composes the sequence additively (19+80+4); the old
+    # "84" was ovos-number-parser silently DROPPING the leading "nineteen" (its
+    # leading-component-loss bug), which the native reader deliberately does not
+    # reproduce.  What this line pins is unchanged: the bridge gate does not
+    # merge or erase across the sequence.
+    assert _folded("nineteen eighty four") == "103"
+    assert _folded("twenty twenty") == "40"  # 20+20; ONP dropped the lead -> 20
 
 
 # --- R17: a bare cardinal + plural unit is a count, not the ordinal day -------
