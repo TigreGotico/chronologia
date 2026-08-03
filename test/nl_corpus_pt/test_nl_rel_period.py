@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 
 from chronologia.astrodate import AstroDate
 
-from ._corpus import ANCHOR, span
+from ._corpus import ANCHOR, nomatch, span
 
 _MIDNIGHT = dict(hour=0, minute=0, second=0, microsecond=0)
 
@@ -56,3 +56,19 @@ CASES = [
 def test_rel_period(text, rel, unit):
     sp = span(text)
     assert (sp.start, sp.end) == _expected(rel, unit)
+
+
+# "last <plural-unit> of <period>" is not a supported construction: the plural
+# unit vetoes the scoped-ordinal reading, so only a bare relative-period reading
+# ("os últimos dias" = the last days = yesterday) is left, stranding the scope
+# noun ("do ano"/"do mês").  That partial must be refused -- honest None -- the
+# way en and the ten other locales already refuse the identical phrase, rather
+# than leaking a yesterday span with the scope tail in the remainder (r43).
+@pytest.mark.parametrize("text", [
+    'os últimos dias do ano',
+    'últimos dias do ano',
+    'os últimos dias do mês',
+    'últimos dias do mês',
+])
+def test_last_plural_unit_of_period_is_nomatch(text):
+    nomatch(text)

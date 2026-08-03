@@ -1825,6 +1825,56 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
     return False
 
 
+def _is_scope_noun(text, spec):
+    """Whether ``text`` is a scope noun the ``scoped_ordinal`` frame's outer
+    ``SCOPE_UNIT`` slot accepts -- a decade/century/millennium word or a
+    calendar unit above the sub-day scale (year/month/week/day).  This is the
+    exact surface test the matcher applies for ``SCOPE_UNIT`` (see
+    :func:`chronologia.extract.matcher` slot matching), reused here so the veto
+    recognises the same scope words the grammar does."""
+    if text in spec.scope_units:
+        return True
+    kind = spec.units.get(text)
+    return kind is not None and kind not in ("hour", "minute", "second")
+
+
+def _trailing_scope_veto(tokens, consumed, spec):
+    """Whether the winning reading strands a trailing ``of? <SCOPE_UNIT>`` scope
+    it could not bind -- the "last <plural-unit> of <period>" compound.
+
+    ``os últimos dias do ano`` / ``ostatnie dni roku`` ("the last days of the
+    year") is not a supported construction: the plural unit vetoes the
+    ``scoped_ordinal`` reading (a scoped ordinal is grammatically singular), so
+    only the bare relative-period reading ("the last days" = yesterday) is left,
+    stranding "of the year" in the remainder.  Where the genitive/contraction
+    doubles as the "of" connector this leaks a yesterday span with a scope tail;
+    in English the same phrase is refused because ``scoped_ordinal`` claims the
+    whole span and its plural veto sinks the parse.  This veto restores the
+    consistent honest refusal: a reading that leaves an unbound trailing scope
+    noun (optionally introduced by an "of" connector and/or article) immediately
+    after the winning span is an incomplete parse and is refused, matching the
+    ten locales where the compound already returns ``None``.
+    """
+    if not consumed:
+        return False
+    last = max(consumed)
+    trailing = [t for t in tokens if t.index > last and t.index not in consumed]
+    # the trailing run must abut the winning span (no consumed gap): the scope
+    # was trying to bind to the reading that just won.
+    if not trailing or trailing[0].index != last + 1:
+        return False
+    of_surfaces = spec.connectors.get("of", frozenset())
+    article_surfaces = spec.connectors.get("article", frozenset())
+    i = 0
+    while i < len(trailing) and (trailing[i].text in of_surfaces
+                                 or trailing[i].text in article_surfaces):
+        i += 1
+    rest = trailing[i:]
+    # exactly one residual scope noun, optionally introduced by a connector
+    # ("do ano"/"do mês") or standing on its own genitive ("roku"/"miesiąca").
+    return len(rest) == 1 and _is_scope_noun(rest[0].text, spec)
+
+
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
                   scale_mode="short"):
     """The single recursive resolver over the token stream.
@@ -2109,8 +2159,18 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         return None
     # widen a date carrying the locale's "week of" marker to its whole week
     resolved = _apply_week_of(tokens, resolved, engine.spec)
-    res, label_consumed, _ = _compose(resolved, engine, tokens)
-    return res.value, set(res.consumed) | label_consumed
+    res, label_consumed, rep = _compose(resolved, engine, tokens)
+    consumed = set(res.consumed) | label_consumed
+    # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
+    # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
+    # "roku") is the unsupported "last <plural-unit> of <period>" compound.  The
+    # plural unit already vetoed the scoped_ordinal reading it apes; refusing the
+    # leftover relative reading restores the honest None that en and the ten
+    # other locales already return (see _trailing_scope_veto).
+    if (rep.construction == "rel_period"
+            and _trailing_scope_veto(tokens, consumed, engine.spec)):
+        return None
+    return res.value, consumed
 
 
 @dataclass(frozen=True)
