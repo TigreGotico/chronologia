@@ -49,6 +49,13 @@ _UNICODE_FOLD = {
     # -> ordinary space
     "\u00a0": " ", "\u202f": " ", "\u2007": " ", "\u2009": " ",
     "\u3000": " ",
+    # Turkish/Azeri/Crimean-Tatar capital dotted I (U+0130) -> ASCII 'i'.
+    # Its str.lower() expands to 'i' + COMBINING DOT ABOVE (two codepoints),
+    # which would break the length-preserving invariant the tokenizer relies on
+    # (offsets into the lower-cased text must index the original one-for-one, or
+    # every remainder slice after an \u0130 is off by one).  Folding it here keeps the
+    # later .lower() length-preserving.
+    "\u0130": "i",
 }
 _UNICODE_TABLE = str.maketrans(_UNICODE_FOLD)
 # The zero-width non-joiner (U+200C) and joiner (U+200D) are *intra-word*
