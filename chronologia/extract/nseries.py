@@ -1462,6 +1462,33 @@ def _recur_every(ctx):
                 iv = {"interval": interval}
             freq = _UNIT_FREQ.get(unit)
             if freq is not None:
+                # An "every N <unit>" interval may carry a trailing placement
+                # qualifier that pins WHICH day the recurrence lands on: a
+                # weekly interval takes "on <weekday(s)>" -> BYDAY ("every 2
+                # weeks on tuesday"), a monthly one "on [the] <Nth>" ->
+                # BYMONTHDAY ("every 3 months on the 5th").  Without this the
+                # qualifier was stranded in the remainder and, with BYDAY/
+                # BYMONTHDAY empty, occurrences() silently fell back to the
+                # anchor's own weekday/day -- a wrong result.
+                nxt = j + 1
+                if nxt < n and t[nxt].text in ctx.on_words:
+                    if freq == "WEEKLY":
+                        got = _collect_weekdays(ctx, nxt + 1, True)
+                        if got is not None:
+                            days, wend = got
+                            byday = tuple((None, wd) for wd in days)
+                            return (_build_every("weekly", byday=byday, **iv),
+                                    set(range(i, wend)))
+                    elif freq == "MONTHLY":
+                        k = nxt + 1
+                        while k < n and t[k].text in ctx.articles:
+                            k += 1
+                        if k < n and t[k].is_number \
+                                and 1 <= int(t[k].value) <= 31:
+                            return (_build_every(
+                                        "monthly",
+                                        bymonthday=int(t[k].value), **iv),
+                                    set(range(i, _of_month_tail(ctx, k + 1))))
                 return _build_every(freq, **iv), set(range(i, j + 1))
     return None
 
