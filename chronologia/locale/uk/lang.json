@@ -2,6 +2,7 @@
  "tokenizer": {
   "split_contractions": false,
   "ordinal_dot": false,
+  "decimal_comma": true,
   "dotted_date": true
  },
  "constructions": {
