@@ -211,3 +211,23 @@ def test_from_ical_dst_gap_event_keeps_its_duration():
                 .replace("20260308T033000", "20260615T150000")
     ev2 = from_ical(normal)
     assert ev2.span.end - ev2.span.start == timedelta(hours=1)
+
+
+def test_ical_rrule_until_gets_z_for_utc_dtstart():
+    # RFC 5545 3.3.10: a UTC DATE-TIME DTSTART (trailing Z) requires a UTC UNTIL.
+    # Regression: to_ical emitted a Z-less UNTIL beside a Z DTSTART.
+    from datetime import timezone
+    from chronologia.recurrence import every
+    rec = every("daily", until=AstroDate(2024, 7, 1, 9, 0, 0))
+    span = DateSpan(AstroDate(2024, 6, 3, 9, 0, 0, tzinfo=timezone.utc),
+                    AstroDate(2024, 6, 3, 10, 0, 0, tzinfo=timezone.utc))
+    lines = to_ical(Event(summary="x", span=span, recurrence=rec)).split("\r\n")
+    assert "DTSTART:20240603T090000Z" in lines
+    assert "RRULE:FREQ=DAILY;UNTIL=20240701T090000Z" in lines
+    # a naive (unzoned) timed DTSTART keeps a bare UNTIL (no spurious Z)
+    naive = Event(summary="n",
+                  span=DateSpan(AstroDate(2024, 6, 3, 9, 0),
+                                AstroDate(2024, 6, 3, 10, 0)),
+                  recurrence=every("daily", until=AstroDate(2024, 7, 1, 9, 0)))
+    nlines = to_ical(naive).split("\r\n")
+    assert "RRULE:FREQ=DAILY;UNTIL=20240701T090000" in nlines

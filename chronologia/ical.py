@@ -201,6 +201,13 @@ def to_ical(obj: Union[Event, DateSpan, Recurrence, HolidayRecurrence]) -> str:
         # drop it here so the emitted UNTIL is a bare DATE, matching DTSTART.
         if _is_all_day(event.span):
             rrule = re.sub(r"(UNTIL=\d{8})T\d{6}Z?", r"\1", rrule)
+        elif dt_lines and dt_lines[0].endswith("Z"):
+            # RFC 5545 3.3.10: when DTSTART is a UTC DATE-TIME (trailing Z), the
+            # UNTIL MUST also be UTC.  The recurrence string carries a naive
+            # wall-clock UNTIL (chronologia compares UNTIL as naive internally,
+            # so its own round-trip is unaffected), but a strict RFC consumer
+            # would reject or mis-offset a Z-less UNTIL beside a Z DTSTART.
+            rrule = re.sub(r"(UNTIL=\d{8}T\d{6})(?!Z)", r"\1Z", rrule)
 
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", f"PRODID:{_PRODID}",
              "BEGIN:VEVENT",
