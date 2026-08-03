@@ -303,6 +303,15 @@ class Tokenizer:
         self._decimal_comma = modes.decimal_comma
         parts += [num, word]
         self._re = re.compile("|".join(parts), re.UNICODE)
+        # Arabic-script native decimal/thousands separators (U+066B/U+066C)
+        # map to this locale's Latin decimal/grouping char respectively --
+        # opposite of each other, matching the decimal_comma convention.
+        decimal_char = "," if modes.decimal_comma else "."
+        grouping_char = "." if modes.decimal_comma else ","
+        self._native_sep_table = str.maketrans({
+            "٫": decimal_char,
+            "٬": grouping_char,
+        })
 
     def tokenize(self, text: str) -> Tuple[Token, ...]:
         if not text:
@@ -314,6 +323,14 @@ class Tokenizer:
         # ``normalise_unicode``), so the offsets below still index the caller's
         # original text one-for-one and the remainder slices out verbatim.
         low = normalise_unicode(text).lower()
+        if self._native_sep_table:
+            # Arabic-script native separators (U+066B decimal, U+066C
+            # thousands) are unambiguous by Unicode definition and only
+            # occur in Arabic-script input, so a length-preserving 1-char
+            # translation to this locale's Latin separator role is safe for
+            # every locale -- it lets the Latin-only number regex above
+            # recognise them without touching char offsets.
+            low = low.translate(self._native_sep_table)
         for i, m in enumerate(self._re.finditer(low)):
             raw = m.group(0)
             # match offsets are into ``text.lower()``; for the Latin-script
