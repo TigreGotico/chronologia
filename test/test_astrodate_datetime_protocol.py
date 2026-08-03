@@ -334,6 +334,32 @@ class TestCivilArithmetic(unittest.TestCase):
         self.assertEqual((res.month, res.day, res.hour), (11, 3, 12))
         self.assertEqual(res - start, timedelta(hours=25))
 
+    def test_day_add_landing_in_spring_forward_gap_pushes_forward(self):
+        # +1 civil day lands the wall time 02:30 on 2025-03-09, inside the US
+        # spring-forward gap (clocks jump 02:00 -> 03:00).  It must resolve to a
+        # REAL instant pushed past the gap (03:30 EDT, -04:00), never the
+        # imaginary PEP-495 fold=0 pair 02:30-05:00.
+        start = AstroDate(2025, 3, 8, 2, 30, tzinfo=self.NY)
+        res = civil_add(start, days=1, zone=self.NY)
+        self.assertEqual((res.month, res.day, res.hour, res.minute), (3, 9, 3, 30))
+        self.assertEqual(res.utcoffset(), timedelta(hours=-4))
+        # the offset must be one zoneinfo agrees with for this real instant
+        self.assertNotEqual(res.utcoffset(), timedelta(hours=-5))
+
+    def test_day_add_landing_in_fall_back_fold_is_real_earlier(self):
+        # +1 day lands 01:30 on 2024-11-03, inside the fall-back ambiguous hour;
+        # both occurrences are real -- take the EARLIER (still-EDT, -04:00).
+        start = AstroDate(2024, 11, 2, 1, 30, tzinfo=self.NY)
+        res = civil_add(start, days=1, zone=self.NY)
+        self.assertEqual((res.month, res.day, res.hour, res.minute), (11, 3, 1, 30))
+        self.assertEqual(res.utcoffset(), timedelta(hours=-4))
+
+    def test_day_add_fixed_and_nondst_zones_unchanged(self):
+        for tzid in ("UTC", "Asia/Kolkata"):
+            z = ZoneInfo(tzid)
+            res = civil_add(AstroDate(2025, 3, 8, 2, 30, tzinfo=z), days=1, zone=z)
+            self.assertEqual((res.month, res.day, res.hour, res.minute), (3, 9, 2, 30))
+
     def test_absolute_add_stays_real_duration(self):
         # + timedelta is untouched: exactly 24h of wall shift, zone preserved
         start = AstroDate(2024, 3, 9, 12, 0, tzinfo=self.NY)

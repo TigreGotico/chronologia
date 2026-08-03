@@ -739,8 +739,35 @@ def civil_add(point_or_span, *, years: int = 0, months: int = 0, days: int = 0,
         y, m, d = shifted.year, shifted.month, shifted.day
 
     tz = zone if zone is not None else pt.tzinfo
-    return AstroDate(y, m, d, pt.hour, pt.minute, pt.second, pt.microsecond,
-                     tzinfo=tz)
+    if tz is None:
+        # Naive path: a plain field shift, no zone to resolve against.
+        return AstroDate(y, m, d, pt.hour, pt.minute, pt.second,
+                         pt.microsecond, tzinfo=None)
+
+    # Zone-aware: the reattached wall time must name a REAL instant.  Route it
+    # through the module's designated handler so a spring-forward gap or a
+    # fall-back fold is resolved honestly rather than fabricating an imaginary
+    # PEP-495 fold=0 offset (see resolve_wall_clock and ical._zoned).  A
+    # fixed-offset or non-DST zone always resolves unique, so it is unchanged.
+    resolved = resolve_wall_clock(y, m, d, pt.hour, pt.minute, tz)
+    if isinstance(resolved, AstroDate):
+        base = resolved                    # unique wall time
+    elif isinstance(resolved, tuple):
+        # Ambiguous fall-back hour: pick the EARLIER occurrence.  civil_add
+        # walks the civil calendar forward, so the first time the clock shows
+        # this reading is the faithful landing; this also keeps the noon
+        # fall-back case (which resolves unique, not here) untouched.
+        base = resolved[0]
+    else:
+        # NeverExisted (spring-forward gap): the reading never occurred.  Push
+        # it forward past the gap to the real instant, exactly as zoneinfo
+        # does: read the fold=0 instant (the imaginary aware time) and
+        # re-express it in the zone through UTC, so e.g. 02:30 EST-gap becomes
+        # 03:30 EDT -- a real instant, never an imaginary 02:30-05:00.
+        imaginary = AstroDate(y, m, d, pt.hour, pt.minute, tzinfo=tz)
+        base = imaginary.astimezone(timezone.utc).astimezone(tz)
+    # resolve_wall_clock works to minute precision; carry the sub-minute back.
+    return base.replace(second=pt.second, microsecond=pt.microsecond)
 
 
 # --------------------------------------------------------------------------
