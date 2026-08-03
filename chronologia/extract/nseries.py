@@ -1470,6 +1470,16 @@ def _recur_every(ctx):
                 # qualifier was stranded in the remainder and, with BYDAY/
                 # BYMONTHDAY empty, occurrences() silently fell back to the
                 # anchor's own weekday/day -- a wrong result.
+                #
+                # This capture is NOT universal: it fires only where the
+                # locale ships an "on" connector (marker_on.voc -> ctx.on_words
+                # via spec.connectors["on"]).  Locales that mark the placement
+                # with a preposition (en "on", de "am", nl "op", pl "we", cs
+                # "v", el "την", pt "à/no/...") or a leading article (fr "le",
+                # es "el") supply that surface; morphological locales that fuse
+                # the weekday into a case ending (fi "tiistaina") have no
+                # separate word to list, so the qualifier stays in the
+                # remainder there by construction.
                 nxt = j + 1
                 if nxt < n and t[nxt].text in ctx.on_words:
                     if freq == "WEEKLY":
