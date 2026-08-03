@@ -136,22 +136,45 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     again.  Raises :class:`NotImplementedError` for languages that have no
     engine locale data (``chronologia/locale/<code>/lang.json``).
     """
-    code = lang.split("-")[0].lower()
-    engine = _TIMESPAN_ENGINES.get(code)
+    region = lang.lower()
+    code = region.split("-")[0]
+    # English is the one base language whose NUMERIC day/month order splits by
+    # region -- the US reads mdy ("03/04" = March 4), the rest of the anglosphere
+    # dmy ("03/04" = 3 April).  The bare ``en`` locale ships the US default
+    # (dmy=False); a Commonwealth region subtag flips it.  A region with an
+    # override gets its own cached engine keyed on the full tag (mirroring the
+    # region-keyed ``_REGION_SCALE`` default for the orthogonal scale feature).
+    dmy_override = _REGION_DMY.get(region)
+    cache_key = region if dmy_override is not None else code
+    engine = _TIMESPAN_ENGINES.get(cache_key)
     if engine is not None:
         return engine
     with _ENGINE_LOCK:
         # re-check under the lock: another thread may have built it while we
         # waited, so a language is only ever compiled once
-        engine = _TIMESPAN_ENGINES.get(code)
+        engine = _TIMESPAN_ENGINES.get(cache_key)
         if engine is None:
             if not os.path.exists(os.path.join(LOCALE_DIR, code, "lang.json")):
                 raise NotImplementedError(
                     f"extract_timespan has no locale data for {lang!r}; only "
                     f"languages with locale/<code>/lang.json are supported so far")
-            engine = DateTimeEngine(load_lang_spec(code))
-            _TIMESPAN_ENGINES[code] = engine
+            spec = load_lang_spec(code)
+            if dmy_override is not None and spec.conventions.dmy != dmy_override:
+                spec = replace(spec, conventions=replace(
+                    spec.conventions, dmy=dmy_override))
+            engine = DateTimeEngine(spec)
+            _TIMESPAN_ENGINES[cache_key] = engine
         return engine
+
+
+#: Region subtags that override the bare code's numeric day/month order.  Only
+#: English needs this: the bare ``en`` locale is US-mdy, so every dmy-convention
+#: anglophone region must flip ``conventions.dmy`` back on.  Sources: each
+#: country's national date-format norm (all dmy except the US).
+_REGION_DMY = {
+    "en-gb": True, "en-au": True, "en-nz": True, "en-ie": True,
+    "en-in": True, "en-za": True,
+}
 
 
 # ---------------------------------------------------------------------------
