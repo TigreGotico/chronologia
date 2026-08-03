@@ -151,6 +151,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     weekend_words: Set[str] = set()
     exclusion_triggers: Set[str] = set()
     exclusion_bound_guards: Set[str] = set()
+    exclusion_coord: Set[str] = set()
+    exclusion_scope: Set[str] = set()
+    exclusion_filler: Set[str] = set()
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
         base = os.path.basename(path)[:-len(".voc")]
@@ -347,6 +350,12 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             exclusion_triggers.update(s.lower() for s in surfaces)
         elif base == "marker_exclusion_bound":
             exclusion_bound_guards.update(s.lower() for s in surfaces)
+        elif base == "marker_exclusion_coord":
+            exclusion_coord.update(s.lower() for s in surfaces)
+        elif base == "marker_exclusion_scope":
+            exclusion_scope.update(s.lower() for s in surfaces)
+        elif base == "marker_exclusion_filler":
+            exclusion_filler.update(s.lower() for s in surfaces)
         elif base.startswith("cycle_"):
             # cycle_<key>_<n>.voc: day <n> (0-based) of the named day cycle
             key, _, num = base[len("cycle_"):].rpartition("_")
@@ -458,6 +467,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         weekend_words=frozenset(weekend_words),
         exclusion_triggers=frozenset(exclusion_triggers),
         exclusion_bound_guards=frozenset(exclusion_bound_guards),
+        exclusion_coord=frozenset(exclusion_coord),
+        exclusion_scope=frozenset(exclusion_scope),
+        exclusion_filler=frozenset(exclusion_filler),
         weekday_full=weekday_full,
         quantifiers=quantifiers,
         positions=cfg.get("positions", {}))

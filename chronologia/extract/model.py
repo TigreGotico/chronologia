@@ -323,6 +323,18 @@ class LangSpec:
     #: means the phrase is a *bound* ("before friday"), not an exclusion.
     exclusion_triggers: FrozenSet[str] = field(default_factory=frozenset)
     exclusion_bound_guards: FrozenSet[str] = field(default_factory=frozenset)
+    #: coordinating triggers (English "but") that read as an exclusion ONLY when
+    #: a scope word governs them ("every day but Tuesday" -> exclude Tuesday);
+    #: standing alone they are a clause conjunction or discourse opener ("... but
+    #: Tuesday is free", "But Tuesday works") and veto nothing. A subset of
+    #: ``exclusion_triggers``.
+    exclusion_coord: FrozenSet[str] = field(default_factory=frozenset)
+    #: scope/quantifier words ("every", "any", "all", "day", "week", ...) that
+    #: license a coordinating trigger to read as "except".
+    exclusion_scope: FrozenSet[str] = field(default_factory=frozenset)
+    #: closed-class filler (copulas/pronouns) the exclusion idiom skips over when
+    #: deciding whether a trigger is adjacent ("unless it is Tuesday").
+    exclusion_filler: FrozenSet[str] = field(default_factory=frozenset)
     # holiday_ref surface -> well-known holiday key ("christmas", "easter");
     # derived at load time from the holidays engine's i18n tables (native
     # names + translations + curated spoken aliases), never hand-listed here
