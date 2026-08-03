@@ -899,8 +899,24 @@ class Resolver:
         value = datetime(year, month, day)          # raises on impossible
         if not year_tok and prefer_future and day_tok \
                 and value < _midnight(anchor):
-            value = value.replace(year=year + 1)
-            year += 1
+            # The date exists in the anchor's year but has already passed, so
+            # roll to its next occurrence.  Feb 29 is the only day that skips
+            # years, so a naive .replace(year=year + 1) lands on a non-leap Feb
+            # 29 and raises, discarding this valid answer entirely; walk forward
+            # to the next year the (month, day) actually occurs instead, bounded
+            # to one leap cycle (a century-boundary gap like 2096 -> 2104 is 8
+            # years).  (A date that does not exist in the anchor year at all --
+            # Feb 29 in a non-leap year, "the 30th of February" -- already
+            # raised above and correctly declined to None; it is not rolled.)
+            for y in range(year + 1, year + 9):
+                try:
+                    value = datetime(y, month, day)
+                except ValueError:
+                    continue
+                year = y
+                break
+            else:
+                return None
         span = _day_span(value) if day_tok \
             else _gregorian_month_span(year, month)
         return Resolution(span, self._consumed(match))
