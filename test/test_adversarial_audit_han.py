@@ -1499,3 +1499,30 @@ def test_week_of_month_accepts_fifth_and_sixth_weeks():
     assert extract_timespan("the 6th week of march 2021", "en", _A) is None
     assert extract_timespan("the 5th week of february 2021", "en", _A) is None
     assert extract_timespan("the 4th week of february 2021", "en", _A) is not None
+
+
+# --- R39: a valid-but-past Feb 29 prefer-future rolls to the next leap year ---
+def test_feb_29_prefer_future_rolls_past_the_leap_gap():
+    """When Feb 29 EXISTS in the anchor's year but has already passed, the
+    prefer-future roll must reach its next actual occurrence (the next leap
+    year), not raise.  Regression: the roll did a naive .replace(year+1), which
+    lands on a non-leap Feb 29 and raised, discarding a valid answer."""
+    from datetime import datetime as _dt
+    from chronologia import extract_timespan
+    def day(anchor):
+        r = extract_timespan("february 29", "en", anchor)
+        return None if r is None else (r.span.start.year, r.span.start.month,
+                                       r.span.start.day)
+    # after Feb 29 in a leap year -> the next leap year
+    assert day(_dt(2016, 3, 1, 13, 4)) == (2020, 2, 29)
+    assert day(_dt(2020, 3, 1, 13, 4)) == (2024, 2, 29)
+    # a century-boundary gap (2100 is not leap): 2096 -> 2104
+    assert day(_dt(2096, 3, 1, 13, 4)) == (2104, 2, 29)
+    # before Feb 29 in the same leap year -> that year
+    assert day(_dt(2016, 1, 1, 13, 4)) == (2016, 2, 29)
+    # Feb 29 does not exist in a non-leap anchor year -> honest None (like
+    # "the 30th of February"); it is not rolled, matching the impossible-date
+    # veto pins.  An explicit impossible year also declines.
+    _A = _dt(2017, 6, 27, 13, 4)
+    assert extract_timespan("february 29", "en", _A) is None
+    assert extract_timespan("february 29 2019", "en", _A) is None
