@@ -38,3 +38,12 @@ def test_duration(text, expected):
 @pytest.mark.parametrize("text", ['2 יוני', 'אין כאן שום דבר זמני'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
+
+
+@pytest.mark.parametrize("text,expected", [
+    ('שעתיים וחצי', timedelta(hours=2, minutes=30)),
+    ('שעתיים ורבע', timedelta(hours=2, minutes=15)),
+])
+def test_duration_vav_fused_fraction(text, expected):
+    got = extract_duration(text, LANG)
+    assert got is not None and got[0] == expected
