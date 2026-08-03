@@ -1203,6 +1203,12 @@ class Resolver:
             return Resolution(span, self._consumed(match))
         length = self._HALF_SCOPES[self._scope_kind(match.slots["SCOPE_UNIT"])]
         base = (anchor.year // length) * length
+        # a "this/next/last" marker shifts the scope one whole unit ("the first
+        # half of NEXT century" is the coming century's first half); a bare
+        # scope ("... of THE century") stays on the anchor's own.
+        rel_tok = match.slots.get("REL_MARKER")
+        if rel_tok is not None:
+            base += self.spec.rel_markers[rel_tok.text] * length
         h = length // 2
         if n == 1:
             span = DateSpan(AstroDate(base, 1, 1), AstroDate(base + h, 1, 1))

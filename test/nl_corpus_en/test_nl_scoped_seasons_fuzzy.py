@@ -290,3 +290,18 @@ def test_decade_adversarial():
 def test_half_period(text, s, e):
     ss, ee = start_end(text)
     assert ss == s and ee == e
+
+
+@pytest.mark.parametrize("text,s,e", [
+    ("the second half of this century", AstroDate(2050, 1, 1), AstroDate(2100, 1, 1)),
+    ("the first half of this century",  AstroDate(2000, 1, 1), AstroDate(2050, 1, 1)),
+    ("the first half of this decade",   AstroDate(2010, 1, 1), AstroDate(2015, 1, 1)),
+    ("the first half of next century",  AstroDate(2100, 1, 1), AstroDate(2150, 1, 1)),
+    ("the second half of last century", AstroDate(1950, 1, 1), AstroDate(2000, 1, 1)),
+])
+def test_half_period_of_this_next_last_scope(text, s, e):
+    # "the second half of this century" must narrow to the half, like "of the
+    # century" does. Regression: the half_period SCOPE_UNIT order had no
+    # REL_MARKER option, so this/next/last fell back to the whole scope with the
+    # half qualifier stranded (first and second half gave the same span).
+    assert start_end(text) == (s, e)
