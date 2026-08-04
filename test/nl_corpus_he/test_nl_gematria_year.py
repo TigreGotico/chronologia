@@ -41,6 +41,40 @@ def test_gematria_year_matches_numeric(gematria, numeric):
     assert _se(gematria) == _se(numeric)
 
 
+@pytest.mark.parametrize("gematria,numeric", [
+    ("כ״ה בכסלו תשפ״ז", "25 בכסלו תשפ״ז"),   # 25 Kislev 5787
+    ("ט״ו בשבט תשפ״ז", "15 בשבט תשפ״ז"),     # Tu BiShvat, 15 Shevat
+    ("כ״ה בכסלו", "25 בכסלו"),                # day + month, no year
+])
+def test_gematria_day_of_month_matches_numeric(gematria, numeric):
+    # In Hebrew day-month order the gematria DAY precedes the month; it used to
+    # be dropped, fabricating day 1 (a confident wrong date).  It must now fold
+    # as the day (raw gematria value, no implied +5000) and resolve identically
+    # to the numeric-day spelling.
+    from datetime import datetime
+    from chronologia import extract_timespan
+
+    def _se(text):
+        r = extract_timespan(text, "he", datetime(2027, 3, 15, 9, 0))
+        return None if r is None else (r[0].start, r[0].end)
+
+    assert _se(gematria) is not None
+    assert _se(gematria) == _se(numeric)
+
+
+def test_gematria_day_does_not_swallow_abbreviations_or_bare_numerals():
+    # a gershayim-marked abbreviation (weekend סופ״ש) or a bare marked numeral
+    # not before a month must NOT fold as a day-of-month date.
+    from datetime import datetime
+    from chronologia import extract_timespan
+    a = datetime(2027, 3, 15, 9, 0)
+    assert extract_timespan("לפנה״ס", "he", a) is None
+    assert extract_timespan("כ״ה", "he", a) is None       # bare, no month
+    # numeric-day and gematria-year paths are unchanged
+    assert extract_timespan("15 אדר 5785", "he", a)[0].start.date().isoformat() == "2025-03-15"
+    assert extract_timespan("15 אדר תשפ״ה", "he", a)[0].start.date().isoformat() == "2025-03-15"
+
+
 def test_gematria_pinned_gregorian():
     """The reference case, pinned to its fixed Gregorian date (15 Adar 5785)."""
     from datetime import datetime
