@@ -170,6 +170,11 @@
         "week_num NUM of YEAR",
         "week_num NUM YEAR?"
       ]
+    },
+    "rel_span": {
+      "orders": [
+        "NUM REL_MARKER UNIT"
+      ]
     }
   },
   "conventions": {
