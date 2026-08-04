@@ -67,6 +67,11 @@ def test_duration(text, expected):
     ("5 minutes please", timedelta(minutes=5), "please"),
     ("wait 10 minutes", timedelta(minutes=10), "wait"),
     ("in a fortnight from now", timedelta(weeks=2), "in from now"),
+    # a duration RANGE is read as its UPPER bound (the return type is a single
+    # timedelta, not an interval); the lower bound and its "to" separator are
+    # consumed rather than stranded as a confusing "3 to" in the remainder.
+    ("3 to 5 days", timedelta(days=5), ""),
+    ("2 to 3 weeks and 4 hours", timedelta(weeks=3, hours=4), ""),
 ])
 def test_duration_remainder(text, expected, remainder):
     got = extract_duration(text, LANG)
