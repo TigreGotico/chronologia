@@ -85,6 +85,17 @@ def julian_to_jdn(year: int, month: int, day: int) -> int:
 
     Fliegel & Van Flandern (1968), Julian variant (no centurial correction).
     """
+    if not 1 <= month <= 12:
+        raise CalendarRangeError(
+            f"julian month {month} out of range for year {year}; "
+            f"expected 1..12")
+    _julian_leap = year % 4 == 0
+    _month_len = (31, 29 if _julian_leap else 28, 31, 30, 31, 30,
+                  31, 31, 30, 31, 30, 31)[month - 1]
+    if not 1 <= day <= _month_len:
+        raise CalendarRangeError(
+            f"julian day {day} out of range for {year}-{month}; "
+            f"expected 1..{_month_len}")
     a = (14 - month) // 12
     y = year + 4800 - a
     m = month + 12 * a - 3
@@ -189,6 +200,15 @@ def _islamic_from_abs(rd: int) -> Tuple[int, int, int]:
 
 
 def islamic_civil_to_jdn(year: int, month: int, day: int) -> int:
+    if not 1 <= month <= 12:
+        raise CalendarRangeError(
+            f"islamic_civil month {month} out of range for year {year}; "
+            f"expected 1..12")
+    length = _islamic_month_length(month, year)
+    if not 1 <= day <= length:
+        raise CalendarRangeError(
+            f"islamic_civil day {day} out of range for {year}-{month}; "
+            f"expected 1..{length}")
     return _abs_from_islamic(year, month, day) + _RD_TO_JDN
 
 
@@ -276,6 +296,16 @@ def _hebrew_from_abs(rd: int) -> Tuple[int, int, int]:
 
 
 def hebrew_to_jdn(year: int, month: int, day: int) -> int:
+    last = _hebrew_last_month(year)
+    if not 1 <= month <= last:
+        raise CalendarRangeError(
+            f"hebrew month {month} out of range for year {year}; "
+            f"expected 1..{last}")
+    length = _hebrew_month_length(month, year)
+    if not 1 <= day <= length:
+        raise CalendarRangeError(
+            f"hebrew day {day} out of range for {year}-{month}; "
+            f"expected 1..{length}")
     return _abs_from_hebrew(year, month, day) + _RD_TO_JDN
 
 
@@ -322,6 +352,18 @@ def _fr_days_before(year: int) -> int:
 def french_republican_to_jdn(year: int, month: int, day: int) -> int:
     """(year, month, day) -> JDN.  Months 1..12 have 30 days; the five or
     six complementary days (sansculottides) are addressed as month 13."""
+    if not 1 <= month <= 13:
+        raise CalendarRangeError(
+            f"french_republican month {month} out of range for year {year}; "
+            f"expected 1..13")
+    if month <= 12:
+        length = 30
+    else:
+        length = 6 if _fr_sextile(year) else 5
+    if not 1 <= day <= length:
+        raise CalendarRangeError(
+            f"french_republican day {day} out of range for {year}-{month}; "
+            f"expected 1..{length}")
     offset = _fr_days_before(year) + (month - 1) * 30 + (day - 1)
     return _FR_EPOCH_JDN + offset
 
@@ -362,9 +404,23 @@ def bahai_to_jdn(year: int, month: int, day: int) -> int:
     """(year, month, day) -> JDN.  Months 1..18 and 19 have 19 days each;
     the intercalary Ayyám-i-Há (4 or 5 days) sits between month 18 and
     month 19 and is addressed as month 0."""
+    if not 0 <= month <= 19:
+        raise CalendarRangeError(
+            f"bahai month {month} out of range for year {year}; "
+            f"expected 0..19")
     base = _bahai_naw_ruz_jdn(year)
     if month == 0:                          # Ayyam-i-Ha
+        total = _bahai_naw_ruz_jdn(year + 1) - base
+        ayyam = total - 361
+        if not 1 <= day <= ayyam:
+            raise CalendarRangeError(
+                f"bahai day {day} out of range for {year}-0 (Ayyam-i-Ha); "
+                f"expected 1..{ayyam}")
         return base + 342 + (day - 1)
+    if not 1 <= day <= 19:
+        raise CalendarRangeError(
+            f"bahai day {day} out of range for {year}-{month}; "
+            f"expected 1..19")
     if month == 19:                         # 'Ala', after Ayyam-i-Ha
         total = _bahai_naw_ruz_jdn(year + 1) - base
         ayyam = total - 361
@@ -411,7 +467,20 @@ _COPTIC_EPOCH_JDN = julian_to_jdn(284, 8, 29)   # 1825030
 _ETHIOPIC_EPOCH_JDN = julian_to_jdn(8, 8, 29)   # 1724221
 
 
-def _coptic_like_to_jdn(epoch: int, year: int, month: int, day: int) -> int:
+def _coptic_like_to_jdn(epoch: int, year: int, month: int, day: int,
+                        key: str = "coptic-like") -> int:
+    if not 1 <= month <= 13:
+        raise CalendarRangeError(
+            f"{key} month {month} out of range for year {year}; "
+            f"expected 1..13")
+    if month <= 12:
+        length = 30
+    else:
+        length = 6 if year % 4 == 3 else 5
+    if not 1 <= day <= length:
+        raise CalendarRangeError(
+            f"{key} day {day} out of range for {year}-{month}; "
+            f"expected 1..{length}")
     return epoch + 365 * (year - 1) + year // 4 + 30 * (month - 1) + (day - 1)
 
 
@@ -427,7 +496,7 @@ def coptic_to_jdn(year: int, month: int, day: int) -> int:
     """Coptic (year, month, day) -> JDN.  Months 1..12 have 30 days; the
     epagomenal 5 (or 6, when ``year % 4 == 3``) days are month 13.  Proleptic
     for years <= 0."""
-    return _coptic_like_to_jdn(_COPTIC_EPOCH_JDN, year, month, day)
+    return _coptic_like_to_jdn(_COPTIC_EPOCH_JDN, year, month, day, "coptic")
 
 
 def coptic_from_jdn(jdn: int) -> Tuple[int, int, int]:
@@ -437,7 +506,7 @@ def coptic_from_jdn(jdn: int) -> Tuple[int, int, int]:
 def ethiopic_to_jdn(year: int, month: int, day: int) -> int:
     """Ethiopic (year, month, day) -> JDN.  Same 12x30 + 5/6 structure as
     Coptic; epoch is 276 Julian years later (Incarnation era)."""
-    return _coptic_like_to_jdn(_ETHIOPIC_EPOCH_JDN, year, month, day)
+    return _coptic_like_to_jdn(_ETHIOPIC_EPOCH_JDN, year, month, day, "ethiopian")
 
 
 def ethiopic_from_jdn(jdn: int) -> Tuple[int, int, int]:
@@ -724,6 +793,20 @@ def _solar_hijri_year_day(month: int, day: int) -> int:
 def solar_hijri_to_jdn(year: int, month: int, day: int) -> int:
     """Arithmetic Solar Hijri (year, month, day) -> JDN.  Proleptic for
     years <= 0.  Arithmetic approximation -- see module note."""
+    if not 1 <= month <= 12:
+        raise CalendarRangeError(
+            f"solar_hijri_arithmetic month {month} out of range for year "
+            f"{year}; expected 1..12")
+    if month <= 6:
+        length = 31
+    elif month <= 11:
+        length = 30
+    else:
+        length = 30 if _solar_hijri_leap(year) else 29
+    if not 1 <= day <= length:
+        raise CalendarRangeError(
+            f"solar_hijri_arithmetic day {day} out of range for "
+            f"{year}-{month}; expected 1..{length}")
     return (_SOLAR_HIJRI_EPOCH_JDN + 365 * (year - 1)
             + _solar_hijri_leaps_before(year - 1)
             + _solar_hijri_year_day(month, day) - 1)
