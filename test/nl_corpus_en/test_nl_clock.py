@@ -65,6 +65,17 @@ def test_hour_meridiem(text, h):
     assert start(text) == clk(h, 0)
 
 
+# a 12-hour am/pm marker only qualifies a valid clock hour 1..12; an hour of 0
+# or >=13 with a meridiem is contradictory ("13 pm", "0 am") and names no time.
+# It must decline (like the "13:60"/"25:00" overflow guards), not silently drop
+# the meridiem and return a confident wrong hour.
+@pytest.mark.parametrize("text", [
+    "13 pm", "13 am", "15 pm", "23 pm", "0 pm", "0 am",
+])
+def test_contradictory_hour_meridiem_declines(text):
+    nomatch(text)
+
+
 # -- fraction system: half/quarter past/to, digit and spelled -------------
 
 @pytest.mark.parametrize("text,h,mi", [

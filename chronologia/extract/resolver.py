@@ -2191,7 +2191,10 @@ class Resolver:
         meridiem = match.slots.get("MERIDIEM")
         if meridiem is not None:
             # digit/military clocks never roll the hour back, so their spoken
-            # hour IS the final hour.
+            # hour IS the final hour.  They also reach here with spoken_hour
+            # still None (only the bare/spelled hour paths set it), so its
+            # None-ness marks an explicit 24-hour clock whose hour is final.
+            bare_12h = spoken_hour is not None
             if spoken_hour is None:
                 spoken_hour = hour
             if meridiem.text in self.spec.night_meridiems:
@@ -2210,6 +2213,16 @@ class Resolver:
                     hour += 12
                 # hours 1..5 keep their AM value unchanged
             else:
+                # a 12-hour am/pm marker only qualifies a valid 12-hour SPOKEN
+                # hour, 1..12.  A bare spoken hour of 0 or >=13 combined with a
+                # meridiem is contradictory ("13 pm", "0 am") and names no time
+                # -- decline, exactly as the numeric literal overflow guards do
+                # ("13:60" -> None), rather than silently drop the meridiem and
+                # return a confident wrong hour.  This does NOT apply to a
+                # daypart marker over an explicit 24-hour clock ("15:30
+                # odpoledne", "öğleden sonra 15:30"), whose hour is already final.
+                if bare_12h and not 1 <= spoken_hour <= 12:
+                    return None
                 off = self.spec.meridiems[meridiem.text]
                 # decide the +/-12 shift from the SPOKEN hour's 12h meaning, then
                 # apply it to the (possibly rolled-back) hour, so a subtractive
