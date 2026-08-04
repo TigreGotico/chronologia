@@ -424,14 +424,17 @@ def _he_gematria_rewrite(tokens):
             elif nxt is not None and nxt.text in _HE_CAL_MONTH:
                 # a marked numeral BEFORE a Hebrew month is the DAY-OF-MONTH
                 # (day-month order: "כ״ה בכסלו" = 25 Kislev): the RAW gematria
-                # value with NO implied thousands, and only a valid day 1..30
-                # -- which also excludes a year value (785) sitting before a
-                # month from being misread as a day.
+                # value with NO implied thousands.  Fold ANY positive value and
+                # let calendar_date validate the day, exactly as the numeric
+                # spelling does -- an out-of-range day ("ל״ה" = 35) then resolves
+                # to None just like numeric "35 בכסלו", instead of leaving the
+                # numeral unfolded and letting the bare month resolve to a
+                # confident whole-month span (a numeric-vs-gematria parity break).
                 try:
                     dv = gematria_value(t.text)
                 except ValueError:
                     dv = None
-                if dv is not None and 1 <= dv <= 30:
+                if dv is not None and dv >= 1:
                     v = dv
         if v is not None:
             out.append(Token(text=str(v), raw=str(v), index=t.index,

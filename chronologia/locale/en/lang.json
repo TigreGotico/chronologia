@@ -321,6 +321,7 @@
     "new_year_ref": {
       "orders": [
         "new year_word in YEAR",
+        "new year_word of YEAR",
         "new year_word YEAR",
         "new year_word"
       ]

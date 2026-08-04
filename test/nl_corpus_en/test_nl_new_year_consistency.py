@@ -95,7 +95,7 @@ def test_new_year_with_explicit_year():
     # used to silently drop the year to the remainder and return the
     # prefer-future Jan 1; now binds the named year (day-wide New Year's Day).
     for text, y in [("new year 2030", 2030), ("new year 2027", 2027),
-                    ("new year in 2027", 2027)]:
+                    ("new year in 2027", 2027), ("new year of 2030", 2030)]:
         r = _ts(text)
         assert r is not None and r[1] == "", text
         assert r[0].start == AstroDate(y, 1, 1)

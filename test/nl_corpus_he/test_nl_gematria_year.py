@@ -62,6 +62,21 @@ def test_gematria_day_of_month_matches_numeric(gematria, numeric):
     assert _se(gematria) == _se(numeric)
 
 
+@pytest.mark.parametrize("gematria,numeric", [
+    ("ל״ה בכסלו", "35 בכסלו"),   # 35 Kislev: impossible day
+    ("ל״א בכסלו", "31 בכסלו"),   # 31 Kislev: impossible day
+])
+def test_out_of_range_gematria_day_declines_like_numeric(gematria, numeric):
+    # an impossible gematria day must resolve to None exactly as the numeric
+    # spelling does (calendar_date rejects it), not leave the numeral unfolded
+    # and let the bare month resolve to a confident whole-month span.
+    from datetime import datetime
+    from chronologia import extract_timespan
+    a = datetime(2027, 3, 15, 9, 0)
+    assert extract_timespan(numeric, "he", a) is None
+    assert extract_timespan(gematria, "he", a) is None
+
+
 def test_gematria_day_does_not_swallow_abbreviations_or_bare_numerals():
     # a gershayim-marked abbreviation (weekend סופ״ש) or a bare marked numeral
     # not before a month must NOT fold as a day-of-month date.

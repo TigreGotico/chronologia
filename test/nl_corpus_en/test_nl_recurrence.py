@@ -70,6 +70,11 @@ _CASES = [
     ("the 15th day of every month", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
     ("the last of every month", "FREQ=MONTHLY;BYMONTHDAY=-1", ""),
     ("the last day of every month", "FREQ=MONTHLY;BYMONTHDAY=-1", ""),
+    # a trailing "<N> times" count must not be swallowed as the day-of-month:
+    # the ordinal day AND the COUNT both survive.
+    ("the 3rd of every month 5 times", "FREQ=MONTHLY;COUNT=5;BYMONTHDAY=3", ""),
+    ("the last day of every month 3 times", "FREQ=MONTHLY;COUNT=3;BYMONTHDAY=-1", ""),
+    ("every month 5 times", "FREQ=MONTHLY;COUNT=5", ""),
     ("every christmas", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
     ("every halloween", "FREQ=YEARLY;BYMONTH=10;BYMONTHDAY=31", ""),
     ("every valentines day", "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=14", ""),
