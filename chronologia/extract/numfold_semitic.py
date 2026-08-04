@@ -376,12 +376,62 @@ def _he_ordinal_rewrite(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
+# -- gematria year numerals ---------------------------------------------------
+# Hebrew calendar years are traditionally written with letters (gematria):
+# תשפ״ה = 785 (small count) means the year 5785.  The numeral is always set
+# off typographically -- a gershayim ״ before the final letter, or a geresh ׳
+# for the thousands / a lone letter -- and that mark is what makes the fold
+# safe: an UNMARKED run of letters is ordinary Hebrew (a word, a weekday name
+# like יום ראשון) and is left untouched, so weekday / ordinal handling cannot
+# regress.  A marked numeral folds to its integer year (via the shared
+# ``hebrew_numerals`` converter) so it flows through the SAME Hebrew-calendar
+# year path the numeric form (5785) already uses.
+from chronologia.hebrew_numerals import hebrew_year_value, is_gematria_numeral
+
+# The gematria fold is scoped to a YEAR context: it fires only on a marked
+# numeral that directly follows a Hebrew-calendar month name (bare or with the
+# ב- "in" prefix) or a year word (שנת / בשנת ...), which is exactly where a
+# Hebrew-calendar year stands.  This is what keeps the equally gershayim-marked
+# ABBREVIATIONS -- the weekend סופ״ש, the era marker לפנה״ס -- from being read
+# as numbers: they never follow a Hebrew month, so they are left untouched.
+_HE_CAL_MONTH = frozenset({
+    "אב", "אדר", "אייר", "אלול", "חשון", "טבת", "כסלו", "ניסן", "סיון",
+    "שבט", "תמוז", "תשרי",
+    # ב- ("in") prefixed forms
+    "באב", "באדר", "באייר", "באלול", "בחשון", "בטבת", "בכסלו", "בניסן",
+    "בסיון", "בשבט", "בתמוז", "בתשרי",
+})
+_HE_YEAR_WORD = frozenset({"שנת", "בשנת", "שנה", "השנה"})
+_HE_YEAR_CONTEXT = _HE_CAL_MONTH | _HE_YEAR_WORD
+
+
+def _he_gematria_rewrite(tokens):
+    out, changed = [], False
+    for i, t in enumerate(tokens):
+        prev = tokens[i - 1] if i > 0 else None
+        if (prev is not None and prev.text in _HE_YEAR_CONTEXT
+                and not t.is_number and is_gematria_numeral(t.text)):
+            try:
+                v = hebrew_year_value(t.text)
+            except ValueError:
+                v = None
+            if v is not None:
+                out.append(Token(text=str(v), raw=str(v), index=t.index,
+                                 is_number=True, value=v,
+                                 char_start=t.char_start, char_end=t.char_end))
+                changed = True
+                continue
+        out.append(t)
+    return reindex(tuple(out)) if changed else tokens
+
+
 _fold_he_cardinal = fold_he
 
 
 def fold_he(tokens):  # noqa: F811  -- wrap the cardinal fold with the fem ordinal
-    """Fold the ordinal teen (11..19) and the feminine ordinal (מחצית's
-    "first/second") before the cardinal fold, then run the cardinal fold: none
-    overlap (each is its own run), and the weekday-masculine ordinals stay
-    untouched."""
-    return _fold_he_cardinal(_he_ordinal_rewrite(_he_teen_fold(tokens)))
+    """Fold the gematria year numeral (תשפ״ה → 5785), the ordinal teen
+    (11..19) and the feminine ordinal (מחצית's "first/second") before the
+    cardinal fold, then run the cardinal fold: none overlap (each is its own
+    run), and the weekday-masculine ordinals stay untouched."""
+    return _fold_he_cardinal(_he_ordinal_rewrite(
+        _he_teen_fold(_he_gematria_rewrite(tokens))))

@@ -270,9 +270,14 @@ class Tokenizer:
         # a zero-width non-joiner / joiner (‌ / ‍) is an *intra-word*
         # formatting mark in Persian and other scripts (سه‌شنبه "Tuesday" is one
         # word), so it always glues letter runs -- never a token boundary.
-        zwj = r"(?:[‌‍][^\W\d]+)*"
+        # the Hebrew geresh ׳ (U+05F3) and gershayim ״ (U+05F4) are the numeral
+        # marks of gematria (תשפ״ה, ה׳תשפ״ה): they sit BETWEEN letters of a
+        # single number-word, so -- like the apostrophe / ZWNJ above -- they
+        # glue the letter runs into one token rather than splitting it.  They
+        # occur only in Hebrew, so listing them is inert for every other locale.
+        zwj = r"(?:[‌‍׳״][^\W\d]+)*"
         word = (r"[^\W\d]+" + zwj if modes.split_contractions
-                else r"[^\W\d]+(?:['’‌‍][^\W\d]+)*")
+                else r"[^\W\d]+(?:['’‌‍׳״][^\W\d]+)*")
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
