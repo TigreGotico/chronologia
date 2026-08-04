@@ -282,6 +282,10 @@ def test_decade_adversarial():
     ("the first half of 2025", AstroDate(2025, 1, 1), AstroDate(2025, 7, 1)),
     ("the second half of 2025", AstroDate(2025, 7, 1), AstroDate(2026, 1, 1)),
     ("the first half of 1999", AstroDate(1999, 1, 1), AstroDate(1999, 7, 1)),
+    # an apostrophe two-digit year pivots through the anchor window (2017) like
+    # the rest of the year layer -- reading it raw resolved to year 99/05 AD.
+    ("the first half of '99", AstroDate(1999, 1, 1), AstroDate(1999, 7, 1)),
+    ("the second half of '05", AstroDate(2005, 7, 1), AstroDate(2006, 1, 1)),
     # scope-word targets resolve the current period from the anchor (2017)
     ("the second half of the century", AstroDate(2050, 1, 1), AstroDate(2100, 1, 1)),
     ("the first half of the decade", AstroDate(2010, 1, 1), AstroDate(2015, 1, 1)),
