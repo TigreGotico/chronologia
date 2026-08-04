@@ -18,6 +18,11 @@ _CASES = [
     ("anualmente", "FREQ=YEARLY", ""),
     ("diariamente", "FREQ=DAILY", ""),
     ("el segundo martes de cada mes", "FREQ=MONTHLY;BYDAY=2TU", ""),
+    ("el 15 de cada mes", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+    # a preposed day-of-month must survive a trailing number, even where the
+    # locale has no "N times" count vocab: the preposed "15" wins over the
+    # stray "3" from "3 veces" (which used to be read as the day, clobbering 15).
+    ("el 15 de cada mes 3 veces", "FREQ=MONTHLY;BYMONTHDAY=15", "3 veces"),
 ]
 
 
