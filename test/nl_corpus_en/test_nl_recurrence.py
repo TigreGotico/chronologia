@@ -44,6 +44,16 @@ _CASES = [
     # fraction (see the guards in test_nl_duration / clock tests).
     ("every quarter", "FREQ=MONTHLY;INTERVAL=3", ""),
     ("every other quarter", "FREQ=MONTHLY;INTERVAL=6", ""),
+    # an interval/quarter monthly rule takes a day-of-month placement qualifier,
+    # preposed ("the Nth of ...") or postposed ("... on the Nth"), just like
+    # "every N months on the Nth" -- the day used to be dropped for these.
+    ("the 15th of every 2 months", "FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=15", ""),
+    ("the 15th of every 3 months", "FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=15", ""),
+    ("every quarter on the 15th", "FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=15", ""),
+    ("the 15th of every quarter", "FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=15", ""),
+    ("the first day of every quarter", "FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=1", ""),
+    ("every other quarter on the 3rd", "FREQ=MONTHLY;INTERVAL=6;BYMONTHDAY=3", ""),
+    ("the last day of every quarter", "FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=-1", ""),
     # an explicit trailing occurrence count "<N> times" folds to COUNT -- the
     # RFC 5545 total.  "0 times" is degenerate (no occurrences): declined, left
     # unconsumed in the remainder rather than emitted as COUNT=0.
