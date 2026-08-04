@@ -71,6 +71,28 @@ def test_bare_be_verb_collision_is_refused():
     assert parse("in 2020 be ready")[1] == "be ready"
 
 
+def test_the_year_2560_be_is_gregorian_2017():
+    # BE aligns with Gregorian year boundaries, so "the year 2560 BE" is the
+    # whole Gregorian year 2017 -- it used to lose the parse to the longer bare
+    # year_ref ("the year 2560") and read 2560 as a literal Gregorian year.
+    s, e = start_end("the year 2560 BE")
+    assert s == AstroDate(2017, 1, 1) and e == AstroDate(2018, 1, 1)
+    assert start_end("year 2560 BE")[0] == AstroDate(2017, 1, 1)
+
+
+@pytest.mark.parametrize("prefixed, bare", [
+    ("the year 2560 BE", "2560 BE"),
+    ("the year 1447 AH", "1447 AH"),
+    ("the year 1404 solar hijri", "1404 solar hijri"),
+])
+def test_the_year_prefix_matches_the_bare_abbreviation_era(prefixed, bare):
+    # the "the year <N>" prefix must not change the era resolution: the single-
+    # token abbreviation (BE/AH/SH) used to lose the parse to the bare year_ref,
+    # stranding the marker; now it resolves identically to the bare form (AH/SH
+    # years do NOT start on Jan 1, so parity -- not a Jan-1 span -- is the pin).
+    assert start_end(prefixed) == start_end(bare)
+
+
 
 # -- era-anchored year narrowed by an adjacent named month ----------------
 @pytest.mark.parametrize("text, year, month", [
