@@ -26,6 +26,10 @@ _CASES = [
     ("week 10 of 1999", 1999, 10),
     ("week 40 of 2024", 2024, 40),
     ("week 7 of 2030", 2030, 7),
+    # an apostrophe two-digit year pivots through the anchor window (2017) --
+    # reading it raw resolved into ISO year 24 / 99 AD.
+    ("week 5 of '24", 2024, 5),
+    ("week 32 of '99", 1999, 32),
     # the ordinal prose surface names the same week as the cardinal one
     ("the 10th week of 2024", 2024, 10),
     ("the 32nd week of 2026", 2026, 32),

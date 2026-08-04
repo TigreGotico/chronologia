@@ -815,7 +815,11 @@ class Resolver:
         num_tok = match.slots.get("NUM") or match.slots["ORD"]
         w = int(num_tok.value)
         year_tok = match.slots.get("YEAR")
-        year = int(year_tok.value) if year_tok is not None else anchor.year
+        # a two-digit / apostrophe year ("week 5 of '24") pivots through the
+        # anchor-relative window like every other year slot; reading it raw gave
+        # ISO year 24 AD.
+        year = (_pivot_two_digit_year(year_tok, anchor.year)
+                if year_tok is not None else anchor.year)
         monday = date.fromisocalendar(year, w, 1)       # ValueError -> None
         s = AstroDate.from_date(monday)
         return Resolution(DateSpan(s, s + timedelta(days=7)),
@@ -1212,7 +1216,10 @@ class Resolver:
             return None
         year_tok = match.slots.get("GYEAR")
         if year_tok is not None:
-            y = int(year_tok.value)
+            # pivot a two-digit / apostrophe year ("the first half of '99")
+            # through the anchor-relative window like the rest of the year
+            # layer; reading it raw resolved to year 99 AD.
+            y = _pivot_two_digit_year(year_tok, anchor.year)
             if n == 1:
                 span = DateSpan(AstroDate(y, 1, 1), AstroDate(y, 7, 1))
             else:
