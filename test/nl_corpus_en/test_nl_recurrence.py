@@ -37,6 +37,20 @@ _CASES = [
     # reading, not a plain INTERVAL bump) is a documented follow-up.
     ("biweekly", "FREQ=WEEKLY;INTERVAL=2", ""),
     ("quarterly", "FREQ=MONTHLY;INTERVAL=3", ""),
+    # a calendar quarter is three months, so "every quarter" is the same
+    # MONTHLY;INTERVAL=3 rule as the lone "quarterly" adverb; "every other
+    # quarter" bumps it to every sixth month.  The quarter noun is read ONLY
+    # under an "every" determiner -- the bare "quarter" stays a duration/clock
+    # fraction (see the guards in test_nl_duration / clock tests).
+    ("every quarter", "FREQ=MONTHLY;INTERVAL=3", ""),
+    ("every other quarter", "FREQ=MONTHLY;INTERVAL=6", ""),
+    # an explicit trailing occurrence count "<N> times" folds to COUNT -- the
+    # RFC 5545 total.  "0 times" is degenerate (no occurrences): declined, left
+    # unconsumed in the remainder rather than emitted as COUNT=0.
+    ("every day 3 times", "FREQ=DAILY;COUNT=3", ""),
+    ("daily 5 times", "FREQ=DAILY;COUNT=5", ""),
+    ("every monday 4 times", "FREQ=WEEKLY;COUNT=4;BYDAY=MO", ""),
+    ("every day 0 times", "FREQ=DAILY", "0 times"),
     ("on weekdays", "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR", ""),
     ("on weekends", "FREQ=WEEKLY;BYDAY=SA,SU", ""),
     ("first monday of every month", "FREQ=MONTHLY;BYDAY=1MO", ""),
@@ -174,7 +188,7 @@ def test_bounded_recurrence(text, rrule, remainder):
     # a frequency *count* above one has no single-RRULE reading (it needs
     # BYSETPOS / per-period COUNT), so it is left unread rather than guessed
     # into a wrong interval.
-    "twice a week", "three times a month", "twice a day",
+    "twice a week", "three times a month", "twice a day", "3 times a day",
     # a bare count word with no period names nothing.
     "once", "once a", "once a friday",
 ])

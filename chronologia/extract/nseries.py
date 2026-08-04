@@ -29,8 +29,9 @@ from typing import List, NamedTuple, Optional, Tuple, Union
 from chronologia.astrodate import DateSpan
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
-                                          _conn_surfaces, _exclusion_vetoes,
-                                          _extract_range, _resolve_scale_mode,
+                                          _RANGE_TO, _conn_surfaces,
+                                          _exclusion_vetoes, _extract_range,
+                                          _resolve_scale_mode,
                                           _timespan_engine, extract_timespan)
 from chronologia.recurrence import HolidayRecurrence, Recurrence
 from chronologia.recurrence import every as _build_every
@@ -291,6 +292,18 @@ def extract_duration(
         if (k not in consumed and tokens[k].text in and_words
                 and k - 1 in consumed and k + 1 in consumed):
             consumed.add(k)
+    # A duration RANGE ("3 to 5 days", "2-4 hours") is read as its UPPER bound
+    # -- the widest length the phrase can mean -- since the public return type
+    # is a single ``timedelta``, not an interval.  The lower bound plus its
+    # range-``to`` separator would otherwise strand a confusing "3 to" in the
+    # remainder; fold them in so the leftover carries only genuinely
+    # non-duration words.  (A real low..high interval would need an API change
+    # and is left as a follow-up.)
+    for k in range(1, n - 1):
+        if (k not in consumed and tokens[k].text in _RANGE_TO
+                and k - 1 not in consumed and tokens[k - 1].is_number
+                and k + 1 in consumed):
+            consumed.update((k - 1, k))
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
@@ -824,6 +837,33 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
                 consumed = consumed | extra
                 break
 
+    # A trailing explicit occurrence count -- "<N> times" -- on an otherwise
+    # complete rule is a total COUNT ("every day 3 times" -> COUNT=3), the one
+    # RFC 5545 count part.  It differs from a *rate* ("3 times a day", "twice a
+    # week"): a rate names occurrences *per period* and has no RFC 5545 part, so
+    # it is refused upstream and never reaches a grounded rule here.  The number
+    # must sit immediately before the count word, and nothing temporal may
+    # follow it -- a "<N> times a <period>" rate keeps its period unit
+    # unconsumed to the right, which this guard rejects, leaving it untouched.
+    # "0 times" is degenerate (no occurrences): it is declined outright, left in
+    # the remainder rather than emitted as COUNT=0.
+    n = len(tokens)
+    if ctx.count_words and isinstance(rec, Recurrence) and rec.count is None:
+        for i in range(n):
+            if i in consumed or tokens[i].text not in ctx.count_words:
+                continue
+            p = i - 1
+            if p < 0 or p in consumed or not tokens[p].is_number:
+                continue
+            if any(k not in consumed for k in range(i + 1, n)):
+                continue  # "<N> times a day": a per-period rate, not a total
+            cnt = int(tokens[p].value)
+            if cnt < 1:
+                break  # "0 times": degenerate, no COUNT=0
+            rec = _replace(rec, count=cnt)
+            consumed = consumed | {p, i}
+            break
+
     return rec, consumed
 
 
@@ -863,6 +903,8 @@ class _RecurCtx:
     habitual_words: set = frozenset()
     and_words: set = frozenset()
     rate_words: set = frozenset()
+    count_words: set = frozenset()
+    quarter_word: set = frozenset()
     holidays: dict = None
     lang: str = "en-us"
     anchor: Optional[datetime] = None
@@ -907,6 +949,8 @@ def _recur_ctx(text, lang, anchor):
         habitual_words=set(C.get("recur_habitual", ())),
         and_words=set(C.get("and", ())),
         rate_words=set(C.get("recur_rate", ())),
+        count_words=set(C.get("recur_count", ())),
+        quarter_word=set(C.get("quarter_word", ())),
         holidays=dict(spec.holidays),
         lang=lang,
         anchor=anchor,
@@ -1448,6 +1492,16 @@ def _recur_every(ctx):
         # hardcoded SA+SU.
         if t[j].text in ctx.weekend_word:
             return (_build_every("weekly", byday=_weekend_byday(ctx), **iv),
+                    set(range(i, j + 1)))
+        # "every quarter" -> a calendar quarter is three months, so the rule is
+        # MONTHLY;INTERVAL=3 (the same reading the lone "quarterly" adverb gets
+        # in _freq_map).  "every other quarter" bumps the interval to every
+        # sixth month.  The quarter noun is its own vocabulary and is read ONLY
+        # under this "every" determiner -- the bare "quarter" is a duration
+        # fraction (a quarter of an hour) or a clock fraction (quarter past),
+        # never a recurrence, so those readings are untouched.
+        if t[j].text in ctx.quarter_word:
+            return (_build_every("monthly", interval=interval * 3),
                     set(range(i, j + 1)))
         # A derived weekday plural ("tous les lundis", "todas as segundas") is
         # licensed here: this is already the "every"-determiner frame, so the

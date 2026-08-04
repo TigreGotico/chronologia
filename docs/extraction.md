@@ -1491,6 +1491,37 @@ assert extract_recurrence("iga esmaspäev 6 nädala jooksul", "et")[0].to_string
     "FREQ=WEEKLY;COUNT=6;BYDAY=MO")
 ```
 
+An **explicit occurrence count** — a trailing "`<N>` times" on an otherwise
+complete rule — sets `COUNT` directly, the RFC 5545 total:
+
+```python
+assert extract_recurrence("every day 3 times", "en")[0].to_string() == "FREQ=DAILY;COUNT=3"
+assert extract_recurrence("daily 5 times", "en")[0].to_string() == "FREQ=DAILY;COUNT=5"
+assert extract_recurrence("every monday 4 times", "en")[0].to_string() == (
+    "FREQ=WEEKLY;COUNT=4;BYDAY=MO")
+```
+
+A *rate* — "`<N>` times a `<period>`", "twice a week" — is different: it names
+occurrences *per period*, which RFC 5545 has no part for, so it returns `None`
+rather than a fabricated rule. "0 times" is degenerate (no occurrences) and is
+likewise declined, left in the remainder rather than emitted as `COUNT=0`:
+
+```python
+assert extract_recurrence("3 times a day", "en") is None
+assert extract_recurrence("twice a week", "en") is None
+```
+
+**"every quarter"** is a calendar quarter — three months — so it reads as the
+same `MONTHLY;INTERVAL=3` rule as the lone `quarterly` adverb; "every other
+quarter" is every sixth month:
+
+```python
+assert extract_recurrence("every quarter", "en")[0].to_string() == "FREQ=MONTHLY;INTERVAL=3"
+assert extract_recurrence("quarterly", "en")[0].to_string() == "FREQ=MONTHLY;INTERVAL=3"
+assert extract_recurrence("every other quarter", "en")[0].to_string() == (
+    "FREQ=MONTHLY;INTERVAL=6")
+```
+
 **Holidays** recur too. A *fixed*-date holiday becomes a real yearly rule; a
 *movable* feast (Easter, the Islamic `eid` feasts…) has no RFC 5545 rule, so it
 becomes a [`HolidayRecurrence`](recurrence.md) — an object that still expands to
