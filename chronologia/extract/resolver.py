@@ -1944,6 +1944,15 @@ class Resolver:
         vetoed by :func:`_new_year_definite_article_veto` in both public APIs.
         """
         from chronologia.extract.timespan import _new_year_span
+        # an explicit year ("new year 2030", "new year in 2027") names THAT
+        # year's Jan 1, not the prefer-future occurrence -- bind and pivot it
+        # like hebrew_new_year does, instead of dropping it to the remainder.
+        year_tok = match.slots.get("YEAR")
+        if year_tok is not None:
+            y = _pivot_two_digit_year(year_tok, anchor.year)
+            start = AstroDate(y, 1, 1)          # New Year's DAY of that year,
+            return Resolution(DateSpan(start, start + timedelta(days=1)),  # day-wide
+                              self._consumed(match))
         return Resolution(_new_year_span(anchor), self._consumed(match))
 
     @staticmethod

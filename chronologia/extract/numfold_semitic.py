@@ -386,7 +386,8 @@ def _he_ordinal_rewrite(tokens):
 # regress.  A marked numeral folds to its integer year (via the shared
 # ``hebrew_numerals`` converter) so it flows through the SAME Hebrew-calendar
 # year path the numeric form (5785) already uses.
-from chronologia.hebrew_numerals import hebrew_year_value, is_gematria_numeral
+from chronologia.hebrew_numerals import (gematria_value, hebrew_year_value,
+                                          is_gematria_numeral)
 
 # The gematria fold is scoped to a YEAR context: it fires only on a marked
 # numeral that directly follows a Hebrew-calendar month name (bare or with the
@@ -407,20 +408,37 @@ _HE_YEAR_CONTEXT = _HE_CAL_MONTH | _HE_YEAR_WORD
 
 def _he_gematria_rewrite(tokens):
     out, changed = [], False
+    n = len(tokens)
     for i, t in enumerate(tokens):
         prev = tokens[i - 1] if i > 0 else None
-        if (prev is not None and prev.text in _HE_YEAR_CONTEXT
-                and not t.is_number and is_gematria_numeral(t.text)):
-            try:
-                v = hebrew_year_value(t.text)
-            except ValueError:
-                v = None
-            if v is not None:
-                out.append(Token(text=str(v), raw=str(v), index=t.index,
-                                 is_number=True, value=v,
-                                 char_start=t.char_start, char_end=t.char_end))
-                changed = True
-                continue
+        nxt = tokens[i + 1] if i + 1 < n else None
+        v = None
+        if (not t.is_number and is_gematria_numeral(t.text)):
+            if prev is not None and prev.text in _HE_YEAR_CONTEXT:
+                # a marked numeral AFTER a month/year word is the YEAR: the
+                # implied +5000 "small count" applies (תשפ״ה -> 5785).
+                try:
+                    v = hebrew_year_value(t.text)
+                except ValueError:
+                    v = None
+            elif nxt is not None and nxt.text in _HE_CAL_MONTH:
+                # a marked numeral BEFORE a Hebrew month is the DAY-OF-MONTH
+                # (day-month order: "כ״ה בכסלו" = 25 Kislev): the RAW gematria
+                # value with NO implied thousands, and only a valid day 1..30
+                # -- which also excludes a year value (785) sitting before a
+                # month from being misread as a day.
+                try:
+                    dv = gematria_value(t.text)
+                except ValueError:
+                    dv = None
+                if dv is not None and 1 <= dv <= 30:
+                    v = dv
+        if v is not None:
+            out.append(Token(text=str(v), raw=str(v), index=t.index,
+                             is_number=True, value=v,
+                             char_start=t.char_start, char_end=t.char_end))
+            changed = True
+            continue
         out.append(t)
     return reindex(tuple(out)) if changed else tokens
 
