@@ -49,6 +49,13 @@ _CASES = [
     ("the 10th of every month", "FREQ=MONTHLY;BYMONTHDAY=10", ""),
     ("every month on the 10th", "FREQ=MONTHLY;BYMONTHDAY=10", ""),
     ("the 1st of every month", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    # an explicit "day" noun between the ordinal and "of" must not drop the
+    # day-of-month constraint (the bare "the 1st of every month" above proves
+    # the lift); and the bare "last" marker is the month-end idiom BYMONTHDAY=-1.
+    ("the first day of every month", "FREQ=MONTHLY;BYMONTHDAY=1", ""),
+    ("the 15th day of every month", "FREQ=MONTHLY;BYMONTHDAY=15", ""),
+    ("the last of every month", "FREQ=MONTHLY;BYMONTHDAY=-1", ""),
+    ("the last day of every month", "FREQ=MONTHLY;BYMONTHDAY=-1", ""),
     ("every christmas", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
     ("every halloween", "FREQ=YEARLY;BYMONTH=10;BYMONTHDAY=31", ""),
     ("every valentines day", "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=14", ""),
