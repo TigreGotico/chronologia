@@ -88,3 +88,21 @@ def test_happy_new_year_resolves_the_holiday():
     r = _ts("happy new year")
     assert r is not None and r[0].start == AstroDate(2027, 1, 1)
     assert r[1] == "happy"
+
+
+# -- an explicit year names THAT New Year's Day, not the prefer-future one --
+def test_new_year_with_explicit_year():
+    # used to silently drop the year to the remainder and return the
+    # prefer-future Jan 1; now binds the named year (day-wide New Year's Day).
+    for text, y in [("new year 2030", 2030), ("new year 2027", 2027),
+                    ("new year in 2027", 2027)]:
+        r = _ts(text)
+        assert r is not None and r[1] == "", text
+        assert r[0].start == AstroDate(y, 1, 1)
+        assert r[0].end == AstroDate(y, 1, 2)          # day-wide, like the bare form
+        assert _nc(text) >= 1                           # candidates agree
+
+
+def test_new_year_apostrophe_year_pivots():
+    r = _ts("new year '29")
+    assert r is not None and r[0].start == AstroDate(2029, 1, 1)
