@@ -51,6 +51,27 @@ def test_single_unit_rel_period_unchanged(text, s, e):
     assert _span(text) == (s, e), text
 
 
+@pytest.mark.parametrize("text,s,e", [
+    # synonym relative markers: coming/upcoming == next (+1), previous/prior/
+    # past == last (-1), in both the single-unit and the N-unit-span readings.
+    ("the coming week", AstroDate(2024, 6, 17), AstroDate(2024, 6, 24)),
+    ("the upcoming month", AstroDate(2024, 7, 1), AstroDate(2024, 8, 1)),
+    ("the past month", AstroDate(2024, 5, 1), AstroDate(2024, 6, 1)),
+    ("the coming 3 weeks", AstroDate(2024, 6, 15), AstroDate(2024, 7, 6)),
+    ("the past 2 months", AstroDate(2024, 4, 15), AstroDate(2024, 6, 15)),
+    ("the previous 2 weeks", AstroDate(2024, 6, 1), AstroDate(2024, 6, 15)),
+])
+def test_relative_marker_synonyms(text, s, e):
+    assert _span(text) == (s, e), text
+
+
+def test_past_synonym_does_not_break_clock_past():
+    # "past" is a relative marker (-1) AND the clock "quarter past" direction;
+    # the clock uses a separate slot, so both readings coexist.
+    r = extract_timespan("quarter past nine", "en", A)
+    assert r is not None and (r.span.start.hour, r.span.start.minute) == (9, 15)
+
+
 def test_offset_point_readings_unchanged():
     # "in N weeks" is still a POINT N weeks out (a week-wide span at the offset
     # instant, keeping the anchor's time-of-day), NOT a rolling span from now --
