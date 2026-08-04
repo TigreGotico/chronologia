@@ -83,6 +83,106 @@ def _make_fold(lang: str, extra_values: Dict[str, float] | None = None,
     return fold
 
 
+def _with_fused_thousands(fold: Callable[[Tuple[Token, ...]], Tuple[Token, ...]],
+                          lang: str, suffix: str
+                          ) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
+    """Wrap ``fold`` so a Hungarian/Finnish fused round-thousand word folds
+    with its trailing sub-thousand chunk instead of dropping it.
+
+    Hungarian and Finnish glue the thousands multiplier straight onto the scale
+    word in one token -- hu "kétezer" (két + ezer = 2000), "háromezer" (3000);
+    fi "kaksituhatta" (2000), "kolmetuhatta" (3000) -- and then attach the
+    trailing sub-thousand part as a hyphenated or spaced word ("kétezer-huszonnégy"
+    = 2024, "kaksituhatta neljä" = 2004).  The model-derived run set is built by
+    pronouncing only 0..999, so the fused word is never a run member; the scan
+    skips it and the sub-thousand chunk folds in isolation, so the duration reader
+    saw only "huszonnégy" = 24 and dropped the 2000.  The ``<multiplier>ezer`` /
+    ``<multiplier>tuhatta`` back-ends themselves cannot compose the two either
+    (``extract_number_hu("kétezer huszonnégy")`` returns 2000, silently dropping
+    the 24), so the value is composed here: multiplier*1000 + the sub-thousand
+    remainder, as one synthetic number token spanning the whole run.
+
+    The multiplier prefix is validated through the language's own
+    ``extract_number_<lang>`` -- not a hand-listed table -- so it generalises to
+    every multiplier the back-end reads ("tizennégyezer" = 14000) and cannot
+    mis-split an unrelated word.  The bare scale word (hu "ezer", fi "tuhat" /
+    "tuhatta" = 1000) has an empty prefix and is left untouched, so that path is
+    not regressed.
+    """
+    holder: dict = {}
+
+    def _num():
+        ext = holder.get("ext")
+        if ext is None:
+            m = import_module("ovos_number_parser.numbers_" + lang)
+            ext = holder["ext"] = getattr(m, "extract_number_" + lang)
+        return ext
+
+    def _value(text):
+        try:
+            v = _num()(text)
+        except Exception:
+            return None
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            return None
+        return v
+
+    def _fuse(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        out = []
+        i = 0
+        n = len(tokens)
+        changed = False
+        while i < n:
+            t = tokens[i]
+            thousands = None
+            if (not t.is_number and t.text.endswith(suffix)
+                    and len(t.text) > len(suffix)):
+                prefix = t.text[:-len(suffix)]
+                mult = _value(prefix)
+                if mult is not None and mult > 0 and float(mult).is_integer():
+                    thousands = int(mult) * 1000
+            if thousands is None:
+                out.append(t)
+                i += 1
+                continue
+            # Absorb a trailing run of spelled sub-thousand number-words
+            # (hyphen already sheared by the tokenizer, or spaced).  Each must
+            # read as an integer in 1..999; a following unit word, another
+            # thousands word (>= 1000) or a bare digit stops the run.
+            j = i + 1
+            rest = []
+            while j < n:
+                nt = tokens[j]
+                if nt.is_number:
+                    break
+                rv = _value(nt.text)
+                if rv is not None and 0 < rv < 1000 and float(rv).is_integer():
+                    rest.append(nt)
+                    j += 1
+                else:
+                    break
+            rest_val = 0
+            if rest:
+                joined = _value(" ".join(x.text for x in rest))
+                if joined is not None and 0 < joined < 1000 and float(joined).is_integer():
+                    rest_val = int(joined)
+                else:
+                    rest_val = sum(int(_value(x.text)) for x in rest)
+            total = thousands + rest_val
+            last = rest[-1] if rest else t
+            out.append(Token(text=str(total), raw=str(total), index=0,
+                             is_number=True, value=total,
+                             char_start=t.char_start, char_end=last.char_end))
+            changed = True
+            i = j
+        return reindex(tuple(out)) if changed else tokens
+
+    def wrapped(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        return fold(_fuse(tokens))
+
+    return wrapped
+
+
 def _with_bare_case_hour(fold: Callable[[Tuple[Token, ...]], Tuple[Token, ...]],
                          hours: Dict[str, float], at_surface: str,
                          skip_before: FrozenSet[str] = frozenset()
@@ -247,6 +347,10 @@ fold_hu = with_ordinals(fold_hu, "hu", extra=_hu_day_ord_extra())
 # marker_at surface).  "N órakor" keeps its own "órakor" oclock token and is
 # untouched here.
 fold_hu = _with_bare_case_hour(fold_hu, _HU_KOR_HOURS, "kor")
+# Fold the fused round-thousand spelling ("kétezer-huszonnégy" = 2024) instead
+# of dropping the thousands and reading only the trailing chunk.  Outermost so
+# it rewrites the raw surface tokens before the cardinal/ordinal/clock folds.
+fold_hu = _with_fused_thousands(fold_hu, "hu", "ezer")
 
 
 # -- Finnish: genitive numerals used in the "N <unit> kuluttua/sitten" slot -
@@ -283,6 +387,11 @@ fold_fi = with_ordinals(fold_fi, "fi")
 # synthetic marker is suppressed so that frame stays byte-identical.
 fold_fi = _with_bare_case_hour(fold_fi, _FI_ABLATIVE_HOURS, "kello",
                                skip_before=frozenset({"kello", "klo"}))
+# Fold the fused round-thousand spelling ("kaksituhatta neljä" = 2004) instead
+# of dropping the thousands.  The scale word here is the partitive "tuhatta"
+# ("kaksituhatta"); the bare "tuhat"/"tuhatta" = 1000 has an empty prefix and is
+# left untouched.
+fold_fi = _with_fused_thousands(fold_fi, "fi", "tuhatta")
 
 
 # -- Estonian: genitive numerals used in the "N <unit> pärast/tagasi" slot --
