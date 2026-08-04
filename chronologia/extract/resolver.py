@@ -145,6 +145,27 @@ _ISOWEEK_PARTS = re.compile(r"(?P<year>\d{4})-[wW](?P<week>\d{1,2})"
                             r"(?:-(?P<weekday>\d))?")
 
 
+def _shift_units(dt: datetime, kind: str, n: int):
+    """Shift ``dt`` by ``n`` whole units of ``kind`` (n may be negative).
+    Day/week/fortnight shift by timedelta; month and the year-family shift
+    through :func:`_add_months` so a Feb-29 (or month-end) anchor clamps to the
+    target month's last valid day.  Returns ``None`` for a sub-day or
+    uncontainered unit (which names no whole-day span)."""
+    if kind == "day":
+        return dt + timedelta(days=n)
+    if kind == "week":
+        return dt + timedelta(weeks=n)
+    if kind == "fortnight":
+        return dt + timedelta(weeks=2 * n)
+    if kind == "month":
+        return _add_months(dt, n)
+    month_steps = {"year": 12, "decade": 120, "century": 1200,
+                   "millennium": 12000}
+    if kind in month_steps:
+        return _add_months(dt, n * month_steps[kind])
+    return None
+
+
 def _midnight(dt: datetime) -> datetime:
     return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -696,6 +717,28 @@ class Resolver:
         if span is None:
             return None
         return Resolution(span, self._consumed(match))
+
+    def _resolve_rel_span(self, match, anchor):
+        """"the next/last <N> <units>": a rolling span of N whole units forward
+        (next/coming) or backward (last/past) from the anchor DAY -- "the next 3
+        weeks" is ``[today, today + 21 days)``, "the last 2 months" is
+        ``[2 months ago, today)``.  Unlike :meth:`_resolve_rel_period`'s single
+        calendar-aligned unit, the span is anchored on the current day, not the
+        calendar grid.  A "this" marker (rel 0), a non-positive count, or a
+        sub-day / uncontainered unit names no such span."""
+        rel = self.spec.rel_markers[match.slots["REL_MARKER"].text]
+        num = int(match.slots["NUM"].value)
+        kind = self.spec.units.get(match.slots["UNIT"].text)
+        if rel == 0 or num < 1:
+            return None
+        base = _midnight(anchor)
+        far = _shift_units(base, kind, num if rel > 0 else -num)
+        if far is None:
+            return None
+        lo, hi = (base, far) if rel > 0 else (far, base)
+        return Resolution(DateSpan(AstroDate.from_datetime(lo),
+                                   AstroDate.from_datetime(hi)),
+                          self._consumed(match))
 
     def _period_span(self, kind, rel, anchor):
         """The whole calendar period of ``kind`` containing the anchor, shifted

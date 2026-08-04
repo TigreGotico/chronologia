@@ -130,6 +130,10 @@ PRECEDENCE: Dict[str, int] = {
     # "next week"/"this month"/"last year": the whole calendar period,
     # same tier as the weekday reference it generalises to coarser units
     "rel_period": 8,
+    # "the next 3 weeks" -- a rolling N-unit span; a longer span than the bare
+    # rel_period unit it extends, and more specific (carries the count), so it
+    # wins its span over rel_period / relative_offset on the shared tokens.
+    "rel_span": 7,
     # "this morning"/"tonight"/"yesterday morning": a time-of-day band on a
     # deictically-selected day.  Same tier as the weekday/period references it
     # sits beside; a bare daypart composes onto a same-text date construction
