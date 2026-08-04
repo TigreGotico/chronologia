@@ -17,6 +17,12 @@ _CASES = [
     ("Q1 2020", 2020, 1, 2020, 4),
     ("Q4 2019", 2019, 10, 2020, 1),
     ("the third quarter of 2026", 2026, 7, 2026, 10),
+    # the compact "Q<n> of <year>" form binds the year like the prose form;
+    # it used to drop the year and silently return the anchor year. The
+    # apostrophe year pivots through the anchor window (2017) like every other.
+    ("Q3 of 2024", 2024, 7, 2024, 10),
+    ("Q3 of '24", 2024, 7, 2024, 10),
+    ("Q1 of '99", 1999, 1, 1999, 4),
     ("the first quarter of 2020", 2020, 1, 2020, 4),
     ("the fourth quarter of 2019", 2019, 10, 2020, 1),
     ("the third quarter", 2017, 7, 2017, 10),        # anchor year 2017
