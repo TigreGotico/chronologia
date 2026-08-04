@@ -377,6 +377,33 @@ class Tokenizer:
                     tokens.append(Token(text=raw, raw=raw, index=i,
                                         char_start=cs, char_end=ce))
                     continue
+                # A '-' glued directly to the digit run, with whitespace (not
+                # string-start) before it, is a freestanding mid-sentence
+                # signed number ("..., -3 times", "in -3 days") -- the number
+                # regex only matches the digit run, so the sign falls between
+                # tokens and would otherwise vanish, turning a negative into a
+                # confident positive.  Three guards, all required:
+                #  - the '-' must be glued to the digits (not a digit before
+                #    it -- date ranges "1914-1918", ISO "2026-08-05"; not a
+                #    letter before it -- zone offsets "utc-3"; not spaced --
+                #    markdown bullets "- 3 days" keep their number reading);
+                #  - whitespace, specifically, must precede the '-' -- a
+                #    string-start '-3' ("-1918" typed bare) is bullet-like,
+                #    the same as a spaced '- 3', and keeps its number reading;
+                #  - the token appended just before this one must not itself
+                #    be a number -- otherwise a spaced range typo ("1914
+                #    -1918") would have its second year wrongly declined
+                #    instead of read as the range's end.
+                if (cs >= 2 and low[cs - 1] == "-" and low[cs - 2].isspace()
+                        and not (tokens and tokens[-1].is_number)):
+                    # fold the glued '-' into the token's own extent (not just
+                    # a recorded flag, unlike the apostrophe case above) so
+                    # ``render_remainder`` slices it back out of the original
+                    # text instead of losing it in the gap between tokens.
+                    signed_raw = text[cs - 1:ce]
+                    tokens.append(Token(text=signed_raw, raw=signed_raw, index=i,
+                                        char_start=cs - 1, char_end=ce))
+                    continue
                 value = float(digits) if "." in digits else int(digits)
                 # an apostrophe immediately before the digit run is the strong
                 # two-digit-year cue ("'42", "the '90s").  The apostrophe folds
