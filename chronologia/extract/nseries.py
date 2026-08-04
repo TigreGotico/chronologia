@@ -1735,7 +1735,12 @@ def _recur_date_anchored(ctx):
         while r < n and not t[r].is_number and steps < 3:
             r += 1
             steps += 1
-        if r < n and t[r].is_number and 1 <= int(t[r].value) <= 31:
+        # ... but a number that is really the trailing occurrence count
+        # ("every month 5 TIMES", "the 3rd of every month 5 times") is NOT the
+        # day-of-month: leave it for the COUNT post-pass and let the backward
+        # ordinal branch below read the real day.
+        if (r < n and t[r].is_number and 1 <= int(t[r].value) <= 31
+                and not (r + 1 < n and t[r + 1].text in ctx.count_words)):
             return (_build_every("monthly", bymonthday=int(t[r].value)),
                     set(range(i, r + 1)))
         # "<N> of every month" / "the last [day] of every month": the ordinal
