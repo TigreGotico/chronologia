@@ -113,6 +113,14 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "rel_period": [
         "REL_MARKER UNIT",
     ],
+    # "the next/last <N> <units>" -- a rolling span of N whole units forward
+    # (next/coming) or backward (last/past) from the anchor DAY, distinct from
+    # the single calendar-aligned unit of rel_period ("the next 3 weeks" is the
+    # 21 days from today, not three calendar weeks).  Shares the same REL_MARKER
+    # / UNIT vocab every locale already ships, plus a NUM.
+    "rel_span": [
+        "REL_MARKER NUM UNIT",
+    ],
     # "last/next <season>" ("next winter"), "<season> of <year>" ("summer of
     # 2024") and the bare "<season> <year>?" ("summer 2024", or a deictic
     # "summer" on its own).  These three -- the relative-marker prefix, the
