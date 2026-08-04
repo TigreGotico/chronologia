@@ -258,6 +258,7 @@
     "quarter_ref": {
       "orders": [
         "q NUM YEAR?",
+        "q NUM of YEAR",
         "article? ORD quarter_word of YEAR",
         "article? ORD quarter_word YEAR?",
         "REL_MARKER quarter_word",
