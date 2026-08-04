@@ -64,6 +64,23 @@ That is the real first day of Hebrew year 5786 — the same Rosh Hashanah the
 [calendars guide](calendars.md) computed — because the era is backed by the
 actual Hebrew calendar.
 
+The two **Hijri** eras work the same way. The Islamic (lunar) **Hijri** era
+counts the years of the Islamic calendar from the Hijra, so "1447 AH" is a real
+lunar year, not 1447 read as a Gregorian year:
+
+```python
+print(resolve_era("hijri", 1447))
+# 2025-06-27
+```
+
+The Iranian **Solar Hijri** (Jalali) era counts the same Hijra years on a solar
+calendar whose year begins at the vernal-equinox Nowruz:
+
+```python
+print(resolve_era("solar_hijri", 1404))
+# 2025-03-20
+```
+
 ### When the year does not start on 1 January
 
 The **Byzantine** Anno Mundi (a Creation era once used across the Orthodox

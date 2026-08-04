@@ -213,6 +213,27 @@
         "NUM buddhist"
       ]
     },
+    "era_buddhist_be": {
+      "orders": [
+        "NUM be"
+      ]
+    },
+    "era_hijri": {
+      "orders": [
+        "in? article? hijri year_word? NUM MONTH",
+        "in? article? hijri year_word? NUM",
+        "NUM hijri MONTH",
+        "NUM hijri"
+      ]
+    },
+    "era_solar_hijri": {
+      "orders": [
+        "in? article? solar_hijri year_word? NUM MONTH",
+        "in? article? solar_hijri year_word? NUM",
+        "NUM solar_hijri MONTH",
+        "NUM solar_hijri"
+      ]
+    },
     "deep_time": {
       "orders": [
         "NUM SCALE year_word ago",

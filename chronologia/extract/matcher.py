@@ -519,5 +519,17 @@ class ConstructionMatcher:
         chosen.sort(key=lambda c: c.match.span[0])
         return chosen
 
-    def match(self, tokens: Tuple[Token, ...]) -> Tuple[Match, ...]:
-        return tuple(c.match for c in self._select(self._candidates(tokens)))
+    def match(self, tokens: Tuple[Token, ...], veto=None) -> Tuple[Match, ...]:
+        """The non-overlapping parse winners.
+
+        ``veto`` is an optional ``match -> bool`` predicate applied to the raw
+        candidates BEFORE the overlap contest (:meth:`_select`).  A vetoed
+        candidate is removed up front, so a shorter reading it would otherwise
+        out-span survives the contest instead of being silently suppressed by a
+        winner the caller means to decline (e.g. a bare-"be" era reading that
+        must yield to the plain year when it is not clause-final).
+        """
+        cands = self._candidates(tokens)
+        if veto is not None:
+            cands = [c for c in cands if not veto(c.match)]
+        return tuple(c.match for c in self._select(cands))
