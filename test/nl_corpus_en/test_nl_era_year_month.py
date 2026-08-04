@@ -22,18 +22,21 @@ from ._corpus import ANCHOR, AstroDate, parse, span, start_end
 
 
 # -- Buddhist Era: BE == CE + 543, epoch-correct + name consumed ----------
-# Only the SPELLED "Buddhist Era" surface is wired.  The bare "BE"
-# abbreviation is DEFERRED: "be" is an extremely common English verb and the
-# tokenizer lower-cases the surface (only first-letter capitalisation
-# survives, which cannot tell the "BE" abbreviation from a sentence-initial
-# "Be"), so a bare-"be" surface would silently misread ordinary text
-# ("in 2020 be ready" -> Buddhist Era 2020).  An honest gap on "2560 BE" is
-# strictly better than that regression.
+# Both the SPELLED "Buddhist Era" surface and the bare "BE" abbreviation are
+# wired.  "be" is an extremely common English verb, so the bare abbreviation
+# fires ONLY at end-of-clause (nothing trailing) -- "2560 BE" resolves, but
+# the verb collision "in 2020 be ready" is refused (see the guard test below).
+# This used to be a DELIBERATE GAP ("2560 BE" was left unresolved) because a
+# naive bare-"be" surface silently misread ordinary text; the end-of-clause
+# guard is what makes the feature safe to wire.
 @pytest.mark.parametrize("text, value", [
     ("Buddhist Era 2560", 2560),
     ("in the Buddhist Era 2560", 2560),
     ("Buddhist Era 2483", 2483),          # 1940
     ("Buddhist Era 2500", 2500),
+    ("2560 BE", 2560),                    # bare abbreviation, now wired
+    ("2540 BE", 2540),                    # 1997
+    ("2560 B.E.", 2560),                  # dotted abbreviation
 ])
 def test_buddhist_era_resolves_through_epoch(text, value):
     s = span(text)
@@ -49,12 +52,23 @@ def test_buddhist_2560_is_2017():
     assert e == AstroDate(2018, 1, 1)
 
 
-def test_bare_be_abbreviation_never_reads_as_buddhist_era():
-    # DEFERRED surface: "2560 BE" must NOT resolve to the (wrong) literal-year
-    # reading nor to a bogus era value; a clean miss is acceptable.  Crucially
-    # it must never yield the 1477 (== 2560 - 543 wired wrong) misread.
-    r = parse("2560 BE")
-    assert r is None or r[0].start.year != 1477
+def test_bare_be_2540_is_1997():
+    # bare "BE" now wired (used to be a deliberate gap): BE 2540 == 1997 CE
+    s, e = start_end("2540 BE")
+    assert s == AstroDate(1997, 1, 1)
+    assert e == AstroDate(1998, 1, 1)
+    assert parse("2540 BE")[1] == ""      # abbreviation fully consumed
+
+
+def test_bare_be_verb_collision_is_refused():
+    # "be" is a common English verb; the bare abbreviation fires ONLY at
+    # end-of-clause.  Ordinary text with a trailing continuation must NOT
+    # misread the year as a Buddhist-Era value (the 1477 == 2020 - 543 misread
+    # the original deferral guarded against): the year reads as the plain
+    # Gregorian 2020 with "be ready" stranded, never Buddhist Era 2020.
+    s, e = start_end("in 2020 be ready")
+    assert s == AstroDate(2020, 1, 1)
+    assert parse("in 2020 be ready")[1] == "be ready"
 
 
 

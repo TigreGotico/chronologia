@@ -703,6 +703,12 @@ and its cycle, Assumption, All Saints, Carnival …) in *its own language*, and
 nothing more: the reference is scoped to what people in that language actually
 say, not to every jurisdiction's full rule catalogue.
 
+A bare **"new year"** in English is recognised as New Year's Day (1 January),
+consistently across `extract_timespan`, `extract_candidates`, and phrase
+composition ("new year party"). The **definite-article** form, "*the* new
+year", is deliberately *not* the holiday — it is the ambiguous "coming year"
+period — and does not resolve to 1 January.
+
 ```python
 from chronologia import extract_timespan
 from datetime import datetime

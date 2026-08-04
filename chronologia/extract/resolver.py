@@ -204,6 +204,7 @@ DATE_CONSTRUCTIONS = frozenset({
     "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
     "era_bc", "era_ad", "era_bp", "era_auc", "era_buddhist",
+    "era_buddhist_be", "era_hijri", "era_solar_hijri",
     "olympiad_ref", "archon_ref",
     "roman_classical", "deep_time", "named_period",
     # a day-of-month reference ("on the 15th", "by the 15th") resolves to a
@@ -211,7 +212,7 @@ DATE_CONSTRUCTIONS = frozenset({
     # clock exactly as any other date does, so "5pm on the 15th" places the
     # clock on that day instead of dropping the day and timing the anchor's.
     "month_day_ref",
-    "holiday_ref"})
+    "holiday_ref", "new_year_ref"})
 
 
 def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolution:
@@ -1746,6 +1747,39 @@ class Resolver:
         return Resolution(self._narrow_to_month(span, match),
                           self._consumed(match))
 
+    def _resolve_era_buddhist_be(self, match, anchor):
+        """"2540 BE": the bare "BE" Buddhist-Era abbreviation, wired SUFFIX-ONLY
+        (``NUM be``, never ``be NUM``).  "be" is a common English verb, so a
+        prefix order would misfire on "there will be 3 dogs"; requiring the year
+        to PRECEDE the marker keeps the surface adjacent-to-year, exactly as the
+        spelled ``buddhist`` form does.  Resolves through the same BE epoch
+        (BE == CE + 543, so BE 2540 == 1997 CE)."""
+        n = int(match.slots["NUM"].value)
+        span = self._era_span("buddhist", n)
+        return Resolution(self._narrow_to_month(span, match),
+                          self._consumed(match))
+
+    def _resolve_era_hijri(self, match, anchor):
+        """"1447 AH" / "AH 1447" / "Anno Hegirae 1447": the Gregorian year-span
+        of that Islamic (lunar) Hijri year, resolved through the registry's
+        epoch (AH 1 == 622-07-19, the tabular civil-Hijri calendar), never the
+        literal number read as a Gregorian year.  Calendar-backed, so the span
+        advances the native Hijri year (not a naive +1 Gregorian year)."""
+        n = int(match.slots["NUM"].value)
+        span = self._era_span("hijri", n)
+        return Resolution(self._narrow_to_month(span, match),
+                          self._consumed(match))
+
+    def _resolve_era_solar_hijri(self, match, anchor):
+        """"1404 Solar Hijri" / "S.H. 1404": the Gregorian year-span of that
+        Iranian Solar Hijri (Jalali) year, resolved through the registry's
+        epoch (SH 1 == 622-03-21, vernal-equinox Nowruz), not the literal
+        number.  Calendar-backed, so the span advances the native solar year."""
+        n = int(match.slots["NUM"].value)
+        span = self._era_span("solar_hijri", n)
+        return Resolution(self._narrow_to_month(span, match),
+                          self._consumed(match))
+
     def _narrow_to_month(self, span, match):
         """Narrow a whole-year era span to a single month when the match
         carries a MONTH slot; otherwise return the year span unchanged.  The
@@ -1890,6 +1924,27 @@ class Resolver:
             return None
         span, _basis = got
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
+
+    def _resolve_new_year_ref(self, match, anchor):
+        """Bare "new year" / "new years" -> New Year's Day (Jan 1), the
+        occurrence on or after the anchor date -- the same choice a bare
+        holiday reference makes.
+
+        Kept a construction of its own (order ``new year_word``) rather than a
+        multiword holiday surface: folding "new year" into a single token would
+        shadow :meth:`_resolve_hebrew_new_year` ("the hebrew new year 5786"),
+        whose grammar needs "new" and "year" as SEPARATE slots.  Wiring it here
+        makes ``extract_candidates``, ``extract_timespan`` and phrase
+        composition ("new year party") all agree on the same reading, instead
+        of only the whole-utterance fast path resolving it.
+
+        The DEFINITE-ARTICLE form ("the new year") is deliberately NOT this
+        holiday -- it is the ambiguous "coming year" period.  The order carries
+        no ``article`` slot, so "the" is never folded in; a leading "the" is
+        vetoed by :func:`_new_year_definite_article_veto` in both public APIs.
+        """
+        from chronologia.extract.timespan import _new_year_span
+        return Resolution(_new_year_span(anchor), self._consumed(match))
 
     @staticmethod
     def _holiday_year(wk, anchor_date, rel):

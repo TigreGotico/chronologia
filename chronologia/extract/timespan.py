@@ -1947,6 +1947,55 @@ def _trailing_scope_veto(tokens, consumed, spec):
     return len(rest) == 1 and _is_scope_noun(rest[0].text, spec)
 
 
+def _new_year_definite_article_veto(tokens, match, spec) -> bool:
+    """True when a bare ``new_year_ref`` match is immediately preceded by the
+    definite article ("the new year", "in the new year").
+
+    Bare "new year" is New Year's Day; the DEFINITE-article form is the
+    ambiguous "coming year" period, NOT the holiday, so it must not resolve to
+    Jan 1.  The ``new_year_ref`` order carries no ``article`` slot, so "the" is
+    never folded into the match -- this veto drops the reading whose left
+    neighbour is the definite article, in BOTH public APIs, keeping them in
+    agreement (both return the un-holiday reading -> None here).
+    """
+    if match.construction != "new_year_ref":
+        return False
+    start = match.span[0]
+    if start == 0:
+        return False
+    articles = spec.connectors.get("article", frozenset())
+    return tokens[start - 1].text.lower() in articles
+
+
+def _bare_be_trailing_veto(tokens, match, spec) -> bool:
+    """True when a bare-"BE" Buddhist-Era match ("2560 BE") is followed by more
+    tokens -- i.e. "be" is really the common English verb, not the abbreviation.
+
+    "be" is an extremely common word and the tokenizer lower-cases surfaces, so
+    a plain NUM-adjacency guard (enough for "bc"/"bp") would misread ordinary
+    text: "in 2020 be ready" -> Buddhist Era 2020 (1477 CE).  The BE
+    abbreviation is a clause-final postfix on the year ("2560 BE"), whereas the
+    verb "be" leads into a continuation ("... be ready").  Restricting the bare
+    abbreviation to end-of-clause (nothing trailing) keeps "2560 BE" while
+    refusing the verb collision -- a clean miss on the rarer "2560 BE was ..."
+    is strictly better than a silent-wrong on everyday "... be ...".  The
+    spelled "Buddhist Era 2560" surface carries no such restriction.
+    """
+    if match.construction != "era_buddhist_be":
+        return False
+    return match.span[1] < len(tokens)
+
+
+def _candidate_veto(tokens, match, spec) -> bool:
+    """Combined pre-selection veto: readings whose surrounding context makes
+    them the WRONG parse ("the new year" is the period not the holiday; a
+    non-clause-final "be" is the verb not the era).  Applied before the overlap
+    contest so the shorter correct reading (a year_ref, or nothing) survives.
+    """
+    return (_new_year_definite_article_veto(tokens, match, spec)
+            or _bare_be_trailing_veto(tokens, match, spec))
+
+
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
                   scale_mode="short"):
     """The single recursive resolver over the token stream.
@@ -2193,7 +2242,8 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     whole utterance does, from a re-based slice of the same stream.
     """
     resolved = []
-    for match in engine.matcher.match(tokens):
+    veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
+    for match in engine.matcher.match(tokens, veto):
         # construction-group gate: a construction tagged ``"group": <g>`` in
         # lang.json is OFF unless ``g`` is in ``enable``.  The raw-Latin date
         # formulas live in the ``"classical"`` group -- unambiguous everyday
@@ -2305,7 +2355,8 @@ def extract_candidates(
     # "5 days after".  Mirrors the post-pass block of _resolve_core (the
     # single-span hot path is deliberately left untouched).
     composed = []
-    for m in engine.matcher.match(tokens):
+    veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
+    for m in engine.matcher.match(tokens, veto):
         group = engine.spec.construction_flags.get(
             m.construction, {}).get("group")
         if group is not None:
@@ -2361,7 +2412,8 @@ def extract_candidates(
     # would never return.
     runner_ups = [c.match for c in engine.matcher._candidates(tokens)
                   if engine.spec.construction_flags.get(
-                      c.match.construction, {}).get("group") is None]
+                      c.match.construction, {}).get("group") is None
+                  and not _candidate_veto(tokens, c.match, engine.spec)]
     matches = [m for m, _ in composed] + runner_ups
     for sc in _score_candidates(matches, _resolve_one, engine.spec):
         match, res, conf = sc.match, sc.resolution, sc.confidence

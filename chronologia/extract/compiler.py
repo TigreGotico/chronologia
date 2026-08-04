@@ -50,6 +50,13 @@ PRECEDENCE: Dict[str, int] = {
     "era_holocene": 1,
     "era_anno_mundi": 1,
     "era_buddhist": 1,
+    "era_buddhist_be": 1,
+    # Islamic (lunar) Hijri and Iranian Solar Hijri era-year surfaces resolve
+    # through the era registry's epoch (AH 1 == 622-07-19, SH 1 == 622-03-21),
+    # so they win the era tie and consume the era name rather than stranding it
+    # for a bare year_ref
+    "era_hijri": 1,
+    "era_solar_hijri": 1,
     # "eve of <Roman anchor>" must outrank the bare roman_date it wraps
     "roman_eve": 1,
     "olympiad_ref": 1,
@@ -65,6 +72,11 @@ PRECEDENCE: Dict[str, int] = {
     # tiers: a same-span calendar reading is preferred, a longer holiday span is
     # not (the holiday surface has no calendar competitor of equal length there).
     "holiday_ref": 6,
+    # bare "New Year" (Jan 1) as a standalone day reference; kept as its own
+    # construction (not a multiword holiday surface) so "new"+"year" stay
+    # separate tokens and never shadow hebrew_new_year.  Same rank as a plain
+    # holiday reference: on the shared span it wins over a bare year_ref
+    "new_year_ref": 6,
     # a bare "HHMM hours" would otherwise read as an "N-th hour" scoped
     # ordinal, so military time wins the same-span tie
     "military_time": 1,

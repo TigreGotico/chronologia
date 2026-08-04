@@ -978,10 +978,14 @@ def test_business_days_before_unresolved_reference_declines():
     silently compute N business days FORWARD from the anchor (dropping the
     marker and inverting a "before"); it declines, like the plain offset path."""
     from chronologia import extract_timespan
-    assert extract_timespan("2 business days before new year", "en", _A) is None
-    assert extract_timespan("3 business days after new year", "en", _A) is None
-    # a resolvable reference and the bare form are unaffected
+    # an unresolvable reference declines (was "new year", now a wired holiday
+    # reference -- see below; use a genuinely non-temporal reference instead)
+    assert extract_timespan("2 business days before someday", "en", _A) is None
+    assert extract_timespan("3 business days after someday", "en", _A) is None
+    # a resolvable reference and the bare form are unaffected; bare "new year"
+    # now resolves like christmas, so the offset composes on it
     assert extract_timespan("2 business days before christmas", "en", _A) is not None
+    assert extract_timespan("2 business days before new year", "en", _A) is not None
     assert extract_timespan("in 3 business days", "en", _A)[0].start.day == 30
 
 
