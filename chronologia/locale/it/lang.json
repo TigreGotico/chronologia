@@ -164,6 +164,11 @@
         "article? PART of? article? UNIT REL_MARKER",
         "PART REL_MARKER UNIT"
       ]
+    },
+    "rel_span": {
+      "orders": [
+        "NUM REL_MARKER UNIT"
+      ]
     }
   },
   "conventions": {

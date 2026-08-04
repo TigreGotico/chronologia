@@ -119,6 +119,11 @@
         "article? ANCHOR_DAY of MONTH",
         "article? ANCHOR_DAY MONTH"
       ]
+    },
+    "rel_span": {
+      "orders": [
+        "NUM REL_MARKER UNIT"
+      ]
     }
   },
   "conventions": {
