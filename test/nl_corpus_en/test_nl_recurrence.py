@@ -170,6 +170,11 @@ _BOUND_CASES = [
     ("every monday for 6 weeks", "FREQ=WEEKLY;COUNT=6;BYDAY=MO", ""),
     ("every friday for three weeks", "FREQ=WEEKLY;COUNT=3;BYDAY=FR", ""),
     ("weekly for 4 weeks", "FREQ=WEEKLY;COUNT=4", ""),
+    # COUNT and UNTIL are mutually exclusive (RFC 5545): an explicit UNTIL bound
+    # wins and the trailing "N times" is left in the remainder -- it must NOT
+    # add COUNT onto the UNTIL rule (which raised an unhandled ValueError out of
+    # the public extractor).
+    ("every day 5 times until march", "FREQ=DAILY;UNTIL=20170301T000000", "5 times"),
 ]
 
 

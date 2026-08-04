@@ -848,7 +848,12 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
     # "0 times" is degenerate (no occurrences): it is declined outright, left in
     # the remainder rather than emitted as COUNT=0.
     n = len(tokens)
-    if ctx.count_words and isinstance(rec, Recurrence) and rec.count is None:
+    # COUNT and UNTIL are mutually exclusive in RFC 5545: if an explicit bound
+    # already set UNTIL ("every day 5 times until March"), do NOT also add the
+    # trailing count -- that would build an invalid rule and raise out of the
+    # public extractor.  UNTIL wins; the "N times" stays in the remainder.
+    if (ctx.count_words and isinstance(rec, Recurrence)
+            and rec.count is None and rec.until is None):
         for i in range(n):
             if i in consumed or tokens[i].text not in ctx.count_words:
                 continue
@@ -1729,25 +1734,15 @@ def _recur_date_anchored(ctx):
         if not (j < n and t[j].text in ctx.units
                 and ctx.units[t[j].text] == "month"):
             continue
-        # "every month (on)(the) <N>": the next number within a short window.
-        r = j + 1
-        steps = 0
-        while r < n and not t[r].is_number and steps < 3:
-            r += 1
-            steps += 1
-        # ... but a number that is really the trailing occurrence count
-        # ("every month 5 TIMES", "the 3rd of every month 5 times") is NOT the
-        # day-of-month: leave it for the COUNT post-pass and let the backward
-        # ordinal branch below read the real day.
-        if (r < n and t[r].is_number and 1 <= int(t[r].value) <= 31
-                and not (r + 1 < n and t[r + 1].text in ctx.count_words)):
-            return (_build_every("monthly", bymonthday=int(t[r].value)),
-                    set(range(i, r + 1)))
-        # "<N> of every month" / "the last [day] of every month": the ordinal
-        # (or the "last" marker) just before the "every".  An explicit "day"
-        # noun may sit between the ordinal and "of" ("the first day of every
-        # month", "the 15th day of every month") -- skip it so the ordinal is
-        # still reached, mirroring the leading-"day" swallow below.
+        # "<N> of every month" / "the last [day] of every month": a preposed
+        # ordinal (or "last" marker) just BEFORE "every".  Checked FIRST -- a
+        # preposed day-of-month is the specific reading and must win over a
+        # trailing number that is really an occurrence count ("the 15th of every
+        # month 3 times", es "el 15 de cada mes 3 veces": read day 15, leave the
+        # count for the post-pass).  Doing this before the forward scan is
+        # locale-independent, unlike the count-word guard on that scan (the
+        # count words are only defined for some locales).  An explicit "day"
+        # noun may sit between the ordinal and "of" -- skip it.
         k = i - 1
         while k >= 0 and (t[k].text in ctx.of_words or t[k].text in ctx.articles
                           or (t[k].text in ctx.units
@@ -1771,6 +1766,19 @@ def _recur_date_anchored(ctx):
                 start -= 1
             return (_build_every("monthly", bymonthday=day_val),
                     set(range(start, j + 1)))
+        # "every month (on)(the) <N>": a POSTPOSED number within a short window,
+        # only when there was no preposed ordinal above.  A number that is
+        # really the trailing occurrence count ("every month 5 TIMES") is left
+        # for the COUNT post-pass (guarded by the locale's count words).
+        r = j + 1
+        steps = 0
+        while r < n and not t[r].is_number and steps < 3:
+            r += 1
+            steps += 1
+        if (r < n and t[r].is_number and 1 <= int(t[r].value) <= 31
+                and not (r + 1 < n and t[r + 1].text in ctx.count_words)):
+            return (_build_every("monthly", bymonthday=int(t[r].value)),
+                    set(range(i, r + 1)))
 
     # -- yearly: a full calendar date *immediately* after "every [year] [on]"
     # The date must start right after the every-skeleton (articles, an optional
