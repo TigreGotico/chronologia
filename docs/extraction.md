@@ -1525,7 +1525,12 @@ language is a directory under `chronologia/locale/<code>/`:
   Monday; `unit_day.voc` the words meaning "day"; `marker_next.voc` the
   words meaning "next". Non-Gregorian months use
   `month_<calendar>_<n>.voc` (e.g. `month_islamic_civil_9.voc` is Ramadan),
-  where `<calendar>` must be a calendar the core knows.
+  where `<calendar>` must be a calendar the core knows. In Hebrew, a
+  Hebrew-calendar year written in traditional *gematria* letter-numerals is
+  read like the digit form: `15 אדר תשפ״ה` resolves the same as
+  `15 אדר 5785` (the *small count* drops the implied 5000; the full count
+  `ה׳תשפ״ה` is read too), so a Hebrew month followed by a gematria year lands
+  on the same Gregorian span as its numeric equivalent.
 - **`lang.json`** — the one stanza per language: tokenizer options, the
   constructions this language enables, calendar conventions (day/month
   order, hemisphere, week start, and `weekend_start` — the first day of the
