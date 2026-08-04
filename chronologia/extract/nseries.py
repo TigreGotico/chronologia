@@ -1380,6 +1380,36 @@ def _recur_on_weekdays(ctx):
     return None
 
 
+def _preposed_monthday(ctx, t, i):
+    """A preposed day-of-month sitting just before ``every`` at index ``i`` --
+    "the <N> of every 2 months", "the 15th of every quarter", "the last [day]
+    of every quarter".  Returns ``(day_val, start)`` where ``day_val`` is 1..31
+    or -1 ("last") and ``start`` is the first consumed token, or ``(None, i)``
+    when no preposed ordinal is present.  Mirrors the backward scan the
+    INTERVAL=1 "N of every month" finder uses, for the interval/quarter frames
+    that finder does not reach."""
+    k = i - 1
+    while k >= 0 and (t[k].text in ctx.of_words or t[k].text in ctx.articles
+                      or (t[k].text in ctx.units
+                          and ctx.units[t[k].text] == "day")):
+        k -= 1
+    day_val = None
+    if k >= 0 and t[k].is_number and 1 <= int(t[k].value) <= 31:
+        day_val = int(t[k].value)
+    elif (k >= 0 and t[k].text in ctx.rel_markers
+          and ctx.rel_markers[t[k].text] == -1):
+        day_val = -1
+    if day_val is None:
+        return None, i
+    start = k
+    while start - 1 >= 0 and (
+            t[start - 1].text in ctx.articles
+            or (t[start - 1].text in ctx.units
+                and ctx.units[t[start - 1].text] == "day")):
+        start -= 1
+    return day_val, start
+
+
 def _recur_every(ctx):
     """``every [other|N] (<weekday> | <unit> | weekday-word)``, plus the
     **elliptical** nth-weekday / day-of-month readings that drop the
@@ -1506,8 +1536,23 @@ def _recur_every(ctx):
         # fraction (a quarter of an hour) or a clock fraction (quarter past),
         # never a recurrence, so those readings are untouched.
         if t[j].text in ctx.quarter_word:
-            return (_build_every("monthly", interval=interval * 3),
-                    set(range(i, j + 1)))
+            kw = {"interval": interval * 3}
+            start, end = i, j + 1
+            # a placement qualifier pins the day-of-month, like the "every N
+            # months" case: postposed "every quarter on [the] <Nth>" or preposed
+            # "the <Nth> of every quarter".
+            if j + 1 < n and t[j + 1].text in ctx.on_words:
+                k = j + 2
+                while k < n and t[k].text in ctx.articles:
+                    k += 1
+                if k < n and t[k].is_number and 1 <= int(t[k].value) <= 31:
+                    kw["bymonthday"] = int(t[k].value)
+                    end = _of_month_tail(ctx, k + 1)
+            if "bymonthday" not in kw:
+                pre_day, pre_start = _preposed_monthday(ctx, t, i)
+                if pre_day is not None:
+                    kw["bymonthday"], start = pre_day, pre_start
+            return _build_every("monthly", **kw), set(range(start, end))
         # A derived weekday plural ("tous les lundis", "todas as segundas") is
         # licensed here: this is already the "every"-determiner frame, so the
         # same positional licence _recur_nth_weekday uses applies, and the guard
@@ -1572,6 +1617,15 @@ def _recur_every(ctx):
                                         "monthly",
                                         bymonthday=int(t[k].value), **iv),
                                     set(range(i, _of_month_tail(ctx, k + 1))))
+                # a preposed day-of-month ("the 15th of every 2 months") is the
+                # placement qualifier for an interval-months rule that no
+                # postposed "on the Nth" carried.  Guarded to interval != 1 so
+                # it never overlaps the INTERVAL=1 "N of every month" finder.
+                if freq == "MONTHLY" and interval != 1:
+                    pre_day, pre_start = _preposed_monthday(ctx, t, i)
+                    if pre_day is not None:
+                        return (_build_every("monthly", bymonthday=pre_day, **iv),
+                                set(range(pre_start, j + 1)))
                 return _build_every(freq, **iv), set(range(i, j + 1))
     return None
 
