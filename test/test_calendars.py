@@ -769,3 +769,109 @@ def test_hebrew_adar_ii_nl_binds_month_13_not_12():
     r12 = _c.extract_timespan("15 Adar 5784", "en")
     assert (r12.span.start.year, r12.span.start.month, r12.span.start.day) \
         == (2024, 2, 24)
+
+
+# -- arithmetic *_to_jdn functions validate directly, like TabulatedCalendar -
+#
+# ``Calendar.date``/``Calendar.validate`` already round-trip-check before
+# calling ``to_jdn`` (see the tests above), but the low-level module-level
+# functions -- ``hebrew_to_jdn``, ``islamic_civil_to_jdn`` and friends -- are
+# public API too and were silently wrapping out-of-range month/day into a
+# wrong-but-plausible JDN instead of raising, unlike ``TabulatedCalendar.
+# to_jdn`` which always validated.  These calls bypass ``Calendar.date``
+# entirely, so the guard has to live in the arithmetic function itself.
+
+def test_hebrew_to_jdn_rejects_impossible_month_directly():
+    # 5785 is a common Hebrew year (12 months): month 13 does not exist.
+    # Before the fix this silently wrapped to a WRONG jdn: hebrew_to_jdn
+    # (5785, 13, 1) == 2460765, which decodes back as (5785, 1, 1) -- not
+    # an error, and not the requested date either.
+    with pytest.raises(cal.CalendarRangeError):
+        cal.hebrew_to_jdn(5785, 13, 1)
+    with pytest.raises(cal.CalendarRangeError):
+        cal.hebrew_to_jdn(5785, 14, 1)
+
+
+def test_islamic_civil_to_jdn_rejects_impossible_month_directly():
+    # Islamic civil has 12 months every year.  Before the fix this silently
+    # wrapped: islamic_civil_to_jdn(1447, 13, 1) == 2461208, which decodes
+    # back as (1447, 12, 30).
+    with pytest.raises(cal.CalendarRangeError):
+        cal.islamic_civil_to_jdn(1447, 13, 1)
+
+
+def test_solar_hijri_to_jdn_rejects_impossible_esfand_30_directly():
+    # AP 1403 is a common Solar Hijri year (_solar_hijri_leap(1403) is
+    # False): Esfand (month 12) has 29 days, so day 30 is impossible.
+    assert cal._solar_hijri_leap(1403) is False
+    with pytest.raises(cal.CalendarRangeError):
+        cal.solar_hijri_to_jdn(1403, 12, 30)
+    # AP 1404 is a leap year: Esfand 30 is the valid leap day the fa path
+    # relies on, and must still convert (and round-trip).
+    assert cal._solar_hijri_leap(1404) is True
+    jdn = cal.solar_hijri_to_jdn(1404, 12, 30)
+    assert cal.solar_hijri_from_jdn(jdn) == (1404, 12, 30)
+
+
+def test_french_republican_to_jdn_rejects_impossible_complementary_day():
+    # Year 5 is not sextile: only 5 complementary days (month 13).
+    assert cal._fr_sextile(5) is False
+    with pytest.raises(cal.CalendarRangeError):
+        cal.french_republican_to_jdn(5, 13, 6)
+    # Year 3 is sextile: the 6th complementary day is valid and round-trips.
+    assert cal._fr_sextile(3) is True
+    jdn = cal.french_republican_to_jdn(3, 13, 6)
+    assert cal.french_republican_from_jdn(jdn) == (3, 13, 6)
+
+
+def test_coptic_and_ethiopic_to_jdn_reject_impossible_epagomenal_day():
+    # Coptic/Ethiopic leap iff year % 4 == 3: only then does the epagomenal
+    # 13th month have a 6th day.
+    with pytest.raises(cal.CalendarRangeError):
+        cal.coptic_to_jdn(1, 13, 6)
+    with pytest.raises(cal.CalendarRangeError):
+        cal.ethiopic_to_jdn(1, 13, 6)
+    jdn = cal.coptic_to_jdn(3, 13, 6)
+    assert cal.coptic_from_jdn(jdn) == (3, 13, 6)
+    jdn = cal.ethiopic_to_jdn(3, 13, 6)
+    assert cal.ethiopic_from_jdn(jdn) == (3, 13, 6)
+
+
+def test_bahai_to_jdn_rejects_impossible_ayyam_i_ha_day():
+    # BE 1 has only 4 Ayyam-i-Ha days; BE 4 has 5.
+    with pytest.raises(cal.CalendarRangeError):
+        cal.bahai_to_jdn(1, 0, 5)
+    jdn = cal.bahai_to_jdn(4, 0, 5)
+    assert cal.bahai_from_jdn(jdn) == (4, 0, 5)
+
+
+def test_julian_to_jdn_rejects_impossible_february_29():
+    # 2025 is not a Julian leap year (2025 % 4 != 0): Feb 29 is impossible.
+    with pytest.raises(cal.CalendarRangeError):
+        cal.julian_to_jdn(2025, 2, 29)
+    # 2024 is a Julian leap year: Feb 29 is valid and round-trips.
+    jdn = cal.julian_to_jdn(2024, 2, 29)
+    assert cal.jdn_to_julian(jdn) == (2024, 2, 29)
+
+
+@pytest.mark.parametrize("key,y,m,d", [
+    ("hebrew", 5784, 13, 1),        # Adar II of a leap year
+    ("hebrew", 5784, 12, 1),        # Adar I of a leap year
+    ("hebrew", 5785, 12, 1),        # Adar of a common year (last month)
+    ("islamic_civil", 1447, 12, 30),
+    ("solar_hijri_arithmetic", 1404, 12, 30),  # leap Esfand
+    ("solar_hijri_arithmetic", 1403, 12, 29),  # common-year Esfand max
+    ("french_republican", 3, 13, 6),
+    ("french_republican", 5, 13, 5),
+    ("coptic", 3, 13, 6),
+    ("ethiopian", 3, 13, 6),
+    ("bahai", 4, 0, 5),
+    ("bahai", 1, 0, 4),
+    ("julian", 2024, 2, 29),
+])
+def test_valid_leap_dates_round_trip_unchanged_after_validation(key, y, m, d):
+    """Every genuine leap-month/leap-day case still converts and round-trips
+    -- the fix only rejects impossible dates, never a valid one."""
+    c = CALENDARS[key]
+    jdn = c.to_jdn(y, m, d)
+    assert c.from_jdn(jdn) == (y, m, d)
