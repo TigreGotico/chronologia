@@ -1947,6 +1947,26 @@ def _trailing_scope_veto(tokens, consumed, spec):
     return len(rest) == 1 and _is_scope_noun(rest[0].text, spec)
 
 
+def _new_year_definite_article_veto(tokens, match, spec) -> bool:
+    """True when a bare ``new_year_ref`` match is immediately preceded by the
+    definite article ("the new year", "in the new year").
+
+    Bare "new year" is New Year's Day; the DEFINITE-article form is the
+    ambiguous "coming year" period, NOT the holiday, so it must not resolve to
+    Jan 1.  The ``new_year_ref`` order carries no ``article`` slot, so "the" is
+    never folded into the match -- this veto drops the reading whose left
+    neighbour is the definite article, in BOTH public APIs, keeping them in
+    agreement (both return the un-holiday reading -> None here).
+    """
+    if match.construction != "new_year_ref":
+        return False
+    start = match.span[0]
+    if start == 0:
+        return False
+    articles = spec.connectors.get("article", frozenset())
+    return tokens[start - 1].text.lower() in articles
+
+
 def _bare_be_trailing_veto(tokens, match, spec) -> bool:
     """True when a bare-"BE" Buddhist-Era match ("2560 BE") is followed by more
     tokens -- i.e. "be" is really the common English verb, not the abbreviation.
@@ -1967,12 +1987,13 @@ def _bare_be_trailing_veto(tokens, match, spec) -> bool:
 
 
 def _candidate_veto(tokens, match, spec) -> bool:
-    """Pre-selection veto: a reading whose surrounding context makes it the
-    WRONG parse (a non-clause-final "be" is the verb, not the BE era).  Applied
-    before the overlap contest so the shorter correct reading (a year_ref, or
-    nothing) survives rather than being suppressed by the longer wrong one.
+    """Combined pre-selection veto: readings whose surrounding context makes
+    them the WRONG parse ("the new year" is the period not the holiday; a
+    non-clause-final "be" is the verb not the era).  Applied before the overlap
+    contest so the shorter correct reading (a year_ref, or nothing) survives.
     """
-    return _bare_be_trailing_veto(tokens, match, spec)
+    return (_new_year_definite_article_veto(tokens, match, spec)
+            or _bare_be_trailing_veto(tokens, match, spec))
 
 
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,

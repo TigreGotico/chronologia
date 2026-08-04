@@ -315,6 +315,11 @@
         "HOLIDAY"
       ]
     },
+    "new_year_ref": {
+      "orders": [
+        "new year_word"
+      ]
+    },
     "solar_event": {
       "orders": [
         "article? SEASON EVENT YEAR?",

@@ -72,6 +72,11 @@ PRECEDENCE: Dict[str, int] = {
     # tiers: a same-span calendar reading is preferred, a longer holiday span is
     # not (the holiday surface has no calendar competitor of equal length there).
     "holiday_ref": 6,
+    # bare "New Year" (Jan 1) as a standalone day reference; kept as its own
+    # construction (not a multiword holiday surface) so "new"+"year" stay
+    # separate tokens and never shadow hebrew_new_year.  Same rank as a plain
+    # holiday reference: on the shared span it wins over a bare year_ref
+    "new_year_ref": 6,
     # a bare "HHMM hours" would otherwise read as an "N-th hour" scoped
     # ordinal, so military time wins the same-span tie
     "military_time": 1,

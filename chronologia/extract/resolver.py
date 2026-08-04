@@ -212,7 +212,7 @@ DATE_CONSTRUCTIONS = frozenset({
     # clock exactly as any other date does, so "5pm on the 15th" places the
     # clock on that day instead of dropping the day and timing the anchor's.
     "month_day_ref",
-    "holiday_ref"})
+    "holiday_ref", "new_year_ref"})
 
 
 def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolution:
@@ -1924,6 +1924,27 @@ class Resolver:
             return None
         span, _basis = got
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
+
+    def _resolve_new_year_ref(self, match, anchor):
+        """Bare "new year" / "new years" -> New Year's Day (Jan 1), the
+        occurrence on or after the anchor date -- the same choice a bare
+        holiday reference makes.
+
+        Kept a construction of its own (order ``new year_word``) rather than a
+        multiword holiday surface: folding "new year" into a single token would
+        shadow :meth:`_resolve_hebrew_new_year` ("the hebrew new year 5786"),
+        whose grammar needs "new" and "year" as SEPARATE slots.  Wiring it here
+        makes ``extract_candidates``, ``extract_timespan`` and phrase
+        composition ("new year party") all agree on the same reading, instead
+        of only the whole-utterance fast path resolving it.
+
+        The DEFINITE-ARTICLE form ("the new year") is deliberately NOT this
+        holiday -- it is the ambiguous "coming year" period.  The order carries
+        no ``article`` slot, so "the" is never folded in; a leading "the" is
+        vetoed by :func:`_new_year_definite_article_veto` in both public APIs.
+        """
+        from chronologia.extract.timespan import _new_year_span
+        return Resolution(_new_year_span(anchor), self._consumed(match))
 
     @staticmethod
     def _holiday_year(wk, anchor_date, rel):

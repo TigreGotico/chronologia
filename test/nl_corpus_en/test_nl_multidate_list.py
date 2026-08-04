@@ -51,14 +51,10 @@ def test_holiday_list_yields_one_mention_per_holiday():
     assert _starts("Christmas and Easter") == [(2017, 12, 25), (2018, 4, 1)]
 
 
-@pytest.mark.xfail(reason="bare 'New Year' has no standalone holiday surface: "
-                          "adding 'new year' collides with the hebrew_new_year "
-                          "construction ('hebrew new year 5786'), which needs "
-                          "'new'+'year' as separate tokens -- a multiword merge "
-                          "of 'new year' would break it.  Only 'new year's day' "
-                          "/ 'new years day' resolve today.", strict=True)
 def test_bare_new_year_resolves_standalone():
-    # documents the gap: "New Year" alone still yields no mention
+    # bare "New Year" now resolves via the dedicated new_year_ref construction,
+    # which keeps "new"+"year" as SEPARATE tokens (so it never shadows the
+    # hebrew_new_year construction).  Used to be a strict-xfail gap.
     assert _starts("New Year") == [(2018, 1, 1)]
 
 
