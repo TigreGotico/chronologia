@@ -17,18 +17,28 @@ import pytest
 from chronologia.hebrew_numerals import (gematria_value, hebrew_year_value,
                                           is_gematria_numeral)
 
-from ._corpus import start_end
-
 
 @pytest.mark.parametrize("gematria,numeric", [
     ("15 אדר תשפ״ה", "15 אדר 5785"),
     ("15 אדר תש״ף", "15 אדר 5780"),
     ("15 אדר תשפ״ד", "15 אדר 5784"),
-    ("אדר תשפ״ה", "אדר 5785"),           # bare month-year (no day)
+    ("אדר תשפ״ה", "אדר 5785"),           # bare month-year (no day): BOTH forms
+                                          # name no date -> None (parity holds)
     ("15 אדר ה׳תשפ״ה", "15 אדר 5785"),   # explicit full-count thousands
 ])
 def test_gematria_year_matches_numeric(gematria, numeric):
-    assert start_end(gematria) == start_end(numeric)
+    # true parity: the gematria year must resolve IDENTICALLY to the numeric
+    # year -- whether that is a concrete span or None.  A bare he month+year
+    # with no day names no date (the numeric "אדר 5785" is None too), so the
+    # equality, not a non-None span, is what this pins.
+    from datetime import datetime
+    from chronologia import extract_timespan
+
+    def _se(text):
+        r = extract_timespan(text, "he", datetime(2020, 6, 1, 12, 0))
+        return None if r is None else (r[0].start, r[0].end)
+
+    assert _se(gematria) == _se(numeric)
 
 
 def test_gematria_pinned_gregorian():
