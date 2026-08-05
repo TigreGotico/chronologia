@@ -276,8 +276,21 @@ class Tokenizer:
         # glue the letter runs into one token rather than splitting it.  They
         # occur only in Hebrew, so listing them is inert for every other locale.
         zwj = r"(?:[‌‍׳״][^\W\d]+)*"
-        word = (r"[^\W\d]+" + zwj if modes.split_contractions
-                else r"[^\W\d]+(?:['’‌‍׳״][^\W\d]+)*")
+        # a geresh can also be the mark on its OWN, trailing the letters
+        # instead of sitting between two of them: that is how a SINGLE-LETTER
+        # gematria numeral is written (א׳ = 1, ה׳ = 5), as opposed to a
+        # multi-letter one where the (gershayim) mark sits before the last
+        # letter (ט״ו = 15, כ״ט = 29) and so is already kept by ``zwj`` above.
+        # Without this, a trailing geresh has nothing after it to glue to and
+        # is dropped as a stray char, so ``is_gematria_numeral`` never sees
+        # the mark and the single-letter numeral silently fails to fold.
+        # Restricted to the real geresh/gershayim (not their ASCII '/"
+        # fallbacks, which double as ordinary quote marks) so this stays
+        # inert outside Hebrew -- an English/French trailing apostrophe or
+        # closing quote is untouched.
+        trailing_mark = r"[׳״]?"
+        word = (r"[^\W\d]+" + zwj + trailing_mark if modes.split_contractions
+                else r"[^\W\d]+(?:['’‌‍׳״][^\W\d]+)*" + trailing_mark)
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
