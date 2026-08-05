@@ -1957,8 +1957,16 @@ def _new_year_definite_article_veto(tokens, match, spec) -> bool:
     never folded into the match -- this veto drops the reading whose left
     neighbour is the definite article, in BOTH public APIs, keeping them in
     agreement (both return the un-holiday reading -> None here).
+
+    An EXPLICIT year ("the new year 2027") is not ambiguous at all -- there is
+    only one Jan 1 named "2027", holiday or period reading agree on the same
+    date -- so a bound ``YEARANY`` slot survives the veto same as "the hebrew
+    new year 5786" already does (that construction carries no such veto).
+    Bare "the new year" (no year number) keeps the ambiguous-period veto.
     """
     if match.construction != "new_year_ref":
+        return False
+    if "YEARANY" in match.slots:
         return False
     start = match.span[0]
     if start == 0:
@@ -1980,20 +1988,52 @@ def _bare_be_trailing_veto(tokens, match, spec) -> bool:
     refusing the verb collision -- a clean miss on the rarer "2560 BE was ..."
     is strictly better than a silent-wrong on everyday "... be ...".  The
     spelled "Buddhist Era 2560" surface carries no such restriction.
+
+    An explicit year-word cue leading the match ("the year 2560 BE") already
+    disambiguates -- "year" cannot itself lead into the English verb "be", so
+    trailing tokens after such a cued match are never the verb collision, and
+    the veto must not fire there ("the year 2560 BE or so" stays the era).
     """
     if match.construction != "era_buddhist_be":
         return False
-    return match.span[1] < len(tokens)
+    year_words = spec.connectors.get("year_word", frozenset())
+    start, end = match.span
+    if any(tok.text in year_words for tok in tokens[start:end]):
+        return False
+    return end < len(tokens)
+
+
+def _stray_capitalized_be_veto(tokens, match, spec) -> bool:
+    """True for a ``year_ref`` match immediately followed by a capitalized,
+    stray "BE" -- the token surface the tokenizer lower-cases into "be" but
+    whose ``cap`` flag still marks it as written upper-case in the source.
+
+    When :func:`_bare_be_trailing_veto` declines a bare "NUM BE" reading (no
+    year-word cue, more text trailing), the plain ``year_ref`` candidate for
+    that same NUM is still in the running and, being un-vetoed, wins the
+    overlap contest -- turning "2560 BE or so" into a confidently WRONG plain
+    year 2560 (543 years off) with "BE" stranded in the remainder.  An
+    ordinary verb "be" ("2020 be ready") is written lower-case and must keep
+    binding the plain year as today; only the upper-case abbreviation surface
+    is suspicious enough to withhold a confident year and prefer a clean miss.
+    """
+    if match.construction != "year_ref":
+        return False
+    end = match.span[1]
+    return end < len(tokens) and tokens[end].text == "be" and tokens[end].cap
 
 
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
-    non-clause-final "be" is the verb not the era).  Applied before the overlap
-    contest so the shorter correct reading (a year_ref, or nothing) survives.
+    non-clause-final "be" is the verb not the era; a plain year stranding a
+    capitalized "BE" is a declined era, not a confident year).  Applied before
+    the overlap contest so the shorter correct reading (a year_ref, or
+    nothing) survives.
     """
     return (_new_year_definite_article_veto(tokens, match, spec)
-            or _bare_be_trailing_veto(tokens, match, spec))
+            or _bare_be_trailing_veto(tokens, match, spec)
+            or _stray_capitalized_be_veto(tokens, match, spec))
 
 
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,

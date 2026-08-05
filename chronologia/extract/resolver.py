@@ -1990,7 +1990,7 @@ class Resolver:
         # an explicit year ("new year 2030", "new year in 2027") names THAT
         # year's Jan 1, not the prefer-future occurrence -- bind and pivot it
         # like hebrew_new_year does, instead of dropping it to the remainder.
-        year_tok = match.slots.get("YEAR")
+        year_tok = match.slots.get("YEARANY")
         if year_tok is not None:
             y = _pivot_two_digit_year(year_tok, anchor.year)
             start = AstroDate(y, 1, 1)          # New Year's DAY of that year,

@@ -104,6 +104,17 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.is_number and ((token.value or 0) >= 32
                                     or n_digits >= 4
                                     or (token.apostrophe and n_digits == 2))
+    if name == "YEARANY":
+        # like YEAR, but WITHOUT the >=32 lower bound: used only by
+        # constructions whose leading word already disambiguates a trailing
+        # number as a year rather than a day/count ("new year 27" cannot mean
+        # a day-of-month -- there is no month/day slot in this construction),
+        # so the two-digit-year pivot must bind uniformly regardless of
+        # whether the value happens to be <32 ("27") or >=32 ("99").  Still
+        # requires >=2 digits so a stray single digit doesn't get read as a
+        # year.
+        n_digits = sum(c.isdigit() for c in token.raw)
+        return token.is_number and n_digits >= 2
     if name == "GYEAR":
         # a standalone Gregorian year: a bare digit run inside the GYEAR
         # window, so small integers ("5", "123") and digit soup
