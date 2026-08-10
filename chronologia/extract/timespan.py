@@ -1890,6 +1890,14 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
         if t.index in consumed or not t.is_number or t.value is None \
                 or t.value != int(t.value) or t.value <= 31:
             continue
+        # a number immediately followed by a unit word ("48 hours", "90
+        # seconds") is a duration/count, not an attempted day-of-month --
+        # its own trailing unit disambiguates it, so it never reaches the
+        # "does this look like an impossible date" fallback below.
+        if (i + 1 < len(tokens) and tokens[i + 1].index not in consumed
+                and tokens[i + 1].text in (set(engine.spec.units)
+                                           | set(engine.spec.singular_units))):
+            continue
         abuts = ((i > 0 and tokens[i - 1].index in consumed)
                  or (i + 1 < len(tokens) and tokens[i + 1].index in consumed))
         if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:

@@ -417,6 +417,21 @@ class ConstructionMatcher:
                                 set(self.spec.units)
                                 | set(self.spec.singular_units))):
                         continue
+                    # "new year 15 minutes" is a duration, not the year 2015:
+                    # YEARANY's only gate below YEAR's own is >=2 digits (no
+                    # >=32 lower bound, see its _bind docstring), so it also
+                    # swallows the leading number of a trailing duration/count
+                    # phrase. A unit word immediately after the bound YEARANY
+                    # token means the number was never a year at all -- veto
+                    # this order so the bare "new year_word" order wins at the
+                    # same start instead, leaving the whole "15 minutes" in
+                    # the remainder for extract_duration to read.
+                    if (name == "new_year_ref" and "YEARANY" in slots
+                            and end < len(tokens)
+                            and tokens[end].text in (
+                                set(self.spec.units)
+                                | set(self.spec.singular_units))):
+                        continue
                     # Positional licensing for the bare-daypart reading: a
                     # capitalised daypart word that is the tail of a capitalised
                     # multi-word phrase ("Guy Fawkes Night", "Twelfth Night") is
