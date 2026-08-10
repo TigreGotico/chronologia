@@ -237,6 +237,74 @@ def test_early_june(text, ymd, maxdays):
     assert span(text).width.days <= maxdays
 
 
+# -- fuzzy season thirds (early/mid/late <season> [year]) -----------------
+
+# Regression: "early spring 2027" used to match the bare season_ref order
+# ("SEASON YEAR?"), which claims the whole 3-month season and strands
+# "early" in the remainder -- a silently wrong (too-wide) answer.  A new
+# ``season_fuzzy`` construction, shaped exactly like ``month_fuzzy``, must
+# narrow the season to its early/mid/late third instead.  Expected
+# boundaries below are independent arithmetic (thirds of the *exact*
+# elapsed microseconds of the 3-month season span, matching
+# :func:`chronologia.subdivide`'s documented algorithm -- the same integer
+# division already pinned by ``test_month_fuzzy``/``test_decade_fuzzy``),
+# never read back from the parser.  Anchor year is 2017 (Tue 2017-06-27);
+# winter wraps into the next calendar year (Dec 1 2017 -> Mar 1 2018).
+
+@pytest.mark.parametrize("text,s,e", [
+    # spring: 2017-03-01 .. 2017-06-01 (92 days)
+    ("early spring", AstroDate(2017, 3, 1, 0, 0), AstroDate(2017, 3, 31, 16, 0)),
+    ("mid spring", AstroDate(2017, 3, 31, 16, 0), AstroDate(2017, 5, 1, 8, 0)),
+    ("late spring", AstroDate(2017, 5, 1, 8, 0), AstroDate(2017, 6, 1, 0, 0)),
+    # summer: 2017-06-01 .. 2017-09-01 (92 days)
+    ("early summer", AstroDate(2017, 6, 1, 0, 0), AstroDate(2017, 7, 1, 16, 0)),
+    ("mid summer", AstroDate(2017, 7, 1, 16, 0), AstroDate(2017, 8, 1, 8, 0)),
+    ("late summer", AstroDate(2017, 8, 1, 8, 0), AstroDate(2017, 9, 1, 0, 0)),
+    # fall/autumn: 2017-09-01 .. 2017-12-01 (91 days)
+    ("early fall", AstroDate(2017, 9, 1, 0, 0), AstroDate(2017, 10, 1, 8, 0)),
+    ("mid fall", AstroDate(2017, 10, 1, 8, 0), AstroDate(2017, 10, 31, 16, 0)),
+    ("late fall", AstroDate(2017, 10, 31, 16, 0), AstroDate(2017, 12, 1, 0, 0)),
+    ("early autumn", AstroDate(2017, 9, 1, 0, 0), AstroDate(2017, 10, 1, 8, 0)),
+    ("late autumn", AstroDate(2017, 10, 31, 16, 0), AstroDate(2017, 12, 1, 0, 0)),
+    # winter: 2017-12-01 .. 2018-03-01 (90 days, wraps the year boundary)
+    ("early winter", AstroDate(2017, 12, 1, 0, 0), AstroDate(2017, 12, 31, 0, 0)),
+    ("mid winter", AstroDate(2017, 12, 31, 0, 0), AstroDate(2018, 1, 30, 0, 0)),
+    ("late winter", AstroDate(2018, 1, 30, 0, 0), AstroDate(2018, 3, 1, 0, 0)),
+])
+def test_season_fuzzy_bare(text, s, e):
+    assert start_end(text) == (s, e)
+
+
+@pytest.mark.parametrize("text,s,e", [
+    # explicit year places the third inside THAT year's season, exactly as
+    # "early March 2019" does for month_fuzzy.
+    ("early spring 2027", AstroDate(2027, 3, 1, 0, 0), AstroDate(2027, 3, 31, 16, 0)),
+    ("mid spring 2027", AstroDate(2027, 3, 31, 16, 0), AstroDate(2027, 5, 1, 8, 0)),
+    ("late spring 2027", AstroDate(2027, 5, 1, 8, 0), AstroDate(2027, 6, 1, 0, 0)),
+    ("early winter of 2020", AstroDate(2020, 12, 1, 0, 0), AstroDate(2020, 12, 31, 0, 0)),
+])
+def test_season_fuzzy_year(text, s, e):
+    assert start_end(text) == (s, e)
+
+
+def test_season_fuzzy_consumes_part():
+    # the fuzzy word must be fully consumed, not left stranded in the
+    # remainder like the pre-fix behaviour.
+    from ._corpus import parse
+    r = parse("early spring 2027")
+    assert r is not None
+    span_, remainder = r
+    assert span_.start == AstroDate(2027, 3, 1, 0, 0)
+    assert not remainder.strip()
+
+
+# controls: the sibling bare constructions must stay exactly as before.
+def test_season_fuzzy_controls():
+    assert start_end("spring 2027") == (AstroDate(2027, 3, 1), AstroDate(2027, 6, 1))
+    s = start("early june")
+    assert (s.year, s.month, s.day) == (2017, 6, 1)
+
+
 # -- decades: spoken, digit, bare-tens (nearest-past century) -------------
 
 @pytest.mark.parametrize("text,s,e", [

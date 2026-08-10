@@ -254,6 +254,34 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "month_fuzzy": [
         "article? PART of? MONTH of? YEAR?",
     ],
+    # "early/mid/late <season> [year]" ("early spring 2027" -> the first
+    # third of spring 2027; "late winter" -> the last third of the anchor
+    # year's winter).  Sibling of ``month_fuzzy`` -- same ``PART`` slot, same
+    # article/connector shape -- but over ``SEASON`` instead of ``MONTH``.
+    # Without this construction the bare ``season_ref`` ("article? SEASON
+    # YEAR?") wins the shared span with its full 3-month width and strands
+    # the fuzzy word in the remainder ("early spring 2027" -> the WHOLE
+    # spring span, "early" left over) -- a silently wrong (too-wide) answer,
+    # exactly the ``daypart_ref``/``weekend_of_month`` failure mode this file
+    # documents elsewhere. The resolver slices the season's 3-month span into
+    # thirds via :func:`chronologia.subdivide`, the same PART semantics as
+    # ``month_fuzzy`` (early=first third, mid=middle, late=last) and the same
+    # ``snap=None`` (a season, like a month, is short enough that the exact
+    # elapsed-microsecond thirds are the right precision -- no year/month
+    # rounding needed the way a decade or century does).  One order is the
+    # language-neutral core every locale that has BOTH the period-part
+    # vocabulary and season vocabulary already shares: a leading ``article?``
+    # carries the Romance/Germanic determiner, ``article?`` equally covers
+    # the article-less surface, and the optional ``of?`` covers both the
+    # connector-less genitive ("PART SEASON": en "early spring", Slavic
+    # "начало весна") and the prepositional connector ("PART of SEASON").
+    # The optional trailing ``of? YEAR?`` mirrors ``month_fuzzy``'s year
+    # handling verbatim: an explicit year places the third in THAT year's
+    # season, and both stay optional so the yearless bare form ("early
+    # winter") narrows the anchor year's season unchanged.
+    "season_fuzzy": [
+        "article? PART of? SEASON of? YEAR?",
+    ],
     # "this morning", "tonight", "yesterday evening", "tomorrow afternoon" --
     # a time-of-day band selected deictically.  ``DAYPART`` binds the locale's
     # daypart surface (``daypart_<key>.voc`` -- en "morning/afternoon/evening/

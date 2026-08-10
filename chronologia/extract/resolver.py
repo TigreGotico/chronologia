@@ -1880,6 +1880,35 @@ class Resolver:
         end = AstroDate.from_datetime(_add_months(start_dt, 3))
         return Resolution(DateSpan(span_start, end), self._consumed(match))
 
+    def _resolve_season_fuzzy(self, match, anchor):
+        """"early/mid/late <season> [year]": the early/mid/late third of
+        that season's 3-month span, sliced by :func:`chronologia.subdivide`.
+
+        Sibling of ``_resolve_month_fuzzy`` over a ``SEASON`` instead of a
+        ``MONTH``: an explicit trailing ``YEAR`` ("early spring 2027") places
+        the third in THAT year's season; without one the season is the one
+        the anchor currently falls in (the same deictic "bare season" rule
+        ``_resolve_season_ref`` uses for its own bare form -- there is no
+        REL_MARKER slot on this construction, so "early"/"mid"/"late" is
+        always read against the CURRENT season, never "next"/"last").
+        """
+        from chronologia import subdivide
+        season = Season[self.spec.seasons[match.slots["SEASON"].text].upper()]
+        part = self.spec.period_parts[match.slots["PART"].text]
+        hemi = (Hemisphere.SOUTH if self.conventions.hemisphere == "south"
+                else Hemisphere.NORTH)
+        year_tok = match.slots.get("YEAR")
+        if year_tok is not None:
+            start = season_to_date(season,
+                                   _pivot_two_digit_year(year_tok, anchor.year), hemi)
+        else:
+            start = current_season_date(season, anchor.date(), hemi)
+        start_dt = datetime(start.year, start.month, start.day)
+        season_span = DateSpan(AstroDate.from_datetime(start_dt),
+                               AstroDate.from_datetime(_add_months(start_dt, 3)))
+        span = subdivide(season_span, part)
+        return Resolution(DateSpan(span.start, span.end), self._consumed(match))
+
     # -- solar_event (equinoxes / solstices) -------------------------------
 
     _MONTH_CARDINAL = {3: "march", 6: "june", 9: "september", 12: "december"}
