@@ -75,6 +75,37 @@ def test_weekend_of_ordinal_month_refuses(text):
 
 
 # ---------------------------------------------------------------------------
+# Defect A regression -- R93: the veto only fired when the stranded tail was
+# EXACTLY "of? article? ORD SCOPE_UNIT"; any trailing text after the scope
+# noun (a year, "next year", a trailing clause) evaded it and the
+# anchor-relative weekend leak resurfaced. The veto must fire whenever the
+# stranded tail STARTS WITH the ordinal-scope shape, regardless of what
+# follows.
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize("text", [
+    "the last weekend of the 13th month of 2026",
+    "the weekend of the 5th month of 2026",
+    "the last weekend of the 13th month next year",
+    "the last weekend of the 13th month, please",
+    "the last weekend of the 13th month 13 2026",
+])
+def test_weekend_of_ordinal_month_with_trailing_text_refuses(text):
+    r = _result(text)
+    assert r is None, f"{text!r} should refuse (None), got {r!r}"
+
+
+def test_weekend_of_ordinal_month_adjacency_control_unrelated_ordinal_later():
+    """Control: a legitimate weekend reading with an UNRELATED later ordinal
+    phrase in the remainder must still resolve -- the veto only considers a
+    tail immediately adjacent (connected by "of") to the weekend
+    construction's own match, not any ordinal-shaped text anywhere in the
+    sentence."""
+    r = _result("next weekend, then the 3rd month of the project kicks off")
+    assert r is not None, "legitimate weekend reading must not be vetoed"
+    assert "3rd month" in r.remainder or "month" in r.remainder
+
+
+# ---------------------------------------------------------------------------
 # Defect B: "N units from <date>" -- "from" doubles as "after".
 # ---------------------------------------------------------------------------
 def test_two_weeks_from_june_1st_matches_after():
