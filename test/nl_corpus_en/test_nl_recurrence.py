@@ -89,6 +89,12 @@ _CASES = [
     ("every halloween", "FREQ=YEARLY;BYMONTH=10;BYMONTHDAY=31", ""),
     ("every valentines day", "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=14", ""),
     ("every thanksgiving", "FREQ=YEARLY;BYMONTH=11;BYDAY=4TH", ""),
+    # "every year on <holiday>": the year-anchored skeleton must resolve a
+    # holiday word the same way the bare "every <holiday>" form does -- not
+    # strand it as remainder behind a bare YEARLY rule that would silently
+    # fire on the anchor date instead of the holiday (see R100).
+    ("every year on christmas", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
+    ("every year on new year's day", "FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1", ""),
     # clock pin: BYHOUR / BYMINUTE fold onto the rule.
     ("daily at 9", "FREQ=DAILY;BYHOUR=9", ""),
     ("every day at 9am", "FREQ=DAILY;BYHOUR=9", ""),
@@ -144,6 +150,10 @@ from chronologia.recurrence import HolidayRecurrence   # noqa: E402
 @pytest.mark.parametrize("text,key", [
     ("every easter", "easter"),
     ("every good friday", "good_friday"),
+    # a movable feast has no RFC 5545 rule under the year-anchored skeleton
+    # either -- "every year on easter" reads the same HolidayRecurrence as
+    # the bare "every easter", it does not degrade to a fabricated RRULE.
+    ("every year on easter", "easter"),
 ])
 def test_movable_holiday_recurrence(text, key):
     got = extract_recurrence(text, LANG)
