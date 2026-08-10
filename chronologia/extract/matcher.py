@@ -152,6 +152,16 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         # year.
         n_digits = sum(c.isdigit() for c in token.raw)
         return token.is_number and n_digits >= 2
+    if name == "SMALLYEAR":
+        # a year below the bare GYEAR window (< 1000), licensed ONLY when an
+        # explicit "year_word" sits in front of it in the order string --
+        # that word is what tells "in year 5" apart from "in a year" + a
+        # stranded count.  Without the word a small number stays ambiguous
+        # with a day/count and is refused here (year_ref's GYEAR order still
+        # binds it unqualified once it reaches 4 digits).
+        raw = token.raw.rstrip(".")
+        return (token.is_number and raw.isdigit() and raw[0] != "0"
+                and 0 < int(raw) < GYEAR_MIN)
     if name == "GYEAR":
         # a standalone Gregorian year: a bare digit run inside the GYEAR
         # window, so small integers ("5", "123") and digit soup

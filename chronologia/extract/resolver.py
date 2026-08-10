@@ -1351,12 +1351,20 @@ class Resolver:
         digit numeral could name is not a year, so it resolves to nothing
         instead of to a span of the year 2000000000."""
         gyear = match.slots.get("GYEAR")
+        smallyear = match.slots.get("SMALLYEAR")
         if gyear is not None:
             # an apostrophe two-digit GYEAR ("'99", "in '05") pivots through the
             # anchor-relative window; a full digit year is taken as written.
             year = (_window_two_digit_year(int(gyear.value), anchor.year)
                     if gyear.apostrophe
                     and len(gyear.raw.rstrip(".")) == 2 else int(gyear.value))
+        elif smallyear is not None:
+            # "in year 5"/"the year 5": an explicit year_word licenses a
+            # small (< GYEAR_MIN) bare year as the absolute year N -- the
+            # only alternative reading in play ("in a year" + a stranded
+            # count) is never acceptable, so a below-window numeral bound to
+            # year_word is taken literally rather than refused.
+            year = int(smallyear.value)
         else:
             year = int(match.slots["NUM"].value) * self.spec.scales[
                 match.slots["SCALE"].text]

@@ -165,7 +165,7 @@
     },
     "era_bc": {
       "orders": [
-        "NUM bc"
+        "in? article? year_word? NUM bc"
       ]
     },
     "era_ad": {
@@ -251,8 +251,9 @@
     "year_ref": {
       "orders": [
         "in GYEAR",
-        "article? year_word GYEAR",
+        "in? article? year_word GYEAR",
         "GYEAR",
+        "in? article? year_word SMALLYEAR",
         "article? year_word NUM SCALE",
         "article? PART of? GYEAR",
         "article? PART of? article? fiscal? year_word GYEAR",
