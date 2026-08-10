@@ -69,6 +69,25 @@ def test_rel_span_quarter_weekend_es_marker_first(text, s, e):
 
 
 @pytest.mark.parametrize("text,s,e", [
+    # DEFECT (rel_span_quarter/rel_span_weekend base orders): the shared
+    # marker-first base order ("REL_MARKER NUM ...") lacked a leading
+    # ``article?``, unlike the sibling ``rel_span`` after PR #643/#645. "los
+    # próximos 3 trimestres" resolved the correct span but stranded "los" in
+    # the remainder -- same spans as the postposed forms above (independently
+    # computed there), just with the article-led marker-first surface.
+    ("los próximos 3 trimestres", AstroDate(2024, 7, 1), AstroDate(2025, 4, 1)),
+    ("los últimos 2 trimestres", AstroDate(2023, 10, 1), AstroDate(2024, 4, 1)),
+    ("los próximos 3 fines de semana", AstroDate(2024, 6, 15), AstroDate(2024, 7, 1)),
+    ("los últimos 2 fines de semana", AstroDate(2024, 6, 1), AstroDate(2024, 6, 10)),
+])
+def test_rel_span_quarter_weekend_es_marker_first_with_article_empty_remainder(text, s, e):
+    r = _r(text)
+    assert r is not None
+    assert (r.span.start, r.span.end) == (s, e), text
+    assert r.remainder == "", (text, r.remainder)
+
+
+@pytest.mark.parametrize("text,s,e", [
     # singular calendar-aligned readings stay untouched.
     ("el próximo trimestre", AstroDate(2024, 7, 1), AstroDate(2024, 10, 1)),
     ("el último trimestre", AstroDate(2024, 1, 1), AstroDate(2024, 4, 1)),

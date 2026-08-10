@@ -21,7 +21,10 @@ _CASES = [
     ("meet on 2026-07-05", ["2026-07-05"]),
     ("the deadline is june 5th 2027", ["june 5th 2027"]),
     ("call me at 3pm", ["at 3pm"]),
-    ("the fifth of june", ["fifth of june"]),
+    # R90: calendar_date's "DAY of MONTH..." order now carries a leading
+    # article? (it was silently stranding "the" before), so the recovered
+    # char span grows to cover the article too -- same date, wider match.
+    ("the fifth of june", ["the fifth of june"]),
     ("Q3 2026 is busy", ["q3 2026"]),
     ("see the report by week 32", ["week 32"]),
     ("early next week works", ["early next week"]),

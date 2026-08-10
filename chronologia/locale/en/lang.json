@@ -76,9 +76,9 @@
     },
     "calendar_date": {
       "orders": [
-        "MONTH DAY? YEAR? ERA?",
-        "DAY of MONTH YEAR? ERA?",
-        "DAY MONTH YEAR? ERA?",
+        "article? MONTH DAY? YEAR? ERA?",
+        "article? DAY of MONTH YEAR? ERA?",
+        "article? DAY MONTH YEAR? ERA?",
         "on article? DAY of MONTH YEAR? ERA?",
         "by article? DAY of MONTH YEAR? ERA?"
       ],
