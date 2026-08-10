@@ -2047,6 +2047,16 @@ def _recur_holiday(ctx):
                 and ctx.units[t[j + 1].text] == "year"):
             interval = int(t[j].value)
             j += 1
+        # "other" is a word-form interval count, same INTERVAL=2 the bare
+        # "every other year" reading already gives -- accepted through the
+        # SAME ``ctx.other`` vocabulary that reading uses (marker_recur_other,
+        # "every other week"), not a hardcoded English word, so any locale
+        # that ships that voc file gets this for free.
+        elif (j < n and t[j].text in ctx.other and j + 1 < n
+              and t[j + 1].text in ctx.units
+              and ctx.units[t[j + 1].text] == "year"):
+            interval = 2
+            j += 1
         if j < n and t[j].text in ctx.units and ctx.units[t[j].text] == "year":
             j += 1
             # tolerate a short filler run before the holiday word -- "on"/"en"
@@ -2190,6 +2200,14 @@ def _recur_date_anchored(ctx):
                 and t[j + 1].text in ctx.units
                 and ctx.units[t[j + 1].text] == "year"):
             interval = int(t[j].value)
+            j += 1
+        # "other" is a word-form interval count -- same INTERVAL=2 the bare
+        # "every other year" reading gives, accepted through the same
+        # ``ctx.other`` vocabulary (see _recur_holiday above).
+        elif (j < n and t[j].text in ctx.other and j + 1 < n
+              and t[j + 1].text in ctx.units
+              and ctx.units[t[j + 1].text] == "year"):
+            interval = 2
             j += 1
         if j < n and t[j].text in ctx.units and ctx.units[t[j].text] == "year":
             j += 1

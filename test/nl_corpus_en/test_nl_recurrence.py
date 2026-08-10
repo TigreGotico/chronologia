@@ -107,6 +107,21 @@ _CASES = [
     ("every 3 years on may 10", "FREQ=YEARLY;INTERVAL=3;BYMONTH=5;BYMONTHDAY=10", ""),
     # bare interval count, no holiday/date tail: unchanged control.
     ("every 2 years", "FREQ=YEARLY;INTERVAL=2", ""),
+    # R106: "every other year on <holiday/date>" -- "other" is a word-form
+    # interval count (INTERVAL=2), same family as "every 2 years"/"every 2nd
+    # year"/"every second year" above.  Before the fix the interval scan only
+    # recognised NUMBER tokens before the year unit, so "other" (which the
+    # bare "every other year" control already reads via ctx.other, the same
+    # ``marker_recur_other.voc`` vocabulary "every other week" uses) fell
+    # through and stranded "on christmas"/"on may 10" as remainder behind a
+    # bare FREQ=YEARLY;INTERVAL=2 rule that silently fired on the anchor date
+    # instead of the named holiday/date.
+    ("every other year on christmas", "FREQ=YEARLY;INTERVAL=2;BYMONTH=12;BYMONTHDAY=25", ""),
+    ("every second year on christmas", "FREQ=YEARLY;INTERVAL=2;BYMONTH=12;BYMONTHDAY=25", ""),
+    ("every 2nd year on christmas", "FREQ=YEARLY;INTERVAL=2;BYMONTH=12;BYMONTHDAY=25", ""),
+    ("every other year on may 10", "FREQ=YEARLY;INTERVAL=2;BYMONTH=5;BYMONTHDAY=10", ""),
+    # bare "every other year": unchanged control.
+    ("every other year", "FREQ=YEARLY;INTERVAL=2", ""),
     # clock pin: BYHOUR / BYMINUTE fold onto the rule.
     ("daily at 9", "FREQ=DAILY;BYHOUR=9", ""),
     ("every day at 9am", "FREQ=DAILY;BYHOUR=9", ""),
@@ -184,6 +199,14 @@ def test_movable_holiday_with_interval_declines():
     anchor date instead of Easter (R103).
     """
     assert extract_recurrence("every 2 years on easter", LANG) is None
+
+
+def test_movable_holiday_with_word_interval_declines():
+    """R106: "every other year on easter" carries the same word-form
+    INTERVAL=2 as "every 2 years on easter" above, and must decline the same
+    way -- not fall through to the greedy bare INTERVAL=2 catch-all.
+    """
+    assert extract_recurrence("every other year on easter", LANG) is None
 
 
 @pytest.mark.parametrize("text,rrule,remainder", _CASES)
