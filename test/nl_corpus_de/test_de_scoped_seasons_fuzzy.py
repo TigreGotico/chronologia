@@ -76,6 +76,45 @@ def test_ende_dezember():
     assert s.start >= AstroDate(2017, 12, 15)
 
 
+# -- adjectival early/late season forms ("früher Frühling") ---------------
+
+# Regression: German seasons (der Frühling/Sommer/Herbst/Winter) are all
+# masculine, so the bare (article-less) adjective takes the STRONG
+# nominative-masculine ending -er ("früher Frühling", "später Sommer" --
+# Duden strong declension of früh/spät).  Only the weak/mixed forms
+# früh/frühe/frühen and spät/späte/späten were in period_part_*.voc, so the
+# bare adjectival phrase fell back to the whole-season ``season_ref`` order
+# with "früher"/"später" stranded in the remainder, exactly the silently
+# too-wide failure mode ``season_fuzzy`` exists to fix for month_fuzzy-style
+# phrasing.  Expected boundaries are the SAME independent thirds-of-92-days
+# arithmetic already pinned for "early/late spring 2027" in the en corpus
+# (test_nl_scoped_seasons_fuzzy.py), since spring 2027 (2027-03-01 ..
+# 2027-06-01, 92 days, non-leap) is calendar-identical across locales.
+#
+# Collision check: "früher"/"später" are also common temporal ADVERBS
+# ("earlier"/"later", e.g. relative-time "das war früher" / "später kam er").
+# Grepped the full de corpus (test/nl_corpus_de/) and de/*.voc for any
+# existing pinned use of either word before adding them here -- none found,
+# so there is no adverbial construction these new adjectival vocab entries
+# could hijack.
+
+@pytest.mark.parametrize("text,s,e", [
+    ("früher frühling 2027", AstroDate(2027, 3, 1, 0, 0), AstroDate(2027, 3, 31, 16, 0)),
+    ("später frühling 2027", AstroDate(2027, 5, 1, 8, 0), AstroDate(2027, 6, 1, 0, 0)),
+])
+def test_season_fuzzy_adjectival(text, s, e):
+    assert start_end(text) == (s, e)
+
+
+def test_season_fuzzy_adjectival_consumes_part():
+    from ._corpus import parse
+    r = parse("früher frühling 2027")
+    assert r is not None
+    span_, remainder = r
+    assert span_.start == AstroDate(2027, 3, 1, 0, 0)
+    assert not remainder.strip()
+
+
 # -- adversarial: an ordinal with no scope is not a span ------------------
 
 @pytest.mark.parametrize("text", ["die dritte", "erste woche"])
