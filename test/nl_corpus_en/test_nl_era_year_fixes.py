@@ -42,13 +42,25 @@ def test_bare_five_digit_year_stays_literal():
     assert s.start_datetime is None and s.end_datetime is None
 
 
-# -- defect 2: never a None-start span (BC/AUC prefixed -> clean None) -----
+# -- defect 2: never a None-start span (AUC prefixed -> clean None) --------
 @pytest.mark.parametrize("text", [
-    "in the year 1 BC",
     "in the year 753 ab urbe condita",
 ])
 def test_prefixed_bce_returns_none_not_malformed_span(text):
     assert extract_timespan(text, "en", ANCHOR) is None
+
+
+# R102: "in the year 1 BC" used to hit the SAME malformed-None-start-span
+# guard as the AUC case above, but for the wrong reason -- the era_bc
+# construction did not consume the leading "in the year" prefix, so a
+# non-empty remainder made the guard veto a reading that was actually
+# complete (astronomical year 0, exactly like bare "1 BC").  Now that
+# era_bc consumes its full "in? article? year_word? NUM bc" span, the
+# remainder is empty and the guard no longer fires.
+def test_year_one_bc_now_resolves():
+    s = span("in the year 1 BC")
+    assert s.start.year == 0 and s.end.year == 1
+    assert parse("in the year 1 BC")[1] == ""
 
 
 def test_no_none_start_span_for_target_phrases():

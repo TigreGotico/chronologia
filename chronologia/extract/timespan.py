@@ -2268,17 +2268,48 @@ def _stray_capitalized_be_veto(tokens, match, spec) -> bool:
     return end < len(tokens) and tokens[end].text == "be" and tokens[end].cap
 
 
+def _stray_capitalized_am_veto(tokens, match, spec) -> bool:
+    """True for a ``year_ref`` match immediately followed by a capitalized,
+    stray "AM" -- the Anno Mundi abbreviation the tokenizer lower-cases into
+    the same surface as the meridiem marker, but whose ``cap`` flag still
+    marks it as written upper-case in the source.
+
+    R102 added a ``year_ref`` order that lets an explicit "year" word license
+    a below-window (< 1000, ``SMALLYEAR``) bare number ("in year 5") so it is
+    never silently stranded on the "in a year" relative reading.  That same
+    order also now claims the leading "in the year 1" of "in the year 1 AM",
+    stranding the capitalized "AM" instead of leaving the whole phrase for the
+    (BCE, out-of-range, correctly declining) Anno Mundi era reading.
+
+    Scoped to the ``SMALLYEAR`` slot only: a ``GYEAR`` (>= 1000) match
+    stranding a trailing "AM"/"BE"/etc is long-standing, pinned behaviour
+    ("in the year 5780 AM" -> plain year 5780, cosmetic remainder) and must
+    stay untouched -- only the new below-window reading is suspicious enough
+    to withhold. A lower-case "am" is the ordinary meridiem marker and must
+    keep composing with a plain year+clock reading as before; only the
+    upper-case abbreviation is suspicious enough to withhold the confident
+    small-year reading and prefer a clean miss -- the same asymmetry
+    :func:`_stray_capitalized_be_veto` already applies to the Buddhist Era
+    "BE" collision.
+    """
+    if match.construction != "year_ref" or "SMALLYEAR" not in match.slots:
+        return False
+    end = match.span[1]
+    return end < len(tokens) and tokens[end].text == "am" and tokens[end].cap
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
     non-clause-final "be" is the verb not the era; a plain year stranding a
-    capitalized "BE" is a declined era, not a confident year).  Applied before
-    the overlap contest so the shorter correct reading (a year_ref, or
+    capitalized "BE"/"AM" is a declined era, not a confident year).  Applied
+    before the overlap contest so the shorter correct reading (a year_ref, or
     nothing) survives.
     """
     return (_new_year_definite_article_veto(tokens, match, spec)
             or _bare_be_trailing_veto(tokens, match, spec)
-            or _stray_capitalized_be_veto(tokens, match, spec))
+            or _stray_capitalized_be_veto(tokens, match, spec)
+            or _stray_capitalized_am_veto(tokens, match, spec))
 
 
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
