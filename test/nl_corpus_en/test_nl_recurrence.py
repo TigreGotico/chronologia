@@ -95,6 +95,18 @@ _CASES = [
     # fire on the anchor date instead of the holiday (see R100).
     ("every year on christmas", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
     ("every year on new year's day", "FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1", ""),
+    # "every N years on <holiday/date>": an interval count before the year
+    # unit ("every 2 YEARS on christmas") used to break the same filler-skip
+    # that "every year on christmas" above relies on -- the literal "years"
+    # check required the unit token to sit RIGHT after "every", so a NUMBER in
+    # between fell through to the bare INTERVAL=N catch-all and stranded "on
+    # christmas", firing on the anchor date instead of 25 December (R103).
+    ("every 2 years on christmas", "FREQ=YEARLY;INTERVAL=2;BYMONTH=12;BYMONTHDAY=25", ""),
+    # the date-anchored reading ("every N years on <month> <day>") has the
+    # identical gap -- same fix, same finder family (_recur_date_anchored).
+    ("every 3 years on may 10", "FREQ=YEARLY;INTERVAL=3;BYMONTH=5;BYMONTHDAY=10", ""),
+    # bare interval count, no holiday/date tail: unchanged control.
+    ("every 2 years", "FREQ=YEARLY;INTERVAL=2", ""),
     # clock pin: BYHOUR / BYMINUTE fold onto the rule.
     ("daily at 9", "FREQ=DAILY;BYHOUR=9", ""),
     ("every day at 9am", "FREQ=DAILY;BYHOUR=9", ""),
@@ -162,6 +174,16 @@ def test_movable_holiday_recurrence(text, key):
     assert got[1] == ""
     with pytest.raises(ValueError):
         got[0].to_string()
+
+
+def test_movable_holiday_with_interval_declines():
+    """"every 2 years on easter": :class:`HolidayRecurrence` (a movable feast)
+    has no ``interval`` field, so this frame cannot be built AT ALL -- it must
+    decline outright (``None``), never fall through to the greedy bare
+    ``FREQ=YEARLY;INTERVAL=2`` catch-all that would silently fire on the
+    anchor date instead of Easter (R103).
+    """
+    assert extract_recurrence("every 2 years on easter", LANG) is None
 
 
 @pytest.mark.parametrize("text,rrule,remainder", _CASES)
