@@ -83,7 +83,13 @@ def _merge_en_ord_suffix(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         nxt = tokens[i + 1] if i + 1 < len(tokens) else None
         if (t.is_number and nxt is not None and not nxt.is_number
                 and nxt.text in _ORD_SUFFIXES):
-            merged.append(replace(t, raw=t.raw + nxt.raw))
+            # the merged token's surface now runs through the suffix, so its
+            # char_end must move out to cover it too -- otherwise char_span
+            # (built from the token's own recorded offsets) falls short of
+            # the suffix and silently truncates 'the 6th' to 'the 6' in any
+            # downstream slice/removal of the mention.
+            merged.append(replace(t, raw=t.raw + nxt.raw,
+                                   char_end=nxt.char_end))
             i += 2
             continue
         merged.append(t)
