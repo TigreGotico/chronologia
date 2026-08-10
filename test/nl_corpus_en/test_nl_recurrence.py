@@ -606,3 +606,37 @@ def test_single_bare_number_range_still_reads_as_clock():
     assert rec.until is None
     assert rec.byhour == (1,)
     assert remainder == ""
+
+
+# R98: a sentence with TWO genuine date-range clauses ("every day from june
+# to august from september to october") is ambiguous -- the rightmost-first
+# scan in ``_apply_range_bound`` used to ground UNTIL off the rightmost
+# clause and strand the other, equally genuine, date-range clause in the
+# remainder, next to a rule that looked confidently correct.  There is no
+# principled way to prefer one calendar bound over the other, so the whole
+# extraction must decline (return None) rather than pick one arbitrarily.
+_DOUBLE_DATE_RANGE_CASES = [
+    "every day from june to august from september to october",
+    "every week from march to may from july to september",
+    # a trailing COUNT clause does not rescue the ambiguity -- the two date
+    # ranges are still both stranded/grounded arbitrarily underneath it.
+    "every week from march to may from july to september, 5 times",
+]
+
+
+@pytest.mark.parametrize("text", _DOUBLE_DATE_RANGE_CASES)
+def test_double_date_range_declines_as_ambiguous(text):
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is None, f"{text!r} should decline (ambiguous), got {got!r}"
+
+
+# control: a single date-range clause is unaffected by the ambiguity check --
+# pinned pre-R98 behaviour must be unchanged.
+def test_single_date_range_still_grounds_until():
+    text = "every day from june to august"
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None
+    rec, remainder = got
+    assert rec.until is not None
+    assert rec.until.month == 8 and rec.until.day == 1
+    assert remainder == ""
