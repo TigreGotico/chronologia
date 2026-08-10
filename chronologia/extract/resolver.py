@@ -1490,12 +1490,31 @@ class Resolver:
 
     def _resolve_half_period(self, match, anchor):
         """"the first/second half of <period>": the calendar half of a year,
-        decade, century or millennium.  Halves are calendar-clean -- the year
-        splits at July 1 (not the arithmetic mid-instant), a decade/century at
-        its midpoint year -- so consecutive halves tile with no gap."""
+        decade, century or millennium -- or, over a NAMED MONTH, the
+        arithmetic half of that month's span.  Year/decade/century/millennium
+        halves are calendar-clean -- the year splits at July 1 (not the
+        arithmetic mid-instant), a decade/century at its midpoint year -- so
+        consecutive halves tile with no gap.  A month is short enough that no
+        such rounding is needed (the same reasoning ``month_fuzzy``'s
+        early/mid/late thirds already use): the month order below slices via
+        :func:`chronologia.subdivide`'s exact elapsed-microsecond convention,
+        so "the first half of august" (31 days) is Aug 1 .. Aug 16 12:00, and
+        "the first half of february" is Feb 1 .. Feb 15 (28-day February) or
+        Feb 1 .. Feb 15 12:00 (leap February, 29 days)."""
         n = int(match.slots["NUM"].value)
         if n not in (1, 2):
             return None
+        month_tok = match.slots.get("MONTH")
+        if month_tok is not None:
+            from chronologia import subdivide
+            month = self.spec.months[month_tok.text]
+            year_tok = match.slots.get("YEAR")
+            year = (_pivot_two_digit_year(year_tok, anchor.year)
+                    if year_tok is not None else anchor.year)
+            part = "first_half" if n == 1 else "second_half"
+            span = subdivide(_gregorian_month_span(year, month), part)
+            return Resolution(DateSpan(span.start, span.end),
+                              self._consumed(match))
         year_tok = match.slots.get("GYEAR")
         if year_tok is not None:
             # pivot a two-digit / apostrophe year ("the first half of '99")
@@ -1522,6 +1541,29 @@ class Resolver:
             span = DateSpan(AstroDate(base + h, 1, 1),
                             AstroDate(base + length, 1, 1))
         return Resolution(span, self._consumed(match))
+
+    _QUARTER_PARTS = {1: "first_quarter", 2: "second_quarter",
+                      3: "third_quarter", 4: "fourth_quarter"}
+
+    def _resolve_quarter_of_month(self, match, anchor):
+        """"the first/second/third/fourth quarter of <month>": a quarter of a
+        NAMED MONTH's span, sliced by :func:`chronologia.subdivide`'s exact
+        elapsed-microsecond convention (the same one ``half_period``'s
+        month order and ``month_fuzzy``'s thirds use).  Distinct from
+        ``quarter_ref``'s calendar quarter of a YEAR ("the first quarter of
+        2027") -- that construction binds ``YEAR``, this one binds ``MONTH``,
+        so the two never compete for the same span."""
+        n = int(match.slots["NUM"].value)
+        part = self._QUARTER_PARTS.get(n)
+        if part is None:
+            return None
+        from chronologia import subdivide
+        month = self.spec.months[match.slots["MONTH"].text]
+        year_tok = match.slots.get("YEAR")
+        year = (_pivot_two_digit_year(year_tok, anchor.year)
+                if year_tok is not None else anchor.year)
+        span = subdivide(_gregorian_month_span(year, month), part)
+        return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     # -- scoped_ordinal ----------------------------------------------------
 

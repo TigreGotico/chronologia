@@ -272,6 +272,12 @@ def children(key: str) -> List[NamedPeriod]:
 _THIRDS = {"early": 0, "mid": 1, "middle": 1, "late": 2}
 _HALVES = {"first_half": 0, "first-half": 0, "firsthalf": 0, "second_half": 1,
            "second-half": 1, "secondhalf": 1}
+# quarters of an arbitrary span ("the first/second/third/fourth quarter of
+# august"), same exact-interpolation convention as thirds/halves above.
+_QUARTERS = {"first_quarter": 0, "first-quarter": 0, "firstquarter": 0,
+             "second_quarter": 1, "second-quarter": 1, "secondquarter": 1,
+             "third_quarter": 2, "third-quarter": 2, "thirdquarter": 2,
+             "fourth_quarter": 3, "fourth-quarter": 3, "fourthquarter": 3}
 # part -> the ICS ordinal-word that names a chart subdivision, when one exists.
 _CHART_WORD = {"early": "early", "mid": "middle", "middle": "middle",
                "late": "late"}
@@ -321,9 +327,15 @@ def _arithmetic_subdivide(span: DateSpan, part: str,
         if idx == 0:
             return DateSpan(span.start, cut(total // 2), basis=basis)
         return DateSpan(cut(total // 2), span.end, basis=basis)
+    if part_key in _QUARTERS:
+        idx = _QUARTERS[part_key]
+        a = span.start if idx == 0 else cut(total * idx // 4)
+        b = span.end if idx == 3 else cut(total * (idx + 1) // 4)
+        return DateSpan(a, b, basis=basis)
     raise ValueError(
         f"unknown subdivision {part!r}; expected one of "
-        f"early/mid/late or first-half/second-half")
+        f"early/mid/late, first-half/second-half or "
+        f"first/second/third/fourth-quarter")
 
 
 def subdivide(target: Union[NamedPeriod, DateSpan], part: str,

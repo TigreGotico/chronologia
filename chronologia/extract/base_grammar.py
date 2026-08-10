@@ -221,9 +221,29 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # Arabic's النصف ordinal الأول/الثاني is withheld from the fold as a
     # Levantine month-name homograph, so spelled Arabic first/second half stays
     # the same documented xfail as spelled Q1/Q2.)
+    # "the first/second half of <month>" ("the first half of august" -> Aug
+    # 1..Aug 16 12:00, the exact arithmetic midpoint -- the same
+    # elapsed-microsecond convention :func:`chronologia.subdivide` already
+    # uses for ``month_fuzzy``'s early/mid/late thirds, since a month, like a
+    # season, is short enough that no year/month rounding is needed).  Without
+    # this order the bare MONTH construction wins the shared span with its
+    # full-month width and strands "first half of"/"second half of" in the
+    # remainder -- a silently wrong (too-wide) answer, the same failure mode
+    # ``month_fuzzy``/``season_fuzzy`` were added to close.  The trailing
+    # ``of? YEAR?`` mirrors ``month_fuzzy``'s year handling verbatim.
     "half_period": [
         "article? NUM half of? GYEAR",
         "article? NUM half of? REL_MARKER? article? SCOPE_UNIT",
+        "article? NUM half of? MONTH of? YEAR?",
+    ],
+    # "the first/second/third/fourth quarter of <month>" -- a quarter of a
+    # NAMED MONTH's span (distinct from ``quarter_ref``'s calendar quarter of
+    # a YEAR, "the first quarter of 2027", which stays untouched: that
+    # construction binds ``YEAR``, this one binds ``MONTH``, so the two never
+    # tie on the same span).  Same arithmetic-quarter convention as the
+    # half-of-month order above, via :func:`chronologia.subdivide`.
+    "quarter_of_month": [
+        "article? NUM quarter_word of? MONTH of? YEAR?",
     ],
     # "early/mid/late <month>" ("early March" -> the first third of March, a
     # ~10-day span; "late December" -> the last third).  ``PART`` binds the

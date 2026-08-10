@@ -93,6 +93,11 @@ PRECEDENCE: Dict[str, int] = {
     # against, this precedence entry only matters for an equal-length tie
     "season_fuzzy": 2,
     "half_period": 2,
+    # sibling of half_period over a MONTH instead of a year/decade/century;
+    # same tier -- always wins its longer span over the bare MONTH it would
+    # otherwise strand "first/second/third/fourth quarter of" against, and
+    # never ties with quarter_ref (that binds YEAR, this binds MONTH)
+    "quarter_of_month": 2,
     "month_day_ref": 2,
     # a quarter ("Q3 2026") and an ISO week ("week 32") carry their own marker
     # vocabulary, so they win the same-span tie over a bare year_ref on the digits
