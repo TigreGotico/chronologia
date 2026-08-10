@@ -2029,9 +2029,13 @@ def _stranded_ordinal_scope_veto(tokens, consumed, spec):
     with the intended scope silently dropped, exactly the leak this veto
     closes by refusing outright rather than surfacing the truncated span.
 
-    Mirrors :func:`_trailing_scope_veto`'s shape but the residual is TWO
-    tokens (an ordinal numeral then a scope noun) instead of one bare scope
-    noun, so it needs its own check rather than a shared one.
+    Mirrors :func:`_trailing_scope_veto`'s shape but the residual STARTS WITH
+    two tokens (an ordinal numeral then a scope noun) instead of being one
+    bare scope noun, so it needs its own check rather than a shared one. The
+    tail may carry arbitrary text AFTER those two tokens (a year, "next
+    year", a trailing clause) -- the shape only needs to be a *prefix* of the
+    stranded tail, since any of those trailers still means the ordinal-scope
+    composition was intended but unsupported.
     """
     if not consumed:
         return False
@@ -2046,7 +2050,7 @@ def _stranded_ordinal_scope_veto(tokens, consumed, spec):
                                  or trailing[i].text in article_surfaces):
         i += 1
     rest = trailing[i:]
-    return (len(rest) == 2 and rest[0].is_number and (rest[0].value or 0) >= 1
+    return (len(rest) >= 2 and rest[0].is_number and (rest[0].value or 0) >= 1
             and _is_scope_noun(rest[1].text, spec))
 
 
