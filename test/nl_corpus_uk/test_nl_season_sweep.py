@@ -30,3 +30,22 @@ def test_season(phrase, sy, sm, ey, em):
     s, e = start_end(phrase)
     assert s == AstroDate(sy, sm, 1), phrase
     assert e == AstroDate(ey, em, 1), phrase
+
+
+@pytest.mark.parametrize("text,s,e", [
+    # Genitive singular ("весни", "літа", "осені", "зими") per *Український
+    # правопис* (2019) declension tables; mirrors the ru fix for the same
+    # gap.  "весна" (2nd decl., hard a-stem) -> gen. весни; "літо" (2nd decl.
+    # neuter) -> gen. літа; "осінь" (3rd decl., soft) -> gen./dat./loc. all
+    # осені; "зима" (hard a-stem) -> gen. зими.  No collision: uk unit_year
+    # ("рік") never uses these forms.
+    ("весни 2027", AstroDate(2027, 3, 1), AstroDate(2027, 6, 1)),
+    ("літа 2027", AstroDate(2027, 6, 1), AstroDate(2027, 9, 1)),
+    ("осені 2027", AstroDate(2027, 9, 1), AstroDate(2027, 12, 1)),
+    ("зими 2027", AstroDate(2027, 12, 1), AstroDate(2028, 3, 1)),
+    # controls: nominative unchanged
+    ("весна 2027", AstroDate(2027, 3, 1), AstroDate(2027, 6, 1)),
+])
+def test_season_genitive_case(text, s, e):
+    ss, ee = start_end(text)
+    assert ss == s and ee == e
