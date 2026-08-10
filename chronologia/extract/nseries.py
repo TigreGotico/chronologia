@@ -1087,9 +1087,7 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
             got = extract_timespan(right_text, lang, anchor=anchor)
             if got is None:
                 continue
-            rec = _replace(rec, until=got[0].start)
-            if rec.count is not None:
-                rec = _replace(rec, count=None)
+            rec = _replace(rec, until=got[0].start, count=None)
             return rec, consumed | set(range(i, n))
     return rec, consumed
 

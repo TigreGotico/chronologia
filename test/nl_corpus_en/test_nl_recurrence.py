@@ -223,6 +223,18 @@ _RANGE_BOUND_CASES = [
     # in the remainder, exactly as "every day 5 times until march" above.
     ("every day 5 times from june to august",
      "FREQ=DAILY;UNTIL=20170801T000000", "5 times"),
+    # R91: a range clause that grounds UNTIL must clear a pre-existing COUNT
+    # ATOMICALLY -- Recurrence.__post_init__ validates COUNT/UNTIL mutual
+    # exclusivity at construction time, so setting until= first (with count=
+    # still set from the earlier "3 times") raised ValueError before a
+    # separate follow-up _replace could clear it.  Both fields must land in
+    # the SAME _replace call.  UNTIL wins, COUNT is dropped.
+    ("every monday from june to august, 3 times",
+     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO", ""),
+    ("every 2 weeks from june to august, 5 times",
+     "FREQ=WEEKLY;INTERVAL=2;UNTIL=20170801T000000", ""),
+    # controls: no range clause, COUNT must survive unchanged.
+    ("every monday 3 times", "FREQ=WEEKLY;COUNT=3;BYDAY=MO", ""),
 ]
 
 
