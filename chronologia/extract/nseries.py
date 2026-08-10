@@ -2035,6 +2035,18 @@ def _recur_holiday(ctx):
         j = i + 1
         while j < n and t[j].text in ctx.articles:
             j += 1
+        # tolerate an explicit interval count before the year unit -- "every
+        # 2 YEARS on christmas" -- the same way "every 2 weeks" reads INTERVAL=2
+        # for a plain period.  Only consumed as an interval when a year unit
+        # immediately follows; otherwise this is some unrelated number and the
+        # holiday lookup below (which will fail on a bare digit) declines as
+        # before.
+        interval = None
+        if (j < n and t[j].is_number and j + 1 < n
+                and t[j + 1].text in ctx.units
+                and ctx.units[t[j + 1].text] == "year"):
+            interval = int(t[j].value)
+            j += 1
         if j < n and t[j].text in ctx.units and ctx.units[t[j].text] == "year":
             j += 1
             # tolerate a short filler run before the holiday word -- "on"/"en"
@@ -2065,13 +2077,20 @@ def _recur_holiday(ctx):
             continue
         kind = wk.kind
         consumed = set(range(i, j + 1))
+        kw = {"interval": interval} if interval is not None else {}
         if isinstance(kind, FixedRule):
             return (_build_every("yearly", bymonth=kind.month,
-                                 bymonthday=kind.day), consumed)
+                                 bymonthday=kind.day, **kw), consumed)
         if isinstance(kind, NthWeekdayRule) and kind.post_offset == 0:
             return (_build_every("yearly", bymonth=kind.month,
-                                 byday=((kind.n, kind.weekday),)), consumed)
-        # movable feast: no RFC 5545 rule can express it.
+                                 byday=((kind.n, kind.weekday),), **kw), consumed)
+        # movable feast: no RFC 5545 rule can express it -- HolidayRecurrence
+        # carries no interval field, so "every 2 years on easter" cannot be
+        # built at all.  Decline outright (consumed, no rule) rather than let
+        # the greedy INTERVAL-only catch-all fall through and silently fire on
+        # the anchor date instead of the (uncomputable) holiday.
+        if interval is not None:
+            return (None, consumed)
         return HolidayRecurrence(key), consumed
     return None
 
@@ -2163,6 +2182,15 @@ def _recur_date_anchored(ctx):
         j = i + 1
         while j < n and t[j].text in ctx.articles:
             j += 1
+        # tolerate an explicit interval count before the year unit -- "every
+        # 3 YEARS on may 10" -- same as the plain-holiday reading above; only
+        # bound as an interval when a year unit immediately follows.
+        interval = None
+        if (j < n and t[j].is_number and j + 1 < n
+                and t[j + 1].text in ctx.units
+                and ctx.units[t[j + 1].text] == "year"):
+            interval = int(t[j].value)
+            j += 1
         if j < n and t[j].text in ctx.units and ctx.units[t[j].text] == "year":
             j += 1
         # the date must start at (or just after) the skeleton: the only tokens
@@ -2199,7 +2227,8 @@ def _recur_date_anchored(ctx):
         day_tok = dm.slots.get("DAY")
         day = int(day_tok.value) if day_tok else 1
         try:
-            rule = _build_every("yearly", bymonth=month, bymonthday=day)
+            kw = {"interval": interval} if interval is not None else {}
+            rule = _build_every("yearly", bymonth=month, bymonthday=day, **kw)
         except ValueError:
             # the named date recurs in no year ("every 31st of april").  This is
             # still the specific yearly-date frame -- consume it and report no
