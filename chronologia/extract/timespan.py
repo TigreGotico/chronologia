@@ -538,6 +538,15 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                      | set(spec.connectors.get("until", ()))
                      if s in at_words}
     lead_required |= {s.lower() for s in lead_only_to}
+    # the marker word set that reads specifically as "until"/"till"/"through"
+    # (never plain "to") -- used below to scope the month-fraction veto so it
+    # never touches a bare "X to Y" range.
+    until_words = {" ".join(w) for w in _conn_surfaces(spec, "until", _RANGE_UNTIL)}
+    # the period-fraction markers ("half"/"quarter") that name a HALF/QUARTER
+    # OF A MONTH construction (``half_period``'s MONTH order, ``quarter_of_
+    # month``) -- see the veto below.
+    fraction_marker_words = (set(spec.connectors.get("half", ()))
+                             | set(spec.connectors.get("quarter_word", ())))
 
     def endpoint(sub):
         return _range_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
@@ -589,6 +598,24 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of)
+            # A month-fraction left endpoint ("first half of august", "third
+            # quarter of february") whose right side is a BARE lone year
+            # joined by "until"/"till"/"through" double-binds that year: the
+            # same token both fills the fraction construction's own optional
+            # YEAR slot (via _lend_year, so the left resolves the correct
+            # in-year fraction span) AND is read again as its own full
+            # calendar-year endpoint, whose ``.end`` then closes the range --
+            # "first half of august, until 2030" would otherwise yield
+            # 2030-08-01..2031-01-01, a self-contradictory span (a half-month
+            # start paired with a whole-year end).  Refuse rather than surface
+            # it; a bare "to" ("first half of august to 2030") and any left
+            # side that is not a month-fraction (bare "june until 2030") are
+            # untouched -- both compose exactly as before.
+            if got is not None \
+                    and any(t.text in fraction_marker_words for t in left_tok) \
+                    and conn_words in until_words \
+                    and bare_of(right_tok) is not None:
+                got = None
             # A bare (unled) "MINUTE to HOUR pm" is the subtractive clock
             # ("ten to eight pm" == ten minutes to eight pm == 19:50), not a
             # range.  Read as two endpoints the same-meridiem pair descends
@@ -2096,6 +2123,63 @@ def _stranded_explicit_anchor_veto(tokens, consumed, text, spec, anchor):
     return extract_timespan(frag, spec.lang, anchor) is not None
 
 
+def _stranded_fraction_prefix_veto(tokens, consumed, spec):
+    """Whether the winning reading strands a LEADING ``article? NUM
+    FRACTION_WORD of?`` prefix it could not bind -- "first half of leap
+    february 2028", "third quarter of somewhat march".
+
+    ``half_period``'s MONTH order / ``quarter_of_month`` (see
+    ``base_grammar.py``) bind ``of? MONTH`` directly adjacent -- no order
+    tolerates a word interposed between "of" and the month name.  #658 closed
+    the ADJACENT stranding ("first half of february" winning the bare month
+    alone); an interposed word ("first half of LEAP february 2028") reopens
+    the exact same leak from a different angle -- neither ``half_period`` nor
+    ``quarter_of_month`` matches, so the bare ``calendar_date`` reading wins
+    on "february 2028" alone and strands "first half of leap" ahead of it, a
+    silently wrong (too-wide) answer.
+
+    Mirrors :func:`_stranded_ordinal_scope_veto`'s prefix-tolerant shape
+    (#651) but on the LEADING side of the winning span rather than the
+    trailing one: the run of unconsumed tokens immediately BEFORE the winner
+    (no consumed gap) only needs to *begin* with ``article? NUM
+    FRACTION_WORD of?`` -- any further filler words ("leap") before the
+    winning span are tolerated, since they still mean the ordinal-fraction
+    composition was intended but unsupported.  Refuses outright rather than
+    surfacing the truncated span, don't try to understand "leap" -- refusal
+    beats silent-wide.
+    """
+    if not consumed:
+        return False
+    first = min(consumed)
+    if first == 0:
+        return False
+    i = first - 1
+    while i >= 0 and tokens[i].index not in consumed:
+        i -= 1
+    lead = [t for t in tokens[i + 1:first]]
+    if not lead:
+        return False
+    article_surfaces = spec.connectors.get("article", frozenset())
+    j = 0
+    while j < len(lead) and lead[j].text in article_surfaces:
+        j += 1
+    if j >= len(lead) or not (lead[j].is_number and (lead[j].value or 0) >= 1):
+        return False
+    j += 1
+    fraction_words = (set(spec.connectors.get("half", ()))
+                      | set(spec.connectors.get("quarter_word", ())))
+    if j >= len(lead) or lead[j].text not in fraction_words:
+        return False
+    j += 1
+    # a trailing "of?" is optional -- some locales' month-fraction surface is
+    # connector-less ("erste Hälfte Februar") -- but any presence of it here
+    # is consumed as part of the recognised prefix, not counted as filler.
+    of_surfaces = spec.connectors.get("of", frozenset())
+    if j < len(lead) and lead[j].text in of_surfaces:
+        j += 1
+    return True
+
+
 def _new_year_definite_article_veto(tokens, match, spec) -> bool:
     """True when a bare ``new_year_ref`` match is immediately preceded by the
     definite article ("the new year", "in the new year").
@@ -2495,6 +2579,16 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
             and rep.construction in ("rel_span", "rel_period", "rel_span_quarter")
             and _stranded_explicit_anchor_veto(tokens, consumed, text,
                                                engine.spec, anchor)):
+        return None
+    # A bare ``calendar_date`` reading (a NAMED month, with or without a
+    # year) that strands a leading "ORD half/quarter of?" prefix it could
+    # not bind is the unsupported "first half of LEAP february 2028" shape
+    # -- an interposed word between "of" and the month reopens #658's
+    # stranding leak from a different angle (see
+    # _stranded_fraction_prefix_veto) -- refuse rather than surface the
+    # too-wide bare-month span with the fraction ordinal dropped.
+    if (rep.construction == "calendar_date"
+            and _stranded_fraction_prefix_veto(tokens, consumed, engine.spec)):
         return None
     return res.value, consumed
 

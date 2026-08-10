@@ -32,3 +32,21 @@ def test_half_of_year_unchanged():
 
 def test_bare_month_unchanged():
     assert start_end('August') == (AstroDate(2017, 8, 1), AstroDate(2017, 9, 1))
+
+
+# -- R101: (A) "bis <year>" no longer double-binds the fraction's year ----
+
+def test_bis_year_not_double_bound():
+    """A trailing "bis 2030" (de "until") must not double-bind: filling the
+    fraction's own YEAR slot AND independently closing the range to a whole
+    calendar year (see the English sibling test in
+    test/nl_corpus_en/test_nl_half_of_month.py for the full defect
+    writeup)."""
+    assert start_end('erste Hälfte von August, bis 2030') == (
+        AstroDate(2017, 8, 1), AstroDate(2017, 8, 16, 12))
+
+
+def test_last_half_is_final_half():
+    """(C) "letzte Hälfte von August" == "zweite Hälfte von August"."""
+    assert start_end('letzte Hälfte von August') == (
+        AstroDate(2017, 8, 16, 12), AstroDate(2017, 9, 1))

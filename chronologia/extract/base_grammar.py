@@ -231,10 +231,24 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # remainder -- a silently wrong (too-wide) answer, the same failure mode
     # ``month_fuzzy``/``season_fuzzy`` were added to close.  The trailing
     # ``of? YEAR?`` mirrors ``month_fuzzy``'s year handling verbatim.
+    # ``ordlast`` ("last half of august" / "last half of 2027") is the same
+    # final-unit synonym ``scoped_ordinal``/``quarter_ref`` already read for
+    # "the last day of the quarter" / "the last quarter" -- "last" standing in
+    # for the ordinal that selects the FINAL half (n=2).  Without it neither
+    # order above binds "last", so the bare MONTH/GYEAR construction won the
+    # shared span and stranded "last half of" -- the same too-wide leak #658
+    # closed for the spelled ordinals.  Only the GYEAR and MONTH orders take
+    # it: the SCOPE_UNIT (decade/century/millennium) order already binds an
+    # optional ``REL_MARKER`` there for a *different* purpose (shifting which
+    # decade/century, "the first half of NEXT century") and "last" has no
+    # established reading over a whole scope-unit here, so it is left alone
+    # rather than guessed at.
     "half_period": [
         "article? NUM half of? GYEAR",
+        "article? ordlast half of? GYEAR",
         "article? NUM half of? REL_MARKER? article? SCOPE_UNIT",
         "article? NUM half of? MONTH of? YEAR?",
+        "article? ordlast half of? MONTH of? YEAR?",
     ],
     # "the first/second/third/fourth quarter of <month>" -- a quarter of a
     # NAMED MONTH's span (distinct from ``quarter_ref``'s calendar quarter of
@@ -242,8 +256,19 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # construction binds ``YEAR``, this one binds ``MONTH``, so the two never
     # tie on the same span).  Same arithmetic-quarter convention as the
     # half-of-month order above, via :func:`chronologia.subdivide`.
+    # ``ordlast`` ("last quarter of august" -> the 4th/final quarter of that
+    # month) mirrors the ``half_period`` addition above -- deliberately MONTH
+    # only.  A GYEAR order ("last quarter of 2027") is NOT added here:
+    # ``quarter_ref`` already binds "last quarter" as a whole via its
+    # ``REL_MARKER quarter_word`` order (the anchor-relative previous-quarter
+    # reading), and a same-tokens ``ordlast quarter_word of? GYEAR`` order on
+    # this sibling construction would collide with it on "last quarter of
+    # 2027" -- untangling that tie is a bigger, deliberate change, not this
+    # leak-closing one, so the pre-existing relative reading is left as the
+    # pinned winner for the YEAR case.
     "quarter_of_month": [
         "article? NUM quarter_word of? MONTH of? YEAR?",
+        "article? ordlast quarter_word of? MONTH of? YEAR?",
     ],
     # "early/mid/late <month>" ("early March" -> the first third of March, a
     # ~10-day span; "late December" -> the last third).  ``PART`` binds the
