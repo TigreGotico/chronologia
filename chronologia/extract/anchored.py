@@ -297,6 +297,159 @@ def _one_offset_pass(tokens, resolved: List[Pair], spec: LangSpec,
     return out, grown
 
 
+#: calendar-grain units -- advanced through :func:`_astro_add_months` -- keyed
+#: to their month multiple (mirrors ``resolver._resolve_relative_offset``'s
+#: elif chain and ``_shift``'s ``month_steps``).
+_CALENDAR_UNIT_MONTHS = {"month": 1, "year": 12, "decade": 120,
+                         "century": 1200, "millennium": 12000}
+
+#: fixed-width units -- advanced through a plain ``timedelta`` -- keyed to
+#: their length in seconds (mirrors ``nseries._DUR_UNIT_SECONDS``, plus
+#: ``fortnight`` which that table also carries).
+_FIXED_UNIT_SECONDS = {"second": 1, "minute": 60, "hour": 3600, "day": 86400,
+                       "week": 604800, "fortnight": 1209600}
+
+#: finest-to-coarsest ordering of every offset unit, used to pick the
+#: composed span's granularity -- the same convention a BARE single-unit
+#: offset already uses (an "in 2 days" is a day-wide span; the compound picks
+#: whichever of its units is narrowest, exactly mirroring that rule).
+_UNIT_RANK = {u: i for i, u in enumerate(
+    ["second", "minute", "hour", "day", "week", "fortnight",
+     "month", "year", "decade", "century", "millennium"])}
+
+
+def _compound_unit_at(tokens, j, spec):
+    """A ``[NUM|QUANT|article] UNIT`` chunk starting at ``j`` -> ``(unit,
+    qty, end)`` or ``None`` when ``j`` does not open one."""
+    n = len(tokens)
+    qty = None
+    k = j
+    if k < n and tokens[k].is_number and tokens[k].value is not None:
+        qty, k = float(tokens[k].value), k + 1
+    elif k < n and tokens[k].text in spec.connectors.get("article", ()):
+        qty, k = 1.0, k + 1
+    elif k < n and tokens[k].text in spec.quantifiers:
+        qty, k = spec.quantifiers[tokens[k].text], k + 1
+    if qty is None:
+        qty, k = 1.0, k
+    if k < n and tokens[k].text in spec.units:
+        unit = spec.units[tokens[k].text]
+        if unit in _CALENDAR_UNIT_MONTHS or unit in _FIXED_UNIT_SECONDS:
+            return unit, qty, k + 1
+    return None
+
+
+def apply_compound_offset(tokens, resolved: List[Pair], spec: LangSpec,
+                          anchor: datetime) -> List[Pair]:
+    """Compose a MIXED-grain offset compound ("in 3 months and 2 days",
+    "in a year and a day", "1 year, 2 months and 3 days") into ONE point,
+    instead of the bare :func:`~chronologia.extract.resolver._resolve_relative_offset`
+    reading only its own leading ``NUM UNIT`` and stranding every further
+    ``[and|,] NUM UNIT`` chunk in the remainder.
+
+    Every chunk shares the leading offset's sign (direction marker):
+    "in 3 months and 2 days" both add, "3 months and 2 days ago" both
+    subtract -- a compound never mixes directions, so one marker covers the
+    whole phrase.
+
+    Composition happens in TWO passes over the summed chunks, not one
+    sequential walk, so the result never depends on the TEXTUAL order the
+    units were said in ("in 3 months and 2 days" and the reversed "in 2 days
+    and 3 months" land on the identical instant): every calendar-grain
+    chunk (month/year/decade/century/millennium) is summed to a single
+    month-count and applied first, in :class:`AstroDate`'s own proleptic
+    space (never stdlib ``datetime``, whose year bounds a BC/deep-time
+    composition would overrun); every fixed-width chunk (second .. fortnight)
+    is summed to a single ``timedelta`` and applied second. Calendar-then-
+    fixed is the natural reading order in any case ("3 months and 2 days"
+    means the 15th, 3 months on, plus 2 more days) and, applied AFTER the
+    month roll, never re-triggers month-end clamping.
+
+    The composed span is a POINT of the FINEST unit named anywhere in the
+    compound ("in 3 months and 2 days" -> a DAY-wide span, matching what a
+    bare "in 2 days" already returns) -- the same granularity convention the
+    single-unit reading already follows, just extended to the widest (finest)
+    grain present.
+
+    A lone, un-extended ``relative_offset`` match (no trailing chunk found)
+    is returned untouched; only constructions actually carrying a composable
+    tail are rewritten.
+    """
+    and_words = frozenset(spec.connectors.get("and", ()))
+    lead_words = (frozenset(spec.connectors.get("article", ()))
+                 | frozenset(spec.quantifiers))
+    out = []
+    for m, r in resolved:
+        if m.construction != "relative_offset":
+            out.append((m, r))
+            continue
+        marker_tok = m.slots.get("MARKER")
+        if marker_tok is None or marker_tok.text not in spec.directions:
+            out.append((m, r))
+            continue
+        sign = spec.directions[marker_tok.text]
+        usg_tok = m.slots.get("USG")
+        if usg_tok is not None:
+            unit0 = spec.singular_units.get(usg_tok.text)
+        else:
+            unit_tok = m.slots.get("UNIT")
+            unit0 = spec.units.get(unit_tok.text) if unit_tok is not None else None
+        if unit0 is None or (unit0 not in _CALENDAR_UNIT_MONTHS
+                             and unit0 not in _FIXED_UNIT_SECONDS):
+            out.append((m, r))
+            continue
+        num_tok = m.slots.get("NUM")
+        quant_tok = m.slots.get("QUANT")
+        if num_tok is not None and quant_tok is not None:
+            qty0 = float(num_tok.value) * spec.quantifiers[quant_tok.text]
+        elif num_tok is not None:
+            qty0 = float(num_tok.value)
+        elif quant_tok is not None:
+            qty0 = spec.quantifiers[quant_tok.text]
+        else:
+            qty0 = 1.0
+        chunks = [(unit0, qty0)]
+        consumed = set(range(*m.span))
+        n = len(tokens)
+        idx = m.span[1]
+        while idx < n:
+            j = idx
+            if tokens[j].text in and_words:
+                j += 1
+            elif not (tokens[j].is_number or tokens[j].text in lead_words
+                     or tokens[j].text in spec.units):
+                # no connector AND the next token doesn't open a bare
+                # comma-joined chunk ("1 year, 2 months" -- the comma itself
+                # is dropped by the tokenizer, so a fresh chunk starts here
+                # with no connector token at all): stop, nothing more to fold.
+                break
+            got = _compound_unit_at(tokens, j, spec)
+            if got is None:
+                break
+            unit, qty, end = got
+            chunks.append((unit, qty))
+            consumed.update(range(idx, end))
+            idx = end
+        if len(chunks) < 2:
+            out.append((m, r))
+            continue
+        total_months = sum(sign * qty * _CALENDAR_UNIT_MONTHS[u]
+                           for u, qty in chunks if u in _CALENDAR_UNIT_MONTHS)
+        total_seconds = sum(sign * qty * _FIXED_UNIT_SECONDS[u]
+                            for u, qty in chunks if u in _FIXED_UNIT_SECONDS)
+        base = AstroDate.from_datetime(anchor)
+        cur = _astro_add_months(base, int(round(total_months))) \
+            if total_months else base
+        if total_seconds:
+            cur = cur + timedelta(seconds=total_seconds)
+        finest = min((u for u, _ in chunks), key=lambda u: _UNIT_RANK[u])
+        end_pt = _shift(cur, finest, 1)
+        new_res = Resolution(DateSpan(cur, end_pt), tuple(sorted(consumed)),
+                             r.week_widened)
+        out.append((m, new_res))
+    return out
+
+
 def apply_anchored_offset(tokens, resolved: List[Pair],
                           spec: LangSpec) -> List[Pair]:
     """Rewrite every date reference carrying a stranded offset pre-amble,

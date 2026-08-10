@@ -25,6 +25,7 @@ from typing import Dict, List, NamedTuple, Optional, Tuple
 
 from chronologia.astrodate import AstroDate, DateSpan, WideDuration
 from chronologia.extract.anchored import (apply_anchored_offset,
+                                              apply_compound_offset,
                                               apply_ordinal_count)
 from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
@@ -2608,6 +2609,11 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                                      jurisdiction, text, scale_mode)
     resolved = apply_business_days(tokens, resolved, engine.spec, anchor,
                                    jurisdiction, resolve_ref)
+    # mixed-grain offset compound ("in 3 months and 2 days"): fold every
+    # further "[and|,] NUM UNIT" chunk into the leading relative_offset match
+    # BEFORE the anchored-offset pass, so a stranded calendar/fixed tail is
+    # never mistaken for its own "N units after <ref>" pre-amble.
+    resolved = apply_compound_offset(tokens, resolved, engine.spec, anchor)
     # anchored arithmetic: rewrite a date reference carrying a stranded
     # "N units after"/"the weekday before" pre-amble (composition on the
     # already-resolved reference), then synthesise any anchor-relative
@@ -2739,6 +2745,7 @@ def extract_candidates(
                                     scale_mode)
     composed = apply_business_days(tokens, composed, engine.spec, anchor, None,
                                    resolve_ref)
+    composed = apply_compound_offset(tokens, composed, engine.spec, anchor)
     composed = apply_anchored_offset(tokens, composed, engine.spec)
     ocount = apply_ordinal_count(tokens, engine.spec, anchor)
     if ocount is not None:
