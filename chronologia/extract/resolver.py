@@ -740,6 +740,74 @@ class Resolver:
                                    AstroDate.from_datetime(hi)),
                           self._consumed(match))
 
+    def _resolve_rel_span_quarter(self, match, anchor):
+        """"the next/last <N> quarters": calendar-aligned, unlike the
+        day-anchored :meth:`_resolve_rel_span`. "the next 2 quarters" is the
+        *next* two whole calendar quarters -- ``[start of next quarter, start
+        of the quarter 2 further)`` -- matching the calendar grid the
+        singular "the next quarter" (:meth:`_resolve_quarter_ref`) already
+        uses. "the last 2 quarters" is the two whole quarters already ended --
+        ``[start of the quarter 2 back, start of the current quarter)``. A
+        "this" marker (rel 0) or a non-positive count names no such span."""
+        rel = self.spec.rel_markers[match.slots["REL_MARKER"].text]
+        num = int(match.slots["NUM"].value)
+        if rel == 0 or num < 1:
+            return None
+        cur = (anchor.month - 1) // 3          # 0-based current quarter
+        cur_abs = anchor.year * 4 + cur         # absolute quarter index
+
+        def _quarter_start(abs_idx):
+            year, q = divmod(abs_idx, 4)
+            return datetime(year, 3 * q + 1, 1)
+
+        if rel > 0:
+            lo = _quarter_start(cur_abs + 1)
+            hi = _quarter_start(cur_abs + 1 + num)
+        else:
+            lo = _quarter_start(cur_abs - num)
+            hi = _quarter_start(cur_abs)
+        return Resolution(DateSpan(AstroDate.from_datetime(lo),
+                                   AstroDate.from_datetime(hi)),
+                          self._consumed(match))
+
+    def _resolve_rel_span_weekend(self, match, anchor):
+        """"the next/last <N> weekends": the *covering* span from the start
+        of the nearest upcoming weekend through the end of the Nth ("the next
+        2 weekends" is Sat-start of the imminent weekend to Sun-end of the
+        one after it), or from the start of the Nth-back weekend through the
+        end of the most recently ended one ("the last 2 weekends").
+
+        Deliberately asymmetric with the singular "next weekend"
+        (:meth:`_resolve_weekend_ref`), which skips the imminent weekend --
+        that skip reads right for naming ONE weekend deictically ("this
+        weekend" already means the imminent one, so "next weekend" must mean
+        the one after), but a COUNT of weekends is naturally inclusive of the
+        nearest one: "the next 2 weekends" covers the two soonest weekends,
+        starting with the one about to happen. A "this" marker (rel 0) or a
+        non-positive count names no such span."""
+        rel = self.spec.rel_markers[match.slots["REL_MARKER"].text]
+        num = int(match.slots["NUM"].value)
+        if rel == 0 or num < 1:
+            return None
+        base = _midnight(anchor)
+        start_idx = _WEEK_START.get(self.conventions.week_start, 0)
+        wknd_idx = self.conventions.weekend_start
+        week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
+        first = week_start + timedelta(days=(wknd_idx - start_idx) % 7)
+        if rel > 0:
+            if first < base:
+                first += timedelta(weeks=1)
+            lo = first
+            hi = first + timedelta(weeks=num - 1) + timedelta(days=2)
+        else:
+            if first + timedelta(days=2) > base:
+                first -= timedelta(weeks=1)
+            hi = first + timedelta(days=2)
+            lo = first - timedelta(weeks=num - 1)
+        return Resolution(DateSpan(AstroDate.from_datetime(lo),
+                                   AstroDate.from_datetime(hi)),
+                          self._consumed(match))
+
     def _period_span(self, kind, rel, anchor):
         """The whole calendar period of ``kind`` containing the anchor, shifted
         by ``rel`` whole units.  Returns a :class:`DateSpan` for the civil

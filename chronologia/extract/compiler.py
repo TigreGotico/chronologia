@@ -134,6 +134,15 @@ PRECEDENCE: Dict[str, int] = {
     # rel_period unit it extends, and more specific (carries the count), so it
     # wins its span over rel_period / relative_offset on the shared tokens.
     "rel_span": 7,
+    # "the next/last N quarters" / "the next/last N weekends": calendar-
+    # aligned / covering-span siblings of ``rel_span`` (see base_grammar.py).
+    # Same tier: more specific than the bare rel_period/weekend_ref/
+    # quarter_ref reading (carries the count), so they win their longer span
+    # via normal longest-span selection, not via this tier -- this rank only
+    # matters for an equal-length tie, which these constructions never hit
+    # against their singular siblings (the count always adds a token).
+    "rel_span_quarter": 7,
+    "rel_span_weekend": 7,
     # "this morning"/"tonight"/"yesterday morning": a time-of-day band on a
     # deictically-selected day.  Same tier as the weekday/period references it
     # sits beside; a bare daypart composes onto a same-text date construction
