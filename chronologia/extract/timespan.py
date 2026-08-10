@@ -2298,18 +2298,46 @@ def _stray_capitalized_am_veto(tokens, match, spec) -> bool:
     return end < len(tokens) and tokens[end].text == "am" and tokens[end].cap
 
 
+def _stray_year_zero_veto(tokens, match, spec) -> bool:
+    """True for a ``relative_offset`` "year" match immediately followed by a
+    bare "0" -- e.g. "in year 0".
+
+    ``SMALLYEAR`` (the R102/#663 fix for "in year 5") deliberately refuses a
+    raw "0" (``matcher.py``'s ``SMALLYEAR`` branch: ``raw[0] != '0'``) because
+    bare "year 0" carries no astronomical-year-0 binding -- it already
+    resolves to ``None``. Without this veto, the R102 fix's own carve-out
+    reopens the original R102 hole for N=0 only: "in year" alone still
+    matches the plain relative-offset grammar ("in a year", +1y from the
+    anchor) and "0" is left stranded, unconsumed, in the remainder -- the
+    exact silent-wrong #663 was written to close for every OTHER N. Refusing
+    the relative reading here keeps "in year 0" declining to ``None``,
+    consistent with the pinned bare "year 0" -> ``None``, rather than
+    inventing a binding the bare surface doesn't have.
+    """
+    if match.construction != "relative_offset":
+        return False
+    unit = match.slots.get("UNIT")
+    if unit is None or spec.units.get(unit.text) != "year":
+        return False
+    end = match.span[1]
+    return (end < len(tokens) and tokens[end].is_number
+            and tokens[end].raw.rstrip(".") == "0")
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
     non-clause-final "be" is the verb not the era; a plain year stranding a
-    capitalized "BE"/"AM" is a declined era, not a confident year).  Applied
-    before the overlap contest so the shorter correct reading (a year_ref, or
-    nothing) survives.
+    capitalized "BE"/"AM" is a declined era, not a confident year; "in year"
+    stranding a bare "0" is the original R102 stranding hole reopened for the
+    one value SMALLYEAR refuses).  Applied before the overlap contest so the
+    shorter correct reading (a year_ref, or nothing) survives.
     """
     return (_new_year_definite_article_veto(tokens, match, spec)
             or _bare_be_trailing_veto(tokens, match, spec)
             or _stray_capitalized_be_veto(tokens, match, spec)
-            or _stray_capitalized_am_veto(tokens, match, spec))
+            or _stray_capitalized_am_veto(tokens, match, spec)
+            or _stray_year_zero_veto(tokens, match, spec))
 
 
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
