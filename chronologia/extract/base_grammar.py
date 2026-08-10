@@ -148,6 +148,20 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "rel_span_weekend": [
         "REL_MARKER NUM WEEKEND",
     ],
+    # "the first/second/.../last weekend of <month> [year]" -- the Nth (or,
+    # with ``ordlast``, the final) weekend WITHIN that month, sibling to
+    # ``scoped_ordinal``'s "Nth WEEKDAY of MONTH" reading but selecting a
+    # whole weekend rather than a single weekday. Without this construction
+    # "weekend" alone is claimed by the bare ``weekend_ref``, which reads
+    # "first"/"last" as if they modified the ANCHOR-relative weekend (an
+    # ordinal like "first" isn't even a REL_MARKER, so it wasn't consumed at
+    # all) and strands "of <month>" in the remainder -- a silently wrong
+    # answer. See resolver docstring for the "whose Saturday falls in the
+    # month" counting rule.
+    "weekend_of_month": [
+        "article? ORD WEEKEND of MONTH of? YEAR?",
+        "article? ordlast WEEKEND of MONTH of? YEAR?",
+    ],
     # "last/next <season>" ("next winter"), "<season> of <year>" ("summer of
     # 2024") and the bare "<season> <year>?" ("summer 2024", or a deictic
     # "summer" on its own).  These three -- the relative-marker prefix, the

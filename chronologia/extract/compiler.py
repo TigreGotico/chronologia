@@ -81,6 +81,11 @@ PRECEDENCE: Dict[str, int] = {
     # ordinal, so military time wins the same-span tie
     "military_time": 1,
     "scoped_ordinal": 2,
+    # "the Nth/last weekend of <month>": same tier as scoped_ordinal, the
+    # sibling construction it generalises to a whole weekend; it also always
+    # wins its longer span over the bare weekend_ref/rel_span_weekend it
+    # would otherwise strand "of <month>" against.
+    "weekend_of_month": 2,
     "month_fuzzy": 2,
     "half_period": 2,
     "month_day_ref": 2,

@@ -118,6 +118,20 @@ def _nth_weekday_of_month(year: int, month: int, weekday: int,
     return date(year, month, days[idx])
 
 
+def _nth_weekend_of_month(year: int, month: int, weekend_start: int,
+                          n: int) -> Optional[date]:
+    """The Saturday (locale ``weekend_start``, Mon=0) that opens the ``n``-th
+    weekend of ``month``/``year``; ``n < 0`` counts from the end (``-1`` =
+    last). A weekend belongs to the month its OPENING day falls in -- a
+    weekend straddling a month boundary (e.g. Sat Jan 31 / Sun Feb 1) counts
+    for the month the Saturday is in, not the one the Sunday spills into, so
+    "the first weekend of february" skips it and starts at the next Saturday
+    actually inside February. Returns ``None`` when the month has no such
+    occurrence (an out-of-range ordinal), same refusal policy as
+    :func:`_nth_weekday_of_month`."""
+    return _nth_weekday_of_month(year, month, weekend_start, n)
+
+
 def _add_months(dt: datetime, months: int) -> datetime:
     total = dt.month - 1 + months
     year = dt.year + total // 12
@@ -1006,6 +1020,34 @@ class Resolver:
         first = first + timedelta(weeks=rel)
         s = AstroDate.from_datetime(first)
         return Resolution(DateSpan(s, s + timedelta(days=2)),
+                          self._consumed(match))
+
+    def _resolve_weekend_of_month(self, match, anchor):
+        """"the first/second/.../last weekend of <month> [year]": the Nth
+        (or, with ``ordlast``, the last) weekend WITHIN that month -- the
+        Saturday/Sunday pair whose Saturday (the locale's ``weekend_start``
+        day) falls in the named month, reusing the same weekend-opens-the-day
+        machinery as :meth:`_resolve_weekend_ref` / :meth:`_resolve_rel_span_weekend`
+        (:func:`_nth_weekend_of_month`).
+
+        The month's year follows the same anchor-relative rule as a bare
+        month reference (``month_fuzzy``): an explicit YEAR wins; otherwise
+        it is always the ANCHOR's year, never rolled forward or back to make
+        the month "upcoming" -- "the first weekend of june" in December still
+        names June of the anchor's own year.
+        """
+        ord_tok = match.slots.get("ORD")
+        n = int(ord_tok.value) if ord_tok is not None else -1
+        month = self.spec.months[match.slots["MONTH"].text]
+        year_tok = match.slots.get("YEAR")
+        year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
+                else anchor.year)
+        value = _nth_weekend_of_month(year, month,
+                                      self.conventions.weekend_start, n)
+        if value is None:                            # no such Nth weekend
+            return None
+        start = AstroDate.from_date(value)
+        return Resolution(DateSpan(start, start + timedelta(days=2)),
                           self._consumed(match))
 
     def _resolve_calendar_date(self, match, anchor):
