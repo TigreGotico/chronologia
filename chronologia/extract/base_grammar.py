@@ -130,7 +130,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # 21 days from today, not three calendar weeks).  Shares the same REL_MARKER
     # / UNIT vocab every locale already ships, plus a NUM.
     "rel_span": [
-        "REL_MARKER NUM UNIT",
+        "article? REL_MARKER NUM UNIT",
     ],
     # "the next/last <N> quarters" -- calendar-quarter sibling of ``rel_span``.
     # A bare "quarter"/"quarters" is NOT a duration UNIT (it is not part of
@@ -146,7 +146,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # the *next* two whole calendar quarters (not today + 2*91 days), "the
     # last 2 quarters" the two most recently *ended* whole quarters.
     "rel_span_quarter": [
-        "REL_MARKER NUM quarter_word",
+        "article? REL_MARKER NUM quarter_word",
     ],
     # "the next/last <N> weekends" -- weekend sibling of ``rel_span``. A bare
     # "weekend"/"weekends" is read through the dedicated ``WEEKEND`` slot
@@ -157,7 +157,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # is deliberately more permissive than singular "next weekend" (which
     # skips the imminent one) -- see resolver docstring.
     "rel_span_weekend": [
-        "REL_MARKER NUM WEEKEND",
+        "article? REL_MARKER NUM WEEKEND",
     ],
     # "the first/second/.../last weekend of <month> [year]" -- the Nth (or,
     # with ``ordlast``, the final) weekend WITHIN that month, sibling to

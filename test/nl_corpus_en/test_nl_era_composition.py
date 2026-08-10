@@ -249,3 +249,38 @@ def test_small_era_year_never_silently_swallows_the_marker():
     r = parse("the last weekend of june 5 BC")
     assert r is not None
     assert "bc" in r[1].lower()
+
+
+# -- R90: "the" article stranded on era-qualified day-of-month dates -------
+#
+# calendar_date's "DAY of MONTH YEAR? ERA?" order (and its non-era-marked
+# sibling used by the plain form below) never carried a leading ``article?``,
+# unlike the sibling orders gated behind "on"/"by". "the 1st of january 500
+# BC" resolved the correct (era-shifted) span but stranded "the" in the
+# remainder -- and the SAME order strands "the" on an ordinary (non-era)
+# date too ("the 1st of january 1999"), so this is not era-specific: the
+# base order itself was missing the article, fixed once for both.
+
+def test_the_1st_of_january_500_bc_remainder_fully_consumed():
+    assert parse("the 1st of january 500 BC")[1] == ""
+
+
+def test_the_15th_of_march_44_bc_remainder_fully_consumed():
+    assert parse("the 15th of march 44 BC")[1] == ""
+
+
+def test_the_1st_of_january_1999_remainder_fully_consumed():
+    # non-era control: the same calendar_date order strands "the" here too,
+    # proving the defect is in the order itself, not the ERA slot.
+    s, e = start_end("the 1st of january 1999")
+    assert s == AstroDate(1999, 1, 1)
+    assert e == AstroDate(1999, 1, 2)
+    assert parse("the 1st of january 1999")[1] == ""
+
+
+def test_the_1st_of_january_1999_ad_shares_the_defect():
+    # explicit AD marker, same order, same fix.
+    s, e = start_end("the 1st of january 1999 AD")
+    assert s == AstroDate(1999, 1, 1)
+    assert e == AstroDate(1999, 1, 2)
+    assert parse("the 1st of january 1999 AD")[1] == ""
