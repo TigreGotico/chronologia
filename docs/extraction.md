@@ -1266,6 +1266,41 @@ limitations, stated plainly:
   lone span) is the natural direction here; it is **not** promised, and today
   the contract is one span or `None`.
 
+### Impossible dates and out-of-range ordinals
+
+A phrase can be grammatically well-formed and still name no date that
+exists: "February 30", "the 32nd of January", "the 13th month of 2026", "the
+0th week of May". These are refused — `extract_timespan` returns `None` —
+never silently rounded, wrapped, or narrowed to something plausible.
+
+**No overflow projection.** "The 13th month of 2026" is not read as January
+2027, the way clock arithmetic might carry a minute into the next hour. A
+year has twelve months and no thirteenth; the same holds for a week beyond
+the year's last ISO week, a weekend that does not occur a sixth time in a
+short month, or a day-of-month past the month's last day. Wherever a count
+would have to roll into a neighbouring period to mean anything, the parser
+stops instead of guessing which neighbour was intended.
+
+**Partial binding is not an answer.** The harder failure mode is not the
+plainly-invalid date itself but a construction that binds *part* of a
+phrase and lets the invalid part fall on the floor. "The 13th month of 2026"
+could, with a less careful parser, drop the impossible "13th month" and
+return all of 2026 instead — technically a valid span, but not what anyone
+asking about a specific month meant. Chronologia treats a stranded ordinal
+or unit word standing next to a resolved date as proof that the parse is
+*incomplete*, and refuses the whole reading rather than surface the
+truncated remainder as if it were the answer.
+
+**The rationale is trust.** A caller acting on a date span cannot
+distinguish "the library computed this deliberately" from "the library
+dropped a piece it couldn't place." A human who says "February 30" has
+made an error or is testing the boundary — they do not mean March 2, and a
+scheduler that quietly proceeds as if they did will act on a date nobody
+asked for. Returning `None` costs an unhandled case; returning a
+plausible-looking wrong date costs a silent, undetectable one. Between an
+honest "this does not resolve" and a fabricated answer that happens to
+parse without complaint, the library always chooses the former.
+
 ### Known limitations: homographs and confusables
 
 A vocabulary maps a *surface form* to a temporal slot, and some surface
