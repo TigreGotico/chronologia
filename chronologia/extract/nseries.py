@@ -1133,18 +1133,25 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
                 if all(t.is_number for t in left) and all(t.is_number for t in right):
                     continue
 
-                # UNTIL is ground exactly once per call: a second date-range
-                # candidate (there should not normally be one, but do not
-                # silently overwrite an already-grounded UNTIL if the
-                # sentence is malformed) is left unclaimed rather than
-                # re-grounded.
-                if rec.until is not None:
-                    continue
-
                 right_text = " ".join(t.raw for t in right)
                 got = extract_timespan(right_text, lang, anchor=anchor)
                 if got is None:
                     continue
+
+                # R98: a SECOND genuine date-range candidate claiming UNTIL
+                # for the same rule ("every day from june to august from
+                # september to october") is ambiguous, not a pick-one -- the
+                # rightmost-first scan already grounded UNTIL off ONE clause
+                # in an earlier pass of this loop, and this earlier clause is
+                # equally a real calendar range.  Silently leaving it
+                # unclaimed strands it in the remainder next to a rule that
+                # looks confidently correct.  There is no principled way to
+                # prefer one calendar bound over the other, so decline the
+                # whole extraction (mirrors the empty-intersection decline in
+                # the weekday-range branch above).
+                if rec.until is not None:
+                    return None, consumed | set(range(i, n))
+
                 rec = _replace(rec, until=got[0].start, count=None)
                 consumed = consumed | set(range(i, n))
                 claimed = True
