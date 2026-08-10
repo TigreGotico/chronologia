@@ -247,8 +247,8 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? NUM half of? GYEAR",
         "article? ordlast half of? GYEAR",
         "article? NUM half of? REL_MARKER? article? SCOPE_UNIT",
-        "article? NUM half of? MONTH of? YEAR?",
-        "article? ordlast half of? MONTH of? YEAR?",
+        "article? NUM half of? MONTH of? YEAR? ERA?",
+        "article? ordlast half of? MONTH of? YEAR? ERA?",
     ],
     # "the first/second/third/fourth quarter of <month>" -- a quarter of a
     # NAMED MONTH's span (distinct from ``quarter_ref``'s calendar quarter of
@@ -267,8 +267,8 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # leak-closing one, so the pre-existing relative reading is left as the
     # pinned winner for the YEAR case.
     "quarter_of_month": [
-        "article? NUM quarter_word of? MONTH of? YEAR?",
-        "article? ordlast quarter_word of? MONTH of? YEAR?",
+        "article? NUM quarter_word of? MONTH of? YEAR? ERA?",
+        "article? ordlast quarter_word of? MONTH of? YEAR? ERA?",
     ],
     # "early/mid/late <month>" ("early March" -> the first third of March, a
     # ~10-day span; "late December" -> the last third).  ``PART`` binds the

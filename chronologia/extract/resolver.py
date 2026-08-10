@@ -1517,8 +1517,23 @@ class Resolver:
             from chronologia import subdivide
             month = self.spec.months[month_tok.text]
             year_tok = match.slots.get("YEAR")
-            year = (_pivot_two_digit_year(year_tok, anchor.year)
-                    if year_tok is not None else anchor.year)
+            era_tok = match.slots.get("ERA")
+            if era_tok is not None and year_tok is None:
+                # a stray era marker with no YEAR bound alongside it -- see
+                # ``_resolve_calendar_date``'s identical guard: composing here
+                # would silently substitute the anchor's year for the
+                # (unreadable) named one, so this reading is refused rather
+                # than guessed.
+                return None
+            if year_tok is not None and era_tok is not None:
+                # an era-qualified year ("first half of august 44 BC")
+                # composes through the same era registry the bare
+                # era_bc/era_ad constructions and calendar_date/
+                # weekend_of_month use -- see the ``ERA`` slot's docstring.
+                year = _year_with_era(year_tok, era_tok, self.spec)
+            else:
+                year = (_pivot_two_digit_year(year_tok, anchor.year)
+                        if year_tok is not None else anchor.year)
             part = "first_half" if n == 1 else "second_half"
             span = subdivide(_gregorian_month_span(year, month), part)
             return Resolution(DateSpan(span.start, span.end),
@@ -1577,8 +1592,19 @@ class Resolver:
         from chronologia import subdivide
         month = self.spec.months[match.slots["MONTH"].text]
         year_tok = match.slots.get("YEAR")
-        year = (_pivot_two_digit_year(year_tok, anchor.year)
-                if year_tok is not None else anchor.year)
+        era_tok = match.slots.get("ERA")
+        if era_tok is not None and year_tok is None:
+            # a stray era marker with no YEAR bound alongside it -- see
+            # ``_resolve_calendar_date``'s identical guard.
+            return None
+        if year_tok is not None and era_tok is not None:
+            # an era-qualified year ("third quarter of february 44 BC")
+            # composes through the same era registry ``half_period``'s MONTH
+            # order and calendar_date/weekend_of_month use.
+            year = _year_with_era(year_tok, era_tok, self.spec)
+        else:
+            year = (_pivot_two_digit_year(year_tok, anchor.year)
+                    if year_tok is not None else anchor.year)
         span = subdivide(_gregorian_month_span(year, month), part)
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
