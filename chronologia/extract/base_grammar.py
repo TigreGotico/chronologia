@@ -78,6 +78,17 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast UNIT of MONTH of? YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",
         "article? ordlast UNIT of article? year_word YEAR?",
+        # "the 12th month of 2026" / "the 100th day of 2026": a bare trailing
+        # Gregorian year with no "the year" wording. Restricted to day/month
+        # (``DMUNIT``, not the generic ``UNIT``) because week and quarter
+        # already resolve this shape through their own dedicated
+        # constructions (``iso_week_ref``, ``quarter_ref``); without this
+        # order the only surviving reading was the doomed "ORD SCOPE_UNIT"
+        # absolute-period one below (day/month have no entry in ``_ABSOLUTE``,
+        # so it always failed to resolve), stranding "the 12th month of" and
+        # letting the bare year win instead of December.
+        "article? ORD DMUNIT of GYEAR",
+        "article? ordlast DMUNIT of GYEAR",
         "article? ORD UNIT of REL_MARKER? article? SCOPE_UNIT",
         "article? ordlast UNIT of REL_MARKER? article? SCOPE_UNIT",
         # a fuzzy early/mid/late PART on an absolute ordinal period ("the

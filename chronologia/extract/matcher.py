@@ -66,6 +66,16 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.is_number
     if name == "UNIT":
         return token.text in spec.units
+    if name == "DMUNIT":
+        # day/month only -- the narrow sibling of UNIT that licenses the
+        # "Nth UNIT of <bare year>" order (no "the year"/ISO-week wording).
+        # Week and quarter already resolve a bare trailing year through their
+        # own dedicated constructions (iso_week_ref, quarter_ref); adding them
+        # here too would create a same-span precedence tie against those
+        # constructions with no guarantee scoped_ordinal's plain WEEK_OF_YEAR/
+        # day-counting semantics agree with iso_week_ref's ISO semantics, so
+        # this slot deliberately stays narrower than UNIT.
+        return spec.units.get(token.text) in ("day", "month")
     if name == "USG":
         return token.text in spec.singular_units
     if name in ("MARKER", "DIRECTION_MARKER"):

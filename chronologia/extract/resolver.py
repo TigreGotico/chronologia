@@ -1486,7 +1486,7 @@ class Resolver:
             value = get_date_ordinal(n, scope_ref, res)
             return self._ordinal_result(value, unit_kind, match)
 
-        unit_tok = match.slots.get("UNIT")
+        unit_tok = match.slots.get("UNIT") or match.slots.get("DMUNIT")
         if unit_tok is None:                        # absolute period
             # SCOPE_UNIT (preposed "the 21st century") or CMUNIT (postposed
             # Romance "século XII") -- same absolute-period resolution
@@ -1510,7 +1510,7 @@ class Resolver:
             return self._ordinal_result(value, kind, match)
 
         unit_kind = self.spec.units[unit_tok.text]
-        year_tok = match.slots.get("YEAR")
+        year_tok = match.slots.get("YEAR") or match.slots.get("GYEAR")
         year = _pivot_two_digit_year(year_tok, anchor.year) if year_tok else anchor.year
         month_tok = match.slots.get("MONTH")
         scope_tok = match.slots.get("SCOPE_UNIT")

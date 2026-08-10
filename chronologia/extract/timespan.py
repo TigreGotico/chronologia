@@ -1867,15 +1867,74 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
         _veto_reentry.active = False
 
 
+def _ordish_scope_word(text, spec):
+    """Whether ``text`` is a scope/unit noun the "Nth <unit> of <scope>"
+    construction selects ("week", "weekend", "month", "quarter", a weekday
+    name, ...) -- used only to recognise a stranded "<ordinal> <unit> of"
+    prefix immediately before an unrelated winning reading, below.
+
+    Deliberately excludes plural surfaces ("weeks", "quarters", "weekends"):
+    a plural names a COUNT, not a scoped ordinal (``_resolve_scoped_ordinal``
+    refuses a plural selected unit the same way), so "3 weeks of vacation in
+    July" must not be mistaken for a stranded ordinal-scope attempt.
+    """
+    if text in spec.plural_units or text in ("weekends", "quarters"):
+        return False
+    return (text in spec.units or text in spec.scope_units
+            or text in spec.weekend_words
+            or text in spec.connectors.get("quarter_word", frozenset())
+            or text in spec.weekdays)
+
+
 def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
     of_surfaces = set(engine.spec.connectors.get("of", ()))
+    # Match-start positions of every construction the matcher recognises
+    # anywhere in the stream (not just the tokens the WINNING reading
+    # consumed): a scoped-ordinal attempt whose ordinal never bound (0,
+    # negative -- the ORD slot requires >=1) leaves its "of <scope>" tail to
+    # be read as an unrelated, independently-resolving reference ("weekend"
+    # alone, ignoring "of june"); composition then picks whichever of the two
+    # readings sits earliest in the text, silently discarding the other
+    # (here "june") rather than the stranded numeral it was actually scoping.
+    # A numeral+unit+"of" run immediately followed by ANY recognised
+    # reference start -- whether or not that reference is the eventual
+    # composition winner -- is the same honest-refusal shape as "abuts
+    # winner" below, just one composition layer further out.
+    veto_cb = lambda m: _candidate_veto(tokens, m, engine.spec)  # noqa: E731
+    match_starts = {m.span[0] for m in engine.matcher.match(tokens, veto_cb)}
     for i in range(len(tokens) - 1):
-        if not (tokens[i].index not in consumed and tokens[i].is_number
-                and tokens[i + 1].index not in consumed
-                and tokens[i + 1].text in of_surfaces):
+        if not (tokens[i].index not in consumed and tokens[i].is_number):
             continue
-        if i + 2 < len(tokens) and tokens[i + 2].index in consumed:
+        j = i + 1
+        skipped_unit = False
+        # an ordinal-scope construction ("the 0th WEEK of may", "the 13th
+        # QUARTER of 2026") names one unit/scope noun between the numeral and
+        # the "of" connector; skip a single such word (consumed or not -- it
+        # may have been separately swallowed by an unrelated shorter match,
+        # e.g. a bare "weekend" reading) so this reaches the connector the
+        # same way the plain "<number> of ..." shape below does. An ordinal
+        # that never bound at all (0, negative -- the ORD slot requires
+        # >=1) never becomes a scoped_ordinal candidate in the first place,
+        # so this is the only way such a stranding is ever detected.
+        if j < len(tokens) and _ordish_scope_word(tokens[j].text, engine.spec):
+            j += 1
+            skipped_unit = True
+        if not (j < len(tokens) and tokens[j].index not in consumed
+                and tokens[j].text in of_surfaces):
+            continue
+        if j + 1 < len(tokens) and (tokens[j + 1].index in consumed
+                                    or tokens[j + 1].index in match_starts):
             return True                              # qualifier abuts winner
+        if skipped_unit:
+            # Shape 2 below (a stranded fragment that does not itself resolve
+            # to a date) is NOT extended to the unit-skipping case: the
+            # fragment scan below stops at the next CONSUMED token anywhere
+            # later in the sentence, which -- once a unit word may sit
+            # between the numeral and "of" -- can run across unrelated
+            # clauses ("the first week of school starts in September") and
+            # false-refuse a sentence that has nothing to do with a scoped
+            # ordinal. Only the direct-abutment check above applies here.
+            continue
         cs = tokens[i].char_start
         ce = None
         for t in tokens[i:]:
