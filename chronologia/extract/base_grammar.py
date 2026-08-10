@@ -121,6 +121,33 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "rel_span": [
         "REL_MARKER NUM UNIT",
     ],
+    # "the next/last <N> quarters" -- calendar-quarter sibling of ``rel_span``.
+    # A bare "quarter"/"quarters" is NOT a duration UNIT (it is not part of
+    # ``spec.units``: the shared duration-offset elifs in ``resolver.py``
+    # every UNIT surface must reach -- relative_offset, rel_period's
+    # ``_shift_units``/``_period_span`` -- have no notion of a "quarter" and
+    # would raise ``ResolverInvariant`` if one reached them, so the quarter
+    # noun stays its own ``quarter_word`` vocabulary (the one ``quarter_ref``
+    # already reads) and gets its own construction+resolver rather than
+    # joining ``spec.units``.  Unlike the rolling day-anchored ``rel_span``,
+    # quarters read calendar-aligned (matching the singular "the next
+    # quarter" of ``rel_period``/``quarter_ref``): "the next 2 quarters" is
+    # the *next* two whole calendar quarters (not today + 2*91 days), "the
+    # last 2 quarters" the two most recently *ended* whole quarters.
+    "rel_span_quarter": [
+        "REL_MARKER NUM quarter_word",
+    ],
+    # "the next/last <N> weekends" -- weekend sibling of ``rel_span``. A bare
+    # "weekend"/"weekends" is read through the dedicated ``WEEKEND`` slot
+    # (``weekend_ref`` already binds it), not ``spec.units``, for the same
+    # reason quarters are kept out: the generic duration-unit elifs have no
+    # weekend case.  The *covering* span from the start of the nearest
+    # upcoming (or most recently ended) weekend through the end of the Nth
+    # is deliberately more permissive than singular "next weekend" (which
+    # skips the imminent one) -- see resolver docstring.
+    "rel_span_weekend": [
+        "REL_MARKER NUM WEEKEND",
+    ],
     # "last/next <season>" ("next winter"), "<season> of <year>" ("summer of
     # 2024") and the bare "<season> <year>?" ("summer 2024", or a deictic
     # "summer" on its own).  These three -- the relative-marker prefix, the
