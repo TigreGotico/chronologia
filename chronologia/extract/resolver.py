@@ -91,6 +91,62 @@ def _pivot_two_digit_year(tok, anchor_year: int) -> int:
     return n
 
 
+#: ``ERA`` slot surface -> era registry key, for the OFFSET eras a bare
+#: Gregorian YEAR slot may compose with (see the ``ERA`` slot's docstring in
+#: :mod:`chronologia.extract.matcher` for why this is BC/AD only).
+_YEAR_ERA_KEYS = ("before_christ", "common_era")
+_YEAR_ERA_CONNECTORS = {"before_christ": "bc", "common_era": "ad"}
+
+
+def _era_key_for_token(spec, tok) -> Optional[str]:
+    """Which era registry key an ``ERA`` slot token names, or ``None``."""
+    for key in _YEAR_ERA_KEYS:
+        if tok.text in spec.connectors.get(_YEAR_ERA_CONNECTORS[key],
+                                           frozenset()):
+            return key
+    return None
+
+
+def _year_with_era(year_tok, era_tok, spec) -> int:
+    """Read an era-qualified ``YEAR`` slot as an astronomical year ("500 BC"
+    -> -499, "44 AD" -> 44, "2560 BE" -> 2017).
+
+    Only call this when ``era_tok is not None``; a bare (unqualified) YEAR
+    goes through :func:`_pivot_two_digit_year` instead, which also handles
+    the anchor-relative two-digit pivot.  An era-qualified year is never
+    two-digit-pivoted -- the marker itself disambiguates the century -- so
+    the literal digit run is read as-is, exactly as the dedicated
+    era_bc/era_ad/era_buddhist_be constructions already do.
+    """
+    n = int(year_tok.value)
+    from chronologia.eras import ERAS, EraCounting
+    key = _era_key_for_token(spec, era_tok)
+    if key is None:
+        return n
+    era = ERAS[key]
+    if era.counting == EraCounting.YEARS_BEFORE:
+        return era.epoch.year - n
+    return era.epoch.year + n - 1
+
+
+def _nth_weekday_of_month_astro(year: int, month: int, weekday: int,
+                                n: int) -> Optional["AstroDate"]:
+    """Same as :func:`_nth_weekday_of_month` but returns an
+    :class:`~chronologia.astrodate.AstroDate` and supports years outside
+    ``datetime.date``'s 1..9999 range (BC years) -- needed so an
+    era-qualified "the last weekend of june 500 BC" can compose without
+    routing through stdlib ``date``, which cannot represent astronomical
+    year -499 at all."""
+    from chronologia.astrodate import _days_in_month
+    last = _days_in_month(year, month)
+    days = [d for d in range(1, last + 1)
+            if AstroDate(year, month, d).weekday() == weekday]
+    idx = n if n < 0 else n - 1
+    if not -len(days) <= idx < len(days):
+        return None
+    return AstroDate(year, month, days[idx])
+
+
 def _pivot_year_str(raw: str, anchor_year: int) -> int:
     """The same anchor-relative window pivot as :func:`_pivot_two_digit_year`,
     but for a bare digit *substring* (the year component of a numeric
@@ -912,8 +968,24 @@ class Resolver:
             if not 1 <= q <= 4:
                 return None
             year_tok = match.slots.get("YEAR")
-            year = (_pivot_two_digit_year(year_tok, anchor.year)
-                    if year_tok is not None else anchor.year)
+            era_tok = match.slots.get("ERA")
+            if era_tok is not None and year_tok is None:
+                # a stray era marker with no YEAR bound alongside it -- see
+                # the identical guard in ``_resolve_calendar_date`` for why
+                # this refuses rather than silently falling back to the
+                # anchor's year.
+                return None
+            if year_tok is not None and era_tok is not None:
+                # an era-qualified year ("the first quarter of 500 BC")
+                # composes through the same era registry the bare era_bc/
+                # era_ad constructions use -- see the ``ERA`` slot's
+                # docstring.  ``AstroDate`` below already supports arbitrary
+                # (including negative/BC) years, so no further branching is
+                # needed past computing the right astronomical year here.
+                year = _year_with_era(year_tok, era_tok, self.spec)
+            else:
+                year = (_pivot_two_digit_year(year_tok, anchor.year)
+                        if year_tok is not None else anchor.year)
         else:                                           # bare "the quarter"
             q = (anchor.month - 1) // 3 + 1              # anchor's own quarter
             year = anchor.year
@@ -1040,6 +1112,32 @@ class Resolver:
         n = int(ord_tok.value) if ord_tok is not None else -1
         month = self.spec.months[match.slots["MONTH"].text]
         year_tok = match.slots.get("YEAR")
+        era_tok = match.slots.get("ERA")
+        if era_tok is not None and year_tok is None:
+            # a stray era marker with no YEAR bound alongside it means the
+            # number that should have been the year instead got swallowed by
+            # a DIFFERENT slot (the YEAR slot's own >=32-or-4-digit floor
+            # refuses a small year like "5" in "5 BC" -- see the ``YEAR``
+            # slot's docstring in matcher.py) -- e.g. "5th january 5 BC"
+            # with DAY consuming the second "5" and ERA left dangling on its
+            # own. Composing a date here would silently substitute the
+            # ANCHOR's year for the (unreadable) named one, exactly the
+            # silent-wrong failure mode this fix exists to close, so this
+            # reading is refused rather than guessed.
+            return None
+        if year_tok and era_tok is not None:
+            # an era-qualified year ("the last weekend of june 500 BC")
+            # composes through the same era registry the bare era_bc/era_ad
+            # constructions use -- see the ``ERA`` slot's docstring.  Routed
+            # through the AstroDate-native weekend finder since stdlib
+            # ``date`` cannot represent a BC astronomical year at all.
+            year = _year_with_era(year_tok, era_tok, self.spec)
+            start = _nth_weekday_of_month_astro(
+                year, month, self.conventions.weekend_start, n)
+            if start is None:                         # no such Nth weekend
+                return None
+            return Resolution(DateSpan(start, start + timedelta(days=2)),
+                              self._consumed(match))
         year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
                 else anchor.year)
         value = _nth_weekend_of_month(year, month,
@@ -1054,9 +1152,32 @@ class Resolver:
         month = self.spec.months[match.slots["MONTH"].text]
         day_tok = match.slots.get("DAY")
         year_tok = match.slots.get("YEAR")
+        era_tok = match.slots.get("ERA")
         day = int(day_tok.value) if day_tok else 1
         prefer_future = self.spec.construction_flags.get(
             "calendar_date", {}).get("prefer_future", False)
+        if era_tok is not None and year_tok is None:
+            # a stray era marker with no YEAR bound alongside it: the number
+            # that should have been the year instead got swallowed by DAY
+            # (the YEAR slot's own >=32-or-4-digit floor refuses a small
+            # year like "5" in "5 BC" -- see the ``YEAR`` slot's docstring in
+            # matcher.py) -- e.g. "5th january 5 BC" with DAY consuming the
+            # second "5" and ERA left dangling on its own. Composing a date
+            # here would silently substitute the ANCHOR's year for the
+            # (unreadable) named one, exactly the silent-wrong failure mode
+            # this fix exists to close, so this reading is refused rather
+            # than guessed.
+            return None
+        if year_tok and era_tok is not None:
+            # an era-qualified year ("1st january 500 BC") composes through
+            # the same era registry the bare era_bc/era_ad constructions use,
+            # rather than reading "500" as the Gregorian year AD 500 and
+            # stranding "BC" as remainder -- see the ``ERA`` slot's docstring.
+            year = _year_with_era(year_tok, era_tok, self.spec)
+            astro = AstroDate(year, month, day)     # raises on impossible
+            span = DateSpan(astro, astro + timedelta(days=1)) if day_tok \
+                else _gregorian_month_span(year, month)
+            return Resolution(span, self._consumed(match))
         if year_tok:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:

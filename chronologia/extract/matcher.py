@@ -99,6 +99,33 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
                    for months in spec.calendar_months.values())
     if name == "DAY":
         return token.is_number and 1 <= (token.value or 0) <= 31
+    if name == "ERA":
+        # an era marker trailing a bare YEAR ("500 BC", "44 AD") so a
+        # construction that grounds on a year -- calendar_date,
+        # weekend_of_month, quarter_ref -- can compose with an era-qualified
+        # year exactly like the dedicated era_bc/era_ad constructions do,
+        # instead of silently reading the number as a bare (common-era)
+        # Gregorian year and stranding the marker as remainder.
+        #
+        # Deliberately BC/AD only, not the full offset-era set:
+        # * calendar-backed eras (hijri, solar_hijri) number a DIFFERENT
+        #   calendar's own months, so mixing them with a Gregorian
+        #   MONTH/quarter slot would be incoherent -- those stay on their
+        #   own dedicated era_* constructions.
+        # * Buddhist Era's "be" marker is guarded to fire ONLY at
+        #   end-of-clause everywhere else in the grammar (see era_buddhist_be
+        #   construction) specifically because it collides with the common
+        #   English verb "be" ("will june be there").  This slot has no
+        #   such position guard, and a resolver decline (``None``) here
+        #   does NOT fall back to a shorter match without ERA -- the
+        #   matcher tries the longest candidate span first and does not
+        #   retry -- so speculatively binding "be" would silently break
+        #   ordinary "june" + verb-"be" sentences that used to resolve
+        #   fine.  Buddhist-Era composition with these three constructions
+        #   stays unsupported (refuses -- see the resolvers' guards) rather
+        #   than risk that regression.
+        return (token.text in spec.connectors.get("bc", frozenset())
+                or token.text in spec.connectors.get("ad", frozenset()))
     if name == "YEAR":
         # a bare number reads as a year when it is too big to be a day/count
         # (>=32) or written with >=4 digits; an apostrophe cue ("'20", "'08")
