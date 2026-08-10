@@ -123,7 +123,18 @@
     },
     "rel_span": {
       "orders": [
-        "NUM REL_MARKER UNIT"
+        "NUM REL_MARKER UNIT",
+        "article? NUM REL_MARKER UNIT"
+      ]
+    },
+    "rel_span_quarter": {
+      "orders": [
+        "article? NUM REL_MARKER quarter_word"
+      ]
+    },
+    "rel_span_weekend": {
+      "orders": [
+        "article? NUM REL_MARKER WEEKEND"
       ]
     }
   },
