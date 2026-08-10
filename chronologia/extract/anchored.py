@@ -32,8 +32,7 @@ from typing import List, Optional, Tuple
 from chronologia.astrodate import AstroDate, DateSpan
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _WEEK_START,
-                                              _add_months, _day_span,
-                                              _midnight)
+                                              _day_span, _midnight)
 
 Pair = Tuple[Match, Resolution]
 
@@ -52,8 +51,33 @@ def _gap_words(spec: LangSpec) -> frozenset:
             | frozenset(spec.connectors.get("of", ())))
 
 
-def _shift(start: datetime, unit: str, step: float) -> datetime:
-    """``start`` advanced by ``step`` of ``unit`` (mirrors the offset resolver)."""
+def _astro_is_leap(year: int) -> bool:
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+
+def _astro_days_in_month(year: int, month: int) -> int:
+    if month == 2 and _astro_is_leap(year):
+        return 29
+    return (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[month - 1]
+
+
+def _astro_add_months(start: AstroDate, months: int) -> AstroDate:
+    """``start`` advanced by whole months, in AstroDate's own (proleptic,
+    unbounded-year) space -- never round-tripped through stdlib ``datetime``,
+    whose ``MINYEAR``/``MAXYEAR`` bounds a BC/deep-time composition would
+    overrun (see ``_try_offset``/``_try_offset_postfix``)."""
+    total = start.month - 1 + months
+    year = start.year + total // 12
+    month = total % 12 + 1
+    day = min(start.day, _astro_days_in_month(year, month))
+    return start.replace(year=year, month=month, day=day)
+
+
+def _shift(start: AstroDate, unit: str, step: float) -> AstroDate:
+    """``start`` advanced by ``step`` of ``unit`` (mirrors the offset resolver),
+    entirely in AstroDate space so the arithmetic stays valid for any
+    proleptic year (BC, deep time) instead of stdlib ``datetime``'s
+    ``MINYEAR``-bounded range."""
     if unit == "minute":
         return start + timedelta(minutes=step)
     if unit == "hour":
@@ -65,13 +89,15 @@ def _shift(start: datetime, unit: str, step: float) -> datetime:
     if unit == "fortnight":
         return start + timedelta(weeks=2 * step)
     if unit == "month":
-        return _add_months(start, int(step))
-    if unit == "year":
-        return _add_months(start, int(step) * 12)
+        return _astro_add_months(start, int(step))
+    month_steps = {"year": 12, "decade": 120, "century": 1200,
+                   "millennium": 12000}
+    if unit in month_steps:
+        return _astro_add_months(start, int(step) * month_steps[unit])
     raise ValueError(f"unsupported offset unit {unit!r}")
 
 
-def _roll_weekday(base: datetime, target: int, sign: int) -> datetime:
+def _roll_weekday(base: AstroDate, target: int, sign: int) -> AstroDate:
     """The named ``target`` weekday strictly after (``sign>0``) or strictly
     before (``sign<0``) the midnight ``base``."""
     if sign > 0:
@@ -79,6 +105,14 @@ def _roll_weekday(base: datetime, target: int, sign: int) -> datetime:
         return base + timedelta(days=ahead)
     back = (base.weekday() - target) % 7 or 7
     return base - timedelta(days=back)
+
+
+def _astro_day_span(d: AstroDate) -> DateSpan:
+    """Day-wide span ``[midnight(d), next midnight)`` for an AstroDate that
+    may fall outside stdlib ``datetime``'s representable range (mirrors
+    ``resolver._day_span``, which only accepts stdlib ``datetime``)."""
+    start = d.replace(hour=0, minute=0, second=0, microsecond=0)
+    return DateSpan(start, start + timedelta(days=1))
 
 
 # -- feature 1: offset-from-reference -------------------------------------
@@ -140,15 +174,15 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
         if pre is None:
             continue
         s = res.value.start
-        base = datetime(s.year, s.month, s.day)
+        base = AstroDate(s.year, s.month, s.day)
         if pre["kind"] == "unit":
             value = _shift(base, pre["unit"], sign * pre["qty"])
             # the offset amount governs the SHIFT, never the result width:
             # "a week after X" is the single civil day one week from X, not a
             # week-wide span.  Every unit resolves to that one shifted day.
-            span = _day_span(value)
+            span = _astro_day_span(value)
         else:
-            span = _day_span(_roll_weekday(base, pre["weekday"], sign))
+            span = _astro_day_span(_roll_weekday(base, pre["weekday"], sign))
         start = pre["start"]
         consumed = tuple(sorted(set(res.consumed) | set(range(start, b))))
         new_match = Match(match.construction, (start, match.span[1]),
@@ -205,14 +239,14 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
                     continue
                 lo = pre["start"]
             s = res.value.start
-            base = datetime(s.year, s.month, s.day)
+            base = AstroDate(s.year, s.month, s.day)
             if pre["kind"] == "unit":
                 value = _shift(base, pre["unit"], sign * pre["qty"])
                 # the offset governs the SHIFT, not the width: the single
                 # shifted civil day, for every unit (see _try_offset).
-                span = _day_span(value)
+                span = _astro_day_span(value)
             else:
-                span = _day_span(_roll_weekday(base, pre["weekday"], sign))
+                span = _astro_day_span(_roll_weekday(base, pre["weekday"], sign))
             consumed = tuple(sorted(set(res.consumed) | set(range(lo, end))))
             new_match = Match(match.construction, (lo, end),
                               match.slots, match.calendar)

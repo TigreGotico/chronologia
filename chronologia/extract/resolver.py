@@ -233,7 +233,14 @@ DATE_CONSTRUCTIONS = frozenset({
     # clock exactly as any other date does, so "5pm on the 15th" places the
     # clock on that day instead of dropping the day and timing the anchor's.
     "month_day_ref",
-    "holiday_ref", "new_year_ref"})
+    "holiday_ref", "new_year_ref",
+    # a bare calendar year ("2020", "in 1995") resolves to a year-wide span
+    # exactly like era_bc/era_ad -- without this the anchored-offset pass
+    # (chronologia/extract/anchored.py) silently skips it, stranding "100
+    # years before" in the remainder instead of composing onto the year's
+    # start ("100 years before 2020" -> 1920-01-01, day-wide, same convention
+    # as "100 years before june 2020" and "100 years before 44 BC").
+    "year_ref"})
 
 
 def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolution:
