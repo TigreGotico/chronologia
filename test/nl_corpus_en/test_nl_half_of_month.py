@@ -222,6 +222,133 @@ def test_last_quarter_of_month_is_fourth():
         AstroDate(2017, 8, 24, 6), AstroDate(2017, 9, 1))
 
 
+# -- R104 seam fixes -----------------------------------------------------
+#
+# Two more seams of the same #660/#658 family, verified live against dev
+# (cd770c62, anchor 2017-06-27):
+#
+# (A) the #660(A) double-bind veto was scoped only to the ``until``-class
+#     connectors ("until"/"till"/"through"/"thru"), leaving the bare "to"
+#     form untouched: "first half of august to 2030" still double-bound the
+#     year (2030 both filling the fraction's own YEAR slot AND closing the
+#     range as a whole calendar year), yielding the same self-contradictory
+#     2030-08-01..2031-01-01. Fixed by unioning the bare "to" surface into
+#     the veto's connector check, scoped exactly as #660 was (fraction-
+#     marked left side, lone bare-year right side) so ordinary "to" ranges
+#     (clock ranges, date ranges, duration connectors) are untouched.
+# (B) the ``half_period`` MONTH order (and ``quarter_of_month``) lacked an
+#     ``ERA?`` slot, so "first half of august 44 BC" composed "44" as the
+#     bare (common-era) Gregorian year AD 44 and stranded "BC" in the
+#     remainder -- a silent ~1987-year error (vs. the correct astronomical
+#     year -43, per #644's era composition). Fixed by adding ``ERA?`` to
+#     both orders and routing the year through ``_year_with_era``, the same
+#     era-aware path ``calendar_date``/``weekend_of_month``/``quarter_ref``
+#     already use.
+
+def test_to_year_not_double_bound():
+    """(A) "first half of august to 2030" -- a bare "to", not "until" --
+    must refuse the double-bound range exactly like the until-form (A)
+    above, falling back to the single-span half-of-august reading in the
+    ANCHOR year with "to 2030" honestly stranded."""
+    assert start_end("first half of august to 2030") == (
+        AstroDate(2017, 8, 1), AstroDate(2017, 8, 16, 12))
+    assert parse("first half of august to 2030")[1] == "to 2030"
+
+
+def test_june_to_year_pinned_unchanged():
+    """Control (A): a bare MONTH (not a fraction) left of a bare-"to" year
+    is unrelated to this fix and keeps its pre-existing (year-lent-then-
+    extended-to-year-end) reading -- mirrors ``test_june_until_year_pinned_
+    unchanged`` for the "to" connector."""
+    assert start_end("june to 2030") == (
+        AstroDate(2030, 6, 1), AstroDate(2031, 1, 1))
+
+
+def test_month_to_month_range_unchanged():
+    """Control (A): an ordinary month-to-month range is untouched by the
+    "to" veto (only fires with a fraction-marked left side and a lone bare
+    year on the right -- "august" is neither)."""
+    assert start_end("june to august") == (
+        AstroDate(2017, 6, 1), AstroDate(2017, 9, 1))
+
+
+def test_clock_range_from_9_to_5_unchanged():
+    """Control (A): "from 9 to 5" -- a clock range, no fraction marker at
+    all on the left -- is untouched by the "to" veto."""
+    s, e = start_end("from 9 to 5")
+    assert s == AstroDate(2017, 6, 28, 9)
+    assert e == AstroDate(2017, 6, 28, 17, 1)
+
+
+def test_duration_2_to_3_weeks_unchanged():
+    """Control (A): "2 to 3 weeks" -- a duration connector, not a date
+    range at all -- is untouched by the "to" veto. Uses the dedicated
+    ``extract_duration`` edge (durations are a different construction
+    family from timespans)."""
+    from datetime import timedelta
+    from chronologia.extract import extract_duration
+    d, remainder = extract_duration("2 to 3 weeks and 4 hours", "en")
+    assert d == timedelta(weeks=3, hours=4)
+    assert remainder == ""
+
+
+def test_half_of_month_bc_era():
+    """(B) "first half of august 44 BC" composes the era-qualified year
+    through ``_year_with_era`` (44 BC == astronomical year -43, per #644)
+    instead of stranding "BC" against the bare AD-44 reading."""
+    assert start_end("first half of august 44 BC") == (
+        AstroDate(-43, 8, 1), AstroDate(-43, 8, 16, 12))
+
+
+def test_half_of_month_ad_era_control():
+    """Control (B): the explicit-AD form composes to the ordinary positive
+    astronomical year (44 AD == year 44, no offset)."""
+    assert start_end("first half of august 44 AD") == (
+        AstroDate(44, 8, 1), AstroDate(44, 8, 16, 12))
+
+
+def test_quarter_of_month_bc_era():
+    """(B) same era composition on ``quarter_of_month``: "third quarter of
+    february 44 BC" -- astronomical year -43, a non-leap year (-43 is not
+    divisible by 4), so February splits into four exact 7-day quarters
+    (Feb1/8/15/22/Mar1); the third is Feb15..22."""
+    assert start_end("third quarter of february 44 BC") == (
+        AstroDate(-43, 2, 15), AstroDate(-43, 2, 22))
+
+
+def test_bare_month_bc_era_control():
+    """Control (B): the pre-existing bare "MONTH YEAR ERA" composition
+    (#644, no fraction prefix) is untouched."""
+    assert start_end("august 44 BC") == (
+        AstroDate(-43, 8, 1), AstroDate(-43, 9, 1))
+
+
+def test_calendar_date_bc_era_control():
+    """Control (B): ``calendar_date``'s own era composition (#644/era-
+    composition fix) is untouched by this change."""
+    assert start_end("the 15th of march 44 BC") == (
+        AstroDate(-43, 3, 15), AstroDate(-43, 3, 16))
+
+
+def test_last_half_of_august_control():
+    """Control (B): the ordlast MONTH order (no era at all) is untouched."""
+    assert start_end("last half of august") == (
+        AstroDate(2017, 8, 16, 12), AstroDate(2017, 9, 1))
+
+
+def test_first_half_of_august_2030_control():
+    """Control (B)/(A): an explicit trailing year with no era and no
+    until/to marker is the ordinary half_period MONTH order, untouched."""
+    assert start_end("first half of august 2030") == (
+        AstroDate(2030, 8, 1), AstroDate(2030, 8, 16, 12))
+
+
+def test_first_half_of_august_until_2030_control():
+    """Control (A): the #660-pinned until-form stays exactly as before."""
+    assert start_end("first half of august, until 2030") == (
+        AstroDate(2017, 8, 1), AstroDate(2017, 8, 16, 12))
+
+
 def test_last_quarter_of_year_pinned_relative_reading():
     """Control (C): "last quarter of 2027" deliberately keeps its
     pre-existing anchor-relative reading (quarter_ref's ``REL_MARKER

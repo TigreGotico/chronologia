@@ -542,6 +542,18 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     # (never plain "to") -- used below to scope the month-fraction veto so it
     # never touches a bare "X to Y" range.
     until_words = {" ".join(w) for w in _conn_surfaces(spec, "until", _RANGE_UNTIL)}
+    # the bare "to" surface itself (never "until"/"till"/"through") -- the
+    # #660 double-bind veto below was originally scoped to ``until_words``
+    # only, leaving "first half of august to 2030" to reproduce the same
+    # self-contradictory span (2030-08-01..2031-01-01) that #660 fixed for
+    # the until-words.  Its own comment flagged "to" as untouched; no test
+    # pinned it.  Unioning the plain "to" surface here closes that gap while
+    # leaving every other bare-"to" reading (clock ranges, date ranges,
+    # duration connectors) untouched, since the veto still only fires when
+    # the left side carries a fraction marker and the right side is a lone
+    # bare year.
+    bare_to_words = {" ".join(w) for w in _conn_surfaces(spec, "to", _RANGE_TO)} \
+        - until_words
     # the period-fraction markers ("half"/"quarter") that name a HALF/QUARTER
     # OF A MONTH construction (``half_period``'s MONTH order, ``quarter_of_
     # month``) -- see the veto below.
@@ -613,7 +625,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             # untouched -- both compose exactly as before.
             if got is not None \
                     and any(t.text in fraction_marker_words for t in left_tok) \
-                    and conn_words in until_words \
+                    and (conn_words in until_words or conn_words in bare_to_words) \
                     and bare_of(right_tok) is not None:
                 got = None
             # A bare (unled) "MINUTE to HOUR pm" is the subtractive clock
