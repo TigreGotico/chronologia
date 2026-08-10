@@ -156,6 +156,65 @@ def _homograph_ordinal_map(vocab, blacklist):
     return out
 
 
+def _homograph_tens_map(vocab, blacklist):
+    """Surface -> value for the *ordinal* reading of every ORDINAL_TENS
+    surface that is also a *fraction* word (pt/es/gl "décimo" = tenth *and*
+    a-tenth; Catalan spells every ordinal 11-19 the same as its fraction --
+    "tretzè"/"dotzè" = 13th/12th *and* a-thirteenth/a-twelfth).  Held out of
+    the number-fold's word set for the same reason as the unit homographs
+    (see :func:`_homograph_ordinal_map`), and licensed back positionally by
+    :func:`_license_tens_homograph` -- but *keeping the original surface*
+    rather than stamping straight to a digit, because a tens word is not
+    always the whole ordinal on its own: "décimo segundo" (twelfth) and
+    "décimo terceiro" (thirteenth) are TWO-token compounds the number
+    back-end composes from the spelled tens word plus a following spelled
+    unit, and stamping the tens word to its own bare digit (as the unit
+    homograph fold does, correctly, for a single-word ordinal) would feed
+    the back-end "10 segundo" and silently truncate the compound to 10."""
+    fractions = set()
+    for table in (vocab.FRACTION, vocab.FRACTION_FEMALE):
+        fractions.update(v.lower() for v in table.values() if v)
+    black = {w.lower() for w in blacklist}
+    out = {}
+    for val, surf in vocab.ORDINAL_TENS.items():
+        if not surf:
+            continue
+        for s in {surf.lower()} | _fem_forms(surf):
+            if s in fractions and s not in black:
+                out[s] = val
+    return out
+
+
+def _license_tens_homograph(tokens, tens_map, definite, quarter_words=frozenset()):
+    """Positionally read a tens ordinal/fraction homograph ("décimo"/"tretzè").
+
+    Same positional rule as :func:`_license_ordinal_fraction` -- licensed
+    after a definite article or before the quarter noun, left alone (the
+    fraction reading) everywhere else -- but the token keeps its ORIGINAL
+    surface, only ``is_number``/``value`` are stamped, so a following
+    spelled unit word still composes through the shared back-end ("décimo
+    segundo" -> 12, "décimo terceiro" -> 13) instead of being handed a
+    pre-stamped digit the back-end cannot recombine with the next word.
+    """
+    if not tens_map or (not definite and not quarter_words):
+        return tokens
+    out = list(tokens)
+    changed = False
+    n = len(out)
+    for i, t in enumerate(out):
+        if t.is_number or t.text not in tens_map:
+            continue
+        prev = out[i - 1] if i - 1 >= 0 else None
+        nxt = out[i + 1] if i + 1 < n else None
+        after_article = prev is not None and prev.text in definite
+        before_quarter = nxt is not None and nxt.text in quarter_words
+        if not after_article and not before_quarter:
+            continue  # not an ordinal frame -- leave for FRACTION
+        out[i] = replace(t, is_number=True, value=tens_map[t.text])
+        changed = True
+    return _reindex(tuple(out)) if changed else tokens
+
+
 #: locale root, for reading a language's ``marker_quarter_word.voc`` (the
 #: calendar-quarter noun -- "trimestre") at fold-build time.
 _LOCALE_ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "locale")
@@ -276,7 +335,18 @@ def _romance_additive_join(left, right):
 
 
 def _make_romance_fold(lang_code, blacklist, reader=None,
-                       extra_numwords=frozenset(), extra_homograph=None):
+                       extra_numwords=frozenset(), extra_homograph=None,
+                       extra_ordinals=None):
+    """``extra_ordinals`` -- a closed surface->value table for spelled
+    ordinals a language's ``NumberVocabulary`` does not carry at all (rather
+    than carrying under a different, homograph-colliding spelling): Spanish
+    fuses its 11th-19th/21st-29th/31st ordinals into a single word
+    ("decimotercero", "vigesimoprimero") the vocabulary's ORDINAL_TENS/
+    ORDINAL_UNITS tables do not list (they list only the two-word compound's
+    components, "décimo"/"tercero", which already compose through the
+    back-end).  Entries are added to both the run-membership word set and
+    the single-token fallback map, exactly like the vocabulary-derived
+    ordinals above."""
     from ovos_number_parser.util import RomanceNumberExtractor
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
     vocab = next(v for v in vars(numbers_mod).values()
@@ -290,7 +360,9 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
         if reader is not None:
             return reader(text, ordinals=ordinals)
         return extractor.extract_number(text, ordinals=ordinals)
-    numwords = _romance_numwords(vocab, blacklist) | frozenset(extra_numwords)
+    extra_ordinals = {k.lower(): v for k, v in (extra_ordinals or {}).items()}
+    numwords = (_romance_numwords(vocab, blacklist) | frozenset(extra_numwords)
+               | frozenset(extra_ordinals))
     joins = frozenset(j.lower() for j in vocab.JOIN_WORD)
     # some ``extract_number_<lang>`` back-ends do not recognise the feminine
     # ordinal surface ("tercera", "segona"); a direct surface->value map,
@@ -305,6 +377,7 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
                     ordinal_value[fem] = val
     ordinal_value = {k: v for k, v in ordinal_value.items()
                      if k in numwords}
+    ordinal_value.update(extra_ordinals)
 
     # the a.c./d.c. glue runs first, then the shared engine: run membership
     # from the vocab-derived word set, the language's JOIN_WORD as the internal
@@ -328,12 +401,18 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
     # homograph entry licenses that surface in the ordinal frames only.
     if extra_homograph:
         homomap.update(extra_homograph)
+    # ORDINAL_TENS surfaces that are also fraction words ("décimo", the
+    # Catalan 11th-19th series) need the same positional licensing, but
+    # composing rather than digit-stamped -- see :func:`_homograph_tens_map`.
+    tens_homomap = _homograph_tens_map(vocab, blacklist)
     definite = _ROMANCE_DEFINITE.get(lang_code, frozenset())
     quarter_words = _quarter_word_surfaces(lang_code)
-    if not homomap or (not definite and not quarter_words):
+    if (not homomap and not tens_homomap) or (not definite and not quarter_words):
         return base
 
     def folded(tokens):
+        tokens = _license_tens_homograph(tokens, tens_homomap, definite,
+                                         quarter_words)
         return base(_license_ordinal_fraction(tokens, homomap, definite,
                                               quarter_words))
     return folded
@@ -611,7 +690,66 @@ fold_pt = _with_scale_frame(fold_pt, "pt", frozenset({"um", "uma"}),
                                                      "milhão", "milhao"}))
 
 
-fold_es = _make_romance_fold("es", set())
+# Spanish fuses its 11th-19th/21st-29th/31st ordinals into a single word --
+# "decimotercero" (13th), "vigesimoprimero" (21st) -- rather than the
+# two-word compound ("décimo tercero") the NumberVocabulary's ORDINAL_TENS/
+# ORDINAL_UNITS tables already compose through the back-end.  The fused
+# spelling is the one RAE prescribes as primary and the one native text
+# overwhelmingly uses; without it "el decimotercer mes de 2026" silently
+# degraded to a bare year_ref match on "2026" instead of refusing (no 13th
+# month exists) the way "el 13.º mes de 2026" and English "the thirteenth
+# month of 2026" already do (R81, PR #640).
+#
+# Source: Real Academia Española, Diccionario panhispánico de dudas (2005),
+# s.v. "numerales, 2.2" -- the fused spelling loses the tens-word's own
+# written accent ("décimo"->"decimo-", "vigésimo"->"vigesimo-") while the
+# unit component keeps its own ("séptimo" -> "decimoséptimo"); "undécimo"/
+# "duodécimo" are the classical alternatives for 11th/12th, "decimonoveno"/
+# "decimonono" both attested for 19th.  Apocopated forms ("decimotercer",
+# "vigesimoprimer") are the form used directly before a masculine singular
+# noun ("el decimotercer mes"), mirroring "tercer"/"primer" themselves.
+_ES_TENS_PREFIX = {10: "decimo", 20: "vigesimo", 30: "trigesimo"}
+#: masculine unit-ordinal suffix fused onto the tens prefix above.
+_ES_UNIT_SUFFIX_MASC = {1: "primero", 2: "segundo", 3: "tercero", 4: "cuarto",
+                        5: "quinto", 6: "sexto", 7: "séptimo", 8: "octavo",
+                        9: "noveno"}
+#: apocopated masculine forms (before a masculine singular noun) -- only
+#: 1st and 3rd apocopate in Spanish.
+_ES_UNIT_SUFFIX_APOC = {1: "primer", 3: "tercer"}
+#: classical alternative spellings RAE lists alongside the productive fused
+#: form, keyed by value.
+_ES_ORDINAL_ALT = {11: ("undécimo",), 12: ("duodécimo",),
+                   19: ("decimonono",)}
+
+
+def _es_fuse(prefix, suffix):
+    """Fuse a tens prefix onto a unit suffix, eliding the tens prefix's
+    trailing "o" before the unit's own leading "o" ("decimo" + "octavo" ->
+    "decimoctavo", never the double-vowel "decimooctavo") -- the one unit
+    (8th, "octavo") that starts with the vowel the prefix ends in."""
+    if prefix.endswith("o") and suffix.startswith("o"):
+        return prefix[:-1] + suffix
+    return prefix + suffix
+
+
+def _es_compound_ordinals():
+    out = {}
+    for tens_val, prefix in _ES_TENS_PREFIX.items():
+        for unit_val, suffix in _ES_UNIT_SUFFIX_MASC.items():
+            val = tens_val + unit_val
+            masc = _es_fuse(prefix, suffix)
+            out[masc] = val
+            out[masc[:-1] + "a"] = val  # feminine: -o -> -a
+            apoc_suffix = _ES_UNIT_SUFFIX_APOC.get(unit_val)
+            if apoc_suffix:
+                out[prefix + apoc_suffix] = val
+            for alt in _ES_ORDINAL_ALT.get(val, ()):
+                out[alt] = val
+                out[alt[:-1] + "a"] = val
+    return out
+
+
+fold_es = _make_romance_fold("es", set(), extra_ordinals=_es_compound_ordinals())
 fold_gl = _make_romance_fold("gl", set())
 fold_ca = _make_romance_fold("ca", set())
 # deep-time SCALE-frame licensing (article-one + multiword "mil <million>")
@@ -754,9 +892,12 @@ def _merge_digit_ordinal(tokens, suffixes):
 def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                           phrases=(), h_clock=False, ord_suffixes=frozenset(),
                           fem_ord=None, reader=None,
-                          extra_numwords=frozenset()):
+                          extra_numwords=frozenset(), extra_homograph=None,
+                          extra_ordinals=None):
     base = _make_romance_fold(lang_code, blacklist, reader=reader,
-                              extra_numwords=extra_numwords)
+                              extra_numwords=extra_numwords,
+                              extra_homograph=extra_homograph,
+                              extra_ordinals=extra_ordinals)
     fem_ord = fem_ord or {}
 
     def fold(tokens):
@@ -985,6 +1126,43 @@ def _license_it_prima(tokens):
     return _reindex(tuple(out))
 
 
+# Italian spells its 11th-19th ordinals identically to the FRACTION
+# denominator of the same value -- "tredicesimo" is at once "thirteenth" and
+# "a-thirteenth" (vocab.FRACTION[13] == vocab.ORDINAL_TENS would list it too,
+# but ORDINAL_TENS only carries the round-ten entries 10/20/../90, so this
+# homograph collision is invisible to the shared TENS mechanism and must be
+# named explicitly).  Without licensing, "undicesimo".."diciannovesimo" are
+# simply absent from the number-fold's word set (silently dropped as
+# fractions), so a phrase built on one -- "il tredicesimo mese del 2026" --
+# never tokenizes an ordinal at all and falls through to a bare year_ref
+# match, same failure mode as the Spanish/Catalan compound gap this change
+# closes.  Licensed positionally (after a definite article / before the
+# quarter noun) exactly like the 1st-9th homographs above -- each is a
+# complete single-word ordinal with no further composition, so (unlike the
+# décimo/tretzè TENS-prefix case) stamping straight to its digit is correct.
+# Source: standard Italian ordinal-numeral formation (Treccani, "numerali
+# ordinali"): 11th-19th borrow the cardinal's stem + "-esimo" and are
+# genuinely homographic with the same-value fraction.
+_IT_TEEN_HOMOGRAPH = {
+    "undicesimo": 11, "dodicesimo": 12, "tredicesimo": 13,
+    "quattordicesimo": 14, "quindicesimo": 15, "sedicesimo": 16,
+    "diciassettesimo": 17, "diciottesimo": 18, "diciannovesimo": 19,
+}
+# Italian composes 21st-31st (and every higher non-round ordinal) by fusing
+# the cardinal's stem onto "-esimo": ventuno -> ventunesimo (21st, unlike
+# "ventunesimo" any FRACTION collision -- Italian's FRACTION table stops at
+# 20).  The two-word compound "ventesimo primo" already composes through the
+# back-end, but the fused spelling is the one Italian actually writes.
+# Source: Treccani / Accademia della Crusca, "numerali ordinali" -- the
+# fused compound elides the cardinal's final vowel before "-esimo" except
+# where the cardinal itself ends in an accented vowel (23rd "ventitré" keeps
+# its final "e": "ventitreesimo").
+_IT_COMPOUND_ORDINALS = {
+    "ventunesimo": 21, "ventiduesimo": 22, "ventitreesimo": 23,
+    "ventiquattresimo": 24, "venticinquesimo": 25, "ventiseiesimo": 26,
+    "ventisettesimo": 27, "ventottesimo": 28, "ventinovesimo": 29,
+    "trentunesimo": 31,
+}
 # "prima" is the feminine ordinal "first" *and* the directional marker
 # "before"; it is blacklisted from the general number fold (so the offset
 # composition can read the marker) and positionally licensed back to the digit
@@ -994,7 +1172,9 @@ _fold_it_base = _romance_prepass_fold(
     "it", {"un", "uno", "una", "milioni", "miliardi", "mila", "prima"},
     proclitics=frozenset({"l", "un", "d", "dell", "all", "nell", "dall",
                           "sull", "quest", "quell", "c"}),
-    phrases=_IT_PHRASES)
+    phrases=_IT_PHRASES,
+    extra_homograph=_IT_TEEN_HOMOGRAPH,
+    extra_ordinals=_IT_COMPOUND_ORDINALS)
 
 
 def _split_it_fused_mila(tokens):
