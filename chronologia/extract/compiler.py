@@ -87,6 +87,11 @@ PRECEDENCE: Dict[str, int] = {
     # would otherwise strand "of <month>" against.
     "weekend_of_month": 2,
     "month_fuzzy": 2,
+    # sibling of month_fuzzy over SEASON instead of MONTH; same tier -- its
+    # longer span (PART + SEASON) already wins the matcher's length-first
+    # tie-break over the bare season_ref it would otherwise strand "early"
+    # against, this precedence entry only matters for an equal-length tie
+    "season_fuzzy": 2,
     "half_period": 2,
     "month_day_ref": 2,
     # a quarter ("Q3 2026") and an ISO week ("week 32") carry their own marker

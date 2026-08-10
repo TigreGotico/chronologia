@@ -70,18 +70,50 @@ def test_season_genitive_case(text, s, e):
     assert ss == _d(s) and ee == _d(e)
 
 
-def test_season_genitive_after_nachalo_does_not_strand_the_season():
+def test_season_genitive_after_nachalo_narrows_to_first_third():
     # "начало весны 2027" ("the beginning of spring 2027") -- genitive is
-    # obligatory after "начало".  This base branch has no season_fuzzy /
-    # thirds construction for "начало <season>", so "начало" itself is not
-    # consumed; what matters for this fix is that the season resolves
-    # correctly (year 2027 -> spring span) instead of falling back to the
-    # whole-year genitive-year misparse ("весны" stranded, span = full
-    # year) that motivated this fix.
+    # obligatory after "начало".  With the oblique case forms in the vocab
+    # AND the season_fuzzy thirds construction both present, the natural
+    # genitive phrase narrows to the first third of the season and consumes
+    # the part word entirely.
     r = parse("начало весны 2027")
     assert r is not None
-    assert r[0].start == _d("2027-3-1") and r[0].end == _d("2027-6-1")
-    assert r.remainder.strip() == "начало"
+    assert r[0].start == AstroDate(2027, 3, 1, 0, 0)
+    assert r[0].end == AstroDate(2027, 3, 31, 16, 0)
+    assert r.remainder.strip() == ""
+
+
+# -- fuzzy season thirds (начало/середина/конец <season> [year]) ----------
+
+# Regression: "начало весна 2027" used to match the bare season, stranding
+# "начало" ("early") in the remainder.  Independent thirds arithmetic
+# mirrors the English ``test_season_fuzzy_bare``/``test_season_fuzzy_year``
+# (same :func:`chronologia.subdivide` algorithm, anchor year 2017).
+@pytest.mark.parametrize("text,s,e", [
+    ("начало весна", AstroDate(2017, 3, 1, 0, 0), AstroDate(2017, 3, 31, 16, 0)),
+    ("середина весна", AstroDate(2017, 3, 31, 16, 0), AstroDate(2017, 5, 1, 8, 0)),
+    ("конец весна", AstroDate(2017, 5, 1, 8, 0), AstroDate(2017, 6, 1, 0, 0)),
+    ("начало зима", AstroDate(2017, 12, 1, 0, 0), AstroDate(2017, 12, 31, 0, 0)),
+    ("середина зима", AstroDate(2017, 12, 31, 0, 0), AstroDate(2018, 1, 30, 0, 0)),
+    ("конец зима", AstroDate(2018, 1, 30, 0, 0), AstroDate(2018, 3, 1, 0, 0)),
+    ("начало лето", AstroDate(2017, 6, 1, 0, 0), AstroDate(2017, 7, 1, 16, 0)),
+    ("начало осень", AstroDate(2017, 9, 1, 0, 0), AstroDate(2017, 10, 1, 8, 0)),
+])
+def test_season_fuzzy_bare(text, s, e):
+    assert start_end(text) == (s, e)
+
+
+@pytest.mark.parametrize("text,s,e", [
+    ("начало весна 2027", AstroDate(2027, 3, 1, 0, 0), AstroDate(2027, 3, 31, 16, 0)),
+    ("конец весна 2027", AstroDate(2027, 5, 1, 8, 0), AstroDate(2027, 6, 1, 0, 0)),
+])
+def test_season_fuzzy_year(text, s, e):
+    assert start_end(text) == (s, e)
+
+
+# control: the bare season, unqualified, must stay unchanged.
+def test_season_fuzzy_control():
+    assert start_end("весна 2027") == (AstroDate(2027, 3, 1), AstroDate(2027, 6, 1))
 
 
 @pytest.mark.parametrize("word,decade_start", [
