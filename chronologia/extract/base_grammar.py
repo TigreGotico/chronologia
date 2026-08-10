@@ -170,8 +170,8 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # answer. See resolver docstring for the "whose Saturday falls in the
     # month" counting rule.
     "weekend_of_month": [
-        "article? ORD WEEKEND of MONTH of? YEAR?",
-        "article? ordlast WEEKEND of MONTH of? YEAR?",
+        "article? ORD WEEKEND of MONTH of? YEAR? ERA?",
+        "article? ordlast WEEKEND of MONTH of? YEAR? ERA?",
     ],
     # "last/next <season>" ("next winter"), "<season> of <year>" ("summer of
     # 2024") and the bare "<season> <year>?" ("summer 2024", or a deictic
