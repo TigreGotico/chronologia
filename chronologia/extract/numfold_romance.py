@@ -1027,6 +1027,80 @@ def _license_fr_une_heure(tokens):
     return _reindex(tuple(out))
 
 
+#: spelled ordinals 11th-31st that ``extract_number_fr`` does not recognise
+#: as ordinals at all -- it reads every "ième" suffix as a *fraction* marker
+#: instead ("onzième" -> 1/11, "vingt-deuxième" -> 22 by accident but
+#: "vingt et unième" -> 20, dropping the "un" tail), a wrong value the shared
+#: run-extraction machinery would confidently fold or silently truncate
+#: rather than refuse.  These are stamped straight to their digit *before*
+#: that machinery ever sees them (see :func:`_stamp_fr_compound_ordinals`),
+#: bypassing ``extract_number_fr`` for this closed set entirely.
+#: 11th-16th are irregular fused single words; 17th-19th and 21st-29th
+#: prefix the ten across a hyphen the tokenizer splits ("dix-septième" ->
+#: "dix","septième"); the X1 forms insert the coordinator "et" before
+#: "unième" ("vingt et unième") rather than hyphenating, exactly as the
+#: cardinals themselves do ("vingt et un").
+#: Source: Larousse / Académie française, "Les adjectifs numéraux ordinaux".
+_FR_SINGLE_ORDINALS = {
+    "onzième": 11, "douzième": 12, "treizième": 13, "quatorzième": 14,
+    "quinzième": 15, "seizième": 16, "vingtième": 20, "trentième": 30,
+}
+#: multiword compounds, longest surface first so "vingt et unième" is
+#: matched before any shorter prefix could apply.
+_FR_MULTIWORD_ORDINALS = [
+    (["vingt", "et", "unième"], 21), (["trente", "et", "unième"], 31),
+    (["dix", "septième"], 17), (["dix", "huitième"], 18),
+    (["dix", "neuvième"], 19), (["vingt", "deuxième"], 22),
+    (["vingt", "troisième"], 23), (["vingt", "quatrième"], 24),
+    (["vingt", "cinquième"], 25), (["vingt", "sixième"], 26),
+    (["vingt", "septième"], 27), (["vingt", "huitième"], 28),
+    (["vingt", "neuvième"], 29),
+]
+
+
+def _stamp_fr_compound_ordinals(tokens):
+    """Stamp French spelled ordinals 11th-31st straight to their digit,
+    ahead of the general cardinal fold.
+
+    ``extract_number_fr`` reads the "ième" suffix as a *fraction* marker for
+    every one of these ("onzième" -> 1/11), not the ordinal it actually
+    spells, so letting them flow into the normal run-extraction would fold a
+    wrong value with high confidence (or, for the "et"-joined X1 forms,
+    silently drop the "un" tail: "vingt et unième" -> 20) instead of
+    resolving to the right month/day or refusing an impossible one.  Stamping
+    the digit here, before the run scan, makes the shared machinery treat
+    each compound exactly like any other already-folded number.
+    """
+    out = list(tokens)
+    for words, val in _FR_MULTIWORD_ORDINALS:
+        m = len(words)
+        result = []
+        i = 0
+        n = len(out)
+        while i < n:
+            if (not out[i].is_number
+                    and [t.text for t in out[i:i + m]] == words):
+                first, last = out[i], out[i + m - 1]
+                raw = "".join(t.raw for t in out[i:i + m])
+                result.append(Token(text=str(val), raw=raw, index=0,
+                                    is_number=True, value=val,
+                                    char_start=first.char_start,
+                                    char_end=last.char_end))
+                i += m
+            else:
+                result.append(out[i])
+                i += 1
+        out = result
+    out = [
+        Token(text=str(_FR_SINGLE_ORDINALS[t.text]), raw=t.raw, index=0,
+              is_number=True, value=_FR_SINGLE_ORDINALS[t.text],
+              char_start=t.char_start, char_end=t.char_end)
+        if (not t.is_number and t.text in _FR_SINGLE_ORDINALS) else t
+        for t in out
+    ]
+    return _reindex(tuple(out))
+
+
 # French composes its tens above sixty rather than naming them: eighty is
 # four twenties ("quatre-vingts") and ninety is eighty plus ten
 # ("quatre-vingt-dix"), a vigesimal reading the shared Romance extractor does
@@ -1036,7 +1110,7 @@ def _license_fr_une_heure(tokens):
 # on 80 or 90 -- "les années quatre-vingt", "quatre-vingts ans" -- parsed as a
 # different number or not at all.  Source: Académie française, "quatre-vingts"
 # (9e éd.), https://www.dictionnaire-academie.fr/article/A9Q0152
-fold_fr = _romance_prepass_fold(
+_fold_fr_ordinals_base = _romance_prepass_fold(
     "fr", {"un", "une"},
     reader=lambda text, ordinals=True: extract_number_fr(
         text, ordinals=ordinals),
@@ -1056,6 +1130,15 @@ fold_fr = _romance_prepass_fold(
     phrases=_FR_PHRASES, h_clock=True,
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
+
+
+def fold_fr(tokens):
+    # spelled 11th-31st ordinals stamped straight to their digit before the
+    # general cardinal fold, which would otherwise misread every one of them
+    # as a fraction -- see :func:`_stamp_fr_compound_ordinals`.
+    return _fold_fr_ordinals_base(_stamp_fr_compound_ordinals(tokens))
+
+
 # deep-time SCALE-frame licensing: "un milliard/un billion d'années"
 fold_fr = _with_scale_frame(fold_fr, "fr", frozenset({"un", "une"}))
 # clock-frame licensing: "une heure" (one o'clock) and every fraction/meridiem/
