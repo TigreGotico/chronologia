@@ -234,6 +234,78 @@ def test_range_bound_recurrence(text, rrule, remainder):
     assert got[1] == remainder
 
 
+# R83a: a from/to weekday range layered on TOP of an existing weekday-SET base
+# ("every weekday" = MO,TU,WE,TH,FR) must INTERSECT with that base, not union
+# onto it -- a weekday rule can never include a weekend day, so "every weekday
+# from friday to monday" (wrap: FR,SA,SU,MO) must land on {FR,MO}, the days
+# both the base and the wrap range agree on, not all 7 days.
+_WEEKDAY_INTERSECT_CASES = [
+    ("every weekday from friday to monday", "FREQ=WEEKLY;BYDAY=FR,MO", ""),
+    # non-wrap control: monday..friday is already a subset of the MO-FR base,
+    # so intersection and the old union happen to agree here -- this must not
+    # regress.
+    ("every weekday from monday to friday",
+     "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR", ""),
+]
+
+
+@pytest.mark.parametrize("text,rrule,remainder", _WEEKDAY_INTERSECT_CASES)
+def test_weekday_range_intersects_existing_byday(text, rrule, remainder):
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+
+
+# R83a: when the intersection is EMPTY ("every weekday" can never land on a
+# weekend day, "every weekend day" can never land on a weekday), the range
+# names a rule that can never fire -- decline outright (None) rather than
+# fabricate a rule that matches nothing or, via the old union bug, everything.
+@pytest.mark.parametrize("text", [
+    "every weekday from saturday to sunday",
+    "every weekend day from monday to friday",
+])
+def test_weekday_range_empty_intersection_declines(text):
+    assert extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR) is None
+
+
+# R83b: UNTIL must ground from the date-range "from A to B" clause, not from
+# a preceding time-of-day "from A to B" clause ("every monday from 9 to 5
+# from june to august").  Before the fix, the range-bound finder paired the
+# FIRST "from" (the clock range) with whatever unconsumed text followed --
+# swallowing "june" out of the second clause's payload and grounding UNTIL on
+# June (the date range's own LEFT/"from" endpoint, which names no field) --
+# instead of August, the date range's right/"to" endpoint. The clock clause's
+# BYHOUR/BYMINUTE reading (however it resolves -- that resolution itself is
+# unrelated pre-existing behaviour, unchanged here) must survive alongside
+# the now-correctly-grounded UNTIL.
+_UNTIL_FROM_RIGHT_CLAUSE_CASES = [
+    # control: no time-of-day clause -- UNTIL already grounded correctly
+    # before this fix, must not regress.
+    ("every monday from june to august",
+     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO", ""),
+    ("every monday from 9 to 5 from june to august",
+     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO;BYHOUR=4;BYMINUTE=51",
+     "from"),
+    ("every monday from 9am to 5pm from june to august",
+     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO;BYHOUR=9",
+     "from to 5pm"),
+    # interval variant: the "every other" INTERVAL=2 reading must survive the
+    # same two-clause pairing.
+    ("every other monday from 9 to 5 from june to august",
+     "FREQ=WEEKLY;INTERVAL=2;UNTIL=20170801T000000;BYDAY=MO;"
+     "BYHOUR=4;BYMINUTE=51", "from"),
+]
+
+
+@pytest.mark.parametrize("text,rrule,remainder", _UNTIL_FROM_RIGHT_CLAUSE_CASES)
+def test_until_grounds_from_rightmost_range_clause(text, rrule, remainder):
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+
+
 # control: extract_timespan on the identical text is untouched by this fix --
 # it already resolved the span correctly before R78 and must keep doing so.
 @pytest.mark.parametrize("text,start,end,remainder", [

@@ -696,6 +696,14 @@ def extract_recurrence(
                 return None
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor)
+            # a range bound may CLAIM its clause yet name no valid recurrence
+            # (a weekday range that shares no day with an already-set BYDAY
+            # base, e.g. "every weekday from saturday to sunday"): declining
+            # outright is correct here for the same reason it is in the
+            # finder loop above -- a rule that matched nothing (or, worse,
+            # everything) would be a silent wrong answer, not a decline.
+            if rec is None:
+                return None
             rec, consumed = _apply_clock(rec, consumed, ctx, lang, anchor)
             from chronologia.extract.pipeline import render_remainder
             remainder = render_remainder(text, [t for t in tokens
@@ -925,7 +933,18 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
             return None
         return i + k if [tokens[i + x].text for x in range(k)] == words else None
 
-    for i in range(n):
+    # Lead positions are tried RIGHTMOST first.  A sentence may carry two
+    # "from A to B" clauses -- a clock range and a date range ("every monday
+    # from 9 to 5 from june to august") -- and the leftmost-first reading
+    # greedily pairs the first "from" with whatever unconsumed text follows
+    # the nearest "to", which swallows the *second* clause's right endpoint
+    # into the first clause's payload text and grounds UNTIL off the wrong
+    # (earlier, clock-adjacent) clause.  The date-range clause is reliably
+    # the last "from ... to ..." in the sentence -- a trailing clock pin
+    # ("from 9 to 5") always precedes it -- so trying lead positions from the
+    # right lets the date clause ground first and leaves the clock clause
+    # untouched for :func:`_apply_clock` to read afterwards.
+    for i in reversed(range(n)):
         if i in consumed:
             continue
         j = next((m for lead in leads
@@ -957,8 +976,25 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
                         break
                     d = (d + 1) % 7
                 existing = {wd for _, wd in rec.byday}
-                added = tuple((None, wd) for wd in days if wd not in existing)
-                rec = _replace(rec, byday=rec.byday + added)
+                if existing:
+                    # A weekday-set base ("every weekday" = MO-FR) already
+                    # names which days can ever match -- a from/to weekday
+                    # range layered on top must INTERSECT with that base, not
+                    # union onto it.  Unioning is how "every weekday from
+                    # friday to monday" (wrap: FR,SA,SU,MO) used to silently
+                    # grow to all 7 days -- a weekday rule that can never
+                    # actually include a weekend day.  An empty intersection
+                    # ("every weekday from saturday to sunday") names a rule
+                    # that can never fire; decline rather than fabricate one
+                    # that matches nothing (or, via the old union bug,
+                    # everything).
+                    keep = [wd for wd in days if wd in existing]
+                    if not keep:
+                        return None, consumed | set(range(i, n))
+                    rec = _replace(rec, byday=tuple((None, wd) for wd in keep))
+                else:
+                    added = tuple((None, wd) for wd in days)
+                    rec = _replace(rec, byday=rec.byday + added)
                 return rec, consumed | set(range(i, n))
 
             right_text = " ".join(t.raw for t in right)
