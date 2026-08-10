@@ -33,3 +33,21 @@ def test_half_of_year_unchanged():
 
 def test_bare_month_unchanged():
     assert start_end('agosto') == (AstroDate(2017, 8, 1), AstroDate(2017, 9, 1))
+
+
+# -- R101: (A) "hasta <year>" no longer double-binds the fraction's year ---
+
+def test_hasta_year_not_double_bound():
+    """A trailing "hasta 2030" (es "until") must not double-bind: filling
+    the fraction's own YEAR slot AND independently closing the range to a
+    whole calendar year (see the English sibling test in
+    test/nl_corpus_en/test_nl_half_of_month.py for the full defect
+    writeup)."""
+    assert start_end('la primera mitad de agosto, hasta 2030') == (
+        AstroDate(2017, 8, 1), AstroDate(2017, 8, 16, 12))
+
+
+def test_last_half_is_final_half():
+    """(C) "última mitad de agosto" == "segunda mitad de agosto"."""
+    assert start_end('última mitad de agosto') == (
+        AstroDate(2017, 8, 16, 12), AstroDate(2017, 9, 1))

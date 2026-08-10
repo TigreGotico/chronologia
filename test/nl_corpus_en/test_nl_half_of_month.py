@@ -98,3 +98,140 @@ def test_half_of_the_month_still_refuses():
     orders require a named MONTH slot, and the generic SCOPE_UNIT path
     (used for decade/century/millennium) does not cover "month" either."""
     assert parse("the first half of the month") is None
+
+
+# -- #658 seam fixes (R101) ---------------------------------------------
+#
+# Three related defects around this construction's edges, all verified live
+# against dev (anchor 2017-06-27) before being fixed here:
+#
+# (A) a trailing "until <year>" was double-bound -- the same year token both
+#     filled the fraction construction's own optional YEAR slot (via the
+#     range engine's year-lending) AND, independently, closed the range as a
+#     whole calendar year, yielding a self-contradictory span (a half-month
+#     start paired with a whole-year end). Fixed by refusing to compose the
+#     range in exactly that shape (month-fraction left side, bare-year right
+#     side, joined by an until-class marker); the sentence now falls back to
+#     the single-span reading with "until <year>" honestly stranded in the
+#     remainder, rather than surfacing the contradictory span.
+# (B) an interposed word between "of" and the month name ("first half of
+#     LEAP february 2028") reopened #658's stranding leak from a different
+#     angle: neither half_period nor quarter_of_month tolerates a word there,
+#     so the bare month construction won alone and stranded "first half of
+#     leap" ahead of it. Fixed with a new leading stranded-fraction-prefix
+#     veto (mirrors #651's prefix-tolerant trailing-tail shape, applied to
+#     the LEADING side): refuses outright rather than surfacing the
+#     too-wide bare-month span.
+# (C) "last" was not recognised as a synonym for the final half/quarter
+#     ("last half of august", "last quarter of august"), so it stranded and
+#     the bare period won at full width. Fixed by adding the existing
+#     ``ordlast`` connector ("last"/"final" -- already used by
+#     scoped_ordinal/quarter_ref for the same "select the final unit" idea)
+#     to half_period's GYEAR/MONTH orders and quarter_of_month's MONTH
+#     order. Deliberately NOT added to quarter_of_month/quarter_ref's YEAR
+#     case: quarter_ref already binds "last quarter" whole via its
+#     ``REL_MARKER quarter_word`` order (the anchor-relative previous-quarter
+#     reading) and a same-tokens ordlast order there would collide with it;
+#     "last quarter of 2027" is pinned below to the existing relative
+#     reading, unchanged.
+
+def test_until_year_not_double_bound():
+    """(A) "first half of august, until 2030" no longer resolves to the
+    self-contradictory 2030-08-01..2031-01-01 (a half-month start closed by
+    a whole-year end). It refuses to compose the range and falls back to
+    the single-span half-of-august reading in the ANCHOR year, honestly
+    stranding "until 2030"."""
+    assert start_end("first half of august, until 2030") == (
+        AstroDate(2017, 8, 1), AstroDate(2017, 8, 16, 12))
+    assert parse("first half of august, until 2030")[1] == "until 2030"
+    assert start_end("first half of august until 2030") == (
+        AstroDate(2017, 8, 1), AstroDate(2017, 8, 16, 12))
+
+
+def test_until_year_not_double_bound_quarter():
+    """(A) same double-bind, on quarter_of_month: "third quarter of
+    february, until 2030". February 2017 (28 days, anchor year) splits into
+    four exact 7-day quarters (Feb1/8/15/22/Mar1); the third is Feb15..22."""
+    assert start_end("third quarter of february, until 2030") == (
+        AstroDate(2017, 2, 15), AstroDate(2017, 2, 22))
+    assert parse("third quarter of february, until 2030")[1] == "until 2030"
+
+
+def test_first_half_of_august_2030_unchanged():
+    """Control (A): an explicit trailing year with NO until-marker is the
+    ordinary half_period MONTH order and must resolve exactly as before --
+    the double-bind veto only fires on the until-class connector."""
+    assert start_end("first half of august 2030") == (
+        AstroDate(2030, 8, 1), AstroDate(2030, 8, 16, 12))
+
+
+def test_first_half_of_august_unchanged():
+    """Control (A): the bare (yearless) form, anchor year, unchanged."""
+    assert start_end("first half of august") == (
+        AstroDate(2017, 8, 1), AstroDate(2017, 8, 16, 12))
+
+
+def test_june_until_year_pinned_unchanged():
+    """Control (A): a bare MONTH (not a half/quarter-of-month fraction) left
+    of an until-class bare year is UNRELATED to this fix -- the veto is
+    scoped to the fraction constructions only -- and keeps its pre-existing
+    (year-lent-then-extended-to-year-end) reading."""
+    assert start_end("june until 2030") == (
+        AstroDate(2030, 6, 1), AstroDate(2031, 1, 1))
+
+
+def test_interposed_word_strands_fraction_refuses():
+    """(B) "first half of LEAP february 2028" -- an unsupported word wedged
+    between "of" and the month -- refuses rather than silently surfacing
+    the bare "february 2028" (with "first half of leap" dropped)."""
+    assert parse("first half of leap february 2028") is None
+    assert parse("first half of leap february") is None
+
+
+def test_first_half_of_february_adjacent_still_works():
+    """Control (B): the #658 adjacent case (no interposed word) is
+    untouched by the new leading veto."""
+    assert start_end("first half of february") == (
+        AstroDate(2017, 2, 1), AstroDate(2017, 2, 15))
+
+
+def test_bare_month_with_year_unchanged():
+    """Control (B): a plain "MONTH YEAR" with no fraction prefix at all is
+    untouched by the new leading veto."""
+    assert start_end("february 2028") == (
+        AstroDate(2028, 2, 1), AstroDate(2028, 3, 1))
+
+
+_LAST_HALF_CASES = [
+    ("last half of august", (2017, 8, 16, 12), (2017, 9, 1)),
+    ("last half of 2027", (2027, 7, 1), (2028, 1, 1)),
+]
+
+
+@pytest.mark.parametrize("text,s,e", _LAST_HALF_CASES)
+def test_last_half_is_final_half(text, s, e):
+    """(C) "last" is a synonym for the final half (== "second")."""
+    assert start_end(text) == (AstroDate(*s), AstroDate(*e))
+
+
+def test_last_quarter_of_month_is_fourth():
+    """(C) "last quarter of august" == "fourth quarter of august". August
+    (31 days) splits into four exact 7d18h quarters (Aug1/8-18h/16-12h/
+    24-6h/Sep1); the fourth is Aug24 06:00..Sep1."""
+    assert start_end("last quarter of august") == (
+        AstroDate(2017, 8, 24, 6), AstroDate(2017, 9, 1))
+
+
+def test_last_quarter_of_year_pinned_relative_reading():
+    """Control (C): "last quarter of 2027" deliberately keeps its
+    pre-existing anchor-relative reading (quarter_ref's ``REL_MARKER
+    quarter_word`` order, "the most recently ended calendar quarter") with
+    "of 2027" stranded, rather than being redirected to "Q4 2027" -- adding
+    an ordlast-of-YEAR order to quarter_of_month would collide with that
+    established reading on the identical tokens "last quarter". Anchor
+    2017-06-27 sits in Q2 2017, so the last (most recently ended) quarter is
+    Q1 2017."""
+    span_, remainder = parse("last quarter of 2027")
+    assert (span_.start, span_.end) == (
+        AstroDate(2017, 1, 1), AstroDate(2017, 4, 1))
+    assert remainder == "of 2027"

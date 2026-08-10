@@ -1500,8 +1500,16 @@ class Resolver:
         :func:`chronologia.subdivide`'s exact elapsed-microsecond convention,
         so "the first half of august" (31 days) is Aug 1 .. Aug 16 12:00, and
         "the first half of february" is Feb 1 .. Feb 15 (28-day February) or
-        Feb 1 .. Feb 15 12:00 (leap February, 29 days)."""
-        n = int(match.slots["NUM"].value)
+        Feb 1 .. Feb 15 12:00 (leap February, 29 days).
+
+        ``ordlast`` ("last half of august", "last half of 2027") is a literal
+        connector, not a slot -- it carries no token in ``match.slots`` the
+        way the spelled ``NUM`` ordinal does, so its order's absence of
+        ``NUM`` is itself the signal (mirrors ``_resolve_scoped_ordinal``'s
+        ``ORD``-absent-means-``ordlast`` read): "last" selects the FINAL
+        half, n=2, the same value "second" already spells out."""
+        num_tok = match.slots.get("NUM")
+        n = int(num_tok.value) if num_tok is not None else 2
         if n not in (1, 2):
             return None
         month_tok = match.slots.get("MONTH")
@@ -1552,8 +1560,17 @@ class Resolver:
         month order and ``month_fuzzy``'s thirds use).  Distinct from
         ``quarter_ref``'s calendar quarter of a YEAR ("the first quarter of
         2027") -- that construction binds ``YEAR``, this one binds ``MONTH``,
-        so the two never compete for the same span."""
-        n = int(match.slots["NUM"].value)
+        so the two never compete for the same span.
+
+        ``ordlast`` ("last quarter of august") is a literal connector, not a
+        slot, so a match with no bound ``NUM`` came through that order --
+        "last" selects the FINAL quarter of the month, n=4, the same value
+        "fourth" already spells out.  Deliberately MONTH-only (see
+        ``base_grammar.py``'s ``quarter_of_month`` comment): a GYEAR order
+        would collide with ``quarter_ref``'s pre-existing "last quarter"
+        anchor-relative reading, so that YEAR case is left untouched."""
+        num_tok = match.slots.get("NUM")
+        n = int(num_tok.value) if num_tok is not None else 4
         part = self._QUARTER_PARTS.get(n)
         if part is None:
             return None
