@@ -2014,6 +2014,84 @@ def _trailing_scope_veto(tokens, consumed, spec):
     return len(rest) == 1 and _is_scope_noun(rest[0].text, spec)
 
 
+def _stranded_ordinal_scope_veto(tokens, consumed, spec):
+    """Whether the winning reading strands a trailing ``of? article? ORD
+    SCOPE_UNIT`` tail it could not bind -- "the weekend of the 5th month",
+    "the last weekend of the 13th month".
+
+    ``weekend_of_month`` only binds a NAMED month (its ``MONTH`` slot); it has
+    no order for an ORDINAL month number ("the 5th month"), so that shape is
+    not a supported composition (see ``weekend_of_month``'s grammar comment --
+    wiring the ``scoped_ordinal`` ordinal-month machinery into a weekend scope
+    would need new grammar, not a small extension).  With no full-span match,
+    the bare ``weekend_ref``/``rel_span_weekend`` reading wins on "weekend"
+    alone and strands "of the 5th/13th month" -- an anchor-relative weekend
+    with the intended scope silently dropped, exactly the leak this veto
+    closes by refusing outright rather than surfacing the truncated span.
+
+    Mirrors :func:`_trailing_scope_veto`'s shape but the residual is TWO
+    tokens (an ordinal numeral then a scope noun) instead of one bare scope
+    noun, so it needs its own check rather than a shared one.
+    """
+    if not consumed:
+        return False
+    last = max(consumed)
+    trailing = [t for t in tokens if t.index > last and t.index not in consumed]
+    if not trailing or trailing[0].index != last + 1:
+        return False
+    of_surfaces = spec.connectors.get("of", frozenset())
+    article_surfaces = spec.connectors.get("article", frozenset())
+    i = 0
+    while i < len(trailing) and (trailing[i].text in of_surfaces
+                                 or trailing[i].text in article_surfaces):
+        i += 1
+    rest = trailing[i:]
+    return (len(rest) == 2 and rest[0].is_number and (rest[0].value or 0) >= 1
+            and _is_scope_noun(rest[1].text, spec))
+
+
+def _stranded_explicit_anchor_veto(tokens, consumed, text, spec, anchor):
+    """Whether the winning reading strands a trailing ``from <date>`` explicit
+    anchor it could not bind -- "the next 2 quarters from 500 BC".
+
+    ``rel_span_quarter``/``rel_span``/``rel_period`` are always anchored to
+    the CALL anchor (today) -- they carry no "from <explicit date>" order, so
+    a trailing "from <date>" naming a DIFFERENT anchor is not a supported
+    composition (that would need ``rel_span``'s calendar-aligned counting to
+    accept an arbitrary start date, a bigger change than the marker fix that
+    lets "from" double as an "after"-synonym for the offset-WITH-reference
+    shape -- see ``apply_anchored_offset``). With no full-span match, the
+    present-anchored reading wins alone and strands "from <date>" -- a
+    silently wrong present-day span with the intended anchor dropped. Refuses
+    outright rather than surfacing the truncated span, the same honest-None
+    policy as :func:`_trailing_scope_veto`/:func:`_stranded_ordinal_scope_veto`.
+    """
+    if not consumed:
+        return False
+    last = max(consumed)
+    trailing = [t for t in tokens if t.index > last and t.index not in consumed]
+    if not trailing or trailing[0].index != last + 1:
+        return False
+    of_surfaces = spec.connectors.get("of", frozenset())
+    article_surfaces = spec.connectors.get("article", frozenset())
+    from_surfaces = spec.connectors.get("from", frozenset())
+    i = 0
+    while i < len(trailing) and (trailing[i].text in of_surfaces
+                                 or trailing[i].text in article_surfaces):
+        i += 1
+    if i >= len(trailing) or trailing[i].text not in from_surfaces:
+        return False
+    i += 1
+    rest = trailing[i:]
+    if not rest:
+        return False
+    cs, ce = rest[0].char_start, rest[-1].char_end
+    if cs is None or ce is None:
+        return False
+    frag = text[cs:ce]
+    return extract_timespan(frag, spec.lang, anchor) is not None
+
+
 def _new_year_definite_article_veto(tokens, match, spec) -> bool:
     """True when a bare ``new_year_ref`` match is immediately preceded by the
     definite article ("the new year", "in the new year").
@@ -2396,6 +2474,23 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     # other locales already return (see _trailing_scope_veto).
     if (rep.construction == "rel_period"
             and _trailing_scope_veto(tokens, consumed, engine.spec)):
+        return None
+    # A bare weekend reading ("weekend"/"the last N weekends") that strands an
+    # unbound "of the Nth month" scope tail is the unsupported ordinal-month
+    # weekend compound (see _stranded_ordinal_scope_veto) -- refuse rather
+    # than surface the anchor-relative weekend with the scope phrase dropped.
+    if (rep.construction in ("weekend_ref", "rel_span_weekend")
+            and _stranded_ordinal_scope_veto(tokens, consumed, engine.spec)):
+        return None
+    # A present-anchored rel_span/rel_period/rel_span_quarter reading that
+    # strands an unbound "from <date>" explicit-anchor tail is the
+    # unsupported "N units/quarters from <date>" compound (see
+    # _stranded_explicit_anchor_veto) -- refuse rather than surface a
+    # present-day span with the intended anchor dropped.
+    if (text is not None
+            and rep.construction in ("rel_span", "rel_period", "rel_span_quarter")
+            and _stranded_explicit_anchor_veto(tokens, consumed, text,
+                                               engine.spec, anchor)):
         return None
     return res.value, consumed
 

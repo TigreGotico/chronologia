@@ -315,10 +315,21 @@ def apply_anchored_offset(tokens, resolved: List[Pair],
     """
     after = spec.connectors.get("after", frozenset())
     before = spec.connectors.get("before", frozenset())
-    if not after and not before:
+    # ``marker_offset_after.voc`` supplies per-locale "after"-synonyms that
+    # apply ONLY to this offset-WITH-explicit-anchor shape ("2 weeks from
+    # june 1st" == "2 weeks after june 1st").  It is a deliberate opt-in
+    # vocab, NOT the locale's generic "from" connector: in many locales the
+    # same surface marks "the week OF <date>" (uk "тиждень від 4 липня"),
+    # and reading it as an offset there shifts the span a whole unit.  A
+    # locale without the file keeps its generic "from" untouched by this
+    # pass; the recurrence "from X to Y" grammar (nseries.py) and the
+    # date_range construction are never affected either way -- they match
+    # their own token patterns and never reach this pass.
+    from_as_after = spec.connectors.get("offset_after", frozenset())
+    if not after and not before and not from_as_after:
         return resolved
     gap = _gap_words(spec)
-    dir_phrases = ([(1, w) for w in _phrases(after)]
+    dir_phrases = ([(1, w) for w in _phrases(after | from_as_after)]
                    + [(-1, w) for w in _phrases(before)])
     # iterate to a fixpoint: a pass that grows nothing (grown == 0) is the
     # signal to stop; the strictly-monotonic token growth guarantees
