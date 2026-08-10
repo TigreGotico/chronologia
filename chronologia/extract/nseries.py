@@ -2015,6 +2015,13 @@ def _recur_holiday(ctx):
     RFC 5545 rules.  A **movable** feast (Easter and its cycle, the Islamic
     ``eid`` feasts, Passover, Diwali ...) has no such rule, so it becomes a
     :class:`~chronologia.recurrence.HolidayRecurrence`.
+
+    The holiday word may also follow an explicit ``year`` unit and/or an
+    ``on``/``en``-style filler word -- "every YEAR ON christmas", "cada AÑO EN
+    navidad" -- the same skeleton :func:`_recur_date_anchored` tolerates in
+    front of a numeric calendar date.  Without this, that skeleton strands the
+    holiday word as unmatched remainder and the bare ``YEARLY`` rule left
+    behind fires on the anchor date instead of the holiday -- silently wrong.
     """
     if not ctx.holidays:
         return None
@@ -2028,6 +2035,26 @@ def _recur_holiday(ctx):
         j = i + 1
         while j < n and t[j].text in ctx.articles:
             j += 1
+        if j < n and t[j].text in ctx.units and ctx.units[t[j].text] == "year":
+            j += 1
+            # tolerate a short filler run before the holiday word -- "on"/"en"
+            # style prepositions land in different connector buckets per
+            # locale ("on" is English "on", but Spanish routes "en" under
+            # "in"), so rather than enumerate every locale's preposition set
+            # here, accept the same short non-content run the date-anchored
+            # finder tolerates in front of a date: articles, or any other
+            # token that is not itself a number/weekday/unit/every-marker
+            # (which would belong to a different, unrelated frame).
+            steps = 0
+            while j < n and steps < 2 and (
+                    t[j].text in ctx.articles
+                    or (not t[j].is_number
+                        and _weekday_here(ctx, t[j], True) is None
+                        and t[j].text not in ctx.units
+                        and t[j].text not in ctx.every
+                        and t[j].text not in ctx.holidays)):
+                j += 1
+                steps += 1
         if j >= n:
             continue
         key = ctx.holidays.get(t[j].text)

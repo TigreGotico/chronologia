@@ -53,6 +53,11 @@ _ANCHORED_CASES = [
     ("cada lunes a las 8", "FREQ=WEEKLY;BYDAY=MO;BYHOUR=8", ""),
     ("cada día a mediodía", "FREQ=DAILY;BYHOUR=12", ""),
     ("cada navidad", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
+    # "cada año en <fiesta>": the year-anchored skeleton must resolve the
+    # holiday word the same way "cada <fiesta>" does -- not strand it as
+    # remainder behind a bare YEARLY rule (see R100).  "en" is Spanish's own
+    # locative preposition, distinct from English "on".
+    ("cada año en navidad", "FREQ=YEARLY;BYMONTH=12;BYMONTHDAY=25", ""),
 ]
 
 
@@ -69,6 +74,7 @@ from chronologia.recurrence import HolidayRecurrence   # noqa: E402
 
 @pytest.mark.parametrize("text,key", [
     ("cada pascua", "easter"),
+    ("cada año en pascua", "easter"),
 ])
 def test_movable_holiday_recurrence(text, key):
     got = extract_recurrence(text, LANG)
