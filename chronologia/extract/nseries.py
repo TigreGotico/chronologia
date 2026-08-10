@@ -1000,6 +1000,25 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
     grounds an ``UNTIL`` -- COUNT and UNTIL are mutually exclusive in RFC
     5545, and UNTIL (the explicit bound) wins, mirroring the same policy in
     :func:`_apply_bounds`.
+
+    R94: a sentence may carry MORE than one stranded range clause -- a
+    weekday range AND a date range on top of an already-consumed clock range
+    ("every weekday from friday to monday from 9 to 5 from june to august").
+    A single first-match-and-stop pass claimed only one clause and left the
+    other stranded in the remainder (or, worse, mis-happens to read a bogus
+    numeric clause as the date).  This function therefore LOOPS: each
+    iteration re-scans for the rightmost still-unclaimed clause (so a genuine
+    date-range candidate is preferred over an earlier one, per the ordering
+    note below) and claims it -- weekday range -> BYDAY intersection, date
+    range -> UNTIL -- then repeats until a full scan claims nothing more. A
+    bare-number range ("from 1 to 2") is never accepted as a date-range
+    grounding here: unlike "to august"/"to monday", digits alone carry no
+    calendar semantics, and accepting them let a leftover numeric range (a
+    stray clock-shaped clause :func:`_apply_clock_range` did not claim)
+    ground a same-day UNTIL and silently swallow a *real* trailing date
+    clause that never got a turn.  Such a clause is left unclaimed here, for
+    :func:`_apply_clock` to read afterwards (or to remain stranded in the
+    remainder).
     """
     from dataclasses import replace as _replace
     if isinstance(rec, HolidayRecurrence) or rec.until is not None:
@@ -1029,66 +1048,111 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
     # the last "from ... to ..." in the sentence -- a trailing clock pin
     # ("from 9 to 5") always precedes it -- so trying lead positions from the
     # right lets the date clause ground first and leaves the clock clause
-    # untouched for :func:`_apply_clock` to read afterwards.
-    for i in reversed(range(n)):
-        if i in consumed:
-            continue
-        j = next((m for lead in leads
-                  if (m := _match(i, lead)) is not None), None)
-        if j is None:
-            continue
-        for k in range(j, n):
-            if k in consumed:
+    # untouched for :func:`_apply_clock` to read afterwards.  This scan
+    # re-runs (see the ``while`` loop below) after every successful claim, so
+    # a sentence with more than one stranded clause has every clause given a
+    # rightmost-first turn, not just the first one found.
+    while True:
+        claimed = False
+        for i in reversed(range(n)):
+            if i in consumed:
                 continue
-            m = next((r for mid in mids
-                      if (r := _match(k, mid)) is not None), None)
-            if m is None:
+            j = next((m for lead in leads
+                      if (m := _match(i, lead)) is not None), None)
+            if j is None:
                 continue
-            left = [t for x, t in enumerate(tokens[j:k]) if (j + x) not in consumed]
-            right = [t for x, t in enumerate(tokens[m:n]) if (m + x) not in consumed]
-            if not left or not right:
-                continue
+            for k in range(j, n):
+                if k in consumed:
+                    continue
+                m = next((r for mid in mids
+                          if (r := _match(k, mid)) is not None), None)
+                if m is None:
+                    continue
+                left = [t for x, t in enumerate(tokens[j:k])
+                        if (j + x) not in consumed]
+                # the right endpoint's span stops at the next unclaimed
+                # lead ("from"/"between") if there is one -- otherwise a
+                # further stranded clause further right in the sentence
+                # ("... from june to august from 1 to 2") gets swallowed
+                # into THIS clause's payload text and corrupts the date it
+                # grounds (R94).
+                right_end = next(
+                    (p for p in range(m, n)
+                     if p not in consumed
+                     and any(_match(p, lead) is not None for lead in leads)),
+                    n)
+                right = [t for x, t in enumerate(tokens[m:right_end])
+                         if (m + x) not in consumed]
+                if not left or not right:
+                    continue
 
-            if (len(left) == 1 and len(right) == 1
-                    and left[0].text in ctx.weekdays
-                    and right[0].text in ctx.weekdays):
-                start_wd = ctx.weekdays[left[0].text]
-                end_wd = ctx.weekdays[right[0].text]
-                days = []
-                d = start_wd
-                while True:
-                    days.append(d)
-                    if d == end_wd:
-                        break
-                    d = (d + 1) % 7
-                existing = {wd for _, wd in rec.byday}
-                if existing:
-                    # A weekday-set base ("every weekday" = MO-FR) already
-                    # names which days can ever match -- a from/to weekday
-                    # range layered on top must INTERSECT with that base, not
-                    # union onto it.  Unioning is how "every weekday from
-                    # friday to monday" (wrap: FR,SA,SU,MO) used to silently
-                    # grow to all 7 days -- a weekday rule that can never
-                    # actually include a weekend day.  An empty intersection
-                    # ("every weekday from saturday to sunday") names a rule
-                    # that can never fire; decline rather than fabricate one
-                    # that matches nothing (or, via the old union bug,
-                    # everything).
-                    keep = [wd for wd in days if wd in existing]
-                    if not keep:
-                        return None, consumed | set(range(i, n))
-                    rec = _replace(rec, byday=tuple((None, wd) for wd in keep))
-                else:
-                    added = tuple((None, wd) for wd in days)
-                    rec = _replace(rec, byday=rec.byday + added)
-                return rec, consumed | set(range(i, n))
+                if (len(left) == 1 and len(right) == 1
+                        and left[0].text in ctx.weekdays
+                        and right[0].text in ctx.weekdays):
+                    start_wd = ctx.weekdays[left[0].text]
+                    end_wd = ctx.weekdays[right[0].text]
+                    days = []
+                    d = start_wd
+                    while True:
+                        days.append(d)
+                        if d == end_wd:
+                            break
+                        d = (d + 1) % 7
+                    existing = {wd for _, wd in rec.byday}
+                    if existing:
+                        # A weekday-set base ("every weekday" = MO-FR) already
+                        # names which days can ever match -- a from/to weekday
+                        # range layered on top must INTERSECT with that base,
+                        # not union onto it.  Unioning is how "every weekday
+                        # from friday to monday" (wrap: FR,SA,SU,MO) used to
+                        # silently grow to all 7 days -- a weekday rule that
+                        # can never actually include a weekend day.  An empty
+                        # intersection ("every weekday from saturday to
+                        # sunday") names a rule that can never fire; decline
+                        # rather than fabricate one that matches nothing (or,
+                        # via the old union bug, everything).
+                        keep = [wd for wd in days if wd in existing]
+                        if not keep:
+                            return None, consumed | set(range(i, n))
+                        rec = _replace(rec, byday=tuple((None, wd) for wd in keep))
+                    else:
+                        added = tuple((None, wd) for wd in days)
+                        rec = _replace(rec, byday=rec.byday + added)
+                    consumed = consumed | set(range(i, n))
+                    claimed = True
+                    break
 
-            right_text = " ".join(t.raw for t in right)
-            got = extract_timespan(right_text, lang, anchor=anchor)
-            if got is None:
-                continue
-            rec = _replace(rec, until=got[0].start, count=None)
-            return rec, consumed | set(range(i, n))
+                # A bare-number range ("from 1 to 2") carries no calendar
+                # semantics of its own -- unlike "to august"/"to monday", it
+                # is indistinguishable from a stray clock clause.  Accepting
+                # it as a date grounds a bogus same-day UNTIL and, being
+                # scanned rightmost-first, would pre-empt a REAL date clause
+                # further left from ever getting a turn.  Decline it (leave
+                # it unclaimed for :func:`_apply_clock` or the remainder) and
+                # keep scanning leftward for a genuine date candidate.
+                if all(t.is_number for t in left) and all(t.is_number for t in right):
+                    continue
+
+                # UNTIL is ground exactly once per call: a second date-range
+                # candidate (there should not normally be one, but do not
+                # silently overwrite an already-grounded UNTIL if the
+                # sentence is malformed) is left unclaimed rather than
+                # re-grounded.
+                if rec.until is not None:
+                    continue
+
+                right_text = " ".join(t.raw for t in right)
+                got = extract_timespan(right_text, lang, anchor=anchor)
+                if got is None:
+                    continue
+                rec = _replace(rec, until=got[0].start, count=None)
+                consumed = consumed | set(range(i, n))
+                claimed = True
+                break
+            if claimed:
+                break
+        if not claimed:
+            break
     return rec, consumed
 
 

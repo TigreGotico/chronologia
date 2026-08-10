@@ -534,3 +534,75 @@ def test_every_n_unit_with_trailing_placement(text, rrule):
     assert got is not None
     assert got[0].to_string() == rrule
     assert got[1] == ""
+
+
+# R94: THREE from/to clauses in one sentence -- a clock range, a weekday
+# range, and a date range -- must ALL be claimed.  Before this fix,
+# ``_apply_clock_range`` and ``_apply_range_bound`` each ran ONCE and stopped
+# at their first match, so a sentence carrying more than two "from X to Y"
+# clauses silently dropped or garbled the extras:
+#
+# * "every weekday from friday to monday from 9 to 5 from june to august" --
+#   the weekday-range clause (friday..monday) was never intersected onto the
+#   MO-FR base and was left stranded in the remainder, even though the clock
+#   clause (9 to 5) and the date clause (june to august) both grounded fine.
+# * "every monday from 9am to 5pm from june to august from 1 to 2" -- the
+#   bogus trailing "from 1 to 2" was read (rightmost-first) as THE date
+#   range, grounding UNTIL to the anchor day at 01:00 (expiring the rule
+#   immediately) while the real "from june to august" clause vanished with
+#   an empty remainder.
+#
+# Fix: both apply-passes now iterate, claiming every from-to clause they can
+# (rightmost date-range candidates first, per #642), rather than stopping
+# after the first hit.  A clause no pass can claim (a bare-number range with
+# no clock reading left to claim it) stays stranded in the remainder --
+# never silently dropped, never misread as a bogus UNTIL.
+_MULTI_CLAUSE_CASES = [
+    ("every weekday from friday to monday from 9 to 5 from june to august",
+     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=FR,MO;BYHOUR=9", ""),
+    # date + weekday + clock in a different textual order: date clause is
+    # still rightmost, weekday and clock clauses precede it.
+    ("every weekday from 9 to 5 from friday to monday from june to august",
+     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=FR,MO;BYHOUR=9", ""),
+]
+
+
+@pytest.mark.parametrize("text,rrule,remainder", _MULTI_CLAUSE_CASES)
+def test_three_clause_recurrence_claims_every_clause(text, rrule, remainder):
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+
+
+def test_bogus_trailing_range_never_produces_garbage_until():
+    # the real date clause ("from june to august") must ground UNTIL, and the
+    # bogus trailing "from 1 to 2" must never be misread as a date -- it is
+    # either claimed as a second clock reading or left stranded in the
+    # remainder, but the rule must NOT silently expire at the anchor day.
+    text = "every monday from 9am to 5pm from june to august from 1 to 2"
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    rec, remainder = got
+    assert rec.until is not None
+    assert rec.until.month == 8 and rec.until.day == 1, (
+        f"UNTIL grounded off the wrong clause: {rec.until!r}")
+    assert rec.byday == ((None, 0),), f"unexpected BYDAY: {rec.byday!r}"
+    assert rec.byhour == (9,), f"unexpected BYHOUR: {rec.byhour!r}"
+    # the bogus clause is never silently dropped: either it stays visible in
+    # the remainder, or nothing named "1" / "2" survives unaccounted for --
+    # in either case the rule must not have swallowed it into a fake bound.
+    assert "1" not in remainder or "from 1 to 2" in remainder
+
+
+# control: a single bare-number range with no other clause competing for it
+# is claimed as a clock reading (existing, pinned behaviour) -- must not
+# regress into the multi-clause loop misreading it as a date.
+def test_single_bare_number_range_still_reads_as_clock():
+    text = "every monday from 1 to 2"
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None
+    rec, remainder = got
+    assert rec.until is None
+    assert rec.byhour == (1,)
+    assert remainder == ""
