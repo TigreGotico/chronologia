@@ -196,6 +196,60 @@ def test_bounded_recurrence(text, rrule, remainder):
     assert got[1] == remainder
 
 
+# R78: a stranded "from A to B" range on a recurrence composes onto the rule
+# instead of being silently dropped (extract_timespan on the SAME text
+# already resolves the span -- the range detector exists, it just was not
+# reused here).  Two readings:
+#
+# * both endpoints bare weekdays -> BYDAY, inclusive and wrap-around
+#   ("friday to monday" -> FR,SA,SU,MO): the idiomatic reading of a
+#   weekday-bounded recurrence.
+# * anything else -> a date-range bound: the right endpoint sets UNTIL,
+#   grounded exactly the way "until <date>" grounds it above (so "to august"
+#   and "until august" land on the identical UNTIL=20170801T000000) -- the
+#   left/"from" endpoint names no field Recurrence has (no DTSTART), same as
+#   the still-unimplemented "starting <date>" today.
+_RANGE_BOUND_CASES = [
+    ("every day from monday to friday",
+     "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR", ""),
+    # wrap-around: friday..monday inclusive is FR,SA,SU,MO, not the empty set.
+    ("every day from friday to monday",
+     "FREQ=DAILY;BYDAY=FR,SA,SU,MO", ""),
+    ("weekly from june to august", "FREQ=WEEKLY;UNTIL=20170801T000000", ""),
+    # COUNT/UNTIL mutual exclusivity (RFC 5545): the trailing "5 times" would
+    # add COUNT, but it sits BEFORE the still-unconsumed range clause, so the
+    # existing "N times" guard (nothing unread may follow) correctly declines
+    # to set COUNT here -- the range then grounds UNTIL and "5 times" is left
+    # in the remainder, exactly as "every day 5 times until march" above.
+    ("every day 5 times from june to august",
+     "FREQ=DAILY;UNTIL=20170801T000000", "5 times"),
+]
+
+
+@pytest.mark.parametrize("text,rrule,remainder", _RANGE_BOUND_CASES)
+def test_range_bound_recurrence(text, rrule, remainder):
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+
+
+# control: extract_timespan on the identical text is untouched by this fix --
+# it already resolved the span correctly before R78 and must keep doing so.
+@pytest.mark.parametrize("text,start,end,remainder", [
+    ("every day from monday to friday",
+     "2017-07-03", "2017-07-08", "every day"),
+    ("weekly from june to august", "2017-06-01", "2017-09-01", "weekly"),
+])
+def test_timespan_on_recurrence_range_text_unchanged(text, start, end, remainder):
+    from chronologia.extract import extract_timespan
+    got = extract_timespan(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None
+    assert str(got[0].start.date()) == start
+    assert str(got[0].end.date()) == end
+    assert got[1] == remainder
+
+
 # adversarial: a one-off reference is not a recurrence.
 @pytest.mark.parametrize("text", [
     "friday", "next friday", "in 3 days", "june 5th",

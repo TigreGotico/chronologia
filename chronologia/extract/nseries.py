@@ -695,6 +695,7 @@ def extract_recurrence(
             if rec is None:
                 return None
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
+            rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_clock(rec, consumed, ctx, lang, anchor)
             from chronologia.extract.pipeline import render_remainder
             remainder = render_remainder(text, [t for t in tokens
@@ -869,6 +870,105 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
             consumed = consumed | {p, i}
             break
 
+    return rec, consumed
+
+
+def _apply_range_bound(rec, consumed, ctx, lang, anchor):
+    """Fold a stranded "from A to B" / "between A and B" range clause onto
+    ``rec``, extending ``consumed`` over the words it reads.
+
+    Reuses the *existing* range connectors (``from``/``between``/``to``/
+    ``and``) rather than a new grammar -- it is the same lead/mid vocabulary
+    :func:`~chronologia.extract.nseries._merge_ranges` and
+    :func:`~chronologia.extract.timespan._extract_range` read for a single-
+    span "from A to B".  Two readings, tried in this order:
+
+    * **weekday range** -- both endpoints are bare weekday names ("from
+      monday to friday", "from friday to monday"): folds into ``BYDAY``,
+      inclusive and wrap-around (friday..monday = FR,SA,SU,MO).  This is the
+      idiomatic reading of a weekday-bounded recurrence -- "every day from
+      monday to friday" means Mon-Fri, not an unbounded daily rule with the
+      clause silently dropped.
+    * **date range** -- anything else ("weekly from june to august"): the
+      clause is a calendar bound.  Only the *right* endpoint sets a field --
+      ``UNTIL`` -- grounded exactly the way a plain "until <date>" bound
+      grounds it (:func:`_apply_bounds`'s ``_ground_until``: the resolved
+      span's ``start``, so "to august" and "until august" land on the same
+      UNTIL).  The left/"from" endpoint names no field ``Recurrence`` has (no
+      DTSTART) -- same as the still-unimplemented "starting <date>" today --
+      so it is consumed as part of the one clause without contributing a
+      value, rather than left stranded in the remainder.
+
+    Declines outright -- rather than guessing -- when ``rec`` already carries
+    an ``UNTIL`` (an explicit "until"/"for" bound already claimed the tail)
+    or is a :class:`~chronologia.recurrence.HolidayRecurrence` (no RRULE
+    fields to fold onto).  A pre-existing ``COUNT`` is cleared when the range
+    grounds an ``UNTIL`` -- COUNT and UNTIL are mutually exclusive in RFC
+    5545, and UNTIL (the explicit bound) wins, mirroring the same policy in
+    :func:`_apply_bounds`.
+    """
+    from dataclasses import replace as _replace
+    if isinstance(rec, HolidayRecurrence) or rec.until is not None:
+        return rec, consumed
+
+    tokens = ctx.tokens
+    spec = ctx.spec
+    n = len(tokens)
+    leads = _conn_surfaces(spec, "between", _RANGE_BETWEEN) \
+        + _conn_surfaces(spec, "from", _RANGE_FROM)
+    mids = _conn_surfaces(spec, "to", _RANGE_TO) \
+        + _conn_surfaces(spec, "and", ("and",))
+
+    def _match(i, words):
+        k = len(words)
+        if not words or i + k > n or any((i + x) in consumed for x in range(k)):
+            return None
+        return i + k if [tokens[i + x].text for x in range(k)] == words else None
+
+    for i in range(n):
+        if i in consumed:
+            continue
+        j = next((m for lead in leads
+                  if (m := _match(i, lead)) is not None), None)
+        if j is None:
+            continue
+        for k in range(j, n):
+            if k in consumed:
+                continue
+            m = next((r for mid in mids
+                      if (r := _match(k, mid)) is not None), None)
+            if m is None:
+                continue
+            left = [t for x, t in enumerate(tokens[j:k]) if (j + x) not in consumed]
+            right = [t for x, t in enumerate(tokens[m:n]) if (m + x) not in consumed]
+            if not left or not right:
+                continue
+
+            if (len(left) == 1 and len(right) == 1
+                    and left[0].text in ctx.weekdays
+                    and right[0].text in ctx.weekdays):
+                start_wd = ctx.weekdays[left[0].text]
+                end_wd = ctx.weekdays[right[0].text]
+                days = []
+                d = start_wd
+                while True:
+                    days.append(d)
+                    if d == end_wd:
+                        break
+                    d = (d + 1) % 7
+                existing = {wd for _, wd in rec.byday}
+                added = tuple((None, wd) for wd in days if wd not in existing)
+                rec = _replace(rec, byday=rec.byday + added)
+                return rec, consumed | set(range(i, n))
+
+            right_text = " ".join(t.raw for t in right)
+            got = extract_timespan(right_text, lang, anchor=anchor)
+            if got is None:
+                continue
+            rec = _replace(rec, until=got[0].start)
+            if rec.count is not None:
+                rec = _replace(rec, count=None)
+            return rec, consumed | set(range(i, n))
     return rec, consumed
 
 
