@@ -269,32 +269,38 @@ def test_weekday_range_empty_intersection_declines(text):
     assert extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR) is None
 
 
-# R83b: UNTIL must ground from the date-range "from A to B" clause, not from
-# a preceding time-of-day "from A to B" clause ("every monday from 9 to 5
-# from june to august").  Before the fix, the range-bound finder paired the
-# FIRST "from" (the clock range) with whatever unconsumed text followed --
+# R83b/R89: UNTIL must ground from the date-range "from A to B" clause, not
+# from a preceding time-of-day "from A to B" clause ("every monday from 9 to
+# 5 from june to august").  Before the R83 fix, the range-bound finder paired
+# the FIRST "from" (the clock range) with whatever unconsumed text followed --
 # swallowing "june" out of the second clause's payload and grounding UNTIL on
 # June (the date range's own LEFT/"from" endpoint, which names no field) --
-# instead of August, the date range's right/"to" endpoint. The clock clause's
-# BYHOUR/BYMINUTE reading (however it resolves -- that resolution itself is
-# unrelated pre-existing behaviour, unchanged here) must survive alongside
-# the now-correctly-grounded UNTIL.
+# instead of August, the date range's right/"to" endpoint.
+#
+# R89 fixes the clock clause's OWN reading: it used to fall through to
+# _apply_clock's generic "N to H" minute-idiom match ("9 to 5" -> 4:51,
+# nonsense) or, for an am/pm-qualified range, ground a same-day UNTIL off the
+# clock clause's right endpoint (silently expiring the whole rule) while
+# stranding the rest of the sentence unconsumed.  A dedicated clock-range
+# reading (:func:`_apply_clock_range`) now folds the clause into a BYHOUR
+# window-start pin instead, and it must still coexist correctly with the
+# date range's UNTIL.
 _UNTIL_FROM_RIGHT_CLAUSE_CASES = [
     # control: no time-of-day clause -- UNTIL already grounded correctly
     # before this fix, must not regress.
     ("every monday from june to august",
      "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO", ""),
     ("every monday from 9 to 5 from june to august",
-     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO;BYHOUR=4;BYMINUTE=51",
-     "from"),
+     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO;BYHOUR=9",
+     ""),
     ("every monday from 9am to 5pm from june to august",
      "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO;BYHOUR=9",
-     "from to 5pm"),
+     ""),
     # interval variant: the "every other" INTERVAL=2 reading must survive the
     # same two-clause pairing.
     ("every other monday from 9 to 5 from june to august",
      "FREQ=WEEKLY;INTERVAL=2;UNTIL=20170801T000000;BYDAY=MO;"
-     "BYHOUR=4;BYMINUTE=51", "from"),
+     "BYHOUR=9", ""),
 ]
 
 
@@ -304,6 +310,45 @@ def test_until_grounds_from_rightmost_range_clause(text, rrule, remainder):
     assert got is not None, f"{text!r} did not parse as a recurrence"
     assert got[0].to_string() == rrule
     assert got[1] == remainder
+
+
+# R89: a within-day clock RANGE ("from 9 to 5", "from 9am to 5pm") folds onto
+# the rule as a BYHOUR window-start pin -- the same discrete civil-clock PIN
+# an "at 9" clause already grounds (RFC 5545's BYHOUR has no window-end
+# part).  Two defects fixed here:
+#
+# * a bare-number range ("from 9 to 5") used to fall through to the clock
+#   engine's own "N to H" MINUTE idiom ("quarter to five") and misread
+#   "9 to 5" as "9 minutes to 5" -> BYHOUR=4;BYMINUTE=51, plus a stranded
+#   "from" in the remainder;
+# * an am/pm-qualified range ("from 9am to 5pm") used to ground the right
+#   endpoint as a same-day UNTIL, silently expiring the rule the day it was
+#   authored.
+#
+# Bare numbers are read literally -- the same "at 9"/"at 5" convention
+# :func:`_apply_clock` already uses -- no am/pm disambiguation is invented.
+@pytest.mark.parametrize("text,rrule,remainder", [
+    ("every monday from 9 to 5",
+     "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9", ""),
+    ("every monday from 9am to 5pm",
+     "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9", ""),
+    ("every day from 8 to 10pm",
+     "FREQ=DAILY;BYHOUR=8", ""),
+    ("every weekday from 9am to 5pm",
+     "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=9", ""),
+    # "between A and B" is the same range grammar as "from A to B".
+    ("every monday between 9am and 5pm",
+     "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9", ""),
+])
+def test_clock_range_becomes_byhour_window_start(text, rrule, remainder):
+    got = extract_recurrence(text, LANG, anchor=_BOUND_ANCHOR)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0].to_string() == rrule
+    assert got[1] == remainder
+    # no bogus BYMINUTE, and the rule must never expire the same day it was
+    # authored via a stray UNTIL.
+    assert got[0].byminute == ()
+    assert got[0].until is None
 
 
 # control: extract_timespan on the identical text is untouched by this fix --

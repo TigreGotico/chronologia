@@ -695,6 +695,7 @@ def extract_recurrence(
             if rec is None:
                 return None
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
+            rec, consumed = _apply_clock_range(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor)
             # a range bound may CLAIM its clause yet name no valid recurrence
             # (a weekday range that shares no day with an already-set BYDAY
@@ -712,6 +713,91 @@ def extract_recurrence(
     return None
 
 
+
+
+def _apply_clock_range(rec, consumed, ctx, lang, anchor):
+    """Fold a "from H to H2" / "from Ham to H2pm" clause into a within-day
+    clock WINDOW: ``BYHOUR`` (and ``BYMINUTE``) is set to the window's
+    **start** only.
+
+    This engine's ``BYHOUR``/``BYMINUTE`` parts are discrete civil-clock
+    PINS -- RFC 5545 has no window-END part -- so a clock range grounds
+    exactly the way a plain "at H" pin grounds (:func:`_apply_clock`): one
+    ``BYHOUR`` value, taken from the range's left/start endpoint.  Without
+    this step the clause is silently misread two ways:
+
+    * ``_apply_range_bound``'s date-range fallback grounds the right
+      endpoint as a same-day ``UNTIL`` ("from 9am to 5pm" -> UNTIL=today
+      17:00), expiring the whole rule the day it is authored;
+    * failing that (a bare "5" does not ground as a date), the tokens fall
+      through to :func:`_apply_clock`'s generic ``clock_time`` engine match,
+      which reads "9 to 5" as the unrelated "N minutes to H" idiom ("quarter
+      to five") -- "9 to 5" -> 4:51, nonsense for a range.
+
+    Both endpoints must resolve as PURE clock times: reading ``"at " +
+    text`` for the (1- or 2-token) endpoint span must leave no remainder --
+    a genuine date range ("from june to august") leaves "at" stranded
+    (``extract_timespan("at august")`` resolves August but returns "at" as
+    remainder) and is declined here, left for :func:`_apply_range_bound` to
+    ground as ``UNTIL`` instead.  Bare numbers ("9", "5") are read literally,
+    the same convention :func:`_apply_clock` already uses for "at 9" / "at
+    5" -- no am/pm guessing is invented here.
+    """
+    from dataclasses import replace as _replace
+    if isinstance(rec, HolidayRecurrence) or rec.until is not None:
+        return rec, consumed
+
+    tokens = ctx.tokens
+    spec = ctx.spec
+    n = len(tokens)
+    leads = _conn_surfaces(spec, "between", _RANGE_BETWEEN) \
+        + _conn_surfaces(spec, "from", _RANGE_FROM)
+    mids = _conn_surfaces(spec, "to", _RANGE_TO) \
+        + _conn_surfaces(spec, "and", ("and",))
+
+    def _match(i, words):
+        k = len(words)
+        if not words or i + k > n or any((i + x) in consumed for x in range(k)):
+            return None
+        return i + k if [tokens[i + x].text for x in range(k)] == words else None
+
+    def _clock_span(start):
+        # a clock endpoint is 1 token ("5") or 2 ("9", "am") -- try the
+        # longer reading first so a trailing am/pm word is captured.
+        for length in (2, 1):
+            end = start + length
+            if end > n or any(x in consumed for x in range(start, end)):
+                continue
+            text = " ".join(t.raw for t in tokens[start:end])
+            got = extract_timespan("at " + text, lang, anchor=anchor)
+            if got is None or got[1] != "":
+                continue
+            c = got[0].start
+            return end, c.hour, c.minute
+        return None
+
+    for i in range(n):
+        if i in consumed:
+            continue
+        j = next((m for lead in leads if (m := _match(i, lead)) is not None), None)
+        if j is None:
+            continue
+        left = _clock_span(j)
+        if left is None:
+            continue
+        k, hour, minute = left
+        m_end = next((r for mid in mids
+                      if (r := _match(k, mid)) is not None), None)
+        if m_end is None:
+            continue
+        right = _clock_span(m_end)
+        if right is None:
+            continue
+        end, _rh, _rm = right
+        rec = _replace(rec, byhour=(hour,),
+                       byminute=((minute,) if minute else ()))
+        return rec, consumed | set(range(i, end))
+    return rec, consumed
 
 
 def _apply_clock(rec, consumed, ctx, lang, anchor):
