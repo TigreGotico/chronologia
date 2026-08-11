@@ -195,7 +195,7 @@ def test_ca_computable_holidays_no_longer_vanish_after_2027(subdiv, name, years)
 @pytest.mark.parametrize("text", [
     "March 2 at 3pm", "june 5th at 3pm",      # date + clock
     "Monday morning", "yesterday morning",     # weekday/named-day + daypart
-    "Monday March 2", "Monday March 2 morning at 3pm",  # weekday-label (+clock)
+    "Monday March 2", "Monday March 2 evening at 9",  # weekday-label (+clock)
     "5 days after christmas", "in 5 business days", "3 fridays from now",  # offsets
 ])
 def test_extract_candidates_top_equals_extract_timespan(text):
