@@ -732,6 +732,11 @@ def extract_recurrence(
             if rec is None:
                 return None
             rec, consumed = _apply_clock(rec, consumed, ctx, lang, anchor)
+            # a BYHOUR list whose items disagree on the minute cannot be
+            # honestly folded onto one RRULE's single BYMINUTE -- see
+            # _apply_clock -- so it declines the same way the steps above do.
+            if rec is None:
+                return None
             from chronologia.extract.pipeline import render_remainder
             remainder = render_remainder(text, [t for t in tokens
                                                 if t.index not in consumed])
@@ -827,32 +832,70 @@ def _apply_clock_range(rec, consumed, ctx, lang, anchor):
 
 
 def _apply_clock(rec, consumed, ctx, lang, anchor):
-    """Fold a trailing clock ("at 9", "at 9:30", "at noon") onto ``rec`` as a
-    ``BYHOUR``/``BYMINUTE`` pin, extending ``consumed`` over the clock (and a
-    leading ``at`` marker).
+    """Fold a trailing clock ("at 9", "at 9:30", "at noon") -- or a
+    comma/"and"-separated LIST of them ("at 9am and 5pm", "at 9am, 12pm and
+    5pm") -- onto ``rec`` as a ``BYHOUR``/``BYMINUTE`` pin, extending
+    ``consumed`` over the clock(s) (and a leading ``at`` marker, repeated
+    before each list item: "a las 9am y a las 5pm").
 
     A :class:`~chronologia.recurrence.HolidayRecurrence` carries no clock pin,
-    so it is left untouched.  The clock is read by the *same* engine
+    so it is left untouched.  Each clock is read by the *same* engine
     ``clock_time`` construction the single-span edge uses (composition, not a
     new grammar); its resolved minute-wide span supplies the hour and minute.
+
+    RFC 5545's ``BYHOUR`` is multi-valued, so a list of full clocks (each with
+    its own meridiem) is read item-by-item -- the tokenizer already drops
+    commas, so items are separated by nothing, the locale's "and" connector,
+    or a repeated leading marker ("a las"), skipped between items the same
+    way ``_collect_weekdays`` skips "and" between weekday names.  ``BYMINUTE``
+    is a single value shared by the whole rule (there is no per-BYHOUR minute
+    in RFC 5545): when every list item names the SAME minute (including all
+    on-the-hour), that minute is used; when items disagree ("9:15 and
+    17:45"), the rule cannot be honestly expressed as one RRULE, so this
+    declines outright (``None``) rather than silently keeping only one
+    item's minute -- the same "claim then decline" convention the finders
+    and ``_apply_clock_range``/``_apply_range_bound``/``_apply_year_scope``
+    already use.
     """
     from dataclasses import replace as _replace
     if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)):
         return rec, consumed
     engine = _timespan_engine(lang)
     tokens = ctx.tokens
-    for m in engine.matcher.match(tokens):
-        if m.construction not in ("clock_time", "military_time"):
-            continue
-        if any(i in consumed for i in range(*m.span)):
-            continue
+    n = len(tokens)
+    matches = sorted(
+        (m for m in engine.matcher.match(tokens)
+         if m.construction in ("clock_time", "military_time")
+         and not any(i in consumed for i in range(*m.span))),
+        key=lambda m: m.span[0])
+    for idx, m in enumerate(matches):
         res = engine.resolver.resolve(m, anchor or datetime.now())
         if res is None:
             continue
         c = res.value.start
-        rec = _replace(rec, byhour=(c.hour,),
-                       byminute=((c.minute,) if c.minute else ()))
+        hours = [c.hour]
+        minutes = [c.minute]
         lo, hi = m.span
+        j = idx + 1
+        while j < len(matches):
+            nxt = matches[j]
+            if nxt.span[0] < hi or not all(
+                    tokens[k].text in ctx.and_words
+                    or tokens[k].text in ctx.at_words
+                    for k in range(hi, nxt.span[0])):
+                break
+            nres = engine.resolver.resolve(nxt, anchor or datetime.now())
+            if nres is None:
+                break
+            nc = nres.value.start
+            hours.append(nc.hour)
+            minutes.append(nc.minute)
+            hi = nxt.span[1]
+            j += 1
+        if len(set(minutes)) > 1:
+            return None, consumed
+        rec = _replace(rec, byhour=tuple(hours),
+                       byminute=((minutes[0],) if minutes[0] else ()))
         while lo - 1 >= 0 and tokens[lo - 1].text in ctx.at_words \
                 and (lo - 1) not in consumed:
             lo -= 1
