@@ -364,6 +364,69 @@ def compose_date_daypart(date_res: Resolution, daypart_res: Resolution,
     return Resolution(band, consumed)
 
 
+def _daypart_pm_side(name: str) -> bool:
+    """Whether the day-part ``name`` sits on the PM side of noon -- its
+    band starts at/after 12:00, or it crosses midnight (a "night"-shaped
+    band, whatever the locale's own name for it).  Read from the same
+    CLDR-derived band :func:`_daypart_band` already uses, so the check is
+    locale-agnostic: it works for a locale's own canonical daypart key
+    (``"vecher_ru"``) exactly as for the English ``"evening"``.
+    """
+    band = _daypart_band(AstroDate(2000, 1, 1), name)
+    return band.end.day != band.start.day or band.start.hour >= 12
+
+
+def _daypart_wraps_midnight(name: str) -> bool:
+    """Whether the day-part ``name``'s band crosses midnight into the next
+    civil day (a "night"-shaped band) -- the only kind that legitimately
+    covers the literal hour 0.
+    """
+    band = _daypart_band(AstroDate(2000, 1, 1), name)
+    return band.end.day != band.start.day
+
+
+def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
+                          name: str, has_explicit_meridiem: bool
+                          ) -> Optional[Resolution]:
+    """Apply a day-part word adjacent to an explicit clock as a MERIDIEM
+    hint on it, rather than a competing reading -- "evening at 9" is 21:00,
+    not a dropped "evening" plus a wrong-by-luck 09:00.
+
+    The clock stays the pinpoint minute; the day-part just supplies the
+    AM/PM side of a bare 12-hour reading (a PM-side day-part -- see
+    :func:`_daypart_pm_side` -- shifts a spoken 1..11 by +12; an AM-side one
+    like ``morning`` leaves it alone).  Over an already-PINNED hour -- an
+    explicit am/pm marker on the clock itself, a 24-hour hour ``>= 13``, or
+    the literal midnight ``0`` -- the day-part must instead *agree* with
+    which side of noon that hour falls on (midnight only agrees with a
+    midnight-crossing "night"-shaped band); a genuine clash ("morning at
+    9pm") declines rather than silently pick a winner, the same refusal
+    convention a contradictory bare-hour-plus-meridiem clock already uses
+    (R57).
+
+    Returns ``None`` on contradiction.
+    """
+    c = clock_res.value.start
+    hour = c.hour
+    is_pm_daypart = _daypart_pm_side(name)
+    if has_explicit_meridiem or hour >= 13 or hour == 0:
+        # already a definite 24-hour reading -- the day-part must agree.
+        if hour == 0:
+            if not _daypart_wraps_midnight(name):
+                return None
+        elif is_pm_daypart != (hour >= 12):
+            return None
+        new_hour = hour
+    else:
+        # bare 1..12 hour, no meridiem of its own: let the day-part supply
+        # the AM/PM side.
+        new_hour = (hour % 12) + 12 if is_pm_daypart and hour != 12 else hour
+    new_start = c.replace(hour=new_hour)
+    consumed = tuple(sorted(set(clock_res.consumed) | set(daypart_res.consumed)))
+    return Resolution(DateSpan(new_start, new_start + timedelta(minutes=1)),
+                      consumed)
+
+
 def _astro_add_years(start: AstroDate, years: int) -> AstroDate:
     """``start`` advanced by whole years (day/month preserved, Feb 29 clamped)."""
     day = 28 if (start.month == 2 and start.day == 29

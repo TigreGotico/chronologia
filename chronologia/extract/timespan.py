@@ -40,7 +40,9 @@ from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
                                               require_text)
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_clock,
-                                              compose_date_daypart, _WEEK_START)
+                                              compose_date_daypart,
+                                              compose_daypart_clock,
+                                              _WEEK_START)
 from chronologia.extract.tokenizer import Tokenizer
 
 
@@ -2618,7 +2620,39 @@ def _compose(resolved, engine, tokens):
     # (a non-empty remainder honestly signals the un-placed time).
     _week = len(eff_dates) == 1 and eff_dates[0][1].week_widened
     glue_consumed = set()
-    if (not _week and len(clocks) == 1 and len(eff_dates) == 1
+    if (not _week and len(clocks) == 1 and len(dayparts) == 1
+            and dayparts[0][0].span[1] <= clocks[0][0].span[0]
+            and _adjacent(dayparts[0][0], clocks[0][0])):
+        # A day-part word PRECEDING an explicit clock ("evening at 9") is a
+        # meridiem HINT on it, not a competing reading: the two must
+        # COMPOSE, with the clock as the pinpoint, rather than one silently
+        # winning and stranding the other (the R117 defect).  Deliberately
+        # ORDER-SENSITIVE: the postposed genitive forms ("9 vecara") already
+        # fuse into the clock's own MERIDIEM slot at match time and never
+        # reach here as a separate daypart_ref match, while a bare POSTPOSED
+        # daypart word after a clock ("half nine at night") is a distinct,
+        # already-decided construction boundary (see
+        # test_half_nine_at_night_unchanged) that this fix must not disturb.
+        dp_match, dp_res = dayparts[0]
+        clk_match, clk_res = clocks[0]
+        dp_name = engine.spec.dayparts[dp_match.slots["DAYPART"].text]
+        has_meridiem = clk_match.slots.get("MERIDIEM") is not None
+        merged_clock = compose_daypart_clock(clk_res, dp_res, dp_name,
+                                             has_meridiem)
+        if merged_clock is None:
+            # A genuine contradiction ("morning at 9pm") -- decline the
+            # whole reading rather than guess a winner (R57 convention).
+            return None, set(), None
+        glue_consumed = _composition_glue(dp_match, clk_match)
+        if len(eff_dates) == 1 and _adjacent(eff_dates[0][0], dp_match):
+            res = compose_date_clock(eff_dates[0][1], merged_clock)
+            rep = eff_dates[0][0]
+            glue_consumed |= _composition_glue(eff_dates[0][0], dp_match)
+            glue_consumed |= _composition_glue(eff_dates[0][0], clk_match)
+        else:
+            res = merged_clock
+            rep = clk_match
+    elif (not _week and len(clocks) == 1 and len(eff_dates) == 1
             and _adjacent(eff_dates[0][0], clocks[0][0])):
         res = compose_date_clock(eff_dates[0][1], clocks[0][1])
         rep = eff_dates[0][0]
@@ -2693,6 +2727,10 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     # widen a date carrying the locale's "week of" marker to its whole week
     resolved = _apply_week_of(tokens, resolved, engine.spec)
     res, label_consumed, rep = _compose(resolved, engine, tokens)
+    if res is None:
+        # A day-part+clock meridiem contradiction ("morning at 9pm") --
+        # _compose declined the whole reading rather than pick a winner.
+        return None
     consumed = set(res.consumed) | label_consumed
     # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
     # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
@@ -2831,13 +2869,19 @@ def extract_candidates(
     primary = None
     if composed:
         win_res, win_label, rep = _compose(composed, engine, tokens)
-        consumed_all = set(win_res.consumed) | win_label
-        lo, hi = min(consumed_all), max(consumed_all) + 1
-        wide = replace(rep, span=(lo, hi))
-        composed = [(wide, win_res) if m is rep else (m, r)
-                    for m, r in composed]
-        label_extra[id(wide)] = consumed_all
-        primary = id(wide)   # extract_timespan's selected answer -> rank it first
+        if win_res is not None:
+            consumed_all = set(win_res.consumed) | win_label
+            lo, hi = min(consumed_all), max(consumed_all) + 1
+            wide = replace(rep, span=(lo, hi))
+            composed = [(wide, win_res) if m is rep else (m, r)
+                        for m, r in composed]
+            label_extra[id(wide)] = consumed_all
+            primary = id(wide)   # extract_timespan's selected answer -> rank it first
+        # else: a day-part/clock meridiem contradiction -- _compose declined
+        # the whole composed reading (mirrors _resolve_core's None), so no
+        # primary winner is surfaced; the un-composed sub-matches (if any
+        # survive their own resolution) still populate the runner-up list
+        # below exactly as they would for any other unresolved text.
     composed_res = {id(m): r for m, r in composed}
 
     def _resolve_one(m):
