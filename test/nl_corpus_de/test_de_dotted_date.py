@@ -141,6 +141,8 @@ def test_trailing_sentence_dot_de():
 
 
 def test_dotted_date_with_a_clock_de():
+    """The "um" stitching the clock onto the date is part of the composed
+    reading, not leftover text -- the remainder comes back empty."""
     s, e = start_end('15.06.2020 um 14:30')
     assert s == AstroDate(2020, 6, 15, 14, 30)
-    assert parse('15.06.2020 um 14:30')[1] == 'um'
+    assert parse('15.06.2020 um 14:30')[1] == ''
