@@ -558,6 +558,12 @@ _PT_QUARTER_SURFACES = frozenset({"quarto", "quartos"})
 
 
 def fold_pt(tokens):
+    # Portuguese writes the digital clock exactly like French/Occitan --
+    # "15h", "15h30", "9h" -- so the same "Nh[MM]" literal is folded to an
+    # ``HH:MM`` CLOCK token here (see :func:`_collapse_h_clock`).  Without
+    # this the grammar reads the digits as HOUR and strands the bare "h" as
+    # unmatched remainder, since no pt clock_time order consumes it.
+    tokens = _collapse_h_clock(tokens)
     tokens = _license_weekday_ordinal(tokens, _PT_ORDINAL_BEFORE_WEEK,
                                       _PT_WEEK_UNITS)
     protected = {
