@@ -2376,6 +2376,131 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _stray_year_zero_veto(tokens, match, spec))
 
 
+#: the "for <duration>" bound marker vocabulary, keyed by spec identity so a
+#: repeat call for the same language does not recompile the alternation. The
+#: WORDS come from ``spec.connectors["recur_for"]`` (``marker_recur_for.voc``)
+#: -- the recurrence grammar's own "for" bound ("every monday for 3 weeks") --
+#: reused here rather than adding a parallel marker family for the same word.
+_FOR_PATTERN_CACHE = {}
+
+
+def _for_marker_pattern(spec):
+    key = id(spec)
+    pat = _FOR_PATTERN_CACHE.get(key)
+    if pat is None:
+        # Each surface is matched as its WHOLE (possibly multi-word) phrase --
+        # never split into individual words. Russian's marker is the
+        # two-word "в течение" ("during"); flattening it to {"в", "течение"}
+        # let the bare preposition "в" ("at"/"in", also the clock's own "в 9
+        # часов" and any other leading "в") stand in for the whole marker,
+        # which is defect R119-followup: "в следующий вторник вечером в 9
+        # часов" (Tuesday evening at 9) had its leading, unrelated "в"
+        # misread as the duration bound and swallowed the entire rest of the
+        # sentence as a bogus 9-HOUR duration. Joining each surface's own
+        # words with a literal space (not "\s+": a vocabulary surface is
+        # exactly the words it lists, not an arbitrary-whitespace pattern)
+        # keeps a multi-word marker atomic.
+        surfaces = _conn_surfaces(spec, "recur_for", ("for",))
+        alts = sorted({" ".join(re.escape(w) for w in tup)
+                       for tup in surfaces if tup},
+                      key=len, reverse=True)
+        alt = "|".join(alts)
+        pat = re.compile(rf"\b(?:{alt})\b", re.IGNORECASE)
+        _FOR_PATTERN_CACHE[key] = pat
+    return pat
+
+
+def _extend_clock_for_duration(span, remainder, tokens, consumed, text, engine):
+    """Extend a resolved PINPOINT clock-start span by a trailing bare
+    "for <duration>" (defect R119): "next monday at 9am for 2 hours" ends at
+    11:00, not a minute after 9am with "for 2 hours" stranded.
+
+    Fires ONLY when the resolved span is exactly the minute-wide span a
+    single clock_time -- alone or composed onto a date via
+    :func:`~chronologia.extract.resolver.compose_date_clock` -- always
+    produces.  A span that is a whole day/week wide ("on monday for 2
+    hours") is left untouched: the duration stays stranded in the
+    remainder rather than being composed onto a guessed reading, per the
+    repo's refusal-over-silently-wrong convention (see
+    ``test_nl_duration_range_not_timespan.py``) -- there is no single
+    unambiguous way to fold "for 2 hours" onto a whole day.
+
+    The duration TAIL is re-read from the ORIGINAL ``text`` (via a fresh
+    marker search restricted to the *uncovered* -- not already
+    matcher-consumed -- character positions), never from the already-
+    rendered ``remainder`` string: :func:`~chronologia.extract.pipeline.
+    render_remainder` slices a maximal run of index-consecutive unconsumed
+    tokens by ``[run[0].char_start : run[-1].char_end]``, which silently
+    truncates whenever the number-fold leaves a narrower-charspan token
+    (e.g. "hour") positioned in the stream after a wider one that already
+    covers its characters (e.g. "an hour and a half" folding to a
+    ``1.5``-valued token spanning the whole phrase, plus a residual
+    "hour" token nested inside it) -- exactly the shape "an hour and a
+    half" folds to.  Re-deriving the tail from ``text`` sidesteps that
+    unrelated pre-existing rendering quirk instead of inheriting it; the
+    PREFIX (the leftover before the marker) is unaffected by the quirk --
+    it is text ``remainder`` renders correctly -- so it is still read from
+    ``remainder``.
+
+    An utterance names one duration bound, so the LAST marker occurrence in
+    each string is used (the tail search additionally skips any marker
+    that falls inside a construction's own already-consumed characters,
+    e.g. a marker surface that happens to double as part of the resolved
+    date/clock's own vocabulary). The tail after the marker must START
+    with a bare fixed-width duration reading -- if it does not (a spurious
+    "for" that names no duration at all), the slice is left untouched, no
+    end is fabricated. Any further trailing text the duration reading does
+    not itself consume ("... for 2 hours to discuss the budget") is kept,
+    appended after the pre-marker prefix, so an embedded sentence loses
+    nothing. An explicit-end range ("9am to 11am on monday") never reaches
+    this function: it is composed by :func:`_extract_range`, which returns
+    before the SINGLE core (and this call) ever runs, so its own
+    end-of-minute convention is untouched.
+    """
+    if not remainder or not remainder.strip():
+        return span, remainder
+    if span.end - span.start != timedelta(minutes=1):
+        return span, remainder
+    spec = engine.spec
+    pat = _for_marker_pattern(spec)
+    rem_matches = list(pat.finditer(remainder))
+    if not rem_matches:
+        return span, remainder
+    covered = [(t.char_start, t.char_end) for t in tokens
+               if t.index in consumed and t.char_start is not None
+               and t.char_end is not None]
+
+    def _is_covered(pos):
+        return any(a <= pos < b for a, b in covered)
+
+    # The marker must sit STRICTLY AFTER every character the resolved
+    # clock/date span itself consumed -- never before, never inside. A
+    # leading, unrelated marker occurrence ("в следующий вторник..." where
+    # the stray leading "в" is a bare preposition, not this span's duration
+    # bound) must never be read as extending an already-resolved span whose
+    # own text comes later; ``_is_covered`` alone only excludes positions
+    # actually inside a consumed token, which a marker sitting BEFORE the
+    # whole consumed run would still pass.
+    last_consumed_end = max((e for _s, e in covered), default=0)
+    text_matches = [m for m in pat.finditer(text)
+                    if m.start() >= last_consumed_end and not _is_covered(m.start())]
+    if not text_matches:
+        return span, remainder
+    from chronologia.extract.nseries import _duration_core
+    for rm, tm in zip(reversed(rem_matches), reversed(text_matches)):
+        tail = text[tm.end():]
+        if not tail.strip():
+            continue
+        got = _duration_core(tail, engine)
+        if got is None:
+            continue
+        prefix = remainder[:rm.start()].strip()
+        suffix = got.remainder.strip()
+        new_remainder = (prefix + " " + suffix).strip() if suffix else prefix
+        return DateSpan(span.start, span.start + got.duration), new_remainder
+    return span, remainder
+
+
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
                   scale_mode="short"):
     """The single recursive resolver over the token stream.
@@ -2462,6 +2587,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
             and span.start_datetime is None
             and span.end_datetime is not None):
         return None
+    span, remainder = _extend_clock_for_duration(
+        span, remainder, tokens, consumed, text, engine)
     return span, remainder
 
 
