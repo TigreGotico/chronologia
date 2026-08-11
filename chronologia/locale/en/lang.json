@@ -368,6 +368,14 @@
       "half_period": [
         "h NUM GYEAR",
         "GYEAR h NUM"
+      ],
+      "scoped_ordinal": [
+        "article? ORD to NTOLAST WEEKDAY of MONTH of? YEAR?",
+        "article? ORD to NTOLAST WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
+        "article? ntolast_next to NTOLAST WEEKDAY of MONTH of? YEAR?",
+        "article? ntolast_next to NTOLAST WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
+        "article? PENULT WEEKDAY of MONTH of? YEAR?",
+        "article? PENULT WEEKDAY of REL_MARKER? article? SCOPE_UNIT"
       ]
     }
   },

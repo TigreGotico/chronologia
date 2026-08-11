@@ -1688,7 +1688,26 @@ class Resolver:
         ``last`` in place of the ordinal selects the final unit (-1).
         """
         ord_tok = match.slots.get("ORD")
-        n = int(ord_tok.value) if ord_tok is not None else -1
+        ntolast_tok = match.slots.get("NTOLAST")
+        penult_tok = match.slots.get("PENULT")
+        if penult_tok is not None:
+            # "penultimate" -- a fixed synonym for "second-to-last" (-2).
+            n = -2
+        elif ntolast_tok is not None:
+            # an "<ordinal> to last" / "next to last" idiom: ``ORD`` present
+            # means "Nth-to-last" (-N), absent means the "next to last" idiom
+            # (-2).  Bounded at -4 -- "fifth-to-last" and beyond refuse rather
+            # than invent a reading past what the idiom is ever actually used
+            # for.
+            if ord_tok is not None:
+                v = int(ord_tok.value)
+                if not 2 <= v <= 4:
+                    return None
+                n = -v
+            else:
+                n = -2
+        else:
+            n = int(ord_tok.value) if ord_tok is not None else -1
 
         # A scoped-ordinal selection ("the Nth <unit> of ...") names ONE unit
         # and is grammatically SINGULAR in every language, so a PLURAL selected

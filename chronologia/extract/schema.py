@@ -87,7 +87,11 @@ NUMERIC_SLOTS: FrozenSet[str] = frozenset({
     "CLOCK", "ISO", "ISOWEEK", "NUMDATE"})
 
 #: uppercase slots that actually bind a *connector* surface set, not a value map.
-CONNECTOR_SLOTS: Dict[str, str] = {"PRIDIE": "pridie"}
+CONNECTOR_SLOTS: Dict[str, str] = {
+    "PRIDIE": "pridie",
+    "NTOLAST": "ordlast",
+    "PENULT": "penult",
+}
 
 #: slots reachable if *either* the scope-unit or the plain-unit map is present.
 DUAL_UNIT_SLOTS: FrozenSet[str] = frozenset({"SEL_UNIT", "SCOPE_UNIT"})

@@ -1,0 +1,6 @@
+# the leading word of the "next to last" idiom (== "second-to-last", -2).
+# Deliberately a SEPARATE table from marker_next.voc's REL_MARKER "next"
+# (which shifts a whole scope by +1) -- "next to last" is not "next" plus
+# "last" composing an offset, it is one fixed idiom meaning -2, and reusing
+# REL_MARKER here would let the two collide.
+next
