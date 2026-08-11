@@ -42,7 +42,7 @@
         "at? LANDMARK CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
         "at? LANDMARK CLOCKDIR MINUTE of? article? MERIDIEM? ZONE?",
         "at? LANDMARK of? article? MERIDIEM? ZONE?",
-        "CLOCK MERIDIEM? ZONE?"
+        "at? at? CLOCK MERIDIEM? ZONE?"
       ],
       "prefer_future": true
     },

@@ -35,7 +35,7 @@
         "at? HOUR of? article? MERIDIEM ZONE?",
         "at? HOUR MERIDIEM ZONE?",
         "at? LANDMARK of? article? MERIDIEM? ZONE?",
-        "CLOCK MERIDIEM? ZONE?"
+        "at? at? CLOCK MERIDIEM? ZONE?"
       ],
       "prefer_future": true
     },
