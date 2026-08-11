@@ -248,8 +248,19 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
     if name == "HOUR":
         # an hour is an integer count -- a dotted decimal ("7.42") is the
         # timetable clock's HH.MM, handled by DOTCLOCK, not an hour whose
-        # fractional minutes get silently truncated to :00.
-        return (token.is_number and "." not in token.raw
+        # fractional minutes get silently truncated to :00.  The guard must
+        # only reject a REAL decimal tail (a digit right after the dot), not
+        # every dot in ``raw``: an ``ordinal_dot`` locale's tokenizer folds a
+        # sentence-final period straight after a bare hour ("a las 10.",
+        # "klokken 10.") into the token's ``raw`` (``\d+\.(?!\d)`` -- the dot
+        # is deliberately NOT followed by a digit, so it can never be a
+        # decimal tail), and a literal ``"." not in token.raw`` check used to
+        # veto that token as a clock hour exactly like a genuine "7.42"
+        # timetable decimal -- stranding the whole date+time merge outside
+        # English (whose tokenizer never folds the trailing dot into ``raw``
+        # in the first place, so it never hit this guard).  Requiring a digit
+        # after the dot keeps "7.42" on DOTCLOCK while letting "10." bind HOUR.
+        return (token.is_number and not re.search(r"\.\d", token.raw)
                 and 0 <= (token.value or 0) <= 24)
     if name == "MINUTE":
         return token.is_number and 0 <= (token.value or 0) <= 59
