@@ -65,6 +65,17 @@ _CASES = [
     ("on weekends", "FREQ=WEEKLY;BYDAY=SA,SU", ""),
     ("first monday of every month", "FREQ=MONTHLY;BYDAY=1MO", ""),
     ("last friday of every month", "FREQ=MONTHLY;BYDAY=-1FR", ""),
+    # R114: "second-to-last" (and its synonyms "penultimate"/"next-to-last")
+    # must map to BYDAY=-2, NOT silently collapse onto the "last" reading
+    # while stranding the qualifier ("the second-to-last friday of each
+    # month" used to resolve as -1FR with remainder "the second-to").  The
+    # controls above ("last friday"/"first monday") prove the un-qualified
+    # readings are unchanged.
+    ("the second-to-last friday of every month", "FREQ=MONTHLY;BYDAY=-2FR", ""),
+    ("the penultimate friday of every month", "FREQ=MONTHLY;BYDAY=-2FR", ""),
+    ("the next-to-last friday of every month", "FREQ=MONTHLY;BYDAY=-2FR", ""),
+    # "third-to-last" generalises the same idiom to -3.
+    ("the third-to-last friday of every month", "FREQ=MONTHLY;BYDAY=-3FR", ""),
     ("the third thursday of november", "FREQ=YEARLY;BYMONTH=11;BYDAY=3TH", ""),
     # date-anchored recurrence: the single-span engine reads the date part.
     ("every 10th of may", "FREQ=YEARLY;BYMONTH=5;BYMONTHDAY=10", ""),
@@ -558,6 +569,59 @@ def test_leap_day_recurrence_is_anchor_independent(text, anchor):
     got = extract_recurrence(text, LANG, anchor=anchor)
     assert got is not None
     assert got[0].to_string() == "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=29"
+    assert got[1] == ""
+
+
+@pytest.mark.parametrize("text", [
+    "the second-to-last friday of every month",
+    "the penultimate friday of every month",
+    "the next-to-last friday of every month",
+])
+def test_second_to_last_friday_occurrences_are_not_the_last_friday(text):
+    # R114: the parsed BYDAY=-2FR rule must actually expand to the
+    # second-to-last Friday of each month (independently computed: August
+    # 2026's Fridays are the 7th/14th/21st/28th, so -2 is the 21st, NOT the
+    # 28th the silent-wrong reading used to return).
+    from chronologia.recurrence import occurrences, parse_rrule
+    got = extract_recurrence(text, LANG,
+                             anchor=_dt.datetime(2026, 8, 10, 12, 0))
+    assert got is not None
+    assert got[0].to_string() == "FREQ=MONTHLY;BYDAY=-2FR"
+    rule = parse_rrule(got[0].to_string())
+    occs = [str(d) for d in
+            occurrences(rule, _dt.datetime(2026, 8, 1), count=3)]
+    assert occs == ["2026-08-21", "2026-09-18", "2026-10-23"]
+
+
+def test_fifth_to_last_friday_of_month_is_no_recurrence():
+    # R114 follow-up: "fifth-to-last" is out of the supported -2..-4 range,
+    # and out-of-range must decline the WHOLE extraction, not just the
+    # nth-weekday reading -- the earlier fix left a residue where the
+    # rejected idiom fell through to the generic every-month finder, which
+    # still consumed "each month" and returned a bare FREQ=MONTHLY with the
+    # entire meaning-bearing phrase ("the fifth-to-last friday of") stranded
+    # in the remainder.  That is the same stranded-temporal-words defect
+    # signature as an impossible ordinal ("every 31st of april" below): the
+    # whole extraction must refuse (None), never a partial rule with the
+    # qualifier silently dropped.
+    assert extract_recurrence(
+        "the fifth-to-last friday of each month", LANG,
+        anchor=_dt.datetime(2026, 8, 10, 12, 0)) is None
+
+
+@pytest.mark.parametrize("text", [
+    # controls: bare "each month"/"every month" (no rejected n-to-last shape
+    # ahead of it) must still ground as the ordinary MONTHLY rule -- the
+    # fifth-to-last refusal above must not make the generic every-month
+    # finder itself decline.
+    "each month",
+    "every month",
+])
+def test_bare_every_month_control_unchanged(text):
+    got = extract_recurrence(text, LANG,
+                             anchor=_dt.datetime(2026, 8, 10, 12, 0))
+    assert got is not None
+    assert got[0].to_string() == "FREQ=MONTHLY"
     assert got[1] == ""
 
 

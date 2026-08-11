@@ -1,0 +1,5 @@
+# "penultimate <weekday> of every month": a single-word synonym for
+# "second-to-last" -- Merriam-Webster s.v. "penultimate" ("next to the last").
+# Always -2 (the day directly before the last); it never generalises to
+# "second-to-penultimate" the way the "<ordinal> to last" idiom does.
+penultimate

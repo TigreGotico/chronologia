@@ -1,0 +1,6 @@
+# the "to" of the "<ordinal> to last" / "next to last" idiom ("the
+# second-to-last friday", "the next-to-last friday").  Union'd with
+# ``_RANGE_TO``'s Python-level defaults (to/until/till/through/thru) by
+# ``_conn_surfaces`` for range detection, and now also reachable as a plain
+# grammar literal so the ``scoped_ordinal`` nth-to-last orders can match it.
+to

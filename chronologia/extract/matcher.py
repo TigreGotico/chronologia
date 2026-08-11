@@ -286,6 +286,16 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.text in spec.solar_quals
     if name in ("ORD", "SORD"):
         return token.is_number and (token.value or 0) >= 1
+    if name == "NTOLAST":
+        # the trailing "last" of an "<ordinal> to last" / "next to last"
+        # idiom ("the second-to-last friday") -- the same surfaces as the
+        # bare ``ordlast`` literal (last/previous/prior/past), reused here as
+        # a SLOT (rather than a literal) so the resolver can tell an
+        # nth-to-last order apart from the bare "the last friday" one.
+        return token.text in spec.connectors.get("ordlast", frozenset())
+    if name == "PENULT":
+        # "penultimate" -- a single-word synonym for "second-to-last".
+        return token.text in spec.connectors.get("penult", frozenset())
     if name == "NORD":
         # a *digit* day-of-month ordinal ("3rd", "15th") -- the surface run
         # still carries its ordinal suffix, so ``raw`` is not all-digits.

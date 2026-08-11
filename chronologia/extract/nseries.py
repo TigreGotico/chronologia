@@ -1304,6 +1304,14 @@ class _RecurCtx:
     quarter_word: set = frozenset()
     holidays: dict = None
     jurisdictions: dict = None
+    #: the "to" of the "<ordinal> to last" / "next to last" idiom ("the
+    #: second-to-last friday of every month").
+    to_words: set = frozenset()
+    #: "penultimate" -- a single-word synonym for "second-to-last".
+    penult_words: set = frozenset()
+    #: the leading word of the "next to last" idiom ("next" -- distinct from
+    #: the REL_MARKER "next" which shifts a whole scope by +1).
+    ntolast_next_words: set = frozenset()
     holiday_words: set = frozenset()
     holiday_qualifiers: set = frozenset()
     holiday_all_words: set = frozenset()
@@ -1359,6 +1367,10 @@ def _recur_ctx(text, lang, anchor):
         holiday_qualifiers=set(C.get("holiday_qualifier", ())),
         holiday_all_words=set(C.get("recur_holiday_all", ())),
         in_words=set(C.get("in", ())),
+        to_words=set(w for words in _conn_surfaces(spec, "to", _RANGE_TO)
+                     for w in words if len(words) == 1),
+        penult_words=set(C.get("penult", ())),
+        ntolast_next_words=set(C.get("ntolast_next", ())),
         lang=lang,
         anchor=anchor,
         pretokens=pretokens(text, spec),
@@ -1427,6 +1439,33 @@ def _weekday_here(ctx, tok, plural_ok):
     return ctx.weekdays.get(s[:-1]) if s.endswith("s") else None
 
 
+def _ntolast_ordn(ctx, t, li):
+    """Whether the "last" token at ``t[li]`` is really the tail of an
+    "<ordinal> to last" / "next to last" idiom -- "the second-to-last friday
+    of every month" (-2), "the third-to-last ..." (-3), "the next-to-last
+    ..." (-2, same idiom as "second-to-last").
+
+    Returns ``(ordn, phrase_start)`` -- the negative ordinal and the index the
+    whole ordinal phrase starts at (so the caller's consumed range covers the
+    leading "second-to"/"next-to" instead of stranding it) -- or ``None`` if
+    ``t[li]`` is not preceded by this idiom (a bare "last").
+
+    Bounded at -4: "fifth-to-last" and beyond refuse rather than invent a
+    reading past what the idiom is ever actually used for.
+    """
+    if li - 1 < 0 or t[li - 1].text not in ctx.to_words:
+        return None
+    k = li - 2
+    if k < 0:
+        return None
+    if t[k].is_number:
+        v = int(t[k].value)
+        return (-v, k) if 2 <= v <= 4 else None
+    if t[k].text in ctx.ntolast_next_words:
+        return -2, k
+    return None
+
+
 def _recur_nth_weekday(ctx):
     """``<ordinal|last> <weekday> of [every] (month|<month name>)``.
 
@@ -1455,11 +1494,41 @@ def _recur_nth_weekday(ctx):
             continue
         li = w - 1
         ordn = None
+        ord_start = li
         if t[li].is_number:
             ordn = int(t[li].value)
         elif (t[li].text in ctx.rel_markers
               and ctx.rel_markers[t[li].text] == -1):
-            ordn = -1
+            # bare "last" (-1), unless it's really the tail of an
+            # "<ordinal> to last" / "next to last" idiom -- checked first so
+            # that idiom is never mis-read as the bare last-of-month.
+            if li - 1 >= 0 and t[li - 1].text in ctx.to_words:
+                # this token IS shaped like the idiom's tail ("<X> to last");
+                # an out-of-range/unrecognised <X> ("fifth-to-last") must
+                # decline the whole reading rather than silently fall back to
+                # bare "last" and strand the qualifier -- exactly the defect
+                # this idiom support exists to fix.
+                found = _ntolast_ordn(ctx, t, li)
+                if found is None:
+                    # the shape IS the "<X> to last" idiom, just with an
+                    # unsupported/out-of-range <X> ("fifth-to-last") -- CLAIM
+                    # the reading and decline it (a ``None`` rule), exactly
+                    # the convention an impossible ordinal ("every 31st of
+                    # april") already uses, so a weaker catch-all finder never
+                    # gets a chance to re-read "each month" alone and strand
+                    # the whole qualified phrase as remainder behind a bare
+                    # MONTHLY rule.  A bare "last" with no leading "to" is NOT
+                    # this idiom and keeps scanning normally (the ``else``
+                    # branch below, and the plain ``continue`` mismatches
+                    # elsewhere in this loop).
+                    return None, frozenset()
+                ordn, ord_start = found
+            else:
+                ordn = -1
+        elif t[li].text in ctx.penult_words:
+            # "penultimate <weekday> of every month" -- a fixed synonym for
+            # "second-to-last" (-2).
+            ordn = -2
         else:
             continue
         r = w + 1
@@ -1468,7 +1537,7 @@ def _recur_nth_weekday(ctx):
         r += 1
         while r < n and (t[r].text in ctx.every or t[r].text in ctx.articles):
             r += 1
-        start = li
+        start = ord_start
         while start > 0 and (t[start - 1].text in ctx.articles
                              or t[start - 1].text in ctx.every):
             start -= 1
