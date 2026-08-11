@@ -412,3 +412,43 @@ def test_jurisdiction_holidays_unknown_country_declines():
 def test_bare_todos_os_feriados_is_unchanged():
     """Pinning the pre-R108 behaviour of the bare phrase (no jurisdiction)."""
     assert extract_recurrence("todos os feriados", LANG) is None
+
+
+# --------------------------------------------------------------------------
+# R111a: "todos os feriados em Portugal E Espanha" -- a second recognised
+# jurisdiction joined by the natural pt connector "e" names more than one
+# jurisdiction; refuse rather than silently keep only the first (Spain
+# dropped).
+# --------------------------------------------------------------------------
+@pytest.mark.parametrize("text", [
+    "todos os feriados em Portugal e Espanha",
+    "cada feriado da França e da Alemanha",
+])
+def test_jurisdiction_holidays_multi_country_declines(text):
+    assert extract_recurrence(text, LANG) is None
+
+
+# --------------------------------------------------------------------------
+# R111b: a trailing whole-year scope binds as UNTIL rather than stranding.
+# Anchored at 2026-08-11 so "no próximo ano" is unambiguously 2027.
+# --------------------------------------------------------------------------
+from datetime import datetime as _datetime  # noqa: E402
+
+_ANCHOR = _datetime(2026, 8, 11, 12, 0)
+
+
+def test_every_monday_next_year_binds_until_pt():
+    got = extract_recurrence(
+        "toda segunda-feira próximo ano", LANG, anchor=_ANCHOR)
+    assert got is not None
+    rec, remainder = got
+    assert remainder == ""
+    assert rec.until.year == 2028 and rec.until.month == 1 and rec.until.day == 1
+
+
+def test_every_holiday_in_portugal_next_year_declines_pt():
+    """JurisdictionHolidays has no bound field to attach a year scope to;
+    refuse outright, mirroring the English test."""
+    got = extract_recurrence(
+        "todos os feriados em Portugal próximo ano", LANG, anchor=_ANCHOR)
+    assert got is None
