@@ -13,6 +13,7 @@ filename                meaning
 ``month_<n>.voc``       month number ``n`` (1..12)
 ``weekday_<n>.voc``     weekday index ``n`` (0 == Monday)
 ``unit_<kind>.voc``     offset unit ``kind`` (day/week/month/year/...)
+``jurisdiction_<code>.voc``  country/region-name surface -> jurisdiction code ``code``
 ``named_day_<off>.voc`` named day at day-offset ``off`` (signed)
 ``daypart_<name>.voc`` surfaces naming the time-of-day band ``name``
 ``marker_past.voc``     direction marker, sign -1
@@ -154,6 +155,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     exclusion_coord: Set[str] = set()
     exclusion_scope: Set[str] = set()
     exclusion_filler: Set[str] = set()
+    jurisdictions: Dict[str, str] = {}
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
         base = os.path.basename(path)[:-len(".voc")]
@@ -271,6 +273,15 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         elif base.startswith("scope_unit_"):
             kind = base[len("scope_unit_"):]
             scope_units.update({s: kind for s in surfaces})
+        elif base.startswith("jurisdiction_"):
+            # jurisdiction_<code>.voc: country/region-name surfaces resolving
+            # to the civil-holidays engine's jurisdiction code ("every holiday
+            # in Portugal" -> "pt" -> "PT"). Per-locale opt-in vocab, like
+            # every other surface table here -- never a shared cross-locale
+            # list. An unmapped country name simply has no surface anywhere
+            # and the "every holiday in <X>" finder declines to match it.
+            code = base[len("jurisdiction_"):].upper()
+            jurisdictions.update({s: code for s in surfaces})
         elif base.startswith("regnal_"):
             # regnal_<seqkey>_<segname>.voc: segment of a regnal sequence.  The
             # sequence key may itself contain underscores ("egyptian_low"), so
@@ -465,6 +476,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         dayparts=dayparts,
         daypart_deictics=daypart_deictics,
         clock_zones=clock_zones,
+        jurisdictions=jurisdictions,
         weekend_words=frozenset(weekend_words),
         exclusion_triggers=frozenset(exclusion_triggers),
         exclusion_bound_guards=frozenset(exclusion_bound_guards),

@@ -66,7 +66,8 @@ from chronologia.cosmology import (AGE_OF_UNIVERSE_ERA, COSMIC_PERIODS,
 from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
                                  AmbiguousPeriodError, NamedPeriod, calibrate_c14,
                                  candidates, children, lookup, subdivide)
-from chronologia.recurrence import (HolidayRecurrence, Recurrence, every,
+from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
+                                    Recurrence, every,
                                     last_weekday_of_month,
                                     nth_weekday_of_month, occurrences,
                                     parse_rrule)
@@ -235,6 +236,7 @@ __all__ = [
     # RFC 5545 recurrence rules (RRULE) over the JDN hub
     "Recurrence",
     "HolidayRecurrence",
+    "JurisdictionHolidays",
     "parse_rrule",
     "occurrences",
     "every",
