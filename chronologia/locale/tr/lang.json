@@ -130,6 +130,10 @@
       ],
       "half_period": [
         "GYEAR poss? NUM half"
+      ],
+      "weekday_ref": [
+        "WEEKDAYFULL weekday_word",
+        "REL_MARKER WEEKDAY weekday_word"
       ]
     }
   }
