@@ -1309,6 +1309,17 @@ class _RecurCtx:
     to_words: set = frozenset()
     #: "penultimate" -- a single-word synonym for "second-to-last".
     penult_words: set = frozenset()
+    #: a SINGULAR trailing day-word ("günü" -- tr's "on <weekday>-day", one
+    #: specific date) that, sitting right after a weekday already collected
+    #: inside an explicitly-marked recurrence frame ("her cuma günü" --
+    #: "every friday"), is pure filler and must be swallowed rather than
+    #: stranded.  See ``_collect_weekdays``.
+    day_word: set = frozenset()
+    #: the PLURAL of ``day_word`` ("günleri") -- unlike the singular, this
+    #: surface is itself the ONLY marker of a bare postposed recurring
+    #: weekday ("cuma günleri" -- "on Fridays"), with no leading "her"/"on".
+    #: See ``_recur_weekday_dayword_bare``.
+    recur_day_word: set = frozenset()
     #: the leading word of the "next to last" idiom ("next" -- distinct from
     #: the REL_MARKER "next" which shifts a whole scope by +1).
     ntolast_next_words: set = frozenset()
@@ -1371,6 +1382,8 @@ def _recur_ctx(text, lang, anchor):
                      for w in words if len(words) == 1),
         penult_words=set(C.get("penult", ())),
         ntolast_next_words=set(C.get("ntolast_next", ())),
+        day_word=set(C.get("weekday_word", ())),
+        recur_day_word=set(C.get("recur_weekday_word", ())),
         lang=lang,
         anchor=anchor,
         pretokens=pretokens(text, spec),
@@ -1786,6 +1799,16 @@ def _collect_weekdays(ctx, start, plural_ok):
             break
         days.append(nxt)
         end = k + 1
+    # a trailing day-word ("günü"/"günleri", tr's "on <weekday>-day[s]") is
+    # pure filler once the weekday itself has been read -- it is what marks
+    # the phrase as a weekday reference at all, not an independent token --
+    # so it is swallowed into the match rather than left to strand in the
+    # remainder.  Both the singular and plural surfaces are skipped here
+    # (the plural is what LICENSES the bare postposed reading in
+    # ``_recur_weekday_dayword_bare``; once a leading marker like "her"/"on"
+    # has already licensed the frame, either surface is just filler).
+    if end < n and (t[end].text in ctx.day_word or t[end].text in ctx.recur_day_word):
+        end += 1
     return days, end
 
 
@@ -2126,6 +2149,48 @@ def _recur_freq_word(ctx):
         if byday is None:
             continue
         return _build_every("weekly", byday=byday), {i - 1, i}
+    return None
+
+
+def _recur_weekday_dayword_bare(ctx):
+    """``<weekday[, weekday ...]> <PLURAL day-word>`` -> WEEKLY;BYDAY=<days>.
+
+    Turkish marks a habitual/recurring weekday with a trailing PLURAL
+    day-word ("cuma günleri" -- "on Fridays") instead of a leading
+    quantifier or preposition: the weekday itself stays in its ordinary bare
+    singular form, and it is the plural "günleri" ("days", of "günü") right
+    after it that marks the reading as recurring rather than a single
+    upcoming date.  The SINGULAR day-word carries no such licence -- "cuma
+    günü" ("on Friday") names one specific date (read, if at all, by
+    extract_timespan's grammar engine, see PR #671) and must stay unread
+    here, exactly as a bare "cuma" alone does.
+
+    ``_collect_weekdays`` already swallows a trailing day-word of EITHER
+    number into its match span (filler, once a frame is already licensed);
+    this finder additionally requires that the swallowed word be the
+    PLURAL, since here it is the only thing licensing the frame at all.
+
+    Mirrors ``_recur_habitual_weekday``'s preposition-marked habitual
+    reading, just postposed and word- rather than preposition-triggered.
+    """
+    if not ctx.recur_day_word:
+        return None
+    t = ctx.tokens
+    n = len(t)
+    for i in range(n):
+        got = _collect_weekdays(ctx, i, False)
+        if got is None:
+            continue
+        days, end = got
+        # the last weekday's own surface is never a day-word (disjoint
+        # vocabularies), so this membership check alone tells apart "a
+        # plural day-word was swallowed" from "nothing trailed the weekday
+        # at all" / "a singular day-word trailed it" -- no separate
+        # bookkeeping of what ``_collect_weekdays`` swallowed is needed.
+        if end == 0 or t[end - 1].text not in ctx.recur_day_word:
+            continue
+        byday = tuple((None, wd) for wd in days)
+        return _build_every("weekly", byday=byday), set(range(i, end))
     return None
 
 
@@ -2541,4 +2606,4 @@ _FINDERS = (_recur_nth_weekday_list, _recur_nth_weekday, _recur_holiday,
             _recur_jurisdiction_holidays,
             _recur_date_anchored,
             _recur_once, _recur_on_weekdays, _recur_every, _recur_freq_word,
-            _recur_habitual_weekday)
+            _recur_weekday_dayword_bare, _recur_habitual_weekday)
