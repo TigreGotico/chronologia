@@ -170,7 +170,7 @@
     },
     "era_ad": {
       "orders": [
-        "NUM ad",
+        "in? article? year_word? NUM ad",
         "ad NUM"
       ]
     },
@@ -215,7 +215,7 @@
     },
     "era_buddhist_be": {
       "orders": [
-        "article? year_word NUM be",
+        "in? article? year_word NUM be",
         "NUM be"
       ]
     },
@@ -223,7 +223,7 @@
       "orders": [
         "in? article? hijri year_word? NUM MONTH",
         "in? article? hijri year_word? NUM",
-        "article? year_word NUM hijri",
+        "in? article? year_word NUM hijri",
         "NUM hijri MONTH",
         "NUM hijri"
       ]
@@ -232,7 +232,7 @@
       "orders": [
         "in? article? solar_hijri year_word? NUM MONTH",
         "in? article? solar_hijri year_word? NUM",
-        "article? year_word NUM solar_hijri",
+        "in? article? year_word NUM solar_hijri",
         "NUM solar_hijri MONTH",
         "NUM solar_hijri"
       ]

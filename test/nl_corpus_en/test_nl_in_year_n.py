@@ -131,3 +131,85 @@ def test_control_next_year():
 def test_control_bare_2030():
     got_s, got_e = start_end("2030")
     assert (got_s, got_e) == (AstroDate(2030, 1, 1), AstroDate(2031, 1, 1))
+
+
+# -- R105: three sibling gaps of R102/#663, all one-token-away -------------
+
+# (A) "in year 0": SMALLYEAR explicitly refuses "0" (bare "year 0" already
+# resolves to None -- there is no astronomical-year-0 binding for a bare
+# small-year surface), so the R102 fix does not cover N=0: it fell through
+# to the "in a year" relative-offset reading with "0" stranded. Chosen
+# policy: refuse "in year 0" too, matching bare "year 0"'s pinned None,
+# rather than inventing a binding the bare surface doesn't have.
+def test_in_year_zero_refuses_not_stranded_relative():
+    nomatch("in year 0")
+
+
+def test_control_bare_year_zero_stays_none():
+    # pinned unchanged: bare "year 0" (no "in") already declines.
+    nomatch("year 0")
+
+
+# (B) "in year 5 AD": era_bc's order was widened by #663 to
+# "in? article? year_word? NUM bc" but era_ad ("NUM ad" / "ad NUM") was
+# never given the same prefix treatment, so "in year 5 AD" resolved via the
+# SMALLYEAR year_ref reading (bug A's fix) with "AD" stranded.
+def test_in_year_n_ad_no_stranded_suffix():
+    got_s, got_e = start_end("in year 5 AD")
+    assert (got_s, got_e) == (AstroDate(5, 1, 1), AstroDate(6, 1, 1))
+    assert parse("in year 5 AD")[1] == ""
+
+
+def test_control_bare_5_ad():
+    got_s, got_e = start_end("5 AD")
+    assert (got_s, got_e) == (AstroDate(5, 1, 1), AstroDate(6, 1, 1))
+    assert parse("5 AD")[1] == ""
+
+
+def test_control_in_year_5_bc_still_empty_remainder():
+    got_s, got_e = start_end("in year 5 BC")
+    assert (got_s, got_e) == (AstroDate(-4, 1, 1), AstroDate(-3, 1, 1))
+    assert parse("in year 5 BC")[1] == ""
+
+
+# (C) era constructions with an "article? year_word NUM <era>" order never
+# got the leading "in?" that era_bc/most other eras already carry, so
+# "in the year 30 AH" / "in year 1 BE" resolve to the correct span but
+# strand the leading "in".
+def test_in_the_year_n_ah_no_stranded_in():
+    got_s, got_e = start_end("in the year 30 AH")
+    assert (got_s, got_e) == (AstroDate(650, 9, 7), AstroDate(651, 8, 27))
+    assert parse("in the year 30 AH")[1] == ""
+
+
+def test_control_the_year_n_ah_unchanged():
+    got_s, got_e = start_end("the year 30 AH")
+    assert (got_s, got_e) == (AstroDate(650, 9, 7), AstroDate(651, 8, 27))
+    assert parse("the year 30 AH")[1] == ""
+
+
+def test_in_year_n_be_no_stranded_in():
+    got_s, got_e = start_end("in year 1 BE")
+    assert (got_s, got_e) == (AstroDate(-542, 1, 1), AstroDate(-541, 1, 1))
+    assert parse("in year 1 BE")[1] == ""
+
+
+def test_control_year_n_be_unchanged():
+    got_s, got_e = start_end("year 1 BE")
+    assert (got_s, got_e) == (AstroDate(-542, 1, 1), AstroDate(-541, 1, 1))
+    assert parse("year 1 BE")[1] == ""
+
+
+# -- controls: must stay exactly as pinned, including the BE/AM ambiguity
+# vetoes from #644 (reverted BE) and #663 (AM veto) -------------------------
+def test_control_in_the_year_5780_am_remainder_pinned():
+    # long-standing pinned behaviour: a GYEAR (>=1000) match stranding a
+    # trailing "AM" is NOT touched by this fix -- only the SMALLYEAR/era
+    # "in?" prefix gaps are.
+    got_s, got_e = start_end("in the year 5780 AM")
+    assert (got_s, got_e) == (AstroDate(5780, 1, 1), AstroDate(5781, 1, 1))
+    assert parse("in the year 5780 AM")[1] == "AM"
+
+
+def test_control_in_the_year_1_am_stays_none():
+    nomatch("in the year 1 AM")
