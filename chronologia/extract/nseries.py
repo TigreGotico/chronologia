@@ -107,6 +107,20 @@ def extract_duration(
     """
     require_text(text, "extract_duration")
     engine = _timespan_engine(lang)
+    return _duration_core(text, engine)
+
+
+def _duration_core(text: str, engine) -> Optional[DurationResult]:
+    """The engine-based body of :func:`extract_duration`.
+
+    Factored out so a caller that already holds the per-language
+    :class:`~chronologia.extract.timespan.DateTimeEngine` (the trailing
+    "for <duration>" extension onto a resolved clock-start span in
+    :mod:`chronologia.extract.timespan`) can read a duration without
+    re-resolving the language string back into an engine -- the same
+    cached engine object is reused, and no lang-string plumbing has to be
+    threaded through the single-span resolver just for this.
+    """
     spec = engine.spec
     tokens = engine.tokenize(text)
     fracs = _fraction_words(spec)
