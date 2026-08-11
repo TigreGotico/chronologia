@@ -32,7 +32,7 @@ from typing import List, Optional, Tuple
 from chronologia.astrodate import AstroDate, DateSpan
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _WEEK_START,
-                                              _day_span, _midnight)
+                                              _day_span, _midnight, _week_span)
 
 Pair = Tuple[Match, Resolution]
 
@@ -126,6 +126,7 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
     roll (``[article] WEEKDAY``).  Returns a descriptor or ``None``.
     """
     lead = spec.connectors.get("offset_lead", frozenset())
+    articles = spec.connectors.get("article", frozenset())
     j = c0 - 1
     if j < 0:
         return None
@@ -134,12 +135,20 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
         unit = spec.units[tj.text]
         start = j
         qty = 1.0
+        explicit_qty = False
         if j - 1 >= 0:
             p = tokens[j - 1]
             if p.is_number and p.value is not None:
-                qty, start = float(p.value), j - 1
+                qty, start, explicit_qty = float(p.value), j - 1, True
             elif p.text in spec.quantifiers:
-                qty, start = spec.quantifiers[p.text], j - 1
+                qty, start, explicit_qty = spec.quantifiers[p.text], j - 1, True
+        # a DEFINITE article directly heading the bare (uncounted) unit
+        # ("**the** week after...") names the calendar grain itself, unlike
+        # an indefinite article/bare count ("a week after...", "2 weeks
+        # after...") which names a plain arithmetic offset -- see
+        # ``_try_offset``'s week-widening.
+        definite = (not explicit_qty and start - 1 >= 0
+                   and tokens[start - 1].text in articles)
         if start - 1 >= 0 and tokens[start - 1].text in gap:
             start -= 1
         # a lead-in preposition heading the offset phrase ("**cu** 3 zile
@@ -147,7 +156,8 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
         # is not stranded in the remainder.
         if start - 1 >= 0 and tokens[start - 1].text in lead:
             start -= 1
-        return {"kind": "unit", "unit": unit, "qty": qty, "start": start}
+        return {"kind": "unit", "unit": unit, "qty": qty, "start": start,
+                "definite": definite}
     if tj.text in spec.weekdays:
         start = j
         if start - 1 >= 0 and tokens[start - 1].text in gap:
@@ -178,9 +188,16 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
         if pre["kind"] == "unit":
             value = _shift(base, pre["unit"], sign * pre["qty"])
             # the offset amount governs the SHIFT, never the result width:
-            # "a week after X" is the single civil day one week from X, not a
-            # week-wide span.  Every unit resolves to that one shifted day.
-            span = _astro_day_span(value)
+            # "a week after X" / "2 weeks after X" is the single civil day
+            # shifted from X, not a week-wide span.  The one exception is the
+            # DEFINITE, uncounted "the week after/before X": that names the
+            # calendar week itself (the same grain "the week of X" widens
+            # to), so it widens to the locale week containing the shifted
+            # day instead of collapsing to a single point.
+            if pre["unit"] == "week" and pre.get("definite"):
+                span = _week_span(value, spec.conventions.week_start)
+            else:
+                span = _astro_day_span(value)
         else:
             span = _astro_day_span(_roll_weekday(base, pre["weekday"], sign))
         start = pre["start"]

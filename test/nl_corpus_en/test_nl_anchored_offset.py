@@ -39,7 +39,10 @@ def _ad(d):
     ("two weeks after easter", EASTER + timedelta(days=14)),
     ("1 week after easter", EASTER + timedelta(days=7)),
     ("a week after easter", EASTER + timedelta(days=7)),
-    ("the week after easter", EASTER + timedelta(days=7)),
+    # "the week after easter" (bare, DEFINITE "the week") is deliberately
+    # NOT a plain point offset -- R120: it widens to the calendar week
+    # containing easter+7, same grain as "the week of X".  See
+    # test_nl_r120_week_after_event.py for its dedicated coverage.
     ("3 days before christmas", CHRISTMAS - timedelta(days=3)),
     ("10 days after christmas", CHRISTMAS + timedelta(days=10)),
     ("the day after christmas", CHRISTMAS + timedelta(days=1)),
