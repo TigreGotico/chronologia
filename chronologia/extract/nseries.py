@@ -304,6 +304,21 @@ def extract_duration(
                 and k - 1 not in consumed and tokens[k - 1].is_number
                 and k + 1 in consumed):
             consumed.update((k - 1, k))
+    # A stranded CALENDAR-grain unit (month/year/decade/...) is not a
+    # fixed-width length -- a bare "3 months" already returns None rather
+    # than some arbitrary 30-day guess (see the module docstring).  A MIXED
+    # compound ("3 months and 2 days") must follow the same refusal, not
+    # silently answer with only its fixed-width part ("2 days") and strand
+    # "3 months and" -- a partial value with the rest dropped is a wrong
+    # answer, not a partial one.  Any unconsumed calendar-unit surface means
+    # the phrase named a length this function cannot express in whole; honour
+    # the "3 months" convention across the whole compound and refuse.
+    for tok in tokens:
+        if tok.index in consumed:
+            continue
+        kind = spec.units.get(tok.text)
+        if kind is not None and kind not in _DUR_UNIT_SECONDS:
+            return None
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
