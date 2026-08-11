@@ -2540,6 +2540,33 @@ def _compose(resolved, engine, tokens):
         return all(i in _covered or tokens[i].text in _glue
                    for i in range(lo[1], hi[0]))
 
+    _articles = frozenset(spec.connectors.get("article", ()))
+
+    def _composition_glue(a, b):
+        """Uncovered glue tokens strictly BETWEEN two composing matches
+        ("morning **of** the day after tomorrow"), plus a lone leading
+        article that opens the earlier match's own phrase ("**the**
+        morning of ..."), when composition actually succeeds.
+
+        A daypart/clock-onto-date composition consumes both matches'
+        own token spans (see :func:`compose_date_clock` /
+        :func:`compose_date_daypart`) but never touched the connector
+        stitching them together -- it was "adjacent" (composition-eligible)
+        without being "claimed", so the glue surfaced in the remainder as a
+        dangling word ("the of").  Once the two parts genuinely fuse into
+        one reading, the connector -- and the article that opens the
+        composing phrase, if nothing else needs it -- belong to that one
+        reading, not to the leftover text.
+        """
+        (lo, hi) = sorted((a.span, b.span))
+        glue = {i for i in range(lo[1], hi[0])
+                if i not in _covered and tokens[i].text in _glue}
+        lead = lo[0] - 1
+        if (lead >= 0 and lead not in _covered
+                and tokens[lead].text in _articles):
+            glue.add(lead)
+        return glue
+
     label_consumed = set()
     if (len(weekdays) == 1 and len(non_weekday_dates) == 1
             and non_weekday_dates[0][0].construction
@@ -2557,21 +2584,24 @@ def _compose(resolved, engine, tokens):
     # the week stands and the clock/daypart stays UNCOMPOSED in the remainder
     # (a non-empty remainder honestly signals the un-placed time).
     _week = len(eff_dates) == 1 and eff_dates[0][1].week_widened
+    glue_consumed = set()
     if (not _week and len(clocks) == 1 and len(eff_dates) == 1
             and _adjacent(eff_dates[0][0], clocks[0][0])):
         res = compose_date_clock(eff_dates[0][1], clocks[0][1])
         rep = eff_dates[0][0]
+        glue_consumed = _composition_glue(eff_dates[0][0], clocks[0][0])
     elif (not _week and len(dayparts) == 1 and len(eff_dates) == 1
             and not clocks
             and _adjacent(eff_dates[0][0], dayparts[0][0])):
         name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
         res = compose_date_daypart(eff_dates[0][1], dayparts[0][1], name)
         rep = eff_dates[0][0]
+        glue_consumed = _composition_glue(eff_dates[0][0], dayparts[0][0])
     elif label_consumed and not clocks and not dayparts:
         rep, res = eff_dates[0]
     else:
         rep, res = min(resolved, key=lambda mr: mr[0].span[0])
-    return res, label_consumed, rep
+    return res, label_consumed | glue_consumed, rep
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
