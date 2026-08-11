@@ -26,6 +26,7 @@ remains declared-but-unimplemented (era phrasing resolves through
 from __future__ import annotations
 
 import calendar
+import math
 import re
 from datetime import date, datetime, timedelta
 from typing import Optional
@@ -476,6 +477,57 @@ class Resolver:
             return self.spec.quantifiers[quant_tok.text]
         return 1.0
 
+    _CALENDAR_GRAIN_MONTHS = {
+        "month": 1, "year": 12, "decade": 120, "century": 1200,
+        "millennium": 12000,
+    }
+
+    def _calendar_grain_offset(self, anchor, unit, step):
+        """A (possibly fractional) offset of a calendar-grain unit
+        (month/year/decade/century/millennium) -> a concrete datetime, or
+        ``None`` when the fraction has no defensible calendar reading.
+
+        A whole count steps through :func:`_add_months` exactly as before --
+        a year is 12 calendar months, a decade 120, a century 1200, a
+        millennium 12000.  A FRACTIONAL count is accepted where it converts
+        to a WHOLE number of months: "half a decade" is exactly 5 years (60
+        months), "a quarter of a century" exactly 25 years (300 months), "a
+        quarter of a decade" exactly 2.5 years (30 months) -- all of those
+        compose through the same calendar-month arithmetic with no rounding,
+        because decade/century/millennium are themselves whole multiples of
+        12 months.
+
+        ``month`` has no finer CALENDAR unit to exchange a fraction for (a
+        "half month" isn't a whole number of months), so a fractional month
+        count is read in plain-meaning DAYS instead: half a month is 15 days
+        (the ordinary English reading, not an exact half of the variable
+        28-31 day month), a quarter month is 7 days (floored from 7.5, so it
+        composes: four quarters of a month total 28 days, one short of a
+        full month, rather than overshooting it).  Any other fractional
+        month (thirds, tenths, ...) has no defensible day count and is
+        refused (``None``) rather than silently truncated to the anchor.
+        """
+        months_per_unit = self._CALENDAR_GRAIN_MONTHS[unit]
+        if unit == "month":
+            whole = math.trunc(step)
+            frac = step - whole
+            if frac == 0:
+                return _add_months(anchor, whole)
+            sign = 1 if frac > 0 else -1
+            mag = abs(frac)
+            if math.isclose(mag, 0.5, abs_tol=1e-9):
+                extra_days = 15
+            elif math.isclose(mag, 0.25, abs_tol=1e-9):
+                extra_days = 7
+            else:
+                return None
+            return _add_months(anchor, whole) + timedelta(days=sign * extra_days)
+        total_months = step * months_per_unit
+        rounded = round(total_months)
+        if not math.isclose(total_months, rounded, abs_tol=1e-9):
+            return None
+        return _add_months(anchor, rounded)
+
     def _resolve_relative_offset(self, match, anchor):
         qty = self._offset_quantity(match)
         usg_tok = match.slots.get("USG")
@@ -497,16 +549,10 @@ class Resolver:
             value = anchor + timedelta(weeks=2 * step)
         elif unit == "second":
             value = anchor + timedelta(seconds=step)
-        elif unit == "month":
-            value = _add_months(anchor, int(step))
-        elif unit == "year":
-            value = _add_months(anchor, int(step) * 12)
-        elif unit == "decade":
-            value = _add_months(anchor, int(step) * 120)
-        elif unit == "century":
-            value = _add_months(anchor, int(step) * 1200)
-        elif unit == "millennium":
-            value = _add_months(anchor, int(step) * 12000)
+        elif unit in ("month", "year", "decade", "century", "millennium"):
+            value = self._calendar_grain_offset(anchor, unit, step)
+            if value is None:
+                return None
         else:
             raise ResolverInvariant(f"unsupported offset unit {unit!r}")
         return Resolution(_point_span(value, unit), self._consumed(match))
