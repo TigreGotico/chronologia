@@ -724,6 +724,13 @@ def extract_recurrence(
             # everything) would be a silent wrong answer, not a decline.
             if rec is None:
                 return None
+            rec, consumed = _apply_year_scope(rec, consumed, ctx, lang, anchor)
+            # a trailing year scope on a rule this engine has no bound field
+            # for (JurisdictionHolidays, HolidayRecurrence) cannot be honestly
+            # expressed -- see _apply_year_scope -- so it declines the same
+            # way the two cases above do.
+            if rec is None:
+                return None
             rec, consumed = _apply_clock(rec, consumed, ctx, lang, anchor)
             from chronologia.extract.pipeline import render_remainder
             remainder = render_remainder(text, [t for t in tokens
@@ -1180,6 +1187,81 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
         if not claimed:
             break
     return rec, consumed
+
+
+def _apply_year_scope(rec, consumed, ctx, lang, anchor):
+    """Fold a trailing whole-YEAR scope ("next year", "this year", "in 2027",
+    a bare "2028") onto ``rec`` as ``UNTIL``, extending ``consumed`` over the
+    words it reads, instead of stranding it in the remainder.
+
+    The scope is read by the *same* single-span engine :func:`_apply_bounds`
+    already reuses for "until <date>" -- offering the whole unconsumed TAIL of
+    the token stream to :func:`extract_timespan` and accepting the hit only
+    when it consumes the tail in full (empty remainder) AND the resolved span
+    is exactly one calendar year (Jan 1 .. next Jan 1) -- so a genuine
+    non-year trailing date ("every friday next month") or a non-temporal
+    trailing word ("every monday please") is left untouched here.
+
+    A named year is a CONTAINMENT scope, not an "until" marker, so the bound
+    set is the span's own ``end`` (the first instant *after* the scoped
+    year) -- "next year" (2027) grounds the identical ``UNTIL`` value
+    "until 2028" already grounds via its own ``.start`` (see
+    :func:`_apply_bounds`'s ``_ground_until``), so the two conventions agree
+    on one instant rather than silently disagreeing by a year.
+
+    ``Recurrence`` has no ``DTSTART`` field -- ``occurrences()`` takes the
+    start as a caller-supplied argument, never a stored one -- so only the
+    scope's UPPER edge can be expressed here; the lower edge is left to
+    whatever ``dtstart`` the caller passes to ``occurrences()``, the same
+    documented limitation :func:`_apply_range_bound` already carries for an
+    unimplemented "starting <date>" bound.  This is stated in the module docs
+    rather than silently assumed.
+
+    A pre-existing ``UNTIL``/``COUNT`` (an explicit "until"/"for" bound
+    already claimed the tail, or a range clause already grounded one) is left
+    untouched -- UNTIL/COUNT are mutually exclusive in RFC 5545 and the
+    explicit bound already present wins, same policy as
+    :func:`_apply_bounds` and :func:`_apply_range_bound`.
+
+    :class:`~chronologia.recurrence.HolidayRecurrence` and
+    :class:`~chronologia.recurrence.JurisdictionHolidays` carry **no** bound
+    field at all -- their ``occurrences()`` takes ``until``/``count`` only as
+    CALL arguments, nothing on the object itself to set -- so a year scope on
+    either of them cannot be attached to the returned value without silently
+    dropping it or inventing a field that does not exist.  Rather than either,
+    this REFUSES the whole extraction (returns ``(None, consumed)``, exactly
+    like the ambiguous-UNTIL and empty-intersection declines in
+    :func:`_apply_range_bound`) when a year scope is found trailing one of
+    these -- the honest "I can't express this bound" rather than a value that
+    quietly ignores half of what was asked.
+    """
+    from dataclasses import replace as _replace
+    tokens = ctx.tokens
+    n = len(tokens)
+    hi = n
+    lo = hi
+    while lo - 1 >= 0 and (lo - 1) not in consumed:
+        lo -= 1
+    if lo >= hi:
+        return rec, consumed
+    tail = " ".join(t.raw for t in tokens[lo:hi] if t.index not in consumed)
+    if not tail.strip():
+        return rec, consumed
+    got = extract_timespan(tail.strip(), lang, anchor=anchor)
+    if got is None or got[1] != "":
+        return rec, consumed
+    span = got[0]
+    start, end = span.start, span.end
+    if not (start.month == 1 and start.day == 1
+            and end.month == 1 and end.day == 1
+            and end.year == start.year + 1):
+        return rec, consumed
+    if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)):
+        return None, consumed | set(range(lo, hi))
+    if rec.until is not None or rec.count is not None:
+        return rec, consumed
+    rec = _replace(rec, until=end)
+    return rec, consumed | set(range(lo, hi))
 
 
 def _count_from_duration(freq, td):
@@ -2183,7 +2265,33 @@ def _recur_jurisdiction_holidays(ctx):
         code = ctx.jurisdictions.get(t[j].text)
         if code is None:
             continue
-        return (JurisdictionHolidays(code), set(range(i, j + 1)))
+        end = j + 1
+        # "every holiday in Portugal AND Spain": a connector immediately
+        # followed by ANOTHER known jurisdiction surface names more than one
+        # jurisdiction -- this class models exactly one (``jurisdiction`` is a
+        # single code, not a list).  Silently keeping only the first and
+        # leaving "and Spain" in the remainder used to answer a *different*,
+        # narrower question than the one asked (Spain's holidays silently
+        # dropped) rather than the one actually named.  There is no principled
+        # way to pick a winner and no multi-jurisdiction class to build one
+        # into (that is a feature for the repo owner, not a bug fix), so this
+        # refuses outright -- same policy as the empty-intersection and
+        # ambiguous-UNTIL declines in :func:`_apply_range_bound`.  An unknown
+        # trailing word after the connector ("... Portugal and next year")
+        # does not trigger this -- only a RECOGNISED second jurisdiction does.
+        if end < n and t[end].text in ctx.and_words:
+            # the second jurisdiction may carry the same short filler run
+            # ("da Alemanha", "de Espanha") the first one tolerated above.
+            k2 = end + 1
+            steps2 = 0
+            while k2 < n and steps2 < 2 and (
+                    t[k2].text in ctx.in_words or t[k2].text in ctx.of_words
+                    or t[k2].text in ctx.articles):
+                k2 += 1
+                steps2 += 1
+            if k2 < n and ctx.jurisdictions.get(t[k2].text) is not None:
+                return (None, set(range(i, k2 + 1)))
+        return (JurisdictionHolidays(code), set(range(i, end)))
     return None
 
 

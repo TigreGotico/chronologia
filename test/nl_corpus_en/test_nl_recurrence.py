@@ -739,3 +739,92 @@ def test_bare_every_holiday_is_unchanged():
     pinned here as a control so a future change to this finder cannot
     silently start matching it."""
     assert extract_recurrence("every holiday", LANG) is None
+
+
+# --------------------------------------------------------------------------
+# R111a: "every holiday in Portugal AND Spain" -- a SECOND, recognised
+# jurisdiction trailing a connector names more than one jurisdiction, which
+# JurisdictionHolidays cannot model (a single ``jurisdiction`` code, not a
+# list).  Silently keeping only the first and stranding "and Spain" answered
+# a narrower question than the one asked; refuse outright instead.
+# --------------------------------------------------------------------------
+@pytest.mark.parametrize("text", [
+    "every holiday in Portugal and Spain",
+    "every holiday in Spain and Portugal",
+    "all holidays in France and Germany",
+])
+def test_jurisdiction_holidays_multi_country_declines(text):
+    assert extract_recurrence(text, LANG) is None
+
+
+def test_jurisdiction_holidays_unknown_trailing_word_unaffected():
+    """An unknown word after the connector (not a second recognised
+    jurisdiction) is NOT a multi-jurisdiction clause -- current stranding
+    behaviour for a genuinely unrecognised tail is unchanged."""
+    got = extract_recurrence("every holiday in Portugal please", LANG)
+    assert got is not None
+    assert got[0] == JurisdictionHolidays("PT")
+    assert got[1] == "please"
+
+
+# --------------------------------------------------------------------------
+# R111b: a trailing whole-year scope ("next year", "this year", "in 2027")
+# binds as UNTIL -- the end of the named year -- rather than stranding.
+# Anchored at 2026-08-11 so "next year" is unambiguously 2027.
+# --------------------------------------------------------------------------
+from datetime import datetime as _datetime  # noqa: E402
+
+from chronologia.astrodate import AstroDate  # noqa: E402
+from chronologia.recurrence import Recurrence, occurrences  # noqa: E402
+
+_ANCHOR = _datetime(2026, 8, 11, 12, 0)
+
+
+def test_every_monday_next_year_binds_until():
+    got = extract_recurrence("every monday next year", LANG, anchor=_ANCHOR)
+    assert got is not None
+    rec, remainder = got
+    assert isinstance(rec, Recurrence)
+    assert remainder == ""
+    assert rec.until == AstroDate(2028, 1, 1)
+    # occurrences, expanded from a dtstart the caller pins inside 2027 (the
+    # scoped year -- Recurrence has no DTSTART field of its own, see
+    # _apply_year_scope's docstring), all fall within 2027.
+    spans = list(occurrences(rec, AstroDate(2027, 1, 1), count=52))
+    assert spans
+    assert all(s.start.year == 2027 for s in spans)
+
+
+def test_every_monday_this_year_binds_until():
+    got = extract_recurrence("every monday this year", LANG, anchor=_ANCHOR)
+    assert got is not None
+    rec, remainder = got
+    assert remainder == ""
+    assert rec.until == AstroDate(2027, 1, 1)
+
+
+def test_every_monday_in_2027_binds_until():
+    got = extract_recurrence("every monday in 2027", LANG, anchor=_ANCHOR)
+    assert got is not None
+    rec, remainder = got
+    assert remainder == ""
+    assert rec.until == AstroDate(2028, 1, 1)
+
+
+def test_every_monday_until_2028_unchanged():
+    """Control: the pre-existing "until <year>" bound is untouched by the new
+    year-scope pass -- it grounds through _apply_bounds first and the tail is
+    already fully consumed by the time _apply_year_scope runs."""
+    got = extract_recurrence("every monday until 2028", LANG, anchor=_ANCHOR)
+    assert got is not None
+    rec, remainder = got
+    assert remainder == ""
+    assert rec.until == AstroDate(2028, 1, 1)
+
+
+def test_every_holiday_in_portugal_next_year_declines():
+    """JurisdictionHolidays carries no bound field at all -- occurrences()
+    takes until/count only as call arguments -- so a trailing year scope on
+    one cannot be attached without silently dropping it; refuse outright."""
+    assert extract_recurrence(
+        "every holiday in Portugal next year", LANG, anchor=_ANCHOR) is None
