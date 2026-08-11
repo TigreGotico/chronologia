@@ -665,6 +665,39 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                      borrowed, spec, bare_of)
             if got is not None:
                 return _with_prefix(got, prefix)
+
+    # -- A <and> B <between> (postposed) ------------------------------------
+    # Turkish, Hungarian and Finnish frame a closed range with the "between"
+    # word placed AFTER the pair instead of before it ("3 Mart ile 5 Nisan
+    # arasında" == "3 March and 5 April between"), unlike English/Romance
+    # "between A and B".  A locale opts in with its own ``marker_between_post
+    # .voc`` (-> ``spec.connectors["between_post"]``); the set is empty by
+    # default so no other language's bare "A and B" is ever mistaken for a
+    # range -- the trailing marker is what licenses the bind, exactly as the
+    # leading "between"/"from" licenses the preposed readings above.  Requiring
+    # the marker (never binding on the bare pair alone) is deliberate: "3 Mart
+    # ile 5 Nisan" with no "arasında" stays two unrelated mentions, mirroring
+    # how a bare "A to B" needs its own licence (see ``lead_required`` above).
+    between_post_surf = _conn_surfaces(spec, "between_post", ())
+    if between_post_surf:
+        split = _first_to_split(tokens, 0, and_surf, text)
+        if split is not None:
+            p, k = split
+            marker = _find_conn(tokens[p + k:], between_post_surf)
+            if marker is not None:
+                m_off, mk = marker
+                q = p + k + m_off
+                left_tok, right_tok = tokens[:p], tokens[p + k:q]
+                suffix = render_remainder(text, list(tokens[q + mk:]))
+                got = _compose_clock_range(text, left_tok, right_tok,
+                                           engine, anchor)
+                if got is None:
+                    got = _compose_range(left_tok, right_tok, endpoint,
+                                         borrowed, spec, bare_of)
+                if got is not None:
+                    span, rem = got
+                    rem = (rem + " " + suffix).strip() if suffix else rem
+                    return span, rem
     return None
 
 
