@@ -168,3 +168,32 @@ try:
 except ValueError as exc:
     print("no RRULE:", "movable feast" in str(exc))
 ```
+
+## Jurisdiction holiday sets: `JurisdictionHolidays`
+
+"Every holiday in Portugal" is not one date's recurrence — it is a whole
+calendar's worth of holidays, re-queried per year from
+`chronologia.civil_holidays`. `JurisdictionHolidays` is the honest home for
+that, on the same terms as `HolidayRecurrence`: real dates through
+`occurrences()`, no fabricated `RRULE` from `to_string()`.
+
+`categories` defaults to `("public",)` — "holiday" plainly means the public
+holidays unless asked for more (e.g. `("public", "bank")`).
+
+```python
+from chronologia.recurrence import JurisdictionHolidays
+
+pt = JurisdictionHolidays("PT")
+dates = list(pt.occurrences(AstroDate(2026, 1, 1), count=14))
+print([d.start.month for d in dates])   # every 2026 Portuguese public holiday
+
+try:
+    pt.to_string()
+except ValueError as exc:
+    print("no RRULE:", "jurisdiction holiday set" in str(exc))
+```
+
+`extract_recurrence` reads the "every [public] holiday in <jurisdiction>"
+frame (and its per-locale equivalents, e.g. Portuguese "todos os feriados em
+Portugal" / "cada feriado de Portugal") straight into this object; an
+unrecognised jurisdiction name simply does not match — never a guess.

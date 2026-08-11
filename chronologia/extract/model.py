@@ -354,6 +354,12 @@ class LangSpec:
     # a trailing signed offset on the surface token ("utc+2") is added at
     # resolve time.  Facts from the ``clock_zone_<minutes>.voc`` convention.
     clock_zones: Mapping[str, int] = field(default_factory=dict)
+    # country/region-name surface -> jurisdiction code ("portugal" -> "PT"),
+    # from the ``jurisdiction_<code>.voc`` convention. Per-locale opt-in vocab
+    # covering only the jurisdictions that locale names; empty for a locale
+    # that has not declared any, in which case "every holiday in <X>" simply
+    # never matches (never a shared cross-locale list).
+    jurisdictions: Mapping[str, str] = field(default_factory=dict)
     # full weekday names only, excluding abbreviations: the bare-weekday order
     # binds against these so short abbreviation surfaces that collide with
     # common words (de "so", nl "zo", es "mar") never resolve without a marker,

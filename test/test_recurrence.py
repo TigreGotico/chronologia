@@ -633,6 +633,56 @@ def test_holiday_recurrence_rejects_unknown_key():
         HolidayRecurrence("not_a_real_holiday")
 
 
+from chronologia.recurrence import JurisdictionHolidays   # noqa: E402
+
+
+def test_jurisdiction_holidays_expands_but_never_serializes():
+    jh = JurisdictionHolidays("PT")
+    dates = [s.start for s in jh.occurrences(AstroDate(2026, 1, 1), count=14)]
+    # 2026 Portuguese public holidays, chronologically, computed independently
+    # of the parser: New Year, Carnival (moveable, not always public but
+    # tabulated here), Good Friday (computus: Easter 2026 = 5 Apr -> Good
+    # Friday = 3 Apr), Easter Sunday, Freedom Day, Labour Day, Corpus Christi
+    # (Easter + 60 = 4 Jun), Portugal Day, Assumption, Republic Day, All
+    # Saints, Restoration of Independence, Immaculate Conception, Christmas.
+    assert (dates[0].year, dates[0].month, dates[0].day) == (2026, 1, 1)
+    assert (2026, 4, 3) in [(d.year, d.month, d.day) for d in dates]   # Good Friday
+    assert (2026, 4, 5) in [(d.year, d.month, d.day) for d in dates]   # Easter
+    assert (2026, 12, 25) in [(d.year, d.month, d.day) for d in dates]  # Christmas
+    # chronological order, never re-sorted across the boundary
+    assert dates == sorted(dates)
+    with pytest.raises(ValueError):
+        jh.to_string()
+    with pytest.raises(ValueError):
+        str(jh)
+
+
+def test_jurisdiction_holidays_spills_into_next_year():
+    jh = JurisdictionHolidays("PT")
+    dates = [s.start for s in jh.occurrences(AstroDate(2026, 1, 1), count=15)]
+    assert dates[-1].year == 2027
+    assert (dates[-1].year, dates[-1].month, dates[-1].day) == (2027, 1, 1)
+
+
+def test_jurisdiction_holidays_unbounded_raises():
+    with pytest.raises(ValueError):
+        list(JurisdictionHolidays("PT").occurrences(AstroDate(2026, 1, 1)))
+
+
+def test_jurisdiction_holidays_rejects_unknown_jurisdiction():
+    with pytest.raises(ValueError):
+        JurisdictionHolidays("ATLANTIS")
+
+
+def test_jurisdiction_holidays_default_category_is_public():
+    assert JurisdictionHolidays("PT").categories == ("public",)
+
+
+def test_jurisdiction_holidays_categories_override():
+    jh = JurisdictionHolidays("PT", categories=("public", "bank"))
+    assert jh.categories == ("public", "bank")
+
+
 def test_count_zero_yields_no_occurrences():
     """COUNT=0 is a legal value (distinct from unbounded) and means 'repeat zero
     times' -- it must yield an empty iterator, not the one occurrence a naive

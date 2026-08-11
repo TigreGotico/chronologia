@@ -951,3 +951,132 @@ class HolidayRecurrence:
             raise ValueError(
                 f"not a HolidayRecurrence envelope: {data.get('type')!r}")
         return cls(data["holiday"])
+
+
+# --------------------------------------------------------------------------
+# Jurisdiction holiday sets -- "every holiday in Portugal" -- a Recurrence
+# cannot express either: it is not one date's recurrence, it is a whole
+# calendar's worth of (potentially many, mostly-movable) dates per year.
+# --------------------------------------------------------------------------
+_DEFAULT_JURISDICTION_CATEGORIES: Tuple[str, ...] = ("public",)
+
+
+@dataclass(frozen=True)
+class JurisdictionHolidays:
+    """"Every holiday in ``jurisdiction``" -- a whole calendar's holiday set.
+
+    Unlike :class:`HolidayRecurrence` (one *named* movable feast, expanded year
+    by year), this is *every* holiday a jurisdiction observes in a given year,
+    re-queried from :mod:`chronologia.civil_holidays` per year and flattened
+    into a single chronological stream. "Holiday" plainly means the public
+    holidays (bank/statutory closures) unless the caller asks for more, so
+    ``categories`` defaults to ``("public",)`` -- pass e.g.
+    ``("public", "bank")`` for a wider set, or any subset the jurisdiction's
+    data supports.
+
+    ``jurisdiction`` is an upper-cased ISO-3166-1 (or vacanza market) code,
+    e.g. ``"PT"``; ``subdiv`` optionally scopes to a subdivision (``"PT-LIS"``)
+    the same way :func:`~chronologia.civil_holidays.holidays_for` does.
+
+    Like :class:`HolidayRecurrence`, this has **no RFC 5545 rule** -- a
+    jurisdiction's holiday calendar is not ``BY*`` arithmetic, it is a lookup
+    -- so :meth:`to_string` raises rather than emit a lie.
+    """
+
+    jurisdiction: str
+    subdiv: Optional[str] = None
+    categories: Optional[Tuple[str, ...]] = _DEFAULT_JURISDICTION_CATEGORIES
+
+    def __post_init__(self) -> None:
+        from chronologia.civil_holidays import registry
+        code = self.jurisdiction.upper()
+        object.__setattr__(self, "jurisdiction", code)
+        # Cheap existence probe: a jurisdiction with no shipped .tab data
+        # raises KeyError deep in the registry the first time anyone asks for
+        # a year -- surface that at construction instead, so a caller finds
+        # out immediately rather than at the first occurrences() pull.
+        try:
+            registry._calendar_for(code)
+        except KeyError as exc:
+            raise ValueError(
+                f"unknown jurisdiction: {self.jurisdiction!r}") from exc
+
+    def occurrences(self, dtstart, until=None,
+                    count: Optional[int] = None) -> Iterator[DateSpan]:
+        """Yield every holiday's :class:`DateSpan` on/after ``dtstart``,
+        chronologically, year by year, bounded (as :func:`occurrences` is) by
+        ``count``/``until``. ``count`` counts *individual holiday
+        occurrences*, not years -- ``count=14`` on a jurisdiction with 13-14
+        public holidays a year yields roughly one calendar year's worth and
+        spills into the next year for the remainder.
+
+        A year that resolves no holiday at all (a genuine data gap) is
+        silently skipped; after :data:`_MAX_EMPTY_YEARS` consecutive such
+        years the iterator stops rather than loop forever.
+        """
+        from chronologia.civil_holidays import registry
+        dtstart = _as_astro(dtstart)
+        eff_until = _as_astro(until) if until is not None else None
+        if eff_until is None and count is None:
+            raise ValueError(
+                "unbounded jurisdiction holiday recurrence: pass count=... "
+                "or until=...")
+        emitted = 0
+        empty = 0
+        year = dtstart.year
+        while True:
+            holidays = registry.holidays_for(
+                self.jurisdiction, year, self.subdiv, self.categories)
+            produced = False
+            for holiday in holidays:
+                span = holiday.span
+                if span.start < dtstart:
+                    continue
+                if eff_until is not None and span.start > eff_until:
+                    return
+                emitted += 1
+                if emitted > _MAX_EMITTED_OCCURRENCES:
+                    raise ValueError(
+                        "jurisdiction holiday recurrence exceeded the "
+                        f"materialisation ceiling of {_MAX_EMITTED_OCCURRENCES} "
+                        f"emitted occurrences (jurisdiction: "
+                        f"{self.jurisdiction!r})")
+                yield span
+                produced = True
+                if count is not None and emitted >= count:
+                    return
+            if produced:
+                empty = 0
+            else:
+                empty += 1
+                if empty > _MAX_EMPTY_YEARS:
+                    return
+            year += 1
+
+    def to_string(self) -> str:
+        raise ValueError(
+            f"jurisdiction holiday set {self.jurisdiction!r} is not a "
+            "single recurring date -- it is a whole calendar's worth of "
+            "holidays per year, looked up from the civil-holidays engine, "
+            "with no RFC 5545 RRULE; expand it with occurrences() instead "
+            "of serializing it to a rule string")
+
+    def __str__(self) -> str:  # pragma: no cover - mirrors to_string
+        return self.to_string()
+
+    def to_json(self) -> dict:
+        """A ``json.dumps``-ready envelope carrying jurisdiction/subdiv/categories."""
+        return {"type": "JurisdictionHolidays", "jurisdiction": self.jurisdiction,
+                "subdiv": self.subdiv,
+                "categories": (list(self.categories)
+                              if self.categories is not None else None)}
+
+    @classmethod
+    def from_json(cls, data: dict) -> "JurisdictionHolidays":
+        """Rebuild a :class:`JurisdictionHolidays` from a :meth:`to_json` envelope."""
+        if data.get("type") != "JurisdictionHolidays":
+            raise ValueError(
+                f"not a JurisdictionHolidays envelope: {data.get('type')!r}")
+        cats = data.get("categories")
+        return cls(data["jurisdiction"], data.get("subdiv"),
+                   tuple(cats) if cats is not None else None)

@@ -33,7 +33,8 @@ from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _exclusion_vetoes, _extract_range,
                                           _resolve_scale_mode,
                                           _timespan_engine, extract_timespan)
-from chronologia.recurrence import HolidayRecurrence, Recurrence
+from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
+                                     Recurrence)
 from chronologia.recurrence import every as _build_every
 from chronologia.recurrence import nth_weekday_of_month as _nth_weekday_of_month
 
@@ -629,9 +630,12 @@ class RecurrenceResult(NamedTuple):
     serialisable :class:`~chronologia.recurrence.Recurrence`; a **movable**
     feast ("every easter") yields a
     :class:`~chronologia.recurrence.HolidayRecurrence` instead (it expands to
-    real dates but has no RFC 5545 ``RRULE``).
+    real dates but has no RFC 5545 ``RRULE``); a whole jurisdiction's calendar
+    ("every holiday in Portugal") yields a
+    :class:`~chronologia.recurrence.JurisdictionHolidays` (same story: real
+    dates, no ``RRULE``).
     """
-    recurrence: Union[Recurrence, HolidayRecurrence]
+    recurrence: Union[Recurrence, HolidayRecurrence, JurisdictionHolidays]
     remainder: str
 
 
@@ -759,7 +763,7 @@ def _apply_clock_range(rec, consumed, ctx, lang, anchor):
     5" -- no am/pm guessing is invented here.
     """
     from dataclasses import replace as _replace
-    if isinstance(rec, HolidayRecurrence) or rec.until is not None:
+    if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)) or rec.until is not None:
         return rec, consumed
 
     tokens = ctx.tokens
@@ -826,7 +830,7 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
     new grammar); its resolved minute-wide span supplies the hour and minute.
     """
     from dataclasses import replace as _replace
-    if isinstance(rec, HolidayRecurrence):
+    if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)):
         return rec, consumed
     engine = _timespan_engine(lang)
     tokens = ctx.tokens
@@ -1036,7 +1040,7 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
     remainder).
     """
     from dataclasses import replace as _replace
-    if isinstance(rec, HolidayRecurrence) or rec.until is not None:
+    if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)) or rec.until is not None:
         return rec, consumed
 
     tokens = ctx.tokens
@@ -1217,6 +1221,11 @@ class _RecurCtx:
     count_words: set = frozenset()
     quarter_word: set = frozenset()
     holidays: dict = None
+    jurisdictions: dict = None
+    holiday_words: set = frozenset()
+    holiday_qualifiers: set = frozenset()
+    holiday_all_words: set = frozenset()
+    in_words: set = frozenset()
     lang: str = "en-us"
     anchor: Optional[datetime] = None
     #: the *pre-fold* token stream (numbers not yet merged across ``and``).
@@ -1263,6 +1272,11 @@ def _recur_ctx(text, lang, anchor):
         count_words=set(C.get("recur_count", ())),
         quarter_word=set(C.get("quarter_word", ())),
         holidays=dict(spec.holidays),
+        jurisdictions=dict(spec.jurisdictions),
+        holiday_words=set(C.get("holiday_word", ())),
+        holiday_qualifiers=set(C.get("holiday_qualifier", ())),
+        holiday_all_words=set(C.get("recur_holiday_all", ())),
+        in_words=set(C.get("in", ())),
         lang=lang,
         anchor=anchor,
         pretokens=pretokens(text, spec),
@@ -2120,6 +2134,59 @@ def _recur_holiday(ctx):
     return None
 
 
+def _recur_jurisdiction_holidays(ctx):
+    """``every holiday in <jurisdiction>`` -> the jurisdiction's whole holiday
+    calendar, a :class:`~chronologia.recurrence.JurisdictionHolidays`.
+
+    Distinct from :func:`_recur_holiday`: that finder reads a *named* feast
+    ("every christmas") through ``ctx.holidays``; this one reads the generic
+    noun "holiday"/"holidays" (``ctx.holiday_words``) followed by an "in
+    <country>" phrase, and has no single well-known key to look up -- the
+    jurisdiction's whole calendar is queried per year instead.
+
+    Skeleton: ``every|all [public] holiday(s) in <jurisdiction>``. An optional
+    qualifier word (``ctx.holiday_qualifiers``, e.g. "public") may sit right
+    before the holiday noun; it does not change what is matched (the default
+    category is already "public"), it is only tolerated so the phrase is not
+    stranded. The jurisdiction name must resolve through ``ctx.jurisdictions``
+    -- an unmapped country name (no surface anywhere) means this finder simply
+    does not match, never a guess.
+    """
+    if not ctx.jurisdictions or not ctx.holiday_words:
+        return None
+    t = ctx.tokens
+    n = len(t)
+    quantifiers = ctx.every | ctx.holiday_all_words
+    for i in range(n):
+        if t[i].text not in quantifiers:
+            continue
+        j = i + 1
+        while j < n and t[j].text in ctx.articles:
+            j += 1
+        if j < n and t[j].text in ctx.holiday_qualifiers:
+            j += 1
+        if not (j < n and t[j].text in ctx.holiday_words):
+            continue
+        j += 1
+        # a short filler run before the jurisdiction name -- "in"/pt "em" or
+        # "de" ("cada feriado DE Portugal") plus an optional article ("in the
+        # Portugal" never occurs, but "em Portugal" carries no article while
+        # some locales might insert one).
+        steps = 0
+        while j < n and steps < 2 and (
+                t[j].text in ctx.in_words or t[j].text in ctx.of_words
+                or t[j].text in ctx.articles):
+            j += 1
+            steps += 1
+        if j >= n:
+            continue
+        code = ctx.jurisdictions.get(t[j].text)
+        if code is None:
+            continue
+        return (JurisdictionHolidays(code), set(range(i, j + 1)))
+    return None
+
+
 def _recur_date_anchored(ctx):
     """Date-anchored recurrence, reusing the single-span engine for the date.
 
@@ -2294,6 +2361,7 @@ def _recur_date_anchored(ctx):
 # so there is no precedence ranking to state here, only those two edges.  A
 # table for seven functions would invent structure that is not there.
 _FINDERS = (_recur_nth_weekday_list, _recur_nth_weekday, _recur_holiday,
+            _recur_jurisdiction_holidays,
             _recur_date_anchored,
             _recur_once, _recur_on_weekdays, _recur_every, _recur_freq_word,
             _recur_habitual_weekday)

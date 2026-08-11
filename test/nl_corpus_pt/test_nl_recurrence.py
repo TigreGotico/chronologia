@@ -378,3 +378,37 @@ def test_bare_plural_weekday_is_still_a_surname():
     preposition, so "domingos" on its own stays the surname it also is."""
     assert extract_recurrence("o senhor domingos chegou", LANG) is None
     assert extract_recurrence("domingos", LANG) is None
+
+
+# --------------------------------------------------------------------------
+# "cada/todos os feriados em/de <jurisdição>" -- a whole calendar's holiday
+# set, R108.  No RFC 5545 rule either -- to_string() refuses the same way
+# HolidayRecurrence above does.
+# --------------------------------------------------------------------------
+from chronologia.recurrence import JurisdictionHolidays   # noqa: E402
+
+
+@pytest.mark.parametrize("text,jurisdiction", [
+    ("todos os feriados em Portugal", "PT"),
+    ("cada feriado de Portugal", "PT"),
+    ("todos os feriados em Espanha", "ES"),
+    ("cada feriado da França", "FR"),
+    ("todos os feriados na Alemanha", "DE"),
+    ("cada feriado do Brasil", "BR"),
+])
+def test_jurisdiction_holidays_recurrence(text, jurisdiction):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0] == JurisdictionHolidays(jurisdiction)
+    assert got[1] == ""
+    with pytest.raises(ValueError):
+        got[0].to_string()
+
+
+def test_jurisdiction_holidays_unknown_country_declines():
+    assert extract_recurrence("todos os feriados na Atlântida", LANG) is None
+
+
+def test_bare_todos_os_feriados_is_unchanged():
+    """Pinning the pre-R108 behaviour of the bare phrase (no jurisdiction)."""
+    assert extract_recurrence("todos os feriados", LANG) is None

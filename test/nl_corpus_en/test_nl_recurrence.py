@@ -695,3 +695,47 @@ def test_single_date_range_still_grounds_until():
     assert rec.until is not None
     assert rec.until.month == 8 and rec.until.day == 1
     assert remainder == ""
+
+
+# --------------------------------------------------------------------------
+# "every holiday in <jurisdiction>" -- a whole calendar's holiday set, R108.
+# Like the movable-feast HolidayRecurrence above, this has no RFC 5545 rule
+# either (it is a lookup across many, mostly-movable dates), so to_string()
+# refuses the same way.
+# --------------------------------------------------------------------------
+from chronologia.recurrence import JurisdictionHolidays   # noqa: E402
+
+
+@pytest.mark.parametrize("text,jurisdiction", [
+    ("every holiday in Portugal", "PT"),
+    ("every public holiday in Portugal", "PT"),
+    ("all holidays in Portugal", "PT"),
+    ("every holiday in Spain", "ES"),
+    ("every holiday in France", "FR"),
+    ("every holiday in Germany", "DE"),
+    ("every holiday in Brazil", "BR"),
+    ("every holiday in the United States", "US"),
+    ("every holiday in the United Kingdom", "GB"),
+])
+def test_jurisdiction_holidays_recurrence(text, jurisdiction):
+    got = extract_recurrence(text, LANG)
+    assert got is not None, f"{text!r} did not parse as a recurrence"
+    assert got[0] == JurisdictionHolidays(jurisdiction)
+    assert got[1] == ""
+    with pytest.raises(ValueError):
+        got[0].to_string()
+
+
+def test_jurisdiction_holidays_unknown_country_declines():
+    """An unmapped country name is never guessed at -- the finder simply
+    does not match, leaving the phrase to whatever the rest of the pipeline
+    makes of it (nothing, here)."""
+    assert extract_recurrence("every holiday in Atlantis", LANG) is None
+
+
+def test_bare_every_holiday_is_unchanged():
+    """R108 adds a NEW frame ("every holiday IN <jurisdiction>"); the bare
+    "every holiday" (no jurisdiction) must keep its pre-R108 behaviour --
+    pinned here as a control so a future change to this finder cannot
+    silently start matching it."""
+    assert extract_recurrence("every holiday", LANG) is None
