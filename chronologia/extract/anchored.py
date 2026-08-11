@@ -339,6 +339,94 @@ def _compound_unit_at(tokens, j, spec):
     return None
 
 
+def _compound_unit_before(tokens, end, spec):
+    """The mirror of :func:`_compound_unit_at`: a ``[NUM|QUANT|article]
+    UNIT`` chunk ENDING exactly at ``end`` (exclusive) -> ``(unit, qty,
+    start)`` or ``None`` when no such chunk sits immediately before ``end``.
+
+    Used to fold a LEADING compound chunk into a postposed-marker offset
+    ("3 months and 2 days **ago**", where the direction marker closes the
+    phrase instead of opening it, so the trailing-scan
+    :func:`_compound_unit_at` never sees the leading "3 months and").
+    """
+    if end <= 0:
+        return None
+    k = end - 1
+    if tokens[k].text not in spec.units:
+        return None
+    unit = spec.units[tokens[k].text]
+    if unit not in _CALENDAR_UNIT_MONTHS and unit not in _FIXED_UNIT_SECONDS:
+        return None
+    if k - 1 >= 0:
+        p = tokens[k - 1]
+        if p.is_number and p.value is not None:
+            return unit, float(p.value), k - 1
+        if p.text in spec.connectors.get("article", ()):
+            return unit, 1.0, k - 1
+        if p.text in spec.quantifiers:
+            return unit, spec.quantifiers[p.text], k - 1
+    return unit, 1.0, k
+
+
+def _scan_trailing_chunks(tokens, idx, spec):
+    """Fold every trailing ``[and|,] NUM UNIT`` chunk starting at ``idx``.
+
+    Returns ``(chunks, consumed, end)``: the folded ``(unit, qty)`` pairs (in
+    textual order), the token indices they occupy, and the index just past
+    the last one consumed (== ``idx`` when nothing folded).
+    """
+    and_words = frozenset(spec.connectors.get("and", ()))
+    lead_words = (frozenset(spec.connectors.get("article", ()))
+                 | frozenset(spec.quantifiers))
+    n = len(tokens)
+    chunks = []
+    consumed = set()
+    while idx < n:
+        j = idx
+        if tokens[j].text in and_words:
+            j += 1
+        elif not (tokens[j].is_number or tokens[j].text in lead_words
+                 or tokens[j].text in spec.units):
+            # no connector AND the next token doesn't open a bare
+            # comma-joined chunk ("1 year, 2 months" -- the comma itself
+            # is dropped by the tokenizer, so a fresh chunk starts here
+            # with no connector token at all): stop, nothing more to fold.
+            break
+        got = _compound_unit_at(tokens, j, spec)
+        if got is None:
+            break
+        unit, qty, end = got
+        chunks.append((unit, qty))
+        consumed.update(range(idx, end))
+        idx = end
+    return chunks, consumed, idx
+
+
+def _scan_leading_chunks(tokens, idx, spec):
+    """The backward mirror of :func:`_scan_trailing_chunks`: fold every
+    leading ``NUM UNIT [and|,]`` chunk ending exactly at ``idx``.
+
+    Returns ``(chunks, consumed, start)``: the folded ``(unit, qty)`` pairs
+    (in textual order), the token indices they occupy, and the index of the
+    first one consumed (== ``idx`` when nothing folded).
+    """
+    and_words = frozenset(spec.connectors.get("and", ()))
+    chunks = []
+    consumed = set()
+    while idx > 0:
+        j = idx - 1
+        used_connector = tokens[j].text in and_words
+        chunk_end = j if used_connector else idx
+        got = _compound_unit_before(tokens, chunk_end, spec)
+        if got is None:
+            break
+        unit, qty, start = got
+        chunks.insert(0, (unit, qty))
+        consumed.update(range(start, idx))
+        idx = start
+    return chunks, consumed, idx
+
+
 def apply_compound_offset(tokens, resolved: List[Pair], spec: LangSpec,
                           anchor: datetime) -> List[Pair]:
     """Compose a MIXED-grain offset compound ("in 3 months and 2 days",
@@ -371,15 +459,33 @@ def apply_compound_offset(tokens, resolved: List[Pair], spec: LangSpec,
     single-unit reading already follows, just extended to the widest (finest)
     grain present.
 
-    A lone, un-extended ``relative_offset`` match (no trailing chunk found)
-    is returned untouched; only constructions actually carrying a composable
-    tail are rewritten.
+    A postposed marker ("3 months and 2 days **ago**") closes the phrase
+    instead of opening it, so any LEADING ``NUM UNIT [and|,]`` chunk sits
+    BEFORE the matched span rather than after it -- folded here by scanning
+    :func:`_scan_leading_chunks` backward from the match whenever the marker
+    is the match's own last token.  Both scans run (a compound could, in
+    principle, carry chunks on both sides); the direction marker's sign
+    covers every folded chunk regardless of which side it came from, so
+    "3 months and 2 days ago" and "2 days and 3 months ago" land on the
+    identical instant, same as the forward-only compounds already do.
+
+    A second, sibling family folds into a rolling ``rel_span`` ("the next 2
+    weeks and 3 days", "the last 2 weeks and 3 days"): unlike
+    ``relative_offset``'s single point, ``rel_span`` already resolves to a
+    ``[today, far)`` / ``[far, today)`` span (:meth:`_resolve_rel_span`), so
+    a trailing chunk EXTENDS the rolling ``far`` end further in the same
+    direction as the ``next``/``last`` marker, rather than composing a new
+    point.
+
+    A lone, un-extended match (no chunk found on either side) is returned
+    untouched; only constructions actually carrying a composable chunk are
+    rewritten.
     """
-    and_words = frozenset(spec.connectors.get("and", ()))
-    lead_words = (frozenset(spec.connectors.get("article", ()))
-                 | frozenset(spec.quantifiers))
     out = []
     for m, r in resolved:
+        if m.construction == "rel_span":
+            out.append(_fold_rel_span(tokens, m, r, spec))
+            continue
         if m.construction != "relative_offset":
             out.append((m, r))
             continue
@@ -410,26 +516,19 @@ def apply_compound_offset(tokens, resolved: List[Pair], spec: LangSpec,
             qty0 = 1.0
         chunks = [(unit0, qty0)]
         consumed = set(range(*m.span))
-        n = len(tokens)
-        idx = m.span[1]
-        while idx < n:
-            j = idx
-            if tokens[j].text in and_words:
-                j += 1
-            elif not (tokens[j].is_number or tokens[j].text in lead_words
-                     or tokens[j].text in spec.units):
-                # no connector AND the next token doesn't open a bare
-                # comma-joined chunk ("1 year, 2 months" -- the comma itself
-                # is dropped by the tokenizer, so a fresh chunk starts here
-                # with no connector token at all): stop, nothing more to fold.
-                break
-            got = _compound_unit_at(tokens, j, spec)
-            if got is None:
-                break
-            unit, qty, end = got
-            chunks.append((unit, qty))
-            consumed.update(range(idx, end))
-            idx = end
+        trail_chunks, trail_consumed, _ = _scan_trailing_chunks(
+            tokens, m.span[1], spec)
+        chunks.extend(trail_chunks)
+        consumed.update(trail_consumed)
+        # a POSTPOSED marker (the match's own last token) closes the phrase,
+        # so a leading chunk sits before the match, not after it -- only
+        # scanned in that shape; a preposed marker ("in 3 months") already
+        # has nothing meaningful before it to fold.
+        if marker_tok.index == m.span[1] - 1:
+            lead_chunks, lead_consumed, _ = _scan_leading_chunks(
+                tokens, m.span[0], spec)
+            chunks = lead_chunks + chunks
+            consumed.update(lead_consumed)
         if len(chunks) < 2:
             out.append((m, r))
             continue
@@ -448,6 +547,40 @@ def apply_compound_offset(tokens, resolved: List[Pair], spec: LangSpec,
                              r.week_widened)
         out.append((m, new_res))
     return out
+
+
+def _fold_rel_span(tokens, m: Match, r: Resolution, spec: LangSpec) -> Pair:
+    """Extend a resolved ``rel_span`` ("the next/last N units") by any
+    trailing ``[and|,] NUM UNIT`` chunk ("the next 2 weeks **and 3 days**"),
+    otherwise stranded in the remainder.
+
+    ``rel_span`` already resolves to a rolling ``[today, far)`` (``next``) or
+    ``[far, today)`` (``last``) span; a trailing chunk pushes ``far`` further
+    in the SAME direction as the ``next``/``last`` marker -- calendar-grain
+    chunks first (in :class:`AstroDate` space), fixed-width chunks second,
+    mirroring the point-offset compound's own two-pass convention.
+    """
+    rel_tok = m.slots.get("REL_MARKER")
+    rel = spec.rel_markers.get(rel_tok.text) if rel_tok is not None else None
+    if not rel:
+        return m, r
+    chunks, chunk_consumed, _ = _scan_trailing_chunks(tokens, m.span[1], spec)
+    if not chunks:
+        return m, r
+    sign = 1 if rel > 0 else -1
+    total_months = sum(sign * qty * _CALENDAR_UNIT_MONTHS[u]
+                       for u, qty in chunks if u in _CALENDAR_UNIT_MONTHS)
+    total_seconds = sum(sign * qty * _FIXED_UNIT_SECONDS[u]
+                        for u, qty in chunks if u in _FIXED_UNIT_SECONDS)
+    lo, hi = r.value.start, r.value.end
+    far = hi if rel > 0 else lo
+    if total_months:
+        far = _astro_add_months(far, int(round(total_months)))
+    if total_seconds:
+        far = far + timedelta(seconds=total_seconds)
+    new_span = DateSpan(lo, far) if rel > 0 else DateSpan(far, hi)
+    consumed = set(r.consumed) | chunk_consumed
+    return m, Resolution(new_span, tuple(sorted(consumed)), r.week_widened)
 
 
 def apply_anchored_offset(tokens, resolved: List[Pair],
