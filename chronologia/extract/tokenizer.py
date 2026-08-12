@@ -312,12 +312,31 @@ class Tokenizer:
         # stops parsing.  Both forms keep the whole surface in ``raw``; only
         # the VALUE string is transformed downstream, so char offsets are
         # untouched.
+        # The whole alternation is wrapped in a non-capturing group with a
+        # trailing ``(?!\d)`` so the guard binds to EITHER alternative once
+        # this fragment is spliced into the bigger "|"-joined ``parts``
+        # alternation below -- without the group, a bare trailing lookahead
+        # would bind only to the last alternative here (the plain-number
+        # one), leaving the grouped alternative free to match a truncated
+        # prefix of a longer digit run.  That truncation is exactly the R131
+        # defect: with no lookahead, the grouped alternative is only required
+        # to find ONE exactly-three-digit group and is free to stop there
+        # even when more digits (with no separator) immediately follow --
+        # so "5,2025" (a comma glued straight onto a 4-digit run, e.g. a
+        # month/day date typed without a space, "march5,2025") greedily
+        # matches as "5,202", folds to the number 5202, and stealthily
+        # strands a bare "5" as its own token right after -- a US-style date
+        # misread as the year 5202.  Requiring nothing to follow the whole
+        # matched number keeps the grouped form working for real groupings
+        # ("1,000 days") while forcing this glued-onto-more-digits shape to
+        # fall through to the plain alternative instead, which stops at the
+        # comma and leaves the ",2025" tail for the comma-glue guard below.
         if modes.decimal_comma:
             # Continental European: '.' groups thousands, ',' is the decimal.
-            num = r"\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?"
+            num = r"(?:\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?)(?!\d)"
         else:
             # English (and he/ms): ',' groups thousands, '.' is the decimal.
-            num = r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?"
+            num = r"(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?!\d)"
         self._decimal_comma = modes.decimal_comma
         parts += [num, word]
         self._re = re.compile("|".join(parts), re.UNICODE)
@@ -330,6 +349,11 @@ class Tokenizer:
             "٫": decimal_char,
             "٬": grouping_char,
         })
+        # kept for the comma-glue guard in ``tokenize`` below: this locale's
+        # grouping separator, the character whose presence right at a digit
+        # run's edge -- with no space and no valid group either side -- marks
+        # a glued-together numeral rather than two independent numbers.
+        self._grouping_char = grouping_char
 
     def tokenize(self, text: str) -> Tuple[Token, ...]:
         if not text:
@@ -349,6 +373,12 @@ class Tokenizer:
             # every locale -- it lets the Latin-only number regex above
             # recognise them without touching char offsets.
             low = low.translate(self._native_sep_table)
+        # Set for one iteration when the PREVIOUS digit run was withdrawn
+        # because it was glued straight onto this one by an invalid grouping
+        # separator (see the comma-glue guard below) -- so this run, the
+        # other half of the same glued mess, gets its number reading
+        # withdrawn too instead of being read as a lone, unrelated number.
+        suppress_glued_number = False
         for i, m in enumerate(self._re.finditer(low)):
             raw = m.group(0)
             # match offsets are into ``text.lower()``; for the Latin-script
@@ -376,6 +406,34 @@ class Tokenizer:
                     digits = surface.replace(".", "").replace(",", ".")
                 else:
                     digits = surface.replace(",", "")
+                # A grouping separator glued directly onto this run's edge,
+                # with a digit immediately on its far side and no space
+                # anywhere, is either the tail of an invalid grouping this
+                # run's own match already rejected (the ``(?!\d)`` guard
+                # above stops the greedy grouped alternative from eating
+                # into it) or, symmetrically, this run IS that tail.  Either
+                # way, two adjacent digit runs separated only by a bare
+                # grouping char is not a shape either locale's number rules
+                # define -- en "5,2025" and "2,5" are not a valid thousands
+                # grouping (wrong group width) and not a decimal (wrong
+                # locale), so both sides give up their number reading rather
+                # than have the matcher silently pick whichever side happens
+                # to sit next to a unit/date word ("2,5 hours" -> 5h with the
+                # 2 dropped; "march5,2025" -> a stray day-shaped 5 and an
+                # unrelated year).  ``was_glued`` propagates the withdrawal
+                # to this run when the PREVIOUS run set it; ``glue_ahead``
+                # detects the same shape looking forward and arms it for the
+                # next run.
+                was_glued = suppress_glued_number
+                suppress_glued_number = False
+                glue_ahead = (ce < len(low) and low[ce] == self._grouping_char
+                              and ce + 1 < len(low) and low[ce + 1].isdigit())
+                if was_glued or glue_ahead:
+                    if glue_ahead:
+                        suppress_glued_number = True
+                    tokens.append(Token(text=raw, raw=raw, index=i,
+                                        char_start=cs, char_end=ce))
+                    continue
                 if _year_inside_a_broken_date(low, cs, ce, digits):
                     # the surface stays exactly as written -- only its number
                     # reading is withdrawn, so no year slot can bind it
