@@ -76,6 +76,23 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         # day-counting semantics agree with iso_week_ref's ISO semantics, so
         # this slot deliberately stays narrower than UNIT.
         return spec.units.get(token.text) in ("day", "month")
+    if name == "DAYUNIT":
+        # day-only sibling of UNIT -- the "the day after/before <named day>"
+        # idiom (constructions ``named_day_after``/``named_day_before``) only
+        # ever shifts by a WHOLE DAY (``resolver._named_day_offset`` declines
+        # any other unit), so a sub-day unit ("an hour") must never bind this
+        # slot at all.  Before this slot existed, "an hour before tomorrow at
+        # 9" matched the bare ``UNIT`` slot here, WON the span as the longest
+        # match against the general offset construction, then the resolver
+        # declined it (unit != day) -- and the matcher, having already
+        # committed to that (losing) span, never fell back to matching
+        # "tomorrow" as its own ``named_day`` reference with "an hour before"
+        # left as a stranded pre-amble for the general anchored-offset pass.
+        # The whole phrase silently vanished/mis-resolved instead. Binding
+        # this slot to "day" only lets "an hour before tomorrow" fail this
+        # construction outright, so the matcher picks the (correct) bare
+        # ``named_day`` reading instead.
+        return spec.units.get(token.text) == "day"
     if name == "USG":
         return token.text in spec.singular_units
     if name in ("MARKER", "DIRECTION_MARKER"):
