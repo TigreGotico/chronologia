@@ -42,7 +42,7 @@ from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_clock,
                                               compose_date_daypart,
                                               compose_daypart_clock,
-                                              _WEEK_START)
+                                              _WEEK_START, _week_span)
 from chronologia.extract.tokenizer import Tokenizer
 
 
@@ -1660,22 +1660,6 @@ def _trailing_meridiem(sub, spec):
     if sub and sub[-1].text in spec.meridiems:
         return sub[-1]
     return None
-
-
-def _week_span(start_astro, week_start_name: str) -> DateSpan:
-    """The locale-aligned seven-day week containing ``start_astro``.
-
-    ``week_start_name`` is the locale ``week_start`` convention (Monday for the
-    languages carrying the "week of" marker); the span begins on that weekday
-    on-or-before the given date and is a fixed seven days wide, so its width
-    reads WEEK.
-    """
-    idx = _WEEK_START.get(week_start_name, 0)
-    d = datetime(start_astro.year, start_astro.month, start_astro.day)
-    back = (d.weekday() - idx) % 7
-    week_start = d - timedelta(days=back)
-    s = AstroDate.from_datetime(week_start)
-    return DateSpan(s, s + timedelta(days=7))
 
 
 def _apply_week_of(tokens, resolved, spec):

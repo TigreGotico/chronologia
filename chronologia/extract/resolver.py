@@ -281,6 +281,25 @@ def _day_span(dt: datetime) -> DateSpan:
     return DateSpan(start, start + timedelta(days=1))
 
 
+def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
+    """The locale-aligned seven-day week containing ``start_astro``.
+
+    ``week_start_name`` is the locale ``week_start`` convention (Monday for
+    the languages carrying the "week of" marker); the span begins on that
+    weekday on-or-before the given date and is a fixed seven days wide, so
+    its width reads WEEK.  Shared by ``timespan._apply_week_of`` ("the week
+    of X") and ``anchored._try_offset`` ("the week after/before X"), which
+    both widen a resolved date to its calendar week under the same
+    convention.
+    """
+    idx = _WEEK_START.get(week_start_name, 0)
+    d = datetime(start_astro.year, start_astro.month, start_astro.day)
+    back = (d.weekday() - idx) % 7
+    week_start = d - timedelta(days=back)
+    s = AstroDate.from_datetime(week_start)
+    return DateSpan(s, s + timedelta(days=7))
+
+
 #: constructions that name a *date* (a day or a wider calendar period); a
 #: clock_time in the same text composes onto the day these select.
 DATE_CONSTRUCTIONS = frozenset({
