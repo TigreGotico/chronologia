@@ -349,6 +349,31 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
                 and k - 1 not in consumed and tokens[k - 1].is_number
                 and k + 1 in consumed):
             consumed.update((k - 1, k))
+    # A duration-marking preposition directly adjacent to the bound duration
+    # ("for 90 minutes", "für 90 Minuten", "durante 90 minutos") is temporal
+    # glue, not leftover text (defect R135): fold it into ``consumed`` so it
+    # does not strand alone in the remainder.  Reuses the SAME
+    # ``recur_for``/``marker_recur_for.voc`` vocabulary as the recurrence
+    # grammar's "every monday *for* 3 weeks" bound and the timespan module's
+    # trailing "... for <duration>" extension -- one marker family, not a
+    # parallel one.  Matched only when the marker sits immediately before the
+    # duration's own earliest consumed token (after the "and"/range folding
+    # above, so "for 3 to 5 days" attaches to the "3", not the "5"): a marker
+    # separated by other words ("meet for lunch in 90 minutes") is NOT
+    # adjacent and stays in the remainder, since it is not glue for THIS
+    # duration.  "in" is deliberately excluded -- it marks a relative OFFSET
+    # ("in 90 minutes" == 90 minutes from now), not a bound duration, and is
+    # not a member of ``recur_for`` in any locale; consuming it would blur
+    # that distinction, so "in 90 minutes" -> remainder "in" is correct as-is.
+    if consumed:
+        start = min(consumed)
+        for words in _conn_surfaces(spec, "recur_for", ("for",)):
+            wlen = len(words)
+            if wlen and start - wlen >= 0 and [
+                    tokens[start - wlen + m].text.lower()
+                    for m in range(wlen)] == words:
+                consumed.update(range(start - wlen, start))
+                break
     # A stranded CALENDAR-grain unit (month/year/decade/...) is not a
     # fixed-width length -- a bare "3 months" already returns None rather
     # than some arbitrary 30-day guess (see the module docstring).  A MIXED
