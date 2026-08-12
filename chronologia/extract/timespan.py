@@ -579,7 +579,19 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
     at_between = _lead_at(tokens, between_surf, spec)
-    lead_at, lead = at_from if at_from is not None else (0, 0)
+    # a "between" lead binds this branch too when the split below lands on a
+    # lead-required "to" surface licensed only after a from/between lead (see
+    # ``lead_only_to`` -- Hebrew's proclitic ל־ after בין, "בין ... ל...").
+    # Without an explicit "from" lead of its own the between word was left
+    # sitting in ``left_tok``, unowned by the date engine and so stranded in
+    # the composed remainder; taking it as the lead here strips it exactly as
+    # an explicit "from" lead is stripped.
+    if at_from is not None:
+        lead_at, lead = at_from
+    elif at_between is not None:
+        lead_at, lead = at_between
+    else:
+        lead_at, lead = 0, 0
     split = _first_to_split(tokens, lead_at + lead, to_surf, text)
     if split is not None:
         p, k = split
@@ -1389,9 +1401,45 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     if core is None:
         return None
     span, consumed = core
+    consumed = _fold_day_label(folded, consumed, engine.spec)
     remainder = render_remainder(text, [t for t in folded
                                         if t.index not in consumed])
     return span, remainder
+
+
+def _fold_day_label(folded, consumed, spec):
+    """``consumed`` widened to swallow a leading day-of-month label noun
+    ("dia" -- Portuguese "dia 3 de março") that directly abuts a bound date.
+
+    Wired into BOTH the range-endpoint resolver (:func:`_resolve_endpoint`,
+    for "do dia 3 ... até ao dia 5 ...") and the single-span resolver
+    (:func:`_resolve_span`'s SINGLE case, for a bare "dia 3 de março" or one
+    embedded in a sentence, "a reunião é dia 3 de março") -- the leak is the
+    same defect signature (a stranded temporal function word beside a
+    correctly-bound date) whether or not the date sits inside a range, so the
+    fold applies wherever a date binds.
+
+    A locale opts in via ``marker_day_label.voc`` (-> ``spec.connectors
+    ["day_label"]``); the set is empty by default so no other language's bare
+    noun is ever mistaken for range-marker glue.  Only a label word
+    IMMEDIATELY followed (no gap) by an already-consumed token is folded in --
+    an unconsumed "dia" elsewhere (the date failed to bind, a content word
+    sits between "dia" and the date -- "o dia estava bonito ontem" -- or it
+    heads unrelated text) is left in the remainder untouched, exactly as the
+    "bis zum"/"até ao" compound markers are only swallowed when the date they
+    frame actually resolved.
+    """
+    labels = set(spec.connectors.get("day_label", ()))
+    if not labels:
+        return consumed
+    widened = set(consumed)
+    for i, t in enumerate(folded):
+        if t.index in consumed or t.text not in labels:
+            continue
+        nxt = folded[i + 1] if i + 1 < len(folded) else None
+        if nxt is not None and nxt.index in consumed:
+            widened.add(t.index)
+    return widened
 
 
 def _since_start(ep, sub, engine, anchor, now):
@@ -2559,6 +2607,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # resolves on its own and is left in the remainder untouched.
     if _impossible_date_veto(tokens, consumed, text, engine, anchor):
         return None
+    consumed = _fold_day_label(tokens, consumed, engine.spec)
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)

@@ -1,2 +1,13 @@
 até
 ate
+# "até ao"/"até à": "até" (until) stacked with the contracted article "ao"/"à"
+# ("do dia 3 ... até ao dia 5") -- the split scanner finds the bare "até"
+# first (it precedes "ao" in the sentence), so without the two-word surface
+# registered the trailing "ao" was left an unclaimed token, stranded in the
+# composed range's remainder.  Registered longest-first (see
+# ``_conn_surfaces``) so it is tried before the bare "até" and swallows both
+# words when they actually appear together; a bare "até o dia" (no
+# contraction) is untouched, and "até" alone still matches when "ao"/"à"
+# does not follow.
+até ao
+até à

@@ -1,0 +1,14 @@
+# Portuguese day-of-month label noun -- "dia" ("day") heads the everyday
+# idiom "dia N de <mês>" ("day 3 of March" == the 3rd of March), a genuine
+# temporal function word (Cunha e Cintra, Nova Gramatica do Portugues
+# Contemporaneo, cap. 12, s.v. numerais partitivos e datas; Priberam s.v.
+# "dia") -- distinct from a bare ordinal reading, and NOT itself part of the
+# date construction's own grammar, so it was left stranded, unconsumed, in a
+# range endpoint's remainder even though the date it labels bound correctly
+# ("do dia 3 de março ... até ao dia 5 de abril" -- span correct, "dia dia"
+# leaked).  Registered as its own marker so range-endpoint resolution
+# (:func:`chronologia.extract.timespan._resolve_endpoint`) can fold an
+# immediately-adjacent leading "dia" into the consumed set precisely when the
+# date it labels actually bound -- never when the date fails to resolve, so a
+# "dia" elsewhere in the sentence is untouched.
+dia
