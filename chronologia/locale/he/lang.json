@@ -37,6 +37,7 @@
       "orders": [
         "at? CLOCK MERIDIEM? ZONE?",
         "CLOCK MERIDIEM? ZONE?",
+        "at HOUR MERIDIEM? ZONE?",
         "at? HOUR MERIDIEM ZONE?",
         "at? LANDMARK MERIDIEM? ZONE?"
       ],
