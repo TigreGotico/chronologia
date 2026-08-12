@@ -7,8 +7,8 @@
   "constructions": {
     "relative_offset": {
       "orders": [
-        "MARKER NUM UNIT",
-        "MARKER indef? UNIT",
+        "MARKER from? NUM UNIT",
+        "MARKER from? indef? UNIT",
         "NUM UNIT MARKER",
         "indef? UNIT MARKER"
       ]
