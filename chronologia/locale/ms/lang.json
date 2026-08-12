@@ -6,7 +6,8 @@
   "constructions": {
     "relative_offset": {
       "orders": [
-        "NUM UNIT MARKER"
+        "NUM UNIT MARKER",
+        "MARKER NUM UNIT"
       ]
     },
     "weekend_ref": {
