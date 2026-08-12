@@ -896,11 +896,11 @@ carnival           | cs | masopust
 chinese_new_year   | cs | čínský nový rok
 #
 # ===== Croatian =====
-new_year           | hr | nova godina
-christmas          | hr | božić
+new_year           | hr | nova godina ;; nove godine
+christmas          | hr | božić ;; božića
 christmas_eve      | hr | badnjak ;; badnji dan
 epiphany           | hr | sveta tri kralja ;; bogojavljenje
-easter             | hr | uskrs ;; uskrsna nedjelja
+easter             | hr | uskrs ;; uskrsna nedjelja ;; uskrsa
 palm_sunday     | hr | cvjetnica
 good_friday        | hr | veliki petak
 easter_monday      | hr | uskrsni ponedjeljak ;; uskršnji ponedjeljak
@@ -965,11 +965,11 @@ carnival           | sk | fašiangy
 chinese_new_year   | sk | čínsky nový rok
 #
 # ===== Slovenian =====
-new_year           | sl | novo leto
-christmas          | sl | božič
+new_year           | sl | novo leto ;; novega leta
+christmas          | sl | božič ;; božiča
 christmas_eve      | sl | sveti večer ;; badnjak
 epiphany           | sl | sveti trije kralji
-easter             | sl | velika noč ;; velikonočna nedelja
+easter             | sl | velika noč ;; velikonočna nedelja ;; velike noči
 palm_sunday     | sl | cvetna nedelja
 good_friday        | sl | veliki petek
 easter_monday      | sl | velikonočni ponedeljek
