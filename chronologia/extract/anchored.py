@@ -167,8 +167,54 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
     return None
 
 
+#: sub-day units: a "before"/"after" shift of these magnitudes is exact
+#: clock arithmetic (minutes/seconds matter), unlike the calendar-grain
+#: units ("day" and wider) whose shift is a whole-civil-day step.
+_SUB_DAY_UNITS = frozenset({"minute", "hour"})
+
+
+def _offset_glue(spec: LangSpec) -> frozenset:
+    """Function words that may legitimately bridge a resolved date and an
+    adjacent clock time within one reference ("March 3 **at** 9am") -- the
+    same "glue" concept :func:`~chronologia.extract.timespan._compose` uses
+    to decide date+clock adjacency (composed later, once the date+clock
+    resolutions are merged).  This pass runs BEFORE that composition, so it
+    needs the same signal early to recognise "before/after DATE at CLOCK" as
+    one clock-anchored reference rather than a bare date.
+    """
+    sep_keys = {"and", "or", "to", "from", "between", "until", "since"}
+    return frozenset(s for _k, vals in spec.connectors.items()
+                     if _k not in sep_keys for s in vals)
+
+
+def _adjacent_clock(tokens, resolved, ref_match: Match,
+                    spec: LangSpec) -> Optional[Pair]:
+    """The lone ``clock_time`` match immediately following ``ref_match`` --
+    only glue words ("at", "on") in the gap between them -- if exactly one
+    such match exists.  ``None`` when there is no clock, or the adjacency is
+    ambiguous."""
+    glue = _offset_glue(spec)
+    covered = set()
+    for m, _r in resolved:
+        if m is not ref_match:
+            covered.update(range(*m.span))
+    found = None
+    for m, r in resolved:
+        if m.construction != "clock_time" or m.span[0] < ref_match.span[1]:
+            continue
+        lo, hi = ref_match.span[1], m.span[0]
+        if not all(i in covered or tokens[i].text in glue
+                  for i in range(lo, hi)):
+            continue
+        if found is not None:
+            return None
+        found = (m, r)
+    return found
+
+
 def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
-                dir_phrases, gap) -> Optional[Pair]:
+                dir_phrases, gap, resolved=(),
+                is_clock_ref: bool = False) -> Optional[Pair]:
     """Compose an offset onto the reference ``match``/``res`` when a
     directional marker (with a stranded pre-amble) sits just before it."""
     b = match.span[0]
@@ -183,6 +229,44 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
         pre = _parse_preamble(tokens, c0, spec, gap)
         if pre is None:
             continue
+        sub_day = pre["kind"] == "unit" and pre["unit"] in _SUB_DAY_UNITS
+        if is_clock_ref:
+            # A bare clock reference ("half an hour before 9am") only takes
+            # a sub-day offset: "3 weeks before 9am" names no calendar day
+            # to shift, so it is left unhandled (falls through untouched).
+            if not sub_day:
+                continue
+            s = res.value.start
+            base = AstroDate(s.year, s.month, s.day, s.hour, s.minute,
+                             s.second, s.microsecond)
+            value = _shift(base, pre["unit"], sign * pre["qty"])
+            span = DateSpan(value, value + timedelta(minutes=1))
+            start = pre["start"]
+            consumed = tuple(sorted(set(res.consumed) | set(range(start, b))))
+            new_match = Match(match.construction, (start, match.span[1]),
+                              match.slots, match.calendar)
+            return new_match, Resolution(span, consumed)
+        clock_pair = _adjacent_clock(tokens, resolved, match, spec) \
+            if sub_day else None
+        if clock_pair is not None:
+            # The reference RESOLVES WITH a time-of-day (an adjacent, not-yet
+            # -composed ``clock_time`` match): a sub-day offset must do exact
+            # instant arithmetic against that clock reading, not the
+            # whole-civil-day floor below -- "half an hour before March 3 at
+            # 9am" is 08:30 the same day, not "March 2, still 9am".
+            cm, cr = clock_pair
+            s = res.value.start
+            c = cr.value.start
+            instant = AstroDate(s.year, s.month, s.day, c.hour, c.minute,
+                                c.second, c.microsecond)
+            value = _shift(instant, pre["unit"], sign * pre["qty"])
+            span = DateSpan(value, value + timedelta(minutes=1))
+            start = pre["start"]
+            consumed = tuple(sorted(set(res.consumed) | set(cr.consumed)
+                                    | set(range(start, cm.span[1]))))
+            new_match = Match(match.construction, (start, cm.span[1]),
+                              match.slots, match.calendar)
+            return new_match, Resolution(span, consumed)
         s = res.value.start
         base = AstroDate(s.year, s.month, s.day)
         if pre["kind"] == "unit":
@@ -288,11 +372,19 @@ def _one_offset_pass(tokens, resolved: List[Pair], spec: LangSpec,
     claimed = set()
     grown = 0
     for match, res in resolved:
-        if match.construction not in DATE_CONSTRUCTIONS:
+        is_date = match.construction in DATE_CONSTRUCTIONS
+        # a bare clock reference ("half an hour before 9am") also takes a
+        # sub-day offset -- see ``_try_offset``'s ``is_clock_ref`` branch --
+        # but never the postfix form (out of scope: no locale under test
+        # trails a directional postposition off a bare clock).
+        is_clock = match.construction == "clock_time"
+        if not is_date and not is_clock:
             continue
-        got = (_try_offset(tokens, match, res, spec, dir_phrases, gap)
-               or _try_offset_postfix(tokens, match, res, spec,
-                                      dir_phrases, gap))
+        got = (_try_offset(tokens, match, res, spec, dir_phrases, gap,
+                           resolved, is_clock)
+               or (_try_offset_postfix(tokens, match, res, spec,
+                                       dir_phrases, gap) if is_date
+                  else None))
         if got is not None:
             gained = set(range(*got[0].span)) - set(range(*match.span))
             if not gained:
