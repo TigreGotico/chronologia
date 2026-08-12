@@ -22,6 +22,7 @@ class stays unwritable.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import List, NamedTuple, Optional, Tuple, Union
@@ -32,7 +33,9 @@ from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _RANGE_TO, _conn_surfaces,
                                           _exclusion_vetoes, _extract_range,
                                           _resolve_scale_mode,
-                                          _timespan_engine, extract_timespan)
+                                          _timespan_engine,
+                                          _WEEKDAY_LABELABLE_DATES,
+                                          extract_timespan)
 from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
                                      Recurrence)
 from chronologia.recurrence import every as _build_every
@@ -428,7 +431,6 @@ def extract_timespans(
     """
     require_text(text, "extract_timespans")
     from chronologia.extract.confidence import score_candidates
-    from chronologia.extract.resolver import compose_date_clock
 
     engine = _timespan_engine(lang)
     scale_mode = _resolve_scale_mode(lang, scale)
@@ -442,21 +444,93 @@ def extract_timespans(
         lambda m: engine.resolver.resolve(m, anchor, scale_mode), engine.spec))
     scored.sort(key=lambda sc: sc.match.span[0])
     resolved = [(sc.match, sc.resolution) for sc in scored]
+    confidence_of = {id(sc.match): sc.confidence for sc in scored}
+
+    # Group the resolved matches into CLUSTERS of mutually-adjacent matches --
+    # the same adjacency :func:`~chronologia.extract.timespan._compose` (the
+    # single-span composer) uses to decide a weekday/daypart/clock belong to
+    # ONE reading: connected via glue tokens (at/on/of/the, a daypart
+    # preposition, ...) or tokens another match in the group already claims.
+    # A genuine clause break -- a comma, "and"/"or"/"then", an unrelated word
+    # -- starts a new cluster, so composition never bleeds across separate
+    # mentions ("tomorrow at 9 and next friday at 5" stays two clusters).
+    # Each multi-match cluster is then handed to :func:`extract_timespan`
+    # (via its own char extent, extended over a trailing "for <duration>"
+    # into the next cluster's boundary) so it runs through the IDENTICAL
+    # composition machinery the single-span edge uses -- weekday+daypart+
+    # clock merge, daypart-meridiem, for-duration extension -- rather than a
+    # second, narrower copy of it.
+    clusters = _cluster_resolved(resolved, tokens, engine.spec, text)
 
     out: List[Tuple[Tuple[int, int], DateSpan, float]] = []
-    for sc in scored:
-        match, res, conf = sc.match, sc.resolution, sc.confidence
-        # a clock time right after a date mention composes onto that day
-        if (match.construction == "clock_time" and out
-                and _prev_is_date(resolved, match)):
-            prev_match, prev_res = _prev_date(resolved, match)
-            merged = compose_date_clock(prev_res, res)
-            lo = min(prev_match.span[0], match.span[0])
-            hi = max(prev_match.span[1], match.span[1])
-            # the composed mention is only as trusted as its weaker half
-            out[-1] = ((lo, hi), merged.value, min(out[-1][2], conf))
+    for ci, cluster in enumerate(clusters):
+        if len(cluster) == 1:
+            match, res = cluster[0]
+            out.append((match.span, res.value, confidence_of[id(match)]))
             continue
-        out.append((match.span, res.value, conf))
+        lo_tok = min(m.span[0] for m, _ in cluster)
+        hi_tok = max(m.span[1] for m, _ in cluster)
+        start_char = tokens[lo_tok].char_start
+        conf = min(confidence_of[id(m)] for m, _ in cluster)
+        if ci + 1 < len(clusters):
+            nxt_lo = min(m.span[0] for m, _ in clusters[ci + 1])
+            boundary = tokens[nxt_lo].char_start
+        else:
+            boundary = None
+        if boundary is None:
+            boundary = len(text)
+        # the last token of the cluster's own span carries the real char
+        # extent MOST of the time; a fully engine-synthesised token (a
+        # multiword surface glued at match time with no offset recorded --
+        # e.g. pt "meio-dia" folding to a single ``meiodia`` token) leaves
+        # ``char_end`` as ``None``.  Walk back to the nearest token in the
+        # cluster that DOES carry one; the offset-less tail past it is still
+        # part of this cluster's own text, so the boundary already computed
+        # above (the next cluster's start, or the end of ``text``) is the
+        # correct upper bound to fall back on -- it is exactly the same
+        # "how far can this reading's own text run" question ``boundary``
+        # already answers for the trailing "for <duration>" extension.
+        if tokens[hi_tok - 1].char_end is not None:
+            end_char = tokens[hi_tok - 1].char_end
+        elif any(tokens[idx].char_end is None
+                 for idx in range(lo_tok, hi_tok)):
+            end_char = boundary
+        else:
+            end_char = None
+            for idx in range(hi_tok - 1, lo_tok - 1, -1):
+                if tokens[idx].char_end is not None:
+                    end_char = tokens[idx].char_end
+                    break
+        if start_char is None or end_char is None:
+            # no character offsets to slice by at all (fully
+            # engine-synthesised tokens throughout) -- fall back to the
+            # uncomposed matches rather than guess.
+            for m, r in cluster:
+                out.append((m.span, r.value, confidence_of[id(m)]))
+            continue
+        # compose over the cluster's OWN char extent only (never the trailing
+        # clause boundary) so an un-consumed trailing connector ("then",
+        # "and") never gets pulled into the composed reading's own extent.
+        slice_text = text[start_char:end_char]
+        result = extract_timespan(slice_text, lang, anchor=anchor, scale=scale)
+        if result is None:
+            # composition declined (e.g. a daypart/clock meridiem
+            # contradiction) -- keep the matches uncomposed rather than drop
+            # them.
+            for m, r in cluster:
+                out.append((m.span, r.value, confidence_of[id(m)]))
+            continue
+        consumed_end = max(start_char + len(slice_text) - len(result.remainder),
+                            end_char)
+        span, consumed_end = _extend_cluster_for_duration(
+            result.span, text, consumed_end, boundary, engine)
+        hi = hi_tok
+        for idx in range(hi_tok, len(tokens)):
+            if tokens[idx].char_start is not None and tokens[idx].char_start < consumed_end:
+                hi = idx + 1
+            else:
+                break
+        out.append(((lo_tok, hi), span, conf))
 
     # a list of ordinals sharing one trailing scope ("the 2nd, 4th and 6th of
     # July", "the 5th and the 3rd of the month") names one date per ordinal --
@@ -639,21 +713,158 @@ def _char_span(tokens, lo, hi):
     return (start, end)
 
 
-def _prev_is_date(resolved, clock_match):
-    from chronologia.extract.resolver import DATE_CONSTRUCTIONS
-    prev = _prev_date(resolved, clock_match)
-    return prev is not None and prev[0].construction in DATE_CONSTRUCTIONS
+#: connector keys that join two DISTINCT references rather than gluing one
+#: reference's own parts together -- the same split
+#: :func:`~chronologia.extract.timespan._compose` uses to decide when a
+#: weekday/daypart/clock/date genuinely fuse into one reading.
+_CLAUSE_SEP_KEYS = {"and", "or", "to", "from", "between", "until", "since"}
 
 
-def _prev_date(resolved, clock_match):
-    """The match immediately preceding ``clock_match`` in reading order."""
-    ordered = [m for m, _ in resolved]
-    idx = ordered.index(clock_match)
-    if idx == 0:
-        return None
-    for m, r in reversed(resolved[:idx]):
-        return m, r
-    return None
+def _clause_glue(spec):
+    """Function-word surfaces that legitimately join a date to a time WITHIN
+    one reference (at/on/of/the, a daypart preposition, ...) -- every
+    connector surface that is not keyed under a pure separator
+    (:data:`_CLAUSE_SEP_KEYS`), mirroring the glue set
+    :func:`~chronologia.extract.timespan._compose` computes for its own
+    adjacency test."""
+    return {s for k, vals in spec.connectors.items() if k not in _CLAUSE_SEP_KEYS
+            for s in vals}
+
+
+def _cluster_role(construction):
+    """The composition ROLE a construction can fill inside one cluster,
+    mirroring :func:`~chronologia.extract.timespan._compose`'s own shape:
+    it fuses at most one clock, one daypart, one weekday(-label) and one
+    anchor DATE into a single reading -- never two anchor dates.  Everything
+    that is not a clock/daypart/weekday is an anchor date candidate.
+    """
+    if construction == "clock_time":
+        return "clock"
+    if construction == "daypart_ref":
+        return "daypart"
+    if construction == "weekday_ref":
+        return "weekday"
+    return "date"
+
+
+def _extend_cluster_for_duration(span, text, end_char, boundary, engine):
+    """Extend a cluster's composed PINPOINT clock-start span by a trailing
+    bare "for <duration>" phrase, bounded to THIS clause's own extent
+    (``end_char`` to ``boundary`` -- the next cluster's start, or the end of
+    ``text``) so a duration named in a LATER clause is never pulled onto an
+    earlier mention.
+
+    Mirrors the rule :func:`~chronologia.extract.timespan.
+    _extend_clock_for_duration` applies for a single mention -- fires only
+    when the span is exactly the minute-wide reading a lone/composed clock
+    produces -- but reads the marker+duration from this clause's own bounded
+    tail via :func:`_duration_core`, the same duration reader, rather than
+    scanning the rest of the utterance (where a second, later "for ..."
+    clause could otherwise bleed onto this one).
+
+    Returns ``(span, consumed_end)`` -- the (possibly unchanged) span and the
+    character offset of the end of what it consumed.
+    """
+    if span.end - span.start != timedelta(minutes=1):
+        return span, end_char
+    tail = text[end_char:boundary]
+    from chronologia.extract.timespan import _for_marker_pattern
+    m = _for_marker_pattern(engine.spec).search(tail)
+    if m is None:
+        return span, end_char
+    after = tail[m.end():]
+    got = _duration_core(after, engine)
+    if got is None:
+        return span, end_char
+    # ``got.remainder`` is a re-rendered (whitespace/punctuation-collapsed)
+    # string, not a char-locatable slice of ``after`` -- a length subtraction
+    # would misplace the boundary whenever punctuation like a trailing comma
+    # is dropped in the rendering.  Locate the FIRST remainder word back in
+    # ``after`` by a whole-word search instead, so the consumed extent stops
+    # exactly at the duration phrase and never swallows a leftover connector
+    # ("for 2 hours, then again ..." must not consume "then").
+    remainder = got.remainder.strip()
+    if remainder:
+        first_word = remainder.split()[0]
+        wm = re.search(r"\b" + re.escape(first_word) + r"\b", after)
+        consumed_in_after = wm.start() if wm else len(after)
+    else:
+        consumed_in_after = len(after)
+    consumed_end = end_char + m.end() + consumed_in_after
+    return DateSpan(span.start, span.start + got.duration), consumed_end
+
+
+def _cluster_resolved(resolved, tokens, spec, text=None):
+    """Group resolved ``(match, res)`` pairs into clusters of matches the
+    single-span composer would fuse into ONE reading.
+
+    Two matches sit in the same cluster when every token strictly between
+    them is either already claimed by some match in ``resolved`` (the
+    daypart in "monday morning at 3pm") or a bare glue connector
+    (:func:`_clause_glue`), AND no stray punctuation (a comma, semicolon, ...)
+    sits between them: the tokenizer drops punctuation from the token stream
+    entirely, so two matches sitting back-to-back with a comma between them
+    ("monday at 9, friday at 5") have an EMPTY token gap that would otherwise
+    read as vacuously adjacent.  Anything else -- a separator word
+    ("and"/"or"), unrelated prose -- starts a new cluster.  This is exactly
+    the adjacency test :func:`~chronologia.extract.timespan._compose` applies
+    pairwise, so a clause's matches cluster together the same way the
+    single-span edge would compose them, and a genuine clause boundary
+    (comma, "then", a distinct "and"-joined mention) reliably splits them.
+
+    Returns a list of clusters (each a list of ``(match, res)`` pairs), in
+    reading order.
+    """
+    if not resolved:
+        return []
+    glue = _clause_glue(spec)
+    ordered = sorted(resolved, key=lambda mr: mr[0].span[0])
+    covered = set()
+    for m, _r in ordered:
+        covered.update(range(*m.span))
+    clusters = [[ordered[0]]]
+    for prev, nxt in zip(ordered, ordered[1:]):
+        (lo_span, hi_span) = sorted((prev[0].span, nxt[0].span))
+        gap = range(lo_span[1], hi_span[0])
+        adjacent = all(i in covered or tokens[i].text in glue for i in gap)
+        if adjacent:
+            # Cap the cluster to the shape _compose can actually fuse: at
+            # most one of each role (clock/daypart/weekday/date).  Two
+            # adjacent but otherwise UNRELATED date references ("friday next
+            # week", no clock/daypart between them) are not a composable
+            # pair -- _compose has no fusion rule for two anchor dates and
+            # would silently keep only the earlier one, dropping the other.
+            # Refusing the merge here keeps both as their own mentions,
+            # exactly as they resolve outside a cluster.
+            nxt_role = _cluster_role(nxt[0].construction)
+            existing = [(m, _cluster_role(m.construction))
+                        for m, _r in clusters[-1]]
+            existing_roles = {r for _m, r in existing}
+            if nxt_role in existing_roles:
+                adjacent = False
+            elif nxt_role == "weekday":
+                # a weekday only fuses onto an existing DATE as a LABEL
+                # ("Monday, March 2") when that date is one of the LITERAL
+                # constructions _compose accepts as labelable; a weekday next
+                # to a non-labelable date ("friday" + "next week") is not a
+                # composable pair and must stay two mentions.
+                other_date = next((m for m, r in existing if r == "date"),
+                                   None)
+                if (other_date is not None
+                        and other_date.construction
+                        not in _WEEKDAY_LABELABLE_DATES):
+                    adjacent = False
+            elif nxt_role == "date":
+                other_weekday = next((m for m, r in existing
+                                      if r == "weekday"), None)
+                if (other_weekday is not None
+                        and nxt[0].construction not in _WEEKDAY_LABELABLE_DATES):
+                    adjacent = False
+        if adjacent:
+            clusters[-1].append(nxt)
+        else:
+            clusters.append([nxt])
+    return clusters
 
 
 # --------------------------------------------------------------------------
