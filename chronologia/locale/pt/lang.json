@@ -36,11 +36,11 @@
     },
     "clock_time": {
       "orders": [
-        "at? HOUR CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
-        "at? HOUR CLOCKDIR MINUTE of? article? MERIDIEM? ZONE?",
-        "at HOUR of? article? MERIDIEM? ZONE?",
-        "at? HOUR of? article? MERIDIEM ZONE?",
-        "at? HOUR MERIDIEM ZONE?",
+        "at? HOUR oclock? CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
+        "at? HOUR oclock? CLOCKDIR MINUTE of? article? MERIDIEM? ZONE?",
+        "at HOUR oclock? of? article? MERIDIEM? ZONE?",
+        "at? HOUR oclock? of? article? MERIDIEM ZONE?",
+        "at? HOUR oclock? MERIDIEM ZONE?",
         "at? LANDMARK CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
         "at? LANDMARK CLOCKDIR MINUTE of? article? MERIDIEM? ZONE?",
         "at? LANDMARK of? article? MERIDIEM? ZONE?",
