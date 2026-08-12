@@ -2392,20 +2392,66 @@ def _stray_year_zero_veto(tokens, match, spec) -> bool:
             and tokens[end].raw.rstrip(".") == "0")
 
 
+#: (R136) Scandinavian month surfaces that collide with the "jul" spelling of
+#: Christmas: Danish, Swedish, Norwegian Bokmal and Nynorsk all name the
+#: month "juli" but also list the bare abbreviation "jul" in their MONTH
+#: vocab (needed for in-context abbreviated dates like "15. jul. 2026" / "jul
+#: 2026"). Standing alone, "jul" overwhelmingly means Christmas in all four
+#: languages -- see :func:`_month_holiday_collision_veto`.
+_MONTH_HOLIDAY_COLLISIONS = {
+    "da": frozenset({"jul"}),
+    "sv": frozenset({"jul"}),
+    "nb": frozenset({"jul"}),
+    "nn": frozenset({"jul"}),
+}
+
+
+def _month_holiday_collision_veto(tokens, match, spec) -> bool:
+    """True for a BARE, single-token ``calendar_date`` MONTH match whose
+    surface is one of :data:`_MONTH_HOLIDAY_COLLISIONS` for this language
+    (Scandinavian "jul").
+
+    "jul" is Danish/Swedish/Norwegian for Christmas; it is only listed as a
+    MONTH surface (alongside the real month word "juli") so an in-context
+    abbreviated date still resolves as July: "15. jul. 2026" binds a DAY,
+    "jul 2026" binds a YEAR, and both keep their longer span regardless of
+    this veto (a DAY- or YEAR-bound match is left untouched, and would win
+    the overlap contest over the equal- or shorter-length holiday_ref reading
+    anyway).  A BARE "jul" -- no day, no year, just the one token -- binds
+    neither, so this veto drops the calendar_date candidate and lets the
+    equal-length holiday_ref reading for the same token (spec.holidays maps
+    "jul" -> "christmas") win the overlap contest instead.  Silently reading
+    bare "jul" as the whole month of July, rather than Christmas Day, is the
+    R136 defect this veto closes.
+    """
+    if match.construction != "calendar_date":
+        return False
+    if match.length != 1:
+        return False
+    if "DAY" in match.slots or "YEAR" in match.slots:
+        return False
+    collisions = _MONTH_HOLIDAY_COLLISIONS.get(spec.lang)
+    if not collisions:
+        return False
+    return tokens[match.span[0]].text in collisions
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
     non-clause-final "be" is the verb not the era; a plain year stranding a
     capitalized "BE"/"AM" is a declined era, not a confident year; "in year"
     stranding a bare "0" is the original R102 stranding hole reopened for the
-    one value SMALLYEAR refuses).  Applied before the overlap contest so the
-    shorter correct reading (a year_ref, or nothing) survives.
+    one value SMALLYEAR refuses; a bare Scandinavian "jul" is Christmas, not
+    the month of July).  Applied before the overlap contest so the shorter
+    correct reading (a year_ref, or nothing) survives.
     """
     return (_new_year_definite_article_veto(tokens, match, spec)
             or _bare_be_trailing_veto(tokens, match, spec)
             or _stray_capitalized_be_veto(tokens, match, spec)
             or _stray_capitalized_am_veto(tokens, match, spec)
-            or _stray_year_zero_veto(tokens, match, spec))
+            or _stray_year_zero_veto(tokens, match, spec)
+            or _month_holiday_collision_veto(tokens, match, spec))
 
 
 #: the "for <duration>" bound marker vocabulary, keyed by spec identity so a
