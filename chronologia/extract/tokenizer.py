@@ -192,6 +192,30 @@ _DOTDATE = r"(?<!\d\.)\d{1,2}\. ?\d{1,2}\. ?\d{2,4}(?!\d)(?!\.\d)"
 # the resolver read this one name, so there is a single source of truth for the
 # shape and the day/month order stays the locale's ``dmy`` decision.
 _NUMDATE_ANY = f"(?:{_NUMDATE})|(?:{_DOTDATE})"
+# a written fraction, "1/2", "3/4" -- two 1-2 digit components and exactly one
+# separator, matched AFTER ``_NUMDATE`` so a real date ("3/4/2025") still wins
+# the alternation at the same start position (``_NUMDATE`` requires the third,
+# year, component; a bare two-part slash run never satisfies it and falls
+# through to this literal instead).  Without a dedicated literal the '/' matches
+# nothing in the token regex, so "1/2 hour" tokenized as the two bare numbers
+# "1" and "2" with nothing to say they were EVER joined; the unit-count fold
+# then bound the *second* number to the unit ("2 hours") and stranded the
+# first as an unexplained remainder ("1") -- a silent misread, not a refusal.
+# The value is read as an ordinary decimal (``num/den``) by the same numeric
+# branch below, so it composes with a following unit exactly like "0.5 hour"
+# already does. No denominator allow-list is enforced: an oddball fraction
+# ("5/7 hour") is arithmetically well-defined and is read the same as any other
+# decimal count would be -- the fold's job is to stop the slash from being
+# silently DROPPED, not to police which fractions are sensible durations.
+# The trailing "(?!/\d)" keeps this from swallowing the HEAD of a broken
+# three-component date whose year overflowed ("12/11/20244" -- _NUMDATE's
+# year component is capped at 4 digits and its own "(?!\d)" guard refuses
+# the 5th, so it falls through here).  Reading "12/11" as a fraction in that
+# wreckage would strand "20244" as an unrelated number instead of the
+# all-or-nothing refusal the broken-date literal is designed to produce
+# (see ``_year_inside_a_broken_date``): the whole run must split into its
+# three bare numerals, not two of them plus a stray "fraction".
+_SLASHFRAC = r"\d{1,2}/\d{1,2}(?!\d)(?!/\d)"
 _CLOCK = r"\d{1,2}:\d{2}(?::\d{2})?(?!\d)"
 _NUM = r"\d+(?:\.\d+)?"
 # a timezone acronym with an optional fixed signed offset kept as ONE token so
@@ -294,11 +318,11 @@ class Tokenizer:
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
-        parts = [_ISOWEEK, _ISO, _NUMDATE, _CLOCK, _ZONE, _NUMOFFSET]
+        parts = [_ISOWEEK, _ISO, _NUMDATE, _SLASHFRAC, _CLOCK, _ZONE, _NUMOFFSET]
         if modes.dotted_date:
             # ahead of the ordinal-dot and bare-number rules below, so a
             # dotted date binds whole rather than being read as a number
-            parts.insert(3, _DOTDATE)
+            parts.insert(4, _DOTDATE)
         if modes.ordinal_dot:
             # a digit run followed by a dot that is not a decimal point
             parts.append(r"\d+\.(?!\d)")
@@ -389,6 +413,23 @@ class Tokenizer:
             # here, so the same offsets index the ORIGINAL text: record whether
             # the surface opened with a capital (proper-noun positional guard).
             cap = cs < len(text) and text[cs] != low[cs]
+            if re.fullmatch(_SLASHFRAC, raw) is not None:
+                # "1/2", "3/4": read the two components as a single decimal
+                # count (see ``_SLASHFRAC`` above for why the slash must not
+                # be allowed to vanish between two bare-number tokens). A
+                # zero denominator ("1/0") names no fraction -- withdraw the
+                # number reading entirely rather than raise, same treatment
+                # as any other unreadable numeral.
+                num_s, den_s = raw.split("/")
+                den = int(den_s)
+                if den == 0:
+                    tokens.append(Token(text=raw, raw=raw, index=i,
+                                        char_start=cs, char_end=ce, cap=cap))
+                else:
+                    tokens.append(Token(text=raw, raw=raw, index=i,
+                                        is_number=True, value=int(num_s) / den,
+                                        char_start=cs, char_end=ce))
+                continue
             is_literal = (re.fullmatch(_ISOWEEK, raw) is not None
                           or re.fullmatch(_ISO, raw) is not None
                           or re.fullmatch(_NUMDATE_ANY, raw) is not None
