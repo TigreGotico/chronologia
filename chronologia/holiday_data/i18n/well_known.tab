@@ -87,6 +87,7 @@ new_year        | de | neujahr ;; neujahrstag
 new_year_eve    | de | silvester
 epiphany        | de | heilige drei könige ;; dreikönigstag ;; epiphanias
 carnival        | de | karneval ;; fasching ;; fastnacht
+ash_wednesday   | de | aschermittwoch
 palm_sunday     | de | palmsonntag
 good_friday     | de | karfreitag
 easter          | de | ostern ;; ostersonntag
@@ -922,6 +923,7 @@ christmas          | pl | boże narodzenie ;; gwiazdka
 christmas_eve      | pl | wigilia
 epiphany           | pl | trzech króli ;; objawienie pańskie
 easter             | pl | wielkanoc ;; niedziela wielkanocna
+ash_wednesday      | pl | środa popielcowa
 palm_sunday     | pl | niedziela palmowa
 good_friday        | pl | wielki piątek
 easter_monday      | pl | poniedziałek wielkanocny ;; lany poniedziałek
