@@ -117,7 +117,9 @@
   "override": {
    "scoped_ordinal": [
     "article? ORD WEEKDAY MONTH YEAR?",
-    "article? ordlast WEEKDAY MONTH YEAR?"
+    "article? ordlast WEEKDAY MONTH YEAR?",
+    "article? ORD WEEKDAY GYEAR",
+    "article? ordlast WEEKDAY GYEAR"
    ]
   }
  }

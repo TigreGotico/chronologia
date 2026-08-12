@@ -89,6 +89,21 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         # letting the bare year win instead of December.
         "article? ORD DMUNIT of GYEAR",
         "article? ordlast DMUNIT of GYEAR",
+        # "the first/last <weekday> of <bare YEAR>" -- the Nth (or final)
+        # occurrence of that weekday WITHIN the calendar year, no month
+        # involved.  Sibling to the "ORD WEEKDAY of MONTH of? YEAR?" order
+        # above, but for the bare-year reading: without it "last monday of
+        # 2026" had no order binding WEEKDAY+GYEAR together at all (YEAR only
+        # ever binds alongside a MONTH), so it fell through to the
+        # anchor-relative "last monday" reading, stranding "of 2026" and
+        # silently ignoring the named year (R142). "of"/"in" both introduce
+        # the year across locales (en "of"/"in", pt "de"), and some locales
+        # (de, pl) drop the connector entirely, hence both an optional-"of"
+        # order and a separate "in" order.
+        "article? ORD WEEKDAY of? GYEAR",
+        "article? ordlast WEEKDAY of? GYEAR",
+        "article? ORD WEEKDAY in GYEAR",
+        "article? ordlast WEEKDAY in GYEAR",
         "article? ORD UNIT of REL_MARKER? article? SCOPE_UNIT",
         "article? ordlast UNIT of REL_MARKER? article? SCOPE_UNIT",
         # a fuzzy early/mid/late PART on an absolute ordinal period ("the
