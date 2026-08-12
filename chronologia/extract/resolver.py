@@ -175,6 +175,25 @@ def _nth_weekday_of_month(year: int, month: int, weekday: int,
     return date(year, month, days[idx])
 
 
+def _nth_weekday_of_year(year: int, weekday: int, n: int) -> Optional[date]:
+    """The ``n``-th ``weekday`` (Mon=0) WITHIN calendar ``year`` (Jan 1 through
+    Dec 31); ``n < 0`` counts from the end (``-1`` = last). Sibling to
+    :func:`_nth_weekday_of_month` but scoped to the whole year rather than one
+    month -- "the last monday of 2026", "the first monday in 2027". Returns
+    ``None`` when the year has no such occurrence (an out-of-range ordinal --
+    a year only ever has 52 or 53 of any given weekday), the same refusal
+    policy as :func:`_nth_weekday_of_month`, never fabricating a reading."""
+    jan1 = date(year, 1, 1)
+    first = jan1 + timedelta(days=(weekday - jan1.weekday()) % 7)
+    count = ((date(year, 12, 31) - first).days // 7) + 1
+    idx = n if n < 0 else n - 1
+    if not -count <= idx < count:
+        return None
+    if idx < 0:
+        idx += count
+    return first + timedelta(days=7 * idx)
+
+
 def _nth_weekend_of_month(year: int, month: int, weekend_start: int,
                           n: int) -> Optional[date]:
     """The Saturday (locale ``weekend_start``, Mon=0) that opens the ``n``-th
@@ -1811,11 +1830,25 @@ class Resolver:
         if wd_tok is not None:                      # nth weekday of a month
             target = self.spec.weekdays[wd_tok.text]
             month_tok = match.slots.get("MONTH")
+            gyear_tok = match.slots.get("GYEAR")
             if month_tok is not None:               # named month ("... of June")
                 month = self.spec.months[month_tok.text]
                 year_tok = match.slots.get("YEAR")
                 year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
                         else anchor.year)
+                value = _nth_weekday_of_month(year, month, target, n)
+            elif gyear_tok is not None:              # bare year, no month:
+                # "the first/last <weekday> of <YEAR>" -- the Nth (or, with
+                # ``ordlast``, final) occurrence of that weekday WITHIN the
+                # calendar year, not the month-scoped reading above. Without
+                # this branch a bare trailing GYEAR is never bound here at
+                # all (only "of MONTH of? YEAR?" binds a YEAR, and only
+                # alongside a MONTH), so "last monday of 2026" fell through
+                # to the anchor-relative ``weekday_ref`` ("last monday")
+                # instead, silently stranding "of 2026" and answering
+                # relative to the anchor year rather than the named one.
+                year = int(gyear_tok.value)
+                value = _nth_weekday_of_year(year, target, n)
             else:                                   # relative-month scope
                 # "... of (the|this|next|last) month": the scope word names the
                 # anchor's own calendar month, shifted by an optional
@@ -1828,7 +1861,7 @@ class Resolver:
                 rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
                 base = _add_months(_midnight(anchor).replace(day=1), rel)
                 year, month = base.year, base.month
-            value = _nth_weekday_of_month(year, month, target, n)
+                value = _nth_weekday_of_month(year, month, target, n)
             if value is None:                       # no such Nth weekday
                 return None
             start = AstroDate.from_date(value)
