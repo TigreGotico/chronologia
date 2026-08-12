@@ -181,7 +181,20 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
                     return fracs[txt[len(aw):]], j + 1
         if j < n and tokens[j].text in and_words:
             j += 1
-            while j < n and tokens[j].text in articles:
+            while j < n and (tokens[j].text in articles
+                              or (tokens[j].is_number
+                                  and tokens[j].value == 1.0)):
+                # A folded "one"-valued number token doubles as the
+                # indefinite article before the fraction word in languages
+                # where the numeral IS the article ("en" in Swedish "en och
+                # en halv timme" == "one and one half hour"): the number
+                # fold already turned the second "en" into a bare `1`
+                # token, so the textual-article check above never sees it
+                # and "en halv" (== "a half") strands as an unconsumed
+                # `1 halv` pair, silently truncating the phrase to just the
+                # leading "en timme" reading.  Skipping it here restores
+                # the trailing-fraction idiom without touching languages
+                # whose article is not also a numeral.
                 j += 1
             if j < n and tokens[j].text in fracs:
                 return fracs[tokens[j].text], j + 1
@@ -252,6 +265,20 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
                 count, j, frac_lead = fracs[tokens[j].text], j + 1, True
             elif tokens[j].text in spec.quantifiers:
                 count, j = spec.quantifiers[tokens[j].text], j + 1
+            elif (tokens[j].text in spec.units
+                  and spec.units[tokens[j].text] in _DUR_UNIT_SECONDS
+                  and _read_additive(j + 1)[0] is not None):
+                # A bare unit with NO leading count, immediately followed by
+                # the trailing "... and a half" idiom, implies an
+                # article-like count of one ("hodinu a půl" ==
+                # "an hour and a half"; "hodinu a pol"): unlike English/
+                # Swedish, these languages fold no "an"/"en" indefinite
+                # article onto the unit here, so without this the count-scan
+                # never starts and the whole phrase is left as remainder.
+                # Peeked (not assumed) so a genuinely bare unit outside the
+                # idiom is untouched -- ``j`` stays AT the unit so the
+                # ordinary unit-match branch below still finds it.
+                count = 1.0
         if count is None:
             i = max(i + 1, j)
             continue
