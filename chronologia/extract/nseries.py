@@ -869,6 +869,68 @@ def _apply_clock_range(rec, consumed, ctx, lang, anchor):
         rec = _replace(rec, byhour=(hour,),
                        byminute=((minute,) if minute else ()))
         return rec, consumed | set(range(i, end))
+
+    # -- H <and> H2 <between> (postposed) -----------------------------------
+    # Turkish, Hungarian and Finnish frame a closed range with the "between"
+    # word placed AFTER the pair ("9 ile 17 arasında" == "9 and 17 between")
+    # instead of before it, mirroring the postposed range construction
+    # :func:`~chronologia.extract.timespan._extract_range` reads via
+    # ``marker_between_post.voc`` (R118).  Without this branch the leading
+    # scan above never matches (there is no leading "between"/"from"), so the
+    # clause falls through to :func:`_apply_range_bound`'s bare-number decline
+    # and then to :func:`_apply_clock`'s list reader, which grounds BYHOUR off
+    # whichever clock-shaped match it meets first -- picking the WRONG (right)
+    # endpoint and stranding the connector/marker in the remainder (R126).
+    # The convention is the same as the leading branch above: BYHOUR pins to
+    # the range's left/start endpoint, read in text order.
+    between_post = _conn_surfaces(spec, "between_post", ())
+    if between_post:
+        # A postposed range's LEFT endpoint may write its hour bare with no
+        # unit word of its own ("9 és 17 óra között" -- only the right side
+        # spells "óra"); its own trailing marker licenses that bare reading
+        # the same way :func:`~chronologia.extract.timespan._compose_clock_range`
+        # licenses it for the preposed/single-span reading.  Rather than
+        # resolve each endpoint in isolation (which would require the SAME
+        # borrowed-unit machinery timespan.py already owns), the whole
+        # candidate clause is handed to :func:`extract_timespan` as one
+        # string and accepted only when it consumes every word (empty
+        # remainder) -- exactly the check :func:`_extract_range` itself uses.
+        for p in range(n):
+            if p in consumed:
+                continue
+            mk = next((k for mid in mids if (k := _match(p, mid)) is not None), None)
+            if mk is None:
+                continue
+            marker_end = None
+            for q in range(mk, n):
+                m2 = next((r for post in between_post
+                           if (r := _match(q, post)) is not None), None)
+                if m2 is not None:
+                    marker_end = m2
+                    break
+            if marker_end is None:
+                continue
+            # the left endpoint's start: try the shortest window first (the
+            # single token immediately before the "and" connector, the
+            # common bare-number case) and only widen leftward when that
+            # fails to parse cleanly -- never crossing an already-consumed
+            # token, which marks where an earlier finder's own frame ends.
+            lo_bound = max((c + 1 for c in consumed if c < p), default=0)
+            hit = None
+            for i in range(p - 1, lo_bound - 1, -1):
+                if i in consumed:
+                    break
+                clause = " ".join(t.raw for t in tokens[i:marker_end])
+                got = extract_timespan(clause, lang, anchor=anchor)
+                if got is not None and got[1] == "":
+                    hit = (i, got[0].start)
+                    break
+            if hit is None:
+                continue
+            i, c = hit
+            rec = _replace(rec, byhour=(c.hour,),
+                           byminute=((c.minute,) if c.minute else ()))
+            return rec, consumed | set(range(i, marker_end))
     return rec, consumed
 
 
@@ -897,6 +959,19 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
     item's minute -- the same "claim then decline" convention the finders
     and ``_apply_clock_range``/``_apply_range_bound``/``_apply_year_scope``
     already use.
+
+    R127: a rule may ALSO already carry a ``BYHOUR`` pin from
+    :func:`_apply_clock_range` (a "between 9 and 5" / postposed clock range,
+    whose consumed span never covers a LATER independent "and also at 7"
+    clause).  A clock range's ``BYHOUR`` is a deliberately partial reading --
+    the *start* of an interval RFC 5545 has no window-end part for -- so
+    folding a further trailing clock list onto it here would either be
+    misread as one more list item (silently dropping the range's own
+    meaning: "9,7" reads as three unrelated pins, not "9-5 plus 7") or
+    silently overwritten outright.  Neither is honest, so a trailing clock
+    match found while ``rec`` already carries a ``BYHOUR`` declines the
+    whole extraction instead -- refusal over a silently wrong rule, the same
+    convention the two decline sites above already follow.
     """
     from dataclasses import replace as _replace
     if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)):
@@ -909,6 +984,8 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
          if m.construction in ("clock_time", "military_time")
          and not any(i in consumed for i in range(*m.span))),
         key=lambda m: m.span[0])
+    if matches and rec.byhour:
+        return None, consumed
     for idx, m in enumerate(matches):
         res = engine.resolver.resolve(m, anchor or datetime.now())
         if res is None:
