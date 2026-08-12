@@ -85,7 +85,11 @@ def _strip_locative_hour(tokens, lang):
     extract = getattr(importlib.import_module(
         "ovos_number_parser.numbers_" + lang), "extract_number_" + lang)
     out = []
-    for t in tokens:
+    skip_next = False
+    for i, t in enumerate(tokens):
+        if skip_next:
+            skip_next = False
+            continue
         if not t.is_number:
             w = t.text
             for suf in _TR_LOCATIVE_SUFFIXES:
@@ -100,6 +104,27 @@ def _strip_locative_hour(tokens, lang):
                             and float(val) == int(val) and 0 <= val <= 23):
                         t = replace(t, text=stem)
                     break
+        elif i + 1 < len(tokens):
+            # A digit clock hour with the locative case marked as a
+            # SEPARATE token ("9'da" -- ``split_contractions`` breaks the
+            # apostrophe into its own boundary, so the tokenizer yields
+            # ["9", "da"] rather than one glued word).  When the next token
+            # is exactly one of the locative suffixes and sits immediately
+            # after the digit run (char_start == char_end + 1, the single
+            # apostrophe char between them, per ``normalise_unicode``'s
+            # straight-apostrophe fold above), it is the same "at <hour>"
+            # marking the word-form strip above handles, just spelled with
+            # the apostrophe the digit surface keeps. Drop it so the clock
+            # grammar sees a bare hour and the marker does not strand in the
+            # remainder, mirroring the word-form stem strip: only a glued,
+            # exact-suffix neighbour of a digit is ever dropped, so
+            # unrelated "-da/-de" words ("orada", "burada") -- which are
+            # never adjacent to a digit token via a single apostrophe --
+            # survive untouched.
+            nxt = tokens[i + 1]
+            if (not nxt.is_number and nxt.text in _TR_LOCATIVE_SUFFIXES
+                    and nxt.char_start == t.char_end + 1):
+                skip_next = True
         out.append(t)
     return tuple(out)
 
