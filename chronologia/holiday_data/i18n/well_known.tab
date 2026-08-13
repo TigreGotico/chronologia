@@ -107,6 +107,7 @@ new_year        | fr | jour de l'an ;; nouvel an ;; premier de l'an
 new_year_eve    | fr | réveillon ;; saint-sylvestre
 epiphany        | fr | épiphanie ;; jour des rois
 carnival        | fr | carnaval ;; mardi gras
+ash_wednesday   | fr | mercredi des cendres
 palm_sunday     | fr | dimanche des rameaux ;; les rameaux
 good_friday     | fr | vendredi saint
 easter          | fr | pâques ;; dimanche de pâques
@@ -125,7 +126,8 @@ boxing_day      | fr | saint-étienne
 new_year        | it | capodanno ;; primo dell'anno
 new_year_eve    | it | san silvestro ;; vigilia di capodanno
 epiphany        | it | epifania ;; befana
-carnival        | it | carnevale
+carnival        | it | carnevale ;; martedì grasso
+ash_wednesday   | it | mercoledì delle ceneri
 palm_sunday     | it | domenica delle palme
 good_friday     | it | venerdì santo
 easter          | it | pasqua ;; domenica di pasqua
@@ -145,6 +147,7 @@ new_year        | nl | nieuwjaar ;; nieuwjaarsdag
 new_year_eve    | nl | oudjaar ;; oudejaarsavond ;; oudejaarsdag
 epiphany        | nl | driekoningen
 carnival        | nl | carnaval
+ash_wednesday   | nl | aswoensdag
 palm_sunday     | nl | palmzondag ;; palmpasen
 good_friday     | nl | goede vrijdag
 easter          | nl | pasen ;; eerste paasdag

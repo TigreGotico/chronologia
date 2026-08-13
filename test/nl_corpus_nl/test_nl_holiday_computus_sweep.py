@@ -114,9 +114,10 @@ def test_holiday_year(phrase, gold):
 
 @pytest.mark.parametrize("phrase", [
     # koningsdag / bevrijdingsdag / sinterklaas now bind (round-2 civil
-    # holidays) -- see test_nl_national_holidays_2.py. aswoensdag /
-    # dodenherdenking remain unregistered coverage gaps.
-    "aswoensdag 2020", "dodenherdenking 2020",
+    # holidays) -- see test_nl_national_holidays_2.py. aswoensdag was fixed
+    # under R144 (see test_nl_r144_movable_feasts.py) and no longer belongs
+    # here. dodenherdenking remains an unregistered coverage gap.
+    "dodenherdenking 2020",
 ])
 def test_unregistered_holiday_leaves_year(phrase):
     """These holiday words are not in the nl vocabulary: the year still binds
