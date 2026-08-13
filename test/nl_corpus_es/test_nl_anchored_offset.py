@@ -56,8 +56,10 @@ def test_weekday_roll_is_day_wide():
     assert span("el lunes después de navidad").width == timedelta(days=1)
 
 
-def test_bare_after_holiday_unchanged():
-    assert start("después de pascua") == _ad(PASCUA)
+def test_bare_after_holiday_refused():
+    # R146: was a silent "después de" strand over the plain holiday;
+    # refused now -- see test_nl_r146_before_after_holiday.py (en).
+    nomatch("después de pascua")
 
 
 @pytest.mark.parametrize("text", ["antes de la reunión", "el día después de la boda"])

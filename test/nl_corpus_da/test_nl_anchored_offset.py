@@ -33,8 +33,10 @@ def test_weekday_roll(text, expected):
 def test_week_offset_is_day_wide():
     assert span("2 uger efter påske").width == timedelta(days=1)
 
-def test_bare_after_holiday_unchanged():
-    assert start("efter påske") == _ad(EASTER)
+def test_bare_after_holiday_refused():
+    # R146: was a silent "efter" strand over the plain holiday; refused now
+    # -- see test_da_r146_before_after_holiday.py / the en writeup.
+    nomatch("efter påske")
 
 @pytest.mark.parametrize("text", ['efter mødet', 'dagen efter mødet'])
 def test_no_reference_no_offset(text):
