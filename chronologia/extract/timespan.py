@@ -2436,6 +2436,38 @@ def _month_holiday_collision_veto(tokens, match, spec) -> bool:
     return tokens[match.span[0]].text in collisions
 
 
+def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
+    """True for a ``daypart_ref`` match whose ``DAYPART`` token is ALSO a
+    ``DAY_WORD`` surface (Spanish/Galician "mañana" is both "tomorrow" and
+    "morning") when the match is immediately preceded by a directional
+    "before"/"after" marker ("antes"/"después").
+
+    "antes de mañana" is unambiguously "before tomorrow", never "before [in]
+    the morning" -- Spanish has no such reading of "antes de" + a bare
+    daypart.  Without this veto, the matcher's own longest-span rule always
+    prefers the 2-token ``daypart_ref`` reading ("de mañana" via the "of
+    DAYPART" order, ``marker_of.voc`` binding "de") over the 1-token bare
+    ``named_day`` reading of "mañana" alone, so "mañana" is read as "the
+    morning" and the whole reference silently becomes a daypart band on
+    TODAY -- stranding "antes"/the offset's own magnitude in the remainder
+    (R141). Portuguese/pt has no such collision ("amanhã" tomorrow vs
+    "manhã" morning are different words), so this veto is a no-op there and
+    everywhere the DAYPART surface does not double as a DAY_WORD.
+    """
+    if match.construction != "daypart_ref":
+        return False
+    dp_tok = match.slots.get("DAYPART")
+    if dp_tok is None or dp_tok.text not in spec.named_days:
+        return False
+    b = match.span[0]
+    if b == 0:
+        return False
+    dir_markers = (spec.connectors.get("before", frozenset())
+                   | spec.connectors.get("after", frozenset())
+                   | spec.connectors.get("offset_after", frozenset()))
+    return tokens[b - 1].text in dir_markers
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
@@ -2443,15 +2475,18 @@ def _candidate_veto(tokens, match, spec) -> bool:
     capitalized "BE"/"AM" is a declined era, not a confident year; "in year"
     stranding a bare "0" is the original R102 stranding hole reopened for the
     one value SMALLYEAR refuses; a bare Scandinavian "jul" is Christmas, not
-    the month of July).  Applied before the overlap contest so the shorter
-    correct reading (a year_ref, or nothing) survives.
+    the month of July; Spanish/Galician "mañana" after "antes"/"después" is
+    "tomorrow", not "[in] the morning").  Applied before the overlap contest
+    so the shorter correct reading (a year_ref, a named_day, or nothing)
+    survives.
     """
     return (_new_year_definite_article_veto(tokens, match, spec)
             or _bare_be_trailing_veto(tokens, match, spec)
             or _stray_capitalized_be_veto(tokens, match, spec)
             or _stray_capitalized_am_veto(tokens, match, spec)
             or _stray_year_zero_veto(tokens, match, spec)
-            or _month_holiday_collision_veto(tokens, match, spec))
+            or _month_holiday_collision_veto(tokens, match, spec)
+            or _relday_daypart_homograph_veto(tokens, match, spec))
 
 
 #: the "for <duration>" bound marker vocabulary, keyed by spec identity so a

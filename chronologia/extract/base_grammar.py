@@ -414,13 +414,13 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # identically in the 6 locales that had it; the base closes the gap in the
     # other 34.
     "named_day_after": [
-        "article? indef? UNIT after DAY_WORD",
+        "article? indef? DAYUNIT after DAY_WORD",
     ],
     # "the day before <named day>" ("the day before yesterday"). Declared
     # identically in the 6 locales that had it; the base closes the gap in the
     # other 34.
     "named_day_before": [
-        "article? indef? UNIT before DAY_WORD",
+        "article? indef? DAYUNIT before DAY_WORD",
     ],
 }
 

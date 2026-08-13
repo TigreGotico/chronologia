@@ -708,8 +708,11 @@ class Resolver:
     def _named_day_offset(self, match, anchor, step):
         """"the day after/before <named day>": one day past/short of a named
         day ("the day after tomorrow" -> +2, "the day before yesterday" -> -2).
-        Only the day unit shifts a named day by a whole day."""
-        if self.spec.units[match.slots["UNIT"].text] != "day":
+        Only the day unit shifts a named day by a whole day -- the grammar's
+        ``DAYUNIT`` slot (see ``matcher._bind``) already restricts the bound
+        token to "day", so this check is a defensive belt-and-braces guard,
+        not the primary gate (that lives at bind time now, R141)."""
+        if self.spec.units[match.slots["DAYUNIT"].text] != "day":
             return None
         offset = self.spec.named_days[match.slots["DAY_WORD"].text] + step
         return Resolution(_day_span(_midnight(anchor) + timedelta(days=offset)),
