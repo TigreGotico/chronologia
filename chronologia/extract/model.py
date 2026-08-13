@@ -96,6 +96,17 @@ class TokenizerModes:
     """Per-language tokenizer switches (facts from ``lang.json``)."""
     split_contractions: bool = False
     ordinal_dot: bool = False
+    # the widest digit run ``ordinal_dot`` folds the trailing dot onto.
+    # ``None`` (default) is unbounded -- a locale like Hungarian legitimately
+    # writes a dotted YEAR that opens a year-first dotted date ("2026.
+    # június 20.": the dot after the 4-digit year is a real part of that
+    # construction, not a stray sentence period).  German ordinals never run
+    # past 2 digits (a day-of-month, a two-digit count), so capping there
+    # keeps a bare 4-digit year's trailing SENTENCE period ("Jahr 2027. Es
+    # ...") from being folded into the year token as if it were an ordinal
+    # dot.  A per-locale fact, not shared logic: the two languages disagree
+    # on how wide a genuine ordinal-dot number gets.
+    ordinal_dot_max_digits: Optional[int] = None
     # the language writes its everyday numeric date with dots
     # ("15.06.2020"), so that surface is read as one date literal instead of
     # as loose numbers.  Off by default: a language with no dotted

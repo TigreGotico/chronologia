@@ -324,8 +324,15 @@ class Tokenizer:
             # dotted date binds whole rather than being read as a number
             parts.insert(4, _DOTDATE)
         if modes.ordinal_dot:
-            # a digit run followed by a dot that is not a decimal point
-            parts.append(r"\d+\.(?!\d)")
+            # a digit run followed by a dot that is not a decimal point.
+            # ``ordinal_dot_max_digits`` (a per-locale fact) optionally caps
+            # how wide that digit run may be -- see its docstring in
+            # ``model.TokenizerModes``. Unbounded by default, matching every
+            # ordinal_dot locale's original behaviour (a year-first dotted
+            # date like Hungarian's "2026. június 20." needs the full
+            # 4-digit run to keep its dot).
+            cap = modes.ordinal_dot_max_digits
+            parts.append(r"\d{1,%d}\.(?!\d)" % cap if cap else r"\d+\.(?!\d)")
         # The number rule is locale-aware: the SAME two characters group
         # thousands or mark the decimal in OPPOSITE roles per locale, so the
         # grouped surface binds as ONE token instead of being split into a

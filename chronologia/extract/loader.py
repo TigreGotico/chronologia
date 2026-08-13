@@ -453,6 +453,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         tokenizer=TokenizerModes(
             split_contractions=tok.get("split_contractions", False),
             ordinal_dot=tok.get("ordinal_dot", False),
+            ordinal_dot_max_digits=tok.get("ordinal_dot_max_digits"),
             dotted_date=tok.get("dotted_date", False),
             decimal_comma=tok.get("decimal_comma", False)),
         guards=cfg.get("guards", {}),
