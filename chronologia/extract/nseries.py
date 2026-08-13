@@ -2009,6 +2009,33 @@ def _recur_nth_weekday(ctx):
         while start > 0 and (t[start - 1].text in ctx.articles
                              or t[start - 1].text in ctx.every):
             start -= 1
+        # a leading interval prefix ("every other"/"every 2nd") directly
+        # before the walked-back head is captured here so the year-scope
+        # branch below can fold it into the built rule's INTERVAL (R154);
+        # the month-scope and bare-elliptical readings intentionally drop
+        # it (their monthly cadence already matches the base "last <wd>"
+        # reading), so this value is used only by the year branch.
+        year_interval = 1
+        if start > 0 and t[start - 1].text in ctx.other:
+            year_interval = 2
+            start -= 1
+        elif start > 0 and t[start - 1].is_number:
+            year_interval = int(t[start - 1].value)
+            start -= 1
+        if year_interval != 1:
+            while start > 0 and (t[start - 1].text in ctx.articles
+                                 or t[start - 1].text in ctx.every):
+                start -= 1
+        if (r < n and t[r].text in ctx.rel_markers
+                and ctx.rel_markers[t[r].text] != 0
+                and r + 1 < n and t[r + 1].text in ctx.units
+                and ctx.units[t[r + 1].text] in ("year", "month")):
+            # non-zero deixis ("next"/"last") before the year/month noun
+            # bounds the phrase to a single period ("of next year"), not an
+            # unbounded recurrence -- claim the frame and refuse so a weaker
+            # finder never re-reads just the ordinal-weekday head into a
+            # rule at the wrong frequency.
+            return None, frozenset(range(start, r + 2))
         if r < n and t[r].text in ctx.months:
             if business:
                 rec = _business_day_of_month(ordn, month=ctx.months[t[r].text])
@@ -2036,8 +2063,10 @@ def _recur_nth_weekday(ctx):
             # weekday of the whole year -- exactly the reading "of the year"
             # asks for, so this resolves rather than refuses.
             if business:
-                return _business_day_of_year(ordn), set(range(start, r + 1))
-            return _nth_weekday_of_year(ordn, wd), set(range(start, r + 1))
+                return (_business_day_of_year(ordn, year_interval),
+                        set(range(start, r + 1)))
+            return (_nth_weekday_of_year(ordn, wd, year_interval),
+                    set(range(start, r + 1)))
     return None
 
 
@@ -2057,27 +2086,35 @@ def _business_day_of_month(ordn, month=None):
     return _build_every("monthly", byday=byday, bysetpos=(ordn,))
 
 
-def _nth_weekday_of_year(ordn, wd):
+def _nth_weekday_of_year(ordn, wd, interval=1):
     """The ``ordn``-th ``wd`` of the whole calendar year (R145).
 
     Sibling of :func:`_nth_weekday_of_month` but with no ``bymonth`` at
     all -- RFC 5545 gives a signed ``BYDAY`` ordinal under bare
     ``FREQ=YEARLY`` exactly this meaning ("last monday of the year" ->
     ``FREQ=YEARLY;BYDAY=-1MO``), never ``FREQ=MONTHLY`` (which would repeat
-    every month rather than once a year).
+    every month rather than once a year). ``interval`` carries a leading
+    "every other"/"every Nth" multiplier (R154): unlike the month-scope
+    sibling, an every-N-years cadence is a distinct, expressible frequency
+    (``FREQ=YEARLY;INTERVAL=N``), not a degenerate repeat of the base
+    reading, so it is folded in rather than dropped.
     """
-    return _build_every("yearly", byday=((ordn, wd),))
+    kw = {"interval": interval} if interval != 1 else {}
+    return _build_every("yearly", byday=((ordn, wd),), **kw)
 
 
-def _business_day_of_year(ordn):
+def _business_day_of_year(ordn, interval=1):
     """The ``ordn``-th business day of the whole calendar year (R145).
 
     Sibling of :func:`_business_day_of_month` (``month=None``) but yearly
     rather than monthly, for "the last weekday of the year" -- the same
     ``BYSETPOS`` idiom, scoped to ``FREQ=YEARLY`` with no ``BYMONTH``.
+    ``interval`` folds a leading "every other"/"every Nth" multiplier, same
+    as :func:`_nth_weekday_of_year`.
     """
     byday = tuple((None, k) for k in range(5))  # MO..FR
-    return _build_every("yearly", byday=byday, bysetpos=(ordn,))
+    kw = {"interval": interval} if interval != 1 else {}
+    return _build_every("yearly", byday=byday, bysetpos=(ordn,), **kw)
 
 
 def _fold_group_value(ctx, group):
@@ -2743,6 +2780,37 @@ def _yearly_recur_qualifiers(ctx, engine, date_matches, idx):
     return month, (day if day is not None else day_default), end
 
 
+def _skip_clock_at(ctx, lang, idx):
+    """The end index just past a clock ("at 9"/"at 9:30") construction
+    anchored EXACTLY at token *idx*, or ``None`` when none sits there.
+
+    Used only to look PAST an out-of-order clock pin for a further
+    qualifier the adjacent scan missed ("weekly **at 9** on monday" --
+    R155's WEEKLY/MONTHLY/YEARLY qualifier scans normally look for their
+    qualifier right after the freq word and give up if a clock sits there
+    instead). The clock's own tokens are deliberately left OUT of the
+    returned span -- this helper never reads the clock's value, so
+    :func:`_apply_clock` still resolves and folds the hour afterwards from
+    its own unconsumed-token scan.
+    """
+    t = ctx.tokens
+    if not (idx < len(t) and t[idx].text in ctx.at_words):
+        return None
+    engine = _timespan_engine(lang)
+    for m in engine.matcher.match(t):
+        if m.construction not in ("clock_time", "military_time"):
+            continue
+        lo = m.span[0]
+        # the clock construction itself may start past a MULTI-token "at"
+        # marker its own grammar does not swallow (Spanish "a las 9" tags
+        # the clock match from "las", not "a") -- exactly the same gap
+        # :func:`_apply_clock` bridges backwards when it extends its own
+        # consumed span over a leading "at" marker.
+        if lo >= idx and all(t[k].text in ctx.at_words for k in range(idx, lo)):
+            return m.span[1]
+    return None
+
+
 def _recur_freq_word(ctx):
     """A lone ``daily`` / ``weekly`` / ``monthly`` / ``yearly`` / ``quarterly``
     / ``biweekly`` / ``fortnightly`` word, or ``[on] weekdays`` / ``[on]
@@ -2757,6 +2825,13 @@ def _recur_freq_word(ctx):
     and :func:`_yearly_bymonth_qualifier` with the ``every``-gated readings
     keeps both paths reading the same qualifier grammar instead of one
     silently dropping it (R149).
+
+    The qualifier scan is order-INSENSITIVE with a leading clock pin
+    (R155): "weekly **at 9** on monday" reads the same BYDAY the postposed
+    order ("weekly on monday at 9am") already does, and the MONTHLY/YEARLY
+    siblings take the same treatment via :func:`_skip_clock_at` since they
+    share the same adjacent-only qualifier scan. DAILY has no further
+    qualifier of its own, so "daily at 9" was never affected.
     """
     t = ctx.tokens
     n = len(t)
@@ -2770,10 +2845,26 @@ def _recur_freq_word(ctx):
                 got = _weekly_byday_qualifier_loose(ctx, nxt)
                 if got is not None:
                     kw["byday"], end = got
+                else:
+                    skip = _skip_clock_at(ctx, ctx.lang, nxt)
+                    if skip is not None:
+                        got = _weekly_byday_qualifier_loose(ctx, skip)
+                        if got is not None:
+                            kw["byday"], byday_end = got
+                            return (_build_every(freq, **kw),
+                                    {i} | set(range(skip, byday_end)))
             elif freq == "MONTHLY":
                 got = _monthly_bymonthday_qualifier(ctx, nxt)
                 if got is not None:
                     kw["bymonthday"], end = got
+                else:
+                    skip = _skip_clock_at(ctx, ctx.lang, nxt)
+                    if skip is not None:
+                        got = _monthly_bymonthday_qualifier(ctx, skip)
+                        if got is not None:
+                            kw["bymonthday"], day_end = got
+                            return (_build_every(freq, **kw),
+                                    {i} | set(range(skip, day_end)))
             elif freq == "YEARLY":
                 engine = _timespan_engine(ctx.lang)
                 date_matches = [m for m in engine.matcher.match(t)
@@ -2781,6 +2872,15 @@ def _recur_freq_word(ctx):
                 got = _yearly_recur_qualifiers(ctx, engine, date_matches, nxt)
                 if got is not None:
                     kw["bymonth"], kw["bymonthday"], end = got
+                else:
+                    skip = _skip_clock_at(ctx, ctx.lang, nxt)
+                    if skip is not None:
+                        got = _yearly_recur_qualifiers(ctx, engine,
+                                                        date_matches, skip)
+                        if got is not None:
+                            kw["bymonth"], kw["bymonthday"], y_end = got
+                            return (_build_every(freq, **kw),
+                                    {i} | set(range(skip, y_end)))
             return _build_every(freq, **kw), set(range(i, end))
     for i, tok in enumerate(t):
         # "on" is *required* here (not merely swallowed if present): a bare
