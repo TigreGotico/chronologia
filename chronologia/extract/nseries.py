@@ -2533,22 +2533,18 @@ def _recur_every(ctx):
                 nxt = j + 1
                 if nxt < n and t[nxt].text in ctx.on_words:
                     if freq == "WEEKLY":
-                        got = _collect_weekdays(ctx, nxt + 1, True)
+                        got = _weekly_byday_qualifier(ctx, nxt)
                         if got is not None:
-                            days, wend = got
-                            byday = tuple((None, wd) for wd in days)
+                            byday, wend = got
                             return (_build_every("weekly", byday=byday, **iv),
                                     set(range(i, wend)))
                     elif freq == "MONTHLY":
-                        k = nxt + 1
-                        while k < n and t[k].text in ctx.articles:
-                            k += 1
-                        if k < n and t[k].is_number \
-                                and 1 <= int(t[k].value) <= 31:
+                        got = _monthly_bymonthday_qualifier(ctx, nxt)
+                        if got is not None:
+                            day, mend = got
                             return (_build_every(
-                                        "monthly",
-                                        bymonthday=int(t[k].value), **iv),
-                                    set(range(i, _of_month_tail(ctx, k + 1))))
+                                        "monthly", bymonthday=day, **iv),
+                                    set(range(i, mend)))
                 # a preposed day-of-month ("the 15th of every 2 months") is the
                 # placement qualifier for an interval-months rule that no
                 # postposed "on the Nth" carried.  Guarded to interval != 1 so
@@ -2562,16 +2558,137 @@ def _recur_every(ctx):
     return None
 
 
+def _weekly_byday_qualifier(ctx, idx):
+    """``on <weekday(s)>`` starting right at token *idx* -> ``(byday, end)``
+    or ``None``.  Shared by the ``every <unit> on ...`` interval reading and
+    the bare-adverb ("weekly"/"woechentlich"/...) qualifier fold below."""
+    t = ctx.tokens
+    n = len(t)
+    if not (idx < n and t[idx].text in ctx.on_words):
+        return None
+    got = _collect_weekdays(ctx, idx + 1, True)
+    if got is None:
+        return None
+    days, end = got
+    return tuple((None, wd) for wd in days), end
+
+
+def _weekly_byday_qualifier_loose(ctx, idx):
+    """Like :func:`_weekly_byday_qualifier`, plus two markers that the
+    ``every``-gated reading never needs because ``every`` already supplies a
+    determiner: a bare leading article ("semanalmente **los** lunes") or no
+    marker at all (German's fused habitual plural, "woechentlich montags").
+    Only the bare-adverb frequency path reads these looser forms -- the
+    dedicated ``on <weekday>`` finder (_recur_on_weekdays) already owns the
+    unmarked English surface ("on mondays") on its own terms.
+    """
+    got = _weekly_byday_qualifier(ctx, idx)
+    if got is not None:
+        return got
+    t = ctx.tokens
+    n = len(t)
+    k = idx
+    while k < n and t[k].text in ctx.articles:
+        k += 1
+    got = _collect_weekdays(ctx, k, True)
+    if got is None:
+        return None
+    days, end = got
+    return tuple((None, wd) for wd in days), end
+
+
+def _monthly_bymonthday_qualifier(ctx, idx):
+    """``on [the] <Nth>`` starting right at token *idx* -> ``(day, end)`` or
+    ``None``.  Shared by the ``every <unit> on ...`` interval reading and the
+    bare-adverb ("monthly"/"monatlich"/...) qualifier fold below."""
+    t = ctx.tokens
+    n = len(t)
+    if not (idx < n and t[idx].text in ctx.on_words):
+        return None
+    k = idx + 1
+    while k < n and t[k].text in ctx.articles:
+        k += 1
+    if k < n and t[k].is_number and 1 <= int(t[k].value) <= 31:
+        return int(t[k].value), _of_month_tail(ctx, k + 1)
+    return None
+
+
+def _month_day_from_date_match(engine, m):
+    """Read ``(month, day)`` off a ``calendar_date`` match's MONTH/DAY slots,
+    defaulting the day to 1 when the match names a month only (a bare "in
+    june" carries no day). Returns ``None`` when the match names no month the
+    locale's calendar recognises."""
+    month_tok = m.slots.get("MONTH")
+    if month_tok is None or month_tok.text not in engine.spec.months:
+        return None
+    month = engine.spec.months[month_tok.text]
+    day_tok = m.slots.get("DAY")
+    day = int(day_tok.value) if day_tok else 1
+    return month, day
+
+
+def _yearly_bymonth_qualifier(ctx, engine, date_matches, idx):
+    """The first ``calendar_date`` match at or after token *idx* reachable
+    across a short ``in``-word/article gap ("annually **in** june") ->
+    ``(month, day, end)`` or ``None``.  Reads the very same MONTH/DAY slots
+    the ``every year <date>`` finder (_recur_date_anchored) reads off the
+    single-span engine's own match, just gated on the adverb path's shorter,
+    marker-only gap instead of that finder's full every-skeleton gap."""
+    t = ctx.tokens
+    for m in date_matches:
+        if m.span[0] < idx:
+            continue
+        gap = t[idx:m.span[0]]
+        if len(gap) > 2 or not all(
+                g.text in ctx.in_words or g.text in ctx.articles
+                for g in gap):
+            continue
+        md = _month_day_from_date_match(engine, m)
+        if md is None:
+            continue
+        return md[0], md[1], m.span[1]
+    return None
+
+
 def _recur_freq_word(ctx):
     """A lone ``daily`` / ``weekly`` / ``monthly`` / ``yearly`` / ``quarterly``
     / ``biweekly`` / ``fortnightly`` word, or ``[on] weekdays`` / ``[on]
-    weekends``."""
+    weekends``.
+
+    The bare adverb carries no determiner of its own, but a trailing
+    day/month qualifier reads exactly like the one an explicit "every"
+    reading takes ("monthly **on the 15th**" folds BYMONTHDAY=15 the same
+    way "every month on the 15th" does; "annually **in june**" folds
+    BYMONTH=6 the same way "every year in june" does) -- sharing
+    :func:`_weekly_byday_qualifier`, :func:`_monthly_bymonthday_qualifier`
+    and :func:`_yearly_bymonth_qualifier` with the ``every``-gated readings
+    keeps both paths reading the same qualifier grammar instead of one
+    silently dropping it (R149).
+    """
     t = ctx.tokens
+    n = len(t)
     for i, tok in enumerate(t):
         if tok.text in ctx.freq:
             freq, interval = ctx.freq[tok.text]
-            iv = {"interval": interval} if interval != 1 else {}
-            return _build_every(freq, **iv), {i}
+            kw = {"interval": interval} if interval != 1 else {}
+            end = i + 1
+            nxt = i + 1
+            if freq == "WEEKLY":
+                got = _weekly_byday_qualifier_loose(ctx, nxt)
+                if got is not None:
+                    kw["byday"], end = got
+            elif freq == "MONTHLY":
+                got = _monthly_bymonthday_qualifier(ctx, nxt)
+                if got is not None:
+                    kw["bymonthday"], end = got
+            elif freq == "YEARLY":
+                engine = _timespan_engine(ctx.lang)
+                date_matches = [m for m in engine.matcher.match(t)
+                                 if m.construction == "calendar_date"]
+                got = _yearly_bymonth_qualifier(ctx, engine, date_matches, nxt)
+                if got is not None:
+                    kw["bymonth"], kw["bymonthday"], end = got
+            return _build_every(freq, **kw), set(range(i, end))
     for i, tok in enumerate(t):
         # "on" is *required* here (not merely swallowed if present): a bare
         # "weekday"/"weekend" names a single day ("it's a weekday", "the
@@ -3000,12 +3117,10 @@ def _recur_date_anchored(ctx):
         # non-leap year, which used to drop this frame and let the greedy
         # _recur_every catch-all mis-read it as a monthly BYMONTHDAY firing 11x
         # a year.
-        month_tok = dm.slots.get("MONTH")
-        if month_tok is None or month_tok.text not in engine.spec.months:
+        md = _month_day_from_date_match(engine, dm)
+        if md is None:
             continue
-        month = engine.spec.months[month_tok.text]
-        day_tok = dm.slots.get("DAY")
-        day = int(day_tok.value) if day_tok else 1
+        month, day = md
         try:
             kw = {"interval": interval} if interval is not None else {}
             rule = _build_every("yearly", bymonth=month, bymonthday=day, **kw)
