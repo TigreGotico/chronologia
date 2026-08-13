@@ -1679,6 +1679,77 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             or scan("since", since_surf, since_span))
 
 
+def _bare_direction_span(tokens, span, consumed, spec, anchor):
+    """R146: a bare "before X" / "after X" -- no magnitude ("a week before
+    X", already composed by
+    :func:`~chronologia.extract.anchored.apply_anchored_offset`) -- binds a
+    span instead of silently stranding the direction word over the bare "X"
+    reading the core already resolved.
+
+    Fires ONLY on the exact defect signature: the core consumed everything
+    from some index ``j`` onward (the endpoint "X" resolved standalone,
+    ``span``/``consumed`` already describe it) while a "before"/"after"
+    marker LEADS the stream at position 0 and is itself, together with any
+    gap words up to ``j``, entirely UNCONSUMED. This is deliberately a
+    *post-hoc* check on the core's own resolution rather than an independent
+    pre-scan: a pre-scan that tried to resolve "<marker> <rest>" on its own
+    would also fire on an unrelated construction that merely happens to
+    START with the same surface as the locale's "before" connector (Danish
+    "for" is both "before" AND the lead-in article of "for N UNIT siden" =
+    "N UNIT ago", which fully consumes -- and legitimately means something
+    else entirely -- on its own). Requiring the REST of the core's own
+    resolution to already be complete except for the marker rules that out:
+    "for tre dage siden" is fully consumed by the ordinary "ago" grammar
+    (nothing stranded), so this never touches it; "for jul" ("before
+    christmas") leaves "for" stranded beside an otherwise-complete "jul"
+    match, which is exactly the shape this closes.
+
+    "before X" mirrors the "until X" open-range binding EXACTLY: ``[now, X's
+    end)`` when X's end is in the FUTURE. When it is not (an explicit past
+    date, "before easter 2020"), the shape is recognised but contradictory --
+    refused, never silently reinterpreted as a bare "X" with "before" dropped.
+
+    "after X" has no natural representation: :class:`DateSpan` is a closed
+    ``[start, end)`` pair of :class:`AstroDate`, and unlike "since X" --
+    whose open side is anchored to "now" as the END (``[X, now)``, still a
+    closed pair) -- "after X" would need an open-ended FUTURE, which the type
+    cannot express. Rather than strand the word or fabricate an artificial
+    end, a bare "after X" is refused outright.
+
+    Returns ``(new_span, new_consumed)`` on a successful bare "before",
+    ``"veto"`` when the shape is recognised but the WHOLE parse must be
+    refused, or ``None`` when this is not the shape at all (unchanged core
+    result stands).
+    """
+    n = len(tokens)
+    if n < 2 or 0 in consumed:
+        return None
+    gap = (frozenset(spec.connectors.get("article", ()))
+           | frozenset(spec.connectors.get("indef", ()))
+           | frozenset(spec.connectors.get("of", ())))
+    now = AstroDate.from_datetime(anchor)
+    for role, surf in (("before", _conn_surfaces(spec, "before", ())),
+                       ("after", _conn_surfaces(spec, "after", ()))):
+        k = _match_conn_at(tokens, 0, surf)
+        if not k:
+            continue
+        j = k
+        while j < n and tokens[j].text in gap:
+            j += 1
+        # every marker/gap token must be UNCONSUMED and everything from j
+        # onward must be FULLY consumed -- the exact "otherwise-complete
+        # endpoint, marker left over" signature.
+        if j >= n or any(i in consumed for i in range(0, j)) \
+                or not all(i in consumed for i in range(j, n)):
+            continue
+        if role == "after":
+            return "veto"
+        if span.end > now:
+            return DateSpan(now, span.end), set(consumed) | set(range(0, j))
+        return "veto"
+    return None
+
+
 def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
     """A lone weekday ("monday") as a range endpoint only: a day-wide span for
     the next occurrence on or after the anchor day, or -- with ``backward`` --
@@ -2701,6 +2772,15 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     if core is None:
         return None
     span, consumed = core
+    # R146: a bare "before X" / "after X" (no magnitude) left the direction
+    # word stranded beside an otherwise-complete "X" -- see
+    # _bare_direction_span for why this is a post-hoc check on the core's
+    # own resolution rather than an independent pre-scan.
+    bare_dir = _bare_direction_span(tokens, span, consumed, engine.spec, anchor)
+    if bare_dir == "veto":
+        return None
+    if bare_dir is not None:
+        span, consumed = bare_dir
     # veto a reference governed by a leading negation/exclusion particle: a
     # trigger reachable across only the skippable run immediately before the span
     # (a whole-prefix scan would falsely veto a trigger in another clause).

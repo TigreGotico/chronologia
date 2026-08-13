@@ -100,10 +100,14 @@ def test_weekday_roll_is_day_wide():
 
 # -- negatives / confusables: existing behaviour must be preserved ---------
 
-def test_bare_after_holiday_unchanged():
-    # "after easter" with no offset pre-amble is the existing holiday_ref
-    # behaviour: the holiday itself, not a shifted date.
-    assert start("after easter") == _ad(EASTER)
+def test_bare_after_holiday_refused():
+    # R146: "after easter" with no offset pre-amble used to silently answer
+    # with the holiday itself and a stranded "after" -- a defect, not this
+    # construction's behaviour. DateSpan cannot express an open-ended
+    # future (unlike "since X", whose open side is anchored to "now" as the
+    # END), so a bare "after X" is refused outright rather than
+    # reinterpreted as a bare "X". See test_nl_r146_before_after_holiday.py.
+    nomatch("after easter")
 
 
 @pytest.mark.parametrize("text,days", [
