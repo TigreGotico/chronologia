@@ -148,22 +148,24 @@ def test_control_no_clock_subday_offset_still_floors_to_day():
     assert got_end == datetime(2026, 8, 13, 0, 0)
 
 
-def test_known_separate_defect_day_grain_multi_count_relday_not_this_fix():
-    # KNOWN SEPARATE BUG, out of scope for R141, left UNCHANGED and pinned
-    # here only as a regression guard (not an assertion of correctness):
-    # "2 days before tomorrow" ALSO collides with the (day-only, R141-fixed)
-    # ``named_day_before`` idiom -- "days" is a DAY unit surface, so it
-    # still matches "DAYUNIT before DAY_WORD" and wins the matcher's
-    # longest-span contest over the general NUM-aware offset construction.
-    # That idiom construction has no NUM slot at all (it is built for the
-    # bare "the day before yesterday" phrasing), so it silently ignores the
-    # "2" quantity and always shifts by exactly one day, stranding "2" in
-    # the remainder. This is a distinct defect (a quantified day-count
-    # colliding with the SAME idiom construction, not the clock-composition
-    # dropping R141 targets) and is left unfixed; this test only pins the
-    # CURRENT (buggy) shape so it does not silently get worse.
+def test_r147_day_grain_multi_count_relday_now_fixed():
+    # Formerly a KNOWN SEPARATE BUG (R147, fixed): "2 days before tomorrow"
+    # collides with the (day-only, R141-fixed) ``named_day_before`` idiom --
+    # "days" is a DAY unit surface, so it also matches "DAYUNIT before
+    # DAY_WORD" and used to win the matcher's longest-span contest over the
+    # general NUM-aware offset construction. That idiom construction has no
+    # NUM slot at all (it is built for the bare "the day before yesterday"
+    # phrasing), so it silently ignored the "2" quantity and always shifted
+    # by exactly one day, stranding "2" in the remainder.
+    #
+    # R147 fixes this by vetoing the idiom match whenever a NUM token
+    # immediately precedes its DAYUNIT slot (``timespan.
+    # _num_preamble_named_day_idiom_veto``), so the bare ``named_day`` match
+    # for "tomorrow" wins instead and the generic anchored-offset
+    # composition pass folds "2 days before" onto it correctly: anchor is
+    # 2026-08-12, tomorrow is 2026-08-13, minus 2 days = 2026-08-11.
     r = extract_timespan("2 days before tomorrow", LANG, _A)
     assert r is not None
-    assert r[0].start == datetime(2026, 8, 12, 0, 0)
-    assert r[0].end == datetime(2026, 8, 13, 0, 0)
-    assert r.remainder == "2"
+    assert r[0].start == datetime(2026, 8, 11, 0, 0)
+    assert r[0].end == datetime(2026, 8, 12, 0, 0)
+    assert r.remainder == ""

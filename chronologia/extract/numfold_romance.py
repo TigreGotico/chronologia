@@ -834,13 +834,57 @@ def _elision_split(tokens, proclitics):
     return _reindex(out)
 
 
+#: "jour(s)" -- the one unit "N jours après/avant demain/hier" ("N days
+#: after/before tomorrow/yesterday") is spelled with, checked by
+#: :func:`_num_unit_before` to decide whether "après demain"/"avant hier"
+#: are the fixed +-2-day idiom or the DIRECTIONAL MARKER of a genuine
+#: numeral-scaled offset (see ``_FR_GUARDED_PHRASES``).
+_FR_DAY_UNIT_WORDS = frozenset({"jour", "jours"})
+
+
+def _num_unit_before(tokens, i, unit_words):
+    """True when a ``[NUM] UNIT`` pre-amble ends immediately at index ``i``
+    ("**deux jours** " before "après demain") -- read from the still
+    UN-folded stream (spelled numbers have not folded to digits yet at this
+    point in the pipeline), so a spelled numeral is recognised through
+    :func:`extract_number_fr` rather than ``Token.is_number``."""
+    if i < 2:
+        return False
+    unit_tok, num_tok = tokens[i - 1], tokens[i - 2]
+    if unit_tok.text not in unit_words:
+        return False
+    if num_tok.is_number:
+        return True
+    value = extract_number_fr(num_tok.text, ordinals=False)
+    return value is not False and value is not None
+
+
+#: fused French idiom surfaces whose collapse must be HELD BACK when a
+#: numeral quantity heads them ("deux jours après demain" = demain+2, an
+#: ordinary numeral-scaled offset with "après" as its marker, R147) --
+#: unlike a bare "après demain"/"avant hier", which is always the fixed
+#: +-2-day idiom.  Every other ``_FR_PHRASES`` entry (the BC/AD markers,
+#: "il y a", "week end") has no such competing numeral-offset reading, so it
+#: collapses unconditionally.
+_FR_GUARDED_PHRASES = frozenset({"apresdemain", "avanthier"})
+
+
 def _collapse_phrase(tokens, words, surface):
-    """Collapse a fixed multiword sequence ("il y a") to one token."""
+    """Collapse a fixed multiword sequence ("il y a") to one token.
+
+    A guarded surface (see ``_FR_GUARDED_PHRASES``) is left un-collapsed
+    when a ``[NUM] UNIT`` pre-amble ("deux jours") immediately precedes it,
+    so the directional marker word stays a separate token for the offset
+    grammar (or the generic anchored-offset composition pass) to bind.
+    """
     n = len(words)
+    guarded = surface in _FR_GUARDED_PHRASES
     out = []
     i = 0
     while i < len(tokens):
-        if [t.text for t in tokens[i:i + n]] == words:
+        if ([t.text for t in tokens[i:i + n]] == words
+                and not (guarded
+                        and _num_unit_before(tokens, i, _FR_DAY_UNIT_WORDS))):
             raw = " ".join(t.raw for t in tokens[i:i + n])
             out.append(Token(text=surface, raw=raw, index=0))
             i += n

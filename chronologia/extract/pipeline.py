@@ -113,17 +113,51 @@ def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
     return tuple(sorted(seen, key=lambda s: len(s.split()), reverse=True))
 
 
+def _num_unit_preamble(tokens: Tuple[Token, ...], i: int, spec: LangSpec) -> bool:
+    """True when a folded ``NUM UNIT`` pre-amble sits immediately before
+    index ``i`` ("**deux jours** " before "apres demain"). By the time
+    :func:`merge_multiword` runs, the number fold has already turned a
+    spelled numeral into a digit token, so a plain ``Token.is_number`` check
+    suffices (unlike the earlier, still-spelled-number stage guarded in
+    ``numfold_romance._collapse_phrase``)."""
+    if i < 2:
+        return False
+    unit_tok, num_tok = tokens[i - 1], tokens[i - 2]
+    return unit_tok.text in spec.units and num_tok.is_number
+
+
 def merge_multiword(tokens: Tuple[Token, ...],
-                    surfaces: Tuple[str, ...]) -> Tuple[Token, ...]:
-    """Fold runs matching a multiword surface back into one token."""
+                    surfaces: Tuple[str, ...],
+                    spec: "LangSpec | None" = None) -> Tuple[Token, ...]:
+    """Fold runs matching a multiword surface back into one token.
+
+    A named-day surface whose FIRST word is itself a directional
+    "after"/"before" connector ("apres demain", "avant hier") is held back
+    from merging when a ``[NUM] UNIT`` pre-amble immediately precedes it
+    ("deux jours apres demain"): in that shape the leading word is the
+    MARKER of a genuine numeral-scaled offset ("N days after/before <day>"
+    = <day>+-N), not the fixed +-2-day idiom a bare, unpre-ambled "apres
+    demain"/"avant hier" names (R147). Every other multiword surface (a
+    period, a fused month, a weekend phrase, ...) has no such competing
+    numeral-offset reading and merges unconditionally, exactly as before;
+    passing no ``spec`` (as pre-existing callers outside this module might)
+    also degrades to the old unconditional behaviour."""
     if not surfaces:
         return tokens
+    dir_markers = (frozenset(spec.connectors.get("after", ()))
+                   | frozenset(spec.connectors.get("before", ())))\
+        if spec is not None else frozenset()
+    named_days = spec.named_days if spec is not None else {}
     phrases = [(s.split(), s) for s in surfaces]
     out: List[Token] = []
     i = 0
     while i < len(tokens):
         for words, surface in phrases:
             n = len(words)
+            if (words[0] in dir_markers and surface in named_days
+                    and spec is not None
+                    and _num_unit_preamble(tokens, i, spec)):
+                continue
             if [t.text for t in tokens[i:i + n]] == words:
                 run = tokens[i:i + n]
                 raw = " ".join(t.raw for t in run)
@@ -170,7 +204,7 @@ def fold_tokens(tokens: Tuple[Token, ...], spec: LangSpec,
     # spec-aware fold (it reads the language's own century/year vocabulary), so
     # it runs here rather than in the per-language hook.
     tokens = fold_roman_numerals(tokens, spec, text)
-    return merge_multiword(tokens, multiword_surfaces(spec))
+    return merge_multiword(tokens, multiword_surfaces(spec), spec)
 
 
 def prematch_tokens(text: str, spec: LangSpec) -> Tuple[Token, ...]:
