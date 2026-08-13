@@ -1998,7 +1998,12 @@ def _recur_nth_weekday(ctx):
         if not (r < n and t[r].text in ctx.of_words):
             continue
         r += 1
-        while r < n and (t[r].text in ctx.every or t[r].text in ctx.articles):
+        while r < n and (t[r].text in ctx.every or t[r].text in ctx.articles
+                         or (t[r].text in ctx.rel_markers
+                             and ctx.rel_markers[t[r].text] == 0)):
+            # zero-offset deixis ("this") reads identically to the bare
+            # article before the unit noun -- "of this year" == "of the
+            # year"; the span path already treats them interchangeably.
             r += 1
         start = ord_start
         while start > 0 and (t[start - 1].text in ctx.articles
@@ -2703,6 +2708,41 @@ def _yearly_bymonth_qualifier(ctx, engine, date_matches, idx):
     return None
 
 
+def _yearly_recur_qualifiers(ctx, engine, date_matches, idx):
+    """Scan a ``YEARLY`` adverb's tail for a month qualifier ("in <month>")
+    and a day qualifier ("on [the] <Nth>") in either order, folding both
+    when the month is present.
+
+    A day qualifier with no month ("annually on the 1st") returns ``None``
+    and stays stranded -- which month it names is unspecified, and
+    inventing one would be silently wrong. A month with no explicit day
+    defaults the day to 1 (the uniform yearly-in-month encoding); an
+    explicit day always overrides that default.
+    """
+    day = None
+    month = None
+    day_default = None
+    pos = idx
+    end = idx
+    for _ in range(2):
+        if month is None:
+            got = _yearly_bymonth_qualifier(ctx, engine, date_matches, pos)
+            if got is not None:
+                month, day_default, pos = got
+                end = pos
+                continue
+        if day is None:
+            got = _monthly_bymonthday_qualifier(ctx, pos)
+            if got is not None:
+                day, pos = got
+                end = pos
+                continue
+        break
+    if month is None:
+        return None
+    return month, (day if day is not None else day_default), end
+
+
 def _recur_freq_word(ctx):
     """A lone ``daily`` / ``weekly`` / ``monthly`` / ``yearly`` / ``quarterly``
     / ``biweekly`` / ``fortnightly`` word, or ``[on] weekdays`` / ``[on]
@@ -2738,7 +2778,7 @@ def _recur_freq_word(ctx):
                 engine = _timespan_engine(ctx.lang)
                 date_matches = [m for m in engine.matcher.match(t)
                                  if m.construction == "calendar_date"]
-                got = _yearly_bymonth_qualifier(ctx, engine, date_matches, nxt)
+                got = _yearly_recur_qualifiers(ctx, engine, date_matches, nxt)
                 if got is not None:
                     kw["bymonth"], kw["bymonthday"], end = got
             return _build_every(freq, **kw), set(range(i, end))
@@ -3146,19 +3186,34 @@ def _recur_date_anchored(ctx):
         # the date must start at (or just after) the skeleton: the only tokens
         # tolerated in the gap are articles or a short filler run ("on"/"in") --
         # never a weekday, number or unit that would belong to a different rule.
-        dm = None
-        for m in date_matches:
-            if m.span[0] < j:
-                continue
-            gap = t[j:m.span[0]]
-            if len(gap) <= 2 and all(
-                    g.text in ctx.articles
-                    or (not g.is_number
-                        and _weekday_here(ctx, g, True) is None
-                        and g.text not in ctx.units and g.text not in ctx.every)
-                    for g in gap):
-                dm = m
-                break
+        def _scan_dm(start):
+            for m in date_matches:
+                if m.span[0] < start:
+                    continue
+                gap = t[start:m.span[0]]
+                if len(gap) <= 2 and all(
+                        g.text in ctx.articles
+                        or (not g.is_number
+                            and _weekday_here(ctx, g, True) is None
+                            and g.text not in ctx.units and g.text not in ctx.every)
+                        for g in gap):
+                    return m
+            return None
+
+        # the plain skeleton scan must run FIRST: fused calendar_date shapes
+        # ("el 1 de enero", "le 10 mai", "am 10. mai") carry their own day,
+        # and letting the qualifier scan go first would swallow that day
+        # ("el 1") as a bogus standalone qualifier.
+        dm = _scan_dm(j)
+        day_pre = None
+        if dm is None:
+            # a LEADING day qualifier ("every year on the 15th in june"):
+            # consume it, resume the date scan beyond it, and apply the day
+            # once the month resolves.
+            got_pre = _monthly_bymonthday_qualifier(ctx, j)
+            if got_pre is not None:
+                day_pre, day_pre_end = got_pre
+                dm = _scan_dm(day_pre_end)
         if dm is None:
             continue
         # Read the month/day straight from the matched calendar_date slots
@@ -3174,6 +3229,17 @@ def _recur_date_anchored(ctx):
         if md is None:
             continue
         month, day = md
+        end = dm.span[1]
+        if day_pre is not None:
+            # the leading qualifier sits between i and dm.span[1], so it is
+            # already consumed -- end does not move for it.
+            day = day_pre
+        else:
+            # trailing day qualifier ("in june on the 15th") overrides the
+            # calendar_date match's default day the same way.
+            got_post = _monthly_bymonthday_qualifier(ctx, dm.span[1])
+            if got_post is not None:
+                day, end = got_post
         try:
             kw = {"interval": interval} if interval is not None else {}
             rule = _build_every("yearly", bymonth=month, bymonthday=day, **kw)
@@ -3181,8 +3247,8 @@ def _recur_date_anchored(ctx):
             # the named date recurs in no year ("every 31st of april").  This is
             # still the specific yearly-date frame -- consume it and report no
             # recurrence, rather than fall through to a wrong MONTHLY;BYMONTHDAY.
-            return (None, set(range(i, dm.span[1])))
-        return (rule, set(range(i, dm.span[1])))
+            return (None, set(range(i, end)))
+        return (rule, set(range(i, end)))
     return None
 
 
