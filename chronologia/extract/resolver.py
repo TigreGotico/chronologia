@@ -1852,19 +1852,58 @@ class Resolver:
                 # relative to the anchor year rather than the named one.
                 year = int(gyear_tok.value)
                 value = _nth_weekday_of_year(year, target, n)
-            else:                                   # relative-month scope
-                # "... of (the|this|next|last) month": the scope word names the
-                # anchor's own calendar month, shifted by an optional
-                # this/next/last marker, NOT a named month.
+            else:
                 scope_tok = match.slots.get("SCOPE_UNIT")
-                if (scope_tok is None
-                        or self.spec.units.get(scope_tok.text) != "month"):
+                scope_kind = (self.spec.units.get(scope_tok.text)
+                              if scope_tok is not None else None)
+                if scope_kind == "month":
+                    # "... of (the|this|next|last) month": the scope word
+                    # names the anchor's own calendar month, shifted by an
+                    # optional this/next/last marker, NOT a named month.
+                    rel_tok = match.slots.get("REL_MARKER")
+                    rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
+                    base = _add_months(_midnight(anchor).replace(day=1), rel)
+                    year, month = base.year, base.month
+                    value = _nth_weekday_of_month(year, month, target, n)
+                elif scope_kind == "year":
+                    # "the last monday of the year" / "of this year" (R145):
+                    # sibling of the plain UNIT branch's ``scope_kind ==
+                    # "year"`` case a few lines below. Before this branch
+                    # existed the WEEKDAY resolver only ever recognised
+                    # SCOPE_UNIT == "month" here and refused (returned None)
+                    # for "of the year"/"of this year" -- a clean refusal
+                    # rather than a silent-wrong answer, but one that should
+                    # now resolve given R142 established the bare-GYEAR
+                    # reading (this resolves within the anchor's own year,
+                    # optionally shifted by this/next/last, same as R142's
+                    # bare-GYEAR resolving within the NAMED year).
+                    rel_tok = match.slots.get("REL_MARKER")
+                    rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
+                    year = anchor.year + rel
+                    value = _nth_weekday_of_year(year, target, n)
+                elif scope_tok is None:
+                    # "the first/last <weekday> of the year_word", bare (no
+                    # GYEAR, no SCOPE_UNIT bound at all) -- ``year_word`` is
+                    # a literal connector, not a slot, so its presence is
+                    # never recorded in ``match.slots``; but the only
+                    # ``scoped_ordinal`` orders that bind WEEKDAY with none
+                    # of MONTH/GYEAR/SCOPE_UNIT are the year_word orders
+                    # added for R145 ("ORD WEEKDAY of? article? year_word
+                    # GYEAR?" / "ORD WEEKDAY GYEAR? year_word" with the
+                    # optional GYEAR absent), so reaching here already means
+                    # the match was one of those. Bare year_word ("pierwszy
+                    # poniedziałek roku", "ostatni poniedziałek roku") names
+                    # the anchor's OWN calendar year -- consistent with the
+                    # plain ``UNIT`` "year-scoped (year_word)" branch below,
+                    # which likewise falls back to ``anchor.year`` with no
+                    # explicit YEAR token. Without this branch these bare
+                    # forms had no order binding WEEKDAY+year_word at all, so
+                    # they fell through to the anchor-relative
+                    # ``weekday_ref`` reading ("first/last monday"),
+                    # stranding "roku"/"года".
+                    value = _nth_weekday_of_year(anchor.year, target, n)
+                else:                                # week/decade/... -> no fit
                     return None
-                rel_tok = match.slots.get("REL_MARKER")
-                rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
-                base = _add_months(_midnight(anchor).replace(day=1), rel)
-                year, month = base.year, base.month
-                value = _nth_weekday_of_month(year, month, target, n)
             if value is None:                       # no such Nth weekday
                 return None
             start = AstroDate.from_date(value)

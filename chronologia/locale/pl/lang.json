@@ -119,7 +119,9 @@
     "article? ORD WEEKDAY MONTH YEAR?",
     "article? ordlast WEEKDAY MONTH YEAR?",
     "article? ORD WEEKDAY GYEAR",
-    "article? ordlast WEEKDAY GYEAR"
+    "article? ordlast WEEKDAY GYEAR",
+    "article? ORD WEEKDAY GYEAR? year_word",
+    "article? ordlast WEEKDAY GYEAR? year_word"
    ]
   }
  }
