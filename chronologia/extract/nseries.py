@@ -1399,6 +1399,7 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
         return _replace(rec, count=count)
 
     for surfaces, grounder in ((ctx.until_words, _ground_until),
+                               (ctx.before_words, _ground_until),
                                (ctx.for_words, _ground_count)):
         for marker in _marker_runs(tokens, surfaces, consumed):
             got = _bound_payload(rec, consumed, tokens, marker, lang, anchor,
@@ -1740,6 +1741,12 @@ class _RecurCtx:
     months: dict
     rel_markers: dict
     until_words: set = frozenset()
+    #: "before" reads the SAME as "until" in a recurrence tail -- "every
+    #: monday before christmas" binds UNTIL exactly like "every monday until
+    #: christmas" does (mirrors the bare-timespan side, where "before
+    #: <holiday>" is also an open range ending at the holiday).  See
+    #: :func:`_apply_bounds`.
+    before_words: set = frozenset()
     for_words: set = frozenset()
     at_words: set = frozenset()
     weekend_word: set = frozenset()
@@ -1810,6 +1817,7 @@ def _recur_ctx(text, lang, anchor):
         months=spec.months,
         rel_markers=spec.rel_markers,
         until_words=set(C.get("until", ())),
+        before_words=set(C.get("before", ())),
         for_words=set(C.get("recur_for", ())),
         at_words=set(C.get("at", ())),
         weekend_word=set(C.get("weekend", ())),
@@ -2403,6 +2411,14 @@ def _recur_on_weekdays(ctx):
             continue  # "on monday": a single coming date, not a rule
         byday = tuple((None, wd) for wd in days)
         consumed = set(range(i, end)) | _leading_rate_span(ctx, i)
+        # A bare WEEKLY adverb directly leading into the placement ("weekly
+        # on mondays") is redundant with the named days, exactly like the
+        # "<N> times a week" rate above -- swallow it too instead of
+        # stranding it in the remainder.  Gated to unit interval 1: "every 2
+        # weeks on monday" is a DIFFERENT finder's own reading and never
+        # reaches here as a bare freq word.
+        if i > 0 and t[i - 1].text in ctx.freq and ctx.freq[t[i - 1].text] == ("WEEKLY", 1):
+            consumed.add(i - 1)
         return _build_every("weekly", byday=byday), consumed
     return None
 
