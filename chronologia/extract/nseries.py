@@ -2044,6 +2044,21 @@ def _recur_nth_weekday(ctx):
             # finder never re-reads just the ordinal-weekday head into a
             # rule at the wrong frequency.
             return None, frozenset(range(start, r + 2))
+        if (r < n and t[r].text in ctx.rel_markers
+                and ctx.rel_markers[t[r].text] != 0
+                and r + 1 < n and t[r + 1].text in ctx.units
+                and ctx.units[t[r + 1].text] == "week"):
+            # "of next/last week" -- same bounded-single-period shape as the
+            # year/month case above, refused the same way.
+            return None, frozenset(range(start, r + 2))
+        if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "week":
+            # unlike month/year, "week" has no zero-offset/bare fold at all:
+            # a week has exactly one of any given weekday, so "of the week"/
+            # "of this week" is degenerate rather than a well-formed unbounded
+            # rule -- refuse here too instead of falling through to the
+            # month/year unit branches below (which "week" never matches) and
+            # leaving the phrase to a weaker finder.
+            return None, frozenset(range(start, r + 1))
         if r < n and t[r].text in ctx.months:
             if business:
                 rec = _business_day_of_month(ordn, month=ctx.months[t[r].text])
@@ -2496,6 +2511,22 @@ def _recur_every(ctx):
         # directly before a weekday is the -1st weekday of the month, exactly
         # as "the last friday of every month" already reads.
         if (num_val is None and j + 1 < n
+                and t[j].text in ctx.rel_markers
+                and ctx.rel_markers[t[j].text] == -1
+                and _weekday_here(ctx, t[j + 1], True) is not None):
+            wd = _weekday_here(ctx, t[j + 1], True)
+            return (_nth_weekday_of_month(-1, wd),
+                    set(range(i, _of_month_tail(ctx, j + 2))))
+
+        # -- ellipsis: "every <N> last <weekday>" (bare, no scope tail) ------
+        # a leading interval count directly before the bare "last <weekday>"
+        # ellipsis reads elliptically as the very same monthly last-weekday
+        # rule the explicit "of the month" tail gets (R154: the interval is
+        # dropped there too). Without this branch the count instead fell
+        # through to the day-of-month ellipsis below ("every 2nd" ->
+        # BYMONTHDAY=2), stranding "last friday" and silently misreading the
+        # whole phrase as a day-of-month rule.
+        if (num_val is not None and j + 1 < n
                 and t[j].text in ctx.rel_markers
                 and ctx.rel_markers[t[j].text] == -1
                 and _weekday_here(ctx, t[j + 1], True) is not None):
