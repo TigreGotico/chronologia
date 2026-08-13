@@ -558,8 +558,18 @@ class ConstructionMatcher:
                     # clock reading so the calendar_date wins.  A real clock
                     # after a month ("June 15 at 3pm") leads with "at", so its
                     # HOUR is preceded by that connector (or the day number),
-                    # never a bare month, and stays untouched.
-                    if name == "clock_time" and "HOUR" in slots:
+                    # never a bare month, and stays untouched.  Gated to the
+                    # genuinely bare reading (no CLOCKDIR/FRACTION): a spoken
+                    # fractional clock ("les nou i quart" = quarter past nine)
+                    # can never be misread as a day-of-month digit in the first
+                    # place, and Catalan's own "at" marker doubles as the
+                    # definite article ("les"), so a full year-less date
+                    # ("25 de desembre les nou i quart") skipped the article
+                    # straight onto its own MONTH and vetoed a real clock
+                    # (R158) -- the CLOCKDIR/FRACTION already disambiguate it.
+                    if (name == "clock_time" and "HOUR" in slots
+                            and "CLOCKDIR" not in slots
+                            and "FRACTION" not in slots):
                         _hi = slots["HOUR"].index - 1
                         _art = self.spec.connectors.get(
                             "article", frozenset())
