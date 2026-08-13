@@ -1962,6 +1962,24 @@ def _recur_nth_weekday(ctx):
             if business:
                 return _business_day_of_month(ordn), set(range(start, r + 1))
             return _nth_weekday_of_month(ordn, wd), set(range(start, r + 1))
+        if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "year":
+            # "every last monday of the year" (R145): the yearly sibling of
+            # the "... of [every] month" tail above. Before this branch, "of
+            # the year" matched neither the ``ctx.months`` check nor the
+            # units-is-"month" one, so the loop's tail check fell through
+            # (``continue`` was never reached either -- there was simply no
+            # matching branch) and this finder returned ``None`` for the
+            # whole phrase; a weaker downstream finder then read only "last
+            # monday" as a bare ``MONTHLY;BYDAY=-1MO`` rule and stranded "of
+            # the year" as unmatched remainder -- silently downgrading a
+            # yearly rule to a monthly one. RFC 5545 gives ``BYDAY`` with a
+            # signed ordinal and no ``BYMONTH`` its own well-defined meaning
+            # under ``FREQ=YEARLY``: the nth (or, negative, last) matching
+            # weekday of the whole year -- exactly the reading "of the year"
+            # asks for, so this resolves rather than refuses.
+            if business:
+                return _business_day_of_year(ordn), set(range(start, r + 1))
+            return _nth_weekday_of_year(ordn, wd), set(range(start, r + 1))
     return None
 
 
@@ -1979,6 +1997,29 @@ def _business_day_of_month(ordn, month=None):
         return _build_every("yearly", bymonth=month, byday=byday,
                             bysetpos=(ordn,))
     return _build_every("monthly", byday=byday, bysetpos=(ordn,))
+
+
+def _nth_weekday_of_year(ordn, wd):
+    """The ``ordn``-th ``wd`` of the whole calendar year (R145).
+
+    Sibling of :func:`_nth_weekday_of_month` but with no ``bymonth`` at
+    all -- RFC 5545 gives a signed ``BYDAY`` ordinal under bare
+    ``FREQ=YEARLY`` exactly this meaning ("last monday of the year" ->
+    ``FREQ=YEARLY;BYDAY=-1MO``), never ``FREQ=MONTHLY`` (which would repeat
+    every month rather than once a year).
+    """
+    return _build_every("yearly", byday=((ordn, wd),))
+
+
+def _business_day_of_year(ordn):
+    """The ``ordn``-th business day of the whole calendar year (R145).
+
+    Sibling of :func:`_business_day_of_month` (``month=None``) but yearly
+    rather than monthly, for "the last weekday of the year" -- the same
+    ``BYSETPOS`` idiom, scoped to ``FREQ=YEARLY`` with no ``BYMONTH``.
+    """
+    byday = tuple((None, k) for k in range(5))  # MO..FR
+    return _build_every("yearly", byday=byday, bysetpos=(ordn,))
 
 
 def _fold_group_value(ctx, group):

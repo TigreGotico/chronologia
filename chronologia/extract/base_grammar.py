@@ -104,6 +104,26 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast WEEKDAY of? GYEAR",
         "article? ORD WEEKDAY in GYEAR",
         "article? ordlast WEEKDAY in GYEAR",
+        # "first/last <weekday> of the year_word [<YEAR>]" (preposed
+        # year_word, sibling of the existing "ORD UNIT of article? year_word
+        # YEAR?" order) and the postposed Slavic "<weekday> [<YEAR>]
+        # year_word" idiom ("первый понедельник 2027 года", "pierwszy
+        # poniedziałek roku") -- R145: neither order ever bound ``WEEKDAY``
+        # together with a ``year_word``, only ``UNIT`` (day/week/...) did, so
+        # "первый понедельник 2027 года" had no order binding WEEKDAY with a
+        # trailing year_word at all -- it fell through to the bare-GYEAR
+        # order above, matched only the number, and stranded the year_word
+        # ("первый 2027 года" left "года" unconsumed; the bare "pierwszy
+        # poniedziałek roku"/"ostatni poniedziałek roku" forms, with no
+        # number at all, had no matching order whatsoever and fell through to
+        # the anchor-relative "weekday_ref" reading, stranding "roku"/"года"
+        # and silently ignoring the of-the-year scoping). Both connector
+        # positions are offered because locales genuinely differ on which
+        # side the year word sits.
+        "article? ORD WEEKDAY of? article? year_word GYEAR?",
+        "article? ordlast WEEKDAY of? article? year_word GYEAR?",
+        "article? ORD WEEKDAY GYEAR? year_word",
+        "article? ordlast WEEKDAY GYEAR? year_word",
         "article? ORD UNIT of REL_MARKER? article? SCOPE_UNIT",
         "article? ordlast UNIT of REL_MARKER? article? SCOPE_UNIT",
         # a fuzzy early/mid/late PART on an absolute ordinal period ("the
