@@ -2468,6 +2468,42 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
     return tokens[b - 1].text in dir_markers
 
 
+def _num_preamble_named_day_idiom_veto(tokens, match, spec) -> bool:
+    """True for a ``named_day_after``/``named_day_before`` match immediately
+    preceded by a NUMBER token ("two days after tomorrow", "3 days before
+    yesterday", "deux jours après demain").
+
+    The idiom's own grammar order ("DAYUNIT after/before DAY_WORD", see
+    ``base_grammar.BASE_GRAMMAR``) has no ``NUM`` slot -- it is a fixed
+    +-1-day idiom ("the day after tomorrow" == tomorrow+1 == anchor+2, a
+    lexicalised whole, not "N days after"). Left unvetoed, the idiom's
+    longer span still wins the overlap contest against the generic offset
+    reading even when a numeral heads the phrase, so the numeral is
+    stranded in the remainder and the idiom's fixed +-1 answers instead of
+    the numeral-scaled one (R147: "two days after tomorrow" resolved to
+    tomorrow+1 instead of tomorrow+2, with "two" stranded).
+
+    Vetoing here makes the matcher fall back to the bare ``named_day`` match
+    for the ``DAY_WORD`` alone, leaving "N days after"/"N days before"
+    completely unconsumed as a pre-amble -- exactly the shape the generic
+    anchored-offset composition pass (``apply_anchored_offset``) already
+    knows how to fold onto a resolved date reference ("two weeks after
+    easter"). That is the same path Spanish and other locales whose
+    "after"/"before" idiom takes an intervening preposition ("despues DE
+    mañana") already take -- the idiom's own order never matches there
+    (the preposition breaks the required contiguous order), so the numeral
+    always composes correctly through the generic pass. This veto makes
+    en/fr/de (and any other locale with a bare-contiguous idiom order) take
+    the identical route whenever a numeral is present.
+    """
+    if match.construction not in ("named_day_after", "named_day_before"):
+        return False
+    b = match.span[0]
+    if b == 0:
+        return False
+    return tokens[b - 1].is_number
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
@@ -2486,7 +2522,8 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _stray_capitalized_am_veto(tokens, match, spec)
             or _stray_year_zero_veto(tokens, match, spec)
             or _month_holiday_collision_veto(tokens, match, spec)
-            or _relday_daypart_homograph_veto(tokens, match, spec))
+            or _relday_daypart_homograph_veto(tokens, match, spec)
+            or _num_preamble_named_day_idiom_veto(tokens, match, spec))
 
 
 #: the "for <duration>" bound marker vocabulary, keyed by spec identity so a
