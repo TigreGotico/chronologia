@@ -241,6 +241,24 @@ def make_fold(grammar: NumberGrammar
             run = []
             while j < n:
                 if is_number(tokens[j]):
+                    # A literal digit SURFACE (its raw text is plain digits)
+                    # directly abutting a spelled number-word with no joiner
+                    # between them is not one written-out number ("kell
+                    # üheksa 25." is a spelled hour followed by an unrelated
+                    # numeral day, not "nine twenty-five") -- unlike two
+                    # spelled words, which always continue the same run.
+                    # Cutting here keeps the digit its own token instead of
+                    # letting the back-end silently drop it while reading
+                    # only the spelled prefix.  Gated on the TEXT being
+                    # digits, not the ``is_number`` flag: a family's own
+                    # pre-pass may stamp ``is_number=True`` onto a spelled
+                    # word it has already resolved (the French tail "un"
+                    # licensing folds "vingt et un" into one compound this
+                    # way), and that synthetic flag must not be mistaken for
+                    # a genuine digit surface the tokenizer read.
+                    if (run and run[-1].text.isdigit() !=
+                            tokens[j].text.isdigit()):
+                        break
                     run.append(tokens[j])
                     j += 1
                 elif (joiner(tokens[j]) and run and j + 1 < n
