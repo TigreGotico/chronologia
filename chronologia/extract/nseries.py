@@ -647,7 +647,15 @@ def _merge_ranges(out, tokens, text, engine, anchor):
             lead_lo = _lead_start(a_lo)
             cs = tokens[lead_lo].char_start
             ce = tokens[b_hi - 1].char_end
-            if cs is not None and ce is not None:
+            # a sentence-final period between the two mentions (a
+            # dot-folding, ordinal_dot locale like de/ru drops it from the
+            # token stream, same as a comma) means these are two INDEPENDENT
+            # clauses, never a "from A to B" range -- "am Montag. ... bis
+            # Freitag" must not fuse into one range spanning both sentences.
+            # See ``_sentence_period_between``.
+            boundary = (a_hi > 0 and b_lo < len(tokens)
+                        and _sentence_period_between(tokens, a_hi - 1, b_lo, text))
+            if cs is not None and ce is not None and not boundary:
                 got = _extract_range(text, _slice(cs, ce), engine, anchor)
                 if got is not None:
                     merged.append(((lead_lo, b_hi), got[0],
@@ -736,6 +744,39 @@ def _char_span(tokens, lo, hi):
     if start is None or end is None:
         return None
     return (start, end)
+
+
+def _sentence_period_between(tokens, lo_idx, hi_idx, text):
+    """Whether a literal sentence-final ``.`` sits in ``text`` between token
+    ``lo_idx`` and token ``hi_idx`` (``lo_idx < hi_idx``, both valid token
+    indices).
+
+    The tokenizer never leaves a punctuation character INSIDE a token's own
+    char span except when it is genuinely part of the token -- an ordinal dot
+    (``ordinal_dot`` mode: ``"15."`` is one token, dot included) or a decimal
+    point inside a number.  Every other ``.`` -- above all a sentence-final
+    one, "...um 14 Uhr. Bitte..." -- is dropped by the tokenizer entirely and
+    so survives only in the character GAP between one token's end and the
+    next token's start.  Checking that gap for a literal ``.`` is therefore a
+    tokenizer-shape-agnostic sentence-boundary test: it fires on a genuine
+    clause break in de/ru (dot-folding, ordinal_dot locales) exactly where an
+    ordinal dot ("15. Juni", "3. März um 9 Uhr") does NOT fire, because that
+    dot sits inside the ordinal token's own span, never in a gap -- and it is
+    equally correct (a no-op) in en/es, which have no ordinal-dot tokens to
+    confuse it with in the first place.
+
+    ``lo_idx``/``hi_idx`` name the LAST token before the region and the FIRST
+    token after it; every token strictly between them is also checked, so a
+    period after any word in a longer gap ("Freitag um 14 Uhr. Bitte reichen
+    Sie") is still caught, not just one immediately adjacent to the edges.
+    """
+    for i in range(lo_idx, hi_idx):
+        a, b = tokens[i], tokens[i + 1]
+        if a.char_end is None or b.char_start is None:
+            continue
+        if "." in text[a.char_end:b.char_start]:
+            return True
+    return False
 
 
 #: connector keys that join two DISTINCT references rather than gluing one
@@ -852,6 +893,18 @@ def _cluster_resolved(resolved, tokens, spec, text=None):
         (lo_span, hi_span) = sorted((prev[0].span, nxt[0].span))
         gap = range(lo_span[1], hi_span[0])
         adjacent = all(i in covered or tokens[i].text in glue for i in gap)
+        if adjacent and text is not None and lo_span[1] > 0 and hi_span[0] < len(tokens):
+            # a genuine clause break -- a sentence-final period in a
+            # dot-folding (ordinal_dot) locale like de/ru -- leaves an EMPTY
+            # token-index gap (the tokenizer drops the period from the token
+            # stream entirely, same as it drops a comma) that would otherwise
+            # read as vacuously adjacent.  Check the character gap between
+            # the two matches' own edge tokens for a literal "." the
+            # ordinal-dot/decimal-dot tokens never leave stray (see
+            # ``_sentence_period_between``) before trusting the token-index
+            # adjacency above.
+            if _sentence_period_between(tokens, lo_span[1] - 1, hi_span[0], text):
+                adjacent = False
         if adjacent:
             # Cap the cluster to the shape _compose can actually fuse: at
             # most one of each role (clock/daypart/weekday/date).  Two
