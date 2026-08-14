@@ -1,0 +1,13 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [12:00, 18:00).
+# The hyphenated surface is tokenizer-canonicalised to "dupa amiaza" (the
+# hyphen splits into two tokens the loader re-glues) -- the same reason
+# fr's daypart_apres_midi_fr.voc keeps this comment. Registering it here is
+# required because bare "amiaza" is ALSO this locale's word for noon
+# (clock_landmark_720.voc): without the glued multi-token surface, the
+# hyphen-split "amiaza" half of "dupa-amiaza" was claimed by the noon
+# landmark instead of the afternoon band.
+după-amiaza
+dupa-amiaza
+după-amiază
