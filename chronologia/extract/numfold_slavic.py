@@ -244,6 +244,40 @@ def _hour_rewrite(hourmap: dict) -> Callable:
     return rewrite
 
 
+# Genitive-singular duration-unit surfaces "пол" ("half") contracts onto in
+# the ordinary compound-noun spelling ("полчаса" == half an hour, "полминуты"
+# == half a minute, "полдня" == half a day, "полнедели" == half a week) --
+# citation forms taken from unit_hour.voc/unit_minute.voc/unit_day.voc/
+# unit_week.voc.  Split so the leading "пол" reads as the standalone 0.5
+# quantifier and the tail reads as the ordinary UNIT surface, exactly as the
+# already-supported space-separated spelling ("пол часа") does; without the
+# split the fused spelling is one unknown word and the whole phrase strands.
+_UNIT_GEN_RU = {"часа": "hour", "минуты": "minute", "дня": "day",
+                "недели": "week"}
+
+
+def _split_ru_pol_unit(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Split the fused "пол<unit-genitive>" compound into "пол" + the
+    genitive unit word, mirroring :func:`_split_ru_pol` for the toward-hour
+    contraction.  Runs before that pass; the unit-genitive set and the
+    toward-hour ordinal set do not overlap, so order between the two does
+    not matter."""
+    out, changed = [], False
+    for t in tokens:
+        tail = t.text[3:] if t.text.startswith("пол") else ""
+        if not t.is_number and tail in _UNIT_GEN_RU:
+            cs, ce = t.char_start, t.char_end
+            mid = (cs + 3) if cs is not None else None
+            out.append(Token(text="пол", raw="пол", index=t.index,
+                             is_number=False, char_start=cs, char_end=mid))
+            out.append(Token(text=tail, raw=tail, index=t.index,
+                             is_number=False, char_start=mid, char_end=ce))
+            changed = True
+        else:
+            out.append(t)
+    return reindex(out) if changed else tokens
+
+
 def _split_ru_pol(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """Russian contracts "пол" + genitive-ordinal hour into one word
     ("полдевятого" == half toward the ninth == 08:30).  Split it back into the
@@ -494,7 +528,8 @@ fold_sk = _compose(_day_rewrite(_DAY_SK),
 fold_pl = _compose(_day_rewrite(_DAY_PL),
                    with_ordinals(_make_fold("pl"), "pl", _FEM_ORD_PL),
                    _hour_rewrite(_HOUR_PL))
-fold_ru = _compose(_split_ru_pol,
+fold_ru = _compose(_split_ru_pol_unit,
+                   _split_ru_pol,
                    _day_rewrite({**_DAY_RU, **_DAY_RU_NEUTER}, _TENS_RU),
                    with_ordinals(_make_fold("ru"), "ru",
                                  {**_ORD_RU, **_FEM_ORD_RU}),
