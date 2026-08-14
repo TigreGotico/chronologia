@@ -474,6 +474,13 @@ _HE_VAV_STEMS = frozenset({
     # of a multi-word surface ("חג" of "חג הפסח"), left for the multiword
     # merge pass to glue back together once split off from "וחג"
     "פסח", "חנוכה", "חג",
+    # marker_before (marker_before.voc) -- "ולפני יום" (and-before-a-day) is
+    # ordinary coordinated speech ("...and a day ago, ...")
+    "לפני",
+    # bet-prefixed weekday noun (weekday_*.voc curated duplicate "ביום שני")
+    # -- "וביום ראשון הבא" (and-on-next-Sunday) needs the bare "ביום" restored
+    # so the multiword merge pass can still glue it to the weekday that follows
+    "ביום",
 })
 
 
@@ -491,12 +498,54 @@ def _he_vav_strip(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
+# -- dual-noun unit split -----------------------------------------------
+# Hebrew inflects a unit noun for the DUAL number when the count is exactly
+# two -- יומיים ("two days") is one word, not "שני ימים" spelled together --
+# so unlike every other count, "two" here is never a separate token for the
+# offset grammar's ``NUM UNIT`` pre-amble to read ("לפני יומיים" stalled to
+# ``None`` while its analytic sibling "לפני שני ימים" already worked).  Each
+# dual surface is split here into a synthetic ``2`` NUM token followed by the
+# ordinary PLURAL unit word it is dual for -- the same plural surface "לפני 2
+# ימים" already binds -- so the split needs no grammar or resolver change,
+# only reuse of the existing NUM+UNIT reading. The synthetic NUM carries a
+# zero-width extent (mirrors the agglutinative "at"-marker split) so it never
+# reaches the remainder text; the plural token keeps the dual word's raw/char
+# extent so an unconsumed dual still reconstructs verbatim.
+_HE_DUAL_UNIT_PLURAL = {
+    "יומיים": "ימים", "יומים": "ימים",      # unit_dual_day.voc -> unit_day.voc
+    "שעתיים": "שעות",                        # unit_dual_hour.voc -> unit_hour.voc
+    "שבועיים": "שבועות",                     # unit_dual_week.voc -> unit_week.voc
+    "דקתיים": "דקות",                        # unit_dual_minute.voc -> unit_minute.voc
+    "חודשיים": "חודשים",                     # month (no dedicated .voc; unit_month.voc plural)
+    "שנתיים": "שנים",                        # year (no dedicated .voc; unit_year.voc plural)
+}
+
+
+def _he_dual_split(tokens):
+    out, changed = [], False
+    for t in tokens:
+        plural = None if t.is_number else _HE_DUAL_UNIT_PLURAL.get(t.text)
+        if plural is None:
+            out.append(t)
+            continue
+        out.append(Token(text="2", raw="", index=t.index, is_number=True,
+                         value=2, char_start=t.char_start,
+                         char_end=t.char_start))
+        out.append(Token(text=plural, raw=t.raw, index=t.index,
+                         char_start=t.char_start, char_end=t.char_end,
+                         cap=t.cap, prev_cap=t.prev_cap))
+        changed = True
+    return reindex(tuple(out)) if changed else tokens
+
+
 def fold_he(tokens):  # noqa: F811  -- wrap the cardinal fold with the fem ordinal
     """Fold the gematria year numeral (תשפ״ה → 5785), the ordinal teen
     (11..19) and the feminine ordinal (מחצית's "first/second") before the
     cardinal fold, then run the cardinal fold: none overlap (each is its own
     run), and the weekday-masculine ordinals stay untouched. The vav strip
     runs first so a vav-prefixed date word folds/matches exactly like its
-    bare form."""
+    bare form; the dual split runs on its result so a vav-prefixed dual
+    ("ולפני יומיים") reaches it as a bare dual noun token."""
     return _fold_he_cardinal(_he_ordinal_rewrite(
-        _he_teen_fold(_he_gematria_rewrite(_he_vav_strip(tokens)))))
+        _he_teen_fold(_he_gematria_rewrite(
+            _he_dual_split(_he_vav_strip(tokens))))))
