@@ -6,9 +6,9 @@ root-cause writeup; this pins the same fix for Portuguese's "antes"/"até"
 connectors, attested via the existing "antes do natal" bare-timespan corpus
 (test_nl_anchored_offset.py, test_pt_r146_before_after_holiday.py).
 
-"pascoa" (easter) is only recognised accented ("páscoa") in this locale's
-holiday vocabulary -- unrelated to this fix, so the accented spelling is
-used here to keep the movable-feast case attested.
+"pascoa" (easter) is recognised both accented ("páscoa") and unaccented
+("pascoa") in this locale's holiday vocabulary; see
+test_nl_r171_movable_feast_unaccented.py for the unaccented-alias coverage.
 """
 from datetime import datetime
 

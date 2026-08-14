@@ -1384,7 +1384,23 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
     tokens = ctx.tokens
 
     def _ground_until(rec, text):
-        got = extract_timespan(text, lang, anchor=anchor)
+        # An "until" marker's payload may itself carry a leading "before"
+        # connector ("until before christmas"): extract_timespan treats a
+        # bare "before <holiday>" as an OPEN range (anchor -> holiday), so
+        # grounding the untouched text would read .start as the anchor and
+        # emit a self-defeating UNTIL=anchor.  Strip the leading before-word
+        # first so the payload matches the bare-holiday form the before_words
+        # marker path itself grounds ("before christmas" -> "christmas"),
+        # keeping "until before X" and "until X" equivalent.
+        stripped = text
+        low = text.lower().split()
+        for surf in ctx.before_words:
+            words = surf.lower().split()
+            k = len(words)
+            if k and low[:k] == words:
+                stripped = " ".join(text.split()[k:])
+                break
+        got = extract_timespan(stripped, lang, anchor=anchor)
         if got is None:
             return None
         return _replace(rec, until=got[0].start)
@@ -1966,6 +1982,12 @@ def _recur_nth_weekday(ctx):
         li = w - 1
         ordn = None
         ord_start = li
+        # a leading numeric count directly before a BARE "last" ("every 3rd
+        # last friday of the month"), captured for the MONTH-scope branches
+        # below to reinterpret as ``BYDAY=-N`` (mirroring the "<ordinal>-to-
+        # last" idiom); the YEAR-scope branch ignores this and keeps reading
+        # the same number as an INTERVAL multiplier instead.
+        numeric_last_n = None
         if t[li].is_number:
             ordn = int(t[li].value)
         elif (t[li].text in ctx.rel_markers
@@ -1995,7 +2017,19 @@ def _recur_nth_weekday(ctx):
                     return None, frozenset()
                 ordn, ord_start = found
             else:
+                # bare "last" -- may still carry a leading numeric count
+                # ("every 3rd last friday of the month"), read below ONLY
+                # for the MONTH-scope tail: the YEAR-scope tail reads that
+                # same leading number as an INTERVAL multiplier instead
+                # ("every 2nd last friday of the year" ->
+                # FREQ=YEARLY;INTERVAL=2;BYDAY=-1FR, ordn staying -1).
+                # ``ord_start``/``ordn`` stay untouched here so year-scope
+                # interval detection (the ``t[start - 1].is_number`` check
+                # below) still sees the number; ``numeric_last_n`` records it
+                # for the month-scope branches to reinterpret.
                 ordn = -1
+                if li - 1 >= 0 and t[li - 1].is_number:
+                    numeric_last_n = int(t[li - 1].value)
         elif t[li].text in ctx.penult_words:
             # "penultimate <weekday> of every month" -- a fixed synonym for
             # "second-to-last" (-2).
@@ -2059,17 +2093,32 @@ def _recur_nth_weekday(ctx):
             # month/year unit branches below (which "week" never matches) and
             # leaving the phrase to a weaker finder.
             return None, frozenset(range(start, r + 1))
-        if r < n and t[r].text in ctx.months:
+        if r < n and (t[r].text in ctx.months
+                      or (t[r].text in ctx.units and ctx.units[t[r].text] == "month")):
+            # month-scope tail: a leading numeric count reinterprets as
+            # ``BYDAY=-N`` here (see ``numeric_last_n`` above) rather than
+            # the bare "last" ellipsis (-1) -- N=2 keeps the ellipsis (it is
+            # indistinguishable from "second/last <weekday>"), N=3..4 count
+            # backward unambiguously, N>=5 refuses (mirrors the "<ordinal>-
+            # to-last" idiom's own -4 cap) rather than falling back silently.
+            month_ordn = ordn
+            if numeric_last_n is not None:
+                if numeric_last_n == 2:
+                    month_ordn = -1
+                elif 3 <= numeric_last_n <= 4:
+                    month_ordn = -numeric_last_n
+                else:
+                    return None, frozenset()
+            if t[r].text in ctx.months:
+                if business:
+                    rec = _business_day_of_month(month_ordn, month=ctx.months[t[r].text])
+                else:
+                    rec = _nth_weekday_of_month(month_ordn, wd,
+                                                month=ctx.months[t[r].text])
+                return rec, set(range(start, r + 1))
             if business:
-                rec = _business_day_of_month(ordn, month=ctx.months[t[r].text])
-            else:
-                rec = _nth_weekday_of_month(ordn, wd,
-                                            month=ctx.months[t[r].text])
-            return rec, set(range(start, r + 1))
-        if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "month":
-            if business:
-                return _business_day_of_month(ordn), set(range(start, r + 1))
-            return _nth_weekday_of_month(ordn, wd), set(range(start, r + 1))
+                return _business_day_of_month(month_ordn), set(range(start, r + 1))
+            return _nth_weekday_of_month(month_ordn, wd), set(range(start, r + 1))
         if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "year":
             # "every last monday of the year": the yearly sibling of
             # the "... of [every] month" tail above. Before this branch, "of
@@ -2526,12 +2575,28 @@ def _recur_every(ctx):
         # through to the day-of-month ellipsis below ("every 2nd" ->
         # BYMONTHDAY=2), stranding "last friday" and silently misreading the
         # whole phrase as a day-of-month rule.
+        #
+        # N=2 is genuinely ambiguous with the "second/last Friday" ellipsis
+        # (documented convention: reads as -1, the bare last weekday) and
+        # MUST NOT change. For N>=3 that ellipsis is impossible -- there is
+        # no "third/last Friday" reading -- so N counts backward from the
+        # month's end exactly like the word-form idiom's "<ordinal>-to-last"
+        # ("third-to-last friday" -> -3): numeric N maps to BYDAY=-N. This
+        # mirrors that idiom's own cap -- bounded at -4, "fifth-to-last" and
+        # beyond refuse (:func:`_ntolast_ordn`) -- so N>=5 here refuses too
+        # rather than inventing a reading the word forms do not support.
         if (num_val is not None and j + 1 < n
                 and t[j].text in ctx.rel_markers
                 and ctx.rel_markers[t[j].text] == -1
                 and _weekday_here(ctx, t[j + 1], True) is not None):
+            if num_val == 2:
+                ordn = -1
+            elif 3 <= num_val <= 4:
+                ordn = -num_val
+            else:
+                return None, frozenset()
             wd = _weekday_here(ctx, t[j + 1], True)
-            return (_nth_weekday_of_month(-1, wd),
+            return (_nth_weekday_of_month(ordn, wd),
                     set(range(i, _of_month_tail(ctx, j + 2))))
 
         # -- ellipsis: "every <ordinal> <weekday>" ---------------------------
