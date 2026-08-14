@@ -25,13 +25,30 @@ _FY_HOURS = {"ienen": 1, "twaen": 2, "trijen": 3, "fjouweren": 4, "fiven": 5,
 
 
 # Per-language stop-sets: clock fractions + scale words that must not fold.
+# "anderthalb" (== "eineinhalb", 1.5) is a genuine synonym ovos-number-parser
+# does not pronounce or read back (extract_number_de('anderthalb') is None),
+# so it is supplied as a fixed word->value surface, mirroring the Frisian
+# inflected-hour word_map above. Duden: "anderthalb" = "eineinhalb".
+#
+# The umlaut-bearing number words are ASCII-transliterated the same way the
+# function words are ("naechster" for "nächster"): ovos-number-parser
+# reads only the umlaut spelling (extract_number_de('fuenf') is None where
+# extract_number_de('fünf') is 5), so "in fuenf tagen" silently failed to
+# fold. Add the ASCII twins actually attested in temporal offsets -- cardinal
+# and the two ordinal forms (nominative/dative "-e"/"-en") ovos-number-parser
+# reads with ordinals=True for the umlaut spelling.
+_DE_UMLAUT_ASCII = {
+    "fuenf": 5, "fuenfzehn": 15, "fuenfzig": 50, "fuenfte": 5, "fuenften": 5,
+    "zwoelf": 12, "zwoelfte": 12, "zwoelften": 12,
+}
 fold_de = _lazy_germanic_fold(
     "ovos_number_parser.numbers_de", "extract_number_de",
     # "billion"/"billionen" is the long-scale 10^12 word (German Billion); it is
     # withheld here so it survives as the deep-time SCALE slot instead of being
     # read as a plain number by the value-probe.
     {"halb", "viertel", "dreiviertel", "million", "millionen",
-     "milliarde", "milliarden", "billion", "billionen", "tausend"})
+     "milliarde", "milliarden", "billion", "billionen", "tausend"},
+    word_map={"anderthalb": 1.5, **_DE_UMLAUT_ASCII})
 fold_nl = _lazy_germanic_fold(
     "ovos_number_parser.numbers_nl", "extract_number_nl",
     # "biljoen" = 10^12 (Dutch long scale), withheld so the SCALE slot survives.
