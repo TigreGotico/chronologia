@@ -477,6 +477,11 @@ _HE_VAV_STEMS = frozenset({
     # marker_before (marker_before.voc) -- "ולפני יום" (and-before-a-day) is
     # ordinary coordinated speech ("...and a day ago, ...")
     "לפני",
+    # marker_future (marker_future.voc) -- "ובעוד יומיים" (and-in-two-days)
+    # is the forward-direction sibling of "לפני"; without the bare stem
+    # restored the vav strip drops the whole mention instead of the
+    # future-offset marker
+    "בעוד",
     # bet-prefixed weekday noun (weekday_*.voc curated duplicate "ביום שני")
     # -- "וביום ראשון הבא" (and-on-next-Sunday) needs the bare "ביום" restored
     # so the multiword merge pass can still glue it to the weekday that follows
