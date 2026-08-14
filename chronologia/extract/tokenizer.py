@@ -349,8 +349,7 @@ class Tokenizer:
         # alternation below -- without the group, a bare trailing lookahead
         # would bind only to the last alternative here (the plain-number
         # one), leaving the grouped alternative free to match a truncated
-        # prefix of a longer digit run.  That truncation is exactly the R131
-        # defect: with no lookahead, the grouped alternative is only required
+        # prefix of a longer digit run.  With no lookahead, the grouped alternative is only required
         # to find ONE exactly-three-digit group and is free to stop there
         # even when more digits (with no separator) immediately follow --
         # so "5,2025" (a comma glued straight onto a 4-digit run, e.g. a

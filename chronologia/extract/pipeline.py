@@ -137,7 +137,7 @@ def merge_multiword(tokens: Tuple[Token, ...],
     ("deux jours apres demain"): in that shape the leading word is the
     MARKER of a genuine numeral-scaled offset ("N days after/before <day>"
     = <day>+-N), not the fixed +-2-day idiom a bare, unpre-ambled "apres
-    demain"/"avant hier" names (R147). Every other multiword surface (a
+    demain"/"avant hier" names. Every other multiword surface (a
     period, a fused month, a weekend phrase, ...) has no such competing
     numeral-offset reading and merges unconditionally, exactly as before;
     passing no ``spec`` (as pre-existing callers outside this module might)
