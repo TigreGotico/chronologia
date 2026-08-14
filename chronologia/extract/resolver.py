@@ -711,7 +711,7 @@ class Resolver:
         Only the day unit shifts a named day by a whole day -- the grammar's
         ``DAYUNIT`` slot (see ``matcher._bind``) already restricts the bound
         token to "day", so this check is a defensive belt-and-braces guard,
-        not the primary gate (that lives at bind time now, R141)."""
+        not the primary gate (that lives at bind time now)."""
         if self.spec.units[match.slots["DAYUNIT"].text] != "day":
             return None
         offset = self.spec.named_days[match.slots["DAY_WORD"].text] + step
@@ -1866,17 +1866,17 @@ class Resolver:
                     year, month = base.year, base.month
                     value = _nth_weekday_of_month(year, month, target, n)
                 elif scope_kind == "year":
-                    # "the last monday of the year" / "of this year" (R145):
+                    # "the last monday of the year" / "of this year":
                     # sibling of the plain UNIT branch's ``scope_kind ==
                     # "year"`` case a few lines below. Before this branch
                     # existed the WEEKDAY resolver only ever recognised
                     # SCOPE_UNIT == "month" here and refused (returned None)
                     # for "of the year"/"of this year" -- a clean refusal
                     # rather than a silent-wrong answer, but one that should
-                    # now resolve given R142 established the bare-GYEAR
-                    # reading (this resolves within the anchor's own year,
-                    # optionally shifted by this/next/last, same as R142's
-                    # bare-GYEAR resolving within the NAMED year).
+                    # now resolve given the bare-GYEAR reading is established
+                    # (this resolves within the anchor's own year,
+                    # optionally shifted by this/next/last, same as the
+                    # bare-GYEAR case resolving within the NAMED year).
                     rel_tok = match.slots.get("REL_MARKER")
                     rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
                     year = anchor.year + rel
@@ -1888,7 +1888,7 @@ class Resolver:
                     # never recorded in ``match.slots``; but the only
                     # ``scoped_ordinal`` orders that bind WEEKDAY with none
                     # of MONTH/GYEAR/SCOPE_UNIT are the year_word orders
-                    # added for R145 ("ORD WEEKDAY of? article? year_word
+                    # added ("ORD WEEKDAY of? article? year_word
                     # GYEAR?" / "ORD WEEKDAY GYEAR? year_word" with the
                     # optional GYEAR absent), so reaching here already means
                     # the match was one of those. Bare year_word ("pierwszy

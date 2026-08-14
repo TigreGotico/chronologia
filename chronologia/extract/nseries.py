@@ -351,7 +351,7 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
             consumed.update((k - 1, k))
     # A duration-marking preposition directly adjacent to the bound duration
     # ("for 90 minutes", "für 90 Minuten", "durante 90 minutos") is temporal
-    # glue, not leftover text (defect R135): fold it into ``consumed`` so it
+    # glue, not leftover text: fold it into ``consumed`` so it
     # does not strand alone in the remainder.  Reuses the SAME
     # ``recur_for``/``marker_recur_for.voc`` vocabulary as the recurrence
     # grammar's "every monday *for* 3 weeks" bound and the timespan module's
@@ -1164,12 +1164,12 @@ def _apply_clock_range(rec, consumed, ctx, lang, anchor):
     # word placed AFTER the pair ("9 ile 17 arasında" == "9 and 17 between")
     # instead of before it, mirroring the postposed range construction
     # :func:`~chronologia.extract.timespan._extract_range` reads via
-    # ``marker_between_post.voc`` (R118).  Without this branch the leading
+    # ``marker_between_post.voc``.  Without this branch the leading
     # scan above never matches (there is no leading "between"/"from"), so the
     # clause falls through to :func:`_apply_range_bound`'s bare-number decline
     # and then to :func:`_apply_clock`'s list reader, which grounds BYHOUR off
     # whichever clock-shaped match it meets first -- picking the WRONG (right)
-    # endpoint and stranding the connector/marker in the remainder (R126).
+    # endpoint and stranding the connector/marker in the remainder.
     # The convention is the same as the leading branch above: BYHOUR pins to
     # the range's left/start endpoint, read in text order.
     between_post = _conn_surfaces(spec, "between_post", ())
@@ -1249,7 +1249,7 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
     and ``_apply_clock_range``/``_apply_range_bound``/``_apply_year_scope``
     already use.
 
-    R127: a rule may ALSO already carry a ``BYHOUR`` pin from
+    A rule may ALSO already carry a ``BYHOUR`` pin from
     :func:`_apply_clock_range` (a "between 9 and 5" / postposed clock range,
     whose consumed span never covers a LATER independent "and also at 7"
     clause).  A clock range's ``BYHOUR`` is a deliberately partial reading --
@@ -2019,7 +2019,7 @@ def _recur_nth_weekday(ctx):
             start -= 1
         # a leading interval prefix ("every other"/"every 2nd") directly
         # before the walked-back head is captured here so the year-scope
-        # branch below can fold it into the built rule's INTERVAL (R154);
+        # branch below can fold it into the built rule's INTERVAL;
         # the month-scope and bare-elliptical readings intentionally drop
         # it (their monthly cadence already matches the base "last <wd>"
         # reading), so this value is used only by the year branch.
@@ -2071,7 +2071,7 @@ def _recur_nth_weekday(ctx):
                 return _business_day_of_month(ordn), set(range(start, r + 1))
             return _nth_weekday_of_month(ordn, wd), set(range(start, r + 1))
         if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "year":
-            # "every last monday of the year" (R145): the yearly sibling of
+            # "every last monday of the year": the yearly sibling of
             # the "... of [every] month" tail above. Before this branch, "of
             # the year" matched neither the ``ctx.months`` check nor the
             # units-is-"month" one, so the loop's tail check fell through
@@ -2110,14 +2110,14 @@ def _business_day_of_month(ordn, month=None):
 
 
 def _nth_weekday_of_year(ordn, wd, interval=1):
-    """The ``ordn``-th ``wd`` of the whole calendar year (R145).
+    """The ``ordn``-th ``wd`` of the whole calendar year.
 
     Sibling of :func:`_nth_weekday_of_month` but with no ``bymonth`` at
     all -- RFC 5545 gives a signed ``BYDAY`` ordinal under bare
     ``FREQ=YEARLY`` exactly this meaning ("last monday of the year" ->
     ``FREQ=YEARLY;BYDAY=-1MO``), never ``FREQ=MONTHLY`` (which would repeat
     every month rather than once a year). ``interval`` carries a leading
-    "every other"/"every Nth" multiplier (R154): unlike the month-scope
+    "every other"/"every Nth" multiplier: unlike the month-scope
     sibling, an every-N-years cadence is a distinct, expressible frequency
     (``FREQ=YEARLY;INTERVAL=N``), not a degenerate repeat of the base
     reading, so it is folded in rather than dropped.
@@ -2127,7 +2127,7 @@ def _nth_weekday_of_year(ordn, wd, interval=1):
 
 
 def _business_day_of_year(ordn, interval=1):
-    """The ``ordn``-th business day of the whole calendar year (R145).
+    """The ``ordn``-th business day of the whole calendar year.
 
     Sibling of :func:`_business_day_of_month` (``month=None``) but yearly
     rather than monthly, for "the last weekday of the year" -- the same
@@ -2521,7 +2521,7 @@ def _recur_every(ctx):
         # -- ellipsis: "every <N> last <weekday>" (bare, no scope tail) ------
         # a leading interval count directly before the bare "last <weekday>"
         # ellipsis reads elliptically as the very same monthly last-weekday
-        # rule the explicit "of the month" tail gets (R154: the interval is
+        # rule the explicit "of the month" tail gets (the interval is
         # dropped there too). Without this branch the count instead fell
         # through to the day-of-month ellipsis below ("every 2nd" ->
         # BYMONTHDAY=2), stranding "last friday" and silently misreading the
@@ -2833,7 +2833,7 @@ def _skip_clock_at(ctx, lang, idx):
 
     Used only to look PAST an out-of-order clock pin for a further
     qualifier the adjacent scan missed ("weekly **at 9** on monday" --
-    R155's WEEKLY/MONTHLY/YEARLY qualifier scans normally look for their
+    the WEEKLY/MONTHLY/YEARLY qualifier scans normally look for their
     qualifier right after the freq word and give up if a clock sits there
     instead). The clock's own tokens are deliberately left OUT of the
     returned span -- this helper never reads the clock's value, so
@@ -2871,10 +2871,10 @@ def _recur_freq_word(ctx):
     :func:`_weekly_byday_qualifier`, :func:`_monthly_bymonthday_qualifier`
     and :func:`_yearly_bymonth_qualifier` with the ``every``-gated readings
     keeps both paths reading the same qualifier grammar instead of one
-    silently dropping it (R149).
+    silently dropping it.
 
-    The qualifier scan is order-INSENSITIVE with a leading clock pin
-    (R155): "weekly **at 9** on monday" reads the same BYDAY the postposed
+    The qualifier scan is order-INSENSITIVE with a leading clock pin:
+    "weekly **at 9** on monday" reads the same BYDAY the postposed
     order ("weekly on monday at 9am") already does, and the MONTHLY/YEARLY
     siblings take the same treatment via :func:`_skip_clock_at` since they
     share the same adjacent-only qualifier scan. DAILY has no further

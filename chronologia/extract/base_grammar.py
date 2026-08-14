@@ -96,7 +96,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         # 2026" had no order binding WEEKDAY+GYEAR together at all (YEAR only
         # ever binds alongside a MONTH), so it fell through to the
         # anchor-relative "last monday" reading, stranding "of 2026" and
-        # silently ignoring the named year (R142). "of"/"in" both introduce
+        # silently ignoring the named year. "of"/"in" both introduce
         # the year across locales (en "of"/"in", pt "de"), and some locales
         # (de, pl) drop the connector entirely, hence both an optional-"of"
         # order and a separate "in" order.
@@ -108,7 +108,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         # year_word, sibling of the existing "ORD UNIT of article? year_word
         # YEAR?" order) and the postposed Slavic "<weekday> [<YEAR>]
         # year_word" idiom ("первый понедельник 2027 года", "pierwszy
-        # poniedziałek roku") -- R145: neither order ever bound ``WEEKDAY``
+        # poniedziałek roku") -- neither order ever bound ``WEEKDAY``
         # together with a ``year_word``, only ``UNIT`` (day/week/...) did, so
         # "первый понедельник 2027 года" had no order binding WEEKDAY with a
         # trailing year_word at all -- it fell through to the bare-GYEAR

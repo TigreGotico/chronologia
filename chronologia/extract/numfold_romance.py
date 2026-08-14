@@ -861,7 +861,7 @@ def _num_unit_before(tokens, i, unit_words):
 
 #: fused French idiom surfaces whose collapse must be HELD BACK when a
 #: numeral quantity heads them ("deux jours après demain" = demain+2, an
-#: ordinary numeral-scaled offset with "après" as its marker, R147) --
+#: ordinary numeral-scaled offset with "après" as its marker) --
 #: unlike a bare "après demain"/"avant hier", which is always the fixed
 #: +-2-day idiom.  Every other ``_FR_PHRASES`` entry (the BC/AD markers,
 #: "il y a", "week end") has no such competing numeral-offset reading, so it

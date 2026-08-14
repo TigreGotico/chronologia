@@ -566,7 +566,7 @@ class ConstructionMatcher:
                     # definite article ("les"), so a full year-less date
                     # ("25 de desembre les nou i quart") skipped the article
                     # straight onto its own MONTH and vetoed a real clock
-                    # (R158) -- the CLOCKDIR/FRACTION already disambiguate it.
+                    # -- the CLOCKDIR/FRACTION already disambiguate it.
                     if (name == "clock_time" and "HOUR" in slots
                             and "CLOCKDIR" not in slots
                             and "FRACTION" not in slots):

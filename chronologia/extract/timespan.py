@@ -1680,7 +1680,7 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
 
 
 def _bare_direction_span(tokens, span, consumed, spec, anchor):
-    """R146: a bare "before X" / "after X" -- no magnitude ("a week before
+    """A bare "before X" / "after X" -- no magnitude ("a week before
     X", already composed by
     :func:`~chronologia.extract.anchored.apply_anchored_offset`) -- binds a
     span instead of silently stranding the direction word over the bare "X"
@@ -2413,7 +2413,7 @@ def _stray_capitalized_am_veto(tokens, match, spec) -> bool:
     the same surface as the meridiem marker, but whose ``cap`` flag still
     marks it as written upper-case in the source.
 
-    R102 added a ``year_ref`` order that lets an explicit "year" word license
+    A ``year_ref`` order lets an explicit "year" word license
     a below-window (< 1000, ``SMALLYEAR``) bare number ("in year 5") so it is
     never silently stranded on the "in a year" relative reading.  That same
     order also now claims the leading "in the year 1" of "in the year 1 AM",
@@ -2441,11 +2441,11 @@ def _stray_year_zero_veto(tokens, match, spec) -> bool:
     """True for a ``relative_offset`` "year" match immediately followed by a
     bare "0" -- e.g. "in year 0".
 
-    ``SMALLYEAR`` (the R102/#663 fix for "in year 5") deliberately refuses a
+    ``SMALLYEAR`` (the #663 fix for "in year 5") deliberately refuses a
     raw "0" (``matcher.py``'s ``SMALLYEAR`` branch: ``raw[0] != '0'``) because
     bare "year 0" carries no astronomical-year-0 binding -- it already
-    resolves to ``None``. Without this veto, the R102 fix's own carve-out
-    reopens the original R102 hole for N=0 only: "in year" alone still
+    resolves to ``None``. Without this veto, the #663 fix's own carve-out
+    reopens the original hole for N=0 only: "in year" alone still
     matches the plain relative-offset grammar ("in a year", +1y from the
     anchor) and "0" is left stranded, unconsumed, in the remainder -- the
     exact silent-wrong #663 was written to close for every OTHER N. Refusing
@@ -2463,7 +2463,7 @@ def _stray_year_zero_veto(tokens, match, spec) -> bool:
             and tokens[end].raw.rstrip(".") == "0")
 
 
-#: (R136) Scandinavian month surfaces that collide with the "jul" spelling of
+#: Scandinavian month surfaces that collide with the "jul" spelling of
 #: Christmas: Danish, Swedish, Norwegian Bokmal and Nynorsk all name the
 #: month "juli" but also list the bare abbreviation "jul" in their MONTH
 #: vocab (needed for in-context abbreviated dates like "15. jul. 2026" / "jul
@@ -2493,7 +2493,7 @@ def _month_holiday_collision_veto(tokens, match, spec) -> bool:
     equal-length holiday_ref reading for the same token (spec.holidays maps
     "jul" -> "christmas") win the overlap contest instead.  Silently reading
     bare "jul" as the whole month of July, rather than Christmas Day, is the
-    R136 defect this veto closes.
+    defect this veto closes.
     """
     if match.construction != "calendar_date":
         return False
@@ -2520,8 +2520,8 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
     DAYPART" order, ``marker_of.voc`` binding "de") over the 1-token bare
     ``named_day`` reading of "mañana" alone, so "mañana" is read as "the
     morning" and the whole reference silently becomes a daypart band on
-    TODAY -- stranding "antes"/the offset's own magnitude in the remainder
-    (R141). Portuguese/pt has no such collision ("amanhã" tomorrow vs
+    TODAY -- stranding "antes"/the offset's own magnitude in the remainder.
+    Portuguese/pt has no such collision ("amanhã" tomorrow vs
     "manhã" morning are different words), so this veto is a no-op there and
     everywhere the DAYPART surface does not double as a DAY_WORD.
     """
@@ -2551,7 +2551,7 @@ def _num_preamble_named_day_idiom_veto(tokens, match, spec) -> bool:
     longer span still wins the overlap contest against the generic offset
     reading even when a numeral heads the phrase, so the numeral is
     stranded in the remainder and the idiom's fixed +-1 answers instead of
-    the numeral-scaled one (R147: "two days after tomorrow" resolved to
+    the numeral-scaled one ("two days after tomorrow" resolved to
     tomorrow+1 instead of tomorrow+2, with "two" stranded).
 
     Vetoing here makes the matcher fall back to the bare ``named_day`` match
@@ -2580,7 +2580,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
     them the WRONG parse ("the new year" is the period not the holiday; a
     non-clause-final "be" is the verb not the era; a plain year stranding a
     capitalized "BE"/"AM" is a declined era, not a confident year; "in year"
-    stranding a bare "0" is the original R102 stranding hole reopened for the
+    stranding a bare "0" is the original stranding hole reopened for the
     one value SMALLYEAR refuses; a bare Scandinavian "jul" is Christmas, not
     the month of July; Spanish/Galician "mañana" after "antes"/"después" is
     "tomorrow", not "[in] the morning").  Applied before the overlap contest
@@ -2613,8 +2613,8 @@ def _for_marker_pattern(spec):
         # never split into individual words. Russian's marker is the
         # two-word "в течение" ("during"); flattening it to {"в", "течение"}
         # let the bare preposition "в" ("at"/"in", also the clock's own "в 9
-        # часов" and any other leading "в") stand in for the whole marker,
-        # which is defect R119-followup: "в следующий вторник вечером в 9
+        # часов" and any other leading "в") stand in for the whole marker:
+        # "в следующий вторник вечером в 9
         # часов" (Tuesday evening at 9) had its leading, unrelated "в"
         # misread as the duration bound and swallowed the entire rest of the
         # sentence as a bogus 9-HOUR duration. Joining each surface's own
@@ -2633,7 +2633,7 @@ def _for_marker_pattern(spec):
 
 def _extend_clock_for_duration(span, remainder, tokens, consumed, text, engine):
     """Extend a resolved PINPOINT clock-start span by a trailing bare
-    "for <duration>" (defect R119): "next monday at 9am for 2 hours" ends at
+    "for <duration>": "next monday at 9am for 2 hours" ends at
     11:00, not a minute after 9am with "for 2 hours" stranded.
 
     Fires ONLY when the resolved span is exactly the minute-wide span a
@@ -2772,7 +2772,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     if core is None:
         return None
     span, consumed = core
-    # R146: a bare "before X" / "after X" (no magnitude) left the direction
+    # A bare "before X" / "after X" (no magnitude) left the direction
     # word stranded beside an otherwise-complete "X" -- see
     # _bare_direction_span for why this is a post-hoc check on the core's
     # own resolution rather than an independent pre-scan.
@@ -2984,7 +2984,7 @@ def _compose(resolved, engine, tokens):
         # A day-part word PRECEDING an explicit clock ("evening at 9") is a
         # meridiem HINT on it, not a competing reading: the two must
         # COMPOSE, with the clock as the pinpoint, rather than one silently
-        # winning and stranding the other (the R117 defect).  Deliberately
+        # winning and stranding the other.  Deliberately
         # ORDER-SENSITIVE: the postposed genitive forms ("9 vecara") already
         # fuse into the clock's own MERIDIEM slot at match time and never
         # reach here as a separate daypart_ref match, while a bare POSTPOSED
