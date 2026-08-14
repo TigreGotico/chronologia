@@ -22,13 +22,18 @@ def test_no_spurious_parse(text):
     nomatch(text)
 
 
-# -- documented gap: the dual noun is not a NUM UNIT pair -------------------
+# -- dual nouns: a dual splits to a synthetic NUM(2) + plural-unit pair
+# (``numfold_semitic._he_dual_split``), reusing the ordinary NUM UNIT offset
+# reading in both directions; these assert the surfaces resolve fully.
 @pytest.mark.parametrize("text", [
-    "בעוד שבועיים",           # "in a fortnight" (dual) -- known gap
-    "לפני יומיים",           # "two days ago" (dual) -- known gap
+    "בעוד שבועיים",           # "in a fortnight" (dual)
+    "לפני יומיים",           # "two days ago" (dual)
 ])
-def test_dual_gap(text):
-    nomatch(text)
+def test_dual_now_resolves(text):
+    from ._corpus import parse
+    r, remainder = parse(text)
+    assert r is not None
+    assert remainder == ""
 
 
 # -- a bare full weekday names its next strictly-future occurrence ----------
