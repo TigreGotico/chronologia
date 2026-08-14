@@ -3,6 +3,7 @@
     "decimal_comma": true,
     "split_contractions": false,
     "ordinal_dot": true,
+    "ordinal_dot_max_digits": 2,
     "dotted_date": true
   },
   "constructions": {

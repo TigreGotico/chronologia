@@ -449,10 +449,54 @@ def _he_gematria_rewrite(tokens):
 _fold_he_cardinal = fold_he
 
 
+# -- vav-conjunction (ו) proclitic strip --------------------------------------
+# Hebrew glues the one-letter conjunction ו ("and") directly onto the word it
+# precedes, no space -- "ומחר" (and-tomorrow), "ופסח" (and-Passover). The
+# bet-preposition ("in") already gets this treatment for months, but as
+# CURATED DUPLICATE literal surfaces -- ``month_1.voc`` lists both "ינואר" and
+# "בינואר" outright. That approach cannot reach the holiday surfaces, which
+# are harvested from ``well_known.tab`` and tokenised at load time, or the
+# multi-word ones ("חג הפסח"), so it is done here instead as a token-level
+# strip: a token whose text starts with ו folds to its bare remainder when
+# that remainder is one of a curated closed set of Hebrew date/holiday stems.
+# Gating on a curated set (rather than "any known vocab surface", which this
+# hook cannot see -- it runs on tokens only) is exactly what keeps a real
+# ו-initial root word ("ותיק", "ורוד"...) untouched: the strip only ever fires
+# on a word already attested here as the Hebrew name of a day, month or
+# holiday.
+_HE_VAV_STEMS = frozenset({
+    # named days (named_day_*.voc)
+    "מחר", "היום", "אתמול", "אמש", "מחרתיים", "מחרתים",
+    # Gregorian months (month_*.voc, bare form)
+    "ינואר", "פברואר", "מרץ", "מרס", "אפריל", "מאי", "יוני", "יולי",
+    "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר",
+    # holiday surfaces (well_known.tab, he) -- single-word or the first word
+    # of a multi-word surface ("חג" of "חג הפסח"), left for the multiword
+    # merge pass to glue back together once split off from "וחג"
+    "פסח", "חנוכה", "חג",
+})
+
+
+def _he_vav_strip(tokens):
+    out, changed = [], False
+    for t in tokens:
+        if (not t.is_number and len(t.text) > 1 and t.text[0] == "ו"
+                and t.text[1:] in _HE_VAV_STEMS):
+            out.append(Token(text=t.text[1:], raw=t.raw[1:], index=t.index,
+                             char_start=t.char_start + 1 if t.char_start is not None else None,
+                             char_end=t.char_end, cap=t.cap, prev_cap=t.prev_cap))
+            changed = True
+        else:
+            out.append(t)
+    return reindex(tuple(out)) if changed else tokens
+
+
 def fold_he(tokens):  # noqa: F811  -- wrap the cardinal fold with the fem ordinal
     """Fold the gematria year numeral (תשפ״ה → 5785), the ordinal teen
     (11..19) and the feminine ordinal (מחצית's "first/second") before the
     cardinal fold, then run the cardinal fold: none overlap (each is its own
-    run), and the weekday-masculine ordinals stay untouched."""
+    run), and the weekday-masculine ordinals stay untouched. The vav strip
+    runs first so a vav-prefixed date word folds/matches exactly like its
+    bare form."""
     return _fold_he_cardinal(_he_ordinal_rewrite(
-        _he_teen_fold(_he_gematria_rewrite(tokens))))
+        _he_teen_fold(_he_gematria_rewrite(_he_vav_strip(tokens)))))
