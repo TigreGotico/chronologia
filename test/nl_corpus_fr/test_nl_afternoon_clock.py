@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """The "de l'après-midi" meridiem (fr): "trois heures de l'après-midi" = 15:00.
 
-French has no bare "après-midi" day-part vocabulary (the tokenizer splits the
-hyphen and "midi" is already the noon landmark -- see test_nl_daypart), but the
-post-posed meridiem phrase "... de l'après-midi" composes with a spelled hour
-to add twelve hours, the afternoon counterpart of "du matin" / "du soir"
-already covered in test_nl_clock.
+This is distinct from the bare "après-midi" day-part band (R165, see
+test_nl_r165_apres_midi): the post-posed meridiem phrase "... de l'après-midi"
+composes with a spelled hour to add twelve hours, the afternoon counterpart
+of "du matin" / "du soir" already covered in test_nl_clock.
 
 Anchor Tuesday 2017-06-27 13:04.  15:00-17:00 are all still ahead of 13:04, so
 they stay on the anchor day; a clock reference is one minute wide.
