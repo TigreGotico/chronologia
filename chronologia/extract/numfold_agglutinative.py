@@ -413,8 +413,46 @@ from chronologia.extract.numfold_ordinals import _pron_ordinal_map as _pom
 from chronologia.extract.numfold_slavic import (_compose as _sl_compose,
                                                 _day_rewrite as _sl_day_rewrite)
 _ET_TENS_ORD = {"kahekümne": 20, "kolmekümne": 30}
+
+
+def _et_adessive_ordinals() -> Dict[str, int]:
+    """The adessive day-of-month ordinal ("viiendal augustil" = on the 5th of
+    August) that the bare nominative map (``_pom("et")``) misses: the date
+    construction takes the ordinal in the adessive case ("-l" on the genitive
+    stem), not the nominative ``pronounce_ordinal_et`` emits.  Estonian
+    ordinal declension builds the genitive stem off the nominative by a
+    closed, regular rule -- the two suppletive ordinals ("esimene", "teine")
+    replace the final "-ne" with "-se", every other ordinal 3rd..20th/30th
+    replaces the final "-s" with "-nda" -- and the adessive is that stem plus
+    "-l".  Only 1..20 and 30 are single-token nominative forms (21..29/31 are
+    two words, "kahekümne esimene"); the trailing word of those compounds is
+    one of the same 1..9 units already produced here, so the tens-prefix
+    compose pass below recombines it without a separate compound table.
+    Source: Eesti keele käsiraamat (EKI), järgarvsõnade käänamine (nimetav ->
+    omastav -> alalütlev)."""
+    pron = getattr(import_module("ovos_number_parser.numbers_et"),
+                   "pronounce_ordinal_et")
+    out: Dict[str, int] = {}
+    for n in list(range(1, 21)) + [30]:
+        try:
+            w = str(pron(n)).strip().lower()
+        except Exception:
+            continue
+        if " " in w:
+            continue
+        if w.endswith("ne"):
+            stem = w[:-2] + "se"
+        elif w.endswith("s"):
+            stem = w[:-1] + "nda"
+        else:
+            continue
+        out[stem + "l"] = n
+    return out
+
+
 fold_et = _sl_compose(
-    _sl_day_rewrite(dict(_pom("et")), _ET_TENS_ORD),
+    _sl_day_rewrite({**dict(_pom("et")), **_et_adessive_ordinals()},
+                    _ET_TENS_ORD),
     with_ordinals(fold_et, "et"))
 
 
