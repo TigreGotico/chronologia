@@ -1,0 +1,8 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as [12:00, 18:00).
+# The hyphenated surface is tokenizer-canonicalised to "après midi" (the
+# hyphen splits into two tokens the loader re-glues); ascii-folded twin kept
+# for the same reason clock_meridiem_pm.voc keeps one.
+après-midi
+apres-midi

@@ -4,9 +4,8 @@
 French opens the matin at four in the morning, two hours before English, and
 runs the soir to midnight with no band between it and the nuit, which is the
 small hours: nuit ``[00:00, 04:00)``, matin ``[04:00, 12:00)``, soir
-``[18:00, 24:00)``. The apres-midi band ``[12:00, 18:00)`` is registered but
-has no vocabulary here: the tokenizer splits the hyphen, leaving "midi", and
-"midi" is already this locale's word for the noon instant.
+``[18:00, 24:00)``. The apres-midi band ``[12:00, 18:00)`` is covered in
+``test_nl_r165_apres_midi.py`` instead of here.
 
 The boundaries are the Unicode CLDR 47 day-period rules for locale ``fr``
 (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),

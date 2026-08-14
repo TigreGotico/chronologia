@@ -122,8 +122,9 @@ consumed through the deictic ``daypart_ref`` grammar ("this morning",
 "yesterday evening"), which speaks that four-band vocabulary.  The bands are
 always shipped; a band whose only natural surface is multi-word (Czech ``v
 noci``, Polish ``po południu``, Turkish ``öğleden sonra``, Malay ``tengah
-hari``) carries no ``daypart_*.voc`` yet, exactly as French ``après-midi``
-already does, and a few locales (``az`` ``el``) ship the bands but hold their
+hari``) carries no ``daypart_*.voc`` yet -- French ``après-midi`` ships its
+tokenizer-canonicalised "après midi" surface, so it no longer belongs to that
+set -- and a few locales (``az`` ``el``) ship the bands but hold their
 surfaces for native review.
 
 ``Vormittag``, ``förmiddag``, ``formiddag``, ``føremiddag`` and ``migdia`` have
@@ -377,8 +378,7 @@ _LANGUAGES: List[DayPart] = [
     # midnight-crossing band where the chart splits it at 00:00).  The band
     # boundaries are always shipped even where no single-token deictic surface
     # exists for a band (a band with a multi-word surface -- Czech "v noci",
-    # Polish "po poludniu" -- carries no ``daypart_*.voc`` yet, exactly as
-    # French "apres-midi" already does).
+    # Polish "po poludniu" -- carries no ``daypart_*.voc`` yet).
     # uk: evening runs to midnight, night is the small hours (like ru).
     _p("morning", (4, 0), (12, 0), "uk", _cldr("uk")),
     _p("afternoon", (12, 0), (18, 0), "uk", _cldr("uk")),

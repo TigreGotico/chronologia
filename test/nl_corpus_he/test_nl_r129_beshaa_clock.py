@@ -133,5 +133,7 @@ def test_shaa_in_duration_phrase_not_a_clock():
 
 
 def test_shaa_ago_not_a_clock():
-    # 'לפני שעה' = "an hour ago" -- must not be swept into a clock reading.
-    nomatch("לפני שעה")
+    # 'לפני שעה' = "an hour ago" -- a relative offset, not a clock reading.
+    from datetime import timedelta
+    s = span("לפני שעה")
+    assert (s.start, s.end) == (ad(ANCHOR - timedelta(hours=1)), ad(ANCHOR))
