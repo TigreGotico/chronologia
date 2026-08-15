@@ -77,7 +77,7 @@
     },
     "decade_ref": {
       "orders": [
-        "PART? article? year_word NUM"
+        "article? PART? of? article? year_word NUM"
       ]
     },
     "year_ref": {
