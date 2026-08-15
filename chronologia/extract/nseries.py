@@ -2709,8 +2709,17 @@ def _recur_every(ctx):
                 or (allow_plural and _weekday_here(ctx, t[j], True) is not None)):
             days, end = _collect_weekdays(ctx, j, allow_plural)
             byday = tuple((None, wd) for wd in days)
+            # A leading preposition directly ahead of the "every" marker
+            # ("in fiecare luni") is the idiomatic Romanian way to say "every
+            # monday" -- the marker itself carries no meaning "every" does
+            # not already supply, so it is absorbed the same way es "cada"
+            # and en "every" need no absorption at all (they have no such
+            # leading preposition to begin with). Scoped to the plain
+            # "<in> every <weekday>" frame only, so "in fiecare zi de luni"
+            # (a DAILY unit reading, a different branch below) is untouched.
+            start = i - 1 if i > 0 and t[i - 1].text in ctx.in_words else i
             return (_build_every("weekly", byday=byday, **iv),
-                    set(range(i, end)))
+                    set(range(start, end)))
         if t[j].text in ctx.units:
             unit = ctx.units[t[j].text]
             if unit == "fortnight":
