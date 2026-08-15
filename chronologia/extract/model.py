@@ -207,6 +207,16 @@ class Conventions:
     # A fact, not logic -- the matcher reads it to veto that one reading;
     # languages that mark clock hours without articles at all leave it empty.
     bare_at_markers: FrozenSet[str] = frozenset()
+    # A day-or-coarser ``relative_offset`` ("3 days ago", "next month") composes
+    # with an adjacent trailing ``clock_time`` exactly like a ``named_day``
+    # does ("yesterday at 9" -> yesterday 09:00): the clock pins the offset day
+    # to a minute, instead of the offset standing alone with the clock stranded
+    # in the remainder.  Off by default -- most locales leave "3 days ago at
+    # 9am" un-composed (a queued, separate gap) -- set only for languages where
+    # the offset's trailing marker word is ALSO the clock's "at" preposition
+    # (Turkic/Iranian "saat"), so the two constructions read as one phrase
+    # ("3 gün əvvəl saat 9" = "9 o'clock, 3 days ago") rather than two.
+    offset_clock_composes: bool = False
 
 
 @dataclass(frozen=True)

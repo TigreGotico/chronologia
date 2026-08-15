@@ -2886,6 +2886,26 @@ def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text,
     return resolve_ref
 
 
+#: sub-day offset units -- a ``relative_offset`` bound to one of these is
+#: already a clock-level point ("2 saat əvvəl" == an hour-wide span, not a
+#: day), so :func:`_compose` never treats it as a composable date even on a
+#: locale that opts into ``offset_clock_composes``; only a day-or-coarser
+#: offset ("3 gün əvvəl") is a whole day a trailing clock can pin a minute on.
+_SUBDAY_OFFSET_UNITS = frozenset({"second", "minute", "hour"})
+
+
+def _offset_is_day_or_coarser(match, spec) -> bool:
+    """True when a ``relative_offset`` match's bound unit is day-or-coarser
+    (day, week, month, year, ...) rather than second/minute/hour."""
+    usg_tok = match.slots.get("USG")
+    if usg_tok is not None:
+        kind = spec.singular_units.get(usg_tok.text)
+    else:
+        unit_tok = match.slots.get("UNIT")
+        kind = spec.units.get(unit_tok.text) if unit_tok is not None else None
+    return kind is not None and kind not in _SUBDAY_OFFSET_UNITS
+
+
 def _compose(resolved, engine, tokens):
     """Pick the single winning reading from the post-passed ``resolved`` matches.
 
@@ -2909,8 +2929,14 @@ def _compose(resolved, engine, tokens):
     public APIs never disagree on the composed primary.
     """
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
+    spec = engine.spec
+    composable = (_COMPOSABLE_DATES | {"relative_offset"}
+                 if spec.conventions.offset_clock_composes
+                 else _COMPOSABLE_DATES)
     dates = [(m, r) for m, r in resolved
-             if m.construction in _COMPOSABLE_DATES]
+             if m.construction in composable
+             and (m.construction != "relative_offset"
+                  or _offset_is_day_or_coarser(m, spec))]
     dayparts = [(m, r) for m, r in resolved
                 if m.construction == "daypart_ref"]
     weekdays = [(m, r) for m, r in resolved
@@ -2925,7 +2951,6 @@ def _compose(resolved, engine, tokens):
     # spans is allowed only when it is itself consumed by one of the resolved
     # matches (the daypart in "monday morning at 3pm") or is a bare glue
     # connector (at / on / of / the -- the clock usually already absorbs "at").
-    spec = engine.spec
     # Glue = function words that legitimately join a date to a time within one
     # reference (at / on / of / the, a daypart preposition like Spanish "por la
     # mañana", French "du" in "le matin du 3 mars").  A surface is glue if it

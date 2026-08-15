@@ -101,7 +101,8 @@
     "dmy": true,
     "hemisphere": null,
     "prefer_future": true,
-    "bare_half_past": true
+    "bare_half_past": true,
+    "offset_clock_composes": true
   },
   "guards": {
     "bare_year_min_digits": 4
