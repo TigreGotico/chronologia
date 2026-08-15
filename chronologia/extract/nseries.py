@@ -2599,6 +2599,38 @@ def _recur_every(ctx):
             return (_nth_weekday_of_month(ordn, wd),
                     set(range(i, _of_month_tail(ctx, j + 2))))
 
+        # -- ellipsis: "every [<N>] last day [of the month]" -> BYMONTHDAY ---
+        # a bare "last" (optionally preceded by a numeric count) directly
+        # before the bare "day" unit noun mirrors the last-weekday ellipsis
+        # above, but for the day-of-month reading: RFC 5545 allows a negative
+        # BYMONTHDAY, so "the Nth-from-the-end day" counts backward exactly
+        # like the word-form "<ordinal>-to-last" idiom the weekday path
+        # already honours ("third-to-last" -> -3). Without this branch the
+        # leading count fell through to the POSITIVE-count BYMONTHDAY branch
+        # below instead, silently reading the opposite end of the month and
+        # stranding "last day of the month" as remainder.
+        #
+        # Unlike the weekday ellipsis, there is no competing "second/last
+        # day" reading to protect here (that ambiguity is specific to the
+        # weekday convention), so N maps straight to -N with no N=2 special
+        # case, bounded the same 1..31 RRULE-valid range any other BYMONTHDAY
+        # count already uses.
+        if (j + 1 < n and t[j].text in ctx.rel_markers
+                and ctx.rel_markers[t[j].text] == -1
+                and t[j + 1].text in ctx.units
+                and ctx.units[t[j + 1].text] == "day"):
+            if num_val is None:
+                day_ordn = -1
+            elif 1 <= num_val <= 31:
+                day_ordn = -num_val
+            else:
+                # out of RRULE's -31..-1 BYMONTHDAY range -- decline the
+                # whole reading rather than clamp or silently fall back.
+                return None, frozenset()
+            end = _of_month_tail(ctx, j + 2)
+            return (_build_every("monthly", bymonthday=day_ordn),
+                    set(range(i, end)))
+
         # -- ellipsis: "every <ordinal> <weekday>" ---------------------------
         # "every first friday" is the 1st friday of the month: an *interval* of
         # one would be degenerate (plain "every friday"), so the ordinal is the
