@@ -145,6 +145,16 @@ _HOUR_PL = {  # genitive/locative feminine ("do/po ...") + nominative ("za ...")
     "pierwsza": 1, "druga": 2, "trzecia": 3, "czwarta": 4, "piąta": 5,
     "szósta": 6, "siódma": 7, "ósma": 8, "dziewiąta": 9, "dziesiąta": 10,
     "jedenasta": 11, "dwunasta": 12}
+# sk mirrors pl's feminine-locative toward-hour class: "o druhej (hodine)" (at
+# two o'clock) names the coming hour with a feminine locative ordinal agreeing
+# with the elided "hodine".  Citation: Jazykovedný ústav Ľ. Štúra SAV,
+# Morfológia slovenského jazyka, skloňovanie radových čísloviek, ženský rod
+# lokál jednotného čísla "jednej ... dvanástej".
+# https://slovnik.juls.savba.sk/
+_HOUR_SK = {  # locative feminine, elided "hodine"
+    "jednej": 1, "druhej": 2, "tretej": 3, "štvrtej": 4, "piatej": 5,
+    "šiestej": 6, "siedmej": 7, "ôsmej": 8, "deviatej": 9, "desiatej": 10,
+    "jedenástej": 11, "dvanástej": 12}
 
 
 # -- feminine nominative ordinals that agree with a feminine temporal noun ------
@@ -524,7 +534,8 @@ fold_cs = _compose(_day_rewrite(_DAY_CS),
                    with_ordinals(_make_fold("cs"), "cs", _FEM_ORD_CS),
                    _hour_rewrite(_HOUR_CS))
 fold_sk = _compose(_day_rewrite(_DAY_SK),
-                   with_ordinals(_make_fold("sk"), "sk", _FEM_ORD_SK))
+                   with_ordinals(_make_fold("sk"), "sk", _FEM_ORD_SK),
+                   _hour_rewrite(_HOUR_SK))
 fold_pl = _compose(_day_rewrite(_DAY_PL),
                    with_ordinals(_make_fold("pl"), "pl", _FEM_ORD_PL),
                    _hour_rewrite(_HOUR_PL))
