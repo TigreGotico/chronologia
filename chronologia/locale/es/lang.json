@@ -150,7 +150,8 @@
     "week_start": "monday",
     "dmy": true,
     "hemisphere": null,
-    "prefer_future": true
+    "prefer_future": true,
+    "bare_at_markers": ["a"]
   },
   "quantifiers": {
     "1": [
