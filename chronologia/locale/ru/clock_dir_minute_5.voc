@@ -1,0 +1,9 @@
+# Russian genitive cardinal minute count in the subtractive "без N <hour>"
+# clock idiom -- generalises the fixed quarter idiom ("без четверти девять")
+# to any minute count: "без пяти девять" == without five == 08:55.  Bound
+# only after CLOCKDIR ("без"); it is not a toward-hour bare-fraction word
+# (unlike FRACTION's "четверть"/"половина", it names no bare "N of the
+# hour" idiom on its own -- "пять девять" alone is not Russian for a clock
+# time), so it lives in its own map rather than clock_fractions.
+# Citation: gramota.ru, telling the time.
+пяти

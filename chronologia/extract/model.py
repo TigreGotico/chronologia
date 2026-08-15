@@ -255,6 +255,11 @@ class LangSpec:
     hook: Optional[Callable] = None
     # clock_time slot vocab (surface -> value), all facts from filename convention
     clock_fractions: Mapping[str, int] = field(default_factory=dict)  # -> minutes
+    # a spelled genitive-cardinal minute count that only ever names the
+    # subtractive CLOCKDIR direction ("без пяти" == without five) -- unlike
+    # clock_fractions it carries no bare toward-hour idiom of its own, so it
+    # cannot ride the FRACTION slot's bare "FRACTION HOUR" order.
+    clock_dir_minutes: Mapping[str, int] = field(default_factory=dict)  # -> minutes
     meridiems: Mapping[str, int] = field(default_factory=dict)        # -> hour offset
     # NIGHT meridiem surfaces (ar ليل, az gecə): the night daypart is a BAND
     # that crosses midnight, not a uniform +12 PM shift.  Small hours stay AM,

@@ -290,6 +290,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         return token.is_number and 0 <= (token.value or 0) <= 9
     if name == "FRACTION":
         return token.text in spec.clock_fractions
+    if name == "CLOCKMIN":
+        return token.text in spec.clock_dir_minutes
     if name == "CLOCKDIR":
         return token.text in spec.clock_dirs
     if name == "MERIDIEM":
