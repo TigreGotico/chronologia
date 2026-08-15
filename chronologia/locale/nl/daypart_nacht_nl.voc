@@ -3,4 +3,7 @@
 # transcribed in chronologia/dayparts.py as [00:00, 06:00).
 # Sources: Algemeen Nederlands Woordenboek, Instituut voor de Nederlandse
 # Taal (https://anw.ivdnt.org/article/ochtend).
+# "vannacht" is a single-word today/tonight+nacht surface, the ANW's own
+# entry and the Dutch shape of "vanavond"/"vanochtend" for this band.
 nacht
+vannacht
