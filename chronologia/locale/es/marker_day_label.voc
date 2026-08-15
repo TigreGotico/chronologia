@@ -1,0 +1,12 @@
+# Spanish day-of-month label noun -- "día" ("day") heads the everyday idiom
+# "día N de <mes>" ("day 3 of March" == the 3rd of March), a genuine temporal
+# function word (RAE, Ortografía de la lengua española 5.2.5.1; DPD s.v.
+# "día") -- distinct from a bare ordinal reading, and NOT itself part of the
+# date construction's own grammar, so it was left stranded, unconsumed, in a
+# range endpoint's remainder even though the date it labels bound correctly.
+# Registered as its own marker so range-endpoint resolution
+# (:func:`chronologia.extract.timespan._resolve_endpoint`) can fold an
+# immediately-adjacent leading "día" into the consumed set precisely when the
+# date it labels actually bound -- never when the date fails to resolve, so a
+# "día" elsewhere in the sentence is untouched.
+día

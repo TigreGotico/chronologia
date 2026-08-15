@@ -1113,6 +1113,20 @@ def _bare_numeral(text, sub, engine, anchor):
         return None
     if len(sub) == 1:
         return nums[0]
+    # a day-label noun ("dia"/"día") plus nothing else besides the numeral is
+    # still a bare day, even though it resolves on its own to a day of the
+    # ANCHOR month -- "do dia 2 ao dia 5 de setembro" would otherwise bind the
+    # left endpoint to the 2nd of the anchor's month instead of September,
+    # stranding it when the composed range came out reversed.  The label noun
+    # names no month of its own (see ``marker_day_label.voc``), so a slice that
+    # is nothing but the label plus the day number still has to look to its
+    # partner exactly as the label-less "5" in "del 5 al 12 de junio" does.
+    # Checked *before* the duration-unit veto below: the label heads the
+    # numeral ("dia 2"), the opposite word order from a duration ("2 dias"),
+    # so the two shapes never collide.
+    labels = set(engine.spec.connectors.get("day_label", ()))
+    if labels and all(t is nums[0] or t.text in labels for t in sub):
+        return nums[0]
     # a slice carrying a unit is a duration, not a bare day -- "za 3 dnya do 5
     # aprelya" ("3 days before April 5") is an anchored offset whose "za 3 dnya"
     # names three days, not the 3rd.  Such a slice must keep its own reading, so

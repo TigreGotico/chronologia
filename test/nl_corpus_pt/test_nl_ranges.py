@@ -127,3 +127,61 @@ def test_a_without_a_from_lead_is_not_a_range():
 def test_shared_month_garbage_never_raises(text):
     from ._corpus import parse
     parse(text)
+
+
+# -- the shared-month range with the "dia" label on both ends: "dia" heads the
+# idiom "dia N de <mes>" (see marker_day_label.voc) and, written alone, "dia
+# N" still resolves on its own to the Nth of the ANCHOR month -- so the bare
+# "5" borrowing path (test_shared_month_range_reads_both_days, above) used to
+# skip it, and "do dia 2 ao dia 5 de setembro" bound only the dated right end
+# ("dia 5 de setembro"), stranding "do dia 2 ao" in the remainder instead of
+# reading the 2nd of September.  The label noun names no month of its own, so
+# a left endpoint that is nothing but "dia" plus a day number must borrow the
+# right endpoint's month exactly as a bare "5" does.
+
+@pytest.mark.parametrize("text", [
+    "do dia 5 ao dia 12 de junho",
+    "de 5 ao dia 12 de junho",
+    "do dia 5 a 12 de junho",
+])
+def test_shared_month_range_with_dayword_reads_both_days(text):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(2018, 6, 5) and ee == AstroDate(2018, 6, 13)
+
+
+def test_shared_month_range_with_dayword_crosses_the_year():
+    ss, ee = start_end("do dia 28 ao dia 31 de dezembro")
+    assert ss == AstroDate(2017, 12, 28) and ee == AstroDate(2018, 1, 1)
+
+
+def test_shared_month_range_with_dayword_consumes_the_label():
+    from ._corpus import parse
+    r = parse("do dia 5 ao dia 12 de junho")
+    assert r.remainder == ""
+
+
+def test_dayword_both_months_named_still_works():
+    # the control this defect masqueraded as correct: naming the month on
+    # BOTH ends, rather than sharing it, always worked and must keep working.
+    ss, ee = start_end("do dia 2 de setembro ao dia 5 de setembro")
+    assert ss == AstroDate(2017, 9, 2) and ee == AstroDate(2017, 9, 6)
+
+
+def test_dayword_bare_number_start_still_works():
+    # the control the fix generalises from: a bare (label-less) numeral start
+    # already borrowed the end's month before this fix and must still.
+    ss, ee = start_end("de 2 a 5 de setembro")
+    assert ss == AstroDate(2017, 9, 2) and ee == AstroDate(2017, 9, 6)
+
+
+def test_dayword_single_date_still_folds_the_label():
+    # a bare "dia N" not paired in a range keeps folding its own label.
+    from ._corpus import parse
+    r = parse("dia 15 de setembro")
+    assert r.span.start == AstroDate(2017, 9, 15) and r.remainder == ""
+
+
+def test_weekday_range_still_works():
+    # anchor is Tuesday 2017-06-27; the next Monday-to-Friday span is 07-03..07-08
+    ss, ee = start_end("de segunda a sexta")
+    assert ss == AstroDate(2017, 7, 3) and ee == AstroDate(2017, 7, 8)
