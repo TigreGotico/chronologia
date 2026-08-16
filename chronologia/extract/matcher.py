@@ -577,6 +577,29 @@ class ConstructionMatcher:
                             _hi -= 1
                         if _hi >= 0 and tokens[_hi].text in self.spec.months:
                             continue
+                    # A bare-hour clock immediately after an article-less "at"
+                    # is not a licensed clock time in a language that always
+                    # names the hour WITH its agreeing article ("a la una",
+                    # "às três") -- "a un rato"/"daqui a um bocado" tokenise
+                    # the everyday indefinite article/count "un"/"um" as the
+                    # numeral 1, and the bare "a" connector alone then reads it
+                    # as 01:00, fabricating a time out of "in a while" and
+                    # "reached an agreement".  Veto that reading so those
+                    # locales require the article-bearing connector ("la"/
+                    # "las"/"al", "à"/"às"/"ao") the same way real clock times
+                    # are spoken.  Positive clock evidence (CLOCKDIR/FRACTION/
+                    # MINUTE/MERIDIEM) still licenses the bare form -- only the
+                    # article-less HOUR-alone reading is refused.
+                    if (name == "clock_time" and "HOUR" in slots
+                            and "CLOCKDIR" not in slots
+                            and "FRACTION" not in slots
+                            and "MINUTE" not in slots
+                            and "MERIDIEM" not in slots
+                            and self.spec.conventions.bare_at_markers):
+                        _ai = slots["HOUR"].index - 1
+                        if (_ai >= 0 and tokens[_ai].text
+                                in self.spec.conventions.bare_at_markers):
+                            continue
                     if "CAL_MONTH" in slots:
                         cal = _calendar_for_surface(
                             self.spec, slots["CAL_MONTH"].text)

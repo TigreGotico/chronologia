@@ -195,6 +195,18 @@ class Conventions:
     # the Romance "desde"/"de") -- there "since A until B" is an ordinary forward
     # interval and must NOT be past-anchored.  A linguistic fact, not logic.
     since_directional: bool = False
+    # "at" surfaces that carry NO fused/agreeing article -- the bare
+    # preposition, as opposed to a form that already bakes the article in
+    # ("la"/"las"/"al" for Spanish, "à"/"às"/"ao" for Portuguese). A bare-hour
+    # clock reading (no CLOCKDIR/FRACTION/MINUTE/MERIDIEM evidence) immediately
+    # after one of these is not a licensed clock time: Spanish and Portuguese
+    # always name the hour with its agreeing article ("a la una", "às três"),
+    # never the bare preposition plus a spelled/digit hour ("a un", "a um" --
+    # indistinguishable at the token from the everyday indefinite article/
+    # count, so it fabricates a time out of "a un rato" / "a um acordo").
+    # A fact, not logic -- the matcher reads it to veto that one reading;
+    # languages that mark clock hours without articles at all leave it empty.
+    bare_at_markers: FrozenSet[str] = frozenset()
 
 
 @dataclass(frozen=True)
