@@ -3009,8 +3009,18 @@ def _compose(resolved, engine, tokens):
         clk_match, clk_res = clocks[0]
         dp_name = engine.spec.dayparts[dp_match.slots["DAYPART"].text]
         has_meridiem = clk_match.slots.get("MERIDIEM") is not None
+        # EXPLICIT-today day-part ("this evening" -- REL_MARKER "this", or a
+        # lexically-fused bare word like "tonight"/"vanavond") must anchor
+        # TODAY with no future-roll; a bare, non-explicit day-part ("evening
+        # at 3") keeps the clock's own roll-to-tomorrow rule (R117).
+        dp_rel_tok = dp_match.slots.get("REL_MARKER")
+        dp_is_this = (dp_rel_tok is not None
+                      and engine.spec.rel_markers.get(dp_rel_tok.text) == 0)
+        dp_is_today_word = (dp_match.slots["DAYPART"].text
+                            in engine.spec.daypart_today_words)
+        force_today = dp_is_this or dp_is_today_word
         merged_clock = compose_daypart_clock(clk_res, dp_res, dp_name,
-                                             has_meridiem)
+                                             has_meridiem, force_today)
         if merged_clock is None:
             # A genuine contradiction ("morning at 9pm") -- decline the
             # whole reading rather than guess a winner (R57 convention).

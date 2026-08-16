@@ -343,6 +343,12 @@ class LangSpec:
     # fixed day offset (Indonesian "tadi"/"nanti").  Facts from the
     # ``marker_daypart_past.voc``/``marker_daypart_future.voc`` filenames.
     daypart_deictics: Mapping[str, str] = field(default_factory=dict)
+    # bare daypart surfaces that are lexically fused with TODAY ("tonight",
+    # "vanavond") -- unlike a plain band word ("night", "avond"), the future-
+    # roll decision on a composed clock reading must not run for these; the
+    # civil day is always the anchor's own day.  Facts from the
+    # ``marker_dayparttoday.voc`` filename.
+    daypart_today_words: FrozenSet[str] = field(default_factory=frozenset)
     # quantifier surface -> count ("a" -> 1, "couple" -> 2, "half" -> 0.5)
     quantifiers: Mapping[str, float] = field(default_factory=dict)
     # weekend surface forms ("weekend", "fim de semana", "Wochenende", ...)

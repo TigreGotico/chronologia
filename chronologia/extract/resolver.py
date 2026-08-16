@@ -424,7 +424,8 @@ def _daypart_wraps_midnight(name: str) -> bool:
 
 
 def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
-                          name: str, has_explicit_meridiem: bool
+                          name: str, has_explicit_meridiem: bool,
+                          force_today: bool = False
                           ) -> Optional[Resolution]:
     """Apply a day-part word adjacent to an explicit clock as a MERIDIEM
     hint on it, rather than a competing reading -- "evening at 9" is 21:00,
@@ -441,6 +442,16 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
     9pm") declines rather than silently pick a winner, the same refusal
     convention a contradictory bare-hour-plus-meridiem clock already uses
     (R57).
+
+    ``force_today`` is set for an EXPLICIT-today day-part ("this evening",
+    "tonight", "vanavond") -- one that names today's band regardless of the
+    wall clock.  The clock's own resolution already ran its "roll to
+    tomorrow if already past" rule on the UNSHIFTED hour ("8" < the 10:00
+    anchor), which fires wrongly for a day-part that has not been shifted
+    into its PM band yet ("tonight at 8" == 20:00, not tomorrow).  Pinning
+    the date back to the day-part's own resolved day undoes that premature
+    roll; a bare, non-explicit day-part ("evening at 3") keeps the clock's
+    roll untouched, per the documented R117 convention.
 
     Returns ``None`` on contradiction.
     """
@@ -460,6 +471,9 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
         # the AM/PM side.
         new_hour = (hour % 12) + 12 if is_pm_daypart and hour != 12 else hour
     new_start = c.replace(hour=new_hour)
+    if force_today:
+        d = daypart_res.value.start
+        new_start = new_start.replace(year=d.year, month=d.month, day=d.day)
     consumed = tuple(sorted(set(clock_res.consumed) | set(daypart_res.consumed)))
     return Resolution(DateSpan(new_start, new_start + timedelta(minutes=1)),
                       consumed)

@@ -148,6 +148,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     clock_landmarks: Dict[str, int] = {}
     dayparts: Dict[str, str] = {}
     daypart_deictics: Dict[str, str] = {}
+    daypart_today_words: Set[str] = set()
     clock_zones: Dict[str, int] = {}
     weekend_words: Set[str] = set()
     exclusion_triggers: Set[str] = set()
@@ -226,6 +227,11 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             rel_markers.update({s: -1 for s in surfaces})
         elif base == "marker_this":
             rel_markers.update({s: 0 for s in surfaces})
+        elif base == "marker_dayparttoday":
+            # a bare daypart surface lexically fused with TODAY ("tonight",
+            # "vanavond") -- carries no REL_MARKER of its own, but anchors
+            # exactly as "this <daypart>" does.
+            daypart_today_words.update(surfaces)
         elif base == "marker_daypart_past":
             # deictic daypart selector picking the NEAREST PAST occurrence of a
             # time-of-day band (Indonesian "tadi" -- "tadi pagi" = this (past)
@@ -477,6 +483,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         decade_words=decade_words, clock_landmarks=clock_landmarks,
         dayparts=dayparts,
         daypart_deictics=daypart_deictics,
+        daypart_today_words=frozenset(daypart_today_words),
         clock_zones=clock_zones,
         jurisdictions=jurisdictions,
         weekend_words=frozenset(weekend_words),

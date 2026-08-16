@@ -1,0 +1,4 @@
+# bare daypart surfaces lexically fused with TODAY: "tonight" already names
+# today's night band, unlike the plain band word "night" (which composes
+# with the clock's own future-roll rule -- see test_nl_r117).
+tonight
