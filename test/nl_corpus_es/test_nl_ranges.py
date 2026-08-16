@@ -147,3 +147,53 @@ def test_del_al_reversed_pinned_dates_fabricate_nothing():
 @pytest.mark.parametrize("text", ["del al", "del 5 al", "del pan al vino"])
 def test_del_al_garbage_never_raises(text):
     parse(text)
+
+
+# -- the shared-month range with the "día" label on both ends: "día" heads the
+# idiom "día N de <mes>" (see marker_day_label.voc) and, written alone, "día
+# N" still resolves on its own to the Nth of the ANCHOR month -- so the bare
+# "5" borrowing path (test_del_al_crosses_month_and_year, above) used to skip
+# it, and "del día 2 al día 5 de septiembre" bound only the dated right end
+# ("día 5 de septiembre"), stranding "del día 2 al día" in the remainder
+# instead of reading the 2nd of September.  The label noun names no month of
+# its own, so a left endpoint that is nothing but "día" plus a day number
+# must borrow the right endpoint's month exactly as a bare "5" does.
+
+@pytest.mark.parametrize("text,s,e", [
+    ("del día 5 al día 12 de agosto", (2017, 8, 5), (2017, 8, 13)),
+    ("del 5 al día 12 de agosto", (2017, 8, 5), (2017, 8, 13)),
+    ("del día 5 al 12 de agosto", (2017, 8, 5), (2017, 8, 13)),
+])
+def test_del_al_dayword_reads_both_days(text, s, e):
+    ss, ee = start_end(text)
+    assert ss == AstroDate(*s) and ee == AstroDate(*e)
+
+
+def test_del_al_dayword_crosses_the_year():
+    ss, ee = start_end("del día 28 al día 31 de diciembre")
+    assert ss == AstroDate(2017, 12, 28) and ee == AstroDate(2018, 1, 1)
+
+
+def test_del_al_dayword_consumes_its_framing_words():
+    r = parse("del día 5 al día 12 de agosto")
+    assert r.remainder == ""
+
+
+def test_dayword_both_months_named_still_works():
+    # the control this defect masqueraded as correct: naming the month on
+    # BOTH ends, rather than sharing it, always worked and must keep working.
+    ss, ee = start_end("del día 2 de septiembre al día 5 de septiembre")
+    assert ss == AstroDate(2017, 9, 2) and ee == AstroDate(2017, 9, 6)
+
+
+def test_dayword_bare_number_start_still_works():
+    # the control the fix generalises from: a bare (label-less) numeral start
+    # already borrowed the end's month before this fix and must still.
+    ss, ee = start_end("del 2 al 5 de septiembre")
+    assert ss == AstroDate(2017, 9, 2) and ee == AstroDate(2017, 9, 6)
+
+
+def test_dayword_single_date_still_folds_the_label():
+    # a bare "día N" not paired in a range keeps folding its own label.
+    r = parse("día 15 de septiembre")
+    assert r.span.start == AstroDate(2017, 9, 15) and r.remainder == ""
