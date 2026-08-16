@@ -336,7 +336,7 @@ def _romance_additive_join(left, right):
 
 def _make_romance_fold(lang_code, blacklist, reader=None,
                        extra_numwords=frozenset(), extra_homograph=None,
-                       extra_ordinals=None):
+                       extra_ordinals=None, word_map=None):
     """``extra_ordinals`` -- a closed surface->value table for spelled
     ordinals a language's ``NumberVocabulary`` does not carry at all (rather
     than carrying under a different, homograph-colliding spelling): Spanish
@@ -346,7 +346,15 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
     components, "décimo"/"tercero", which already compose through the
     back-end).  Entries are added to both the run-membership word set and
     the single-token fallback map, exactly like the vocabulary-derived
-    ordinals above."""
+    ordinals above.
+
+    ``word_map`` -- a closed surface->value table for spelled cardinals
+    ``extract_number_<lang>`` does not read under an attested spelling
+    variant (mirrors the Germanic ASCII-twin ``word_map`` in
+    :func:`chronologia.extract.numfold.make_germanic_fold`): the surface is
+    rewritten to a digit token in a pre-pass, before the vocabulary-driven
+    extractor ever sees it, so no change to ``ovos_number_parser`` is
+    needed."""
     from ovos_number_parser.util import RomanceNumberExtractor
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
     vocab = next(v for v in vars(numbers_mod).values()
@@ -379,16 +387,29 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
                      if k in numwords}
     ordinal_value.update(extra_ordinals)
 
-    # the a.c./d.c. glue runs first, then the shared engine: run membership
-    # from the vocab-derived word set, the language's JOIN_WORD as the internal
-    # connector (kept in the back-end text), and the feminine-ordinal map as the
-    # single-token fallback the back-end rejects.
+    wmap = dict(word_map or {})
+
+    def _pre(tokens):
+        if wmap:
+            tokens = tuple(
+                replace(t, text=str(wmap[t.text]), raw=t.raw,
+                        is_number=True, value=wmap[t.text])
+                if (not t.is_number and t.text in wmap) else t
+                for t in tokens)
+        return _glue(tokens)
+
+    # the word-map rewrite (if any) runs first so a spelling variant becomes
+    # a plain digit token before the a.c./d.c. glue and the shared engine see
+    # it; run membership from the vocab-derived word set, the language's
+    # JOIN_WORD as the internal connector (kept in the back-end text), and
+    # the feminine-ordinal map as the single-token fallback the back-end
+    # rejects.
     base = make_fold(NumberGrammar(
         is_number=lambda tok: tok.is_number or tok.text in numwords,
         extract=lambda text: extract_fn(text, ordinals=True),
         joiner=lambda tok: tok.text in joins,
         single_fallback=ordinal_value.get,
-        pre=_glue,
+        pre=_pre,
         bridge_ok=_romance_additive_join))
     # ordinal-fraction homographs ("quarto" = fourth *and* a-quarter) are held
     # out of ``numwords`` above so the clock FRACTION slot keeps them; license
@@ -943,11 +964,12 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                           phrases=(), h_clock=False, ord_suffixes=frozenset(),
                           fem_ord=None, reader=None,
                           extra_numwords=frozenset(), extra_homograph=None,
-                          extra_ordinals=None):
+                          extra_ordinals=None, word_map=None):
     base = _make_romance_fold(lang_code, blacklist, reader=reader,
                               extra_numwords=extra_numwords,
                               extra_homograph=extra_homograph,
-                              extra_ordinals=extra_ordinals)
+                              extra_ordinals=extra_ordinals,
+                              word_map=word_map)
     fem_ord = fem_ord or {}
 
     def fold(tokens):
@@ -1376,11 +1398,15 @@ _OC_PHRASES = [
     (["que", "ven"], "queven"),
     (["week", "end"], "weekend"),
 ]
+# "uèch" (8) is the only spelling ovos_number_parser.numbers_oc reads;
+# "uèit"/"uòch" are attested variants it does not (source: native-speaker
+# review, https://github.com/OpenVoiceOS/ovos-date-parser/issues/300).
 fold_oc = _romance_prepass_fold(
     "oc", {"un", "una"},
     proclitics=frozenset({"l", "d", "un", "qu", "n", "s"}),
     phrases=_OC_PHRASES, h_clock=True,
-    ord_suffixes=frozenset({"èr", "er", "n", "nd", "en", "ena", "a", "d"}))
+    ord_suffixes=frozenset({"èr", "er", "n", "nd", "en", "ena", "a", "d"}),
+    word_map={"uèit": 8, "uòch": 8})
 
 
 # -- Asturian ---------------------------------------------------------------
