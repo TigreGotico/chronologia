@@ -1,0 +1,19 @@
+# The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,
+# not a uniform +12 PM shift: small hours 1..5 stay AM, evening hours 6..11
+# are PM, twelve is midnight (the band-split lives in the resolver
+# _clock_hms via night_meridiems; see chronologia/locale/es/
+# clock_meridiem_night.voc for the shared Romance mechanism).
+# Surfaces + their a-initial twins per native-speaker review, source:
+# https://github.com/OpenVoiceOS/ovos-date-parser/issues/300
+nuèch
+nuèit
+nèit
+nèt
+nèch
+nuòch
+anuèch
+anuèit
+anèit
+anèt
+anèch
+anuòch

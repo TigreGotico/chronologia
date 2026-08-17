@@ -1,3 +1,12 @@
+# Additional afternoon forms, source:
+# https://github.com/OpenVoiceOS/ovos-date-parser/issues/300
+# "aprvèspre" not added (looks like a typo in the source, ambiguous surface).
 ser
 vèspre
 vespre
+vesprada
+après miègjorn
+après merende
+aprèp merende
+après dinnar
+aprèp dinnar
