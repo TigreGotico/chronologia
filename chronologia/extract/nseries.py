@@ -1811,6 +1811,11 @@ class _RecurCtx:
     #: unrelated "at" sense the same surface also carries, e.g. nl "om 3
     #: uur"/"at 3 o'clock").
     om_de_words: set = frozenset()
+    #: the "from" lead already used to open a bounded/open range ("de"/"desde"
+    #: pt/es, "de"/"depuis" fr) -- reused, not new vocabulary, to read the
+    #: repeated-numeral interval idiom "de N em N <unit>" ("de quinze em
+    #: quinze dias"). See :func:`_recur_repeated_numeral`.
+    from_words: set = frozenset()
     lang: str = "en-us"
     anchor: Optional[datetime] = None
     #: the *pre-fold* token stream (numbers not yet merged across ``and``).
@@ -1864,6 +1869,7 @@ def _recur_ctx(text, lang, anchor):
         holiday_all_words=set(C.get("recur_holiday_all", ())),
         in_words=set(C.get("in", ())),
         om_de_words=set(C.get("recur_om_de", ())),
+        from_words=set(C.get("from", ())),
         to_words=set(w for words in _conn_surfaces(spec, "to", _RANGE_TO)
                      for w in words if len(words) == 1),
         penult_words=set(C.get("penult", ())),
@@ -2409,7 +2415,7 @@ def _recur_once(ctx):
     return None
 
 
-def _collect_weekdays(ctx, start, plural_ok):
+def _collect_weekdays(ctx, start, plural_ok, extra_skip=frozenset()):
     """Read a run of weekday names beginning at ``start`` -> ``(days, end)``.
 
     A recurrence enumeration lists its days with the language's ``and``/``&``
@@ -2419,6 +2425,12 @@ def _collect_weekdays(ctx, start, plural_ok):
     weekday is collected rather than only the first.  ``days`` is the list of
     weekday codes in reading order; ``end`` the index just past the last day.
     Returns ``None`` when ``start`` is not a weekday at all.
+
+    ``extra_skip`` additionally absorbs a REPEATED leading marker between
+    list items -- fr "les lundis ET LES mercredis" restates "les" before the
+    second weekday where es "los lunes y miércoles" does not restate "los";
+    the caller passes its own marker vocabulary (e.g. ``ctx.habitual_words``)
+    so the repetition is swallowed instead of stranding the weekday behind it.
     """
     t = ctx.tokens
     n = len(t)
@@ -2429,7 +2441,7 @@ def _collect_weekdays(ctx, start, plural_ok):
     end = start + 1
     while True:
         k = end
-        while k < n and t[k].text in ctx.and_words:
+        while k < n and (t[k].text in ctx.and_words or t[k].text in extra_skip):
             k += 1
         nxt = _weekday_here(ctx, t[k], plural_ok) if k < n else None
         if nxt is None:
@@ -2547,6 +2559,55 @@ def _preposed_monthday(ctx, t, i):
                 and ctx.units[t[start - 1].text] == "day")):
         start -= 1
     return day_val, start
+
+
+def _recur_repeated_numeral(ctx):
+    """``<from> N <in> N <unit>`` -> ``FREQ=<unit>;INTERVAL=N``.
+
+    Portuguese, Spanish and French all say an interval recurrence by
+    RESTATING the same count between the "from" and "in" leads instead of a
+    single "every N" quantifier: pt "de quinze em quinze dias", es "de
+    quince en quince días", fr "de deux en deux jours" -- all "every 15/2
+    days".  The repeated numeral itself *is* the interval, so this reads
+    the exact same ``ctx.from_words``/``ctx.in_words`` vocabulary the range
+    detector and ``_recur_every``'s "on"-qualifier already load (marker_from
+    "de", marker_in "em"/"en") rather than adding a dedicated vocabulary --
+    the words already carry the right sense ("from N to/in N <unit>").
+
+    Gender agreement on the numeral ("quinze"/masc vs "duas"/fem) is a
+    non-issue here: both numerals are already folded to plain integer
+    ``token.value`` by the time this runs, so a fem/masc pair for the SAME
+    value reads identically.
+
+    The two numerals MUST match.  "de dois em três dias" names no coherent
+    interval -- REFUSE (``None``) rather than guess which of the two counts
+    the speaker meant, the same "decline over guess" rule every other
+    finder in this module follows.
+    """
+    if not ctx.from_words or not ctx.in_words:
+        return None
+    t = ctx.tokens
+    n = len(t)
+    for i in range(n):
+        if t[i].text not in ctx.from_words:
+            continue
+        if (i + 4 < n and t[i + 1].is_number and t[i + 2].text in ctx.in_words
+                and t[i + 3].is_number and t[i + 4].text in ctx.units):
+            v1, v2 = int(t[i + 1].value), int(t[i + 3].value)
+            unit = ctx.units[t[i + 4].text]
+            freq = _UNIT_FREQ.get(unit)
+            if freq is None:
+                continue
+            if v1 != v2:
+                return None
+            if v1 < 1:
+                return None
+            iv = {"interval": v1} if v1 != 1 else {}
+            if unit == "fortnight":
+                iv = {"interval": v1 * 2}
+                freq = "WEEKLY"
+            return _build_every(freq, **iv), set(range(i, i + 5))
+    return None
 
 
 def _recur_every(ctx):
@@ -3199,6 +3260,18 @@ def _recur_habitual_weekday(ctx):
       ordinal-count readings match -- but under an explicit habitual
       preposition there is no such ambiguity.
 
+    The **same** bare-plural-article habitual reading exists in Spanish
+    ("los lunes", "the Mondays") and French ("les lundis"): the plural
+    definite article alone marks habitual recurrence exactly as pt à/às
+    does, while the SINGULAR article ("el lunes", "le lundi") names one
+    upcoming date and never reaches here -- ``recur_habitual`` for es/fr
+    holds only the plural surfaces (los/las, les), so a singular article is
+    simply absent from the vocabulary rather than excluded by a runtime
+    check. A list ("los lunes y miércoles", "les lundis et les mercredis")
+    is read the same way any other weekday enumeration is -- fr restates
+    the article per item, so the collector also swallows a repeated
+    habitual marker between list items (see :func:`_collect_weekdays`).
+
     Runs **last** of the finders: a phrase that already reads as a fuller rule
     ("uma vez por semana à segunda") is claimed by that rule first, so this
     only ever fires on the bare habitual phrase.
@@ -3207,20 +3280,15 @@ def _recur_habitual_weekday(ctx):
         return None
     t = ctx.tokens
     n = len(t)
-    # the weekday surfaces this position accepts: the vocabulary's own, plus
-    # the regular "-s" plural of each single-word surface ("domingo" ->
-    # "domingos", "segundas feiras" is already vocabulary).
-    surfaces = dict(ctx.weekdays)
-    for surf, wd in ctx.weekdays.items():
-        surfaces.setdefault(surf + "s", wd)
     for i in range(n - 1):
         if t[i].text not in ctx.habitual_words:
             continue
-        wd = surfaces.get(t[i + 1].text)
-        if wd is None:
+        got = _collect_weekdays(ctx, i + 1, True, extra_skip=ctx.habitual_words)
+        if got is None:
             continue
-        return (_build_every("weekly", byday=((None, wd),)),
-                set(range(i, i + 2)))
+        days, end = got
+        byday = tuple((None, wd) for wd in days)
+        return _build_every("weekly", byday=byday), set(range(i, end))
     return None
 
 
@@ -3606,11 +3674,16 @@ def _recur_date_anchored(ctx):
 #   monday) whose weekday tail belongs to the more specific reading; run first
 #   it wins the weekday alone and drops the count.
 #
-# The remaining five are mutually commutable -- their frames do not overlap --
-# so there is no precedence ranking to state here, only those two edges.  A
-# table for seven functions would invent structure that is not there.
+# The remaining finders are mutually commutable -- their frames do not
+# overlap -- so there is no precedence ranking to state here, only those two
+# edges.  A table naming every pair would invent structure that is not there.
+# ``_recur_repeated_numeral`` (pt/es/fr "de N em/en N <unit>") is one of
+# them: its 5-token from/number/in/number/unit shape never satisfies any of
+# the other finders' frames, so it is placed anywhere ahead of the
+# ``_recur_every``/``_recur_habitual_weekday`` catch-alls.
 _FINDERS = (_recur_nth_weekday_list, _recur_nth_weekday, _recur_holiday,
             _recur_jurisdiction_holidays,
             _recur_date_anchored,
-            _recur_once, _recur_on_weekdays, _recur_every, _recur_freq_word,
+            _recur_once, _recur_on_weekdays, _recur_repeated_numeral,
+            _recur_every, _recur_freq_word,
             _recur_weekday_dayword_bare, _recur_habitual_weekday)

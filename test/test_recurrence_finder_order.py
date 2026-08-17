@@ -88,6 +88,7 @@ def test_finders_tuple_is_the_documented_order():
         "_recur_nth_weekday_list", "_recur_nth_weekday", "_recur_holiday",
         "_recur_jurisdiction_holidays",
         "_recur_date_anchored",
-        "_recur_once", "_recur_on_weekdays", "_recur_every", "_recur_freq_word",
+        "_recur_once", "_recur_on_weekdays", "_recur_repeated_numeral",
+        "_recur_every", "_recur_freq_word",
         "_recur_weekday_dayword_bare", "_recur_habitual_weekday",
     ]
