@@ -1,0 +1,6 @@
+# TDK Guncel Turkce Sozluk (sozluk.gov.tr): "yuzyil" = "yuz yillik zaman
+# parcasi" (a hundred-year span). "asir" (Arabic loan, also TDK-listed as
+# a century synonym) is deliberately left out -- one attested surface is
+# enough and keeping the set small keeps the false-positive risk down.
+yüzyıl
+yüzyıllar

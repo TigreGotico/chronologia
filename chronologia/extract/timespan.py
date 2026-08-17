@@ -2246,6 +2246,53 @@ def _stranded_ordinal_scope_veto(tokens, consumed, spec):
             and _is_scope_noun(rest[1].text, spec))
 
 
+def _stranded_compound_ordinal_veto(tokens, match, spec) -> bool:
+    """Whether a century/millennium ``scoped_ordinal`` reading strands, right
+    beside its ``ORD``/``SORD`` slot, a token this match did not consume --
+    "abad kedua puluh" (Indonesian "twentieth" = kedua "second" + puluh
+    "tens", century read as 2 with "puluh" stranded), "on dokuzuncu yuzyil"
+    (Turkish "nineteenth" = on "ten" + dokuzuncu "ninth", century read as 9
+    with the leading "on" stranded), "qarn bist o yekom" (Persian
+    "twenty-first" = bist "twenty" + o "and" + yekom "first", century read
+    as 20 with "o yekom" stranded).
+
+    The per-locale number-word fold (``numfold*.py``) folds a bare digit run
+    and, where a pronouncer exists, a SINGLE spelled-ordinal token -- it does
+    not compose a multi-word spelled ordinal ("twentieth" = tens-word +
+    ones-ordinal).  The matcher's ``ORD``/``SORD`` slot only requires
+    ``token.is_number`` (see ``matcher.py``), so it happily binds whichever
+    lone digit the fold produced, and the rest of the numeral is left beside
+    it rather than inside the remainder where a human would notice the
+    reading is wrong -- "the 2nd century" silently answered for "the
+    twentieth century" is the one outcome this project refuses, more so
+    than an honest "unsupported."
+
+    Detected structurally, the same shape as
+    :func:`_stranded_ordinal_scope_veto`/:func:`_stranded_fraction_prefix_veto`:
+    a token immediately adjacent to ``ORD`` (on EITHER side -- leading for a
+    prefix "ORD SCOPE_UNIT" order, trailing for a postposed "CMUNIT/
+    SCOPE_UNIT ORD" order) that this match did not itself consume means a
+    fragment of the same written numeral was left dangling next to the
+    ordinal slot.  Refuses outright (the honest-None policy) rather than
+    teach the fold to compose these compounds -- a separate, larger piece of
+    work; a legitimate unrelated trailing clause is not adjacent without a
+    connector/marker of its own, so this does not fire on it.
+    """
+    ord_tok = match.slots.get("ORD") or match.slots.get("SORD")
+    scope_tok = match.slots.get("SCOPE_UNIT") or match.slots.get("CMUNIT")
+    if ord_tok is None or scope_tok is None:
+        return False
+    if spec.scope_units.get(scope_tok.text) not in ("century", "millennium"):
+        return False
+    consumed_idx = set(range(*match.span))
+    by_index = {t.index: t for t in tokens}
+    for neighbor_idx in (ord_tok.index - 1, ord_tok.index + 1):
+        neighbor = by_index.get(neighbor_idx)
+        if neighbor is not None and neighbor_idx not in consumed_idx:
+            return True
+    return False
+
+
 def _stranded_explicit_anchor_veto(tokens, consumed, text, spec, anchor):
     """Whether the winning reading strands a trailing ``from <date>`` explicit
     anchor it could not bind -- "the next 2 quarters from 500 BC".
@@ -3174,6 +3221,14 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     # too-wide bare-month span with the fraction ordinal dropped.
     if (rep.construction == "calendar_date"
             and _stranded_fraction_prefix_veto(tokens, consumed, engine.spec)):
+        return None
+    # A century/millennium scoped_ordinal reading that strands a token
+    # beside its ORD slot is a partially-folded compound spelled ordinal
+    # ("abad kedua puluh" = twentieth, read as 2nd with "puluh" stranded) --
+    # refuse rather than surface the wrong century (see
+    # _stranded_compound_ordinal_veto).
+    if (rep.construction == "scoped_ordinal"
+            and _stranded_compound_ordinal_veto(tokens, rep, engine.spec)):
         return None
     return res.value, consumed
 

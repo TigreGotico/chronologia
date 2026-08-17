@@ -121,6 +121,11 @@
     ]
   },
   "base_grammar": {
-    "marker_position": "post"
+    "marker_position": "post",
+    "extend": {
+      "scoped_ordinal": [
+        "CMUNIT ORD"
+      ]
+    }
   }
 }
