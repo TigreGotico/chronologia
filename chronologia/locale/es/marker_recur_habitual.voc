@@ -1,0 +1,11 @@
+# Bare PLURAL definite article marking habitual weekday recurrence -- "los
+# lunes" / "las" (feminine agreement is never needed for a weekday noun, but
+# both forms are listed for symmetry with the article vocabulary). RAE/DPD
+# s.v. "el" -- the plural article on a day-of-the-week noun reads
+# habitually ("Los lunes vamos al cine" -- "We go to the cinema on
+# Mondays"), while the singular ("El lunes vamos al cine") names the single
+# next Monday. Deliberately holds ONLY the plural surfaces: "el"/"la" are
+# excluded so the singular reading is structurally unreachable here, not
+# merely guarded against.
+los
+las
