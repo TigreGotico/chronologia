@@ -38,6 +38,8 @@
         "HOUR oclock MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
         "CLOCKDIR FRACTION HOUR MERIDIEM? ZONE?",
+        "CLOCKDIR CLOCKMIN minut? HOUR MERIDIEM? ZONE?",
+        "CLOCKDIR MINUTE minut? HOUR MERIDIEM? ZONE?",
         "at? LANDMARK ZONE?"
       ],
       "prefer_future": true

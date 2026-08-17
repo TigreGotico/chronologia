@@ -2839,10 +2839,13 @@ class Resolver:
             spoken_hour = hour
             frac_tok = match.slots.get("FRACTION")
             min_tok = match.slots.get("MINUTE")
+            clockmin_tok = match.slots.get("CLOCKMIN")
             dir_tok = match.slots.get("CLOCKDIR")
-            if dir_tok is not None and (frac_tok is not None or min_tok is not None):
-                offset = (self.spec.clock_fractions[frac_tok.text]
-                          if frac_tok is not None else int(min_tok.value))
+            if dir_tok is not None and (frac_tok is not None or min_tok is not None
+                                         or clockmin_tok is not None):
+                offset = (self.spec.clock_fractions[frac_tok.text] if frac_tok is not None
+                          else self.spec.clock_dir_minutes[clockmin_tok.text]
+                          if clockmin_tok is not None else int(min_tok.value))
                 if self.spec.clock_dirs[dir_tok.text] > 0:      # past
                     minute += offset
                 else:                                           # to (before)
