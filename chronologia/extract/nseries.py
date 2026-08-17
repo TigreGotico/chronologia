@@ -2330,6 +2330,26 @@ def _of_month_tail(ctx, r):
     return r
 
 
+def _of_month_name_tail(ctx, r):
+    """``of <month name>`` at ``r`` -> ``(month, end)``, or ``None`` when
+    there is no such tail.
+
+    Sibling of :func:`_of_month_tail`, which reads the *generic* "of [the]
+    month" noun; this reads a *named* month ("of june") instead, so a caller
+    can scope a monthly ellipsis down to a single calendar month (a YEARLY
+    rule) rather than leaving the month name stranded in the remainder.
+    """
+    t = ctx.tokens
+    n = len(t)
+    if r < n and t[r].text in ctx.of_words:
+        k = r + 1
+        while k < n and t[k].text in ctx.articles:
+            k += 1
+        if k < n and t[k].text in ctx.months:
+            return ctx.months[t[k].text], k + 1
+    return None
+
+
 def _recur_once(ctx):
     """``[one] once a <unit> [on <weekday>]`` -> the plain per-period frequency.
 
@@ -2631,6 +2651,21 @@ def _recur_every(ctx):
                 # out of RRULE's -31..-1 BYMONTHDAY range -- decline the
                 # whole reading rather than clamp or silently fall back.
                 return None, frozenset()
+            # a NAMED month in the tail ("every last day of june") scopes the
+            # rule to that single calendar month -- a YEARLY rule, not the
+            # bare MONTHLY every-month reading "of the month" gets. Without
+            # this the month name fell through unread and was stranded in
+            # the remainder while the rule kept firing every month, actively
+            # contradicting the input. Checked BEFORE the generic "of [the]
+            # month" tail so the named-month reading wins whenever a name is
+            # actually present; the generic tail (or no tail at all) keeps
+            # today's every-month rule.
+            named = _of_month_name_tail(ctx, j + 2)
+            if named is not None:
+                month, end = named
+                return (_build_every("yearly", bymonth=month,
+                                      bymonthday=day_ordn),
+                        set(range(i, end)))
             end = _of_month_tail(ctx, j + 2)
             return (_build_every("monthly", bymonthday=day_ordn),
                     set(range(i, end)))
@@ -2741,7 +2776,15 @@ def _recur_every(ctx):
         # read the strict bare-dict check applies (the singular still gets its
         # interval reading, the plural is left unread).
         allow_plural = num_val is None
-        if (t[j].text in ctx.weekdays
+        # ro's "luni" (Monday) is homographic with the plural of "lună"
+        # (month, ctx.units["luni"] == "month"): with a leading interval
+        # count the numeral names months, never weekdays -- Romanian has no
+        # distinct weekday plural to collide the other way ("2 luni" is "2
+        # months", not "2 Mondays"). The direct weekday-dict match is
+        # skipped in that case so the unit-month interval branch below reads
+        # it instead.
+        is_month_word = t[j].text in ctx.units and ctx.units[t[j].text] == "month"
+        if ((t[j].text in ctx.weekdays and not (num_val is not None and is_month_word))
                 or (allow_plural and _weekday_here(ctx, t[j], True) is not None)):
             days, end = _collect_weekdays(ctx, j, allow_plural)
             byday = tuple((None, wd) for wd in days)
@@ -3363,6 +3406,16 @@ def _recur_date_anchored(ctx):
             j += 1
         if not (j < n and t[j].text in ctx.units
                 and ctx.units[t[j].text] == "month"):
+            continue
+        # a bare month-unit token directly after "every" that is ALSO a bare
+        # weekday word (ro "luni": Monday, homographic with "luni", the
+        # plural of "luna"/"lună", month) reads as the WEEKDAY -- "fiecare
+        # luni" ("every Monday") is the only grammatical reading here; the
+        # month-plural reading needs a leading count ("fiecare 2 luni") or
+        # the singular ("fiecare lună"), never this bare form ("every
+        # months" is ungrammatical). Declining leaves the weekday reading to
+        # _recur_every below.
+        if t[j].text in ctx.weekdays:
             continue
         # "<N> of every month" / "the last [day] of every month": a preposed
         # ordinal (or "last" marker) just BEFORE "every".  Checked FIRST -- a
