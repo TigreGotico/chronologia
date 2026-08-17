@@ -9,7 +9,9 @@
   "relative_offset": {
    "orders": [
     "NUM UNIT MARKER",
-    "MARKER NUM UNIT"
+    "MARKER NUM UNIT",
+    "MARKER USG",
+    "USG MARKER"
    ]
   },
   "weekend_ref": {

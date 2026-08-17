@@ -10,8 +10,8 @@
       "orders": [
         "NUM UNIT MARKER",
         "MARKER NUM UNIT",
-        "MARKER indef? UNIT",
-        "indef? UNIT MARKER"
+        "MARKER USG",
+        "USG MARKER"
       ]
     },
     "weekend_ref": {
