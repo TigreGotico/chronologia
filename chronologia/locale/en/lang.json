@@ -152,7 +152,10 @@
     "clock_this_daypart": {
       "orders": [
         "at? CLOCK thisdeixis MERIDIEM ZONE?",
-        "at? HOUR thisdeixis MERIDIEM ZONE?"
+        "at? HOUR thisdeixis MERIDIEM ZONE?",
+        "at? FRACTION CLOCKDIR HOUR thisdeixis MERIDIEM ZONE?",
+        "at? FRACTION HOUR thisdeixis MERIDIEM ZONE?",
+        "at? MINUTE CLOCKDIR HOUR thisdeixis MERIDIEM ZONE?"
       ]
     },
     "military_time": {

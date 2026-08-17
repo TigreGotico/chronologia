@@ -1,0 +1,7 @@
+# bare daypart surfaces lexically fused with TODAY: "vanavond"/"vanochtend"/
+# "vanmorgen" already name today's own band, unlike the plain band words
+# "avond"/"ochtend" (which compose with the clock's own future-roll rule --
+# see test_nl_r117 in the en corpus for the documented convention).
+vanavond
+vanochtend
+vanmorgen
