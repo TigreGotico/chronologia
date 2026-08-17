@@ -24,7 +24,7 @@ Four axes, each with a different expectation:
 
 Run it directly for a printed report::
 
-    python benchmarks/holiday_differential.py
+    python benchmark/holiday_differential.py
 """
 from __future__ import annotations
 

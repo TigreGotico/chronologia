@@ -214,6 +214,39 @@ data-file headers. Where sources disagree, both versions ship under
 different names. Where sources are silent, the library says so instead
 of guessing.
 
+## How well does it speak your language?
+
+Forty languages load, but they are not all equally exercised, and pretending
+otherwise would waste your afternoon. Coverage falls into three honest bands:
+
+**Reviewed in depth** — English, Spanish, Portuguese, French, German, Dutch,
+Russian, Arabic, Hebrew. Each has been through repeated adversarial audit
+rounds *and* a dedicated per-language review that probed everyday register,
+not just textbook forms: "quarter to four", "tonight at 8", "om de twee
+weken", "без пяти девять". Expect these to handle what a person would
+actually type.
+
+**Broadly covered** — Italian, Polish, Czech, Slovak, Slovenian, Croatian,
+Bulgarian, Ukrainian, Swedish, Danish, Norwegian (Bokmål and Nynorsk),
+Finnish, Estonian, Hungarian, Greek, Turkish, Azerbaijani, Persian,
+Indonesian, Malay, Catalan, Galician, Romanian, Basque, Frisian. Each has its
+own test corpus and is swept whenever a shared mechanism changes, so the
+common constructions work; the idiomatic long tail is thinner, and that is
+where bug reports are most useful.
+
+**Early** — Aragonese, Asturian, Kabyle, Mirandese, Occitan. The vocabulary
+is in place and the engine is shared, so a lot already works, but these have
+not yet had a native speaker read them end to end. Occitan is the model for
+how that changes: a native speaker reviewed a sibling project's word lists,
+and the forms they supplied turned up a real bug here — "davant-ièr" was
+being read as *yesterday* rather than the day before.
+
+If your language sits in the second or third band and something reads wrong,
+that report is worth more than a patch — attach the phrase, what you expected,
+and what you got. [CONTRIBUTING.md](CONTRIBUTING.md) explains how a language
+gets deepened, and [docs/adding-a-language.md](docs/adding-a-language.md) is
+the full walkthrough for adding one.
+
 ## Built by AI, held to account by tests
 
 chronologia was written and orchestrated by AI, directed and reviewed by a

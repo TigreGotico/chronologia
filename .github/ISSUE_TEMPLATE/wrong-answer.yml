@@ -1,0 +1,54 @@
+name: A phrase reads wrongly
+description: A date phrase returns the wrong span, or returns nothing when it should parse
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Two kinds of report, both welcome, fixed differently. A **wrong
+        answer** — a plausible span that is not what the phrase means — is the
+        highest-priority bug class here. A **refusal** — `None`, or your words
+        left over in the remainder — is usually a missing vocabulary entry and
+        an easy fix.
+  - type: input
+    id: phrase
+    attributes:
+      label: The phrase
+      placeholder: de quinze em quinze dias
+    validations:
+      required: true
+  - type: input
+    id: lang
+    attributes:
+      label: Language code
+      placeholder: pt
+    validations:
+      required: true
+  - type: input
+    id: anchor
+    attributes:
+      label: Anchor (the "now" you passed)
+      placeholder: datetime(2026, 8, 14, 10, 0)
+  - type: textarea
+    id: actual
+    attributes:
+      label: What you got
+      description: Paste the result, including the remainder if there was one.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and why
+      description: >
+        The span or recurrence rule the phrase means to a speaker of the
+        language. If the form is regional or informal, say so — that is useful
+        context, not a disqualification.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "0.2.9a1"

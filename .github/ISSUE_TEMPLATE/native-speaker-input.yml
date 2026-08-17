@@ -1,0 +1,41 @@
+name: Native-speaker input for a language
+description: You speak a language the library reads, and want to correct or deepen it
+labels: [language]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the most valuable contribution the project can receive. Nobody
+        here speaks forty languages, so the vocabulary for most of them was
+        assembled from dictionaries and grammars rather than from a speaker.
+        You do not need to write code or know Python to help.
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: "Occitan / occitan (oc)"
+    validations:
+      required: true
+  - type: textarea
+    id: forms
+    attributes:
+      label: Forms that are wrong, missing, or unnatural
+      description: >
+        List the phrase and what it should mean. Regional and informal variants
+        are welcome — say which region or register they belong to. If a form
+        the library currently accepts is one no speaker would actually use,
+        that is worth reporting too.
+      placeholder: |
+        "davant-ièr" = the day before yesterday (the library read it as yesterday)
+        "abansièr" is a French calque; speakers say "ièr delà" or "passat ièr"
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: >
+        Your own native knowledge is a perfectly good source — say so. A
+        dictionary, grammar or standards body is also welcome. Anything
+        uncertain is better flagged than guessed.
+      placeholder: Native speaker (Gascon variety); plus Diccionari general occitan

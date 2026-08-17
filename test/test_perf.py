@@ -5,7 +5,7 @@ dev hardware are hundreds of microseconds. The point is to catch an
 order-of-magnitude regression (an accidental O(n^2) or a per-call reload),
 not to police absolute timings, so the test is not flaky on a slow CI box.
 """
-from benchmarks.perf import EXTRACT_PHRASES, collect
+from benchmark.perf import EXTRACT_PHRASES, collect
 
 
 def test_extract_timespan_mean_under_50ms():
