@@ -2,7 +2,7 @@
 
 Run directly to print a table::
 
-    python -m benchmarks.perf
+    python -m benchmark.perf
 
 The numbers are wall-clock means on the current machine; the companion test
 (``test/test_perf.py``) asserts only a generous order-of-magnitude bound on

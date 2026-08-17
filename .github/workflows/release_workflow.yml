@@ -22,7 +22,11 @@ jobs:
       version_file: 'chronologia/version.py'
       update_changelog: true
       publish_prerelease: true
-      propose_release: true
+      # Stable releases are cut deliberately through publish_stable.yml
+      # (workflow_dispatch, or a push to master), never by promoting an
+      # automatically opened proposal, so proposing one on every merge only
+      # accumulates pull requests nobody acts on.
+      propose_release: false
       changelog_max_issues: 50
       publish_pypi: true
       notify_matrix: true

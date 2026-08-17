@@ -55,7 +55,9 @@ print(span.width)                                                  # 30 days, 0:
 ```
 
 **Read a date in another language.** Pass the language code; the vocabulary
-does the rest. chronologia speaks 40 languages.
+does the rest. chronologia speaks 40 languages, though not all to the same
+depth — the README's coverage table says which have had a full per-language
+review and which are still waiting for a native reader.
 
 ```python
 from chronologia import extract_timespan
