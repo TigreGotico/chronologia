@@ -4,8 +4,12 @@
 # Sources: Algemeen Nederlands Woordenboek, Instituut voor de Nederlandse
 # Taal (https://anw.ivdnt.org/article/ochtend).
 # "vanochtend" is a single-word today+ochtend surface, the Dutch shape of
-# English "tonight", and the ANW carries it as its own entry. "vanmorgen" is
-# its everyday synonym (ANW, "morgen" sense 2: today's morning).
+# English "tonight", and the ANW carries it as its own entry.
+# "vanmorgen" is a synonym of "vanochtend" the ANW also carries as its own
+# entry -- here "morgen" is the older word for the morning ITSELF (as in
+# "goedemorgen"), not the "morgen"=tomorrow relative-day word it is
+# everywhere else in this locale; the two never compete because "vanmorgen"
+# is a single fused token, not a split "van" + "morgen".
 ochtend
 vanochtend
 vanmorgen
