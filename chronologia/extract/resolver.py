@@ -1846,6 +1846,17 @@ class Resolver:
         sel_tok = (match.slots.get("UNIT") or match.slots.get("SEL_UNIT"))
         if sel_tok is not None and sel_tok.text in self.spec.plural_units:
             return None
+        # The same collapse applies to the OUTER scope noun: "the 2nd century"
+        # is a true ordinal, but "two centuries" folds its cardinal "two" to
+        # the identical ORD token and must not be read as era index 2. A
+        # plural SCOPE_UNIT ("decades"/"centuries") is a bare COUNT, never a
+        # scoped-ordinal's singular scope noun, so it refuses the same way the
+        # SEL_UNIT check above does; genuine offsets ("two centuries ago",
+        # "in two decades") are unaffected -- they bind through
+        # ``relative_offset``'s UNIT slot, not this construction's SCOPE_UNIT.
+        scope_tok = match.slots.get("SCOPE_UNIT")
+        if scope_tok is not None and scope_tok.text in self.spec.plural_units:
+            return None
 
         wd_tok = match.slots.get("WEEKDAY")
         if wd_tok is not None:                      # nth weekday of a month
