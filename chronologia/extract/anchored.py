@@ -440,11 +440,26 @@ def _compound_unit_at(tokens, j, spec):
         qty, k = 1.0, k + 1
     elif k < n and tokens[k].text in spec.quantifiers:
         qty, k = spec.quantifiers[tokens[k].text], k + 1
+    implied = qty is None
     if qty is None:
         qty, k = 1.0, k
     if k < n and tokens[k].text in spec.units:
         unit = spec.units[tokens[k].text]
         if unit in _CALENDAR_UNIT_MONTHS or unit in _FIXED_UNIT_SECONDS:
+            # A BARE (no NUM/quantifier/article of its own) unit word that
+            # ALSO doubles as the clock's "at" preposition ("saat" = both
+            # "hour" and "at" in az/tr/fa) is never folded here as an
+            # implied-one offset chunk: "saat" immediately after a resolved
+            # day offset is the clock reading ("3 gün əvvəl saat 9" = "9
+            # o'clock, 3 days ago"), not a genuine extra hour to subtract, and
+            # even with no digit following it the word stays ambiguous, so it
+            # is left unconsumed (stranded in the remainder) rather than
+            # guessed as a phantom hour.  A genuine bare-hour-unit offset
+            # ("bir saat əvvəl", "2 saat əvvəl") never reaches this function --
+            # its NUM/quantifier sits in the PRIMARY relative_offset match, so
+            # this guard cannot affect it.
+            if implied and tokens[k].text in spec.connectors.get("at", ()):
+                return None
             return unit, qty, k + 1
     return None
 

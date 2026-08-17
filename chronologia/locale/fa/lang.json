@@ -102,7 +102,8 @@
     "weekend_start": 3,
     "dmy": true,
     "hemisphere": null,
-    "prefer_future": true
+    "prefer_future": true,
+    "offset_clock_composes": true
   },
   "guards": {
     "bare_year_min_digits": 4

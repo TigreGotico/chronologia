@@ -170,7 +170,8 @@ TOKENIZER_KEYS: FrozenSet[str] = frozenset({"split_contractions", "ordinal_dot",
 CONVENTION_KEYS: FrozenSet[str] = frozenset({
     "week_start", "dmy", "hemisphere", "prefer_future", "bare_half_to",
     "bare_quarter_to", "toward_hour_12h", "bare_half_past", "weekend_start",
-    "daypart_proper_noun_guard", "since_directional", "bare_at_markers"})
+    "daypart_proper_noun_guard", "since_directional", "bare_at_markers",
+    "offset_clock_composes"})
 GUARD_KEYS: FrozenSet[str] = frozenset({"bare_year_min_digits"})
 
 
