@@ -269,6 +269,8 @@ def _point_span(dt: datetime, unit: str) -> DateSpan:
     start = AstroDate.from_datetime(dt)
     if unit == "minute":
         end = AstroDate.from_datetime(dt + timedelta(minutes=1))
+    elif unit == "quarter_hour":
+        end = AstroDate.from_datetime(dt + timedelta(minutes=15))
     elif unit == "hour":
         end = AstroDate.from_datetime(dt + timedelta(hours=1))
     elif unit == "day":
@@ -654,6 +656,8 @@ class Resolver:
         step = sign * qty
         if unit == "minute":
             value = anchor + timedelta(minutes=step)
+        elif unit == "quarter_hour":
+            value = anchor + timedelta(minutes=15 * step)
         elif unit == "hour":
             value = anchor + timedelta(hours=step)
         elif unit == "day":

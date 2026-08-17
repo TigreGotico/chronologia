@@ -55,6 +55,10 @@ _DUR_UNIT_SECONDS = {
     "day": 86400,
     "week": 604800,
     "fortnight": 1209600,
+    # Dutch "kwartier" -- a quarter-hour NOUN (unlike English "quarter",
+    # which is a fraction word that composes with a stated unit) -- names a
+    # fixed length on its own: "een kwartier", "drie kwartier" (0.75 h).
+    "quarter_hour": 900,
 }
 
 

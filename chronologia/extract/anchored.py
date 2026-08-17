@@ -415,15 +415,16 @@ _CALENDAR_UNIT_MONTHS = {"month": 1, "year": 12, "decade": 120,
 #: fixed-width units -- advanced through a plain ``timedelta`` -- keyed to
 #: their length in seconds (mirrors ``nseries._DUR_UNIT_SECONDS``, plus
 #: ``fortnight`` which that table also carries).
-_FIXED_UNIT_SECONDS = {"second": 1, "minute": 60, "hour": 3600, "day": 86400,
-                       "week": 604800, "fortnight": 1209600}
+_FIXED_UNIT_SECONDS = {"second": 1, "minute": 60, "quarter_hour": 900,
+                       "hour": 3600, "day": 86400, "week": 604800,
+                       "fortnight": 1209600}
 
 #: finest-to-coarsest ordering of every offset unit, used to pick the
 #: composed span's granularity -- the same convention a BARE single-unit
 #: offset already uses (an "in 2 days" is a day-wide span; the compound picks
 #: whichever of its units is narrowest, exactly mirroring that rule).
 _UNIT_RANK = {u: i for i, u in enumerate(
-    ["second", "minute", "hour", "day", "week", "fortnight",
+    ["second", "minute", "quarter_hour", "hour", "day", "week", "fortnight",
      "month", "year", "decade", "century", "millennium"])}
 
 

@@ -128,7 +128,13 @@ fold_nl = _lazy_germanic_fold(
     "ovos_number_parser.numbers_nl", "extract_number_nl",
     # "biljoen" = 10^12 (Dutch long scale), withheld so the SCALE slot survives.
     {"half", "kwart", "miljoen", "miljard", "biljoen", "duizend"},
-    ord_suffixes={"e", "de", "ste", "te"})
+    ord_suffixes={"e", "de", "ste", "te"},
+    # ``extract_number_nl`` already reads the neuter form "anderhalf" (1.5,
+    # Van Dale: "anderhalf" = 1,5) -- it is the common-gender agreement twin
+    # "anderhalve" (used before de-words: "anderhalve week/dag/maand") that it
+    # does not read (``extract_number_nl('anderhalve')`` is ``False``), so it
+    # is supplied as a fixed word->value surface, mirroring "anderthalb" (de).
+    word_map={"anderhalve": 1.5})
 fold_nl = _compose(_split_nl_relday_daypart, fold_nl)
 fold_sv = _lazy_germanic_fold(
     "ovos_number_parser.numbers_sv", "extract_number_sv",
