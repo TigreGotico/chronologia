@@ -1804,6 +1804,13 @@ class _RecurCtx:
     holiday_qualifiers: set = frozenset()
     holiday_all_words: set = frozenset()
     in_words: set = frozenset()
+    #: a leading word of the "om de <unit>" interval idiom (nl) -- a
+    #: same-meaning ALTERNATE to ``every`` that, unlike it, requires the
+    #: article directly after it (matched positionally in ``_recur_every``,
+    #: not folded into ``every`` itself, so it never swallows the
+    #: unrelated "at" sense the same surface also carries, e.g. nl "om 3
+    #: uur"/"at 3 o'clock").
+    om_de_words: set = frozenset()
     lang: str = "en-us"
     anchor: Optional[datetime] = None
     #: the *pre-fold* token stream (numbers not yet merged across ``and``).
@@ -1856,6 +1863,7 @@ def _recur_ctx(text, lang, anchor):
         holiday_qualifiers=set(C.get("holiday_qualifier", ())),
         holiday_all_words=set(C.get("recur_holiday_all", ())),
         in_words=set(C.get("in", ())),
+        om_de_words=set(C.get("recur_om_de", ())),
         to_words=set(w for words in _conn_surfaces(spec, "to", _RANGE_TO)
                      for w in words if len(words) == 1),
         penult_words=set(C.get("penult", ())),
@@ -2548,11 +2556,22 @@ def _recur_every(ctx):
 
     The ellipsis fires only under an explicit ``every`` marker: a bare "last
     friday" is a single past date, not a recurrence, and stays unread here.
+
+    A locale may additionally carry an ``om_de_words`` marker (nl "om de") --
+    a same-meaning interval idiom that, unlike ``every``, requires the
+    article to sit directly after it ("om de twee weken", "om de week"), so
+    it never collides with the same surface's unrelated "at" sense ("om 3
+    uur"). With no explicit numeral this bare form is the everyday Dutch way
+    to say "every OTHER" unit ("om de dag" == every other day, "om de week"
+    == every other week -- confirmed against the same reading en "every
+    other day" gets), so it defaults the interval to 2 instead of 1.
     """
     t = ctx.tokens
     n = len(t)
     for i in range(n):
-        if t[i].text not in ctx.every:
+        is_om_de = (t[i].text in ctx.om_de_words and i + 1 < n
+                    and t[i + 1].text in ctx.articles)
+        if t[i].text not in ctx.every and not is_om_de:
             continue
         j = i + 1
         interval = 1
@@ -2571,6 +2590,12 @@ def _recur_every(ctx):
                 num_idx, j = j, j + 1
             else:
                 break
+
+        # the bare "om de <unit>" form (no explicit numeral, no "other"
+        # word -- nl has none) is itself the every-OTHER-unit idiom; see the
+        # docstring above.
+        if is_om_de and num_val is None and interval == 1:
+            interval = 2
 
         # "every 0 <unit>" names no valid recurrence: an interval must be >= 1.
         # Report it as None (the honest "this expresses no recurrence") rather
