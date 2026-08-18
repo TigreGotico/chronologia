@@ -22,6 +22,11 @@
     "year_ref": {
       "orders": [
         "GYEAR"
+      ],
+      "calendar": "berber",
+      "calendar_year_range": [
+        2900,
+        3060
       ]
     },
     "quarter_ref": {

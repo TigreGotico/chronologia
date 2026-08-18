@@ -514,6 +514,67 @@ def ethiopic_from_jdn(jdn: int) -> Tuple[int, int, int]:
 
 
 # --------------------------------------------------------------------------
+# Berber (Amazigh): the Julian calendar under a shifted era.
+# --------------------------------------------------------------------------
+# The Amazigh calendar in modern use (Algeria, Morocco, the Kabyle and
+# Riffian diaspora, ...) is structurally the Julian calendar -- same twelve
+# months, same ``year % 4 == 0`` leap rule, same 1 January new year -- with
+# the months given Berber names and the year counted from a different era.
+# The +950 era offset (agricultural year 2976 == Julian/Gregorian 2026) was
+# fixed in 1968 by the Académie Berbère, who chose it to commemorate the
+# accession of Shoshenq I, the Berber pharaoh of Egypt's 22nd dynasty
+# (conventionally dated 950 BC).  It is a documented 20th-century symbolic
+# choice, not an ancient reckoning: no earlier era count for this calendar
+# is attested.  Because the offset is a pure additive year shift onto the
+# existing Julian arithmetic, 1 Yennayer (Berber new year) falls on 1
+# January Julian every year, which is 14 January Gregorian for the 1900-2099
+# window (13 days of Julian/Gregorian drift).
+#
+# Year-end leap-day placement.  Popular description often states that the
+# calendar's intercalary day is appended at the *end* of the year (after
+# Dujembeṛ) rather than inside February as in the base Julian layout. That
+# claim traces to a single source (Wikipedia's "Berber calendar" article)
+# with no corroborating primary reference, and changing where within the
+# year the leap day sits does not change which years are leap or the total
+# day count, so it cannot be checked against any dated event. This module
+# therefore keeps the plain Julian placement (extra day in February, via
+# ``julian_to_jdn``/``jdn_to_julian``) and does not hard-code the
+# append-at-year-end convention; it is flagged here as an open question
+# pending native/community confirmation, not shipped as arithmetic.
+#
+# Civil Yennayer holidays are explicitly OUT of scope for this arithmetic
+# entry. Algeria's Yennayer public holiday is a fixed civil date, 12
+# January Gregorian, set by presidential decree (27 December 2017, first
+# observed 2018) -- two days *earlier* than the 14 January this calendar's
+# Julian arithmetic produces for the same era year. Morocco's is fixed at
+# 13 January Gregorian by royal decree (May 2023, effective 2024). Neither
+# is derived from -- or reconcilable with -- the Julian-era arithmetic
+# above: they are legislated civil dates, not calendar output, and belong
+# to the civil-holidays data layer (see ``holiday_data/dz.tab``,
+# ``holiday_data/ma.tab``), never to this function. A popular folk
+# justification for Algeria's 12 January ("13 days of drift back from 1
+# January") is arithmetically inconsistent -- 13 days after 1 January is
+# 14 January, not 12 -- and is not encoded here in any form.
+#
+# Gold check: 1 Yennayer 2976 == Julian 2026-01-01 == Gregorian 2026-01-14.
+
+
+def berber_to_jdn(year: int, month: int, day: int) -> int:
+    """Berber/Amazigh (year, month, day) -> JDN.
+
+    Julian month/leap structure; the calendar year is the Julian year plus
+    950 (the Académie Berbère's 1968 era anchor -- see module note).
+    Proleptic for years <= 0.
+    """
+    return julian_to_jdn(year - 950, month, day)
+
+
+def berber_from_jdn(jdn: int) -> Tuple[int, int, int]:
+    year, month, day = jdn_to_julian(jdn)
+    return year + 950, month, day
+
+
+# --------------------------------------------------------------------------
 # Revised Julian (Milankovic): the 900-year leap-century rule.
 # --------------------------------------------------------------------------
 # Adopted 1923 by several Orthodox churches.  Structurally the Julian/AD
@@ -1341,6 +1402,9 @@ CALENDARS: Dict[str, Union[Calendar, TabulatedCalendar]] = {
     "ethiopian": Calendar(
         "ethiopian", 13, ethiopic_to_jdn, ethiopic_from_jdn,
         _ETHIOPIC_EPOCH_JDN),
+    "berber": Calendar(
+        "berber", 12, berber_to_jdn, berber_from_jdn,
+        berber_to_jdn(1, 1, 1)),
     "revised_julian": Calendar(
         "revised_julian", 12, revised_julian_to_jdn, revised_julian_from_jdn,
         revised_julian_to_jdn(1, 1, 1)),

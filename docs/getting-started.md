@@ -277,7 +277,7 @@ You now know the three ideas — the **JDN** number line, the unbounded
 **AstroDate**, the **DateSpan** stretch with its **basis** — that everything
 else is built on. The other guides go deeper, gently:
 
-- **[calendars.md](calendars.md)** — all 17 calendars, how to convert, and
+- **[calendars.md](calendars.md)** — all 18 calendars, how to convert, and
   how far each one can be trusted.
 - **[timelines.md](timelines.md)** — the days that vanished, the day that
   happened twice, and February 30th.
@@ -304,7 +304,7 @@ from chronologia import (
     combine_basis, is_leap_year, resolve_wall_clock, civil_add,
 )
 
-# The calendar hub: 17 calendars plus direct Gregorian/Julian conversion
+# The calendar hub: 18 calendars plus direct Gregorian/Julian conversion
 from chronologia import (
     CALENDARS, Calendar, CalendarDate, TabulatedCalendar, CalendarRangeError,
     gregorian_to_jdn, jdn_to_gregorian,
