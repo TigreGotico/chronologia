@@ -1,0 +1,6 @@
+# Persian "fall/autumn" -- Dehkhoda Dictionary and Sokhan Comprehensive
+# Dictionary, s.v. "پاییز".  "پائیز" is a common orthographic variant (ئ vs ی
+# before the ی of "پاییز"); both are listed since the tokenizer performs no
+# hamza normalisation.
+پاییز
+پائیز
