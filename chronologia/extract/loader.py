@@ -419,12 +419,14 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     # German genitive-singular jahres/monats, because a locale's own listed
     # singulars decide the split.
     #
-    # Fallback -- ``-s``/``-es`` morphology: for a locale WITHOUT ``unit1_``
-    # files (en/es/fr/de/pt), a unit surface is plural when another same-kind
-    # surface plus an ``-s``/``-es`` ending spells it (day+s -> days,
-    # fortnight+s -> fortnights).  The relation IS the plural, so it never
-    # mis-flags a singular; a non-``-s`` language with no ``unit1_`` files
-    # produces an empty set and its scoped readings are left untouched.
+    # Fallback -- ``-s``/``-es``/``-ies`` morphology: for a locale WITHOUT
+    # ``unit1_`` files (en/es/fr/de/pt), a unit surface is plural when another
+    # same-kind surface plus an ``-s``/``-es`` ending spells it (day+s ->
+    # days, fortnight+s -> fortnights), or a same-kind ``y``-ending surface
+    # with ``y`` swapped for ``ies`` spells it (century -> centuries). The
+    # relation IS the plural, so it never mis-flags a singular; a non-``-s``
+    # language with no ``unit1_`` files produces an empty set and its scoped
+    # readings are left untouched.
     _all_units = {**units, **scope_units}
     if singular_units:
         plural_units = frozenset(
@@ -435,7 +437,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             if (s.endswith("s")
                 and ((s[:-1] in _all_units and _all_units[s[:-1]] == kind)
                      or (s.endswith("es") and s[:-2] in _all_units
-                         and _all_units[s[:-2]] == kind))))
+                         and _all_units[s[:-2]] == kind)
+                     or (s.endswith("ies") and s[:-3] + "y" in _all_units
+                         and _all_units[s[:-3] + "y"] == kind))))
 
     spec = LangSpec(
         lang=lang,
