@@ -319,7 +319,7 @@ do differently? The honest comparison runs along three axes:
 - **Honesty semantics** — when a wall time is ambiguous or impossible, does the
   library force you to confront it (typed fold/gap answers), and does it carry
   span width and an evidentiary *basis*?
-- **Range** — how far can dates go? Unbounded years, 17 calendars, deep time?
+- **Range** — how far can dates go? Unbounded years, 18 calendars, deep time?
 - **Scope** — does it model *civil* time only, or also everything before and
   around it (solar events, historical local time, calendar reforms, geology)?
 

@@ -1,7 +1,7 @@
 # Calendars
 
 A calendar is just an agreement about how to name days. Humanity has invented
-dozens of these agreements, and this library speaks seventeen of them. This
+dozens of these agreements, and this library speaks eighteen of them. This
 page introduces each one in plain language, shows you how to translate dates
 in and out of it, and — most importantly — tells you honestly how far each one
 can be trusted.
@@ -178,6 +178,39 @@ print(CALENDARS["ethiopian"].date(2017, 1, 1))   # 1 Maskaram
 Notice this is the *same* Gregorian day as Coptic 1741 above — the two
 calendars are the same clock with different year numbers. Source: Dershowitz &
 Reingold; epoch 1 Maskaram EE 1 = 29 August AD 8 (Julian).
+
+### Berber (Amazigh)
+
+The Amazigh agricultural calendar in modern use across the Berber-speaking
+world (Algeria, Morocco, and the Kabyle and Riffian diaspora): structurally
+the Julian calendar — same twelve months and leap rule — with the months
+named in Berber and the year counted from a different era. 1 Yennayer
+(Berber new year) always falls on 1 January Julian, which is 14 January
+Gregorian throughout the 1900–2099 window.
+
+```python
+print(CALENDARS["berber"].date(2976, 1, 1))   # 1 Yennayer 2976
+# 2026-01-14T00:00:00
+```
+
+**Era note:** the +950 offset (Berber year 2976 = 2026 CE) was fixed in 1968
+by the Académie Berbère to commemorate the accession of Shoshenq I, the
+Berber pharaoh of Egypt's 22nd dynasty (conventionally dated 950 BC) — a
+documented 20th-century symbolic choice, not an ancient reckoning.
+
+**Caveat — civil holidays are separate from the arithmetic:** Algeria's
+Yennayer public holiday is fixed by decree at 12 January Gregorian (2017),
+and Morocco's at 13 January Gregorian (2023) — both legislated civil dates
+that diverge from this calendar's own 14 January new year and are not
+derived from it. Those dates live in the civil-holidays data
+([civil-holidays.md](civil-holidays.md)), never in this conversion. The
+year-end placement of the calendar's leap day (whether it falls in February,
+as here, or is appended after the last month) is attested by only a single
+source and is left as an open, unresolved convention rather than hard-coded.
+
+Source: the Julian JDN algorithm above, shifted by the documented +950 era;
+epoch and era history from the Académie Berbère's 1968 adoption and the
+Algerian (2017) and Moroccan (2023) holiday decrees.
 
 ### Armenian
 
@@ -440,7 +473,7 @@ skypoint.com/members/waltzmn/MSDating.html); both retrieved 2026-07-21 — see
 
 ---
 
-## Reference: all 17 calendars
+## Reference: all 18 calendars
 
 `basis` is `exact` for the arithmetic calendars (no error bar) and `tabulated`
 for the table-based ones. `months` is the highest month number a calendar can
@@ -455,6 +488,7 @@ name (leap-month and intercalary calendars use the larger count).
 | `solar_hijri_arithmetic` | 12 | 1948320 | modern era (±1 day) | exact |
 | `coptic` | 13 | 1825030 | any year (proleptic) | exact |
 | `ethiopian` | 13 | 1724221 | any year (proleptic) | exact |
+| `berber` | 12 | 1374436 | any year (proleptic) | exact |
 | `armenian` | 13 | 1922868 | any year (proleptic) | exact |
 | `egyptian` | 13 | 1448638 | any year (proleptic) | exact |
 | `french_republican` | 13 | 2375840 | any year (proleptic) | exact |

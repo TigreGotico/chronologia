@@ -258,6 +258,80 @@ def test_coptic_like_proleptic_pre_epoch(key):
         assert c.to_jdn(*c.from_jdn(jd)) == jd
 
 
+# -- Berber (Amazigh): Julian arithmetic under the +950 Académie Berbère
+# era -- gold values hand-derived from julian_to_jdn/jdn_to_gregorian
+# (year - 950), never read back from berber_to_jdn itself. -------------
+
+def test_berber_epoch():
+    b = CALENDARS["berber"]
+    assert b.to_jdn(1, 1, 1) == julian_to_jdn(1 - 950, 1, 1)
+
+
+def test_berber_yennayer_2976_is_2026_01_14():
+    # 1 Yennayer 2976 == Julian 2026-01-01 == Gregorian 2026-01-14, the
+    # 1900-2099-window offset asserted in the module docstring.
+    b = CALENDARS["berber"]
+    assert jdn_to_julian(b.to_jdn(2976, 1, 1)) == (2026, 1, 1)
+    assert jdn_to_gregorian(b.to_jdn(2976, 1, 1)) == (2026, 1, 14)
+
+
+@pytest.mark.parametrize("by,gy", [(2974, 2024), (2975, 2025), (2976, 2026),
+                                   (2977, 2027), (2978, 2028)])
+def test_berber_yennayer_gregorian_gold(by, gy):
+    # hand table: berber year - 950 == Julian year, whose 1 Jan == 14 Jan
+    # Gregorian throughout the 1900-2099 window.
+    b = CALENDARS["berber"]
+    assert jdn_to_gregorian(b.to_jdn(by, 1, 1)) == (gy, 1, 14)
+
+
+@pytest.mark.parametrize("by,leap", [(2974, True), (2975, False),
+                                     (2976, False), (2977, False),
+                                     (2978, True)])
+def test_berber_leap_years_follow_julian_year_minus_950(by, leap):
+    # Julian leap rule (year % 4 == 0) applied to (berber year - 950):
+    # 2024, 2028 leap; 2025, 2026, 2027 not.
+    b = CALENDARS["berber"]
+    if leap:
+        assert b.from_jdn(b.to_jdn(by, 2, 29)) == (by, 2, 29)
+    else:
+        with pytest.raises(cal.CalendarRangeError):
+            b.to_jdn(by, 2, 29)
+
+
+def test_berber_year_boundary_2976_to_2977():
+    # 2976-12-31 -> Gregorian 2027-01-13 (Berber year end, plain Julian
+    # February placement -- see module note on the disputed year-end leap
+    # day); the next day rolls into 2977-01-01 == Gregorian 2027-01-14.
+    b = CALENDARS["berber"]
+    last = b.to_jdn(2976, 12, 31)
+    assert jdn_to_gregorian(last) == (2027, 1, 13)
+    assert jdn_to_gregorian(last + 1) == (2027, 1, 14)
+    assert b.from_jdn(last + 1) == (2977, 1, 1)
+
+
+def test_berber_round_trip():
+    b = CALENDARS["berber"]
+    for jd in range(b.epoch_jdn, b.epoch_jdn + 1_100_000, 17):
+        y, m, d = b.from_jdn(jd)
+        assert b.to_jdn(y, m, d) == jd
+        assert 1 <= m <= 12
+
+
+def test_berber_is_a_pure_year_shift_of_julian():
+    # every Berber date is the same day as Julian (year - 950): a broad
+    # sweep across both leap and non-leap years must agree with the +950
+    # shift computed directly via julian_to_jdn.
+    b = CALENDARS["berber"]
+    for by in range(2900, 3060):
+        for m, d in ((1, 1), (2, 28), (6, 15), (12, 31)):
+            jy = by - 950
+            length = 29 if (m == 2 and jy % 4 == 0) else \
+                (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[m - 1]
+            if d > length:
+                continue
+            assert b.to_jdn(by, m, d) == julian_to_jdn(jy, m, d)
+
+
 # -- Revised Julian (Milankovic 900-year rule) ------------------------------
 
 def test_revised_julian_leap_rule():
