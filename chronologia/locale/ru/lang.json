@@ -137,6 +137,11 @@
         "article? ORD WEEKDAY GYEAR? year_word",
         "article? ordlast WEEKDAY GYEAR? year_word"
       ]
+    },
+    "extend": {
+      "weekday_ref": [
+        "at WEEKDAYFULL"
+      ]
     }
   }
 }
