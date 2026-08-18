@@ -1,0 +1,11 @@
+# साल and वर्ष both gloss “year” at en.wiktionary.org, which lists them as
+# synonyms; CLDR 47 uses वर्ष for the year field.  बरस is the third
+# attested word (en.wiktionary, entry “बरस”, with the oblique plural
+# बरसों shown in its own usage example).  All three are masculine
+# consonant stems, whose oblique plural is -ओं.
+साल
+सालों
+वर्ष
+वर्षों
+बरस
+बरसों

@@ -1,0 +1,12 @@
+# को trails a weekday to mark the time at which something happens --
+# en.wiktionary.org, entry “को”, sense “in, at the time of”, worked example
+# “बुधवार को” (“on Wednesday”).  Inside a recurrence frame already opened by
+# हर (“हर सोमवार को” -- every Monday) the postposition is pure filler: हर has
+# already made the phrase recurring, and को adds nothing to the rule, so it is
+# swallowed into the match rather than left to strand in the remainder.
+#
+# Shipped as the SINGULAR day-word only.  The plural counterpart
+# (marker_recur_day_word) is what LICENSES a bare postposed weekday as
+# recurring, and Hindi has no such form: bare “सोमवार को” names one specific
+# Monday, not every Monday, and is read as a single date by the grammar engine.
+को

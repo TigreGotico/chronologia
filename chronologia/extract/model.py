@@ -173,6 +173,13 @@ class Conventions:
     # binds with no CLOCKDIR.  Source: Cambridge Dictionary, "half past";
     # British native-speaker consensus that "half nine" == "half past nine".
     bare_half_past: bool = False
+    # Additive bare QUARTER, the past-side mirror of bare_quarter_to: a bare
+    # quarter-fraction names the quarter *past* the stated hour ("सवा एक" ==
+    # 01:15).  English rejects a bare quarter because "quarter nine" is not
+    # English; a locale whose quarter word is as ordinary as its half word
+    # opts in here rather than having the reading guessed.  Read only
+    # alongside bare_half_past, which owns the additive branch.
+    bare_quarter_past: bool = False
     # Positional licensing for the bare-daypart reading: refuse to read a bare
     # DAYPART word ("Night") as a time-of-day band when it is the CAPITALISED
     # tail of a capitalised multi-word phrase -- a proper-noun holiday name such
@@ -265,6 +272,14 @@ class LangSpec:
     hook: Optional[Callable] = None
     # clock_time slot vocab (surface -> value), all facts from filename convention
     clock_fractions: Mapping[str, int] = field(default_factory=dict)  # -> minutes
+    # fraction surfaces (a SUBSET of clock_fractions, so the FRACTION slot still
+    # binds them) whose bare reading sits in the hour BEFORE the one spoken:
+    # Hindi "पौने दस" is 09:45, a quarter short of the ten it names, while the
+    # same locale's "साढ़े तीन" and "सवा एक" count forward from theirs.  The
+    # direction is therefore a property of the WORD, not of the locale, which is
+    # what separates this from the whole-locale bare_half_to / bare_half_past
+    # conventions.  Value is the minute of that earlier hour.
+    clock_fractions_prev: Mapping[str, int] = field(default_factory=dict)
     # a spelled genitive-cardinal minute count that only ever names the
     # subtractive CLOCKDIR direction ("без пяти" == without five) -- unlike
     # clock_fractions it carries no bare toward-hour idiom of its own, so it

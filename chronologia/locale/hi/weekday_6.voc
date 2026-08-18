@@ -1,0 +1,7 @@
+# Unicode CLDR 47, locale hi, gregorian wide weekday names
+# (cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).
+# Sense confirmed at en.wiktionary.org, entry “रविवार”.
+# इतवार is the everyday colloquial name for the same day; en.wiktionary
+# glosses it 'Sunday' and lists रविवार as its synonym.
+रविवार
+इतवार

@@ -1,0 +1,4 @@
+# The past offset marker trails its quantity: “{0} दिन पहले” is CLDR 47's
+# own past relative-time pattern for locale hi, for every unit field.
+# en.wiktionary.org, entry “पहले”: “previously, earlier, before”.
+पहले

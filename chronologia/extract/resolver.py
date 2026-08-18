@@ -2873,14 +2873,29 @@ class Resolver:
                     if hour == 0 and self.spec.conventions.toward_hour_12h:
                         hour = 12
             elif (frac_tok is not None and dir_tok is None
+                    and frac_tok.text in self.spec.clock_fractions_prev):
+                # a fraction word that names its own direction: Hindi "पौने"
+                # ("a quarter less") counts BACK from the hour it is followed
+                # by, so "पौने दस" is 09:45 -- while the very same locale's
+                # "साढ़े"/"सवा" count forward from theirs.  The asymmetry is
+                # lexical, so it is read off the word rather than off a
+                # whole-locale convention, and the naive symmetric fold that
+                # would return 10:45 never happens.
+                hour -= 1
+                minute = self.spec.clock_fractions_prev[frac_tok.text]
+            elif (frac_tok is not None and dir_tok is None
                     and self.spec.conventions.bare_half_past):
                 # British-colloquial additive bare half: "half nine" == 09:30,
                 # i.e. half *past* the stated hour (the opposite of the
                 # Continental-Germanic "halb neun" == 08:30).  Only the half is
                 # colloquial; "quarter nine" is not English, so a bare quarter
                 # is rejected rather than guessed.
+                # ``bare_quarter_past`` is the past-side mirror of
+                # ``bare_quarter_to``: a locale whose quarter word is as
+                # ordinary as its half word ("सवा एक" == 01:15) opts the
+                # quarter in, instead of the reading being guessed.
                 offset = self.spec.clock_fractions[frac_tok.text]
-                if offset != 30:
+                if offset != 30 and not self.spec.conventions.bare_quarter_past:
                     return None
                 minute = offset
             elif (frac_tok is not None and dir_tok is None

@@ -1,0 +1,6 @@
+# The future offset marker likewise trails: “{0} दिन में” is CLDR 47's
+# future relative-time pattern for locale hi.  बाद is the other everyday
+# word for the same reading -- en.wiktionary.org, entry “बाद”, whose own
+# usage example is “एक दिन बाद” (“one day later”).
+में
+बाद

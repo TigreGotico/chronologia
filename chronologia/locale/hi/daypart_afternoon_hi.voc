@@ -1,0 +1,6 @@
+# Band boundaries: Unicode CLDR 47 supplemental dayPeriodRuleSet for
+# locale hi (cldr-json 47.0.0, cldr-core/supplemental/dayPeriods.json),
+# transcribed in chronologia/dayparts.py as the afternoon band.
+# Surface: the CLDR dayPeriod name; en.wiktionary.org, entry “दोपहर”,
+# glosses it “afternoon, midday”.
+दोपहर

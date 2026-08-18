@@ -420,6 +420,12 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (18, 0), "pl", _cldr("pl")),
     _p("evening", (18, 0), (21, 0), "pl", _cldr("pl")),
     _p("night", (21, 0), (6, 0), "pl", _cldr("pl")),
+    # hi: the morning opens at 04:00, the afternoon closes at 16:00 and the
+    # evening at 20:00, so the night is the long band from 20:00 round to 04:00.
+    _p("morning", (4, 0), (12, 0), "hi", _cldr("hi")),
+    _p("afternoon", (12, 0), (16, 0), "hi", _cldr("hi")),
+    _p("evening", (16, 0), (20, 0), "hi", _cldr("hi")),
+    _p("night", (20, 0), (4, 0), "hi", _cldr("hi")),
     # lt: the evening runs to midnight and the night is the small hours.
     _p("morning", (6, 0), (12, 0), "lt", _cldr("lt")),
     _p("afternoon", (12, 0), (18, 0), "lt", _cldr("lt")),

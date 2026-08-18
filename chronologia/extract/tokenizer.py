@@ -299,7 +299,22 @@ class Tokenizer:
         # single number-word, so -- like the apostrophe / ZWNJ above -- they
         # glue the letter runs into one token rather than splitting it.  They
         # occur only in Hebrew, so listing them is inert for every other locale.
-        zwj = r"(?:[‌‍׳״][^\W\d]+)*"
+        # Devanagari writes a syllable as a base consonant plus COMBINING vowel
+        # signs, the nukta and the virama -- मार्च is म + ा + र + ् + च, and
+        # फ़रवरी is फ + ़ + रवरी.  Those marks are Unicode categories Mn and Mc,
+        # which ``\w`` (and therefore ``[^\W\d]``) does not match, so without
+        # them in the letter class every Devanagari word ends at its first
+        # matra and the token stream is a run of bare consonants.  They are
+        # part of the word, not a glue character, so they join the letter class
+        # itself.  Ranges are the Devanagari block's sign/matra subranges
+        # (Unicode 16.0 chart U+0900): U+0900-0903 candrabindu/anusvara/
+        # visarga, U+093A-094F matras + nukta + virama, U+0951-0957 accents and
+        # additional marks, U+0962-0963 vocalic-l matras.  The digits
+        # U+0966-096F are deliberately excluded -- they are numbers, and the
+        # numeric rule below already reads them.  Inert for every script that
+        # writes no combining mark.
+        letter = r"(?:[^\W\d]|[ऀ-ःऺ-ॏ॑-ॗॢॣ])"
+        zwj = r"(?:[‌‍׳״]" + letter + r"+)*"
         # a geresh can also be the mark on its OWN, trailing the letters
         # instead of sitting between two of them: that is how a SINGLE-LETTER
         # gematria numeral is written (א׳ = 1, ה׳ = 5), as opposed to a
@@ -313,8 +328,9 @@ class Tokenizer:
         # inert outside Hebrew -- an English/French trailing apostrophe or
         # closing quote is untouched.
         trailing_mark = r"[׳״]?"
-        word = (r"[^\W\d]+" + zwj + trailing_mark if modes.split_contractions
-                else r"[^\W\d]+(?:['’‌‍׳״][^\W\d]+)*" + trailing_mark)
+        word = (letter + r"+" + zwj + trailing_mark
+                if modes.split_contractions
+                else letter + r"+(?:['’‌‍׳״]" + letter + r"+)*" + trailing_mark)
         # ISO and clock literals (2017-06-30, 15:30, 5:07:30) are kept whole,
         # ahead of the bare-number rule, so the matcher can bind them as one
         # slot; both are language-neutral, always-on lexical shapes.
