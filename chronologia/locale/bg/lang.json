@@ -116,6 +116,11 @@
     "article? ORD UNIT of MONTH YEAR?",
     "article? ordlast WEEKDAY of MONTH YEAR?"
    ]
+  },
+  "extend": {
+   "weekday_ref": [
+    "at WEEKDAYFULL"
+   ]
   }
  }
 }
