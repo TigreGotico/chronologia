@@ -1,0 +1,91 @@
+{
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": true,
+  "decimal_comma": true,
+  "dotted_date": true
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "NUM UNIT MARKER",
+    "MARKER NUM UNIT",
+    "MARKER USG",
+    "USG MARKER"
+   ]
+  },
+  "weekend_ref": {
+   "orders": [
+    "REL_MARKER WEEKEND",
+    "article? WEEKEND"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "DAY MONTH YEAR?",
+    "DAY of MONTH YEAR?",
+    "MONTH DAY? YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK MERIDIEM? ZONE?",
+    "at HOUR MERIDIEM? ZONE?",
+    "HOUR MERIDIEM ZONE?",
+    "at HOUR oclock MERIDIEM? ZONE?",
+    "HOUR oclock MERIDIEM? ZONE?",
+    "FRACTION HOUR MERIDIEM? ZONE?",
+    "HOUR CLOCKDIR FRACTION MERIDIEM? ZONE?",
+    "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
+    "CLOCKMIN CLOCKDIR HOUR MERIDIEM? ZONE?",
+    "at? LANDMARK ZONE?"
+   ],
+   "prefer_future": true
+  },
+  "year_ref": {
+   "orders": [
+    "in GYEAR",
+    "article? year_word GYEAR",
+    "GYEAR"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": true,
+  "hemisphere": "north",
+  "prefer_future": true,
+  "bare_half_to": true,
+  "toward_hour_12h": true
+ },
+ "quantifiers": {
+  "1": [
+   "jedan",
+   "jedna",
+   "jedno",
+   "један",
+   "једна",
+   "једно"
+  ],
+  "0.5": [
+   "pola",
+   "пола"
+  ],
+  "0.25": [
+   "četvrt",
+   "четврт"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_slavic:fold_sr",
+ "base_grammar": {
+  "extend": {
+   "weekday_ref": [
+    "at WEEKDAYFULL"
+   ]
+  }
+ }
+}

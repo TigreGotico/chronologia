@@ -1,0 +1,7 @@
+# Subtractive-only literal minute count in "MINUTE do HOUR": "petnaest do
+# sedam" (fifteen to seven) == 6:45.  Unlike "četvrt" this is not a bare
+# fraction word (Serbian never says a bare "*petnaest sedam*"), so it lives
+# in its own CLOCKMIN class, valid only alongside CLOCKDIR -- exactly the
+# ru "без пятнадцати" shape.  gospeakserbian, "Telling Time in Serbian".
+petnaest
+петнаест

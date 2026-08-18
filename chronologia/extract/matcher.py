@@ -476,6 +476,35 @@ class ConstructionMatcher:
                     continue
                 end, slots = best
                 if end > start:
+                    # A weekday whose genitive surface is ALSO the
+                    # dictionary-default genitive of a "week" word ("prošle
+                    # nedelje" -- dictionaries give "last week" as the primary
+                    # reading of that exact genitive, not "last Sunday") is a
+                    # genuinely ambiguous phrase: refuse the weekday reading
+                    # instead of silently picking one sense.  The ambiguous
+                    # surface is a locale fact (``marker_weekday_week_ambiguous
+                    # .voc`` -> ``spec.connectors["weekday_week_ambiguous"]``);
+                    # a locale that ships none of these words is unaffected.
+                    if (name == "weekday_ref"
+                            and ("WEEKDAY" in slots or "WEEKDAYFULL" in slots)
+                            and (slots.get("WEEKDAY") or slots.get(
+                                "WEEKDAYFULL")).text
+                            in self.spec.connectors.get(
+                                "weekday_week_ambiguous", frozenset())):
+                        continue
+                    # A bare weekday match immediately followed by an
+                    # unconsumed genitive/duration "day" word ("nedelju
+                    # dana") is the frozen idiom that disambiguates a
+                    # week-doubling weekday word AS a week -- but expressing
+                    # that reading needs grammar this family does not have.
+                    # Silently answering the lone-weekday sub-reading and
+                    # stranding "dana" would be a worse wrong answer than no
+                    # answer, so the whole phrase refuses instead: veto the
+                    # weekday match whenever a bare day-unit word trails it.
+                    if (name == "weekday_ref" and end < len(tokens)
+                            and self.spec.units.get(tokens[end].text)
+                            == "day"):
+                        continue
                     # "the year 1 am" is the Anno Mundi era marker, not the
                     # 01:00 ante-meridiem clock: veto a bare HOUR+MERIDIEM
                     # clock reading whose hour sits immediately after a

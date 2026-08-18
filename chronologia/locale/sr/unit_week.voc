@@ -1,0 +1,10 @@
+# "sedmica" is the unambiguous week word this locale ships as a duration
+# unit; "nedelja" is deliberately excluded here (see weekday_6.voc) because
+# it also names Sunday and the two senses are not locally disambiguable in
+# a bare NUM+UNIT phrase.  Full paradigm plus paucal: "dve sedmice" (2-4,
+# gen sg), "pet sedmica" (5+, gen pl).  Wiktionary, sedmica, declension
+# table -- https://en.wiktionary.org/wiki/sedmica#Serbo-Croatian
+sedmica
+седмица
+sedmice
+седмице

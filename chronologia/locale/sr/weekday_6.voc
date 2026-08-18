@@ -1,0 +1,14 @@
+# "nedelja" names BOTH the weekday Sunday and (dialectally/dictionary-wise)
+# the week -- Wiktionary marks the week sense secondary/regional and
+# sr.wikipedia treats sedmica as the unmarked "week" word.  This locale
+# resolves the ambiguity by CONSTRUCTION, not by guessing: nedelja binds only
+# the weekday slot (WEEKDAY == Sunday, as in "u nedelju"), and the duration
+# unit is sedmica alone (unit_week.voc/unit1_week.voc) -- nedelja never enters
+# a duration reading, so "nedelju dana" refuses rather than silently picking a
+# sense.  Wiktionary, nedelja -- https://en.wiktionary.org/wiki/nedelja#Serbo-Croatian
+nedelja
+недеља
+nedelju
+недељу
+nedelje
+недеље
