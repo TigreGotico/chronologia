@@ -1,0 +1,7 @@
+# Unicode CLDR 47, locale hi, gregorian abbreviated weekday names
+# (cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).
+# Sense confirmed at en.wiktionary.org, entry “शनि”.
+# The abbreviation is the bare planet name, which is an ordinary word in
+# its own right (गुरु 'teacher', शुक्र 'Venus'), so it binds only the
+# marker-ed weekday orders and never a bare weekday on its own.
+शनि

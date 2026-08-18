@@ -1,0 +1,9 @@
+# Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names
+# (cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).
+# फ़रवरी is written with the nukta (फ + U+093C); the nukta-less
+# spelling फरवरी is as common in ordinary Hindi typing, and names the
+# same month, so both ship.
+फ़रवरी
+फरवरी
+फ़र
+फर

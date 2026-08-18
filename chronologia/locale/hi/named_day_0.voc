@@ -1,0 +1,10 @@
+# आज “today”: en.wiktionary.org, entry “आज”; CLDR 47 gives it as locale
+# hi's relative-type-0 day name.
+# There is NO named_day file for any OTHER offset.  कल names BOTH
+# yesterday and tomorrow and परसों BOTH the day before yesterday and the
+# day after tomorrow -- CLDR 47 maps locale hi's relative-type--1 and
+# relative-type-1 to the same word कल, and its -2 and +2 to the same word
+# परसों, and en.wiktionary lists both senses under each entry.  Only the
+# verb's tense separates them, which this engine does not read, so the
+# words are refused rather than guessed at a direction.
+आज

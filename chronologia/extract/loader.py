@@ -126,6 +126,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     calendar_months: Dict[str, Dict[str, int]] = {}
     cal_surface_owner: Dict[str, str] = {}   # surface -> calendar, collision guard
     clock_fractions: Dict[str, int] = {}
+    clock_fractions_prev: Dict[str, int] = {}
     clock_dir_minutes: Dict[str, int] = {}
     meridiems: Dict[str, int] = {}
     night_meridiems: Set[str] = set()
@@ -244,6 +245,13 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             # time-of-day band (Indonesian "nanti" -- "nanti malam" = tonight,
             # "nanti pagi" = tomorrow morning).
             daypart_deictics.update({s: "future" for s in surfaces})
+        elif base.startswith("clock_fraction_prev_"):
+            # a bare fraction naming a position in the hour BEFORE the one
+            # spoken ("पौने दस" == 09:45).  Unioned into clock_fractions too, so
+            # the FRACTION slot binds it exactly as any other fraction word.
+            n = int(base[len("clock_fraction_prev_"):])
+            clock_fractions_prev.update({s: n for s in surfaces})
+            clock_fractions.update({s: n for s in surfaces})
         elif base.startswith("clock_fraction_"):
             n = int(base[len("clock_fraction_"):])
             clock_fractions.update({s: n for s in surfaces})
@@ -460,6 +468,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             bare_quarter_to=conv.get("bare_quarter_to", False),
             toward_hour_12h=conv.get("toward_hour_12h", False),
             bare_half_past=conv.get("bare_half_past", False),
+            bare_quarter_past=conv.get("bare_quarter_past", False),
             since_directional=conv.get("since_directional", False),
             daypart_proper_noun_guard=conv.get(
                 "daypart_proper_noun_guard", False),
@@ -475,7 +484,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             decimal_comma=tok.get("decimal_comma", False)),
         guards=cfg.get("guards", {}),
         hook=_resolve_dotted(cfg.get("hook")),
-        clock_fractions=clock_fractions, clock_dir_minutes=clock_dir_minutes,
+        clock_fractions=clock_fractions,
+        clock_fractions_prev=clock_fractions_prev,
+        clock_dir_minutes=clock_dir_minutes,
         meridiems=meridiems,
         night_meridiems=frozenset(night_meridiems),
         clock_dirs=clock_dirs, seasons=seasons,

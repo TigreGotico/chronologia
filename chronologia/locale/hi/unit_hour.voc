@@ -1,0 +1,7 @@
+# Declension: en.wiktionary.org, entry “घंटा” (masculine ā-stem: घंटा / घंटे / घंटों).  A noun counted by a
+# numeral stands in the OBLIQUE case, so the oblique forms are unit
+# surfaces in their own right.
+# CLDR 47 writes the counted form oblique in its own patterns (“{0} घंटे में”).
+घंटा
+घंटे
+घंटों

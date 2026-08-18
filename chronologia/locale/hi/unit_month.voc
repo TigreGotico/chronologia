@@ -1,0 +1,11 @@
+# Declension: en.wiktionary.org, entry “महीना” (masculine ā-stem: महीना / महीने / महीनों).  A noun counted by a
+# numeral stands in the OBLIQUE case, so the oblique forms are unit
+# surfaces in their own right.
+# माह is the form CLDR 47 uses for the month field's displayName and
+# relative-time patterns; मास is the Sanskritic doublet en.wiktionary
+# glosses “a month”.  Both are masculine consonant stems.
+महीना
+महीने
+महीनों
+माह
+मास
