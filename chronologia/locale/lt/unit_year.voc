@@ -1,0 +1,9 @@
+# Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/metai.
+# The counted noun's form keys off the numeral's last digit -- nominative
+# singular after a numeral ending in 1, nominative plural after 2-9,
+# genitive plural after 0 and 11-19 -- and the accusative is the form
+# "prieš" (ago) imposes, so all of them are surfaces of this unit.
+metai
+metų
+metus
+metais

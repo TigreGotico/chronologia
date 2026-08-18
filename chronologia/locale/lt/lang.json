@@ -1,0 +1,68 @@
+{
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": true,
+  "decimal_comma": true,
+  "dotted_date": true
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "MARKER NUM UNIT",
+    "MARKER USG"
+   ]
+  },
+  "weekend_ref": {
+   "orders": [
+    "REL_MARKER WEEKEND",
+    "WEEKEND"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "YEAR year_word MONTH DAY day_word",
+    "YEAR year_word MONTH DAY",
+    "MONTH DAY day_word",
+    "MONTH DAY? YEAR?",
+    "DAY MONTH YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK MERIDIEM?",
+    "FRACTION HOUR MERIDIEM?",
+    "CLOCKDIR MINUTE HOUR MERIDIEM?",
+    "LANDMARK"
+   ],
+   "prefer_future": true
+  },
+  "year_ref": {
+   "orders": [
+    "GYEAR year_word",
+    "GYEAR"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": false,
+  "hemisphere": "north",
+  "prefer_future": true,
+  "bare_half_to": true,
+  "toward_hour_12h": true
+ },
+ "quantifiers": {
+  "1": [
+   "vienas",
+   "viena"
+  ],
+  "0.5": [
+   "pusė"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_baltic:fold_lt"
+}

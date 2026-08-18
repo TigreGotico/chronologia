@@ -1,0 +1,7 @@
+# Nominative: Unicode CLDR 47, locale lt, gregorian wide weekday names.
+# Genitive and accusative: en.wiktionary.org declension table of
+# https://en.wiktionary.org/wiki/sekmadienis (masculine -is stem).  The accusative is the
+# ordinary adverbial "on <weekday>" form ("praeitą penktadienį").
+sekmadienis
+sekmadienio
+sekmadienį

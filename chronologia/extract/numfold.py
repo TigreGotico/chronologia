@@ -14,9 +14,11 @@ engine (also used by ``numfold_germanic`` and ``numfold_turkic``).  The
 Romance family (an/ast/ca/es/fr/gl/it/mwl/oc/pt/ro) lives in
 ``numfold_romance``, the Continental/North Germanic family (da/de/fy/nb/nl/nn/
 sv) in ``numfold_germanic``, and the Turkic family (az/tr) in
-``numfold_turkic``.  The Slavic, Semitic and agglutinative families each have
-their own sibling module already (``numfold_slavic``, ``numfold_semitic``,
-``numfold_agglutinative``).
+``numfold_turkic``.  The Slavic, Semitic, Baltic and agglutinative families
+each have their own sibling module already (``numfold_slavic``,
+``numfold_semitic``, ``numfold_baltic``, ``numfold_agglutinative``);
+``numfold_baltic`` owns its number tables outright and reads no external
+number back-end.
 
 Wired as a language ``hook`` in each locale's ``lang.json`` and applied by
 :meth:`DateTimeEngine.tokenize` after normalisation.  Every fold is a pure
