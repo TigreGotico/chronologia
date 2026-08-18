@@ -108,7 +108,8 @@
         "SEASON REL_MARKER"
       ],
       "scoped_ordinal": [
-        "WEEKDAY ORD MONTH YEAR?"
+        "WEEKDAY ORD MONTH YEAR?",
+        "CMUNIT ORD"
       ],
       "daypart_ref": [
         "DPDEIX DAYPART",

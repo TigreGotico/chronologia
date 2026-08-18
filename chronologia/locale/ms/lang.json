@@ -106,6 +106,9 @@
     "extend": {
       "season_ref": [
         "SEASON REL_MARKER"
+      ],
+      "scoped_ordinal": [
+        "CMUNIT ORD"
       ]
     }
   }

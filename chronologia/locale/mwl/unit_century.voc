@@ -1,0 +1,7 @@
+# "seclo" is the Mirandese word for "century", attested in native running
+# text on the Mirandese Wikipedia (Biquipédia), e.g. the article title
+# "Seclo XX" (mwl.wikipedia.org/wiki/Seclo_XX). Plural "seclos" follows the
+# regular -o -> -os pattern already used across this locale's other
+# unit_*.voc files.
+seclo
+seclos
