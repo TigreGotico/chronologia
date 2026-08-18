@@ -1,0 +1,6 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale sr
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as the morning band.
+# Source: Wiktionary, ujutru -- https://en.wiktionary.org/wiki/ujutru
+ujutru
+ујутру

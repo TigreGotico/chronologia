@@ -1,0 +1,9 @@
+# The genitive "nedelje" is the form "prošle/sledeće nedelje" ("last/next
+# nedelje") uses -- and dictionaries give "last WEEK" as the DEFAULT gloss of
+# that exact genitive (Wiktionary marks the weekday sense secondary at this
+# case; sr.wikipedia treats nedelja/sedmica as interchangeable for "week").
+# No source establishes one reading as dominant, so "prošle/sledeće nedelje"
+# refuses rather than silently picking the weekday sense (see
+# weekday_6.voc for the full disambiguation design).
+nedelje
+недеље
