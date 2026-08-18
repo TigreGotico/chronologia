@@ -420,6 +420,11 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (18, 0), "pl", _cldr("pl")),
     _p("evening", (18, 0), (21, 0), "pl", _cldr("pl")),
     _p("night", (21, 0), (6, 0), "pl", _cldr("pl")),
+    # lt: the evening runs to midnight and the night is the small hours.
+    _p("morning", (6, 0), (12, 0), "lt", _cldr("lt")),
+    _p("afternoon", (12, 0), (18, 0), "lt", _cldr("lt")),
+    _p("evening", (18, 0), (0, 0), "lt", _cldr("lt")),
+    _p("night", (0, 0), (6, 0), "lt", _cldr("lt")),
     # id: morning opens at midnight (CLDR "pagi" 00:00-10:00); no wrap.
     _p("morning", (0, 0), (10, 0), "id", _cldr("id")),
     _p("afternoon", (10, 0), (15, 0), "id", _cldr("id")),

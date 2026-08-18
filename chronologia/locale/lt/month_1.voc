@@ -1,0 +1,6 @@
+# Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,
+# locale lt, gregorian calendar month names; the genitive is the form the
+# date construction uses ("kovo 1 d.").  Abbreviation from the same chart.
+sausis
+sausio
+saus.
