@@ -1,0 +1,19 @@
+# Source: en.wiktionary.org, https://en.wiktionary.org/wiki/blwyddyn.
+# blwyddyn (feminine), plural blynyddoedd, with the DEDICATED count
+# form blynedd used directly after a numeral.  That count form is the
+# richest mutation case in the language's temporal vocabulary: it
+# surfaces three ways depending on which numeral precedes it --
+#   blynedd   radical, after three ("tair blynedd")
+#   flynedd   soft b -> f, after two ("dwy flynedd")
+#   mlynedd   nasal b -> m, after five ("pum mlynedd")
+# all three attested: the first in running text on cy.wikipedia.org,
+# the latter two on the en.wiktionary.org entry itself.
+# Soft-mutated surfaces are listed beside the radical: Welsh changes a
+# word's first letter after a preceding trigger.  Mutation table:
+# en.wikipedia.org, "Welsh mutation".
+# Singular only: the form a count of one takes.
+blwyddyn
+flwyddyn
+blynedd
+flynedd
+mlynedd

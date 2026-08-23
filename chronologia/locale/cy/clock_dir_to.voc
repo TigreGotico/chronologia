@@ -1,0 +1,6 @@
+# "i" (to) counts DOWN to the hour named, and triggers SOFT
+# mutation on it: "chwarter i bedwar" is 03:45, "chwarter i dri" 02:45.
+# Sources: en.wikibooks.org, "Welsh/Mynediad/Lesson 8" ("use i after half
+# past", with the five-minute table); cy.wikipedia.org running text ("am
+# chwarter i dri yn y prynhawn", "Am chwarter i saith").
+i

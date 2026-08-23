@@ -1,0 +1,6 @@
+# "nesaf" (next), with the clipped form the entry lists.  It
+# TRAILS its noun ("yr wythnos nesaf" -- next week), which is why this locale
+# sets marker_position to post.  Source: en.wiktionary.org,
+# https://en.wiktionary.org/wiki/nesaf.
+nesaf
+nesa

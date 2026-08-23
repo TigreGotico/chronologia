@@ -1,0 +1,11 @@
+# Unicode CLDR 47, locale cy, gregorian calendar (cldr-json
+# cldr-dates-full/main/cy/ca-gregorian.json).
+# The wide name is the calendar's own; the abbreviations are its
+# format and stand-alone short forms from the same table.
+# Mutation: h does not soft-mutate.
+# Soft-mutated surfaces are listed beside the radical: Welsh changes a
+# word's first letter after a preceding trigger, so a matcher that saw
+# only the radical would miss the form running text actually carries.
+# Mutation table: en.wikipedia.org, "Welsh mutation".
+hydref
+hyd
