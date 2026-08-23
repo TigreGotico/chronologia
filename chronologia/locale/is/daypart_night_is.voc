@@ -1,0 +1,10 @@
+# Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for is (cldr-json
+# cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py.
+# Unicode CLDR 47, locale is, gregorian calendar (cldr-json
+# cldr-dates-full/main/is/ca-gregorian.json).
+# dayPeriod "night1".  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/nótt.
+nótt
+nóttu
+nóttina
+nóttin

@@ -1,0 +1,9 @@
+# Unicode CLDR 47, locale is, gregorian calendar (cldr-json
+# cldr-dates-full/main/is/ca-gregorian.json).
+# Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mánudagur.  The date-construction
+# form is the accusative, bare or with the suffixed article, which is
+# what the bare temporal accusative uses ("á mánudaginn").
+mánudagur
+mánudag
+mánudaginn
+mánudegi

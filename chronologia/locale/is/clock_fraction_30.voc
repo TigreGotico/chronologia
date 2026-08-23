@@ -1,0 +1,4 @@
+# The spoken half hour names the COMING hour: "hálf tvö" is 01:30, not
+# 02:30 -- hence bare_half_to + toward_hour_12h.  Source:
+# en.wiktionary.org, Appendix:Telling time in Icelandic (row 1:30).
+hálf

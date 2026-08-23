@@ -1,0 +1,7 @@
+# Unicode CLDR 47, locale is, gregorian calendar (cldr-json
+# cldr-dates-full/main/is/ca-gregorian.json).
+# Icelandic month names do not decline, so the wide name is the
+# only form the date construction reads; the abbreviation is the
+# calendar's own short form from the same table.
+apríl
+apr.
