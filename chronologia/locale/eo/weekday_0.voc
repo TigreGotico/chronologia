@@ -1,0 +1,13 @@
+# Nominative (CLDR wide/stand-alone form): Unicode CLDR 47, locale eo,
+# gregorian wide weekday names (cldr-dates-full/main/eo/ca-gregorian.json).
+# Accusative -n: en.wiktionary.org "lundo" -- marks a SINGLE, specific
+# occurrence when bare ("La stevardino flugos al Parizo lundon" -- the
+# flight attendant will fly to Paris [this coming] Monday); under a
+# distributive "ĉiu"/"ĉiun" (marker_every.voc) the SAME accusative is the
+# attested "every ACCUSATIVE" recurrence idiom instead ("ĉiun lundon" --
+# every Monday), exactly as it governs a counted unit ("ĉiun tagon").  The
+# ADVERBIAL -e form ("lunde" -- on Mondays) is a deliberately different
+# vocabulary slot, never folded in here, and gains no recurrence reading
+# from "ĉiu" either -- see test_eo_weekday_case.py.
+lundo
+lundon

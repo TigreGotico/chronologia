@@ -1,0 +1,4 @@
+# CLDR 47 abbreviated weekday names, locale eo. Bound to the WEEKDAY class
+# but never the bare-weekday order (loader convention), so these two-letter
+# forms cannot resolve a weekday on their own.
+lu
