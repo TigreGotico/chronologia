@@ -113,7 +113,7 @@ Per-language conventions, all from the CLDR 47 chart above:
   formiddag/føremiddag ``[10:00, 12:00)``, ettermiddag ``[12:00, 18:00)``,
   kveld ``[18:00, 24:00)``.
 
-Eighteen further locales (``ar az bg cs el et eu fa he hr hu id ms pl sk sl
+Further locales (``ar az bg cs el et eu fa he hr hu id is ms pl sk sl
 tr uk``) are transcribed the same way, but collapsed into chronologia's own
 four-band model — ``morning`` (CLDR morning1+morning2), ``afternoon``
 (afternoon1/2), ``evening`` (evening1) and ``night`` (night1, joined with a
@@ -426,6 +426,12 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (16, 0), "hi", _cldr("hi")),
     _p("evening", (16, 0), (20, 0), "hi", _cldr("hi")),
     _p("night", (20, 0), (4, 0), "hi", _cldr("hi")),
+    # is: same shape as lt -- the evening runs to midnight and the night is
+    # the small hours -- and CLDR lists the two locales under the same rules.
+    _p("morning", (6, 0), (12, 0), "is", _cldr("is")),
+    _p("afternoon", (12, 0), (18, 0), "is", _cldr("is")),
+    _p("evening", (18, 0), (0, 0), "is", _cldr("is")),
+    _p("night", (0, 0), (6, 0), "is", _cldr("is")),
     # lt: the evening runs to midnight and the night is the small hours.
     _p("morning", (6, 0), (12, 0), "lt", _cldr("lt")),
     _p("afternoon", (12, 0), (18, 0), "lt", _cldr("lt")),
