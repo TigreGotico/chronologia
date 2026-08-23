@@ -460,6 +460,19 @@ def _compound_unit_at(tokens, j, spec):
             # this guard cannot affect it.
             if implied and tokens[k].text in spec.connectors.get("at", ()):
                 return None
+            # BCS "godinu/mjesec/tjedan DANA" ("a year/month/week OF DAYS"):
+            # a bare genitive-plural day word with no NUM/quantifier of its
+            # own is the idiomatic filler that closes a year/month/week
+            # count, not a genuine extra day -- a real "+1 day" offset uses
+            # the nominative "dan", never this genitive-plural surface
+            # (``marker_day_filler.voc``).  Folding it here duplicated the
+            # count ("godinu dana" landed a year AND a day on).  A genuine
+            # counted-days offset ("tri dana") never reaches this function:
+            # its own NUM sits in the PRIMARY relative_offset match.
+            if (implied and unit == "day"
+                    and tokens[k].text in spec.connectors.get(
+                        "day_filler", ())):
+                return None
             return unit, qty, k + 1
     return None
 
@@ -490,6 +503,12 @@ def _compound_unit_before(tokens, end, spec):
             return unit, 1.0, k - 1
         if p.text in spec.quantifiers:
             return unit, spec.quantifiers[p.text], k - 1
+    # BCS genitive-plural day filler, mirroring the guard in
+    # :func:`_compound_unit_at` above -- a bare "dana" with no NUM/quantifier
+    # of its own is the idiom's filler, not a genuine extra day.
+    if unit == "day" and tokens[k].text in spec.connectors.get(
+            "day_filler", ()):
+        return None
     return unit, 1.0, k
 
 
@@ -519,6 +538,12 @@ def _scan_trailing_chunks(tokens, idx, spec):
             break
         got = _compound_unit_at(tokens, j, spec)
         if got is None:
+            # A bare day-filler idiom word ("dana") consumes itself as the
+            # phrase's closing filler -- the guard in
+            # :func:`_compound_unit_at` already refused it as a chunk, but it
+            # still belongs to the reading, not the remainder.
+            if tokens[j].text in spec.connectors.get("day_filler", ()):
+                consumed.add(j)
             break
         unit, qty, end = got
         chunks.append((unit, qty))
@@ -655,6 +680,14 @@ def apply_compound_offset(tokens, resolved: List[Pair], spec: LangSpec,
             chunks = lead_chunks + chunks
             consumed.update(lead_consumed)
         if len(chunks) < 2:
+            # Only a filler word (no genuine second chunk) trailed the match
+            # -- keep the original span but widen ``consumed`` so the filler
+            # is folded into the reading instead of stranded in the
+            # remainder.
+            extra = consumed - set(range(*m.span))
+            if extra:
+                r = Resolution(r.value, tuple(sorted(set(r.consumed) | extra)),
+                               r.week_widened)
             out.append((m, r))
             continue
         total_months = sum(sign * qty * _CALENDAR_UNIT_MONTHS[u]
