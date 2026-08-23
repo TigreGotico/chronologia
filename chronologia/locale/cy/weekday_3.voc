@@ -1,0 +1,13 @@
+# Unicode CLDR 47, locale cy, gregorian calendar (cldr-json
+# cldr-dates-full/main/cy/ca-gregorian.json).
+# The wide name is the head noun "dydd" (day) plus the day's own name.
+# "dydd" is the target of soft mutation after the markers that open an
+# adverbial "on <weekday>" ("ar ddydd Llun", "bob ddydd Sul"), so the
+# mutated head is listed beside the radical; attested in running text on
+# cy.wikipedia.org ("ar ddydd Llun", "o ddydd Llun i ddydd Sadwrn").
+# Soft-mutated surfaces are listed beside the radical: Welsh changes a
+# word's first letter after a preceding trigger, so a matcher that saw
+# only the radical would miss the form running text actually carries.
+# Mutation table: en.wikipedia.org, "Welsh mutation".
+dydd iau
+ddydd iau

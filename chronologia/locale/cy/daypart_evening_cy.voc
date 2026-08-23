@@ -1,0 +1,10 @@
+# Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for cy (cldr-json
+# cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py.  Welsh draws only three bands and has no
+# night rule at all, so no night vocabulary ships.
+# Unicode CLDR 47, locale cy, gregorian calendar (cldr-json
+# cldr-dates-full/main/cy/ca-gregorian.json).
+# dayPeriod "evening1" ("yr hwyr").  Noun:
+# en.wiktionary.org, https://en.wiktionary.org/wiki/hwyr (masculine, evening,
+# nightfall).  h does not soft-mutate.
+hwyr

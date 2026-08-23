@@ -1,0 +1,63 @@
+{
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": false,
+  "decimal_comma": false,
+  "dotted_date": false
+ },
+ "base_grammar": {
+  "marker_position": "post"
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "NUM UNIT MARKER",
+    "MARKER NUM UNIT",
+    "USG MARKER",
+    "MARKER USG"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "article? DAY of MONTH YEAR?",
+    "article? DAY MONTH YEAR?",
+    "article? MONTH DAY? YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK",
+    "at? FRACTION CLOCKDIR HOUR oclock? MERIDIEM?",
+    "at? MINUTE minute_word? CLOCKDIR HOUR oclock? MERIDIEM?",
+    "at? FRACTION CLOCKDIR LANDMARK",
+    "at? HOUR oclock MERIDIEM?",
+    "at? LANDMARK"
+   ],
+   "prefer_future": true
+  },
+  "year_ref": {
+   "orders": [
+    "GYEAR"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": true,
+  "hemisphere": "north",
+  "prefer_future": true
+ },
+ "quantifiers": {
+  "1": [
+   "un"
+  ],
+  "0.5": [
+   "hanner"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_welsh:fold_cy"
+}
