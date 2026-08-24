@@ -1,0 +1,6 @@
+# Sunday is the one weekday that is not counted.  CLDR's abbreviation "CN"
+# is deliberately absent: bare "cn" is also the era abbreviation of Công
+# Nguyên (the common era), so admitting it would let an era marker resolve
+# to a day of the week.
+# Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.
+chủ nhật

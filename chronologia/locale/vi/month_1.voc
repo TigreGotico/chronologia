@@ -1,0 +1,12 @@
+# Months are numbered too -- tháng ("month") plus the number -- and CLDR
+# gives no lexical month names at all, only "tháng 1".."tháng 12" wide
+# and "thg 1".. abbreviated.  The spelled numbering is the same
+# construction, and month four takes the positional substitute tư rather
+# than the cardinal bốn.
+# Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.
+# Spelled forms and the lunar-calendar alternates giêng (January) and chạp
+# (December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng.
+tháng 1
+thg 1
+tháng một
+tháng giêng

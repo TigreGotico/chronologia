@@ -1,0 +1,9 @@
+# Vietnamese weekdays are ORDINAL-NUMBERED: thứ ("rank") plus a number,
+# counting from Sunday, which is named instead (chủ nhật, "lord's day").
+# Monday is therefore "rank two".  CLDR spells the same construction two
+# ways -- wide "Thứ Hai", abbreviated "Thứ 2" -- and both are listed,
+# because they are one construction in two spellings, not a name and an
+# abbreviation of it.
+# Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.
+thứ tư
+thứ 4

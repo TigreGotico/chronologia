@@ -235,13 +235,14 @@ common constructions work; the idiomatic long tail is thinner, and that is
 where bug reports are most useful.
 
 **Early** — Aragonese, Armenian, Asturian, Esperanto, Georgian, Hindi,
-Icelandic, Irish, Kabyle, Lithuanian, Mirandese, Occitan, Serbian, Welsh. The
+Icelandic, Irish, Kabyle, Lithuanian, Mirandese, Occitan, Serbian,
+Vietnamese, Welsh. The
 vocabulary is in place and the engine is shared, so a lot already works, but
 these have not yet had a native speaker read them end to end, and several
 deliberately omit constructions the source grammar does not use the same
 way — Welsh has no seasons or millennium unit, Irish and Esperanto have no
 dayparts, Georgian has no century unit or "every" quantifier, Armenian omits
-several markers. Occitan is the model for how that changes: a native speaker
+several markers, and Vietnamese reads no ordinals and no bare "năm" as five. Occitan is the model for how that changes: a native speaker
 reviewed a sibling project's word lists, and the forms they supplied turned
 up a real bug here — "davant-ièr" was being read as *yesterday* rather than
 the day before.
