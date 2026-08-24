@@ -164,3 +164,28 @@ def test_milenijum_refuses(phrase):
     no unit file in any script, so every phrasing refuses rather than
     guessing an undocumented paradigm."""
     nomatch(phrase)
+
+
+@pytest.mark.parametrize("phrase", [
+    "dve nedelja pre", "pre dve nedelja", "2 nedelja pre", "pre 2 nedelja",
+    "две недеља пре", "пре две недеља", "2 недеља пре", "пре 2 недеља",
+])
+def test_counted_nedelja_refuses_on_both_sides_of_the_marker(phrase):
+    """The count is what forbids the Sunday reading, so the veto holds
+    wherever the relative marker sits -- "pre" leading the count or trailing
+    the noun.  A marker fixes direction, not sense, and cannot rescue a
+    reading the count already ruled out."""
+    nomatch(phrase)
+
+
+@pytest.mark.parametrize("phrase,expected_day", [
+    ("dva ponedeljka pre", 19), ("pre dva ponedeljka", 19),
+    ("два понедељка пре", 19), ("tri petka pre", 9),
+])
+def test_counted_unambiguous_weekday_counts_on_both_sides(phrase, expected_day):
+    """Unambiguous weekday words keep their counted reading behind a marker on
+    either side: N Mondays (or Fridays) before the Tuesday anchor."""
+    r = parse(phrase)
+    assert r is not None
+    assert r[1] == ""
+    assert r[0].start.day == expected_day
