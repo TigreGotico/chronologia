@@ -151,5 +151,10 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_germanic:fold_da"
+  "hook": "chronologia.extract.numfold_germanic:fold_da",
+  "base_grammar": {
+    "disable": [
+      "calendar_date"
+    ]
+  }
 }

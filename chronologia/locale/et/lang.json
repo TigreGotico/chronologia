@@ -127,6 +127,9 @@
   },
   "hook": "chronologia.extract.numfold_agglutinative:fold_et",
   "base_grammar": {
+    "disable": [
+      "calendar_date"
+    ],
     "extend": {
       "rel_period": [
         "article? UNIT REL_MARKER"

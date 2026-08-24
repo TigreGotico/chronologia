@@ -163,6 +163,9 @@
   },
   "hook": "chronologia.extract.numfold_romance:fold_gl",
   "base_grammar": {
+    "disable": [
+      "calendar_date"
+    ],
     "marker_position": "post",
     "override": {
       "daypart_ref": [

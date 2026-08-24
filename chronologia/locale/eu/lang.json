@@ -129,6 +129,9 @@
   },
   "hook": "chronologia.extract.numfold_agglutinative:fold_eu",
   "base_grammar": {
+    "disable": [
+      "calendar_date"
+    ],
     "season_year_order": "year_first",
     "extend": {
       "rel_period": [

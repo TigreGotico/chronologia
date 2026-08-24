@@ -61,7 +61,8 @@ from typing import Dict, List, Mapping, Sequence
 # language-neutrally.  A leading ``article?`` is OPTIONAL, so an article-less
 # language (Estonian, Basque) matches the same orders without shipping an
 # article: ``article?`` covers the article-less surface.  More constructions
-# with genuine per-locale divergence (``calendar_date``, ``clock_time``,
+# with genuine per-locale divergence (``calendar_date`` beyond its single
+# marker-prefixed order, ``clock_time``,
 # ``year_ref``, ``relative_offset``, ...) stay per-locale for now; they were
 # surveyed and found to disagree across locales enough that migrating them
 # would need more overrides than the DRY win is worth.
@@ -441,6 +442,26 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # other 34.
     "named_day_before": [
         "article? indef? DAYUNIT before DAY_WORD",
+    ],
+    # "in/during <month>" ("in January", "en janvier", "im Januar").  Only the
+    # marker-prefixed order is shared: the bare "MONTH DAY? YEAR?" surface and
+    # the day-first orders stay per-locale, since locales disagree on them.
+    # The marker is REQUIRED, so a locale that ships no ``marker_during.voc``
+    # keeps exactly the orders it declared inline -- the connector matches
+    # nothing and the order is inert.  ``during`` is the locative "in the
+    # course of" connector, deliberately NOT ``marker_in.voc``, which in
+    # several locales holds the future-offset "in N units" word instead
+    # ("след", "через", "za", "pärast", "múlva").  Three families disable this
+    # contribution.  Locales whose during-word is a POSTPOSITION ("jaanuari
+    # jooksul", "tammikuun aikana", "január alatt", "urtarrilan zehar"): a
+    # prefix order would accept only ungrammatical word order.  The
+    # Scandinavian locales, whose July abbreviation "jul" is also the word for
+    # Christmas -- there "i jul" must stay the holiday, not the month.  And
+    # Portuguese/Galician, whose ``marker_during.voc`` holds the part-of-day
+    # frame ("pela manhã", "pola mañá") rather than a month preposition, so
+    # opting in would widen ``daypart_ref`` instead.
+    "calendar_date": [
+        "during MONTH DAY? YEAR?",
     ],
 }
 

@@ -160,5 +160,10 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_germanic:fold_nn"
+  "hook": "chronologia.extract.numfold_germanic:fold_nn",
+  "base_grammar": {
+    "disable": [
+      "calendar_date"
+    ]
+  }
 }
