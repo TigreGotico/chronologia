@@ -24,7 +24,7 @@
    "orders": [
     "DAY MONTH YEAR?",
     "DAY of MONTH YEAR?",
-    "MONTH DAY? YEAR?"
+    "during? MONTH DAY? YEAR?"
    ],
    "prefer_future": true
   },
@@ -51,6 +51,7 @@
   },
   "year_ref": {
    "orders": [
+    "during GYEAR",
     "article? year_word GYEAR",
     "GYEAR"
    ]
