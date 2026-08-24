@@ -140,7 +140,7 @@ the hook and where to read it.
 - **Emperors, popes, and consuls.** "Reiwa 7", "the consulship of
   Lentulus and Marcellus", "Year 5 of Ramesses II" in three competing
   scholarly chronologies — plus the full Roman Kalends/Nones/Ides
-  grammar in ten living languages → [docs/eras-and-rulers.md](docs/eras-and-rulers.md).
+  grammar in twelve living languages → [docs/eras-and-rulers.md](docs/eras-and-rulers.md).
 - **Beyond Earth.** Mars Sol Date, the Darian calendar, rover
   mission-sols, a span-valued Big Bang epoch and Sagan's Cosmic Calendar
   → [docs/mars-and-beyond.md](docs/mars-and-beyond.md).
@@ -197,7 +197,7 @@ self-checking scripts (`python examples/01_extract_basics.py`).
 |---|---|
 | **Who is this for?** | [**docs/use-cases.md**](docs/use-cases.md) — worked programs for archivists, historians, archaeologists, faith communities, astronomers, engineers, and voice assistants — start here |
 | Reading human dates | [**docs/extraction.md**](docs/extraction.md) — `extract_timespan` turns a phrase into a span; how the per-language vocabulary works and how to add a language |
-| 17 calendars | Gregorian, Julian, Hebrew, Islamic (arithmetic + Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican, Bahá'í, ISO week, and more — [docs/calendars.md](docs/calendars.md) |
+| 18 calendars | Gregorian, Julian, Hebrew, Islamic (arithmetic + Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican, Bahá'í, ISO week, and more — [docs/calendars.md](docs/calendars.md) |
 | Timelines | 13 jurisdictions' calendar reforms and dateline hops — Rome, Britain, Sweden, Russia, Greece, Japan, plus the days Samoa, the Philippines and Alaska deleted or re-lived at the International Date Line — [docs/timelines.md](docs/timelines.md) |
 | Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one — [docs/deep-time.md](docs/deep-time.md) |
 | Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present; regnal years (Japanese nengō, Roman consuls, Egyptian chronologies) — [docs/eras-and-rulers.md](docs/eras-and-rulers.md) |
@@ -216,7 +216,7 @@ of guessing.
 
 ## How well does it speak your language?
 
-Forty languages load, but they are not all equally exercised, and pretending
+Forty-nine languages load, but they are not all equally exercised, and pretending
 otherwise would waste your afternoon. Coverage falls into three honest bands:
 
 **Reviewed in depth** — English, Spanish, Portuguese, French, German, Dutch,
@@ -234,12 +234,17 @@ own test corpus and is swept whenever a shared mechanism changes, so the
 common constructions work; the idiomatic long tail is thinner, and that is
 where bug reports are most useful.
 
-**Early** — Aragonese, Asturian, Kabyle, Mirandese, Occitan. The vocabulary
-is in place and the engine is shared, so a lot already works, but these have
-not yet had a native speaker read them end to end. Occitan is the model for
-how that changes: a native speaker reviewed a sibling project's word lists,
-and the forms they supplied turned up a real bug here — "davant-ièr" was
-being read as *yesterday* rather than the day before.
+**Early** — Aragonese, Armenian, Asturian, Esperanto, Georgian, Hindi,
+Icelandic, Irish, Kabyle, Lithuanian, Mirandese, Occitan, Serbian, Welsh. The
+vocabulary is in place and the engine is shared, so a lot already works, but
+these have not yet had a native speaker read them end to end, and several
+deliberately omit constructions the source grammar does not use the same
+way — Welsh has no seasons or millennium unit, Irish and Esperanto have no
+dayparts, Georgian has no century unit or "every" quantifier, Armenian omits
+several markers. Occitan is the model for how that changes: a native speaker
+reviewed a sibling project's word lists, and the forms they supplied turned
+up a real bug here — "davant-ièr" was being read as *yesterday* rather than
+the day before.
 
 If your language sits in the second or third band and something reads wrong,
 that report is worth more than a patch — attach the phrase, what you expected,
@@ -255,7 +260,7 @@ the library exists at all — and because you should be able to judge the work
 without having to trust either the AI or the maintainer.
 
 **Why it could only be built this way.** A library that reads dates in around
-forty languages — with the goal of *every* language over time, the way the
+fifty languages — with the goal of *every* language over time, the way the
 sibling [orthography2ipa](https://github.com/TigreGotico/orthography2ipa)
 project is already 1000+ languages strong — needs command of grammar,
 number-words, calendar arithmetic and holiday law in each one. No single

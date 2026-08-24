@@ -334,7 +334,7 @@ almost never *quality* on the ground they cover — it is how much ground that i
 | **pendulum** | raises on skipped, picks post-transition on ambiguous | 1–9999 | Gregorian | nice human durations/periods |
 | **arrow** | follows stdlib fold | 1–9999 | Gregorian | humanization, parsing |
 | **whenever** | **typed** `disambiguate=` (raise/earlier/later/compatible) | 1–9999 | Gregorian | DST-safe arithmetic |
-| **chronologia** | **typed** answer: one / `(earlier, later)` / `NeverExisted` | **unbounded** | **17** | sun, moon, LMT, reforms, deep time |
+| **chronologia** | **typed** answer: one / `(earlier, later)` / `NeverExisted` | **unbounded** | **18** | sun, moon, LMT, reforms, deep time |
 
 ### stdlib `datetime` + `zoneinfo` — verified live
 

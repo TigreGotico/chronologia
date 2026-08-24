@@ -46,13 +46,15 @@ no bundle raises `NotImplementedError` naming the missing locale.
 | | | | | |
 |---|---|---|---|---|
 | `an` Aragonese | `ar` Arabic | `ast` Asturian | `az` Azerbaijani | `bg` Bulgarian |
-| `ca` Catalan | `cs` Czech | `da` Danish | `de` German | `el` Greek |
-| `en` English | `es` Spanish | `et` Estonian | `eu` Basque | `fa` Persian |
-| `fi` Finnish | `fr` French | `fy` West Frisian | `gl` Galician | `he` Hebrew |
-| `hr` Croatian | `hu` Hungarian | `id` Indonesian | `it` Italian | `kab` Kabyle |
-| `ms` Malay | `mwl` Mirandese | `nb` Norwegian Bokmål | `nl` Dutch | `nn` Norwegian Nynorsk |
-| `oc` Occitan | `pl` Polish | `pt` Portuguese | `ro` Romanian | `ru` Russian |
-| `sk` Slovak | `sl` Slovenian | `sv` Swedish | `tr` Turkish | `uk` Ukrainian |
+| `ca` Catalan | `cs` Czech | `cy` Welsh | `da` Danish | `de` German |
+| `el` Greek | `en` English | `eo` Esperanto | `es` Spanish | `et` Estonian |
+| `eu` Basque | `fa` Persian | `fi` Finnish | `fr` French | `fy` West Frisian |
+| `ga` Irish | `gl` Galician | `he` Hebrew | `hi` Hindi | `hr` Croatian |
+| `hu` Hungarian | `hy` Armenian | `id` Indonesian | `is` Icelandic | `it` Italian |
+| `ka` Georgian | `kab` Kabyle | `lt` Lithuanian | `ms` Malay | `mwl` Mirandese |
+| `nb` Norwegian Bokmål | `nl` Dutch | `nn` Norwegian Nynorsk | `oc` Occitan | `pl` Polish |
+| `pt` Portuguese | `ro` Romanian | `ru` Russian | `sk` Slovak | `sl` Slovenian |
+| `sr` Serbian | `sv` Swedish | `tr` Turkish | `uk` Ukrainian | |
 
 English carries the widest grammar; coverage of the more specialised
 constructions (regnal years, classical Roman date formulas, deep-time eras)
@@ -402,7 +404,7 @@ it wires.
 **The distinctive part is composition, not the vocabulary.** These anchors
 are just another named reference point to the same anchored-arithmetic engine
 that resolves "3 days before christmas" (see below), so **any** offset
-composes with **any** anchor in **any** of the eleven languages, for free --
+composes with **any** anchor in **any** of the twelve languages, for free --
 nothing month-specific or language-specific had to be taught to the offset
 logic:
 
@@ -1661,13 +1663,13 @@ placeholder. Run `pytest test/test_locale_schema.py` after editing a locale.
 
 ### Performance — lazy, cached per-locale loading
 
-`import chronologia` reads **no** locale data: not one of the 40-plus
+`import chronologia` reads **no** locale data: not one of the 49
 `locale/<code>/` directories is touched at import. A language's vocabulary is
 read, expanded, and compiled into an engine the **first** time you call an
 `extract_*` function for it, and that engine is then cached for the lifetime
 of the process — a second call for the same language never re-reads a file.
 So an embedded voice target that speaks one language pays for one locale, not
-forty, and pays for it once. The cache is guarded by a lock, so concurrent
+forty-nine, and pays for it once. The cache is guarded by a lock, so concurrent
 first-calls from different threads are safe: each language is compiled exactly
 once, and every later call returns the identical engine.
 
