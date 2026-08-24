@@ -174,9 +174,6 @@
   },
   "hook": "chronologia.extract.numfold_romance:fold_pt",
   "base_grammar": {
-    "disable": [
-      "calendar_date"
-    ],
     "marker_position": "post",
     "override": {
       "daypart_ref": [
@@ -184,7 +181,7 @@
         "article DAYPART",
         "of DAYPART",
         "at DAYPART",
-        "during DAYPART",
+        "dayframe DAYPART",
         "article? DAYPART REL_MARKER"
       ]
     },
