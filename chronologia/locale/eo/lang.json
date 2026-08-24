@@ -13,7 +13,8 @@
   },
   "calendar_date": {
    "orders": [
-    "article? DAY of MONTH"
+    "article? DAY of MONTH",
+    "MONTH YEAR?"
    ],
    "prefer_future": true
   },

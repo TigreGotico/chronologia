@@ -1,4 +1,9 @@
 # Unicode CLDR 47, locale eo, gregorian wide (format/stand-alone identical)
 # and abbreviated month names (cldr-dates-full/main/eo/ca-gregorian.json).
+# The accusative -n form ("junion") is a regular temporal accusative
+# (en.wiktionary.org "-n"), added alongside the nominative because unlike
+# WEEKDAY, MONTH carries no nominative/accusative recurrence split -- both
+# forms name the same month with the same reading.
 junio
+junion
 jun

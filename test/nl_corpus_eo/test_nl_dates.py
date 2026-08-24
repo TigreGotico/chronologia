@@ -38,13 +38,20 @@ def test_bare_year_reference(text, y):
     assert (got.year, got.month, got.day) == (y, 1, 1)
 
 
-@pytest.mark.parametrize("text", [
-    "de januaro",           # a bare "of MONTH" with no day at all
-    "asdf qwerty", "",
-])
+@pytest.mark.parametrize("text", ["asdf qwerty", ""])
 def test_no_date_without_a_day_and_month(text):
     from ._corpus import nomatch
     nomatch(text)
+
+
+def test_dangling_of_before_a_bare_month_leaves_it_stranded():
+    """"de januaro" ("of January") has no day to attach "de" to, so the
+    calendar_date match is the bare MONTH alone; the leading "de" is left
+    unconsumed rather than either being silently dropped or vetoing the
+    month reading (see test_eo_bare_month.py for the bare-MONTH order
+    itself)."""
+    r = remainder("de januaro")
+    assert r.strip() == "de"
 
 
 @pytest.mark.parametrize("text,y,m,d", [
