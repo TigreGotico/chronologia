@@ -1,6 +1,7 @@
 {
   "positions": {
-    "until": "post"
+    "until": "post",
+    "from": "post"
   },
   "tokenizer": {
     "decimal_comma": true,

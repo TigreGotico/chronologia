@@ -158,7 +158,7 @@ TOP_LEVEL_KEYS: FrozenSet[str] = frozenset({
 #: marker roles whose POSITIONALITY may be declared -- the open-range and
 #: recurrence-bound framing words the engine scans for around a date.  Each maps
 #: to a per-locale ``marker_<role>.voc`` surface set.
-KNOWN_POSITION_ROLES: FrozenSet[str] = frozenset({"until", "since", "for"})
+KNOWN_POSITION_ROLES: FrozenSet[str] = frozenset({"until", "since", "for", "from"})
 
 #: where a marker sits relative to its date: ``pre`` leads it (default),
 #: ``post`` trails it as a separate bound word, ``affix`` is a suffix fused onto

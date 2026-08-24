@@ -108,7 +108,8 @@
   },
   "positions": {
     "until": "affix",
-    "since": "post"
+    "since": "post",
+    "from": "affix"
   },
   "quantifiers": {
     "1": [

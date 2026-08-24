@@ -1456,6 +1456,22 @@ def _fold_day_label(folded, consumed, spec):
     return widened
 
 
+def _definite_endpoint(sub, spec):
+    """Whether the endpoint tokens ``sub`` name ONE fixed point in time.
+
+    A now-relative day word ("tomorrow"), a direction/rel-qualified reference
+    ("next month", "this friday") or an explicit year ("2019").  Everything else
+    -- a bare "july 6", a holiday, a quarter, a clock time -- is an
+    underspecified recurring reference that only lands on a point once a cycle
+    is chosen for it.
+    """
+    return (any(t.text in spec.named_days for t in sub)
+            or any(t.text in spec.rel_markers for t in sub)
+            or any(t.text in spec.directions for t in sub)
+            or any(t.is_number and t.value is not None and t.value >= 100
+                   for t in sub))
+
+
 def _since_start(ep, sub, engine, anchor, now):
     """The start instant of a "since <endpoint>" span, or ``None``.
 
@@ -1478,11 +1494,7 @@ def _since_start(ep, sub, engine, anchor, now):
     if ep is None:
         return None
     start = ep[0].start
-    if (any(t.text in spec.named_days for t in sub)
-            or any(t.text in spec.rel_markers for t in sub)
-            or any(t.text in spec.directions for t in sub)
-            or any(t.is_number and t.value is not None and t.value >= 100
-                   for t in sub)):
+    if _definite_endpoint(sub, spec):
         # A DEFINITE endpoint: a now-relative day ("tomorrow"), a
         # direction/rel-qualified reference ("next month", "this friday") or an
         # explicit year ("2019").  A QUALIFIED weekday lands here too, via its
@@ -1602,6 +1614,13 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
     and the open side is pinned to the anchor instant ("now").  So "until
     friday" is ``[now, friday_end)`` and "since 2019" is ``[2019-01-01, now)``.
     The marker is found on the token stream, leading or postposed.
+
+    A bare ``from`` marker with no terminator ("from 2019") opens the same span
+    as ``since``: the two are one word in many languages (Slavic "od", Russian
+    "с", Italian "da"), so the reading cannot depend on which of the two a
+    language happens to spell.  It is tried last, after ``until`` and ``since``,
+    and only once :func:`_extract_range` has already failed to find a
+    terminator -- "from A to B" is a closed range and never reaches here.
     """
     spec = engine.spec
     n = len(tokens)
@@ -1610,6 +1629,7 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
     now = AstroDate.from_datetime(anchor)
     until_surf = _conn_surfaces(spec, "until", _RANGE_UNTIL)
     since_surf = _conn_surfaces(spec, "since", _RANGE_SINCE)
+    from_surf = _conn_surfaces(spec, "from", _RANGE_FROM)
 
     def endpoint(sub):
         return (_resolve_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
@@ -1689,8 +1709,44 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         return (lead(surf, build) or trail(surf, build)
                 or (affix(surf, build) if pos == "affix" else None))
 
+    def from_scan():
+        # unlike ``until``/``since``, the declared position is exclusive here: a
+        # "from" word is far too common to also be read in the positions the
+        # language does not put it in.  A trailing English "from" heads the
+        # clause that follows it ("at 5 from june"), never a postposed marker.
+        # An ``affix`` marker also reads as a trailing word: the tokenizer cuts
+        # letters off digits, so the suffix of a numeric year ("2020-tól") is a
+        # token of its own while the suffix of a word ("péntektől") stays fused.
+        pos = positions.get("from", "pre")
+        build = {"pre": lead, "post": trail,
+                 "affix": lambda s, b: affix(s, b) or trail(s, b)}[pos]
+        # ONLY a from-marker whose endpoint side holds no terminator opens a
+        # span.  A slice that still carries a "to"/"until" word is a CLOSED
+        # range whose endpoints merely failed to resolve (a reversed "from june
+        # 12 to june 5", an unparseable right side) or a clock the range grammar
+        # owns ("from quarter to five"); half of it must never be rebuilt as an
+        # open span.  The marker's own tokens are exempt: the Iberian "a partir
+        # de" contains the very "a" that is the "to" word.
+        to_surf = _conn_surfaces(
+            spec, "to", _RANGE_TO + tuple(spec.connectors.get("until", ())))
+
+        def guarded(ep, sub):
+            if any(_match_conn_at(sub, i, to_surf) for i in range(len(sub))):
+                return None
+            # ...and only over a DEFINITE endpoint.  An underspecified one
+            # ("from july", "vom 10. Juli", Catalan "de matinada") would have to
+            # be rolled back a cycle to open a span, and a from-word doubling as
+            # the everyday preposition "of"/"at" is far likelier to be labelling
+            # that reference than opening a span at it.
+            if not _definite_endpoint(sub, spec):
+                return None
+            return since_span(ep, sub)
+
+        return build(from_surf, guarded)
+
     return (scan("until", until_surf, until_span)
-            or scan("since", since_surf, since_span))
+            or scan("since", since_surf, since_span)
+            or from_scan())
 
 
 def _bare_direction_span(tokens, span, consumed, spec, anchor):
