@@ -451,15 +451,17 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # nothing and the order is inert.  ``during`` is the locative "in the
     # course of" connector, deliberately NOT ``marker_in.voc``, which in
     # several locales holds the future-offset "in N units" word instead
-    # ("след", "через", "za", "pärast", "múlva").  Three families disable this
-    # contribution.  Locales whose during-word is a POSTPOSITION ("jaanuari
-    # jooksul", "tammikuun aikana", "január alatt", "urtarrilan zehar"): a
-    # prefix order would accept only ungrammatical word order.  The
+    # ("след", "через", "za", "pärast", "múlva").  Two families disable this
+    # contribution: locales whose during-word is a POSTPOSITION ("jaanuari
+    # jooksul", "tammikuun aikana", "január alatt", "urtarrilan zehar"), where a
+    # prefix order would accept only ungrammatical word order, and the
     # Scandinavian locales, whose July abbreviation "jul" is also the word for
-    # Christmas -- there "i jul" must stay the holiday, not the month.  And
-    # Portuguese/Galician, whose ``marker_during.voc`` holds the part-of-day
-    # frame ("pela manhã", "pola mañá") rather than a month preposition, so
-    # opting in would widen ``daypart_ref`` instead.
+    # Christmas -- there "i jul" must stay the holiday, not the month.
+    # Portuguese/Galician's ``marker_during.voc`` used to double as the
+    # part-of-day frame ("pela manhã", "pola mañá"); that vocabulary now lives
+    # in its own ``marker_dayframe.voc`` (bound by ``daypart_ref``'s
+    # "dayframe DAYPART" order), leaving ``marker_during.voc`` free to hold the
+    # genuine month preposition ("em", "en") and opt in here.
     "calendar_date": [
         "during MONTH DAY? YEAR?",
     ],
