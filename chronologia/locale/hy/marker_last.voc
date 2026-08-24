@@ -1,0 +1,7 @@
+# Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).
+# relative-type--1 ("նախորդ շաբաթ" -- last week).  անցյալ and անցած are the
+# two adjectival synonyms en.wiktionary.org attests in the same slot
+# ("անցյալ ձմեռ" at անցյալ, "անցած ամիս" at ամիս).
+նախորդ
+անցյալ
+անցած

@@ -1,0 +1,5 @@
+# առաջ ("ago", "before") is a POSTPOSITION: it follows the phrase it
+# governs.  With a bare duration the counted noun is unmarked -- "{0} օր
+# առաջ" (N days ago).  Sources: # Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).
+# relativeTime-type-past for every unit; en.wiktionary.org, առաջ (postposition).
+առաջ

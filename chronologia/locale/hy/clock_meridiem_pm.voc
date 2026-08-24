@@ -1,0 +1,4 @@
+# Unicode CLDR 47, locale hy, gregorian calendar (cldr-json
+# cldr-dates-full/main/hy/ca-gregorian.json).
+# dayPeriod "pm", which this locale writes with the Latin abbreviation.
+pm

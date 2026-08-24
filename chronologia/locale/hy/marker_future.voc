@@ -1,0 +1,11 @@
+# Armenian marks the forward offset three ways, all postposed.  ից is the
+# ablative case suffix on the unit noun itself ("{0} օրից" -- in N days),
+# split off the fused surface by the locale's number fold.  անց and հետո are
+# free-standing postpositions after a bare duration.  Sources:
+# # Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).
+# relativeTime-type-future (ից) and relativeTime-type-future for the weekday
+# fields (հետո); en.wiktionary.org, անց (postposition: "հինգ տարի անց" --
+# five years later).
+ից
+անց
+հետո

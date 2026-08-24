@@ -1,0 +1,65 @@
+{
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": false,
+  "decimal_comma": true,
+  "dotted_date": true
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "NUM UNIT MARKER",
+    "QUANT UNIT MARKER",
+    "USG MARKER"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "YEAR year_word MONTH DAY?",
+    "MONTH DAY? YEAR?",
+    "DAY MONTH YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK MERIDIEM?",
+    "at HOUR CLOCKDIR FRACTION MERIDIEM?",
+    "at HOUR FRACTION CLOCKDIR MERIDIEM?",
+    "HOUR CLOCKDIR FRACTION MERIDIEM?",
+    "HOUR FRACTION CLOCKDIR MERIDIEM?",
+    "at HOUR MERIDIEM?",
+    "at? LANDMARK"
+   ],
+   "prefer_future": true
+  },
+  "year_ref": {
+   "orders": [
+    "GYEAR year_word",
+    "year_word GYEAR",
+    "GYEAR"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": true,
+  "hemisphere": "north",
+  "prefer_future": true
+ },
+ "positions": {
+  "until": "pre"
+ },
+ "quantifiers": {
+  "1": [
+   "մի"
+  ],
+  "0.5": [
+   "կես"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_armenian:fold_hy"
+}

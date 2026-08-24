@@ -1,0 +1,6 @@
+# թ. is the standard abbreviation of թվական ("year") and TRAILS the year in
+# the written date ("dd MMMM, y թ.").  Source: # Unicode CLDR 47, locale hy, gregorian calendar (cldr-json
+# cldr-dates-full/main/hy/ca-gregorian.json).
+թ.
+թվական
+թվականին
