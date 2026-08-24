@@ -1,0 +1,10 @@
+# Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for ka (cldr-json
+# cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py.
+# Unicode CLDR 47, locale ka, gregorian calendar (cldr-json
+# cldr-dates-full/main/ka/ca-gregorian.json).
+# dayPeriod "night1": the stand-alone wide form and the format wide form,
+# the latter being the case-marked adverbial one.  Declension:
+# en.wiktionary.org, ღამე -- https://en.wiktionary.org/wiki/%E1%83%A6%E1%83%90%E1%83%9B%E1%83%94
+ღამე
+ღამით

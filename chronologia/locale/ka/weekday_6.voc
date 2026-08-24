@@ -1,0 +1,10 @@
+# Unicode CLDR 47, locale ka, gregorian calendar (cldr-json
+# cldr-dates-full/main/ka/ca-gregorian.json).
+# კვირა names BOTH the weekday Sunday and the duration "week", under a
+# single Wiktionary entry whose seven-case declension is identical for the
+# two senses -- there is no morphological cue to tell them apart.  The
+# ambiguity is resolved by CONSTRUCTION rather than guessed: კვირა binds
+# the weekday slot only, and this locale ships no week duration unit at
+# all, so a counted "two weeks" refuses instead of silently picking a
+# sense.  en.wiktionary.org, კვირა -- https://en.wiktionary.org/wiki/%E1%83%99%E1%83%95%E1%83%98%E1%83%A0%E1%83%90
+კვირა

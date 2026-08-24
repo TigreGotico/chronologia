@@ -454,6 +454,11 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (14, 0), "ms", _cldr("ms")),
     _p("evening", (14, 0), (19, 0), "ms", _cldr("ms")),
     _p("night", (19, 0), (0, 0), "ms", _cldr("ms")),
+    # ka: the morning opens at 05:00 and the night from 21:00 wraps to it.
+    _p("morning", (5, 0), (12, 0), "ka", _cldr("ka")),
+    _p("afternoon", (12, 0), (18, 0), "ka", _cldr("ka")),
+    _p("evening", (18, 0), (21, 0), "ka", _cldr("ka")),
+    _p("night", (21, 0), (5, 0), "ka", _cldr("ka")),
     # tr: afternoon "ogleden sonra" is multi-word (band shipped, no voc).
     _p("morning", (6, 0), (12, 0), "tr", _cldr("tr")),
     _p("afternoon", (12, 0), (19, 0), "tr", _cldr("tr")),

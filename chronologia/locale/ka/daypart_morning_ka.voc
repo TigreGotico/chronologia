@@ -1,0 +1,10 @@
+# Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for ka (cldr-json
+# cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py.
+# Unicode CLDR 47, locale ka, gregorian calendar (cldr-json
+# cldr-dates-full/main/ka/ca-gregorian.json).
+# dayPeriod "morning1": the stand-alone wide form and the format wide form,
+# the latter being the case-marked adverbial one.  Declension:
+# en.wiktionary.org, დილა -- https://en.wiktionary.org/wiki/%E1%83%93%E1%83%98%E1%83%9A%E1%83%90
+დილა
+დილით

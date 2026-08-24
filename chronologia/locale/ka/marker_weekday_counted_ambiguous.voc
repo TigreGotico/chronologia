@@ -1,0 +1,10 @@
+# კვირა names both Sunday and the week, so a COUNT before it ("ორი კვირა")
+# can only be a span of weeks -- nobody counts Sundays that way -- and this
+# locale ships no week duration unit, because the two senses share one
+# declension and no source disambiguates them.  The count therefore vetoes
+# the weekday reading: answering "Sunday" to "two weeks" would give a caller
+# who asked for a duration one specific day.  Declining the false weekday
+# reading is not the same as asserting the unsourced week one, which stays
+# unavailable.  en.wiktionary.org, კვირა --
+# https://en.wiktionary.org/wiki/%E1%83%99%E1%83%95%E1%83%98%E1%83%A0%E1%83%90
+კვირა
