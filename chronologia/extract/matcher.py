@@ -505,6 +505,30 @@ class ConstructionMatcher:
                             and self.spec.units.get(tokens[end].text)
                             == "day"):
                         continue
+                    # The mirror of the veto above, on the other side of the
+                    # weekday: a COUNT immediately before a weekday word that
+                    # doubles as a duration ("ორი კვირა" -- two weeks, or two
+                    # Sundays) can only be the duration, and a locale that
+                    # ships no such duration unit cannot express it.  Answering
+                    # the weekday alone would hand a caller who asked for a
+                    # span of weeks one specific Sunday, so the phrase refuses.
+                    # This declines a false weekday reading; it does not assert
+                    # the duration one, which stays unavailable.  The
+                    # count-ambiguous surface is a locale fact
+                    # (``marker_weekday_counted_ambiguous.voc`` ->
+                    # ``spec.connectors["weekday_counted_ambiguous"]``), and is
+                    # kept apart from ``weekday_week_ambiguous`` above because
+                    # the two state different things: that one refuses the
+                    # weekday reading outright, this one only under a count.
+                    if (name == "weekday_ref" and start > 0
+                            and tokens[start - 1].is_number
+                            and (slots.get("WEEKDAY") or slots.get(
+                                "WEEKDAYFULL")) is not None
+                            and (slots.get("WEEKDAY") or slots.get(
+                                "WEEKDAYFULL")).text
+                            in self.spec.connectors.get(
+                                "weekday_counted_ambiguous", frozenset())):
+                        continue
                     # "the year 1 am" is the Anno Mundi era marker, not the
                     # 01:00 ante-meridiem clock: veto a bare HOUR+MERIDIEM
                     # clock reading whose hour sits immediately after a
