@@ -23,7 +23,7 @@
     "clock_time": {
       "orders": [
         "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
-        "CLOCK MERIDIEM? ZONE?",
+        "at? CLOCK MERIDIEM? ZONE?",
         "at HOUR of? article? MERIDIEM? ZONE?"
       ],
       "prefer_future": true
