@@ -1253,6 +1253,10 @@ def _license_it_prima(tokens):
 
     * is immediately followed by a di-family preposition introducing the
       reference date ("prima **di** gennaio", "prima **del** 5 aprile"), or
+    * is immediately followed by a bare written year ("prima **2030**") --
+      the connector-less counterpart of the di-family form, the same
+      preposition-optional shape every other before-marker locale accepts
+      (en "before 2030", es "antes de 2030"), or
     * closes a ``[NUM] UNIT`` duration ("3 giorni **prima** del ...",
       "tre giorni **prima** ...") -- the token before it a (non-number) unit
       word, the one before that a number;
@@ -1270,8 +1274,12 @@ def _license_it_prima(tokens):
         nxt = out[i + 1] if i + 1 < n else None
         prev = out[i - 1] if i - 1 >= 0 else None
         prev2 = out[i - 2] if i - 2 >= 0 else None
+        nxt_is_written_year = (nxt is not None and nxt.is_number
+                                and nxt.raw is not None
+                                and len(nxt.raw) == 4 and nxt.raw.isdigit())
         is_before_marker = (
             (nxt is not None and nxt.text in _IT_OFFSET_PREP)
+            or nxt_is_written_year
             or (prev is not None and not prev.is_number
                 and prev2 is not None and prev2.is_number))
         if not is_before_marker:
