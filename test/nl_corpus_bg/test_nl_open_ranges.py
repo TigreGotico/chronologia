@@ -4,7 +4,7 @@ date endpoint. ``until`` opens the start (pinned to now) and keeps the
 endpoint's ``.end``; ``since`` opens the end (pinned to now) and keeps the
 endpoint's ``.start``. Anchor 2017-06-27 13:04. Every edge hand-derived."""
 import pytest
-from ._corpus import ANCHOR, AstroDate, ad, start_end, nomatch
+from ._corpus import ANCHOR, AstroDate, ad, start, start_end, nomatch
 
 
 @pytest.mark.parametrize("text,e", [
@@ -32,3 +32,22 @@ def test_since_open_end(text, s):
 @pytest.mark.parametrize("text", ["до", "срещата"])
 def test_no_open_range(text):
     nomatch(text)
+
+
+@pytest.mark.parametrize("text", ["след 2030", "след януари"])
+def test_after_year_refused(text):
+    # an open-ended future span ("after X") has no DateSpan representation
+    # and must be refused, not silently degrade to the bare X reading.
+    nomatch(text)
+
+
+@pytest.mark.parametrize("text,e", [
+    ("след 3 дни", (2017, 6, 30, 13, 4)),
+    ("след 5 работни дни", (2017, 7, 4)),
+])
+def test_after_marker_offset_reading_unaffected(text, e):
+    # "след" is also the "in N units" offset marker ("след 3 дни" = "in 3
+    # days") -- a distinct construction from the after-year open range above
+    # and must keep resolving.
+    s = start(text)
+    assert s == AstroDate(*e)
