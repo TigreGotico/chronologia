@@ -1,6 +1,6 @@
 """Property-based (Hypothesis) laws for the core value types and calendars.
 
-These assert *laws* rather than examples: JDN round-trips for all 17 registered
+These assert *laws* rather than examples: JDN round-trips for all 18 registered
 calendars, AstroDate ordinal/isoformat round-trips across the full year range,
 DateSpan set-algebra laws, EDTF parse/format idempotence and timeline
 JDN round-trips on non-discontinuity days.
@@ -55,7 +55,7 @@ def _make_calendar_test(key):
 
 
 # Bind one property test per calendar into the module namespace so each of the
-# 17 shows up (and fails) independently.
+# 18 shows up (and fails) independently.
 for _key in sorted(c.CALENDARS):
     globals()[f"test_jdn_roundtrip_{_key}"] = _make_calendar_test(_key)
 

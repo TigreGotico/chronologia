@@ -46,7 +46,7 @@ of time (a start and an end), not an instant; every span carries a one-word
 ### Calendars & eras
 | Guide | What it gives you |
 |---|---|
-| [calendars.md](calendars.md) | All 17 built-in calendars in plain language, how to convert in and out, and how far each can be trusted. |
+| [calendars.md](calendars.md) | All 18 built-in calendars in plain language, how to convert in and out, and how far each can be trusted. |
 | [eras-and-rulers.md](eras-and-rulers.md) | Year-numbering conventions (Anno Mundi, Hijri, Holocene…), regnal years (Japanese nengō, Roman consuls, Egyptian chronologies), and the full Roman date grammar. |
 
 ### Time, sun & sky
