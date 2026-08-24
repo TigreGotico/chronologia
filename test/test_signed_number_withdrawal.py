@@ -58,16 +58,15 @@ def test_utc_offset_unaffected():
     assert r is not None
 
 
-def test_spaced_range_typo_pinned_to_dev_baseline():
+def test_spaced_range_typo_is_not_a_range():
     # "1914 -1918" (a spaced range typo, not a glued range) is exempted from
-    # withdrawal because the preceding token is itself a number: this pins
-    # today's dev behavior exactly (only the year immediately after "from"
-    # grounds a span; the second, glued-minus year is not re-consumed as a
-    # range end and keeps its own number reading, so its digits still show up
-    # in the remainder) -- the fix must not change this pre-existing reading.
+    # withdrawal because the preceding token is itself a number: the second,
+    # glued-minus year is not re-consumed as a range end and keeps its own
+    # number reading, so its digits still show up in the remainder.  With no
+    # range end to bind, the "from" opens a span running to the anchor.
     anc = datetime(2017, 6, 27, 13, 4)
     r = extract_timespan("from 1914 -1918", "en", anc)
     assert r is not None
     assert r.span.start.year == 1914
-    assert r.span.end.year == 1915
-    assert r.remainder == "from 1918"
+    assert (r.span.end.year, r.span.end.month, r.span.end.day) == (2017, 6, 27)
+    assert r.remainder == "1918"
