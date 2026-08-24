@@ -833,6 +833,7 @@ def _count_weekday(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     present = spec.connectors.get("present", frozenset())
     ago = (frozenset(spec.connectors.get("ago", ()))
            | frozenset(s for s, v in spec.directions.items() if v < 0))
+    ambiguous = spec.connectors.get("weekday_counted_ambiguous", frozenset())
     for i, t in enumerate(tokens):
         if not (t.is_number and t.value and t.value >= 1):
             continue
@@ -842,18 +843,23 @@ def _count_weekday(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
         wd = _weekday_of(tokens[w].text, spec)
         if wd is None:
             continue
+        # A count immediately before the weekday cannot be counting weekdays
+        # when the surface also names a duration: Romanian "luni" is Monday
+        # and "months" ("acum 2 luni" is 2 MONTHS ago), and the locales that
+        # declare a surface count-ambiguous (Georgian "კვირა", Serbian
+        # "nedelja" -- both Sunday and the week) refuse the counted reading
+        # outright.  This holds whichever side the relative marker sits on,
+        # so it gates every branch below rather than the leading one alone.
+        if tokens[w].text in spec.units or tokens[w].text in ambiguous:
+            continue
         p = w + 1
         ago_n = _match_at(tokens, p, ago)
         if ago_n:
             sign, start, end = -1, i, p + ago_n
-        elif (i > 0 and tokens[i - 1].text in ago
-                and tokens[w].text not in spec.units):
+        elif i > 0 and tokens[i - 1].text in ago:
             # a LEADING past marker before the count: Romance puts the past
             # particle first ("hace 2 lunes" == 2 mondays ago, "il y a 2
             # lundis"), where the trailing scan never sees it.  Consume it too.
-            # Skip when the "weekday" is ALSO a unit surface: Romanian "luni" is
-            # both Monday and "months", and "acum 2 luni" is 2 MONTHS ago -- let
-            # the unit-offset reading win rather than fabricate a Monday count.
             sign, start, end = -1, i - 1, p
         else:
             from_n = _match_at(tokens, p, from_words)

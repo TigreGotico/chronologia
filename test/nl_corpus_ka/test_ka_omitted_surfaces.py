@@ -180,3 +180,27 @@ def test_no_meridiem(text):
     Latin "AM"/"PM" -- so no meridiem vocabulary ships."""
     r = parse(text)
     assert r is None or r[1] != ""
+
+
+@pytest.mark.parametrize("text", [
+    "ორი კვირა წინ", "სამი კვირა წინ", "ერთი კვირა წინ", "2 კვირა წინ",
+])
+def test_counted_kvira_with_postposed_marker_refuses(text):
+    """წინ is a POSTPOSITION, so a counted კვირა phrase carries its relative
+    marker after the noun.  The count still forbids the weekday reading --
+    a trailing marker disambiguates direction, never sense -- so these refuse
+    exactly like the bare counted forms rather than naming N Sundays back."""
+    assert parse(text) is None
+
+
+@pytest.mark.parametrize("text,expected_day", [
+    ("ორი ორშაბათი წინ", 19), ("სამი ორშაბათი წინ", 12),
+])
+def test_counted_unambiguous_weekday_with_postposed_marker(text, expected_day):
+    """ორშაბათი (Monday) shares no surface with a duration, so the counted
+    reading survives behind the same postposition: N Mondays before the
+    Tuesday anchor."""
+    from ._corpus import start
+    s = start(text)
+    assert s.weekday() == 0
+    assert s.day == expected_day
