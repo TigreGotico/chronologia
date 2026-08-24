@@ -1,0 +1,10 @@
+# Unicode CLDR 47, locale ga, gregorian calendar (cldr-json
+# cldr-dates-full/main/ga/ca-gregorian.json).
+# The month name stands bare, follows the noun "mí" in the
+# genitive ("mí Aibreáin"), or follows the bare preposition "i"
+# eclipsed ("i mBealtaine").  Declension: en.wiktionary.org, the
+# headword's own table; eclipsis: its own mutation table.
+Samhain
+Samhna
+mí Samhna
+Samh

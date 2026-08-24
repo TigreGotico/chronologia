@@ -1,0 +1,10 @@
+# Unicode CLDR 47, locale ga, gregorian calendar (cldr-json
+# cldr-dates-full/main/ga/ca-gregorian.json).
+# The CLDR citation form is already the adverbial "Dé" + day
+# compound ("on <day>"); the bare radical noun is the form a
+# modified reference uses ("an Luan seo chugainn").  Both are
+# listed.  Radical and genitive: en.wiktionary.org, the day's own
+# headword entry.
+Dé Domhnaigh
+Domhnach
+Domhnaigh

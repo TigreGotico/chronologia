@@ -1,0 +1,5 @@
+# Unicode CLDR 47, locale ga, gregorian calendar (cldr-json
+# cldr-dates-full/main/ga/ca-gregorian.json).
+# The calendar's short form.  "Céad" (Wednesday) is deliberately
+# absent: it is spelled exactly like the numeral "céad" (hundred).
+Déar
