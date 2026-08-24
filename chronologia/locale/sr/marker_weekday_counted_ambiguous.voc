@@ -9,3 +9,10 @@
 # nedelja -- https://en.wiktionary.org/wiki/nedelja#Serbo-Croatian
 nedelja
 недеља
+# "nedelje" is the paucal (2-4) GENITIVE SINGULAR of the same noun --
+# unit_week.voc's own "sedmica"/"sedmice" pair uses that exact case for a
+# counted week ("dve sedmice"), so "dve nedelje" is read the same way and
+# needs the same veto the nominative gets above. Wiktionary, nedelja,
+# declension table -- https://en.wiktionary.org/wiki/nedelja#Serbo-Croatian
+nedelje
+недеље

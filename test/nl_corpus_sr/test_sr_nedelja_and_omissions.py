@@ -189,3 +189,18 @@ def test_counted_unambiguous_weekday_counts_on_both_sides(phrase, expected_day):
     assert r is not None
     assert r[1] == ""
     assert r[0].start.day == expected_day
+
+
+@pytest.mark.parametrize("phrase", [
+    "dve nedelje", "tri nedelje", "2 nedelje",
+    "dve nedelje pre", "pre dve nedelje", "tri nedelje pre", "pre tri nedelje",
+    "две недеље", "три недеље", "2 недеље",
+    "две недеље пре", "пре две недеље", "три недеље пре", "пре три недеље",
+])
+def test_counted_genitive_nedelje_refuses_too(phrase):
+    """"nedelje" is the paucal (2-4) GENITIVE SINGULAR of "nedelja" -- the
+    same case unit_week.voc's "sedmica"/"sedmice" pair uses for a counted
+    week ("dve sedmice").  A count immediately before it is just as
+    unable to name a specific Sunday as the nominative "nedelja" is, so it
+    gets the same veto, on either side of a relative marker."""
+    nomatch(phrase)
