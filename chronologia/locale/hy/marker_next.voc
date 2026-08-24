@@ -1,0 +1,4 @@
+# Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).
+# relative-type-1 for day/week/month/year and the weekday fields
+# ("հաջորդ շաբաթ" -- next week).  Prenominal, no case suffix on the noun.
+հաջորդ

@@ -1,0 +1,9 @@
+# Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for hy (cldr-json
+# cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py.
+# Unicode CLDR 47, locale hy, gregorian calendar (cldr-json
+# cldr-dates-full/main/hy/ca-gregorian.json).
+# dayPeriod "afternoon1": ցերեկ stand-alone, ցերեկը/ցերեկվա in format context.
+ցերեկ
+ցերեկը
+ցերեկվա

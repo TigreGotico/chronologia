@@ -437,6 +437,12 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (18, 0), "lt", _cldr("lt")),
     _p("evening", (18, 0), (0, 0), "lt", _cldr("lt")),
     _p("night", (0, 0), (6, 0), "lt", _cldr("lt")),
+    # hy: same shape as is/lt -- the evening runs to midnight and the night is
+    # the small hours.
+    _p("morning", (6, 0), (12, 0), "hy", _cldr("hy")),
+    _p("afternoon", (12, 0), (18, 0), "hy", _cldr("hy")),
+    _p("evening", (18, 0), (0, 0), "hy", _cldr("hy")),
+    _p("night", (0, 0), (6, 0), "hy", _cldr("hy")),
     # cy: Welsh draws only THREE bands.  The morning opens at midnight and runs
     # to noon, and the rule set carries no night row at all, so none is
     # invented here -- a Welsh "night" would be a boundary nobody stated.

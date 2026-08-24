@@ -1,0 +1,8 @@
+# Unicode CLDR 47, locale hy, gregorian calendar (cldr-json
+# cldr-dates-full/main/hy/ca-gregorian.json).
+# The wide name շաբաթ is also the ordinary noun "week", and nothing in the
+# surface distinguishes the two readings, so only the phrase that names the
+# day unambiguously is claimed here: en.wiktionary.org, շաբաթ ("շաբաթ օրը --
+# on Saturday").  A bare շաբաթ reads as the week unit.
+շաբաթ օրը
+շաբաթ օր

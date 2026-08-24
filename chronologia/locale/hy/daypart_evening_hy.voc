@@ -1,0 +1,10 @@
+# Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for hy (cldr-json
+# cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py.
+# Unicode CLDR 47, locale hy, gregorian calendar (cldr-json
+# cldr-dates-full/main/hy/ca-gregorian.json).
+# dayPeriod "evening1": երեկո stand-alone, երեկոյան in format context.
+# Declension: en.wiktionary.org, երեկո.
+երեկո
+երեկոյան
+երեկոն
