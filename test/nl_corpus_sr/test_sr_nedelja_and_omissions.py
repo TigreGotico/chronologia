@@ -116,6 +116,43 @@ def test_pre_sedmice_bare_unit_offset(phrase):
     assert r.start == ad(ANCHOR - timedelta(weeks=1))
 
 
+# -- nedelja: counted phrase REFUSED, mirroring the genitive veto ------------
+
+@pytest.mark.parametrize("phrase", [
+    "dve nedelja", "jedna nedelja", "tri nedelja", "2 nedelja", "10 nedelja",
+    "две недеља", "једна недеља", "три недеља", "2 недеља", "10 недеља",
+])
+def test_counted_nedelja_refuses_rather_than_naming_a_sunday(phrase):
+    """A COUNT immediately before "nedelja" ("dve nedelja", "10 nedelja")
+    can only mean a span of weeks -- nobody counts specific Sundays that
+    way -- but this locale ships no week duration unit under "nedelja"
+    (sedmica is the unambiguous week word). Answering the lone-Sunday
+    sub-reading and stranding the count would be a worse wrong answer than
+    none, so the count vetoes the weekday match and the phrase refuses."""
+    nomatch(phrase)
+
+
+@pytest.mark.parametrize("phrase", ["dva ponedeljka", "два понедељка"])
+def test_counted_unambiguous_weekday_still_resolves(phrase):
+    """An unambiguous weekday word ("ponedeljak" -- Monday) is untouched by
+    the counted-nedelja veto: the count strands as remainder, same as any
+    other bare weekday_ref match, and the weekday still resolves."""
+    r = parse(phrase)
+    assert r is not None
+    assert r[0].start.date().weekday() == 0  # Monday
+
+
+# -- sedmica: unaffected by the nedelja veto ----------------------------------
+
+def test_sedmica_phrasing_unaffected_by_nedelja_veto():
+    """"sedmica" never shares a surface with "nedelja", so the counted-
+    nedelja veto cannot touch it either way -- pinned as controls: "dve
+    sedmice" refuses (paucal genitive not wired to a duration reading) and
+    "za sedmicu" resolves; neither state changes here."""
+    nomatch("dve sedmice")
+    span("za sedmicu")
+
+
 # -- milenijum: excluded, no declension table found --------------------------
 
 @pytest.mark.parametrize("phrase", [

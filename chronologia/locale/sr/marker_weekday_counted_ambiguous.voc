@@ -1,0 +1,11 @@
+# "nedelja" names both the weekday Sunday and, in some sources, the week
+# (see weekday_6.voc) -- a COUNT immediately before it ("dve nedelja", "10
+# nedelja") can only be a span of weeks, since nobody counts specific
+# Sundays that way, but this locale ships no week duration unit under
+# "nedelja" (sedmica is the unambiguous week word; unit_week.voc/
+# unit1_week.voc). Answering the lone-Sunday sub-reading and stranding the
+# count would be a worse wrong answer than none, so the count vetoes the
+# weekday match instead of asserting the unsourced week reading. Wiktionary,
+# nedelja -- https://en.wiktionary.org/wiki/nedelja#Serbo-Croatian
+nedelja
+недеља
