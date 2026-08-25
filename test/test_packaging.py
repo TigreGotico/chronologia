@@ -26,11 +26,15 @@ import shutil
 import subprocess
 import sys
 import sysconfig
-import tomllib
 import zipfile
 from pathlib import Path
 
 import pytest
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:                                       # tomllib entered the stdlib in 3.11
+    import tomli as tomllib
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _PKG_ROOT = _REPO_ROOT / "chronologia"

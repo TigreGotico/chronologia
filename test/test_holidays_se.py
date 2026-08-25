@@ -1,17 +1,28 @@
 """Sweden national differential (source: Lag 1989:253 om allmänna helgdagar).
 
 Per-holiday gold dates live in the shared HOLIDAY_GOLDS registry. Under Swedish law
-every Sunday is also an "allmän helgdag", so the reference package lists all ~52
+every Sunday is also an "allmän helgdag", so the reference calendar lists all ~52
 Sundays as bare "Söndag" entries. We ship only the named holidays; the differential
-here compares our national public set against the reference with those bare
-"Söndag" entries removed — and they agree exactly across 2023-2025 (the named
+here compares our national public set against the frozen reference dates with those
+bare "Söndag" entries removed — and they agree exactly across 2023-2025 (the named
 Sundays Påskdagen and Pingstdagen keep their own names and are matched).
 """
-import holidays
-
 from chronologia import AstroDate, holidays_for
 
 _J = "SE"
+
+#: Frozen reference named-holiday dates (vacanza/holidays 0.101 output for SE
+#: with the bare weekly-Sunday "Söndag" entries removed), as {year: {(m, d)}}.
+#: Frozen rather than re-derived, so the differential asserts the same thing on
+#: every machine and no upstream release can turn it red by accident.
+_REF_NAMED = {
+    2023: {(1, 1), (1, 6), (4, 7), (4, 9), (4, 10), (5, 1), (5, 18), (5, 28),
+           (6, 6), (6, 24), (11, 4), (12, 25), (12, 26)},
+    2024: {(1, 1), (1, 6), (3, 29), (3, 31), (4, 1), (5, 1), (5, 9), (5, 19),
+           (6, 6), (6, 22), (11, 2), (12, 25), (12, 26)},
+    2025: {(1, 1), (1, 6), (4, 18), (4, 20), (4, 21), (5, 1), (5, 29), (6, 6),
+           (6, 8), (6, 21), (11, 1), (12, 25), (12, 26)},
+}
 
 
 def _our(year):
@@ -21,9 +32,7 @@ def _our(year):
 
 def _ref_named(year):
     """Reference set with the bare weekly-Sunday ("Söndag") entries removed."""
-    return {(d.month, d.day)
-            for d, n in holidays.country_holidays(_J, years=year).items()
-            if n != "Söndag"}
+    return _REF_NAMED[year]
 
 
 def test_national_differential_named_days_2023_2025():
