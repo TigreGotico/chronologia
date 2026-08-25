@@ -37,7 +37,7 @@ def test_explicit_year(text, ymd):
     assert _start(text) == AstroDate(*ymd)
 
 @pytest.mark.parametrize("text", [
-    "Tameddit i tettaččar Tejmaɛt",
+    "Yexḍeb.",
 ])
 def test_no_holiday_no_match(text):
     nomatch(text, A)
