@@ -397,20 +397,31 @@ def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
     """Longest run of tokens from ``ti`` matching a connector surface.
 
     A connector surface may be **multi-word** ("vor christus", "v. chr.",
-    "before the present"): it is compared word-for-word against the token
-    stream, punctuation-split the same way the tokenizer splits it (dots
-    dropped).  Returns the number of tokens consumed (0 if none matched).
+    "before the present"): it is compared against the token stream by
+    surface text, punctuation-split the same way the tokenizer splits it
+    (dots dropped).  The comparison is on the joined run rather than
+    word-for-word because a connector surface that is ALSO multiword
+    vocabulary somewhere in the language (English "week end", Basque "orain
+    dela", Irish "go dtí") has already been glued into a single token by
+    ``pipeline.merge_multiword``, and that token's text carries the whole
+    surface, spaces included.  Returns the number of tokens consumed (0 if
+    none matched).
     """
     surfaces = spec.connectors.get(name)
     if not surfaces or ti >= len(tokens):
         return 0
     best = 0
     for surf in surfaces:
-        words = surf.lower().replace(".", " ").split()
-        n = len(words)
-        if n and ti + n <= len(tokens) and all(
-                tokens[ti + k].text == words[k] for k in range(n)):
-            best = max(best, n)
+        target = " ".join(surf.lower().replace(".", " ").split())
+        if not target:
+            continue
+        run = ""
+        for k in range(ti, len(tokens)):
+            run = tokens[k].text if not run else f"{run} {tokens[k].text}"
+            if len(run) >= len(target):
+                if run == target:
+                    best = max(best, k - ti + 1)
+                break
     return best
 
 

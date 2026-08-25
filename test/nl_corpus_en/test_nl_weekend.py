@@ -59,6 +59,23 @@ def test_hyphenated_weekend(text, rel):
     assert (sp.start, sp.end) == _expected(rel)
 
 
+# the same surface written with a space is the vocabulary's canonical form
+# (the hyphen is normalised onto it) and names the weekend just the same
+SPACED_CASES = [
+    ('this week end', 0),
+    ('next week end', 1),
+    ('last week end', -1),
+    ('the week end', 0),
+    ('week end', 0),
+]
+
+
+@pytest.mark.parametrize("text,rel", SPACED_CASES)
+def test_spaced_weekend(text, rel):
+    sp = span(text)
+    assert (sp.start, sp.end) == _expected(rel)
+
+
 def test_hyphenated_weekend_is_fully_consumed():
     assert parse('this week-end').remainder == ''
 
