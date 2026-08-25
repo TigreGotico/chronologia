@@ -450,6 +450,13 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (18, 0), "lv", _cldr("lv")),
     _p("evening", (18, 0), (23, 0), "lv", _cldr("lv")),
     _p("night", (23, 0), (6, 0), "lv", _cldr("lv")),
+    # sq: CLDR draws two morning bands (04:00-09:00 and 09:00-12:00), joined
+    # here into the one morning the registry names; the evening then runs to
+    # midnight and the night is the small hours.
+    _p("morning", (4, 0), (12, 0), "sq", _cldr("sq")),
+    _p("afternoon", (12, 0), (18, 0), "sq", _cldr("sq")),
+    _p("evening", (18, 0), (0, 0), "sq", _cldr("sq")),
+    _p("night", (0, 0), (4, 0), "sq", _cldr("sq")),
     # hy: same shape as is/lt -- the evening runs to midnight and the night is
     # the small hours.
     _p("morning", (6, 0), (12, 0), "hy", _cldr("hy")),
