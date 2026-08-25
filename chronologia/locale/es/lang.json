@@ -181,7 +181,11 @@
       "daypart_ref": [
         "REL_MARKER DAYPART",
         "article DAYPART",
-        "of DAYPART"
+        "of DAYPART",
+        "dayframe article DAYPART",
+        "at article DAYPART",
+        "of article DAYPART",
+        "in article DAYPART"
       ]
     },
     "extend": {
