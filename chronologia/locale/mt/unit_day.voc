@@ -1,0 +1,9 @@
+# jum (plural jiem) and its Romance-flavoured rival ġurnata (plural ġranet);
+# CLDR spells the relative-time patterns with ġurnata/ġranet and names the
+# field jum.  The dual jumejn is not listed here: the number fold rewrites it
+# as two plus jiem before matching.  en.wiktionary.org, jum; en.wiktionary.org,
+# ġranet; Unicode CLDR 47, mt dateFields.json.
+jum
+jiem
+ġurnata
+ġranet

@@ -1,0 +1,23 @@
+# The demonstrative, which PRECEDES its noun and agrees with it in gender: din
+# before a feminine noun (din is-sena, din il-ġimgħa), dan before a masculine
+# one (dan ix-xahar, dan il-jum).
+#
+# "din il" is listed as a surface of its own because Maltese spells the
+# feminine demonstrative and the article as one proclitic run before a noun
+# taking il-, and that run is what tells "din il-ġimgħa" (this week) apart
+# from the weekday Il-Ġimgħa (Friday), which is the same noun under the same
+# article.  Gender does the disambiguating: ġimgħa is feminine and takes din,
+# while the masculine weekdays keep their own demonstrative frame intact (dan
+# il-Ħadd, dan il-Ħamis).  The week reading of "din il-ġimgħa" is the one CLDR
+# states -- it is the week field's relative-type-0, and CLDR leaves the mt
+# Friday field untranslated rather than assigning the phrase to the weekday --
+# and it is the only reading found in running text: mt.wikipedia.org spells it
+# "matul din il-ġimgħa, tibda bit-tridu" (Siġġiewi), "Din il-ġimgħa offriet
+# kuntrast interessanti" (Inter) and "Matul din il-ġimgħa, issir fiera
+# taż-żwiemel" (Ivrea), all of them a span of days.
+#
+# Unicode CLDR 47, mt dateFields.json, relative-type-0; mt.wikipedia.org,
+# articles Siġġiewi, Inter and Ivrea.
+din
+dan
+din il

@@ -1,0 +1,6 @@
+# minuta, plural minuti.  A Romance loan, so it takes no dual -- "two minutes"
+# is spelled with the ordinary numeral, never a -ejn form.  Unicode CLDR 47,
+# mt dateFields.json, whose minute patterns read "{0} minuti" at the two count;
+# en.wiktionary.org, minuta.
+minuta
+minuti

@@ -1,0 +1,6 @@
+# pitgħada, "the day after tomorrow", with its attested variant bitgħada.
+# There is no named_day_-2 file: Maltese has no sourced word for the day
+# before yesterday, CLDR carries no relative-type--2 field for mt, and none is
+# invented here.  en.wiktionary.org, pitgħada.
+pitgħada
+bitgħada

@@ -1,0 +1,18 @@
+# The definite article and every one of its sun-letter allomorphs.  Maltese
+# writes il- before a moon letter, l- before a vowel, and assimilates the l to
+# the following consonant when that consonant is one of the nine sun letters
+# ċ, d, n, r, s, t, x, z, ż -- giving iċ-, id-, in-, ir-, is-, it-, ix-, iz-,
+# iż-.  The tokenizer shears the hyphen, so each allomorph arrives as its own
+# token and is listed here rather than derived.  en.wikipedia.org, "Maltese
+# grammar"; memorizeinaflash.com, "Chapter 3: The Article & Basic Nouns".
+il
+l
+iċ
+id
+in
+ir
+is
+it
+ix
+iz
+iż

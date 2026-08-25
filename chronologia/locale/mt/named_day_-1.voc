@@ -1,0 +1,6 @@
+# lbieraħ, "yesterday", as CLDR spells it, alongside the articled spellings
+# the same word carries in ordinary text.  Unicode CLDR 47, mt
+# dateFields.json, day relative-type--1; en.wiktionary.org, lbieraħ.
+lbieraħ
+ilbieraħ
+il-bieraħ

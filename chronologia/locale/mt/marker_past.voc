@@ -1,0 +1,10 @@
+# ilu, "ago" -- a POSTPOSITION, so it trails the number and unit it measures
+# ("Wasalna hawn jumejn ilu", "we arrived here two days ago"), and it is
+# invariant in that use.  The same surface heads a different lexeme, the
+# person-inflected durative adverb that PRECEDES its duration ("Ili jumejn ma
+# norqod", "I haven't slept in two days"; "Xmun ilu seba' xhur fil-ħabs").
+# That sense needs agreement with a subject this engine has no way to read, so
+# it is refused: the offset orders accept ilu only in trailing position, and a
+# preposed ilu never yields an offset.  en.wiktionary.org, ilu; Unicode CLDR
+# 47, mt dateFields.json, relativeTime-type-past.
+ilu

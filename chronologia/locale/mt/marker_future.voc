@@ -1,0 +1,8 @@
+# oħra / ieħor / oħrajn, "another", which trails the unit in every CLDR
+# future-offset pattern ("fi żmien jumejn oħra", "sa ġimgħa oħra").  The
+# masculine ieħor goes with a masculine unit noun (xahar), the feminine oħra
+# with the rest.  Unicode CLDR 47, mt dateFields.json,
+# relativeTime-type-future.
+oħra
+ieħor
+oħrajn

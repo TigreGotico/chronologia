@@ -1,0 +1,10 @@
+# The suppletive phrases CLDR gives for the coming period: "id-dieħel" for the
+# masculine month, "d-dieħla" for the feminine year and week, and "li ġej" /
+# "ta' wara" for a weekday.  They are participial phrases that TRAIL the noun
+# ("is-sena d-dieħla", "il-Ħadd ta' wara"), not a single particle, so they are
+# shipped as the phrases they are.  Unicode CLDR 47, mt dateFields.json,
+# relative-type-1; en.wiktionary.org, dieħel.
+d-dieħla
+id-dieħel
+li ġej
+ta' wara

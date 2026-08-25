@@ -1,0 +1,4 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/mt/ca-gregorian.json. days.format.wide "It-Tnejn", literally "the two" -- Maltese
+# numbers its weekdays from Sunday, the Semitic pattern.  The bare "tnejn" is
+# NOT shipped: on its own it is the cardinal two.
+it-tnejn
