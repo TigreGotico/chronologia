@@ -1,0 +1,14 @@
+# saa names the hour of the day, and this locale refuses to read that hour:
+# the traditional count runs from sunrise, so "saa tatu" is 09:00 to one
+# writer and 03:00 to another, and both conventions occur in written Swahili
+# (see unit_hour.voc).  A counted saa standing beside a day-part word must
+# therefore veto the band as well, because the band alone is not the answer to
+# the question that was asked: "saa moja asubuhi" names one hour inside the
+# morning, and returning the whole 07:00-12:00 morning would hand a caller who
+# asked for an hour a five-hour span, with the hour they asked about dropped
+# into the remainder.  Declining the band is not the same as asserting either
+# clock reading, which stays unavailable.
+#
+# The bare band is untouched: "usiku" and "kesho usiku" still answer, because
+# neither names an hour.
+saa

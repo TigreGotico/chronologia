@@ -1,0 +1,6 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.
+# days.format.wide; the abbreviated forms are the same strings.
+# The Juma- series counts from Jumamosi (Saturday), so the numeral inside a
+# name is two short of the Monday-first index this file is numbered by.
+# Jumatano is juma + tano (five).
+jumatano

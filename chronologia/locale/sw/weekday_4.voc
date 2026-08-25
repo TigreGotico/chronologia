@@ -1,0 +1,5 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.
+# days.format.wide; the abbreviated forms are the same strings.
+# Ijumaa is the Arabic jum'a, the congregational Friday -- the word Swahili's
+# own name for a week, juma, is borrowed from.
+ijumaa

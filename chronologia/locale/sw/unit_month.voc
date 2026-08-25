@@ -1,0 +1,6 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  "mwezi
+# {0} uliopita" in the singular and "miezi {0} iliyopita" in the plural: mwezi
+# is class 3/4, so unlike the N-class units it DOES change shape for number,
+# and the plural miezi is what a count above one stands beside.
+mwezi
+miezi

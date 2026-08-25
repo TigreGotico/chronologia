@@ -1,0 +1,4 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale sw
+# (cldr/common/supplemental/dayPeriods.xml), transcribed in
+# chronologia/dayparts.py as the alfajiri (morning1, 04:00-07:00) band.
+alfajiri

@@ -1,0 +1,13 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.
+# relative-type--1 per unit, and the relative pronoun agrees with the noun
+# class of the unit it follows: "mwaka uliopita" and "mwezi uliopita" take the
+# class 3/4 form, while "wiki iliyopita" and every weekday -- "Jumatatu
+# iliyopita" -- take the class 9/10 form.  zilizopita is the class 9/10 plural,
+# the shape CLDR counts with above one ("wiki {0} zilizopita").
+#
+# All three ship together because a marker slot is matched by surface: which
+# one is grammatical is decided by the noun the writer already chose, and a
+# writer who chose it correctly must be read.
+uliopita
+iliyopita
+zilizopita

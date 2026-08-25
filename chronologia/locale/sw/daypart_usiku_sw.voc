@@ -1,0 +1,4 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale sw
+# (cldr/common/supplemental/dayPeriods.xml), transcribed in
+# chronologia/dayparts.py as the usiku (night1, 19:00-04:00) band.
+usiku

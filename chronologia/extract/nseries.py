@@ -241,6 +241,36 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
             consumed.update(range(i, end))
             i = end
             continue
+        # A head-initial noun phrase puts the count AFTER its unit ("siku
+        # tano" == five days, "dakika thelathini" == thirty minutes): the
+        # numeral is a modifier and modifiers follow their head, so the
+        # count-then-unit scan below never starts and every bare duration in
+        # such a language reads as None.  Handled up front, like the dual noun
+        # above, because it is the same kind of fact -- where the count lives
+        # relative to the unit -- and because the scan proper assumes it leads.
+        # Gated on the locale convention, so a count-first language cannot
+        # gain a unit-first reading that would let "days 5" parse.  A trailing
+        # "... and a half" still attaches, matching the count-first path.
+        if spec.conventions.duration_count_follows_unit:
+            kind = spec.units.get(tokens[i].text)
+            if (kind in _DUR_UNIT_SECONDS and i + 1 < n
+                    and tokens[i + 1].is_number
+                    and tokens[i + 1].value is not None):
+                try:
+                    secs = float(tokens[i + 1].value) * _DUR_UNIT_SECONDS[kind]
+                except (TypeError, ValueError, OverflowError):
+                    secs = None
+                if secs is not None:
+                    end = i + 2
+                    add2, end2 = _read_additive(end)
+                    if add2 is not None:
+                        secs += add2 * _DUR_UNIT_SECONDS[kind]
+                        end = end2
+                    total += secs
+                    found = True
+                    consumed.update(range(i, end))
+                    i = end
+                    continue
         # a leading article: "a day" -> count 1; "a couple of days" -> skip it.
         if tokens[j].text in articles:
             if j + 1 < n and (tokens[j + 1].is_number

@@ -1,0 +1,11 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  "saa
+# {0} iliyopita" / "saa {0} zilizopita" / "baada ya saa {0}" -- class 9/10,
+# invariant for number.
+#
+# saa is a DURATION here and only a duration.  The same word names the hour of
+# the day, and that reading is deliberately not shipped: Swahili's traditional
+# clock counts the hours from sunrise, so "saa tatu" is 09:00 to one writer and
+# 03:00 to another, and nothing in the phrase says which.  See
+# test/nl_corpus_sw/test_sw_refusals.py for the pinned refusal, and lang.json
+# for the clock grammar that admits the digital literal only.
+saa
