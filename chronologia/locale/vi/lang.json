@@ -44,6 +44,11 @@
         "year_word GYEAR",
         "GYEAR"
       ]
+    },
+    "decade_ref": {
+      "orders": [
+        "DCUNIT DNUM"
+      ]
     }
   },
   "conventions": {
@@ -67,6 +72,11 @@
   },
   "hook": "chronologia.extract.numfold_vietnamese:fold_vi",
   "base_grammar": {
-    "marker_position": "post"
+    "marker_position": "post",
+    "extend": {
+      "scoped_ordinal": [
+        "CMUNIT ordinal_prefix? ORD"
+      ]
+    }
   }
 }

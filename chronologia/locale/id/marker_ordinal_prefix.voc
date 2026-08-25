@@ -1,0 +1,5 @@
+# "ke-" makes a numeral ordinal ("abad ke-20", "bulan kelima").  The
+# tokenizer splits the hyphenated digit form into this prefix plus the
+# numeral; the spelled form is one word the number fold reads whole.
+# en.wiktionary.org, https://en.wiktionary.org/wiki/ke-.
+ke

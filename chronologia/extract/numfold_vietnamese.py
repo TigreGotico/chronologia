@@ -29,11 +29,16 @@ those positions gives a wrong value rather than no value.
 * the thousand is ``nghìn`` in the north and ``ngàn`` in the south; both are
   read, because the choice is regional rather than stylistic.
 
-Two positions are deliberately left unfolded.  A numeral directly after
-``thứ`` or ``tháng`` is a NAME component, not a count -- ``thứ hai`` is Monday
-and ``tháng tư`` is April -- and the locale lists those surfaces whole, in
-both their spelled and their CLDR digit spelling, so folding the numeral there
-would only destroy the surface the vocabulary matches.  And ``năm`` standing
+Two positions are deliberately left unfolded.  A ONE-WORD numeral directly
+after ``thứ`` or ``tháng`` is a NAME component, not a count -- ``thứ hai`` is
+Monday and ``tháng tư`` is April -- and the locale lists those surfaces whole,
+in both their spelled and their CLDR digit spelling, so folding the numeral
+there would only destroy the surface the vocabulary matches.  A numeral that
+runs longer than one word after those heads is folded, because no weekday name
+runs that long and ``thứ`` is also the ordinal marker (``thứ tám`` eighth):
+``thứ hai mươi`` is the twentieth, not Monday with ``mươi`` left over.  The
+month names spell their long numerals in digits too (``tháng mười hai`` ==
+``tháng 12``), so the fold leaves them matching.  And ``năm`` standing
 alone is read as the noun "year", never as five: the two are the same word
 with the same tone, Vietnamese itself resorts to ``lăm`` to keep them apart in
 compounds, and no cue distinguishes them in "năm năm" or "năm giờ".  Refusing
@@ -54,7 +59,9 @@ https://en.wikipedia.org/wiki/Vietnamese_numerals.  ``năm`` as both five and
 year, with the lăm shift stated as its own usage note: en.wiktionary.org,
 https://en.wiktionary.org/wiki/n%C4%83m.  The additive minute clock
 ("4 giờ 5 phút" == 5 past 4): en.wiktionary.org,
-https://en.wiktionary.org/wiki/ph%C3%BAt.  Nothing is delegated to an external
+https://en.wiktionary.org/wiki/ph%C3%BAt.  ``thứ`` as the ordinal-number
+marker beside its weekday sense ("thứ tám" eighth): en.wiktionary.org,
+https://en.wiktionary.org/wiki/th%E1%BB%A9.  Nothing is delegated to an external
 number back-end.
 """
 from __future__ import annotations
@@ -222,12 +229,27 @@ def _cardinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             out.append(tok)
             i += 1
             continue
-        # a numeral right after "thứ"/"tháng" spells part of a weekday or
-        # month name; the locale matches that name whole, in either spelling.
+        # a ONE-WORD numeral right after "thứ"/"tháng" spells part of a weekday
+        # or month name; the locale matches that name whole, in either
+        # spelling, so folding it would destroy the surface.  A numeral that
+        # runs LONGER than one word there is not a name: no weekday name does,
+        # and "thứ" is equally the ordinal marker, so "thứ hai mươi" is the
+        # twentieth while "thứ hai" is Monday -- folding the long run is what
+        # keeps the two apart.  The month names spell their long numerals in
+        # digits as well ("tháng mười hai" == "tháng 12"), so folding leaves
+        # them matching.
         if out and out[-1].text in NAME_HEADS:
-            while i < n and not tokens[i].is_number and tokens[i].text in NUMBER_WORDS:
-                out.append(tokens[i])
-                i += 1
+            j = i
+            while j < n and not tokens[j].is_number \
+                    and tokens[j].text in NUMBER_WORDS:
+                j += 1
+            value, used = read([t.text for t in tokens[i:j]])
+            if value is None or used == 1:
+                out.extend(tokens[i:j])
+                i = j
+                continue
+            out.append(_numeric(tok, value, tokens[i + used - 1]))
+            i, changed = i + used, True
             continue
         j = i
         while j < n and not tokens[j].is_number and tokens[j].text in NUMBER_WORDS:

@@ -59,14 +59,6 @@ def test_no_this_deictic(text):
     assert r is None or r[1] != ""
 
 
-@pytest.mark.parametrize("text", ["thế kỷ 21", "thế kỷ thứ 21", "thập kỷ 90"])
-def test_no_ordinal_scoped_periods(text):
-    """Naming a century or a decade by its number needs an ordinal
-    construction, and the ordinal series is not shipped (see
-    test_vi_named_series).  The unit words exist for durations only."""
-    assert parse(text) is None
-
-
 @pytest.mark.parametrize("text", ["một triệu năm trước", "một tỷ năm trước"])
 def test_no_scales_above_the_thousand(text):
     """triệu (million) and tỷ (billion) are attested but sit far outside the
