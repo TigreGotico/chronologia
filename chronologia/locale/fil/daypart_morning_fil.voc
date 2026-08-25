@@ -1,0 +1,8 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale fil, transcribed
+# in chronologia/dayparts.py as the morning band (CLDR morning1 + morning2,
+# 00:00-12:00).  Surface: umaga, "morning".  madaling-araw is NOT shipped:
+# CLDR fil labels its 06:00-12:00 band with it and its 00:00-06:00 band with
+# umaga, which inverts the dictionary senses (madaling-araw is glossed as the
+# period between midnight and sunrise), so which band the word names is
+# unresolved.  en.wiktionary.org, umaga.
+umaga

@@ -1,0 +1,10 @@
+# hapon, "afternoon"; gabi, "evening/night"; tanghali, "noon".  All three fix
+# their hour in the PM half: "alas kuwatro y medya ng hapon" == 16:30, "alas
+# otso y medya ng gabi" == 20:30, "alas dose ng tanghali" == 12:00.  gabi is a
+# plain PM marker, not a midnight-crossing band: CLDR fil runs it from 16:00
+# to 24:00 and gives the small hours to umaga/madaling-araw instead, so it
+# never has to name a 1am.  en.wiktionary.org, hapon; en.wiktionary.org, gabi; en.wiktionary.org, tanghali;
+# Unicode CLDR 47, fil; en.wikipedia.org, "Date and time notation in the Philippines".
+hapon
+gabi
+tanghali

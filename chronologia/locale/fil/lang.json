@@ -1,0 +1,58 @@
+{
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": false,
+  "decimal_comma": false,
+  "dotted_date": false
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "MARKER NUM na? UNIT",
+    "NUM na? UNIT MARKER"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "DAY ng MONTH year_word? YEAR?",
+    "DAY MONTH year_word? YEAR?",
+    "MONTH DAY? year_word? YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK MERIDIEM?",
+    "at HOUR and? FRACTION ng? MERIDIEM?",
+    "at HOUR ng? MERIDIEM?",
+    "MINUTE na? minute_word? CLOCKDIR ang? mag? HOUR ng? MERIDIEM?",
+    "HOUR ng MERIDIEM",
+    "at? LANDMARK"
+   ],
+   "prefer_future": true
+  },
+  "year_ref": {
+   "orders": [
+    "year_word GYEAR",
+    "GYEAR"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": true,
+  "hemisphere": "north",
+  "prefer_future": true,
+  "bare_half_past": true
+ },
+ "quantifiers": {
+  "1": [
+   "isa",
+   "isang"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_filipino:fold_fil"
+}

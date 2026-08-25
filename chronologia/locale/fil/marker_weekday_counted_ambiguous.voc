@@ -1,0 +1,8 @@
+# linggo names both Sunday and the week, so a count before it ("dalawang
+# linggo") is ambiguous between a span of weeks and a number of Sundays.  The
+# count vetoes the weekday reading -- handing back one specific Sunday to a
+# caller who asked for a duration would be a worse answer than none -- and
+# the duration reading is not asserted in its place: the week unit this
+# locale ships is semana, not linggo.  en.wiktionary.org, linggo (noun, "week");
+# en.wiktionary.org, Linggo (noun, "Sunday").
+linggo

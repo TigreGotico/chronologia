@@ -1,0 +1,7 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json
+# (wide form).  The CLDR abbreviations are deliberately not shipped:
+# every one of them is a live Tagalog word or a rival month/weekday
+# abbreviation -- "may" is the existential "there is", "mar"
+# abbreviates both Marso and Martes, "ago" and "set" and "dis"
+# read as ordinary text far more often than as a month.
+mayo

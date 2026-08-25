@@ -1,0 +1,5 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json
+# (wide form).  Every Filipino weekday name is a Spanish loan; the CLDR
+# abbreviations (Lin, Lun, Mar, ...) are not shipped -- "mar" is also
+# the Marso abbreviation and "lin"/"lun" carry no independent sense.
+lunes
