@@ -1,0 +1,77 @@
+{
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": false,
+  "decimal_comma": true,
+  "dotted_date": true
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "MARKER NUM UNIT",
+    "NUM UNIT MARKER",
+    "MARKER QUANT UNIT",
+    "MARKER USG",
+    "USG MARKER"
+   ]
+  },
+  "weekend_ref": {
+   "orders": [
+    "REL_MARKER WEEKEND",
+    "WEEKEND"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "DAY MONTH YEAR?",
+    "DAY of MONTH YEAR?",
+    "during? MONTH DAY? YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK MERIDIEM?",
+    "at? HOUR CLOCKDIR FRACTION MERIDIEM?",
+    "at? HOUR CLOCKDIR MINUTE minute_word? MERIDIEM?",
+    "at HOUR oclock? MERIDIEM?",
+    "at? HOUR oclock MERIDIEM?",
+    "at? LANDMARK"
+   ],
+   "prefer_future": true
+  },
+  "year_ref": {
+   "orders": [
+    "GYEAR year_word",
+    "year_word GYEAR",
+    "GYEAR"
+   ]
+  },
+  "quarter_ref": {
+   "orders": [
+    "REL_MARKER quarter_word",
+    "quarter_word REL_MARKER"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": true,
+  "hemisphere": "north",
+  "prefer_future": true
+ },
+ "quantifiers": {
+  "1": [
+   "еден",
+   "една",
+   "едно"
+  ],
+  "0.5": [
+   "пол"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_macedonian:fold_mk"
+}

@@ -1,0 +1,7 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale mk
+# (cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py as the навечер (evening1, 18:00-24:00) band.
+# en.wiktionary.org, Macedonian entry навечер (adverb, "in the evening"); вечер is the stand-alone
+# form CLDR gives for the same band.
+навечер
+вечер
