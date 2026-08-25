@@ -670,6 +670,66 @@ contributor — can see *where this came from* and trust it.
 
 ---
 
+## When the right answer is to leave it out
+
+Sooner or later you will reach a construction your language does not have, or
+has in a way your sources cannot agree on. Leaving it out is a correct
+outcome, and a locale that ships fewer constructions honestly is worth more
+than one that ships them all by guessing. Nobody will ask you to fill every
+file.
+
+The three shapes this takes are all normal. Your language may simply lack the
+concept — Maltese has no word for the day before yesterday, so it ships no
+`named_day_-2.voc` and that phrase returns nothing. It may have a form your
+sources contradict each other about — Serbian's *nedelja* is Sunday to one
+dictionary and the week to another in the very case that "last/next" uses, so
+that word answers neither, and the unambiguous *sedmica* carries the week
+reading instead. Or the reference data may define no boundaries for something
+another language pins down — several locales ship no day-period bands at all
+rather than invent clock times for "morning".
+
+The one thing that is never acceptable is a form you made up because the
+neighbouring language has one. That produces a confident wrong answer, which
+the caller cannot detect and cannot argue with.
+
+**Pin the refusal, don't just omit it.** An empty gap looks identical to an
+oversight, and the next contributor will helpfully fill it. Two habits prevent
+that. Write the reason as a `#` header comment in the nearest related file —
+the file that *does* ship, naming the source you consulted and what it failed
+to establish:
+
+```text
+# pitgħada, "the day after tomorrow", with its attested variant bitgħada.
+# There is no named_day_-2 file: Maltese has no sourced word for the day
+# before yesterday, CLDR carries no relative-type--2 field for mt, and none
+# is invented here.  en.wiktionary.org, pitgħada.
+pitgħada
+```
+
+Then assert the refusal in your corpus, the same way you assert the readings
+that work — some locales keep a dedicated `test_<code>_refusals.py` module for
+exactly this:
+
+```python
+# doctest: skip
+@pytest.mark.parametrize("text", ["qabel ilbieraħ", "ilbieraħ l-ieħor"])
+def test_the_day_before_yesterday_is_not_guessed(text):
+    r = parse(text)
+    assert r is None or r[0].start.date().isoformat() != "2027-05-10"
+```
+
+Note the shape of that assertion. The refusal being pinned is not "this
+returns `None`" — it is "this never returns the *wrong day*". A phrase whose
+construction does not exist may still parse partially, consuming the words it
+does know and leaving the rest in the remainder, and that is a fair outcome.
+What must never happen is the confident wrong date.
+
+A pinned refusal is a decision with evidence behind it. An unpinned one is
+indistinguishable from a to-do, and it will quietly become a wrong answer the
+first time someone tidies up.
+
+---
+
 ## Submitting your work
 
 You don't need to be a git expert. The gentle version:

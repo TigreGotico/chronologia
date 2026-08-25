@@ -22,9 +22,27 @@ assert "Sexta-feira Santa" in names      # Good Friday, Easter - 2
 assert "Corpo de Deus" in names          # Corpus Christi, Easter + 60
 ```
 
+## How much is covered
+
+Rules ship for 260 jurisdictions, keyed by ISO 3166-1 alpha-2 code — one
+`chronologia/holiday_data/<code>.tab` file each, every one carrying the
+official source it was transcribed from. Thirty-two of them go below the
+national tier into states, cantons, provinces or municipalities. Asking for a
+code with no file is a `KeyError` naming the jurisdiction, so an unsupported
+country is loud rather than an empty list you might mistake for "no holidays
+this year".
+
+Depth varies more than breadth does. A jurisdiction file may carry only the
+national public days, or it may carry the regional and religious tiers too, and
+`coverage(jurisdiction, year)` reports whether the year you asked about
+resolves fully or leans on a prediction past a decree table's horizon — see
+[the horizon detector](#knowing-when-you-are-past-the-horizon) below.
+
 ## The municipal story
 
-Portugal is the flagship. Beyond the 13 national days, nearly every one of the
+Portugal is the flagship. Beyond the thirteen statutory national days — and
+Carnaval, which is widely observed without being statutory, so it is tagged
+`optional` alongside `public` — nearly every one of the
 ~300 *concelhos* (municipalities) has its own **feriado municipal**. Lisbon
 stops for Santo António on 13 June; Porto for São João on 24 June. Ask the
 country and you miss both; ask the municipality and the real answer appears.
@@ -121,6 +139,30 @@ assert "Jour du Ramadan (estimé)" not in strict     # refused under strict
 assert "Fête du Nouvel An" in strict                # fixed date, always kept
 ```
 
+### Knowing when you are past the horizon
+
+Both of those behaviours — the omission and the prediction — are invisible in
+the returned list, which is why the horizon is inspectable on its own.
+`coverage(jurisdiction, year)` answers the question a scheduler actually has:
+is this year's answer authoritative?
+
+```python
+from chronologia import coverage
+
+print(coverage("BJ", 2024))   # full
+print(coverage("BJ", 2028))   # partial
+```
+
+`full` means no decree-tabulated rule that applies this year has run past the
+years it tabulates — everything resolves from a table or a computable rule.
+`predicted` means every rule that *has* run past its horizon carries a
+prediction, so the year is bridged with `basis="predicted"` and nothing is
+silently missing. `partial` means at least one gazette-only rule has no
+prediction and is genuinely absent, while the rest still resolve. `none` means
+the year yields no holiday at all. The `subdiv` and `categories` arguments
+scope the question exactly as they scope `holidays_for`, so you can ask about
+the tier you actually display.
+
 ## Observed shifts
 
 When a fixed holiday lands on a weekend it is often *observed* on a nearby
@@ -166,14 +208,28 @@ assert "Juneteenth National Independence Day" in \
 
 ## Categories
 
-Every holiday carries a documented subset of the schema
-`{public, regional, municipal, religious, school}`. A holiday can hold several
-at once, and you can filter by them:
+Every holiday carries a documented subset of the `CATEGORIES` schema. A
+holiday can hold several at once, and you can filter by them:
 
 ```python
+from chronologia import CATEGORIES
+
 religious = holidays_for("PT", 2024, categories=["religious"])
 assert all("religious" in h.categories for h in religious)
+assert {"public", "regional", "municipal", "religious", "school"} <= CATEGORIES
 ```
+
+Four of those describe the **tier** a holiday belongs to — `public`,
+`regional`, `municipal`, `school`. The rest describe its *character*, and the
+schema is open in the sense that a jurisdiction's own vocabulary earns a term:
+`optional` for a widely-observed day that is not statutory, `half_day`,
+`bank`, `de_facto`, `unofficial`, and the tradition a religious day comes from
+(`catholic`, `orthodox`, `islamic`, `hebrew`, `hindu`, and others a
+jurisdiction's sources name). Filtering on `public` alone is the usual
+question — "is the office closed?" — but it is not the whole schema, and a day
+tagged `optional public` is one your calendar probably still wants to show.
+`CATEGORIES` is importable, so the current set is inspectable rather than
+something to trust a document about.
 
 ## Internationalisation — a holiday's real name
 
