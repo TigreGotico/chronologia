@@ -2,16 +2,16 @@
 
 Per-holiday gold dates for US (federal + every subdivision rule) live in the
 shared HOLIDAY_GOLDS registry (test_holiday_golds.py). This module carries the
-national differential against vacanza/holidays and a couple of state-layer
-coverage checks.
+national differential against the frozen reference snapshot and a couple of
+state-layer coverage checks.
 
 National differential (2023-2025) adjudication
 ----------------------------------------------
 chronologia models the 5 U.S.C. 6103 weekend rule as a *relocating*
 ObservedShift: a federal holiday on a Saturday is observed the preceding
 Friday, on a Sunday the following Monday, and the nominal weekend date is
-*not* also emitted (the day off is the observed day). The reference package,
-with ``observed=True``, keeps BOTH the nominal weekend date and its observed
+*not* also emitted (the day off is the observed day). The reference snapshot,
+taken with ``observed=True``, keeps BOTH the nominal weekend date and its observed
 weekday. So in any year a federal holiday falls on a weekend the reference has
 a nominal date we do not:
 
@@ -29,6 +29,15 @@ from chronologia import AstroDate, holidays_for
 from holiday_testkit import assert_national_differential
 
 _J = "US"
+#: ISO 3166-2:US: the 50 states, DC, the five inhabited territories (AS, GU,
+#: MP, PR, VI) and the US Minor Outlying Islands (UM).
+_SUBDIVISIONS = {
+    "AK", "AL", "AR", "AS", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
+    "GU", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME",
+    "MI", "MN", "MO", "MP", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM",
+    "NV", "NY", "OH", "OK", "OR", "PA", "PR", "RI", "SC", "SD", "TN", "TX",
+    "UM", "UT", "VA", "VI", "VT", "WA", "WI", "WV", "WY",
+}
 _DISAGREEMENTS = {
     2023: {"ref_only": {(1, 1), (11, 11)}},
 }
@@ -41,13 +50,11 @@ def test_national_differential_2023_2025():
 def test_state_layer_covers_all_57_subdivisions_minus_two():
     """Every ISO 3166-2:US subdivision except ND and UM (federal-only) carries
     at least one beyond-federal rule."""
-    import holidays as _pkg
     covered = {h.subdiv.split("-", 1)[1]
-               for y in (2024,)
-               for sub in _pkg.UnitedStates.subdivisions
-               for h in holidays_for("US", y, subdiv=f"US-{sub}")
+               for sub in _SUBDIVISIONS
+               for h in holidays_for("US", 2024, subdiv=f"US-{sub}")
                if h.subdiv is not None}
-    missing = set(_pkg.UnitedStates.subdivisions) - covered
+    missing = _SUBDIVISIONS - covered
     assert missing == {"ND", "UM"}, missing
 
 
