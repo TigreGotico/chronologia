@@ -1,0 +1,5 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale mk
+# (cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py as the ноќе (night1, 00:00-04:00) band.
+# en.wiktionary.org, Macedonian entry ноќе (adverb, "at night").
+ноќе

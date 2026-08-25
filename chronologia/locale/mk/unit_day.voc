@@ -1,0 +1,6 @@
+# en.wiktionary.org, Macedonian entry ден: the plural is денови but the COUNT FORM -- the
+# shape a noun takes behind a numeral -- is дена, and дена is what CLDR spells
+# every counted day offset with ("пред {0} дена").  Only the count form ships:
+# денови counts nothing.
+ден
+дена

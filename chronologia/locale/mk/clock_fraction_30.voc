@@ -1,0 +1,5 @@
+# reper.net.mk, style guide on writing the time: "девет и пол" is 9:30 -- the
+# half hour is added to the hour already named, not subtracted from the next.
+# No quarter-hour word ships: the same guide writes the quarter as "девет и
+# петнаесет", with the minute spelled out.
+пол

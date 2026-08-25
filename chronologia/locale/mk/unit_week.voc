@@ -1,0 +1,7 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  The week field's displayName is седмица and its
+# counted plural седмици.  недели, the plural of недела, is the colloquial
+# rival (en.wiktionary.org, Macedonian entry недела, sense "week"); the SINGULAR недела is left to the
+# weekday vocabulary, where it is Sunday.
+седмица
+седмици
+недели

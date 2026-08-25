@@ -1,0 +1,7 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale mk
+# (cldr-core/supplemental/dayPeriods.json), transcribed in
+# chronologia/dayparts.py as the наутро (morning1, 04:00-10:00) band.
+# en.wiktionary.org, Macedonian entry наутро (adverb, "in the morning"); утро is the stand-alone
+# form CLDR gives for the same band.
+наутро
+утро

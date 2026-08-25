@@ -1,0 +1,6 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  days.format.wide and days.format.abbreviated.
+# недела is also the colloquial word for a week; only the Sunday reading
+# ships on the singular, and the week is седмица (CLDR's own displayName
+# for the week field), so the two never contend for the same surface.
+недела
+нед
