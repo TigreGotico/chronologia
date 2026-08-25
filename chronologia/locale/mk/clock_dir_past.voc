@@ -1,0 +1,8 @@
+# The Macedonian clock is ADDITIVE ONLY: minutes are counted forward from the
+# hour already named, through 59, and и ("and") is the only direction word.
+# reper.net.mk, style guide on writing the time, worked examples "девет и
+# петнаесет" (9:15), "девет и пол" (9:30) and "дваесет и еден и педесет"
+# (21:50).  There is no minutes-to-the-hour form: mk.wikipedia's "Предлози во
+# македонскиот јазик" §Без catalogues every sense of без and names no temporal
+# one, so no clock_dir_to.voc ships.
+и

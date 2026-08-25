@@ -1,0 +1,4 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  dayPeriods am "претпл." (the tokenizer drops the
+# dot).
+претпл
+am

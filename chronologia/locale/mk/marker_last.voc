@@ -1,0 +1,14 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  relative-type--1 spells "минатиот месец", "минатата
+# седмица", "минатата среда" -- the adjective agrees in gender with its noun.
+# последното is the form the quarter field uses.
+# en.wiktionary.org, Macedonian entry минат ("previous, past, last"), whose declension table gives
+# the indefinite and definite forms alike.
+минат
+мината
+минато
+минати
+минатиот
+минатата
+минатото
+минатите
+последното

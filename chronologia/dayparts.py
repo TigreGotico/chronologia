@@ -421,6 +421,17 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (14, 0), (18, 0), "bg", _cldr("bg")),
     _p("evening", (18, 0), (22, 0), "bg", _cldr("bg")),
     _p("night", (22, 0), (4, 0), "bg", _cldr("bg")),
+    # mk: five bands, kept under their own names rather than collapsed, because
+    # Macedonian splits the forenoon the way German does -- претпладне is the
+    # two hours before noon and наутро the six before that -- so a single
+    # "morning" would answer 04:00-12:00 for a word that means 10:00-12:00.
+    # The noon and midnight points CLDR also lists are the global anchors, and
+    # ship as clock landmarks (напладне, полноќ) rather than as bands.
+    _p("nokje", (0, 0), (4, 0), "mk", _cldr("mk")),
+    _p("nautro", (4, 0), (10, 0), "mk", _cldr("mk")),
+    _p("pretpladne", (10, 0), (12, 0), "mk", _cldr("mk")),
+    _p("popladne", (12, 0), (18, 0), "mk", _cldr("mk")),
+    _p("navecher", (18, 0), (0, 0), "mk", _cldr("mk")),
     # pl (afternoon "po poludniu" and night "w nocy" are multi-word: bands
     # shipped, no voc; morning "rano" and evening "wieczorem" carry surfaces).
     _p("morning", (6, 0), (12, 0), "pl", _cldr("pl")),
