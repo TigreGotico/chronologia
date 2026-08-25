@@ -1,0 +1,6 @@
+# "pagājušajā" (last, past) as the backward determiner: the locative
+# definite form of the phrase Unicode CLDR 47 dateFields, locale lv, gives for
+# relative-type--1 ("pagājušajā nedēļā", "pagājušajā gadā").  Only that form
+# ships -- the participle has no dictionary declension table to transcribe, and
+# the remaining cells would be guesses.
+pagājušajā

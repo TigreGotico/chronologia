@@ -437,6 +437,12 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (18, 0), "lt", _cldr("lt")),
     _p("evening", (18, 0), (0, 0), "lt", _cldr("lt")),
     _p("night", (0, 0), (6, 0), "lt", _cldr("lt")),
+    # lv: the evening runs to 23:00 and the night is the small hours from
+    # there, one hour earlier on both edges than the Lithuanian shape.
+    _p("morning", (6, 0), (12, 0), "lv", _cldr("lv")),
+    _p("afternoon", (12, 0), (18, 0), "lv", _cldr("lv")),
+    _p("evening", (18, 0), (23, 0), "lv", _cldr("lv")),
+    _p("night", (23, 0), (6, 0), "lv", _cldr("lv")),
     # hy: same shape as is/lt -- the evening runs to midnight and the night is
     # the small hours.
     _p("morning", (6, 0), (12, 0), "hy", _cldr("hy")),

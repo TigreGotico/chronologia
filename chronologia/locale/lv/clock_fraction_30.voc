@@ -1,0 +1,7 @@
+# The spoken half hour names the COMING hour: "pusčetri" (half toward
+# four) is 03:30 and "pusastoņi" is 07:30 -- hence bare_half_to +
+# toward_hour_12h.  Latvian writes the prefix fused onto the hour cardinal, so
+# chronologia/extract/numfold_latvian.py splits the word and this file binds the
+# prefix it leaves behind.  Source: pronuncia.io, "How to Tell Time and Dates in
+# Latvian for English Speakers".
+pus

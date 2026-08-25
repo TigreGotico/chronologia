@@ -1,0 +1,10 @@
+# Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian
+# wide and abbreviated weekday names.  The locative is the adverbial "on
+# <weekday>" form ("sanāksme ir pirmdienā"); genitive and accusative from the
+# en.wiktionary.org declension table.  The short adverbial "pirmdien" ships
+# for MONDAY ONLY, the one value attested in running text; the parallel forms
+# for the other six days are a regular pattern nothing sources, so they are
+# left out rather than invented.
+piektdiena
+piektdienā
+piektdienu

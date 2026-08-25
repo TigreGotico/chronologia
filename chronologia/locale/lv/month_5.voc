@@ -1,0 +1,5 @@
+# Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian
+# calendar month names.  The locative is the form the sentence-embedded date
+# takes ("3. maijā" = on May 3rd); declension from en.wiktionary.org.
+maijs
+maijā
