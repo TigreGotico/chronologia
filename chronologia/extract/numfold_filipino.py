@@ -20,22 +20,31 @@ first word is in and the two never have to be told apart by context.
 
 The clock is where the split bites.  The Spanish-lexified construction states
 the hour as a bare cardinal after ``alas``/``ala`` and appends Spanish
-minutes ("alas diyes trenta y singko ng gabi" == 22:35).  The native
-construction states the hour as an ``ika-`` ORDINAL and counts native minutes
-toward it in one of two directions -- ``makalipas`` ("after") for the first
-half of the hour, ``bago`` ("before") for the second ("limang minuto
-makalipas ang ika-anim ng umaga" == 06:05; "labinlimang minuto bago ang
-ika-apat ng hapon" == 15:45).  The same ``ika-`` ordinal spells the day of a
-date ("ika-24 ng Agosto"), which is why the ordinal pass folds to a bare
-integer and lets the surrounding construction decide whether it read an hour
-or a day.
+minutes ADDITIVELY, with no direction word at all ("alas diyes trenta y
+singko ng gabi" == 22:35).  The native construction states the hour as an
+``ika-`` ORDINAL and counts native minutes toward it in one of two
+directions -- ``makalipas`` ("after") for the first half of the hour,
+``bago`` ("before") for the second ("limang minuto makalipas ang ika-anim ng
+umaga" == 06:05; "labinlimang minuto bago ang ika-apat ng hapon" == 15:45).
+The same ``ika-`` ordinal spells the day of a date ("ika-24 ng Agosto"),
+which is why the ordinal pass folds to a bare integer and lets the
+surrounding construction decide whether it read an hour or a day.
+
+Because the Spanish-lexified minutes carry no direction word, the shared
+clock grammar has nowhere to bind them -- a MINUTE slot only ever reaches the
+resolver alongside a CLOCKDIR, which this construction does not have.  The
+minute run is fused into the hour here instead, into one ``HH:MM`` clock
+literal the grammar reads verbatim, mirroring the Vietnamese additive-minute
+fold (:mod:`chronologia.extract.numfold_vietnamese`) for the same reason: the
+alternative is a minute count silently dropped from the answer.
 
 Sources: en.wiktionary.org, Category:Tagalog cardinal numbers (each cardinal
 and ordinal surface below is an entry there, checked individually); the
 en.wiktionary.org ``ika-`` entry, which glosses the prefix both as the
 ordinal former and as "used to express o'clock"; and en.wikipedia.org, "Date
 and time notation in the Philippines", for the worked clock and date examples
-and for the ``makalipas``/``bago`` split.
+(including "alas singko trenta y otso ng hapon" == 17:38 and "alas diyes
+trenta y singko ng gabi" == 22:35) and for the ``makalipas``/``bago`` split.
 
 Deliberately absent, each because no per-word attestation was found rather
 than because the value was in doubt: ``sesenta`` (60) and ``nobenta`` (90),
@@ -50,7 +59,7 @@ to fold to 1 on that basis.
 """
 from __future__ import annotations
 
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
@@ -335,6 +344,41 @@ def _spanish_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return _run_rewrite(tokens, _SPANISH.get, read_spanish_run, "y")
 
 
+#: the Spanish-lexified clock's lead-in word, immediately before the hour.
+_AT_WORDS = frozenset({"alas", "ala"})
+
+
+def _clock_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Fuse the additive Spanish-lexified clock into one clock literal.
+
+    ``alas onse kinse`` names 11:15 with no direction word at all -- after
+    :func:`_spanish_rewrite` it is two adjacent numbers, hour then minute,
+    right after ``alas``/``ala`` -- so the minute has nothing to bind to and
+    would be dropped; fusing it into ``11:15`` hands the clock grammar a
+    literal it reads exactly, hour as spoken, and lets the trailing
+    daypart word apply the am/pm shift exactly as it already does for the
+    bare ``HOUR ng MERIDIEM`` reading.
+    """
+    out: List[Token] = []
+    i, n, changed = 0, len(tokens), False
+    while i < n:
+        if (tokens[i].is_number and i + 1 < n and tokens[i + 1].is_number
+                and i > 0 and tokens[i - 1].text in _AT_WORDS):
+            hour, minute = tokens[i].value, tokens[i + 1].value
+            if (hour is not None and minute is not None
+                    and float(hour).is_integer() and float(minute).is_integer()
+                    and 0 <= hour <= 23 and 0 <= minute <= 59):
+                text = f"{int(hour)}:{int(minute):02d}"
+                out.append(Token(text=text, raw=text, index=tokens[i].index,
+                                 char_start=tokens[i].char_start,
+                                 char_end=tokens[i + 1].char_end))
+                i, changed = i + 2, True
+                continue
+        out.append(tokens[i])
+        i += 1
+    return reindex(out) if changed else tokens
+
+
 def _compose(*passes: Callable) -> Callable:
     def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         for p in passes:
@@ -345,5 +389,8 @@ def _compose(*passes: Callable) -> Callable:
 
 #: the ordinal pass leads so an ``ika-`` hour or day claims its stem before a
 #: cardinal pass could take that stem for a bare count; the two cardinal
-#: tables then run in either order, sharing no surface.
-fold_fil = _compose(_ordinal_rewrite, _native_rewrite, _spanish_rewrite)
+#: tables then run in either order, sharing no surface.  The clock fusion
+#: runs last, once the Spanish table has already folded a compound minute
+#: ("trenta y otso") into one number for it to find adjacent to the hour.
+fold_fil = _compose(_ordinal_rewrite, _native_rewrite, _spanish_rewrite,
+                    _clock_rewrite)
