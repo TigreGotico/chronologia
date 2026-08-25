@@ -183,12 +183,19 @@ def test_incomplete_clock_is_not_a_time(text):
     nomatch(text)
 
 
-def test_spanish_minute_count_is_left_unconsumed():
-    """The Spanish-lexified clock also states arbitrary minutes ("alas onse
-    kinse ng umaga" == 11:15), but that form is NOT shipped: reading it would
-    need the engine to apply a bare minute slot with no direction word, which
-    it does not do.  The hour still parses; the minute stays visibly in the
-    remainder rather than being silently dropped from an 11:15 answer."""
-    assert start("alas onse kinse ng umaga").hour == 11
-    assert start("alas onse kinse ng umaga").minute == 0
-    assert "kinse" in remainder("alas onse kinse ng umaga")
+#: the Spanish-lexified clock's minutes are additive with no direction word
+#: at all -- unlike the native register, there is no ``makalipas``/``bago``
+#: to carry a MINUTE slot to the resolver, so the fold fuses the hour and the
+#: minute into one clock literal before the grammar ever sees them.  A
+#: worked pair from en.wikipedia.org, "Date and time notation in the
+#: Philippines": "alas singko trenta y otso ng hapon" == 17:38 and "alas
+#: diyes trenta y singko ng gabi" == 22:35, both a compound minute joined by
+#: "y" ("trenta y otso" == 30 + 8).
+@pytest.mark.parametrize("text,h,mi", [
+    ("alas onse kinse ng umaga", 11, 15),
+    ("alas singko trenta y otso ng hapon", 17, 38),
+    ("alas diyes trenta y singko ng gabi", 22, 35),
+])
+def test_spanish_additive_minute_count_is_read(text, h, mi):
+    assert start(text) == next_time(h, mi)
+    assert remainder(text) == ""
