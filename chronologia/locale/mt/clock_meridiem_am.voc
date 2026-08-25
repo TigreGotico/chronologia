@@ -1,0 +1,8 @@
+# filgħodu, "in the morning", the adverb that fixes a spoken hour in the AM
+# half ("Fis-sebgħa nieqes għaxar filgħodu"), and CLDR's bare AM.  This is a
+# clock marker, not a daypart band: CLDR ships no dayPeriodRuleSet for mt, so
+# this locale ships no band boundaries at all.  en.wiktionary.org, filgħodu;
+# languagephrases.com, "Telling Time In Maltese Language"; Unicode CLDR 47, mt
+# ca-gregorian.json, dayPeriods.format.wide.
+filgħodu
+am

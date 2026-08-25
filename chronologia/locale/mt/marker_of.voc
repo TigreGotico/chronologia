@@ -1,0 +1,6 @@
+# ta', the genitive linker, which stands between the day of the month and the
+# month name in the standard Maltese date ("15 ta' Awwissu").  The tokenizer
+# drops the apostrophe.  Unicode CLDR 47, mt ca-gregorian.json, dateFormats
+# long "d 'ta'' MMMM y"; en.wiktionary.org, ta'.
+ta'
+ta

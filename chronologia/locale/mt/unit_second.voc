@@ -1,0 +1,5 @@
+# sekonda, plural sekondi.  A Romance loan, so it takes no dual.  Unicode CLDR
+# 47, mt dateFields.json, whose second patterns read "{0} sekondi" at the two
+# count.
+sekonda
+sekondi

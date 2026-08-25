@@ -1,0 +1,7 @@
+# The linker written onto a numeral from eleven upward, which puts the counted
+# noun back in the singular ("ħdax-il jum", "tlettax-il raġel").  The
+# tokenizer shears the hyphen, so it arrives as its own token and the counted
+# orders take it as an optional connector.  en.wiktionary.org,
+# Module:number_list/data/mt ("Numbers 11-19 use the suffix -il in construct
+# forms"); malteseforbeginners.blogspot.com, "The Numbers (In-Numri)".
+il

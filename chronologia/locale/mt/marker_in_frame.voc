@@ -1,0 +1,7 @@
+# The periphrastic frame that opens a future offset.  CLDR spells it "fi
+# żmien" ("within [the] time") for year, day and hour and "sa" ("up to") for
+# week and minute, with month using both; the frame is preposed and the
+# direction word ohra trails the unit.  Unicode CLDR 47, mt dateFields.json,
+# relativeTime-type-future.
+fi żmien
+sa

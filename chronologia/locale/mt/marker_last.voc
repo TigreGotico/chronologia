@@ -1,0 +1,7 @@
+# The suppletive phrases CLDR gives for the period just past: "l-oħra" (the
+# other) for the year, "li għadda" for the masculine month and for a weekday,
+# "li għaddiet" for the feminine week.  All trail the noun.  Unicode CLDR 47,
+# mt dateFields.json, relative-type--1.
+l-oħra
+li għadda
+li għaddiet
