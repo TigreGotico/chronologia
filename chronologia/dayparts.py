@@ -389,6 +389,13 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (18, 0), "hr", _cldr("hr")),
     _p("evening", (18, 0), (21, 0), "hr", _cldr("hr")),
     _p("night", (21, 0), (4, 0), "hr", _cldr("hr")),
+    # sr: the chart's rows land on the same clock hours as chronologia's own
+    # English default (06/12/18/21), unlike hr's morning opening two hours
+    # earlier -- a coincidence of the source, not a shortcut taken here.
+    _p("morning", (6, 0), (12, 0), "sr", _cldr("sr")),
+    _p("afternoon", (12, 0), (18, 0), "sr", _cldr("sr")),
+    _p("evening", (18, 0), (21, 0), "sr", _cldr("sr")),
+    _p("night", (21, 0), (6, 0), "sr", _cldr("sr")),
     # sl
     _p("morning", (6, 0), (12, 0), "sl", _cldr("sl")),
     _p("afternoon", (12, 0), (18, 0), "sl", _cldr("sl")),
