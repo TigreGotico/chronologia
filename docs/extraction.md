@@ -54,7 +54,7 @@ no bundle raises `NotImplementedError` naming the missing locale.
 | `ka` Georgian | `kab` Kabyle | `lt` Lithuanian | `ms` Malay | `mwl` Mirandese |
 | `nb` Norwegian Bokmål | `nl` Dutch | `nn` Norwegian Nynorsk | `oc` Occitan | `pl` Polish |
 | `pt` Portuguese | `ro` Romanian | `ru` Russian | `sk` Slovak | `sl` Slovenian |
-| `sr` Serbian | `sv` Swedish | `tr` Turkish | `uk` Ukrainian | |
+| `sr` Serbian | `sv` Swedish | `tr` Turkish | `uk` Ukrainian | `vi` Vietnamese |
 
 English carries the widest grammar; coverage of the more specialised
 constructions (regnal years, classical Roman date formulas, deep-time eras)

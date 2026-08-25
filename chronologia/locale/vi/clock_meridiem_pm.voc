@@ -1,0 +1,7 @@
+# chiều is the afternoon band (12:00-18:00), tối the evening one
+# (18:00-21:00), and trưa the noon point; all three put the hour they
+# follow after midday.
+# Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.
+chiều
+tối
+trưa

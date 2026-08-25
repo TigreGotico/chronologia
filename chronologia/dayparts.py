@@ -460,6 +460,13 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (14, 0), "ms", _cldr("ms")),
     _p("evening", (14, 0), (19, 0), "ms", _cldr("ms")),
     _p("night", (19, 0), (0, 0), "ms", _cldr("ms")),
+    # vi: the morning opens at 04:00 and the night from 21:00 wraps to it.
+    # CLDR's noon point (trưa, 12:00) falls inside the afternoon band and adds
+    # no boundary of its own, so none is invented.
+    _p("morning", (4, 0), (12, 0), "vi", _cldr("vi")),
+    _p("afternoon", (12, 0), (18, 0), "vi", _cldr("vi")),
+    _p("evening", (18, 0), (21, 0), "vi", _cldr("vi")),
+    _p("night", (21, 0), (4, 0), "vi", _cldr("vi")),
     # ka: the morning opens at 05:00 and the night from 21:00 wraps to it.
     _p("morning", (5, 0), (12, 0), "ka", _cldr("ka")),
     _p("afternoon", (12, 0), (18, 0), "ka", _cldr("ka")),
