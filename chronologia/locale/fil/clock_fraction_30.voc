@@ -1,0 +1,10 @@
+# medya, the half in the Spanish-lexified clock, which attaches ADDITIVELY to
+# the hour already named: "alas otso y medya ng gabi" == 20:30 and "alas
+# kuwatro y medya ng hapon" == 16:30, both worked examples in the source.
+# That is the opposite direction from the Continental-Germanic bare half, so
+# the locale sets bare_half_past rather than bare_half_to.  The source spells
+# the word med'ya/mediya; the apostrophe form is not shipped because the
+# tokenizer would shear it.  medya has no Wiktionary Tagalog entry -- the
+# citation is the worked clock examples alone.  en.wikipedia.org, "Date and time notation in the Philippines".
+medya
+mediya

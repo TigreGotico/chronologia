@@ -1,0 +1,5 @@
+# semana, the Spanish-derived week noun.  The native week word, linggo, is
+# NOT shipped as a unit: it is also the name of Sunday, and no source gives a
+# disambiguator, so a counted "dalawang linggo" refuses rather than picking a
+# sense (marker_weekday_counted_ambiguous.voc).  en.wiktionary.org, semana.
+semana

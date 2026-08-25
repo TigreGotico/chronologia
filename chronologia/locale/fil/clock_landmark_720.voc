@@ -1,0 +1,5 @@
+# tanghali, "noon".  tanghaling-tapat is CLDR's wide label for the same
+# point; only the bare noun is shipped, the attributive -ng form being a
+# linker inflection rather than a separate surface.  en.wiktionary.org, tanghali;
+# Unicode CLDR 47, fil.
+tanghali

@@ -1,0 +1,7 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale fil, transcribed
+# in chronologia/dayparts.py as the night band (18:00-00:00).  Surface: gabi,
+# "evening/night".  CLDR fil labels BOTH its evening band (16:00-18:00) and
+# its night band with gabi; the word is bound to night alone, the wider of
+# the two, and the evening band ships no surface rather than a second reading
+# of one word.  en.wiktionary.org, gabi.
+gabi

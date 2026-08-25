@@ -467,6 +467,15 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (18, 0), "vi", _cldr("vi")),
     _p("evening", (18, 0), (21, 0), "vi", _cldr("vi")),
     _p("night", (21, 0), (4, 0), "vi", _cldr("vi")),
+    # fil: CLDR's two morning bands are collapsed as everywhere else, which
+    # also sidesteps their labelling -- CLDR fil names 00:00-06:00 "ng umaga"
+    # and 06:00-12:00 "madaling-araw", the reverse of the two words' ordinary
+    # senses.  The evening band ships no surface: CLDR gives "gabi" for both
+    # it and the night.
+    _p("morning", (0, 0), (12, 0), "fil", _cldr("fil")),
+    _p("afternoon", (12, 0), (16, 0), "fil", _cldr("fil")),
+    _p("evening", (16, 0), (18, 0), "fil", _cldr("fil")),
+    _p("night", (18, 0), (0, 0), "fil", _cldr("fil")),
     # ka: the morning opens at 05:00 and the night from 21:00 wraps to it.
     _p("morning", (5, 0), (12, 0), "ka", _cldr("ka")),
     _p("afternoon", (12, 0), (18, 0), "ka", _cldr("ka")),
