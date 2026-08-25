@@ -1,0 +1,12 @@
+# Declension: en.wiktionary.org.  A counted noun surfaces in more than one
+# form here.  After "pirms"/"pēc" it is the genitive singular when the numeral
+# ends in 1 (and is not 11) and the dative plural otherwise ("pirms gada",
+# "pirms 11 gadiem").  A bare count admits two registers -- formal genitive
+# plural after 11-19 and the round tens, colloquial nominative -- and both ship,
+# because nothing in the input says which register the writer used.
+desmitgade
+desmitgades
+desmitgažu
+desmitgadēm
+desmitgadi
+desmitgadē
