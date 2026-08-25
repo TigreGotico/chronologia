@@ -1,0 +1,5 @@
+# "ke-" makes a numeral ordinal ("abad ke-20", "bulan kelima").  A hyphen is
+# required before digits and omitted before a spelled numeral; the tokenizer
+# splits the hyphenated form into this prefix plus the numeral.
+# en.wiktionary.org, https://en.wiktionary.org/wiki/ke-.
+ke

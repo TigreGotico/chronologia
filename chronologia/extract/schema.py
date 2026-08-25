@@ -123,6 +123,7 @@ SLOT_VOCAB_ATTR: Dict[str, str] = {
     "EVENT": "solar_events",
     "SOLARQUAL": "solar_quals",
     "CMUNIT": "scope_units",
+    "DCUNIT": "scope_units",
     "CYCLE_DAY": "cycle_positions",
     "ERANAME": "regnal_names",
     "ANCHOR_DAY": "roman_anchors",

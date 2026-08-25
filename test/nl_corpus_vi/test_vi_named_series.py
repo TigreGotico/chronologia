@@ -2,12 +2,12 @@
 
 ``thứ hai`` is Monday and, read compositionally, "the second".  Georgian faces
 the same shape with კვირა (Sunday and week) and settles it with a veto: a
-count in front of the word cancels the weekday reading.  Vietnamese needs no
-such veto, because the ordinal reading is never reachable -- the locale ships
-no ordinal series at all, so ``thứ`` plus a number populates the weekday slot
-and nothing else, and no construction puts a count in front of it.  Both
-halves of that are pinned here, so the day anyone adds ordinals this file says
-what has to be reconsidered.
+count in front of the word cancels the weekday reading.  Vietnamese settles it
+by LENGTH instead, because ``thứ`` is equally the ordinal marker: a weekday
+name is ``thứ`` plus exactly one numeral word, so a numeral that runs longer
+is an ordinal and never a day.  ``thứ hai`` is Monday, ``thứ hai mươi`` is the
+twentieth, and a count in front of either still needs no veto -- ``thứ hai``
+names no unit, so the count simply stays in the remainder.
 
 ``hôm kia`` and ``ngày kia`` are the sharper problem: a minimal pair, both
 closing on ``kia``, pointing two days in OPPOSITE directions.  Only the head
@@ -40,11 +40,22 @@ def test_a_weekday_span_is_one_whole_day(text):
 
 
 @pytest.mark.parametrize("text", ["thứ nhất", "thứ mười", "thứ mười hai"])
-def test_no_ordinal_series_ships(text):
+def test_a_bare_ordinal_names_no_date(text):
     """thứ nhất is "first" and thứ mười is "tenth", both well formed and
-    neither a weekday -- there are only six numbered days.  With no ordinal
-    vocabulary they resolve to nothing, which is the honest answer; inventing
-    a reading here is what would make the weekday collision real."""
+    neither a weekday -- there are only six numbered days.  A bare ordinal
+    names no period on its own, so it resolves to nothing; it takes a scope
+    noun beside it ("thế kỷ thứ hai mươi") to name one."""
+    assert parse(text) is None
+
+
+@pytest.mark.parametrize("text", [
+    "thứ hai mươi", "thứ hai mươi mốt", "thứ ba mươi", "thứ hai mươi lăm",
+])
+def test_a_longer_numeral_after_thu_is_an_ordinal_not_a_weekday(text):
+    """The collision the length rule settles.  Every one of these opens with
+    the two words that spell Monday, and reading Monday out of them would
+    answer a specific day for "the twentieth" and leave the rest of the
+    numeral in the remainder.  None of them is a date on its own."""
     assert parse(text) is None
 
 
@@ -105,3 +116,15 @@ def test_april_uses_the_positional_four(text, month):
 
 def test_thang_bon_is_not_a_month():
     assert parse("tháng bốn") is None
+
+
+@pytest.mark.parametrize("text,month", [
+    ("tháng mười hai", 12),
+    ("tháng 12", 12),
+    ("tháng mười một", 11),
+])
+def test_a_longer_numeral_after_thang_still_names_its_month(text, month):
+    """The same length rule runs over the month head, where the long numeral
+    IS the name: CLDR spells every month in digits too, so December reads the
+    same written out as it does as "tháng 12"."""
+    assert start(text).month == month

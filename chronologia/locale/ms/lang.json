@@ -73,6 +73,11 @@
         "YEAR HOLIDAY",
         "HOLIDAY"
       ]
+    },
+    "decade_ref": {
+      "orders": [
+        "DCUNIT DNUM"
+      ]
     }
   },
   "conventions": {
@@ -108,7 +113,7 @@
         "SEASON REL_MARKER"
       ],
       "scoped_ordinal": [
-        "CMUNIT ORD"
+        "CMUNIT ordinal_prefix? ORD"
       ]
     }
   }

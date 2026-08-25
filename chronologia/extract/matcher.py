@@ -334,6 +334,13 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         # ordinal ("século XII", "secolo XII") binds this, never a plain unit
         # like "anno"/"semana" (which would hijack a year or ISO-week reading)
         return spec.scope_units.get(token.text) in ("century", "millennium")
+    if name == "DCUNIT":
+        # a DECADE scope unit only -- the head of the decade-naming phrase
+        # ("dekade 1990", "thập kỷ 1990") in the languages that frame a decade
+        # this way instead of pluralising the numeral.  Restricted to decade
+        # words for the same reason CMUNIT is restricted to century and
+        # millennium: a century word here would read "abad 1990" as a decade.
+        return spec.scope_units.get(token.text) == "decade"
     if name == "SCOPE_UNIT":
         # the outer scope of an ordinal ("the third CENTURY") is never a
         # sub-day unit -- excluding hour/minute keeps "15 uur"/"15 uhr" a
