@@ -1,0 +1,13 @@
+# Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.
+# minute: displayName "хвіліна" and the four plural forms of the
+# relativeTime patterns (хвіліну / хвіліны / хвілін).  NOT the Russian
+# cognate "мінута" -- Belarusian names the minute хвіліна.
+хвіліна
+хвіліны
+хвіліне
+хвіліну
+хвілінай
+хвілін
+хвілінам
+хвілінах
+хвілінамі

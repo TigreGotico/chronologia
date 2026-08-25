@@ -1,0 +1,8 @@
+# The calendar quarter.  CLDR 47 dateFields, quarter: displayName "квартал",
+# and the relative-type-* wording puts it in the locative behind у ("у мінулым
+# квартале"), so that form is listed alongside the citation forms.
+квартал
+квартала
+квартале
+кварталы
+кварталаў
