@@ -1,0 +1,97 @@
+{
+  "tokenizer": {
+    "decimal_comma": true,
+    "split_contractions": false,
+    "ordinal_dot": false,
+    "dotted_date": true
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "NUM UNIT MARKER",
+        "MARKER NUM UNIT",
+        "QUANT UNIT MARKER",
+        "MARKER QUANT UNIT",
+        "MARKER USG",
+        "USG MARKER"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "DAY MONTH YEAR year_word",
+        "DAY MONTH YEAR?",
+        "MONTH DAY? YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK MERIDIEM? ZONE?",
+        "CLOCKDIR CLOCKMIN minut? HOUR MERIDIEM? ZONE?",
+        "CLOCKDIR MINUTE minut? HOUR MERIDIEM? ZONE?",
+        "CLOCKDIR FRACTION HOUR MERIDIEM? ZONE?",
+        "FRACTION na HOUR MERIDIEM? ZONE?",
+        "FRACTION HOUR MERIDIEM? ZONE?",
+        "at HOUR oclock MERIDIEM? ZONE?",
+        "at HOUR MERIDIEM? ZONE?",
+        "HOUR oclock MERIDIEM? ZONE?",
+        "at? LANDMARK ZONE?"
+      ],
+      "prefer_future": true
+    },
+    "year_ref": {
+      "orders": [
+        "of GYEAR year_word?",
+        "GYEAR year_word",
+        "GYEAR"
+      ]
+    },
+    "quarter_ref": {
+      "orders": [
+        "ORD quarter_word YEAR?",
+        "of REL_MARKER quarter_word",
+        "REL_MARKER quarter_word",
+        "quarter_word REL_MARKER"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": true,
+    "hemisphere": "north",
+    "prefer_future": true,
+    "bare_half_to": true,
+    "bare_quarter_to": true,
+    "toward_hour_12h": true
+  },
+  "quantifiers": {
+    "1": [
+      "адзін",
+      "адна",
+      "адно"
+    ]
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "hook": "chronologia.extract.numfold_be:fold_be",
+  "base_grammar": {
+    "override": {
+      "scoped_ordinal": [
+        "article? ORD WEEKDAY MONTH YEAR?",
+        "article? ORD UNIT MONTH YEAR?",
+        "article? ordlast WEEKDAY MONTH YEAR?",
+        "article? ORD WEEKDAY GYEAR? year_word",
+        "article? ordlast WEEKDAY GYEAR? year_word",
+        "article? PART ORD SCOPE_UNIT",
+        "article? ORD SCOPE_UNIT"
+      ]
+    },
+    "extend": {
+      "rel_period": [
+        "of REL_MARKER UNIT",
+        "na REL_MARKER UNIT"
+      ]
+    }
+  }
+}

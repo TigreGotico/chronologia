@@ -1,0 +1,16 @@
+# Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.
+# CLDR relative-type--1 spells the previous period with "мінулы" in the
+# locative ("у мінулым месяцы", "на мінулым тыдні"), so the adjective is
+# listed in the paradigm those phrases use, not in the citation form alone.
+# Declension: en.wiktionary.org, "мінулы" (hard-stem adjective).
+мінулы
+мінулага
+мінуламу
+мінулым
+мінулая
+мінулай
+мінулую
+мінулае
+мінулыя
+мінулых
+мінулымі

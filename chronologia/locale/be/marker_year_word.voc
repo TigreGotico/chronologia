@@ -1,0 +1,7 @@
+# Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.
+# dateFormats.long is "d MMMM y 'г'." -- the year word, spelled out or
+# abbreviated to the standard skarot "г".
+год
+года
+годзе
+г
