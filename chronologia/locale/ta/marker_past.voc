@@ -1,0 +1,5 @@
+# Unicode CLDR, locale ta, dateFields.json, field the ago patterns of every unit.
+# முன் "before" closes the ago pattern, following the dative-marked unit
+# ({0} ஆண்டிற்கு முன்).  It is shipped only in that trailing role, because
+# no source consulted attested it as a free-standing preposition.
+முன்

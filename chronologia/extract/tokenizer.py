@@ -325,7 +325,18 @@ class Tokenizer:
         # Thai digits U+0E50-0E59 are deliberately excluded: a currency
         # symbol and a bullet are not letters, and the numeric rule below
         # already reads the digits.
-        letter = r"(?:[^\W\d]|[ऀ-ःऺ-ॏ॑-ॗॢॣ]|[\u0e31\u0e34-\u0e3a\u0e47-\u0e4e])"
+        # Tamil writes a syllable the same way -- ஒன்பதரை is ஒ + ன + ◌் + ப +
+        # த + ர + ◌ை -- so without its marks in the letter class the word
+        # arrives as the bare-consonant fragments "ஒன", "பதர".  Ranges are the
+        # Tamil block's mark subranges (Unicode 16.0 chart U+0B80): U+0B82
+        # anusvara, U+0BBE-0BCD the vowel signs and the virama, and U+0BD7 the
+        # au length mark.  U+0B83 aytham is category Lo and already a letter.
+        # The Tamil digits U+0BE6-0BEF and the day/month/year/rupee signs
+        # U+0BF3-0BFA are excluded: the numeric rule below already reads the
+        # digits, and a currency or bookkeeping symbol is not a letter.
+        letter = (r"(?:[^\W\d]|[ऀ-ःऺ-ॏ॑-ॗॢॣ]"
+                  r"|[\u0e31\u0e34-\u0e3a\u0e47-\u0e4e]"
+                  r"|[\u0b82\u0bbe-\u0bcd\u0bd7])")
         zwj = r"(?:[‌‍׳״]" + letter + r"+)*"
         # a geresh can also be the mark on its OWN, trailing the letters
         # instead of sitting between two of them: that is how a SINGLE-LETTER

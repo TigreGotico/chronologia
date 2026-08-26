@@ -1,0 +1,6 @@
+# Band boundaries: Unicode CLDR supplemental dayPeriodRuleSet for locale
+# ta, transcribed in chronologia/dayparts.py.  Surface: the CLDR
+# dayPeriod name (ca-gregorian.json, dayPeriods.format.wide).
+# The pre-dawn band, 03:00-05:00 -- a band of its own, not a
+# synonym for காலை.
+அதிகாலை

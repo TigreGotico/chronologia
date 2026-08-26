@@ -1,0 +1,5 @@
+# நண்பகல் "noon", the 12:00 point of the CLDR ruleset for ta.  It falls on
+# the மதியம் boundary and draws no band of its own, so it ships as the
+# landmark instead.  No midnight counterpart ships: no source consulted for
+# this locale gave that label.
+நண்பகல்

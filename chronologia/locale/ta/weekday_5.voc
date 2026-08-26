@@ -1,0 +1,5 @@
+# Unicode CLDR, locale ta, gregorian wide weekday names
+# (cldr-json, cldr-dates-full/main/ta/ca-gregorian.json).
+# சனி is Saturday and also Saturn.  CLDR gives the same surface for the
+# wide and the abbreviated form, so no separate abbreviation ships.
+சனி

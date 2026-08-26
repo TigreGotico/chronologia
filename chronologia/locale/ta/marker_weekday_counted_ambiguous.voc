@@ -1,0 +1,10 @@
+# திங்கள் names Monday, the moon, the month and -- obsoletely -- the week,
+# so a COUNT before it ("இரண்டு திங்கள்") can only be a span of months;
+# nobody counts Mondays that way.  This locale reads the month unit as
+# மாதம், CLDR's own wording, and ships no month sense for திங்கள், so the
+# count vetoes the weekday reading instead: answering "Monday" to "two
+# months" would give a caller who asked for a duration one specific day.
+# Declining the false weekday reading is not the same as asserting the
+# unshipped month one, which stays unavailable.
+# en.wiktionary.org, திங்கள்
+திங்கள்

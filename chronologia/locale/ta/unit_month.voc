@@ -1,0 +1,12 @@
+# Unicode CLDR, locale ta, dateFields.json, field month.
+# A counted noun is CASE-MARKED in Tamil, not bare: the ago pattern is
+# the DATIVE unit plus முன், and the in-N pattern is the LOCATIVE on
+# the unit with no preposition at all.  Both case forms are unit
+# surfaces in their own right, and both are CLDR's own wording.
+# மாதம் is the month unit.  திங்கள் also means "month", and is not
+# shipped here: it is Monday first and the collision is unresolvable
+# inside a phrase, so the unit reading of that word is refused.
+மாதம்
+மாதங்கள்
+மாதத்துக்கு
+மாதங்களுக்கு

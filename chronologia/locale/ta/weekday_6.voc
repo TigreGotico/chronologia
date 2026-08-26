@@ -1,0 +1,5 @@
+# Unicode CLDR, locale ta, gregorian wide weekday names
+# (cldr-json, cldr-dates-full/main/ta/ca-gregorian.json).
+# ஞாயிறு is Sunday and also the formal word for the sun
+# (en.wiktionary.org, ஞாயிறு).
+ஞாயிறு

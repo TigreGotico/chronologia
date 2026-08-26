@@ -1,0 +1,12 @@
+# Unicode CLDR, locale ta, dateFields.json, field day.
+# A counted noun is CASE-MARKED in Tamil, not bare: the ago pattern is
+# the DATIVE unit plus முன், and the in-N pattern is the LOCATIVE on
+# the unit with no preposition at all.  Both case forms are unit
+# surfaces in their own right, and both are CLDR's own wording.
+# The plural stem is suppletive in shape (நாள் -> நாட்கள்).  நாள் and
+# நாளை (tomorrow) differ by one grapheme and both stand next to a
+# numeral, so the day-word file carries only the unit senses.
+நாள்
+நாட்கள்
+நாளுக்கு
+நாட்களுக்கு
