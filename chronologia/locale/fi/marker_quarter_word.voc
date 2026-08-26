@@ -1,4 +1,11 @@
+# CLDR 47 names the quarter two ways in the relative phrases -- the long
+# "neljännesvuonna" and the short "neljänneksenä", both essive:
+# "viime neljännesvuonna", "viime neljänneksenä"
+# (cldr-dates-full/main/fi/dateFields.json, quarter and quarter-short
+# relative-type--1/0/1).
 vuosineljännes
 neljännes
 vuosineljänneksellä
 neljänneksellä
+neljännesvuonna
+neljänneksenä

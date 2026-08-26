@@ -1,3 +1,8 @@
+# The locative "kwartale" is the case the relative-quarter phrases take:
+# CLDR 47 gives "w zeszłym kwartale", "w tym kwartale", "w przyszłym
+# kwartale" (cldr-dates-full/main/pl/dateFields.json, quarter
+# relative-type--1/0/1).
 kwartał
 kwartału
+kwartale
 kwartały

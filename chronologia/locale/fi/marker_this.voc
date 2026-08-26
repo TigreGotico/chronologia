@@ -1,2 +1,9 @@
+# The demonstrative agrees in case with the unit noun it modifies, so the
+# relative-period phrases need the inessive and adessive beside the essive.
+# CLDR 47 attests all three for fi: "tänä vuonna", "tässä kuussa",
+# "tällä viikolla" (cldr-dates-full/main/fi/dateFields.json,
+# year/month/week relative-type-0).
 tämä
 tänä
+tässä
+tällä

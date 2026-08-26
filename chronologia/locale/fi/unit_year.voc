@@ -1,3 +1,7 @@
+# The essive "vuonna" is the case the relative-year phrases take: CLDR 47
+# gives "viime vuonna", "tänä vuonna", "ensi vuonna" for the fi year field
+# (cldr-dates-full/main/fi/dateFields.json, year relative-type--1/0/1).
 vuosi
 vuotta
 vuoden
+vuonna
