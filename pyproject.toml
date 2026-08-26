@@ -47,9 +47,12 @@ chronologia = "chronologia.__main__:main"
 # backend the build runs uninsulated and which the interpreters that no
 # longer bundle it would otherwise lack, and it reads pyproject.toml, so it
 # needs the `tomli` backport on the one interpreter without stdlib tomllib;
+# pytest-xdist spreads the suite over every core, which is what keeps a
+# six-figure test count inside a CI job's wall-clock budget;
 # the rest of the suite runs on pytest alone.
 test = [
     "pytest",
+    "pytest-xdist>=3.0",
     "hypothesis>=6.0",
     "dateparser>=1.1",
     "build>=1.0",
@@ -60,6 +63,7 @@ test = [
 [dependency-groups]
 dev = [
     "pytest",
+    "pytest-xdist>=3.0",
     "hypothesis>=6.0",
     "dateparser>=1.1",
     "build>=1.0",
