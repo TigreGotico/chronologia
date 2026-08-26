@@ -1,0 +1,5 @@
+# Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field day.
+# วัน is also the prefix of every weekday name; the segmenter
+# takes the longest surface, so วันจันทร์ reads as Monday and
+# วันนี้ as today, never as this noun plus a leftover.
+วัน

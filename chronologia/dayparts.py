@@ -518,6 +518,20 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (14, 0), "ms", _cldr("ms")),
     _p("evening", (14, 0), (19, 0), "ms", _cldr("ms")),
     _p("night", (19, 0), (0, 0), "ms", _cldr("ms")),
+    # th: five bands under their own names rather than collapsed, for the same
+    # reason Swahili's and Macedonian's are.  CLDR draws two afternoon rows
+    # (12:00-13:00 and 13:00-16:00) and labels both บ่าย, so they are one band;
+    # the two evening rows are NOT, because they carry different words -- เย็น
+    # is the late afternoon and ค่ำ the hours after dark -- and a single
+    # "evening" spanning both would answer 16:00-21:00 for a word that means
+    # 18:00-21:00.  The night wraps 21:00 round to dawn.  CLDR's เที่ยง and
+    # เที่ยงคืน points add no boundary of their own and ship as clock
+    # landmarks instead.
+    _p("chao", (6, 0), (12, 0), "th", _cldr("th")),
+    _p("bai", (12, 0), (16, 0), "th", _cldr("th")),
+    _p("yen", (16, 0), (18, 0), "th", _cldr("th")),
+    _p("kham", (18, 0), (21, 0), "th", _cldr("th")),
+    _p("klangkhuen", (21, 0), (6, 0), "th", _cldr("th")),
     # vi: the morning opens at 04:00 and the night from 21:00 wraps to it.
     # CLDR's noon point (trưa, 12:00) falls inside the afternoon band and adds
     # no boundary of its own, so none is invented.

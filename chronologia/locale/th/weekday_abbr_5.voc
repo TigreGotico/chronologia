@@ -1,0 +1,6 @@
+# Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.abbreviated.
+# The prefixless form. Bound only where a marker or a date frames it:
+# จันทร์ is equally the moon and อาทิตย์ equally the week, so a bare one
+# names no day. CLDR's own relative-time data writes จันทร์ที่แล้ว for
+# "last Monday", which is why the short form must read at all.
+เสาร์
