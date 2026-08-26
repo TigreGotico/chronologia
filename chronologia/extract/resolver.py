@@ -1715,11 +1715,20 @@ class Resolver:
             return Resolution(DateSpan(span.start, span.end),
                               self._consumed(match))
         year_tok = match.slots.get("GYEAR")
-        if year_tok is not None:
-            # pivot a two-digit / apostrophe year ("the first half of '99")
+        if year_tok is not None or "SCOPE_UNIT" not in match.slots:
+            # ``year_tok is None`` here means a bare ``year_word`` order with
+            # its optional ``GYEAR`` absent ("the first half of the year"):
+            # ``year_word`` is a literal connector, never a slot, and the
+            # only orders binding neither MONTH nor GYEAR nor SCOPE_UNIT are
+            # those, so reaching here already identifies them.  A bare year
+            # word names the anchor's OWN calendar year, the same reading
+            # ``_resolve_scoped_ordinal``'s year_word branch takes.
+            #
+            # A two-digit / apostrophe year ("the first half of '99") pivots
             # through the anchor-relative window like the rest of the year
-            # layer; reading it raw resolved to year 99 AD.
-            y = _pivot_two_digit_year(year_tok, anchor.year)
+            # layer; read raw it would name year 99 AD.
+            y = (_pivot_two_digit_year(year_tok, anchor.year)
+                 if year_tok is not None else anchor.year)
             if n == 1:
                 span = DateSpan(AstroDate(y, 1, 1), AstroDate(y, 7, 1))
             else:

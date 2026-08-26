@@ -142,7 +142,8 @@
     "marker_position": "post",
     "extend": {
       "half_period": [
-        "half NUM of? GYEAR"
+        "half NUM of? GYEAR",
+        "half NUM of? article? year_word GYEAR?"
       ]
     }
   }

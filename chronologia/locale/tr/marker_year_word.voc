@@ -1,0 +1,12 @@
+# Turkish noun "year" naming the year a period belongs to ("2020 yılının ilk
+# yarısı" -- the first half of the year 2020).  TDK Güncel Türkçe Sözlük: yıl =
+# dünyanın güneş çevresinde bir kez dönmesi için geçen süre.  https://sozluk.gov.tr
+# The possessed forms carry the regular 3rd-person possessive -(s)I ("yılı")
+# and the genitive on top of it ("yılının"), written as one word -- the
+# tokenizer only splits an apostrophe-marked suffix, so each attested form is
+# listed on its own.  TDK, İmla Kılavuzu: iyelik eki -(s)I, ilgi durumu eki
+# -(n)In with vowel harmony.
+yıl
+yılı
+yılın
+yılının
