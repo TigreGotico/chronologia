@@ -1,0 +1,5 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.
+# relative-type-1: "mwaka ujao" / "mwezi ujao" for class 3/4, "wiki ijayo" and
+# "<weekday> ijayo" for class 9/10.
+ujao
+ijayo

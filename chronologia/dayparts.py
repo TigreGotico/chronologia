@@ -432,6 +432,20 @@ _LANGUAGES: List[DayPart] = [
     _p("pretpladne", (10, 0), (12, 0), "mk", _cldr("mk")),
     _p("popladne", (12, 0), (18, 0), "mk", _cldr("mk")),
     _p("navecher", (18, 0), (0, 0), "mk", _cldr("mk")),
+    # sw: five bands, kept under their own names rather than collapsed, for the
+    # same reason Macedonian's are -- alfajiri is the three hours before
+    # sunrise and asubuhi the five after it, so a single "morning" spanning
+    # both would answer 04:00-12:00 for a word that means 07:00-12:00.  The
+    # afternoon closes at 16:00 and the evening at 19:00, so the night is the
+    # long band from 19:00 round to dawn.  The noon and midnight points CLDR
+    # also lists are spelled "saa sita za mchana" and "saa sita za usiku" --
+    # sunrise-anchored clock readings -- and are NOT shipped as landmarks; see
+    # the Swahili clock refusal in locale/sw/unit_hour.voc.
+    _p("usiku", (19, 0), (4, 0), "sw", _cldr("sw")),
+    _p("alfajiri", (4, 0), (7, 0), "sw", _cldr("sw")),
+    _p("asubuhi", (7, 0), (12, 0), "sw", _cldr("sw")),
+    _p("mchana", (12, 0), (16, 0), "sw", _cldr("sw")),
+    _p("jioni", (16, 0), (19, 0), "sw", _cldr("sw")),
     # pl (afternoon "po poludniu" and night "w nocy" are multi-word: bands
     # shipped, no voc; morning "rano" and evening "wieczorem" carry surfaces).
     _p("morning", (6, 0), (12, 0), "pl", _cldr("pl")),
