@@ -71,7 +71,9 @@ at the apostrophe as a standalone token, so the genitive endings are registered
 as their own optional connector across the full vowel-harmony set — `nin`,
 `nın`, `nun`, `nün` and the vowel-final variants — cited to TDK's *İmla
 Kılavuzu*. `yarı` and `yarısı` are the period nouns and `yarım` is kept
-separate for the clock and quantifier path.
+separate for the clock and quantifier path. Naming the year outright works too
+— `2020 yılının ilk yarısı` — through the year noun `yıl`, whose possessed and
+genitive forms are written as one word and so are registered individually.
 
 **Fuzzy month parts** are postposed too: `haziran başı`, `haziran ortası`,
 `haziran sonu`.

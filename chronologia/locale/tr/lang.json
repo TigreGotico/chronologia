@@ -130,7 +130,8 @@
         "MONTH PART"
       ],
       "half_period": [
-        "GYEAR poss? NUM half"
+        "GYEAR poss? NUM half",
+        "GYEAR? year_word poss? NUM half"
       ],
       "weekday_ref": [
         "WEEKDAYFULL weekday_word",

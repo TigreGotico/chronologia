@@ -138,7 +138,8 @@
         "article? WEEKDAY ORD of MONTH YEAR?"
       ],
       "half_period": [
-        "half NUM of? GYEAR"
+        "half NUM of? GYEAR",
+        "half NUM of? article? year_word GYEAR?"
       ]
     }
   }
