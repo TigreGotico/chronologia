@@ -3,12 +3,21 @@
 Per-holiday gold DATES are frozen in the per-jurisdiction data files under
 ``test/holiday_golds/`` (walked, structurally enforced, and provenance-tiered by
 test_holiday_golds.py). This module carries only the differential machinery each
-country module reuses to compare our national set against the independent
-reference package.
+country module reuses to compare our national set against the frozen reference
+snapshot in ``test/holiday_reference/national.json``.
 """
 from __future__ import annotations
 
+import json
+import os
+
 from chronologia import holidays_for
+
+_REFERENCE = os.path.join(os.path.dirname(__file__), "holiday_reference",
+                          "national.json")
+
+with open(_REFERENCE, encoding="utf-8") as _fh:
+    REFERENCE_NATIONAL = json.load(_fh)
 
 
 def national_public_dates(jurisdiction: str, year: int):
@@ -18,12 +27,9 @@ def national_public_dates(jurisdiction: str, year: int):
             if h.subdiv is None and "public" in h.categories}
 
 
-def reference_dates(jurisdiction: str, year: int, observed: bool = True):
-    """The vacanza/holidays national set as {(month, day)} (differential ref)."""
-    import holidays as _pkg
-    return {(d.month, d.day)
-            for d in _pkg.country_holidays(jurisdiction, years=year,
-                                           observed=observed)}
+def reference_dates(jurisdiction: str, year: int):
+    """The frozen reference national set as {(month, day)} (differential ref)."""
+    return {(m, d) for m, d in REFERENCE_NATIONAL[jurisdiction][str(year)]}
 
 
 def assert_national_differential(jurisdiction, years, expected_disagreements):

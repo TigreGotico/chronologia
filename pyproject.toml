@@ -43,21 +43,32 @@ chronologia = "chronologia.__main__:main"
 # test/test_fuzz.py) needs Hypothesis; the differential benchmark
 # (benchmark/) needs dateparser and dateutil as comparison engines
 # (dateutil is already a runtime dependency); test/test_packaging.py builds a
-# real wheel and imports it, so it needs `build`; the rest of the suite runs
-# on pytest alone.
+# real wheel and imports it, so it needs `build` plus `setuptools`, whose
+# backend the build runs uninsulated and which the interpreters that no
+# longer bundle it would otherwise lack, and it reads pyproject.toml, so it
+# needs the `tomli` backport on the one interpreter without stdlib tomllib;
+# pytest-xdist spreads the suite over every core, which is what keeps a
+# six-figure test count inside a CI job's wall-clock budget;
+# the rest of the suite runs on pytest alone.
 test = [
     "pytest",
+    "pytest-xdist>=3.0",
     "hypothesis>=6.0",
     "dateparser>=1.1",
     "build>=1.0",
+    "setuptools>=61",
+    "tomli>=2.0; python_version < '3.11'",
 ]
 
 [dependency-groups]
 dev = [
     "pytest",
+    "pytest-xdist>=3.0",
     "hypothesis>=6.0",
     "dateparser>=1.1",
     "build>=1.0",
+    "setuptools>=61",
+    "tomli>=2.0; python_version < '3.11'",
     "mypy",
 ]
 

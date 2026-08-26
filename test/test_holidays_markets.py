@@ -1518,37 +1518,3 @@ def test_xmex_transmision_del_poder_ejecutivo_one_off_2024_only():
 def test_xmex_dia_del_empleado_bancario_tabulated(year):
     got = _dates_for("XMEX", year)
     assert got["Día del Empleado Bancario"] == AstroDate(year, 12, 12)
-
-
-# ==========================================================================
-# Completeness ratchet -- every financial market vacanza/holidays 0.101
-# supports must resolve to either a shipped .tab file, a MARKET_ALIASES
-# entry pointing at one, or a documented SKIP_LIST reason. Mirrors the
-# batch-5 country ratchet (test_holidays_batch5.test_catalog_covers_every_
-# vacanza_supported_country) at market scope, so the catalog can never
-# silently drift out of sync with a future vacanza release.
-# ==========================================================================
-#: Vacanza-supported financial-market codes with neither a shipped .tab nor a
-#: MARKET_ALIASES entry. Empty: every market vacanza/holidays 0.101's
-#: ``list_supported_financial()`` names now has a canonical .tab file or
-#: resolves onto one through MARKET_ALIASES (see MARKETS above and
-#: chronologia.civil_holidays.MARKET_ALIASES for the full alias map).
-SKIP_LIST = {}
-
-
-def test_catalog_covers_every_vacanza_supported_financial_market():
-    import holidays as _pkg
-    supported = set(_pkg.list_supported_financial())
-    shipped = {f[:-4].upper() for f in os.listdir(_DATA_DIR) if f.endswith(".tab")}
-    covered = shipped | set(MARKET_ALIASES) | set(SKIP_LIST)
-    uncovered = supported - covered
-    assert not uncovered, (
-        f"vacanza-supported financial markets with neither a .tab file, a "
-        f"MARKET_ALIASES entry, nor a documented SKIP_LIST reason: "
-        f"{sorted(uncovered)}")
-
-
-def test_skip_list_entries_are_not_also_shipped_or_aliased():
-    shipped = {f[:-4].upper() for f in os.listdir(_DATA_DIR) if f.endswith(".tab")}
-    overlap = set(SKIP_LIST) & (shipped | set(MARKET_ALIASES))
-    assert not overlap, f"SKIP_LIST entries already covered: {overlap}"

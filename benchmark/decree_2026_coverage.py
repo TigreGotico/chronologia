@@ -1,5 +1,17 @@
-"""Ratchet: every decree rule vacanza/holidays 0.101 still publishes for 2026
-must carry a 2026 date in its own ``holiday_data/*.tab`` row.
+"""Coverage differential: decree rows vacanza/holidays publishes 2026 dates for.
+
+Every ``decree`` rule vacanza/holidays still publishes a 2026 date for should
+carry that date in its own ``holiday_data/*.tab`` row. This script re-derives,
+live, whether vacanza has a 2026 rendering matching each row's name, and reports
+the rows it has something to offer that the ``.tab`` file has not picked up.
+
+House rule: benchmark, don't assert. Comparing library against library needs the
+other library installed, so this lives here rather than in the test suite, and
+it reports and exits when the package is absent.
+
+Run it directly for a printed report::
+
+    python benchmark/decree_2026_coverage.py
 
 Context
 -------
@@ -14,12 +26,11 @@ its own ``name`` column against that package's per-country/per-market
 output.
 
 Rather than a static, hand-maintained skip list (which would silently rot as
-vacanza's own data changes release to release), this ratchet re-derives,
+vacanza's own data changes release to release), this report re-derives,
 live, whether vacanza actually has a 2026 rendering matching each row's name
-today. A row is only allowed to stay 2026-silent if this re-derivation
-independently agrees vacanza has nothing to offer it -- so the test fails
-loudly the day vacanza adds a forecast for a rule we haven't picked up, and
-also fails if the matching logic regresses. A small ``_SKIP`` still covers
+today. A row is only reported if that re-derivation says vacanza has something
+to offer it, so the report grows the day vacanza adds a forecast for a rule the
+catalog has not picked up. A small ``_SKIP`` still covers
 the handful of cases independently confirmed to be permanent (categories a
 country's vacanza class does not model at all, so no future release can add
 data for it) -- documented per entry, not a blanket exemption.
@@ -46,10 +57,13 @@ the bulk mechanical extraction:
 """
 import os
 import re
+import sys
 from collections import defaultdict
 
-import holidays
-import pytest
+try:
+    import holidays
+except ImportError:                             # reported by main(), not raised
+    holidays = None
 
 from chronologia import load_calendar
 from chronologia.civil_holidays import DecreeTableRule, _DATA_DIR
@@ -62,13 +76,12 @@ _VACANZA_CATS = {"bank": "BANK", "government": "GOVERNMENT", "school": "SCHOOL",
                  "christian": "CHRISTIAN", "catholic": "CATHOLIC",
                  "orthodox": "ORTHODOX", "hebrew": "HEBREW", "islamic": "ISLAMIC",
                  "hindu": "HINDU", "sabian": "SABIAN", "yazidi": "YAZIDI"}
-_DELIM = holidays.constants.HOLIDAY_NAME_DELIMITER
 _TRAILING_PAREN = re.compile(r"^(.*)\s\([^()]*\)$")
 _NUMBERED = re.compile(r"^(.*)\s\((\d+)\)$")
 _BILINGUAL_PART = re.compile(r"^(\w+):(.*)$")
 
 #: (country, subdiv, name) -> justification for staying 2026-silent even
-#: though this test's own live re-derivation cannot independently confirm it
+#: though this script's own live re-derivation cannot independently confirm it
 #: (usually because the confirmation itself needs the same category-support
 #: probe that already made the row unmatchable, so it is documented instead
 #: of re-derived to avoid circular reasoning).
@@ -119,8 +132,9 @@ def _get_source(jurisdiction, lang, subdiv, categories, years=(2026, 2027)):
 
 def _name_map(src):
     m = defaultdict(list)
+    delim = holidays.constants.HOLIDAY_NAME_DELIMITER
     for d, name in src.items():
-        for n in name.split(_DELIM):
+        for n in name.split(delim):
             m[n].append((d.year, d.month, d.day))
     return m
 
@@ -140,8 +154,9 @@ def _detect_language(jurisdiction, known_names):
         except Exception:
             continue
         names = set()
+        delim = holidays.constants.HOLIDAY_NAME_DELIMITER
         for d, n in src.items():
-            names.update(n.split(_DELIM))
+            names.update(n.split(delim))
         score = len(known_names & names)
         if score > best_score:
             best_score, best_lang = score, cand
@@ -205,19 +220,37 @@ def _decree_row_params():
     return out
 
 
-@pytest.mark.parametrize("country,subdiv,name,has_2026,categories,known_names",
-                          _decree_row_params())
-def test_decree_2024_2025_row_has_2026(country, subdiv, name, has_2026,
-                                        categories, known_names):
-    """Every 2024/2025-tabulated decree row must carry 2026, unless vacanza
-    itself has nothing to offer it (independently re-checked live) or it is
-    in the documented, permanently-justified ``_SKIP`` list."""
-    if has_2026:
-        return
-    if (country, subdiv, name) in _SKIP:
-        return
-    assert not _vacanza_has_2026_for(country, subdiv, categories, name,
-                                      known_names), (
-        f"{country}/{subdiv}/{name!r}: vacanza/holidays 0.101 now publishes "
-        f"a 2026 date for this rule but the .tab row wasn't extended -- "
-        f"add it")
+def missing_2026_rows():
+    """Decree rows with no 2026 date that vacanza does publish one for."""
+    out = []
+    for (country, subdiv, name, has_2026, categories,
+         known_names) in _decree_row_params():
+        if has_2026 or (country, subdiv, name) in _SKIP:
+            continue
+        if _vacanza_has_2026_for(country, subdiv, categories, name,
+                                 known_names):
+            out.append((country, subdiv, name))
+    return out
+
+
+def main():
+    if holidays is None:
+        print("holidays (vacanza) is not installed -- nothing to compare "
+              "against; install it to run this coverage differential.")
+        return 0
+    rows = missing_2026_rows()
+    print("chronologia x holidays decree 2026 coverage")
+    print("=" * 44)
+    if not rows:
+        print("\nevery 2024/2025-tabulated decree row vacanza has a 2026 "
+              "date for already carries it")
+        return 0
+    print(f"\nrows vacanza publishes 2026 for that the .tab file has not "
+          f"picked up ({len(rows)}):")
+    for country, subdiv, name in rows:
+        print(f"  {country}/{subdiv}/{name!r}")
+    return 0
+
+
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(main())

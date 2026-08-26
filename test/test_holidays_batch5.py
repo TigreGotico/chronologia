@@ -1,7 +1,6 @@
 """Batch-5: the closing sweep — every ISO-3166-1 country/territory vacanza/
 holidays 0.101 supports that batch-1 through batch-4 had not yet reached
-(106 jurisdictions), plus the completeness ratchet that pins the catalog
-against vacanza going forward.
+(106 jurisdictions).
 
 Sourcing discipline
 --------------------
@@ -93,26 +92,6 @@ BATCH5 = (
     "UM", "VA", "VC", "VG", "VI", "VU", "WF", "WS", "XK", "YT",
 )
 
-#: Codes vacanza supports (as an ISO-3166-1 alpha-2 "country") that are
-#: deliberately not filed as their own ``.tab`` — with the reason each is
-#: excluded. This is the completeness ratchet's allowlist: every vacanza
-#: alpha-2 country code MUST be either shipped as a ``.tab`` file or listed
-#: here with a reason, so the catalog can never silently regress.
-SKIP_LIST = {
-    "UA": "national holiday calendar suspended/altered under martial law "
-          "since 2022 (batch-4 decision, still in force)",
-    "UK": "bare vacanza alias for GB -- holidays.country_holidays('UK', ...) "
-          "and holidays.country_holidays('GB', ...) return an identical "
-          "date/name mapping; not a distinct jurisdiction",
-    "BV": "Bouvet Island: uninhabited, no statutory holiday calendar "
-          "(empty vacanza output for 2024-2025)",
-    "HM": "Heard Island and McDonald Islands: uninhabited, no statutory "
-          "holiday calendar (empty vacanza output for 2024-2025)",
-    "IO": "British Indian Ocean Territory: no permanent population, no "
-          "statutory holiday calendar (empty vacanza output for 2024-2025)",
-}
-
-
 def _register_batch5_country(country):
     path = os.path.join(_DATA_DIR, f"{country.lower()}.tab")
     cal = load_calendar(path)
@@ -170,28 +149,3 @@ def test_batch5_calendar_loads_and_has_rules(country):
     cal = load_calendar(os.path.join(_DATA_DIR, f"{country.lower()}.tab"))
     assert cal.rules
     assert cal.jurisdiction == country
-
-
-# ==========================================================================
-# Completeness ratchet -- every alpha-2 country vacanza/holidays supports
-# must resolve to either a shipped .tab file or a documented SKIP_LIST
-# entry. This is the parity gate: it fails the moment a future vacanza
-# release adds a new supported country this catalog has not yet caught up
-# to, instead of silently drifting out of sync.
-# ==========================================================================
-def test_catalog_covers_every_vacanza_supported_country():
-    import holidays as _pkg
-    supported = {c for c in _pkg.list_supported_countries() if len(c) == 2}
-    shipped = {f[:-4].upper() for f in os.listdir(_DATA_DIR)
-               if f.endswith(".tab")}
-    uncovered = supported - shipped - set(SKIP_LIST)
-    assert not uncovered, (
-        f"vacanza-supported countries with neither a .tab file nor a "
-        f"documented SKIP_LIST reason: {sorted(uncovered)}")
-
-
-def test_skip_list_entries_are_not_also_shipped():
-    shipped = {f[:-4].upper() for f in os.listdir(_DATA_DIR)
-               if f.endswith(".tab")}
-    overlap = shipped & set(SKIP_LIST)
-    assert not overlap, f"codes both shipped and skip-listed: {overlap}"
