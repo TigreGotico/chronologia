@@ -50,7 +50,6 @@ _SAFE_NONE = [
     'puoli kierrosta',
     'joukkueen puolikas',
     'pieni määrä',
-    'viime kuussa',
 ]
 
 

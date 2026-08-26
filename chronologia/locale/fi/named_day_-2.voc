@@ -1,1 +1,5 @@
+# CLDR 47 writes the day before yesterday as two words, "toissa päivänä"
+# (cldr-dates-full/main/fi/dateFields.json, day relative-type--2); the
+# abbreviation "toissap." beside it shows the same phrase written solid.
 toissapäivänä
+toissa päivänä

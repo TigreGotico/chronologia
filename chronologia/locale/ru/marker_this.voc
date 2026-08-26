@@ -15,3 +15,9 @@
 эти
 этих
 этими
+# The quarter is the one field CLDR frames with "текущий" (current) rather
+# than "этот": "в текущем квартале", short "текущий кв."
+# (cldr-dates-full/main/ru/dateFields.json, quarter and quarter-short
+# relative-type-0).  Only those two attested forms ship.
+текущий
+текущем

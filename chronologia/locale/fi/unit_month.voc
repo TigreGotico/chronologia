@@ -1,3 +1,8 @@
+# "kuussa" is the inessive of "kuu", the short month noun the relative-month
+# phrases use rather than "kuukausi". CLDR 47 gives "viime kuussa",
+# "tässä kuussa", "ensi kuussa" for the fi month field
+# (cldr-dates-full/main/fi/dateFields.json, month relative-type--1/0/1).
 kuukausi
 kuukautta
 kuukauden
+kuussa

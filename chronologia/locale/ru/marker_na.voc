@@ -1,0 +1,6 @@
+# The preposition the week phrases take: Russian frames a relative week with
+# "на" and the prepositional case, where the month and year take "в".
+# CLDR 47 gives "на прошлой неделе", "на этой неделе", "на следующей неделе"
+# for the ru week field (cldr-dates-full/main/ru/dateFields.json,
+# week relative-type--1/0/1).
+на

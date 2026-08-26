@@ -72,6 +72,7 @@
       "orders": [
         "q NUM YEAR?",
         "ORD quarter_word YEAR?",
+        "of REL_MARKER quarter_word",
         "REL_MARKER quarter_word",
         "quarter_word REL_MARKER"
       ]
@@ -141,6 +142,10 @@
     "extend": {
       "weekday_ref": [
         "at WEEKDAYFULL"
+      ],
+      "rel_period": [
+        "of REL_MARKER UNIT",
+        "na REL_MARKER UNIT"
       ]
     }
   }
