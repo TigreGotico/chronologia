@@ -1,0 +1,5 @@
+# Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.
+# The abbreviation is dot-internal and dot-final; the loader also
+# registers its token-canonical spelling, so both forms match.
+มกราคม
+ม.ค.

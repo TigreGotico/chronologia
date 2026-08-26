@@ -71,5 +71,6 @@ never cited as evidence about a language.
 | Maltese | [mt.md](mt.md) |
 | Serbian | [sr.md](sr.md) |
 | Swahili | [sw.md](sw.md) |
+| Thai | [th.md](th.md) |
 | Vietnamese | [vi.md](vi.md) |
 | Welsh | [cy.md](cy.md) |

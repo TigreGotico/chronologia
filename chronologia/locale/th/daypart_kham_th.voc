@@ -1,0 +1,4 @@
+# Unicode CLDR supplemental dayPeriods, ruleset th; labels from
+# cldr-dates-full/main/th/ca-gregorian.json, dayPeriods.format.wide.
+# evening2, 18:00-21:00 -- its own word, not a late เย็น.
+ค่ำ
