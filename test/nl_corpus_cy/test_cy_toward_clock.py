@@ -66,6 +66,7 @@ def test_half_past_is_never_the_coming_hour(text, wrong_hour):
 
 def test_bare_hanner_is_the_same_idiom():
     """The lesson gives the half hour with and without the noun."""
+    assert start("hanner awr wedi tri") == _next_time(3, 30)
     assert start("hanner wedi tri") == start("hanner awr wedi tri")
 
 
