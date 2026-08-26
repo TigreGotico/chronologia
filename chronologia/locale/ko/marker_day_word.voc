@@ -1,0 +1,5 @@
+# Unicode CLDR 47, ko ca-gregorian.json, dateFormats long -- "y년 MMMM d일".
+# 일 closes the day of the month.  It is the same syllable as the day
+# duration unit and as the Sino numeral one; here it is licensed only by a
+# day number standing immediately before it.
+일

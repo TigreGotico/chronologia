@@ -2872,6 +2872,17 @@ class Resolver:
                     # only ever fires for the spelled hour 1.
                     if hour == 0 and self.spec.conventions.toward_hour_12h:
                         hour = 12
+            elif min_tok is not None and dir_tok is None:
+                # An ADDITIVE minute count with no direction word at all:
+                # Korean writes 세 시 십 분 -- "three hour ten minute" -- and
+                # the minutes simply belong to the hour just named, exactly as
+                # a digit clock's do.  Every other locale that binds MINUTE
+                # requires a CLOCKDIR in the same order (its minutes are
+                # spoken as "past"/"to" something), so those readings are
+                # unaffected; without this branch the bound minutes were
+                # silently dropped and the phrase came back as the whole
+                # hour, a wrong time rather than a refusal.
+                minute = int(min_tok.value)
             elif (frac_tok is not None and dir_tok is None
                     and frac_tok.text in self.spec.clock_fractions_prev):
                 # a fraction word that names its own direction: Hindi "पौने"

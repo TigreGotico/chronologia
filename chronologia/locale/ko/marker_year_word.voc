@@ -1,0 +1,4 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.  The
+# long date format is "y년 MMMM d일": every field carries its own suffix, and
+# 년 is the year's.
+년

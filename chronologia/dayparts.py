@@ -452,6 +452,19 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (18, 0), "pl", _cldr("pl")),
     _p("evening", (18, 0), (21, 0), "pl", _cldr("pl")),
     _p("night", (21, 0), (6, 0), "pl", _cldr("pl")),
+    # ko: five bands, kept under their own names rather than collapsed into an
+    # English-shaped four, because Korean cuts the forenoon in two -- 아침 is
+    # the three hours before the working day and 오전 the six after them, so a
+    # single "morning" would answer 03:00-12:00 for a word that means
+    # 06:00-12:00.  오전 and 오후 do double duty: the same two words are the
+    # am/pm markers of a clock reading and the names of these bands.  The noon
+    # and midnight points CLDR also lists (정오, 자정) ship as clock landmarks
+    # rather than bands.
+    _p("achim", (3, 0), (6, 0), "ko", _cldr("ko")),
+    _p("ojeon", (6, 0), (12, 0), "ko", _cldr("ko")),
+    _p("ohu", (12, 0), (18, 0), "ko", _cldr("ko")),
+    _p("jeonyeok", (18, 0), (21, 0), "ko", _cldr("ko")),
+    _p("bam", (21, 0), (3, 0), "ko", _cldr("ko")),
     # hi: the morning opens at 04:00, the afternoon closes at 16:00 and the
     # evening at 20:00, so the night is the long band from 20:00 round to 04:00.
     _p("morning", (4, 0), (12, 0), "hi", _cldr("hi")),

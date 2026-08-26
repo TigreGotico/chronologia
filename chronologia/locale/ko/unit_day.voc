@@ -1,0 +1,7 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  "{0}일 전" / "{0}일 후".
+#
+# 일 also marks the day of the month (3월 15일) and is the Sino numeral one.
+# The readings are told apart by position, never by the string: the day
+# marker follows a day number inside a date, the duration unit carries its
+# own count and a direction word.
+일

@@ -1,0 +1,7 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  The COUNTED month is 개월 -- "{0}개월 전" --
+# and not the calendar label 월, which numbers the months of the year (3월 is
+# March).  The two are grammatical in the same position and mean different
+# things, so only the counter ships here; 월 stays a month name.
+# 달 is the native month noun, the unit of 지난달 / 이번 달 / 다음 달.
+개월
+달

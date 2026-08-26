@@ -1,0 +1,4 @@
+# en.wiktionary.org, -에 -- "at; indicates that the preceding noun functions
+# as a temporal adverb, making a point in time".  Written onto the noun with
+# no space (3시에); the language hook cuts it back off.
+에

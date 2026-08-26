@@ -1,0 +1,7 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  The "N units ago" pattern ends in 전.
+#
+# 전 also means "before" on a clock face, where it turns a minute count into
+# minutes BEFORE the hour just named (세 시 십 분 전 is ten to three).  The
+# two readings never collide, because the clock one is licensed by a named
+# hour standing in front of it and this one is not.
+전

@@ -216,7 +216,7 @@ of guessing.
 
 ## How well does it speak your language?
 
-Fifty-five languages load, but they are not all equally exercised, and pretending
+Fifty-eight languages load, but they are not all equally exercised, and pretending
 otherwise would waste your afternoon. Coverage falls into three honest bands:
 
 **Reviewed in depth** — English, Spanish, Portuguese, French, German, Dutch,
@@ -235,16 +235,19 @@ common constructions work; the idiomatic long tail is thinner, and that is
 where bug reports are most useful.
 
 **Early** — Albanian, Aragonese, Armenian, Asturian, Esperanto, Filipino,
-Georgian, Hindi, Icelandic, Irish, Kabyle, Latvian, Lithuanian, Macedonian,
-Maltese, Mirandese, Occitan, Serbian, Vietnamese, Welsh. The
+Georgian, Hindi, Icelandic, Irish, Kabyle, Korean, Latvian, Lithuanian,
+Macedonian, Maltese, Mirandese, Occitan, Serbian, Swahili, Vietnamese,
+Welsh. The
 vocabulary is in place and the engine is shared, so a lot already works, but
 these have not yet had a native speaker read them end to end, and several
 deliberately omit constructions the source grammar does not use the same
 way — Welsh has no seasons or millennium unit, Irish and Esperanto have no
 dayparts, Georgian has no century unit or "every" quantifier, Armenian omits
 several markers, Macedonian has no minutes-to-the-hour clock because its own
-style guides count only forward from the hour, and Vietnamese reads no
-ordinals and no bare "năm" as five. Occitan is the model for how that changes:
+style guides count only forward from the hour, Korean ships no
+single-syllable weekday abbreviations (each one is also an everyday word:
+일 is the day, the numeral one and Sunday at once) and no spelled month
+names, and Vietnamese reads no ordinals and no bare "năm" as five. Occitan is the model for how that changes:
 a native speaker reviewed a sibling project's word lists, and the forms they
 supplied turned up a real bug here — "davant-ièr" was being read as *yesterday*
 rather than the day before.
