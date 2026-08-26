@@ -25,6 +25,8 @@ Two related silent-wrong defects on the "<weekday> [<daypart>] saat
 Anchor: 2026-07-15 12:00 (Wednesday), per ``_corpus.ANCHOR``. The next Tuesday
 from that anchor is 2026-07-21.
 """
+from chronologia.astrodate import AstroDate
+
 from ._corpus import ANCHOR, nomatch, parse, span, start
 
 TUESDAY = "2026-07-21"
@@ -71,6 +73,8 @@ def test_saat_15_apostrophe_te_reads_fifteen_empty_remainder():
 
 def test_apostrophe_suffixed_matches_bare_digit_form():
     # The suffix must be a pure marker: same instant as the unsuffixed form.
+    # 09:00 is already past at the 12:00 anchor, so the hour rolls to 07-16.
+    assert parse("saat 9'da").span.start == AstroDate(2026, 7, 16, 9, 0)
     assert parse("saat 9'da") == parse("saat 9")
 
 
