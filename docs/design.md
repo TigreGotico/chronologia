@@ -232,7 +232,17 @@ library refuses to fake any of them.
    decision that was never a rule. Such reconstructions are supported *as*
    reconstructions, wearing their basis openly, never as computed fact.
 
-One sentence covers all three, and it is the invariant the whole library
+The same discipline governs the reading side, where it is felt most often.
+A locale ships a construction only where the surface form is attested by a
+source; where sources conflict or none names a form, the phrase returns `None`
+rather than the reading that looks most European. Georgian ships no week
+duration unit because one word carries both "week" and "Sunday" and no source
+separates them; Macedonian has no minutes-to-the-hour clock because its style
+guides count only forward. A wrong span is worse than no span, and a wrong span
+that leaves a stranded fragment behind is still a wrong answer — see
+[when a language declines a phrase](extraction.md#when-a-language-declines-a-phrase).
+
+One sentence covers all of it, and it is the invariant the whole library
 upholds: **a span's width and basis always tell the truth about what is
 knowable.** Everything else — the JDN hub, the type system, the scope
 boundaries — exists to keep that promise.

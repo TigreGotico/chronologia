@@ -66,7 +66,7 @@ When someone says **"June 2027"**, they mean the whole month — not one
 secret instant at midnight on the 1st. This library takes that
 seriously: its answers are **spans** — a start and an end. The width of
 a span is honest information. A day is a day wide. A month is a month
-wide. "The Jurassic" is fifty-six million years wide:
+wide. "The Jurassic" is fifty-eight and a half million years wide:
 
 ```python
 from chronologia import lookup
@@ -85,7 +85,7 @@ from the official geological chart, uncertainties included.
 
 Under the hood, one trick powers everything: every day that has ever
 existed gets a plain number — its **Julian Day Number** — so *any* of the
-seventeen built-in calendars can talk to any other by meeting at the
+eighteen built-in calendars can talk to any other by meeting at the
 number in the middle. See [docs/getting-started.md](docs/getting-started.md)
 for the three ideas the whole library is built from.
 
@@ -202,7 +202,7 @@ self-checking scripts (`python examples/01_extract_basics.py`).
 | Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one — [docs/deep-time.md](docs/deep-time.md) |
 | Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present; regnal years (Japanese nengō, Roman consuls, Egyptian chronologies) — [docs/eras-and-rulers.md](docs/eras-and-rulers.md) |
 | Recurrence | [RFC 5545 RRULE](docs/recurrence.md) — "every third Tuesday", Labor Day, Friday the 13th — parsed and expanded as pure JDN arithmetic into day-wide `DateSpan`s |
-| Civil holidays | [public/regional/municipal holidays](docs/civil-holidays.md) as computed rules with observed-shift policies — Portugal at municipal depth (~300 concelhos), US federal, Saudi Arabia |
+| Civil holidays | [public/regional/municipal holidays](docs/civil-holidays.md) for 260 jurisdictions as computed rules with observed-shift policies — 32 of them carry subdivisions, Portugal down to municipal depth (~300 concelhos) |
 | Time, sun & sky | [sun, moon & seasons](docs/sun-moon-and-seasons.md) — sunrise/sunset/twilights, unequal hours, prayer times, moon phases, solstices/equinoxes, local mean time, leap seconds, and the French Revolution's 10-hour clock |
 | Timezones | [timezones](docs/timezones.md) — reading any `zoneinfo` zone as a timeline with honest fall-back/spring-forward handling |
 | Beyond Earth | [Mars and beyond](docs/mars-and-beyond.md) — Mars Sol Date, Coordinated Mars Time, the Darian calendar, and cosmology (a span-valued Big Bang epoch, the Hubble tension, Sagan's Cosmic Calendar) |
@@ -216,7 +216,7 @@ of guessing.
 
 ## How well does it speak your language?
 
-Forty-nine languages load, but they are not all equally exercised, and pretending
+Fifty-five languages load, but they are not all equally exercised, and pretending
 otherwise would waste your afternoon. Coverage falls into three honest bands:
 
 **Reviewed in depth** — English, Spanish, Portuguese, French, German, Dutch,
@@ -234,18 +234,27 @@ own test corpus and is swept whenever a shared mechanism changes, so the
 common constructions work; the idiomatic long tail is thinner, and that is
 where bug reports are most useful.
 
-**Early** — Aragonese, Armenian, Asturian, Esperanto, Georgian, Hindi,
-Icelandic, Irish, Kabyle, Lithuanian, Mirandese, Occitan, Serbian,
-Vietnamese, Welsh. The
+**Early** — Albanian, Aragonese, Armenian, Asturian, Esperanto, Filipino,
+Georgian, Hindi, Icelandic, Irish, Kabyle, Latvian, Lithuanian, Macedonian,
+Maltese, Mirandese, Occitan, Serbian, Vietnamese, Welsh. The
 vocabulary is in place and the engine is shared, so a lot already works, but
 these have not yet had a native speaker read them end to end, and several
 deliberately omit constructions the source grammar does not use the same
 way — Welsh has no seasons or millennium unit, Irish and Esperanto have no
 dayparts, Georgian has no century unit or "every" quantifier, Armenian omits
-several markers, and Vietnamese reads no ordinals and no bare "năm" as five. Occitan is the model for how that changes: a native speaker
-reviewed a sibling project's word lists, and the forms they supplied turned
-up a real bug here — "davant-ièr" was being read as *yesterday* rather than
-the day before.
+several markers, Macedonian has no minutes-to-the-hour clock because its own
+style guides count only forward from the hour, and Vietnamese reads no
+ordinals and no bare "năm" as five. Occitan is the model for how that changes:
+a native speaker reviewed a sibling project's word lists, and the forms they
+supplied turned up a real bug here — "davant-ièr" was being read as *yesterday*
+rather than the day before.
+
+Those omissions are the design working, not a backlog. A locale ships a
+construction only where its sources attest one; where they conflict or say
+nothing, the phrase returns nothing, because a wrong span is worse than no
+span. [docs/extraction.md](docs/extraction.md#when-a-language-declines-a-phrase)
+explains how to tell a deliberate refusal from a bug, and what each is worth
+reporting.
 
 If your language sits in the second or third band and something reads wrong,
 that report is worth more than a patch — attach the phrase, what you expected,
@@ -260,8 +269,8 @@ human maintainer. That is stated plainly here because the method is the reason
 the library exists at all — and because you should be able to judge the work
 without having to trust either the AI or the maintainer.
 
-**Why it could only be built this way.** A library that reads dates in around
-fifty languages — with the goal of *every* language over time, the way the
+**Why it could only be built this way.** A library that reads dates in more
+than fifty languages — with the goal of *every* language over time, the way the
 sibling [orthography2ipa](https://github.com/TigreGotico/orthography2ipa)
 project is already 1000+ languages strong — needs command of grammar,
 number-words, calendar arithmetic and holiday law in each one. No single

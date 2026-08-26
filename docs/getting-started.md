@@ -55,9 +55,13 @@ print(span.width)                                                  # 30 days, 0:
 ```
 
 **Read a date in another language.** Pass the language code; the vocabulary
-does the rest. chronologia speaks 49 languages, though not all to the same
-depth — the README's coverage table says which have had a full per-language
-review and which are still waiting for a native reader.
+does the rest. chronologia speaks 57 languages, though not all to the same
+depth — the README's coverage bands say which have had a full per-language
+review and which are still waiting for a native reader. A language also
+declines constructions its sources do not attest, and that refusal is a
+deliberate answer rather than a gap:
+[when a language declines a phrase](extraction.md#when-a-language-declines-a-phrase)
+explains how to tell one from a bug.
 
 ```python
 from chronologia import extract_timespan
@@ -242,7 +246,7 @@ print(june.resolution.name)
 ```
 
 A single day is a day wide. A month is a month wide. "The Jurassic" is
-fifty-six million years wide. The width is the honesty: a wide span is the
+fifty-eight and a half million years wide. The width is the honesty: a wide span is the
 library admitting it only knows the answer roughly.
 
 ## Basis: where an answer came from
