@@ -1,3 +1,8 @@
+# The inflected attributive "folgjende" is the ordinary form; the
+# uninflected "folgjend" is what a neuter indefinite singular takes
+# ("folgjend jier").  Source for the uninflected surface: CLDR dateFields,
+# locale "fy", year relative-type-1.
 folgjende
+folgjend
 kommende
 oare

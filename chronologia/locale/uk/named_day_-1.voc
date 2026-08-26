@@ -1,1 +1,7 @@
+# Ukrainian "yesterday".  Both spellings are standard: the entry heads
+# "учора" and lists "вчора" as an alternative form, the ordinary у-/в-
+# alternation.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/учора.
+# "учора" is also what CLDR dateFields gives for locale "uk", day
+# relative-type--1.
 вчора
+учора

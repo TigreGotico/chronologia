@@ -8,3 +8,24 @@ síðastliðnum
 síðastliðinni
 síðastliðnu
 síðastliðni
+# "síðastur" (last, most recent), the superlative of "síðari".  The weak
+# forms are the ones an oblique relative period uses -- "á síðasta ári",
+# "í síðasta mánuði" (weak dative singular), "í síðustu viku" (weak
+# feminine oblique singular).  The bare neuter "síðast" is left out: as a
+# standalone token it is the ordinary adverb "last, most recently".
+# Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/síðari (superlative table).
+# The three phrases: CLDR dateFields, locale "is", year/month/week
+# relative-type--1.
+síðastur
+síðastan
+síðasts
+síðasti
+síðasta
+síðust
+síðustu
+síðustum
+síðastri
+síðastrar
+síðastir
+síðastar
+síðastra
