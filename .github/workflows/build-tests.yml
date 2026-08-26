@@ -12,3 +12,7 @@ jobs:
       python_versions: '["3.10", "3.11", "3.12", "3.13"]'
       install_extras: 'test'
       test_path: 'test'
+      # The suite is six figures of tests. '-n auto' spreads it over every
+      # runner core, and '-q' cancels the shared workflow's '-v' so the log
+      # is a progress line per file instead of one per test.
+      pytest_args: '-q -n auto'
