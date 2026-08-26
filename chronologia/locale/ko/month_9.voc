@@ -1,0 +1,4 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.
+# months.format.wide and months.format.abbreviated are identical: the
+# Sino-Korean numeral written in digits plus the month word.
+9월

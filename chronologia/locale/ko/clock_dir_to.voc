@@ -1,0 +1,6 @@
+# The backward clock reading is obligatorily marked, and marked at the END of
+# the phrase: 세 시 십 분 전 is ten minutes BEFORE three, 02:50.  Because the
+# marker is required and final, the forward and backward readings never
+# collide and neither has to be guessed.  Elon.io, Korean grammar, "Half, To,
+# and Past: 반, 전, 후".
+전

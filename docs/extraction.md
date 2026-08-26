@@ -1772,7 +1772,7 @@ placeholder. Run `pytest test/test_locale_schema.py` after editing a locale.
 
 ### Performance — lazy, cached per-locale loading
 
-`import chronologia` reads **no** locale data: not one of the 57
+`import chronologia` reads **no** locale data: not one of the 58
 `locale/<code>/` directories is touched at import. A language's vocabulary is
 read, expanded, and compiled into an engine the **first** time you call an
 `extract_*` function for it, and that engine is then cached for the lifetime

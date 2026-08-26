@@ -1,0 +1,10 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.
+# days.format.wide, indexed from Monday.
+#
+# The abbreviated forms CLDR also carries are single syllables (일 월 화 수
+# 목 금 토) and each is an ordinary word in its own right -- 일 is the day,
+# the numeral one and Sunday at once, 월 is the month and Monday, 수 is a
+# number and water, 금 is gold.  Nothing inside the phrase tells the readings
+# apart; only a calendar grid does, and a grid is not prose.  They are
+# therefore not shipped, and a bare abbreviation names no weekday here.
+월요일

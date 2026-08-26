@@ -1,0 +1,5 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  "{0}년 전" / "{0}년 후".
+# 해 is the native word for the year, the unit the relative-period forms
+# 작년 / 올해 / 내년 name (dateFields year relative-type -1/0/1).
+년
+해

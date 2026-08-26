@@ -1,0 +1,5 @@
+# Unicode CLDR 47, ko ca-gregorian.json.  시 names the hour of the clock.
+# It is also the ordinary word for a city and for a poem, so it reads as an
+# hour only behind a numeral -- every order that binds it puts an hour in
+# front of it.
+시

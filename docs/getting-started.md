@@ -55,7 +55,7 @@ print(span.width)                                                  # 30 days, 0:
 ```
 
 **Read a date in another language.** Pass the language code; the vocabulary
-does the rest. chronologia speaks 57 languages, though not all to the same
+does the rest. chronologia speaks 58 languages, though not all to the same
 depth — the README's coverage bands say which have had a full per-language
 review and which are still waiting for a native reader. A language also
 declines constructions its sources do not attest, and that refusal is a
