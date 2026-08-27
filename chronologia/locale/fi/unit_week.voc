@@ -1,3 +1,8 @@
+# The adessive "viikolla" is the case the ordinary relative-week phrases put
+# the noun in, and it is what CLDR 47 gives for the fi week field:
+# "viime viikolla", "tällä viikolla", "ensi viikolla"
+# (cldr-dates-full/main/fi/dateFields.json, week relative-type--1/0/1).
 viikko
 viikkoa
 viikon
+viikolla

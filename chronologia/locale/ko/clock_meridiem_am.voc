@@ -1,0 +1,3 @@
+# Unicode CLDR 47, ko ca-gregorian.json, dayPeriods.format.wide am.  The
+# marker LEADS the hour in Korean (오전 9시), the opposite of English order.
+오전

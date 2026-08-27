@@ -1,0 +1,4 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  "{0}시간 전" / "{0}시간 후".
+#
+# 시간 counts hours; 시 names the hour of the clock and is not a duration.
+시간

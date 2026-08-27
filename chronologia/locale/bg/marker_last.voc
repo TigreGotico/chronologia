@@ -23,3 +23,22 @@
 предишното
 предишни
 предишните
+# "предходен" is the near-synonym the calendar phrases use -- CLDR gives
+# "предходен месец" and "предходната седмица" (dateFields, locale "bg",
+# month/week relative-type--1).  The gender/number forms are the headword
+# line of Институт за български език, БАН -- *Речник на българския език
+# (онлайн)*, "ПРЕДХÒДЕН, -дна, -дно, мн. -дни, прил.", sense 2 "който
+# съществува или настъпва, става, извършва се по-рано по време от друг;
+# предишен"; the same entry's citations carry предходната, предходния,
+# предходното and предходните.  https://ibl.bas.bg/rbe/
+# The full-article masculine "предходният" is the subject form of the same
+# short "предходния", by the членуване rule cited above.
+предходен
+предходна
+предходно
+предходни
+предходният
+предходния
+предходната
+предходното
+предходните

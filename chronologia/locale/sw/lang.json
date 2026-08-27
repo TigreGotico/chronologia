@@ -1,0 +1,61 @@
+{
+  "tokenizer": {
+    "split_contractions": false,
+    "ordinal_dot": false,
+    "decimal_comma": false
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "UNIT NUM MARKER",
+        "MARKER UNIT NUM"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "at? DAY MONTH YEAR?",
+        "at? MONTH DAY? YEAR?"
+      ],
+      "prefer_future": true
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK"
+      ],
+      "prefer_future": true
+    },
+    "year_ref": {
+      "orders": [
+        "GYEAR"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "saturday",
+    "dmy": true,
+    "hemisphere": null,
+    "prefer_future": true,
+    "duration_count_follows_unit": true
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "base_grammar": {
+    "marker_position": "post",
+    "override": {
+      "rel_period": [],
+      "weekday_ref": [
+        "WEEKDAYFULL"
+      ]
+    }
+  },
+  "hook": "chronologia.extract.numfold_bantu:fold_sw",
+  "quantifiers": {
+    "0.5": [
+      "nusu"
+    ],
+    "0.25": [
+      "robo"
+    ]
+  }
+}

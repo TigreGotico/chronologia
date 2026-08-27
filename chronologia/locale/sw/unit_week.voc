@@ -1,0 +1,9 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  The week
+# field's displayName is wiki and it counts with the same surface in both
+# plural categories ("wiki {0} zilizopita") -- class 9/10, invariant.
+#
+# juma (class 5/6, plural majuma) is the other word for a week and is the
+# source of the Juma- weekday names, but no source consulted gives its
+# class-5/6 last/this/next agreement forms, so it ships nowhere: wiki already
+# carries every week reading CLDR states.
+wiki

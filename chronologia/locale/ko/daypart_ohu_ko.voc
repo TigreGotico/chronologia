@@ -1,0 +1,6 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale ko
+# (cldr/common/supplemental/dayPeriods.xml), transcribed in
+# chronologia/dayparts.py; label from ko ca-gregorian.json
+# dayPeriods.format.wide.  The 12:00-18:00 band, whose
+# label is also the pm marker.
+오후

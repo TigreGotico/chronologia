@@ -282,6 +282,21 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "half_period": [
         "article? NUM half of? GYEAR",
         "article? ordlast half of? GYEAR",
+        # the same year half with the year NAMED by a ``year_word`` ("the
+        # first half of THE YEAR 2020", de "erste Hälfte des JAHRES 2020",
+        # pl "pierwsza połowa ROKU 2020", ru/uk postposed "первая половина
+        # 2020 ГОДА").  The bare-GYEAR orders above bind only the number, so
+        # without these a spoken year word has no order to sit in: the bare
+        # whole-year reading wins the span and the half is stranded in the
+        # remainder -- twelve months where six were asked for.  Both connector
+        # positions are offered because locales genuinely differ on which
+        # side of the year the word sits, and ``GYEAR`` stays optional so the
+        # yearless "the first half of the year" names the anchor's own year
+        # (the reading the ``scoped_ordinal`` year_word orders already take).
+        "article? NUM half of? article? year_word GYEAR?",
+        "article? ordlast half of? article? year_word GYEAR?",
+        "article? NUM half of? GYEAR? year_word",
+        "article? ordlast half of? GYEAR? year_word",
         "article? NUM half of? REL_MARKER? article? SCOPE_UNIT",
         "article? NUM half of? MONTH of? YEAR? ERA?",
         "article? ordlast half of? MONTH of? YEAR? ERA?",

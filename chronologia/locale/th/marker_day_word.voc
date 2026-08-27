@@ -1,0 +1,4 @@
+# วันที่ ("the day") introduces the day of the month; CLDR's full date
+# pattern is EEEEที่ d MMMM G y.
+# Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, dateFormats.full.
+วันที่

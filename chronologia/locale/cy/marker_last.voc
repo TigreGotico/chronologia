@@ -4,3 +4,9 @@
 diwethaf
 diwetha
 diweddaf
+# "ddiwethaf" is the soft mutation of the same headword, which is what a
+# feminine singular noun takes: CLDR gives the masculine "mis diwethaf"
+# against the feminine "wythnos ddiwethaf" (dateFields, locale "cy",
+# month/week relative-type--1).  The mutation cell is the radical -> soft
+# column of the entry's own mutation table.
+ddiwethaf

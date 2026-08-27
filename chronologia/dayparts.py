@@ -432,12 +432,39 @@ _LANGUAGES: List[DayPart] = [
     _p("pretpladne", (10, 0), (12, 0), "mk", _cldr("mk")),
     _p("popladne", (12, 0), (18, 0), "mk", _cldr("mk")),
     _p("navecher", (18, 0), (0, 0), "mk", _cldr("mk")),
+    # sw: five bands, kept under their own names rather than collapsed, for the
+    # same reason Macedonian's are -- alfajiri is the three hours before
+    # sunrise and asubuhi the five after it, so a single "morning" spanning
+    # both would answer 04:00-12:00 for a word that means 07:00-12:00.  The
+    # afternoon closes at 16:00 and the evening at 19:00, so the night is the
+    # long band from 19:00 round to dawn.  The noon and midnight points CLDR
+    # also lists are spelled "saa sita za mchana" and "saa sita za usiku" --
+    # sunrise-anchored clock readings -- and are NOT shipped as landmarks; see
+    # the Swahili clock refusal in locale/sw/unit_hour.voc.
+    _p("usiku", (19, 0), (4, 0), "sw", _cldr("sw")),
+    _p("alfajiri", (4, 0), (7, 0), "sw", _cldr("sw")),
+    _p("asubuhi", (7, 0), (12, 0), "sw", _cldr("sw")),
+    _p("mchana", (12, 0), (16, 0), "sw", _cldr("sw")),
+    _p("jioni", (16, 0), (19, 0), "sw", _cldr("sw")),
     # pl (afternoon "po poludniu" and night "w nocy" are multi-word: bands
     # shipped, no voc; morning "rano" and evening "wieczorem" carry surfaces).
     _p("morning", (6, 0), (12, 0), "pl", _cldr("pl")),
     _p("afternoon", (12, 0), (18, 0), "pl", _cldr("pl")),
     _p("evening", (18, 0), (21, 0), "pl", _cldr("pl")),
     _p("night", (21, 0), (6, 0), "pl", _cldr("pl")),
+    # ko: five bands, kept under their own names rather than collapsed into an
+    # English-shaped four, because Korean cuts the forenoon in two -- 아침 is
+    # the three hours before the working day and 오전 the six after them, so a
+    # single "morning" would answer 03:00-12:00 for a word that means
+    # 06:00-12:00.  오전 and 오후 do double duty: the same two words are the
+    # am/pm markers of a clock reading and the names of these bands.  The noon
+    # and midnight points CLDR also lists (정오, 자정) ship as clock landmarks
+    # rather than bands.
+    _p("achim", (3, 0), (6, 0), "ko", _cldr("ko")),
+    _p("ojeon", (6, 0), (12, 0), "ko", _cldr("ko")),
+    _p("ohu", (12, 0), (18, 0), "ko", _cldr("ko")),
+    _p("jeonyeok", (18, 0), (21, 0), "ko", _cldr("ko")),
+    _p("bam", (21, 0), (3, 0), "ko", _cldr("ko")),
     # hi: the morning opens at 04:00, the afternoon closes at 16:00 and the
     # evening at 20:00, so the night is the long band from 20:00 round to 04:00.
     _p("morning", (4, 0), (12, 0), "hi", _cldr("hi")),
@@ -491,6 +518,20 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (14, 0), "ms", _cldr("ms")),
     _p("evening", (14, 0), (19, 0), "ms", _cldr("ms")),
     _p("night", (19, 0), (0, 0), "ms", _cldr("ms")),
+    # th: five bands under their own names rather than collapsed, for the same
+    # reason Swahili's and Macedonian's are.  CLDR draws two afternoon rows
+    # (12:00-13:00 and 13:00-16:00) and labels both บ่าย, so they are one band;
+    # the two evening rows are NOT, because they carry different words -- เย็น
+    # is the late afternoon and ค่ำ the hours after dark -- and a single
+    # "evening" spanning both would answer 16:00-21:00 for a word that means
+    # 18:00-21:00.  The night wraps 21:00 round to dawn.  CLDR's เที่ยง and
+    # เที่ยงคืน points add no boundary of their own and ship as clock
+    # landmarks instead.
+    _p("chao", (6, 0), (12, 0), "th", _cldr("th")),
+    _p("bai", (12, 0), (16, 0), "th", _cldr("th")),
+    _p("yen", (16, 0), (18, 0), "th", _cldr("th")),
+    _p("kham", (18, 0), (21, 0), "th", _cldr("th")),
+    _p("klangkhuen", (21, 0), (6, 0), "th", _cldr("th")),
     # vi: the morning opens at 04:00 and the night from 21:00 wraps to it.
     # CLDR's noon point (trưa, 12:00) falls inside the afternoon band and adds
     # no boundary of its own, so none is invented.

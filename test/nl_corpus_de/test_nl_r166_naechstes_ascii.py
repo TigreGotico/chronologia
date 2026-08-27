@@ -9,10 +9,14 @@ stranded as remainder, so the season read as the CURRENT year's, not next
 year's). Gold: every ASCII spelling must resolve to the SAME span as its
 umlaut twin.
 """
-from ._corpus import ANCHOR, start_end  # noqa: F401
+from ._corpus import ANCHOR, AstroDate, start_end  # noqa: F401
 
 
 def test_naechstes_quartal_matches_umlaut_twin():
+    # The anchor sits in Q2 2017 (April-June), so the next quarter is Q3:
+    # 2017-07-01 up to 2017-10-01.
+    assert start_end("nächstes quartal") == (AstroDate(2017, 7, 1),
+                                             AstroDate(2017, 10, 1))
     assert start_end("naechstes quartal") == start_end("nächstes quartal")
 
 

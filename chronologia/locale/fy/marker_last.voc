@@ -1,3 +1,9 @@
+# The inflected attributive "foarige" is the ordinary form; the uninflected
+# "foarich" is what a neuter indefinite singular takes ("foarich jier").
+# "foarich": en.wiktionary.org, https://en.wiktionary.org/wiki/foarich (West Frisian
+# adjective, "former, previous, past").  "foarich jier": CLDR dateFields,
+# locale "fy", year relative-type--1.
 ôfrûne
 foarige
+foarich
 lêste

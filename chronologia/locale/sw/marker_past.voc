@@ -1,0 +1,9 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  The past
+# relative-time pattern is the unit noun, the count, and the same agreeing
+# relative pronoun the bare last/this/next phrases use -- "miaka {0} iliyopita"
+# = N years ago, "mwaka {0} uliopita" = one year ago, "wiki {0} zilizopita".
+# So "ago" is not a separate word in Swahili: the marker that says "last week"
+# says "N weeks ago" as well, and both surfaces sets are the same three.
+uliopita
+iliyopita
+zilizopita

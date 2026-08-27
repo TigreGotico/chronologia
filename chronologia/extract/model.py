@@ -202,6 +202,17 @@ class Conventions:
     # the Romance "desde"/"de") -- there "since A until B" is an ordinary forward
     # interval and must NOT be past-anchored.  A linguistic fact, not logic.
     since_directional: bool = False
+    # The count FOLLOWS its unit noun ("siku tano" == day five == five days,
+    # "dakika thelathini" == thirty minutes) instead of leading it.  Swahili,
+    # like Bantu generally, is head-initial in the noun phrase: the numeral is
+    # a modifier and modifiers follow their head, so the count-then-unit order
+    # every other locale in the tree spells is simply not available.  Without
+    # this the duration reader never starts -- it scans for a count and finds a
+    # unit -- and every bare duration in the language returns None while the
+    # anchored relative forms built on the same words ("saa tatu zilizopita")
+    # resolve normally.  A word-order fact, not logic; a locale whose numeral
+    # precedes its noun leaves it off and is untouched.
+    duration_count_follows_unit: bool = False
     # "at" surfaces that carry NO fused/agreeing article -- the bare
     # preposition, as opposed to a form that already bakes the article in
     # ("la"/"las"/"al" for Spanish, "à"/"às"/"ao" for Portuguese). A bare-hour

@@ -1,0 +1,5 @@
+# Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  The
+# second field counts with one surface in both plural categories ("Sekunde {0}
+# iliyopita", "Sekunde {0} zilizopita"): sekunde is class 9/10 and invariant,
+# so the noun carries no count and the count lives in the numeral alone.
+sekunde

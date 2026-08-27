@@ -1,0 +1,8 @@
+# Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.
+# The hour noun standing after the ordinal that names the hour: "другая
+# гадзіна" (02:00), "а другой гадзіне" (at two).  Only the nominative and
+# locative singular are listed -- the plural "дзве гадзіны" is a DURATION of
+# two hours, not a clock reading, and listing it here would read one as the
+# other.
+гадзіна
+гадзіне

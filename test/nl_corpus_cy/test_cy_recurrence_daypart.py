@@ -12,7 +12,10 @@ night rule at all, so this locale ships no night surface and none is invented.
 """
 import pytest
 
-from ._corpus import ANCHOR, nomatch, recur, span
+from ._corpus import ANCHOR, ad, nomatch, recur, span
+
+#: midnight of the anchor day -- the civil day a bare day-part names.
+_TODAY = ANCHOR.replace(hour=0, minute=0, second=0, microsecond=0)
 
 #: weekday index of each Welsh day name; 0 is Monday.
 WEEKDAYS = [("Llun", 0), ("Mawrth", 1), ("Mercher", 2), ("Iau", 3),
@@ -80,10 +83,15 @@ def test_the_three_cldr_bands(text, h0, h1):
 
 
 def test_the_mutated_morning_matches_the_radical():
+    # A bare day-part is not future-shifted, so it names the anchor day's band.
+    assert (span("bore").start, span("bore").end) == (
+        ad(_TODAY), ad(_TODAY.replace(hour=12)))
     assert span("fore") == span("bore")
 
 
 def test_the_mutated_afternoon_matches_the_radical():
+    assert (span("prynhawn").start, span("prynhawn").end) == (
+        ad(_TODAY.replace(hour=12)), ad(_TODAY.replace(hour=18)))
     assert span("brynhawn") == span("prynhawn")
 
 

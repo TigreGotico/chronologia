@@ -470,6 +470,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             bare_half_past=conv.get("bare_half_past", False),
             bare_quarter_past=conv.get("bare_quarter_past", False),
             since_directional=conv.get("since_directional", False),
+            duration_count_follows_unit=conv.get(
+                "duration_count_follows_unit", False),
             daypart_proper_noun_guard=conv.get(
                 "daypart_proper_noun_guard", False),
             bare_at_markers=frozenset(conv.get("bare_at_markers", ())),

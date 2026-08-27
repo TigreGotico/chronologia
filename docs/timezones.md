@@ -437,7 +437,7 @@ ZonedDateTime(2024, 11, 3, 1, 30, tz="America/New_York", disambiguate="earlier")
 
 Where the two part ways is range and scope. `whenever` is civil time, done
 rigorously, within years 1–9999 on the Gregorian calendar. `chronologia`
-carries the same honesty *outward* — to unbounded years, seventeen calendars,
+carries the same honesty *outward* — to unbounded years, eighteen calendars,
 spans with an evidentiary basis, sunrise and moon phase, calendar reforms, and
 geological deep time. If your problem is "civil timestamps, correctly," reach
 for `whenever` without hesitation. If it is "any date, in any calendar, from the

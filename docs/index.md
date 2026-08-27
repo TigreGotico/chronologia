@@ -37,7 +37,7 @@ of time (a start and an end), not an instant; every span carries a one-word
 ### Reading dates written by humans
 | Guide | What it gives you |
 |---|---|
-| [extraction.md](extraction.md) | `extract_timespan` — turn a phrase into the exact span it means; how the per-language vocabulary works. |
+| [extraction.md](extraction.md) | `extract_timespan` — turn a phrase into the exact span it means; how the per-language vocabulary works, and what a locale declines to read rather than guess. |
 | [adding-a-language.md](adding-a-language.md) | A step-by-step guide to teaching chronologia a new language, written so a bilingual non-programmer can follow it. |
 | [events.md](events.md) | Pulling a titled event (summary + time) out of a sentence and exporting it as an `.ics` calendar file. |
 | [recurrence.md](recurrence.md) | Repeating rules ("every third Tuesday") via the RFC 5545 RRULE grammar, expanded to concrete dates. |
@@ -69,7 +69,7 @@ of time (a start and an end), not an instant; every span carries a one-word
 ### Holidays
 | Guide | What it gives you |
 |---|---|
-| [civil-holidays.md](civil-holidays.md) | Public, regional, and municipal holidays computed from published rules, per jurisdiction, with honest `tabulated` basis and honest omission outside a table's range. |
+| [civil-holidays.md](civil-holidays.md) | Public, regional, and municipal holidays computed from published rules for 260 jurisdictions, with honest `tabulated` basis and honest omission outside a table's range. |
 
 ### Reference & meta
 | Guide | What it gives you |

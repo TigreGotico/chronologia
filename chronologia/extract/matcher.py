@@ -392,6 +392,31 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
     return False
 
 
+def _counted_refused_unit_before(tokens: Tuple[Token, ...], start: int,
+                                 spec: LangSpec) -> bool:
+    """Is there a counted ``daypart_counted_ambiguous`` unit before ``start``?
+
+    The shape looked for is ``<unit> <count>`` -- the unit LEADS its count in
+    the only locale that declares this vocabulary, matching how that language
+    counts everything else ("saa tatu", hour three).  One intervening word is
+    allowed between the count and the day-part, because the genitive linker
+    stands there in the fuller phrasing ("saa sita **za** mchana"); allowing
+    exactly one keeps the veto adjacent rather than letting it reach across a
+    clause into an unrelated count.
+
+    Returns ``False`` for every locale that ships no such vocabulary, which is
+    every locale but Swahili.
+    """
+    ambiguous = spec.connectors.get("daypart_counted_ambiguous", frozenset())
+    if not ambiguous:
+        return False
+    k = start - 1
+    if k >= 0 and not tokens[k].is_number and tokens[k].text not in ambiguous:
+        k -= 1          # step over the genitive linker
+    return (k >= 1 and tokens[k].is_number
+            and tokens[k - 1].text in ambiguous)
+
+
 def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
                     spec: LangSpec) -> int:
     """Longest run of tokens from ``ti`` matching a connector surface.
@@ -605,6 +630,33 @@ class ConstructionMatcher:
                             and start > 0
                             and tokens[start].cap
                             and tokens[start].prev_cap):
+                        continue
+                    # The mirror, on the other side of the day-part, of the
+                    # counted-weekday veto above: a COUNT on a unit whose
+                    # clock reading the locale REFUSES ("saa tatu usiku" --
+                    # Swahili hour three of the night, unreadable because the
+                    # traditional count runs from sunrise and both conventions
+                    # occur in print) sitting immediately before a bare
+                    # day-part word.  The band alone is not the answer to that
+                    # question: "saa moja asubuhi" names ONE HOUR inside the
+                    # morning, so returning the 07:00-12:00 morning hands a
+                    # caller who asked for an hour a five-hour span and drops
+                    # the hour they asked about into the remainder -- a wrong
+                    # answer with a visible fragment, which this library ranks
+                    # below returning nothing.  Veto the band so the whole
+                    # phrase refuses together.  As with the weekday veto, this
+                    # declines a false reading without asserting the refused
+                    # one, which stays unavailable.  The ambiguous unit is a
+                    # locale fact (``marker_daypart_counted_ambiguous.voc`` ->
+                    # ``spec.connectors["daypart_counted_ambiguous"]``), so a
+                    # locale that reads its hours normally is untouched --
+                    # English "at three tonight" deliberately keeps its hour.
+                    # A bare band ("usiku") and a band on a named day ("kesho
+                    # usiku") name no hour and are never vetoed.
+                    if (name == "daypart_ref" and "DAYPART" in slots
+                            and "REL_MARKER" not in slots
+                            and _counted_refused_unit_before(
+                                tokens, start, self.spec)):
                         continue
                     # "the last TWO days of the month" is not "the 2nd day of
                     # the month": a rel-marker ("last"/"next"/"this") sitting

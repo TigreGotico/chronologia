@@ -1,0 +1,13 @@
+# Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.
+# hour: displayName "гадзіна" and the relativeTime plural forms
+# (гадзіну / гадзіны / гадзін).  NOT "час": in the hour sense that is a
+# documented dialectal Russianism, and it is the ordinary word for "time".
+гадзіна
+гадзіны
+гадзіне
+гадзіну
+гадзінай
+гадзін
+гадзінам
+гадзінах
+гадзінамі

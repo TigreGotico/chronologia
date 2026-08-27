@@ -1,0 +1,6 @@
+# Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field year/month/week/day/hour/minute/second, past.
+# CLDR writes the past year with ที่แล้ว and every shorter unit with
+# ที่ผ่านมา. The split matters only when generating text; on input both
+# forms occur for every unit, so both are read for all of them.
+ที่แล้ว
+ที่ผ่านมา

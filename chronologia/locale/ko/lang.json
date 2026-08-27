@@ -1,0 +1,56 @@
+{
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": false,
+  "decimal_comma": false
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "NUM UNIT MARKER"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "YEAR year_word MONTH DAY day_word at?",
+    "YEAR year_word MONTH",
+    "MONTH DAY day_word at?",
+    "MONTH"
+   ],
+   "prefer_future": true
+  },
+  "clock_time": {
+   "orders": [
+    "MERIDIEM? CLOCK at?",
+    "MERIDIEM? HOUR oclock MINUTE minute_word CLOCKDIR at?",
+    "MERIDIEM? HOUR oclock MINUTE minute_word at?",
+    "MERIDIEM? HOUR oclock FRACTION at?",
+    "MERIDIEM? HOUR oclock at?",
+    "LANDMARK at?"
+   ],
+   "prefer_future": true
+  },
+  "year_ref": {
+   "orders": [
+    "GYEAR year_word",
+    "GYEAR"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": false,
+  "hemisphere": "north",
+  "prefer_future": true,
+  "bare_half_past": true
+ },
+ "quantifiers": {
+  "0.5": [
+   "반"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "hook": "chronologia.extract.numfold_korean:fold_ko"
+}

@@ -48,17 +48,126 @@ no bundle raises `NotImplementedError` naming the missing locale.
 | `an` Aragonese | `ar` Arabic | `ast` Asturian | `az` Azerbaijani | `bg` Bulgarian |
 | `ca` Catalan | `cs` Czech | `cy` Welsh | `da` Danish | `de` German |
 | `el` Greek | `en` English | `eo` Esperanto | `es` Spanish | `et` Estonian |
-| `eu` Basque | `fa` Persian | `fi` Finnish | `fr` French | `fy` West Frisian |
-| `ga` Irish | `gl` Galician | `he` Hebrew | `hi` Hindi | `hr` Croatian |
-| `hu` Hungarian | `hy` Armenian | `id` Indonesian | `is` Icelandic | `it` Italian |
-| `ka` Georgian | `kab` Kabyle | `lt` Lithuanian | `ms` Malay | `mwl` Mirandese |
-| `nb` Norwegian Bokmål | `nl` Dutch | `nn` Norwegian Nynorsk | `oc` Occitan | `pl` Polish |
-| `pt` Portuguese | `ro` Romanian | `ru` Russian | `sk` Slovak | `sl` Slovenian |
+| `eu` Basque | `fa` Persian | `fi` Finnish | `fil` Filipino | `fr` French |
+| `fy` West Frisian | `ga` Irish | `gl` Galician | `he` Hebrew | `hi` Hindi |
+| `hr` Croatian | `hu` Hungarian | `hy` Armenian | `id` Indonesian | `is` Icelandic |
+| `it` Italian | `ka` Georgian | `kab` Kabyle | `lt` Lithuanian | `lv` Latvian |
+| `mk` Macedonian | `ms` Malay | `mt` Maltese | `mwl` Mirandese | `nb` Norwegian Bokmål |
+| `nl` Dutch | `nn` Norwegian Nynorsk | `oc` Occitan | `pl` Polish | `pt` Portuguese |
+| `ro` Romanian | `ru` Russian | `sk` Slovak | `sl` Slovenian | `sq` Albanian |
 | `sr` Serbian | `sv` Swedish | `tr` Turkish | `uk` Ukrainian | `vi` Vietnamese |
 
 English carries the widest grammar; coverage of the more specialised
 constructions (regnal years, classical Roman date formulas, deep-time eras)
 varies by language and is noted where it applies below.
+
+## When a language declines a phrase
+
+A language code in that table does not promise that every construction on this
+page works in that language. A locale ships a construction only where the
+surface form is **attested** — a dictionary, a language authority, a style
+guide or a native speaker's confirmation says that this is how people say it.
+Where the sources consulted conflict, or where none of them names a form at
+all, the locale ships nothing: the phrase returns `None`, or — where part of
+it is a construction the locale does know — a narrower span with the
+unreadable words left in the remainder. Either way that is a deliberate
+answer, not a hole someone forgot to fill.
+
+The reasoning is the same one that governs the rest of the library: **a wrong
+span is worse than no span.** A caller cannot tell a guessed date from a
+computed one. If a Macedonian locale invented a minutes-to-the-hour form
+because most of Europe has one, then "five to nine" would come back as a
+confident 08:55 in a language that counts only forward from the hour, and the
+scheduler on the other end would act on it. Refusing costs the caller one
+phrase; guessing costs them a wrong appointment they have no way to detect.
+
+Refusals are not blanket. They are as narrow as the evidence, and the rest of
+the language keeps working around them. Macedonian reads clock times fine —
+it just reads them the additive way its own style guides document:
+
+```python
+from chronologia import extract_timespan
+from datetime import datetime
+
+anchor = datetime(2017, 6, 27, 13, 4)
+
+span, _ = extract_timespan("девет и педесет", "mk", anchor)   # "nine and fifty"
+print(span.start_datetime)          # 2017-06-28 09:50:00
+
+print(extract_timespan("без пет девет", "mk", anchor))   # a minutes-to form
+# None
+```
+
+Serbian shows the other shape a refusal takes — one *word* declining, while a
+synonym answers. *Nedelja* names both Sunday and the week, and the sources
+disagree about which sense dominates in the genitive that "last/next" uses.
+*Sedmica* is unambiguously the week, so it carries the reading and *nedelja*
+declines rather than pick a side:
+
+```python
+span, _ = extract_timespan("prošle sedmice", "sr", anchor)   # "last week"
+print(span.start_datetime.date())   # 2017-06-19
+
+print(extract_timespan("prošle nedelje", "sr", anchor))
+# None
+```
+
+The same veto runs through the duration reader, for the same reason: a count
+before *nedelja* could only mean weeks, since nobody counts individual
+Sundays, but the week sense of that word is the unsourced one. Answering
+"two Sundays" would be worse than answering nothing:
+
+```python
+from chronologia import extract_duration
+
+print(extract_duration("dve sedmice", "sr").duration.days)   # 14
+print(extract_duration("dve nedelje", "sr"))                 # None
+```
+
+Georgian has the same collision in a sharper form: *კვირა* is both Sunday and
+the week, the two senses share one declension, and no source separates them —
+so Georgian ships no week duration unit at all, and a count before the word
+vetoes the weekday reading rather than hand a caller who asked for a duration
+one specific day. Maltese has no sourced word for the day before yesterday and
+CLDR carries no such field for it, so that one named day is simply absent while
+"the day after tomorrow" answers normally. Several locales ship no day-period
+bands — no "morning"/"evening" spans — because the reference data defines no
+boundaries for them, and inventing clock times for a cultural convention is
+exactly the kind of plausible fiction this library refuses to produce.
+
+### Telling a refusal from a bug
+
+Both look identical from the caller's side: `None`, or a span with words left
+in the remainder. Three checks separate them.
+
+**Does the phrase's construction exist in that locale at all?** Look in
+`chronologia/locale/<code>/` for the vocabulary the phrase needs — a
+minutes-to clock needs `clock_dir_to.voc`, a day-before-yesterday needs
+`named_day_-2.voc`. If the file is not there, the omission is deliberate, and
+the neighbouring files usually carry a header comment saying which source was
+consulted and what it failed to establish. Those headers are where the reason
+lives.
+
+**Does the same phrase work in a language you know?** If English or Spanish
+reads the construction and yours does not, the gap is per-locale — either a
+deliberate refusal or a genuinely missing translation, and the vocabulary
+files tell you which.
+
+**Does `explain` show the construction firing and losing?** If the machinery
+matched something and then discarded it (see
+[Seeing why a parse landed](#seeing-why-a-parse-landed)), the vocabulary is
+present and the behaviour is a ranking question — that is a bug worth
+reporting, not a refusal.
+
+What to do with each: a **deliberate refusal** is worth reporting only if you
+can bring the evidence it lacks — a dictionary entry, a grammar, a style guide,
+or your own confirmation as a native speaker, which counts. That turns an
+unsourced form into a sourced one, and the locale can then ship it. A
+**missing translation** is a straightforward contribution, and
+[adding-a-language.md](adding-a-language.md) walks through it. A **wrong
+answer** — a span that comes back confidently wrong — is the highest-value
+report of all, because it is the failure mode the whole design exists to
+prevent.
 
 ## What goes in, and what raises
 
@@ -1663,13 +1772,13 @@ placeholder. Run `pytest test/test_locale_schema.py` after editing a locale.
 
 ### Performance — lazy, cached per-locale loading
 
-`import chronologia` reads **no** locale data: not one of the 49
+`import chronologia` reads **no** locale data: not one of the 58
 `locale/<code>/` directories is touched at import. A language's vocabulary is
 read, expanded, and compiled into an engine the **first** time you call an
 `extract_*` function for it, and that engine is then cached for the lifetime
 of the process — a second call for the same language never re-reads a file.
 So an embedded voice target that speaks one language pays for one locale, not
-forty-nine, and pays for it once. The cache is guarded by a lock, so concurrent
+fifty-five, and pays for it once. The cache is guarded by a lock, so concurrent
 first-calls from different threads are safe: each language is compiled exactly
 once, and every later call returns the identical engine.
 

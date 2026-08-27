@@ -313,7 +313,19 @@ class Tokenizer:
         # U+0966-096F are deliberately excluded -- they are numbers, and the
         # numeric rule below already reads them.  Inert for every script that
         # writes no combining mark.
-        letter = r"(?:[^\W\d]|[ऀ-ःऺ-ॏ॑-ॗॢॣ])"
+        # Thai writes a syllable as a base consonant plus COMBINING vowel
+        # signs and tone marks -- วันจันทร์ is ว + ◌ั + น + จ + ◌ั + น + ท + ร +
+        # ◌์ -- and those marks are Mn, so without them in the letter class
+        # every Thai word ends at its first vowel sign and "วันจันทร์" arrives
+        # as five bare-consonant fragments.  Ranges are the Thai block's mark
+        # subranges (Unicode 16.0 chart U+0E00): U+0E31 mai han-akat,
+        # U+0E34-0E3A the sara/nikhahit vowel signs plus phinthu, and
+        # U+0E47-0E4E maitaikhu, the four tone marks, thanthakhat, nikhahit
+        # and yamakkan.  The baht sign U+0E3F, the fongman U+0E4F and the
+        # Thai digits U+0E50-0E59 are deliberately excluded: a currency
+        # symbol and a bullet are not letters, and the numeric rule below
+        # already reads the digits.
+        letter = r"(?:[^\W\d]|[ऀ-ःऺ-ॏ॑-ॗॢॣ]|[\u0e31\u0e34-\u0e3a\u0e47-\u0e4e])"
         zwj = r"(?:[‌‍׳״]" + letter + r"+)*"
         # a geresh can also be the mark on its OWN, trailing the letters
         # instead of sitting between two of them: that is how a SINGLE-LETTER

@@ -1,0 +1,5 @@
+# Korean marks no number on a noun, so the counted and uncounted forms of
+# a unit are one and the same word.  Listed here as well so the engine reads
+# this locale as having no plural unit surfaces at all.
+개월
+달
