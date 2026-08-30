@@ -20,8 +20,11 @@ A pure ``tuple[Token] -> tuple[Token]`` transform, re-indexed so
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 from ovos_number_parser.numbers_ar import extract_number_ar
 from ovos_number_parser.numbers_he import extract_number_he
+from ovos_spec_tools import read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
@@ -263,6 +266,70 @@ def _ar_clock_fraction_split(tokens):
                          char_start=t.char_start + 1, char_end=t.char_end)
             out.append(waw)
             out.append(frac)
+            changed = True
+        else:
+            out.append(t)
+    return reindex(tuple(out)) if changed else tokens
+
+
+#: locale-directory roots this module's hooks read vocabulary from, same
+#: layout ``loader.LOCALE_DIR`` resolves (``chronologia/locale``).
+_DEFAULT_LOCALE_DIR = str(Path(__file__).parent.parent / "locale")
+
+#: vocab-filename globs that name a single closed-class TEMPORAL slot whose
+#: bare word may legitimately follow a fused waw as a range endpoint --
+#: months (Gregorian and Islamic-civil), weekdays and dayparts.  The
+#: ABBREVIATED weekday file (``weekday_abbr_6.voc``: "أحد"/"احد", bare
+#: Sunday with no article) is deliberately excluded: it is spelled
+#: identically to the bare stem inside the numeral "واحد" (one), so folding
+#: it in would mis-split "واحد وعشرين يوما" (21 days) into "و" + "احد" and
+#: silently drop a day.  ``weekday_[0-9].voc`` (the article-bearing full
+#: form, "الأحد") carries no such collision.  Multiword entries within these
+#: files (``"ربيع الأول"``, ``"يوم الإثنين"``) are filtered out below:
+#: splitting only the leading proclitic off a MULTIWORD surface would leave a
+#: dangling remainder the multiword-merge pass was never asked to re-glue, so
+#: those surfaces are deliberately left unclosed by this hook (tracked
+#: separately).
+_AR_WORD_ROLE_GLOBS = ("month_*.voc", "weekday_[0-9].voc", "daypart_*.voc")
+
+
+def _ar_temporal_words(locale_dir=_DEFAULT_LOCALE_DIR):
+    lang_dir = Path(locale_dir) / "ar"
+    words = set()
+    for pattern in _AR_WORD_ROLE_GLOBS:
+        for path in sorted(lang_dir.glob(pattern)):
+            for surface in read_resource_file(path):
+                if " " not in surface:
+                    words.add(surface)
+    return frozenset(words)
+
+
+# Single-word month/weekday/daypart surfaces, used to recognise a "و"-glued
+# temporal word as a range endpoint -- see split_ar_range_word.
+_AR_TEMPORAL_WORDS = _ar_temporal_words()
+
+
+def split_ar_range_word(tokens):
+    """Split a "و"-glued temporal word off its proclitic ("بين يناير ومارس" ->
+    [بين][يناير][و][مارس]).  Arabic writes the "and" conjunction fused onto
+    the word it precedes with no space, so the second endpoint of a range
+    ("بين X وY", "من X وY") is otherwise invisible to the range grammar and
+    the span silently truncates to the first endpoint alone.  Gated on the
+    remainder being a recognised single-word month/weekday/daypart surface
+    (see ``_AR_TEMPORAL_WORDS``), so words that merely happen to start with و
+    ("وسط" mid, "واحد" one, "والنصف" and-the-half, ...) are left untouched.
+    Wired as ``pre_hook`` -- range/connector detection reads the raw pretoken
+    stream, before the ``hook`` number fold ever runs."""
+    out, changed = [], False
+    for t in tokens:
+        if (not t.is_number and len(t.raw) > 1 and len(t.text) == len(t.raw)
+                and t.raw[0] == "و" and t.text[1:] in _AR_TEMPORAL_WORDS):
+            waw = Token(text="و", raw=t.raw[0], index=t.index,
+                        char_start=t.char_start, char_end=t.char_start + 1)
+            rest = Token(text=t.text[1:], raw=t.raw[1:], index=t.index,
+                         char_start=t.char_start + 1, char_end=t.char_end)
+            out.append(waw)
+            out.append(rest)
             changed = True
         else:
             out.append(t)

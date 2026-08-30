@@ -153,8 +153,8 @@ CONSTRUCTION_FLAG_KEYS: FrozenSet[str] = frozenset(
 
 TOP_LEVEL_KEYS: FrozenSet[str] = frozenset({
     "tokenizer", "constructions", "conventions", "quantifiers", "guards",
-    "hook", "lemmas", "suffix_strip", "day_subdivision", "positions",
-    "base_grammar"})
+    "hook", "pre_hook", "lemmas", "suffix_strip", "day_subdivision",
+    "positions", "base_grammar"})
 
 #: marker roles whose POSITIONALITY may be declared -- the open-range and
 #: recurrence-bound framing words the engine scans for around a date.  Each maps
