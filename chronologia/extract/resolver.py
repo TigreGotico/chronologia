@@ -846,11 +846,30 @@ class Resolver:
         wd_tok = match.slots.get("WEEKDAY") or match.slots["WEEKDAYFULL"]
         target = self.spec.weekdays[wd_tok.text]
         rel_tok = match.slots.get("REL_MARKER")
+        base = _midnight(anchor)
+        ntolast_tok = match.slots.get("NTOLAST")
+        penult_tok = match.slots.get("PENULT")
+        if ntolast_tok is not None or penult_tok is not None:
+            # "second-to-last/penultimate <weekday>", no "of <scope>" -- the
+            # unscoped sibling of ``_resolve_scoped_ordinal``'s "<ordinal>
+            # to last WEEKDAY of MONTH" reading, using the SAME -N-from-last
+            # math, just anchored on today's week instead of a named scope:
+            # each extra step back from "last" costs one more whole week.
+            if penult_tok is not None:
+                n = -2
+            else:
+                ord_tok = match.slots.get("ORD")
+                v = int(ord_tok.value) if ord_tok is not None else 2
+                if not 2 <= v <= 4:
+                    return None
+                n = -v
+            back = (anchor.weekday() - target) % 7 or 7
+            value = base - timedelta(days=back + (-n - 1) * 7)
+            return Resolution(_day_span(value), self._consumed(match))
         # A bare weekday ("friday") names the NEXT occurrence, strictly future:
         # the same prefer-future reckoning as an explicit "next", so when the
         # anchor already IS that weekday the span is seven days out.
         rel = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 1
-        base = _midnight(anchor)
         if rel > 0:      # next
             ahead = (target - anchor.weekday()) % 7 or 7
             value = base + timedelta(days=ahead)
