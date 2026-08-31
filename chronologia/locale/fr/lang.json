@@ -118,6 +118,17 @@
         "article? year_word NUM SCALE"
       ]
     },
+    "era_anno_mundi": {
+      "orders": [
+        "article? year_word? NUM of? hebrew",
+        "in? article? hebrew year_word? NUM"
+      ]
+    },
+    "era_french_republican": {
+      "orders": [
+        "article? year_word NUM of? article? french_republican"
+      ]
+    },
     "decade_ref": {
       "orders": [
         "PART? article? NUM plural",

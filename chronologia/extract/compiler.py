@@ -49,6 +49,7 @@ PRECEDENCE: Dict[str, int] = {
     "era_byzantine": 1,
     "era_holocene": 1,
     "era_anno_mundi": 1,
+    "era_french_republican": 1,
     "era_buddhist": 1,
     "era_buddhist_be": 1,
     # Islamic (lunar) Hijri and Iranian Solar Hijri era-year surfaces resolve

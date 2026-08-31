@@ -2418,6 +2418,15 @@ class Resolver:
         return Resolution(self._era_span("anno_mundi", n),
                           self._consumed(match))
 
+    def _resolve_era_french_republican(self, match, anchor):
+        """"l'an II de la République": the French Republican calendar's own
+        year numbering, resolved through its epoch (An I == 22 September
+        1792, the calendar's own Vendémiaire-based year), not the literal
+        number read as a Gregorian year."""
+        n = int(match.slots["NUM"].value)
+        return Resolution(self._era_span("french_republican", n),
+                          self._consumed(match))
+
     def _resolve_era_buddhist(self, match, anchor):
         """"Buddhist Era 2560" / "2560 BE": the Gregorian year-span of that
         Buddhist-Era year, resolved through the registry's epoch (BE == CE +
