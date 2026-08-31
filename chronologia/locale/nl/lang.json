@@ -11,6 +11,11 @@
         "article? year_word NUM bc"
       ]
     },
+    "decade_ref": {
+      "orders": [
+        "PART? article? year_plural NUM"
+      ]
+    },
     "relative_offset": {
       "orders": [
         "NUM UNIT MARKER",

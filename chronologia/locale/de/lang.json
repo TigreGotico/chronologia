@@ -133,7 +133,9 @@
     "iso_week_ref": {
       "orders": [
         "week_num NUM of YEAR",
-        "week_num NUM YEAR?"
+        "week_num NUM YEAR?",
+        "article? ORD week_num of YEAR",
+        "article? ORD week_num YEAR?"
       ]
     },
     "roman_date": {
@@ -174,5 +176,12 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_germanic:fold_de"
+  "hook": "chronologia.extract.numfold_germanic:fold_de",
+  "base_grammar": {
+    "extend": {
+      "season_ref": [
+        "during article? SEASON YEAR?"
+      ]
+    }
+  }
 }
