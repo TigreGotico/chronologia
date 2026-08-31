@@ -54,3 +54,19 @@ def test_digit_clock(text, h, mi):
 ])
 def test_landmarks(text, h, mi):
     assert start(text) == _next_time(h, mi)
+
+
+@pytest.mark.parametrize("text,h,mi", [
+    # The daypart nouns also serve as a uniform +12 PM cue on an explicit
+    # hour (πρωί/απόγευμα/βράδυ) or the small-hours/PM night split
+    # (νύχτα) -- see clock_meridiem_{am,pm,night}.voc for the CLDR
+    # citations. The hour is final; the modifier is not the daypart band.
+    ("τρεις το πρωί", 3, 0),
+    ("τρεις το απόγευμα", 15, 0),
+    ("οκτώ το βράδυ", 20, 0),
+    ("δέκα τη νύχτα", 22, 0),
+    ("μία τη νύχτα", 1, 0),
+    ("δώδεκα τη νύχτα", 0, 0),
+])
+def test_daypart_as_meridiem(text, h, mi):
+    assert start(text) == _next_time(h, mi)

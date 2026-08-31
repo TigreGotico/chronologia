@@ -8,3 +8,12 @@
 μ.μ.
 μ. μ.
 μμ
+# The daypart nouns απόγευμα (afternoon, CLDR el [12:00, 17:00)) and βράδυ
+# (evening, CLDR el [17:00, 20:00)) also serve as a uniform +12 PM cue on an
+# explicit hour, the same role tarde plays across afternoon+evening in es/pt
+# and nachmittags/abends do separately in de -- "οκτώ το βράδυ" is 20:00, not
+# a hint to re-derive the daypart band. Source: Triantafyllidis, Νεοελληνική
+# Γραμματική §403 (time expressions); Λεξικό της Κοινής Νεοελληνικής
+# (Ίδρυμα Μανόλη Τριανταφυλλίδη), s.vv. "απόγευμα", "βράδυ".
+απόγευμα
+βράδυ

@@ -124,8 +124,7 @@ always shipped; a band whose only natural surface is multi-word (Czech ``v
 noci``, Polish ``po południu``, Turkish ``öğleden sonra``, Malay ``tengah
 hari``) carries no ``daypart_*.voc`` yet -- French ``après-midi`` ships its
 tokenizer-canonicalised "après midi" surface, so it no longer belongs to that
-set -- and a few locales (``az`` ``el``) ship the bands but hold their
-surfaces for native review.
+set -- and ``az`` ships the bands but holds its surfaces for native review.
 
 ``Vormittag``, ``förmiddag``, ``formiddag``, ``føremiddag`` and ``migdia`` have
 no English name at all, which is why they are stored under their own names
@@ -607,8 +606,6 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (17, 0), "az", _cldr("az")),
     _p("evening", (17, 0), (19, 0), "az", _cldr("az")),
     _p("night", (19, 0), (4, 0), "az", _cldr("az")),
-    # el: surfaces held for native review (the deictic forms carry an article
-    # -- "to proi" -- that strands as a separate token here).
     _p("morning", (4, 0), (12, 0), "el", _cldr("el")),
     _p("afternoon", (12, 0), (17, 0), "el", _cldr("el")),
     _p("evening", (17, 0), (20, 0), "el", _cldr("el")),

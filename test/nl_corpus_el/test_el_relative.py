@@ -6,7 +6,7 @@ never the engine's own output.
 import pytest
 from dateutil.relativedelta import relativedelta
 
-from ._corpus import ANCHOR, ad, start, start_end, nomatch
+from ._corpus import ANCHOR, ad, start, start_end, nomatch, AstroDate, parse
 
 UNIT = {
     "μέρα": relativedelta(days=1), "μέρες": relativedelta(days=1),
@@ -140,5 +140,14 @@ def test_bare_number_no_unit_nomatch():
     nomatch("είκοσι τρεις")
 
 
-def test_gibberish_nomatch():
-    nomatch("τρώω μήλα κάθε πρωί")
+def test_gibberish_sentence_binds_its_daypart():
+    # "τρώω μήλα κάθε πρωί" ("I eat apples every morning") carries a genuine
+    # πρωί daypart mention and binds the CLDR el morning band
+    # [04:00, 12:00). Recurrence ("κάθε" -- "every") is unimplemented in el,
+    # so κάθε strands in the remainder along with the rest of the sentence.
+    r = parse("τρώω μήλα κάθε πρωί")
+    assert r is not None
+    sp, remainder = r
+    assert sp.start == AstroDate(2017, 6, 27, 4, 0)
+    assert sp.end == AstroDate(2017, 6, 27, 12, 0)
+    assert remainder == "τρώω μήλα κάθε"

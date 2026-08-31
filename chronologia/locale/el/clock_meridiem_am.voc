@@ -7,3 +7,9 @@
 π.μ.
 π. μ.
 πμ
+# πρωί (morning, CLDR el [04:00, 12:00)) also serves as an AM cue on an
+# explicit hour, the same role mañana/madrugada play in es -- "τρεις το
+# πρωί" is 03:00 (a no-op AM confirmation, spoken hours 1..11 already read
+# AM). Source: Triantafyllidis, Νεοελληνική Γραμματική §403; Λεξικό της
+# Κοινής Νεοελληνικής (Ίδρυμα Μανόλη Τριανταφυλλίδη), s.v. "πρωί".
+πρωί

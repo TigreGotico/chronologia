@@ -1,3 +1,9 @@
+# The definite article. Accusative singular "το" (neuter) and "τη"/"την"
+# (feminine) are cited to Wiktionary: "το", neuter nominative/accusative
+# singular of "ο" (https://en.wiktionary.org/wiki/το); "τη", feminine
+# accusative singular of "ο", used before a word that does not start with a
+# vowel or a plosive consonant (κ ξ π τ ψ γκ ντ μπ) -- "την" is the
+# alternative form used otherwise (https://en.wiktionary.org/wiki/τη).
 ο
 η
 το
@@ -5,3 +11,4 @@
 τα
 τον
 την
+τη
