@@ -383,7 +383,47 @@ def _dash_between(tokens, p, text):
     return tokens[p - 1].is_number and tokens[p].is_number
 
 
-def _first_to_split(tokens, left_start, to_surf, text):
+def _ntolast_interior(tokens, p, k, spec, text):
+    """Whether the connector at ``tokens[p:p + k]`` is the joint of an
+    "<ordinal> to last" idiom ("the second-to-last friday", "the next-to-last
+    monday") rather than a range boundary.
+
+    The idiom spells its own ordinal with the language's ``to`` word, so the
+    range detector would otherwise split "second-to-last" into a "second" ..
+    "last friday" range -- a candidate that outranks the weekday reading and
+    lands a week off.  Recognised by shape, not by surface: a single-token
+    ``to`` connector with an ``ordlast`` word on its right and either a 2..4
+    ordinal or an ``ntolast_next`` word on its left, the same surfaces and
+    bounds :func:`_ntolast_ordn` reads the idiom with.
+
+    Both gates matter.  The connector must be a ``to`` surface, so the ``and``
+    split ("between the second and last friday of june") is never a candidate.
+    And the locale must declare ``ntolast_next``, the vocabulary that goes with
+    this idiom, so a language that merely pairs an ordlast word with its own
+    range connector -- Spanish "del 2 al último día de junio", French "du 2 au
+    dernier jour", Dutch "van 2 tot laatste dag" -- keeps a genuine range.
+    """
+    if p == 0 or k != 1 or p + k >= len(tokens):
+        return False
+    if not spec.connectors.get("ntolast_next"):
+        return False
+    to_words = {w for words in _conn_surfaces(spec, "to", _RANGE_TO)
+                for w in words if len(words) == 1}
+    if tokens[p].text not in to_words:
+        return False
+    if tokens[p + k].text not in spec.connectors.get("ordlast", ()):
+        return False
+    left = tokens[p - 1]
+    if left.text in spec.connectors.get("ntolast_next", ()):
+        return True
+    # the ordinal is read off the PRE-fold stream here, where "second" is still
+    # a word; folding the one token gives it the value the idiom is bounded by.
+    folded = fold_tokens((left,), spec, text)
+    return len(folded) == 1 and folded[0].is_number \
+        and 2 <= (folded[0].value or 0) <= 4
+
+
+def _first_to_split(tokens, left_start, to_surf, text, spec):
     """First "to"-connector at a boundary after ``left_start``.
 
     Returns ``(p, k)`` -- the connector begins at token ``p`` and spans ``k``
@@ -395,7 +435,8 @@ def _first_to_split(tokens, left_start, to_surf, text):
     for p in range(left_start + 1, n):
         k = _match_conn_at(tokens, p, to_surf)
         if k and p + k < n:                       # word connector, right non-empty
-            return p, k
+            if not _ntolast_interior(tokens, p, k, spec, text):
+                return p, k
         if _dash_between(tokens, p, text):        # dash gap, right is tokens[p:]
             return p, 0
     return None
@@ -592,7 +633,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         lead_at, lead = at_between
     else:
         lead_at, lead = 0, 0
-    split = _first_to_split(tokens, lead_at + lead, to_surf, text)
+    split = _first_to_split(tokens, lead_at + lead, to_surf, text, spec)
     if split is not None:
         p, k = split
         left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
@@ -667,7 +708,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     # -- between A and B ---------------------------------------------------
     if at_between is not None:
         lead_at, lead = at_between
-        split = _first_to_split(tokens, lead_at + lead, and_surf, text)
+        split = _first_to_split(tokens, lead_at + lead, and_surf, text, spec)
         if split is not None:
             p, k = split
             left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
@@ -694,7 +735,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     # how a bare "A to B" needs its own licence (see ``lead_required`` above).
     between_post_surf = _conn_surfaces(spec, "between_post", ())
     if between_post_surf:
-        split = _first_to_split(tokens, 0, and_surf, text)
+        split = _first_to_split(tokens, 0, and_surf, text, spec)
         if split is not None:
             p, k = split
             marker = _find_conn(tokens[p + k:], between_post_surf)
@@ -1556,7 +1597,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
         return None
     to_surf = _conn_surfaces(
         spec, "to", _RANGE_TO + tuple(spec.connectors.get("until", ())))
-    split = _first_to_split(tokens, k, to_surf, text)
+    split = _first_to_split(tokens, k, to_surf, text, spec)
     if split is None:
         return None
     p, m = split
