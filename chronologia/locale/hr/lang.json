@@ -35,7 +35,8 @@
     "HOUR MERIDIEM ZONE?",
     "at HOUR oclock MERIDIEM? ZONE?",
     "HOUR oclock MERIDIEM? ZONE?",
-    "at? LANDMARK ZONE?"
+    "at? LANDMARK ZONE?",
+    "FRACTION HOUR MERIDIEM? ZONE?"
    ],
    "prefer_future": true
   },
@@ -90,7 +91,9 @@
   "week_start": "monday",
   "dmy": true,
   "hemisphere": "north",
-  "prefer_future": true
+  "prefer_future": true,
+  "bare_half_to": true,
+  "toward_hour_12h": true
  },
  "quantifiers": {
   "1": [

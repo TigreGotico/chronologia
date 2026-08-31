@@ -37,6 +37,20 @@ _EXTRA: dict = {
     # clock's FRACTION slot ("půl deváté").  The half-hour duration ("půl
     # hodiny") resolves through the marker_half path, not the cardinal fold.
     "cs": {"dva", "dvě", "dvou", "tři", "čtyři"},
+    # Slovak names the clock half toward the coming hour the same direction
+    # as Czech ("pol deviatej" == half toward nine, parallel to "půl deváté"),
+    # attested by en.wiktionary.org/wiki/half_past's translation table (sk:
+    # "pol druhej" under the headword "half past one" == 1:30).  It is NOT
+    # wired here despite that: the hour is a genitive/locative ORDINAL
+    # ("deviatej", "druhej"), not Croatian's bare cardinal, so the hr wiring
+    # (bare_half_to + a bare "FRACTION HOUR" order) does not transfer as-is --
+    # it would need an ordinal-aware toward-hour construction of its own, the
+    # same shape Czech already has via _HOUR_SK-style ordinal folding.  Also,
+    # unlike Croatian's "pola", "pol" here stays a genuine cardinal number
+    # word ("pol hodiny" == half an hour) and cannot simply be dropped from
+    # this fold set the way hr's "pola" was -- see the hr entry below for the
+    # duration breakage that caused.  Left unimplemented rather than shipped
+    # half-built.
     "sk": {"dva", "dve", "dvoch", "tri", "štyri", "pol"},
     "pl": {"dwa", "dwie", "dwóch", "trzy", "cztery", "pół"},
     # "one" agrees in gender/case with its noun; the model pronounces only the
@@ -51,7 +65,17 @@ _EXTRA: dict = {
     # "пів <unit>" durations already resolve through the QUANT slot
     # (lang.json quantifiers), not this cardinal fold.
     "uk": {"два", "дві", "двох", "три", "одна", "одну", "одної"},
-    "hr": {"dva", "dvije", "tri", "pola", "pol"},
+    # NB "pola" is deliberately NOT folded here, mirroring cs's "půl":
+    # folding it to 0.5 would erase the toward-hour clock's FRACTION surface
+    # ("pola devet") before the grammar ever sees the word.  "pol" stays IN
+    # the fold set -- it is the plain cardinal-duration half ("pol sata",
+    # "sat i pol", "dva i pol sata"), not the clock word, and dropping it
+    # alongside "pola" broke all ten of those readings for no reason.  The
+    # accepted cost of excluding "pola" alone is that the timespan-composing
+    # "za pola sata" (in half an hour) no longer resolves through this fold
+    # either; the standalone "pola sata" duration still resolves through the
+    # QUANT slot (lang.json quantifiers), unaffected by this table.
+    "hr": {"dva", "dvije", "tri", "pol"},
     "sl": {"dva", "dve", "tri", "pol"},
     "bg": {"два", "две", "три", "половин"},
 }
