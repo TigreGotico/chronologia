@@ -184,8 +184,11 @@ def pretokens(text: str, spec: LangSpec) -> Tuple[Token, ...]:
     Every token still carries its original character extent, so an endpoint
     sub-slice can be folded on its own afterwards (:func:`fold_tokens`).
     """
-    return TemporalNormaliser(spec).normalise(
+    tokens = TemporalNormaliser(spec).normalise(
         Tokenizer(spec.tokenizer).tokenize(text))
+    if spec.pre_hook is not None:
+        tokens = spec.pre_hook(tokens)
+    return tokens
 
 
 def fold_tokens(tokens: Tuple[Token, ...], spec: LangSpec,

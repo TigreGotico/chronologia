@@ -486,6 +486,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             decimal_comma=tok.get("decimal_comma", False)),
         guards=cfg.get("guards", {}),
         hook=_resolve_dotted(cfg.get("hook")),
+        pre_hook=_resolve_dotted(cfg.get("pre_hook")),
         clock_fractions=clock_fractions,
         clock_fractions_prev=clock_fractions_prev,
         clock_dir_minutes=clock_dir_minutes,

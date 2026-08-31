@@ -281,6 +281,12 @@ class LangSpec:
     tokenizer: TokenizerModes
     guards: Mapping[str, int]
     hook: Optional[Callable] = None
+    # applied to the raw pretoken stream, before range/connector detection
+    # reads it -- unlike ``hook`` (spelled-number fold), which only runs on
+    # the post-range fold pass so a range connector never gets swallowed into
+    # a folded number.  For token SPLITS a connector needs to see (e.g. a
+    # fused proclitic), not number folds.
+    pre_hook: Optional[Callable] = None
     # clock_time slot vocab (surface -> value), all facts from filename convention
     clock_fractions: Mapping[str, int] = field(default_factory=dict)  # -> minutes
     # fraction surfaces (a SUBSET of clock_fractions, so the FRACTION slot still
