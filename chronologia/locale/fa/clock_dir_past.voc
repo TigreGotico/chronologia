@@ -1,0 +1,6 @@
+# The Persian clock connector "و" ("and") always counts the fraction PAST
+# the stated hour -- unlike Arabic, which reuses the same "و" for its
+# past reading too, Persian has no symmetric "to" connector in ordinary
+# speech, so only the past direction is wired.  Citations: see
+# clock_fraction_15.voc / clock_fraction_30.voc.
+و
