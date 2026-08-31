@@ -90,13 +90,11 @@ def test_between_full_date_range(d1, m1, y1, d2, m2, y2):
     assert ee == AstroDate(e.year, e.month, e.day)
 
 
-# -- known gap: fused ו- (no hyphen) drops the second endpoint --------------
-@pytest.mark.xfail(reason="the ו coordinator must be set off by a maqaf/hyphen "
-                          "(ו-מרץ) to tokenize separately; the fused literary "
-                          "form (ומרץ) is swallowed and the range collapses to "
-                          "just the first endpoint month instead of matching "
-                          "Jan-Mar or failing to match at all",
-                   strict=True)
+# -- fused ו- (no hyphen): the literary form ("ומרץ") used to be swallowed,
+# collapsing the range to just its first endpoint.  A range-only pre_hook
+# (``split_he_range_word``, chronologia/extract/numfold_semitic.py) now
+# splits a vav-glued month/weekday/daypart word off before range detection
+# reads the pretoken stream, so the second endpoint is visible again.
 def test_between_fused_and_pending():
     ss, ee = start_end("בין ינואר ומרץ")
     assert ss == AstroDate(2017, 1, 1)

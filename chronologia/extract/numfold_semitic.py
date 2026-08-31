@@ -336,6 +336,98 @@ def split_ar_range_word(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
+#: vocab-filename globs that name a single closed-class TEMPORAL slot whose
+#: bare word may legitimately follow a fused vav as a range endpoint --
+#: Gregorian and Hebrew-calendar months, and dayparts.  ``weekday_[0-9].voc``
+#: is EXCLUDED, unlike the Arabic version of this guard: every Hebrew weekday
+#: full name Mon..Fri is multiword ("יום שני") and so is already filtered out
+#: by the single-word check below. ``weekday_abbr_*.voc`` (the bare
+#: abbreviated forms, e.g. "שני" Monday, "שלישי" Tuesday, ...) is EXCLUDED
+#: outright rather than relying on the single-word filter, and for two
+#: DIFFERENT reasons per entry, not one shared one: "שני" is specifically the
+#: SAME string as the construct form of the cardinal "two" (שניים), a
+#: homograph documented on ``_HE_NUM``/``fold_he`` above -- folding it in
+#: would let "יום ושני שעות" (a day and two hours) mis-split into "ו" +
+#: "שני" and risk a duration count being read as a Monday range endpoint,
+#: the same class of defect the Arabic guard's abbreviated-Sunday exclusion
+#: documents ("أحد" inside "واحد"). The other bare abbreviated weekdays
+#: (שלישי/רביעי/חמישי/שישי/ראשון) carry a broader, ordinary ORDINAL
+#: homograph instead -- Hebrew names weekdays by ordinal, so e.g. "שלישי" is
+#: simultaneously "third" and "Tuesday" with no dedicated cardinal collision;
+#: excluding the whole file keeps that one guard simple rather than needing
+#: a second, narrower rationale per entry. ``weekday_abbr_5.voc`` never
+#: reaches either check regardless: its only surfaces ("יום ש"/"ביום ש")
+#: are multiword, so the single-word filter below would have dropped it
+#: anyway. ``weekday_5.voc`` ("שבת", bare Saturday) has no such collision
+#: and is covered through the single-word filter same as any other role.
+#: Multiword entries (weekday full names, "אדר ב"/"אדר שני"/"אדר בית" for
+#: the Hebrew leap month) are filtered out below: splitting only the
+#: leading vav off a MULTIWORD surface would leave a dangling remainder the
+#: multiword-merge pass was never asked to re-glue, so those surfaces are
+#: deliberately left unclosed by this hook (tracked separately).
+_HE_WORD_ROLE_GLOBS = ("month_*.voc", "weekday_5.voc", "daypart_*.voc")
+
+#: ``month_hebrew_5.voc`` ("אב", the Hebrew month Av) is excluded outright,
+#: from BOTH the range-endpoint split and the bare-mention remerge below --
+#: not merely narrowed the way the abbreviated weekdays are. "אב" is not a
+#: rare technical homograph: it is also the ordinary, extremely common noun
+#: "father" ("אמא ואב", "mother and father"), and admitting it let a fused
+#: bare mention resolve as a confident ``basis='exact'`` month span for text
+#: that is not talking about a date at all (found on adversarial review --
+#: "אם ואב"/"אבא ואב" mis-resolved to Av). Gregorian months and the other
+#: Hebrew-calendar months carry no such everyday-word collision. The
+#: trade-off, stated not hidden: a range whose second endpoint is a FUSED
+#: "ואב" ("בין ניסן ואב") still truncates, the original defect, left open for
+#: this one month rather than risk the false positive; the spaced form
+#: ("בין ניסן ו אב") is unaffected and already works.
+_HE_VAV_HOMOGRAPH_EXCLUDE = frozenset({"אב"})
+
+
+def _he_temporal_words(locale_dir=_DEFAULT_LOCALE_DIR):
+    lang_dir = Path(locale_dir) / "he"
+    words = set()
+    for pattern in _HE_WORD_ROLE_GLOBS:
+        for path in sorted(lang_dir.glob(pattern)):
+            for surface in read_resource_file(path):
+                if " " not in surface:
+                    words.add(surface)
+    return frozenset(words) - _HE_VAV_HOMOGRAPH_EXCLUDE
+
+
+# Single-word month/weekday/daypart surfaces, used to recognise a
+# vav-glued temporal word as a range endpoint -- see split_he_range_word.
+_HE_TEMPORAL_WORDS = _he_temporal_words()
+
+
+def split_he_range_word(tokens):
+    """Split a vav-glued temporal word off its proclitic ("בין ינואר ומרץ" ->
+    [בין][ינואר][ו][מרץ]).  Hebrew writes the "and" conjunction fused onto the
+    word it precedes with no space, so the second endpoint of a range
+    ("בין X וY") is otherwise invisible to the range grammar and the span
+    silently truncates to the first endpoint alone.  Gated on the remainder
+    being a recognised single-word month/weekday/daypart surface (see
+    ``_HE_TEMPORAL_WORDS``), so words that merely happen to start with ו
+    ("ורוד" pink, "ותיק" veteran, ...) are left untouched.  Wired as
+    ``pre_hook`` -- range/connector detection reads the raw pretoken stream,
+    before the ``hook`` number fold (``fold_he``, which already strips a
+    vav proclitic off a wider curated word set, ``_he_vav_strip``) ever
+    runs."""
+    out, changed = [], False
+    for t in tokens:
+        if (not t.is_number and len(t.text) > 1 and t.text[0] == "ו"
+                and t.text[1:] in _HE_TEMPORAL_WORDS):
+            vav = Token(text="ו", raw=t.raw[0], index=t.index,
+                        char_start=t.char_start, char_end=t.char_start + 1)
+            rest = Token(text=t.text[1:], raw=t.raw[1:], index=t.index,
+                         char_start=t.char_start + 1, char_end=t.char_end)
+            out.append(vav)
+            out.append(rest)
+            changed = True
+        else:
+            out.append(t)
+    return reindex(tuple(out)) if changed else tokens
+
+
 def fold_ar(tokens):
     """Fold the feminine ordinal clock hour first (in clock context only), split
     a "و"-glued trailing clock fraction off it, then the ordinal teen (11..19),
@@ -570,6 +662,52 @@ def _he_vav_strip(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
+# ``split_he_range_word`` (pre_hook) already split a fused vav + month/
+# weekday/daypart word into two adjacent tokens ["ו"][word] BEFORE this hook
+# ever sees the stream -- range detection needs that split visible on the raw
+# pretoken stream.  Every OTHER grammar (bare-mention date resolution
+# included) reads this hook's OUTPUT instead (``fold_tokens``, applied to
+# ``pretokens()``'s result -- see ``pipeline.fold_tokens``/``pretokens``), so
+# without undoing the split here first, a standalone fused mention
+# ("ומרץ" alone, no range) would surface a stray unconsumed "ו" token in the
+# remainder instead of resolving clean.  This re-merges the pair back into
+# one bare-word token whenever the two tokens are ADJACENT with no gap
+# (``char_end == char_start``, i.e. actually fused in the source text): a
+# genuinely SPACED "ו word" ("ינואר ו מרץ") keeps its own "ו" token
+# untouched, since that vav is an ordinary free connector word, not a
+# proclitic to undo.
+#
+# NOTE this does not merely RESTORE the pre-pre_hook behaviour -- it
+# BROADENS it.  ``_he_vav_strip`` above only ever curated Gregorian months
+# into ``_HE_VAV_STEMS``, so on the prior release a fused bare mention of a
+# weekday ("ושבת"), a daypart ("ובבוקר") or a Hebrew-calendar month
+# ("וניסן", "וסיון") returned no match at all.  Gating the remerge on
+# ``_HE_VAV_STEMS | _HE_TEMPORAL_WORDS`` (the same set the range-endpoint
+# split itself uses, see ``_HE_TEMPORAL_WORDS`` above) makes those three
+# additional classes resolve too, since they are now reachable via the
+# split either way and leaving them unmerged would only add noise (a stray
+# "ו" in the remainder) without preventing the match.  Pinned with tests
+# (test_nl_ranges.py) rather than left as an undocumented side effect.
+def _he_vav_remerge(tokens):
+    out, i, n, changed = [], 0, len(tokens), False
+    while i < n:
+        t = tokens[i]
+        if (i + 1 < n and t.text == "ו" and t.char_end is not None
+                and tokens[i + 1].char_start == t.char_end
+                and tokens[i + 1].text in (_HE_VAV_STEMS | _HE_TEMPORAL_WORDS)):
+            nxt = tokens[i + 1]
+            out.append(Token(text=nxt.text, raw=(t.raw or "") + (nxt.raw or ""),
+                             index=t.index, char_start=t.char_start,
+                             char_end=nxt.char_end, cap=nxt.cap,
+                             prev_cap=nxt.prev_cap))
+            i += 2
+            changed = True
+            continue
+        out.append(t)
+        i += 1
+    return reindex(tuple(out)) if changed else tokens
+
+
 # -- dual-noun unit split -----------------------------------------------
 # Hebrew inflects a unit noun for the DUAL number when the count is exactly
 # two -- יומיים ("two days") is one word, not "שני ימים" spelled together --
@@ -614,10 +752,17 @@ def fold_he(tokens):  # noqa: F811  -- wrap the cardinal fold with the fem ordin
     """Fold the gematria year numeral (תשפ״ה → 5785), the ordinal teen
     (11..19) and the feminine ordinal (מחצית's "first/second") before the
     cardinal fold, then run the cardinal fold: none overlap (each is its own
-    run), and the weekday-masculine ordinals stay untouched. The vav strip
-    runs first so a vav-prefixed date word folds/matches exactly like its
-    bare form; the dual split runs on its result so a vav-prefixed dual
-    ("ולפני יומיים") reaches it as a bare dual noun token."""
+    run), and the weekday-masculine ordinals stay untouched. The vav remerge
+    runs first, undoing ``split_he_range_word``'s pre_hook split for any pair
+    that was not consumed as a range connector, so a bare fused month/
+    weekday/daypart mention resolves clean instead of leaving a stray "ו" in
+    the remainder -- this both restores the pre-pre_hook Gregorian-month
+    behaviour AND broadens it to weekday/daypart/Hebrew-month mentions that
+    previously had no match at all (see the comment on ``_he_vav_remerge``);
+    the vav strip runs next so a still-fused vav-prefixed date word (any
+    ``_HE_VAV_STEMS`` role the pre_hook does not cover) folds/matches exactly
+    like its bare form; the dual split runs on its result so a vav-prefixed
+    dual ("ולפני יומיים") reaches it as a bare dual noun token."""
     return _fold_he_cardinal(_he_ordinal_rewrite(
         _he_teen_fold(_he_gematria_rewrite(
-            _he_dual_split(_he_vav_strip(tokens))))))
+            _he_dual_split(_he_vav_strip(_he_vav_remerge(tokens)))))))
