@@ -43,6 +43,22 @@ one-and-a-half quantifier.
 `kvart i nio`, `fem över åtta` — with `klockan` as the o'clock word. `midnatt`
 and `middag` are the landmark points.
 
+**A spoken hour binds to a following day-part phrase as its meridiem.**
+`åtta på kvällen` reads 20:00, and the fractional and relative-minute clock
+forms carry the same binding — `halv nio på kvällen` reads 20:30, `kvart i
+nio på kvällen` 20:45, `fem över sju på kvällen` 19:05. `på` is the
+connector; the five day-part nouns (`morgon`, `förmiddag`, `eftermiddag`,
+`kväll`, `natt`) double as the meridiem vocabulary, `morgon`/`förmiddag`
+shifting the AM side and `eftermiddag`/`kväll` the PM side. The shift is a
+flat twelve-hour move on the spoken 1–11 hour, the same rule the English,
+Spanish and Portuguese locales apply, not a lookup into the day-part's own
+CLDR band: the literal hour twelve is the one case where that shows, so
+`tolv på förmiddagen` and `tolv på morgonen` both read as midnight rather
+than the late-morning noon a native speaker would mean, and an hour spoken
+outside its day-part's own band (`ett på kvällen`, `fem på kvällen`) still
+takes the flat shift rather than declining. A day-part phrase with no hour
+in front of it is unaffected and still reads as the whole band.
+
 **Ranges** are `från … till …` and `mellan … och …`, with `sedan` opening one
 that runs to the anchor and `till` closing one that starts there.
 
@@ -64,12 +80,6 @@ neighbouring Germanic locales have.
 
 ## What refuses
 
-**A twelve-hour clock time with a day-part phrase.** `åtta på kvällen` does not
-resolve as 20:00. It resolves the evening band instead and leaves `åtta på` in
-the remainder, so the hour is lost. The locale ships no meridiem vocabulary at
-all — there is no `clock_meridiem_am` or `clock_meridiem_pm` file — so nothing
-can shift a bare hour into the afternoon half.
-
 **The deictic day-part adverbs.** `i morse` and `inatt` return nothing. The
 band words themselves read when framed — `i kväll`, `i eftermiddag`,
 `på förmiddagen` all resolve — but the fused and suppletive deictic forms are
@@ -85,12 +95,9 @@ marker is still only a quantity.
 
 ## Open questions for a native speaker
 
-1. Which meridiem surfaces would make `åtta på kvällen` read as 20:00 —
-   `på morgonen`, `på förmiddagen`, `på eftermiddagen`, `på kvällen`,
-   `på natten` — and where does each of them put the twelve-hour boundary?
-2. Should `i morse`, `inatt` and `i går kväll` ship as their own surfaces?
+1. Should `i morse`, `inatt` and `i går kväll` ship as their own surfaces?
    `i morse` in particular is not `i morgon` and names the morning just past.
-3. Does the `förmiddag` boundary at 10:00 match ordinary use, or does the
+2. Does the `förmiddag` boundary at 10:00 match ordinary use, or does the
    `morgon` run later in speech than the CLDR table says?
-4. Are the clock words and range markers as this locale ships them the standard
+3. Are the clock words and range markers as this locale ships them the standard
    set, or are there common alternatives missing?

@@ -1,0 +1,12 @@
+# The PM-side dayparts (Unicode CLDR 47 Day Period Rules, locale sv --
+# eftermiddag [12:00, 18:00), kvall [18:00, 24:00)) doubling as the MERIDIEM
+# slot of "atta pa kvallen"/"tre pa eftermiddagen" -- the same daypart-as-
+# meridiem reuse es/pt already make for "de la tarde"/"da tarde" (see their
+# clock_meridiem_pm.voc).  Surfaces copied verbatim from
+# daypart_eftermiddag_sv.voc and daypart_kvall_sv.voc.
+eftermiddag
+eftermiddagen
+kväll
+kvall
+kvällen
+kvallen
