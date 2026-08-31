@@ -1,2 +1,7 @@
 av
 i
+# "på" ("on/at"): the connector already attested between a bare hour and a
+# day-part noun in this locale's own corpus ("tidigt på morgonen",
+# test/nl_corpus_sv/test_nl_daypart.py) -- the same slot "de"/"da" fill in
+# es/pt's "las ocho de la tarde" / "oito da noite".
+på

@@ -71,6 +71,8 @@
       "orders": [
         "q NUM YEAR?",
         "ORD quarter_word YEAR?",
+        "YEAR ORD quarter_word",
+        "YEAR q NUM",
         "REL_MARKER quarter_word",
         "quarter_word REL_MARKER"
       ]

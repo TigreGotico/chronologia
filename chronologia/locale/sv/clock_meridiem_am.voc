@@ -1,0 +1,12 @@
+# The AM-side dayparts (Unicode CLDR 47 Day Period Rules, locale sv --
+# morgon [05:00, 10:00), formiddag [10:00, 12:00)) doubling as the MERIDIEM
+# slot of "atta pa morgonen"/"tio pa formiddagen" -- the same daypart-as-
+# meridiem reuse es/pt already make for "de la manana"/"da manha" (see their
+# clock_meridiem_am.voc).  Surfaces copied verbatim from daypart_morgon_sv.voc
+# and daypart_formiddag_sv.voc.
+morgon
+morgonen
+förmiddag
+formiddag
+förmiddagen
+formiddagen

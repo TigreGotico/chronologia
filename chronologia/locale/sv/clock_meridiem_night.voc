@@ -1,0 +1,8 @@
+# The natt daypart (Unicode CLDR 47 Day Period Rules, locale sv --
+# [00:00, 05:00)) is a midnight-crossing BAND, not a uniform PM shift: "ett
+# pa natten" is 01:00 and "tolv pa natten" is midnight 00:00, while "elva pa
+# natten" is 23:00 -- the same colloquial split es/pt's "de la noche"/"da
+# noite" already carry (see their clock_meridiem_night.voc).  Surfaces copied
+# verbatim from daypart_natt_sv.voc.
+natt
+natten
