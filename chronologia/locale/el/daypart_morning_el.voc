@@ -1,0 +1,12 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale el
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as morning [04:00, 12:00) (CLDR
+# morning1+morning2 collapsed into chronologia's four-band model).
+# Surface: πρωί (proï), the neuter noun for "morning"; used bare as an
+# adverb ("in the morning") and after the article ("το πρωί").
+# Source: Wiktionary, "πρωί" (noun, gender "n")
+# https://en.wiktionary.org/wiki/πρωί
+# Gender confirms the neuter accusative article "το" (Wiktionary, "το",
+# neuter nominative/accusative singular of "ο":
+# https://en.wiktionary.org/wiki/το).
+πρωί

@@ -6,13 +6,12 @@ import pytest
 
 from ._corpus import nomatch, span, start
 from datetime import datetime
-from ._corpus import ad
+from ._corpus import ad, AstroDate, parse
 
 
 # -- pure non-temporal text: must not parse -------------------------------
 
 @pytest.mark.parametrize("text", [
-    "τρώω μήλα κάθε πρωί",
     "η γάτα κοιμάται",
     "καλημέρα σας",
     "ένα ωραίο βιβλίο",
@@ -68,3 +67,16 @@ def test_future_marker_alone_nomatch():
 def test_wrong_month_case_still_reads_as_nominative():
     # nominative month + digit day is a valid Greek surface too
     assert start("5 ιούνιος 2020") == ad(datetime(2020, 6, 5))
+
+
+def test_daypart_inside_sentence_binds_the_band():
+    # "τρώω μήλα κάθε πρωί" ("I eat apples every morning") carries a genuine
+    # πρωί daypart mention and binds the CLDR el morning band
+    # [04:00, 12:00). Recurrence ("κάθε" -- "every") is unimplemented in el,
+    # so κάθε strands in the remainder along with the rest of the sentence.
+    r = parse("τρώω μήλα κάθε πρωί")
+    assert r is not None
+    sp, remainder = r
+    assert sp.start == AstroDate(2017, 6, 27, 4, 0)
+    assert sp.end == AstroDate(2017, 6, 27, 12, 0)
+    assert remainder == "τρώω μήλα κάθε"

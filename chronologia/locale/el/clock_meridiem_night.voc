@@ -1,0 +1,12 @@
+# The NIGHT daypart is a BAND that crosses midnight in colloquial clock
+# usage, not a uniform +12 PM shift: "μία τη νύχτα" is 01:00 and "δώδεκα τη
+# νύχτα" is midnight 00:00, while "δέκα η ώρα τη νύχτα" is 22:00. Small
+# hours 1..5 stay AM, evening hours 6..11 are PM, twelve is midnight (the
+# band-split lives in the resolver's shared night-meridiem logic, the same
+# convention es "de la noche"/pt "da noite" use). CLDR el's own νύχτα band
+# starts at 20:00, not 18:00 -- the 6|5 cut is the shared colloquial 12-hour
+# clock convention (cf. CLDR ar day-period bands), not a literal restatement
+# of the CLDR el band edge. Source: Triantafyllidis, Νεοελληνική Γραμματική
+# §403; Λεξικό της Κοινής Νεοελληνικής (Ίδρυμα Μανόλη Τριανταφυλλίδη),
+# s.v. "νύχτα".
+νύχτα

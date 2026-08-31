@@ -1,0 +1,14 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale el
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as night [20:00, 04:00) (CLDR
+# night1, joined with the 00:00 night2 row into one midnight-crossing band).
+# Surface: νύχτα (nýchta), the feminine noun for "night"; used bare as an
+# adverb and after the article ("τη νύχτα").
+# Source: Wiktionary, "νύχτα" (noun, gender "f")
+# https://en.wiktionary.org/wiki/νύχτα
+# Gender confirms the feminine accusative article "τη", not "την": Wiktionary,
+# "τη", feminine accusative singular of "ο", used before a word that does
+# not start with a vowel or a plosive consonant (κ ξ π τ ψ γκ ντ μπ) --
+# "νύχτα" starts with ν, so "τη" applies, not "την":
+# https://en.wiktionary.org/wiki/τη.
+νύχτα

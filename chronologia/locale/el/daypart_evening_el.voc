@@ -1,0 +1,14 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale el
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as evening [17:00, 20:00) (CLDR
+# evening1 collapsed into chronologia's four-band model).
+# Surface: βράδυ (vrády), the neuter noun for "evening" (period between
+# sunset and full dark); used bare as an adverb and after the article
+# ("το βράδυ").
+# Source: Wiktionary, "βράδυ" (noun, gender "n"), which glosses "το
+# βράδυ" as its own worked example.
+# https://en.wiktionary.org/wiki/βράδυ
+# Gender confirms the neuter accusative article "το" (Wiktionary, "το",
+# neuter nominative/accusative singular of "ο":
+# https://en.wiktionary.org/wiki/το).
+βράδυ

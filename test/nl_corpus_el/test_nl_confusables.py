@@ -23,7 +23,7 @@ silently starting to pass. See the
 """
 import pytest
 
-from ._corpus import parse, nomatch  # noqa: F401
+from ._corpus import parse, nomatch, AstroDate  # noqa: F401
 
 
 _SAFE_NONE = [
@@ -40,7 +40,6 @@ _SAFE_NONE = [
     'ένα εκατομμύριο λόγοι',
     'χιλιάδες άνθρωποι',
     'ανατέλλων ήλιος',
-    'νωρίς το πρωί',
     'δευτερόλεπτο σιωπής',
     'οι περισσότεροι άνθρωποι',
     'μερικές μέρες',
@@ -105,6 +104,7 @@ def test_documented_limitation(text):
 _SPAN_ELSEWHERE = [
     ('μικρή λεπτομέρεια σε 3 ημέρες', 'λεπτομέρεια'),
     ('ένα εκατομμύριο λόγοι σε 2 εβδομάδες', 'εκατομμύριο'),
+    ('νωρίς το πρωί', 'νωρίς'),
 ]
 
 
@@ -123,3 +123,15 @@ def test_confusable_now_none(text):
     # binds nothing here.  A strict tripwire would misfire, so this is
     # a live positive assertion of the now-correct behaviour.
     nomatch(text)
+
+
+def test_early_morning_binds_the_cldr_band():
+    # "νωρίς το πρωί" ("early in the morning"): the span is the CLDR el
+    # morning band [04:00, 12:00); "νωρίς" is not part of it and stays in
+    # the remainder.
+    r = parse('νωρίς το πρωί')
+    assert r is not None
+    sp, remainder = r
+    assert sp.start == AstroDate(2017, 6, 27, 4, 0)
+    assert sp.end == AstroDate(2017, 6, 27, 12, 0)
+    assert remainder == 'νωρίς'
