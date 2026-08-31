@@ -69,12 +69,6 @@ parts.
 
 ## Weaker provenance
 
-The day-part band edges that actually resolve are the library's default
-four-band cut — morning to noon, afternoon to six, a short evening, and a night
-that wraps across midnight — rather than the `ar` rows transcribed in
-`chronologia/dayparts.py`. The surfaces are the checked part; the exact
-boundaries a phrase resolves to are not the ones the vocabulary comment names.
-
 The weekday and month names, the clock words, the seasons and the holiday
 vocabulary carry no recorded source. The locale sets `hemisphere` to null.
 
@@ -102,9 +96,7 @@ definite `الليلة` returns nothing.
    يومين` and `أسبوعين` are the everyday forms and neither resolves.
 2. Should the tokenizer split a proclitic `و`, and would splitting it break
    anything — words that legitimately begin with `و` are the obvious risk.
-3. Which day-part boundaries are right for Arabic, given that the ones cited
-   and the ones that resolve differ?
-4. Do the two month-naming conventions ever collide in a way that reads the
+3. Do the two month-naming conventions ever collide in a way that reads the
    wrong month, given that both sets ship at once?
-5. Is `الثامنة والنصف` the ordinary way to say half past eight, and what should
+4. Is `الثامنة والنصف` the ordinary way to say half past eight, and what should
    the clock read for it?

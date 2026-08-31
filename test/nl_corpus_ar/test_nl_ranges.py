@@ -98,16 +98,18 @@ def test_fused_waw_weekday_range_endpoint(text, s, e):
     assert ss == AstroDate(*s) and ee == AstroDate(*e)
 
 
-# Daypart range: CLDR-confirmed bands (test_nl_daypart_sweep.py) morning
-# 06-12, evening 18-21, both anchored on the anchor's own civil day
-# (2017-06-27, a Tuesday) since no deictic day is named.
+# Daypart range: CLDR ar bands (Unicode CLDR 47/48 Day Period Rules, locale
+# ar, transcribed in chronologia/dayparts.py; test_nl_daypart_sweep.py)
+# morning 03-12, evening 18-24. Morning is anchored on the anchor's own civil
+# day (2017-06-27, a Tuesday) since no deictic day is named; evening's 24:00
+# close lands on the following civil day.
 @pytest.mark.parametrize("text", ["بين الصباح و المساء", "بين الصباح والمساء"])
 def test_fused_waw_daypart_range_endpoint(text):
     sp = span(text)
-    assert sp.start_datetime == ANCHOR.replace(hour=6, minute=0, second=0,
+    assert sp.start_datetime == ANCHOR.replace(hour=3, minute=0, second=0,
                                                microsecond=0)
-    assert sp.end_datetime == ANCHOR.replace(hour=21, minute=0, second=0,
-                                             microsecond=0)
+    assert sp.end_datetime == (ANCHOR + timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0)
 
 
 # Multiword Levantine month names ("كانون الأول" December) are NOT closed by
