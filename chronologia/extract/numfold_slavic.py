@@ -45,7 +45,12 @@ _EXTRA: dict = {
     # and every compound ending in 1 folded to N-1.  Add the feminine
     # nominative/accusative/oblique, mirroring the "два"/"две"/"двух" trio.
     "ru": {"два", "две", "двух", "три", "пол", "одна", "одну", "одной"},
-    "uk": {"два", "дві", "двох", "три", "пів", "одна", "одну", "одної"},
+    # NB "пів" is deliberately NOT folded here, mirroring cs's "půl": folding
+    # it to 0.5 would erase the toward-hour clock's FRACTION surface
+    # ("пів на другу") before the grammar ever sees the word.  Standalone
+    # "пів <unit>" durations already resolve through the QUANT slot
+    # (lang.json quantifiers), not this cardinal fold.
+    "uk": {"два", "дві", "двох", "три", "одна", "одну", "одної"},
     "hr": {"dva", "dvije", "tri", "pola", "pol"},
     "sl": {"dva", "dve", "tri", "pol"},
     "bg": {"два", "две", "три", "половин"},
@@ -155,6 +160,33 @@ _HOUR_SK = {  # locative feminine, elided "hodine"
     "jednej": 1, "druhej": 2, "tretej": 3, "štvrtej": 4, "piatej": 5,
     "šiestej": 6, "siedmej": 7, "ôsmej": 8, "deviatej": 9, "desiatej": 10,
     "jedenástej": 11, "dvanástej": 12}
+
+# -- Ukrainian "at <hour>": locative feminine, elided "годині" -----------------
+# "о другій (годині)" == at two o'clock (02:00, the literal named hour, not a
+# toward-hour reading -- "о"/"about" + locative just names the hour).
+# Citation: worked examples "о сьомій годині" (at seven o'clock) and "о
+# шостій" (at six) -- slovopedia.org.ua, "Смолич. То як передати..."
+# (http://slovopedia.org.ua/34/53415/33359.html) and dimostovyk.blogspot.com,
+# "Квіти і час" (https://dimostovyk.blogspot.com/p/6_9.html).
+_HOUR_UK = {
+    "першій": 1, "другій": 2, "третій": 3, "четвертій": 4, "п'ятій": 5,
+    "шостій": 6, "сьомій": 7, "восьмій": 8, "дев'ятій": 9, "десятій": 10,
+    "одинадцятій": 11, "дванадцятій": 12}
+for _apo in ("'", "’"):
+    _HOUR_UK.update({f"п{_apo}ятій": 5, f"дев{_apo}ятій": 9})
+
+# -- Ukrainian toward-hour "пів на <hour>"/"чверть на <hour>": accusative -----
+# feminine, elided "годину".  "пів на другу" == half onto the second == 01:30
+# (the NAMED hour is the coming one); "чверть на одинадцяту" == a quarter
+# onto the eleventh == 10:15.  Citations: promovu.in.ua, "Час англійською"
+# (https://promovu.in.ua/time/) and miyklas.com.ua, 6th-grade lesson
+# (https://www.miyklas.com.ua/p/ukrainska-mova/6-klas/chislivnik-14257/vikoristannia-chislivnikiv-na-poznachennia-dat-i-chasu-37756/).
+_HOUR_UK_ACC = {
+    "першу": 1, "другу": 2, "третю": 3, "четверту": 4, "п'яту": 5,
+    "шосту": 6, "сьому": 7, "восьму": 8, "дев'яту": 9, "десяту": 10,
+    "одинадцяту": 11, "дванадцяту": 12}
+for _apo in ("'", "’"):
+    _HOUR_UK_ACC.update({f"п{_apo}яту": 5, f"дев{_apo}яту": 9})
 
 
 # -- feminine nominative ordinals that agree with a feminine temporal noun ------
@@ -546,7 +578,8 @@ fold_ru = _compose(_split_ru_pol_unit,
                                  {**_ORD_RU, **_FEM_ORD_RU}),
                    _hour_rewrite(_HOUR_RU))
 fold_uk = _compose(_day_rewrite({**_DAY_UK, **_DAY_UK_NEUTER}, _TENS_UK),
-                   with_ordinals(_make_fold("uk"), "uk", _FEM_ORD_UK))
+                   with_ordinals(_make_fold("uk"), "uk", _FEM_ORD_UK),
+                   _hour_rewrite({**_HOUR_UK, **_HOUR_UK_ACC}))
 fold_hr = _compose(_day_rewrite(_DAY_HR, _TENS_HR, ("i",)),
                    with_ordinals(_make_fold("hr"), "hr", _FEM_ORD_HR))
 fold_sl = _compose(_day_rewrite(_DAY_SL),
