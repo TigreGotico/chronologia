@@ -119,6 +119,7 @@
     "bare_year_min_digits": 4
   },
   "hook": "chronologia.extract.numfold_semitic:fold_he",
+  "pre_hook": "chronologia.extract.numfold_semitic:split_he_range_word",
   "quantifiers": {
     "1": [
       "אחד",
