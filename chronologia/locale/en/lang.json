@@ -378,7 +378,15 @@
         "article? ntolast_next to NTOLAST WEEKDAY of MONTH of? YEAR?",
         "article? ntolast_next to NTOLAST WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
         "article? PENULT WEEKDAY of MONTH of? YEAR?",
-        "article? PENULT WEEKDAY of REL_MARKER? article? SCOPE_UNIT"
+        "article? PENULT WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
+        "article? ORD to NTOLAST WEEKDAY of GYEAR",
+        "article? ntolast_next to NTOLAST WEEKDAY of GYEAR",
+        "article? PENULT WEEKDAY of GYEAR"
+      ],
+      "weekday_ref": [
+        "article? ORD to NTOLAST WEEKDAY",
+        "article? ntolast_next to NTOLAST WEEKDAY",
+        "article? PENULT WEEKDAY"
       ]
     }
   },
