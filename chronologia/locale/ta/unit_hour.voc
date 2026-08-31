@@ -1,0 +1,10 @@
+# Unicode CLDR, locale ta, dateFields.json, field hour.
+# A counted noun is CASE-MARKED in Tamil, not bare: the ago pattern is
+# the DATIVE unit plus முன், and the in-N pattern is the LOCATIVE on
+# the unit with no preposition at all.  Both case forms are unit
+# surfaces in their own right, and both are CLDR's own wording.
+# மணிநேரம் does not inflect for count in either direction -- CLDR gives
+# the same wording for one hour and for N.  The everyday மணி is NOT a
+# unit surface: its first dictionary sense is "bell", so it is read as
+# an hour only beside a numeral, which the numeral fold does.
+மணிநேரம்

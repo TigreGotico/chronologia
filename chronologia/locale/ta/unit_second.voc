@@ -1,0 +1,9 @@
+# Unicode CLDR, locale ta, dateFields.json, field second.
+# A counted noun is CASE-MARKED in Tamil, not bare: the ago pattern is
+# the DATIVE unit plus முன், and the in-N pattern is the LOCATIVE on
+# the unit with no preposition at all.  Both case forms are unit
+# surfaces in their own right, and both are CLDR's own wording.
+விநாடி
+விநாடிகள்
+விநாடிக்கு
+விநாடிகளுக்கு

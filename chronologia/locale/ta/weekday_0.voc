@@ -1,0 +1,8 @@
+# Unicode CLDR, locale ta, gregorian wide weekday names
+# (cldr-json, cldr-dates-full/main/ta/ca-gregorian.json).
+# திங்கள் is Monday, and also the moon, the month, and an obsolete word
+# for the week (en.wiktionary.org, திங்கள்).  It ships as the weekday
+# ONLY: CLDR uses மாதம் for the month field, so the unit reading is
+# refused rather than guessed, and a COUNT before this word vetoes the
+# weekday reading too -- see marker_weekday_counted_ambiguous.voc.
+திங்கள்

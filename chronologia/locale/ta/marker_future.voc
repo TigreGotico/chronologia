@@ -1,0 +1,8 @@
+# Unicode CLDR, locale ta, dateFields.json, field the in-N patterns of every unit.
+# The in-N-units pattern carries NO preposition: the direction is the
+# LOCATIVE suffix -இல் on the unit itself ({0} ஆண்டில், {0} நாட்களில்).
+# The numeral fold cuts that suffix off the unit word and emits it as this
+# separate marker, so the engine reads the fused surface as the unit plus a
+# forward direction.  A bare இல் is never written on its own in Tamil, so
+# the surface is unreachable except from that split.
+இல்

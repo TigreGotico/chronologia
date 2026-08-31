@@ -532,6 +532,23 @@ _LANGUAGES: List[DayPart] = [
     _p("yen", (16, 0), (18, 0), "th", _cldr("th")),
     _p("kham", (18, 0), (21, 0), "th", _cldr("th")),
     _p("klangkhuen", (21, 0), (6, 0), "th", _cldr("th")),
+    # ta: nine CLDR rows, at the high end of what the standard carries for
+    # any locale, and they are kept under their own names rather than folded
+    # into an English-shaped four because the extra cuts are real words with
+    # narrow senses.  அதிகாலை is the pre-dawn stretch and a separate band from
+    # காலை, not a synonym for it; மதியம் and பிற்பகல் split the afternoon at
+    # 14:00; மாலை and அந்தி மாலை split the evening at 18:00.  Collapsing any
+    # pair would answer a wider span than the word names.  CLDR's நண்பகல்
+    # (12:00) point falls on the மதியம் boundary and adds none of its own, so
+    # it ships as a clock landmark instead of a band; the midnight point ships
+    # as neither, because no source consulted for this locale gave its label.
+    _p("adhikaalai", (3, 0), (5, 0), "ta", _cldr("ta")),
+    _p("kaalai", (5, 0), (12, 0), "ta", _cldr("ta")),
+    _p("madhiyam", (12, 0), (14, 0), "ta", _cldr("ta")),
+    _p("pirpakal", (14, 0), (16, 0), "ta", _cldr("ta")),
+    _p("maalai", (16, 0), (18, 0), "ta", _cldr("ta")),
+    _p("andhimaalai", (18, 0), (21, 0), "ta", _cldr("ta")),
+    _p("iravu", (21, 0), (3, 0), "ta", _cldr("ta")),
     # vi: the morning opens at 04:00 and the night from 21:00 wraps to it.
     # CLDR's noon point (trưa, 12:00) falls inside the afternoon band and adds
     # no boundary of its own, so none is invented.

@@ -1,0 +1,5 @@
+# Unicode CLDR, locale ta, gregorian wide weekday names
+# (cldr-json, cldr-dates-full/main/ta/ca-gregorian.json).
+# செவ்வாய் is Tuesday and also Mars; the whole weekday set is planet
+# names, so astronomical prose is a known false-positive field.
+செவ்வாய்

@@ -82,6 +82,7 @@ never cited as evidence about a language.
 | Spanish | [es.md](es.md) |
 | Swahili | [sw.md](sw.md) |
 | Swedish | [sv.md](sv.md) |
+| Tamil | [ta.md](ta.md) |
 | Thai | [th.md](th.md) |
 | Turkish | [tr.md](tr.md) |
 | Vietnamese | [vi.md](vi.md) |
