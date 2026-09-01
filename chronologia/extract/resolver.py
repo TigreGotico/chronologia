@@ -314,10 +314,9 @@ def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
     convention.
     """
     idx = _WEEK_START.get(week_start_name, 0)
-    d = datetime(start_astro.year, start_astro.month, start_astro.day)
-    back = (d.weekday() - idx) % 7
-    week_start = d - timedelta(days=back)
-    s = AstroDate.from_datetime(week_start)
+    day = AstroDate(start_astro.year, start_astro.month, start_astro.day)
+    back = (day.weekday() - idx) % 7
+    s = AstroDate.fromordinal(day.toordinal() - back)
     return DateSpan(s, s + timedelta(days=7))
 
 
