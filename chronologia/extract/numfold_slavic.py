@@ -77,7 +77,27 @@ _EXTRA: dict = {
     # QUANT slot (lang.json quantifiers), unaffected by this table.
     "hr": {"dva", "dvije", "tri", "pol"},
     "sl": {"dva", "dve", "tri", "pol"},
-    "bg": {"два", "две", "три", "половин"},
+    # Bulgarian's teens and tens each have a formal spelling and a contracted
+    # everyday one, and only the formal spelling is what pronounce_number_bg
+    # emits, so the spoken register ("единайсет и половина" == half past
+    # eleven) never entered the run set.  extract_number_bg reads every
+    # contracted surface below, so the value comes back right once membership
+    # admits it.  Attested on en.wiktionary.org, each on its own lemma page:
+    # единайсет/дванайсет ("colloquial but standard" eleven/twelve, alternative
+    # forms of едина́десет/двана́десет); тринайсет and двайсет are marked
+    # contractions of трина́десет/два́десет; the rest -- четиринайсет ...
+    # деветнайсет, трийсет, шейсет -- carry an alternative-forms line naming
+    # the long spelling.  The further colloquial "два́йсе"-style clippings are
+    # not folded: Wiktionary lists them only inside another entry's
+    # alternative-forms line, never as lemmas of their own.  "четиресет" (40)
+    # is likewise left out, and its exclusion matters more than the others:
+    # extract_number_bg returns False for it alone but reads "четиресет и пет"
+    # as 5, so admitting it would fold a compound to its tail and answer five
+    # minutes for forty-five.
+    "bg": {"два", "две", "три", "половин",
+           "единайсет", "дванайсет", "тринайсет", "четиринайсет",
+           "петнайсет", "шестнайсет", "седемнайсет", "осемнайсет",
+           "деветнайсет", "двайсет", "трийсет", "шейсет"},
 }
 
 
