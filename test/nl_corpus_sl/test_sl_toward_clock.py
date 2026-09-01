@@ -1,7 +1,8 @@
-"""Slovenian ordinal-toward-hour spoken clock.
+"""Slovenian toward-hour spoken clock.
 
-Slovenian names the coming hour with a genitive-plural ordinal: "pol devetih"
-== half toward the ninth == 08:30, "ob pol enih" == half toward one == 12:30
+Slovenian names the coming hour with a declined (genitive/locative plural)
+cardinal: "pol devetih" == half toward nine == 08:30, "ob pol enih" ==
+half toward one == 12:30
 (the "ob" is the ordinary "at" connector; twelve-hour reckoning, so the hour
 before one is spoken as twelve).  Citation: ZRC SAZU Jezikovna svetovalnica
 (ISJFR / Fran), telling the time.  Exact H:MM, hand-derived.
