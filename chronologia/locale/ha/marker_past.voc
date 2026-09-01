@@ -1,0 +1,14 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# Every past relativeTime pattern is the unit, the count, and a trailing
+# relative clause: "kwanaki {0} da suka gabata", "wata {0} da ya gabata",
+# "shekara {0} da ta gabata".  The verb agrees with the unit noun -- ya for
+# masculine, ta for feminine, suka for the plural -- so all three ship: which
+# one is grammatical was settled by the noun the writer already chose.
+# CLDR gives wuce beside gabata for Friday and Saturday; the two verbs are
+# interchangeable in the frame and both ship.
+da ya gabata
+da ta gabata
+da suka gabata
+da ya wuce
+da ta wuce
+da suka wuce

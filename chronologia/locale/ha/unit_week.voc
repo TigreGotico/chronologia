@@ -1,0 +1,10 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# week displayName mako, plural makonni.  sati is CLDR's own second word for
+# a week -- it is what relative-type--1 ("satin da ya gabata") and
+# relativePeriod ("sati na {0}") are built on -- and en.wiktionary.org gives
+# the two as synonyms.  satin is the definite form CLDR itself writes in
+# "satin da ya gabata" and "wannan satin".
+mako
+makonni
+sati
+satin

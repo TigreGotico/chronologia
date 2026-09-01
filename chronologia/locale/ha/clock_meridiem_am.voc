@@ -1,0 +1,10 @@
+# Hausa scopes a clock reading with a following na-phrase naming the part of
+# the day.  Each band below is fixed by a worked example on
+# ha.wikipedia.org where the article's own text or its parenthetical
+# conversion pins the hour.
+# "ƙarfe 7:59 na safiyar ranar sha ɗaya" is the 07:59 departure of the first
+# aircraft on 11 September, and "ƙarfe 09:00 na safiyar Litinin" is 09:00.
+# safe and safiya are the same word's two shapes.
+na safe
+na safiya
+na safiyar

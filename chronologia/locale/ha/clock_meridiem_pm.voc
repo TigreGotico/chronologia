@@ -1,0 +1,11 @@
+# Hausa scopes a clock reading with a following na-phrase naming the part of
+# the day.  Each band below is fixed by a worked example on
+# ha.wikipedia.org where the article's own text or its parenthetical
+# conversion pins the hour.
+# "ƙarfe 1:00 na rana (12:00 GMT)" is 13:00 -- Nigeria runs an hour ahead of
+# GMT, so the parenthetical conversion fixes na rana as the afternoon.
+# "daga ƙarfe 7:30 zuwa 11:30 na safe, sai kuma 2:30 zuwa 6:00 na yamma" is a
+# school day running 07:30-11:30 and again 14:30-18:00, which fixes na yamma
+# the same way.
+na rana
+na yamma

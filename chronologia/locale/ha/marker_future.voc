@@ -1,0 +1,8 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# Every future relativeTime pattern is "cikin <unit> {0}" or "a cikin <unit>
+# {0}" -- literally "inside", leading the unit it counts.
+cikin
+a cikin
+# bayan is the ordinary "after", and "bayan kwanaki hudu" (ha.wikipedia.org)
+# is the same forward offset cikin names, so it reads as one too.
+bayan

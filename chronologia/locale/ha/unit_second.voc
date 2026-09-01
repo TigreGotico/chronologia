@@ -1,0 +1,7 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# second displayName daƙiƙa; the relativeTime patterns spell the same word
+# dakika in the singular and dakiku in the plural, without the hooked ƙ.
+# All three surfaces are CLDR's own and all three ship.
+daƙiƙa
+dakika
+dakiku

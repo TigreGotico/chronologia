@@ -1,0 +1,60 @@
+{
+  "tokenizer": {
+    "split_contractions": false,
+    "ordinal_dot": false,
+    "decimal_comma": false
+  },
+  "constructions": {
+    "relative_offset": {
+      "orders": [
+        "UNIT NUM MARKER",
+        "MARKER UNIT NUM"
+      ]
+    },
+    "calendar_date": {
+      "orders": [
+        "day_word? DAY ga month_word? MONTH year_word YEAR ERA?",
+        "day_word? DAY ga month_word? MONTH YEAR? ERA?",
+        "day_word? DAY month_word? MONTH year_word YEAR ERA?",
+        "day_word? DAY month_word? MONTH YEAR? ERA?",
+        "month_word? MONTH DAY? year_word YEAR ERA?",
+        "month_word? MONTH DAY? YEAR? ERA?"
+      ],
+      "prefer_future": true
+    },
+    "clock_time": {
+      "orders": [
+        "CLOCK MERIDIEM? ZONE?",
+        "oclock CLOCK MERIDIEM? ZONE?",
+        "oclock HOUR MERIDIEM? ZONE?",
+        "DOTCLOCK MERIDIEM ZONE?"
+      ],
+      "prefer_future": true
+    },
+    "year_ref": {
+      "orders": [
+        "year_word of? GYEAR",
+        "GYEAR"
+      ]
+    }
+  },
+  "conventions": {
+    "week_start": "monday",
+    "dmy": true,
+    "hemisphere": null,
+    "prefer_future": true,
+    "duration_count_follows_unit": true
+  },
+  "guards": {
+    "bare_year_min_digits": 4
+  },
+  "base_grammar": {
+    "marker_position": "post"
+  },
+  "hook": "chronologia.extract.numfold_chadic:fold_ha",
+  "quantifiers": {
+    "0.5": [
+      "rabi"
+    ]
+  }
+}

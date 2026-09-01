@@ -1,0 +1,13 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# relative-type-1: "sati na gaba" / "wata na gaba", the week or month ahead.
+# The marker trails its noun.
+#
+# CLDR's weekday form "Laraba mai zuwa" (the coming Wednesday) is the other
+# half of the field and is deliberately NOT shipped: it ends in zuwa, which is
+# also this locale's range terminator ("daga Litinin zuwa Jumaʼa"), and the
+# range split reads the raw token stream before multiword surfaces are glued
+# back together.  Shipping it would let "Litinin mai zuwa" be read as the open
+# range "up to Monday" -- a wrong answer rather than no answer -- so the
+# surface stays out until the two can be told apart.
+na gaba
+mai zuwa

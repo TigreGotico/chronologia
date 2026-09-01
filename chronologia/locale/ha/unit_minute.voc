@@ -1,0 +1,6 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# minute displayName minti, plural mintuna; mintin is the definite form of
+# relative-type-0 ("wannan mintin").
+minti
+mintuna
+mintin

@@ -1,0 +1,4 @@
+# ga stands between the day number and the month name in the ordinary Hausa
+# date line: "10 ga watan Oktoba 2022", "26 ga Janairu, 1981",
+# "21 ga watan Afrilu" (ha.wikipedia.org).  CLDR's date patterns omit it.
+ga
