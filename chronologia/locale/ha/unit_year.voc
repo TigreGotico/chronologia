@@ -1,0 +1,6 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# year displayName shekara, plural shekaru; shekarar is the linked form
+# CLDR's future pattern uses ("a shekarar {0}").
+shekara
+shekarar
+shekaru

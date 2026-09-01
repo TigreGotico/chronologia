@@ -67,6 +67,7 @@ never cited as evidence about a language.
 | Georgian | [ka.md](ka.md) |
 | German | [de.md](de.md) |
 | Greek | [el.md](el.md) |
+| Hausa | [ha.md](ha.md) |
 | Hindi | [hi.md](hi.md) |
 | Icelandic | [is.md](is.md) |
 | Indonesian | [id.md](id.md) |

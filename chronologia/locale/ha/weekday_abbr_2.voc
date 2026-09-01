@@ -1,0 +1,7 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.
+# days.format.abbreviated.  An abbreviation binds a marker-ed order but
+# never a bare weekday, so a three-letter form cannot claim a span on its
+# own.  The two-letter days.format.short series (Li, Ta, Lr, Al, Ju, As,
+# Lh) is deliberately not shipped: Ta collides with the feminine genitive
+# linker and the rest are equally ordinary letter pairs.
+lar

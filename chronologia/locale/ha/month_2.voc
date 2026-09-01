@@ -1,0 +1,12 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.
+# months.format.wide and months.format.abbreviated.
+# CLDR spells February Faburairu; Nigerian written Hausa overwhelmingly
+# writes Fabrairu, and both spellings ship because both are attested.
+# The linked form is the genitive that a month name takes inside the date
+# line ("watan faburairu 2027"); harvested from ha.wikipedia.org by a corpus
+# count over the frame "watan <month>" (Fabrairu 12 / Fabrairun 8 / Faburairu 1).
+faburairu
+fab
+fabrairu
+fabrairun
+faburairun

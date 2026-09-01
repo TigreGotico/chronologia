@@ -1,0 +1,11 @@
+# Hausa scopes a clock reading with a following na-phrase naming the part of
+# the day.  Each band below is fixed by a worked example on
+# ha.wikipedia.org where the article's own text or its parenthetical
+# conversion pins the hour.
+# na dare is a midnight-crossing band, not a uniform twelve-hour shift.
+# ha.wikipedia.org writes "ƙarfe 2 na dare" for a death in the small hours
+# and "ƙarfe 1:00 na dare" for a night raid, but "ƙarfe 9:05 na dare" and
+# "ƙarfe 11:30 na dare" for the late evening.  The resolver's band split --
+# hours one to five stay morning, six to eleven become evening, twelve is
+# midnight -- is exactly that distribution.
+na dare

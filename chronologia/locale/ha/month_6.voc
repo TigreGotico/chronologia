@@ -1,0 +1,8 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.
+# months.format.wide and months.format.abbreviated.
+# The linked form is the genitive that a month name takes inside the date
+# line ("watan yuni 2027"); harvested from ha.wikipedia.org by a corpus
+# count over the frame "watan <month>" (Yunin 11 / Yuni 9).
+yuni
+yun
+yunin

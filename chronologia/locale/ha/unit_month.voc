@@ -1,0 +1,7 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# month displayName wata, plural watanni.  watan is the linked form the
+# relativeTime pattern uses ("a cikin watan {0}") and the form that stands
+# before a month name in the date line.
+wata
+watan
+watanni

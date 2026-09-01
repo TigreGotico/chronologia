@@ -1,0 +1,6 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# hour displayName awa, plural awanni.  Hausa reckons the hour of the day on
+# the Western clock (see clock_meridiem_pm.voc), so unlike the Swahili saa
+# this noun carries no competing traditional count.
+awa
+awanni

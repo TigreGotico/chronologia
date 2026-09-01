@@ -1,0 +1,11 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.
+# relative-type--1: "watan da ya gabata", "satin da ya gabata", "Laraba da
+# ta gabata", "Asabar da ta wuce".  The marker trails its noun and is the
+# same relative clause the counted past uses, so last-week and N-weeks-ago
+# are one vocabulary in Hausa.
+da ya gabata
+da ta gabata
+da suka gabata
+da ya wuce
+da ta wuce
+da suka wuce

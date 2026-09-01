@@ -1,0 +1,11 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.
+# months.format.wide and months.format.abbreviated.
+# CLDR spells April Afirilu, written usage prefers Afrilu; both ship.
+# The linked form is the genitive that a month name takes inside the date
+# line ("watan afirilu 2027"); harvested from ha.wikipedia.org by a corpus
+# count over the frame "watan <month>" (Afrilu 11 / Afrilun 9 / Afirilu 6 / Afirilun 4).
+afirilu
+afi
+afirilun
+afrilu
+afrilun

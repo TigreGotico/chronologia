@@ -1,0 +1,6 @@
+# CLDR carries no relative-type--2 for Hausa.  shekaranjiya is glossed
+# "day-before-yesterday" in two independent Chadic comparative wordlists on
+# ha.wikipedia.org (the Polci and Geranci articles), which is the attestation
+# this file rests on.  There is no relative-type-2 counterpart: no source
+# consulted attests a day-after-tomorrow word, so none ships.
+shekaranjiya

@@ -1,0 +1,8 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.
+# months.format.wide and months.format.abbreviated.
+# The linked form is the genitive that a month name takes inside the date
+# line ("watan nuwamba 2027"); harvested from ha.wikipedia.org by a corpus
+# count over the frame "watan <month>" (Nuwamba 15 / Nuwamban 5).
+nuwamba
+nuw
+nuwamban

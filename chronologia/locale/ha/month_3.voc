@@ -1,0 +1,6 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.
+# months.format.wide and months.format.abbreviated.
+# Maris ends in a consonant and takes no -n linker: the corpus frame
+# "watan Maris" returns the bare name in every hit.
+maris
+mar

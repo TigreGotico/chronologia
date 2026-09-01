@@ -1,0 +1,7 @@
+# Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.
+# days.format.wide.
+# ca-gregorian spells Friday Jummaʼa with a doubled m, dateFields spells
+# it Jumaʼa; the two CLDR files disagree, so both ship.  The modifier
+# apostrophe U+02BC folds to a plain apostrophe in the tokenizer.
+jummaʼa
+jumaʼa
