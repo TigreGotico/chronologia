@@ -35,6 +35,7 @@ the fold owns only *which* tokens form a run.  Clock fractions ("half",
 """
 from __future__ import annotations
 
+import re
 from dataclasses import replace
 from typing import Tuple
 
@@ -154,8 +155,28 @@ def _unit_words():
     return words
 
 
+def _month_words():
+    """Every Gregorian calendar-month surface ("september", "sep").  Only the
+    civil calendar is read: the Hebrew/Islamic/French-Republican month files
+    name a different calendar's months, which never head a spelled Gregorian
+    year."""
+    from pathlib import Path
+    words = set()
+    lang_dir = Path(__file__).resolve().parent.parent / "locale" / "en"
+    for path in sorted(lang_dir.glob("month_*.voc")):
+        if _MONTH_FILE.fullmatch(path.name):
+            words |= _en_voc(path.name[:-len(".voc")])
+    return words
+
+
+_MONTH_FILE = re.compile(r"month_\d+\.voc")
+#: spelled day-of-month ordinals -- the tens ordinals included, so "thirtieth"
+#: and the "thirty first" compound both read as a day.
+_ORD_DAY_WORDS = frozenset(_ORD_ONES) | frozenset(_ORD_TENS)
+
 _CUE_WORDS = None
 _UNIT_WORDS = None
+_MONTH_WORDS = None
 
 
 def _cue_words():
@@ -165,11 +186,37 @@ def _cue_words():
     return _CUE_WORDS
 
 
+def _months():
+    global _MONTH_WORDS
+    if _MONTH_WORDS is None:
+        _MONTH_WORDS = frozenset(_month_words())
+    return _MONTH_WORDS
+
+
 def _units():
     global _UNIT_WORDS
     if _UNIT_WORDS is None:
         _UNIT_WORDS = frozenset(_unit_words())
     return _UNIT_WORDS
+
+
+def _after_month_day(out):
+    """True when a calendar month and its day-of-month sit immediately before.
+
+    "september first, ...", "july fourth ...", "december thirty first ...".
+    A month plus a day is a complete calendar date bar its year, so a spelled
+    pair following one can only be that year -- the day slot is already taken
+    and English has no other reading for the words there.  That makes the shape
+    as unambiguous as an explicit "in"/"the year" cue, which is why it licenses
+    the same fold.
+    """
+    k = len(out) - 1
+    if k < 0 or out[k].text not in _ORD_DAY_WORDS:
+        return False
+    k -= 1
+    if k >= 0 and out[k].text in _CARD_TENS:   # "thirty first"
+        k -= 1
+    return k >= 0 and out[k].text in _months()
 
 
 def _card_run(tokens):
@@ -227,11 +274,13 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         is never what tells a year from deep time -- a closing unit word is
         ("ninety nine thousand years ago" stays an offset, refused below).
 
-    ``<c> <y>`` (year pair, **explicit year cue required**)
+    ``<c> <y>`` (year pair, **licensing context required**)
         "nineteen ninety-nine" (1999), "twenty twenty-four" (2024).  A bare
         pair is genuinely ambiguous with a plain number, so it only reads as a
         year after a cue word ("in ...", "the year ..." -- taken from the
-        locale vocabulary).  ``c`` must be a single teen/tens word (10..99)
+        locale vocabulary) or after a month with its day-of-month ("september
+        first, twenty twenty six"), where the only date slot still open is the
+        year.  ``c`` must be a single teen/tens word (10..99)
         and ``y`` must itself be 10..99: a bare ones suffix is refused, both
         because "in twenty five days" is a count and because English spells
         that year with "oh" ("nineteen oh five").
@@ -273,7 +322,7 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
                     composed = head * scale + tail
                     if GYEAR_MIN <= composed <= GYEAR_MAX:
                         value, end = composed, max(tail_end, head_end + 1)
-        elif out and out[-1].text in cues:
+        elif out and (out[-1].text in cues or _after_month_day(out)):
             # year pair: the century prefix is a *single* teen/tens word, the
             # rest of the run is the 10..99 remainder
             century = _card_run(tokens[i:i + 1])
