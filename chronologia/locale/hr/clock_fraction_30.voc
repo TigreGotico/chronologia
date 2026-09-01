@@ -1,0 +1,11 @@
+# Croatian toward-hour HALF: "pola devet" == half toward the ninth == 08:30
+# (bare_half_to + toward_hour_12h).  Unlike Czech/Slovak, the half names the
+# coming hour with the bare CARDINAL, not an ordinal.  Citations, both with
+# a worked numeric example naming the SAME hour ("half past one" = 1:30):
+#   - en.wiktionary.org/wiki/pola#Serbo-Croatian: "pola tri — 2:30" (half
+#     toward three == 2:30).
+#   - en.wiktionary.org/wiki/half_past, Translations table (headword "half
+#     past one" == 1:30): "Serbo-Croatian: pola dva (used with the following
+#     hour)" -- "dva" (two) is the COMING hour, confirming the same
+#     toward-hour direction.
+pola
