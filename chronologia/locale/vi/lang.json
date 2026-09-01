@@ -19,8 +19,10 @@
     },
     "calendar_date": {
       "orders": [
-        "day_word? DAY MONTH year_word? YEAR?",
-        "MONTH day_word? DAY? year_word? YEAR?"
+        "day_word? DAY MONTH year_word YEAR",
+        "day_word? DAY MONTH YEAR?",
+        "MONTH day_word? DAY? year_word YEAR",
+        "MONTH day_word? DAY? YEAR?"
       ],
       "prefer_future": true
     },
