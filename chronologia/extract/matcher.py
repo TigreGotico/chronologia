@@ -58,7 +58,15 @@ class MatchCandidate:
     precedence: int
 
 
-def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
+def _is_era_marker(token: Token, spec: LangSpec) -> bool:
+    """Whether ``token`` is a BC/AD era marker -- the surface test the ``ERA``
+    slot applies, shared with the ``YEAR`` slot's lookahead below."""
+    return (token.text in spec.connectors.get("bc", frozenset())
+            or token.text in spec.connectors.get("ad", frozenset()))
+
+
+def _bind(element: SlotElement, token: Token, spec: LangSpec,
+          era_follows: bool = False) -> bool:
     name = element.name
     if not element.is_slot:
         return token.text in spec.connectors.get(name, frozenset())
@@ -141,8 +149,7 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         #   fine.  Buddhist-Era composition with these three constructions
         #   stays unsupported (refuses -- see the resolvers' guards) rather
         #   than risk that regression.
-        return (token.text in spec.connectors.get("bc", frozenset())
-                or token.text in spec.connectors.get("ad", frozenset()))
+        return _is_era_marker(token, spec)
     if name == "YEAR":
         # a bare number reads as a year when it is too big to be a day/count
         # (>=32) or written with >=4 digits; an apostrophe cue ("'20", "'08")
@@ -155,9 +162,23 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec) -> bool:
         # counting digits keeps the real 4-digit year while rejecting the
         # 2-digit ordinal.
         n_digits = sum(c.isdigit() for c in token.raw)
-        return token.is_number and ((token.value or 0) >= 32
-                                    or n_digits >= 4
-                                    or (token.apostrophe and n_digits == 2))
+        if not token.is_number:
+            return False
+        # An explicit era marker the SAME order goes on to bind removes the
+        # day-of-month ambiguity the >=32 floor exists to guard: "31" in
+        # "march 15th, 31 bc" cannot be anything but a year, and the day slot
+        # is already filled.  Without this the ERA-bearing order fails to
+        # match at all, the shorter month-day reading wins, and the parser
+        # answers with the NEXT occurrence of march 15th while stranding "bc"
+        # in the remainder -- a confident answer two millennia adrift.  The
+        # marker must be claimed by an ERA element still ahead in this order:
+        # loosening the floor for a marker no slot binds would only trade one
+        # wrong year for another and strand the marker just the same.
+        if era_follows:
+            return True
+        return ((token.value or 0) >= 32
+                or n_digits >= 4
+                or (token.apostrophe and n_digits == 2))
     if name == "YEARANY":
         # like YEAR, but WITHOUT the >=32 lower bound: used only by
         # constructions whose leading word already disambiguates a trailing
@@ -476,7 +497,10 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
             best = cand
 
     if el.is_slot:
-        if ti < len(tokens) and _bind(el, tokens[ti], spec):
+        era_follows = (el.name == "YEAR" and ti + 1 < len(tokens)
+                       and _is_era_marker(tokens[ti + 1], spec)
+                       and any(e.name == "ERA" for e in elements[ei + 1:]))
+        if ti < len(tokens) and _bind(el, tokens[ti], spec, era_follows):
             bound = dict(slots)
             bound[el.name] = tokens[ti]
             consider(_walk(elements, tokens, ei + 1, ti + 1, spec, bound))

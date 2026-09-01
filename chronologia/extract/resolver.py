@@ -1302,11 +1302,9 @@ class Resolver:
         if era_tok is not None and year_tok is None:
             # a stray era marker with no YEAR bound alongside it means the
             # number that should have been the year instead got swallowed by
-            # a DIFFERENT slot (the YEAR slot's own >=32-or-4-digit floor
-            # refuses a small year like "5" in "5 BC" -- see the ``YEAR``
-            # slot's docstring in matcher.py) -- e.g. "5th january 5 BC"
-            # with DAY consuming the second "5" and ERA left dangling on its
-            # own. Composing a date here would silently substitute the
+            # a DIFFERENT slot -- e.g. "march 5 BC", where DAY takes the "5"
+            # a month-less reading would have given YEAR and the ERA marker
+            # is left dangling on its own. Composing a date here would silently substitute the
             # ANCHOR's year for the (unreadable) named one, exactly the
             # silent-wrong failure mode this fix exists to close, so this
             # reading is refused rather than guessed.
@@ -1345,10 +1343,8 @@ class Resolver:
         if era_tok is not None and year_tok is None:
             # a stray era marker with no YEAR bound alongside it: the number
             # that should have been the year instead got swallowed by DAY
-            # (the YEAR slot's own >=32-or-4-digit floor refuses a small
-            # year like "5" in "5 BC" -- see the ``YEAR`` slot's docstring in
-            # matcher.py) -- e.g. "5th january 5 BC" with DAY consuming the
-            # second "5" and ERA left dangling on its own. Composing a date
+            # -- e.g. "march 5 BC", where DAY takes the "5" and the ERA
+            # marker is left dangling on its own. Composing a date
             # here would silently substitute the ANCHOR's year for the
             # (unreadable) named one, exactly the silent-wrong failure mode
             # this fix exists to close, so this reading is refused rather
