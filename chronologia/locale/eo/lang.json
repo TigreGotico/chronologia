@@ -23,6 +23,9 @@
     "CLOCK",
     "at? article HOUR oclock? CLOCKDIR article? FRACTION",
     "FRACTION CLOCKDIR at? article HOUR",
+    "at? article HOUR oclock? CLOCKDIR article? MINUTE minute_word?",
+    "MINUTE minute_word? CLOCKDIR at? article HOUR",
+    "at? article HOUR MINUTE minute_word?",
     "at? article HOUR oclock?",
     "at? LANDMARK"
    ],
