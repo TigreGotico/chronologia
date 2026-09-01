@@ -6,6 +6,11 @@
   "dotted_date": true
  },
  "constructions": {
+  "decade_ref": {
+   "orders": [
+    "PART? year_plural DECADE"
+   ]
+  },
   "relative_offset": {
    "orders": [
     "NUM UNIT MARKER",
