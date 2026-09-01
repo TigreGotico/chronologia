@@ -1,0 +1,13 @@
+# Bulgarian tells the half hour additively, past the stated hour: "осем и
+# половина" == "eight and a half" == 8:30, the opposite direction from the
+# toward-hour Slovene/Croatian/Czech "pol"/"půl" siblings. Two independent
+# attestations with worked examples:
+#   en.wikibooks.org/wiki/Bulgarian/Time -- "Единайсет и трийсет, Единайсет
+#     и половина (Edinayset i triyset, Edinayset i polovina) = Eleven thirty,
+#     Half past eleven = 11:30".
+#   preply.com, telling the time in Bulgarian -- "Пет и половина" == 5:30,
+#     "Три и половина" == 3:30.
+# Mechanism copied from el's additive-past clock (clock_dir_past.voc "και" +
+# clock_fraction_30.voc "μισή"), chronologia/locale/el/lang.json:30-38
+# (order "HOUR CLOCKDIR FRACTION article? MERIDIEM? ZONE?").
+половина
