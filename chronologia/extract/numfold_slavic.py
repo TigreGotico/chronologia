@@ -125,6 +125,28 @@ def _make_fold(lang: str) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
         extract=lambda text: _extract(lang, text)))
 
 
+def _make_fold_bg() -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
+    """Bulgarian names a compound cardinal with an internal "и" ("двадесет и
+    три" == 23), so ``pronounce_number_bg``'s sweep puts "и" itself in the
+    model-derived word set -- unlike its Slavic siblings, none of which
+    spell a compound this way.  Read as bare ``is_number`` membership (the
+    ``_make_fold`` shape above) that swallows ANY "и" adjacent to a number,
+    including the clock's additive "осем и половина" ("eight and a half"),
+    folding "осем и" to the bare hour and stranding "половина" for the
+    FRACTION slot to never see -- the same fold trap that already forced cs's
+    "půl", uk's "пів" and hr's "pola" out of their bare-cardinal sets.  "и"
+    is pulled out of the membership set here and reinstated only as a
+    ``joiner``, which the shared engine (numfold_engine.fold) admits into a
+    run solely when the *following* token is itself a number word -- exactly
+    the compound case -- so "двадесет и три" still folds to 23 while "осем и
+    половина" leaves "и" standing for the clock's CLOCKDIR slot."""
+    words = _numwords("bg") - {"и"}
+    return make_fold(NumberGrammar(
+        is_number=lambda tok: tok.is_number or tok.text in words,
+        extract=lambda text: _extract("bg", text),
+        joiner=lambda tok: tok.text == "и"))
+
+
 from chronologia.extract.numfold_ordinals import with_ordinals
 
 # Spelled ordinals the *quarter* (and scoped-ordinal) construction reads in its
@@ -611,7 +633,7 @@ fold_sl = _compose(_day_rewrite(_DAY_SL),
                                  {**_ORD_SL, **_FEM_ORD_SL}),
                    _hour_rewrite(_HOUR_SL))
 fold_bg = _compose(_day_rewrite(_DAY_BG, _TENS_BG, ("и",)),
-                   with_ordinals(_make_fold("bg"), "bg",
+                   with_ordinals(_make_fold_bg(), "bg",
                                  {**_ORD_BG, **_FEM_ORD_BG}))
 
 
