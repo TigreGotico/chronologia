@@ -221,34 +221,28 @@ def test_2000_years_before_500_bc_still_correct():
     assert e == AstroDate(-2499, 1, 2)
 
 
-# -- adversarial: a small (<32, <4-digit) era-marked year refuses rather ---
-#    than silently substituting the anchor's year --------------------------
+# -- a small (<32, <4-digit) era-marked year still names its year ---------
 #
-# The generic YEAR slot only binds a number that is itself unambiguously a
-# year (>=32, or >=4 digits, or apostrophe-cued); "5 BC" or "1 AD" is too
-# small to bind there, so a day-of-month construction like "5th january 5
-# BC" ends up with DAY consuming the trailing "5" and the era marker left
-# dangling with NO year bound at all. Composing that would silently
-# substitute the anchor's own year for the (unreadable) named one -- the
-# exact silent-wrong failure mode this fix exists to close -- so these must
-# refuse (``None``), not guess.
+# The generic YEAR slot only binds a number that is unambiguously a year on
+# its own (>=32, or >=4 digits, or apostrophe-cued), because 1..31 is also a
+# day of the month. An explicit era marker the same order goes on to bind
+# settles that ambiguity, so the small number binds YEAR after all and the
+# marker is consumed rather than stranded.
 
-def test_small_era_year_refuses_not_guesses():
-    assert parse("5th january 5 BC") is None
+def test_small_era_year_binds_when_the_day_slot_is_already_filled():
+    s, e = start_end("5th january 5 BC")
+    assert s == AstroDate(-4, 1, 5)
+    assert e == AstroDate(-4, 1, 6)
+    assert parse("5th january 5 BC")[1] == ""
 
 
-def test_small_era_year_never_silently_swallows_the_marker():
-    # weekend_of_month has no competing numeric slot to steal the small
-    # number, so "5 BC" simply never binds YEAR at all: it correctly falls
-    # back to the (visible, non-empty) remainder -- "5 BC" stays stranded in
-    # the returned remainder text -- rather than being silently CONSUMED
-    # while still reading as the anchor's year. That "visible decline" is
-    # the pre-existing, acceptable behavior this fix must not regress: the
-    # marker must never disappear from the remainder while the date is
-    # wrong.
-    r = parse("the last weekend of june 5 BC")
-    assert r is not None
-    assert "bc" in r[1].lower()
+def test_small_era_year_composes_with_weekend_of_month():
+    # 5 BC is astronomical year -4; the last Saturday of June -4 falls on
+    # the 29th (proleptic Gregorian), so the weekend runs 29 June - 1 July.
+    s, e = start_end("the last weekend of june 5 BC")
+    assert s == AstroDate(-4, 6, 29)
+    assert e == AstroDate(-4, 7, 1)
+    assert parse("the last weekend of june 5 BC")[1] == ""
 
 
 # -- R90: "the" article stranded on era-qualified day-of-month dates -------
