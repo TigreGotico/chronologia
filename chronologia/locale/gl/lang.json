@@ -69,7 +69,7 @@
     },
     "decade_ref": {
       "orders": [
-        "article? PART? of? article? year_word NUM"
+        "article? PART? of? article? year_plural DNUM"
       ]
     },
     "year_ref": {
