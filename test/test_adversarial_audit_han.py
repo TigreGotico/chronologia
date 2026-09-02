@@ -25,14 +25,40 @@ _A = datetime(2017, 6, 27, 13, 4)
 
 
 # -- SEC-001 --------------------------------------------------------------
+def _fold_seconds(words: int, repeats: int = 3) -> float:
+    """Best-of-`repeats` wall time to fold a run of `words` number-words.
+
+    The minimum, not the mean: a loaded box inflates every sample upward, so
+    the fastest run is the closest estimate of the true cost and the one that
+    keeps this measurement stable under CI contention.
+    """
+    best = float("inf")
+    for _ in range(repeats):
+        t = time.perf_counter()
+        extract_timespan("um " * words, "pt", _A)
+        best = min(best, time.perf_counter() - t)
+    return best
+
+
 def test_romance_number_fold_is_linear_not_quadratic():
     """A long joiner-less run of a Romance number-word used to re-parse the
-    growing prefix once per token -- O(n^2), ~7.5s at 8000 words.  The fold is
-    now linear; a generous 3s budget (vs ~0.15s actual) fails loudly if the
-    quadratic behaviour ever returns, while staying robust to a slow CI box."""
-    t = time.time()
-    extract_timespan("um " * 8000, "pt", _A)
-    assert time.time() - t < 3.0
+    growing prefix once per token -- O(n^2), ~7.8s at 8000 words.
+
+    The claim under test is asymptotic, so the assertion compares the cost of
+    two input sizes rather than measuring one against a stopwatch: quadrupling
+    the input roughly quadruples a linear fold and multiplies a quadratic one
+    by about sixteen.  Measured across the fix, the ratio is ~2.9 after and
+    ~11.5 before, so a ceiling of 6 separates them with headroom on both
+    sides.  A wall-clock budget cannot do this: it measures the machine as
+    much as the algorithm, and a fixed 3s ceiling on ~0.15s of work still
+    failed on a contended runner.
+    """
+    extract_timespan("um um", "pt", _A)          # warm the locale cache
+    small = _fold_seconds(2000)
+    large = _fold_seconds(8000)
+    assert large / small < 6.0, (
+        f"folding 8000 number-words took {large / small:.1f}x the time of "
+        f"2000 ({large:.2f}s vs {small:.2f}s); linear is ~4x, quadratic ~16x")
 
 
 @pytest.mark.parametrize("text,lang,days", [
