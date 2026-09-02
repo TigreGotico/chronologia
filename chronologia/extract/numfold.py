@@ -633,8 +633,58 @@ def _fold_offset_fraction(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return _reindex(out)
 
 
+#: era abbreviations the tokenizer shatters on their dots ("b.c." -> b,c),
+#: keyed by the fragment tuple and glued back into the single token the ``bc``
+#: / ``ad`` connector and the ``ERA`` slot bind.  The dotted spelling is the
+#: ordinary written English form, as common as the bare one.
+_EN_ERA_GLUE = {
+    ("b", "c", "e"): "bce", ("b", "c"): "bc",
+    ("c", "e"): "ce", ("a", "d"): "ad",
+}
+
+
+def _dotted_run(run: Tuple[Token, ...]) -> bool:
+    """Whether the fragments were written as ONE dotted abbreviation.
+
+    The letters of an era marker are single letters that any punctuation makes
+    adjacent once the tokenizer drops it, so text adjacency alone reads "b/c"
+    ("because") and "b, c" as BC -- a sign flip on ordinary English.  The
+    written abbreviation separates its letters by exactly one full stop and
+    nothing else, which the source extents plus ``trailing_dot`` pin down.
+
+    The dot is required *between* the letters, not after the last one: the
+    unterminated "3 b.c" is ordinary written English and reads as 3 BC, the
+    same as "3 b.c.".
+    """
+    return all(a.trailing_dot and a.char_end is not None
+               and b.char_start == a.char_end + 1
+               for a, b in zip(run, run[1:]))
+
+
+def _glue_en_era(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    seqs = sorted(_EN_ERA_GLUE, key=len, reverse=True)
+    out = []
+    i = 0
+    while i < len(tokens):
+        for seq in seqs:
+            k = len(seq)
+            if (tuple(t.text for t in tokens[i:i + k]) == seq
+                    and _dotted_run(tokens[i:i + k])):
+                run = tokens[i:i + k]
+                out.append(Token(text=_EN_ERA_GLUE[seq],
+                                 raw="".join(t.raw for t in run), index=0,
+                                 char_start=run[0].char_start,
+                                 char_end=run[-1].char_end))
+                i += k
+                break
+        else:
+            out.append(tokens[i])
+            i += 1
+    return _reindex(out)
+
+
 def _pre_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-    folded = _fold_spelled_year(_merge_en_ord_suffix(tokens))
+    folded = _fold_spelled_year(_merge_en_ord_suffix(_glue_en_era(tokens)))
     folded = _fold_article_magnitude(folded)
     return _fold_offset_fraction(_fold_scale_offset(folded))
 
