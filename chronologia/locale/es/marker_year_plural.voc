@@ -1,0 +1,11 @@
+# The plural year noun that frames a decade ("los años veinte", "los años
+# 1980"); the singular in marker_year_word.voc names a single year ("el año
+# 1980") and must not reach the decade slot.  The unaccented spelling is
+# kept alongside, as it is there.
+# Source: Diccionario panhispánico de dudas, RAE, s.v. "década"
+# (https://www.rae.es/dpd/década): "Es habitual utilizar expresiones como
+# los años veinte, la década de los treinta, los cuarenta, etc."; "Es
+# posible emplear cifras en su expresión si acompañan a la palabra años:
+# los años 20."
+años
+anos

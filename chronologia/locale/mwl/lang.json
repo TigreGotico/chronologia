@@ -52,7 +52,7 @@
     },
     "decade_ref": {
       "orders": [
-        "PART? article? year_word NUM"
+        "PART? article? year_plural DNUM"
       ]
     },
     "fuzzy_period": {
