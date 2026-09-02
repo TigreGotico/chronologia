@@ -8,7 +8,10 @@ subtractive reading neighbouring Bulgarian uses is pinned as unreadable.
 """
 import pytest
 
-from ._corpus import ANCHOR, minute_at, nomatch, parse, span, start_end
+from datetime import datetime
+
+from ._corpus import (ANCHOR, ad, minute_at, nomatch, parse, span,
+                      start_end)
 
 #: prefer_future puts a bare morning clock on the day after a 13:04 anchor.
 TOMORROW = (2027, 5, 13)
@@ -126,3 +129,67 @@ def test_impossible_clocks_are_never_returned_as_times():
 def test_a_bare_connector_is_not_a_time():
     nomatch("и")
     assert parse("девет и") is None or parse("девет и")[1] != ""
+
+
+# The spoken half of the day.  CLDR 47 names the afternoon band попладне and
+# the evening band навечер, and both words also qualify a named hour, so "во
+# три попладне" is three in the afternoon and not three in the morning.  The
+# remainder is asserted empty on every row: the word is part of the reading,
+# and an hour that happens to be right with the qualifier left standing is the
+# defect, not the fix.
+
+@pytest.mark.parametrize("text,day_,hh,mm", [
+    ("во три попладне", TODAY, 15, 0),
+    ("во пет попладне", TODAY, 17, 0),
+    ("во осум навечер", TODAY, 20, 0),
+    ("во единаесет навечер", TODAY, 23, 0),
+    ("во девет наутро", TOMORROW, 9, 0),
+    ("во шест наутро", TOMORROW, 6, 0),
+    ("во единаесет претпладне", TOMORROW, 11, 0),
+    ("во 3 попладне", TODAY, 15, 0),
+    ("во 8 навечер", TODAY, 20, 0),
+])
+def test_the_spoken_part_of_day_sets_the_half(text, day_, hh, mm):
+    assert start_end(text) == minute_at(*day_, hh, mm)
+    assert parse(text)[1] == ""
+
+
+@pytest.mark.parametrize("text,band", [
+    ("попладне", (12, 18)),
+    ("навечер", (18, 24)),
+    ("наутро", (4, 10)),
+    ("претпладне", (10, 12)),
+])
+def test_the_same_word_alone_is_still_the_whole_band(text, band):
+    hour_from, hour_to = band
+    base = datetime(*TODAY)
+    assert start_end(text) == (
+        ad(base.replace(hour=hour_from)),
+        ad(base.replace(hour=hour_to) if hour_to < 24
+           else datetime(*TOMORROW)))
+    assert parse(text)[1] == ""
+
+
+@pytest.mark.parametrize("text,d,hour_from", [
+    ("денес попладне", 12, 12),
+    ("вчера навечер", 11, 18),
+    ("утре наутро", 13, 4),
+])
+def test_a_day_still_carries_its_band(text, d, hour_from):
+    s = span(text)
+    assert (s.start.day, s.start.hour) == (d, hour_from)
+    assert parse(text)[1] == ""
+
+
+# The clock's leading preposition belongs to the reading.  "во 8:30" is half
+# past eight, and во is consumed rather than handed back.
+
+@pytest.mark.parametrize("text,day_,hh,mm", [
+    ("во 8:30", TOMORROW, 8, 30),
+    ("во 09:30", TOMORROW, 9, 30),
+    ("во 21:50", TODAY, 21, 50),
+    ("во 13:05", TODAY, 13, 5),
+])
+def test_the_digital_clock_takes_its_preposition(text, day_, hh, mm):
+    assert start_end(text) == minute_at(*day_, hh, mm)
+    assert parse(text)[1] == ""

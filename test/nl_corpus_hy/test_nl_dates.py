@@ -79,3 +79,21 @@ def test_seasons_bare_and_definite(text, month):
     """The definite article is a suffix, so a season noun is met both bare and
     suffixed; the northern hemisphere convention places spring in March."""
     assert start(text).month == month
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("2026 թվականի մարտի 15", (2026, 3, 15)),
+    ("1957 թվականի մարտի 22", (1957, 3, 22)),
+    ("2019 թվականի հունիսի 5", (2019, 6, 5)),
+])
+def test_the_year_leads_the_date_with_the_full_word(text, expected):
+    """The year-first date spells թվական in the genitive before the month, the
+    shape Armenian prose actually uses -- "Ընդունվել է 1957 թվականի մարտի
+    22-ին։"  The whole phrase is the date, so nothing is left over."""
+    assert _ymd(text) == expected
+    assert parse(text)[1] == ""
+
+
+def test_the_year_first_date_is_not_read_as_a_bare_year():
+    r = parse("2026 թվականի մարտի 15")
+    assert (r[0].end - r[0].start).days == 1

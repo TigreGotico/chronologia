@@ -31,7 +31,7 @@
   },
   "clock_time": {
    "orders": [
-    "CLOCK MERIDIEM?",
+    "at? CLOCK MERIDIEM?",
     "at? HOUR CLOCKDIR FRACTION MERIDIEM?",
     "at? HOUR CLOCKDIR MINUTE minute_word? MERIDIEM?",
     "at HOUR oclock? MERIDIEM?",

@@ -2,3 +2,8 @@
 # dot).
 претпл
 am
+# The spoken half of the day: CLDR 47 names morning1 (04:00-10:00) "наутро" and morning2
+# (10:00-12:00) "претпладне", and both are adverbs in their own right -- en.wiktionary.org,
+# Macedonian entries наутро ("in the morning") and претпладне ("before noon").
+наутро
+претпладне
