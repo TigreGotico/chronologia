@@ -346,6 +346,16 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         raw = token.raw.rstrip(".")
         return (token.is_number and 1 <= (token.value or 0) <= 31
                 and raw[:1].isdigit() and not raw.isdigit())
+    if name == "DORD":
+        # an ordinal that still WEARS its ordinal mark: a digit run whose
+        # ``raw`` keeps the trailing dot an ``ordinal_dot`` locale writes its
+        # ordinals with ("20." in "v 20. storočí").  ``ORD`` cannot be used
+        # where the construction's other reading is a bare count, because the
+        # number fold collapses the cardinal "20", the spelled "päť" and the
+        # dotted ordinal "20." to one numeric token -- the dot in ``raw`` is
+        # the only surviving evidence that an ordinal was written at all.
+        return (token.is_number and (token.value or 0) >= 1
+                and token.raw[:1].isdigit() and token.raw.endswith("."))
     if name in ("SUBH", "SUBM", "SUBS"):
         return token.is_number and (token.value or 0) >= 0
     if name == "SEL_UNIT":

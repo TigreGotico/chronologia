@@ -2,5 +2,8 @@
 # (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
 # transcribed in chronologia/dayparts.py as the morning band.
 # Surface: adverb 'in the morning' -- the deictic form these phrases use.
-# Source: Wiktionary, ráno — https://en.wiktionary.org/wiki/ráno#Slovak
+# Source: the CLDR chart linked above -- the sk row spells morning1
+# 'ráno', this surface exactly.  Neither Wiktionary carries a Slovak
+# 'ráno' (the English entry has a Czech section only, and Wikislovník
+# has no page), so CLDR is the closest thing to a per-word source here.
 ráno

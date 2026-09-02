@@ -3,9 +3,11 @@
 # with either the accusative "prošli tjedan" or the genitive "prošlog tjedna",
 # so the nominative-only listing missed the commonest phrasings.  The masculine
 # genitive/dative have the attested short and long variants (-og / -oga,
-# -om / -ome).  Institut za hrvatski jezik, *Hrvatski pravopis* / Hrvatski
-# jezični portal, sklonidba pridjeva.
-# https://hjp.znanje.hr/index.php?show=search_by_id&id=eldnUBQ%3D
+# -om / -ome).  The season nouns are neuter, so "prošlo ljeto" and
+# "prethodno proljeće" need the neuter nominative/accusative too.
+# Hrvatski jezični portal, sklonidba pridjeva:
+# https://hjp.znanje.hr/index.php?show=search_by_id&id=dl5iXBI%3D (prošli)
+# https://hjp.znanje.hr/index.php?show=search_by_id&id=eVdjXBk%3D (prethodan)
 prošli
 prošlog
 prošloga
@@ -16,6 +18,7 @@ prošla
 prošle
 prošloj
 prošlu
+prošlo
 prošlih
 prošlima
 prethodni
@@ -26,4 +29,5 @@ prethodna
 prethodne
 prethodnoj
 prethodnu
+prethodno
 prethodnih

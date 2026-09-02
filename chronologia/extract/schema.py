@@ -82,7 +82,8 @@ SLOT_ALPHABET: FrozenSet[str] = _derive_slot_alphabet()
 #: slots whose value is a numeric / regex literal -- always reachable, they
 #: bind no per-locale vocabulary.
 NUMERIC_SLOTS: FrozenSet[str] = frozenset({
-    "NUM", "DNUM", "DAY", "YEAR", "YEARANY", "GYEAR", "ORD", "SORD", "SUBH", "SUBM", "SUBS",
+    "NUM", "DNUM", "DAY", "YEAR", "YEARANY", "GYEAR", "ORD", "SORD", "DORD",
+    "SUBH", "SUBM", "SUBS",
     "HOUR", "MINUTE", "QUARTS", "MILTIME", "MILTIMEZ", "MILTIMENZ",
     "CLOCK", "ISO", "ISOWEEK", "NUMDATE"})
 
