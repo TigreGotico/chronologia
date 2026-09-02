@@ -60,6 +60,7 @@ never cited as evidence about a language.
 | Armenian | [hy.md](hy.md) |
 | Belarusian | [be.md](be.md) |
 | Bulgarian | [bg.md](bg.md) |
+| Czech | [cs.md](cs.md) |
 | Dutch | [nl.md](nl.md) |
 | English | [en.md](en.md) |
 | Esperanto | [eo.md](eo.md) |
@@ -71,6 +72,7 @@ never cited as evidence about a language.
 | Greek | [el.md](el.md) |
 | Hausa | [ha.md](ha.md) |
 | Hindi | [hi.md](hi.md) |
+| Hungarian | [hu.md](hu.md) |
 | Icelandic | [is.md](is.md) |
 | Indonesian | [id.md](id.md) |
 | Irish | [ga.md](ga.md) |
