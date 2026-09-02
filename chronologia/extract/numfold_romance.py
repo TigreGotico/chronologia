@@ -1400,7 +1400,9 @@ fold_ro = _with_scale_frame(fold_ro, "ro", frozenset({"un", "unu", "una", "o"}))
 # -- Occitan ----------------------------------------------------------------
 _OC_PHRASES = [
     (["abans", "jèsus", "crist"], "acn"), (["abans", "jesus", "crist"], "acn"),
+    (["abans", "nòstra", "èra"], "acn"), (["abans", "nostra", "era"], "acn"),
     (["aprèp", "jèsus", "crist"], "apc"), (["aprep", "jesus", "crist"], "apc"),
+    (["de", "nòstra", "èra"], "apc"), (["de", "nostra", "era"], "apc"),
     (["abans", "ièr"], "abansièr"), (["abans", "ier"], "abansièr"),
     (["passat", "deman"], "passatdeman"), (["delà", "deman"], "passatdeman"),
     (["que", "ven"], "queven"),
