@@ -1,1 +1,10 @@
+# Slovak "century".  After the "v"/"vo" preposition the noun stands in the
+# locative -- "v 20. storočí" -- so listing the nominative alone left the noun
+# stranded and the ordinal was read as a clock hour instead.  The locative is
+# spelled like the genitive plural ("päť storočí" = five centuries), so the
+# order that binds it requires the written ordinal dot -- the only thing that
+# tells "v 20. storočí" from "v 20 storočí", twenty centuries.
+# Wikislovník, storočie, skloňovanie (lokál sg. "storočí"):
+# https://sk.wiktionary.org/wiki/storočie
 storočie
+storočí

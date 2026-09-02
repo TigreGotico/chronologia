@@ -113,7 +113,8 @@
    "scoped_ordinal": [
     "article? ORD WEEKDAY MONTH YEAR?",
     "article? ordlast WEEKDAY MONTH YEAR?",
-    "article? ORD UNIT MONTH YEAR?"
+    "article? ORD UNIT MONTH YEAR?",
+    "during DORD CMUNIT"
    ],
    "weekday_ref": [
     "at WEEKDAYFULL"

@@ -1832,7 +1832,10 @@ class Resolver:
 
         ``last`` in place of the ordinal selects the final unit (-1).
         """
-        ord_tok = match.slots.get("ORD")
+        # ``DORD`` is ``ORD`` restricted to an ordinal that kept its written
+        # dot -- the same number, read from an order that must not accept a
+        # bare count (see the slot's note in ``matcher``).
+        ord_tok = match.slots.get("ORD") or match.slots.get("DORD")
         ntolast_tok = match.slots.get("NTOLAST")
         penult_tok = match.slots.get("PENULT")
         if penult_tok is not None:
