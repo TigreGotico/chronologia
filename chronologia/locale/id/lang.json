@@ -86,7 +86,8 @@
     "dmy": true,
     "hemisphere": null,
     "prefer_future": true,
-    "bare_half_to": true
+    "bare_half_to": true,
+    "toward_hour_12h": true
   },
   "guards": {
     "bare_year_min_digits": 4

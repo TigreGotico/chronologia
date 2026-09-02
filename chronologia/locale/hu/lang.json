@@ -104,7 +104,8 @@
     "hemisphere": "north",
     "prefer_future": true,
     "bare_half_to": true,
-    "bare_quarter_to": true
+    "bare_quarter_to": true,
+    "toward_hour_12h": true
   },
   "positions": {
     "until": "affix",
