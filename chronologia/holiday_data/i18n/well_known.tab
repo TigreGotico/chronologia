@@ -854,14 +854,10 @@ valentines      | eu | san valentin ;; maitasunaren eguna
 #
 # ===== Kabyle =====
 new_year        | kab | aseggas amaynut
-christmas       | kab | lɛid n tlalit ;; krismas
-eid_al_fitr     | kab | lɛid ameẓyan ;; tafaska tameẓyant
-eid_al_adha     | kab | lɛid ameqqran ;; tafaska tameqqrant
-ramadan         | kab | ramḍan ;; uẓum
-islamic_new_year| kab | aseggas ihjrawan
-nowruz          | kab | nowruz
-diwali          | kab | diwali
-halloween       | kab | halloween
+eid_al_fitr     | kab | lɛid ameẓyan
+eid_al_adha     | kab | lɛid ameqqran
+ramadan         | kab | remṭan
+islamic_new_year| kab | aseggas ahiǧri
 # ===== Bulgarian =====
 new_year           | bg | нова година
 new_year_eve       | bg | навечерие на нова година
