@@ -1228,6 +1228,14 @@ def fold_fr(tokens):  # noqa: F811 -- final wrap adds une-heure + un-compound
 _IT_PHRASES = [
     (["avanti", "cristo"], "ac"), (["dopo", "cristo"], "dc"),
     (["avanti", "l", "era", "volgare"], "ac"), (["era", "volgare"], "dc"),
+    # the dotted abbreviations "a.e.v."/"e.v." of the areligious era formula
+    # (https://it.wikipedia.org/wiki/Era_volgare) have no rows.  The tokenizer
+    # shatters them on their dots and this table matches on token text alone,
+    # so a row would equally match the same letters written apart: "a", "e"
+    # and "v" are an ordinary preposition, the conjunction "and" and a Roman
+    # numeral, and "1500 a e V" or "il 3 e V maggio" would read as a dated era
+    # marker -- a sign flip on ordinary Italian.  The spelled-out
+    # "(avanti l') era volgare" above carries the same meaning unambiguously.
     (["altro", "ieri"], "altroieri"), (["avanti", "ieri"], "avantieri"),
     (["dopo", "domani"], "dopodomani"),
     (["fine", "settimana"], "finesettimana"),
@@ -1423,6 +1431,11 @@ fold_oc = _romance_prepass_fold(
 _AST_PHRASES = [
     (["enantes", "de", "cristu"], "adc"), (["antes", "de", "cristu"], "adc"),
     (["dempués", "de", "cristu"], "ddc"), (["despues", "de", "cristu"], "ddc"),
+    # the areligious era wording: "cuartu mileniu enantes de la nuesa era"
+    # (https://ast.wikipedia.org/wiki/Espada), "l'añu 28 de la nuesa era"
+    # (https://ast.wikipedia.org/wiki/Xuan_Bautista).
+    (["enantes", "de", "la", "nuesa", "era"], "adc"),
+    (["de", "la", "nuesa", "era"], "ddc"),
     (["pasáu", "mañana"], "trasmañana"), (["pasao", "mañana"], "trasmañana"),
     (["que", "vien"], "quevien"),
     (["fin", "de", "selmana"], "findeselmana"),

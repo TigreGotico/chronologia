@@ -579,5 +579,7 @@ class Tokenizer:
         return tuple(Token(t.text, t.raw, i, t.is_number, t.value,
                            t.char_start, t.char_end, t.cap,
                            prev_cap=(tokens[i - 1].cap if i > 0 else False),
-                           apostrophe=t.apostrophe)
+                           apostrophe=t.apostrophe,
+                           trailing_dot=(t.char_end is not None
+                                         and low[t.char_end:t.char_end + 1] == "."))
                      for i, t in enumerate(tokens))
