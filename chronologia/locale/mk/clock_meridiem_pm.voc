@@ -1,3 +1,9 @@
 # Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  dayPeriods pm "попл.".
 попл
 pm
+# The spoken half of the day: CLDR 47 names afternoon1 (12:00-18:00) "попладне" and evening1
+# (18:00-24:00) "навечер", and both are adverbs in their own right -- en.wiktionary.org, Macedonian
+# entries попладне ("in the afternoon") and навечер ("in the evening") -- so they qualify a named
+# hour the way "следобед" does in Bulgarian.
+попладне
+навечер
