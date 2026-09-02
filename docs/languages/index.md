@@ -66,11 +66,13 @@ never cited as evidence about a language.
 | Esperanto | [eo.md](eo.md) |
 | Estonian | [et.md](et.md) |
 | Filipino | [fil.md](fil.md) |
+| Finnish | [fi.md](fi.md) |
 | French | [fr.md](fr.md) |
 | Georgian | [ka.md](ka.md) |
 | German | [de.md](de.md) |
 | Greek | [el.md](el.md) |
 | Hausa | [ha.md](ha.md) |
+| Hebrew | [he.md](he.md) |
 | Hindi | [hi.md](hi.md) |
 | Hungarian | [hu.md](hu.md) |
 | Icelandic | [is.md](is.md) |
