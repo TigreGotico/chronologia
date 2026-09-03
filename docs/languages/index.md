@@ -57,6 +57,7 @@ never cited as evidence about a language.
 |:---|:---|
 | Albanian | [sq.md](sq.md) |
 | Arabic | [ar.md](ar.md) |
+| Aragonese | [an.md](an.md) |
 | Armenian | [hy.md](hy.md) |
 | Asturian | [ast.md](ast.md) |
 | Belarusian | [be.md](be.md) |
@@ -88,9 +89,11 @@ never cited as evidence about a language.
 | Latvian | [lv.md](lv.md) |
 | Lithuanian | [lt.md](lt.md) |
 | Macedonian | [mk.md](mk.md) |
+| Malay | [ms.md](ms.md) |
 | Maltese | [mt.md](mt.md) |
 | Norwegian Nynorsk | [nn.md](nn.md) |
 | Occitan | [oc.md](oc.md) |
+| Mirandese | [mwl.md](mwl.md) |
 | Persian | [fa.md](fa.md) |
 | Polish | [pl.md](pl.md) |
 | Portuguese | [pt.md](pt.md) |
