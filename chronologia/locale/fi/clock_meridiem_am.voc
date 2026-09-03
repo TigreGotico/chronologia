@@ -1,2 +1,7 @@
 ap.
 aamupäivällä
+# aamulla "in the morning": Finnish postposes the day-part word after the
+# clock ("kello 9 aamulla"), where it names the AM side of a 12-hour hour
+# rather than a band of its own -- the same double duty aamupäivällä already
+# does here and in daypart_aamu_fi.voc, which cites the surface.
+aamulla

@@ -1,0 +1,13 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale fi
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as aamu [05:00, 10:00)
+# (CLDR morning1).
+# Surface: aamulla, the adessive of aamu "morning" -- the form a speaker
+# uses adverbially; the bare nominative aamu is the citation form and is
+# deliberately NOT shipped.
+# Source: Wiktionary, "aamulla": Finnish adverb, glossed "at morning", and
+# the adessive singular of "aamu".
+# https://en.wiktionary.org/wiki/aamulla
+# CLDR 47 fi names this period "aamulla" in the format-wide day periods,
+# confirming the adessive is the surface, not the nominative.
+aamulla

@@ -168,7 +168,8 @@ KNOWN_POSITION_ROLES: FrozenSet[str] = frozenset({"until", "since", "for", "from
 KNOWN_POSITIONS: FrozenSet[str] = frozenset({"pre", "post", "affix"})
 TOKENIZER_KEYS: FrozenSet[str] = frozenset({"split_contractions", "ordinal_dot",
                                           "ordinal_dot_max_digits",
-                                          "dotted_date", "decimal_comma"})
+                                          "dotted_date", "decimal_comma",
+                                          "dotted_clock"})
 CONVENTION_KEYS: FrozenSet[str] = frozenset({
     "week_start", "dmy", "hemisphere", "prefer_future", "bare_half_to",
     "bare_quarter_to", "toward_hour_12h", "bare_half_past",

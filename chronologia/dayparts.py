@@ -610,6 +610,18 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (17, 0), "el", _cldr("el")),
     _p("evening", (17, 0), (20, 0), "el", _cldr("el")),
     _p("night", (20, 0), (4, 0), "el", _cldr("el")),
+    # fi: five bands, kept under their own names rather than collapsed, for the
+    # reason Macedonian's are -- Finnish cuts the forenoon in two, aamu is the
+    # five hours from 05:00 and aamupaiva only the two before noon, so a single
+    # "morning" would answer 05:00-12:00 for a word that means 10:00-12:00.
+    # The remaining three are the ordinary afternoon/evening/night bands, but
+    # they too keep the Finnish name so one language reads as one set.  Noon
+    # and midnight ship as clock landmarks (keskipaiva, keskiyo), not bands.
+    _p("aamu", (5, 0), (10, 0), "fi", _cldr("fi")),
+    _p("aamupaiva", (10, 0), (12, 0), "fi", _cldr("fi")),
+    _p("iltapaiva", (12, 0), (18, 0), "fi", _cldr("fi")),
+    _p("ilta", (18, 0), (23, 0), "fi", _cldr("fi")),
+    _p("yo", (23, 0), (5, 0), "fi", _cldr("fi")),
 ]
 
 #: Deprecated alias for :data:`_LANGUAGES`, from when the tag was miscalled a

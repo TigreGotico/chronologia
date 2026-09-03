@@ -415,6 +415,18 @@ def _daypart_pm_side(name: str) -> bool:
     return band.end.day != band.start.day or band.start.hour >= 12
 
 
+def _hour_in_daypart(name: str, hour: int) -> bool:
+    """Whether the wall-clock ``hour`` falls inside the day-part ``name``'s
+    band, read from the same CLDR-derived bands everything else here uses.
+    A midnight-crossing band is tested as the union of its two arms.
+    """
+    band = _daypart_band(AstroDate(2000, 1, 1), name)
+    lo, hi = band.start.hour, band.end.hour
+    if band.end.day != band.start.day:
+        return hour >= lo or hour < hi
+    return lo <= hour < hi
+
+
 def _daypart_wraps_midnight(name: str) -> bool:
     """Whether the day-part ``name``'s band crosses midnight into the next
     civil day (a "night"-shaped band) -- the only kind that legitimately
@@ -3003,7 +3015,17 @@ class Resolver:
                 # return a confident wrong hour.  This does NOT apply to a
                 # daypart marker over an explicit 24-hour clock ("15:30
                 # odpoledne", "öğleden sonra 15:30"), whose hour is already final.
+                # A day-part WORD in the meridiem slot is not an am/pm
+                # abbreviation: Finnish postposes it after a 24-hour hour
+                # ("kello 21 illalla") and means the band, so the pair is
+                # contradictory only when the hour falls OUTSIDE that band.
+                # "kello 21 illalla" is 21:00, "kello 15 illalla" still names
+                # no time.  Bare "pm" is nowhere a day-part surface, so the
+                # flat "15 pm" refusal above is untouched.
+                dp_name = self.spec.dayparts.get(meridiem.text)
                 if bare_12h and not 1 <= spoken_hour <= 12:
+                    if dp_name is not None and _hour_in_daypart(dp_name, hour):
+                        return hour, minute, second
                     return None
                 off = self.spec.meridiems[meridiem.text]
                 # decide the +/-12 shift from the SPOKEN hour's 12h meaning, then

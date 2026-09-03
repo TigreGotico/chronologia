@@ -1,0 +1,4 @@
+# yöllä "at night".  The Finnish night band crosses midnight (CLDR 47 fi
+# night1, 23:00-05:00), so the hour under it is the small-hours one: "kello 3
+# yöllä" is 03:00, not 15:00.  Cited in daypart_yo_fi.voc.
+yöllä

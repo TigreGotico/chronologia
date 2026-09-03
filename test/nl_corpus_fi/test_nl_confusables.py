@@ -40,7 +40,6 @@ _SAFE_NONE = [
     'miljoona syytä',
     'tuhansia ihmisiä',
     'nouseva aurinko',
-    'aikaisin aamulla',
     'sekunti hiljaisuutta',
     'useimmat ihmiset',
     'muutama päivä',
@@ -57,6 +56,17 @@ _SAFE_NONE = [
 def test_confusable_returns_none(text):
     # structurally safe: no count/modifier, nothing to bind.
     nomatch(text)
+
+
+def test_early_morning_is_temporal_not_a_confusable():
+    """"aikaisin aamulla" is "early in the morning" -- a genuine time
+    reference, listed among the confusables only while the locale had no
+    day-part vocabulary at all and every one of them returned None.  The
+    morning band binds; the intensifier stays in the remainder."""
+    r = parse('aikaisin aamulla')
+    assert r is not None
+    assert (r[0].start.hour, r[0].end.hour) == (5, 10)
+    assert r[1] == 'aikaisin'
 
 
 _RESOLVED = [

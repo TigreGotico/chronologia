@@ -7,7 +7,8 @@
     "decimal_comma": true,
     "split_contractions": false,
     "ordinal_dot": true,
-    "dotted_date": true
+    "dotted_date": true,
+    "dotted_clock": true
   },
   "constructions": {
     "relative_offset": {
@@ -32,6 +33,7 @@
     },
     "clock_time": {
       "orders": [
+        "at CLOCK MERIDIEM? ZONE?",
         "CLOCK MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
         "at HOUR oclock MERIDIEM? ZONE?",
