@@ -128,6 +128,18 @@ class TokenizerModes:
     # and which merely groups thousands, so the SAME two characters are read
     # oppositely per locale instead of silently splitting the number.
     decimal_comma: bool = False
+    # the language writes the wall clock with a dot instead of a colon
+    # ("klo 9.15", "kello 15.30").  Finnish is the case this exists for:
+    # Kielikello's rule on writing clock times prescribes the period
+    # ("kellonajan tunnit ja minuutit erotetaan toisistaan pisteellä") and
+    # CLDR 47's fi short time pattern is "H.mm", so the dotted form is the
+    # standard written one, not a variant.  Off by default, and only safe to
+    # turn on together with ``decimal_comma``: it is the comma-decimal
+    # convention that frees the dot from ever marking a decimal point, so
+    # "15.30" cannot be the number 15.3 in such a locale.  Where the dot IS
+    # the decimal point (English), the dotted clock stays cue-licensed
+    # through the ``DOTCLOCK``/``PADCLOCK`` slots instead.
+    dotted_clock: bool = False
 
 
 @dataclass(frozen=True)

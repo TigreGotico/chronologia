@@ -1,0 +1,11 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale fi
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as ilta [18:00, 23:00)
+# (CLDR evening1).
+# Surface: illalla, the adessive of ilta "evening" (the stem loses its t:
+# ilta -> illa-).
+# Source: Wiktionary, "illalla": Finnish adverb, glossed "in the evening",
+# and the adessive singular of "ilta".
+# https://en.wiktionary.org/wiki/illalla
+# CLDR 47 fi names this period "illalla" in the format-wide day periods.
+illalla

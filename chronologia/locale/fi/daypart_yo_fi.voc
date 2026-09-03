@@ -1,0 +1,10 @@
+# Band boundaries: Unicode CLDR 47 Day Period Rules, locale fi
+# (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
+# transcribed in chronologia/dayparts.py as yo [23:00, 05:00)
+# (CLDR night1, one midnight-crossing band).
+# Surface: yöllä, the adessive of yö "night".
+# Source: Wiktionary, "yöllä": Finnish adverb, glossed "at night", and the
+# adessive singular of "yö".
+# https://en.wiktionary.org/wiki/y%C3%B6ll%C3%A4
+# CLDR 47 fi names this period "yöllä" in the format-wide day periods.
+yöllä

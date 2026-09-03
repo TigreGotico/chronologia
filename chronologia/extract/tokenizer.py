@@ -217,6 +217,28 @@ _NUMDATE_ANY = f"(?:{_NUMDATE})|(?:{_DOTDATE})"
 # three bare numerals, not two of them plus a stray "fraction".
 _SLASHFRAC = r"\d{1,2}/\d{1,2}(?!\d)(?!/\d)"
 _CLOCK = r"\d{1,2}:\d{2}(?::\d{2})?(?!\d)"
+# the same wall clock written with a dot, "9.15" / "15.30" -- the standard
+# Finnish separator (Kielikello: "kellonajan tunnit ja minuutit erotetaan
+# toisistaan pisteellä"; CLDR 47 fi short time pattern "H.mm").  Enabled by
+# the per-language ``dotted_clock`` mode and never on by default, because in a
+# dot-decimal locale these digits are a number.
+#
+# The shape is bound tight so it can only be a clock: the hour is 0..23 and
+# the minute is exactly two digits, 00..59, so a thousands group ("1.000",
+# three digits) and an out-of-range run ("15.70", "25.30") both fall through
+# to the number rule untouched.  It is matched AFTER _DOTDATE, so the
+# three-component date "3.6.2020" still binds whole, and the boundary guards
+# do the rest: a following dot refuses the shape outright and the lookbehinds
+# refuse a tail glued to one, so nothing inside "1.15.06.2020" reads as a
+# time.  The trailing-dot guard is deliberately blind to what comes after that
+# dot, because "15.06." -- a day and a month with the year left off -- is a
+# truncated DATE the dotted-date rules already refuse, and reading 15:06 out
+# of it would be exactly the silent wrong that refusal exists to prevent.
+#
+# The token carries the colon spelling as ``text`` and the written surface as
+# ``raw``, which is what lets it bind the ordinary CLOCK slot -- the dot is a
+# spelling of the clock, not a separate construction.
+_DOTCLOCK = r"(?<!\d)(?<!\d\.)(?:[01]?\d|2[0-3])\.[0-5]\d(?!\d)(?!\.)"
 _NUM = r"\d+(?:\.\d+)?"
 # a timezone acronym with an optional fixed signed offset kept as ONE token so
 # the sign survives ("utc+2", "gmt-5", bare "utc"); language-neutral, like the
@@ -362,6 +384,11 @@ class Tokenizer:
             # ahead of the ordinal-dot and bare-number rules below, so a
             # dotted date binds whole rather than being read as a number
             parts.insert(4, _DOTDATE)
+        if modes.dotted_clock:
+            # after _DOTDATE (a dotted date wins its own digits) and ahead of
+            # the ordinal-dot and number rules, so "15.30" binds as one clock
+            # token instead of splitting into two bare numbers.
+            parts.append(_DOTCLOCK)
         if modes.ordinal_dot:
             # a digit run followed by a dot that is not a decimal point.
             # ``ordinal_dot_max_digits`` (a per-locale fact) optionally caps
@@ -407,6 +434,7 @@ class Tokenizer:
             # English (and he/ms): ',' groups thousands, '.' is the decimal.
             num = r"(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?!\d)"
         self._decimal_comma = modes.decimal_comma
+        self._dotted_clock = modes.dotted_clock
         parts += [num, word]
         self._re = re.compile("|".join(parts), re.UNICODE)
         # Arabic-script native decimal/thousands separators (U+066B/U+066C)
@@ -474,6 +502,14 @@ class Tokenizer:
                     tokens.append(Token(text=raw, raw=raw, index=i,
                                         is_number=True, value=int(num_s) / den,
                                         char_start=cs, char_end=ce))
+                continue
+            if self._dotted_clock and re.fullmatch(_DOTCLOCK, raw) is not None:
+                # the dotted wall clock: keep the written surface in ``raw``
+                # (so the remainder renders what the writer typed) and hand
+                # the matcher the colon spelling, which is the one shape the
+                # ``CLOCK`` slot and the clock resolver already read.
+                tokens.append(Token(text=raw.replace(".", ":"), raw=raw,
+                                    index=i, char_start=cs, char_end=ce))
                 continue
             is_literal = (re.fullmatch(_ISOWEEK, raw) is not None
                           or re.fullmatch(_ISO, raw) is not None
