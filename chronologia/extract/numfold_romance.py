@@ -788,6 +788,30 @@ fold_gl = _with_scale_frame(fold_gl, "gl", frozenset({"un", "unha"}),
                                                      "millón", "millon"}))
 fold_ca = _with_scale_frame(fold_ca, "ca", frozenset({"un", "una"}),
                             million_extra=frozenset({"milions", "milió"}))
+
+
+def _with_h_clock(fold):
+    """Read the hour-letter clock ("21h30", "20h") ahead of the number fold.
+
+    Iberian Romance writes the clock two ways: the colon form dominates, and
+    beside it runs the hour-letter form Portuguese and French share -- "as
+    21h30", "a les 17h30", "a las 21h20".  Attested in running prose on the
+    Spanish, Catalan and Galician Wikipedias (Spanish TV schedules and an
+    Ecuadorian decree, the 1949 Turia flood in Catalan, RTP Acores listings in
+    Galician).  Italian, Romanian, Asturian, Greek and Swedish do NOT write it:
+    a search for each language's own clock preposition before the notation
+    ("alle"/"ore" in Italian, "ora" in Romanian) returns nothing, and the bare
+    digit-h-digit hits in those wikis are durations, coordinates and citations
+    to French sources.
+    """
+    def folded(tokens):
+        return fold(_collapse_h_clock(tokens))
+    return folded
+
+
+fold_es = _with_h_clock(fold_es)
+fold_gl = _with_h_clock(fold_gl)
+fold_ca = _with_h_clock(fold_ca)
 # an: "martes" (Tuesday) must never be read as a number; the Romance factory
 # folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
 # an: "quarto" (the qu- spelling) is the idiomatic masculine ordinal 4th before
