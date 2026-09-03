@@ -61,6 +61,7 @@ never cited as evidence about a language.
 | Belarusian | [be.md](be.md) |
 | Bulgarian | [bg.md](bg.md) |
 | Croatian | [hr.md](hr.md) |
+| Catalan | [ca.md](ca.md) |
 | Czech | [cs.md](cs.md) |
 | Dutch | [nl.md](nl.md) |
 | English | [en.md](en.md) |
@@ -87,6 +88,7 @@ never cited as evidence about a language.
 | Macedonian | [mk.md](mk.md) |
 | Maltese | [mt.md](mt.md) |
 | Norwegian Nynorsk | [nn.md](nn.md) |
+| Occitan | [oc.md](oc.md) |
 | Persian | [fa.md](fa.md) |
 | Polish | [pl.md](pl.md) |
 | Portuguese | [pt.md](pt.md) |
