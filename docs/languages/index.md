@@ -58,6 +58,7 @@ never cited as evidence about a language.
 | Albanian | [sq.md](sq.md) |
 | Arabic | [ar.md](ar.md) |
 | Armenian | [hy.md](hy.md) |
+| Asturian | [ast.md](ast.md) |
 | Belarusian | [be.md](be.md) |
 | Bulgarian | [bg.md](bg.md) |
 | Czech | [cs.md](cs.md) |
@@ -68,6 +69,7 @@ never cited as evidence about a language.
 | Filipino | [fil.md](fil.md) |
 | Finnish | [fi.md](fi.md) |
 | French | [fr.md](fr.md) |
+| Galician | [gl.md](gl.md) |
 | Georgian | [ka.md](ka.md) |
 | German | [de.md](de.md) |
 | Greek | [el.md](el.md) |
