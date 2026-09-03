@@ -60,6 +60,7 @@ never cited as evidence about a language.
 | Armenian | [hy.md](hy.md) |
 | Belarusian | [be.md](be.md) |
 | Bulgarian | [bg.md](bg.md) |
+| Croatian | [hr.md](hr.md) |
 | Czech | [cs.md](cs.md) |
 | Dutch | [nl.md](nl.md) |
 | English | [en.md](en.md) |
@@ -91,6 +92,7 @@ never cited as evidence about a language.
 | Romanian | [ro.md](ro.md) |
 | Russian | [ru.md](ru.md) |
 | Serbian | [sr.md](sr.md) |
+| Slovak | [sk.md](sk.md) |
 | Slovenian | [sl.md](sl.md) |
 | Spanish | [es.md](es.md) |
 | Swahili | [sw.md](sw.md) |
