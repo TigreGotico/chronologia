@@ -85,6 +85,7 @@ never cited as evidence about a language.
 | Lithuanian | [lt.md](lt.md) |
 | Macedonian | [mk.md](mk.md) |
 | Maltese | [mt.md](mt.md) |
+| Norwegian Nynorsk | [nn.md](nn.md) |
 | Persian | [fa.md](fa.md) |
 | Polish | [pl.md](pl.md) |
 | Portuguese | [pt.md](pt.md) |
@@ -101,3 +102,4 @@ never cited as evidence about a language.
 | Ukrainian | [uk.md](uk.md) |
 | Vietnamese | [vi.md](vi.md) |
 | Welsh | [cy.md](cy.md) |
+| West Frisian | [fy.md](fy.md) |
