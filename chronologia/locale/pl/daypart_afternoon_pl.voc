@@ -1,0 +1,8 @@
+# Unicode CLDR 47, locale pl, cldr-dates-full/main/pl/ca-gregorian.json.
+# dayPeriods format-wide afternoon1 is "po południu", the phrase a speaker
+# uses when placing an event; the stand-alone chart gives the bare noun
+# "popołudnie", which names the part of the day itself.  Both are listed,
+# with the locative the preposition governs.
+po południu
+popołudnie
+popołudniu

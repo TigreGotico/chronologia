@@ -1,1 +1,5 @@
 вечора
+# CLDR 47 names the Ukrainian afternoon "dnya", and it is the surface a
+# spoken afternoon hour takes: "o 15 dnya".  See daypart_afternoon_uk.voc
+# for why it cannot follow a bare numeral.
+дня
