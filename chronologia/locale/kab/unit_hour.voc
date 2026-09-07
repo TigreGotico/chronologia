@@ -6,3 +6,11 @@ wesrag
 tsaɛtin
 tisaɛtin
 isragen
+# The Arabic-borrowed plural for a DURATION of hours, resting on the native
+# Kabyle speaker @athmanemokraoui alone.  On
+# https://github.com/TigreGotico/chronologia/pull/846#issuecomment-5573978767:
+#   "'ssaɛtin' means only two o'clock.  A duration of two hours is 'snat n
+#    sswayeɛ'."
+# So "snat n sswayeɛ" is two hours, and the clock hour "ssaɛtin" is
+# deliberately absent from this file.
+sswayeɛ

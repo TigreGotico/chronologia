@@ -146,10 +146,9 @@ def test_fraction_and_minus_clock(text, want):
 
 # Surfaces with no attestation stay unparsed rather than being guessed at.
 #   "d lɛecṛa ɣiṛ"    -- not a whole phrase, "ten minus" with nothing after.
-#   "d lɛecṛa u wac"  -- "wac" is in no Kabyle source read for this corpus.
-#   "n uzal"          -- the daylight noun is attested on the clock only in
-#                        bare apposition ("d ttnac uzal"), never with "n".
-#   "juǧ"             -- the attested two-o'clock forms are "zzuǧ", "jjuj"
+#   "d lɛecṛa u wac"  -- "ten-something" is an APPROXIMATE time, and the
+#                        library has no approximate-clock reading to give it.
+#   "juǧ"             -- the two-o'clock forms are "jjuǧ", "jjuj", "zzuǧ"
 #                        and "ssaɛtin".
 #   "d lweḥda"        -- a bare hour noun with nothing after it would make
 #                        every dangling connective resolve, so it is refused.
@@ -157,7 +156,6 @@ def test_fraction_and_minus_clock(text, want):
     "d lɛecṛa ɣiṛ",
     "d lɛecṛa u wac",
     "d juǧ n uzal",
-    "d ttnac n uzal",
     "d lweḥda",
     "d ttnac",
 ])

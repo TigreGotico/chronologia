@@ -836,7 +836,6 @@ fold_ms = _lazy_germanic_fold(
 # tmeddit", "ɣef ṛṛebɛa d wezgen n tmeddit", "ɣef lxemsa n tmeddit", "ɣef
 # tmanya n tmeddit", "ɣef ttesɛa n tṣ̣ebḥit", "Lɛecṛa n tṣ̣ebḥit", "ɣef leḥdac
 # d wezgen n tṣ̣ebḥit", "ɣef ttnac n yiḍ" (Tafsut n Yimaziɣen, Bgayet).
-# Six and seven have no attested hour form and are deliberately absent.
 # The remaining hour nouns come from the Kabyle sentences on Tatoeba, each
 # with the English it is paired with:
 #   "Ha-tt-an d ssaɛtin ɣiṛ ṛṛbeɛ."      -- "It's quarter to two."
@@ -846,9 +845,20 @@ fold_ms = _lazy_germanic_fold(
 #   "Ha-tt-an d ttmanya ɣiṛ ṛṛbeɛ."      -- "It's a quarter to eight."
 #   "Attan d lεacra d wezgen."           -- "It is ten-thirty."
 #   "Ha-tt-an d leḥḍac u ṛṛbeɛ."         -- "It's a quarter past eleven."
+# Two and seven take their standard forms from @athmanemokraoui, a native
+# Kabyle speaker, on
+# https://github.com/TigreGotico/chronologia/pull/846#issuecomment-5573978767:
+#   "Six is 'ssetta', but seven is 'ssebɛa' (always with the final -a)."
+#   "For the clock hour write 'ssaɛtin' (d ssaɛtin = it's two o'clock).  For
+#    the cardinal number 2 itself, use 'jjuǧ' depending on regional
+#    phonetics."
+# "ssebɛa" and "jjuǧ" rest on that comment alone.  The apocopated "ssebɛ" of
+# the Tatoeba sentence above keeps parsing beside "ssebɛa", as do "jjuj" and
+# "zzuǧ" beside "jjuǧ" -- a parser accepts every attested variation.
 _KAB_HOUR_NOUNS = {
-    "lweḥda": 1, "jjuj": 2, "zzuǧ": 2, "ssaɛtin": 2, "ṛṛebɛa": 4,
-    "lxemsa": 5, "ssetta": 6, "ssebɛ": 7, "ttmanya": 8, "ttesɛa": 9,
+    "lweḥda": 1, "jjuj": 2, "jjuǧ": 2, "zzuǧ": 2, "ssaɛtin": 2, "ṛṛebɛa": 4,
+    "lxemsa": 5, "ssetta": 6, "ssebɛa": 7, "ssebɛ": 7, "ttmanya": 8,
+    "ttesɛa": 9,
     "lɛecṛa": 10, "lɛacra": 10, "leḥdac": 11, "leḥḍac": 11, "ttnac": 12,
 }
 fold_kab = _lazy_germanic_fold(

@@ -1,9 +1,17 @@
 # "ṛṛbeɛ" = the quarter, the Arabic-borrowed fraction Kabyle uses on the clock.
-# Tatoeba Kabyle sentences (native contributors), with their English pairs:
+# The two spellings are conditioned variants of one word, not a right and a
+# wrong one.  @athmanemokraoui, native Kabyle speaker, on
+# https://github.com/TigreGotico/chronologia/pull/846#issuecomment-5573978767:
+#   "'ṛbeɛ' after a vowel (u ṛbeɛ), 'ṛṛbeɛ' with the assimilated article
+#    (ɣir ṛṛbeɛ).  The emphatic ṛ requires the underdot."
+# The Kabyle sentences on Tatoeba (native contributors) write both, and he
+# confirms the additive quarter reading ("d lɛecṛa u ṛbeɛ", answer 8):
 #   "Ha-tt-an d leḥḍac u ṛṛbeɛ."   -- "It's a quarter past eleven."
 #   "Ha-tt-an d ttnac u ṛṛbeɛ."    -- "It's a quarter past twelve."
 #   "Ha-tt-an d tesɛa u ṛbeɛ."     -- "It's quarter past nine."
 #   "Ha-tt-an d ttmanya ɣiṛ ṛṛbeɛ." -- "It's a quarter to eight."
 ṛṛbeɛ
 ṛbeɛ
+# The dotless "rrbeɛ" is the plain-ASCII fallback a keyboard without the
+# emphatic produces; it parses, but the emphatic ṛ above is the spelling.
 rrbeɛ

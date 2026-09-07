@@ -9,7 +9,14 @@ n tmeddit
 tmeddit
 tameddit
 # "uzal" is the broad-daylight noun; on the clock it closes a midday reading.
-# Tatoeba Kabyle: "Tella qrib d ttnac uzal." -- "It was nearly noon."  It is
-# the construct-state form of daypart_noon.voc's "azal", and it stands in bare
-# apposition to the hour, without the genitive "n" that "n tmeddit" takes.
+# The genitive "n uzal" is the standard form.  @athmanemokraoui, native Kabyle
+# speaker, on
+# https://github.com/TigreGotico/chronologia/pull/846#issuecomment-5573978767:
+#   "'D ttnac n uzal' is the grammatically correct and standard form (genitive
+#    n + annexed state uzal).  'D ttnac uzal' is only an informal elision in
+#    rapid speech."
+n uzal
+# The bare apposition is what Tatoeba writes -- "Tella qrib d ttnac uzal."
+# ("It was nearly noon.") -- and it stays readable: an informal register is
+# still Kabyle a speaker says.  The form to write is "n uzal" above.
 uzal
