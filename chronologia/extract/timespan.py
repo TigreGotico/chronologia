@@ -2006,7 +2006,27 @@ def extract_timespan(
     raw = pretokens(text, engine.spec)
     res = _resolve_span(text, raw, engine, anchor, enable, jurisdiction,
                         scale_mode)
-    return None if res is None else DateSpanResult(*res)
+    if res is None:
+        return None
+    out = DateSpanResult(*res)
+    if out.remainder and _is_whole_duration(text, lang):
+        # The noun that opens a clock time is the same one that counts hours,
+        # so "2 hodiny 30 minut" -- two and a half hours -- reads as two
+        # o'clock and leaves the minutes behind.  A phrase the duration reader
+        # consumes whole is a length, not a point, and answering it with a
+        # clock drops half of what was said.
+        return None
+    return out
+
+
+def _is_whole_duration(text: str, lang: str) -> bool:
+    """True when the duration reader consumes the text with nothing left."""
+    from .nseries import extract_duration
+    try:
+        got = extract_duration(text, lang)
+    except Exception:
+        return False
+    return bool(got and got.duration and not got.remainder.strip())
 
 
 # A temporal reference GOVERNED BY a negation/exclusion particle ("not
