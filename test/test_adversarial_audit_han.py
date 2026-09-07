@@ -1564,9 +1564,11 @@ def test_feb_29_prefer_future_rolls_past_the_leap_gap():
     assert day(_dt(2096, 3, 1, 13, 4)) == (2104, 2, 29)
     # before Feb 29 in the same leap year -> that year
     assert day(_dt(2016, 1, 1, 13, 4)) == (2016, 2, 29)
-    # Feb 29 does not exist in a non-leap anchor year -> honest None (like
-    # "the 30th of February"); it is not rolled, matching the impossible-date
-    # veto pins.  An explicit impossible year also declines.
+    # From a non-leap anchor year the roll reaches the next leap year, the
+    # same walk a passed Feb 29 takes: 29 February exists, and 2020 is when it
+    # next comes round.  An explicit year that has no Feb 29 is the speaker's
+    # own and still declines, as does a day no year holds.
     _A = _dt(2017, 6, 27, 13, 4)
-    assert extract_timespan("february 29", "en", _A) is None
+    assert day(_A) == (2020, 2, 29)
     assert extract_timespan("february 29 2019", "en", _A) is None
+    assert extract_timespan("february 30", "en", _A) is None

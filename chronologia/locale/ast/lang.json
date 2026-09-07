@@ -26,7 +26,7 @@
       "orders": [
         "MONTH DAY? YEAR?",
         "MONTH of? YEAR?",
-        "DAY of? MONTH YEAR?",
+        "DAY of? MONTH of? YEAR?",
         "DAY MONTH YEAR?"
       ],
       "prefer_future": true

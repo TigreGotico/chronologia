@@ -2615,6 +2615,49 @@ def _stray_capitalized_am_veto(tokens, match, spec) -> bool:
     return end < len(tokens) and tokens[end].text == "am" and tokens[end].cap
 
 
+def _stranded_year_veto(tokens, match, spec) -> bool:
+    """True for a yearless 29 February whose utterance names a year the
+    construction did not bind -- "the 29th of February this year".
+
+    29 February is the one day-and-month that does not occur every year, so
+    resolving it without a year walks forward to a year that HAS it.  That
+    walk can cross the year the speaker actually said: where a locale's date
+    order does not reach a trailing year, "this year" or a trailing "de 2019"
+    is left unbound and the answer is 2020 with the real year stranded in the
+    remainder -- the silent-wrong shape the ERA guard in
+    ``_resolve_calendar_date`` refuses for the same reason.  Declining leaves
+    the speaker's own year visible instead of overridden.
+
+    Every other day-and-month occurs in every year, so its roll never skips
+    past a named one and its reading is left exactly as it was.
+
+    Only the immediate tail is read: a four-digit year, alone or behind one
+    glue word, and a rel-marked year word ("this year", "next year").  A year
+    further away belongs to another clause ("29 february, and I moved in
+    2019") and is none of this construction's business.
+    """
+    if match.construction != "calendar_date":
+        return False
+    day = match.slots.get("DAY")
+    month = match.slots.get("MONTH")
+    if day is None or month is None or "YEAR" in match.slots:
+        return False
+    if (spec.months.get(month.text), int(day.value)) != (2, 29):
+        return False
+    tail = tokens[match.span[1]:match.span[1] + 3]
+    for skipped, tok in enumerate(tail[:2]):
+        if tok.is_number:
+            return (skipped == 0 or not tail[0].is_number) \
+                and len(tok.raw.strip(".")) == 4 and tok.raw.strip(".").isdigit()
+    if len(tail) >= 2:
+        first, second = tail[0].text, tail[1].text
+        if (first in spec.rel_markers and spec.units.get(second) == "year") \
+                or (spec.units.get(first) == "year"
+                    and second in spec.rel_markers):
+            return True
+    return False
+
+
 def _stray_year_zero_veto(tokens, match, spec) -> bool:
     """True for a ``relative_offset`` "year" match immediately followed by a
     bare "0" -- e.g. "in year 0".
@@ -2772,7 +2815,8 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _stray_year_zero_veto(tokens, match, spec)
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
-            or _num_preamble_named_day_idiom_veto(tokens, match, spec))
+            or _num_preamble_named_day_idiom_veto(tokens, match, spec)
+            or _stranded_year_veto(tokens, match, spec))
 
 
 #: the "for <duration>" bound marker vocabulary, keyed by spec identity so a
