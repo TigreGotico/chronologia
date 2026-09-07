@@ -30,8 +30,11 @@
     "calendar_date": {
       "orders": [
         "MONTH DAY? YEAR?",
+        "defart MONTH DAY? YEAR?",
         "DAY of? MONTH YEAR?",
-        "DAY MONTH YEAR?"
+        "defart DAY of? MONTH YEAR?",
+        "DAY MONTH YEAR?",
+        "defart DAY MONTH YEAR?"
       ],
       "prefer_future": true
     },

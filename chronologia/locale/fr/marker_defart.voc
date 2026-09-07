@@ -1,0 +1,12 @@
+# The definite article a date takes, and only that.  A French date is
+# masculine singular -- "le 15 juin", "le 1er janvier" -- so the feminine and
+# the plural are not dates and are not listed: "les" opens the recurrence
+# "tous les 10 mai", and an article slot that eats it takes the recurrence
+# with it.
+#
+# marker_article.voc is the wrong slot here for a second reason.  It also
+# carries the contracted prepositions "du/des/au/aux", and a slot wide enough
+# to take those swallows the "du" of "la semaine du 20 juillet" -- the week OF
+# the twentieth, which then loses its week.
+le
+l
