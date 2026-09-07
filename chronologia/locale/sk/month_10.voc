@@ -1,4 +1,9 @@
+# Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.
+# months.format.abbreviated and months.stand-alone.abbreviated are identical;
+# CLDR ships the trailing dot as part of the surface, but the tokenizer strips
+# a trailing dot before matching, so the bare form covers both spellings.
 október
 októbra
 októbrom
 októbri
+okt
