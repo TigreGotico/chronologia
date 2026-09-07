@@ -116,7 +116,11 @@
    "scoped_ordinal": [
     "article? ORD WEEKDAY of MONTH YEAR?",
     "article? ORD UNIT of MONTH YEAR?",
-    "article? ordlast WEEKDAY of MONTH YEAR?"
+    "article? ordlast WEEKDAY of MONTH YEAR?",
+    "article? PART ORD CMUNIT",
+    "article? ORD CMUNIT",
+    "during PART ORD CMUNIT",
+    "during ORD CMUNIT"
    ]
   },
   "extend": {

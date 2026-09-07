@@ -136,7 +136,11 @@
         "article? ORD UNIT MONTH YEAR?",
         "article? ordlast WEEKDAY MONTH YEAR?",
         "article? ORD WEEKDAY GYEAR? year_word",
-        "article? ordlast WEEKDAY GYEAR? year_word"
+        "article? ordlast WEEKDAY GYEAR? year_word",
+        "article? PART ORD CMUNIT",
+        "article? ORD CMUNIT",
+        "during PART ORD CMUNIT",
+        "during ORD CMUNIT"
       ]
     },
     "extend": {
