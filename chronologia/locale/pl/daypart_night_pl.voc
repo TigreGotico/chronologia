@@ -1,0 +1,7 @@
+# Unicode CLDR 47, locale pl, cldr-dates-full/main/pl/ca-gregorian.json.
+# dayPeriods format-wide night1 is "w nocy"; the stand-alone chart gives the
+# bare noun "noc".  The locative "nocy" carries the same reading after the
+# preposition and is listed so the phrase reads without it.
+w nocy
+nocy
+noc
