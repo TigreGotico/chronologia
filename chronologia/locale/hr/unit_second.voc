@@ -1,0 +1,11 @@
+# Croatian "sekunda", matching the depth of unit_minute.voc: nominative
+# singular after 1, the paucal genitive singular after 2-4, the genitive
+# plural after 5+, plus the accusative and the locative/instrumental plural.
+# Unicode CLDR 47, locale hr, cldr-units-full/main/hr/units.json,
+# duration-second: one "sekunda", few "sekunde", other "sekundi".
+# Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekunda
+sekunda
+sekunde
+sekundi
+sekundu
+sekundama

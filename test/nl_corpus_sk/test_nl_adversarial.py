@@ -56,8 +56,14 @@ def test_quarterto_idiom_gap():
         assert (r[0].start.hour, r[0].start.minute) != (8, 15)
 
 
-def test_seconds_offset_gap():
-    nomatch("za 45 sekúnd")
+def test_seconds_offset_resolves():
+    # a sub-minute offset resolves to the second: unit_second.voc ships
+    from datetime import timedelta
+    from ._corpus import ad
+    r = parse('za 45 sekúnd')
+    assert r is not None
+    assert r.remainder == ""
+    assert r[0].start == ad(ANCHOR + timedelta(seconds=45))
 
 
 def test_bare_weekday_resolves_next():

@@ -1,0 +1,14 @@
+# Russian "секунда", full first-declension paradigm, matching the depth of
+# unit_minute.voc.
+# Unicode CLDR 47, locale ru, cldr-units-full/main/ru/units.json,
+# duration-second: one "секунда", few "секунды", many "секунд".
+# Грамота.ру, "Склонение существительных": 1-е склонение.
+секунда
+секунды
+секунде
+секунду
+секундой
+секунд
+секундам
+секундах
+секундами

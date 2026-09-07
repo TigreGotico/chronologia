@@ -1,0 +1,5 @@
+# Unicode CLDR 47, locale ar, cldr-units-full/main/ar/units.json,
+# duration-second, unitPattern-count-two "ثانيتان" -- the dual noun that
+# means exactly two seconds.  "ثانيتين" is its accusative/genitive.
+ثانيتان
+ثانيتين

@@ -1,0 +1,9 @@
+# Polish "sekunda", matching the depth of unit_minute.voc: nominative
+# singular after 1, nominative plural after 2-4, genitive plural after 5+,
+# and the accusative "za sekundę".
+# Unicode CLDR 47, locale pl, cldr-units-full/main/pl/units.json,
+# duration-second: one "sekunda", few "sekundy", many "sekund".
+sekunda
+sekundy
+sekund
+sekundę

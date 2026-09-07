@@ -67,9 +67,14 @@ def test_halfto_idiom_resolves():
     assert (r[0].start.hour, r[0].start.minute) == (9, 30)
 
 
-def test_seconds_offset_gap():
-    # the engine has no sub-minute offset unit; "za 45 sekund" does not resolve
-    nomatch("za 45 sekund")
+def test_seconds_offset_resolves():
+    # a sub-minute offset resolves to the second: unit_second.voc ships
+    from datetime import timedelta
+    from ._corpus import ad
+    r = parse('za 45 sekund')
+    assert r is not None
+    assert r.remainder == ""
+    assert r[0].start == ad(ANCHOR + timedelta(seconds=45))
 
 
 # -- a bare weekday alone names its next strictly-future occurrence -------

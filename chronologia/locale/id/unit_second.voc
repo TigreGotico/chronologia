@@ -1,0 +1,4 @@
+# Unicode CLDR 47, locale id, cldr-units-full/main/id/units.json,
+# duration-second: the single form "detik" -- Indonesian has no count plural,
+# as unit_minute.voc's "menit" already shows.
+detik

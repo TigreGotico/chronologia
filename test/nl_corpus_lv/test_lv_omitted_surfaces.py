@@ -68,13 +68,6 @@ def test_no_month_range(text):
 
 
 @pytest.mark.parametrize("text", [
-    "pēc 45 sekundēm", "pirms 30 sekundēm",
-])
-def test_no_second_unit(text):
-    nomatch(text)
-
-
-@pytest.mark.parametrize("text", [
     "pirmais ceturksnis", "ceturksnis", "otrais ceturksnis",
 ])
 def test_no_calendar_quarter(text):

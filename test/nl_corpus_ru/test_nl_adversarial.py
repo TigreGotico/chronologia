@@ -59,8 +59,14 @@ def test_halfto_idiom_resolves():
     assert (r[0].start.hour, r[0].start.minute) == (9, 30)
 
 
-def test_seconds_offset_gap():
-    nomatch("через 45 секунд")
+def test_seconds_offset_resolves():
+    # a sub-minute offset resolves to the second: unit_second.voc ships
+    from datetime import timedelta
+    from ._corpus import ad
+    r = parse('через 45 секунд')
+    assert r is not None
+    assert r.remainder == ""
+    assert r[0].start == ad(ANCHOR + timedelta(seconds=45))
 
 
 def test_bare_weekday_resolves_next():

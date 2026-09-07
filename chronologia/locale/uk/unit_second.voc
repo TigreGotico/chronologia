@@ -1,0 +1,14 @@
+# Ukrainian "секунда", full first-declension paradigm, matching the depth of
+# unit_minute.voc.
+# Unicode CLDR 47, locale uk, cldr-units-full/main/uk/units.json,
+# duration-second: one "секунда", few "секунди", many "секунд".
+# *Український правопис* (2019), declension of nouns.
+секунда
+секунди
+секунді
+секунду
+секундою
+секунд
+секундам
+секундах
+секундами

@@ -1,0 +1,11 @@
+# Slovene "sekunda", matching the depth of unit_minute.voc: nominative
+# singular after 1, the DUAL after 2, the plural after 3-4, the genitive
+# plural after 5+, and the accusative "cez sekundo".
+# Unicode CLDR 47, locale sl, cldr-units-full/main/sl/units.json,
+# duration-second: one "sekunda", two "sekundi", few "sekunde",
+# other "sekund".
+sekunda
+sekundi
+sekunde
+sekund
+sekundo

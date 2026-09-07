@@ -1,0 +1,7 @@
+# Unicode CLDR 47, locale he, cldr-units-full/main/he/units.json,
+# duration-second: one "שניה", many/other "שניות".  The plene spelling
+# "שנייה" is the one Academy of the Hebrew Language rules prescribe for
+# unvocalised text and the one native writing uses; both ship.
+שנייה
+שניה
+שניות
