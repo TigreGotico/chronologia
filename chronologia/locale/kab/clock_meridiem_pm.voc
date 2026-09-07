@@ -1,1 +1,10 @@
+# Kabyle pm surfaces.
+# "n tmeddit" is CLDR 47's dayPeriods pm for kab (cldr-dates-full/main/kab/
+# ca-gregorian.json) and is how kab.wikipedia writes a pm clock reading:
+#   "Deg wass-nni, ɣef 4:40 n tmeddit, yiwet n terbaεt n yisafagen ..." (Bgayet)
+#   "azal n 12:30 n tmeddit, takarust n Meɛṭub tettwaḥbes" (Lwennas Meɛṭub)
+#   "ɣef lxemsa n tmeddit, anmahal n Ldzayer deg Fṛansa yemlal ..."
+#     (Tafsut n Yimaziɣen)
+n tmeddit
+tmeddit
 tameddit

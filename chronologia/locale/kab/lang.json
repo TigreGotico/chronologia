@@ -15,7 +15,12 @@
     },
     "clock_time": {
       "orders": [
-        "CLOCK MERIDIEM? ZONE?"
+        "at? CLOCK MERIDIEM? ZONE?",
+        "CLOCK MERIDIEM? ZONE?",
+        "at? HOUR CLOCKDIR FRACTION MERIDIEM? ZONE?",
+        "at? HOUR CLOCKDIR MINUTE MERIDIEM? ZONE?",
+        "at? HOUR oclock MERIDIEM? ZONE?",
+        "at? HOUR MERIDIEM ZONE?"
       ],
       "prefer_future": true
     },

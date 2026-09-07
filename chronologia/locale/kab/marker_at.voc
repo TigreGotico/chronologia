@@ -1,0 +1,11 @@
+# The Kabyle preposition that opens a clock reading.  kab.wikipedia writes
+# every spoken clock time in Tafsut n Yimaziɣen with "ɣef":
+#   "ɣef lweḥda n tṣ̣ebḥit", "ɣef tlata n tmeddit", "ɣef tmanya n tmeddit"
+# "d" is the predicative copula ("it is ..."), the ordinary way to ANSWER the
+# question "what time is it": "d lxemsa n tmeddit" = "it is five in the
+# evening".  It is the same particle as marker_and.voc / clock_dir_past.voc;
+# the two readings are kept apart by position, since the copula only ever
+# opens the phrase and the conjunction only ever stands between an hour and
+# its fraction or minutes.
+ɣef
+d

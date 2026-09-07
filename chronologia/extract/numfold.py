@@ -825,9 +825,25 @@ fold_ms = _lazy_germanic_fold(
     "ovos_number_parser.numbers_id", "extract_number_ms",
     {"setengah", "separuh", "suku", "ribu", "juta", "bilion", "miliar"},
     join_words={"puluh", "ratus", "belas"})
+# Kabyle tells the time with Arabic-borrowed hour NOUNS carrying the definite
+# article ("ɣef lxemsa n tmeddit" = at five in the evening), not with the bare
+# Berber cardinals.  ovos-number-parser knows the bare borrowings (tlata,
+# setta, sebɛa, tmanya) but none of the article-bearing hour forms, so they
+# reach the matcher as plain words and no clock order can bind them.  Map them
+# to their value the way the Frisian coming-hour forms are mapped, so the HOUR
+# slot binds.  Every surface below is written as an hour on kab.wikipedia:
+# "ɣef lweḥda n tṣ̣ebḥit", "ɣef tizi n jjuj d wezgen n tmeddit", "ɣef tlata n
+# tmeddit", "ɣef ṛṛebɛa d wezgen n tmeddit", "ɣef lxemsa n tmeddit", "ɣef
+# tmanya n tmeddit", "ɣef ttesɛa n tṣ̣ebḥit", "Lɛecṛa n tṣ̣ebḥit", "ɣef leḥdac
+# d wezgen n tṣ̣ebḥit", "ɣef ttnac n yiḍ" (Tafsut n Yimaziɣen, Bgayet).
+# Six and seven have no attested hour form and are deliberately absent.
+_KAB_HOUR_NOUNS = {
+    "lweḥda": 1, "jjuj": 2, "ṛṛebɛa": 4, "lxemsa": 5,
+    "ttesɛa": 9, "lɛecṛa": 10, "leḥdac": 11, "ttnac": 12,
+}
 fold_kab = _lazy_germanic_fold(
     "ovos_number_parser.numbers_kab", "extract_number_kab",
-    {"azgen", "agim", "amelyun"})
+    {"azgen", "wezgen", "agim", "amelyun"}, word_map=_KAB_HOUR_NOUNS)
 # fa (Persian): single extractor extract_number_fa(text, ordinals=False);
 # withhold the half/quarter clock words and the scale words.
 fold_fa = _lazy_germanic_fold(
