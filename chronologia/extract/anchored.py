@@ -864,9 +864,19 @@ def _count_weekday(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
         else:
             from_n = _match_at(tokens, p, from_words)
             pres_n = _match_at(tokens, p + from_n, present) if from_n else 0
-            if not pres_n:
-                continue
-            sign, start, end = 1, i, p + from_n + pres_n
+            if pres_n:
+                sign, start, end = 1, i, p + from_n + pres_n
+            else:
+                # A locale may also spell the same forward marker as one
+                # multiword direction surface ("from now"), which the glue
+                # hands over as a single token: the from/present pair above
+                # never sees its halves.  Accept it only when it is itself
+                # multiword, so a bare preposed "in" cannot close the count.
+                fut = frozenset(w for w, v in spec.directions.items()
+                                if v > 0 and " " in w)
+                if p >= len(tokens) or tokens[p].text not in fut:
+                    continue
+                sign, start, end = 1, i, p + 1
         value = _nth_weekday(anchor, wd, int(t.value), sign)
         return (Match("weekday_count", (start, end), {}),
                 Resolution(_day_span(value), tuple(range(start, end))))
