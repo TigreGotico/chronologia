@@ -837,9 +837,19 @@ fold_ms = _lazy_germanic_fold(
 # tmanya n tmeddit", "ɣef ttesɛa n tṣ̣ebḥit", "Lɛecṛa n tṣ̣ebḥit", "ɣef leḥdac
 # d wezgen n tṣ̣ebḥit", "ɣef ttnac n yiḍ" (Tafsut n Yimaziɣen, Bgayet).
 # Six and seven have no attested hour form and are deliberately absent.
+# The remaining hour nouns come from the Kabyle sentences on Tatoeba, each
+# with the English it is paired with:
+#   "Ha-tt-an d ssaɛtin ɣiṛ ṛṛbeɛ."      -- "It's quarter to two."
+#   "Ha-tt-an d zzuǧ ɣiṛ ṛṛbeɛ."         -- "It's quarter to two."
+#   "Ad d-uɣaleɣ ɣef ssetta d wezgen."   -- "I will be back at half past six."
+#   "Ha-tt-an d ssebɛ u ṛṛbeɛ."          -- a seven-o'clock quarter reading.
+#   "Ha-tt-an d ttmanya ɣiṛ ṛṛbeɛ."      -- "It's a quarter to eight."
+#   "Attan d lεacra d wezgen."           -- "It is ten-thirty."
+#   "Ha-tt-an d leḥḍac u ṛṛbeɛ."         -- "It's a quarter past eleven."
 _KAB_HOUR_NOUNS = {
-    "lweḥda": 1, "jjuj": 2, "ṛṛebɛa": 4, "lxemsa": 5,
-    "ttesɛa": 9, "lɛecṛa": 10, "leḥdac": 11, "ttnac": 12,
+    "lweḥda": 1, "jjuj": 2, "zzuǧ": 2, "ssaɛtin": 2, "ṛṛebɛa": 4,
+    "lxemsa": 5, "ssetta": 6, "ssebɛ": 7, "ttmanya": 8, "ttesɛa": 9,
+    "lɛecṛa": 10, "lɛacra": 10, "leḥdac": 11, "leḥḍac": 11, "ttnac": 12,
 }
 fold_kab = _lazy_germanic_fold(
     "ovos_number_parser.numbers_kab", "extract_number_kab",

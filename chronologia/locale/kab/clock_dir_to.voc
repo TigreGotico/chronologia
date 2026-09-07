@@ -1,0 +1,11 @@
+# Subtractive clock connective: the hour, then "minus", then the fraction or
+# the minutes.  Same Arabic borrowing as ar/clock_dir_to.voc ("إلا").
+# Tatoeba Kabyle sentences (native contributors), with their English pairs:
+#   "Ha-tt-an d ttmanya ɣiṛ ṛṛbeɛ."  -- "It's a quarter to eight."
+#   "Ha-tt-an d lweḥda ɣiṛ ṛṛbeɛ."   -- "It's a quarter to one."
+#   "Ha-tt-an d ssaɛtin ɣiṛ ṛṛbeɛ."  -- "It's quarter to two."
+#   "Ha-tt-an d tmenya ɣir ɛecra."   -- "It's ten to eight."
+# The second pair shows the slot after "ɣiṛ" also takes plain minutes, not
+# only the quarter.
+ɣiṛ
+ɣir
