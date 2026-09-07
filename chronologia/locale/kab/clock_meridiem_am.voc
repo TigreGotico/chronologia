@@ -1,1 +1,25 @@
+# Kabyle am surfaces.
+# "n tufat" is CLDR 47's dayPeriods am for kab (cldr-dates-full/main/kab/
+# ca-gregorian.json), and kab.wikipedia writes it in running text:
+#   "Di 7 n tufat n wass n 8 yennayer" (Imenɣi n Lezzayer (1956-1957))
+# The commonest running-text form is the "morning" noun in the genitive frame
+# "n t(a)ṣebḥit", spelled on kab.wikipedia with the emphatic ṣ, matching
+# daypart_morning.voc:
+#   "ɣef lweḥda n tṣ̣ebḥit : tebda-d temhelt n Mizrana" (Tafsut n Yimaziɣen)
+#   "Lɛecṛa n tṣ̣ebḥit. Ldzayer tamaneɣt, deg Tsenbert ..." (idem)
+# The plain-s "ssbaḥ" is attested too:
+#   "Neffeɣ-d ɣef lxemsa n ssbaḥ" (Agarsafen, quoted song text)
+# "ssbeḥ", the surface this file shipped with, has no attestation of its own.
+# It is kept as a tolerated variant rather than dropped: it collides with no
+# other Kabyle word, so accepting it costs nothing, while the emphatic ṣṣbeḥ
+# added above is what real Kabyle writes and what the rest of the locale uses.
+n tufat
+tufat
+n tṣebḥit
+n tṣ̣ebḥit
+n taṣebḥit
+ṣṣbeḥ
+taṣebḥit
+n ssbaḥ
+ssbaḥ
 ssbeḥ
