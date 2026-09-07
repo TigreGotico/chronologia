@@ -1,0 +1,14 @@
+# Declension: en.wiktionary.org.  A counted noun surfaces in more than one
+# form here.  After "pirms"/"pēc" it is the genitive singular when the numeral
+# ends in 1 (and is not 11) and the dative plural otherwise ("pirms sekundes",
+# "pirms 11 sekundēm").  A bare count admits two registers -- formal genitive
+# plural after 11-19 and the round tens, colloquial nominative -- and both ship,
+# because nothing in the input says which register the writer used.
+# Unicode CLDR 47, locale lv, cldr-units-full/main/lv/units.json,
+# duration-second: one "sekunde", other "sekundes", zero "sekunžu".
+sekunde
+sekundes
+sekunžu
+sekundēm
+sekundi
+sekundē

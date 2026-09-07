@@ -1,0 +1,4 @@
+# Unicode CLDR 47, locale ms, cldr-units-full/main/ms/units.json,
+# duration-second: the single form "saat" -- Malay has no count plural, as
+# unit_minute.voc's "minit" already shows.
+saat

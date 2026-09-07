@@ -29,11 +29,6 @@ def test_no_calendar_quarter(text):
     nomatch(text)
 
 
-@pytest.mark.parametrize("text", ["po 45 sekundžių", "prieš 30 sekundžių"])
-def test_no_second_unit(text):
-    nomatch(text)
-
-
 @pytest.mark.parametrize("text", ["3 savaitė", "savaitė 3", "trečioji savaitė"])
 def test_no_iso_week_reference(text):
     nomatch(text)

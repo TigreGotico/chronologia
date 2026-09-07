@@ -1,0 +1,13 @@
+# Slovak "sekunda", full first-declension paradigm, matching the depth of
+# unit_minute.voc: nominative singular after 1, nominative plural after 2-4,
+# genitive plural after 5+, plus the accusative and instrumental the
+# prepositions "o" and "pred" impose.
+# Unicode CLDR 47, locale sk, cldr-units-full/main/sk/units.json,
+# duration-second: one "sekunda", few/many "sekundy", other "sekúnd".
+# Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekunda
+sekunda
+sekundy
+sekúnd
+sekundu
+sekundou
+sekundách

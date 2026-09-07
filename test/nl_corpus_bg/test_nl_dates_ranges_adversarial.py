@@ -111,8 +111,14 @@ def test_foreign_not_matched(text):
     assert r is None or r[0].start.date() == ANCHOR.date()
 
 
-def test_seconds_offset_gap():
-    nomatch("след 45 секунди")
+def test_seconds_offset_resolves():
+    # a sub-minute offset resolves to the second: unit_second.voc ships
+    from datetime import timedelta
+    from ._corpus import ad
+    r = parse('след 45 секунди')
+    assert r is not None
+    assert r.remainder == ""
+    assert r[0].start == ad(ANCHOR + timedelta(seconds=45))
 
 
 PAIRS = [

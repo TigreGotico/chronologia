@@ -1,0 +1,4 @@
+# Unicode CLDR 47, locale nn, cldr-units-full/main/nn/units.json,
+# duration-second: one and other are both "sekund" -- a Nynorsk neuter noun
+# takes a bare indefinite plural, as unit_minute.voc's "minutt" shows.
+sekund

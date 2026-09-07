@@ -1,0 +1,4 @@
+# Unicode CLDR 47, locale tr, cldr-units-full/main/tr/units.json,
+# duration-second: one and other are both "saniye" -- Turkish leaves a
+# counted noun in the singular, as unit_minute.voc's "dakika" already does.
+saniye

@@ -1,0 +1,4 @@
+# Unicode CLDR 47, locale az, cldr-units-full/main/az/units.json,
+# duration-second: one and other are both "saniyə" -- Azerbaijani leaves a
+# counted noun in the singular, as unit_minute.voc's "dəqiqə" already does.
+saniyə

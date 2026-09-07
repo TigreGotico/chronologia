@@ -1,0 +1,14 @@
+# Czech "sekunda", full first-declension paradigm, matching the depth of
+# unit_minute.voc: the counted noun surfaces as the nominative singular
+# after 1, the nominative plural after 2-4 and the genitive plural after 5+,
+# and the accusative and instrumental are the forms "za" and "před" impose.
+# Unicode CLDR 47, locale cs, cldr-units-full/main/cs/units.json,
+# duration-second: one "sekunda", few/many "sekundy", other "sekund".
+# Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekunda
+sekunda
+sekundy
+sekund
+sekundu
+sekundou
+sekundách
+sekundami

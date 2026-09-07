@@ -1,0 +1,11 @@
+# Unicode CLDR 47, locale ar, cldr-units-full/main/ar/units.json,
+# duration-second: one "ثانية", few "ثوان", many/other "ثانية".
+# The plural "ثواني" (with the final yaa written) is the unpausal spelling
+# native text uses; en.wiktionary.org, ثانية, plural ثوان / ثواني.
+# "ثانيه" is the same word with the taa marbuta written as a plain haa, the
+# spelling untypeset Arabic keyboards produce -- unit_minute.voc ships the
+# matching "دقيقه" for the same reason.
+ثانية
+ثانيه
+ثوان
+ثواني

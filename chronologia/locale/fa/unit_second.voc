@@ -1,0 +1,4 @@
+# Unicode CLDR 47, locale fa, cldr-units-full/main/fa/units.json,
+# duration-second: one and other are both "ثانیه" -- Persian leaves a counted
+# noun in the singular, as unit_minute.voc's "دقیقه" already does.
+ثانیه
