@@ -59,6 +59,8 @@ never cited as evidence about a language.
 | Arabic | [ar.md](ar.md) |
 | Armenian | [hy.md](hy.md) |
 | Asturian | [ast.md](ast.md) |
+| Azerbaijani | [az.md](az.md) |
+| Basque | [eu.md](eu.md) |
 | Belarusian | [be.md](be.md) |
 | Bulgarian | [bg.md](bg.md) |
 | Croatian | [hr.md](hr.md) |
