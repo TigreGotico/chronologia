@@ -1472,10 +1472,24 @@ def test_impossible_date_veto_is_not_exponential():
     guard bounds it to one linear pass."""
     import time
     from chronologia import extract_timespan
-    text = "5th of june " * 40   # would be astronomically slow pre-fix
-    t0 = time.perf_counter()
-    extract_timespan(text, "en-us", _A)
-    assert time.perf_counter() - t0 < 5.0
+
+    def best_of_three(reps):
+        text = "5th of june " * reps
+        runs = []
+        for _ in range(3):
+            t0 = time.perf_counter()
+            extract_timespan(text, "en-us", _A)
+            runs.append(time.perf_counter() - t0)
+        return min(runs)
+
+    # A wall-clock budget measures the machine, not the guard: this ran under
+    # two seconds locally and failed a five-second budget on a loaded runner.
+    # What the guard actually promises is that the work stays linear, so the
+    # assertion is the shape of the curve. Exponential recursion would put
+    # this ratio astronomically above the bound; linear puts it near two.
+    small, large = best_of_three(20), best_of_three(40)
+    assert large / small < 6.0, (
+        "doubling the input multiplied the work by %.1f" % (large / small))
 
 
 # --- R33: an out-of-range "Nth month/week of the year" must refuse, not wrap ---
