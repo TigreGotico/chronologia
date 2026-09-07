@@ -1,0 +1,10 @@
+# Croatian QUARTER hour.  Unlike "pola" (which counts toward the coming
+# hour, 08:30 for "pola devet"), the quarter is only ever spoken with an
+# explicit direction word -- "četvrt do devet" == 08:45 -- so
+# ``bare_quarter_to`` is deliberately NOT set for hr and a bare
+# "četvrt devet" stays unparsed rather than guessed.
+# Citation: hjp.znanje.hr (Hrvatski jezicni portal), s.v. "četvrt":
+# "četvrtina sata; petnaest minuta", with the clock example
+# "četvrt do devet".
+četvrt
+četvrti

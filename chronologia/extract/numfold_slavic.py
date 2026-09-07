@@ -37,21 +37,14 @@ _EXTRA: dict = {
     # clock's FRACTION slot ("půl deváté").  The half-hour duration ("půl
     # hodiny") resolves through the marker_half path, not the cardinal fold.
     "cs": {"dva", "dvě", "dvou", "tři", "čtyři"},
-    # Slovak names the clock half toward the coming hour the same direction
-    # as Czech ("pol deviatej" == half toward nine, parallel to "půl deváté"),
-    # attested by en.wiktionary.org/wiki/half_past's translation table (sk:
-    # "pol druhej" under the headword "half past one" == 1:30).  It is NOT
-    # wired here despite that: the hour is a genitive/locative ORDINAL
-    # ("deviatej", "druhej"), not Croatian's bare cardinal, so the hr wiring
-    # (bare_half_to + a bare "FRACTION HOUR" order) does not transfer as-is --
-    # it would need an ordinal-aware toward-hour construction of its own, the
-    # same shape Czech already has via _HOUR_SK-style ordinal folding.  Also,
-    # unlike Croatian's "pola", "pol" here stays a genuine cardinal number
-    # word ("pol hodiny" == half an hour) and cannot simply be dropped from
-    # this fold set the way hr's "pola" was -- see the hr entry below for the
-    # duration breakage that caused.  Left unimplemented rather than shipped
-    # half-built.
-    "sk": {"dva", "dve", "dvoch", "tri", "štyri", "pol"},
+    # NB "pol" is deliberately NOT a cardinal number-word here, for the same
+    # reason as Czech's "půl": the clock's FRACTION slot needs the bare word
+    # ("pol deviatej" == half toward the ninth == 08:30, the genitive-feminine
+    # ordinal agreeing with elided "hodiny").  Folding it to 0.5 took the word
+    # out of that slot before the grammar saw it.  The half-hour duration
+    # ("pol hodiny") resolves through the marker_half path, exactly as Czech's
+    # does.
+    "sk": {"dva", "dve", "dvoch", "tri", "štyri"},
     "pl": {"dwa", "dwie", "dwóch", "trzy", "cztery", "pół"},
     # "one" agrees in gender/case with its noun; the model pronounces only the
     # masculine nominative "один"/"один", so the feminine forms (required before
@@ -625,10 +618,36 @@ def _compose(*passes: Callable) -> Callable:
     return run
 
 
+def _glue_cs_three_quarters(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Join the spaced "tři čtvrtě" into the solid "třičtvrtě" the fraction
+    vocabulary carries.  Internetová jazyková příručka (ÚJČ AV ČR),
+    "Vyjadřování času", writes the worked example spaced: "tři čtvrtě na
+    sedm" == 6.45.  Runs before the cardinal fold, which would otherwise take
+    "tři" for the bare number 3 and leave "čtvrtě" as an unknown word."""
+    out, changed = [], False
+    i = 0
+    while i < len(tokens):
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < len(tokens) else None
+        if (nxt is not None and not t.is_number and t.text == "tři"
+                and nxt.text == "čtvrtě"):
+            out.append(Token(text="třičtvrtě", raw=t.raw + " " + nxt.raw,
+                             index=t.index, char_start=t.char_start,
+                             char_end=nxt.char_end, cap=t.cap,
+                             prev_cap=t.prev_cap))
+            changed = True
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return reindex(tuple(out)) if changed else tokens
+
+
 # The day-ordinal pass leads, so a compound day claims its cardinal tens before
 # the cardinal fold can take that tens for a bare number; the toward-hour pass
 # still trails, because its surfaces must not merge with the fraction word.
-fold_cs = _compose(_day_rewrite(_DAY_CS),
+fold_cs = _compose(_glue_cs_three_quarters,
+                   _day_rewrite(_DAY_CS),
                    with_ordinals(_make_fold("cs"), "cs", _FEM_ORD_CS),
                    _hour_rewrite(_HOUR_CS))
 fold_sk = _compose(_day_rewrite(_DAY_SK),

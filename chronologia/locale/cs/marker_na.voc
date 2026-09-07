@@ -1,0 +1,11 @@
+# Czech toward-hour connector "na" ("onto"): the fraction names how far the
+# clock has advanced INTO the hour that is coming, so the hour spoken after
+# "na" is the NEXT one -- "čtvrt na devět" == a quarter onto the ninth ==
+# 08:15, "tři čtvrtě na devět" == three quarters onto the ninth == 08:45.
+# This is NOT the subtractive "do"/"pred" reading (clock_dir_to.voc), which
+# counts backwards from the named hour; the two must not be merged.  The same
+# construction is spelled with "na" in Slovak, Belarusian and Ukrainian.
+# Citation: Internetová jazyková příručka (Ústav pro jazyk český AV ČR),
+# "Vyjadřování času", worked examples "čtvrt na sedm" == 6.15 and
+# "tři čtvrtě na sedm" == 6.45.
+na

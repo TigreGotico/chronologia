@@ -1,0 +1,10 @@
+# Slovak toward-hour connector "na" ("onto"): the fraction names how far the
+# clock has advanced INTO the hour that is coming, so the hour spoken after
+# "na" is the NEXT one -- "štvrť na deväť" == a quarter onto the ninth ==
+# 08:15, "trištvrte na deväť" == three quarters onto the ninth == 08:45.
+# The same construction is spelled with "na" in Belarusian and Ukrainian
+# (see be/marker_na.voc, uk/marker_na.voc).
+# Citation: Slovník súčasného slovenského jazyka (Jazykovedný ústav Ľ. Štúra
+# SAV, slovnik.juls.savba.sk), s.v. "štvrť": "štvrť na osem" glossed as
+# 7.15 h -- a worked numeric example naming the COMING hour.
+na

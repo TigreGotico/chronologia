@@ -1,0 +1,10 @@
+# Croatian SUBTRACTIVE clock direction: "do" ("to/until") names the minutes
+# still missing from the coming hour -- "petnaest do devet" == fifteen to
+# nine == 08:45, "četvrt do devet" == a quarter to nine == 08:45.  This is
+# the ordinary "to" reading (subtract from the named hour), NOT the
+# toward-hour reading that "pola" takes (see clock_fraction_30.voc).
+# Citation: en.wiktionary.org/wiki/do#Serbo-Croatian, preposition sense
+# "to, until, up to" with the genitive.  The clock use with a worked
+# numeric example is in hjp.znanje.hr, s.v. "četvrt": "četvrt do devet"
+# for 8:45.
+do

@@ -10,6 +10,8 @@
       "orders": [
         "NUM UNIT MARKER",
         "MARKER NUM UNIT",
+        "QUANT UNIT MARKER",
+        "MARKER QUANT UNIT",
         "MARKER USG",
         "USG MARKER"
       ]
@@ -38,7 +40,8 @@
         "at? LANDMARK ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
         "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
-        "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?"
+        "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?",
+        "at? FRACTION na HOUR MERIDIEM? ZONE?"
       ],
       "prefer_future": true
     },
@@ -95,6 +98,7 @@
     "hemisphere": "north",
     "prefer_future": true,
     "bare_half_to": true,
+    "bare_quarter_to": true,
     "toward_hour_12h": true
   },
   "quantifiers": {
