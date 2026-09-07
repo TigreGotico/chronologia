@@ -1,7 +1,13 @@
-# "swaswa" = exactly, precisely -- the Kabyle "sharp" that closes a whole-hour
-# reading ("d lɛecṛa swaswa" = it is ten exactly).  kab.wikipedia uses it in
-# its plain adverbial sense:
+# The Kabyle "sharp" that closes a whole-hour reading.
+# "swaswa" = exactly, precisely ("d lɛecṛa swaswa" = it is ten exactly).
+# kab.wikipedia uses it in running text:
 #   "war ma nezmer ad d-nessiweḍ ad d-nini swaswa asmi i teɣli tneggarut-a"
-#     (Tamurt n Leqbayel)
+#     (Tafsut n Yimaziɣen)
 #   "Lqedd n iɣezzuba n tnezzut n temdint-a ur tettwassen ara swaswa" (Bgayet)
 swaswa
+# "gedged" is the second exactness marker, and rests on the native Kabyle
+# speaker @athmanemokraoui alone.  On
+# https://github.com/TigreGotico/chronologia/pull/846#issuecomment-5573978767:
+#   "Also 'd lweḥda swaswa' or 'd lweḥda gedged' for 'it is one o'clock
+#    precisely'."
+gedged

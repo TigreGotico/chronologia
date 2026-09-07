@@ -1,25 +1,37 @@
 # Kabyle am surfaces.
-# "n tufat" is CLDR 47's dayPeriods am for kab (cldr-dates-full/main/kab/
-# ca-gregorian.json), and kab.wikipedia writes it in running text:
-#   "Di 7 n tufat n wass n 8 yennayer" (Imenɣi n Lezzayer (1956-1957))
-# The commonest running-text form is the "morning" noun in the genitive frame
-# "n t(a)ṣebḥit", spelled on kab.wikipedia with the emphatic ṣ, matching
+#
+# The everyday spoken frame is the "morning" noun in the genitive, "n
+# tṣebḥit", colloquially "n ṣṣbeḥ".  @athmanemokraoui, native Kabyle speaker,
+# on https://github.com/TigreGotico/chronologia/pull/846#issuecomment-5573978767:
+#   "'it is ten in the morning' is 'd lɛecṛa n tṣebḥit' (or colloquially
+#    'd lɛecṛa n ṣṣbeḥ')."
+# kab.wikipedia writes the same frame with the emphatic ṣ, matching
 # daypart_morning.voc:
 #   "ɣef lweḥda n tṣ̣ebḥit : tebda-d temhelt n Mizrana" (Tafsut n Yimaziɣen)
 #   "Lɛecṛa n tṣ̣ebḥit. Ldzayer tamaneɣt, deg Tsenbert ..." (idem)
-# The plain-s "ssbaḥ" is attested too:
-#   "Neffeɣ-d ɣef lxemsa n ssbaḥ" (Agarsafen, quoted song text)
-# "ssbeḥ", the surface this file shipped with, has no attestation of its own.
-# It is kept as a tolerated variant rather than dropped: it collides with no
-# other Kabyle word, so accepting it costs nothing, while the emphatic ṣṣbeḥ
-# added above is what real Kabyle writes and what the rest of the locale uses.
-n tufat
-tufat
+# The plain-s "ssbaḥ" is attested in a quoted song text:
+#   "Neffeɣ-d ɣef lxemsa n ssbaḥ" (Agarsafen)
 n tṣebḥit
 n tṣ̣ebḥit
 n taṣebḥit
-ṣṣbeḥ
+tṣebḥit
 taṣebḥit
+n ṣṣbeḥ
+ṣṣbeḥ
 n ssbaḥ
 ssbaḥ
+# "ssbeḥ" is the surface this file shipped with and has no attestation of its
+# own.  It collides with no other Kabyle word, so it stays as a tolerated
+# variant rather than being dropped.
+n ssbeḥ
 ssbeḥ
+# "n tufat" is CLDR 47's dayPeriods am for kab (cldr-dates-full/main/kab/
+# ca-gregorian.json), and kab.wikipedia writes it in running text:
+#   "Di 7 n tufat n wass n 8 yennayer" (Imenɣi n Lezzayer (1956-1957))
+# It belongs to a FORMAL register.  @athmanemokraoui, in the same comment:
+#   "Tufat is a modern standard not used in everyday native speech."
+# That describes register, not existence: CLDR is a real attestation and a
+# user who writes "n tufat" is writing Kabyle, so it keeps parsing.  The forms
+# a speaker actually says are "n tṣebḥit" and "n ṣṣbeḥ" above.
+n tufat
+tufat
