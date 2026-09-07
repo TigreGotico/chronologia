@@ -256,6 +256,13 @@ def _shift_units(dt: datetime, kind: str, n: int):
     return None
 
 
+#: How many years a bare day-and-month may be rolled forward while looking for
+#: a year that actually holds it.  Set by the widest gap between consecutive
+#: 29 Februaries -- 1896 to 1904, across the non-leap year 1900.  A day no year
+#: holds (Jan 45, Feb 30) runs the range out and the reading is declined.
+_ROLL_YEAR_LIMIT = 9
+
+
 def _midnight(dt: datetime) -> datetime:
     return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -1376,27 +1383,30 @@ class Resolver:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
             year = anchor.year
-        value = datetime(year, month, day)          # raises on impossible
-        if not year_tok and prefer_future and day_tok \
-                and value < _midnight(anchor):
-            # The date exists in the anchor's year but has already passed, so
-            # roll to its next occurrence.  Feb 29 is the only day that skips
-            # years, so a naive .replace(year=year + 1) lands on a non-leap Feb
-            # 29 and raises, discarding this valid answer entirely; walk forward
-            # to the next year the (month, day) actually occurs instead, bounded
-            # to one leap cycle (a century-boundary gap like 2096 -> 2104 is 8
-            # years).  (A date that does not exist in the anchor year at all --
-            # Feb 29 in a non-leap year, "the 30th of February" -- already
-            # raised above and correctly declined to None; it is not rolled.)
-            for y in range(year + 1, year + 9):
+        if not year_tok and prefer_future and day_tok:
+            # A bare day-and-month names the next time that day comes round.
+            # Feb 29 is the only Gregorian day that skips years, so neither
+            # the anchor year nor anchor-year-plus-one is guaranteed to have
+            # it: at a 2017 anchor "29 February" means 2020, and building
+            # datetime(2017, 2, 29) to test whether it has "already passed"
+            # raises and throws the whole reading away.  Walk forward from the
+            # anchor year to the first year that HAS this (month, day) on or
+            # after the anchor day.  The walk is bounded by the widest gap
+            # between consecutive Feb 29s -- 1896 to 1904, eight years, across
+            # a non-leap century -- so a day-of-month no year can hold (Jan 45,
+            # Feb 30) exhausts the range and declines.
+            for y in range(year, year + _ROLL_YEAR_LIMIT):
                 try:
                     value = datetime(y, month, day)
                 except ValueError:
-                    continue
-                year = y
-                break
+                    continue                        # no such day that year
+                if value >= _midnight(anchor):
+                    year = y
+                    break
             else:
                 return None
+        else:
+            value = datetime(year, month, day)      # raises on impossible
         span = _day_span(value) if day_tok \
             else _gregorian_month_span(year, month)
         return Resolution(span, self._consumed(match))
@@ -1421,10 +1431,31 @@ class Resolver:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
             year = calendar.from_jdn(anchor_jdn)[0]     # anchor's calendar year
-        jdn = calendar.to_jdn(year, month, day)
-        if not year_tok and prefer_future and day_tok and jdn < anchor_jdn:
-            year += 1                                   # bump in calendar space
-            jdn = calendar.to_jdn(year, month, day)
+        if not year_tok and prefer_future and day_tok:
+            # Same walk as the Gregorian path, in calendar space: a bare
+            # day-and-month names the next time that day comes round, and the
+            # Hijri and Hebrew years skip days the Gregorian one never does --
+            # a 30th of a month that is 29 days long this year, or any day of
+            # Adar II in a common Hebrew year.  A blind +1 lands on such a
+            # year and the round-trip check below discards a valid reading, so
+            # walk to the first year that HAS this (month, day) on or after
+            # the anchor.  The eight-year bound is set by the Gregorian Feb 29
+            # gap and is wider than the Hebrew 19-year and Hijri 30-year
+            # cycles ever leave between two occurrences of the same date.
+            for y in range(year, year + _ROLL_YEAR_LIMIT):
+                try:
+                    cand = calendar.to_jdn(y, month, day)
+                except ValueError:
+                    continue                            # no such day that year
+                if calendar.from_jdn(cand) != (y, month, day):
+                    continue
+                if cand >= anchor_jdn:
+                    year, jdn = y, cand
+                    break
+            else:
+                return None
+        else:
+            jdn = calendar.to_jdn(year, month, day)     # raises on impossible
         if calendar.from_jdn(jdn) != (year, month, day):
             return None                                 # impossible day-in-month
         start = AstroDate(*jdn_to_gregorian(jdn))       # ValueError -> None
