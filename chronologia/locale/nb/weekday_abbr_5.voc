@@ -1,1 +1,5 @@
+# Unicode CLDR 47, locale nb, gregorian calendar (cldr-json
+# cldr-dates-full/main/nb/ca-gregorian.json): days.format.abbreviated,
+# days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing
+# period; the surfaces here drop it.
 lør

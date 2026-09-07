@@ -1,2 +1,7 @@
+# Unicode CLDR 47, locale fr, gregorian calendar (cldr-json
+# cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide, months.format.abbreviated,
+# months.stand-alone.abbreviated.  CLDR spells the abbreviations with a
+# trailing period; the surfaces here drop it.
 avril
 avr

@@ -1,2 +1,7 @@
+# Unicode CLDR 47, locale ar, gregorian calendar (cldr-json
+# cldr-dates-full/main/ar/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide, months.format.abbreviated,
+# months.stand-alone.abbreviated.  Not covered by any of those charts, and so
+# unattested here: "كانون الثاني".
 يناير
 كانون الثاني

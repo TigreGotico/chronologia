@@ -1,3 +1,8 @@
+# Unicode CLDR 47, locale sk, gregorian calendar (cldr-json
+# cldr-dates-full/main/sk/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide, months.format.abbreviated,
+# months.stand-alone.abbreviated.  Not covered by any of those charts, and so
+# unattested here: "júnom", "júni".
 jún
 júna
 júnom

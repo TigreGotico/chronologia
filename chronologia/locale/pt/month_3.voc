@@ -1,3 +1,9 @@
+# Unicode CLDR 47, locale pt, gregorian calendar (cldr-json
+# cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide, months.format.abbreviated,
+# months.stand-alone.abbreviated.  CLDR spells the abbreviations with a
+# trailing period; the surfaces here drop it.  Not covered by any of those
+# charts, and so unattested here: "marco".
 março
 marco
 mar

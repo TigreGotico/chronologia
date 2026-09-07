@@ -1,3 +1,7 @@
+# Unicode CLDR 47, locale el, gregorian calendar (cldr-json
+# cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide.  Not covered by any of those charts, and so
+# unattested here: "μάρτιο".
 μάρτιος
 μαρτίου
 μάρτιο

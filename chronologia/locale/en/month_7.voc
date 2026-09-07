@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale en, gregorian calendar (cldr-json
+# cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide, months.format.abbreviated,
+# months.stand-alone.abbreviated.
 july
 jul

@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale et, gregorian calendar (cldr-json
+# cldr-dates-full/main/et/ca-gregorian.json): days.format.wide,
+# days.stand-alone.wide.  Not covered by any of those charts, and so
+# unattested here: "neljapäeval".
 neljapäev
 neljapäeval

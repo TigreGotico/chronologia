@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale es, gregorian calendar (cldr-json
+# cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide, months.format.abbreviated,
+# months.stand-alone.abbreviated.
 abril
 abr

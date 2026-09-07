@@ -1,3 +1,7 @@
+# Unicode CLDR 47, locale et, gregorian calendar (cldr-json
+# cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide.  Not covered by any of those charts, and so
+# unattested here: "jaanuari", "jaanuaris", "jaanuaril".
 jaanuar
 jaanuari
 jaanuaris

@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale ca, gregorian calendar (cldr-json
+# cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,
+# months.stand-alone.abbreviated.  CLDR spells the abbreviations with a
+# trailing period; the surfaces here drop it.
 gener
 gen
