@@ -1,3 +1,7 @@
+# Unicode CLDR 47, locale de, gregorian calendar (cldr-json
+# cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide, months.format.abbreviated.  Not covered by any of
+# those charts, and so unattested here: "maerz", "mrz".
 märz
 maerz
 mrz

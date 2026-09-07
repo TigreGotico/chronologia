@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale en, gregorian calendar (cldr-json
+# cldr-dates-full/main/en/ca-gregorian.json): days.format.abbreviated,
+# days.stand-alone.abbreviated.  Not covered by any of those charts, and so
+# unattested here: "tues".
 tue
 tues

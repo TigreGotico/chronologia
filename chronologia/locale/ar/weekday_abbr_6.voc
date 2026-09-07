@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale ar, gregorian calendar (cldr-json
+# cldr-dates-full/main/ar/ca-gregorian.json): days.format.short,
+# days.stand-alone.short.  Not covered by any of those charts, and so
+# unattested here: "احد".
 أحد
 احد

@@ -1,3 +1,7 @@
+# Unicode CLDR 47, locale uk, gregorian calendar (cldr-json
+# cldr-dates-full/main/uk/ca-gregorian.json): days.format.wide,
+# days.stand-alone.wide.  Not covered by any of those charts, and so
+# unattested here: "середу", "середи".
 середа
 середу
 середи

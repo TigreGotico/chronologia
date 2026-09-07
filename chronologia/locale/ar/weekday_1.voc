@@ -1,3 +1,8 @@
+# Unicode CLDR 47, locale ar, gregorian calendar (cldr-json
+# cldr-dates-full/main/ar/ca-gregorian.json): days.format.wide,
+# days.stand-alone.wide, days.format.abbreviated,
+# days.stand-alone.abbreviated.  Not covered by any of those charts, and so
+# unattested here: "يوم الثلاثاء", "يوم ثلاثاء".
 الثلاثاء
 يوم الثلاثاء
 يوم ثلاثاء

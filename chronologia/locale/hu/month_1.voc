@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale hu, gregorian calendar (cldr-json
+# cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide.  Not covered by any of those charts, and so
+# unattested here: "januárban".
 január
 januárban

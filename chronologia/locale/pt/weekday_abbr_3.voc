@@ -1,1 +1,6 @@
+# Unicode CLDR 47, locale pt, gregorian calendar (cldr-json
+# cldr-dates-full/main/pt/ca-gregorian.json): days.format.abbreviated,
+# days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.
+# CLDR spells the abbreviations with a trailing period; the surfaces here drop
+# it.
 qui

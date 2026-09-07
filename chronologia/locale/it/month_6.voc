@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale it, gregorian calendar (cldr-json
+# cldr-dates-full/main/it/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide, months.format.abbreviated,
+# months.stand-alone.abbreviated.
 giugno
 giu

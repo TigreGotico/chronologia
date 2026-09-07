@@ -1,2 +1,6 @@
+# Unicode CLDR 47, locale he, gregorian calendar (cldr-json
+# cldr-dates-full/main/he/ca-gregorian.json): months.format.wide,
+# months.stand-alone.wide.  Not covered by any of those charts, and so
+# unattested here: "בפברואר".
 פברואר
 בפברואר

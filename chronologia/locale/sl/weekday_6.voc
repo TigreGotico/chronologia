@@ -1,3 +1,7 @@
+# Unicode CLDR 47, locale sl, gregorian calendar (cldr-json
+# cldr-dates-full/main/sl/ca-gregorian.json): days.format.wide,
+# days.stand-alone.wide.  Not covered by any of those charts, and so
+# unattested here: "nedeljo", "nedelje".
 nedelja
 nedeljo
 nedelje
