@@ -761,14 +761,17 @@ class Resolver:
         return self._named_day_offset(match, anchor, -1)
 
     def _resolve_weekday_offset(self, match, anchor):
-        """"a week from tuesday", "two weeks from monday": N weeks after the
-        next occurrence (strictly future) of the named weekday."""
-        if self.spec.units[match.slots["UNIT"].text] != "week":
+        """"a week from tuesday", "two weeks from monday", "two days from
+        friday": N whole-day units after the next occurrence (strictly
+        future) of the named weekday.  The same day-granular units the
+        named-day twin ("a week from tomorrow") takes."""
+        days = self._DAY_UNIT_DAYS.get(self.spec.units[match.slots["UNIT"].text])
+        if days is None:
             return None
-        weeks = int(self._offset_quantity(match))
+        qty = int(self._offset_quantity(match))
         target = self.spec.weekdays[match.slots["WEEKDAY"].text]
         ahead = (target - anchor.weekday()) % 7 or 7          # strictly future
-        value = _midnight(anchor) + timedelta(days=ahead, weeks=weeks)
+        value = _midnight(anchor) + timedelta(days=ahead + days * qty)
         return Resolution(_day_span(value), self._consumed(match))
 
     #: whole-day offset units (a named-day idiom only shifts by whole days).
