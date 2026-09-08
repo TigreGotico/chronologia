@@ -1,4 +1,8 @@
 woche
-wochen
 kw
 kalenderwoche
+# The plural is NOT a week-number surface: a German week number is always
+# singular ("die 2. Woche", "KW 2", "Kalenderwoche 2"), and the plural names
+# a COUNT of weeks. Listing it let the ordinal order read the bare counted
+# length "2 wochen" as calendar week 2, answering a date six months before
+# the anchor.
