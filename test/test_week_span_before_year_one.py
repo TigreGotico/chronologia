@@ -26,7 +26,7 @@ _ANCHOR = datetime(2026, 9, 1)
 
 
 def _span(text):
-    result = extract_timespan(text, "en-us", anchor=_ANCHOR)
+    result = extract_timespan(text, "en", anchor=_ANCHOR)
     assert result is not None, text
     assert result.remainder == "", result.remainder
     return result.span

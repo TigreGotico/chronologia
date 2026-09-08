@@ -3,7 +3,7 @@
 Subcommands (each prints one friendly line to stdout)::
 
     chronologia convert 2024-06-01 --from gregorian --to hebrew
-    chronologia extract "last summer" --lang en-us
+    chronologia extract "last summer" --lang en-US
     chronologia holidays US 2024 [--subdiv CA]
     chronologia easter 2024
     chronologia when 1984-06?
@@ -122,7 +122,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     p_ext = sub.add_parser("extract", help="extract a date span from text")
     p_ext.add_argument("text", help="the natural-language phrase")
-    p_ext.add_argument("--lang", default="en-us", help="language (default en-us)")
+    p_ext.add_argument("--lang", default="en", help="language (default en)")
     p_ext.set_defaults(func=_cmd_extract)
 
     p_hol = sub.add_parser("holidays", help="list civil holidays for a year")
