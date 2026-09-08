@@ -6,7 +6,7 @@ from datetime import datetime
 
 import pytest
 
-from ._corpus import ad, start, start_end
+from ._corpus import ad, nomatch, start, start_end
 
 
 @pytest.mark.parametrize("text,y,mo,d", [
@@ -40,3 +40,15 @@ def test_full_date_span_is_one_day():
 ])
 def test_bare_day_month_rolls_future(text, y, mo, d):
     assert start(text) == ad(datetime(y, mo, d))
+
+
+@pytest.mark.parametrize("text", [
+    "45. tammikuuta",
+    "32. tammikuuta",
+    "31. kesäkuuta",
+    "30. helmikuuta",
+])
+def test_impossible_day_of_month_is_refused(text):
+    """A day number the month cannot hold is not a date.  Returning nothing
+    beats clamping to the month end or rolling into the next month."""
+    nomatch(text)
