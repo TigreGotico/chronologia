@@ -1,2 +1,8 @@
 hai
 fai
+# "atrás" closing a counted length is the postposed past marker, beside the
+# preposed "hai"/"fai": ast.wikipedia has "10,000 años atrás" (Pleistocenu),
+# "sieglos atrás" (Malí) and "meses atrás" (Israel).  Portuguese lists the
+# same pair in this file.
+atrás
+atras
