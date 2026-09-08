@@ -16,7 +16,7 @@ from typing import Callable, Tuple
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold import _lazy_germanic_fold
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import reindex, with_marked_h_clock
 from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
 
 
@@ -147,6 +147,10 @@ fold_sv = _lazy_germanic_fold(
 # so chronologia owns the ordinal locally by inverting that pronouncer.  SAOL
 # (Svenska Akademiens ordlista): ordningstal.
 fold_sv = _with_ordinals(fold_sv, "sv")
+# Swedish writes "21h30" only behind the clock marker ("kl 21h30", "klockan
+# 21h30"); a bare "21h30" is a duration.  The marker set is sv's own
+# marker_at surfaces.
+fold_sv = with_marked_h_clock(fold_sv, {"klockan", "kl"})
 fold_da = _lazy_germanic_fold(
     "ovos_number_parser.numbers_da", "extract_number_da",
     {"halv", "halvdel", "halvdelen", "kvart", "million", "millioner",

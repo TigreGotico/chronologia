@@ -28,7 +28,8 @@ from importlib import import_module
 from typing import Callable, Dict, FrozenSet, Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
+from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
+                                                reindex, with_marked_h_clock)
 from chronologia.extract.numfold_ordinals import with_ordinals
 
 
@@ -292,6 +293,12 @@ def fold_el(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         merged.append(t)
         i += 1
     return _el_numfold(reindex(tuple(merged)))
+
+
+# Greek writes "21h30" only behind a clock marker ("στις 21h30"); a bare
+# "21h30" in Greek text is a duration or a citation to a French source.  The
+# marker set is el's own marker_at and marker_oclock surfaces.
+fold_el = with_marked_h_clock(fold_el, {"στις", "στη", "στην", "ώρα"})
 
 
 # -- Hungarian: "hét" is both seven and week; never fold it to a number.
