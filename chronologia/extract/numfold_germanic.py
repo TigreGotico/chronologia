@@ -150,7 +150,13 @@ fold_sv = _with_ordinals(fold_sv, "sv")
 fold_da = _lazy_germanic_fold(
     "ovos_number_parser.numbers_da", "extract_number_da",
     {"halv", "halvdel", "halvdelen", "kvart", "million", "millioner",
-     "milliard", "milliarder", "tusind"})
+     "milliard", "milliarder", "tusind"},
+    # "halvanden" (1.5) is the ordinary Danish word for one and a half --
+    # Den Danske Ordbog: "halvanden" = 1,5 -- but ``extract_number_da``
+    # misreads it as 0.5 (it appears to match only the "halv" prefix), so
+    # it is supplied as a fixed word->value surface, mirroring "anderthalb"
+    # (de) and "anderhalve" (nl) above.
+    word_map={"halvanden": 1.5})
 # Danish: ``extract_number_da`` returns False for the spelled ordinals
 # ("femtende", "enogtyvende" ...) -- the release-blocked ovos-number-parser
 # path -- so chronologia owns them by inverting ``pronounce_ordinal_da``, which

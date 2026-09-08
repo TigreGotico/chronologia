@@ -114,6 +114,14 @@ deep-time period vocabulary.
 **The ordinal-last determiner** is `sidste`, so `sidste mandag i maj` resolves.
 The vocabulary file cites Den Danske Ordbog.
 
+**`halvanden`**, the ordinary Danish word for 1.5 (Den Danske Ordbog; from Old
+Norse *halfr annarr*), is declared as the `1.5` quantifier. Resolved by native
+review: `extract_number_da('halvanden')` misreads it as a bare `0.5`, so a
+fixed word-map override in `numfold_germanic.fold_da` intercepts the token
+before the (wrong) number-parser value ever folds it, mirroring German
+`anderthalb` and Dutch `anderhalve`. `halvanden time siden` now resolves to
+1.5 hours ago rather than half an hour ago.
+
 ## The hour before one
 
 This is the open decision of the locale, and it is worth stating precisely
@@ -171,16 +179,6 @@ and the holiday vocabulary record no source.
 
 ## What refuses
 
-**One and a half is not read as one and a half.** `halvanden` is the ordinary
-Danish word for 1.5 — English Wiktionary carries it as a Danish numeral, "one
-and a half (1.5, 1½)", from Old Norse *halfr annarr* — but the locale declares
-no 1.5 quantifier and the number fold reduces the word to a bare `0.5`. So
-`halvanden time siden` resolves to half an hour ago and `om halvanden time` to
-half an hour from now, with an empty remainder in both cases. This is not a
-refusal; it is a wrong answer that looks clean, and it is the worst defect on
-the page. Norwegian Bokmål declares `halvannen` and gets the same sentence
-right.
-
 **`ét` with its acute.** `halv ét` returns nothing. The bare `et` reads, and
 the accented numeral that Danish orthography uses to distinguish the numeral
 from the article is not in the vocabulary.
@@ -206,12 +204,13 @@ resolve, leaving the framing `i` or `om` in the remainder: `i eftermiddag`,
 
 1. Should `halv et` and `kvart i et` read as 12:30 and 12:45? The two branches
    move together, so the answer has to cover both.
-2. Should `halvanden` ship as the 1.5 quantifier? Nothing but the missing
-   declaration stands in the way.
-3. Is `tre om eftermiddagen`, with no `klokken`, ordinary enough to need to
+2. Is `tre om eftermiddagen`, with no `klokken`, ordinary enough to need to
    bind? It is the form that returns a six-hour band.
-4. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split
+3. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split
    puts it at 18:00.
-5. Should a `morgen` day-part surface ship despite the collision with the
+4. Should a `morgen` day-part surface ship despite the collision with the
    tomorrow word, and if so in which forms?
-6. Is `14.30` the written clock Danish readers expect to be understood?
+5. Is `14.30` the written clock Danish readers expect to be understood?
+
+Resolved: whether `halvanden` ships as the 1.5 quantifier — see `halvanden`
+under "What ships" above.
