@@ -1522,10 +1522,12 @@ one yields no duration and is returned to you in the remainder:
 from chronologia import extract_duration
 
 assert extract_duration("2 months", "en") is None
-# "second" is read as the ordinal (its far commoner sense) and there is no
-# fixed-width "second" duration unit, so the idiom yields no spurious 1-second
-# length — the homograph is resolved in favour of the dominant reading
+# "second" is also the ordinal: before another word it is the adjective, so
+# the idiom yields no spurious 1-second length ...
 assert extract_duration("a second chance", "en") is None
+# ... while a counted second is the unit
+assert extract_duration("a second", "en").duration.total_seconds() == 1
+assert extract_duration("one second", "en").duration.total_seconds() == 1
 ```
 
 It works the same in every language with locale data — the unit and fraction

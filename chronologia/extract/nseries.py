@@ -2261,9 +2261,12 @@ def _fold_group_value(ctx, group):
 #: words that can never be part of an ordinal ("of the month", a determiner,
 #: another weekday, a unit or month name).
 def _list_region_stop(ctx, tok):
+    # the second is the one unit whose word is also an ordinal ("second and
+    # fourth tuesday"), so it stays inside the ordinal region
     return (tok.text in ctx.articles or tok.text in ctx.every
             or tok.text in ctx.of_words or tok.text in ctx.on_words
-            or tok.text in ctx.weekdays or tok.text in ctx.units
+            or tok.text in ctx.weekdays
+            or (tok.text in ctx.units and ctx.units[tok.text] != "second")
             or tok.text in ctx.months)
 
 

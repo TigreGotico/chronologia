@@ -1,3 +1,6 @@
+# "second" is also the ordinal; after a count it is read as the unit
+# (chronologia.extract.pipeline._fold_around_counted_seconds).
+second
 seconds
 sec
 secs
