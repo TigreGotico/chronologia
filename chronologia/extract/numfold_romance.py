@@ -578,6 +578,25 @@ _PT_ORDINAL_BEFORE_WEEK = {"segunda": 2, "quarta": 4, "quinta": 5, "sexta": 6}
 _PT_QUARTER_SURFACES = frozenset({"quarto", "quartos"})
 
 
+def _pt_protect_dez(tokens):
+    """Hold "dez" back from the fold where it is December, not ten.
+
+    The CLDR abbreviation for dezembro is the homograph of the cardinal
+    "dez", and the fold wins, so "3 de dez" resolved to nothing while every
+    other abbreviated month ("3 de jan") resolved.  The month reading is
+    available in exactly one position -- the month slot of the "N de MONTH"
+    date frame, a day number then the preposition -- and nowhere else, so
+    "dez de dezembro" (10 December) and "em dez dias" (in ten days) keep the
+    numeral.
+    """
+    return {
+        i for i, t in enumerate(tokens)
+        if t.text == "dez" and i >= 2 and tokens[i - 1].text == "de"
+        and tokens[i - 2].is_number and tokens[i - 2].value is not None
+        and 1 <= tokens[i - 2].value <= 31
+    }
+
+
 def fold_pt(tokens):
     # Portuguese writes the digital clock exactly like French/Occitan --
     # "15h", "15h30", "9h" -- so the same "Nh[MM]" literal is folded to an
@@ -592,6 +611,7 @@ def fold_pt(tokens):
         if t.text in ("um", "uma") and i + 1 < len(tokens)
         and tokens[i + 1].text in _PT_QUARTER_SURFACES
     }
+    protected |= _pt_protect_dez(tokens)
     if not protected:
         return _fold_pt_base(tokens)
     out = []
