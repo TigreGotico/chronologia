@@ -135,7 +135,7 @@
         "week_num NUM of YEAR",
         "week_num NUM YEAR?",
         "article? ORD week_num of YEAR",
-        "article? ORD week_num YEAR?"
+        "article ORD week_num YEAR?"
       ]
     },
     "roman_date": {
