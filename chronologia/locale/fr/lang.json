@@ -70,6 +70,8 @@
         "HOUR oclock CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
         "at HOUR oclock CLOCKDIR article? MINUTE of? article? MERIDIEM? ZONE?",
         "HOUR oclock CLOCKDIR article? MINUTE of? article? MERIDIEM? ZONE?",
+        "at HOUR oclock MINUTE of? article? MERIDIEM? ZONE?",
+        "HOUR oclock MINUTE of? article? MERIDIEM? ZONE?",
         "at HOUR oclock of? article? MERIDIEM? ZONE?",
         "HOUR oclock of? article? MERIDIEM? ZONE?",
         "at HOUR article? MERIDIEM? ZONE?",
