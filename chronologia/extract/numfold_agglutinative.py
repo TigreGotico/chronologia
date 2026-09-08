@@ -25,7 +25,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from importlib import import_module
-from typing import Callable, Dict, FrozenSet, Tuple
+from typing import Callable, Dict, FrozenSet, Optional, Tuple
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
@@ -185,7 +185,9 @@ def _with_fused_thousands(fold: Callable[[Tuple[Token, ...]], Tuple[Token, ...]]
 
 def _with_bare_case_hour(fold: Callable[[Tuple[Token, ...]], Tuple[Token, ...]],
                          hours: Dict[str, float], at_surface: str,
-                         skip_before: FrozenSet[str] = frozenset()
+                         skip_before: FrozenSet[str] = frozenset(),
+                         digit_suffix: Optional[str] = None,
+                         no_digit_suffix_after: FrozenSet[str] = frozenset()
                          ) -> Callable[[Tuple[Token, ...]], Tuple[Token, ...]]:
     """Wrap a ``fold`` so a bare CASE-SUFFIXED clock hour binds its HOUR.
 
@@ -204,11 +206,33 @@ def _with_bare_case_hour(fold: Callable[[Tuple[Token, ...]], Tuple[Token, ...]],
     explicit clock marker (Finnish "kello kolmelta"), keeping that frame's parse
     byte-identical.  ``at_surface`` must be a surface in the locale's
     ``marker_at.voc``; ``hours`` is the ``{glued surface: value}`` telling-time map.
+
+    ``digit_suffix`` names the same suffix written after an hour in DIGITS,
+    where the orthography separates it with a hyphen the tokenizer drops:
+    Hungarian writes "reggel 9-kor" and "delutan 2-kor" beside the spelled
+    "kilenckor".  The suffix then arrives as its own token behind the number,
+    and the pair is read exactly like the glued form.  Only a locale whose
+    spelling rules actually hyphenate the suffix onto a numeral passes it, and
+    ``no_digit_suffix_after`` names the surfaces that must not license it: a
+    clock fraction in a count-toward-the-hour language, where binding the hour
+    alone would answer a whole hour late with the fraction stranded.
     """
     def pre(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         out = []
+        skip = False
         for i, t in enumerate(tokens):
-            value = None if t.is_number else hours.get(t.text)
+            if skip:
+                skip = False
+                continue
+            nxt = tokens[i + 1] if i + 1 < len(tokens) else None
+            if (digit_suffix is not None and t.is_number and t.value is not None
+                    and 0 <= t.value <= 24 and float(t.value).is_integer()
+                    and nxt is not None and nxt.text == digit_suffix
+                    and not (i > 0
+                             and tokens[i - 1].text in no_digit_suffix_after)):
+                value, skip = t.value, True
+            else:
+                value = None if t.is_number else hours.get(t.text)
             if value is None:
                 out.append(t)
                 continue
@@ -346,7 +370,16 @@ fold_hu = with_ordinals(fold_hu, "hu", extra=_hu_day_ord_extra())
 # glue -kor onto the numeral; split them so "at HOUR" binds ("kor" is the hu
 # marker_at surface).  "N órakor" keeps its own "órakor" oclock token and is
 # untouched here.
-fold_hu = _with_bare_case_hour(fold_hu, _HU_KOR_HOURS, "kor")
+# The suffix is also written after an hour in DIGITS, hyphenated: hu.wikipedia
+# prose has "reggel 9-kor", "delutan 2-kor" and "ejjel 11-kor".  A leading
+# clock fraction is held back, because Hungarian counts TOWARD the hour: "fel
+# 8-kor" is 07:30, so binding the hour alone would answer 08:00 with "fel"
+# stranded, a wrong time where refusing is right.
+_HU_CLOCK_FRACTIONS = frozenset({"negyed", "fél", "fel", "háromnegyed",
+                                 "haromnegyed"})
+fold_hu = _with_bare_case_hour(fold_hu, _HU_KOR_HOURS, "kor",
+                               digit_suffix="kor",
+                               no_digit_suffix_after=_HU_CLOCK_FRACTIONS)
 # Fold the fused round-thousand spelling ("kétezer-huszonnégy" = 2024) instead
 # of dropping the thousands and reading only the trailing chunk.  Outermost so
 # it rewrites the raw surface tokens before the cardinal/ordinal/clock folds.
