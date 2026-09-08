@@ -1187,9 +1187,12 @@ def test_spelled_ordinal_list_across_and_keeps_first():
     assert _folded("two hundred and fifty") == "2 hundred and 50"
     assert _folded("a thousand and one") == "a thousand and 1"
     assert _folded("one hundred and first") == "1 hundred and 1"
-    # spelled years still fold to their single value, untouched by the gate
-    assert _folded("nineteen eighty four") == "84"
-    assert _folded("twenty twenty") == "20"
+    # a bare year pair with no cue is two numerals (the year reading needs a
+    # cue such as "in" or a month-and-day before it); the back-end used to
+    # keep only the last atom, silently dropping the first
+    assert _folded("nineteen eighty four") == "19 84"
+    assert _folded("twenty twenty") == "20 20"
+    assert _folded("in nineteen eighty four") == "in 1984"
 
 
 # --- R17: a bare cardinal + plural unit is a count, not the ordinal day -------

@@ -70,6 +70,17 @@ class NumberGrammar:
     ``single_fallback`` -- for a one-token run the back-end rejects, a
                       surface->value lookup (returns ``None`` when absent).
     ``pre``        -- an optional token-stream pre-pass run before the scan.
+    ``continues``  -- optional gate on a plain (joiner-less) atom worth less
+                      than 100 extending a run that is itself worth less than
+                      100: given the value so far and the atom's own value, is
+                      the atom a continuation of the SAME number?  When it
+                      returns False the run is cut before the atom and each
+                      side folds on its own, so a spoken clock ("seven
+                      thirty", "eleven fifty five") stays two numerals instead
+                      of the back-end silently keeping only the last one.
+                      Left None (the default) every atom continues, exactly as
+                      before; a language whose small numbers compose by
+                      multiplication (French "quatre vingt") must leave it so.
     ``bridge_ok``  -- optional gate on a joiner bridge: given the value read so
                       far and the value of the atom the joiner introduces, is
                       the join a genuine additive continuation of the *same*
@@ -87,6 +98,7 @@ class NumberGrammar:
     single_fallback: Optional[Callable[[str], Any]] = None
     pre: Optional[Callable[[Tuple[Token, ...]], Tuple[Token, ...]]] = None
     bridge_ok: Optional[Callable[[float, float], bool]] = None
+    continues: Optional[Callable[[float, float], bool]] = None
 
 
 def make_fold(grammar: NumberGrammar
@@ -123,6 +135,7 @@ def make_fold(grammar: NumberGrammar
     keep_joiner = grammar.joiner_in_text
     pre = grammar.pre
     bridge_ok = grammar.bridge_ok
+    continues = grammar.continues
 
     def _value_of(run):
         """The back-end value of a homogeneous run, with the single-token
@@ -220,6 +233,17 @@ def make_fold(grammar: NumberGrammar
                 seg, seg_val = atom, atom_val
                 k = j
                 continue
+            if continues is not None and seg:
+                tok_val = _value_of([tok])
+                if tok_val is not None and tok_val < 100:
+                    if seg_val is unset:
+                        seg_val = _value_of(seg)
+                    if (seg_val is not None and seg_val < 100
+                            and not continues(seg_val, tok_val)):
+                        _fold_run(seg, into)
+                        seg, seg_val = [tok], tok_val
+                        k += 1
+                        continue
             seg.append(tok)
             seg_val = unset   # invalidate; recomputed lazily at the next joiner
             k += 1
