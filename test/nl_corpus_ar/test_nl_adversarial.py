@@ -24,13 +24,16 @@ def test_no_spurious_parse(text):
     nomatch(text)
 
 
-# -- documented gaps: the dual noun is not a NUM UNIT pair -------------------
-@pytest.mark.parametrize("text", [
-    "بعد أسبوعين",            # "in a fortnight" (dual) -- known gap
-    "قبل يومين",             # "two days ago" (dual) -- known gap
+# -- the dual noun counts two: a NUM UNIT pair the noun carries itself -------
+@pytest.mark.parametrize("text,days", [
+    ("بعد أسبوعين", 14),      # "in a fortnight" (dual)
+    ("قبل يومين", -2),        # "two days ago" (dual)
 ])
-def test_dual_gap(text):
-    nomatch(text)
+def test_dual_counts_two(text, days):
+    from datetime import timedelta
+    from ._corpus import ANCHOR, ad
+    s, _ = start_end(text)
+    assert s == ad(ANCHOR + timedelta(days=days))
 
 
 # -- a bare full weekday names its next strictly-future occurrence ----------

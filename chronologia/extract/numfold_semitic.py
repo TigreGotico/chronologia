@@ -428,14 +428,117 @@ def split_he_range_word(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
+# -- dual-noun unit split ------------------------------------------------
+# Arabic inflects a unit noun for the DUAL when the count is exactly two --
+# ساعتان/ساعتين ("two hours") is one word, not "ساعتان" spelled together --
+# so unlike every other count, "two" here is never a separate token for the
+# offset grammar's ``NUM UNIT`` pre-amble to read ("بعد ساعتين" stalled to
+# ``None`` while its analytic sibling "بعد ساعتين" written "بعد 2 ساعات"
+# already worked).  Both the nominative -ān and the oblique -ayn are read:
+# W. Wright, *A Grammar of the Arabic Language*, 3rd ed., vol. I, §299 -- the
+# dual is formed with ـَانِ in the nominative and ـَيْنِ in the genitive/
+# accusative, and MSA text uses the oblique form in most running prose.
+#
+# Each dual surface is split into a synthetic ``2`` NUM token followed by the
+# ordinary PLURAL unit word it is dual for -- the same plural surface "بعد 2
+# ساعات" already binds -- so the split needs no grammar or resolver change,
+# only reuse of the existing NUM+UNIT reading.  The synthetic NUM carries a
+# zero-width extent so it never reaches the remainder text; the plural token
+# keeps the dual word's raw/char extent so an unconsumed dual still
+# reconstructs verbatim.  This mirrors ``_he_dual_split`` below.
+#
+# Keys are exactly the surfaces of ``locale/ar/unit_dual_*.voc``; values the
+# matching plural in ``locale/ar/unit_*.voc``.
+_AR_DUAL_UNIT_PLURAL = {
+    "ساعتان": "ساعات", "ساعتين": "ساعات",      # unit_dual_hour.voc
+    "يومان": "أيام", "يومين": "أيام",          # unit_dual_day.voc
+    "أسبوعان": "أسابيع", "أسبوعين": "أسابيع",  # unit_dual_week.voc
+    "اسبوعان": "أسابيع", "اسبوعين": "أسابيع",  # ... alif-hamza-less spelling
+    "دقيقتان": "دقائق", "دقيقتين": "دقائق",    # unit_dual_minute.voc
+    "ثانيتان": "ثوان", "ثانيتين": "ثوان",      # unit_dual_second.voc
+}
+
+
+def _ar_dual_split(tokens):
+    out, changed = [], False
+    for t in tokens:
+        plural = None if t.is_number else _AR_DUAL_UNIT_PLURAL.get(t.text)
+        if plural is None:
+            out.append(t)
+            continue
+        out.append(Token(text="2", raw="", index=t.index, is_number=True,
+                         value=2, char_start=t.char_start,
+                         char_end=t.char_start))
+        out.append(Token(text=plural, raw=t.raw, index=t.index,
+                         char_start=t.char_start, char_end=t.char_end,
+                         cap=t.cap, prev_cap=t.prev_cap))
+        changed = True
+    return reindex(tuple(out)) if changed else tokens
+
+
+# -- additive fraction on a counted unit ---------------------------------------
+# A length of "N and a half/quarter <unit>" is written with the fraction fused
+# to the conjunction after the unit noun: "ساعة ونصف" (an hour and a half),
+# "ساعتين ونصف" (two and a half hours), "ساعة وربع" (an hour and a quarter);
+# ar.wikipedia "كويرنافاكا" ("رحلة بطول ساعة ونصف"), "قرزة" ("على بعد ساعتين
+# ونصف"), "حنين (فلم 2005)" ("مدتها ساعة وربع").  The offset grammar reads a
+# NUM before its UNIT, so the fused fraction is folded into that number: a
+# bare singular unit counts one, a preceding numeral keeps its value, and the
+# fraction is added.  The synthetic NUM spans from the unit to the fraction so
+# the whole phrase is consumed; the unit token keeps its own surface.
+_AR_ADDITIVE_FRACTION = {"ونصف": 0.5, "وربع": 0.25}
+
+
+def _ar_unit_surfaces(locale_dir=_DEFAULT_LOCALE_DIR):
+    lang_dir = Path(locale_dir) / "ar"
+    words = set()
+    for path in sorted(lang_dir.glob("unit_*.voc")):
+        words.update(read_resource_file(path))
+    return frozenset(words)
+
+
+_AR_UNIT_SURFACES = _ar_unit_surfaces()
+
+
+def _ar_additive_fraction(tokens):
+    out, changed = [], False
+    i = 0
+    while i < len(tokens):
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < len(tokens) else None
+        if (nxt is not None and not t.is_number and not nxt.is_number
+                and nxt.text in _AR_ADDITIVE_FRACTION
+                and t.text in _AR_UNIT_SURFACES):
+            frac = _AR_ADDITIVE_FRACTION[nxt.text]
+            if out and out[-1].is_number and out[-1].value is not None:
+                num = out.pop()
+                value = num.value + frac
+                start = num.char_start
+            else:
+                value = 1 + frac
+                start = t.char_start
+            out.append(Token(text=str(value), raw="", index=t.index,
+                             is_number=True, value=value,
+                             char_start=start, char_end=nxt.char_end))
+            out.append(t)
+            changed = True
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return reindex(tuple(out)) if changed else tokens
+
+
 def fold_ar(tokens):
     """Fold the feminine ordinal clock hour first (in clock context only), split
     a "و"-glued trailing clock fraction off it, then the ordinal teen (11..19),
     the cardinal/ordinal fold, then license الأول/الثاني positionally
-    (Rule A, #268)."""
-    return _ar_month_ordinal_license(
+    (Rule A, #268).  The dual-noun split runs last, on the folded stream, so a
+    dual unit noun reaches the offset grammar as the ``2 <plural unit>`` it
+    means."""
+    return _ar_additive_fraction(_ar_dual_split(_ar_month_ordinal_license(
         _fold_ar_base(_ar_teen_fold(
-            _ar_clock_fraction_split(_ar_clock_hour_fold(tokens)))))
+            _ar_clock_fraction_split(_ar_clock_hour_fold(tokens)))))))
 
 
 # -- Hebrew ------------------------------------------------------------------
