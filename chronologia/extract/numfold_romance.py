@@ -812,6 +812,19 @@ def _with_h_clock(fold):
 fold_es = _with_h_clock(fold_es)
 fold_gl = _with_h_clock(fold_gl)
 fold_ca = _with_h_clock(fold_ca)
+
+
+def _ca_daqui(tokens):
+    """Rejoin the elided "d'aquí" the tokenizer split into "d" + "aquí", so the
+    future-offset marker "d'aquí a" is one surface the offset grammar binds."""
+    return _collapse_phrase(tokens, ["d", "aquí"], "d'aquí")
+
+
+_fold_ca_base = fold_ca
+
+
+def fold_ca(tokens):
+    return _fold_ca_base(_ca_daqui(tokens))
 # an: "martes" (Tuesday) must never be read as a number; the Romance factory
 # folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
 # an: "quarto" (the qu- spelling) is the idiomatic masculine ordinal 4th before
