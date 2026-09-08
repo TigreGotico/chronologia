@@ -894,10 +894,18 @@ class Resolver:
         elif rel < 0:    # last
             back = (anchor.weekday() - target) % 7 or 7
             value = base - timedelta(days=back)
-        else:            # this: within the current week (honouring week_start)
-            start_idx = _WEEK_START.get(self.conventions.week_start, 0)
-            week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
-            value = week_start + timedelta(days=(target - start_idx) % 7)
+        else:
+            # "this <weekday>" names the COMING one, and the anchor's own day
+            # when it is already that weekday -- the same prefer-future
+            # reckoning as the bare weekday, differing only in including
+            # today.  Reading it as the weekday of the current calendar week
+            # put an already-past weekday in the past ("this monday" on a
+            # Tuesday answered yesterday) while the bare "monday" answered
+            # forward, so the two disagreed about the same day.  Week start
+            # does not enter it: that governs named calendar PERIODS ("this
+            # week"), not which occurrence of a weekday is meant.
+            ahead = (target - anchor.weekday()) % 7
+            value = base + timedelta(days=ahead)
         return Resolution(_day_span(value), self._consumed(match))
 
     def _resolve_before_last(self, match, anchor):
