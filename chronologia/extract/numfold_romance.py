@@ -1429,6 +1429,42 @@ fold_ro = _romance_prepass_fold(
 fold_ro = _with_scale_frame(fold_ro, "ro", frozenset({"un", "unu", "una", "o"}))
 
 
+def _ro_tens_and_one(tokens):
+    """Join "douăzeci și unu / una" (21) after the cardinal fold.
+
+    "unu" and "una" are held out of the run set because they are the article
+    and the scale-frame count ("un miliard de ani"), so the fold stops at
+    "și" and the compound 21, 31 ... 91 never folds ("douăzeci și doi" folds
+    because "doi" is an ordinary number word).  Wiktionary: douăzeci și unu
+    "twenty-one".  Joined only after a tens count 20..90 and the joiner."""
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        if (t.is_number and t.value in (20, 30, 40, 50, 60, 70, 80, 90)
+                and i + 2 < n and tokens[i + 1].text == "și"
+                and tokens[i + 2].text in ("unu", "una")):
+            last = tokens[i + 2]
+            out.append(Token(text=str(int(t.value) + 1),
+                             raw=" ".join(x.raw for x in tokens[i:i + 3]),
+                             index=t.index, is_number=True,
+                             value=int(t.value) + 1,
+                             char_start=t.char_start, char_end=last.char_end))
+            i += 3
+            continue
+        out.append(t)
+        i += 1
+    return _reindex(tuple(out))
+
+
+_fold_ro_base = fold_ro
+
+
+def fold_ro(tokens):
+    return _ro_tens_and_one(_fold_ro_base(tokens))
+
+
 # -- Occitan ----------------------------------------------------------------
 _OC_PHRASES = [
     (["abans", "jèsus", "crist"], "acn"), (["abans", "jesus", "crist"], "acn"),
