@@ -41,7 +41,6 @@ _SAFE_NONE = [
     'en million grunde',
     'tusindvis af mennesker',
     'opgående sol',
-    'tidligt om morgenen',
     'et sekund af stilhed',
     'de fleste mennesker',
     'et par dage',
@@ -90,6 +89,7 @@ def test_documented_limitation(text):
 _SPAN_ELSEWHERE = [
     ('et sekund af stilhed om 3 dage', 'sekund'),
     ('den halve sandhed om 2 uger', 'sandhed'),
+    ('tidligt om morgenen', 'tidligt'),
 ]
 
 
