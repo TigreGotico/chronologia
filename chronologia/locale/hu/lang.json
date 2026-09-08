@@ -33,6 +33,7 @@
         "at HOUR oclock MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
         "MERIDIEM at? HOUR oclock? ZONE?",
+        "FRACTION at HOUR MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
         "at? LANDMARK ZONE?"
       ],
