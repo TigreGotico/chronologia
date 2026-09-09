@@ -3,7 +3,8 @@
     "decimal_comma": true,
     "split_contractions": false,
     "ordinal_dot": true,
-    "dotted_date": true
+    "dotted_date": true,
+    "dotted_clock": true
   },
   "constructions": {
     "relative_offset": {
