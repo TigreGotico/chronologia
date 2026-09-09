@@ -22,6 +22,22 @@ def test_quarter_explicit(text, h, mi):
     assert start(text) == clk(h, mi)
 
 
+@pytest.mark.parametrize("text,h,mi", [
+    # regression (PR #883 review): toward_hour_12h resolved the bare/night
+    # forms to 12 but left spoken_hour at the literal "et"=1, so the
+    # meridiem step's own spoken_hour<12 PM-shift fired a SECOND time on an
+    # already-resolved 12, landing on 0 instead of leaving it at 12.
+    ('halv et om eftermiddagen', 12, 30),
+    ('kvart i et om eftermiddagen', 12, 45),
+    ('klokken halv et om eftermiddagen', 12, 30),
+    # proves the flag did not just move midnight to noon everywhere: the
+    # NIGHT band still reads the small hours as-is, unaffected by the fix.
+    ('halv et om natten', 0, 30),
+])
+def test_hour_before_one_with_explicit_meridiem(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
 @pytest.mark.parametrize("text", ['kvart ni', 'kvart ti'])
 def test_bare_quarter_rejected(text):
     nomatch(text)
