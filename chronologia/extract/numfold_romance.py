@@ -1363,8 +1363,40 @@ _IT_COMPOUND_ORDINALS = {
 # composition can read the marker) and positionally licensed back to the digit
 # 1 in ordinal position by ``_license_it_prima``.  The unambiguous masculine
 # "primo" still folds to 1 in the general pass.
+# Italian writes 21..99 as ONE word: the tens word takes the unit directly,
+# dropping its final vowel before "uno" and "otto" ("ventuno", "ventotto",
+# "trentuno", "quarantotto") and stressing a final "tre" ("ventitré").
+# ``extract_number_it`` reads every one of them, but the run set seeded from
+# the number vocabulary carries only the separate tens and units, so
+# "alle ventuno" (at twenty-one) never folded.  Wiktionary: ventuno,
+# ventitré, ventotto, trentuno.
+_IT_TENS = {"venti": 20, "trenta": 30, "quaranta": 40, "cinquanta": 50,
+            "sessanta": 60, "settanta": 70, "ottanta": 80, "novanta": 90}
+_IT_UNITS = ["uno", "due", "tre", "quattro", "cinque", "sei", "sette",
+             "otto", "nove"]
+
+
+def _it_fused_compounds():
+    words = set()
+    for tens in _IT_TENS:
+        for unit in _IT_UNITS:
+            stem = tens[:-1] if unit in ("uno", "otto") else tens
+            words.add(stem + unit)
+            if unit == "tre":
+                words.add(stem + "tré")
+    return frozenset(words)
+
+
+def _read_it(text, ordinals=True):
+    # the generic Romance reader refuses the fused compounds; Italian's own
+    # wrapper reads them ("ventuno" == 21)
+    from ovos_number_parser.numbers_it import extract_number_it
+    return extract_number_it(text, ordinals=ordinals)
+
+
 _fold_it_base = _romance_prepass_fold(
     "it", {"un", "uno", "una", "milioni", "miliardi", "mila", "prima"},
+    reader=_read_it, extra_numwords=_it_fused_compounds(),
     proclitics=frozenset({"l", "un", "d", "dell", "all", "nell", "dall",
                           "sull", "quest", "quell", "c"}),
     phrases=_IT_PHRASES,
