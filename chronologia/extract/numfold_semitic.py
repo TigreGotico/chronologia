@@ -482,6 +482,69 @@ def _he_counts_a_noun(tokens, i):
     return i + 1 < len(tokens) and not tokens[i + 1].is_number
 
 
+#: The FEMININE hour numerals 1..10.  Hebrew tells the time in the feminine,
+#: because שעה ("hour") is feminine, and the preposition ב־ ("at") is written
+#: fused onto the numeral: "בשבע בבוקר" (at seven in the morning) is one
+#: token to a whitespace tokenizer, so the hour was invisible and the phrase
+#: answered the daypart alone.  Attested across ordinary he.wikipedia prose:
+#: "החל בשבע בבוקר" (גלגלצ), "מת גרנט בשמונה בבוקר" (יוליסס ס. גרנט), "הגיע
+#: לברגהוף בעשר בבוקר" (הפלישה לנורמנדי), "בשלוש אחר הצהריים" (הפצצת תל אביב
+#: במלחמת העצמאות), "בחמש אחר הצהריים" (רצח ג'ון לנון), "באחת בלילה"
+#: (מאיר פיינשטיין).
+#:
+#: The MASCULINE forms are deliberately absent.  Hebrew names its weekdays by
+#: the masculine ordinal, so "בשני" is Monday, not two o'clock -- the same
+#: collision ``fold_he`` already guards against for the bare שני.
+_HE_BET_HOURS = frozenset({
+    "אחת", "שתיים", "שלוש", "ארבע", "חמש",
+    "שש", "שבע", "שמונה", "תשע", "עשר",
+})
+
+
+#: what must follow the fused numeral for it to be a clock.  The same
+#: spellings carry ordinary noun phrases -- "בשבע רצון" is gladly and "בשבע
+#: עיניים" is with close attention, neither naming a time -- so the split is
+#: licensed only where a time word closes it.  The meridiem surfaces are he's
+#: own ``clock_meridiem_*`` vocabularies; the two fraction surfaces are the
+#: ones the hour-and-fraction change beneath this one introduces.
+_HE_CLOCK_TAIL = frozenset({
+    "בבוקר", "בערב", "בלילה", "ורבע", "וחצי",
+    # the afternoon meridiem is written as two words, so its FIRST token is
+    # what follows the numeral ("אחר הצהריים", and the "אחה צ" abbreviation).
+    "אחר", "אחה",
+})
+
+
+def _he_split_bet_hour(tokens):
+    """Split the fused "at" preposition off a feminine hour numeral.
+
+    Emits ["ב"][numeral] so the ordinary ``at HOUR`` grammar binds, the same
+    two-token shape ``split_he_range_word`` produces for a vav-glued month.
+    A lone ב is not a Hebrew word -- it is only ever a proclitic -- so the
+    bare marker this leaves behind can come from nowhere else.
+
+    Only a numeral a time word closes is split.  The fused spelling is also
+    the start of ordinary idioms built on the same numeral, and splitting one
+    of those invents a time out of a phrase that names none.
+    """
+    out, changed = [], False
+    for i, t in enumerate(tokens):
+        nxt = tokens[i + 1] if i + 1 < len(tokens) else None
+        if (nxt is not None and nxt.text in _HE_CLOCK_TAIL
+                and not t.is_number and len(t.text) > 1 and t.text[0] == "ב"
+                and t.text[1:] in _HE_BET_HOURS):
+            out.append(Token(text="ב", raw=t.raw[0], index=t.index,
+                             char_start=t.char_start,
+                             char_end=t.char_start + 1 if t.char_start is not None else None))
+            out.append(Token(text=t.text[1:], raw=t.raw[1:], index=t.index,
+                             char_start=t.char_start + 1 if t.char_start is not None else None,
+                             char_end=t.char_end))
+            changed = True
+        else:
+            out.append(t)
+    return reindex(tuple(out)) if changed else tokens
+
+
 def fold_he(tokens):
     """The Hebrew cardinal fold, holding ``שני`` back where it names Monday.
 
@@ -492,6 +555,7 @@ def fold_he(tokens):
     ימים", two days ago) still folds while the weekday survives to be glued
     onto its day noun by the multiword pass.
     """
+    tokens = _he_split_bet_hour(tokens)
     out = []
     segment = []
     for i, tok in enumerate(tokens):
