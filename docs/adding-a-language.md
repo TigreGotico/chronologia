@@ -570,8 +570,36 @@ chronologia follows a simple discipline: **you don't get to claim your language
 works — you show it, with examples.** For every language there is a folder of
 tests at `test/nl_corpus_<your code>/` full of *real sentences a person would
 say*, each paired with the exact date it should mean. The test runner checks
-that chronologia agrees. This is the project's guarantee of quality, and it is
-required: **a new language must ship these examples.**
+that chronologia agrees. It is required: **a new language must ship these
+examples.**
+
+### What a green corpus does and does not tell you
+
+A passing corpus means the engine returns the value the example says it should.
+It does not mean a speaker of that language has read the example.
+
+Most locales are **unverified but internally consistent**: their expected values
+are derived by arithmetic independent of the parser, and that arithmetic has
+been re-derived against implementations sharing no code with it, but the
+*phrases* have had no native reader. An unidiomatic sentence with a correct date
+attached passes every check the project can run alone.
+
+A locale becomes verified when a speaker of it signs the corpus off, and the
+reviewer is named where that has happened, with something a reader can go and
+check. Danish has one: @andlo, whose native review of the open questions in
+`docs/languages/da.md` is issues #887 and #888. Every other locale is waiting
+for a reader, and until then its corpus is evidence that the engine is
+self-consistent rather than evidence that it understands the language.
+
+Being a reviewer for a locale elsewhere in the organisation is not a record
+here. The name goes on this page when the person has read these files and said
+so where it can be cited.
+
+This is why the vocabulary comment convention above asks for a name and not a
+verdict: "confirmed by a native speaker" is a claim about a person, and only a
+person can make it. No automated check, corpus frequency count or model reading
+may be written up as a native review. A speaker outranks every signal the
+project owns, which is precisely what makes the word worth protecting.
 
 Two things make it approachable:
 
