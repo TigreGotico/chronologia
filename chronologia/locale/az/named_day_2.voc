@@ -1,1 +1,10 @@
 o biri gün
+# az.wiktionary, entry "gün": "Biri gün (o birisi gün) -- sabahdan sonrakı
+# gün" (the day after tomorrow).  The fused spelling is the one that runs in
+# literary prose: az.wikisource has "sabah-birigün ərə gedərsən" (Şamdan bəy)
+# and "sabah yox, birigün züvvarlar çıxırlar" (Danabaş kəndinin əhvalatları).
+# The bare spaced "biri gün" is deliberately NOT listed -- it collides with
+# the ordinary "biri" + a gün- word ("başçılardan biri günah işlədərək",
+# "heç biri günümüzə"), which the fused and the "o ..." forms cannot.
+birigün
+o birisi gün
