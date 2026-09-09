@@ -1533,9 +1533,18 @@ _AST_PHRASES = [
     (["fin", "de", "selmana"], "findeselmana"),
 ]
 fold_ast = _romance_prepass_fold(
-    "ast", {"un", "una"},
+    "ast", set(),
     proclitics=frozenset({"l", "d", "un", "n"}),
     phrases=_AST_PHRASES,
     fem_ord={"primera": 1, "segunda": 2, "tercera": 3, "cuarta": 4,
              "quinta": 5, "sexta": 6, "séptima": 7, "septima": 7,
              "octava": 8, "novena": 9, "décima": 10, "decima": 10})
+# Asturian counts the article-one like its Iberian siblings: "una" is the
+# numeral wherever a count is expected ("a la una" -- one o'clock, attested in
+# running prose on ast.wikipedia: "a la una de la madrugada"), and the article
+# only where it heads a scale frame ("hai un millón d'anos").  The blanket
+# blacklist read it as the article everywhere, so the feminine hour never
+# folded.  Same treatment as es/gl/ca.
+fold_ast = _with_scale_frame(fold_ast, "ast", frozenset({"un", "una"}),
+                             million_extra=frozenset({"millones", "millon",
+                                                      "millón"}))
