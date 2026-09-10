@@ -37,6 +37,17 @@ tomorrow, which is what CLDR's `i morgen` means once the `i` is dropped, but
 Danish writes the dotted civil date, so `15.06.2020` reads, as does the ISO
 `2020-06-15`.
 
+**The dotted timetable clock.** Resolved by native review: `14.30` and
+`klokken 14.30` now read the same as the colon form `14:30`. The
+`dotted_clock` tokenizer mode was already built (originally for Finnish, CLDR
+47 fi short time pattern `H.mm`) but was opt-in and off by default; declaring
+it for Danish was the whole fix. The mode's own guards keep it from
+colliding with the dotted date it is matched after (`3.6.2020` still reads
+whole) and with plain decimals (`1.000`, `2.5` still fall through to the
+number rule) — verified against both, plus the combined case `3. oktober
+klokken 14.30`, which now also resolves the clock half instead of leaving it
+in the remainder.
+
 **Relative offsets** are `om` forward and `siden` backward, with `for` licensed
 as a leading before-marker, so both `for tre dage siden` and `tre dage siden`
 resolve. Units ship in singular and plural with a separate `unit1_` file each.
@@ -175,10 +186,6 @@ and the holiday vocabulary record no source.
 the accented numeral that Danish orthography uses to distinguish the numeral
 from the article is not in the vocabulary.
 
-**The dotted timetable clock.** `14.30` and `klokken 14.30` both return
-nothing, though the colon form `14:30` reads. The tokenizer splits on the dot
-for the dotted civil date and no timetable-clock reading is attempted.
-
 **Decades.** `80'erne` and `firserne` return nothing. The locale declares no
 decade construction; Bokmål declares one and reads `80-tallet`.
 
@@ -198,7 +205,6 @@ resolve, leaving the framing `i` or `om` in the remainder: `i eftermiddag`,
    bind? It is the form that returns a six-hour band.
 2. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split
    puts it at 18:00.
-3. Is `14.30` the written clock Danish readers expect to be understood?
 
 Resolved: whether `halvanden` ships as the 1.5 quantifier — see `halvanden`
 under "What ships" above.
@@ -209,3 +215,6 @@ ships" above (shipped definite-only, `morgenen`).
 
 Resolved: whether `halv et` and `kvart i et` read as 12:30 and 12:45 — see
 "The hour before one" above.
+
+Resolved: whether `14.30` should read as a clock — see "The dotted timetable
+clock" under "What ships" above.
