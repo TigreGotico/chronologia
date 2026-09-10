@@ -69,7 +69,14 @@ _UNICODE_TABLE = str.maketrans(_UNICODE_FOLD)
 # folding the key is offset-safe.  The loader tokenises its vocab surfaces
 # through this same class, so a voc entry written WITH a ZWNJ is registered in
 # its folded (ZWNJ-free) form as well; a user's either spelling then matches.
-_INTRAWORD_ZW = dict.fromkeys((0x200C, 0x200D))
+# The Arabic vowel and consonant marks (Unicode Arabic block, U+064B-U+0652:
+# the three tanwin, fatha, damma, kasra, shadda, sukun; U+0670 the superscript
+# alef) are optional in ordinary writing: "الثالثة" and the fully vocalised
+# "الثَّالِثة" are the same word.  They are combining marks, so without them
+# in the letter class a vocalised word split at every mark; kept in the
+# class and dropped from the matching key, as the ZWNJ is, so either
+# spelling matches and the offsets still index the original text.
+_INTRAWORD_ZW = dict.fromkeys((0x200C, 0x200D, *range(0x064B, 0x0653), 0x0670))
 # the º / ª ordinal indicators (Spanish/Portuguese/Italian "1º de abril" = the
 # 1st) glued to a digit, with the optional RAE dot ("1.º"): read as the day
 # number by dropping the indicator.  Only after a digit, so a bare "Nº" or a
@@ -358,7 +365,8 @@ class Tokenizer:
         # digits, and a currency or bookkeeping symbol is not a letter.
         letter = (r"(?:[^\W\d]|[ऀ-ःऺ-ॏ॑-ॗॢॣ]"
                   r"|[\u0e31\u0e34-\u0e3a\u0e47-\u0e4e]"
-                  r"|[\u0b82\u0bbe-\u0bcd\u0bd7])")
+                  r"|[\u0b82\u0bbe-\u0bcd\u0bd7]"
+                  r"|[\u064b-\u0652\u0670])")
         zwj = r"(?:[‌‍׳״]" + letter + r"+)*"
         # a geresh can also be the mark on its OWN, trailing the letters
         # instead of sitting between two of them: that is how a SINGLE-LETTER
