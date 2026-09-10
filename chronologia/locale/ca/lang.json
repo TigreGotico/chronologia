@@ -32,6 +32,7 @@
         "at? QUARTS quarters of HOUR of? article? MERIDIEM? ZONE?",
         "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
         "at? at HOUR of? article? MERIDIEM? ZONE?",
+        "at? at HOUR oclock of? article? MERIDIEM? ZONE?",
         "at? HOUR of? article? MERIDIEM ZONE?",
         "at? HOUR MERIDIEM ZONE?",
         "at? LANDMARK of? article? MERIDIEM? ZONE?",
