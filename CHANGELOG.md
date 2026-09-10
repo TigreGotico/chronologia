@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.29.12a1](https://github.com/TigreGotico/chronologia/tree/0.29.12a1) (2026-09-10)
+
+[Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.29.11a2...0.29.12a1)
+
+**Merged pull requests:**
+
+- fix\(da\): halvanden \(1.5\) now resolves correctly, not as 0.5 [\#886](https://github.com/TigreGotico/chronologia/pull/886) ([andlo](https://github.com/andlo))
+- fix\(sl\): read the noon, midnight and before-noon adverbs [\#875](https://github.com/TigreGotico/chronologia/pull/875) ([JarbasAl](https://github.com/JarbasAl))
+- fix\(it\): read the spelled clock hour-first [\#873](https://github.com/TigreGotico/chronologia/pull/873) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.29.11a2](https://github.com/TigreGotico/chronologia/tree/0.29.11a2) (2026-09-09)
+
+[Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.29.11a1...0.29.11a2)
+
+## [0.29.11a1](https://github.com/TigreGotico/chronologia/tree/0.29.11a1) (2026-09-09)
+
+[Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.29.10a1...0.29.11a1)
+
+## [0.29.10a1](https://github.com/TigreGotico/chronologia/tree/0.29.10a1) (2026-09-09)
+
+[Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.29.9a1...0.29.10a1)
+
+**Merged pull requests:**
+
+- docs: say what a green corpus does and does not establish [\#893](https://github.com/TigreGotico/chronologia/pull/893) ([JarbasAl](https://github.com/JarbasAl))
+- fix\(he\): split the fused at-preposition off a feminine hour [\#877](https://github.com/TigreGotico/chronologia/pull/877) ([JarbasAl](https://github.com/JarbasAl))
+- fix\(he\): read the additive fraction that closes an hour [\#874](https://github.com/TigreGotico/chronologia/pull/874) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.29.9a1](https://github.com/TigreGotico/chronologia/tree/0.29.9a1) (2026-09-09)
+
+[Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.29.8a1...0.29.9a1)
+
+## [0.29.8a1](https://github.com/TigreGotico/chronologia/tree/0.29.8a1) (2026-09-09)
+
+[Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.29.7a1...0.29.8a1)
+
 ## [0.29.7a1](https://github.com/TigreGotico/chronologia/tree/0.29.7a1) (2026-09-09)
 
 [Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.29.6a1...0.29.7a1)
@@ -619,49 +655,25 @@
 
 [Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.10.1a2...0.10.2a1)
 
-**Merged pull requests:**
-
-- fix: counted week-weekday vetoes cover their case forms [\#770](https://github.com/TigreGotico/chronologia/pull/770) ([JarbasAl](https://github.com/JarbasAl))
-
 ## [0.10.1a2](https://github.com/TigreGotico/chronologia/tree/0.10.1a2) (2026-08-24)
 
 [Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.10.1a1...0.10.1a2)
-
-**Merged pull requests:**
-
-- fix: trailing-marker weekday counts honour the unit-surface guard [\#769](https://github.com/TigreGotico/chronologia/pull/769) ([JarbasAl](https://github.com/JarbasAl))
 
 ## [0.10.1a1](https://github.com/TigreGotico/chronologia/tree/0.10.1a1) (2026-08-24)
 
 [Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.10.0a1...0.10.1a1)
 
-**Merged pull requests:**
-
-- fix: counted Serbian week-Sunday forms refuse instead of naming a day [\#768](https://github.com/TigreGotico/chronologia/pull/768) ([JarbasAl](https://github.com/JarbasAl))
-
 ## [0.10.0a1](https://github.com/TigreGotico/chronologia/tree/0.10.0a1) (2026-08-24)
 
 [Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.9.0a1...0.10.0a1)
-
-**Merged pull requests:**
-
-- feat: Armenian locale with native decimal number folding [\#767](https://github.com/TigreGotico/chronologia/pull/767) ([JarbasAl](https://github.com/JarbasAl))
 
 ## [0.9.0a1](https://github.com/TigreGotico/chronologia/tree/0.9.0a1) (2026-08-24)
 
 [Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.8.6a1...0.9.0a1)
 
-**Merged pull requests:**
-
-- feat: Georgian locale with vigesimal number folding [\#766](https://github.com/TigreGotico/chronologia/pull/766) ([JarbasAl](https://github.com/JarbasAl))
-
 ## [0.8.6a1](https://github.com/TigreGotico/chronologia/tree/0.8.6a1) (2026-08-24)
 
 [Full Changelog](https://github.com/TigreGotico/chronologia/compare/0.8.5a1...0.8.6a1)
-
-**Merged pull requests:**
-
-- fix: separate Portuguese and Galician dayframe markers from during [\#765](https://github.com/TigreGotico/chronologia/pull/765) ([JarbasAl](https://github.com/JarbasAl))
 
 ## [0.8.5a1](https://github.com/TigreGotico/chronologia/tree/0.8.5a1) (2026-08-24)
 
@@ -1313,7 +1325,7 @@
 
 ## [0.1.0a2](https://github.com/TigreGotico/chronologia/tree/0.1.0a2) (2026-07-21)
 
-[Full Changelog](https://github.com/TigreGotico/chronologia/compare/6a3f75634c8273970bd84740f5cb0dc2f65c97bb...0.1.0a2)
+[Full Changelog](https://github.com/TigreGotico/chronologia/compare/0d8563c995bf8d2a9c1049f157169597d1d520a4...0.1.0a2)
 
 
 
