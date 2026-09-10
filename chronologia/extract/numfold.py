@@ -211,7 +211,14 @@ def _after_month_day(out):
     the same fold.
     """
     k = len(out) - 1
-    if k < 0 or out[k].text not in _ORD_DAY_WORDS:
+    if k < 0:
+        return False
+    if out[k].is_number:
+        # a digit day, "july 4" / "july 4th" (the suffix already merged)
+        v = out[k].value
+        return (v is not None and 1 <= v <= 31 and float(v).is_integer()
+                and k >= 1 and out[k - 1].text in _months())
+    if out[k].text not in _ORD_DAY_WORDS:
         return False
     k -= 1
     if k >= 0 and out[k].text in _CARD_TENS:   # "thirty first"
@@ -299,7 +306,8 @@ def _fold_spelled_year(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     units = _units()
     while i < n:
         tok = tokens[i]
-        if tok.text not in _CARDINALS or (out and out[-1].is_number):
+        if tok.text not in _CARDINALS or (
+                out and out[-1].is_number and not _after_month_day(out)):
             out.append(tok)
             i += 1
             continue
@@ -704,6 +712,10 @@ fold_en = make_fold(NumberGrammar(
     joiner=lambda tok: tok.text == "and",
     joiner_in_text=False,
     bridge_ok=lambda so_far, atom: so_far >= 100 and atom < so_far,
+    # below a hundred only a tens word takes a units digit ("twenty two",
+    # "twenty second"); "seven thirty" and "eleven fifty" are two numerals
+    continues=lambda so_far, atom: (so_far >= 20 and so_far % 10 == 0
+                                    and 1 <= atom <= 9),
     pre=_pre_en))
 
 
