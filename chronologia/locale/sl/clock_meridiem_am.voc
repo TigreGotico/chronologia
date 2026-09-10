@@ -1,1 +1,6 @@
 zjutraj
+# "dopoldne" (before noon) is the ante-meridiem mirror of "popoldne", which
+# this locale already lists in clock_meridiem_pm.voc.  Running prose on
+# sl.wikipedia: "ob deseti uri dopoldne" (Trbovlje), "8. maja dopoldne se je
+# skozi Maribor ... umaknil" (Maribor).
+dopoldne
