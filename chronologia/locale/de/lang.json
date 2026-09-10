@@ -39,6 +39,7 @@
         "CLOCK MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
         "at HOUR oclock MINUTE oclock? MERIDIEM? ZONE?",
+        "at? HOUR MERIDIEM ZONE?",
         "at HOUR oclock MERIDIEM? ZONE?",
         "HOUR oclock MINUTE oclock? MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
