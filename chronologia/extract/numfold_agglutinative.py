@@ -373,7 +373,26 @@ _FI_ABLATIVE_HOURS = {
     "kuudelta": 6, "seitsemältä": 7, "kahdeksalta": 8, "yhdeksältä": 9,
     "kymmeneltä": 10, "yhdeltätoista": 11, "kahdeltatoista": 12,
 }
-fold_fi = _make_fold("fi", {**_FI_GENITIVE})
+# Finnish tells the minutes of a "N yli/vaille HOUR" clock with either the
+# nominative or the partitive ("kymmenen yli yksi" ~ "kymmentä yli yksi",
+# "kaksikymmentä vaille kaksi" ~ "kahtakymmentä vaille"); the partitive is a
+# single word the cardinal back-end does not read.  Kotus, Kielitoimiston
+# ohjepankki, "Luvut ja numerot: peruslukujen taivuttaminen" tabulates the
+# partitive of 1-10 and of 11-20 (the -toista tail never inflects, so the
+# ending comes off the leading part) and gives the compound pattern
+# "kahtakymmentäyhtä", "kahtakymmentäkahta" for 21-29.
+_FI_PARTITIVE_UNITS = {
+    "yhtä": 1, "kahta": 2, "kolmea": 3, "neljää": 4, "viittä": 5,
+    "kuutta": 6, "seitsemää": 7, "kahdeksaa": 8, "yhdeksää": 9,
+}
+_FI_PARTITIVE = {
+    "kymmentä": 10,
+    "kahtakymmentä": 20,
+    **_FI_PARTITIVE_UNITS,
+    **{w + "toista": n + 10 for w, n in _FI_PARTITIVE_UNITS.items()},
+    **{"kahtakymmentä" + w: 20 + n for w, n in _FI_PARTITIVE_UNITS.items()},
+}
+fold_fi = _make_fold("fi", {**_FI_GENITIVE, **_FI_PARTITIVE})
 # Finnish spells the day-of-month with a single-token ordinal the cardinal
 # back-end does not read in date position ("viidestoista huhtikuuta" = the 15th
 # of April).  ``pronounce_ordinal_fi`` emits every 1..31 as one compound word

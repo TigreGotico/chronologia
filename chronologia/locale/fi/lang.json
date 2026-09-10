@@ -39,6 +39,8 @@
         "at HOUR oclock MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
+        "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
+        "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?",
         "at? LANDMARK ZONE?"
       ],
       "prefer_future": true
