@@ -58,13 +58,23 @@ def test_ordinal_reading_survives(text, first, last):
     assert res[0].end == ad(datetime(*last))
 
 
-# -- a COUNT of exactly one, spelled with the surface the ordinal shares:
-# -- "the second one" reads as readily as "one second", so the engine
-# -- declines rather than pick, and no fabricated one-second span appears.
+# -- a COUNT of exactly one, spelled with the surface the ordinal shares.
+# -- After a count the word has one reading, the unit: "1 second" is a length
+# -- and never "1 2nd".  The offset is the anchor shifted by one second; a bare
+# -- count names a length and no point in time.
 
-@pytest.mark.parametrize("text", [
-    "en 1 segundu",
+@pytest.mark.parametrize("text,secs", [
+    ('en 1 segundu', 1),
 ])
-def test_count_one_stays_refused(text):
-    assert parse(text) is None, f"{text!r} fabricated a span"
-    assert extract_duration(text, LANG) is None
+def test_count_one_is_one_second(text, secs):
+    got = extract_duration(text, LANG)
+    assert got is not None, f"{text!r} did not read as a duration"
+    assert got[0] == timedelta(seconds=1)
+    res = parse(text)
+    if secs is None:
+        assert res is None, f"{text!r} fabricated a span from a bare length"
+    else:
+        assert res is not None, f"{text!r} did not parse as a span"
+        assert res.remainder == ""
+        assert res[0].start == ad(ANCHOR + timedelta(seconds=secs))
+        assert res[0].end == ad(ANCHOR + timedelta(seconds=secs + 1))

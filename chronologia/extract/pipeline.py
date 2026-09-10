@@ -23,6 +23,7 @@ from typing import List, Tuple
 
 from chronologia.extract.model import LangSpec, Token
 from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numfold_roman import fold_roman_numerals
 from chronologia.extract.tokenizer import Tokenizer
 
@@ -191,6 +192,64 @@ def pretokens(text: str, spec: LangSpec) -> Tuple[Token, ...]:
     return tokens
 
 
+def _is_a_numeral_one(tok: Token, hook) -> bool:
+    """A digit token, or a spelled word the language's own fold reads as 1."""
+    if tok.is_number:
+        return True
+    folded = hook((tok,))
+    return len(folded) == 1 and folded[0].is_number and folded[0].value == 1
+
+
+def _fold_around_counted_seconds(tokens: Tuple[Token, ...], hook,
+                                 spec: LangSpec) -> Tuple[Token, ...]:
+    """Run the number fold with every counted second-unit word held out.
+
+    In English and the Romance languages the unit of time and the ordinal
+    "2nd" share one word ("second", "segundo", "seconde", "secondo",
+    "segon", "segonda").  The spelled-number fold reads that word as the
+    ordinal wherever it stands, so "one second" folds to the single numeral
+    2 and "1 second" to the pair 1 2, and the length is gone before any
+    unit rule sees it.  Right after a count the word can only be the unit,
+    so the stream is folded in segments on either side of it and the word
+    itself passes through untouched; every other position keeps the ordinal
+    reading ("the second of May", "twenty second" == 22).
+    """
+    seconds = {s for s, unit in spec.units.items() if unit == "second"}
+    if not seconds:
+        return hook(tokens)
+    # After a numeral ("1", "one", "un" read as 1) the word is the unit unless
+    # a unit, weekday or month follows ("une seconde semaine").  After the
+    # bare unit-of-one word that is also the indefinite article ("a", "une",
+    # "um") it is the unit only when the phrase ends there or an offset
+    # direction follows ("in a second", "un secondo fa"); before any other
+    # word it is the ordinal adjective ("a second chance").
+    nouns = set(spec.units) | set(spec.weekdays) | set(spec.months)
+    trailers = set(spec.directions)
+
+    def unit_here(i):
+        prev = tokens[i - 1]
+        nxt = tokens[i + 1].text if i + 1 < len(tokens) else None
+        if _is_a_numeral_one(prev, hook):
+            return nxt not in nouns
+        if spec.quantifiers.get(prev.text) == 1.0:
+            return nxt is None or nxt in trailers
+        return False
+
+    out = []
+    seg = []
+    for i, tok in enumerate(tokens):
+        if tok.text in seconds and i > 0 and unit_here(i):
+            if seg:
+                out.extend(hook(tuple(seg)))
+                seg = []
+            out.append(tok)
+        else:
+            seg.append(tok)
+    if seg:
+        out.extend(hook(tuple(seg)))
+    return reindex(tuple(out))
+
+
 def fold_tokens(tokens: Tuple[Token, ...], spec: LangSpec,
                 text: str) -> Tuple[Token, ...]:
     """The folding tail of the pipeline applied to a (sub-)stream of pretokens.
@@ -202,7 +261,7 @@ def fold_tokens(tokens: Tuple[Token, ...], spec: LangSpec,
     without re-running the tokenizer.
     """
     if spec.hook is not None:
-        tokens = spec.hook(tokens)
+        tokens = _fold_around_counted_seconds(tokens, spec.hook, spec)
     # context-gated Roman-numeral ordinals ("século XII", "anno MMXX"): a
     # spec-aware fold (it reads the language's own century/year vocabulary), so
     # it runs here rather than in the per-language hook.
