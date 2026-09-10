@@ -2950,6 +2950,7 @@ class Resolver:
                     # only ever fires for the spelled hour 1.
                     if hour == 0 and self.spec.conventions.toward_hour_12h:
                         hour = 12
+                        spoken_hour = 12
             elif min_tok is not None and dir_tok is None:
                 # An ADDITIVE minute count with no direction word at all:
                 # Korean writes 세 시 십 분 -- "three hour ten minute" -- and
@@ -3011,6 +3012,7 @@ class Resolver:
                 # hour is spoken as twelve.
                 if hour == 0 and self.spec.conventions.toward_hour_12h:
                     hour = 12
+                    spoken_hour = 12
             if hour < 0:            # "quarter to midnight" underflows -> 23:45
                 hour += 24
         meridiem = match.slots.get("MERIDIEM")

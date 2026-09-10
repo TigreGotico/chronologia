@@ -11,14 +11,30 @@ import pytest
 from ._corpus import ANCHOR, ad, start, span, nomatch, clk
 
 
-@pytest.mark.parametrize("text,h,mi", [('halv ni', 8, 30), ('halv syv', 6, 30), ('halv otte', 7, 30), ('halv ti', 9, 30), ('halv elleve', 10, 30), ('halv tolv', 11, 30), ('halv et', 0, 30), ('halv to', 1, 30), ('halv tre', 2, 30), ('halv fire', 3, 30), ('halv fem', 4, 30), ('halv seks', 5, 30), ('halv middag', 11, 30), ('halv midnat', 23, 30)])
+@pytest.mark.parametrize("text,h,mi", [('halv ni', 8, 30), ('halv syv', 6, 30), ('halv otte', 7, 30), ('halv ti', 9, 30), ('halv elleve', 10, 30), ('halv tolv', 11, 30), ('halv et', 12, 30), ('halv to', 1, 30), ('halv tre', 2, 30), ('halv fire', 3, 30), ('halv fem', 4, 30), ('halv seks', 5, 30), ('halv middag', 11, 30), ('halv midnat', 23, 30)])
 def test_half_is_half_to(text, h, mi):
     assert start(text) == clk(h, mi)
     assert span(text).width == timedelta(minutes=1)
 
 
-@pytest.mark.parametrize("text,h,mi", [('kvart over tre', 3, 15), ('kvart i ni', 8, 45), ('kvart over elleve', 11, 15), ('kvart i tolv', 11, 45), ('kvart i et', 0, 45), ('kvart over midnat', 0, 15), ('kvart i midnat', 23, 45), ('kvart over middag', 12, 15)])
+@pytest.mark.parametrize("text,h,mi", [('kvart over tre', 3, 15), ('kvart i ni', 8, 45), ('kvart over elleve', 11, 15), ('kvart i tolv', 11, 45), ('kvart i et', 12, 45), ('kvart over midnat', 0, 15), ('kvart i midnat', 23, 45), ('kvart over middag', 12, 15)])
 def test_quarter_explicit(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
+@pytest.mark.parametrize("text,h,mi", [
+    # regression (PR #883 review): toward_hour_12h resolved the bare/night
+    # forms to 12 but left spoken_hour at the literal "et"=1, so the
+    # meridiem step's own spoken_hour<12 PM-shift fired a SECOND time on an
+    # already-resolved 12, landing on 0 instead of leaving it at 12.
+    ('halv et om eftermiddagen', 12, 30),
+    ('kvart i et om eftermiddagen', 12, 45),
+    ('klokken halv et om eftermiddagen', 12, 30),
+    # proves the flag did not just move midnight to noon everywhere: the
+    # NIGHT band still reads the small hours as-is, unaffected by the fix.
+    ('halv et om natten', 0, 30),
+])
+def test_hour_before_one_with_explicit_meridiem(text, h, mi):
     assert start(text) == clk(h, mi)
 
 

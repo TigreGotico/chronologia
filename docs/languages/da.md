@@ -12,9 +12,9 @@ The same article records the fact that governs everything awkward about this
 locale: everyday Danish reckons the clock in two twelve-hour cycles, `"Et" til
 "tolv", underforstået 'timer' (2 cykler på en dag)`, and normally speaks it
 `kun op til et halvt døgn` — its worked example turns 18:49 into `kvart i syv`.
-The locale nevertheless resolves the hour that rolls back past one in
-twenty-four-hour terms, so `halv et` is 00:30 and `kvart i et` is 00:45. See
-"The hour before one" below, which is the open decision of this locale.
+The locale resolves the hour that rolls back past one in the two-cycle
+twelve-hour reading a Danish speaker means, so `halv et` is 12:30 and `kvart i
+et` is 12:45. See "The hour before one" below.
 
 ## What ships
 
@@ -126,39 +126,29 @@ before the (wrong) number-parser value ever folds it, mirroring German
 
 ## The hour before one
 
-This is the open decision of the locale, and it is worth stating precisely
-because the two readings are both defensible.
+Resolved by native review: Danish sets `toward_hour_12h`. What a Danish
+speaker most often means, given that the everyday clock runs in two
+twelve-hour cycles, is 12:30 for `halv et` and 12:45 for `kvart i et` — half
+past noon, not half past midnight. `toward_hour_12h` is exactly this: where
+it is set, the hour that rolls back from one to zero surfaces as twelve.
 
-What resolves today, in twenty-four-hour terms: `halv et` is 00:30, `kvart i
-et` is 00:45, `fem i et` is 00:55. What a Danish speaker most often means,
-given that the everyday clock runs in two twelve-hour cycles, is 12:30, 12:45
-and 12:55 — half past noon, not half past midnight. The `toward_hour_12h`
-convention exists for exactly this: where it is set, the hour that rolls back
-from one to zero surfaces as twelve.
+Danish is now the second Germanic locale to declare it, alongside Icelandic;
+German, Dutch, Frisian, Swedish, and both Norwegian standards still don't.
+This was scoped to Danish only — Swedish and Bokmål pin the same 00:30/00:45
+shape for their own spellings and were left as-is, since the doc's own
+framing called this a family decision, not a Danish one, and a native review
+of one locale isn't grounds to flip its siblings.
 
-Danish does not declare it, and neither do German, Dutch, Frisian, Swedish,
-either Norwegian standard, or Malay — eight locales that share the
-coming-hour half without it, the set defined by the flag combination rather
-than by family; Malay is not Germanic. The one Germanic locale that does set
-it is Icelandic.
+The flag is read at three points in the resolver, and the two that matter
+moved together as expected: `halv et` now resolves to 12:30 and `kvart i et`
+to 12:45, pinned in `test/nl_corpus_da/test_da_clock.py`. Full local test
+suite re-run clean after the change (159419 passed, only 3 pre-existing,
+unrelated `test_packaging.py` errors from a missing `build` module in this
+environment).
 
-Declaring it here would not be a targeted fix. The flag is read at three points
-in the resolver, and the two that matter are the bare half and the *explicit*
-subtractive direction. Turning it on moves `halv et` to 12:30, which is the
-intent, but it also moves `kvart i et` to 12:45 and `fem i et` to 12:55 —
-readings a speaker who said them at midnight would find wrong in the other
-direction. Nothing in the flag distinguishes the two branches.
-
-The cost in tests is exactly two pinned cases in this locale's own corpus,
-`('halv et', 0, 30)` and `('kvart i et', 0, 45)` in
-`test/nl_corpus_da/test_da_clock.py`. The Swedish and Bokmål corpora pin the
-same pair for their own spellings, and `test/test_engine_bare_half_to.py` pins
-the same shape once more for German `halb eins`. A change here is therefore a
-family decision, not a Danish one.
-
-The marked forms already read the way a native expects and would not move: the
+The marked forms already read the way a native expects and did not move: the
 day-part binding gives `halv et om eftermiddagen` 12:30 and `kvart i et om
-eftermiddagen` 12:45 today. Only the unmarked phrase is at issue.
+eftermiddagen` 12:45, same as before.
 
 ## Weaker provenance
 
@@ -204,13 +194,11 @@ resolve, leaving the framing `i` or `om` in the remainder: `i eftermiddag`,
 
 ## Open questions for a native speaker
 
-1. Should `halv et` and `kvart i et` read as 12:30 and 12:45? The two branches
-   move together, so the answer has to cover both.
-2. Is `tre om eftermiddagen`, with no `klokken`, ordinary enough to need to
+1. Is `tre om eftermiddagen`, with no `klokken`, ordinary enough to need to
    bind? It is the form that returns a six-hour band.
-3. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split
+2. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split
    puts it at 18:00.
-4. Is `14.30` the written clock Danish readers expect to be understood?
+3. Is `14.30` the written clock Danish readers expect to be understood?
 
 Resolved: whether `halvanden` ships as the 1.5 quantifier — see `halvanden`
 under "What ships" above.
@@ -218,3 +206,6 @@ under "What ships" above.
 Resolved: whether a `morgen` day-part surface should ship despite the
 collision with the tomorrow word — see the `morgen` paragraph under "What
 ships" above (shipped definite-only, `morgenen`).
+
+Resolved: whether `halv et` and `kvart i et` read as 12:30 and 12:45 — see
+"The hour before one" above.
