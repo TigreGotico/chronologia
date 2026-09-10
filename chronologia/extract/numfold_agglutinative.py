@@ -532,6 +532,18 @@ def fold_eu(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         t = tokens[i]
         nxt = tokens[i + 1] if i + 1 < n else None
         if (t.is_number and nxt is not None and not nxt.is_number
+                and nxt.text == "etan"):
+            # the digit hour with the inessive glued on ("3etan" = at three;
+            # Araua 37 writes case suffixes onto digits, "1995eko", "7an"):
+            # the same synthetic "at" + hour the spelled "hiruretan" gets
+            merged.append(Token(text="etan", raw="", index=t.index,
+                                char_start=t.char_start, char_end=t.char_start))
+            merged.append(replace(t, raw=t.raw + nxt.raw,
+                                   char_end=nxt.char_end if nxt.char_end is not None
+                                   else t.char_end))
+            i += 2
+            continue
+        if (t.is_number and nxt is not None and not nxt.is_number
                 and nxt.text in _EU_NUM_SUFFIX):
             merged.append(replace(t, raw=t.raw + nxt.raw,
                                    char_end=nxt.char_end if nxt.char_end is not None
