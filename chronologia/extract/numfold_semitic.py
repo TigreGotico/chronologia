@@ -156,6 +156,12 @@ _fold_ar_base = with_ordinals(
 # half) and "الربع الأول" (first quarter) read while تشرين الأول stays October.
 _AR_MONTH_ORD_PREFIX = frozenset({"تشرين", "كانون", "جمادى", "ربيع"})
 _AR_MONTH_ORDINAL = {"الأول": 1, "الأولى": 1, "الثاني": 2, "الثانية": 2}
+#: The yesterday word takes the same ordinal as its second half: "أمس الأول"
+#: is the day before yesterday, the reversed twin of "أول أمس".  Folding the
+#: ordinal to 1 there destroys the phrase before the multiword pass can merge
+#: it, and the day word alone then answers YESTERDAY -- a wrong date rather
+#: than a refusal.
+_AR_DAY_ORD_PREFIX = frozenset({"أمس", "امس", "الأمس"})
 
 
 def _ar_month_ordinal_license(tokens):
@@ -164,8 +170,9 @@ def _ar_month_ordinal_license(tokens):
         if t.is_number or t.text not in _AR_MONTH_ORDINAL:
             continue
         prev = out[i - 1] if i > 0 else None
-        if prev is not None and prev.text in _AR_MONTH_ORD_PREFIX:
-            continue  # part of a month name -- leave the surface untouched
+        if prev is not None and (prev.text in _AR_MONTH_ORD_PREFIX
+                                 or prev.text in _AR_DAY_ORD_PREFIX):
+            continue  # part of a month name or of "أمس الأول" -- leave it
         v = _AR_MONTH_ORDINAL[t.text]
         out[i] = Token(text=str(v), raw=str(v), index=t.index, is_number=True,
                        value=v, char_start=t.char_start, char_end=t.char_end)

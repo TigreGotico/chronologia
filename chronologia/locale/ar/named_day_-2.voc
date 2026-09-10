@@ -1,3 +1,12 @@
 أول أمس
 اول امس
 أول من أمس
+# The reversed word order is as ordinary as the fronted one and was the form
+# that failed: "أمس الأول" matched only "أمس" (yesterday) and left "الأول"
+# stranded, so the day before yesterday answered YESTERDAY.  ar.wikipedia
+# running prose: "عقدوا أمس الأول اجتماعاً في عكا" (عملية الخالصة), "أقامت
+# إدارة التعليم بمحافظة ينبع أمس الأول احتفالا" (1998 في السعودية), "كأنها
+# جرت أمس الأول" (طاهر أبو زيد).  The undotted spelling follows this
+# locale's own convention of listing both.
+أمس الأول
+امس الاول
