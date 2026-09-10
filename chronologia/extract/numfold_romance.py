@@ -22,6 +22,7 @@ from ovos_number_parser.numbers_fr import extract_number_fr
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
+                                                with_marked_h_clock,
                                                     reindex as _reindex)
 from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
 
@@ -818,11 +819,12 @@ def _with_h_clock(fold):
     21h30", "a les 17h30", "a las 21h20".  Attested in running prose on the
     Spanish, Catalan and Galician Wikipedias (Spanish TV schedules and an
     Ecuadorian decree, the 1949 Turia flood in Catalan, RTP Acores listings in
-    Galician).  Italian, Romanian, Asturian, Greek and Swedish do NOT write it:
-    a search for each language's own clock preposition before the notation
-    ("alle"/"ore" in Italian, "ora" in Romanian) returns nothing, and the bare
-    digit-h-digit hits in those wikis are durations, coordinates and citations
-    to French sources.
+    Galician).  These three fold it unconditionally, marker or none.
+
+    Italian, Romanian, Asturian, Greek and Swedish write it only behind a
+    clock marker -- Asturian article prose has "a les 21h" and "de les 13h a
+    les 13h25", never a bare one -- so they take
+    :func:`~chronologia.extract.numfold_engine.with_marked_h_clock` instead.
     """
     def folded(tokens):
         return fold(_collapse_h_clock(tokens))
@@ -1572,3 +1574,15 @@ fold_ast = _romance_prepass_fold(
 fold_ast = _with_scale_frame(fold_ast, "ast", frozenset({"un", "una"}),
                              million_extra=frozenset({"millones", "millon",
                                                       "millón"}))
+
+
+# The hour-letter clock is written in all three of these languages, but only
+# where a clock marker already announces one: "alle 21h30", "ore 21h30",
+# "la ora 21h30", "a les 21h30".  Each marker set is that locale's own
+# marker_at and marker_oclock surfaces, so the notation folds exactly where
+# the grammar already reads a clock; a bare "21h30" stays unread, and the
+# phrase returns nothing rather than the hour alone with "h30" stranded.
+fold_it = with_marked_h_clock(
+    fold_it, {"alle", "all", "alla", "a", "ad", "ore", "ora"})
+fold_ro = with_marked_h_clock(fold_ro, {"la", "ora", "ore"})
+fold_ast = with_marked_h_clock(fold_ast, {"a", "les", "la", "hores", "hora"})

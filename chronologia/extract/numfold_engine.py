@@ -286,3 +286,53 @@ def make_fold(grammar: NumberGrammar
         return reindex(out)
 
     return fold
+
+
+def collapse_marked_h_clock(tokens, markers) -> Tuple[Token, ...]:
+    """Fold "21h30"/"20h" into an ``HH:MM`` literal behind a clock marker.
+
+    Italian, Romanian, Asturian, Greek and Swedish write the hour-letter
+    notation only where a clock marker already says a clock follows -- "alle
+    21h30", "la ora 21h30", "a les 21h30", "στις 21h30", "kl 21h30".  A bare
+    "21h30" in those languages is a duration, a coordinate or a citation to a
+    French source, so it is not folded and the phrase does not become a time.
+
+    ``markers`` is the closed set of surfaces that may sit immediately before
+    the hour, taken from that locale's own ``marker_at`` and ``marker_oclock``
+    vocabularies, so the fold licenses the notation exactly where the grammar
+    already licenses a clock.
+    """
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        nn = tokens[i + 2] if i + 2 < n else None
+        marked = bool(out) and out[-1].text in markers
+        if (marked and t.is_number and t.value is not None
+                and 0 <= t.value <= 24 and float(t.value).is_integer()
+                and nxt is not None and nxt.text == "h"):
+            if (nn is not None and nn.is_number and nn.value is not None
+                    and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
+                lit = "%d:%02d" % (int(t.value), int(nn.value))
+                out.append(Token(text=lit, raw=lit, index=0))
+                i += 3
+                continue
+            lit = "%d:00" % int(t.value)
+            out.append(Token(text=lit, raw=lit, index=0))
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return reindex(out)
+
+
+def with_marked_h_clock(fold, markers):
+    """Wrap a number fold so the marked hour-letter clock folds ahead of it."""
+    marker_set = frozenset(markers)
+
+    def folded(tokens):
+        return fold(collapse_marked_h_clock(tokens, marker_set))
+
+    return folded
