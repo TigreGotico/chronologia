@@ -88,19 +88,21 @@ remainder.
 
 **Day parts** take their band boundaries from the Unicode CLDR 47 day-period
 chart, whose Danish rows read `nat` from 00:00, `morgen` from 05:00,
-`formiddag` from 10:00, `eftermiddag` from 12:00 and `aften` from 18:00. Four
-of the five ship as vocabulary, each in the bare and the definite form:
-`nat`/`natten`, `formiddag`/`formiddagen`, `eftermiddag`/`eftermiddagen`,
-`aften`/`aftenen`. The `formiddag` is the late morning English cannot name in
-one word.
+`formiddag` from 10:00, `eftermiddag` from 12:00 and `aften` from 18:00. All
+five ship as vocabulary: four in both the bare and the definite form
+(`nat`/`natten`, `formiddag`/`formiddagen`, `eftermiddag`/`eftermiddagen`,
+`aften`/`aftenen`); `morgen` ships definite-only (see below). The
+`formiddag` is the late morning English cannot name in one word.
 
-The `morgen` band is transcribed in `chronologia/dayparts.py` but ships no
-vocabulary file, so it is unreachable: `om morgenen` returns nothing even
-though `klokken ni om morgenen` binds the meridiem. That is the price of the
-tomorrow-word collision above — a `morgen` day-part surface would compete with
-the named day on every sentence. German and both Norwegian standards leave the
-morning band out for their own reasons; Swedish, Dutch, English, Frisian and
-Icelandic ship one.
+The `morgen` band is transcribed in `chronologia/dayparts.py`. Resolved by
+native review: it ships now, but only under its DEFINITE surface
+`morgenen` — deliberately excluding the bare `morgen` that sibling
+dayparts (`aften`/`aftenen`, `nat`/`natten`) both ship. Bare `morgen` stays
+reserved for the relative-day "tomorrow" reading; `morgenen` never appears
+in that idiom (`i morgen` is always the bare form), so it carries no such
+ambiguity, and the same surface was already used safely as a meridiem
+marker (`klokken ni om morgenen` == 09:00, above). `om morgenen` alone now
+resolves to the band.
 
 **Ranges** are `fra … til …` and `mellem … og …`, with `siden` opening one that
 runs to the anchor and `indtil`/`til` closing one that starts there.
@@ -208,9 +210,11 @@ resolve, leaving the framing `i` or `om` in the remainder: `i eftermiddag`,
    bind? It is the form that returns a six-hour band.
 3. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split
    puts it at 18:00.
-4. Should a `morgen` day-part surface ship despite the collision with the
-   tomorrow word, and if so in which forms?
-5. Is `14.30` the written clock Danish readers expect to be understood?
+4. Is `14.30` the written clock Danish readers expect to be understood?
 
 Resolved: whether `halvanden` ships as the 1.5 quantifier — see `halvanden`
 under "What ships" above.
+
+Resolved: whether a `morgen` day-part surface should ship despite the
+collision with the tomorrow word — see the `morgen` paragraph under "What
+ships" above (shipped definite-only, `morgenen`).
