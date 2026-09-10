@@ -1527,6 +1527,10 @@ _OC_PHRASES = [
     (["passat", "deman"], "passatdeman"), (["delà", "deman"], "passatdeman"),
     (["que", "ven"], "queven"),
     (["week", "end"], "weekend"),
+    # the future-offset marker survives the elision split as one token, the
+    # way "dins" does, so the offset grammar binds it ("d'aquí un moment",
+    # oc.wiktionary s.v. "lèu").
+    (["d", "aquí"], "d'aquí"), (["d", "aicí"], "d'aicí"),
 ]
 # "uèch" (8) is the only spelling ovos_number_parser.numbers_oc reads;
 # "uèit"/"uòch" are attested variants it does not (source: native-speaker
