@@ -70,10 +70,18 @@ def test_import_reads_no_locale_files():
 # ---------------------------------------------------------------------------
 
 def test_same_language_returns_identical_engine():
-    a = _timespan_engine("en-us")
+    a = _timespan_engine("en-sg")        # a region with no convention override
     b = _timespan_engine("en")           # region tag stripped -> same code
     assert a is b
     assert a.spec is b.spec
+
+
+def test_a_region_with_an_override_gets_its_own_engine():
+    # en-GB reads the numeric date day-first and en-US begins the week on
+    # Sunday, so neither can share the bare code's compiled spec.
+    base = _timespan_engine("en")
+    assert _timespan_engine("en-gb") is not base
+    assert _timespan_engine("en-us") is not base
 
 
 def test_distinct_languages_are_distinct_engines():

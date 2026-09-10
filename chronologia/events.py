@@ -142,7 +142,7 @@ def _clean_summary(text: str, lang: str) -> str:
 
 def extract_event(
         text: str,
-        lang: str = "en-us",
+        lang: str = "en",
         anchor: Optional[datetime] = None,
         jurisdiction: Optional[str] = None,
 ) -> Optional[Event]:

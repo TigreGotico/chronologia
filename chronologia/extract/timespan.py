@@ -148,7 +148,9 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     # override gets its own cached engine keyed on the full tag (mirroring the
     # region-keyed ``_REGION_SCALE`` default for the orthogonal scale feature).
     dmy_override = _REGION_DMY.get(region)
-    cache_key = region if dmy_override is not None else code
+    week_override = _REGION_WEEK_START.get(region)
+    cache_key = (region if dmy_override is not None or week_override is not None
+                 else code)
     engine = _TIMESPAN_ENGINES.get(cache_key)
     if engine is not None:
         return engine
@@ -162,9 +164,13 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
                     f"extract_timespan has no locale data for {lang!r}; only "
                     f"languages with locale/<code>/lang.json are supported so far")
             spec = load_lang_spec(code)
-            if dmy_override is not None and spec.conventions.dmy != dmy_override:
-                spec = replace(spec, conventions=replace(
-                    spec.conventions, dmy=dmy_override))
+            conv = spec.conventions
+            if dmy_override is not None and conv.dmy != dmy_override:
+                conv = replace(conv, dmy=dmy_override)
+            if week_override is not None and conv.week_start != week_override:
+                conv = replace(conv, week_start=week_override)
+            if conv is not spec.conventions:
+                spec = replace(spec, conventions=conv)
             engine = DateTimeEngine(spec)
             _TIMESPAN_ENGINES[cache_key] = engine
         return engine
@@ -177,6 +183,17 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
 _REGION_DMY = {
     "en-gb": True, "en-au": True, "en-nz": True, "en-ie": True,
     "en-in": True, "en-za": True,
+}
+
+
+#: Region subtags whose week begins on Sunday, overriding the bare code's own
+#: ``week_start``.  The language default is a property of the language and is
+#: never touched here: English and Portuguese both ship Monday, which is right
+#: for the anglophone and lusophone regions that keep the ISO week, and only
+#: the regions listed below depart from it.  Sources: CLDR supplemental data,
+#: ``weekData/firstDay`` (US, CA and BR are ``sun``).
+_REGION_WEEK_START = {
+    "en-us": "sunday", "en-ca": "sunday", "pt-br": "sunday",
 }
 
 
@@ -1940,7 +1957,7 @@ def _apply_week_of(tokens, resolved, spec):
 
 def extract_timespan(
         text: str,
-        lang: str = "en-us",
+        lang: str = "en",
         anchor: Optional[datetime] = None,
         jurisdiction: Optional[str] = None,
         enable: Tuple[str, ...] = (),
@@ -3420,7 +3437,7 @@ class Candidate:
 
 def extract_candidates(
         text: str,
-        lang: str = "en-us",
+        lang: str = "en",
         anchor: Optional[datetime] = None,
         limit: int = 5,
         scale: Optional[str] = None,

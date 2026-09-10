@@ -93,7 +93,7 @@ def _and_words(spec):
 
 def extract_duration(
         text: str,
-        lang: str = "en-us",
+        lang: str = "en",
 ) -> Optional[DurationResult]:
     """Extract a :class:`datetime.timedelta` length from ``text``.
 
@@ -469,7 +469,7 @@ class TimeMention:
 
 def extract_timespans(
         text: str,
-        lang: str = "en-us",
+        lang: str = "en",
         anchor: Optional[datetime] = None,
         scale: Optional[str] = None,
 ) -> List[TimeMention]:
@@ -1005,7 +1005,7 @@ class RecurrenceResult(NamedTuple):
 
 def extract_recurrence(
         text: str,
-        lang: str = "en-us",
+        lang: str = "en",
         anchor: Optional[datetime] = None,
 ) -> Optional[RecurrenceResult]:
     """Map a recurring phrase onto an RFC 5545 :class:`~chronologia.recurrence.Recurrence`.
@@ -1846,7 +1846,7 @@ class _RecurCtx:
     #: repeated-numeral interval idiom "de N em N <unit>" ("de quinze em
     #: quinze dias"). See :func:`_recur_repeated_numeral`.
     from_words: set = frozenset()
-    lang: str = "en-us"
+    lang: str = "en"
     anchor: Optional[datetime] = None
     #: the *pre-fold* token stream (numbers not yet merged across ``and``).
     #: A finder that must see an ordinal *list* -- "first and third monday" --
