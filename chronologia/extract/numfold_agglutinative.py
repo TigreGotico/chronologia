@@ -249,7 +249,12 @@ _EL_HUNDREDS = {
     "πεντακόσιοι": 500, "εξακόσιοι": 600, "επτακόσιοι": 700,
     "οκτακόσιοι": 800, "εννιακόσιοι": 900,
 }
-_el_numfold = _make_fold("el", {**_EL_FEM_HOURS, **_EL_HUNDREDS})
+# The everyday spellings of seven, eight and nine (Wiktionary: εφτά and οχτώ
+# "alternative spelling of" επτά / οκτώ, εννιά "nine") beside the formal
+# ones the pronouncer emits, so the spoken clock "στις οχτώ" (at eight) binds.
+_EL_SPOKEN_UNITS = {"εφτά": 7, "οχτώ": 8, "εννιά": 9}
+_el_numfold = _make_fold("el", {**_EL_FEM_HOURS, **_EL_HUNDREDS,
+                                **_EL_SPOKEN_UNITS})
 
 # -- Greek: the written day-of-month is a digit + ordinal ending -------------
 # "5η Μαρτίου" (the 5th of March), "της 5ης Μαρτίου" (of the 5th of March).
