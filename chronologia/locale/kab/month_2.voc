@@ -1,6 +1,7 @@
 # Unicode CLDR 47, locale kab, gregorian calendar (cldr-json
 # cldr-dates-full/main/kab/ca-gregorian.json): months.format.wide,
-# months.stand-alone.wide.  Not covered by any of those charts, and so
-# unattested here: "furar".
+# months.stand-alone.wide.  "furar" is not in those charts. It is the form a
+# native Kabyle speaker (athmanemokraoui) supplies, and it is kept on that
+# evidence, beside the chart form "fuṛar".
 fuṛar
 furar
