@@ -38,7 +38,7 @@ import pytest
 
 from chronologia.extract.loader import load_lang_spec
 
-from ._corpus import AstroDate, LANG, span, start, start_end
+from ._corpus import (AstroDate, LANG, nomatch, span, start, start_end)
 
 SPEC = load_lang_spec(LANG)
 
@@ -130,3 +130,95 @@ def test_era_year_ref_file_carries_his_two_surfaces():
     lines = [ln.strip() for ln in
              path.read_text(encoding="utf-8").splitlines() if ln.strip()]
     assert lines[:2] == ["aseggas n", "deg useggas n"]
+
+
+# --------------------------------------------------------------------- #
+# The second batch: ten more files from the same speaker
+# --------------------------------------------------------------------- #
+# athmanemokraoui supplied ten more files on 2026-09-22
+# (OpenVoiceOS/ovos-localize#594-#603): the seven abbreviated weekday names,
+# the month unit, the year unit again and the day before yesterday. The year
+# unit repeats what he already gave, byte for byte, so nine files are new.
+#
+# Gold from the same independent arithmetic: the anchor Tue 2017-06-27, so
+# the day before yesterday is Sun 2017-06-25, and the month before the
+# anchor month is May 2017.
+
+
+@pytest.mark.parametrize("surface,index", [
+    ("ari", 0), ("ara", 1), ("aha", 2), ("amh", 3),
+    ("sem", 4), ("sed", 5), ("ace", 6),
+])
+def test_weekday_abbreviations_load(surface, index):
+    assert SPEC.weekdays[surface] == index
+
+
+@pytest.mark.parametrize("surface", ["ari", "ara", "aha", "amh",
+                                     "sem", "sed", "ace"])
+def test_an_abbreviation_never_reads_as_a_bare_weekday(surface):
+    """A three-letter form binds the WEEKDAY slot, never the bare order.
+
+    The loader keeps abbreviations out of ``weekday_full`` so a short form
+    that is also a common word cannot resolve to a weekday on its own. This
+    asserts the policy holds for his forms, and it is why the tests below
+    read each abbreviation through a marker.
+    """
+    assert surface not in SPEC.weekday_full
+    nomatch(surface)
+
+
+@pytest.mark.parametrize("abbrev,full,day", [
+    ("ari", "letnayen", 26),
+    ("ara", "ttlata", 27),
+    ("aha", "laṛebɛa", 21),
+    ("amh", "lexmis", 22),
+    ("sem", "lǧemɛa", 23),
+    ("sed", "ssebt", 24),
+    ("ace", "lḥedd", 25),
+])
+def test_an_abbreviation_reads_the_day_its_full_name_reads(abbrev, full, day):
+    """Each abbreviation picks the same day as the locale's own full name.
+
+    Read through the "since" marker, because the bare order refuses an
+    abbreviation. The anchor is Tue 2017-06-27, so "since Monday" is
+    Mon 2017-06-26 and "since Wednesday" the Wednesday before it, 21 June.
+    """
+    assert start("seg %s" % abbrev) == AstroDate(2017, 6, day)
+    assert start("seg %s" % full) == AstroDate(2017, 6, day)
+
+
+@pytest.mark.parametrize("surface", ["ayyuren", "ayyur"])
+def test_month_unit_surfaces(surface):
+    assert SPEC.units[surface] == "month"
+
+
+@pytest.mark.parametrize("marker", ["yezrin", "iɛeddan", "aneggaru"])
+def test_last_month_is_the_month_before_the_anchor(marker):
+    """The month unit reaches the same ``rel_period`` order the year unit did.
+
+    ``kab`` carried no month unit, so ``REL_MARKER UNIT`` could never match
+    on a month. Anchor June 2017, so the month before it is May 2017.
+    """
+    s, e = start_end("%s ayyur" % marker)
+    assert s == AstroDate(2017, 5, 1)
+    assert e == AstroDate(2017, 6, 1)
+
+
+@pytest.mark.parametrize("surface", ["send iḍelli", "sendiḍelli"])
+def test_the_day_before_yesterday(surface):
+    """Anchor Tue 2017-06-27, so the day before yesterday is Sun 2017-06-25."""
+    s, e = start_end(surface)
+    assert s == AstroDate(2017, 6, 25)
+    assert e == AstroDate(2017, 6, 26)
+
+
+@pytest.mark.parametrize("surface", ["send iḍelli", "sendiḍelli"])
+def test_the_day_before_yesterday_is_not_yesterday(surface):
+    """The control for the pair above: ``-2`` is a day before ``-1``.
+
+    ``iḍelli`` is the locale's own yesterday and reads 26 June. A
+    ``named_day_-2.voc`` read at the wrong offset, or a longest-match that
+    let ``iḍelli`` win inside ``send iḍelli``, would return that date here.
+    """
+    assert SPEC.named_days[surface] == -2
+    assert start(surface) != start("iḍelli")
