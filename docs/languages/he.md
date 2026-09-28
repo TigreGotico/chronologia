@@ -20,7 +20,10 @@ beside `מרץ` for March. The prefixed set is not a second CLDR chart but a
 consequence of the first: CLDR's `he` long date pattern is `d בMMMM y`, with
 the preposition written into the pattern itself and no space before the month
 placeholder, so the form a real date line contains is always the fused one.
-`months.voc` repeats the same twenty-six surfaces as a flat list.
+`months.voc` carries the twelve bare forms, one per line in month order,
+because a positional reader indexes that file by line number. The twenty-six
+surfaces stay in `month_1` through `month_12`, which is what this package's own
+loader reads.
 
 **Hebrew-calendar months** ship as their own slot, `month_hebrew_1` through
 `month_hebrew_13`, in Hebrew script, in Latin transliteration, and with the
