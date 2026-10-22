@@ -543,6 +543,13 @@ class ConstructionMatcher:
     def __init__(self, compiled: CompiledSpec):
         self.compiled = compiled
         self.spec = compiled.spec
+        # plural surfaces of the period nouns: units, weekends, quarters
+        connectors = self.spec.connectors
+        self._plural_periods = frozenset(self.spec.plural_units) | frozenset(
+            word
+            for key in ("weekend", "quarter_word")
+            for word in connectors.get(key, ())
+            if word.endswith("s") and word[:-1] in connectors.get(key, ()))
 
     def _candidates(self, tokens: Tuple[Token, ...]) -> List[MatchCandidate]:
         out: List[MatchCandidate] = []
@@ -581,6 +588,21 @@ class ConstructionMatcher:
                     if (name == "weekday_ref" and end < len(tokens)
                             and self.spec.units.get(tokens[end].text)
                             == "day"):
+                        continue
+                    # A marker that only modifies a singular period ("the
+                    # following week") gives no date before a plural period
+                    # word ("the following weeks were hard"), which names no
+                    # single period.  Any candidate that reads such a word
+                    # directly after the marker is refused, whether the
+                    # marker is bound inside the candidate or stands just
+                    # before it.  The marker list is a locale fact
+                    # (``marker_singular_only.voc``).
+                    _mi = (slots["REL_MARKER"].index if "REL_MARKER" in slots
+                           else start - 1)
+                    if (0 <= _mi < len(tokens) - 1
+                            and tokens[_mi].text in self.spec.connectors.get(
+                                "singular_only", frozenset())
+                            and tokens[_mi + 1].text in self._plural_periods):
                         continue
                     # A weekday word that is also a feminine ordinal ("a
                     # segunda dose", "pela segunda vez") names a Monday only
