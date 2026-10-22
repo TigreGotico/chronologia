@@ -16,6 +16,7 @@
         "MARKER NUM UNIT",
         "MARKER indef? QUANT? of? indef? UNIT",
         "MARKER indef? NUM of? indef? UNIT",
+        "MARKER NUM QUANT of? UNIT",
         "indef? QUANT? of? indef? UNIT MARKER",
         "indef? NUM of? indef? UNIT MARKER"
       ]
