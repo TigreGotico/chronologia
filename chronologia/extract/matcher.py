@@ -759,6 +759,26 @@ class ConstructionMatcher:
                         if (_ai >= 0 and tokens[_ai].text
                                 in self.spec.conventions.bare_at_markers):
                             continue
+                    # A holiday name takes no indefinite article when it is
+                    # an adjective plus a weekday: "have a good friday" is the
+                    # adjective and the day, not Good Friday.  A single-word
+                    # name ("Karfreitag") has no such homograph and is kept.
+                    # The locale lists the articles in
+                    # ``marker_holiday_indef.voc``.  A language whose article
+                    # is also its numeral ("een") reaches the matcher as the
+                    # number 1, so a leading 1 counts as the article there.
+                    if "HOLIDAY" in slots and start > 0:
+                        _surface = slots["HOLIDAY"].text.split()
+                        _indef = self.spec.connectors.get(
+                            "holiday_indef", frozenset())
+                        _prev = tokens[start - 1]
+                        if (len(_surface) > 1 and _indef
+                                and any(w in self.spec.weekdays
+                                        for w in _surface)
+                                and (_prev.text in _indef
+                                     or (_prev.is_number
+                                         and _prev.value == 1))):
+                            continue
                     if "CAL_MONTH" in slots:
                         cal = _calendar_for_surface(
                             self.spec, slots["CAL_MONTH"].text)
