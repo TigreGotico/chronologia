@@ -147,6 +147,15 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "REL_MARKER WEEKDAY",
         "WEEKDAYFULL",
     ],
+    # "<weekday> of next/last/this week" and "next/last/this week <weekday>":
+    # the named day of the shifted calendar week, not the bare weekday's next
+    # occurrence ("friday of next week" from a Monday is the Friday after the
+    # coming one).  The connector is optional so "friday next week" joins too.
+    # ``WEEKDAYFULL`` keeps ambiguous abbreviations ("so", "zo", "man") out.
+    "weekday_of_week": [
+        "article? WEEKDAYFULL of? article? REL_MARKER UNIT",
+        "REL_MARKER UNIT article? WEEKDAYFULL",
+    ],
     # "last/next <unit>" -- "last week", "next month", "this year".  The prefix
     # form ("REL_MARKER UNIT" -- the marker LEADS the unit) is the
     # language-neutral core every locale shares.  The postposed idiom
@@ -504,6 +513,12 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
     ],
     "rel_period": [
         "article? UNIT REL_MARKER",
+    ],
+    # the marker trails the week: "el viernes de la semana que viene",
+    # "sexta-feira da semana passada", "la semana que viene el viernes".
+    "weekday_of_week": [
+        "article? WEEKDAYFULL of? article? UNIT REL_MARKER",
+        "article? UNIT REL_MARKER article? WEEKDAYFULL",
     ],
     # "last/next <season>" postposed -- the marker TRAILS the season
     # ("el verano pasado", "l'été dernier", "الصيف الماضي", "musim panas

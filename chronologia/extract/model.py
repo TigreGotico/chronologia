@@ -95,6 +95,12 @@ class Token:
     # ``_fold_article_magnitude`` and read by the deep-time resolver, which is
     # the only place that tells the two readings apart once the count is a digit.
     article: bool = False
+    # Whether clause punctuation (, . ; : ? !) stood between the previous
+    # token and this one in the original utterance.  The tokenizer drops
+    # punctuation, so this flag is the only record that two adjacent tokens
+    # sat in different clauses; constructions that join neighbouring words
+    # ("friday, next week ...") read it to refuse a join across the break.
+    break_before: bool = False
 
 
 @dataclass(frozen=True)
