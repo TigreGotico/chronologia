@@ -15,7 +15,8 @@
         "NUM UNIT MARKER",
         "MARKER offsetlink? NUM QUANT of? UNIT",
         "MARKER offsetlink? NUM of? UNIT",
-        "MARKER offsetlink? QUANT of? UNIT"
+        "MARKER offsetlink? QUANT of? UNIT",
+        "MARKER offsetlink? indef QUANT of? UNIT"
       ]
     },
     "weekend_ref": {
@@ -71,6 +72,15 @@
         "NUM SCALE of? year_word MARKER",
         "MARKER NUM SCALE of? year_word"
       ]
+    },
+    "month_day_ref": {
+      "orders": [
+        "article? day_label ORD of article? REL_MARKER month_word",
+        "article? day_label ORD of article? month_word REL_MARKER",
+        "article ORD of article? REL_MARKER month_word",
+        "article ORD of article? month_word REL_MARKER"
+      ],
+      "prefer_future": true
     },
     "month_fuzzy": {
       "orders": [
