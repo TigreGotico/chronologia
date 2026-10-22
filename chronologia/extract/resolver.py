@@ -332,7 +332,8 @@ def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
 DATE_CONSTRUCTIONS = frozenset({
     "calendar_date", "reckoned_date", "nongregorian_date", "iso_date",
     "numeric_date",
-    "weekday_ref", "named_day", "season_ref", "solar_event", "scoped_ordinal",
+    "weekday_ref", "weekday_of_week", "named_day", "season_ref", "solar_event",
+    "scoped_ordinal",
     # the named-day offset idioms ("the day after tomorrow", "the day before
     # yesterday") resolve to a whole day, so a further stranded "the day
     # after/before" pre-amble composes onto them exactly as onto any other
@@ -901,6 +902,22 @@ class Resolver:
             start_idx = _WEEK_START.get(self.conventions.week_start, 0)
             week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
             value = week_start + timedelta(days=(target - start_idx) % 7)
+        return Resolution(_day_span(value), self._consumed(match))
+
+    def _resolve_weekday_of_week(self, match, anchor):
+        """"friday of next week", "next week friday": the named weekday of the
+        calendar week (locale ``week_start``) that the relative marker shifts
+        to.  Only a week unit has weekdays to pick from; any other unit
+        declines so the parts stand on their own."""
+        if self.spec.units.get(match.slots["UNIT"].text) != "week":
+            return None
+        rel = self.spec.rel_markers[match.slots["REL_MARKER"].text]
+        target = self.spec.weekdays[match.slots["WEEKDAYFULL"].text]
+        base = _midnight(anchor)
+        start_idx = _WEEK_START.get(self.conventions.week_start, 0)
+        week_start = (base - timedelta(days=(anchor.weekday() - start_idx) % 7)
+                      + timedelta(weeks=rel))
+        value = week_start + timedelta(days=(target - start_idx) % 7)
         return Resolution(_day_span(value), self._consumed(match))
 
     def _resolve_before_last(self, match, anchor):

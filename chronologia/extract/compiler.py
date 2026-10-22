@@ -142,6 +142,7 @@ PRECEDENCE: Dict[str, int] = {
     # clock_time, so it wins the longer span ("3 this afternoon" over "3").
     "clock_this_daypart": 7,
     "weekday_ref": 8,
+    "weekday_of_week": 8,
     "cycle_ref": 8,
     # "next week"/"this month"/"last year": the whole calendar period,
     # same tier as the weekday reference it generalises to coarser units

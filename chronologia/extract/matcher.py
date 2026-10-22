@@ -569,12 +569,19 @@ class ConstructionMatcher:
                     # surface is a locale fact (``marker_weekday_week_ambiguous
                     # .voc`` -> ``spec.connectors["weekday_week_ambiguous"]``);
                     # a locale that ships none of these words is unaffected.
-                    if (name == "weekday_ref"
+                    if (name in ("weekday_ref", "weekday_of_week")
                             and ("WEEKDAY" in slots or "WEEKDAYFULL" in slots)
                             and (slots.get("WEEKDAY") or slots.get(
                                 "WEEKDAYFULL")).text
                             in self.spec.connectors.get(
                                 "weekday_week_ambiguous", frozenset())):
+                        continue
+                    # "friday, next week is busy": a weekday and a relative
+                    # week in different clauses are two mentions, not one
+                    # day of the shifted week.
+                    if (name == "weekday_of_week"
+                            and any(t.break_before
+                                    for t in tokens[start + 1:end])):
                         continue
                     # A bare weekday match immediately followed by an
                     # unconsumed genitive/duration "day" word ("nedelju

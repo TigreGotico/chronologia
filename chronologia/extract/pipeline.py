@@ -167,7 +167,8 @@ def merge_multiword(tokens: Tuple[Token, ...],
                 out.append(Token(text=surface, raw=raw, index=len(out),
                                  char_start=run[0].char_start,
                                  char_end=run[-1].char_end, cap=run[0].cap,
-                                 prev_cap=run[0].prev_cap))
+                                 prev_cap=run[0].prev_cap,
+                                 break_before=run[0].break_before))
                 i += n
                 break
         else:
