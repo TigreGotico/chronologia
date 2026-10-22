@@ -582,6 +582,57 @@ class ConstructionMatcher:
                             and self.spec.units.get(tokens[end].text)
                             == "day"):
                         continue
+                    # A weekday word that is also a feminine ordinal ("a
+                    # segunda dose", "pela segunda vez") names a Monday only
+                    # when no ordinal noun follows it.  The first word of a
+                    # phrase is exempt: the tokenizer drops the comma of a
+                    # calendar note ("segunda, aula de piano").  Both lists
+                    # are locale facts
+                    # (``marker_weekday_ordinal_homonym.voc`` and
+                    # ``marker_ordinal_noun.voc``); a locale shipping neither
+                    # is unaffected.
+                    if (name == "weekday_ref" and start > 0
+                            and end < len(tokens)
+                            and (slots.get("WEEKDAY") or slots.get(
+                                "WEEKDAYFULL")) is not None
+                            and (slots.get("WEEKDAY") or slots.get(
+                                "WEEKDAYFULL")).text
+                            in self.spec.connectors.get(
+                                "weekday_ordinal_homonym", frozenset())
+                            and tokens[end].text in self.spec.connectors.get(
+                                "ordinal_noun", frozenset())):
+                        continue
+                    # "faz N anos" counts back ("faz dois anos") only at the
+                    # start of a clause; after a subject it is the verb "to
+                    # turn" ("a minha filha faz dez anos").  Only a year
+                    # count can be an age.  The
+                    # tokenizer drops punctuation, so a clause start is the
+                    # start of the utterance or a lead word such as "já".
+                    # The marker and the lead words are locale facts
+                    # (``marker_past_clause_initial.voc`` and
+                    # ``marker_clause_lead.voc``).
+                    if (name == "relative_offset" and "MARKER" in slots
+                            and slots["MARKER"].text
+                            in self.spec.connectors.get(
+                                "past_clause_initial", frozenset())
+                            and "UNIT" in slots
+                            and self.spec.units.get(
+                                slots["UNIT"].text) == "year"
+                            and slots["MARKER"].index > 0
+                            and tokens[slots["MARKER"].index - 1].text
+                            not in self.spec.connectors.get(
+                                "clause_lead", frozenset())):
+                        continue
+                    # A spelled ordinal after an indefinite article ("a third
+                    # of the month is gone", "an eighth of March") is a
+                    # fraction, never a day-of-month: a date names its day
+                    # with the definite article or none ("the third of the
+                    # month", "third of March").
+                    if (name == "month_day_ref" and "ORD" in slots
+                            and slots["ORD"].index > 0
+                            and tokens[slots["ORD"].index - 1].text
+                            in self.spec.connectors.get("indef", frozenset())):
+                        continue
                     # The mirror of the veto above, on the other side of the
                     # weekday: a COUNT immediately before a weekday word that
                     # doubles as a duration ("ორი კვირა" -- two weeks, or two

@@ -1,0 +1,8 @@
+# Weekday names that are also feminine ordinals: segunda (2nd), quarta (4th),
+# quinta (5th), sexta (6th).  "terça" is not listed: the ordinal is "terceira".
+# Machine-drafted, not native-reviewed.  The weekday reading is vetoed only
+# before an ordinal noun (see marker_ordinal_noun.voc).
+segunda
+quarta
+quinta
+sexta
