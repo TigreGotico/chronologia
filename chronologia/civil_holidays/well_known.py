@@ -822,7 +822,7 @@ WELL_KNOWN_BY_KEY: Dict[str, WellKnownHoliday] = {w.key: w for w in WELL_KNOWN}
 # a surface is chosen by the *locale's* documented jurisdiction default.
 #
 # Jurisdiction-default decisions (the fact each locale is bound to):
-#   pt->PT  es->ES  ca->ES  gl->ES  de->DE  fr->FR  it->IT  nl->NL  en->US
+#   pt->PT  es->ES  ca->ES  eu->ES  gl->ES  de->DE  fr->FR  it->IT  nl->NL  en->US
 # (``en`` is deliberately given the U.S. reading and no other; a multi-country
 # anglosphere name like "independence day" is NOT added here — it is left
 # unresolved because no single country is implied, and inventing one would be
@@ -873,6 +873,7 @@ JURISDICTION_KNOWN: Tuple[JurisdictionKnownHoliday, ...] = (
     JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "es", "ES"),
     JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "ca", "ES"),
     JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "gl", "ES"),
+    JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "eu", "ES"),
     JurisdictionKnownHoliday("fathers_day", _FD_MAR19, _UNOFF, "it", "IT"),
     JurisdictionKnownHoliday("fathers_day", _FD_ASCENSION, _UNOFF, "de", "DE"),
 )
