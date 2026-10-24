@@ -1722,7 +1722,7 @@ class Resolver:
         # 30th" past a Jan-31 anchor clamps Feb 30 -> Feb 28, silently
         # relabelling the day); walk forward instead (a 31st skips the short
         # months to the next long one).
-        roll = rel == 0 and prefer_future and (
+        roll = rel_tok is None and prefer_future and (
             value is None or value < _midnight(anchor))
         if roll:
             for step in range(1, 13):
