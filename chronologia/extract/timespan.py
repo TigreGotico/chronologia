@@ -2813,6 +2813,22 @@ def _num_preamble_named_day_idiom_veto(tokens, match, spec) -> bool:
     return tokens[b - 1].is_number
 
 
+def _subday_named_day_idiom_veto(match, spec) -> bool:
+    """True for a ``named_day_span_idiom`` match whose unit is sub-day
+    ("an hour today").
+
+    The idiom shifts a named day by whole days, so its resolver declines a
+    sub-day unit.  Left unvetoed, the idiom still wins the overlap contest
+    against the general offset reading, the resolver then drops it, and
+    "in an hour today" loses both the offset and the day.  Vetoing it lets
+    the matcher read "in an hour" and "today" as two references, which
+    :func:`_compose` joins.
+    """
+    if match.construction != "named_day_span_idiom":
+        return False
+    return spec.units.get(match.slots["UNIT"].text) in _SUBDAY_OFFSET_UNITS
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
@@ -2833,6 +2849,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
+            or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec))
 
 
@@ -3168,6 +3185,10 @@ def _compose(resolved, engine, tokens):
                 if m.construction == "weekday_ref"]
     non_weekday_dates = [(m, r) for m, r in dates
                          if m.construction != "weekday_ref"]
+    named_days = [(m, r) for m, r in resolved if m.construction == "named_day"]
+    subday_offsets = [(m, r) for m, r in resolved
+                      if m.construction == "relative_offset"
+                      and not _offset_is_day_or_coarser(m, spec)]
     # Composition is only legitimate when the two parts are ADJACENT -- a lone
     # clock/daypart/weekday-label folds onto a date only if nothing unrelated
     # sits between them.  Otherwise a distant time bleeds across arbitrary text
@@ -3298,6 +3319,22 @@ def _compose(resolved, engine, tokens):
         glue_consumed = _composition_glue(eff_dates[0][0], dayparts[0][0])
     elif label_consumed and not clocks and not dayparts:
         rep, res = eff_dates[0]
+    elif (len(named_days) == 1 and len(subday_offsets) == 1
+            and not clocks and not dayparts
+            and _adjacent(named_days[0][0], subday_offsets[0][0])):
+        # A sub-day counted offset keeps the anchor clock ("today in an
+        # hour" is the anchor plus an hour).  "Today" is loose speech near
+        # midnight, so an offset that crosses it still stands.  Any other
+        # named day contradicts the offset ("tomorrow in an hour"), even
+        # when the offset lands on it, so the reading is declined whole.
+        day_match, day_res = named_days[0]
+        off_match, off_res = subday_offsets[0]
+        if spec.named_days[day_match.slots["DAY_WORD"].text] != 0:
+            return None, set(), None
+        res = off_res
+        rep = off_match
+        glue_consumed = (set(day_res.consumed)
+                         | _composition_glue(day_match, off_match))
     else:
         rep, res = min(resolved, key=lambda mr: mr[0].span[0])
     return res, label_consumed | glue_consumed, rep
