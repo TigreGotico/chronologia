@@ -8,7 +8,7 @@ tabulated Chinese).  Every expected date is derived by hand.
 
 Persian postposes the relative marker (``نوروز آینده`` = "next Nowruz"), so a
 ``HOLIDAY REL_MARKER`` order is wired alongside the prefixed forms."""
-from datetime import timedelta
+from datetime import datetime, timedelta
 import pytest
 from chronologia.astrodate import AstroDate
 from ._corpus import parse, span, start, nomatch
@@ -23,7 +23,22 @@ _BARE = [
     ('کریسمس', (2017, 12, 25)),
     ('سال نو هجری', (2017, 9, 21)),
     ('سال نو چینی', (2018, 2, 16)),
+    ('سال نو', (2018, 3, 21)),
+    ('سال نو پارسی', (2018, 3, 21)),
+    ('سال نو میلادی', (2018, 1, 1)),
+    ('شب سال نو', (2017, 12, 31)),
+    ('شب سال نو میلادی', (2017, 12, 31)),
+    ('شب سال نو هجری', (2017, 9, 21)),
+    ('شب سال نو چینی', (2018, 2, 16)),
+    ('شب سال نو پارسی', (2018, 3, 21)),
 ]
+
+
+def test_bare_new_year_is_nowruz_of_the_following_year():
+    # 1 Farvardin 1406 is 21 March 2027: the March equinox falls at
+    # 20:25 UTC on 20 March, 23:55 in Tehran, after noon, so the day
+    # after is the first of the year.
+    assert start('سال نو', datetime(2026, 10, 23, 12)) == AstroDate(2027, 3, 21)
 
 
 @pytest.mark.parametrize("text,ymd", _BARE)
