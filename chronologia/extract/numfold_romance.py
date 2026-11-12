@@ -564,6 +564,37 @@ _PT_WEEK_UNITS = frozenset({"semana", "semanas"})
 #: weekday-homograph feminine ordinal -> its value.  "terça" (Tuesday) is not
 #: listed: the third ordinal is "terceira", no homograph, and it already folds.
 _PT_ORDINAL_BEFORE_WEEK = {"segunda": 2, "quarta": 4, "quinta": 5, "sexta": 6}
+#: The feminine weekday names.  Directly after an article, a homograph
+#: ordinal written right before one of them is the ordinal: "a segunda
+#: terça-feira" is the second Tuesday, because a weekday name does not take
+#: a second weekday name after it.  Only the feminine names agree with the
+#: feminine ordinal.
+_PT_FEMININE_WEEKDAYS = frozenset({"segunda", "terça", "terca", "quarta",
+                                   "quinta", "sexta"})
+_PT_ORDINAL_ARTICLES = frozenset({"a", "na", "da", "à", "pela"})
+
+
+def _license_ordinal_before_weekday(tokens):
+    """Read "a segunda terça-feira" as the second Tuesday.
+
+    Priberam s.v. "segundo": "adjetivo numeral ... 1. Que ou o que está logo
+    depois do primeiro."  The homograph is licensed only between an article
+    and a feminine weekday name with nothing written between them, so a list
+    of weekdays ("na segunda, terça e quarta") keeps its weekday reading.
+    """
+    out = list(tokens)
+    for i in range(1, len(tokens) - 1):
+        prev, tok, nxt = tokens[i - 1], tokens[i], tokens[i + 1]
+        adjacent = (tok.char_end is not None and nxt.char_start is not None
+                    and nxt.char_start - tok.char_end == 1)
+        if (not tok.is_number and tok.text in _PT_ORDINAL_BEFORE_WEEK
+                and prev.text in _PT_ORDINAL_ARTICLES
+                and nxt.text in _PT_FEMININE_WEEKDAYS and adjacent):
+            value = _PT_ORDINAL_BEFORE_WEEK[tok.text]
+            out[i] = Token(text=str(value), raw=tok.raw, index=0,
+                           is_number=True, value=value,
+                           char_start=tok.char_start, char_end=tok.char_end)
+    return _reindex(tuple(out))
 
 # Portuguese writes the clock quarter with an explicit article -- "quatro e um
 # quarto" == 4:15, "duas menos um quarto" == 1:45 -- where the "um"/"uma" is the
@@ -607,6 +638,7 @@ def fold_pt(tokens):
     tokens = _collapse_h_clock(tokens)
     tokens = _license_weekday_ordinal(tokens, _PT_ORDINAL_BEFORE_WEEK,
                                       _PT_WEEK_UNITS)
+    tokens = _license_ordinal_before_weekday(tokens)
     protected = {
         i for i, t in enumerate(tokens)
         if t.text in ("um", "uma") and i + 1 < len(tokens)

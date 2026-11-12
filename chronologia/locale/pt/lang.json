@@ -197,7 +197,11 @@
     },
     "extend": {
       "scoped_ordinal": [
-        "article? CMUNIT ORD"
+        "article? CMUNIT ORD",
+        "article? ORD WEEKDAY of article? SCOPE_UNIT REL_MARKER",
+        "article? ordlast WEEKDAY of article? SCOPE_UNIT REL_MARKER",
+        "article? ORD UNIT of article? SCOPE_UNIT REL_MARKER",
+        "article? ordlast UNIT of article? SCOPE_UNIT REL_MARKER"
       ]
     }
   }
