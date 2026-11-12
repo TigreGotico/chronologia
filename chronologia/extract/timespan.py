@@ -39,6 +39,7 @@ from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
                                               pretokens, render_remainder,
                                               require_text)
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
+                                              _daypart_band,
                                               compose_date_clock,
                                               compose_date_daypart,
                                               compose_daypart_clock,
@@ -1512,6 +1513,41 @@ def _fold_day_label(folded, consumed, spec):
         if nxt is not None and nxt.index in consumed:
             widened.add(t.index)
     return widened
+
+
+def _fold_day_early(tokens, span, consumed, spec):
+    """``(span, consumed)`` narrowed to the morning when an "early" word
+    directly follows a bound whole day ("mañá cedo", "mañana ceo").
+
+    In Galician and Asturian the word names the first hours of the day it
+    follows, so a whole-day span narrows to that day's morning band and the
+    word is consumed.  A span that is already the morning band ("mañá pola
+    mañá cedo") keeps its value and takes the word.  Any other span, or an
+    "early" word with no bound day before it ("chegou cedo"), is left as it
+    is.  A locale opts in with ``marker_day_early.voc``.
+    """
+    early = spec.connectors.get("day_early", frozenset())
+    if not early or not consumed:
+        return span, consumed
+    last = max(i for i, t in enumerate(tokens) if t.index in consumed)
+    if last + 1 >= len(tokens):
+        return span, consumed
+    word = tokens[last + 1]
+    if word.index in consumed or word.text not in early:
+        return span, consumed
+    start = span.start
+    if start is None or span.end is None:
+        return span, consumed
+    day = AstroDate(start.year, start.month, start.day)
+    morning = _daypart_band(day, "morning")
+    whole_day = (span.start == day
+                 and span.end == AstroDate.from_datetime(
+                     datetime(day.year, day.month, day.day)
+                     + timedelta(days=1)))
+    is_morning = (span.start == morning.start and span.end == morning.end)
+    if not (whole_day or is_morning):
+        return span, consumed
+    return (morning if whole_day else span), consumed | {word.index}
 
 
 def _definite_endpoint(sub, spec):
@@ -3062,6 +3098,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     if _impossible_date_veto(tokens, consumed, text, engine, anchor):
         return None
     consumed = _fold_day_label(tokens, consumed, engine.spec)
+    span, consumed = _fold_day_early(tokens, span, consumed, engine.spec)
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)

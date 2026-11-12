@@ -196,6 +196,12 @@
     "override": {
       "rel_period": [
         "article? REL_MARKER UNIT"
+      ],
+      "daypart_ref": [
+        "REL_MARKER DAYPART",
+        "article DAYPART",
+        "of DAYPART",
+        "dayframe DAYPART"
       ]
     }
   }
