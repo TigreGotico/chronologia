@@ -30,3 +30,16 @@ def test_half_read_hour_letter_refuses(text):
 def test_complete_clock_still_reads(text, hour, minute):
     s = span(text)
     assert (s.start.day, s.start.hour, s.start.minute) == (27, hour, minute)
+
+
+def test_a_count_of_something_else_keeps_the_clock():
+    """"2 amigos" counts friends, not minutes: the clock stays 10:00, which
+    has gone at 13:04, so it is tomorrow."""
+    s = span("ás 10:00 e 2 amigos")
+    assert (s.start.day, s.start.hour, s.start.minute) == (28, 10, 0)
+
+
+def test_and_a_half_after_a_written_hour():
+    """"e media" after the hour is half past it, as in "ás 10 e media"."""
+    s = span("ás 10h e media")
+    assert (s.start.day, s.start.hour, s.start.minute) == (28, 10, 30)

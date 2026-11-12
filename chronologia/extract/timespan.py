@@ -2164,20 +2164,36 @@ _CLOCK_LITERAL = re.compile(r"\d{1,2}:\d{2}(:\d{2})?")
 
 def _clock_half_read(tokens, consumed, spec):
     """Whether a bound clock literal is followed by an unread "past" clock
-    direction and a number ("ás 20h e 45", "ás 20:00 e 45").
+    direction and a minute count ("ás 20h e 45", "ás 20:00 e 45m").
 
     A written hour ("20h") folds to the literal "20:00", and no order adds
     minutes after a literal, so the reading stops at 20:00 with "e 45" left
     over: a time the speaker did not give.  The phrase is refused instead.
+    The number is a minute count only when it ends the phrase, carries a
+    minute unit, or has a unit letter written on it ("45m"); "às 10:00 e 2
+    amigos" counts something else and keeps its clock.
     """
-    for here, after, count in zip(tokens, tokens[1:], tokens[2:]):
+    for i, (here, after, count) in enumerate(
+            zip(tokens, tokens[1:], tokens[2:])):
         if (here.index in consumed
                 and _CLOCK_LITERAL.fullmatch(here.text)
                 and after.index not in consumed
                 and spec.clock_dirs.get(after.text, 0) > 0
-                and count.index not in consumed and count.is_number):
+                and count.index not in consumed and count.is_number
+                and _minute_count(count, tokens[i + 3:i + 4], spec)):
             return True
     return False
+
+
+def _minute_count(count, rest, spec):
+    """Whether ``count`` ends the phrase or is followed by a minute unit,
+    either as a word or as a letter written on the number."""
+    if not rest:
+        return True
+    nxt = rest[0]
+    glued = (count.char_end is not None and nxt.char_start is not None
+             and count.char_end == nxt.char_start)
+    return glued or spec.units.get(nxt.text) == "minute"
 
 
 def _impossible_date_veto(tokens, consumed, text, engine, anchor):
