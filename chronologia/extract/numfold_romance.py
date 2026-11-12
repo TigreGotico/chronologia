@@ -1053,7 +1053,7 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
             # feminine ordinals the number back-end rejects ("a doua",
             # "la segunda") -- map the surface straight to its digit.  With
             # ``ord_article`` the surface is an ordinal only after that
-            # article: Romanian "două" alone is the cardinal two.
+            # article: Romanian "doua" alone is the cardinal two.
             tokens = _reindex(tuple(
                 Token(text=str(fem_ord[t.text]), raw=t.raw, index=0,
                       is_number=True, value=fem_ord[t.text],
@@ -1502,12 +1502,14 @@ fold_ro = _romance_prepass_fold(
     "ro", {"un", "unu", "una", "o"},
     phrases=_RO_PHRASES,
     ord_suffixes=frozenset({"lea", "a", "ea", "le"}),
-    fem_ord={"doua": 2, "două": 2, "treia": 3, "patra": 4, "cincea": 5,
+    fem_ord={"doua": 2, "treia": 3, "patra": 4, "cincea": 5,
              "șasea": 6, "sasea": 6, "șaptea": 7, "saptea": 7, "opta": 8,
              "noua": 9, "zecea": 10},
-    # "două" and "noua" (nouă without diacritics) are also cardinals; the
-    # ordinal takes the article: en.wiktionary "doua", "a doua f (ordinal
-    # form of doi)"
+    # The ordinal is "a doua" and the cardinal is "două" (DOOM 3, "doilea"
+    # and "doi").  "doua" and "noua" are also the cardinals written without
+    # diacritics, so the ordinal takes the article.  "două" is not in the
+    # table: after "a" it is the genitive cardinal ("mamă a două fete",
+    # C. Stan, Revue roumaine de linguistique LV (3), 2010, p. 243)
     ord_article=frozenset({"a"}))
 # deep-time SCALE-frame licensing: "un miliard/un bilion de ani în urmă"
 fold_ro = _with_scale_frame(fold_ro, "ro", frozenset({"un", "unu", "una", "o"}))

@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from chronologia import extract_duration, extract_timespan
+from chronologia.extract.nseries import _timespan_engine
 
 
 @pytest.mark.parametrize("text,lang", [
@@ -41,6 +42,12 @@ from chronologia import extract_duration, extract_timespan
     ("la prima settimana di aprile", "it"),
     ("as nonas semanas de março", "pt"),
     ("a doua săptămână din martie", "ro"),
+    ("a doua zi", "ro"),
+    ("A doua zi", "ro"),
+    ("în a doua zi", "ro"),
+    ("cea de-a doua zi", "ro"),
+    ("a doua oră", "ro"),
+    ("a noua zi", "ro"),
     ("trečioji savaitė", "lt"),
     ("þriðja vika", "is"),
     ("तीसरा सप्ताह", "hi"),
@@ -92,6 +99,54 @@ def test_a_count_is_still_a_length(text, lang, length, remainder):
     assert got is not None
     assert got.duration == length
     assert got.remainder == remainder
+
+
+# DOOM 3 spells the ordinal "a doua" ("doilea") and the cardinal "două"
+# ("doi").  After "a", "două" is the genitive of the cardinal: "mamă a două
+# fete" (C. Stan, "On the Grammaticality Status of Numerals in Romanian",
+# Revue roumaine de linguistique LV (3), 2010, p. 243).  "doua" is "două"
+# without diacritics, and only "a" makes it the ordinal.  In "punctul a"
+# (item a) the "a" is the last word, not the word before "doua".
+# "douăzeci și două" is 20 + 2.
+@pytest.mark.parametrize("text,length,remainder", [
+    ("pe parcursul a două săptămâni", timedelta(weeks=2), "pe parcursul"),
+    ("în decursul a două ore", timedelta(hours=2), "în decursul"),
+    ("după expirarea a două ore", timedelta(hours=2), "după expirarea"),
+    ("pe durata a două zile", timedelta(days=2), "pe durata"),
+    ("timp de două ore", timedelta(hours=2), ""),
+    ("timp de doua ore", timedelta(hours=2), ""),
+    ("doua ore pentru punctul a", timedelta(hours=2), "pentru punctul a"),
+    ("douăzeci și două de minute", timedelta(minutes=22), ""),
+])
+def test_a_romanian_cardinal_after_a_is_still_a_length(text, length,
+                                                       remainder):
+    got = extract_duration(text, "ro")
+    assert got is not None
+    assert got.duration == length
+    assert got.remainder == remainder
+
+
+# en.wiktionary: ga "dara" "second", "aonú" "first", with "an t-aonú fear
+# déag" "the eleventh man" and "an t-aonú lá is fiche" "the twenty-first day".
+# Irish puts the noun inside the compound, so a unit after "déag" or
+# "is fichiú" is not grammatical.  The fold still reads the compound as one
+# ordinal, and a duration must not count it.
+@pytest.mark.parametrize("compound,value", [
+    ("dara déag", 12),
+    ("an t-aonú is fichiú", 21),
+])
+def test_an_irish_ordinal_compound_is_an_ordinal(compound, value):
+    numbers = [t for t in _timespan_engine("ga").tokenize(compound)
+               if t.is_number]
+    assert [(t.value, t.ordinal) for t in numbers] == [(value, True)]
+
+
+@pytest.mark.parametrize("text", [
+    "an dara déag lá",
+    "an t-aonú is fichiú lá",
+])
+def test_an_irish_ordinal_compound_before_a_unit_is_not_a_length(text):
+    assert extract_duration(text, "ga") is None
 
 
 def test_a_cardinal_two_after_a_clock_is_still_a_length():
