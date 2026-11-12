@@ -10,7 +10,7 @@ A = datetime(2017, 6, 27, 13, 4)
 
 @pytest.mark.parametrize("text,s,e", [
     ("juni - agustus", (2017, 6, 1), (2017, 9, 1)),
-    ("januari - maret", (2017, 1, 1), (2017, 4, 1)),
+    ("januari - maret", (2018, 1, 1), (2018, 4, 1)),
 ])
 def test_dash_range(text, s, e):
     ss, ee = start_end(text, A)

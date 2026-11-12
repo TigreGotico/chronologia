@@ -75,7 +75,8 @@ def test_vav_month_year():
     ("ואוקטובר", 10), ("ונובמבר", 11), ("ודצמבר", 12),
 ])
 def test_vav_month_bare(text, month):
-    assert span(text).start == AstroDate(2017, month, 1)
+    assert span(text).start == AstroDate(
+        ANCHOR.year + (month < ANCHOR.month), month, 1)
 
 
 # --------------------------------------------------------------------------
@@ -95,7 +96,7 @@ def test_control_bare_holiday_and_month_unaffected():
 def test_control_bet_prefixed_month_unaffected():
     """The already-working ב- ("in") month prefix must keep working exactly
     as before -- the vav strip is scoped to ו only."""
-    assert span("בינואר").start == AstroDate(2017, 1, 1)
+    assert span("בינואר").start == AstroDate(2018, 1, 1)
 
 
 def test_control_bet_vav_combo_unaffected():

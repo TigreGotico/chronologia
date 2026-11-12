@@ -621,8 +621,11 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     fraction_marker_words = (set(spec.connectors.get("half", ()))
                              | set(spec.connectors.get("quarter_word", ())))
 
-    def endpoint(sub):
-        return _range_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
+    def endpoint(sub, years_back=0):
+        at = _minus_one_year(anchor) if years_back else anchor
+        if at is None:
+            return None
+        return _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
 
     def bare_of(sub):
         return _bare_numeral(text, sub, engine, anchor)
@@ -1406,6 +1409,8 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         # back a year would fabricate a bogus ~year-wide span, so leave it to
         # fail below (None -> the single-span fallback reads the left date).
         pulled = _minus_one_year(start)
+        if left[2] == "dated" and not (shared_left or left_lent):
+            pulled = _previous_cycle(left_tok, left, endpoint) or pulled
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
     # a year lent across the range (one endpoint named the pair's single year)
@@ -1437,6 +1442,22 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
     return DateSpan(start, end), remainder
+
+
+def _previous_cycle(left_tok, left, endpoint):
+    """The left endpoint's start one cycle earlier, for the straddle repair.
+
+    The left is read again at an anchor one year back, so a month of a reckoned
+    calendar lands on that calendar's previous year: "nisan" moves from 17
+    March 2018 to 28 March 2017, where one Gregorian year back gives 17 March
+    2017, a day that starts no month.  Returns ``None`` when the second reading
+    is not an earlier span of the same kind.
+    """
+    again = endpoint(left_tok, years_back=1)
+    if again is None or again[2] != left[2] \
+            or again[0].start >= left[0].start:
+        return None
+    return again[0].start
 
 
 def _minus_one_year(astro):

@@ -486,8 +486,11 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # in its own ``marker_dayframe.voc`` (bound by ``daypart_ref``'s
     # "dayframe DAYPART" order), leaving ``marker_during.voc`` free to hold the
     # genuine month preposition ("em", "en") and opt in here.
+    # A month named with a relative marker ("last October", "в прошлом
+    # октябре") is the occurrence before or after the bare reading.
     "calendar_date": [
         "during MONTH DAY? YEAR?",
+        "during? REL_MARKER MONTH",
     ],
 }
 

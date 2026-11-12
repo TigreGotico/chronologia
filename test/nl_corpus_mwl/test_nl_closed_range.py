@@ -73,5 +73,5 @@ def test_month_range_same_year():
 
 def test_bare_month_range():
     s, e = start_end("zde janeiro até márcio")
-    assert s == AstroDate(2017, 1, 1)
-    assert e == AstroDate(2017, 4, 1)
+    assert s == AstroDate(2018, 1, 1)
+    assert e == AstroDate(2018, 4, 1)

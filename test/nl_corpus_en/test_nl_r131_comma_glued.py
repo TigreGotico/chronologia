@@ -54,8 +54,8 @@ def test_month_day_comma_year_no_space_never_reads_year_5202():
     assert span.start.year != 5202
     assert span.end.year != 5202
     # policy: degrades to the month-only span chronologia can still stand
-    # behind; the ungrounded "day,year" text is NOT silently discharged
-    assert (span.start.year, span.start.month, span.start.day) == (2017, 3, 1)
+    # behind, March 2018, the next March after the anchor; the ungrounded "day,year" text is NOT silently discharged
+    assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 1)
     assert "2025" in remainder or remainder == "5,2025"
 
 
@@ -66,7 +66,7 @@ def test_month_spaced_day_comma_glued_year_never_reads_year_5202():
     span, remainder = r
     assert span.start.year != 5202
     assert span.end.year != 5202
-    assert (span.start.year, span.start.month, span.start.day) == (2017, 3, 1)
+    assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 1)
     assert "2025" in remainder
 
 
@@ -77,7 +77,7 @@ def test_month_day_comma_two_digit_year_no_space_never_drops_the_year():
     r = extract_timespan("march5,25", "en", ANCHOR)
     assert r is not None
     span, remainder = r
-    assert (span.start.year, span.start.month, span.start.day) == (2017, 3, 1)
+    assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 1)
     # the "25" must be visible in the remainder, never silently absorbed
     # into a full, wrong date
     assert "25" in remainder
@@ -89,7 +89,7 @@ def test_month_two_digit_day_comma_year_no_space_no_silent_wrong_date():
         return
     span, remainder = r
     assert span.start.year != 5212
-    assert (span.start.year, span.start.month, span.start.day) == (2017, 3, 1)
+    assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 1)
     assert "2025" in remainder
 
 
@@ -99,7 +99,7 @@ def test_month_25_day_comma_year_no_space_no_silent_wrong_date():
         return
     span, remainder = r
     assert span.start.year != 5225
-    assert (span.start.year, span.start.month, span.start.day) == (2017, 3, 1)
+    assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 1)
     assert "2025" in remainder
 
 

@@ -37,7 +37,7 @@ def test_em_month_fully_consumes(marker, month, num):
     r = _span(f"{marker} {month}")
     assert r is not None, f"{marker} {month!r} did not parse"
     assert r.remainder == ""
-    assert r[0].start == AstroDate(2026, num, 1)
+    assert r[0].start == AstroDate(_A.year + (num < _A.month), num, 1)
 
 
 @pytest.mark.parametrize("phrase,start_h,end_h", [

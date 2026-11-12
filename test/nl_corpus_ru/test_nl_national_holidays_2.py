@@ -46,7 +46,7 @@ def test_explicit_year(text, ymd):
 #    the holiday names embed must stay byte-identical to their pre-holiday
 #    reading (a whole-month span, a single weekday, a plain day-date). --
 def test_bare_month_unchanged():
-    assert start('февраль') == AstroDate(2017, 2, 1)
+    assert start('февраль') == AstroDate(2018, 2, 1)
     assert span('февраль').width == timedelta(days=28)
 
 

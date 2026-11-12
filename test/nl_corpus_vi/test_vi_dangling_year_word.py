@@ -30,7 +30,7 @@ def test_the_year_word_still_works_with_a_numeral_year_attached():
 
 
 def test_no_year_at_all_still_resolves_against_the_anchor():
-    # anchor is 2017-06-27; a bare month reference with no year at all takes
-    # the anchor's own year, 2017, and the first day of that month.
+    # anchor is 2017-06-27; a bare month reference with no year at all is
+    # its next occurrence: April has ended, so it is April 2018.
     s = start("tháng tư")
-    assert (s.year, s.month, s.day) == (2017, 4, 1)
+    assert (s.year, s.month, s.day) == (2018, 4, 1)

@@ -239,7 +239,7 @@ _BOUND_CASES = [
     ("every friday until june", "FREQ=WEEKLY;UNTIL=20170601T000000;BYDAY=FR", ""),
     ("every monday until december", "FREQ=WEEKLY;UNTIL=20171201T000000;BYDAY=MO", ""),
     ("daily until 2020", "FREQ=DAILY;UNTIL=20200101T000000", ""),
-    ("every week till march", "FREQ=WEEKLY;UNTIL=20170301T000000", ""),
+    ("every week till march", "FREQ=WEEKLY;UNTIL=20180301T000000", ""),
     ("daily for two weeks", "FREQ=DAILY;COUNT=14", ""),
     ("daily for a week", "FREQ=DAILY;COUNT=7", ""),
     ("every day for 3 days", "FREQ=DAILY;COUNT=3", ""),
@@ -250,7 +250,7 @@ _BOUND_CASES = [
     # wins and the trailing "N times" is left in the remainder -- it must NOT
     # add COUNT onto the UNTIL rule (which raised an unhandled ValueError out of
     # the public extractor).
-    ("every day 5 times until march", "FREQ=DAILY;UNTIL=20170301T000000", "5 times"),
+    ("every day 5 times until march", "FREQ=DAILY;UNTIL=20180301T000000", "5 times"),
 ]
 
 

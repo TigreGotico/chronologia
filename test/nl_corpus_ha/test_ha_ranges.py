@@ -18,8 +18,8 @@ def test_the_closed_range_runs_daga_to_zuwa(text, lo, hi):
 
 
 def test_a_month_range():
-    assert start_end("daga Janairu zuwa Maris") == (month_span(2027, 1)[0],
-                                                    month_span(2027, 3)[1])
+    assert start_end("daga Janairu zuwa Maris") == (month_span(2028, 1)[0],
+                                                    month_span(2028, 3)[1])
 
 
 @pytest.mark.parametrize("text,lo,hi", [

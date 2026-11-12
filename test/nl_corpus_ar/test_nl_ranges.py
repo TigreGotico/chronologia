@@ -15,7 +15,7 @@ from ._corpus import ANCHOR, AstroDate, start_end, nomatch, remainder, span
 
 
 @pytest.mark.parametrize("text,s,e", [
-    ("يناير - مارس", (2017, 1, 1), (2017, 4, 1)),
+    ("يناير - مارس", (2018, 1, 1), (2018, 4, 1)),
     ("يونيو - أغسطس", (2017, 6, 1), (2017, 9, 1)),
     ("15 يناير - 20 يناير", (2018, 1, 15), (2018, 1, 21)),
 ])
@@ -25,7 +25,7 @@ def test_dash_range(text, s, e):
 
 
 @pytest.mark.parametrize("text,s,e", [
-    ("من يناير إلى مارس", (2017, 1, 1), (2017, 4, 1)),
+    ("من يناير إلى مارس", (2018, 1, 1), (2018, 4, 1)),
     ("من يونيو إلى أغسطس", (2017, 6, 1), (2017, 9, 1)),
     ("من 15 يناير إلى 20 يناير", (2018, 1, 15), (2018, 1, 21)),
 ])
@@ -47,8 +47,8 @@ def test_bare_connector_is_nomatch(text):
 # same span; a bare word that legitimately starts with "و" ("وسط" mid) must
 # NOT be mistaken for a glued endpoint.
 @pytest.mark.parametrize("text,s,e", [
-    ("بين يناير و مارس", (2017, 1, 1), (2017, 4, 1)),
-    ("بين يناير ومارس", (2017, 1, 1), (2017, 4, 1)),
+    ("بين يناير و مارس", (2018, 1, 1), (2018, 4, 1)),
+    ("بين يناير ومارس", (2018, 1, 1), (2018, 4, 1)),
 ])
 def test_fused_waw_range_endpoint(text, s, e):
     ss, ee = start_end(text)
@@ -129,10 +129,10 @@ def test_fused_waw_yields_two_mentions_not_one():
     # the second, fused month invisibly into the first's remainder.
     mentions = extract_timespans("يناير ومارس", "ar", ANCHOR)
     assert len(mentions) == 2
-    assert mentions[0].span.start == AstroDate(2017, 1, 1)
-    assert mentions[0].span.end == AstroDate(2017, 2, 1)
-    assert mentions[1].span.start == AstroDate(2017, 3, 1)
-    assert mentions[1].span.end == AstroDate(2017, 4, 1)
+    assert mentions[0].span.start == AstroDate(2018, 1, 1)
+    assert mentions[0].span.end == AstroDate(2018, 2, 1)
+    assert mentions[1].span.start == AstroDate(2018, 3, 1)
+    assert mentions[1].span.end == AstroDate(2018, 4, 1)
 
 
 def test_fused_waw_bare_word_now_resolves_as_month():
@@ -143,5 +143,5 @@ def test_fused_waw_bare_word_now_resolves_as_month():
     # reading unconditionally since it cannot see verb-vs-noun context.
     r = extract_timespan("ومارس", "ar", ANCHOR)
     assert r is not None
-    assert r[0].start == AstroDate(2017, 3, 1) and r[0].end == AstroDate(2017, 4, 1)
+    assert r[0].start == AstroDate(2018, 3, 1) and r[0].end == AstroDate(2018, 4, 1)
     assert r[1] == "و"

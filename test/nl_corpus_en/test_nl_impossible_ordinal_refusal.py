@@ -226,8 +226,8 @@ def test_thirteenth_quarter_of_2026_refuses():
 def test_plural_count_of_vacation_is_not_vetoed():
     r = _result("3 weeks of vacation in july")
     assert r is not None
-    assert r.span.start == AstroDate(2026, 7, 1)
-    assert r.span.end == AstroDate(2026, 8, 1)
+    assert r.span.start == AstroDate(2027, 7, 1)
+    assert r.span.end == AstroDate(2027, 8, 1)
 
 
 def test_unrelated_later_clause_is_not_vetoed():

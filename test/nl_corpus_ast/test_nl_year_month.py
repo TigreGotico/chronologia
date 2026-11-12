@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from ._corpus import start_end, ad
+from ._corpus import ANCHOR, start_end, ad
 from ._gen import MON
 
 
@@ -44,10 +44,11 @@ def test_month_de_year(year, m, word):
     assert e == ad(_first_next_month(year, m))
 
 
-# --- bare month resolves to the anchor year ----------------------------------
+# --- bare month is its next occurrence: a month that has ended is next year's -
 @pytest.mark.parametrize("m,word", sorted(MON.items()))
-def test_bare_month_anchor_year(m, word):
+def test_bare_month_next_occurrence(m, word):
+    year = ANCHOR.year + (m < ANCHOR.month)
     s, e = start_end(word)
-    assert s == ad(datetime(2017, m, 1))
-    assert e == ad(_first_next_month(2017, m))
+    assert s == ad(datetime(year, m, 1))
+    assert e == ad(_first_next_month(year, m))
     assert e > s and (e - s) >= timedelta(days=28)

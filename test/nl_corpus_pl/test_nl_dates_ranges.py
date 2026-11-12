@@ -46,7 +46,7 @@ def test_iso_and_year():
 
 @pytest.mark.parametrize("text,s,e", [
     ("od czerwca do sierpnia", "2017-6-1", "2017-9-1"),
-    ("od stycznia do marca", "2017-1-1", "2017-4-1"),
+    ("od stycznia do marca", "2018-1-1", "2018-4-1"),
     ("od października do grudnia", "2017-10-1", "2018-1-1"),
 ])
 def test_from_to_range(text, s, e):

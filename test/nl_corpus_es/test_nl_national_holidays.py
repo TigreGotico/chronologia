@@ -51,8 +51,8 @@ def test_explicit_year(text, ymd):
 # -- collision regression pins: the month / weekday tokens the holiday names
 #    embed must stay byte-identical to their pre-holiday reading. --
 @pytest.mark.parametrize("text,ymd,days", [
-    ("mayo", (2017, 5, 1), 31),    # bare month May, NOT labour day
-    ("abril", (2017, 4, 1), 30),   # bare month April
+    ("mayo", (2018, 5, 1), 31),    # bare month May, NOT labour day
+    ("abril", (2018, 4, 1), 30),   # bare month April
 ])
 def test_bare_month_unchanged(text, ymd, days):
     assert start(text) == AstroDate(*ymd)
