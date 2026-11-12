@@ -2159,6 +2159,27 @@ def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
 _veto_reentry = threading.local()
 
 
+_CLOCK_LITERAL = re.compile(r"\d{1,2}:\d{2}(:\d{2})?")
+
+
+def _clock_half_read(tokens, consumed, spec):
+    """Whether a bound clock literal is followed by an unread "past" clock
+    direction and a number ("ás 20h e 45", "ás 20:00 e 45").
+
+    A written hour ("20h") folds to the literal "20:00", and no order adds
+    minutes after a literal, so the reading stops at 20:00 with "e 45" left
+    over: a time the speaker did not give.  The phrase is refused instead.
+    """
+    for here, after, count in zip(tokens, tokens[1:], tokens[2:]):
+        if (here.index in consumed
+                and _CLOCK_LITERAL.fullmatch(here.text)
+                and after.index not in consumed
+                and spec.clock_dirs.get(after.text, 0) > 0
+                and count.index not in consumed and count.is_number):
+            return True
+    return False
+
+
 def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     """Whether the winning reading strands an IMPOSSIBLE day-of-month numeral --
     proof the parse is incomplete and must be refused (residue-veto design,
@@ -3060,6 +3081,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # A stranded but VALID date (a second mention, "... al 5 de junio de 2020")
     # resolves on its own and is left in the remainder untouched.
     if _impossible_date_veto(tokens, consumed, text, engine, anchor):
+        return None
+    if _clock_half_read(tokens, consumed, engine.spec):
         return None
     consumed = _fold_day_label(tokens, consumed, engine.spec)
     remainder = render_remainder(text, [t for t in tokens
