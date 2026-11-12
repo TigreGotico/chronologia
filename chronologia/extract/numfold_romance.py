@@ -19,6 +19,7 @@ from dataclasses import replace
 from importlib import import_module
 
 from ovos_number_parser.numbers_fr import extract_number_fr
+from ovos_number_parser.util import NumberVocabulary
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
@@ -49,6 +50,13 @@ from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
 # doubles as a weekday name (pt "segunda"/"quarta"/"quinta"/"sexta") from
 # ever being read as a number.
 from importlib import import_module
+
+
+def _number_vocabulary(numbers_mod):
+    """The language's ``NumberVocabulary`` instance; a language may subclass it
+    (ovos-number-parser's Occitan ``OccitanVocabulary``)."""
+    return next(v for v in vars(numbers_mod).values()
+                if isinstance(v, NumberVocabulary))
 
 
 def _fem_forms(surf):
@@ -358,8 +366,7 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
     needed."""
     from ovos_number_parser.util import RomanceNumberExtractor
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
-    vocab = next(v for v in vars(numbers_mod).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_mod)
     # the shared spoken-number reader; for most Romance languages
     # ``extract_number_<lang>`` is a thin wrapper over exactly this, and a
     # language whose wrapper adds a real hook passes that wrapper as ``reader``.
@@ -471,8 +478,7 @@ def _romance_scale_frame(lang_code, article_ones,
     surfaces the article-one frame must recognise.
     """
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
-    vocab = next(v for v in vars(numbers_mod).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_mod)
     thousand, million, scale_all = set(), set(million_extra), set(scale_extra)
     scale_all |= set(million_extra)
     for table in (vocab.SHORT_SCALE, vocab.LONG_SCALE):
@@ -690,8 +696,7 @@ def _license_pt_nonas(tokens):
 
 def _pt_plural_ordinals():
     from ovos_number_parser import numbers_pt
-    vocab = next(v for v in vars(numbers_pt).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_pt)
     out = {}
     for val, surf in vocab.ORDINAL_UNITS.items():
         if not surf:
