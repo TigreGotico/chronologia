@@ -341,10 +341,11 @@ def read_run(text: str) -> Optional[int]:
     return total + group if seen else None
 
 
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
+def _numeric(tok: Token, value: int, end: Token = None,
+             ordinal: bool = False) -> Token:
     return Token(text=str(value), raw=str(value), index=tok.index,
                  is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
+                 char_end=(end or tok).char_end, ordinal=ordinal)
 
 
 #: the magnitude class of a cardinal surface, which is what licenses one
@@ -415,11 +416,11 @@ def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             unit = _ORDINAL_UNITS.get(tokens[i + 2].text)
             if tokens[i + 1].text == _AND and unit is not None:
                 out.append(_numeric(t, _ORDINAL_TENS_SURFACES[t.text] + unit,
-                                    tokens[i + 2]))
+                                    tokens[i + 2], ordinal=True))
                 i, changed = i + 3, True
                 continue
         if not t.is_number and t.text in ORDINALS:
-            out.append(_numeric(t, ORDINALS[t.text]))
+            out.append(_numeric(t, ORDINALS[t.text], ordinal=True))
             i, changed = i + 1, True
             continue
         out.append(t)

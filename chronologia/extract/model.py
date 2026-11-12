@@ -101,6 +101,11 @@ class Token:
     # sat in different clauses; constructions that join neighbouring words
     # ("friday, next week ...") read it to refuse a join across the break.
     break_before: bool = False
+    # Whether this number token was folded from an ORDINAL ("second", "2nd",
+    # Danish "2.", "terceira").  The value alone cannot tell "the second
+    # week" (which week) from "two weeks" (how long), so the duration reader
+    # reads this flag and refuses an ordinal as a count.
+    ordinal: bool = False
 
 
 @dataclass(frozen=True)
