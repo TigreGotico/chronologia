@@ -17,7 +17,9 @@
   "weekend_ref": {
    "orders": [
     "REL_MARKER WEEKEND",
-    "article? WEEKEND"
+    "article? WEEKEND",
+    "at REL_MARKER? WEEKEND",
+    "for_date REL_MARKER? WEEKEND"
    ]
   },
   "calendar_date": {
@@ -121,7 +123,16 @@
   },
   "extend": {
    "weekday_ref": [
-    "at WEEKDAYFULL"
+    "at WEEKDAYFULL",
+    "at REL_MARKER WEEKDAY",
+    "for_date WEEKDAYFULL",
+    "for_date REL_MARKER WEEKDAY"
+   ],
+   "named_day": [
+    "for_date DAY_WORD"
+   ],
+   "rel_period": [
+    "for_date REL_MARKER UNIT"
    ]
   }
  }
