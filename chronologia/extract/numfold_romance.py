@@ -580,6 +580,29 @@ _PT_ORDINAL_BEFORE_WEEK = {"segunda": 2, "quarta": 4, "quinta": 5, "sexta": 6}
 _PT_FEMININE_WEEKDAYS = frozenset({"segunda", "terça", "terca", "quarta",
                                    "quinta", "sexta"})
 _PT_ORDINAL_ARTICLES = frozenset({"a", "na", "da", "à", "pela"})
+#: The words that open the period after "a segunda terça-feira": "de 2026",
+#: "de julho", "do mês que vem", "deste mês".  Without one of them there is
+#: no period for the ordinal to count in.
+_PT_ORDINAL_SCOPE_OPENERS = frozenset({"de", "do", "da", "deste", "desta"})
+
+
+def _pt_daypart_surfaces():
+    """The pt day-part words, read from ``locale/pt/daypart_*.voc``.
+
+    A day part after the opener ("de manhã", "da tarde") is a time of day,
+    not a period that holds several of the same weekday, so it gives the
+    ordinal nothing to count in."""
+    folder = os.path.join(_LOCALE_ROOT, "pt")
+    out = set()
+    for name in os.listdir(folder):
+        if name.startswith("daypart_") and name.endswith(".voc"):
+            with open(os.path.join(folder, name), encoding="utf-8") as fh:
+                out.update(line.strip().lower() for line in fh
+                           if line.strip() and not line.startswith("#"))
+    return frozenset(out)
+
+
+_PT_DAYPARTS = _pt_daypart_surfaces()
 
 
 def _license_ordinal_before_weekday(tokens):
@@ -587,17 +610,27 @@ def _license_ordinal_before_weekday(tokens):
 
     Priberam s.v. "segundo": "adjetivo numeral ... 1. Que ou o que está logo
     depois do primeiro."  The homograph is licensed only between an article
-    and a feminine weekday name with nothing written between them, so a list
-    of weekdays ("na segunda, terça e quarta") keeps its weekday reading.
+    and a feminine weekday name with nothing written between them, and only
+    when the period it counts in follows the weekday ("de julho", "do mês que
+    vem").  A list of weekdays keeps its weekday reading, with or without the
+    commas that speech-to-text never writes: "na segunda terça e quarta" is
+    Monday, Tuesday and Wednesday, and in "na segunda terça de manhã" the day
+    part is no period, so "segunda" stays Monday.
     """
     out = list(tokens)
-    for i in range(1, len(tokens) - 1):
+    n = len(tokens)
+    for i in range(1, n - 1):
         prev, tok, nxt = tokens[i - 1], tokens[i], tokens[i + 1]
         adjacent = (tok.char_end is not None and nxt.char_start is not None
                     and nxt.char_start - tok.char_end == 1)
+        j = i + 2
+        if j < n and tokens[j].text == "feira":
+            j += 1
+        scoped = (j + 1 < n and tokens[j].text in _PT_ORDINAL_SCOPE_OPENERS
+                  and tokens[j + 1].text not in _PT_DAYPARTS)
         if (not tok.is_number and tok.text in _PT_ORDINAL_BEFORE_WEEK
                 and prev.text in _PT_ORDINAL_ARTICLES
-                and nxt.text in _PT_FEMININE_WEEKDAYS and adjacent):
+                and nxt.text in _PT_FEMININE_WEEKDAYS and adjacent and scoped):
             value = _PT_ORDINAL_BEFORE_WEEK[tok.text]
             out[i] = Token(text=str(value), raw=tok.raw, index=0,
                            is_number=True, value=value,
