@@ -101,6 +101,12 @@ class Token:
     # sat in different clauses; constructions that join neighbouring words
     # ("friday, next week ...") read it to refuse a join across the break.
     break_before: bool = False
+    # Whether this number token was folded from a declined day-of-month
+    # ordinal WORD ("двадцатого", "двадцять третього").  The Slavic day fold
+    # turns the word into a bare digit, so this flag is the only record that an
+    # ordinal, not a cardinal, was spoken: "двадцатого числа" names a day,
+    # "три числа" ("three numbers") does not.
+    day_ordinal: bool = False
 
 
 @dataclass(frozen=True)

@@ -346,6 +346,10 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         raw = token.raw.rstrip(".")
         return (token.is_number and 1 <= (token.value or 0) <= 31
                 and raw[:1].isdigit() and not raw.isdigit())
+    if name == "WORDORD":
+        # a day-of-month ordinal spoken as a declined word ("двадцатого") --
+        # never a cardinal or a digit, which the day fold leaves unflagged.
+        return token.day_ordinal and 1 <= (token.value or 0) <= 31
     if name == "DORD":
         # an ordinal that still WEARS its ordinal mark: a digit run whose
         # ``raw`` keeps the trailing dot an ``ordinal_dot`` locale writes its

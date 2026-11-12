@@ -1703,8 +1703,10 @@ class Resolver:
         month, rolled to next month when that day has already passed
         (prefer_future).  The bare-preposition orders ("on the 3rd", "by the
         5th") bind a *digit* day-of-month ordinal via the NORD slot; the
-        "of month_word" order binds a general ORD."""
-        ord_tok = match.slots.get("ORD") or match.slots["NORD"]
+        "of month_word" order binds a general ORD; the Slavic "двадцатого
+        числа" order binds a spelled day ordinal via WORDORD."""
+        ord_tok = (match.slots.get("ORD") or match.slots.get("WORDORD")
+                   or match.slots["NORD"])
         day = int(ord_tok.value)
         rel_tok = match.slots.get("REL_MARKER")
         rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
