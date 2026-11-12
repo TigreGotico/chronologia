@@ -239,10 +239,11 @@ def read_run(text: str) -> Optional[int]:
     return total + group if seen else None
 
 
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
+def _numeric(tok: Token, value: int, end: Token = None,
+             ordinal: bool = False) -> Token:
     return Token(text=str(value), raw=str(value), index=tok.index,
                  is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
+                 char_end=(end or tok).char_end, ordinal=ordinal)
 
 
 #: the magnitude class of a cardinal surface, which is what licenses one
@@ -306,11 +307,11 @@ def _day_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             unit = _DAY_ORD_LT.get(tokens[i + 1].text, 0)
             if 1 <= unit <= 9:
                 out.append(_numeric(t, _DAY_TENS_LT[t.text] + unit,
-                                    tokens[i + 1]))
+                                    tokens[i + 1], ordinal=True))
                 i, changed = i + 2, True
                 continue
         if not t.is_number and t.text in _DAY_ORD_LT:
-            out.append(_numeric(t, _DAY_ORD_LT[t.text]))
+            out.append(_numeric(t, _DAY_ORD_LT[t.text], ordinal=True))
             i, changed = i + 1, True
             continue
         out.append(t)
@@ -323,7 +324,7 @@ def _ord_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     out, changed = [], False
     for t in tokens:
         if not t.is_number and t.text in _ORD_LT:
-            out.append(_numeric(t, _ORD_LT[t.text]))
+            out.append(_numeric(t, _ORD_LT[t.text], ordinal=True))
             changed = True
         else:
             out.append(t)

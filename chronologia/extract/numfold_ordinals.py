@@ -11,8 +11,9 @@ closed morphological class the cardinal back-end does not read, so this
 pre-pass folds a lone ordinal-word token to the digit its ``ORD`` slot binds.
 
 The word->value map is built, where the language exposes it, from
-``ovos_number_parser``'s ``pronounce_ordinal_<lang>`` (inverted over a small
-range); languages whose model carries no ordinal pronouncer supply an explicit
+``ovos_number_parser``'s ordinal pronouncer (inverted over a small range):
+``pronounce_ordinal_<lang>``, or the ``RomanceNumberExtractor`` that pt, gl
+and mwl expose in its place; languages whose model carries no ordinal pronouncer supply an explicit
 closed table (a fact of the language, kept tiny).  Only **single-token**
 ordinal surfaces are folded -- compound ordinals ("twenty-third") are out of
 scope for the quarter/scoped-ordinal constructions that need this.
@@ -31,14 +32,23 @@ from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex as _reindex
 
 
+#: languages whose ``pronounce_ordinal_<lang>`` is a deprecated wrapper over
+#: the module's own ``RomanceNumberExtractor``; the extractor is read
+#: directly, and pt is the pt-PT norm the wrapper defaults to.
+_ROMANCE_EXTRACTORS = {"pt": "PT_PT", "gl": "GL", "mwl": "MWL"}
+
+
 @lru_cache(maxsize=None)
 def _pron_ordinal_map(lang: str, hi: int = 31) -> Dict[str, int]:
-    """Invert ``pronounce_ordinal_<lang>`` over ``1..hi`` into a
+    """Invert the model's ordinal pronouncer over ``1..hi`` into a
     single-word surface -> value map, or ``{}`` when the model has no
     ordinal pronouncer."""
     try:
         mod = import_module(f"ovos_number_parser.numbers_{lang}")
-        pron = getattr(mod, f"pronounce_ordinal_{lang}")
+        if lang in _ROMANCE_EXTRACTORS:
+            pron = getattr(mod, _ROMANCE_EXTRACTORS[lang]).pronounce_ordinal
+        else:
+            pron = getattr(mod, f"pronounce_ordinal_{lang}")
     except (ImportError, AttributeError):
         return {}
     out: Dict[str, int] = {}
@@ -64,7 +74,7 @@ def _make_rewrite(omap: Dict[str, int]) -> Callable:
                 out.append(Token(text=str(val), raw=str(val), index=t.index,
                                  is_number=True, value=val,
                                  char_start=t.char_start,
-                                 char_end=t.char_end))
+                                 char_end=t.char_end, ordinal=True))
                 changed = True
             else:
                 out.append(t)

@@ -1,0 +1,6 @@
+# The NIGHT daypart is a BAND that crosses midnight, not a uniform +12 PM
+# shift: SSKJ², s.v. ponoči, "v času teme od sončnega zahoda do vzhoda", with
+# the example "ob dvanajstih ponoči".  Small hours 1..5 stay AM, evening hours
+# 6..11 are PM, twelve is midnight (the band-split lives in the resolver
+# _clock_hms).  https://fran.si/iskanje?View=1&Query=ponoči
+ponoči
