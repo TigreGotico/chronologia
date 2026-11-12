@@ -42,6 +42,7 @@ from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_clock,
                                               compose_date_daypart,
                                               compose_daypart_clock,
+                                              daypart_follows_evening,
                                               _WEEK_START, _week_span)
 from chronologia.extract.tokenizer import Tokenizer
 
@@ -3298,7 +3299,13 @@ def _compose(resolved, engine, tokens):
             return None, set(), None
         glue_consumed = _composition_glue(dp_match, clk_match)
         if len(eff_dates) == 1 and _adjacent(eff_dates[0][0], dp_match):
-            res = compose_date_clock(eff_dates[0][1], merged_clock)
+            day_res = eff_dates[0][1]
+            if daypart_follows_evening(dp_name) \
+                    and eff_dates[0][0].construction == "named_day":
+                # the night after the named day's evening
+                day_res = compose_date_daypart(day_res, dp_res, dp_name,
+                                               after_evening=True)
+            res = compose_date_clock(day_res, merged_clock)
             rep = eff_dates[0][0]
             glue_consumed |= _composition_glue(eff_dates[0][0], dp_match)
             glue_consumed |= _composition_glue(eff_dates[0][0], clk_match)
@@ -3314,7 +3321,9 @@ def _compose(resolved, engine, tokens):
             and not clocks
             and _adjacent(eff_dates[0][0], dayparts[0][0])):
         name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
-        res = compose_date_daypart(eff_dates[0][1], dayparts[0][1], name)
+        res = compose_date_daypart(
+            eff_dates[0][1], dayparts[0][1], name,
+            after_evening=eff_dates[0][0].construction == "named_day")
         rep = eff_dates[0][0]
         glue_consumed = _composition_glue(eff_dates[0][0], dayparts[0][0])
     elif label_consumed and not clocks and not dayparts:
