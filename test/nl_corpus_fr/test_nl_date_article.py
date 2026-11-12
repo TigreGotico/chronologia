@@ -16,10 +16,10 @@ from ._corpus import parse, start_end, AstroDate
     ("le dimanche 2 juillet 2017", (2017, 7, 2), ""),
     ("rendez-vous le lundi 3 juillet", (2017, 7, 3), "rendez-vous"),
     ("le 15 juin", (2018, 6, 15), ""),
-    # alone, "le mardi" is also the habit; a habitual phrase reads as the
-    # next such day, Tuesday 4 July
-    ("le mardi", (2017, 7, 4), ""),
-    ("le mardi je travaille", (2017, 7, 4), "je travaille"),
+    # alone, "le jeudi" is also the habit; a habitual phrase reads as the
+    # next such day, Thursday 29 June
+    ("le jeudi", (2017, 6, 29), ""),
+    ("le jeudi je travaille", (2017, 6, 29), "je travaille"),
 ])
 def test_article_is_part_of_the_date(text, ymd, rest):
     s, e = start_end(text)

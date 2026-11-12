@@ -5,7 +5,7 @@
 contraction carries the article of that day noun; leaving "no" in the
 remainder strands half of the date expression (Svobodová, "Variabilidade
 semântica e sintática dos nomes dos dias da semana", Acta Universitatis
-Carolinae -- Philologica 3, Romanistica Pragensia, 2016, p. 24: "trabalhar
+Carolinae -- Philologica 3, Romanistica Pragensia, 2016, p. 25: "trabalhar
 na sexta-feira" is singular).  The habitual "ao sábado" is in
 test_nl_habitual_weekday.py.  Anchor 2017-06-27, a terça, 13:04; dates by hand.
 """
