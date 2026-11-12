@@ -186,6 +186,13 @@
   "base_grammar": {
     "marker_position": "post",
     "override": {
+      "rel_period": [
+        "article? REL_MARKER UNIT"
+      ],
+      "weekday_ref": [
+        "article? REL_MARKER WEEKDAY",
+        "WEEKDAYFULL"
+      ],
       "daypart_ref": [
         "REL_MARKER DAYPART",
         "article DAYPART",
