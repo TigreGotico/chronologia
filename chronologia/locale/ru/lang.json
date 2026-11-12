@@ -22,6 +22,12 @@
         "article? WEEKEND"
       ]
     },
+    "month_day_ref": {
+      "orders": [
+        "WORDORD day_label"
+      ],
+      "prefer_future": true
+    },
     "calendar_date": {
       "orders": [
         "DAY MONTH YEAR?",
@@ -37,6 +43,7 @@
         "at HOUR oclock MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
+        "at FRACTION HOUR MERIDIEM? ZONE?",
         "CLOCKDIR FRACTION HOUR MERIDIEM? ZONE?",
         "CLOCKDIR CLOCKMIN minut? HOUR MERIDIEM? ZONE?",
         "CLOCKDIR MINUTE minut? HOUR MERIDIEM? ZONE?",
