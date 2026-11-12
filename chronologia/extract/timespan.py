@@ -3234,8 +3234,11 @@ def _compose(resolved, engine, tokens):
     :func:`extract_candidates` to score the composed reading -- so the two
     public APIs never disagree on the composed primary.
     """
-    clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
     spec = engine.spec
+    resolved, apposed = _fold_apposed_weekday(resolved, spec, tokens)
+    if resolved is None:
+        return None, set(), None
+    clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
     composable = (_COMPOSABLE_DATES | {"relative_offset"}
                  if spec.conventions.offset_clock_composes
                  else _COMPOSABLE_DATES)
@@ -3273,7 +3276,7 @@ def _compose(resolved, engine, tokens):
     _sep_keys = {"and", "or", "to", "from", "between", "until", "since"}
     _glue = {s for _k, _vals in spec.connectors.items()
              if _k not in _sep_keys for s in _vals}
-    _covered = set()
+    _covered = set(apposed)
     for m, _r in resolved:
         _covered.update(range(*m.span))
 
@@ -3407,7 +3410,38 @@ def _compose(resolved, engine, tokens):
                          | _composition_glue(day_match, off_match))
     else:
         rep, res = min(resolved, key=lambda mr: mr[0].span[0])
-    return res, label_consumed | glue_consumed, rep
+    return res, label_consumed | glue_consumed | apposed, rep
+
+
+def _fold_apposed_weekday(resolved, spec, tokens):
+    """A weekday next to a named day names the same day, or no day.
+
+    In "amanhã domingo" or "tomorrow, sunday" the weekday is an apposition:
+    it characterises the day the day word names.  When the two agree the
+    weekday folds into the day word's reading and does not strand.  When
+    they disagree ("amanhã segunda-feira" said on a Saturday) the phrase
+    names no single day, and the reading is refused.  Only a bare weekday
+    (no next/last marker) directly beside one day word is an apposition.
+
+    Returns ``(resolved, consumed)``: the matches without the folded weekday
+    and the weekday's token positions, or ``(None, set())`` on a refusal.
+    """
+    days = [(m, r) for m, r in resolved if m.construction == "named_day"]
+    weekdays = [(m, r) for m, r in resolved
+                if m.construction == "weekday_ref"
+                and m.slots.get("REL_MARKER") is None]
+    if len(days) != 1 or len(weekdays) != 1:
+        return resolved, set()
+    (day_match, day_res), (wd_match, _wd_res) = days[0], weekdays[0]
+    (lo, hi) = sorted((day_match.span, wd_match.span))
+    between = [tokens[i].text for i in range(lo[1], hi[0])]
+    if any(t not in (",",) for t in between):
+        return resolved, set()
+    wd_tok = wd_match.slots.get("WEEKDAY") or wd_match.slots["WEEKDAYFULL"]
+    if day_res.value.start.weekday() != spec.weekdays[wd_tok.text]:
+        return None, set()
+    return ([(m, r) for m, r in resolved if m is not wd_match],
+            set(range(*wd_match.span)))
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
