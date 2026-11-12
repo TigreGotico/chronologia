@@ -8,6 +8,7 @@
     "relative_offset": {
       "orders": [
         "NUM UNIT MARKER",
+        "QUANT UNIT MARKER",
         "indef? UNIT MARKER",
         "MARKER NUM UNIT"
       ]
@@ -33,6 +34,7 @@
         "at HOUR oclock MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
         "MERIDIEM at? HOUR oclock? ZONE?",
+        "MERIDIEM FRACTION at? HOUR ZONE?",
         "FRACTION at HOUR MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
         "at? LANDMARK ZONE?"

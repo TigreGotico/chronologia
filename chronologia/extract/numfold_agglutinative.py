@@ -23,6 +23,7 @@ Each ``fold_<lang>`` is wired as the language ``hook`` in
 """
 from __future__ import annotations
 
+import re
 from dataclasses import replace
 from importlib import import_module
 from typing import Callable, Dict, FrozenSet, Optional, Tuple
@@ -392,6 +393,42 @@ _HU_CLOCK_FRACTIONS = frozenset({"negyed", "fél", "fel", "háromnegyed",
 fold_hu = _with_bare_case_hour(fold_hu, _HU_KOR_HOURS, "kor",
                                digit_suffix="kor",
                                no_digit_suffix_after=_HU_CLOCK_FRACTIONS)
+# A day number or a digit clock takes its case suffix after a hyphen: AkH. 12,
+# rule 298, "1848. márc. 15-én", "2014. febr. 28-a", "1-je", "1-jén"; rule
+# 300, "10:35-kor".  The tokenizer drops the hyphen and leaves the suffix as a
+# word of its own, so a suffix that follows a hyphen folds back into the
+# number or clock it is written on.  The sublative "-ra"/"-re" names the same
+# point as a target ("ébressz fel 7-re", wake me for 7).  "-ig" (until) is not
+# folded: it carries a meaning of its own.
+_HU_DAY_SUFFIX = frozenset({"a", "e", "án", "én", "je", "jén", "ra", "re"})
+_HU_CLOCK_SUFFIX = frozenset({"kor", "ra", "re"})
+_HU_CLOCK = re.compile(r"\d{1,2}[:.]\d{2}")
+
+
+def _with_hu_hyphen_suffix(fold):
+    def pre(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        out, i, n = [], 0, len(tokens)
+        while i < n:
+            t = tokens[i]
+            nxt = tokens[i + 1] if i + 1 < n else None
+            if nxt is not None and t.trailing_hyphen and (
+                    (t.is_number and t.value is not None
+                     and 1 <= t.value <= 31 and nxt.text in _HU_DAY_SUFFIX)
+                    or (_HU_CLOCK.fullmatch(t.text)
+                        and nxt.text in _HU_CLOCK_SUFFIX)):
+                out.append(replace(t, raw=t.raw + nxt.raw,
+                                   char_end=nxt.char_end or t.char_end,
+                                   trailing_hyphen=False))
+                i += 2
+                continue
+            out.append(t)
+            i += 1
+        return fold(reindex(tuple(out)))
+
+    return pre
+
+
+fold_hu = _with_hu_hyphen_suffix(fold_hu)
 # Fold the fused round-thousand spelling ("kétezer-huszonnégy" = 2024) instead
 # of dropping the thousands and reading only the trailing chunk.  Outermost so
 # it rewrites the raw surface tokens before the cardinal/ordinal/clock folds.

@@ -1,0 +1,6 @@
+# The NIGHT daypart is a BAND that crosses midnight: hu.wikipedia prose has
+# "ejjel 11-kor" (23:00), and "éjjel" glosses as "at night" (en.wiktionary,
+# s.v. éjjel), so "éjjel 2-kor" is 02:00.  Small hours 1..5 stay AM, evening
+# hours 6..11 are PM, twelve is midnight (the band-split lives in the
+# resolver _clock_hms).  https://en.wiktionary.org/wiki/éjjel
+éjjel

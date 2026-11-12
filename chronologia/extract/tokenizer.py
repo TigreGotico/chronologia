@@ -641,5 +641,8 @@ class Tokenizer:
                                and any(_is_clause_break(c) for c in
                                        low[tokens[i - 1].char_end:t.char_start])),
                            trailing_dot=(t.char_end is not None
-                                         and low[t.char_end:t.char_end + 1] == "."))
+                                         and low[t.char_end:t.char_end + 1] == "."),
+                           trailing_hyphen=(t.char_end is not None
+                                            and low[t.char_end:t.char_end + 1]
+                                            == "-"))
                      for i, t in enumerate(tokens))
