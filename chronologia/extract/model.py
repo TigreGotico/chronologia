@@ -258,6 +258,11 @@ class Conventions:
     # the offset's trailing marker word is ALSO the clock's "at" preposition
     # (Turkic/Iranian "saat"), so the two constructions read as one phrase
     # ("3 gün əvvəl saat 9" = "9 o'clock, 3 days ago") rather than two.
+    # Basque sets it because the "-ko" suffix turns the offset into a modifier
+    # of the time noun after it ("duela 3 eguneko gaua" = the night of three
+    # days ago): "-ko atzizkia adizlagunei eransten zaie eta izenlagunak
+    # eratortzen ditu", with "atzo -> atzoko egunkaria" (Trask, "-Ko atzizkia
+    # euskaraz", Euskera XXX, pp. 168-169).
     offset_clock_composes: bool = False
 
 
