@@ -255,6 +255,7 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
             kind = spec.units.get(tokens[i].text)
             if (kind in _DUR_UNIT_SECONDS and i + 1 < n
                     and tokens[i + 1].is_number
+                    and not tokens[i + 1].ordinal
                     and tokens[i + 1].value is not None):
                 try:
                     secs = float(tokens[i + 1].value) * _DUR_UNIT_SECONDS[kind]
@@ -284,6 +285,10 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
             scaled = _read_scale(j)
             if scaled is not None:
                 count, j = scaled
+            elif tokens[j].ordinal:
+                # an ordinal names WHICH unit, not how many: "the second
+                # week" is one week of a series, never fourteen days.
+                j += 1
             elif tokens[j].is_number:
                 # A digit run hundreds of characters long folds to an int no
                 # C double can hold ("1" * 400): float() itself overflows

@@ -211,7 +211,8 @@ def _license_tens_homograph(tokens, tens_map, definite, quarter_words=frozenset(
         before_quarter = nxt is not None and nxt.text in quarter_words
         if not after_article and not before_quarter:
             continue  # not an ordinal frame -- leave for FRACTION
-        out[i] = replace(t, is_number=True, value=tens_map[t.text])
+        out[i] = replace(t, is_number=True, value=tens_map[t.text],
+                         ordinal=True)
         changed = True
     return _reindex(tuple(out)) if changed else tokens
 
@@ -277,7 +278,7 @@ def _license_ordinal_fraction(tokens, homomap, definite, quarter_words=frozenset
         val = homomap[t.text]
         out[i] = Token(text=str(val), raw=t.raw, index=0, is_number=True,
                        value=val, char_start=t.char_start,
-                       char_end=t.char_end)
+                       char_end=t.char_end, ordinal=True)
         changed = True
     return _reindex(tuple(out)) if changed else tokens
 
@@ -411,7 +412,8 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
         joiner=lambda tok: tok.text in joins,
         single_fallback=ordinal_value.get,
         pre=_pre,
-        bridge_ok=_romance_additive_join))
+        bridge_ok=_romance_additive_join,
+        ordinal=lambda tok: tok.text in ordinal_value))
     # ordinal-fraction homographs ("quarto" = fourth *and* a-quarter) are held
     # out of ``numwords`` above so the clock FRACTION slot keeps them; license
     # the ordinal reading back positionally (outside the "un quarto" fraction
@@ -552,7 +554,7 @@ def _license_weekday_ordinal(tokens, mapping, units):
                 and nxt is not None and nxt.text in units):
             value = mapping[tok.text]
             out.append(Token(text=str(value), raw=tok.raw, index=0,
-                             is_number=True, value=value))
+                             is_number=True, value=value, ordinal=True))
         else:
             out.append(tok)
     return _reindex(tuple(out))
@@ -684,7 +686,8 @@ def _license_pt_nonas(tokens):
         if nxt is not None and nxt.text in _PT_OF_PREP:
             continue
         out[i] = Token(text="9", raw=t.raw, index=0, is_number=True,
-                       value=9, char_start=t.char_start, char_end=t.char_end)
+                       value=9, char_start=t.char_start, char_end=t.char_end,
+                       ordinal=True)
     return _reindex(tuple(out))
 
 
@@ -1011,7 +1014,7 @@ def _merge_digit_ordinal(tokens, suffixes):
         nxt = tokens[i + 1] if i + 1 < n else None
         if (t.is_number and nxt is not None and not nxt.is_number
                 and nxt.text in suffixes):
-            out.append(t)
+            out.append(replace(t, ordinal=True))
             i += 2
             continue
         out.append(t)
@@ -1045,7 +1048,7 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
             # "la segunda") -- map the surface straight to its digit.
             tokens = _reindex(tuple(
                 Token(text=str(fem_ord[t.text]), raw=t.raw, index=0,
-                      is_number=True, value=fem_ord[t.text])
+                      is_number=True, value=fem_ord[t.text], ordinal=True)
                 if (not t.is_number and t.text in fem_ord) else t
                 for t in tokens))
         return base(tokens)
@@ -1216,7 +1219,7 @@ def _stamp_fr_compound_ordinals(tokens):
                 result.append(Token(text=str(val), raw=raw, index=0,
                                     is_number=True, value=val,
                                     char_start=first.char_start,
-                                    char_end=last.char_end))
+                                    char_end=last.char_end, ordinal=True))
                 i += m
             else:
                 result.append(out[i])
@@ -1225,7 +1228,7 @@ def _stamp_fr_compound_ordinals(tokens):
     out = [
         Token(text=str(_FR_SINGLE_ORDINALS[t.text]), raw=t.raw, index=0,
               is_number=True, value=_FR_SINGLE_ORDINALS[t.text],
-              char_start=t.char_start, char_end=t.char_end)
+              char_start=t.char_start, char_end=t.char_end, ordinal=True)
         if (not t.is_number and t.text in _FR_SINGLE_ORDINALS) else t
         for t in out
     ]
@@ -1352,7 +1355,7 @@ def _license_it_prima(tokens):
         if not is_before_marker:
             out[i] = Token(text="1", raw=t.raw, index=0, is_number=True,
                            value=1, char_start=t.char_start,
-                           char_end=t.char_end)
+                           char_end=t.char_end, ordinal=True)
     return _reindex(tuple(out))
 
 
