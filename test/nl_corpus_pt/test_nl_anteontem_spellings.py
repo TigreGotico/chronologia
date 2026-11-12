@@ -2,10 +2,12 @@
 """The day before yesterday with the compound written apart, pt.
 
 Priberam s.v. "anteontem": "No dia que precedeu o dia de ontem. = ANTES DE
-ONTEM [...] Origem: ante- + ontem."  "ante ontem" is the compound written
-apart (attested in ovos-date-parser's pt test corpus), and "antes de ontem"
-is the synonym Priberam gives.  Read as "ontem" with
-"ante" left over, the split form answered yesterday -- a wrong day, not a refusal.  Anchor 2017-06-27.
+ONTEM [...] Origem: ante- + ontem."  "anteontem" is the standard form and
+"antes de ontem" is the synonym Priberam gives.  Priberam does not list
+"ante ontem"; it is a non-standard split spelling from speech-to-text
+(attested in ovos-date-parser's pt test corpus), accepted as input only.
+Read as "ontem" with "ante" left over, the split form answered yesterday --
+a wrong day, not a refusal.  Anchor 2017-06-27.
 """
 import pytest
 

@@ -1,6 +1,8 @@
 # Priberam s.v. "anteontem": "No dia que precedeu o dia de ontem. = ANTES DE
-# ONTEM [...] Origem: ante- + ontem."  "ante ontem" is the compound written
-# apart, and Priberam gives "antes de ontem" as its synonym.
+# ONTEM [...] Origem: ante- + ontem."  "anteontem" is the standard form, and
+# Priberam gives "antes de ontem" as its synonym.  Priberam does not list
+# "ante ontem".  It is a non-standard split spelling that speech-to-text
+# writes, accepted here as input only.
 anteontem
 ante ontem
 antes de ontem

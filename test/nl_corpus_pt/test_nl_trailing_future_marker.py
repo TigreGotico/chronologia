@@ -11,6 +11,8 @@ The count belongs to "faz" (she turns two); "em maio" is the date.  Anchor
 """
 from datetime import datetime
 
+import pytest
+
 from ._corpus import parse, ad
 
 
@@ -20,8 +22,10 @@ def test_trailing_em_is_not_an_offset():
     assert rest == "ela faz dois anos"
 
 
-def test_trailing_atras_still_counts_back():
-    span, rest = parse("dois anos atrás")
+@pytest.mark.parametrize("text", ["dois anos atrás", "dois anos atras"])
+def test_trailing_atras_still_counts_back(text):
+    # "atras" is "atrás" as text without diacritics writes it
+    span, rest = parse(text)
     assert span.start == ad(datetime(2015, 6, 27, 13, 4))
     assert rest == ""
 
