@@ -1019,6 +1019,51 @@ def _collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
     return _reindex(out)
 
 
+def _governed_hour_length(tokens, governors, hour_words, minute_words,
+                          fractions):
+    """Spell a counted length of hours and minutes as "N h et M minutes".
+
+    After a counted-offset word ("dans", "il y a") the hour and the minutes
+    that follow it are one length: "dans 2h30", "dans 2 h 30", "dans 2
+    heures et demie".  The grammar reads that length only in its full form
+    ("dans 2 heures et 30 minutes"), so the short forms are rewritten to it.
+    ``fractions`` maps the fraction words after "et" to their minutes.
+    """
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        hour = tokens[i + 1] if i + 1 < n else None
+        if not (out and out[-1].text in governors and t.is_number
+                and hour is not None and hour.text in hour_words):
+            out.append(t)
+            i += 1
+            continue
+        nxt = tokens[i + 2] if i + 2 < n else None
+        nn = tokens[i + 3] if i + 3 < n else None
+        minutes = None
+        if (nxt is not None and nxt.is_number and nxt.value is not None
+                and 0 < nxt.value < 60 and float(nxt.value).is_integer()):
+            minutes, used = int(nxt.value), 3
+            if nn is not None and nn.text in minute_words:
+                used = 4
+        elif (nxt is not None and nxt.text in _FR_ET and nn is not None
+                and nn.text in fractions):
+            minutes, used = fractions[nn.text], 4
+        if minutes is None:
+            out.append(t)
+            i += 1
+            continue
+        lit = str(minutes)
+        out.extend((t, hour, Token(text="et", raw="et", index=0),
+                    Token(text=lit, raw=lit, index=0, is_number=True,
+                          value=minutes),
+                    Token(text="minutes", raw="minutes", index=0)))
+        i += used
+    return _reindex(out)
+
+
 def _merge_digit_ordinal(tokens, suffixes):
     """Drop a lone ordinal-suffix word after a digit ("1 er" -> 1)."""
     out = []
@@ -1039,7 +1084,7 @@ def _merge_digit_ordinal(tokens, suffixes):
 
 def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                           phrases=(), h_clock=False, h_spared=((), ()),
-                          ord_suffixes=frozenset(),
+                          hour_length=None, ord_suffixes=frozenset(),
                           fem_ord=None, reader=None,
                           extra_numwords=frozenset(), extra_homograph=None,
                           extra_ordinals=None, word_map=None,
@@ -1073,7 +1118,10 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                                or (i > 0 and tokens[i - 1].text in ord_article)))
                 if (not t.is_number and t.text in fem_ord) else t
                 for i, t in enumerate(tokens)))
-        return base(tokens)
+        tokens = base(tokens)
+        if hour_length:
+            tokens = _governed_hour_length(tokens, *hour_length)
+        return tokens
 
     return fold
 
@@ -1290,6 +1338,16 @@ _fold_fr_ordinals_base = _romance_prepass_fold(
     # marker_ago.voc it is the hour unit, and before the clock directions of
     # clock_dir_past.voc and clock_dir_to.voc it is the hour word.
     h_spared=(("dans", "ilya"), ("et", "moins")),
+    # A count of hours and minutes after those offset words is one length
+    # (OQLF, same page: "2 h 28 min"); "et demie" and "et quart" after a
+    # count of hours are its half and its quarter: "Et demi(e) (après un
+    # nom) : et la moitié. Cinq heures et demie." (Le Robert, s.v. "demi");
+    # "Quart d'heure : quinze minutes. [...] deux heures et quart." (Le
+    # Robert, s.v. "quart").
+    hour_length=(frozenset({"dans", "ilya"}),
+                 frozenset({"h", "heure", "heures"}),
+                 frozenset({"min", "mins", "minute", "minutes"}),
+                 {"demie": 30, "demi": 30, "quart": 15}),
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
 

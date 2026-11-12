@@ -46,3 +46,27 @@ def test_a_clock_with_the_symbol_is_unchanged(text, hour):
     day = 27 if hour > 13 else 28
     assert span.start == ad(datetime(2017, 6, day, hour, 0))
     assert rest == ""
+
+
+@pytest.mark.parametrize("text,expected", [
+    # 13:04 + 2 h 30 min = 15:34
+    ("dans 2h30", datetime(2017, 6, 27, 15, 34)),
+    ("dans 2 h 30", datetime(2017, 6, 27, 15, 34)),
+    ("dans 2 h 30 min", datetime(2017, 6, 27, 15, 34)),
+    ("dans 2 h et demie", datetime(2017, 6, 27, 15, 34)),
+    ("dans 2 heures et demie", datetime(2017, 6, 27, 15, 34)),
+    ("dans 2 heures 30", datetime(2017, 6, 27, 15, 34)),
+    # 13:04 + 1 h 30 min = 14:34; 13:04 + 2 h 15 min = 15:19
+    ("dans une heure et demie", datetime(2017, 6, 27, 14, 34)),
+    ("dans 2 heures et quart", datetime(2017, 6, 27, 15, 19)),
+    # 13:04 - 2 h 30 min = 10:34
+    ("il y a 2h30", datetime(2017, 6, 27, 10, 34)),
+])
+def test_hours_and_minutes_after_a_counted_offset_are_one_length(text,
+                                                                 expected):
+    """"2 h 28 min" is a length (OQLF, as above); "Et demi(e) (après un
+    nom) : et la moitié. Cinq heures et demie." (Le Robert, s.v. "demi");
+    "Quart d'heure : quinze minutes." (Le Robert, s.v. "quart")."""
+    span, rest = parse(text)
+    assert span.start == ad(expected)
+    assert rest == ""

@@ -5,3 +5,7 @@ heure
 # 2 h 28 min)".  The fold reads "20h" as a clock elsewhere, so "h" reaches
 # this unit only after "dans" or "il y a".
 h
+# After "dans" or "il y a", a count of hours and the minutes after it are one
+# length: "2 h 28 min" (OQLF, as above), "Et demi(e) (après un nom) : et la
+# moitié. Cinq heures et demie." (Le Robert, s.v. "demi"), "Quart d'heure :
+# quinze minutes. [...] deux heures et quart." (Le Robert, s.v. "quart").
