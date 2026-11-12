@@ -51,7 +51,7 @@ def test_explicit_year(text, ymd):
 
 # -- collision regression pins --
 @pytest.mark.parametrize("text,ymd,days", [
-    ("abril", (2017, 4, 1), 30),
+    ("abril", (2018, 4, 1), 30),
     ("junho", (2017, 6, 1), 30),
     ("outubro", (2017, 10, 1), 31),
 ])

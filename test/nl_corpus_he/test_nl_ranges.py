@@ -14,7 +14,7 @@ from ._corpus import ANCHOR, AstroDate, span, start_end, nomatch
 
 
 @pytest.mark.parametrize("text,s,e", [
-    ("ינואר - מרץ", (2017, 1, 1), (2017, 4, 1)),
+    ("ינואר - מרץ", (2018, 1, 1), (2018, 4, 1)),
     ("יוני - אוגוסט", (2017, 6, 1), (2017, 9, 1)),
     ("15 בינואר - 20 בינואר", (2018, 1, 15), (2018, 1, 21)),
 ])
@@ -24,7 +24,7 @@ def test_dash_range(text, s, e):
 
 
 @pytest.mark.parametrize("text,s,e", [
-    ("מ-ינואר עד מרץ", (2017, 1, 1), (2017, 4, 1)),
+    ("מ-ינואר עד מרץ", (2018, 1, 1), (2018, 4, 1)),
     ("מ-יוני עד אוגוסט", (2017, 6, 1), (2017, 9, 1)),
     ("מ-15 בינואר עד 20 בינואר", (2018, 1, 15), (2018, 1, 21)),
 ])
@@ -46,8 +46,8 @@ def test_bare_connector_is_nomatch(text):
 # same span; a bare word that legitimately starts with "ו" ("ורוד" pink) must
 # NOT be mistaken for a glued endpoint.
 @pytest.mark.parametrize("text,s,e", [
-    ("בין ינואר ו מרץ", (2017, 1, 1), (2017, 4, 1)),
-    ("בין ינואר ומרץ", (2017, 1, 1), (2017, 4, 1)),
+    ("בין ינואר ו מרץ", (2018, 1, 1), (2018, 4, 1)),
+    ("בין ינואר ומרץ", (2018, 1, 1), (2018, 4, 1)),
 ])
 def test_fused_vav_range_endpoint(text, s, e):
     ss, ee = start_end(text)
@@ -114,10 +114,10 @@ def test_fused_vav_yields_two_mentions_not_one():
     from chronologia import extract_timespans
     mentions = extract_timespans("ינואר ומרץ", "he", ANCHOR)
     assert len(mentions) == 2
-    assert mentions[0].span.start == AstroDate(2017, 1, 1)
-    assert mentions[0].span.end == AstroDate(2017, 2, 1)
-    assert mentions[1].span.start == AstroDate(2017, 3, 1)
-    assert mentions[1].span.end == AstroDate(2017, 4, 1)
+    assert mentions[0].span.start == AstroDate(2018, 1, 1)
+    assert mentions[0].span.end == AstroDate(2018, 2, 1)
+    assert mentions[1].span.start == AstroDate(2018, 3, 1)
+    assert mentions[1].span.end == AstroDate(2018, 4, 1)
 
 
 def test_fused_vav_bare_word_still_resolves_clean():
@@ -130,7 +130,7 @@ def test_fused_vav_bare_word_still_resolves_clean():
     # exactly as clean as before the range fix existed.
     r = extract_timespan("ומרץ", "he", ANCHOR)
     assert r is not None
-    assert r[0].start == AstroDate(2017, 3, 1) and r[0].end == AstroDate(2017, 4, 1)
+    assert r[0].start == AstroDate(2018, 3, 1) and r[0].end == AstroDate(2018, 4, 1)
     assert r[1] == ""
 
 
@@ -151,7 +151,8 @@ def test_fused_vav_av_range_endpoint_still_open():
     # alone -- the original defect, left open for this one month.  The
     # spaced sibling is unaffected (test_fused_vav_av_range_endpoint_spaced).
     ss, ee = start_end("בין ניסן ואב")
-    assert ss == AstroDate(2017, 3, 28) and ee == AstroDate(2017, 4, 27)
+    # Nisan 5777 (from 28 March 2017) has ended, so the bare Nisan is 5778
+    assert ss == AstroDate(2018, 3, 17) and ee == AstroDate(2018, 4, 16)
 
 
 def test_fused_vav_av_range_endpoint_spaced():

@@ -50,8 +50,9 @@ def test_bare_month_year(text, y, m):
     ("mayyu", 5), ("yunyu", 6), ("yulyu", 7), ("ɣuct", 8),
     ("ctembeṛ", 9), ("tubeṛ", 10), ("wambeṛ", 11), ("dujembeṛ", 12)])
 def test_bare_month(text, m):
-    # a bare month name resolves within the anchor year (2017)
-    assert start(text) == AstroDate(2017, m, 1)
+    # a bare month name is its next occurrence: a month that has ended is
+    # next year's
+    assert start(text) == AstroDate(ANCHOR.year + (m < ANCHOR.month), m, 1)
 
 
 @pytest.mark.parametrize("y", [1999, 2020, 1969, 1830, 1962, 1954])

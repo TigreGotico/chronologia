@@ -7,7 +7,8 @@ out of the match.  The base grammar now carries one marker-prefixed order
 in ``marker_during.voc``.
 
 The span never moves -- every phrase below is asserted equal to the bare-month
-reading of the same month, and to January of the anchor year, derived by hand.
+reading of the same month, and to the January after the anchor, January 2027,
+derived by hand.
 The controls pin the ways a locale must NOT gain the reading: a marker that
 means the future offset "in N units" ("через", "za", "pärast") stays out of the
 month frame, a locale whose during-word is a postposition ("jooksul", "aikana",
@@ -73,8 +74,8 @@ def test_marker_is_consumed(lang, phrase, bare):
     marked = extract_timespan(phrase, lang, _REF)
     assert marked is not None, f"{lang}: {phrase!r} did not parse"
     assert marked.remainder == ""
-    assert marked[0].start == AstroDate(2026, 1, 1)
-    assert marked[0].end == AstroDate(2026, 2, 1)
+    assert marked[0].start == AstroDate(2027, 1, 1)
+    assert marked[0].end == AstroDate(2027, 2, 1)
     plain = extract_timespan(bare, lang, _REF)
     assert (marked[0].start, marked[0].end) == (plain[0].start, plain[0].end)
 
@@ -85,7 +86,7 @@ def test_offset_and_postposed_markers_stay_out(lang, phrase, marker):
     r = extract_timespan(phrase, lang, _REF)
     assert r is not None
     assert r.remainder == marker
-    assert r[0].start == AstroDate(2026, 1, 1)
+    assert r[0].start == AstroDate(2027, 1, 1)
 
 
 @pytest.mark.parametrize("lang,phrase", [("da", "i jul"), ("da", "under jul"),

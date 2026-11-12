@@ -1403,6 +1403,21 @@ class Resolver:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
             year = anchor.year
+            rel_tok = match.slots.get("REL_MARKER")
+            rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
+            if rel < 0:
+                # "last October": the latest such month that has ended
+                if month >= anchor.month:
+                    year -= 1
+            elif rel > 0:
+                # "next July": the first such month after the anchor's
+                if month <= anchor.month:
+                    year += 1
+            elif prefer_future and not day_tok and month < anchor.month:
+                # A bare month names its next occurrence as a span: the month
+                # that holds the anchor is this one, a month that has already
+                # ended is next year's.
+                year += 1
         if not year_tok and prefer_future and day_tok:
             # A bare day-and-month names the next time that day comes round.
             # Feb 29 is the only Gregorian day that skips years, so neither
@@ -1451,6 +1466,14 @@ class Resolver:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
             year = calendar.from_jdn(anchor_jdn)[0]     # anchor's calendar year
+            if prefer_future and not day_tok:
+                # A bare month names its next occurrence, as on the
+                # Gregorian path: a month that has already ended is next
+                # year's.
+                nyear, nmonth = (year, month + 1) \
+                    if month < calendar.month_count else (year + 1, 1)
+                if calendar.to_jdn(nyear, nmonth, 1) <= anchor_jdn:
+                    year += 1
         if not year_tok and prefer_future and day_tok:
             # Same walk as the Gregorian path, in calendar space: a bare
             # day-and-month names the next time that day comes round, and the

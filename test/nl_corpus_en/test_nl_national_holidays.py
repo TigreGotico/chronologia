@@ -68,8 +68,8 @@ def test_bare_weekday_unchanged():
 
 
 @pytest.mark.parametrize("text,ymd,days", [
-    ("february", (2017, 2, 1), 28),
-    ("april", (2017, 4, 1), 30),
+    ("february", (2018, 2, 1), 28),
+    ("april", (2018, 4, 1), 30),
     ("june", (2017, 6, 1), 30),
     ("november", (2017, 11, 1), 30),
 ])

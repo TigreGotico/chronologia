@@ -115,7 +115,7 @@ def test_letters_parted_by_other_punctuation_are_not_an_era(
     ("it", "dal 1500 a e V compresi", 1500, "a e V compresi"),
     ("it", "1500 e V", 1500, "V"),
     ("it", "1500 e v", 1500, "v"),
-    ("it", "il 3 e V maggio", 2026, "il 3 e V"),
+    ("it", "il 3 e V maggio", 2027, "il 3 e V"),
 ])
 def test_italian_areligious_era_abbreviation_is_not_read(
         lang, text, year, remainder):

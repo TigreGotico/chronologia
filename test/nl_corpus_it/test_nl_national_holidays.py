@@ -47,8 +47,8 @@ def test_explicit_year(text, ymd):
 
 # -- collision regression pins --
 @pytest.mark.parametrize("text,ymd,days", [
-    ("maggio", (2017, 5, 1), 31),
-    ("aprile", (2017, 4, 1), 30),
+    ("maggio", (2018, 5, 1), 31),
+    ("aprile", (2018, 4, 1), 30),
     ("giugno", (2017, 6, 1), 30),
 ])
 def test_bare_month_unchanged(text, ymd, days):

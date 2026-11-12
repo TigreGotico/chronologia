@@ -64,16 +64,16 @@ def test_antara_dan_empty_remainder():
 def test_dari_hingga_consumes_lead():
     r = _result("dari Januari hingga Mac")
     assert r is not None
-    assert r[0].start == AstroDate(2026, 1, 1)
-    assert r[0].end == AstroDate(2026, 4, 1)
+    assert r[0].start == AstroDate(2027, 1, 1)
+    assert r[0].end == AstroDate(2027, 4, 1)
     assert r.remainder == ""
 
 
 def test_daripada_hingga_consumes_lead():
     r = _result("daripada Januari hingga Mac")
     assert r is not None
-    assert r[0].start == AstroDate(2026, 1, 1)
-    assert r[0].end == AstroDate(2026, 4, 1)
+    assert r[0].start == AstroDate(2027, 1, 1)
+    assert r[0].end == AstroDate(2027, 4, 1)
     assert r.remainder == ""
 
 
