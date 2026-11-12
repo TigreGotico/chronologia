@@ -974,8 +974,15 @@ def _collapse_phrase(tokens, words, surface):
     return _reindex(out)
 
 
-def _collapse_h_clock(tokens):
-    """Fold French/Occitan "20h30"/"20h" into one ``HH:MM`` clock literal."""
+def _collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
+    """Fold French/Occitan "20h30"/"20h" into one ``HH:MM`` clock literal.
+
+    ``governors`` and ``followers`` keep "h" a word: after a counted-offset
+    preposition ("dans 2 h") it is the unit of a length, and before a clock
+    direction ("9 h et quart") it is the hour word the direction counts from.
+    Both readings come from "h" being the symbol of "heure", so the grammar
+    reads them as it reads "dans 2 heures" and "9 heures et quart".
+    """
     out = []
     i = 0
     n = len(tokens)
@@ -983,7 +990,10 @@ def _collapse_h_clock(tokens):
         t = tokens[i]
         nxt = tokens[i + 1] if i + 1 < n else None
         nn = tokens[i + 2] if i + 2 < n else None
-        if (t.is_number and t.value is not None and 0 <= t.value <= 24
+        spared = ((out and out[-1].text in governors)
+                  or (nn is not None and nn.text in followers))
+        if (not spared
+                and t.is_number and t.value is not None and 0 <= t.value <= 24
                 and float(t.value).is_integer() and nxt is not None
                 and nxt.text == "h"):
             if (nn is not None and nn.is_number and nn.value is not None
@@ -1020,7 +1030,8 @@ def _merge_digit_ordinal(tokens, suffixes):
 
 
 def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
-                          phrases=(), h_clock=False, ord_suffixes=frozenset(),
+                          phrases=(), h_clock=False, h_spared=((), ()),
+                          ord_suffixes=frozenset(),
                           fem_ord=None, reader=None,
                           extra_numwords=frozenset(), extra_homograph=None,
                           extra_ordinals=None, word_map=None):
@@ -1037,7 +1048,8 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
         for seq, surface in phrases:
             tokens = _collapse_phrase(tokens, seq, surface)
         if h_clock:
-            tokens = _collapse_h_clock(tokens)
+            tokens = _collapse_h_clock(tokens, frozenset(h_spared[0]),
+                                       frozenset(h_spared[1]))
         if ord_suffixes:
             tokens = _merge_digit_ordinal(tokens, ord_suffixes)
         if fem_ord:
@@ -1259,6 +1271,12 @@ _fold_fr_ordinals_base = _romance_prepass_fold(
     # 2 like the Spanish/Romanian feminine tables above.
     fem_ord={"première": 1, "premiere": 1, "seconde": 2},
     phrases=_FR_PHRASES, h_clock=True,
+    # "h" is the symbol of "heure" (OQLF, Banque de dépannage linguistique,
+    # "Écriture des nombres exprimant une durée": "2 heures 28 minutes (ou :
+    # 2 h 28 min)"), so after the counted-offset words of marker_in.voc and
+    # marker_ago.voc it is the hour unit, and before the clock directions of
+    # clock_dir_past.voc and clock_dir_to.voc it is the hour word.
+    h_spared=(("dans", "ilya"), ("et", "moins")),
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
 

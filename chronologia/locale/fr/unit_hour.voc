@@ -1,2 +1,7 @@
 heures
 heure
+# "h" is the symbol of the hour: OQLF, Banque de dépannage linguistique,
+# "Écriture des nombres exprimant une durée": "2 heures 28 minutes (ou :
+# 2 h 28 min)".  The fold reads "20h" as a clock elsewhere, so "h" reaches
+# this unit only after "dans" or "il y a".
+h
