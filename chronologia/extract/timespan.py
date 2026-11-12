@@ -2096,6 +2096,43 @@ def _sentence_boundary_between(text, start, end) -> bool:
     return any(c in ".!?;\n" for c in text[start:end])
 
 
+# Locales that write the hour-letter clock ("20h", "21h30"); see the folds in
+# numfold_romance, numfold_agglutinative and numfold_germanic.
+_HOUR_LETTER_LOCALES = frozenset({
+    "ast", "ca", "el", "es", "fr", "gl", "it", "oc", "pt", "ro", "sv"})
+_HOUR_LITERAL = re.compile(r"\d{1,2}:\d{2}")
+
+
+def _bare_hour_in_sentence(tokens, consumed, spec):
+    """Whether the whole reading is a bare hour that stands inside a
+    sentence with no clock marker ("un film de 2h", "il reste 3 heures").
+
+    In a locale that writes the hour-letter clock, "2h" and "3 heures" are as
+    often a length as a time of day.  Alone they are a clock; behind "à" or
+    another clock marker they are a clock; after the verb that states the
+    hour (fr "il est 3 heures", listed in ``marker_hour_statement.voc``) they
+    are a clock; next to other words and with no marker they are not read.
+    """
+    if spec.lang.split("-")[0] not in _HOUR_LETTER_LOCALES:
+        return False
+    if not any(t.index not in consumed and t.text.strip(".,;:!?")
+               for t in tokens):
+        return False
+    oclock = set(spec.connectors.get("oclock", ()))
+    glue = (set(spec.connectors.get("of", ()))
+            | set(spec.connectors.get("article", ())))
+    read = [t for t in tokens if t.index in consumed and t.text not in glue]
+    literal = (len(read) == 1 and read[0].char_start is None
+               and _HOUR_LITERAL.fullmatch(read[0].text))
+    counted = (len(read) == 2 and read[0].is_number
+               and read[1].text in oclock)
+    if not (literal or counted):
+        return False
+    first = min(consumed)
+    before = tokens[first - 1].text.lower() if first > 0 else ""
+    return before not in spec.connectors.get("hour_statement", ())
+
+
 def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
     """True when a negation/exclusion particle GOVERNS the winning reference and
     the phrase is not a resolvable bound.
@@ -3041,6 +3078,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # trigger reachable across only the skippable run immediately before the span
     # (a whole-prefix scan would falsely veto a trigger in another clause).
     if _exclusion_governing_veto(tokens, consumed, text, engine.spec):
+        return None
+    if _bare_hour_in_sentence(tokens, consumed, engine.spec):
         return None
     # Impossible-date veto (residue-veto design, #244): a stranded
     # "<number> of ..." fragment in the remainder -- a day-of-month qualifier

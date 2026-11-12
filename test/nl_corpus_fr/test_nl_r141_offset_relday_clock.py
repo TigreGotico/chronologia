@@ -130,17 +130,12 @@ def test_known_unfixed_ambiguity_avant_hier_with_offset_and_clock():
     # KNOWN SEPARATE issue, explicitly out of scope for R141 (see module
     # docstring): the "avant-hier" idiom's multi-word fold wins over the
     # "avant" + bare "hier" + offset reading, before the offset pass ever
-    # runs. This pins the CURRENT (mis-resolved) shape as a regression
-    # guard only -- not a claim that this is the right answer.
-    r = extract_timespan("une heure avant hier à 9h", LANG, _A)
-    assert r is not None
-    assert r[0].start == datetime(2026, 8, 13, 1, 0)
-    assert r.remainder == "avant hier à 9:00"
+    # runs.  What is left is "une heure" read as 01:00 inside a sentence
+    # with no clock marker, which ruling 2 of 2026-11-12
+    # (knowledge/wiki/audits/chronologia/disagreement-classes.md) refuses.
+    assert extract_timespan("une heure avant hier à 9h", LANG, _A) is None
 
 
 def test_known_unfixed_ambiguity_apres_demain_with_offset_and_clock():
     # same idiom-fold collision, mirrored for "après-demain".
-    r = extract_timespan("une heure après demain à 9h", LANG, _A)
-    assert r is not None
-    assert r[0].start == datetime(2026, 8, 13, 1, 0)
-    assert r.remainder == "après demain à 9:00"
+    assert extract_timespan("une heure après demain à 9h", LANG, _A) is None

@@ -1,13 +1,12 @@
-"""The hour-letter clock is a clock only behind a clock marker.
+"""The hour-letter clock is a clock behind a clock marker, or alone.
 
-Swedish writes "21h30" where a clock marker already announces a clock; a
-bare "21h30" is a duration, a coordinate or a citation to a French source, so
-the phrase yields nothing at all rather than the hour alone with "h30" left
-over in the remainder.
+Swedish writes "21h30" where a clock marker already announces a clock.  Said
+alone, the whole utterance is the clock.  Inside a sentence with no marker it
+is a length, a coordinate or a citation, and is not read.
 """
 import pytest
 
-from ._corpus import ANCHOR, nomatch, parse, span
+from ._corpus import ANCHOR, parse, span
 
 MARKED = [
     ('kl 21h30', 21, 30),
@@ -15,10 +14,13 @@ MARKED = [
     ('kl 20h', 20, 0),
 ]
 
+# Said alone, the whole utterance is the clock (ruling 2 of 2026-11-12 in
+# knowledge/wiki/audits/chronologia/disagreement-classes.md).  At 13:04,
+# 21:30 and 20:00 are still ahead today and 02:30 is tomorrow.
 BARE = [
-    '21h30',
-    '20h',
-    '2h30',
+    ('21h30', 27, 21, 30),
+    ('20h', 27, 20, 0),
+    ('2h30', 28, 2, 30),
 ]
 
 
@@ -37,6 +39,9 @@ def test_marked_h_clock_consumes_the_whole_phrase(text, hour, minute):
     assert parse(text)[1] == ""
 
 
-@pytest.mark.parametrize("text", BARE)
-def test_bare_h_notation_is_not_a_clock(text):
-    nomatch(text)
+@pytest.mark.parametrize("text,day,hour,minute", BARE)
+def test_bare_h_notation_alone_is_a_clock(text, day, hour, minute):
+    s = span(text)
+    assert (s.start.month, s.start.day) == (6, day)
+    assert (s.start.hour, s.start.minute) == (hour, minute)
+    assert parse(text)[1] == ""

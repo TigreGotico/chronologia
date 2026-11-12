@@ -318,8 +318,9 @@ def collapse_marked_h_clock(tokens, markers) -> Tuple[Token, ...]:
     Italian, Romanian, Asturian, Greek and Swedish write the hour-letter
     notation only where a clock marker already says a clock follows -- "alle
     21h30", "la ora 21h30", "a les 21h30", "στις 21h30", "kl 21h30".  A bare
-    "21h30" in those languages is a duration, a coordinate or a citation to a
-    French source, so it is not folded and the phrase does not become a time.
+    "21h30" inside a sentence in those languages is a duration, a coordinate
+    or a citation to a French source, so it is not folded there.  Said alone,
+    the whole utterance is the clock and it folds.
 
     ``markers`` is the closed set of surfaces that may sit immediately before
     the hour, taken from that locale's own ``marker_at`` and ``marker_oclock``
@@ -333,7 +334,9 @@ def collapse_marked_h_clock(tokens, markers) -> Tuple[Token, ...]:
         t = tokens[i]
         nxt = tokens[i + 1] if i + 1 < n else None
         nn = tokens[i + 2] if i + 2 < n else None
-        marked = bool(out) and out[-1].text in markers
+        alone = i == 0 and nxt is not None and nxt.text == "h" and (
+            n == 2 or (n == 3 and nn is not None and nn.is_number))
+        marked = (bool(out) and out[-1].text in markers) or alone
         if (marked and t.is_number and t.value is not None
                 and 0 <= t.value <= 24 and float(t.value).is_integer()
                 and nxt is not None and nxt.text == "h"):
