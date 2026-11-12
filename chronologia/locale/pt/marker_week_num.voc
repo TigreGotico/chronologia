@@ -1,2 +1,9 @@
+# "a primeira semana de 2026" is ISO 8601 week 01 of that year: "The ISO
+# 8601 definition for calendar week 01 is the week with the first Thursday
+# of the Gregorian year"; equivalently "It has 4 January in it" (Wikipedia,
+# "ISO week date").  "a última semana de 2026" is the year's last ISO week,
+# for which the same page gives "It has 28 December in it".  The weeks of a
+# month have no ISO definition and keep their own reading (the first Monday
+# on or after the 1st).
 semana
 semanas
