@@ -29,3 +29,19 @@ def test_the_morning_band(text, day):
 @pytest.mark.parametrize("text", ["cedo", "chegou cedo", "érguome moi cedo"])
 def test_cedo_without_a_day_names_no_date(text):
     nomatch(text)
+
+
+def test_neste_before_a_weekday_reads_forward():
+    """Said on Tuesday 27 June, "neste luns" is the next Monday, 3 July, as
+    the bare "luns" reads; never the Monday that has gone."""
+    s, e = start_end("neste luns")
+    assert (s, e) == (AstroDate(2017, 7, 3), AstroDate(2017, 7, 4))
+
+
+@pytest.mark.parametrize("text,start,end", [
+    ("nesta semana", (2017, 6, 26), (2017, 7, 3)),
+    ("neste mes", (2017, 6, 1), (2017, 7, 1)),
+])
+def test_neste_before_a_period_is_this_period(text, start, end):
+    """gl weeks start on Monday, so the anchor's week is 26 June to 3 July."""
+    assert start_end(text) == (AstroDate(*start), AstroDate(*end))

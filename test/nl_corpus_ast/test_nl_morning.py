@@ -43,3 +43,12 @@ def test_the_bare_adverb_is_still_tomorrow(text, ymd, rest):
 @pytest.mark.parametrize("text", ["ceo", "llegó ceo"])
 def test_ceo_without_a_day_names_no_date(text):
     nomatch(text)
+
+
+@pytest.mark.parametrize("text", ["a partir de mañana", "el día de mañana"])
+def test_de_manana_after_a_phrase_is_tomorrow(text):
+    """After "a partir" or "el día", "mañana" is the adverb: "Nel día que
+    sigue al de güei" (DALLA s.v. "mañana").  The answer is the whole of
+    tomorrow, 28 June, not a morning that ended before 13:04."""
+    s, e = start_end(text)
+    assert (s, e) == (AstroDate(2017, 6, 28), AstroDate(2017, 6, 29))
