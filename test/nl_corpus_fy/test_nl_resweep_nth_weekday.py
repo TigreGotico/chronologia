@@ -27,8 +27,10 @@ def test_nth_weekday_of_named_month(text, ymd):
 
 
 def test_nth_weekday_of_current_month():
-    # anchor 2017-06-27 (Tue): the first Monday of June 2017 is June 5.
-    assert start('de earste moandei fan de moanne') == AstroDate(2017, 6, 5)
+    # anchor 2017-06-27 (Tue): the first Monday of June 2017, June 5, has
+    # passed, so "fan de moanne" names July's: 1 July 2017 is a Saturday,
+    # so its first Monday is July 3.
+    assert start('de earste moandei fan de moanne') == AstroDate(2017, 7, 3)
 
 
 def test_nth_weekday_of_relative_month():

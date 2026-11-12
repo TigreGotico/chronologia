@@ -1983,6 +1983,14 @@ class Resolver:
                     base = _add_months(_midnight(anchor).replace(day=1), rel)
                     year, month = base.year, base.month
                     value = _nth_weekday_of_month(year, month, target, n)
+                    # "the first tuesday of the month", with no marker, names
+                    # the next such day once this month's has passed; "of
+                    # this month" keeps the anchor's month.
+                    if (rel_tok is None and value is not None
+                            and value < anchor.date()):
+                        base = _add_months(base, 1)
+                        value = _nth_weekday_of_month(base.year, base.month,
+                                                      target, n)
                 elif scope_kind == "year":
                     # "the last monday of the year" / "of this year":
                     # sibling of the plain UNIT branch's ``scope_kind ==
@@ -2083,6 +2091,18 @@ class Resolver:
                 base = _add_months(_midnight(anchor).replace(day=1), rel)
                 value = get_date_ordinal(n, date(base.year, base.month, 1),
                                          _UNIT_OF_MONTH[unit_kind])
+                # With no marker, a day or week of "the month" that ended
+                # before the anchor is next month's ("the first day of the
+                # month" said on the 17th); "of this month" never rolls.
+                if rel_tok is None and value is not None:
+                    start = (value if isinstance(value, AstroDate)
+                             else AstroDate.from_date(value))
+                    if _unit_end(start, unit_kind) <= AstroDate.from_datetime(
+                            anchor):
+                        base = _add_months(base, 1)
+                        value = get_date_ordinal(
+                            n, date(base.year, base.month, 1),
+                            _UNIT_OF_MONTH[unit_kind])
             elif scope_kind == "year":
                 value = get_date_ordinal(n, date(anchor.year + rel, 1, 1),
                                          _UNIT_OF_YEAR[unit_kind])

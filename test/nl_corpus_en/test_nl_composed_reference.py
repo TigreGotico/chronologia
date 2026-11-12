@@ -45,7 +45,8 @@ def remainder(text):
 
 @pytest.mark.parametrize("text,expected", [
     ("the last day of the month", AstroDate(2024, 3, 31)),
-    ("the first day of the month", AstroDate(2024, 3, 1)),
+    # 1 March has passed on 6 March, so "of the month" names April's
+    ("the first day of the month", AstroDate(2024, 4, 1)),
     ("the last day of the year", AstroDate(2024, 12, 31)),
     ("the first day of the year", AstroDate(2024, 1, 1)),
     ("the last day of this month", AstroDate(2024, 3, 31)),
