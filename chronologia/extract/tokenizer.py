@@ -624,6 +624,7 @@ class Tokenizer:
                 apos = cs > 0 and low[cs - 1] == "'"
                 tokens.append(Token(text=raw.rstrip("."), raw=raw, index=i,
                                     is_number=True, value=value,
+                                    ordinal=raw.endswith("."),
                                     char_start=cs, char_end=ce,
                                     apostrophe=apos))
             else:
@@ -635,6 +636,7 @@ class Tokenizer:
                            t.char_start, t.char_end, t.cap,
                            prev_cap=(tokens[i - 1].cap if i > 0 else False),
                            apostrophe=t.apostrophe,
+                           ordinal=t.ordinal,
                            break_before=(
                                i > 0 and tokens[i - 1].char_end is not None
                                and t.char_start is not None
