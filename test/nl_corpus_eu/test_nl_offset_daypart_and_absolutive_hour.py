@@ -8,13 +8,18 @@ atzoko egunkaria" (Trask, "-Ko atzizkia euskaraz", Euskera XXX, pp.
 as "atzoko gaua" already does for yesterday.
 
 "arratsaldeko 5ak" is five in the afternoon.  The hour takes the article and
-the plural mark ("hirurak dira"), and the digit form carries the same suffix
-("arratsaldeko 3etatik gaueko 12ak arte"): Euskaltzaindia, Araua 35,
-"Orduak nola esan", decisions 1 and 6, p. 185.
+the plural mark ("Hirurak dira", Euskaltzaindia, Araua 35, "Orduak nola
+esan", section 1, p. 182), and the digit form carries the same suffix
+("arratsaldeko 3etatik gaueko 12ak arte", decision 6, p. 185).
+
+The day part also comes before a quarter and before a digit clock:
+"Arratsaldeko hiru(rak) eta laurdenetan" (section 5c, p. 184), "hirurak eta
+laurden" (decision 3, p. 185), "goizeko 11,30etan" (decision 6, p. 185).
+"arratsaldeko 5ak eta laurden" is 17:15.
 
 Anchor 2017-06-27 13:04, a Tuesday.  Three days back is Saturday 24 June,
-two days back Sunday 25 June.  17:00 is still ahead of 13:04, so it is today;
-08:00 has passed, so it is tomorrow.
+two days back Sunday 25 June.  17:00 and 17:15 are still ahead of 13:04, so
+they are today; 08:00 and 08:15 have passed, so they are tomorrow.
 """
 from datetime import datetime
 
@@ -47,6 +52,19 @@ def test_absolutive_digit_hour(text, day, hour, rest):
     assert r is not None, text
     assert r[0].start == ad(datetime(2017, 6, day, hour, 0))
     assert r.remainder == rest
+
+
+@pytest.mark.parametrize("text,day,hour,minute", [
+    ("arratsaldeko 5ak eta laurden", 27, 17, 15),
+    ("arratsaldeko bostak eta laurden", 27, 17, 15),
+    ("arratsaldeko 5:15", 27, 17, 15),
+    ("goizeko 8ak eta laurden", 28, 8, 15),
+])
+def test_daypart_before_quarter_and_digit_clock(text, day, hour, minute):
+    r = parse(text)
+    assert r is not None, text
+    assert r[0].start == ad(datetime(2017, 6, day, hour, minute))
+    assert r.remainder == ""
 
 
 def test_offset_alone_keeps_the_anchor_clock():
