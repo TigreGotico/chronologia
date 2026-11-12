@@ -1707,6 +1707,14 @@ class Resolver:
         ord_tok = match.slots.get("ORD") or match.slots["NORD"]
         day = int(ord_tok.value)
         rel_tok = match.slots.get("REL_MARKER")
+        # A marker before the day ("o próximo dia 5") names the next day with
+        # that number, not a month: it rolls like the bare day, strictly after
+        # the anchor's own day.
+        strict = False
+        if rel_tok is not None and rel_tok.index < ord_tok.index:
+            if self.spec.rel_markers[rel_tok.text] <= 0:
+                return None
+            rel_tok, strict = None, True
         rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
         base = _add_months(datetime(anchor.year, anchor.month, 1), rel)
         prefer_future = self.spec.construction_flags.get(
@@ -1723,7 +1731,8 @@ class Resolver:
         # relabelling the day); walk forward instead (a 31st skips the short
         # months to the next long one).
         roll = rel_tok is None and prefer_future and (
-            value is None or value < _midnight(anchor))
+            value is None or value < _midnight(anchor)
+            or (strict and value == _midnight(anchor)))
         if roll:
             for step in range(1, 13):
                 nxt = _add_months(datetime(base.year, base.month, 1), step)
