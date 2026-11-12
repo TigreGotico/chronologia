@@ -1,0 +1,6 @@
+# The NIGHT daypart is a BAND that crosses midnight: pl.wiktionary, s.v. noc,
+# sense 1.1, "okres od zmierzchu do świtu", so "o drugiej w nocy" is 02:00
+# and "o 11 w nocy" is 23:00.  Small hours 1..5 stay AM, evening hours 6..11
+# are PM, twelve is midnight (the band-split lives in the resolver
+# _clock_hms).  https://pl.wiktionary.org/wiki/noc
+w nocy
