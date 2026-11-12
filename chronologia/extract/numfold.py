@@ -73,6 +73,7 @@ _EXTRA = ["zero", "couple", "dozen", "score"]
 _NUMWORDS = frozenset(_ONES + _TENS + _ORD_ONES + _ORD_TENS
                       + _ORD_SCALES + _EXTRA)
 _ORD_SUFFIXES = frozenset({"st", "nd", "rd", "th"})
+_ORD_WORDS = frozenset(_ORD_ONES + _ORD_TENS + _ORD_SCALES)
 
 
 def _is_numword(tok: Token) -> bool:
@@ -94,7 +95,7 @@ def _merge_en_ord_suffix(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             # the suffix and silently truncates 'the 6th' to 'the 6' in any
             # downstream slice/removal of the mention.
             merged.append(replace(t, raw=t.raw + nxt.raw,
-                                   char_end=nxt.char_end))
+                                   char_end=nxt.char_end, ordinal=True))
             i += 2
             continue
         merged.append(t)
@@ -716,6 +717,7 @@ fold_en = make_fold(NumberGrammar(
     # "twenty second"); "seven thirty" and "eleven fifty" are two numerals
     continues=lambda so_far, atom: (so_far >= 20 and so_far % 10 == 0
                                     and 1 <= atom <= 9),
+    ordinal=lambda tok: tok.text in _ORD_WORDS,
     pre=_pre_en))
 
 
@@ -753,6 +755,12 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None,
         if v is False or v is None:
             v = extract_fn(text)
         return v
+
+    def is_ordinal(tok):
+        # an ordinal is the surface the back-end reads only as an ordinal
+        cardinal = extract_fn(tok.text)
+        return ((cardinal is False or cardinal is None)
+                and extract_fn(tok.text, ordinals=True) not in (False, None))
 
     def is_numword(tok):
         if tok.is_number:
@@ -794,7 +802,8 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None,
                 nxt = tokens[i + 1] if i + 1 < len(tokens) else None
                 if (t.is_number and nxt is not None and not nxt.is_number
                         and nxt.text in suffixes):
-                    merged.append(replace(t, raw=t.raw + nxt.raw))
+                    merged.append(replace(t, raw=t.raw + nxt.raw,
+                                          ordinal=True))
                     i += 2
                     continue
                 merged.append(t)
@@ -803,7 +812,7 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None,
         return tokens
 
     return make_fold(NumberGrammar(
-        is_number=is_numword, extract=value_of, pre=pre))
+        is_number=is_numword, extract=value_of, pre=pre, ordinal=is_ordinal))
 
 
 def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),
