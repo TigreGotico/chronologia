@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """A bare hour inside a sentence with no clock marker is not a clock, fr.
 
-Ruling 2 of 2026-11-12 (knowledge/wiki/audits/chronologia/
-disagreement-classes.md): "20h", "21h30" and "3 heures" are a clock when they
-are the whole utterance or follow a clock marker ("à").  Inside a sentence
-with no marker they are as often a length ("un film de 2 heures") and are
-not read.  Anchor 2017-06-27 13:04: 20:00 and 21:30 are still ahead today,
-03:00 is tomorrow.
+"20h", "21h30" and "3 heures" are a clock when they are the whole utterance
+or follow a clock marker ("à").  Inside a sentence with no marker they are
+as often a length ("un film de 2 heures") and are not read.  Anchor
+2017-06-27 13:04: 20:00 and 21:30 are still ahead today, 03:00 is tomorrow.
 """
 import pytest
 

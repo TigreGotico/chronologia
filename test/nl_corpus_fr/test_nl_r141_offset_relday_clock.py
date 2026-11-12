@@ -131,8 +131,8 @@ def test_known_unfixed_ambiguity_avant_hier_with_offset_and_clock():
     # docstring): the "avant-hier" idiom's multi-word fold wins over the
     # "avant" + bare "hier" + offset reading, before the offset pass ever
     # runs.  What is left is "une heure" read as 01:00 inside a sentence
-    # with no clock marker, which ruling 2 of 2026-11-12
-    # (knowledge/wiki/audits/chronologia/disagreement-classes.md) refuses.
+    # with no clock marker, and a bare hour inside a sentence with no
+    # marker is not a clock.
     assert extract_timespan("une heure avant hier à 9h", LANG, _A) is None
 
 

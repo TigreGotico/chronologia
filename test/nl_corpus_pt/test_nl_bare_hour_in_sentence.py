@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """A bare hour inside a sentence with no clock marker is not a clock, pt.
 
-Ruling 2 of 2026-11-12 (knowledge/wiki/audits/chronologia/
-disagreement-classes.md): "15h" is a clock when it is the whole utterance or
-follows a clock marker ("às").  Inside a sentence with no marker it is as
-often a length ("um filme de 2h") and is not read.  Anchor 2017-06-27 13:04:
-15:00 is still ahead today.
+"15h" is a clock when it is the whole utterance or follows a clock marker
+("às").  Inside a sentence with no marker it is as often a length ("um filme
+de 2h") and is not read.  Anchor 2017-06-27 13:04: 15:00 is still ahead
+today.
 """
 import pytest
 

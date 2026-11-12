@@ -13,9 +13,8 @@ MARKED = [
     ('στις 20h', 20, 0),
 ]
 
-# Said alone, the whole utterance is the clock (ruling 2 of 2026-11-12 in
-# knowledge/wiki/audits/chronologia/disagreement-classes.md).  At 13:04,
-# 21:30 and 20:00 are still ahead today and 02:30 is tomorrow.
+# Said alone, the whole utterance is the clock.  At 13:04, 21:30 and 20:00
+# are still ahead today and 02:30 is tomorrow.
 BARE = [
     ('21h30', 27, 21, 30),
     ('20h', 27, 20, 0),
