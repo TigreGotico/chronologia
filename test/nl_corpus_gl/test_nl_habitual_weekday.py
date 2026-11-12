@@ -2,8 +2,7 @@
 """A habitual weekday reads as the next such day, gl.
 
 "Os luns estudio" is the habit (EOI Lugo, "O artigo", D) Usos do artigo
-determinado, p. 3).  Ruling 5 of 2026-11-12 (knowledge/wiki/audits/
-chronologia/disagreement-classes.md) reads it as the next occurrence, and
+determinado, p. 3).  A habitual phrase reads as the next occurrence, and
 its article belongs to the date.  Anchor Tuesday 2017-06-27: the next Monday
 is 3 July, the next Friday 30 June.
 """

@@ -16,8 +16,8 @@ from ._corpus import parse, start_end, AstroDate
     ("le dimanche 2 juillet 2017", (2017, 7, 2), ""),
     ("rendez-vous le lundi 3 juillet", (2017, 7, 3), "rendez-vous"),
     ("le 15 juin", (2018, 6, 15), ""),
-    # alone, "le mardi" is also the habit; ruling 5 of 2026-11-12 reads it
-    # as the next Tuesday, 4 July
+    # alone, "le mardi" is also the habit; a habitual phrase reads as the
+    # next such day, Tuesday 4 July
     ("le mardi", (2017, 7, 4), ""),
     ("le mardi je travaille", (2017, 7, 4), "je travaille"),
 ])
