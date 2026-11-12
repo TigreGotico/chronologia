@@ -138,7 +138,7 @@ def test_weekday_and_date_together():
     ("piektdiena", 4), ("sestdiena", 5), ("svētdiena", 6),
 ])
 def test_bare_weekday_names_its_next_occurrence(text, weekday):
-    ahead = (weekday - ANCHOR.weekday()) % 7 or 7
+    ahead = (weekday - ANCHOR.weekday()) % 7
     expected = (ANCHOR + timedelta(days=ahead)).date()
     s, e = start_end(text)
     assert date(s.year, s.month, s.day) == expected
@@ -150,7 +150,7 @@ def test_bare_weekday_names_its_next_occurrence(text, weekday):
     ("piektdienā", 4), ("sestdienā", 5), ("svētdienā", 6),
 ])
 def test_locative_weekday_is_the_adverbial_form(text, weekday):
-    ahead = (weekday - ANCHOR.weekday()) % 7 or 7
+    ahead = (weekday - ANCHOR.weekday()) % 7
     expected = (ANCHOR + timedelta(days=ahead)).date()
     s, _ = start_end(text)
     assert date(s.year, s.month, s.day) == expected

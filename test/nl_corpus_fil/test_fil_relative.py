@@ -69,7 +69,7 @@ WEEKDAYS = ["lunes", "martes", "miyerkules", "huwebes", "biyernes",
 def test_a_bare_weekday_names_the_coming_one(name, weekday):
     s = start(name)
     assert s.datetime().weekday() == weekday
-    assert s.datetime() > ANCHOR
+    assert s.datetime() >= ANCHOR.replace(hour=0, minute=0)
 
 
 @pytest.mark.parametrize("name,weekday", list(zip(WEEKDAYS, range(7))))

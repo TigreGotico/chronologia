@@ -3212,7 +3212,7 @@ def _offset_is_day_or_coarser(match, spec) -> bool:
     return kind is not None and kind not in _SUBDAY_OFFSET_UNITS
 
 
-def _compose(resolved, engine, tokens):
+def _compose(resolved, engine, tokens, anchor=None):
     """Pick the single winning reading from the post-passed ``resolved`` matches.
 
     Returns ``(res, label_consumed, rep)``:
@@ -3407,7 +3407,37 @@ def _compose(resolved, engine, tokens):
                          | _composition_glue(day_match, off_match))
     else:
         rep, res = min(resolved, key=lambda mr: mr[0].span[0])
+    res = _roll_bare_weekday_time(res, rep, anchor)
     return res, label_consumed | glue_consumed, rep
+
+
+def _roll_bare_weekday_time(res, rep, anchor):
+    """A bare weekday's time that has already passed moves on one week.
+
+    A bare weekday said on that weekday names the anchor's own day ("tuesday"
+    on a Tuesday), because a span that contains the anchor is the current
+    one.  A clock or a day part placed on that day is a narrower span: when
+    it ends at or before the anchor it is no longer ahead, so the next
+    occurrence of the same weekday and time is meant ("tuesday at 10am" said
+    on a Tuesday at 13:04 is the next Tuesday at 10:00).  Only a reading on
+    the anchor's own day moves: "the second-to-last friday" names a past day
+    on purpose.
+    """
+    if (anchor is None or rep is None or rep.construction != "weekday_ref"
+            or rep.slots.get("REL_MARKER") is not None):
+        return res
+    # A zoned clock ("at 3:30 utc+2") is compared on its wall clock, as the
+    # anchor carries no zone.
+    start = res.value.start.replace(tzinfo=None)
+    end = res.value.end.replace(tzinfo=None)
+    today = AstroDate.from_datetime(anchor.replace(hour=0, minute=0, second=0,
+                                                   microsecond=0))
+    if start < today or end > AstroDate.from_datetime(anchor):
+        return res
+    week = timedelta(days=7)
+    return replace(res, value=DateSpan(res.value.start + week,
+                                       res.value.end + week,
+                                       res.value.basis))
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
@@ -3465,7 +3495,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         return None
     # widen a date carrying the locale's "week of" marker to its whole week
     resolved = _apply_week_of(tokens, resolved, engine.spec)
-    res, label_consumed, rep = _compose(resolved, engine, tokens)
+    res, label_consumed, rep = _compose(resolved, engine, tokens, anchor)
     if res is None:
         # A day-part+clock meridiem contradiction ("morning at 9pm") --
         # _compose declined the whole reading rather than pick a winner.

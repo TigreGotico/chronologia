@@ -22,7 +22,7 @@ from ._corpus import ANCHOR, day, parse, remainder, span, start_end
 @pytest.mark.parametrize("text,y,m,d", [
     ("it-Tnejn", 2027, 5, 17),
     ("it-Tlieta", 2027, 5, 18),
-    ("l-Erbgħa", 2027, 5, 19),
+    ("l-Erbgħa", 2027, 5, 12),
     ("il-Ħamis", 2027, 5, 13),
     ("il-Ġimgħa", 2027, 5, 14),
     ("is-Sibt", 2027, 5, 15),

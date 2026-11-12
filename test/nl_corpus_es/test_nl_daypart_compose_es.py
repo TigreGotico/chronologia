@@ -48,9 +48,13 @@ def _band_span(d, lo, hi):
     return AstroDate.from_datetime(s), AstroDate.from_datetime(e)
 
 
-def _next_wd(wd):
+def _next_wd(wd, hi):
+    """The next such weekday whose band still ends after the anchor, 13:04
+    on Tuesday 2017-06-27: the anchor day itself for an afternoon or night."""
     base = date(2017, 6, 27)
-    ahead = (wd - base.weekday()) % 7 or 7
+    ahead = (wd - base.weekday()) % 7
+    if ahead == 0 and hi <= 13:
+        ahead = 7
     return base + timedelta(days=ahead)
 
 
@@ -58,7 +62,7 @@ def _cases():
     out = []
     for wn, wd in _WD.items():
         for bn, (lo, hi) in _BANDS.items():
-            s, e = _band_span(_next_wd(wd), lo, hi)
+            s, e = _band_span(_next_wd(wd, hi), lo, hi)
             out.append((f"el {wn} por {bn}", s, e))
     for rn, d in _REL.items():
         for bn, (lo, hi) in _BANDS.items():
