@@ -255,7 +255,6 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
             kind = spec.units.get(tokens[i].text)
             if (kind in _DUR_UNIT_SECONDS and i + 1 < n
                     and tokens[i + 1].is_number
-                    and not tokens[i + 1].ordinal
                     and tokens[i + 1].value is not None):
                 try:
                     secs = float(tokens[i + 1].value) * _DUR_UNIT_SECONDS[kind]

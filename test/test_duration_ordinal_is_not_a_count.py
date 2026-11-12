@@ -3,16 +3,18 @@
 An ordinal is "a word that expresses the relative position of an item in a
 sequence" (Wiktionary, "ordinal number", sense 1).  "The second week" names
 which week; it is not two weeks long.  The library already reads these
-phrases as positions: every non-English phrase below comes from that
-locale's own corpus, where extract_timespan resolves it to one week or one
-day ("die zweite woche" is calendar week 2 in
+phrases as positions: the non-English phrases in the first block come from
+that locale's own corpus, where extract_timespan resolves them to one week
+or one day ("die zweite woche" is calendar week 2 in
 test/nl_corpus_de/test_nl_indefinite_article_is_not_a_week_number.py).
+The second block holds one phrase for each ordinal fold that no corpus
+phrase reaches, with the dictionary entry that makes its word an ordinal.
 """
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
 
-from chronologia import extract_duration
+from chronologia import extract_duration, extract_timespan
 
 
 @pytest.mark.parametrize("text,lang", [
@@ -43,6 +45,21 @@ from chronologia import extract_duration
     ("þriðja vika", "is"),
     ("तीसरा सप्ताह", "hi"),
     ("an t-aonú lá is tríocha", "ga"),
+    ("tríochadú lá is aon", "ga"),
+    ("la cuarta semana de marzo", "es"),
+    ("le vingt et unième jour de janvier", "fr"),
+    # en.wiktionary: lt "antras" "second"; is "tuttugasti" "twentieth",
+    # "fyrstur" "first"; pt "décimo" "(ordinal) tenth"; nl "2e" "abbreviation
+    # of tweede (second)"; fr "1er" "abbreviation of premier (first)", "21e"
+    # "abbreviation of vingt-et-unième", "onzième" "(ordinal) eleventh".
+    ("antra savaitė", "lt"),
+    ("dvidešimt antroji savaitė", "lt"),
+    ("tuttugasta og fyrsta vika", "is"),
+    ("o décimo dia", "pt"),
+    ("de 2e week", "nl"),
+    ("le 1er jour", "fr"),
+    ("la 21e semaine", "fr"),
+    ("le onzième jour", "fr"),
 ])
 def test_an_ordinal_is_not_a_length(text, lang):
     assert extract_duration(text, lang) is None
@@ -66,9 +83,24 @@ def test_an_ordinal_is_not_a_length(text, lang):
     ("tvær vikur", "is", timedelta(weeks=2), ""),
     ("पाँच हफ़्ते", "hi", timedelta(weeks=5), ""),
     ("trí lá", "ga", timedelta(days=3), ""),
+    ("două minute", "ro", timedelta(minutes=2), ""),
+    ("doua minute", "ro", timedelta(minutes=2), ""),
+    ("două ore și jumătate", "ro", timedelta(hours=2, minutes=30), ""),
 ])
 def test_a_count_is_still_a_length(text, lang, length, remainder):
     got = extract_duration(text, lang)
     assert got is not None
     assert got.duration == length
     assert got.remainder == remainder
+
+
+def test_a_cardinal_two_after_a_clock_is_still_a_length():
+    # Romanian "două" is the cardinal two (en.wiktionary "două", Numeral,
+    # "two"); the ordinal is "a doua".  Sunday 2026-09-27: Monday at 9 for
+    # two hours is 09:00 to 11:00 on 2026-09-28.
+    got = extract_timespan("luni la ora 9 timp de două ore", "ro",
+                           datetime(2026, 9, 27, 13, 4))
+    assert got is not None
+    assert (got.span.start.day, got.span.start.hour) == (28, 9)
+    assert (got.span.end.day, got.span.end.hour, got.span.end.minute) == (28, 11, 0)
+    assert got.remainder == ""

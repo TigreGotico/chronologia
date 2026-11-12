@@ -1026,7 +1026,8 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                           phrases=(), h_clock=False, ord_suffixes=frozenset(),
                           fem_ord=None, reader=None,
                           extra_numwords=frozenset(), extra_homograph=None,
-                          extra_ordinals=None, word_map=None):
+                          extra_ordinals=None, word_map=None,
+                          ord_article=frozenset()):
     base = _make_romance_fold(lang_code, blacklist, reader=reader,
                               extra_numwords=extra_numwords,
                               extra_homograph=extra_homograph,
@@ -1045,12 +1046,16 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
             tokens = _merge_digit_ordinal(tokens, ord_suffixes)
         if fem_ord:
             # feminine ordinals the number back-end rejects ("a doua",
-            # "la segunda") -- map the surface straight to its digit.
+            # "la segunda") -- map the surface straight to its digit.  With
+            # ``ord_article`` the surface is an ordinal only after that
+            # article: Romanian "două" alone is the cardinal two.
             tokens = _reindex(tuple(
                 Token(text=str(fem_ord[t.text]), raw=t.raw, index=0,
-                      is_number=True, value=fem_ord[t.text], ordinal=True)
+                      is_number=True, value=fem_ord[t.text],
+                      ordinal=(not ord_article
+                               or (i > 0 and tokens[i - 1].text in ord_article)))
                 if (not t.is_number and t.text in fem_ord) else t
-                for t in tokens))
+                for i, t in enumerate(tokens)))
         return base(tokens)
 
     return fold
@@ -1494,7 +1499,11 @@ fold_ro = _romance_prepass_fold(
     ord_suffixes=frozenset({"lea", "a", "ea", "le"}),
     fem_ord={"doua": 2, "două": 2, "treia": 3, "patra": 4, "cincea": 5,
              "șasea": 6, "sasea": 6, "șaptea": 7, "saptea": 7, "opta": 8,
-             "noua": 9, "zecea": 10})
+             "noua": 9, "zecea": 10},
+    # "două" and "noua" (nouă without diacritics) are also cardinals; the
+    # ordinal takes the article: en.wiktionary "doua", "a doua f (ordinal
+    # form of doi)"
+    ord_article=frozenset({"a"}))
 # deep-time SCALE-frame licensing: "un miliard/un bilion de ani în urmă"
 fold_ro = _with_scale_frame(fold_ro, "ro", frozenset({"un", "unu", "una", "o"}))
 

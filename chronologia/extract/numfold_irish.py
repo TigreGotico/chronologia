@@ -246,12 +246,12 @@ def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         unit = None if t.is_number else _ORDINAL_UNITS.get(t.text)
         if unit is not None:
             if i + 1 < n and tokens[i + 1].text in _DEAG:
-                out.append(_numeric(t, unit + 10, tokens[i + 1], ordinal=True))
+                out.append(_numeric(t, unit + 10, tokens[i + 1]))
                 i, changed = i + 2, True
                 continue
             if (i + 2 < n and tokens[i + 1].text in _JOINERS
                     and _ORDINAL_TENS.get(tokens[i + 2].text) == 20):
-                out.append(_numeric(t, unit + 20, tokens[i + 2], ordinal=True))
+                out.append(_numeric(t, unit + 20, tokens[i + 2]))
                 i, changed = i + 3, True
                 continue
             out.append(_numeric(t, unit, ordinal=True))
