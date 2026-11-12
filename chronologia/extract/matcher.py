@@ -346,6 +346,10 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         raw = token.raw.rstrip(".")
         return (token.is_number and 1 <= (token.value or 0) <= 31
                 and raw[:1].isdigit() and not raw.isdigit())
+    if name == "WORDORD":
+        # a day-of-month ordinal spoken as a declined word ("двадцатого") --
+        # never a cardinal or a digit, which the day fold leaves unflagged.
+        return token.day_ordinal and 1 <= (token.value or 0) <= 31
     if name == "DORD":
         # an ordinal that still WEARS its ordinal mark: a digit run whose
         # ``raw`` keeps the trailing dot an ``ordinal_dot`` locale writes its
@@ -713,6 +717,18 @@ class ConstructionMatcher:
                             and tokens[end].text in (
                                 set(self.spec.units)
                                 | set(self.spec.singular_units))):
+                        continue
+                    # A fraction-of-the-hour reading ("половина двадцатого")
+                    # whose hour word is followed by a unit or scope-unit noun
+                    # names that noun's ordinal, not a clock: "в половине
+                    # двадцатого века" is the middle of the 20th century, not
+                    # 19:30.  Veto it so the noun phrase is left unread.
+                    if (name == "clock_time" and "FRACTION" in slots
+                            and "HOUR" in slots and end < len(tokens)
+                            and tokens[end].text in (
+                                set(self.spec.units)
+                                | set(self.spec.singular_units)
+                                | set(self.spec.scope_units))):
                         continue
                     # "new year 15 minutes" is a duration, not the year 2015:
                     # YEARANY's only gate below YEAR's own is >=2 digits (no
