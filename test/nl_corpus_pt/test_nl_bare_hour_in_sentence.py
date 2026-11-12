@@ -24,3 +24,25 @@ def test_a_length_in_a_sentence_is_not_a_clock(text):
 def test_a_clock_alone_or_after_a_marker_still_reads(text, day, hour):
     s = span(text)
     assert (s.start.month, s.start.day, s.start.hour) == (6, day, hour)
+
+
+@pytest.mark.parametrize("text,day,hour", [
+    ("são 15h", 27, 15),
+    ("já são 15h", 27, 15),
+])
+def test_the_verb_that_states_the_hour_marks_a_clock(text, day, hour):
+    """"ser [...] 14. Indica o momento [...] (ex.: já é noite; são 18h00)."
+    (Priberam, s.v. "ser")."""
+    s = span(text)
+    assert (s.start.month, s.start.day, s.start.hour) == (6, day, hour)
+
+
+@pytest.mark.parametrize("text,day,hour", [
+    ("por volta das 20h", 27, 20),
+    ("a partir das 20h", 27, 20),
+])
+def test_a_word_of_approximation_or_start_marks_a_clock(text, day, hour):
+    """"Cerca de, por volta de, próximo de" (Priberam, s.v. "volta"); "a
+    partir de: Com início em determinada data" (Priberam, s.v. "partir")."""
+    s = span(text)
+    assert (s.start.month, s.start.day, s.start.hour) == (6, day, hour)

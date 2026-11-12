@@ -50,3 +50,44 @@ def test_the_verb_that_states_the_hour_marks_a_clock(text, day, hour):
     s = span(text)
     assert (s.start.month, s.start.day) == (6, day)
     assert (s.start.hour, s.start.minute) == (hour, 0)
+
+
+@pytest.mark.parametrize("text,hour", [
+    ("il était 3 heures", 3),
+    ("il est déjà 20h", 20),
+])
+def test_the_verb_that_states_the_hour_in_another_form(text, hour):
+    """"était" is the same verb; "déjà" stands between the verb and the
+    hour: "Il est déjà midi." (Le Robert, s.v. "déjà")."""
+    s = span(text)
+    assert (s.start.hour, s.start.minute) == (hour, 0)
+
+
+@pytest.mark.parametrize("text,day,hour", [
+    ("vers 20h", 27, 20),
+    ("vers 3 heures", 28, 3),
+    ("vers 15 heures", 27, 15),
+    ("dès 20h", 27, 20),
+    ("sur les 20h", 27, 20),
+    ("aux alentours de 20h", 27, 20),
+])
+def test_a_word_of_approximation_or_start_marks_a_clock(text, day, hour):
+    """"Vers (les) cinq heures." (Le Robert, s.v. "vers"); "sur" and "aux
+    alentours de" point to "vers"; "dès": "Immédiatement, à partir de." """
+    s = span(text)
+    assert (s.start.month, s.start.day) == (6, day)
+    assert (s.start.hour, s.start.minute) == (hour, 0)
+
+
+def test_pour_before_a_count_of_hours_is_a_length():
+    """"Pour six mois, pendant six mois" (Le Robert, s.v. "pour"): "pour"
+    also opens a length, so it does not mark a clock."""
+    nomatch("je pars pour 3 heures")
+
+
+def test_a_day_period_after_the_hour_marks_a_clock():
+    """"Dix heures du soir" (Le Robert, s.v. "soir"): a day period after the
+    hour names a time of day.  20:00 is still ahead at 13:04."""
+    s = span("20h ce soir")
+    assert (s.start.month, s.start.day) == (6, 27)
+    assert (s.start.hour, s.start.minute) == (20, 0)

@@ -2109,9 +2109,16 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
 
     In a locale that writes the hour-letter clock, "2h" and "3 heures" are as
     often a length as a time of day.  Alone they are a clock; behind "à" or
-    another clock marker they are a clock; after the verb that states the
-    hour (fr "il est 3 heures", listed in ``marker_hour_statement.voc``) they
-    are a clock; next to other words and with no marker they are not read.
+    another clock marker they are a clock; next to other words and with no
+    marker they are not read.  Three kinds of marker the reading does not
+    consume also make the hour a clock, each listed in the locale's own
+    vocabulary with its source:
+
+    * the verb that states the hour, with its article ("il est 3 heures",
+      "son las 15h", ``marker_hour_statement.voc``);
+    * a word of approximation or of a start time ("vers 20h", "por volta das
+      20h", ``marker_hour_approx.voc``);
+    * a day period or a day word right after the hour ("20h ce soir").
     """
     if spec.lang.split("-")[0] not in _HOUR_LETTER_LOCALES:
         return False
@@ -2128,9 +2135,24 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
                and read[1].text in oclock)
     if not (literal or counted):
         return False
-    first = min(consumed)
-    before = tokens[first - 1].text.lower() if first > 0 else ""
-    return before not in spec.connectors.get("hour_statement", ())
+    markers = (spec.connectors.get("hour_statement", frozenset())
+               | spec.connectors.get("hour_approx", frozenset()))
+    before = [t.text.lower() for t in tokens[:read[0].index]]
+    if any(" ".join(before[-n:]) in markers
+           for n in range(1, min(len(before), 4) + 1)):
+        return False
+    return not _day_period_follows(tokens[read[-1].index + 1:], spec)
+
+
+def _day_period_follows(after, spec):
+    """Whether ``after`` opens with a day period or a day word, alone or
+    behind a relative marker ("20h ce soir", "15h amanhã")."""
+    words = [t.text.lower() for t in after[:2]]
+    if words and words[0] in spec.rel_markers:
+        words = words[1:]
+    return bool(words) and (words[0] in spec.dayparts
+                            or words[0] in spec.daypart_today_words
+                            or words[0] in spec.named_days)
 
 
 def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
