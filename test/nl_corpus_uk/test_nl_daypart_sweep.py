@@ -4,7 +4,9 @@
 
 Bands (chronologia dayparts): вночі 00-04, вранці 04-12, вдень 12-18,
 ввечері 18-24.  The band offsets are applied to today / +1 / -1 days derived
-from the anchor by pure arithmetic.  Anchor Tue 2017-06-27 13:04.
+from the anchor by pure arithmetic.  вночі follows the named day's evening, so
+its small hours fall on the next date ("Частина доби від заходу до сходу
+сонця, з вечора до ранку", СУМ-11, s.v. ніч).  Anchor Tue 2017-06-27 13:04.
 """
 from datetime import datetime, timedelta
 
@@ -38,7 +40,8 @@ def _band_span(day_offset, sh, eh):
 _CASES = []
 for _pref, _off in _DAYREF.items():
     for _band, (_sh, _eh) in _BANDS.items():
-        _CASES.append((f"{_pref} {_band}", *_band_span(_off, _sh, _eh)))
+        _night = 1 if _band == "вночі" else 0
+        _CASES.append((f"{_pref} {_band}", *_band_span(_off + _night, _sh, _eh)))
 
 
 @pytest.mark.parametrize("phrase,s,e", _CASES)

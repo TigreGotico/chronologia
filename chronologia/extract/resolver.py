@@ -31,8 +31,9 @@ import re
 from datetime import date, datetime, timedelta
 from typing import Optional
 
-from chronologia.astrodate import AstroDate, BASIS_RECONSTRUCTED, DateSpan
-from chronologia.dayparts import daypart_span
+from chronologia.astrodate import (AstroDate, BASIS_RECONSTRUCTED, DateSpan,
+                                   civil_add)
+from chronologia.dayparts import daypart_span, lookup as daypart_lookup
 from chronologia.calendars import (CALENDARS, gregorian_to_jdn,
                                         jdn_to_gregorian)
 from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, US_PER_DAY,
@@ -379,7 +380,8 @@ def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolutio
     return Resolution(DateSpan(start, start + timedelta(minutes=1)), consumed)
 
 
-def _daypart_band(day: AstroDate, name: str) -> DateSpan:
+def _daypart_band(day: AstroDate, name: str,
+                  after_evening: bool = False) -> DateSpan:
     """The conventional time-of-day band ``name`` on the civil ``day``.
 
     The boundaries come from :func:`chronologia.dayparts.daypart_span` (Unicode
@@ -389,13 +391,20 @@ def _daypart_band(day: AstroDate, name: str) -> DateSpan:
     carries ``BASIS_RECONSTRUCTED``, never ``exact``: a day-part is a
     conventional cultural boundary, not a clock reading the speaker gave, so the
     span must not claim the exactness a spoken "at 6am" would.
+
+    ``after_evening`` places a night band that follows the evening (ru
+    "ночью") on the day after ``day``: it is set for a day named relative to
+    the anchor ("сегодня ночью", "завтра ночью", bare "ночью"), and not for a
+    calendar date, whose own small hours "ночью 5 июня" names.
     """
+    if after_evening and daypart_lookup(name).follows_evening:
+        day = civil_add(day, days=1)
     band = daypart_span(AstroDate(day.year, day.month, day.day), name)
     return DateSpan(band.start, band.end, BASIS_RECONSTRUCTED)
 
 
 def compose_date_daypart(date_res: Resolution, daypart_res: Resolution,
-                         name: str) -> Resolution:
+                         name: str, after_evening: bool = False) -> Resolution:
     """Narrow a resolved day to the ``name`` day-part band on that day.
 
     The date construction ("yesterday", "tomorrow") supplies the civil day (its
@@ -406,9 +415,15 @@ def compose_date_daypart(date_res: Resolution, daypart_res: Resolution,
     21:00 -> the day after 06:00.
     """
     d = date_res.value.start
-    band = _daypart_band(d, name)
+    band = _daypart_band(d, name, after_evening)
     consumed = tuple(sorted(set(date_res.consumed) | set(daypart_res.consumed)))
     return Resolution(band, consumed)
+
+
+def daypart_follows_evening(name: str) -> bool:
+    """Whether ``name`` is a small-hours night band named from the day before
+    it (ru "сегодня ночью" said in the afternoon is the coming night)."""
+    return daypart_lookup(name).follows_evening
 
 
 def _daypart_pm_side(name: str) -> bool:
@@ -740,7 +755,8 @@ class Resolver:
         rel_tok = match.slots.get("REL_MARKER")
         off = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
         day = AstroDate.from_datetime(_midnight(anchor) + timedelta(days=off))
-        return Resolution(_daypart_band(day, name), self._consumed(match))
+        return Resolution(_daypart_band(day, name, after_evening=True),
+                          self._consumed(match))
 
     def _named_day_offset(self, match, anchor, step):
         """"the day after/before <named day>": one day past/short of a named
