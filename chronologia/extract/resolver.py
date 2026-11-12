@@ -898,10 +898,8 @@ class Resolver:
         elif rel < 0:    # last
             back = (anchor.weekday() - target) % 7 or 7
             value = base - timedelta(days=back)
-        else:            # this: within the current week (honouring week_start)
-            start_idx = _WEEK_START.get(self.conventions.week_start, 0)
-            week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
-            value = week_start + timedelta(days=(target - start_idx) % 7)
+        else:            # this: the first such weekday on or after today
+            value = base + timedelta(days=(target - anchor.weekday()) % 7)
         return Resolution(_day_span(value), self._consumed(match))
 
     def _resolve_weekday_of_week(self, match, anchor):

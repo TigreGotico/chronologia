@@ -155,7 +155,7 @@ def test_bare_weekday_takes_the_next_occurrence(text, day):
     ("të hënën e kaluar", date(2017, 6, 26)),
     ("të premten e kaluar", date(2017, 6, 23)),
     ("të premten e ardhshme", date(2017, 6, 30)),
-    ("këtë të hënë", date(2017, 6, 26)),
+    ("këtë të hënë", date(2017, 7, 3)),
 ])
 def test_weekday_with_a_marker(text, expected):
     s, _ = start_end(text)

@@ -62,7 +62,13 @@ def test_last_nundinal_day():
 
 
 def test_this_nundinal_day():
-    assert _day("nundinal", 0, 0) == AstroDate(2017, 6, 25)
+    # position 0 fell on 2017-06-25, before the anchor; the next one is
+    # eight days later
+    assert _day("nundinal", 0, 0) == AstroDate(2017, 7, 3)
+
+
+def test_this_nundinal_day_is_the_anchor_day():
+    assert _day("nundinal", 2, 0) == AstroDate(2017, 6, 27)
 
 
 # -- French Republican décade (month-anchored, length 10) ----------------
@@ -78,8 +84,9 @@ def test_next_decadi():
 
 
 def test_this_quintidi():
-    # quintidi == position 4; the one in the current décade is 2017-06-23
-    assert _day("republican_decade", 4, 0) == AstroDate(2017, 6, 23)
+    # quintidi == position 4; 5 Messidor (2017-06-23) is before the anchor,
+    # so "this" names 15 Messidor, ten days later
+    assert _day("republican_decade", 4, 0) == AstroDate(2017, 7, 3)
 
 
 # -- month-anchored discontinuity: target past the décade boundary -> None
