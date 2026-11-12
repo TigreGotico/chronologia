@@ -74,7 +74,7 @@ def _make_rewrite(omap: Dict[str, int]) -> Callable:
                 out.append(Token(text=str(val), raw=str(val), index=t.index,
                                  is_number=True, value=val,
                                  char_start=t.char_start,
-                                 char_end=t.char_end))
+                                 char_end=t.char_end, ordinal=True))
                 changed = True
             else:
                 out.append(t)
