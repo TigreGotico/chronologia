@@ -278,10 +278,11 @@ def read_run(text: str) -> Optional[int]:
     return total + group if seen else None
 
 
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
+def _numeric(tok: Token, value: int, end: Token = None,
+             ordinal: bool = False) -> Token:
     return Token(text=str(value), raw=str(value), index=tok.index,
                  is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
+                 char_end=(end or tok).char_end, ordinal=ordinal)
 
 
 #: the magnitude class of a cardinal surface, which is what licenses one
@@ -354,7 +355,7 @@ def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     out, changed = [], False
     for t in tokens:
         if not t.is_number and t.text in _ORDINALS:
-            out.append(_numeric(t, _ORDINALS[t.text]))
+            out.append(_numeric(t, _ORDINALS[t.text], ordinal=True))
             changed = True
         else:
             out.append(t)

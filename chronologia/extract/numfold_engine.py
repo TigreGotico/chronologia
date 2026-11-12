@@ -90,6 +90,10 @@ class NumberGrammar:
                       clock minute ("sete e vinte" == 7 + a MINUTE of 20) is no
                       longer swallowed into a single wrong numeral.  Left None
                       (the default) every joiner bridges, exactly as before.
+    ``ordinal``    -- is this number-word an ordinal ("second", "tercera")?
+                      A run that ends on one folds to a token marked
+                      ``ordinal``; a compound ordinal ends on its ordinal
+                      word ("twenty second").
     """
     is_number: Callable[[Token], bool]
     extract: Callable[[str], Any]
@@ -99,6 +103,7 @@ class NumberGrammar:
     pre: Optional[Callable[[Tuple[Token, ...]], Tuple[Token, ...]]] = None
     bridge_ok: Optional[Callable[[float, float], bool]] = None
     continues: Optional[Callable[[float, float], bool]] = None
+    ordinal: Callable[[Token], bool] = _never
 
 
 def make_fold(grammar: NumberGrammar
@@ -136,6 +141,7 @@ def make_fold(grammar: NumberGrammar
     pre = grammar.pre
     bridge_ok = grammar.bridge_ok
     continues = grammar.continues
+    ordinal = grammar.ordinal
 
     def _value_of(run):
         """The back-end value of a homogeneous run, with the single-token
@@ -189,7 +195,8 @@ def make_fold(grammar: NumberGrammar
         into.append(Token(text=str(num), raw=str(num), index=0,
                           is_number=True, value=num,
                           char_start=run[0].char_start,
-                          char_end=run[-1].char_end))
+                          char_end=run[-1].char_end,
+                          ordinal=run[-1].ordinal or ordinal(run[-1])))
 
     def _segment(run, into):
         """Split ``run`` at every joiner the ``bridge_ok`` gate rejects, then

@@ -19,6 +19,7 @@ from dataclasses import replace
 from importlib import import_module
 
 from ovos_number_parser.numbers_fr import extract_number_fr
+from ovos_number_parser.util import NumberVocabulary
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
@@ -49,6 +50,13 @@ from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
 # doubles as a weekday name (pt "segunda"/"quarta"/"quinta"/"sexta") from
 # ever being read as a number.
 from importlib import import_module
+
+
+def _number_vocabulary(numbers_mod):
+    """The language's ``NumberVocabulary`` instance; a language may subclass it
+    (ovos-number-parser's Occitan ``OccitanVocabulary``)."""
+    return next(v for v in vars(numbers_mod).values()
+                if isinstance(v, NumberVocabulary))
 
 
 def _fem_forms(surf):
@@ -211,7 +219,8 @@ def _license_tens_homograph(tokens, tens_map, definite, quarter_words=frozenset(
         before_quarter = nxt is not None and nxt.text in quarter_words
         if not after_article and not before_quarter:
             continue  # not an ordinal frame -- leave for FRACTION
-        out[i] = replace(t, is_number=True, value=tens_map[t.text])
+        out[i] = replace(t, is_number=True, value=tens_map[t.text],
+                         ordinal=True)
         changed = True
     return _reindex(tuple(out)) if changed else tokens
 
@@ -277,7 +286,7 @@ def _license_ordinal_fraction(tokens, homomap, definite, quarter_words=frozenset
         val = homomap[t.text]
         out[i] = Token(text=str(val), raw=t.raw, index=0, is_number=True,
                        value=val, char_start=t.char_start,
-                       char_end=t.char_end)
+                       char_end=t.char_end, ordinal=True)
         changed = True
     return _reindex(tuple(out)) if changed else tokens
 
@@ -358,8 +367,7 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
     needed."""
     from ovos_number_parser.util import RomanceNumberExtractor
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
-    vocab = next(v for v in vars(numbers_mod).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_mod)
     # the shared spoken-number reader; for most Romance languages
     # ``extract_number_<lang>`` is a thin wrapper over exactly this, and a
     # language whose wrapper adds a real hook passes that wrapper as ``reader``.
@@ -411,7 +419,8 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
         joiner=lambda tok: tok.text in joins,
         single_fallback=ordinal_value.get,
         pre=_pre,
-        bridge_ok=_romance_additive_join))
+        bridge_ok=_romance_additive_join,
+        ordinal=lambda tok: tok.text in ordinal_value))
     # ordinal-fraction homographs ("quarto" = fourth *and* a-quarter) are held
     # out of ``numwords`` above so the clock FRACTION slot keeps them; license
     # the ordinal reading back positionally (outside the "un quarto" fraction
@@ -471,8 +480,7 @@ def _romance_scale_frame(lang_code, article_ones,
     surfaces the article-one frame must recognise.
     """
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
-    vocab = next(v for v in vars(numbers_mod).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_mod)
     thousand, million, scale_all = set(), set(million_extra), set(scale_extra)
     scale_all |= set(million_extra)
     for table in (vocab.SHORT_SCALE, vocab.LONG_SCALE):
@@ -552,7 +560,7 @@ def _license_weekday_ordinal(tokens, mapping, units):
                 and nxt is not None and nxt.text in units):
             value = mapping[tok.text]
             out.append(Token(text=str(value), raw=tok.raw, index=0,
-                             is_number=True, value=value))
+                             is_number=True, value=value, ordinal=True))
         else:
             out.append(tok)
     return _reindex(tuple(out))
@@ -684,14 +692,14 @@ def _license_pt_nonas(tokens):
         if nxt is not None and nxt.text in _PT_OF_PREP:
             continue
         out[i] = Token(text="9", raw=t.raw, index=0, is_number=True,
-                       value=9, char_start=t.char_start, char_end=t.char_end)
+                       value=9, char_start=t.char_start, char_end=t.char_end,
+                       ordinal=True)
     return _reindex(tuple(out))
 
 
 def _pt_plural_ordinals():
     from ovos_number_parser import numbers_pt
-    vocab = next(v for v in vars(numbers_pt).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_pt)
     out = {}
     for val, surf in vocab.ORDINAL_UNITS.items():
         if not surf:
@@ -1011,7 +1019,7 @@ def _merge_digit_ordinal(tokens, suffixes):
         nxt = tokens[i + 1] if i + 1 < n else None
         if (t.is_number and nxt is not None and not nxt.is_number
                 and nxt.text in suffixes):
-            out.append(t)
+            out.append(replace(t, ordinal=True))
             i += 2
             continue
         out.append(t)
@@ -1023,7 +1031,8 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                           phrases=(), h_clock=False, ord_suffixes=frozenset(),
                           fem_ord=None, reader=None,
                           extra_numwords=frozenset(), extra_homograph=None,
-                          extra_ordinals=None, word_map=None):
+                          extra_ordinals=None, word_map=None,
+                          ord_article=frozenset()):
     base = _make_romance_fold(lang_code, blacklist, reader=reader,
                               extra_numwords=extra_numwords,
                               extra_homograph=extra_homograph,
@@ -1042,12 +1051,16 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
             tokens = _merge_digit_ordinal(tokens, ord_suffixes)
         if fem_ord:
             # feminine ordinals the number back-end rejects ("a doua",
-            # "la segunda") -- map the surface straight to its digit.
+            # "la segunda") -- map the surface straight to its digit.  With
+            # ``ord_article`` the surface is an ordinal only after that
+            # article: Romanian "doua" alone is the cardinal two.
             tokens = _reindex(tuple(
                 Token(text=str(fem_ord[t.text]), raw=t.raw, index=0,
-                      is_number=True, value=fem_ord[t.text])
+                      is_number=True, value=fem_ord[t.text],
+                      ordinal=(not ord_article
+                               or (i > 0 and tokens[i - 1].text in ord_article)))
                 if (not t.is_number and t.text in fem_ord) else t
-                for t in tokens))
+                for i, t in enumerate(tokens)))
         return base(tokens)
 
     return fold
@@ -1216,7 +1229,7 @@ def _stamp_fr_compound_ordinals(tokens):
                 result.append(Token(text=str(val), raw=raw, index=0,
                                     is_number=True, value=val,
                                     char_start=first.char_start,
-                                    char_end=last.char_end))
+                                    char_end=last.char_end, ordinal=True))
                 i += m
             else:
                 result.append(out[i])
@@ -1225,7 +1238,7 @@ def _stamp_fr_compound_ordinals(tokens):
     out = [
         Token(text=str(_FR_SINGLE_ORDINALS[t.text]), raw=t.raw, index=0,
               is_number=True, value=_FR_SINGLE_ORDINALS[t.text],
-              char_start=t.char_start, char_end=t.char_end)
+              char_start=t.char_start, char_end=t.char_end, ordinal=True)
         if (not t.is_number and t.text in _FR_SINGLE_ORDINALS) else t
         for t in out
     ]
@@ -1352,7 +1365,7 @@ def _license_it_prima(tokens):
         if not is_before_marker:
             out[i] = Token(text="1", raw=t.raw, index=0, is_number=True,
                            value=1, char_start=t.char_start,
-                           char_end=t.char_end)
+                           char_end=t.char_end, ordinal=True)
     return _reindex(tuple(out))
 
 
@@ -1489,9 +1502,15 @@ fold_ro = _romance_prepass_fold(
     "ro", {"un", "unu", "una", "o"},
     phrases=_RO_PHRASES,
     ord_suffixes=frozenset({"lea", "a", "ea", "le"}),
-    fem_ord={"doua": 2, "două": 2, "treia": 3, "patra": 4, "cincea": 5,
+    fem_ord={"doua": 2, "treia": 3, "patra": 4, "cincea": 5,
              "șasea": 6, "sasea": 6, "șaptea": 7, "saptea": 7, "opta": 8,
-             "noua": 9, "zecea": 10})
+             "noua": 9, "zecea": 10},
+    # The ordinal is "a doua" and the cardinal is "două" (DOOM 3, "doilea"
+    # and "doi").  "doua" and "noua" are also the cardinals written without
+    # diacritics, so the ordinal takes the article.  "două" is not in the
+    # table: after "a" it is the genitive cardinal ("mamă a două fete",
+    # C. Stan, Revue roumaine de linguistique LV (3), 2010, p. 243)
+    ord_article=frozenset({"a"}))
 # deep-time SCALE-frame licensing: "un miliard/un bilion de ani în urmă"
 fold_ro = _with_scale_frame(fold_ro, "ro", frozenset({"un", "unu", "una", "o"}))
 
