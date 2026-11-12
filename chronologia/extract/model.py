@@ -86,6 +86,11 @@ class Token:
     # this flag is the only surviving record that the letter was written as an
     # abbreviation rather than as a bare word.
     trailing_dot: bool = False
+    # Whether a hyphen followed this token IMMEDIATELY in the original
+    # utterance ("15-én", "17:30-kor").  The tokenizer drops the hyphen, so
+    # this flag is the only record that the next token is a suffix written
+    # onto this one, not a separate word ("15 a" with the article "a").
+    trailing_hyphen: bool = False
     # Whether this number token was composed from an INDEFINITE ARTICLE deep-time
     # magnitude ("a million years ago", "a hundred thousand years ago") rather
     # than a spoken numeral.  The article form is a colloquial count-from-now
