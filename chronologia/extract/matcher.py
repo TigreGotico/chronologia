@@ -30,6 +30,8 @@ _ISO = re.compile(tokenizer._ISO)
 _ISOWEEK = re.compile(tokenizer._ISOWEEK)
 _NUMDATE = re.compile(tokenizer._NUMDATE_ANY)
 _CLOCK = re.compile(tokenizer._CLOCK)
+_DAYMONTH = re.compile(tokenizer._SLASHFRAC)
+_PADDAYMONTH = re.compile(r"\d{2}/\d{2}")
 
 
 def _calendar_for_surface(spec: LangSpec, surface: str):
@@ -260,6 +262,15 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         return _ISOWEEK.fullmatch(token.text) is not None
     if name == "NUMDATE":
         return _NUMDATE.fullmatch(token.text) is not None
+    # a day and a month with no year ("25/12"): the tokenizer keeps the
+    # two-part slash run whole as a fraction.  PADDAYMONTH is the form the
+    # numeric pattern writes, two digits each ("dd/MM"), for the place where
+    # no day word licenses the date and a fraction ("1/2", "3/4") must stay
+    # a fraction.
+    if name == "DAYMONTH":
+        return _DAYMONTH.fullmatch(token.text) is not None
+    if name == "PADDAYMONTH":
+        return _PADDAYMONTH.fullmatch(token.text) is not None
     # -- clock_time slots --------------------------------------------------
     if name == "CLOCK":
         return _CLOCK.fullmatch(token.text) is not None
@@ -325,7 +336,10 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
     if name == "SOLARQUAL":
         return token.text in spec.solar_quals
     if name in ("ORD", "SORD"):
-        return token.is_number and (token.value or 0) >= 1
+        # an ordinal is a whole number: a written fraction ("dia 5/3") names
+        # no nth anything
+        return (token.is_number and (token.value or 0) >= 1
+                and float(token.value).is_integer())
     if name == "NTOLAST":
         # the trailing "last" of an "<ordinal> to last" / "next to last"
         # idiom ("the second-to-last friday") -- the same surfaces as the

@@ -314,7 +314,7 @@ _COMPOSABLE_DATES = DATE_CONSTRUCTIONS | {
 #: than the computed date lands on.
 _WEEKDAY_LABELABLE_DATES = frozenset({
     "calendar_date", "month_day_ref", "iso_date", "numeric_date",
-    "reckoned_date", "nongregorian_date"})
+    "numeric_day_month", "reckoned_date", "nongregorian_date"})
 
 
 def _conn_surfaces(spec, name, defaults):
