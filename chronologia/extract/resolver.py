@@ -1256,8 +1256,16 @@ class Resolver:
 
         With ``ordlast`` and no number ("the last week of 2026") the week is
         the year's last ISO week, the one that contains 28 December.
+
+        The prose form names a week only with an ordinal: "duas semanas de
+        2026" and "uma semana de 2026" count weeks, so an ``ORD`` that was
+        not folded from an ordinal refuses.  A plural week noun refuses in
+        the matcher, which sees the noun.
         """
-        num_tok = match.slots.get("NUM") or match.slots.get("ORD")
+        ord_tok = match.slots.get("ORD")
+        if ord_tok is not None and not ord_tok.ordinal:
+            return None
+        num_tok = match.slots.get("NUM") or ord_tok
         year_tok = match.slots.get("YEAR")
         # a two-digit / apostrophe year ("week 5 of '24") pivots through the
         # anchor-relative window like every other year slot; reading it raw gave

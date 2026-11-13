@@ -38,3 +38,18 @@ def test_last_week_without_a_year_is_the_previous_week():
     span, rest = extract_timespan("last week", "en", SATURDAY)
     assert (span.start, span.end) == (AstroDate(2026, 10, 5),
                                       AstroDate(2026, 10, 12))
+
+
+# A count of weeks or a plural week noun names no one ISO week: "two weeks
+# of 2026" is two weeks, not week 02.  The phrase refuses or keeps words in
+# the remainder.
+@pytest.mark.parametrize("text", [
+    "two weeks of 2026",
+    "one week of 2026",
+    "the first weeks of 2026",
+    "the last weeks of 2026",
+])
+def test_a_count_of_weeks_is_not_an_iso_week(text):
+    r = extract_timespan(text, "en", SATURDAY)
+    assert r is None or r.remainder != "", (
+        f"{text!r} read {r!r} with nothing left over")

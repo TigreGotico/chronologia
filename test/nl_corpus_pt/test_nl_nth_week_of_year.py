@@ -8,7 +8,7 @@ for which the same page gives "It has 28 December in it".
 
 1 January 2026 is a Thursday, so week 01 of 2026 runs from Monday
 29 December 2025 to Sunday 4 January 2026, and week 02 starts on Monday
-5 January.  1 January 2027 and 1 January 2021 are Fridays, so week 01 of
+5 January, and week 10 nine weeks later, on Monday 2 March.  1 January 2027 and 1 January 2021 are Fridays, so week 01 of
 each starts on Monday 4 January; week 03 of 2027 starts on Monday 18
 January.  28 December 2026 is a Monday, so the last week of 2026 runs
 from 28 December 2026 to 3 January 2027.  28 December 2027 is a Tuesday
@@ -39,6 +39,9 @@ SATURDAY = datetime(2026, 10, 17, 12, 0)
     ("a primeira semana do ano", (2025, 12, 29), (2026, 1, 5)),
     ("a segunda semana do ano", (2026, 1, 5), (2026, 1, 12)),
     ("a última semana do ano passado", (2025, 12, 22), (2025, 12, 29)),
+    ("a 1ª semana de 2026", (2025, 12, 29), (2026, 1, 5)),
+    ("a 1.ª semana de 2026", (2025, 12, 29), (2026, 1, 5)),
+    ("a 10.ª semana de 2026", (2026, 3, 2), (2026, 3, 9)),
 ])
 def test_nth_week_of_year(text, begin, end):
     r = parse(text, SATURDAY)
@@ -46,3 +49,21 @@ def test_nth_week_of_year(text, begin, end):
     assert (r.span.start, r.span.end) == (ad(datetime(*begin)),
                                           ad(datetime(*end)))
     assert r.remainder == ""
+
+
+# A count of weeks or a plural week noun names no one ISO week: "duas
+# semanas de 2026" is two weeks, not week 02, and "uma semana de 2026" is a
+# week, not week 01.  The phrase refuses or keeps the count in the
+# remainder.
+@pytest.mark.parametrize("text", [
+    "duas semanas de 2026",
+    "três semanas de 2026",
+    "2 semanas de 2026",
+    "uma semana de 2026",
+    "as primeiras semanas de 2026",
+    "as últimas semanas de 2026",
+])
+def test_a_count_of_weeks_is_not_an_iso_week(text):
+    r = parse(text, SATURDAY)
+    assert r is None or r.remainder != "", (
+        f"{text!r} read {r!r} with nothing left over")

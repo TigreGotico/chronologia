@@ -585,6 +585,13 @@ class ConstructionMatcher:
                             in self.spec.connectors.get(
                                 "this_not_weekday", frozenset())):
                         continue
+                    # An ISO week of a year is one week: a plural week noun
+                    # ("duas semanas de 2026", "the last weeks of 2026")
+                    # counts weeks or names a stretch of them.
+                    if (name == "iso_week_ref"
+                            and any(t.text in self._plural_periods
+                                    for t in tokens[start:end])):
+                        continue
                     # Some words open a day part only right after a day:
                     # "el llunes de mañana" is Monday morning, but in "a
                     # partir de mañana" and "el día de mañana" the word
