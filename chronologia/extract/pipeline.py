@@ -267,7 +267,46 @@ def fold_tokens(tokens: Tuple[Token, ...], spec: LangSpec,
     # spec-aware fold (it reads the language's own century/year vocabulary), so
     # it runs here rather than in the per-language hook.
     tokens = fold_roman_numerals(tokens, spec, text)
-    return merge_multiword(tokens, multiword_surfaces(spec), spec)
+    tokens = merge_multiword(tokens, multiword_surfaces(spec), spec)
+    return _open_clock_before_fraction(tokens, spec)
+
+
+_WHOLE_HOUR = re.compile(r"(\d{1,2}):00")
+
+
+def _open_clock_before_fraction(tokens: Tuple[Token, ...],
+                                spec: LangSpec) -> Tuple[Token, ...]:
+    """A whole-hour clock literal before "and a half" or "and a quarter"
+    becomes its hour number again.
+
+    "às 10h e meia" folds to "10:00 e meia", and no order adds a fraction
+    after a literal, so the reading stopped at 10:00 with "e meia" left over.
+    As the hour number, it reads as "às 10 e meia" reads: 10:30.  A locale
+    whose hour word includes the symbol "h" (fr "10 h et demie") keeps the
+    symbol after the number, since there the hour word stands before the
+    fraction.  A locale with its own order for a fraction after a clock
+    literal (ar "CLOCK CLOCKDIR FRACTION") reads the literal as it is.
+    """
+    if any("CLOCK CLOCKDIR FRACTION" in order.raw
+           for orders in spec.orders.values() for order in orders):
+        return tokens
+    symbol = "h" in spec.connectors.get("oclock", ())
+    indef = spec.connectors.get("indef", frozenset())
+    words = [t.text for t in tokens] + ["", ""]
+    out: List[Token] = []
+    for i, t in enumerate(tokens):
+        m = _WHOLE_HOUR.fullmatch(t.text)
+        fraction = (words[i + 3] if words[i + 2] in indef
+                    else words[i + 2])
+        if (m and spec.clock_dirs.get(words[i + 1], 0) > 0
+                and fraction in spec.clock_fractions):
+            hour = int(m.group(1))
+            out.append(replace(t, text=str(hour), is_number=True, value=hour))
+            if symbol:
+                out.append(Token(text="h", raw="h", index=0))
+            continue
+        out.append(t)
+    return reindex(tuple(out)) if len(out) != len(tokens) else tuple(out)
 
 
 def prematch_tokens(text: str, spec: LangSpec) -> Tuple[Token, ...]:
