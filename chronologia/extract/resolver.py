@@ -194,6 +194,18 @@ def _nth_weekday_of_year(year: int, weekday: int, n: int) -> Optional[date]:
     return first + timedelta(days=7 * idx)
 
 
+def _nth_iso_week_of_year(year: int, n: int) -> Optional[date]:
+    """Monday of the ``n``-th ISO 8601 week of ``year``; ``n < 0`` counts from
+    the end (``-1`` = the last week, the one that holds 28 December).  Week 01
+    is "the week with the first Thursday of the Gregorian year", so it can
+    start in late December.  ``None`` when the year has no such week."""
+    last = date(year, 12, 28).isocalendar()[1]
+    w = n if n > 0 else last + n + 1
+    if not 1 <= w <= last:
+        return None
+    return date.fromisocalendar(year, w, 1)
+
+
 def _nth_weekend_of_month(year: int, month: int, weekend_start: int,
                           n: int) -> Optional[date]:
     """The Saturday (locale ``weekend_start``, Mon=0) that opens the ``n``-th
@@ -1244,16 +1256,29 @@ class Resolver:
         2024") or as an ordinal in the prose form (``ORD`` -- "the 10th week of
         2024"); the two surfaces name the same week and MUST resolve to the
         identical span.
+
+        With ``ordlast`` and no number ("the last week of 2026") the week is
+        the year's last ISO week, the one that contains 28 December.
+
+        The prose form names a week only with an ordinal: "duas semanas de
+        2026" and "uma semana de 2026" count weeks, so an ``ORD`` that was
+        not folded from an ordinal refuses.  A plural week noun refuses in
+        the matcher, which sees the noun.
         """
-        num_tok = match.slots.get("NUM") or match.slots["ORD"]
-        w = int(num_tok.value)
+        ord_tok = match.slots.get("ORD")
+        if ord_tok is not None and not ord_tok.ordinal:
+            return None
+        num_tok = match.slots.get("NUM") or ord_tok
         year_tok = match.slots.get("YEAR")
         # a two-digit / apostrophe year ("week 5 of '24") pivots through the
         # anchor-relative window like every other year slot; reading it raw gave
         # ISO year 24 AD.
         year = (_pivot_two_digit_year(year_tok, anchor.year)
                 if year_tok is not None else anchor.year)
-        monday = date.fromisocalendar(year, w, 1)       # ValueError -> None
+        monday = _nth_iso_week_of_year(
+            year, int(num_tok.value) if num_tok is not None else -1)
+        if monday is None:
+            return None
         s = AstroDate.from_date(monday)
         return Resolution(DateSpan(s, s + timedelta(days=7)),
                           self._consumed(match))
@@ -2111,14 +2136,20 @@ class Resolver:
                         value = get_date_ordinal(
                             n, date(base.year, base.month, 1),
                             _UNIT_OF_MONTH[unit_kind])
+            elif scope_kind == "year" and unit_kind == "week":
+                value = _nth_iso_week_of_year(anchor.year + rel, n)
             elif scope_kind == "year":
                 value = get_date_ordinal(n, date(anchor.year + rel, 1, 1),
                                          _UNIT_OF_YEAR[unit_kind])
             else:                                   # week/decade/... -> no fit
                 return None
-        else:                                       # year-scoped (year_word)
+        elif unit_kind == "week":                   # year-scoped (year_word)
+            value = _nth_iso_week_of_year(year, n)
+        else:
             res = _UNIT_OF_YEAR[unit_kind]
             value = get_date_ordinal(n, date(year, 1, 1), res)
+        if value is None:
+            return None
         return self._ordinal_result(value, unit_kind, match)
 
     def _ordinal_result(self, value, kind, match):

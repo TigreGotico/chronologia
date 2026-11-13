@@ -1023,7 +1023,8 @@ def _variant_endpoint(text, sub, engine, anchor, scale_mode="short"):
     utterance and must never surface as leftover text.
     """
     folded = fold_tokens(tuple(sub), engine.spec, text)
-    core = _resolve_core(folded, engine, anchor, scale_mode=scale_mode)
+    core = _resolve_core(folded, engine, anchor, text=text,
+                         scale_mode=scale_mode)
     if core is None:
         return None
     span, consumed = core
@@ -1507,7 +1508,8 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     if not sub:
         return None
     folded = fold_tokens(tuple(sub), engine.spec, text)
-    core = _resolve_core(folded, engine, anchor, scale_mode=scale_mode)
+    core = _resolve_core(folded, engine, anchor, text=text,
+                         scale_mode=scale_mode)
     if core is None:
         return None
     span, consumed = core
@@ -2259,12 +2261,20 @@ def _exclusion_vetoes(governing_text: str, spec) -> bool:
     return any(w in triggers for w in words)
 
 
+# Sentence ends: the Latin ".!?;", the ellipsis, the Greek question mark
+# (U+037E), the Armenian full stop (U+0589), the Arabic question mark and
+# full stop (U+061F, U+06D4), the Devanagari danda and double danda (U+0964,
+# U+0965), and the line breaks.
+_SENTENCE_ENDS = frozenset(
+    ".!?;\u2026\u037e\u0589\u061f\u06d4\u0964\u0965\n\r\u2028\u2029")
+
+
 def _sentence_boundary_between(text, start, end) -> bool:
-    """True when a sentence-ending punctuation (``.!?;`` or a newline) sits in
-    the raw gap ``text[start:end]`` separating two adjacent tokens."""
+    """True when a sentence end (see ``_SENTENCE_ENDS``) sits in the raw gap
+    ``text[start:end]`` separating two adjacent tokens."""
     if start is None or end is None or end <= start:
         return False
-    return any(c in ".!?;\n" for c in text[start:end])
+    return any(c in _SENTENCE_ENDS for c in text[start:end])
 
 
 # Locales that write the hour-letter clock ("20h", "21h30"); see the folds in
@@ -3438,7 +3448,7 @@ def _offset_is_day_or_coarser(match, spec) -> bool:
     return kind is not None and kind not in _SUBDAY_OFFSET_UNITS
 
 
-def _compose(resolved, engine, tokens, anchor=None):
+def _compose(resolved, engine, tokens, anchor=None, text=None):
     """Pick the single winning reading from the post-passed ``resolved`` matches.
 
     Returns ``(res, label_consumed, rep)``:
@@ -3460,8 +3470,11 @@ def _compose(resolved, engine, tokens, anchor=None):
     :func:`extract_candidates` to score the composed reading -- so the two
     public APIs never disagree on the composed primary.
     """
-    clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
     spec = engine.spec
+    resolved, apposed = _fold_apposed_weekday(resolved, spec, tokens, text)
+    if resolved is None:
+        return None, set(), None
+    clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
     composable = (_COMPOSABLE_DATES | {"relative_offset"}
                  if spec.conventions.offset_clock_composes
                  else _COMPOSABLE_DATES)
@@ -3499,7 +3512,7 @@ def _compose(resolved, engine, tokens, anchor=None):
     _sep_keys = {"and", "or", "to", "from", "between", "until", "since"}
     _glue = {s for _k, _vals in spec.connectors.items()
              if _k not in _sep_keys for s in _vals}
-    _covered = set()
+    _covered = set(apposed)
     for m, _r in resolved:
         _covered.update(range(*m.span))
 
@@ -3645,7 +3658,51 @@ def _compose(resolved, engine, tokens, anchor=None):
     else:
         rep, res = min(resolved, key=lambda mr: mr[0].span[0])
     res = _roll_bare_weekday_time(res, rep, anchor)
-    return res, label_consumed | glue_consumed, rep
+    return res, label_consumed | glue_consumed | apposed, rep
+
+
+def _fold_apposed_weekday(resolved, spec, tokens, text):
+    """A weekday after a named day names the same day, or no day.
+
+    In "amanhã domingo" or "tomorrow, sunday" the weekday is an apposition:
+    an "aposto" is a "Nome ou locução nominal que se junta a outro nome para
+    melhor o caracterizar" (Priberam s.v. "aposto", 5).  When the two agree
+    the weekday folds into the day word's reading and does not strand.  When
+    they disagree ("amanhã segunda-feira" said on a Saturday) the phrase
+    names no single day, and the reading is refused.  Only a bare weekday
+    (no next/last marker) directly after one day word is an apposition.
+
+    A weekday before the day word is not folded.  In de, nl, da and nb,
+    "morgen" after a weekday names its morning: "Dienstagmorgen" is "Morgen
+    des Dienstags" (Duden s.v. "Dienstagmorgen"), so "dienstag morgen" is
+    Tuesday morning, and es "martes mañana" reads the same way.  A sentence
+    end between the two words also stops the fold: "vou amanhã. segunda-feira
+    trabalho" names tomorrow.
+
+    Returns ``(resolved, consumed)``: the matches without the folded weekday
+    and the weekday's token positions, or ``(None, set())`` on a refusal.
+    """
+    days = [(m, r) for m, r in resolved if m.construction == "named_day"]
+    weekdays = [(m, r) for m, r in resolved
+                if m.construction == "weekday_ref"
+                and m.slots.get("REL_MARKER") is None]
+    if len(days) != 1 or len(weekdays) != 1:
+        return resolved, set()
+    (day_match, day_res), (wd_match, _wd_res) = days[0], weekdays[0]
+    if wd_match.span[0] < day_match.span[0]:
+        return resolved, set()
+    between = [tokens[i].text for i in range(day_match.span[1], wd_match.span[0])]
+    if any(t not in (",",) for t in between):
+        return resolved, set()
+    if text is not None and _sentence_boundary_between(
+            text, tokens[day_match.span[1] - 1].char_end,
+            tokens[wd_match.span[0]].char_start):
+        return resolved, set()
+    wd_tok = wd_match.slots.get("WEEKDAY") or wd_match.slots["WEEKDAYFULL"]
+    if day_res.value.start.weekday() != spec.weekdays[wd_tok.text]:
+        return None, set()
+    return ([(m, r) for m, r in resolved if m is not wd_match],
+            set(range(*wd_match.span)))
 
 
 def _roll_bare_weekday_time(res, rep, anchor):
@@ -3732,7 +3789,8 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         return None
     # widen a date carrying the locale's "week of" marker to its whole week
     resolved = _apply_week_of(tokens, resolved, engine.spec)
-    res, label_consumed, rep = _compose(resolved, engine, tokens, anchor)
+    res, label_consumed, rep = _compose(resolved, engine, tokens, anchor,
+                                        text)
     if res is None:
         # A day-part+clock meridiem contradiction ("morning at 9pm") --
         # _compose declined the whole reading rather than pick a winner.
@@ -3882,7 +3940,8 @@ def extract_candidates(
     label_extra = {}
     primary = None
     if composed:
-        win_res, win_label, rep = _compose(composed, engine, tokens, anchor)
+        win_res, win_label, rep = _compose(composed, engine, tokens,
+                                           anchor, text)
         if win_res is not None:
             consumed_all = set(win_res.consumed) | win_label
             lo, hi = min(consumed_all), max(consumed_all) + 1
