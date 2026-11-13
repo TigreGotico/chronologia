@@ -63,6 +63,7 @@ def test_a_slash_date_is_the_next_such_day(text, expected):
     "no dia 31/04",
     "dia 30/2",
     "dia 13/13",
+    "dia 2,5",
     "1/2 hora",
     "3/4 do bolo",
 ])
