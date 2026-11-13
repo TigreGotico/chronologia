@@ -150,3 +150,82 @@ def test_since_weekday_that_disagrees_with_the_day_names_no_start():
     r = parse("desde quarta dia 20")
     assert r is None or r.remainder != "", f"read {r!r}"
     assert r is None or r.span.start != ad(datetime(2017, 6, 20))
+
+
+# A weekday beside "dia N" that is not that day's weekday names no range: the
+# left end is not pulled back a year in its place.  Wednesday 2017-12-27:
+# 20 December 2017 is a Wednesday, not a Tuesday.  On Tuesday 2017-06-27,
+# 20 June 2017 is a Tuesday, so the range starts on the 20th.
+DEC27 = datetime(2017, 12, 27, 10, 0)
+
+
+@pytest.mark.parametrize("text", [
+    "do dia 20, terça, até hoje",
+    "entre o dia 20, terça, e hoje",
+    "do dia 20, terça, até ontem",
+    "de terça dia 20 até hoje",
+])
+def test_range_weekday_that_disagrees_with_the_day_names_no_range(text):
+    r = parse(text, DEC27)
+    assert r is None or r.remainder != "", f"read {r!r}"
+    assert r is None or r.span.start.year == 2018, f"read {r!r}"
+
+
+@pytest.mark.parametrize("text,anchor,begin,end", [
+    ("do dia 20, quarta, até hoje", DEC27, datetime(2017, 12, 20),
+     datetime(2017, 12, 28)),
+    ("do dia 20, terça, até hoje", ANCHOR, datetime(2017, 6, 20),
+     datetime(2017, 6, 28)),
+])
+def test_range_weekday_that_agrees_with_the_day(text, anchor, begin, end):
+    r = parse(text, anchor)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (ad(begin), ad(end))
+    assert r.remainder == ""
+
+
+# A weekday after "o dia N" names that day or no day (ruling 15).  On
+# Tuesday 2017-06-27 the next 20th is 20 July 2017, a Thursday.
+@pytest.mark.parametrize("text", [
+    "o dia 20, quarta",
+    "o dia 20, terça",
+    "no dia 20, sábado",
+])
+def test_weekday_after_the_day_that_disagrees_is_not_folded(text):
+    r = parse(text)
+    assert r is None or r.remainder != "", f"read {r!r}"
+
+
+@pytest.mark.parametrize("text", ["o dia 20, quinta", "no dia 20, quinta-feira"])
+def test_weekday_after_the_day_that_agrees_is_folded(text):
+    r = parse(text)
+    assert r is not None, f"{text!r} did not parse"
+    assert r.span.start == ad(datetime(2017, 7, 20))
+    assert r.remainder == ""
+
+
+def test_since_day_with_weekday_after_it_that_agrees():
+    r = parse("desde o dia 20, terça")
+    assert r is not None
+    assert (r.span.start, r.span.end) == (ad(datetime(2017, 6, 20)),
+                                          ad(ANCHOR))
+    assert r.remainder == ""
+
+
+# A right end that recurs each month is not rolled by weeks.  Saturday
+# 2026-10-17: the 3rd has passed in October; October 2026 Tuesdays are 6,
+# 13, 20 and 27, and its last Friday is the 30th.
+SAT17 = datetime(2026, 10, 17, 12, 0)
+
+
+@pytest.mark.parametrize("text,begin,end", [
+    ("do dia 3 até à terceira terça-feira do mês", datetime(2026, 10, 3),
+     datetime(2026, 10, 21)),
+    ("do dia 3 até à última sexta-feira do mês", datetime(2026, 10, 3),
+     datetime(2026, 10, 31)),
+])
+def test_range_to_a_monthly_weekday_is_not_rolled_by_weeks(text, begin, end):
+    r = parse(text, SAT17)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (ad(begin), ad(end))
+    assert r.remainder == ""

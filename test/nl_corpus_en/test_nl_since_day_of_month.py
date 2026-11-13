@@ -40,3 +40,43 @@ def test_since_other_cycles_unchanged(text, expected):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
     assert r.span.start == ad(expected)
+
+
+# "since the last friday of the month" and "from the last friday of the month
+# to today" name the same start.  On Saturday 2026-10-17 the last Friday of
+# October (the 30th) is ahead; September 2026 starts on a Tuesday, so its
+# last Friday is the 25th.  On Saturday 2026-10-31 the 30th has passed.
+SAT17 = datetime(2026, 10, 17, 12, 0)
+SAT31 = datetime(2026, 10, 31, 12, 0)
+
+
+@pytest.mark.parametrize("text,anchor,begin,end", [
+    ("since the last friday of the month", SAT17, datetime(2026, 9, 25),
+     SAT17),
+    ("from the last friday of the month to today", SAT17,
+     datetime(2026, 9, 25), datetime(2026, 10, 18)),
+    ("since the last friday of the month", SAT31, datetime(2026, 10, 30),
+     SAT31),
+    ("from the last friday of the month to today", SAT31,
+     datetime(2026, 10, 30), datetime(2026, 11, 1)),
+])
+def test_since_and_range_agree_on_the_last_weekday(text, anchor, begin, end):
+    r = parse(text, anchor)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (ad(begin), ad(end))
+    assert r.remainder == ""
+
+
+# A right end that recurs each month is not rolled by weeks: on 17 October
+# 2026 the third Tuesday is the 20th and the last Friday the 30th.
+@pytest.mark.parametrize("text,begin,end", [
+    ("from the 3rd of the month to the third tuesday of the month",
+     datetime(2026, 10, 3), datetime(2026, 10, 21)),
+    ("from the 3rd of the month to the last friday of the month",
+     datetime(2026, 10, 3), datetime(2026, 10, 31)),
+])
+def test_range_to_a_monthly_weekday_is_not_rolled_by_weeks(text, begin, end):
+    r = parse(text, SAT17)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (ad(begin), ad(end))
+    assert r.remainder == ""
