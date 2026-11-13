@@ -16,6 +16,7 @@ from ._corpus import span
     ("às 10:00 e meia", 28, 10, 30),
     ("às 10h e um quarto", 28, 10, 15),
     ("às 20h e meia", 27, 20, 30),
+    ("são 10h e meia", 28, 10, 30),
 ])
 def test_a_fraction_after_a_written_hour(text, day, hour, minute):
     s = span(text)
