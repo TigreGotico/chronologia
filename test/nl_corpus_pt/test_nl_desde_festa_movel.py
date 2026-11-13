@@ -43,6 +43,27 @@ def test_desde_festa_movel_na_propria_data(text, anchor, expected):
     assert (r.span.start, r.span.end) == (ad(expected), ad(anchor))
 
 
+@pytest.mark.parametrize("anchor", [JUN20, MAR01])
+def test_desde_o_inverno(anchor):
+    # chronologia reads the meteorological winter, 1 December to 1 March
+    r = parse("desde o inverno", anchor)
+    assert r is not None
+    assert (r.span.start, r.span.end) == (ad(datetime(2025, 12, 1)),
+                                          ad(anchor))
+    assert r.remainder == ""
+
+
+def test_da_semana_que_vem_nao_recua_um_ano():
+    # Thursday 2026-12-31: "a semana que vem" is 4 to 11 January 2027, after
+    # the right end, so no range is read and the words stay.
+    r = parse("da semana que vem até 31 de dezembro",
+              datetime(2026, 12, 31, 12, 0))
+    assert r is not None
+    assert (r.span.start, r.span.end) == (ad(datetime(2027, 1, 4)),
+                                          ad(datetime(2027, 1, 11)))
+    assert r.remainder != ""
+
+
 def test_desde_a_pascoa_ate_hoje():
     r = parse("desde a páscoa até hoje", JUN20)
     assert r is not None

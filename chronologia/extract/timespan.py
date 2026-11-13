@@ -625,10 +625,11 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     def endpoint(sub):
         return _range_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
 
-    def previous(sub, start):
-        at = _new_year_before(anchor, start)
-        return None if at is None else _range_endpoint(
-            text, sub, engine, at, scale_mode=scale_mode)
+    def previous(sub, start, bound):
+        return _latest_reading(
+            lambda at: _range_endpoint(text, sub, engine, at,
+                                       scale_mode=scale_mode),
+            anchor, start, bound)
 
     def bare_of(sub):
         return _bare_numeral(text, sub, engine, anchor)
@@ -1319,9 +1320,10 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     never rolled -- so a genuinely reversed range ("june 12 2020 to june 5
     2020") yields ``None`` rather than a fabricated span.
 
-    ``previous(sub, start)`` reads an endpoint in the year before its reading
-    ``start``, in the shape of ``endpoint(sub)``, or gives ``None`` (see
-    :func:`_new_year_before`); the year pull uses it."""
+    ``previous(sub, start, bound)`` gives the latest reading at or before
+    ``bound`` of an endpoint read at ``start``, in the shape of
+    ``endpoint(sub)``, or ``None`` (see :func:`_latest_reading`); the year pull
+    uses it."""
     left = endpoint(left_tok)
     right = endpoint(right_tok)
     # one endpoint written as a bare number against a partner that names a
@@ -1458,10 +1460,12 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         # back a year would fabricate a bogus ~year-wide span, so leave it to
         # fail below (None -> the single-span fallback reads the left date).
         # A holiday computed per year (Easter, Carnival, Chinese New Year)
-        # falls on another day each year, so the left is read again in the
-        # year before; the calendar-year step keeps the month and day.
+        # falls on another day each year, so the left is read again for its
+        # latest date at or before the right; the calendar-year step keeps the
+        # month and day.
         pulled = _minus_one_year(start)
-        earlier = None if previous is None else previous(left_tok, start)
+        earlier = (None if previous is None
+                   else previous(left_tok, start, right_span.start))
         if earlier is not None:
             pulled = earlier[0].start
         if pulled is not None and pulled < right_span.end:
@@ -1506,20 +1510,35 @@ def _minus_one_year(astro):
         return None
 
 
-def _new_year_before(anchor, start):
-    """``anchor`` moved to 1 January of the year before ``start``, or ``None``
-    outside the ``datetime`` range.
+def _latest_reading(resolve, anchor, start, bound):
+    """The latest reading at or before ``bound`` of a yearly endpoint whose
+    reading ``start`` lies after it, or ``None``.
 
-    An endpoint read again from there lands on its date in that year, so a
-    holiday computed per year (Easter, Carnival, Chinese New Year) falls on its
-    own day; a calendar-year step of ``start`` keeps the month and day, which
-    only a fixed date shares.
+    ``resolve(at)`` reads the endpoint with the anchor ``at``.  It is read
+    from 1 January of the year before ``start``, then again from the end of
+    each reading while the next one starts at or before ``bound``: the first
+    reading can be a span that holds that 1 January (a winter, a Ramadan), or
+    the first of two in one year.  So a holiday computed per year (Easter,
+    Carnival, Chinese New Year) falls on its own day; a calendar-year step of
+    ``start`` keeps the month and day, which only a fixed date shares.
     """
-    year = start.year - 1
-    if not MINYEAR <= year <= MAXYEAR:
-        return None
-    return anchor.replace(year=year, month=1, day=1, hour=0, minute=0,
-                          second=0, microsecond=0)
+    def at(day):
+        if not MINYEAR <= day.year <= MAXYEAR:
+            return None
+        return anchor.replace(year=day.year, month=day.month, day=day.day,
+                              hour=day.hour, minute=day.minute,
+                              second=day.second, microsecond=day.microsecond)
+
+    first = at(AstroDate(start.year - 1, 1, 1))
+    found = None if first is None else resolve(first)
+    while found is not None:
+        later = at(found[0].end)
+        nxt = None if later is None else resolve(later)
+        if nxt is None or nxt[0].start > bound \
+                or nxt[0].start <= found[0].start:
+            break
+        found = nxt
+    return found
 
 
 def _plus_one_year(astro):
@@ -1657,11 +1676,14 @@ def _definite_endpoint(sub, spec):
     ("next month", "this friday") or an explicit year ("2019").  Everything else
     -- a bare "july 6", a holiday, a quarter, a clock time -- is an
     underspecified recurring reference that only lands on a point once a cycle
-    is chosen for it.
+    is chosen for it.  A marker may span words: "the following", "que viene",
+    "from now".
     """
-    return (any(t.text in spec.named_days for t in sub)
-            or any(t.text in spec.rel_markers for t in sub)
-            or any(t.text in spec.directions for t in sub)
+    words = [t.text for t in sub]
+    phrases = {" ".join(words[i:j]) for i in range(len(words))
+               for j in range(i + 1, min(i + 3, len(words)) + 1)}
+    return (any(p in spec.named_days or p in spec.rel_markers
+                or p in spec.directions for p in phrases)
             or any(t.is_number and t.value is not None and t.value >= 100
                    for t in sub))
 
@@ -1774,12 +1796,13 @@ def _since_start(ep, sub, engine, anchor, now, text):
     is_clock = (ep[0].end - ep[0].start < timedelta(days=1)
                 and not any(t.text in spec.months for t in sub))
     # A holiday computed per year (Easter, Carnival, Chinese New Year) falls on
-    # another day each year, so a yearly endpoint is read again in the year
-    # before its reading.  The calendar-year step below remains for an
-    # endpoint that does not read from there.
+    # another day each year, so a yearly endpoint is read again for its latest
+    # date at or before now.  The calendar-year step below remains for an
+    # endpoint that does not read from the year before.
     if not is_clock and start > now:
-        at = _new_year_before(anchor, start)
-        back = None if at is None else _resolve_endpoint(text, sub, engine, at)
+        back = _latest_reading(
+            lambda at: _resolve_endpoint(text, sub, engine, at),
+            anchor, start, now)
         if back is not None:
             return back[0].start, ep[1]
     while start > now:

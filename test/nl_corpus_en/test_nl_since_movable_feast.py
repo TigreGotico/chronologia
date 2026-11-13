@@ -10,6 +10,11 @@ Easter comes from ``dateutil.easter`` (the Gregorian computus): 20 April 2025,
 Carnival Tuesday is Easter minus 47 days.  Chinese New Year is 29 January 2025
 and 17 February 2026 (Hong Kong Observatory, Gregorian-Lunar Calendar
 Conversion Table).
+
+Winter holds 1 January.  chronologia reads the meteorological winter,
+1 December to 1 March (``chronologia/edtf.py``).  So the most recent winter
+start before 20 June 2026 or 1 March 2026 is 1 December 2025, not the winter
+that holds 1 January 2025.
 """
 from datetime import datetime, timedelta
 
@@ -47,10 +52,28 @@ CNY_2026 = datetime(2026, 2, 17)
     ("since carnival", JUN20, CARNIVAL_2026),
     ("since chinese new year", JUN20, CNY_2026),
     ("since chinese new year", FEB01, CNY_2025),
+    ("since winter", JUN20, datetime(2025, 12, 1)),
+    ("since winter", MAR01, datetime(2025, 12, 1)),
 ])
 def test_since_movable_feast_is_its_own_date(text, anchor, expected):
     r = parse(text, anchor)
     assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (ad(expected), ad(anchor))
+    assert r.remainder == ""
+
+
+# 1 Ramadan in the Umm al-Qura calendar: 18 February 2026 (1447), 28 January
+# 2028 (1449), 16 January 2029 (1450).  The holiday reader can give a
+# Ramadan that has ended, so the search must stop when a reading does not move
+# on.
+@pytest.mark.parametrize("anchor,expected", [
+    (JUN20, datetime(2026, 2, 18)),
+    (datetime(2028, 6, 1, 12, 0), datetime(2028, 1, 28)),
+    (datetime(2029, 6, 1, 12, 0), datetime(2029, 1, 16)),
+])
+def test_since_ramadan_is_its_own_date(anchor, expected):
+    r = parse("since ramadan", anchor)
+    assert r is not None
     assert (r.span.start, r.span.end) == (ad(expected), ad(anchor))
     assert r.remainder == ""
 
@@ -63,6 +86,11 @@ def test_since_movable_feast_is_its_own_date(text, anchor, expected):
     ("from easter to september 3", SEP01, EASTER_2026, datetime(2026, 9, 4)),
     ("from chinese new year to today", JUN20, CNY_2026,
      datetime(2026, 6, 21)),
+    ("since winter until today", JUN20, datetime(2025, 12, 1),
+     datetime(2026, 6, 21)),
+    # Monday 2026-12-28: the most recent Friday is 25 December.
+    ("from friday to today", datetime(2026, 12, 28, 12, 0),
+     datetime(2026, 12, 25), datetime(2026, 12, 29)),
 ])
 def test_range_from_movable_feast_is_its_own_date(text, anchor, begin, end):
     r = parse(text, anchor)
@@ -72,8 +100,9 @@ def test_range_from_movable_feast_is_its_own_date(text, anchor, begin, end):
 
 
 # A definite left names one day counted from now, so the year pull leaves it.
-# On Thursday 2026-12-31, tomorrow is 1 January 2027 and next week starts on
-# Monday 4 January 2027; both lie after the right end, so no range is read.
+# On Thursday 2026-12-31, tomorrow is 1 January 2027, two days from now is
+# 2 January 2027 at 12:00, and next week starts on Monday 4 January 2027; each
+# lies after the right end, so no range is read.
 DEC31 = datetime(2026, 12, 31, 12, 0)
 
 
@@ -81,6 +110,10 @@ DEC31 = datetime(2026, 12, 31, 12, 0)
     ("from tomorrow to today", datetime(2027, 1, 1), datetime(2027, 1, 2)),
     ("from next week to december 31", datetime(2027, 1, 4),
      datetime(2027, 1, 11)),
+    ("from the following week to december 31", datetime(2027, 1, 4),
+     datetime(2027, 1, 11)),
+    ("from two days from now to december 31", datetime(2027, 1, 2, 12),
+     datetime(2027, 1, 3, 12)),
 ])
 def test_definite_left_is_not_pulled_back_a_year(text, begin, end):
     r = parse(text, DEC31)
