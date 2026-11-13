@@ -122,19 +122,32 @@ def test_definite_left_is_not_pulled_back_a_year(text, begin, end):
     assert r.remainder != ""
 
 
-# A clock recurs daily, so the year pull leaves it too.  Said at 13:00, the
-# next 9am is tomorrow; it lies after today, so no range is read, on 31
-# December as on any other day.  The year pull would read 30 December 09:00.
-@pytest.mark.parametrize("anchor,begin", [
-    (datetime(2026, 12, 31, 13, 0), datetime(2027, 1, 1, 9, 0)),
-    (datetime(2026, 6, 15, 13, 0), datetime(2026, 6, 16, 9, 0)),
+# A bare clock recurs daily, so it is rolled back by days, never by a year:
+# the left end is the latest reading that starts before the right end.  On
+# Thursday 31 December the year pull read 30 December 09:00.  A clock with a
+# weekday keeps the yearly reading: the most recent Friday is 25 December.
+DEC31_13 = datetime(2026, 12, 31, 13, 0)
+JUN15_13 = datetime(2026, 6, 15, 13, 0)
+
+
+@pytest.mark.parametrize("text,anchor,begin,end", [
+    ("from 9am to today", DEC31_13, datetime(2026, 12, 31, 9),
+     datetime(2027, 1, 1)),
+    ("from 9am to today", JUN15_13, datetime(2026, 6, 15, 9),
+     datetime(2026, 6, 16)),
+    ("from 9am to now", DEC31_13, datetime(2026, 12, 31, 9), DEC31_13),
+    ("from midnight to today", DEC31_13, datetime(2026, 12, 31),
+     datetime(2027, 1, 1)),
+    ("from 9am to yesterday", JUN15_13, datetime(2026, 6, 14, 9),
+     datetime(2026, 6, 15)),
+    ("from 9am on friday to today", DEC31_13, datetime(2026, 12, 25, 9),
+     datetime(2027, 1, 1)),
 ])
-def test_a_clock_is_not_pulled_back_a_year(anchor, begin):
-    r = parse("from 9am to today", anchor)
+def test_a_clock_is_rolled_back_by_days(text, anchor, begin, end):
+    r = parse(text, anchor)
     assert r is not None
-    assert (r.span.start, r.span.end) == (ad(begin),
-                                          ad(begin + timedelta(minutes=1)))
-    assert r.remainder != ""
+    assert (r.span.start, r.span.end) == (ad(begin), ad(end))
+    assert r.remainder == ""
 
 
 @pytest.mark.parametrize("anchor,expected", [
