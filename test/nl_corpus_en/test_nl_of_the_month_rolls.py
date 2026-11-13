@@ -65,3 +65,51 @@ def test_a_weekday_said_on_that_day_is_today(text, anchor, ymd):
     span, rest = extract_timespan(text, "en", anchor)
     assert span.start == AstroDate(*ymd)
     assert rest == ""
+
+
+# A "since" endpoint and the left end of a range ending today name a past
+# start: the latest such day at or before the anchor, never next month's.
+# The bare phrase rolls (ruling 13); the endpoint steps back one month at a
+# time and counts the day in its own month.  On Saturday 17 October 2026 the
+# first Tuesday of October is the 6th and the first day the 1st.  On
+# Thursday 10 December 2026 the first day of December is the 1st, and
+# 1 December 2026 is a Tuesday, so it is also the first Tuesday.
+SAT17 = datetime(2026, 10, 17, 12, 0)
+THU10 = datetime(2026, 12, 10, 10, 0)
+
+
+@pytest.mark.parametrize("lang,text,anchor,begin,end", [
+    ("en", "since the first tuesday of the month", SAT17,
+     (2026, 10, 6), (2026, 10, 17, 12)),
+    ("en", "since the first day of the month", SAT17,
+     (2026, 10, 1), (2026, 10, 17, 12)),
+    ("pt", "desde a primeira terça-feira do mês", SAT17,
+     (2026, 10, 6), (2026, 10, 17, 12)),
+    ("pt", "desde o primeiro dia do mês", SAT17,
+     (2026, 10, 1), (2026, 10, 17, 12)),
+    ("es", "desde el primer martes del mes", SAT17,
+     (2026, 10, 6), (2026, 10, 17, 12)),
+    ("es", "desde el primer día del mes", SAT17,
+     (2026, 10, 1), (2026, 10, 17, 12)),
+    ("fr", "depuis le premier mardi du mois", SAT17,
+     (2026, 10, 6), (2026, 10, 17, 12)),
+    ("fr", "depuis le premier jour du mois", SAT17,
+     (2026, 10, 1), (2026, 10, 17, 12)),
+    ("de", "seit dem ersten Dienstag des Monats", SAT17,
+     (2026, 10, 6), (2026, 10, 17, 12)),
+    ("de", "seit dem ersten Tag des Monats", SAT17,
+     (2026, 10, 1), (2026, 10, 17, 12)),
+    ("en", "from the first day of the month to today", SAT17,
+     (2026, 10, 1), (2026, 10, 18)),
+    ("en", "from the first day of the month to today", THU10,
+     (2026, 12, 1), (2026, 12, 11)),
+    ("en", "from the first tuesday of the month to today", THU10,
+     (2026, 12, 1), (2026, 12, 11)),
+    ("pt", "do primeiro dia do mês até hoje", THU10,
+     (2026, 12, 1), (2026, 12, 11)),
+])
+def test_a_past_anchored_endpoint_steps_back_by_months(lang, text, anchor,
+                                                      begin, end):
+    span, rest = extract_timespan(text, lang, anchor)
+    assert (span.start, span.end) == (AstroDate(*begin), AstroDate(*end))
+    assert rest == ""
