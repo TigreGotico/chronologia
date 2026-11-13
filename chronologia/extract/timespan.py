@@ -1015,7 +1015,8 @@ def _variant_endpoint(text, sub, engine, anchor, scale_mode="short"):
     utterance and must never surface as leftover text.
     """
     folded = fold_tokens(tuple(sub), engine.spec, text)
-    core = _resolve_core(folded, engine, anchor, scale_mode=scale_mode)
+    core = _resolve_core(folded, engine, anchor, text=text,
+                         scale_mode=scale_mode)
     if core is None:
         return None
     span, consumed = core
@@ -1470,7 +1471,8 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     if not sub:
         return None
     folded = fold_tokens(tuple(sub), engine.spec, text)
-    core = _resolve_core(folded, engine, anchor, scale_mode=scale_mode)
+    core = _resolve_core(folded, engine, anchor, text=text,
+                         scale_mode=scale_mode)
     if core is None:
         return None
     span, consumed = core
@@ -2150,12 +2152,20 @@ def _exclusion_vetoes(governing_text: str, spec) -> bool:
     return any(w in triggers for w in words)
 
 
+# Sentence ends: the Latin ".!?;", the ellipsis, the Greek question mark
+# (U+037E), the Armenian full stop (U+0589), the Arabic question mark and
+# full stop (U+061F, U+06D4), the Devanagari danda and double danda (U+0964,
+# U+0965), and the line breaks.
+_SENTENCE_ENDS = frozenset(
+    ".!?;\u2026\u037e\u0589\u061f\u06d4\u0964\u0965\n\r\u2028\u2029")
+
+
 def _sentence_boundary_between(text, start, end) -> bool:
-    """True when a sentence-ending punctuation (``.!?;`` or a newline) sits in
-    the raw gap ``text[start:end]`` separating two adjacent tokens."""
+    """True when a sentence end (see ``_SENTENCE_ENDS``) sits in the raw gap
+    ``text[start:end]`` separating two adjacent tokens."""
     if start is None or end is None or end <= start:
         return False
-    return any(c in ".!?;\n" for c in text[start:end])
+    return any(c in _SENTENCE_ENDS for c in text[start:end])
 
 
 # Locales that write the hour-letter clock ("20h", "21h30"); see the folds in

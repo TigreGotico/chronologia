@@ -70,3 +70,16 @@ def test_no_apposition_keeps_the_first_reading(text, offset, rest):
     assert r is not None, f"{text!r} did not parse"
     assert r.span.start == ad(DAY + timedelta(days=offset))
     assert r.remainder == rest
+
+
+@pytest.mark.parametrize("text", [
+    "de hoje até amanhã. segunda-feira trabalho",
+    "entre hoje e amanhã. segunda-feira trabalho",
+])
+def test_a_range_endpoint_does_not_fold_across_a_sentence_end(text):
+    # Hoje é sábado 17; o intervalo vai até domingo 18, e acaba no início de
+    # segunda 19.
+    r = parse(text, SATURDAY)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (ad(DAY), ad(DAY + timedelta(days=2)))
+    assert r.remainder == "segunda-feira trabalho"

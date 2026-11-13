@@ -57,3 +57,22 @@ def test_a_marked_weekday_is_not_an_apposition():
     day = SATURDAY.replace(hour=0) + timedelta(days=1)
     assert r[0].start == AstroDate(day.year, day.month, day.day)
     assert r[1] == "next monday"
+
+
+@pytest.mark.parametrize("text,start,end,rest", [
+    ("from today until tomorrow. monday is busy",
+     datetime(2026, 10, 17), datetime(2026, 10, 19), "monday is busy"),
+    ("from today to tomorrow; monday off",
+     datetime(2026, 10, 17), datetime(2026, 10, 19), "monday off"),
+    ("until tomorrow. monday is busy",
+     SATURDAY, datetime(2026, 10, 19), "monday is busy"),
+])
+def test_a_range_endpoint_does_not_fold_across_a_sentence_end(
+        text, start, end, rest):
+    # Today is Saturday 17; the range runs through Sunday 18, so its end is
+    # the start of Monday 19.  "until" opens the range at the anchor.
+    span, remainder = extract_timespan(text, "en", SATURDAY)
+    assert (span.start, span.end) == (
+        AstroDate(start.year, start.month, start.day, start.hour),
+        AstroDate(end.year, end.month, end.day))
+    assert remainder == rest
