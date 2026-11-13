@@ -6,7 +6,9 @@ and the week starts on the locale's first day: Monday for bare en and
 Sunday for en-US (CLDR ``weekData/firstDay``).  "in a month on friday" is
 the first Friday on or after the day the count reaches.  A count of days
 reaches one day, so a weekday that is not that day's weekday names no day,
-and the phrase is refused.
+and the phrase is refused.  A weekday before a count of days stands apart
+from it and keeps its own reading.  A deadline ("by friday") is not part of
+the date the count names.
 
 Anchor Saturday 2026-10-17 12:00.  Monday weeks run 12 to 18 October, then
 19 to 25, then 26 October to 1 November; Sunday weeks run 11 to 17, then 18
@@ -50,3 +52,19 @@ def test_a_weekday_offset_keeps_its_own_reading():
     r = extract_timespan("two weeks from friday", "en", SATURDAY)
     assert r.span.start == ad(datetime(2026, 11, 6))
     assert r.remainder == ""
+
+
+def test_a_deadline_does_not_fold():
+    # Saturday plus three days is Tuesday 20, at the anchor's clock.
+    r = extract_timespan("in 3 days by friday", "en", SATURDAY)
+    assert r is not None
+    assert r.span.start == ad(datetime(2026, 10, 20, 12, 0))
+    assert r.remainder == "by friday"
+
+
+def test_a_weekday_before_a_count_of_days_keeps_the_count():
+    # The coming Friday is 23 October.
+    r = extract_timespan("friday in a day", "en", SATURDAY)
+    assert r is not None
+    assert r.span.start == ad(datetime(2026, 10, 23))
+    assert r.remainder == "in a day"

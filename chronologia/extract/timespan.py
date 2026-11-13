@@ -3789,6 +3789,12 @@ def _glue_surfaces(spec):
 #: Offset units whose count reaches a calendar week.
 _WEEK_COUNT_UNITS = frozenset({"week", "fortnight"})
 
+#: Connector keys whose words may stand between a count and its weekday
+#: ("in two weeks on friday", "daqui a uma semana, na sexta-feira").  A
+#: deadline ("by friday"), a clause ("que sexta-feira") or a list word is no
+#: part of one date.
+_COUNT_WEEKDAY_LINKS = ("on", "article", "date_article")
+
 
 def _fold_count_weekday(resolved, spec, tokens, text):
     """A weekday beside a count names that weekday in the period the count
@@ -3802,14 +3808,18 @@ def _fold_count_weekday(resolved, spec, tokens, text):
     reaches one day, so the weekday is an apposition to it, as in "amanhã,
     domingo" (an "aposto" is a "Nome ou locução nominal que se junta a outro
     nome para melhor o caracterizar", Priberam s.v. "aposto", 5): when it is
-    not that day's weekday, the phrase names no day and is refused.  The
-    weekday belongs to the date in either order ("sexta-feira daqui a uma
-    semana"), so it never strands.
+    not that day's weekday, the phrase names no day and is refused.  A
+    weekday before a count of days is not folded, as a weekday before a day
+    word is not ("sexta-feira amanhã"), so the count stays in the remainder.
+    Otherwise the weekday belongs to the date in either order ("sexta-feira
+    daqui a uma semana"), so it never strands.
 
     Only a bare weekday (no next/last marker) next to a day-or-coarser count
-    folds, with nothing but glue between them ("in two weeks on friday") and
-    no sentence end.  A past count of months or years has no reading here
-    and keeps the count, with the weekday in the remainder.
+    folds, with nothing but link words between them ("in two weeks on
+    friday") and no sentence end.  A weekday that labels a literal date
+    ("sexta-feira 30 de outubro") belongs to that date, so the count is not
+    folded and stays in the remainder.  A past count of months or years has
+    no reading here and keeps the count, with the weekday in the remainder.
 
     Returns ``(resolved, consumed)``: the matches with the weekday holding
     the folded day and the count removed, and the count's and the glue's
@@ -3825,15 +3835,20 @@ def _fold_count_weekday(resolved, spec, tokens, text):
         return resolved, set()
     (off_match, off_res), (wd_match, wd_res) = offsets[0], weekdays[0]
     (lo, hi) = sorted((off_match.span, wd_match.span))
-    # "e" is glue in pt (a clause lead) and also "and": a word that can join
-    # two references never joins the count to its weekday.
-    glue = _glue_surfaces(spec) - {s for key in _SEPARATOR_KEYS
-                                   for s in spec.connectors.get(key, ())}
+    # A word that can join two references ("e", "and") never joins the count
+    # to its weekday, even where the locale also lists it as a link.
+    links = ({s for key in _COUNT_WEEKDAY_LINKS
+              for s in spec.connectors.get(key, ())}
+             - {s for key in _SEPARATOR_KEYS
+                for s in spec.connectors.get(key, ())})
     between = range(lo[1], hi[0])
-    if any(tokens[i].text not in glue for i in between):
+    if any(tokens[i].text not in links for i in between):
         return resolved, set()
     if text is not None and _sentence_boundary_between(
             text, tokens[lo[1] - 1].char_end, tokens[hi[0]].char_start):
+        return resolved, set()
+    if any(_labels_literal_date(wd_match, m, tokens, links)
+           for m, _r in resolved):
         return resolved, set()
     usg_tok = off_match.slots.get("USG")
     unit = (spec.singular_units[usg_tok.text] if usg_tok is not None
@@ -3847,6 +3862,8 @@ def _fold_count_weekday(resolved, spec, tokens, text):
         week = _week_span(reached, spec.conventions.week_start).start
         day = week + timedelta(days=(target - week.weekday()) % 7)
     elif unit == "day":
+        if wd_match.span[0] < off_match.span[0]:
+            return resolved, set()
         if reached.weekday() != target:
             return None, set()
         day = reached
@@ -3859,6 +3876,16 @@ def _fold_count_weekday(resolved, spec, tokens, text):
     rest = [(m, folded if m is wd_match else r) for m, r in resolved
             if m is not off_match]
     return rest, set(range(*off_match.span)) | set(between)
+
+
+def _labels_literal_date(wd_match, match, tokens, links):
+    """Whether the weekday stands next to a literal date it labels
+    ("sexta-feira 30 de outubro", "sexta-feira, 25/12"), with only link
+    words between the two."""
+    if match.construction not in _WEEKDAY_LABELABLE_DATES:
+        return False
+    (lo, hi) = sorted((wd_match.span, match.span))
+    return all(tokens[i].text in links for i in range(lo[1], hi[0]))
 
 
 def _roll_bare_weekday_time(res, rep, anchor):

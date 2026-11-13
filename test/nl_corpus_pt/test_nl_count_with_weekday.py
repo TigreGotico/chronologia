@@ -11,6 +11,13 @@ nominal que se junta a outro nome para melhor o caracterizar" (Priberam s.v.
 "aposto", 5).  When it is not, the phrase names no day and is refused.  The
 weekday belongs to the date, so it never stays in the remainder.
 
+Two cases do not fold.  A weekday before a count of days stands apart from
+it, as "sexta-feira amanhã" does, so the weekday keeps its own reading and
+the count stays in the remainder.  A weekday that labels a literal date
+("sexta-feira 30 de outubro") belongs to that date, so the count stays in
+the remainder.  Only an article or "on" links the two parts; a clause word
+("que") does not.
+
 Anchor Saturday 2026-10-17 12:00.  pt-PT weeks run Monday 12 to Sunday 18
 October, then 19 to 25, then 26 October to 1 November; the week before runs
 5 to 11.  pt-BR weeks run Sunday 11 to Saturday 17, then 18 to 24, then 25
@@ -126,3 +133,39 @@ def test_no_fold_keeps_the_count(text, expected, rest):
     assert r is not None, f"{text!r} did not parse"
     assert r.span.start == expected
     assert r.remainder == rest
+
+
+@pytest.mark.parametrize("text", [
+    "daqui a uma semana, sexta-feira 30 de outubro",
+    "daqui a uma semana sexta-feira 30 de outubro",
+])
+def test_a_weekday_that_labels_a_date_keeps_the_count(text):
+    # Friday 30 October is the written date; the count does not move it.
+    r = extract_timespan(text, "pt-PT", SATURDAY)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (day(10, 30), day(10, 31))
+    assert r.remainder == "daqui a uma semana"
+
+
+@pytest.mark.parametrize("text,expected,rest", [
+    # The coming Friday is 23 October and the coming Monday 19 October.
+    ("sexta-feira daqui a um dia", day(10, 23), "daqui a um dia"),
+    ("sexta-feira daqui a dois dias", day(10, 23), "daqui a dois dias"),
+    ("segunda-feira daqui a dois dias", day(10, 19), "daqui a dois dias"),
+])
+def test_a_weekday_before_a_count_of_days_keeps_the_count(text, expected,
+                                                          rest):
+    r = extract_timespan(text, "pt-PT", SATURDAY)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (expected,
+                                          expected + timedelta(days=1))
+    assert r.remainder == rest
+
+
+def test_a_clause_word_does_not_link_a_count_to_a_weekday():
+    # Saturday plus two days is Monday 19, at the anchor's clock.
+    r = extract_timespan("daqui a dois dias que sexta-feira", "pt-PT",
+                         SATURDAY)
+    assert r is not None
+    assert r.span.start == day(10, 19, h=12)
+    assert r.remainder == "que sexta-feira"
