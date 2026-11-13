@@ -676,6 +676,19 @@ class ConstructionMatcher:
                             not in self.spec.connectors.get(
                                 "clause_lead", frozenset())):
                         continue
+                    # A direction word after the unit counts only if it can
+                    # follow its count: "dois anos atrás" does, while "em"
+                    # is a preposition and "dois anos em maio" is not "in
+                    # two years".  The trailing words are a locale fact
+                    # (``marker_postposed_direction.voc``); a locale without
+                    # the file keeps every trailing marker.
+                    postposed = self.spec.connectors.get(
+                        "postposed_direction")
+                    if (postposed and name == "relative_offset"
+                            and "MARKER" in slots and "UNIT" in slots
+                            and slots["MARKER"].index > slots["UNIT"].index
+                            and slots["MARKER"].text not in postposed):
+                        continue
                     # A spelled ordinal after an indefinite article ("a third
                     # of the month is gone", "an eighth of March") is a
                     # fraction, never a day-of-month: a date names its day
