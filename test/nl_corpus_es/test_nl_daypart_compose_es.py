@@ -7,9 +7,10 @@ composes with a CLDR ``es`` day-period band via ``por la``: ``la mañana``
 ``[06:00, 12:00)``, ``la tarde`` ``[12:00, 20:00)``, ``la noche``
 ``[20:00, 24:00)``.  The span is that band placed on the resolved day.
 
-Gold is independent: the weekday oracle takes the next occurrence STRICTLY
-after the anchor date (2017-06-27, Tuesday); the band hours come from the CLDR
-table transcribed in :mod:`chronologia.dayparts`.  The parser never defines
+Gold is independent: the weekday oracle takes the first such weekday on or
+after the anchor date (2017-06-27, Tuesday, 13:04), and the next week's when
+the band on the anchor day has already ended (``_next_wd``); the band hours
+come from the CLDR table transcribed in :mod:`chronologia.dayparts`.  The parser never defines
 either.  ``pasado mañana``/``anteayer`` compounds are handled separately and
 some are on the BUG list; only the verified-clean compositions are asserted.
 """
