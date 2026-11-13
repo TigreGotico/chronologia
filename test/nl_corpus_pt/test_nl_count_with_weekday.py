@@ -120,15 +120,16 @@ def test_a_count_of_days_with_another_weekday_is_refused(text):
     ("daqui a uma semana. sexta-feira trabalho", day(10, 24, h=12),
      "sexta-feira trabalho"),
     ("daqui a uma semana e sexta-feira", day(10, 24, h=12), "e sexta-feira"),
+    ("daqui a uma semana a sexta-feira", day(10, 24, h=12), "a sexta-feira"),
     ("há um mês sexta-feira", day(9, 17, h=12), "sexta-feira"),
     ("daqui a uma semana na próxima sexta-feira", day(10, 24, h=12),
      "na próxima sexta-feira"),
 ])
 def test_no_fold_keeps_the_count(text, expected, rest):
     # No ruling names a weekday after a past month or a weekday with its own
-    # marker, and a sentence end or a list joins two references, so the
-    # count keeps its own reading: the anchor plus or minus the count, at
-    # the anchor's clock (class 1).
+    # marker, and a sentence end, a list word or a range word ("a" is also
+    # "to") joins two references, so the count keeps its own reading: the
+    # anchor plus or minus the count, at the anchor's clock (class 1).
     r = extract_timespan(text, "pt-PT", SATURDAY)
     assert r is not None, f"{text!r} did not parse"
     assert r.span.start == expected
