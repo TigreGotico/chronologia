@@ -51,3 +51,24 @@ def test_article_before_next_or_last(text, begin, end, rest):
 ])
 def test_article_before_next_or_last_without_a_date(text):
     nomatch(text)
+
+
+# A plural article before "próximos" or "últimos" opens a stretch of several
+# units: "nos próximos dias" is "in the coming days", "nos últimos anos" is
+# "in recent years".  Neither phrase names one day or one year.  The article
+# is not folded, so the phrase refuses or keeps its article in the remainder.
+@pytest.mark.parametrize("text,article", [
+    ("nos próximos dias", "nos"),
+    ("os próximos meses", "os"),
+    ("as próximas semanas", "as"),
+    ("nas próximas semanas", "nas"),
+    ("nos últimos anos", "nos"),
+    ("nos últimos meses", "nos"),
+    ("as últimas semanas", "as"),
+    ("as últimas sextas-feiras", "as"),
+    ("os próximos sábados", "os"),
+])
+def test_plural_article_is_not_folded(text, article):
+    r = parse(text)
+    assert r is None or article in r.remainder.split(), (
+        f"{text!r} read {r!r}: the plural article was folded")
