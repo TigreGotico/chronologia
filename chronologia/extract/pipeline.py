@@ -284,8 +284,12 @@ def _open_clock_before_fraction(tokens: Tuple[Token, ...],
     As the hour number, it reads as "às 10 e meia" reads: 10:30.  A locale
     whose hour word includes the symbol "h" (fr "10 h et demie") keeps the
     symbol after the number, since there the hour word stands before the
-    fraction.
+    fraction.  A locale with its own order for a fraction after a clock
+    literal (ar "CLOCK CLOCKDIR FRACTION") reads the literal as it is.
     """
+    if any("CLOCK CLOCKDIR FRACTION" in order.raw
+           for orders in spec.orders.values() for order in orders):
+        return tokens
     symbol = "h" in spec.connectors.get("oclock", ())
     indef = spec.connectors.get("indef", frozenset())
     words = [t.text for t in tokens] + ["", ""]
