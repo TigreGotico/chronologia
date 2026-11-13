@@ -12,6 +12,9 @@ from datetime import datetime
 
 import pytest
 
+from chronologia.extract.loader import load_lang_spec
+from chronologia.extract.pipeline import prematch_tokens
+
 from ._corpus import parse, ad
 
 
@@ -94,3 +97,49 @@ def test_moins_after_a_counted_offset_shortens_the_length(text, expected):
     span, rest = parse(text)
     assert span.start == ad(expected)
     assert rest == ""
+
+
+@pytest.mark.parametrize("text,expected", [
+    # 13:04 + (2 h - 10 s) = 13:04 + 1 h 59 min 50 s = 15:03:50
+    ("dans 2 heures moins 10 secondes", datetime(2017, 6, 27, 15, 3, 50)),
+    ("dans 2 heures moins 10 sec", datetime(2017, 6, 27, 15, 3, 50)),
+    # 13:04 + (2 h - 1 s) = 15:03:59
+    ("dans 2 heures moins 1 seconde", datetime(2017, 6, 27, 15, 3, 59)),
+    # 13:04 - 1 h 59 min 50 s = 11:04:10
+    ("il y a 2 heures moins 10 secondes", datetime(2017, 6, 27, 11, 4, 10)),
+    # 13:04 + 2 h 10 s = 15:04:10
+    ("dans 2 heures 10 secondes", datetime(2017, 6, 27, 15, 4, 10)),
+    ("dans 2 h et 10 secondes", datetime(2017, 6, 27, 15, 4, 10)),
+    ("dans 2h10 secondes", datetime(2017, 6, 27, 15, 4, 10)),
+    # 13:04 + 2 h 30 s = 15:04:30
+    ("dans 2 h 30 s", datetime(2017, 6, 27, 15, 4, 30)),
+])
+def test_seconds_after_the_count_are_seconds(text, expected):
+    """A count after the hours is in the unit that follows it: "10 min 35 s"
+    (OQLF, "Écriture des nombres exprimant une durée"), and "sec" is a
+    symbol of the second (Wiktionnaire, s.v. "sec").  Read as minutes, the
+    first phrase answered 14:54 and the plain counts 15:14."""
+    span, rest = parse(text)
+    assert span.start == ad(expected)
+    assert rest == ""
+
+
+def test_a_count_before_another_unit_is_not_taken_away():
+    """"5 jours" is not a part of an hour, so the length stays "2 heures" and
+    "moins 5 jours" is left over; read as minutes, it answered 14:59 the next
+    day.  13:04 + 2 h = 15:04."""
+    span, rest = parse("dans 2 heures moins 5 jours")
+    assert span.start == ad(datetime(2017, 6, 27, 15, 4))
+    assert rest == "moins 5 jours"
+
+
+@pytest.mark.parametrize("text,kept", [
+    # "10" counts days, not minutes: the length is not rewritten.
+    ("dans 2 heures 10 jours", ["dans", "2", "heures", "10", "jours"]),
+    # 0 h less 10 min is no length; rewritten, it is "-1 h et 50 minutes"
+    # and "dans" answers 12:54, ten minutes before the anchor.
+    ("dans 0 h moins 10", ["dans", "0", "h", "moins", "10"]),
+])
+def test_the_length_rewrite_leaves_the_phrase(text, kept):
+    spec = load_lang_spec("fr")
+    assert [t.text for t in prematch_tokens(text, spec)] == kept

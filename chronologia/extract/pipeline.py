@@ -255,14 +255,16 @@ def fold_tokens(tokens: Tuple[Token, ...], spec: LangSpec,
                 text: str) -> Tuple[Token, ...]:
     """The folding tail of the pipeline applied to a (sub-)stream of pretokens.
 
-    Number fold (the per-language ``hook``), the context-gated Roman-numeral
-    fold, and the multiword-vocab merge.  Run on the whole stream for the
+    Number fold (the per-language ``hook``, then its ``post_hook``), the
+    context-gated Roman-numeral fold, and the multiword-vocab merge.  Run on the whole stream for the
     single-span path, or on a lone range endpoint's slice so its numbers fold in
     isolation -- exactly as the old per-substring re-tokenization did, but
     without re-running the tokenizer.
     """
     if spec.hook is not None:
         tokens = _fold_around_counted_seconds(tokens, spec.hook, spec)
+    if spec.post_hook is not None:
+        tokens = spec.post_hook(tokens, spec)
     # context-gated Roman-numeral ordinals ("século XII", "anno MMXX"): a
     # spec-aware fold (it reads the language's own century/year vocabulary), so
     # it runs here rather than in the per-language hook.

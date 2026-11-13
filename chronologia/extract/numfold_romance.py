@@ -1106,26 +1106,44 @@ def _collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
     return _reindex(out)
 
 
-def _governed_hour_length(tokens, governors, hour_words, minute_words,
-                          fractions, minus, minus_articles):
-    """Spell a counted length of hours and minutes as "N h et M minutes".
+def _governed_hour_length(tokens, spec, governors, fractions, minus,
+                          minus_articles, second_symbols):
+    """Spell a counted length of hours as "N h et M minutes et S secondes".
 
-    After a counted-offset word ("dans", "il y a") the hour and the minutes
-    that follow it are one length: "dans 2h30", "dans 2 h 30", "dans 2
-    heures et demie".  The grammar reads that length only in its full form
-    ("dans 2 heures et 30 minutes"), so the short forms are rewritten to it.
-    ``fractions`` maps the fraction words after "et" to their minutes.  After
-    a ``minus`` word the minutes are taken away from the hours, with an
-    optional article before a fraction: "dans 2 h moins le quart" is the
-    length 1 h 45 min, "dans 2 h moins 10" is 1 h 50 min.
+    After a counted-offset word ("dans", "il y a") the hour and the count
+    that follows it are one length: "dans 2h30", "dans 2 h 30", "dans 2
+    heures et demie", "dans 2 h 10 s".  The grammar reads that length only in
+    its full form ("dans 2 heures et 30 minutes"), so the short forms are
+    rewritten to it.  The unit word after the count names its unit: none or
+    a minute word is minutes, a second word or one of ``second_symbols`` is
+    seconds, and any other unit ("dans 2 heures 10 jours") is not part of
+    the length, so the phrase is left as written.  ``fractions`` maps the
+    fraction words after "et" to their minutes.  After a ``minus`` word the
+    count is taken away from the hours, with an optional article before a
+    fraction: "dans 2 h moins le quart" is the length 1 h 45 min, "dans 2 h
+    moins 10" is 1 h 50 min, "dans 2 h moins 10 secondes" is 1 h 59 min 50 s.
+
+    It runs as the language ``post_hook``: the pipeline holds a counted
+    second word out of the number fold, and only the whole stream shows the
+    unit after the count.
     """
-    def minute_count(tok):
+    def count(tok):
         return (tok is not None and tok.is_number and tok.value is not None
                 and 0 < tok.value < 60 and float(tok.value).is_integer())
+
+    def unit_of(k):
+        if k >= n:
+            return None
+        if tokens[k].text in second_symbols:
+            return "second"
+        return spec.units.get(tokens[k].text)
 
     def number(value):
         return Token(text=str(value), raw=str(value), index=0,
                      is_number=True, value=value)
+
+    def word(text):
+        return Token(text=text, raw=text, index=0)
 
     out = []
     i = 0
@@ -1134,18 +1152,22 @@ def _governed_hour_length(tokens, governors, hour_words, minute_words,
         t = tokens[i]
         hour = tokens[i + 1] if i + 1 < n else None
         if not (out and out[-1].text in governors and t.is_number
-                and hour is not None and hour.text in hour_words):
+                and hour is not None and spec.units.get(hour.text) == "hour"):
             out.append(t)
             i += 1
             continue
         nxt = tokens[i + 2] if i + 2 < n else None
         nn = tokens[i + 3] if i + 3 < n else None
-        minutes = None
         hours = t
-        if minute_count(nxt):
-            minutes, used = int(nxt.value), 3
-            if nn is not None and nn.text in minute_words:
-                used = 4
+        minutes = seconds = None
+        if count(nxt):
+            unit = unit_of(i + 3)
+            if unit is None:
+                minutes, used = int(nxt.value), 3
+            elif unit == "minute":
+                minutes, used = int(nxt.value), 4
+            elif unit == "second":
+                seconds, used = int(nxt.value), 4
         elif (nxt is not None and nxt.text in _FR_ET and nn is not None
                 and nn.text in fractions):
             minutes, used = fractions[nn.text], 4
@@ -1155,23 +1177,31 @@ def _governed_hour_length(tokens, governors, hour_words, minute_words,
             if nn is not None and nn.text in minus_articles:
                 j += 1
             taken_tok = tokens[j] if j < n else None
-            taken = None
+            taken = None  # seconds
             if taken_tok is not None and taken_tok.text in fractions:
-                taken, used = fractions[taken_tok.text], j + 1 - i
-            elif j == i + 3 and minute_count(taken_tok):
-                taken, used = int(taken_tok.value), 4
-                if i + 4 < n and tokens[i + 4].text in minute_words:
-                    used = 5
-            if taken is not None and int(t.value) * 60 > taken:
-                whole, minutes = divmod(int(t.value) * 60 - taken, 60)
+                taken, used = fractions[taken_tok.text] * 60, j + 1 - i
+            elif j == i + 3 and count(taken_tok):
+                unit = unit_of(i + 4)
+                if unit is None:
+                    taken, used = int(taken_tok.value) * 60, 4
+                elif unit == "minute":
+                    taken, used = int(taken_tok.value) * 60, 5
+                elif unit == "second":
+                    taken, used = int(taken_tok.value), 5
+            if taken is not None and int(t.value) * 3600 > taken:
+                whole, rest = divmod(int(t.value) * 3600 - taken, 3600)
                 hours = number(whole)
-        if minutes is None:
+                minutes, seconds = divmod(rest, 60)
+                seconds = seconds or None
+        if minutes is None and seconds is None:
             out.append(t)
             i += 1
             continue
-        out.extend((hours, hour, Token(text="et", raw="et", index=0),
-                    number(minutes),
-                    Token(text="minutes", raw="minutes", index=0)))
+        out.extend((hours, hour))
+        if minutes is not None:
+            out.extend((word("et"), number(minutes), word("minutes")))
+        if seconds is not None:
+            out.extend((word("et"), number(seconds), word("secondes")))
         i += used
     return _reindex(out)
 
@@ -1196,7 +1226,7 @@ def _merge_digit_ordinal(tokens, suffixes):
 
 def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                           phrases=(), h_clock=False, h_spared=((), ()),
-                          hour_length=None, ord_suffixes=frozenset(),
+                          ord_suffixes=frozenset(),
                           fem_ord=None, reader=None,
                           extra_numwords=frozenset(), extra_homograph=None,
                           extra_ordinals=None, word_map=None,
@@ -1230,10 +1260,7 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
                                or (i > 0 and tokens[i - 1].text in ord_article)))
                 if (not t.is_number and t.text in fem_ord) else t
                 for i, t in enumerate(tokens)))
-        tokens = base(tokens)
-        if hour_length:
-            tokens = _governed_hour_length(tokens, *hour_length)
-        return tokens
+        return base(tokens)
 
     return fold
 
@@ -1450,20 +1477,6 @@ _fold_fr_ordinals_base = _romance_prepass_fold(
     # marker_ago.voc it is the hour unit, and before the clock directions of
     # clock_dir_past.voc and clock_dir_to.voc it is the hour word.
     h_spared=(("dans", "ilya"), ("et", "moins")),
-    # A count of hours and minutes after those offset words is one length
-    # (OQLF, same page: "2 h 28 min"); "et demie" and "et quart" after a
-    # count of hours are its half and its quarter: "Qui a la valeur d'une
-    # moitié s'ajoutant à la quantité exprimée par le substantif. Il a deux
-    # ans et demi" (TLFi, s.v. "demi", I.A); "Quart d'heure" : "Une des
-    # quatre parties égales d'une heure, quinze minutes." (TLFi, s.v. "quart",
-    # B.1.a).  "moins" before minutes takes them away from the hours: "Pour
-    # indiquer une soustraction" (TLFi, s.v. "moins", II.A), and "moins le
-    # quart est plus fréq. que moins un quart" (TLFi, s.v. "quart", B.1.a).
-    hour_length=(frozenset({"dans", "ilya"}),
-                 frozenset({"h", "heure", "heures"}),
-                 frozenset({"min", "mins", "minute", "minutes"}),
-                 {"demie": 30, "demi": 30, "quart": 15},
-                 frozenset({"moins"}), frozenset({"le", "la", "un"})),
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
 
@@ -1487,6 +1500,34 @@ def fold_fr(tokens):  # noqa: F811 -- final wrap adds une-heure + un-compound
     return _fold_fr_scaled(
         _license_fr_une_heure(_license_fr_un_compound(tokens)))
 
+
+
+def fold_fr_hour_length(tokens, spec):
+    """The French ``post_hook``: a counted length of hours after "dans" or
+    "il y a" (:func:`_governed_hour_length`).
+
+    A count of hours and minutes after those offset words is one length
+    (OQLF, Banque de dépannage linguistique, "Écriture des nombres exprimant
+    une durée": "L'expérience a duré exactement 2 heures 28 minutes. (ou :
+    2 h 28 min)"), and so is a count of seconds after it: "La championne a
+    couru l'épreuve en 10 min 35 s 7/100." (same page).  "sec" is also a
+    symbol of the second: "Symbole de la seconde. Note : Le symbole du
+    Système international est s." (Wiktionnaire, s.v. "sec", Conventions
+    internationales, 3).  "et demie" and "et quart" after a count of hours
+    are its half and its quarter: "Qui a la valeur d'une moitié s'ajoutant à
+    la quantité exprimée par le substantif. Il a deux ans et demi" (TLFi,
+    s.v. "demi", I.A); "Quart d'heure" : "Une des quatre parties égales
+    d'une heure, quinze minutes." (TLFi, s.v. "quart", B.1.a).  "moins"
+    before a count takes it away from the hours: "Pour indiquer une
+    soustraction" (TLFi, s.v. "moins", II.A), and "moins le quart est plus
+    fréq. que moins un quart" (TLFi, s.v. "quart", B.1.a).
+    """
+    return _governed_hour_length(
+        tokens, spec, governors=frozenset({"dans", "ilya"}),
+        fractions={"demie": 30, "demi": 30, "quart": 15},
+        minus=frozenset({"moins"}),
+        minus_articles=frozenset({"le", "la", "un"}),
+        second_symbols=frozenset({"s", "sec"}))
 
 # -- Italian ----------------------------------------------------------------
 _IT_PHRASES = [

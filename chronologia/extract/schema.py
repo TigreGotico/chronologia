@@ -154,7 +154,7 @@ CONSTRUCTION_FLAG_KEYS: FrozenSet[str] = frozenset(
 
 TOP_LEVEL_KEYS: FrozenSet[str] = frozenset({
     "tokenizer", "constructions", "conventions", "quantifiers", "guards",
-    "hook", "pre_hook", "lemmas", "suffix_strip", "day_subdivision",
+    "hook", "pre_hook", "post_hook", "lemmas", "suffix_strip", "day_subdivision",
     "positions", "base_grammar"})
 
 #: marker roles whose POSITIONALITY may be declared -- the open-range and
