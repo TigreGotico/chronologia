@@ -78,6 +78,8 @@ def _shift(start: AstroDate, unit: str, step: float) -> AstroDate:
     entirely in AstroDate space so the arithmetic stays valid for any
     proleptic year (BC, deep time) instead of stdlib ``datetime``'s
     ``MINYEAR``-bounded range."""
+    if unit == "second":
+        return start + timedelta(seconds=step)
     if unit == "minute":
         return start + timedelta(minutes=step)
     if unit == "hour":
