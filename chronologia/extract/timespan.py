@@ -19,7 +19,7 @@ from __future__ import annotations
 import os
 import re
 import threading
-from datetime import datetime, timedelta
+from datetime import MAXYEAR, MINYEAR, datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
 
@@ -625,6 +625,12 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     def endpoint(sub):
         return _range_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
 
+    def previous(sub, start, bound):
+        return _latest_reading(
+            lambda at: _range_endpoint(text, sub, engine, at,
+                                       scale_mode=scale_mode),
+            anchor, start, bound)
+
     def bare_of(sub):
         return _bare_numeral(text, sub, engine, anchor)
 
@@ -690,7 +696,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                            engine, anchor)
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
-                                     borrowed, spec, bare_of, monthly)
+                                     borrowed, spec, bare_of, monthly,
+                                     previous)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -742,7 +749,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                        engine, anchor)
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
-                                     borrowed, spec, bare_of, monthly)
+                                     borrowed, spec, bare_of, monthly,
+                                     previous)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -774,7 +782,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 if got is None:
                     got = _compose_range(left_tok, right_tok, endpoint,
                                          borrowed, spec, bare_of,
-                                         monthly)
+                                         monthly, previous)
                 if got is not None:
                     span, rem = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
@@ -1296,7 +1304,7 @@ def _lend_year(bare, donor):
 
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
-                   bare_of=_lone_numeral, monthly=None):
+                   bare_of=_lone_numeral, monthly=None, previous=None):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1310,7 +1318,12 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     date whose prefer_future flung it a year ahead of a straddled anchor, by
     pulling the left endpoint back one year.  A pinned or dated endpoint is
     never rolled -- so a genuinely reversed range ("june 12 2020 to june 5
-    2020") yields ``None`` rather than a fabricated span."""
+    2020") yields ``None`` rather than a fabricated span.
+
+    ``previous(sub, start, bound)`` gives the latest reading at or before
+    ``bound`` of an endpoint read at ``start``, in the shape of
+    ``endpoint(sub)``, or ``None`` (see :func:`_latest_reading`); the year pull
+    uses it."""
     left = endpoint(left_tok)
     right = endpoint(right_tok)
     # one endpoint written as a bare number against a partner that names a
@@ -1432,8 +1445,10 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # whole year ahead (prefer_future) while the right stays put, inverting the
     # span.  Pull an unpinned left back one year so both read in the nearest
     # cycle ("july 20 to july 25" on july 22 stays this year).  A pinned left
-    # (explicit year) is fixed and must not be pulled.
+    # (explicit year) is fixed and must not be pulled, and so is a definite
+    # left ("tomorrow", "next week"), which names one day counted from now.
     if end <= start and not left[3] \
+            and not _definite_endpoint(left_tok, spec) \
             and start.year != right_span.start.year:
         # The straddle repair only applies when the two endpoints landed in
         # DIFFERENT cycles: prefer_future flung the left a year ahead of a right
@@ -1444,7 +1459,15 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         # 5), it is a genuine reversal, not a straddle; pulling only the left
         # back a year would fabricate a bogus ~year-wide span, so leave it to
         # fail below (None -> the single-span fallback reads the left date).
+        # A holiday computed per year (Easter, Carnival, Chinese New Year)
+        # falls on another day each year, so the left is read again for its
+        # latest date at or before the right; the calendar-year step keeps the
+        # month and day.
         pulled = _minus_one_year(start)
+        earlier = (None if previous is None
+                   else previous(left_tok, start, right_span.start))
+        if earlier is not None:
+            pulled = earlier[0].start
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
     # a year lent across the range (one endpoint named the pair's single year)
@@ -1485,6 +1508,37 @@ def _minus_one_year(astro):
         return astro.replace(year=astro.year - 1)
     except (ValueError, OverflowError):
         return None
+
+
+def _latest_reading(resolve, anchor, start, bound):
+    """The latest reading at or before ``bound`` of a yearly endpoint whose
+    reading ``start`` lies after it, or ``None``.
+
+    ``resolve(at)`` reads the endpoint with the anchor ``at``.  It is read
+    from 1 January of the year before ``start``, then again from the end of
+    each reading while the next one starts at or before ``bound``: the first
+    reading can be a span that holds that 1 January (a winter, a Ramadan), or
+    the first of two in one year.  So a holiday computed per year (Easter,
+    Carnival, Chinese New Year) falls on its own day; a calendar-year step of
+    ``start`` keeps the month and day, which only a fixed date shares.
+    """
+    def at(day):
+        if not MINYEAR <= day.year <= MAXYEAR:
+            return None
+        return anchor.replace(year=day.year, month=day.month, day=day.day,
+                              hour=day.hour, minute=day.minute,
+                              second=day.second, microsecond=day.microsecond)
+
+    first = at(AstroDate(start.year - 1, 1, 1))
+    found = None if first is None else resolve(first)
+    while found is not None:
+        later = at(found[0].end)
+        nxt = None if later is None else resolve(later)
+        if nxt is None or nxt[0].start > bound \
+                or nxt[0].start <= found[0].start:
+            break
+        found = nxt
+    return found
 
 
 def _plus_one_year(astro):
@@ -1622,11 +1676,14 @@ def _definite_endpoint(sub, spec):
     ("next month", "this friday") or an explicit year ("2019").  Everything else
     -- a bare "july 6", a holiday, a quarter, a clock time -- is an
     underspecified recurring reference that only lands on a point once a cycle
-    is chosen for it.
+    is chosen for it.  A marker may span words: "the following", "que viene",
+    "from now".
     """
-    return (any(t.text in spec.named_days for t in sub)
-            or any(t.text in spec.rel_markers for t in sub)
-            or any(t.text in spec.directions for t in sub)
+    words = [t.text for t in sub]
+    phrases = {" ".join(words[i:j]) for i in range(len(words))
+               for j in range(i + 1, min(i + 3, len(words)) + 1)}
+    return (any(p in spec.named_days or p in spec.rel_markers
+                or p in spec.directions for p in phrases)
             or any(t.is_number and t.value is not None and t.value >= 100
                    for t in sub))
 
@@ -1738,6 +1795,16 @@ def _since_start(ep, sub, engine, anchor, now, text):
     # (a bare month/day, a holiday, a quarter) is a yearly anniversary.
     is_clock = (ep[0].end - ep[0].start < timedelta(days=1)
                 and not any(t.text in spec.months for t in sub))
+    # A holiday computed per year (Easter, Carnival, Chinese New Year) falls on
+    # another day each year, so a yearly endpoint is read again for its latest
+    # date at or before now.  The calendar-year step below remains for an
+    # endpoint that does not read from the year before.
+    if not is_clock and start > now:
+        back = _latest_reading(
+            lambda at: _resolve_endpoint(text, sub, engine, at),
+            anchor, start, now)
+        if back is not None:
+            return back[0].start, ep[1]
     while start > now:
         pulled = (start + timedelta(days=-1) if is_clock
                   else _minus_one_year(start))
