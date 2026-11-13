@@ -58,6 +58,13 @@ def test_a_list_of_weekdays_keeps_the_weekday():
     ("vou na segunda terça de carro", (2017, 7, 3)),
     ("na segunda terça de casa", (2017, 7, 3)),
     ("na segunda terça de folga", (2017, 7, 3)),
+    # a small number after "de" is a clock or a count, not a year
+    ("na segunda terça de 9 às 17", (2017, 7, 3)),
+    ("na segunda terça de 10 a 12", (2017, 7, 3)),
+    ("na segunda quarta de 2 em 2 semanas", (2017, 7, 3)),
+    # a week holds one of each weekday: Monday of next week is 3 July
+    ("na segunda terça da semana que vem", (2017, 7, 3)),
+    ("na segunda terça da próxima semana", (2017, 7, 3)),
 ])
 def test_an_unpunctuated_list_of_weekdays_keeps_the_first_weekday(text, ymd):
     s, e = start_end(text)

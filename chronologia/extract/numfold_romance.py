@@ -582,10 +582,12 @@ _PT_FEMININE_WEEKDAYS = frozenset({"segunda", "terça", "terca", "quarta",
 _PT_ORDINAL_ARTICLES = frozenset({"a", "na", "da", "à", "pela"})
 #: The words that open the period after "a segunda terça-feira": "de 2026",
 #: "de julho", "do mês que vem".  Without one of them there is no period for
-#: the ordinal to count in.  "deste" and "desta" are not listed: no
+#: the ordinal to count in.  "da" is not listed: the feminine periods are
+#: "semana" and "década", a week holds one of each weekday, and no order
+#: reads "da década".  "deste" and "desta" are not listed: no
 #: ``scoped_ordinal`` order reads them, so a fold before them only strands
 #: the ordinal.
-_PT_ORDINAL_SCOPE_OPENERS = frozenset({"de", "do", "da"})
+_PT_ORDINAL_SCOPE_OPENERS = frozenset({"de", "do"})
 
 
 def _pt_voc_surfaces(*prefixes):
@@ -601,24 +603,27 @@ def _pt_voc_surfaces(*prefixes):
 
 
 #: The words that name a period that holds several of the same weekday: a
-#: month ("de julho"), a week, month or year ("do mês que vem"), or a longer
-#: span ("do século").  A number ("de 2026") is a year.  Any other word after
-#: the opener ("de manhã", "de carro", "de folga") names no period, so
-#: "na segunda terça de carro" stays a list that starts on Monday.
+#: month ("de julho"), a month or year ("do mês que vem"), or a longer span
+#: ("do século").  A week holds one of each weekday, so it is not listed.  A
+#: number of 1000 or more ("de 2026") is a year; a smaller one is a clock or a
+#: count ("de 9 às 17", "de 2 em 2 semanas").  Any other word after the
+#: opener ("de manhã", "de carro", "de folga") names no period, so "na
+#: segunda terça de carro" stays a list that starts on Monday.
 _PT_SCOPE_HEADS = _pt_voc_surfaces("month_", "scope_unit_", "unit_month",
-                                   "unit_year", "unit_week")
+                                   "unit_year")
 #: A relative marker may stand between the opener and the period: "do
 #: próximo mês", "do último ano".
 _PT_SCOPE_MARKERS = _pt_voc_surfaces("marker_next", "marker_last")
 
 
 def _pt_period_follows(tokens, k):
-    """Whether ``tokens[k:]`` opens with a period: a number, or a scope head
+    """Whether ``tokens[k:]`` opens with a period: a year, or a scope head
     behind an optional relative marker."""
     if k < len(tokens) and tokens[k].text in _PT_SCOPE_MARKERS:
         k += 1
-    return k < len(tokens) and (tokens[k].is_number
-                                or tokens[k].text in _PT_SCOPE_HEADS)
+    return k < len(tokens) and (
+        tokens[k].is_number and (tokens[k].value or 0) >= 1000
+        or tokens[k].text in _PT_SCOPE_HEADS)
 
 
 def _license_ordinal_before_weekday(tokens):
