@@ -488,6 +488,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         guards=cfg.get("guards", {}),
         hook=_resolve_dotted(cfg.get("hook")),
         pre_hook=_resolve_dotted(cfg.get("pre_hook")),
+        post_hook=_resolve_dotted(cfg.get("post_hook")),
         clock_fractions=clock_fractions,
         clock_fractions_prev=clock_fractions_prev,
         clock_dir_minutes=clock_dir_minutes,

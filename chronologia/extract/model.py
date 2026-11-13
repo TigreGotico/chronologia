@@ -321,6 +321,10 @@ class LangSpec:
     # a folded number.  For token SPLITS a connector needs to see (e.g. a
     # fused proclitic), not number folds.
     pre_hook: Optional[Callable] = None
+    # called as ``post_hook(tokens, spec)`` on the folded stream, after the
+    # number fold has run on every segment around a held-out second word, so
+    # a rewrite that reads the unit after a count sees the whole stream.
+    post_hook: Optional[Callable] = None
     # clock_time slot vocab (surface -> value), all facts from filename convention
     clock_fractions: Mapping[str, int] = field(default_factory=dict)  # -> minutes
     # fraction surfaces (a SUBSET of clock_fractions, so the FRACTION slot still
