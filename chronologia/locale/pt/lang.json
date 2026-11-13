@@ -78,7 +78,8 @@
         "article? day_label ORD of article? REL_MARKER month_word",
         "article? day_label ORD of article? month_word REL_MARKER",
         "article ORD of article? REL_MARKER month_word",
-        "article ORD of article? month_word REL_MARKER"
+        "article ORD of article? month_word REL_MARKER",
+        "article? day_label ORD REL_MARKER month_word"
       ],
       "prefer_future": true
     },
@@ -186,6 +187,13 @@
   "base_grammar": {
     "marker_position": "post",
     "override": {
+      "rel_period": [
+        "article_singular? REL_MARKER UNIT"
+      ],
+      "weekday_ref": [
+        "article_singular? REL_MARKER WEEKDAY",
+        "WEEKDAYFULL"
+      ],
       "daypart_ref": [
         "REL_MARKER DAYPART",
         "article DAYPART",
@@ -201,7 +209,11 @@
         "article? ORD WEEKDAY of article? SCOPE_UNIT REL_MARKER",
         "article? ordlast WEEKDAY of article? SCOPE_UNIT REL_MARKER",
         "article? ORD UNIT of article? SCOPE_UNIT REL_MARKER",
-        "article? ordlast UNIT of article? SCOPE_UNIT REL_MARKER"
+        "article? ordlast UNIT of article? SCOPE_UNIT REL_MARKER",
+        "article? ORD WEEKDAY REL_MARKER SCOPE_UNIT",
+        "article? ordlast WEEKDAY REL_MARKER SCOPE_UNIT",
+        "article? ORD UNIT REL_MARKER SCOPE_UNIT",
+        "article? ordlast UNIT REL_MARKER SCOPE_UNIT"
       ]
     }
   }

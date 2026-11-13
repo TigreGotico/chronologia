@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A bare full weekday name resolves to its next strictly-future occurrence.
+"""A bare full weekday name resolves to its next occurrence, or today.
 
 Only the unambiguous definite forms (الجمعة, السبت, الأحد ...) bind bare; the
 article-less number homographs (أحد "someone", اثنين "two") stay out of the
@@ -46,7 +46,7 @@ YAWM_CASES = [
 def test_yawm_compound_consumes_fully(text, idx):
     """The 'يوم + weekday' compound folds to one token: the day-word is part
     of the reference, so the remainder must be empty."""
-    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    ahead = (idx - ANCHOR.weekday()) % 7
     s = (ANCHOR + timedelta(days=ahead)).date()
     sp, remainder = parse(text)
     assert remainder == ''

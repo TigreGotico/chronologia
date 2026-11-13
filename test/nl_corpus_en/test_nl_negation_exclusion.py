@@ -57,7 +57,7 @@ def test_negated_reference_empty_in_timespans_and_candidates(text):
     ("not before Monday", "2017-07-03T00:00:00", "2017-07-04T00:00:00", "not before"),
     ("no earlier than 5pm", "2017-06-27T17:00:00", "2017-06-27T17:01:00", "no earlier than"),
     ("no later than Friday", "2017-06-30T00:00:00", "2017-07-01T00:00:00", "no later than"),
-    ("not until Tuesday", "2017-07-04T00:00:00", "2017-07-05T00:00:00", "not until"),
+    ("not until Tuesday", "2017-06-27T00:00:00", "2017-06-28T00:00:00", "not until"),
     ("not after 3pm", "2017-06-27T15:00:00", "2017-06-27T15:01:00", "not after"),
     ("not before tomorrow", "2017-06-28T00:00:00", "2017-06-29T00:00:00", "not before"),
     ("not after Friday", "2017-06-30T00:00:00", "2017-07-01T00:00:00", "not after"),
@@ -99,7 +99,8 @@ def test_plain_references_unchanged(text, start, end, rem):
 def test_non_governing_trigger_does_not_veto(text):
     r = extract_timespan(text, "en", ANCHOR)
     assert r is not None
-    assert r.span.start.date().isoformat() == "2017-07-04"
+    # "Tuesday" said on Tuesday 2017-06-27 is that day
+    assert r.span.start.date().isoformat() == "2017-06-27"
     # both public APIs must agree the reading survives
     assert extract_candidates(text, "en", ANCHOR) != []
 
