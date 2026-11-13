@@ -10,11 +10,9 @@ from ._corpus import ANCHOR, ad, start, span, AstroDate
 
 
 def _next_weekday(target):
-    """target: Mon=0..Sun=6.  Prefer-future: today's weekday rolls +7."""
+    """target: Mon=0..Sun=6.  Today's own weekday is today."""
     base = ANCHOR.replace(hour=0, minute=0, second=0, microsecond=0)
     delta = (target - base.weekday()) % 7
-    if delta == 0:
-        delta = 7
     return base + timedelta(days=delta)
 
 

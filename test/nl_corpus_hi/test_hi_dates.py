@@ -63,7 +63,7 @@ def test_the_nukta_and_nukta_less_february_are_the_same_month():
 ])
 def test_every_weekday_resolves_to_its_next_occurrence(weekday, index):
     from datetime import timedelta
-    ahead = (index - ANCHOR.weekday()) % 7 or 7
+    ahead = (index - ANCHOR.weekday()) % 7
     expected = (ANCHOR + timedelta(days=ahead)).date()
     s = start(weekday)
     assert (s.year, s.month, s.day) == (expected.year, expected.month,

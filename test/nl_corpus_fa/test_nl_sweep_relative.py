@@ -31,7 +31,7 @@ def test_relative_day(text, off):
     ("چهارشنبه", 2), ("پنج‌شنبه", 3), ("جمعه", 4),
 ])
 def test_bare_weekday_next_occurrence(text, dow):
-    delta = (dow - _MID.weekday()) % 7 or 7
+    delta = (dow - _MID.weekday()) % 7
     g = _MID + timedelta(days=delta)
     assert start_end(text) == (ad(g), ad(g + timedelta(days=1)))
 

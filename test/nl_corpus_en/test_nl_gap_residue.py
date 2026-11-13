@@ -8,7 +8,7 @@ no fabricated date from an anchor it cannot resolve -- these return None,
 never a wrong span.
 
 A phrase that *opens* with a bare weekday is different: the weekday itself
-is a valid reference (its next strictly-future occurrence), so the engine
+is a valid reference (its next occurrence, or today), so the engine
 resolves that leading day and reports the rest as residue.  Those cases are
 asserted positively below, not as non-matches.
 """
@@ -40,7 +40,7 @@ def test_event_relative_returns_none(text):
 def test_leading_weekday_resolves_next(text, idx):
     # the leading bare weekday resolves to its next occurrence; the rest of
     # the phrase is unsupported residue the engine does not fold in
-    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    ahead = (idx - ANCHOR.weekday()) % 7
     exp = (ANCHOR + timedelta(days=ahead)).date()
     s = span(text).start
     assert (s.year, s.month, s.day) == (exp.year, exp.month, exp.day)

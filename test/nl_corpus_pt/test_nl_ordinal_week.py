@@ -38,7 +38,7 @@ _NEXT = {
     "na quarta": (2017, 6, 28),        # Wednesday
     "na quinta": (2017, 6, 29),        # Thursday
     "na sexta": (2017, 6, 30),         # Friday
-    "na terça": (2017, 7, 4),          # Tuesday
+    "na terça": (2017, 6, 27),         # Tuesday, the anchor day
     "segunda-feira": (2017, 7, 3),
     "quarta-feira": (2017, 6, 28),
     "quinta-feira": (2017, 6, 29),
