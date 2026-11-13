@@ -631,6 +631,16 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                        scale_mode=scale_mode),
             anchor, start, bound)
 
+    def daily(sub):
+        # an endpoint that names no day: read two days later, it is the same
+        # clock two days later (a weekday or a holiday moves by a week, a
+        # year, or not at all)
+        here = endpoint(sub)
+        there = _range_endpoint(text, sub, engine, anchor + timedelta(days=2),
+                                scale_mode=scale_mode)
+        return (here is not None and there is not None
+                and there[0].start - here[0].start == timedelta(days=2))
+
     def bare_of(sub):
         return _bare_numeral(text, sub, engine, anchor)
 
@@ -697,7 +707,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous)
+                                     previous, daily)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -750,7 +760,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous)
+                                     previous, daily)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -782,7 +792,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 if got is None:
                     got = _compose_range(left_tok, right_tok, endpoint,
                                          borrowed, spec, bare_of,
-                                         monthly, previous)
+                                         monthly, previous, daily)
                 if got is not None:
                     span, rem = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
@@ -1304,7 +1314,8 @@ def _lend_year(bare, donor):
 
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
-                   bare_of=_lone_numeral, monthly=None, previous=None):
+                   bare_of=_lone_numeral, monthly=None, previous=None,
+                   daily=None):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1323,7 +1334,7 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     ``previous(sub, start, bound)`` gives the latest reading at or before
     ``bound`` of an endpoint read at ``start``, in the shape of
     ``endpoint(sub)``, or ``None`` (see :func:`_latest_reading`); the year pull
-    uses it."""
+    uses it.  ``daily(sub)`` is true for an endpoint that recurs each day."""
     left = endpoint(left_tok)
     right = endpoint(right_tok)
     # one endpoint written as a bare number against a partner that names a
@@ -1447,15 +1458,19 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # cycle ("july 20 to july 25" on july 22 stays this year).  A pinned left
     # (explicit year) is fixed and must not be pulled, and so is a definite
     # left ("tomorrow", "next week"), which names one day counted from now.
-    # A bare clock on the left recurs daily, so it is rolled back by days to
+    # A clock that names no day recurs daily, so it is rolled back by days to
     # the latest reading that starts before the right end ("from 9am to now",
-    # "from midnight to today"), as a right clock is rolled forward above.
-    # The year pull below would read yesterday's 9am on 31 December.
-    if end <= start and left_bare_clock and not right_dated \
-            and not _definite_endpoint(left_tok, spec):
+    # "from midnight to today"), as a right clock is rolled forward above.  A
+    # clock on a weekday, a holiday or a date keeps the year pull below, which
+    # would read yesterday's 9am for a daily clock on 31 December.
+    daily_clock = (end <= start and left[2] == "clock"
+                   and not right_dated and daily is not None
+                   and not _definite_endpoint(left_tok, spec)
+                   and daily(left_tok))
+    if daily_clock:
         day = timedelta(days=1)
         start -= ((start - end) // day + 1) * day
-    if end <= start and not left[3] and not left_bare_clock \
+    if end <= start and not left[3] and not daily_clock \
             and not _definite_endpoint(left_tok, spec) \
             and start.year != right_span.start.year:
         # The straddle repair only applies when the two endpoints landed in
