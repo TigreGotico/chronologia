@@ -636,10 +636,15 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         # clock two days later (a weekday or a holiday moves by a week, a
         # year, or not at all)
         here = endpoint(sub)
-        there = _range_endpoint(text, sub, engine, anchor + timedelta(days=2),
+        try:
+            other = anchor + timedelta(days=2)
+        except OverflowError:
+            # the last days of the calendar: read two days earlier
+            other = anchor - timedelta(days=2)
+        there = _range_endpoint(text, sub, engine, other,
                                 scale_mode=scale_mode)
         return (here is not None and there is not None
-                and there[0].start - here[0].start == timedelta(days=2))
+                and abs(there[0].start - here[0].start) == timedelta(days=2))
 
     def bare_of(sub):
         return _bare_numeral(text, sub, engine, anchor)

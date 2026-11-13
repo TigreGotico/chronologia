@@ -149,6 +149,9 @@ JUN15_13 = datetime(2026, 6, 15, 13, 0)
      datetime(2026, 6, 16)),
     ("from christmas eve at 9pm to now", DEC31_13, datetime(2026, 12, 24, 21),
      DEC31_13),
+    # two days after the anchor is past the end of the calendar
+    ("from 9am to now", datetime(9999, 12, 30, 13),
+     datetime(9999, 12, 30, 9), datetime(9999, 12, 30, 13)),
 ])
 def test_a_clock_is_rolled_back_by_days(text, anchor, begin, end):
     r = parse(text, anchor)
@@ -158,10 +161,12 @@ def test_a_clock_is_rolled_back_by_days(text, anchor, begin, end):
 
 
 # A clock on a day still to come names no range, and the words stay over:
-# Christmas said on 24 December, a written date in December said in June.
+# Christmas said on 24 December, a written date in December said in June,
+# tomorrow's 9am said today.
 @pytest.mark.parametrize("text,anchor", [
     ("from 9am on christmas to today", datetime(2026, 12, 24, 13)),
     ("from 9am on 12/25/2026 to today", JUN15_13),
+    ("from 9am tomorrow to now", JUN15_13),
 ])
 def test_a_clock_on_a_coming_day_is_not_rolled(text, anchor):
     r = parse(text, anchor)
