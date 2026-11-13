@@ -2221,6 +2221,43 @@ def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
 _veto_reentry = threading.local()
 
 
+_CLOCK_LITERAL = re.compile(r"\d{1,2}:\d{2}(:\d{2})?")
+
+
+def _clock_half_read(tokens, consumed, spec):
+    """Whether a bound clock literal is followed by an unread "past" clock
+    direction and a minute count ("ás 20h e 45", "ás 20:00 e 45m").
+
+    A written hour ("20h") folds to the literal "20:00", and no order adds
+    minutes after a literal, so the reading stops at 20:00 with "e 45" left
+    over: a time the speaker did not give.  The phrase is refused instead.
+    The number is a minute count only when it ends the phrase, carries a
+    minute unit, or has a unit letter written on it ("45m"); "às 10:00 e 2
+    amigos" counts something else and keeps its clock.
+    """
+    for i, (here, after, count) in enumerate(
+            zip(tokens, tokens[1:], tokens[2:])):
+        if (here.index in consumed
+                and _CLOCK_LITERAL.fullmatch(here.text)
+                and after.index not in consumed
+                and spec.clock_dirs.get(after.text, 0) > 0
+                and count.index not in consumed and count.is_number
+                and _minute_count(count, tokens[i + 3:i + 4], spec)):
+            return True
+    return False
+
+
+def _minute_count(count, rest, spec):
+    """Whether ``count`` ends the phrase or is followed by a minute unit,
+    either as a word or as a letter written on the number."""
+    if not rest:
+        return True
+    nxt = rest[0]
+    glued = (count.char_end is not None and nxt.char_start is not None
+             and count.char_end == nxt.char_start)
+    return glued or spec.units.get(nxt.text) == "minute"
+
+
 def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     """Whether the winning reading strands an IMPOSSIBLE day-of-month numeral --
     proof the parse is incomplete and must be refused (residue-veto design,
@@ -3122,6 +3159,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # A stranded but VALID date (a second mention, "... al 5 de junio de 2020")
     # resolves on its own and is left in the remainder untouched.
     if _impossible_date_veto(tokens, consumed, text, engine, anchor):
+        return None
+    if _clock_half_read(tokens, consumed, engine.spec):
         return None
     consumed = _fold_day_label(tokens, consumed, engine.spec)
     span, consumed = _fold_day_early(tokens, span, consumed, engine.spec)
