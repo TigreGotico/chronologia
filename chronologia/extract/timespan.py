@@ -1417,10 +1417,15 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                 return None
             start, end = pulled[0].start, right_span.end
             left = (pulled[0], pulled[1]) + left[2:]
-    # A right end that recurs each month and still lies before the start
-    # names no month that holds both ends; the year pull below would make a
-    # range of about one year.
-    if end <= start and monthly is not None and monthly(right_tok) is not None:
+    # A right end that recurs each month and still lies less than half a year
+    # before the start names no month that holds both ends: the year pull
+    # below would make a range of more than half a year, not the nearest
+    # cycle.  A left date read a year ahead ("from september 28 to the 3rd of
+    # the month" said on 1 October) lies more than half a year after the right
+    # end, and the year pull brings it back.
+    if (end <= start and monthly is not None
+            and monthly(right_tok) is not None
+            and start - right_span.start < timedelta(days=183)):
         return None
     # prefer-future asymmetry: a straddling range resolves its left endpoint a
     # whole year ahead (prefer_future) while the right stays put, inverting the
@@ -1740,6 +1745,15 @@ def _since_start(ep, sub, engine, anchor, now, text):
     return start, ep[1]
 
 
+def _reads_day_word(text, sub, engine, anchor, scale_mode="short"):
+    """Whether the reading of ``sub`` consumes a day word ("today",
+    "tomorrow"), not only holds one among its leftover words."""
+    folded = fold_tokens(tuple(sub), engine.spec, text)
+    core = _resolve_core(folded, engine, anchor, scale_mode=scale_mode)
+    return core is not None and any(
+        t.index in core[1] and t.text in engine.spec.named_days for t in folded)
+
+
 def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short"):
     """A range whose start marker is "since" and whose end marker is "until":
     "since monday until friday".
@@ -1805,10 +1819,11 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     # what keeps "since june 5 until june 12" a recent-past week rather than
     # letting "until june 12" roll a year forward on its own, and it is correct
     # for every endpoint kind (a weekday lands within the week, a dated
-    # anniversary within the year).  A day word ("today", "tomorrow") counts
-    # from now, so it is read at the anchor.
-    named = any(t.text in engine.spec.named_days for t in right_tok)
-    right_ep = endpoint(right_tok, anchor if named else start_dt)
+    # anniversary within the year).  A day word ("today", "tomorrow") that the
+    # right end reads counts from now, so that end is read at the anchor.
+    reads_day_word = _reads_day_word(text, right_tok, engine, anchor,
+                                     scale_mode)
+    right_ep = endpoint(right_tok, anchor if reads_day_word else start_dt)
     if right_ep is None:
         return None
     end = right_ep[0].end

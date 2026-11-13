@@ -286,3 +286,71 @@ def test_since_until_a_day_word_counts_from_now(text, anchor, begin, end):
     span, rest = extract_timespan(text, "en", anchor)
     assert (span.start, span.end) == (AstroDate(*begin), AstroDate(*end))
     assert rest == ""
+
+
+# A left date read a year ahead lies more than half a year after a monthly
+# right end, and the year pull brings it back to the nearest cycle.  On
+# Thursday 1 October 2026, 28 September has just passed and the first
+# Saturday of October is the 3rd.  On Wednesday 2 December 2026, 30 November
+# has just passed and the first Friday of December is the 4th.
+THU01 = datetime(2026, 10, 1, 12, 0)
+WED02 = datetime(2026, 12, 2, 12, 0)
+
+
+@pytest.mark.parametrize("lang,text,anchor,begin,end", [
+    ("en", "from september 28 to the 3rd of the month", THU01, (2026, 9, 28),
+     (2026, 10, 4)),
+    ("en", "from september 28 to the first saturday of the month", THU01,
+     (2026, 9, 28), (2026, 10, 4)),
+    ("pt", "de 28 de setembro ao primeiro sábado do mês", THU01,
+     (2026, 9, 28), (2026, 10, 4)),
+    ("es", "del 28 de septiembre al primer sábado del mes", THU01,
+     (2026, 9, 28), (2026, 10, 4)),
+    ("fr", "du 28 septembre au premier samedi du mois", THU01, (2026, 9, 28),
+     (2026, 10, 4)),
+    ("de", "vom 28. September bis zum ersten Samstag des Monats", THU01,
+     (2026, 9, 28), (2026, 10, 4)),
+    ("en", "from november 30 to the 4th of the month", WED02, (2026, 11, 30),
+     (2026, 12, 5)),
+    ("en", "between november 30 and the 4th of the month", WED02,
+     (2026, 11, 30), (2026, 12, 5)),
+    ("en", "from november 30 to the first friday of the month", WED02,
+     (2026, 11, 30), (2026, 12, 5)),
+])
+def test_a_left_date_a_year_ahead_is_pulled_back_to_a_monthly_right_end(
+        lang, text, anchor, begin, end):
+    span, rest = extract_timespan(text, lang, anchor)
+    assert (span.start, span.end) == (AstroDate(*begin), AstroDate(*end))
+    assert rest == ""
+
+
+def test_a_dated_left_end_after_a_monthly_right_end_names_no_range():
+    got = extract_timespan("from december 20 2026 to the 3rd of the month",
+                           "en", WED02)
+    assert got is None or got[1] != "", f"read {got!r}"
+
+
+# A day word left over after the right end does not move that end: the end
+# is read at the start, and the day word stays in the remainder.  Saturday
+# 20 June 2026 and Saturday 17 October 2026.
+SAT20J = datetime(2026, 6, 20, 12, 0)
+
+
+@pytest.mark.parametrize("text,anchor,begin,end,rest", [
+    ("since june 5 until june 12 and today", SAT20J, (2026, 6, 5),
+     (2026, 6, 13), "and today"),
+    ("since june 5 until june 12 then again tomorrow", SAT20J, (2026, 6, 5),
+     (2026, 6, 13), "then again tomorrow"),
+    ("since monday until friday and today", SAT17, (2026, 10, 12),
+     (2026, 10, 17), "and today"),
+    ("since september 1 until september 30 and today", SAT17, (2026, 9, 1),
+     (2026, 10, 1), "and today"),
+    # the day word is read, so 5pm is tomorrow's: a minute-wide end
+    ("since monday until tomorrow at 5pm", SAT17, (2026, 10, 12),
+     (2026, 10, 18, 17, 1), ""),
+])
+def test_a_day_word_counts_from_now_only_when_the_right_end_reads_it(
+        text, anchor, begin, end, rest):
+    span, got_rest = extract_timespan(text, "en", anchor)
+    assert (span.start, span.end) == (AstroDate(*begin), AstroDate(*end))
+    assert got_rest == rest
