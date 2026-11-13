@@ -28,7 +28,7 @@
     },
     "calendar_date": {
       "orders": [
-        "article? DAY of MONTH of? YEAR?",
+        "article? day_label? DAY of MONTH of? YEAR?",
         "article? DAY MONTH YEAR?",
         "MONTH of? YEAR?",
         "MONTH DAY? YEAR?"
@@ -79,7 +79,10 @@
         "article? day_label ORD of article? month_word REL_MARKER",
         "article ORD of article? REL_MARKER month_word",
         "article ORD of article? month_word REL_MARKER",
-        "article? day_label ORD REL_MARKER month_word"
+        "article? day_label ORD REL_MARKER month_word",
+        "article? day_label ORD of article? month_word",
+        "article? REL_MARKER day_label ORD",
+        "article? day_label ORD"
       ],
       "prefer_future": true
     },

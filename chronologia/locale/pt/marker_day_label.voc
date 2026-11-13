@@ -1,3 +1,11 @@
+# "dia N" names a numbered day of the month: Priberam s.v. "dia", "dia de
+# Reis": "Dia 6 de Janeiro, no qual os cristãos celebram a adoração de Jesus
+# pelos Reis Magos".  Said without a month ("no dia 3", "o dia 5 do mês"),
+# it is the next day with that number, or the anchor's own day when it has
+# that number: the month that lacks the day is skipped ("o dia 30 do mês"
+# said on 31 January is 30 March).  "próximo" before it ("o próximo dia 5")
+# is "Seguinte ao actual" (Priberam s.v. "próximo", 4): the next such day
+# after today.
 # Portuguese day-of-month label noun -- "dia" ("day") heads the everyday
 # idiom "dia N de <mês>" ("day 3 of March" == the 3rd of March), a genuine
 # temporal function word (Cunha e Cintra, Nova Gramatica do Portugues
