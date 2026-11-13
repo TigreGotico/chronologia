@@ -576,6 +576,30 @@ class ConstructionMatcher:
                             in self.spec.connectors.get(
                                 "weekday_week_ambiguous", frozenset())):
                         continue
+                    # A "this" marker that a locale keeps away from a
+                    # weekday ("neste luns") gives no weekday reading of its
+                    # own; the bare weekday reads instead.  The list is a
+                    # locale fact (``marker_this_not_weekday.voc``).
+                    if (name == "weekday_ref" and "REL_MARKER" in slots
+                            and slots["REL_MARKER"].text
+                            in self.spec.connectors.get(
+                                "this_not_weekday", frozenset())):
+                        continue
+                    # Some words open a day part only right after a day:
+                    # "el llunes de mañana" is Monday morning, but in "a
+                    # partir de mañana" and "el día de mañana" the word
+                    # "mañana" is tomorrow.  The list is a locale fact
+                    # (``marker_daypart_after_day.voc``).
+                    if (name == "daypart_ref" and "REL_MARKER" not in slots
+                            and tokens[start].text
+                            in self.spec.connectors.get(
+                                "daypart_after_day", frozenset())
+                            and (start == 0
+                                 or (tokens[start - 1].text
+                                     not in self.spec.weekdays
+                                     and tokens[start - 1].text
+                                     not in self.spec.named_days))):
+                        continue
                     # "friday, next week is busy": a weekday and a relative
                     # week in different clauses are two mentions, not one
                     # day of the shifted week.
