@@ -1984,13 +1984,18 @@ class Resolver:
                     year, month = base.year, base.month
                     value = _nth_weekday_of_month(year, month, target, n)
                     # "the first tuesday of the month", with no marker, names
-                    # the next such day once this month's has passed; "of
-                    # this month" keeps the anchor's month.
-                    if (rel_tok is None and value is not None
-                            and value < anchor.date()):
-                        base = _add_months(base, 1)
-                        value = _nth_weekday_of_month(base.year, base.month,
-                                                      target, n)
+                    # the next such day once this month's has passed, in the
+                    # next month that has it ("the fifth friday" skips the
+                    # months with four); "of this month" keeps the anchor's
+                    # month.
+                    if rel_tok is None and (value is None
+                                            or value < anchor.date()):
+                        for step in range(1, 13):
+                            nxt = _add_months(base, step)
+                            value = _nth_weekday_of_month(nxt.year, nxt.month,
+                                                          target, n)
+                            if value is not None:
+                                break
                 elif scope_kind == "year":
                     # "the last monday of the year" / "of this year":
                     # sibling of the plain UNIT branch's ``scope_kind ==
