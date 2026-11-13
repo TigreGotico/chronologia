@@ -1475,6 +1475,7 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
         return None
     span, consumed = core
     consumed = _fold_day_label(folded, consumed, engine.spec)
+    consumed = _fold_date_article(folded, consumed, engine.spec)
     remainder = render_remainder(text, [t for t in folded
                                         if t.index not in consumed])
     return span, remainder
@@ -1548,6 +1549,31 @@ def _fold_day_early(tokens, span, consumed, spec):
     if not (whole_day or is_morning):
         return span, consumed
     return (morning if whole_day else span), consumed | {word.index}
+
+
+def _fold_date_article(folded, consumed, spec):
+    """``consumed`` widened to swallow the article that opens a bound date.
+
+    In Portuguese, Galician and French the definite article in front of a
+    weekday or a day of the month belongs to the date ("no sábado", "o luns",
+    "le mardi"), so it must not strand.  The habitual forms ("ao sábado", "os
+    luns") read as the next such day and take their article too.
+
+    A locale opts in via ``marker_date_article.voc``; only a surface that
+    directly abuts an already-consumed token is folded, so an article heading
+    any other noun ("o bebé") stays in the remainder.  Runs after
+    :func:`_fold_day_label`, so the article in front of a label ("no dia 25")
+    folds too.
+    """
+    articles = set(spec.connectors.get("date_article", ()))
+    if not articles:
+        return consumed
+    widened = set(consumed)
+    for i, t in enumerate(folded[:-1]):
+        if (t.index not in widened and t.text in articles
+                and folded[i + 1].index in widened):
+            widened.add(t.index)
+    return widened
 
 
 def _definite_endpoint(sub, spec):
@@ -3099,6 +3125,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
         return None
     consumed = _fold_day_label(tokens, consumed, engine.spec)
     span, consumed = _fold_day_early(tokens, span, consumed, engine.spec)
+    consumed = _fold_date_article(tokens, consumed, engine.spec)
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)
@@ -3289,6 +3316,12 @@ def _compose(resolved, engine, tokens):
             and _adjacent(non_weekday_dates[0][0], weekdays[0][0])):
         eff_dates = non_weekday_dates
         label_consumed = set(range(*weekdays[0][0].span))
+        # The article in front of a labelled date ("le lundi 3 juillet") opens
+        # the whole date, not the weekday alone, so it goes with the label.
+        lead = min(weekdays[0][0].span[0], non_weekday_dates[0][0].span[0]) - 1
+        if (lead >= 0 and lead not in _covered
+                and tokens[lead].text in _articles):
+            label_consumed.add(lead)
     else:
         eff_dates = dates
     # A week-of-widened date is a seven-day span, not a day: composing a
