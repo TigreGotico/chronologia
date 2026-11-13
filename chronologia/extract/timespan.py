@@ -2118,7 +2118,10 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
       "son las 15h", ``marker_hour_statement.voc``);
     * a word of approximation or of a start time ("vers 20h", "por volta das
       20h", ``marker_hour_approx.voc``);
-    * a day period or a day word right after the hour ("20h ce soir").
+    * a day period or a day word right after an hour written with the
+      letter ("20h ce soir").  After a counted hour ("une heure avant-hier")
+      the day word does not make a clock, because the count is as often a
+      length.
     """
     if spec.lang.split("-")[0] not in _HOUR_LETTER_LOCALES:
         return False
@@ -2141,7 +2144,8 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
     if any(" ".join(before[-n:]) in markers
            for n in range(1, min(len(before), 4) + 1)):
         return False
-    return not _day_period_follows(tokens[read[-1].index + 1:], spec)
+    return not (literal
+                and _day_period_follows(tokens[read[-1].index + 1:], spec))
 
 
 def _day_period_follows(after, spec):
