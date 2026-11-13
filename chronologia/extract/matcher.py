@@ -695,14 +695,15 @@ class ConstructionMatcher:
                         continue
                     # A month count is an age too ("o bebé faz dois meses":
                     # Priberam s.v. "fazer", 13: "Atingir determinado tempo
-                    # ou determinada quantidade"), but after a verb it
-                    # counts back ("ele trabalha cá faz dois meses"), so a
-                    # subject must stand before "faz": a subject pronoun
-                    # right before it ("ela faz"), or a determiner two
-                    # words before it ("o bebé faz", "a minha filha faz").
-                    # Both lists are locale facts
-                    # (``marker_subject_pronoun.voc`` and
-                    # ``marker_subject_determiner.voc``).
+                    # ou determinada quantidade",
+                    # https://dicionario.priberam.org/fazer), but only with
+                    # its subject alone before "faz" (see
+                    # ``_subject_opens``).  After a verb, an object or a
+                    # place it counts back ("comprei o carro faz dois
+                    # meses", "fui a Lisboa faz dois meses"), and so it does
+                    # before "que" ("a minha mãe faz dois meses que está
+                    # internada"): that "que" follows a time phrase
+                    # (``marker_elapsed_que.voc``).
                     if (name == "relative_offset" and "MARKER" in slots
                             and slots["MARKER"].text
                             in self.spec.connectors.get(
@@ -711,24 +712,23 @@ class ConstructionMatcher:
                             and self.spec.units.get(
                                 slots["UNIT"].text) == "month"
                             and slots["MARKER"].index > 0
-                            and (tokens[slots["MARKER"].index - 1].text
-                                 in self.spec.connectors.get(
-                                     "subject_pronoun", frozenset())
-                                 or (slots["MARKER"].index > 1
-                                     and tokens[slots["MARKER"].index - 2].text
+                            and not (end < len(tokens)
+                                     and tokens[end].text
                                      in self.spec.connectors.get(
-                                         "subject_determiner", frozenset())))):
+                                         "elapsed_que", frozenset()))
+                            and self._subject_opens(tokens,
+                                                    slots["MARKER"].index)):
                         continue
                     # Impersonal "fazer" also names the weather (Priberam
                     # s.v. "fazer", 26: "Haver determinada condição
-                    # atmosférica"): in "faz um dia lindo" and "faz um dia
-                    # de sol" the word after "dia" qualifies the day, so "um
-                    # dia" is no count.  Elapsed time ends at the unit, at
-                    # a punctuation mark, or at a word that opens a clause
-                    # ("faz um dia que não como").  The marker and the
-                    # clause words are locale facts
-                    # (``marker_past_clause_initial.voc`` and
-                    # ``marker_clause_lead.voc``).
+                    # atmosférica", https://dicionario.priberam.org/fazer):
+                    # "faz um dia lindo", "faz um dia de sol".  A count of
+                    # one day refuses when a weather word qualifies the
+                    # day: an adjective, or "de" and a weather noun.  Any
+                    # other word leaves the count ("faz um dia inteiro que
+                    # não como").  The lists are locale facts
+                    # (``marker_weather_adjective.voc``,
+                    # ``marker_weather_noun.voc`` and ``marker_of.voc``).
                     if (name == "relative_offset" and "MARKER" in slots
                             and slots["MARKER"].text
                             in self.spec.connectors.get(
@@ -738,10 +738,15 @@ class ConstructionMatcher:
                             and self.spec.units.get(
                                 slots["UNIT"].text) == "day"
                             and end < len(tokens)
-                            and not tokens[end].break_before
-                            and tokens[end].text
-                            not in self.spec.connectors.get(
-                                "clause_lead", frozenset())):
+                            and (tokens[end].text in self.spec.connectors.get(
+                                "weather_adjective", frozenset())
+                                 or (end + 1 < len(tokens)
+                                     and tokens[end].text
+                                     in self.spec.connectors.get(
+                                         "of", frozenset())
+                                     and tokens[end + 1].text
+                                     in self.spec.connectors.get(
+                                         "weather_noun", frozenset())))):
                         continue
                     # A direction word after the unit counts only if it can
                     # follow its count: "dois anos atrás" does, while "em"
@@ -997,6 +1002,23 @@ class ConstructionMatcher:
                         Match(name, (start, end), slots, calendar=cal),
                         precedence))
         return out
+
+    def _subject_opens(self, tokens: Tuple[Token, ...], marker: int) -> bool:
+        """Whether the words before ``tokens[marker]`` are its subject alone:
+        a subject pronoun right before it ("ela faz"), or a determiner phrase
+        that opens the sentence ("o bebé faz", "a minha filha faz").  The
+        lists are locale facts (``marker_subject_pronoun.voc`` and
+        ``marker_subject_determiner.voc``)."""
+        if tokens[marker - 1].text in self.spec.connectors.get(
+                "subject_pronoun", frozenset()):
+            return True
+        determiners = self.spec.connectors.get("subject_determiner",
+                                               frozenset())
+        return any(first >= 0
+                   and (first == 0 or tokens[first].break_before)
+                   and all(t.text in determiners
+                           for t in tokens[first:marker - 1])
+                   for first in (marker - 2, marker - 3))
 
     @staticmethod
     def _select(candidates: List[MatchCandidate]) -> List[MatchCandidate]:
