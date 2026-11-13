@@ -1020,15 +1020,26 @@ def _collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
 
 
 def _governed_hour_length(tokens, governors, hour_words, minute_words,
-                          fractions):
+                          fractions, minus, minus_articles):
     """Spell a counted length of hours and minutes as "N h et M minutes".
 
     After a counted-offset word ("dans", "il y a") the hour and the minutes
     that follow it are one length: "dans 2h30", "dans 2 h 30", "dans 2
     heures et demie".  The grammar reads that length only in its full form
     ("dans 2 heures et 30 minutes"), so the short forms are rewritten to it.
-    ``fractions`` maps the fraction words after "et" to their minutes.
+    ``fractions`` maps the fraction words after "et" to their minutes.  After
+    a ``minus`` word the minutes are taken away from the hours, with an
+    optional article before a fraction: "dans 2 h moins le quart" is the
+    length 1 h 45 min, "dans 2 h moins 10" is 1 h 50 min.
     """
+    def minute_count(tok):
+        return (tok is not None and tok.is_number and tok.value is not None
+                and 0 < tok.value < 60 and float(tok.value).is_integer())
+
+    def number(value):
+        return Token(text=str(value), raw=str(value), index=0,
+                     is_number=True, value=value)
+
     out = []
     i = 0
     n = len(tokens)
@@ -1043,22 +1054,36 @@ def _governed_hour_length(tokens, governors, hour_words, minute_words,
         nxt = tokens[i + 2] if i + 2 < n else None
         nn = tokens[i + 3] if i + 3 < n else None
         minutes = None
-        if (nxt is not None and nxt.is_number and nxt.value is not None
-                and 0 < nxt.value < 60 and float(nxt.value).is_integer()):
+        hours = t
+        if minute_count(nxt):
             minutes, used = int(nxt.value), 3
             if nn is not None and nn.text in minute_words:
                 used = 4
         elif (nxt is not None and nxt.text in _FR_ET and nn is not None
                 and nn.text in fractions):
             minutes, used = fractions[nn.text], 4
+        elif (nxt is not None and nxt.text in minus
+                and t.value is not None and float(t.value).is_integer()):
+            j = i + 3
+            if nn is not None and nn.text in minus_articles:
+                j += 1
+            taken_tok = tokens[j] if j < n else None
+            taken = None
+            if taken_tok is not None and taken_tok.text in fractions:
+                taken, used = fractions[taken_tok.text], j + 1 - i
+            elif j == i + 3 and minute_count(taken_tok):
+                taken, used = int(taken_tok.value), 4
+                if i + 4 < n and tokens[i + 4].text in minute_words:
+                    used = 5
+            if taken is not None and int(t.value) * 60 > taken:
+                whole, minutes = divmod(int(t.value) * 60 - taken, 60)
+                hours = number(whole)
         if minutes is None:
             out.append(t)
             i += 1
             continue
-        lit = str(minutes)
-        out.extend((t, hour, Token(text="et", raw="et", index=0),
-                    Token(text=lit, raw=lit, index=0, is_number=True,
-                          value=minutes),
+        out.extend((hours, hour, Token(text="et", raw="et", index=0),
+                    number(minutes),
                     Token(text="minutes", raw="minutes", index=0)))
         i += used
     return _reindex(out)
@@ -1340,14 +1365,18 @@ _fold_fr_ordinals_base = _romance_prepass_fold(
     h_spared=(("dans", "ilya"), ("et", "moins")),
     # A count of hours and minutes after those offset words is one length
     # (OQLF, same page: "2 h 28 min"); "et demie" and "et quart" after a
-    # count of hours are its half and its quarter: "Et demi(e) (après un
-    # nom) : et la moitié. Cinq heures et demie." (Le Robert, s.v. "demi");
-    # "Quart d'heure : quinze minutes. [...] deux heures et quart." (Le
-    # Robert, s.v. "quart").
+    # count of hours are its half and its quarter: "Qui a la valeur d'une
+    # moitié s'ajoutant à la quantité exprimée par le substantif. Il a deux
+    # ans et demi" (TLFi, s.v. "demi", I.A); "Quart d'heure" : "Une des
+    # quatre parties égales d'une heure, quinze minutes." (TLFi, s.v. "quart",
+    # B.1.a).  "moins" before minutes takes them away from the hours: "Pour
+    # indiquer une soustraction" (TLFi, s.v. "moins", II.A), and "moins le
+    # quart est plus fréq. que moins un quart" (TLFi, s.v. "quart", B.1.a).
     hour_length=(frozenset({"dans", "ilya"}),
                  frozenset({"h", "heure", "heures"}),
                  frozenset({"min", "mins", "minute", "minutes"}),
-                 {"demie": 30, "demi": 30, "quart": 15}),
+                 {"demie": 30, "demi": 30, "quart": 15},
+                 frozenset({"moins"}), frozenset({"le", "la", "un"})),
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
 

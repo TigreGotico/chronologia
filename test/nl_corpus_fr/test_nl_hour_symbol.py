@@ -20,6 +20,7 @@ from ._corpus import parse, ad
     ("demain à 9h et quart", 9, 15),
     ("à 9 h et demie", 9, 30),
     ("à 9 h moins le quart", 8, 45),
+    ("à 2h moins le quart", 1, 45),
     ("demain à 9 heures et quart", 9, 15),
 ])
 def test_clock_direction_after_the_hour_symbol(text, hour, minute):
@@ -64,9 +65,32 @@ def test_a_clock_with_the_symbol_is_unchanged(text, hour):
 ])
 def test_hours_and_minutes_after_a_counted_offset_are_one_length(text,
                                                                  expected):
-    """"2 h 28 min" is a length (OQLF, as above); "Et demi(e) (après un
-    nom) : et la moitié. Cinq heures et demie." (Le Robert, s.v. "demi");
-    "Quart d'heure : quinze minutes." (Le Robert, s.v. "quart")."""
+    """"2 h 28 min" is a length (OQLF, as above); "et demi" adds "la valeur
+    d'une moitié" (TLFi, s.v. "demi", I.A); a quarter of an hour is "quinze
+    minutes" (TLFi, s.v. "quart", B.1.a)."""
+    span, rest = parse(text)
+    assert span.start == ad(expected)
+    assert rest == ""
+
+
+@pytest.mark.parametrize("text,expected", [
+    # 13:04 + (2 h - 15 min) = 13:04 + 1 h 45 min = 14:49
+    ("dans 2h moins le quart", datetime(2017, 6, 27, 14, 49)),
+    ("dans 2 heures moins le quart", datetime(2017, 6, 27, 14, 49)),
+    ("dans 2 h moins un quart", datetime(2017, 6, 27, 14, 49)),
+    # 13:04 + (2 h - 10 min) = 13:04 + 1 h 50 min = 14:54
+    ("dans 2 h moins 10", datetime(2017, 6, 27, 14, 54)),
+    ("dans 2 h moins 10 minutes", datetime(2017, 6, 27, 14, 54)),
+    # 13:04 + (1 h - 15 min) = 13:49
+    ("dans 1h moins le quart", datetime(2017, 6, 27, 13, 49)),
+    # 13:04 - 1 h 45 min = 11:19
+    ("il y a 2h moins le quart", datetime(2017, 6, 27, 11, 19)),
+])
+def test_moins_after_a_counted_offset_shortens_the_length(text, expected):
+    """"moins" before minutes is "Pour indiquer une soustraction" (TLFi,
+    s.v. "moins", II.A).  After "dans" the hours are a length, so the
+    minutes come off the length; read as a clock, the phrase answered 01:45
+    tomorrow with "dans" left over."""
     span, rest = parse(text)
     assert span.start == ad(expected)
     assert rest == ""
