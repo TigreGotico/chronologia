@@ -1,15 +1,12 @@
-# Weekday names that are also feminine ordinals: segunda (2nd), terça (3rd),
-# quarta (4th), quinta (5th), sexta (6th).  Priberam s.v. "segunda": the
-# ordinal "segundo" is "Que ou o que está logo depois do primeiro", and the
-# noun "segunda" is "Dia da semana, depois de domingo e antes de
-# terça-feira".  Priberam s.v. "terça": 1. adjective "Terceira."; 2. noun
-# "Cada uma as três partes iguais em que se pode dividir um todo" ("a terça
-# parte"); 3. noun "Dia da semana que vem depois de segunda-feira e antes de
-# quarta-feira".  The weekday reading is vetoed only before an ordinal noun
-# (see marker_ordinal_noun.voc).
+# Weekday names that are also feminine ordinals: segunda (2nd), quarta (4th),
+# quinta (5th), sexta (6th).  Priberam s.v. "segunda"
+# (https://dicionario.priberam.org/segunda): the ordinal "segundo" is "Que ou
+# o que está logo depois do primeiro", and the noun "segunda" is "Dia da
+# semana, depois de domingo e antes de terça-feira".  "terça" is not listed:
+# the ordinal is "terceira", and "terça" names a fraction only before
+# "parte" (see marker_weekday_fraction_homonym.voc).  The weekday reading is
+# vetoed only before an ordinal noun (see marker_ordinal_noun.voc).
 segunda
-terça
-terca
 quarta
 quinta
 sexta

@@ -5,9 +5,11 @@
 # "semana") are left out.
 # The synthetic comparatives "maior", "menor", "melhor" and "pior" also follow
 # an ordinal and never a weekday: "a segunda maior cidade" is the city in
-# second place by size.  Priberam s.v. "maior": "Que excede outro em
-# quantidade, volume, extensão, intensidade ou duração. ≠ MENOR"; s.v.
-# "melhor": "Comparativo de superioridade de bom; mais bom."
+# second place by size.  Priberam s.v. "maior"
+# (https://dicionario.priberam.org/maior): "Que excede outro em quantidade,
+# volume, extensão, intensidade ou duração. ≠ MENOR"; s.v. "melhor"
+# (https://dicionario.priberam.org/melhor): "Comparativo de superioridade de
+# bom; mais bom."
 maior
 menor
 melhor

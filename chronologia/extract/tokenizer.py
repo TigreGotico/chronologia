@@ -322,6 +322,14 @@ def _is_clause_break(char: str) -> bool:
     return (unicodedata.category(char).startswith("P")
             and char not in _WORD_INTERNAL_PUNCT)
 
+
+def _gap_breaks_clause(gap: str) -> bool:
+    """Whether the text between two tokens ends a clause.  A hyphen that
+    touches both words joins them ("segunda-feira"); a spaced or doubled
+    one ("segunda - aula", "terça -- aula") is a dash."""
+    return (any(_is_clause_break(c) for c in gap)
+            or ("-" in gap and gap != "-"))
+
 class Tokenizer:
     """Configured once from a language's :class:`TokenizerModes`."""
 
@@ -644,8 +652,8 @@ class Tokenizer:
                            break_before=(
                                i > 0 and tokens[i - 1].char_end is not None
                                and t.char_start is not None
-                               and any(_is_clause_break(c) for c in
-                                       low[tokens[i - 1].char_end:t.char_start])),
+                               and _gap_breaks_clause(
+                                   low[tokens[i - 1].char_end:t.char_start])),
                            trailing_dot=(t.char_end is not None
                                          and low[t.char_end:t.char_end + 1] == "."))
                      for i, t in enumerate(tokens))
