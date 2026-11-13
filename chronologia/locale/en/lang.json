@@ -305,7 +305,8 @@
       "orders": [
         "week_num NUM of YEAR",
         "week_num NUM YEAR?",
-        "article? ORD week_num of YEAR"
+        "article? ORD week_num of YEAR",
+        "article? ordlast week_num of YEAR"
       ]
     },
     "month_day_ref": {

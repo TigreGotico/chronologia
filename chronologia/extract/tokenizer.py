@@ -622,9 +622,13 @@ class Tokenizer:
                 # to ASCII in ``low`` and is not part of the number match, so
                 # record it here -- it is the only surviving trace.
                 apos = cs > 0 and low[cs - 1] == "'"
+                # the dropped º / ª indicator ("a 1ª semana") marks the
+                # digits as an ordinal, as the German ordinal dot does.
+                ordinal = (raw.endswith(".")
+                           or _ORDINAL_IND.match(text, ce - 1) is not None)
                 tokens.append(Token(text=raw.rstrip("."), raw=raw, index=i,
                                     is_number=True, value=value,
-                                    ordinal=raw.endswith("."),
+                                    ordinal=ordinal,
                                     char_start=cs, char_end=ce,
                                     apostrophe=apos))
             else:
