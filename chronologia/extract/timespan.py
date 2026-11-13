@@ -2188,6 +2188,82 @@ def _sentence_boundary_between(text, start, end) -> bool:
     return any(c in ".!?;\n" for c in text[start:end])
 
 
+# Locales that write the hour-letter clock ("20h", "21h30"); see the folds in
+# numfold_romance, numfold_agglutinative and numfold_germanic.
+_HOUR_LETTER_LOCALES = frozenset({
+    "ast", "ca", "el", "es", "fr", "gl", "it", "oc", "pt", "ro", "sv"})
+_HOUR_LITERAL = re.compile(r"\d{1,2}:\d{2}")
+
+
+def _bare_hour_in_sentence(tokens, consumed, spec):
+    """Whether the whole reading is a bare hour that stands inside a
+    sentence with no clock marker ("un film de 2h", "il reste 3 heures").
+
+    In a locale that writes the hour-letter clock, "2h" and "3 heures" are as
+    often a length as a time of day.  Alone they are a clock; behind "à" or
+    another clock marker they are a clock; next to other words and with no
+    marker they are not read.  Three kinds of marker the reading does not
+    consume also make the hour a clock, each listed in the locale's own
+    vocabulary with its source:
+
+    * the verb that states the hour, with its article ("il est 3 heures",
+      "son las 15h", ``marker_hour_statement.voc``);
+    * a word of approximation or of a start time ("vers 20h", "por volta das
+      20h", ``marker_hour_approx.voc``);
+    * a day period or a day word right after an hour written with the
+      letter ("20h ce soir").  After a counted hour ("une heure avant-hier")
+      the day word does not make a clock, because the count is as often a
+      length.
+
+    A half or a quarter added to an hour written with the letter or taken
+    from it ("un film de 2h et demie", "2h moins le quart") leaves it a bare
+    hour.  A plain number with a fraction ("pelas 10 e meia") is not one.  A
+    clock marker that is also an article ("alle" in it) is a marker, never
+    glue.
+    """
+    if spec.lang.split("-")[0] not in _HOUR_LETTER_LOCALES:
+        return False
+    if not any(t.index not in consumed and t.text.strip(".,;:!?")
+               for t in tokens):
+        return False
+    oclock = set(spec.connectors.get("oclock", ()))
+    glue = ((set(spec.connectors.get("of", ()))
+             | set(spec.connectors.get("article", ())))
+            - set(spec.connectors.get("at", ())))
+    read = [t for t in tokens if t.index in consumed and t.text not in glue]
+    tail = (len(read) >= 2 and read[-2].text in spec.clock_dirs
+            and read[-1].text in spec.clock_fractions)
+    if tail:
+        read = read[:-2]
+    literal = (len(read) == 1 and read[0].char_start is None
+               and _HOUR_LITERAL.fullmatch(read[0].text))
+    counted = ((len(read) == 2 and read[0].is_number
+                and read[1].text in oclock)
+               or (tail and len(read) == 1 and read[0].is_number
+                   and read[0].char_start is None))
+    if not (literal or counted):
+        return False
+    markers = (spec.connectors.get("hour_statement", frozenset())
+               | spec.connectors.get("hour_approx", frozenset()))
+    before = [t.text.lower() for t in tokens[:read[0].index]]
+    if any(" ".join(before[-n:]) in markers
+           for n in range(1, min(len(before), 4) + 1)):
+        return False
+    return not (literal
+                and _day_period_follows(tokens[read[-1].index + 1:], spec))
+
+
+def _day_period_follows(after, spec):
+    """Whether ``after`` opens with a day period or a day word, alone or
+    behind a relative marker ("20h ce soir", "15h amanhã")."""
+    words = [t.text.lower() for t in after[:2]]
+    if words and words[0] in spec.rel_markers:
+        words = words[1:]
+    return bool(words) and (words[0] in spec.dayparts
+                            or words[0] in spec.daypart_today_words
+                            or words[0] in spec.named_days)
+
+
 def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
     """True when a negation/exclusion particle GOVERNS the winning reference and
     the phrase is not a resolvable bound.
@@ -2249,6 +2325,43 @@ def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
 
 
 _veto_reentry = threading.local()
+
+
+_CLOCK_LITERAL = re.compile(r"\d{1,2}:\d{2}(:\d{2})?")
+
+
+def _clock_half_read(tokens, consumed, spec):
+    """Whether a bound clock literal is followed by an unread "past" clock
+    direction and a minute count ("ás 20h e 45", "ás 20:00 e 45m").
+
+    A written hour ("20h") folds to the literal "20:00", and no order adds
+    minutes after a literal, so the reading stops at 20:00 with "e 45" left
+    over: a time the speaker did not give.  The phrase is refused instead.
+    The number is a minute count only when it ends the phrase, carries a
+    minute unit, or has a unit letter written on it ("45m"); "às 10:00 e 2
+    amigos" counts something else and keeps its clock.
+    """
+    for i, (here, after, count) in enumerate(
+            zip(tokens, tokens[1:], tokens[2:])):
+        if (here.index in consumed
+                and _CLOCK_LITERAL.fullmatch(here.text)
+                and after.index not in consumed
+                and spec.clock_dirs.get(after.text, 0) > 0
+                and count.index not in consumed and count.is_number
+                and _minute_count(count, tokens[i + 3:i + 4], spec)):
+            return True
+    return False
+
+
+def _minute_count(count, rest, spec):
+    """Whether ``count`` ends the phrase or is followed by a minute unit,
+    either as a word or as a letter written on the number."""
+    if not rest:
+        return True
+    nxt = rest[0]
+    glued = (count.char_end is not None and nxt.char_start is not None
+             and count.char_end == nxt.char_start)
+    return glued or spec.units.get(nxt.text) == "minute"
 
 
 def _impossible_date_veto(tokens, consumed, text, engine, anchor):
@@ -3134,6 +3247,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # (a whole-prefix scan would falsely veto a trigger in another clause).
     if _exclusion_governing_veto(tokens, consumed, text, engine.spec):
         return None
+    if _bare_hour_in_sentence(tokens, consumed, engine.spec):
+        return None
     # Impossible-date veto (residue-veto design, #244): a stranded
     # "<number> of ..." fragment in the remainder -- a day-of-month qualifier
     # the core could not bind because the day is impossible (a 32nd, the 29th
@@ -3152,6 +3267,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # A stranded but VALID date (a second mention, "... al 5 de junio de 2020")
     # resolves on its own and is left in the remainder untouched.
     if _impossible_date_veto(tokens, consumed, text, engine, anchor):
+        return None
+    if _clock_half_read(tokens, consumed, engine.spec):
         return None
     consumed = _fold_day_label(tokens, consumed, engine.spec)
     span, consumed = _fold_day_early(tokens, span, consumed, engine.spec)
