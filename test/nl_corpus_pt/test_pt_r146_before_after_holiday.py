@@ -39,8 +39,14 @@ def test_bare_after_refused_not_stranded():
     assert _span("depois do natal") is None
 
 
-def test_bare_before_past_endpoint_refused():
-    assert _span("antes de ontem") is None  # "before yesterday"
+def test_antes_de_ontem_is_the_day_before_yesterday():
+    # Priberam s.v. "anteontem": "No dia que precedeu o dia de ontem. =
+    # ANTES DE ONTEM".  Thursday 13 August minus two days is 11 August.
+    r = _span("antes de ontem")
+    assert r is not None
+    assert r[0].start == datetime(2026, 8, 11)
+    assert r[0].end == datetime(2026, 8, 12)
+    assert r.remainder == ""
 
 
 def test_magnitude_offset_before_unaffected():
