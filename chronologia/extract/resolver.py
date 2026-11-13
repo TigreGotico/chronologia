@@ -833,7 +833,7 @@ class Resolver:
             elif rel < 0:
                 shift = -((anchor.weekday() - target) % 7 or 7)
             else:
-                shift = target - anchor.weekday()
+                shift = (target - anchor.weekday()) % 7
             value = anchor + timedelta(days=shift)
             return Resolution(_point_span(value, "minute"),
                               self._consumed(match))
