@@ -3,6 +3,15 @@
 # is an ordinal, not a weekday.  Machine-drafted, not native-reviewed.  Words
 # that also follow a weekday ("manhã", "tarde", "noite", "feira",
 # "semana") are left out.
+# The synthetic comparatives "maior", "menor", "melhor" and "pior" also follow
+# an ordinal and never a weekday: "a segunda maior cidade" is the city in
+# second place by size.  Priberam s.v. "maior": "Que excede outro em
+# quantidade, volume, extensão, intensidade ou duração. ≠ MENOR"; s.v.
+# "melhor": "Comparativo de superioridade de bom; mais bom."
+maior
+menor
+melhor
+pior
 vez
 dose
 opção

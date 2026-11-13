@@ -651,17 +651,35 @@ class ConstructionMatcher:
                                 "singular_only", frozenset())
                             and tokens[_mi + 1].text in self._plural_periods):
                         continue
+                    # "Last" also means final (Priberam s.v. "último", 1:
+                    # "Que vem ou está depois de todos"), and an "of" phrase
+                    # after the period says what it is the final one of: "o
+                    # último dia de escola" is the final day of school, not
+                    # yesterday.  A construction that reads the "of" phrase
+                    # as a date ("o último dia do mês", "a última semana de
+                    # 2026") is a longer candidate and still wins.  Both
+                    # lists are locale facts (``marker_ordlast.voc`` and
+                    # ``marker_of.voc``).
+                    if (name == "rel_period" and "REL_MARKER" in slots
+                            and slots["REL_MARKER"].text
+                            in self.spec.connectors.get(
+                                "ordlast", frozenset())
+                            and end < len(tokens)
+                            and not tokens[end].break_before
+                            and tokens[end].text in self.spec.connectors.get(
+                                "of", frozenset())):
+                        continue
                     # A weekday word that is also a feminine ordinal ("a
-                    # segunda dose", "pela segunda vez") names a Monday only
-                    # when no ordinal noun follows it.  The first word of a
-                    # phrase is exempt: the tokenizer drops the comma of a
-                    # calendar note ("segunda, aula de piano").  Both lists
-                    # are locale facts
+                    # segunda dose", "pela segunda vez", "quinta vez") names
+                    # a Monday only when no ordinal noun follows it.  A
+                    # punctuation mark between the two keeps the weekday: a
+                    # calendar note ("segunda, aula de piano") names the day,
+                    # then the event.  Both lists are locale facts
                     # (``marker_weekday_ordinal_homonym.voc`` and
                     # ``marker_ordinal_noun.voc``); a locale shipping neither
                     # is unaffected.
-                    if (name == "weekday_ref" and start > 0
-                            and end < len(tokens)
+                    if (name == "weekday_ref" and end < len(tokens)
+                            and not tokens[end].break_before
                             and (slots.get("WEEKDAY") or slots.get(
                                 "WEEKDAYFULL")) is not None
                             and (slots.get("WEEKDAY") or slots.get(
