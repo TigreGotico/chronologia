@@ -3329,7 +3329,7 @@ def _offset_is_day_or_coarser(match, spec) -> bool:
     return kind is not None and kind not in _SUBDAY_OFFSET_UNITS
 
 
-def _compose(resolved, engine, tokens):
+def _compose(resolved, engine, tokens, text=None):
     """Pick the single winning reading from the post-passed ``resolved`` matches.
 
     Returns ``(res, label_consumed, rep)``:
@@ -3352,7 +3352,7 @@ def _compose(resolved, engine, tokens):
     public APIs never disagree on the composed primary.
     """
     spec = engine.spec
-    resolved, apposed = _fold_apposed_weekday(resolved, spec, tokens)
+    resolved, apposed = _fold_apposed_weekday(resolved, spec, tokens, text)
     if resolved is None:
         return None, set(), None
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
@@ -3530,15 +3530,23 @@ def _compose(resolved, engine, tokens):
     return res, label_consumed | glue_consumed | apposed, rep
 
 
-def _fold_apposed_weekday(resolved, spec, tokens):
-    """A weekday next to a named day names the same day, or no day.
+def _fold_apposed_weekday(resolved, spec, tokens, text):
+    """A weekday after a named day names the same day, or no day.
 
     In "amanhã domingo" or "tomorrow, sunday" the weekday is an apposition:
-    it characterises the day the day word names.  When the two agree the
-    weekday folds into the day word's reading and does not strand.  When
+    an "aposto" is a "Nome ou locução nominal que se junta a outro nome para
+    melhor o caracterizar" (Priberam s.v. "aposto", 5).  When the two agree
+    the weekday folds into the day word's reading and does not strand.  When
     they disagree ("amanhã segunda-feira" said on a Saturday) the phrase
     names no single day, and the reading is refused.  Only a bare weekday
-    (no next/last marker) directly beside one day word is an apposition.
+    (no next/last marker) directly after one day word is an apposition.
+
+    A weekday before the day word is not folded.  In de, nl, da and nb,
+    "morgen" after a weekday names its morning: "Dienstagmorgen" is "Morgen
+    des Dienstags" (Duden s.v. "Dienstagmorgen"), so "dienstag morgen" is
+    Tuesday morning, and es "martes mañana" reads the same way.  A sentence
+    end between the two words also stops the fold: "vou amanhã. segunda-feira
+    trabalho" names tomorrow.
 
     Returns ``(resolved, consumed)``: the matches without the folded weekday
     and the weekday's token positions, or ``(None, set())`` on a refusal.
@@ -3550,9 +3558,14 @@ def _fold_apposed_weekday(resolved, spec, tokens):
     if len(days) != 1 or len(weekdays) != 1:
         return resolved, set()
     (day_match, day_res), (wd_match, _wd_res) = days[0], weekdays[0]
-    (lo, hi) = sorted((day_match.span, wd_match.span))
-    between = [tokens[i].text for i in range(lo[1], hi[0])]
+    if wd_match.span[0] < day_match.span[0]:
+        return resolved, set()
+    between = [tokens[i].text for i in range(day_match.span[1], wd_match.span[0])]
     if any(t not in (",",) for t in between):
+        return resolved, set()
+    if text is not None and _sentence_boundary_between(
+            text, tokens[day_match.span[1] - 1].char_end,
+            tokens[wd_match.span[0]].char_start):
         return resolved, set()
     wd_tok = wd_match.slots.get("WEEKDAY") or wd_match.slots["WEEKDAYFULL"]
     if day_res.value.start.weekday() != spec.weekdays[wd_tok.text]:
@@ -3616,7 +3629,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         return None
     # widen a date carrying the locale's "week of" marker to its whole week
     resolved = _apply_week_of(tokens, resolved, engine.spec)
-    res, label_consumed, rep = _compose(resolved, engine, tokens)
+    res, label_consumed, rep = _compose(resolved, engine, tokens, text)
     if res is None:
         # A day-part+clock meridiem contradiction ("morning at 9pm") --
         # _compose declined the whole reading rather than pick a winner.
@@ -3766,7 +3779,7 @@ def extract_candidates(
     label_extra = {}
     primary = None
     if composed:
-        win_res, win_label, rep = _compose(composed, engine, tokens)
+        win_res, win_label, rep = _compose(composed, engine, tokens, text)
         if win_res is not None:
             consumed_all = set(win_res.consumed) | win_label
             lo, hi = min(consumed_all), max(consumed_all) + 1
