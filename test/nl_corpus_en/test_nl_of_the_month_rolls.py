@@ -235,3 +235,54 @@ def test_since_and_range_agree_on_the_last_weekday(text, anchor, begin, end):
 def test_since_the_last_weekday_of_this_month_ahead_names_no_start():
     got = extract_timespan("since the last friday of this month", "en", SAT17)
     assert got is None or got[1] != ""
+
+
+# A right end that recurs each month and still lies before the left end names
+# no range, and the left end is not pulled back a year.  December 2026
+# Thursdays are 3, 10, 17, 24 and 31; the Sunday after Monday 28 December is
+# 3 January 2027, and tomorrow on Thursday 31 December is 1 January 2027.
+MON28 = datetime(2026, 12, 28, 12, 0)
+THU31 = datetime(2026, 12, 31, 12, 0)
+
+
+@pytest.mark.parametrize("lang,text,anchor", [
+    ("en", "from sunday to the last thursday of the month", MON28),
+    ("en", "between sunday and the last thursday of the month", MON28),
+    ("en", "from january 2 to the last thursday of the month", MON28),
+    ("en", "from sunday to the fifth thursday of the month", MON28),
+    ("en", "from tomorrow to the last thursday of the month", THU31),
+    ("en", "from sunday to the 31st of the month", MON28),
+    ("en", "from tomorrow to the 31st of the month", THU31),
+    ("pt", "de domingo até à última quinta-feira do mês", MON28),
+    ("pt", "de amanhã até à última quinta-feira do mês", THU31),
+    ("es", "del domingo al último jueves del mes", MON28),
+    ("fr", "de dimanche au dernier jeudi du mois", MON28),
+    ("de", "von Sonntag bis zum letzten Donnerstag des Monats", MON28),
+])
+def test_a_monthly_right_end_before_the_left_end_names_no_range(lang, text,
+                                                                anchor):
+    got = extract_timespan(text, lang, anchor)
+    assert got is None or got[1] != "", f"read {got!r}"
+
+
+# "since X until today" ends today, whatever X is: a day word counts from
+# now, not from the start.  On Saturday 17 October 2026 the Monday before is
+# the 12th; on Tuesday 10 November the fifth Friday of October is the 30th.
+@pytest.mark.parametrize("text,anchor,begin,end", [
+    ("since the last friday of the month until tomorrow", SAT17,
+     (2026, 9, 25), (2026, 10, 19)),
+    ("since the last friday of the month until today", SAT17,
+     (2026, 9, 25), (2026, 10, 18)),
+    ("since the fifth friday of the month until today",
+     datetime(2026, 11, 10, 12, 0), (2026, 10, 30), (2026, 11, 11)),
+    ("since the first tuesday of the month until today", SAT17,
+     (2026, 10, 6), (2026, 10, 18)),
+    ("since monday until today", SAT17, (2026, 10, 12), (2026, 10, 18)),
+    ("since monday until yesterday", SAT17, (2026, 10, 12), (2026, 10, 17)),
+    ("since yesterday until tomorrow", SAT17, (2026, 10, 16), (2026, 10, 19)),
+    ("since monday until friday", SAT17, (2026, 10, 12), (2026, 10, 17)),
+])
+def test_since_until_a_day_word_counts_from_now(text, anchor, begin, end):
+    span, rest = extract_timespan(text, "en", anchor)
+    assert (span.start, span.end) == (AstroDate(*begin), AstroDate(*end))
+    assert rest == ""

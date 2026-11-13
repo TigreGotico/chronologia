@@ -1417,6 +1417,11 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                 return None
             start, end = pulled[0].start, right_span.end
             left = (pulled[0], pulled[1]) + left[2:]
+    # A right end that recurs each month and still lies before the start
+    # names no month that holds both ends; the year pull below would make a
+    # range of about one year.
+    if end <= start and monthly is not None and monthly(right_tok) is not None:
+        return None
     # prefer-future asymmetry: a straddling range resolves its left endpoint a
     # whole year ahead (prefer_future) while the right stays put, inverting the
     # span.  Pull an unpinned left back one year so both read in the nearest
@@ -1800,8 +1805,10 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     # what keeps "since june 5 until june 12" a recent-past week rather than
     # letting "until june 12" roll a year forward on its own, and it is correct
     # for every endpoint kind (a weekday lands within the week, a dated
-    # anniversary within the year).
-    right_ep = endpoint(right_tok, start_dt)
+    # anniversary within the year).  A day word ("today", "tomorrow") counts
+    # from now, so it is read at the anchor.
+    named = any(t.text in engine.spec.named_days for t in right_tok)
+    right_ep = endpoint(right_tok, anchor if named else start_dt)
     if right_ep is None:
         return None
     end = right_ep[0].end
