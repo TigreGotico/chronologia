@@ -651,25 +651,55 @@ class ConstructionMatcher:
                                 "singular_only", frozenset())
                             and tokens[_mi + 1].text in self._plural_periods):
                         continue
-                    # A weekday word that is also a feminine ordinal ("a
-                    # segunda dose", "pela segunda vez") names a Monday only
-                    # when no ordinal noun follows it.  The first word of a
-                    # phrase is exempt: the tokenizer drops the comma of a
-                    # calendar note ("segunda, aula de piano").  Both lists
-                    # are locale facts
-                    # (``marker_weekday_ordinal_homonym.voc`` and
-                    # ``marker_ordinal_noun.voc``); a locale shipping neither
-                    # is unaffected.
-                    if (name == "weekday_ref" and start > 0
-                            and end < len(tokens)
-                            and (slots.get("WEEKDAY") or slots.get(
-                                "WEEKDAYFULL")) is not None
-                            and (slots.get("WEEKDAY") or slots.get(
-                                "WEEKDAYFULL")).text
+                    # "Last" also means final (Priberam s.v. "último", 1:
+                    # "Que vem ou está depois de todos"), and an "of" phrase
+                    # after the period says what it is the final one of: "o
+                    # último dia de escola" is the final day of school, not
+                    # yesterday.  A construction that reads the "of" phrase
+                    # as a date ("o último dia do mês", "a última semana de
+                    # 2026") is a longer candidate and still wins.  A locale
+                    # opts in by listing its "of" words in
+                    # ``marker_ordlast_of.voc``: where the "last" word also
+                    # means "previous" and the preposition also means "in"
+                    # (de "letzte Woche im Büro", fr "la semaine dernière de
+                    # nouveau"), the phrase names a place or an activity
+                    # instead, so those locales ship no such file.
+                    if (name == "rel_period" and "REL_MARKER" in slots
+                            and slots["REL_MARKER"].text
                             in self.spec.connectors.get(
-                                "weekday_ordinal_homonym", frozenset())
+                                "ordlast", frozenset())
+                            and end < len(tokens)
+                            and not tokens[end].break_before
                             and tokens[end].text in self.spec.connectors.get(
-                                "ordinal_noun", frozenset())):
+                                "ordlast_of", frozenset())):
+                        continue
+                    # A weekday word that is also a feminine ordinal ("a
+                    # segunda dose", "pela segunda vez", "quinta vez") names
+                    # a Monday only when no ordinal noun follows it.  A
+                    # weekday word that is also a fraction ("a terça parte")
+                    # names no day before its fraction noun.  A punctuation
+                    # mark between the two keeps the weekday: a calendar
+                    # note ("segunda, aula de piano") names the day, then
+                    # the event.  The four lists are locale facts
+                    # (``marker_weekday_ordinal_homonym.voc``,
+                    # ``marker_ordinal_noun.voc``,
+                    # ``marker_weekday_fraction_homonym.voc`` and
+                    # ``marker_fraction_noun.voc``); a locale shipping none
+                    # is unaffected.
+                    _wd = slots.get("WEEKDAY") or slots.get("WEEKDAYFULL")
+                    if (name == "weekday_ref" and _wd is not None
+                            and end < len(tokens)
+                            and not tokens[end].break_before
+                            and ((_wd.text in self.spec.connectors.get(
+                                "weekday_ordinal_homonym", frozenset())
+                                  and tokens[end].text
+                                  in self.spec.connectors.get(
+                                      "ordinal_noun", frozenset()))
+                                 or (_wd.text in self.spec.connectors.get(
+                                     "weekday_fraction_homonym", frozenset())
+                                     and tokens[end].text
+                                     in self.spec.connectors.get(
+                                         "fraction_noun", frozenset())))):
                         continue
                     # "faz N anos" counts back ("faz dois anos") only at the
                     # start of a clause; after a subject it is the verb "to
