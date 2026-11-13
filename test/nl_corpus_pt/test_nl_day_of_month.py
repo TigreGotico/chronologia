@@ -105,3 +105,48 @@ def test_since_other_cycles_unchanged(text, expected):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
     assert r.span.start == ad(expected)
+
+
+# The left end of a range ending today or yesterday is the latest day N at
+# or before the right end, a month or more back, never a year back.  Sunday
+# 2017-12-10: the 3rd and the 1st have passed in December, so "do dia 3 até
+# hoje" runs from 3 December to the end of the 10th.  Sunday 2017-12-31
+# 23:59: yesterday is the 30th, and the 20th has passed.  Tuesday
+# 2017-06-27: the 3rd has passed in June.  Counted on the calendar by hand.
+DEC10 = datetime(2017, 12, 10, 10, 0)
+DEC31 = datetime(2017, 12, 31, 23, 59)
+
+
+@pytest.mark.parametrize("text,anchor,begin,end", [
+    ("do dia 3 até hoje", DEC10, datetime(2017, 12, 3), datetime(2017, 12, 11)),
+    ("entre o dia 1 e hoje", DEC10, datetime(2017, 12, 1),
+     datetime(2017, 12, 11)),
+    ("desde o dia 3 até ontem", DEC10, datetime(2017, 12, 3),
+     datetime(2017, 12, 10)),
+    ("do dia 20 até ontem", DEC31, datetime(2017, 12, 20),
+     datetime(2017, 12, 31)),
+    ("do dia 3 até hoje", ANCHOR, datetime(2017, 6, 3), datetime(2017, 6, 28)),
+])
+def test_range_from_day_of_month_steps_back_by_months(text, anchor, begin,
+                                                       end):
+    r = parse(text, anchor)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (ad(begin), ad(end))
+    assert r.remainder == ""
+
+
+# A weekday said beside "dia N" must fall on that day.  20 June 2017 is a
+# Tuesday, so "desde terça dia 20" said on Tuesday 27 June starts on the
+# 20th.  It is not a Wednesday, so "desde quarta dia 20" names no start.
+def test_since_weekday_with_day_of_month_agrees():
+    r = parse("desde terça dia 20")
+    assert r is not None
+    assert (r.span.start, r.span.end) == (ad(datetime(2017, 6, 20)),
+                                          ad(ANCHOR))
+    assert r.remainder in ("", "terça")
+
+
+def test_since_weekday_that_disagrees_with_the_day_names_no_start():
+    r = parse("desde quarta dia 20")
+    assert r is None or r.remainder != "", f"read {r!r}"
+    assert r is None or r.span.start != ad(datetime(2017, 6, 20))
