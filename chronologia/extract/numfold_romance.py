@@ -1197,11 +1197,18 @@ def _governed_hour_length(tokens, spec, governors, fractions, minus,
             out.append(t)
             i += 1
             continue
-        out.extend((hours, hour))
+        # the rewritten length keeps the extent of what was written, so a
+        # remainder or a mention reads the user's own words
+        first, last = tokens[i + 2], tokens[i + used - 1]
+        tail = []
         if minutes is not None:
-            out.extend((word("et"), number(minutes), word("minutes")))
+            tail += [word("et"), number(minutes), word("minutes")]
         if seconds is not None:
-            out.extend((word("et"), number(seconds), word("secondes")))
+            tail += [word("et"), number(seconds), word("secondes")]
+        tail = [replace(x, char_start=first.char_start, char_end=last.char_end)
+                for x in tail]
+        out.extend([replace(hours, raw=t.raw, char_start=t.char_start,
+                            char_end=t.char_end), hour] + tail)
         i += used
     return _reindex(out)
 
@@ -1473,9 +1480,9 @@ _fold_fr_ordinals_base = _romance_prepass_fold(
     phrases=_FR_PHRASES, h_clock=True,
     # "h" is the symbol of "heure" (OQLF, Banque de dépannage linguistique,
     # "Écriture des nombres exprimant une durée": "2 heures 28 minutes (ou :
-    # 2 h 28 min)"), so after the counted-offset words of marker_in.voc and
-    # marker_ago.voc it is the hour unit, and before the clock directions of
-    # clock_dir_past.voc and clock_dir_to.voc it is the hour word.
+    # 2 h 28 min)"), so after the counted-offset words "dans" and "il y a"
+    # ("ilya" once folded) it is the hour unit, and before the clock
+    # directions "et" and "moins" it is the hour word.
     h_spared=(("dans", "ilya"), ("et", "moins")),
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
@@ -1513,7 +1520,7 @@ def fold_fr_hour_length(tokens, spec):
     couru l'épreuve en 10 min 35 s 7/100." (same page).  "sec" is also a
     symbol of the second: "Symbole de la seconde. Note : Le symbole du
     Système international est s." (Wiktionnaire, s.v. "sec", Conventions
-    internationales, 3).  "et demie" and "et quart" after a count of hours
+    internationales, 3, labelled "Non standard").  "et demie" and "et quart" after a count of hours
     are its half and its quarter: "Qui a la valeur d'une moitié s'ajoutant à
     la quantité exprimée par le substantif. Il a deux ans et demi" (TLFi,
     s.v. "demi", I.A); "Quart d'heure" : "Une des quatre parties égales

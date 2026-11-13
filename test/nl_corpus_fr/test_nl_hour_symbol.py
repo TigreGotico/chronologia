@@ -143,3 +143,16 @@ def test_a_count_before_another_unit_is_not_taken_away():
 def test_the_length_rewrite_leaves_the_phrase(text, kept):
     spec = load_lang_spec("fr")
     assert [t.text for t in prematch_tokens(text, spec)] == kept
+
+
+@pytest.mark.parametrize("text,rest", [
+    ("rappelle-moi le 3 juillet de partir dans 2 heures moins 5",
+     "rappelle-moi de partir dans 2 heures moins 5"),
+    ("le 3 juillet, dans 2 heures moins 10 secondes",
+     "dans 2 heures moins 10 secondes"),
+])
+def test_the_remainder_keeps_the_words_the_user_wrote(text, rest):
+    """The length rewrite works on tokens; the remainder still slices the
+    sentence, so the user's own words come back."""
+    _, left = parse(text)
+    assert left == rest
