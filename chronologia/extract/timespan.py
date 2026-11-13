@@ -1592,7 +1592,32 @@ def _definite_endpoint(sub, spec):
                    for t in sub))
 
 
-def _since_start(ep, sub, engine, anchor, now):
+def _names_day_of_month(text, sub, engine):
+    """Whether the endpoint ``sub`` binds a numbered day of the month with no
+    month named ("o dia 3", "the 3rd of the month")."""
+    folded = fold_tokens(tuple(sub), engine.spec, text)
+    veto = lambda m: _candidate_veto(folded, m, engine.spec)   # noqa: E731
+    return any(m.construction == "month_day_ref"
+               for m in engine.matcher.match(folded, veto))
+
+
+def _minus_months_keeping_day(astro, now):
+    """The latest date at or before ``now`` with the day of the month and the
+    clock of ``astro``, stepping back one month at a time from ``now``'s month
+    and skipping a month that lacks the day; ``None`` when a year finds none."""
+    year, month = now.year, now.month
+    for _ in range(12):
+        try:
+            cand = astro.replace(year=year, month=month)
+        except (ValueError, OverflowError):
+            cand = None
+        if cand is not None and cand <= now:
+            return cand
+        year, month = (year, month - 1) if month > 1 else (year - 1, 12)
+    return None
+
+
+def _since_start(ep, sub, engine, anchor, now, text):
     """The start instant of a "since <endpoint>" span, or ``None``.
 
     "since X" is PAST-anchored: it names the most recent occurrence of X
@@ -1605,7 +1630,10 @@ def _since_start(ep, sub, engine, anchor, now):
     underspecified endpoint whose prefer_future guessed the wrong cycle forward
     (bare "july 6", "christmas", "q3", a bare clock time) is rolled back by its
     OWN cycle -- a year for a date/quarter, a DAY for a time-of-day -- until it
-    lands at-or-before now.
+    lands at-or-before now.  A numbered day of the month with no month named
+    ("since the 3rd of the month", "desde o dia 3") recurs MONTHLY: it steps
+    back a month at a time, its clock with it, and skips a month that lacks
+    the day.
     """
     spec = engine.spec
     wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
@@ -1632,6 +1660,8 @@ def _since_start(ep, sub, engine, anchor, now):
         while start > now:
             start = start + timedelta(days=-7)
         return start
+    if start > now and _names_day_of_month(text, sub, engine):
+        return _minus_months_keeping_day(start, now)
     # An underspecified recurring reference.  Roll back by its OWN cycle: a bare
     # time-of-day (a sub-day-wide span with no calendar-date word) recurs DAILY,
     # so "since noon" at 9am is yesterday noon -- NOT a year ago; everything else
@@ -1700,7 +1730,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
                 or _bare_weekday_endpoint(sub, engine, at))
 
     left_ep = endpoint(left_tok, anchor)
-    start = _since_start(left_ep, left_tok, engine, anchor, now)
+    start = _since_start(left_ep, left_tok, engine, anchor, now, text)
     if start is None:
         return None
     start_dt = start.datetime()
@@ -1760,7 +1790,7 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             else None
 
     def since_span(ep, sub):
-        start = _since_start(ep, sub, engine, anchor, now)
+        start = _since_start(ep, sub, engine, anchor, now, text)
         return DateSpan(start, now) if start is not None and start < now \
             else None
 
