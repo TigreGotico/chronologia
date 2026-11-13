@@ -1,7 +1,8 @@
 """Bare weekdays and this/next/last calendar periods.
 
-``el martes`` names the next strictly-future occurrence of that weekday from the
-anchor (Tuesday 2017-06-27), i.e. the following week.  Weeks are Monday-based.
+``el martes`` names the next occurrence of that weekday from the anchor
+(Tuesday 2017-06-27), and the anchor day itself on that weekday.  Weeks are
+Monday-based.
 """
 from datetime import date, datetime, timedelta
 
@@ -15,7 +16,7 @@ _ANCHOR = date(2017, 6, 27)  # Tuesday
 
 @pytest.mark.parametrize("w,word", sorted(WD.items()))
 def test_weekday_next_strict(w, word):
-    offset = (w - _ANCHOR.weekday()) % 7 or 7
+    offset = (w - _ANCHOR.weekday()) % 7
     d = datetime(2017, 6, 27) + timedelta(days=offset)
     s, e = start_end(f"el {word}")
     assert s == ad(d)

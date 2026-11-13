@@ -85,7 +85,7 @@ def test_next_weekend():
     ("sunnudagur", 6),
 ])
 def test_bare_weekday_names_its_next_occurrence(text, idx):
-    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    ahead = (idx - ANCHOR.weekday()) % 7
     expected = (ANCHOR + timedelta(days=ahead)).date()
     s = span(text)
     assert (s.start.year, s.start.month, s.start.day) == (

@@ -43,8 +43,9 @@ def test_r148_ru_monday_and_friday_stay_two_mentions_not_a_range():
     )
     assert len(ms) == 2
     monday, friday = ms
-    assert monday.span.start == AstroDate(2026, 8, 17)
-    assert monday.span.end == AstroDate(2026, 8, 18)
+    # "в понедельник" said on Monday 2026-08-10 is that day
+    assert monday.span.start == AstroDate(2026, 8, 10)
+    assert monday.span.end == AstroDate(2026, 8, 11)
     assert friday.span.start == AstroDate(2026, 8, 14)
     assert friday.span.end == AstroDate(2026, 8, 15)
 
@@ -70,7 +71,7 @@ def test_r148_ru_three_sentences_four_mentions():
         "Крайний срок в пятницу."
     )
     assert len(ms) == 4
-    assert [m.span.start.day for m in ms] == [10, 17, 12, 14]
+    assert [m.span.start.day for m in ms] == [10, 10, 12, 14]
 
 
 # --------------------------------------------------------------------------
@@ -99,7 +100,7 @@ def test_r148_ru_sentence_ending_on_an_ordinal_date_still_splits():
     )
     assert len(ms) == 2
     assert ms[0].span.start == AstroDate(2027, 6, 15)
-    assert ms[1].span.start == AstroDate(2026, 8, 17)
+    assert ms[1].span.start == AstroDate(2026, 8, 10)
 
 
 def test_r148_ru_dotted_civil_date_unaffected():

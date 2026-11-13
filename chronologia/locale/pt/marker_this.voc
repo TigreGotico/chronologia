@@ -1,4 +1,12 @@
+# "este" is "Designativo de pessoa ou coisa que está presente, ou mais
+# próxima de quem fala que outra ou outras" (Priberam s.v. "este"): "este
+# mês" is the month the speaker is in, the one that contains the anchor.
+# "deste" is "Contracção da preposição de com o pronome este" (Priberam s.v.
+# "deste"), so "o dia 5 deste mês" names the 5th of the anchor's own month
+# and does not roll to the next month when that day has passed.
 este
 esta
 neste
 nesta
+deste
+desta
