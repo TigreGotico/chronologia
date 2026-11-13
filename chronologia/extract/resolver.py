@@ -321,6 +321,29 @@ def _day_span(dt: datetime) -> DateSpan:
     return DateSpan(start, start + timedelta(days=1))
 
 
+def _next_day_month(month: int, day: int, anchor: datetime) -> Optional[datetime]:
+    """The next time a day and a month with no year come round.
+
+    Feb 29 is the only Gregorian day that skips years, so neither the anchor
+    year nor anchor-year-plus-one is guaranteed to have it: at a 2017 anchor
+    "29 February" means 2020, and building datetime(2017, 2, 29) to test
+    whether it has "already passed" raises and throws the whole reading away.
+    Walk forward from the anchor year to the first year that HAS this (month,
+    day) on or after the anchor day.  The walk is bounded by the widest gap
+    between consecutive Feb 29s -- 1896 to 1904, eight years, across a
+    non-leap century -- so a day-of-month no year can hold (Jan 45, Feb 30)
+    exhausts the range and gives None.
+    """
+    for y in range(anchor.year, anchor.year + _ROLL_YEAR_LIMIT):
+        try:
+            value = datetime(y, month, day)
+        except ValueError:
+            continue                        # no such day that year
+        if value >= _midnight(anchor):
+            return value
+    return None
+
+
 def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
     """The locale-aligned seven-day week containing ``start_astro``.
 
@@ -343,7 +366,7 @@ def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
 #: clock_time in the same text composes onto the day these select.
 DATE_CONSTRUCTIONS = frozenset({
     "calendar_date", "reckoned_date", "nongregorian_date", "iso_date",
-    "numeric_date",
+    "numeric_date", "numeric_day_month",
     "weekday_ref", "weekday_of_week", "named_day", "season_ref", "solar_event",
     "scoped_ordinal",
     # the named-day offset idioms ("the day after tomorrow", "the day before
@@ -1432,27 +1455,10 @@ class Resolver:
         else:
             year = anchor.year
         if not year_tok and prefer_future and day_tok:
-            # A bare day-and-month names the next time that day comes round.
-            # Feb 29 is the only Gregorian day that skips years, so neither
-            # the anchor year nor anchor-year-plus-one is guaranteed to have
-            # it: at a 2017 anchor "29 February" means 2020, and building
-            # datetime(2017, 2, 29) to test whether it has "already passed"
-            # raises and throws the whole reading away.  Walk forward from the
-            # anchor year to the first year that HAS this (month, day) on or
-            # after the anchor day.  The walk is bounded by the widest gap
-            # between consecutive Feb 29s -- 1896 to 1904, eight years, across
-            # a non-leap century -- so a day-of-month no year can hold (Jan 45,
-            # Feb 30) exhausts the range and declines.
-            for y in range(year, year + _ROLL_YEAR_LIMIT):
-                try:
-                    value = datetime(y, month, day)
-                except ValueError:
-                    continue                        # no such day that year
-                if value >= _midnight(anchor):
-                    year = y
-                    break
-            else:
+            value = _next_day_month(month, day, anchor)
+            if value is None:
                 return None
+            year = value.year
         else:
             value = datetime(year, month, day)      # raises on impossible
         span = _day_span(value) if day_tok \
@@ -1599,6 +1605,25 @@ class Resolver:
             return None
         return Resolution(DateSpan(start, start + timedelta(days=1)),
                           self._consumed(match))
+
+    def _resolve_numeric_day_month(self, match, anchor):
+        """A slash day and month with no year ("25/12"): the next time that
+        day comes round, as a bare day-and-month reads (class 3).  The
+        component order is the locale's ``conventions.dmy``.  A month above
+        12 or a day the month never holds ("31/04") is no date.
+
+        A locale declares the construction when CLDR writes its numeric day
+        and month that way: CLDR 49 gives pt and pt-PT the pattern "dd/MM"
+        for the skeletons ``Md`` and ``MMdd`` (``availableFormats``).
+        """
+        tok = match.slots.get("DAYMONTH") or match.slots["PADDAYMONTH"]
+        first, second = (int(part) for part in tok.text.split("/"))
+        day, month = ((first, second) if self.spec.conventions.dmy
+                      else (second, first))
+        value = _next_day_month(month, day, anchor)
+        if value is None:
+            return None
+        return Resolution(_day_span(value), self._consumed(match))
 
     def _resolve_hebrew_new_year(self, match, anchor):
         """"the hebrew new year N": Rosh Hashanah of Hebrew year N -- 1 Tishrei
