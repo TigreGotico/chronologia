@@ -122,6 +122,21 @@ def test_definite_left_is_not_pulled_back_a_year(text, begin, end):
     assert r.remainder != ""
 
 
+# A clock recurs daily, so the year pull leaves it too.  Said at 13:00, the
+# next 9am is tomorrow; it lies after today, so no range is read, on 31
+# December as on any other day.  The year pull would read 30 December 09:00.
+@pytest.mark.parametrize("anchor,begin", [
+    (datetime(2026, 12, 31, 13, 0), datetime(2027, 1, 1, 9, 0)),
+    (datetime(2026, 6, 15, 13, 0), datetime(2026, 6, 16, 9, 0)),
+])
+def test_a_clock_is_not_pulled_back_a_year(anchor, begin):
+    r = parse("from 9am to today", anchor)
+    assert r is not None
+    assert (r.span.start, r.span.end) == (ad(begin),
+                                          ad(begin + timedelta(minutes=1)))
+    assert r.remainder != ""
+
+
 @pytest.mark.parametrize("anchor,expected", [
     (JUN20, datetime(2025, 12, 25)),
     (MAR01, datetime(2025, 12, 25)),

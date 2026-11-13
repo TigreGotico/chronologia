@@ -1447,7 +1447,9 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # cycle ("july 20 to july 25" on july 22 stays this year).  A pinned left
     # (explicit year) is fixed and must not be pulled, and so is a definite
     # left ("tomorrow", "next week"), which names one day counted from now.
-    if end <= start and not left[3] \
+    # A clock recurs daily, so it is never pulled by a year: on 31 December
+    # "from 9am to today" would otherwise read yesterday's 9am.
+    if end <= start and not left[3] and left[2] != "clock" \
             and not _definite_endpoint(left_tok, spec) \
             and start.year != right_span.start.year:
         # The straddle repair only applies when the two endpoints landed in
