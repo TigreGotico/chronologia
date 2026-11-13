@@ -19,8 +19,10 @@ from ._corpus import AstroDate, start
 # -- nth weekday of a RELATIVE month --------------------------------------
 
 @pytest.mark.parametrize("text,expected", [
-    # "the month" / "this month" == the anchor's own month (June 2017)
-    ("third Wednesday of the month", AstroDate(2017, 6, 21)),
+    # "the month" rolls once its day has passed: 21 June is before the
+    # 27 June anchor, so the third Wednesday of July (Jul 1 is a Saturday)
+    ("third Wednesday of the month", AstroDate(2017, 7, 19)),
+    # "this month" == the anchor's own month (June 2017)
     ("the third Wednesday of this month", AstroDate(2017, 6, 21)),
     # "next month" == anchor month + 1 (July 2017)
     ("the second Monday of next month", AstroDate(2017, 7, 10)),

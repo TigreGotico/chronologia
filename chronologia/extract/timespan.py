@@ -628,6 +628,13 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     def bare_of(sub):
         return _bare_numeral(text, sub, engine, anchor)
 
+    def monthly(sub):
+        found = _monthly_endpoint(text, sub, engine)
+        if found is None:
+            return None
+        return lambda bound: _monthly_start(text, sub, engine, anchor, bound,
+                                            found)
+
     def borrowed(sub):
         # a slice carrying tokens lent by the other endpoint; resolved through
         # the synthetic-token path so the lent words, which have no extent of
@@ -683,7 +690,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                            engine, anchor)
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
-                                     borrowed, spec, bare_of)
+                                     borrowed, spec, bare_of, monthly)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -735,7 +742,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                        engine, anchor)
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
-                                     borrowed, spec, bare_of)
+                                     borrowed, spec, bare_of, monthly)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -766,7 +773,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                            engine, anchor)
                 if got is None:
                     got = _compose_range(left_tok, right_tok, endpoint,
-                                         borrowed, spec, bare_of)
+                                         borrowed, spec, bare_of,
+                                         monthly)
                 if got is not None:
                     span, rem = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
@@ -1288,7 +1296,7 @@ def _lend_year(bare, donor):
 
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
-                   bare_of=_lone_numeral):
+                   bare_of=_lone_numeral, monthly=None):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1386,11 +1394,40 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # dated endpoint already carries its year, so it is left untouched.  The
     # roll is arithmetic (see _roll_after): the cycle count is chosen by the
     # utterance's year, so stepping it made a far-future range a hang.
+    # A weekday that recurs each month ("the third tuesday of the month") is
+    # not rolled by weeks: a week roll lands on a day that is no such weekday
+    # of any month.
     end = right_span.end
     if right[2] == "clock":
         end = _roll_after(right_span, start, timedelta(days=1)).end
-    elif right[2] == "weekday":
+    elif right[2] == "weekday" and (monthly is None
+                                    or monthly(right_tok) is None):
         end = _roll_after(right_span, start, timedelta(days=7)).end
+    # A left endpoint that recurs each month ("from the first day of the
+    # month to today", "do dia 3 até hoje") rolled past the right one: it
+    # names the latest such day at or before the right endpoint, a month or
+    # more back, never a year back.  ``monthly(sub)`` gives a function from
+    # that bound to the start, or ``None`` for an endpoint that does not recur
+    # monthly.  A monthly endpoint with no such start (its weekday disagrees
+    # with its day) names no range.
+    if end <= start and not left[3] and monthly is not None:
+        back = monthly(left_tok)
+        if back is not None:
+            pulled = back(right_span.start)
+            if pulled is None:
+                return None
+            start, end = pulled[0].start, right_span.end
+            left = (pulled[0], pulled[1]) + left[2:]
+    # A right end that recurs each month and still lies less than half a year
+    # before the start names no month that holds both ends: the year pull
+    # below would make a range of more than half a year, not the nearest
+    # cycle.  A left date read a year ahead ("from september 28 to the 3rd of
+    # the month" said on 1 October) lies more than half a year after the right
+    # end, and the year pull brings it back.
+    if (end <= start and monthly is not None
+            and monthly(right_tok) is not None
+            and start - right_span.start < timedelta(days=183)):
+        return None
     # prefer-future asymmetry: a straddling range resolves its left endpoint a
     # whole year ahead (prefer_future) while the right stays put, inverting the
     # span.  Pull an unpinned left back one year so both read in the nearest
@@ -1594,8 +1631,61 @@ def _definite_endpoint(sub, spec):
                    for t in sub))
 
 
-def _since_start(ep, sub, engine, anchor, now):
-    """The start instant of a "since <endpoint>" span, or ``None``.
+def _monthly_endpoint(text, sub, engine):
+    """The match in ``sub`` that names a day recurring each month, with the
+    weekdays said beside it, or ``None``.
+
+    Such a day is a numbered day ("o dia 3", "the 3rd of the month") or an nth
+    day, week or weekday "of the month" ("the first tuesday of the month"),
+    with no month and no this/next/last marker named.
+    """
+    spec = engine.spec
+    folded = fold_tokens(tuple(sub), spec, text)
+    veto = lambda m: _candidate_veto(folded, m, spec)   # noqa: E731
+    for match in engine.matcher.match(folded, veto):
+        if "REL_MARKER" in match.slots or "MONTH" in match.slots:
+            continue
+        scope = match.slots.get("SCOPE_UNIT")
+        if match.construction == "month_day_ref" or (
+                match.construction == "scoped_ordinal" and scope is not None
+                and spec.units.get(scope.text) == "month"):
+            lo, hi = match.span
+            weekdays = {spec.weekdays[t.text]
+                        for i, t in enumerate(folded)
+                        if not lo <= i < hi and t.text in spec.weekdays}
+            return match, weekdays
+    return None
+
+
+def _monthly_start(text, sub, engine, anchor, bound, found):
+    """``(span, remainder)`` of the latest reading at or before ``bound`` of an
+    endpoint that names a day recurring each month (``found`` from
+    :func:`_monthly_endpoint`), or ``None``.
+
+    The endpoint is resolved again with the anchor on the first of each month,
+    from ``bound``'s month back over one year.  So an nth weekday is counted in
+    its own month, a clock stays with its day, and a month that lacks the day
+    is skipped.  A weekday said beside a numbered day ("desde terça dia 20")
+    must fall on that day, or the endpoint names no date.
+    """
+    weekdays = found[1]
+    first = anchor.replace(year=bound.year, month=bound.month, day=1, hour=0,
+                           minute=0, second=0, microsecond=0)
+    for _ in range(13):
+        ep = _resolve_endpoint(text, sub, engine, first)
+        if ep is not None:
+            start = ep[0].start
+            if start <= bound:
+                if weekdays and start.weekday() not in weekdays:
+                    return None
+                return ep
+        first = (first.replace(month=first.month - 1) if first.month > 1
+                 else first.replace(year=first.year - 1, month=12))
+    return None
+
+
+def _since_start(ep, sub, engine, anchor, now, text):
+    """``(start, remainder)`` of a "since <endpoint>" span, or ``None``.
 
     "since X" is PAST-anchored: it names the most recent occurrence of X
     at-or-before now.  A bare weekday recurs WEEKLY, so resolve it backward
@@ -1607,15 +1697,23 @@ def _since_start(ep, sub, engine, anchor, now):
     underspecified endpoint whose prefer_future guessed the wrong cycle forward
     (bare "july 6", "christmas", "q3", a bare clock time) is rolled back by its
     OWN cycle -- a year for a date/quarter, a DAY for a time-of-day -- until it
-    lands at-or-before now.
+    lands at-or-before now.  A day that recurs each month ("since the 3rd of
+    the month", "desde o dia 3", "since the first tuesday of the month") steps
+    back a month at a time (see :func:`_monthly_start`), never by a week or a
+    year.
     """
     spec = engine.spec
     wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
     if wk is not None:
-        return wk[0].start
+        return wk[0].start, wk[1]
     if ep is None:
         return None
     start = ep[0].start
+    if start > now:
+        monthly = _monthly_endpoint(text, sub, engine)
+        if monthly is not None:
+            found = _monthly_start(text, sub, engine, anchor, now, monthly)
+            return None if found is None else (found[0].start, found[1])
     if _definite_endpoint(sub, spec):
         # A DEFINITE endpoint: a now-relative day ("tomorrow"), a
         # direction/rel-qualified reference ("next month", "this friday") or an
@@ -1623,7 +1721,7 @@ def _since_start(ep, sub, engine, anchor, now):
         # own direction/rel token.  None of these is an underspecified reference
         # prefer_future flung forward, so never roll it: in the past it opens
         # the span, in the future "since" it is contradictory and is refused.
-        return start if start <= now else None
+        return (start, ep[1]) if start <= now else None
     if any(t.text in spec.weekdays for t in sub):
         # An UNqualified weekday (the bare-weekday-alone case is handled by
         # _bare_weekday_endpoint above; this is a weekday carrying a clock, e.g.
@@ -1633,7 +1731,7 @@ def _since_start(ep, sub, engine, anchor, now):
         # would strand it on the wrong weekday.
         while start > now:
             start = start + timedelta(days=-7)
-        return start
+        return start, ep[1]
     # An underspecified recurring reference.  Roll back by its OWN cycle: a bare
     # time-of-day (a sub-day-wide span with no calendar-date word) recurs DAILY,
     # so "since noon" at 9am is yesterday noon -- NOT a year ago; everything else
@@ -1646,7 +1744,16 @@ def _since_start(ep, sub, engine, anchor, now):
         if pulled is None:
             break
         start = pulled
-    return start
+    return start, ep[1]
+
+
+def _reads_day_word(text, sub, engine, anchor, scale_mode="short"):
+    """Whether the reading of ``sub`` consumes a day word ("today",
+    "tomorrow"), not only holds one among its leftover words."""
+    folded = fold_tokens(tuple(sub), engine.spec, text)
+    core = _resolve_core(folded, engine, anchor, scale_mode=scale_mode)
+    return core is not None and any(
+        t.index in core[1] and t.text in engine.spec.named_days for t in folded)
 
 
 def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short"):
@@ -1702,9 +1809,10 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
                 or _bare_weekday_endpoint(sub, engine, at))
 
     left_ep = endpoint(left_tok, anchor)
-    start = _since_start(left_ep, left_tok, engine, anchor, now)
-    if start is None:
+    since = _since_start(left_ep, left_tok, engine, anchor, now, text)
+    if since is None:
         return None
+    start, left_rem = since
     start_dt = start.datetime()
     if start_dt is None:
         return None
@@ -1713,15 +1821,17 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     # what keeps "since june 5 until june 12" a recent-past week rather than
     # letting "until june 12" roll a year forward on its own, and it is correct
     # for every endpoint kind (a weekday lands within the week, a dated
-    # anniversary within the year).
-    right_ep = endpoint(right_tok, start_dt)
+    # anniversary within the year).  A day word ("today", "tomorrow") that the
+    # right end reads counts from now, so that end is read at the anchor.
+    reads_day_word = _reads_day_word(text, right_tok, engine, anchor,
+                                     scale_mode)
+    right_ep = endpoint(right_tok, anchor if reads_day_word else start_dt)
     if right_ep is None:
         return None
     end = right_ep[0].end
     if start >= end:
         return None
-    remainder = " ".join(r for r in ((left_ep[1] if left_ep else ""),
-                                     right_ep[1]) if r).strip()
+    remainder = " ".join(r for r in (left_rem, right_ep[1]) if r).strip()
     return DateSpan(start, end), remainder
 
 
@@ -1758,13 +1868,13 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                 or _bare_weekday_endpoint(sub, engine, anchor))
 
     def until_span(ep, sub):
-        return DateSpan(now, ep[0].end) if ep is not None and ep[0].end > now \
-            else None
+        return (DateSpan(now, ep[0].end), ep[1]) \
+            if ep is not None and ep[0].end > now else None
 
     def since_span(ep, sub):
-        start = _since_start(ep, sub, engine, anchor, now)
-        return DateSpan(start, now) if start is not None and start < now \
-            else None
+        since = _since_start(ep, sub, engine, anchor, now, text)
+        return (DateSpan(since[0], now), since[1]) \
+            if since is not None and since[0] < now else None
 
     def lead(surf, build):
         # the marker leads; its tokens are dropped, the endpoint keeps its own
@@ -1773,8 +1883,7 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         if not k:
             return None
         ep = endpoint(tokens[k:])
-        span = build(ep, tokens[k:]) if ep is not None else None
-        return (span, ep[1]) if span is not None else None
+        return build(ep, tokens[k:]) if ep is not None else None
 
     def trail(surf, build):
         # a **postposed** marker -- the bound word trailing its date, the
@@ -1785,9 +1894,9 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             m = len(words)
             if m and m < n and [t.text for t in tokens[n - m:]] == words:
                 ep = endpoint(tokens[:n - m])
-                span = build(ep, tokens[:n - m]) if ep is not None else None
-                if span is not None:
-                    return span, ep[1]
+                got = build(ep, tokens[:n - m]) if ep is not None else None
+                if got is not None:
+                    return got
         return None
 
     def affix(surf, build):
@@ -1814,9 +1923,9 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                               if last.char_end is not None else None))
                 sub_a = tuple(tokens[:-1]) + (stripped,)
                 ep = endpoint(sub_a)
-                span = build(ep, sub_a) if ep is not None else None
-                if span is not None:
-                    return span, ep[1]
+                got = build(ep, sub_a) if ep is not None else None
+                if got is not None:
+                    return got
         return None
 
     positions = spec.positions
@@ -3439,11 +3548,22 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
             glue.add(lead)
         return glue
 
+    def _label_agrees(date, weekday):
+        """A weekday beside a numbered day of the month ("o dia 20, quinta")
+        must name that day's weekday, or it is no label on it."""
+        if date[0].construction != "month_day_ref":
+            return True
+        lo, hi = weekday[0].span
+        named = {spec.weekdays[t.text] for t in tokens[lo:hi]
+                 if t.text in spec.weekdays}
+        return date[1].value.start.weekday() in named
+
     label_consumed = set()
     if (len(weekdays) == 1 and len(non_weekday_dates) == 1
             and non_weekday_dates[0][0].construction
             in _WEEKDAY_LABELABLE_DATES
-            and _adjacent(non_weekday_dates[0][0], weekdays[0][0])):
+            and _adjacent(non_weekday_dates[0][0], weekdays[0][0])
+            and _label_agrees(non_weekday_dates[0], weekdays[0])):
         eff_dates = non_weekday_dates
         label_consumed = set(range(*weekdays[0][0].span))
         # The article in front of a labelled date ("le lundi 3 juillet") opens
