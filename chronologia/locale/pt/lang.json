@@ -86,6 +86,13 @@
       ],
       "prefer_future": true
     },
+    "numeric_day_month": {
+      "orders": [
+        "article? day_label DAYMONTH",
+        "PADDAYMONTH"
+      ],
+      "prefer_future": true
+    },
     "month_fuzzy": {
       "orders": [
         "article? PART of? MONTH"
