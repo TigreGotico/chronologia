@@ -46,3 +46,22 @@ def test_a_span_that_ends_at_the_anchor_has_passed(text, anchor, ymd):
     span, rest = extract_timespan(text, "en", anchor)
     assert span.start == AstroDate(*ymd)
     assert rest == ""
+
+
+@pytest.mark.parametrize("text,anchor,ymd", [
+    # A weekday said on that day is the anchor's day (a day is a span, and
+    # the span that holds the anchor is the current one): the first Tuesday
+    # of October 2026 is the 6th, so at noon on Tuesday 6 October it is
+    # today.  On Wednesday the 7th it has passed, and November's first
+    # Tuesday is the 3rd.  The last Friday of October 2026 is the 30th.
+    ("the first tuesday of the month", datetime(2026, 10, 6, 12),
+     (2026, 10, 6)),
+    ("the first tuesday of the month", datetime(2026, 10, 7, 12),
+     (2026, 11, 3)),
+    ("the last friday of the month", datetime(2026, 10, 30, 12),
+     (2026, 10, 30)),
+])
+def test_a_weekday_said_on_that_day_is_today(text, anchor, ymd):
+    span, rest = extract_timespan(text, "en", anchor)
+    assert span.start == AstroDate(*ymd)
+    assert rest == ""
