@@ -57,7 +57,7 @@ def test_neighbouring_readings_are_unchanged(anchor):
     assert ymd("next week") == (monday + timedelta(weeks=1), 7)
     assert ymd("last week") == (monday - timedelta(weeks=1), 7)
     assert ymd("this week") == (monday, 7)
-    ahead = (4 - anchor.weekday()) % 7 or 7
+    ahead = (4 - anchor.weekday()) % 7
     assert ymd("friday") == (anchor.date() + timedelta(days=ahead), 1)
     if anchor.weekday() <= 4:
         assert ymd("this friday") == (monday + timedelta(days=4), 1)

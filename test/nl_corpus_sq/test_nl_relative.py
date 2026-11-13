@@ -141,12 +141,13 @@ def test_a_counted_vjet_is_a_duration_not_last_year():
 # -- weekdays ---------------------------------------------------------------
 
 @pytest.mark.parametrize("text,day", [
-    ("e hënë", 3), ("e martë", 4), ("e mërkurë", 28), ("e enjte", 29),
+    ("e hënë", 3), ("e martë", 27), ("e mërkurë", 28), ("e enjte", 29),
     ("e premte", 30), ("e shtunë", 1), ("e diel", 2),
 ])
 def test_bare_weekday_takes_the_next_occurrence(text, day):
     """The anchor is Tuesday 27 June 2017; a bare weekday reads forward, so
-    Wednesday is the 28th and Monday has to wait until 3 July."""
+    Wednesday is the 28th and Monday has to wait until 3 July.  Tuesday is
+    the anchor day itself."""
     s, _ = start_end(text)
     assert s.day == day
 

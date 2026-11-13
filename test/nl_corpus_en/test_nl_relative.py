@@ -138,7 +138,7 @@ def test_day_after_tomorrow(text, days):
 
 
 @pytest.mark.parametrize("text,days", [
-    ("a week from tuesday", 14), ("a week from monday", 6 + 7),
+    ("a week from tuesday", 7), ("a week from monday", 6 + 7),
     ("two weeks from monday", 6 + 14), ("a week from friday", 3 + 7),
 ])
 def test_a_week_from_weekday(text, days):

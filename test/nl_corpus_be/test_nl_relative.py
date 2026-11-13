@@ -38,8 +38,7 @@ def test_day_offsets(text, offset):
 ])
 def test_bare_weekday_is_its_next_occurrence(text, weekday):
     s = start(text)
-    assert s.date().weekday() == weekday
-    assert s.date() > TODAY
+    assert s.date() == TODAY + timedelta(days=(weekday - TODAY.weekday()) % 7)
 
 
 @pytest.mark.parametrize("text,weekday", [

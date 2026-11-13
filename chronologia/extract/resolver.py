@@ -763,15 +763,16 @@ class Resolver:
 
     def _resolve_weekday_offset(self, match, anchor):
         """"a week from tuesday", "two weeks from monday", "two days from
-        friday": N whole-day units after the next occurrence (strictly
-        future) of the named weekday.  The same day-granular units the
-        named-day twin ("a week from tomorrow") takes."""
+        friday": N whole-day units after the named weekday's next occurrence,
+        which is today when said on that weekday, as a bare weekday reads.
+        The same day-granular units the named-day twin ("a week from
+        tomorrow") takes."""
         days = self._DAY_UNIT_DAYS.get(self.spec.units[match.slots["UNIT"].text])
         if days is None:
             return None
         qty = int(self._offset_quantity(match))
         target = self.spec.weekdays[match.slots["WEEKDAY"].text]
-        ahead = (target - anchor.weekday()) % 7 or 7          # strictly future
+        ahead = (target - anchor.weekday()) % 7
         value = _midnight(anchor) + timedelta(days=ahead + days * qty)
         return Resolution(_day_span(value), self._consumed(match))
 
@@ -888,10 +889,14 @@ class Resolver:
             back = (anchor.weekday() - target) % 7 or 7
             value = base - timedelta(days=back + (-n - 1) * 7)
             return Resolution(_day_span(value), self._consumed(match))
-        # A bare weekday ("friday") names the NEXT occurrence, strictly future:
-        # the same prefer-future reckoning as an explicit "next", so when the
-        # anchor already IS that weekday the span is seven days out.
-        rel = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 1
+        # A bare weekday ("friday") names the next occurrence, and the anchor's
+        # own day when it is that weekday: a day is a span, and a span that
+        # contains the anchor is the current one, as a bare month is.  An
+        # explicit "next" still moves on a week.
+        if rel_tok is None:
+            value = base + timedelta(days=(target - anchor.weekday()) % 7)
+            return Resolution(_day_span(value), self._consumed(match))
+        rel = self.spec.rel_markers[rel_tok.text]
         if rel > 0:      # next
             ahead = (target - anchor.weekday()) % 7 or 7
             value = base + timedelta(days=ahead)
