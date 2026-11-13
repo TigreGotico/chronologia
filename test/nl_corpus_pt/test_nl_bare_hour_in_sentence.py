@@ -16,6 +16,16 @@ def test_a_length_in_a_sentence_is_not_a_clock(text):
     nomatch(text)
 
 
+@pytest.mark.parametrize("text", [
+    "um filme de 2h e meia",
+    "um filme de 2h e um quarto",
+])
+def test_a_length_with_a_fraction_is_not_a_clock(text):
+    """A half or a quarter after the hour does not make it a clock: the
+    length is still a bare hour with no marker."""
+    nomatch(text)
+
+
 @pytest.mark.parametrize("text,day,hour", [
     ("15h", 27, 15),
     ("às 15h", 27, 15),

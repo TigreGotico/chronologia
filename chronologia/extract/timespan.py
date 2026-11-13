@@ -2148,6 +2148,10 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
       letter ("20h ce soir").  After a counted hour ("une heure avant-hier")
       the day word does not make a clock, because the count is as often a
       length.
+
+    A half or a quarter added to the hour or taken from it ("un film de 2h et
+    demie", "2h moins le quart") leaves it a bare hour.  A clock marker that is also an article ("alle" in it) is a
+    marker, never glue.
     """
     if spec.lang.split("-")[0] not in _HOUR_LETTER_LOCALES:
         return False
@@ -2155,13 +2159,19 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
                for t in tokens):
         return False
     oclock = set(spec.connectors.get("oclock", ()))
-    glue = (set(spec.connectors.get("of", ()))
-            | set(spec.connectors.get("article", ())))
+    glue = ((set(spec.connectors.get("of", ()))
+             | set(spec.connectors.get("article", ())))
+            - set(spec.connectors.get("at", ())))
     read = [t for t in tokens if t.index in consumed and t.text not in glue]
+    tail = (len(read) >= 2 and read[-2].text in spec.clock_dirs
+            and read[-1].text in spec.clock_fractions)
+    if tail:
+        read = read[:-2]
     literal = (len(read) == 1 and read[0].char_start is None
                and _HOUR_LITERAL.fullmatch(read[0].text))
-    counted = (len(read) == 2 and read[0].is_number
-               and read[1].text in oclock)
+    counted = ((len(read) == 2 and read[0].is_number
+                and read[1].text in oclock)
+               or (tail and len(read) == 1 and read[0].is_number))
     if not (literal or counted):
         return False
     markers = (spec.connectors.get("hour_statement", frozenset())

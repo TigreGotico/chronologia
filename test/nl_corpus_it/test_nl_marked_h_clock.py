@@ -16,6 +16,15 @@ MARKED = [
 
 # Said alone, the whole utterance is the clock.  At 13:04, 21:30 and 20:00
 # are still ahead today and 02:30 is tomorrow.
+# Words after the clock do not take its marker away.  "alle" ("a" + "le") is
+# the clock marker and an article at once.  21:30 and 15:00 are still ahead
+# today at 13:04.
+TRAILING = [
+    ('ci vediamo alle 21h30 al bar', 21, 30),
+    ('alle 21h30 al bar', 21, 30),
+    ('alle 15h con Marco', 15, 0),
+]
+
 BARE = [
     ('21h30', 27, 21, 30),
     ('20h', 27, 20, 0),
@@ -44,3 +53,10 @@ def test_bare_h_notation_alone_is_a_clock(text, day, hour, minute):
     assert (s.start.month, s.start.day) == (6, day)
     assert (s.start.hour, s.start.minute) == (hour, minute)
     assert parse(text)[1] == ""
+
+
+@pytest.mark.parametrize("text,hour,minute", TRAILING)
+def test_marked_h_clock_with_words_after_it_still_reads(text, hour, minute):
+    s = span(text)
+    assert (s.start.month, s.start.day) == (6, 27)
+    assert (s.start.hour, s.start.minute) == (hour, minute)

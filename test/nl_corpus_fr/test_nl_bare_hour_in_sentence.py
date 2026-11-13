@@ -24,6 +24,29 @@ def test_a_length_in_a_sentence_is_not_a_clock(text):
     nomatch(text)
 
 
+@pytest.mark.parametrize("text", [
+    "un film de 2h et demie",
+    "un film de 2 heures et demie",
+    "j'ai attendu 2 h et demie",
+    "il reste 2h et quart",
+    "3 h et quart de travail",
+    "un film de 2h moins le quart",
+    "j'ai attendu 2 h moins le quart",
+])
+def test_a_length_with_a_fraction_is_not_a_clock(text):
+    """A half or a quarter added to the hour or taken from it does not make
+    it a clock: the length is still a bare hour with no marker."""
+    nomatch(text)
+
+
+def test_a_marked_clock_with_a_fraction_still_reads():
+    """"Il est une heure" (Larousse, s.v. "être") marks the clock; the half
+    after it is half past.  03:30 has gone at 13:04, so it is tomorrow."""
+    s = span("il est 3 heures et demie")
+    assert (s.start.month, s.start.day) == (6, 28)
+    assert (s.start.hour, s.start.minute) == (3, 30)
+
+
 @pytest.mark.parametrize("text,day,hour,minute", [
     ("20h", 27, 20, 0),
     ("21h30", 27, 21, 30),
