@@ -3762,7 +3762,7 @@ def extract_candidates(
     label_extra = {}
     primary = None
     if composed:
-        win_res, win_label, rep = _compose(composed, engine, tokens)
+        win_res, win_label, rep = _compose(composed, engine, tokens, anchor)
         if win_res is not None:
             consumed_all = set(win_res.consumed) | win_label
             lo, hi = min(consumed_all), max(consumed_all) + 1

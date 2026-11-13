@@ -39,6 +39,9 @@ def _ad(dt):
     ("this tuesday", TODAY),
     ("this tuesday at 10am", TODAY.replace(hour=10)),
     ("wednesday", TODAY + timedelta(days=1)),
+    ("tuesday at 1:03 pm", TODAY.replace(hour=13, minute=3) + WEEK),
+    ("tuesday at 1:04 pm", TODAY.replace(hour=13, minute=4)),
+    ("tuesday at 00:00", TODAY + WEEK),
 ])
 def test_weekday_said_on_that_weekday(text, expected):
     result = extract_timespan(text, "en", ANCHOR)
