@@ -581,28 +581,44 @@ _PT_FEMININE_WEEKDAYS = frozenset({"segunda", "terça", "terca", "quarta",
                                    "quinta", "sexta"})
 _PT_ORDINAL_ARTICLES = frozenset({"a", "na", "da", "à", "pela"})
 #: The words that open the period after "a segunda terça-feira": "de 2026",
-#: "de julho", "do mês que vem", "deste mês".  Without one of them there is
-#: no period for the ordinal to count in.
-_PT_ORDINAL_SCOPE_OPENERS = frozenset({"de", "do", "da", "deste", "desta"})
+#: "de julho", "do mês que vem".  Without one of them there is no period for
+#: the ordinal to count in.  "deste" and "desta" are not listed: no
+#: ``scoped_ordinal`` order reads them, so a fold before them only strands
+#: the ordinal.
+_PT_ORDINAL_SCOPE_OPENERS = frozenset({"de", "do", "da"})
 
 
-def _pt_daypart_surfaces():
-    """The pt day-part words, read from ``locale/pt/daypart_*.voc``.
-
-    A day part after the opener ("de manhã", "da tarde") is a time of day,
-    not a period that holds several of the same weekday, so it gives the
-    ordinal nothing to count in."""
+def _pt_voc_surfaces(*prefixes):
+    """The pt surfaces of every ``locale/pt/<prefix>*.voc`` file."""
     folder = os.path.join(_LOCALE_ROOT, "pt")
     out = set()
     for name in os.listdir(folder):
-        if name.startswith("daypart_") and name.endswith(".voc"):
+        if name.startswith(prefixes) and name.endswith(".voc"):
             with open(os.path.join(folder, name), encoding="utf-8") as fh:
                 out.update(line.strip().lower() for line in fh
                            if line.strip() and not line.startswith("#"))
     return frozenset(out)
 
 
-_PT_DAYPARTS = _pt_daypart_surfaces()
+#: The words that name a period that holds several of the same weekday: a
+#: month ("de julho"), a week, month or year ("do mês que vem"), or a longer
+#: span ("do século").  A number ("de 2026") is a year.  Any other word after
+#: the opener ("de manhã", "de carro", "de folga") names no period, so
+#: "na segunda terça de carro" stays a list that starts on Monday.
+_PT_SCOPE_HEADS = _pt_voc_surfaces("month_", "scope_unit_", "unit_month",
+                                   "unit_year", "unit_week")
+#: A relative marker may stand between the opener and the period: "do
+#: próximo mês", "do último ano".
+_PT_SCOPE_MARKERS = _pt_voc_surfaces("marker_next", "marker_last")
+
+
+def _pt_period_follows(tokens, k):
+    """Whether ``tokens[k:]`` opens with a period: a number, or a scope head
+    behind an optional relative marker."""
+    if k < len(tokens) and tokens[k].text in _PT_SCOPE_MARKERS:
+        k += 1
+    return k < len(tokens) and (tokens[k].is_number
+                                or tokens[k].text in _PT_SCOPE_HEADS)
 
 
 def _license_ordinal_before_weekday(tokens):
@@ -614,8 +630,9 @@ def _license_ordinal_before_weekday(tokens):
     when the period it counts in follows the weekday ("de julho", "do mês que
     vem").  A list of weekdays keeps its weekday reading, with or without the
     commas that speech-to-text never writes: "na segunda terça e quarta" is
-    Monday, Tuesday and Wednesday, and in "na segunda terça de manhã" the day
-    part is no period, so "segunda" stays Monday.
+    Monday, Tuesday and Wednesday.  In "na segunda terça de manhã" and "vou
+    na segunda terça de carro" no period follows "de", so "segunda" stays
+    Monday.
     """
     out = list(tokens)
     n = len(tokens)
@@ -626,8 +643,8 @@ def _license_ordinal_before_weekday(tokens):
         j = i + 2
         if j < n and tokens[j].text == "feira":
             j += 1
-        scoped = (j + 1 < n and tokens[j].text in _PT_ORDINAL_SCOPE_OPENERS
-                  and tokens[j + 1].text not in _PT_DAYPARTS)
+        scoped = (j < n and tokens[j].text in _PT_ORDINAL_SCOPE_OPENERS
+                  and _pt_period_follows(tokens, j + 1))
         if (not tok.is_number and tok.text in _PT_ORDINAL_BEFORE_WEEK
                 and prev.text in _PT_ORDINAL_ARTICLES
                 and nxt.text in _PT_FEMININE_WEEKDAYS and adjacent and scoped):

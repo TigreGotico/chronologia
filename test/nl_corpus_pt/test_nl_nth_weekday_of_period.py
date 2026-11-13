@@ -15,7 +15,8 @@ marker after the noun as in "o mês que vem".
 Anchor 2017-06-27 13:04.  Counted on the calendar by hand: Tuesdays of 2026
 fall on 6 and 13 January; Mondays of July 2017 on 3 and 10; Fridays of July
 2017 on 7, 14, 21 and 28; Fridays of August 2017 on 4, 11, 18 and 25;
-1 January 2018 is a Monday; the last Monday of July 2017 is the 31st.
+Tuesdays of July 2017 on 4 and 11, Wednesdays on 5 and 12, Thursdays on 6
+and 13; 1 January 2018 is a Monday; the last Monday of July 2017 is the 31st.
 The first Monday after the anchor is 3 July 2017, the first Wednesday is
 28 June.
 """
@@ -54,6 +55,9 @@ def test_a_list_of_weekdays_keeps_the_weekday():
     ("na segunda quinta e sexta", (2017, 7, 3)),
     ("na quarta quinta e sexta", (2017, 6, 28)),
     ("na segunda terça de manhã", (2017, 7, 3)),
+    ("vou na segunda terça de carro", (2017, 7, 3)),
+    ("na segunda terça de casa", (2017, 7, 3)),
+    ("na segunda terça de folga", (2017, 7, 3)),
 ])
 def test_an_unpunctuated_list_of_weekdays_keeps_the_first_weekday(text, ymd):
     s, e = start_end(text)
@@ -65,5 +69,32 @@ def test_without_an_article_the_word_stays_the_weekday():
     # "para segunda" is "for Monday"; the ordinal needs its article,
     # "para a segunda terça-feira de julho".
     s, e = start_end("adia para segunda terça de julho")
+    assert s == AstroDate(2017, 7, 3)
+    assert (e - s).days == 1
+
+
+@pytest.mark.parametrize("text,ymd", [
+    ("na segunda terça-feira de julho", (2017, 7, 11)),
+    ("da segunda sexta-feira de julho", (2017, 7, 14)),
+    ("à segunda quinta-feira de julho", (2017, 7, 13)),
+    ("pela segunda quarta-feira de julho", (2017, 7, 12)),
+])
+def test_each_article_opens_the_ordinal(text, ymd):
+    s, e = start_end(text)
+    assert s == AstroDate(*ymd)
+    assert (e - s).days == 1
+
+
+def test_a_relative_marker_before_the_period():
+    # "do próximo mês" is July 2017; its second Tuesday is the 11th.
+    s, _ = start_end("na segunda terça-feira do próximo mês")
+    assert s == AstroDate(2017, 7, 11)
+    assert parse("na segunda terça-feira do próximo mês")[1] == ""
+
+
+def test_a_comma_between_the_words_keeps_the_weekday():
+    # The ordinal and the weekday name must stand next to each other; a
+    # comma makes "segunda, terça" a list that starts on Monday.
+    s, e = start_end("na segunda, terça de julho")
     assert s == AstroDate(2017, 7, 3)
     assert (e - s).days == 1
