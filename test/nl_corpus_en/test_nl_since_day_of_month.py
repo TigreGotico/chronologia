@@ -80,3 +80,29 @@ def test_range_to_a_monthly_weekday_is_not_rolled_by_weeks(text, begin, end):
     assert r is not None, f"{text!r} did not parse"
     assert (r.span.start, r.span.end) == (ad(begin), ad(end))
     assert r.remainder == ""
+
+
+# "from sunday to the 31st of the month" said on Monday 2026-12-28: the
+# Sunday is 3 January 2027 and the 31st is 31 December, so no range holds
+# both; the left end is not pulled back a year.
+def test_range_to_a_day_of_month_before_the_left_end_names_no_range():
+    r = parse("from sunday to the 31st of the month",
+              datetime(2026, 12, 28, 12, 0))
+    assert r is None or r.remainder != "", f"read {r!r}"
+
+
+# "since X until today" ends today: a day word counts from now, not from the
+# start.  On Saturday 2026-10-17 the last Friday of September is the 25th.
+@pytest.mark.parametrize("text,begin,end", [
+    ("since the last friday of the month until tomorrow",
+     datetime(2026, 9, 25), datetime(2026, 10, 19)),
+    ("since the last friday of the month until today",
+     datetime(2026, 9, 25), datetime(2026, 10, 18)),
+    ("since the 3rd of the month until today", datetime(2026, 10, 3),
+     datetime(2026, 10, 18)),
+])
+def test_since_until_a_day_word_counts_from_now(text, begin, end):
+    r = parse(text, SAT17)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (ad(begin), ad(end))
+    assert r.remainder == ""

@@ -229,3 +229,17 @@ def test_range_to_a_monthly_weekday_is_not_rolled_by_weeks(text, begin, end):
     assert r is not None, f"{text!r} did not parse"
     assert (r.span.start, r.span.end) == (ad(begin), ad(end))
     assert r.remainder == ""
+
+
+# A numbered day of the month that lies before the left end names no range,
+# and the left end is not pulled back a year.  The Sunday after Monday
+# 2026-12-28 is 3 January 2027; tomorrow on Thursday 2026-12-31 is 1 January.
+@pytest.mark.parametrize("text,anchor", [
+    ("de domingo até ao dia 31", datetime(2026, 12, 28, 12, 0)),
+    ("de domingo até ao dia 30", datetime(2026, 12, 28, 12, 0)),
+    ("de amanhã até ao dia 31", datetime(2026, 12, 31, 12, 0)),
+])
+def test_range_to_a_day_of_month_before_the_left_end_names_no_range(text,
+                                                                     anchor):
+    r = parse(text, anchor)
+    assert r is None or r.remainder != "", f"read {r!r}"
