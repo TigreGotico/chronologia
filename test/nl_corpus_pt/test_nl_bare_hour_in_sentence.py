@@ -56,3 +56,16 @@ def test_a_word_of_approximation_or_start_marks_a_clock(text, day, hour):
     partir de: Com início em determinada data" (Priberam, s.v. "partir")."""
     s = span(text)
     assert (s.start.month, s.start.day, s.start.hour) == (6, day, hour)
+
+
+@pytest.mark.parametrize("text", [
+    'pelas 10 e meia',
+    'cerca das 10 e meia',
+])
+def test_a_plain_number_with_a_half_after_a_marker_is_a_clock(text):
+    """Only an hour written with the letter stays a bare hour before a
+    fraction.  10:30 has passed at 13:04, so the clock is tomorrow's."""
+    s = span(text)
+    assert (s.start.month, s.start.day, s.start.hour, s.start.minute) == (
+        6, 28, 10, 30)
+

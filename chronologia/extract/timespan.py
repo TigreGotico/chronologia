@@ -2149,9 +2149,11 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
       the day word does not make a clock, because the count is as often a
       length.
 
-    A half or a quarter added to the hour or taken from it ("un film de 2h et
-    demie", "2h moins le quart") leaves it a bare hour.  A clock marker that is also an article ("alle" in it) is a
-    marker, never glue.
+    A half or a quarter added to an hour written with the letter or taken
+    from it ("un film de 2h et demie", "2h moins le quart") leaves it a bare
+    hour.  A plain number with a fraction ("pelas 10 e meia") is not one.  A
+    clock marker that is also an article ("alle" in it) is a marker, never
+    glue.
     """
     if spec.lang.split("-")[0] not in _HOUR_LETTER_LOCALES:
         return False
@@ -2171,7 +2173,8 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
                and _HOUR_LITERAL.fullmatch(read[0].text))
     counted = ((len(read) == 2 and read[0].is_number
                 and read[1].text in oclock)
-               or (tail and len(read) == 1 and read[0].is_number))
+               or (tail and len(read) == 1 and read[0].is_number
+                   and read[0].char_start is None))
     if not (literal or counted):
         return False
     markers = (spec.connectors.get("hour_statement", frozenset())

@@ -43,3 +43,15 @@ def test_bare_h_notation_alone_is_a_clock(text, day, hour, minute):
     assert (s.start.month, s.start.day) == (6, day)
     assert (s.start.hour, s.start.minute) == (hour, minute)
     assert parse(text)[1] == ""
+
+
+@pytest.mark.parametrize("text", [
+    'στις 10 και μισή',
+])
+def test_a_plain_number_with_a_half_after_a_marker_is_a_clock(text):
+    """Only an hour written with the letter stays a bare hour before a
+    fraction.  10:30 has passed at 13:04, so the clock is tomorrow's."""
+    s = span(text)
+    assert (s.start.month, s.start.day, s.start.hour, s.start.minute) == (
+        6, 28, 10, 30)
+
