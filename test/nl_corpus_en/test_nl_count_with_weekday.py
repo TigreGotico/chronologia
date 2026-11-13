@@ -68,3 +68,16 @@ def test_a_weekday_before_a_count_of_days_keeps_the_count():
     assert r is not None
     assert r.span.start == ad(datetime(2026, 10, 23))
     assert r.remainder == "in a day"
+
+
+@pytest.mark.parametrize("text,rest", [
+    ("friday in a week, october 30", "in a week"),
+    ("october 30 in a week on friday", "in a week on"),
+])
+def test_a_written_date_keeps_the_count(text, rest):
+    # Friday 30 October is the written date; the count does not move it.
+    r = extract_timespan(text, "en", SATURDAY)
+    assert r is not None
+    assert (r.span.start, r.span.end) == (ad(datetime(2026, 10, 30)),
+                                          ad(datetime(2026, 10, 31)))
+    assert r.remainder == rest

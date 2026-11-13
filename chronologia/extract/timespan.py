@@ -3823,8 +3823,9 @@ def _fold_count_weekday(resolved, spec, tokens, text):
 
     Only a bare weekday (no next/last marker) next to a day-or-coarser count
     folds, with nothing but link words between them ("in two weeks on
-    friday") and no sentence end.  A weekday that labels a literal date
-    ("sexta-feira 30 de outubro") belongs to that date, so the count is not
+    friday") and no sentence end.  A literal date in the same reading
+    ("sexta-feira 30 de outubro", "sexta-feira daqui a uma semana, 30 de
+    outubro") outranks the count wherever it stands, so the count is not
     folded and stays in the remainder.  A past count of months or years has
     no reading here and keeps the count, with the weekday in the remainder.
 
@@ -3854,8 +3855,7 @@ def _fold_count_weekday(resolved, spec, tokens, text):
     if text is not None and _sentence_boundary_between(
             text, tokens[lo[1] - 1].char_end, tokens[hi[0]].char_start):
         return resolved, set()
-    if any(_labels_literal_date(wd_match, m, tokens, links)
-           for m, _r in resolved):
+    if any(m.construction in _WEEKDAY_LABELABLE_DATES for m, _r in resolved):
         return resolved, set()
     usg_tok = off_match.slots.get("USG")
     unit = (spec.singular_units[usg_tok.text] if usg_tok is not None
@@ -3883,16 +3883,6 @@ def _fold_count_weekday(resolved, spec, tokens, text):
     rest = [(m, folded if m is wd_match else r) for m, r in resolved
             if m is not off_match]
     return rest, set(range(*off_match.span)) | set(between)
-
-
-def _labels_literal_date(wd_match, match, tokens, links):
-    """Whether the weekday stands next to a literal date it labels
-    ("sexta-feira 30 de outubro", "sexta-feira, 25/12"), with only link
-    words between the two."""
-    if match.construction not in _WEEKDAY_LABELABLE_DATES:
-        return False
-    (lo, hi) = sorted((wd_match.span, match.span))
-    return all(tokens[i].text in links for i in range(lo[1], hi[0]))
 
 
 def _roll_bare_weekday_time(res, rep, anchor):

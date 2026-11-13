@@ -136,13 +136,17 @@ def test_no_fold_keeps_the_count(text, expected, rest):
     assert r.remainder == rest
 
 
+@pytest.mark.parametrize("lang", ["pt-PT", "pt-BR"])
 @pytest.mark.parametrize("text", [
     "daqui a uma semana, sexta-feira 30 de outubro",
     "daqui a uma semana sexta-feira 30 de outubro",
+    "sexta-feira daqui a uma semana, 30 de outubro",
+    "30 de outubro daqui a uma semana sexta-feira",
 ])
-def test_a_weekday_that_labels_a_date_keeps_the_count(text):
-    # Friday 30 October is the written date; the count does not move it.
-    r = extract_timespan(text, "pt-PT", SATURDAY)
+def test_a_written_date_keeps_the_count(lang, text):
+    # Friday 30 October is the written date, wherever it stands; the count
+    # does not move it.
+    r = extract_timespan(text, lang, SATURDAY)
     assert r is not None, f"{text!r} did not parse"
     assert (r.span.start, r.span.end) == (day(10, 30), day(10, 31))
     assert r.remainder == "daqui a uma semana"
@@ -170,3 +174,12 @@ def test_a_clause_word_does_not_link_a_count_to_a_weekday():
     assert r is not None
     assert r.span.start == day(10, 19, h=12)
     assert r.remainder == "que sexta-feira"
+
+
+def test_a_slash_date_after_the_count_keeps_the_count():
+    # Thursday 12 November 2026: the written 27 November wins.
+    r = extract_timespan("sexta-feira daqui a uma semana, 27/11", "pt-PT",
+                         datetime(2026, 11, 12, 10, 0))
+    assert r is not None
+    assert (r.span.start, r.span.end) == (day(11, 27), day(11, 28))
+    assert r.remainder == "daqui a uma semana"
