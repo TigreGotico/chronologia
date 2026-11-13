@@ -3548,6 +3548,10 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
     resolved, apposed = _fold_apposed_weekday(resolved, spec, tokens, text)
     if resolved is None:
         return None, set(), None
+    resolved, counted = _fold_count_weekday(resolved, spec, tokens, text)
+    if resolved is None:
+        return None, set(), None
+    apposed |= counted
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
     composable = (_COMPOSABLE_DATES | {"relative_offset"}
                  if spec.conventions.offset_clock_composes
@@ -3583,9 +3587,7 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
     # doubles as a separator surface (French "du" is also "from", Catalan "al"
     # is also "to") stays glue via its non-separator sense, while "and"/"y" --
     # which appear ONLY under a separator key -- correctly break adjacency.
-    _sep_keys = {"and", "or", "to", "from", "between", "until", "since"}
-    _glue = {s for _k, _vals in spec.connectors.items()
-             if _k not in _sep_keys for s in _vals}
+    _glue = _glue_surfaces(spec)
     _covered = set(apposed)
     for m, _r in resolved:
         _covered.update(range(*m.span))
@@ -3777,6 +3779,110 @@ def _fold_apposed_weekday(resolved, spec, tokens, text):
         return None, set()
     return ([(m, r) for m, r in resolved if m is not wd_match],
             set(range(*wd_match.span)))
+
+
+#: Connector keys that join two distinct references.
+_SEPARATOR_KEYS = frozenset({"and", "or", "to", "from", "between", "until",
+                             "since"})
+
+
+def _glue_surfaces(spec):
+    """Connector surfaces that join two parts of one reference: every
+    connector key that is not a separator."""
+    return {s for key, vals in spec.connectors.items()
+            if key not in _SEPARATOR_KEYS for s in vals}
+
+
+#: Offset units whose count reaches a calendar week.
+_WEEK_COUNT_UNITS = frozenset({"week", "fortnight"})
+
+#: Connector keys whose words may stand between a count and its weekday
+#: ("in two weeks on friday", "daqui a uma semana, na sexta-feira").  A
+#: deadline ("by friday"), a clause ("que sexta-feira") or a list word is no
+#: part of one date.
+_COUNT_WEEKDAY_LINKS = ("on", "article", "date_article")
+
+
+def _fold_count_weekday(resolved, spec, tokens, text):
+    """A weekday beside a count names that weekday in the period the count
+    reaches, or no day.
+
+    "daqui a uma semana sexta-feira" is the Friday of the calendar week one
+    week on, with the week starting on the locale's ``week_start``; "há uma
+    semana sexta-feira" is the Friday of the calendar week one week back.
+    "daqui a um mês sexta-feira" and "daqui a um ano sexta-feira" are the
+    first Friday on or after the day the count reaches.  A count of days
+    reaches one day, so the weekday is an apposition to it, as in "amanhã,
+    domingo" (an "aposto" is a "Nome ou locução nominal que se junta a outro
+    nome para melhor o caracterizar", Priberam s.v. "aposto", 5): when it is
+    not that day's weekday, the phrase names no day and is refused.  A
+    weekday before a count of days is not folded, as a weekday before a day
+    word is not ("sexta-feira amanhã"), so the count stays in the remainder.
+    Otherwise the weekday belongs to the date in either order ("sexta-feira
+    daqui a uma semana"), so it never strands.
+
+    Only a bare weekday (no next/last marker) next to a day-or-coarser count
+    folds, with nothing but link words between them ("in two weeks on
+    friday") and no sentence end.  A literal date in the same reading
+    ("sexta-feira 30 de outubro", "sexta-feira daqui a uma semana, 30 de
+    outubro") outranks the count wherever it stands, so the count is not
+    folded and stays in the remainder.  A past count of months or years has
+    no reading here and keeps the count, with the weekday in the remainder.
+
+    Returns ``(resolved, consumed)``: the matches with the weekday holding
+    the folded day and the count removed, and the count's and the glue's
+    token positions; ``(None, set())`` on a refusal.
+    """
+    offsets = [(m, r) for m, r in resolved
+               if m.construction == "relative_offset"
+               and _offset_is_day_or_coarser(m, spec)]
+    weekdays = [(m, r) for m, r in resolved
+                if m.construction == "weekday_ref"
+                and m.slots.get("REL_MARKER") is None]
+    if len(offsets) != 1 or len(weekdays) != 1:
+        return resolved, set()
+    (off_match, off_res), (wd_match, wd_res) = offsets[0], weekdays[0]
+    (lo, hi) = sorted((off_match.span, wd_match.span))
+    # A word that can join two references ("e", "and") never joins the count
+    # to its weekday, even where the locale also lists it as a link.
+    links = ({s for key in _COUNT_WEEKDAY_LINKS
+              for s in spec.connectors.get(key, ())}
+             - {s for key in _SEPARATOR_KEYS
+                for s in spec.connectors.get(key, ())})
+    between = range(lo[1], hi[0])
+    if any(tokens[i].text not in links for i in between):
+        return resolved, set()
+    if text is not None and _sentence_boundary_between(
+            text, tokens[lo[1] - 1].char_end, tokens[hi[0]].char_start):
+        return resolved, set()
+    if any(m.construction in _WEEKDAY_LABELABLE_DATES for m, _r in resolved):
+        return resolved, set()
+    usg_tok = off_match.slots.get("USG")
+    unit = (spec.singular_units[usg_tok.text] if usg_tok is not None
+            else spec.units[off_match.slots["UNIT"].text])
+    sign = spec.directions[off_match.slots["MARKER"].text]
+    wd_tok = wd_match.slots.get("WEEKDAY") or wd_match.slots["WEEKDAYFULL"]
+    target = spec.weekdays[wd_tok.text]
+    reached = off_res.value.start
+    reached = AstroDate(reached.year, reached.month, reached.day)
+    if unit in _WEEK_COUNT_UNITS:
+        week = _week_span(reached, spec.conventions.week_start).start
+        day = week + timedelta(days=(target - week.weekday()) % 7)
+    elif unit == "day":
+        if wd_match.span[0] < off_match.span[0]:
+            return resolved, set()
+        if reached.weekday() != target:
+            return None, set()
+        day = reached
+    elif unit in ("month", "year") and sign > 0:
+        day = reached + timedelta(days=(target - reached.weekday()) % 7)
+    else:
+        return resolved, set()
+    folded = replace(wd_res, value=DateSpan(day, day + timedelta(days=1),
+                                            wd_res.value.basis))
+    rest = [(m, folded if m is wd_match else r) for m, r in resolved
+            if m is not off_match]
+    return rest, set(range(*off_match.span)) | set(between)
 
 
 def _roll_bare_weekday_time(res, rep, anchor):
