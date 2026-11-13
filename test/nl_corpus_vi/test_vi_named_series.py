@@ -22,7 +22,7 @@ from ._corpus import ANCHOR, ad, parse, remainder, start
 
 @pytest.mark.parametrize("text,y,m,d", [
     ("thứ hai", 2017, 7, 3),
-    ("thứ ba", 2017, 7, 4),
+    ("thứ ba", 2017, 6, 27),
     ("thứ tư", 2017, 6, 28),
 ])
 def test_thu_plus_number_is_a_weekday(text, y, m, d):

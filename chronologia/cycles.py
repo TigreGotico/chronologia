@@ -134,8 +134,8 @@ def resolve_cycle_day(cycle: DayCycle, position: int, rel: int,
     """JDN of the day at ``position`` in ``cycle`` relative to ``anchor_jdn``.
 
     ``rel`` follows the weekday convention: ``+1`` the next such day strictly
-    ahead, ``-1`` the most recent one strictly behind, ``0`` the one in the
-    current cycle window (the reproduction of weekday_ref's next/last/this).
+    ahead, ``-1`` the most recent one strictly behind, ``0`` the next such day
+    on or after the anchor (the reproduction of weekday_ref's next/last/this).
     Returns ``None`` when a month-anchored target falls outside its month
     (an intercalary-boundary discontinuity).
     """
@@ -146,7 +146,7 @@ def resolve_cycle_day(cycle: DayCycle, position: int, rel: int,
     elif rel < 0:
         delta = -((cur - position) % length or length)
     else:
-        delta = position - cur
+        delta = (position - cur) % length
     target = anchor_jdn + delta
     if cycle.position(target) != position:
         return None                 # month-anchored boundary discontinuity

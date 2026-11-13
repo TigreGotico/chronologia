@@ -1,0 +1,12 @@
+# The singular article that opens one named period or weekday after
+# "próximo" or "último": "a próxima semana", "o próximo sábado", "na última
+# semana".  "próximo" is "Seguinte ao actual" (Priberam s.v. "próximo", 4),
+# so with a singular noun it names the one next period.  A plural article
+# opens a plural noun, and "nos próximos dias" or "nos últimos anos" names a
+# stretch of several days or years, not one of them.  The grammar reads
+# "article_singular? REL_MARKER UNIT" and "article_singular? REL_MARKER
+# WEEKDAY", so a plural article stays out of the date.
+o
+a
+no
+na

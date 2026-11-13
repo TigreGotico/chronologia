@@ -79,7 +79,7 @@ def test_lunar_flavoured_month_alternates(text, month):
 
 @pytest.mark.parametrize("text,y,m,d", [
     ("thứ hai", 2017, 7, 3),
-    ("thứ ba", 2017, 7, 4),
+    ("thứ ba", 2017, 6, 27),
     ("thứ tư", 2017, 6, 28),
     ("thứ năm", 2017, 6, 29),
     ("thứ sáu", 2017, 6, 30),

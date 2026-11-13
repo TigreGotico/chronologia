@@ -10,8 +10,8 @@ folded the ZWNJ out of the matching key, only the voc's spelling resolved and
 the user's other spelling returned None (a silent wrong).
 
 Gold is computed by independent weekday arithmetic against this corpus's Tuesday
-anchor (prefer-future: a bare weekday names its next strictly-future
-occurrence), never by re-running the parser.
+anchor (a bare weekday names its next occurrence, and the anchor day on that
+weekday), never by re-running the parser.
 """
 from datetime import timedelta
 
@@ -46,7 +46,7 @@ _ZWNJ_FORM = {
 
 def _expected(idx):
     base = ANCHOR.replace(hour=0, minute=0, second=0, microsecond=0)
-    ahead = (idx - base.weekday()) % 7 or 7
+    ahead = (idx - base.weekday()) % 7
     s = base + timedelta(days=ahead)
     e = s + timedelta(days=1)
     return AstroDate(s.year, s.month, s.day), AstroDate(e.year, e.month, e.day)

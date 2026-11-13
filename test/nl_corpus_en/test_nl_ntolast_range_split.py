@@ -82,13 +82,13 @@ def test_uncomposed_controls_unchanged(text):
     "monday-to-friday",
 ])
 def test_genuine_weekday_range_still_binds(text):
-    # the week after the Monday anchor: 2026-06-22 through 2026-06-26,
-    # end-exclusive at 2026-06-27.
+    # said on Monday 2026-06-15, "monday" is that day: 2026-06-15 through
+    # Friday 2026-06-19, end-exclusive at 2026-06-20.
     r = _result(text)
     assert r is not None and r.remainder == ""
     assert (r.span.start.year, r.span.start.month, r.span.start.day) \
-        == (2026, 6, 22)
-    assert (r.span.end.year, r.span.end.month, r.span.end.day) == (2026, 6, 27)
+        == (2026, 6, 15)
+    assert (r.span.end.year, r.span.end.month, r.span.end.day) == (2026, 6, 20)
 
 
 def test_genuine_clock_range_still_binds():

@@ -97,7 +97,7 @@ _MID = ANCHOR.replace(hour=0, minute=0)
     ("last friday", _MID - timedelta(days=4)),       # 2017-06-23
     ("last saturday", _MID - timedelta(days=3)),     # 2017-06-24
     ("last sunday", _MID - timedelta(days=2)),       # 2017-06-25
-    ("this monday", _MID - timedelta(days=1)),       # week start (Mon)
+    ("this monday", _MID + timedelta(days=6)),       # 2017-07-03, class 3
     ("this tuesday", _MID),                          # anchor day
     ("this wednesday", _MID + timedelta(days=1)),
     ("this thursday", _MID + timedelta(days=2)),
@@ -138,7 +138,7 @@ def test_day_after_tomorrow(text, days):
 
 
 @pytest.mark.parametrize("text,days", [
-    ("a week from tuesday", 14), ("a week from monday", 6 + 7),
+    ("a week from tuesday", 7), ("a week from monday", 6 + 7),
     ("two weeks from monday", 6 + 14), ("a week from friday", 3 + 7),
 ])
 def test_a_week_from_weekday(text, days):

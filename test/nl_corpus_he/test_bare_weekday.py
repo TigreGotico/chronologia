@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A bare full weekday name resolves to its next strictly-future occurrence.
+"""A bare full weekday name resolves to its next occurrence, or today.
 
 Only the unambiguous "יום ..." forms and שבת bind bare; the single-word
 ordinal homographs (ראשון "first", שני "second" ...) stay out of the bare
@@ -24,7 +24,7 @@ CASES = [
 
 @pytest.mark.parametrize("text,idx", CASES)
 def test_bare_full_weekday(text, idx):
-    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    ahead = (idx - ANCHOR.weekday()) % 7
     s = (ANCHOR + timedelta(days=ahead)).date()
     e = s + timedelta(days=1)
     sp = span(text)
@@ -47,7 +47,7 @@ BE_CASES = [
 def test_be_prefixed_weekday_consumes_fully(text, idx):
     """The preposition-fused 'on <weekday>' form (ב + יום/שבת) is one word in
         Hebrew orthography; it must bind whole with an empty remainder."""
-    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    ahead = (idx - ANCHOR.weekday()) % 7
     s = (ANCHOR + timedelta(days=ahead)).date()
     sp, remainder = parse(text)
     assert remainder == ''
