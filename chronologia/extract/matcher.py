@@ -673,8 +673,9 @@ class ConstructionMatcher:
                         continue
                     # "faz N anos" counts back ("faz dois anos") only at the
                     # start of a clause; after a subject it is the verb "to
-                    # turn" ("a minha filha faz dez anos").  Only a year
-                    # count can be an age.  The
+                    # turn" ("a minha filha faz dez anos").  Any word but a
+                    # lead word makes a year count an age; a month count
+                    # has a narrower test below.  The
                     # tokenizer drops punctuation, so a clause start is the
                     # start of the utterance or a lead word such as "já".
                     # The marker and the lead words are locale facts
@@ -689,6 +690,56 @@ class ConstructionMatcher:
                                 slots["UNIT"].text) == "year"
                             and slots["MARKER"].index > 0
                             and tokens[slots["MARKER"].index - 1].text
+                            not in self.spec.connectors.get(
+                                "clause_lead", frozenset())):
+                        continue
+                    # A month count is an age too ("o bebé faz dois meses":
+                    # Priberam s.v. "fazer", 13: "Atingir determinado tempo
+                    # ou determinada quantidade"), but after a verb it
+                    # counts back ("ele trabalha cá faz dois meses"), so a
+                    # subject must stand before "faz": a subject pronoun
+                    # right before it ("ela faz"), or a determiner two
+                    # words before it ("o bebé faz", "a minha filha faz").
+                    # Both lists are locale facts
+                    # (``marker_subject_pronoun.voc`` and
+                    # ``marker_subject_determiner.voc``).
+                    if (name == "relative_offset" and "MARKER" in slots
+                            and slots["MARKER"].text
+                            in self.spec.connectors.get(
+                                "past_clause_initial", frozenset())
+                            and "UNIT" in slots
+                            and self.spec.units.get(
+                                slots["UNIT"].text) == "month"
+                            and slots["MARKER"].index > 0
+                            and (tokens[slots["MARKER"].index - 1].text
+                                 in self.spec.connectors.get(
+                                     "subject_pronoun", frozenset())
+                                 or (slots["MARKER"].index > 1
+                                     and tokens[slots["MARKER"].index - 2].text
+                                     in self.spec.connectors.get(
+                                         "subject_determiner", frozenset())))):
+                        continue
+                    # Impersonal "fazer" also names the weather (Priberam
+                    # s.v. "fazer", 26: "Haver determinada condição
+                    # atmosférica"): in "faz um dia lindo" and "faz um dia
+                    # de sol" the word after "dia" qualifies the day, so "um
+                    # dia" is no count.  Elapsed time ends at the unit, at
+                    # a punctuation mark, or at a word that opens a clause
+                    # ("faz um dia que não como").  The marker and the
+                    # clause words are locale facts
+                    # (``marker_past_clause_initial.voc`` and
+                    # ``marker_clause_lead.voc``).
+                    if (name == "relative_offset" and "MARKER" in slots
+                            and slots["MARKER"].text
+                            in self.spec.connectors.get(
+                                "past_clause_initial", frozenset())
+                            and "NUM" in slots and slots["NUM"].value == 1
+                            and "UNIT" in slots
+                            and self.spec.units.get(
+                                slots["UNIT"].text) == "day"
+                            and end < len(tokens)
+                            and not tokens[end].break_before
+                            and tokens[end].text
                             not in self.spec.connectors.get(
                                 "clause_lead", frozenset())):
                         continue

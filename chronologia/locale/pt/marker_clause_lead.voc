@@ -1,5 +1,10 @@
-# Words that may stand before a clause-initial "faz" without a subject coming
-# between: "já faz dois dias".
+# Words that open a clause.  They may stand before a clause-initial "faz"
+# without a subject coming between: "já faz dois dias".  After "faz um dia"
+# they end the time phrase, so "um dia" is a count ("faz um dia que não
+# como", "faz um dia e meio") and not a day the weather qualifies ("faz um
+# dia lindo").  The "que" after an elapsed time is the "que excessivo" of
+# Ciberdúvidas, "Que excessivo em «faz dois anos que...»": "o que em «faz
+# dois anos que eu estudo aqui» é igualmente um que excessivo".
 já
 e
 mas
