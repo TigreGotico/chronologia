@@ -44,7 +44,8 @@ from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_daypart,
                                               compose_daypart_clock,
                                               _WEEK_START, _week_span)
-from chronologia.extract.tokenizer import Tokenizer
+from chronologia.extract.tokenizer import (Tokenizer, _ISO, _NUMDATE_ANY,
+                                           _SLASHFRAC)
 
 
 class DateSpanResult(NamedTuple):
@@ -294,6 +295,9 @@ _SLASH_GAP = re.compile(r"/")
 #: interval, so a numeric date whose first component is not a four-digit year
 #: ("04/2020", "2020/04", "2024/03") is never mistaken for one.
 _ISO_YEAR_FIRST = re.compile(r"\d{4}(?:-\d{1,2}){0,2}")
+# a numeric date token in any written form: "2027-01-01", "01/01/2027",
+# "15.06.2020", "20/12"
+_NUMERIC_DATE = re.compile(f"{_ISO}|{_NUMDATE_ANY}|{_SLASHFRAC}")
 
 #: the constructions a lone ``clock_time`` composes onto (its minute-wide time
 #: placed on the day the date names).  A single composable-date set so the
@@ -1184,7 +1188,9 @@ def _bare_numeral(text, sub, engine, anchor):
     reaches the remainder, and a slice that *does* resolve by itself (a real
     date, a bare weekday) is left to its own reading.
     """
-    nums = [t for t in sub if t.is_number and t.value is not None]
+    # a written date or fraction ("05/01") names its own day, never a bare one
+    nums = [t for t in sub if t.is_number and t.value is not None
+            and not _NUMERIC_DATE.fullmatch(t.text)]
     if len(nums) != 1:
         return None
     if len(sub) == 1:
@@ -1396,7 +1402,8 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         or any(t.text in spec.months for t in right_tok)
     left_bare_clock = left[2] == "clock" \
         and not any(t.text in spec.weekdays for t in left_tok) \
-        and not any(t.text in spec.months for t in left_tok)
+        and not any(t.text in spec.months for t in left_tok) \
+        and not any(_NUMERIC_DATE.fullmatch(t.text) for t in left_tok)
     if right_dated and left_bare_clock:
         rs, ls = right_span.start, left_span.start
         start = AstroDate(rs.year, rs.month, rs.day, ls.hour, ls.minute,

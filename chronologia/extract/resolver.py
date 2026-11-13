@@ -1620,8 +1620,6 @@ class Resolver:
         first, second = (int(part) for part in tok.text.split("/"))
         day, month = ((first, second) if self.spec.conventions.dmy
                       else (second, first))
-        if not 1 <= month <= 12:
-            return None
         value = _next_day_month(month, day, anchor)
         if value is None:
             return None

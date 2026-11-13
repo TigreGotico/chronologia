@@ -336,10 +336,11 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
     if name == "SOLARQUAL":
         return token.text in spec.solar_quals
     if name in ("ORD", "SORD"):
-        # an ordinal is a whole number: a written fraction ("dia 5/3") names
-        # no nth anything
+        # an ordinal is a whole number written as one: a written fraction
+        # ("dia 5/3", "dia 1/1") names no nth anything, whatever its value
         return (token.is_number and (token.value or 0) >= 1
-                and float(token.value).is_integer())
+                and float(token.value).is_integer()
+                and "/" not in token.text)
     if name == "NTOLAST":
         # the trailing "last" of an "<ordinal> to last" / "next to last"
         # idiom ("the second-to-last friday") -- the same surfaces as the
