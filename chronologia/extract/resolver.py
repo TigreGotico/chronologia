@@ -3149,6 +3149,13 @@ class Resolver:
                         return hour, minute, second
                     return None
                 off = self.spec.meridiems[meridiem.text]
+                # A morning marker over an explicit 24-hour clock past noon
+                # ("15:00 da manhã", "15:30 am") is as contradictory as the
+                # spoken "às 15 da manhã" above, unless the hour lies in the
+                # marker's own day-part band.
+                if not bare_12h and off == 0 and hour >= 13 and not (
+                        dp_name is not None and _hour_in_daypart(dp_name, hour)):
+                    return None
                 # decide the +/-12 shift from the SPOKEN hour's 12h meaning, then
                 # apply it to the (possibly rolled-back) hour, so a subtractive
                 # "to twelve pm/am" lands the right side of noon/midnight.  "pm"

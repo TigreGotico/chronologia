@@ -76,6 +76,13 @@ def test_contradictory_hour_meridiem_declines(text):
     nomatch(text)
 
 
+# A 24-hour digit clock past noon keeps a redundant "pm" and names no time
+# with "am".
+def test_digit_clock_past_noon_with_a_meridiem():
+    assert start("15:30 pm") == clk(15, 30)
+    nomatch("15:30 am")
+
+
 # -- fraction system: half/quarter past/to, digit and spelled -------------
 
 @pytest.mark.parametrize("text,h,mi", [
