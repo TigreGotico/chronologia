@@ -585,6 +585,15 @@ class ConstructionMatcher:
                             in self.spec.connectors.get(
                                 "this_not_weekday", frozenset())):
                         continue
+                    # A marker contracted with its preposition ("deste",
+                    # "desta") always comes before its noun, so a match never
+                    # ends on it: "a semana deste natal" is the week of
+                    # Christmas, not this week.  The list is a locale fact
+                    # (``marker_rel_preposed.voc``).
+                    if (tokens[end - 1].text
+                            in self.spec.connectors.get(
+                                "rel_preposed", frozenset())):
+                        continue
                     # Some words open a day part only right after a day:
                     # "el llunes de mañana" is Monday morning, but in "a
                     # partir de mañana" and "el día de mañana" the word

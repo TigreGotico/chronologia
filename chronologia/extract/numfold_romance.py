@@ -584,10 +584,9 @@ _PT_ORDINAL_ARTICLES = frozenset({"a", "na", "da", "à", "pela"})
 #: "de julho", "do mês que vem".  Without one of them there is no period for
 #: the ordinal to count in.  "da" is not listed: the feminine periods are
 #: "semana" and "década", a week holds one of each weekday, and no order
-#: reads "da década".  "deste" and "desta" are not listed: no
-#: ``scoped_ordinal`` order reads them, so a fold before them only strands
-#: the ordinal.
-_PT_ORDINAL_SCOPE_OPENERS = frozenset({"de", "do"})
+#: reads "da década".  "deste" and "desta" open the anchor's own period:
+#: "a segunda terça-feira deste mês".
+_PT_ORDINAL_SCOPE_OPENERS = frozenset({"de", "do", "deste", "desta"})
 
 
 def _pt_voc_surfaces(*prefixes):
