@@ -324,6 +324,23 @@ def test_a_left_date_a_year_ahead_is_pulled_back_to_a_monthly_right_end(
     assert rest == ""
 
 
+# The year pull repairs a left end only when it lies more than half a year
+# after the right end.  On Thursday 1 October 2026 the 3rd of the month is
+# 3 October; "april 3" first reads 3 April 2027, 182 days after it, and
+# "april 4" reads 4 April 2027, 183 days after it.
+def test_a_left_end_less_than_half_a_year_ahead_names_no_range():
+    got = extract_timespan("from april 3 to the 3rd of the month", "en", THU01)
+    assert got is None or got[1] != "", f"read {got!r}"
+
+
+def test_a_left_end_half_a_year_ahead_is_pulled_back():
+    span, rest = extract_timespan("from april 4 to the 3rd of the month",
+                                  "en", THU01)
+    assert (span.start, span.end) == (AstroDate(2026, 4, 4),
+                                      AstroDate(2026, 10, 4))
+    assert rest == ""
+
+
 def test_a_dated_left_end_after_a_monthly_right_end_names_no_range():
     got = extract_timespan("from december 20 2026 to the 3rd of the month",
                            "en", WED02)
