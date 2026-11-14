@@ -7,7 +7,9 @@ Impersonal "fazer" also names the weather (Priberam s.v. "fazer", 26:
 date.  "fazer" with a subject names an age (Priberam s.v. "fazer", 13:
 "Atingir determinado tempo ou determinada quantidade"), so "o bebé faz dois
 meses" names no date either; a bare length is not a date.  After a verb, an
-object or a place, or before "que", the count still counts back.
+object or a place, or before "que", the count still counts back.  So it does
+after a pronoun that does not open the sentence ("falei com ela faz dois
+meses"), and before a weather word that opens the next sentence.
 
 Gold values are hand arithmetic from the anchor, Tuesday 2017-06-27 13:04:
 today is 2017-06-27, tomorrow 2017-06-28; one day back is 2017-06-26 13:04,
@@ -87,6 +89,25 @@ def test_weather_on_the_grid_anchor_is_that_saturday():
     ("a minha mãe faz dois meses que está internada",
      datetime(2017, 4, 27, 13, 4)),
     ("ela faz dois meses que não me liga", datetime(2017, 4, 27, 13, 4)),
+    ("falei com ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("não falo com ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("estive com ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("estou com ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("namoro com ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("terminei com ele faz três meses", datetime(2017, 3, 27, 13, 4)),
+    ("moro com ele faz três meses", datetime(2017, 3, 27, 13, 4)),
+    ("saí com ela faz um mês", datetime(2017, 5, 27, 13, 4)),
+    ("liguei para ele faz um mês", datetime(2017, 5, 27, 13, 4)),
+    ("trabalho para ela faz um mês", datetime(2017, 5, 27, 13, 4)),
+    ("mandei uma carta para ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("vi ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("eu conheci ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("não vejo ela faz dois meses", datetime(2017, 4, 27, 13, 4)),
+    ("O avião caiu faz um dia. Frio e chuva dificultam as buscas",
+     datetime(2017, 6, 26, 13, 4)),
+    ("faz um dia. Lindo, o tempo hoje", datetime(2017, 6, 26, 13, 4)),
+    ("a tempestade passou faz um dia. De sol, nem sinal",
+     datetime(2017, 6, 26, 13, 4)),
 ])
 def test_elapsed_time_still_counts_back(text, begin):
     assert start(text) == ad(begin)

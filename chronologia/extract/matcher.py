@@ -724,9 +724,12 @@ class ConstructionMatcher:
                     # atmosférica", https://dicionario.priberam.org/fazer):
                     # "faz um dia lindo", "faz um dia de sol".  A count of
                     # one day refuses when a weather word qualifies the
-                    # day: an adjective, or "de" and a weather noun.  Any
-                    # other word leaves the count ("faz um dia inteiro que
-                    # não como").  The lists are locale facts
+                    # day with no punctuation after the unit: an
+                    # adjective, or "de" and a weather noun.  Any other word
+                    # leaves the count ("faz um dia inteiro que não como"),
+                    # and so does a weather word that opens the next
+                    # sentence ("O avião caiu faz um dia. Frio e chuva
+                    # dificultam as buscas").  The lists are locale facts
                     # (``marker_weather_adjective.voc``,
                     # ``marker_weather_noun.voc`` and ``marker_of.voc``).
                     if (name == "relative_offset" and "MARKER" in slots
@@ -738,6 +741,7 @@ class ConstructionMatcher:
                             and self.spec.units.get(
                                 slots["UNIT"].text) == "day"
                             and end < len(tokens)
+                            and not tokens[end].break_before
                             and (tokens[end].text in self.spec.connectors.get(
                                 "weather_adjective", frozenset())
                                  or (end + 1 < len(tokens)
@@ -1004,18 +1008,22 @@ class ConstructionMatcher:
         return out
 
     def _subject_opens(self, tokens: Tuple[Token, ...], marker: int) -> bool:
-        """Whether the words before ``tokens[marker]`` are its subject alone:
-        a subject pronoun right before it ("ela faz"), or a determiner phrase
-        that opens the sentence ("o bebé faz", "a minha filha faz").  The
-        lists are locale facts (``marker_subject_pronoun.voc`` and
+        """Whether the words before ``tokens[marker]`` are its subject alone
+        and open the sentence: a subject pronoun ("ela faz"), or a
+        determiner phrase ("o bebé faz", "a minha filha faz").  A pronoun
+        after a word is an object instead ("falei com ela faz dois meses",
+        pt-BR "vi ela faz dois meses").  The lists are locale facts
+        (``marker_subject_pronoun.voc`` and
         ``marker_subject_determiner.voc``)."""
-        if tokens[marker - 1].text in self.spec.connectors.get(
-                "subject_pronoun", frozenset()):
+        def opens(i: int) -> bool:
+            return i == 0 or tokens[i].break_before
+
+        if (tokens[marker - 1].text in self.spec.connectors.get(
+                "subject_pronoun", frozenset()) and opens(marker - 1)):
             return True
         determiners = self.spec.connectors.get("subject_determiner",
                                                frozenset())
-        return any(first >= 0
-                   and (first == 0 or tokens[first].break_before)
+        return any(first >= 0 and opens(first)
                    and all(t.text in determiners
                            for t in tokens[first:marker - 1])
                    for first in (marker - 2, marker - 3))
