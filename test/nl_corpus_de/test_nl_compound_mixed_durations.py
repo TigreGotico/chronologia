@@ -37,12 +37,13 @@ def test_year_day_compound_composes():
     assert end == exp_start + timedelta(days=1)
 
 
-@pytest.mark.parametrize("text", [
-    "3 Monaten und 2 Tagen",
-    "3 Jahren und 2 Monaten",
+@pytest.mark.parametrize("text, delta", [
+    ("3 Monaten und 2 Tagen", {"months": 3, "days": 2}),
+    ("3 Jahren und 2 Monaten", {"years": 3, "months": 2}),
 ])
-def test_mixed_calendar_fixed_duration_refuses(text):
-    assert extract_duration(text, LANG) is None
+def test_mixed_calendar_fixed_duration_counts_whole(text, delta):
+    got = extract_duration(text, LANG, anchor=ANCHOR)
+    assert got == (ANCHOR + relativedelta(**delta) - ANCHOR, "")
 
 
 def test_pure_fixed_grain_duration_compound_unaffected():

@@ -12,13 +12,9 @@ Two public edges are covered:
   in the compound -- the same width convention a bare single-unit offset
   ("in 2 days" -> a day-wide span) already follows.
 
-* :func:`extract_duration` -- a calendar-grain unit is not a fixed-width
-  length (a bare "3 months" already refuses with ``None`` rather than guess
-  a 30-day month; see ``test_nl_duration.py::test_not_a_duration``).  A MIXED
-  compound must follow the identical convention and refuse WHOLE, never
-  answer with only its fixed-width part and strand the calendar part in the
-  remainder -- a partial value with the rest dropped is a wrong answer, not
-  a partial one.
+* :func:`extract_duration` -- a calendar-grain unit is counted on the
+  calendar from the anchor, months first, then the fixed-grain units, so a
+  MIXED compound gives the whole length, never only its fixed-width part.
 
 Every expected span is hand-derived with ``dateutil.relativedelta`` (which
 itself applies the month/day components in the same calendar-then-fixed
@@ -116,23 +112,23 @@ def test_recurrence_every_n_weeks_untouched():
     nomatch("every 2 weeks")
 
 
-# -- extract_duration: mixed compounds refuse WHOLE, never strand a part ---
+# -- extract_duration: a mixed compound gives its whole length -------------
 
-@pytest.mark.parametrize("text", [
-    "3 months and 2 days",
-    "2 days and 3 months",
-    "3 years and 2 months",
-    "1 year, 2 months and 3 days",
-    "in a year and a day",
+@pytest.mark.parametrize("text, delta, remainder", [
+    ("3 months and 2 days", {"months": 3, "days": 2}, ""),
+    ("2 days and 3 months", {"months": 3, "days": 2}, ""),
+    ("3 years and 2 months", {"years": 3, "months": 2}, ""),
+    ("1 year, 2 months and 3 days", {"years": 1, "months": 2, "days": 3}, ""),
+    ("in a year and a day", {"years": 1, "days": 1}, "in"),
 ])
-def test_mixed_calendar_fixed_duration_refuses(text):
-    assert extract_duration(text, LANG) is None
+def test_mixed_calendar_fixed_duration_counts_whole(text, delta, remainder):
+    got = extract_duration(text, LANG, anchor=ANCHOR)
+    assert got == (ANCHOR + relativedelta(**delta) - ANCHOR, remainder)
 
 
-def test_bare_calendar_duration_still_refuses():
-    # unchanged control (test_nl_duration.py already pins this; repeated here
-    # as the reference point the mixed-compound refusal must match).
-    assert extract_duration("3 months", LANG) is None
+def test_bare_calendar_duration_counts_from_the_anchor():
+    got = extract_duration("3 months", LANG, anchor=ANCHOR)
+    assert got == (ANCHOR + relativedelta(months=3) - ANCHOR, "")
 
 
 def test_pure_fixed_grain_duration_compound_unaffected():

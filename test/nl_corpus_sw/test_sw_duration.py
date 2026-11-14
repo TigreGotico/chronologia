@@ -16,6 +16,7 @@ locale in the tree spells.
 from datetime import timedelta
 
 import pytest
+from dateutil.relativedelta import relativedelta
 
 from chronologia import extract_duration, extract_timespan
 
@@ -85,10 +86,16 @@ def test_a_leading_fraction_scales_the_unit(text, expected):
     assert dur(text).duration == expected
 
 
-@pytest.mark.parametrize("text", ["miezi mitatu", "miaka mitano", "mwaka moja"])
-def test_the_calendar_units_are_not_durations(text):
-    """A month and a year are not fixed widths, here as in every locale."""
-    assert dur(text) is None
+@pytest.mark.parametrize("text, delta", [
+    ("miezi mitatu", {"months": 3}),
+    ("miaka mitano", {"years": 5}),
+    ("mwaka moja", {"years": 1}),
+])
+def test_the_calendar_units_count_from_the_anchor(text, delta):
+    """A month and a year are counted on the calendar, here as in every
+    locale; the count follows the unit."""
+    got = extract_duration(text, "sw", anchor=ANCHOR)
+    assert got == (ANCHOR + relativedelta(**delta) - ANCHOR, "")
 
 
 @pytest.mark.parametrize("text", ["siku", "saa", "dakika", "tano", "mitano"])

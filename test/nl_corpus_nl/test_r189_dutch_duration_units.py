@@ -92,16 +92,19 @@ def test_anderhalf_generalized(text, expected):
     assert got.remainder == ""
 
 
-def test_anderhalf_calendar_unit_is_a_timespan_not_a_fixed_duration():
-    # "jaar"/"maand" are calendar-ambiguous (not a fixed-width duration, same
-    # as the plain "een jaar"/"een maand" control), so "anderhalf jaar" and
-    # "anderhalve maand" stay outside extract_duration's fixed-width table --
-    # they resolve only as an anchored timespan ("over anderhalf jaar").
-    assert extract_duration("anderhalf jaar", LANG) is None
-    assert extract_duration("anderhalve maand", LANG) is None
+def test_anderhalf_calendar_unit_counts_from_the_anchor():
+    # "jaar"/"maand" are calendar units: "anderhalf jaar" is 18 months and
+    # "anderhalve maand" a month and 15 days, counted from the anchor, as
+    # the anchored timespan ("over anderhalf jaar") counts them.
     from datetime import datetime
 
+    from dateutil.relativedelta import relativedelta
+
     anchor = datetime(2026, 8, 14, 10, 0)
+    assert extract_duration("anderhalf jaar", LANG, anchor=anchor) == (
+        anchor + relativedelta(months=18) - anchor, "")
+    assert extract_duration("anderhalve maand", LANG, anchor=anchor) == (
+        anchor + relativedelta(months=1, days=15) - anchor, "")
     assert parse("over anderhalf jaar", anchor) is not None
     assert parse("over anderhalve maand", anchor) is not None
 

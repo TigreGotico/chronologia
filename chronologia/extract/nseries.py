@@ -28,6 +28,7 @@ from datetime import datetime, timedelta
 from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
+from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _RANGE_TO, _conn_surfaces,
@@ -45,9 +46,9 @@ from chronologia.recurrence import nth_weekday_of_month as _nth_weekday_of_month
 # Durations.
 # --------------------------------------------------------------------------
 #: Fixed-width offset units and their length in seconds.  Month / year / decade
-#: are calendar quantities, not fixed durations (a "month" is 28..31 days), so
-#: they are deliberately *not* durations -- a phrase naming one yields no
-#: duration and is left in the remainder.  The fixed set below tiles exactly.
+#: and the larger units are calendar quantities (a "month" is 28..31 days):
+#: their length is counted on the calendar from an anchor, see
+#: :func:`extract_duration`.
 _DUR_UNIT_SECONDS = {
     "second": 1,
     "minute": 60,
@@ -94,6 +95,7 @@ def _and_words(spec):
 def extract_duration(
         text: str,
         lang: str = "en",
+        anchor: Optional[datetime] = None,
 ) -> Optional[DurationResult]:
     """Extract a :class:`datetime.timedelta` length from ``text``.
 
@@ -104,20 +106,35 @@ def extract_duration(
     are folded by ``ovos-number-parser`` before matching, so "90 minutes" and
     "ninety minutes" read alike.
 
-    Calendar-ambiguous units (month, year, decade, ...) are **not** durations
-    and are left in the remainder.  Returns a :class:`DurationResult` -- a
-    ``(duration, remainder)`` named tuple (unpack it, or read ``.duration`` /
-    ``.remainder``) -- or ``None`` when the text names no fixed-width length.
+    The calendar units (month, year, decade, century, millennium) have no
+    fixed length, so they are counted on the calendar from ``anchor`` (by
+    default, the current time): "3 months" from 31 January is the time to 30
+    April.  The months are added first and a day the new month lacks is
+    pinned to its last day, then the fixed-width units are added (W3C XML
+    Schema 1.1 Part 2,
+    E.3.3 "Adding durations to dateTimes": "The ·months· value is added to
+    the starting dateTime value first. If the day is out of range for the new
+    month value, it is pinned to be within range. Thus April 31 turns into
+    April 30. Then the ·seconds· value is added."). A fraction of a month is
+    read as the offset reader reads it: half a month is 15 days, a quarter 7.
+
+    Returns a :class:`DurationResult` -- a ``(duration, remainder)`` named
+    tuple (unpack it, or read ``.duration`` / ``.remainder``) -- or ``None``
+    when the text names no length.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names no length, the empty string included, returns ``None``.
     """
     require_text(text, "extract_duration")
     engine = _timespan_engine(lang)
-    return _duration_core(text, engine)
+    anchor = anchor or datetime.now()
+    if isinstance(anchor, datetime):
+        anchor = anchor.replace(tzinfo=None)
+    return _duration_core(text, engine, anchor)
 
 
-def _duration_core(text: str, engine) -> Optional[DurationResult]:
+def _duration_core(text: str, engine,
+                   anchor: Optional[datetime] = None) -> Optional[DurationResult]:
     """The engine-based body of :func:`extract_duration`.
 
     Factored out so a caller that already holds the per-language
@@ -127,6 +144,9 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
     re-resolving the language string back into an engine -- the same
     cached engine object is reused, and no lang-string plumbing has to be
     threaded through the single-span resolver just for this.
+
+    With no ``anchor`` a calendar unit has no length, and a text naming one
+    returns ``None``.
     """
     spec = engine.spec
     tokens = engine.tokenize(text)
@@ -215,9 +235,24 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
                 return float(tokens[j].value), j + 1
         return None, k
 
+    calendar_months = _CALENDAR_UNIT_MONTHS if anchor is not None else {}
     total = 0.0
+    months = 0.0
     found = False
     consumed = set()
+
+    def _unit_of(tok):
+        kind = spec.units.get(tok.text)
+        return kind if kind in _DUR_UNIT_SECONDS or kind in calendar_months \
+            else None
+
+    def _add(kind, count):
+        nonlocal total, months
+        if kind in calendar_months:
+            months += count * calendar_months[kind]
+        else:
+            total += count * _DUR_UNIT_SECONDS[kind]
+
     i = 0
     while i < n:
         j = i
@@ -229,14 +264,15 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
         # (2 x unit).  A trailing "... and a half" still attaches ("ساعتان
         # ونصف"), matching the ordinary count-then-unit path below.
         dual = spec.dual_units.get(tokens[i].text)
-        if dual is not None and dual in _DUR_UNIT_SECONDS:
-            secs = 2.0 * _DUR_UNIT_SECONDS[dual]
+        if dual is not None and (dual in _DUR_UNIT_SECONDS
+                                 or dual in calendar_months):
+            count = 2.0
             end = i + 1
             add2, end2 = _read_additive(end)
             if add2 is not None:
-                secs += add2 * _DUR_UNIT_SECONDS[dual]
+                count += add2
                 end = end2
-            total += secs
+            _add(dual, count)
             found = True
             consumed.update(range(i, end))
             i = end
@@ -252,21 +288,21 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
         # gain a unit-first reading that would let "days 5" parse.  A trailing
         # "... and a half" still attaches, matching the count-first path.
         if spec.conventions.duration_count_follows_unit:
-            kind = spec.units.get(tokens[i].text)
-            if (kind in _DUR_UNIT_SECONDS and i + 1 < n
+            kind = _unit_of(tokens[i])
+            if (kind is not None and i + 1 < n
                     and tokens[i + 1].is_number
                     and tokens[i + 1].value is not None):
                 try:
-                    secs = float(tokens[i + 1].value) * _DUR_UNIT_SECONDS[kind]
+                    count = float(tokens[i + 1].value)
                 except (TypeError, ValueError, OverflowError):
-                    secs = None
-                if secs is not None:
+                    count = None
+                if count is not None:
                     end = i + 2
                     add2, end2 = _read_additive(end)
                     if add2 is not None:
-                        secs += add2 * _DUR_UNIT_SECONDS[kind]
+                        count += add2
                         end = end2
-                    total += secs
+                    _add(kind, count)
                     found = True
                     consumed.update(range(i, end))
                     i = end
@@ -306,8 +342,7 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
                 count, j, frac_lead = fracs[tokens[j].text], j + 1, True
             elif tokens[j].text in spec.quantifiers:
                 count, j = spec.quantifiers[tokens[j].text], j + 1
-            elif (tokens[j].text in spec.units
-                  and spec.units[tokens[j].text] in _DUR_UNIT_SECONDS
+            elif (_unit_of(tokens[j]) is not None
                   and _read_additive(j + 1)[0] is not None):
                 # A bare unit with NO leading count, immediately followed by
                 # the trailing "... and a half" idiom, implies an
@@ -349,17 +384,15 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
                     pass
                 while j < n and tokens[j].text in filler:
                     j += 1
-        if (j < n and tokens[j].text in spec.units
-                and spec.units[tokens[j].text] in _DUR_UNIT_SECONDS):
-            unit = spec.units[tokens[j].text]
-            secs = count * _DUR_UNIT_SECONDS[unit]
+        if j < n and _unit_of(tokens[j]) is not None:
+            unit = _unit_of(tokens[j])
             end = j + 1
             # "an hour and a half": the fraction trails the unit.
             add2, end2 = _read_additive(end)
             if add2 is not None:
-                secs += add2 * _DUR_UNIT_SECONDS[unit]
+                count += add2
                 end = end2
-            total += secs
+            _add(unit, count)
             found = True
             consumed.update(range(i, end))
             i = end
@@ -425,7 +458,7 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
         if tok.index in consumed:
             continue
         kind = spec.units.get(tok.text)
-        if kind is not None and kind not in _DUR_UNIT_SECONDS:
+        if kind is not None and _unit_of(tok) is None:
             return None
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens
@@ -437,8 +470,14 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
     # the honest "I can't express this length" rather than a raised error
     # or a silently wrong clamp to some arbitrary huge-but-wrong value.
     try:
-        return DurationResult(timedelta(seconds=total), remainder)
-    except OverflowError:
+        if not months:
+            return DurationResult(timedelta(seconds=total), remainder)
+        end = engine.resolver._calendar_grain_offset(anchor, "month", months)
+        if end is None:
+            return None
+        return DurationResult(end + timedelta(seconds=total) - anchor,
+                              remainder)
+    except (OverflowError, ValueError):
         return None
 
 
@@ -1444,7 +1483,7 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
         return _replace(rec, until=got[0].start)
 
     def _ground_count(rec, text):
-        dur = extract_duration(text, lang)
+        dur = extract_duration(text, lang, anchor=anchor)
         if dur is None:
             return None
         count = _count_from_duration(rec.freq, dur[0])

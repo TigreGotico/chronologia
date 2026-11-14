@@ -177,7 +177,8 @@ def extract_event(
         recurrence, remainder = got_rec
 
     duration: Optional[timedelta] = None
-    got_dur = extract_duration(remainder, lang)
+    duration_text = remainder
+    got_dur = extract_duration(remainder, lang, anchor=anchor)
     if got_dur is not None:
         duration, remainder = got_dur
 
@@ -199,6 +200,14 @@ def extract_event(
 
     if base is None:
         return None
+
+    # a calendar unit in the duration counts from the start of the event
+    if duration is not None and 1 <= base.start.year <= 9999:
+        start = datetime(base.start.year, base.start.month, base.start.day,
+                         base.start.hour, base.start.minute,
+                         base.start.second, base.start.microsecond)
+        duration = extract_duration(duration_text, lang,
+                                    anchor=start).duration
 
     # When a duration is named, the span carries exactly that width; otherwise
     # the span keeps its own implicit width (a day, an hour, a minute...).

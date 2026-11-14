@@ -121,21 +121,18 @@ def test_control_era_bc_offset_still_works():
     assert start("100 years before 44 BC") == AstroDate(-143, 1, 1)
 
 
-# -- probe: extract_duration on the same phrases pins current behaviour ---
-# (dev already returns None for these -- an anchored offset onto an era
-# reference is not a bounded "duration"; this fix is scoped to extract_timespan
-# and must not change extract_duration's behaviour.)
+# -- probe: extract_duration reads the length and leaves the base -------
+# (the length is counted from the duration anchor; extract_timespan counts
+# it from the base and gives the date.)
 
-@pytest.mark.parametrize("text", [
-    "2000 years before 500 BC",
-    "3 centuries after 44 BCE",
-    "100 years before 44 BC",
-    "2 weeks after christmas",
-    "3 days before june 5",
+@pytest.mark.parametrize("text, remainder", [
+    ("2000 years before 500 BC", "before 500 BC"),
+    ("3 centuries after 44 BCE", "after 44 BCE"),
+    ("100 years before 44 BC", "before 44 BC"),
+    ("2 weeks after christmas", "after christmas"),
+    ("3 days before june 5", "before june 5"),
 ])
-def test_duration_probe_pinned(text):
+def test_duration_probe_leaves_the_base(text, remainder):
     from chronologia import extract_duration
-    if text in ("2 weeks after christmas", "3 days before june 5"):
-        assert extract_duration(text) is not None
-    else:
-        assert extract_duration(text) is None
+    got = extract_duration(text)
+    assert got is not None and got.remainder == remainder
