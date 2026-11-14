@@ -240,9 +240,6 @@ def test_a_rewritten_mention_keeps_the_order(text):
     _mentions_are_ordered_and_non_overlapping(mentions)
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    'ko "작년" folds to two tokens whose char_span ends one character too '
-    'far, so "작년" covers the "3" of "3월"'))
 def test_a_folded_year_word_keeps_its_characters():
     _mentions_are_ordered_and_non_overlapping(extract_timespans("작년3월", "ko"))
 
