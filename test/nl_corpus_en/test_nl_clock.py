@@ -89,6 +89,12 @@ def test_digit_clock_midnight_with_pm_declines(text):
     nomatch(text)
 
 
+# "evening" holds 18:00 to 21:00 in the English day-part convention.
+def test_digit_clock_with_evening():
+    assert start("19:30 evening") == clk(19, 30)
+    nomatch("15:30 evening")
+
+
 # -- fraction system: half/quarter past/to, digit and spelled -------------
 
 @pytest.mark.parametrize("text,h,mi", [

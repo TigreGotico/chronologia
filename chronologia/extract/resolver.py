@@ -32,7 +32,7 @@ from datetime import date, datetime, timedelta
 from typing import Optional
 
 from chronologia.astrodate import AstroDate, BASIS_RECONSTRUCTED, DateSpan
-from chronologia.dayparts import daypart_span
+from chronologia.dayparts import daypart_span, lookup as _daypart_lookup
 from chronologia.calendars import (CALENDARS, gregorian_to_jdn,
                                         jdn_to_gregorian)
 from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, US_PER_DAY,
@@ -3192,11 +3192,18 @@ class Resolver:
                     return None
                 # An afternoon or evening marker never holds midnight ("0h da
                 # tarde", "00:30 pm"), and a day-part word does not hold a
-                # 24-hour clock outside its band ("22h da tarde").  A plain
-                # "pm" over a later hour is redundant ("15:30 pm").
+                # 24-hour clock outside the locale's own band for it ("22h da
+                # tarde").  The default bands are the English convention, so
+                # elsewhere a word with only a default band keeps the clock
+                # (kab "15:30 tameddit"), as a plain "pm" over a later hour
+                # does ("15:30 pm").
+                band_lang = (_daypart_lookup(dp_name, self.spec.lang).lang
+                             if dp_name is not None else None)
+                own_band = dp_name is not None and (
+                    band_lang == self.spec.lang
+                    or (band_lang is None and self.spec.lang == "en"))
                 if off == 12 and (spoken_hour == 0 or (
-                        dp_name is not None and spoken_hour >= 13
-                        and not in_band)):
+                        own_band and spoken_hour >= 13 and not in_band)):
                     return None
                 # decide the +/-12 shift from the SPOKEN hour's 12h meaning, then
                 # apply it to the (possibly rolled-back) hour, so a subtractive
