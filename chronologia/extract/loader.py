@@ -130,6 +130,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     clock_dir_minutes: Dict[str, int] = {}
     meridiems: Dict[str, int] = {}
     night_meridiems: Set[str] = set()
+    am_night_meridiems: Set[str] = set()
     clock_dirs: Dict[str, int] = {}
     seasons: Dict[str, str] = {}
     solar_events: Dict[str, str] = {}
@@ -262,6 +263,12 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             meridiems.update({s: 0 for s in surfaces})
         elif base == "clock_meridiem_pm":
             meridiems.update({s: 12 for s in surfaces})
+        elif base == "clock_meridiem_am_night":
+            # a night word read on the am half of the 12-hour clock ("drei
+            # nachts" is 03:00) that over an explicit 24-hour clock also
+            # covers the late evening ("23:30 nachts"); see the resolver.
+            meridiems.update({s: 0 for s in surfaces})
+            am_night_meridiems.update(surfaces)
         elif base == "clock_meridiem_night":
             # The NIGHT daypart is a BAND crossing midnight, not a uniform +12
             # PM shift: "the one at night" is 01:00, not 13:00.  Surfaces are
@@ -494,6 +501,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         clock_dir_minutes=clock_dir_minutes,
         meridiems=meridiems,
         night_meridiems=frozenset(night_meridiems),
+        am_night_meridiems=frozenset(am_night_meridiems),
         clock_dirs=clock_dirs, seasons=seasons,
         solar_events=solar_events, solar_quals=solar_quals,
         scope_units=scope_units,

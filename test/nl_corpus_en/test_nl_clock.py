@@ -83,6 +83,12 @@ def test_digit_clock_past_noon_with_a_meridiem():
     nomatch("15:30 am")
 
 
+# Midnight on a 24-hour clock is never "pm".
+@pytest.mark.parametrize("text", ["00:30 pm", "0:00 pm", "00:00 pm"])
+def test_digit_clock_midnight_with_pm_declines(text):
+    nomatch(text)
+
+
 # -- fraction system: half/quarter past/to, digit and spelled -------------
 
 @pytest.mark.parametrize("text,h,mi", [

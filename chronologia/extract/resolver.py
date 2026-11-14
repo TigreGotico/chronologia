@@ -3147,6 +3147,10 @@ class Resolver:
                 # where ليل covers the small hours as AM and the late evening
                 # as PM (cf. CLDR day-period bands for ar: night starts at
                 # 00:00 and morning at ~06:00).
+                # An hour from 13 to 17 lies in the afternoon, never the night
+                # ("15:30 da noite", "às 15 da noite"), so it names no time.
+                if 13 <= spoken_hour <= 17:
+                    return None
                 if hour == 12:
                     hour = 0
                 elif 6 <= hour <= 11:
@@ -3174,12 +3178,25 @@ class Resolver:
                         return hour, minute, second
                     return None
                 off = self.spec.meridiems[meridiem.text]
-                # A morning marker over an explicit 24-hour clock past noon
-                # ("15:00 da manhã", "15:30 am") is as contradictory as the
-                # spoken "às 15 da manhã" above, unless the hour lies in the
-                # marker's own day-part band.
-                if not bare_12h and off == 0 and hour >= 13 and not (
-                        dp_name is not None and _hour_in_daypart(dp_name, hour)):
+                in_band = dp_name is not None and _hour_in_daypart(dp_name,
+                                                                   hour)
+                # Only a 24-hour clock reaches here with an hour of 0 or from
+                # 13.  A morning marker past noon ("15:00 da manhã", "15:30
+                # am") is as contradictory as the spoken "às 15 da manhã"
+                # above, unless the hour lies in the marker's own day-part
+                # band.  A night word on the am half keeps the evening from
+                # 18:00 ("23:30 nachts"); 13 to 17 is the afternoon.
+                if off == 0 and spoken_hour >= 13 and not in_band and not (
+                        meridiem.text in self.spec.am_night_meridiems
+                        and spoken_hour >= 18):
+                    return None
+                # An afternoon or evening marker never holds midnight ("0h da
+                # tarde", "00:30 pm"), and a day-part word does not hold a
+                # 24-hour clock outside its band ("22h da tarde").  A plain
+                # "pm" over a later hour is redundant ("15:30 pm").
+                if off == 12 and (spoken_hour == 0 or (
+                        dp_name is not None and spoken_hour >= 13
+                        and not in_band)):
                     return None
                 # decide the +/-12 shift from the SPOKEN hour's 12h meaning, then
                 # apply it to the (possibly rolled-back) hour, so a subtractive

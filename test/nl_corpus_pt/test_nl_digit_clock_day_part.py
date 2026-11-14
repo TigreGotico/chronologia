@@ -7,7 +7,9 @@ Time").  So "11:55 da noite" is 23:55 as "11 da noite" is 23:00, and the
 part of the day does not stay in the remainder.  Twelve in the night is
 midnight, as in "doze e cinco da noite".  A clock that has passed is the
 next one (class 3).  A clock past noon with "da manhã" or "da madrugada"
-names no time, as the spoken "às 15 da manhã" does not.
+names no time, as the spoken "às 15 da manhã" does not.  "da tarde" holds
+neither midnight nor an hour past its band (12h to 19h), and "da noite" holds
+no afternoon hour from 13h to 17h.
 
 Anchor Saturday 2024-06-15 10:00.
 """
@@ -22,6 +24,7 @@ SATURDAY = datetime(2024, 6, 15, 10, 0)
 
 @pytest.mark.parametrize("text,expected", [
     ("11:55 da noite", datetime(2024, 6, 15, 23, 55)),
+    ("22:30 da noite", datetime(2024, 6, 15, 22, 30)),
     ("às 11:55 da noite", datetime(2024, 6, 15, 23, 55)),
     ("12:05 da noite", datetime(2024, 6, 16, 0, 5)),
     ("1:15 da tarde", datetime(2024, 6, 15, 13, 15)),
@@ -50,4 +53,21 @@ def test_a_preposition_with_no_part_of_the_day_stays():
     "14:00 da madrugada",
 ])
 def test_a_clock_past_noon_in_the_morning_is_no_time(text):
+    assert parse(text, SATURDAY) is None
+
+
+@pytest.mark.parametrize("text", [
+    "22h da tarde",
+    "0h da tarde",
+    "0h30 da tarde",
+    "00:30 da tarde",
+    "22:30 da tarde",
+    "20:00 da tarde",
+    "15h da noite",
+    "15:30 da noite",
+    "13:00 da noite",
+    "17:00 da noite",
+    "às 15 da noite",
+])
+def test_a_clock_outside_the_evening_word_is_no_time(text):
     assert parse(text, SATURDAY) is None
