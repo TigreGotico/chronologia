@@ -183,3 +183,21 @@ def test_a_slash_date_after_the_count_keeps_the_count():
     assert r is not None
     assert (r.span.start, r.span.end) == (day(11, 27), day(11, 28))
     assert r.remainder == "daqui a uma semana"
+
+
+@pytest.mark.parametrize("lang", ["pt-PT", "pt-BR"])
+@pytest.mark.parametrize("text,expected,rest", [
+    # Amanhã is Sunday 18 October; Natal is 25 December.
+    ("amanhã ou daqui a duas semanas sexta-feira", day(10, 18),
+     "ou daqui a duas semanas sexta-feira"),
+    ("no natal ou daqui a duas semanas sexta-feira", day(12, 25),
+     "ou daqui a duas semanas sexta-feira"),
+])
+def test_another_date_keeps_the_count(lang, text, expected, rest):
+    # The other date is the reading; the count and its weekday stay
+    # together in the remainder.
+    r = extract_timespan(text, lang, SATURDAY)
+    assert r is not None, f"{text!r} did not parse"
+    assert (r.span.start, r.span.end) == (expected,
+                                          expected + timedelta(days=1))
+    assert r.remainder == rest

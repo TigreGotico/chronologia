@@ -81,3 +81,22 @@ def test_a_written_date_keeps_the_count(text, rest):
     assert (r.span.start, r.span.end) == (ad(datetime(2026, 10, 30)),
                                           ad(datetime(2026, 10, 31)))
     assert r.remainder == rest
+
+
+@pytest.mark.parametrize("text,expected,rest", [
+    # Tomorrow is Sunday 18 October; Halloween is 31 October.
+    ("tomorrow or in two weeks on friday", datetime(2026, 10, 18),
+     "or in two weeks on friday"),
+    ("today and in two weeks on friday", datetime(2026, 10, 17),
+     "and in two weeks on friday"),
+    ("halloween in two weeks on friday", datetime(2026, 10, 31),
+     "in two weeks on friday"),
+])
+def test_another_date_keeps_the_count(text, expected, rest):
+    # The other date is the reading; the count and its weekday stay
+    # together in the remainder.
+    r = extract_timespan(text, "en", SATURDAY)
+    assert r is not None
+    assert (r.span.start, r.span.end) == (ad(expected),
+                                          ad(expected + timedelta(days=1)))
+    assert r.remainder == rest
