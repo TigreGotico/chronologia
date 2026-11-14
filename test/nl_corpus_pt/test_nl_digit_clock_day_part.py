@@ -8,8 +8,10 @@ part of the day does not stay in the remainder.  Twelve in the night is
 midnight, as in "doze e cinco da noite".  A clock that has passed is the
 next one (class 3).  A clock past noon with "da manhã" or "da madrugada"
 names no time, as the spoken "às 15 da manhã" does not.  "da tarde" holds
-neither midnight nor an hour past its band (12h to 19h), and "da noite" holds
-no afternoon hour from 13h to 17h.
+neither midnight nor an hour outside its band, and "da noite" holds no
+afternoon hour from 13h to 17h.  The band is the afternoon, "A tarde, das
+12h às 18h" (Senado Federal, Manual de Comunicação, s.v. "Hora"), read as
+tarde_pt [12h, 19h) in chronologia.dayparts.
 
 Anchor Saturday 2024-06-15 10:00.
 """
@@ -28,6 +30,9 @@ SATURDAY = datetime(2024, 6, 15, 10, 0)
     ("às 11:55 da noite", datetime(2024, 6, 15, 23, 55)),
     ("12:05 da noite", datetime(2024, 6, 16, 0, 5)),
     ("1:15 da tarde", datetime(2024, 6, 15, 13, 15)),
+    ("12:30 da tarde", datetime(2024, 6, 15, 12, 30)),
+    ("13:00 da tarde", datetime(2024, 6, 15, 13, 0)),
+    ("18:30 da tarde", datetime(2024, 6, 15, 18, 30)),
     ("7h30 da manhã", datetime(2024, 6, 16, 7, 30)),
     ("3:30 da madrugada", datetime(2024, 6, 16, 3, 30)),
     ("amanhã às 10:30 da manhã", datetime(2024, 6, 16, 10, 30)),
@@ -63,6 +68,7 @@ def test_a_clock_past_noon_in_the_morning_is_no_time(text):
     "00:30 da tarde",
     "22:30 da tarde",
     "20:00 da tarde",
+    "19:00 da tarde",
     "15h da noite",
     "15:30 da noite",
     "13:00 da noite",

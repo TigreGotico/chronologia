@@ -351,6 +351,10 @@ class LangSpec:
     # that keep an explicit 24-hour clock from 18:00 as written ("23:30
     # nachts").  A surface here is also present in ``meridiems`` with 0.
     am_night_meridiems: FrozenSet[str] = field(default_factory=frozenset)
+    # pm-side day-part words whose band a usage source pins: over an explicit
+    # 24-hour clock they hold only an hour in that band ("22h da tarde" names
+    # no time).  A surface here is also present in ``meridiems`` with 12.
+    band_meridiems: FrozenSet[str] = field(default_factory=frozenset)
     clock_dirs: Mapping[str, int] = field(default_factory=dict)       # past +1 / to -1
     # season_ref slot vocab (surface -> canonical season name)
     seasons: Mapping[str, str] = field(default_factory=dict)

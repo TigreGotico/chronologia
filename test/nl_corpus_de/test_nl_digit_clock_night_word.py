@@ -14,6 +14,7 @@ from ._corpus import AstroDate, nomatch, start
 @pytest.mark.parametrize("text,expected", [
     ("23:30 nachts", AstroDate(2017, 6, 27, 23, 30)),
     ("22:00 nachts", AstroDate(2017, 6, 27, 22, 0)),
+    ("18:00 nachts", AstroDate(2017, 6, 27, 18, 0)),
     ("02:00 nachts", AstroDate(2017, 6, 28, 2, 0)),
 ])
 def test_the_night_word_keeps_the_clock(text, expected):
@@ -21,6 +22,6 @@ def test_the_night_word_keeps_the_clock(text, expected):
 
 
 @pytest.mark.parametrize("text", ["15:30 nachts", "13:00 nachts", "17:30 nachts",
-                                  "15:30 morgens"])
+                                  "17:59 nachts", "15:30 morgens"])
 def test_an_afternoon_clock_is_no_time(text):
     nomatch(text)
