@@ -16,7 +16,10 @@ present. We went there last year.", https://en.wiktionary.org/wiki/last),
 so "I told you last week of the change" is the previous week; only "the
 last" is "final".  pt "de forma", "de maneira", "de modo" and "de manhã"
 open an adverbial locution (Priberam s.v. "forma", "maneira", "modo" and
-"manhã"), so "no último ano de forma notável" is the previous year.
+"manhã"), so "no último ano de forma notável" is the previous year.  So do
+"de qualquer forma", "da mesma forma" and the locutions "de novo", "de
+repente", "de vez em quando", "de facto", "de resto", "de propósito" and
+"de todo", each listed in its Priberam entry.
 
 Gold values are hand arithmetic from the anchor, Tuesday 2017-06-27 13:04:
 the previous Monday-to-Sunday week is 2017-06-19 to 2017-06-26 (exclusive
@@ -91,6 +94,46 @@ def test_opted_in_locale_refuses(lang, text):
      ad(2017, 6, 19), ad(2017, 6, 26)),
     ("pt", "no último mês, de casa em casa, vendi tudo",
      ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "na última semana de qualquer forma",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "no último mês de qualquer maneira fui trabalhar",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "no último ano de qualquer modo",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "as vendas subiram no último ano de uma forma geral",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "as vendas subiram no último ano de um modo geral",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "no último mês de uma maneira geral",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "no último ano de certa forma tudo mudou",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "no último mês de alguma forma tudo correu bem",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "choveu na última semana de outra forma",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "os preços subiram no último mês de igual modo",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "as vendas subiram no último ano da mesma forma",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "choveu na última semana de novo",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "na última semana de repente começou a chover",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "no último mês de vez em quando chovia",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "no último ano de facto as vendas subiram",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "no último ano de fato as vendas subiram",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "no último mês de resto nada mudou",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "na última semana de propósito não saí",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "no último ano de todo não saí",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "na última semana de manha",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
 ])
 def test_previous_period_stands(lang, text, start, end):
     s = span(text, lang)

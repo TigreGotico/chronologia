@@ -1009,23 +1009,28 @@ class ConstructionMatcher:
                   end: int) -> bool:
         """Whether the "last <unit>" right before ``tokens[end]`` is the
         adjective "final" with an "of" complement after it.  An "of" word
-        must follow the unit with no break between them, and the two words
-        from there must not open an adverbial locution ("no último ano de
-        forma notável", "na última semana de manhã").  A locale that lists
+        must follow the unit with no break between them, and it must not
+        open an adverbial locution: a listed pair ("na última semana de
+        manhã", "de novo"), or a manner noun as the next word or the one
+        after it ("de forma notável", "de qualquer forma", "da mesma
+        forma").  A locale that lists
         articles for the adjective also needs one right before the marker:
         en bare "last week" is "previous" ("I told you last week of the
         change"), only "the last week of school" is "final".  The lists are
         locale facts (``marker_ordlast_of.voc``,
-        ``marker_ordlast_of_locution.voc`` and
+        ``marker_ordlast_of_locution.voc``, ``marker_manner_noun.voc`` and
         ``marker_ordlast_article.voc``)."""
         connectors = self.spec.connectors
         if (end >= len(tokens) or tokens[end].break_before
                 or tokens[end].text not in connectors.get("ordlast_of",
                                                           frozenset())):
             return False
-        if (end + 1 < len(tokens)
-                and f"{tokens[end].text} {tokens[end + 1].text}"
-                in connectors.get("ordlast_of_locution", frozenset())):
+        following = [t.text for t in tokens[end + 1:end + 3]]
+        if following and (
+                f"{tokens[end].text} {following[0]}"
+                in connectors.get("ordlast_of_locution", frozenset())
+                or any(word in connectors.get("manner_noun", frozenset())
+                       for word in following)):
             return False
         articles = connectors.get("ordlast_article")
         return not articles or (marker > 0

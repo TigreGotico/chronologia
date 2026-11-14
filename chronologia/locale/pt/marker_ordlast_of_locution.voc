@@ -1,25 +1,40 @@
 # A "de" after "último <unit>" that opens an adverbial locution is not the
-# complement of "último": "o número de transplantes aumentou no último ano de
-# forma notável" is 2016, and "na última semana de manhã" is the previous
-# week in the mornings.
-#
-# Manner: Priberam lists locutions with "de" under each noun: s.v. "forma"
-# (https://dicionario.priberam.org/forma), 8: "Modo, maneira.", and "de
-# forma que", "de forma alguma"; s.v. "maneira"
-# (https://dicionario.priberam.org/maneira), "de maneira que", "de maneira
-# alguma"; s.v. "modo" (https://dicionario.priberam.org/modo), "de modo
-# que", "de modo algum".  Priberam s.v. "de" (https://dicionario.priberam.org/de)
-# gives the relation "modo (ex.: deitado de costas)".
+# complement of "último": "na última semana de manhã" is the previous week in
+# the mornings, and "choveu na última semana de novo" is the previous week.
+# Each line is the locution's first two words.  Manner locutions are matched
+# by noun instead (``marker_manner_noun.voc``).
 #
 # Day period: Priberam s.v. "manhã" (https://dicionario.priberam.org/manhã)
 # lists "de manhã • Entre o amanhecer e o meio-dia".  "de tarde", "de noite"
 # and "de madrugada" are the same locution with the other day-part words of
-# this locale (``daypart_*_pt.voc``).
-de forma
-de maneira
-de modo
+# this locale (``daypart_*_pt.voc``), and "manha" is that file's spelling
+# without the tilde.
+#
+# Other adverbial locutions, each from its Priberam entry:
+# "novo" (https://dicionario.priberam.org/novo): "de novo • Outra vez."
+# "repente" (https://dicionario.priberam.org/repente): "de repente •
+# Repentinamente, inesperadamente, subitamente, de golpe".
+# "vez" (https://dicionario.priberam.org/vez): "de vez em quando • Com
+# intervalos; de tempos a tempos." and "de vez • Decisivamente,
+# terminantemente; a valer".
+# "facto" (https://dicionario.priberam.org/facto): "de facto • Com efeito; na
+# verdade.", with "Grafia no Brasil: fato".
+# "resto" (https://dicionario.priberam.org/resto): "de resto • Demais; aliás;
+# além de que."
+# "propósito" (https://dicionario.priberam.org/propósito): "de propósito • De
+# caso pensado."
+# "todo" (https://dicionario.priberam.org/todo): "de todo • De modo completo
+# ou total".
 de manhã
 de manha
 de tarde
 de noite
 de madrugada
+de novo
+de repente
+de vez
+de facto
+de fato
+de resto
+de propósito
+de todo
