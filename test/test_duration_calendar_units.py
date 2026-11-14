@@ -38,7 +38,7 @@ def _length(anchor, **delta):
     ("en", "2 days and 3 months", {"months": 3, "days": 2}),
     ("en", "a year and a half", {"months": 18}),
     ("en", "a decade", {"years": 10}),
-    ("en", "a quarter of a century", {"years": 25}),
+    ("en", "two decades", {"years": 20}),
     ("en", "1 month and 3 hours", {"months": 1, "hours": 3}),
     ("de", "zwei Monate", {"months": 2}),
     ("cs", "dva měsíce", {"months": 2}),
@@ -85,9 +85,13 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
 
 
 @pytest.mark.parametrize("lang, text", [
-    # a roman numeral or an ordinal names a century, not a count
+    # a century or millennium names the ordinal century, not a length
     ("en", "the XII century"),
     ("fr", "XVe siècle"),
+    ("it", "il 20 secolo"),
+    ("ru", "20 век"),
+    ("ru", "второе столетие"),
+    ("en", "two centuries"),
     # "of" between the count and the unit names a day of the month
     ("pt", "o dia 5 do mês"),
     # a definite article names the month, not one month

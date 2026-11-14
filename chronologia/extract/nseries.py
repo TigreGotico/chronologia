@@ -46,13 +46,13 @@ from chronologia.recurrence import nth_weekday_of_month as _nth_weekday_of_month
 # Durations.
 # --------------------------------------------------------------------------
 #: Fixed-width offset units and their length in seconds.  Month / year / decade
-#: and the larger units are calendar quantities (a "month" is 28..31 days):
-#: their length is counted on the calendar from an anchor, see
-#: :func:`extract_duration`.
-#: a count written as a roman numeral, with an optional ordinal mark, names
-#: a century or a regnal number ("the XII century", "XVe siècle"), never how
-#: many of a calendar unit
-_ROMAN = re.compile(r"[IVXLCDM]+(?:e|er|re|ème|o|º|ª|th|st|nd|rd|\.)?")
+#: are calendar quantities (a "month" is 28..31 days): their length is counted
+#: on the calendar from an anchor, see :func:`extract_duration`.
+#: The calendar units a duration counts, in months.  A century or millennium
+#: with a number before it names the ordinal century far more often than a
+#: length ("20 век", "il 20 secolo", "второе столетие"), so it stays unread.
+_DUR_CALENDAR_MONTHS = {unit: _CALENDAR_UNIT_MONTHS[unit]
+                        for unit in ("month", "year", "decade")}
 
 _DUR_UNIT_SECONDS = {
     "second": 1,
@@ -111,22 +111,24 @@ def extract_duration(
     are folded by ``ovos-number-parser`` before matching, so "90 minutes" and
     "ninety minutes" read alike.
 
-    The calendar units (month, year, decade, century, millennium) have no
-    fixed length, so they are counted on the calendar from ``anchor``: "3
-    months" from 31 January is the time to 30 April.  A ``date`` anchor is
-    its midnight.  With no anchor a calendar unit has no length, and a text
-    naming one returns ``None``.  The months are added first and a day the new month lacks is
+    The calendar units (month, year, decade) have no fixed length, so they
+    are counted on the calendar from ``anchor``: "3 months" from 31 January
+    is the time to 30 April.  A ``date`` anchor is its midnight.  With no
+    anchor a calendar unit has no length, and a text naming one returns
+    ``None``.  The months are added first and a day the new month lacks is
     pinned to its last day, then the fixed-width units are added (W3C XML
-    Schema 1.1 Part 2,
-    E.3.3 "Adding durations to dateTimes": "The ·months· value is added to
-    the starting dateTime value first. If the day is out of range for the new
-    month value, it is pinned to be within range. Thus April 31 turns into
-    April 30. Then the ·seconds· value is added."). A fraction of a month is
-    read as the offset reader reads it: half a month is 15 days, a quarter 7.
-    A fraction of a larger unit must come to whole months ("1.5 years" is 18
-    months; "1.125 years" names no length).  A calendar unit counts only a
-    plain cardinal right before it, so "the XII century", "o dia 5 do mês"
-    and "2 hours a month" name no length.
+    Schema 1.1 Part 2, E.3.3 "Adding durations to dateTimes": "The ·months·
+    value is added to the starting dateTime value first. If the day is out
+    of range for the new month value, it is pinned to be within range. Thus
+    April 31 turns into April 30. Then the ·seconds· value is added.").
+
+    A fraction of a month is read as the offset reader reads it: half a
+    month is 15 days, a quarter 7.  A fraction of a year or a decade must
+    come to whole months ("1.5 years" is 18 months; "1.125 years" names no
+    length).  A calendar unit counts only a plain cardinal right before it,
+    so "o dia 5 do mês" and "2 hours a month" name no length.  A century or
+    millennium stays unread: with a number before it, it names the ordinal
+    century far more often than a length.
 
     Returns a :class:`DurationResult` -- a ``(duration, remainder)`` named
     tuple (unpack it, or read ``.duration`` / ``.remainder``) -- or ``None``
@@ -249,7 +251,7 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                 return float(tokens[j].value), j + 1
         return None, k
 
-    calendar_months = _CALENDAR_UNIT_MONTHS if anchor is not None else {}
+    calendar_months = _DUR_CALENDAR_MONTHS if anchor is not None else {}
     total = 0.0
     months = 0.0
     found = False
@@ -273,7 +275,6 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         count = None
         frac_lead = False
         article_one = None
-        count_tok = None
         # A Semitic dual-noun unit fuses the count "two" with the unit into one
         # token (Arabic ساعتان / ساعتين == two hours, Hebrew שעתיים) -- there is
         # no separate "two" word to read, so it is handled up front as exactly
@@ -346,7 +347,6 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                 # before a unit is even matched.  Such a count names no real
                 # length, so the token is treated as if it weren't numeric
                 # and scanning moves on, rather than raising past the caller.
-                count_tok = j
                 try:
                     count, j = float(tokens[j].value), j + 1
                 except OverflowError:
@@ -412,10 +412,10 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                 count += add2
                 end = end2
             # a calendar unit counts only a plain cardinal right before it: a
-            # definite article ("the month"), a roman numeral ("the XII
-            # century"), an "of" between ("o dia 5 do mês"), an article after
-            # "of" ("a third of a year") or right after another length ("2
-            # hours a month", a rate) names a date, a part or a frequency, and a fraction of a year must be whole
+            # definite article ("the month"), an "of" between ("o dia 5 do
+            # mês"), an article after "of" ("a third of a year") or right
+            # after another length ("2 hours a month", a rate) names a date,
+            # a part or a frequency, and a fraction of a year must be whole
             # months; the unit then stays unread and the text names no length
             if unit in calendar_months and not (
                     (j == adjacent or frac_lead)
@@ -423,9 +423,6 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                          or article_one in spec.quantifiers
                          and i - 1 not in consumed
                          and (i == 0 or tokens[i - 1].text not in of_words))
-                    and (count_tok is None or not _ROMAN.fullmatch(
-                        text[tokens[count_tok].char_start:
-                             tokens[count_tok].char_end]))
                     and (unit == "month"
                          or float(count * calendar_months[unit]).is_integer())):
                 i += 1
