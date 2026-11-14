@@ -47,6 +47,7 @@ SATURDAY = datetime(2026, 10, 17, 12, 0)
     "este bebé faz dois meses",
     "esta gata faz três meses",
     "está ótimo. o bebé faz dois meses",
+    "ela faz dois meses, não faz?",
 ])
 def test_weather_or_age_names_no_date(text, anchor):
     nomatch(text, anchor)
@@ -106,6 +107,14 @@ def test_weather_on_the_grid_anchor_is_that_saturday():
     ("O avião caiu faz um dia. Frio e chuva dificultam as buscas",
      datetime(2017, 6, 26, 13, 4)),
     ("faz um dia. Lindo, o tempo hoje", datetime(2017, 6, 26, 13, 4)),
+    ("a minha mãe, faz dois meses, morreu", datetime(2017, 4, 27, 13, 4)),
+    ("o meu pai, faz dois meses, foi operado", datetime(2017, 4, 27, 13, 4)),
+    ("ela, faz dois meses, partiu para Paris", datetime(2017, 4, 27, 13, 4)),
+    ("ele, faz dois meses, mudou de casa", datetime(2017, 4, 27, 13, 4)),
+    ("ela, faz dois meses, deixou de fumar", datetime(2017, 4, 27, 13, 4)),
+    ("ela — faz dois meses — deixou de fumar", datetime(2017, 4, 27, 13, 4)),
+    ("ela (faz dois meses) deixou de fumar", datetime(2017, 4, 27, 13, 4)),
+    ("o bebé, faz dois meses, nasceu em Lisboa", datetime(2017, 4, 27, 13, 4)),
     ("a tempestade passou faz um dia. De sol, nem sinal",
      datetime(2017, 6, 26, 13, 4)),
 ])

@@ -1012,12 +1012,17 @@ class ConstructionMatcher:
         and open the sentence: a subject pronoun ("ela faz"), or a
         determiner phrase ("o bebé faz", "a minha filha faz").  A pronoun
         after a word is an object instead ("falei com ela faz dois meses",
-        pt-BR "vi ela faz dois meses").  The lists are locale facts
+        pt-BR "vi ela faz dois meses").  Punctuation right before
+        ``tokens[marker]`` sets the count apart from the subject, which
+        then belongs to a later verb ("a minha mãe, faz dois meses,
+        morreu").  The lists are locale facts
         (``marker_subject_pronoun.voc`` and
         ``marker_subject_determiner.voc``)."""
         def opens(i: int) -> bool:
             return i == 0 or tokens[i].break_before
 
+        if tokens[marker].break_before:
+            return False
         if (tokens[marker - 1].text in self.spec.connectors.get(
                 "subject_pronoun", frozenset()) and opens(marker - 1)):
             return True
