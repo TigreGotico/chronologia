@@ -9,6 +9,15 @@ after the period is a place or an activity and the previous period stands
 im letzten Sommer waren wir an der See", https://www.dwds.de/wb/letzt).
 Those locales ship no ``marker_ordlast_of.voc``.
 
+Inside the two locales that opt in, the "of" word must be the complement of
+the adjective.  en bare "last week" is the determiner "previous"
+(Wiktionary s.v. "last", determiner 1: "The (one) immediately before the
+present. We went there last year.", https://en.wiktionary.org/wiki/last),
+so "I told you last week of the change" is the previous week; only "the
+last" is "final".  pt "de forma", "de maneira", "de modo" and "de manhã"
+open an adverbial locution (Priberam s.v. "forma", "maneira", "modo" and
+"manhã"), so "no último ano de forma notável" is the previous year.
+
 Gold values are hand arithmetic from the anchor, Tuesday 2017-06-27 13:04:
 the previous Monday-to-Sunday week is 2017-06-19 to 2017-06-26 (exclusive
 end), the previous month is May 2017, the previous year is 2016.  Three
@@ -52,6 +61,36 @@ def test_opted_in_locale_refuses(lang, text):
     ("da", "sidste måned i Paris", ad(2017, 5, 1), ad(2017, 6, 1)),
     ("pl", "w ostatnim tygodniu w pracy", ad(2017, 6, 19), ad(2017, 6, 26)),
     ("en", "the last day of the month", ad(2017, 6, 30), ad(2017, 7, 1)),
+    ("en", "I told you last week of the change",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("en", "I heard last week of his death", ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("en", "I was reminded last week of my appointment",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("en", "we talked last week of going to Lisbon",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("en", "last week of course I was busy", ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("en", "we spoke last month of the merger", ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("en", "he wrote to me last month of his plans",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("en", "she spoke last year of retiring", ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "o número de transplantes aumentou no último ano de forma notável",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "as vendas cresceram no último mês de forma consistente",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "choveu na última semana de forma intensa",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "os preços subiram no último ano de maneira geral",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "a inflação desceu no último ano de modo consistente",
+     ad(2016, 1, 1), ad(2017, 1, 1)),
+    ("pt", "na última semana de manhã", ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "no último mês de tarde", ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "na última semana de noite", ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "no último mês de madrugada", ad(2017, 5, 1), ad(2017, 6, 1)),
+    ("pt", "na última semana, de Lisboa ao Porto, choveu sempre",
+     ad(2017, 6, 19), ad(2017, 6, 26)),
+    ("pt", "no último mês, de casa em casa, vendi tudo",
+     ad(2017, 5, 1), ad(2017, 6, 1)),
 ])
 def test_previous_period_stands(lang, text, start, end):
     s = span(text, lang)

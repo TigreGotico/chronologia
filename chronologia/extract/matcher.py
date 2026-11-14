@@ -663,15 +663,15 @@ class ConstructionMatcher:
                     # means "previous" and the preposition also means "in"
                     # (de "letzte Woche im Büro", fr "la semaine dernière de
                     # nouveau"), the phrase names a place or an activity
-                    # instead, so those locales ship no such file.
+                    # instead, so those locales ship no such file.  See
+                    # ``_final_of`` for the article and locution tests.
                     if (name == "rel_period" and "REL_MARKER" in slots
                             and slots["REL_MARKER"].text
                             in self.spec.connectors.get(
                                 "ordlast", frozenset())
-                            and end < len(tokens)
-                            and not tokens[end].break_before
-                            and tokens[end].text in self.spec.connectors.get(
-                                "ordlast_of", frozenset())):
+                            and self._final_of(tokens,
+                                               slots["REL_MARKER"].index,
+                                               end)):
                         continue
                     # A weekday word that is also a feminine ordinal ("a
                     # segunda dose", "pela segunda vez", "quinta vez") names
@@ -1004,6 +1004,32 @@ class ConstructionMatcher:
             chosen.append(cand)
         chosen.sort(key=lambda c: c.match.span[0])
         return chosen
+
+    def _final_of(self, tokens: Tuple[Token, ...], marker: int,
+                  end: int) -> bool:
+        """Whether the "last <unit>" right before ``tokens[end]`` is the
+        adjective "final" with an "of" complement after it.  An "of" word
+        must follow the unit with no break between them, and the two words
+        from there must not open an adverbial locution ("no último ano de
+        forma notável", "na última semana de manhã").  A locale that lists
+        articles for the adjective also needs one right before the marker:
+        en bare "last week" is "previous" ("I told you last week of the
+        change"), only "the last week of school" is "final".  The lists are
+        locale facts (``marker_ordlast_of.voc``,
+        ``marker_ordlast_of_locution.voc`` and
+        ``marker_ordlast_article.voc``)."""
+        connectors = self.spec.connectors
+        if (end >= len(tokens) or tokens[end].break_before
+                or tokens[end].text not in connectors.get("ordlast_of",
+                                                          frozenset())):
+            return False
+        if (end + 1 < len(tokens)
+                and f"{tokens[end].text} {tokens[end + 1].text}"
+                in connectors.get("ordlast_of_locution", frozenset())):
+            return False
+        articles = connectors.get("ordlast_article")
+        return not articles or (marker > 0
+                                and tokens[marker - 1].text in articles)
 
     def match(self, tokens: Tuple[Token, ...], veto=None) -> Tuple[Match, ...]:
         """The non-overlapping parse winners.

@@ -1,0 +1,25 @@
+# A "de" after "último <unit>" that opens an adverbial locution is not the
+# complement of "último": "o número de transplantes aumentou no último ano de
+# forma notável" is 2016, and "na última semana de manhã" is the previous
+# week in the mornings.
+#
+# Manner: Priberam lists locutions with "de" under each noun: s.v. "forma"
+# (https://dicionario.priberam.org/forma), 8: "Modo, maneira.", and "de
+# forma que", "de forma alguma"; s.v. "maneira"
+# (https://dicionario.priberam.org/maneira), "de maneira que", "de maneira
+# alguma"; s.v. "modo" (https://dicionario.priberam.org/modo), "de modo
+# que", "de modo algum".  Priberam s.v. "de" (https://dicionario.priberam.org/de)
+# gives the relation "modo (ex.: deitado de costas)".
+#
+# Day period: Priberam s.v. "manhã" (https://dicionario.priberam.org/manhã)
+# lists "de manhã • Entre o amanhecer e o meio-dia".  "de tarde", "de noite"
+# and "de madrugada" are the same locution with the other day-part words of
+# this locale (``daypart_*_pt.voc``).
+de forma
+de maneira
+de modo
+de manhã
+de manha
+de tarde
+de noite
+de madrugada
