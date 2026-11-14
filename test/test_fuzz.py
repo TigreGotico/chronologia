@@ -208,15 +208,43 @@ def test_nullish_edge_cases_never_crash(lang):
 # --------------------------------------------------------------------------
 
 def _mentions_are_ordered_and_non_overlapping(mentions):
-    prev_end = None
+    # token_span is set on every mention; char_span is None for a mention
+    # whose tokens the engine rewrote, so the character check runs only when
+    # both mentions carry one, never comparing characters with tokens
+    prev = None
     for m in mentions:
-        span = m.char_span or m.token_span
-        assert span[0] <= span[1], f"inverted extent {span!r} in {m!r}"
-        if prev_end is not None:
-            assert span[0] >= prev_end, (
-                f"mention {m!r} starts before the previous one ends "
-                f"(prev_end={prev_end})")
-        prev_end = span[1]
+        for span in (m.token_span, m.char_span):
+            if span is not None:
+                assert span[0] <= span[1], f"inverted extent {span!r} in {m!r}"
+        if prev is not None:
+            assert m.token_span[0] >= prev.token_span[1], (
+                f"mention {m!r} starts before {prev!r} ends (tokens)")
+            if m.char_span is not None and prev.char_span is not None:
+                assert m.char_span[0] >= prev.char_span[1], (
+                    f"mention {m!r} starts before {prev!r} ends (characters)")
+        prev = m
+
+
+@pytest.mark.parametrize("text", [
+    "15 de xunetu 1900 esta terça às 10h",
+    "tredje sundag i februar 2021 and il y a 1 mois",
+])
+def test_a_rewritten_mention_keeps_the_order(text):
+    # each text yields a mention with char_span None after one with a
+    # char_span
+    mentions = extract_timespans(text, "fr")
+    # the row tests the mixed shape only while the engine gives a rewritten
+    # mention no char_span
+    assert any(m.char_span is None for m in mentions)
+    assert any(m.char_span is not None for m in mentions)
+    _mentions_are_ordered_and_non_overlapping(mentions)
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    'ko "작년" folds to two tokens whose char_span ends one character too '
+    'far, so "작년" covers the "3" of "3월"'))
+def test_a_folded_year_word_keeps_its_characters():
+    _mentions_are_ordered_and_non_overlapping(extract_timespans("작년3월", "ko"))
 
 
 @pytest.mark.parametrize("lang", LANGS)
