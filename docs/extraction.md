@@ -1515,14 +1515,16 @@ The return is a `DurationResult` — a named 2-tuple. Unpack it as
 
 The **fixed-width** units — minute, hour, day, week, fortnight — have one
 length. A calendar unit has none of its own (a month is 28–31 days, a year 365
-or 366), so it is counted on the calendar from `anchor` (by default, the
-current time). The months come first, and a day the new month lacks becomes its
-last day; then the fixed-width units are added:
+or 366), so it is counted on the calendar from `anchor`. The months come
+first, and a day the new month lacks becomes its last day; then the fixed-width
+units are added. With no `anchor`, a phrase naming a calendar unit yields no
+duration:
 
 ```python
 from chronologia import extract_duration
 from datetime import datetime, timedelta
 
+assert extract_duration("2 months", "en") is None
 end_of_january = datetime(2026, 1, 31)
 # to 30 April, as 31 April does not exist
 assert extract_duration("3 months", "en", anchor=end_of_january)[0] == timedelta(days=89)

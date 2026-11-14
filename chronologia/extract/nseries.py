@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
@@ -49,6 +49,11 @@ from chronologia.recurrence import nth_weekday_of_month as _nth_weekday_of_month
 #: and the larger units are calendar quantities (a "month" is 28..31 days):
 #: their length is counted on the calendar from an anchor, see
 #: :func:`extract_duration`.
+#: a count written as a roman numeral, with an optional ordinal mark, names
+#: a century or a regnal number ("the XII century", "XVe siècle"), never how
+#: many of a calendar unit
+_ROMAN = re.compile(r"[IVXLCDM]+(?:e|er|re|ème|o|º|ª|th|st|nd|rd|\.)?")
+
 _DUR_UNIT_SECONDS = {
     "second": 1,
     "minute": 60,
@@ -95,7 +100,7 @@ def _and_words(spec):
 def extract_duration(
         text: str,
         lang: str = "en",
-        anchor: Optional[datetime] = None,
+        anchor: Optional[Union[datetime, date]] = None,
 ) -> Optional[DurationResult]:
     """Extract a :class:`datetime.timedelta` length from ``text``.
 
@@ -107,9 +112,10 @@ def extract_duration(
     "ninety minutes" read alike.
 
     The calendar units (month, year, decade, century, millennium) have no
-    fixed length, so they are counted on the calendar from ``anchor`` (by
-    default, the current time): "3 months" from 31 January is the time to 30
-    April.  The months are added first and a day the new month lacks is
+    fixed length, so they are counted on the calendar from ``anchor``: "3
+    months" from 31 January is the time to 30 April.  A ``date`` anchor is
+    its midnight.  With no anchor a calendar unit has no length, and a text
+    naming one returns ``None``.  The months are added first and a day the new month lacks is
     pinned to its last day, then the fixed-width units are added (W3C XML
     Schema 1.1 Part 2,
     E.3.3 "Adding durations to dateTimes": "The ·months· value is added to
@@ -117,6 +123,10 @@ def extract_duration(
     month value, it is pinned to be within range. Thus April 31 turns into
     April 30. Then the ·seconds· value is added."). A fraction of a month is
     read as the offset reader reads it: half a month is 15 days, a quarter 7.
+    A fraction of a larger unit must come to whole months ("1.5 years" is 18
+    months; "1.125 years" names no length).  A calendar unit counts only a
+    plain cardinal right before it, so "the XII century", "o dia 5 do mês"
+    and "2 hours a month" name no length.
 
     Returns a :class:`DurationResult` -- a ``(duration, remainder)`` named
     tuple (unpack it, or read ``.duration`` / ``.remainder``) -- or ``None``
@@ -127,14 +137,16 @@ def extract_duration(
     """
     require_text(text, "extract_duration")
     engine = _timespan_engine(lang)
-    anchor = anchor or datetime.now()
-    if isinstance(anchor, datetime):
+    if anchor is not None:
+        if not isinstance(anchor, datetime):
+            anchor = datetime(anchor.year, anchor.month, anchor.day)
         anchor = anchor.replace(tzinfo=None)
     return _duration_core(text, engine, anchor)
 
 
-def _duration_core(text: str, engine,
-                   anchor: Optional[datetime] = None) -> Optional[DurationResult]:
+def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
+                   calendar_needs_marker: bool = False
+                   ) -> Optional[DurationResult]:
     """The engine-based body of :func:`extract_duration`.
 
     Factored out so a caller that already holds the per-language
@@ -146,7 +158,9 @@ def _duration_core(text: str, engine,
     threaded through the single-span resolver just for this.
 
     With no ``anchor`` a calendar unit has no length, and a text naming one
-    returns ``None``.
+    returns ``None``.  With ``calendar_needs_marker`` the text must name a
+    calendar unit right after a duration marker ("for 3 months"), or the
+    result is ``None``.
     """
     spec = engine.spec
     tokens = engine.tokenize(text)
@@ -258,14 +272,15 @@ def _duration_core(text: str, engine,
         j = i
         count = None
         frac_lead = False
+        article_one = None
+        count_tok = None
         # A Semitic dual-noun unit fuses the count "two" with the unit into one
         # token (Arabic ساعتان / ساعتين == two hours, Hebrew שעתיים) -- there is
         # no separate "two" word to read, so it is handled up front as exactly
         # (2 x unit).  A trailing "... and a half" still attaches ("ساعتان
         # ونصف"), matching the ordinary count-then-unit path below.
         dual = spec.dual_units.get(tokens[i].text)
-        if dual is not None and (dual in _DUR_UNIT_SECONDS
-                                 or dual in calendar_months):
+        if dual is not None and dual in _DUR_UNIT_SECONDS:
             count = 2.0
             end = i + 1
             add2, end2 = _read_additive(end)
@@ -313,6 +328,7 @@ def _duration_core(text: str, engine,
                               or tokens[j + 1].text in fracs):
                 j += 1
             else:
+                article_one = tokens[j].text
                 count, j = 1.0, j + 1
         if count is None and j < n:
             # a thousand-scale count ("mil e quinhentos dias" = 1500 days) --
@@ -330,6 +346,7 @@ def _duration_core(text: str, engine,
                 # before a unit is even matched.  Such a count names no real
                 # length, so the token is treated as if it weren't numeric
                 # and scanning moves on, rather than raising past the caller.
+                count_tok = j
                 try:
                     count, j = float(tokens[j].value), j + 1
                 except OverflowError:
@@ -341,6 +358,7 @@ def _duration_core(text: str, engine,
             elif tokens[j].text in fracs:
                 count, j, frac_lead = fracs[tokens[j].text], j + 1, True
             elif tokens[j].text in spec.quantifiers:
+                article_one = tokens[j].text
                 count, j = spec.quantifiers[tokens[j].text], j + 1
             elif (_unit_of(tokens[j]) is not None
                   and _read_additive(j + 1)[0] is not None):
@@ -362,6 +380,7 @@ def _duration_core(text: str, engine,
         add, j = _read_additive(j)
         if add is not None:
             count += add
+        adjacent = j
         while j < n and tokens[j].text in filler:
             j += 1
         # "half of a hundred days" = 0.5 * 100: a leading fraction ("half"/
@@ -392,6 +411,25 @@ def _duration_core(text: str, engine,
             if add2 is not None:
                 count += add2
                 end = end2
+            # a calendar unit counts only a plain cardinal right before it: a
+            # definite article ("the month"), a roman numeral ("the XII
+            # century"), an "of" between ("o dia 5 do mês"), an article after
+            # "of" ("a third of a year") or right after another length ("2
+            # hours a month", a rate) names a date, a part or a frequency, and a fraction of a year must be whole
+            # months; the unit then stays unread and the text names no length
+            if unit in calendar_months and not (
+                    (j == adjacent or frac_lead)
+                    and (article_one is None
+                         or article_one in spec.quantifiers
+                         and i - 1 not in consumed
+                         and (i == 0 or tokens[i - 1].text not in of_words))
+                    and (count_tok is None or not _ROMAN.fullmatch(
+                        text[tokens[count_tok].char_start:
+                             tokens[count_tok].char_end]))
+                    and (unit == "month"
+                         or float(count * calendar_months[unit]).is_integer())):
+                i += 1
+                continue
             _add(unit, count)
             found = True
             consumed.update(range(i, end))
@@ -436,6 +474,7 @@ def _duration_core(text: str, engine,
     # ("in 90 minutes" == 90 minutes from now), not a bound duration, and is
     # not a member of ``recur_for`` in any locale; consuming it would blur
     # that distinction, so "in 90 minutes" -> remainder "in" is correct as-is.
+    marked = False
     if consumed:
         start = min(consumed)
         for words in _conn_surfaces(spec, "recur_for", ("for",)):
@@ -444,7 +483,10 @@ def _duration_core(text: str, engine,
                     tokens[start - wlen + m].text.lower()
                     for m in range(wlen)] == words:
                 consumed.update(range(start - wlen, start))
+                marked = True
                 break
+    if calendar_needs_marker and not (months and marked):
+        return None
     # A stranded CALENDAR-grain unit (month/year/decade/...) is not a
     # fixed-width length -- a bare "3 months" already returns None rather
     # than some arbitrary 30-day guess (see the module docstring).  A MIXED
@@ -458,7 +500,7 @@ def _duration_core(text: str, engine,
         if tok.index in consumed:
             continue
         kind = spec.units.get(tok.text)
-        if kind is not None and _unit_of(tok) is None:
+        if kind is not None and kind not in _DUR_UNIT_SECONDS:
             return None
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens

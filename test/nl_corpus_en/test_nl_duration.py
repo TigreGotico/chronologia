@@ -81,6 +81,7 @@ def test_duration_remainder(text, expected, remainder):
 # adversarial: not a fixed-width duration -> None (never a spurious span).
 @pytest.mark.parametrize("text", [
     "a second chance",   # ordinal "second"/idiom, not 1 second
+    "2 months",          # calendar-ambiguous unit, out of scope
     "next year",         # a reference, not a length
     "hello world",       # nothing temporal
 ])

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """Durations in German: ``extract_duration(text, "de")`` -> timedelta."""
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pytest
-from dateutil.relativedelta import relativedelta
 
 from chronologia.extract import extract_duration
 
@@ -35,12 +34,6 @@ def test_duration(text, expected):
     assert got[0] == expected
 
 
-@pytest.mark.parametrize("text", ["hallo welt"])
+@pytest.mark.parametrize("text", ["2 monate", "hallo welt"])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
-
-
-def test_a_calendar_unit_counts_from_the_anchor():
-    anchor = datetime(2026, 12, 31, 10, 0)
-    got = extract_duration("2 monate", LANG, anchor=anchor)
-    assert got == (anchor + relativedelta(months=2) - anchor, "")

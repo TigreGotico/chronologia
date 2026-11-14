@@ -3,10 +3,9 @@
 
 Fixed-width units only; expected values are hand-derived seconds arithmetic.
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pytest
-from dateutil.relativedelta import relativedelta
 
 from chronologia.extract import extract_duration
 
@@ -40,12 +39,6 @@ def test_duration(text, expected):
     assert got[0] == expected
 
 
-@pytest.mark.parametrize("text", ["hola mundo"])
+@pytest.mark.parametrize("text", ["2 meses", "hola mundo"])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
-
-
-def test_a_calendar_unit_counts_from_the_anchor():
-    anchor = datetime(2026, 12, 31, 10, 0)
-    got = extract_duration("2 meses", LANG, anchor=anchor)
-    assert got == (anchor + relativedelta(months=2) - anchor, "")

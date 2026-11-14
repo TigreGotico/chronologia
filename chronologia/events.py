@@ -160,8 +160,10 @@ def extract_event(
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that carries no event, the empty string included, returns ``None``.
     """
-    from chronologia.extract import (extract_candidates, extract_duration,
-                                     extract_recurrence, extract_timespan)
+    from chronologia.extract import (_timespan_engine, extract_candidates,
+                                     extract_duration, extract_recurrence,
+                                     extract_timespan)
+    from chronologia.extract.nseries import _duration_core
     from chronologia.extract.pipeline import require_text
 
     require_text(text, "extract_event")
@@ -177,8 +179,7 @@ def extract_event(
         recurrence, remainder = got_rec
 
     duration: Optional[timedelta] = None
-    duration_text = remainder
-    got_dur = extract_duration(remainder, lang, anchor=anchor)
+    got_dur = extract_duration(remainder, lang)
     if got_dur is not None:
         duration, remainder = got_dur
 
@@ -201,13 +202,17 @@ def extract_event(
     if base is None:
         return None
 
-    # a calendar unit in the duration counts from the start of the event
-    if duration is not None and 1 <= base.start.year <= 9999:
+    # a calendar length after its marker ("for 3 months") counts from the
+    # start of the event; the date reader read the text before it, so an
+    # offset ("in 3 months") stays a date
+    if duration is None and 1 <= base.start.year <= 9999:
         start = datetime(base.start.year, base.start.month, base.start.day,
                          base.start.hour, base.start.minute,
                          base.start.second, base.start.microsecond)
-        duration = extract_duration(duration_text, lang,
-                                    anchor=start).duration
+        got_cal = _duration_core(remainder, _timespan_engine(lang), start,
+                                 calendar_needs_marker=True)
+        if got_cal is not None:
+            duration, remainder = got_cal
 
     # When a duration is named, the span carries exactly that width; otherwise
     # the span keeps its own implicit width (a day, an hour, a minute...).
