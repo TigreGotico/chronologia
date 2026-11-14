@@ -122,6 +122,57 @@ def test_definite_left_is_not_pulled_back_a_year(text, begin, end):
     assert r.remainder != ""
 
 
+# A clock that names no day recurs daily, so it is rolled back by days, never
+# by a year: the left end is the latest reading that starts before the right
+# end.  On Thursday 31 December the year pull read 30 December 09:00.  A clock
+# on a weekday or a holiday keeps the yearly reading: the most recent Friday
+# is 25 December, and Easter 2026 is 5 April (EASTER_2026).
+DEC31_13 = datetime(2026, 12, 31, 13, 0)
+JUN15_13 = datetime(2026, 6, 15, 13, 0)
+
+
+@pytest.mark.parametrize("text,anchor,begin,end", [
+    ("from 9am to today", DEC31_13, datetime(2026, 12, 31, 9),
+     datetime(2027, 1, 1)),
+    ("from 9am to today", JUN15_13, datetime(2026, 6, 15, 9),
+     datetime(2026, 6, 16)),
+    ("from 9am to now", DEC31_13, datetime(2026, 12, 31, 9), DEC31_13),
+    ("from midnight to today", DEC31_13, datetime(2026, 12, 31),
+     datetime(2027, 1, 1)),
+    ("from 9am to yesterday", JUN15_13, datetime(2026, 6, 14, 9),
+     datetime(2026, 6, 15)),
+    ("from 9am on friday to today", DEC31_13, datetime(2026, 12, 25, 9),
+     datetime(2027, 1, 1)),
+    ("from 9am on christmas to today", datetime(2026, 12, 26, 13),
+     datetime(2026, 12, 25, 9), datetime(2026, 12, 27)),
+    ("from 9am on easter to today", JUN15_13, EASTER_2026 + timedelta(hours=9),
+     datetime(2026, 6, 16)),
+    ("from christmas eve at 9pm to now", DEC31_13, datetime(2026, 12, 24, 21),
+     DEC31_13),
+    # two days after the anchor is past the end of the calendar
+    ("from 9am to now", datetime(9999, 12, 30, 13),
+     datetime(9999, 12, 30, 9), datetime(9999, 12, 30, 13)),
+])
+def test_a_clock_is_rolled_back_by_days(text, anchor, begin, end):
+    r = parse(text, anchor)
+    assert r is not None
+    assert (r.span.start, r.span.end) == (ad(begin), ad(end))
+    assert r.remainder == ""
+
+
+# A clock on a day still to come names no range, and the words stay over:
+# Christmas said on 24 December, a written date in December said in June,
+# tomorrow's 9am said today.
+@pytest.mark.parametrize("text,anchor", [
+    ("from 9am on christmas to today", datetime(2026, 12, 24, 13)),
+    ("from 9am on 12/25/2026 to today", JUN15_13),
+    ("from 9am tomorrow to now", JUN15_13),
+])
+def test_a_clock_on_a_coming_day_is_not_rolled(text, anchor):
+    r = parse(text, anchor)
+    assert r is None or r.remainder != ""
+
+
 @pytest.mark.parametrize("anchor,expected", [
     (JUN20, datetime(2025, 12, 25)),
     (MAR01, datetime(2025, 12, 25)),
