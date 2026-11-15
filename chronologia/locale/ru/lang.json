@@ -26,6 +26,7 @@
     },
     "month_day_ref": {
       "orders": [
+        "WORDORD day_label REL_MARKER month_word",
         "WORDORD day_label"
       ],
       "prefer_future": true

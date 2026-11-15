@@ -40,3 +40,17 @@ def test_ordinal_with_chisla_is_a_day_of_month(text, month, day, remainder):
 ])
 def test_without_chisla_or_with_a_count_is_not_a_date(text):
     nomatch(text)
+
+
+@pytest.mark.parametrize("text,month,day", [
+    ("пятого числа прошлого месяца", 5, 5),         # 5 May: last month
+    ("двадцатого числа следующего месяца", 7, 20),  # 20 July: next month
+])
+def test_chisla_with_a_month_phrase_reads_that_month(text, month, day):
+    # The month phrase names the month outright: the day neither rolls nor
+    # stays in the anchor's month, and the phrase is consumed.
+    r = parse(text)
+    assert r is not None
+    assert (r.span.start, r.span.end) == (_day(month, day),
+                                          _day(month, day + 1))
+    assert r.remainder == ""
