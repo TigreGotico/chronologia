@@ -666,30 +666,61 @@ class ConstructionMatcher:
                                 "singular_only", frozenset())
                             and tokens[_mi + 1].text in self._plural_periods):
                         continue
-                    # A weekday word that is also a feminine ordinal ("a
-                    # segunda dose", "pela segunda vez") names a Monday only
-                    # when no ordinal noun follows it.  The first word of a
-                    # phrase is exempt: the tokenizer drops the comma of a
-                    # calendar note ("segunda, aula de piano").  Both lists
-                    # are locale facts
-                    # (``marker_weekday_ordinal_homonym.voc`` and
-                    # ``marker_ordinal_noun.voc``); a locale shipping neither
-                    # is unaffected.
-                    if (name == "weekday_ref" and start > 0
-                            and end < len(tokens)
-                            and (slots.get("WEEKDAY") or slots.get(
-                                "WEEKDAYFULL")) is not None
-                            and (slots.get("WEEKDAY") or slots.get(
-                                "WEEKDAYFULL")).text
+                    # "Last" also means final (Priberam s.v. "último", 1:
+                    # "Que vem ou está depois de todos"), and an "of" phrase
+                    # after the period says what it is the final one of: "o
+                    # último dia de escola" is the final day of school, not
+                    # yesterday.  A construction that reads the "of" phrase
+                    # as a date ("o último dia do mês", "a última semana de
+                    # 2026") is a longer candidate and still wins.  A locale
+                    # opts in by listing its "of" words in
+                    # ``marker_ordlast_of.voc``: where the "last" word also
+                    # means "previous" and the preposition also means "in"
+                    # (de "letzte Woche im Büro", fr "la semaine dernière de
+                    # nouveau"), the phrase names a place or an activity
+                    # instead, so those locales ship no such file.  See
+                    # ``_final_of`` for the article and locution tests.
+                    if (name == "rel_period" and "REL_MARKER" in slots
+                            and slots["REL_MARKER"].text
                             in self.spec.connectors.get(
+                                "ordlast", frozenset())
+                            and self._final_of(tokens,
+                                               slots["REL_MARKER"].index,
+                                               end)):
+                        continue
+                    # A weekday word that is also a feminine ordinal ("a
+                    # segunda dose", "pela segunda vez", "quinta vez") names
+                    # a Monday only when no ordinal noun follows it.  A
+                    # weekday word that is also a fraction ("a terça parte")
+                    # names no day before its fraction noun.  A punctuation
+                    # mark between the two keeps the weekday: a calendar
+                    # note ("segunda, aula de piano") names the day, then
+                    # the event.  The four lists are locale facts
+                    # (``marker_weekday_ordinal_homonym.voc``,
+                    # ``marker_ordinal_noun.voc``,
+                    # ``marker_weekday_fraction_homonym.voc`` and
+                    # ``marker_fraction_noun.voc``); a locale shipping none
+                    # is unaffected.
+                    _wd = slots.get("WEEKDAY") or slots.get("WEEKDAYFULL")
+                    if (name == "weekday_ref" and _wd is not None
+                            and end < len(tokens)
+                            and not tokens[end].break_before
+                            and ((_wd.text in self.spec.connectors.get(
                                 "weekday_ordinal_homonym", frozenset())
-                            and tokens[end].text in self.spec.connectors.get(
-                                "ordinal_noun", frozenset())):
+                                  and tokens[end].text
+                                  in self.spec.connectors.get(
+                                      "ordinal_noun", frozenset()))
+                                 or (_wd.text in self.spec.connectors.get(
+                                     "weekday_fraction_homonym", frozenset())
+                                     and tokens[end].text
+                                     in self.spec.connectors.get(
+                                         "fraction_noun", frozenset())))):
                         continue
                     # "faz N anos" counts back ("faz dois anos") only at the
                     # start of a clause; after a subject it is the verb "to
-                    # turn" ("a minha filha faz dez anos").  Only a year
-                    # count can be an age.  The
+                    # turn" ("a minha filha faz dez anos").  Any word but a
+                    # lead word makes a year count an age; a month count
+                    # has a narrower test below.  The
                     # tokenizer drops punctuation, so a clause start is the
                     # start of the utterance or a lead word such as "já".
                     # The marker and the lead words are locale facts
@@ -706,6 +737,65 @@ class ConstructionMatcher:
                             and tokens[slots["MARKER"].index - 1].text
                             not in self.spec.connectors.get(
                                 "clause_lead", frozenset())):
+                        continue
+                    # A month count is an age too ("o bebé faz dois meses":
+                    # Priberam s.v. "fazer", 13: "Atingir determinado tempo
+                    # ou determinada quantidade",
+                    # https://dicionario.priberam.org/fazer), but only with
+                    # its subject alone before "faz" (see
+                    # ``_subject_opens``).  After a verb, an object or a
+                    # place it counts back ("comprei o carro faz dois
+                    # meses", "fui a Lisboa faz dois meses"), and so it does
+                    # before "que" ("a minha mãe faz dois meses que está
+                    # internada"): that "que" follows a time phrase
+                    # (``marker_elapsed_que.voc``).
+                    if (name == "relative_offset" and "MARKER" in slots
+                            and slots["MARKER"].text
+                            in self.spec.connectors.get(
+                                "past_clause_initial", frozenset())
+                            and "UNIT" in slots
+                            and self.spec.units.get(
+                                slots["UNIT"].text) == "month"
+                            and slots["MARKER"].index > 0
+                            and not (end < len(tokens)
+                                     and tokens[end].text
+                                     in self.spec.connectors.get(
+                                         "elapsed_que", frozenset()))
+                            and self._subject_opens(tokens,
+                                                    slots["MARKER"].index)):
+                        continue
+                    # Impersonal "fazer" also names the weather (Priberam
+                    # s.v. "fazer", 26: "Haver determinada condição
+                    # atmosférica", https://dicionario.priberam.org/fazer):
+                    # "faz um dia lindo", "faz um dia de sol".  A count of
+                    # one day refuses when a weather word qualifies the
+                    # day with no punctuation after the unit: an
+                    # adjective, or "de" and a weather noun.  Any other word
+                    # leaves the count ("faz um dia inteiro que não como"),
+                    # and so does a weather word that opens the next
+                    # sentence ("O avião caiu faz um dia. Frio e chuva
+                    # dificultam as buscas").  The lists are locale facts
+                    # (``marker_weather_adjective.voc``,
+                    # ``marker_weather_noun.voc`` and ``marker_of.voc``).
+                    if (name == "relative_offset" and "MARKER" in slots
+                            and slots["MARKER"].text
+                            in self.spec.connectors.get(
+                                "past_clause_initial", frozenset())
+                            and "NUM" in slots and slots["NUM"].value == 1
+                            and "UNIT" in slots
+                            and self.spec.units.get(
+                                slots["UNIT"].text) == "day"
+                            and end < len(tokens)
+                            and not tokens[end].break_before
+                            and (tokens[end].text in self.spec.connectors.get(
+                                "weather_adjective", frozenset())
+                                 or (end + 1 < len(tokens)
+                                     and tokens[end].text
+                                     in self.spec.connectors.get(
+                                         "of", frozenset())
+                                     and tokens[end + 1].text
+                                     in self.spec.connectors.get(
+                                         "weather_noun", frozenset())))):
                         continue
                     # A direction word after the unit counts only if it can
                     # follow its count: "dois anos atrás" does, while "em"
@@ -962,6 +1052,32 @@ class ConstructionMatcher:
                         precedence))
         return out
 
+    def _subject_opens(self, tokens: Tuple[Token, ...], marker: int) -> bool:
+        """Whether the words before ``tokens[marker]`` are its subject alone
+        and open the sentence: a subject pronoun ("ela faz"), or a
+        determiner phrase ("o bebé faz", "a minha filha faz").  A pronoun
+        after a word is an object instead ("falei com ela faz dois meses",
+        pt-BR "vi ela faz dois meses").  Punctuation right before
+        ``tokens[marker]`` sets the count apart from the subject, which
+        then belongs to a later verb ("a minha mãe, faz dois meses,
+        morreu").  The lists are locale facts
+        (``marker_subject_pronoun.voc`` and
+        ``marker_subject_determiner.voc``)."""
+        def opens(i: int) -> bool:
+            return i == 0 or tokens[i].break_before
+
+        if tokens[marker].break_before:
+            return False
+        if (tokens[marker - 1].text in self.spec.connectors.get(
+                "subject_pronoun", frozenset()) and opens(marker - 1)):
+            return True
+        determiners = self.spec.connectors.get("subject_determiner",
+                                               frozenset())
+        return any(first >= 0 and opens(first)
+                   and all(t.text in determiners
+                           for t in tokens[first:marker - 1])
+                   for first in (marker - 2, marker - 3))
+
     @staticmethod
     def _select(candidates: List[MatchCandidate]) -> List[MatchCandidate]:
         """Pick the non-overlapping winners: longest span, then precedence.
@@ -989,6 +1105,37 @@ class ConstructionMatcher:
             chosen.append(cand)
         chosen.sort(key=lambda c: c.match.span[0])
         return chosen
+
+    def _final_of(self, tokens: Tuple[Token, ...], marker: int,
+                  end: int) -> bool:
+        """Whether the "last <unit>" right before ``tokens[end]`` is the
+        adjective "final" with an "of" complement after it.  An "of" word
+        must follow the unit with no break between them, and it must not
+        open an adverbial locution: a listed pair ("na última semana de
+        manhã", "de novo"), or a manner noun as the next word or the one
+        after it ("de forma notável", "de qualquer forma", "da mesma
+        forma").  A locale that lists
+        articles for the adjective also needs one right before the marker:
+        en bare "last week" is "previous" ("I told you last week of the
+        change"), only "the last week of school" is "final".  The lists are
+        locale facts (``marker_ordlast_of.voc``,
+        ``marker_ordlast_of_locution.voc``, ``marker_manner_noun.voc`` and
+        ``marker_ordlast_article.voc``)."""
+        connectors = self.spec.connectors
+        if (end >= len(tokens) or tokens[end].break_before
+                or tokens[end].text not in connectors.get("ordlast_of",
+                                                          frozenset())):
+            return False
+        following = [t.text for t in tokens[end + 1:end + 3]]
+        if following and (
+                f"{tokens[end].text} {following[0]}"
+                in connectors.get("ordlast_of_locution", frozenset())
+                or any(word in connectors.get("manner_noun", frozenset())
+                       for word in following)):
+            return False
+        articles = connectors.get("ordlast_article")
+        return not articles or (marker > 0
+                                and tokens[marker - 1].text in articles)
 
     def match(self, tokens: Tuple[Token, ...], veto=None) -> Tuple[Match, ...]:
         """The non-overlapping parse winners.

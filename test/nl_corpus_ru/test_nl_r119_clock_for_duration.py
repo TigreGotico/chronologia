@@ -41,7 +41,7 @@ def test_stray_leading_preposition_embedded_sentence():
     assert r is not None
     assert (r.span.start, r.span.end) == (ad(datetime(2017, 7, 4, 21, 0)),
                                           ad(datetime(2017, 7, 4, 21, 1)))
-    assert r.remainder == "встретимся в"
+    assert r.remainder == "встретимся"
 
 
 def test_clock_own_v_preposition_not_mistaken_for_marker():
