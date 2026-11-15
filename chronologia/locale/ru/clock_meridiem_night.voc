@@ -1,0 +1,7 @@
+# The NIGHT daypart is a BAND that crosses midnight, not an AM marker: the
+# dictionary sense of "ночь" is "Часть суток от захода до восхода солнца, от
+# вечера до утра" (gramota.ru, metaslovar, s.v. ночь, sense 1), so "11 часов
+# ночи" is 23:00 and "3 часа ночи" is 03:00.  Small hours 1..5 stay AM,
+# evening hours 6..11 are PM, twelve is midnight (the band-split lives in the
+# resolver _clock_hms).  https://gramota.ru/poisk?query=ночь&mode=slovari
+ночи
