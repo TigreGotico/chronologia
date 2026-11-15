@@ -2,7 +2,7 @@
 
 AkH. 12, rule 298, joins a suffix to a day number with a hyphen: "1848. márc.
 15-én", "2014. febr. 28-a", "1-je", "1-jén".  Rule 300 does the same for a
-digit clock: "10:35-kor".  The sublative "-ra"/"-re" names the same point as
+digit clock: "10.35-kor" or "10:35-kor".  The sublative "-ra"/"-re" names the same point as
 a target.  The suffix belongs to the date or the clock, so it does not stay in
 the remainder.  An article after a space is a separate word.
 
@@ -52,6 +52,9 @@ def test_day_suffix_is_part_of_the_date(text, y, m, d):
     ("március 15-én 10:35-kor", datetime(2018, 3, 15, 10, 35)),
     ("este fél kilenc", datetime(2017, 6, 27, 20, 30)),
     ("holnap este fél kilenc", datetime(2017, 6, 28, 20, 30)),
+    ("este fél 8-kor", datetime(2017, 6, 27, 19, 30)),
+    ("fél 8-kor", datetime(2017, 6, 28, 7, 30)),
+    ("10.35-kor", datetime(2017, 6, 28, 10, 35)),
 ])
 def test_clock_suffix_and_evening_half(text, when):
     r = parse(text)
