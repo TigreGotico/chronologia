@@ -1058,9 +1058,13 @@ a number mention carries that mention beside its word. The language fold
 (`numlayer_en.py`, `numlayer_pt.py`) names the number words that the date
 grammar reads as words in their position: `half` and `quarter` in a clock,
 `million` and `milhões` before a year word in deep time, `segunda` as
-Monday. Every other mention folds to its value. When a date word cuts a
-mention, numtag reads each side again on its own words. The other languages
-fold with their `numfold_*` module and ovos-number-parser.
+Monday. Every other mention folds to its value. In deep time the count before
+the scale word is the mention value in units of that word: "one million two
+hundred thousand years ago" counts 1200 thousands, so the age is numtag's
+1200000. When another date word cuts a mention, numtag reads each side again
+on its own words. `pt-BR` reads its numbers with numtag's Brazilian lexicon,
+where "bilhão" is 10^9; `pt` reads the European one, where it is 10^12. The
+other languages fold with their `numfold_*` module and ovos-number-parser.
 
 **4. Multiword merge** (`chronologia.extract.pipeline.merge_multiword`,
 reached through `fold_tokens`). Vocabulary

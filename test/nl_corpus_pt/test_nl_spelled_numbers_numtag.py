@@ -2,12 +2,18 @@
 """Portuguese spelled numbers that numtag reads whole.
 
 A spelled year with "mil" ("dois mil e vinte e seis") and a count with a
-collective noun ("duas dúzias") are one number each.  Every expected value is
+collective noun ("duas dúzias") are one number each.  A deep-time age is the
+whole number before "anos", in the scale of the language tag: pt-PT counts
+the long scale and pt-BR the short scale (Priberam, "bilião", senses 1 and
+2).  Every expected value is
 written by hand or computed with ``relativedelta`` from the anchor.
 """
 import pytest
 
-from ._corpus import ANCHOR, datetime, parse, relativedelta, span
+from chronologia import extract_duration, extract_timespan
+
+from ._corpus import (ANCHOR, AstroDate, datetime, nomatch, parse,
+                      relativedelta, span, timedelta)
 
 
 @pytest.mark.parametrize("text,year", [
@@ -40,3 +46,51 @@ def test_collective_noun_count():
     text = "há duas dúzias de anos"
     assert span(text).start == ANCHOR - relativedelta(years=24)
     assert parse(text).remainder == ""
+
+
+@pytest.mark.parametrize("text,days", [
+    ("há meia dúzia de dias", 6),           # 12 / 2
+    ("há uma dúzia e meia de dias", 18),    # 12 + 12 / 2
+])
+def test_half_inside_a_count(text, days):
+    assert span(text).start == ANCHOR - timedelta(days=days)
+    assert parse(text).remainder == ""
+
+
+@pytest.mark.parametrize("text,lang,years,width", [
+    # 1 000 000 + 200 000, said to the thousand
+    ("há um milhão e duzentos mil anos", "pt", 1_200_000, 1_000),
+    ("há dois milhões e quinhentos mil anos", "pt", 2_500_000, 1_000),
+    # 1 000 000 / 2, said to a tenth of a million
+    ("há meio milhão de anos", "pt", 500_000, 100_000),
+    # pt-BR: bilhão = 10^9, so 2*10^9 + 500*10^6, said to the million
+    ("há dois bilhões e quinhentos milhões de anos", "pt-BR",
+     2_500_000_000, 1_000_000),
+    ("há um bilhão e duzentos milhões de anos", "pt-BR",
+     1_200_000_000, 1_000_000),
+    # pt-PT: bilhão and bilião = 10^12, so 2*10^12 + 500*10^6
+    ("há dois bilhões e quinhentos milhões de anos", "pt",
+     2_000_500_000_000, 1_000_000),
+    # pt-PT: 2*10^12 + 500*10^3*10^6
+    ("há dois biliões e quinhentos mil milhões de anos", "pt",
+     2_500_000_000_000, 1_000_000),
+])
+def test_deep_time_count_with_several_scale_words(text, lang, years, width):
+    """The start year is 1950 - years before present, and the span is one
+    unit of the last digit said wide."""
+    got = extract_timespan(text, lang, ANCHOR)
+    assert (got.span.start, got.span.end) == (
+        AstroDate(1950 - years, 1, 1), AstroDate(1950 - years + width, 1, 1))
+    assert got.remainder == ""
+
+
+def test_scale_count_of_seconds_is_no_year():
+    """"dois mil milhões" is 2 x 1000 x 10^6 = 2*10^9 seconds."""
+    text = "daqui a dois mil milhões de segundos"
+    assert span(text).start == ANCHOR + timedelta(seconds=2_000_000_000)
+    assert extract_duration(text, "pt").duration == timedelta(
+        seconds=2_000_000_000)
+
+
+def test_scale_count_of_things_is_no_year():
+    nomatch("comprei dois mil milhões de livros")

@@ -20,14 +20,16 @@ from __future__ import annotations
 import re
 from dataclasses import replace
 from pathlib import Path
-from typing import FrozenSet, Set, Tuple
+from typing import Dict, FrozenSet, Set, Tuple
 
 from numtag import Kind
 from ovos_spec_tools import expand, read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import fold_mentions, mention_number, mentions
+from chronologia.extract.numlayer import (fold_mentions, mention_number,
+                                          mentions, scale_factor,
+                                          scale_factors)
 
 _LANG_DIR = Path(__file__).resolve().parent.parent / "locale" / "en"
 
@@ -57,6 +59,7 @@ _MONTHS = frozenset().union(*(
 _FRACTIONS = _voc("clock_fraction_") | {"quarters"}
 #: The deep-time SCALE words ("thousand", "million", "billion").
 _SCALES = _voc("scale_")
+_FACTORS = scale_factors("en")
 _INDEF = frozenset({"a", "an"})
 _ORDLAST = _voc("marker_ordlast")
 #: The words between a fraction and its unit: "half a year", "three quarters
@@ -143,15 +146,20 @@ def _mention_end(tokens: Tuple[Token, ...], i: int) -> int:
     return j
 
 
-def _date_words(tokens: Tuple[Token, ...]) -> Set[int]:
-    """The indices of the number words the date grammar reads as words.
+def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Dict[int, int]]:
+    """The indices of the number words the date grammar reads as words, and
+    of the deep-time scale words with their factors.
 
-    A clock fraction stays a word unless its mention is a length: a fraction
-    followed by a unit ("two and a half hours", "half a year").  A scale word
-    stays a word in the deep-time frame, before a year word ("sixty six
-    million years ago").
+    A clock fraction stays a word ("half past three", "an hour and a half"),
+    except in two positions.  A fraction followed by a unit is a length ("two
+    and a half hours", "half a year"), and a fraction word inside a cardinal
+    is part of the count ("half a dozen" is 6, "a dozen and a half" is 18).
+    A scale word stays a word in the deep-time frame, before a year word
+    ("sixty six million years ago"); the count before it is the mention value
+    in units of this word.
     """
     claimed = set()
+    scales = {}
     n = len(tokens)
     for i, tok in enumerate(tokens):
         m = tok.mention
@@ -159,13 +167,17 @@ def _date_words(tokens: Tuple[Token, ...]) -> Set[int]:
             continue
         if tok.text in _FRACTIONS:
             unit = _skip_filler(tokens, _mention_end(tokens, i))
-            if not (m.kind is Kind.FRACTION and unit < n
-                    and tokens[unit].text in _UNITS):
+            length = (m.kind is Kind.FRACTION and unit < n
+                      and tokens[unit].text in _UNITS)
+            if m.kind is not Kind.CARDINAL and not length:
                 claimed.add(i)
         elif (tok.text in _SCALES and i + 1 < n
               and tokens[i + 1].text in _YEAR_WORDS):
-            claimed.add(i)
-    return claimed
+            factor = scale_factor(tok.text, m, _FACTORS)
+            if factor is not None:
+                claimed.add(i)
+                scales[i] = factor
+    return claimed, scales
 
 
 def ordinal_to_last(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
@@ -338,9 +350,8 @@ def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     token, except the words the date grammar reads as words; then the year
     pair, the deep-time article and the duration fraction compose."""
     tokens = reindex(_merge_ord_suffix(_glue_era(tokens)))
-    claimed = _date_words(tokens)
-    scales = frozenset(i for i in claimed if tokens[i].text in _SCALES)
-    folded = fold_mentions(tokens, "en", claimed)
+    claimed, scales = _date_words(tokens)
+    folded = fold_mentions(tokens, "en", claimed, scales)
     # the claimed scale words keep their place in the folded stream; find
     # them again by their source extent
     extents = {(tokens[i].char_start, tokens[i].char_end) for i in scales}

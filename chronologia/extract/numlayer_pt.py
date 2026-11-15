@@ -11,13 +11,16 @@ from __future__ import annotations
 
 import os
 from dataclasses import replace
-from typing import FrozenSet, Set, Tuple
+from typing import Dict, FrozenSet, Set, Tuple
+
+from numtag import Kind
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_romance import (_LOCALE_ROOT,
                                                  _collapse_h_clock, _glue)
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import fold_mentions, mention_number
+from chronologia.extract.numlayer import (fold_mentions, mention_number,
+                                          scale_factor, scale_factors)
 
 
 def _voc(*prefixes: str) -> FrozenSet[str]:
@@ -70,6 +73,10 @@ _UNIT_NOUNS = frozenset({"segundos"})
 #: The deep-time frame "NUM SCALE de anos": the SCALE slot binds the word.
 _SCALES = _voc("scale_")
 _THOUSANDS = _voc("scale_1000.")
+_FACTORS = scale_factors("pt")
+#: The units of time.  A unit after "N milhões de" makes the mention a count
+#: of time ("dois mil milhões de segundos"), not a count of things.
+_UNITS = _voc("unit_")
 _YEAR_WORDS = _voc("marker_year_word")
 _OF = _voc("marker_of")
 
@@ -135,11 +142,14 @@ def _ordinal_weekday(tokens: Tuple[Token, ...], i: int) -> bool:
             and _period_follows(tokens, j + 1))
 
 
-def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Set[int]]:
-    """The indices of the number words the date grammar reads as words, and
-    of the homographs it reads as ordinals by their position."""
+def _date_words(tokens: Tuple[Token, ...]
+                ) -> Tuple[Set[int], Set[int], Dict[int, int]]:
+    """The indices of the number words the date grammar reads as words, of
+    the homographs it reads as ordinals by their position, and of the
+    deep-time scale words with their factors."""
     claimed = set()
     ordinals = set()
+    scales = {}
     n = len(tokens)
     for i, tok in enumerate(tokens):
         if tok.mention is None or tok.is_number:
@@ -158,7 +168,11 @@ def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Set[int]]:
             if word == "quarto" and (prev in _DEFINITE
                                      or nxt in _QUARTER_NOUNS):
                 ordinals.add(i)
-            elif _ends_mention(tok):
+            elif _ends_mention(tok) and tok.mention.kind is not Kind.CARDINAL:
+                # the half or quarter of a clock hour: "às três e meia" is
+                # 3.5, "meio-dia e quarto" holds "quarto".  In a count ("uma
+                # dúzia e meia", 18) numtag reads the half as part of the
+                # number, and the mention is a cardinal.
                 claimed.add(i)
         elif word == "dez":
             # the CLDR abbreviation of "dezembro", in the month slot of "N de
@@ -171,14 +185,25 @@ def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Set[int]]:
             # ninth everywhere else ("as nonas semanas")
             if nxt in _OF:
                 claimed.add(i)
-        elif word in _SCALES:
-            # the deep-time SCALE ("milhões de anos"), and a scale noun that
-            # counts a noun after "de" ("um milhão de razões"): the count of
-            # things is no date number, so the noun stays a word
-            if (nxt in _YEAR_WORDS or (nxt in _OF and nxt2 in _YEAR_WORDS)
-                    or (word not in _THOUSANDS and nxt in _OF)):
+        elif (word in _SCALES and _ends_mention(tok)
+              and (nxt in _YEAR_WORDS
+                   or (nxt in _OF and nxt2 in _YEAR_WORDS))):
+            # the deep-time SCALE ("sessenta e seis milhões de anos"); the
+            # count before it is the mention value in units of this word
+            factor = scale_factor(word, tok.mention, _FACTORS)
+            if factor is not None:
                 claimed.add(i)
-    return claimed, ordinals
+                scales[i] = factor
+        elif (word in _SCALES and word not in _THOUSANDS and _ends_mention(tok)
+              and nxt in _OF and nxt2 not in _UNITS):
+            # a scale noun that counts things after "de" ("um milhão de
+            # razões"): the count of things is no date number, so every word
+            # of its mention stays a word
+            k = i
+            while k >= 0 and tokens[k].mention is tok.mention:
+                claimed.add(k)
+                k -= 1
+    return claimed, ordinals, scales
 
 
 def fold_pt(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
@@ -190,11 +215,11 @@ def fold_pt(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     tokenizer splits ("a.c.", "meio-dia") are glued back into one word.
     """
     tokens = reindex(_glue(_collapse_h_clock(tokens)))
-    claimed, ordinals = _date_words(tokens)
+    claimed, ordinals, scales = _date_words(tokens)
     # a homograph read as an ordinal by its position keeps its written word,
     # so a mention's text shows "o quarto trimestre"
     words = {(tokens[i].char_start, tokens[i].char_end): tokens[i].raw
              for i in ordinals}
     return tuple(replace(t, raw=words[(t.char_start, t.char_end)])
                  if t.is_number and (t.char_start, t.char_end) in words else t
-                 for t in fold_mentions(tokens, "pt", claimed))
+                 for t in fold_mentions(tokens, "pt", claimed, scales))

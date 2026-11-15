@@ -192,7 +192,7 @@ def pretokens(text: str, spec: LangSpec) -> Tuple[Token, ...]:
         Tokenizer(spec.tokenizer).tokenize(text))
     if spec.pre_hook is not None:
         tokens = spec.pre_hook(tokens)
-    return attach(tokens, text, spec.lang)
+    return attach(tokens, text, spec.number_lang or spec.lang)
 
 
 def _is_a_numeral_one(tok: Token, hook) -> bool:

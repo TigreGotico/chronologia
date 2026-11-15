@@ -61,6 +61,18 @@ def test_romance_number_fold_is_linear_not_quadratic():
         f"2000 ({large:.2f}s vs {small:.2f}s); linear is ~4x, quadratic ~16x")
 
 
+@pytest.mark.parametrize("text,lang,left", [
+    ("jeden půldruhé den", "cs", "jeden"),
+    ("am einige tag", "de", "am"),
+])
+def test_word_before_a_quantifier_stays_outside_a_folded_count(text, lang,
+                                                               left):
+    """The article before a quantifier joins the count only in the languages
+    numtag reads.  The other languages read their quantifiers in their fold,
+    and a word before one stays in the remainder."""
+    assert extract_duration(text, lang).remainder == left
+
+
 @pytest.mark.parametrize("text,lang,days", [
     ("cento e vinte e três dias", "pt", 123),
     ("ciento veintitrés días", "es", 123),

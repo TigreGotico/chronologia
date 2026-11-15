@@ -333,6 +333,10 @@ class LangSpec:
     # number fold has run on every segment around a held-out second word, so
     # a rewrite that reads the unit after a count sees the whole stream.
     post_hook: Optional[Callable] = None
+    # The language tag the number layer reads with, when a region reads its
+    # numbers in its own way: ``pt-BR`` counts the short scale ("dois bilhões"
+    # is 2*10^9).  ``None`` reads with ``lang``.
+    number_lang: Optional[str] = None
     # clock_time slot vocab (surface -> value), all facts from filename convention
     clock_fractions: Mapping[str, int] = field(default_factory=dict)  # -> minutes
     # fraction surfaces (a SUBSET of clock_fractions, so the FRACTION slot still
