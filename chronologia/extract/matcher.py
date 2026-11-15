@@ -876,6 +876,18 @@ class ConstructionMatcher:
                                 set(self.spec.units)
                                 | set(self.spec.singular_units))):
                         continue
+                    # A fraction-of-the-hour reading ("половина двадцатого")
+                    # whose hour word is followed by a unit or scope-unit noun
+                    # names that noun's ordinal, not a clock: "в половине
+                    # двадцатого века" is the middle of the 20th century, not
+                    # 19:30.  Veto it so the noun phrase is left unread.
+                    if (name == "clock_time" and "FRACTION" in slots
+                            and "HOUR" in slots and end < len(tokens)
+                            and tokens[end].text in (
+                                set(self.spec.units)
+                                | set(self.spec.singular_units)
+                                | set(self.spec.scope_units))):
+                        continue
                     # "new year 15 minutes" is a duration, not the year 2015:
                     # YEARANY's only gate below YEAR's own is >=2 digits (no
                     # >=32 lower bound, see its _bind docstring), so it also
