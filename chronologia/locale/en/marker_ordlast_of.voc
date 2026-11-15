@@ -1,0 +1,6 @@
+# "of" after "the last <unit>": "the last day of school" names the final day
+# of school, not yesterday.  Wiktionary s.v. "last", adjective 1: "Final,
+# ultimate, coming after all others of its kind"
+# (https://en.wiktionary.org/wiki/last).  Bare "last week" is the
+# determiner "previous" instead (``marker_ordlast_article.voc``).
+of

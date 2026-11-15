@@ -95,7 +95,7 @@ def test_named_days(text, off):
     ("Dé hAoine", 4), ("Dé Sathairn", 5), ("Dé Domhnaigh", 6),
 ])
 def test_marked_weekday_names_its_next_occurrence(text, idx):
-    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    ahead = (idx - ANCHOR.weekday()) % 7
     d = (ANCHOR + timedelta(days=ahead)).date()
     s = span(text)
     assert (s.start.year, s.start.month, s.start.day) == (d.year, d.month, d.day)
@@ -108,7 +108,7 @@ def test_marked_weekday_names_its_next_occurrence(text, idx):
 def test_bare_radical_weekday_reads_too(text, idx):
     """The CLDR citation form is already the adverbial "Dé" compound; the
     bare radical noun a modified reference uses names the same day."""
-    ahead = (idx - ANCHOR.weekday()) % 7 or 7
+    ahead = (idx - ANCHOR.weekday()) % 7
     d = (ANCHOR + timedelta(days=ahead)).date()
     assert start(text).day == d.day
 

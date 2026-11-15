@@ -125,6 +125,7 @@ PRECEDENCE: Dict[str, int] = {
     # a numeric slash/dash date ("12/11/2024") is a full literal date, same
     # tier as the ISO literal it sits beside
     "numeric_date": 4,
+    "numeric_day_month": 4,
     # reckoned_date (and its legacy alias nongregorian_date) -- the unified
     # calendar/era family; more specific vocabulary wins over calendar_date
     "hebrew_new_year": 1,

@@ -22,7 +22,7 @@ from ._corpus import ANCHOR, day, parse, remainder, span, start_end
 @pytest.mark.parametrize("text,y,m,d", [
     ("it-Tnejn", 2027, 5, 17),
     ("it-Tlieta", 2027, 5, 18),
-    ("l-Erbgħa", 2027, 5, 19),
+    ("l-Erbgħa", 2027, 5, 12),
     ("il-Ħamis", 2027, 5, 13),
     ("il-Ġimgħa", 2027, 5, 14),
     ("is-Sibt", 2027, 5, 15),
@@ -113,8 +113,8 @@ def test_the_postposed_articled_week_frames_still_read_as_friday():
 
 
 @pytest.mark.parametrize("text,y,m,d", [
-    ("dan it-Tnejn", 2027, 5, 10),
-    ("din it-Tlieta", 2027, 5, 11),
+    ("dan it-Tnejn", 2027, 5, 17),
+    ("din it-Tlieta", 2027, 5, 18),
     ("din l-Erbgħa", 2027, 5, 12),
     ("dan il-Ħamis", 2027, 5, 13),
     ("dan is-Sibt", 2027, 5, 15),

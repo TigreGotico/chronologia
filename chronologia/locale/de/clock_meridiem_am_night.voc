@@ -1,0 +1,11 @@
+# "nachts" reads on the am half of the 12-hour clock ("drei nachts" is 03:00).
+# Over an explicit 24-hour clock it keeps 18:00-23:59 as written ("23:30
+# nachts"): the night starts at nightfall, not at midnight.
+# Duden, "Nacht", Bedeutung 1: "Zeitraum etwa zwischen Sonnenuntergang und
+# Sonnenaufgang, zwischen Einbruch der Dunkelheit und Beginn der
+# Morgendämmerung" (https://www.duden.de/rechtschreibung/Nacht).
+# DWDS, "Nacht", Bedeutung 1 (eWDG): "Zeit zwischen Ende der Abenddämmerung
+# und Beginn der Morgendämmerung" (https://www.dwds.de/wb/Nacht).
+# 13:00-17:59 is the Nachmittag (Unicode CLDR Day Period Rules, locale de,
+# nachmittag [13:00, 18:00)), so "15:30 nachts" names no time.
+nachts
