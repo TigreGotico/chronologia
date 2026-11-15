@@ -531,6 +531,17 @@ If your language has no number backend yet, leave `hook` out entirely —
 chronologia will still read digits perfectly, just not spelled-out number
 words. Nothing else in `lang.json` depends on the hook.
 
+Two more optional keys name code, and few languages need them. `pre_hook` runs
+once on the whole token stream before range detection and number folding, and
+takes the tokens alone. `post_hook` runs once on the whole stream after the
+number fold, and takes the tokens and the language spec: a rewrite that must
+see a number word next to the unit word after it goes there. French uses it
+to read "dans 2 heures moins 10 secondes" as one length:
+
+```json
+"post_hook": "chronologia.extract.numfold_romance:fold_fr_hour_length"
+```
+
 ---
 
 ## Numbers: digits vs spelled-out words

@@ -1,2 +1,15 @@
 heures
 heure
+# "h" is the symbol of the hour: OQLF, Banque de dépannage linguistique,
+# "Écriture des nombres exprimant une durée": "2 heures 28 minutes (ou :
+# 2 h 28 min)".  The fold reads "20h" as a clock elsewhere, so "h" reaches
+# this unit only after "dans" or "il y a".
+h
+# After "dans" or "il y a", a count of hours and the minutes after it are one
+# length: "2 h 28 min" (OQLF, as above).  "et demie" adds half an hour: "Qui a
+# la valeur d'une moitié s'ajoutant à la quantité exprimée par le substantif.
+# Il a deux ans et demi" (TLFi, s.v. "demi", I.A).  "et quart" adds a quarter:
+# "Quart d'heure" : "Une des quatre parties égales d'une heure, quinze
+# minutes." (TLFi, s.v. "quart", B.1.a).  "moins" takes the minutes away:
+# "Pour indiquer une soustraction" (TLFi, s.v. "moins", II.A), so "dans 2 h
+# moins le quart" is a length of 1 h 45 min.

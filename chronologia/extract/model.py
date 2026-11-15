@@ -106,6 +106,11 @@ class Token:
     # sat in different clauses; constructions that join neighbouring words
     # ("friday, next week ...") read it to refuse a join across the break.
     break_before: bool = False
+    # Whether this number token was folded from an ORDINAL ("second", "2nd",
+    # Danish "2.", "terceira").  The value alone cannot tell "the second
+    # week" (which week) from "two weeks" (how long), so the duration reader
+    # reads this flag and refuses an ordinal as a count.
+    ordinal: bool = False
 
 
 @dataclass(frozen=True)
@@ -263,6 +268,11 @@ class Conventions:
     # the offset's trailing marker word is ALSO the clock's "at" preposition
     # (Turkic/Iranian "saat"), so the two constructions read as one phrase
     # ("3 gün əvvəl saat 9" = "9 o'clock, 3 days ago") rather than two.
+    # Basque sets it because the "-ko" suffix turns the offset into a modifier
+    # of the time noun after it ("duela 3 eguneko gaua" = the night of three
+    # days ago): "-ko atzizkia adizlagunei eransten zaie eta izenlagunak
+    # eratortzen ditu", with "atzo -> atzoko egunkaria" (Trask, "-Ko atzizkia
+    # euskaraz", Euskera XXX, pp. 168-169).
     offset_clock_composes: bool = False
 
 
@@ -316,6 +326,10 @@ class LangSpec:
     # a folded number.  For token SPLITS a connector needs to see (e.g. a
     # fused proclitic), not number folds.
     pre_hook: Optional[Callable] = None
+    # called as ``post_hook(tokens, spec)`` on the folded stream, after the
+    # number fold has run on every segment around a held-out second word, so
+    # a rewrite that reads the unit after a count sees the whole stream.
+    post_hook: Optional[Callable] = None
     # clock_time slot vocab (surface -> value), all facts from filename convention
     clock_fractions: Mapping[str, int] = field(default_factory=dict)  # -> minutes
     # fraction surfaces (a SUBSET of clock_fractions, so the FRACTION slot still
@@ -338,6 +352,14 @@ class LangSpec:
     # resolver (_clock_hms).  A surface here is also present in ``meridiems`` so
     # the MERIDIEM slot binds it; its numeric offset there is unused.
     night_meridiems: FrozenSet[str] = field(default_factory=frozenset)
+    # Night words on the am half of the 12-hour clock ("drei nachts" is 03:00)
+    # that keep an explicit 24-hour clock from 18:00 as written ("23:30
+    # nachts").  A surface here is also present in ``meridiems`` with 0.
+    am_night_meridiems: FrozenSet[str] = field(default_factory=frozenset)
+    # pm-side day-part words whose band a usage source pins: over an explicit
+    # 24-hour clock they hold only an hour in that band ("22h da tarde" names
+    # no time).  A surface here is also present in ``meridiems`` with 12.
+    band_meridiems: FrozenSet[str] = field(default_factory=frozenset)
     clock_dirs: Mapping[str, int] = field(default_factory=dict)       # past +1 / to -1
     # season_ref slot vocab (surface -> canonical season name)
     seasons: Mapping[str, str] = field(default_factory=dict)

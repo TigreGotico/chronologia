@@ -25,7 +25,8 @@ def test_mention_count(text, count):
 
 def test_two_mentions_in_order():
     ms = mentions("amanhã ou a próxima semana")
-    assert [m.text for m in ms] == ["amanhã", "próxima semana"]
+    # the article before "próxima" opens the second date
+    assert [m.text for m in ms] == ["amanhã", "a próxima semana"]
 
 
 def test_three_named_days_in_order():

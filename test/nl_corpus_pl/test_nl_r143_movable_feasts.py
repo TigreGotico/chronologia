@@ -78,13 +78,13 @@ def test_ash_wednesday_2026_is_feb_18():
 
 def test_control_bare_wednesday_still_resolves_to_next_wednesday():
     # 'środa' alone (no 'popielcowa') is an ordinary weekday reference and
-    # must keep working: anchor is Wednesday 2026-08-12, so the next
-    # Wednesday is 2026-08-19.
+    # must keep working: anchor is Wednesday 2026-08-12, and a weekday said
+    # on that weekday is that day.
     r = parse("środa")
     assert r is not None
     span, remainder = r
     assert remainder == ""
-    assert (span.start.year, span.start.month, span.start.day) == (2026, 8, 19)
+    assert (span.start.year, span.start.month, span.start.day) == (2026, 8, 12)
 
 
 def test_control_wielki_piatek_still_works():

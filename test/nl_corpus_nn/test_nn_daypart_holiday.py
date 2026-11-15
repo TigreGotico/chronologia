@@ -25,8 +25,10 @@ WD = {0: 'måndag', 1: 'tysdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag',
 
 
 def _next_wd(wd):
+    # Only the afternoon and the evening are pinned; at 13:04 both still end
+    # after the anchor, so the anchor's own weekday is the anchor day.
     d = ANCHOR.date()
-    for i in range(1, 8):
+    for i in range(0, 7):
         cand = d + timedelta(days=i)
         if cand.weekday() == wd:
             return cand

@@ -70,14 +70,15 @@ def test_range_embedded_in_a_sentence_keeps_the_surrounding_words():
 
 
 def test_bare_ate_with_no_contracted_article_is_untouched():
-    # Control: "até o dia" (no contraction) has no "ao"/"à" to fold in --
-    # only the bare "até" terminator is consumed, exactly as before.
+    # Control: "até o dia" (no contraction) has no "ao"/"à" to fold in.
+    # The article "o" opens the labelled date "o dia 5 de abril", so the
+    # date consumes it and nothing is left.
     text = "do dia 3 de março até o dia 5 de abril"
     r = parse(text)
     assert r is not None
     assert r[0].start == AstroDate(2018, 3, 3)
     assert r[0].end == AstroDate(2018, 4, 6)
-    assert r[1] == "o", f"unexpected remainder: {r[1]!r}"
+    assert r[1] == "", f"unexpected remainder: {r[1]!r}"
 
 
 def test_dia_outside_a_range_is_left_alone():
