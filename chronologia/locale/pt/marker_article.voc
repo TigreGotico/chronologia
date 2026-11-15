@@ -1,3 +1,11 @@
+# The definite article opens a named period or weekday after "próximo" or
+# "último": "a próxima semana", "o próximo sábado", "a última sexta-feira".
+# The contraction keeps the same article: "na próxima semana" (Priberam s.v.
+# "em", 2: "Usa-se para indicar tempo (ex.: em Janeiro; na próxima semana)"),
+# and "na" is "Contracção da preposição em e artigo ou pronome a" (Priberam
+# s.v. "na").  Without the preposition the article stays and belongs to the
+# date.  Only a singular article opens one such date: see
+# marker_article_singular.voc.
 o
 a
 os

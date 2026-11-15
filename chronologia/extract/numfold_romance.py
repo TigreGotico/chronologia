@@ -19,6 +19,7 @@ from dataclasses import replace
 from importlib import import_module
 
 from ovos_number_parser.numbers_fr import extract_number_fr
+from ovos_number_parser.util import NumberVocabulary
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
@@ -49,6 +50,13 @@ from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
 # doubles as a weekday name (pt "segunda"/"quarta"/"quinta"/"sexta") from
 # ever being read as a number.
 from importlib import import_module
+
+
+def _number_vocabulary(numbers_mod):
+    """The language's ``NumberVocabulary`` instance; a language may subclass it
+    (ovos-number-parser's Occitan ``OccitanVocabulary``)."""
+    return next(v for v in vars(numbers_mod).values()
+                if isinstance(v, NumberVocabulary))
 
 
 def _fem_forms(surf):
@@ -211,7 +219,8 @@ def _license_tens_homograph(tokens, tens_map, definite, quarter_words=frozenset(
         before_quarter = nxt is not None and nxt.text in quarter_words
         if not after_article and not before_quarter:
             continue  # not an ordinal frame -- leave for FRACTION
-        out[i] = replace(t, is_number=True, value=tens_map[t.text])
+        out[i] = replace(t, is_number=True, value=tens_map[t.text],
+                         ordinal=True)
         changed = True
     return _reindex(tuple(out)) if changed else tokens
 
@@ -277,7 +286,7 @@ def _license_ordinal_fraction(tokens, homomap, definite, quarter_words=frozenset
         val = homomap[t.text]
         out[i] = Token(text=str(val), raw=t.raw, index=0, is_number=True,
                        value=val, char_start=t.char_start,
-                       char_end=t.char_end)
+                       char_end=t.char_end, ordinal=True)
         changed = True
     return _reindex(tuple(out)) if changed else tokens
 
@@ -358,8 +367,7 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
     needed."""
     from ovos_number_parser.util import RomanceNumberExtractor
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
-    vocab = next(v for v in vars(numbers_mod).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_mod)
     # the shared spoken-number reader; for most Romance languages
     # ``extract_number_<lang>`` is a thin wrapper over exactly this, and a
     # language whose wrapper adds a real hook passes that wrapper as ``reader``.
@@ -411,7 +419,8 @@ def _make_romance_fold(lang_code, blacklist, reader=None,
         joiner=lambda tok: tok.text in joins,
         single_fallback=ordinal_value.get,
         pre=_pre,
-        bridge_ok=_romance_additive_join))
+        bridge_ok=_romance_additive_join,
+        ordinal=lambda tok: tok.text in ordinal_value))
     # ordinal-fraction homographs ("quarto" = fourth *and* a-quarter) are held
     # out of ``numwords`` above so the clock FRACTION slot keeps them; license
     # the ordinal reading back positionally (outside the "un quarto" fraction
@@ -471,8 +480,7 @@ def _romance_scale_frame(lang_code, article_ones,
     surfaces the article-one frame must recognise.
     """
     numbers_mod = import_module("ovos_number_parser.numbers_" + lang_code)
-    vocab = next(v for v in vars(numbers_mod).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_mod)
     thousand, million, scale_all = set(), set(million_extra), set(scale_extra)
     scale_all |= set(million_extra)
     for table in (vocab.SHORT_SCALE, vocab.LONG_SCALE):
@@ -552,7 +560,7 @@ def _license_weekday_ordinal(tokens, mapping, units):
                 and nxt is not None and nxt.text in units):
             value = mapping[tok.text]
             out.append(Token(text=str(value), raw=tok.raw, index=0,
-                             is_number=True, value=value))
+                             is_number=True, value=value, ordinal=True))
         else:
             out.append(tok)
     return _reindex(tuple(out))
@@ -564,6 +572,91 @@ _PT_WEEK_UNITS = frozenset({"semana", "semanas"})
 #: weekday-homograph feminine ordinal -> its value.  "terça" (Tuesday) is not
 #: listed: the third ordinal is "terceira", no homograph, and it already folds.
 _PT_ORDINAL_BEFORE_WEEK = {"segunda": 2, "quarta": 4, "quinta": 5, "sexta": 6}
+#: The feminine weekday names.  Directly after an article, a homograph
+#: ordinal written right before one of them is the ordinal: "a segunda
+#: terça-feira" is the second Tuesday, because a weekday name does not take
+#: a second weekday name after it.  Only the feminine names agree with the
+#: feminine ordinal.
+_PT_FEMININE_WEEKDAYS = frozenset({"segunda", "terça", "terca", "quarta",
+                                   "quinta", "sexta"})
+_PT_ORDINAL_ARTICLES = frozenset({"a", "na", "da", "à", "pela"})
+#: The words that open the period after "a segunda terça-feira": "de 2026",
+#: "de julho", "do mês que vem".  Without one of them there is no period for
+#: the ordinal to count in.  "da" is not listed: the feminine periods are
+#: "semana" and "década", a week holds one of each weekday, and no order
+#: reads "da década".  "deste" and "desta" open the anchor's own period:
+#: "a segunda terça-feira deste mês".
+_PT_ORDINAL_SCOPE_OPENERS = frozenset({"de", "do", "deste", "desta"})
+
+
+def _pt_voc_surfaces(*prefixes):
+    """The pt surfaces of every ``locale/pt/<prefix>*.voc`` file."""
+    folder = os.path.join(_LOCALE_ROOT, "pt")
+    out = set()
+    for name in os.listdir(folder):
+        if name.startswith(prefixes) and name.endswith(".voc"):
+            with open(os.path.join(folder, name), encoding="utf-8") as fh:
+                out.update(line.strip().lower() for line in fh
+                           if line.strip() and not line.startswith("#"))
+    return frozenset(out)
+
+
+#: The words that name a period that holds several of the same weekday: a
+#: month ("de julho"), a month or year ("do mês que vem"), or a longer span
+#: ("do século").  A week holds one of each weekday, so it is not listed.  A
+#: number of 1000 or more ("de 2026") is a year; a smaller one is a clock or a
+#: count ("de 9 às 17", "de 2 em 2 semanas").  Any other word after the
+#: opener ("de manhã", "de carro", "de folga") names no period, so "na
+#: segunda terça de carro" stays a list that starts on Monday.
+_PT_SCOPE_HEADS = _pt_voc_surfaces("month_", "scope_unit_", "unit_month",
+                                   "unit_year")
+#: A relative marker may stand between the opener and the period: "do
+#: próximo mês", "do último ano".
+_PT_SCOPE_MARKERS = _pt_voc_surfaces("marker_next", "marker_last")
+
+
+def _pt_period_follows(tokens, k):
+    """Whether ``tokens[k:]`` opens with a period: a year, or a scope head
+    behind an optional relative marker."""
+    if k < len(tokens) and tokens[k].text in _PT_SCOPE_MARKERS:
+        k += 1
+    return k < len(tokens) and (
+        tokens[k].is_number and (tokens[k].value or 0) >= 1000
+        or tokens[k].text in _PT_SCOPE_HEADS)
+
+
+def _license_ordinal_before_weekday(tokens):
+    """Read "a segunda terça-feira" as the second Tuesday.
+
+    Priberam s.v. "segundo": "adjetivo numeral ... 1. Que ou o que está logo
+    depois do primeiro."  The homograph is licensed only between an article
+    and a feminine weekday name with nothing written between them, and only
+    when the period it counts in follows the weekday ("de julho", "do mês que
+    vem").  A list of weekdays keeps its weekday reading, with or without the
+    commas that speech-to-text never writes: "na segunda terça e quarta" is
+    Monday, Tuesday and Wednesday.  In "na segunda terça de manhã" and "vou
+    na segunda terça de carro" no period follows "de", so "segunda" stays
+    Monday.
+    """
+    out = list(tokens)
+    n = len(tokens)
+    for i in range(1, n - 1):
+        prev, tok, nxt = tokens[i - 1], tokens[i], tokens[i + 1]
+        adjacent = (tok.char_end is not None and nxt.char_start is not None
+                    and nxt.char_start - tok.char_end == 1)
+        j = i + 2
+        if j < n and tokens[j].text == "feira":
+            j += 1
+        scoped = (j < n and tokens[j].text in _PT_ORDINAL_SCOPE_OPENERS
+                  and _pt_period_follows(tokens, j + 1))
+        if (not tok.is_number and tok.text in _PT_ORDINAL_BEFORE_WEEK
+                and prev.text in _PT_ORDINAL_ARTICLES
+                and nxt.text in _PT_FEMININE_WEEKDAYS and adjacent and scoped):
+            value = _PT_ORDINAL_BEFORE_WEEK[tok.text]
+            out[i] = Token(text=str(value), raw=tok.raw, index=0,
+                           is_number=True, value=value,
+                           char_start=tok.char_start, char_end=tok.char_end)
+    return _reindex(tuple(out))
 
 # Portuguese writes the clock quarter with an explicit article -- "quatro e um
 # quarto" == 4:15, "duas menos um quarto" == 1:45 -- where the "um"/"uma" is the
@@ -607,6 +700,7 @@ def fold_pt(tokens):
     tokens = _collapse_h_clock(tokens)
     tokens = _license_weekday_ordinal(tokens, _PT_ORDINAL_BEFORE_WEEK,
                                       _PT_WEEK_UNITS)
+    tokens = _license_ordinal_before_weekday(tokens)
     protected = {
         i for i, t in enumerate(tokens)
         if t.text in ("um", "uma") and i + 1 < len(tokens)
@@ -684,14 +778,14 @@ def _license_pt_nonas(tokens):
         if nxt is not None and nxt.text in _PT_OF_PREP:
             continue
         out[i] = Token(text="9", raw=t.raw, index=0, is_number=True,
-                       value=9, char_start=t.char_start, char_end=t.char_end)
+                       value=9, char_start=t.char_start, char_end=t.char_end,
+                       ordinal=True)
     return _reindex(tuple(out))
 
 
 def _pt_plural_ordinals():
     from ovos_number_parser import numbers_pt
-    vocab = next(v for v in vars(numbers_pt).values()
-                 if type(v).__name__ == "NumberVocabulary")
+    vocab = _number_vocabulary(numbers_pt)
     out = {}
     for val, surf in vocab.ORDINAL_UNITS.items():
         if not surf:
@@ -974,8 +1068,15 @@ def _collapse_phrase(tokens, words, surface):
     return _reindex(out)
 
 
-def _collapse_h_clock(tokens):
-    """Fold French/Occitan "20h30"/"20h" into one ``HH:MM`` clock literal."""
+def _collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
+    """Fold French/Occitan "20h30"/"20h" into one ``HH:MM`` clock literal.
+
+    ``governors`` and ``followers`` keep "h" a word: after a counted-offset
+    preposition ("dans 2 h") it is the unit of a length, and before a clock
+    direction ("9 h et quart") it is the hour word the direction counts from.
+    Both readings come from "h" being the symbol of "heure", so the grammar
+    reads them as it reads "dans 2 heures" and "9 heures et quart".
+    """
     out = []
     i = 0
     n = len(tokens)
@@ -983,7 +1084,10 @@ def _collapse_h_clock(tokens):
         t = tokens[i]
         nxt = tokens[i + 1] if i + 1 < n else None
         nn = tokens[i + 2] if i + 2 < n else None
-        if (t.is_number and t.value is not None and 0 <= t.value <= 24
+        spared = ((out and out[-1].text in governors)
+                  or (nn is not None and nn.text in followers))
+        if (not spared
+                and t.is_number and t.value is not None and 0 <= t.value <= 24
                 and float(t.value).is_integer() and nxt is not None
                 and nxt.text == "h"):
             if (nn is not None and nn.is_number and nn.value is not None
@@ -1001,6 +1105,113 @@ def _collapse_h_clock(tokens):
     return _reindex(out)
 
 
+def _governed_hour_length(tokens, spec, governors, fractions, minus,
+                          minus_articles, second_symbols):
+    """Spell a counted length of hours as "N h et M minutes et S secondes".
+
+    After a counted-offset word ("dans", "il y a") the hour and the count
+    that follows it are one length: "dans 2h30", "dans 2 h 30", "dans 2
+    heures et demie", "dans 2 h 10 s".  The grammar reads that length only in
+    its full form ("dans 2 heures et 30 minutes"), so the short forms are
+    rewritten to it.  The unit word after the count names its unit: none or
+    a minute word is minutes, a second word or one of ``second_symbols`` is
+    seconds, and any other unit ("dans 2 heures 10 jours") is not part of
+    the length, so the phrase is left as written.  ``fractions`` maps the
+    fraction words after "et" to their minutes.  After a ``minus`` word the
+    count is taken away from the hours, with an optional article before a
+    fraction: "dans 2 h moins le quart" is the length 1 h 45 min, "dans 2 h
+    moins 10" is 1 h 50 min, "dans 2 h moins 10 secondes" is 1 h 59 min 50 s.
+
+    It runs as the language ``post_hook``: the pipeline holds a counted
+    second word out of the number fold, and only the whole stream shows the
+    unit after the count.
+    """
+    def count(tok):
+        return (tok is not None and tok.is_number and tok.value is not None
+                and 0 < tok.value < 60 and float(tok.value).is_integer())
+
+    def unit_of(k):
+        if k >= n:
+            return None
+        if tokens[k].text in second_symbols:
+            return "second"
+        return spec.units.get(tokens[k].text)
+
+    def number(value):
+        return Token(text=str(value), raw=str(value), index=0,
+                     is_number=True, value=value)
+
+    def word(text):
+        return Token(text=text, raw=text, index=0)
+
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        hour = tokens[i + 1] if i + 1 < n else None
+        if not (out and out[-1].text in governors and t.is_number
+                and hour is not None and spec.units.get(hour.text) == "hour"):
+            out.append(t)
+            i += 1
+            continue
+        nxt = tokens[i + 2] if i + 2 < n else None
+        nn = tokens[i + 3] if i + 3 < n else None
+        hours = t
+        minutes = seconds = None
+        if count(nxt):
+            unit = unit_of(i + 3)
+            if unit is None:
+                minutes, used = int(nxt.value), 3
+            elif unit == "minute":
+                minutes, used = int(nxt.value), 4
+            elif unit == "second":
+                seconds, used = int(nxt.value), 4
+        elif (nxt is not None and nxt.text in _FR_ET and nn is not None
+                and nn.text in fractions):
+            minutes, used = fractions[nn.text], 4
+        elif (nxt is not None and nxt.text in minus
+                and t.value is not None and float(t.value).is_integer()):
+            j = i + 3
+            if nn is not None and nn.text in minus_articles:
+                j += 1
+            taken_tok = tokens[j] if j < n else None
+            taken = None  # seconds
+            if taken_tok is not None and taken_tok.text in fractions:
+                taken, used = fractions[taken_tok.text] * 60, j + 1 - i
+            elif j == i + 3 and count(taken_tok):
+                unit = unit_of(i + 4)
+                if unit is None:
+                    taken, used = int(taken_tok.value) * 60, 4
+                elif unit == "minute":
+                    taken, used = int(taken_tok.value) * 60, 5
+                elif unit == "second":
+                    taken, used = int(taken_tok.value), 5
+            if taken is not None and int(t.value) * 3600 > taken:
+                whole, rest = divmod(int(t.value) * 3600 - taken, 3600)
+                hours = number(whole)
+                minutes, seconds = divmod(rest, 60)
+                seconds = seconds or None
+        if minutes is None and seconds is None:
+            out.append(t)
+            i += 1
+            continue
+        # the rewritten length keeps the extent of what was written, so a
+        # remainder or a mention reads the user's own words
+        first, last = tokens[i + 2], tokens[i + used - 1]
+        tail = []
+        if minutes is not None:
+            tail += [word("et"), number(minutes), word("minutes")]
+        if seconds is not None:
+            tail += [word("et"), number(seconds), word("secondes")]
+        tail = [replace(x, char_start=first.char_start, char_end=last.char_end)
+                for x in tail]
+        out.extend([replace(hours, raw=t.raw, char_start=t.char_start,
+                            char_end=t.char_end), hour] + tail)
+        i += used
+    return _reindex(out)
+
+
 def _merge_digit_ordinal(tokens, suffixes):
     """Drop a lone ordinal-suffix word after a digit ("1 er" -> 1)."""
     out = []
@@ -1011,7 +1222,7 @@ def _merge_digit_ordinal(tokens, suffixes):
         nxt = tokens[i + 1] if i + 1 < n else None
         if (t.is_number and nxt is not None and not nxt.is_number
                 and nxt.text in suffixes):
-            out.append(t)
+            out.append(replace(t, ordinal=True))
             i += 2
             continue
         out.append(t)
@@ -1020,10 +1231,12 @@ def _merge_digit_ordinal(tokens, suffixes):
 
 
 def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
-                          phrases=(), h_clock=False, ord_suffixes=frozenset(),
+                          phrases=(), h_clock=False, h_spared=((), ()),
+                          ord_suffixes=frozenset(),
                           fem_ord=None, reader=None,
                           extra_numwords=frozenset(), extra_homograph=None,
-                          extra_ordinals=None, word_map=None):
+                          extra_ordinals=None, word_map=None,
+                          ord_article=frozenset()):
     base = _make_romance_fold(lang_code, blacklist, reader=reader,
                               extra_numwords=extra_numwords,
                               extra_homograph=extra_homograph,
@@ -1037,17 +1250,22 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
         for seq, surface in phrases:
             tokens = _collapse_phrase(tokens, seq, surface)
         if h_clock:
-            tokens = _collapse_h_clock(tokens)
+            tokens = _collapse_h_clock(tokens, frozenset(h_spared[0]),
+                                       frozenset(h_spared[1]))
         if ord_suffixes:
             tokens = _merge_digit_ordinal(tokens, ord_suffixes)
         if fem_ord:
             # feminine ordinals the number back-end rejects ("a doua",
-            # "la segunda") -- map the surface straight to its digit.
+            # "la segunda") -- map the surface straight to its digit.  With
+            # ``ord_article`` the surface is an ordinal only after that
+            # article: Romanian "doua" alone is the cardinal two.
             tokens = _reindex(tuple(
                 Token(text=str(fem_ord[t.text]), raw=t.raw, index=0,
-                      is_number=True, value=fem_ord[t.text])
+                      is_number=True, value=fem_ord[t.text],
+                      ordinal=(not ord_article
+                               or (i > 0 and tokens[i - 1].text in ord_article)))
                 if (not t.is_number and t.text in fem_ord) else t
-                for t in tokens))
+                for i, t in enumerate(tokens)))
         return base(tokens)
 
     return fold
@@ -1216,7 +1434,7 @@ def _stamp_fr_compound_ordinals(tokens):
                 result.append(Token(text=str(val), raw=raw, index=0,
                                     is_number=True, value=val,
                                     char_start=first.char_start,
-                                    char_end=last.char_end))
+                                    char_end=last.char_end, ordinal=True))
                 i += m
             else:
                 result.append(out[i])
@@ -1225,7 +1443,7 @@ def _stamp_fr_compound_ordinals(tokens):
     out = [
         Token(text=str(_FR_SINGLE_ORDINALS[t.text]), raw=t.raw, index=0,
               is_number=True, value=_FR_SINGLE_ORDINALS[t.text],
-              char_start=t.char_start, char_end=t.char_end)
+              char_start=t.char_start, char_end=t.char_end, ordinal=True)
         if (not t.is_number and t.text in _FR_SINGLE_ORDINALS) else t
         for t in out
     ]
@@ -1259,6 +1477,12 @@ _fold_fr_ordinals_base = _romance_prepass_fold(
     # 2 like the Spanish/Romanian feminine tables above.
     fem_ord={"première": 1, "premiere": 1, "seconde": 2},
     phrases=_FR_PHRASES, h_clock=True,
+    # "h" is the symbol of "heure" (OQLF, Banque de dépannage linguistique,
+    # "Écriture des nombres exprimant une durée": "2 heures 28 minutes (ou :
+    # 2 h 28 min)"), so after the counted-offset words "dans" and "il y a"
+    # ("ilya" once folded) it is the hour unit, and before the clock
+    # directions "et" and "moins" it is the hour word.
+    h_spared=(("dans", "ilya"), ("et", "moins")),
     ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
                             "nd", "nde", "d", "re", "es", "emes", "èmes"}))
 
@@ -1282,6 +1506,34 @@ def fold_fr(tokens):  # noqa: F811 -- final wrap adds une-heure + un-compound
     return _fold_fr_scaled(
         _license_fr_une_heure(_license_fr_un_compound(tokens)))
 
+
+
+def fold_fr_hour_length(tokens, spec):
+    """The French ``post_hook``: a counted length of hours after "dans" or
+    "il y a" (:func:`_governed_hour_length`).
+
+    A count of hours and minutes after those offset words is one length
+    (OQLF, Banque de dépannage linguistique, "Écriture des nombres exprimant
+    une durée": "L'expérience a duré exactement 2 heures 28 minutes. (ou :
+    2 h 28 min)"), and so is a count of seconds after it: "La championne a
+    couru l'épreuve en 10 min 35 s 7/100." (same page).  "sec" is also a
+    symbol of the second: "Symbole de la seconde. Note : Le symbole du
+    Système international est s." (Wiktionnaire, s.v. "sec", Conventions
+    internationales, 3, labelled "Non standard").  "et demie" and "et quart" after a count of hours
+    are its half and its quarter: "Qui a la valeur d'une moitié s'ajoutant à
+    la quantité exprimée par le substantif. Il a deux ans et demi" (TLFi,
+    s.v. "demi", I.A); "Quart d'heure" : "Une des quatre parties égales
+    d'une heure, quinze minutes." (TLFi, s.v. "quart", B.1.a).  "moins"
+    before a count takes it away from the hours: "Pour indiquer une
+    soustraction" (TLFi, s.v. "moins", II.A), and "moins le quart est plus
+    fréq. que moins un quart" (TLFi, s.v. "quart", B.1.a).
+    """
+    return _governed_hour_length(
+        tokens, spec, governors=frozenset({"dans", "ilya"}),
+        fractions={"demie": 30, "demi": 30, "quart": 15},
+        minus=frozenset({"moins"}),
+        minus_articles=frozenset({"le", "la", "un"}),
+        second_symbols=frozenset({"s", "sec"}))
 
 # -- Italian ----------------------------------------------------------------
 _IT_PHRASES = [
@@ -1352,7 +1604,7 @@ def _license_it_prima(tokens):
         if not is_before_marker:
             out[i] = Token(text="1", raw=t.raw, index=0, is_number=True,
                            value=1, char_start=t.char_start,
-                           char_end=t.char_end)
+                           char_end=t.char_end, ordinal=True)
     return _reindex(tuple(out))
 
 
@@ -1489,9 +1741,15 @@ fold_ro = _romance_prepass_fold(
     "ro", {"un", "unu", "una", "o"},
     phrases=_RO_PHRASES,
     ord_suffixes=frozenset({"lea", "a", "ea", "le"}),
-    fem_ord={"doua": 2, "două": 2, "treia": 3, "patra": 4, "cincea": 5,
+    fem_ord={"doua": 2, "treia": 3, "patra": 4, "cincea": 5,
              "șasea": 6, "sasea": 6, "șaptea": 7, "saptea": 7, "opta": 8,
-             "noua": 9, "zecea": 10})
+             "noua": 9, "zecea": 10},
+    # The ordinal is "a doua" and the cardinal is "două" (DOOM 3, "doilea"
+    # and "doi").  "doua" and "noua" are also the cardinals written without
+    # diacritics, so the ordinal takes the article.  "două" is not in the
+    # table: after "a" it is the genitive cardinal ("mamă a două fete",
+    # C. Stan, Revue roumaine de linguistique LV (3), 2010, p. 243)
+    ord_article=frozenset({"a"}))
 # deep-time SCALE-frame licensing: "un miliard/un bilion de ani în urmă"
 fold_ro = _with_scale_frame(fold_ro, "ro", frozenset({"un", "unu", "una", "o"}))
 

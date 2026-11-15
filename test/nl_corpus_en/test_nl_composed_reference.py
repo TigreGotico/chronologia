@@ -45,7 +45,8 @@ def remainder(text):
 
 @pytest.mark.parametrize("text,expected", [
     ("the last day of the month", AstroDate(2024, 3, 31)),
-    ("the first day of the month", AstroDate(2024, 3, 1)),
+    # 1 March has passed on 6 March, so "of the month" names April's
+    ("the first day of the month", AstroDate(2024, 4, 1)),
     ("the last day of the year", AstroDate(2024, 12, 31)),
     ("the first day of the year", AstroDate(2024, 1, 1)),
     ("the last day of this month", AstroDate(2024, 3, 31)),
@@ -100,6 +101,11 @@ def test_units_from_named_day(text, expected):
     ("this time tomorrow", AstroDate(2024, 3, 7, 12, 0)),
     ("this time yesterday", AstroDate(2024, 3, 5, 12, 0)),
     ("this time next month", AstroDate(2024, 4, 6, 12, 0)),
+    # "this <weekday>" is the first such day on or after the anchor's day:
+    # Monday is 5 days after Wednesday 2024-03-06, Friday 2 days after.
+    ("this time this monday", AstroDate(2024, 3, 11, 12, 0)),
+    ("this time this wednesday", AstroDate(2024, 3, 6, 12, 0)),
+    ("this time this friday", AstroDate(2024, 3, 8, 12, 0)),
 ])
 def test_this_time_shift(text, expected):
     assert start(text) == expected
