@@ -77,6 +77,8 @@ def test_a_date_anchor_is_its_midnight():
 def test_a_length_past_the_last_year_is_refused():
     assert extract_duration("2 months", "en",
                             anchor=datetime(9999, 12, 1)) is None
+    assert extract_duration("10000 years", "en",
+                            anchor=END_OF_JANUARY) is None
 
 
 def test_a_fraction_of_a_year_in_whole_months_is_read():
@@ -103,6 +105,12 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
     ("en", "a third of a year"),
     # a fraction of a year that is not whole months
     ("en", "1.125 years"),
+    # a demonstrative names this month or year
+    ("ast", "esti mes"),
+    # a four-digit year before or after a year word names that year
+    ("ru", "в 1980 году"),
+    ("ha", "shekarar 2024"),
+    ("ko", "2024년 3월 15일"),
 ])
 def test_a_calendar_unit_without_a_plain_count_names_no_length(lang, text):
     assert extract_duration(text, lang, anchor=END_OF_JANUARY) is None
@@ -172,3 +180,15 @@ def test_an_event_reads_a_calendar_length_only_after_its_marker(
     assert got.span.start == datetime(2026, 6, 1)
     assert got.duration is None
     assert got.summary == summary
+
+
+@pytest.mark.parametrize("text", [
+    "every day for a third of a year",
+    "every day for a third of a month",
+])
+def test_a_recurrence_bound_by_a_part_of_a_unit_has_no_count(text):
+    # "a third of" names no whole count, so the bound stays unread
+    from chronologia import extract_recurrence
+    got = extract_recurrence(text, "en", anchor=END_OF_JANUARY)
+    assert got.recurrence.count is None
+    assert got.remainder == text[len("every day "):]

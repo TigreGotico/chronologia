@@ -126,7 +126,9 @@ def extract_duration(
     month is 15 days, a quarter 7.  A fraction of a year or a decade must
     come to whole months ("1.5 years" is 18 months; "1.125 years" names no
     length).  A calendar unit counts only a plain cardinal right before it,
-    so "o dia 5 do mês" and "2 hours a month" name no length.  A century or
+    so "o dia 5 do mês" and "2 hours a month" name no length, and a
+    four-digit number by a year word names that year ("в 1980 году"), not a
+    count of years.  A century or
     millennium stays unread: with a number before it, it names the ordinal
     century far more often than a length.
 
@@ -262,6 +264,11 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         return kind if kind in _DUR_UNIT_SECONDS or kind in calendar_months \
             else None
 
+    def _written_year(kind, tok):
+        # a four-digit number by a year word names that year ("в 1980
+        # году", "shekarar 2024", "2024년"), not a count of years
+        return kind == "year" and tok.raw.isdigit() and len(tok.raw) == 4
+
     def _add(kind, count):
         nonlocal total, months
         if kind in calendar_months:
@@ -307,7 +314,9 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             kind = _unit_of(tokens[i])
             if (kind is not None and i + 1 < n
                     and tokens[i + 1].is_number
-                    and tokens[i + 1].value is not None):
+                    and tokens[i + 1].value is not None
+                    and not (kind in calendar_months
+                             and _written_year(kind, tokens[i + 1]))):
                 try:
                     count = float(tokens[i + 1].value)
                 except (TypeError, ValueError, OverflowError):
@@ -419,6 +428,7 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             # months; the unit then stays unread and the text names no length
             if unit in calendar_months and not (
                     (j == adjacent or frac_lead)
+                    and not _written_year(unit, tokens[i])
                     and (article_one is None
                          or article_one in spec.quantifiers
                          and i - 1 not in consumed
@@ -1848,10 +1858,10 @@ def _apply_year_scope(rec, consumed, ctx, lang, anchor):
 
 
 def _count_from_duration(freq, td):
-    """Occurrence count a fixed-width duration spans at ``freq``: one per day
-    for DAILY, one per whole week for WEEKLY.  MONTHLY/YEARLY need a
-    calendar-ambiguous duration the fixed-width extractor never yields, so they
-    return ``None`` (no COUNT bound)."""
+    """Occurrence count a duration spans at ``freq``: one per day for DAILY,
+    one per whole week for WEEKLY.  MONTHLY/YEARLY return ``None`` (no COUNT
+    bound): the duration is a length in days, and a count of months or years
+    would have to be read again from the calendar."""
     if freq == "DAILY":
         return td.days or None
     if freq == "WEEKLY":
