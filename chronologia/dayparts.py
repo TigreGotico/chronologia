@@ -193,6 +193,11 @@ class DayPart:
     :param source: the versioned authority the boundaries came from.
     :param crosses_midnight: ``True`` when the part wraps past 24:00 into the
         next civil day (``end <= start``), e.g. ``night`` ``[21:00, 06:00)``.
+    :param follows_evening: ``True`` for a night band that opens at midnight
+        but belongs to the evening before it: Russian "сегодня ночью" said in
+        the afternoon is the coming night, so the night of a day named
+        relative to the anchor is the band on the NEXT civil date.  The span
+        API itself never shifts: a calendar date keeps its own small hours.
 
     ``start``/``end`` are *times of day*, not instants: a :class:`DayPart` is a
     convention with no date until :func:`daypart_span` anchors it to one.  The
@@ -205,6 +210,7 @@ class DayPart:
     lang: Optional[str]
     source: str
     crosses_midnight: bool
+    follows_evening: bool = False
 
     def __post_init__(self):
         if not isinstance(self.start, time) or not isinstance(self.end, time):
@@ -238,6 +244,14 @@ def _p(name: str, start: Tuple[int, int], end: Tuple[int, int],
     s = time(*start)
     e = time(*end)
     return DayPart(name, s, e, lang, source, crosses_midnight=e <= s)
+
+
+def _night_after_evening(name: str, end: Tuple[int, int], lang: str,
+                          source: str) -> DayPart:
+    """A small-hours night band ``[00:00, end)`` that names the night after
+    the given date's evening."""
+    return DayPart(name, time(0, 0), time(*end), lang, source,
+                   crosses_midnight=False, follows_evening=True)
 
 
 def _anchor(name: str, hm: Tuple[int, int], lang: Optional[str],
@@ -365,7 +379,11 @@ _LANGUAGES: List[DayPart] = [
     # "ночь" is the small hours (00:00-04:00), not a midnight-crosser -- the
     # same Abend/Nacht shape German draws, with the morning opening two hours
     # before English at 04:00.
-    _p("noch", (0, 0), (4, 0), "ru", _cldr("ru")),
+    # A speaker names that small-hours band from the day before it: "ночь"
+    # is "Часть суток от захода до восхода солнца, от вечера до утра"
+    # (gramota.ru, s.v. ночь), so "сегодня ночью" said at 13:04 is the coming
+    # night and "завтра ночью" is the night after tomorrow evening.
+    _night_after_evening("noch", (4, 0), "ru", _cldr("ru")),
     _p("utro", (4, 0), (12, 0), "ru", _cldr("ru")),
     _p("den", (12, 0), (18, 0), "ru", _cldr("ru")),
     _p("vecher", (18, 0), (0, 0), "ru", _cldr("ru")),
@@ -382,7 +400,9 @@ _LANGUAGES: List[DayPart] = [
     _p("morning", (4, 0), (12, 0), "uk", _cldr("uk")),
     _p("afternoon", (12, 0), (18, 0), "uk", _cldr("uk")),
     _p("evening", (18, 0), (0, 0), "uk", _cldr("uk")),
-    _p("night", (0, 0), (4, 0), "uk", _cldr("uk")),
+    # "ніч" is "Частина доби від заходу до сходу сонця, з вечора до ранку"
+    # (СУМ-11, s.v. ніч), so "сьогодні вночі" is the coming night, as in ru.
+    _night_after_evening("night", (4, 0), "uk", _cldr("uk")),
     # hr
     _p("morning", (4, 0), (12, 0), "hr", _cldr("hr")),
     _p("afternoon", (12, 0), (18, 0), "hr", _cldr("hr")),
