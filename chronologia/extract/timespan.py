@@ -1862,12 +1862,13 @@ def _since_month(match, span, tokens, engine, anchor, scale_mode="short"):
     one that has begun: "since january" said in June is this January, as the
     leading "since" range reads it (:func:`_since_start`).
     """
-    if (span.start <= anchor or match.construction not in _BARE_MONTH_DATES
-            or set(match.slots) - {"MONTH", "CAL_MONTH"}):
+    if (match.construction not in _BARE_MONTH_DATES
+            or set(match.slots) - {"MONTH", "CAL_MONTH"}
+            or span.start <= anchor):
         return span
     lo = match.span[0]
-    if not any(lo >= len(words)
-               and [t.text for t in tokens[lo - len(words):lo]] == words
+    texts = [t.text for t in tokens]
+    if not any(texts[max(lo - len(words), 0):lo] == words
                for words in _conn_surfaces(engine.spec, "since",
                                            _RANGE_SINCE)):
         return span
@@ -3451,7 +3452,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
         return _new_year_span(anchor), ""
     tokens = fold_tokens(raw, engine.spec, text)
     core = _resolve_core(tokens, engine, anchor, enable, jurisdiction, text,
-                         scale_mode)
+                         scale_mode, whole=True)
     if core is None:
         return None
     span, consumed = core
@@ -3984,7 +3985,7 @@ def _roll_bare_weekday_time(res, rep, anchor):
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
-                  text=None, scale_mode="short"):
+                  text=None, scale_mode="short", whole=False):
     """The single-span resolution over an already-tokenized stream.
 
     The whole of the old ``extract_timespan`` body *below* range detection --
@@ -3994,6 +3995,9 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     positions (the caller renders the remainder from the unconsumed ones).
     Factored out so a range endpoint resolves through the *identical* path a
     whole utterance does, from a re-based slice of the same stream.
+    ``whole`` marks the whole utterance, where a bare month after "since"
+    names the one that has begun (:func:`_since_month`); a range endpoint
+    follows the range rules instead.
     """
     resolved = []
     veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
@@ -4008,8 +4012,9 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
             continue
         res = engine.resolver.resolve(match, anchor, scale_mode)
         if res is not None:
-            res = replace(res, value=_since_month(match, res.value, tokens,
-                                                  engine, anchor, scale_mode))
+            if whole:
+                res = replace(res, value=_since_month(
+                    match, res.value, tokens, engine, anchor, scale_mode))
             resolved.append((match, res))
     # business-day counting ("in 5 business days", "the next working day",
     # "3 working days after christmas"); jurisdiction scopes the holiday lookup.
