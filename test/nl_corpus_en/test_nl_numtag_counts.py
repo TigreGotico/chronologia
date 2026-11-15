@@ -62,6 +62,9 @@ def test_half_inside_a_count(text, expected):
     ("two and a half billion years ago", 2_500_000_000, 100_000_000),
     # 0.5 million, said to a tenth of a million
     ("half a million years ago", 500_000, 100_000),
+    # 2.5 million, said to a tenth of a million, the half before or after
+    ("two and a half million years ago", 2_500_000, 100_000),
+    ("two million and a half years ago", 2_500_000, 100_000),
 ])
 def test_deep_time_count_with_several_scale_words(text, years, width):
     """The age is the whole number before "years": the start year is

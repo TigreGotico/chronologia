@@ -178,18 +178,27 @@ def fold_mentions(tokens: Tuple[Token, ...], lang: str,
     are read again (:func:`reread`).  A run of digit tokens stays as the
     tokenizer read it.
 
-    ``scales`` maps a claimed deep-time scale word that ends its mention to
-    its factor.  The words before it are the count, and the count is the
-    mention value in units of the scale word: "one million two hundred
-    thousand years" counts 1200 thousands.  When another claim cuts the count
-    from the start of its mention, the count has no value and its words stay
-    words.
+    ``scales`` maps a claimed deep-time scale word, the last scale word of
+    its mention, to its factor.  The words before it are the count, and the
+    count is the mention value in units of the scale word: "one million two
+    hundred thousand years" counts 1200 thousands, "dois milhões e meio"
+    counts 2.5 milhões.  The words after the scale word ("e meio") are in that
+    count already, so the scale word token spans them.  When another claim
+    cuts the count from the start of its mention, the count has no value and
+    its words stay words.
     """
     out = []
     i = 0
     n = len(tokens)
     while i < n:
         m = tokens[i].mention
+        if scales and i in scales:
+            j = i + 1
+            while j < n and tokens[j].mention is m and j not in claimed:
+                j += 1
+            out.append(replace(tokens[i], char_end=tokens[j - 1].char_end))
+            i = j
+            continue
         if m is None or i in claimed:
             out.append(tokens[i])
             i += 1
@@ -204,6 +213,8 @@ def fold_mentions(tokens: Tuple[Token, ...], lang: str,
             out.append(number_token(m, run[0], run[-1]))
         elif scales and j in scales and tokens[j].mention is m:
             if run[0].char_start == m.char_span[0]:
+                # resolve_bp reads the count in the unit of the scale word, so
+                # its span is one unit of the last digit said in that unit
                 out.append(number_token(m, run[0], run[-1], per=scales[j]))
             else:
                 out.extend(run)

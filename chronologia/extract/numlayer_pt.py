@@ -104,6 +104,21 @@ def _ends_mention(tok: Token) -> bool:
     return tok.mention is not None and tok.mention.char_span[1] == tok.char_end
 
 
+def _mention_end(tokens: Tuple[Token, ...], i: int) -> int:
+    """The index after the last token of the mention of ``tokens[i]``."""
+    j = i
+    while j < len(tokens) and tokens[j].mention is tokens[i].mention:
+        j += 1
+    return j
+
+
+def _last_scale(tokens: Tuple[Token, ...], i: int, end: int) -> bool:
+    """Whether ``tokens[i]`` is the last scale word of its mention, which
+    ends before ``end``."""
+    return (tokens[i].text in _SCALES
+            and not any(t.text in _SCALES for t in tokens[i + 1:end]))
+
+
 def _period_follows(tokens: Tuple[Token, ...], k: int) -> bool:
     """Whether ``tokens[k:]`` opens with a period: a year, or a scope head
     behind an optional relative marker."""
@@ -157,6 +172,9 @@ def _date_words(tokens: Tuple[Token, ...]
         prev = tokens[i - 1].text if i > 0 else None
         nxt = tokens[i + 1].text if i + 1 < n else None
         nxt2 = tokens[i + 2].text if i + 2 < n else None
+        end = _mention_end(tokens, i)
+        after = tokens[end].text if end < n else None
+        after2 = tokens[end + 1].text if end + 1 < n else None
         word = tok.text
         if word in _WEEKDAY_ORDINALS and _alone(tok):
             (ordinals if _ordinal_weekday(tokens, i) else claimed).add(i)
@@ -185,11 +203,12 @@ def _date_words(tokens: Tuple[Token, ...]
             # ninth everywhere else ("as nonas semanas")
             if nxt in _OF:
                 claimed.add(i)
-        elif (word in _SCALES and _ends_mention(tok)
-              and (nxt in _YEAR_WORDS
-                   or (nxt in _OF and nxt2 in _YEAR_WORDS))):
-            # the deep-time SCALE ("sessenta e seis milhões de anos"); the
-            # count before it is the mention value in units of this word
+        elif (_last_scale(tokens, i, end)
+              and (after in _YEAR_WORDS
+                   or (after in _OF and after2 in _YEAR_WORDS))):
+            # the deep-time SCALE ("sessenta e seis milhões de anos", "dois
+            # milhões e meio de anos"); the count before it is the mention
+            # value in units of this word
             factor = scale_factor(word, tok.mention, _FACTORS)
             if factor is not None:
                 claimed.add(i)

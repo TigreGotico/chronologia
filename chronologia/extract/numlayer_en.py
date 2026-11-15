@@ -146,6 +146,12 @@ def _mention_end(tokens: Tuple[Token, ...], i: int) -> int:
     return j
 
 
+def _last_scale(tokens: Tuple[Token, ...], i: int) -> bool:
+    """Whether ``tokens[i]`` is the last scale word of its mention."""
+    return not any(t.text in _SCALES
+                   for t in tokens[i + 1:_mention_end(tokens, i)])
+
+
 def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Dict[int, int]]:
     """The indices of the number words the date grammar reads as words, and
     of the deep-time scale words with their factors.
@@ -154,9 +160,10 @@ def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Dict[int, int]]:
     except in two positions.  A fraction followed by a unit is a length ("two
     and a half hours", "half a year"), and a fraction word inside a cardinal
     is part of the count ("half a dozen" is 6, "a dozen and a half" is 18).
-    A scale word stays a word in the deep-time frame, before a year word
-    ("sixty six million years ago"); the count before it is the mention value
-    in units of this word.
+    The last scale word of a mention before a year word stays a word in the
+    deep-time frame ("sixty six million years ago", "two million and a half
+    years ago"); the count before it is the mention value in units of this
+    word.
     """
     claimed = set()
     scales = {}
@@ -171,8 +178,9 @@ def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Dict[int, int]]:
                       and tokens[unit].text in _UNITS)
             if m.kind is not Kind.CARDINAL and not length:
                 claimed.add(i)
-        elif (tok.text in _SCALES and i + 1 < n
-              and tokens[i + 1].text in _YEAR_WORDS):
+        elif (tok.text in _SCALES and _last_scale(tokens, i)
+              and _mention_end(tokens, i) < n
+              and tokens[_mention_end(tokens, i)].text in _YEAR_WORDS):
             factor = scale_factor(tok.text, m, _FACTORS)
             if factor is not None:
                 claimed.add(i)
@@ -353,10 +361,10 @@ def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     claimed, scales = _date_words(tokens)
     folded = fold_mentions(tokens, "en", claimed, scales)
     # the claimed scale words keep their place in the folded stream; find
-    # them again by their source extent
-    extents = {(tokens[i].char_start, tokens[i].char_end) for i in scales}
+    # them again by where they start
+    starts = {tokens[i].char_start for i in scales}
     scale_idx = frozenset(t.index for t in folded
                           if not t.is_number and t.text in _SCALES
-                          and (t.char_start, t.char_end) in extents)
+                          and t.char_start in starts)
     folded = _deep_time_article(folded, scale_idx)
     return _duration_fraction(_year_pairs(folded))

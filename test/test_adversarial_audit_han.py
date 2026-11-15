@@ -61,6 +61,40 @@ def test_romance_number_fold_is_linear_not_quadratic():
         f"2000 ({large:.2f}s vs {small:.2f}s); linear is ~4x, quadratic ~16x")
 
 
+def _attach_seconds(words: int, repeats: int = 5, calls: int = 10) -> float:
+    """Best-of-`repeats` wall time of `calls` number-layer attaches on a run
+    of `words` number-words, with numtag's mentions already cached."""
+    from chronologia.extract.loader import load_lang_spec
+    from chronologia.extract.normaliser import TemporalNormaliser
+    from chronologia.extract.numlayer import attach, mentions
+    from chronologia.extract.tokenizer import Tokenizer
+    spec = load_lang_spec("pt")
+    text = "um " * words
+    tokens = TemporalNormaliser(spec).normalise(
+        Tokenizer(spec.tokenizer).tokenize(text))
+    mentions(text, "pt")
+    best = float("inf")
+    for _ in range(repeats):
+        t = time.perf_counter()
+        for _ in range(calls):
+            attach(tokens, text, "pt")
+        best = min(best, time.perf_counter() - t)
+    return best
+
+
+def test_number_layer_attach_is_linear():
+    """Giving each token its numtag mention costs time in proportion to the
+    input.  Four times the words take about 4x as long when each token finds
+    its mention directly, and about 16x when each token scans every mention.
+    Measured on one box, the ratio is 4.5 against 18.6; a ceiling of 9 leaves
+    a factor of two to each."""
+    small = _attach_seconds(2000)
+    large = _attach_seconds(8000)
+    assert large / small < 9.0, (
+        f"attaching 8000 number-words took {large / small:.1f}x the time of "
+        f"2000 ({large:.3f}s vs {small:.3f}s); linear is ~4x, quadratic ~16x")
+
+
 @pytest.mark.parametrize("text,lang,left", [
     ("jeden půldruhé den", "cs", "jeden"),
     ("am einige tag", "de", "am"),

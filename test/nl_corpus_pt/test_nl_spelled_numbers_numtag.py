@@ -63,6 +63,13 @@ def test_half_inside_a_count(text, days):
     ("há dois milhões e quinhentos mil anos", "pt", 2_500_000, 1_000),
     # 1 000 000 / 2, said to a tenth of a million
     ("há meio milhão de anos", "pt", 500_000, 100_000),
+    # 2 * 10^6 + 10^6 / 2 and 10^6 + 10^6 / 2, said to a tenth of a million
+    ("há dois milhões e meio de anos", "pt", 2_500_000, 100_000),
+    ("há um milhão e meio de anos", "pt", 1_500_000, 100_000),
+    # pt-PT: 1000 * 10^6 + 1000 * 10^6 / 2 = 1500 milhões, said to the million
+    ("há mil milhões e meio de anos", "pt", 1_500_000_000, 1_000_000),
+    # pt-BR: 2 * 10^9 + 10^9 / 2, said to a tenth of a billion
+    ("há dois bilhões e meio de anos", "pt-BR", 2_500_000_000, 100_000_000),
     # pt-BR: bilhão = 10^9, so 2*10^9 + 500*10^6, said to the million
     ("há dois bilhões e quinhentos milhões de anos", "pt-BR",
      2_500_000_000, 1_000_000),
