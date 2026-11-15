@@ -16,6 +16,7 @@ kept as a single token for the ``iso_date`` pre-pass.
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import Tuple
 
 from chronologia.extract.model import Token, TokenizerModes
@@ -310,6 +311,24 @@ def _year_inside_a_broken_date(text: str, start: int, end: int,
     right = _adjacent_group(text, end, 1)
     return bool((left and left != 4) or (right and right != 4))
 
+
+#: punctuation the tokenizer treats as word-internal, so it never ends a clause
+_WORD_INTERNAL_PUNCT = frozenset("'-\u2019\u2010\u2011")
+
+
+def _is_clause_break(char: str) -> bool:
+    """Whether ``char`` is punctuation that ends a clause between two tokens
+    (ASCII, Arabic, Greek and typographic marks alike)."""
+    return (unicodedata.category(char).startswith("P")
+            and char not in _WORD_INTERNAL_PUNCT)
+
+
+def _gap_breaks_clause(gap: str) -> bool:
+    """Whether the text between two tokens ends a clause.  A hyphen that
+    touches both words joins them ("segunda-feira"); a spaced or doubled
+    one ("segunda - aula", "terça -- aula") is a dash."""
+    return (any(_is_clause_break(c) for c in gap)
+            or ("-" in gap and gap != "-"))
 
 class Tokenizer:
     """Configured once from a language's :class:`TokenizerModes`."""
@@ -611,8 +630,13 @@ class Tokenizer:
                 # to ASCII in ``low`` and is not part of the number match, so
                 # record it here -- it is the only surviving trace.
                 apos = cs > 0 and low[cs - 1] == "'"
+                # the dropped º / ª indicator ("a 1ª semana") marks the
+                # digits as an ordinal, as the German ordinal dot does.
+                ordinal = (raw.endswith(".")
+                           or _ORDINAL_IND.match(text, ce - 1) is not None)
                 tokens.append(Token(text=raw.rstrip("."), raw=raw, index=i,
                                     is_number=True, value=value,
+                                    ordinal=ordinal,
                                     char_start=cs, char_end=ce,
                                     apostrophe=apos))
             else:
@@ -624,6 +648,12 @@ class Tokenizer:
                            t.char_start, t.char_end, t.cap,
                            prev_cap=(tokens[i - 1].cap if i > 0 else False),
                            apostrophe=t.apostrophe,
+                           ordinal=t.ordinal,
+                           break_before=(
+                               i > 0 and tokens[i - 1].char_end is not None
+                               and t.char_start is not None
+                               and _gap_breaks_clause(
+                                   low[tokens[i - 1].char_end:t.char_start])),
                            trailing_dot=(t.char_end is not None
                                          and low[t.char_end:t.char_end + 1] == "."))
                      for i, t in enumerate(tokens))

@@ -25,6 +25,13 @@ _BARE = [
     ("pazko astelehena", (2018, 4, 2)),
     ("igokundea", (2018, 5, 10)),
     ("andre maria", (2017, 8, 15)),
+    ("aitaren eguna", (2018, 3, 19)),
+    ("langilearen eguna", (2018, 5, 1)),
+    ("langileen eguna", (2018, 5, 1)),
+    ("maiatzaren lehena", (2018, 5, 1)),
+    ("emakume langilearen eguna", (2018, 3, 8)),
+    ("emakume langilearen nazioarteko eguna", (2018, 3, 8)),
+    ("emakumeen nazioarteko eguna", (2018, 3, 8)),
 ]
 
 @pytest.mark.parametrize("text,ymd", _BARE)

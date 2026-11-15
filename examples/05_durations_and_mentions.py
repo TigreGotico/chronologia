@@ -24,7 +24,7 @@ print("Duration of 'three and a half hours':", length)
 assert length == timedelta(hours=3, minutes=30)
 
 # A sentence with more than one date in it.
-sentence = "monday to friday next week"
+sentence = "lunch on friday and the dentist on march 3"
 mentions = extract_timespans(sentence, "en", datetime(2024, 1, 1))
 print(f"\n{len(mentions)} date mentions found in {sentence!r}:")
 for m in mentions:

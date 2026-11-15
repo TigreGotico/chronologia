@@ -24,7 +24,7 @@ from ._corpus import ANCHOR, day, start_end
 CYCLE = [
     ("Jumatatu", (2027, 5, 17), 0),
     ("Jumanne", (2027, 5, 18), 1),
-    ("Jumatano", (2027, 5, 19), 2),
+    ("Jumatano", (2027, 5, 12), 2),
     ("Alhamisi", (2027, 5, 13), 3),
     ("Ijumaa", (2027, 5, 14), 4),
     ("Jumamosi", (2027, 5, 15), 5),

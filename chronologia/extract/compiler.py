@@ -125,6 +125,7 @@ PRECEDENCE: Dict[str, int] = {
     # a numeric slash/dash date ("12/11/2024") is a full literal date, same
     # tier as the ISO literal it sits beside
     "numeric_date": 4,
+    "numeric_day_month": 4,
     # reckoned_date (and its legacy alias nongregorian_date) -- the unified
     # calendar/era family; more specific vocabulary wins over calendar_date
     "hebrew_new_year": 1,
@@ -142,6 +143,7 @@ PRECEDENCE: Dict[str, int] = {
     # clock_time, so it wins the longer span ("3 this afternoon" over "3").
     "clock_this_daypart": 7,
     "weekday_ref": 8,
+    "weekday_of_week": 8,
     "cycle_ref": 8,
     # "next week"/"this month"/"last year": the whole calendar period,
     # same tier as the weekday reference it generalises to coarser units

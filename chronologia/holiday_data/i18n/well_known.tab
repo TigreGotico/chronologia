@@ -851,6 +851,9 @@ diwali          | eu | diwali
 vesak           | eu | vesak
 halloween       | eu | halloween ;; gau beltza
 valentines      | eu | san valentin ;; maitasunaren eguna
+labour_day      | eu | langilearen eguna ;; langileen eguna ;; maiatzaren lehena
+fathers_day     | eu | aitaren eguna
+womens_day      | eu | emakume langilearen nazioarteko eguna ;; emakume langilearen eguna ;; emakumeen nazioarteko eguna ;; emakumearen nazioarteko eguna
 #
 # ===== Kabyle =====
 new_year        | kab | aseggas amaynut
@@ -1003,14 +1006,16 @@ hanukkah           | uk | ханука
 passover           | uk | песах
 nowruz             | uk | новруз
 # ===== Persian / Farsi (native script) =====
-nowruz             | fa | نوروز ;; عید نوروز
+nowruz             | fa | نوروز ;; عید نوروز ;; سال نو ;; سال نو پارسی ;; شب سال نو پارسی
+new_year           | fa | سال نو میلادی
+new_year_eve       | fa | شب سال نو ;; شب سال نو میلادی
 eid_al_fitr        | fa | عید فطر
 eid_al_adha        | fa | عید قربان
 ramadan            | fa | ماه رمضان ;; رمضان
 ashura             | fa | عاشورا
 christmas          | fa | کریسمس
-islamic_new_year   | fa | سال نو هجری
-chinese_new_year   | fa | سال نو چینی
+islamic_new_year   | fa | سال نو هجری ;; شب سال نو هجری
+chinese_new_year   | fa | سال نو چینی ;; شب سال نو چینی
 #
 # ==========================================================================
 # NATIONAL / CIVIL fixed-date holidays (es / fr / it / pt / en). Spoken

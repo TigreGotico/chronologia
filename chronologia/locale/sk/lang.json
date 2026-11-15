@@ -124,7 +124,15 @@
     "during DORD CMUNIT"
    ],
    "weekday_ref": [
-    "at WEEKDAYFULL"
+    "at WEEKDAYFULL",
+    "for_date WEEKDAYFULL"
+   ],
+   "weekday_of_week": [
+    "at article? WEEKDAYFULL of? article? REL_MARKER UNIT",
+    "for_date article? WEEKDAYFULL of? article? REL_MARKER UNIT"
+   ],
+   "named_day": [
+    "for_date DAY_WORD"
    ]
   }
  },

@@ -9,8 +9,9 @@ except NIGHT, which runs from 21:00 into 06:00 of the following morning):
     evening    18:00 - 21:00
     night      21:00 - 06:00 (+1 day)
 
-A bare weekday resolves to its next STRICTLY-future occurrence from the
-Tuesday 2017-06-27 anchor (weekday index 1); "today"/"tomorrow"/"yesterday"
+A bare weekday resolves to its next occurrence from the Tuesday 2017-06-27
+13:04 anchor (weekday index 1), and to the anchor day when the daypart there
+has not ended; "today"/"tomorrow"/"yesterday"
 shift the base civil day by 0/+1/-1.  Every expected edge below is derived by
 independent Python arithmetic against the anchor -- never from the parser.
 """
@@ -41,10 +42,11 @@ def _daypart(base_day, part):
     return ad(s), ad(e)
 
 
-def _weekday_base(target_idx):
-    """Midnight of the next strictly-future weekday from the anchor."""
+def _weekday_base(target_idx, part):
+    """Midnight of the next weekday from the anchor that still has the daypart
+    ahead: the anchor's own day when the daypart there has not ended."""
     days = (target_idx - ANCHOR.weekday()) % 7
-    if days == 0:
+    if days == 0 and _daypart(_MID, part)[1] <= ad(ANCHOR):
         days = 7
     return _MID + timedelta(days=days)
 
@@ -97,6 +99,6 @@ def _wd_cases():
 
 @pytest.mark.parametrize("text,idx,part", _wd_cases())
 def test_weekday_daypart(text, idx, part):
-    base = _weekday_base(idx)
+    base = _weekday_base(idx, part)
     s, e = _daypart(base, part)
     assert start_end(text) == (s, e)

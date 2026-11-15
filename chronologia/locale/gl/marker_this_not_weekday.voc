@@ -1,0 +1,7 @@
+# "neste" and "nesta" read as "este" and "esta" before a part of the day or a
+# period ("nesta mañá", "nesta semana"), but not before a weekday.  "este
+# luns" picks the Monday of the current week, which can be past, while the
+# next occurrence is the right answer (a weekday said alone reads forward).
+# "neste luns" keeps the reading of the bare weekday.
+neste
+nesta

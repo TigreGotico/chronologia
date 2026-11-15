@@ -194,6 +194,18 @@ def _nth_weekday_of_year(year: int, weekday: int, n: int) -> Optional[date]:
     return first + timedelta(days=7 * idx)
 
 
+def _nth_iso_week_of_year(year: int, n: int) -> Optional[date]:
+    """Monday of the ``n``-th ISO 8601 week of ``year``; ``n < 0`` counts from
+    the end (``-1`` = the last week, the one that holds 28 December).  Week 01
+    is "the week with the first Thursday of the Gregorian year", so it can
+    start in late December.  ``None`` when the year has no such week."""
+    last = date(year, 12, 28).isocalendar()[1]
+    w = n if n > 0 else last + n + 1
+    if not 1 <= w <= last:
+        return None
+    return date.fromisocalendar(year, w, 1)
+
+
 def _nth_weekend_of_month(year: int, month: int, weekend_start: int,
                           n: int) -> Optional[date]:
     """The Saturday (locale ``weekend_start``, Mon=0) that opens the ``n``-th
@@ -309,6 +321,29 @@ def _day_span(dt: datetime) -> DateSpan:
     return DateSpan(start, start + timedelta(days=1))
 
 
+def _next_day_month(month: int, day: int, anchor: datetime) -> Optional[datetime]:
+    """The next time a day and a month with no year come round.
+
+    Feb 29 is the only Gregorian day that skips years, so neither the anchor
+    year nor anchor-year-plus-one is guaranteed to have it: at a 2017 anchor
+    "29 February" means 2020, and building datetime(2017, 2, 29) to test
+    whether it has "already passed" raises and throws the whole reading away.
+    Walk forward from the anchor year to the first year that HAS this (month,
+    day) on or after the anchor day.  The walk is bounded by the widest gap
+    between consecutive Feb 29s -- 1896 to 1904, eight years, across a
+    non-leap century -- so a day-of-month no year can hold (Jan 45, Feb 30)
+    exhausts the range and gives None.
+    """
+    for y in range(anchor.year, anchor.year + _ROLL_YEAR_LIMIT):
+        try:
+            value = datetime(y, month, day)
+        except ValueError:
+            continue                        # no such day that year
+        if value >= _midnight(anchor):
+            return value
+    return None
+
+
 def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
     """The locale-aligned seven-day week containing ``start_astro``.
 
@@ -331,8 +366,9 @@ def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
 #: clock_time in the same text composes onto the day these select.
 DATE_CONSTRUCTIONS = frozenset({
     "calendar_date", "reckoned_date", "nongregorian_date", "iso_date",
-    "numeric_date",
-    "weekday_ref", "named_day", "season_ref", "solar_event", "scoped_ordinal",
+    "numeric_date", "numeric_day_month",
+    "weekday_ref", "weekday_of_week", "named_day", "season_ref", "solar_event",
+    "scoped_ordinal",
     # the named-day offset idioms ("the day after tomorrow", "the day before
     # yesterday") resolve to a whole day, so a further stranded "the day
     # after/before" pre-amble composes onto them exactly as onto any other
@@ -762,15 +798,16 @@ class Resolver:
 
     def _resolve_weekday_offset(self, match, anchor):
         """"a week from tuesday", "two weeks from monday", "two days from
-        friday": N whole-day units after the next occurrence (strictly
-        future) of the named weekday.  The same day-granular units the
-        named-day twin ("a week from tomorrow") takes."""
+        friday": N whole-day units after the named weekday's next occurrence,
+        which is today when said on that weekday, as a bare weekday reads.
+        The same day-granular units the named-day twin ("a week from
+        tomorrow") takes."""
         days = self._DAY_UNIT_DAYS.get(self.spec.units[match.slots["UNIT"].text])
         if days is None:
             return None
         qty = int(self._offset_quantity(match))
         target = self.spec.weekdays[match.slots["WEEKDAY"].text]
-        ahead = (target - anchor.weekday()) % 7 or 7          # strictly future
+        ahead = (target - anchor.weekday()) % 7
         value = _midnight(anchor) + timedelta(days=ahead + days * qty)
         return Resolution(_day_span(value), self._consumed(match))
 
@@ -832,7 +869,7 @@ class Resolver:
             elif rel < 0:
                 shift = -((anchor.weekday() - target) % 7 or 7)
             else:
-                shift = target - anchor.weekday()
+                shift = (target - anchor.weekday()) % 7
             value = anchor + timedelta(days=shift)
             return Resolution(_point_span(value, "minute"),
                               self._consumed(match))
@@ -887,20 +924,38 @@ class Resolver:
             back = (anchor.weekday() - target) % 7 or 7
             value = base - timedelta(days=back + (-n - 1) * 7)
             return Resolution(_day_span(value), self._consumed(match))
-        # A bare weekday ("friday") names the NEXT occurrence, strictly future:
-        # the same prefer-future reckoning as an explicit "next", so when the
-        # anchor already IS that weekday the span is seven days out.
-        rel = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 1
+        # A bare weekday ("friday") names the next occurrence, and the anchor's
+        # own day when it is that weekday: a day is a span, and a span that
+        # contains the anchor is the current one, as a bare month is.  An
+        # explicit "next" still moves on a week.
+        if rel_tok is None:
+            value = base + timedelta(days=(target - anchor.weekday()) % 7)
+            return Resolution(_day_span(value), self._consumed(match))
+        rel = self.spec.rel_markers[rel_tok.text]
         if rel > 0:      # next
             ahead = (target - anchor.weekday()) % 7 or 7
             value = base + timedelta(days=ahead)
         elif rel < 0:    # last
             back = (anchor.weekday() - target) % 7 or 7
             value = base - timedelta(days=back)
-        else:            # this: within the current week (honouring week_start)
-            start_idx = _WEEK_START.get(self.conventions.week_start, 0)
-            week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
-            value = week_start + timedelta(days=(target - start_idx) % 7)
+        else:            # this: the first such weekday on or after today
+            value = base + timedelta(days=(target - anchor.weekday()) % 7)
+        return Resolution(_day_span(value), self._consumed(match))
+
+    def _resolve_weekday_of_week(self, match, anchor):
+        """"friday of next week", "next week friday": the named weekday of the
+        calendar week (locale ``week_start``) that the relative marker shifts
+        to.  Only a week unit has weekdays to pick from; any other unit
+        declines so the parts stand on their own."""
+        if self.spec.units.get(match.slots["UNIT"].text) != "week":
+            return None
+        rel = self.spec.rel_markers[match.slots["REL_MARKER"].text]
+        target = self.spec.weekdays[match.slots["WEEKDAYFULL"].text]
+        base = _midnight(anchor)
+        start_idx = _WEEK_START.get(self.conventions.week_start, 0)
+        week_start = (base - timedelta(days=(anchor.weekday() - start_idx) % 7)
+                      + timedelta(weeks=rel))
+        value = week_start + timedelta(days=(target - start_idx) % 7)
         return Resolution(_day_span(value), self._consumed(match))
 
     def _resolve_before_last(self, match, anchor):
@@ -1224,16 +1279,29 @@ class Resolver:
         2024") or as an ordinal in the prose form (``ORD`` -- "the 10th week of
         2024"); the two surfaces name the same week and MUST resolve to the
         identical span.
+
+        With ``ordlast`` and no number ("the last week of 2026") the week is
+        the year's last ISO week, the one that contains 28 December.
+
+        The prose form names a week only with an ordinal: "duas semanas de
+        2026" and "uma semana de 2026" count weeks, so an ``ORD`` that was
+        not folded from an ordinal refuses.  A plural week noun refuses in
+        the matcher, which sees the noun.
         """
-        num_tok = match.slots.get("NUM") or match.slots["ORD"]
-        w = int(num_tok.value)
+        ord_tok = match.slots.get("ORD")
+        if ord_tok is not None and not ord_tok.ordinal:
+            return None
+        num_tok = match.slots.get("NUM") or ord_tok
         year_tok = match.slots.get("YEAR")
         # a two-digit / apostrophe year ("week 5 of '24") pivots through the
         # anchor-relative window like every other year slot; reading it raw gave
         # ISO year 24 AD.
         year = (_pivot_two_digit_year(year_tok, anchor.year)
                 if year_tok is not None else anchor.year)
-        monday = date.fromisocalendar(year, w, 1)       # ValueError -> None
+        monday = _nth_iso_week_of_year(
+            year, int(num_tok.value) if num_tok is not None else -1)
+        if monday is None:
+            return None
         s = AstroDate.from_date(monday)
         return Resolution(DateSpan(s, s + timedelta(days=7)),
                           self._consumed(match))
@@ -1387,27 +1455,10 @@ class Resolver:
         else:
             year = anchor.year
         if not year_tok and prefer_future and day_tok:
-            # A bare day-and-month names the next time that day comes round.
-            # Feb 29 is the only Gregorian day that skips years, so neither
-            # the anchor year nor anchor-year-plus-one is guaranteed to have
-            # it: at a 2017 anchor "29 February" means 2020, and building
-            # datetime(2017, 2, 29) to test whether it has "already passed"
-            # raises and throws the whole reading away.  Walk forward from the
-            # anchor year to the first year that HAS this (month, day) on or
-            # after the anchor day.  The walk is bounded by the widest gap
-            # between consecutive Feb 29s -- 1896 to 1904, eight years, across
-            # a non-leap century -- so a day-of-month no year can hold (Jan 45,
-            # Feb 30) exhausts the range and declines.
-            for y in range(year, year + _ROLL_YEAR_LIMIT):
-                try:
-                    value = datetime(y, month, day)
-                except ValueError:
-                    continue                        # no such day that year
-                if value >= _midnight(anchor):
-                    year = y
-                    break
-            else:
+            value = _next_day_month(month, day, anchor)
+            if value is None:
                 return None
+            year = value.year
         else:
             value = datetime(year, month, day)      # raises on impossible
         span = _day_span(value) if day_tok \
@@ -1555,6 +1606,25 @@ class Resolver:
         return Resolution(DateSpan(start, start + timedelta(days=1)),
                           self._consumed(match))
 
+    def _resolve_numeric_day_month(self, match, anchor):
+        """A slash day and month with no year ("25/12"): the next time that
+        day comes round, as a bare day-and-month reads (class 3).  The
+        component order is the locale's ``conventions.dmy``.  A month above
+        12 or a day the month never holds ("31/04") is no date.
+
+        A locale declares the construction when CLDR writes its numeric day
+        and month that way: CLDR 49 gives pt and pt-PT the pattern "dd/MM"
+        for the skeletons ``Md`` and ``MMdd`` (``availableFormats``).
+        """
+        tok = match.slots.get("DAYMONTH") or match.slots["PADDAYMONTH"]
+        first, second = (int(part) for part in tok.text.split("/"))
+        day, month = ((first, second) if self.spec.conventions.dmy
+                      else (second, first))
+        value = _next_day_month(month, day, anchor)
+        if value is None:
+            return None
+        return Resolution(_day_span(value), self._consumed(match))
+
     def _resolve_hebrew_new_year(self, match, anchor):
         """"the hebrew new year N": Rosh Hashanah of Hebrew year N -- 1 Tishrei
         (month 7 in the Nisan-first month numbering this calendar uses),
@@ -1690,6 +1760,14 @@ class Resolver:
         ord_tok = match.slots.get("ORD") or match.slots["NORD"]
         day = int(ord_tok.value)
         rel_tok = match.slots.get("REL_MARKER")
+        # A marker before the day ("o próximo dia 5") names the next day with
+        # that number, not a month: it rolls like the bare day, strictly after
+        # the anchor's own day.
+        strict = False
+        if rel_tok is not None and rel_tok.index < ord_tok.index:
+            if self.spec.rel_markers[rel_tok.text] <= 0:
+                return None
+            rel_tok, strict = None, True
         rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
         base = _add_months(datetime(anchor.year, anchor.month, 1), rel)
         prefer_future = self.spec.construction_flags.get(
@@ -1705,8 +1783,9 @@ class Resolver:
         # 30th" past a Jan-31 anchor clamps Feb 30 -> Feb 28, silently
         # relabelling the day); walk forward instead (a 31st skips the short
         # months to the next long one).
-        roll = rel == 0 and prefer_future and (
-            value is None or value < _midnight(anchor))
+        roll = rel_tok is None and prefer_future and (
+            value is None or value < _midnight(anchor)
+            or (strict and value == _midnight(anchor)))
         if roll:
             for step in range(1, 13):
                 nxt = _add_months(datetime(base.year, base.month, 1), step)
@@ -1966,6 +2045,19 @@ class Resolver:
                     base = _add_months(_midnight(anchor).replace(day=1), rel)
                     year, month = base.year, base.month
                     value = _nth_weekday_of_month(year, month, target, n)
+                    # "the first tuesday of the month", with no marker, names
+                    # the next such day once this month's has passed, in the
+                    # next month that has it ("the fifth friday" skips the
+                    # months with four); "of this month" keeps the anchor's
+                    # month.
+                    if rel_tok is None and (value is None
+                                            or value < anchor.date()):
+                        for step in range(1, 13):
+                            nxt = _add_months(base, step)
+                            value = _nth_weekday_of_month(nxt.year, nxt.month,
+                                                          target, n)
+                            if value is not None:
+                                break
                 elif scope_kind == "year":
                     # "the last monday of the year" / "of this year":
                     # sibling of the plain UNIT branch's ``scope_kind ==
@@ -2066,14 +2158,32 @@ class Resolver:
                 base = _add_months(_midnight(anchor).replace(day=1), rel)
                 value = get_date_ordinal(n, date(base.year, base.month, 1),
                                          _UNIT_OF_MONTH[unit_kind])
+                # With no marker, a day or week of "the month" that ended
+                # before the anchor is next month's ("the first day of the
+                # month" said on the 17th); "of this month" never rolls.
+                if rel_tok is None and value is not None:
+                    start = (value if isinstance(value, AstroDate)
+                             else AstroDate.from_date(value))
+                    if _unit_end(start, unit_kind) <= AstroDate.from_datetime(
+                            anchor):
+                        base = _add_months(base, 1)
+                        value = get_date_ordinal(
+                            n, date(base.year, base.month, 1),
+                            _UNIT_OF_MONTH[unit_kind])
+            elif scope_kind == "year" and unit_kind == "week":
+                value = _nth_iso_week_of_year(anchor.year + rel, n)
             elif scope_kind == "year":
                 value = get_date_ordinal(n, date(anchor.year + rel, 1, 1),
                                          _UNIT_OF_YEAR[unit_kind])
             else:                                   # week/decade/... -> no fit
                 return None
-        else:                                       # year-scoped (year_word)
+        elif unit_kind == "week":                   # year-scoped (year_word)
+            value = _nth_iso_week_of_year(year, n)
+        else:
             res = _UNIT_OF_YEAR[unit_kind]
             value = get_date_ordinal(n, date(year, 1, 1), res)
+        if value is None:
+            return None
         return self._ordinal_result(value, unit_kind, match)
 
     def _ordinal_result(self, value, kind, match):
@@ -3037,6 +3147,10 @@ class Resolver:
                 # where ليل covers the small hours as AM and the late evening
                 # as PM (cf. CLDR day-period bands for ar: night starts at
                 # 00:00 and morning at ~06:00).
+                # An hour from 13 to 17 lies in the afternoon, never the night
+                # ("15:30 da noite", "às 15 da noite"), so it names no time.
+                if 13 <= spoken_hour <= 17:
+                    return None
                 if hour == 12:
                     hour = 0
                 elif 6 <= hour <= 11:
@@ -3064,6 +3178,28 @@ class Resolver:
                         return hour, minute, second
                     return None
                 off = self.spec.meridiems[meridiem.text]
+                in_band = dp_name is not None and _hour_in_daypart(dp_name,
+                                                                   hour)
+                # Only a 24-hour clock reaches here with an hour of 0 or from
+                # 13.  A morning marker past noon ("15:00 da manhã", "15:30
+                # am") is as contradictory as the spoken "às 15 da manhã"
+                # above, unless the hour lies in the marker's own day-part
+                # band.  A night word on the am half keeps the evening from
+                # 18:00 ("23:30 nachts"); 13 to 17 is the afternoon.
+                if off == 0 and spoken_hour >= 13 and not in_band and not (
+                        meridiem.text in self.spec.am_night_meridiems
+                        and spoken_hour >= 18):
+                    return None
+                # An afternoon or evening marker never holds midnight ("0h da
+                # tarde", "00:30 pm").  A word whose band a usage source pins
+                # does not hold a 24-hour clock outside it ("22h da tarde").
+                # A CLDR day-period band is a formatting label, not a usage
+                # limit, so any other word keeps the clock ("22:30 evening",
+                # "15:30 pm").
+                if off == 12 and (spoken_hour == 0 or (
+                        meridiem.text in self.spec.band_meridiems
+                        and spoken_hour >= 13 and not in_band)):
+                    return None
                 # decide the +/-12 shift from the SPOKEN hour's 12h meaning, then
                 # apply it to the (possibly rolled-back) hour, so a subtractive
                 # "to twelve pm/am" lands the right side of noon/midnight.  "pm"

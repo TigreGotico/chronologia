@@ -546,9 +546,13 @@ _EU_INESSIVE_HOURS = {
     "hamaiketan": 11, "hamabietan": 12,
 }
 # NB: a bare "k" is deliberately excluded -- it collides with the "k.a."/
-# "k.o." era abbreviations the tokenizer shears to a "k" fragment.
+# "k.o." era abbreviations the tokenizer shears to a "k" fragment.  "ak" is the
+# absolutive plural a digit hour carries like the spelled "bostak": Araua 35,
+# "Orduak nola esan", section 1, p. 182 ("Aski da dagokion zenbatzaileari
+# artikulua eta plural marka eranstea ... Hirurak dira") and decision 6,
+# p. 185 ("arratsaldeko 3etatik gaueko 12ak arte").
 _EU_NUM_SUFFIX = frozenset({
-    "a", "an", "ean", "n", "ko", "eko", "ren",
+    "a", "ak", "an", "ean", "n", "ko", "eko", "ren",
     "garren", "garrena", "garrenean",
 })
 # Basque spells its compound hundreds with the conjunction "eta" ("ehun eta

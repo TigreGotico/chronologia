@@ -12,10 +12,13 @@ strings.  Two properties make the refactor safe, and both are asserted here:
   pre-refactor (dev) orders matched.  The merge only ever adds matching power,
   never drops an order a locale already shipped.
 """
+import json
 import os
+from datetime import datetime, timedelta
 
 import pytest
 
+from chronologia import extract_timespan
 from chronologia.extract import load_lang_spec
 from chronologia.extract.base_grammar import (BASE_GRAMMAR,
                                                  MARKER_POSTFIX_ORDERS,
@@ -335,6 +338,7 @@ def test_scalar_marker_position_unchanged_for_weekday_and_period():
     mapping = merge_orders(
         {"base_grammar": {"marker_position": {"weekday_ref": "post",
                                               "rel_period": "post",
+                                              "weekday_of_week": "post",
                                               "season_ref": "post"}}}, {})
     assert scalar == mapping             # scalar == the equivalent full mapping
 
@@ -600,3 +604,81 @@ def test_override_replaces_extend_appends():
 def test_disable_opts_out():
     out = merge_orders({"base_grammar": {"disable": ["scoped_ordinal"]}}, {})
     assert "scoped_ordinal" not in out
+
+
+# --- weekday_of_week: "<weekday> of next week", "next week <weekday>" -------
+#
+# Phrases are assembled from each locale's own vocabulary files, and the gold
+# date is plain ``datetime.date`` arithmetic from the locale's declared
+# week start -- nothing here reads the parser's answer back.
+
+_WEEKDAY_NAMES = ("monday", "tuesday", "wednesday", "thursday", "friday",
+                  "saturday", "sunday")
+
+
+def _voc_first(lang, stem):
+    path = os.path.join(_LOCALE_DIR, lang, stem + ".voc")
+    if not os.path.isfile(path):
+        return None
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                return line
+    return None
+
+
+def _week_start_index(lang):
+    with open(os.path.join(_LOCALE_DIR, lang, "lang.json"),
+              encoding="utf-8") as fh:
+        conv = json.load(fh).get("conventions", {})
+    return _WEEKDAY_NAMES.index(conv.get("week_start", "monday"))
+
+
+def _week_vocab_langs():
+    return [lang for lang in _LANGS
+            if all(_voc_first(lang, s) for s in
+                   ("weekday_4", "marker_next", "marker_last", "unit_week"))]
+
+
+# Monday 2026-10-19 plus the six days after it: every weekday as the anchor.
+_ANCHORS = [datetime(2026, 10, 19 + i, 10, 0) for i in range(7)]
+
+
+def _expected_day(lang, anchor, target_idx, weeks):
+    start_idx = _week_start_index(lang)
+    week_start = anchor.date() - timedelta(days=(anchor.weekday() - start_idx) % 7)
+    return week_start + timedelta(weeks=weeks, days=(target_idx - start_idx) % 7)
+
+
+def test_weekday_of_week_is_a_base_construction():
+    assert "weekday_of_week" in BASE_GRAMMAR
+    assert "weekday_of_week" in MARKER_POSTFIX_ORDERS
+    assert len(_week_vocab_langs()) >= 38
+
+
+@pytest.mark.parametrize("lang", ["es", "pt", "it", "fr", "ca", "gl", "ast"])
+def test_weekday_of_week_postposed_orders_follow_marker_position(lang):
+    effective = _effective_orders(lang, "weekday_of_week")
+    for order in MARKER_POSTFIX_ORDERS["weekday_of_week"]:
+        assert order in effective
+    assert "article? WEEKDAYFULL of? article? REL_MARKER UNIT" in effective
+
+
+@pytest.mark.parametrize("anchor", _ANCHORS, ids=lambda a: a.strftime("%a"))
+@pytest.mark.parametrize("weeks,marker", [(1, "marker_next"), (-1, "marker_last")])
+@pytest.mark.parametrize("order", ["{wd} {rel} {unit}", "{rel} {unit} {wd}"])
+@pytest.mark.parametrize("lang", _week_vocab_langs())
+def test_weekday_of_week_every_anchor_every_locale(lang, weeks, marker,
+                                                   order, anchor):
+    target_idx = 4                                    # friday
+    text = order.format(wd=_voc_first(lang, "weekday_4"),
+                        rel=_voc_first(lang, marker),
+                        unit=_voc_first(lang, "unit_week"))
+    result = extract_timespan(text, lang, anchor)
+    want = _expected_day(lang, anchor, target_idx, weeks)
+    assert result is not None, text
+    start, end = result.span.start, result.span.end
+    assert (start.year, start.month, start.day) == (want.year, want.month, want.day), text
+    assert (end - start).days == 1, text
+    assert result.remainder == "", text

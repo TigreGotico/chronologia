@@ -1,0 +1,9 @@
+# Weekday names that are also the name of a fraction.  Priberam s.v. "terça"
+# (https://dicionario.priberam.org/terça), 2: "Cada uma as três partes
+# iguais em que se pode dividir um todo"; 3: "Dia da semana que vem depois
+# de segunda-feira e antes de quarta-feira".  The fraction reading needs its
+# noun (marker_fraction_noun.voc): "a terça parte".  Before any other noun
+# "terça" stays the weekday ("na terça aula de piano"), because the ordinal
+# a speaker uses there is "terceira".
+terça
+terca

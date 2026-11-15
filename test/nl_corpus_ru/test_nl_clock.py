@@ -9,7 +9,7 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, start, span
+from ._corpus import ANCHOR, ad, parse, start, span
 
 
 def clk(h, mi, s=0):
@@ -47,3 +47,20 @@ def test_landmark(text, h, mi):
 
 def test_bare_1500_is_a_year():
     assert start("1500").year == 1500
+
+
+# "в" + a digit clock: the preposition that opens a clock time belongs to the
+# time ("в 14:30" = at 14:30), as it already does before a bare hour ("в 5")
+# and after a date ("15.06.2020 в 14:30").  At 13:04, 14:30 is still today.
+@pytest.mark.parametrize("text,remainder", [
+    ("в 14:30", ""),
+    ("в 9:05", ""),
+    ("встреча в 14:30", "встреча"),
+    ("позвони мне в 18:45", "позвони мне"),
+])
+def test_at_marker_before_digit_clock(text, remainder):
+    r = parse(text)
+    assert r is not None
+    hour, minute = map(int, text.rsplit(" ", 1)[1].split(":"))
+    assert r[0].start == clk(hour, minute)
+    assert r[1] == remainder

@@ -131,7 +131,7 @@ _FRI = _dt(2026, 7, 24, 12, 0)  # anchor: Friday
     ("terça-feira passada", 2026, 7, 21), # postfix last, compound weekday
     ("próxima sexta", 2026, 7, 31),       # prefix next
     ("sexta que vem", 2026, 7, 31),       # postfix next
-    ("sexta", 2026, 7, 31),               # bare weekday -> next
+    ("sexta", 2026, 7, 24),               # bare weekday on a Friday -> today
     ("semana passada", 2026, 7, 13),      # unit noun, unaffected
 ])
 def test_weekday_postfix_idiom(text, y, m, d):

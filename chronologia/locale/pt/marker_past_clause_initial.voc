@@ -1,0 +1,4 @@
+# "faz" counts back ("faz dois dias", "faz dois dias que não o vejo") only at
+# the start of a clause.  After a subject it is the verb "fazer" in the sense
+# "to turn" ("a minha filha faz dez anos"), which names an age, not a date.
+faz
