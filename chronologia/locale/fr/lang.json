@@ -236,6 +236,7 @@
     "bare_year_min_digits": 4
   },
   "hook": "chronologia.extract.numfold_romance:fold_fr",
+  "post_hook": "chronologia.extract.numfold_romance:fold_fr_hour_length",
   "base_grammar": {
     "marker_position": "post",
     "override": {

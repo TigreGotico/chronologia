@@ -284,6 +284,10 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
             scaled = _read_scale(j)
             if scaled is not None:
                 count, j = scaled
+            elif tokens[j].ordinal:
+                # an ordinal names WHICH unit, not how many: "the second
+                # week" is one week of a series, never fourteen days.
+                j += 1
             elif tokens[j].is_number:
                 # A digit run hundreds of characters long folds to an int no
                 # C double can hold ("1" * 400): float() itself overflows

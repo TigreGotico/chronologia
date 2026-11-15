@@ -64,8 +64,9 @@ def test_r148_de_monday_and_friday_stay_two_mentions_not_a_range():
     # a genuine "Mon .. Sat" RANGE (what the defect produced) always has a
     # single mention whose span crosses several days; two SEPARATE point
     # mentions, one per sentence, is the only correct reading here.
-    assert monday.span.start == AstroDate(2026, 8, 17)
-    assert monday.span.end == AstroDate(2026, 8, 18)
+    # "Montag" said on Monday 2026-08-10 is that day
+    assert monday.span.start == AstroDate(2026, 8, 10)
+    assert monday.span.end == AstroDate(2026, 8, 11)
     assert friday.span.start == AstroDate(2026, 8, 14)
     assert friday.span.end == AstroDate(2026, 8, 15)
 
@@ -92,7 +93,7 @@ def test_r148_de_three_sentences_four_mentions():
         "Die Frist ist am Freitag."
     )
     assert len(ms) == 4
-    assert [m.span.start.day for m in ms] == [10, 17, 12, 14]
+    assert [m.span.start.day for m in ms] == [10, 10, 12, 14]
 
 
 # --------------------------------------------------------------------------
@@ -122,7 +123,7 @@ def test_r148_de_sentence_ending_on_an_ordinal_date_still_splits():
     ms = mentions("Wir treffen uns am 15. Juni. Danach gibt es ein Fest am Montag.")
     assert len(ms) == 2
     assert ms[0].span.start == AstroDate(2027, 6, 15)
-    assert ms[1].span.start == AstroDate(2026, 8, 17)
+    assert ms[1].span.start == AstroDate(2026, 8, 10)
 
 
 def test_r148_de_dotted_civil_date_unaffected():
@@ -155,7 +156,7 @@ def test_r148_en_control_weekday_pair_still_two_mentions():
         lang="en-us",
     )
     assert len(ms) == 2
-    assert ms[0].span.start == AstroDate(2026, 8, 17)
+    assert ms[0].span.start == AstroDate(2026, 8, 10)
     assert ms[1].span.start == AstroDate(2026, 8, 14)
 
 

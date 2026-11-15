@@ -47,7 +47,8 @@ def test_bare_hour_still_a_clock(text, hour):
 
 def test_weekday_is_still_a_weekday():
     s = span("martes")
-    assert (s.start.year, s.start.month, s.start.day) == (2018, 6, 12)
+    # said on Tuesday 5 June 2018, "martes" is that day
+    assert (s.start.year, s.start.month, s.start.day) == (2018, 6, 5)
     assert s.width == timedelta(days=1)
 
 

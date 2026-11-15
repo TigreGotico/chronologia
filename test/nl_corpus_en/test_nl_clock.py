@@ -76,6 +76,29 @@ def test_contradictory_hour_meridiem_declines(text):
     nomatch(text)
 
 
+# A 24-hour digit clock past noon keeps a redundant "pm" and names no time
+# with "am".
+def test_digit_clock_past_noon_with_a_meridiem():
+    assert start("15:30 pm") == clk(15, 30)
+    nomatch("15:30 am")
+
+
+# Midnight on a 24-hour clock is never "pm".
+@pytest.mark.parametrize("text", ["00:30 pm", "0:00 pm", "00:00 pm"])
+def test_digit_clock_midnight_with_pm_declines(text):
+    nomatch(text)
+
+
+# A day-period band is a formatting label, not a usage limit, so "evening"
+# keeps a 24-hour clock as written; "12:xx" stays at noon.
+@pytest.mark.parametrize("text,h,mi", [
+    ("19:30 evening", 19, 30), ("22:30 evening", 22, 30),
+    ("12:30 evening", 12, 30),
+])
+def test_digit_clock_with_evening(text, h, mi):
+    assert start(text) == clk(h, mi)
+
+
 # -- fraction system: half/quarter past/to, digit and spelled -------------
 
 @pytest.mark.parametrize("text,h,mi", [

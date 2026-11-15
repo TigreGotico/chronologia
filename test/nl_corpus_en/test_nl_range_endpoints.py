@@ -154,3 +154,16 @@ def test_far_future_weekday_range_rolls_to_the_next_weekday():
 ])
 def test_range_non_regressions(text, s, e):
     assert start_end(text) == (s, e)
+
+
+# -- a numeric date on the left keeps its own day --------------------------
+# Only a dateless left clock moves onto the right endpoint's day; a written
+# date beside the clock is the start.
+
+@pytest.mark.parametrize("text", [
+    "from 01/01/2018 at 9am to january 5",
+    "from 2018-01-01 at 9am to january 5",
+])
+def test_a_numeric_date_with_a_clock_keeps_its_day(text):
+    assert start_end(text) == (AstroDate(2018, 1, 1, 9),
+                               AstroDate(2018, 1, 6))

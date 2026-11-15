@@ -36,10 +36,9 @@ WEEKDAY_IDX = {
 
 
 def _bare_expected(idx):
-    """Next strictly-future occurrence of weekday *idx* -- same formula as
-    ``test_bare_weekday.py``."""
+    """Next occurrence of weekday *idx*, today on that weekday."""
     base = ANCHOR.replace(hour=0, minute=0, second=0, microsecond=0)
-    ahead = (idx - base.weekday()) % 7 or 7
+    ahead = (idx - base.weekday()) % 7
     s = base + timedelta(days=ahead)
     e = s + timedelta(days=1)
     return AstroDate(s.year, s.month, s.day), AstroDate(e.year, e.month, e.day)

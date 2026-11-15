@@ -43,7 +43,8 @@ def test_last_nundinal_day():
     assert _one("zlast znund").value.start == AstroDate(2017, 6, 20)
 
 def test_this_nundinal_day():
-    assert _one("zthis znuna").value.start == AstroDate(2017, 6, 25)
+    # nundinal position 0 fell on 2017-06-25; the next one is 2017-07-03
+    assert _one("zthis znuna").value.start == AstroDate(2017, 7, 3)
 
 
 # -- French Republican décade (month-anchored, length 10) ------------------
@@ -55,7 +56,8 @@ def test_next_decadi():
     assert _one("znext zdecadi").value.start == AstroDate(2017, 6, 28)
 
 def test_this_quintidi():
-    assert _one("zthis zquintidi").value.start == AstroDate(2017, 6, 23)
+    # 5 Messidor (2017-06-23) has passed; 15 Messidor is 2017-07-03
+    assert _one("zthis zquintidi").value.start == AstroDate(2017, 7, 3)
 
 def test_republican_decade_is_month_anchored():
     assert DAY_CYCLES["republican_decade"].kind == "month_anchored"
