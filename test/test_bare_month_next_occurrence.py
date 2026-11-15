@@ -14,7 +14,7 @@ A relative marker moves the bare reading.  "last October" is the latest
 October that has ended, October 2016; "last June" said in June is June 2016.
 "next June" said in June is June 2018, and "next July" is July 2017.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -97,4 +97,50 @@ def test_relative_month(text, lang, year, month):
 def test_bare_month_inside_a_request(text, lang, year, month, remainder):
     r = _span(text, lang)
     assert r.span.start == AstroDate(year, month, 1)
+    assert r.remainder == remainder
+
+
+@pytest.mark.parametrize("text,lang", [
+    ("march of this year", "en"),
+    ("march this year", "en"),
+    ("в марте этого года", "ru"),
+    ("у березні цього року", "uk"),
+    ("w marcu tego roku", "pl"),
+    ("em março deste ano", "pt"),
+    ("en marzo de este año", "es"),
+    ("en mars cette année", "fr"),
+    ("im März dieses Jahres", "de"),
+    ("mars dernier", "fr"),
+    ("en mars dernier", "fr"),
+    ("marzo pasado", "es"),
+    ("em março passado", "pt"),
+    ("marzo scorso", "it"),
+])
+def test_month_with_this_year_or_a_postposed_last(text, lang):
+    # "this year" names the anchor's year, so March 2017 has ended and is
+    # still March 2017.  A postposed "last" ("mars dernier") is the latest
+    # March that has ended, the same month.
+    r = _span(text, lang)
+    assert r.span.start == AstroDate(2017, 3, 1)
+    assert r.span.end == AstroDate(2017, 4, 1)
+    assert r.remainder == ""
+
+
+@pytest.mark.parametrize("text,date,remainder", [
+    ("next march 5th", (2018, 3, 5), ""),
+    ("remind me next march 5th to pay", (2018, 3, 5), "remind me to pay"),
+    ("this march 5th", (2018, 3, 5), ""),
+    ("next january 10", (2018, 1, 10), ""),
+    ("next march 5", (2018, 3, 5), ""),
+    ("last march 5", (2017, 3, 5), ""),
+    ("last january 10th", (2017, 1, 10), ""),
+])
+def test_relative_month_keeps_its_day(text, date, remainder):
+    # The day after a marked month is part of the date.  "next" and "this"
+    # take the next 5 March, 2018; "last" takes the latest one that has
+    # passed, 5 March 2017.
+    r = _span(text, "en")
+    start = AstroDate(*date)
+    assert r.span.start == start
+    assert r.span.end == start + timedelta(days=1)
     assert r.remainder == remainder

@@ -487,10 +487,14 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # "dayframe DAYPART" order), leaving ``marker_during.voc`` free to hold the
     # genuine month preposition ("em", "en") and opt in here.
     # A month named with a relative marker ("last October", "в прошлом
-    # октябре") is the occurrence before or after the bare reading.
+    # октябре") is the occurrence before or after the bare reading, and a day
+    # after it belongs to the date ("next March 5th").  A year phrase after the
+    # month ("March of this year", "в марте прошлого года", "im März dieses
+    # Jahres") names the year itself.
     "calendar_date": [
         "during MONTH DAY? YEAR?",
-        "during? REL_MARKER MONTH",
+        "during? REL_MARKER MONTH DAY?",
+        "during? MONTH of? REL_MARKER year_word",
     ],
 }
 
@@ -533,6 +537,11 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
     # in (or out) on its own, without disturbing weekday/period.
     "season_ref": [
         "article? SEASON REL_MARKER",
+    ],
+    # "last/next <month>" postposed: "mars dernier", "marzo pasado", "em
+    # março passado", "marzo scorso".
+    "calendar_date": [
+        "during? MONTH REL_MARKER",
     ],
 }
 
