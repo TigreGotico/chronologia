@@ -62,6 +62,9 @@ class ExplainTrace:
         return self.report()
 
 
+_VETOED = "vetoed: its context makes it the wrong reading"
+
+
 def _reason(cand: MatchCandidate, winners) -> str:
     span = range(*cand.match.span)
     for w in winners:
@@ -84,12 +87,21 @@ def explain(text: str, spec: LangSpec, anchor: datetime) -> ExplainTrace:
     tokens = prematch_tokens(text, spec)
     matcher = ConstructionMatcher(compiled)
     candidates = matcher._candidates(tokens)
-    selected = matcher._select(candidates)
+    # the same pre-selection veto extract_timespan applies, so a reading its
+    # context rules out (a bare Scandinavian "jul" as the month) never wins
+    # the trace while it loses the real parse.  Imported here because
+    # timespan imports this module.
+    from chronologia.extract.timespan import _candidate_veto
+    vetoed = {id(c) for c in candidates
+              if _candidate_veto(tokens, c.match, spec)}
+    selected = matcher._select([c for c in candidates
+                                if id(c) not in vetoed])
     resolver = Resolver(spec)
     winners = tuple(WonMatch(c.match, _safe_resolve(resolver, c.match, anchor))
                     for c in selected)
     chosen = {id(c) for c in selected}
-    losers = tuple(LostMatch(c.match, _reason(c, selected))
+    losers = tuple(LostMatch(c.match, _VETOED if id(c) in vetoed
+                             else _reason(c, selected))
                    for c in candidates if id(c) not in chosen)
     return ExplainTrace(text, tokens, winners, losers)
 
