@@ -41,8 +41,10 @@ _BANDS = [
     ('сегодня вечером', AstroDate(2017, 6, 27, 18, 0), AstroDate(2017, 6, 28)),
     ('вчера вечером', AstroDate(2017, 6, 26, 18, 0), AstroDate(2017, 6, 27)),
     ('завтра вечером', AstroDate(2017, 6, 28, 18, 0), AstroDate(2017, 6, 29)),
-    ('сегодня ночью', AstroDate(2017, 6, 27, 0, 0), AstroDate(2017, 6, 27, 4, 0)),
-    ('вчера ночью', AstroDate(2017, 6, 26, 0, 0), AstroDate(2017, 6, 26, 4, 0)),
+    # the night follows the named day's evening: tonight's small hours are
+    # tomorrow's date, and last night's are this morning's
+    ('сегодня ночью', AstroDate(2017, 6, 28, 0, 0), AstroDate(2017, 6, 28, 4, 0)),
+    ('вчера ночью', AstroDate(2017, 6, 27, 0, 0), AstroDate(2017, 6, 27, 4, 0)),
     # bare instrumental adverb -> today's band
     ('утром', AstroDate(2017, 6, 27, 4, 0), AstroDate(2017, 6, 27, 12, 0)),
     ('вечером', AstroDate(2017, 6, 27, 18, 0), AstroDate(2017, 6, 28)),
