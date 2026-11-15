@@ -85,7 +85,7 @@ NUMERIC_SLOTS: FrozenSet[str] = frozenset({
     "NUM", "DNUM", "DAY", "YEAR", "YEARANY", "GYEAR", "ORD", "SORD", "DORD", "WORDORD",
     "SUBH", "SUBM", "SUBS",
     "HOUR", "MINUTE", "QUARTS", "MILTIME", "MILTIMEZ", "MILTIMENZ",
-    "CLOCK", "ISO", "ISOWEEK", "NUMDATE"})
+    "CLOCK", "ISO", "ISOWEEK", "NUMDATE", "DAYMONTH", "PADDAYMONTH"})
 
 #: uppercase slots that actually bind a *connector* surface set, not a value map.
 CONNECTOR_SLOTS: Dict[str, str] = {
@@ -154,7 +154,7 @@ CONSTRUCTION_FLAG_KEYS: FrozenSet[str] = frozenset(
 
 TOP_LEVEL_KEYS: FrozenSet[str] = frozenset({
     "tokenizer", "constructions", "conventions", "quantifiers", "guards",
-    "hook", "pre_hook", "lemmas", "suffix_strip", "day_subdivision",
+    "hook", "pre_hook", "post_hook", "lemmas", "suffix_strip", "day_subdivision",
     "positions", "base_grammar"})
 
 #: marker roles whose POSITIONALITY may be declared -- the open-range and

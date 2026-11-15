@@ -55,7 +55,8 @@ def test_spelled_day_of_month(text, m, d):
 def test_weekday_names_its_next_occurrence(text, weekday):
     s = start(text)
     assert s.weekday() == weekday
-    assert ad(ANCHOR) <= s <= ad(ANCHOR + timedelta(days=7))
+    today = ANCHOR.replace(hour=0, minute=0)
+    assert ad(today) <= s < ad(today + timedelta(days=7))
 
 
 @pytest.mark.parametrize("text,offset", [

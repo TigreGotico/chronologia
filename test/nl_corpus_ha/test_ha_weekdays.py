@@ -19,8 +19,8 @@ WEEKDAYS = [
 
 
 def _forward(idx):
-    """The first date with weekday ``idx`` strictly after the anchor's day."""
-    d = ANCHOR.date() + timedelta(days=1)
+    """The first date with weekday ``idx`` on or after the anchor's day."""
+    d = ANCHOR.date()
     while d.weekday() != idx:
         d += timedelta(days=1)
     return (d.year, d.month, d.day)

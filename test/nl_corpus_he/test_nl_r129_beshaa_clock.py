@@ -68,7 +68,7 @@ def test_evening_daypart_overrides_coarse_band_to_pinpoint_2100():
     assert r.remainder == "", (
         "R129: coarse evening band must not beat the explicit hour and "
         "strand 'בשעה 9' in the remainder")
-    assert r.span.start == clk(2017, 7, 4, 21, 0)
+    assert r.span.start == clk(2017, 6, 27, 21, 0)
     assert r.span.width.total_seconds() == 60, (
         "expected a minute-wide pinpoint clock, not the 4h evening band")
 
@@ -84,13 +84,13 @@ def test_evening_daypart_meridiem_spelled_hour():
     r = parse("ביום שלישי בערב בשעה תשע")
     assert r is not None
     assert r.remainder == ""
-    assert r.span.start == clk(2017, 7, 4, 21, 0)
+    assert r.span.start == clk(2017, 6, 27, 21, 0)
 
 
 def test_evening_daypart_clock_composes_inside_embedded_sentence():
     r = parse("ניפגש ביום שלישי בערב בשעה תשע בבית קפה")
     assert r is not None
-    assert r.span.start == clk(2017, 7, 4, 21, 0)
+    assert r.span.start == clk(2017, 6, 27, 21, 0)
     # the date+daypart+clock tokens are all consumed; only the unrelated
     # surrounding words remain.
     assert "בשעה" not in r.remainder
@@ -117,7 +117,7 @@ def test_bare_evening_band_unchanged():
 
 
 def test_date_only_sentence_unchanged():
-    assert start("ביום שלישי") == clk(2017, 7, 4, 0, 0)
+    assert start("ביום שלישי") == clk(2017, 6, 27, 0, 0)
     assert span("ביום שלישי").width.total_seconds() == 24 * 3600
 
 

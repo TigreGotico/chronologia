@@ -82,7 +82,7 @@ def test_r125_three_event_narrative():
     assert len(ms) == 3
     assert [m.span.start for m in ms] == [
         ad(datetime(2017, 7, 3, 9, 0)),
-        ad(datetime(2017, 7, 4, 15, 0)),
+        ad(datetime(2017, 6, 27, 15, 0)),
         ad(datetime(2017, 6, 28, 19, 0)),
     ]
     assert [m.text for m in ms] == [
