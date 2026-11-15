@@ -66,3 +66,19 @@ def test_extract_timespan_remainder_keeps_ordinal_suffix_intact():
     assert "the 6th" in result.remainder
     assert "the 6 " not in result.remainder
     assert not result.remainder.rstrip().endswith("the 6")
+
+
+def test_a_lexical_korean_year_word_spans_only_itself():
+    # 작년, 올해 and 내년 fold to a determiner and "해" (지난 해, 이번 해,
+    # 다음 해), which are no cut of the written word, so the mention spans the
+    # written word and nothing after it
+    for sentence, surfaces in [
+            ("작년3월", ["작년", "3월"]),
+            ("작년 3월", ["작년", "3월"]),
+            ("작년, 3월", ["작년", "3월"]),
+            ("내년 5월에", ["내년", "5월"]),
+            ("올해 1월부터 내년 2월까지", ["올해", "1월", "내년", "2월"]),
+            ("작년", ["작년"])]:
+        mentions = extract_timespans(sentence, lang="ko", anchor=ANCHOR)
+        got = [sentence[m.char_span[0]:m.char_span[1]] for m in mentions]
+        assert got == surfaces, (sentence, got)
