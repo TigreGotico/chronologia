@@ -3,5 +3,8 @@
 # the ninth == 08:30.  Handled by the bare_half_to + toward_hour_12h
 # conventions.  Citation: gramota.ru (Russian State Language reference
 # service), telling the time -- "половина <genitive ordinal>" counts toward
-# the coming hour.
+# the coming hour.  The locative "половине" is the same half after the clock
+# preposition "в": "Приходите в половине двенадцатого" (Pushkin, quoted in
+# В. И. Максимов, "Половина первого, полпервого?", 1973, p. 53).
 половина
+половине
