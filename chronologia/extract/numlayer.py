@@ -169,7 +169,7 @@ def reread(run: Tuple[Token, ...], lang: str) -> Tuple[Token, ...]:
 
 def split_counts(tokens: Tuple[Token, ...],
                  units: Collection[str]) -> Set[int]:
-    """The indices of the words of two spelled mentions that stand side by
+    """The indices of the words of two spelled cardinals that stand side by
     side before a unit word.
 
     numtag reads "mil duzentos" as two numbers, 1000 and 200 (Gramática do
@@ -178,14 +178,17 @@ def split_counts(tokens: Tuple[Token, ...],
     duzentos anos" the count of years is not settled, and only the context
     of the caller can choose.  The words of both mentions stay words: no
     count slot takes a mention that another mention cuts from its unit, and
-    no year slot takes the first one.
+    no year slot takes the first one.  An ordinal before a count ("the
+    first two weeks") is no such pair.
     """
     out: Set[int] = set()
     n = len(tokens)
     i = 1
     while i < n:
         first, second = tokens[i - 1].mention, tokens[i].mention
-        if first is None or second is None or first is second:
+        if (first is None or second is None or first is second
+                or first.kind is not Kind.CARDINAL
+                or second.kind is not Kind.CARDINAL):
             i += 1
             continue
         end = i
