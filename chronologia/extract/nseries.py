@@ -271,10 +271,12 @@ def _duration_core(text: str, engine) -> Optional[DurationResult]:
                     consumed.update(range(i, end))
                     i = end
                     continue
-        # a leading article: "a day" -> count 1; "a couple of days" -> skip it.
+        # a leading article: "a day" -> count 1; "a couple of days" and "a
+        # few days" -> skip it, the quantifier is the count.
         if tokens[j].text in articles:
             if j + 1 < n and (tokens[j + 1].is_number
-                              or tokens[j + 1].text in fracs):
+                              or tokens[j + 1].text in fracs
+                              or tokens[j + 1].text in spec.quantifiers):
                 j += 1
             else:
                 count, j = 1.0, j + 1

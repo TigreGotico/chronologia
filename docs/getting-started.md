@@ -12,9 +12,10 @@ pip install chronologia
 ```
 
 That is everything. You need Python 3.10 or newer. The reckoning core is pure
-standard library; the natural-language layer adds two small pure-Python helpers
-— **ovos-number-parser** (spelled numbers → digits) and **ovos-spec-tools**
-(loads each language's vocabulary). Nothing here ever talks to the internet.
+standard library; the natural-language layer adds three small pure-Python
+helpers — **numtag** (reads the English and Portuguese numbers),
+**ovos-number-parser** (spelled numbers → digits in the other languages) and
+**ovos-spec-tools** (loads each language's vocabulary). Nothing here ever talks to the internet.
 
 ## Your first extraction (60 seconds)
 

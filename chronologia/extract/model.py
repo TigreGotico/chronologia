@@ -27,9 +27,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, FrozenSet, Mapping, Optional, Tuple
+from typing import TYPE_CHECKING, Callable, FrozenSet, Mapping, Optional, Tuple
 
 from chronologia.astrodate import DateSpan
+
+if TYPE_CHECKING:
+    from numtag import NumberMention
 
 
 class Direction(Enum):
@@ -106,6 +109,11 @@ class Token:
     # week" (which week) from "two weeks" (how long), so the duration reader
     # reads this flag and refuses an ordinal as a count.
     ordinal: bool = False
+    # The numtag mention this token sits inside, for the languages numtag
+    # reads (``numlayer.NUMTAG_LANGS``).  A word token keeps its word and
+    # carries the mention beside it; a number token folded from a mention
+    # carries the mention it stands for.
+    mention: Optional["NumberMention"] = field(default=None, compare=False)
 
 
 @dataclass(frozen=True)

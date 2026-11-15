@@ -20,11 +20,13 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 # Natural-language date extraction (chronologia.extract / extract_timespan)
-# needs two runtime helpers: ovos-number-parser turns spelled numbers into
-# digits inside the tokenizer, and ovos-spec-tools loads the per-language
-# .voc vocabulary bundles under chronologia/locale/. The calendrical core
-# (dates, spans, calendars, eras) still runs on the standard library alone.
+# needs three runtime helpers: numtag reads the English and Portuguese
+# numbers, ovos-number-parser reads the spelled numbers of the other
+# languages, and ovos-spec-tools loads the per-language .voc vocabulary
+# bundles under chronologia/locale/. The calendrical core (dates, spans,
+# calendars, eras) still runs on the standard library alone.
 dependencies = [
+    "numtag>=0.0.1a1",
     "ovos-number-parser>=0.19.7a2",
     "ovos-spec-tools>=1.5.0a1",
 ]

@@ -48,6 +48,7 @@ from chronologia.extract.compiler import parse_order
 from chronologia.extract.model import (Conventions, LangSpec,
                                            TokenizerModes)
 from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.numlayer import attach
 from chronologia.extract.schema import validate as validate_locale
 from chronologia.extract.tokenizer import Tokenizer
 
@@ -557,7 +558,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     tokenizer = Tokenizer(spec.tokenizer)
     normaliser = TemporalNormaliser(spec)
     for surface, key in well_known_surfaces(lang).items():
-        toks = normaliser.normalise(tokenizer.tokenize(surface))
+        toks = attach(normaliser.normalise(tokenizer.tokenize(surface)),
+                      surface, lang)
         if spec.hook is not None:
             # apply the same language hook (e.g. French elision split) the real
             # pre-match pipeline runs, so a stored surface matches token-for-token

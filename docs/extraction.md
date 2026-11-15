@@ -1046,13 +1046,21 @@ morphology only: a lemma map (`tygodni → tydzien`) then rule-based suffix
 stripping. Numbers pass through untouched; only `text` changes, `raw` is
 preserved.
 
-**3. The numfold hook** (`numfold.py`, wired for English via `lang.json`'s
-`hook`). The tokenizer only sees *digit* numbers, but people write "the
-twenty fifth" and "the third week". This pass folds a maximal run of English
-number-words into one digit token, so a `DAY`/`YEAR`/`ORD` slot binds the
-same whether the writer typed `5` or `five`. It deliberately does **not**
-fold `half`/`quarter` (those are clock fractions) or scale words like
-`million` (those separate deep time from a plain offset).
+**3. The number fold** (the language `hook` in `lang.json`). The tokenizer
+only sees *digit* numbers, but people write "the twenty fifth" and "the
+third week". This pass folds each spelled number into one digit token, so a
+`DAY`/`YEAR`/`ORD` slot binds the same whether the writer typed `5` or
+`five`.
+
+For English and Portuguese the numbers come from **numtag**
+(`numlayer.py`). `pretokens` tags the input text once, and each token inside
+a number mention carries that mention beside its word. The language fold
+(`numlayer_en.py`, `numlayer_pt.py`) names the number words that the date
+grammar reads as words in their position: `half` and `quarter` in a clock,
+`million` and `milhões` before a year word in deep time, `segunda` as
+Monday. Every other mention folds to its value. When a date word cuts a
+mention, numtag reads each side again on its own words. The other languages
+fold with their `numfold_*` module and ovos-number-parser.
 
 **4. Multiword merge** (`chronologia.extract.pipeline.merge_multiword`,
 reached through `fold_tokens`). Vocabulary
@@ -1727,8 +1735,9 @@ language is a directory under `chronologia/locale/<code>/`:
 
 The vocabulary files are loaded through **ovos-spec-tools**, the shared
 `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are
-folded to digits by **ovos-number-parser** before matching, so a slot binds
-the same whether the writer typed `5` or `five`.
+folded to digits before matching, so a slot binds the same whether the
+writer typed `5` or `five`. **numtag** reads the English and Portuguese
+numbers; **ovos-number-parser** reads the other languages.
 
 To add a language, create `chronologia/locale/<code>/`, translate the `.voc`
 surface forms, and write a `lang.json` that sets the conventions and lists

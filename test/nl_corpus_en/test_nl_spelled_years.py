@@ -8,9 +8,8 @@ Three shapes reach the same year-wide span a digit year does:
 * the year pair -- "nineteen ninety-nine" (1999), read *only* after an
   explicit year cue ("in ...", "the year ...") because a bare pair is
   genuinely ambiguous with a plain number;
-* everything else refuses.  A malformed component, a scale word riding on the
-  construction, or the deep-time "... years ago" frame yields no span at all
-  rather than a fabricated year.
+* everything else refuses.  A malformed component or the deep-time "...
+  years ago" frame yields no span at all rather than a fabricated year.
 """
 import pytest
 
@@ -92,7 +91,6 @@ def test_bare_year_pair_is_not_a_year(text):
 # -- refusals --------------------------------------------------------------
 
 @pytest.mark.parametrize("text", [
-    "two thousand and one hundred thousand",
     "ninety nine ninety nine",
     "thirteen fourteen",
     "in ninety nine",
@@ -100,6 +98,19 @@ def test_bare_year_pair_is_not_a_year(text):
 ])
 def test_refuses_rather_than_guesses(text):
     nomatch(text)
+
+
+def test_two_numbers_joined_by_and_read_as_their_digits():
+    """"two thousand and one hundred thousand" is two numbers, 2000 and
+    100000: the hundred thousand does not fit below the thousand it follows.
+    The spelled text reads as its digits "2000 and 100000" do, with the
+    second number left in the remainder."""
+    spelled = parse("two thousand and one hundred thousand")
+    digits = parse("2000 and 100000")
+    assert spelled.span == digits.span
+    assert (spelled.span.start, spelled.span.end) == (AstroDate(2000, 1, 1),
+                                                      AstroDate(2001, 1, 1))
+    assert spelled.remainder == "and one hundred thousand"
 
 
 def test_ones_suffix_is_a_count_not_a_year():

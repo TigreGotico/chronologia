@@ -1172,7 +1172,7 @@ def test_spelled_ordinal_list_across_and_keeps_first():
             # June 3 is only acceptable if "first" was NOT silently swallowed
             assert "first" in r.remainder, "'first' silently erased from a list"
     # the genuine magnitude-additive folds are unchanged (not turned into lists)
-    from chronologia.extract.numfold import fold_en
+    from chronologia.extract.numlayer_en import fold_en
     from chronologia.extract.pipeline import pretokens
     from chronologia.extract.loader import load_lang_spec
     _spec = load_lang_spec("en")
@@ -1181,12 +1181,12 @@ def test_spelled_ordinal_list_across_and_keeps_first():
     # the ordinal LIST is cut at "and" -- BOTH ordinals survive, "first" is not
     # swallowed into a lone "3" the way it was before the bridge gate.
     assert _folded("first and third of June") == "1 and 3 of june"
-    # every genuine magnitude-additive fold is byte-for-byte unchanged by the
-    # gate (these are exactly the pre-fix outputs).
-    assert _folded("one hundred and five") == "1 hundred and 5"
-    assert _folded("two hundred and fifty") == "2 hundred and 50"
-    assert _folded("a thousand and one") == "a thousand and 1"
-    assert _folded("one hundred and first") == "1 hundred and 1"
+    # a genuine magnitude-additive "and" joins one number: 100 + 5, 200 + 50,
+    # 1000 + 1, and the ordinal 100 + 1
+    assert _folded("one hundred and five") == "105"
+    assert _folded("two hundred and fifty") == "250"
+    assert _folded("a thousand and one") == "1001"
+    assert _folded("one hundred and first") == "101"
     # a bare year pair with no cue is two numerals (the year reading needs a
     # cue such as "in" or a month-and-day before it); the back-end used to
     # keep only the last atom, silently dropping the first
