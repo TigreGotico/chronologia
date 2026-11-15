@@ -264,10 +264,36 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         return kind if kind in _DUR_UNIT_SECONDS or kind in calendar_months \
             else None
 
-    def _written_year(kind, tok):
-        # a four-digit number by a year word names that year ("в 1980
-        # году", "shekarar 2024", "2024년"), not a count of years
-        return kind == "year" and tok.raw.isdigit() and len(tok.raw) == 4
+    # The singular and date forms of the year noun ("год", "году", "roku",
+    # "metais", "년", "mwaka", "year"): the plural forms that a count takes
+    # ("лет", "years", "anos") are left out.  A locale with no ``unit1_``
+    # files tells its plural by its ``-s`` morphology (``plural_units``).
+    year_plural = spec.connectors.get("year_plural", frozenset())
+    year_forms = {
+        s for s in (set(spec.connectors.get("year_word", ()))
+                    | {s for s, k in spec.singular_units.items()
+                       if k == "year"})
+        if s not in year_plural
+        and (spec.singular_units or s not in spec.plural_units)}
+
+    def _written_year(kind, tok, unit_tok):
+        # a number written in digits by a year word names that year, not a
+        # count of years: four digits by any year form ("в 1980 году",
+        # "2024년"), three digits by a singular or date form ("в 988 году",
+        # "988 metais"), where a count of 988 takes the plural ("988 лет")
+        if kind != "year" or tok is None or not tok.raw.isdigit():
+            return False
+        return len(tok.raw) == 4 or (len(tok.raw) == 3
+                                     and unit_tok.text in year_forms)
+
+    def _weekday_by_a_clock(unit_at, count_at):
+        # ro "luni" is "months" and "Monday".  After a clock hour ("la ora 9
+        # luni") or before a day part ("luni dimineața") it is the weekday
+        if tokens[unit_at].text not in spec.weekdays:
+            return False
+        after = tokens[unit_at + 1].text if unit_at + 1 < n else None
+        return (after in spec.dayparts
+                or (count_at > 0 and _unit_of(tokens[count_at - 1]) == "hour"))
 
     def _add(kind, count):
         nonlocal total, months
@@ -280,6 +306,7 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     while i < n:
         j = i
         count = None
+        count_tok = None
         frac_lead = False
         article_one = None
         # A Semitic dual-noun unit fuses the count "two" with the unit into one
@@ -316,7 +343,8 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     and tokens[i + 1].is_number
                     and tokens[i + 1].value is not None
                     and not (kind in calendar_months
-                             and _written_year(kind, tokens[i + 1]))):
+                             and _written_year(kind, tokens[i + 1],
+                                               tokens[i]))):
                 try:
                     count = float(tokens[i + 1].value)
                 except (TypeError, ValueError, OverflowError):
@@ -357,7 +385,8 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                 # length, so the token is treated as if it weren't numeric
                 # and scanning moves on, rather than raising past the caller.
                 try:
-                    count, j = float(tokens[j].value), j + 1
+                    count, count_tok = float(tokens[j].value), tokens[j]
+                    j += 1
                 except OverflowError:
                     count, j = None, i + 1
                 # a fraction word right after the count multiplies it: "three
@@ -428,7 +457,9 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             # months; the unit then stays unread and the text names no length
             if unit in calendar_months and not (
                     (j == adjacent or frac_lead)
-                    and not _written_year(unit, tokens[i])
+                    and not _written_year(unit, count_tok, tokens[j])
+                    and not _weekday_by_a_clock(
+                        j, i if count_tok is None else count_tok.index)
                     and (article_one is None
                          or article_one in spec.quantifiers
                          and i - 1 not in consumed
@@ -1531,9 +1562,26 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
             return None
         return _replace(rec, until=got[0].start)
 
+    def _calendar(text):
+        # a length with a month or a year counts only from an anchor
+        return extract_duration(text, lang) is None
+
+    def _another_start(text):
+        # a day other than the anchor's ("starting march 1"), from which a
+        # calendar length would count to a different number of days; a clock
+        # time ("at 9 am") names when in the day, not the start
+        got = extract_timespan(text, lang, anchor=anchor) if text else None
+        if got is None:
+            return False
+        start, end = got.span.start, got.span.end
+        return (end - start >= timedelta(days=1)
+                and (start.year, start.month, start.day)
+                != (anchor.year, anchor.month, anchor.day))
+
     def _ground_count(rec, text):
         dur = extract_duration(text, lang, anchor=anchor)
-        if dur is None:
+        if dur is None or (dur.remainder and _calendar(text)
+                           and _another_start(dur.remainder)):
             return None
         count = _count_from_duration(rec.freq, dur[0])
         if count is None:
@@ -1547,8 +1595,17 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
             got = _bound_payload(rec, consumed, tokens, marker, lang, anchor,
                                  grounder)
             if got is not None:
-                rec, extra = got
-                consumed = consumed | extra
+                new_rec, extra = got
+                rest = " ".join(t.raw for t in tokens
+                                if t.index not in consumed | extra)
+                if (grounder is _ground_count
+                        and _calendar(" ".join(tokens[k].raw for k in
+                                               sorted(extra - consumed)))
+                        and _another_start(rest)):
+                    # the calendar length counted from the anchor, but the
+                    # text names another start, so the bound stays unread
+                    break
+                rec, consumed = new_rec, consumed | extra
                 break
 
     # A trailing explicit occurrence count -- "<N> times" -- on an otherwise

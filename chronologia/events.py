@@ -183,6 +183,17 @@ def extract_event(
     if got_dur is not None:
         duration, remainder = got_dur
 
+    # a calendar length after its marker ("for a month and a half") leaves
+    # the text before the date reader runs, as a fixed length does, so the
+    # date reader cannot take a part of it; its width is read once the start
+    # is known
+    calendar_text = None
+    if duration is None:
+        got_cal = _duration_core(remainder, _timespan_engine(lang), anchor,
+                                 calendar_needs_marker=True)
+        if got_cal is not None:
+            calendar_text, remainder = remainder, got_cal[1]
+
     # A recurring event is rule-driven (a matched ``every`` marker is a strong,
     # unambiguous signal), so it carries full confidence; a one-off inherits
     # the confidence of the best plausible reading of the span-bearing text.
@@ -202,17 +213,26 @@ def extract_event(
     if base is None:
         return None
 
-    # a calendar length after its marker ("for 3 months") counts from the
-    # start of the event; the date reader read the text before it, so an
-    # offset ("in 3 months") stays a date
-    if duration is None and 1 <= base.start.year <= 9999:
-        start = datetime(base.start.year, base.start.month, base.start.day,
-                         base.start.hour, base.start.minute,
-                         base.start.second, base.start.microsecond)
-        got_cal = _duration_core(remainder, _timespan_engine(lang), start,
-                                 calendar_needs_marker=True)
+    # a calendar length ("for 3 months") counts from the start of the event;
+    # an offset ("in 3 months") has no marker and stays a date
+    if calendar_text is not None:
+        got_cal = None
+        if 1 <= base.start.year <= 9999:
+            start = datetime(base.start.year, base.start.month,
+                             base.start.day, base.start.hour,
+                             base.start.minute, base.start.second,
+                             base.start.microsecond)
+            got_cal = _duration_core(calendar_text, _timespan_engine(lang),
+                                     start, calendar_needs_marker=True)
         if got_cal is not None:
-            duration, remainder = got_cal
+            duration = got_cal[0]
+        elif recurrence is not None:
+            remainder = calendar_text
+        else:
+            # a length with no calendar end stays in the summary
+            got_span = extract_timespan(calendar_text, lang, anchor=anchor,
+                                        jurisdiction=jurisdiction)
+            remainder = calendar_text if got_span is None else got_span[1]
 
     # When a duration is named, the span carries exactly that width; otherwise
     # the span keeps its own implicit width (a day, an hour, a minute...).

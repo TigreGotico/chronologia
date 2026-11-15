@@ -1634,7 +1634,10 @@ assert extract_recurrence("every wednesday at 9:30", "en")[0].to_string() == (
 `UNTIL` ("every friday until june"); a `for` marker plus a fixed-width duration
 sets `COUNT` — the number of occurrences the duration spans at the rule's
 frequency ("daily for two weeks" → `COUNT=14`, "every monday for 6 weeks" →
-`COUNT=6`). Both markers may be **multi-word** and **postposed** — the marker
+`COUNT=6`). A calendar length ("daily for a month") counts from `anchor`. When
+the text names another start day ("every day starting march 1 for a month"),
+that count would be wrong, so the bound stays in the remainder and the rule has
+no `COUNT`. Both markers may be **multi-word** and **postposed** — the marker
 following the date/duration rather than leading it — because languages express
 these bounds either way:
 

@@ -111,9 +111,32 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
     ("ru", "в 1980 году"),
     ("ha", "shekarar 2024"),
     ("ko", "2024년 3월 15일"),
+    ("en", "the 2024 year"),
+    # a year of fewer than four digits before a singular year word
+    ("ru", "в 988 году"),
+    ("ru", "988 год"),
+    ("pl", "w 988 roku"),
+    ("lt", "988 metais"),
+    # ro "luni" is both "months" and "Monday": next to a clock it is the day
+    ("ro", "la ora 9 luni dimineața"),
 ])
 def test_a_calendar_unit_without_a_plain_count_names_no_length(lang, text):
     assert extract_duration(text, lang, anchor=END_OF_JANUARY) is None
+
+
+@pytest.mark.parametrize("lang, text, delta", [
+    ("ru", "через 988 лет", {"years": 988}),
+    ("en", "988 years", {"years": 988}),
+    ("pt", "em 988 anos", {"years": 988}),
+    ("de", "seit 988 jahren", {"years": 988}),
+    ("it", "988 anni", {"years": 988}),
+    ("ro", "988 ani", {"years": 988}),
+    ("ro", "9 luni", {"months": 9}),
+    ("ro", "timp de 3 luni", {"months": 3}),
+])
+def test_a_count_before_a_plural_unit_is_still_a_length(lang, text, delta):
+    got = extract_duration(text, lang, anchor=END_OF_JANUARY)
+    assert got.duration == _length(END_OF_JANUARY, **delta)
 
 
 @pytest.mark.parametrize("lang, text, freq_days, delta", [
@@ -142,6 +165,21 @@ def test_an_event_counts_the_calendar_length_from_its_start(lang, text):
     assert got.span.start == datetime(2026, 1, 30)
     assert got.duration == timedelta(days=29)
     assert got.summary in {"vacation", "férias"}
+
+
+@pytest.mark.parametrize("text, start, delta", [
+    ("vacation tomorrow for a month and a half", datetime(2026, 1, 31),
+     {"months": 1, "days": 15}),
+    ("trip on monday for a year and a half", datetime(2026, 2, 2),
+     {"months": 18}),
+])
+def test_an_event_keeps_the_half_of_a_calendar_length(text, start, delta):
+    # the date reader must not take "and a half" from the length
+    from chronologia import extract_event
+    got = extract_event(text, "en", anchor=datetime(2026, 1, 30, 10, 0))
+    assert got.span.start == start
+    assert got.span.end == start + relativedelta(**delta)
+    assert got.summary == text.split()[0]
 
 
 @pytest.mark.parametrize("lang, text, start", [
@@ -192,3 +230,35 @@ def test_a_recurrence_bound_by_a_part_of_a_unit_has_no_count(text):
     got = extract_recurrence(text, "en", anchor=END_OF_JANUARY)
     assert got.recurrence.count is None
     assert got.remainder == text[len("every day "):]
+
+
+@pytest.mark.parametrize("text, start_words", [
+    ("every day starting march 1 for a month", "starting march 1"),
+    ("every day for a month starting march 1", "starting march 1"),
+    ("every day from march 1 for a month", "from march 1"),
+])
+def test_a_recurrence_with_its_own_start_counts_no_calendar_length(
+        text, start_words):
+    # a month counts from the anchor, and the text names another start, so
+    # the bound stays unread rather than give the wrong number of days
+    from chronologia import extract_recurrence
+    got = extract_recurrence(text, "en", anchor=datetime(2026, 1, 30, 10, 0))
+    assert got.recurrence.count is None
+    assert start_words in got.remainder
+    assert "for a month" in got.remainder
+
+
+@pytest.mark.parametrize("text, freq_days, months", [
+    ("every day at 9 am for a month", 1, 1),
+    ("every monday at 6pm for 3 months", 7, 3),
+])
+def test_a_clock_time_in_a_recurrence_names_no_other_start(
+        text, freq_days, months):
+    # a clock time names when in the day, so the length still counts from
+    # the anchor
+    from chronologia import extract_recurrence
+    anchor = datetime(2026, 1, 30, 10, 0)
+    got = extract_recurrence(text, "en", anchor=anchor)
+    assert got.recurrence.count == _length(anchor, months=months).days \
+        // freq_days
+    assert got.remainder == ""
