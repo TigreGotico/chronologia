@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from chronologia import extract_timespan
+from chronologia.extract import extract_timespans
 from chronologia.astrodate import AstroDate
 
 ANCHOR = datetime(2017, 6, 27, 13, 4)
@@ -144,3 +145,36 @@ def test_relative_month_keeps_its_day(text, date, remainder):
     assert r.span.start == start
     assert r.span.end == start + timedelta(days=1)
     assert r.remainder == remainder
+
+
+@pytest.mark.parametrize("text,lang,date", [
+    ("5 march next year", "en", (2018, 3, 5)),
+    ("напомни 5 марта следующего года", "ru", (2018, 3, 5)),
+    ("am 5. März nächsten Jahres", "de", (2018, 3, 5)),
+    ("5 marca przyszłego roku", "pl", (2018, 3, 5)),
+    ("5 марта этого года", "ru", (2017, 3, 5)),
+    ("5 березня цього року", "uk", (2017, 3, 5)),
+    ("5 марта прошлого года", "ru", (2016, 3, 5)),
+    ("5 march last year", "en", (2016, 3, 5)),
+])
+def test_a_day_before_the_month_keeps_the_year_phrase(text, lang, date):
+    """The day before the month is part of the date the year phrase places:
+    "5 march next year" is 5 March 2018, said on 27 June 2017."""
+    r = _span(text, lang)
+    start = AstroDate(*date)
+    assert (r.span.start, r.span.end) == (start, start + timedelta(days=1))
+    assert "5" not in r.remainder
+
+
+@pytest.mark.parametrize("text,lang,start", [
+    ("since january", "en", datetime(2017, 1, 1)),
+    ("I have been here since january", "en", datetime(2017, 1, 1)),
+    ("с января", "ru", datetime(2017, 1, 1)),
+    ("since july", "en", datetime(2016, 7, 1)),
+])
+def test_a_bare_month_after_since_has_begun(text, lang, start):
+    """After "since" a bare month names the latest one that has begun, in
+    every reader: January 2017 and July 2016, said on 27 June 2017."""
+    assert _span(text, lang).span.start == start
+    mentions = extract_timespans(text, lang, ANCHOR)
+    assert [m.span.start for m in mentions] == [start]

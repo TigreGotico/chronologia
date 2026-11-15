@@ -33,7 +33,7 @@ from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _RANGE_TO, _conn_surfaces,
                                           _exclusion_vetoes, _extract_range,
                                           _resolve_scale_mode,
-                                          _timespan_engine,
+                                          _since_month, _timespan_engine,
                                           _WEEKDAY_LABELABLE_DATES,
                                           extract_timespan)
 from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
@@ -529,7 +529,9 @@ def extract_timespans(
     for ci, cluster in enumerate(clusters):
         if len(cluster) == 1:
             match, res = cluster[0]
-            out.append((match.span, res.value, confidence_of[id(match)]))
+            span = _since_month(match, res.value, tokens, engine, anchor,
+                                scale_mode)
+            out.append((match.span, span, confidence_of[id(match)]))
             continue
         lo_tok = min(m.span[0] for m, _ in cluster)
         hi_tok = max(m.span[1] for m, _ in cluster)

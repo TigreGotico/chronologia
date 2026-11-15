@@ -53,8 +53,9 @@ def test_month_day_comma_year_no_space_never_reads_year_5202():
     # dropped as an unrelated stray token
     assert span.start.year != 5202
     assert span.end.year != 5202
-    # policy: degrades to the month-only span chronologia can still stand
-    # behind, March 2018, the next March after the anchor; the ungrounded "day,year" text is NOT silently discharged
+    # policy: degrades to the month alone, read as a bare month (its next
+    # occurrence, March 2018).  The text means 5 March 2025, which is not
+    # read, so the ungrounded "day,year" text stays in the remainder
     assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 1)
     assert "2025" in remainder or remainder == "5,2025"
 

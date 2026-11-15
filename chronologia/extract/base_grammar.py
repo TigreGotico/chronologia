@@ -494,7 +494,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "calendar_date": [
         "during MONTH DAY? YEAR?",
         "during? REL_MARKER MONTH DAY?",
-        "during? MONTH of? REL_MARKER year_word",
+        "during? DAY? MONTH of? REL_MARKER year_word",
     ],
 }
 

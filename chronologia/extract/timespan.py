@@ -1850,6 +1850,36 @@ def _since_start(ep, sub, engine, anchor, now, text):
     return start, ep[1]
 
 
+#: The constructions that read a bare month as its next occurrence.
+_BARE_MONTH_DATES = frozenset({"calendar_date", "nongregorian_date"})
+
+
+def _since_month(match, span, tokens, engine, anchor, scale_mode="short"):
+    """The span of ``match``, read back to its latest occurrence at or before
+    the anchor when it is a bare month right after a "since" marker.
+
+    A bare month alone names its next occurrence.  After "since" it names the
+    one that has begun: "since january" said in June is this January, as the
+    leading "since" range reads it (:func:`_since_start`).
+    """
+    if (span.start <= anchor or match.construction not in _BARE_MONTH_DATES
+            or set(match.slots) - {"MONTH", "CAL_MONTH"}):
+        return span
+    lo = match.span[0]
+    if not any(lo >= len(words)
+               and [t.text for t in tokens[lo - len(words):lo]] == words
+               for words in _conn_surfaces(engine.spec, "since",
+                                           _RANGE_SINCE)):
+        return span
+
+    def read(at):
+        res = engine.resolver.resolve(match, at, scale_mode)
+        return None if res is None else (res.value,)
+
+    back = _latest_reading(read, anchor, span.start, anchor)
+    return span if back is None else back[0]
+
+
 def _reads_day_word(text, sub, engine, anchor, scale_mode="short"):
     """Whether the reading of ``sub`` consumes a day word ("today",
     "tomorrow"), not only holds one among its leftover words."""
@@ -3978,6 +4008,8 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
             continue
         res = engine.resolver.resolve(match, anchor, scale_mode)
         if res is not None:
+            res = replace(res, value=_since_month(match, res.value, tokens,
+                                                  engine, anchor, scale_mode))
             resolved.append((match, res))
     # business-day counting ("in 5 business days", "the next working day",
     # "3 working days after christmas"); jurisdiction scopes the holiday lookup.

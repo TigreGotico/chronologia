@@ -1483,14 +1483,15 @@ class Resolver:
             span = DateSpan(astro, astro + timedelta(days=1)) if day_tok \
                 else _gregorian_month_span(year, month)
             return Resolution(span, self._consumed(match))
+        # a year phrase after the month ("march of this year", "5 марта
+        # прошлого года") names the year outright
+        year_phrase = (rel_tok is not None and rel_tok.index > month_tok.index
+                       and match.span[1] > rel_tok.index + 1)
         if year_tok:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
             year = anchor.year
-            if rel_tok is not None and rel_tok.index > month_tok.index \
-                    and match.span[1] > rel_tok.index + 1:
-                # a year phrase after the month ("march of this year", "в
-                # марте прошлого года") names the year outright
+            if year_phrase:
                 year += rel
             elif rel < 0:
                 # "last October": the latest such month that has ended
@@ -1505,13 +1506,15 @@ class Resolver:
                 # that holds the anchor is this one, a month that has already
                 # ended is next year's.
                 year += 1
-        if not year_tok and day_tok and rel < 0:
+        if year_tok or year_phrase:
+            value = datetime(year, month, day)      # raises on impossible
+        elif day_tok and rel < 0:
             # "last March 5": the latest such day before today
             value = _last_day_month(month, day, anchor)
             if value is None:
                 return None
             year = value.year
-        elif not year_tok and prefer_future and day_tok:
+        elif prefer_future and day_tok:
             value = _next_day_month(month, day, anchor)
             if value is None:
                 return None
