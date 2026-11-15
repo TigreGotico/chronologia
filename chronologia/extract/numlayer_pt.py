@@ -20,7 +20,8 @@ from chronologia.extract.numfold_romance import (_LOCALE_ROOT,
                                                  _collapse_h_clock, _glue)
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (fold_mentions, mention_number,
-                                          scale_factor, scale_factors)
+                                          scale_factor, scale_factors,
+                                          split_counts)
 
 
 def _voc(*prefixes: str) -> FrozenSet[str]:
@@ -204,11 +205,13 @@ def _date_words(tokens: Tuple[Token, ...]
             if nxt in _OF:
                 claimed.add(i)
         elif (_last_scale(tokens, i, end)
+              and tok.char_start != tok.mention.char_span[0]
               and (after in _YEAR_WORDS
                    or (after in _OF and after2 in _YEAR_WORDS))):
             # the deep-time SCALE ("sessenta e seis milhões de anos", "dois
             # milhões e meio de anos"); the count before it is the mention
-            # value in units of this word
+            # value in units of this word.  A scale word that opens its
+            # mention has no count before it: "mil e duzentos" is 1200
             factor = scale_factor(word, tok.mention, _FACTORS)
             if factor is not None:
                 claimed.add(i)
@@ -235,6 +238,7 @@ def fold_pt(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """
     tokens = reindex(_glue(_collapse_h_clock(tokens)))
     claimed, ordinals, scales = _date_words(tokens)
+    claimed |= split_counts(tokens, _UNITS)
     # a homograph read as an ordinal by its position keeps its written word,
     # so a mention's text shows "o quarto trimestre"
     words = {(tokens[i].char_start, tokens[i].char_end): tokens[i].raw

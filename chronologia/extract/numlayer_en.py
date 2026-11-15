@@ -29,7 +29,7 @@ from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (fold_mentions, mention_number,
                                           mentions, scale_factor,
-                                          scale_factors)
+                                          scale_factors, split_counts)
 
 _LANG_DIR = Path(__file__).resolve().parent.parent / "locale" / "en"
 
@@ -359,6 +359,7 @@ def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     pair, the deep-time article and the duration fraction compose."""
     tokens = reindex(_merge_ord_suffix(_glue_era(tokens)))
     claimed, scales = _date_words(tokens)
+    claimed |= split_counts(tokens, _UNITS)
     folded = fold_mentions(tokens, "en", claimed, scales)
     # the claimed scale words keep their place in the folded stream; find
     # them again by where they start

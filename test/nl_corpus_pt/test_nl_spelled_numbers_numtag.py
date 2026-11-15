@@ -60,6 +60,8 @@ def test_half_inside_a_count(text, days):
 @pytest.mark.parametrize("text,lang,years,width", [
     # 1 000 000 + 200 000, said to the thousand
     ("há um milhão e duzentos mil anos", "pt", 1_200_000, 1_000),
+    # 2 000 000 + 300 000, said to the thousand
+    ("há dois milhões e trezentos mil anos", "pt", 2_300_000, 1_000),
     ("há dois milhões e quinhentos mil anos", "pt", 2_500_000, 1_000),
     # 1 000 000 / 2, said to a tenth of a million
     ("há meio milhão de anos", "pt", 500_000, 100_000),
@@ -101,3 +103,24 @@ def test_scale_count_of_seconds_is_no_year():
 
 def test_scale_count_of_things_is_no_year():
     nomatch("comprei dois mil milhões de livros")
+
+
+@pytest.mark.parametrize("text", [
+    "há mil duzentos anos",
+    "há dois milhões trezentos mil anos",
+    "há mil duzentos milhões de anos",
+])
+def test_two_numbers_before_the_unit_give_no_count(text):
+    """Without "e" the last group starts a new number (Gramática do
+    Português, Fundação Calouste Gulbenkian, pp. 932-933): "mil duzentos" is
+    1000 and 200.  The count of years is not settled, so no slot reads it."""
+    nomatch(text)
+
+
+def test_mil_with_e_is_one_count():
+    """"mil e duzentos" is 1000 + 200 = 1200.  "mil" has no count word
+    before it, so it is no deep-time scale, and the phrase reads as its
+    digits "há 1200 anos" do."""
+    text = "há mil e duzentos anos"
+    assert span(text).start == ANCHOR - relativedelta(years=1200)
+    assert parse(text).remainder == ""

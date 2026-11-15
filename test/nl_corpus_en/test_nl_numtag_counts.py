@@ -56,6 +56,9 @@ def test_half_inside_a_count(text, expected):
 @pytest.mark.parametrize("text,years,width", [
     # 1 000 000 + 200 000, said to the thousand
     ("one million two hundred thousand years ago", 1_200_000, 1_000),
+    # 1000 + 200, said to the hundred: numtag reads "one thousand two
+    # hundred" as one number, as English joins its groups without "and"
+    ("one thousand two hundred years ago", 1_200, 100),
     # 2 000 000 000 + 500 000 000, said to the million
     ("two billion five hundred million years ago", 2_500_000_000, 1_000_000),
     # 2.5 billion, said to a tenth of a billion

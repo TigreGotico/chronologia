@@ -21,7 +21,7 @@ from dataclasses import replace
 from fractions import Fraction
 from functools import lru_cache
 from pathlib import Path
-from typing import Collection, Dict, Mapping, Optional, Tuple, Union
+from typing import Collection, Dict, Mapping, Optional, Set, Tuple, Union
 
 from numtag import Form, Kind, NumberMention, Scale, tag_numbers
 from ovos_spec_tools import expand, read_resource_file
@@ -165,6 +165,39 @@ def reread(run: Tuple[Token, ...], lang: str) -> Tuple[Token, ...]:
         out.append(number_token(m, run[i], run[j - 1]))
         i = j
     return tuple(out)
+
+
+def split_counts(tokens: Tuple[Token, ...],
+                 units: Collection[str]) -> Set[int]:
+    """The indices of the words of two spelled mentions that stand side by
+    side before a unit word.
+
+    numtag reads "mil duzentos" as two numbers, 1000 and 200 (Gramática do
+    Português, Fundação Calouste Gulbenkian, pp. 932-933: "mil e duzentos" is
+    1200, and without "e" the last group starts a new number).  So in "há mil
+    duzentos anos" the count of years is not settled, and only the context
+    of the caller can choose.  The words of both mentions stay words: no
+    count slot takes a mention that another mention cuts from its unit, and
+    no year slot takes the first one.
+    """
+    out: Set[int] = set()
+    n = len(tokens)
+    i = 1
+    while i < n:
+        first, second = tokens[i - 1].mention, tokens[i].mention
+        if first is None or second is None or first is second:
+            i += 1
+            continue
+        end = i
+        while end < n and tokens[end].mention is second:
+            end += 1
+        if end < n and tokens[end].text in units:
+            start = i - 1
+            while start > 0 and tokens[start - 1].mention is first:
+                start -= 1
+            out.update(range(start, end))
+        i = end
+    return out
 
 
 def fold_mentions(tokens: Tuple[Token, ...], lang: str,
