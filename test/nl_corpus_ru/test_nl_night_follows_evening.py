@@ -6,7 +6,9 @@ to 04:00 (CLDR 47, ru), so the night of a day is that band on the NEXT civil
 date.  At the Tuesday 27 June 2017 13:04 anchor, "сегодня ночью" and bare
 "ночью" are the coming night, 28 June 00:00-04:00, not this morning's night,
 which has passed.  "завтра ночью" is the night after Wednesday evening, and
-"вчера ночью" is the night after Monday evening, this morning.
+"вчера ночью" is the night after Monday evening, this morning.  A named
+weekday follows the same rule: "в среду ночью" is the night after Wednesday
+evening, the same night as "завтра ночью".
 """
 from datetime import datetime
 
@@ -21,6 +23,7 @@ from ._corpus import ad, parse
     ("какая погода будет сегодня ночью", 28),
     ("завтра ночью", 29),
     ("вчера ночью", 27),
+    ("в среду ночью", 29),
 ])
 def test_night_band(text, day):
     r = parse(text)

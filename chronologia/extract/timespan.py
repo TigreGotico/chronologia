@@ -3551,6 +3551,12 @@ def _offset_is_day_or_coarser(match, spec) -> bool:
     return kind is not None and kind not in _SUBDAY_OFFSET_UNITS
 
 
+#: Day constructions whose night band follows the day's evening (ru "завтра
+#: ночью", "в среду ночью"): a day named relative to the anchor or by its
+#: weekday.  A calendar date keeps its own small hours ("ночью 5 июня").
+_NIGHT_AFTER_DAYS = frozenset({"named_day", "weekday_ref"})
+
+
 def _compose(resolved, engine, tokens, anchor=None, text=None):
     """Pick the single winning reading from the post-passed ``resolved`` matches.
 
@@ -3726,7 +3732,7 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
         if len(eff_dates) == 1 and _adjacent(eff_dates[0][0], dp_match):
             day_res = eff_dates[0][1]
             if daypart_follows_evening(dp_name) \
-                    and eff_dates[0][0].construction == "named_day":
+                    and eff_dates[0][0].construction in _NIGHT_AFTER_DAYS:
                 # the night after the named day's evening
                 day_res = compose_date_daypart(day_res, dp_res, dp_name,
                                                after_evening=True)
@@ -3748,7 +3754,7 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
         name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
         res = compose_date_daypart(
             eff_dates[0][1], dayparts[0][1], name,
-            after_evening=eff_dates[0][0].construction == "named_day")
+            after_evening=eff_dates[0][0].construction in _NIGHT_AFTER_DAYS)
         rep = eff_dates[0][0]
         glue_consumed = _composition_glue(eff_dates[0][0], dayparts[0][0])
     elif label_consumed and not clocks and not dayparts:

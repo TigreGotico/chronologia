@@ -4,7 +4,8 @@
 s.v. ніч).  The uk night band is the small hours, 00:00 to 04:00 (CLDR 47, uk),
 so the night of a day is that band on the NEXT civil date.  At the Tuesday 27
 June 2017 13:04 anchor, "сьогодні вночі" and bare "вночі" are 28 June
-00:00-04:00, and "завтра вночі" is 29 June 00:00-04:00.
+00:00-04:00, and "завтра вночі" and "в середу вночі" (Wednesday night) are
+29 June 00:00-04:00.
 """
 from datetime import datetime
 
@@ -17,6 +18,7 @@ from ._corpus import ad, parse
     ("сьогодні вночі", 28),
     ("вночі", 28),
     ("завтра вночі", 29),
+    ("в середу вночі", 29),
 ])
 def test_night_band(text, day):
     r = parse(text)
