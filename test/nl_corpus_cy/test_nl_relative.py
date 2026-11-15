@@ -149,7 +149,7 @@ def test_relative_year(text, y):
 ])
 def test_bare_weekday_resolves_forward(text, weekday):
     s = start(text)
-    ahead = (weekday - ANCHOR.weekday()) % 7 or 7
+    ahead = (weekday - ANCHOR.weekday()) % 7
     expected = ANCHOR.date() + timedelta(days=ahead)
     assert (s.year, s.month, s.day) == (expected.year, expected.month,
                                         expected.day)

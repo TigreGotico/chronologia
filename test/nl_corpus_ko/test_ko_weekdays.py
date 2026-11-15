@@ -14,7 +14,7 @@ _NEXT = {
 
 
 def _next_occurrence(index):
-    d = ANCHOR + timedelta(days=1)
+    d = ANCHOR
     while d.weekday() != index:
         d += timedelta(days=1)
     return d

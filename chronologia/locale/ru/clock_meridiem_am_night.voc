@@ -1,0 +1,9 @@
+# "ночи" reads on the am half of the 12-hour clock ("два часа ночи" is 02:00).
+# Over an explicit 24-hour clock it keeps 18:00-23:59 as written ("23:30
+# ночи"). No dictionary entry found pins this either way: Wiktionary gives
+# ночь as "часть суток между вечером и утром (примерно от полночи до 6
+# часов)" (https://ru.wiktionary.org/wiki/ночь), which names no clock hour
+# with "ночи".
+# 13:00-17:59 is the день (Unicode CLDR Day Period Rules, locale ru,
+# afternoon1 [12:00, 18:00)), so "15:30 ночи" names no time.
+ночи

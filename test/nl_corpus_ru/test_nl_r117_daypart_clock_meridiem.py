@@ -56,12 +56,12 @@ def test_preceding_utrom_needs_no_shift_bare_no_date():
 
 def test_preceding_vecherom_with_explicit_weekday_date_and_clean_remainder():
     """The date, the day-part and the clock all compose into one reading;
-    the leading verb phrase is all that is left in the remainder -- not
+    the leading verb is all that is left in the remainder -- not "в",
     "вечером" or any piece of the clock clause."""
     r = _p("встретимся в следующий вторник вечером в 9 часов")
     assert r is not None
     assert r.span.start == AstroDate(2026, 8, 18, 21, 0)
-    assert r.remainder == "встретимся в"
+    assert r.remainder == "встретимся"
 
 
 def test_postposed_genitive_control_is_unaffected():

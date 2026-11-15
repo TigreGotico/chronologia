@@ -259,14 +259,22 @@ def _is_bare_numeral(text: str) -> bool:
 
 
 def _respan(tok: Token, parts: Tuple[str, ...], index: int) -> List[Token]:
-    """Re-cut ``tok`` into ``parts``, carrying the character extents across."""
+    """Re-cut ``tok`` into ``parts``, carrying the character extents across.
+
+    A lexical expansion (작년 -> 지난 해) is no cut of the written word, so
+    each of its parts spans the whole word.
+    """
     out: List[Token] = []
     offset = 0
+    lexical = "".join(parts) != tok.text
     for part in parts:
         start = end = None
         if tok.char_start is not None and len(tok.raw) == len(tok.text):
-            start = tok.char_start + offset
-            end = start + len(part)
+            if lexical:
+                start, end = tok.char_start, tok.char_end
+            else:
+                start = tok.char_start + offset
+                end = start + len(part)
         out.append(Token(text=part, raw=part, index=index + len(out),
                          char_start=start, char_end=end))
         offset += len(part)

@@ -201,10 +201,11 @@ def read_run(text: str) -> Optional[int]:
     return total + group if seen else None
 
 
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
+def _numeric(tok: Token, value: int, end: Token = None,
+             ordinal: bool = False) -> Token:
     return Token(text=str(value), raw=str(value), index=tok.index,
                  is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
+                 char_end=(end or tok).char_end, ordinal=ordinal)
 
 
 def _cardinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
@@ -245,19 +246,19 @@ def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         unit = None if t.is_number else _ORDINAL_UNITS.get(t.text)
         if unit is not None:
             if i + 1 < n and tokens[i + 1].text in _DEAG:
-                out.append(_numeric(t, unit + 10, tokens[i + 1]))
+                out.append(_numeric(t, unit + 10, tokens[i + 1], ordinal=True))
                 i, changed = i + 2, True
                 continue
             if (i + 2 < n and tokens[i + 1].text in _JOINERS
                     and _ORDINAL_TENS.get(tokens[i + 2].text) == 20):
-                out.append(_numeric(t, unit + 20, tokens[i + 2]))
+                out.append(_numeric(t, unit + 20, tokens[i + 2], ordinal=True))
                 i, changed = i + 3, True
                 continue
-            out.append(_numeric(t, unit))
+            out.append(_numeric(t, unit, ordinal=True))
             i, changed = i + 1, True
             continue
         if not t.is_number and t.text in _ORDINAL_TENS:
-            out.append(_numeric(t, _ORDINAL_TENS[t.text]))
+            out.append(_numeric(t, _ORDINAL_TENS[t.text], ordinal=True))
             i, changed = i + 1, True
             continue
         out.append(t)
