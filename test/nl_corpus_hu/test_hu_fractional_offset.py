@@ -10,7 +10,11 @@ remainder.
 s.v. másfél), so "másfél óra múlva" is 14:34 and "két és fél óra múlva" is
 15:34.  The whole count is read, and no number word stays in the remainder.
 """
+from datetime import timedelta
+
 import pytest
+
+from chronologia import extract_duration
 
 from ._corpus import ANCHOR, ad, parse
 
@@ -36,3 +40,16 @@ def test_whole_and_a_half_hours(text, hour, minute):
     assert r is not None
     assert r.span.start == ad(ANCHOR.replace(hour=hour, minute=minute))
     assert r.remainder == ""
+
+
+@pytest.mark.parametrize("text,seconds", [
+    ("két és fél óra", 9000),                 # 2.5 * 3600
+    ("másfél óra", 5400),                     # 1.5 * 3600
+    ("a film két és fél óra hosszú", 9000),   # the film is 2.5 hours long
+    ("két és fél óra alatt", 9000),           # within 2.5 hours
+])
+def test_a_count_with_a_half_is_a_length_not_a_clock(text, seconds):
+    # The clock says half past two as "fél három", never "két és fél óra",
+    # so the phrase names a length and no point in time.
+    assert parse(text) is None
+    assert extract_duration(text, "hu").duration == timedelta(seconds=seconds)

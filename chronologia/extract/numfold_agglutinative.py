@@ -487,7 +487,11 @@ def _with_hu_half_count(fold):
                 out.append(t)
                 i += 1
                 continue
-            out.append(replace(t, text=str(value), is_number=True, value=value,
+            # the raw shows the decimal, so the token never binds a clock
+            # HOUR: "két és fél óra" is a length of 2.5 hours, and the clock
+            # says half past two as "fél három"
+            out.append(replace(t, text=str(value), raw=str(value),
+                               is_number=True, value=value,
                                char_end=last.char_end))
             i += step
         return reindex(tuple(out))
