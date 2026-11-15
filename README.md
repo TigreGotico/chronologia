@@ -50,7 +50,7 @@ honestly when history itself doesn't know the answer.
 pip install chronologia
 ```
 
-Python 3.10+. The calendrical core is pure standard library; the
+Python 3.11+. The calendrical core is pure standard library; the
 natural-language layer adds three small helpers — **numtag** (reads the
 English and Portuguese numbers), **ovos-number-parser** (spelled numbers →
 digits in the other languages) and **ovos-spec-tools** (loads each language's

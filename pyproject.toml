@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "General-purpose calendrical and chronological core: unbounded datetime-compatible dates, half-open time spans, and a JDN calendar/era/regnal/cycle registry."
 readme = "README.md"
 license = { text = "Apache-2.0" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [{ name = "TigreGotico" }]
 keywords = ["calendar", "datetime", "julian-day", "eras", "chronology", "astronomical-year"]
 classifiers = [
@@ -16,7 +16,9 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 # Natural-language date extraction (chronologia.extract / extract_timespan)
@@ -26,7 +28,7 @@ classifiers = [
 # bundles under chronologia/locale/. The calendrical core (dates, spans,
 # calendars, eras) still runs on the standard library alone.
 dependencies = [
-    "numtag>=0.0.1a1",
+    "numtag>=0.1.0a1",
     "ovos-number-parser>=0.19.7a2",
     "ovos-spec-tools>=1.5.0a1",
 ]
@@ -51,8 +53,7 @@ chronologia = "chronologia.__main__:main"
 # suite at all; test/test_packaging.py builds a
 # real wheel and imports it, so it needs `build` plus `setuptools`, whose
 # backend the build runs uninsulated and which the interpreters that no
-# longer bundle it would otherwise lack, and it reads pyproject.toml, so it
-# needs the `tomli` backport on the one interpreter without stdlib tomllib;
+# longer bundle it would otherwise lack;
 # pytest-xdist spreads the suite over every core, which is what keeps a
 # six-figure test count inside a CI job's wall-clock budget;
 # the rest of the suite runs on pytest alone.
@@ -64,7 +65,6 @@ test = [
     "python-dateutil>=2.8",
     "build>=1.0",
     "setuptools>=61",
-    "tomli>=2.0; python_version < '3.11'",
 ]
 
 [dependency-groups]
@@ -76,7 +76,6 @@ dev = [
     "python-dateutil>=2.8",
     "build>=1.0",
     "setuptools>=61",
-    "tomli>=2.0; python_version < '3.11'",
     "mypy",
 ]
 

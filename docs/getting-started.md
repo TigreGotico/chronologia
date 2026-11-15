@@ -11,7 +11,7 @@ follow along.
 pip install chronologia
 ```
 
-That is everything. You need Python 3.10 or newer. The reckoning core is pure
+That is everything. You need Python 3.11 or newer. The reckoning core is pure
 standard library; the natural-language layer adds three small pure-Python
 helpers — **numtag** (reads the English and Portuguese numbers),
 **ovos-number-parser** (spelled numbers → digits in the other languages) and
