@@ -283,9 +283,15 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         # where a count of 988 takes the plural ("988 лет").  A language
         # whose year noun has no plural of its own counts with the one form
         # ("100년 전", "hundrað ár"), so there three digits stay a count
-        if kind != "year" or tok is None or not tok.raw.isdigit():
+        if kind != "year" or tok is None:
             return False
-        return len(tok.raw) == 4 or (len(tok.raw) == 3 and bool(year_plural)
+        # the source text, not ``raw``: a spelled number may carry digits
+        # in ``raw`` ("mil e quinhentos" -> "1500") and is no written year
+        written = tok.raw if tok.char_start is None or tok.char_end is None \
+            else text[tok.char_start:tok.char_end]
+        if not written.isdigit():
+            return False
+        return len(written) == 4 or (len(written) == 3 and bool(year_plural)
                                      and unit_tok.text in year_forms)
 
     def _weekday_by_a_clock(unit_at, count_at):
@@ -1585,7 +1591,7 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
         if dur is None or (dur.remainder and _calendar(text)
                            and _another_start(dur.remainder)):
             return None
-        count = _count_from_duration(rec.freq, dur[0])
+        count = _count_from_duration(rec.freq, dur[0], rec.interval)
         if count is None:
             return None
         return _replace(rec, count=count)
@@ -1916,15 +1922,19 @@ def _apply_year_scope(rec, consumed, ctx, lang, anchor):
     return rec, consumed | set(range(lo, hi))
 
 
-def _count_from_duration(freq, td):
-    """Occurrence count a duration spans at ``freq``: one per day for DAILY,
-    one per whole week for WEEKLY.  MONTHLY/YEARLY return ``None`` (no COUNT
+def _count_from_duration(freq, td, interval=1):
+    """Occurrence count a duration spans at ``freq`` and ``interval``.
+
+    DAILY: the first occurrence is day 0, so a span of ``d`` days holds
+    ``ceil(d / interval)`` of them: "every 2 days for a year" is days 0, 2,
+    ..., 364, 183 occurrences.  WEEKLY: one per whole week, then one per
+    ``interval`` of those weeks.  MONTHLY/YEARLY return ``None`` (no COUNT
     bound): the duration is a length in days, and a count of months or years
     would have to be read again from the calendar."""
     if freq == "DAILY":
-        return td.days or None
+        return -(-td.days // interval) or None
     if freq == "WEEKLY":
-        return (td.days // 7) or None
+        return -(-(td.days // 7) // interval) or None
     return None
 
 

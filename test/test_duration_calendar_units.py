@@ -116,6 +116,16 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
     ("ru", "в 988 году"),
     ("ru", "988 год"),
     ("pl", "w 988 roku"),
+    # the same in the other languages whose year noun has a plural
+    # (en.wiktionary declension tables: uk "роки", bg and mk "години",
+    # sw "miaka", ha "shekaru")
+    ("uk", "у 988 році"),
+    ("uk", "988 рік"),
+    ("bg", "през 988 година"),
+    ("bg", "988 година"),
+    ("mk", "988 година"),
+    ("ha", "shekarar 988"),
+    ("sw", "mwaka 980"),
     # ro "luni" is both "months" and "Monday": next to a clock it is the day
     ("ro", "la ora 9 luni dimineața"),
 ])
@@ -130,6 +140,11 @@ def test_a_calendar_unit_without_a_plain_count_names_no_length(lang, text):
     ("de", "seit 988 jahren", {"years": 988}),
     ("it", "988 anni", {"years": 988}),
     ("ro", "988 ani", {"years": 988}),
+    ("uk", "988 років", {"years": 988}),
+    ("bg", "988 години", {"years": 988}),
+    ("sw", "miaka 980", {"years": 980}),
+    # a spelled number is no written year, whatever digits it folds to
+    ("pt", "mil e quinhentos anos", {"years": 1500}),
     # a year noun with no plural of its own counts with its one form
     ("ko", "100년 전", {"years": 100}),
     ("vi", "một trăm năm trước", {"years": 100}),
@@ -222,6 +237,24 @@ def test_an_event_reads_a_calendar_length_only_after_its_marker(
     assert got.span.start == datetime(2026, 6, 1)
     assert got.duration is None
     assert got.summary == summary
+
+
+@pytest.mark.parametrize("lang, text, count", [
+    # the first occurrence is day 0.  From 31 January 2026 a year is 365
+    # days: days 0, 2, ..., 364 are 183 occurrences.  A month ends on 28
+    # February, 28 days: every 3 days is days 0, 3, ..., 27, 10 occurrences
+    ("en", "every 2 days for a year", 183),
+    ("en", "every 3 days for a month", 10),
+    ("en", "every other day for a month", 14),
+    ("pt", "a cada 2 dias durante um mês", 14),
+    # the same for a fixed length: days 0, 3, 6 and 9 of 10
+    ("en", "every 2 days for 10 days", 5),
+    ("en", "every 3 days for 10 days", 4),
+])
+def test_a_recurrence_count_steps_by_its_interval(lang, text, count):
+    from chronologia import extract_recurrence
+    got = extract_recurrence(text, lang, anchor=END_OF_JANUARY)
+    assert got.recurrence.count == count
 
 
 @pytest.mark.parametrize("text", [
