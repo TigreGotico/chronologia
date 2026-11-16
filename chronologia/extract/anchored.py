@@ -82,6 +82,8 @@ def _shift(start: AstroDate, unit: str, step: float) -> AstroDate:
         return start + timedelta(seconds=step)
     if unit == "minute":
         return start + timedelta(minutes=step)
+    if unit == "quarter_hour":
+        return start + timedelta(minutes=15 * step)
     if unit == "hour":
         return start + timedelta(hours=step)
     if unit == "day":
@@ -121,6 +123,7 @@ def _astro_day_span(d: AstroDate) -> DateSpan:
 #: it counts from
 _LONGEST_UNIT = {
     "second": timedelta(seconds=1), "minute": timedelta(minutes=1),
+    "quarter_hour": timedelta(minutes=15),
     "hour": timedelta(hours=1), "day": timedelta(days=1),
     "week": timedelta(weeks=1), "fortnight": timedelta(weeks=2),
     "month": timedelta(days=31), "year": timedelta(days=366),

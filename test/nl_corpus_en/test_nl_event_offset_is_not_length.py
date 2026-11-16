@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from chronologia import extract_event
+from chronologia import extract_event, extract_timespan
 
 ANCHOR = datetime(2026, 1, 30, 10, 0)
 
@@ -48,3 +48,76 @@ def test_length_with_for_stays_a_length(text, summary, start, length):
     ev = extract_event(text, "en", anchor=ANCHOR)
     assert (ev.summary, ev.span.start, ev.span.end, ev.duration) == (
         summary, start, start + length, length)
+
+
+MONDAY = datetime(2026, 1, 26, 10, 0)
+
+
+@pytest.mark.parametrize("lang, text, anchor, summary, day, hours", [
+    # "uur" and "heures" are a clock hour and a length: Larousse "heure",
+    # en.wiktionary nl "uur". Without a marker the number is the length.
+    ("fr", "réunion de deux heures demain", ANCHOR, "réunion",
+     datetime(2026, 1, 31), 2),
+    ("fr", "un cours de deux heures vendredi", MONDAY, "cours",
+     datetime(2026, 1, 30), 2),
+    ("fr", "je travaille trois heures demain", ANCHOR, "je travaille",
+     datetime(2026, 1, 31), 3),
+    ("nl", "vergadering van twee uur morgen", ANCHOR, "vergadering",
+     datetime(2026, 1, 31), 2),
+    ("nl", "ik werk drie uur morgen", ANCHOR, "ik werk",
+     datetime(2026, 1, 31), 3),
+])
+def test_a_length_without_an_offset_marker_stays_a_length(
+        lang, text, anchor, summary, day, hours):
+    ev = extract_event(text, lang, anchor=anchor)
+    length = timedelta(hours=hours)
+    assert (ev.summary, ev.span.start, ev.span.end, ev.duration) == (
+        summary, day, day + length, length)
+
+
+def test_nl_quarter_hour_offset_reads_like_its_english_form():
+    """Dutch "een kwartier" is the unit quarter_hour; it reads as the
+    English "15 minutes" does and raises nothing."""
+    for nl, en in [
+        ("we eten een kwartier na kerstmis", "we eat 15 minutes after christmas"),
+        ("een kwartier voor kerstmis bellen",
+         "15 minutes before christmas call"),
+    ]:
+        got = extract_event(nl, "nl", anchor=ANCHOR)
+        want = extract_event(en, "en", anchor=ANCHOR)
+        assert (got.span.start, got.span.end, got.duration) == (
+            want.span.start, want.span.end, want.duration)
+
+
+def test_nl_quarter_hour_before_christmas_is_the_day_before():
+    ev = extract_event("een kwartier voor kerstmis bellen", "nl", anchor=ANCHOR)
+    assert (ev.summary, ev.span.start, ev.duration) == (
+        "bellen", datetime(2026, 12, 24), None)
+
+
+def test_a_failing_whole_text_read_does_not_raise(monkeypatch):
+    """The exploratory whole-text read must not take the event down."""
+    import chronologia.extract as extract
+    real = extract.extract_timespan
+    calls = []
+
+    def flaky(text, *args, **kwargs):
+        calls.append(text)
+        if len(calls) == 1:
+            raise ValueError("unsupported offset unit")
+        return real(text, *args, **kwargs)
+
+    monkeypatch.setattr(extract, "extract_timespan", flaky)
+    ev = extract_event("dentist for 2 hours tomorrow", "en", anchor=ANCHOR)
+    assert (ev.summary, ev.duration) == ("dentist", timedelta(hours=2))
+
+
+@pytest.mark.parametrize("nl, en", [
+    ("een kwartier na kerstmis", "15 minutes after christmas"),
+    ("een kwartier voor kerstmis", "15 minutes before christmas"),
+    ("twee kwartier na kerstmis", "30 minutes after christmas"),
+])
+def test_nl_quarter_hour_offset_spans_like_its_english_form(nl, en):
+    got = extract_timespan(nl, "nl", anchor=ANCHOR)
+    want = extract_timespan(en, "en", anchor=ANCHOR)
+    assert (got.span.start, got.span.end) == (want.span.start, want.span.end)
