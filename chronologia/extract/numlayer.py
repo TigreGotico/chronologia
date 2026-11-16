@@ -48,10 +48,12 @@ def mentions(text: str, lang: str) -> Tuple[NumberMention, ...]:
     """The spelled mentions of ``text``: WORDS and MIXED.
 
     DIGITS mentions are left out, because the tokenizer reads digits with the
-    locale's decimal mark and its date literals ("3.5.2025", "15h30").
+    locale's decimal mark and its date literals ("3.5.2025", "15h30").  Roman
+    numerals are left out too: :mod:`numfold_roman` reads one only next to a
+    century word or after a year marker, so a bare "MMXX" stays a word.
     """
     return tuple(m for m in tag_numbers(text, NUMTAG_LANGS.get(lang, lang))
-                 if m.form is not Form.DIGITS)
+                 if m.form in (Form.WORDS, Form.MIXED))
 
 
 def attach(tokens: Tuple[Token, ...], text: str,
