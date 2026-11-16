@@ -36,6 +36,7 @@ writer's ``DTEND`` is correct).
 """
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Optional, Union
@@ -178,6 +179,24 @@ def extract_event(
 
     duration: Optional[timedelta] = None
     got_dur = extract_duration(remainder, lang)
+    if got_dur is not None and recurrence is None:
+        # "3 days before christmas": the length is the date's offset, not the
+        # event's width, when the span reading of the whole text consumes
+        # every word the length took and starts on another date than the text
+        # without the length.  "for 3 days from tomorrow" keeps its length,
+        # because the span reading leaves "for" behind; "at 5pm for 10
+        # minutes" keeps it, because both readings start at 5pm.
+        whole = extract_timespan(remainder, lang, anchor=anchor,
+                                 jurisdiction=jurisdiction)
+        if whole is not None:
+            words = Counter(remainder.lower().split())
+            length_words = words - Counter(got_dur.remainder.lower().split())
+            span_words = words - Counter(whole.remainder.lower().split())
+            rest = extract_timespan(got_dur.remainder, lang, anchor=anchor,
+                                    jurisdiction=jurisdiction)
+            if not length_words - span_words and (
+                    rest is None or rest.span.start != whole.span.start):
+                got_dur = None
     if got_dur is not None:
         duration, remainder = got_dur
 
