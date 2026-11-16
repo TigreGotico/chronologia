@@ -48,9 +48,9 @@ def _day(text):
      date(2026, 8, 31) + timedelta(weeks=1), "the shop opens"),
     ("we move 3 months after summer",
      date(2026, 8, 31) + relativedelta(months=3), "we move"),
-    # bare "march" at the anchor is March 2026
+    # bare "march" at the anchor is the next March, March 2027
     ("the report is due a week after march",
-     date(2026, 3, 31) + timedelta(weeks=1), "the report is due"),
+     date(2027, 3, 31) + timedelta(weeks=1), "the report is due"),
     # a weekday has no unit: the first monday after 30 June 2027, a Wednesday
     ("the monday after june 2027",
      date(2027, 6, 30) + timedelta(days=(0 - date(2027, 6, 30).weekday()) % 7),
@@ -75,7 +75,7 @@ def test_before_a_span_and_after_a_day_are_unchanged(text, day, remainder):
 @pytest.mark.parametrize("text, day, remainder", [
     # a unit as long as the reference counts unit by unit from its first day
     ("the lease ends a month after march",
-     date(2026, 3, 1) + relativedelta(months=1), "the lease ends"),
+     date(2027, 3, 1) + relativedelta(months=1), "the lease ends"),
     ("2 years after 1990", date(1990, 1, 1) + relativedelta(years=2), ""),
     ("a year after next summer",
      FIRST_DAY_OF_NEXT_SUMMER + relativedelta(years=1), ""),

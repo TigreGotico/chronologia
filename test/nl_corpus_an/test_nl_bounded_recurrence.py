@@ -10,7 +10,7 @@ ANCHOR = datetime(2018, 6, 5, 13, 4)
 _CASES = [
     ('cada viernes', 'FREQ=WEEKLY;BYDAY=FR', ''),
     ('cada semana', 'FREQ=WEEKLY', ''),
-    ('cada viernes dica abril', 'FREQ=WEEKLY;UNTIL=20180401T000000;BYDAY=FR', ''),
+    ('cada viernes dica abril', 'FREQ=WEEKLY;UNTIL=20190401T000000;BYDAY=FR', ''),
     ('cada luns dica setiembre', 'FREQ=WEEKLY;UNTIL=20180901T000000;BYDAY=MO', ''),
     ('cada luns durante 6 semanas', 'FREQ=WEEKLY;COUNT=6;BYDAY=MO', ''),
     ('cada viernes durante 3 semanas', 'FREQ=WEEKLY;COUNT=3;BYDAY=FR', ''),

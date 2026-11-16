@@ -345,6 +345,20 @@ def _next_day_month(month: int, day: int, anchor: datetime) -> Optional[datetime
     return None
 
 
+def _last_day_month(month: int, day: int, anchor: datetime) -> Optional[datetime]:
+    """The latest day and month with no year that came round before the
+    anchor's day ("last March 5").  The backward twin of
+    :func:`_next_day_month`, bounded by the same eight-year walk."""
+    for y in range(anchor.year, anchor.year - _ROLL_YEAR_LIMIT, -1):
+        try:
+            value = datetime(y, month, day)
+        except ValueError:
+            continue                        # no such day that year
+        if value < _midnight(anchor):
+            return value
+    return None
+
+
 def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
     """The locale-aligned seven-day week containing ``start_astro``.
 
@@ -1439,7 +1453,10 @@ class Resolver:
                           self._consumed(match))
 
     def _resolve_calendar_date(self, match, anchor):
-        month = self.spec.months[match.slots["MONTH"].text]
+        month_tok = match.slots["MONTH"]
+        month = self.spec.months[month_tok.text]
+        rel_tok = match.slots.get("REL_MARKER")
+        rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
         day_tok = match.slots.get("DAY")
         year_tok = match.slots.get("YEAR")
         era_tok = match.slots.get("ERA")
@@ -1466,11 +1483,38 @@ class Resolver:
             span = DateSpan(astro, astro + timedelta(days=1)) if day_tok \
                 else _gregorian_month_span(year, month)
             return Resolution(span, self._consumed(match))
+        # a year phrase after the month ("march of this year", "5 марта
+        # прошлого года") names the year outright
+        year_phrase = (rel_tok is not None and rel_tok.index > month_tok.index
+                       and match.span[1] > rel_tok.index + 1)
         if year_tok:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
             year = anchor.year
-        if not year_tok and prefer_future and day_tok:
+            if year_phrase:
+                year += rel
+            elif rel < 0:
+                # "last October": the latest such month that has ended
+                if month >= anchor.month:
+                    year -= 1
+            elif rel > 0:
+                # "next July": the first such month after the anchor's
+                if month <= anchor.month:
+                    year += 1
+            elif prefer_future and not day_tok and month < anchor.month:
+                # A bare month names its next occurrence as a span: the month
+                # that holds the anchor is this one, a month that has already
+                # ended is next year's.
+                year += 1
+        if year_tok or year_phrase:
+            value = datetime(year, month, day)      # raises on impossible
+        elif day_tok and rel < 0:
+            # "last March 5": the latest such day before today
+            value = _last_day_month(month, day, anchor)
+            if value is None:
+                return None
+            year = value.year
+        elif prefer_future and day_tok:
             value = _next_day_month(month, day, anchor)
             if value is None:
                 return None
@@ -1501,6 +1545,14 @@ class Resolver:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
             year = calendar.from_jdn(anchor_jdn)[0]     # anchor's calendar year
+            if prefer_future and not day_tok:
+                # A bare month names its next occurrence, as on the
+                # Gregorian path: a month that has already ended is next
+                # year's.
+                nyear, nmonth = (year, month + 1) \
+                    if month < calendar.month_count else (year + 1, 1)
+                if calendar.to_jdn(nyear, nmonth, 1) <= anchor_jdn:
+                    year += 1
         if not year_tok and prefer_future and day_tok:
             # Same walk as the Gregorian path, in calendar space: a bare
             # day-and-month names the next time that day comes round, and the

@@ -43,7 +43,7 @@ def test_year_list_yields_one_mention_per_year():
 
 def test_month_list_yields_one_mention_per_month():
     assert _starts("March, June and September") == [
-        (2017, 3, 1), (2017, 6, 1), (2017, 9, 1)]
+        (2018, 3, 1), (2017, 6, 1), (2017, 9, 1)]
 
 
 def test_holiday_list_yields_one_mention_per_holiday():

@@ -64,8 +64,8 @@ def test_antara_dan_empty_remainder():
 def test_dari_sampai_consumes_lead():
     r = _result("dari Januari sampai Maret")
     assert r is not None
-    assert r[0].start == AstroDate(2026, 1, 1)
-    assert r[0].end == AstroDate(2026, 4, 1)
+    assert r[0].start == AstroDate(2027, 1, 1)
+    assert r[0].end == AstroDate(2027, 4, 1)
     assert r.remainder == ""
 
 

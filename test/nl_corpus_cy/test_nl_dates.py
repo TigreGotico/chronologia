@@ -82,7 +82,7 @@ def test_day_month_without_year_resolves_forward(text, y, m, d):
 
 
 @pytest.mark.parametrize("text,y,m", [
-    ("Gorffennaf", 2017, 7), ("Ionawr", 2017, 1), ("Mehefin", 2017, 6),
+    ("Gorffennaf", 2017, 7), ("Ionawr", 2018, 1), ("Mehefin", 2017, 6),
     ("Rhagfyr", 2017, 12),
 ])
 def test_bare_month_is_the_whole_month(text, y, m):

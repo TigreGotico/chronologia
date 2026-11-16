@@ -17,9 +17,9 @@ def _d(s):
 
 @pytest.mark.parametrize("text,s,e", [
     ("od června do srpna", "2017-6-1", "2017-9-1"),
-    ("od ledna do března", "2017-1-1", "2017-4-1"),
+    ("od ledna do března", "2018-1-1", "2018-4-1"),
     ("od října do prosince", "2017-10-1", "2018-1-1"),
-    ("od března do května", "2017-3-1", "2017-6-1"),
+    ("od března do května", "2018-3-1", "2018-6-1"),
     ("od června 2020 do srpna 2021", "2020-6-1", "2021-9-1"),
     ("od ledna 2000 do prosince 2009", "2000-1-1", "2010-1-1"),
 ])

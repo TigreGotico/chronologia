@@ -50,7 +50,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional, Set, Tuple
 
 from chronologia.civil_holidays import is_civil_holiday
-from chronologia.extract.anchored import _gap_words
+from chronologia.extract.anchored import _gap_words, _offset_base
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
                                               _day_span, _midnight,
@@ -253,7 +253,7 @@ def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
                         return base, sign, rec_end, ids
             if flat is not None:
                 m, r = flat
-                s = r.value.start
+                s = _offset_base(r.value, sign, "day")
                 base = datetime(s.year, s.month, s.day)
                 ids = set(range(m.span[0], m.span[1])) | set(range(hi, p))
                 return base, sign, m.span[1], ids
