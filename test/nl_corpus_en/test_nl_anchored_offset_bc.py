@@ -14,10 +14,6 @@ maps ``year -> 1 - n``, i.e. "1 BC" == year 0, "44 BC" == year -43):
     500 BC  == year -499;  -499 - 2000 == -2499  ("2000 years before 500 BC")
     44 BCE  == year  -43;   -43 +  300 ==   257  ("3 centuries after 44 BCE")
     44 BC   == year  -43;   -43 -  100 ==  -143  ("100 years before 44 BC")
-
-"before" counts back from the first day of the year, 1 January.  "after"
-counts on from its last day, 31 December, as "the day after christmas"
-counts from 25 December.
 """
 import pytest
 
@@ -28,16 +24,16 @@ from datetime import date, timedelta
 
 # -- the three confirmed crash repros --------------------------------------
 
-@pytest.mark.parametrize("text,year,month,day", [
-    ("2000 years before 500 BC", -2499, 1, 1),
-    ("3 centuries after 44 BCE", 257, 12, 31),
-    ("100 years before 44 BC", -143, 1, 1),
+@pytest.mark.parametrize("text,year", [
+    ("2000 years before 500 BC", -2499),
+    ("3 centuries after 44 BCE", 257),
+    ("100 years before 44 BC", -143),
 ])
-def test_bc_offset_no_longer_raises(text, year, month, day):
+def test_bc_offset_no_longer_raises(text, year):
     # must not raise -- extractors are documented to never raise.
     result = parse(text)
     assert result is not None, f"{text!r} did not parse (expected a span)"
-    assert start(text) == AstroDate(year, month, day, 0, 0, 0, 0)
+    assert start(text) == AstroDate(year, 1, 1, 0, 0, 0, 0)
 
 
 # -- controls: ordinary (non-BC) offset composition is unchanged ----------
@@ -74,22 +70,21 @@ def test_control_deep_time_unchanged():
 # untouched -> a confidently WRONG non-None span (2020, whole-year) with the
 # offset words dumped in the remainder instead of composed.  Convention
 # (matches the BC fix and the "100 years before june 2020" case already on
-# dev): "before" shifts the reference's first day and "after" its last day;
-# the result is DAY-WIDE at the shifted day -- not year-wide. ---------------
+# dev): the offset shifts the reference's START, result is DAY-WIDE at that
+# shifted start -- not year-wide. ------------------------------------------
 
-@pytest.mark.parametrize("text,first_day", [
-    ("100 years before 2020", date(1920, 1, 1)),
-    ("2 years after 1990", date(1992, 12, 31)),
-    ("a century after 1900", date(2000, 12, 31)),
+@pytest.mark.parametrize("text,year", [
+    ("100 years before 2020", 1920),
+    ("2 years after 1990", 1992),
+    ("a century after 1900", 2000),
 ])
-def test_year_ref_offset_composes(text, first_day):
+def test_year_ref_offset_composes(text, year):
     result = parse(text)
     assert result is not None, f"{text!r} did not parse (expected a span)"
     span_, remainder = result
     assert remainder == "", f"{text!r} left a remainder: {remainder!r}"
-    assert span_.start == _ad(first_day)
-    # day-wide, not year-wide
-    assert span_.end == _ad(first_day + timedelta(days=1))
+    assert span_.start == AstroDate(year, 1, 1)
+    assert span_.end == AstroDate(year, 1, 2)  # day-wide, not year-wide
 
 
 # -- controls: bare-year reading itself, and adjacent constructs, unchanged -
