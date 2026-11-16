@@ -138,6 +138,14 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
     ("ru", "в январе 102 года"),
     ("ru", "1 мая 102 года"),
     ("ru", "зимой 104 года"),
+    # "после" and "до" take the genitive (en.wiktionary "после"), and a
+    # count in an oblique case takes the plural (en.wiktionary "два",
+    # usage notes): "после 862 лет" counts, "после 862 года" is a year
+    ("ru", "после 862 года"),
+    ("ru", "до 862 года"),
+    ("ru", "до 102 года"),
+    ("uk", "після 862 року"),
+    ("uk", "до 102 року"),
     ("ru", "101 год"),
     ("bg", "през 988 година"),
     ("bg", "988 година"),
@@ -186,6 +194,7 @@ def test_a_count_of_years_is_still_a_length(lang, text, delta):
     ("uk", "101 рік тому", 101),
     ("uk", "121 рік тому", 121),
     ("uk", "через 101 рік", 101),
+    ("ru", "за 102 года до нашей эры", 102),
 ])
 def test_a_count_of_years_agrees_with_its_last_word(lang, text, years):
     """An East Slavic count agrees with the last word of its number.  ru

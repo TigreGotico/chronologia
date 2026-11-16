@@ -278,9 +278,13 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         if s not in year_plural
         and (spec.singular_units or s not in spec.plural_units)}
 
-    offset_words = set(spec.directions) | {
-        word for name in ("in", "after", "before", "offset_lead")
-        for surface in spec.connectors.get(name, ()) for word in surface.split()}
+    def _words(*names):
+        return {word for name in names
+                for surface in spec.connectors.get(name, ())
+                for word in surface.split()}
+
+    words_before_count = set(spec.directions) | _words("in", "offset_lead")
+    words_after_count = words_before_count | _words("after", "before")
 
     def _written_year(kind, tok, unit_tok):
         # a number written in digits by a year word names that year, not a
@@ -307,10 +311,14 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     def _by_an_offset_word(tok, unit_tok):
         # "года" is also the genitive of the year in a date ("летом 862
         # года", the summer of 862), so the count forms count only next to
-        # an ago, in, after or before word: "101 год назад", "через 102 года"
+        # an ago or in word, or after the unit an after or before word:
+        # "101 год назад", "через 102 года", "за 102 года до нашей эры".
+        # Before the number "после" and "до" take the genitive of a year
+        # ("после 862 года"); a count there is "после 862 лет"
         lo, hi = sorted((tok.index, unit_tok.index))
-        near = {tokens[k].text for k in (lo - 1, hi + 1) if 0 <= k < n}
-        return bool(near & offset_words)
+        before = tokens[lo - 1].text if lo > 0 else None
+        after = tokens[hi + 1].text if hi + 1 < n else None
+        return before in words_before_count or after in words_after_count
 
     def _count_forms(written):
         # East Slavic counts agree with the last word of the number: one
