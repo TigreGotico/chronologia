@@ -291,8 +291,24 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             else text[tok.char_start:tok.char_end]
         if not written.isdigit():
             return False
-        return len(written) == 4 or (len(written) == 3 and bool(year_plural)
-                                     and unit_tok.text in year_forms)
+        if len(written) == 4:
+            return True
+        return (len(written) == 3 and bool(year_plural)
+                and unit_tok.text in year_forms
+                and unit_tok.text not in _count_forms(written))
+
+    def _count_forms(written):
+        # East Slavic counts agree with the last word of the number: one
+        # takes the singular ("101 год", "101 рік"), two to four in ru the
+        # genitive singular ("102 года"); the teens take the plural
+        last, tens = int(written[-1]), int(written[-2])
+        if tens == 1:
+            return frozenset()
+        if last == 1:
+            return spec.connectors.get("year_count_one", frozenset())
+        if 2 <= last <= 4:
+            return spec.connectors.get("year_count_few", frozenset())
+        return frozenset()
 
     def _weekday_by_a_clock(unit_at, count_at):
         # ro "luni" is "months" and "Monday".  After a clock hour ("la ora 9
