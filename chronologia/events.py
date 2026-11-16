@@ -142,26 +142,33 @@ def _clean_summary(text: str, lang: str) -> str:
 
 
 def _is_bare_clock_length(text: str, lang: str, anchor: datetime,
-                          span_words: Counter, length_words: Counter) -> bool:
+                          length_words: Counter) -> bool:
     """True when the length words alone read as a clock time and no offset
-    marker sits among the words the date reading took."""
+    marker joins them to the date.
+
+    A marker joins two readings, so only a token that lies between two
+    winners and that no winner takes counts: "avant" in "deux heures avant
+    midi".  A marker inside a reading is part of it: "après-demain" is one
+    day word, and "en mars" one month.
+    """
     from chronologia.extract import explain, load_lang_spec
 
     spec = load_lang_spec(lang)
-    markers = {word for name in ("before", "after", "in", "ago")
+    markers = {word.lower() for name in ("before", "after", "in", "ago")
                for surface in spec.connectors.get(name, ())
                for word in surface.split()}
-    if markers & set(span_words):
-        return False
     trace = explain(text, spec, anchor)
-
-    def words(match) -> Counter:
-        first, last = match.span[0], match.span[1] - 1
-        return Counter(text[trace.tokens[first].char_start:
-                            trace.tokens[last].char_end].lower().split())
-
+    spans = [w.match.span for w in trace.winners]
+    if not spans:
+        return False
+    taken = {i for first, end in spans for i in range(first, end)}
+    gap = range(min(first for first, _ in spans), max(end for _, end in spans))
+    if any(trace.tokens[i].text.lower() in markers
+           for i in gap if i not in taken):
+        return False
     return any(w.match.construction == "clock_time"
-               and words(w.match) == length_words for w in trace.winners)
+               and Counter(t.text for t in trace.tokens[slice(*w.match.span)])
+               == length_words for w in trace.winners)
 
 
 def extract_event(
@@ -222,14 +229,18 @@ def extract_event(
         except (KeyError, ValueError):
             whole = None
         if whole is not None:
-            words = Counter(remainder.lower().split())
-            length_words = words - Counter(got_dur.remainder.lower().split())
-            span_words = words - Counter(whole.remainder.lower().split())
+            engine = _timespan_engine(lang)
+
+            def words(phrase: str) -> Counter:
+                return Counter(t.text for t in engine.tokenize(phrase))
+
+            all_words = words(remainder)
+            length_words = all_words - words(got_dur.remainder)
+            span_words = all_words - words(whole.remainder)
             if not length_words - span_words and (
                     rest is None or rest.span.start != whole.span.start) \
                     and not (rest is not None and _is_bare_clock_length(
-                        remainder, lang, anchor, span_words,
-                        length_words)):
+                        remainder, lang, anchor, length_words)):
                 got_dur = None
     if got_dur is not None:
         duration, remainder = got_dur
