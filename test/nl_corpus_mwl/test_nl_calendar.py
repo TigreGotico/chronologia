@@ -48,7 +48,7 @@ def test_bare_month_year(text, y, m):
     ("maio", 5), ("júnio", 6), ("júlio", 7), ("agosto", 8),
     ("setembre", 9), ("outubre", 10), ("nobembre", 11), ("dezembre", 12)])
 def test_bare_month(text, m):
-    assert start(text) == AstroDate(2017, m, 1)
+    assert start(text) == AstroDate(ANCHOR.year + (m < ANCHOR.month), m, 1)
 
 
 @pytest.mark.parametrize("y", [1999, 2020, 1969, 1580])

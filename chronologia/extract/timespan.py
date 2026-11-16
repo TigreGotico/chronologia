@@ -716,9 +716,14 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 got = _compose_clock_range(text, left_tok, right_tok,
                                            engine, anchor)
             if got is None:
+                # "since january ... until friday": the month after "since"
+                # has begun, whatever the marker's place in the range
+                since = any(tokens[i].text in spec.months
+                            and _since_marker_before(i, tokens, spec)
+                            is not None for i in range(lead_at, p))
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily)
+                                     previous, daily, since=since)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -1328,7 +1333,7 @@ def _lend_year(bare, donor):
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
-                   daily=None):
+                   daily=None, since=False):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1347,7 +1352,13 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     ``previous(sub, start, bound)`` gives the latest reading at or before
     ``bound`` of an endpoint read at ``start``, in the shape of
     ``endpoint(sub)``, or ``None`` (see :func:`_latest_reading`); the year pull
-    uses it.  ``daily(sub)`` is true for an endpoint that recurs each day."""
+    uses it.  ``daily(sub)`` is true for an endpoint that recurs each day.
+
+    ``since`` marks a left month that follows a "since" marker.  That month
+    has begun, so when the right end, a weekday or a clock, comes before the
+    month's next occurrence, the month takes its previous occurrence instead
+    of rolling the end after it: "since january ... until friday" said in
+    June runs from this January to this Friday."""
     left = endpoint(left_tok)
     right = endpoint(right_tok)
     # one endpoint written as a bare number against a partner that names a
@@ -1436,6 +1447,12 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # not rolled by weeks: a week roll lands on a day that is no such weekday
     # of any month.
     end = right_span.end
+    if since and right[2] in ("clock", "weekday") and not left[3] \
+            and previous is not None and right_span.end <= start:
+        earlier = previous(left_tok, start, right_span.start)
+        if earlier is not None and earlier[0].start < right_span.end:
+            start = earlier[0].start
+            left = (earlier[0], earlier[1]) + left[2:]
     if right[2] == "clock":
         end = _roll_after(right_span, start, timedelta(days=1)).end
     elif right[2] == "weekday" and (monthly is None
@@ -1851,6 +1868,63 @@ def _since_start(ep, sub, engine, anchor, now, text):
     return start, ep[1]
 
 
+#: The constructions that read a bare month as its next occurrence.
+_BARE_MONTH_DATES = frozenset({"calendar_date", "nongregorian_date"})
+
+
+def _since_marker_before(lo, tokens, spec):
+    """The index where a "since" marker that ends right before token ``lo``
+    starts, or ``None``."""
+    texts = [t.text for t in tokens]
+    for words in _conn_surfaces(spec, "since", _RANGE_SINCE):
+        if lo >= len(words) and texts[lo - len(words):lo] == words:
+            return lo - len(words)
+    return None
+
+
+def _is_bare_month(match):
+    return (match.construction in _BARE_MONTH_DATES
+            and not set(match.slots) - {"MONTH", "CAL_MONTH"})
+
+
+def _since_month(match, span, tokens, engine, anchor, scale_mode="short"):
+    """The span of ``match``, read back to its latest occurrence at or before
+    the anchor when it is a bare month next to a "since" marker.
+
+    A bare month alone names its next occurrence.  After "since" it names the
+    one that has begun: "since january" said in June is this January, as the
+    leading "since" range reads it (:func:`_since_start`).  A postposition
+    follows the month: hu "január óta", hi "जनवरी से".
+    """
+    if not _is_bare_month(match) or span.start <= anchor:
+        return span
+    hi = match.span[1]
+    texts = [t.text for t in tokens]
+    after = any(texts[hi:hi + len(words)] == words
+                for words in _conn_surfaces(engine.spec, "since",
+                                            _RANGE_SINCE))
+    # before a later "until" the postposition opens a range: hi "मार्च से
+    # जून तक" is "from March to June"
+    until = _conn_surfaces(engine.spec, "until", _RANGE_UNTIL)
+    if after and any(_match_conn_at(tokens, i, until)
+                     for i in range(hi, len(tokens))):
+        after = False
+    # a month that "until" follows closes that range, and the marker before
+    # it is the postposition of the start: the "से" before "मार्च" in hi
+    # "जनवरी से मार्च तक"
+    if not after and (_match_conn_at(tokens, hi, until)
+                      or _since_marker_before(match.span[0], tokens,
+                                              engine.spec) is None):
+        return span
+
+    def read(at):
+        res = engine.resolver.resolve(match, at, scale_mode)
+        return None if res is None else (res.value,)
+
+    back = _latest_reading(read, anchor, span.start, anchor)
+    return span if back is None else back[0]
+
+
 def _reads_day_word(text, sub, engine, anchor, scale_mode="short"):
     """Whether the reading of ``sub`` consumes a day word ("today",
     "tomorrow"), not only holds one among its leftover words."""
@@ -1868,9 +1942,10 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     FORWARD: here "since" past-anchors the START (its most recent past
     occurrence) while "until" future-anchors the END, so "since monday until
     friday" reads ``[last monday, next friday]`` rather than ``[next monday,
-    next friday]``.  Fires only on a LEADING "since" marker with a following
+    next friday]``.  Fires only on a "since" marker with a following
     terminator, so bare "since X" (no terminator -> open since) and "from A to
-    B" (no leading since) are both untouched.
+    B" (no since) are both untouched.  The words before the marker stay in the
+    remainder.
     """
     spec = engine.spec
     # opt-in per locale: only languages whose "since" is genuinely past-anchored
@@ -1884,9 +1959,13 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
         return None
     now = AstroDate.from_datetime(anchor)
     since_surf = _conn_surfaces(spec, "since", _RANGE_SINCE)
-    k = _match_conn_at(tokens, 0, since_surf)
-    if not k:
+    # the marker may follow other words ("I have lived here since january
+    # until march"); they stay in the remainder
+    lead = next((i for i in range(n) if _match_conn_at(tokens, i, since_surf)),
+                None)
+    if lead is None:
         return None
+    k = lead + _match_conn_at(tokens, lead, since_surf)
     to_surf = _conn_surfaces(
         spec, "to", _RANGE_TO + tuple(spec.connectors.get("until", ())))
     split = _first_to_split(tokens, k, to_surf, text, spec)
@@ -1917,6 +1996,11 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     if since is None:
         return None
     start, left_rem = since
+    # in mid-sentence "since" may be the conjunction of cause ("we stay home
+    # since the office is closed from monday to friday"): it opens the range
+    # only when its date reads every word up to the terminator
+    if lead and left_rem:
+        return None
     start_dt = start.datetime()
     if start_dt is None:
         return None
@@ -1935,7 +2019,9 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     end = right_ep[0].end
     if start >= end:
         return None
-    remainder = " ".join(r for r in (left_rem, right_ep[1]) if r).strip()
+    before = render_remainder(text, list(tokens[:lead]))
+    remainder = " ".join(r for r in (before, left_rem, right_ep[1])
+                         if r).strip()
     return DateSpan(start, end), remainder
 
 
@@ -3432,7 +3518,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
         return _new_year_span(anchor), ""
     tokens = fold_tokens(raw, engine.spec, text)
     core = _resolve_core(tokens, engine, anchor, enable, jurisdiction, text,
-                         scale_mode)
+                         scale_mode, whole=True)
     if core is None:
         return None
     span, consumed = core
@@ -3965,7 +4051,7 @@ def _roll_bare_weekday_time(res, rep, anchor):
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
-                  text=None, scale_mode="short"):
+                  text=None, scale_mode="short", whole=False):
     """The single-span resolution over an already-tokenized stream.
 
     The whole of the old ``extract_timespan`` body *below* range detection --
@@ -3975,6 +4061,9 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     positions (the caller renders the remainder from the unconsumed ones).
     Factored out so a range endpoint resolves through the *identical* path a
     whole utterance does, from a re-based slice of the same stream.
+    ``whole`` marks the whole utterance, where a bare month after "since"
+    names the one that has begun (:func:`_since_month`); a range endpoint
+    follows the range rules instead.
     """
     resolved = []
     veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
@@ -3989,6 +4078,9 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
             continue
         res = engine.resolver.resolve(match, anchor, scale_mode)
         if res is not None:
+            if whole:
+                res = replace(res, value=_since_month(
+                    match, res.value, tokens, engine, anchor, scale_mode))
             resolved.append((match, res))
     # business-day counting ("in 5 business days", "the next working day",
     # "3 working days after christmas"); jurisdiction scopes the holiday lookup.
