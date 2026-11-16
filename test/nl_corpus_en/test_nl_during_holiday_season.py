@@ -42,3 +42,9 @@ def test_in_a_bare_season_reads_as_the_season(text, bare):
     span, rest = parse(text, ANCHOR)
     assert span == parse(bare, ANCHOR)[0]
     assert rest == ""
+
+
+def test_during_before_a_relative_marker_reads_with_the_holiday():
+    span, rest = parse("during next christmas", ANCHOR)
+    assert (span.start, span.end) == CHRISTMAS_2026
+    assert rest == ""
