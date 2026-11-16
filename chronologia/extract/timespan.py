@@ -26,7 +26,8 @@ from typing import Dict, List, NamedTuple, Optional, Tuple
 from chronologia.astrodate import AstroDate, DateSpan, WideDuration
 from chronologia.extract.anchored import (apply_anchored_offset,
                                               apply_compound_offset,
-                                              apply_ordinal_count)
+                                              apply_ordinal_count,
+                                              marker_names_a_reference)
 from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
@@ -3236,6 +3237,15 @@ def _subday_named_day_idiom_veto(match, spec) -> bool:
     return spec.units.get(match.slots["UNIT"].text) in _SUBDAY_OFFSET_UNITS
 
 
+def _skip_one_idiom_veto(tokens, match, spec) -> bool:
+    """True for an "after next" / "before last" idiom whose marker modifies
+    the word after it: in "the day after next summer" the idiom would read
+    "the day after next" and strand "summer".  Without it, "next summer"
+    reads as the reference and "the day after" as the offset."""
+    return (match.construction in ("after_next", "before_last")
+            and marker_names_a_reference(tokens, match.span[1] - 1, spec))
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
@@ -3257,7 +3267,8 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _relday_daypart_homograph_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
-            or _stranded_year_veto(tokens, match, spec))
+            or _stranded_year_veto(tokens, match, spec)
+            or _skip_one_idiom_veto(tokens, match, spec))
 
 
 #: the "for <duration>" bound marker vocabulary, keyed by spec identity so a

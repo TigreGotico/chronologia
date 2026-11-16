@@ -136,6 +136,17 @@
       "calendar_date"
     ],
     "season_year_order": "year_first",
+    "override": {
+      "season_ref": [
+        "article? SEASON of YEAR",
+        "REL_MARKER SEASON",
+        "article? SEASON YEAR? during?"
+      ],
+      "holiday_ref": [
+        "REL_MARKER HOLIDAY",
+        "article? HOLIDAY YEAR? during?"
+      ]
+    },
     "extend": {
       "rel_period": [
         "article? UNIT REL_MARKER"
