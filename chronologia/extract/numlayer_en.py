@@ -243,11 +243,12 @@ def ordinal_to_last(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
                 or tokens[i + 1].text != "to"
                 or tokens[i + 2].text not in _ORDLAST):
             continue
-        found = mentions(tok.raw, "en")
+        # the word alone, at its offset, so the mention and its parts carry
+        # the word's place in the text
+        found = mentions(" " * tok.char_start + tok.raw, "en")
         if (len(found) == 1 and found[0].text == tok.raw
                 and found[0].kind is Kind.ORDINAL):
-            out[i] = replace(tok, mention=replace(
-                found[0], char_span=(tok.char_start, tok.char_end)))
+            out[i] = replace(tok, mention=found[0])
     return tuple(out)
 
 
