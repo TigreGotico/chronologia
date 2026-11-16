@@ -129,6 +129,16 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
     ("ru", "112 года"),
     ("uk", "у 101 році"),
     ("uk", "111 рік"),
+    # "года" is also the genitive of the year in a date (en.wiktionary
+    # "год", declension: "го́да"), so without an ago, in, after or before
+    # word the count form names a year: the summer of 862, January 102
+    ("ru", "летом 862 года"),
+    ("ru", "в сентябре 862 года"),
+    ("ru", "события 862 года"),
+    ("ru", "в январе 102 года"),
+    ("ru", "1 мая 102 года"),
+    ("ru", "зимой 104 года"),
+    ("ru", "101 год"),
     ("bg", "през 988 година"),
     ("bg", "988 година"),
     ("mk", "988 година"),

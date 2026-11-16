@@ -276,6 +276,10 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         if s not in year_plural
         and (spec.singular_units or s not in spec.plural_units)}
 
+    offset_words = set(spec.directions) | {
+        word for name in ("in", "after", "before", "offset_lead")
+        for surface in spec.connectors.get(name, ()) for word in surface.split()}
+
     def _written_year(kind, tok, unit_tok):
         # a number written in digits by a year word names that year, not a
         # count of years: four digits by any year form ("в 1980 году",
@@ -295,7 +299,16 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             return True
         return (len(written) == 3 and bool(year_plural)
                 and unit_tok.text in year_forms
-                and unit_tok.text not in _count_forms(written))
+                and not (unit_tok.text in _count_forms(written)
+                         and _by_an_offset_word(tok, unit_tok)))
+
+    def _by_an_offset_word(tok, unit_tok):
+        # "года" is also the genitive of the year in a date ("летом 862
+        # года", the summer of 862), so the count forms count only next to
+        # an ago, in, after or before word: "101 год назад", "через 102 года"
+        lo, hi = sorted((tok.index, unit_tok.index))
+        near = {tokens[k].text for k in (lo - 1, hi + 1) if 0 <= k < n}
+        return bool(near & offset_words)
 
     def _count_forms(written):
         # East Slavic counts agree with the last word of the number: one
