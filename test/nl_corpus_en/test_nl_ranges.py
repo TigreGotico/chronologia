@@ -20,17 +20,17 @@ def _d(s):
 
 @pytest.mark.parametrize("text,s,e", [
     ("from june to august", "2017-6-1", "2017-9-1"),
-    ("from january to march", "2017-1-1", "2017-4-1"),
+    ("from january to march", "2018-1-1", "2018-4-1"),
     ("between june and september", "2017-6-1", "2017-10-1"),
     ("from october to december", "2017-10-1", "2018-1-1"),
     ("from june 2020 to august 2021", "2020-6-1", "2021-9-1"),
     ("from january 2000 to december 2009", "2000-1-1", "2010-1-1"),
-    ("from march to may", "2017-3-1", "2017-6-1"),
+    ("from march to may", "2018-3-1", "2018-6-1"),
     ("between april and june", "2017-4-1", "2017-7-1"),
     ("from september to november", "2017-9-1", "2017-12-1"),
     ("from june to june", "2017-6-1", "2017-7-1"),
     ("from january to december", "2017-1-1", "2018-1-1"),
-    ("between february and april", "2017-2-1", "2017-5-1"),
+    ("between february and april", "2018-2-1", "2018-5-1"),
 ])
 def test_month_range(text, s, e):
     ss, ee = start_end(text)

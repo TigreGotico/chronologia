@@ -64,9 +64,9 @@ def test_range_per_endpoint_years_stay_separate():
         AstroDate(2019, 12, 1), AstroDate(2020, 4, 1))
 
 
-def test_range_no_year_stays_anchor_year():
+def test_range_no_year_that_has_ended_is_next_years():
     assert start_end('from January to March') == (
-        AstroDate(2017, 1, 1), AstroDate(2017, 4, 1))
+        AstroDate(2018, 1, 1), AstroDate(2018, 4, 1))
 
 
 # -- (C) ordinal weekday + year (en already binds; regression pin) -------

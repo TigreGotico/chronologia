@@ -35,7 +35,9 @@ from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _RANGE_TO, _conn_surfaces,
                                           _exclusion_vetoes, _extract_range,
                                           _resolve_scale_mode,
-                                          _timespan_engine,
+                                          _extract_directional_range,
+                                          _since_marker_before,
+                                          _since_month, _timespan_engine,
                                           _WEEKDAY_LABELABLE_DATES,
                                           extract_timespan)
 from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
@@ -662,7 +664,9 @@ def extract_timespans(
     for ci, cluster in enumerate(clusters):
         if len(cluster) == 1:
             match, res = cluster[0]
-            out.append((match.span, res.value, confidence_of[id(match)]))
+            span = _since_month(match, res.value, tokens, engine, anchor,
+                                scale_mode)
+            out.append((match.span, span, confidence_of[id(match)]))
             continue
         lo_tok = min(m.span[0] for m, _ in cluster)
         hi_tok = max(m.span[1] for m, _ in cluster)
@@ -827,7 +831,20 @@ def _merge_ranges(out, tokens, text, engine, anchor):
             boundary = (a_hi > 0 and b_lo < len(tokens)
                         and _sentence_period_between(tokens, a_hi - 1, b_lo, text))
             if cs is not None and ce is not None and not boundary:
-                got = _extract_range(text, _slice(cs, ce), engine, anchor)
+                # after "since" the range has begun, as the whole text reads
+                # it: "since january until march" said in June is this year's
+                since_lo = _since_marker_before(a_lo, tokens, spec)
+                since_cs = None if since_lo is None \
+                    else tokens[since_lo].char_start
+                got = _extract_range(
+                    text, _slice(cs if since_cs is None else since_cs, ce),
+                    engine, anchor)
+                if got is not None and since_cs is not None:
+                    part = text[since_cs:ce]
+                    back = _extract_directional_range(
+                        part, engine.tokenize(part), engine, anchor)
+                    if back is not None and not back[1]:
+                        got = back
                 if got is not None:
                     merged.append(((lead_lo, b_hi), got[0],
                                    min(a_conf, b_conf)))
