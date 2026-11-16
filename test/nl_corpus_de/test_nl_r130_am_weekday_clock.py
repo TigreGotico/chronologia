@@ -16,12 +16,10 @@ The fix adds "am" to ``chronologia/locale/de/marker_article.voc`` as well
 (keeping it in ``marker_on.voc`` too, so the recurrence "on"-qualifier path
 is untouched).
 
-Bare "am Dienstag" (a single, uncomposed ``weekday_ref`` match -- nothing to
-compose with) is UNCHANGED by this fix: the composer only fires when two
-matches actually fuse, so a lone weekday match still has no order that
-accepts a leading "am" for itself. Likewise a lone daypart ("am Morgen") or a
-lone calendar date ("am 3. März") -- neither composes with anything else in
-those sentences -- keep leaking "am" exactly as before.
+A lone weekday ("am Dienstag"), daypart ("am Morgen") or calendar date
+("am 3. März") has nothing to compose with, so the composer does not fire.
+"am" is listed in ``marker_date_lead.voc`` as the word that opens a date, and
+that vocabulary takes it into the date there.
 
 Anchor for extract_timespan cases is the shared de corpus anchor,
 2017-06-27 13:04 (Tuesday) -- see ``test/nl_corpus_de/_corpus.py``.
@@ -65,25 +63,24 @@ def test_daypart_variant_stays_clean():
     assert remainder == ""
 
 
-# -- controls: "am" elsewhere, with nothing to compose with, is unchanged ---
+# -- "am" before a lone daypart, date or weekday goes with it -----------------
 
-def test_am_morgen_control_unchanged():
+def test_am_goes_with_a_lone_daypart():
     r = parse("am Morgen")
     assert r is not None
     s, remainder = r
-    assert remainder == "am"
+    assert remainder == ""
 
 
-def test_am_calendar_date_control_unchanged():
+def test_am_goes_with_a_lone_calendar_date():
     r = parse("am 3. März")
     assert r is not None
     s, remainder = r
-    assert remainder == "am"
+    assert remainder == ""
 
 
-def test_bare_am_weekday_control_unchanged():
-    # A lone weekday_ref -- no composition, no order accepts a leading "am".
+def test_am_goes_with_a_lone_weekday():
     r = parse("am Dienstag")
     assert r is not None
     s, remainder = r
-    assert remainder == "am"
+    assert remainder == ""

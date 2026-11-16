@@ -1711,8 +1711,13 @@ def _fold_date_article(folded, consumed, spec):
     any other noun ("o bebé") stays in the remainder.  Runs after
     :func:`_fold_day_label`, so the article in front of a label ("no dia 25")
     folds too.
+
+    ``marker_date_lead.voc`` lists the other words that open a date or a
+    clock and belong to it, the preposition or clock word of English "at 5",
+    Dutch "om 9:00" or Norwegian "klokka 15:30", and folds the same way.
     """
-    articles = set(spec.connectors.get("date_article", ()))
+    articles = (set(spec.connectors.get("date_article", ()))
+                | set(spec.connectors.get("date_lead", ())))
     if not articles:
         return consumed
     widened = set(consumed)

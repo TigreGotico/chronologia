@@ -25,7 +25,7 @@ def test_clock_plus_minutes_extends_end():
     assert r is not None
     assert (r.span.start, r.span.end) == (ad(datetime(2017, 6, 27, 15, 15)),
                                           ad(datetime(2017, 6, 27, 16, 0)))
-    assert r.remainder == "Besprechung um"
+    assert r.remainder == "Besprechung"
 
 
 def test_bare_duration_alone_still_refused():
