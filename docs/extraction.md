@@ -1811,10 +1811,13 @@ before …") shifts the reference by that many units, keeping the unit's width
 "the Friday before …") lands on the named weekday strictly after — or strictly
 before — the reference, a day-wide span.
 
-A reference wider than one day has a first and a last day. "after" counts on
-from its last day and "before" counts back from its first day. "two weeks
-after next summer" is two weeks after 31 August, the last day of
-meteorological summer (June, July and August).
+A reference wider than one day has a first and a last day. "before" counts
+back from its first day. "after" counts on from its last day when the offset
+unit is shorter than the reference: "two weeks after next summer" is two weeks
+after 31 August, the last day of meteorological summer (June, July and
+August). A unit as long as the reference or longer counts unit by unit from
+its first day: "2 years after 1990" is 1992, and "a month after march" is
+April.
 
 ```python
 from datetime import datetime
@@ -1841,9 +1844,12 @@ assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 30)
 span, _ = extract_timespan("3 dias antes do natal", "pt", anchor)
 assert (span.start.year, span.start.month, span.start.day) == (2017, 12, 22)
 
-# "after" a month counts from its last day, 30 June 2018.
+# days are shorter than a month: count from its last day, 30 June 2018
 span, _ = extract_timespan("three days after june 2018", "en", anchor)
 assert (span.start.year, span.start.month, span.start.day) == (2018, 7, 3)
+# years are as long as 1990: count year by year
+span, _ = extract_timespan("2 years after 1990", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (1992, 1, 1)
 ```
 
 A bare marker with no offset in front of it is **not** anchored arithmetic —
