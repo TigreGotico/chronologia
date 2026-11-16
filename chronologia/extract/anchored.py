@@ -131,16 +131,21 @@ _LONGEST_UNIT = {
 
 def _offset_base(span: DateSpan, sign: int,
                  unit: Optional[str] = None) -> AstroDate:
-    """The civil day an offset counts from.
+    """The instant an offset counts from.
 
-    Before the reference, its first day.  After it, its last day when the
-    offset unit is shorter than the reference: "two weeks after the summer"
-    counts from 31 August, the last day of meteorological summer.  A unit as
-    long as the reference or longer counts unit by unit from its first day:
+    Before the reference, its first day.  After it, a unit shorter than a
+    day counts from the end of the reference: "12 hours after next summer"
+    is 1 September at 12:00.  A longer unit that is still shorter than the
+    reference counts from its last day: "two weeks after the summer" counts
+    from 31 August, the last day of meteorological summer.  A unit as long
+    as the reference or longer counts unit by unit from its first day:
     "2 years after 1990" is 1992, and "a month after march" is April.  A
     weekday offset ("the monday after X") has no unit and counts from the
     last day.
     """
+    if sign > 0 and unit is not None \
+            and _LONGEST_UNIT[unit] < timedelta(days=1):
+        return span.end
     after_end = sign > 0 and (
         unit is None or _LONGEST_UNIT[unit] < span.end - span.start)
     s = span.end - timedelta(microseconds=1) if after_end else span.start

@@ -1817,7 +1817,9 @@ unit is shorter than the reference: "two weeks after next summer" is two weeks
 after 31 August, the last day of meteorological summer (June, July and
 August). A unit as long as the reference or longer counts unit by unit from
 its first day: "2 years after 1990" is 1992, and "a month after march" is
-April.
+April. A unit shorter than a day counts from the end of the reference, so "12
+hours after next summer" is 1 September at 12:00. A business-day count after a
+reference starts on its last day: "3 business days after june 2027" is 5 July.
 
 ```python
 from datetime import datetime
