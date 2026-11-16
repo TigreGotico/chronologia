@@ -224,11 +224,11 @@ def _offset_glue(spec: LangSpec) -> frozenset:
                      if _k not in sep_keys for s in vals)
 
 
-def _adjacent_clock(tokens, resolved, ref_match: Match,
-                    spec: LangSpec) -> Optional[Pair]:
-    """The lone ``clock_time`` match immediately following ``ref_match`` --
+def _adjacent_match(tokens, resolved, ref_match: Match, spec: LangSpec,
+                    construction: str) -> Optional[Pair]:
+    """The lone ``construction`` match immediately following ``ref_match`` --
     only glue words ("at", "on") in the gap between them -- if exactly one
-    such match exists.  ``None`` when there is no clock, or the adjacency is
+    such match exists.  ``None`` when there is none, or the adjacency is
     ambiguous."""
     glue = _offset_glue(spec)
     covered = set()
@@ -237,7 +237,7 @@ def _adjacent_clock(tokens, resolved, ref_match: Match,
             covered.update(range(*m.span))
     found = None
     for m, r in resolved:
-        if m.construction != "clock_time" or m.span[0] < ref_match.span[1]:
+        if m.construction != construction or m.span[0] < ref_match.span[1]:
             continue
         lo, hi = ref_match.span[1], m.span[0]
         if not all(i in covered or tokens[i].text in glue
@@ -283,8 +283,8 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             new_match = Match(match.construction, (start, match.span[1]),
                               match.slots, match.calendar)
             return new_match, Resolution(span, consumed)
-        clock_pair = _adjacent_clock(tokens, resolved, match, spec) \
-            if sub_day else None
+        clock_pair = _adjacent_match(tokens, resolved, match, spec,
+                                     "clock_time") if sub_day else None
         if clock_pair is not None:
             # The reference RESOLVES WITH a time-of-day (an adjacent, not-yet
             # -composed ``clock_time`` match): a sub-day offset must do exact
@@ -304,7 +304,15 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             new_match = Match(match.construction, (start, cm.span[1]),
                               match.slots, match.calendar)
             return new_match, Resolution(span, consumed)
-        base = _offset_base(res.value, sign, pre.get("unit"))
+        if sub_day and _adjacent_match(tokens, resolved, match, spec,
+                                       "daypart_ref") is not None:
+            # "an hour after tomorrow morning": the part of the day attaches
+            # to the shifted day, so a sub-day offset stays on the
+            # reference's own day instead of counting from its end
+            s = res.value.start
+            base = AstroDate(s.year, s.month, s.day)
+        else:
+            base = _offset_base(res.value, sign, pre.get("unit"))
         if pre["kind"] == "unit":
             value = _shift(base, pre["unit"], sign * pre["qty"])
             # the offset amount governs the SHIFT, never the result width:
