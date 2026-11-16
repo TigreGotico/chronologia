@@ -201,13 +201,19 @@ def extract_event(
     if recurrence is not None:
         base = first_occurrence(recurrence, anchor)
     else:
+        got_span = extract_timespan(remainder, lang, anchor=anchor,
+                                    jurisdiction=jurisdiction)
+        if got_span is None and calendar_text is not None:
+            # the length was a part of the date: da "for et år siden" is
+            # "a year ago"
+            remainder, calendar_text = calendar_text, None
+            got_span = extract_timespan(remainder, lang, anchor=anchor,
+                                        jurisdiction=jurisdiction)
+        if got_span is None:
+            return None
         cands = extract_candidates(remainder, lang, anchor=anchor)
         if cands:
             conf = cands[0].confidence
-        got_span = extract_timespan(remainder, lang, anchor=anchor,
-                                    jurisdiction=jurisdiction)
-        if got_span is None:
-            return None
         base, remainder = got_span
 
     if base is None:

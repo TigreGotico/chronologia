@@ -265,9 +265,9 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             else None
 
     # The singular and date forms of the year noun ("год", "году", "roku",
-    # "metais", "년", "mwaka", "year"): the plural forms that a count takes
-    # ("лет", "years", "anos") are left out.  A locale with no ``unit1_``
-    # files tells its plural by its ``-s`` morphology (``plural_units``).
+    # "year"): the plural forms that a count takes ("лет", "years", "anos")
+    # are left out.  A locale with no ``unit1_`` files tells its plural by
+    # its ``-s`` morphology (``plural_units``).
     year_plural = spec.connectors.get("year_plural", frozenset())
     year_forms = {
         s for s in (set(spec.connectors.get("year_word", ()))
@@ -279,11 +279,13 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     def _written_year(kind, tok, unit_tok):
         # a number written in digits by a year word names that year, not a
         # count of years: four digits by any year form ("в 1980 году",
-        # "2024년"), three digits by a singular or date form ("в 988 году",
-        # "988 metais"), where a count of 988 takes the plural ("988 лет")
+        # "2024년"), three digits by a singular or date form ("в 988 году")
+        # where a count of 988 takes the plural ("988 лет").  A language
+        # whose year noun has no plural of its own counts with the one form
+        # ("100년 전", "hundrað ár"), so there three digits stay a count
         if kind != "year" or tok is None or not tok.raw.isdigit():
             return False
-        return len(tok.raw) == 4 or (len(tok.raw) == 3
+        return len(tok.raw) == 4 or (len(tok.raw) == 3 and bool(year_plural)
                                      and unit_tok.text in year_forms)
 
     def _weekday_by_a_clock(unit_at, count_at):

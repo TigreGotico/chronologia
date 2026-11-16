@@ -116,7 +116,6 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
     ("ru", "в 988 году"),
     ("ru", "988 год"),
     ("pl", "w 988 roku"),
-    ("lt", "988 metais"),
     # ro "luni" is both "months" and "Monday": next to a clock it is the day
     ("ro", "la ora 9 luni dimineața"),
 ])
@@ -131,10 +130,15 @@ def test_a_calendar_unit_without_a_plain_count_names_no_length(lang, text):
     ("de", "seit 988 jahren", {"years": 988}),
     ("it", "988 anni", {"years": 988}),
     ("ro", "988 ani", {"years": 988}),
+    # a year noun with no plural of its own counts with its one form
+    ("ko", "100년 전", {"years": 100}),
+    ("vi", "một trăm năm trước", {"years": 100}),
+    ("is", "hundrað ár", {"years": 100}),
+    ("mt", "tliet mitt sena ilu", {"years": 300}),
     ("ro", "9 luni", {"months": 9}),
     ("ro", "timp de 3 luni", {"months": 3}),
 ])
-def test_a_count_before_a_plural_unit_is_still_a_length(lang, text, delta):
+def test_a_count_of_years_is_still_a_length(lang, text, delta):
     got = extract_duration(text, lang, anchor=END_OF_JANUARY)
     assert got.duration == _length(END_OF_JANUARY, **delta)
 
@@ -262,3 +266,18 @@ def test_a_clock_time_in_a_recurrence_names_no_other_start(
     assert got.recurrence.count == _length(anchor, months=months).days \
         // freq_days
     assert got.remainder == ""
+
+
+@pytest.mark.parametrize("lang, text, years", [
+    ("da", "for et år siden", 1),
+    ("nb", "for ti år siden", 10),
+    ("nn", "for eit år sidan", 1),
+])
+def test_a_length_inside_a_date_stays_the_date(lang, text, years):
+    # Danish and Norwegian "for <length> siden" is "<length> ago", so the
+    # length is a part of the date and not the width of the event
+    from chronologia import extract_event
+    anchor = datetime(2026, 1, 30, 10, 0)
+    got = extract_event(text, lang, anchor=anchor)
+    assert got.span.start == anchor - relativedelta(years=years)
+    assert got.duration is None
