@@ -82,6 +82,8 @@ def _shift(start: AstroDate, unit: str, step: float) -> AstroDate:
         return start + timedelta(seconds=step)
     if unit == "minute":
         return start + timedelta(minutes=step)
+    if unit == "quarter_hour":
+        return start + timedelta(minutes=15 * step)
     if unit == "hour":
         return start + timedelta(hours=step)
     if unit == "day":
@@ -115,6 +117,37 @@ def _astro_day_span(d: AstroDate) -> DateSpan:
     ``resolver._day_span``, which only accepts stdlib ``datetime``)."""
     start = d.replace(hour=0, minute=0, second=0, microsecond=0)
     return DateSpan(start, start + timedelta(days=1))
+
+
+#: the longest a unit can be, to compare an offset unit with the reference
+#: it counts from
+_LONGEST_UNIT = {
+    "second": timedelta(seconds=1), "minute": timedelta(minutes=1),
+    "quarter_hour": timedelta(minutes=15),
+    "hour": timedelta(hours=1), "day": timedelta(days=1),
+    "week": timedelta(weeks=1), "fortnight": timedelta(weeks=2),
+    "month": timedelta(days=31), "year": timedelta(days=366),
+    "decade": timedelta(days=3653), "century": timedelta(days=36525),
+    "millennium": timedelta(days=365250),
+}
+
+
+def _offset_base(span: DateSpan, sign: int,
+                 unit: Optional[str] = None) -> AstroDate:
+    """The civil day an offset counts from.
+
+    Before the reference, its first day.  After it, its last day when the
+    offset unit is shorter than the reference: "two weeks after the summer"
+    counts from 31 August, the last day of meteorological summer.  A unit as
+    long as the reference or longer counts unit by unit from its first day:
+    "2 years after 1990" is 1992, and "a month after march" is April.  A
+    weekday offset ("the monday after X") has no unit and counts from the
+    last day.
+    """
+    after_end = sign > 0 and (
+        unit is None or _LONGEST_UNIT[unit] < span.end - span.start)
+    s = span.end - timedelta(microseconds=1) if after_end else span.start
+    return AstroDate(s.year, s.month, s.day)
 
 
 # -- feature 1: offset-from-reference -------------------------------------
@@ -269,8 +302,7 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             new_match = Match(match.construction, (start, cm.span[1]),
                               match.slots, match.calendar)
             return new_match, Resolution(span, consumed)
-        s = res.value.start
-        base = AstroDate(s.year, s.month, s.day)
+        base = _offset_base(res.value, sign, pre.get("unit"))
         if pre["kind"] == "unit":
             value = _shift(base, pre["unit"], sign * pre["qty"])
             # the offset amount governs the SHIFT, never the result width:
@@ -341,8 +373,7 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
                 if pre is None:
                     continue
                 lo = pre["start"]
-            s = res.value.start
-            base = AstroDate(s.year, s.month, s.day)
+            base = _offset_base(res.value, sign, pre.get("unit"))
             if pre["kind"] == "unit":
                 value = _shift(base, pre["unit"], sign * pre["qty"])
                 # the offset governs the SHIFT, not the width: the single
