@@ -160,8 +160,10 @@ def extract_event(
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that carries no event, the empty string included, returns ``None``.
     """
-    from chronologia.extract import (extract_candidates, extract_duration,
-                                     extract_recurrence, extract_timespan)
+    from chronologia.extract import (_timespan_engine, extract_candidates,
+                                     extract_duration, extract_recurrence,
+                                     extract_timespan)
+    from chronologia.extract.nseries import _duration_core
     from chronologia.extract.pipeline import require_text
 
     require_text(text, "extract_event")
@@ -181,6 +183,17 @@ def extract_event(
     if got_dur is not None:
         duration, remainder = got_dur
 
+    # a calendar length after its marker ("for a month and a half") leaves
+    # the text before the date reader runs, as a fixed length does, so the
+    # date reader cannot take a part of it; its width is read once the start
+    # is known
+    calendar_text = None
+    if duration is None:
+        got_cal = _duration_core(remainder, _timespan_engine(lang), anchor,
+                                 calendar_needs_marker=True)
+        if got_cal is not None:
+            calendar_text, remainder = remainder, got_cal[1]
+
     # A recurring event is rule-driven (a matched ``every`` marker is a strong,
     # unambiguous signal), so it carries full confidence; a one-off inherits
     # the confidence of the best plausible reading of the span-bearing text.
@@ -188,17 +201,44 @@ def extract_event(
     if recurrence is not None:
         base = first_occurrence(recurrence, anchor)
     else:
+        got_span = extract_timespan(remainder, lang, anchor=anchor,
+                                    jurisdiction=jurisdiction)
+        if got_span is None and calendar_text is not None:
+            # the length was a part of the date: da "for et år siden" is
+            # "a year ago"
+            remainder, calendar_text = calendar_text, None
+            got_span = extract_timespan(remainder, lang, anchor=anchor,
+                                        jurisdiction=jurisdiction)
+        if got_span is None:
+            return None
         cands = extract_candidates(remainder, lang, anchor=anchor)
         if cands:
             conf = cands[0].confidence
-        got_span = extract_timespan(remainder, lang, anchor=anchor,
-                                    jurisdiction=jurisdiction)
-        if got_span is None:
-            return None
         base, remainder = got_span
 
     if base is None:
         return None
+
+    # a calendar length ("for 3 months") counts from the start of the event;
+    # an offset ("in 3 months") has no marker and stays a date
+    if calendar_text is not None:
+        got_cal = None
+        if 1 <= base.start.year <= 9999:
+            start = datetime(base.start.year, base.start.month,
+                             base.start.day, base.start.hour,
+                             base.start.minute, base.start.second,
+                             base.start.microsecond)
+            got_cal = _duration_core(calendar_text, _timespan_engine(lang),
+                                     start, calendar_needs_marker=True)
+        if got_cal is not None:
+            duration = got_cal[0]
+        elif recurrence is not None:
+            remainder = calendar_text
+        else:
+            # a length with no calendar end stays in the summary
+            got_span = extract_timespan(calendar_text, lang, anchor=anchor,
+                                        jurisdiction=jurisdiction)
+            remainder = calendar_text if got_span is None else got_span[1]
 
     # When a duration is named, the span carries exactly that width; otherwise
     # the span keeps its own implicit width (a day, an hour, a minute...).
