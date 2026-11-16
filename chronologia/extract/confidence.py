@@ -24,6 +24,9 @@ otherwise be thrown away the moment the matcher picks a winner:
 * **fold distance** -- a digit ("5") is trusted over a spelled number the
   ``numfold`` hook folded ("five") over a multiword surface the pipeline glued
   ("bronze age"); each rung down is a small penalty;
+* **doubt** -- a bare-hour clock followed by an ordinary word ("at 5
+  people") may be a count rather than a time of day; it keeps a candidate
+  but scores half, below the date-only reading of the same text;
 * **basis** -- the resolved :class:`~chronologia.astrodate.DateSpan`'s own
   provenance lattice: ``exact`` > ``tabulated`` > ``reconstructed`` >
   ``predicted``.
@@ -42,7 +45,8 @@ weak link should, and because every factor is a unit-interval multiplier with a
 clear "1.0 == no objection" reading.  The result lies in ``(0, 1]``,
 monotone in every signal, and is fully deterministic -- there is **no** machine
 learning here and the number is emphatically **not** a probability (see
-``docs/extraction.md``).
+``docs/extraction.md``).  A doubtful bare hour (see ``Match.doubt``) then
+multiplies the product by ``_DOUBT_FACTOR``.
 
 The exponents ``a=0.40`` (spec), ``b=0.30`` (homograph), ``c=0.15`` (fold),
 ``d=0.15`` (basis) are a **declared ordering prior**, not a fitted model. They
@@ -99,6 +103,12 @@ _FOLD_MULTIWORD = 0.85
 
 # --- homograph: a bound short-form weekday surface ("mar", "so") -------------
 _HOMOGRAPH_PENALTY = 0.6
+
+# --- doubt: a bare hour that may count the word after it ("at 5 people") ----
+# Halves the score, which puts the clock below the date-only reading of the
+# same text (at most 0.9 * 0.5 against a date reading near 0.85) while it
+# stays a candidate.
+_DOUBT_FACTOR = 0.5
 
 # --- quality weights (must sum to 1.0) --------------------------------------
 _W_SPEC = 0.40
@@ -201,7 +211,8 @@ def confidence(match: Match, resolution: Resolution, extent: int,
     basis_f = _BASIS_FACTOR.get(resolution.value.basis, _BASIS_FACTOR[BASIS_PREDICTED])
     quality = (spec_f ** _W_SPEC * homo_f ** _W_HOMOGRAPH
                * fold_f ** _W_FOLD * basis_f ** _W_BASIS)
-    return round(coverage * quality, 4)
+    doubt = _DOUBT_FACTOR if match.doubt else 1.0
+    return round(coverage * quality * doubt, 4)
 
 
 @dataclass(frozen=True)

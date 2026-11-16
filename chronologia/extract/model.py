@@ -518,6 +518,10 @@ class Match:
     slots: Mapping[str, Token]
     # which registered calendar a CAL_MONTH slot resolved to, if any
     calendar: Optional[str] = None
+    # a bare-hour clock read from a number that more likely counts the word
+    # after it ("a las 5 personas", "look at 5 houses"); see
+    # ``ConstructionMatcher._flag_counted_hours``
+    doubt: bool = False
 
     @property
     def length(self) -> int:
