@@ -66,6 +66,20 @@ MONDAY = datetime(2026, 1, 26, 10, 0)
      datetime(2026, 1, 31), 2),
     ("nl", "ik werk drie uur morgen", ANCHOR, "ik werk",
      datetime(2026, 1, 31), 3),
+    # a day word or a month that holds an "after", "before" or "in" word is
+    # still one date: Larousse "après-demain", the day after tomorrow
+    ("fr", "réunion de deux heures après-demain", ANCHOR, "réunion",
+     datetime(2026, 2, 1), 2),
+    ("fr", "réunion de deux heures après demain", ANCHOR, "réunion",
+     datetime(2026, 2, 1), 2),
+    ("fr", "j'ai travaillé deux heures avant-hier", ANCHOR, "j ai travaillé",
+     datetime(2026, 1, 28), 2),
+    ("fr", "j'ai travaillé deux heures avant hier", ANCHOR, "j ai travaillé",
+     datetime(2026, 1, 28), 2),
+    ("fr", "réunion de deux heures en mars", ANCHOR, "réunion",
+     datetime(2026, 3, 1), 2),
+    ("nl", "vergadering van twee uur in maart", ANCHOR, "vergadering",
+     datetime(2026, 3, 1), 2),
 ])
 def test_a_length_without_an_offset_marker_stays_a_length(
         lang, text, anchor, summary, day, hours):
@@ -73,6 +87,20 @@ def test_a_length_without_an_offset_marker_stays_a_length(
     length = timedelta(hours=hours)
     assert (ev.summary, ev.span.start, ev.span.end, ev.duration) == (
         summary, day, day + length, length)
+
+
+@pytest.mark.parametrize("jurisdiction, day", [
+    # Christmas 2026 is a Friday.  GB moves Boxing Day (Saturday) to Monday
+    # 28 December, so its second business day is the 30th; US works the 28th.
+    ("GB", datetime(2026, 12, 30)),
+    ("US", datetime(2026, 12, 29)),
+])
+def test_a_length_before_a_business_day_date_keeps_the_jurisdiction(
+        jurisdiction, day):
+    ev = extract_event("a 2 hour meeting 2 business days after christmas", "en",
+                       anchor=ANCHOR, jurisdiction=jurisdiction)
+    assert (ev.summary, ev.span.start, ev.duration) == (
+        "meeting", day, timedelta(hours=2))
 
 
 def test_nl_quarter_hour_offset_reads_like_its_english_form():

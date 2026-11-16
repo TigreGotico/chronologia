@@ -238,9 +238,18 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # own via the PER-CONSTRUCTION ``marker_position`` mapping; a scalar
     # ``post`` (Romance/Semitic) enables it for every construction at once.
     "season_ref": [
-        "article? SEASON of YEAR",
-        "REL_MARKER SEASON",
-        "article? SEASON YEAR?",
+        "during? article? SEASON of YEAR",
+        "during? REL_MARKER SEASON",
+        "during? article? SEASON YEAR?",
+    ],
+    # A holiday reads with a leading "during" and article, as a season does
+    # ("during christmas", "durante o natal").  The ``during`` connector
+    # holds en "in" and fr "en"; the ``in`` connector is left out because in
+    # most locales it is the offset marker (ru "через", fi "kuluttua").
+    # The locale's own ``holiday_ref`` orders add the year-first forms.
+    "holiday_ref": [
+        "during? REL_MARKER HOLIDAY",
+        "during? article? HOLIDAY YEAR?",
     ],
     # "the first/second half of <period>" ("the first half of 2020" -> Jan-Jun;
     # "the second half of the century").  ``NUM`` binds the ordinal (first/second

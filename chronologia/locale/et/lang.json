@@ -131,6 +131,17 @@
     "disable": [
       "calendar_date"
     ],
+    "override": {
+      "season_ref": [
+        "article? SEASON of YEAR",
+        "REL_MARKER SEASON",
+        "article? SEASON YEAR?"
+      ],
+      "holiday_ref": [
+        "REL_MARKER HOLIDAY",
+        "article? HOLIDAY YEAR?"
+      ]
+    },
     "extend": {
       "rel_period": [
         "article? UNIT REL_MARKER"
