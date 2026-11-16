@@ -22,6 +22,13 @@
     "for_date REL_MARKER? WEEKEND"
    ]
   },
+  "month_day_ref": {
+   "orders": [
+    "WORDORD day_label REL_MARKER month_word",
+    "WORDORD day_label"
+   ],
+   "prefer_future": true
+  },
   "calendar_date": {
    "orders": [
     "DAY MONTH YEAR?",
@@ -36,7 +43,7 @@
     "at HOUR MERIDIEM? ZONE?",
     "at HOUR oclock MERIDIEM? ZONE?",
     "HOUR oclock MERIDIEM? ZONE?",
-    "FRACTION na HOUR MERIDIEM? ZONE?",
+    "at? FRACTION na HOUR MERIDIEM? ZONE?",
     "at? LANDMARK ZONE?"
    ],
    "prefer_future": true

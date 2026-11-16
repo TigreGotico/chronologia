@@ -571,7 +571,7 @@ def _day_rewrite(ords: dict, tens_prefix: dict = None,
     def _num(t: Token, value: int, end: Token = None) -> Token:
         return Token(text=str(value), raw=str(value), index=t.index,
                      is_number=True, value=value, char_start=t.char_start,
-                     char_end=(end or t).char_end)
+                     char_end=(end or t).char_end, day_ordinal=True)
 
     def rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         out, i, n, changed = [], 0, len(tokens), False
