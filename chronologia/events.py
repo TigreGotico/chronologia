@@ -220,7 +220,10 @@ def extract_event(
         # minutes" keeps it, because both readings start at 5pm.  fr "réunion
         # de deux heures demain" keeps it too: "deux heures" alone reads as the
         # clock time 02:00, and no "before"/"after"/"in"/"ago" marker joins the
-        # words to the date that remains.
+        # words to the date that remains.  es "reunión de dos horas en
+        # marzo" keeps it as well: the span reading takes "dos horas en" as
+        # "in two hours" and leaves "marzo", a word the reading of the rest
+        # takes, so the whole-text reading lost the date.
         try:
             whole = extract_timespan(remainder, lang, anchor=anchor,
                                      jurisdiction=jurisdiction)
@@ -237,8 +240,10 @@ def extract_event(
             all_words = words(remainder)
             length_words = all_words - words(got_dur.remainder)
             span_words = all_words - words(whole.remainder)
-            if not length_words - span_words and (
-                    rest is None or rest.span.start != whole.span.start) \
+            rest_words = Counter() if rest is None else (
+                words(got_dur.remainder) - words(rest.remainder))
+            if not length_words - span_words and not rest_words - span_words \
+                    and (rest is None or rest.span.start != whole.span.start) \
                     and not (rest is not None and _is_bare_clock_length(
                         remainder, lang, anchor, length_words)):
                 got_dur = None
