@@ -1,0 +1,6 @@
+# The NIGHT daypart is a BAND that crosses midnight: СУМ-11, s.v. ніч,
+# sense 1, "Частина доби від заходу до сходу сонця, з вечора до ранку", so
+# "о 2 ночі" is 02:00 and "об 11 ночі" is 23:00.  Small hours 1..5 stay AM,
+# evening hours 6..11 are PM, twelve is midnight (the band-split lives in the
+# resolver _clock_hms).  https://slovnyk.ua/index.php?swrd=ніч
+ночі

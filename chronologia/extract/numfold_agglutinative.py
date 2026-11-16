@@ -23,6 +23,7 @@ Each ``fold_<lang>`` is wired as the language ``hook`` in
 """
 from __future__ import annotations
 
+import re
 from dataclasses import replace
 from importlib import import_module
 from typing import Callable, Dict, FrozenSet, Optional, Tuple
@@ -392,6 +393,113 @@ _HU_CLOCK_FRACTIONS = frozenset({"negyed", "fél", "fel", "háromnegyed",
 fold_hu = _with_bare_case_hour(fold_hu, _HU_KOR_HOURS, "kor",
                                digit_suffix="kor",
                                no_digit_suffix_after=_HU_CLOCK_FRACTIONS)
+# A day number or a digit clock takes its case suffix after a hyphen: AkH. 12,
+# rule 298, "1848. márc. 15-én", "2014. febr. 28-a", "1-je", "1-jén"; rule
+# 300, "10:35-kor".  The tokenizer drops the hyphen and leaves the suffix as a
+# word of its own, so a suffix that follows a hyphen folds back into the
+# number or clock it is written on.  The sublative "-ra"/"-re" names the same
+# point as a target ("ébressz fel 7-re", wake me for 7).  "-ig" (until) is not
+# folded: it carries a meaning of its own.  The tokenizer splits the dotted
+# clock "10.35" at its dot, so the two halves join back into "10:35" when a
+# clock suffix follows.  An hour after a clock fraction ("fél 8-kor", 7:30)
+# keeps its suffix too, because the fraction blocks the "at HOUR" reading of
+# the bare-suffix fold below.
+_HU_DAY_SUFFIX = frozenset({"a", "e", "án", "én", "je", "jén", "ra", "re"})
+_HU_CLOCK_SUFFIX = frozenset({"kor", "ra", "re"})
+_HU_CLOCK = re.compile(r"\d{1,2}[:.]\d{2}")
+
+
+def _hu_dotted_clock(tokens: Tuple[Token, ...], i: int) -> Optional[Token]:
+    """The clock "HH:MM" that tokens ``i`` and ``i + 1`` spell as "HH.MM"
+    when a hyphenated clock suffix follows, else None."""
+    if i + 2 >= len(tokens):
+        return None
+    hour, minute = tokens[i], tokens[i + 1]
+    if not (hour.trailing_dot and re.fullmatch(r"\d{1,2}", hour.text)
+            and re.fullmatch(r"\d{2}", minute.text)
+            and minute.char_start is not None and hour.char_end is not None
+            and minute.char_start == hour.char_end + 1
+            and minute.trailing_hyphen
+            and tokens[i + 2].text in _HU_CLOCK_SUFFIX
+            and int(hour.text) <= 23 and int(minute.text) <= 59):
+        return None
+    return replace(hour, text=f"{hour.text}:{minute.text}",
+                   raw=f"{hour.raw}.{minute.raw}", char_end=minute.char_end,
+                   is_number=False, value=None, trailing_dot=False,
+                   trailing_hyphen=True)
+
+
+def _with_hu_hyphen_suffix(fold):
+    def pre(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        out, i, n = [], 0, len(tokens)
+        while i < n:
+            clock = _hu_dotted_clock(tokens, i)
+            if clock is not None:
+                tokens = tokens[:i] + (clock,) + tokens[i + 2:]
+                n -= 1
+            t = tokens[i]
+            nxt = tokens[i + 1] if i + 1 < n else None
+            after_fraction = i > 0 and tokens[i - 1].text in _HU_CLOCK_FRACTIONS
+            if nxt is not None and t.trailing_hyphen and (
+                    (t.is_number and t.value is not None
+                     and 1 <= t.value <= 31 and nxt.text in _HU_DAY_SUFFIX)
+                    or (t.is_number and t.value is not None and after_fraction
+                        and 0 <= t.value <= 24 and nxt.text in _HU_CLOCK_SUFFIX)
+                    or (_HU_CLOCK.fullmatch(t.text)
+                        and nxt.text in _HU_CLOCK_SUFFIX)):
+                out.append(replace(t, raw=t.raw + nxt.raw,
+                                   char_end=nxt.char_end or t.char_end,
+                                   trailing_hyphen=False))
+                i += 2
+                continue
+            out.append(t)
+            i += 1
+        return fold(reindex(tuple(out)))
+
+    return pre
+
+
+fold_hu = _with_hu_hyphen_suffix(fold_hu)
+# A count with a half: "két és fél" (two and a half) and "másfél" (one and a
+# half, en.wiktionary s.v. másfél) are one number.  Without the fold the
+# offset reads only "fél óra" and strands the whole part.  A number after
+# "fél" keeps it a clock ("kettő és fél három", 2 and 2:30).
+_HU_ONE_AND_A_HALF = frozenset({"másfél", "masfel"})
+_HU_HALF = frozenset({"fél", "fel"})
+
+
+def _with_hu_half_count(fold):
+    def post(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        tokens = fold(tokens)
+        out, i, n = [], 0, len(tokens)
+        while i < n:
+            t = tokens[i]
+            if (i + 3 < n and t.is_number and t.value is not None
+                    and float(t.value).is_integer()
+                    and tokens[i + 1].text == "és"
+                    and tokens[i + 2].text in _HU_HALF
+                    and not tokens[i + 3].is_number):
+                value, last, step = t.value + 0.5, tokens[i + 2], 3
+            elif (t.text in _HU_ONE_AND_A_HALF and i + 1 < n
+                  and not tokens[i + 1].is_number):
+                value, last, step = 1.5, t, 1
+            else:
+                out.append(t)
+                i += 1
+                continue
+            # the raw shows the decimal, so the token never binds a clock
+            # HOUR: "két és fél óra" is a length of 2.5 hours, and the clock
+            # says half past two as "fél három"
+            out.append(replace(t, text=str(value), raw=str(value),
+                               is_number=True, value=value,
+                               char_end=last.char_end))
+            i += step
+        return reindex(tuple(out))
+
+    return post
+
+
+fold_hu = _with_hu_half_count(fold_hu)
 # Fold the fused round-thousand spelling ("kétezer-huszonnégy" = 2024) instead
 # of dropping the thousands and reading only the trailing chunk.  Outermost so
 # it rewrites the raw surface tokens before the cardinal/ordinal/clock folds.
