@@ -19,8 +19,9 @@ from chronologia.extract.model import Token
 from chronologia.extract.numfold_romance import (_LOCALE_ROOT,
                                                  _collapse_h_clock, _glue)
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import (fold_mentions, mention_number,
-                                          scale_factor, scale_factors,
+from chronologia.extract.numlayer import (counts_things, fold_mentions,
+                                          mention_number, scale_factor,
+                                          scale_factors,
                                           withhold_split_counts)
 
 
@@ -80,6 +81,9 @@ _FACTORS = scale_factors("pt")
 _UNITS = _voc("unit_")
 _YEAR_WORDS = _voc("marker_year_word")
 _OF = _voc("marker_of")
+#: Every word a pt date rule knows, and the words that announce a year.
+_VOCAB = _voc("")
+_YEAR_CUES = _YEAR_WORDS | _voc("marker_in.")
 
 
 def _number_in(tok: Token, low: float, high: float) -> bool:
@@ -216,6 +220,14 @@ def _date_words(tokens: Tuple[Token, ...]
             if factor is not None:
                 claimed.add(i)
                 scales[i] = factor
+        elif (word in _SCALES and _ends_mention(tok)
+              and counts_things(tokens, end, _VOCAB, _YEAR_CUES)):
+            # a count of things ("comprei mil ações ontem") is no date
+            # number, so every word of its mention stays a word
+            k = i
+            while k >= 0 and tokens[k].mention is tok.mention:
+                claimed.add(k)
+                k -= 1
         elif (word in _SCALES and word not in _THOUSANDS and _ends_mention(tok)
               and nxt in _OF and nxt2 not in _UNITS):
             # a scale noun that counts things after "de" ("um milhão de

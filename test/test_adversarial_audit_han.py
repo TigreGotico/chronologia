@@ -25,8 +25,8 @@ _A = datetime(2017, 6, 27, 13, 4)
 
 
 # -- SEC-001 --------------------------------------------------------------
-def _fold_seconds(words: int, repeats: int = 3) -> float:
-    """Best-of-`repeats` wall time to fold a run of `words` number-words.
+def _fold_seconds(text: str, lang: str, repeats: int = 3) -> float:
+    """Best-of-`repeats` wall time to fold `text`.
 
     The minimum, not the mean: a loaded box inflates every sample upward, so
     the fastest run is the closest estimate of the true cost and the one that
@@ -35,12 +35,16 @@ def _fold_seconds(words: int, repeats: int = 3) -> float:
     best = float("inf")
     for _ in range(repeats):
         t = time.perf_counter()
-        extract_timespan("um " * words, "pt", _A)
+        extract_timespan(text, lang, _A)
         best = min(best, time.perf_counter() - t)
     return best
 
 
-def test_romance_number_fold_is_linear_not_quadratic():
+@pytest.mark.parametrize("lang, word", [
+    ("es", "uno"),     # the shared Romance fold in numfold_engine
+    ("pt", "um"),      # numtag
+])
+def test_romance_number_fold_is_linear_not_quadratic(lang, word):
     """A long joiner-less run of a Romance number-word used to re-parse the
     growing prefix once per token -- O(n^2), ~7.8s at 8000 words.
 
@@ -51,13 +55,16 @@ def test_romance_number_fold_is_linear_not_quadratic():
     three on each side.  Each size is the best of three runs, because a
     loaded box inflates single samples.  The test pins the growth, not a
     speed: a wall-clock budget measures the machine as much as the algorithm.
+    es reads its numbers through the engine fold and pt through numtag, so
+    each path has its own case.
     """
-    extract_timespan("um um", "pt", _A)          # warm the locale cache
-    small = _fold_seconds(800)
-    large = _fold_seconds(8000)
+    extract_timespan(f"{word} {word}", lang, _A)     # warm the locale cache
+    small = _fold_seconds(f"{word} " * 800, lang)
+    large = _fold_seconds(f"{word} " * 8000, lang)
     assert large / small < 30.0, (
-        f"folding 8000 number-words took {large / small:.1f}x the time of "
-        f"800 ({large:.2f}s vs {small:.2f}s); linear is ~10x, quadratic ~100x")
+        f"folding 8000 {lang} number-words took {large / small:.1f}x the time "
+        f"of 800 ({large:.2f}s vs {small:.2f}s); linear is ~10x, quadratic "
+        f"~100x")
 
 
 def _attach_seconds(words: int, repeats: int = 5, calls: int = 10) -> float:

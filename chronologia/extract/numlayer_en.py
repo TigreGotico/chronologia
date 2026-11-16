@@ -27,8 +27,9 @@ from ovos_spec_tools import expand, read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import (fold_mentions, mention_number,
-                                          mentions, scale_factor,
+from chronologia.extract.numlayer import (counts_things, fold_mentions,
+                                          mention_number, mentions,
+                                          scale_factor,
                                           scale_factors,
                                           withhold_split_counts)
 
@@ -68,6 +69,8 @@ _ORDLAST = _voc("marker_ordlast")
 #: part of a period, not a length.
 _FILLER = _INDEF | {"of"}
 _ORD_SUFFIXES = frozenset({"st", "nd", "rd", "th"})
+#: Every word an English date rule knows.
+_VOCAB = _voc("")
 
 
 def _merge_ord_suffix(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
@@ -224,6 +227,14 @@ def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Dict[int, int]]:
             if factor is not None:
                 claimed.add(i)
                 scales[i] = factor
+        elif (tok.text in _SCALES and _mention_end(tokens, i) == i + 1
+              and counts_things(tokens, i + 1, _VOCAB, _YEAR_CUES)):
+            # a count of things ("I saw a thousand people yesterday") is no
+            # date number, so every word of its mention stays a word
+            k = i
+            while k >= 0 and tokens[k].mention is m:
+                claimed.add(k)
+                k -= 1
     return claimed, scales
 
 

@@ -105,6 +105,41 @@ def test_scale_count_of_things_is_no_year():
     nomatch("comprei dois mil milhões de livros")
 
 
+_YESTERDAY = (datetime(2017, 6, 26), datetime(2017, 6, 27))
+_TOMORROW = (datetime(2017, 6, 28), datetime(2017, 6, 29))
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    # a scale word before a noun counts things: no year 1000 or 2000
+    ("pt", "comprei mil ações ontem", _YESTERDAY),
+    ("pt", "vi mil pessoas ontem", _YESTERDAY),
+    ("pt", "vendi duas mil ações ontem", _YESTERDAY),
+    ("en", "I saw a thousand people yesterday", _YESTERDAY),
+    ("en", "a thousand people came tomorrow", _TOMORROW),
+])
+def test_a_count_of_things_leaves_the_day_word_the_date(lang, text, day):
+    s = extract_timespan(text, lang, ANCHOR).span
+    assert (s.start, s.end) == day
+
+
+@pytest.mark.parametrize("text, year", [
+    # after a year cue, or with no word after it, the number is the year
+    ("no ano mil", 1000),
+    ("em dois mil eu nasci", 2000),
+])
+def test_a_scale_word_after_a_year_cue_stays_the_year(text, year):
+    s = span(text)
+    assert (s.start, s.end) == (datetime(year, 1, 1), datetime(year + 1, 1, 1))
+
+
+@pytest.mark.parametrize("lang, text", [
+    ("pt", "em MMXX"),
+    ("en", "in MMXX"),
+])
+def test_a_bare_roman_numeral_after_a_connector_is_no_year(lang, text):
+    assert extract_timespan(text, lang, ANCHOR) is None
+
+
 @pytest.mark.parametrize("text", [
     "há mil duzentos anos",
     "há dois milhões trezentos mil anos",

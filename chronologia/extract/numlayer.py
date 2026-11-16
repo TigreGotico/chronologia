@@ -222,6 +222,24 @@ def withhold_split_counts(tokens: Tuple[Token, ...], units: Collection[str],
     return tuple(out)
 
 
+def counts_things(tokens: Tuple[Token, ...], end: int,
+                  vocab: Collection[str], cues: Collection[str]) -> bool:
+    """Whether the mention that ends before ``end`` counts things.
+
+    A mention that ends in a scale word, before a word that no date rule
+    knows, is a count and not a year: "comprei mil ações ontem", "I saw a
+    thousand people yesterday".  After a year cue ("em", "in", "the year")
+    it stays a number.
+    """
+    start = end - 1
+    while start > 0 and tokens[start - 1].mention is tokens[end - 1].mention:
+        start -= 1
+    nxt = tokens[end] if end < len(tokens) else None
+    return (nxt is not None and nxt.mention is None and not nxt.is_number
+            and nxt.text.isalpha() and nxt.text not in vocab
+            and (start == 0 or tokens[start - 1].text not in cues))
+
+
 def fold_mentions(tokens: Tuple[Token, ...], lang: str,
                   claimed: Collection[int] = (),
                   scales: Optional[Mapping[int, int]] = None
