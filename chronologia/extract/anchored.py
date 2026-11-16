@@ -904,6 +904,21 @@ def _weekend_span(anchor, spec: LangSpec, rel: int) -> DateSpan:
     return DateSpan(s, s + timedelta(days=2))
 
 
+def marker_names_a_reference(tokens, k: int, spec: LangSpec) -> bool:
+    """True when the relative marker at ``k`` modifies the word after it.
+
+    In "the day after next summer" the marker "next" belongs to "next
+    summer", the reference the offset counts from.  The word is a season,
+    a weekday or the first word of a holiday.  It is then not the
+    "after next" idiom, which ends the phrase ("the day after next").
+    """
+    if k + 1 >= len(tokens):
+        return False
+    word = tokens[k + 1].text
+    return (word in spec.seasons or word in spec.weekdays
+            or any(h.split()[0] == word for h in spec.holidays))
+
+
 def _weekend_after_next(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
     """"the weekend after next": skip one weekend, take the following one."""
     after = spec.connectors.get("after", frozenset())
@@ -957,7 +972,8 @@ def _weekday_after_next(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
         k = i + 1 + an
         while k < n and tokens[k].text in gap:        # article/of gap before "next"
             k += 1
-        if k < n and tokens[k].text in nextw:
+        if k < n and tokens[k].text in nextw \
+                and not marker_names_a_reference(tokens, k, spec):
             start = i - 1 if i - 1 >= 0 and tokens[i - 1].text in gap else i
             value = _nth_weekday(anchor, wd, 1, 1) + timedelta(days=7)
             match = Match("weekday_after_next", (start, k + 1), {})
