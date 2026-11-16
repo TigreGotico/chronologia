@@ -33,6 +33,8 @@ from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _RANGE_TO, _conn_surfaces,
                                           _exclusion_vetoes, _extract_range,
                                           _resolve_scale_mode,
+                                          _extract_directional_range,
+                                          _since_marker_before,
                                           _since_month, _timespan_engine,
                                           _WEEKDAY_LABELABLE_DATES,
                                           extract_timespan)
@@ -697,6 +699,16 @@ def _merge_ranges(out, tokens, text, engine, anchor):
                         and _sentence_period_between(tokens, a_hi - 1, b_lo, text))
             if cs is not None and ce is not None and not boundary:
                 got = _extract_range(text, _slice(cs, ce), engine, anchor)
+                # after "since" the range has begun, as the whole text reads
+                # it: "since january until march" said in June is this year's
+                since_lo = _since_marker_before(a_lo, tokens, spec)
+                if got is not None and since_lo is not None \
+                        and tokens[since_lo].char_start is not None:
+                    part = text[tokens[since_lo].char_start:ce]
+                    back = _extract_directional_range(
+                        part, engine.tokenize(part), engine, anchor)
+                    if back is not None and not back[1]:
+                        got = back
                 if got is not None:
                     merged.append(((lead_lo, b_hi), got[0],
                                    min(a_conf, b_conf)))

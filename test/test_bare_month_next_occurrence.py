@@ -178,3 +178,44 @@ def test_a_bare_month_after_since_has_begun(text, lang, start):
     assert _span(text, lang).span.start == start
     mentions = extract_timespans(text, lang, ANCHOR)
     assert [m.span.start for m in mentions] == [start]
+
+
+@pytest.mark.parametrize("text,lang", [
+    # a postposition follows the month.  hu "óta" is "since (a point in
+    # time)" (en.wiktionary "óta"), hi "से" is "since/from" (en.wiktionary
+    # "से", "कल से" = "since yesterday")
+    ("január óta", "hu"),
+    ("januárban óta", "hu"),
+    ("जनवरी से", "hi"),
+])
+def test_a_bare_month_before_a_since_postposition_has_begun(text, lang):
+    """The month names January 2017, said on 27 June 2017, in both readers."""
+    assert _span(text, lang).span.start == datetime(2017, 1, 1)
+    mentions = extract_timespans(text, lang, ANCHOR)
+    assert [(m.span.start, m.span.end) for m in mentions] == [
+        (datetime(2017, 1, 1), datetime(2017, 2, 1))]
+
+
+def test_a_postposition_before_until_opens_a_range():
+    """hi "से" is also "from": in "मार्च से जून तक" ("from March to June")
+    the month is the start of a range, so it keeps its next occurrence."""
+    mentions = extract_timespans("मार्च से जून तक", "hi", ANCHOR)
+    assert (mentions[0].span.start, mentions[0].span.end) == (
+        datetime(2018, 3, 1), datetime(2018, 4, 1))
+
+
+@pytest.mark.parametrize("text, left", [
+    ("since january until march", ""),
+    ("since january to march", ""),
+    ("I have lived here since january until march", "I have lived here"),
+])
+def test_a_range_after_since_has_begun(text, left):
+    """"since january until march" said on 27 June 2017 is January to March
+    2017 in both readers: the speaker says the range has begun."""
+    r = _span(text, "en")
+    assert (r.span.start, r.span.end) == (datetime(2017, 1, 1),
+                                          datetime(2017, 4, 1))
+    assert r.remainder == left
+    mentions = extract_timespans(text, "en", ANCHOR)
+    assert [(m.span.start, m.span.end) for m in mentions] == [
+        (datetime(2017, 1, 1), datetime(2017, 4, 1))]

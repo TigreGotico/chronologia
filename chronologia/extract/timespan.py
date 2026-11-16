@@ -1854,23 +1854,45 @@ def _since_start(ep, sub, engine, anchor, now, text):
 _BARE_MONTH_DATES = frozenset({"calendar_date", "nongregorian_date"})
 
 
+def _since_marker_before(lo, tokens, spec):
+    """The index where a "since" marker that ends right before token ``lo``
+    starts, or ``None``."""
+    texts = [t.text for t in tokens]
+    for words in _conn_surfaces(spec, "since", _RANGE_SINCE):
+        if lo >= len(words) and texts[lo - len(words):lo] == words:
+            return lo - len(words)
+    return None
+
+
+def _is_bare_month(match):
+    return (match.construction in _BARE_MONTH_DATES
+            and not set(match.slots) - {"MONTH", "CAL_MONTH"})
+
+
 def _since_month(match, span, tokens, engine, anchor, scale_mode="short"):
     """The span of ``match``, read back to its latest occurrence at or before
-    the anchor when it is a bare month right after a "since" marker.
+    the anchor when it is a bare month next to a "since" marker.
 
     A bare month alone names its next occurrence.  After "since" it names the
     one that has begun: "since january" said in June is this January, as the
-    leading "since" range reads it (:func:`_since_start`).
+    leading "since" range reads it (:func:`_since_start`).  A postposition
+    follows the month: hu "január óta", hi "जनवरी से".
     """
-    if (match.construction not in _BARE_MONTH_DATES
-            or set(match.slots) - {"MONTH", "CAL_MONTH"}
-            or span.start <= anchor):
+    if not _is_bare_month(match) or span.start <= anchor:
         return span
-    lo = match.span[0]
+    hi = match.span[1]
     texts = [t.text for t in tokens]
-    if not any(texts[max(lo - len(words), 0):lo] == words
-               for words in _conn_surfaces(engine.spec, "since",
-                                           _RANGE_SINCE)):
+    after = any(texts[hi:hi + len(words)] == words
+                for words in _conn_surfaces(engine.spec, "since",
+                                            _RANGE_SINCE))
+    # before a later "until" the postposition opens a range: hi "मार्च से
+    # जून तक" is "from March to June"
+    until = _conn_surfaces(engine.spec, "until", _RANGE_UNTIL)
+    if after and any(_match_conn_at(tokens, i, until)
+                     for i in range(hi, len(tokens))):
+        after = False
+    if not after and _since_marker_before(match.span[0], tokens,
+                                          engine.spec) is None:
         return span
 
     def read(at):
@@ -1898,9 +1920,10 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     FORWARD: here "since" past-anchors the START (its most recent past
     occurrence) while "until" future-anchors the END, so "since monday until
     friday" reads ``[last monday, next friday]`` rather than ``[next monday,
-    next friday]``.  Fires only on a LEADING "since" marker with a following
+    next friday]``.  Fires only on a "since" marker with a following
     terminator, so bare "since X" (no terminator -> open since) and "from A to
-    B" (no leading since) are both untouched.
+    B" (no since) are both untouched.  The words before the marker stay in the
+    remainder.
     """
     spec = engine.spec
     # opt-in per locale: only languages whose "since" is genuinely past-anchored
@@ -1914,9 +1937,13 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
         return None
     now = AstroDate.from_datetime(anchor)
     since_surf = _conn_surfaces(spec, "since", _RANGE_SINCE)
-    k = _match_conn_at(tokens, 0, since_surf)
-    if not k:
+    # the marker may follow other words ("I have lived here since january
+    # until march"); they stay in the remainder
+    lead = next((i for i in range(n) if _match_conn_at(tokens, i, since_surf)),
+                None)
+    if lead is None:
         return None
+    k = lead + _match_conn_at(tokens, lead, since_surf)
     to_surf = _conn_surfaces(
         spec, "to", _RANGE_TO + tuple(spec.connectors.get("until", ())))
     split = _first_to_split(tokens, k, to_surf, text, spec)
@@ -1965,7 +1992,9 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     end = right_ep[0].end
     if start >= end:
         return None
-    remainder = " ".join(r for r in (left_rem, right_ep[1]) if r).strip()
+    before = render_remainder(text, list(tokens[:lead]))
+    remainder = " ".join(r for r in (before, left_rem, right_ep[1])
+                         if r).strip()
     return DateSpan(start, end), remainder
 
 
