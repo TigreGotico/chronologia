@@ -23,7 +23,8 @@ DIGIT_HOUR = [
     ("8-kor", "2017-06-28T08:00:00"),
     ("reggel 9-kor", "2017-06-28T09:00:00"),
     ("délután 2-kor", "2017-06-27T14:00:00"),
-    ("éjjel 11-kor", "2017-06-28T23:00:00"),
+    # "éjjel" is the night band, so 11 is 23:00, and tonight's 23:00 is next
+    ("éjjel 11-kor", "2017-06-27T23:00:00"),
 ]
 
 #: count-toward-the-hour fractions, which must NOT be read as the bare hour.
