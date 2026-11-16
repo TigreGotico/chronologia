@@ -145,6 +145,15 @@
     "override": {
       "rel_period": [
         "REL_MARKER article? UNIT"
+      ],
+      "season_ref": [
+        "article? SEASON of YEAR",
+        "REL_MARKER SEASON",
+        "article? SEASON YEAR? during?"
+      ],
+      "holiday_ref": [
+        "REL_MARKER HOLIDAY",
+        "article? HOLIDAY YEAR? during?"
       ]
     },
     "extend": {
