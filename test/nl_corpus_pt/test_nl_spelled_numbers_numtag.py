@@ -11,6 +11,7 @@ written by hand or computed with ``relativedelta`` from the anchor.
 import pytest
 
 from chronologia import extract_duration, extract_timespan, extract_timespans
+from chronologia.events import extract_event
 
 from ._corpus import (ANCHOR, AstroDate, datetime, nomatch, parse,
                       relativedelta, span, timedelta)
@@ -151,10 +152,14 @@ def test_a_count_with_more_number_words_leaves_the_day_word_the_date(
     ("pt", "dois mil e quinhentos euros"),
     ("pt", "mil, dois dias"),
     ("en", "two thousand and one hundred thousand"),
+    # a scale word with no number before it names no year
+    ("pt", "mil"),
+    ("pt", "paguei mil"),
 ])
 def test_a_count_before_a_noun_or_a_number_is_no_year(lang, text):
     assert extract_timespan(text, lang, ANCHOR) is None
     assert extract_timespans(text, lang, ANCHOR) == []
+    assert extract_event(text, lang, anchor=ANCHOR) is None
 
 
 @pytest.mark.parametrize("lang, text, length", [
