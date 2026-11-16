@@ -29,8 +29,9 @@ def test_during_year_consumes_marker(text, y):
 ])
 def test_during_month_consumes_marker(text, m):
     r = parse(text)
-    assert r.span.start == AstroDate(ANCHOR.year, m, 1)
-    assert r.span.end == AstroDate(ANCHOR.year, m + 1, 1)
+    year = ANCHOR.year + (m < ANCHOR.month)
+    assert r.span.start == AstroDate(year, m, 1)
+    assert r.span.end == AstroDate(year, m + 1, 1)
     assert r.remainder == ""
 
 

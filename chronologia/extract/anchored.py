@@ -134,16 +134,21 @@ _LONGEST_UNIT = {
 
 def _offset_base(span: DateSpan, sign: int,
                  unit: Optional[str] = None) -> AstroDate:
-    """The civil day an offset counts from.
+    """The instant an offset counts from.
 
-    Before the reference, its first day.  After it, its last day when the
-    offset unit is shorter than the reference: "two weeks after the summer"
-    counts from 31 August, the last day of meteorological summer.  A unit as
-    long as the reference or longer counts unit by unit from its first day:
+    Before the reference, its first day.  After it, a unit shorter than a
+    day counts from the end of the reference: "12 hours after next summer"
+    is 1 September at 12:00.  A longer unit that is still shorter than the
+    reference counts from its last day: "two weeks after the summer" counts
+    from 31 August, the last day of meteorological summer.  A unit as long
+    as the reference or longer counts unit by unit from its first day:
     "2 years after 1990" is 1992, and "a month after march" is April.  A
     weekday offset ("the monday after X") has no unit and counts from the
     last day.
     """
+    if sign > 0 and unit is not None \
+            and _LONGEST_UNIT[unit] < timedelta(days=1):
+        return span.end
     after_end = sign > 0 and (
         unit is None or _LONGEST_UNIT[unit] < span.end - span.start)
     s = span.end - timedelta(microseconds=1) if after_end else span.start
@@ -222,11 +227,11 @@ def _offset_glue(spec: LangSpec) -> frozenset:
                      if _k not in sep_keys for s in vals)
 
 
-def _adjacent_clock(tokens, resolved, ref_match: Match,
-                    spec: LangSpec) -> Optional[Pair]:
-    """The lone ``clock_time`` match immediately following ``ref_match`` --
+def _adjacent_match(tokens, resolved, ref_match: Match, spec: LangSpec,
+                    construction: str) -> Optional[Pair]:
+    """The lone ``construction`` match immediately following ``ref_match`` --
     only glue words ("at", "on") in the gap between them -- if exactly one
-    such match exists.  ``None`` when there is no clock, or the adjacency is
+    such match exists.  ``None`` when there is none, or the adjacency is
     ambiguous."""
     glue = _offset_glue(spec)
     covered = set()
@@ -235,7 +240,7 @@ def _adjacent_clock(tokens, resolved, ref_match: Match,
             covered.update(range(*m.span))
     found = None
     for m, r in resolved:
-        if m.construction != "clock_time" or m.span[0] < ref_match.span[1]:
+        if m.construction != construction or m.span[0] < ref_match.span[1]:
             continue
         lo, hi = ref_match.span[1], m.span[0]
         if not all(i in covered or tokens[i].text in glue
@@ -281,8 +286,8 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             new_match = Match(match.construction, (start, match.span[1]),
                               match.slots, match.calendar)
             return new_match, Resolution(span, consumed)
-        clock_pair = _adjacent_clock(tokens, resolved, match, spec) \
-            if sub_day else None
+        clock_pair = _adjacent_match(tokens, resolved, match, spec,
+                                     "clock_time") if sub_day else None
         if clock_pair is not None:
             # The reference RESOLVES WITH a time-of-day (an adjacent, not-yet
             # -composed ``clock_time`` match): a sub-day offset must do exact
@@ -302,7 +307,15 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             new_match = Match(match.construction, (start, cm.span[1]),
                               match.slots, match.calendar)
             return new_match, Resolution(span, consumed)
-        base = _offset_base(res.value, sign, pre.get("unit"))
+        if sub_day and _adjacent_match(tokens, resolved, match, spec,
+                                       "daypart_ref") is not None:
+            # "an hour after tomorrow morning": the part of the day attaches
+            # to the shifted day, so a sub-day offset stays on the
+            # reference's own day instead of counting from its end
+            s = res.value.start
+            base = AstroDate(s.year, s.month, s.day)
+        else:
+            base = _offset_base(res.value, sign, pre.get("unit"))
         if pre["kind"] == "unit":
             value = _shift(base, pre["unit"], sign * pre["qty"])
             # the offset amount governs the SHIFT, never the result width:
@@ -575,7 +588,7 @@ def _scan_trailing_chunks(tokens, idx, spec):
             # phrase's closing filler -- the guard in
             # :func:`_compound_unit_at` already refused it as a chunk, but it
             # still belongs to the reading, not the remainder.
-            if tokens[j].text in spec.connectors.get("day_filler", ()):
+            if j < n and tokens[j].text in spec.connectors.get("day_filler", ()):
                 consumed.add(j)
             break
         unit, qty, end = got

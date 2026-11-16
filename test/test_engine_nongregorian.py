@@ -57,11 +57,12 @@ def test_zz_yearless_prefer_future_bumps_in_calendar_space():
     assert _one(zz_engine(), "zram 5").value.start == AstroDate(2018, 5, 20)
 
 
-def test_zz_yearless_month_only_no_bump():
-    # month word alone -> day 1 of Ramadan in the anchor's Islamic year
-    # (AH 1438); 1 Ramadan 1438 == 2017-05-27, MONTH resolution, no bump
+def test_zz_yearless_month_only_bumps_when_ended():
+    # month word alone -> its next occurrence: Ramadan 1438 (from 2017-05-27)
+    # ended before the anchor, so it is Ramadan 1439; 5 Ramadan 1439 is
+    # 2018-05-20 (above), so 1 Ramadan 1439 is 2018-05-16, MONTH resolution
     r = _one(zz_engine(), "zram")
-    assert r.value.start == AstroDate(2017, 5, 27)
+    assert r.value.start == AstroDate(2018, 5, 16)
     assert r.value.resolution == DateTimeResolution.MONTH
 
 

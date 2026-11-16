@@ -72,8 +72,9 @@ _MONTHNAMES = ["january", "february", "march", "april", "may", "june",
 @pytest.mark.parametrize("m,name", list(enumerate(_MONTHNAMES, 1)))
 def test_bare_month(m, name):
     s, e = start_end(name)
-    assert s == AstroDate(2017, m, 1)
-    ny, nm = (2018, 1) if m == 12 else (2017, m + 1)
+    year = ANCHOR.year + (m < ANCHOR.month)
+    assert s == AstroDate(year, m, 1)
+    ny, nm = (year + 1, 1) if m == 12 else (year, m + 1)
     assert e == AstroDate(ny, nm, 1)
 
 

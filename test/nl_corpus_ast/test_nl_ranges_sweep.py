@@ -7,7 +7,7 @@ from datetime import datetime
 
 import pytest
 
-from ._corpus import start_end, ad
+from ._corpus import ANCHOR, start_end, ad
 from ._gen import MON
 
 
@@ -15,8 +15,10 @@ def _month_range_cases():
     out = []
     for m1 in range(1, 13):
         for m2 in range(m1, 13):
-            end = datetime(2018, 1, 1) if m2 == 12 else datetime(2017, m2 + 1, 1)
-            out.append((f"de {MON[m1]} a {MON[m2]}", datetime(2017, m1, 1), end))
+            # a range that ended before the anchor is next year's
+            y = ANCHOR.year + (m2 + 1 <= ANCHOR.month)
+            end = datetime(y + 1, 1, 1) if m2 == 12 else datetime(y, m2 + 1, 1)
+            out.append((f"de {MON[m1]} a {MON[m2]}", datetime(y, m1, 1), end))
     return out
 
 

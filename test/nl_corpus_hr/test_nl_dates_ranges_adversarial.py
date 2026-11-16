@@ -41,7 +41,7 @@ def test_iso_and_year():
 
 @pytest.mark.parametrize("text,s,e", [
     ("od lipnja do rujna", "2017-6-1", "2017-10-1"),
-    ("od siječnja do ožujka", "2017-1-1", "2017-4-1"),
+    ("od siječnja do ožujka", "2018-1-1", "2018-4-1"),
     ("od listopada do prosinca", "2017-10-1", "2018-1-1"),
 ])
 def test_from_to_range(text, s, e):

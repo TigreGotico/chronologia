@@ -97,8 +97,8 @@ def test_between_full_date_range(d1, m1, y1, d2, m2, y2):
 # reads the pretoken stream, so the second endpoint is visible again.
 def test_between_fused_and_pending():
     ss, ee = start_end("בין ינואר ומרץ")
-    assert ss == AstroDate(2017, 1, 1)
-    assert ee == AstroDate(2017, 4, 1)
+    assert ss == AstroDate(2018, 1, 1)
+    assert ee == AstroDate(2018, 4, 1)
 
 
 # -- ל- as the "between" closing marker binds the 2nd endpoint ---------------
@@ -110,8 +110,8 @@ def test_between_fused_and_pending():
 # granularities bind their second endpoint.
 def test_between_lamed_month():
     ss, ee = start_end("בין ינואר ל-אפריל")
-    assert ss == AstroDate(2017, 1, 1)
-    assert ee == AstroDate(2017, 5, 1)
+    assert ss == AstroDate(2018, 1, 1)
+    assert ee == AstroDate(2018, 5, 1)
 
 
 def test_between_lamed_year():

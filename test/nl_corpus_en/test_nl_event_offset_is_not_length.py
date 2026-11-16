@@ -89,6 +89,39 @@ def test_a_length_without_an_offset_marker_stays_a_length(
         summary, day, day + length, length)
 
 
+@pytest.mark.parametrize("lang, text, date_word, start, hours", [
+    # The whole text reads "dos horas en" as "in two hours" and leaves the
+    # month; the rest reads the month.  1 March 2026 is the next March.
+    ("es", "reunión de dos horas en marzo", "marzo", datetime(2026, 3, 1), 2),
+    ("es", "reunión de dos horas en abril", "abril", datetime(2026, 4, 1), 2),
+    ("es", "clase de dos horas en mayo", "mayo", datetime(2026, 5, 1), 2),
+    ("es", "trabajo tres horas en marzo", "marzo", datetime(2026, 3, 1), 3),
+    # meteorological summer starts on 1 June (NOAA NCEI, "Meteorological
+    # Versus Astronomical Seasons")
+    ("es", "reunión de dos horas en verano", "verano", datetime(2026, 6, 1),
+     2),
+    ("gl", "reunión de dúas horas en marzo", "marzo", datetime(2026, 3, 1), 2),
+    ("ro", "ședință de două ore în martie", "martie", datetime(2026, 3, 1), 2),
+    # The whole text reads "twee uur" as 02:00 and leaves "morgen".
+    ("nl", "vergadering van twee uur na het werk morgen", "morgen",
+     datetime(2026, 1, 31), 2),
+    ("nl", "vergadering van twee uur na school morgen", "morgen",
+     datetime(2026, 1, 31), 2),
+    ("nl", "twee uur sporten na het eten morgen", "morgen",
+     datetime(2026, 1, 31), 2),
+    ("nl", "vergadering van twee uur na de lunch morgen", "morgen",
+     datetime(2026, 1, 31), 2),
+    ("nl", "vergadering van twee uur in de middag morgen", "morgen",
+     extract_timespan("in de middag morgen", "nl", anchor=ANCHOR).span.start,
+     2),
+])
+def test_a_length_the_whole_text_reads_as_a_time_keeps_the_rest_date(
+        lang, text, date_word, start, hours):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    assert (ev.span.start, ev.duration) == (start, timedelta(hours=hours))
+    assert date_word not in ev.summary.split()
+
+
 @pytest.mark.parametrize("jurisdiction, day", [
     # Christmas 2026 is a Friday.  GB moves Boxing Day (Saturday) to Monday
     # 28 December, so its second business day is the 30th; US works the 28th.
