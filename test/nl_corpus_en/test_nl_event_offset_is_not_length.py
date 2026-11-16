@@ -121,3 +121,31 @@ def test_nl_quarter_hour_offset_spans_like_its_english_form(nl, en):
     got = extract_timespan(nl, "nl", anchor=ANCHOR)
     want = extract_timespan(en, "en", anchor=ANCHOR)
     assert (got.span.start, got.span.end) == (want.span.start, want.span.end)
+
+
+@pytest.mark.parametrize("lang, text, start", [
+    # an offset from now has no "before" or "after" word; the length is the
+    # offset (anchor Friday 30 January 2026, 10:00)
+    ("an", "dentro de 3 semanas", datetime(2026, 2, 20, 10)),
+    ("id", "1 jam lagi", datetime(2026, 1, 30, 11)),
+    ("vi", "7 ngày trước", datetime(2026, 1, 23, 10)),
+    ("it", "fra un quarto d'ora", datetime(2026, 1, 30, 10, 15)),
+    # a bare clock hour has no date to carry the event: "2 heures" stays 02:00
+    ("fr", "2 heures", datetime(2026, 1, 31, 2)),
+    ("nl", "15 uur", datetime(2026, 1, 30, 15)),
+    # "saat 12" is as wide as "3 gün", but it is not the length's words
+    ("tr", "3 gün önce saat 12", datetime(2026, 1, 27, 12)),
+    ("az", "3 gün əvvəl saat 9", datetime(2026, 1, 27, 9)),
+    # a clock time wider than the number and unit is a clock time
+    ("fr", "dîner cinq heures du matin demain", datetime(2026, 1, 31, 5)),
+])
+def test_an_offset_without_a_marker_word_is_the_date(lang, text, start):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    assert (ev.span.start, ev.duration) == (start, None)
+
+
+def test_a_clock_like_length_before_a_date_is_still_an_offset():
+    """fr "deux heures avant midi" is 10:00: the hours are the offset."""
+    ev = extract_event("réunion deux heures avant midi", "fr", anchor=ANCHOR)
+    assert (ev.summary, ev.span.start, ev.duration) == (
+        "réunion", datetime(2026, 1, 30, 10), None)
