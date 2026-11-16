@@ -280,3 +280,36 @@ def test_an_until_in_a_later_sentence_leaves_since_january_begun():
     assert [(m.span.start, m.span.end) for m in mentions] == [
         (datetime(2017, 1, 1), datetime(2017, 2, 1)),
         (datetime(2017, 6, 30), datetime(2017, 7, 1))]
+
+
+@pytest.mark.parametrize("text, lang, start", [
+    ("I have worked here since january and I stay until friday", "en",
+     datetime(2017, 1, 1)),
+    ("he has been ill since february but is back until friday", "en",
+     datetime(2017, 2, 1)),
+    ("ich arbeite hier seit januar und bleibe bis freitag", "de",
+     datetime(2017, 1, 1)),
+    ("je travaille ici depuis janvier et je reste jusqu'à vendredi", "fr",
+     datetime(2017, 1, 1)),
+    ("trabajo aquí desde enero y me quedo hasta el viernes", "es",
+     datetime(2017, 1, 1)),
+    ("trabalho aqui desde janeiro e fico até sexta", "pt",
+     datetime(2017, 1, 1)),
+])
+def test_a_since_month_stays_begun_before_a_later_until_day(text, lang, start):
+    """"since" names a past start (en.wiktionary "since", preposition, sense
+    1: "From: referring to a period of time ending in the present").  A
+    later "until friday" ends the range on Friday 30 June 2017; it must not
+    move the month to its 2018 occurrence."""
+    end = datetime(2017, 7, 1)
+    r = _span(text, lang)
+    assert (r.span.start, r.span.end) == (start, end)
+    mentions = extract_timespans(text, lang, ANCHOR)
+    assert [(m.span.start, m.span.end) for m in mentions] == [(start, end)]
+
+
+def test_a_leading_since_month_stays_begun_in_the_mentions():
+    mentions = extract_timespans("since january I stay until friday", "en",
+                                 ANCHOR)
+    assert [(m.span.start, m.span.end) for m in mentions] == [
+        (datetime(2017, 1, 1), datetime(2017, 7, 1))]

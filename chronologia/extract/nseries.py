@@ -825,13 +825,16 @@ def _merge_ranges(out, tokens, text, engine, anchor):
             boundary = (a_hi > 0 and b_lo < len(tokens)
                         and _sentence_period_between(tokens, a_hi - 1, b_lo, text))
             if cs is not None and ce is not None and not boundary:
-                got = _extract_range(text, _slice(cs, ce), engine, anchor)
                 # after "since" the range has begun, as the whole text reads
                 # it: "since january until march" said in June is this year's
                 since_lo = _since_marker_before(a_lo, tokens, spec)
-                if got is not None and since_lo is not None \
-                        and tokens[since_lo].char_start is not None:
-                    part = text[tokens[since_lo].char_start:ce]
+                since_cs = None if since_lo is None \
+                    else tokens[since_lo].char_start
+                got = _extract_range(
+                    text, _slice(cs if since_cs is None else since_cs, ce),
+                    engine, anchor)
+                if got is not None and since_cs is not None:
+                    part = text[since_cs:ce]
                     back = _extract_directional_range(
                         part, engine.tokenize(part), engine, anchor)
                     if back is not None and not back[1]:

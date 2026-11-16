@@ -716,9 +716,14 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 got = _compose_clock_range(text, left_tok, right_tok,
                                            engine, anchor)
             if got is None:
+                # "since january ... until friday": the month after "since"
+                # has begun, whatever the marker's place in the range
+                since = any(tokens[i].text in spec.months
+                            and _since_marker_before(i, tokens, spec)
+                            is not None for i in range(lead_at, p))
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily)
+                                     previous, daily, since=since)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -1328,7 +1333,7 @@ def _lend_year(bare, donor):
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
-                   daily=None):
+                   daily=None, since=False):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1347,7 +1352,13 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     ``previous(sub, start, bound)`` gives the latest reading at or before
     ``bound`` of an endpoint read at ``start``, in the shape of
     ``endpoint(sub)``, or ``None`` (see :func:`_latest_reading`); the year pull
-    uses it.  ``daily(sub)`` is true for an endpoint that recurs each day."""
+    uses it.  ``daily(sub)`` is true for an endpoint that recurs each day.
+
+    ``since`` marks a left month that follows a "since" marker.  That month
+    has begun, so when the right end, a weekday or a clock, comes before the
+    month's next occurrence, the month takes its previous occurrence instead
+    of rolling the end after it: "since january ... until friday" said in
+    June runs from this January to this Friday."""
     left = endpoint(left_tok)
     right = endpoint(right_tok)
     # one endpoint written as a bare number against a partner that names a
@@ -1436,6 +1447,12 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # not rolled by weeks: a week roll lands on a day that is no such weekday
     # of any month.
     end = right_span.end
+    if since and right[2] in ("clock", "weekday") and not left[3] \
+            and previous is not None and right_span.end <= start:
+        earlier = previous(left_tok, start, right_span.start)
+        if earlier is not None and earlier[0].start < right_span.end:
+            start = earlier[0].start
+            left = (earlier[0], earlier[1]) + left[2:]
     if right[2] == "clock":
         end = _roll_after(right_span, start, timedelta(days=1)).end
     elif right[2] == "weekday" and (monthly is None
