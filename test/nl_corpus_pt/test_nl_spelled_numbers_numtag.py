@@ -111,10 +111,28 @@ def test_scale_count_of_things_is_no_year():
     "há mil duzentos milhões de anos",
 ])
 def test_two_numbers_before_the_unit_give_no_count(text):
-    """Without "e" the last group starts a new number (Gramática do
-    Português, Fundação Calouste Gulbenkian, pp. 932-933): "mil duzentos" is
-    1000 and 200.  The count of years is not settled, so no slot reads it."""
+    """The standard form of 1200 is "mil e duzentos" (Cunha and Cintra,
+    Nova Gramática do Português Contemporâneo, 1984, p. 372, quoted in
+    Ciberdúvidas 34389; the Gulbenkian Gramática do Português, pp. 932-933,
+    was not consulted).  numtag reads "mil duzentos" as 1000 and 200, so the
+    count of years is not settled: no slot reads it, and "anos" does not
+    read as one year."""
     nomatch(text)
+    assert extract_duration(text, "pt", anchor=ANCHOR) is None
+
+
+@pytest.mark.parametrize("text,expected,left", [
+    ("o autocarro dez cinco minutos atrás", ANCHOR - timedelta(minutes=5),
+     "o autocarro dez"),
+    ("sala três dois dias atrás", ANCHOR - timedelta(days=2), "sala três"),
+])
+def test_a_number_that_names_a_thing_leaves_the_count_after_it(
+        text, expected, left):
+    """"dez" names the bus and "três" the room: neither ends in a scale
+    word, so the number after it is the count."""
+    got = parse(text)
+    assert got.span.start == expected
+    assert got.remainder == left
 
 
 def test_mil_with_e_is_one_count():
@@ -124,3 +142,10 @@ def test_mil_with_e_is_one_count():
     text = "há mil e duzentos anos"
     assert span(text).start == ANCHOR - relativedelta(years=1200)
     assert parse(text).remainder == ""
+
+
+def test_a_comma_after_a_scale_word_ends_the_number():
+    """A comma ends "mil", so "dois dias" is a count of its own."""
+    got = extract_duration("mil, dois dias", "pt")
+    assert got.duration == timedelta(days=2)
+    assert got.remainder == "mil"

@@ -29,7 +29,8 @@ from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (fold_mentions, mention_number,
                                           mentions, scale_factor,
-                                          scale_factors, split_counts)
+                                          scale_factors,
+                                          withhold_split_counts)
 
 _LANG_DIR = Path(__file__).resolve().parent.parent / "locale" / "en"
 
@@ -130,6 +131,44 @@ def _glue_era(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             out.append(tokens[i])
             i += 1
     return reindex(out)
+
+
+#: The full hours a leading zero opens in military time: 0100 to 0900.
+_ZERO_HOURS = frozenset(str(h * 100) for h in range(1, 10))
+
+
+def _military_hour(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Military time says the leading zero of the hour and says a full hour
+    as "hundred": 0000 is "zero hundred hours" and 0200 is "zero two hundred"
+    (timeanddate.com, "Military Time: The 24-Hour Clock", conversion chart;
+    Wikipedia, "24-hour clock", section "Military time").  numtag reads no
+    number in "zero hundred", and "zero" and "nine hundred" as two numbers,
+    so the four digits fold here to one token, as "0900" is written.
+    """
+    out = []
+    n = len(tokens)
+    i = 0
+    while i < n:
+        tok, value, end = tokens[i], None, i + 2
+        if tok.text == "zero" and i + 1 < n and not tokens[i + 1].break_before:
+            m = tokens[i + 1].mention
+            if tokens[i + 1].text == "hundred" and m is None:
+                value = 0
+            elif (m is not None and m is not tok.mention
+                  and m.kind is Kind.CARDINAL and m.value in _ZERO_HOURS):
+                end = _mention_end(tokens, i + 1)
+                if tokens[end - 1].text == "hundred":
+                    value = int(m.value)
+        if value is None:
+            out.append(tok)
+            i += 1
+            continue
+        out.append(Token(text=f"{value:04d}", raw=f"{value:04d}", index=0,
+                         is_number=True, value=value,
+                         char_start=tok.char_start,
+                         char_end=tokens[end - 1].char_end))
+        i = end
+    return tuple(out)
 
 
 def _skip_filler(tokens: Tuple[Token, ...], k: int) -> int:
@@ -357,9 +396,10 @@ def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """The English number fold: every numtag mention becomes one number
     token, except the words the date grammar reads as words; then the year
     pair, the deep-time article and the duration fraction compose."""
-    tokens = reindex(_merge_ord_suffix(_glue_era(tokens)))
+    tokens = reindex(withhold_split_counts(
+        _military_hour(_merge_ord_suffix(_glue_era(tokens))), _UNITS,
+        _FACTORS))
     claimed, scales = _date_words(tokens)
-    claimed |= split_counts(tokens, _UNITS)
     folded = fold_mentions(tokens, "en", claimed, scales)
     # the claimed scale words keep their place in the folded stream; find
     # them again by where they start

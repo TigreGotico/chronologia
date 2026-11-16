@@ -21,7 +21,7 @@ from chronologia.extract.numfold_romance import (_LOCALE_ROOT,
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (fold_mentions, mention_number,
                                           scale_factor, scale_factors,
-                                          split_counts)
+                                          withhold_split_counts)
 
 
 def _voc(*prefixes: str) -> FrozenSet[str]:
@@ -236,9 +236,9 @@ def fold_pt(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     literal folds to an ``HH:MM`` clock token first; the abbreviations the
     tokenizer splits ("a.c.", "meio-dia") are glued back into one word.
     """
-    tokens = reindex(_glue(_collapse_h_clock(tokens)))
+    tokens = reindex(withhold_split_counts(
+        _glue(_collapse_h_clock(tokens)), _UNITS, _FACTORS))
     claimed, ordinals, scales = _date_words(tokens)
-    claimed |= split_counts(tokens, _UNITS)
     # a homograph read as an ordinal by its position keeps its written word,
     # so a mention's text shows "o quarto trimestre"
     words = {(tokens[i].char_start, tokens[i].char_end): tokens[i].raw

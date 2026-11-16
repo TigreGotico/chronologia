@@ -76,3 +76,36 @@ def test_deep_time_count_with_several_scale_words(text, years, width):
     assert start_end(text) == (AstroDate(1950 - years, 1, 1),
                                AstroDate(1950 - years + width, 1, 1))
     assert parse(text).remainder == ""
+
+
+@pytest.mark.parametrize("text,expected,left", [
+    ("I finished chapter one two days ago", ANCHOR - timedelta(days=2),
+     "I finished chapter one"),
+    ("chapter one, two days ago", ANCHOR - timedelta(days=2), "chapter one"),
+    ("I watched season one two weeks ago", ANCHOR - timedelta(weeks=2),
+     "I watched season one"),
+    ("I beat level three two hours ago", ANCHOR - timedelta(hours=2),
+     "I beat level three"),
+    ("we moved to room four three days ago", ANCHOR - timedelta(days=3),
+     "we moved to room four"),
+    ("bus number seven ten minutes ago", ANCHOR - timedelta(minutes=10),
+     "bus number seven"),
+    ("platform nine three minutes from now", ANCHOR + timedelta(minutes=3),
+     "platform nine"),
+    ("gate twelve five minutes from now", ANCHOR + timedelta(minutes=5),
+     "gate twelve"),
+])
+def test_a_number_that_names_a_thing_leaves_the_count_after_it(
+        text, expected, left):
+    """Only a number that ends in a scale word and a smaller number make a
+    pair ("mil duzentos"): "chapter one" names the chapter, and "two days
+    ago" is the count."""
+    got = parse(text)
+    assert got.span.start == expected
+    assert got.remainder == left
+
+
+def test_a_length_after_a_number_that_names_a_thing():
+    got = extract_duration("level three two hours", "en")
+    assert got.duration == timedelta(hours=2)
+    assert got.remainder == "level three"

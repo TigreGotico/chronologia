@@ -21,7 +21,7 @@ from dataclasses import replace
 from fractions import Fraction
 from functools import lru_cache
 from pathlib import Path
-from typing import Collection, Dict, Mapping, Optional, Set, Tuple, Union
+from typing import Collection, Dict, Mapping, Optional, Tuple, Union
 
 from numtag import Form, Kind, NumberMention, Scale, tag_numbers
 from ovos_spec_tools import expand, read_resource_file
@@ -167,40 +167,57 @@ def reread(run: Tuple[Token, ...], lang: str) -> Tuple[Token, ...]:
     return tuple(out)
 
 
-def split_counts(tokens: Tuple[Token, ...],
-                 units: Collection[str]) -> Set[int]:
-    """The indices of the words of two spelled cardinals that stand side by
-    side before a unit word.
+def withhold_split_counts(tokens: Tuple[Token, ...], units: Collection[str],
+                          factors: Mapping[Optional[Scale], Mapping[str, int]]
+                          ) -> Tuple[Token, ...]:
+    """Withhold a count that a missing "e" splits in two, with its unit.
 
-    numtag reads "mil duzentos" as two numbers, 1000 and 200 (Gramática do
-    Português, Fundação Calouste Gulbenkian, pp. 932-933: "mil e duzentos" is
-    1200, and without "e" the last group starts a new number).  So in "há mil
-    duzentos anos" the count of years is not settled, and only the context
-    of the caller can choose.  The words of both mentions stay words: no
-    count slot takes a mention that another mention cuts from its unit, and
-    no year slot takes the first one.  An ordinal before a count ("the
-    first two weeks") is no such pair.
+    The standard Portuguese form of 1200 is "mil e duzentos": the "e" joins
+    the thousand and the hundred when the number ends in a round hundred
+    (Cunha and Cintra, Nova Gramática do Português Contemporâneo, 1984,
+    p. 372, quoted in Ciberdúvidas 34389: "1800 = mil e oitocentos").  The
+    Gramática do Português (Fundação Calouste Gulbenkian), pp. 932-933, which
+    Ciberdúvidas 8981 quotes for the same rule, was not consulted.  numtag
+    reads "mil duzentos" as two numbers, 1000 and 200, so in "há mil
+    duzentos anos" the count of years is not settled.
+
+    Such a pair is a cardinal mention that ends in a scale word ("mil",
+    "milhões", "thousand"), then a cardinal mention smaller than that scale,
+    then a unit word, with no clause break between them.  The pair and its
+    unit become one word token that binds no slot, so no part of the pair
+    reads as a count and the unit does not read as one unit.  Two numbers that
+    do not have this shape ("chapter one two days ago") stay as they are.
     """
-    out: Set[int] = set()
+    out = []
     n = len(tokens)
-    i = 1
+    i = 0
     while i < n:
-        first, second = tokens[i - 1].mention, tokens[i].mention
-        if (first is None or second is None or first is second
-                or first.kind is not Kind.CARDINAL
-                or second.kind is not Kind.CARDINAL):
+        first = tokens[i].mention
+        if first is None or first.kind is not Kind.CARDINAL:
+            out.append(tokens[i])
             i += 1
             continue
-        end = i
-        while end < n and tokens[end].mention is second:
+        mid = i
+        while mid < n and tokens[mid].mention is first:
+            mid += 1
+        second = tokens[mid].mention if mid < n else None
+        end = mid
+        while end < n and second is not None and tokens[end].mention is second:
             end += 1
-        if end < n and tokens[end].text in units:
-            start = i - 1
-            while start > 0 and tokens[start - 1].mention is first:
-                start -= 1
-            out.update(range(start, end))
-        i = end
-    return out
+        factor = scale_factor(tokens[mid - 1].text, first, factors)
+        if (second is not None and second.kind is Kind.CARDINAL
+                and factor is not None and Fraction(second.value) < factor
+                and end < n and tokens[end].text in units
+                and not any(t.break_before for t in tokens[mid:end + 1])):
+            raw = " ".join(t.raw for t in tokens[i:end + 1])
+            out.append(Token(text=raw, raw=raw, index=0,
+                             char_start=tokens[i].char_start,
+                             char_end=tokens[end].char_end))
+            i = end + 1
+        else:
+            out.extend(tokens[i:mid])
+            i = mid
+    return tuple(out)
 
 
 def fold_mentions(tokens: Tuple[Token, ...], lang: str,
