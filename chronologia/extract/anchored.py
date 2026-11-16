@@ -930,14 +930,14 @@ def marker_names_a_reference(tokens, k: int, spec: LangSpec) -> bool:
 
     In "the day after next summer" the marker "next" belongs to "next
     summer", the reference the offset counts from.  The word is a season,
-    a weekday or the first word of a holiday.  It is then not the
-    "after next" idiom, which ends the phrase ("the day after next").
+    a weekday or a holiday, matched by its whole surface.  It is then not
+    the "after next" idiom, which ends the phrase ("the day after next").
     """
-    if k + 1 >= len(tokens):
-        return False
-    word = tokens[k + 1].text
-    return (word in spec.seasons or word in spec.weekdays
-            or any(h.split()[0] == word for h in spec.holidays))
+    following = " ".join(t.text for t in tokens[k + 1:]).split()
+    return any(following[:len(words)] == words
+               for surfaces in (spec.seasons, spec.weekdays, spec.holidays)
+               for words in map(str.split, surfaces)
+               if words)
 
 
 def _weekend_after_next(tokens, spec: LangSpec, anchor) -> Optional[Pair]:
