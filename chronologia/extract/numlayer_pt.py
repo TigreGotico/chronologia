@@ -20,8 +20,8 @@ from chronologia.extract.numfold_romance import (_LOCALE_ROOT,
                                                  _collapse_h_clock, _glue)
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (counts_things, fold_mentions,
-                                          mention_number, scale_factor,
-                                          scale_factors,
+                                          mark_counts, mention_number,
+                                          scale_factor, scale_factors,
                                           withhold_split_counts)
 
 
@@ -81,9 +81,9 @@ _FACTORS = scale_factors("pt")
 _UNITS = _voc("unit_")
 _YEAR_WORDS = _voc("marker_year_word")
 _OF = _voc("marker_of")
-#: Every word a pt date rule knows, and the words that announce a year.
-_VOCAB = _voc("")
+#: The words that announce a year, and the months a year follows.
 _YEAR_CUES = _YEAR_WORDS | _voc("marker_in.")
+_MONTHS = _voc("month_")
 
 
 def _number_in(tok: Token, low: float, high: float) -> bool:
@@ -220,8 +220,9 @@ def _date_words(tokens: Tuple[Token, ...]
             if factor is not None:
                 claimed.add(i)
                 scales[i] = factor
-        elif (word in _SCALES and _ends_mention(tok)
-              and counts_things(tokens, end, _VOCAB, _YEAR_CUES)):
+        elif (_ends_mention(tok) and after not in _OF
+              and counts_things(tokens, end, _SCALES, _YEAR_CUES, _MONTHS,
+                                _UNITS)):
             # a count of things ("comprei mil ações ontem") is no date
             # number, so every word of its mention stays a word
             k = i
@@ -255,6 +256,8 @@ def fold_pt(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     # so a mention's text shows "o quarto trimestre"
     words = {(tokens[i].char_start, tokens[i].char_end): tokens[i].raw
              for i in ordinals}
-    return tuple(replace(t, raw=words[(t.char_start, t.char_end)])
-                 if t.is_number and (t.char_start, t.char_end) in words else t
-                 for t in fold_mentions(tokens, "pt", claimed, scales))
+    folded = tuple(replace(t, raw=words[(t.char_start, t.char_end)])
+                   if t.is_number and (t.char_start, t.char_end) in words
+                   else t
+                   for t in fold_mentions(tokens, "pt", claimed, scales))
+    return mark_counts(folded, _SCALES, _YEAR_CUES, _MONTHS)

@@ -16,6 +16,7 @@ units of the scale word.
 """
 from __future__ import annotations
 
+import re
 from bisect import bisect_right
 from dataclasses import replace
 from fractions import Fraction
@@ -222,22 +223,60 @@ def withhold_split_counts(tokens: Tuple[Token, ...], units: Collection[str],
     return tuple(out)
 
 
+def is_count(tokens: Tuple[Token, ...], end: int, scales: Collection[str],
+             cues: Collection[str], months: Collection[str]) -> bool:
+    """Whether the mention that ends before ``end`` is a count, not a year.
+
+    A mention that holds a scale word and has a word or another number after
+    it is a count: "comprei mil ações ontem", "dois mil e quinhentos euros",
+    "paguei mil na segunda", "I saw two thousand five hundred people
+    yesterday".  A year takes a cue before it: a year word or "em", "in"
+    ("em dois mil eu nasci"), or a month in the two words before ("março de
+    dois mil e três").  A mention with nothing after it stays a number.
+    """
+    mention = tokens[end - 1].mention
+    start = end - 1
+    while start > 0 and tokens[start - 1].mention is mention:
+        start -= 1
+    if (end >= len(tokens) or mention is None
+            or not any(w in scales
+                       for w in re.split(r"[\s-]+", mention.text.lower()))):
+        return False
+    nxt = tokens[end]
+    if not (nxt.is_number or nxt.mention is not None or nxt.text.isalpha()):
+        return False
+    return not (start > 0 and (tokens[start - 1].text in cues
+                               or any(t.text in months
+                                      for t in tokens[max(0, start - 2):start])))
+
+
 def counts_things(tokens: Tuple[Token, ...], end: int,
-                  vocab: Collection[str], cues: Collection[str]) -> bool:
+                  scales: Collection[str], cues: Collection[str],
+                  months: Collection[str], units: Collection[str]) -> bool:
     """Whether the mention that ends before ``end`` counts things.
 
-    A mention that ends in a scale word, before a word that no date rule
-    knows, is a count and not a year: "comprei mil ações ontem", "I saw a
-    thousand people yesterday".  After a year cue ("em", "in", "the year")
-    it stays a number.
+    It is a count (:func:`is_count`) before a word that is neither a unit nor
+    a number.  Its words stay words.  A count before a unit or a number folds
+    into a number, because the duration reader reads it.
     """
-    start = end - 1
-    while start > 0 and tokens[start - 1].mention is tokens[end - 1].mention:
-        start -= 1
     nxt = tokens[end] if end < len(tokens) else None
-    return (nxt is not None and nxt.mention is None and not nxt.is_number
-            and nxt.text.isalpha() and nxt.text not in vocab
-            and (start == 0 or tokens[start - 1].text not in cues))
+    return (is_count(tokens, end, scales, cues, months)
+            and not nxt.is_number and nxt.mention is None
+            and nxt.text not in units)
+
+
+def mark_counts(tokens: Tuple[Token, ...], scales: Collection[str],
+                cues: Collection[str], months: Collection[str]
+                ) -> Tuple[Token, ...]:
+    """Mark each folded number that :func:`is_count` reads as a count.
+
+    The mark keeps the year and military-hour slots off it: "mil e quinhentas
+    horas" counts hours.
+    """
+    return tuple(replace(t, count=True)
+                 if t.is_number and is_count(tokens, i + 1, scales, cues,
+                                             months) else t
+                 for i, t in enumerate(tokens))
 
 
 def fold_mentions(tokens: Tuple[Token, ...], lang: str,

@@ -10,7 +10,7 @@ written by hand or computed with ``relativedelta`` from the anchor.
 """
 import pytest
 
-from chronologia import extract_duration, extract_timespan
+from chronologia import extract_duration, extract_timespan, extract_timespans
 
 from ._corpus import (ANCHOR, AstroDate, datetime, nomatch, parse,
                       relativedelta, span, timedelta)
@@ -122,6 +122,66 @@ def test_a_count_of_things_leaves_the_day_word_the_date(lang, text, day):
     assert (s.start, s.end) == day
 
 
+_MONDAY = ANCHOR.date() + relativedelta(weekday=0, days=1)
+_MONDAY = (datetime.combine(_MONDAY, datetime.min.time()),
+           datetime.combine(_MONDAY + timedelta(days=1), datetime.min.time()))
+_TODAY = (datetime(2017, 6, 27), datetime(2017, 6, 28))
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    # more number words after the scale word: still a count, not a year
+    ("pt", "ganhei dois mil e quinhentos euros amanhã", _TOMORROW),
+    ("pt", "paguei mil e duzentos euros na segunda", _MONDAY),
+    ("pt", "comprei mil e duzentas ações ontem", _YESTERDAY),
+    ("pt", "vi três mil e cem pessoas ontem", _YESTERDAY),
+    # a number before a day word, with no year cue before it, is no year
+    ("pt", "paguei mil na segunda", _MONDAY),
+    ("pt", "gastei mil hoje", _TODAY),
+    ("pt", "comprei mil, ontem", _YESTERDAY),
+    ("en", "I paid a thousand on monday", _MONDAY),
+    ("en", "I saw two thousand five hundred people yesterday", _YESTERDAY),
+])
+def test_a_count_with_more_number_words_leaves_the_day_word_the_date(
+        lang, text, day):
+    s = extract_timespan(text, lang, ANCHOR).span
+    assert (s.start, s.end) == day
+
+
+@pytest.mark.parametrize("lang, text", [
+    ("pt", "dois mil e quinhentos euros"),
+    ("pt", "mil, dois dias"),
+    ("en", "two thousand and one hundred thousand"),
+])
+def test_a_count_before_a_noun_or_a_number_is_no_year(lang, text):
+    assert extract_timespan(text, lang, ANCHOR) is None
+    assert extract_timespans(text, lang, ANCHOR) == []
+
+
+@pytest.mark.parametrize("lang, text, length", [
+    ("pt", "mil e quinhentas horas", timedelta(hours=1500)),
+    ("en", "two thousand five hundred minutes", timedelta(minutes=2500)),
+    ("en", "one thousand five hundred hours", timedelta(hours=1500)),
+])
+def test_a_count_before_a_unit_is_a_length_and_no_year_or_clock(
+        lang, text, length):
+    """"quinhentas" is the feminine form, so a year is never spelled with
+    it (en.wiktionary "quinhentas"); "hours" after "one thousand five
+    hundred" counts hours, and the clock says "fifteen hundred hours"."""
+    assert extract_timespans(text, lang, ANCHOR) == []
+    assert extract_duration(text, lang, anchor=ANCHOR).duration == length
+
+
+@pytest.mark.parametrize("lang, text, year, month", [
+    ("pt", "março de dois mil e três às três", 2003, 3),
+    ("pt", "janeiro de mil novecentos e noventa e nove foi frio", 1999, 1),
+    ("en", "in two thousand and one I saw people", 2001, 1),
+])
+def test_a_year_after_a_cue_or_a_month_stays_the_year(
+        lang, text, year, month):
+    s = extract_timespan(text, lang, ANCHOR).span
+    assert (s.start.year, s.start.month) == (year, month)
+
+
 @pytest.mark.parametrize("text, year", [
     # after a year cue, or with no word after it, the number is the year
     ("no ano mil", 1000),
@@ -153,6 +213,7 @@ def test_two_numbers_before_the_unit_give_no_count(text):
     count of years is not settled: no slot reads it, and "anos" does not
     read as one year."""
     nomatch(text)
+    assert extract_timespans(text, "pt", ANCHOR) == []
     assert extract_duration(text, "pt", anchor=ANCHOR) is None
 
 

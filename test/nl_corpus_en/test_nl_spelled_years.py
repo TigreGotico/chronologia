@@ -100,17 +100,12 @@ def test_refuses_rather_than_guesses(text):
     nomatch(text)
 
 
-def test_two_numbers_joined_by_and_read_as_their_digits():
+def test_two_numbers_joined_by_and_are_no_year():
     """"two thousand and one hundred thousand" is two numbers, 2000 and
     100000: the hundred thousand does not fit below the thousand it follows.
-    The spelled text reads as its digits "2000 and 100000" do, with the
-    second number left in the remainder."""
-    spelled = parse("two thousand and one hundred thousand")
-    digits = parse("2000 and 100000")
-    assert spelled.span == digits.span
-    assert (spelled.span.start, spelled.span.end) == (AstroDate(2000, 1, 1),
-                                                      AstroDate(2001, 1, 1))
-    assert spelled.remainder == "and one hundred thousand"
+    A spelled number is a year after a year cue or with nothing after it, and
+    here a word follows it, so it is no year."""
+    nomatch("two thousand and one hundred thousand")
 
 
 def test_ones_suffix_is_a_count_not_a_year():

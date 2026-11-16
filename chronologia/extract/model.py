@@ -120,6 +120,11 @@ class Token:
     # ordinal, not a cardinal, was spoken: "двадцатого числа" names a day,
     # "три числа" ("three numbers") does not.
     day_ordinal: bool = False
+    # Whether this number token counts what a unit word after it names ("mil e
+    # quinhentas horas", "two thousand five hundred minutes").  A count is no
+    # year and no clock, so the year and military-hour slots refuse it.  Set by
+    # ``numlayer.mark_counts``.
+    count: bool = False
     # The numtag mention this token sits inside, for the languages numtag
     # reads (``numlayer.NUMTAG_LANGS``).  A word token keeps its word and
     # carries the mention beside it; a number token folded from a mention

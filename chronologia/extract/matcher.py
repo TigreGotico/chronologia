@@ -216,11 +216,12 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         if token.apostrophe and raw.isdigit() and len(raw) == 2:
             return True
         # a leading zero marks a clock reading ("0600"), never a year
-        return (token.is_number and raw.isdigit() and raw[0] != "0"
-                and GYEAR_MIN <= int(raw) <= GYEAR_MAX)
+        return (token.is_number and not token.count and raw.isdigit()
+                and raw[0] != "0" and GYEAR_MIN <= int(raw) <= GYEAR_MAX)
     if name in ("MILTIME", "MILTIMEZ"):
         raw = token.raw.rstrip(".")
-        if not (token.is_number and raw.isdigit() and len(raw) == 4):
+        if not (token.is_number and not token.count and raw.isdigit()
+                and len(raw) == 4):
             return False
         hh, mm = int(raw[:2]), int(raw[2:])
         if not (0 <= hh <= 23 and 0 <= mm <= 59):
@@ -235,7 +236,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         # leading-zero forms are already MILTIMEZ, so excluding them here keeps
         # "0800Z"/"0300 Zulu" resolving through their existing order, unchanged.
         raw = token.raw.rstrip(".")
-        if not (token.is_number and raw.isdigit() and len(raw) == 4):
+        if not (token.is_number and not token.count and raw.isdigit()
+                and len(raw) == 4):
             return False
         hh, mm = int(raw[:2]), int(raw[2:])
         return 0 <= hh <= 23 and 0 <= mm <= 59 and raw[0] != "0"
