@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 
 from chronologia.extract import tokenizer
@@ -485,19 +486,26 @@ def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
     surfaces = spec.connectors.get(name)
     if not surfaces or ti >= len(tokens):
         return 0
+    targets, longest = _connector_targets(surfaces)
     best = 0
-    for surf in surfaces:
-        target = " ".join(surf.lower().replace(".", " ").split())
-        if not target:
-            continue
-        run = ""
-        for k in range(ti, len(tokens)):
-            run = tokens[k].text if not run else f"{run} {tokens[k].text}"
-            if len(run) >= len(target):
-                if run == target:
-                    best = max(best, k - ti + 1)
-                break
+    run = ""
+    for k in range(ti, len(tokens)):
+        run = tokens[k].text if not run else f"{run} {tokens[k].text}"
+        if len(run) > longest:
+            break
+        if run in targets:
+            best = k - ti + 1
     return best
+
+
+@lru_cache(maxsize=None)
+def _connector_targets(surfaces: frozenset) -> Tuple[frozenset, int]:
+    """The surfaces of a connector as :func:`_connector_span` compares them,
+    and the length of the longest.  The matcher asks for a connector at every
+    token of every construction, so each set is normalised once."""
+    targets = frozenset(filter(None, (" ".join(s.lower().replace(".", " ").split())
+                                      for s in surfaces)))
+    return targets, max(map(len, targets), default=0)
 
 
 def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
