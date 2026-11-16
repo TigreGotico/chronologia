@@ -117,6 +117,15 @@ def _astro_day_span(d: AstroDate) -> DateSpan:
     return DateSpan(start, start + timedelta(days=1))
 
 
+def _offset_base(span: DateSpan, sign: int) -> AstroDate:
+    """The civil day an offset counts from: the first day of the reference
+    before it, and its last day after it.  "two weeks after the summer"
+    counts from 31 August, the last day of meteorological summer, as "the
+    day after christmas" counts from 25 December."""
+    s = span.end - timedelta(microseconds=1) if sign > 0 else span.start
+    return AstroDate(s.year, s.month, s.day)
+
+
 # -- feature 1: offset-from-reference -------------------------------------
 
 def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
@@ -269,8 +278,7 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             new_match = Match(match.construction, (start, cm.span[1]),
                               match.slots, match.calendar)
             return new_match, Resolution(span, consumed)
-        s = res.value.start
-        base = AstroDate(s.year, s.month, s.day)
+        base = _offset_base(res.value, sign)
         if pre["kind"] == "unit":
             value = _shift(base, pre["unit"], sign * pre["qty"])
             # the offset amount governs the SHIFT, never the result width:
@@ -341,8 +349,7 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
                 if pre is None:
                     continue
                 lo = pre["start"]
-            s = res.value.start
-            base = AstroDate(s.year, s.month, s.day)
+            base = _offset_base(res.value, sign)
             if pre["kind"] == "unit":
                 value = _shift(base, pre["unit"], sign * pre["qty"])
                 # the offset governs the SHIFT, not the width: the single

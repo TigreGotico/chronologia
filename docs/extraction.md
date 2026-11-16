@@ -1811,6 +1811,11 @@ before …") shifts the reference by that many units, keeping the unit's width
 "the Friday before …") lands on the named weekday strictly after — or strictly
 before — the reference, a day-wide span.
 
+A reference wider than one day has a first and a last day. "after" counts on
+from its last day and "before" counts back from its first day. "two weeks
+after next summer" is two weeks after 31 August, the last day of
+meteorological summer (June, July and August).
+
 ```python
 from datetime import datetime
 from chronologia import extract_timespan
@@ -1835,6 +1840,10 @@ span, _ = extract_timespan("le vendredi avant pâques", "fr", anchor)
 assert (span.start.year, span.start.month, span.start.day) == (2018, 3, 30)
 span, _ = extract_timespan("3 dias antes do natal", "pt", anchor)
 assert (span.start.year, span.start.month, span.start.day) == (2017, 12, 22)
+
+# "after" a month counts from its last day, 30 June 2018.
+span, _ = extract_timespan("three days after june 2018", "en", anchor)
+assert (span.start.year, span.start.month, span.start.day) == (2018, 7, 3)
 ```
 
 A bare marker with no offset in front of it is **not** anchored arithmetic —
