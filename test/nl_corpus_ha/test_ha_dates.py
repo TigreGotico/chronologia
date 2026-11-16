@@ -134,5 +134,5 @@ def test_a_bare_year_word_with_no_year_leaves_it_stranded(text, expected):
 
 
 def test_a_bare_month_and_year_word_with_no_year_leaves_it_stranded():
-    assert start_end("watan Fabrairu shekarar") == month_span(2027, 2)
+    assert start_end("watan Fabrairu shekarar") == month_span(2028, 2)
     assert remainder("watan Fabrairu shekarar") == "shekarar"
