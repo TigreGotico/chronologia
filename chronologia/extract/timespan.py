@@ -1891,8 +1891,12 @@ def _since_month(match, span, tokens, engine, anchor, scale_mode="short"):
     if after and any(_match_conn_at(tokens, i, until)
                      for i in range(hi, len(tokens))):
         after = False
-    if not after and _since_marker_before(match.span[0], tokens,
-                                          engine.spec) is None:
+    # a month that "until" follows closes that range, and the marker before
+    # it is the postposition of the start: the "से" before "मार्च" in hi
+    # "जनवरी से मार्च तक"
+    if not after and (_match_conn_at(tokens, hi, until)
+                      or _since_marker_before(match.span[0], tokens,
+                                              engine.spec) is None):
         return span
 
     def read(at):
@@ -1974,6 +1978,11 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     if since is None:
         return None
     start, left_rem = since
+    # in mid-sentence "since" may be the conjunction of cause ("we stay home
+    # since the office is closed from monday to friday"): it opens the range
+    # only when its date reads every word up to the terminator
+    if lead and left_rem:
+        return None
     start_dt = start.datetime()
     if start_dt is None:
         return None

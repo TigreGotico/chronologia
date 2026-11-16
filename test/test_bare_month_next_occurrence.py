@@ -204,6 +204,56 @@ def test_a_postposition_before_until_opens_a_range():
         datetime(2018, 3, 1), datetime(2018, 4, 1))
 
 
+@pytest.mark.parametrize("text, anchor, months", [
+    ("जनवरी से मार्च तक", datetime(2026, 1, 30, 10), [(2026, 1), (2026, 3)]),
+    ("मार्च से जून तक", datetime(2026, 1, 30, 10), [(2026, 3), (2026, 6)]),
+    ("मैं जनवरी से मार्च तक यहाँ था", datetime(2026, 1, 30, 10),
+     [(2026, 1), (2026, 3)]),
+    ("जनवरी से मार्च तक", ANCHOR, [(2018, 1), (2018, 3)]),
+])
+def test_the_month_before_a_postposed_until_is_ahead(text, anchor, months):
+    """hi "तक" is "until" (en.wiktionary "तक": "नौ बजे से दो बजे तक", "from
+    nine o'clock up to two o'clock").  In "जनवरी से मार्च तक" the "से" is the
+    postposition of January, so March is not read after "since": it is the
+    next March, in the same year as the start."""
+    mentions = extract_timespans(text, "hi", anchor)
+    assert [(m.span.start.year, m.span.start.month) for m in mentions] == months
+
+
+# Tuesday 27 June 2017: the next Monday is 3 July and its Friday 7 July; the
+# Wednesday ahead is 28 June
+_NEXT_MONDAY = ANCHOR.date() + timedelta(days=(0 - ANCHOR.weekday()) % 7)
+_WEEK = (datetime.combine(_NEXT_MONDAY, datetime.min.time()),
+         datetime.combine(_NEXT_MONDAY + timedelta(days=5), datetime.min.time()))
+
+
+@pytest.mark.parametrize("text, lang, start, end", [
+    ("we stay home since the office is closed from monday to friday", "en",
+     *_WEEK),
+    ("I am off since it is a holiday from monday until friday", "en", *_WEEK),
+    ("the meeting moves since tuesday is a holiday from wednesday to friday",
+     "en", datetime(2017, 6, 28), datetime(2017, 7, 1)),
+    ("book the room since the hall is busy from 2 pm until 5 pm", "en",
+     datetime(2017, 6, 27, 14), datetime(2017, 6, 27, 17, 1)),
+    ("nous restons à la maison depuis que le bureau est fermé du lundi au "
+     "vendredi", "fr", *_WEEK),
+    ("ficamos em casa desde que o escritório está fechado de segunda a sexta",
+     "pt", *_WEEK),
+    ("wir bleiben zu hause seit das büro von montag bis freitag geschlossen "
+     "ist", "de", *_WEEK),
+])
+def test_a_since_of_cause_leaves_the_range_ahead(text, lang, start, end):
+    """In mid-sentence "since" may be the conjunction "because" (en.wiktionary
+    "since", conjunction: "Since you didn't call, we left without you.").
+    Then it does not govern a date, and the range after it stays ahead, in
+    both readers.  fr "depuis que", pt "desde que" and de "seit" before a
+    clause read the same."""
+    r = _span(text, lang)
+    assert (r.span.start, r.span.end) == (start, end)
+    assert extract_timespans(text, lang, ANCHOR)[-1].span.start.date() \
+        == start.date()
+
+
 @pytest.mark.parametrize("text, left", [
     ("since january until march", ""),
     ("since january to march", ""),
@@ -219,3 +269,14 @@ def test_a_range_after_since_has_begun(text, left):
     mentions = extract_timespans(text, "en", ANCHOR)
     assert [(m.span.start, m.span.end) for m in mentions] == [
         (datetime(2017, 1, 1), datetime(2017, 4, 1))]
+
+
+def test_an_until_in_a_later_sentence_leaves_since_january_begun():
+    """Only an "until" right after the month closes a range on it.  In "I have
+    been here since january. I stay until friday" the month after "since" is
+    January 2017, and the Friday is 30 June 2017."""
+    mentions = extract_timespans(
+        "I have been here since january. I stay until friday", "en", ANCHOR)
+    assert [(m.span.start, m.span.end) for m in mentions] == [
+        (datetime(2017, 1, 1), datetime(2017, 2, 1)),
+        (datetime(2017, 6, 30), datetime(2017, 7, 1))]
