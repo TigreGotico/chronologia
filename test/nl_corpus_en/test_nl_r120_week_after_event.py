@@ -10,8 +10,9 @@ article, no explicit count) names the calendar week itself -- the same
 grain "the week of X" already widens to (``timespan._apply_week_of`` /
 ``resolver._week_span``).  This suite pins the fixed width and the sibling
 constructions that must NOT change: counted offsets stay a point, "the
-day after/before" stays a point, and the documented idiom quirks
-("the week after next", "the day after next monday") stay untouched.
+day after/before" stays a point, and "the week after next" stays unread.
+"next" before a weekday belongs to that weekday ("the day after next
+monday" counts from next Monday).
 
 Expected values are hand-derived: the reference date's independently known
 value (Easter/Christmas computus, same as ``test_nl_anchored_offset.py``),
@@ -53,21 +54,17 @@ def test_the_week_after_before_is_week_wide(text, shifted):
     assert span(text).width == timedelta(days=7)
 
 
-def test_the_week_after_next_friday_unaffected_by_widening():
-    # "the week after next friday" hits the SAME "next"-precedence quirk as
-    # "the week after next monday"/"the day after next monday" below: "next"
-    # between the marker and the weekday breaks the simple pre-amble scan,
-    # so the phrase never reaches the week-widening path at all -- it reads
-    # as the bare "next friday" reference with "the week after next" left as
-    # leftover text.  This fix must not change that pre-existing shape.
+def test_the_week_after_next_friday_widens_from_next_friday():
+    # "next" belongs to "next friday", the reference; "the week after" it
+    # is the week that holds next friday + 7 days
     from ._corpus import ANCHOR
     next_friday = ANCHOR.date() + timedelta(
         days=(4 - ANCHOR.weekday()) % 7 or 7)
+    exp_start, exp_end = _week_of(next_friday + timedelta(days=7))
     r = parse("the week after next friday")
     assert r is not None
-    assert r[0].start == _ad(next_friday)
-    assert r[0].width == timedelta(days=1)
-    assert r[1] == "the week after next"
+    assert (r[0].start, r[0].end) == (_ad(exp_start), _ad(exp_end))
+    assert r[1] == ""
 
 
 # -- CONTROL: counted / indefinite weeks stay a single-day point ----------
@@ -109,15 +106,13 @@ def test_the_week_after_next_idiom_unchanged():
     nomatch("the week after next")
 
 
-def test_the_day_after_next_monday_idiom_unchanged():
-    # pinned en idiom-precedence quirk: "the day after next" (named_day
-    # idiom, anchor + 2 days) wins over composing "monday" as its reference,
-    # stranding "monday" in the remainder -- untouched by this fix.
+def test_the_day_after_next_monday_counts_from_next_monday():
+    # "next" belongs to "next monday", so this is the day after it, not
+    # "the day after next" with "monday" left over
     from ._corpus import ANCHOR
-    day_after_next = ANCHOR.date() + timedelta(days=2)
+    next_monday = ANCHOR.date() + timedelta(days=(0 - ANCHOR.weekday()) % 7 or 7)
     r = parse("the day after next monday")
     assert r is not None
-    s = r[0].start
-    assert s == _ad(day_after_next)
+    assert r[0].start == _ad(next_monday + timedelta(days=1))
     assert r[0].width == timedelta(days=1)
-    assert r[1] == "monday"
+    assert r[1] == ""
