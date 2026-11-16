@@ -3432,7 +3432,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
         return _new_year_span(anchor), ""
     tokens = fold_tokens(raw, engine.spec, text)
     core = _resolve_core(tokens, engine, anchor, enable, jurisdiction, text,
-                         scale_mode)
+                         scale_mode, whole=True)
     if core is None:
         return None
     span, consumed = core
@@ -3964,8 +3964,46 @@ def _roll_bare_weekday_time(res, rep, anchor):
                                        res.value.basis))
 
 
+#: clock slots that fix the half of the day or the zone: a meridiem word
+#: ("pm", "de la tarde") or a zone ("utc+2").
+_FIXED_HALF_OF_DAY_SLOTS = frozenset({"MERIDIEM", "ZONE"})
+
+
+def _lone_spoken_hour(res, rep, anchor, spec):
+    """A lone spoken hour takes the next of its two twelve-hour readings.
+
+    An hour 1 to 12 said with no am/pm word and no part of the day is
+    whichever of h and h + 12 comes next at or after the anchor: "at 8" said
+    at 15:00 is 20:00, "at 8" said at 06:00 is 08:00, and "at 12" said at
+    15:00 is the midnight that follows.  Only a clock that is the whole
+    reading is read so; beside a day word or a part of the day it keeps the
+    spoken hour.  Digit clocks and 24-hour hours are untouched.
+    """
+    hour = None if rep is None else rep.slots.get("HOUR")
+    if (anchor is None or hour is None or rep.construction != "clock_time"
+            or set(res.consumed) != set(range(*rep.span))
+            or _FIXED_HALF_OF_DAY_SLOTS & set(rep.slots)
+            or not hour.is_number or not 1 <= hour.value <= 12
+            or not spec.construction_flags.get(
+                "clock_time", {}).get("prefer_future", False)):
+        return res
+    start = res.value.start
+    if start.hour > 12:
+        return res
+    midnight = anchor.replace(hour=0, minute=0, second=0, microsecond=0)
+    tod = timedelta(hours=start.hour % 12, minutes=start.minute,
+                    seconds=start.second)
+    wall = min(t for t in (midnight + tod,
+                           midnight + tod + timedelta(hours=12),
+                           midnight + tod + timedelta(days=1))
+               if t >= anchor)
+    moment = AstroDate.from_datetime(wall)
+    return replace(res, value=DateSpan(moment, moment + timedelta(minutes=1),
+                                       res.value.basis))
+
+
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
-                  text=None, scale_mode="short"):
+                  text=None, scale_mode="short", whole=False):
     """The single-span resolution over an already-tokenized stream.
 
     The whole of the old ``extract_timespan`` body *below* range detection --
@@ -3975,6 +4013,8 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     positions (the caller renders the remainder from the unconsumed ones).
     Factored out so a range endpoint resolves through the *identical* path a
     whole utterance does, from a re-based slice of the same stream.
+    ``whole`` marks the whole utterance, where a clock standing alone reads
+    its next twelve-hour hour (:func:`_lone_spoken_hour`).
     """
     resolved = []
     veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
@@ -4025,6 +4065,8 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         # A day-part+clock meridiem contradiction ("morning at 9pm") --
         # _compose declined the whole reading rather than pick a winner.
         return None
+    if whole:
+        res = _lone_spoken_hour(res, rep, anchor, engine.spec)
     consumed = set(res.consumed) | label_consumed
     # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
     # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
@@ -4173,6 +4215,7 @@ def extract_candidates(
         win_res, win_label, rep = _compose(composed, engine, tokens,
                                            anchor, text)
         if win_res is not None:
+            win_res = _lone_spoken_hour(win_res, rep, anchor, engine.spec)
             consumed_all = set(win_res.consumed) | win_label
             lo, hi = min(consumed_all), max(consumed_all) + 1
             wide = replace(rep, span=(lo, hi))
