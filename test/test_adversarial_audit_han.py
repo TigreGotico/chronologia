@@ -45,20 +45,19 @@ def test_romance_number_fold_is_linear_not_quadratic():
     growing prefix once per token -- O(n^2), ~7.8s at 8000 words.
 
     The claim under test is asymptotic, so the assertion compares the cost of
-    two input sizes rather than measuring one against a stopwatch: quadrupling
-    the input roughly quadruples a linear fold and multiplies a quadratic one
-    by about sixteen.  Measured across the fix, the ratio is ~2.9 after and
-    ~11.5 before, so a ceiling of 6 separates them with headroom on both
-    sides.  A wall-clock budget cannot do this: it measures the machine as
-    much as the algorithm, and a fixed 3s ceiling on ~0.15s of work still
-    failed on a contended runner.
+    two input sizes rather than measuring one against a stopwatch.  Ten times
+    the input costs a linear fold about ten times as much and a quadratic one
+    about a hundred times, so a ceiling of 30 separates them with a factor of
+    three on each side.  Each size is the best of three runs, because a
+    loaded box inflates single samples.  The test pins the growth, not a
+    speed: a wall-clock budget measures the machine as much as the algorithm.
     """
     extract_timespan("um um", "pt", _A)          # warm the locale cache
-    small = _fold_seconds(2000)
+    small = _fold_seconds(800)
     large = _fold_seconds(8000)
-    assert large / small < 6.0, (
+    assert large / small < 30.0, (
         f"folding 8000 number-words took {large / small:.1f}x the time of "
-        f"2000 ({large:.2f}s vs {small:.2f}s); linear is ~4x, quadratic ~16x")
+        f"800 ({large:.2f}s vs {small:.2f}s); linear is ~10x, quadratic ~100x")
 
 
 def _attach_seconds(words: int, repeats: int = 5, calls: int = 10) -> float:
