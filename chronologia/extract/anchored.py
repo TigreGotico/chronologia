@@ -572,7 +572,7 @@ def _scan_trailing_chunks(tokens, idx, spec):
             # phrase's closing filler -- the guard in
             # :func:`_compound_unit_at` already refused it as a chunk, but it
             # still belongs to the reading, not the remainder.
-            if tokens[j].text in spec.connectors.get("day_filler", ()):
+            if j < n and tokens[j].text in spec.connectors.get("day_filler", ()):
                 consumed.add(j)
             break
         unit, qty, end = got
