@@ -10,6 +10,8 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import span, start, nomatch, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,y,mo,d,h,mi", [
@@ -58,7 +60,7 @@ from ._corpus import span, start, nomatch, AstroDate
     ("une heure moins dix", 2017, 6, 28, 12, 50),
 ])
 def test_clock(text, y, mo, d, h, mi):
-    assert start(text) == AstroDate(y, mo, d, h, mi)
+    assert start(text) == moved(AstroDate(y, mo, d, h, mi), ANCHOR)
 
 
 def test_une_heure_stays_a_week_duration_elsewhere():
@@ -79,7 +81,7 @@ def test_clock_is_minute_wide():
 
 def test_moins_le_quart_not_a_range():
     # "quatre heures moins le quart" must read 3:45, not a "... to ..." range
-    assert start("quatre heures moins le quart") == AstroDate(2017, 6, 28, 3, 45)
+    assert start("quatre heures moins le quart") == moved(AstroDate(2017, 6, 28, 3, 45), ANCHOR)
 
 
 def test_impossible_hour_no_crash():

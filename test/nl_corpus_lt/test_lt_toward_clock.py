@@ -11,6 +11,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -31,7 +32,7 @@ def _next_time(h, mi):
     ("pusė dviejų", 1, 30),
 ])
 def test_half_names_the_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour", [
@@ -44,7 +45,7 @@ def test_half_is_not_the_stated_hour(text, wrong_hour):
 
 def test_half_toward_one_reads_as_twelve():
     """Rolling back from one o'clock surfaces as twelve, not zero."""
-    assert start("pusė vienos").hour == 12
+    assert start("pusė vienos").hour == moved(12, ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -54,7 +55,7 @@ def test_half_toward_one_reads_as_twelve():
     ("be dvylikos devyni", 8, 48),
 ])
 def test_minutes_to_the_named_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour", [

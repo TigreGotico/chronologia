@@ -4,6 +4,7 @@ import pytest
 from chronologia import extract_timespan
 
 from ._corpus import ANCHOR, nomatch, parse, span
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text", [
@@ -45,7 +46,7 @@ def test_se_the_pronoun_does_not_become_a_time():
     pronoun's number must stay in the remainder rather than becoming an
     hour."""
     s = span("tá sé leathuair tar éis a trí")
-    assert (s.start.hour, s.start.minute) == (3, 30)
+    assert (s.start.hour, s.start.minute) == moved((3, 30), ANCHOR)
 
 
 def test_bare_numeral_is_not_a_year():

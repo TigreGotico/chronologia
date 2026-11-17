@@ -16,6 +16,7 @@ from datetime import datetime
 import pytest
 
 from chronologia import extract_duration, extract_timespan
+from ruling17 import moved
 
 ANCHOR = datetime(2017, 6, 27, 13, 4)
 
@@ -44,7 +45,7 @@ def test_a_spoken_length_names_no_point_in_time(text, lang, seconds):
 def test_a_clock_time_still_reads(text, lang, hour):
     got = extract_timespan(text, lang, ANCHOR)
     assert got is not None, text
-    assert got.span.start.hour == hour
+    assert got.span.start.hour == moved(hour, ANCHOR)
     assert got.remainder == ""
 
 

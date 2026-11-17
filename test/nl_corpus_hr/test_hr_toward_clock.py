@@ -20,6 +20,7 @@ import pytest
 from chronologia.extract import extract_duration
 
 from ._corpus import ANCHOR, ad, start, nomatch
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -36,7 +37,7 @@ def _next_time(h, mi):
     ("pola jedan", 12, 30),  # half toward one -> 12:30 (toward_hour_12h wrap)
 ])
 def test_half_toward_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 def test_half_toward_hour_is_thirty_minutes_before_the_plain_hour():
@@ -46,8 +47,8 @@ def test_half_toward_hour_is_thirty_minutes_before_the_plain_hour():
     # instead land at 9:30, an hour past "u devet" in the wrong direction.
     half = start("pola devet")
     plain = _next_time(9, 0)
-    assert start("u devet") == plain
-    assert plain - half == timedelta(minutes=30)
+    assert start("u devet") == moved(plain, ANCHOR)
+    assert moved(plain, ANCHOR) - half == timedelta(minutes=30)
 
 
 def test_half_hour_duration_still_resolves():

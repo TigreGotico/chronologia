@@ -21,6 +21,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, nomatch, parse, remainder, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -41,8 +42,8 @@ def _next_time(h, mi):
 ])
 def test_minute_counts_resolve_to_the_exact_minute(text, h, mi):
     got = start(text)
-    assert (got.hour, got.minute) == (h, mi)
-    assert got == _next_time(h, mi)
+    assert (got.hour, got.minute) == moved((h, mi), ANCHOR)
+    assert got == moved(_next_time(h, mi), ANCHOR)
     assert remainder(text) == ""
 
 
@@ -51,7 +52,7 @@ def test_kaj_dek_kvin_minutoj_is_not_the_bare_hour():
     "kaj dek kvin minutoj" stranded in the remainder."""
     got = start("la sesa kaj dek kvin minutoj")
     assert (got.hour, got.minute) != (6, 0)
-    assert (got.hour, got.minute) == (6, 15)
+    assert (got.hour, got.minute) == moved((6, 15), ANCHOR)
 
 
 def test_la_tria_kaj_dek_kvin_is_not_the_bare_hour():
@@ -59,7 +60,7 @@ def test_la_tria_kaj_dek_kvin_is_not_the_bare_hour():
     the bare 3:00 the leaked partial parse used to return."""
     got = start("la tria kaj dek kvin")
     assert (got.hour, got.minute) != (3, 0)
-    assert (got.hour, got.minute) == (3, 15)
+    assert (got.hour, got.minute) == moved((3, 15), ANCHOR)
 
 
 def test_a_bare_minute_count_with_no_hour_does_not_resolve():
@@ -77,5 +78,5 @@ def test_the_half_hour_is_undisturbed(text, h, mi):
     good -- these must keep resolving exactly as before, with nothing left
     over in the remainder."""
     got = start(text)
-    assert (got.hour, got.minute) == (h, mi)
+    assert (got.hour, got.minute) == moved((h, mi), ANCHOR)
     assert remainder(text) == ""

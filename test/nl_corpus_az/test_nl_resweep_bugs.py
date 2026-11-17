@@ -10,13 +10,15 @@ import pytest
 from chronologia.astrodate import AstroDate
 
 from ._corpus import parse
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 def test_locative_spelled_clock_hour():
     r = parse("saat üçdə")
     assert r is not None
     s = r[0].start
-    assert (s.year, s.month, s.day, s.hour, s.minute) == (2017, 6, 28, 3, 0)
+    assert (s.year, s.month, s.day, s.hour, s.minute) == moved((2017, 6, 28, 3, 0), ANCHOR)
 
 
 def test_fixed_secular_holiday_with_year():

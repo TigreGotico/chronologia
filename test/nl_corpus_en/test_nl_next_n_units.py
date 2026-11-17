@@ -12,6 +12,7 @@ import pytest
 
 from chronologia import extract_timespan
 from chronologia.astrodate import AstroDate
+from ruling17 import moved
 
 A = datetime(2024, 6, 15, 12, 0)
 
@@ -69,7 +70,7 @@ def test_past_synonym_does_not_break_clock_past():
     # "past" is a relative marker (-1) AND the clock "quarter past" direction;
     # the clock uses a separate slot, so both readings coexist.
     r = extract_timespan("quarter past nine", "en", A)
-    assert r is not None and (r.span.start.hour, r.span.start.minute) == (9, 15)
+    assert r is not None and (r.span.start.hour, r.span.start.minute) == moved((9, 15), A)
 
 
 def test_offset_point_readings_unchanged():

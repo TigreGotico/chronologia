@@ -27,6 +27,7 @@ import pytest
 from chronologia.extract.numfold_slavic import sr_lat2cyr
 
 from ._corpus import ANCHOR, ad, nomatch, remainder, start
+from ruling17 import moved
 
 
 def _cyr(phrase: str) -> str:
@@ -47,7 +48,7 @@ def test_clock_latin(phrase, hour, minute):
     base = ANCHOR.replace(hour=hour, minute=minute, second=0, microsecond=0)
     if base < ANCHOR:
         base = base + timedelta(days=1)
-    assert start(phrase) == ad(base)
+    assert start(phrase) == moved(ad(base), ANCHOR)
 
 
 @pytest.mark.parametrize("phrase,hour,minute", [
@@ -58,7 +59,7 @@ def test_clock_cyrillic(phrase, hour, minute):
     base = ANCHOR.replace(hour=hour, minute=minute, second=0, microsecond=0)
     if base < ANCHOR:
         base = base + timedelta(days=1)
-    assert start(_cyr(phrase)) == ad(base)
+    assert start(_cyr(phrase)) == moved(ad(base), ANCHOR)
 
 
 def test_pola_cetiri_is_never_four_thirty():
@@ -67,8 +68,8 @@ def test_pola_cetiri_is_never_four_thirty():
     got = start("pola četiri")
     assert got != ad(ANCHOR.replace(hour=4, minute=30, second=0,
                                     microsecond=0) + timedelta(days=1))
-    assert got == ad(ANCHOR.replace(hour=3, minute=30, second=0,
-                                    microsecond=0) + timedelta(days=1))
+    assert got == moved(ad(ANCHOR.replace(hour=3, minute=30, second=0,
+                                    microsecond=0) + timedelta(days=1)), ANCHOR)
 
 
 def test_bare_i_petnaest_is_unattested():
@@ -96,7 +97,7 @@ def test_bare_oclock_across_the_paucal_classes(phrase, hour):
     base = ANCHOR.replace(hour=hour, minute=0, second=0, microsecond=0)
     if base <= ANCHOR:
         base = base + timedelta(days=1)
-    assert start(phrase) == ad(base)
+    assert start(phrase) == moved(ad(base), ANCHOR)
 
 
 # -- the leading preposition is consumed, not stranded -----------------------
@@ -118,7 +119,7 @@ def test_the_at_preposition_is_consumed_by_every_fraction_order(phrase, hour, mi
     base = ANCHOR.replace(hour=hour, minute=minute, second=0, microsecond=0)
     if base <= ANCHOR:
         base = base + timedelta(days=1)
-    assert start(phrase) == ad(base)
+    assert start(phrase) == moved(ad(base), ANCHOR)
     # The time was already right without the preposition ordered; what was
     # wrong is that the preposition stayed behind, so the remainder is the
     # whole assertion here.

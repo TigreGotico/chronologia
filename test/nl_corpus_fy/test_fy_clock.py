@@ -9,17 +9,18 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch, clk
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,mi", [('healwei fiven', 4, 30), ('healwei sânen', 6, 30), ('healwei achten', 7, 30), ('healwei tsienen', 9, 30), ('healwei alven', 10, 30), ('healwei tolven', 11, 30), ('healwei ienen', 0, 30), ('healwei twaen', 1, 30), ('healwei trijen', 2, 30), ('healwei fjouweren', 3, 30), ('healwei seizen', 5, 30), ('healwei njoggenen', 8, 30)])
 def test_half_is_half_to(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 
 @pytest.mark.parametrize("text,h,mi", [('kertier oer fjouweren', 4, 15), ('kertier foar fiven', 4, 45), ('kertier oer ienen', 1, 15), ('kertier oer tolven', 12, 15), ('kertier foar tolven', 11, 45), ('kertier oer njoggenen', 9, 15), ('kertier foar ienen', 0, 45), ('kertier oer tsienen', 10, 15)])
 def test_quarter_explicit(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text", ['kertier fiven', 'kertier tsienen'])
@@ -29,7 +30,7 @@ def test_bare_quarter_rejected(text):
 
 @pytest.mark.parametrize("text,h,mi", [('tweintich oer fjouweren', 4, 20), ('tweintich foar fiven', 4, 40), ('tsien oer fjouweren', 4, 10), ('fiif foar fiven', 4, 55), ('tsien foar tolven', 11, 50)])
 def test_minute_to_past(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi,s", [
@@ -43,7 +44,7 @@ def test_digit_time(text, h, mi, s):
 
 @pytest.mark.parametrize("text,h", [('fjouwer oere', 4), ('njoggen oere', 9), ('tolve oere', 12), ('om fjouwer', 4), ('om njoggen', 9), ('acht oere', 8), ('om middernacht', 0), ('om middei', 12)])
 def test_bare_hour(text, h):
-    assert start(text) == clk(h, 0)
+    assert start(text) == moved(clk(h, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [('middernacht', 0, 0), ('middei', 12, 0)])

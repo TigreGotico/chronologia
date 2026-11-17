@@ -23,6 +23,8 @@ from chronologia.astrodate import AstroDate
 from chronologia.extract import extract_duration
 
 from ._corpus import parse
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 LANG = "bg"
 
@@ -44,7 +46,7 @@ LANG = "bg"
 def test_contracted_hour_reads_its_clock_time(text, expect):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
-    assert r.span.start == expect
+    assert r.span.start == moved(expect, ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 
@@ -69,7 +71,7 @@ def test_contracted_hour_takes_the_additive_half(text, expect):
     # contracted hour word: "и" stays a joiner only before another numeral.
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
-    assert r.span.start == expect
+    assert r.span.start == moved(expect, ANCHOR)
     assert r.remainder == ""
 
 

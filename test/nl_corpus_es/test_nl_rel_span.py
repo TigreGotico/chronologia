@@ -12,6 +12,7 @@ import pytest
 
 from chronologia import extract_timespan
 from chronologia.astrodate import AstroDate
+from ruling17 import moved
 
 A = datetime(2024, 6, 15, 12, 0)
 
@@ -50,7 +51,7 @@ def test_clock_reading_unaffected_by_rel_span_num_marker_order():
     # "a las 3" must still resolve as a bare 3am clock reading, not collide
     # with the new "NUM REL_MARKER UNIT" rel_span order.
     r = extract_timespan("a las 3", "es", A)
-    assert r.span.start == AstroDate(2024, 6, 16, 3, 0, 0)
+    assert r.span.start == moved(AstroDate(2024, 6, 16, 3, 0, 0), A)
 
 
 @pytest.mark.parametrize("text,s,e", [

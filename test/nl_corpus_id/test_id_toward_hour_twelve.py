@@ -16,6 +16,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, parse, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -34,7 +35,7 @@ def test_toward_hour_fractions(text, h, mi):
     got = parse(text)
     assert got is not None, f"{text!r} did not parse"
     span, remainder = got
-    assert span.start == _next_time(h, mi)
+    assert span.start == moved(_next_time(h, mi), ANCHOR)
     assert remainder == ""
 
 
@@ -55,4 +56,4 @@ def test_bare_fraction_without_hour_is_not_a_clock():
 def test_plain_hour_is_untouched():
     # The whole-hour reading shares the resolver path the fraction fold sits
     # in; it must stay exactly where it was.
-    assert start('jam sembilan') == _next_time(9, 0)
+    assert start('jam sembilan') == moved(_next_time(9, 0), ANCHOR)

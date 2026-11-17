@@ -16,6 +16,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 D = timedelta(days=1)
 
@@ -24,8 +25,8 @@ def _offset(text, delta, grain, rem=""):
     res = parse(text)
     assert res is not None, f"{text!r} did not parse"
     assert res.remainder == rem, f"{text!r} left {res.remainder!r}"
-    assert res[0].start == ad(ANCHOR + delta)
-    assert res[0].end == ad(ANCHOR + delta + grain)
+    assert res[0].start == moved(ad(ANCHOR + delta), ANCHOR)
+    assert res[0].end == moved(ad(ANCHOR + delta + grain), ANCHOR)
 
 
 @pytest.mark.parametrize("text,delta", [
@@ -50,7 +51,7 @@ def test_half_and_quarter_do_not_collapse():
                                       ("kvart i tre", 2, 45)])
 def test_the_clock_fraction_is_untouched(text, h, m):
     res = parse(text)
-    assert res[0].start == ad(ANCHOR.replace(hour=h, minute=m) + D)
+    assert res[0].start == moved(ad(ANCHOR.replace(hour=h, minute=m) + D), ANCHOR)
 
 
 @pytest.mark.parametrize("text,rem", [

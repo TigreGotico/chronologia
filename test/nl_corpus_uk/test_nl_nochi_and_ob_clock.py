@@ -8,6 +8,7 @@
 import pytest
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 def _at(day, hour):
@@ -26,5 +27,5 @@ def _at(day, hour):
 def test_night_band_and_ob(text, day, hour):
     r = parse(text)
     assert r is not None
-    assert r.span.start == _at(day, hour)
+    assert r.span.start == moved(_at(day, hour), ANCHOR)
     assert r.remainder == ""

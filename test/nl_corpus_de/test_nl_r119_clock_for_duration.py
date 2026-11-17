@@ -8,6 +8,8 @@ Expected values are independently hand-computed against the anchor
 """
 from datetime import datetime
 
+from ruling17 import moved
+
 from ._corpus import ANCHOR, ad, nomatch, parse, start_end
 
 
@@ -15,8 +17,8 @@ def test_dateless_clock_plus_hours_extends_end():
     # "um 9 Uhr" -- 9am has already passed today (anchor 13:04) -> rolls to
     # tomorrow; + 2h = 11am.
     s, e = start_end("um 9 Uhr für 2 Stunden")
-    assert (s, e) == (ad(datetime(2017, 6, 28, 9, 0)),
-                      ad(datetime(2017, 6, 28, 11, 0)))
+    assert (s, e) == moved((ad(datetime(2017, 6, 28, 9, 0)),
+                            ad(datetime(2017, 6, 28, 11, 0))), ANCHOR)
 
 
 def test_clock_plus_minutes_extends_end():

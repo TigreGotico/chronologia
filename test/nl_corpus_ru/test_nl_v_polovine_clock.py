@@ -10,6 +10,7 @@ hour.
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, parse, start
+from ruling17 import moved
 
 
 def _at(day, hour, minute):
@@ -27,7 +28,7 @@ def _at(day, hour, minute):
 def test_locative_half_clock(text, day, hour, minute, remainder):
     r = parse(text)
     assert r is not None
-    assert r.span.start == _at(day, hour, minute)
+    assert r.span.start == moved(_at(day, hour, minute), ANCHOR)
     assert r.remainder == remainder
 
 

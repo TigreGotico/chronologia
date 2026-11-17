@@ -23,6 +23,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start
+from ruling17 import moved
 
 _NUM = {1: "uma", 2: "duas", 3: "três", 4: "quatro", 5: "cinco", 6: "seis",
         7: "sete", 8: "oito", 9: "nove", 10: "dez", 11: "onze", 12: "doze"}
@@ -62,15 +63,15 @@ def _minus_cases():
 
 @pytest.mark.parametrize("text,h,mi", _half_quarter_cases())
 def test_hour_sweep_additive_fraction(text, h, mi):
-    assert start(text) == _clk(h, mi)
+    assert start(text) == moved(_clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", _minus_cases())
 def test_hour_sweep_subtractive_fraction(text, h, mi):
-    assert start(text) == _clk(h, mi)
+    assert start(text) == moved(_clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("h", list(range(1, 13)))
 def test_em_ponto_hour_sweep(h):
     text = f"{_art(h)} {_NUM[h]} em ponto"
-    assert start(text) == _clk(h, 0)
+    assert start(text) == moved(_clk(h, 0), ANCHOR)

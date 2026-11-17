@@ -344,6 +344,29 @@ only reads as the range marker when the head parses as a date endpoint; a bare
 noun in careful speech, which is a downstream morphology concern; the engine
 reads the bare head.
 
+## A lone spoken hour
+
+An hour from 1 to 12 said with no am/pm word and no part of the day is read as
+whichever of its two twelve-hour readings comes next at or after the anchor. "at
+8" said at 13:04 is 20:00 the same day, not 08:00 tomorrow. A day word or a part
+of the day keeps the hour as spoken, and so does a meridiem, a digit clock
+("8:30"), an hour written with the letter "h", and an hour from 13 to 23. This
+holds in every language, for `extract_timespan`, `extract_timespans` and the top
+`extract_candidates` reading. A recurrence pin names an hour of the day, so
+`extract_recurrence("daily at 7")` stays `BYHOUR=7`.
+
+```python
+from datetime import datetime
+from chronologia import extract_timespan
+
+anchor = datetime(2017, 6, 27, 13, 4)   # a Tuesday afternoon
+
+assert extract_timespan("at 8", "en", anchor).span.start.datetime() == datetime(2017, 6, 27, 20, 0)
+assert extract_timespan("tomorrow at 8", "en", anchor).span.start.datetime() == datetime(2017, 6, 28, 8, 0)
+assert extract_timespan("at 8 am", "en", anchor).span.start.datetime() == datetime(2017, 6, 28, 8, 0)
+assert extract_timespan("at 8:30", "en", anchor).span.start.datetime() == datetime(2017, 6, 28, 8, 30)
+```
+
 ## Deep time and other reckonings
 
 Because the extractor resolves against the full reckoning core, it reaches

@@ -11,6 +11,8 @@ Anchor 2017-06-27 13:04.
 import pytest
 
 from ._corpus import AstroDate, nomatch, parse, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,hour,minute", [
@@ -20,7 +22,7 @@ from ._corpus import AstroDate, nomatch, parse, start
     ("מחר בשעה שלוש וחצי", 3, 30),
 ])
 def test_the_additive_fraction_after_the_hour(text, hour, minute):
-    assert start(text) == AstroDate(2017, 6, 28, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)
     assert parse(text).remainder == ""
 
 
@@ -29,8 +31,8 @@ def test_the_fraction_reads_through_a_meridiem():
     assert parse("בשעה שבע וחצי בבוקר").remainder == ""
 
 
-def test_the_bare_hour_is_unchanged():
-    assert start("בשעה שלוש") == AstroDate(2017, 6, 28, 3, 0)
+def test_the_bare_hour_is_reads():
+    assert start("בשעה שלוש") == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR)
 
 
 # ---------------------------------------------------------------------------

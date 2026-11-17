@@ -10,6 +10,8 @@ import pytest
 from chronologia.extract.numfold_filipino import read_spanish_run
 
 from ._corpus import nomatch, remainder, span, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text", ["alas una", "ala una"])
@@ -117,5 +119,5 @@ def test_the_quarter_hour_has_no_dedicated_word():
     """The half is ``medya``; nothing sources a quarter lexeme beside it, and
     the worked 3:45 example spells the minutes out ("kuwarenta singko")
     rather than using one."""
-    assert start("alas tres y kuwarto").hour == 3
+    assert start("alas tres y kuwarto").hour == moved(3, ANCHOR)
     assert "kuwarto" in remainder("alas tres y kuwarto")

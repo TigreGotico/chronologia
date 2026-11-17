@@ -11,8 +11,9 @@ Anchor 2017-06-27 13:04, a Tuesday; expected values computed by hand.
 from datetime import datetime
 
 import pytest
+from ruling17 import moved
 
-from ._corpus import AstroDate, parse, start
+from ._corpus import ANCHOR, AstroDate, parse, start
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -25,9 +26,9 @@ from ._corpus import AstroDate, parse, start
     ("hai 2 meses", datetime(2017, 4, 27, 13, 4)),
 ])
 def test_past_offset(text, expected):
-    assert start(text) == AstroDate(expected.year, expected.month,
-                                    expected.day, expected.hour,
-                                    expected.minute)
+    assert start(text) == moved(AstroDate(expected.year, expected.month,
+                                          expected.day, expected.hour,
+                                          expected.minute), ANCHOR)
     assert parse(text).remainder == ""
 
 
@@ -40,9 +41,9 @@ def test_past_offset(text, expected):
     ("a les dos", datetime(2017, 6, 28, 2, 0)),
 ])
 def test_feminine_hour(text, expected):
-    assert start(text) == AstroDate(expected.year, expected.month,
-                                    expected.day, expected.hour,
-                                    expected.minute)
+    assert start(text) == moved(AstroDate(expected.year, expected.month,
+                                          expected.day, expected.hour,
+                                          expected.minute), ANCHOR)
     assert parse(text).remainder == ""
 
 

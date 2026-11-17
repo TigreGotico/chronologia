@@ -13,6 +13,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -34,7 +35,7 @@ def _next_time(h, mi):
     ("თორმეტის ნახევარი", 11, 30),
 ])
 def test_half_names_the_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour", [

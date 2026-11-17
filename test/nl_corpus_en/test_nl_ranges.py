@@ -9,6 +9,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import AstroDate, start_end, span, start, nomatch, ANCHOR, ad
+from ruling17 import moved
 
 
 def _d(s):
@@ -82,7 +83,7 @@ def test_clock_range(text, sh, eh):
 
 def test_quarter_to_five_is_a_clock_not_a_range():
     # "quarter to five" must stay a clock time, never a "quarter"->"five" range
-    assert start("quarter to five") == AstroDate(2017, 6, 28, 4, 45)
+    assert start("quarter to five") == moved(AstroDate(2017, 6, 28, 4, 45), ANCHOR)
 
 
 # -- deferred phrasings ---------------------------------------------------
@@ -235,8 +236,8 @@ def test_shared_month_range_crosses_the_year():
 # clock reading of "A to B" survives untouched.
 def test_subtractive_clock_still_wins_with_no_month_in_sight():
     ss, ee = start_end("quarter to five")
-    assert ss == AstroDate(2017, 6, 28, 4, 45)
-    assert ee == AstroDate(2017, 6, 28, 4, 46)
+    assert ss == moved(AstroDate(2017, 6, 28, 4, 45), ANCHOR)
+    assert ee == moved(AstroDate(2017, 6, 28, 4, 46), ANCHOR)
 
 
 def test_bare_hour_range_is_still_a_working_day():
