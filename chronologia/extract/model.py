@@ -477,6 +477,9 @@ class LangSpec:
     #: closed-class filler (copulas/pronouns) the exclusion idiom skips over when
     #: deciding whether a trigger is adjacent ("unless it is Tuesday").
     exclusion_filler: FrozenSet[str] = field(default_factory=frozenset)
+    # closed-class words (pronouns, adverbs, verb particles) that never stand
+    # as a counted noun right after an hour (``marker_not_count.voc``)
+    not_count: FrozenSet[str] = field(default_factory=frozenset)
     # holiday_ref surface -> well-known holiday key ("christmas", "easter");
     # derived at load time from the holidays engine's i18n tables (native
     # names + translations + curated spoken aliases), never hand-listed here

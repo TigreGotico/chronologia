@@ -1086,7 +1086,9 @@ class ConstructionMatcher:
         those prepositions in ``marker_at_counts.voc``.  A bare hour behind
         one of them is a time of day when nothing follows, when the next word
         belongs to the date grammar (a connector, a unit word, or a courtesy
-        phrase such as "at 8 please"), when a part of the day stands before it
+        phrase such as "at 8 please"), a word of the locale's closed class that
+        never counts (``marker_not_count.voc``: "te llamo", "om 8 thuis"),
+        when a part of the day stands before it
         ("tuesday evening at 9 downtown"), or when "and" or "or" joins it to
         another reading.  Any other word after it may be the thing counted, and
         so may "and" or "or" before a second number ("om 8 en 9 kinderen").
@@ -1135,6 +1137,7 @@ class ConstructionMatcher:
                                 and tokens[end + joined].is_number)
                 else:
                     doubtful = (not word_at(end, grammar)
+                                and tokens[end].text not in self.spec.not_count
                                 and any(ch.isalpha() for ch in tokens[end].text))
                 if doubtful:
                     cand = MatchCandidate(replace(match, doubt=True),

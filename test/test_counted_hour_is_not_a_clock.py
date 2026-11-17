@@ -61,6 +61,11 @@ CLOCKS = [
     ("tomorrow at 8 please", "en", datetime(2026, 9, 26, 8)),
     ("at 8, wave at the people", "en", datetime(2026, 9, 26, 8)),
     ("a las 8 mañana", "es", datetime(2026, 9, 26, 8)),
+    ("a las 8 te llamo", "es", datetime(2026, 9, 26, 8)),
+    ("ik kom morgen om 8 thuis", "nl", datetime(2026, 9, 26, 8)),
+    ("bel me morgen om 5 terug", "nl", datetime(2026, 9, 26, 5)),
+    ("herinner me morgen om 7 aan de afspraak", "nl", datetime(2026, 9, 26, 7)),
+    ("be at 6 home", "en", datetime(2026, 9, 26, 6)),
     ("at 8 tomorrow", "en", datetime(2026, 9, 26, 8)),
     ("at 8 monday", "en", datetime(2026, 9, 28, 8)),
     ("hacia las 8 llegamos", "es", datetime(2026, 9, 26, 8)),
@@ -96,7 +101,7 @@ def test_hour_before_a_courtesy_or_date_word_is_a_clock(text, lang, expected):
 @pytest.mark.parametrize("text,lang,hour", [
     ("recuérdame llamar a las 3 vecinas mañana", "es", 3),
     ("look at 5 houses tomorrow", "en", 5),
-    ("a las 8 te llamo", "es", 8),
+    ("llama a las 4 vecinas mañana", "es", 4),
 ])
 def test_doubtful_clock_stays_a_candidate_below_the_date(text, lang, hour):
     candidates = extract_candidates(text, lang, ANCHOR)
