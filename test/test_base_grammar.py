@@ -331,15 +331,16 @@ def test_scalar_marker_position_unchanged_for_weekday_and_period():
     """The per-construction change is byte-identical for scalar-knob locales.
 
     A scalar ``post`` must still produce exactly the same weekday_ref and
-    rel_period orders it did before season_ref joined the postfix set -- the
-    only added contribution is season_ref's own postfix.
+    rel_period orders it did before season_ref and calendar_date joined the
+    postfix set -- the only added contributions are their own postfixes.
     """
     scalar = merge_orders({"base_grammar": {"marker_position": "post"}}, {})
     mapping = merge_orders(
         {"base_grammar": {"marker_position": {"weekday_ref": "post",
                                               "rel_period": "post",
                                               "weekday_of_week": "post",
-                                              "season_ref": "post"}}}, {})
+                                              "season_ref": "post",
+                                              "calendar_date": "post"}}}, {})
     assert scalar == mapping             # scalar == the equivalent full mapping
 
 

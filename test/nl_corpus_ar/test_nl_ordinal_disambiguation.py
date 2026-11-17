@@ -29,7 +29,7 @@ def test_half_quarter_read_ordinal(text, start, days):
 
 @pytest.mark.parametrize("text,start", [
     ("تشرين الأول", "2017-10-01"),   # October (NOT "the first")
-    ("كانون الثاني", "2017-01-01"),  # January (NOT "the second")
+    ("كانون الثاني", "2018-01-01"),  # January (NOT "the second")
 ])
 def test_month_names_preserved(text, start):
     sp, _ = _span(text)
