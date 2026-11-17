@@ -11,13 +11,19 @@ the un-consumed magnitude survives as an honest, non-empty remainder -- while
 leaving every genuinely-consumed run (including the implied-multiplier
 "hundred twenty three") folded exactly as before.
 """
-from chronologia.extract.numfold import fold_en
+from chronologia.extract.loader import load_lang_spec
 from chronologia.extract.numfold_germanic import fold_nl
+from chronologia.extract.pipeline import prematch_tokens
 from chronologia.extract.tokenizer import Tokenizer, TokenizerModes
 
 
 def _toks(text):
     return Tokenizer(TokenizerModes(dotted_date=True, ordinal_dot=True)).tokenize(text)
+
+
+def _en(text):
+    """English reads its numbers through numtag, on the pipeline's layer."""
+    return prematch_tokens(text, load_lang_spec("en"))
 
 
 def _values(out):
@@ -51,15 +57,15 @@ def test_nl_dropped_hundred_is_not_silently_folded_to_the_remainder():
 # --- must NOT regress: genuinely-consumed runs stay folded --------------------
 
 def test_en_implied_multiplier_hundred_twenty_three_stays_123():
-    out = fold_en(_toks("one hundred twenty three days"))
+    out = _en("one hundred twenty three days")
     assert 123 in _values(out)
 
 
 def test_en_two_hundred_fifty_stays_250():
-    out = fold_en(_toks("two hundred fifty days"))
+    out = _en("two hundred fifty days")
     assert 250 in _values(out)
 
 
 def test_en_twenty_three_stays_23():
-    out = fold_en(_toks("twenty three days"))
+    out = _en("twenty three days")
     assert 23 in _values(out)

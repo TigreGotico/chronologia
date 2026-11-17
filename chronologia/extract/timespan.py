@@ -154,8 +154,9 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     # region-keyed ``_REGION_SCALE`` default for the orthogonal scale feature).
     dmy_override = _REGION_DMY.get(region)
     week_override = _REGION_WEEK_START.get(region)
+    number_lang = _REGION_NUMBER_LANG.get(region)
     cache_key = (region if dmy_override is not None or week_override is not None
-                 else code)
+                 or number_lang is not None else code)
     engine = _TIMESPAN_ENGINES.get(cache_key)
     if engine is not None:
         return engine
@@ -176,6 +177,8 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
                 conv = replace(conv, week_start=week_override)
             if conv is not spec.conventions:
                 spec = replace(spec, conventions=conv)
+            if number_lang is not None:
+                spec = replace(spec, number_lang=number_lang)
             engine = DateTimeEngine(spec)
             _TIMESPAN_ENGINES[cache_key] = engine
         return engine
@@ -200,6 +203,13 @@ _REGION_DMY = {
 _REGION_WEEK_START = {
     "en-us": "sunday", "en-ca": "sunday", "pt-br": "sunday",
 }
+
+
+#: Region subtags whose numbers numtag reads with a lexicon of their own.
+#: Brazilian Portuguese counts the short scale: Priberam, "bilião", sense 2,
+#: "[Brasil] Mil milhões (10^9)".  So "dois bilhões e quinhentos milhões" is
+#: 2.5*10^9 in pt-BR and 2.0005*10^12 in pt-PT.
+_REGION_NUMBER_LANG = {"pt-br": "pt-BR"}
 
 
 # ---------------------------------------------------------------------------

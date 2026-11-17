@@ -25,8 +25,8 @@ _A = datetime(2017, 6, 27, 13, 4)
 
 
 # -- SEC-001 --------------------------------------------------------------
-def _fold_seconds(words: int, repeats: int = 3) -> float:
-    """Best-of-`repeats` wall time to fold a run of `words` number-words.
+def _fold_seconds(text: str, lang: str, repeats: int = 3) -> float:
+    """Best-of-`repeats` wall time to fold `text`.
 
     The minimum, not the mean: a loaded box inflates every sample upward, so
     the fastest run is the closest estimate of the true cost and the one that
@@ -35,30 +35,82 @@ def _fold_seconds(words: int, repeats: int = 3) -> float:
     best = float("inf")
     for _ in range(repeats):
         t = time.perf_counter()
-        extract_timespan("um " * words, "pt", _A)
+        extract_timespan(text, lang, _A)
         best = min(best, time.perf_counter() - t)
     return best
 
 
-def test_romance_number_fold_is_linear_not_quadratic():
+@pytest.mark.parametrize("lang, word", [
+    ("es", "uno"),     # the shared Romance fold in numfold_engine
+    ("pt", "um"),      # numtag
+])
+def test_romance_number_fold_is_linear_not_quadratic(lang, word):
     """A long joiner-less run of a Romance number-word used to re-parse the
     growing prefix once per token -- O(n^2), ~7.8s at 8000 words.
 
     The claim under test is asymptotic, so the assertion compares the cost of
-    two input sizes rather than measuring one against a stopwatch: quadrupling
-    the input roughly quadruples a linear fold and multiplies a quadratic one
-    by about sixteen.  Measured across the fix, the ratio is ~2.9 after and
-    ~11.5 before, so a ceiling of 6 separates them with headroom on both
-    sides.  A wall-clock budget cannot do this: it measures the machine as
-    much as the algorithm, and a fixed 3s ceiling on ~0.15s of work still
-    failed on a contended runner.
+    two input sizes rather than measuring one against a stopwatch.  Ten times
+    the input costs a linear fold about ten times as much and a quadratic one
+    about a hundred times, so a ceiling of 30 separates them with a factor of
+    three on each side.  Each size is the best of three runs, because a
+    loaded box inflates single samples.  The test pins the growth, not a
+    speed: a wall-clock budget measures the machine as much as the algorithm.
+    es reads its numbers through the engine fold and pt through numtag, so
+    each path has its own case.
     """
-    extract_timespan("um um", "pt", _A)          # warm the locale cache
-    small = _fold_seconds(2000)
-    large = _fold_seconds(8000)
-    assert large / small < 6.0, (
-        f"folding 8000 number-words took {large / small:.1f}x the time of "
-        f"2000 ({large:.2f}s vs {small:.2f}s); linear is ~4x, quadratic ~16x")
+    extract_timespan(f"{word} {word}", lang, _A)     # warm the locale cache
+    small = _fold_seconds(f"{word} " * 800, lang)
+    large = _fold_seconds(f"{word} " * 8000, lang)
+    assert large / small < 30.0, (
+        f"folding 8000 {lang} number-words took {large / small:.1f}x the time "
+        f"of 800 ({large:.2f}s vs {small:.2f}s); linear is ~10x, quadratic "
+        f"~100x")
+
+
+def _attach_seconds(words: int, repeats: int = 5, calls: int = 10) -> float:
+    """Best-of-`repeats` wall time of `calls` number-layer attaches on a run
+    of `words` number-words, with numtag's mentions already cached."""
+    from chronologia.extract.loader import load_lang_spec
+    from chronologia.extract.normaliser import TemporalNormaliser
+    from chronologia.extract.numlayer import attach, mentions
+    from chronologia.extract.tokenizer import Tokenizer
+    spec = load_lang_spec("pt")
+    text = "um " * words
+    tokens = TemporalNormaliser(spec).normalise(
+        Tokenizer(spec.tokenizer).tokenize(text))
+    mentions(text, "pt")
+    best = float("inf")
+    for _ in range(repeats):
+        t = time.perf_counter()
+        for _ in range(calls):
+            attach(tokens, text, "pt")
+        best = min(best, time.perf_counter() - t)
+    return best
+
+
+def test_number_layer_attach_is_linear():
+    """Giving each token its numtag mention costs time in proportion to the
+    input.  Four times the words take about 4x as long when each token finds
+    its mention directly, and about 16x when each token scans every mention.
+    Measured on one box, the ratio is 4.5 against 18.6; a ceiling of 9 leaves
+    a factor of two to each."""
+    small = _attach_seconds(2000)
+    large = _attach_seconds(8000)
+    assert large / small < 9.0, (
+        f"attaching 8000 number-words took {large / small:.1f}x the time of "
+        f"2000 ({large:.3f}s vs {small:.3f}s); linear is ~4x, quadratic ~16x")
+
+
+@pytest.mark.parametrize("text,lang,left", [
+    ("jeden půldruhé den", "cs", "jeden"),
+    ("am einige tag", "de", "am"),
+])
+def test_word_before_a_quantifier_stays_outside_a_folded_count(text, lang,
+                                                               left):
+    """The article before a quantifier joins the count only in the languages
+    numtag reads.  The other languages read their quantifiers in their fold,
+    and a word before one stays in the remainder."""
+    assert extract_duration(text, lang).remainder == left
 
 
 @pytest.mark.parametrize("text,lang,days", [
@@ -1173,7 +1225,7 @@ def test_spelled_ordinal_list_across_and_keeps_first():
             # June 3 is only acceptable if "first" was NOT silently swallowed
             assert "first" in r.remainder, "'first' silently erased from a list"
     # the genuine magnitude-additive folds are unchanged (not turned into lists)
-    from chronologia.extract.numfold import fold_en
+    from chronologia.extract.numlayer_en import fold_en
     from chronologia.extract.pipeline import pretokens
     from chronologia.extract.loader import load_lang_spec
     _spec = load_lang_spec("en")
@@ -1182,12 +1234,12 @@ def test_spelled_ordinal_list_across_and_keeps_first():
     # the ordinal LIST is cut at "and" -- BOTH ordinals survive, "first" is not
     # swallowed into a lone "3" the way it was before the bridge gate.
     assert _folded("first and third of June") == "1 and 3 of june"
-    # every genuine magnitude-additive fold is byte-for-byte unchanged by the
-    # gate (these are exactly the pre-fix outputs).
-    assert _folded("one hundred and five") == "1 hundred and 5"
-    assert _folded("two hundred and fifty") == "2 hundred and 50"
-    assert _folded("a thousand and one") == "a thousand and 1"
-    assert _folded("one hundred and first") == "1 hundred and 1"
+    # a genuine magnitude-additive "and" joins one number: 100 + 5, 200 + 50,
+    # 1000 + 1, and the ordinal 100 + 1
+    assert _folded("one hundred and five") == "105"
+    assert _folded("two hundred and fifty") == "250"
+    assert _folded("a thousand and one") == "1001"
+    assert _folded("one hundred and first") == "101"
     # a bare year pair with no cue is two numerals (the year reading needs a
     # cue such as "in" or a month-and-day before it); the back-end used to
     # keep only the last atom, silently dropping the first

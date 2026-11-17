@@ -429,5 +429,6 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_en"
+  "pre_hook": "chronologia.extract.numlayer_en:ordinal_to_last",
+  "hook": "chronologia.extract.numlayer_en:fold_en"
 }
