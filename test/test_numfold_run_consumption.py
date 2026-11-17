@@ -3,9 +3,9 @@
 back-end genuinely consumes the whole run.
 
 ``ovos_number_parser`` can greedily read only a *trailing* component of a run
-and silently drop a leading magnitude: ``extract_number_nl("tweeduizend
-vierentwintig")`` returns 24, dropping the 2000.  The fold used to stamp that
-24 over the whole run, committing a confidently-wrong value with an empty
+and silently drop a leading magnitude: ``extract_number_nl("tweehonderd
+vijftig")`` returns 50, dropping the 200.  The fold used to stamp that
+50 over the whole run, committing a confidently-wrong value with an empty
 remainder.  The consumption guard in ``_fold_run`` cuts such a run instead --
 the un-consumed magnitude survives as an honest, non-empty remainder -- while
 leaving every genuinely-consumed run (including the implied-multiplier
@@ -36,13 +36,22 @@ def _numtexts(out):
 
 # --- the defect: a dropped leading magnitude must never become the value -----
 
-def test_nl_dropped_thousand_is_not_silently_folded_to_the_remainder():
+def test_nl_thousand_with_space_is_folded_whole():
+    # "na duizend een spatie" (Taaladvies): "tweeduizend vierentwintig" is the
+    # written form of 2024 and the back-end consumes the whole run.
     out = fold_nl(_toks("tweeduizend vierentwintig dagen"))
+    assert _values(out) == [2024]
+    assert [t.text for t in out if not t.is_number] == ["dagen"]
+
+
+def test_nl_dropped_hundred_is_not_silently_folded_to_the_remainder():
+    # the back-end reads only the trailing 50 of "tweehonderd vijftig"
+    out = fold_nl(_toks("tweehonderd vijftig dagen"))
     vals = _values(out)
-    # never the confidently-wrong 24 with an empty remainder
-    assert vals != [24], f"leading 2000 was silently dropped: {vals}"
-    # honest partial: the 2000 magnitude survives as its own token
-    assert 2000 in vals, f"un-consumed magnitude vanished: {vals}"
+    # never the confidently-wrong 50 with an empty remainder
+    assert vals != [50], f"leading 200 was silently dropped: {vals}"
+    # honest partial: the 200 magnitude survives as its own token
+    assert vals == [200, 50], f"un-consumed magnitude vanished: {vals}"
 
 
 # --- must NOT regress: genuinely-consumed runs stay folded --------------------
