@@ -203,6 +203,21 @@ def test_a_cue_in_the_clause_before_is_no_cue(lang, text, day):
     assert _event_day(lang, text) == day
 
 
+@pytest.mark.parametrize("lang, text, years, rest", [
+    ("en", "from two thousand to two thousand and ten it rained",
+     (2000, 2011), "it rained"),
+    ("en", "between two thousand and two thousand and five it rained",
+     (2000, 2006), "it rained"),
+    ("pt", "desde dois mil até dois mil e dez choveu", (2000, 2011),
+     "choveu"),
+])
+def test_the_second_endpoint_of_a_range_reads_the_cue_of_the_first(
+        lang, text, years, rest):
+    s, left = extract_timespan(text, lang, _FRIDAY)
+    assert (s.start, s.end, left) == (datetime(years[0], 1, 1),
+                                      datetime(years[1], 1, 1), rest)
+
+
 def test_known_cost_a_year_after_ate():
     """Known cost: "até" is no year cue, so the year 2030 reads as a count,
     as on origin/dev."""

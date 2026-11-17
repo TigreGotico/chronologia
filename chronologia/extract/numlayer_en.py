@@ -73,10 +73,16 @@ _FRACTIONS = _voc("clock_fraction_") | {"quarters"}
 #: The deep-time SCALE words ("thousand", "million", "billion").
 _SCALES = _voc("scale_")
 _FACTORS = scale_factors("en")
-#: The words that tell a count from a year.
+#: The words that tell a count from a year.  A range cue also makes a year of
+#: the number after the word that closes it: "from two thousand to two
+#: thousand and ten it rained", "between two thousand and two thousand and
+#: five".
 _COUNT_WORDS = CountWords(
     scales=_SCALES, cues=_COUNT_CUES, months=_MONTHS, units=_UNITS,
-    currencies=_voc("currency."))
+    currencies=_voc("currency."),
+    ranges={"from": _voc("marker_to.", "marker_until."),
+            "since": _voc("marker_until."),
+            "between": _voc("marker_and.")})
 _INDEF = frozenset({"a", "an"})
 _ORDLAST = _voc("marker_ordlast")
 #: The words between a fraction and its unit: "half a year", "three quarters

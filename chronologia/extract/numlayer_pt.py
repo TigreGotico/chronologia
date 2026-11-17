@@ -86,13 +86,15 @@ _OF = _voc("marker_of")
 _YEAR_CUES = _YEAR_WORDS | _voc("marker_in.")
 _MONTHS = _voc("month_")
 #: The words that tell a count from a year.  Of the range words only "desde"
-#: makes the number after it a year ("desde dois mil e dez vivo aqui").
-#: "até", "a partir de", "entre" and "de" mostly put an amount after them
-#: ("até dois mil euros", "a partir de três mil euros por mês", "uma
-#: multidão de dois mil"), so they are no cue.
+#: makes the number after it a year ("desde dois mil e dez vivo aqui"), and
+#: the "até" that closes it makes a year of the second number ("desde dois
+#: mil até dois mil e dez").  "até", "a partir de", "entre" and "de" mostly
+#: put an amount after them ("até dois mil euros", "a partir de três mil
+#: euros por mês", "uma multidão de dois mil"), so they are no cue.
 _COUNT_WORDS = CountWords(
     scales=_SCALES, cues=_YEAR_CUES | _voc("marker_since"), months=_MONTHS,
-    units=_UNITS, currencies=_voc("currency"))
+    units=_UNITS, currencies=_voc("currency"),
+    ranges={"desde": _voc("marker_until")})
 
 
 def _number_in(tok: Token, low: float, high: float) -> bool:

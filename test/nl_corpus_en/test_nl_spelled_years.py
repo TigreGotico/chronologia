@@ -162,17 +162,18 @@ def test_known_cost_a_year_after_by_or_of_with_a_word_after_it(text):
     nomatch(text)
 
 
-@pytest.mark.parametrize("text, rest", [
-    ("after two thousand people left", "after people left"),
-    ("between two thousand and three thousand people came",
-     "between and three thousand people came"),
+@pytest.mark.parametrize("text, end, rest", [
+    ("after two thousand people left", 2001, "after people left"),
+    ("between two thousand and three thousand people came", 3001,
+     "people came"),
 ])
-def test_known_cost_a_count_after_a_range_word(text, rest):
+def test_known_cost_a_count_after_a_range_word(text, end, rest):
     """Known cost: a range or since word cues a year, also before a count of
-    people.  The first number reads as the year 2000."""
+    people, and "and" after "between two thousand" cues the second number.
+    origin/dev gives the same spans."""
     s, left = parse(text)
     assert (s.start, s.end, left) == (AstroDate(2000, 1, 1),
-                                      AstroDate(2001, 1, 1), rest)
+                                      AstroDate(end, 1, 1), rest)
 
 
 def test_ones_suffix_is_a_count_not_a_year():

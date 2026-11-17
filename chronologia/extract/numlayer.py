@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import re
 from bisect import bisect_right
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from fractions import Fraction
 from functools import lru_cache
 from pathlib import Path
@@ -60,6 +60,8 @@ def mentions(text: str, lang: str) -> Tuple[NumberMention, ...]:
 #: The punctuation that ends a clause.  A cue before it is no cue for a
 #: number after it: "esperei até. Dois mil turistas chegaram ontem".
 _CLAUSE_BREAK = re.compile(r"[.,;:!?]")
+#: The place of a whole mention in :attr:`Token.before`.
+NUMBER = "\x00"
 
 
 def _words_before(tokens: Tuple[Token, ...], i: int, text: str
@@ -82,7 +84,9 @@ def attach(tokens: Tuple[Token, ...], text: str,
 
     ``lang`` is a chronologia locale or a region tag (``pt-BR``).  The first
     token of each mention also gets the words before it in its clause
-    (:attr:`Token.before`).
+    (:attr:`Token.before`).  A mention one word after another mention gets
+    that mention's words, :data:`NUMBER` and the word: "from two thousand to
+    two thousand and ten" gives the second mention ("from", NUMBER, "to").
     """
     if not reads(lang):
         return tokens
@@ -94,6 +98,8 @@ def attach(tokens: Tuple[Token, ...], text: str,
     # before it
     starts = [m.char_span[0] for m in found]
     out = []
+    # the words before the last mention, and the index of its last token
+    last_before, last_end = None, None
     for i, t in enumerate(tokens):
         m = None
         if t.char_start is not None and t.char_end is not None:
@@ -104,10 +110,16 @@ def attach(tokens: Tuple[Token, ...], text: str,
             out.append(t)
             continue
         if t.char_start == m.char_span[0]:
-            out.append(replace(t, mention=m,
-                               before=_words_before(tokens, i, text)))
+            before = _words_before(tokens, i, text)
+            if last_end == i - 2 and len(before) >= 2:
+                # a cue of up to three words, the mention and the word: a
+                # run of mentions keeps a window of fixed length
+                before = (last_before + (NUMBER, before[-1]))[-5:]
+            last_before = before
+            out.append(replace(t, mention=m, before=before))
         else:
             out.append(replace(t, mention=m))
+        last_end = i
     return tuple(out)
 
 
@@ -266,17 +278,26 @@ class CountWords:
     units: Collection[str]
     #: The currency names.  A count before one keeps its words.
     currencies: Collection[str] = frozenset()
+    #: For a range cue ("from"), the words that open its second endpoint
+    #: ("to"): a mention after one is a year too.
+    ranges: Mapping[str, Collection[str]] = field(default_factory=dict)
 
 
 def year_cue(before: Tuple[str, ...], words: CountWords) -> Optional[str]:
     """The cue at the end of ``before``, or ``None``.
 
-    A cue can be up to three words long.
+    A cue can be up to three words long.  The word between two mentions is a
+    cue when the first mention has a range cue that it closes: "to" after
+    "from two thousand".
     """
     for k in range(1, len(before) + 1):
         cue = " ".join(before[-k:])
         if cue in words.cues:
             return cue
+    if len(before) > 2 and before[-2] == NUMBER:
+        opener = year_cue(before[:-2], words)
+        if opener is not None and before[-1] in words.ranges.get(opener, ()):
+            return before[-1]
     return None
 
 
