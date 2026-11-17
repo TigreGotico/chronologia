@@ -101,8 +101,6 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
     # an article after another length is a rate
     ("en", "2 hours a month"),
     ("en", "2 days a year"),
-    # an article after "of" names a part of the unit
-    ("en", "a third of a year"),
     # a fraction of a year that is not whole months
     ("en", "1.125 years"),
     # a demonstrative names this month or year
@@ -177,6 +175,8 @@ def test_a_calendar_unit_without_a_plain_count_names_no_length(lang, text):
     ("is", "hundrað ár", {"years": 100}),
     ("mt", "tliet mitt sena ilu", {"years": 300}),
     ("ro", "9 luni", {"months": 9}),
+    # a third of 12 months is 4 months: 31 January to 31 May, 120 days
+    ("en", "a third of a year", {"months": 4}),
     ("ro", "timp de 3 luni", {"months": 3}),
 ])
 def test_a_count_of_years_is_still_a_length(lang, text, delta):
@@ -307,12 +307,20 @@ def test_a_recurrence_count_steps_by_its_interval(lang, text, count):
     assert got.recurrence.count == count
 
 
+def test_a_recurrence_bound_by_a_third_of_a_year_counts_four_months():
+    # 31 January to 31 May is 28 + 31 + 30 + 31 = 120 days
+    from chronologia import extract_recurrence
+    got = extract_recurrence("every day for a third of a year", "en",
+                             anchor=END_OF_JANUARY)
+    assert got.recurrence.count == 120
+    assert got.remainder == ""
+
+
 @pytest.mark.parametrize("text", [
-    "every day for a third of a year",
     "every day for a third of a month",
 ])
 def test_a_recurrence_bound_by_a_part_of_a_unit_has_no_count(text):
-    # "a third of" names no whole count, so the bound stays unread
+    # a third of a month is no whole count of days, so the bound stays unread
     from chronologia import extract_recurrence
     got = extract_recurrence(text, "en", anchor=END_OF_JANUARY)
     assert got.recurrence.count is None

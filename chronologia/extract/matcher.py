@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, replace
+from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 
 from chronologia.extract import tokenizer
@@ -223,11 +224,12 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         if token.apostrophe and raw.isdigit() and len(raw) == 2:
             return True
         # a leading zero marks a clock reading ("0600"), never a year
-        return (token.is_number and raw.isdigit() and raw[0] != "0"
-                and GYEAR_MIN <= int(raw) <= GYEAR_MAX)
+        return (token.is_number and not token.count and raw.isdigit()
+                and raw[0] != "0" and GYEAR_MIN <= int(raw) <= GYEAR_MAX)
     if name in ("MILTIME", "MILTIMEZ"):
         raw = token.raw.rstrip(".")
-        if not (token.is_number and raw.isdigit() and len(raw) == 4):
+        if not (token.is_number and not token.count and raw.isdigit()
+                and len(raw) == 4):
             return False
         hh, mm = int(raw[:2]), int(raw[2:])
         if not (0 <= hh <= 23 and 0 <= mm <= 59):
@@ -242,7 +244,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         # leading-zero forms are already MILTIMEZ, so excluding them here keeps
         # "0800Z"/"0300 Zulu" resolving through their existing order, unchanged.
         raw = token.raw.rstrip(".")
-        if not (token.is_number and raw.isdigit() and len(raw) == 4):
+        if not (token.is_number and not token.count and raw.isdigit()
+                and len(raw) == 4):
             return False
         hh, mm = int(raw[:2]), int(raw[2:])
         return 0 <= hh <= 23 and 0 <= mm <= 59 and raw[0] != "0"
@@ -493,19 +496,26 @@ def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
     surfaces = spec.connectors.get(name)
     if not surfaces or ti >= len(tokens):
         return 0
+    targets, longest = _connector_targets(surfaces)
     best = 0
-    for surf in surfaces:
-        target = " ".join(surf.lower().replace(".", " ").split())
-        if not target:
-            continue
-        run = ""
-        for k in range(ti, len(tokens)):
-            run = tokens[k].text if not run else f"{run} {tokens[k].text}"
-            if len(run) >= len(target):
-                if run == target:
-                    best = max(best, k - ti + 1)
-                break
+    run = ""
+    for k in range(ti, len(tokens)):
+        run = tokens[k].text if not run else f"{run} {tokens[k].text}"
+        if len(run) > longest:
+            break
+        if run in targets:
+            best = k - ti + 1
     return best
+
+
+@lru_cache(maxsize=None)
+def _connector_targets(surfaces: frozenset) -> Tuple[frozenset, int]:
+    """The surfaces of a connector as :func:`_connector_span` compares them,
+    and the length of the longest.  The matcher asks for a connector at every
+    token of every construction, so each set is normalised once."""
+    targets = frozenset(filter(None, (" ".join(s.lower().replace(".", " ").split())
+                                      for s in surfaces)))
+    return targets, max(map(len, targets), default=0)
 
 
 def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],

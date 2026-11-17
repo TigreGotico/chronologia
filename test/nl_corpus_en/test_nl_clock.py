@@ -7,7 +7,7 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, start, span, nomatch
+from ._corpus import ANCHOR, ad, nomatch, parse, span, start
 from ruling17 import moved
 
 
@@ -193,6 +193,20 @@ def test_landmark(text, h, mi):
 ])
 def test_military_time(text, h, mi):
     assert start(text) == clk(h, mi)
+
+
+# military time says the leading zero and "hundred" for a full hour: 0000
+# is "zero hundred hours", 0200 "zero two hundred" (timeanddate.com,
+# "Military Time: The 24-Hour Clock"; Wikipedia, "24-hour clock")
+@pytest.mark.parametrize("text,h,left", [
+    ("at zero hundred hours", 0, "at"), ("zero hundred hours", 0, ""),
+    ("at zero hundred", 0, ""), ("at zero six hundred hours", 6, "at"),
+    ("zero nine hundred hours", 9, ""),
+])
+def test_spelled_military_time(text, h, left):
+    got = parse(text)
+    assert got.span.start == clk(h, 0)
+    assert got.remainder == left
 
 
 # a bare 4-digit run without a leading zero stays a YEAR, not a clock
