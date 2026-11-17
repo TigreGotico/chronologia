@@ -9,17 +9,18 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch, clk
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,mi", [('halv ni', 8, 30), ('halv syv', 6, 30), ('halv otte', 7, 30), ('halv ti', 9, 30), ('halv elleve', 10, 30), ('halv tolv', 11, 30), ('halv et', 12, 30), ('halv to', 1, 30), ('halv tre', 2, 30), ('halv fire', 3, 30), ('halv fem', 4, 30), ('halv seks', 5, 30), ('halv middag', 11, 30), ('halv midnat', 23, 30)])
 def test_half_is_half_to(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 
 @pytest.mark.parametrize("text,h,mi", [('kvart over tre', 3, 15), ('kvart i ni', 8, 45), ('kvart over elleve', 11, 15), ('kvart i tolv', 11, 45), ('kvart i et', 12, 45), ('kvart over midnat', 0, 15), ('kvart i midnat', 23, 45), ('kvart over middag', 12, 15)])
 def test_quarter_explicit(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -45,7 +46,7 @@ def test_bare_quarter_rejected(text):
 
 @pytest.mark.parametrize("text,h,mi", [('ti i otte', 7, 50), ('fem over tre', 3, 5), ('tyve i syv', 6, 40), ('fem i tolv', 11, 55), ('ti over middag', 12, 10)])
 def test_minute_to_past(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi,s", [
@@ -59,7 +60,7 @@ def test_digit_time(text, h, mi, s):
 
 @pytest.mark.parametrize("text,h", [('klokken 15', 15), ('klokken 9', 9), ('klokken tre', 3), ('klokken 20', 20), ('klokken otte', 8), ('klokken midnat', 0), ('klokken middag', 12)])
 def test_bare_hour(text, h):
-    assert start(text) == clk(h, 0)
+    assert start(text) == moved(clk(h, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [('midnat', 0, 0), ('middag', 12, 0)])

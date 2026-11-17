@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from chronologia import extract_candidates, extract_timespan
+from chronologia import extract_candidates, extract_recurrence, extract_timespan
 
 AFTERNOON = datetime(2026, 3, 11, 15, 0)
 MORNING = datetime(2026, 3, 11, 6, 0)
@@ -35,6 +35,7 @@ LONE_HOURS = [
     ("om kwart voor 1", "nl", NOON, datetime(2026, 10, 17, 12, 45)),
     ("alle tre e un quarto", "it", NOON, datetime(2026, 10, 17, 15, 15)),
     ("alle 11", "it", AFTER_NOON, datetime(2017, 6, 27, 23, 0)),
+    ("om 12 uur", "nl", AFTER_NOON, datetime(2017, 6, 28, 0, 0)),
     ("às 10 e meia", "pt", AFTER_NOON, datetime(2017, 6, 27, 22, 30)),
     ("dos quarts de deu", "ca", AFTERNOON, datetime(2026, 3, 11, 21, 30)),
     ("les deu i quart", "ca", AFTERNOON, datetime(2026, 3, 11, 22, 15)),
@@ -80,3 +81,13 @@ def test_best_candidate_agrees_with_the_timespan(text, lang, anchor, expected):
                                        ("2", "nl")])
 def test_a_lone_numeral_is_no_hour(text, lang):
     assert extract_timespan(text, lang, AFTERNOON) is None
+
+
+@pytest.mark.parametrize("text,rule", [
+    ("daily at 7", "FREQ=DAILY;BYHOUR=7"),
+    ("every monday at 7", "FREQ=WEEKLY;BYDAY=MO;BYHOUR=7"),
+    ("daily from 9 to 5", "FREQ=DAILY;BYHOUR=9"),
+])
+def test_a_recurrence_pin_keeps_the_spoken_hour(text, rule):
+    found = extract_recurrence(text, "en", anchor=AFTERNOON)
+    assert found[0].to_string() == rule

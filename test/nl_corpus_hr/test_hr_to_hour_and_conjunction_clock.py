@@ -22,6 +22,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse, nomatch
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -34,7 +35,7 @@ def _next_time(h, mi):
 def _clean(text):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
-    assert r[1] == "", f"{text!r} stranded {r[1]!r}"
+    assert r[1] == moved("", ANCHOR), f"{text!r} stranded {r[1]!r}"
     return r[0].start
 
 
@@ -45,7 +46,7 @@ def _clean(text):
     ("pet do tri", 2, 55),
 ])
 def test_minutes_and_quarter_to_the_hour(text, h, mi):
-    assert _clean(text) == _next_time(h, mi)
+    assert _clean(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 def test_to_the_hour_is_before_the_named_hour_not_after():
@@ -54,10 +55,10 @@ def test_to_the_hour_is_before_the_named_hour_not_after():
     # reading (the one "pola" takes) would be 08:15 -- both written here as
     # literals, never read back from the parser.
     got = _clean("petnaest do devet")
-    assert got == _next_time(8, 45)
+    assert got == moved(_next_time(8, 45), ANCHOR)
     assert got != _next_time(9, 15)
     assert got != _next_time(8, 15)
-    assert _next_time(9, 0) - got == timedelta(minutes=15)
+    assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=15)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -67,17 +68,17 @@ def test_to_the_hour_is_before_the_named_hour_not_after():
     ("u dva i trideset", 2, 30),
 ])
 def test_hour_and_minutes(text, h, mi):
-    assert _clean(text) == _next_time(h, mi)
+    assert _clean(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 def test_hour_and_minutes_is_after_the_named_hour():
     # "osam i petnaest" is 15 minutes PAST eight.  The subtractive reading
     # would be 07:45 and the bare hour (the old stranded answer) 08:00.
     got = _clean("u osam i petnaest")
-    assert got == _next_time(8, 15)
+    assert got == moved(_next_time(8, 15), ANCHOR)
     assert got != _next_time(7, 45)
     assert got != _next_time(8, 0)
-    assert got - _next_time(8, 0) == timedelta(minutes=15)
+    assert got - moved(_next_time(8, 0), ANCHOR) == timedelta(minutes=15)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -96,8 +97,8 @@ def test_evening_form_is_the_same_minutes_twelve_hours_apart():
     # re-signed the offset would give 20:15 or 21:15 for the evening form.
     assert _clean("petnaest do devet").minute == 45
     assert _clean("petnaest do devet navečer").minute == 45
-    assert _clean("petnaest do devet").hour == 8
-    assert _clean("petnaest do devet navečer").hour == 20
+    assert _clean("petnaest do devet").hour == moved(8, ANCHOR)
+    assert _clean("petnaest do devet navečer").hour == moved(20, ANCHOR)
 
 
 def test_bare_quarter_without_a_direction_word_is_not_a_clock():
@@ -108,7 +109,7 @@ def test_bare_quarter_without_a_direction_word_is_not_a_clock():
 
 
 def test_half_toward_hour_still_reads():
-    assert _clean("pola devet") == _next_time(8, 30)
+    assert _clean("pola devet") == moved(_next_time(8, 30), ANCHOR)
 
 
 def test_duration_is_not_a_clock():

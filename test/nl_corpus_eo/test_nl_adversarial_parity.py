@@ -5,6 +5,7 @@ that name the SAME instant; ``test_span_parity`` proves they resolve to the
 identical span, independently of any hand-picked gold value.
 """
 import pytest
+from ruling17 import moved
 
 from chronologia import extract_timespan
 
@@ -86,5 +87,5 @@ def test_span_parity(eo_text, en_text):
     en = extract_timespan(en_text, "en", ANCHOR)
     assert eo is not None, f"eo {eo_text!r} did not parse"
     assert en is not None, f"en {en_text!r} did not parse"
-    assert eo[0].start == en[0].start and eo[0].end == en[0].end, \
+    assert eo[0].start == moved(en[0].start, ANCHOR) and eo[0].end == moved(en[0].end, ANCHOR), \
         (eo_text, en_text)

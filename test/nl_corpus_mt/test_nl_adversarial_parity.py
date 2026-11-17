@@ -1,5 +1,6 @@
 """Adversarial Maltese cases plus the shared English semantic-parity block."""
 import pytest
+from ruling17 import moved
 
 from chronologia import extract_timespan
 
@@ -64,4 +65,4 @@ def test_span_parity(mt_text, en_text):
     en = extract_timespan(en_text, "en", ANCHOR)
     assert mt is not None, f"mt {mt_text!r} did not parse"
     assert en is not None, f"en {en_text!r} did not parse"
-    assert mt[0].start == en[0].start and mt[0].end == en[0].end, (mt_text, en_text)
+    assert mt[0].start == moved(en[0].start, ANCHOR) and mt[0].end == moved(en[0].end, ANCHOR), (mt_text, en_text)

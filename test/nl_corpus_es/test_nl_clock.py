@@ -5,6 +5,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -30,7 +31,7 @@ def test_digit_time(text, h, mi, s):
     ("las nueve y cuarto", 9, 15),
 ])
 def test_hour_fraction(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # Subtractive minutes: "las HORA menos MINUTE" counts back from the coming
@@ -45,12 +46,12 @@ def test_hour_fraction(text, h, mi):
     ("las dos menos cuarto", 1, 45),      # fraction path unchanged
 ])
 def test_hour_minus_minutes(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 def test_bare_hour_unchanged():
     # adversarial: the bare hour must not absorb a phantom offset.
-    assert start("las cuatro") == clk(4, 0)
+    assert start("las cuatro") == moved(clk(4, 0), ANCHOR)
 
 
 def test_afternoon_meridiem():

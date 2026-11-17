@@ -24,6 +24,7 @@ import pytest
 from chronologia.extract import extract_duration
 
 from ._corpus import ANCHOR, ad, parse, nomatch
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -36,7 +37,7 @@ def _next_time(h, mi):
 def _clean(text):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
-    assert r[1] == "", f"{text!r} stranded {r[1]!r}"
+    assert r[1] == moved("", ANCHOR), f"{text!r} stranded {r[1]!r}"
     return r[0].start
 
 
@@ -53,7 +54,7 @@ def _clean(text):
     ("trištvrte na osem", 7, 45),    # JULS worked example
 ])
 def test_toward_hour_readings(text, h, mi):
-    assert _clean(text) == _next_time(h, mi)
+    assert _clean(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 def test_half_names_the_coming_hour_not_the_past_one():
@@ -61,31 +62,31 @@ def test_half_names_the_coming_hour_not_the_past_one():
     # o'clock; the reversed "half past nine" reading would be 09:30.  Both
     # values are literals, never read back from the parser.
     got = _clean("pol deviatej")
-    assert got == _next_time(8, 30)
+    assert got == moved(_next_time(8, 30), ANCHOR)
     assert got != _next_time(9, 30)
-    assert _next_time(9, 0) - got == timedelta(minutes=30)
-    assert _clean("o deviatej") == _next_time(9, 0)
+    assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=30)
+    assert _clean("o deviatej") == moved(_next_time(9, 0), ANCHOR)
 
 
 def test_quarter_onto_the_hour_is_forty_five_minutes_before_it():
     got = _clean("štvrť na deväť")
-    assert got == _next_time(8, 15)
+    assert got == moved(_next_time(8, 15), ANCHOR)
     assert got != _next_time(9, 15)     # past-the-named-hour reading
     assert got != _next_time(8, 45)     # subtractive "quarter to" reading
-    assert _next_time(9, 0) - got == timedelta(minutes=45)
+    assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=45)
 
 
 def test_three_quarters_onto_the_hour_is_fifteen_minutes_before_it():
     got = _clean("trištvrte na deväť")
-    assert got == _next_time(8, 45)
+    assert got == moved(_next_time(8, 45), ANCHOR)
     assert got != _next_time(9, 45)
-    assert _next_time(9, 0) - got == timedelta(minutes=15)
+    assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=15)
 
 
 def test_toward_the_first_hour_is_spoken_as_twelve():
     # toward_hour_12h: the hour before one is spoken as twelve, so half
     # toward one is 12:30, never 00:30.
-    assert _clean("pol jednej") == _next_time(12, 30)
+    assert _clean("pol jednej") == moved(_next_time(12, 30), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [

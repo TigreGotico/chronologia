@@ -43,7 +43,7 @@ def test_a_trap_bare_month_pair_is_single_span():
 def test_a_trap_clock_is_single_span():
     # "ás tres" is a clock time, a minute-wide span -- never a range boundary.
     ss, ee = start_end("ás tres")
-    assert ss == AstroDate(2017, 6, 28, 3, 0) and ee == AstroDate(2017, 6, 28, 3, 1)
+    assert ss == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR) and ee == moved(AstroDate(2017, 6, 28, 3, 1), ANCHOR)
 
 
 def test_a_trap_non_temporal_place_is_nomatch():
@@ -52,6 +52,7 @@ def test_a_trap_non_temporal_place_is_nomatch():
 
 # -- open-ended ranges: "ata" (open start) / "desde" (open end) -------------
 from ._corpus import ANCHOR, ad  # noqa: E402
+from ruling17 import moved
 
 
 def test_ata_open_start():
@@ -85,8 +86,8 @@ def test_shared_month_range_reads_both_days(text):
 
 def test_ao_without_a_from_lead_is_not_a_range():
     ss, ee = start_end("o concerto é ás tres")
-    assert ss == AstroDate(2017, 6, 28, 3, 0)
-    assert ee == AstroDate(2017, 6, 28, 3, 1)
+    assert ss == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR)
+    assert ee == moved(AstroDate(2017, 6, 28, 3, 1), ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["do ao", "do 5 ao", "imos do pan ao viño"])

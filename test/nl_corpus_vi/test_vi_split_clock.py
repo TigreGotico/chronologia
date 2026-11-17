@@ -20,6 +20,8 @@ to three, 2:50.
 import pytest
 
 from ._corpus import parse, remainder, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,hour", [
@@ -34,7 +36,7 @@ from ._corpus import parse, remainder, start
 ])
 def test_ruoi_counts_from_the_hour_it_names(text, hour):
     s = start(text)
-    assert (s.hour, s.minute) == (hour, 30)
+    assert (s.hour, s.minute) == moved((hour, 30), ANCHOR)
 
 
 @pytest.mark.parametrize("text,hour", [
@@ -43,7 +45,7 @@ def test_ruoi_counts_from_the_hour_it_names(text, hour):
 ])
 def test_ruoi_without_the_hour_word(text, hour):
     s = start(text)
-    assert (s.hour, s.minute) == (hour, 30)
+    assert (s.hour, s.minute) == moved((hour, 30), ANCHOR)
 
 
 @pytest.mark.parametrize("text,hour", [
@@ -57,7 +59,7 @@ def test_ruoi_never_lands_in_the_previous_hour(text, hour):
     not, and this is the assertion that says so."""
     s = start(text)
     assert (s.hour, s.minute) != (hour - 1, 30)
-    assert s.hour == hour
+    assert s.hour == moved(hour, ANCHOR)
 
 
 @pytest.mark.parametrize("text,hour,minute", [
@@ -71,7 +73,7 @@ def test_ruoi_never_lands_in_the_previous_hour(text, hour):
 ])
 def test_kem_subtracts_from_the_hour_it_names(text, hour, minute):
     s = start(text)
-    assert (s.hour, s.minute) == (hour, minute)
+    assert (s.hour, s.minute) == moved((hour, minute), ANCHOR)
 
 
 @pytest.mark.parametrize("text,named", [
@@ -84,7 +86,7 @@ def test_kem_never_reads_as_past_the_hour(text, named):
     "and" -- would put the time INSIDE the hour that was spoken.  It must
     land in the hour before it instead."""
     s = start(text)
-    assert s.hour == named - 1
+    assert s.hour == moved(named - 1, ANCHOR)
     assert s.hour != named
 
 
@@ -106,7 +108,7 @@ def test_additive_minutes_keep_the_hour_they_follow(text, hour, minute):
 ])
 def test_bare_hour(text, hour):
     s = start(text)
-    assert (s.hour, s.minute) == (hour, 0)
+    assert (s.hour, s.minute) == moved((hour, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,hour", [

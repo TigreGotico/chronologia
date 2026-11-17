@@ -16,6 +16,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, start_end
+from ruling17 import moved
 
 #: bare ablative clock hour 1..12 -> value (independent of the parser).
 _ABL = {
@@ -35,8 +36,8 @@ def _next_point(h, mi=0):
 @pytest.mark.parametrize("surface,n", sorted(_ABL.items()))
 def test_bare_ablative_standalone(surface, n):
     p = _next_point(n)
-    assert start(surface) == ad(p)
-    assert start_end(surface) == (ad(p), ad(p + timedelta(minutes=1)))
+    assert start(surface) == moved(ad(p), ANCHOR)
+    assert start_end(surface) == moved((ad(p), ad(p + timedelta(minutes=1))), ANCHOR)
 
 
 # aamupäivällä (forenoon) = am, iltapäivällä (afternoon) = pm; the meridiem

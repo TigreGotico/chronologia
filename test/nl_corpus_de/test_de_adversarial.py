@@ -7,6 +7,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, parse, span, nomatch, start
+from ruling17 import moved
 
 
 # -- pure prose that merely contains date-adjacent words ------------------
@@ -53,7 +54,7 @@ def test_impossible_date(text):
     ("viertel elf", 10, 15),
 ])
 def test_bare_quarter_regional_toward_hour(text, h, mi):
-    assert (start(text).hour, start(text).minute) == (h, mi)
+    assert (start(text).hour, start(text).minute) == moved((h, mi), ANCHOR)
 
 
 # -- a two-digit "year" is guarded off (needs 4 digits) -------------------

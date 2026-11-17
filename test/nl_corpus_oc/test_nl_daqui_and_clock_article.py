@@ -29,14 +29,15 @@ import pytest
 from chronologia.extract import extract_duration
 
 from ._corpus import ANCHOR, ad, nomatch, parse
+from ruling17 import moved
 
 
 def _offset(text, delta, grain):
     res = parse(text)
     assert res is not None, f"{text!r} did not parse"
     assert res.remainder == "", f"{text!r} stranded {res.remainder!r}"
-    assert res[0].start == ad(ANCHOR + delta)
-    assert res[0].end == ad(ANCHOR + delta + grain)
+    assert res[0].start == moved(ad(ANCHOR + delta), ANCHOR)
+    assert res[0].end == moved(ad(ANCHOR + delta + grain), ANCHOR)
 
 
 @pytest.mark.parametrize("marker", ["d'aquí", "d'aquí a", "d'aicí", "d'aicí a",
@@ -107,8 +108,8 @@ def test_article_led_clock(text, h, m):
     res = parse(text)
     assert res is not None, f"{text!r} did not parse"
     assert res.remainder == ""
-    assert res[0].start == _next(h, m)
-    assert res[0].end == _next(h, m) + timedelta(minutes=1)
+    assert res[0].start == moved(_next(h, m), ANCHOR)
+    assert res[0].end == moved(_next(h, m) + timedelta(minutes=1), ANCHOR)
 
 
 def test_the_two_fraction_directions_do_not_collapse():

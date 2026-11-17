@@ -10,6 +10,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,hour", [
@@ -25,7 +26,7 @@ def test_spoken_ordinal_hour_consumes_hour_word(text, hour):
     # ANCHOR is 2017-06-27 13:04; every clock hour 1..12 read as 24h is
     # earlier in the day than the anchor's time-of-day, so it rolls forward
     # to the next calendar day.
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=hour, minute=0,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=hour, minute=0,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""

@@ -33,6 +33,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -70,7 +71,7 @@ def clk(h, mi, s=0):
     ("tres quarts de dotze", 11, 45),
 ])
 def test_campanar_quarters(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 
@@ -84,7 +85,7 @@ def test_campanar_quarters(text, h, mi):
     ("tres quarts d'onze", 10, 45),
 ])
 def test_campanar_elision_onze(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # -- the 1 o'clock wrap: the hour before one is spoken as twelve ------------
@@ -96,7 +97,7 @@ def test_campanar_elision_onze(text, h, mi):
 ])
 def test_campanar_one_oclock_wraps_to_twelve(text, mi):
     """A quarter *of one* is 12:15 -- not 00:15, and never a negative hour."""
-    assert start(text) == clk(12, mi)
+    assert start(text) == moved(clk(12, mi), ANCHOR)
 
 
 # -- meridiem still composes -----------------------------------------------
@@ -114,19 +115,19 @@ def test_campanar_with_meridiem():
     ("les deu menys quart", 9, 45),
 ])
 def test_rellotge_unchanged(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # -- no collision: the two systems coexist and never capture each other -----
 
 def test_both_systems_coexist_at_the_same_instant():
     """09:15 has one name in each system; each keeps its own arithmetic."""
-    assert start("les nou i quart") == clk(9, 15)
-    assert start("un quart de deu") == clk(9, 15)
-    assert start("les nou i mitja") == clk(9, 30)
-    assert start("dos quarts de deu") == clk(9, 30)
-    assert start("les deu menys quart") == clk(9, 45)
-    assert start("tres quarts de deu") == clk(9, 45)
+    assert start("les nou i quart") == moved(clk(9, 15), ANCHOR)
+    assert start("un quart de deu") == moved(clk(9, 15), ANCHOR)
+    assert start("les nou i mitja") == moved(clk(9, 30), ANCHOR)
+    assert start("dos quarts de deu") == moved(clk(9, 30), ANCHOR)
+    assert start("les deu menys quart") == moved(clk(9, 45), ANCHOR)
+    assert start("tres quarts de deu") == moved(clk(9, 45), ANCHOR)
 
 
 def test_campanar_is_not_read_additively():

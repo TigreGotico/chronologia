@@ -16,6 +16,7 @@ import the shared helpers at module scope with no import cycle.
 """
 from __future__ import annotations
 
+import functools
 import os
 import re
 import threading
@@ -3969,6 +3970,26 @@ def _roll_bare_weekday_time(res, rep, anchor):
 _FIXED_HALF_OF_DAY_SLOTS = frozenset({"MERIDIEM", "ZONE"})
 
 
+_reading = threading.local()
+
+
+def reads_spoken_hours(fn):
+    """Run ``fn`` with the spoken hour kept as spoken.
+
+    A recurrence pin ("daily at 7" is ``BYHOUR=7``) names an hour of the day,
+    not an instant, so no twelve-hour reading is chosen for it.
+    """
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        outer = getattr(_reading, "spoken", False)
+        _reading.spoken = True
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            _reading.spoken = outer
+    return wrapper
+
+
 def _lone_spoken_hour(res, rep, anchor, spec):
     """A lone spoken hour takes the next of its two twelve-hour readings.
 
@@ -3980,7 +4001,8 @@ def _lone_spoken_hour(res, rep, anchor, spec):
     spoken hour.  Digit clocks and 24-hour hours are untouched.
     """
     hour = None if rep is None else rep.slots.get("HOUR")
-    if (anchor is None or hour is None or rep.construction != "clock_time"
+    if (getattr(_reading, "spoken", False)
+            or anchor is None or hour is None or rep.construction != "clock_time"
             or set(res.consumed) != set(range(*rep.span))
             or _FIXED_HALF_OF_DAY_SLOTS & set(rep.slots)
             or not hour.is_number or not 1 <= hour.value <= 12

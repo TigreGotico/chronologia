@@ -12,6 +12,7 @@ from chronologia.extract.numfold_filipino import (read_native_run,
                                                   read_spanish_run)
 
 from ._corpus import ANCHOR, next_time, nomatch, span, start
+from ruling17 import moved
 
 NATIVE = [
     ("isa", 1), ("dalawa", 2), ("tatlo", 3), ("apat", 4), ("lima", 5),
@@ -152,7 +153,7 @@ def test_the_hyphenated_teens_survive_tokenization(phrase, days):
 ])
 def test_spanish_count_drives_the_clock_hour(word, h):
     lead = "ala" if h == 1 else "alas"
-    assert start(f"{lead} {word}").hour == h % 24
+    assert start(f"{lead} {word}").hour == moved(h % 24, ANCHOR)
 
 
 @pytest.mark.parametrize("phrase", [

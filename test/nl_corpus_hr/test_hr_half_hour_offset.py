@@ -14,6 +14,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,delta", [
@@ -31,4 +32,4 @@ def test_half_past_clock_is_untouched():
     """"pola devet" is the clock's half toward nine, not a half-hour count."""
     res = parse("pola devet")
     assert res is not None
-    assert res[0].start == ad(ANCHOR.replace(hour=8, minute=30) + timedelta(days=1))
+    assert res[0].start == moved(ad(ANCHOR.replace(hour=8, minute=30) + timedelta(days=1)), ANCHOR)

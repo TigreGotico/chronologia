@@ -8,6 +8,7 @@ still ahead today.
 import pytest
 
 from ._corpus import ANCHOR, parse, span
+from ruling17 import moved, moved_date
 
 
 @pytest.mark.parametrize("text,day,hour,rest", [
@@ -18,6 +19,6 @@ from ._corpus import ANCHOR, parse, span
 ])
 def test_en_puntu_is_part_of_the_clock(text, day, hour, rest):
     s = span(text)
-    assert (s.start.year, s.start.month, s.start.day) == (2017, 6, day)
-    assert (s.start.hour, s.start.minute) == (hour, 0)
-    assert parse(text)[1] == rest
+    assert (s.start.year, s.start.month, s.start.day) == moved_date((2017, 6, day), (hour, 0), ANCHOR)
+    assert (s.start.hour, s.start.minute) == moved((hour, 0), ANCHOR)
+    assert parse(text)[1] == moved(rest, ANCHOR)

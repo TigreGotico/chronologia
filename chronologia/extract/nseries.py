@@ -31,6 +31,7 @@ from chronologia.astrodate import DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
+                                          reads_spoken_hours,
                                           _RANGE_TO, _conn_surfaces,
                                           _exclusion_vetoes, _extract_range,
                                           _resolve_scale_mode,
@@ -1134,6 +1135,7 @@ class RecurrenceResult(NamedTuple):
     remainder: str
 
 
+@reads_spoken_hours
 def extract_recurrence(
         text: str,
         lang: str = "en",

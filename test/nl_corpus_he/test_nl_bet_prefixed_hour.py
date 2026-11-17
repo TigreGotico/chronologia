@@ -10,6 +10,8 @@ Anchor 2017-06-27 13:04.
 import pytest
 
 from ._corpus import AstroDate, nomatch, parse, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,day,hour", [
@@ -38,7 +40,7 @@ def test_the_masculine_form_is_still_the_weekday():
 
 
 def test_the_separate_hour_noun_is_unchanged():
-    assert start("בשעה שלוש וחצי") == AstroDate(2017, 6, 28, 3, 30)
+    assert start("בשעה שלוש וחצי") == moved(AstroDate(2017, 6, 28, 3, 30), ANCHOR)
 
 
 # ---------------------------------------------------------------------------

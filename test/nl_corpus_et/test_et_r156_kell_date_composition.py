@@ -15,6 +15,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start_end, start, nomatch
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,y,mo,d,h", [
@@ -39,7 +40,7 @@ def test_control_kell_alone_unchanged():
     cand = ANCHOR.replace(hour=9, minute=0, second=0, microsecond=0)
     if cand <= ANCHOR:
         cand += timedelta(days=1)
-    assert start("kell üheksa") == ad(cand)
+    assert start("kell üheksa") == moved(ad(cand), ANCHOR)
 
 
 def test_control_kell_with_weekday_unchanged():
@@ -64,7 +65,7 @@ def test_control_counting_clock_forms_unchanged(text, h, mi):
     cand = ANCHOR.replace(hour=h, minute=mi, second=0, microsecond=0)
     if cand <= ANCHOR:
         cand += timedelta(days=1)
-    assert start(text) == ad(cand)
+    assert start(text) == moved(ad(cand), ANCHOR)
 
 
 # -- recombined variants (attested surfaces only) ------------------------

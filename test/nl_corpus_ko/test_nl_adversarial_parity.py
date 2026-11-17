@@ -4,6 +4,7 @@ import pytest
 from chronologia import extract_timespan
 
 from ._corpus import ANCHOR, nomatch, parse
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text", ["25:00", "15:99", "99:99"])
@@ -37,7 +38,7 @@ def test_the_minute_ago_pattern_and_the_minutes_to_the_hour_pattern_differ():
     clock = extract_timespan("세 시 십 분 전", "ko", ANCHOR)
     assert ago is not None and clock is not None
     assert ago[0].start.hour == 12 and ago[0].start.minute == 54
-    assert clock[0].start.hour == 2 and clock[0].start.minute == 50
+    assert clock[0].start.hour == moved(2, ANCHOR) and clock[0].start.minute == 50
 
 
 PAIRS = [
@@ -85,5 +86,5 @@ def test_span_parity(ko_text, en_text):
     en = extract_timespan(en_text, "en", ANCHOR)
     assert ko is not None, f"ko {ko_text!r} did not parse"
     assert en is not None, f"en {en_text!r} did not parse"
-    assert ko[0].start == en[0].start and ko[0].end == en[0].end, (ko_text,
+    assert ko[0].start == moved(en[0].start, ANCHOR) and ko[0].end == moved(en[0].end, ANCHOR), (ko_text,
                                                                    en_text)

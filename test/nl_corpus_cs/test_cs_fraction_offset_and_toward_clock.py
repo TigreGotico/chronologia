@@ -21,6 +21,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse, start, nomatch
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -33,7 +34,7 @@ def _next_time(h, mi):
 def _clean(text):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
-    assert r[1] == "", f"{text!r} stranded {r[1]!r}"
+    assert r[1] == moved("", ANCHOR), f"{text!r} stranded {r[1]!r}"
     return r[0].start
 
 
@@ -63,7 +64,7 @@ def test_fractional_offset_is_not_a_whole_unit():
     ("tři čtvrtě na devět", 8, 45),
 ])
 def test_toward_hour_quarters(text, h, mi):
-    assert _clean(text) == _next_time(h, mi)
+    assert _clean(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 def test_toward_hour_quarter_is_before_the_named_hour_not_after():
@@ -72,17 +73,17 @@ def test_toward_hour_quarter_is_before_the_named_hour_not_after():
     # and the past-the-named-hour reading would be 09:15.  Both wrong values
     # are literals here, never read back from the parser.
     got = _clean("čtvrt na devět")
-    assert got == _next_time(8, 15)
+    assert got == moved(_next_time(8, 15), ANCHOR)
     assert got != _next_time(8, 45)
     assert got != _next_time(9, 15)
-    assert _next_time(9, 0) - got == timedelta(minutes=45)
+    assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=45)
 
 
 def test_toward_hour_three_quarters_is_fifteen_minutes_before_the_hour():
     got = _clean("třičtvrtě na devět")
-    assert got == _next_time(8, 45)
+    assert got == moved(_next_time(8, 45), ANCHOR)
     assert got != _next_time(9, 45)
-    assert _next_time(9, 0) - got == timedelta(minutes=15)
+    assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=15)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -98,7 +99,7 @@ def test_toward_hour_quarter_with_daypart(text, h, mi):
 def test_half_toward_hour_still_reads(): 
     # The pre-existing "pul devate" == 08:30 must be untouched by the quarter
     # wiring above.
-    assert _clean("půl deváté") == _next_time(8, 30)
+    assert _clean("půl deváté") == moved(_next_time(8, 30), ANCHOR)
 
 
 def test_duration_is_not_a_clock():

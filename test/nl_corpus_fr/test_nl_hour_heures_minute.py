@@ -9,6 +9,8 @@ Anchor 2017-06-27 13:04.
 import pytest
 
 from ._corpus import AstroDate, parse, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,day,hour,minute", [
@@ -19,7 +21,7 @@ from ._corpus import AstroDate, parse, start
     ("vingt heures trente", 27, 20, 30),
 ])
 def test_the_minute_after_heures(text, day, hour, minute):
-    assert start(text) == AstroDate(2017, 6, day, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, day, hour, minute), ANCHOR)
     assert parse(text).remainder == ""
 
 
@@ -32,4 +34,4 @@ def test_the_minute_after_heures(text, day, hour, minute):
     ("à neuf heures du soir", 27, 21, 0),
 ])
 def test_the_forms_that_already_read(text, day, hour, minute):
-    assert start(text) == AstroDate(2017, 6, day, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, day, hour, minute), ANCHOR)

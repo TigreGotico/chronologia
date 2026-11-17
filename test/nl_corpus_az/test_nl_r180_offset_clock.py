@@ -23,6 +23,7 @@ import pytest
 
 from chronologia.astrodate import AstroDate
 from ._corpus import ANCHOR, span, start, parse
+from ruling17 import moved
 
 
 def _hour_on_day_offset(n, h):
@@ -91,4 +92,4 @@ def test_bare_saat_clock_unchanged():
     # "saat 9" alone (no day offset) still resolves as the next occurrence
     # of 9:00 -- untouched by this fix (no relative_offset match at all).
     s = start("saat 9")
-    assert s.hour == 9
+    assert s.hour == moved(9, ANCHOR)

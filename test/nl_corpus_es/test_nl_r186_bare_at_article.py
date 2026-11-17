@@ -18,6 +18,7 @@ evidence a bare "a" lacks.
 from datetime import timedelta
 
 from ._corpus import ANCHOR, ad, nomatch, start
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -58,10 +59,10 @@ def test_bare_a_un_non_temporal_object_no_clock():
 def test_article_bearing_hour_still_resolves():
     # "la"/"las" themselves carry the article; only the bare "a" was ever
     # in question.
-    assert start("a la una") == clk(1, 0)
-    assert start("a las tres") == clk(3, 0)
+    assert start("a la una") == moved(clk(1, 0), ANCHOR)
+    assert start("a las tres") == moved(clk(3, 0), ANCHOR)
 
 
 def test_article_bearing_digit_hour_still_resolves():
-    assert start("a las 3") == clk(3, 0)
-    assert start("a las 11") == clk(11, 0)
+    assert start("a las 3") == moved(clk(3, 0), ANCHOR)
+    assert start("a las 11") == moved(clk(11, 0), ANCHOR)

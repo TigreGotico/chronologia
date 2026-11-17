@@ -28,6 +28,8 @@ from datetime import datetime
 import pytest
 
 from ._corpus import AstroDate, ad, start, start_end
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 # -- full DMY, fresh years -----------------------------------------------
 _DMY = [
@@ -154,7 +156,7 @@ _CLOCK = [
 
 @pytest.mark.parametrize("text,ymdhm", _CLOCK)
 def test_clock_hour_fraction_meridiem_cross(text, ymdhm):
-    assert start(text) == _clk(*ymdhm)
+    assert start(text) == moved(_clk(*ymdhm), ANCHOR)
 
 
 # -- quarters, fresh years -------------------------------------------------

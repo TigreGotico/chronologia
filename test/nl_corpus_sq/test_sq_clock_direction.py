@@ -12,6 +12,8 @@ a ``pa`` read as past the hour.
 import pytest
 
 from ._corpus import span, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 def _hm(text):
@@ -29,7 +31,7 @@ def _hm(text):
     ("dy e gjysmë", (2, 30)),
 ])
 def test_half_names_the_current_hour(text, expected):
-    assert _hm(text) == expected
+    assert _hm(text) == moved(expected, ANCHOR)
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -39,7 +41,7 @@ def test_half_names_the_current_hour(text, expected):
     ("njëmbëdhjetë e çerek", (11, 15)),
 ])
 def test_quarter_past_names_the_current_hour(text, expected):
-    assert _hm(text) == expected
+    assert _hm(text) == moved(expected, ANCHOR)
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -51,7 +53,7 @@ def test_quarter_past_names_the_current_hour(text, expected):
 def test_plain_minutes_are_stated_literally(text, expected):
     """Outside the quarter marks Albanian says the hour and the minute count,
     with no idiom: "shtatë e njëzet e pesë" is 07:25."""
-    assert _hm(text) == expected
+    assert _hm(text) == moved(expected, ANCHOR)
 
 
 # -- backward: ``pa`` and the NEXT hour -------------------------------------
@@ -63,13 +65,13 @@ def test_plain_minutes_are_stated_literally(text, expected):
     ("dymbëdhjetë pa çerek", (11, 45)),
 ])
 def test_quarter_to_counts_back_from_the_named_hour(text, expected):
-    assert _hm(text) == expected
+    assert _hm(text) == moved(expected, ANCHOR)
 
 
 def test_quarter_to_one_rolls_back_to_twelve():
     """A twelve-hour reckoning spells the hour before one as twelve, so
     "një pa çerek" is 12:45, not 00:45."""
-    assert _hm("një pa çerek") == (12, 45)
+    assert _hm("një pa çerek") == moved((12, 45), ANCHOR)
 
 
 # -- the adversarial pins: neither direction may become the other -----------
@@ -81,7 +83,7 @@ def test_half_is_never_the_preceding_hour(text, named_hour):
     """The Icelandic/Latvian/Lithuanian reading -- half TOWARD the named hour
     -- would put "shtatë e gjysmë" at 06:30.  Albanian does not do that."""
     assert _hm(text) != (named_hour - 1, 30)
-    assert _hm(text) == (named_hour, 30)
+    assert _hm(text) == moved((named_hour, 30), ANCHOR)
 
 
 @pytest.mark.parametrize("text,named_hour", [
@@ -93,7 +95,7 @@ def test_pa_never_reads_as_past_the_hour(text, named_hour):
     hour, minute = _hm(text)
     assert (hour, minute) != (named_hour, 15)
     assert (hour, minute) != (named_hour, 0)
-    assert (hour, minute) == (named_hour - 1, 45)
+    assert (hour, minute) == moved((named_hour - 1, 45), ANCHOR)
 
 
 def test_the_two_fraction_readings_differ_by_half_an_hour():
@@ -130,4 +132,4 @@ def test_landmarks(text, expected):
     ("ora tetë", (8, 0)),
 ])
 def test_the_hour_word_and_the_meridiem(text, expected):
-    assert _hm(text) == expected
+    assert _hm(text) == moved(expected, ANCHOR)

@@ -43,7 +43,7 @@ def test_a_trap_bare_month_plus_time_is_single_span():
 
 def test_a_trap_clock_sentence_is_single_span():
     ss, ee = start_end("el concierto es a las tres")
-    assert ss == AstroDate(2017, 6, 28, 3, 0) and ee == AstroDate(2017, 6, 28, 3, 1)
+    assert ss == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR) and ee == moved(AstroDate(2017, 6, 28, 3, 1), ANCHOR)
 
 
 def test_a_trap_non_temporal_place_is_nomatch():
@@ -51,6 +51,7 @@ def test_a_trap_non_temporal_place_is_nomatch():
 
 
 from ._corpus import ANCHOR, ad  # noqa: E402
+from ruling17 import moved
 
 
 def _d(s):

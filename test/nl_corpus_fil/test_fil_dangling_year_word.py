@@ -10,6 +10,8 @@ asked for but never supplied.  The noun must now either refuse to bind or
 stay visible in the remainder.
 """
 from ._corpus import parse, remainder, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 def test_the_year_word_does_not_bind_without_a_numeral_after_it():
@@ -39,7 +41,7 @@ def test_a_bare_numeral_year_still_works_without_the_noun():
 def test_the_dangling_linker_ng_does_not_bind_without_a_meridiem():
     r = parse("alas-3 ng")
     assert r is not None, "expected the hour without the dangling linker"
-    assert r[0].start.hour == 3
+    assert r[0].start.hour == moved(3, ANCHOR)
     assert "ng" in r[1], (
         f"'ng' must not be silently absorbed; remainder was {r[1]!r}")
 

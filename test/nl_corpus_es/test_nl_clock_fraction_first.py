@@ -15,6 +15,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -30,7 +31,7 @@ def clk(h, mi, s=0):
     ("media para las cuatro", 3, 30),
 ])
 def test_fraction_first_quarter_to(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # Bare-number variant: a plain minute count instead of a named fraction word,
@@ -40,19 +41,19 @@ def test_fraction_first_quarter_to(text, h, mi):
     ("veinte para las diez", 9, 40),
 ])
 def test_fraction_first_minutes_to(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 def test_fraction_first_not_a_range():
     # adversarial: this must read a clock time, not strand the fraction as
     # remainder while landing on the bare target hour (the original defect:
     # "un cuarto para las cuatro" silently read 04:00).
-    assert start("un cuarto para las cuatro") == clk(3, 45)
+    assert start("un cuarto para las cuatro") == moved(clk(3, 45), ANCHOR)
 
 
 def test_hour_first_minus_unchanged():
     # control: the pre-existing hour-first subtractive form must not regress.
-    assert start("las cuatro menos cuarto") == clk(3, 45)
+    assert start("las cuatro menos cuarto") == moved(clk(3, 45), ANCHOR)
 
 
 def test_redundant_menos_para_not_a_silent_guess():
