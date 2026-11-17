@@ -24,7 +24,7 @@ otherwise be thrown away the moment the matcher picks a winner:
 * **fold distance** -- a digit ("5") is trusted over a spelled number the
   ``numfold`` hook folded ("five") over a multiword surface the pipeline glued
   ("bronze age"); each rung down is a small penalty;
-* **doubt** -- a bare-hour clock followed by an ordinary word ("at 5
+* **doubt** -- a bare-hour clock followed by a counted noun ("at 5
   people") may be a count rather than a time of day; it keeps a candidate
   but scores half, below the date-only reading of the same text;
 * **basis** -- the resolved :class:`~chronologia.astrodate.DateSpan`'s own

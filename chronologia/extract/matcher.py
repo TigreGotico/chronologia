@@ -1086,7 +1086,8 @@ class ConstructionMatcher:
         those prepositions in ``marker_at_counts.voc`` and the nouns that count
         people or things in ``marker_counted_noun.voc``.  A bare hour behind
         one of the prepositions and directly before one of the nouns is
-        doubtful.  Any other word after the hour, a verb included, leaves the
+        doubtful, unless a comma or a sentence period ends the hour.  Any
+        other word after the hour, a verb included, leaves the
         clock as it is.  A doubtful clock stays a candidate, marked ``doubt``;
         :meth:`match` leaves it out of the parse winners.
         """
@@ -1099,6 +1100,7 @@ class ConstructionMatcher:
             start, end = match.span
             if (_is_bare_hour(match) and end < len(tokens)
                     and not tokens[end].break_before
+                    and not tokens[end - 1].raw.endswith(".")
                     and tokens[end].text in nouns
                     and any(t.text in prepositions for t in
                             tokens[max(0, start - 1):match.slots["HOUR"].index])):

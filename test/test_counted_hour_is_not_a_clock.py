@@ -33,6 +33,7 @@ COUNTS_WITH_DATE = [
     ("llama a las 4 vecinas mañana", "es", "llama a las 4 vecinas"),
     ("amanhã liga às 3 vizinhas", "pt", "liga às 3 vizinhas"),
     ("digues-ho a les 3 noies demà", "ca", "digues-ho a les 3 noies"),
+    ("ás 2 rapazas mañá", "gl", "ás 2 rapazas"),
     ("dillo alle due ragazze domani", "it", "dillo alle due ragazze"),
     ("demain à 8 personnes", "fr", "à 8 personnes"),
     ("morgen om 3 mensen", "nl", "om 3 mensen"),
@@ -43,6 +44,7 @@ COUNTS_ALONE = [
     ("a las 5 personas", "es"),
     ("wave at 5 people", "en"),
     ("a les 3 noies", "ca"),
+    ("ás 2 rapazas", "gl"),
     ("om 5 euro", "nl"),
     ("om 8 mensen", "nl"),
     ("um 8 Leute", "de"),
@@ -52,36 +54,44 @@ COUNTS_ALONE = [
 ]
 
 # text, language, expected instant: a word after the hour that is no counted
-# noun leaves the clock, whatever its class
+# noun leaves the clock, whatever its class.  A lone hour takes the next
+# twelve-hour reading after the anchor (ruling 17), a named day keeps it.
 CLOCKS = [
-    ("wake me at 7 again", "en", datetime(2026, 9, 26, 7)),
-    ("see you at 8 then", "en", datetime(2026, 9, 26, 8)),
-    ("at 8 we leave", "en", datetime(2026, 9, 26, 8)),
-    ("at 8 i will call", "en", datetime(2026, 9, 26, 8)),
-    ("pick me up at 8 sharp", "en", datetime(2026, 9, 26, 8)),
-    ("be at 6 home", "en", datetime(2026, 9, 26, 6)),
-    ("a las 8 llegamos", "es", datetime(2026, 9, 26, 8)),
-    ("a las 8 empieza la película", "es", datetime(2026, 9, 26, 8)),
-    ("a las 8 nos vemos", "es", datetime(2026, 9, 26, 8)),
-    ("a las 8 te llamo", "es", datetime(2026, 9, 26, 8)),
-    ("quedamos a las 8 entonces", "es", datetime(2026, 9, 26, 8)),
+    ("wake me at 7 again", "en", datetime(2026, 9, 25, 19)),
+    ("see you at 8 then", "en", datetime(2026, 9, 25, 20)),
+    ("at 8 we leave", "en", datetime(2026, 9, 25, 20)),
+    ("at 8 i will call", "en", datetime(2026, 9, 25, 20)),
+    ("pick me up at 8 sharp", "en", datetime(2026, 9, 25, 20)),
+    ("be at 6 home", "en", datetime(2026, 9, 25, 18)),
+    ("a las 8 llegamos", "es", datetime(2026, 9, 25, 20)),
+    ("a las 8 empieza la película", "es", datetime(2026, 9, 25, 20)),
+    ("a las 8 nos vemos", "es", datetime(2026, 9, 25, 20)),
+    ("a las 8 te llamo", "es", datetime(2026, 9, 25, 20)),
+    ("quedamos a las 8 entonces", "es", datetime(2026, 9, 25, 20)),
     ("mañana a las 8 por favor", "es", datetime(2026, 9, 26, 8)),
-    ("um 8 gehe ich", "de", datetime(2026, 9, 26, 8)),
-    ("um 8 beginnt das Treffen", "de", datetime(2026, 9, 26, 8)),
-    ("ich rufe dich um 8 an", "de", datetime(2026, 9, 26, 8)),
-    ("om 8 ben ik thuis", "nl", datetime(2026, 9, 26, 8)),
-    ("om 8 ga ik", "nl", datetime(2026, 9, 26, 8)),
-    ("ik haal je om 8 af", "nl", datetime(2026, 9, 26, 8)),
+    ("um 8 gehe ich", "de", datetime(2026, 9, 25, 20)),
+    ("um 8 beginnt das Treffen", "de", datetime(2026, 9, 25, 20)),
+    ("ich rufe dich um 8 an", "de", datetime(2026, 9, 25, 20)),
+    ("om 8 ben ik thuis", "nl", datetime(2026, 9, 25, 20)),
+    ("om 8 ga ik", "nl", datetime(2026, 9, 25, 20)),
+    ("ik haal je om 8 af", "nl", datetime(2026, 9, 25, 20)),
     ("ik kom morgen om 8 thuis", "nl", datetime(2026, 9, 26, 8)),
-    ("alle 8 arriva Marco", "it", datetime(2026, 9, 26, 8)),
-    ("à 8 je pars", "fr", datetime(2026, 9, 26, 8)),
-    ("às 8 chega o comboio", "pt", datetime(2026, 9, 26, 8)),
-    ("a les 8 arriba el tren", "ca", datetime(2026, 9, 26, 8)),
-    ("ás 8 chega o tren", "gl", datetime(2026, 9, 26, 8)),
-    ("a les 8 llegamos", "ast", datetime(2026, 9, 26, 8)),
-    ("hacia las 8 llegamos", "es", datetime(2026, 9, 26, 8)),
+    ("alle 8 arriva Marco", "it", datetime(2026, 9, 25, 20)),
+    ("à 8 je pars", "fr", datetime(2026, 9, 25, 20)),
+    ("às 8 chega o comboio", "pt", datetime(2026, 9, 25, 20)),
+    ("a les 8 arriba el tren", "ca", datetime(2026, 9, 25, 20)),
+    ("ás 8 chega o tren", "gl", datetime(2026, 9, 25, 20)),
+    ("a les 8 llegamos", "ast", datetime(2026, 9, 25, 20)),
+    ("hacia las 8 llegamos", "es", datetime(2026, 9, 25, 20)),
     ("a las 8 mañana", "es", datetime(2026, 9, 26, 8)),
-    ("son las 5 personas", "es", datetime(2026, 9, 26, 5)),
+    ("son las 5 personas", "es", datetime(2026, 9, 25, 17)),
+    ("at 8, people are waiting", "en", datetime(2026, 9, 25, 20)),
+    ("a las 8. Personas mayores primero", "es", datetime(2026, 9, 25, 20)),
+    ("nos vemos a las 8. Personas no", "es", datetime(2026, 9, 25, 20)),
+    ("às 8. Pessoas mais velhas primeiro", "pt", datetime(2026, 9, 25, 20)),
+    ("um 8. Leute warten", "de", datetime(2026, 9, 25, 20)),
+    ("à 8 personne ne répond", "fr", datetime(2026, 9, 25, 20)),
+    ("à 8 personne ne vient", "fr", datetime(2026, 9, 25, 20)),
     ("at 8 monday", "en", datetime(2026, 9, 28, 8)),
     ("let's meet next tuesday evening at 9 downtown", "en",
      datetime(2026, 9, 29, 21)),
@@ -107,9 +117,9 @@ def test_a_word_that_is_no_counted_noun_leaves_the_clock(text, lang, expected):
 
 
 @pytest.mark.parametrize("text,lang,hour", [
-    ("recuérdame llamar a las 3 vecinas mañana", "es", 3),
-    ("look at 5 houses tomorrow", "en", 5),
-    ("llama a las 4 vecinas mañana", "es", 4),
+    ("recuérdame llamar a las 3 vecinas mañana", "es", 15),
+    ("look at 5 houses tomorrow", "en", 17),
+    ("llama a las 4 vecinas mañana", "es", 16),
 ])
 def test_doubtful_clock_stays_a_candidate_below_the_date(text, lang, hour):
     candidates = extract_candidates(text, lang, ANCHOR)
@@ -147,5 +157,5 @@ def test_clock_vocabulary_does_not_join_the_exclusion_words(text, lang):
 
 def test_a_language_without_counting_prepositions_keeps_the_clock():
     found = extract_timespan("je la sesa vespere", "eo", ANCHOR)
-    assert found.span.start.datetime() == datetime(2026, 9, 26, 6)
+    assert found.span.start.datetime() == datetime(2026, 9, 25, 18)
     assert "vespere" in found.remainder
