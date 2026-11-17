@@ -1,0 +1,8 @@
+# Lead words that do not open a time expression that begins with this, next or last and has no
+# determiner in the dative ("ruf mich an nächsten Freitag", "mach das Licht an nächste Woche").
+# "an" governs the dative in a time phrase, so a bare accusative phrase takes no preposition and the
+# "an" before it belongs to the verb (anrufen, anmachen).
+# Saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace:
+# Duden, "an": "zur Angabe des Zeitpunkts. Grammatik: mit Dativ. an einem Wintermorgen, an diesem 31. Januar" [de-an-duden.txt]
+# DWDS, "an": "2. zeitlich a) ... Grammatik: mit Dativ. Beispiele: das Wetter an diesem, am nächsten Tag" [de-an-dwds.txt]
+an

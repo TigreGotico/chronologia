@@ -1730,7 +1730,11 @@ def _fold_date_article(folded, consumed, spec, span):
     front of it belongs to the verb.  ``marker_date_lead_no_deixis.voc``
     lists the lead words that also do not open a this, next or last phrase
     of a daypart, a period or a weekday ("turn it on this evening", "what is
-    on this weekend", "turn it on next friday").
+    on this weekend", "turn it on next friday").  A word in
+    ``marker_date_lead_dative.voc`` makes the this-phrase take the lead word
+    again: German "an" governs the dative in a time phrase, so "an diesem
+    Freitag" folds while the bare "nächsten Freitag" in "ruf mich an
+    nächsten Freitag" leaves "an" to the verb.
     """
     articles = (set(spec.connectors.get("date_article", ()))
                 | set(spec.connectors.get("date_lead", ())))
@@ -1740,6 +1744,7 @@ def _fold_date_article(folded, consumed, spec, span):
         return consumed
     deictic = set(spec.named_days) | spec.daypart_today_words
     no_deixis = set(spec.connectors.get("date_lead_no_deixis", ()))
+    dative = set(spec.connectors.get("date_lead_dative", ()))
     periods = (set(spec.dayparts) | set(spec.units) | spec.weekend_words
                | set(spec.weekdays))
     clock_words = set(spec.clock_fractions) | set(spec.clock_landmarks)
@@ -1753,6 +1758,7 @@ def _fold_date_article(folded, consumed, spec, span):
                 or nxt.text in leads):
             continue
         deictic_phrase = (t.text in no_deixis and nxt.text in spec.rel_markers
+                          and nxt.text not in dative
                           and i + 2 < len(folded)
                           and folded[i + 2].text in periods)
         opens_day = (t.text in articles and nxt.text not in deictic

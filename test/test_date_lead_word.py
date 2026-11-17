@@ -54,6 +54,10 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
     ("es", "ponme una alarma a las siete y cuarto de la mañana",
      datetime(2017, 6, 28, 7, 15), "ponme una alarma"),
     ("es", "cuándo es el siguiente viernes", datetime(2017, 6, 30), "cuándo es"),
+    ("de", "an diesem Freitag", datetime(2017, 6, 30), ""),
+    ("de", "ruf mich an diesem Freitag", datetime(2017, 6, 30), "ruf mich"),
+    ("de", "treffen wir uns am nächsten Freitag", datetime(2017, 6, 30),
+     "treffen wir uns"),
 ])
 def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
     span, remainder = extract_timespan(text, lang, ANCHOR)
@@ -102,6 +106,12 @@ def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
     # "um" in front of a year means "around": the reading is not a clock
     ("de", "das Haus wurde um 1900 gebaut", "das Haus wurde um gebaut"),
     ("de", "um 2030", "um"),
+    # "an" governs the dative in a time phrase: a bare accusative phrase takes
+    # no preposition, so the "an" before it is the particle of the verb
+    ("de", "ruf mich an nächsten Freitag", "ruf mich an"),
+    ("de", "ruf mich an diesen Freitag", "ruf mich an"),
+    ("de", "mach das Licht an nächsten Montag", "mach das Licht an"),
+    ("de", "mach das Licht an nächste Woche", "mach das Licht an"),
     # "um" in front of a dated day is not a clock word
     ("de", "um 8. Mai", "um"),
 ])
