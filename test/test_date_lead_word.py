@@ -10,7 +10,7 @@ clock time only, so "um Montag" keeps "um".  Anchor Tuesday 2017-06-27 13:04.
 Every expected value is read off the calendar by hand: 30 June 2017 is a
 Friday, 29 June a Thursday, 2 July a Sunday, 3 July a Monday.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -83,7 +83,34 @@ def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
     ("sv", "tänd lampan på i morgon", "tänd lampan på"),
     # "ab" opens a span that chronologia does not read, so it stays
     ("de", "ab Montag arbeite ich", "ab arbeite ich"),
+    # English puts no preposition in front of a this-phrase of a daypart or
+    # a period, so the word in front of it belongs to the verb
+    ("en", "turn it on this evening", "turn it on"),
+    ("en", "is anything on this evening", "is anything on"),
+    ("en", "what is on this weekend", "what is on"),
+    # "um" in front of a year means "around": the reading is not a clock
+    ("de", "das Haus wurde um 1900 gebaut", "das Haus wurde um gebaut"),
+    ("de", "um 2030", "um"),
 ])
 def test_a_word_that_does_not_touch_the_date_stays(lang, text, rest):
     _, remainder = extract_timespan(text, lang, ANCHOR)
     assert remainder == rest
+
+
+@pytest.mark.parametrize("lang,text", [
+    ("de", "um 8"),
+    ("de", "um halb neun"),
+    ("nl", "om kwart over negen"),
+])
+def test_a_clock_word_folds_in_front_of_a_clock(lang, text):
+    _, remainder = extract_timespan(text, lang, ANCHOR)
+    assert remainder == ""
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "tokens are casefolded, so the noun 'Morgen' (morning) matches the named "
+    "day 'morgen' (tomorrow): chronologia reads tomorrow and 'am' stays"))
+def test_am_morgen_is_the_morning():
+    span, remainder = extract_timespan("am Morgen", "de", ANCHOR)
+    assert span.end_datetime - span.start_datetime < timedelta(days=1)
+    assert remainder == ""

@@ -1622,7 +1622,7 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
         return None
     span, consumed = core
     consumed = _fold_day_label(folded, consumed, engine.spec)
-    consumed = _fold_date_article(folded, consumed, engine.spec)
+    consumed = _fold_date_article(folded, consumed, engine.spec, span)
     remainder = render_remainder(text, [t for t in folded
                                         if t.index not in consumed])
     return span, remainder
@@ -1698,7 +1698,7 @@ def _fold_day_early(tokens, span, consumed, spec):
     return (morning if whole_day else span), consumed | {word.index}
 
 
-def _fold_date_article(folded, consumed, spec):
+def _fold_date_article(folded, consumed, spec, span):
     """``consumed`` widened to swallow the article that opens a bound date.
 
     In Portuguese, Galician and French the definite article in front of a
@@ -1716,16 +1716,20 @@ def _fold_date_article(folded, consumed, spec):
     clock and belong to it, the preposition of English "at 5" or "on
     monday", and folds the same way.  ``marker_clock_lead.voc`` lists the
     words that open a clock time only, Dutch "om 9:00" or Norwegian "klokka
-    15:30": they fold only in front of a number, a clock time, a clock
-    fraction ("om half negen") or a clock landmark ("um Mitternacht"), so
-    "um Montag" and "klokka i morgen" keep the word.
+    15:30": they fold only when ``span`` is a clock time (one minute wide or
+    less) and the next token is a number, a clock time, a clock fraction
+    ("om half negen") or a clock landmark ("um Mitternacht").  So "um
+    Montag", "klokka i morgen" and the year of "um 1900" keep the word.
 
     No word folds in front of another word of these lists: in "switch it on
     at 7" or "ruf mich an um 7" the clock word belongs to the date and the
     particle before it belongs to the verb.  No word folds in front of a
     named day or a daypart fused with today ("turn the lights on tomorrow",
     "what's on tonight"): such a day takes no preposition, so the word in
-    front of it belongs to the verb.
+    front of it belongs to the verb.  ``marker_date_lead_no_deixis.voc``
+    lists the lead words that also do not open a this, next or last phrase
+    of a daypart or a period ("turn it on this evening", "what is on this
+    weekend").
     """
     articles = (set(spec.connectors.get("date_article", ()))
                 | set(spec.connectors.get("date_lead", ())))
@@ -1734,15 +1738,24 @@ def _fold_date_article(folded, consumed, spec):
     if not leads:
         return consumed
     deictic = set(spec.named_days) | spec.daypart_today_words
+    no_deixis = set(spec.connectors.get("date_lead_no_deixis", ()))
+    periods = set(spec.dayparts) | set(spec.units) | spec.weekend_words
     clock_words = set(spec.clock_fractions) | set(spec.clock_landmarks)
+    start, end = span.start_datetime, span.end_datetime
+    is_clock = (start is not None and end is not None
+                and end - start <= timedelta(minutes=1))
     widened = set(consumed)
     for i, t in enumerate(folded[:-1]):
         nxt = folded[i + 1]
         if (t.index in widened or nxt.index not in widened
                 or nxt.text in leads):
             continue
-        opens_day = t.text in articles and nxt.text not in deictic
-        opens_clock = t.text in clock_leads and (
+        deictic_phrase = (t.text in no_deixis and nxt.text in spec.rel_markers
+                          and i + 2 < len(folded)
+                          and folded[i + 2].text in periods)
+        opens_day = (t.text in articles and nxt.text not in deictic
+                     and not deictic_phrase)
+        opens_clock = is_clock and t.text in clock_leads and (
             nxt.is_number or nxt.text in clock_words
             or any(c.isdigit() for c in nxt.text))
         if opens_day or opens_clock:
@@ -3588,7 +3601,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
         return None
     consumed = _fold_day_label(tokens, consumed, engine.spec)
     span, consumed = _fold_day_early(tokens, span, consumed, engine.spec)
-    consumed = _fold_date_article(tokens, consumed, engine.spec)
+    consumed = _fold_date_article(tokens, consumed, engine.spec, span)
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)
