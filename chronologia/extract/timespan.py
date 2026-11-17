@@ -34,7 +34,8 @@ from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
-from chronologia.extract.matcher import ConstructionMatcher
+from chronologia.extract.matcher import (ConstructionMatcher,
+                                         has_alarm_marker)
 from chronologia.extract.model import (LangSpec, Resolution, Token)
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
@@ -913,6 +914,8 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     carries tokens lent by the other endpoint, whose text belongs to that
     endpoint and so must not reach this one's remainder.
     """
+    if has_alarm_marker(sub, engine.spec):
+        return None
     # "now" as an endpoint is the anchor instant: a fixed point, never rolled or
     # year-pulled (kind "dated", pinned).  Wiring it here is what lets "from now
     # to X" / "between now and X" compose as [anchor, X] instead of collapsing to

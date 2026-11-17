@@ -43,6 +43,12 @@ CLOCKS = [
     ("alarme para 7 e meia", "pt", datetime(2026, 11, 17, 19, 30)),
     ("alarma para 7 y media", "es", datetime(2026, 11, 17, 19, 30)),
     ("sveglia per 7 e mezza", "it", datetime(2026, 11, 17, 19, 30)),
+    ("alarm for 20 to 8", "en", datetime(2026, 11, 17, 19, 40)),
+    ("set an alarm for 5 to 7", "en", datetime(2026, 11, 17, 18, 55)),
+    ("alarm for 10 to 7", "en", datetime(2026, 11, 17, 18, 50)),
+    ("alarm for 10 to 11", "en", datetime(2026, 11, 17, 10, 50)),
+    ("reminder for 10 to 11", "en", datetime(2026, 11, 17, 10, 50)),
+    ("alarm for 7 till 8", "en", datetime(2026, 11, 17, 19, 53)),
 ]
 
 NO_CLOCK = [
@@ -51,6 +57,8 @@ NO_CLOCK = [
     ("for 10 minutes", "en"),
     ("alarm for 10 minutes", "en"),
     ("alarm for 2 hours", "en"),
+    ("alarm for 7 30 minutes", "en"),
+    ("alarm for 1 30 hours", "en"),
     ("alarm for 2 hrs", "en"),
     ("alarm for 2 hr", "en"),
     ("alarm for 10 more minutes", "en"),

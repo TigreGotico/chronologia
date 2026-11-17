@@ -537,13 +537,22 @@ def _connector_targets(surfaces: frozenset) -> Tuple[frozenset, int]:
     return targets, max(map(len, targets), default=0)
 
 
+def has_alarm_marker(tokens: Tuple[Token, ...], spec: LangSpec) -> bool:
+    """Whether ``tokens`` hold an alarm noun and its preposition
+    (``marker_alarm_at.voc``).  An alarm names one instant, so a slice with
+    one is never the end of a range."""
+    tokens = tuple(tokens)
+    return any(_connector_span("alarm_at", tokens, i, spec)
+               for i in range(len(tokens)))
+
+
 def _alarm_hour_goes_on(tokens: Tuple[Token, ...], end: int,
                         spec: LangSpec) -> bool:
     """Whether the words after the hour of an "alarm for <hour>" reading make
     it a length or leave minutes unread: a unit ("10 minutes"), a word that
     adds to a count (``marker_alarm_length.voc``: "10 more minutes"), a number,
     a clock fraction or direction, or any word before a second counted unit
-    ("10 to 15 minutes")."""
+    ("10 through 15 minutes")."""
     if end >= len(tokens):
         return False
     word = tokens[end].text
