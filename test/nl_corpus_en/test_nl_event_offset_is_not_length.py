@@ -356,3 +356,60 @@ def test_an_hour_count_before_a_part_of_the_day_is_a_clock(lang, text, start):
 def test_an_event_of_a_clock_after_a_date_word_has_no_length(lang, text, start):
     ev = extract_event(text, lang, anchor=ANCHOR)
     assert (ev.span.start, ev.duration) == (start, None)
+
+
+@pytest.mark.parametrize("lang, text, start, length", [
+    # A length with its own "for" marker stays a length after a date word.
+    # Friday 30 January 2026: "amanhã", "demain" and "morgen" are Saturday
+    # 31 January, "segunda" and "lundi" are Monday 2 February.  Band starts
+    # from CLDR 47 day periods: pt manhã 06:00, pt tarde 12:00, fr matin
+    # 04:00, fr après-midi 12:00, fr soir 18:00, nl ochtend 06:00.
+    ("pt", "amanhã durante duas horas de manhã", datetime(2026, 1, 31, 6),
+     timedelta(hours=2)),
+    ("pt", "amanhã durante três horas de tarde", datetime(2026, 1, 31, 12),
+     timedelta(hours=3)),
+    ("pt", "segunda durante duas horas de manhã", datetime(2026, 2, 2, 6),
+     timedelta(hours=2)),
+    ("pt", "amanhã aula durante duas horas de manhã", datetime(2026, 1, 31, 6),
+     timedelta(hours=2)),
+    ("pt", "amanhã por duas horas de manhã", datetime(2026, 1, 31, 6),
+     timedelta(hours=2)),
+    ("fr", "demain pendant deux heures le matin", datetime(2026, 1, 31, 4),
+     timedelta(hours=2)),
+    ("fr", "demain pendant trois heures le soir", datetime(2026, 1, 31, 18),
+     timedelta(hours=3)),
+    ("fr", "lundi pendant deux heures l'après-midi", datetime(2026, 2, 2, 12),
+     timedelta(hours=2)),
+    ("nl", "morgen gedurende twee uur in de ochtend", datetime(2026, 1, 31, 6),
+     timedelta(hours=2)),
+])
+def test_a_length_with_its_own_for_marker_after_a_date_word_stays_a_length(
+        lang, text, start, length):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    assert (ev.span.start, ev.span.end, ev.duration) == (
+        start, start + length, length)
+
+
+@pytest.mark.parametrize("text, start", [
+    # The clock suffix "da" ties the part of the day to the hour after a word
+    # that is no length cue: "nove horas da noite" is 21:00 and "oito horas
+    # da noite" is 20:00, on Saturday 31 January.
+    ("jantar nove horas da noite amanhã", datetime(2026, 1, 31, 21)),
+    ("jantar oito horas da noite amanhã", datetime(2026, 1, 31, 20)),
+])
+def test_an_event_with_the_pt_clock_suffix_has_no_length(text, start):
+    ev = extract_event(text, "pt", anchor=ANCHOR)
+    assert (ev.span.start, ev.duration) == (start, None)
+
+
+@pytest.mark.parametrize("lang, text, start", [
+    # A count at the start of the text, with the date word after the part of
+    # the day, is a clock: 21:30 and 14:15 on Saturday 31 January.
+    ("pt", "nove horas e meia de noite amanhã", datetime(2026, 1, 31, 21, 30)),
+    ("pt", "duas horas e um quarto de tarde amanhã",
+     datetime(2026, 1, 31, 14, 15)),
+])
+def test_an_event_of_a_count_at_the_start_before_a_date_word_has_no_length(
+        lang, text, start):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    assert (ev.span.start, ev.duration) == (start, None)
