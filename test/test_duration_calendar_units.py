@@ -121,6 +121,32 @@ def test_a_fraction_of_a_year_in_whole_months_is_read():
     # sw "miaka", ha "shekaru")
     ("uk", "у 988 році"),
     ("uk", "988 рік"),
+    # a count of 101 or 102 takes "год" or "года", but not in the locative,
+    # and a count of 111 or 112 takes "лет"
+    ("ru", "в 101 году"),
+    ("ru", "в 102 году"),
+    ("ru", "111 год"),
+    ("ru", "112 года"),
+    ("uk", "у 101 році"),
+    ("uk", "111 рік"),
+    # "года" is also the genitive of the year in a date (en.wiktionary
+    # "год", declension: "го́да"), so without an ago, in, after or before
+    # word the count form names a year: the summer of 862, January 102
+    ("ru", "летом 862 года"),
+    ("ru", "в сентябре 862 года"),
+    ("ru", "события 862 года"),
+    ("ru", "в январе 102 года"),
+    ("ru", "1 мая 102 года"),
+    ("ru", "зимой 104 года"),
+    # "после" and "до" take the genitive (en.wiktionary "после"), and a
+    # count in an oblique case takes the plural (en.wiktionary "два",
+    # usage notes): "после 862 лет" counts, "после 862 года" is a year
+    ("ru", "после 862 года"),
+    ("ru", "до 862 года"),
+    ("ru", "до 102 года"),
+    ("uk", "після 862 року"),
+    ("uk", "до 102 року"),
+    ("ru", "101 год"),
     ("bg", "през 988 година"),
     ("bg", "988 година"),
     ("mk", "988 година"),
@@ -156,6 +182,30 @@ def test_a_calendar_unit_without_a_plain_count_names_no_length(lang, text):
 def test_a_count_of_years_is_still_a_length(lang, text, delta):
     got = extract_duration(text, lang, anchor=END_OF_JANUARY)
     assert got.duration == _length(END_OF_JANUARY, **delta)
+
+
+@pytest.mark.parametrize("lang, text, years", [
+    ("ru", "101 год назад", 101),
+    ("ru", "это было 121 год назад", 121),
+    ("ru", "через 101 год", 101),
+    ("ru", "102 года назад", 102),
+    ("ru", "через 122 года", 122),
+    ("ru", "через 104 года", 104),
+    ("uk", "101 рік тому", 101),
+    ("uk", "121 рік тому", 121),
+    ("uk", "через 101 рік", 101),
+    ("ru", "за 102 года до нашей эры", 102),
+])
+def test_a_count_of_years_agrees_with_its_last_word(lang, text, years):
+    """An East Slavic count agrees with the last word of its number.  ru
+    "один" and its compounds (21, 101) "govern the singular", and два, три,
+    четыре and their compounds (22, 102) "govern the genitive" singular
+    (en.wiktionary "один" and "два", Russian usage notes): "101 год",
+    "102 года".  In uk "the nouns agree with the last number in any compound
+    number" (en.wikipedia "Ukrainian grammar"): "101 рік".  So by these
+    counts the singular is no written year."""
+    got = extract_duration(text, lang, anchor=END_OF_JANUARY)
+    assert got.duration == _length(END_OF_JANUARY, years=years)
 
 
 @pytest.mark.parametrize("lang, text, freq_days, delta", [
