@@ -13,6 +13,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -36,7 +37,7 @@ def _next_time(h, mi):
     ("hálf eitt", 12, 30),
 ])
 def test_half_names_the_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour", [
@@ -49,7 +50,7 @@ def test_half_is_not_the_stated_hour(text, wrong_hour):
 
 def test_half_toward_one_reads_as_twelve():
     """Rolling back from one o'clock surfaces as twelve, not zero."""
-    assert start("hálf eitt").hour == 12
+    assert start("hálf eitt").hour == moved(12, ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -59,7 +60,7 @@ def test_half_toward_one_reads_as_twelve():
     ("kortér yfir sjö", 7, 15),
 ])
 def test_quarter_past_counts_up(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -68,7 +69,7 @@ def test_quarter_past_counts_up(text, h, mi):
     ("kortér í tólf", 11, 45),
 ])
 def test_quarter_to_counts_down(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("past,to", [
@@ -91,7 +92,7 @@ def test_past_and_to_are_not_the_same_time(past, to):
     ("fimmtán mínútur í tvö", 1, 45),
 ])
 def test_minutes_past_and_to(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour", [
@@ -108,7 +109,7 @@ def test_minutes_to_rolls_the_hour_back(text, wrong_hour):
 def test_klukkan_names_a_bare_hour(text, h):
     """The hour after "klukkan" is the NEUTER numeral -- eitt, tvö, þrjú,
     fjögur -- not the masculine citation form."""
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [

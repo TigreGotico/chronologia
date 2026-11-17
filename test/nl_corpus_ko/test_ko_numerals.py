@@ -11,6 +11,8 @@ import pytest
 from chronologia.extract.numfold_korean import read_native, read_sino
 
 from ._corpus import minute_at, nomatch, start_end
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,value", [
@@ -74,7 +76,7 @@ def test_the_sino_series_is_not_read_as_native(text):
 def test_the_hour_takes_the_native_series(text, hour):
     """Every spelled hour of the twelve, in the attributive shapes."""
     y, m, d = (2027, 5, 12) if hour > 13 else (2027, 5, 13)
-    assert start_end(text) == minute_at(y, m, d, hour, 0)
+    assert start_end(text) == moved(minute_at(y, m, d, hour, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

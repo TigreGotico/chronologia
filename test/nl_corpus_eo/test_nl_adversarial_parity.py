@@ -5,6 +5,7 @@ that name the SAME instant; ``test_span_parity`` proves they resolve to the
 identical span, independently of any hand-picked gold value.
 """
 import pytest
+from ruling17 import moved
 
 from chronologia import extract_timespan
 
@@ -67,16 +68,16 @@ PAIRS = [
     ("post tri tagoj", "in 3 days"), ("post unu tago", "in 1 day"),
     ("antaŭ dek du tagoj", "12 days ago"), ("post dek du tagoj", "in 12 days"),
     ("antaŭ dudek tagoj", "20 days ago"), ("antaŭ cent tagoj", "100 days ago"),
-    ("la sesa kaj duono", "6:30"), ("la sesa kaj kvarono", "6:15"),
-    ("la sesa", "6:00"), ("je la sesa", "6:00"),
+    ("la sesa kaj duono", "half past six"), ("la sesa kaj kvarono", "quarter past six"),
+    ("la sesa", "at 6"), ("je la sesa", "at 6"),
     ("noktomezo", "midnight"), ("tagmezo", "noon"),
     ("2019", "2019"), ("1918", "1918"),
     ("la unua de januaro", "january 1"), ("la kvina de julio", "july 5"),
     ("lundon", "monday"), ("mardon", "tuesday"),
     ("la unua de decembro", "december 1"),
     ("la dudek kvina de decembro", "december 25"),
-    ("kvarono antaŭ la sepa", "6:45"), ("duono post la sepa", "7:30"),
-    ("la deka de junio", "june 10"), ("la naŭa kaj duono", "9:30"),
+    ("kvarono antaŭ la sepa", "quarter to seven"), ("duono post la sepa", "half past seven"),
+    ("la deka de junio", "june 10"), ("la naŭa kaj duono", "half past nine"),
 ]
 
 

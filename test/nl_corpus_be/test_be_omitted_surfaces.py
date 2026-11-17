@@ -10,6 +10,8 @@ gap is closed, which is exactly when the behaviour should be revisited.
 import pytest
 
 from ._corpus import nomatch, parse
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text", ["залетась", "пазалетась"])
@@ -48,7 +50,7 @@ def test_a_minute_count_in_the_first_half_of_the_hour(text):
 def test_the_fraction_form_of_the_first_half_does_read():
     """The control for the pin above."""
     s = parse("палова на трэцюю")[0].start
-    assert (s.hour, s.minute) == (2, 30)
+    assert (s.hour, s.minute) == moved((2, 30), ANCHOR)
 
 
 @pytest.mark.parametrize("text", [
@@ -80,7 +82,7 @@ def test_the_da_form_of_the_subtractive_clock(text):
 def test_the_bez_and_za_forms_do_read(text, h, mi):
     """The control for the pin above."""
     s = parse(text)[0].start
-    assert (s.hour, s.minute) == (h, mi)
+    assert (s.hour, s.minute) == moved((h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

@@ -15,14 +15,15 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 def _offset(text, delta, grain, rem=""):
     res = parse(text)
     assert res is not None, f"{text!r} did not parse"
     assert res.remainder == rem, f"{text!r} left {res.remainder!r}"
-    assert res[0].start == ad(ANCHOR + delta)
-    assert res[0].end == ad(ANCHOR + delta + grain)
+    assert res[0].start == moved(ad(ANCHOR + delta), ANCHOR)
+    assert res[0].end == moved(ad(ANCHOR + delta + grain), ANCHOR)
 
 
 D, H = timedelta(days=1), timedelta(hours=1)
@@ -67,5 +68,5 @@ def _next(h):
 def test_hores_closes_the_hour(text, h):
     res = parse(text)
     assert res is not None and res.remainder == "", f"{text!r} -> {res}"
-    assert res[0].start == _next(h)
-    assert res[0].end == _next(h) + timedelta(minutes=1)
+    assert res[0].start == moved(_next(h), ANCHOR)
+    assert res[0].end == moved(_next(h) + timedelta(minutes=1), ANCHOR)

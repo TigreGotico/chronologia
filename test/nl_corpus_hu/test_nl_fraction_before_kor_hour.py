@@ -11,6 +11,8 @@ the following morning.
 import pytest
 
 from ._corpus import AstroDate, parse, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,hour,minute", [
@@ -20,7 +22,7 @@ from ._corpus import AstroDate, parse, start
     ("fél tízkor", 9, 30),
 ])
 def test_fraction_before_a_kor_hour(text, hour, minute):
-    assert start(text) == AstroDate(2017, 6, 28, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)
     assert parse(text).remainder == ""
 
 
@@ -32,7 +34,7 @@ def test_fraction_before_a_kor_hour(text, hour, minute):
     ("nyolckor", 8, 0),
 ])
 def test_the_forms_that_already_read(text, hour, minute):
-    assert start(text) == AstroDate(2017, 6, 28, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)
 
 
 def test_the_daypart_still_binds_the_kor_hour():

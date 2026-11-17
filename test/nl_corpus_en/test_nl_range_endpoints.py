@@ -15,6 +15,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, AstroDate, parse, span, start_end
+from ruling17 import moved
 
 
 def _dt(day, hour, minute=0):
@@ -68,12 +69,12 @@ def test_bare_hour_range_on_a_named_day():
     ("five to eight", _dt(28, 7, 55)),
 ])
 def test_subtractive_clock_without_a_lead(text, s):
-    assert start_end(text) == (s, s + timedelta(minutes=1))
+    assert start_end(text) == moved((s, s + timedelta(minutes=1)), ANCHOR)
 
 
 def test_from_quarter_to_five_is_still_the_clock():
     # "quarter" is no hour, so the range refuses and the clock reading wins
-    assert span("from quarter to five").start == _dt(28, 4, 45)
+    assert span("from quarter to five").start == moved(_dt(28, 4, 45), ANCHOR)
 
 
 # -- a scoping qualifier stays inside the range ----------------------------

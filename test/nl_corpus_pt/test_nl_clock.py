@@ -5,6 +5,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -30,7 +31,7 @@ def test_digit_time(text, h, mi, s):
     ("às nove e quarto", 9, 15),
 ])
 def test_hour_fraction(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # Additive quarter with the explicit numeral: "e um quarto" == the same 15
@@ -44,7 +45,7 @@ def test_hour_fraction(text, h, mi):
     ("nove e um quarto", 9, 15),
 ])
 def test_hour_plus_um_quarto(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # Subtractive clock: "HORA menos ..." counts back from the coming hour --
@@ -57,7 +58,7 @@ def test_hour_plus_um_quarto(text, h, mi):
     ("quatro menos dez", 3, 50),
 ])
 def test_hour_minus(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 def test_afternoon_meridiem():

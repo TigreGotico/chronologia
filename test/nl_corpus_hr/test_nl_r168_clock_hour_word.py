@@ -7,13 +7,14 @@ hour after "u" with the fixed count noun "sati", regardless of the numeral.
 from datetime import timedelta
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 def test_digit_clock_consumes_hour_word():
     r = parse("u 9 sati")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=9, minute=0,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=9, minute=0,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 

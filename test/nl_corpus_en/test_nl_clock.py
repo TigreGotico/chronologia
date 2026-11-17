@@ -8,6 +8,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, parse, span, start
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -51,7 +52,7 @@ def test_digit_time_meridiem(text, h, mi):
     ("seven o'clock", 7), ("ten o'clock", 10),
 ])
 def test_bare_hour(text, h):
-    assert start(text) == clk(h, 0)
+    assert start(text) == moved(clk(h, 0), ANCHOR)
 
 
 # -- "N pm" / "N am" (no 'at') --------------------------------------------
@@ -111,7 +112,7 @@ def test_digit_clock_with_evening(text, h, mi):
     ("half past six pm", 18, 30), ("quarter past eleven", 11, 15),
 ])
 def test_fraction(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # -- British-colloquial additive bare half: "half nine" == 09:30 ----------
@@ -125,12 +126,12 @@ def test_fraction(text, h, mi):
     ("half six", 6, 30), ("half twelve", 12, 30), ("half one", 1, 30),
 ])
 def test_bare_half_is_additive(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 def test_bare_half_opposite_of_german():
     # en "half three" == 03:30 (half past) vs de "halb drei" == 02:30 (half to)
-    assert start("half three") == clk(3, 30)
+    assert start("half three") == moved(clk(3, 30), ANCHOR)
 
 
 # a bare QUARTER is not English ("quarter nine" is not said) -> rejected; only
@@ -221,7 +222,7 @@ def test_bare_1500_is_a_year():
     ("ten past noon", 12, 10),
 ])
 def test_minute_to_past(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # adversarial: a landmark inside prose still resolves, and "1300 hours"

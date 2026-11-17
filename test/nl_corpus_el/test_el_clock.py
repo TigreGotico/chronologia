@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -34,7 +35,7 @@ def _next_time(h, mi):
     ("τέσσερις και τέταρτο", 4, 15),
 ])
 def test_spoken_clock(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [

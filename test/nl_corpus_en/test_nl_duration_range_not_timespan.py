@@ -16,6 +16,8 @@ are pinned here as regressions so the veto never widens.
 from ._corpus import nomatch, start_end, ad, ANCHOR
 from datetime import datetime
 
+from ruling17 import moved
+
 
 # -- the veto: a "for N to M <unit>" duration range is not a timespan --------
 
@@ -99,5 +101,5 @@ def test_explicit_clock_literal_range_still_a_timespan():
 def test_subtractive_clock_still_reads_when_no_unit_trails():
     # "10 to 6" == ten minutes to six == 05:50 -- a real time, untouched
     s, e = start_end("10 to 6")
-    assert (s, e) == (ad(datetime(2017, 6, 28, 5, 50)),
-                      ad(datetime(2017, 6, 28, 5, 51)))
+    assert (s, e) == moved((ad(datetime(2017, 6, 28, 5, 50)),
+                            ad(datetime(2017, 6, 28, 5, 51))), ANCHOR)

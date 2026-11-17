@@ -13,6 +13,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, nomatch
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -29,7 +30,7 @@ def _next_time(h, mi):
     ("wpół do pierwszej", 12, 30),   # half toward one -> 12:30
 ])
 def test_half_toward_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -37,7 +38,7 @@ def test_half_toward_coming_hour(text, h, mi):
     ("kwadrans po dziesiątej", 10, 15),
 ])
 def test_quarter_past_ordinary(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -45,7 +46,7 @@ def test_quarter_past_ordinary(text, h, mi):
     ("za kwadrans dziewiąta", 8, 45),
 ])
 def test_quarter_to_ordinary(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

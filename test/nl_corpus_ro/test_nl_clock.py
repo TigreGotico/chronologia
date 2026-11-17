@@ -5,6 +5,8 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import span, start, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,y,mo,d,h,mi", [
@@ -21,7 +23,7 @@ from ._corpus import span, start, AstroDate
     ("trei și jumătate", 2017, 6, 28, 3, 30),
 ])
 def test_clock(text, y, mo, d, h, mi):
-    assert start(text) == AstroDate(y, mo, d, h, mi)
+    assert start(text) == moved(AstroDate(y, mo, d, h, mi), ANCHOR)
 
 
 def test_clock_is_minute_wide():
@@ -29,7 +31,7 @@ def test_clock_is_minute_wide():
 
 
 def test_fara_un_sfert_not_a_range():
-    assert start("patru fără un sfert") == AstroDate(2017, 6, 28, 3, 45)
+    assert start("patru fără un sfert") == moved(AstroDate(2017, 6, 28, 3, 45), ANCHOR)
 
 
 def test_gibberish_no_crash():

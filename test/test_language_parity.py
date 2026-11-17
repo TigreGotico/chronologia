@@ -27,6 +27,7 @@ import os
 import sys
 
 import pytest
+from ruling17 import moved
 
 _TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.dirname(_TEST_DIR)

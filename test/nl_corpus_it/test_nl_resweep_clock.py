@@ -6,6 +6,8 @@ dropped, not pinned with a guessed gold), plus mezzogiorno/mezzanotte fractions.
 Gold via an independent next-occurrence-after-anchor oracle, never the parser."""
 import pytest
 from ._corpus import start, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 _CASES = [
     ('alle due e un quarto', AstroDate(2017, 6, 28, 2, 15)),
@@ -91,5 +93,5 @@ _CASES = [
 
 @pytest.mark.parametrize("text,gold", _CASES)
 def test_clock_resweep(text, gold):
-    assert start(text) == gold
+    assert start(text) == moved(gold, ANCHOR)
 

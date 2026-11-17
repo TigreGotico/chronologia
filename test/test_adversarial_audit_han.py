@@ -417,6 +417,7 @@ def test_redundant_decree_merges_category_into_computable_holiday():
 # Round 5 (fresh-roster han audit)
 # ===========================================================================
 from datetime import datetime as _datetime
+from ruling17 import moved
 _A = _datetime(2017, 6, 27, 13, 4)   # a Tuesday
 
 
@@ -632,7 +633,7 @@ def test_bare_clock_range_with_meridiem_no_bogus_day_roll():
     assert (s.end.hour, s.end.day) == (17, 28)
     # a meridiem-less "9 to 5" stays the subtractive clock ("nine minutes to 5")
     s2, _ = extract_timespan("9 to 5", "en", _A)
-    assert (s2.start.hour, s2.start.minute) == (4, 51)
+    assert (s2.start.hour, s2.start.minute) == moved((4, 51), _A)
 
 
 # --- R9 numfold: "hundred" word recognized (was excluded by range(0,100)) -----
@@ -1187,8 +1188,8 @@ def test_subtractive_clock_beats_descending_meridiem_range():
     assert hm("twenty to twelve pm") == (11, 40)
     assert hm("ten to twelve pm") == (11, 50)
     # no meridiem still reads as the subtractive clock, unchanged
-    assert hm("ten to eight") == (7, 50)
-    assert hm("quarter to five") == (4, 45)
+    assert hm("ten to eight") == moved((7, 50), _A)
+    assert hm("quarter to five") == moved((4, 45), _A)
 
     # ASCENDING same-day clock ranges are real ranges and stay ranges: the pair
     # never crosses midnight, so the bail never fires.

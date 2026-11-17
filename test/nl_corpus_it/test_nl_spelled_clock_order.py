@@ -11,6 +11,8 @@ the following morning.  Expected values are the arithmetic of the idiom.
 import pytest
 
 from ._corpus import AstroDate, parse, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,hour,minute", [
@@ -23,7 +25,7 @@ from ._corpus import AstroDate, parse, start
     ("le nove e venti", 9, 20),
 ])
 def test_hour_leads_the_minute(text, hour, minute):
-    assert start(text) == AstroDate(2017, 6, 28, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)
     assert parse(text).remainder == ""
 
 
@@ -33,5 +35,5 @@ def test_hour_leads_the_minute(text, hour, minute):
     ("alle nove e un quarto", 9, 15),
 ])
 def test_the_bare_fraction_forms_resolve(text, hour, minute):
-    assert start(text) == AstroDate(2017, 6, 28, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)
     assert parse(text).remainder == ""

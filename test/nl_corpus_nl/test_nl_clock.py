@@ -9,17 +9,18 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch, clk
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,mi", [('half negen', 8, 30), ('half zeven', 6, 30), ('half acht', 7, 30), ('half tien', 9, 30), ('half elf', 10, 30), ('half twaalf', 11, 30), ('half een', 0, 30), ('half twee', 1, 30), ('half drie', 2, 30), ('half vier', 3, 30), ('half vijf', 4, 30), ('half zes', 5, 30), ('half middag', 11, 30), ('half middernacht', 23, 30)])
 def test_half_is_half_to(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 
 @pytest.mark.parametrize("text,h,mi", [('kwart over drie', 3, 15), ('kwart voor negen', 8, 45), ('kwart over elf', 11, 15), ('kwart voor twaalf', 11, 45), ('kwart voor een', 0, 45), ('kwart over middernacht', 0, 15), ('kwart voor middernacht', 23, 45), ('kwart over middag', 12, 15)])
 def test_quarter_explicit(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text", ['kwart negen', 'kwart tien'])
@@ -29,7 +30,7 @@ def test_bare_quarter_rejected(text):
 
 @pytest.mark.parametrize("text,h,mi", [('tien voor acht', 7, 50), ('vijf over drie', 3, 5), ('twintig voor zeven', 6, 40), ('vijf voor twaalf', 11, 55), ('tien over middag', 12, 10)])
 def test_minute_to_past(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi,s", [
@@ -43,7 +44,7 @@ def test_digit_time(text, h, mi, s):
 
 @pytest.mark.parametrize("text,h", [('om 15', 15), ('om 9', 9), ('om drie', 3), ('15 uur', 15), ('20 uur', 20), ('drie uur', 3), ('acht uur', 8), ('om middernacht', 0), ('om middag', 12)])
 def test_bare_hour(text, h):
-    assert start(text) == clk(h, 0)
+    assert start(text) == moved(clk(h, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [('middernacht', 0, 0), ('middag', 12, 0)])

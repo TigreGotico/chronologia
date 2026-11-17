@@ -12,6 +12,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -31,7 +32,7 @@ def _next_time(h, mi):
     ("ժամը ութն ու կեսը", 8, 30),
 ])
 def test_half_names_the_hour_already_reached(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,forbidden", [
@@ -52,7 +53,7 @@ def test_half_is_never_the_hour_before(text, forbidden):
     ("տասը քառորդ անց", 10, 15),
 ])
 def test_quarter_past_counts_up_from_the_named_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,forbidden", [
@@ -67,7 +68,7 @@ def test_quarter_past_is_never_quarter_to(text, forbidden):
     ("ժամը տասը", 10), ("ժամը վեցը", 6), ("ժամը երեքն", 3),
 ])
 def test_bare_hour(text, h):
-    assert start(text) == _next_time(h, 0)
+    assert start(text) == moved(_next_time(h, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [

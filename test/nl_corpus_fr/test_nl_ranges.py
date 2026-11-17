@@ -44,6 +44,7 @@ def test_century_span():
 
 
 from ._corpus import nomatch, ANCHOR, ad  # noqa: E402
+from ruling17 import moved
 
 
 def _d(s):
@@ -112,8 +113,8 @@ def test_shared_month_range_crosses_the_year():
 def test_a_without_a_from_lead_is_not_a_range():
     from ._corpus import start_end as se
     ss, ee = se("le concert est à trois heures")
-    assert ss == AstroDate(2017, 6, 28, 3, 0)
-    assert ee == AstroDate(2017, 6, 28, 3, 1)
+    assert ss == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR)
+    assert ee == moved(AstroDate(2017, 6, 28, 3, 1), ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["du au", "du 5 au", "du pain au vin"])
