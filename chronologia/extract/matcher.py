@@ -1078,71 +1078,32 @@ class ConstructionMatcher:
 
     def _flag_counted_hours(self, tokens: Tuple[Token, ...],
                             cands: List[MatchCandidate]) -> List[MatchCandidate]:
-        """Mark each bare-hour clock whose number may count the next word.
+        """Mark each bare-hour clock whose number counts the next noun.
 
         In some languages the preposition of a clock also introduces a counted
         group: "wave at 5 people", "a las 3 vecinas" (to the three
         neighbours), "om 3 mensen" (about three people).  The locale lists
-        those prepositions in ``marker_at_counts.voc`` (``LangSpec.at_counts``).  A bare hour behind
-        one of them is a time of day when nothing follows, when the next word
-        belongs to the date grammar (a connector, a unit word, or a courtesy
-        phrase such as "at 8 please"), a word of the locale's closed class that
-        never counts (``marker_not_count.voc``: "te llamo", "om 8 thuis"),
-        when a part of the day stands before it
-        ("tuesday evening at 9 downtown"), or when "and" or "or" joins it to
-        another reading.  Any other word after it may be the thing counted, and
-        so may "and" or "or" before a second number ("om 8 en 9 kinderen").
-        Such a clock stays a candidate, marked ``doubt``; :meth:`match` leaves
-        it out of the parse winners.
+        those prepositions in ``marker_at_counts.voc`` and the nouns that count
+        people or things in ``marker_counted_noun.voc``.  A bare hour behind
+        one of the prepositions and directly before one of the nouns is
+        doubtful.  Any other word after the hour, a verb included, leaves the
+        clock as it is.  A doubtful clock stays a candidate, marked ``doubt``;
+        :meth:`match` leaves it out of the parse winners.
         """
-        prepositions = self.spec.at_counts
-        if not prepositions:
+        prepositions, nouns = self.spec.at_counts, self.spec.counted_noun
+        if not (prepositions and nouns):
             return cands
-        claimed = {i for c in cands if not _is_bare_hour(c.match)
-                   for i in range(*c.match.span)}
-        part_of_day = {i for c in cands if c.match.construction == "daypart_ref"
-                       for i in range(*c.match.span)}
-        connectors = self.spec.connectors
-        grammar = [f.split() for f in
-                   (*self.spec.units,
-                    *self.spec.courtesy,
-                    *(f for forms in connectors.values() for f in forms))]
-        joiners = [f.split() for f in
-                   (*connectors.get("and", ()), *self.spec.or_words)]
-        glue = {f for forms in connectors.values() for f in forms}
-
-        def word_at(i: int, words_list) -> int:
-            return next((len(w) for w in words_list
-                         if [t.text for t in tokens[i:i + len(w)]] == w), 0)
-
-        def after_part_of_day(start: int) -> bool:
-            i = start - 1
-            while i >= 0 and i not in part_of_day and tokens[i].text in glue:
-                i -= 1
-            return i in part_of_day
-
         flagged: List[MatchCandidate] = []
         for cand in cands:
             match = cand.match
             start, end = match.span
             if (_is_bare_hour(match) and end < len(tokens)
-                    and any(t.text in prepositions for t in
-                            tokens[max(0, start - 1):match.slots["HOUR"].index])
                     and not tokens[end].break_before
-                    and not tokens[end].is_number
-                    and end not in claimed
-                    and not after_part_of_day(start)):
-                joined = word_at(end, joiners)
-                if joined:
-                    doubtful = (end + joined < len(tokens)
-                                and tokens[end + joined].is_number)
-                else:
-                    doubtful = (not word_at(end, grammar)
-                                and tokens[end].text not in self.spec.not_count
-                                and any(ch.isalpha() for ch in tokens[end].text))
-                if doubtful:
-                    cand = MatchCandidate(replace(match, doubt=True),
-                                          cand.precedence)
+                    and tokens[end].text in nouns
+                    and any(t.text in prepositions for t in
+                            tokens[max(0, start - 1):match.slots["HOUR"].index])):
+                cand = MatchCandidate(replace(match, doubt=True),
+                                      cand.precedence)
             flagged.append(cand)
         return flagged
 
