@@ -327,6 +327,15 @@ def year_cue(before: Tuple[str, ...], words: CountWords) -> Optional[str]:
     return None
 
 
+def _mention_start(tokens: Tuple[Token, ...], end: int) -> int:
+    """The index of the first token of the mention that ends before
+    ``end``."""
+    start = end - 1
+    while start > 0 and tokens[start - 1].mention is tokens[end - 1].mention:
+        start -= 1
+    return start
+
+
 def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     """Whether the mention that ends before ``end`` is a count, not a year.
 
@@ -345,9 +354,7 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     number.
     """
     mention = tokens[end - 1].mention
-    start = end - 1
-    while start > 0 and tokens[start - 1].mention is mention:
-        start -= 1
+    start = _mention_start(tokens, end)
     said = re.split(r"[\s-]+", mention.text.lower()) if mention else []
     if not any(w in words.scales for w in said):
         return False
@@ -376,7 +383,10 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     if cue is not None or any(w in words.months for w in before[-2:]):
         return False
     if nxt is None:
-        return len(said) == 1
+        # a range endpoint folded alone has a connector after it in the
+        # utterance, and a word after the range: "vieram entre dois mil e
+        # três mil turistas ontem"
+        return len(said) == 1 or len(after) == 3
     return nxt.is_number or nxt.mention is not None or nxt.text.isalpha()
 
 
@@ -387,9 +397,13 @@ def counts_things(tokens: Tuple[Token, ...], end: int,
     It is a count (:func:`is_count`) with no word after it, or before a word
     that is neither a unit nor a number.  Its words stay words.  A count
     before a unit or a number folds into a number, because the duration
-    reader reads it.
+    reader reads it, and so does the first number of a range of units:
+    "between two thousand and three thousand days".
     """
     nxt = tokens[end] if end < len(tokens) else None
+    after = tokens[_mention_start(tokens, end)].after or ()
+    if len(after) == 3 and after[2] in words.units:
+        return False
     return (is_count(tokens, end, words)
             and (nxt is None or not (nxt.is_number or nxt.mention is not None
                                      or nxt.text in words.units)))

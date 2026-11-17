@@ -252,6 +252,52 @@ def test_a_currency_in_the_next_sentence_measures_no_number():
                                       "Dollars were spent")
 
 
+@pytest.mark.parametrize("lang, text, length, rest", [
+    ("en", "between two thousand and three thousand days",
+     timedelta(days=3000), "between two thousand and"),
+    ("en", "between two thousand and three thousand hours",
+     timedelta(hours=3000), "between two thousand and"),
+    ("pt", "entre dois mil e três mil dias", timedelta(days=3000),
+     "entre dois mil e"),
+])
+def test_a_range_of_time_units_holds_no_year_and_adds_no_thousand(
+        lang, text, length, rest):
+    """The first number of a range of units folds into a number, so the
+    duration reader takes the second number alone, as on origin/dev, and no
+    "thousand" of the first number adds to it."""
+    assert extract_timespans(text, lang, _FRIDAY) == []
+    found = extract_duration(text, lang, anchor=_FRIDAY)
+    assert (found.duration, found.remainder) == (length, rest)
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    ("pt", "pagámos entre dois mil e três mil euros na segunda", _MONDAY_2),
+    ("pt", "vieram entre dois mil e três mil turistas ontem", _THURSDAY_29),
+    ("pt-BR", "pagamos entre dois mil e três mil reais na segunda",
+     _MONDAY_2),
+])
+def test_an_entre_range_of_counts_leaves_the_day_word_as_the_date(
+        lang, text, day):
+    """"entre" is no year cue, and a word comes after the range, so both
+    numbers count things, also when the range reader folds the first one
+    alone."""
+    s = extract_timespan(text, lang, _FRIDAY).span
+    assert (s.start, s.end) == day
+
+
+@pytest.mark.parametrize("lang, text", [
+    ("en", "since two thousand only three thousand dollars were spent"),
+    ("pt", "desde dois mil só três mil euros foram gastos"),
+])
+def test_a_word_that_closes_no_range_lets_no_unit_reach_the_first_number(
+        lang, text):
+    """Only the word that closes the cue ("until", "até") makes a range:
+    after "only" or "só" the currency measures the second number alone, and
+    the first number stays a year."""
+    s = extract_timespan(text, lang, _FRIDAY).span
+    assert (s.start, s.end) == (datetime(2000, 1, 1), _FRIDAY)
+
+
 def test_known_cost_a_year_after_ate():
     """Known cost: "até" is no year cue, so the year 2030 reads as a count,
     as on origin/dev."""
