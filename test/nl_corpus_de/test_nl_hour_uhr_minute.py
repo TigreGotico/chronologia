@@ -10,6 +10,8 @@ the following morning unless stated.
 import pytest
 
 from ._corpus import AstroDate, parse, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,day,hour,minute", [
@@ -21,7 +23,7 @@ from ._corpus import AstroDate, parse, start
     ("um 19 uhr 30", 27, 19, 30),
 ])
 def test_the_minute_after_uhr(text, day, hour, minute):
-    assert start(text) == AstroDate(2017, 6, day, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, day, hour, minute), ANCHOR)
     assert parse(text).remainder == ""
 
 
@@ -32,4 +34,4 @@ def test_the_minute_after_uhr(text, day, hour, minute):
     ("viertel acht", 7, 15),
 ])
 def test_the_forms_that_already_read(text, hour, minute):
-    assert start(text) == AstroDate(2017, 6, 28, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)

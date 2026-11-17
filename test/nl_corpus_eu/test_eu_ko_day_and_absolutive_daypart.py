@@ -19,6 +19,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 def _same_span(text, twin, day_offset):
@@ -59,5 +60,5 @@ def test_digit_hour_with_glued_inessive(text, h):
     cand = ANCHOR.replace(hour=h, minute=0, second=0)
     if cand <= ANCHOR:
         cand += timedelta(days=1)
-    assert res[0].start == ad(cand)
+    assert res[0].start == moved(ad(cand), ANCHOR)
     assert res[0].start == parse("hiruretan")[0].start if h == 3 else True

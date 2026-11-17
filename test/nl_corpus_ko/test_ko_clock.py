@@ -2,6 +2,8 @@
 import pytest
 
 from ._corpus import minute_at, nomatch, remainder, start_end
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 #: the anchor's own day and the day after it -- prefer_future rolls a wall
 #: time already past on the anchor day forward to the next one.
@@ -32,7 +34,7 @@ def test_minutes_are_added_to_the_hour_just_named(text, expected):
     """The counting runs forward: 세 시 십 분 is ten past three, never ten
     to it.  A reversed clock is wrong in every reading it produces and says
     nothing about being wrong, so both directions are pinned."""
-    assert start_end(text) == expected
+    assert start_end(text) == moved(expected, ANCHOR)
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -44,7 +46,7 @@ def test_minutes_are_added_to_the_hour_just_named(text, expected):
 def test_half_is_half_past_the_hour_named(text, expected):
     """반 stands in for 삼십 분 and counts forward like any other minute
     count, so 두 시 반 is 2:30 and not 1:30."""
-    assert start_end(text) == expected
+    assert start_end(text) == moved(expected, ANCHOR)
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -56,7 +58,7 @@ def test_half_is_half_past_the_hour_named(text, expected):
 def test_a_final_jeon_turns_the_count_backward(text, expected):
     """The backward reading exists and is marked, obligatorily and last, by
     전: 세 시 십 분 전 is ten minutes BEFORE three."""
-    assert start_end(text) == expected
+    assert start_end(text) == moved(expected, ANCHOR)
 
 
 @pytest.mark.parametrize("text,plain", [
@@ -99,7 +101,7 @@ def test_the_two_clock_landmarks(text, expected):
 def test_the_suffixed_particle_is_consumed_with_the_clock(text, expected):
     """에 is written onto the noun with no space at all, so the reading has
     to reach inside the token to find it."""
-    assert start_end(text) == expected
+    assert start_end(text) == moved(expected, ANCHOR)
     assert remainder(text) == ""
 
 

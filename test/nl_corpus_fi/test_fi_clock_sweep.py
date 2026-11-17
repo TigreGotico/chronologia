@@ -9,6 +9,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start
+from ruling17 import moved
 
 _WORD = {
     "yksi": 1, "kaksi": 2, "kolme": 3, "neljä": 4, "viisi": 5, "kuusi": 6,
@@ -26,9 +27,9 @@ def _next_hour(h):
 
 @pytest.mark.parametrize("word,h", list(_WORD.items()))
 def test_kello_spelled(word, h):
-    assert start(f"kello {word}") == _next_hour(h)
+    assert start(f"kello {word}") == moved(_next_hour(h), ANCHOR)
 
 
 @pytest.mark.parametrize("h", list(range(0, 24)))
 def test_kello_digit(h):
-    assert start(f"kello {h}") == _next_hour(h)
+    assert start(f"kello {h}") == moved(_next_hour(h), ANCHOR)

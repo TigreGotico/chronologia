@@ -15,6 +15,7 @@ L-Erbgħa, Is-Sibt), and the relative period phrases carry theirs on the noun
 import pytest
 
 from ._corpus import ANCHOR, day, parse, remainder, span, start_end
+from ruling17 import moved
 
 
 # -- the seven weekdays, each with the article its initial forces -----------
@@ -71,7 +72,7 @@ def test_the_period_phrases_carry_the_assimilated_article(text, start_iso, end_i
     ("fit-tnax", 12),
 ])
 def test_the_preposition_carries_the_same_assimilation(text, hour):
-    assert span(text).start.hour == hour
+    assert span(text).start.hour == moved(hour, ANCHOR)
 
 
 # -- a bare stem without its article is not the weekday ---------------------

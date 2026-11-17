@@ -14,6 +14,7 @@ import pytest
 from chronologia.extract import extract_duration
 
 from ._corpus import ANCHOR, ad, nomatch, parse
+from ruling17 import moved
 
 
 def _next(h):
@@ -37,8 +38,8 @@ def test_spoken_hour(text, h, rem):
     res = parse(text)
     assert res is not None, f"{text!r} did not parse"
     assert res.remainder == rem
-    assert res[0].start == _next(h)
-    assert res[0].end == _next(h) + timedelta(minutes=1)
+    assert res[0].start == moved(_next(h), ANCHOR)
+    assert res[0].end == moved(_next(h) + timedelta(minutes=1), ANCHOR)
 
 
 def test_spoken_eight_in_the_morning_is_eight_not_the_band():

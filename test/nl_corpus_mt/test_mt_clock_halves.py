@@ -16,6 +16,7 @@ morning time has already passed today and is read as tomorrow's.
 import pytest
 
 from ._corpus import ANCHOR, minute_at, parse, remainder, span
+from ruling17 import moved
 
 
 def _tomorrow(hh, mm):
@@ -37,7 +38,7 @@ def _tomorrow(hh, mm):
     ("il-ħdax u kwart", 11, 15),
 ])
 def test_before_the_half_hour_the_minutes_are_added(text, hh, mm):
-    assert (span(text).start, span(text).end) == _tomorrow(hh, mm)
+    assert (span(text).start, span(text).end) == moved(_tomorrow(hh, mm), ANCHOR)
 
 
 # -- second half of the hour: subtractive, off the hour still coming --------
@@ -54,7 +55,7 @@ def test_before_the_half_hour_the_minutes_are_added(text, hh, mm):
     ("it-tnax nieqes kwart", 11, 45),
 ])
 def test_after_the_half_hour_the_minutes_come_off_the_coming_hour(text, hh, mm):
-    assert (span(text).start, span(text).end) == _tomorrow(hh, mm)
+    assert (span(text).start, span(text).end) == moved(_tomorrow(hh, mm), ANCHOR)
 
 
 # -- the two halves are not interchangeable ---------------------------------
@@ -62,8 +63,8 @@ def test_after_the_half_hour_the_minutes_come_off_the_coming_hour(text, hh, mm):
 def test_the_subtractive_reading_is_not_the_additive_one():
     subtractive = span("it-tmienja nieqes kwart").start
     additive = span("it-tmienja u kwart").start
-    assert subtractive.hour == 7 and subtractive.minute == 45
-    assert additive.hour == 8 and additive.minute == 15
+    assert subtractive.hour == moved(7, ANCHOR) and subtractive.minute == 45
+    assert additive.hour == moved(8, ANCHOR) and additive.minute == 15
 
 
 def test_a_bare_tens_after_u_reads_as_a_compound_number():
@@ -131,8 +132,8 @@ def test_two_three_and_four_oclock_read_as_weekdays(text, weekday):
 
 
 def test_the_hours_without_a_weekday_homograph_still_read_as_clock_times():
-    assert span("is-sitta u nofs").start.hour == 6
-    assert span("il-ħdax u kwart").start.hour == 11
+    assert span("is-sitta u nofs").start.hour == moved(6, ANCHOR)
+    assert span("il-ħdax u kwart").start.hour == moved(11, ANCHOR)
 
 
 def test_midday_and_midnight():

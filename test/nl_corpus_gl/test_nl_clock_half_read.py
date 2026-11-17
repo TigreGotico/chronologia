@@ -9,7 +9,9 @@ hour on its own and the spelled "ás 20 e 45" keep their readings.  Anchor
 """
 import pytest
 
-from ._corpus import nomatch, span
+from ruling17 import moved, moved_date, moved_dhm
+
+from ._corpus import ANCHOR, nomatch, span
 
 
 @pytest.mark.parametrize("text", [
@@ -42,4 +44,4 @@ def test_a_count_of_something_else_keeps_the_clock():
 def test_and_a_half_after_a_written_hour():
     """"e media" after the hour is half past it, as in "ás 10 e media"."""
     s = span("ás 10h e media")
-    assert (s.start.day, s.start.hour, s.start.minute) == (28, 10, 30)
+    assert (s.start.day, s.start.hour, s.start.minute) == moved_dhm((28, 10, 30), ANCHOR)

@@ -15,6 +15,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, start, start_end, AstroDate
+from ruling17 import moved
 
 #: 2017-06-27 (Tuesday) is the corpus anchor; "ièr" is 06-26, the day before
 #: yesterday ("davant-ièr" and its attested synonyms) is 06-25.
@@ -97,4 +98,4 @@ def test_eight_oclock_spelling_variants(text):
     # "uèch" is the only spelling ovos_number_parser.numbers_oc reads;
     # "uèit"/"uòch" are attested variants folded via the new word_map
     # pre-pass in numfold_romance.py's fold_oc.
-    assert start(text) == AstroDate(2017, 6, 28, 8, 0)
+    assert start(text) == moved(AstroDate(2017, 6, 28, 8, 0), ANCHOR)

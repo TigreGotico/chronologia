@@ -14,6 +14,8 @@ quarter -- names minutes still to run before the coming hour.
 import pytest
 
 from ._corpus import span, start, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -25,7 +27,7 @@ from ._corpus import span, start, AstroDate
     ("le dodici meno venti", 11, 40),
 ])
 def test_meno_minutes(text, h, mi):
-    assert start(text) == AstroDate(2017, 6, 28, h, mi)
+    assert start(text) == moved(AstroDate(2017, 6, 28, h, mi), ANCHOR)
 
 
 def test_meno_minutes_consumes_article():
@@ -44,4 +46,4 @@ def test_meno_minutes_consumes_article():
     ("alle tre e un quarto", 3, 15),
 ])
 def test_quarter_half_regressions(text, h, mi):
-    assert start(text) == AstroDate(2017, 6, 28, h, mi)
+    assert start(text) == moved(AstroDate(2017, 6, 28, h, mi), ANCHOR)

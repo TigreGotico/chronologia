@@ -20,6 +20,7 @@ day, 2017-06-28.
 from datetime import timedelta
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 def test_bare_hour():
@@ -27,8 +28,8 @@ def test_bare_hour():
     # built from.
     r = parse("ساعت دو")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=2, minute=0,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=2, minute=0,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 
@@ -40,8 +41,8 @@ def test_quarter_past_names_the_stated_hour():
     # implementation loudly).
     r = parse("دو و ربع")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=2, minute=15,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=2, minute=15,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 
@@ -53,8 +54,8 @@ def test_half_past_names_the_stated_hour():
     # pairing.
     r = parse("دو و نیم")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=2, minute=30,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=2, minute=30,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 
@@ -65,7 +66,7 @@ def test_next_bare_hour_pairs_against_half_past():
     # toward-the-hour misreading of "و" would collapse the two together.
     r = parse("ساعت سه")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=3, minute=0,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=3, minute=0,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""

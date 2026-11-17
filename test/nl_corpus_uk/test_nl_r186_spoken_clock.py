@@ -20,14 +20,15 @@ day, 2017-06-28.
 from datetime import timedelta
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 def test_locative_bare_hour():
     # "о другій" == at two o'clock == 02:00, the LITERAL named hour.
     r = parse("о другій")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=2, minute=0,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=2, minute=0,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 
@@ -40,8 +41,8 @@ def test_toward_hour_half_names_the_coming_hour():
     # direction fails loudly rather than by a rounding coincidence.
     r = parse("пів на другу")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=1, minute=30,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=1, minute=30,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 
@@ -53,8 +54,8 @@ def test_toward_hour_quarter_names_the_coming_hour():
     # the bare locative hour it is built from.
     r = parse("чверть на одинадцяту")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=10, minute=15,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=10, minute=15,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 
@@ -67,7 +68,7 @@ def test_locative_bare_hour_eleven_pairs_with_toward_quarter():
     # standing a full 45 minutes apart.
     r = parse("о одинадцятій")
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=11, minute=0,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=11, minute=0,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""

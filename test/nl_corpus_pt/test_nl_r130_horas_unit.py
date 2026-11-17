@@ -17,6 +17,7 @@ Anchor for extract_timespan cases is the shared pt corpus anchor,
 2017-06-27 13:04 (Tuesday) -- see ``test/nl_corpus_pt/_corpus.py``.
 """
 from ._corpus import ANCHOR, parse, span
+from ruling17 import moved
 
 
 # -- clean remainder: the spelled unit fully consumes ------------------------
@@ -33,7 +34,7 @@ def test_plural_horas_bare():
     r = parse("às 9 horas")
     assert r is not None
     s, remainder = r
-    assert (s.start.hour, s.start.minute) == (9, 0)
+    assert (s.start.hour, s.start.minute) == moved((9, 0), ANCHOR)
     assert remainder == ""
 
 

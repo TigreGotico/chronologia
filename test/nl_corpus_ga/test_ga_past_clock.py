@@ -18,6 +18,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -40,7 +41,7 @@ def _next_time(h, mi):
     ("leathuair tar éis a deich", 10, 30),
 ])
 def test_half_past_names_the_hour_just_gone(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour", [
@@ -63,7 +64,7 @@ def test_half_past_is_never_the_previous_hour(text, wrong_hour):
     ("ceathrú tar éis a deich", 10, 15),
 ])
 def test_quarter_past_counts_up(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -72,7 +73,7 @@ def test_quarter_past_counts_up(text, h, mi):
     ("ceathrú chun a seacht", 6, 45),
 ])
 def test_quarter_to_counts_down(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("past,to", [
@@ -93,7 +94,7 @@ def test_past_and_to_are_not_the_same_time(past, to):
     ("deich nóiméad chun a trí", 2, 50),
 ])
 def test_minutes_past_and_to(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour", [
@@ -128,7 +129,7 @@ def test_ulster_go_dti_reads_as_chun(to, ulster):
 def test_a_chlog_names_a_bare_hour(text, h):
     """The hour after the particle "a" is the disjunctive numeral, with the
     h-prothesis one and eight carry there ("a haon", "a hocht")."""
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [

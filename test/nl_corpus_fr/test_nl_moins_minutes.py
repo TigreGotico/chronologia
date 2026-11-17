@@ -13,6 +13,8 @@ Source: French Wikipedia, "Heure" (lecture de l'heure), where any minute count
 import pytest
 
 from ._corpus import span, start, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -22,7 +24,7 @@ from ._corpus import span, start, AstroDate
     ("dix heures moins vingt", 9, 40),
 ])
 def test_moins_minutes(text, h, mi):
-    assert start(text) == AstroDate(2017, 6, 28, h, mi)
+    assert start(text) == moved(AstroDate(2017, 6, 28, h, mi), ANCHOR)
 
 
 def test_moins_minutes_consumes_offset():
@@ -38,4 +40,4 @@ def test_moins_minutes_consumes_offset():
     ("dix heures moins le quart", 9, 45),
 ])
 def test_quart_regressions(text, h, mi):
-    assert start(text) == AstroDate(2017, 6, 28, h, mi)
+    assert start(text) == moved(AstroDate(2017, 6, 28, h, mi), ANCHOR)

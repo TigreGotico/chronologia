@@ -5,6 +5,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -30,7 +31,7 @@ def test_digit_time(text, h, mi, s):
     ("les nou i quart", 9, 15),
 ])
 def test_hour_fraction(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 def test_afternoon_meridiem():

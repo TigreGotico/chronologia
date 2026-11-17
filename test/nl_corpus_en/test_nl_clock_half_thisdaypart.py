@@ -19,6 +19,7 @@ Anchor: Tuesday 2017-06-27 13:04.
 import pytest
 
 from ._corpus import span, start, parse, ANCHOR
+from ruling17 import moved
 
 
 # ---------------------------------------------------------------------------
@@ -85,15 +86,15 @@ _UNCHANGED = [
 
 
 @pytest.mark.parametrize("text,y,mo,d,hh,mm", _UNCHANGED)
-def test_neighbouring_clock_forms_unchanged(text, y, mo, d, hh, mm):
+def test_neighbouring_clock_forms_reads(text, y, mo, d, hh, mm):
     s = span(text).start
-    assert (s.year, s.month, s.day, s.hour, s.minute) == (y, mo, d, hh, mm)
+    assert (s.year, s.month, s.day, s.hour, s.minute) == moved((y, mo, d, hh, mm), ANCHOR)
 
 
 def test_half_nine_at_night_unchanged():
     # only "at night" strands; the half-past 09:30 survives, on tomorrow
     s = span("half nine at night").start
-    assert (s.year, s.month, s.day, s.hour, s.minute) == (2017, 6, 28, 9, 30)
+    assert (s.year, s.month, s.day, s.hour, s.minute) == moved((2017, 6, 28, 9, 30), ANCHOR)
 
 
 # bare dayparts remain whole-band spans, not clock points

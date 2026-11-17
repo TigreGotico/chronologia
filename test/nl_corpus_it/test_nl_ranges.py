@@ -5,6 +5,8 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import start_end, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,s,e", [
@@ -52,8 +54,8 @@ def test_shared_month_range_crosses_the_year():
 
 def test_alle_without_a_from_lead_is_not_a_range():
     ss, ee = start_end("il concerto è alle tre")
-    assert ss == AstroDate(2017, 6, 28, 3, 0)
-    assert ee == AstroDate(2017, 6, 28, 3, 1)
+    assert ss == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR)
+    assert ee == moved(AstroDate(2017, 6, 28, 3, 1), ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["dal al", "dal 5 al", "dal pane al vino"])

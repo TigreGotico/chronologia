@@ -12,6 +12,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, nomatch
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -30,7 +31,7 @@ def _next_time(h, mi):
     ("полвторого", 1, 30),
 ])
 def test_half_toward_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -39,7 +40,7 @@ def test_half_toward_coming_hour(text, h, mi):
     ("четверть первого", 12, 15),
 ])
 def test_quarter_toward_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -48,7 +49,7 @@ def test_quarter_toward_coming_hour(text, h, mi):
     ("без четверти двенадцать", 11, 45),
 ])
 def test_subtractive_to_reached_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

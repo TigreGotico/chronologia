@@ -18,6 +18,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, nomatch, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -37,7 +38,7 @@ def test_half_and_quarter_name_the_stated_hour(text, h, mi):
     """"kaj" is the FORWARD connector: the named hour is the one just
     started, exactly as English "six thirty" names six, not seven."""
     got = start(text)
-    assert (got.hour, got.minute) == (h, mi)
+    assert (got.hour, got.minute) == moved((h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour,wrong_minute", [
@@ -57,7 +58,7 @@ def test_half_past_never_reads_toward_the_hour(text, wrong_hour, wrong_minute):
 ])
 def test_post_connector_is_the_same_forward_direction(text, h, mi):
     got = start(text)
-    assert (got.hour, got.minute) == (h, mi)
+    assert (got.hour, got.minute) == moved((h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -67,7 +68,7 @@ def test_antaŭ_counts_backward_toward_the_named_hour(text, h, mi):
     """"antaŭ" is the ASYMMETRIC member of the set: it counts back from the
     hour it names, unlike "kaj"/"post"."""
     got = start(text)
-    assert (got.hour, got.minute) == (h, mi)
+    assert (got.hour, got.minute) == moved((h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,wrong_hour", [
@@ -81,7 +82,7 @@ def test_antaŭ_is_not_the_stated_hour_plus_the_fraction(text, wrong_hour):
     ("la sesa", 6), ("je la sesa", 6), ("la sesa horo", 6),
 ])
 def test_bare_oclock(text, h):
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
     assert start(text).minute == 0
 
 

@@ -13,6 +13,7 @@ the anchor-year Adar (2018-03-02 at the corpus anchor) with the numeral left
 in the remainder, a confident wrong date.
 """
 import pytest
+from ruling17 import moved
 
 from chronologia.hebrew_numerals import (gematria_value, hebrew_year_value,
                                           is_gematria_numeral)
@@ -168,7 +169,7 @@ def test_trailing_geresh_does_not_leak_outside_hebrew():
     from chronologia import extract_timespan
     a = datetime(2020, 6, 1, 12, 0)
     en = extract_timespan("3 o'clock", "en", a)
-    assert en is not None and en[0].start.hour == 3
+    assert en is not None and en[0].start.hour == moved(3, a)
     fr = extract_timespan("l'après-midi le 3 juin", "fr", a)
     assert fr is not None and fr[0].start.month == 6 and fr[0].start.day == 3
 

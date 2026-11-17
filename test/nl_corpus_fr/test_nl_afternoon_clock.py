@@ -12,6 +12,8 @@ they stay on the anchor day; a clock reference is one minute wide.
 import pytest
 
 from ._corpus import span, start, nomatch, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h", [
@@ -33,5 +35,5 @@ def test_afternoon_clock_is_minute_wide():
 
 def test_afternoon_adds_twelve_hours_over_bare_hour():
     # the meridiem is what turns 3 into 15; the bare hour rolls to next day 03h
-    assert start("trois heures de l'après-midi") == AstroDate(2017, 6, 27, 15, 0)
-    assert start("à trois heures") == AstroDate(2017, 6, 28, 3, 0)
+    assert start("trois heures de l'après-midi") == moved(AstroDate(2017, 6, 27, 15, 0), ANCHOR)
+    assert start("à trois heures") == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR)
