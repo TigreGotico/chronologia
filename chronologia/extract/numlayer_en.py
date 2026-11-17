@@ -27,7 +27,8 @@ from ovos_spec_tools import expand, read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import (counts_things, fold_mentions,
+from chronologia.extract.numlayer import (CountWords, counts_things,
+                                          fold_mentions,
                                           mark_counts, mention_number,
                                           mentions, scale_factor,
                                           scale_factors,
@@ -72,6 +73,10 @@ _FRACTIONS = _voc("clock_fraction_") | {"quarters"}
 #: The deep-time SCALE words ("thousand", "million", "billion").
 _SCALES = _voc("scale_")
 _FACTORS = scale_factors("en")
+#: The words that tell a count from a year.
+_COUNT_WORDS = CountWords(
+    scales=_SCALES, cues=_COUNT_CUES, months=_MONTHS, units=_UNITS,
+    currencies=_voc("currency."))
 _INDEF = frozenset({"a", "an"})
 _ORDLAST = _voc("marker_ordlast")
 #: The words between a fraction and its unit: "half a year", "three quarters
@@ -236,8 +241,7 @@ def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Dict[int, int]]:
                 claimed.add(i)
                 scales[i] = factor
         elif (_mention_end(tokens, i) == i + 1
-              and counts_things(tokens, i + 1, _SCALES, _COUNT_CUES, _MONTHS,
-                                _UNITS)):
+              and counts_things(tokens, i + 1, _COUNT_WORDS)):
             # a count of things ("I saw a thousand people yesterday") is no
             # date number, so every word of its mention stays a word
             k = i
@@ -429,5 +433,4 @@ def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
                           if not t.is_number and t.text in _SCALES
                           and t.char_start in starts)
     folded = _deep_time_article(folded, scale_idx)
-    return mark_counts(_duration_fraction(_year_pairs(folded)),
-                       _SCALES, _COUNT_CUES, _MONTHS)
+    return mark_counts(_duration_fraction(_year_pairs(folded)), _COUNT_WORDS)

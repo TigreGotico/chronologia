@@ -156,20 +156,59 @@ def test_desde_cues_a_spelled_year_with_a_clause_after_it():
     assert rest == "vivo aqui"
 
 
-def test_entre_with_spelled_years_is_one_range():
-    found = extract_timespans("entre dois mil e dois mil e cinco", "pt",
-                              ANCHOR)
-    assert [(m.span.start, m.span.end) for m in found] == [
-        (datetime(2000, 1, 1), datetime(2006, 1, 1))]
+#: Friday 30 January 2026, 10:00.
+_FRIDAY = datetime(2026, 1, 30, 10, 0)
+_THURSDAY_29 = (datetime(2026, 1, 29), datetime(2026, 1, 30))
+_MONDAY_2 = (datetime(2026, 2, 2), datetime(2026, 2, 3))
+
+
+def _event_day(lang, text):
+    s = extract_event(text, lang, anchor=_FRIDAY).span
+    return s.start, s.end
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    ("pt", "paguei até dois mil euros na segunda", _MONDAY_2),
+    ("pt", "gastei até três mil euros ontem", _THURSDAY_29),
+    ("en", "we paid until three thousand dollars on monday", _MONDAY_2),
+])
+def test_a_currency_after_a_cued_number_makes_it_an_amount(lang, text, day):
+    """A currency after the number makes it an amount, also after a range
+    word: the day word is the date."""
+    assert _event_day(lang, text) == day
 
 
 @pytest.mark.parametrize("text", [
-    "até dois mil e dez vivi lá",
-    "a partir de dois mil e dez vivo aqui",
-    "entre dois mil e dez choveu",
+    "até dois mil euros",
+    "até cinco mil pessoas",
+    "a partir de três mil euros por mês",
+    "entre mil e dois mil euros",
 ])
-def test_a_range_word_cues_a_spelled_year(text):
-    assert span(text).start == datetime(2010, 1, 1)
+def test_an_amount_after_ate_a_partir_de_or_entre_is_no_year(text):
+    """"até", "a partir de" and "entre" are no year cue: in pt they mostly
+    put an amount after them."""
+    nomatch(text)
+
+
+def test_known_cost_a_year_after_ate():
+    """Known cost: "até" is no year cue, so the year 2030 reads as a count,
+    as on origin/dev."""
+    assert extract_timespan("até dois mil e trinta vamos poupar", "pt",
+                            _FRIDAY) is None
+
+
+@pytest.mark.parametrize("lang, text, span_", [
+    ("en", "before three thousand fans arrived yesterday",
+     (datetime(3000, 1, 1), datetime(3001, 1, 1))),
+    ("pt", "desde dois mil turistas chegaram ontem",
+     (datetime(2000, 1, 1), _FRIDAY)),
+])
+def test_known_cost_a_count_of_people_after_a_cue(lang, text, span_):
+    """Known cost: only a unit or a currency after the number makes it a
+    count after a cue.  A noun such as "fans" or "turistas" does not, so the
+    number reads as a year.  origin/dev reads the en row the same."""
+    s = extract_timespan(text, lang, _FRIDAY).span
+    assert (s.start, s.end) == span_
 
 
 @pytest.mark.parametrize("text", [

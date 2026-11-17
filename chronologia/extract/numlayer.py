@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import re
 from bisect import bisect_right
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from fractions import Fraction
 from functools import lru_cache
 from pathlib import Path
@@ -61,7 +61,9 @@ def attach(tokens: Tuple[Token, ...], text: str,
            lang: str) -> Tuple[Token, ...]:
     """Give each token inside a mention of ``text`` that mention.
 
-    ``lang`` is a chronologia locale or a region tag (``pt-BR``).
+    ``lang`` is a chronologia locale or a region tag (``pt-BR``).  The first
+    token of each mention also gets the words before it
+    (:attr:`Token.before`).
     """
     if not reads(lang):
         return tokens
@@ -81,7 +83,8 @@ def attach(tokens: Tuple[Token, ...], text: str,
                 m = found[k]
         if m is None:
             out.append(t)
-        elif t.char_start == m.char_span[0]:
+            continue
+        if t.char_start == m.char_span[0]:
             before = tuple(p.text for p in tokens[max(0, i - 3):i])
             out.append(replace(t, mention=m, before=before))
         else:
@@ -230,8 +233,35 @@ def withhold_split_counts(tokens: Tuple[Token, ...], units: Collection[str],
     return tuple(out)
 
 
-def is_count(tokens: Tuple[Token, ...], end: int, scales: Collection[str],
-             cues: Collection[str], months: Collection[str]) -> bool:
+@dataclass(frozen=True)
+class CountWords:
+    """The words of a language that tell a count from a year."""
+
+    #: The scale words: only a mention with one can be a count.
+    scales: Collection[str]
+    #: The words before a mention that make it a year: "in", "since".
+    cues: Collection[str]
+    #: The months a year follows.
+    months: Collection[str]
+    #: The units of time.  A count before a unit folds into a number.
+    units: Collection[str]
+    #: The currency names.  A count before one keeps its words.
+    currencies: Collection[str] = frozenset()
+
+
+def year_cue(before: Tuple[str, ...], words: CountWords) -> Optional[str]:
+    """The cue at the end of ``before``, or ``None``.
+
+    A cue can be up to three words long.
+    """
+    for k in range(1, len(before) + 1):
+        cue = " ".join(before[-k:])
+        if cue in words.cues:
+            return cue
+    return None
+
+
+def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     """Whether the mention that ends before ``end`` is a count, not a year.
 
     A mention that holds a scale word and has a word or another number after
@@ -241,34 +271,40 @@ def is_count(tokens: Tuple[Token, ...], end: int, scales: Collection[str],
     either.  A year takes a cue before it: a year word or "em", "in" ("em
     dois mil eu nasci"), a range or since word ("since two thousand and ten
     I have lived here", "a partir de dois mil e dez"), or a month in the two
-    words before ("março de dois mil e três").  A cue can be up to three
-    words long, and a range endpoint folded alone reads it from the whole
-    utterance (``Token.before``).  Any other mention with nothing after it
-    stays a number.
+    words before ("março de dois mil e três") (:func:`year_cue`).  A range
+    endpoint folded alone reads the cue from the whole utterance
+    (:attr:`Token.before`).  A unit or a currency
+    after the mention makes it a count after any cue: "paguei até dois mil
+    euros na segunda".  Any other mention with nothing after it stays a
+    number.
     """
     mention = tokens[end - 1].mention
     start = end - 1
     while start > 0 and tokens[start - 1].mention is mention:
         start -= 1
-    words = re.split(r"[\s-]+", mention.text.lower()) if mention else []
-    if not any(w in scales for w in words):
+    said = re.split(r"[\s-]+", mention.text.lower()) if mention else []
+    if not any(w in words.scales for w in said):
         return False
-    # a range endpoint is folded on its own, so a mention at the start of the
-    # stream reads the words before it from the whole utterance
-    before = ([t.text for t in tokens[max(0, start - 3):start]] if start
-              else list(tokens[0].before))
-    if (any(" ".join(before[-k:]) in cues for k in range(1, len(before) + 1))
-            or any(w in months for w in before[-2:])):
+    nxt = tokens[end] if end < len(tokens) else None
+    if nxt is not None and (nxt.text in words.units
+                            or nxt.text in words.currencies):
+        return True
+    # a range endpoint is folded on its own, so the words before a mention
+    # come from the whole utterance; a part of a mention read again takes
+    # them from the stream
+    before = tokens[start].before
+    if before is None:
+        before = tuple(t.text for t in tokens[max(0, start - 3):start])
+    if (year_cue(before, words) is not None
+            or any(w in words.months for w in before[-2:])):
         return False
-    if end >= len(tokens):
-        return len(words) == 1
-    nxt = tokens[end]
+    if nxt is None:
+        return len(said) == 1
     return nxt.is_number or nxt.mention is not None or nxt.text.isalpha()
 
 
 def counts_things(tokens: Tuple[Token, ...], end: int,
-                  scales: Collection[str], cues: Collection[str],
-                  months: Collection[str], units: Collection[str]) -> bool:
+                  words: CountWords) -> bool:
     """Whether the mention that ends before ``end`` counts things.
 
     It is a count (:func:`is_count`) with no word after it, or before a word
@@ -277,13 +313,12 @@ def counts_things(tokens: Tuple[Token, ...], end: int,
     reader reads it.
     """
     nxt = tokens[end] if end < len(tokens) else None
-    return (is_count(tokens, end, scales, cues, months)
+    return (is_count(tokens, end, words)
             and (nxt is None or not (nxt.is_number or nxt.mention is not None
-                                     or nxt.text in units)))
+                                     or nxt.text in words.units)))
 
 
-def mark_counts(tokens: Tuple[Token, ...], scales: Collection[str],
-                cues: Collection[str], months: Collection[str]
+def mark_counts(tokens: Tuple[Token, ...], words: CountWords
                 ) -> Tuple[Token, ...]:
     """Mark each folded number that :func:`is_count` reads as a count.
 
@@ -291,8 +326,7 @@ def mark_counts(tokens: Tuple[Token, ...], scales: Collection[str],
     horas" counts hours.
     """
     return tuple(replace(t, count=True)
-                 if t.is_number and is_count(tokens, i + 1, scales, cues,
-                                             months) else t
+                 if t.is_number and is_count(tokens, i + 1, words) else t
                  for i, t in enumerate(tokens))
 
 
