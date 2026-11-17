@@ -1729,8 +1729,8 @@ def _fold_date_article(folded, consumed, spec, span):
     "what's on tonight"): such a day takes no preposition, so the word in
     front of it belongs to the verb.  ``marker_date_lead_no_deixis.voc``
     lists the lead words that also do not open a this, next or last phrase
-    of a daypart or a period ("turn it on this evening", "what is on this
-    weekend").
+    of a daypart, a period or a weekday ("turn it on this evening", "what is
+    on this weekend", "turn it on next friday").
     """
     articles = (set(spec.connectors.get("date_article", ()))
                 | set(spec.connectors.get("date_lead", ())))
@@ -1740,7 +1740,8 @@ def _fold_date_article(folded, consumed, spec, span):
         return consumed
     deictic = set(spec.named_days) | spec.daypart_today_words
     no_deixis = set(spec.connectors.get("date_lead_no_deixis", ()))
-    periods = set(spec.dayparts) | set(spec.units) | spec.weekend_words
+    periods = (set(spec.dayparts) | set(spec.units) | spec.weekend_words
+               | set(spec.weekdays))
     clock_words = set(spec.clock_fractions) | set(spec.clock_landmarks)
     start, end = span.start_datetime, span.end_datetime
     is_clock = (start is not None and end is not None

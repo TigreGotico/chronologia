@@ -88,9 +88,22 @@ def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
     ("en", "turn it on this evening", "turn it on"),
     ("en", "is anything on this evening", "is anything on"),
     ("en", "what is on this weekend", "what is on"),
+    ("en", "turn it on next friday", "turn it on"),
+    ("en", "is anything on next friday", "is anything on"),
+    ("en", "what is on this saturday", "what is on"),
+    ("en", "look at next monday", "look at"),
+    ("en", "switch it on next tuesday at 7", "switch it on"),
+    # the article of a Spanish this-phrase belongs to the date, and the
+    # Portuguese contraction does too; the verb keeps all of its own words
+    ("es", "enciéndelo el próximo viernes", "enciéndelo"),
+    ("es", "pon la tele el próximo lunes", "pon la tele"),
+    ("pt", "liga-o na próxima sexta", "liga-o"),
+    ("pt", "desliga a luz na próxima segunda", "desliga a luz"),
     # "um" in front of a year means "around": the reading is not a clock
     ("de", "das Haus wurde um 1900 gebaut", "das Haus wurde um gebaut"),
     ("de", "um 2030", "um"),
+    # "um" in front of a dated day is not a clock word
+    ("de", "um 8. Mai", "um"),
 ])
 def test_a_word_that_does_not_touch_the_date_stays(lang, text, rest):
     _, remainder = extract_timespan(text, lang, ANCHOR)
