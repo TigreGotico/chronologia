@@ -168,8 +168,8 @@ def make_fold(grammar: NumberGrammar
         own) a genuinely-consumed run is worth at least that magnitude ("two
         thousand [and] twenty four" 2024 >= 2000, "two hundred fifty" 250 >=
         200).  When the folded value is instead *smaller* than that leading
-        magnitude, the back-end dropped it (Dutch "tweeduizend vierentwintig" ->
-        24, dropping the 2000): stamping one token over the whole run would
+        magnitude, the back-end dropped it (Dutch "tweehonderd vijftig" ->
+        50, dropping the 200): stamping one token over the whole run would
         commit a confidently-wrong value with an empty remainder.  Cut instead
         -- peel the first token as its own number and re-fold the rest -- so the
         un-consumed magnitude survives as an honest, non-empty remainder.
