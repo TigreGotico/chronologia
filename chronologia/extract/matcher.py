@@ -1013,6 +1013,15 @@ class ConstructionMatcher:
                         if (_ai >= 0 and tokens[_ai].text
                                 in self.spec.conventions.bare_at_markers):
                             continue
+                    # "alarm for 10" is a clock, "alarm for 10 minutes" is a
+                    # length: a unit word right after the hour ends the
+                    # reading (``marker_alarm_at.voc``).
+                    if (name == "clock_time"
+                            and _connector_span("alarm_at", tokens, start,
+                                                self.spec)
+                            and end < len(tokens)
+                            and tokens[end].text in self.spec.units):
+                        continue
                     # A holiday name takes no indefinite article when it is
                     # an adjective plus a weekday: "have a good friday" is the
                     # adjective and the day, not Good Friday.  A single-word

@@ -130,6 +130,7 @@
     },
     "clock_time": {
       "orders": [
+        "alarm_at HOUR MERIDIEM? ZONE?",
         "CLOCK MERIDIEM? ZONE?",
         "at DOTCLOCK MERIDIEM? ZONE?",
         "DOTCLOCK MERIDIEM ZONE?",
