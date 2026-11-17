@@ -10,6 +10,8 @@ from datetime import datetime, timedelta
 import pytest
 from chronologia.astrodate import AstroDate
 from ._corpus import start, nomatch
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 A = datetime(2017, 6, 27, 13, 4)
 
@@ -33,7 +35,7 @@ def _next_hour(h):
 def test_saat_spelled_hour(h):
     g = _next_hour(h)
     s = start("saat " + _WORD[h], A)
-    assert s == AstroDate(g.year, g.month, g.day, h, 0)
+    assert s == moved(AstroDate(g.year, g.month, g.day, h, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("h", list(range(1, 24)))
@@ -54,4 +56,4 @@ def test_gece_yarisi_is_next_midnight():
 
 def test_locative_hour_suffix_should_parse():
     # 'saat üçdə' = 'at three o'clock' — idiomatic az; currently no-parse.
-    assert start("saat üçdə", A).hour == 3
+    assert start("saat üçdə", A).hour == moved(3, ANCHOR)

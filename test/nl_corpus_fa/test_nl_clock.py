@@ -2,6 +2,8 @@
 """Clock readings in Persian."""
 import pytest
 from ._corpus import start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,m", [
@@ -15,7 +17,7 @@ def test_iso_clock(text, h, m):
 @pytest.mark.parametrize("text,h", [
     ("ساعت 3", 3), ("ساعت 9", 9), ("ساعت 7", 7), ("ساعت 11", 11)])
 def test_at_hour(text, h):
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
 
 
 @pytest.mark.parametrize("text,h", [("ظهر", 12), ("نیمه‌شب", 0)])

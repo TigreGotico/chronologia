@@ -10,6 +10,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, span, start, start_end, nomatch, parse
+from ruling17 import moved
 
 
 def ago(**kw):
@@ -92,7 +93,7 @@ def test_the_connector_does_not_join_two_units():
     # bridge any pair, the clock's own connector would be swallowed and the
     # minute of "девет и пет" would vanish into a single fourteen.
     s = span("девет и пет")
-    assert (s.start.hour, s.start.minute) == (9, 5)
+    assert (s.start.hour, s.start.minute) == moved((9, 5), ANCHOR)
 
 
 def test_a_bare_numeral_is_not_a_date():

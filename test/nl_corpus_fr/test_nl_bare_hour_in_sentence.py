@@ -9,6 +9,8 @@ as often a length ("un film de 2 heures") and are not read.  Anchor
 import pytest
 
 from ._corpus import nomatch, parse, span
+from ._corpus import ANCHOR
+from ruling17 import moved, moved_date
 
 
 @pytest.mark.parametrize("text", [
@@ -43,8 +45,8 @@ def test_a_marked_clock_with_a_fraction_still_reads():
     """"Il est une heure" (Larousse, s.v. "être") marks the clock; the half
     after it is half past.  03:30 has gone at 13:04, so it is tomorrow."""
     s = span("il est 3 heures et demie")
-    assert (s.start.month, s.start.day) == (6, 28)
-    assert (s.start.hour, s.start.minute) == (3, 30)
+    assert (s.start.month, s.start.day) == moved_date((6, 28), (3, 30), ANCHOR)
+    assert (s.start.hour, s.start.minute) == moved((3, 30), ANCHOR)
 
 
 @pytest.mark.parametrize("text,day,hour,minute", [
@@ -58,8 +60,8 @@ def test_a_marked_clock_with_a_fraction_still_reads():
 ])
 def test_a_clock_alone_or_after_a_marker_still_reads(text, day, hour, minute):
     s = span(text)
-    assert (s.start.month, s.start.day) == (6, day)
-    assert (s.start.hour, s.start.minute) == (hour, minute)
+    assert (s.start.month, s.start.day) == moved_date((6, day), (hour, minute), ANCHOR)
+    assert (s.start.hour, s.start.minute) == moved((hour, minute), ANCHOR)
 
 
 @pytest.mark.parametrize("text,day,hour", [
@@ -71,8 +73,8 @@ def test_the_verb_that_states_the_hour_marks_a_clock(text, day, hour):
     """"Il est une heure, midi, etc., sert à indiquer l'heure." (Larousse,
     s.v. "être")."""
     s = span(text)
-    assert (s.start.month, s.start.day) == (6, day)
-    assert (s.start.hour, s.start.minute) == (hour, 0)
+    assert (s.start.month, s.start.day) == moved_date((6, day), (hour, 0), ANCHOR)
+    assert (s.start.hour, s.start.minute) == moved((hour, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,hour", [
@@ -83,7 +85,7 @@ def test_the_verb_that_states_the_hour_in_another_form(text, hour):
     """"était" is the same verb; "déjà" stands between the verb and the
     hour: "Il est déjà midi." (Le Robert, s.v. "déjà")."""
     s = span(text)
-    assert (s.start.hour, s.start.minute) == (hour, 0)
+    assert (s.start.hour, s.start.minute) == moved((hour, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,day,hour", [
@@ -98,8 +100,8 @@ def test_a_word_of_approximation_or_start_marks_a_clock(text, day, hour):
     """"Vers (les) cinq heures." (Le Robert, s.v. "vers"); "sur" and "aux
     alentours de" point to "vers"; "dès": "Immédiatement, à partir de." """
     s = span(text)
-    assert (s.start.month, s.start.day) == (6, day)
-    assert (s.start.hour, s.start.minute) == (hour, 0)
+    assert (s.start.month, s.start.day) == moved_date((6, day), (hour, 0), ANCHOR)
+    assert (s.start.hour, s.start.minute) == moved((hour, 0), ANCHOR)
 
 
 def test_pour_before_a_count_of_hours_is_a_length():

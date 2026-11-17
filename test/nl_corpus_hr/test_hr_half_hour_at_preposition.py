@@ -9,6 +9,7 @@ match that looks correct until the caller inspects what was not consumed.
 from datetime import datetime, timedelta
 
 from ._corpus import ANCHOR, ad, parse, span
+from ruling17 import moved
 
 
 def test_u_pola_devet_consumes_the_preposition():
@@ -21,8 +22,8 @@ def test_u_pola_devet_is_half_past_eight_tomorrow():
     # the anchor is 13:04, so the next 08:30 is the following morning
     r = parse("u pola devet")
     assert r is not None
-    assert r[0].start == ad(datetime(ANCHOR.year, ANCHOR.month,
-                                     ANCHOR.day, 8, 30) + timedelta(days=1))
+    assert r[0].start == moved(ad(datetime(ANCHOR.year, ANCHOR.month,
+                                     ANCHOR.day, 8, 30) + timedelta(days=1)), ANCHOR)
 
 
 def test_the_preposition_does_not_change_the_answer():

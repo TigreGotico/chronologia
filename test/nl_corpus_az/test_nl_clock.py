@@ -2,6 +2,8 @@
 """Clock readings in Azerbaijani."""
 import pytest
 from ._corpus import nomatch, parse, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,m", [
@@ -15,7 +17,7 @@ def test_iso_clock(text, h, m):
 @pytest.mark.parametrize("text,h", [
     ("saat 3", 3), ("saat 9", 9), ("saat 7", 7), ("saat 11", 11)])
 def test_at_hour(text, h):
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
 
 
 # -- the daypart adverbial, which Azerbaijani puts before the time phrase ---
@@ -43,7 +45,7 @@ def test_daypart_marker_over_an_iso_clock():
 def test_bare_hour_without_daypart_stays_on_the_named_hour():
     # No marker, no twelve-hour shift: the hour is read exactly as named.
     s = start("saat 8")
-    assert (s.hour, s.minute) == (8, 0)
+    assert (s.hour, s.minute) == moved((8, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["axşam", "səhər", "axşam saat"])

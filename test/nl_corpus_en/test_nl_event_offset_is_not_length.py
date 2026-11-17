@@ -302,8 +302,8 @@ def test_nl_quarter_hour_offset_spans_like_its_english_form(nl, en):
     ("id", "1 jam lagi", datetime(2026, 1, 30, 11)),
     ("vi", "7 ngày trước", datetime(2026, 1, 23, 10)),
     ("it", "fra un quarto d'ora", datetime(2026, 1, 30, 10, 15)),
-    # a bare clock hour has no date to carry the event: "2 heures" stays 02:00
-    ("fr", "2 heures", datetime(2026, 1, 31, 2)),
+    # a bare clock hour has no date to carry the event: "2 heures" is the next 14:00
+    ("fr", "2 heures", datetime(2026, 1, 30, 14)),
     ("nl", "15 uur", datetime(2026, 1, 30, 15)),
     # "saat 12" is as wide as "3 gün", but it is not the length's words
     ("tr", "3 gün önce saat 12", datetime(2026, 1, 27, 12)),
@@ -321,3 +321,38 @@ def test_a_clock_like_length_before_a_date_is_still_an_offset():
     ev = extract_event("réunion deux heures avant midi", "fr", anchor=ANCHOR)
     assert (ev.summary, ev.span.start, ev.duration) == (
         "réunion", datetime(2026, 1, 30, 10), None)
+
+
+@pytest.mark.parametrize("lang, text, start", [
+    # An hour count that a part of the day follows directly is a clock in
+    # that part of the day, with or without a date word before it.  Friday
+    # 30 January 2026, 10:00: the clock is the next one in that part of the day.
+    ("fr", "demain neuf heures et demie le soir", datetime(2026, 1, 31, 21, 30)),
+    ("fr", "demain huit heures et demie le soir", datetime(2026, 1, 31, 20, 30)),
+    ("fr", "lundi neuf heures et demie le soir", datetime(2026, 2, 2, 21, 30)),
+    ("fr", "demain neuf heures le soir", datetime(2026, 1, 31, 21, 0)),
+    ("fr", "neuf heures et demie le soir", datetime(2026, 1, 30, 21, 30)),
+    ("fr", "huit heures et demie le soir", datetime(2026, 1, 30, 20, 30)),
+    ("fr", "sept heures et quart le soir", datetime(2026, 1, 30, 19, 15)),
+    ("fr", "onze heures moins le quart le soir", datetime(2026, 1, 30, 22, 45)),
+    ("fr", "deux heures et demie le matin", datetime(2026, 1, 31, 2, 30)),
+    ("fr", "deux heures moins le quart le matin", datetime(2026, 1, 31, 1, 45)),
+    ("pt", "amanhã nove horas e meia de noite", datetime(2026, 1, 31, 21, 30)),
+    ("pt", "segunda nove horas e meia de noite", datetime(2026, 2, 2, 21, 30)),
+    ("pt", "amanhã duas horas e um quarto de tarde", datetime(2026, 1, 31, 14, 15)),
+    ("pt", "nove horas e meia de noite", datetime(2026, 1, 30, 21, 30)),
+    ("pt", "duas horas e meia de manhã", datetime(2026, 1, 31, 2, 30)),
+    ("pt", "duas horas de manhã", datetime(2026, 1, 31, 2)),
+])
+def test_an_hour_count_before_a_part_of_the_day_is_a_clock(lang, text, start):
+    got = extract_timespan(text, lang, anchor=ANCHOR)
+    assert (got.span.start, got.remainder) == (start, "")
+
+
+@pytest.mark.parametrize("lang, text, start", [
+    ("fr", "demain neuf heures et demie le soir", datetime(2026, 1, 31, 21, 30)),
+    ("pt", "amanhã nove horas e meia de noite", datetime(2026, 1, 31, 21, 30)),
+])
+def test_an_event_of_a_clock_after_a_date_word_has_no_length(lang, text, start):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    assert (ev.span.start, ev.duration) == (start, None)

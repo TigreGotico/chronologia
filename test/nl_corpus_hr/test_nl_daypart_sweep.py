@@ -12,7 +12,9 @@ Gold windows are the fixed daypart definitions, not the parser.  Anchor
 """
 import pytest
 
-from ._corpus import AstroDate, start_end
+from ruling17 import moved
+
+from ._corpus import ANCHOR, AstroDate, start_end
 
 # bare + deictic dayparts: (phrase, start, end)
 _WINDOWS = [
@@ -49,5 +51,5 @@ _CLOCK = [
 @pytest.mark.parametrize("phrase,s", _CLOCK, ids=[c[0] for c in _CLOCK])
 def test_clock_daypart(phrase, s):
     st, en = start_end(phrase)
-    assert st == s, phrase
+    assert st == moved(s, ANCHOR), phrase
     assert (en - st).total_seconds() == 60, phrase

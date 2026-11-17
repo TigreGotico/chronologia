@@ -7,6 +7,7 @@ gaps (half-TO idiom, seconds, oblique numerals).
 import pytest
 
 from ._corpus import ANCHOR, parse, nomatch
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text", [
@@ -56,7 +57,7 @@ def test_halfto_idiom_resolves():
     # ordinal-toward-hour clock (bare_half_to); see test_ru_toward_clock.
     r = parse("полдесятого")
     assert r is not None
-    assert (r[0].start.hour, r[0].start.minute) == (9, 30)
+    assert (r[0].start.hour, r[0].start.minute) == moved((9, 30), ANCHOR)
 
 
 def test_seconds_offset_resolves():

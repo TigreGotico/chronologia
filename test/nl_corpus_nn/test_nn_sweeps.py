@@ -145,13 +145,13 @@ DIGIT = [(f"{h:02d}:{mi:02d}", h, mi)
 @pytest.mark.parametrize("text,h,mi", HALV)
 def test_clock_halv(text, h, mi):
     s = span(text)
-    assert s.start == _clk(h, mi)
+    assert s.start == moved(_clk(h, mi), ANCHOR)
     assert s.width == timedelta(minutes=1)
 
 
 @pytest.mark.parametrize("text,h,mi", KVART)
 def test_clock_kvart(text, h, mi):
-    assert span(text).start == _clk(h, mi)
+    assert span(text).start == moved(_clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", DIGIT)
@@ -163,6 +163,7 @@ def test_clock_digit(text, h, mi):
 
 # ---- ISO weeks with explicit year --------------------------------------
 import datetime as _dt  # noqa: E402
+from ruling17 import moved
 
 ISOW = []
 for _y in (2018, 2019, 2020, 2021):

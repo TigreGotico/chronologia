@@ -20,6 +20,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, parse
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -33,8 +34,8 @@ def _assert_clock(text, h, mi):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
     span, rem = r
-    assert span.start == _next_time(h, mi)
-    assert span.end == _next_time(h, mi) + timedelta(minutes=1)
+    assert span.start == moved(_next_time(h, mi), ANCHOR)
+    assert span.end == moved(_next_time(h, mi) + timedelta(minutes=1), ANCHOR)
     assert rem == ""
 
 
@@ -74,8 +75,8 @@ def test_the_two_directions_do_not_collapse():
     past, _ = parse("varttia yli kaksi")
     to, _ = parse("varttia vaille kaksi")
     assert past.start - to.start == timedelta(minutes=30)
-    assert past.start == _next_time(2, 15)
-    assert to.start == _next_time(1, 45)
+    assert past.start == moved(_next_time(2, 15), ANCHOR)
+    assert to.start == moved(_next_time(1, 45), ANCHOR)
 
 
 def test_yli_without_an_hour_is_not_a_clock():

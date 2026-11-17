@@ -8,14 +8,16 @@ match starts at the article and strands the leading "a" as remainder.
 Anchor is the shared es corpus anchor, 2017-06-27 13:04 (Tuesday).
 """
 from ._corpus import parse
+from ._corpus import ANCHOR
+from ruling17 import moved, moved_date
 
 
 def test_a_las_plural_consumed():
     r = parse("a las tres")
     assert r is not None
     s, remainder = r
-    assert (s.start.year, s.start.month, s.start.day) == (2017, 6, 28)
-    assert (s.start.hour, s.start.minute) == (3, 0)
+    assert (s.start.year, s.start.month, s.start.day) == moved_date((2017, 6, 28), (3, 0), ANCHOR)
+    assert (s.start.hour, s.start.minute) == moved((3, 0), ANCHOR)
     assert remainder == ""
 
 
@@ -34,5 +36,5 @@ def test_bare_article_form_still_works():
     r = parse("las tres")
     assert r is not None
     s, remainder = r
-    assert (s.start.hour, s.start.minute) == (3, 0)
+    assert (s.start.hour, s.start.minute) == moved((3, 0), ANCHOR)
     assert remainder == ""

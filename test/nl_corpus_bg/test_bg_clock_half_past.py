@@ -26,15 +26,17 @@ pass while both are wrong. Anchor: Tuesday 2017-06-27 13:04.
 """
 from ._corpus import start, start_end
 from chronologia.astrodate import AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 def test_plain_hour_is_eight_am_next_day():
     # "в осем" (at eight) rolls past the 13:04 anchor to the next morning.
-    assert start("в осем") == AstroDate(2017, 6, 28, 8, 0, 0, 0)
+    assert start("в осем") == moved(AstroDate(2017, 6, 28, 8, 0, 0, 0), ANCHOR)
 
 
 def test_half_past_is_thirty_minutes_after_the_plain_hour():
-    assert start("осем и половина") == AstroDate(2017, 6, 28, 8, 30, 0, 0)
+    assert start("осем и половина") == moved(AstroDate(2017, 6, 28, 8, 30, 0, 0), ANCHOR)
 
 
 def test_half_past_matches_the_additive_direction_not_toward_hour():
@@ -44,8 +46,8 @@ def test_half_past_matches_the_additive_direction_not_toward_hour():
 
 
 def test_half_past_other_hours():
-    assert start("пет и половина") == AstroDate(2017, 6, 28, 5, 30, 0, 0)
-    assert start("десет и половина") == AstroDate(2017, 6, 28, 10, 30, 0, 0)
+    assert start("пет и половина") == moved(AstroDate(2017, 6, 28, 5, 30, 0, 0), ANCHOR)
+    assert start("десет и половина") == moved(AstroDate(2017, 6, 28, 10, 30, 0, 0), ANCHOR)
 
 
 def test_half_period_still_resolves_with_the_shared_half_word():

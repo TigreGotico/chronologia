@@ -26,6 +26,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, parse, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -52,7 +53,7 @@ TOWARD = [
 
 @pytest.mark.parametrize("text,h,mi", TOWARD)
 def test_na_names_the_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", TOWARD)
@@ -66,7 +67,7 @@ def test_the_half_toward_one_is_twelve_thirty():
     """Belarusian reckons the toward-hour clock in twelve hours, so the hour
     that rolls back from one is spoken as twelve, not zero."""
     assert (start("палова на першую").hour,
-            start("палова на першую").minute) == (12, 30)
+            start("палова на першую").minute) == moved((12, 30), ANCHOR)
 
 
 #: The dictionary's connector-less genitive form of the same reading.
@@ -78,7 +79,7 @@ GENITIVE_HALF = [
 
 @pytest.mark.parametrize("text,h,mi", GENITIVE_HALF)
 def test_bare_genitive_half_names_the_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", GENITIVE_HALF)
@@ -103,7 +104,7 @@ SUBTRACTIVE = [
 
 @pytest.mark.parametrize("text,h,mi", SUBTRACTIVE)
 def test_subtractive_names_the_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", SUBTRACTIVE)
@@ -115,23 +116,23 @@ def test_subtractive_never_lands_on_the_stated_hour(text, h, mi):
 
 def test_the_four_worked_dictionary_examples():
     """The exact citations the direction was read off, with their meridiems."""
-    assert (start("палова пятай").hour, start("палова пятай").minute) == (4, 30)
+    assert (start("палова пятай").hour, start("палова пятай").minute) == moved((4, 30), ANCHOR)
     assert (start("палавіна восьмай вечара").hour,
-            start("палавіна восьмай вечара").minute) == (19, 30)
+            start("палавіна восьмай вечара").minute) == moved((19, 30), ANCHOR)
     assert (start("без чвэрці адзінаццаць").hour,
-            start("без чвэрці адзінаццаць").minute) == (10, 45)
+            start("без чвэрці адзінаццаць").minute) == moved((10, 45), ANCHOR)
     assert (start("без дваццаці восем вечара").hour,
-            start("без дваццаці восем вечара").minute) == (19, 40)
+            start("без дваццаці восем вечара").minute) == moved((19, 40), ANCHOR)
 
 
 def test_the_three_worked_column_examples():
     """Вячорка's own numeric examples."""
     assert (start("палова на пятую").hour,
-            start("палова на пятую").minute) == (4, 30)
+            start("палова на пятую").minute) == moved((4, 30), ANCHOR)
     assert (start("без дзесяці першая").hour,
-            start("без дзесяці першая").minute) == (12, 50)
+            start("без дзесяці першая").minute) == moved((12, 50), ANCHOR)
     assert (start("за квадранец восьмая").hour,
-            start("за квадранец восьмая").minute) == (7, 45)
+            start("за квадранец восьмая").minute) == moved((7, 45), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h", [
@@ -142,7 +143,7 @@ def test_the_kali_answer_names_the_hour_itself(text, h):
     """Answering "калі?" with а/аб plus the locative ordinal names that hour
     on the dot -- no toward-hour arithmetic is involved."""
     s = start(text)
-    assert (s.hour, s.minute) == (h, 0)
+    assert (s.hour, s.minute) == moved((h, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h", [
@@ -185,4 +186,4 @@ def test_a_cardinal_hour_count_is_not_a_clock_reading(text):
 @pytest.mark.parametrize("text,h", [("другая гадзіна", 2),
                                     ("дзясятая гадзіна", 10)])
 def test_the_ordinal_hour_noun_is_a_clock_reading(text, h):
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)

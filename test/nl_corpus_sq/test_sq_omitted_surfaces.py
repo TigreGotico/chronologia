@@ -10,6 +10,7 @@ to justify it, and they are the checklist for the pass that adds it.
 import pytest
 
 from ._corpus import ANCHOR, nomatch, parse
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text", [
@@ -78,7 +79,7 @@ def test_the_hour_word_licenses_a_bare_hour():
     """A bare number reads as a clock only when the hour word introduces it,
     which is what keeps a stray numeral after any noun from becoming a time."""
     r = parse("ora tetë")
-    assert r is not None and (r[0].start.hour, r[0].start.minute) == (8, 0)
+    assert r is not None and (r[0].start.hour, r[0].start.minute) == moved((8, 0), ANCHOR)
     nomatch("tetë")
 
 

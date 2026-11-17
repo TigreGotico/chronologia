@@ -13,6 +13,8 @@ from datetime import date, datetime, timedelta
 import pytest
 
 from ._corpus import parse, span
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 def _day(y, m, d):
@@ -48,7 +50,7 @@ def test_v_pul_devate_consumes_the_preposition():
     r = parse("v půl deváté")
     assert r[1] == ""
     # 08:30 has passed at 13:04, so the next one is tomorrow's
-    assert r[0].start == datetime(2017, 6, 28, 8, 30)
+    assert r[0].start == moved(datetime(2017, 6, 28, 8, 30), ANCHOR)
 
 
 @pytest.mark.parametrize("text,day", [

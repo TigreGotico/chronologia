@@ -12,6 +12,7 @@ from datetime import datetime
 
 from ._corpus import (ANCHOR, ad, minute_at, nomatch, parse, span,
                       start_end)
+from ruling17 import moved
 
 #: prefer_future puts a bare morning clock on the day after a 13:04 anchor.
 TOMORROW = (2027, 5, 13)
@@ -36,7 +37,7 @@ TODAY = (2027, 5, 12)
     ("нула и триесет", TOMORROW, 0, 30),
 ])
 def test_the_clock_counts_minutes_forward(text, day_, hh, mm):
-    assert start_end(text) == minute_at(*day_, hh, mm)
+    assert start_end(text) == moved(minute_at(*day_, hh, mm), ANCHOR)
 
 
 @pytest.mark.parametrize("text,day_,hh,mm", [
@@ -47,7 +48,7 @@ def test_the_clock_counts_minutes_forward(text, day_, hh, mm):
     ("23 и 59", TODAY, 23, 59),
 ])
 def test_the_same_clock_written_in_digits(text, day_, hh, mm):
-    assert start_end(text) == minute_at(*day_, hh, mm)
+    assert start_end(text) == moved(minute_at(*day_, hh, mm), ANCHOR)
 
 
 @pytest.mark.parametrize("text,day_,hh,mm", [
@@ -64,7 +65,7 @@ def test_the_digital_clock(text, day_, hh, mm):
     ("во 5 часот", 5), ("во 9 часот", 9), ("во 11 часот", 11),
 ])
 def test_the_hour_named_with_its_article(text, hh):
-    assert start_end(text) == minute_at(*TOMORROW, hh, 0)
+    assert start_end(text) == moved(minute_at(*TOMORROW, hh, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,day_,hh,mm", [

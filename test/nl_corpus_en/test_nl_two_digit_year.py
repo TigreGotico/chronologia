@@ -18,6 +18,7 @@ Anchor 2017-06-27 (Tue, 13:04): the window is 1937..2036.
 from datetime import datetime
 
 import pytest
+from ruling17 import moved
 
 from ._corpus import parse, start, start_end, ANCHOR
 
@@ -126,5 +127,5 @@ def test_apostrophe_not_a_year_false_positive():
     # 3 o'clock TIME (o'clock consumed as the clock marker, never as a spurious
     # '<year>), so the result -- if any -- is an hour-3 clock span, not a year.
     r = parse("at 3 o'clock")
-    assert r is None or (r[0].start.hour == 3
+    assert r is None or (r[0].start.hour == moved(3, ANCHOR)
                          and "clock" not in r[1] and "'" not in r[1])

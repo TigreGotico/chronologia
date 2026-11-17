@@ -16,6 +16,7 @@ import the shared helpers at module scope with no import cycle.
 """
 from __future__ import annotations
 
+import functools
 import os
 import re
 import threading
@@ -4051,6 +4052,68 @@ def _roll_bare_weekday_time(res, rep, anchor):
                                        res.value.basis))
 
 
+_reading = threading.local()
+
+
+def reads_spoken_hours(fn):
+    """Run ``fn`` with the spoken hour kept as spoken.
+
+    A recurrence pin ("daily at 7" is ``BYHOUR=7``) names an hour of the day,
+    not an instant, so no twelve-hour reading is chosen for it.
+    """
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        outer = getattr(_reading, "spoken", False)
+        _reading.spoken = True
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            _reading.spoken = outer
+    return wrapper
+
+
+def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches):
+    """A lone spoken hour takes the next of its two twelve-hour readings.
+
+    An hour 1 to 12 said with no am/pm word and no part of the day is
+    whichever of h and h + 12 comes next at or after the anchor: "at 8" said
+    at 15:00 is 20:00, "at 8" said at 06:00 is 08:00, and "at 12" said at
+    15:00 is the midnight that follows.  Only a clock that is the whole
+    reading is read so, and only when no part of the day or meridiem match
+    resolves anywhere in the utterance, even one the reading leaves over ("at
+    10 o'clock in the morning").  A digit clock and an hour written with the
+    letter "h" are untouched, as are 24-hour hours, whatever fraction follows.
+    """
+    hour = None if rep is None else rep.slots.get("HOUR")
+    if (getattr(_reading, "spoken", False)
+            or anchor is None or hour is None
+            or rep.construction != "clock_time"
+            or set(res.consumed) != set(range(*rep.span))
+            or "ZONE" in rep.slots
+            or not hour.is_number or not 1 <= hour.value <= 12
+            or any(m.construction == "daypart_ref" or "MERIDIEM" in m.slots
+                   for m in matches)
+            or re.search(r"\d\s*[h:]", (hour.raw or "").lower())
+            or (hour.index + 1 < len(tokens)
+                and tokens[hour.index + 1].text == "h")
+            or not spec.construction_flags.get(
+                "clock_time", {}).get("prefer_future", False)):
+        return res
+    start = res.value.start
+    if start.hour > 12:
+        return res
+    midnight = anchor.replace(hour=0, minute=0, second=0, microsecond=0)
+    tod = timedelta(hours=start.hour % 12, minutes=start.minute,
+                    seconds=start.second)
+    wall = min(t for t in (midnight + tod,
+                           midnight + tod + timedelta(hours=12),
+                           midnight + tod + timedelta(days=1))
+               if t >= anchor)
+    moment = AstroDate.from_datetime(wall)
+    return replace(res, value=DateSpan(moment, moment + timedelta(minutes=1),
+                                       res.value.basis))
+
+
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                   text=None, scale_mode="short", whole=False):
     """The single-span resolution over an already-tokenized stream.
@@ -4063,8 +4126,9 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     Factored out so a range endpoint resolves through the *identical* path a
     whole utterance does, from a re-based slice of the same stream.
     ``whole`` marks the whole utterance, where a bare month after "since"
-    names the one that has begun (:func:`_since_month`); a range endpoint
-    follows the range rules instead.
+    names the one that has begun (:func:`_since_month`) and a clock standing
+    alone reads its next twelve-hour hour (:func:`_lone_spoken_hour`); a
+    range endpoint follows the range rules instead.
     """
     resolved = []
     veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
@@ -4118,6 +4182,9 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         # A day-part+clock meridiem contradiction ("morning at 9pm") --
         # _compose declined the whole reading rather than pick a winner.
         return None
+    if whole:
+        res = _lone_spoken_hour(res, rep, anchor, engine.spec, tokens,
+                                [m for m, _ in resolved])
     consumed = set(res.consumed) | label_consumed
     # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
     # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
@@ -4266,6 +4333,8 @@ def extract_candidates(
         win_res, win_label, rep = _compose(composed, engine, tokens,
                                            anchor, text)
         if win_res is not None:
+            win_res = _lone_spoken_hour(win_res, rep, anchor, engine.spec, tokens,
+                                        [m for m, _ in composed])
             consumed_all = set(win_res.consumed) | win_label
             lo, hi = min(consumed_all), max(consumed_all) + 1
             wide = replace(rep, span=(lo, hi))
@@ -4281,9 +4350,12 @@ def extract_candidates(
     composed_res = {id(m): r for m, r in composed}
 
     def _resolve_one(m):
-        if id(m) in composed_res:
-            return composed_res[id(m)]
-        return engine.resolver.resolve(m, anchor, scale_mode)
+        res = composed_res.get(id(m))
+        if res is None:
+            res = engine.resolver.resolve(m, anchor, scale_mode)
+        if res is None:
+            return None
+        return _lone_spoken_hour(res, m, anchor, engine.spec, tokens, matches)
 
     scored = []
     seen = set()

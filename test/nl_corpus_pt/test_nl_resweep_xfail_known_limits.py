@@ -23,13 +23,14 @@ import pytest
 from chronologia.astrodate import AstroDate
 
 from ._corpus import ANCHOR, ad, start, start_end
+from ruling17 import moved
 
 
 def test_additive_twenty_minutes():
     dt = ANCHOR.replace(hour=7, minute=20, second=0, microsecond=0)
     if dt < ANCHOR:
         dt += timedelta(days=1)
-    assert start("às sete e vinte") == ad(dt)
+    assert start("às sete e vinte") == moved(ad(dt), ANCHOR)
 
 
 def test_additive_ten_minutes_with_meridiem():

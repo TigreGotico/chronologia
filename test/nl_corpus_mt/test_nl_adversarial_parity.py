@@ -1,5 +1,6 @@
 """Adversarial Maltese cases plus the shared English semantic-parity block."""
 import pytest
+from ruling17 import moved
 
 from chronologia import extract_timespan
 
@@ -53,7 +54,7 @@ PAIRS = [
     ("25 ta' Diċembru 2020", "25 december 2020"),
     ("1 ta' Jannar 2030", "1 january 2030"),
     ("nofsinhar", "noon"), ("nofsillejl", "midnight"),
-    ("is-sitta u nofs", "06:30"), ("it-tmienja nieqes kwart", "07:45"),
+    ("is-sitta u nofs", "half past six"), ("it-tmienja nieqes kwart", "quarter to eight"),
     ("fis-sebgħa filgħodu", "07:00"),
 ]
 

@@ -8,6 +8,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -26,7 +27,7 @@ def _next_time(h, mi):
     ("hamarrak eta erdi", 10, 30),
 ])
 def test_spoken_clock_past(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [

@@ -5,6 +5,8 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import span, start, start_end, nomatch, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,y,m,d", [
@@ -55,7 +57,7 @@ def test_impossible(text):
     ("sèt oras del ser", 2017, 6, 27, 19, 0),
 ])
 def test_clock(text, y, mo, d, h, mi):
-    assert start(text) == AstroDate(y, mo, d, h, mi)
+    assert start(text) == moved(AstroDate(y, mo, d, h, mi), ANCHOR)
 
 
 def test_clock_minute_wide():

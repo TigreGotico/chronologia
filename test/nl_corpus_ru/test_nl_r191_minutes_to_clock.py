@@ -24,6 +24,7 @@ import pytest
 
 from chronologia import extract_timespan
 from chronologia.astrodate import AstroDate
+from ruling17 import moved
 
 LANG = "ru"
 ANCHOR = datetime(2026, 8, 14, 10, 0)
@@ -49,7 +50,7 @@ def _gold(minute):
     ("без двадцати девять", 40),
 ])
 def test_genitive_minutes_to_bare(text, minute):
-    assert span(text) == _gold(minute)
+    assert span(text) == moved(_gold(minute), ANCHOR)
 
 
 # -- genitive numeral with the explicit noun "минут" -------------------------
@@ -61,7 +62,7 @@ def test_genitive_minutes_to_bare(text, minute):
     ("без двадцати минут девять", 40),
 ])
 def test_genitive_minutes_to_with_word(text, minute):
-    assert span(text) == _gold(minute)
+    assert span(text) == moved(_gold(minute), ANCHOR)
 
 
 # -- digit numeral in the same subtractive frame ------------------------
@@ -73,7 +74,7 @@ def test_genitive_minutes_to_with_word(text, minute):
     ("без 20 девять", 40),
 ])
 def test_digit_minutes_to(text, minute):
-    assert span(text) == _gold(minute)
+    assert span(text) == moved(_gold(minute), ANCHOR)
 
 
 # -- boundary: the "двадцать пять" (25) compound genitive does not compose --
@@ -90,17 +91,17 @@ def test_compound_25_genitive_not_supported():
 # -- controls that must not regress -----------------------------------------
 
 def test_control_bez_chetverti_devyat():
-    assert span("без четверти девять") == _gold(45)
+    assert span("без четверти девять") == moved(_gold(45), ANCHOR)
 
 
 def test_control_spoken_clock_v_chasov():
-    assert span("в 9 часов") == (
-        AstroDate(2026, 8, 15, 9, 0), AstroDate(2026, 8, 15, 9, 1))
+    assert span("в 9 часов") == moved((
+        AstroDate(2026, 8, 15, 9, 0), AstroDate(2026, 8, 15, 9, 1)), ANCHOR)
 
 
 def test_control_poldevyatogo_contraction():
-    assert span("полдевятого") == (
-        AstroDate(2026, 8, 15, 8, 30), AstroDate(2026, 8, 15, 8, 31))
+    assert span("полдевятого") == moved((
+        AstroDate(2026, 8, 15, 8, 30), AstroDate(2026, 8, 15, 8, 31)), ANCHOR)
 
 
 def test_control_offset_genitive_two_days_ago():

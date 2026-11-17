@@ -12,6 +12,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, nomatch
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -28,7 +29,7 @@ def _next_time(h, mi):
     ("fél tíz", 9, 30),
 ])
 def test_half_toward_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h", [
@@ -37,7 +38,7 @@ def test_half_toward_coming_hour(text, h, mi):
     ("nyolc óra", 8),
 ])
 def test_whole_hour(text, h):
-    assert start(text) == _next_time(h, 0)
+    assert start(text) == moved(_next_time(h, 0), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -66,7 +67,7 @@ def test_landmarks(text, h, mi):
     ("negyed nyolc", 7, 15),
 ])
 def test_quarter_toward_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

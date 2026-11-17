@@ -11,6 +11,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start_end
+from ruling17 import moved
 
 CARDINALS = {
     1: "üks", 2: "kaks", 3: "kolm", 4: "neli", 5: "viis", 6: "kuus",
@@ -30,5 +31,5 @@ def _next_hour(h):
 def test_kell_whole_hour(h, word):
     s, e = start_end(f"kell {word}")
     base = _next_hour(h)
-    assert s == ad(base)
-    assert e == ad(base + timedelta(minutes=1))
+    assert s == moved(ad(base), ANCHOR)
+    assert e == moved(ad(base + timedelta(minutes=1)), ANCHOR)
