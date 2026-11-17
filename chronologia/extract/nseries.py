@@ -35,7 +35,9 @@ from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _RANGE_TO, _conn_surfaces,
                                           _exclusion_vetoes, _extract_range,
                                           _resolve_scale_mode,
-                                          _timespan_engine,
+                                          _extract_directional_range,
+                                          _since_marker_before,
+                                          _since_month, _timespan_engine,
                                           _WEEKDAY_LABELABLE_DATES,
                                           extract_timespan)
 from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
@@ -277,6 +279,14 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         if s not in year_plural
         and (spec.singular_units or s not in spec.plural_units)}
 
+    def _words(*names):
+        return {word for name in names
+                for surface in spec.connectors.get(name, ())
+                for word in surface.split()}
+
+    words_before_count = set(spec.directions) | _words("in", "offset_lead")
+    words_after_count = words_before_count | _words("after", "before")
+
     def _written_year(kind, tok, unit_tok):
         # a number written in digits by a year word names that year, not a
         # count of years: four digits by any year form ("в 1980 году",
@@ -292,8 +302,37 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             else text[tok.char_start:tok.char_end]
         if not written.isdigit():
             return False
-        return len(written) == 4 or (len(written) == 3 and bool(year_plural)
-                                     and unit_tok.text in year_forms)
+        if len(written) == 4:
+            return True
+        return (len(written) == 3 and bool(year_plural)
+                and unit_tok.text in year_forms
+                and not (unit_tok.text in _count_forms(written)
+                         and _by_an_offset_word(tok, unit_tok)))
+
+    def _by_an_offset_word(tok, unit_tok):
+        # "года" is also the genitive of the year in a date ("летом 862
+        # года", the summer of 862), so the count forms count only next to
+        # an ago or in word, or after the unit an after or before word:
+        # "101 год назад", "через 102 года", "за 102 года до нашей эры".
+        # Before the number "после" and "до" take the genitive of a year
+        # ("после 862 года"); a count there is "после 862 лет"
+        lo, hi = sorted((tok.index, unit_tok.index))
+        before = tokens[lo - 1].text if lo > 0 else None
+        after = tokens[hi + 1].text if hi + 1 < n else None
+        return before in words_before_count or after in words_after_count
+
+    def _count_forms(written):
+        # East Slavic counts agree with the last word of the number: one
+        # takes the singular ("101 год", "101 рік"), two to four in ru the
+        # genitive singular ("102 года"); the teens take the plural
+        last, tens = int(written[-1]), int(written[-2])
+        if tens == 1:
+            return frozenset()
+        if last == 1:
+            return spec.connectors.get("year_count_one", frozenset())
+        if 2 <= last <= 4:
+            return spec.connectors.get("year_count_few", frozenset())
+        return frozenset()
 
     def _weekday_by_a_clock(unit_at, count_at):
         # ro "luni" is "months" and "Monday".  After a clock hour ("la ora 9
@@ -657,7 +696,9 @@ def extract_timespans(
     for ci, cluster in enumerate(clusters):
         if len(cluster) == 1:
             match, res = cluster[0]
-            out.append((match.span, res.value, confidence_of[id(match)]))
+            span = _since_month(match, res.value, tokens, engine, anchor,
+                                scale_mode)
+            out.append((match.span, span, confidence_of[id(match)]))
             continue
         lo_tok = min(m.span[0] for m, _ in cluster)
         hi_tok = max(m.span[1] for m, _ in cluster)
@@ -822,7 +863,20 @@ def _merge_ranges(out, tokens, text, engine, anchor):
             boundary = (a_hi > 0 and b_lo < len(tokens)
                         and _sentence_period_between(tokens, a_hi - 1, b_lo, text))
             if cs is not None and ce is not None and not boundary:
-                got = _extract_range(text, _slice(cs, ce), engine, anchor)
+                # after "since" the range has begun, as the whole text reads
+                # it: "since january until march" said in June is this year's
+                since_lo = _since_marker_before(a_lo, tokens, spec)
+                since_cs = None if since_lo is None \
+                    else tokens[since_lo].char_start
+                got = _extract_range(
+                    text, _slice(cs if since_cs is None else since_cs, ce),
+                    engine, anchor)
+                if got is not None and since_cs is not None:
+                    part = text[since_cs:ce]
+                    back = _extract_directional_range(
+                        part, engine.tokenize(part), engine, anchor)
+                    if back is not None and not back[1]:
+                        got = back
                 if got is not None:
                     merged.append(((lead_lo, b_hi), got[0],
                                    min(a_conf, b_conf)))

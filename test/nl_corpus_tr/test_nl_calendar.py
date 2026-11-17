@@ -47,7 +47,7 @@ def test_bare_month_year(text, y, m):
 @pytest.mark.parametrize("text,m", [
     ("haziran", 6), ("ocak", 1), ("aralık", 12), ("mart", 3), ("eylül", 9)])
 def test_bare_month(text, m):
-    assert start(text) == AstroDate(2026, m, 1)
+    assert start(text) == AstroDate(ANCHOR.year + (m < ANCHOR.month), m, 1)
 
 
 @pytest.mark.parametrize("y", [1999, 2020, 1969, 1923])

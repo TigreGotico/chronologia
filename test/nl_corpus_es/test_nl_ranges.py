@@ -12,7 +12,7 @@ from ._corpus import AstroDate, start_end, nomatch, parse
 
 @pytest.mark.parametrize("text,s,e", [
     ("junio - agosto", (2017, 6, 1), (2017, 9, 1)),
-    ("enero - marzo", (2017, 1, 1), (2017, 4, 1)),
+    ("enero - marzo", (2018, 1, 1), (2018, 4, 1)),
     ("5 de junio - 12 de junio", (2018, 6, 5), (2018, 6, 13)),
 ])
 def test_dash_range(text, s, e):

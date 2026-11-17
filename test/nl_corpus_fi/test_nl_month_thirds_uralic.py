@@ -52,6 +52,7 @@ def test_month_thirds_no_strand(text, part):
 
 
 def test_plain_month_regression():
-    """Plain "maaliskuu" (no third-marker) stays the WHOLE month."""
+    """Plain "maaliskuu" (no third-marker) stays the WHOLE month.  March has ended
+    at the anchor, so the bare month is next year's."""
     s = span("maaliskuu", A)
-    assert (s.start, s.end) == MAR
+    assert (s.start, s.end) == (AstroDate(2018, 3, 1), AstroDate(2018, 4, 1))
