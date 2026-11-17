@@ -73,7 +73,7 @@ def _at(text, want):
     assert r is not None, "%r did not parse" % text
     s = r[0].start
     assert (s.year, s.month, s.day, s.hour, s.minute) == moved(want, ANCHOR)
-    assert r[1] == moved("", ANCHOR), "%r stranded %r" % (text, r[1])
+    assert r[1] == "", "%r stranded %r" % (text, r[1])
 
 
 @pytest.mark.parametrize("text,want,source", _CLOCKS)

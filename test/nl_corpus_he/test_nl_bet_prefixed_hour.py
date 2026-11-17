@@ -39,7 +39,7 @@ def test_the_masculine_form_is_still_the_weekday():
     nomatch("בשני")
 
 
-def test_the_separate_hour_noun_is_unchanged():
+def test_the_separate_hour_noun_is_reads():
     assert start("בשעה שלוש וחצי") == moved(AstroDate(2017, 6, 28, 3, 30), ANCHOR)
 
 

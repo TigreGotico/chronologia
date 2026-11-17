@@ -36,7 +36,7 @@ def test_hour_leads_the_minute(text, hour, minute):
     ("nouă și un sfert", 9, 15),
     ("nouă și jumătate", 9, 30),
 ])
-def test_fraction_forms_are_unchanged(text, hour, minute):
+def test_fraction_forms_are_reads(text, hour, minute):
     assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)
 
 

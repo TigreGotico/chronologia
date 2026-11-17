@@ -48,7 +48,7 @@ def test_clock_consumes_its_at_preposition(text, remainder):
 
 def test_v_pul_devate_consumes_the_preposition():
     r = parse("v půl deváté")
-    assert r[1] == moved("", ANCHOR)
+    assert r[1] == ""
     # 08:30 has passed at 13:04, so the next one is tomorrow's
     assert r[0].start == moved(datetime(2017, 6, 28, 8, 30), ANCHOR)
 

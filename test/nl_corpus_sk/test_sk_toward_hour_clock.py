@@ -37,7 +37,7 @@ def _next_time(h, mi):
 def _clean(text):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
-    assert r[1] == moved("", ANCHOR), f"{text!r} stranded {r[1]!r}"
+    assert r[1] == "", f"{text!r} stranded {r[1]!r}"
     return r[0].start
 
 
@@ -63,7 +63,7 @@ def test_half_names_the_coming_hour_not_the_past_one():
     # values are literals, never read back from the parser.
     got = _clean("pol deviatej")
     assert got == moved(_next_time(8, 30), ANCHOR)
-    assert got != _next_time(9, 30)
+    assert got != moved(_next_time(9, 30), ANCHOR)
     assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=30)
     assert _clean("o deviatej") == moved(_next_time(9, 0), ANCHOR)
 
@@ -71,15 +71,15 @@ def test_half_names_the_coming_hour_not_the_past_one():
 def test_quarter_onto_the_hour_is_forty_five_minutes_before_it():
     got = _clean("štvrť na deväť")
     assert got == moved(_next_time(8, 15), ANCHOR)
-    assert got != _next_time(9, 15)     # past-the-named-hour reading
-    assert got != _next_time(8, 45)     # subtractive "quarter to" reading
+    assert got != moved(_next_time(9, 15), ANCHOR)     # past-the-named-hour reading
+    assert got != moved(_next_time(8, 45), ANCHOR)     # subtractive "quarter to" reading
     assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=45)
 
 
 def test_three_quarters_onto_the_hour_is_fifteen_minutes_before_it():
     got = _clean("trištvrte na deväť")
     assert got == moved(_next_time(8, 45), ANCHOR)
-    assert got != _next_time(9, 45)
+    assert got != moved(_next_time(9, 45), ANCHOR)
     assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=15)
 
 
@@ -108,7 +108,7 @@ def test_daypart_form_is_not_the_bare_hour_with_a_stranded_fraction():
     assert r is not None
     assert r[1] == ""
     assert r[0].start == _next_time(8, 30)
-    assert r[0].start != _next_time(9, 0)
+    assert r[0].start != moved(_next_time(9, 0), ANCHOR)
 
 
 def test_weekday_plus_toward_hour_keeps_both():

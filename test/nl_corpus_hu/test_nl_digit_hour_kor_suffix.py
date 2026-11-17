@@ -55,7 +55,7 @@ def test_digit_hour_with_kor_consumes_the_phrase(text, expected):
 
 
 @pytest.mark.parametrize("text,expected", FRACTION_CONTROLS + SPELLED_CONTROLS)
-def test_the_neighbouring_readings_are_unchanged(text, expected):
+def test_the_neighbouring_readings_are_reads(text, expected):
     assert str(start(text)) == moved(expected, ANCHOR)
 
 

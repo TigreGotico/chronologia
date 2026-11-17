@@ -31,7 +31,7 @@ def test_the_fraction_reads_through_a_meridiem():
     assert parse("בשעה שבע וחצי בבוקר").remainder == ""
 
 
-def test_the_bare_hour_is_unchanged():
+def test_the_bare_hour_is_reads():
     assert start("בשעה שלוש") == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR)
 
 

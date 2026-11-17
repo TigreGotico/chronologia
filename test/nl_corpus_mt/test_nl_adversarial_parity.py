@@ -54,7 +54,7 @@ PAIRS = [
     ("25 ta' Diċembru 2020", "25 december 2020"),
     ("1 ta' Jannar 2030", "1 january 2030"),
     ("nofsinhar", "noon"), ("nofsillejl", "midnight"),
-    ("is-sitta u nofs", "06:30"), ("it-tmienja nieqes kwart", "07:45"),
+    ("is-sitta u nofs", "half past six"), ("it-tmienja nieqes kwart", "quarter to eight"),
     ("fis-sebgħa filgħodu", "07:00"),
 ]
 
@@ -65,4 +65,4 @@ def test_span_parity(mt_text, en_text):
     en = extract_timespan(en_text, "en", ANCHOR)
     assert mt is not None, f"mt {mt_text!r} did not parse"
     assert en is not None, f"en {en_text!r} did not parse"
-    assert mt[0].start == moved(en[0].start, ANCHOR) and mt[0].end == moved(en[0].end, ANCHOR), (mt_text, en_text)
+    assert mt[0].start == en[0].start and mt[0].end == en[0].end, (mt_text, en_text)

@@ -28,7 +28,7 @@ def _at(text, want):
     assert (s.year, s.month, s.day, s.hour, s.minute) == moved(want, ANCHOR), \
         "%r read %s, expected %s" % (text, (s.year, s.month, s.day, s.hour,
                                             s.minute), want)
-    assert r[1] == moved("", ANCHOR), "%r stranded %r" % (text, r[1])
+    assert r[1] == "", "%r stranded %r" % (text, r[1])
 
 
 # The subtractive connective is spelled "ɣir": standard INALCO Kabyle

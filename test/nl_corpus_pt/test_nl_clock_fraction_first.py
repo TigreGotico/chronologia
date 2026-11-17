@@ -51,6 +51,6 @@ def test_fraction_first_not_a_range():
     assert start("um quarto para as quatro") == moved(clk(3, 45), ANCHOR)
 
 
-def test_hour_first_minus_unchanged():
+def test_hour_first_minus_reads():
     # control: the pre-existing hour-first subtractive form must not regress.
     assert start("duas menos um quarto") == moved(clk(1, 45), ANCHOR)

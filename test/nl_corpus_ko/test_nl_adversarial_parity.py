@@ -69,8 +69,8 @@ PAIRS = [
     ("09:30", "09:30"), ("00:00", "00:00"), ("21:50", "21:50"),
     ("14:05", "14:05"),
     ("오후 3시 30분", "3:30 pm"),
-    ("세 시 십 분", "3:10 am"),
-    ("두 시 반", "2:30 am"),
+    ("세 시 십 분", "ten past three"),
+    ("두 시 반", "half past two"),
     ("2027년 6월 5일", "5 june 2027"),
     ("2020년 12월 25일", "25 december 2020"),
     ("2030년 1월 1일", "1 january 2030"),
@@ -86,5 +86,5 @@ def test_span_parity(ko_text, en_text):
     en = extract_timespan(en_text, "en", ANCHOR)
     assert ko is not None, f"ko {ko_text!r} did not parse"
     assert en is not None, f"en {en_text!r} did not parse"
-    assert ko[0].start == moved(en[0].start, ANCHOR) and ko[0].end == moved(en[0].end, ANCHOR), (ko_text,
+    assert ko[0].start == en[0].start and ko[0].end == en[0].end, (ko_text,
                                                                    en_text)

@@ -34,7 +34,7 @@ def _next_time(h, mi):
 def _clean(text):
     r = parse(text)
     assert r is not None, f"{text!r} did not parse"
-    assert r[1] == moved("", ANCHOR), f"{text!r} stranded {r[1]!r}"
+    assert r[1] == "", f"{text!r} stranded {r[1]!r}"
     return r[0].start
 
 
@@ -74,15 +74,15 @@ def test_toward_hour_quarter_is_before_the_named_hour_not_after():
     # are literals here, never read back from the parser.
     got = _clean("čtvrt na devět")
     assert got == moved(_next_time(8, 15), ANCHOR)
-    assert got != _next_time(8, 45)
-    assert got != _next_time(9, 15)
+    assert got != moved(_next_time(8, 45), ANCHOR)
+    assert got != moved(_next_time(9, 15), ANCHOR)
     assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=45)
 
 
 def test_toward_hour_three_quarters_is_fifteen_minutes_before_the_hour():
     got = _clean("třičtvrtě na devět")
     assert got == moved(_next_time(8, 45), ANCHOR)
-    assert got != _next_time(9, 45)
+    assert got != moved(_next_time(9, 45), ANCHOR)
     assert moved(_next_time(9, 0), ANCHOR) - got == timedelta(minutes=15)
 
 

@@ -43,5 +43,5 @@ def test_a_half_length_counts_from_the_anchor(text, expected):
 
 
 @pytest.mark.parametrize("text,expected", WHOLE_LENGTHS + CLOCK_FRACTION)
-def test_the_neighbouring_readings_are_unchanged(text, expected):
+def test_the_neighbouring_readings_are_reads(text, expected):
     assert str(start(text)) == moved(expected, ANCHOR)

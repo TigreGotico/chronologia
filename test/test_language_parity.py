@@ -222,8 +222,8 @@ def test_parity_pair_resolves_to_same_span(lang, a, b, anchor):
     b_lang = _span(b, lang, anchor)
     a_en = _span(a, REFERENCE_LANG, anchor)
 
-    forward = a_lang is not None and a_lang == moved(b_en, anchor)
-    reverse = b_lang is not None and b_lang == moved(a_en, anchor)
+    forward = a_lang is not None and a_lang == b_en
+    reverse = b_lang is not None and b_lang == a_en
     assert forward or reverse, (
         f"parity broken for nl_corpus_{lang}: {a!r} / {b!r} do not resolve "
         f"to the same span.\n"

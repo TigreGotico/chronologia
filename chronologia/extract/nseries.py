@@ -31,6 +31,7 @@ from chronologia.astrodate import DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
+                                          _lone_spoken_hour,
                                           reads_spoken_hours,
                                           _RANGE_TO, _conn_surfaces,
                                           _exclusion_vetoes, _extract_range,
@@ -696,6 +697,8 @@ def extract_timespans(
     for ci, cluster in enumerate(clusters):
         if len(cluster) == 1:
             match, res = cluster[0]
+            res = _lone_spoken_hour(res, match, anchor, engine.spec, tokens,
+                                    [m for m, _ in resolved])
             span = _since_month(match, res.value, tokens, engine, anchor,
                                 scale_mode)
             out.append((match.span, span, confidence_of[id(match)]))

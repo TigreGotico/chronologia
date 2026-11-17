@@ -88,7 +88,7 @@ def test_dunen_saat_composition_unchanged():
     assert s == AstroDate(d.year, d.month, d.day, 9, 0)
 
 
-def test_bare_saat_clock_unchanged():
+def test_bare_saat_clock_reads():
     # "saat 9" alone (no day offset) still resolves as the next occurrence
     # of 9:00 -- untouched by this fix (no relative_offset match at all).
     s = start("saat 9")

@@ -49,7 +49,7 @@ def test_hour_minus_minutes(text, h, mi):
     assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
-def test_bare_hour_unchanged():
+def test_bare_hour_reads():
     # adversarial: the bare hour must not absorb a phantom offset.
     assert start("las cuatro") == moved(clk(4, 0), ANCHOR)
 

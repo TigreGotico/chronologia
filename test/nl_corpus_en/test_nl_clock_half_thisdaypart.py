@@ -86,7 +86,7 @@ _UNCHANGED = [
 
 
 @pytest.mark.parametrize("text,y,mo,d,hh,mm", _UNCHANGED)
-def test_neighbouring_clock_forms_unchanged(text, y, mo, d, hh, mm):
+def test_neighbouring_clock_forms_reads(text, y, mo, d, hh, mm):
     s = span(text).start
     assert (s.year, s.month, s.day, s.hour, s.minute) == moved((y, mo, d, hh, mm), ANCHOR)
 

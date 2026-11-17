@@ -36,7 +36,7 @@ def test_control_bare_numeric_date_unchanged():
     assert e == s + timedelta(days=1)
 
 
-def test_control_kell_alone_unchanged():
+def test_control_kell_alone_reads():
     cand = ANCHOR.replace(hour=9, minute=0, second=0, microsecond=0)
     if cand <= ANCHOR:
         cand += timedelta(days=1)
@@ -61,7 +61,7 @@ def test_control_kell_with_weekday_unchanged():
     ("pool viis", 4, 30),
     ("kolmveerand üheksa", 8, 45),
 ])
-def test_control_counting_clock_forms_unchanged(text, h, mi):
+def test_control_counting_clock_forms_reads(text, h, mi):
     cand = ANCHOR.replace(hour=h, minute=mi, second=0, microsecond=0)
     if cand <= ANCHOR:
         cand += timedelta(days=1)

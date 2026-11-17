@@ -114,7 +114,7 @@ def test_campanar_with_meridiem():
     ("les nou i mitja", 9, 30),
     ("les deu menys quart", 9, 45),
 ])
-def test_rellotge_unchanged(text, h, mi):
+def test_rellotge_reads(text, h, mi):
     assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
@@ -132,14 +132,14 @@ def test_both_systems_coexist_at_the_same_instant():
 
 def test_campanar_is_not_read_additively():
     """The trap: additive logic would make "un quart de deu" 10:15."""
-    assert start("un quart de deu") != clk(10, 15)
-    assert start("dos quarts de deu") != clk(10, 30)
-    assert start("tres quarts de deu") != clk(10, 45)
+    assert start("un quart de deu") != moved(clk(10, 15), ANCHOR)
+    assert start("dos quarts de deu") != moved(clk(10, 30), ANCHOR)
+    assert start("tres quarts de deu") != moved(clk(10, 45), ANCHOR)
 
 
 def test_rellotge_hour_is_the_stated_hour():
     """Conversely, the rellotge hour is *not* shifted back a step."""
-    assert start("les nou i quart") != clk(8, 15)
+    assert start("les nou i quart") != moved(clk(8, 15), ANCHOR)
 
 
 # -- out-of-range quantities refuse rather than guess -----------------------
