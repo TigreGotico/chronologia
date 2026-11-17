@@ -506,6 +506,12 @@ class LangSpec:
     #: closed-class filler (copulas/pronouns) the exclusion idiom skips over when
     #: deciding whether a trigger is adjacent ("unless it is Tuesday").
     exclusion_filler: FrozenSet[str] = field(default_factory=frozenset)
+    # the clock prepositions that also introduce a counted group ("at", "a",
+    # "om"), and the nouns that count people or things a clock never takes
+    # ("people", "vecinas", "mensen"); read by the counted-hour test only, so
+    # neither joins the connectors
+    at_counts: FrozenSet[str] = field(default_factory=frozenset)
+    counted_noun: FrozenSet[str] = field(default_factory=frozenset)
     # holiday_ref surface -> well-known holiday key ("christmas", "easter");
     # derived at load time from the holidays engine's i18n tables (native
     # names + translations + curated spoken aliases), never hand-listed here
@@ -547,6 +553,10 @@ class Match:
     slots: Mapping[str, Token]
     # which registered calendar a CAL_MONTH slot resolved to, if any
     calendar: Optional[str] = None
+    # a bare-hour clock read from a number that more likely counts the word
+    # after it ("a las 5 personas", "look at 5 houses"); see
+    # ``ConstructionMatcher._flag_counted_hours``
+    doubt: bool = False
 
     @property
     def length(self) -> int:
