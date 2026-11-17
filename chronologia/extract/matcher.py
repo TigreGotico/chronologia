@@ -13,7 +13,7 @@ Selected matches never overlap.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Dict, List, Optional, Tuple
 
 from chronologia.extract import tokenizer
@@ -58,6 +58,14 @@ GYEAR_MIN, GYEAR_MAX = 1000, 99999
 class MatchCandidate:
     match: Match
     precedence: int
+
+
+def _is_bare_hour(match: Match) -> bool:
+    """A clock that is a marker and an hour only: "at 5", "a las 3"."""
+    hour = match.slots.get("HOUR")
+    return (match.construction == "clock_time" and hour is not None
+            and set(match.slots) == {"HOUR"}
+            and match.span[0] < hour.index == match.span[1] - 1)
 
 
 def _is_era_marker(token: Token, spec: LangSpec) -> bool:
@@ -1075,7 +1083,40 @@ class ConstructionMatcher:
                     out.append(MatchCandidate(
                         Match(name, (start, end), slots, calendar=cal),
                         precedence))
-        return out
+        return self._flag_counted_hours(tokens, out)
+
+    def _flag_counted_hours(self, tokens: Tuple[Token, ...],
+                            cands: List[MatchCandidate]) -> List[MatchCandidate]:
+        """Mark each bare-hour clock whose number counts the next noun.
+
+        In some languages the preposition of a clock also introduces a counted
+        group: "wave at 5 people", "a las 3 vecinas" (to the three
+        neighbours), "om 3 mensen" (about three people).  The locale lists
+        those prepositions in ``marker_at_counts.voc`` and the nouns that count
+        people or things in ``marker_counted_noun.voc``.  A bare hour behind
+        one of the prepositions and directly before one of the nouns is
+        doubtful, unless a comma or a sentence period ends the hour.  Any
+        other word after the hour, a verb included, leaves the
+        clock as it is.  A doubtful clock stays a candidate, marked ``doubt``;
+        :meth:`match` leaves it out of the parse winners.
+        """
+        prepositions, nouns = self.spec.at_counts, self.spec.counted_noun
+        if not (prepositions and nouns):
+            return cands
+        flagged: List[MatchCandidate] = []
+        for cand in cands:
+            match = cand.match
+            start, end = match.span
+            if (_is_bare_hour(match) and end < len(tokens)
+                    and not tokens[end].break_before
+                    and not tokens[end - 1].raw.endswith(".")
+                    and tokens[end].text in nouns
+                    and any(t.text in prepositions for t in
+                            tokens[max(0, start - 1):match.slots["HOUR"].index])):
+                cand = MatchCandidate(replace(match, doubt=True),
+                                      cand.precedence)
+            flagged.append(cand)
+        return flagged
 
     def _subject_opens(self, tokens: Tuple[Token, ...], marker: int) -> bool:
         """Whether the words before ``tokens[marker]`` are its subject alone
@@ -1172,7 +1213,7 @@ class ConstructionMatcher:
         winner the caller means to decline (e.g. a bare-"be" era reading that
         must yield to the plain year when it is not clause-final).
         """
-        cands = self._candidates(tokens)
+        cands = [c for c in self._candidates(tokens) if not c.match.doubt]
         if veto is not None:
             cands = [c for c in cands if not veto(c.match)]
         return tuple(c.match for c in self._select(cands))

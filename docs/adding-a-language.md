@@ -337,6 +337,24 @@ your language always says the direction word out loud — leave them all off (th
 default). The plain-language question to ask yourself is: *"In my language, does
 'half nine' mean 8:30 or 9:30?"* — and set the flag accordingly.
 
+### When the clock preposition also counts ("a las 3 vecinas")
+
+In some languages the word before a clock hour also introduces a counted group:
+English "wave at 5 people", Spanish "a las 3 vecinas" (to the three neighbours),
+Dutch "om 3 mensen" (about three people). Two optional files let chronologia
+tell the two apart. Leave them out if your language has no such clash.
+
+| File | Put in it |
+|---|---|
+| `marker_at_counts.voc` | the clock prepositions that also introduce a counted group ("at", "a", "om") |
+| `marker_counted_noun.voc` | nouns that count people or things a clock never takes ("people", "vecinas", "mensen"), singular and plural, each gender |
+
+A bare hour behind one of those prepositions and directly before one of those
+nouns is read as a count. Any other word after the hour, a verb included, leaves
+the clock as it is ("a las 8 llegamos" is 08:00). Cite a dictionary entry that
+shows the class of each noun in the file header, and keep the fetched page with
+your audit.
+
 ### Counting quarters toward the hour ("dos quarts de deu")
 
 Some languages don't just shift the hour — they *count* how many quarters of the
