@@ -122,6 +122,53 @@ def test_a_length_the_whole_text_reads_as_a_time_keeps_the_rest_date(
     assert date_word not in ev.summary.split()
 
 
+@pytest.mark.parametrize("lang, text, part, hours", [
+    # A count of hours before a part of the day is a length in that part:
+    # "de manhã" is "Entre o amanhecer e o meio-dia" (Priberam, "manhã").
+    ("pt", "trabalhei duas horas de manhã", "de manhã", 2),
+    ("pt", "aula de duas horas de manhã", "de manhã", 2),
+    ("pt", "reunião de três horas de manhã amanhã", "de manhã amanhã", 3),
+    ("pt", "reunião de duas horas de manhã amanhã", "de manhã amanhã", 2),
+    ("pt", "reunião de duas horas de tarde amanhã", "de tarde amanhã", 2),
+    ("fr", "réunion de deux heures le matin demain", "le matin demain", 2),
+])
+def test_a_count_of_hours_before_a_part_of_the_day_is_a_length(
+        lang, text, part, hours):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    start = extract_timespan(part, lang, anchor=ANCHOR).span.start
+    assert (ev.span.start, ev.duration) == (start, timedelta(hours=hours))
+
+
+@pytest.mark.parametrize("lang, text", [
+    # A clock preposition or the clock suffix makes the hour a clock time.
+    ("pt", "às duas horas da manhã"),
+    ("pt", "duas horas da manhã"),
+    ("pt", "às duas horas de manhã"),
+    ("fr", "à deux heures du matin"),
+    ("fr", "deux heures du matin"),
+    ("fr", "à deux heures le matin"),
+])
+def test_an_hour_with_a_clock_preposition_or_suffix_stays_a_clock(lang, text):
+    got = extract_timespan(text, lang, anchor=ANCHOR)
+    # 02:00 is past on 30 January at 10:00, so the next one is the 31st
+    assert (got.span.start, got.remainder) == (datetime(2026, 1, 31, 2), "")
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    # The span reading names a date of its own, so the unit inside it is no
+    # length.  Friday 30 January 2026: the day after next is 1 February, last
+    # week starts on Monday 19 January, a week from now is Friday 6 February.
+    ("en", "the day after next 3 pm", datetime(2026, 2, 1)),
+    ("en", "the day after next may be rainy", datetime(2026, 2, 1)),
+    ("fr", "la semaine dernière de lundi à vendredi", datetime(2026, 1, 19)),
+    ("pt", "daqui a uma semana a sexta-feira", datetime(2026, 2, 6)),
+    ("pt", "daqui a uma semana na próxima sexta-feira", datetime(2026, 2, 6)),
+])
+def test_a_unit_inside_a_date_of_its_own_is_no_length(lang, text, day):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    assert (ev.span.start.date(), ev.duration) == (day.date(), None)
+
+
 @pytest.mark.parametrize("jurisdiction, day", [
     # Christmas 2026 is a Friday.  GB moves Boxing Day (Saturday) to Monday
     # 28 December, so its second business day is the 30th; US works the 28th.

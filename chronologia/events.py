@@ -146,15 +146,18 @@ def _is_bare_clock_length(text: str, lang: str, anchor: datetime,
     """True when the length words alone read as a clock time and no offset
     marker joins them to the date.
 
-    A marker joins two readings, so only a token that lies between two
-    winners and that no winner takes counts: "avant" in "deux heures avant
-    midi".  A marker inside a reading is part of it: "après-demain" is one
-    day word, and "en mars" one month.
+    A before or after word joins two readings, so only a token that lies
+    between two winners and that no winner takes counts: "avant" in "deux
+    heures avant midi".  A marker inside a reading is part of it:
+    "après-demain" is one day word, and "en mars" one month.  An "in" or
+    "ago" word stands before or after its own count, never between the
+    length and a date: nl "twee uur in de ochtend" is two hours in the
+    morning.
     """
     from chronologia.extract import explain, load_lang_spec
 
     spec = load_lang_spec(lang)
-    markers = {word.lower() for name in ("before", "after", "in", "ago")
+    markers = {word.lower() for name in ("before", "after")
                for surface in spec.connectors.get(name, ())
                for word in surface.split()}
     trace = explain(text, spec, anchor)
@@ -193,7 +196,7 @@ def extract_event(
     """
     from chronologia.extract import (_timespan_engine, extract_candidates,
                                      extract_duration, extract_recurrence,
-                                     extract_timespan)
+                                     extract_timespan, load_lang_spec)
     from chronologia.extract.nseries import _duration_core
     from chronologia.extract.pipeline import require_text
 
@@ -223,7 +226,10 @@ def extract_event(
         # words to the date that remains.  es "reunión de dos horas en
         # marzo" keeps it as well: the span reading takes "dos horas en" as
         # "in two hours" and leaves "marzo", a word the reading of the rest
-        # takes, so the whole-text reading lost the date.
+        # takes, so the whole-text reading lost the date.  That check holds
+        # only when the span reading is the length with its offset words, an
+        # offset from now: "the day after next 3 pm" reads a date of its own,
+        # so its "day" is no length even though "3 pm" is left over.
         try:
             whole = extract_timespan(remainder, lang, anchor=anchor,
                                      jurisdiction=jurisdiction)
@@ -242,7 +248,15 @@ def extract_event(
             span_words = all_words - words(whole.remainder)
             rest_words = Counter() if rest is None else (
                 words(got_dur.remainder) - words(rest.remainder))
-            if not length_words - span_words and not rest_words - span_words \
+            spec = load_lang_spec(lang)
+            offset_words = Counter({
+                word: len(all_words)
+                for name in ("before", "after", "in", "ago")
+                for surface in spec.connectors.get(name, ())
+                for word in words(surface)})
+            bare_offset = not span_words - length_words - offset_words
+            if not length_words - span_words \
+                    and not (bare_offset and rest_words - span_words) \
                     and (rest is None or rest.span.start != whole.span.start) \
                     and not (rest is not None and _is_bare_clock_length(
                         remainder, lang, anchor, length_words)):
