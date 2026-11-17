@@ -475,6 +475,25 @@ def _counted_refused_unit_before(tokens: Tuple[Token, ...], start: int,
             and tokens[k - 1].text in ambiguous)
 
 
+def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
+                            spec: LangSpec) -> bool:
+    """Is the plural day-part word at ``index`` counted, not a part of the day?
+
+    "three nights", "two mornings ago" and "for 3 nights" count days; they
+    name no band.  A plural listed in ``daypart_plural`` is a count when a
+    number stands directly before it or a ``daypart_plural_after`` word
+    ("ago", "from now") follows it.  Spelled numbers are already digit
+    tokens here.  A locale with no such vocabulary is untouched.
+    """
+    if tokens[index].text not in spec.connectors.get("daypart_plural",
+                                                     frozenset()):
+        return False
+    if index > 0 and tokens[index - 1].is_number:
+        return True
+    return _connector_span("daypart_plural_after", tokens, index + 1,
+                           spec) > 0
+
+
 def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
                     spec: LangSpec) -> int:
     """Longest run of tokens from ``ti`` matching a connector surface.
@@ -953,6 +972,9 @@ class ConstructionMatcher:
                             and "REL_MARKER" not in slots
                             and _counted_refused_unit_before(
                                 tokens, start, self.spec)):
+                        continue
+                    if ("DAYPART" in slots and _counted_plural_daypart(
+                            tokens, slots["DAYPART"].index, self.spec)):
                         continue
                     # "the last TWO days of the month" is not "the 2nd day of
                     # the month": a rel-marker ("last"/"next"/"this") sitting
