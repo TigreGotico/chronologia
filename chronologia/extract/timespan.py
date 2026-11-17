@@ -1713,17 +1713,39 @@ def _fold_date_article(folded, consumed, spec):
     folds too.
 
     ``marker_date_lead.voc`` lists the other words that open a date or a
-    clock and belong to it, the preposition or clock word of English "at 5",
-    Dutch "om 9:00" or Norwegian "klokka 15:30", and folds the same way.
+    clock and belong to it, the preposition of English "at 5" or "on
+    monday", and folds the same way.  ``marker_clock_lead.voc`` lists the
+    words that open a clock time only, Dutch "om 9:00" or Norwegian "klokka
+    15:30": they fold only in front of a number, a clock time, a clock
+    fraction ("om half negen") or a clock landmark ("um Mitternacht"), so
+    "um Montag" and "klokka i morgen" keep the word.
+
+    No word folds in front of another word of these lists: in "switch it on
+    at 7" or "ruf mich an um 7" the clock word belongs to the date and the
+    particle before it belongs to the verb.  No word folds in front of a
+    named day or a daypart fused with today ("turn the lights on tomorrow",
+    "what's on tonight"): such a day takes no preposition, so the word in
+    front of it belongs to the verb.
     """
     articles = (set(spec.connectors.get("date_article", ()))
                 | set(spec.connectors.get("date_lead", ())))
-    if not articles:
+    clock_leads = set(spec.connectors.get("clock_lead", ()))
+    leads = articles | clock_leads
+    if not leads:
         return consumed
+    deictic = set(spec.named_days) | spec.daypart_today_words
+    clock_words = set(spec.clock_fractions) | set(spec.clock_landmarks)
     widened = set(consumed)
     for i, t in enumerate(folded[:-1]):
-        if (t.index not in widened and t.text in articles
-                and folded[i + 1].index in widened):
+        nxt = folded[i + 1]
+        if (t.index in widened or nxt.index not in widened
+                or nxt.text in leads):
+            continue
+        opens_day = t.text in articles and nxt.text not in deictic
+        opens_clock = t.text in clock_leads and (
+            nxt.is_number or nxt.text in clock_words
+            or any(c.isdigit() for c in nxt.text))
+        if opens_day or opens_clock:
             widened.add(t.index)
     return widened
 

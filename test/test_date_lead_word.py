@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """The preposition, article or clock word that opens a date belongs to it.
 
-"at 11:55 pm", "klokka 15:30", "om 9:00" and "il 25 dicembre" name a clock
-time or a day, and the opening word is part of that expression, so nothing of
-it is left over.  A word that does not touch the date stays: "wake me at
-half past 8 please" keeps "wake me please", and "call a friend on monday" keeps
-"call a friend".  Anchor Tuesday 2017-06-27 13:04.  Every expected value is
-read off the calendar by hand: 30 June 2017 is a Friday, 29 June a Thursday,
-2 July a Sunday.
+"at 11:55 pm", "klokka 15:30", "om 9:00" and "el siguiente viernes" name a
+clock time or a day, and the opening word is part of that expression, so
+nothing of it is left over.  A word that does not open the date stays: "wake
+me at half past 8 am please" keeps "wake me please", and "switch it on at 7"
+keeps "switch it on", because "on" belongs to the verb.  A clock word opens a
+clock time only, so "um Montag" keeps "um".  Anchor Tuesday 2017-06-27 13:04.
+Every expected value is read off the calendar by hand: 30 June 2017 is a
+Friday, 29 June a Thursday, 2 July a Sunday, 3 July a Monday.
 """
 from datetime import datetime
 
@@ -20,7 +21,7 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 @pytest.mark.parametrize("lang,text,start,rest", [
     ("en", "at 11:55 pm", datetime(2017, 6, 27, 23, 55), ""),
-    ("en", "wake me at half past 8 please", datetime(2017, 6, 28, 8, 30),
+    ("en", "wake me at half past 8 am please", datetime(2017, 6, 28, 8, 30),
      "wake me please"),
     ("en", "meeting on June 15 at three in the afternoon",
      datetime(2018, 6, 15, 15, 0), "meeting"),
@@ -34,6 +35,8 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
     ("nl", "laten we afspreken op donderdag", datetime(2017, 6, 29), "laten we afspreken"),
     ("de", "erinnere mich um 10:45 abends", datetime(2017, 6, 27, 22, 45),
      "erinnere mich"),
+    ("de", "um halb neun abends", datetime(2017, 6, 27, 20, 30), ""),
+    ("nl", "om middernacht", datetime(2017, 6, 28), ""),
     ("de", "erinnere mich mama anzurufen am dritten august",
      datetime(2017, 8, 3), "erinnere mich mama anzurufen"),
     ("de", "wie ist das wetter an diesem donnerstag?", datetime(2017, 6, 29),
@@ -48,8 +51,8 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
     ("fa", "ساعت ۱۴:۳۰", datetime(2017, 6, 27, 14, 30), ""),
     ("et", "kell 15:30", datetime(2017, 6, 27, 15, 30), ""),
     ("ro", "pe 15 august", datetime(2017, 8, 15), ""),
-    ("es", "ponme una alarma a las siete y cuarto", datetime(2017, 6, 28, 7, 15),
-     "ponme una alarma"),
+    ("es", "ponme una alarma a las siete y cuarto de la mañana",
+     datetime(2017, 6, 28, 7, 15), "ponme una alarma"),
     ("es", "cuándo es el siguiente viernes", datetime(2017, 6, 30), "cuándo es"),
 ])
 def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
@@ -61,6 +64,25 @@ def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
 @pytest.mark.parametrize("lang,text,rest", [
     ("en", "look at the stars on monday", "look at the stars"),
     ("nl", "ik wacht om je op donderdag", "ik wacht om je"),
+    # a verb particle in front of the clock word stays with the verb
+    ("en", "switch it on at 7", "switch it on"),
+    ("en", "remind me to turn the lights on at 7",
+     "remind me to turn the lights on"),
+    ("de", "ruf mich an um 7", "ruf mich an"),
+    ("de", "mach das Licht an um 7 Uhr", "mach das Licht an"),
+    ("nb", "skru lyset på klokka 7", "skru lyset på"),
+    # a clock word opens a clock time, not a day
+    ("de", "um Montag", "um"),
+    ("de", "es geht um morgen", "es geht um"),
+    ("nl", "ik vraag om morgen vrij", "ik vraag om vrij"),
+    ("nb", "klokka i morgen", "klokka"),
+    ("et", "kell homme", "kell"),
+    # a named day takes no preposition, so the word belongs to the verb
+    ("en", "turn the lights on tomorrow", "turn the lights on"),
+    ("en", "what's on tonight", "what's on"),
+    ("sv", "tänd lampan på i morgon", "tänd lampan på"),
+    # "ab" opens a span that chronologia does not read, so it stays
+    ("de", "ab Montag arbeite ich", "ab arbeite ich"),
 ])
 def test_a_word_that_does_not_touch_the_date_stays(lang, text, rest):
     _, remainder = extract_timespan(text, lang, ANCHOR)

@@ -16,7 +16,7 @@ The fix adds "am" to ``chronologia/locale/de/marker_article.voc`` as well
 (keeping it in ``marker_on.voc`` too, so the recurrence "on"-qualifier path
 is untouched).
 
-A lone weekday ("am Dienstag"), daypart ("am Morgen") or calendar date
+A lone weekday ("am Dienstag"), daypart ("am Abend") or calendar date
 ("am 3. März") has nothing to compose with, so the composer does not fire.
 "am" is listed in ``marker_date_lead.voc`` as the word that opens a date, and
 that vocabulary takes it into the date there.
@@ -66,7 +66,7 @@ def test_daypart_variant_stays_clean():
 # -- "am" before a lone daypart, date or weekday goes with it -----------------
 
 def test_am_goes_with_a_lone_daypart():
-    r = parse("am Morgen")
+    r = parse("am Abend")
     assert r is not None
     s, remainder = r
     assert remainder == ""
