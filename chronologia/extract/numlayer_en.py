@@ -52,6 +52,16 @@ _YEAR_UNITS = _voc("unit_year")
 _YEAR_WORDS = _voc("marker_year_word")
 #: The words that announce a calendar year: "in ...", "the year ...".
 _YEAR_CUES = _YEAR_WORDS | _voc("marker_in.")
+#: The words that make a spelled number with a scale word after them a year,
+#: not a count: the year cues and the range and since words ("since two
+#: thousand and ten", "from two thousand to two thousand and ten").  "since"
+#: and "between" are the built-in English range words of
+#: ``timespan._RANGE_SINCE`` and ``timespan._RANGE_BETWEEN``, which have no
+#: ``.voc`` file.  "by" and "of" also take a count ("killed by two thousand
+#: soldiers", "a crowd of two thousand"), so they are no cue.
+_COUNT_CUES = (_YEAR_CUES | {"since", "between"}
+               | _voc("marker_from.", "marker_until.", "marker_before.",
+                      "marker_after."))
 #: The Gregorian months.  The other calendars' month files name months that
 #: never head a Gregorian year.
 _MONTHS = frozenset().union(*(
@@ -226,7 +236,7 @@ def _date_words(tokens: Tuple[Token, ...]) -> Tuple[Set[int], Dict[int, int]]:
                 claimed.add(i)
                 scales[i] = factor
         elif (_mention_end(tokens, i) == i + 1
-              and counts_things(tokens, i + 1, _SCALES, _YEAR_CUES, _MONTHS,
+              and counts_things(tokens, i + 1, _SCALES, _COUNT_CUES, _MONTHS,
                                 _UNITS)):
             # a count of things ("I saw a thousand people yesterday") is no
             # date number, so every word of its mention stays a word
@@ -420,4 +430,4 @@ def fold_en(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
                           and t.char_start in starts)
     folded = _deep_time_article(folded, scale_idx)
     return mark_counts(_duration_fraction(_year_pairs(folded)),
-                       _SCALES, _YEAR_CUES, _MONTHS)
+                       _SCALES, _COUNT_CUES, _MONTHS)

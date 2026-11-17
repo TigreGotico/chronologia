@@ -83,6 +83,13 @@ _YEAR_WORDS = _voc("marker_year_word")
 _OF = _voc("marker_of")
 #: The words that announce a year, and the months a year follows.
 _YEAR_CUES = _YEAR_WORDS | _voc("marker_in.")
+#: The words that make a spelled number with a scale word after them a year,
+#: not a count: the year cues and the range and since words ("desde dois mil
+#: e dez", "entre dois mil e dois mil e cinco").  Of the "from" leads only "a
+#: partir de" is a cue: "de" and "do" also take a count ("uma multidão de
+#: dois mil").
+_COUNT_CUES = (_YEAR_CUES | {"a partir de"}
+               | _voc("marker_since", "marker_until", "marker_between"))
 _MONTHS = _voc("month_")
 
 
@@ -221,7 +228,7 @@ def _date_words(tokens: Tuple[Token, ...]
                 claimed.add(i)
                 scales[i] = factor
         elif (_ends_mention(tok) and after not in _OF
-              and counts_things(tokens, end, _SCALES, _YEAR_CUES, _MONTHS,
+              and counts_things(tokens, end, _SCALES, _COUNT_CUES, _MONTHS,
                                 _UNITS)):
             # a count of things ("comprei mil ações ontem") is no date
             # number, so every word of its mention stays a word
@@ -260,4 +267,4 @@ def fold_pt(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
                    if t.is_number and (t.char_start, t.char_end) in words
                    else t
                    for t in fold_mentions(tokens, "pt", claimed, scales))
-    return mark_counts(folded, _SCALES, _YEAR_CUES, _MONTHS)
+    return mark_counts(folded, _SCALES, _COUNT_CUES, _MONTHS)

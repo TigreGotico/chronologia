@@ -73,13 +73,19 @@ def attach(tokens: Tuple[Token, ...], text: str,
     # before it
     starts = [m.char_span[0] for m in found]
     out = []
-    for t in tokens:
+    for i, t in enumerate(tokens):
         m = None
         if t.char_start is not None and t.char_end is not None:
             k = bisect_right(starts, t.char_start) - 1
             if k >= 0 and t.char_end <= found[k].char_span[1]:
                 m = found[k]
-        out.append(t if m is None else replace(t, mention=m))
+        if m is None:
+            out.append(t)
+        elif t.char_start == m.char_span[0]:
+            before = tuple(p.text for p in tokens[max(0, i - 3):i])
+            out.append(replace(t, mention=m, before=before))
+        else:
+            out.append(replace(t, mention=m))
     return tuple(out)
 
 
@@ -129,7 +135,8 @@ def number_token(mention: NumberMention, first: Token, last: Token,
     return Token(text=str(num), raw=str(num), index=0, is_number=True,
                  value=num, char_start=first.char_start,
                  char_end=last.char_end,
-                 ordinal=mention.kind is Kind.ORDINAL, mention=mention)
+                 ordinal=mention.kind is Kind.ORDINAL, mention=mention,
+                 before=first.before)
 
 
 def covers(run: Tuple[Token, ...], mention: NumberMention) -> bool:
@@ -232,8 +239,12 @@ def is_count(tokens: Tuple[Token, ...], end: int, scales: Collection[str],
     "paguei mil na segunda", "I saw two thousand five hundred people
     yesterday".  A scale word with no number before it ("mil") names no year
     either.  A year takes a cue before it: a year word or "em", "in" ("em
-    dois mil eu nasci"), or a month in the two words before ("março de dois
-    mil e três").  Any other mention with nothing after it stays a number.
+    dois mil eu nasci"), a range or since word ("since two thousand and ten
+    I have lived here", "a partir de dois mil e dez"), or a month in the two
+    words before ("março de dois mil e três").  A cue can be up to three
+    words long, and a range endpoint folded alone reads it from the whole
+    utterance (``Token.before``).  Any other mention with nothing after it
+    stays a number.
     """
     mention = tokens[end - 1].mention
     start = end - 1
@@ -242,9 +253,12 @@ def is_count(tokens: Tuple[Token, ...], end: int, scales: Collection[str],
     words = re.split(r"[\s-]+", mention.text.lower()) if mention else []
     if not any(w in scales for w in words):
         return False
-    if start > 0 and (tokens[start - 1].text in cues
-                      or any(t.text in months
-                             for t in tokens[max(0, start - 2):start])):
+    # a range endpoint is folded on its own, so a mention at the start of the
+    # stream reads the words before it from the whole utterance
+    before = ([t.text for t in tokens[max(0, start - 3):start]] if start
+              else list(tokens[0].before))
+    if (any(" ".join(before[-k:]) in cues for k in range(1, len(before) + 1))
+            or any(w in months for w in before[-2:])):
         return False
     if end >= len(tokens):
         return len(words) == 1

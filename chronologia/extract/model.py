@@ -130,6 +130,11 @@ class Token:
     # carries the mention beside it; a number token folded from a mention
     # carries the mention it stands for.
     mention: Optional["NumberMention"] = field(default=None, compare=False)
+    # The texts of the up to three tokens before the first token of a numtag
+    # mention, in the whole utterance.  Set by ``numlayer.attach``, so a range
+    # endpoint folded on its own still sees the word that makes the mention a
+    # year: "since two thousand and ten I have lived here".
+    before: Tuple[str, ...] = field(default=(), compare=False)
 
 
 @dataclass(frozen=True)

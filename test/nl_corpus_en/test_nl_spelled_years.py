@@ -13,7 +13,9 @@ Three shapes reach the same year-wide span a digit year does:
 """
 import pytest
 
-from ._corpus import AstroDate, nomatch, parse, span, start
+from chronologia import extract_timespans
+
+from ._corpus import ANCHOR, AstroDate, ad, nomatch, parse, span, start
 
 
 def _year(text, y):
@@ -106,6 +108,71 @@ def test_two_numbers_joined_by_and_are_no_year():
     A spelled number is a year after a year cue or with nothing after it, and
     here a word follows it, so it is no year."""
     nomatch("two thousand and one hundred thousand")
+
+
+# -- the range and since words cue a year ---------------------------------
+
+def test_since_cues_a_spelled_year_with_a_clause_after_it():
+    """"since 2010 I have lived here" runs from the start of 2010 to the
+    anchor, and the spelled year reads the same."""
+    s, rest = parse("since two thousand and ten I have lived here")
+    assert (s.start, s.end) == (AstroDate(2010, 1, 1), ad(ANCHOR))
+    assert rest == "I have lived here"
+
+
+def test_from_to_with_spelled_years_is_one_range():
+    """The range holds both years in full: the start of 2000 to the end of
+    2010."""
+    found = extract_timespans("from two thousand to two thousand and ten",
+                              "en", ANCHOR)
+    assert [(m.span.start, m.span.end) for m in found] == [
+        (AstroDate(2000, 1, 1), AstroDate(2011, 1, 1))]
+
+
+@pytest.mark.parametrize("cue", [
+    "since", "until", "till", "before", "after", "between",
+])
+def test_a_range_word_cues_the_spelled_year_as_it_cues_the_digits(cue):
+    spelled = parse(f"{cue} two thousand and ten it rained")
+    digits = parse(f"{cue} 2010 it rained")
+    assert spelled.span.start == AstroDate(2010, 1, 1)
+    assert spelled == digits
+
+
+@pytest.mark.parametrize("text", [
+    "killed by two thousand soldiers",
+    "a crowd of two thousand gathered",
+    "I paid two thousand and ten dollars",
+])
+def test_a_spelled_count_after_by_or_of_is_no_year(text):
+    nomatch(text)
+
+
+@pytest.mark.parametrize("text", [
+    "by two thousand and thirty we will retire",
+    "the census of two thousand and eleven showed growth",
+])
+def test_known_cost_a_year_after_by_or_of_with_a_word_after_it(text):
+    """Known cost: the year 2030 and the year 2011 read as counts.
+
+    "by" and "of" also take a count ("killed by two thousand soldiers", "a
+    crowd of two thousand gathered").  Only the noun or the verb after the
+    number tells the two apart, and the number layer does not read it, so
+    "by" and "of" are no year cue."""
+    nomatch(text)
+
+
+@pytest.mark.parametrize("text, rest", [
+    ("after two thousand people left", "after people left"),
+    ("between two thousand and three thousand people came",
+     "between and three thousand people came"),
+])
+def test_known_cost_a_count_after_a_range_word(text, rest):
+    """Known cost: a range or since word cues a year, also before a count of
+    people.  The first number reads as the year 2000."""
+    s, left = parse(text)
+    assert (s.start, s.end, left) == (AstroDate(2000, 1, 1),
+                                      AstroDate(2001, 1, 1), rest)
 
 
 def test_ones_suffix_is_a_count_not_a_year():

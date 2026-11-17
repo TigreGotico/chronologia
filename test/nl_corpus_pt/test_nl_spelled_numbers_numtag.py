@@ -148,6 +148,40 @@ def test_a_count_with_more_number_words_leaves_the_day_word_the_date(
     assert (s.start, s.end) == day
 
 
+def test_desde_cues_a_spelled_year_with_a_clause_after_it():
+    """"desde 2010 vivo aqui" runs from the start of 2010 to the anchor, and
+    the spelled year reads the same."""
+    s, rest = parse("desde dois mil e dez vivo aqui")
+    assert (s.start, s.end) == (datetime(2010, 1, 1), ANCHOR)
+    assert rest == "vivo aqui"
+
+
+def test_entre_with_spelled_years_is_one_range():
+    found = extract_timespans("entre dois mil e dois mil e cinco", "pt",
+                              ANCHOR)
+    assert [(m.span.start, m.span.end) for m in found] == [
+        (datetime(2000, 1, 1), datetime(2006, 1, 1))]
+
+
+@pytest.mark.parametrize("text", [
+    "até dois mil e dez vivi lá",
+    "a partir de dois mil e dez vivo aqui",
+    "entre dois mil e dez choveu",
+])
+def test_a_range_word_cues_a_spelled_year(text):
+    assert span(text).start == datetime(2010, 1, 1)
+
+
+@pytest.mark.parametrize("text", [
+    "uma multidão de dois mil chegou",
+    # Known cost: "de" also takes a count ("uma multidão de dois mil"), so it
+    # is no year cue, and the census year 2011 reads as a count.
+    "o censo de dois mil e onze mostrou",
+])
+def test_a_spelled_number_after_de_with_a_word_after_it_is_a_count(text):
+    nomatch(text)
+
+
 @pytest.mark.parametrize("lang, text", [
     ("pt", "dois mil e quinhentos euros"),
     ("pt", "mil, dois dias"),
