@@ -218,6 +218,40 @@ def test_the_second_endpoint_of_a_range_reads_the_cue_of_the_first(
                                       datetime(years[1], 1, 1), rest)
 
 
+@pytest.mark.parametrize("lang, text", [
+    ("en", "between two thousand and three thousand dollars"),
+    ("en", "from two thousand to three thousand euros"),
+    ("en", "from one thousand to two thousand dollars"),
+    ("pt", "desde dois mil até três mil euros"),
+])
+def test_a_currency_after_the_second_number_of_a_range_measures_both(
+        lang, text):
+    """A currency after the second number of a range makes the first number
+    an amount too, so the range holds no year."""
+    assert extract_timespans(text, lang, _FRIDAY) == []
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    ("en", "we paid between two thousand and three thousand dollars on monday",
+     _MONDAY_2),
+    ("en", "between two thousand and three thousand dollars were stolen "
+     "yesterday", _THURSDAY_29),
+    ("pt", "pagámos desde dois mil até três mil euros na segunda", _MONDAY_2),
+])
+def test_a_range_of_amounts_leaves_the_day_word_as_the_date(lang, text, day):
+    assert _event_day(lang, text) == day
+
+
+def test_a_currency_in_the_next_sentence_measures_no_number():
+    """A full stop ends the range: "Dollars" starts the next sentence."""
+    s, left = extract_timespan(
+        "from two thousand to two thousand and ten. Dollars were spent",
+        "en", _FRIDAY)
+    assert (s.start, s.end, left) == (datetime(2000, 1, 1),
+                                      datetime(2011, 1, 1),
+                                      "Dollars were spent")
+
+
 def test_known_cost_a_year_after_ate():
     """Known cost: "até" is no year cue, so the year 2030 reads as a count,
     as on origin/dev."""

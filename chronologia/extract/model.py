@@ -136,6 +136,12 @@ class Token:
     # own still sees the word that makes the mention a year: "since two
     # thousand and ten I have lived here".
     before: Optional[Tuple[str, ...]] = field(default=None, compare=False)
+    # On the first token of a mention one word before another mention: that
+    # word, a place mark for the second mention, and the word after it, in
+    # the same clause.  Set by ``numlayer.attach``, so a unit after the
+    # second number of a range measures the first one too: "between two
+    # thousand and three thousand dollars".
+    after: Optional[Tuple[str, ...]] = field(default=None, compare=False)
 
 
 @dataclass(frozen=True)

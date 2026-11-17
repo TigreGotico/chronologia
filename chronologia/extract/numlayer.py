@@ -60,8 +60,16 @@ def mentions(text: str, lang: str) -> Tuple[NumberMention, ...]:
 #: The punctuation that ends a clause.  A cue before it is no cue for a
 #: number after it: "esperei até. Dois mil turistas chegaram ontem".
 _CLAUSE_BREAK = re.compile(r"[.,;:!?]")
-#: The place of a whole mention in :attr:`Token.before`.
+#: The place of a whole mention in :attr:`Token.before` and
+#: :attr:`Token.after`.
 NUMBER = "\x00"
+
+
+def _same_clause(left: Token, right: Token, text: str) -> bool:
+    """Whether no clause punctuation of ``text`` stands between two tokens."""
+    return (left.char_end is not None and right.char_start is not None
+            and not _CLAUSE_BREAK.search(text, left.char_end,
+                                         right.char_start))
 
 
 def _words_before(tokens: Tuple[Token, ...], i: int, text: str
@@ -70,11 +78,9 @@ def _words_before(tokens: Tuple[Token, ...], i: int, text: str
     clause of ``text``."""
     out = []
     for j in range(i - 1, max(-1, i - 4), -1):
-        left, right = tokens[j], tokens[j + 1]
-        if (left.char_end is None or right.char_start is None
-                or _CLAUSE_BREAK.search(text, left.char_end, right.char_start)):
+        if not _same_clause(tokens[j], tokens[j + 1], text):
             break
-        out.append(left.text)
+        out.append(tokens[j].text)
     return tuple(reversed(out))
 
 
@@ -87,6 +93,9 @@ def attach(tokens: Tuple[Token, ...], text: str,
     (:attr:`Token.before`).  A mention one word after another mention gets
     that mention's words, :data:`NUMBER` and the word: "from two thousand to
     two thousand and ten" gives the second mention ("from", NUMBER, "to").
+    The first mention then gets the word, :data:`NUMBER` and the word after
+    the second mention (:attr:`Token.after`): "between two thousand and three
+    thousand dollars" gives the first mention ("and", NUMBER, "dollars").
     """
     if not reads(lang):
         return tokens
@@ -98,8 +107,11 @@ def attach(tokens: Tuple[Token, ...], text: str,
     # before it
     starts = [m.char_span[0] for m in found]
     out = []
-    # the words before the last mention, and the index of its last token
-    last_before, last_end = None, None
+    # the words before the last mention, the index of its first token and
+    # the index of its last token
+    last_before, last_first, last_end = None, None, None
+    # the first token of a mention and of the mention one word after it
+    pairs = []
     for i, t in enumerate(tokens):
         m = None
         if t.char_start is not None and t.char_end is not None:
@@ -115,11 +127,21 @@ def attach(tokens: Tuple[Token, ...], text: str,
                 # a cue of up to three words, the mention and the word: a
                 # run of mentions keeps a window of fixed length
                 before = (last_before + (NUMBER, before[-1]))[-5:]
-            last_before = before
+                pairs.append((last_first, i))
+            last_before, last_first = before, i
             out.append(replace(t, mention=m, before=before))
         else:
             out.append(replace(t, mention=m))
         last_end = i
+    for first, second in pairs:
+        end, mention = second, out[second].mention
+        while end + 1 < len(out) and out[end + 1].mention is mention:
+            end += 1
+        nxt = (tokens[end + 1].text,) if (
+            end + 1 < len(tokens)
+            and _same_clause(tokens[end], tokens[end + 1], text)) else ()
+        out[first] = replace(out[first],
+                             after=(tokens[second - 1].text, NUMBER) + nxt)
     return tuple(out)
 
 
@@ -170,7 +192,7 @@ def number_token(mention: NumberMention, first: Token, last: Token,
                  value=num, char_start=first.char_start,
                  char_end=last.char_end,
                  ordinal=mention.kind is Kind.ORDINAL, mention=mention,
-                 before=first.before)
+                 before=first.before, after=first.after)
 
 
 def covers(run: Tuple[Token, ...], mention: NumberMention) -> bool:
@@ -282,6 +304,10 @@ class CountWords:
     #: ("to"): a mention after one is a year too.
     ranges: Mapping[str, Collection[str]] = field(default_factory=dict)
 
+    def measures(self, word: str) -> bool:
+        """Whether ``word`` is a unit or a currency."""
+        return word in self.units or word in self.currencies
+
 
 def year_cue(before: Tuple[str, ...], words: CountWords) -> Optional[str]:
     """The cue at the end of ``before``, or ``None``.
@@ -326,8 +352,8 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     if not any(w in words.scales for w in said):
         return False
     nxt = tokens[end] if end < len(tokens) else None
-    if nxt is not None and (nxt.text in words.units
-                            or nxt.text in words.currencies):
+    if (nxt is not None and not nxt.break_before
+            and words.measures(nxt.text)):
         return True
     # a range endpoint is folded on its own, so the words before a mention
     # come from the whole utterance; a part of a mention read again takes
@@ -339,8 +365,15 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
         while j > 0 and len(before) < 3 and not tokens[j].break_before:
             before = (tokens[j - 1].text,) + before
             j -= 1
-    if (year_cue(before, words) is not None
-            or any(w in words.months for w in before[-2:])):
+    cue = year_cue(before, words)
+    # a unit after the second number of a range measures the first one too:
+    # "between two thousand and three thousand dollars"
+    after = tokens[start].after or ()
+    if (cue is not None and len(after) == 3
+            and after[0] in words.ranges.get(cue, ())
+            and words.measures(after[2])):
+        return True
+    if cue is not None or any(w in words.months for w in before[-2:]):
         return False
     if nxt is None:
         return len(said) == 1
