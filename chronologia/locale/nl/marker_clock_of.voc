@@ -1,0 +1,4 @@
+# The clock suffix that ties a part of the day to an hour: "twee uur 's
+# middags" (Van Dale, "middag").  Without it "twee uur" before a part of the
+# day is a length.
+s

@@ -174,6 +174,49 @@ def _is_bare_clock_length(text: str, lang: str, anchor: datetime,
                == length_words for w in trace.winners)
 
 
+def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
+                            length_words: Counter) -> bool:
+    """True when a word that no reading takes stands before the length
+    words and the clock reading that starts on them goes on into a part of
+    the day without a clock suffix: pt "reunião de duas horas e meia de
+    manhã", fr "travaillé trois heures le matin".
+
+    A date word or a clock preposition before the count belongs to a
+    reading, so "demain neuf heures et demie le soir" is the clock 21:30.
+    The clock suffix ("da", "du", "'s", or "de" and an article) ties the
+    part of the day to the hour: "deux heures du matin" is 02:00.  Only
+    languages that list a ``clock_of`` suffix tell the two forms apart.
+    """
+    from chronologia.extract import explain, load_lang_spec
+
+    spec = load_lang_spec(lang)
+    suffixes = spec.connectors.get("clock_of")
+    if not suffixes:
+        return False
+    of_words = spec.connectors.get("of", frozenset())
+    articles = spec.connectors.get("article", frozenset())
+    trace = explain(text, spec, anchor)
+    taken = {i for w in trace.winners for i in range(*w.match.span)}
+    size = sum(length_words.values())
+    for w in trace.winners:
+        first, end = w.match.span
+        if (w.match.construction != "clock_time"
+                or "MERIDIEM" not in w.match.slots
+                or end - first <= size or first == 0
+                or first - 1 in taken):
+            continue
+        words = [t.text for t in trace.tokens[first:end]]
+        if Counter(words[:size]) != length_words:
+            continue
+        tail = words[size:]
+        tied = any(word in suffixes or (
+            word in of_words and nxt in articles)
+            for word, nxt in zip(tail, tail[1:] + [""]))
+        if not tied:
+            return True
+    return False
+
+
 def extract_event(
         text: str,
         lang: str = "en",
@@ -259,7 +302,9 @@ def extract_event(
                     and not (bare_offset and rest_words - span_words) \
                     and (rest is None or rest.span.start != whole.span.start) \
                     and not (rest is not None and _is_bare_clock_length(
-                        remainder, lang, anchor, length_words)):
+                        remainder, lang, anchor, length_words)) \
+                    and not _is_counted_part_of_day(
+                        remainder, lang, anchor, length_words):
                 got_dur = None
     if got_dur is not None:
         duration, remainder = got_dur
