@@ -154,6 +154,70 @@ def test_an_hour_with_a_clock_preposition_or_suffix_stays_a_clock(lang, text):
     assert (got.span.start, got.remainder) == (datetime(2026, 1, 31, 2), "")
 
 
+@pytest.mark.parametrize("lang, text, start, length", [
+    # A half or a quarter after the count does not make it a clock.
+    # Band starts from CLDR 47 day periods: pt manhã 06:00, pt tarde 12:00,
+    # fr matin 04:00, fr après-midi 12:00, fr soir 18:00.
+    ("pt", "trabalhei duas horas e meia de manhã", datetime(2026, 1, 30, 6),
+     timedelta(hours=2, minutes=30)),
+    ("pt", "reunião de duas horas e meia de manhã amanhã",
+     datetime(2026, 1, 31, 6), timedelta(hours=2, minutes=30)),
+    ("pt", "reunião de uma hora e meia de manhã amanhã",
+     datetime(2026, 1, 31, 6), timedelta(hours=1, minutes=30)),
+    ("pt", "reunião de duas horas e um quarto de tarde amanhã",
+     datetime(2026, 1, 31, 12), timedelta(hours=2, minutes=15)),
+    ("fr", "réunion de deux heures et quart le soir demain",
+     datetime(2026, 1, 31, 18), timedelta(hours=2, minutes=15)),
+    ("fr", "réunion de trois heures et demie l'après-midi demain",
+     datetime(2026, 1, 31, 12), timedelta(hours=3, minutes=30)),
+    ("fr", "réunion de deux heures et demie le matin demain",
+     datetime(2026, 1, 31, 4), timedelta(hours=2, minutes=30)),
+])
+def test_a_count_of_hours_and_a_part_before_a_part_of_the_day_is_a_length(
+        lang, text, start, length):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    assert (ev.span.start, ev.span.end, ev.duration) == (
+        start, start + length, length)
+
+
+@pytest.mark.parametrize("lang, text, start", [
+    # A clock preposition, the clock suffix, or an hour without "horas"
+    # makes a clock time.  02:30 is past on 30 January at 10:00, so the next
+    # one is the 31st; 14:45 and 15:30 are still ahead on the 30th.
+    ("pt", "às duas e meia da manhã", datetime(2026, 1, 31, 2, 30)),
+    ("pt", "duas e meia da manhã", datetime(2026, 1, 31, 2, 30)),
+    ("pt", "duas e meia de manhã", datetime(2026, 1, 31, 2, 30)),
+    ("pt", "às duas horas e meia de manhã", datetime(2026, 1, 31, 2, 30)),
+    ("pt", "duas horas e meia da manhã", datetime(2026, 1, 31, 2, 30)),
+    ("pt", "às duas horas e vinte de manhã", datetime(2026, 1, 31, 2, 20)),
+    ("pt", "duas horas e vinte da manhã", datetime(2026, 1, 31, 2, 20)),
+    ("pt", "duas de manhã", datetime(2026, 1, 31, 2)),
+    ("pt", "três menos um quarto da tarde", datetime(2026, 1, 30, 14, 45)),
+    ("fr", "à deux heures et demie du matin", datetime(2026, 1, 31, 2, 30)),
+    ("fr", "deux heures et demie du matin", datetime(2026, 1, 31, 2, 30)),
+    ("fr", "à deux heures et demie le matin", datetime(2026, 1, 31, 2, 30)),
+    ("fr", "deux heures moins le quart du matin", datetime(2026, 1, 31, 1, 45)),
+    ("fr", "deux heures vingt du matin", datetime(2026, 1, 31, 2, 20)),
+    ("fr", "trois heures et demie de l'après-midi",
+     datetime(2026, 1, 30, 15, 30)),
+])
+def test_a_clock_with_a_part_of_the_hour_stays_a_clock(lang, text, start):
+    got = extract_timespan(text, lang, anchor=ANCHOR)
+    assert (got.span.start, got.remainder) == (start, "")
+
+
+@pytest.mark.parametrize("lang, text, start", [
+    ("pt", "reunião às duas horas e meia de manhã amanhã",
+     datetime(2026, 1, 31, 2, 30)),
+    ("fr", "réunion à trois heures et demie de l'après-midi demain",
+     datetime(2026, 1, 31, 15, 30)),
+])
+def test_an_event_at_a_clock_with_a_part_of_the_hour_has_no_length(
+        lang, text, start):
+    ev = extract_event(text, lang, anchor=ANCHOR)
+    assert (ev.span.start, ev.duration) == (start, None)
+
+
 @pytest.mark.parametrize("lang, text, day", [
     # The span reading names a date of its own, so the unit inside it is no
     # length.  Friday 30 January 2026: the day after next is 1 February, last
