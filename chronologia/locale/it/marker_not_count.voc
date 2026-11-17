@@ -1,6 +1,16 @@
 # Closed-class words that never stand as a counted noun right after an hour:
-# pronouns, adverbs and verb particles ("a las 8 te llamo"). Source for the
-# class: Serianni, Grammatica italiana (1988), pronomi personali atoni.
+# pronouns, adverbs and verb particles ("a las 8 te llamo").  Each word's class
+# is quoted from its Wiktionary entry (https://en.wiktionary.org/wiki/<word>); the
+# fetched pages are kept with the audit.  Markup is removed from the quotes.
+# mi: Pronoun. "inflection of io (clitic, acc). me"
+# ti: Pronoun. "inflection of tu (acc//dat); you"
+# lo: Pronoun. "(accusative) him"
+# la: Pronoun. "(accusative) her, it"
+# ci: Pronoun. "us"
+# vi: Pronoun. "second-person personal plural object pronoun: you, to you"
+# ne: Adverb. "from there"
+# si: Pronoun. "(reflexive pronoun) oneself, himself, herself, itself, themselves"
+# gli: Pronoun. "(dative) him, to him; it; to it"
 mi
 ti
 lo

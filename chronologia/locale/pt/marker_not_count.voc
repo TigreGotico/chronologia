@@ -1,10 +1,18 @@
 # Closed-class words that never stand as a counted noun right after an hour:
-# pronouns, adverbs and verb particles ("a las 8 te llamo"). Source for the
-# class: Cunha and Cintra, Nova Gramática do Português Contemporâneo (2013), pronomes pessoais átonos.
+# pronouns, adverbs and verb particles ("a las 8 te llamo").  Each word's class
+# is quoted from its Wiktionary entry (https://en.wiktionary.org/wiki/<word>); the
+# fetched pages are kept with the audit.  Markup is removed from the quotes.
+# me: Pronoun. "first-person singular objective direct personal pronoun; me"
+# te: Pronoun. "(object pronoun) you (singular), thee"
+# o: Pronoun. "him, it (as a direct object; as an indirect object, see lhe; after prepositions, see ele)"
+# lhe: Pronoun. "inflection of ele,ela (dat): (to) him/her/it"
+# nos: Pronoun. "inflection of nós (acc, dat)"
+# vos: Pronoun. "inflection of vós (objective)"
+# lhes: Pronoun. "inflection of eles,elas (indirect object)"
+# se: Pronoun. "third-person singular and plural reflexive pronoun; himself; herself; itself; themselves"
 me
 te
 o
-a
 lhe
 nos
 vos

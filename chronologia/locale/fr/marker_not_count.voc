@@ -1,6 +1,17 @@
 # Closed-class words that never stand as a counted noun right after an hour:
-# pronouns, adverbs and verb particles ("a las 8 te llamo"). Source for the
-# class: Grevisse and Goosse, Le bon usage, pronoms personnels conjoints.
+# pronouns, adverbs and verb particles ("a las 8 te llamo").  Each word's class
+# is quoted from its Wiktionary entry (https://en.wiktionary.org/wiki/<word>); the
+# fetched pages are kept with the audit.  Markup is removed from the quotes.
+# me: Pronoun. "me direct object"
+# te: Pronoun. "(direct object) you"
+# le: Pronoun. "(direct object) him, her, it, them"
+# la: Pronoun. "her, it (direct object)"
+# lui: Pronoun. "him, he, it; the third-person masculine singular personal pronoun used after a preposition, or as the predi..."
+# nous: Pronoun. "the plural personal pronoun in the first person"
+# vous: Pronoun. "the plural personal pronoun in the second person"
+# leur: Pronoun. "(personal, indirect) (to) them"
+# y: Pronoun. "there (at a place)"
+# en: Pronoun. "Used as the object of a verb to indicate an indefinite quantity; of it, of them. Replaces the partitive art..."
 me
 te
 le

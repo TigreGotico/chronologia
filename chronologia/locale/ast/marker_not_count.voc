@@ -1,7 +1,10 @@
 # Closed-class words that never stand as a counted noun right after an hour:
-# pronouns, adverbs and verb particles ("a las 8 te llamo"). Source for the
-# class: Academia de la Llingua Asturiana, Gramática de la Llingua Asturiana (2001), pronomes átonos.
+# pronouns, adverbs and verb particles ("a las 8 te llamo").  Each word's class
+# is quoted from its Wiktionary entry (https://en.wiktionary.org/wiki/<word>); the
+# fetched pages are kept with the audit.  Markup is removed from the quotes.
+# me: Pronoun. "me first-person singular direct pronoun"
+# te: Pronoun. "you (second-person singular direct pronoun)"
+# nos: Pronoun. "us dative and accusative of nosotros/nós"
 me
 te
 nos
-vos
