@@ -1,4 +1,7 @@
 # Words that open a date or a clock time and belong to it.
-# Source: Граматика на съвременния български книжовен език (БАН, 1983): "в" opens a clock time, "на" a date.
+# Each word is shown opening a time or date phrase on the page named in brackets,
+# saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.
+# в: Wiktionary "в": "used with certain time expressions to say when something happens: в 8 часа; в петък" [bg-в.wikitext.txt]
+# на: Wiktionary "на": "used with certain time expressions to show when something happens: Роден на 4 юли." [bg-на.wikitext.txt]
 в
 на

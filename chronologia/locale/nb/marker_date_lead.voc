@@ -1,5 +1,10 @@
 # Words that open a date or a clock time and belong to it.
-# Source: Faarlund, Lie & Vannebo 1997, Norsk referansegrammatikk: "klokka" (kl.) opens a clock time, "på" a weekday.
+# Each word is shown opening a time or date phrase on the page named in brackets,
+# saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.
+# klokka: Wiktionary "klokka": "time on a clock: o'clock: klokka seks" [nb-klokka.wikitext.txt]
+# klokken: Wiktionary "klokken": "time on a clock: o'clock: klokken seks" [nb-klokken.wikitext.txt]
+# kl: Wiktionary "kl.": "Møtet er kl. 12." [nb-kl.wikitext.txt]
+# på: Wiktionary "på": "on (a certain day)" [nb-på.wikitext.txt]; Bokmålsordboka "på": "brukt i tidsuttrykk" [ordbokene-på.txt]
 klokka
 klokken
 kl

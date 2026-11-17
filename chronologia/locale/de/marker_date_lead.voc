@@ -1,5 +1,11 @@
 # Words that open a date or a clock time and belong to it.
-# Source: Duden, Die Grammatik (9th ed. 2016): "am" and "an" open a day or a date ("an diesem Montag"), "um" a clock time, "im" a month, "ab" the start of a period.
+# Each word is shown opening a time or date phrase on the page named in brackets,
+# saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.
+# am: de.Wiktionary "am": "[1] Angabe eines Zeitpunkts - wann? ... am Donnerstag, am 1.11.2005" [dewikt-am.wikitext.txt]
+# an: Wiktionary "an": "temporal, with days or times of day: on; in; at" [de-an.wikitext.txt]
+# um: Wiktionary "um": "at, by (when relating to time): Um acht Uhr reisen wir ab" [de-um.wikitext.txt]
+# im: de.Wiktionary "im": "[1] zeitlich: Position innerhalb einer genannten Zeitspanne ... Im April blühen die Anemonen." [dewikt-im.wikitext.txt]
+# ab: Wiktionary "ab": "beginning at that time or location; from" [de-ab.wikitext.txt]
 am
 an
 um

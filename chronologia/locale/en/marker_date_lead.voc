@@ -1,4 +1,7 @@
 # Words that open a date or a clock time and belong to it.
-# Source: Quirk, Greenbaum, Leech & Svartvik 1985, A Comprehensive Grammar of the English Language: "at" opens a clock time, "on" a day or a date.
+# Each word is shown opening a time or date phrase on the page named in brackets,
+# saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.
+# at: Wiktionary "at": "at six o’clock; at dawn; at closing time" [en-at.wikitext.txt]
+# on: Wiktionary "on": "At or during the date or day of. On Sunday I'm busy. I'll see you on Monday." [en-on.wikitext.txt]
 at
 on
