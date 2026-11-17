@@ -57,12 +57,31 @@ def mentions(text: str, lang: str) -> Tuple[NumberMention, ...]:
                  if m.form in (Form.WORDS, Form.MIXED))
 
 
+#: The punctuation that ends a clause.  A cue before it is no cue for a
+#: number after it: "esperei até. Dois mil turistas chegaram ontem".
+_CLAUSE_BREAK = re.compile(r"[.,;:!?]")
+
+
+def _words_before(tokens: Tuple[Token, ...], i: int, text: str
+                  ) -> Tuple[str, ...]:
+    """The texts of the up to three tokens before ``tokens[i]`` in its
+    clause of ``text``."""
+    out = []
+    for j in range(i - 1, max(-1, i - 4), -1):
+        left, right = tokens[j], tokens[j + 1]
+        if (left.char_end is None or right.char_start is None
+                or _CLAUSE_BREAK.search(text, left.char_end, right.char_start)):
+            break
+        out.append(left.text)
+    return tuple(reversed(out))
+
+
 def attach(tokens: Tuple[Token, ...], text: str,
            lang: str) -> Tuple[Token, ...]:
     """Give each token inside a mention of ``text`` that mention.
 
     ``lang`` is a chronologia locale or a region tag (``pt-BR``).  The first
-    token of each mention also gets the words before it
+    token of each mention also gets the words before it in its clause
     (:attr:`Token.before`).
     """
     if not reads(lang):
@@ -85,8 +104,8 @@ def attach(tokens: Tuple[Token, ...], text: str,
             out.append(t)
             continue
         if t.char_start == m.char_span[0]:
-            before = tuple(p.text for p in tokens[max(0, i - 3):i])
-            out.append(replace(t, mention=m, before=before))
+            out.append(replace(t, mention=m,
+                               before=_words_before(tokens, i, text)))
         else:
             out.append(replace(t, mention=m))
     return tuple(out)
@@ -271,9 +290,9 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     either.  A year takes a cue before it: a year word or "em", "in" ("em
     dois mil eu nasci"), a range or since word ("since two thousand and ten
     I have lived here", "a partir de dois mil e dez"), or a month in the two
-    words before ("março de dois mil e três") (:func:`year_cue`).  A range
-    endpoint folded alone reads the cue from the whole utterance
-    (:attr:`Token.before`).  A unit or a currency
+    words before ("março de dois mil e três").  The cue stands in the same
+    clause (:func:`year_cue`), and a range endpoint folded alone reads it
+    from the whole utterance (:attr:`Token.before`).  A unit or a currency
     after the mention makes it a count after any cue: "paguei até dois mil
     euros na segunda".  Any other mention with nothing after it stays a
     number.
@@ -291,10 +310,14 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
         return True
     # a range endpoint is folded on its own, so the words before a mention
     # come from the whole utterance; a part of a mention read again takes
-    # them from the stream
+    # them from the stream, up to a clause break
     before = tokens[start].before
     if before is None:
-        before = tuple(t.text for t in tokens[max(0, start - 3):start])
+        before = ()
+        j = start
+        while j > 0 and len(before) < 3 and not tokens[j].break_before:
+            before = (tokens[j - 1].text,) + before
+            j -= 1
     if (year_cue(before, words) is not None
             or any(w in words.months for w in before[-2:])):
         return False

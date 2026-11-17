@@ -190,6 +190,19 @@ def test_an_amount_after_ate_a_partir_de_or_entre_is_no_year(text):
     nomatch(text)
 
 
+@pytest.mark.parametrize("lang, text, day", [
+    ("pt", "esperei até. Dois mil turistas chegaram ontem", _THURSDAY_29),
+    ("pt", "esperei desde, dois mil turistas chegaram ontem", _THURSDAY_29),
+    ("en", "I left after. Two thousand people came yesterday", _THURSDAY_29),
+    ("en", "the shop opened since; two thousand people came yesterday",
+     _THURSDAY_29),
+    ("en", "we waited until. Three thousand tickets sold on monday",
+     _MONDAY_2),
+])
+def test_a_cue_in_the_clause_before_is_no_cue(lang, text, day):
+    assert _event_day(lang, text) == day
+
+
 def test_known_cost_a_year_after_ate():
     """Known cost: "até" is no year cue, so the year 2030 reads as a count,
     as on origin/dev."""
