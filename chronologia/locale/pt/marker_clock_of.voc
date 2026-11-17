@@ -1,0 +1,6 @@
+# The clock suffix that ties a part of the day to an hour without "às": "nove
+# da manhã, três da tarde" (Senado Federal, Manual de Comunicação, s.v.
+# "Hora").  "de manhã" is the part of the day itself, "Entre o amanhecer e o
+# meio-dia" (Priberam, "manhã"), so "duas horas de manhã" is two hours in the
+# morning, and "às duas horas de manhã" is 02:00.
+da
