@@ -138,3 +138,14 @@ def test_a_language_without_counting_prepositions_keeps_the_clock():
     found = extract_timespan("je la sesa vespere", "eo", ANCHOR)
     assert found.span.start.datetime() == datetime(2026, 9, 26, 6)
     assert "vespere" in found.remainder
+
+
+@pytest.mark.parametrize("text,lang", [
+    ("no gracias, mañana", "es"),
+    ("no o mañana", "es"),
+    ("nicht oder morgen", "de"),
+    ("pas ou demain", "fr"),
+])
+def test_courtesy_and_or_words_do_not_join_the_exclusion_words(text, lang):
+    found = extract_timespan(text, lang, ANCHOR)
+    assert found.span.start.datetime() == TOMORROW

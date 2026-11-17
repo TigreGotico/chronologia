@@ -480,6 +480,12 @@ class LangSpec:
     # closed-class words (pronouns, adverbs, verb particles) that never stand
     # as a counted noun right after an hour (``marker_not_count.voc``)
     not_count: FrozenSet[str] = field(default_factory=frozenset)
+    # courtesy phrases that close a request ("please", "por favor"), the clock
+    # prepositions that also introduce a counted group, and the word for "or";
+    # read by the counted-hour test only, so none of them joins the connectors
+    courtesy: FrozenSet[str] = field(default_factory=frozenset)
+    at_counts: FrozenSet[str] = field(default_factory=frozenset)
+    or_words: FrozenSet[str] = field(default_factory=frozenset)
     # holiday_ref surface -> well-known holiday key ("christmas", "easter");
     # derived at load time from the holidays engine's i18n tables (native
     # names + translations + curated spoken aliases), never hand-listed here

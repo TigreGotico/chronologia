@@ -161,6 +161,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     exclusion_scope: Set[str] = set()
     exclusion_filler: Set[str] = set()
     not_count: Set[str] = set()
+    courtesy: Set[str] = set()
+    at_counts: Set[str] = set()
+    or_words: Set[str] = set()
     jurisdictions: Dict[str, str] = {}
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
@@ -402,6 +405,12 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             exclusion_filler.update(s.lower() for s in surfaces)
         elif base == "marker_not_count":
             not_count.update(s.lower() for s in surfaces)
+        elif base == "marker_courtesy":
+            courtesy.update(s.lower() for s in surfaces)
+        elif base == "marker_at_counts":
+            at_counts.update(s.lower() for s in surfaces)
+        elif base == "marker_or":
+            or_words.update(s.lower() for s in surfaces)
         elif base.startswith("cycle_"):
             # cycle_<key>_<n>.voc: day <n> (0-based) of the named day cycle
             key, _, num = base[len("cycle_"):].rpartition("_")
@@ -539,6 +548,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         exclusion_scope=frozenset(exclusion_scope),
         exclusion_filler=frozenset(exclusion_filler),
         not_count=frozenset(not_count),
+        courtesy=frozenset(courtesy),
+        at_counts=frozenset(at_counts),
+        or_words=frozenset(or_words),
         weekday_full=weekday_full,
         quantifiers=quantifiers,
         positions=cfg.get("positions", {}))

@@ -1083,7 +1083,7 @@ class ConstructionMatcher:
         In some languages the preposition of a clock also introduces a counted
         group: "wave at 5 people", "a las 3 vecinas" (to the three
         neighbours), "om 3 mensen" (about three people).  The locale lists
-        those prepositions in ``marker_at_counts.voc``.  A bare hour behind
+        those prepositions in ``marker_at_counts.voc`` (``LangSpec.at_counts``).  A bare hour behind
         one of them is a time of day when nothing follows, when the next word
         belongs to the date grammar (a connector, a unit word, or a courtesy
         phrase such as "at 8 please"), a word of the locale's closed class that
@@ -1095,7 +1095,7 @@ class ConstructionMatcher:
         Such a clock stays a candidate, marked ``doubt``; :meth:`match` leaves
         it out of the parse winners.
         """
-        prepositions = self.spec.connectors.get("at_counts")
+        prepositions = self.spec.at_counts
         if not prepositions:
             return cands
         claimed = {i for c in cands if not _is_bare_hour(c.match)
@@ -1105,9 +1105,10 @@ class ConstructionMatcher:
         connectors = self.spec.connectors
         grammar = [f.split() for f in
                    (*self.spec.units,
+                    *self.spec.courtesy,
                     *(f for forms in connectors.values() for f in forms))]
-        joiners = [f.split() for key in ("and", "or")
-                   for f in connectors.get(key, ())]
+        joiners = [f.split() for f in
+                   (*connectors.get("and", ()), *self.spec.or_words)]
         glue = {f for forms in connectors.values() for f in forms}
 
         def word_at(i: int, words_list) -> int:
