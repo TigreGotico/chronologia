@@ -508,6 +508,26 @@ def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
     return best
 
 
+def _alarm_hour_goes_on(tokens: Tuple[Token, ...], end: int,
+                        spec: LangSpec) -> bool:
+    """Whether the words after the hour of an "alarm for <hour>" reading make
+    it a length or leave minutes unread: a unit ("10 minutes"), a word that
+    adds to a count (``marker_alarm_length.voc``: "10 more minutes"), a number,
+    a clock fraction or direction, or any word before a second counted unit
+    ("10 to 15 minutes")."""
+    if end >= len(tokens):
+        return False
+    word = tokens[end].text
+    second = tokens[end + 1:end + 3]
+    return (word in spec.units
+            or word in spec.connectors.get("alarm_length", frozenset())
+            or tokens[end].is_number
+            or word in spec.clock_fractions or word in spec.clock_dirs
+            or word in spec.clock_dir_minutes
+            or (len(second) == 2 and second[0].is_number
+                and second[1].text in spec.units))
+
+
 def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
           ei: int, ti: int, spec: LangSpec,
           slots: Dict[str, Token]) -> Optional[Tuple[int, Dict[str, Token]]]:
@@ -1022,13 +1042,12 @@ class ConstructionMatcher:
                                 in self.spec.conventions.bare_at_markers):
                             continue
                     # "alarm for 10" is a clock, "alarm for 10 minutes" is a
-                    # length: a unit word right after the hour ends the
-                    # reading (``marker_alarm_at.voc``).
+                    # length, and "alarm for 7 e meia" has minutes that the
+                    # bare hour would drop (``marker_alarm_at.voc``).
                     if (name == "clock_time"
                             and _connector_span("alarm_at", tokens, start,
                                                 self.spec)
-                            and end < len(tokens)
-                            and tokens[end].text in self.spec.units):
+                            and _alarm_hour_goes_on(tokens, end, self.spec)):
                         continue
                     # A holiday name takes no indefinite article when it is
                     # an adjective plus a weekday: "have a good friday" is the

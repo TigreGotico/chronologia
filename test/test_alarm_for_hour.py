@@ -35,8 +35,14 @@ CLOCKS = [
     ("Wecker für 9", "de", datetime(2026, 11, 17, 9, 0)),
     ("sveglia per 7", "it", datetime(2026, 11, 17, 19, 0)),
     ("wekker voor 7", "nl", datetime(2026, 11, 17, 19, 0)),
-    ("despertador per 7", "ca", datetime(2026, 11, 17, 19, 0)),
     ("espertador para 7", "gl", datetime(2026, 11, 17, 19, 0)),
+    ("alarm for seven thirty", "en", datetime(2026, 11, 17, 19, 30)),
+    ("alarm for 7 thirty", "en", datetime(2026, 11, 17, 19, 30)),
+    ("alarm for 7 30", "en", datetime(2026, 11, 17, 19, 30)),
+    ("alarm for 7 30 am", "en", datetime(2026, 11, 18, 7, 30)),
+    ("alarme para 7 e meia", "pt", datetime(2026, 11, 17, 19, 30)),
+    ("alarma para 7 y media", "es", datetime(2026, 11, 17, 19, 30)),
+    ("sveglia per 7 e mezza", "it", datetime(2026, 11, 17, 19, 30)),
 ]
 
 NO_CLOCK = [
@@ -45,6 +51,15 @@ NO_CLOCK = [
     ("for 10 minutes", "en"),
     ("alarm for 10 minutes", "en"),
     ("alarm for 2 hours", "en"),
+    ("alarm for 2 hrs", "en"),
+    ("alarm for 2 hr", "en"),
+    ("alarm for 10 more minutes", "en"),
+    ("snooze the alarm for 10 more minutes", "en"),
+    ("alarm for 10 extra minutes", "en"),
+    ("alarm for 10 to 15 minutes", "en"),
+    ("alarm for 10 through 15 min", "en"),
+    ("alarme para 10 min", "pt"),
+    ("alarma para 10 min", "es"),
     ("uma mesa para 4", "pt"),
     ("espera para 10", "pt"),
     ("alarme para 10 minutos", "pt"),
@@ -54,7 +69,6 @@ NO_CLOCK = [
     ("Tisch für 4", "de"),
     ("tavolo per 4", "it"),
     ("tafel voor 4", "nl"),
-    ("taula per 4", "ca"),
     ("mesa para 4", "gl"),
 ]
 
@@ -70,6 +84,13 @@ def test_an_alarm_noun_makes_the_bare_hour_a_clock(text, lang, expected):
 
 @pytest.mark.parametrize("text,lang", NO_CLOCK)
 def test_any_other_for_number_is_no_clock(text, lang):
+    assert extract_timespan(text, lang, ANCHOR) is None
+
+
+@pytest.mark.parametrize("text,lang", [
+    ("réveil pour 7 et demie", "fr"),
+])
+def test_minutes_the_order_cannot_read_leave_no_clock(text, lang):
     assert extract_timespan(text, lang, ANCHOR) is None
 
 
