@@ -16,6 +16,8 @@ from chronologia.extract.loader import load_lang_spec
 from chronologia.extract.pipeline import prematch_tokens
 
 from ._corpus import parse, ad
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,hour,minute", [
@@ -28,7 +30,7 @@ from ._corpus import parse, ad
 ])
 def test_clock_direction_after_the_hour_symbol(text, hour, minute):
     span, rest = parse(text)
-    assert span.start == ad(datetime(2017, 6, 28, hour, minute))
+    assert span.start == moved(ad(datetime(2017, 6, 28, hour, minute)), ANCHOR)
     assert rest == ""
 
 

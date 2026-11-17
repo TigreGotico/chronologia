@@ -16,6 +16,8 @@ Philippines", which gives both spoken forms for each of a set of clock times.
 import pytest
 
 from ._corpus import next_time, nomatch, remainder, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 #: (Spanish-lexified form, native form, hour, minute) -- the source states
 #: both spoken forms for the same clock time.
@@ -51,7 +53,7 @@ def test_the_two_systems_name_the_same_time(spanish, native, h, mi):
     ("alas dose ng tanghali", 12, 0),
 ])
 def test_spanish_hour_on_the_hour(text, h, mi):
-    assert start(text) == next_time(h, mi)
+    assert start(text) == moved(next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -62,7 +64,7 @@ def test_spanish_hour_on_the_hour(text, h, mi):
     ("alas onse y medya ng umaga", 11, 30),
 ])
 def test_y_medya_is_half_past_the_named_hour(text, h, mi):
-    assert start(text) == next_time(h, mi)
+    assert start(text) == moved(next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,stated", [
@@ -72,7 +74,7 @@ def test_y_medya_is_half_past_the_named_hour(text, h, mi):
 def test_y_medya_is_not_the_toward_hour_reading(text, stated):
     """The Continental-Germanic reading ("halb neun" == 08:30) would put the
     half BEFORE the stated hour; Filipino puts it after."""
-    assert start(text).hour == stated
+    assert start(text).hour == moved(stated, ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [

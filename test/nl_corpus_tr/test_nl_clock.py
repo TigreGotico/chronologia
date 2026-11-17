@@ -13,6 +13,7 @@ the hour taking the case it agrees with:
 """
 import pytest
 from ._corpus import ANCHOR, nomatch, parse, start
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,m", [
@@ -27,7 +28,7 @@ def test_iso_clock(text, h, m):
     ("saat 3", 3), ("saat 9", 9), ("saat 7", 7), ("saat 11", 11),
     ("saat 8", 8)])
 def test_at_hour(text, h):
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
 
 
 # -- "buçuk": additive half past the named hour (TDK s.v. "buçuk") ----------
@@ -36,7 +37,7 @@ def test_at_hour(text, h):
     ("dokuz buçuk", 9, 30)])
 def test_bucuk_half_past(text, h, m):
     s = start(text)
-    assert (s.hour, s.minute) == (h, m)
+    assert (s.hour, s.minute) == moved((h, m), ANCHOR)
 
 
 # The hour-introducing noun "saat" frames the whole clock reading, and TDK
@@ -50,7 +51,7 @@ def test_bucuk_half_past(text, h, m):
     ("saat on iki buçuk", 12, 30)])
 def test_saat_bucuk_half_past(text, h, m):
     s = start(text)
-    assert (s.hour, s.minute) == (h, m)
+    assert (s.hour, s.minute) == moved((h, m), ANCHOR)
     assert parse(text).remainder in ("", "toplantı")
 
 
@@ -60,7 +61,7 @@ def test_saat_bucuk_half_past(text, h, m):
     ("saat üç", 3), ("saat dokuz", 9), ("saat on iki", 12)])
 def test_saat_without_bucuk_is_the_whole_hour(text, h):
     s = start(text)
-    assert (s.hour, s.minute) == (h, 0)
+    assert (s.hour, s.minute) == moved((h, 0), ANCHOR)
 
 
 # -- "geçe": accusative hour + minute/fraction past (TDK s.v. "geçe") -------
@@ -72,7 +73,7 @@ def test_saat_without_bucuk_is_the_whole_hour(text, h):
     ("onu on geçe", 10, 10)])
 def test_gece_past(text, h, m):
     s = start(text)
-    assert (s.hour, s.minute) == (h, m)
+    assert (s.hour, s.minute) == moved((h, m), ANCHOR)
 
 
 # -- "kala": dative hour + minute/fraction to (TDK s.v. "kala") -------------
@@ -82,7 +83,7 @@ def test_gece_past(text, h, m):
     ("saat üçe on kala", 2, 50)])
 def test_kala_to(text, h, m):
     s = start(text)
-    assert (s.hour, s.minute) == (h, m)
+    assert (s.hour, s.minute) == moved((h, m), ANCHOR)
 
 
 # "saat" frames the geçe/kala readings too, so it belongs to the time phrase
@@ -126,7 +127,7 @@ def test_daypart_marker_over_a_full_reading(text, h, m):
 def test_bare_hour_without_daypart_stays_on_the_named_hour():
     # No marker, no twelve-hour shift: the hour is read exactly as named.
     s = start("saat üç")
-    assert (s.hour, s.minute) == (3, 0)
+    assert (s.hour, s.minute) == moved((3, 0), ANCHOR)
 
 
 # -- adversarial: bare direction/fraction words are not a time --------------

@@ -28,6 +28,7 @@ from that anchor is 2026-07-21.
 from chronologia.astrodate import AstroDate
 
 from ._corpus import ANCHOR, nomatch, parse, span, start
+from ruling17 import moved
 
 TUESDAY = "2026-07-21"
 
@@ -44,7 +45,7 @@ def _iso(astro):
 def test_saat_9_apostrophe_da_reads_nine_empty_remainder():
     r = parse("saat 9'da")
     assert r is not None
-    assert r.span.start.hour == 9
+    assert r.span.start.hour == moved(9, ANCHOR)
     assert r.remainder == ""
 
 
@@ -53,14 +54,14 @@ def test_saat_9_apostrophe_te_reads_nine_empty_remainder():
     # consumed identically.
     r = parse("saat 9'te")
     assert r is not None
-    assert r.span.start.hour == 9
+    assert r.span.start.hour == moved(9, ANCHOR)
     assert r.remainder == ""
 
 
 def test_saat_10_apostrophe_da_reads_ten_empty_remainder():
     r = parse("saat 10'da")
     assert r is not None
-    assert r.span.start.hour == 10
+    assert r.span.start.hour == moved(10, ANCHOR)
     assert r.remainder == ""
 
 
@@ -74,7 +75,7 @@ def test_saat_15_apostrophe_te_reads_fifteen_empty_remainder():
 def test_apostrophe_suffixed_matches_bare_digit_form():
     # The suffix must be a pure marker: same instant as the unsuffixed form.
     # 09:00 is already past at the 12:00 anchor, so the hour rolls to 07-16.
-    assert parse("saat 9'da").span.start == AstroDate(2026, 7, 16, 9, 0)
+    assert parse("saat 9'da").span.start == moved(AstroDate(2026, 7, 16, 9, 0), ANCHOR)
     assert parse("saat 9'da") == parse("saat 9")
 
 
@@ -173,7 +174,7 @@ def test_gunu_construction_unaffected_pr671():
 def test_bare_saat_9_unaffected():
     r = parse("saat 9")
     assert r is not None
-    assert r.span.start.hour == 9
+    assert r.span.start.hour == moved(9, ANCHOR)
     assert r.remainder == ""
 
 

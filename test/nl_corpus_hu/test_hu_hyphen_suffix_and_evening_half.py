@@ -16,6 +16,8 @@ from datetime import datetime, timedelta
 import pytest
 
 from ._corpus import ad, parse
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 def _day(y, m, d):
@@ -59,7 +61,7 @@ def test_day_suffix_is_part_of_the_date(text, y, m, d):
 def test_clock_suffix_and_evening_half(text, when):
     r = parse(text)
     assert r is not None
-    assert r.span.start == ad(when)
+    assert r.span.start == moved(ad(when), ANCHOR)
     assert r.remainder == ""
 
 

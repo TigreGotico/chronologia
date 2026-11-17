@@ -14,6 +14,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span, nomatch
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -40,13 +41,13 @@ def clk(h, mi, s=0):
     ("halb sechs", 5, 30),
 ])
 def test_halb_is_half_to(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 
 def test_halb_neun_is_not_half_past():
     # the whole point: 08:30, never 09:30.
-    assert start("halb neun").hour == 8
+    assert start("halb neun").hour == moved(8, ANCHOR)
     assert start("halb neun").minute == 30
 
 
@@ -70,7 +71,7 @@ def test_halb_landmark_and_meridiem(text, h, mi):
     ("viertel vor mitternacht", 23, 45), ("viertel nach mittag", 12, 15),
 ])
 def test_quarter_explicit_direction(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # == REGIONAL bare quarters: South/East German + Austrian toward-the-hour ==
@@ -86,7 +87,7 @@ def test_quarter_explicit_direction(text, h, mi):
     ("viertel drei", 2, 15), ("dreiviertel eins", 0, 45),
 ])
 def test_bare_quarter_regional_toward_hour(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # == arbitrary minute "N vor/nach H" ======================================
@@ -97,7 +98,7 @@ def test_bare_quarter_regional_toward_hour(text, h, mi):
     ("zehn nach mittag", 12, 10),
 ])
 def test_minute_to_past(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 # == digit / bare-hour / o'clock literals =================================
@@ -118,7 +119,7 @@ def test_digit_time(text, h, mi, s):
     ("um mitternacht", 0), ("um mittag", 12),
 ])
 def test_bare_hour(text, h):
-    assert start(text) == clk(h, 0)
+    assert start(text) == moved(clk(h, 0), ANCHOR)
 
 
 # == landmarks ============================================================

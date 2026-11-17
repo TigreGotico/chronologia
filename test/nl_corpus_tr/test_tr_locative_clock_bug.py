@@ -17,6 +17,8 @@ from datetime import datetime
 import pytest
 
 from ._corpus import parse
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 A = datetime(2017, 6, 27, 13, 4)
 
@@ -32,4 +34,4 @@ _LOCATIVE = [
 def test_locative_hour(text, h):
     r = parse(text, A)
     assert r is not None, f"{text!r} did not parse"
-    assert r[0].start.hour == h
+    assert r[0].start.hour == moved(h, ANCHOR)

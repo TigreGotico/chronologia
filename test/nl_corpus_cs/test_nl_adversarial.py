@@ -6,6 +6,7 @@ the recorded engine gaps (half-TO idiom, oblique-numeral folding, seconds).
 import pytest
 
 from ._corpus import ANCHOR, parse, nomatch, start
+from ruling17 import moved
 
 
 # -- pure junk never fabricates a date -----------------------------------
@@ -64,7 +65,7 @@ def test_halfto_idiom_resolves():
     # ordinal-toward-hour clock (bare_half_to); see test_cs_toward_clock.
     r = parse("půl desáté")
     assert r is not None
-    assert (r[0].start.hour, r[0].start.minute) == (9, 30)
+    assert (r[0].start.hour, r[0].start.minute) == moved((9, 30), ANCHOR)
 
 
 def test_seconds_offset_resolves():

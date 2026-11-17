@@ -12,6 +12,7 @@ guard, ``"." not in token.raw``, rejected that token exactly like a genuine
 while plain "perjantaina klo 10" (no trailing period) merged correctly.
 """
 from ._corpus import ANCHOR, ad, start, span, nomatch  # noqa: F401
+from ruling17 import moved
 
 #: the Friday following the Tuesday ANCHOR (2017-06-27 -> 2017-06-30).
 _FRIDAY_10 = ANCHOR.replace(month=6, day=30, hour=10, minute=0, second=0,
@@ -30,5 +31,5 @@ def test_no_period_control_still_merges():
 
 
 def test_bare_marker_hour_period():
-    assert start("klo 10.") == ad(_NEXT_10)
-    assert start("klo 10") == ad(_NEXT_10)
+    assert start("klo 10.") == moved(ad(_NEXT_10), ANCHOR)
+    assert start("klo 10") == moved(ad(_NEXT_10), ANCHOR)

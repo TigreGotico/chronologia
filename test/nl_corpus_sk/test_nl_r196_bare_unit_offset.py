@@ -23,6 +23,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 from ._corpus import ANCHOR, ad, start, span, parse, nomatch
+from ruling17 import moved
 
 
 def test_day_future():
@@ -82,7 +83,7 @@ def test_numeral_form_unaffected():
 def test_o_clock_collision_unaffected():
     r = parse("o 9 hodine")
     assert r is not None
-    assert r[0].start.hour == 9
+    assert r[0].start.hour == moved(9, ANCHOR)
 
 
 # a bare PLURAL unit is not an implied one -- USG only ever supplies

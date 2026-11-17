@@ -23,6 +23,8 @@ import pytest
 from chronologia.extract import extract_duration
 
 from ._corpus import parse
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 LANG = "nl"
 
@@ -140,8 +142,8 @@ def test_kwartier_does_not_collide_with_clock_kwart():
     anchor = datetime(2026, 8, 14, 10, 0)
     r = parse("kwart over negen", anchor)
     assert r is not None
-    assert r[0].start == AstroDate(2026, 8, 15, 9, 15)
+    assert r[0].start == moved(AstroDate(2026, 8, 15, 9, 15), anchor)
 
     r = parse("kwart voor negen", anchor)
     assert r is not None
-    assert r[0].start == AstroDate(2026, 8, 15, 8, 45)
+    assert r[0].start == moved(AstroDate(2026, 8, 15, 8, 45), anchor)

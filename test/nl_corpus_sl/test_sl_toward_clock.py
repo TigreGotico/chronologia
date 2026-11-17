@@ -12,6 +12,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, nomatch
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -29,7 +30,7 @@ def _next_time(h, mi):
     ("pol dvanajstih", 11, 30),
 ])
 def test_half_toward_coming_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

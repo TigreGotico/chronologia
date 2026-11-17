@@ -18,6 +18,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start
+from ruling17 import moved
 
 _NUM = [
     ("una", 1), ("dos", 2), ("tres", 3), ("cuatro", 4), ("cinco", 5),
@@ -97,17 +98,17 @@ def _noche_cases():
 
 @pytest.mark.parametrize("text,g", _fraction_cases())
 def test_hour_fraction_matrix(text, g):
-    assert start(text) == g, text
+    assert start(text) == moved(g, ANCHOR), text
 
 
 @pytest.mark.parametrize("text,g", _menos_cuarto_cases())
 def test_menos_cuarto_matrix(text, g):
-    assert start(text) == g, text
+    assert start(text) == moved(g, ANCHOR), text
 
 
 @pytest.mark.parametrize("text,g", _en_punto_cases())
 def test_en_punto_matrix(text, g):
-    assert start(text) == g, text
+    assert start(text) == moved(g, ANCHOR), text
 
 
 @pytest.mark.parametrize("text,g", _manana_cases())

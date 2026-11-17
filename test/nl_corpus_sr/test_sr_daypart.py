@@ -16,6 +16,8 @@ import pytest
 from chronologia.astrodate import BASIS_RECONSTRUCTED
 
 from ._corpus import AstroDate, nomatch, parse, span, start  # noqa: F401
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 #: pinned to the mission anchor (Tuesday 13:04) so the asserted bands are
 #: reproducible regardless of the corpus helper's own default anchor.
@@ -64,4 +66,4 @@ def test_bare_nedelja_still_names_sunday(phrase):
 
 def test_pola_cetiri_still_three_thirty():
     s = start("pola četiri", A)
-    assert (s.hour, s.minute) == (3, 30)
+    assert (s.hour, s.minute) == moved((3, 30), ANCHOR)
