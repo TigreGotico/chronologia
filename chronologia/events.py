@@ -261,8 +261,10 @@ def extract_event(
         # "3 days before christmas": the length is the date's offset, not the
         # event's width, when the span reading of the whole text consumes
         # every word the length took and starts on another date than the text
-        # without the length.  "for 3 days from tomorrow" keeps its length,
-        # because the span reading leaves "for" behind; "at 5pm for 10
+        # without the length.  A length that carries its own "for" marker
+        # stays a length, also when the span reading takes the marker: "for 3
+        # days from tomorrow", pt "amanhã durante duas horas de manhã" and fr
+        # "demain pendant deux heures le matin".  "at 5pm for 10
         # minutes" keeps it, because both readings start at 5pm.  fr "réunion
         # de deux heures demain" keeps it too: "deux heures" alone reads as the
         # clock time 02:00, and no "before"/"after"/"in"/"ago" marker joins the
@@ -298,7 +300,9 @@ def extract_event(
                 for surface in spec.connectors.get(name, ())
                 for word in words(surface)})
             bare_offset = not span_words - length_words - offset_words
-            if not length_words - span_words \
+            for_marked = any(not words(surface) - length_words
+                             for surface in spec.connectors.get("recur_for", ()))
+            if not for_marked and not length_words - span_words \
                     and not (bare_offset and rest_words - span_words) \
                     and (rest is None or rest.span.start != whole.span.start) \
                     and not (rest is not None and _is_bare_clock_length(
