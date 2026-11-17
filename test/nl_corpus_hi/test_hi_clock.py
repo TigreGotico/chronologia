@@ -15,8 +15,10 @@ manufacture them either.
 from datetime import timedelta
 
 import pytest
+from ruling17 import moved
 
 from ._corpus import ANCHOR, ad, nomatch, remainder, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -35,7 +37,7 @@ def _next_time(h, mi):
     ("साढ़े बारह बजे", 12, 30),
 ])
 def test_half_counts_forward_from_the_named_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -46,7 +48,7 @@ def test_half_counts_forward_from_the_named_hour(text, h, mi):
     ("सवा बारह", 12, 15),
 ])
 def test_quarter_counts_forward_from_the_named_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -57,7 +59,7 @@ def test_quarter_counts_forward_from_the_named_hour(text, h, mi):
 ])
 def test_quarter_less_counts_back_from_the_named_hour(text, h, mi):
     """पौने दस == 09:45 is en.wiktionary's own worked example."""
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,named_hour", [
@@ -75,9 +77,9 @@ def test_quarter_less_is_never_the_hour_it_names(text, named_hour):
 def test_the_three_fractions_disagree_on_the_same_hour():
     """साढ़े/सवा add to their hour, पौने subtracts from it -- pinned side by
     side so a change that unifies them cannot pass."""
-    assert (start("सवा चार").hour, start("सवा चार").minute) == (4, 15)
-    assert (start("साढ़े चार").hour, start("साढ़े चार").minute) == (4, 30)
-    assert (start("पौने चार").hour, start("पौने चार").minute) == (3, 45)
+    assert (start("सवा चार").hour, start("सवा चार").minute) == moved((4, 15), ANCHOR)
+    assert (start("साढ़े चार").hour, start("साढ़े चार").minute) == moved((4, 30), ANCHOR)
+    assert (start("पौने चार").hour, start("पौने चार").minute) == moved((3, 45), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -98,7 +100,7 @@ def test_the_half_word_does_not_manufacture_the_suppletive_hours(text):
     suppletive literal's value by some special case."""
     s = start(text)
     assert s.minute == 30
-    assert s.hour in (1, 2)
+    assert s.hour in tuple(moved((h, 30), ANCHOR)[0] for h in (1, 2))
 
 
 @pytest.mark.parametrize("text,h,mi", [
@@ -107,14 +109,14 @@ def test_the_half_word_does_not_manufacture_the_suppletive_hours(text):
     ("तीन बजकर पैंतालीस मिनट", 3, 45),
 ])
 def test_minutes_past_a_struck_hour(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h", [
     ("दो बजे", 2), ("छह बजे", 6), ("नौ बजे", 9), ("बारह बजे", 12),
 ])
 def test_oclock(text, h):
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [

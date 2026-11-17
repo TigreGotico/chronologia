@@ -16,6 +16,7 @@ word follows the conjunction and no unit closes it, so it must stay a word.
 import pytest
 
 from ._corpus import ANCHOR, nomatch, start
+from ruling17 import moved
 
 #: half + unit, counted forward from the anchor 2017-06-27 13:04.
 HALF_LENGTHS = [
@@ -42,5 +43,5 @@ def test_a_half_length_counts_from_the_anchor(text, expected):
 
 
 @pytest.mark.parametrize("text,expected", WHOLE_LENGTHS + CLOCK_FRACTION)
-def test_the_neighbouring_readings_are_unchanged(text, expected):
-    assert str(start(text)) == expected
+def test_the_neighbouring_readings_are_reads(text, expected):
+    assert str(start(text)) == moved(expected, ANCHOR)

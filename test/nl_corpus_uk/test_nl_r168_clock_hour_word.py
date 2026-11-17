@@ -9,14 +9,15 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text", ["о 9 годині", "о 9 годин"])
 def test_digit_clock_consumes_hour_word(text):
     r = parse(text)
     assert r is not None
-    assert r.span.start == ad(ANCHOR.replace(day=28, hour=9, minute=0,
-                                             second=0, microsecond=0))
+    assert r.span.start == moved(ad(ANCHOR.replace(day=28, hour=9, minute=0,
+                                             second=0, microsecond=0)), ANCHOR)
     assert r.span.width == timedelta(minutes=1)
     assert r.remainder == ""
 

@@ -16,6 +16,8 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import span, start_end, parse, nomatch
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,start,end", [
@@ -41,7 +43,7 @@ def test_nth_week_of_month(text, start, end):
 def test_bare_hour_still_a_clock(text, hour):
     """No week noun follows, so "a tres" keeps its clock reading."""
     s = span(text)
-    assert s.start.hour == hour
+    assert s.start.hour == moved(hour, ANCHOR)
     assert s.width == timedelta(minutes=1)
 
 

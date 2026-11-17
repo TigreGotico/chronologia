@@ -13,6 +13,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -33,7 +34,7 @@ HALF_HOURS = [
 
 @pytest.mark.parametrize("text,hour", HALF_HOURS)
 def test_half_names_the_coming_hour(text, hour):
-    assert start(text) == _next_time(hour, 30)
+    assert start(text) == moved(_next_time(hour, 30), ANCHOR)
 
 
 @pytest.mark.parametrize("text,hour", HALF_HOURS)
@@ -45,8 +46,8 @@ def test_half_is_never_the_stated_hour(text, hour):
 def test_the_two_sourced_examples():
     """The worked pairs the rule was read off: "pusastoņi" is 7:30 and
     "pusčetri" is 3:30."""
-    assert (start("pusastoņi").hour, start("pusastoņi").minute) == (7, 30)
-    assert (start("pusčetri").hour, start("pusčetri").minute) == (3, 30)
+    assert (start("pusastoņi").hour, start("pusastoņi").minute) == moved((7, 30), ANCHOR)
+    assert (start("pusčetri").hour, start("pusčetri").minute) == moved((3, 30), ANCHOR)
 
 
 def test_every_half_hour_lands_on_the_half():

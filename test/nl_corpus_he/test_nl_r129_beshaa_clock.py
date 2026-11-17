@@ -18,6 +18,7 @@ Gold values are hand-derived from the mission anchor (Tuesday 2017-06-27
 13:04); the next Tuesday is 2017-07-04.  Never read back from the parser.
 """
 from ._corpus import ANCHOR, ad, nomatch, parse, span, start
+from ruling17 import moved
 
 
 def clk(y, m, d, h, mi):
@@ -32,7 +33,7 @@ def test_bare_digit_binds_and_rolls_to_tomorrow():
     r = parse("בשעה 9")
     assert r is not None, "'בשעה 9' did not parse (R129: clock never bound)"
     assert r.remainder == ""
-    assert r.span.start == clk(2017, 6, 28, 9, 0)
+    assert r.span.start == moved(clk(2017, 6, 28, 9, 0), ANCHOR)
 
 
 def test_bare_spelled_binds_same_as_digit():
@@ -41,7 +42,7 @@ def test_bare_spelled_binds_same_as_digit():
     r = parse("בשעה תשע")
     assert r is not None, "'בשעה תשע' did not parse"
     assert r.remainder == ""
-    assert r.span.start == clk(2017, 6, 28, 9, 0)
+    assert r.span.start == moved(clk(2017, 6, 28, 9, 0), ANCHOR)
 
 
 def test_bare_clock_with_explicit_colon_unchanged():

@@ -5,6 +5,7 @@ alone, the whole utterance is the clock.  Inside a sentence with no marker it
 is a length, a coordinate or a citation, and is not read.
 """
 import pytest
+from ruling17 import moved
 
 from ._corpus import ANCHOR, parse, span
 
@@ -52,6 +53,6 @@ def test_a_plain_number_with_a_half_after_a_marker_is_a_clock(text):
     """Only an hour written with the letter stays a bare hour before a
     fraction.  10:30 has passed at 13:04, so the clock is tomorrow's."""
     s = span(text)
-    assert (s.start.month, s.start.day, s.start.hour, s.start.minute) == (
-        6, 28, 10, 30)
+    assert (s.start.month, s.start.day, s.start.hour, s.start.minute) == moved(
+        (6, 28, 10, 30), ANCHOR)
 

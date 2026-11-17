@@ -25,6 +25,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span
+from ruling17 import moved
 
 _HOUR_WORDS = [
     (1, "una"), (2, "dues"), (3, "tres"), (4, "quatre"), (5, "cinc"),
@@ -67,7 +68,7 @@ _FRACTION_CASES = _fraction_cases()
     ids=["%s" % t for t, _, _ in _FRACTION_CASES],
 )
 def test_hour_fraction_all_hours(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 

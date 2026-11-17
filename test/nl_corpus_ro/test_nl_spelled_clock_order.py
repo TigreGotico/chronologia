@@ -11,6 +11,8 @@ not the engine's output.
 import pytest
 
 from ._corpus import AstroDate, parse, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,hour,minute", [
@@ -24,7 +26,7 @@ from ._corpus import AstroDate, parse, start
     ("ora nouă și cinci", 9, 5),
 ])
 def test_hour_leads_the_minute(text, hour, minute):
-    assert start(text) == AstroDate(2017, 6, 28, hour, minute)
+    assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)
     assert parse(text).remainder == ""
 
 
@@ -34,8 +36,8 @@ def test_hour_leads_the_minute(text, hour, minute):
     ("nouă și un sfert", 9, 15),
     ("nouă și jumătate", 9, 30),
 ])
-def test_fraction_forms_are_unchanged(text, hour, minute):
-    assert start(text) == AstroDate(2017, 6, 28, hour, minute)
+def test_fraction_forms_are_reads(text, hour, minute):
+    assert start(text) == moved(AstroDate(2017, 6, 28, hour, minute), ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

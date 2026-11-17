@@ -9,6 +9,8 @@ still ahead today.
 import pytest
 
 from ._corpus import span
+from ._corpus import ANCHOR
+from ruling17 import moved, moved_date
 
 
 @pytest.mark.parametrize("text,day,hour,minute", [
@@ -20,8 +22,8 @@ from ._corpus import span
 ])
 def test_a_fraction_after_a_written_hour(text, day, hour, minute):
     s = span(text)
-    assert (s.start.month, s.start.day) == (6, day)
-    assert (s.start.hour, s.start.minute) == (hour, minute)
+    assert (s.start.month, s.start.day) == moved_date((6, day), (hour, minute), ANCHOR)
+    assert (s.start.hour, s.start.minute) == moved((hour, minute), ANCHOR)
 
 
 def test_a_count_of_something_else_keeps_the_clock():

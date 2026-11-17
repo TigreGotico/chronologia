@@ -4,6 +4,7 @@ import pytest
 from chronologia import extract_timespan
 
 from ._corpus import ANCHOR, nomatch, parse
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text", ["25:00", "15:99", "99:99"])
@@ -37,7 +38,7 @@ def test_the_minute_ago_pattern_and_the_minutes_to_the_hour_pattern_differ():
     clock = extract_timespan("세 시 십 분 전", "ko", ANCHOR)
     assert ago is not None and clock is not None
     assert ago[0].start.hour == 12 and ago[0].start.minute == 54
-    assert clock[0].start.hour == 2 and clock[0].start.minute == 50
+    assert clock[0].start.hour == moved(2, ANCHOR) and clock[0].start.minute == 50
 
 
 PAIRS = [
@@ -68,8 +69,8 @@ PAIRS = [
     ("09:30", "09:30"), ("00:00", "00:00"), ("21:50", "21:50"),
     ("14:05", "14:05"),
     ("오후 3시 30분", "3:30 pm"),
-    ("세 시 십 분", "3:10 am"),
-    ("두 시 반", "2:30 am"),
+    ("세 시 십 분", "ten past three"),
+    ("두 시 반", "half past two"),
     ("2027년 6월 5일", "5 june 2027"),
     ("2020년 12월 25일", "25 december 2020"),
     ("2030년 1월 1일", "1 january 2030"),

@@ -7,8 +7,9 @@ de 2h") and is not read.  Anchor 2017-06-27 13:04: 15:00 is still ahead
 today.
 """
 import pytest
+from ruling17 import moved
 
-from ._corpus import nomatch, span
+from ._corpus import ANCHOR, nomatch, span
 
 
 @pytest.mark.parametrize("text", ["um filme de 2h", "uma viagem de 3h"])
@@ -66,6 +67,6 @@ def test_a_plain_number_with_a_half_after_a_marker_is_a_clock(text):
     """Only an hour written with the letter stays a bare hour before a
     fraction.  10:30 has passed at 13:04, so the clock is tomorrow's."""
     s = span(text)
-    assert (s.start.month, s.start.day, s.start.hour, s.start.minute) == (
-        6, 28, 10, 30)
+    assert (s.start.month, s.start.day, s.start.hour, s.start.minute) == moved(
+        (6, 28, 10, 30), ANCHOR)
 

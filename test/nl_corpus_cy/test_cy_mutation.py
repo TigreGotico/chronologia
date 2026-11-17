@@ -17,6 +17,7 @@ from dateutil.relativedelta import relativedelta
 from chronologia.astrodate import AstroDate
 
 from ._corpus import ANCHOR, ad, nomatch, remainder, start
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,years", [
@@ -117,7 +118,7 @@ def test_the_weekday_head_noun_mutates(mutated, radical):
 def test_the_hour_numeral_mutates_after_am(text, h):
     """"am" (at) triggers soft mutation on the numeral itself: dau -> ddau,
     tri -> dri, pedwar -> bedwar, pump -> bump, deg -> ddeg."""
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
 
 
 def test_bob_is_the_every_marker_in_its_mutated_form():

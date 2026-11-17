@@ -15,6 +15,8 @@ from datetime import datetime
 import pytest
 
 from ._corpus import nomatch, parse
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 A = datetime(2017, 6, 27, 13, 4)
 
@@ -23,7 +25,7 @@ def _at(text, want):
     r = parse(text, A)
     assert r is not None, "%r did not parse" % text
     s = r[0].start
-    assert (s.year, s.month, s.day, s.hour, s.minute) == want, \
+    assert (s.year, s.month, s.day, s.hour, s.minute) == moved(want, ANCHOR), \
         "%r read %s, expected %s" % (text, (s.year, s.month, s.day, s.hour,
                                             s.minute), want)
     assert r[1] == "", "%r stranded %r" % (text, r[1])

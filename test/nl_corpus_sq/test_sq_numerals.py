@@ -13,6 +13,7 @@ import pytest
 from chronologia.extract.numfold_albanian import read_run
 
 from ._corpus import ANCHOR, nomatch, parse, start
+from ruling17 import moved
 
 #: 1..10, transcribed from the entries një, dy, tre/tri, katër, pesë,
 #: gjashtë, shtatë, tetë, nëntë, dhjetë.
@@ -135,7 +136,7 @@ def test_a_run_without_a_round_word_still_composes(text, expected):
     """The clock's hour-and-minutes run has the same shape as the refused one
     -- number, connective, number -- and must keep composing."""
     s = start(text)
-    assert (s.hour, s.minute) == expected
+    assert (s.hour, s.minute) == moved(expected, ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

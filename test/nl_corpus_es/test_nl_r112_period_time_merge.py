@@ -16,6 +16,7 @@ so did English ("friday at 10.", whose tokenizer never folds the dot into
 from datetime import timedelta
 
 from ._corpus import ANCHOR, ad, start, span, nomatch
+from ruling17 import moved
 
 #: the Friday following the Tuesday ANCHOR (2017-06-27 -> 2017-06-30).
 _FRIDAY_10 = ANCHOR.replace(month=6, day=30, hour=10, minute=0, second=0,
@@ -40,7 +41,7 @@ def test_bare_marker_hour_period():
     # scaffolding.  10:00 is already past the 13:04 anchor time, so
     # ``prefer_future`` rolls it to the next day (06-28), same as the
     # no-period baseline would.
-    assert start("a las 10.") == ad(
-        ANCHOR.replace(day=28, hour=10, minute=0, second=0, microsecond=0))
-    assert start("a las 10") == ad(
-        ANCHOR.replace(day=28, hour=10, minute=0, second=0, microsecond=0))
+    assert start("a las 10.") == moved(ad(
+        ANCHOR.replace(day=28, hour=10, minute=0, second=0, microsecond=0)), ANCHOR)
+    assert start("a las 10") == moved(ad(
+        ANCHOR.replace(day=28, hour=10, minute=0, second=0, microsecond=0)), ANCHOR)

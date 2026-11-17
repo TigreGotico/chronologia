@@ -2,6 +2,8 @@
 """Clock readings in Malay."""
 import pytest
 from ._corpus import start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,h,m", [
@@ -16,7 +18,7 @@ def test_iso_clock(text, h, m):
     ("pukul 3", 3), ("jam 9", 9), ("pukul 7", 7), ("jam 11", 11),
     ("pukul 8", 8)])
 def test_at_hour(text, h):
-    assert start(text).hour == h
+    assert start(text).hour == moved(h, ANCHOR)
 
 
 # -- THE MALAY HALF TRAP: "setengah tiga" == 02:30 (half TOWARD three), NOT
@@ -32,4 +34,4 @@ def test_at_hour(text, h):
 ])
 def test_setengah_is_half_toward(text, h, m):
     s = start(text)
-    assert (s.hour, s.minute) == (h, m)
+    assert (s.hour, s.minute) == moved((h, m), ANCHOR)

@@ -11,6 +11,8 @@ phrase and not a locale that stopped parsing.
 import pytest
 
 from ._corpus import nomatch, start
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 #: phrase -> the value the legacy extractor invented for it.
 LEGACY_INVENTED = [
@@ -30,4 +32,4 @@ def test_the_invented_reading_is_refused(text, legacy_value):
 
 @pytest.mark.parametrize("text,expected", CONTROLS)
 def test_the_locale_still_reads_its_neighbour(text, expected):
-    assert str(start(text)) == expected
+    assert str(start(text)) == moved(expected, ANCHOR)

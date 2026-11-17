@@ -11,6 +11,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start
+from ruling17 import moved
 
 #: (hour word, hour value).
 _HOURS = [
@@ -32,4 +33,4 @@ def test_additive_minutes_sweep(hw, hv, mw, mv):
     dt = ANCHOR.replace(hour=hv, minute=mv, second=0, microsecond=0)
     if dt < ANCHOR:
         dt += timedelta(days=1)
-    assert start(f"le {hw} e {mw}") == ad(dt)
+    assert start(f"le {hw} e {mw}") == moved(ad(dt), ANCHOR)

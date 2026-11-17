@@ -15,6 +15,8 @@ import pytest
 from chronologia.astrodate import AstroDate
 
 from ._corpus import parse
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 A = datetime(2017, 6, 27, 13, 4)
 
@@ -38,7 +40,7 @@ _LOCATIVE = {
 def test_locative_hour_reads_as_hour(h, word):
     r = parse("saat " + word, A)
     assert r is not None, f"'saat {word}' did not parse"
-    assert r[0].start.hour == h
+    assert r[0].start.hour == moved(h, A)
 
 
 @pytest.mark.parametrize("h,word", sorted(_LOCATIVE.items()))
@@ -47,7 +49,7 @@ def test_locative_hour_pins_the_next_occurrence(h, word):
     # rolls to the following day.
     r = parse("saat " + word, A)
     assert r is not None
-    assert r[0].start == _next_hour(h)
+    assert r[0].start == moved(_next_hour(h), A)
 
 
 @pytest.mark.parametrize("h,word", sorted(_LOCATIVE.items()))

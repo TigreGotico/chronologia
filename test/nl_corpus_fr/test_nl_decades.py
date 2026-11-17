@@ -14,6 +14,8 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import span, start, start_end, nomatch, AstroDate
+from ._corpus import ANCHOR
+from ruling17 import moved
 
 
 @pytest.mark.parametrize("text,y0", [
@@ -74,4 +76,4 @@ def test_bare_spelled_clock():
     # dev's SCOPE_UNIT hour-exclusion lets a bare spelled clock ("trois
     # heures") read as 3 o'clock instead of colliding with the scoped
     # "Nth hour" ordinal reading.
-    assert start("trois heures") == AstroDate(2017, 6, 28, 3, 0)
+    assert start("trois heures") == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR)

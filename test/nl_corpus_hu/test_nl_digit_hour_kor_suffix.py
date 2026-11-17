@@ -17,6 +17,7 @@ Those rows are controls, unchanged by this construction.
 import pytest
 
 from ._corpus import ANCHOR, nomatch, parse, start
+from ruling17 import moved
 
 #: hour written in digits, read at the anchor's next occurrence of it.
 DIGIT_HOUR = [
@@ -43,7 +44,7 @@ SPELLED_CONTROLS = [
 
 @pytest.mark.parametrize("text,expected", DIGIT_HOUR)
 def test_digit_hour_with_kor_reads_the_hour(text, expected):
-    assert str(start(text)) == expected
+    assert str(start(text)) == moved(expected, ANCHOR)
 
 
 @pytest.mark.parametrize("text,expected", DIGIT_HOUR)
@@ -54,8 +55,8 @@ def test_digit_hour_with_kor_consumes_the_phrase(text, expected):
 
 
 @pytest.mark.parametrize("text,expected", FRACTION_CONTROLS + SPELLED_CONTROLS)
-def test_the_neighbouring_readings_are_unchanged(text, expected):
-    assert str(start(text)) == expected
+def test_the_neighbouring_readings_are_reads(text, expected):
+    assert str(start(text)) == moved(expected, ANCHOR)
 
 
 def test_an_impossible_hour_is_still_refused():

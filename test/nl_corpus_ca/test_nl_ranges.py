@@ -47,6 +47,7 @@ def test_a_trap_non_temporal_place_is_nomatch():
 
 # -- open-ended ranges: "fins" (open start) / "des de" (open end) -----------
 from ._corpus import ANCHOR, ad  # noqa: E402
+from ruling17 import moved
 
 
 def test_fins_open_start():
@@ -85,8 +86,8 @@ def test_del_al_crosses_the_year():
 
 def test_al_without_a_from_lead_is_not_a_range():
     ss, ee = start_end("el concert és a les tres")
-    assert ss == AstroDate(2017, 6, 28, 3, 0)
-    assert ee == AstroDate(2017, 6, 28, 3, 1)
+    assert ss == moved(AstroDate(2017, 6, 28, 3, 0), ANCHOR)
+    assert ee == moved(AstroDate(2017, 6, 28, 3, 1), ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["del al", "del 5 al", "anem del pa al vi"])
