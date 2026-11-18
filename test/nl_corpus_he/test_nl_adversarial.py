@@ -23,7 +23,7 @@ def test_no_spurious_parse(text):
 
 
 # -- dual nouns: a dual splits to a synthetic NUM(2) + plural-unit pair
-# (``numfold_semitic._he_dual_split``), reusing the ordinary NUM UNIT offset
+# (``numlayer_semitic._he_dual_split``), reusing the ordinary NUM UNIT offset
 # reading in both directions; these assert the surfaces resolve fully.
 @pytest.mark.parametrize("text", [
     "בעוד שבועיים",           # "in a fortnight" (dual)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Spelled-ordinal folding shared across the number-fold families.
 
-The cardinal folds (``numfold``, ``numfold_slavic``, ``numfold_semitic``,
+The cardinal folds (``numfold``, ``numfold_slavic``,
 ``numfold_agglutinative``) read *cardinal* number-words from
 ``ovos_number_parser``'s ``extract_number_<lang>`` back-end.  Several
 constructions instead take a **spelled ordinal** in their ``ORD`` slot -- the

@@ -1,4 +1,4 @@
-"""Spelled-number folding for the heavy-morphology batch (el, hu, fi, et, eu).
+"""Spelled-number folding for the heavy-morphology batch (hu, fi, et, eu).
 
 Same job as the English/Slavic folds: collapse a maximal run of spelled
 number-words into one digit :class:`~chronologia.extract.model.Token` so a
@@ -8,8 +8,7 @@ not cover, so the factory below takes them as explicit facts:
 
 * **oblique/declined forms the extractor does not read** -- the Finnish and
   Estonian genitive numerals used in offset slots ("kahden viikon",
-  "kolme nädala"), the Greek feminine clock-hour numerals that agree with
-  *ώρα* ("τρεις"/"τέσσερις"), and the Basque *-ak* hour forms ("bostak").
+  "kolme nädala") and the Basque *-ak* hour forms ("bostak").
   These are given as an explicit ``{surface: value}`` map: run membership is
   gated on the surface and the value is read from the map when the number
   model rejects the form.
@@ -29,8 +28,7 @@ from importlib import import_module
 from typing import Callable, Dict, FrozenSet, Optional, Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
-                                                reindex, with_marked_h_clock)
+from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
 from chronologia.extract.numfold_ordinals import with_ordinals
 
 
@@ -249,86 +247,6 @@ def _with_bare_case_hour(fold: Callable[[Tuple[Token, ...]], Tuple[Token, ...]],
         return fold(reindex(tuple(out)))
 
     return pre
-
-
-# -- Greek: feminine clock-hour numerals agree with the elided ώρα ----------
-# extract_number_el already reads most; the run-membership gate needs the
-# feminine surfaces the *pronounce* side (neuter) does not emit.
-_EL_FEM_HOURS = {
-    "μία": 1, "τρεις": 3, "τέσσερις": 4,
-    "δεκατρείς": 13, "δεκατέσσερις": 14,
-}
-# Greek hundreds inflect for gender; ``pronounce_number_el`` emits only the
-# NEUTER form (διακόσια), so the FEMININE hundreds that agree with feminine unit
-# nouns ("διακόσιες μέρες" -- 200 days, μέρα being feminine) and the MASCULINE
-# hundreds ("διακόσιοι μήνες") never entered the model-derived run set and folded
-# to None.  ``extract_number_el`` reads every gender correctly, so the surfaces
-# only need to be present in the run set; the neuter forms already arrive via
-# the 0..999 pronunciation sweep.
-_EL_HUNDREDS = {
-    "διακόσιες": 200, "τριακόσιες": 300, "τετρακόσιες": 400,
-    "πεντακόσιες": 500, "εξακόσιες": 600, "εφτακόσιες": 700,
-    "επτακόσιες": 700, "οχτακόσιες": 800, "οκτακόσιες": 800,
-    "εννιακόσιες": 900,
-    "διακόσιοι": 200, "τριακόσιοι": 300, "τετρακόσιοι": 400,
-    "πεντακόσιοι": 500, "εξακόσιοι": 600, "επτακόσιοι": 700,
-    "οκτακόσιοι": 800, "εννιακόσιοι": 900,
-}
-# The everyday spellings of seven, eight and nine (Wiktionary: εφτά and οχτώ
-# "alternative spelling of" επτά / οκτώ, εννιά "nine") beside the formal
-# ones the pronouncer emits, so the spoken clock "στις οχτώ" (at eight) binds.
-_EL_SPOKEN_UNITS = {"εφτά": 7, "οχτώ": 8, "εννιά": 9}
-_el_numfold = _make_fold("el", {**_EL_FEM_HOURS, **_EL_HUNDREDS,
-                                **_EL_SPOKEN_UNITS})
-
-# -- Greek: the written day-of-month is a digit + ordinal ending -------------
-# "5η Μαρτίου" (the 5th of March), "της 5ης Μαρτίου" (of the 5th of March).
-# A Greek τακτικό αριθμητικό (ordinal) inflects for gender/case; when spelled
-# with a digit the ending rides on the numeral ("5η", "5ος", "5ου").  The
-# day-of-month agrees with the feminine ημέρα, so "Nη"/"Nης" are the everyday
-# forms, but the masculine/neuter/plural endings are the same closed class and
-# are folded too so any digit-ordinal binds its numeral.  Source: Νεοελληνική
-# Γραμματική (Τριανταφυλλίδης), τακτικά αριθμητικά; Πύλη για την Ελληνική Γλώσσα
-# (greek-language.gr) ordinal-ending paradigm.
-#
-# The tokenizer shears the ending off the digit ("5η" -> "5", "η"), so a number
-# immediately followed by a bare ordinal-ending fragment folds back to the
-# number and the DAY/NUM slot binds.  The merge is gated on ADJACENCY (no space
-# between the two source tokens): "η"/"ο"/"οι" are also the feminine/neuter
-# definite articles, and "5 η ώρα" ("5 o'clock", article present) must keep its
-# separate article token -- only the glued "5η" is an ordinal.
-_EL_ORD_SUFFIX = frozenset({
-    "η", "ης", "ην",              # feminine (day agrees with ημέρα): nom/gen/acc
-    "ος", "ου", "ο", "ον",       # masculine / neuter
-    "οι", "ων", "ους", "ες",     # plural forms
-})
-
-
-def fold_el(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-    merged = []
-    i = 0
-    n = len(tokens)
-    while i < n:
-        t = tokens[i]
-        nxt = tokens[i + 1] if i + 1 < n else None
-        if (t.is_number and nxt is not None and not nxt.is_number
-                and nxt.text in _EL_ORD_SUFFIX
-                and t.char_end is not None and nxt.char_start is not None
-                and nxt.char_start == t.char_end):
-            merged.append(replace(t, raw=t.raw + nxt.raw,
-                                  char_end=nxt.char_end
-                                  if nxt.char_end is not None else t.char_end))
-            i += 2
-            continue
-        merged.append(t)
-        i += 1
-    return _el_numfold(reindex(tuple(merged)))
-
-
-# Greek writes "21h30" only behind a clock marker ("στις 21h30"); a bare
-# "21h30" in Greek text is a duration or a citation to a French source.  The
-# marker set is el's own marker_at and marker_oclock surfaces.
-fold_el = with_marked_h_clock(fold_el, {"στις", "στη", "στην", "ώρα"})
 
 
 # -- Hungarian: "hét" is both seven and week; never fold it to a number.
