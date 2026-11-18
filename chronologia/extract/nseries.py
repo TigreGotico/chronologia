@@ -808,9 +808,14 @@ def extract_timespans(
             prev_end = cs[1]
         kept.append(((lo, hi), value, conf))
 
-    return [TimeMention(value, " ".join(t.raw for t in tokens[lo:hi]), (lo, hi),
-                        _char_span(tokens, lo, hi), conf)
-            for (lo, hi), value, conf in kept]
+    mentions = []
+    for (lo, hi), value, conf in kept:
+        cs = _char_span(tokens, lo, hi)
+        # a folded number token carries its digits, so the surface comes from
+        # the utterance whenever the tokenizer recorded where the words were
+        surface = text[cs[0]:cs[1]] if cs else " ".join(t.raw for t in tokens[lo:hi])
+        mentions.append(TimeMention(value, surface, (lo, hi), cs, conf))
+    return mentions
 
 
 def _merge_ranges(out, tokens, text, engine, anchor):
