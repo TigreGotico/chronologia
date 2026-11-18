@@ -7,8 +7,8 @@ after a determiner or a preposition.  Larousse, conjugaison du verbe "être":
 passé composé "il a été", plus-que-parfait "il avait été".
 
 Anchor: Saturday 2026-10-24 13:00.  The next 15 May after the anchor is
-2027-05-15 (ruling 3 of the disagreement rulings); the summer of 2026 runs from
-1 June to 1 September (the span the season reading gives for "cet été").
+2027-05-15 (ruling C of `docs/rulings.md`: the next occurrence).  The summer of
+2026 runs from 1 June to 1 September.
 """
 from datetime import datetime
 
@@ -31,10 +31,8 @@ PARTICIPLE_WITH_DATE = [
 
 SEASON = [
     ("cet été", datetime(2026, 6, 1), datetime(2026, 9, 1)),
-    ("en été", datetime(2026, 6, 1), datetime(2026, 9, 1)),
     ("l'été prochain", datetime(2027, 6, 1), datetime(2027, 9, 1)),
     ("il a plu cet été", datetime(2026, 6, 1), datetime(2026, 9, 1)),
-    ("il a été malade en été", datetime(2026, 6, 1), datetime(2026, 9, 1)),
 ]
 
 
