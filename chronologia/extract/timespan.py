@@ -2144,6 +2144,10 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         k = _match_conn_at(tokens, 0, surf)
         if not k:
             return None
+        if (k < n and tokens[k].text
+                in spec.connectors.get("until_amount", ())):
+            # "hasta cuántos grados": the limit is an amount, not a time
+            return None
         ep = endpoint(tokens[k:])
         return build(ep, tokens[k:]) if ep is not None else None
 
