@@ -557,7 +557,7 @@ see a number word next to the unit word after it goes there. French uses it
 to read "dans 2 heures moins 10 secondes" as one length:
 
 ```json
-"post_hook": "chronologia.extract.numfold_romance:fold_fr_hour_length"
+"post_hook": "chronologia.extract.numlayer_fr:fold_fr_hour_length"
 ```
 
 ---

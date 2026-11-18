@@ -211,7 +211,7 @@ _REGION_WEEK_START = {
 #: Brazilian Portuguese counts the short scale: Priberam, "bilião", sense 2,
 #: "[Brasil] Mil milhões (10^9)".  So "dois bilhões e quinhentos milhões" is
 #: 2.5*10^9 in pt-BR and 2.0005*10^12 in pt-PT.
-_REGION_NUMBER_LANG = {"pt-br": "pt-BR"}
+_REGION_NUMBER_LANG = {"pt-br": "pt-BR", "fr-be": "fr-BE", "fr-ch": "fr-CH"}
 
 
 # ---------------------------------------------------------------------------
