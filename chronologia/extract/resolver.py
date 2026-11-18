@@ -28,6 +28,7 @@ from __future__ import annotations
 import calendar
 import math
 import re
+from decimal import Decimal
 from datetime import date, datetime, timedelta
 from typing import Optional
 
@@ -2772,8 +2773,12 @@ class Resolver:
         unit = self._BP_SCALE_UNITS.get(factor)
         if unit is not None:
             span = resolve_bp(num.text, unit)
-        else:  # scale word with no SI unit (e.g. "hundred"): fall back to years
-            span = resolve_bp(num.value * factor, "a")
+        else:
+            # a scale word with no SI unit ("hundred", the long-scale
+            # trillion): the width is still one unit of the last digit said
+            # in the scale's unit, so the shift keeps the digits' exponent
+            span = resolve_bp(Decimal(num.text).scaleb(len(str(factor)) - 1),
+                              "a")
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
     # -- named_period ("during the jurassic", "the late cretaceous") ------
