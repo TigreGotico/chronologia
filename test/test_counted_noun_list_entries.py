@@ -28,8 +28,7 @@ def test_a_count_before_a_counted_noun_is_no_clock(text, lang):
 
 def test_the_ast_unit_meses_is_not_a_counted_noun():
     from chronologia.extract.loader import load_lang_spec
-    assert "meses" not in load_lang_spec("ast").connectors.get(
-        "counted_noun", frozenset())
+    assert "meses" not in load_lang_spec("ast").counted_noun
 
 
 def test_a_clock_before_a_person_word_in_another_sense_still_reads():
