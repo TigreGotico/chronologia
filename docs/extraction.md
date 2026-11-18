@@ -749,9 +749,10 @@ signals the parse already produced and would otherwise throw away, and it is
 **deterministic**: the same text always scores the same. There is no machine
 learning anywhere in it.
 
-`extract_candidates` returns the ranked list of *every* plausible reading the
-matcher considered — not just the winner `extract_timespan` hands back, but the
-runner-ups too — each with its confidence and the leftover text:
+`extract_candidates` returns the ranked list of up to `limit` readings (default
+5) the matcher considered — not just the winner `extract_timespan` hands back,
+but the runner-ups too — each with its confidence and the leftover text. A veto
+(an excluded reference, an impossible date) drops a reading from the list:
 
 ```python
 from chronologia.extract import extract_candidates
@@ -780,17 +781,29 @@ scored on its own reading rather than on its share of the carrier sentence.
 
 ### Alternative readings of an ambiguous phrase
 
-A phrase can name a time in more than one way. `extract_candidates` returns
-each way, ranked, and `extract_timespan` returns the first. Ruling 31 gives an
-example: pt "às 9 uma hora antes do natal" has a stated clock (9), an offset
-(one hour before Christmas) and a twelve-hour choice for the 9. The ruling
-ranks the readings: the stated clock on the day the offset lands on, then the
-offset instant itself, then the clock's other twelve-hour reading. A consumer
-that can ask the speaker a question takes the first two candidates and asks.
-A consumer that cannot takes the first. The same holds for a lone numeral
-(ruling 34): `extract_timespan` returns nothing for it, and
-`extract_candidates` lists the hour, the day of the month and the year it could
-be.
+A phrase can name a time in more than one way. `extract_candidates` lists
+the readings, ranked, and `extract_timespan` returns the first one. An open
+range such as "before christmas" is the exception: `extract_timespan` builds it
+after the core match, and `extract_candidates` does not run that step, so the
+list holds only the holiday.
+
+Two rulings give readings that the engine does not return yet.
+
+Ruling 31 ranks the readings of pt "às 9 uma hora antes do natal", which has a
+stated clock (9), an offset (one hour before Christmas) and a twelve-hour
+choice for the 9. The ruled order is the stated clock on the day the offset
+lands on (24 December 21:00), then the offset instant itself (24 December
+23:00), then the clock's other twelve-hour reading. The engine gives another
+answer. Said at 2026-11-18 10:00, `extract_timespan` returns 24 December 09:00,
+and the next candidates are 21:00 on the anchor day (18 November) and the
+holiday itself (25 December). The 21:00 and 23:00 readings of 24 December are
+not in the list.
+
+Ruling 34 rules that a lone numeral (da "20", nl "2", en "20") is a candidate
+and not a reading: `extract_candidates` would list the hour, the day of the
+month and the year it could be, ranked low. The engine returns nothing for
+these numerals. `extract_timespan` returns `None` and `extract_candidates`
+returns an empty list.
 
 ### What the score is made of
 
@@ -836,7 +849,7 @@ if 0.7 meant "70 % likely right".
 A consumer picks a reading by rank: the first candidate, or the first one that
 meets the consumer's own test. The cases where a reading should not be acted on
 are the documented decline cases, not a fixed score. They are a bare number
-with no clock marker (ruling 34: it is a low-ranked candidate, not a reading),
+with no clock marker (ruling 34 rules it a candidate, not a reading; the engine returns neither),
 a counted noun after a clock preposition (ruling 22), and a clock that
 the part of the day contradicts (ruling 20). In each case the engine
 declines or ranks the reading low by a rule in [rulings.md](rulings.md), and
@@ -1445,9 +1458,9 @@ limitations, stated plainly:
 - **`extract_timespan` returns one reading.** `_select` takes the longest,
   highest-precedence, earliest candidate. A phrase with several plausible
   readings yields the first one, with no signal that another was possible.
-  `extract_candidates` is the way to see the others. It returns every
-  reading the matcher considered, ranked, with each reading's `confidence`
-  and leftover text, and `explain` shows why a loser lost. A caller that must
+  `extract_candidates` is the way to see the others. It returns up to
+  `limit` (default 5) of the readings the matcher considered, ranked, with
+  each reading's `confidence` and leftover text, less the readings a veto drops, and `explain` shows why a loser lost. A caller that must
   not guess calls `extract_candidates`, and picks by rank as described in
   "How sure is it?". The contract of `extract_timespan` stays one span or
   `None`.
