@@ -49,6 +49,7 @@ from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               compose_date_daypart,
                                               compose_daypart_clock,
                                               daypart_follows_evening,
+                                              daypart_part,
                                               _WEEK_START, _week_span)
 from chronologia.extract.tokenizer import (Tokenizer, _ISO, _NUMDATE_ANY,
                                            _SLASHFRAC)
@@ -118,7 +119,8 @@ class DateTimeEngine:
         elif len(dayparts) == 1 and len(dates) == 1 and not clocks:
             name = self.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
             merged, second = compose_date_daypart(
-                dates[0][1], dayparts[0][1], name), dayparts[0][0]
+                dates[0][1], dayparts[0][1], name,
+                part=daypart_part(dayparts[0][0], self.spec)), dayparts[0][0]
         if merged is not None:
             drop = {id(second), id(dates[0][0])}
             kept = [(m, r) for m, r in pairs if id(m) not in drop]
@@ -3924,7 +3926,8 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
         name = engine.spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
         res = compose_date_daypart(
             eff_dates[0][1], dayparts[0][1], name,
-            after_evening=eff_dates[0][0].construction in _NIGHT_AFTER_DAYS)
+            after_evening=eff_dates[0][0].construction in _NIGHT_AFTER_DAYS,
+            part=daypart_part(dayparts[0][0], engine.spec))
         rep = eff_dates[0][0]
         glue_consumed = _composition_glue(eff_dates[0][0], dayparts[0][0])
     elif label_consumed and not clocks and not dayparts:

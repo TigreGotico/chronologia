@@ -175,6 +175,7 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     tokens = engine.tokenize(text)
     fracs = _fraction_words(spec)
     articles = _article_words(spec)
+    no_count_articles = set(spec.connectors.get("article_no_count", ()))
     of_words = set(spec.connectors.get("of", ()))
     and_words = _and_words(spec)
     filler = articles | of_words
@@ -420,6 +421,9 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                               or (tokens[j + 1].text in spec.quantifiers
                                   and spec.lang in NUMTAG_LANGS)):
                 j += 1
+            elif tokens[j].text in no_count_articles:
+                i += 1
+                continue
             else:
                 article_one = tokens[j].text
                 count, j = 1.0, j + 1

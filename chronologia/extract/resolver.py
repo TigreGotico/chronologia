@@ -34,6 +34,7 @@ from typing import Optional
 from chronologia.astrodate import (AstroDate, BASIS_RECONSTRUCTED, DateSpan,
                                    civil_add)
 from chronologia.dayparts import daypart_span, lookup as daypart_lookup
+from chronologia.periods import subdivide
 from chronologia.calendars import (CALENDARS, gregorian_to_jdn,
                                         jdn_to_gregorian)
 from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, US_PER_DAY,
@@ -451,7 +452,8 @@ def _daypart_band(day: AstroDate, name: str,
 
 
 def compose_date_daypart(date_res: Resolution, daypart_res: Resolution,
-                         name: str, after_evening: bool = False) -> Resolution:
+                         name: str, after_evening: bool = False,
+                         part: Optional[str] = None) -> Resolution:
     """Narrow a resolved day to the ``name`` day-part band on that day.
 
     The date construction ("yesterday", "tomorrow") supplies the civil day (its
@@ -459,12 +461,21 @@ def compose_date_daypart(date_res: Resolution, daypart_res: Resolution,
     morning band of yesterday, replacing the whole-day span the bare date would
     yield -- the fix for the silent daypart drop.  A midnight-crosser (night)
     reaches into the following civil day, so "tomorrow night" runs tomorrow
-    21:00 -> the day after 06:00.
+    21:00 -> the day after 06:00.  A part ("early", "mid", "late") keeps
+    that third of the band.
     """
     d = date_res.value.start
     band = _daypart_band(d, name, after_evening)
+    if part is not None:
+        band = subdivide(band, part)
     consumed = tuple(sorted(set(date_res.consumed) | set(daypart_res.consumed)))
     return Resolution(band, consumed)
+
+
+def daypart_part(match: Match, spec: LangSpec) -> Optional[str]:
+    """The "early", "mid" or "late" word a day-part match carries, if any."""
+    part_tok = match.slots.get("PART")
+    return None if part_tok is None else spec.period_parts[part_tok.text]
 
 
 def daypart_follows_evening(name: str) -> bool:
@@ -802,8 +813,11 @@ class Resolver:
         rel_tok = match.slots.get("REL_MARKER")
         off = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
         day = AstroDate.from_datetime(_midnight(anchor) + timedelta(days=off))
-        return Resolution(_daypart_band(day, name, after_evening=True),
-                          self._consumed(match))
+        band = _daypart_band(day, name, after_evening=True)
+        part = daypart_part(match, self.spec)
+        if part is not None:
+            band = subdivide(band, part)
+        return Resolution(band, self._consumed(match))
 
     def _named_day_offset(self, match, anchor, step):
         """"the day after/before <named day>": one day past/short of a named
