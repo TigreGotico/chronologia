@@ -789,6 +789,17 @@ has no "in", no year word and no other date beside it, so `extract_timespan`
 gives `None`, and `extract_candidates` lists the year 2400 after every other
 reading. "in 2400", "the year 2400" and "before 2030" read as dates.
 
+A numeral that is the whole text, such as "20", lists an hour for 0 to 24 and
+a day of the month for 1 to 31. The hour is the next time the clock shows
+it, and the day is the next day with that number. Both rank last:
+
+```python
+for c in extract_candidates("20", "da", datetime(2026, 11, 18, 14, 0)):
+    print(c.construction, round(c.confidence, 3), c.span)
+# month_day_ref 0.486 2026-11-20
+# clock_time    0.45  2026-11-18 20:00 – 20:01
+```
+
 The score answers "how sure are we of this reading", not "how much of the
 sentence did it explain". A phrase read the same way scores the same however
 much ordinary conversation surrounds it:
