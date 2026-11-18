@@ -69,3 +69,15 @@ def test_a_part_of_the_day_in_the_idiom_leaves_the_clock_unread(
     assert found.span.start.datetime() == start
     assert found.span.end.datetime() == end
     assert found.remainder == remainder
+
+
+@pytest.mark.parametrize("text", [
+    "the week before last at 3 pm",
+    "the month before last at 3 pm",
+    "the year before last at noon",
+])
+def test_a_period_before_last_takes_no_clock(text):
+    found = extract_timespan(text, "en", ANCHOR)
+    assert found.span.end.datetime() - found.span.start.datetime() \
+        >= datetime(2026, 1, 8) - datetime(2026, 1, 1)
+    assert found.remainder.startswith("at ")
