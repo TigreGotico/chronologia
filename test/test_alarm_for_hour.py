@@ -109,6 +109,11 @@ CLOCKS = [
      datetime(2026, 11, 17, 9, 0)),
     ("alarm for 5 for 8 am flight", "en", datetime(2026, 11, 18, 5, 0)),
     ("alarma para 7 o 8 de la mañana", "es", datetime(2026, 11, 17, 8, 0)),
+    ("alarm for 7 and 8 on monday evening", "en",
+     datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 then 9 am meeting", "en", datetime(2026, 11, 18, 7, 0)),
+    ("reminder for 9 then 3 pm meeting", "en", datetime(2026, 11, 17, 9, 0)),
+    ("wekker voor 7 of 8 uur 's avonds", "nl", datetime(2026, 11, 17, 20, 0)),
 ]
 
 NO_CLOCK = [
@@ -179,6 +184,27 @@ def test_an_alarm_noun_makes_the_bare_hour_a_clock(text, lang, expected):
     assert found.span.end.datetime() == datetime(
         expected.year, expected.month, expected.day, expected.hour,
         expected.minute + 1)
+
+
+@pytest.mark.parametrize("text,lang", [
+    ("wecker für 7 oder 8 uhr abends", "de"),
+    ("wecker für 7 bzw. 8 uhr abends", "de"),
+    ("wecker für 7 beziehungsweise 8 uhr abends", "de"),
+    ("espertador para 7 ou 8 da tarde", "gl"),
+    ("sveglia per 7 oppure 8 di sera", "it"),
+])
+def test_each_locale_joiner_shares_the_later_meridiem(text, lang):
+    found = extract_timespan(text, lang, ANCHOR)
+    assert found.span.start.datetime() == datetime(2026, 11, 17, 20, 0)
+    assert found.span.end.datetime() == datetime(2026, 11, 17, 20, 1)
+
+
+@pytest.mark.xfail(
+    strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1058")
+def test_nl_joiner_shares_the_later_meridiem_without_uur():
+    found = extract_timespan("wekker voor 7 of 8 's avonds", "nl", ANCHOR)
+    assert found is not None
+    assert found.span.start.datetime() == datetime(2026, 11, 17, 20, 0)
 
 
 @pytest.mark.parametrize("text,remainder", [
