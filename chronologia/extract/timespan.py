@@ -4175,9 +4175,8 @@ def reads_spoken_hours(fn):
     """Run ``fn`` with the spoken hour kept as spoken.
 
     A recurrence pin ("daily at 7" is ``BYHOUR=7``) names an hour of the day,
-    not an instant, so no twelve-hour reading is chosen for it.  A numeral
-    that a recurrence reads alone is a part of the phrase, so it keeps its
-    year reading (:func:`_lone_numeral_year`).
+    not an instant, so no twelve-hour reading is chosen for it.  It also
+    keeps a lone numeral bound a year (:func:`_lone_numeral_year`).
     """
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
@@ -4296,20 +4295,9 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
 
 
 def _lone_numeral_year(rep, res, tokens) -> bool:
-    """Whether the whole text is one numeral the year reading took.
-
-    "2400" alone has no "in", no year word and no other word beside it, so
-    it names no date: ruling 34 of the disagreement rulings reads a lone
-    numeral as a candidate, not a reading.  :func:`extract_timespan` gives
-    no value for it, and :func:`extract_candidates` lists the year without
-    ranking it first.  The numeral is written in digits of any script and
-    nothing else: any other word makes it a year in a phrase ("in 2400",
-    "2400 people came", "dodenherdenking 2020"), an era word folded into
-    the number ("พ.ศ. 2568") or a spelled year ("two thousand twenty") is
-    a year cue, and so is the apostrophe of "'99".  Inside a recurrence
-    (:func:`reads_spoken_hours`) the numeral is the bound of a longer phrase
-    ("daily until 2020"), so it keeps its year.
-    """
+    """Whether the whole text is one numeral in digits that the year reading
+    took: ruling 34 lists it as a candidate, not a reading.  A recurrence
+    bound ("daily until 2020") keeps its year."""
     if getattr(_reading, "spoken", False):
         return False
     if (rep is None or rep.construction != "year_ref" or len(tokens) != 1
