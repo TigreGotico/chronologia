@@ -1785,6 +1785,7 @@ def _fold_date_article(folded, consumed, spec, span):
     for i, t in enumerate(folded[1:-1], start=1):
         if (t.text in dative and t.index not in widened
                 and folded[i + 1].index in widened
+                and folded[i + 1].text not in deictic
                 and folded[i - 1].text in articles):
             widened.add(t.index)
     for i, t in enumerate(folded[:-1]):
