@@ -34,7 +34,9 @@ from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
-from chronologia.extract.matcher import ConstructionMatcher
+from chronologia.extract.matcher import (ConstructionMatcher,
+                                         alarm_marker_span,
+                                         is_alarm_bare_range)
 from chronologia.extract.model import (LangSpec, Resolution, Token)
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
@@ -154,8 +156,9 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     # region-keyed ``_REGION_SCALE`` default for the orthogonal scale feature).
     dmy_override = _REGION_DMY.get(region)
     week_override = _REGION_WEEK_START.get(region)
+    number_lang = _REGION_NUMBER_LANG.get(region)
     cache_key = (region if dmy_override is not None or week_override is not None
-                 else code)
+                 or number_lang is not None else code)
     engine = _TIMESPAN_ENGINES.get(cache_key)
     if engine is not None:
         return engine
@@ -176,6 +179,8 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
                 conv = replace(conv, week_start=week_override)
             if conv is not spec.conventions:
                 spec = replace(spec, conventions=conv)
+            if number_lang is not None:
+                spec = replace(spec, number_lang=number_lang)
             engine = DateTimeEngine(spec)
             _TIMESPAN_ENGINES[cache_key] = engine
         return engine
@@ -200,6 +205,13 @@ _REGION_DMY = {
 _REGION_WEEK_START = {
     "en-us": "sunday", "en-ca": "sunday", "pt-br": "sunday",
 }
+
+
+#: Region subtags whose numbers numtag reads with a lexicon of their own.
+#: Brazilian Portuguese counts the short scale: Priberam, "bilião", sense 2,
+#: "[Brasil] Mil milhões (10^9)".  So "dois bilhões e quinhentos milhões" is
+#: 2.5*10^9 in pt-BR and 2.0005*10^12 in pt-PT.
+_REGION_NUMBER_LANG = {"pt-br": "pt-BR"}
 
 
 # ---------------------------------------------------------------------------
@@ -690,6 +702,15 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     if split is not None:
         p, k = split
         left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
+        # "reminder for 3 to 5 pm": a meridiem at the far end makes the 3 an
+        # hour of the range, so the alarm noun and "for" stay out of the
+        # endpoint reading and go to the remainder
+        alarm = alarm_marker_span(left_tok, spec) \
+            if any(t.text in spec.meridiems for t in right_tok) else None
+        alarm_words = ""
+        if alarm is not None:
+            alarm_words = render_remainder(text, list(left_tok[:sum(alarm)]))
+            left_tok = left_tok[sum(alarm):]
         # a bare "A to B" (no from/between) is only trusted when the left side is
         # not a lone clock fraction word (avoids hijacking "quarter to five") AND
         # the connector is not an ``at``-ambiguous preposition (avoids fabricating
@@ -697,10 +718,12 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         led = bool(lead) or at_between is not None
         left_words = " ".join(t.text for t in left_tok)
         conn_words = " ".join(t.text for t in tokens[p:p + k]).lower()
-        if led or (left_words not in fraction_words
-                   and conn_words not in lead_required):
+        if (led or (left_words not in fraction_words
+                    and conn_words not in lead_required)) \
+                and not is_alarm_bare_range(left_tok, spec):
             prefix = render_remainder(text, list(tokens[:lead_at])) \
                 if lead else ""
+            prefix = (prefix + " " + alarm_words).strip()
             # an explicit lead licenses the bare-hour reading of a numeric
             # endpoint ("from 9 to 5"), which must be tried *before* the
             # generic composition so a borrowed meridiem cannot roll a day.
@@ -1623,7 +1646,7 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
         return None
     span, consumed = core
     consumed = _fold_day_label(folded, consumed, engine.spec)
-    consumed = _fold_date_article(folded, consumed, engine.spec)
+    consumed = _fold_date_article(folded, consumed, engine.spec, span)
     remainder = render_remainder(text, [t for t in folded
                                         if t.index not in consumed])
     return span, remainder
@@ -1699,7 +1722,7 @@ def _fold_day_early(tokens, span, consumed, spec):
     return (morning if whole_day else span), consumed | {word.index}
 
 
-def _fold_date_article(folded, consumed, spec):
+def _fold_date_article(folded, consumed, spec, span):
     """``consumed`` widened to swallow the article that opens a bound date.
 
     In Portuguese, Galician and French the definite article in front of a
@@ -1712,14 +1735,61 @@ def _fold_date_article(folded, consumed, spec):
     any other noun ("o bebé") stays in the remainder.  Runs after
     :func:`_fold_day_label`, so the article in front of a label ("no dia 25")
     folds too.
+
+    ``marker_date_lead.voc`` lists the other words that open a date or a
+    clock and belong to it, the preposition of English "at 5" or "on
+    monday", and folds the same way.  ``marker_clock_lead.voc`` lists the
+    words that open a clock time only, Dutch "om 9:00" or Norwegian "klokka
+    15:30": they fold only when ``span`` is a clock time (one minute wide or
+    less) and the next token is a number, a clock time, a clock fraction
+    ("om half negen") or a clock landmark ("um Mitternacht").  So "um
+    Montag", "klokka i morgen" and the year of "um 1900" keep the word.
+
+    No word folds in front of another word of these lists: in "switch it on
+    at 7" or "ruf mich an um 7" the clock word belongs to the date and the
+    particle before it belongs to the verb.  No word folds in front of a
+    named day or a daypart fused with today ("turn the lights on tomorrow",
+    "what's on tonight"): such a day takes no preposition, so the word in
+    front of it belongs to the verb.  ``marker_date_lead_no_deixis.voc``
+    lists the lead words that also do not open a this, next or last phrase
+    of a daypart, a period or a weekday ("turn it on this evening", "what is
+    on this weekend", "turn it on next friday").  A word in
+    ``marker_date_lead_dative.voc`` makes the this-phrase take the lead word
+    again: German "an" governs the dative in a time phrase, so "an diesem
+    Freitag" folds while the bare "nächsten Freitag" in "ruf mich an
+    nächsten Freitag" leaves "an" to the verb.
     """
-    articles = set(spec.connectors.get("date_article", ()))
-    if not articles:
+    articles = (set(spec.connectors.get("date_article", ()))
+                | set(spec.connectors.get("date_lead", ())))
+    clock_leads = set(spec.connectors.get("clock_lead", ()))
+    leads = articles | clock_leads
+    if not leads:
         return consumed
+    deictic = set(spec.named_days) | spec.daypart_today_words
+    no_deixis = set(spec.connectors.get("date_lead_no_deixis", ()))
+    dative = set(spec.connectors.get("date_lead_dative", ()))
+    periods = (set(spec.dayparts) | set(spec.units) | spec.weekend_words
+               | set(spec.weekdays))
+    clock_words = set(spec.clock_fractions) | set(spec.clock_landmarks)
+    start, end = span.start_datetime, span.end_datetime
+    is_clock = (start is not None and end is not None
+                and end - start <= timedelta(minutes=1))
     widened = set(consumed)
     for i, t in enumerate(folded[:-1]):
-        if (t.index not in widened and t.text in articles
-                and folded[i + 1].index in widened):
+        nxt = folded[i + 1]
+        if (t.index in widened or nxt.index not in widened
+                or nxt.text in leads):
+            continue
+        deictic_phrase = (t.text in no_deixis and nxt.text in spec.rel_markers
+                          and nxt.text not in dative
+                          and i + 2 < len(folded)
+                          and folded[i + 2].text in periods)
+        opens_day = (t.text in articles and nxt.text not in deictic
+                     and not deictic_phrase)
+        opens_clock = is_clock and t.text in clock_leads and (
+            nxt.is_number or nxt.text in clock_words
+            or any(c.isdigit() for c in nxt.text))
+        if opens_day or opens_clock:
             widened.add(t.index)
     return widened
 
@@ -3562,7 +3632,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
         return None
     consumed = _fold_day_label(tokens, consumed, engine.spec)
     span, consumed = _fold_day_early(tokens, span, consumed, engine.spec)
-    consumed = _fold_date_article(tokens, consumed, engine.spec)
+    consumed = _fold_date_article(tokens, consumed, engine.spec, span)
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
     # A half-open span whose start falls before the datetime era (year <= 0)

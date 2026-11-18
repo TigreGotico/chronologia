@@ -13,7 +13,8 @@ Selected matches never overlap.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 
 from chronologia.extract import tokenizer
@@ -58,6 +59,14 @@ GYEAR_MIN, GYEAR_MAX = 1000, 99999
 class MatchCandidate:
     match: Match
     precedence: int
+
+
+def _is_bare_hour(match: Match) -> bool:
+    """A clock that is a marker and an hour only: "at 5", "a las 3"."""
+    hour = match.slots.get("HOUR")
+    return (match.construction == "clock_time" and hour is not None
+            and set(match.slots) == {"HOUR"}
+            and match.span[0] < hour.index == match.span[1] - 1)
 
 
 def _is_era_marker(token: Token, spec: LangSpec) -> bool:
@@ -215,11 +224,12 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         if token.apostrophe and raw.isdigit() and len(raw) == 2:
             return True
         # a leading zero marks a clock reading ("0600"), never a year
-        return (token.is_number and raw.isdigit() and raw[0] != "0"
-                and GYEAR_MIN <= int(raw) <= GYEAR_MAX)
+        return (token.is_number and not token.count and raw.isdigit()
+                and raw[0] != "0" and GYEAR_MIN <= int(raw) <= GYEAR_MAX)
     if name in ("MILTIME", "MILTIMEZ"):
         raw = token.raw.rstrip(".")
-        if not (token.is_number and raw.isdigit() and len(raw) == 4):
+        if not (token.is_number and not token.count and raw.isdigit()
+                and len(raw) == 4):
             return False
         hh, mm = int(raw[:2]), int(raw[2:])
         if not (0 <= hh <= 23 and 0 <= mm <= 59):
@@ -234,7 +244,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         # leading-zero forms are already MILTIMEZ, so excluding them here keeps
         # "0800Z"/"0300 Zulu" resolving through their existing order, unchanged.
         raw = token.raw.rstrip(".")
-        if not (token.is_number and raw.isdigit() and len(raw) == 4):
+        if not (token.is_number and not token.count and raw.isdigit()
+                and len(raw) == 4):
             return False
         hh, mm = int(raw[:2]), int(raw[2:])
         return 0 <= hh <= 23 and 0 <= mm <= 59 and raw[0] != "0"
@@ -467,6 +478,25 @@ def _counted_refused_unit_before(tokens: Tuple[Token, ...], start: int,
             and tokens[k - 1].text in ambiguous)
 
 
+def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
+                            spec: LangSpec) -> bool:
+    """Is the plural day-part word at ``index`` counted, not a part of the day?
+
+    "three nights", "two mornings ago" and "for 3 nights" count days; they
+    name no band.  A plural listed in ``daypart_plural`` is a count when a
+    number stands directly before it or a ``daypart_plural_after`` word
+    ("ago", "from now") follows it.  Spelled numbers are already digit
+    tokens here.  A locale with no such vocabulary is untouched.
+    """
+    if tokens[index].text not in spec.connectors.get("daypart_plural",
+                                                     frozenset()):
+        return False
+    if index > 0 and tokens[index - 1].is_number:
+        return True
+    return _connector_span("daypart_plural_after", tokens, index + 1,
+                           spec) > 0
+
+
 def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
                     spec: LangSpec) -> int:
     """Longest run of tokens from ``ti`` matching a connector surface.
@@ -485,19 +515,72 @@ def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
     surfaces = spec.connectors.get(name)
     if not surfaces or ti >= len(tokens):
         return 0
+    targets, longest = _connector_targets(surfaces)
     best = 0
-    for surf in surfaces:
-        target = " ".join(surf.lower().replace(".", " ").split())
-        if not target:
-            continue
-        run = ""
-        for k in range(ti, len(tokens)):
-            run = tokens[k].text if not run else f"{run} {tokens[k].text}"
-            if len(run) >= len(target):
-                if run == target:
-                    best = max(best, k - ti + 1)
-                break
+    run = ""
+    for k in range(ti, len(tokens)):
+        run = tokens[k].text if not run else f"{run} {tokens[k].text}"
+        if len(run) > longest:
+            break
+        if run in targets:
+            best = k - ti + 1
     return best
+
+
+@lru_cache(maxsize=None)
+def _connector_targets(surfaces: frozenset) -> Tuple[frozenset, int]:
+    """The surfaces of a connector as :func:`_connector_span` compares them,
+    and the length of the longest.  The matcher asks for a connector at every
+    token of every construction, so each set is normalised once."""
+    targets = frozenset(filter(None, (" ".join(s.lower().replace(".", " ").split())
+                                      for s in surfaces)))
+    return targets, max(map(len, targets), default=0)
+
+
+def alarm_marker_span(tokens: Tuple[Token, ...],
+                      spec: LangSpec) -> Optional[Tuple[int, int]]:
+    """The first alarm noun with its preposition in ``tokens``
+    (``marker_alarm_at.voc``), as the index of its first token and its length."""
+    tokens = tuple(tokens)
+    for i in range(len(tokens)):
+        n = _connector_span("alarm_at", tokens, i, spec)
+        if n:
+            return i, n
+    return None
+
+
+def is_alarm_bare_range(left: Tuple[Token, ...],
+                        spec: LangSpec) -> bool:
+    """Whether the left side of a split at "to" is an alarm marker and one bare
+    number: "alarm for 20" in "alarm for 20 to 8".  An alarm names one instant
+    and the pair is the clock "twenty to eight".  A meridiem, a day word or an
+    article on the left makes it a real range, and a meridiem on the right is
+    handled before this check."""
+    marker = alarm_marker_span(left, spec)
+    if marker is None:
+        return False
+    rest = tuple(left)[sum(marker):]
+    return len(rest) == 1 and rest[0].is_number
+
+
+def _alarm_hour_goes_on(tokens: Tuple[Token, ...], end: int,
+                        spec: LangSpec) -> bool:
+    """Whether the words after the hour of an "alarm for <hour>" reading make
+    it a length or leave minutes unread: a unit ("10 minutes"), a word that
+    adds to a count (``marker_alarm_length.voc``: "10 more minutes"), a number,
+    a clock fraction or direction, or any word before a second counted unit
+    ("10 through 15 minutes")."""
+    if end >= len(tokens):
+        return False
+    word = tokens[end].text
+    second = tokens[end + 1:end + 3]
+    return (word in spec.units
+            or word in spec.connectors.get("alarm_length", frozenset())
+            or tokens[end].is_number
+            or word in spec.clock_fractions or word in spec.clock_dirs
+            or word in spec.clock_dir_minutes
+            or (len(second) == 2 and second[0].is_number
+                and second[1].text in spec.units))
 
 
 def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
@@ -946,6 +1029,9 @@ class ConstructionMatcher:
                             and _counted_refused_unit_before(
                                 tokens, start, self.spec)):
                         continue
+                    if ("DAYPART" in slots and _counted_plural_daypart(
+                            tokens, slots["DAYPART"].index, self.spec)):
+                        continue
                     # "the last TWO days of the month" is not "the 2nd day of
                     # the month": a rel-marker ("last"/"next"/"this") sitting
                     # UNCONSUMED immediately before a scoped-ordinal match means
@@ -1013,6 +1099,14 @@ class ConstructionMatcher:
                         if (_ai >= 0 and tokens[_ai].text
                                 in self.spec.conventions.bare_at_markers):
                             continue
+                    # "alarm for 10" is a clock, "alarm for 10 minutes" is a
+                    # length, and "alarm for 7 e meia" has minutes that the
+                    # bare hour would drop (``marker_alarm_at.voc``).
+                    if (name == "clock_time"
+                            and _connector_span("alarm_at", tokens, start,
+                                                self.spec)
+                            and _alarm_hour_goes_on(tokens, end, self.spec)):
+                        continue
                     # A holiday name takes no indefinite article when it is
                     # an adjective plus a weekday: "have a good friday" is the
                     # adjective and the day, not Good Friday.  A single-word
@@ -1066,7 +1160,40 @@ class ConstructionMatcher:
                     out.append(MatchCandidate(
                         Match(name, (start, end), slots, calendar=cal),
                         precedence))
-        return out
+        return self._flag_counted_hours(tokens, out)
+
+    def _flag_counted_hours(self, tokens: Tuple[Token, ...],
+                            cands: List[MatchCandidate]) -> List[MatchCandidate]:
+        """Mark each bare-hour clock whose number counts the next noun.
+
+        In some languages the preposition of a clock also introduces a counted
+        group: "wave at 5 people", "a las 3 vecinas" (to the three
+        neighbours), "om 3 mensen" (about three people).  The locale lists
+        those prepositions in ``marker_at_counts.voc`` and the nouns that count
+        people or things in ``marker_counted_noun.voc``.  A bare hour behind
+        one of the prepositions and directly before one of the nouns is
+        doubtful, unless a comma or a sentence period ends the hour.  Any
+        other word after the hour, a verb included, leaves the
+        clock as it is.  A doubtful clock stays a candidate, marked ``doubt``;
+        :meth:`match` leaves it out of the parse winners.
+        """
+        prepositions, nouns = self.spec.at_counts, self.spec.counted_noun
+        if not (prepositions and nouns):
+            return cands
+        flagged: List[MatchCandidate] = []
+        for cand in cands:
+            match = cand.match
+            start, end = match.span
+            if (_is_bare_hour(match) and end < len(tokens)
+                    and not tokens[end].break_before
+                    and not tokens[end - 1].raw.endswith(".")
+                    and tokens[end].text in nouns
+                    and any(t.text in prepositions for t in
+                            tokens[max(0, start - 1):match.slots["HOUR"].index])):
+                cand = MatchCandidate(replace(match, doubt=True),
+                                      cand.precedence)
+            flagged.append(cand)
+        return flagged
 
     def _subject_opens(self, tokens: Tuple[Token, ...], marker: int) -> bool:
         """Whether the words before ``tokens[marker]`` are its subject alone
@@ -1163,7 +1290,7 @@ class ConstructionMatcher:
         winner the caller means to decline (e.g. a bare-"be" era reading that
         must yield to the plain year when it is not clause-final).
         """
-        cands = self._candidates(tokens)
+        cands = [c for c in self._candidates(tokens) if not c.match.doubt]
         if veto is not None:
             cands = [c for c in cands if not veto(c.match)]
         return tuple(c.match for c in self._select(cands))

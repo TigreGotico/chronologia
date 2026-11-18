@@ -48,6 +48,7 @@ from chronologia.extract.compiler import parse_order
 from chronologia.extract.model import (Conventions, LangSpec,
                                            TokenizerModes)
 from chronologia.extract.normaliser import TemporalNormaliser
+from chronologia.extract.numlayer import attach
 from chronologia.extract.schema import validate as validate_locale
 from chronologia.extract.tokenizer import Tokenizer
 
@@ -160,6 +161,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     exclusion_coord: Set[str] = set()
     exclusion_scope: Set[str] = set()
     exclusion_filler: Set[str] = set()
+    at_counts: Set[str] = set()
+    counted_noun: Set[str] = set()
     jurisdictions: Dict[str, str] = {}
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
@@ -399,6 +402,10 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             exclusion_scope.update(s.lower() for s in surfaces)
         elif base == "marker_exclusion_filler":
             exclusion_filler.update(s.lower() for s in surfaces)
+        elif base == "marker_at_counts":
+            at_counts.update(s.lower() for s in surfaces)
+        elif base == "marker_counted_noun":
+            counted_noun.update(s.lower() for s in surfaces)
         elif base.startswith("cycle_"):
             # cycle_<key>_<n>.voc: day <n> (0-based) of the named day cycle
             key, _, num = base[len("cycle_"):].rpartition("_")
@@ -535,6 +542,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         exclusion_coord=frozenset(exclusion_coord),
         exclusion_scope=frozenset(exclusion_scope),
         exclusion_filler=frozenset(exclusion_filler),
+        at_counts=frozenset(at_counts),
+        counted_noun=frozenset(counted_noun),
         weekday_full=weekday_full,
         quantifiers=quantifiers,
         positions=cfg.get("positions", {}))
@@ -557,7 +566,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     tokenizer = Tokenizer(spec.tokenizer)
     normaliser = TemporalNormaliser(spec)
     for surface, key in well_known_surfaces(lang).items():
-        toks = normaliser.normalise(tokenizer.tokenize(surface))
+        toks = attach(normaliser.normalise(tokenizer.tokenize(surface)),
+                      surface, lang)
         if spec.hook is not None:
             # apply the same language hook (e.g. French elision split) the real
             # pre-match pipeline runs, so a stored surface matches token-for-token

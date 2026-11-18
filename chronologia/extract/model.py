@@ -27,9 +27,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, FrozenSet, Mapping, Optional, Tuple
+from typing import TYPE_CHECKING, Callable, FrozenSet, Mapping, Optional, Tuple
 
 from chronologia.astrodate import DateSpan
+
+if TYPE_CHECKING:
+    from numtag import NumberMention
 
 
 class Direction(Enum):
@@ -117,6 +120,28 @@ class Token:
     # ordinal, not a cardinal, was spoken: "двадцатого числа" names a day,
     # "три числа" ("three numbers") does not.
     day_ordinal: bool = False
+    # Whether this number token counts what a unit word after it names ("mil e
+    # quinhentas horas", "two thousand five hundred minutes").  A count is no
+    # year and no clock, so the year and military-hour slots refuse it.  Set by
+    # ``numlayer.mark_counts``.
+    count: bool = False
+    # The numtag mention this token sits inside, for the languages numtag
+    # reads (``numlayer.NUMTAG_LANGS``).  A word token keeps its word and
+    # carries the mention beside it; a number token folded from a mention
+    # carries the mention it stands for.
+    mention: Optional["NumberMention"] = field(default=None, compare=False)
+    # The texts of the up to three tokens before the first token of a numtag
+    # mention, in its clause of the whole utterance; ``None`` on every other
+    # token.  Set by ``numlayer.attach``, so a range endpoint folded on its
+    # own still sees the word that makes the mention a year: "since two
+    # thousand and ten I have lived here".
+    before: Optional[Tuple[str, ...]] = field(default=None, compare=False)
+    # On the first token of a mention one word before another mention: that
+    # word, a place mark for the second mention, and the word after it, in
+    # the same clause.  Set by ``numlayer.attach``, so a unit after the
+    # second number of a range measures the first one too: "between two
+    # thousand and three thousand dollars".
+    after: Optional[Tuple[str, ...]] = field(default=None, compare=False)
 
 
 @dataclass(frozen=True)
@@ -336,6 +361,10 @@ class LangSpec:
     # number fold has run on every segment around a held-out second word, so
     # a rewrite that reads the unit after a count sees the whole stream.
     post_hook: Optional[Callable] = None
+    # The language tag the number layer reads with, when a region reads its
+    # numbers in its own way: ``pt-BR`` counts the short scale ("dois bilhões"
+    # is 2*10^9).  ``None`` reads with ``lang``.
+    number_lang: Optional[str] = None
     # clock_time slot vocab (surface -> value), all facts from filename convention
     clock_fractions: Mapping[str, int] = field(default_factory=dict)  # -> minutes
     # fraction surfaces (a SUBSET of clock_fractions, so the FRACTION slot still
@@ -477,6 +506,12 @@ class LangSpec:
     #: closed-class filler (copulas/pronouns) the exclusion idiom skips over when
     #: deciding whether a trigger is adjacent ("unless it is Tuesday").
     exclusion_filler: FrozenSet[str] = field(default_factory=frozenset)
+    # the clock prepositions that also introduce a counted group ("at", "a",
+    # "om"), and the nouns that count people or things a clock never takes
+    # ("people", "vecinas", "mensen"); read by the counted-hour test only, so
+    # neither joins the connectors
+    at_counts: FrozenSet[str] = field(default_factory=frozenset)
+    counted_noun: FrozenSet[str] = field(default_factory=frozenset)
     # holiday_ref surface -> well-known holiday key ("christmas", "easter");
     # derived at load time from the holidays engine's i18n tables (native
     # names + translations + curated spoken aliases), never hand-listed here
@@ -518,6 +553,10 @@ class Match:
     slots: Mapping[str, Token]
     # which registered calendar a CAL_MONTH slot resolved to, if any
     calendar: Optional[str] = None
+    # a bare-hour clock read from a number that more likely counts the word
+    # after it ("a las 5 personas", "look at 5 houses"); see
+    # ``ConstructionMatcher._flag_counted_hours``
+    doubt: bool = False
 
     @property
     def length(self) -> int:
