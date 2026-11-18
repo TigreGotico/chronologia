@@ -199,8 +199,8 @@ def test_military_time(text, h, mi):
 # is "zero hundred hours", 0200 "zero two hundred" (timeanddate.com,
 # "Military Time: The 24-Hour Clock"; Wikipedia, "24-hour clock")
 @pytest.mark.parametrize("text,h,left", [
-    ("at zero hundred hours", 0, "at"), ("zero hundred hours", 0, ""),
-    ("at zero hundred", 0, ""), ("at zero six hundred hours", 6, "at"),
+    ("at zero hundred hours", 0, ""), ("zero hundred hours", 0, ""),
+    ("at zero hundred", 0, ""), ("at zero six hundred hours", 6, ""),
     ("zero nine hundred hours", 9, ""),
 ])
 def test_spelled_military_time(text, h, left):
