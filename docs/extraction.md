@@ -778,6 +778,20 @@ for text in ("tomorrow", "meet me tomorrow if that works for you at all"):
 each `TimeMention` and each `Event` carries a `.confidence`, and each mention is
 scored on its own reading rather than on its share of the carrier sentence.
 
+### Alternative readings of an ambiguous phrase
+
+A phrase can name a time in more than one way. `extract_candidates` returns
+each way, ranked, and `extract_timespan` returns the first. Ruling 31 gives an
+example: pt "às 9 uma hora antes do natal" has a stated clock (9), an offset
+(one hour before Christmas) and a twelve-hour choice for the 9. The ruling
+ranks the readings: the stated clock on the day the offset lands on, then the
+offset instant itself, then the clock's other twelve-hour reading. A consumer
+that can ask the speaker a question takes the first two candidates and asks.
+A consumer that cannot takes the first. The same holds for a lone numeral
+(ruling 34): `extract_timespan` returns nothing for it, and
+`extract_candidates` lists the hour, the day of the month and the year it could
+be.
+
 ### What the score is made of
 
 It is a **weighted product** of five factors, each a multiplier in `(0, 1]`
@@ -817,9 +831,16 @@ has a clear unit-interval reading.
 It is **not a probability**. It does not estimate "the chance this parse is
 correct" and the numbers do not sum to one across candidates. It is a *relative
 trust score* built to **rank** readings — nothing more. Do not threshold it as
-if 0.7 meant "70 % likely right"; do use it to prefer one candidate over
-another, or to decide a partial reading is not worth acting on without
-confirmation.
+if 0.7 meant "70 % likely right".
+
+A consumer picks a reading by rank: the first candidate, or the first one that
+meets the consumer's own test. The cases where a reading should not be acted on
+are the documented decline cases, not a fixed score. They are a bare number
+with no clock marker (ruling 34: it is a low-ranked candidate, not a reading),
+a counted noun after a clock preposition (ruling 22), and a clock that
+the part of the day contradicts (ruling 20). In each case the engine
+declines or ranks the reading low by a rule in [rulings.md](rulings.md), and
+the consumer reads the rule instead of a number.
 
 It is also **not a judgement about the sentence**. A look-alike the parser
 cannot tell from a real date — "christmas came early", "fall for the trick" —
@@ -1421,14 +1442,15 @@ limitations, stated plainly:
   contiguity limit only bites when the tokens are genuinely not adjacent.
 - **No scattered sets.** "the first and third Mondays" names a *set* of days;
   the engine resolves single spans, not enumerated collections.
-- **Single-winner selection resolves ambiguity silently.** `_select` takes
-  the longest, highest-precedence, earliest candidate and moves on — a
-  genuinely ambiguous phrase quietly yields one reading with no signal that
-  another was plausible. `explain` will *show* you the losers and why they
-  lost, but `extract_timespan` returns only the winner. A future
-  `CandidateSet`-style return (surfacing ranked alternatives instead of a
-  lone span) is the natural direction here; it is **not** promised, and today
-  the contract is one span or `None`.
+- **`extract_timespan` returns one reading.** `_select` takes the longest,
+  highest-precedence, earliest candidate. A phrase with several plausible
+  readings yields the first one, with no signal that another was possible.
+  `extract_candidates` is the way to see the others. It returns every
+  reading the matcher considered, ranked, with each reading's `confidence`
+  and leftover text, and `explain` shows why a loser lost. A caller that must
+  not guess calls `extract_candidates`, and picks by rank as described in
+  "How sure is it?". The contract of `extract_timespan` stays one span or
+  `None`.
 
 ### Impossible dates and out-of-range ordinals
 
