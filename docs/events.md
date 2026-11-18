@@ -70,6 +70,12 @@ assert once.summary == "my birthday party"
 assert (once.span.start.month, once.span.start.day) == (12, 25)
 ```
 
+A length that counts the date, as in "dentist three days before christmas", is
+not the event's length. The event is one day, 22 December, with no duration.
+The length stays a length when "for" introduces it ("for 3 days from
+tomorrow"), or when the date reads the same without it ("at 5pm for 10
+minutes").
+
 It is data-driven across languages — the same call works in Portuguese, Spanish,
 German and French:
 

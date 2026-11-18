@@ -1,0 +1,4 @@
+# The clock suffix that ties a part of the day to an hour: "deux heures du
+# matin, dix heures du soir" (Larousse, "heure").  "le matin" without it is
+# the part of the day itself, so "réunion de deux heures le matin" is a length.
+du
