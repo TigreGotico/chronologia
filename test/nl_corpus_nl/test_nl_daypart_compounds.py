@@ -43,6 +43,7 @@ _BANDS = [
     # today + day-part ("van" fused synonyms, not a split compound)
     ('vanmorgen', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
     ('vannacht', AstroDate(2017, 6, 27, 0, 0), AstroDate(2017, 6, 27, 6, 0)),
+    ('vanmiddag', AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 18, 0)),
     # weekday + day-part
     ('maandagochtend', AstroDate(2017, 7, 3, 6, 0), AstroDate(2017, 7, 3, 12, 0)),
     ('vrijdagavond', AstroDate(2017, 6, 30, 18, 0), AstroDate(2017, 7, 1)),
@@ -68,12 +69,6 @@ _INSTANTS = [
 def test_compound_noon_instant(text, start, end):
     s = span(text)
     assert (s.start, s.end) == (start, end), f"{text!r} resolved to {s}"
-
-
-def test_vanmiddag_stays_unparsed():
-    """"middag" has no band reading in this locale (reserved for the noon
-    instant), so "vanmiddag" has nothing to compose into and must not parse."""
-    assert parse('vanmiddag') is None
 
 
 def test_full_composition_with_clock_time():
