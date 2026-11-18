@@ -4201,7 +4201,11 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
                                  for t in tokens):
         # a locale with no am/pm vocabulary leaves the word over
         return res
-    meridiem_words = [t.text for t in tokens if t.text in spec.meridiems]
+    # a meridiem word that a match covers was read as something else (es
+    # "mañana" as tomorrow), so only a word left over decides the half
+    covered = {i for m in matches for i in range(*m.span)}
+    meridiem_words = [t.text for t in tokens
+                      if t.index not in covered and t.text in spec.meridiems]
     if meridiem_words and (
             not all(spec.meridiems[w] == 12 for w in meridiem_words)
             or any(w in spec.night_meridiems for w in meridiem_words)):
