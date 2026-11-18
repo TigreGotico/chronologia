@@ -4160,7 +4160,8 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     leading zero reads the same way; "03:30", "12:30", "15:30" and an hour
     written with the letter "h", a dotted clock and a clock folded from spelled
     numbers are as written.  The word "today" names no
-    part of the day, so "at 3:30 today" takes its reading from the same day;
+    part of the day, so "at 3:30 today" and "today at 5" take their reading
+    from the same day (the written hour when both readings have passed);
     any other day word keeps the written hour.  24-hour hours are untouched,
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
@@ -4188,7 +4189,7 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         return res
     hour = clock_match.slots.get("HOUR")
     clock = clock_match.slots.get("CLOCK")
-    if hour is not None and not today:
+    if hour is not None:
         if (not hour.is_number or not 1 <= hour.value <= 12
                 or re.search(r"\d\s*[h:]", (hour.raw or "").lower())
                 or (hour.index + 1 < len(tokens)
