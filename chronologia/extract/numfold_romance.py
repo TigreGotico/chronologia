@@ -24,7 +24,7 @@ from importlib import import_module
 from ovos_number_parser.util import NumberVocabulary
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
+from chronologia.extract.numfold_engine import (NumberGrammar, extent, make_fold,
                                                 with_marked_h_clock,
                                                     reindex as _reindex)
 from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
@@ -309,7 +309,8 @@ def _glue(tokens):
             k = len(seq)
             if tuple(t.text for t in tokens[i:i + k]) == seq:
                 raw = "".join(t.raw for t in tokens[i:i + k])
-                out.append(Token(text=_ROMANCE_GLUE[seq], raw=raw, index=0))
+                out.append(Token(text=_ROMANCE_GLUE[seq], raw=raw, index=0,
+                                 **extent(tokens[i:i + k])))
                 i += k
                 break
         else:
@@ -604,7 +605,8 @@ def _collapse_phrase(tokens, words, surface):
     while i < len(tokens):
         if [t.text for t in tokens[i:i + n]] == words:
             raw = " ".join(t.raw for t in tokens[i:i + n])
-            out.append(Token(text=surface, raw=raw, index=0))
+            out.append(Token(text=surface, raw=raw, index=0,
+                             **extent(tokens[i:i + n])))
             i += n
         else:
             out.append(tokens[i])
@@ -637,11 +639,14 @@ def _collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
             if (nn is not None and nn.is_number and nn.value is not None
                     and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
                 lit = "%d:%02d" % (int(t.value), int(nn.value))
-                out.append(Token(text=lit, raw=lit, index=0))
+                out.append(Token(text=lit, raw=lit, index=0,
+                                 letter_clock=True,
+                                 **extent(tokens[i:i + 3])))
                 i += 3
                 continue
             lit = "%d:00" % int(t.value)
-            out.append(Token(text=lit, raw=lit, index=0))
+            out.append(Token(text=lit, raw=lit, index=0,
+                             letter_clock=True, **extent(tokens[i:i + 2])))
             i += 2
             continue
         out.append(t)
