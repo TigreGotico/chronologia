@@ -40,17 +40,11 @@ from chronologia.civil_holidays import _DATA_DIR
 from chronologia.computus import easter
 from chronologia.recurrence import nth_weekday_of_month, occurrences
 
-#: Private source-document archive (raw HTML/TSV/CSV primary sources for the
-#: PT-municipal and ES-regional source-vs-engine witness tests below). It is
-#: NOT part of this repository -- only the maintainer's machine has it -- so
-#: every test that reads from it is skipped when it is absent (see
-#: ``_SKIP_NO_PAPERS``). The frozen golds in ``test/holiday_golds/*.tab`` are
-#: unaffected: they need no source archive at all.
-_PAPERS = os.path.expanduser("~/AgentWorkspaces/papers/holidays")
-_HAVE_PAPERS = os.path.isdir(_PAPERS)
-_SKIP_NO_PAPERS = pytest.mark.skipif(
-    not _HAVE_PAPERS,
-    reason=f"private source archive not present: {_PAPERS}")
+#: Published source documents for the source-vs-engine witness tests: the four
+#: BOE resolutions that list the Spanish regional holidays for 2023 to 2026, and
+#: the Portuguese municipal holiday tables (``municipios_portugal.csv``,
+#: ``feriados.tsv``, ``feriados_moveis.tsv``).
+_SOURCES = os.path.join(os.path.dirname(__file__), "holiday_sources")
 GOLD_DIR = os.path.join(os.path.dirname(__file__), "holiday_golds")
 _TIER_FLOOR = os.path.join(GOLD_DIR, "_tier_floor.json")
 _TIERS = ("primary", "computed", "witnessed", "self-evident")
@@ -437,9 +431,7 @@ _MUNI_ALIASES_FOLDED = {_fold(k): v for k, v in _MUNI_ALIASES.items()}
 
 
 def _load_municipio_codes() -> dict:
-    if not _HAVE_PAPERS:
-        return {}
-    path = os.path.join(_PAPERS, "municipios_portugal.csv")
+    path = os.path.join(_SOURCES, "municipios_portugal.csv")
     codes = {}
     with open(path, encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
@@ -474,11 +466,9 @@ def _load_pt_tab_municipal(kinds):
 
 def _pt_fixed_municipal_source_golds():
     """Parse feriados.tsv -> {(subdiv, name): (month, day)} (source-derived)."""
-    if not _HAVE_PAPERS:
-        return {}
     codes = _load_municipio_codes()
     out = {}
-    path = os.path.join(_PAPERS, "feriados.tsv")
+    path = os.path.join(_SOURCES, "feriados.tsv")
     with open(path, encoding="utf-8") as fh:
         next(fh)
         for line in fh:
@@ -503,10 +493,8 @@ _PT_MUNICIPAL_FIXED_TAB = [
 ]
 
 
-@_SKIP_NO_PAPERS
 @pytest.mark.parametrize("subdiv,name,month,day", sorted(
-    (s, n, m, d) for s, m, d, n in _PT_MUNICIPAL_FIXED_TAB) if _HAVE_PAPERS
-    else [("", "", 0, 0)])
+    (s, n, m, d) for s, m, d, n in _PT_MUNICIPAL_FIXED_TAB))
 def test_pt_municipal_fixed_gold_matches_source(subdiv, name, month, day):
     """Source-vs-engine: the feriados.tsv-derived (month, day) must equal both
     the engine's resolved 2024 date AND the .tab file's own args."""
@@ -553,11 +541,9 @@ _MOVABLE_PHRASE_RULES = [
 
 def _pt_movable_municipal_source_golds():
     """Parse feriados_moveis.tsv -> {subdiv: (AstroDate, name)}."""
-    if not _HAVE_PAPERS:
-        return {}
     codes = _load_municipio_codes()
     out = {}
-    path = os.path.join(_PAPERS, "feriados_moveis.tsv")
+    path = os.path.join(_SOURCES, "feriados_moveis.tsv")
     with open(path, encoding="utf-8") as fh:
         next(fh)
         for line in fh:
@@ -585,9 +571,7 @@ _PT_MUNICIPAL_MOVABLE_SOURCE = _pt_movable_municipal_source_golds()
 _PT_MUNICIPAL_MOVABLE_TAB = _load_pt_tab_municipal({"easter", "nth_weekday"})
 
 
-@_SKIP_NO_PAPERS
-@pytest.mark.parametrize("subdiv,kind,args,name", sorted(_PT_MUNICIPAL_MOVABLE_TAB)
-                          if _HAVE_PAPERS else [("", "", "", "")])
+@pytest.mark.parametrize("subdiv,kind,args,name", sorted(_PT_MUNICIPAL_MOVABLE_TAB))
 def test_pt_municipal_movable_gold_matches_source(subdiv, kind, args, name):
     """Source-vs-engine: the feriados_moveis.tsv phrase-derived date must equal
     the engine's resolved 2024 date."""
@@ -646,11 +630,9 @@ def _es_canon(n):
 
 def _es_regional_source_golds():
     """Parse the four BOE tables into {(subdiv, name, year): (month, day)}."""
-    if not _HAVE_PAPERS:
-        return {}
     out = {}
     for year, fn in _ES_BOE.items():
-        path = os.path.join(_PAPERS, fn)
+        path = os.path.join(_SOURCES, fn)
         html_text = open(path, encoding="utf-8").read()
         m = re.search(r'<table class="tabla_girada_condensada">(.*?)</table>',
                       html_text, re.S)
@@ -686,10 +668,8 @@ def _es_regional_source_golds():
 _ES_REGIONAL_SOURCE = _es_regional_source_golds()
 
 
-@_SKIP_NO_PAPERS
 @pytest.mark.parametrize("subdiv,name,year,month,day", sorted(
-    (s, n, y, m, d) for (s, n, y), (m, d) in _ES_REGIONAL_SOURCE.items())
-    if _HAVE_PAPERS else [("", "", 0, 0, 0)])
+    (s, n, y, m, d) for (s, n, y), (m, d) in _ES_REGIONAL_SOURCE.items()))
 def test_es_regional_gold_matches_boe_source(subdiv, name, year, month, day):
     """Source-vs-engine: the BOE-table date must equal the engine's decree
     resolution for that community and year."""
@@ -697,6 +677,5 @@ def test_es_regional_gold_matches_boe_source(subdiv, name, year, month, day):
     assert got[(name, subdiv)] == AstroDate(year, month, day)
 
 
-@_SKIP_NO_PAPERS
 def test_es_regional_covers_all_communities():
     assert {s for (s, _n, _y) in _ES_REGIONAL_SOURCE} == set(_ES_CODES)
