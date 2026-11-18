@@ -316,6 +316,12 @@ is 24 December, 23:00. A holiday stands for the instant it begins in both
 directions, so "2 hours after christmas" is 25 December, 02:00. A count of a
 day or more names the day: "2 days after christmas" is 27 December.
 
+A clock said with such an offset ("at 9 one hour before christmas") is read on
+the day the offset lands on, in the twelve-hour reading nearer to the offset
+instant: 24 December, 21:00. `extract_candidates` ranks the offset instant
+(23:00) next and the clock's other twelve-hour reading (09:00) after it. A
+clock with an am or pm word has no other reading.
+
 A bare "after X" names a span with a start and no end: the time from the end
 of the next X onward. The span has `open_end` set and stores its start in both
 endpoints, so a consumer that needs an instant takes `span.start`:
