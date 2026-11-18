@@ -1012,6 +1012,15 @@ class ConstructionMatcher:
                                 set(self.spec.units)
                                 | set(self.spec.singular_units))):
                         continue
+                    # A season word that is also a verb ("will the temperature
+                    # fall") is the season only behind a licensing word, before
+                    # a year or alone (``marker_season_homograph.voc``).
+                    if ("SEASON" in slots
+                            and slots["SEASON"].text in self.spec.connectors.get(
+                                "season_homograph", frozenset())
+                            and not self._season_homograph_licensed(
+                                tokens, slots)):
+                        continue
                     # Positional licensing for the bare-daypart reading: a
                     # capitalised daypart word that is the tail of a capitalised
                     # multi-word phrase ("Guy Fawkes Night", "Twelfth Night") is
@@ -1223,6 +1232,30 @@ class ConstructionMatcher:
                                       cand.precedence)
             flagged.append(cand)
         return flagged
+
+    def _season_homograph_licensed(self, tokens: Tuple[Token, ...],
+                                   slots: Dict[str, Token]) -> bool:
+        """Whether the season homograph in ``slots`` reads as the season:
+        it is the whole text, a part of the period ("late fall"), a year or
+        the solar event follows it, or an article, a relative marker or a
+        preposition stands before it."""
+        at = slots["SEASON"].index
+        connectors = self.spec.connectors
+        after = tokens[at + 1] if at + 1 < len(tokens) else None
+        if "PART" in slots:
+            return True
+        if after is not None and (
+                after.is_number or after.text in self.spec.solar_events
+                or (after.text in connectors.get("of", frozenset())
+                    and at + 2 < len(tokens) and tokens[at + 2].is_number)):
+            return True
+        if at == 0:
+            return after is None
+        before = tokens[at - 1].text
+        return (before in self.spec.rel_markers
+                or any(before in connectors.get(name, frozenset())
+                       for name in ("article", "in", "from", "to", "until",
+                                    "during", "by", "of", "every")))
 
     def _subject_opens(self, tokens: Tuple[Token, ...], marker: int) -> bool:
         """Whether the words before ``tokens[marker]`` are its subject alone
