@@ -431,3 +431,61 @@ def test_a_comma_after_a_scale_word_ends_the_number():
     got = extract_duration("mil, dois dias", "pt")
     assert got.duration == timedelta(days=2)
     assert got.remainder == "mil"
+
+
+@pytest.mark.parametrize("lang, text", [
+    ("en", "from two thousand to three thousand $"),
+    ("en", "between two thousand and three thousand €"),
+    ("en", "between two thousand and three thousand US$"),
+    ("en", "between two thousand and three thousand USD"),
+    ("en", "between two thousand and three thousand ALL"),
+    ("en", "between two thousand and three thousand US dollars"),
+    ("en", "between two thousand and three thousand more dollars"),
+    ("pt", "desde dois mil até três mil €"),
+    ("pt", "desde dois mil até três mil EUR"),
+    ("pt", "desde dois mil até três mil mais euros"),
+])
+def test_a_currency_symbol_code_or_qualified_name_measures_a_range(
+        lang, text):
+    """A currency symbol, an ISO 4217 code or a currency name after one
+    qualifying word makes both numbers of a range amounts (CLDR 49.0.0
+    currency symbols, codes and display names such as "US dollars"); "more"
+    and "mais" qualify the quantity (Wiktionary "more", Priberam "mais")."""
+    assert extract_timespans(text, lang, _FRIDAY) == []
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    ("en", "we paid between two thousand and three thousand USD on monday",
+     _MONDAY_2),
+    ("en", "between two thousand and three thousand $ were stolen yesterday",
+     _THURSDAY_29),
+])
+def test_a_range_of_amounts_with_a_symbol_or_code_leaves_the_day_word(
+        lang, text, day):
+    assert _event_day(lang, text) == day
+
+
+@pytest.mark.parametrize("text", [
+    "between two thousand and three thousand all",
+    "since two thousand try again",
+])
+def test_a_word_spelled_like_an_iso_code_in_lower_case_is_no_currency(text):
+    """"all" and "try" are the codes ALL and TRY only in capitals."""
+    s = extract_timespan(text, "en", _FRIDAY).span
+    assert s.start == datetime(2000, 1, 1)
+
+
+@pytest.mark.parametrize("lang, text, years", [
+    ("en", "in two thousand the dollar rose", (2000, 2001)),
+    ("en", "since two thousand the euro fell", (2000, None)),
+    ("pt", "em dois mil o euro subiu", (2000, 2001)),
+    ("pt", "desde dois mil o euro caiu", (2000, None)),
+])
+def test_an_article_between_a_year_and_a_currency_noun_is_no_qualifier(
+        lang, text, years):
+    """Only a word that qualifies a currency stands between a number and its
+    currency noun, so the article of the next phrase keeps the number a
+    year."""
+    s = extract_timespan(text, lang, _FRIDAY).span
+    assert s.start == datetime(years[0], 1, 1)
+    assert years[1] is None or s.end == datetime(years[1], 1, 1)
