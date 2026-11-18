@@ -65,6 +65,7 @@
     },
     "clock_time": {
       "orders": [
+        "alarm_at HOUR MERIDIEM? ZONE?",
         "at? CLOCK article? MERIDIEM? ZONE?",
         "at HOUR oclock CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
         "HOUR oclock CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",

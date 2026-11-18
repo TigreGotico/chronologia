@@ -1,0 +1,10 @@
+# The clock suffix that ties a part of the day to an hour without "às": "nove
+# da manhã, três da tarde" (Senado Federal, Manual de Comunicação, s.v.
+# "Hora").  "de manhã" is the part of the day itself, "Entre o amanhecer e o
+# meio-dia" (Priberam, "manhã").  extract_timespan reads "duas horas de
+# manhã" as the clock 02:00.  extract_event reads the count as a length in
+# the morning only when a word that no reading takes stands before it and
+# this suffix does not follow it: "reunião de duas horas de manhã" is a
+# length, "jantar nove horas da noite" is 21:00.  Without "horas" the number
+# is no count of hours: "duas e meia de manhã" is 02:30.
+da

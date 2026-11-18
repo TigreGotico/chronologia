@@ -52,7 +52,7 @@ pip install chronologia
 
 Python 3.11+. The calendrical core is pure standard library; the
 natural-language layer adds three small helpers — **numtag** (reads the
-numbers of Catalan, English, French, Galician, Italian, Portuguese and Spanish), **ovos-number-parser** (spelled numbers →
+numbers of Catalan, Danish, Dutch, English, French, Galician, German, Italian, Portuguese, Spanish and Swedish), **ovos-number-parser** (spelled numbers →
 digits in the other languages) and **ovos-spec-tools** (loads each language's
 vocabulary files).
 
@@ -328,7 +328,7 @@ around them:
   yet.
 - **[numtag](https://github.com/TigreGotico/numtag)** — finds every number in
   a text and returns typed mentions with their spans and exact values.
-  chronologia reads the numbers of Catalan, English, French, Galician, Italian, Portuguese and Spanish through it.
+  chronologia reads the numbers of Catalan, Danish, Dutch, English, French, Galician, German, Italian, Portuguese, Spanish and Swedish through it.
 - **[ovos-spec-tools](https://github.com/OpenVoiceOS/ovos-spec-tools)** — the
   reference implementation of the OVOS formal specifications (template
   expander, locale loader, dialog renderer, language matcher, linter).

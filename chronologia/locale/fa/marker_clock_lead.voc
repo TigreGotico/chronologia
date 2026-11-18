@@ -1,0 +1,6 @@
+# Words that open a clock time and belong to it. They fold only in front of
+# a number, a clock time, a clock fraction or a clock landmark.
+# Each word is shown opening a clock time on the page named in brackets,
+# saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.
+# ساعت: Wiktionary "ساعت": "hour; o’clock: ساعتِ دو (two o’clock)" [fa-ساعت.wikitext.txt]
+ساعت

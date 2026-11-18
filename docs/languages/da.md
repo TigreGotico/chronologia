@@ -128,12 +128,9 @@ deep-time period vocabulary.
 The vocabulary file cites Den Danske Ordbog.
 
 **`halvanden`**, the ordinary Danish word for 1.5 (Den Danske Ordbog; from Old
-Norse *halfr annarr*), is declared as the `1.5` quantifier. Resolved by native
-review: `extract_number_da('halvanden')` misreads it as a bare `0.5`, so a
-fixed word-map override in `numfold_germanic.fold_da` intercepts the token
-before the (wrong) number-parser value ever folds it, mirroring German
-`anderthalb` and Dutch `anderhalve`. `halvanden time siden` now resolves to
-1.5 hours ago rather than half an hour ago.
+Norse *halfr annarr*), is declared as the `1.5` quantifier. numtag reads it as the fraction 1.5. The
+former ovos-number-parser reading misread it as a bare `0.5`. `halvanden time
+siden` resolves to 1.5 hours ago rather than half an hour ago.
 
 ## The hour before one
 
