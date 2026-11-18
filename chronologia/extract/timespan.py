@@ -2341,6 +2341,10 @@ def _trailing_meridiem(sub, spec):
     """The am/pm token ending a slice, or None -- for propagating a shared
     meridiem onto a bare range endpoint."""
     if sub and sub[-1].text in spec.meridiems:
+        # the last word of a two-word day name ("i morgon", sv for tomorrow)
+        # is not a meridiem
+        if len(sub) > 1 and f"{sub[-2].text} {sub[-1].text}" in spec.named_days:
+            return None
         return sub[-1]
     return None
 
