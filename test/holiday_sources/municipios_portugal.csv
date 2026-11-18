@@ -1,0 +1,306 @@
+Municipio,Codigo
+Abrantes,ABT
+Águeda,AGD
+Aguiar da Beira,AGB
+Alandroal,ADL
+Albergaria-a-Velha,ABL
+Albufeira,ABF
+Alcácer do Sal,ASL
+Alcobaça,ACB
+Alcanena,ACN
+Alcochete,ACH
+Alcoutim,ACT
+Alenquer,ALQ
+Alfândega da Fé,AFE
+Alijó,ALJ
+Aljezur,AJZ
+Aljustrel,AJT
+Almada,ALM
+Almeida,ALD
+Almeirim,ALR
+Almodôvar,ADV
+Alpiarça,APC
+Alter do Chão,ALT
+Alvaiázere,AVZ
+Alvito,AVT
+Amadora,AMD
+Amarante,AMT
+Amares,AMR
+Anadia,AND
+Angra do Heroísmo,AGH
+Ansião,ANS
+Arcos de Valdevez,AVV
+Arganil,AGN
+Armamar,AMM
+Arouca,ARC
+Arraiolos,ARL
+Arronches,ARR
+Arruda dos Vinhos,ARV
+Aveiro,AVR
+Avis,AVS
+Azambuja,AZB
+Baião,BAO
+Barcelos,BCL
+Barrancos,BRC
+Barreiro,BRR
+Batalha,BTL
+Beja,BJA
+Belmonte,BMT
+Benavente,BNV
+Bombarral,BBR
+Borba,BRB
+Boticas,BTC
+Braga,BRG
+Bragança,BGC
+Cabeceiras de Basto,CBC
+Cadaval,CDV
+Caldas da Rainha,CLD
+Calheta (Angra do Heroísmo),CHT
+Calheta (Funchal),CLT
+Câmara de Lobos,CML
+Caminha,CMN
+Campo Maior,CMR
+Cantanhede,CNT
+Carrazeda de Ansiães,CRZ
+Carregal do Sal,CRS
+Cartaxo,CTX
+Cascais,CSC
+Castanheira de Pêra,CPR
+Castelo Branco,CTB
+Castelo de Paiva,CPV
+Castelo de Vide,CVD
+Castro Daire,CDR
+Castro Marim,CTM
+Castro Verde,CVR
+Celorico de Basto,CBT
+Celorico da Beira,CLB
+Chamusca,CHM
+Chaves,CHV
+Cinfães,CNF
+Coimbra,CBR
+Condeixa-a-Nova,CDN
+Constância,CTC
+Coruche,CCH
+Corvo,CRV
+Covilhã,CVL
+Crato,CRT
+Cuba,CUB
+Elvas,ELV
+Entroncamento,ENT
+Espinho,ESP
+Esposende,EPS
+Estarreja,ETR
+Estremoz,ETZ
+Évora,EVR
+Fafe,FAF
+Faro,FAR
+Felgueiras,FLG
+Ferreira do Alentejo,FAL
+Ferreira do Zêzere,FZZ
+Figueira da Foz,FIG
+Figueira de Castelo Rodrigo,FCR
+Figueiró dos Vinhos,FVN
+Fornos de Algodres,FAG
+Freixo de Espada à Cinta,FEC
+Fronteira,FTR
+Funchal,FUN
+Fundão,FND
+Gavião,GAV
+Góis,GOI
+Golegã,GLG
+Gondomar,GDM
+Gouveia,GVA
+Grândola,GDL
+Guarda,GRD
+Guimarães,GMR
+Horta,HRT
+Idanha-a-Nova,IDN
+Ílhavo,ILH
+Lagoa,LGA
+Lagoa (Ponta Delgada),LAG
+Lagos,LGS
+Lajes das Flores,LJF
+Lajes do Pico,LJP
+Lamego,LMG
+Leiria,LRA
+Lisboa,LSB
+Loulé,LLE
+Loures,LRS
+Lourinhã,LNH
+Lousã,LSA
+Lousada,LSD
+Mação,MAC
+Macedo de Cavaleiros,MDC
+Machico,MCH
+Madalena,MAD
+Mafra,MFR
+Maia,MAI
+Mangualde,MGL
+Manteigas,MTG
+Marco de Canaveses,MCN
+Marinha Grande,MGR
+Marvão,MRV
+Matosinhos,MTS
+Mealhada,MLD
+Meda,MDA
+Melgaço,MLG
+Mértola,MTL
+Mesão Frio,MSF
+Mira,MIR
+Miranda do Corvo,MCV
+Miranda do Douro,MDR
+Mirandela,MDL
+Mogadouro,MGD
+Moimenta da Beira,MBR
+Moita,MTA
+Monção,MNC
+Monchique,MCQ
+Mondim de Basto,MDB
+Monforte,MFT
+Montalegre,MTR
+Montemor-o-Novo,MMN
+Montemor-o-Velho,MMV
+Montijo,MTJ
+Mora,MOR
+Mortágua,MRT
+Moura,MRA
+Mourão,MOU
+Murça,MUR
+Murtosa,MRS
+Nazaré,NZR
+Nelas,NLS
+Nisa,NIS
+Nordeste,NRD
+Óbidos,OBD
+Odemira,ODM
+Oeiras,OER
+Oleiros,OLR
+Olhão,OLH
+Oliveira de Azeméis,OAZ
+Oliveira do Bairro,OBR
+Oliveira de Frades,OFR
+Oliveira do Hospital,OHP
+Ourém,VNO
+Ourique,ORQ
+Ovar,OVR
+Paços de Ferreira,PFR
+Palmela,PLM
+Pampilhosa da Serra,PPS
+Paredes,PRD
+Paredes de Coura,PCR
+Pedrógão Grande,PGR
+Penafiel,PNF
+Penalva do Castelo,PCT
+Penacova,PCV
+Penamacor,PNC
+Penedono,PND
+Penela,PNL
+Peniche,PNI
+Peso da Régua,PRG
+Pinhel,PNH
+Pombal,PBL
+Ponta Delgada,PDL
+Ponta do Sol,PTS
+Ponte da Barca,PTB
+Ponte de Lima,PTL
+Ponte de Sor,PSR
+Portel,PRL
+Portimão,PTM
+Portalegre,PTG
+Porto,PRT
+Porto de Mós,PMS
+Porto Moniz,PMZ
+Porto Santo,PST
+Póvoa de Lanhoso,PVL
+Póvoa de Varzim,PVZ
+Povoação,PVC
+Proença-a-Nova,PNV
+Redondo,RDD
+Reguengos de Monsaraz,RMZ
+Resende,RSD
+Ribeira Brava,RBR
+Ribeira Grande,RGR
+Ribeira de Pena,RPN
+Rio Maior,RMR
+Sabrosa,SBR
+Sabugal,SBG
+Salvaterra de Magos,SMG
+Santa Comba Dão,SCD
+Santa Cruz,SCR
+Santa Cruz das Flores,SCF
+Santa Cruz da Graciosa,SCG
+Santa Maria da Feira,VFR
+Santa Marta de Penaguião,SMP
+Santana,STN
+Santarém,STR
+Santiago do Cacém,STC
+Santo Tirso,STS
+São Brás de Alportel,SBA
+São João da Madeira,SJM
+São João da Pesqueira,SJP
+São Pedro do Sul,SPS
+São Roque do Pico,SRP
+São Vicente,SVC
+Sardoal,SRD
+Sátão,SAT
+Seia,SEI
+Seixal,SXL
+Sernancelhe,SRN
+Serpa,SRP
+Sertã,SRT
+Sesimbra,SSB
+Setúbal,STB
+Sever do Vouga,SVV
+Silves,SLV
+Sines,SNS
+Sintra,SNT
+Sobral de Monte Agraço,SMA
+Soure,SRE
+Sousel,SSL
+Tábua,TBU
+Tabuaço,TBC
+Tarouca,TRC
+Tavira,TVR
+Terras de Bouro,TBR
+Tomar,TMR
+Tondela,TND
+Torre de Moncorvo,TMC
+Torres Novas,TNV
+Torres Vedras,TVD
+Trancoso,TCS
+Vagos,VGS
+Vale de Cambra,VLC
+Valença,VLN
+Valongo,VLG
+Valpaços,VLP
+Velas,VLS
+Vendas Novas,VND
+Viana do Alentejo,VNT
+Viana do Castelo,VCT
+Vidigueira,VDG
+Vieira do Minho,VRM
+Vila de Rei,VLR
+Vila do Bispo,VBP
+Vila do Conde,VCD
+Vila Flor,VFL
+Vila Franca do Campo,VFC
+Vila Franca de Xira,VFX
+Vila Nova da Barquinha,VNB
+Vila Nova de Cerveira,VNC
+Vila Nova de Famalicão,VNF
+Vila Nova de Foz Côa,VLF
+Vila Nova de Gaia,VNG
+Vila Nova de Paiva,VNP
+Vila Nova de Poiares,PRS
+Vila Pouca de Aguiar,VPA
+Vila do Porto,VPT
+Vila da Praia da Vitória,VPV
+Vila Real,VRL
+Vila Real de Santo António,VRS
+Vila Velha de Ródão,VVR
+Vila Verde,VVD
+Vila Viçosa,VVC
+Vimioso,VMS
+Vinhais,VNH
+Viseu,VIS
+Vouzela,VLZ

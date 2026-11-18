@@ -44,7 +44,7 @@ def mentions(text, lang="de"):
 def test_r161_de_bare_year_under_jahr_marker_clean_text():
     ms = mentions("Das Jahr 2027. Es wird toll.")
     assert len(ms) == 1
-    assert ms[0].text == "das jahr 2027"
+    assert ms[0].text == "Das Jahr 2027"
     assert ms[0].span.start == AstroDate(2027, 1, 1)
 
 
@@ -62,7 +62,7 @@ def test_r161_de_bare_year_mid_sentence_two_mentions_still_split():
     swallows it itself -- two SEPARATE mentions, not a fused range."""
     ms = mentions("Das Jahr 2027. Der Termin ist am Montag.")
     assert len(ms) == 2
-    assert ms[0].text == "das jahr 2027"
+    assert ms[0].text == "Das Jahr 2027"
     assert ms[1].span.start == AstroDate(2026, 8, 17)
 
 
@@ -73,13 +73,13 @@ def test_r161_de_bare_year_mid_sentence_two_mentions_still_split():
 def test_r161_en_control_clean_text():
     ms = mentions("The year 2027. It will be great.", lang="en-us")
     assert len(ms) == 1
-    assert ms[0].text == "the year 2027"
+    assert ms[0].text == "The year 2027"
 
 
 def test_r161_ru_control_clean_text():
     ms = mentions("Год 2027. Будет здорово.", lang="ru")
     assert len(ms) == 1
-    assert ms[0].text == "год 2027"
+    assert ms[0].text == "Год 2027"
 
 
 # --------------------------------------------------------------------------
@@ -97,7 +97,7 @@ def test_r161_de_ordinal_dot_bare_date_unaffected():
     ms = mentions("Das Meeting ist am 15. Juni.")
     assert len(ms) == 1
     assert ms[0].span.start == AstroDate(2027, 6, 15)
-    assert ms[0].text == "15. juni"
+    assert ms[0].text == "15. Juni"
 
 
 def test_r161_de_ordinal_dot_one_digit_unaffected():

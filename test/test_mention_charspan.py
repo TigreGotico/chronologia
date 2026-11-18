@@ -82,3 +82,16 @@ def test_a_lexical_korean_year_word_spans_only_itself():
         mentions = extract_timespans(sentence, lang="ko", anchor=ANCHOR)
         got = [sentence[m.char_span[0]:m.char_span[1]] for m in mentions]
         assert got == surfaces, (sentence, got)
+
+
+def test_text_keeps_spelled_numbers_as_written():
+    # a spelled number folds to digits for the grammar; the mention text is
+    # still the words the writer typed, the same substring char_span slices
+    for sentence, lang, written in [
+        ("the meeting is in three days", "en", "in three days"),
+        ("We Leave In Three Days", "en", "In Three Days"),
+        ("a reunião é daqui a três dias", "pt", "daqui a três dias"),
+        ("das Treffen ist in drei Tagen", "de", "in drei Tagen"),
+    ]:
+        assert [m.text for m in extract_timespans(sentence, lang=lang, anchor=ANCHOR)] == [written]
+        _assert_spans_agree(sentence, lang)
