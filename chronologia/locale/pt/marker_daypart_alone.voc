@@ -1,0 +1,13 @@
+# A part-of-day word names its band with no article or preposition only when
+# it is the whole text: "tarde", "noite", "manhã".  Priberam s.v. "tarde":
+# "Espaço do dia compreendido entre o meio-dia e o anoitecer"; s.v. "noite":
+# "Tempo compreendido entre o crepúsculo vespertino e o matutino".  Inside a
+# sentence the bare word is not read: "tarde" is also the adverb "late"
+# ("chegou tarde"), and "boa noite" is a greeting.
+madrugada
+madrugadas
+manhã
+manha
+manhãs
+noite
+tarde

@@ -534,17 +534,25 @@ def test_additive_superset_daypart_ref(lang):
         f"(not additive): {missing}\n  effective={effective}")
 
 
-def test_es_gl_pt_daypart_ref_omit_the_bare_order():
+def test_es_gl_daypart_ref_omit_the_bare_order():
     """The tomorrow-homograph locales must NOT inherit the bare "DAYPART".
 
     es "mañana"/gl "mañá" are also the word for *tomorrow*; a bare-band reading
     would hijack that parse.  Their ``override`` keeps the article/connector
     forms and drops the bare order, so "DAYPART" alone never fires for them.
     """
-    for lang in ("es", "gl", "pt"):
+    for lang in ("es", "gl"):
         eff = _effective_orders(lang, "daypart_ref")
         assert "DAYPART" not in eff, f"{lang} unexpectedly gained bare DAYPART"
         assert "REL_MARKER DAYPART" in eff
+
+
+def test_pt_bare_daypart_is_read_only_when_it_is_the_whole_text():
+    """pt keeps the bare order, and every pt band word is listed as one that
+    names its band only when it is the whole text (``marker_daypart_alone``)."""
+    assert "DAYPART" in _effective_orders("pt", "daypart_ref")
+    spec = load_lang_spec("pt")
+    assert set(spec.dayparts) <= spec.connectors["daypart_alone"]
 
 
 def test_totality_every_locale_has_every_base_construction():

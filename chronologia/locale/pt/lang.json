@@ -217,7 +217,8 @@
         "of DAYPART",
         "at DAYPART",
         "dayframe DAYPART",
-        "article? DAYPART REL_MARKER"
+        "article? DAYPART REL_MARKER",
+        "DAYPART"
       ]
     },
     "extend": {
