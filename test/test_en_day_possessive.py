@@ -29,8 +29,34 @@ def test_a_day_word_with_a_possessive_names_the_day(text, day, remainder):
     assert found.remainder == remainder
 
 
-@pytest.mark.parametrize("text,day,remainder", ROWS[:4])
-def test_the_mention_is_the_possessive_word(text, day, remainder):
+MENTIONS = [
+    ("read me today's forecast", datetime(2017, 6, 27), "today's"),
+    ("today's weather", datetime(2017, 6, 27), "today's"),
+    ("what is tomorrow's forecast", datetime(2017, 6, 28), "tomorrow's"),
+    ("show yesterday's news", datetime(2017, 6, 26), "yesterday's"),
+]
+
+
+@pytest.mark.parametrize("text,day,word", MENTIONS)
+def test_the_mention_is_the_possessive_word(text, day, word):
     found = extract_timespans(text, "en", ANCHOR)
     assert [m.span.start.datetime() for m in found] == [day]
-    assert found[0].text == text[found[0].char_span[0]:found[0].char_span[1]]
+    assert found[0].text == word
+
+
+CLOCK_ROWS = [
+    ("remind me of tomorrow's meeting at 9 am", datetime(2017, 6, 28, 9, 0), "remind me of meeting"),
+    ("tomorrow's meeting at 5pm", datetime(2017, 6, 28, 17, 0), "meeting"),
+    ("tomorrow\u2019s meeting at 5pm", datetime(2017, 6, 28, 17, 0), "meeting"),
+    ("today's meeting at 5pm", datetime(2017, 6, 27, 17, 0), "meeting"),
+    ("yesterday's flight at 10:30 pm", datetime(2017, 6, 26, 22, 30), "flight"),
+    ("yesterday's game at 9 am", datetime(2017, 6, 26, 9, 0), "game"),
+]
+
+
+@pytest.mark.parametrize("text,instant,remainder", CLOCK_ROWS)
+def test_a_clock_after_the_noun_joins_the_possessive_day(text, instant, remainder):
+    found = extract_timespan(text, "en", ANCHOR)
+    assert found.span.start.datetime() == instant
+    assert found.remainder == remainder
+
