@@ -34,8 +34,12 @@ from chronologia.extract.numfold_engine import reindex
 #: European Portuguese and its ``fr`` locale the French of France.  A region
 #: tag goes to numtag as it is: ``pt-BR`` reads the Brazilian lexicon, whose
 #: short scale makes "dois bilhões" 2*10^9, and ``fr-BE`` reads "septante".
+#: The bare ``fr`` reads numtag's ``fr-CH``: the lexicon of France plus
+#: "septante", "nonante" and "huitante", which mean 70, 90 and 80 and clash
+#: with no word of ``fr-FR`` (Académie française, "Septante, octante (ou
+#: huitante), nonante": "Ils sont officiels en Belgique et en Suisse").
 NUMTAG_LANGS = {"pt": "pt-PT", "en": "en", "es": "es", "gl": "gl", "ca": "ca",
-                "it": "it", "fr": "fr-FR", "de": "de", "nl": "nl", "da": "da",
+                "it": "it", "fr": "fr-CH", "de": "de", "nl": "nl", "da": "da",
                 "sv": "sv"}
 
 _LOCALE_DIR = Path(__file__).resolve().parent.parent / "locale"
