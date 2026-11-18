@@ -26,6 +26,11 @@ CLOCKS = [
     ("auf 15:30 Uhr", datetime(2017, 6, 27, 15, 30), ""),
     ("das Taxi ist auf 16 Uhr bestellt", datetime(2017, 6, 27, 16),
      "das Taxi ist bestellt"),
+    ("auf 15 Uhr 30", datetime(2017, 6, 27, 15, 30), ""),
+    ("auf 7 Uhr 15", datetime(2017, 6, 27, 19, 15), ""),
+    ("verschiebe den Termin auf 15 Uhr 30", datetime(2017, 6, 27, 15, 30),
+     "verschiebe den Termin"),
+    ("auf 15 Uhr dreißig", datetime(2017, 6, 27, 15, 30), ""),
 ]
 
 
