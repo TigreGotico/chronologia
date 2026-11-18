@@ -40,6 +40,7 @@
         "CLOCK CLOCKDIR FRACTION MERIDIEM? ZONE?",
         "at? CLOCK MERIDIEM? ZONE?",
         "CLOCK MERIDIEM? ZONE?",
+        "oclock HOUR MERIDIEM? ZONE?",
         "at? HOUR MERIDIEM ZONE?",
         "at? LANDMARK MERIDIEM? ZONE?"
       ],
