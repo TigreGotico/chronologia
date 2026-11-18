@@ -4146,6 +4146,14 @@ def reads_spoken_hours(fn):
 _DIGIT_CLOCK = re.compile(r"([1-9]|1[01]):[0-5]\d")
 
 
+def _clock_glue(spec):
+    """The words that may stand between a clock and its morning or evening
+    word: the clock's own lead, clock word, "of" and article words."""
+    return set().union(*(spec.connectors.get(name, ()) for name in (
+        "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
+        "s")))
+
+
 def _half_words_beside(span, tokens, spec, covered, skip=()):
     """The morning or evening words beside ``span``, past its glue words.
 
@@ -4154,9 +4162,7 @@ def _half_words_beside(span, tokens, spec, covered, skip=()):
     late.  A word a match covers (index in ``covered``) was read as something
     else (es "mañana").  Token indices in ``skip`` stand between as glue does.
     """
-    glue = set().union(*(spec.connectors.get(name, ()) for name in (
-        "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
-        "s")))
+    glue = _clock_glue(spec)
     found = []
     for step in (-1, 1):
         i = span[0] - 1 if step < 0 else span[1]
@@ -4222,9 +4228,12 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
           or unicodedata.normalize(
               "NFKC", text[clock.char_start:clock.char_end]).lower() != clock.raw):
         return res
+    glue = _clock_glue(spec)
     if clock is not None and any(t.text.replace(".", "") in ("am", "pm")
-                                 for t in tokens):
-        # a locale with no am/pm vocabulary leaves the word over
+                                 and t.text not in spec.meridiems
+                                 and t.text not in glue for t in tokens):
+        # a locale with no am/pm vocabulary leaves the word over; Welsh "am"
+        # is the word "at"
         return res
     covered = {i for m in matches for i in range(*m.span)}
     # the word "today" of the reading stands between the clock and the part

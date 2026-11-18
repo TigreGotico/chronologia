@@ -114,6 +114,17 @@ TODAY_EVENING = [
     # a morning word keeps the written hour
     ("om 8:00 vandaag 's ochtends", "nl", datetime(2017, 6, 27, 5, 0),
      datetime(2017, 6, 27, 8, 0)),
+    # a pm word the locale lists decides the half too
+    ("at 8:00 today pm", "en", datetime(2017, 6, 27, 5, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    ("at 8:00 today pm", "en", AFTER_NOON, datetime(2017, 6, 27, 20, 0)),
+    ("at 8:00 today pm", "en", datetime(2017, 6, 27, 21, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    # Welsh "am" is the word "at", not a meridiem
+    ("am 8:00 heddiw yh", "cy", datetime(2017, 6, 27, 5, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    ("am 8:00 heddiw yh", "cy", datetime(2017, 6, 27, 21, 0),
+     datetime(2017, 6, 27, 20, 0)),
 ]
 
 # text, language, anchor, expected instant: "tarde" in another clause means
