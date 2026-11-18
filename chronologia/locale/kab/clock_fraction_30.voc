@@ -7,3 +7,8 @@ azgen
 # Tatoeba Kabyle also writes the construct-state "uzgen" after the connective:
 #   "Attan qrib d lweḥda d uzgen." -- "It's almost half past one already."
 uzgen
+# "nnefṣ" = half, from Arabic "nisf"; it is the half word of the Amazigh
+# fraction list in ovos-number-parser (numbers_kab, vouched by the native
+# speaker athmanemokraoui in the localize review), and the ovos-skill-alerts
+# locale files write the half hour with it: "ɣef sebɛa u nnefṣ".
+nnefṣ

@@ -195,7 +195,7 @@ _KAB_HOUR_NOUNS = {
 }
 fold_kab = _lazy_germanic_fold(
     "ovos_number_parser.numbers_kab", "extract_number_kab",
-    {"azgen", "wezgen", "agim", "amelyun"}, word_map=_KAB_HOUR_NOUNS)
+    {"azgen", "wezgen", "nnefṣ", "agim", "amelyun"}, word_map=_KAB_HOUR_NOUNS)
 # fa (Persian): single extractor extract_number_fa(text, ordinals=False);
 # withhold the half/quarter clock words and the scale words.
 fold_fa = _lazy_germanic_fold(
