@@ -3,7 +3,9 @@
 date ("15 בינואר 2020") and stands bare in a month-year ("ינואר 2020")."""
 import pytest
 
-from ._corpus import AstroDate, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import AstroDate, start_end, ANCHOR
 
 
 @pytest.mark.parametrize("text,s,e", [
@@ -32,9 +34,19 @@ def test_month_year(text, s, e):
 
 
 @pytest.mark.parametrize("text,y", [
-    ("1999", 1999), ("2020", 2020), ("שנת 2020", 2020),
+    ("שנת 2020", 2020),
     ("בשנת 1948", 1948), ("שנת 1967", 1967),
 ])
 def test_year_ref(text, y):
     ss, ee = start_end(text)
     assert ss == AstroDate(y, 1, 1) and ee == AstroDate(y + 1, 1, 1)
+
+
+@pytest.mark.parametrize("text,y", [
+    ("1999", 1999),
+    ("2020", 2020),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "he", ANCHOR)

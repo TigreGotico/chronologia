@@ -102,7 +102,7 @@ PAIRS = [
     ("ceathrú chun a dó", "quarter to two"),
     ("a trí a chlog", "at three"),
     ("meán lae", "noon"), ("meán oíche", "midnight"),
-    ("15:30", "15:30"), ("2019", "2019"), ("2017-06-30", "2017-06-30"),
+    ("15:30", "15:30"), ("2017-06-30", "2017-06-30"),
     ("deireadh seachtaine", "weekend"),
     ("an deireadh seachtaine seo chugainn", "next weekend"),
 ]

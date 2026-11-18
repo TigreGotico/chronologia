@@ -7,6 +7,8 @@ from datetime import timedelta
 
 import pytest
 
+from ruling34 import candidate_spans
+
 from ._corpus import ANCHOR, start, start_end, span, nomatch, AstroDate
 
 
@@ -60,10 +62,19 @@ def test_iso(text, y, m, d):
 # -- bare year ------------------------------------------------------------
 
 @pytest.mark.parametrize("text,y", [
-    ("1969", 1969), ("im jahr 1969", 1969), ("das jahr 2000", 2000),
+    ("im jahr 1969", 1969), ("das jahr 2000", 2000),
 ])
 def test_year(text, y):
     assert start(text) == AstroDate(y, 1, 1)
+
+
+@pytest.mark.parametrize("text,y", [
+    ("1969", 1969),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "de", ANCHOR)
 
 
 # -- adversarial: impossible calendar dates never fabricate ---------------

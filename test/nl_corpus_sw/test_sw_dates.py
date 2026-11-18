@@ -1,7 +1,9 @@
 """Calendar dates: day before month, and the two month registers CLDR gives."""
 import pytest
 
-from ._corpus import day, nomatch, parse, span, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import day, nomatch, parse, span, start_end, ANCHOR
 
 
 MONTHS = [
@@ -55,7 +57,9 @@ def test_the_point_in_time_markers(text, expected):
 
 
 def test_a_bare_four_figure_year():
-    assert start_end("2027") == (day(2027, 1, 1)[0], day(2028, 1, 1)[0])
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (day(2027, 1, 1)[0], day(2028, 1, 1)[0])
+    assert want in candidate_spans("2027", "sw", ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["27", "127", "5"])

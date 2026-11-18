@@ -2,7 +2,9 @@
 """The Buddhist Era: BE = CE + 543, read from the marker and never guessed."""
 import pytest
 
-from ._corpus import day, parse, start, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import day, parse, start, start_end, ANCHOR, AstroDate
 
 
 @pytest.mark.parametrize("be,ce", [(2568, 2025), (2569, 2026), (2540, 1997),
@@ -36,6 +38,9 @@ def test_an_unmarked_year_is_common_era():
     """The documented locale policy: a bare four-digit year is Common Era.
     Reading it as Buddhist would silently move every foreign date quoted in a
     Thai text by 543 years, and nothing in the digits says which era is meant.
+    Alone, the year is a candidate, not a reading (ruling 34).
     """
-    assert start("2026").year == 2026
-    assert start("2568").year == 2568
+    assert (AstroDate(2026, 1, 1), AstroDate(2027, 1, 1)) in candidate_spans(
+        "2026", "th", ANCHOR)
+    assert (AstroDate(2568, 1, 1), AstroDate(2569, 1, 1)) in candidate_spans(
+        "2568", "th", ANCHOR)

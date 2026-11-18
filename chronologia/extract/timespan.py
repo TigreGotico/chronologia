@@ -2880,7 +2880,11 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
             continue
         abuts = ((i > 0 and tokens[i - 1].index in consumed)
                  or (i + 1 < len(tokens) and tokens[i + 1].index in consumed))
-        if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:
+        # a lone numeral the year reading takes is a candidate, not an
+        # impossible date (ruling 34)
+        if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None \
+                and not any(c.construction == "year_ref" for c in
+                            extract_candidates(t.text, engine.spec.lang, anchor)):
             return True                              # impossible day-of-month
     return False
 
@@ -4171,7 +4175,8 @@ def reads_spoken_hours(fn):
     """Run ``fn`` with the spoken hour kept as spoken.
 
     A recurrence pin ("daily at 7" is ``BYHOUR=7``) names an hour of the day,
-    not an instant, so no twelve-hour reading is chosen for it.
+    not an instant, so no twelve-hour reading is chosen for it.  It also
+    keeps a lone numeral bound a year (:func:`_lone_numeral_year`).
     """
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
@@ -4289,6 +4294,22 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
                                        res.value.basis))
 
 
+def _lone_numeral_year(rep, res, tokens) -> bool:
+    """Whether the whole text is one numeral in digits that the year reading
+    took: ruling 34 lists it as a candidate, not a reading.  A recurrence
+    bound ("daily until 2020") keeps its year."""
+    if getattr(_reading, "spoken", False):
+        return False
+    if (rep is None or rep.construction != "year_ref" or len(tokens) != 1
+            or "GYEAR" not in rep.slots
+            or set(res.consumed) != {rep.span[0]}):
+        return False
+    tok = tokens[0]
+    return (tok.raw.isdecimal() and not tok.apostrophe
+            and tok.char_start is not None
+            and tok.char_end - tok.char_start == len(tok.raw))
+
+
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                   text=None, scale_mode="short", whole=False):
     """The single-span resolution over an already-tokenized stream.
@@ -4356,6 +4377,8 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     if res is None:
         # A day-part+clock meridiem contradiction ("morning at 9pm") --
         # _compose declined the whole reading rather than pick a winner.
+        return None
+    if whole and _lone_numeral_year(rep, res, tokens):
         return None
     if whole:
         res = _lone_spoken_hour(res, rep, anchor, engine.spec, tokens,
@@ -4504,6 +4527,7 @@ def extract_candidates(
     # remembered so the remainder excludes everything the winner folded in.
     label_extra = {}
     primary = None
+    lone = None
     if composed:
         win_res, win_label, rep = _compose(composed, engine, tokens,
                                            anchor, text)
@@ -4516,7 +4540,10 @@ def extract_candidates(
             composed = [(wide, win_res) if m is rep else (m, r)
                         for m, r in composed]
             label_extra[id(wide)] = consumed_all
-            primary = id(wide)   # extract_timespan's selected answer -> rank it first
+            if _lone_numeral_year(rep, win_res, tokens):
+                lone = id(wide)      # extract_timespan refuses it: rank it last
+            else:
+                primary = id(wide)   # extract_timespan's selected answer -> rank it first
         # else: a day-part/clock meridiem contradiction -- _compose declined
         # the whole composed reading (mirrors _resolve_core's None), so no
         # primary winner is surfaced; the un-composed sub-matches (if any
@@ -4582,7 +4609,8 @@ def extract_candidates(
         # is first so the two APIs agree on the top answer; then confidence, a
         # composed reading ahead of the bare partial it was built from, earlier
         # text position, and longer span.
-        rank = (0 if id(match) == primary else 1, -conf,
+        rank = (0 if id(match) == primary else 2 if id(match) == lone else 1,
+                -conf,
                 0 if is_composed else 1, match.span[0], -match.length)
         scored.append((rank, Candidate(value, remainder, conf,
                                        match.construction)))

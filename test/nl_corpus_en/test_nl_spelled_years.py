@@ -3,8 +3,8 @@
 Three shapes reach the same year-wide span a digit year does:
 
 * the scale composition -- "two thousand and one" (2001), "nineteen hundred
-  and five" (1905).  It needs no cue: the digit form ``2001`` already reads as
-  a year, so the spelled form must too;
+  and five" (1905).  It needs no cue: a spelled year is itself a year cue,
+  while the digit form ``2001`` alone is only a candidate (ruling 34);
 * the year pair -- "nineteen ninety-nine" (1999), read *only* after an
   explicit year cue ("in ...", "the year ...") because a bare pair is
   genuinely ambiguous with a plain number;
@@ -14,6 +14,7 @@ Three shapes reach the same year-wide span a digit year does:
 import pytest
 
 from chronologia import extract_timespans
+from ruling34 import candidate_spans
 
 from ._corpus import ANCHOR, AstroDate, ad, nomatch, parse, span, start
 
@@ -244,13 +245,15 @@ def test_spelled_and_digit_agree_at_the_window_edges(text, digits):
 
     The window is 1000..99999 -- four digits for the Common Era, five for the
     Human-Era form -- and the spelled path is measured against the same
-    bound, so the two never disagree about whether a magnitude is a year."""
+    bound, so the two never disagree about whether a magnitude is a year.
+    Lone digits name their year as a candidate, not a reading (ruling 34)."""
     spelled = parse(text)
-    digit = parse(digits)
-    assert (spelled is None) == (digit is None)
-    if digit is not None:
-        assert (spelled[0].start, spelled[0].end) == (digit[0].start,
-                                                     digit[0].end)
+    digit = [(s, e) for s, e in candidate_spans(digits, "en", ANCHOR)
+             if (s.month, s.day, e.month, e.day) == (1, 1, 1, 1)
+             and e.year == s.year + 1]
+    assert (spelled is None) == (not digit)
+    if spelled is not None:
+        assert (spelled[0].start, spelled[0].end) in digit
 
 
 # -- the deep-time boundary ------------------------------------------------

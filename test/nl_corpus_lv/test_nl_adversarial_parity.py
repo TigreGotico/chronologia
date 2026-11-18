@@ -55,7 +55,7 @@ PAIRS = [
     ("pagājušajā otrdienā", "last tuesday"),
     ("15:30", "15:30"), ("09:30", "09:30"), ("00:00", "00:00"),
     ("pusdienlaikā", "noon"), ("pusnaktī", "midnight"),
-    ("2019", "2019"), ("1918", "1918"), ("2017-06-30", "2017-06-30"),
+    ("2017-06-30", "2017-06-30"),
     ("vasara 2020", "summer 2020"), ("nākamā ziema", "next winter"),
     ("5. jūlijā", "july 5"),
     ("2020. gada 25. decembris", "25 december 2020"),

@@ -8,6 +8,8 @@ from datetime import timedelta
 
 import pytest
 
+from ruling34 import candidate_spans
+
 from ._corpus import ANCHOR, AstroDate, ad, span, start, start_end
 
 
@@ -41,7 +43,9 @@ def test_day_month_prefer_future(text, y, m, d):
 
 def test_iso_and_year():
     assert start("2017-06-30") == AstroDate(2017, 6, 30)
-    assert start("2019") == AstroDate(2019, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(2019, 1, 1), AstroDate(2020, 1, 1)) in candidate_spans(
+        "2019", "uk", ANCHOR)
 
 
 @pytest.mark.parametrize("text,s,e", [

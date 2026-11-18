@@ -11,6 +11,8 @@ from datetime import datetime
 import pytest
 
 from chronologia.astrodate import AstroDate
+from ruling34 import candidate_spans
+
 from ._corpus import start_end
 
 A = datetime(2017, 6, 27, 13, 4)
@@ -46,6 +48,6 @@ _BARE_YEARS = [1888, 1912, 1925, 1961, 1975, 1993, 2003, 2011, 2028, 2045]
 
 @pytest.mark.parametrize("y", _BARE_YEARS)
 def test_bare_year_resweep(y):
-    s, e = start_end(str(y), A)
-    assert s == AstroDate(y, 1, 1)
-    assert e == AstroDate(y + 1, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(str(y), "tr", A)

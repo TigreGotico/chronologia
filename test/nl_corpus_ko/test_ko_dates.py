@@ -1,7 +1,9 @@
 """The date line: year, month, day, each field carrying its own suffix."""
 import pytest
 
-from ._corpus import day, nomatch, remainder, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import day, nomatch, remainder, start_end, ANCHOR, AstroDate
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -66,8 +68,10 @@ def test_the_particle_is_consumed_with_the_date(text):
     ("1918", (1918, 1, 1)),
 ])
 def test_a_bare_year(text, expected):
-    s, _ = start_end(text)
-    assert (s.year, s.month, s.day) == expected
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    y = expected[0]
+    assert (AstroDate(*expected), AstroDate(y + 1, 1, 1)) in candidate_spans(
+        text, "ko", ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["13월", "0월", "20월"])

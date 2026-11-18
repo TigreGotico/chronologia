@@ -11,7 +11,9 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, start, span
+from ruling34 import candidate_spans
+
+from ._corpus import ANCHOR, ad, start, span, AstroDate
 from ruling17 import moved
 
 
@@ -64,4 +66,7 @@ def test_compose_date_and_time():
 
 # a bare 4-digit run without a leading zero stays a YEAR, not a clock
 def test_bare_1500_is_a_year():
-    assert start("1500").year == 1500
+    # a lone numeral is no clock; it is a year candidate, not a reading
+    # (ruling 34)
+    assert (AstroDate(1500, 1, 1), AstroDate(1501, 1, 1)) in candidate_spans(
+        "1500", "cs", ANCHOR)

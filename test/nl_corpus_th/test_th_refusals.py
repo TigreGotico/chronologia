@@ -7,7 +7,9 @@ and would look exactly like a correct answer.
 """
 import pytest
 
-from ._corpus import nomatch, start_end, band
+from ruling34 import candidate_spans
+
+from ._corpus import nomatch, start_end, band, ANCHOR
 
 
 @pytest.mark.parametrize("text", [
@@ -80,6 +82,8 @@ def test_the_sunday_word_is_never_read_as_the_week():
 def test_a_bare_four_digit_year_is_not_read_as_a_buddhist_one():
     """A bare Thai year identifies no era -- CLDR's own long and full date
     patterns for th carry the era field for exactly that reason -- so it is
-    read as Common Era and the พ.ศ. marker is what selects the other."""
-    from ._corpus import start
-    assert start("2568").year == 2568
+    read as Common Era and the พ.ศ. marker is what selects the other.  Alone,
+    the year is a candidate, not a reading (ruling 34)."""
+    from ._corpus import AstroDate
+    assert (AstroDate(2568, 1, 1), AstroDate(2569, 1, 1)) in candidate_spans(
+        "2568", "th", ANCHOR)

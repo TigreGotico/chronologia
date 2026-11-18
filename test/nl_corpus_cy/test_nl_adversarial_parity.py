@@ -36,7 +36,6 @@ PAIRS = [
     ("25 Rhagfyr 2020", "25 december 2020"),
     ("Ionawr 2030", "january 2030"),
     ("Mehefin", "june"),
-    ("1990", "1990"),
     ("hanner awr wedi naw", "half past nine"),
     ("chwarter wedi naw", "quarter past nine"),
     ("chwarter i ddeg", "quarter to ten"),

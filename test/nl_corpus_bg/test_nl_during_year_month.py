@@ -13,13 +13,17 @@ from ._corpus import ANCHOR, AstroDate, ad, parse, span, start, nomatch
 @pytest.mark.parametrize("text,y", [
     ("през 2030", 2030),
     ("в 2030", 2030),
-    ("2030", 2030),
 ])
 def test_during_year_consumes_marker(text, y):
     r = parse(text)
     assert r.span.start == AstroDate(y, 1, 1)
     assert r.span.end == AstroDate(y + 1, 1, 1)
     assert r.remainder == ""
+
+
+def test_bare_year_is_no_date():
+    # ruling 34: a numeral with no year cue is a candidate, not a reading
+    nomatch("2030")
 
 
 @pytest.mark.parametrize("text,m", [

@@ -34,8 +34,6 @@ PAIRS = [
     ("00:00", "00:00"),
     ("poledne", "noon"),
     ("půlnoc", "midnight"),
-    ("2019", "2019"),
-    ("1989", "1989"),
     ("2017-06-30", "2017-06-30"),
     ("od června do srpna", "from june to august"),
     ("od ledna do března", "from january to march"),

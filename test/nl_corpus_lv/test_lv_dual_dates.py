@@ -15,7 +15,10 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, nomatch, parse, remainder, span, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import (
+    ANCHOR, ad, nomatch, parse, remainder, span, start_end, AstroDate)
 
 
 def _day(y, m, d):
@@ -121,9 +124,9 @@ def test_iso_date(text, y, m, d):
 
 
 def test_bare_year():
-    s, e = start_end("2019")
-    assert (s.year, s.month, s.day) == (2019, 1, 1)
-    assert (e.year, e.month, e.day) == (2020, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(2019, 1, 1), AstroDate(2020, 1, 1)) in candidate_spans(
+        "2019", "lv", ANCHOR)
 
 
 def test_weekday_and_date_together():

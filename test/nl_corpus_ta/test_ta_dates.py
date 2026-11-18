@@ -9,7 +9,9 @@ to a Gregorian date needs calendar arithmetic no source consulted closes -- see
 """
 import pytest
 
-from ._corpus import day, remainder, span, start
+from ruling34 import candidate_spans
+
+from ._corpus import day, remainder, span, start, ANCHOR, AstroDate
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -55,8 +57,6 @@ def test_the_abbreviated_months(text, month):
 
 
 @pytest.mark.parametrize("text,year", [
-    ("2026", 2026),
-    ("1984", 1984),
     ("இரண்டு ஆயிரம் இருபது", 2020),
     ("ஆயிரம் தொள்ளாயிரம் நாற்பது", 1940),
 ])
@@ -64,6 +64,16 @@ def test_a_year_reads_whole(text, year):
     s = span(text)
     assert (s.start.year, s.start.month, s.start.day) == (year, 1, 1)
     assert s.end.year == year + 1
+
+
+@pytest.mark.parametrize("text,year", [
+    ("2026", 2026),
+    ("1984", 1984),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, year):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+    assert want in candidate_spans(text, "ta", ANCHOR)
 
 
 @pytest.mark.parametrize("text,expected", [

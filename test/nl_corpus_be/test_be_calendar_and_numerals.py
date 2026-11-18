@@ -13,7 +13,9 @@ from datetime import date, timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, parse, start, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import ANCHOR, parse, start, start_end, AstroDate
 
 #: (stand-alone nominative, format genitive, month number) -- CLDR 47, be.
 MONTHS = [
@@ -142,12 +144,22 @@ def test_date_forms(text, y, m, d):
     assert (s.year, s.month, s.day) == (y, m, d)
 
 
-@pytest.mark.parametrize("text,y", [("2019", 2019), ("1918", 1918),
+@pytest.mark.parametrize("text,y", [
                                     ("1863 г.", 1863), ("у 2020 годзе", 2020)])
 def test_year_reference(text, y):
     s, e = start_end(text)
     assert (s.year, s.month, s.day) == (y, 1, 1)
     assert e.year == y + 1
+
+
+@pytest.mark.parametrize("text,y", [
+    ("2019", 2019),
+    ("1918", 1918),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "be", ANCHOR)
 
 
 @pytest.mark.parametrize("text,y0,y1", [

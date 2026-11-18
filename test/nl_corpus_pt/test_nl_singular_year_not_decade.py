@@ -12,7 +12,9 @@ from datetime import datetime
 
 import pytest
 
-from ._corpus import ad, parse
+from ruling34 import candidate_spans
+
+from ._corpus import ad, parse, ANCHOR
 
 
 def resolved(text):
@@ -71,7 +73,8 @@ def test_year_introduced_by_de():
 
 
 def test_bare_year():
-    assert resolved("1980") == year(1980)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert year(1980) in candidate_spans("1980", "pt", ANCHOR)
 
 
 def test_dated_day():

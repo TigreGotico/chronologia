@@ -23,7 +23,6 @@ PAIRS = [
     ("00:00", "00:00"),
     ("podne", "noon"),
     ("ponoć", "midnight"),
-    ("2019", "2019"),
     ("2017-06-30", "2017-06-30"),
     ("leto 2020", "summer 2020"),
     ("sledeća zima", "next winter"),
@@ -33,6 +32,7 @@ PAIRS = [
     ("ove godine", "this year"),
     ("sledeće godine", "next year"),
     ("prošle godine", "last year"),
+    ("godine 1969.", "the year 1969"),
 ]
 
 

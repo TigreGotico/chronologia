@@ -8,7 +8,9 @@ bare year on its own still reads as all twelve months.
 import pytest
 
 from chronologia.astrodate import AstroDate
-from ._corpus import parse, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import parse, start_end, ANCHOR
 
 
 @pytest.mark.parametrize("text,s,e", [
@@ -34,5 +36,7 @@ def test_matches_the_bare_year_wording():
 
 
 def test_the_bare_year_is_still_the_whole_year():
-    """The half reading must not swallow a plain year reference."""
-    assert start_end("2020") == (AstroDate(2020, 1, 1), AstroDate(2021, 1, 1))
+    """The half reading must not swallow a plain year reference.  A lone
+    numeral is a candidate, not a reading (ruling 34)."""
+    assert (AstroDate(2020, 1, 1), AstroDate(2021, 1, 1)) in candidate_spans(
+        "2020", "sv", ANCHOR)

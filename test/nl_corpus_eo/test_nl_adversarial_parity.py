@@ -71,13 +71,13 @@ PAIRS = [
     ("la sesa kaj duono", "half past six"), ("la sesa kaj kvarono", "quarter past six"),
     ("la sesa", "at 6"), ("je la sesa", "at 6"),
     ("noktomezo", "midnight"), ("tagmezo", "noon"),
-    ("2019", "2019"), ("1918", "1918"),
     ("la unua de januaro", "january 1"), ("la kvina de julio", "july 5"),
     ("lundon", "monday"), ("mardon", "tuesday"),
     ("la unua de decembro", "december 1"),
     ("la dudek kvina de decembro", "december 25"),
     ("kvarono antaŭ la sepa", "quarter to seven"), ("duono post la sepa", "half past seven"),
     ("la deka de junio", "june 10"), ("la naŭa kaj duono", "half past nine"),
+    ("julio 1969", "july 1969"),
 ]
 
 

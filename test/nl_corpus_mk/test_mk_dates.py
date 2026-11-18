@@ -7,7 +7,10 @@ and take no ending; weekday names are Slavic.
 """
 import pytest
 
-from ._corpus import ANCHOR, day, nomatch, parse, remainder, span, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import (
+    ANCHOR, day, nomatch, parse, remainder, span, start_end, AstroDate)
 
 MONTHS = ["јануари", "февруари", "март", "април", "мај", "јуни", "јули",
           "август", "септември", "октомври", "ноември", "декември"]
@@ -55,11 +58,21 @@ def test_the_month_is_never_read_first():
 
 
 @pytest.mark.parametrize("text,year", [
-    ("2027 г", 2027), ("1918 г", 1918), ("2027", 2027), ("1918", 1918),
+    ("2027 г", 2027), ("1918 г", 1918), 
 ])
 def test_the_year_with_and_without_its_abbreviation(text, year):
     s = span(text)
     assert (s.start.year, s.start.month, s.start.day) == (year, 1, 1)
+
+
+@pytest.mark.parametrize("text,year", [
+    ("2027", 2027),
+    ("1918", 1918),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, year):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+    assert want in candidate_spans(text, "mk", ANCHOR)
 
 
 @pytest.mark.parametrize("text,y,m", [

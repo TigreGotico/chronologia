@@ -30,6 +30,8 @@ Gregorian year N, Jan 1 .. Jan 1 (N+1), with no arithmetic beyond that.
 """
 import pytest
 
+from ruling34 import candidate_spans
+
 from ._corpus import AstroDate, ANCHOR, nomatch, parse, span, start_end
 
 
@@ -129,8 +131,9 @@ def test_control_next_year():
 
 
 def test_control_bare_2030():
-    got_s, got_e = start_end("2030")
-    assert (got_s, got_e) == (AstroDate(2030, 1, 1), AstroDate(2031, 1, 1))
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(2030, 1, 1), AstroDate(2031, 1, 1)) in candidate_spans(
+        "2030", "en", ANCHOR)
 
 
 # -- R105: three sibling gaps of R102/#663, all one-token-away -------------

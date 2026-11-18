@@ -5,7 +5,9 @@ from datetime import datetime
 
 import pytest
 
-from ._corpus import ad, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import ad, start_end, ANCHOR, AstroDate
 
 
 @pytest.mark.parametrize("text,astro_year", [
@@ -36,9 +38,9 @@ def test_ad_year(text, year):
     ("1453", 1453),
 ])
 def test_year_ref(text, year):
-    s, e = start_end(text)
-    assert (s.year, e.year) == (year, year + 1)
-    assert (s.month, s.day) == (1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+    assert want in candidate_spans(text, "eu", ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

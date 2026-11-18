@@ -20,6 +20,8 @@ Anchor 2026-06-15."""
 from datetime import datetime
 import pytest
 from chronologia.astrodate import AstroDate
+from ruling34 import candidate_spans
+
 from ._corpus import start_end
 
 A = datetime(2026, 6, 15, 12, 0)
@@ -48,10 +50,10 @@ def test_year_first_half():
 def test_bare_year_with_no_quarter_word_stays_whole_year():
     """Adversarial: a bare year with no quarter word must NOT be narrowed --
     "2020" alone stays the whole calendar year, proving the new orders bind
-    only when the quarter/half word is actually present."""
-    s, e = start_end("2020", A)
-    assert s == AstroDate(2020, 1, 1)
-    assert e == AstroDate(2021, 1, 1)
+    only when the quarter/half word is actually present.  Alone, the year is a
+    candidate, not a reading (ruling 34)."""
+    assert (AstroDate(2020, 1, 1), AstroDate(2021, 1, 1)) in candidate_spans(
+        "2020", "tr", A)
 
 
 @pytest.mark.xfail(reason="çeyreği (possessive-marked quarter noun) has no "

@@ -13,6 +13,8 @@ import pytest
 
 from chronologia.astrodate import AstroDate
 
+from ruling34 import candidate_spans
+
 from ._corpus import ANCHOR, nomatch, remainder, span, start
 
 
@@ -97,8 +99,9 @@ def test_last_and_next_weekday_point_opposite_ways(text, expected):
     ("2019", 2019), ("1918", 2018 - 100), ("1947", 1947),
 ])
 def test_bare_year(text, y):
-    s = span(text)
-    assert s.start == AstroDate(y, 1, 1) and s.end == AstroDate(y + 1, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "hi", ANCHOR)
 
 
 @pytest.mark.parametrize("text,century", [

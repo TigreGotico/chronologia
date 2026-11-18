@@ -30,7 +30,6 @@ PAIRS = [
     ("october 2020", "oktober 2020"),
     ("march 1999", "märz 1999"),
     ("the year 1969", "das jahr 1969"),
-    ("1969", "1969"),
     ("44 bc", "44 v. chr."),
     ("753 bc", "753 v. chr."),
     ("2024 ad", "2024 n. chr."),
@@ -47,6 +46,7 @@ PAIRS = [
     ("noon", "mittag"),
     ("quarter past three", "viertel nach drei"),
     ("from june 5th to june 12th", "von 5. juni bis 12. juni"),
+    ("the year 1969", "im Jahr 1969"),
 ]
 
 

@@ -9,7 +9,9 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, parse, start, span
+from ruling34 import candidate_spans
+
+from ._corpus import ANCHOR, ad, parse, start, span, AstroDate
 from ruling17 import moved
 
 
@@ -47,7 +49,10 @@ def test_landmark(text, h, mi):
 
 
 def test_bare_1500_is_a_year():
-    assert start("1500").year == 1500
+    # a lone numeral is no clock; it is a year candidate, not a reading
+    # (ruling 34)
+    assert (AstroDate(1500, 1, 1), AstroDate(1501, 1, 1)) in candidate_spans(
+        "1500", "ru", ANCHOR)
 
 
 # "в" + a digit clock: the preposition that opens a clock time belongs to the

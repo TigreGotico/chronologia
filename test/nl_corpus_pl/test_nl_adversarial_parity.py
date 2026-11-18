@@ -73,7 +73,7 @@ PAIRS = [
     ("przyszły piątek", "next friday"), ("przyszły poniedziałek", "next monday"),
     ("zeszły wtorek", "last tuesday"), ("15:30", "15:30"), ("09:30", "09:30"),
     ("00:00", "00:00"), ("południe", "noon"), ("północ", "midnight"),
-    ("2019", "2019"), ("1918", "1918"), ("2017-06-30", "2017-06-30"),
+    ("2017-06-30", "2017-06-30"),
     ("od czerwca do sierpnia", "from june to august"),
     ("od stycznia do marca", "from january to march"),
     ("między czerwcem a wrześniem", "between june and september"),

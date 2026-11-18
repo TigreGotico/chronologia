@@ -65,7 +65,6 @@ PAIRS = [
     ("31 tháng 12 năm 2000", "31 december 2000"),
     ("thứ hai", "monday"),
     ("thứ sáu", "friday"),
-    ("2020", "2020"),
     ("15:30", "15:30"),
     ("nửa đêm", "midnight"),
     ("hai giờ rưỡi", "half past two"),

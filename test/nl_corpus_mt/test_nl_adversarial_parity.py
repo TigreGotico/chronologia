@@ -49,7 +49,6 @@ PAIRS = [
     ("dan ix-xahar", "this month"), ("ix-xahar li għadda", "last month"),
     ("din il-ġimgħa", "this week"),
     ("15:30", "15:30"), ("00:00", "00:00"), ("09:30", "09:30"),
-    ("2019", "2019"), ("1918", "1918"),
     ("15 ta' Awwissu 2027", "15 august 2027"),
     ("25 ta' Diċembru 2020", "25 december 2020"),
     ("1 ta' Jannar 2030", "1 january 2030"),

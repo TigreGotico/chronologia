@@ -14,6 +14,8 @@ from datetime import timedelta
 
 import pytest
 
+from ruling34 import candidate_spans
+
 from ._corpus import ANCHOR, AstroDate, ad, span, start, start_end, parse
 from ruling17 import moved
 
@@ -46,7 +48,9 @@ def test_day_month_prefer_future(text, y, m, d):
 
 def test_iso_and_year():
     assert start("2017-06-30") == AstroDate(2017, 6, 30)
-    assert start("2019") == AstroDate(2019, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(2019, 1, 1), AstroDate(2020, 1, 1)) in candidate_spans(
+        "2019", "sk", ANCHOR)
 
 
 # -- clock ---------------------------------------------------------------
@@ -79,4 +83,7 @@ def test_landmark(text, h, mi):
 
 
 def test_bare_1500_is_a_year():
-    assert start("1500").year == 1500
+    # a lone numeral is no clock; it is a year candidate, not a reading
+    # (ruling 34)
+    assert (AstroDate(1500, 1, 1), AstroDate(1501, 1, 1)) in candidate_spans(
+        "1500", "sk", ANCHOR)

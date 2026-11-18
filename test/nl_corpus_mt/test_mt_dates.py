@@ -13,7 +13,9 @@ year is left out, the locale prefers the future, so a date already past in
 """
 import pytest
 
-from ._corpus import day, parse, remainder, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import day, parse, remainder, start_end, ANCHOR, AstroDate
 
 
 @pytest.mark.parametrize("text,y,m,d", [
@@ -99,8 +101,18 @@ def test_the_numeric_date_is_day_first(text, y, m, d):
 # -- bare years -------------------------------------------------------------
 
 @pytest.mark.parametrize("text,year", [
-    ("2019", 2019), ("1918", 1918), ("sena 2019", 2019),
+    ("sena 2019", 2019),
 ])
 def test_a_bare_year_is_the_whole_year(text, year):
     s = start_end(text)
     assert s[0].year == year and s[1].year == year + 1
+
+
+@pytest.mark.parametrize("text,year", [
+    ("2019", 2019),
+    ("1918", 1918),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, year):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+    assert want in candidate_spans(text, "mt", ANCHOR)

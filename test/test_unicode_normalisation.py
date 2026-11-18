@@ -13,7 +13,8 @@ from datetime import datetime
 
 import pytest
 
-from chronologia import extract_timespan
+from chronologia import AstroDate, extract_timespan
+from ruling34 import candidate_spans
 
 ANCHOR = datetime(2017, 6, 27, 13, 4)
 
@@ -87,8 +88,9 @@ def test_narrow_nbsp_separated_date_resolves():
 
 
 def test_arabic_indic_year_still_resolves():
-    got = _span("\u0662\u0660\u0662\u0660", "ar")
-    assert got is not None and got[0].year == 2020
+    # alone, the numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(2020, 1, 1), AstroDate(2021, 1, 1)) in candidate_spans(
+        "\u0662\u0660\u0662\u0660", "ar", ANCHOR)
 
 
 def test_french_curly_apostrophe_phrase():
@@ -100,7 +102,6 @@ def test_french_curly_apostrophe_phrase():
     ("5 o\'clock", "en"),
     ("meet at 5:30", "en"),
     ("1 de abril", "es"),
-    ("\u0662\u0660\u0662\u0660", "ar"),
 ])
 def test_plain_forms_unchanged(text, lang):
     assert _span(text, lang) is not None

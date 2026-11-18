@@ -73,7 +73,6 @@ PAIRS = [
     ("shtatë e gjysmë", "half past seven"),
     ("tre pa çerek", "quarter to three"),
     ("dy e çerek", "quarter past two"),
-    ("2019", "2019"), ("1918", "1918"),
     ("5 korrik 2027", "july 5 2027"),
     ("qershor 2027", "june 2027"),
     ("vera 2020", "summer 2020"),

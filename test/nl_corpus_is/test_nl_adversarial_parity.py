@@ -99,7 +99,7 @@ PAIRS = [
     ("klukkan þrjú", "at three"),
     ("kortér yfir tvö", "quarter past two"),
     ("hálf tvö", "half past one"),
-    ("2019", "2019"), ("1918", "1918"), ("2017-06-30", "2017-06-30"),
+    ("2017-06-30", "2017-06-30"),
     ("5. júní", "june 5"), ("fimmti júní", "june 5"),
     ("25. desember 2020", "25 december 2020"),
     ("sumar 2020", "summer 2020"), ("næsta helgi", "next weekend"),

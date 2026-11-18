@@ -9,6 +9,8 @@ import pytest
 
 from chronologia import extract_timespan
 
+from ruling34 import candidate_spans
+
 from ._corpus import ANCHOR, AstroDate, ad, span, start, start_end, parse, nomatch
 
 
@@ -40,7 +42,9 @@ def test_day_month_prefer_future(text, y, m, d):
 
 def test_iso_and_year():
     assert start("2017-06-30") == AstroDate(2017, 6, 30)
-    assert start("2019") == AstroDate(2019, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(2019, 1, 1), AstroDate(2020, 1, 1)) in candidate_spans(
+        "2019", "bg", ANCHOR)
 
 
 @pytest.mark.parametrize("text,s,e", [
@@ -134,11 +138,12 @@ PAIRS = [
     ("след 3 дни", "in 3 days"), ("след 2 седмици", "in 2 weeks"),
     ("след 5 години", "in 5 years"), ("следващия петък", "next friday"),
     ("миналия вторник", "last tuesday"), ("15:30", "15:30"), ("00:00", "00:00"),
-    ("обед", "noon"), ("полунощ", "midnight"), ("2019", "2019"),
+    ("обед", "noon"), ("полунощ", "midnight"),
     ("2017-06-30", "2017-06-30"),
     ("от юни до август", "from june to august"),
     ("между април и юни", "between april and june"),
     ("лято 2020", "summer 2020"), ("следващата зима", "next winter"),
+    ("годината 1969", "the year 1969"),
 ]
 
 

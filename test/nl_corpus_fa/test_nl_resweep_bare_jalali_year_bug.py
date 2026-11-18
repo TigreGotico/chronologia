@@ -17,11 +17,12 @@ from datetime import datetime
 
 import pytest
 
-from ._corpus import ad, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import ad, start_end, ANCHOR
 from ._jalali import j2g
 
 _CASES = [
-    ("1402", 1402),
     ("سال 1402", 1402),
 ]
 
@@ -33,3 +34,11 @@ def test_bare_year_is_solar_hijri(text, y):
     got = start_end(text)
     assert got == (ad(datetime(s.year, s.month, s.day)),
                    ad(datetime(e.year, e.month, e.day)))
+
+
+def test_a_lone_numeral_is_a_solar_hijri_candidate():
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    s, e = j2g(1402, 1, 1), j2g(1403, 1, 1)
+    want = (ad(datetime(s.year, s.month, s.day)),
+            ad(datetime(e.year, e.month, e.day)))
+    assert want in candidate_spans("1402", "fa", ANCHOR)

@@ -23,6 +23,7 @@ Behaviour is hand-derived against the fixed anchor.
 """
 import pytest
 from engine_helpers import ANCHOR
+from ruling34 import candidate_spans
 
 from chronologia.astrodate import AstroDate
 from chronologia.extract import DateTimeEngine, extract_timespan
@@ -128,9 +129,9 @@ def test_bare_fraction_is_not_a_date():
 
 
 def test_bare_year_still_year_wide():
-    r = extract_timespan("2024", "en-us", ANCHOR)
-    assert r.span.start == AstroDate(2024, 1, 1)
-    assert r.span.end == AstroDate(2025, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(2024, 1, 1), AstroDate(2025, 1, 1)) in candidate_spans(
+        "2024", "en-us", ANCHOR)
 
 
 def test_the_year_phrase_unchanged():
