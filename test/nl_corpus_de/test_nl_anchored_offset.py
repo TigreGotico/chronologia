@@ -56,10 +56,10 @@ def test_weekday_roll_is_day_wide():
     assert span("der montag nach weihnachten").width == timedelta(days=1)
 
 
-def test_bare_after_holiday_refused():
-    # R146: was a silent "nach" strand over the plain holiday; refused now
-    # -- see test_de_r146_before_after_holiday.py / the en writeup.
-    nomatch("nach ostern")
+def test_bare_after_holiday_is_open_from_its_end():
+    # Easter 2018 is 1 April: "after" it starts when that day ends
+    s = span("nach ostern")
+    assert (s.start, s.open_end) == (AstroDate(2018, 4, 2), True)
 
 
 @pytest.mark.parametrize("text", ["vor dem termin", "der tag nach dem meeting"])

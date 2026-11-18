@@ -149,8 +149,6 @@ frequency words ship but no construction reads them.
 **A spelled half or quarter of an hour.** `om ein halv time` and `om eit
 kvarter` return nothing, although `om halvannan time` reads.
 
-**A forward-looking "after".** `etter måndag` returns nothing.
-
 **A four-digit clock.** `14.30` and `klokka 14.30` return nothing; the dotted
 form reads as a date, not a time.
 

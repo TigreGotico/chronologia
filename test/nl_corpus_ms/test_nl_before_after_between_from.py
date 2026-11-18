@@ -8,8 +8,8 @@ dropping the very word that reverses the meaning (before/after/between).
 "sebelum X" now binds the open-range reading ``[now, X's end)`` when X is in
 the future, and is refused (no match) when X's end is not in the future --
 mirroring Spanish "antes de X"/English "before X" exactly (see
-``test_es_r146_before_after_holiday.py``). "selepas X" ("after X") is always
-refused: :class:`DateSpan` has no open-ended-future representation. "antara
+``test_es_r146_before_after_holiday.py``). "selepas X" ("after X") is the open span from the end of X
+onward, a :class:`DateSpan` with ``open_end``. "antara
 A dan B" binds the closed range [A, B). "dari A hingga B" / "daripada A
 hingga B" consume their own from-lead.
 
@@ -42,12 +42,15 @@ def test_sebelum_past_year_refused():
     nomatch("sebelum 2020")
 
 
-def test_selepas_year_refused_not_stranded():
-    nomatch("selepas 2030")
+def test_selepas_year_is_open_from_its_end():
+    r = _result("selepas 2030")
+    assert (r[0].start, r[0].open_end, r.remainder) == (AstroDate(2031, 1, 1), True, "")
 
 
-def test_selepas_month_refused_not_stranded():
-    nomatch("selepas Januari")
+def test_selepas_month_is_open_from_its_end():
+    # the next January after 15 July 2026 is January 2027
+    r = _result("selepas Januari")
+    assert (r[0].start, r[0].open_end, r.remainder) == (AstroDate(2027, 2, 1), True, "")
 
 
 def test_antara_dan_binds_closed_range():

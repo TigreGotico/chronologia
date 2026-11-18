@@ -2272,14 +2272,13 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
     date, "before easter 2020"), the shape is recognised but contradictory --
     refused, never silently reinterpreted as a bare "X" with "before" dropped.
 
-    "after X" has no natural representation: :class:`DateSpan` is a closed
-    ``[start, end)`` pair of :class:`AstroDate`, and unlike "since X" --
-    whose open side is anchored to "now" as the END (``[X, now)``, still a
-    closed pair) -- "after X" would need an open-ended FUTURE, which the type
-    cannot express. Rather than strand the word or fabricate an artificial
-    end, a bare "after X" is refused outright.
+    "after X" is the open span from the end of X onward: "after monday" said
+    on a Saturday starts at 00:00 on Tuesday and has no end. It is a
+    :class:`DateSpan` with ``open_end``, whose start is the instant a consumer
+    answers. X is a day or wider; "after" a clock or a part of the day stays
+    refused.
 
-    Returns ``(new_span, new_consumed)`` on a successful bare "before",
+    Returns ``(new_span, new_consumed)`` on a successful bare direction,
     ``"veto"`` when the shape is recognised but the WHOLE parse must be
     refused, or ``None`` when this is not the shape at all (unchanged core
     result stands).
@@ -2307,7 +2306,10 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
                 or not all(i in consumed for i in range(j, n)):
             continue
         if role == "after":
-            return "veto"
+            if span.end - span.start < timedelta(days=1):
+                return "veto"
+            return (DateSpan(span.end, span.end, span.basis, open_end=True),
+                    set(consumed) | set(range(0, j)))
         if span.end > now:
             return DateSpan(now, span.end), set(consumed) | set(range(0, j))
         return "veto"
@@ -4524,6 +4526,14 @@ def extract_candidates(
         # here either -- otherwise the two public APIs disagree on the top answer.
         if _impossible_date_veto(tokens, consumed, text, engine, anchor):
             continue
+        value = res.value
+        if id(match) == primary:
+            # a bare "after X" or "before X": the primary is X, and the
+            # answer extract_timespan gives is the span the marker binds
+            bare_dir = _bare_direction_span(tokens, value, consumed,
+                                            engine.spec, anchor)
+            if bare_dir not in (None, "veto"):
+                value, consumed = bare_dir
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
         # rank: the composed PRIMARY (extract_timespan's own selected reading)
@@ -4532,7 +4542,7 @@ def extract_candidates(
         # text position, and longer span.
         rank = (0 if id(match) == primary else 1, -conf,
                 0 if is_composed else 1, match.span[0], -match.length)
-        scored.append((rank, Candidate(res.value, remainder, conf,
+        scored.append((rank, Candidate(value, remainder, conf,
                                        match.construction)))
     # Range and open-range readings ("june 5 to june 12", "between monday and
     # friday", "since 2019", "until friday") are composed by _resolve_span the

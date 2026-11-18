@@ -33,12 +33,10 @@ def test_weekday_roll(text, expected):
 def test_week_offset_is_day_wide():
     assert span("2 weken na pasen").width == timedelta(days=1)
 
-def test_bare_after_holiday_refused():
-    # R146: a bare "after <holiday>" with no offset pre-amble used to answer
-    # the holiday itself with the direction word stranded -- a defect. A
-    # DateSpan cannot express an open-ended future, so it is refused outright.
-    # See test_nl_r146_before_after_holiday.py (en) for the full writeup.
-    nomatch("na pasen")
+def test_bare_after_holiday_is_open_from_its_end():
+    # Easter 2018 is 1 April: "after" it starts when that day ends
+    s = span("na pasen")
+    assert (s.start, s.open_end) == (AstroDate(2018, 4, 2), True)
 
 @pytest.mark.parametrize("text", ['na de vergadering', 'de dag na de vergadering'])
 def test_no_reference_no_offset(text):

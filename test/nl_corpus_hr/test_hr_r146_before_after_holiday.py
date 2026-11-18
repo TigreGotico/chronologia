@@ -4,8 +4,8 @@ the full root-cause writeup. A bare "prije božića"/"poslije božića" (no
 magnitude) used to strand "prije"/"poslije" and return Christmas Day
 unchanged (see the updated ``test_timespan_prije_bozica_genitive`` in
 ``test_nl_r137_genitive_until.py``, which pinned the pre-fix defect);
-"prije X" now binds ``[now, X end)`` (mirroring "do X"), "poslije X" is
-refused (no open-ended-future representation). A magnitude form ("tjedan
+"prije X" now binds ``[now, X end)`` (mirroring "do X"), "poslije X" is the open span
+from the end of X onward. A magnitude form ("tjedan
 dana prije božića") is unaffected by this fix -- it already left "tjedan"
 (a PRE-EXISTING, unrelated quirk) stranded before this defect was touched,
 so that stranding is asserted here as a known baseline, not re-litigated.
@@ -39,8 +39,11 @@ def test_bare_before_mirrors_until():
     assert before[0] == until[0]
 
 
-def test_bare_after_refused_not_stranded():
-    assert _span("poslije božića") is None
+def test_bare_after_is_open_from_the_end_of_the_holiday():
+    # Christmas 2026 is 25 December and Easter 2027 is 28 March; the span
+    # starts when that day ends and has no end
+    r = _span("poslije božića")
+    assert (r[0].start, r[0].open_end, r[1]) == (datetime(2026, 12, 26), True, "")
 
 
 def test_bare_before_past_endpoint_refused():

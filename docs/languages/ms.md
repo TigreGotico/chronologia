@@ -59,8 +59,8 @@ the surfaces from the Malay sections of the Wiktionary entries for each word.
 `daripada` open a bounded one, `antara ... dan ...` frames a closed range,
 `sejak` is since, `sehingga`, `hingga` and `sampai` are until, `selama` is a
 duration, `setiap` and `tiap` are every. Each is sourced to its *Kamus Dewan*
-entry. `selepas` is listed for "after" but is refused, in line with the rule
-that a bare "after" has no open-ended-future span to return.
+entry. `selepas isnin` is the open span from the end of the next Monday
+onward, as a bare "after" is in every locale.
 
 **Habitual recurrence** is `setiap hari isnin`. Answered as a recurrence,
 this is the repeating Monday; asked for a span, it comes back as the next

@@ -3,7 +3,8 @@
 the full root-cause writeup. A bare "antes de navidad"/"después de navidad"
 (no magnitude) used to strand "antes de"/"después de" and return Christmas
 Day unchanged; "antes de X" now binds ``[now, X end)`` (mirroring "hasta
-X"), "después de X" is refused (no open-ended-future representation).
+X"), "después de X" is the open span
+from the end of X onward.
 Magnitude forms ("una semana antes de navidad") are untouched.
 
 Expected values are independently hand-computed against the anchor.
@@ -35,8 +36,11 @@ def test_bare_before_mirrors_until():
     assert before[0] == until[0]
 
 
-def test_bare_after_refused_not_stranded():
-    assert _span("después de navidad") is None
+def test_bare_after_is_open_from_the_end_of_the_holiday():
+    # Christmas 2026 is 25 December and Easter 2027 is 28 March; the span
+    # starts when that day ends and has no end
+    r = _span("después de navidad")
+    assert (r[0].start, r[0].open_end, r[1]) == (datetime(2026, 12, 26), True, "")
 
 
 def test_bare_before_past_endpoint_refused():

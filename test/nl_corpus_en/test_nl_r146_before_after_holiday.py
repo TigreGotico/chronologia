@@ -21,14 +21,11 @@ FIX: ``timespan._extract_directional_bare`` recognises a LEADING bare
 
 * "before X" -- mirrors "until X" EXACTLY (reuses its own span): ``[now, X's
   end)`` when X resolves to a FUTURE endpoint;
+* "after X" -- the open span from X's end onward, a ``DateSpan`` with
+  ``open_end``;
 * refuses the WHOLE parse (returns ``None`` from ``extract_timespan``,
-  never a bare-X fallback) when:
-    - "before X" but X is not in the future (an explicit past date), or
-    - "after X" at all -- ``DateSpan`` cannot express an open-ended FUTURE
-      (unlike "since X", whose open side is anchored to "now" as the END,
-      still a closed pair), so a bare "after X" has no valid representation
-      and is refused rather than silently stranding the word or fabricating
-      an artificial end.
+  never a bare-X fallback) when "before X" but X is not in the future (an
+  explicit past date).
 
 A magnitude offset ("a week before christmas") is UNCHANGED: it never
 reaches this new pass (the marker there does not lead the whole utterance),
@@ -75,16 +72,16 @@ def test_bare_before_mirrors_until():
     assert before[0] == until[0]
 
 
-# -- bare "after X" has no open-ended representation: refused, not silent --
+# -- bare "after X" is the open span from the end of X, never X itself ------
 
-@pytest.mark.parametrize("text", [
-    "after christmas",
-    "after easter",
+@pytest.mark.parametrize("text, start", [
+    # Christmas 2026 is 25 December; Easter 2027 is 28 March
+    ("after christmas", datetime(2026, 12, 26)),
+    ("after easter", datetime(2027, 3, 29)),
 ])
-def test_bare_after_refused_not_stranded(text):
+def test_bare_after_is_open_from_the_end(text, start):
     r = _span(text)
-    # MUST NOT silently return christmas/easter with "after" dropped.
-    assert r is None, f"{text!r} should be refused, got {r!r}"
+    assert (r[0].start, r[0].open_end, r[1]) == (start, True, "")
 
 
 # -- "before X" where X is in the past: refused too, never re-pointed ------
@@ -97,8 +94,10 @@ def test_bare_before_past_endpoint_refused(text):
     assert _span(text) is None
 
 
-def test_bare_after_past_endpoint_refused():
-    assert _span("after easter 2020") is None
+def test_bare_after_past_endpoint_is_open_from_its_end():
+    # Easter 2020 is 12 April; the open span starts when that day ends
+    r = _span("after easter 2020")
+    assert (r[0].start, r[0].open_end) == (datetime(2020, 4, 13), True)
 
 
 # -- magnitude forms are untouched: still compose exactly as before --------

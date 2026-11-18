@@ -33,10 +33,10 @@ def test_weekday_roll(text, expected):
 def test_week_offset_is_day_wide():
     assert span("2 veker etter påske").width == timedelta(days=1)
 
-def test_bare_after_holiday_refused():
-    # R146: was a silent "etter" strand over the plain holiday; refused now
-    # -- see test_nl_r146_before_after_holiday.py (en) for the writeup.
-    nomatch("etter påske")
+def test_bare_after_holiday_is_open_from_its_end():
+    # Easter 2018 is 1 April: "after" it starts when that day ends
+    s = span("etter påske")
+    assert (s.start, s.open_end) == (AstroDate(2018, 4, 2), True)
 
 @pytest.mark.parametrize("text", ['etter møtet', 'dagen etter møtet'])
 def test_no_reference_no_offset(text):
