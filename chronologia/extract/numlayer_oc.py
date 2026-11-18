@@ -18,7 +18,8 @@ _WORDS = DateWords(
     quarter_articles=frozenset({"un"}),
     unit_nouns=frozenset({"segondas"}),
     unit_ordinals=frozenset({"segonda"}),
-    counts=count_words("oc", locale_words("oc", "marker_since")))
+    counts=count_words("oc", locale_words("oc", "marker_since")),
+    articles_are_words=True)
 _PROCLITICS = frozenset({"l", "d", "un", "qu", "n", "s"})
 _PHRASES = [
     (["abans", "jèsus", "crist"], "acn"), (["abans", "jesus", "crist"], "acn"),

@@ -14,6 +14,9 @@ from ._corpus import ANCHOR, ad, start
 @pytest.mark.parametrize("text,days", [
     ("peste o sută unu zile", 101),
     ("acum o mie nouă sute nouăzeci și nouă zile", -1999),
+    # "doua" and "noua" are "două" and "nouă" written without diacritics
+    ("peste doua zile", 2),
+    ("acum noua zile", -9),
 ])
 def test_count(text, days):
     assert start(text) == ad(ANCHOR + timedelta(days=days))
