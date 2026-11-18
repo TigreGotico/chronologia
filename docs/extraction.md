@@ -317,6 +317,17 @@ print(r.span)           # 2026-10-20 00:00 – ..
 print(r.span.open_end)  # True
 ```
 
+A date with "onwards" after it is the same kind of open span, but it starts at
+the start of the date, so the date itself is inside the span. A "from" word
+before the date belongs to the phrase. The markers are listed per language in
+`marker_onwards.voc`: "2019 em diante" (pt), "de 2019 en adelante" (es),
+"dal 2019 in poi" (it).
+
+```python
+r = extract_timespan("from 2019 onwards", "en", datetime(2026, 11, 16, 12, 0))
+print(r.span)           # 2019-01-01 00:00 – ..
+```
+
 ### Marker positionality
 
 *Where* a marker sits relative to its date is a first-class per-language fact,
