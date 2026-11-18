@@ -1,6 +1,7 @@
-"""Romance-language spelled-number folding (an/ast/ca/es/fr/gl/it/mwl/oc/ro).
+"""Romance-language spelled-number folding (an/ast/mwl/oc/ro).
 
-Portuguese reads its numbers through numtag (``numlayer_pt``).
+Catalan, French, Galician, Italian, Portuguese and Spanish read their numbers
+through numtag (``numlayer_ca`` and its siblings).
 
 Shared mechanism: the number-word set is read from ovos_number_parser's
 ``NumberVocabulary`` for the language, and a maximal run of those words
@@ -20,7 +21,6 @@ import os
 from dataclasses import replace
 from importlib import import_module
 
-from ovos_number_parser.numbers_fr import extract_number_fr
 from ovos_number_parser.util import NumberVocabulary
 
 from chronologia.extract.model import Token
@@ -31,7 +31,7 @@ from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
 
 
 # ---------------------------------------------------------------------------
-# Romance spelled-number folding (pt / es / gl / ca)
+# Romance spelled-number folding
 # ---------------------------------------------------------------------------
 #
 # The English fold above carries its own closed-class word list.  The Romance
@@ -129,11 +129,6 @@ def _romance_numwords(vocab, blacklist):
 #: coordinator "and" in another (Catalan "les tres **i** quart"), so a merged
 #: set would mis-license a clock fraction.  A fact of the languages, kept tiny.
 _ROMANCE_DEFINITE = {
-    "it": frozenset({"il", "lo", "la", "i", "gli", "le", "l"}),
-    "es": frozenset({"el", "la", "los", "las"}),
-    "ca": frozenset({"el", "la", "els", "les", "l"}),
-    "gl": frozenset({"o", "a", "os", "as"}),
-    "fr": frozenset({"le", "la", "les", "l"}),
     "oc": frozenset({"lo", "la", "los", "las", "les", "l"}),
     "an": frozenset({"o", "a", "os", "as", "lo", "la", "los", "las", "l"}),
     "ast": frozenset({"el", "la", "lo", "los", "les", "l"}),
@@ -534,115 +529,6 @@ def _with_scale_frame(fold, lang_code, article_ones,
     return lambda tokens: fold(prepass(tokens))
 
 
-# Spanish fuses its 11th-19th/21st-29th/31st ordinals into a single word --
-# "decimotercero" (13th), "vigesimoprimero" (21st) -- rather than the
-# two-word compound ("décimo tercero") the NumberVocabulary's ORDINAL_TENS/
-# ORDINAL_UNITS tables already compose through the back-end.  The fused
-# spelling is the one RAE prescribes as primary and the one native text
-# overwhelmingly uses; without it "el decimotercer mes de 2026" silently
-# degraded to a bare year_ref match on "2026" instead of refusing (no 13th
-# month exists) the way "el 13.º mes de 2026" and English "the thirteenth
-# month of 2026" already do (R81, PR #640).
-#
-# Source: Real Academia Española, Diccionario panhispánico de dudas (2005),
-# s.v. "numerales, 2.2" -- the fused spelling loses the tens-word's own
-# written accent ("décimo"->"decimo-", "vigésimo"->"vigesimo-") while the
-# unit component keeps its own ("séptimo" -> "decimoséptimo"); "undécimo"/
-# "duodécimo" are the classical alternatives for 11th/12th, "decimonoveno"/
-# "decimonono" both attested for 19th.  Apocopated forms ("decimotercer",
-# "vigesimoprimer") are the form used directly before a masculine singular
-# noun ("el decimotercer mes"), mirroring "tercer"/"primer" themselves.
-_ES_TENS_PREFIX = {10: "decimo", 20: "vigesimo", 30: "trigesimo"}
-#: masculine unit-ordinal suffix fused onto the tens prefix above.
-_ES_UNIT_SUFFIX_MASC = {1: "primero", 2: "segundo", 3: "tercero", 4: "cuarto",
-                        5: "quinto", 6: "sexto", 7: "séptimo", 8: "octavo",
-                        9: "noveno"}
-#: apocopated masculine forms (before a masculine singular noun) -- only
-#: 1st and 3rd apocopate in Spanish.
-_ES_UNIT_SUFFIX_APOC = {1: "primer", 3: "tercer"}
-#: classical alternative spellings RAE lists alongside the productive fused
-#: form, keyed by value.
-_ES_ORDINAL_ALT = {11: ("undécimo",), 12: ("duodécimo",),
-                   19: ("decimonono",)}
-
-
-def _es_fuse(prefix, suffix):
-    """Fuse a tens prefix onto a unit suffix, eliding the tens prefix's
-    trailing "o" before the unit's own leading "o" ("decimo" + "octavo" ->
-    "decimoctavo", never the double-vowel "decimooctavo") -- the one unit
-    (8th, "octavo") that starts with the vowel the prefix ends in."""
-    if prefix.endswith("o") and suffix.startswith("o"):
-        return prefix[:-1] + suffix
-    return prefix + suffix
-
-
-def _es_compound_ordinals():
-    out = {}
-    for tens_val, prefix in _ES_TENS_PREFIX.items():
-        for unit_val, suffix in _ES_UNIT_SUFFIX_MASC.items():
-            val = tens_val + unit_val
-            masc = _es_fuse(prefix, suffix)
-            out[masc] = val
-            out[masc[:-1] + "a"] = val  # feminine: -o -> -a
-            apoc_suffix = _ES_UNIT_SUFFIX_APOC.get(unit_val)
-            if apoc_suffix:
-                out[prefix + apoc_suffix] = val
-            for alt in _ES_ORDINAL_ALT.get(val, ()):
-                out[alt] = val
-                out[alt[:-1] + "a"] = val
-    return out
-
-
-fold_es = _make_romance_fold("es", set(), extra_ordinals=_es_compound_ordinals())
-fold_gl = _make_romance_fold("gl", set())
-fold_ca = _make_romance_fold("ca", set())
-# deep-time SCALE-frame licensing (article-one + multiword "mil <million>")
-fold_es = _with_scale_frame(fold_es, "es", frozenset({"un", "una"}),
-                            million_extra=frozenset({"millones", "millon",
-                                                     "millón"}))
-fold_gl = _with_scale_frame(fold_gl, "gl", frozenset({"un", "unha"}),
-                            million_extra=frozenset({"millóns", "millons",
-                                                     "millón", "millon"}))
-fold_ca = _with_scale_frame(fold_ca, "ca", frozenset({"un", "una"}),
-                            million_extra=frozenset({"milions", "milió"}))
-
-
-def _with_h_clock(fold):
-    """Read the hour-letter clock ("21h30", "20h") ahead of the number fold.
-
-    Iberian Romance writes the clock two ways: the colon form dominates, and
-    beside it runs the hour-letter form Portuguese and French share -- "as
-    21h30", "a les 17h30", "a las 21h20".  Attested in running prose on the
-    Spanish, Catalan and Galician Wikipedias (Spanish TV schedules and an
-    Ecuadorian decree, the 1949 Turia flood in Catalan, RTP Acores listings in
-    Galician).  These three fold it unconditionally, marker or none.
-
-    Italian, Romanian, Asturian, Greek and Swedish write it only behind a
-    clock marker -- Asturian article prose has "a les 21h" and "de les 13h a
-    les 13h25", never a bare one -- so they take
-    :func:`~chronologia.extract.numfold_engine.with_marked_h_clock` instead.
-    """
-    def folded(tokens):
-        return fold(_collapse_h_clock(tokens))
-    return folded
-
-
-fold_es = _with_h_clock(fold_es)
-fold_gl = _with_h_clock(fold_gl)
-fold_ca = _with_h_clock(fold_ca)
-
-
-def _ca_daqui(tokens):
-    """Rejoin the elided "d'aquí" the tokenizer split into "d" + "aquí", so the
-    future-offset marker "d'aquí a" is one surface the offset grammar binds."""
-    return _collapse_phrase(tokens, ["d", "aquí"], "d'aquí")
-
-
-_fold_ca_base = fold_ca
-
-
-def fold_ca(tokens):
-    return _fold_ca_base(_ca_daqui(tokens))
 # an: "martes" (Tuesday) must never be read as a number; the Romance factory
 # folds via numbers_an's NumberVocabulary and the shared a.c./d.c. glue.
 # an: "quarto" (the qu- spelling) is the idiomatic masculine ordinal 4th before
@@ -666,18 +552,17 @@ fold_mwl = _make_romance_fold(
 
 
 # ---------------------------------------------------------------------------
-# fr / it / ro / oc / ast: language-specific pre-passes layered on the shared
-# Romance fold factory.
+# ro / oc / ast: language-specific pre-passes layered on the shared Romance
+# fold factory.
 #
 # ``_make_romance_fold`` already owns spelled-number folding (compound
 # numbers, JOIN_WORD bridging, feminine ordinals, and the a.c./d.c. glue).
-# These five locales need small token-surgery pre-passes it does not provide:
-# elided proclitics split so a bare year-word binds ("d'annees" -> d annees),
-# fixed idiom phrases collapse to one connector ("il y a", "avanti cristo"),
-# French/Occitan "NhMM" clock notation folds to an HH:MM literal, and a digit
-# followed by an ordinal-suffix word merges ("1er" -> 1, "20-lea" -> 20).
-# "un/una" are blacklisted from folding so the clock fraction "meno un
-# quarto" keeps its article token.
+# These locales need small token-surgery pre-passes it does not provide:
+# elided proclitics split so a bare year-word binds ("d'annadas" -> d
+# annadas), fixed idiom phrases collapse to one connector ("înainte de
+# hristos"), the Occitan "NhMM" clock notation folds to an HH:MM literal, and
+# a digit followed by an ordinal-suffix word merges ("20-lea" -> 20).  The
+# numtag folds of French and Italian share these pre-passes.
 # ---------------------------------------------------------------------------
 
 def _elision_split(tokens, proclitics):
@@ -710,57 +595,14 @@ def _elision_split(tokens, proclitics):
     return _reindex(out)
 
 
-#: "jour(s)" -- the one unit "N jours après/avant demain/hier" ("N days
-#: after/before tomorrow/yesterday") is spelled with, checked by
-#: :func:`_num_unit_before` to decide whether "après demain"/"avant hier"
-#: are the fixed +-2-day idiom or the DIRECTIONAL MARKER of a genuine
-#: numeral-scaled offset (see ``_FR_GUARDED_PHRASES``).
-_FR_DAY_UNIT_WORDS = frozenset({"jour", "jours"})
-
-
-def _num_unit_before(tokens, i, unit_words):
-    """True when a ``[NUM] UNIT`` pre-amble ends immediately at index ``i``
-    ("**deux jours** " before "après demain") -- read from the still
-    UN-folded stream (spelled numbers have not folded to digits yet at this
-    point in the pipeline), so a spelled numeral is recognised through
-    :func:`extract_number_fr` rather than ``Token.is_number``."""
-    if i < 2:
-        return False
-    unit_tok, num_tok = tokens[i - 1], tokens[i - 2]
-    if unit_tok.text not in unit_words:
-        return False
-    if num_tok.is_number:
-        return True
-    value = extract_number_fr(num_tok.text, ordinals=False)
-    return value is not False and value is not None
-
-
-#: fused French idiom surfaces whose collapse must be HELD BACK when a
-#: numeral quantity heads them ("deux jours après demain" = demain+2, an
-#: ordinary numeral-scaled offset with "après" as its marker) --
-#: unlike a bare "après demain"/"avant hier", which is always the fixed
-#: +-2-day idiom.  Every other ``_FR_PHRASES`` entry (the BC/AD markers,
-#: "il y a", "week end") has no such competing numeral-offset reading, so it
-#: collapses unconditionally.
-_FR_GUARDED_PHRASES = frozenset({"apresdemain", "avanthier"})
-
 
 def _collapse_phrase(tokens, words, surface):
-    """Collapse a fixed multiword sequence ("il y a") to one token.
-
-    A guarded surface (see ``_FR_GUARDED_PHRASES``) is left un-collapsed
-    when a ``[NUM] UNIT`` pre-amble ("deux jours") immediately precedes it,
-    so the directional marker word stays a separate token for the offset
-    grammar (or the generic anchored-offset composition pass) to bind.
-    """
+    """Collapse a fixed multiword sequence ("il y a") to one token."""
     n = len(words)
-    guarded = surface in _FR_GUARDED_PHRASES
     out = []
     i = 0
     while i < len(tokens):
-        if ([t.text for t in tokens[i:i + n]] == words
-                and not (guarded
-                        and _num_unit_before(tokens, i, _FR_DAY_UNIT_WORDS))):
+        if [t.text for t in tokens[i:i + n]] == words:
             raw = " ".join(t.raw for t in tokens[i:i + n])
             out.append(Token(text=surface, raw=raw, index=0))
             i += n
@@ -804,113 +646,6 @@ def _collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
             continue
         out.append(t)
         i += 1
-    return _reindex(out)
-
-
-def _governed_hour_length(tokens, spec, governors, fractions, minus,
-                          minus_articles, second_symbols):
-    """Spell a counted length of hours as "N h et M minutes et S secondes".
-
-    After a counted-offset word ("dans", "il y a") the hour and the count
-    that follows it are one length: "dans 2h30", "dans 2 h 30", "dans 2
-    heures et demie", "dans 2 h 10 s".  The grammar reads that length only in
-    its full form ("dans 2 heures et 30 minutes"), so the short forms are
-    rewritten to it.  The unit word after the count names its unit: none or
-    a minute word is minutes, a second word or one of ``second_symbols`` is
-    seconds, and any other unit ("dans 2 heures 10 jours") is not part of
-    the length, so the phrase is left as written.  ``fractions`` maps the
-    fraction words after "et" to their minutes.  After a ``minus`` word the
-    count is taken away from the hours, with an optional article before a
-    fraction: "dans 2 h moins le quart" is the length 1 h 45 min, "dans 2 h
-    moins 10" is 1 h 50 min, "dans 2 h moins 10 secondes" is 1 h 59 min 50 s.
-
-    It runs as the language ``post_hook``: the pipeline holds a counted
-    second word out of the number fold, and only the whole stream shows the
-    unit after the count.
-    """
-    def count(tok):
-        return (tok is not None and tok.is_number and tok.value is not None
-                and 0 < tok.value < 60 and float(tok.value).is_integer())
-
-    def unit_of(k):
-        if k >= n:
-            return None
-        if tokens[k].text in second_symbols:
-            return "second"
-        return spec.units.get(tokens[k].text)
-
-    def number(value):
-        return Token(text=str(value), raw=str(value), index=0,
-                     is_number=True, value=value)
-
-    def word(text):
-        return Token(text=text, raw=text, index=0)
-
-    out = []
-    i = 0
-    n = len(tokens)
-    while i < n:
-        t = tokens[i]
-        hour = tokens[i + 1] if i + 1 < n else None
-        if not (out and out[-1].text in governors and t.is_number
-                and hour is not None and spec.units.get(hour.text) == "hour"):
-            out.append(t)
-            i += 1
-            continue
-        nxt = tokens[i + 2] if i + 2 < n else None
-        nn = tokens[i + 3] if i + 3 < n else None
-        hours = t
-        minutes = seconds = None
-        if count(nxt):
-            unit = unit_of(i + 3)
-            if unit is None:
-                minutes, used = int(nxt.value), 3
-            elif unit == "minute":
-                minutes, used = int(nxt.value), 4
-            elif unit == "second":
-                seconds, used = int(nxt.value), 4
-        elif (nxt is not None and nxt.text in _FR_ET and nn is not None
-                and nn.text in fractions):
-            minutes, used = fractions[nn.text], 4
-        elif (nxt is not None and nxt.text in minus
-                and t.value is not None and float(t.value).is_integer()):
-            j = i + 3
-            if nn is not None and nn.text in minus_articles:
-                j += 1
-            taken_tok = tokens[j] if j < n else None
-            taken = None  # seconds
-            if taken_tok is not None and taken_tok.text in fractions:
-                taken, used = fractions[taken_tok.text] * 60, j + 1 - i
-            elif j == i + 3 and count(taken_tok):
-                unit = unit_of(i + 4)
-                if unit is None:
-                    taken, used = int(taken_tok.value) * 60, 4
-                elif unit == "minute":
-                    taken, used = int(taken_tok.value) * 60, 5
-                elif unit == "second":
-                    taken, used = int(taken_tok.value), 5
-            if taken is not None and int(t.value) * 3600 > taken:
-                whole, rest = divmod(int(t.value) * 3600 - taken, 3600)
-                hours = number(whole)
-                minutes, seconds = divmod(rest, 60)
-                seconds = seconds or None
-        if minutes is None and seconds is None:
-            out.append(t)
-            i += 1
-            continue
-        # the rewritten length keeps the extent of what was written, so a
-        # remainder or a mention reads the user's own words
-        first, last = tokens[i + 2], tokens[i + used - 1]
-        tail = []
-        if minutes is not None:
-            tail += [word("et"), number(minutes), word("minutes")]
-        if seconds is not None:
-            tail += [word("et"), number(seconds), word("secondes")]
-        tail = [replace(x, char_start=first.char_start, char_end=last.char_end)
-                for x in tail]
-        out.extend([replace(hours, raw=t.raw, char_start=t.char_start,
-                            char_end=t.char_end), hour] + tail)
-        i += used
     return _reindex(out)
 
 
@@ -971,464 +706,6 @@ def _romance_prepass_fold(lang_code, blacklist, proclitics=frozenset(),
         return base(tokens)
 
     return fold
-
-
-# -- French -----------------------------------------------------------------
-_FR_PHRASES = [
-    (["avant", "jésus", "christ"], "avjc"), (["avant", "jesus", "christ"], "avjc"),
-    (["avant", "notre", "ère"], "avjc"), (["avant", "notre", "ere"], "avjc"),
-    (["av", "j", "c"], "avjc"), (["av", "jc"], "avjc"),
-    (["après", "jésus", "christ"], "apjc"), (["apres", "jesus", "christ"], "apjc"),
-    (["de", "notre", "ère"], "apjc"), (["de", "notre", "ere"], "apjc"),
-    (["ap", "j", "c"], "apjc"), (["ap", "jc"], "apjc"),
-    (["il", "y", "a"], "ilya"),
-    (["avant", "hier"], "avanthier"),
-    (["apres", "demain"], "apresdemain"), (["après", "demain"], "apresdemain"),
-    (["week", "end"], "weekend"),
-]
-#: the oclock surfaces that turn a preceding "un"/"une" into the hour 1.
-_FR_HEURE = frozenset({"heure", "heures"})
-
-#: the coordinator that joins the unit "un" to a French tens word in 21..71
-#: ("vingt **et** un", "soixante **et** onze") -- the one connector that can
-#: sit between the tens number and the licensed cardinal tail.
-_FR_ET = frozenset({"et"})
-
-
-def _fr_is_number_word(tok):
-    """Is ``tok`` a spelled/parsed French number to the left of a "un" tail?
-
-    A left neighbour that already carries a numeric reading (a folded digit
-    run, "quatre-vingt" pre-folded to 80) or whose surface the French number
-    back-end reads as a cardinal ("vingt", "cent", "mille", "deux") -- read
-    with ``ordinals=False`` so an ordinal homograph ("premier") never counts.
-    """
-    if tok is None:
-        return False
-    if tok.is_number:
-        return True
-    value = extract_number_fr(tok.text, ordinals=False)
-    return value is not False and value is not None
-
-
-def _license_fr_un_compound(tokens):
-    """Read "un"/"une" as the cardinal 1 when it is the *tail of a numeric
-    compound*, the inverse of the blacklist that keeps it an article.
-
-    French drops "un"/"une" from the spelled-number vocabulary so the everyday
-    indefinite article and the clock-fraction article survive the fold ("un
-    jour" = a day, "un quart d'heure" = a quarter hour, "une semaine" = a
-    week).  That same blacklist silently truncates every compound number that
-    *ends* in one -- "vingt et un" (21), "cent un" (101), "quatre-vingt-un"
-    (81), "deux cent un" (201), "mille un" (1001) -- because the run-builder
-    cannot extend across the missing "un".  The two readings are separable by
-    position exactly as Portuguese separates its "um" article (see
-    :func:`chronologia.extract.numlayer_pt.fold_pt`): the cardinal is the "un"/"une" whose left neighbour is a
-    number, either directly ("cent un", "quatre-vingt-un") or across the
-    coordinator "et" whose own left neighbour is a number ("vingt et un",
-    "cent vingt et un").  In that position -- and only there -- the surface is
-    marked a number so the shared extractor composes it additively (cent + 1 =
-    101, vingt et 1 = 21) and the following unit binds; everywhere else the
-    article stays byte-identical.  The *word* surface is kept (only
-    ``is_number``/``value`` are set), because the shared run-folder re-reads
-    the run's joined text through the number back-end, which composes "cent un"
-    but not the digit-mixed "cent 1".
-    """
-    out = list(tokens)
-    n = len(out)
-    changed = False
-    for i, t in enumerate(out):
-        if t.is_number or t.text not in ("un", "une"):
-            continue
-        prev = out[i - 1] if i - 1 >= 0 else None
-        if prev is not None and prev.text in _FR_ET:
-            left = out[i - 2] if i - 2 >= 0 else None
-        else:
-            left = prev
-        if _fr_is_number_word(left):
-            out[i] = replace(t, is_number=True, value=1)
-            changed = True
-    return _reindex(tuple(out)) if changed else tokens
-
-
-def _license_fr_une_heure(tokens):
-    """Read "un"/"une" as the hour 1 directly before "heure(s)".
-
-    French "une" is at once the feminine indefinite article ("une semaine" =
-    a week) and the feminine cardinal one, and the shared number back-end
-    leaves both "un" and "une" unfolded so the article reading survives
-    ("il y a une semaine").  On the clock, though, the hour name is spoken
-    exactly like the article -- "une heure" is one o'clock, and every
-    fraction/meridiem/subtractive frame built on it ("une heure et quart",
-    "une heure moins le quart", "une heure du matin") needs the 1 to bind the
-    HOUR slot the way "deux heures" already does.  The two readings are
-    distinguishable by position: the cardinal is the "un"/"une" immediately
-    before the oclock word "heure(s)", and the article everywhere else.  Only
-    that position is licensed to the digit 1, so "une semaine" and every other
-    article use stays byte-identical.
-    """
-    out = list(tokens)
-    n = len(out)
-    for i, t in enumerate(out):
-        if t.is_number or t.text not in ("un", "une"):
-            continue
-        nxt = out[i + 1] if i + 1 < n else None
-        if nxt is not None and nxt.text in _FR_HEURE:
-            out[i] = replace(t, text="1", is_number=True, value=1)
-    return _reindex(tuple(out))
-
-
-#: spelled ordinals 11th-31st that ``extract_number_fr`` does not recognise
-#: as ordinals at all -- it reads every "ième" suffix as a *fraction* marker
-#: instead ("onzième" -> 1/11, "vingt-deuxième" -> 22 by accident but
-#: "vingt et unième" -> 20, dropping the "un" tail), a wrong value the shared
-#: run-extraction machinery would confidently fold or silently truncate
-#: rather than refuse.  These are stamped straight to their digit *before*
-#: that machinery ever sees them (see :func:`_stamp_fr_compound_ordinals`),
-#: bypassing ``extract_number_fr`` for this closed set entirely.
-#: 11th-16th are irregular fused single words; 17th-19th and 21st-29th
-#: prefix the ten across a hyphen the tokenizer splits ("dix-septième" ->
-#: "dix","septième"); the X1 forms insert the coordinator "et" before
-#: "unième" ("vingt et unième") rather than hyphenating, exactly as the
-#: cardinals themselves do ("vingt et un").
-#: Source: Larousse / Académie française, "Les adjectifs numéraux ordinaux".
-_FR_SINGLE_ORDINALS = {
-    "onzième": 11, "douzième": 12, "treizième": 13, "quatorzième": 14,
-    "quinzième": 15, "seizième": 16, "vingtième": 20, "trentième": 30,
-}
-#: multiword compounds, longest surface first so "vingt et unième" is
-#: matched before any shorter prefix could apply.
-_FR_MULTIWORD_ORDINALS = [
-    (["vingt", "et", "unième"], 21), (["trente", "et", "unième"], 31),
-    (["dix", "septième"], 17), (["dix", "huitième"], 18),
-    (["dix", "neuvième"], 19), (["vingt", "deuxième"], 22),
-    (["vingt", "troisième"], 23), (["vingt", "quatrième"], 24),
-    (["vingt", "cinquième"], 25), (["vingt", "sixième"], 26),
-    (["vingt", "septième"], 27), (["vingt", "huitième"], 28),
-    (["vingt", "neuvième"], 29),
-]
-
-
-def _stamp_fr_compound_ordinals(tokens):
-    """Stamp French spelled ordinals 11th-31st straight to their digit,
-    ahead of the general cardinal fold.
-
-    ``extract_number_fr`` reads the "ième" suffix as a *fraction* marker for
-    every one of these ("onzième" -> 1/11), not the ordinal it actually
-    spells, so letting them flow into the normal run-extraction would fold a
-    wrong value with high confidence (or, for the "et"-joined X1 forms,
-    silently drop the "un" tail: "vingt et unième" -> 20) instead of
-    resolving to the right month/day or refusing an impossible one.  Stamping
-    the digit here, before the run scan, makes the shared machinery treat
-    each compound exactly like any other already-folded number.
-    """
-    out = list(tokens)
-    for words, val in _FR_MULTIWORD_ORDINALS:
-        m = len(words)
-        result = []
-        i = 0
-        n = len(out)
-        while i < n:
-            if (not out[i].is_number
-                    and [t.text for t in out[i:i + m]] == words):
-                first, last = out[i], out[i + m - 1]
-                raw = "".join(t.raw for t in out[i:i + m])
-                result.append(Token(text=str(val), raw=raw, index=0,
-                                    is_number=True, value=val,
-                                    char_start=first.char_start,
-                                    char_end=last.char_end, ordinal=True))
-                i += m
-            else:
-                result.append(out[i])
-                i += 1
-        out = result
-    out = [
-        Token(text=str(_FR_SINGLE_ORDINALS[t.text]), raw=t.raw, index=0,
-              is_number=True, value=_FR_SINGLE_ORDINALS[t.text],
-              char_start=t.char_start, char_end=t.char_end, ordinal=True)
-        if (not t.is_number and t.text in _FR_SINGLE_ORDINALS) else t
-        for t in out
-    ]
-    return _reindex(tuple(out))
-
-
-# French composes its tens above sixty rather than naming them: eighty is
-# four twenties ("quatre-vingts") and ninety is eighty plus ten
-# ("quatre-vingt-dix"), a vigesimal reading the shared Romance extractor does
-# not perform -- it adds the components instead and returns 24 and 34.  The
-# French wrapper is the one that carries the vigesimal collapse, so French
-# reads its numbers through the wrapper.  Without it every French phrase built
-# on 80 or 90 -- "les années quatre-vingt", "quatre-vingts ans" -- parsed as a
-# different number or not at all.  Source: Académie française, "quatre-vingts"
-# (9e éd.), https://www.dictionnaire-academie.fr/article/A9Q0152
-_fold_fr_ordinals_base = _romance_prepass_fold(
-    "fr", {"un", "une"},
-    reader=lambda text, ordinals=True: extract_number_fr(
-        text, ordinals=ordinals),
-    # "vingt" and "cent" take the plural -s exactly when they close a round
-    # number -- "quatre-vingts", "deux cents", but "quatre-vingt-un" and "deux
-    # cent un" -- and the shared vocabulary lists only the singular, so the
-    # prescribed spelling of 80 and 200 fell out of the run and left the
-    # leading "quatre"/"deux" behind as the whole number.
-    extra_numwords=frozenset({"vingts", "cents"}),
-    proclitics=frozenset({"d", "l", "j", "n", "s", "c", "m", "t", "qu"}),
-    # feminine ordinals the number back-end rejects but that agree with a
-    # feminine noun the constructions bind ("la premiere/première moitié",
-    # "la seconde moitié").  "seconde" is unambiguous in French date text --
-    # French has no time-unit "seconde" vocabulary here -- so it maps straight to
-    # 2 like the Spanish/Romanian feminine tables above.
-    fem_ord={"première": 1, "premiere": 1, "seconde": 2},
-    phrases=_FR_PHRASES, h_clock=True,
-    # "h" is the symbol of "heure" (OQLF, Banque de dépannage linguistique,
-    # "Écriture des nombres exprimant une durée": "2 heures 28 minutes (ou :
-    # 2 h 28 min)"), so after the counted-offset words "dans" and "il y a"
-    # ("ilya" once folded) it is the hour unit, and before the clock
-    # directions "et" and "moins" it is the hour word.
-    h_spared=(("dans", "ilya"), ("et", "moins")),
-    ord_suffixes=frozenset({"er", "ere", "ère", "e", "eme", "ème",
-                            "nd", "nde", "d", "re", "es", "emes", "èmes"}))
-
-
-def fold_fr(tokens):
-    # spelled 11th-31st ordinals stamped straight to their digit before the
-    # general cardinal fold, which would otherwise misread every one of them
-    # as a fraction -- see :func:`_stamp_fr_compound_ordinals`.
-    return _fold_fr_ordinals_base(_stamp_fr_compound_ordinals(tokens))
-
-
-# deep-time SCALE-frame licensing: "un milliard/un billion d'années"
-fold_fr = _with_scale_frame(fold_fr, "fr", frozenset({"un", "une"}))
-# clock-frame licensing: "une heure" (one o'clock) and every fraction/meridiem/
-# subtractive frame built on it -- "un"/"une" reads as the hour 1 before
-# "heure(s)", the article everywhere else.
-_fold_fr_scaled = fold_fr
-
-
-def fold_fr(tokens):  # noqa: F811 -- final wrap adds une-heure + un-compound
-    return _fold_fr_scaled(
-        _license_fr_une_heure(_license_fr_un_compound(tokens)))
-
-
-
-def fold_fr_hour_length(tokens, spec):
-    """The French ``post_hook``: a counted length of hours after "dans" or
-    "il y a" (:func:`_governed_hour_length`).
-
-    A count of hours and minutes after those offset words is one length
-    (OQLF, Banque de dépannage linguistique, "Écriture des nombres exprimant
-    une durée": "L'expérience a duré exactement 2 heures 28 minutes. (ou :
-    2 h 28 min)"), and so is a count of seconds after it: "La championne a
-    couru l'épreuve en 10 min 35 s 7/100." (same page).  "sec" is also a
-    symbol of the second: "Symbole de la seconde. Note : Le symbole du
-    Système international est s." (Wiktionnaire, s.v. "sec", Conventions
-    internationales, 3, labelled "Non standard").  "et demie" and "et quart" after a count of hours
-    are its half and its quarter: "Qui a la valeur d'une moitié s'ajoutant à
-    la quantité exprimée par le substantif. Il a deux ans et demi" (TLFi,
-    s.v. "demi", I.A); "Quart d'heure" : "Une des quatre parties égales
-    d'une heure, quinze minutes." (TLFi, s.v. "quart", B.1.a).  "moins"
-    before a count takes it away from the hours: "Pour indiquer une
-    soustraction" (TLFi, s.v. "moins", II.A), and "moins le quart est plus
-    fréq. que moins un quart" (TLFi, s.v. "quart", B.1.a).
-    """
-    return _governed_hour_length(
-        tokens, spec, governors=frozenset({"dans", "ilya"}),
-        fractions={"demie": 30, "demi": 30, "quart": 15},
-        minus=frozenset({"moins"}),
-        minus_articles=frozenset({"le", "la", "un"}),
-        second_symbols=frozenset({"s", "sec"}))
-
-# -- Italian ----------------------------------------------------------------
-_IT_PHRASES = [
-    (["avanti", "cristo"], "ac"), (["dopo", "cristo"], "dc"),
-    (["avanti", "l", "era", "volgare"], "ac"), (["era", "volgare"], "dc"),
-    # the dotted abbreviations "a.e.v."/"e.v." of the areligious era formula
-    # (https://it.wikipedia.org/wiki/Era_volgare) have no rows.  The tokenizer
-    # shatters them on their dots and this table matches on token text alone,
-    # so a row would equally match the same letters written apart: "a", "e"
-    # and "v" are an ordinary preposition, the conjunction "and" and a Roman
-    # numeral, and "1500 a e V" or "il 3 e V maggio" would read as a dated era
-    # marker -- a sign flip on ordinary Italian.  The spelled-out
-    # "(avanti l') era volgare" above carries the same meaning unambiguously.
-    (["altro", "ieri"], "altroieri"), (["avanti", "ieri"], "avantieri"),
-    (["dopo", "domani"], "dopodomani"),
-    (["fine", "settimana"], "finesettimana"),
-]
-#: the di-family prepositions (plain and article-fused) that introduce the
-#: reference date after the before-marker "prima" -- "prima di gennaio",
-#: "prima del 5 aprile".  "d"/"dell" are the elision-split heads of "d'"/
-#: "dell'".
-_IT_OFFSET_PREP = frozenset({"di", "del", "dello", "della", "dell", "dei",
-                             "degli", "delle", "d"})
-
-
-def _license_it_prima(tokens):
-    """Positionally read the homograph "prima".
-
-    Italian "prima" is at once the feminine ordinal "first" and the
-    directional marker "before"; a blanket number-fold would erase the
-    marker, a blanket blacklist would erase the ordinal.  The two readings
-    are distinguishable by position, so "prima" is blacklisted from the
-    general fold (see :func:`fold_it`) and licensed to the digit 1 *only*
-    where it is the ordinal -- i.e. everywhere it is **not** in the offset
-    frame.  It is the before-marker when it either
-
-    * is immediately followed by a di-family preposition introducing the
-      reference date ("prima **di** gennaio", "prima **del** 5 aprile"), or
-    * is immediately followed by a bare written year ("prima **2030**") --
-      the connector-less counterpart of the di-family form, the same
-      preposition-optional shape every other before-marker locale accepts
-      (en "before 2030", es "antes de 2030"), or
-    * closes a ``[NUM] UNIT`` duration ("3 giorni **prima** del ...",
-      "tre giorni **prima** ...") -- the token before it a (non-number) unit
-      word, the one before that a number;
-
-    and the ordinal "first" otherwise ("**prima** settimana", "la **prima**
-    domenica", "**prima** quindicina"), where it folds to 1 so the ordinal
-    constructions bind it.  The rule keys off the preposition and the
-    NUM+UNIT shape, never a hard-coded month or unit list, so it generalises.
-    """
-    out = list(tokens)
-    n = len(out)
-    for i, t in enumerate(out):
-        if t.is_number or t.text != "prima":
-            continue
-        nxt = out[i + 1] if i + 1 < n else None
-        prev = out[i - 1] if i - 1 >= 0 else None
-        prev2 = out[i - 2] if i - 2 >= 0 else None
-        nxt_is_written_year = (nxt is not None and nxt.is_number
-                                and nxt.raw is not None
-                                and len(nxt.raw) == 4 and nxt.raw.isdigit())
-        is_before_marker = (
-            (nxt is not None and nxt.text in _IT_OFFSET_PREP)
-            or nxt_is_written_year
-            or (prev is not None and not prev.is_number
-                and prev2 is not None and prev2.is_number))
-        if not is_before_marker:
-            out[i] = Token(text="1", raw=t.raw, index=0, is_number=True,
-                           value=1, char_start=t.char_start,
-                           char_end=t.char_end, ordinal=True)
-    return _reindex(tuple(out))
-
-
-# Italian spells its 11th-19th ordinals identically to the FRACTION
-# denominator of the same value -- "tredicesimo" is at once "thirteenth" and
-# "a-thirteenth" (vocab.FRACTION[13] == vocab.ORDINAL_TENS would list it too,
-# but ORDINAL_TENS only carries the round-ten entries 10/20/../90, so this
-# homograph collision is invisible to the shared TENS mechanism and must be
-# named explicitly).  Without licensing, "undicesimo".."diciannovesimo" are
-# simply absent from the number-fold's word set (silently dropped as
-# fractions), so a phrase built on one -- "il tredicesimo mese del 2026" --
-# never tokenizes an ordinal at all and falls through to a bare year_ref
-# match, same failure mode as the Spanish/Catalan compound gap this change
-# closes.  Licensed positionally (after a definite article / before the
-# quarter noun) exactly like the 1st-9th homographs above -- each is a
-# complete single-word ordinal with no further composition, so (unlike the
-# décimo/tretzè TENS-prefix case) stamping straight to its digit is correct.
-# Source: standard Italian ordinal-numeral formation (Treccani, "numerali
-# ordinali"): 11th-19th borrow the cardinal's stem + "-esimo" and are
-# genuinely homographic with the same-value fraction.
-_IT_TEEN_HOMOGRAPH = {
-    "undicesimo": 11, "dodicesimo": 12, "tredicesimo": 13,
-    "quattordicesimo": 14, "quindicesimo": 15, "sedicesimo": 16,
-    "diciassettesimo": 17, "diciottesimo": 18, "diciannovesimo": 19,
-}
-# Italian composes 21st-31st (and every higher non-round ordinal) by fusing
-# the cardinal's stem onto "-esimo": ventuno -> ventunesimo (21st, unlike
-# "ventunesimo" any FRACTION collision -- Italian's FRACTION table stops at
-# 20).  The two-word compound "ventesimo primo" already composes through the
-# back-end, but the fused spelling is the one Italian actually writes.
-# Source: Treccani / Accademia della Crusca, "numerali ordinali" -- the
-# fused compound elides the cardinal's final vowel before "-esimo" except
-# where the cardinal itself ends in an accented vowel (23rd "ventitré" keeps
-# its final "e": "ventitreesimo").
-_IT_COMPOUND_ORDINALS = {
-    "ventunesimo": 21, "ventiduesimo": 22, "ventitreesimo": 23,
-    "ventiquattresimo": 24, "venticinquesimo": 25, "ventiseiesimo": 26,
-    "ventisettesimo": 27, "ventottesimo": 28, "ventinovesimo": 29,
-    "trentunesimo": 31,
-}
-# "prima" is the feminine ordinal "first" *and* the directional marker
-# "before"; it is blacklisted from the general number fold (so the offset
-# composition can read the marker) and positionally licensed back to the digit
-# 1 in ordinal position by ``_license_it_prima``.  The unambiguous masculine
-# "primo" still folds to 1 in the general pass.
-# Italian writes 21..99 as ONE word: the tens word takes the unit directly,
-# dropping its final vowel before "uno" and "otto" ("ventuno", "ventotto",
-# "trentuno", "quarantotto") and stressing a final "tre" ("ventitré").
-# ``extract_number_it`` reads every one of them, but the run set seeded from
-# the number vocabulary carries only the separate tens and units, so
-# "alle ventuno" (at twenty-one) never folded.  Wiktionary: ventuno,
-# ventitré, ventotto, trentuno.
-_IT_TENS = {"venti": 20, "trenta": 30, "quaranta": 40, "cinquanta": 50,
-            "sessanta": 60, "settanta": 70, "ottanta": 80, "novanta": 90}
-_IT_UNITS = ["uno", "due", "tre", "quattro", "cinque", "sei", "sette",
-             "otto", "nove"]
-
-
-def _it_fused_compounds():
-    words = set()
-    for tens in _IT_TENS:
-        for unit in _IT_UNITS:
-            stem = tens[:-1] if unit in ("uno", "otto") else tens
-            words.add(stem + unit)
-            if unit == "tre":
-                words.add(stem + "tré")
-    return frozenset(words)
-
-
-def _read_it(text, ordinals=True):
-    # the generic Romance reader refuses the fused compounds; Italian's own
-    # wrapper reads them ("ventuno" == 21)
-    from ovos_number_parser.numbers_it import extract_number_it
-    return extract_number_it(text, ordinals=ordinals)
-
-
-_fold_it_base = _romance_prepass_fold(
-    "it", {"un", "uno", "una", "milioni", "miliardi", "mila", "prima"},
-    reader=_read_it, extra_numwords=_it_fused_compounds(),
-    proclitics=frozenset({"l", "un", "d", "dell", "all", "nell", "dall",
-                          "sull", "quest", "quell", "c"}),
-    phrases=_IT_PHRASES,
-    extra_homograph=_IT_TEEN_HOMOGRAPH,
-    extra_ordinals=_IT_COMPOUND_ORDINALS)
-
-
-def _split_it_fused_mila(tokens):
-    """Split Italian's fused round-thousand spelling ("duemila", "diecimila")
-    into the multiplier and the scale particle ("due"/"dieci", "mila"), so the
-    existing ``[NUM] mila`` composition in ``nseries._read_scale`` binds it
-    exactly as it already binds the space-separated "due mila".  The prefix is
-    validated through ``extract_number_it`` itself -- not a hand-listed table --
-    so it generalises to every multiplier the backend understands and cannot
-    mis-split an unrelated word (the only Italian surface ending in "mila" is
-    the bare scale word "mila", excluded here)."""
-    from ovos_number_parser.numbers_it import extract_number_it
-    out = []
-    changed = False
-    for t in tokens:
-        if not t.is_number and t.text.endswith("mila") and t.text != "mila":
-            prefix = t.text[:-4]
-            val = extract_number_it(prefix, ordinals=False) if prefix else False
-            if isinstance(val, (int, float)) and val:
-                cs, ce = t.char_start, t.char_end
-                p_end = cs + len(prefix) if cs is not None else None
-                m_start = ce - 4 if ce is not None else None
-                out.append(Token(text=prefix, raw=prefix, index=0,
-                                 char_start=cs, char_end=p_end))
-                out.append(Token(text="mila", raw="mila", index=0,
-                                 char_start=m_start, char_end=ce))
-                changed = True
-                continue
-        out.append(t)
-    return _reindex(tuple(out)) if changed else tokens
-
-
-def fold_it(tokens):
-    return _license_it_prima(_fold_it_base(_split_it_fused_mila(tokens)))
-
-
-# deep-time SCALE-frame licensing: "un miliardo/un bilione di anni fa"
-fold_it = _with_scale_frame(fold_it, "it", frozenset({"un", "uno", "una"}))
 
 
 # -- Romanian ---------------------------------------------------------------
@@ -1543,19 +820,16 @@ fold_ast = _romance_prepass_fold(
 # running prose on ast.wikipedia: "a la una de la madrugada"), and the article
 # only where it heads a scale frame ("hai un millón d'anos").  The blanket
 # blacklist read it as the article everywhere, so the feminine hour never
-# folded.  Same treatment as es/gl/ca.
+# folded.
 fold_ast = _with_scale_frame(fold_ast, "ast", frozenset({"un", "una"}),
                              million_extra=frozenset({"millones", "millon",
                                                       "millón"}))
 
 
-# The hour-letter clock is written in all three of these languages, but only
-# where a clock marker already announces one: "alle 21h30", "ore 21h30",
-# "la ora 21h30", "a les 21h30".  Each marker set is that locale's own
+# The hour-letter clock is written in both of these languages, but only
+# where a clock marker already announces one: "la ora 21h30", "a les 21h30".  Each marker set is that locale's own
 # marker_at and marker_oclock surfaces, so the notation folds exactly where
 # the grammar already reads a clock; a bare "21h30" stays unread, and the
 # phrase returns nothing rather than the hour alone with "h30" stranded.
-fold_it = with_marked_h_clock(
-    fold_it, {"alle", "all", "alla", "a", "ad", "ore", "ora"})
 fold_ro = with_marked_h_clock(fold_ro, {"la", "ora", "ore"})
 fold_ast = with_marked_h_clock(fold_ast, {"a", "les", "la", "hores", "hora"})

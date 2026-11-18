@@ -31,9 +31,11 @@ from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
 
 #: chronologia locale -> numtag language.  chronologia's ``pt`` locale is
-#: European Portuguese.  A region tag goes to numtag as it is: ``pt-BR`` reads
-#: the Brazilian lexicon, whose short scale makes "dois bilhões" 2*10^9.
-NUMTAG_LANGS = {"pt": "pt-PT", "en": "en"}
+#: European Portuguese and its ``fr`` locale the French of France.  A region
+#: tag goes to numtag as it is: ``pt-BR`` reads the Brazilian lexicon, whose
+#: short scale makes "dois bilhões" 2*10^9, and ``fr-BE`` reads "septante".
+NUMTAG_LANGS = {"pt": "pt-PT", "en": "en", "es": "es", "gl": "gl", "ca": "ca",
+                "it": "it", "fr": "fr-FR"}
 
 _LOCALE_DIR = Path(__file__).resolve().parent.parent / "locale"
 

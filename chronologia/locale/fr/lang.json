@@ -235,8 +235,9 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_romance:fold_fr",
-  "post_hook": "chronologia.extract.numfold_romance:fold_fr_hour_length",
+  "hook": "chronologia.extract.numlayer_fr:fold_fr",
+  "pre_hook": "chronologia.extract.numlayer_fr:split_elisions",
+  "post_hook": "chronologia.extract.numlayer_fr:fold_fr_hour_length",
   "base_grammar": {
     "marker_position": "post",
     "override": {

@@ -3,13 +3,13 @@
 mirroring the English/German defect, PLUS a French-specific wrinkle: the
 fused idiom vocabulary ("apres demain"/"avant hier", the space-spelled
 sibling of the hyphenated "apres-demain"/"avant-hier") folds the two words
-into ONE token before the matcher ever runs (``numfold_romance._FR_PHRASES``
-via ``_collapse_phrase``, re-applied by the generic multiword-vocab merge in
+into ONE token before the matcher ever runs (``numlayer_fr._day_phrases``,
+re-applied by the generic multiword-vocab merge in
 ``pipeline.merge_multiword``), so "apres"/"avant" was never even available
 as a separate directional-marker token for the numeral-scaled offset to
 bind -- worse than the bare idiom-vs-offset overlap collision en/de have.
 
-FIX: both fusion sites (``numfold_romance._collapse_phrase`` and
+FIX: both fusion sites (``numlayer_fr._day_phrases`` and
 ``pipeline.merge_multiword``) hold back collapsing "apres demain"/"avant
 hier" specifically when a ``[NUM] UNIT`` pre-amble ("deux jours") heads
 them -- in that shape "apres"/"avant" is the offset's directional MARKER,
