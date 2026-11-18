@@ -110,7 +110,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_romance:fold_an",
+  "hook": "chronologia.extract.numlayer_an:fold_an",
   "base_grammar": {
     "marker_position": "post"
   }

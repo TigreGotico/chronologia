@@ -95,7 +95,6 @@ def test_night_band_surfaces(text, hour):
 
 @pytest.mark.parametrize("text", ["a uèch oras", "a uèit oras", "a uòch oras"])
 def test_eight_oclock_spelling_variants(text):
-    # "uèch" is the only spelling ovos_number_parser.numbers_oc reads;
-    # "uèit"/"uòch" are attested variants folded via the new word_map
-    # pre-pass in numfold_romance.py's fold_oc.
+    # "uèch", "uèit" and "uòch" are attested spellings of eight; numtag
+    # reads all three.
     assert start(text) == moved(AstroDate(2017, 6, 28, 8, 0), ANCHOR)

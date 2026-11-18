@@ -1,10 +1,10 @@
 """German numbers read through numtag.
 
-A German number is one compound word ("dreiundzwanzig"), a spelled year is one
-word ("zweitausendfünfundzwanzig"), and the clock fractions "halb", "viertel"
-and "dreiviertel" stay words the clock grammar reads.  Every expected value is
-written by hand or computed with ``relativedelta`` / ``timedelta`` from the
-anchor.
+A German number is one compound word ("dreiundzwanzig"), a spelled year is
+one word ("zweitausendfünfundzwanzig"), and the clock fractions "halb",
+"viertel" and "dreiviertel" stay words the clock grammar reads. Every
+expected value is written by hand or computed with ``relativedelta`` /
+``timedelta`` from the anchor.
 """
 import pytest
 from dateutil.relativedelta import relativedelta

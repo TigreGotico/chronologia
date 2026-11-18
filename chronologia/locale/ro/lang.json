@@ -208,7 +208,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_romance:fold_ro",
+  "hook": "chronologia.extract.numlayer_ro:fold_ro",
   "base_grammar": {
     "override": {
       "rel_period": [

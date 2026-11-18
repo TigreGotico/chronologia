@@ -11,7 +11,7 @@ English and Portuguese read their numbers through numtag
 fold does not share a family engine with another language (``fa``, ``id``,
 ``kab``, ``ms``), and the ``_make_germanic_fold``/``_lazy_germanic_fold``
 single-extractor engine that ``numfold_germanic`` and ``numfold_turkic`` also
-use.  The Romance family lives in ``numfold_romance``, the Continental/North
+use.  The Romance token passes live in ``numfold_romance``, the Continental/North
 Germanic family in ``numfold_germanic``, the Turkic family in
 ``numfold_turkic``; the Slavic, Semitic, Baltic, Indo-Aryan and agglutinative
 families each have their own sibling module.
