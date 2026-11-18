@@ -744,6 +744,21 @@ class ConstructionMatcher:
                                      and tokens[start - 1].text
                                      not in self.spec.named_days))):
                         continue
+                    # After a noun, "de" before a word that is also a day word
+                    # joins the noun to that day: "las alarmas de mañana" is
+                    # tomorrow's alarms.  The list is a locale fact
+                    # (``marker_daypart_after_noun.voc``).
+                    if (name == "daypart_ref" and "REL_MARKER" not in slots
+                            and tokens[start].text
+                            in self.spec.connectors.get(
+                                "daypart_after_noun", frozenset())
+                            and slots["DAYPART"].text in self.spec.named_days
+                            and start > 0
+                            and tokens[start - 1].text
+                            not in self.spec.weekdays
+                            and tokens[start - 1].text
+                            not in self.spec.named_days):
+                        continue
                     # "friday, next week is busy": a weekday and a relative
                     # week in different clauses are two mentions, not one
                     # day of the shifted week.
