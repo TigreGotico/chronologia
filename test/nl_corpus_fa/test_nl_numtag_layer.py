@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 
 import pytest
 
+from chronologia.extract import extract_duration
+
 from ._corpus import ANCHOR, ad, start
 
 
@@ -27,3 +29,11 @@ def test_count(text, days):
 ])
 def test_spelled_year(text, year):
     assert start(text) == ad(datetime(year, 1, 1))
+
+
+def test_compound_minutes_keep_the_tens():
+    # "چهل و پنج" is 40 + 5 = 45 minutes, not the 5 of its last word
+    got = extract_duration("طول قرار ملاقاتم را به چهل و پنج دقیقه کوتاه کن", "fa")
+    assert got is not None
+    assert got[0] == timedelta(minutes=45)
+    assert got[1] == "طول قرار ملاقاتم را به کوتاه کن"
