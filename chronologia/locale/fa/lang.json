@@ -110,6 +110,8 @@
     "bare_year_min_digits": 4
   },
   "hook": "chronologia.extract.numfold:fold_fa",
+  "pre_hook": "chronologia.extract.numlayer_fa_words:fuse_spaced_weekdays",
+  "post_hook": "chronologia.extract.numlayer_fa_words:mark_verb_prefix",
   "quantifiers": {
     "1": [
       "یک"
