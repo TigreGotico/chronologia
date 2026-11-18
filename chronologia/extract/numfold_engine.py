@@ -47,8 +47,7 @@ _LITERAL = re.compile(
 
 
 def extent(run) -> dict:
-    """The character extent of ``run``, as ``Token`` keywords: a token built
-    from a run of written tokens covers what was written."""
+    """``Token`` keywords for the character extent of ``run``."""
     if run[0].char_start is None or run[-1].char_end is None:
         return {}
     return {"char_start": run[0].char_start, "char_end": run[-1].char_end}

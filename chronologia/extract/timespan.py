@@ -1434,8 +1434,7 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             if new_right is not None:
                 right, right_lent = new_right, True
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
-    # endpoint's trailing meridiem so both read on the same clock; a slice
-    # with no number in it is no hour and borrows nothing
+    # endpoint's trailing meridiem so both read on the same clock
     if (left is None and right is not None
             and any(t.is_number or t.mention is not None for t in left_tok)):
         merid = _trailing_meridiem(right_tok, spec)
