@@ -36,7 +36,8 @@ from chronologia.extract.numfold_engine import reindex
 #: short scale makes "dois bilhões" 2*10^9, and ``fr-BE`` reads "septante".
 NUMTAG_LANGS = {"pt": "pt-PT", "en": "en", "es": "es", "gl": "gl", "ca": "ca",
                 "it": "it", "fr": "fr-FR", "de": "de", "nl": "nl", "da": "da",
-                "sv": "sv"}
+                "sv": "sv", "et": "et", "fi": "fi", "hu": "hu", "eu": "eu",
+                "tr": "tr", "az": "az"}
 
 _LOCALE_DIR = Path(__file__).resolve().parent.parent / "locale"
 
@@ -56,8 +57,13 @@ def mentions(text: str, lang: str) -> Tuple[NumberMention, ...]:
     numerals are left out too: :mod:`numfold_roman` reads one only next to a
     century word or after a year marker, so a bare "MMXX" stays a word.
     """
-    return tuple(m for m in tag_numbers(text, NUMTAG_LANGS.get(lang, lang))
-                 if m.form in (Form.WORDS, Form.MIXED))
+    try:
+        found = tag_numbers(text, NUMTAG_LANGS.get(lang, lang))
+    except IndexError:
+        # numtag 0.15.3a1 raises on a number and a joiner at the end of
+        # the text ("zwei und", "két és").  The text then reads no number.
+        return ()
+    return tuple(m for m in found if m.form in (Form.WORDS, Form.MIXED))
 
 
 #: The punctuation that ends a clause.  A cue before it is no cue for a

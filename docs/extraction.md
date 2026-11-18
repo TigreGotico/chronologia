@@ -1128,12 +1128,14 @@ third week". This pass folds each spelled number into one digit token, so a
 `DAY`/`YEAR`/`ORD` slot binds the same whether the writer typed `5` or
 `five`.
 
-For Catalan, Danish, Dutch, English, French, Galician, German, Italian, Portuguese, Spanish and Swedish the numbers come from **numtag**
+For Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Hungarian, Italian, Portuguese, Spanish, Swedish and Turkish the numbers come from **numtag**
 (`numlayer.py`). `pretokens` tags the input text once, and each token inside
 a number mention carries that mention beside its word. The language fold
 (`numlayer_en.py`, `numlayer_pt.py`, `numlayer_de.py`, `numlayer_nl.py`,
-`numlayer_da.py`, `numlayer_sv.py`, and `numlayer_ca.py` and its Romance
-siblings over `numlayer_romance.py`) names the number words that the date
+`numlayer_da.py`, `numlayer_sv.py`, `numlayer_ca.py` and its Romance
+siblings over `numlayer_romance.py`, `numlayer_agglutinative.py` for Estonian,
+Finnish, Hungarian and Basque, and `numlayer_turkic.py` for Turkish and
+Azerbaijani) names the number words that the date
 grammar reads as words in their position: `half`, `quarter` and `media` in
 a clock (German `halb`, `viertel`), `moins` in "dix heures moins dix",
 `million` and `milhões` before a year word in deep time, `segunda` as
@@ -1838,7 +1840,7 @@ The vocabulary files are loaded through **ovos-spec-tools**, the shared
 `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are
 folded to digits before matching, so a slot binds the same whether the
 writer typed `5` or `five`. **numtag** reads the numbers of
-Catalan, Danish, Dutch, English, French, Galician, German, Italian, Portuguese, Spanish and Swedish; **ovos-number-parser** reads the other languages.
+Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Hungarian, Italian, Portuguese, Spanish, Swedish and Turkish; **ovos-number-parser** reads the other languages.
 
 To add a language, create `chronologia/locale/<code>/`, translate the `.voc`
 surface forms, and write a `lang.json` that sets the conventions and lists
