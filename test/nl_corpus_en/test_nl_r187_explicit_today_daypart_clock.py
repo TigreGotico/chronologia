@@ -13,8 +13,8 @@ straight to 24-hour form, bypassing the ambiguous-hour roll rule entirely.
 The fix pins the day-part+clock composition to the day-part's own resolved
 day (today) whenever the day-part is explicitly "this <daypart>" or a bare
 word lexically fused with today ("tonight"); a genuinely bare, non-explicit
-day-part ("evening at 3", no "this"/"tonight") keeps the clock's own
-roll-to-tomorrow rule untouched (see test_nl_r117_daypart_clock_meridiem.py).
+day-part ("evening at 3", no "this"/"tonight") takes the next such time
+(see test_nl_r117_daypart_clock_meridiem.py).
 
 Anchor: Friday 2026-08-14 10:00 -- every hour 1..12 is tested so the fixed
 composition is exercised across the whole PM shift (hours < 10 used to
@@ -83,13 +83,16 @@ def test_unambiguous_forms_unaffected(text, hour):
     assert r.remainder == ""
 
 
-def test_bare_non_explicit_daypart_still_rolls_forward():
-    """"evening at 3" (no "this"/"tonight") keeps the clock's own
-    roll-to-tomorrow rule -- the documented R117 convention, untouched by
-    this fix."""
+def test_bare_non_explicit_daypart_takes_the_next_such_time():
+    """"evening at 3" (no "this"/"tonight") at 10:00 is 15:00 the same day,
+    the next time that matches; at 16:00 it is 15:00 the next day."""
     r = _p("evening at 3")
     assert r is not None
     s = r.span.start
+    assert (s.year, s.month, s.day, s.hour) == (2026, 8, TODAY, 15)
+    late = parse("evening at 3", __import__("datetime").datetime(
+        2026, 8, 14, 16, 0))
+    s = late.span.start
     assert (s.year, s.month, s.day, s.hour) == (2026, 8, 15, 15)
 
 
