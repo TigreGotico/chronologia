@@ -30,7 +30,8 @@ def test_an_open_range_up_to_a_weekday():
 def test_an_open_range_before_a_weekday():
     s, e = start_end("ก่อน วันจันทร์")
     assert s == ad(ANCHOR)
-    assert e == ad(__import__("datetime").datetime(2027, 5, 18))
+    # ruling 29: "before X" ends where X starts, Monday 17 May 2027
+    assert e == ad(__import__("datetime").datetime(2027, 5, 17))
 
 
 def test_a_counted_offset_after_a_weekday_reads_unspaced():

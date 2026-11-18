@@ -2,7 +2,7 @@
 
 A bare "after X" names an open future from the end of X: a ``DateSpan``
 with ``open_end``, never X itself.  "avant X" (before X)
-is the open range from now to the end of X, as en "before may 13" is.
+is the range from now to the start of X, as en "before may 13" is (ruling 29).
 
 The French date takes its article, "le 13 mai", so the article belongs to
 the date and the marker is the only word left over.  The gold is plain date
@@ -30,10 +30,10 @@ def test_after_a_date_is_open_as_in_english(fr, en, start):
 
 
 @pytest.mark.parametrize("text, end", [
-    ("avant le 13 mai", datetime(2027, 5, 14)),
-    ("avant le 1er juin", datetime(2027, 6, 2)),
+    ("avant le 13 mai", datetime(2027, 5, 13)),
+    ("avant le 1er juin", datetime(2027, 6, 1)),
 ])
-def test_before_a_date_runs_from_now_to_its_end(text, end):
+def test_before_a_date_runs_from_now_to_its_start(text, end):
     span, rest = parse(text, ANCHOR)
     assert (span.start, span.end) == (ANCHOR, end)
     assert rest == ""

@@ -3,8 +3,8 @@
 "after may 13" is the open span from the end of 13 May onward, with no end.
 "after the 13th of may" is the same reference with an article, so it reads
 the same, not as 13 May with "after" left over.
-"before the 13th of may" is the open range from now to the end of 13 May, as
-"before may 13" is.  Anchor 16 November 2026: the next 13 May is in 2027.
+"before the 13th of may" is the range from now to the start of 13 May, as
+"before may 13" is (ruling 29: "before X" ends when X begins).  Anchor 16 November 2026: the next 13 May is in 2027.
 """
 from datetime import datetime
 
@@ -28,9 +28,9 @@ def test_after_the_date_is_open_from_its_end(text):
 
 
 @pytest.mark.parametrize("text", ["before may 13", "before the 13th of may"])
-def test_before_the_date_runs_from_now_to_its_end(text):
+def test_before_the_date_runs_from_now_to_its_start(text):
     span, rest = parse(text, ANCHOR)
-    assert (span.start, span.end) == (ANCHOR, datetime(2027, 5, 14))
+    assert (span.start, span.end) == (ANCHOR, datetime(2027, 5, 13))
     assert rest == ""
 
 
@@ -42,5 +42,5 @@ def test_before_the_date_runs_from_now_to_its_end(text):
 ])
 def test_before_with_a_connector_leaves_nothing(lang, text):
     span, rest = extract_timespan(text, lang, ANCHOR)
-    assert (span.start, span.end) == (ANCHOR, datetime(2027, 5, 14))
+    assert (span.start, span.end) == (ANCHOR, datetime(2027, 5, 13))
     assert rest == ""

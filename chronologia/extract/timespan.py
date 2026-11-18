@@ -2267,10 +2267,13 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
     christmas") leaves "for" stranded beside an otherwise-complete "jul"
     match, which is exactly the shape this closes.
 
-    "before X" mirrors the "until X" open-range binding EXACTLY: ``[now, X's
-    end)`` when X's end is in the FUTURE. When it is not (an explicit past
-    date, "before easter 2020"), the shape is recognised but contradictory --
-    refused, never silently reinterpreted as a bare "X" with "before" dropped.
+    "before X" is ``[now, X's start)`` when X starts in the FUTURE: "before"
+    means "earlier than" (Wiktionary, "before", preposition: "Earlier than
+    (in time)."), so X itself is not inside the span. "until X" keeps X's
+    end. When X does not start after now (an explicit past date, "before
+    easter 2020", or a day already begun), the shape is recognised but
+    contradictory -- refused, never silently reinterpreted as a bare "X" with
+    "before" dropped.
 
     "after X" is the open span from the end of X onward: "after monday" said
     on a Saturday starts at 00:00 on Tuesday and has no end. It is a
@@ -2310,8 +2313,8 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
                 return "veto"
             return (DateSpan(span.end, span.end, span.basis, open_end=True),
                     set(consumed) | set(range(0, j)))
-        if span.end > now:
-            return DateSpan(now, span.end), set(consumed) | set(range(0, j))
+        if span.start > now:
+            return DateSpan(now, span.start), set(consumed) | set(range(0, j))
         return "veto"
     return None
 
@@ -4529,10 +4532,13 @@ def extract_candidates(
         value = res.value
         if id(match) == primary:
             # a bare "after X" or "before X": the primary is X, and the
-            # answer extract_timespan gives is the span the marker binds
+            # answer extract_timespan gives is the span the marker binds,
+            # or none when it refuses the phrase
             bare_dir = _bare_direction_span(tokens, value, consumed,
                                             engine.spec, anchor)
-            if bare_dir not in (None, "veto"):
+            if bare_dir == "veto":
+                continue
+            if bare_dir is not None:
                 value, consumed = bare_dir
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])

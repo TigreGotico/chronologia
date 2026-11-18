@@ -28,15 +28,18 @@ def test_bare_before_binds_span():
     r = _span("prije božića")
     assert r is not None
     assert r[0].start == _A
-    assert r[0].end == datetime(2026, 12, 26)
+    # ruling 29: "before X" ends when X begins, 25 December 00:00
+    assert r[0].end == datetime(2026, 12, 25)
     assert r.remainder == ""
 
 
-def test_bare_before_mirrors_until():
+def test_bare_before_ends_where_until_ends_on_the_day_before():
+    # ruling 29: "before X" stops when X begins; "until X" takes X in
     before = _span("prije božića")
     until = _span("do božića")
-    assert before is not None and until is not None
-    assert before[0] == until[0]
+    assert before[0].start == until[0].start
+    assert (before[0].end, until[0].end) == (datetime(2026, 12, 25),
+                                             datetime(2026, 12, 26))
 
 
 def test_bare_after_is_open_from_the_end_of_the_holiday():

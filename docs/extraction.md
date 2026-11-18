@@ -307,6 +307,10 @@ per-language range markers, so "bis freitag" / "seit 2010" (de), "jusqu'à
 vendredi" / "depuis 2010" (fr), "até sexta-feira" / "desde 2010" (pt) and
 "hasta viernes" / "desde 2010" (es) behave the same way.
 
+A bare "before X" runs from now to the start of X, so X itself is not in the
+span: "before christmas" said in September ends at 25 December, 00:00, where
+"until christmas" ends at 26 December, 00:00.
+
 A bare "after X" names a span with a start and no end: the time from the end
 of the next X onward. The span has `open_end` set and stores its start in both
 endpoints, so a consumer that needs an instant takes `span.start`:

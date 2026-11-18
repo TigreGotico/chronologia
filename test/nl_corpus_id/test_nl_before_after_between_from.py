@@ -34,7 +34,8 @@ def test_sebelum_future_year_binds_open_range():
     assert r is not None
     assert r[0].start == AstroDate(ANCHOR.year, ANCHOR.month, ANCHOR.day,
                                    ANCHOR.hour, ANCHOR.minute)
-    assert r[0].end == AstroDate(2031, 1, 1)
+    # ruling 29: "before X" ends where X starts
+    assert r[0].end == AstroDate(2030, 1, 1)
     assert r.remainder == ""
 
 
