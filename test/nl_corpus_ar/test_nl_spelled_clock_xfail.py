@@ -33,7 +33,8 @@ def _clk(h, mi=0):
 @pytest.mark.parametrize("text,h", [
     ("الساعة الثامنة صباحا", 8),
     ("التاسعة صباحا", 9),
-    ("الساعة الثامنة", 8),
+    # no part of the day: the next eight after 13:04 is 20:00 (ruling 23)
+    ("الساعة الثامنة", 20),
     ("الثامنة مساء", 20),
 ])
 def test_spelled_clock_hour(text, h):

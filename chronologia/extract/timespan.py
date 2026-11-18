@@ -4157,10 +4157,12 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     resolves anywhere in the utterance, even one the reading leaves over ("at
     10 o'clock in the morning").  Speech recognition writes a spoken "three
     thirty" as "3:30", so a digit clock h:mm with an hour 1 to 11 and no
-    leading zero reads the same way; "03:30", "12:30", "15:30" and an hour
-    written with the letter "h", a dotted clock and a clock folded from spelled
-    numbers are as written.  The word "today" names no
-    part of the day, so "at 3:30 today" takes its reading from the same day;
+    leading zero reads the same way.  So does a clock folded from spelled
+    words in a language with the ``spelled_clock_lone_hour`` convention (ar
+    "الساعة السادسة والنصف") when no part of the day is in its words.  "03:30",
+    "12:30", "15:30", an hour written with the letter "h", a dotted clock and
+    any other folded clock are as written.  The word "today" names no part of
+    the day, so "at 3:30 today" takes its reading from the same day;
     any other day word keeps the written hour.  24-hour hours are untouched,
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
@@ -4195,10 +4197,17 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
                     and tokens[hour.index + 1].text == "h")):
             return res
     elif (clock is None or not _DIGIT_CLOCK.fullmatch(clock.raw)
-          or clock.char_start is None or text is None
-          or unicodedata.normalize(
-              "NFKC", text[clock.char_start:clock.char_end]).lower() != clock.raw):
+          or clock.char_start is None or text is None):
         return res
+    else:
+        written = text[clock.char_start:clock.char_end]
+        if unicodedata.normalize("NFKC", written).lower() != clock.raw:
+            words = written.lower().split()
+            if (not spec.conventions.spelled_clock_lone_hour
+                    or any(ch.isdigit() for ch in written)
+                    or any(w in spec.dayparts or w in spec.meridiems
+                           for w in words)):
+                return res
     if clock is not None and any(t.text.replace(".", "") in ("am", "pm")
                                  for t in tokens):
         # a locale with no am/pm vocabulary leaves the word over

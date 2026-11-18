@@ -61,9 +61,12 @@ def test_spelled_hour_x_daypart(hour_word, h12, part, cls):
 
 @pytest.mark.parametrize("hour_word,h12", list(_HOURS.items()))
 def test_spelled_hour_after_oclock_marker(hour_word, h12):
-    """الساعة (o'clock) alone licenses the bare spelled hour -> H:00, no
-    meridiem shift."""
-    dt = ANCHOR.replace(hour=h12, minute=0, second=0, microsecond=0)
-    if dt < ANCHOR:
-        dt += timedelta(days=1)
+    """الساعة (o'clock) alone licenses the bare spelled hour.  Hours 1 to 11 take
+    the next of their two twelve-hour readings after the anchor (ruling 23);
+    twelve is as written."""
+    options = [ANCHOR.replace(hour=h12 % 24, minute=0, second=0, microsecond=0)
+               + timedelta(hours=12 * k) for k in range(4)]
+    if h12 == 12:
+        options = options[:1] + [options[0] + timedelta(days=1)]
+    dt = min(t for t in options if t >= ANCHOR)
     assert start("الساعة %s" % hour_word) == ad(dt)

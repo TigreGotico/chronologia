@@ -278,6 +278,11 @@ class Conventions:
     # resolve normally.  A word-order fact, not logic; a locale whose numeral
     # precedes its noun leaves it off and is untouched.
     duration_count_follows_unit: bool = False
+    # The fold writes a spelled clock as one "h:mm" token (ar "الساعة السادسة
+    # والنصف", ta "ஒன்பதரை மணி"), so a spelled clock and its digit twin read
+    # alike under the lone-hour rule.  Off by default: a language whose fold
+    # keeps the part of the day inside the token reads the clock as written.
+    spelled_clock_lone_hour: bool = False
     # "at" surfaces that carry NO fused/agreeing article -- the bare
     # preposition, as opposed to a form that already bakes the article in
     # ("la"/"las"/"al" for Spanish, "à"/"às"/"ao" for Portuguese). A bare-hour
