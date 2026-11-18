@@ -802,8 +802,16 @@ class Resolver:
         rel_tok = match.slots.get("REL_MARKER")
         off = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
         day = AstroDate.from_datetime(_midnight(anchor) + timedelta(days=off))
-        return Resolution(_daypart_band(day, name, after_evening=True),
-                          self._consumed(match))
+        band = _daypart_band(day, name, after_evening=True)
+        if rel_tok is not None and rel_tok.text in self.spec.upcoming:
+            # "komende avond": the first band that has not begun.
+            day = AstroDate.from_datetime(_midnight(anchor))
+            band = _daypart_band(day, name, after_evening=True)
+            if band.start <= AstroDate.from_datetime(anchor):
+                day = AstroDate.from_datetime(_midnight(anchor)
+                                              + timedelta(days=1))
+                band = _daypart_band(day, name, after_evening=True)
+        return Resolution(band, self._consumed(match))
 
     def _named_day_offset(self, match, anchor, step):
         """"the day after/before <named day>": one day past/short of a named
@@ -1393,6 +1401,9 @@ class Resolver:
         week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
         wknd_idx = self.conventions.weekend_start
         first = week_start + timedelta(days=(wknd_idx - start_idx) % 7)
+        if rel_tok is not None and rel_tok.text in self.spec.upcoming:
+            # "komend weekend": the first weekend that has not begun.
+            rel = 0 if first > base else 1
         first = first + timedelta(weeks=rel)
         s = AstroDate.from_datetime(first)
         return Resolution(DateSpan(s, s + timedelta(days=2)),
