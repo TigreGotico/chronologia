@@ -123,7 +123,7 @@ that has passed.
 
 **32. A clock still ahead today is today.** "at 12:30 am" said at 00:00:30 is 00:30 the same day, as ruling C reads the next occurrence.
 
-**33. A bare "after X" is the open span that starts when X ends.** "after monday", "depois de segunda", "nach Montag" name a time even with no clock: the span from the end of the next X onward, with no end. A phrase that names a time never reads no value just because the end is open; consumers that need an instant take the span's start. *Not yet implemented. No issue yet.*
+**33. A bare "after X" is the open span that starts when X ends.** "after monday", "depois de segunda", "nach Montag" name a time even with no clock: the span from the end of the next X onward, with no end. A phrase that names a time never reads no value just because the end is open; consumers that need an instant take the span's start. *Not yet implemented. Tracked in [#1098](https://github.com/TigreGotico/chronologia/issues/1098).*
 
 **34. A lone numeral is a candidate, not a reading.** A numeral with no clock marker, no unit and no year cue (da "20", nl "2", "2400") is not a date in `extract_timespan`, as ruling 2 keeps a bare number from being a clock. `extract_candidates` lists its readings ranked low: an hour for 0 to 24, a day of the month for 1 to 31, and a year for a four-digit numeral. A consumer that asked "when?" can take them. *Not yet implemented. Tracked in [#1032](https://github.com/TigreGotico/chronologia/issues/1032) and [#1035](https://github.com/TigreGotico/chronologia/issues/1035).*
 
