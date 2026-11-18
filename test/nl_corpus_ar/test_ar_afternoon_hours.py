@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
-"""An hour followed by العصر or الظهر is a pm hour, and "الساعة <hour>" alone is
-a clock.
+"""An hour followed by العصر, الظهر, المغرب or العشاء is a pm hour, one followed
+by الصبح or الفجر is an am hour, one followed by الليل is a night hour, and
+"الساعة <hour>" alone is a clock.
 
 Wiktionary عصر: "late afternoon"; ظهر (ظُهْر): "noon, midday" and
 "afternoon, p.m." (after Wehr, A Dictionary of Modern Written Arabic).  Ruling
-27 lets a locale's own pm word beside a clock decide the half, and ruling 17
-gives a lone hour its next twelve-hour reading.  Gold values are hand
+27 lets a locale's own pm word beside a clock decide the half, ruling 36 puts a
+night word in the half that falls in the night, and ruling 17 gives a lone hour
+its next twelve-hour reading.  Wiktionary: صبح "morning"; فجر "dawn, daybreak";
+مغرب "time of sunset", "evening"; عشاء "dusk, nightfall; evening"; ليل
+"nighttime, night".  Gold values are hand
 arithmetic on the anchors: Tuesday 2017-06-27 08:00 and 15:00.
 """
 import pytest
@@ -29,6 +33,14 @@ def _at(day, hour):
     ("الساعة 4 عصرا", _at(27, 16)),
     ("الساعة 2 ظهرا", _at(27, 14)),
     ("الساعة 4 مساء", _at(27, 16)),
+    ("الساعة 7 المغرب", _at(27, 19)),
+    ("الساعة 9 العشاء", _at(27, 21)),
+    ("الساعة 4 الصبح", _at(28, 4)),
+    ("الساعة 11 الصبح", _at(27, 11)),
+    ("الساعة 5 الفجر", _at(28, 5)),
+    ("الساعة 11 الليل", _at(27, 23)),
+    ("الساعة 2 الليل", _at(28, 2)),
+    ("الساعة 12 الليل", _at(28, 0)),
 ])
 def test_an_hour_before_a_pm_word_is_the_pm_hour(text, gold):
     assert start_end(text, EARLY) == gold
@@ -41,6 +53,12 @@ def test_the_definite_and_the_accusative_form_read_alike():
                 == start_end(f"الساعة {hour} عصرا", EARLY))
         assert (start_end(f"الساعة {hour} الظهر", EARLY)
                 == start_end(f"الساعة {hour} ظهرا", EARLY))
+
+
+def test_the_definite_night_word_reads_like_the_accusative():
+    for hour in range(1, 13):
+        assert (start_end(f"الساعة {hour} الليل", EARLY)
+                == start_end(f"الساعة {hour} ليلا", EARLY))
 
 
 def test_a_half_hour_clock_before_alasr_is_pm():
