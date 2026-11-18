@@ -32,6 +32,7 @@ from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
+                                          _candidate_veto,
                                           _lone_spoken_hour,
                                           reads_spoken_hours,
                                           _RANGE_TO, _conn_surfaces,
@@ -676,8 +677,9 @@ def extract_timespans(
         anchor = anchor.replace(tzinfo=None)
     tokens = engine.tokenize(text)
 
+    veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
     scored = list(score_candidates(
-        engine.matcher.match(tokens),
+        engine.matcher.match(tokens, veto),
         lambda m: engine.resolver.resolve(m, anchor, scale_mode), engine.spec))
     scored.sort(key=lambda sc: sc.match.span[0])
     resolved = [(sc.match, sc.resolution) for sc in scored]

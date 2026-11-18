@@ -94,6 +94,10 @@ class Token:
     # this flag is the only record that the next token is a suffix written
     # onto this one, not a separate word ("15 a" with the article "a").
     trailing_hyphen: bool = False
+    # Whether this ``H:MM`` clock literal rewrites a time written with the
+    # hour letter ("20h30").  A sentence reads that spelling as a length as
+    # often as a time, and the literal no longer shows which spelling it was.
+    letter_clock: bool = False
     # Whether this number token was composed from an INDEFINITE ARTICLE deep-time
     # magnitude ("a million years ago", "a hundred thousand years ago") rather
     # than a spoken numeral.  The article form is a colloquial count-from-now

@@ -1434,8 +1434,10 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             if new_right is not None:
                 right, right_lent = new_right, True
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
-    # endpoint's trailing meridiem so both read on the same clock
-    if left is None and right is not None and left_tok:
+    # endpoint's trailing meridiem so both read on the same clock; a slice
+    # with no number in it is no hour and borrows nothing
+    if (left is None and right is not None
+            and any(t.is_number or t.mention is not None for t in left_tok)):
         merid = _trailing_meridiem(right_tok, spec)
         if merid is not None:
             left = endpoint(tuple(left_tok) + (merid,))
@@ -2587,12 +2589,12 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
             and read[-1].text in spec.clock_fractions)
     if tail:
         read = read[:-2]
-    literal = (len(read) == 1 and read[0].char_start is None
+    literal = (len(read) == 1 and read[0].letter_clock
                and _HOUR_LITERAL.fullmatch(read[0].text))
     counted = ((len(read) == 2 and read[0].is_number
                 and read[1].text in oclock)
                or (tail and len(read) == 1 and read[0].is_number
-                   and read[0].char_start is None))
+                   and read[0].letter_clock))
     if not (literal or counted):
         return False
     markers = (spec.connectors.get("hour_statement", frozenset())

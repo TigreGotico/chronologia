@@ -46,6 +46,14 @@ _LITERAL = re.compile(
                                   _tok._NUMDATE_ANY, _tok._CLOCK)))
 
 
+def extent(run) -> dict:
+    """The character extent of ``run``, as ``Token`` keywords: a token built
+    from a run of written tokens covers what was written."""
+    if run[0].char_start is None or run[-1].char_end is None:
+        return {}
+    return {"char_start": run[0].char_start, "char_end": run[-1].char_end}
+
+
 def reindex(tokens) -> Tuple[Token, ...]:
     """Renumber ``Token.index`` so the stream stays contiguous from 0."""
     return tuple(replace(t, index=i) for i, t in enumerate(tokens))
@@ -350,11 +358,14 @@ def collapse_marked_h_clock(tokens, markers) -> Tuple[Token, ...]:
             if (nn is not None and nn.is_number and nn.value is not None
                     and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
                 lit = "%d:%02d" % (int(t.value), int(nn.value))
-                out.append(Token(text=lit, raw=lit, index=0))
+                out.append(Token(text=lit, raw=lit, index=0,
+                                 letter_clock=True,
+                                 **extent(tokens[i:i + 3])))
                 i += 3
                 continue
             lit = "%d:00" % int(t.value)
-            out.append(Token(text=lit, raw=lit, index=0))
+            out.append(Token(text=lit, raw=lit, index=0,
+                             letter_clock=True, **extent(tokens[i:i + 2])))
             i += 2
             continue
         out.append(t)
