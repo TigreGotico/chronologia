@@ -556,9 +556,10 @@ fold_fi = with_ordinals(fold_fi, "fi")
 # The bare ablative telling-time forms (kolmelta, yhdeksältä, ...) drop "kello"
 # and carry -lta/-ltä alone; split them so "at HOUR" binds ("kello" is the fi
 # marker_at surface).  When "kello" is already spoken ("kello kolmelta") the
-# synthetic marker is suppressed so that frame stays byte-identical.
+# synthetic marker is suppressed so that frame stays byte-identical.  "puoli"
+# suppresses it too: "FRACTION HOUR" takes no clock marker.
 fold_fi = _with_bare_case_hour(fold_fi, _FI_ABLATIVE_HOURS, "kello",
-                               skip_before=frozenset({"kello", "klo"}))
+                               skip_before=frozenset({"kello", "klo", "puoli"}))
 # Fold the fused round-thousand spelling ("kaksituhatta neljä" = 2004) instead
 # of dropping the thousands.  The scale word here is the partitive "tuhatta"
 # ("kaksituhatta"); the bare "tuhat"/"tuhatta" = 1000 has an empty prefix and is
