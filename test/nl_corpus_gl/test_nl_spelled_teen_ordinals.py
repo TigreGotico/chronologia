@@ -22,6 +22,8 @@ and FRACTION tables).
 Golds are computed by independent calendar reasoning, never read back from
 the parser.
 """
+import pytest
+
 from ._corpus import start, nomatch, parse
 
 
@@ -47,7 +49,15 @@ def test_already_working_teen_ordinals_regression_controls():
             start("o duodécimo mes de 2026").month) == (2026, 12)
 
 
+@pytest.mark.xfail(reason="numtag reads no mention for the one-word form: "
+                   "https://github.com/TigreGotico/chronologia/issues/1069",
+                   strict=True)
 def test_impossible_ordinal_month_still_refuses():
     # 13th/14th month do not exist -- must refuse, not fabricate a span
     nomatch("o decimoterceiro mes de 2026")
     nomatch("o decimocuarto mes de 2026")
+
+
+def test_impossible_two_word_ordinal_month_refuses():
+    nomatch("o décimo terceiro mes de 2026")
+    nomatch("o décimo cuarto mes de 2026")

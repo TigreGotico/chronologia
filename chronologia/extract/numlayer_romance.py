@@ -174,9 +174,12 @@ def date_words(tokens: Tuple[Token, ...], words: DateWords) -> Claims:
             # "las dos menos cuarto" is 1:45.  After a definite article or
             # before the quarter noun the word is the ordinal ("el cuarto
             # lunes", "cuarto trimestre"), and in a count ("una docena y
-            # media") the half is part of the number
+            # media") the half is part of the number.  The unit of a compound
+            # ordinal is the ordinal too: "o décimo cuarto mes" is the 14th
+            compound = (tok.mention.kind is Kind.ORDINAL and prev is not None
+                        and prev.mention is tok.mention and not _minus(prev))
             if ((prev is None or prev.text not in words.definite)
-                    and nxt not in quarter_nouns
+                    and nxt not in quarter_nouns and not compound
                     and ends_mention(tok)
                     and tok.mention.kind is not Kind.CARDINAL):
                 claimed.add(i)
