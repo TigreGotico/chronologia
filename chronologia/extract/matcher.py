@@ -537,13 +537,30 @@ def _connector_targets(surfaces: frozenset) -> Tuple[frozenset, int]:
     return targets, max(map(len, targets), default=0)
 
 
-def has_alarm_marker(tokens: Tuple[Token, ...], spec: LangSpec) -> bool:
-    """Whether ``tokens`` hold an alarm noun and its preposition
-    (``marker_alarm_at.voc``).  An alarm names one instant, so a slice with
-    one is never the end of a range."""
+def alarm_marker_span(tokens: Tuple[Token, ...],
+                      spec: LangSpec) -> Optional[Tuple[int, int]]:
+    """The first alarm noun with its preposition in ``tokens``
+    (``marker_alarm_at.voc``), as the index of its first token and its length."""
     tokens = tuple(tokens)
-    return any(_connector_span("alarm_at", tokens, i, spec)
-               for i in range(len(tokens)))
+    for i in range(len(tokens)):
+        n = _connector_span("alarm_at", tokens, i, spec)
+        if n:
+            return i, n
+    return None
+
+
+def is_alarm_bare_range(left: Tuple[Token, ...],
+                        spec: LangSpec) -> bool:
+    """Whether the left side of a split at "to" is an alarm marker and one bare
+    number: "alarm for 20" in "alarm for 20 to 8".  An alarm names one instant
+    and the pair is the clock "twenty to eight".  A meridiem, a day word or an
+    article on the left makes it a real range, and a meridiem on the right is
+    handled before this check."""
+    marker = alarm_marker_span(left, spec)
+    if marker is None:
+        return False
+    rest = tuple(left)[sum(marker):]
+    return len(rest) == 1 and rest[0].is_number
 
 
 def _alarm_hour_goes_on(tokens: Tuple[Token, ...], end: int,

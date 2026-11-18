@@ -35,7 +35,8 @@ from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
-                                         has_alarm_marker)
+                                         alarm_marker_span,
+                                         is_alarm_bare_range)
 from chronologia.extract.model import (LangSpec, Resolution, Token)
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
@@ -701,6 +702,15 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     if split is not None:
         p, k = split
         left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
+        # "reminder for 3 to 5 pm": a meridiem at the far end makes the 3 an
+        # hour of the range, so the alarm noun and "for" stay out of the
+        # endpoint reading and go to the remainder
+        alarm = alarm_marker_span(left_tok, spec) \
+            if any(t.text in spec.meridiems for t in right_tok) else None
+        alarm_words = ""
+        if alarm is not None:
+            alarm_words = render_remainder(text, list(left_tok[:sum(alarm)]))
+            left_tok = left_tok[sum(alarm):]
         # a bare "A to B" (no from/between) is only trusted when the left side is
         # not a lone clock fraction word (avoids hijacking "quarter to five") AND
         # the connector is not an ``at``-ambiguous preposition (avoids fabricating
@@ -708,10 +718,12 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         led = bool(lead) or at_between is not None
         left_words = " ".join(t.text for t in left_tok)
         conn_words = " ".join(t.text for t in tokens[p:p + k]).lower()
-        if led or (left_words not in fraction_words
-                   and conn_words not in lead_required):
+        if (led or (left_words not in fraction_words
+                    and conn_words not in lead_required)) \
+                and not is_alarm_bare_range(left_tok, spec):
             prefix = render_remainder(text, list(tokens[:lead_at])) \
                 if lead else ""
+            prefix = (prefix + " " + alarm_words).strip()
             # an explicit lead licenses the bare-hour reading of a numeric
             # endpoint ("from 9 to 5"), which must be tried *before* the
             # generic composition so a borrowed meridiem cannot roll a day.
@@ -914,8 +926,6 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     carries tokens lent by the other endpoint, whose text belongs to that
     endpoint and so must not reach this one's remainder.
     """
-    if has_alarm_marker(sub, engine.spec):
-        return None
     # "now" as an endpoint is the anchor instant: a fixed point, never rolled or
     # year-pulled (kind "dated", pinned).  Wiring it here is what lets "from now
     # to X" / "between now and X" compose as [anchor, X] instead of collapsing to

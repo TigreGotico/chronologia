@@ -49,6 +49,8 @@ CLOCKS = [
     ("alarm for 10 to 11", "en", datetime(2026, 11, 17, 10, 50)),
     ("reminder for 10 to 11", "en", datetime(2026, 11, 17, 10, 50)),
     ("alarm for 7 till 8", "en", datetime(2026, 11, 17, 19, 53)),
+    ("reminder for 10 to noon", "en", datetime(2026, 11, 17, 11, 50)),
+    ("reminder for 7 to midnight", "en", datetime(2026, 11, 17, 23, 53)),
 ]
 
 NO_CLOCK = [
@@ -79,6 +81,37 @@ NO_CLOCK = [
     ("tafel voor 4", "nl"),
     ("mesa para 4", "gl"),
 ]
+
+
+# text, language, first instant, end (one minute past the last instant read)
+RANGES = [
+    ("set a reminder for 3 to 5 pm", "en",
+     datetime(2026, 11, 17, 15, 0), datetime(2026, 11, 17, 17, 1)),
+    ("reminder for 2 to 4 pm", "en",
+     datetime(2026, 11, 17, 14, 0), datetime(2026, 11, 17, 16, 1)),
+    ("reminder for 1 to 3 pm tomorrow", "en",
+     datetime(2026, 11, 18, 13, 0), datetime(2026, 11, 18, 15, 1)),
+    ("reminder for 10 am to noon", "en",
+     datetime(2026, 11, 17, 10, 0), datetime(2026, 11, 17, 12, 1)),
+    ("set a reminder for 9 am to 10 am", "en",
+     datetime(2026, 11, 17, 9, 0), datetime(2026, 11, 17, 10, 1)),
+    ("reminder for 3 pm to 5 pm", "en",
+     datetime(2026, 11, 17, 15, 0), datetime(2026, 11, 17, 17, 1)),
+    ("reminder for tuesday to thursday", "en",
+     datetime(2026, 11, 17), datetime(2026, 11, 20)),
+    ("set a reminder for next monday to friday", "en",
+     datetime(2026, 11, 23), datetime(2026, 11, 28)),
+    ("alarma para las 7 hasta las 8", "es",
+     datetime(2026, 11, 18, 7, 0), datetime(2026, 11, 18, 8, 1)),
+]
+
+
+@pytest.mark.parametrize("text,lang,start,end", RANGES)
+def test_an_explicit_range_after_an_alarm_noun_stays_a_range(text, lang,
+                                                             start, end):
+    found = extract_timespan(text, lang, ANCHOR)
+    assert found.span.start.datetime() == start
+    assert found.span.end.datetime() == end
 
 
 @pytest.mark.parametrize("text,lang,expected", CLOCKS)
