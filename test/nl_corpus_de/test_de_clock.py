@@ -109,7 +109,7 @@ def test_minute_to_past(text, h, mi):
     ("18:45", 18, 45, 0),
 ])
 def test_digit_time(text, h, mi, s):
-    assert start(text) == clk(h, mi, s)
+    assert start(text) == moved(clk(h, mi, s), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 

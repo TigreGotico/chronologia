@@ -1,11 +1,12 @@
-"""Pins that ruling 17 moved: a lone spoken hour takes the next twelve-hour reading.
+"""Pins that rulings 17 and 23 moved: a lone hour takes the next twelve-hour reading.
 
 An hour 1 to 12 said with no am/pm word and no part of the day is whichever of
-h and h + 12 comes next at or after the anchor.  A test that pinned the old
-reading, the spoken hour rolled to tomorrow, wraps its expected value in
-``moved``.  ``moved`` changes the value only for a test listed in
-``ruling17_pins.txt``; every other test, the marked-hour rows among them, keeps
-its expected value.  The new value is date arithmetic on the anchor and the old
+h and h + 12 comes next at or after the anchor (ruling 17), and so is a digit
+clock h:mm with an hour 1 to 11 and no leading zero (ruling 23).  A test that
+pinned the old reading, the hour rolled to tomorrow, wraps its expected value
+in ``moved``.  ``moved`` changes the value only for a test listed in
+``ruling17_pins.txt`` or ``ruling23_pins.txt``; every other test, the
+marked-hour rows among them, keeps its expected value.  The new value is date arithmetic on the anchor and the old
 expected value.  It never reads chronologia.
 """
 import os
@@ -16,7 +17,8 @@ from chronologia.astrodate import AstroDate, DateSpan
 
 _LISTED = frozenset(
     line.rstrip("\n")
-    for line in (Path(__file__).with_name("ruling17_pins.txt")
+    for name in ("ruling17_pins.txt", "ruling23_pins.txt")
+    for line in (Path(__file__).with_name(name)
                  .read_text(encoding="utf-8").splitlines())
     if line)
 

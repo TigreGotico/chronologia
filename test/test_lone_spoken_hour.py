@@ -4,8 +4,9 @@
 An hour 1 to 12 said with no am/pm word and no part of the day is whichever of
 h and h + 12 comes next at or after the anchor: "at 8" said at 15:00 is 20:00,
 and "at 8" said at 06:00 is 08:00.  A day word or a part of the day keeps the
-spoken hour, and so do a digit clock and an hour from 13 to 23.  A numeral with
-no clock word and no clock preposition is no hour.
+spoken hour, and so does an hour from 13 to 23.  A digit clock h:mm with an hour
+from 1 to 11 reads like the spoken hour (test_digit_clock_lone_hour.py).  A
+numeral with no clock word and no clock preposition is no hour.
 
 Every expected instant is worked out by hand from the anchor.
 """
@@ -25,6 +26,7 @@ ONE_THIRTY = datetime(2026, 3, 11, 13, 30)
 # text, language, anchor, expected instant
 LONE_HOURS = [
     ("at 8", "en", AFTERNOON, datetime(2026, 3, 11, 20, 0)),
+    ("at 8:30", "en", AFTERNOON, datetime(2026, 3, 11, 20, 30)),
     ("at 8", "en", MORNING, datetime(2026, 3, 11, 8, 0)),
     ("at 12", "en", AFTERNOON, datetime(2026, 3, 12, 0, 0)),
     ("at 12", "en", MORNING, datetime(2026, 3, 11, 12, 0)),
@@ -49,7 +51,6 @@ KEPT = [
     ("tomorrow at 8", "en", AFTERNOON, datetime(2026, 3, 12, 8, 0)),
     ("at 8 pm", "en", MORNING, datetime(2026, 3, 11, 20, 0)),
     ("at 8 in the morning", "en", AFTERNOON, datetime(2026, 3, 12, 8, 0)),
-    ("at 8:30", "en", AFTERNOON, datetime(2026, 3, 12, 8, 30)),
     ("at 20", "en", AFTERNOON, datetime(2026, 3, 11, 20, 0)),
     ("morgen om 8 uur", "nl", AFTER_NOON, datetime(2017, 6, 28, 8, 0)),
     ("at 0", "en", MORNING, datetime(2026, 3, 12, 0, 0)),
@@ -80,6 +81,13 @@ def test_lone_hour_is_the_next_twelve_hour_reading(text, lang, anchor,
 @pytest.mark.parametrize("text,lang,anchor,expected", KEPT)
 def test_a_marked_hour_keeps_the_spoken_hour(text, lang, anchor, expected):
     assert extract_timespan(text, lang, anchor).span.start.datetime() == expected
+
+
+def test_an_unjoined_morning_word_beside_a_spoken_hour_keeps_the_morning():
+    # "morgens" sits before the lead word, unjoined, and is the locale's am
+    # word: it keeps the spoken hour 6 as the morning, not the evening.
+    found = extract_timespan("morgens um 6", "de", AFTER_NOON)
+    assert found.span.start.datetime() == datetime(2017, 6, 28, 6, 0)
 
 
 @pytest.mark.parametrize("text,lang,anchor,expected", LONE_HOURS)

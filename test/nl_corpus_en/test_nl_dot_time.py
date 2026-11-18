@@ -15,7 +15,8 @@ number/duration reading untouched; the dot is only a clock when something says
 Anchor: Tuesday 2017-06-27 13:04.  ``prefer_future`` rolls a wall time already
 past today to tomorrow.
 """
-from ._corpus import parse, start, nomatch
+from ._corpus import ANCHOR, parse, start, nomatch
+from ruling17 import moved
 
 
 # ---------------------------------------------------------------------------
@@ -48,7 +49,7 @@ def test_train_remainder_survives():
 # regression pins: the colon clock is unchanged, byte-identical
 # ---------------------------------------------------------------------------
 def test_colon_clock_unchanged():
-    for text, hh, mm in [("at 7:42", 7, 42), ("at 07:42", 7, 42)]:
+    for text, hh, mm in [("at 7:42", *moved((7, 42), ANCHOR)), ("at 07:42", 7, 42)]:
         s = start(text)
         assert (s.hour, s.minute) == (hh, mm), f"{text!r} -> {s!r}"
 

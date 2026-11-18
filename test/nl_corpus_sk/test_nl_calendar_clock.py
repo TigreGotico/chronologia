@@ -15,6 +15,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, AstroDate, ad, span, start, start_end, parse
+from ruling17 import moved
 
 
 # -- dates ---------------------------------------------------------------
@@ -62,7 +63,7 @@ def clk(h, mi, s=0):
     ("7:15", 7, 15), ("14:30", 14, 30),
 ])
 def test_digit_time(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == moved(clk(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h", [

@@ -8,6 +8,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start
+from ruling17 import moved
 
 
 def _next_time(h, mi):
@@ -25,4 +26,4 @@ _CASES = [
 
 @pytest.mark.parametrize("text,h,mi", _CASES)
 def test_digit_clock_sweep(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)

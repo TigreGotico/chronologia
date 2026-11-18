@@ -20,6 +20,7 @@ import functools
 import os
 import re
 import threading
+import unicodedata
 from datetime import MAXYEAR, MINYEAR, datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
@@ -4142,7 +4143,10 @@ def reads_spoken_hours(fn):
     return wrapper
 
 
-def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches):
+_DIGIT_CLOCK = re.compile(r"([1-9]|1[01]):[0-5]\d")
+
+
+def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     """A lone spoken hour takes the next of its two twelve-hour readings.
 
     An hour 1 to 12 said with no am/pm word and no part of the day is
@@ -4151,23 +4155,79 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches):
     15:00 is the midnight that follows.  Only a clock that is the whole
     reading is read so, and only when no part of the day or meridiem match
     resolves anywhere in the utterance, even one the reading leaves over ("at
-    10 o'clock in the morning").  A digit clock and an hour written with the
-    letter "h" are untouched, as are 24-hour hours, whatever fraction follows.
+    10 o'clock in the morning").  Speech recognition writes a spoken "three
+    thirty" as "3:30", so a digit clock h:mm with an hour 1 to 11 and no
+    leading zero reads the same way; "03:30", "12:30", "15:30" and an hour
+    written with the letter "h", a dotted clock and a clock folded from spelled
+    numbers are as written.  The word "today" names no
+    part of the day, so "at 3:30 today" takes its reading from the same day;
+    any other day word keeps the written hour.  24-hour hours are untouched,
+    whatever fraction follows.  An am or pm word the locale lists for a half of
+    the day decides that half only when it stands beside the clock, even
+    unjoined: a pm word pins the pm reading, an am or night word keeps the
+    written hour.
     """
-    hour = None if rep is None else rep.slots.get("HOUR")
     if (getattr(_reading, "spoken", False)
-            or anchor is None or hour is None
-            or rep.construction != "clock_time"
-            or set(res.consumed) != set(range(*rep.span))
-            or "ZONE" in rep.slots
-            or not hour.is_number or not 1 <= hour.value <= 12
+            or anchor is None or rep is None
             or any(m.construction == "daypart_ref" or "MERIDIEM" in m.slots
                    for m in matches)
-            or re.search(r"\d\s*[h:]", (hour.raw or "").lower())
-            or (hour.index + 1 < len(tokens)
-                and tokens[hour.index + 1].text == "h")
             or not spec.construction_flags.get(
                 "clock_time", {}).get("prefer_future", False)):
+        return res
+    today = False
+    clock_match = rep
+    if rep.construction == "named_day":
+        # "at 3:30 today": the day word is the representative of the pair
+        clocks = [m for m in matches if m.construction == "clock_time"]
+        today = (len(clocks) == 1 and "DAY_WORD" in rep.slots
+                 and spec.named_days.get(rep.slots["DAY_WORD"].text) == 0)
+        if not today:
+            return res
+        clock_match = clocks[0]
+    if clock_match.construction != "clock_time" or "ZONE" in clock_match.slots:
+        return res
+    hour = clock_match.slots.get("HOUR")
+    clock = clock_match.slots.get("CLOCK")
+    if hour is not None and not today:
+        if (not hour.is_number or not 1 <= hour.value <= 12
+                or re.search(r"\d\s*[h:]", (hour.raw or "").lower())
+                or (hour.index + 1 < len(tokens)
+                    and tokens[hour.index + 1].text == "h")):
+            return res
+    elif (clock is None or not _DIGIT_CLOCK.fullmatch(clock.raw)
+          or clock.char_start is None or text is None
+          or unicodedata.normalize(
+              "NFKC", text[clock.char_start:clock.char_end]).lower() != clock.raw):
+        return res
+    if clock is not None and any(t.text.replace(".", "") in ("am", "pm")
+                                 for t in tokens):
+        # a locale with no am/pm vocabulary leaves the word over
+        return res
+    # Only the first word past the clock's glue words on each side can decide
+    # the half: "tarde" in another clause ("no quiero llegar tarde") means
+    # late.  A word a match covers was read as something else (es "mañana").
+    covered = {i for m in matches for i in range(*m.span)}
+    glue = set().union(*(spec.connectors.get(name, ()) for name in (
+        "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
+        "s")))
+    n = len(tokens)
+    meridiem_words = []
+    for step in (-1, 1):
+        i = clock_match.span[0] - 1 if step < 0 else clock_match.span[1]
+        while 0 <= i < n and tokens[i].text in glue:
+            i += step
+        if 0 <= i < n and tokens[i].index not in covered \
+                and tokens[i].text in spec.meridiems:
+            meridiem_words.append(tokens[i].text)
+    if meridiem_words and (
+            not all(spec.meridiems[w] == 12 for w in meridiem_words)
+            or any(w in spec.night_meridiems for w in meridiem_words)):
+        # an am word, a night word, or a mix keeps the written hour
+        return res
+    pm = bool(meridiem_words)
+    read = set(range(*clock_match.span)) | (set(range(*rep.span))
+                                             if today else set())
+    if set(res.consumed) != read:
         return res
     start = res.value.start
     if start.hour > 12:
@@ -4175,11 +4235,15 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches):
     midnight = anchor.replace(hour=0, minute=0, second=0, microsecond=0)
     tod = timedelta(hours=start.hour % 12, minutes=start.minute,
                     seconds=start.second)
-    wall = min(t for t in (midnight + tod,
-                           midnight + tod + timedelta(hours=12),
-                           midnight + tod + timedelta(days=1))
-               if t >= anchor)
-    moment = AstroDate.from_datetime(wall)
+    options = [midnight + tod + timedelta(hours=12)]
+    if not pm:
+        options.insert(0, midnight + tod)
+    if not today:
+        options.append(options[0] + timedelta(days=1))
+    later = [t for t in options if t >= anchor]
+    if not later:
+        return res
+    moment = AstroDate.from_datetime(min(later))
     return replace(res, value=DateSpan(moment, moment + timedelta(minutes=1),
                                        res.value.basis))
 
@@ -4254,7 +4318,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         return None
     if whole:
         res = _lone_spoken_hour(res, rep, anchor, engine.spec, tokens,
-                                [m for m, _ in resolved])
+                                [m for m, _ in resolved], text)
     consumed = set(res.consumed) | label_consumed
     # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
     # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
@@ -4404,7 +4468,7 @@ def extract_candidates(
                                            anchor, text)
         if win_res is not None:
             win_res = _lone_spoken_hour(win_res, rep, anchor, engine.spec, tokens,
-                                        [m for m, _ in composed])
+                                        [m for m, _ in composed], text)
             consumed_all = set(win_res.consumed) | win_label
             lo, hi = min(consumed_all), max(consumed_all) + 1
             wide = replace(rep, span=(lo, hi))
@@ -4425,7 +4489,8 @@ def extract_candidates(
             res = engine.resolver.resolve(m, anchor, scale_mode)
         if res is None:
             return None
-        return _lone_spoken_hour(res, m, anchor, engine.spec, tokens, matches)
+        return _lone_spoken_hour(res, m, anchor, engine.spec, tokens, matches,
+                                 text)
 
     scored = []
     seen = set()

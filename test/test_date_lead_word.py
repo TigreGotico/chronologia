@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from chronologia import extract_timespan
+from ruling17 import moved
 
 ANCHOR = datetime(2017, 6, 27, 13, 4)
 
@@ -61,7 +62,7 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
 ])
 def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
     span, remainder = extract_timespan(text, lang, ANCHOR)
-    assert span.start_datetime == start
+    assert span.start_datetime == moved(start, ANCHOR)
     assert remainder == rest
 
 

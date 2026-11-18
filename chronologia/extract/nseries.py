@@ -704,7 +704,7 @@ def extract_timespans(
         if len(cluster) == 1:
             match, res = cluster[0]
             res = _lone_spoken_hour(res, match, anchor, engine.spec, tokens,
-                                    [m for m, _ in resolved])
+                                    [m for m, _ in resolved], text)
             span = _since_month(match, res.value, tokens, engine, anchor,
                                 scale_mode)
             out.append((match.span, span, confidence_of[id(match)]))

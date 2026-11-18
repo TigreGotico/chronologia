@@ -11,6 +11,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start
+from ruling17 import moved
 
 
 def _clk(h, mi):
@@ -31,4 +32,4 @@ _TIMES += [(13, 4), (13, 5), (13, 3), (0, 0), (23, 59), (12, 0)]
 @pytest.mark.parametrize("h,mi", _TIMES)
 def test_clock(h, mi):
     phrase = f"{h:02d}:{mi:02d}"
-    assert start(phrase) == _clk(h, mi), phrase
+    assert start(phrase) == moved(_clk(h, mi), ANCHOR), phrase

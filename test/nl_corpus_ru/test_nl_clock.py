@@ -10,6 +10,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, parse, start, span
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -25,7 +26,7 @@ def clk(h, mi, s=0):
     ("18:45", 18, 45, 0), ("14:30", 14, 30, 0),
 ])
 def test_digit_time(text, h, mi, s):
-    assert start(text) == clk(h, mi, s)
+    assert start(text) == moved(clk(h, mi, s), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 
@@ -62,5 +63,5 @@ def test_at_marker_before_digit_clock(text, remainder):
     r = parse(text)
     assert r is not None
     hour, minute = map(int, text.rsplit(" ", 1)[1].split(":"))
-    assert r[0].start == clk(hour, minute)
+    assert r[0].start == moved(clk(hour, minute), ANCHOR)
     assert r[1] == remainder

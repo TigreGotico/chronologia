@@ -348,12 +348,22 @@ reads the bare head.
 
 An hour from 1 to 12 said with no am/pm word and no part of the day is read as
 whichever of its two twelve-hour readings comes next at or after the anchor. "at
-8" said at 13:04 is 20:00 the same day, not 08:00 tomorrow. A day word or a part
-of the day keeps the hour as spoken, and so does a meridiem, a digit clock
-("8:30"), an hour written with the letter "h", and an hour from 13 to 23. This
-holds in every language, for `extract_timespan`, `extract_timespans` and the top
-`extract_candidates` reading. A recurrence pin names an hour of the day, so
-`extract_recurrence("daily at 7")` stays `BYHOUR=7`.
+8" said at 13:04 is 20:00 the same day, not 08:00 tomorrow. A digit clock `h:mm`
+with an hour from 1 to 11 and no leading zero reads the same way, because speech
+recognition writes a spoken "eight thirty" as "8:30": "at 8:30" is 20:30. "Today"
+names no part of the day, so "at 3:30 today" said at 15:00 is 15:30. A day word or
+a part of the day keeps the hour as written, and so does a meridiem, a leading
+zero ("08:30"), the hour 12, an hour written with the letter "h", and an hour from
+13 to 23. A morning or evening word that the language lists for a half of the
+day decides the half when it stands beside the clock, also when the reader does
+not join it: Dutch "om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is
+20:00. Only a clock word ("uur"), the word that opens the clock ("om") or an
+article may stand between them, so Spanish "a las 6:30 que no quiero llegar
+tarde" ("late") said at 23:00 is 06:30. This holds in
+every language, for `extract_timespan`,
+`extract_timespans` and the top `extract_candidates` reading. A recurrence pin
+names an hour of the day, so `extract_recurrence("daily at 7")` stays
+`BYHOUR=7`.
 
 ```python
 from datetime import datetime
@@ -364,7 +374,8 @@ anchor = datetime(2017, 6, 27, 13, 4)   # a Tuesday afternoon
 assert extract_timespan("at 8", "en", anchor).span.start.datetime() == datetime(2017, 6, 27, 20, 0)
 assert extract_timespan("tomorrow at 8", "en", anchor).span.start.datetime() == datetime(2017, 6, 28, 8, 0)
 assert extract_timespan("at 8 am", "en", anchor).span.start.datetime() == datetime(2017, 6, 28, 8, 0)
-assert extract_timespan("at 8:30", "en", anchor).span.start.datetime() == datetime(2017, 6, 28, 8, 30)
+assert extract_timespan("at 8:30", "en", anchor).span.start.datetime() == datetime(2017, 6, 27, 20, 30)
+assert extract_timespan("at 08:30", "en", anchor).span.start.datetime() == datetime(2017, 6, 28, 8, 30)
 ```
 
 ## Deep time and other reckonings

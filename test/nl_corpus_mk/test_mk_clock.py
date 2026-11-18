@@ -192,5 +192,5 @@ def test_a_day_still_carries_its_band(text, d, hour_from):
     ("во 13:05", TODAY, 13, 5),
 ])
 def test_the_digital_clock_takes_its_preposition(text, day_, hh, mm):
-    assert start_end(text) == minute_at(*day_, hh, mm)
+    assert start_end(text) == moved(minute_at(*day_, hh, mm), ANCHOR)
     assert parse(text)[1] == ""

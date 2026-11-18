@@ -12,6 +12,7 @@ from datetime import timedelta
 import pytest
 
 from ._corpus import ANCHOR, ad, start, span
+from ruling17 import moved
 
 
 def clk(h, mi, s=0):
@@ -27,7 +28,7 @@ def clk(h, mi, s=0):
     ("18:45", 18, 45, 0), ("5:07:30", 5, 7, 30), ("14:30", 14, 30, 0),
 ])
 def test_digit_time(text, h, mi, s):
-    assert start(text) == clk(h, mi, s)
+    assert start(text) == moved(clk(h, mi, s), ANCHOR)
     assert span(text).width == timedelta(minutes=1)
 
 

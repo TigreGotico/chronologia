@@ -46,7 +46,7 @@ def test_spoken_clock(text, h, mi):
     ("6:07", 6, 7),
 ])
 def test_digit_clock(text, h, mi):
-    assert start(text) == _next_time(h, mi)
+    assert start(text) == moved(_next_time(h, mi), ANCHOR)
 
 
 @pytest.mark.parametrize("text,h,mi", [
