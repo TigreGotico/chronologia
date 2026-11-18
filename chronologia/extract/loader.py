@@ -163,6 +163,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     exclusion_filler: Set[str] = set()
     at_counts: Set[str] = set()
     counted_noun: Set[str] = set()
+    season_lead: Set[str] = set()
+    season_follow: Set[str] = set()
+    season_beside: Set[str] = set()
     alarm_joiners: Set[str] = set()
     jurisdictions: Dict[str, str] = {}
 
@@ -407,6 +410,12 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             at_counts.update(s.lower() for s in surfaces)
         elif base == "marker_counted_noun":
             counted_noun.update(s.lower() for s in surfaces)
+        elif base == "marker_season_lead":
+            season_lead.update(s.lower() for s in surfaces)
+        elif base == "marker_season_follow":
+            season_follow.update(s.lower() for s in surfaces)
+        elif base == "marker_season_beside":
+            season_beside.update(s.lower() for s in surfaces)
         elif base == "marker_alarm_joiner":
             alarm_joiners.update(s.lower() for s in surfaces)
         elif base.startswith("cycle_"):
@@ -547,6 +556,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         exclusion_filler=frozenset(exclusion_filler),
         at_counts=frozenset(at_counts),
         counted_noun=frozenset(counted_noun),
+        season_lead=frozenset(season_lead),
+        season_follow=frozenset(season_follow),
+        season_beside=frozenset(season_beside),
         alarm_joiners=frozenset(alarm_joiners),
         weekday_full=weekday_full,
         quantifiers=quantifiers,
