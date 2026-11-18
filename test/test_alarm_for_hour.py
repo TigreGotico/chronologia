@@ -97,6 +97,18 @@ CLOCKS = [
      datetime(2026, 11, 18, 7, 0)),
     ("alarm for 7 and 8. In the morning I run", "en",
      datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 and 8 tomorrow morning", "en",
+     datetime(2026, 11, 18, 7, 0)),
+    ("alarme para 7 ou 8 amanhã de manhã", "pt",
+     datetime(2026, 11, 18, 7, 0)),
+    ("réveil pour 7 ou 8 demain matin", "fr", datetime(2026, 11, 18, 7, 0)),
+    ("sveglia per 7 o 8 domani mattina", "it", datetime(2026, 11, 18, 7, 0)),
+    ("alarma para 7 o 8 mañana por la mañana", "es",
+     datetime(2026, 11, 18, 7, 0)),
+    ("reminder for 9 about 2 pm meeting", "en",
+     datetime(2026, 11, 17, 9, 0)),
+    ("alarm for 5 for 8 am flight", "en", datetime(2026, 11, 18, 5, 0)),
+    ("alarma para 7 o 8 de la mañana", "es", datetime(2026, 11, 17, 8, 0)),
 ]
 
 NO_CLOCK = [
@@ -173,6 +185,7 @@ def test_an_alarm_noun_makes_the_bare_hour_a_clock(text, lang, expected):
     ("alarm for 7 pm tomorrow evening", "evening"),
     ("alarm for 7 pm and a call in the evening",
      "and a call in the evening"),
+    ("alarm for 7 pm and 8 am", "and 8 am"),
 ])
 def test_a_meridiem_hour_keeps_the_alarm_noun_in_the_reading(text, remainder):
     assert extract_timespan(text, "en", ANCHOR).remainder == remainder
