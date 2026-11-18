@@ -3116,9 +3116,10 @@ class Resolver:
             half_tok = match.slots.get("HALF")
             if half_tok is not None:
                 # minutes around the half hour before the stated hour:
-                # "tien voor half zeven" is 6.20, "tien over half zeven" 6.40
-                # (Team Taaladvies, "Kloklezen, kloktijden lezen").  A count of
-                # 30 or more leaves the half hour, so it names no time.
+                # "tien voor half negen" is 8.20, "tien over half negen" 8.40
+                # (Team Taaladvies, "Kloktijden: acht uur zeventien / zeventien
+                # over acht / dertien voor halfnegen").  A count of 30 or more
+                # leaves the half hour, so it names no time.
                 offset = (self.spec.clock_fractions[frac_tok.text]
                           if frac_tok is not None else int(min_tok.value))
                 if offset >= 30:
