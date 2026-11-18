@@ -3334,6 +3334,25 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
     return tokens[b - 1].text in dir_markers
 
 
+def _hour_before_year_word_veto(tokens, match, spec) -> bool:
+    """True for a ``clock_time`` match that is a bare number and no more,
+    when a year word follows it: ru "в 1 году" names a year and no hour.
+
+    The year word is the locale's ``marker_year_word.voc``.  A clock that
+    carries its own evidence (a minute, a fraction, a part of the day) is
+    not bare and is never vetoed.
+    """
+    if match.construction != "clock_time":
+        return False
+    hour = match.slots.get("HOUR")
+    start, end = match.span
+    if hour is None or len(match.slots) != 1 or end >= len(tokens):
+        return False
+    return (hour.index == end - 1
+            and tokens[end].text in spec.connectors.get("year_word",
+                                                        frozenset()))
+
+
 def _num_preamble_named_day_idiom_veto(tokens, match, spec) -> bool:
     """True for a ``named_day_after``/``named_day_before`` match immediately
     preceded by a NUMBER token ("two days after tomorrow", "3 days before
@@ -3414,6 +3433,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _stray_year_zero_veto(tokens, match, spec)
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
+            or _hour_before_year_word_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)

@@ -941,7 +941,7 @@ chinese_new_year   | pl | chiński nowy rok
 new_year           | ru | новый год
 new_year_eve       | ru | канун нового года
 orthodox_easter    | ru | пасха ;; светлое христово воскресение
-orthodox_good_friday | ru | страстная пятница ;; великая пятница
+orthodox_good_friday | ru | страстная пятница ;; великая пятница ;; страстную пятницу ;; великую пятницу
 orthodox_easter_monday | ru | светлый понедельник
 orthodox_christmas | ru | рождество христово ;; рождество
 orthodox_christmas_eve | ru | рождественский сочельник ;; сочельник
@@ -994,7 +994,7 @@ chinese_new_year   | sl | kitajsko novo leto
 new_year           | uk | новий рік
 new_year_eve       | uk | переддень нового року
 orthodox_easter    | uk | великдень ;; пасха
-orthodox_good_friday | uk | страсна п'ятниця ;; велика п'ятниця
+orthodox_good_friday | uk | страсна п'ятниця ;; велика п'ятниця ;; страсну п'ятницю ;; велику п'ятницю
 orthodox_easter_monday | uk | світлий понеділок
 christmas_ua | uk | різдво ;; різдво христове
 christmas_eve_ua | uk | святвечір
