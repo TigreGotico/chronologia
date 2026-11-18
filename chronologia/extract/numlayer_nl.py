@@ -72,6 +72,44 @@ def split_nl_relday_daypart(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return reindex(out) if changed else tokens
 
 
+#: The hour words Dutch writes after "half" as one word: Team Taaladvies,
+#: "Kloklezen, kloktijden lezen", writes 6.30 uur as "halfzeven" and 6.40 uur
+#: as "tien over halfzeven".
+_NL_HALF_HOURS = {
+    "een": 1, "één": 1, "twee": 2, "drie": 3, "vier": 4, "vijf": 5, "zes": 6,
+    "zeven": 7, "acht": 8, "negen": 9, "tien": 10, "elf": 11, "twaalf": 12}
+
+
+def split_nl_half_hour(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Split "halfzeven" into "half" and the hour 7, the spelling the clock
+    grammar reads.  Only "half" followed by a whole hour word splits, so
+    "halfjaar" or "halfvol" pass through.  numtag reads the input text, where
+    the hour word is inside a longer word, so the hour token carries its
+    value here."""
+    out, changed = [], False
+    for t in tokens:
+        tail = t.text[4:]
+        if t.is_number or not t.text.startswith("half") \
+                or tail not in _NL_HALF_HOURS:
+            out.append(t)
+            continue
+        cs, ce = t.char_start, t.char_end
+        mid = cs + 4 if cs is not None else None
+        out.append(Token(text="half", raw=t.raw[:4], index=t.index,
+                         char_start=cs, char_end=mid, cap=t.cap))
+        hour = _NL_HALF_HOURS[tail]
+        out.append(Token(text=str(hour), raw=t.raw[4:], index=t.index,
+                         is_number=True, value=float(hour),
+                         char_start=mid, char_end=ce))
+        changed = True
+    return reindex(out) if changed else tokens
+
+
+def split_nl_compounds(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """The Dutch one-word compounds the grammar reads as two words."""
+    return split_nl_half_hour(split_nl_relday_daypart(tokens))
+
+
 _WORDS = DateWords(
     lang="nl",
     fractions=locale_words("nl", "clock_fraction_"),
