@@ -567,17 +567,25 @@ def _day_cue_follows(tokens: Tuple[Token, ...], end: int,
                      spec: LangSpec) -> bool:
     """Whether a meridiem word reads with a second hour right after this bare
     hour: "alarm for 7 or 8 pm", "7 or 8 in the morning".  The cue counts only
-    after one joiner word and a second bare hour, so a date word or another
-    clause between the hour and the cue keeps the alarm reading."""
+    after one joiner word (``marker_alarm_joiner.voc``) and a second bare hour;
+    a date word between the hour and the cue keeps the alarm reading."""
     if (end + 1 >= len(tokens) or tokens[end].break_before
-            or tokens[end].is_number or tokens[end].text in spec.units
+            or tokens[end].text not in spec.alarm_joiners
             or not tokens[end + 1].is_number):
         return False
-    for token in tokens[end + 2:end + 5]:
+    for offset, token in enumerate(tokens[end + 2:end + 5]):
         if token.break_before:
             break
         if token.text in spec.meridiems:
+            # A meridiem word that is also a date word ("mañana") reads as the
+            # date word right after the second hour, so it stops the window
+            # there; behind another word it is the meridiem.
+            if offset == 0 and (token.text in spec.named_days
+                                or token.text in spec.weekdays):
+                return False
             return True
+        if token.text in spec.named_days or token.text in spec.weekdays:
+            return False
     return False
 
 

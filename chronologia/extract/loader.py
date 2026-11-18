@@ -163,6 +163,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     exclusion_filler: Set[str] = set()
     at_counts: Set[str] = set()
     counted_noun: Set[str] = set()
+    alarm_joiners: Set[str] = set()
     jurisdictions: Dict[str, str] = {}
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
@@ -406,6 +407,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             at_counts.update(s.lower() for s in surfaces)
         elif base == "marker_counted_noun":
             counted_noun.update(s.lower() for s in surfaces)
+        elif base == "marker_alarm_joiner":
+            alarm_joiners.update(s.lower() for s in surfaces)
         elif base.startswith("cycle_"):
             # cycle_<key>_<n>.voc: day <n> (0-based) of the named day cycle
             key, _, num = base[len("cycle_"):].rpartition("_")
@@ -544,6 +547,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         exclusion_filler=frozenset(exclusion_filler),
         at_counts=frozenset(at_counts),
         counted_noun=frozenset(counted_noun),
+        alarm_joiners=frozenset(alarm_joiners),
         weekday_full=weekday_full,
         quantifiers=quantifiers,
         positions=cfg.get("positions", {}))
