@@ -17,6 +17,8 @@
 # taules: Noun. "plural of taula"
 # entrades: Noun. "plural of entrada"
 # habitacions: Noun. "plural of habitació"
+# euro: Noun. "euro (currency)"
+# euros: Noun. "plural of euro"
 persona
 persones
 convidats
@@ -32,3 +34,5 @@ seients
 taules
 entrades
 habitacions
+euro
+euros

@@ -4144,6 +4144,7 @@ def reads_spoken_hours(fn):
 
 
 _DIGIT_CLOCK = re.compile(r"([1-9]|1[01]):[0-5]\d")
+_DIGIT_DOTCLOCK = re.compile(r"([1-9]|1[01])\.[0-5]\d")
 
 
 def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
@@ -4158,8 +4159,10 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     10 o'clock in the morning").  Speech recognition writes a spoken "three
     thirty" as "3:30", so a digit clock h:mm with an hour 1 to 11 and no
     leading zero reads the same way; "03:30", "12:30", "15:30" and an hour
-    written with the letter "h", a dotted clock and a clock folded from spelled
-    numbers are as written.  The word "today" names no
+    written with the letter "h" and a clock folded from spelled numbers are as
+    written.  A dotted clock is as written too, except in a locale that writes
+    it as another spelling of the colon clock (``dotted_clock_cued``), where
+    "a las 8.30" reads as "a las 8:30" does.  The word "today" names no
     part of the day, so "at 3:30 today" takes its reading from the same day;
     any other day word keeps the written hour.  24-hour hours are untouched,
     whatever fraction follows.  An am or pm word the locale lists for a half of
@@ -4188,13 +4191,17 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         return res
     hour = clock_match.slots.get("HOUR")
     clock = clock_match.slots.get("CLOCK")
+    digits = _DIGIT_CLOCK
+    if clock is None and spec.tokenizer.dotted_clock_cued:
+        clock = clock_match.slots.get("DOTCLOCK")
+        digits = _DIGIT_DOTCLOCK
     if hour is not None and not today:
         if (not hour.is_number or not 1 <= hour.value <= 12
                 or re.search(r"\d\s*[h:]", (hour.raw or "").lower())
                 or (hour.index + 1 < len(tokens)
                     and tokens[hour.index + 1].text == "h")):
             return res
-    elif (clock is None or not _DIGIT_CLOCK.fullmatch(clock.raw)
+    elif (clock is None or not digits.fullmatch(clock.raw)
           or clock.char_start is None or text is None
           or unicodedata.normalize(
               "NFKC", text[clock.char_start:clock.char_end]).lower() != clock.raw):

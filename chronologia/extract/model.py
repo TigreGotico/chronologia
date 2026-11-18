@@ -187,6 +187,12 @@ class TokenizerModes:
     # the decimal point (English), the dotted clock stays cue-licensed
     # through the ``DOTCLOCK``/``PADCLOCK`` slots instead.
     dotted_clock: bool = False
+    # the dotted wall clock keeps its dot and binds only the ``DOTCLOCK`` slot,
+    # so a grammar order must license it with a clock word.  For a comma-decimal
+    # locale whose writers use the dot as one spelling of the clock beside the
+    # colon (es, ca, nl, de) but also meet it in a price or a
+    # list number: "a las 8.30" is a clock, "8.30 euros" is not.
+    dotted_clock_cued: bool = False
 
 
 @dataclass(frozen=True)
