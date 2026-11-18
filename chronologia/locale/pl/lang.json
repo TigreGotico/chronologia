@@ -15,6 +15,8 @@
    "orders": [
     "NUM UNIT MARKER",
     "MARKER NUM UNIT",
+    "QUANT UNIT MARKER",
+    "MARKER QUANT UNIT",
     "MARKER USG",
     "USG MARKER"
    ]

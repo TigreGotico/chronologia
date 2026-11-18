@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, start
+from ._corpus import ANCHOR, ad, parse, start
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -21,3 +21,20 @@ from ._corpus import ANCHOR, ad, start
 ])
 def test_numbers_read_through_numtag(text, expected):
     assert start(text) == ad(expected)
+
+
+# The year of a spelled date is an ordinal that holds a scale word; the
+# date keeps the year it names, whatever the anchor.
+@pytest.mark.parametrize("anchor", [
+    datetime(2026, 1, 10, 8, 0),
+    datetime(2026, 12, 1, 8, 0),
+    datetime(2028, 3, 1, 8, 0),
+])
+@pytest.mark.parametrize("text,month,day", [
+    ("первого мая две тысячи двадцать шестого года", 5, 1),
+    ("двадцатого марта две тысячи двадцать шестого года", 3, 20),
+])
+def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
+    result = parse(text, anchor)
+    assert result is not None
+    assert result.span.start == ad(datetime(2026, month, day))
