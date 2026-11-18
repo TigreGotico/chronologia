@@ -2547,7 +2547,16 @@ _HOUR_LETTER_LOCALES = frozenset({
 _HOUR_LITERAL = re.compile(r"\d{1,2}:\d{2}")
 
 
-def _bare_hour_in_sentence(tokens, consumed, spec):
+def _folded_clock(token, text):
+    """Whether a clock token was built by a fold ("2h" read as 2:00) and not
+    typed as the digits it shows."""
+    return (token.char_start is None or text is None
+            or unicodedata.normalize(
+                "NFKC", text[token.char_start:token.char_end]
+            ).lower() != token.raw)
+
+
+def _bare_hour_in_sentence(tokens, consumed, spec, text=None):
     """Whether the whole reading is a bare hour that stands inside a
     sentence with no clock marker ("un film de 2h", "il reste 3 heures").
 
@@ -2587,12 +2596,12 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
             and read[-1].text in spec.clock_fractions)
     if tail:
         read = read[:-2]
-    literal = (len(read) == 1 and read[0].char_start is None
+    literal = (len(read) == 1 and _folded_clock(read[0], text)
                and _HOUR_LITERAL.fullmatch(read[0].text))
     counted = ((len(read) == 2 and read[0].is_number
                 and read[1].text in oclock)
                or (tail and len(read) == 1 and read[0].is_number
-                   and read[0].char_start is None))
+                   and _folded_clock(read[0], text)))
     if not (literal or counted):
         return False
     markers = (spec.connectors.get("hour_statement", frozenset())
@@ -3609,7 +3618,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # (a whole-prefix scan would falsely veto a trigger in another clause).
     if _exclusion_governing_veto(tokens, consumed, text, engine.spec):
         return None
-    if _bare_hour_in_sentence(tokens, consumed, engine.spec):
+    if _bare_hour_in_sentence(tokens, consumed, engine.spec, text):
         return None
     # Impossible-date veto (residue-veto design, #244): a stranded
     # "<number> of ..." fragment in the remainder -- a day-of-month qualifier
