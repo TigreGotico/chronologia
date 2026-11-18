@@ -537,6 +537,52 @@ def _connector_targets(surfaces: frozenset) -> Tuple[frozenset, int]:
     return targets, max(map(len, targets), default=0)
 
 
+def alarm_marker_span(tokens: Tuple[Token, ...],
+                      spec: LangSpec) -> Optional[Tuple[int, int]]:
+    """The first alarm noun with its preposition in ``tokens``
+    (``marker_alarm_at.voc``), as the index of its first token and its length."""
+    tokens = tuple(tokens)
+    for i in range(len(tokens)):
+        n = _connector_span("alarm_at", tokens, i, spec)
+        if n:
+            return i, n
+    return None
+
+
+def is_alarm_bare_range(left: Tuple[Token, ...],
+                        spec: LangSpec) -> bool:
+    """Whether the left side of a split at "to" is an alarm marker and one bare
+    number: "alarm for 20" in "alarm for 20 to 8".  An alarm names one instant
+    and the pair is the clock "twenty to eight".  A meridiem, a day word or an
+    article on the left makes it a real range, and a meridiem on the right is
+    handled before this check."""
+    marker = alarm_marker_span(left, spec)
+    if marker is None:
+        return False
+    rest = tuple(left)[sum(marker):]
+    return len(rest) == 1 and rest[0].is_number
+
+
+def _alarm_hour_goes_on(tokens: Tuple[Token, ...], end: int,
+                        spec: LangSpec) -> bool:
+    """Whether the words after the hour of an "alarm for <hour>" reading make
+    it a length or leave minutes unread: a unit ("10 minutes"), a word that
+    adds to a count (``marker_alarm_length.voc``: "10 more minutes"), a number,
+    a clock fraction or direction, or any word before a second counted unit
+    ("10 through 15 minutes")."""
+    if end >= len(tokens):
+        return False
+    word = tokens[end].text
+    second = tokens[end + 1:end + 3]
+    return (word in spec.units
+            or word in spec.connectors.get("alarm_length", frozenset())
+            or tokens[end].is_number
+            or word in spec.clock_fractions or word in spec.clock_dirs
+            or word in spec.clock_dir_minutes
+            or (len(second) == 2 and second[0].is_number
+                and second[1].text in spec.units))
+
+
 def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
           ei: int, ti: int, spec: LangSpec,
           slots: Dict[str, Token]) -> Optional[Tuple[int, Dict[str, Token]]]:
@@ -1053,6 +1099,14 @@ class ConstructionMatcher:
                         if (_ai >= 0 and tokens[_ai].text
                                 in self.spec.conventions.bare_at_markers):
                             continue
+                    # "alarm for 10" is a clock, "alarm for 10 minutes" is a
+                    # length, and "alarm for 7 e meia" has minutes that the
+                    # bare hour would drop (``marker_alarm_at.voc``).
+                    if (name == "clock_time"
+                            and _connector_span("alarm_at", tokens, start,
+                                                self.spec)
+                            and _alarm_hour_goes_on(tokens, end, self.spec)):
+                        continue
                     # A holiday name takes no indefinite article when it is
                     # an adjective plus a weekday: "have a good friday" is the
                     # adjective and the day, not Good Friday.  A single-word
