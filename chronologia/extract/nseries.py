@@ -32,6 +32,7 @@ from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
+                                          _half_words_beside,
                                           _lone_spoken_hour,
                                           reads_spoken_hours,
                                           _RANGE_TO, _conn_surfaces,
@@ -699,6 +700,7 @@ def extract_timespans(
     # second, narrower copy of it.
     clusters = _cluster_resolved(resolved, tokens, engine.spec, text)
 
+    covered = {i for m, _ in resolved for i in range(*m.span)}
     out: List[Tuple[Tuple[int, int], DateSpan, float]] = []
     for ci, cluster in enumerate(clusters):
         if len(cluster) == 1:
@@ -752,8 +754,19 @@ def extract_timespans(
         # compose over the cluster's OWN char extent only (never the trailing
         # clause boundary) so an un-consumed trailing connector ("then",
         # "and") never gets pulled into the composed reading's own extent.
+        # A morning or evening word beside it still decides a clock's half,
+        # as it does for the whole text: nl "vandaag om 8:00 's avonds".
+        read_lo, read_hi = start_char, end_char
+        if any(m.construction == "clock_time" for m, _ in cluster):
+            for t in _half_words_beside((lo_tok, hi_tok), tokens, engine.spec,
+                                        covered):
+                if tokens[t].char_start is not None \
+                        and tokens[t].char_end is not None:
+                    read_lo = min(read_lo, tokens[t].char_start)
+                    read_hi = min(max(read_hi, tokens[t].char_end), boundary)
         slice_text = text[start_char:end_char]
-        result = extract_timespan(slice_text, lang, anchor=anchor, scale=scale)
+        result = extract_timespan(text[read_lo:read_hi], lang, anchor=anchor,
+                                  scale=scale)
         if result is None:
             # composition declined (e.g. a daypart/clock meridiem
             # contradiction) -- keep the matches uncomposed rather than drop

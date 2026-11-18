@@ -4146,6 +4146,28 @@ def reads_spoken_hours(fn):
 _DIGIT_CLOCK = re.compile(r"([1-9]|1[01]):[0-5]\d")
 
 
+def _half_words_beside(span, tokens, spec, covered, skip=()):
+    """The morning or evening words beside ``span``, past its glue words.
+
+    Only the first word past the clock's glue words on each side can decide
+    the half: "tarde" in another clause ("no quiero llegar tarde") means
+    late.  A word a match covers (index in ``covered``) was read as something
+    else (es "mañana").  Token indices in ``skip`` stand between as glue does.
+    """
+    glue = set().union(*(spec.connectors.get(name, ()) for name in (
+        "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
+        "s")))
+    found = []
+    for step in (-1, 1):
+        i = span[0] - 1 if step < 0 else span[1]
+        while 0 <= i < len(tokens) and (tokens[i].text in glue or i in skip):
+            i += step
+        if 0 <= i < len(tokens) and tokens[i].index not in covered \
+                and tokens[i].text in spec.meridiems:
+            found.append(i)
+    return found
+
+
 def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     """A lone spoken hour takes the next of its two twelve-hour readings.
 
@@ -4203,25 +4225,12 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
                                  for t in tokens):
         # a locale with no am/pm vocabulary leaves the word over
         return res
-    # Only the first word past the clock's glue words on each side can decide
-    # the half: "tarde" in another clause ("no quiero llegar tarde") means
-    # late.  A word a match covers was read as something else (es "mañana").
     covered = {i for m in matches for i in range(*m.span)}
-    glue = set().union(*(spec.connectors.get(name, ()) for name in (
-        "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
-        "s")))
-    n = len(tokens)
     # the word "today" of the reading stands between the clock and the part
     # of the day as glue does: nl "om 8:00 vandaag 's avonds"
     today_words = set(range(*rep.span)) if today else set()
-    meridiem_words = []
-    for step in (-1, 1):
-        i = clock_match.span[0] - 1 if step < 0 else clock_match.span[1]
-        while 0 <= i < n and (tokens[i].text in glue or i in today_words):
-            i += step
-        if 0 <= i < n and tokens[i].index not in covered \
-                and tokens[i].text in spec.meridiems:
-            meridiem_words.append(tokens[i].text)
+    meridiem_words = [tokens[i].text for i in _half_words_beside(
+        clock_match.span, tokens, spec, covered, today_words)]
     if meridiem_words and (
             not all(spec.meridiems[w] == 12 for w in meridiem_words)
             or any(w in spec.night_meridiems for w in meridiem_words)):
