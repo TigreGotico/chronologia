@@ -45,11 +45,10 @@ lead their noun, and `bu` is the proximal.
 **The clock** puts the hour noun `saat` before the numeral and marks the
 numeral itself with the locative case: `saat üçdə`, at three. The suffix
 harmonises for backness and for the voicing of the preceding consonant, giving
-`-tə`, `-ta`, `-də`, `-da`, and the cardinal reader does not recognise the
-inflected surface — it mis-reads `üçdə` as the fraction one-third. The fold in
-`chronologia/extract/numfold_turkic.py` therefore strips the locative ending
-back to the bare cardinal, but only inside a clock frame where a `saat` token
-is present, so that unrelated words ending in the same letters are untouched.
+`-tə`, `-ta`, `-də`, `-da`. numtag reads the inflected numeral as its cardinal,
+`üçdə` as 3. A digit hour takes the suffix after an apostrophe, `saat 9'da`;
+the fold in `chronologia/extract/numlayer_turkic.py` drops that suffix, but
+only inside a clock frame where a `saat` token is present.
 
 **The daypart lead.** Azerbaijani states the part of day before the hour:
 `səhər saat doqquzda` is nine in the morning, `axşam saat səkkizdə` eight in

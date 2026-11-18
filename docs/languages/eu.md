@@ -10,7 +10,7 @@ whitespace therefore never sees the marker; it sees one long word.
 
 The locale answers this in two places. The vocabulary files list the inflected
 surfaces themselves — every month ships six forms, every weekday five — and
-`chronologia/extract/numfold_agglutinative.py` re-fuses a digit that the
+`chronologia/extract/numlayer_agglutinative.py` re-fuses a digit that the
 tokenizer has sheared from its case ending, so `5ean` comes back as the day
 number 5 rather than a number followed by a stranded fragment. The marker files
 that do exist (`marker_from.voc`, `marker_to.voc`, `marker_of.voc`) hold
@@ -80,7 +80,7 @@ other three day-part surfaces are on firmer ground — the Wiktionary entries fo
 `goiz`, `arratsalde` and `gau` each carry a declension table that shows
 `goizean`, `arratsaldean` and `gauean` explicitly.
 
-The comment in `numfold_agglutinative.py` that documents the inessive-plural
+The comment in `numlayer_agglutinative.py` that documents the inessive-plural
 hour fold cites `en.wiktionary.org/wiki/-etan#Basque`. That page was fetched
 and has no Basque section at all; its only section is Old English. The
 mechanism it describes is nonetheless the one the code implements and the one

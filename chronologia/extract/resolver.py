@@ -60,17 +60,15 @@ def _window_two_digit_year(n: int, anchor_year: int) -> int:
     A two-digit written year is inherently ambiguous ("the summer of 69" could
     be 1969 or 2069).  Rather than the fixed POSIX ``%y`` cut at 68/69 (which
     ages badly and mis-centuries recent years -- "'42" -> 2042, "'20" would
-    read the wrong century), we adopt the anchor-relative window used by
-    :mod:`email.utils` and ``dateutil``: the two-digit year resolves into the
-    100-year span ``[anchor_year - 80, anchor_year + 19]``.  Exactly one of
-    ``1900 + n`` / ``2000 + n`` lands inside that span, and that one wins, so
-    the reading tracks the anchor and ages correctly (for anchor 2017 the
-    window is 1937..2036: "'42" -> 1942, "'20" -> 2020, "'69" -> 1969).
+    read the wrong century), the year takes ICU's default window: the
+    100-year span ``[anchor_year - 80, anchor_year + 19]`` (ICU4J
+    SimpleDateFormat: "within 80 years before and 20 years after the time the
+    SimpleDateFormat instance is created").  Exactly one year in that span ends in ``n``, in whatever
+    century the anchor is: for anchor 2017 the window is 1937..2036 ("'42" ->
+    1942, "'20" -> 2020), and for anchor 2117 it is 2037..2136 ("'20" -> 2120).
     """
-    candidate = 2000 + n
-    if anchor_year - 80 <= candidate <= anchor_year + 19:
-        return candidate
-    return 1900 + n
+    first = anchor_year - 80
+    return first + (n - first) % 100
 
 
 def _pivot_two_digit_year(tok, anchor_year: int) -> int:
