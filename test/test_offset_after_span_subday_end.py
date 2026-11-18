@@ -1,5 +1,9 @@
 """A sub-day or business-day offset after a span counts from the span's end.
 
+A count under a day names an instant one minute wide, and a holiday stands for
+the instant it begins in both directions (ruling 30 of the chronologia
+disagreement rulings): "2 hours after christmas" is 25 December 02:00.
+
 Meteorological summer is June, July and August (NOAA NCEI, "Meteorological
 Versus Astronomical Seasons"), so next summer from 16 November 2026 ends
 at 1 September 2027, 00:00.  30 June 2027 is a Wednesday and 31 August 2027
@@ -22,18 +26,30 @@ def _day(text, lang="en"):
     return date(span.start.year, span.start.month, span.start.day)
 
 
-@pytest.mark.parametrize("text, day", [
-    # 1 September 00:00 + 12 hours is 1 September 12:00
-    ("12 hours after next summer", date(2027, 9, 1)),
-    # 1 July 00:00 + 36 hours is 2 July 12:00
-    ("36 hours after june 2027", date(2027, 7, 2)),
-    # 1 July 00:00 + 30 minutes is 1 July 00:30
-    ("30 minutes after june 2027", date(2027, 7, 1)),
-    # 26 December 00:00 + 2 hours
-    ("2 hours after christmas", date(2026, 12, 26)),
+def _instant(text, lang="en"):
+    span, rest = extract_timespan(text, lang, anchor=ANCHOR)
+    assert rest == ""
+    assert span.end - span.start == (datetime(2000, 1, 1, 0, 1) - datetime(2000, 1, 1))
+    return datetime(span.start.year, span.start.month, span.start.day,
+                    span.start.hour, span.start.minute)
+
+
+@pytest.mark.parametrize("text, instant", [
+    # 1 September 00:00 + 12 hours
+    ("12 hours after next summer", datetime(2027, 9, 1, 12, 0)),
+    # 1 July 00:00 + 36 hours is a count of a day or more: see below
+    # 1 July 00:00 + 30 minutes
+    ("30 minutes after june 2027", datetime(2027, 7, 1, 0, 30)),
+    # ruling 30: christmas stands for 25 December 00:00, + 2 hours
+    ("2 hours after christmas", datetime(2026, 12, 25, 2, 0)),
 ])
-def test_a_sub_day_offset_counts_from_the_end_of_the_reference(text, day):
-    assert _day(text) == day
+def test_a_sub_day_offset_counts_from_the_end_of_the_reference(text, instant):
+    assert _instant(text) == instant
+
+
+def test_a_count_of_a_day_or_more_names_the_day():
+    # 1 July 00:00 + 36 hours is 2 July 12:00, a count over one day
+    assert _day("36 hours after june 2027") == date(2027, 7, 2)
 
 
 @pytest.mark.parametrize("lang, text, day", [
@@ -48,9 +64,13 @@ def test_a_business_day_offset_counts_from_the_last_day(lang, text, day):
     assert _day(text, lang) == day
 
 
+def test_a_sub_day_offset_before_counts_from_the_start():
+    # next summer starts 1 June 2027 00:00; 12 hours before is 31 May 12:00
+    assert _instant("12 hours before next summer") == datetime(2027, 5, 31, 12, 0)
+
+
 @pytest.mark.parametrize("text, day", [
-    # controls: a before offset still ends at the start of the reference
-    ("12 hours before next summer", date(2027, 5, 31)),
+    # controls: a before offset still counts from the start of the reference
     ("3 business days before june 2027", date(2027, 5, 27)),
     # controls: one civil day or a longer unit is unchanged
     ("a week after march 2027", date(2027, 4, 7)),

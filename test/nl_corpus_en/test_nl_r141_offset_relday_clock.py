@@ -139,13 +139,12 @@ def test_control_named_day_after_idiom_unaffected():
     assert got_end == datetime(2026, 8, 11, 0, 0)
 
 
-def test_control_no_clock_subday_offset_still_floors_to_day():
-    # unchanged pre-existing (R134) rule: a sub-day offset on a rel-day
-    # reference with NO clock in the sentence has no instant to do exact
-    # arithmetic against, so it still floors to the whole shifted civil day.
+def test_control_no_clock_subday_offset_is_an_instant():
+    # ruling 30: a count under one day is a one-minute instant, half an
+    # hour before tomorrow begins
     got_start, got_end = _start_end("half an hour before tomorrow")
-    assert got_start == datetime(2026, 8, 12, 0, 0)
-    assert got_end == datetime(2026, 8, 13, 0, 0)
+    assert got_start == datetime(2026, 8, 12, 23, 30)
+    assert got_end == datetime(2026, 8, 12, 23, 31)
 
 
 def test_r147_day_grain_multi_count_relday_now_fixed():

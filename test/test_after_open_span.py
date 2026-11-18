@@ -44,9 +44,10 @@ def test_the_first_candidate_is_the_open_span(lang, text, start):
 
 
 @pytest.mark.parametrize("text, start, end", [
-    # an offset from christmas (25 December 2026), not an event length; the
-    # offset arithmetic itself is the one origin/dev gives
-    ("15 minutes after christmas", datetime(2026, 12, 26), datetime(2026, 12, 27)),
+    # an offset from christmas (25 December 2026), not an event length; a
+    # count under a day counts from the holiday's start (ruling 30)
+    ("15 minutes after christmas", datetime(2026, 12, 25, 0, 15),
+     datetime(2026, 12, 25, 0, 16)),
     ("the day after christmas", datetime(2026, 12, 26), datetime(2026, 12, 27)),
     ("the week after easter", datetime(2027, 3, 29), datetime(2027, 4, 5)),
 ])

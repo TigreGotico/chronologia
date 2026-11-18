@@ -84,7 +84,9 @@ def test_control_weekday_ref_unaffected():
     assert got_end == datetime(2026, 8, 17, 8, 1)
 
 
-def test_control_no_clock_subday_offset_still_floors_to_day():
+def test_control_no_clock_subday_offset_is_an_instant():
+    # ruling 30: a count under one day is a one-minute instant, half an
+    # hour before tomorrow begins
     got_start, got_end = _start_end("eine halbe Stunde vor morgen")
-    assert got_start == datetime(2026, 8, 12, 0, 0)
-    assert got_end == datetime(2026, 8, 13, 0, 0)
+    assert got_start == datetime(2026, 8, 12, 23, 30)
+    assert got_end == datetime(2026, 8, 12, 23, 31)
