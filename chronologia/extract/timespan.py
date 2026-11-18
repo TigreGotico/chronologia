@@ -748,7 +748,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                             is not None for i in range(lead_at, p))
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily, since=since)
+                                     previous, daily, since=since, text=text)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -801,7 +801,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily)
+                                     previous, daily, text=text)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -833,7 +833,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 if got is None:
                     got = _compose_range(left_tok, right_tok, endpoint,
                                          borrowed, spec, bare_of,
-                                         monthly, previous, daily)
+                                         monthly, previous, daily, text=text)
                 if got is not None:
                     span, rem = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
@@ -1358,7 +1358,7 @@ def _lend_year(bare, donor):
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
-                   daily=None, since=False):
+                   daily=None, since=False, text=""):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1434,10 +1434,13 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             if new_right is not None:
                 right, right_lent = new_right, True
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
-    # endpoint's trailing meridiem so both read on the same clock
+    # endpoint's trailing meridiem so both read on the same clock.  Only a
+    # numeral takes the word: "to" before a verb is the infinitive marker, and
+    # "go morning" is no part of the day.
     if left is None and right is not None and left_tok:
         merid = _trailing_meridiem(right_tok, spec)
-        if merid is not None:
+        if merid is not None and any(
+                t.is_number for t in fold_tokens(tuple(left_tok), spec, text)):
             left = endpoint(tuple(left_tok) + (merid,))
     if left is None or right is None:
         return None
