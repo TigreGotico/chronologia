@@ -11,8 +11,9 @@ is 8.30 uur of 8.30 u. correct" (Taaladvies.net, "8h30 / 8u.30 / 8.30 u. /
 8.30 uur").  de: "Der Doppelpunkt kann auch durch einen Punkt ersetzt werden:
 8.03 Uhr" (Duden, "Schreibung von Uhrzeitangaben").  pt, it, gl and fr have no
 source that shows the dotted clock, so they read it as before: the Ciberduvidas
-answer "A grafia das horas" objects to "17.30 h", the Accademia della Crusca
-site (DICO) says Italian prefers the comma or the colon to the point, and the
+answer "A grafia das horas" objects to "17.30 h", the DICO service of the
+University of Messina (answer by Fabio Ruggiano, "Modi per indicare un
+orario") says Italian prefers the comma or the colon to the point, and the
 OQLF writes the hour with "h" and allows only the colon.
 
 The dot also marks a price or a list number, so the clock needs a clock word
