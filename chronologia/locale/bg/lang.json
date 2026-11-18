@@ -110,7 +110,7 @@
  "guards": {
   "bare_year_min_digits": 4
  },
- "hook": "chronologia.extract.numfold_slavic:fold_bg",
+ "hook": "chronologia.extract.numlayer_slavic:fold_bg",
  "base_grammar": {
   "override": {
    "scoped_ordinal": [

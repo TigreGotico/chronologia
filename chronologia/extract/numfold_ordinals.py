@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """Spelled-ordinal folding shared across the number-fold families.
 
-The cardinal folds (``numfold``, ``numfold_slavic``, ``numfold_semitic``,
-``numfold_agglutinative``) read *cardinal* number-words from
-``ovos_number_parser``'s ``extract_number_<lang>`` back-end.  Several
+The cardinal folds (``numfold``, ``numfold_romance``, ``numfold_semitic``,
+``numfold_turkic``, ``numfold_agglutinative``) read *cardinal* number-words
+from ``ovos_number_parser``'s ``extract_number_<lang>`` back-end.  Several
 constructions instead take a **spelled ordinal** in their ``ORD`` slot -- the
-calendar quarter is the canonical one ("třetí kvartál" = third quarter,
-"الربع الثالث" = the third quarter).  Those ordinal surfaces are their own
-closed morphological class the cardinal back-end does not read, so this
-pre-pass folds a lone ordinal-word token to the digit its ``ORD`` slot binds.
+calendar quarter is the canonical one ("الربع الثالث" = the third quarter).
+Those ordinal surfaces are their own closed morphological class the cardinal
+back-end does not read, so this pre-pass folds a lone ordinal-word token to
+the digit its ``ORD`` slot binds.
 
 The word->value map is built, where the language exposes it, from
 ``ovos_number_parser``'s ordinal pronouncer (inverted over a small range):

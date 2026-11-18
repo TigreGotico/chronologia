@@ -141,5 +141,5 @@
       ]
     }
   },
-  "hook": "chronologia.extract.numfold_slavic:fold_cs"
+  "hook": "chronologia.extract.numlayer_slavic:fold_cs"
 }

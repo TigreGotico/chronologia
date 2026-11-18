@@ -136,5 +136,5 @@
    ]
   }
  },
- "hook": "chronologia.extract.numfold_slavic:fold_sk"
+ "hook": "chronologia.extract.numlayer_slavic:fold_sk"
 }

@@ -93,26 +93,20 @@ the heading "half past". Both examples parse, the Wikibooks one because the
 locale also reads Bulgarian's contracted teens and tens: «единайсет» is the
 everyday spelling of eleven, and the long «единадесет» its formal twin. The
 contracted series from eleven to nineteen, together with twenty, thirty and
-sixty, is folded from Wiktionary lemmas; the further clippings that drop the
-final consonant are not, having no lemma of their own, and forty is held out
-because the number model beneath reads a compound built on it as its tail
-alone. The locale reads it through `clock_fraction_30.voc`
+sixty, reads through numtag. The locale reads the clock through
+`clock_fraction_30.voc`
 (`половина`) and `clock_dir_past.voc` (`и`), wired into two `clock_time`
 orders — `at HOUR CLOCKDIR FRACTION article? MERIDIEM? ZONE?` and the same
-shape without the leading `at`. The joiner needs care because `и` is also
-the conjunction Bulgarian's spelled compound numerals are built on
-(`двадесет и едно`), so the cardinal fold would otherwise swallow it; a
-dedicated fold pulls `и` back out of the bare cardinal set and reinstates it
-as the clock's direction word.
+shape without the leading `at`. `и` is also the conjunction of a compound
+numeral (`двадесет и едно`); numtag reads `осем и половина` as one fraction,
+and the fold keeps `половина` and `и` as words for the clock.
 
-**Numerals** are read through the shared Slavic cardinal-fold hook
-(`chronologia.extract.numfold_slavic:fold_bg`) rather than a per-locale
-vocabulary file — no locale ships numeral `.voc` files — and a spelled
-number is recognised by asking `ovos_number_parser`'s Bulgarian back-end
-what a token run is worth. The
-fold's closed extra-word set for `bg` is `{два, две, три, половин}` — the
-oblique/quantifier forms the parser's own nominative pronunciation would
-otherwise miss.
+**Numerals** are read by numtag (`numlayer_slavic.py`), and no locale ships
+numeral `.voc` files. numtag reads the compound `двадесет и три`, and
+`осем и половина` as one fraction mention: the fold keeps `половина` as the
+clock word and reads `осем` again on its own. numtag reads the contracted
+ordinals `единайсети` and `двайсети` but not the long `единадесети` and
+`двадесети`, so the fold reads each long form through its contracted twin.
 
 ## Weaker provenance
 
@@ -129,11 +123,9 @@ calendar-quarter word and the other a fiscal-quarter word.
 **`половин`/`половина`** ship for `half_period` ("first/second half of the
 year") cited to the Institute for Bulgarian Language's online dictionary,
 sense "one of the two equal parts of a whole". The two surfaces do different
-jobs: `половина` is the clock's fraction word, while `половин` is folded as
-a cardinal 0.5 by the numfold hook's extra-word set purely so `half_period`'s
-quantifier slot can read it back, and it reaches no clock construction —
-the same split Persian's page records, where an attested spelled fractional
-clock reaches only the period construction.
+jobs: `половина` is the clock's fraction word, and `половин` is the
+quantifier of `половин година`. Both stay words, and `първата половин година`
+is the first half of the year.
 
 ## What refuses
 
