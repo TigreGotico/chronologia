@@ -16,7 +16,9 @@ is the toward-hour form: `четверть десятого` is a quarter *of th
 is 09:15, and `половина девятого` — contracted `полдевятого` — is half of the
 ninth, 08:30. Backward is `без`, which subtracts from the hour actually named:
 `без четверти десять` is a quarter to ten, 09:45. Both are cited to
-gramota.ru's guide to telling the time.
+gramota.ru's guide to telling the time. Before an hour that starts with a
+vowel the dictionary writes a hyphen, `пол-одиннадцатого` (10:30). The spaced
+`пол восьмого` that writers and speech recognisers give reads as 07:30 too.
 
 ## What ships
 

@@ -7,7 +7,8 @@ dziewiątej` is a quarter past nine, 09:15, and `za kwadrans dziesiąta` is a
 quarter to ten, 09:45. `bare_half_to` is therefore set in `lang.json` and
 `bare_quarter_to` is deliberately not. The vocabulary cites PWN's Poradnia
 Językowa and the Polish Academy of Sciences' *Wielki słownik języka polskiego*
-for both halves of that system.
+for both halves of that system. The spaced `w pół do ósmej` that writers and
+speech recognisers give reads as `wpół do ósmej`, 07:30.
 
 The other decision that shapes the locale is the same one Russian faces: the
 ordinary Polish temporal phrase is locative, not nominative. `w zeszłym
