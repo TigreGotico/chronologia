@@ -1,0 +1,7 @@
+# Words that open a date or a clock time and belong to it.
+# Each word is shown opening a time or date phrase on the page named in brackets,
+# saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.
+# a: DLE "a" 6.: "Precisa el lugar o tiempo en que sucede algo. Firmaré a la noche." [rae-a.txt]
+# el: DLE "el" 2.: "unidades del calendario. ... El viernes empieza las vacaciones." [rae-el.txt]
+a
+el
