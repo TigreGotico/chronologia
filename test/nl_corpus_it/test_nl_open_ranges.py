@@ -23,10 +23,11 @@ def test_before_bare_year_open_start():
     # bare year alone with "prima" stranded.
     s, e = start_end('prima 2030')
     assert s == ad(ANCHOR)
-    assert e == AstroDate(2031, 1, 1)
+    # ruling 29: "before X" ends where X starts
+    assert e == AstroDate(2030, 1, 1)
 
 
 def test_before_article_year_open_start():
     s, e = start_end('prima del 2030')
     assert s == ad(ANCHOR)
-    assert e == AstroDate(2031, 1, 1)
+    assert e == AstroDate(2030, 1, 1)

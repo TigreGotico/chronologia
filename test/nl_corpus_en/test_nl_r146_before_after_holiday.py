@@ -54,8 +54,9 @@ def _span(text, anchor=_A):
 # -- bare "before X" binds a span, direction word never stranded -----------
 
 @pytest.mark.parametrize("text,start,end", [
-    ("before christmas", _A, datetime(2026, 12, 26)),
-    ("before march 3", _A, datetime(2027, 3, 4)),
+    # ruling 29: "before X" ends when X begins
+    ("before christmas", _A, datetime(2026, 12, 25)),
+    ("before march 3", _A, datetime(2027, 3, 3)),
 ])
 def test_bare_before_binds_span(text, start, end):
     r = _span(text)
@@ -65,11 +66,13 @@ def test_bare_before_binds_span(text, start, end):
     assert r.remainder == "", f"direction word stranded in {r.remainder!r}"
 
 
-def test_bare_before_mirrors_until():
+def test_bare_before_ends_where_until_ends_on_the_day_before():
+    # ruling 29: "before X" stops when X begins; "until X" takes X in
     before = _span("before christmas")
     until = _span("until christmas")
-    assert before is not None and until is not None
-    assert before[0] == until[0]
+    assert before[0].start == until[0].start
+    assert (before[0].end, until[0].end) == (datetime(2026, 12, 25),
+                                             datetime(2026, 12, 26))
 
 
 # -- bare "after X" is the open span from the end of X, never X itself ------

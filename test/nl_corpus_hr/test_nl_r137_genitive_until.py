@@ -57,15 +57,12 @@ def test_timespan_do_bozica_genitive():
 
 
 def test_timespan_prije_bozica_genitive():
-    # R146: a bare "prije" (before) + genitive holiday must bind a span --
-    # not resolve to the plain holiday date with "prije" stranded (the
-    # pre-R146 defect this test used to pin), and not strand the genitive
-    # noun either. It mirrors "do božića" (until) EXACTLY: [anchor, holiday
-    # end) -- see test_nl_r146_before_after_holiday.py (en) for the full
-    # root-cause writeup.
+    # A bare "prije" (before) + genitive holiday binds a span and strands
+    # neither word. By ruling 29 the span ends when Christmas begins,
+    # 25 December 00:00.
     r = extract_timespan('prije božića', "hr", anchor=ANCHOR)
     assert r is not None, "'prije božića' did not parse"
     span = r[0]
     assert span.start.year == 2017 and span.start.month == 6 and span.start.day == 27
-    assert span.end.year == 2017 and span.end.month == 12 and span.end.day == 26
+    assert span.end.year == 2017 and span.end.month == 12 and span.end.day == 25
     assert r[1] == ""
