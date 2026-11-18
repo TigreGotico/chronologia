@@ -217,6 +217,34 @@ def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
     return False
 
 
+def _is_length_of_noun(text: str, lang: str, anchor: datetime,
+                       length_words: Counter) -> bool:
+    """True when the length words stand right after a length preposition
+    (``marker_length_of.voc``) that no reading takes, and a word that no
+    reading takes stands before it: pt "jantar de duas horas da noite
+    amanhã" is a two-hour dinner in the evening, not a dinner at 02:00.
+
+    The clock suffix after the count ("da noite") does not turn the count
+    into a clock, because a clock names its hour after "às" and no noun.
+    Only languages that list the preposition tell the two apart.
+    """
+    from chronologia.extract import explain, load_lang_spec
+
+    spec = load_lang_spec(lang)
+    joiners = spec.connectors.get("length_of")
+    if not joiners:
+        return False
+    trace = explain(text, spec, anchor)
+    taken = {i for w in trace.winners for i in range(*w.match.span)}
+    words = [t.text for t in trace.tokens]
+    size = sum(length_words.values())
+    return any(
+        Counter(words[i:i + size]) == length_words
+        and words[i - 1] in joiners
+        and i - 1 not in taken and i - 2 not in taken
+        for i in range(2, len(words) - size + 1))
+
+
 def extract_event(
         text: str,
         lang: str = "en",
@@ -308,6 +336,8 @@ def extract_event(
                     and not (rest is not None and _is_bare_clock_length(
                         remainder, lang, anchor, length_words)) \
                     and not _is_counted_part_of_day(
+                        remainder, lang, anchor, length_words) \
+                    and not _is_length_of_noun(
                         remainder, lang, anchor, length_words):
                 got_dur = None
     if got_dur is not None:
