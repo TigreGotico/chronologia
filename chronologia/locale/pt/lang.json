@@ -213,6 +213,8 @@
       ],
       "daypart_ref": [
         "REL_MARKER DAYPART",
+        "article? PART of DAYPART",
+        "at PART of DAYPART",
         "article DAYPART",
         "of DAYPART",
         "at DAYPART",
