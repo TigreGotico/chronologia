@@ -2774,9 +2774,7 @@ class Resolver:
         if unit is not None:
             span = resolve_bp(num.text, unit)
         else:
-            # a scale word with no SI unit ("hundred", the long-scale
-            # trillion): the width is still one unit of the last digit said
-            # in the scale's unit, so the shift keeps the digits' exponent
+            # no SI unit for this scale: shift the digits to keep their width
             span = resolve_bp(Decimal(num.text).scaleb(len(str(factor)) - 1),
                               "a")
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
