@@ -784,6 +784,11 @@ for c in extract_candidates("june 2027", "en", datetime(2017, 6, 27)):
 # year_ref      0.457 'june'  -> a weaker reading: just "2027", "june" stranded
 ```
 
+A numeral alone is a candidate, not a reading. "2400" or "2400 people came"
+has no "in", no year word and no other date beside it, so `extract_timespan`
+gives `None`, and `extract_candidates` lists the year 2400 after every other
+reading. "in 2400", "the year 2400" and "before 2030" read as dates.
+
 The score answers "how sure are we of this reading", not "how much of the
 sentence did it explain". A phrase read the same way scores the same however
 much ordinary conversation surrounds it:
