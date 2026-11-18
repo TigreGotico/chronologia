@@ -256,6 +256,14 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             if (j < n and tokens[j].is_number and tokens[j].value is not None
                     and 0 < tokens[j].value < 1):
                 return float(tokens[j].value), j + 1
+        # fr "deux heures moins le quart": a clock "to" word and a fraction
+        # take that fraction off the count
+        if j < n and spec.clock_dirs.get(tokens[j].text) == -1:
+            j += 1
+            while j < n and tokens[j].text in articles:
+                j += 1
+            if j < n and tokens[j].text in fracs:
+                return -fracs[tokens[j].text], j + 1
         return None, k
 
     calendar_months = _DUR_CALENDAR_MONTHS if anchor is not None else {}
