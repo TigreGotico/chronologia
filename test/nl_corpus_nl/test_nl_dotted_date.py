@@ -25,7 +25,7 @@ def test_dotted_date_nl():
 def test_dotted_date_in_a_sentence_nl():
     s, e = start_end('de vergadering op 15.06.2020')
     assert (s, e) == (AstroDate(2020, 6, 15), AstroDate(2020, 6, 16))
-    assert parse('de vergadering op 15.06.2020')[1] == 'de vergadering op'
+    assert parse('de vergadering op 15.06.2020')[1] == 'de vergadering'
 
 
 def test_dotted_date_unpadded_nl():

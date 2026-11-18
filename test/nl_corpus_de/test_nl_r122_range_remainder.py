@@ -27,11 +27,11 @@ def test_bis_zur_range_consumes_the_compound_marker():
     assert r is not None, f"{text!r} did not parse"
     assert r[0].start == AstroDate(2018, 3, 3)
     assert r[0].end == AstroDate(2018, 4, 6)
-    # "Wanderung am" (the hike, on) is real non-temporal content named by the
-    # range's own trailing clause and must survive in the remainder -- only
-    # the "zur" marker glue is swallowed, never the noun/preposition it
-    # introduces.
-    assert r[1] == "Wanderung am", f"unexpected remainder: {r[1]!r}"
+    # "Wanderung" (the hike) is real non-temporal content named by the
+    # range's own trailing clause and must survive in the remainder -- the
+    # "zur" marker glue and the "am" that opens the date are swallowed, never
+    # the noun.
+    assert r[1] == "Wanderung", f"unexpected remainder: {r[1]!r}"
 
 
 def test_range_embedded_in_a_sentence_keeps_the_surrounding_words():
