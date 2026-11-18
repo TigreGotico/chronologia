@@ -3770,7 +3770,9 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
                   or _offset_is_day_or_coarser(m, spec))
              and not (m.construction in ("after_next", "before_last")
                       and ("DAYPART" in m.slots
-                           or spec.units.get(m.slots["UNIT"].text) != "day"))]
+                           or (m.slots.get("UNIT") is not None
+                               and spec.units.get(m.slots["UNIT"].text)
+                               != "day")))]
     dayparts = [(m, r) for m, r in resolved
                 if m.construction == "daypart_ref"]
     weekdays = [(m, r) for m, r in resolved
