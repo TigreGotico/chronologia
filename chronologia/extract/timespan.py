@@ -38,7 +38,7 @@ from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
                                          is_alarm_bare_range)
-from chronologia.extract.model import (LangSpec, Resolution, Token)
+from chronologia.extract.model import (LangSpec, Match, Resolution, Token)
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
                                               pretokens, render_remainder,
@@ -4313,6 +4313,31 @@ def _lone_numeral_year(rep, res, tokens, spec) -> bool:
                    if t.index != rep.span[0])
 
 
+def _lone_numeral_readings(tokens) -> list:
+    """The hour and day-of-month readings of an utterance that is one numeral.
+
+    Ruling 34 of the disagreement rulings: da "20" or nl "2" alone names no
+    date, but a consumer that asked "when?" can take the readings it allows.
+    A whole number 0 to 24 is an hour, read as "at 20" would be; 1 to 31 is a
+    day of the month, read as "on the 20th" would be.  Both carry the doubt
+    of a bare hour, and :func:`extract_candidates` ranks them last.
+    """
+    if len(tokens) != 1:
+        return []
+    tok = tokens[0]
+    if not tok.is_number or tok.value is None or tok.value != int(tok.value):
+        return []
+    value = int(tok.value)
+    span = (tok.index, tok.index + 1)
+    readings = []
+    if 0 <= value <= 24:
+        readings.append(Match("clock_time", span, {"HOUR": tok}, doubt=True))
+    if 1 <= value <= 31:
+        readings.append(Match("month_day_ref", span, {"NORD": tok},
+                              doubt=True))
+    return readings
+
+
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                   text=None, scale_mode="short", whole=False):
     """The single-span resolution over an already-tokenized stream.
@@ -4573,7 +4598,8 @@ def extract_candidates(
                   if engine.spec.construction_flags.get(
                       c.match.construction, {}).get("group") is None
                   and not _candidate_veto(tokens, c.match, engine.spec)]
-    matches = [m for m, _ in composed] + runner_ups
+    lone_readings = _lone_numeral_readings(tokens)
+    matches = [m for m, _ in composed] + runner_ups + lone_readings
     for sc in _score_candidates(matches, _resolve_one, engine.spec):
         match, res, conf = sc.match, sc.resolution, sc.confidence
         is_composed = id(match) in composed_res
@@ -4612,7 +4638,8 @@ def extract_candidates(
         # is first so the two APIs agree on the top answer; then confidence, a
         # composed reading ahead of the bare partial it was built from, earlier
         # text position, and longer span.
-        rank = (0 if id(match) == primary else 2 if id(match) == lone else 1,
+        last = id(match) == lone or any(match is m for m in lone_readings)
+        rank = (0 if id(match) == primary else 2 if last else 1,
                 -conf,
                 0 if is_composed else 1, match.span[0], -match.length)
         scored.append((rank, Candidate(value, remainder, conf,
