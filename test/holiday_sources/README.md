@@ -25,4 +25,4 @@ The text of a legal provision is free of copyright (Real Decreto Legislativo 1/1
 | `feriados_moveis.tsv` | Movable municipal holidays: rule, holiday, municipalities. |
 | `municipios_portugal.csv` | Municipality name and the code of its subdivision. |
 
-The tables come from the public gist <https://gist.github.com/00ac648935e964a795e9b9fe4585c2a5,> written by the owner of this repository. They ship under the licence of this repository.
+The tables come from the public gist <https://gist.github.com/JarbasAl/00ac648935e964a795e9b9fe4585c2a5>, written by the owner of this repository. They ship under the licence of this repository.

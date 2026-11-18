@@ -6,8 +6,8 @@ dictionary or standard rules on it, the source. A test pins every ruling, and a
 change to a ruling changes this page.
 
 Rulings A to C are the readings that differ from ovos-date-parser, the reader
-that chronologia replaces. Ruling D lists spelled-clock and day-word readings
-that both engines were checked against. The numbered rulings that follow apply
+that chronologia replaces. Ruling D lists settled spelled-clock and day-word
+readings. The numbered rulings that follow apply
 to every locale unless a ruling names the locales it covers.
 
 ## A. A counted offset carries the clock of the anchor
