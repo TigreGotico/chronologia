@@ -563,6 +563,27 @@ def _subtractive_clock_complete(text, sub, engine, anchor):
                for t in folded if t.char_start is not None)
 
 
+def _extract_later_range(text, tokens, engine, anchor, scale_mode):
+    """A range that a later clause opens, when the first one reads no range.
+
+    The range reader splits at the first connector, so "from two thousand to
+    three thousand dollars, from 2000 to 2010" takes the whole text after the
+    first "to" as the right end of one range, and the range of years never
+    gets read.  A clause that opens with a range word is read as a range of
+    its own, and the clauses before it go to the remainder.
+    """
+    spec = engine.spec
+    leads = (_conn_surfaces(spec, "from", _RANGE_FROM)
+             + _conn_surfaces(spec, "between", _RANGE_BETWEEN))
+    for i in range(1, len(tokens)):
+        if tokens[i].break_before and _match_conn_at(tokens, i, leads):
+            got = _extract_range(text, tokens[i:], engine, anchor, scale_mode)
+            if got is not None:
+                return _with_prefix(
+                    got, render_remainder(text, list(tokens[:i])))
+    return None
+
+
 def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     """A "from A to B" / "between A and B" span, endpoints from two sub-parses.
 
@@ -3577,6 +3598,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     if dir_rng is not None:
         return dir_rng
     rng = _extract_range(text, raw, engine, anchor, scale_mode)
+    if rng is None:
+        rng = _extract_later_range(text, raw, engine, anchor, scale_mode)
     if rng is not None:
         return rng
     opn = _extract_open_range(text, raw, engine, anchor, scale_mode)
