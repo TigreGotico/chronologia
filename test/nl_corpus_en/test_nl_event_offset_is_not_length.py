@@ -261,10 +261,11 @@ def test_nl_quarter_hour_offset_reads_like_its_english_form():
             want.span.start, want.span.end, want.duration)
 
 
-def test_nl_quarter_hour_before_christmas_is_the_day_before():
+def test_nl_quarter_hour_before_christmas_is_an_instant():
+    # ruling 30: a quarter of an hour before Christmas Day begins
     ev = extract_event("een kwartier voor kerstmis bellen", "nl", anchor=ANCHOR)
     assert (ev.summary, ev.span.start, ev.duration) == (
-        "bellen", datetime(2026, 12, 24), None)
+        "bellen", datetime(2026, 12, 24, 23, 45), None)
 
 
 def test_a_failing_whole_text_read_does_not_raise(monkeypatch):

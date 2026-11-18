@@ -29,7 +29,11 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import List, Optional, Tuple
 
+from numtag import tag_vague_quantities
+
 from chronologia.astrodate import AstroDate, DateSpan
+from chronologia.extract.numlayer import NUMTAG_LANGS
+from chronologia.extract.numlayer import reads as reads_numbers
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _WEEK_START,
                                               _day_span, _midnight, _week_span)
@@ -157,6 +161,36 @@ def _offset_base(span: DateSpan, sign: int,
 
 # -- feature 1: offset-from-reference -------------------------------------
 
+def _is_vague(words: Tuple[Token, ...], lang: str) -> bool:
+    """Whether numtag reads the quantifier ``words`` ("a few", "several",
+    "algumas") as a vague quantity rather than a count."""
+    if not reads_numbers(lang):
+        return False
+    text = " ".join(t.text for t in words)
+    return bool(tag_vague_quantities(text, NUMTAG_LANGS[lang.split("-")[0]]))
+
+
+def _fraction_of(tokens: Tuple[Token, ...], k: int,
+                 spec: LangSpec) -> Optional[Tuple[float, int]]:
+    """``(qty, start)`` for "[count] FRACTION of" ending at the "of" token
+    ``k``, or ``None``: "un quart d'heure" is 0.25 of the unit and "tres
+    cuartos de hora" 0.75.  The fraction word is a quantifier below one."""
+    if tokens[k].text not in spec.connectors.get("of", ()) or k < 1:
+        return None
+    frac = spec.quantifiers.get(tokens[k - 1].text)
+    if frac is None or frac >= 1:
+        return None
+    start = k - 1
+    count = 1.0
+    if start >= 1:
+        c = tokens[start - 1]
+        if c.is_number and c.value is not None:
+            count, start = float(c.value), start - 1
+        elif spec.quantifiers.get(c.text) == 1:
+            start -= 1
+    return frac * count, start
+
+
 def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
                     gap: frozenset) -> Optional[dict]:
     """Read the offset pre-amble ending just before token ``c0`` (the
@@ -176,12 +210,19 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
         start = j
         qty = 1.0
         explicit_qty = False
+        vague = False
         if j - 1 >= 0:
             p = tokens[j - 1]
             if p.is_number and p.value is not None:
                 qty, start, explicit_qty = float(p.value), j - 1, True
             elif p.text in spec.quantifiers:
                 qty, start, explicit_qty = spec.quantifiers[p.text], j - 1, True
+                vague = _is_vague(tokens[max(j - 2, 0):j], spec.lang)
+            elif _fraction_of(tokens, j - 1, spec) is not None:
+                # "un quart d'heure", "tres cuartos de hora": a fraction
+                # word, "of", the unit, with an optional count before
+                qty, start = _fraction_of(tokens, j - 1, spec)
+                explicit_qty = True
         # a DEFINITE article directly heading the bare (uncounted) unit
         # ("**the** week after...") names the calendar grain itself, unlike
         # an indefinite article/bare count ("a week after...", "2 weeks
@@ -197,7 +238,7 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
         if start - 1 >= 0 and tokens[start - 1].text in lead:
             start -= 1
         return {"kind": "unit", "unit": unit, "qty": qty, "start": start,
-                "definite": definite}
+                "definite": definite, "vague": vague}
     if tj.text in spec.weekdays:
         start = j
         if start - 1 >= 0 and tokens[start - 1].text in gap:
@@ -211,6 +252,34 @@ def _parse_preamble(tokens: Tuple[Token, ...], c0: int, spec: LangSpec,
 #: clock arithmetic (minutes/seconds matter), unlike the calendar-grain
 #: units ("day" and wider) whose shift is a whole-civil-day step.
 _SUB_DAY_UNITS = frozenset({"minute", "hour"})
+
+#: a holiday reference: a counted offset from it counts from the instant it
+#: begins, in both directions
+_HOLIDAY_CONSTRUCTIONS = frozenset({"holiday_ref", "new_year_ref"})
+
+
+def _counted_offset_span(span: DateSpan, construction: str, sign: int,
+                         unit: str, qty: float, vague: bool) -> DateSpan:
+    """The span that ``qty`` ``unit`` before (``sign<0``) or after a
+    reference ``span`` names (ruling 30 of the disagreement rulings).
+
+    A count under a day names an instant, one minute wide: "an hour before
+    christmas" is 24 December 23:00.  A holiday stands for the instant it
+    begins in both directions, so "2 hours after christmas" is 25 December
+    02:00; any other reference counts as :func:`_offset_base` says.  A count
+    of a day or more names the shifted civil day: "2 days after christmas"
+    is 27 December.  A vague count ("a few hours") names no instant and
+    keeps the shifted day.
+    """
+    under_a_day = not vague and _LONGEST_UNIT[unit] * qty < timedelta(days=1)
+    if under_a_day and construction in _HOLIDAY_CONSTRUCTIONS:
+        base = span.start
+    else:
+        base = _offset_base(span, sign, unit)
+    value = _shift(base, unit, sign * qty)
+    if under_a_day:
+        return DateSpan(value, value + timedelta(minutes=1))
+    return _astro_day_span(value)
 
 
 def _offset_glue(spec: LangSpec) -> frozenset:
@@ -307,8 +376,9 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             new_match = Match(match.construction, (start, cm.span[1]),
                               match.slots, match.calendar)
             return new_match, Resolution(span, consumed)
-        if sub_day and _adjacent_match(tokens, resolved, match, spec,
-                                       "daypart_ref") is not None:
+        daypart = sub_day and _adjacent_match(tokens, resolved, match, spec,
+                                              "daypart_ref") is not None
+        if daypart:
             # "an hour after tomorrow morning": the part of the day attaches
             # to the shifted day, so a sub-day offset stays on the
             # reference's own day instead of counting from its end
@@ -327,8 +397,12 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             # day instead of collapsing to a single point.
             if pre["unit"] == "week" and pre.get("definite"):
                 span = _week_span(value, spec.conventions.week_start)
-            else:
+            elif daypart:
                 span = _astro_day_span(value)
+            else:
+                span = _counted_offset_span(res.value, match.construction,
+                                            sign, pre["unit"], pre["qty"],
+                                            pre["vague"])
         else:
             span = _astro_day_span(_roll_weekday(base, pre["weekday"], sign))
         start = pre["start"]
@@ -386,13 +460,12 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
                 if pre is None:
                     continue
                 lo = pre["start"]
-            base = _offset_base(res.value, sign, pre.get("unit"))
             if pre["kind"] == "unit":
-                value = _shift(base, pre["unit"], sign * pre["qty"])
-                # the offset governs the SHIFT, not the width: the single
-                # shifted civil day, for every unit (see _try_offset).
-                span = _astro_day_span(value)
+                span = _counted_offset_span(res.value, match.construction,
+                                            sign, pre["unit"], pre["qty"],
+                                            pre["vague"])
             else:
+                base = _offset_base(res.value, sign, pre.get("unit"))
                 span = _astro_day_span(_roll_weekday(base, pre["weekday"], sign))
             consumed = tuple(sorted(set(res.consumed) | set(range(lo, end))))
             new_match = Match(match.construction, (lo, end),

@@ -102,13 +102,12 @@ def test_day_grain_offset_unaffected(text, start, end):
     assert got_end == end
 
 
-def test_no_clock_subday_offset_still_floors_to_day():
-    # a sub-day offset on a DATE with NO time-of-day in the sentence has no
-    # clock to do exact arithmetic against: it still floors to the whole
-    # shifted civil day (pinned pre-existing behaviour, not this defect).
+def test_no_clock_subday_offset_is_an_instant():
+    # ruling 30: a count under one day is a one-minute instant, half an
+    # hour before 3 March begins
     got_start, got_end = _start_end("half an hour before March 3")
-    assert got_start == datetime(2027, 3, 2, 0, 0)
-    assert got_end == datetime(2027, 3, 3, 0, 0)
+    assert got_start == datetime(2027, 3, 2, 23, 30)
+    assert got_end == datetime(2027, 3, 2, 23, 31)
 
 
 @pytest.mark.parametrize("text,start,end", [

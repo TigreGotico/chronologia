@@ -311,6 +311,11 @@ A bare "before X" runs from now to the start of X, so X itself is not in the
 span: "before christmas" said in September ends at 25 December, 00:00, where
 "until christmas" ends at 26 December, 00:00.
 
+A counted offset under one day names an instant: "an hour before christmas"
+is 24 December, 23:00. A holiday stands for the instant it begins in both
+directions, so "2 hours after christmas" is 25 December, 02:00. A count of a
+day or more names the day: "2 days after christmas" is 27 December.
+
 A bare "after X" names a span with a start and no end: the time from the end
 of the next X onward. The span has `open_end` set and stores its start in both
 endpoints, so a consumer that needs an instant takes `span.start`:
