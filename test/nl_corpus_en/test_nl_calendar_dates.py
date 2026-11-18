@@ -9,6 +9,8 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
+from ruling34 import candidate_spans
+
 from ._corpus import ANCHOR, AstroDate, ad, start, start_end, span, nomatch
 
 _ANCHOR_DAY = ANCHOR.date()
@@ -191,14 +193,24 @@ def test_bare_nth_without_preposition_does_not_bind(text):
 # -- bare / marked calendar year (year-wide span) -------------------------
 
 @pytest.mark.parametrize("text,year", [
-    ("2027", 2027), ("in 1995", 1995), ("the year 2000", 2000),
-    ("year 1969", 1969), ("in 1492", 1492), ("2020", 2020),
+    ("in 1995", 1995), ("the year 2000", 2000),
+    ("year 1969", 1969), ("in 1492", 1492), 
     ("the year 1000", 1000),
 ])
 def test_bare_year(text, year):
     s, e = start_end(text)
     assert s == AstroDate(year, 1, 1)
     assert e == AstroDate(year + 1, 1, 1)
+
+
+@pytest.mark.parametrize("text,year", [
+    ("2027", 2027),
+    ("2020", 2020),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, year):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+    assert want in candidate_spans(text, "en", ANCHOR)
 
 
 # adversarial: a small integer is NOT a year (needs 4 digits / >= 32).

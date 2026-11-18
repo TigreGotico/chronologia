@@ -16,7 +16,9 @@ from datetime import date, timedelta
 import pytest
 
 from chronologia.astrodate import AstroDate
-from ._corpus import start_end, nomatch, parse, span
+from ruling34 import candidate_spans
+
+from ._corpus import start_end, nomatch, parse, span, ANCHOR
 
 
 def _ad(d):
@@ -148,7 +150,15 @@ def test_week_counts_are_what_the_standard_says():
     ("2024-03", AstroDate(2024, 3, 1), AstroDate(2024, 4, 1)),
     ("2024-03-06", AstroDate(2024, 3, 6), AstroDate(2024, 3, 7)),
     ("12/11/2024", AstroDate(2024, 12, 11), AstroDate(2024, 12, 12)),
-    ("2024", AstroDate(2024, 1, 1), AstroDate(2025, 1, 1)),
 ])
 def test_neighbouring_literals_unchanged(text, s, e):
     assert start_end(text) == (s, e)
+
+
+@pytest.mark.parametrize("text,s,e", [
+    ("2024", AstroDate(2024, 1, 1), AstroDate(2025, 1, 1)),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, s, e):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (s, e)
+    assert want in candidate_spans(text, "en", ANCHOR)

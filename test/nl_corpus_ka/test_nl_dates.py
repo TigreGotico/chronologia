@@ -10,7 +10,9 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, remainder, start, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import ANCHOR, ad, remainder, start, start_end, AstroDate
 
 
 @pytest.mark.parametrize("text,y,m,d", [
@@ -104,9 +106,9 @@ def test_night_wraps_past_midnight(text):
     ("2020", 2020), ("1999", 1999), ("2031", 2031),
 ])
 def test_bare_year(text, year):
-    s, e = start_end(text)
-    assert (s.year, s.month, s.day) == (year, 1, 1)
-    assert e.year == year + 1
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+    assert want in candidate_spans(text, "ka", ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["", "   ", "გამარჯობა", "qwerty zxcvb"])

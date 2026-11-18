@@ -9,7 +9,9 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, nomatch, span, start, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import ANCHOR, ad, nomatch, span, start, start_end, AstroDate
 
 
 @pytest.mark.parametrize("text,delta", [
@@ -107,10 +109,19 @@ def test_a_daypart_composes_with_a_named_day(text, day, hour):
     assert (s.day, s.hour) == (day, hour)
 
 
-@pytest.mark.parametrize("text,y", [("taong 2026", 2026), ("2026", 2026)])
+@pytest.mark.parametrize("text,y", [("taong 2026", 2026), ])
 def test_year_reference(text, y):
     s = span(text)
     assert (s.start.year, s.start.month, s.start.day) == (y, 1, 1)
+
+
+@pytest.mark.parametrize("text,y", [
+    ("2026", 2026),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "fil", ANCHOR)
 
 
 def test_a_range_runs_from_mula_to_hanggang():

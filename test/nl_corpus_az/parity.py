@@ -26,8 +26,6 @@ PARITY = [
     ('25 dekabr 2025', 'december 25 2025'),
     ('iyun 2027', 'june 2027'),
     ('yanvar 2020', 'january 2020'),
-    ('1999', '1999'),
-    ('2020', '2020'),
     ('15:30', '15:30'),
     ('gələn çərşənbə axşamı', 'next tuesday'),
     ('keçən cümə', 'last friday'),

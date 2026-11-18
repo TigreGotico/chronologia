@@ -25,8 +25,6 @@ PARITY = [
     ('3 mac 2027', 'march 3 2027'),
     ('jun 2027', 'june 2027'),
     ('januari 2020', 'january 2020'),
-    ('1999', '1999'),
-    ('2020', '2020'),
     ('15:30', '15:30'),
     ('selasa depan', 'next tuesday'),
     ('jumaat lepas', 'last friday'),

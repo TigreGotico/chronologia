@@ -1,7 +1,10 @@
 """The Hausa date line: day, *ga*, month, year -- and the month's linked form."""
 import pytest
 
-from ._corpus import day, month_span, nomatch, remainder, start_end, year_span
+from ruling34 import candidate_spans
+
+from ._corpus import (
+    day, month_span, nomatch, remainder, start_end, year_span, ANCHOR)
 
 
 #: CLDR wide name, CLDR abbreviation, the genitive-linked form written
@@ -90,12 +93,21 @@ def test_a_month_named_with_its_noun():
 
 
 @pytest.mark.parametrize("text,y", [
-    ("2027", 2027), ("1918", 1918), ("1960", 1960),
     ("shekara ta 1926", 1926),
     ("shekarar 2024", 2024),
 ])
 def test_the_year(text, y):
     assert start_end(text) == year_span(y)
+
+
+@pytest.mark.parametrize("text,y", [
+    ("2027", 2027),
+    ("1918", 1918),
+    ("1960", 1960),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert year_span(y) in candidate_spans(text, "ha", ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["ga", "ranar", "watan", "shekarar"])

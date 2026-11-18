@@ -10,7 +10,9 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import parse, span, start_end, nomatch, AstroDate
+from ruling34 import candidate_spans
+
+from ._corpus import parse, span, start_end, nomatch, AstroDate, ANCHOR
 
 
 @pytest.mark.parametrize("text,y0", [
@@ -36,8 +38,10 @@ def test_framing_year_word_is_consumed():
 
 
 def test_bare_year_is_still_a_year():
-    # no ordinal ending, so "1980" stays the single year
-    assert start_end("1980") == (AstroDate(1980, 1, 1), AstroDate(1981, 1, 1))
+    # no ordinal ending, so "1980" stays the single year, a candidate and
+    # not a reading when it stands alone (ruling 34)
+    assert (AstroDate(1980, 1, 1), AstroDate(1981, 1, 1)) in candidate_spans(
+        "1980", "ru", ANCHOR)
 
 
 def test_garbage_ending_is_no_decade():

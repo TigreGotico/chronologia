@@ -30,8 +30,6 @@ PAIRS = [
     ("00:00", "00:00"),
     ("a mediudía", "noon"),
     ("a medianueche", "midnight"),
-    ("2019", "2019"),
-    ("1989", "1989"),
     ("2017-06-30", "2017-06-30"),
     ("de xunu a agostu", "from june to august"),
     ("de xineru a marzu", "from january to march"),

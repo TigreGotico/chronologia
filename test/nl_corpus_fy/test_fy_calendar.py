@@ -3,7 +3,9 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import start, start_end, span, nomatch, AstroDate
+from ruling34 import candidate_spans
+
+from ._corpus import start, start_end, span, nomatch, AstroDate, ANCHOR
 
 
 @pytest.mark.parametrize("text,y,m,d", [('5 juny 2018', 2018, 6, 5), ('1 jannewaris 2000', 2000, 1, 1), ('3 oktober 2020', 2020, 10, 3), ('31 desimber 1999', 1999, 12, 31), ('29 febrewaris 2020', 2020, 2, 29), ('6 juny 1944', 1944, 6, 6), ('9 novimber 1989', 1989, 11, 9), ('8 maaie 1945', 1945, 5, 8)])
@@ -32,6 +34,15 @@ def test_iso(text, y, m, d):
     assert start(text) == AstroDate(y, m, d)
 
 
-@pytest.mark.parametrize("text,y", [('1969', 1969), ('it jier 1969', 1969), ('it jier 2000', 2000)])
+@pytest.mark.parametrize("text,y", [('it jier 1969', 1969), ('it jier 2000', 2000)])
 def test_year(text, y):
     assert start(text) == AstroDate(y, 1, 1)
+
+
+@pytest.mark.parametrize("text,y", [
+    ('1969', 1969),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "fy", ANCHOR)

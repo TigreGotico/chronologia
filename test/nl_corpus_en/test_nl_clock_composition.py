@@ -21,7 +21,9 @@ past today to tomorrow.
 import pytest
 
 from chronologia.astrodate import AstroDate
-from ._corpus import span, start, parse
+from ruling34 import candidate_spans
+
+from ._corpus import span, start, parse, ANCHOR
 
 
 # ---------------------------------------------------------------------------
@@ -66,7 +68,6 @@ def test_military_forms_unchanged(text, y, mo, d, hh, mm):
 # a four-digit YEAR must NOT be hijacked by the clock reading: only a military
 # zone/marker qualifier licenses the clock; a bare number stays a year.
 _YEAR_PINS = [
-    ("1500",          1500),
     ("in 1500",       1500),
     ("1500 AD",       1500),
     ("the year 1500", 1500),
@@ -78,6 +79,12 @@ def test_bare_four_digit_stays_year(text, year):
     s = span(text).start
     assert (s.year, s.month, s.day) == (year, 1, 1)
     assert (s.hour, s.minute) == (0, 0)
+
+
+def test_a_lone_four_digit_numeral_is_a_year_candidate():
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(1500, 1, 1), AstroDate(1501, 1, 1)) in candidate_spans(
+        "1500", "en", ANCHOR)
 
 
 def test_year_range_unchanged():

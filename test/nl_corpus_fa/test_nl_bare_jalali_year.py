@@ -18,7 +18,9 @@ from datetime import datetime
 
 import pytest
 
-from ._corpus import ad, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import ad, start_end, ANCHOR
 from ._jalali import j2g
 
 # Contemporary Solar-Hijri civil years across the window (1404 excluded).
@@ -34,7 +36,8 @@ def _sh_gold(y):
 
 @pytest.mark.parametrize("y", _SH_YEARS)
 def test_bare_year_is_solar_hijri(y):
-    assert start_end(str(y)) == _sh_gold(y)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert _sh_gold(y) in candidate_spans(str(y), "fa", ANCHOR)
 
 
 @pytest.mark.parametrize("y", _SH_YEARS)
@@ -59,4 +62,5 @@ def test_miladi_marker_forces_gregorian(y):
 def test_gregorian_scale_year_stays_gregorian(y):
     """Years outside the civil Solar-Hijri window read as written Gregorian:
     a Persian speaker naming 2024 means 2024 AD, not SH 2024."""
-    assert start_end(str(y)) == _greg_year(y)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert _greg_year(y) in candidate_spans(str(y), "fa", ANCHOR)

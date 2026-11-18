@@ -17,7 +17,9 @@ maps ``year -> 1 - n``, i.e. "1 BC" == year 0, "44 BC" == year -43):
 """
 import pytest
 
-from ._corpus import AstroDate, nomatch, parse, span, start
+from ruling34 import candidate_spans
+
+from ._corpus import AstroDate, nomatch, parse, span, start, ANCHOR
 
 from datetime import date, timedelta
 
@@ -90,8 +92,9 @@ def test_year_ref_offset_composes(text, year):
 # -- controls: bare-year reading itself, and adjacent constructs, unchanged -
 
 def test_control_plain_year_unchanged():
-    s, e = span("2020").start, span("2020").end
-    assert s == AstroDate(2020, 1, 1) and e == AstroDate(2021, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    assert (AstroDate(2020, 1, 1), AstroDate(2021, 1, 1)) in candidate_spans(
+        "2020", "en", ANCHOR)
 
 
 def test_control_the_year_2020_unchanged():

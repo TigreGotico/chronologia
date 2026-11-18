@@ -4,7 +4,9 @@ MONTH YEAR, bare year.  Both Gregorian-Arabic (يناير) and single/double-tok
 Levantine (شباط, كانون الثاني) month names."""
 import pytest
 
-from ._corpus import AstroDate, start_end, span
+from ruling34 import candidate_spans
+
+from ._corpus import AstroDate, start_end, span, ANCHOR
 
 
 @pytest.mark.parametrize("text,s,e", [
@@ -56,9 +58,19 @@ def test_levantine_two_token(text, s, e):
 
 
 @pytest.mark.parametrize("text,y", [
-    ("1999", 1999), ("2020", 2020), ("عام 2020", 2020), ("في 1969", 1969),
+    ("عام 2020", 2020), ("في 1969", 1969),
     ("سنة 1948", 1948),
 ])
 def test_year_ref(text, y):
     ss, ee = start_end(text)
     assert ss == AstroDate(y, 1, 1) and ee == AstroDate(y + 1, 1, 1)
+
+
+@pytest.mark.parametrize("text,y", [
+    ("1999", 1999),
+    ("2020", 2020),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "ar", ANCHOR)

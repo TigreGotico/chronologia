@@ -4,7 +4,9 @@ next occurrence (prefer_future) against the 2017-06-27 anchor.
 """
 import pytest
 
-from ._corpus import AstroDate, span, start, start_end, parse
+from ruling34 import candidate_spans
+
+from ._corpus import AstroDate, span, start, start_end, parse, ANCHOR
 
 
 # -- full DMY dates with a year (day-wide) -------------------------------
@@ -61,10 +63,20 @@ def test_iso_date():
 
 # -- bare year -----------------------------------------------------------
 
-@pytest.mark.parametrize("text,y", [("2019", 2019), ("1989", 1989),
+@pytest.mark.parametrize("text,y", [
                                     ("v roce 2000", 2000)])
 def test_year(text, y):
     assert start(text) == AstroDate(y, 1, 1)
+
+
+@pytest.mark.parametrize("text,y", [
+    ("2019", 2019),
+    ("1989", 1989),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "cs", ANCHOR)
 
 
 # adversarial: a 3-digit run is not a bare year (guard)

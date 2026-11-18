@@ -14,7 +14,9 @@ import pytest
 
 from chronologia.astrodate import AstroDate
 
-from ._corpus import nomatch, remainder, span, start
+from ruling34 import candidate_spans
+
+from ._corpus import nomatch, remainder, span, start, ANCHOR
 
 
 @pytest.mark.parametrize("text,y,m,d", [
@@ -105,8 +107,9 @@ def test_month_and_year(text, y, m):
     ("1990", 1990), ("2027", 2027), ("1969", 1969),
 ])
 def test_bare_year(text, y):
-    s = span(text)
-    assert (s.start.year, s.start.month, s.start.day) == (y, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "cy", ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["999", "42", "7"])

@@ -12,7 +12,8 @@ from datetime import datetime
 
 import pytest
 
-from chronologia import extract_timespan, resolve_era
+from chronologia import AstroDate, extract_timespan, resolve_era
+from ruling34 import candidate_spans
 
 _A = datetime(2017, 6, 27, 13, 4)
 
@@ -52,12 +53,20 @@ def test_anno_mundi_older_year():
 
 @pytest.mark.parametrize("text,want_year", [
     ("the year 5786", 5786),     # no "anno mundi" marker -> a plain Gregorian year
-    ("5786", 5786),
     ("the year 2020", 2020),
 ])
 def test_bare_year_is_not_anno_mundi(text, want_year):
     r = extract_timespan(text, "en", _A)
     assert r is not None and r[0].start_datetime.year == want_year
+
+
+@pytest.mark.parametrize("text,want_year", [
+    ("5786", 5786),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, want_year):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(want_year, 1, 1), AstroDate(want_year + 1, 1, 1))
+    assert want in candidate_spans(text, "en", _A)
 
 
 @pytest.mark.parametrize("text", ["9 am", "at 9 am", "3 am tomorrow"])

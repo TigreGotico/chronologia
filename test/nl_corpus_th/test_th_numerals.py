@@ -10,6 +10,7 @@ into 10 and 20.
 import pytest
 
 from chronologia.extract.numfold_thai import read_run, surface
+from ruling34 import candidate_spans
 
 CASES = [
     ("ศูนย์", 0), ("หนึ่ง", 1), ("สอง", 2), ("สาม", 3), ("สี่", 4),
@@ -58,15 +59,16 @@ def test_the_dialectal_twenty_is_read_but_never_generated(text, value):
 
 
 def test_thai_digits_are_read_by_the_shared_tokenizer():
-    """๐-๙ are Unicode decimal digits, so no locale handling is needed."""
+    """๐-๙ are Unicode decimal digits, so no locale handling is needed.  A
+    lone numeral is a candidate, not a reading (ruling 34), and the Thai and
+    the ASCII digits give the same year."""
     from datetime import datetime
 
-    from chronologia import extract_timespan
+    from chronologia import AstroDate
     anchor = datetime(2027, 5, 12, 13, 4)
-    thai = extract_timespan("๒๐๒๖", "th", anchor)
-    arabic = extract_timespan("2026", "th", anchor)
-    assert thai is not None and arabic is not None
-    assert (thai[0].start, thai[0].end) == (arabic[0].start, arabic[0].end)
+    year = (AstroDate(2026, 1, 1), AstroDate(2027, 1, 1))
+    assert year in candidate_spans("๒๐๒๖", "th", anchor)
+    assert year in candidate_spans("2026", "th", anchor)
 
 
 @pytest.mark.parametrize("text,value", [("หนึ่งร้อยหนึ่ง", 101),

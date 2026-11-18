@@ -22,8 +22,6 @@ PARITY = [
     ('1 de chinero de 2000', 'january 1 2000'),
     ('chunyo de 2027', 'june 2027'),
     ('chinero de 2020', 'january 2020'),
-    ('1999', '1999'),
-    ('2020', '2020'),
     ('15:30', '15:30'),
     ('o martes que viene', 'next tuesday'),
     ('o viernes pasau', 'last friday'),

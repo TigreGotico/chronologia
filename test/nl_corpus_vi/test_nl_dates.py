@@ -13,7 +13,9 @@ from datetime import timedelta
 
 import pytest
 
-from ._corpus import remainder, start, start_end
+from ruling34 import candidate_spans
+
+from ._corpus import remainder, start, start_end, ANCHOR, AstroDate
 
 
 @pytest.mark.parametrize("text,y,m,d", [
@@ -116,12 +118,20 @@ def test_named_days(text, y, m, d):
 @pytest.mark.parametrize("text,year", [
     ("năm 2020", 2020),
     ("năm 1999", 1999),
-    ("2020", 2020),
 ])
 def test_year_reference(text, year):
     s, e = start_end(text)
     assert (s.year, s.month, s.day) == (year, 1, 1)
     assert e.year == year + 1
+
+
+@pytest.mark.parametrize("text,year", [
+    ("2020", 2020),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, year):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+    assert want in candidate_spans(text, "vi", ANCHOR)
 
 
 @pytest.mark.parametrize("text", [

@@ -4175,7 +4175,9 @@ def reads_spoken_hours(fn):
     """Run ``fn`` with the spoken hour kept as spoken.
 
     A recurrence pin ("daily at 7" is ``BYHOUR=7``) names an hour of the day,
-    not an instant, so no twelve-hour reading is chosen for it.
+    not an instant, so no twelve-hour reading is chosen for it.  A numeral
+    that a recurrence reads alone is a part of the phrase, so it keeps its
+    year reading (:func:`_lone_numeral_year`).
     """
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
@@ -4304,8 +4306,12 @@ def _lone_numeral_year(rep, res, tokens) -> bool:
     nothing else: any other word makes it a year in a phrase ("in 2400",
     "2400 people came", "dodenherdenking 2020"), an era word folded into
     the number ("พ.ศ. 2568") or a spelled year ("two thousand twenty") is
-    a year cue, and so is the apostrophe of "'99".
+    a year cue, and so is the apostrophe of "'99".  Inside a recurrence
+    (:func:`reads_spoken_hours`) the numeral is the bound of a longer phrase
+    ("daily until 2020"), so it keeps its year.
     """
+    if getattr(_reading, "spoken", False):
+        return False
     if (rep is None or rep.construction != "year_ref" or len(tokens) != 1
             or "GYEAR" not in rep.slots
             or set(res.consumed) != {rep.span[0]}):

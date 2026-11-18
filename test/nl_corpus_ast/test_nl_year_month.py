@@ -1,12 +1,15 @@
 """Bare years, ``<month> <year>`` (juxtaposed) and bare months.
 
-Anchor is Tuesday 2017-06-27 13:04.  A bare year spans the whole civil year;
+Anchor is Tuesday 2017-06-27 13:04.  A bare year is a candidate that spans the
+whole civil year, not a reading (ruling 34);
 ``xunu 2020`` spans that month of that explicit year; a bare month resolves to
 that month of the anchor year.
 """
 from datetime import datetime, timedelta
 
 import pytest
+
+from ruling34 import candidate_spans
 
 from ._corpus import ANCHOR, start_end, ad
 from ._gen import MON
@@ -19,8 +22,8 @@ def _first_next_month(y, m):
 # --- bare civil year ---------------------------------------------------------
 @pytest.mark.parametrize("year", list(range(1700, 2201)))
 def test_bare_year(year):
-    s, e = start_end(str(year))
-    assert (s, e) == (ad(datetime(year, 1, 1)), ad(datetime(year + 1, 1, 1)))
+    assert (ad(datetime(year, 1, 1)), ad(datetime(year + 1, 1, 1))) in (
+        candidate_spans(str(year), "ast", ANCHOR))
 
 
 # --- <month> <year> (juxtaposed, no "de") ------------------------------------

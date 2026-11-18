@@ -66,8 +66,6 @@ PAIRS = [
     ("14:05", "14:05"),
     ("ƙarfe 7:45 na dare", "7:45 pm"),
     ("ƙarfe 9 na safe", "9 am"),
-    ("2027", "2027"),
-    ("1918", "1918"),
     ("5 ga Yuni 2027", "5 june 2027"),
     ("25 ga Disamba 2020", "25 december 2020"),
     ("1 ga Janairu 2030", "1 january 2030"),

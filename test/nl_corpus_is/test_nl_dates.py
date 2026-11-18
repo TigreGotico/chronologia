@@ -12,7 +12,9 @@ import pytest
 
 from chronologia.astrodate import AstroDate
 
-from ._corpus import nomatch, remainder, span, start
+from ruling34 import candidate_spans
+
+from ._corpus import nomatch, remainder, span, start, ANCHOR
 
 
 @pytest.mark.parametrize("text,y,m,d", [
@@ -108,10 +110,19 @@ def test_no_date_without_a_month(text):
     nomatch(text)
 
 
-@pytest.mark.parametrize("text,y", [("árið 1990", 1990), ("2019", 2019)])
+@pytest.mark.parametrize("text,y", [("árið 1990", 1990), ])
 def test_year_reference(text, y):
     s = span(text)
     assert s.start == AstroDate(y, 1, 1) and s.end == AstroDate(y + 1, 1, 1)
+
+
+@pytest.mark.parametrize("text,y", [
+    ("2019", 2019),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, y):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "is", ANCHOR)
 
 
 def test_year_word_is_consumed():

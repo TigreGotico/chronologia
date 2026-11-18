@@ -11,7 +11,9 @@ With no year stated the date resolves FORWARD from the anchor
 """
 import pytest
 
-from ._corpus import remainder, start
+from ruling34 import candidate_spans
+
+from ._corpus import remainder, start, ANCHOR, AstroDate
 
 
 @pytest.mark.parametrize("text,y,m,d", [
@@ -34,8 +36,9 @@ def test_full_date_consumes_everything(text):
 
 @pytest.mark.parametrize("text,y", [("1990", 1990), ("2019", 2019)])
 def test_bare_year_reference(text, y):
-    got = start(text)
-    assert (got.year, got.month, got.day) == (y, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(text, "eo", ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["asdf qwerty", ""])

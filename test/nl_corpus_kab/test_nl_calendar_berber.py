@@ -17,6 +17,8 @@ under the +950 era shift, independent of the ``berber`` calendar's own
 ``to_jdn``/``from_jdn`` (see ``test/test_calendars.py``)."""
 from datetime import date
 import pytest
+from ruling34 import candidate_spans
+
 from ._corpus import ANCHOR, AstroDate, start, start_end
 
 
@@ -26,18 +28,21 @@ from ._corpus import ANCHOR, AstroDate, start, start_end
 def test_bare_year_in_berber_range_resolves_via_berber_calendar(text, gy):
     # 1 Yennayer of berber year Y == Gregorian (Y - 950)-01-14; the bare
     # year_ref span covers the whole berber year, so it starts there.
-    s, e = start_end(text)
-    assert s == AstroDate(gy, 1, 14)
-    assert e == AstroDate(gy + 1, 1, 14)
+    # 1 Yennayer of berber year Y == Gregorian (Y - 950)-01-14; the bare
+    # year_ref span covers the whole berber year, so it starts there.  A lone
+    # numeral is a candidate, not a reading (ruling 34).
+    want = (AstroDate(gy, 1, 14), AstroDate(gy + 1, 1, 14))
+    assert want in candidate_spans(text, "kab", ANCHOR)
 
 
 @pytest.mark.parametrize("text,gy", [(str(y), y) for y in
                                      (1999, 2020, 1969, 1830, 2899, 3061)])
 def test_bare_year_outside_berber_range_stays_gregorian(text, gy):
     # just below/above the 2900-3060 window: an ordinary Gregorian year.
-    s, e = start_end(text)
-    assert s == AstroDate(gy, 1, 1)
-    assert e == AstroDate(gy + 1, 1, 1)
+    # just below/above the 2900-3060 window: an ordinary Gregorian year, a
+    # candidate and not a reading when the numeral stands alone (ruling 34).
+    want = (AstroDate(gy, 1, 1), AstroDate(gy + 1, 1, 1))
+    assert want in candidate_spans(text, "kab", ANCHOR)
 
 
 def test_yennayer_2976_month_year_phrase_reads_as_literal_gregorian():

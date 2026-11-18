@@ -9,7 +9,9 @@ revisited.
 """
 import pytest
 
-from ._corpus import nomatch, parse
+from ruling34 import candidate_spans
+
+from ._corpus import nomatch, parse, ANCHOR, AstroDate
 
 
 @pytest.mark.parametrize("text", [
@@ -114,9 +116,11 @@ def test_the_last_determiner_ships_only_in_the_locative():
 def test_the_year_word_alone_does_not_make_a_year():
     """"2019. gadā" needs the year word to bind the bare year, and the shape
     it would have to take collides with the scoped-ordinal reading of the
-    same two tokens; rather than force it, the bare year is what ships."""
+    same two tokens; rather than force it, the bare year is what ships.  The
+    bare year alone is a candidate, not a reading (ruling 34)."""
     assert parse("2019. gadā") is None
-    assert parse("2019") is not None
+    assert (AstroDate(2019, 1, 1), AstroDate(2020, 1, 1)) in candidate_spans(
+        "2019", "lv", ANCHOR)
 
 
 @pytest.mark.parametrize("text", ["katru nedēļu", "katru pirmdienu"])

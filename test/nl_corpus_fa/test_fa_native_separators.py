@@ -14,7 +14,9 @@ from datetime import timedelta
 
 from chronologia import extract_duration
 
-from ._corpus import parse
+from ruling34 import candidate_spans
+
+from ._corpus import ANCHOR, AstroDate
 
 
 def test_native_decimal_separator_fraction():
@@ -27,10 +29,10 @@ def test_native_decimal_separator_fraction():
 
 def test_bare_native_digit_year_regression():
     # regression guard: a bare native-digit year (no separators involved)
-    # must keep resolving after the translate step is introduced.
-    r = parse("۲۰۲۰")
-    assert r is not None
-    assert r[0].start.year == 2020
+    # must keep reading as the year 2020 after the translate step is
+    # introduced.  Alone, it is a candidate, not a reading (ruling 34).
+    assert (AstroDate(2020, 1, 1), AstroDate(2021, 1, 1)) in candidate_spans(
+        "۲۰۲۰", "fa", ANCHOR)
 
 
 def test_native_decimal_separator_remainder_offset_invariant():

@@ -8,7 +8,9 @@ date be written year-first the way CLDR's full pattern does.
 """
 import pytest
 
-from ._corpus import ANCHOR, parse, span, start
+from ruling34 import candidate_spans
+
+from ._corpus import ANCHOR, parse, span, start, AstroDate
 
 
 def _ymd(text, anchor=ANCHOR):
@@ -54,12 +56,21 @@ def test_both_month_forms_name_the_same_month(nominative, genitive, number):
 
 
 @pytest.mark.parametrize("text,year", [
-    ("2019 թ.", 2019), ("1990 թ.", 1990), ("2019", 2019),
+    ("2019 թ.", 2019), ("1990 թ.", 1990), 
 ])
 def test_year_reference(text, year):
     s, e = span(text).start, span(text).end
     assert (s.year, s.month, s.day) == (year, 1, 1)
     assert (e.year, e.month, e.day) == (year + 1, 1, 1)
+
+
+@pytest.mark.parametrize("text,year", [
+    ("2019", 2019),
+])
+def test_a_lone_numeral_is_a_year_candidate(text, year):
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(year, 1, 1), AstroDate(year + 1, 1, 1))
+    assert want in candidate_spans(text, "hy", ANCHOR)
 
 
 def test_a_bare_two_digit_number_is_not_a_year():

@@ -33,8 +33,6 @@ PAIRS = [
     ("00:00", "00:00"),
     ("midi", "noon"),
     ("minuit", "midnight"),
-    ("2019", "2019"),
-    ("1989", "1989"),
     ("2017-06-30", "2017-06-30"),
     ("de juin à août", "from june to august"),
     ("de janvier à mars", "from january to march"),

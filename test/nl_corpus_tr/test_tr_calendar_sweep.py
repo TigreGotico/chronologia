@@ -11,6 +11,8 @@ from datetime import date, datetime, timedelta
 import pytest
 
 from chronologia.astrodate import AstroDate
+from ruling34 import candidate_spans
+
 from ._corpus import span, start, start_end
 
 A = datetime(2017, 6, 27, 13, 4)
@@ -64,6 +66,6 @@ def test_month_year(text, y, m):
 # -- bare year: whole calendar year ------------------------------------------
 @pytest.mark.parametrize("y", [1901, 1950, 1984, 1999, 2008, 2020, 2033, 2040])
 def test_bare_year(y):
-    s, e = start_end(str(y), A)
-    assert s == AstroDate(y, 1, 1)
-    assert e == AstroDate(y + 1, 1, 1)
+    # a lone numeral is a candidate, not a reading (ruling 34)
+    want = (AstroDate(y, 1, 1), AstroDate(y + 1, 1, 1))
+    assert want in candidate_spans(str(y), "tr", A)

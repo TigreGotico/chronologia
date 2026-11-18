@@ -76,7 +76,7 @@ PAIRS = [
     ("praeitą antradienį", "last tuesday"),
     ("15:30", "15:30"), ("09:30", "09:30"), ("00:00", "00:00"),
     ("vidurdienis", "noon"), ("vidurnaktis", "midnight"),
-    ("2019", "2019"), ("1918", "1918"), ("2017-06-30", "2017-06-30"),
+    ("2017-06-30", "2017-06-30"),
     ("nuo birželio iki rugpjūčio", "from june to august"),
     ("nuo sausio iki kovo", "from january to march"),
     ("tarp birželio ir rugsėjo", "between june and september"),
