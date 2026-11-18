@@ -4187,7 +4187,8 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
     unjoined: a pm word pins the pm reading, an am or night word keeps the
-    written hour.
+    written hour.  The word "today" may stand between them, and a pm word
+    with "today" keeps its half when that time has passed.
     """
     if (getattr(_reading, "spoken", False)
             or anchor is None or rep is None

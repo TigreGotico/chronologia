@@ -357,9 +357,11 @@ zero ("08:30"), the hour 12, an hour written with the letter "h", and an hour fr
 13 to 23. A morning or evening word that the language lists for a half of the
 day decides the half when it stands beside the clock, also when the reader does
 not join it: Dutch "om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is
-20:00. Only a clock word ("uur"), the word that opens the clock ("om") or an
-article may stand between them, so Spanish "a las 6:30 que no quiero llegar
-tarde" ("late") said at 23:00 is 06:30. A part of the day after a digit clock
+20:00. Only a clock word ("uur"), the word that opens the clock ("om"), an
+article or the word "today" may stand between them, so Spanish "a las 6:30 que
+no quiero llegar tarde" ("late") said at 23:00 is 06:30. With "today" the word
+keeps its half after that time has passed: Dutch "om 8:00 vandaag 's avonds"
+said at 21:00 is 20:00 that day. A part of the day after a digit clock
 joins the clock as it joins a spoken hour: Spanish "a las 6:30 de la tarde"
 said at 13:04 is 18:30, and "a las 6:30 de la mañana" is 06:30 the next day.
 This holds in
