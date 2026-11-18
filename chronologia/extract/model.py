@@ -29,7 +29,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Callable, FrozenSet, Mapping, Optional, Tuple
 
-from chronologia.astrodate import DateSpan
+from chronologia.astrodate import AstroDate, DateSpan
 
 if TYPE_CHECKING:
     from numtag import NumberMention
@@ -582,3 +582,8 @@ class Resolution:
     #: June 15 at 3pm" is not a one-minute reading), so the composer reads this
     #: flag to keep the week and strand the clock in the remainder instead.
     week_widened: bool = False
+    #: set by the anchored-offset pass on a counted offset from a holiday
+    #: whose count is not a whole number of days: the instant the count
+    #: lands on.  A clock composed onto the offset takes the twelve-hour
+    #: reading nearer to it (ruling 31 of the disagreement rulings).
+    offset_instant: Optional[AstroDate] = None

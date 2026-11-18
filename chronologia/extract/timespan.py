@@ -3732,6 +3732,44 @@ def _offset_is_day_or_coarser(match, spec) -> bool:
 _NIGHT_AFTER_DAYS = frozenset({"named_day", "weekday_ref"})
 
 
+def _offset_clock_readings(date_res, clock_match, clock_res):
+    """The readings of a clock said with a counted offset from a holiday,
+    most likely first (ruling 31 of the disagreement rulings).
+
+    "às 9 uma hora antes do natal" names 9 o'clock on the day the offset
+    lands on, in the twelve-hour reading nearer to the offset instant: 24
+    December 21:00.  The offset instant itself, 24 December 23:00, comes
+    next, then the clock's other twelve-hour reading, 09:00.  A clock with
+    an am or pm word, or with an hour over 12, has no other reading.  A
+    clock that agrees with the offset gives one reading.  A digit clock
+    reads as the spoken one when :func:`_lone_spoken_hour` would read it so
+    ("9:30", not "09:30").  ``None`` when the date carries no offset instant.
+    """
+    instant = date_res.offset_instant
+    if instant is None:
+        return None
+    c = clock_res.value.start
+    written = AstroDate(instant.year, instant.month, instant.day, c.hour,
+                        c.minute, c.second, c.microsecond, tzinfo=c.tzinfo)
+    clocks = [written]
+    hour = clock_match.slots.get("HOUR")
+    digits = clock_match.slots.get("CLOCK")
+    if "MERIDIEM" not in clock_match.slots and (
+            (hour is not None and hour.is_number and 1 <= hour.value <= 12
+             and not re.search(r"\d\s*[h:]", (hour.raw or "").lower()))
+            or (digits is not None
+                and _DIGIT_CLOCK.fullmatch(digits.raw or ""))):
+        other = written + timedelta(hours=12 if c.hour < 12 else -12)
+        nearer = abs(other - instant) < abs(written - instant)
+        clocks = [other, written] if nearer else [written, other]
+    readings = [clocks[0]]
+    if clocks[0] != instant:
+        readings += [instant] + clocks[1:]
+    consumed = tuple(sorted(set(date_res.consumed) | set(clock_res.consumed)))
+    return [Resolution(DateSpan(t, t + timedelta(minutes=1)), consumed)
+            for t in readings]
+
+
 def _compose(resolved, engine, tokens, anchor=None, text=None):
     """Pick the single winning reading from the post-passed ``resolved`` matches.
 
@@ -3920,7 +3958,9 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
             rep = clk_match
     elif (not _week and len(clocks) == 1 and len(eff_dates) == 1
             and _adjacent(eff_dates[0][0], clocks[0][0])):
-        res = compose_date_clock(eff_dates[0][1], clocks[0][1])
+        readings = _offset_clock_readings(eff_dates[0][1], *clocks[0])
+        res = (readings[0] if readings
+               else compose_date_clock(eff_dates[0][1], clocks[0][1]))
         rep = eff_dates[0][0]
         glue_consumed = _composition_glue(eff_dates[0][0], clocks[0][0])
     elif (not _week and len(dayparts) == 1 and len(eff_dates) == 1
@@ -4468,10 +4508,19 @@ def extract_candidates(
     # remembered so the remainder excludes everything the winner folded in.
     label_extra = {}
     primary = None
+    others = []
     if composed:
         win_res, win_label, rep = _compose(composed, engine, tokens,
                                            anchor, text)
         if win_res is not None:
+            # a clock said with an offset from a holiday: its other readings
+            # rank next after the first (ruling 31)
+            clock = [(m, r) for m, r in composed
+                     if m.construction == "clock_time"
+                     and set(r.consumed) <= set(win_res.consumed)]
+            date = next((r for m, r in composed if m is rep), None)
+            if len(clock) == 1 and date is not None:
+                others = (_offset_clock_readings(date, *clock[0]) or [])[1:]
             win_res = _lone_spoken_hour(win_res, rep, anchor, engine.spec, tokens,
                                         [m for m, _ in composed], text)
             consumed_all = set(win_res.consumed) | win_label
@@ -4550,6 +4599,10 @@ def extract_candidates(
                 0 if is_composed else 1, match.span[0], -match.length)
         scored.append((rank, Candidate(value, remainder, conf,
                                        match.construction)))
+        if id(match) == primary:
+            scored.extend(((0, 1 + i), Candidate(other.value, remainder, conf,
+                                                 match.construction))
+                          for i, other in enumerate(others))
     # Range and open-range readings ("june 5 to june 12", "between monday and
     # friday", "since 2019", "until friday") are composed by _resolve_span the
     # same way extract_timespan resolves them, but the matcher core never

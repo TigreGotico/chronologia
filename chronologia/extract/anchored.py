@@ -26,6 +26,7 @@ generic, the facts are data.
 """
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime, timedelta
 from typing import List, Optional, Tuple
 
@@ -282,6 +283,22 @@ def _counted_offset_span(span: DateSpan, construction: str, sign: int,
     return _astro_day_span(value)
 
 
+def _offset_instant(span: DateSpan, construction: str, sign: int,
+                    unit: str, qty: float, vague: bool) -> Optional[AstroDate]:
+    """The instant a counted offset from a holiday lands on, when the count
+    is not a whole number of days: "an hour before christmas" lands on 24
+    December 23:00, "a day and a half before easter monday" on Easter
+    Saturday 12:00.  A clock said with the offset reads against this instant
+    (ruling 31 of the disagreement rulings).  A whole number of days, a
+    calendar unit or a vague count lands on no instant.
+    """
+    if (vague or construction not in _HOLIDAY_CONSTRUCTIONS
+            or unit not in _FIXED_UNIT_SECONDS
+            or _FIXED_UNIT_SECONDS[unit] * qty % 86400 == 0):
+        return None
+    return _shift(span.start, unit, sign * qty)
+
+
 def _offset_glue(spec: LangSpec) -> frozenset:
     """Function words that may legitimately bridge a resolved date and an
     adjacent clock time within one reference ("March 3 **at** 9am") -- the
@@ -386,6 +403,7 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
             base = AstroDate(s.year, s.month, s.day)
         else:
             base = _offset_base(res.value, sign, pre.get("unit"))
+        instant = None
         if pre["kind"] == "unit":
             value = _shift(base, pre["unit"], sign * pre["qty"])
             # the offset amount governs the SHIFT, never the result width:
@@ -403,13 +421,16 @@ def _try_offset(tokens, match: Match, res: Resolution, spec: LangSpec,
                 span = _counted_offset_span(res.value, match.construction,
                                             sign, pre["unit"], pre["qty"],
                                             pre["vague"])
+                instant = _offset_instant(res.value, match.construction,
+                                          sign, pre["unit"], pre["qty"],
+                                          pre["vague"])
         else:
             span = _astro_day_span(_roll_weekday(base, pre["weekday"], sign))
         start = pre["start"]
         consumed = tuple(sorted(set(res.consumed) | set(range(start, b))))
         new_match = Match(match.construction, (start, match.span[1]),
                           match.slots, match.calendar)
-        return new_match, Resolution(span, consumed)
+        return new_match, Resolution(span, consumed, offset_instant=instant)
     return None
 
 
@@ -460,17 +481,22 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
                 if pre is None:
                     continue
                 lo = pre["start"]
+            instant = None
             if pre["kind"] == "unit":
                 span = _counted_offset_span(res.value, match.construction,
                                             sign, pre["unit"], pre["qty"],
                                             pre["vague"])
+                instant = _offset_instant(res.value, match.construction,
+                                          sign, pre["unit"], pre["qty"],
+                                          pre["vague"])
             else:
                 base = _offset_base(res.value, sign, pre.get("unit"))
                 span = _astro_day_span(_roll_weekday(base, pre["weekday"], sign))
             consumed = tuple(sorted(set(res.consumed) | set(range(lo, end))))
             new_match = Match(match.construction, (lo, end),
                               match.slots, match.calendar)
-            return new_match, Resolution(span, consumed)
+            return new_match, Resolution(span, consumed,
+                                         offset_instant=instant)
     return None
 
 
@@ -522,7 +548,35 @@ def _one_offset_pass(tokens, resolved: List[Pair], spec: LangSpec,
             out.append(composed[id(match)])
         elif not any(i in claimed for i in range(*match.span)):
             out.append((match, res))
+        elif match.construction == "clock_time":
+            hour = _hour_before(match, res, claimed)
+            if hour is not None:
+                out.append(hour)
     return out, grown
+
+
+def _hour_before(match: Match, res: Resolution, claimed) -> Optional[Pair]:
+    """The bare hour of a clock whose minute word an offset count took.
+
+    In "at 9 one hour before christmas" the clock reads "9 one" as 9:01,
+    but "one" counts the hours of the offset.  The clock keeps the words
+    before the count and reads as the hour alone.  ``None`` when the count
+    took any word other than the clock's last, its minute.
+    """
+    cut = min(i for i in range(*match.span) if i in claimed)
+    minute = match.slots.get("MINUTE")
+    if (minute is None or minute.index != cut or cut != match.span[1] - 1
+            or "HOUR" not in match.slots
+            or any(t.index >= cut for k, t in match.slots.items()
+                   if k != "MINUTE")):
+        return None
+    s = res.value.start
+    hour = AstroDate(s.year, s.month, s.day, s.hour, tzinfo=s.tzinfo)
+    slots = {k: t for k, t in match.slots.items() if k != "MINUTE"}
+    return (replace(match, span=(match.span[0], cut), slots=slots),
+            Resolution(DateSpan(hour, hour + timedelta(minutes=1),
+                                res.value.basis),
+                       tuple(i for i in res.consumed if i < cut)))
 
 
 #: calendar-grain units -- advanced through :func:`_astro_add_months` -- keyed
