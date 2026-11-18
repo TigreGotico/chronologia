@@ -4163,8 +4163,9 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     part of the day, so "at 3:30 today" takes its reading from the same day;
     any other day word keeps the written hour.  24-hour hours are untouched,
     whatever fraction follows.  An am or pm word the locale lists for a half of
-    the day decides that half even when it is left over unjoined: a pm word
-    pins the pm reading, an am or night word keeps the written hour.
+    the day decides that half only when it stands beside the clock, even
+    unjoined: a pm word pins the pm reading, an am or night word keeps the
+    written hour.
     """
     if (getattr(_reading, "spoken", False)
             or anchor is None or rep is None
@@ -4202,11 +4203,22 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
                                  for t in tokens):
         # a locale with no am/pm vocabulary leaves the word over
         return res
-    # a meridiem word that a match covers was read as something else (es
-    # "mañana" as tomorrow), so only a word left over decides the half
+    # Only the first word past the clock's glue words on each side can decide
+    # the half: "tarde" in another clause ("no quiero llegar tarde") means
+    # late.  A word a match covers was read as something else (es "mañana").
     covered = {i for m in matches for i in range(*m.span)}
-    meridiem_words = [t.text for t in tokens
-                      if t.index not in covered and t.text in spec.meridiems]
+    glue = set().union(*(spec.connectors.get(name, ()) for name in (
+        "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
+        "s")))
+    n = len(tokens)
+    meridiem_words = []
+    for step in (-1, 1):
+        i = clock_match.span[0] - 1 if step < 0 else clock_match.span[1]
+        while 0 <= i < n and tokens[i].text in glue:
+            i += step
+        if 0 <= i < n and tokens[i].index not in covered \
+                and tokens[i].text in spec.meridiems:
+            meridiem_words.append(tokens[i].text)
     if meridiem_words and (
             not all(spec.meridiems[w] == 12 for w in meridiem_words)
             or any(w in spec.night_meridiems for w in meridiem_words)):

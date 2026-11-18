@@ -83,6 +83,13 @@ def test_a_marked_hour_keeps_the_spoken_hour(text, lang, anchor, expected):
     assert extract_timespan(text, lang, anchor).span.start.datetime() == expected
 
 
+def test_an_unjoined_morning_word_beside_a_spoken_hour_keeps_the_morning():
+    # "morgens" sits before the lead word, unjoined, and is the locale's am
+    # word: it keeps the spoken hour 6 as the morning, not the evening.
+    found = extract_timespan("morgens um 6", "de", AFTER_NOON)
+    assert found.span.start.datetime() == datetime(2017, 6, 28, 6, 0)
+
+
 @pytest.mark.parametrize("text,lang,anchor,expected", LONE_HOURS)
 def test_best_candidate_agrees_with_the_timespan(text, lang, anchor, expected):
     best = extract_candidates(text, lang, anchor)[0]

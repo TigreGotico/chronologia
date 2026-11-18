@@ -82,6 +82,8 @@ AS_WRITTEN = [
     ("morgens um 6:30", "de", AFTER_NOON, datetime(2017, 6, 28, 6, 30)),
     ("um 6:30 Uhr morgens", "de", AFTER_NOON, datetime(2017, 6, 28, 6, 30)),
     ("madrugada a las 4:30", "es", AFTER_NOON, datetime(2017, 6, 28, 4, 30)),
+    # a night word keeps the written hour
+    ("om 3:00 's nachts", "nl", AFTER_NOON, datetime(2017, 6, 28, 3, 0)),
 ]
 
 # text, language, anchor, expected instant: an evening word pins the pm half
@@ -92,6 +94,19 @@ EVENING = [
     ("tarde a las 4:30", "es", AFTER_NOON, datetime(2017, 6, 27, 16, 30)),
     ("tarde a las 4:30", "es", datetime(2017, 6, 27, 3, 0),
      datetime(2017, 6, 27, 16, 30)),
+]
+
+# text, language, anchor, expected instant: "tarde" in another clause means
+# "late", not "evening", so it does not move the clock to the pm half
+OTHER_CLAUSE = [
+    ("despiértame a las 6:30 que no quiero llegar tarde", "es",
+     datetime(2017, 6, 27, 23, 0), datetime(2017, 6, 28, 6, 30)),
+    ("acorda-me às 6:30, não quero chegar tarde", "pt",
+     datetime(2017, 6, 27, 23, 0), datetime(2017, 6, 28, 6, 30)),
+    ("esperta-me ás 6:30, non quero chegar tarde", "gl",
+     datetime(2017, 6, 27, 23, 0), datetime(2017, 6, 28, 6, 30)),
+    ("despiértame a las 6 que no quiero llegar tarde", "es",
+     datetime(2017, 6, 27, 23, 0), datetime(2017, 6, 28, 6, 0)),
 ]
 
 
@@ -113,6 +128,12 @@ def test_a_marked_digit_clock_reads_as_written(text, lang, anchor, expected):
 @pytest.mark.parametrize("text,lang,anchor,expected", EVENING)
 def test_an_evening_word_moves_a_digit_clock_to_the_pm_half(text, lang, anchor,
                                                             expected):
+    assert extract_timespan(text, lang, anchor).span.start.datetime() == expected
+
+
+@pytest.mark.parametrize("text,lang,anchor,expected", OTHER_CLAUSE)
+def test_a_meridiem_word_in_another_clause_does_not_decide_the_half(
+        text, lang, anchor, expected):
     assert extract_timespan(text, lang, anchor).span.start.datetime() == expected
 
 
