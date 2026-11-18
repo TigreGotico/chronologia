@@ -13,6 +13,7 @@ import pytest
 
 from chronologia.astrodate import AstroDate
 from ._corpus import parse, start
+from ruling17 import moved
 
 A = datetime(2017, 6, 27, 13, 4)
 
@@ -35,7 +36,7 @@ def _iso_cases():
 @pytest.mark.parametrize("text,h,m", _iso_cases())
 def test_iso_clock(text, h, m):
     s = start(text, A)
-    assert (s.hour, s.minute) == (h, m)
+    assert (s.hour, s.minute) == moved((h, m), A)
 
 
 # -- "saat N": numeral hour, still ahead of the anchor -> same day ----------

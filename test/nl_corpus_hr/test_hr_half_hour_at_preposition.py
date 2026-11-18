@@ -36,8 +36,9 @@ def test_u_830_consumes_the_preposition():
     r = parse("u 8:30")
     assert r is not None
     assert r[1] == ""
-    assert r[0].start == ad(datetime(ANCHOR.year, ANCHOR.month,
-                                     ANCHOR.day, 8, 30) + timedelta(days=1))
+    assert r[0].start == moved(ad(datetime(ANCHOR.year, ANCHOR.month,
+                                           ANCHOR.day, 8, 30)
+                                  + timedelta(days=1)), ANCHOR)
 
 
 def test_u_2030_consumes_the_preposition():

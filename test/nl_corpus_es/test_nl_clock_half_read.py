@@ -25,5 +25,5 @@ def test_a_fraction_after_a_written_hour(text, day, hour, minute):
 
 def test_a_count_of_something_else_keeps_the_clock():
     s = span("a las 10:00 y 3 personas")
-    assert (s.start.month, s.start.day) == (6, 28)
-    assert (s.start.hour, s.start.minute) == (10, 0)
+    assert (s.start.month, s.start.day) == moved_date((6, 28), (10, 0), ANCHOR)
+    assert (s.start.hour, s.start.minute) == moved((10, 0), ANCHOR)
