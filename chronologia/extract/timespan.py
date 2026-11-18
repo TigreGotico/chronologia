@@ -2298,10 +2298,11 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
         j = k
         while j < n and tokens[j].text in gap:
             j += 1
-        # every marker/gap token must be UNCONSUMED and everything from j
-        # onward must be FULLY consumed -- the exact "otherwise-complete
-        # endpoint, marker left over" signature.
-        if j >= n or any(i in consumed for i in range(0, j)) \
+        # every marker token must be UNCONSUMED and everything from j onward
+        # must be FULLY consumed -- the exact "otherwise-complete endpoint,
+        # marker left over" signature.  A gap word may belong to the
+        # endpoint: fr "le 13 mai" reads its article with the date.
+        if j >= n or any(i in consumed for i in range(0, k)) \
                 or not all(i in consumed for i in range(j, n)):
             continue
         if role == "after":
