@@ -4211,10 +4211,13 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
         "s")))
     n = len(tokens)
+    # the word "today" of the reading stands between the clock and the part
+    # of the day as glue does: nl "om 8:00 vandaag 's avonds"
+    today_words = set(range(*rep.span)) if today else set()
     meridiem_words = []
     for step in (-1, 1):
         i = clock_match.span[0] - 1 if step < 0 else clock_match.span[1]
-        while 0 <= i < n and tokens[i].text in glue:
+        while 0 <= i < n and (tokens[i].text in glue or i in today_words):
             i += step
         if 0 <= i < n and tokens[i].index not in covered \
                 and tokens[i].text in spec.meridiems:
@@ -4241,9 +4244,11 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     if not today:
         options.append(options[0] + timedelta(days=1))
     later = [t for t in options if t >= anchor]
-    if not later:
+    if not later and not pm:
         return res
-    moment = AstroDate.from_datetime(min(later))
+    # a pm word keeps its half when "today" has passed it: "vandaag om 8:00
+    # 's avonds" said at 21:00 is 20:00, as the spoken "om 8 uur 's avonds"
+    moment = AstroDate.from_datetime(min(later) if later else options[-1])
     return replace(res, value=DateSpan(moment, moment + timedelta(minutes=1),
                                        res.value.basis))
 
