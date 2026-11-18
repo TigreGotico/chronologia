@@ -129,12 +129,18 @@ def _clean_summary(text: str, lang: str) -> str:
     behind are removed, so "my weekly meeting for" -> "my weekly meeting".
     """
     from chronologia.extract import _timespan_engine
+    from chronologia.extract.numlayer import mentions, reads
 
     engine = _timespan_engine(lang)
     tokens = list(engine.tokenize(text))
     stop = _summary_stopwords(engine.spec, lang)
+    # a count word that opens a longer number is no stranded article:
+    # "un millón de euros" keeps its "un"
+    number_ends = ({m.char_span[0]: m.char_span[1] for m in mentions(text, lang)}
+                   if reads(lang) else {})
     lo, hi = 0, len(tokens)
-    while lo < hi and tokens[lo].text in stop:
+    while (lo < hi and tokens[lo].text in stop
+           and number_ends.get(tokens[lo].char_start, -1) <= tokens[lo].char_end):
         lo += 1
     while hi > lo and tokens[hi - 1].text in stop:
         hi -= 1
