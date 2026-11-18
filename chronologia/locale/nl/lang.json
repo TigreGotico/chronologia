@@ -163,5 +163,6 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_germanic:fold_nl"
+  "hook": "chronologia.extract.numlayer_nl:fold_nl",
+  "pre_hook": "chronologia.extract.numlayer_nl:split_nl_relday_daypart"
 }

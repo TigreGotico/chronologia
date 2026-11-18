@@ -162,7 +162,8 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_germanic:fold_sv",
+  "hook": "chronologia.extract.numlayer_sv:fold_sv",
+  "pre_hook": "chronologia.extract.numlayer_sv:split_sv_half_compound",
   "base_grammar": {
     "disable": [
       "calendar_date"

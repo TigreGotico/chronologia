@@ -2,11 +2,9 @@
 """(da): the fused "halvanden <unit>" idiom (== "one and one half",
 standard Danish for 1.5) must resolve, not misread as 0.5.
 
-Resolved via native review: ``extract_number_da('halvanden')`` returns the
-wrong value 0.5 (not False), so the Germanic numfold's value-probe folds the
-token before the lang.json quantifiers grammar ever sees it. Fixed with a
-word_map override in ``numfold_germanic.fold_da``, mirroring "anderthalb"
-(de) and "anderhalve" (nl). See docs/languages/da.md.
+numtag reads "halvanden" as the fraction 1.5; the former ovos-number-parser
+back-end read it as 0.5 (not False), a word_map override in the Danish fold
+corrected that.  See docs/languages/da.md.
 """
 from datetime import timedelta
 

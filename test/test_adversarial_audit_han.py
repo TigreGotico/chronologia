@@ -103,7 +103,6 @@ def test_number_layer_attach_is_linear():
 
 @pytest.mark.parametrize("text,lang,left", [
     ("jeden půldruhé den", "cs", "jeden"),
-    ("am einige tag", "de", "am"),
 ])
 def test_word_before_a_quantifier_stays_outside_a_folded_count(text, lang,
                                                                left):
@@ -111,6 +110,10 @@ def test_word_before_a_quantifier_stays_outside_a_folded_count(text, lang,
     numtag reads.  The other languages read their quantifiers in their fold,
     and a word before one stays in the remainder."""
     assert extract_duration(text, lang).remainder == left
+
+
+def test_article_before_a_quantifier_joins_the_count_in_a_numtag_language():
+    assert extract_duration("am einige tag", "de").remainder == ""
 
 
 @pytest.mark.parametrize("text,lang,days", [
