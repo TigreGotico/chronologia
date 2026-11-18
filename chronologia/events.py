@@ -36,6 +36,7 @@ writer's ``DTEND`` is correct).
 """
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Optional, Union
@@ -140,6 +141,82 @@ def _clean_summary(text: str, lang: str) -> str:
     return " ".join(t.raw for t in tokens[lo:hi]).strip()
 
 
+def _is_bare_clock_length(text: str, lang: str, anchor: datetime,
+                          length_words: Counter) -> bool:
+    """True when the length words alone read as a clock time and no offset
+    marker joins them to the date.
+
+    A before or after word joins two readings, so only a token that lies
+    between two winners and that no winner takes counts: "avant" in "deux
+    heures avant midi".  A marker inside a reading is part of it:
+    "après-demain" is one day word, and "en mars" one month.  An "in" or
+    "ago" word stands before or after its own count, never between the
+    length and a date: nl "twee uur in de ochtend" is two hours in the
+    morning.
+    """
+    from chronologia.extract import explain, load_lang_spec
+
+    spec = load_lang_spec(lang)
+    markers = {word.lower() for name in ("before", "after")
+               for surface in spec.connectors.get(name, ())
+               for word in surface.split()}
+    trace = explain(text, spec, anchor)
+    spans = [w.match.span for w in trace.winners]
+    if not spans:
+        return False
+    taken = {i for first, end in spans for i in range(first, end)}
+    gap = range(min(first for first, _ in spans), max(end for _, end in spans))
+    if any(trace.tokens[i].text.lower() in markers
+           for i in gap if i not in taken):
+        return False
+    return any(w.match.construction == "clock_time"
+               and Counter(t.text for t in trace.tokens[slice(*w.match.span)])
+               == length_words for w in trace.winners)
+
+
+def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
+                            length_words: Counter) -> bool:
+    """True when a word that no reading takes stands before the length
+    words and the clock reading that starts on them goes on into a part of
+    the day without a clock suffix: pt "reunião de duas horas e meia de
+    manhã", fr "travaillé trois heures le matin".
+
+    A date word or a clock preposition before the count belongs to a
+    reading, so "demain neuf heures et demie le soir" is the clock 21:30.
+    The clock suffix ("da", "du", "'s", or "de" and an article) ties the
+    part of the day to the hour: "deux heures du matin" is 02:00.  Only
+    languages that list a ``clock_of`` suffix tell the two forms apart.
+    """
+    from chronologia.extract import explain, load_lang_spec
+
+    spec = load_lang_spec(lang)
+    suffixes = spec.connectors.get("clock_of")
+    if not suffixes:
+        return False
+    of_words = spec.connectors.get("of", frozenset())
+    articles = spec.connectors.get("article", frozenset())
+    trace = explain(text, spec, anchor)
+    taken = {i for w in trace.winners for i in range(*w.match.span)}
+    size = sum(length_words.values())
+    for w in trace.winners:
+        first, end = w.match.span
+        if (w.match.construction != "clock_time"
+                or "MERIDIEM" not in w.match.slots
+                or end - first <= size or first == 0
+                or first - 1 in taken):
+            continue
+        words = [t.text for t in trace.tokens[first:end]]
+        if Counter(words[:size]) != length_words:
+            continue
+        tail = words[size:]
+        tied = any(word in suffixes or (
+            word in of_words and nxt in articles)
+            for word, nxt in zip(tail, tail[1:] + [""]))
+        if not tied:
+            return True
+    return False
+
+
 def extract_event(
         text: str,
         lang: str = "en",
@@ -162,7 +239,7 @@ def extract_event(
     """
     from chronologia.extract import (_timespan_engine, extract_candidates,
                                      extract_duration, extract_recurrence,
-                                     extract_timespan)
+                                     extract_timespan, load_lang_spec)
     from chronologia.extract.nseries import _duration_core
     from chronologia.extract.pipeline import require_text
 
@@ -180,6 +257,59 @@ def extract_event(
 
     duration: Optional[timedelta] = None
     got_dur = extract_duration(remainder, lang)
+    if got_dur is not None and recurrence is None:
+        # "3 days before christmas": the length is the date's offset, not the
+        # event's width, when the span reading of the whole text consumes
+        # every word the length took and starts on another date than the text
+        # without the length.  A length that carries its own "for" marker
+        # stays a length, also when the span reading takes the marker: "for 3
+        # days from tomorrow", pt "amanhã durante duas horas de manhã" and fr
+        # "demain pendant deux heures le matin".  "at 5pm for 10
+        # minutes" keeps it, because both readings start at 5pm.  fr "réunion
+        # de deux heures demain" keeps it too: "deux heures" alone reads as the
+        # clock time 02:00, and no "before"/"after"/"in"/"ago" marker joins the
+        # words to the date that remains.  es "reunión de dos horas en
+        # marzo" keeps it as well: the span reading takes "dos horas en" as
+        # "in two hours" and leaves "marzo", a word the reading of the rest
+        # takes, so the whole-text reading lost the date.  That check holds
+        # only when the span reading is the length with its offset words, an
+        # offset from now: "the day after next 3 pm" reads a date of its own,
+        # so its "day" is no length even though "3 pm" is left over.
+        try:
+            whole = extract_timespan(remainder, lang, anchor=anchor,
+                                     jurisdiction=jurisdiction)
+            rest = extract_timespan(got_dur.remainder, lang, anchor=anchor,
+                                    jurisdiction=jurisdiction)
+        except (KeyError, ValueError):
+            whole = None
+        if whole is not None:
+            engine = _timespan_engine(lang)
+
+            def words(phrase: str) -> Counter:
+                return Counter(t.text for t in engine.tokenize(phrase))
+
+            all_words = words(remainder)
+            length_words = all_words - words(got_dur.remainder)
+            span_words = all_words - words(whole.remainder)
+            rest_words = Counter() if rest is None else (
+                words(got_dur.remainder) - words(rest.remainder))
+            spec = load_lang_spec(lang)
+            offset_words = Counter({
+                word: len(all_words)
+                for name in ("before", "after", "in", "ago")
+                for surface in spec.connectors.get(name, ())
+                for word in words(surface)})
+            bare_offset = not span_words - length_words - offset_words
+            for_marked = any(not words(surface) - length_words
+                             for surface in spec.connectors.get("recur_for", ()))
+            if not for_marked and not length_words - span_words \
+                    and not (bare_offset and rest_words - span_words) \
+                    and (rest is None or rest.span.start != whole.span.start) \
+                    and not (rest is not None and _is_bare_clock_length(
+                        remainder, lang, anchor, length_words)) \
+                    and not _is_counted_part_of_day(
+                        remainder, lang, anchor, length_words):
+                got_dur = None
     if got_dur is not None:
         duration, remainder = got_dur
 

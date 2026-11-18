@@ -1083,11 +1083,13 @@ third week". This pass folds each spelled number into one digit token, so a
 `DAY`/`YEAR`/`ORD` slot binds the same whether the writer typed `5` or
 `five`.
 
-For English and Portuguese the numbers come from **numtag**
+For English, Portuguese, German, Dutch, Danish and Swedish the numbers come
+from **numtag**
 (`numlayer.py`). `pretokens` tags the input text once, and each token inside
 a number mention carries that mention beside its word. The language fold
-(`numlayer_en.py`, `numlayer_pt.py`) names the number words that the date
-grammar reads as words in their position: `half` and `quarter` in a clock,
+(`numlayer_en.py`, `numlayer_pt.py`, `numlayer_de.py`, `numlayer_nl.py`,
+`numlayer_da.py`, `numlayer_sv.py`) names the number words that the date
+grammar reads as words in their position: `half` and `quarter` in a clock (German `halb`, `viertel`),
 `million` and `milhões` before a year word in deep time, `segunda` as
 Monday. Every other mention folds to its value. In deep time the count before
 the scale word is the mention value in units of that word: "one million two
@@ -1786,8 +1788,9 @@ language is a directory under `chronologia/locale/<code>/`:
 The vocabulary files are loaded through **ovos-spec-tools**, the shared
 `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are
 folded to digits before matching, so a slot binds the same whether the
-writer typed `5` or `five`. **numtag** reads the English and Portuguese
-numbers; **ovos-number-parser** reads the other languages.
+writer typed `5` or `five`. **numtag** reads the Danish, Dutch, English,
+German, Portuguese and Swedish numbers; **ovos-number-parser** reads the
+other languages.
 
 To add a language, create `chronologia/locale/<code>/`, translate the `.voc`
 surface forms, and write a `lang.json` that sets the conventions and lists
