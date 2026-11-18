@@ -363,7 +363,9 @@ tarde" ("late") said at 23:00 is 06:30. Clause punctuation also ends the
 clock's side: "es tarde: a las 6:30" is 06:30. Spanish, Portuguese and Galician
 "tarde" is also the adverb "late", so before the clock and after another word of
 its clause it decides nothing: "llego tarde a las 6:30" is 06:30, while "tarde a
-las 4:30" is 16:30. This holds in
+las 4:30" is 16:30. A part of the day after a digit clock joins the clock as it
+joins a spoken hour: Spanish "a las 6:30 de la tarde" said at 13:04 is 18:30,
+and "a las 6:30 de la mañana" is 06:30 the next day. This holds in
 every language, for `extract_timespan`,
 `extract_timespans` and the top `extract_candidates` reading. A recurrence pin
 names an hour of the day, so `extract_recurrence("daily at 7")` stays

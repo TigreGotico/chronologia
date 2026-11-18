@@ -3,10 +3,9 @@
 "the summer of '42" is 1942, not 2042; "the summer of '20" is 2020, not the
 anchor year with a stranded "'20"; "the spring of '08" is 2008.  A bare
 two-digit year is inherently ambiguous, so it resolves into the 100-year span
-``[anchor_year - 80, anchor_year + 19]`` -- the anchor-relative window
-:mod:`email.utils` and ``dateutil`` use.  Exactly one of ``19YY`` / ``20YY``
-lands inside that window, and that one wins, so the reading tracks the anchor
-and ages correctly.
+``[anchor_year - 80, anchor_year + 19]`` -- ICU's default two-digit-year
+window.  Exactly one year ending in YY lands inside that window, in whatever
+century the anchor is, so the reading tracks the anchor and ages correctly.
 
 Regression guard for the silent-wrong where a fixed ``%y`` pivot (00-68 ->
 20YY, 69-99 -> 19YY) mis-centuried recent years ("'42" -> 2042) AND the year
@@ -26,10 +25,8 @@ from ._corpus import parse, start, start_end, ANCHOR
 def _window(yy, anchor_year):
     """Independent reference: the year a two-digit YY resolves to under the
     anchor-relative window, computed WITHOUT touching the parser."""
-    candidate = 2000 + yy
-    if anchor_year - 80 <= candidate <= anchor_year + 19:
-        return candidate
-    return 1900 + yy
+    return next(y for y in range(anchor_year - 80, anchor_year + 20)
+                if y % 100 == yy)
 
 
 # -- the full YY sweep, "the summer of 'YY" -> the windowed year -----------
