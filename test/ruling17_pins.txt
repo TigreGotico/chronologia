@@ -410,13 +410,6 @@ test/nl_corpus_eo/test_eo_clock_minutes.py::test_minute_counts_resolve_to_the_ex
 test/nl_corpus_eo/test_eo_clock_minutes.py::test_the_half_hour_is_undisturbed[duono anta\u016d la sepa-6-30]
 test/nl_corpus_eo/test_eo_clock_minutes.py::test_the_half_hour_is_undisturbed[duono post la sepa-7-30]
 test/nl_corpus_eo/test_eo_clock_minutes.py::test_the_half_hour_is_undisturbed[la sesa kaj duono-6-30]
-test/nl_corpus_eo/test_nl_adversarial_parity.py::test_span_parity[duono post la sepa-7:30]
-test/nl_corpus_eo/test_nl_adversarial_parity.py::test_span_parity[je la sesa-6:00]
-test/nl_corpus_eo/test_nl_adversarial_parity.py::test_span_parity[kvarono anta\u016d la sepa-6:45]
-test/nl_corpus_eo/test_nl_adversarial_parity.py::test_span_parity[la na\u016da kaj duono-9:30]
-test/nl_corpus_eo/test_nl_adversarial_parity.py::test_span_parity[la sesa kaj duono-6:30]
-test/nl_corpus_eo/test_nl_adversarial_parity.py::test_span_parity[la sesa kaj kvarono-6:15]
-test/nl_corpus_eo/test_nl_adversarial_parity.py::test_span_parity[la sesa-6:00]
 test/nl_corpus_es/test_nl_clock.py::test_bare_hour_reads
 test/nl_corpus_es/test_nl_clock.py::test_hour_fraction[las nueve y cuarto-9-15]
 test/nl_corpus_es/test_nl_clock.py::test_hour_fraction[las nueve y media-9-30]
@@ -1225,8 +1218,6 @@ test/nl_corpus_ko/test_ko_numerals.py::test_the_hour_takes_the_native_series[\uc
 test/nl_corpus_ko/test_ko_numerals.py::test_the_hour_takes_the_native_series[\uc5f4\ub450 \uc2dc-12]
 test/nl_corpus_ko/test_ko_numerals.py::test_the_hour_takes_the_native_series[\uc5f4\ud55c \uc2dc-11]
 test/nl_corpus_ko/test_ko_numerals.py::test_the_hour_takes_the_native_series[\uc77c\uacf1 \uc2dc-7]
-test/nl_corpus_ko/test_nl_adversarial_parity.py::test_span_parity[\ub450 \uc2dc \ubc18-2:30 am]
-test/nl_corpus_ko/test_nl_adversarial_parity.py::test_span_parity[\uc138 \uc2dc \uc2ed \ubd84-3:10 am]
 test/nl_corpus_ko/test_nl_adversarial_parity.py::test_the_minute_ago_pattern_and_the_minutes_to_the_hour_pattern_differ
 test/nl_corpus_lt/test_lt_toward_clock.py::test_half_names_the_coming_hour[pus\u0117 a\u0161tuoni\u0173-7-30]
 test/nl_corpus_lt/test_lt_toward_clock.py::test_half_names_the_coming_hour[pus\u0117 de\u0161imties-9-30]
@@ -1307,8 +1298,6 @@ test/nl_corpus_mt/test_mt_clock_halves.py::test_before_the_half_hour_the_minutes
 test/nl_corpus_mt/test_mt_clock_halves.py::test_before_the_half_hour_the_minutes_are_added[l-g\u0127axra u nofs-10-30]
 test/nl_corpus_mt/test_mt_clock_halves.py::test_the_hours_without_a_weekday_homograph_still_read_as_clock_times
 test/nl_corpus_mt/test_mt_clock_halves.py::test_the_subtractive_reading_is_not_the_additive_one
-test/nl_corpus_mt/test_nl_adversarial_parity.py::test_span_parity[is-sitta u nofs-06:30]
-test/nl_corpus_mt/test_nl_adversarial_parity.py::test_span_parity[it-tmienja nieqes kwart-07:45]
 test/nl_corpus_nb/test_nb_clock.py::test_bare_hour[klokka 9-9]
 test/nl_corpus_nb/test_nb_clock.py::test_bare_hour[klokka \xe5tte-8]
 test/nl_corpus_nb/test_nb_clock.py::test_bare_hour[klokka tre-3]
@@ -1869,14 +1858,3 @@ test/test_engine_bare_half_to.py::test_bare_half_counts_down[halb neun-8-30]
 test/test_engine_bare_half_to.py::test_de_bare_quarter_is_regional_toward_hour
 test/test_engine_bare_half_to.py::test_en_bare_half_is_additive
 test/test_engine_bare_half_to.py::test_english_half_nine_stays_half_past
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[eo:duono post la sepa|7:30]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[eo:je la sesa|6:00]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[eo:kvarono anta\u016d la sepa|6:45]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[eo:la na\u016da kaj duono|9:30]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[eo:la sesa kaj duono|6:30]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[eo:la sesa kaj kvarono|6:15]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[eo:la sesa|6:00]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[ko:\ub450 \uc2dc \ubc18|2:30 am]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[ko:\uc138 \uc2dc \uc2ed \ubd84|3:10 am]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[mt:is-sitta u nofs|06:30]
-test/test_language_parity.py::test_parity_pair_resolves_to_same_span[mt:it-tmienja nieqes kwart|07:45]

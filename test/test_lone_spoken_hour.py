@@ -50,6 +50,7 @@ LONE_HOURS = [
 KEPT = [
     ("tomorrow at 8", "en", AFTERNOON, datetime(2026, 3, 12, 8, 0)),
     ("at 8 pm", "en", MORNING, datetime(2026, 3, 11, 20, 0)),
+    ("at 8 am", "en", AFTER_NOON, datetime(2017, 6, 28, 8, 0)),
     ("at 8 in the morning", "en", AFTERNOON, datetime(2026, 3, 12, 8, 0)),
     ("at 20", "en", AFTERNOON, datetime(2026, 3, 11, 20, 0)),
     ("morgen om 8 uur", "nl", AFTER_NOON, datetime(2017, 6, 28, 8, 0)),
