@@ -355,8 +355,11 @@ names no part of the day, so "at 3:30 today" said at 15:00 is 15:30. A day word 
 a part of the day keeps the hour as written, and so does a meridiem, a leading
 zero ("08:30"), the hour 12, an hour written with the letter "h", and an hour from
 13 to 23. A morning or evening word that the language lists for a half of the
-day decides the half also when the reader does not join it to the clock: Dutch
-"om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is 20:00. This holds in
+day decides the half when it stands beside the clock, also when the reader does
+not join it: Dutch "om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is
+20:00. Only a clock word ("uur"), the word that opens the clock ("om") or an
+article may stand between them, so Spanish "a las 6:30 que no quiero llegar
+tarde" ("late") said at 23:00 is 06:30. This holds in
 every language, for `extract_timespan`,
 `extract_timespans` and the top `extract_candidates` reading. A recurrence pin
 names an hour of the day, so `extract_recurrence("daily at 7")` stays
