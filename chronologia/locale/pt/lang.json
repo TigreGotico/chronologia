@@ -195,6 +195,9 @@
     "0.25": [
       "quarto",
       "quartos"
+    ],
+    "0.75": [
+      "três quartos"
     ]
   },
   "guards": {
