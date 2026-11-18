@@ -395,6 +395,11 @@ class LangSpec:
     # 24-hour clock they hold only an hour in that band ("22h da tarde" names
     # no time).  A surface here is also present in ``meridiems`` with 12.
     band_meridiems: FrozenSet[str] = field(default_factory=frozenset)
+    # Meridiem words that are also the adverb "late" (es, pt, gl "tarde").
+    # Before a clock and after another word of its clause such a word is the
+    # adverb ("llego tarde a las 6:30").  A surface here is also present in
+    # ``meridiems``.
+    late_meridiems: FrozenSet[str] = field(default_factory=frozenset)
     clock_dirs: Mapping[str, int] = field(default_factory=dict)       # past +1 / to -1
     # season_ref slot vocab (surface -> canonical season name)
     seasons: Mapping[str, str] = field(default_factory=dict)

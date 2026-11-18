@@ -133,6 +133,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     night_meridiems: Set[str] = set()
     am_night_meridiems: Set[str] = set()
     band_meridiems: Set[str] = set()
+    late_meridiems: Set[str] = set()
     clock_dirs: Dict[str, int] = {}
     seasons: Dict[str, str] = {}
     solar_events: Dict[str, str] = {}
@@ -274,6 +275,10 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             # da tarde" names no time); see the resolver.
             meridiems.update({s: 12 for s in surfaces})
             band_meridiems.update(surfaces)
+        elif base == "clock_meridiem_late":
+            # a meridiem word that is also the adverb "late"; the meridiem
+            # voc lists it too
+            late_meridiems.update(surfaces)
         elif base == "clock_meridiem_am_night":
             # a night word read on the am half of the 12-hour clock ("drei
             # nachts" is 03:00) that over an explicit 24-hour clock also
@@ -520,6 +525,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         night_meridiems=frozenset(night_meridiems),
         am_night_meridiems=frozenset(am_night_meridiems),
         band_meridiems=frozenset(band_meridiems),
+        late_meridiems=frozenset(late_meridiems),
         clock_dirs=clock_dirs, seasons=seasons,
         solar_events=solar_events, solar_quals=solar_quals,
         scope_units=scope_units,

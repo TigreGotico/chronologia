@@ -359,7 +359,11 @@ day decides the half when it stands beside the clock, also when the reader does
 not join it: Dutch "om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is
 20:00. Only a clock word ("uur"), the word that opens the clock ("om") or an
 article may stand between them, so Spanish "a las 6:30 que no quiero llegar
-tarde" ("late") said at 23:00 is 06:30. This holds in
+tarde" ("late") said at 23:00 is 06:30. Clause punctuation also ends the
+clock's side: "es tarde: a las 6:30" is 06:30. Spanish, Portuguese and Galician
+"tarde" is also the adverb "late", so before the clock and after another word of
+its clause it decides nothing: "llego tarde a las 6:30" is 06:30, while "tarde a
+las 4:30" is 16:30. This holds in
 every language, for `extract_timespan`,
 `extract_timespans` and the top `extract_candidates` reading. A recurrence pin
 names an hour of the day, so `extract_recurrence("daily at 7")` stays
