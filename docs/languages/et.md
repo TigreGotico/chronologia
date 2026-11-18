@@ -61,16 +61,12 @@ three-quarter readings the same way. The convention flags
 `clock_time` construction carries a dedicated `FRACTION HOUR MERIDIEM?
 ZONE?` order alongside the whole-hour `kell H` shape.
 
-**`pool` survives the cardinal fold intact.** The Estonian numfold hook
-(`chronologia.extract.numfold_agglutinative:fold_et`) folds spelled genitive
-numerals into digits for the "N units ago/from now" slot — `ühe`, `kahe`,
-`kolme`, ... `kümne`, plus `poole` (0.5) and `pooleteist` (1.5). That
-genitive `poole` is a distinct word from the clock fraction's nominative
-`pool`: the fold set never contains `pool` itself, so the clock's fraction
-word is never at risk of being read as a bare number and dropped before the
-grammar sees it — the same danger the Slavic module's Czech and Ukrainian
-entries were built to dodge, avoided here simply because the two case forms
-do not collide.
+**`pool` survives the number fold intact.** The Estonian hook
+(`chronologia.extract.numlayer_agglutinative:fold_et`) reads every number
+through numtag, the genitive numerals of the "N units ago/from now" slot too:
+`ühe`, `kahe`, `kolme`, ... `kümne`. numtag reads the clock fraction `pool` as
+one half, and the fold keeps it a word when it ends its own mention, so the
+clock grammar sees `pool` before the hour.
 
 **Relative offsets** are `tagasi` (ago, trailing the count) and a
 leading-marker order, with the deep-time construction (`N SCALE aastat
