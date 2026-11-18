@@ -4293,24 +4293,27 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
                                        res.value.basis))
 
 
-def _lone_numeral_year(rep, res, tokens, spec) -> bool:
-    """Whether the whole reading is a year read from a numeral alone.
+def _lone_numeral_year(rep, res, tokens) -> bool:
+    """Whether the whole text is one numeral the year reading took.
 
-    "2400" or "2400 people came" has no "in", no year word, no other date
-    and no marker word beside it, so it names no date: ruling 34 of the
-    disagreement rulings reads a lone numeral as a candidate, not a
-    reading.  :func:`extract_timespan` gives no value for it, and
-    :func:`extract_candidates` lists the year without ranking it first.
-    "in 2400", "the year 2400", "before 2030" and "june 2400" are dates.
+    "2400" alone has no "in", no year word and no other word beside it, so
+    it names no date: ruling 34 of the disagreement rulings reads a lone
+    numeral as a candidate, not a reading.  :func:`extract_timespan` gives
+    no value for it, and :func:`extract_candidates` lists the year without
+    ranking it first.  The numeral is written in digits of any script and
+    nothing else: any other word makes it a year in a phrase ("in 2400",
+    "2400 people came", "dodenherdenking 2020"), an era word folded into
+    the number ("พ.ศ. 2568") or a spelled year ("two thousand twenty") is
+    a year cue, and so is the apostrophe of "'99".
     """
-    if (rep is None or rep.construction != "year_ref" or rep.length != 1
+    if (rep is None or rep.construction != "year_ref" or len(tokens) != 1
             or "GYEAR" not in rep.slots
             or set(res.consumed) != {rep.span[0]}):
         return False
-    markers = ({s for vals in spec.connectors.values() for s in vals}
-               | set(_RANGE_FROM + _RANGE_UNTIL + _RANGE_SINCE))
-    return not any(t.text in markers for t in tokens
-                   if t.index != rep.span[0])
+    tok = tokens[0]
+    return (tok.raw.isdecimal() and not tok.apostrophe
+            and tok.char_start is not None
+            and tok.char_end - tok.char_start == len(tok.raw))
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
@@ -4381,7 +4384,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         # A day-part+clock meridiem contradiction ("morning at 9pm") --
         # _compose declined the whole reading rather than pick a winner.
         return None
-    if whole and _lone_numeral_year(rep, res, tokens, engine.spec):
+    if whole and _lone_numeral_year(rep, res, tokens):
         return None
     if whole:
         res = _lone_spoken_hour(res, rep, anchor, engine.spec, tokens,
@@ -4543,7 +4546,7 @@ def extract_candidates(
             composed = [(wide, win_res) if m is rep else (m, r)
                         for m, r in composed]
             label_extra[id(wide)] = consumed_all
-            if _lone_numeral_year(rep, win_res, tokens, engine.spec):
+            if _lone_numeral_year(rep, win_res, tokens):
                 lone = id(wide)      # extract_timespan refuses it: rank it last
             else:
                 primary = id(wide)   # extract_timespan's selected answer -> rank it first

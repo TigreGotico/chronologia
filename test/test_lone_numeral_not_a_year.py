@@ -3,8 +3,9 @@
 Ruling 34 of the chronologia disagreement rulings: a numeral with no clock
 marker, no unit and no year cue is not a date in ``extract_timespan``, as
 ruling 2 keeps a bare number from being a clock.  ``extract_candidates``
-lists its year reading, ranked low.  A year with a cue ("in", a year word,
-a month, "before") still reads.
+lists its year reading, ranked low.  A lone numeral is the whole text: a
+year with any other word ("in", a year word, a month, "before", "2400
+people came") still reads.
 """
 from datetime import datetime
 
@@ -20,7 +21,6 @@ from chronologia import AstroDate, extract_candidates, extract_timespan
     ("nl", "2400", datetime(1998, 1, 1)),
     ("en", "1990", datetime(2017, 6, 27, 13, 4)),
     ("pt", "1990", datetime(2017, 6, 27, 13, 4)),
-    ("en", "2400 people came", datetime(2017, 6, 27, 13, 4)),
 ])
 def test_a_lone_numeral_is_no_date(lang, text, anchor):
     assert extract_timespan(text, lang, anchor) is None
@@ -38,6 +38,8 @@ def test_the_year_stays_a_candidate():
     ("the year 2400", 2400),
     ("june 2400", 2400),
     ("christmas 2020", 2020),
+    # any other word makes the numeral part of a phrase
+    ("2400 people came", 2400),
 ])
 def test_a_year_with_a_cue_still_reads(text, year):
     span, _ = extract_timespan(text, "en", datetime(2017, 6, 27, 13, 4))
