@@ -120,7 +120,8 @@
     "weekend_start": 4,
     "dmy": true,
     "hemisphere": null,
-    "prefer_future": true
+    "prefer_future": true,
+    "spelled_clock_lone_hour": true
   },
   "guards": {
     "bare_year_min_digits": 4

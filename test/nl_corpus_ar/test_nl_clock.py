@@ -10,6 +10,17 @@ from ._corpus import ANCHOR, ad, remainder, start, span
 from ruling17 import moved
 
 
+def lone(h, mi=0):
+    """A spelled hour from 1 to 11 with no part of the day: the next of its two
+    twelve-hour readings after the anchor (ruling 23).  Another hour is as
+    written."""
+    if not 1 <= h <= 11:
+        return clk(h, mi)
+    options = [ANCHOR.replace(hour=h, minute=mi, second=0, microsecond=0) + timedelta(hours=12 * k)
+               for k in range(4)]
+    return ad(min(t for t in options if t >= ANCHOR))
+
+
 def clk(h, mi, s=0):
     dt = ANCHOR.replace(hour=h, minute=mi, second=s, microsecond=0)
     if dt < ANCHOR:
@@ -61,7 +72,7 @@ def test_midnight():
     ("الساعة الثانية إلا ربع", 1, 45),
 ])
 def test_clock_fraction(text, h, mi):
-    assert start(text) == clk(h, mi)
+    assert start(text) == lone(h, mi)
     assert remainder(text) == ""
 
 
@@ -77,4 +88,4 @@ def test_clock_fraction_meridiem(text, h, mi):
 
 # a bare hour with no fraction is unchanged.
 def test_clock_hour_no_fraction():
-    assert start("الساعة الثالثة") == clk(3, 0)
+    assert start("الساعة الثالثة") == lone(3, 0)

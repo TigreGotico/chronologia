@@ -175,7 +175,8 @@ CONVENTION_KEYS: FrozenSet[str] = frozenset({
     "bare_quarter_to", "toward_hour_12h", "bare_half_past",
     "bare_quarter_past", "weekend_start",
     "daypart_proper_noun_guard", "since_directional", "bare_at_markers",
-    "offset_clock_composes", "duration_count_follows_unit"})
+    "offset_clock_composes", "duration_count_follows_unit",
+    "spelled_clock_lone_hour"})
 GUARD_KEYS: FrozenSet[str] = frozenset({"bare_year_min_digits"})
 
 

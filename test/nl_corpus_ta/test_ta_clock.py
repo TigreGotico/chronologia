@@ -13,14 +13,19 @@ import pytest
 
 from ._corpus import minute_at, nomatch, start_end
 
+# A spelled hour from 1 to 11 with no part of the day takes the next of its two
+# twelve-hour readings after the anchor, as its digit twin does (ruling 23).
+# The anchor is Wednesday 2027-05-12 13:04, so each of these hours reads in the
+# afternoon or evening of that day: 9:30 is 21:30, 3:10 is 15:10.
+
 
 @pytest.mark.parametrize("text,expected", [
     # the fused half hour: the fraction அரை suffixed to the numeral for nine.
-    ("ஒன்பதரை", minute_at(2027, 5, 13, 9, 30)),
-    ("ஒன்பதரை மணி", minute_at(2027, 5, 13, 9, 30)),
+    ("ஒன்பதரை", minute_at(2027, 5, 12, 21, 30)),
+    ("ஒன்பதரை மணி", minute_at(2027, 5, 12, 21, 30)),
     # the quarter, the numeral carrying the emphatic -ஏ and கால் after it.
-    ("ஒன்பதே கால்", minute_at(2027, 5, 13, 9, 15)),
-    ("ஒன்பதே கால் மணி", minute_at(2027, 5, 13, 9, 15)),
+    ("ஒன்பதே கால்", minute_at(2027, 5, 12, 21, 15)),
+    ("ஒன்பதே கால் மணி", minute_at(2027, 5, 12, 21, 15)),
 ])
 def test_the_fused_fraction_counts_forward(text, expected):
     assert start_end(text) == expected
@@ -40,9 +45,9 @@ def test_the_fused_fraction_is_not_the_european_subtractive_reading(
 
 @pytest.mark.parametrize("text,expected", [
     # மேல் "above, past" -- the minutes are counted forward from the named hour
-    ("மூன்று மணிக்கு பத்து நிமிடம் மேல்", minute_at(2027, 5, 13, 3, 10)),
-    ("ஒன்பது மணிக்கு இருபது நிமிடம் மேல்", minute_at(2027, 5, 13, 9, 20)),
-    ("பதினொன்று மணிக்கு பதினைந்து நிமிடம் மேல்", minute_at(2027, 5, 13, 11, 15)),
+    ("மூன்று மணிக்கு பத்து நிமிடம் மேல்", minute_at(2027, 5, 12, 15, 10)),
+    ("ஒன்பது மணிக்கு இருபது நிமிடம் மேல்", minute_at(2027, 5, 12, 21, 20)),
+    ("பதினொன்று மணிக்கு பதினைந்து நிமிடம் மேல்", minute_at(2027, 5, 12, 23, 15)),
 ])
 def test_mel_counts_forward_from_the_named_hour(text, expected):
     assert start_end(text) == expected
@@ -51,9 +56,9 @@ def test_mel_counts_forward_from_the_named_hour(text, expected):
 @pytest.mark.parametrize("text,expected", [
     # குறைவு "less" -- the named hour is the UPCOMING one, so the reading
     # lands in the hour before it: six less fifteen minutes is 5:45.
-    ("ஆறு மணிக்கு பதினைந்து நிமிடம் குறைவு", minute_at(2027, 5, 13, 5, 45)),
-    ("பத்து மணிக்கு பத்து நிமிடம் குறைவு", minute_at(2027, 5, 13, 9, 50)),
-    ("மூன்று மணிக்கு இருபது நிமிடம் குறைவு", minute_at(2027, 5, 13, 2, 40)),
+    ("ஆறு மணிக்கு பதினைந்து நிமிடம் குறைவு", minute_at(2027, 5, 12, 17, 45)),
+    ("பத்து மணிக்கு பத்து நிமிடம் குறைவு", minute_at(2027, 5, 12, 21, 50)),
+    ("மூன்று மணிக்கு இருபது நிமிடம் குறைவு", minute_at(2027, 5, 12, 14, 40)),
 ])
 def test_kuraivu_counts_back_off_the_upcoming_hour(text, expected):
     assert start_end(text) == expected
@@ -72,12 +77,12 @@ def test_kuraivu_is_not_read_as_a_forward_tail(text, forbidden):
 
 
 @pytest.mark.parametrize("text,expected", [
-    ("ஏழு மணி", minute_at(2027, 5, 13, 7, 0)),
-    ("எட்டு மணிக்கு", minute_at(2027, 5, 13, 8, 0)),
+    ("ஏழு மணி", minute_at(2027, 5, 12, 19, 0)),
+    ("எட்டு மணிக்கு", minute_at(2027, 5, 12, 20, 0)),
     ("இருபது மணி", minute_at(2027, 5, 12, 20, 0)),
     # an unmarked minute tail takes the forward direction the fused
     # fractions establish.
-    ("ஏழு மணி இருபது நிமிடம்", minute_at(2027, 5, 13, 7, 20)),
+    ("ஏழு மணி இருபது நிமிடம்", minute_at(2027, 5, 12, 19, 20)),
 ])
 def test_the_bare_hour_and_its_unmarked_minute_tail(text, expected):
     assert start_end(text) == expected
