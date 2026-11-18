@@ -728,7 +728,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             # an explicit lead licenses the bare-hour reading of a numeric
             # endpoint ("from 9 to 5"), which must be tried *before* the
             # generic composition so a borrowed meridiem cannot roll a day.
-            got = None
+            got = _range_before_ago(left_tok, right_tok, endpoint, spec)
             # an explicit lead ("from 9 to 5") OR a trailing meridiem that
             # already frames the pair as clock times ("9 to 5 pm") licenses the
             # bare-hour reading with its am/pm fallback, which must be tried
@@ -736,8 +736,9 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             # roll a bogus ~20h day-crossing span (9->21:00, then 5pm rolled to
             # tomorrow).  A bare "9 to 5" with no meridiem stays the subtractive
             # clock ("nine minutes to five"), untouched.
-            if led or _trailing_meridiem(right_tok, spec) is not None \
-                    or _trailing_meridiem(left_tok, spec) is not None:
+            if got is None and (
+                    led or _trailing_meridiem(right_tok, spec) is not None
+                    or _trailing_meridiem(left_tok, spec) is not None):
                 got = _compose_clock_range(text, left_tok, right_tok,
                                            engine, anchor)
             if got is None:
@@ -796,8 +797,10 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             p, k = split
             left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
             prefix = render_remainder(text, list(tokens[:lead_at]))
-            got = _compose_clock_range(text, left_tok, right_tok,
-                                       engine, anchor)
+            got = _range_before_ago(left_tok, right_tok, endpoint, spec)
+            if got is None:
+                got = _compose_clock_range(text, left_tok, right_tok,
+                                           engine, anchor)
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
@@ -1354,6 +1357,36 @@ def _lend_year(bare, donor):
     # strip its character extent -- the token belongs to the other endpoint.
     lent = replace(year, index=-1 - len(bare), char_start=None, char_end=None)
     return tuple(bare) + (lent,)
+
+
+def _range_before_ago(left_tok, right_tok, endpoint, spec):
+    """``(span, remainder)`` of "from 2 to 3 days ago", or ``None``.
+
+    The right endpoint is a count, a unit and an "ago" word, and the left
+    endpoint is a bare count: the unit and the "ago" word measure both, so the
+    range runs from the larger offset back to the smaller one.  The span holds
+    the two instants, not the days that hold them.
+    """
+    ago = _conn_surfaces(spec, "ago", ())
+    counted = [i for i, t in enumerate(right_tok)
+               if t.is_number or t.mention is not None]
+    if not counted or not left_tok or not ago:
+        return None
+    tail = right_tok[counted[-1] + 1:]
+    words = [t.text for t in tail]
+    if not tail or words[0] not in spec.units \
+            or not any(words[-len(a):] == a for a in ago):
+        return None
+    if not all(t.is_number or t.mention is not None for t in left_tok):
+        return None
+    left = endpoint(tuple(left_tok) + tuple(tail))
+    right = endpoint(right_tok)
+    if left is None or right is None:
+        return None
+    start, end = right[0].start, left[0].start
+    if not start < end:
+        return None
+    return DateSpan(start, end), right[1]
 
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
