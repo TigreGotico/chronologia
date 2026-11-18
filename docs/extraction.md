@@ -782,12 +782,16 @@ scored on its own reading rather than on its share of the carrier sentence.
 ### Alternative readings of an ambiguous phrase
 
 A phrase can name a time in more than one way. `extract_candidates` lists
-the readings, ranked, and `extract_timespan` returns the first one. An open
-range such as "before christmas" is the exception: `extract_timespan` builds it
-after the core match, and `extract_candidates` does not run that step, so the
-list holds only the holiday.
+the readings, ranked, and `extract_timespan` returns the first one. A bare
+"before X" with no count, such as "before christmas", is an exception:
+`extract_timespan` builds it after the core match, and `extract_candidates`
+does not run that step, so the list holds only the holiday. The ranges with
+"until", "since" and "from" come from both functions alike. When
+`extract_timespan` declines a phrase (a bare "after X", or a decline case of
+rulings 20 and 22), it returns `None` while `extract_candidates` still lists
+readings.
 
-Two rulings give readings that the engine does not return yet.
+Rulings 31 and 34 give readings that the engine does not return yet.
 
 Ruling 31 ranks the readings of pt "às 9 uma hora antes do natal", which has a
 stated clock (9), an offset (one hour before Christmas) and a twelve-hour
@@ -803,7 +807,8 @@ Ruling 34 rules that a lone numeral (da "20", nl "2", en "20") is a candidate
 and not a reading: `extract_candidates` would list the hour, the day of the
 month and the year it could be, ranked low. The engine returns nothing for
 these numerals. `extract_timespan` returns `None` and `extract_candidates`
-returns an empty list.
+returns an empty list. The issues [#1032](https://github.com/TigreGotico/chronologia/issues/1032) and [#1035](https://github.com/TigreGotico/chronologia/issues/1035) track the ruling, and
+this paragraph changes when the ruling lands.
 
 ### What the score is made of
 
