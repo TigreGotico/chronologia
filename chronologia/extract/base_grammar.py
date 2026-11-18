@@ -77,6 +77,10 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast WEEKDAY of MONTH of article? year_word YEAR",
         "article? ORD WEEKDAY of article? month_word of MONTH of? YEAR?",
         "article? ordlast WEEKDAY of article? month_word of MONTH of? YEAR?",
+        "article? ORD WEEKDAY of article? month_word? of? MONTH of? article? REL_MARKER year_word",
+        "article? ordlast WEEKDAY of article? month_word? of? MONTH of? article? REL_MARKER year_word",
+        "article? ORD WEEKDAY of article? month_word? of? MONTH of? article? year_word REL_MARKER",
+        "article? ordlast WEEKDAY of article? month_word? of? MONTH of? article? year_word REL_MARKER",
         "article? ORD WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
         "article? ordlast WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
         "article? ORD WEEKDAY of article? SCOPE_UNIT REL_MARKER",
@@ -554,9 +558,12 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
         "article? SEASON REL_MARKER",
     ],
     # "last/next <month>" postposed: "mars dernier", "marzo pasado", "em
-    # março passado", "marzo scorso".
+    # março passado", "marzo scorso".  A relative year after the month
+    # trails its year noun the same way: "noviembre del año que viene",
+    # "novembro do ano passado".
     "calendar_date": [
         "during? MONTH REL_MARKER",
+        "during? DAY? MONTH of? article? year_word REL_MARKER",
     ],
 }
 
