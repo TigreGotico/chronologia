@@ -411,7 +411,7 @@ class Tokenizer:
             # ahead of the ordinal-dot and bare-number rules below, so a
             # dotted date binds whole rather than being read as a number
             parts.insert(4, _DOTDATE)
-        if modes.dotted_clock:
+        if modes.dotted_clock or modes.dotted_clock_cued:
             # after _DOTDATE (a dotted date wins its own digits) and ahead of
             # the ordinal-dot and number rules, so "15.30" binds as one clock
             # token instead of splitting into two bare numbers.
@@ -462,6 +462,7 @@ class Tokenizer:
             num = r"(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?!\d)"
         self._decimal_comma = modes.decimal_comma
         self._dotted_clock = modes.dotted_clock
+        self._dotted_clock_cued = modes.dotted_clock_cued
         parts += [num, word]
         self._re = re.compile("|".join(parts), re.UNICODE)
         # Arabic-script native decimal/thousands separators (U+066B/U+066C)
@@ -529,6 +530,12 @@ class Tokenizer:
                     tokens.append(Token(text=raw, raw=raw, index=i,
                                         is_number=True, value=int(num_s) / den,
                                         char_start=cs, char_end=ce))
+                continue
+            if (self._dotted_clock_cued
+                    and re.fullmatch(_DOTCLOCK, raw) is not None):
+                # the dot stays in ``text``: only the DOTCLOCK slot reads it
+                tokens.append(Token(text=raw, raw=raw, index=i,
+                                    char_start=cs, char_end=ce))
                 continue
             if self._dotted_clock and re.fullmatch(_DOTCLOCK, raw) is not None:
                 # the dotted wall clock: keep the written surface in ``raw``

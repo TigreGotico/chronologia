@@ -14,6 +14,8 @@
 # xogadores: Noun. "form of xogador"
 # mesas: Noun. "plural of mesa"
 # cuartos: Noun. "plural of cuarto"
+# euro: Noun. "euro (currency)"
+# euros: Noun. "plural of euro"
 persoa
 persoas
 veciños
@@ -26,3 +28,5 @@ adultos
 xogadores
 mesas
 cuartos
+euro
+euros

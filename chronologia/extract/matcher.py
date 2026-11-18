@@ -62,10 +62,11 @@ class MatchCandidate:
 
 
 def _is_bare_hour(match: Match) -> bool:
-    """A clock that is a marker and an hour only: "at 5", "a las 3"."""
-    hour = match.slots.get("HOUR")
+    """A clock that is a marker and an hour only: "at 5", "a las 3".  A dotted
+    clock counts as one: "a las 8.30"."""
+    hour = match.slots.get("HOUR") or match.slots.get("DOTCLOCK")
     return (match.construction == "clock_time" and hour is not None
-            and set(match.slots) == {"HOUR"}
+            and len(match.slots) == 1
             and match.span[0] < hour.index == match.span[1] - 1)
 
 
@@ -1115,13 +1116,15 @@ class ConstructionMatcher:
                     # are spoken.  Positive clock evidence (CLOCKDIR/FRACTION/
                     # MINUTE/MERIDIEM) still licenses the bare form -- only the
                     # article-less HOUR-alone reading is refused.
-                    if (name == "clock_time" and "HOUR" in slots
+                    if (name == "clock_time"
+                            and ("HOUR" in slots or "DOTCLOCK" in slots)
                             and "CLOCKDIR" not in slots
                             and "FRACTION" not in slots
                             and "MINUTE" not in slots
                             and "MERIDIEM" not in slots
                             and self.spec.conventions.bare_at_markers):
-                        _ai = slots["HOUR"].index - 1
+                        _ai = (slots.get("HOUR")
+                               or slots["DOTCLOCK"]).index - 1
                         if (_ai >= 0 and tokens[_ai].text
                                 in self.spec.conventions.bare_at_markers):
                             continue
@@ -1213,12 +1216,13 @@ class ConstructionMatcher:
         for cand in cands:
             match = cand.match
             start, end = match.span
+            hour = match.slots.get("HOUR") or match.slots.get("DOTCLOCK")
             if (_is_bare_hour(match) and end < len(tokens)
                     and not tokens[end].break_before
                     and not tokens[end - 1].raw.endswith(".")
                     and tokens[end].text in nouns
                     and any(t.text in prepositions for t in
-                            tokens[max(0, start - 1):match.slots["HOUR"].index])):
+                            tokens[max(0, start - 1):hour.index])):
                 cand = MatchCandidate(replace(match, doubt=True),
                                       cand.precedence)
             flagged.append(cand)

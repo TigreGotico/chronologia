@@ -2,7 +2,8 @@
   "tokenizer": {
     "decimal_comma": true,
     "split_contractions": false,
-    "ordinal_dot": false
+    "ordinal_dot": false,
+    "dotted_clock_cued": true
   },
   "constructions": {
     "decade_bc": {
@@ -71,6 +72,13 @@
         "at CLOCK article? MERIDIEM ZONE?",
         "CLOCK article? MERIDIEM ZONE?",
         "at? CLOCK article? MERIDIEM? ZONE?",
+        "at DOTCLOCK oclock of? article? MERIDIEM ZONE?",
+        "DOTCLOCK oclock of? article? MERIDIEM ZONE?",
+        "at DOTCLOCK article? MERIDIEM ZONE?",
+        "DOTCLOCK article? MERIDIEM ZONE?",
+        "at DOTCLOCK oclock? MERIDIEM? ZONE?",
+        "DOTCLOCK oclock MERIDIEM? ZONE?",
+        "DOTCLOCK MERIDIEM ZONE?",
         "at HOUR oclock CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
         "HOUR oclock CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
         "at HOUR oclock CLOCKDIR article? MINUTE of? article? MERIDIEM? ZONE?",
