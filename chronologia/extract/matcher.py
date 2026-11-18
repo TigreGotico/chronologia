@@ -565,14 +565,18 @@ def is_alarm_bare_range(left: Tuple[Token, ...],
 
 def _day_cue_follows(tokens: Tuple[Token, ...], end: int,
                      spec: LangSpec) -> bool:
-    """Whether a meridiem or a part of the day follows in the same sentence
-    behind other words: "alarm for 7 or 8 pm".  The bare hour is not the
-    clock then, and the later cue reads with its own hour."""
-    for token in tokens[end:]:
+    """Whether a meridiem word reads with a second hour right after this bare
+    hour: "alarm for 7 or 8 pm", "7 or 8 in the morning".  The cue counts only
+    after one joiner word and a second bare hour, so a date word or another
+    clause between the hour and the cue keeps the alarm reading."""
+    if (end + 1 >= len(tokens) or tokens[end].break_before
+            or tokens[end].is_number or tokens[end].text in spec.units
+            or not tokens[end + 1].is_number):
+        return False
+    for token in tokens[end + 2:end + 5]:
         if token.break_before:
-            return False
-        if (token.text in spec.meridiems or token.text in spec.dayparts
-                or token.text in spec.daypart_today_words):
+            break
+        if token.text in spec.meridiems:
             return True
     return False
 
