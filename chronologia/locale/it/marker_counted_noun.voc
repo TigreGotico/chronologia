@@ -19,7 +19,6 @@
 # tavoli: Noun. "plural of tavolo"
 # biglietti: Noun. "plural of biglietto"
 # stanze: Noun. "plural of stanza"
-# euro: Noun. "euro (currency)"
 persona
 persone
 ospiti
@@ -37,4 +36,3 @@ posti
 tavoli
 biglietti
 stanze
-euro

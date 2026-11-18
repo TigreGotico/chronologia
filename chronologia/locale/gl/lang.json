@@ -2,8 +2,7 @@
   "tokenizer": {
     "decimal_comma": true,
     "split_contractions": false,
-    "ordinal_dot": true,
-    "dotted_clock_cued": true
+    "ordinal_dot": true
   },
   "constructions": {
     "relative_offset": {
@@ -40,11 +39,7 @@
         "at? LANDMARK of? article? MERIDIEM? ZONE?",
         "at CLOCK of? article? MERIDIEM ZONE?",
         "at? CLOCK of? article? MERIDIEM ZONE?",
-        "at? CLOCK MERIDIEM? ZONE?",
-        "at DOTCLOCK of? article? MERIDIEM ZONE?",
-        "at? DOTCLOCK of? article? MERIDIEM ZONE?",
-        "at DOTCLOCK MERIDIEM? ZONE?",
-        "DOTCLOCK MERIDIEM ZONE?"
+        "at? CLOCK MERIDIEM? ZONE?"
       ],
       "prefer_future": true
     },

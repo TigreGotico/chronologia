@@ -1,16 +1,22 @@
 # -*- coding: utf-8 -*-
 """A dotted clock beside a clock word reads as the colon clock does.
 
-Writers of es, nl and de use the dot for the colon: Spanish "18.20" is the
-older form that the press still uses (Wikipedia, "Date and time notation in
-Spain"), Dutch writes "22.51 uur" (Wikipedia, "Date and time notation in the
-Netherlands"), and German DIN 1355 and DIN 5008 set the dot as the separator
-until 1995 (Wikipedia, "Date and time notation in Europe", Germany).  The
-rows for pt, it, ca, gl and fr follow the issue; no source for them was
-checked, and a native reviewer is to confirm them.
+es, ca, nl and de write the dot for the colon, and each has a source.
+es: "El separador oficial entre las horas y los minutos es el signo de dos
+puntos [...] lo cual no significa que usar el punto sea incorrecto (23:45 o
+23.45)" (FundeuRAE, "horas, grafia").  ca: "utilitzem un punt per a separar
+les hores dels minuts [...] La reunio comencara a les 9.30 h" (Diputacio de
+Barcelona, Llengua, "192. Les hores i els horaris").  nl: "In een gewone tekst
+is 8.30 uur of 8.30 u. correct" (Taaladvies.net, "8h30 / 8u.30 / 8.30 u. /
+8.30 uur").  de: "Der Doppelpunkt kann auch durch einen Punkt ersetzt werden:
+8.03 Uhr" (Duden, "Schreibung von Uhrzeitangaben").  pt, it, gl and fr have no
+source that shows the dotted clock, so they read it as before: the Ciberduvidas
+answer "A grafia das horas" objects to "17.30 h", the Accademia della Crusca
+site (DICO) says Italian prefers the comma or the colon to the point, and the
+OQLF writes the hour with "h" and allows only the colon.
 
 The dot also marks a price or a list number, so the clock needs a clock word
-before it ("a las", "um", "om") or after it ("Uhr", "horas"), and a counted
+before it ("a las", "um", "om") or after it ("Uhr", "uur"), and a counted
 noun after it makes a count.  A dotted date and a bare number stay unread.
 The hour reads as the colon clock does (ruling 23: the next of its two
 twelve-hour readings), and a clock with a leading zero, a 24-hour hour or a
@@ -31,17 +37,11 @@ EARLY = datetime(2026, 9, 25, 6, 0)
 EVENING_READING = [
     ("a las 8.30", "es", datetime(2026, 9, 25, 20, 30)),
     ("a las 8.15", "es", datetime(2026, 9, 25, 20, 15)),
-    ("às 8.30", "pt", datetime(2026, 9, 25, 20, 30)),
-    ("às 8.15", "pt", datetime(2026, 9, 25, 20, 15)),
     ("um 8.15", "de", datetime(2026, 9, 25, 20, 15)),
     ("um 8.15 Uhr", "de", datetime(2026, 9, 25, 20, 15)),
     ("8.30 Uhr", "de", datetime(2026, 9, 25, 20, 30)),
-    ("alle 8.30", "it", datetime(2026, 9, 25, 20, 30)),
-    ("à 8.15", "fr", datetime(2026, 9, 25, 20, 15)),
     ("om 8.30", "nl", datetime(2026, 9, 25, 20, 30)),
     ("a les 8.30", "ca", datetime(2026, 9, 25, 20, 30)),
-    ("ás 8.30", "gl", datetime(2026, 9, 25, 20, 30)),
-    ("às 8.30 horas", "pt", datetime(2026, 9, 25, 20, 30)),
 ]
 
 # text, language, expected instant: a part of the day beside the clock decides
@@ -50,22 +50,14 @@ DAYPART_READING = [
     ("a las 8.30 de la tarde", "es", datetime(2026, 9, 25, 20, 30)),
     ("a las 8.30 de la noche", "es", datetime(2026, 9, 25, 20, 30)),
     ("a las 8.30 de la mañana", "es", datetime(2026, 9, 26, 8, 30)),
-    ("às 8.30 da noite", "pt", datetime(2026, 9, 25, 20, 30)),
-    ("às 8.30 da manhã", "pt", datetime(2026, 9, 26, 8, 30)),
-    ("alle 8.30 di sera", "it", datetime(2026, 9, 25, 20, 30)),
-    ("alle 8.30 di mattina", "it", datetime(2026, 9, 26, 8, 30)),
-    ("à 8.30 du soir", "fr", datetime(2026, 9, 25, 20, 30)),
-    ("à 8.30 du matin", "fr", datetime(2026, 9, 26, 8, 30)),
     ("om 8.30 's avonds", "nl", datetime(2026, 9, 25, 20, 30)),
     ("a les 8.30 de la tarda", "ca", datetime(2026, 9, 25, 20, 30)),
-    ("ás 8.30 da tarde", "gl", datetime(2026, 9, 25, 20, 30)),
     ("um 8.30 Uhr abends", "de", datetime(2026, 9, 25, 20, 30)),
 ]
 
 # the clock written as it is spoken in the morning, said at 06:00
 EARLY_READING = [
     ("a las 8.30", "es", datetime(2026, 9, 25, 8, 30)),
-    ("às 8.15", "pt", datetime(2026, 9, 25, 8, 15)),
     ("om 8.30", "nl", datetime(2026, 9, 25, 8, 30)),
 ]
 
@@ -73,8 +65,6 @@ EARLY_READING = [
 AS_WRITTEN = [
     ("a las 08.30", "es", datetime(2026, 9, 26, 8, 30)),
     ("a las 15.30", "es", datetime(2026, 9, 25, 15, 30)),
-    ("às 8.30 da manhã", "pt", datetime(2026, 9, 26, 8, 30)),
-    ("amanhã às 8.30", "pt", datetime(2026, 9, 26, 8, 30)),
     ("um 20.15 Uhr", "de", datetime(2026, 9, 25, 20, 15)),
     ("at 8.30", "en", datetime(2026, 9, 26, 8, 30)),
     ("kello 8.30", "fi", datetime(2026, 9, 26, 8, 30)),
@@ -134,3 +124,11 @@ def test_a_dotted_date_is_a_date_and_no_clock():
     found = extract_timespan("8.3.2026", "de", NOON)
     assert found.span.start.datetime() == datetime(2026, 3, 8)
     assert found.span.end.datetime() == datetime(2026, 3, 9)
+
+
+@pytest.mark.parametrize("text,lang", [
+    ("às 8.30", "pt"), ("alle 8.30", "it"), ("ás 8.30", "gl"),
+    ("à 8.15", "fr"), ("à 3.50 m", "fr"),
+])
+def test_a_locale_with_no_source_for_the_dotted_clock_reads_none(text, lang):
+    assert extract_timespan(text, lang, NOON) is None
