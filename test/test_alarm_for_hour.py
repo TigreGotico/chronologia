@@ -49,8 +49,54 @@ CLOCKS = [
     ("alarm for 10 to 11", "en", datetime(2026, 11, 17, 10, 50)),
     ("reminder for 10 to 11", "en", datetime(2026, 11, 17, 10, 50)),
     ("alarm for 7 till 8", "en", datetime(2026, 11, 17, 19, 53)),
+    ("alarms for 7 and 8 pm", "en", datetime(2026, 11, 17, 20, 0)),
+    ("alarm for 7 or 8 pm", "en", datetime(2026, 11, 17, 20, 0)),
+    ("alarme para 7 às 8 da noite", "pt", datetime(2026, 11, 17, 20, 0)),
+    ("alarma para 7 a 8 de la noche", "es", datetime(2026, 11, 17, 20, 0)),
+    ("alarm for 7 and 8 in the morning", "en", datetime(2026, 11, 17, 8, 0)),
+    ("set an alarm for 6 or 7 pm tomorrow", "en",
+     datetime(2026, 11, 18, 19, 0)),
     ("reminder for 10 to noon", "en", datetime(2026, 11, 17, 11, 50)),
     ("reminder for 7 to midnight", "en", datetime(2026, 11, 17, 23, 53)),
+    ("set an alarm for 7 tomorrow morning", "en",
+     datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 tomorrow morning", "en", datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 on friday morning", "en", datetime(2026, 11, 20, 7, 0)),
+    ("alarm for 9 on monday morning", "en", datetime(2026, 11, 23, 9, 0)),
+    ("reminder for 9 tomorrow morning", "en", datetime(2026, 11, 18, 9, 0)),
+    ("wake-up call for 6 tomorrow morning", "en",
+     datetime(2026, 11, 18, 6, 0)),
+    ("set a reminder for 8 tomorrow morning to call bob", "en",
+     datetime(2026, 11, 18, 8, 0)),
+    ("alarme para 7 amanhã de manhã", "pt", datetime(2026, 11, 18, 7, 0)),
+    ("alarme para 6 amanhã de manhã", "pt", datetime(2026, 11, 18, 6, 0)),
+    ("alarme para 7 na segunda de manhã", "pt", datetime(2026, 11, 23, 7, 0)),
+    ("despertador para 6 el lunes por la mañana", "es",
+     datetime(2026, 11, 23, 6, 0)),
+    ("réveil pour 7 demain matin", "fr", datetime(2026, 11, 18, 7, 0)),
+    ("réveil pour 6 demain matin", "fr", datetime(2026, 11, 18, 6, 0)),
+    ("alarme pour 7 lundi matin", "fr", datetime(2026, 11, 23, 7, 0)),
+    ("sveglia per 7 domani mattina", "it", datetime(2026, 11, 18, 7, 0)),
+    ("sveglia per 7 lunedì mattina", "it", datetime(2026, 11, 23, 7, 0)),
+    ("wekker voor 7 morgenochtend", "nl", datetime(2026, 11, 18, 7, 0)),
+    ("wekker voor 7 maandagochtend", "nl", datetime(2026, 11, 23, 7, 0)),
+    ("wekker voor 7 morgen in de ochtend", "nl",
+     datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 and call mum in the evening", "en",
+     datetime(2026, 11, 18, 7, 0)),
+    ("reminder for 9 about the party tonight", "en",
+     datetime(2026, 11, 17, 9, 0)),
+    ("alarm for 7 then a meeting at 3 pm", "en", datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 and dinner at 8 pm", "en", datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 and remind me at 8 pm", "en", datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7, dinner at 8 pm", "en", datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7. Meeting at 3 pm", "en", datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7. Tonight I sleep", "en", datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7. Or 8 pm", "en", datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 and 8 then I go for a run in the morning", "en",
+     datetime(2026, 11, 18, 7, 0)),
+    ("alarm for 7 and 8. In the morning I run", "en",
+     datetime(2026, 11, 18, 7, 0)),
 ]
 
 NO_CLOCK = [
@@ -121,6 +167,22 @@ def test_an_alarm_noun_makes_the_bare_hour_a_clock(text, lang, expected):
     assert found.span.end.datetime() == datetime(
         expected.year, expected.month, expected.day, expected.hour,
         expected.minute + 1)
+
+
+@pytest.mark.parametrize("text,remainder", [
+    ("alarm for 7 pm tomorrow evening", "evening"),
+    ("alarm for 7 pm and a call in the evening",
+     "and a call in the evening"),
+])
+def test_a_meridiem_hour_keeps_the_alarm_noun_in_the_reading(text, remainder):
+    assert extract_timespan(text, "en", ANCHOR).remainder == remainder
+
+
+@pytest.mark.xfail(
+    strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1058")
+def test_alarm_for_seven_tonight_reads_seven_in_the_evening():
+    found = extract_timespan("alarm for 7 tonight", "en", ANCHOR)
+    assert found.span.start.datetime() == datetime(2026, 11, 17, 19, 0)
 
 
 @pytest.mark.parametrize("text,lang", NO_CLOCK)
