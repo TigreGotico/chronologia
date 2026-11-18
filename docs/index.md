@@ -42,6 +42,7 @@ of time (a start and an end), not an instant; every span carries a one-word
 | [events.md](events.md) | Pulling a titled event (summary + time) out of a sentence and exporting it as an `.ics` calendar file. |
 | [recurrence.md](recurrence.md) | Repeating rules ("every third Tuesday") via the RFC 5545 RRULE grammar, expanded to concrete dates. |
 | [edtf.md](edtf.md) | Extended Date/Time Format — cataloguing-style approximate and uncertain dates ("probably the 1890s"). |
+| [rulings.md](rulings.md) | The decisions that fix how a phrase with two possible readings is read: which occurrence, which hour, which period, with examples and sources. |
 
 ### Calendars & eras
 | Guide | What it gives you |
