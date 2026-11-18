@@ -3277,4 +3277,9 @@ class Resolver:
                     hour = (hour + 12) % 24
                 elif off == 0 and spoken_hour == 12:
                     hour = (hour - 12) % 24
+                elif (off == 0 and hour < 12
+                        and meridiem.text in self.spec.am_night_meridiems
+                        and not _hour_in_daypart("night", hour)
+                        and _hour_in_daypart("night", hour + 12)):
+                    hour += 12
         return hour, minute, second
