@@ -72,7 +72,7 @@ def test_a_weekday_before_a_count_of_days_keeps_the_count():
 
 @pytest.mark.parametrize("text,rest", [
     ("friday in a week, october 30", "in a week"),
-    ("october 30 in a week on friday", "in a week on"),
+    ("october 30 in a week on friday", "in a week"),
 ])
 def test_a_written_date_keeps_the_count(text, rest):
     # Friday 30 October is the written date; the count does not move it.

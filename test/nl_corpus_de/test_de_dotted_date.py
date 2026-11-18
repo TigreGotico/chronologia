@@ -25,7 +25,7 @@ def test_dotted_date_de():
 def test_dotted_date_in_a_sentence_de():
     s, e = start_end('das Treffen am 15.06.2020')
     assert (s, e) == (AstroDate(2020, 6, 15), AstroDate(2020, 6, 16))
-    assert parse('das Treffen am 15.06.2020')[1] == 'das Treffen am'
+    assert parse('das Treffen am 15.06.2020')[1] == 'das Treffen'
 
 
 def test_dotted_date_unpadded_de():
@@ -57,7 +57,7 @@ def test_dotted_date_spaced_de(text):
 def test_dotted_date_spaced_in_a_sentence_de():
     s, e = start_end('das Treffen am 15. 6. 2020')
     assert (s, e) == (AstroDate(2020, 6, 15), AstroDate(2020, 6, 16))
-    assert parse('das Treffen am 15. 6. 2020')[1] == 'das Treffen am'
+    assert parse('das Treffen am 15. 6. 2020')[1] == 'das Treffen'
 
 
 def test_dotted_date_spaced_two_digit_year_de():

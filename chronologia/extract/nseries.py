@@ -1326,10 +1326,11 @@ def _apply_clock_range(rec, consumed, ctx, lang, anchor):
       to five") -- "9 to 5" -> 4:51, nonsense for a range.
 
     Both endpoints must resolve as PURE clock times: reading ``"at " +
-    text`` for the (1- or 2-token) endpoint span must leave no remainder --
-    a genuine date range ("from june to august") leaves "at" stranded
-    (``extract_timespan("at august")`` resolves August but returns "at" as
-    remainder) and is declined here, left for :func:`_apply_range_bound` to
+    text`` for the (1- or 2-token) endpoint span must leave no remainder and
+    give a minute-wide span --
+    a genuine date range ("from june to august") reads as a span wider than
+    one minute (``extract_timespan("at august")`` resolves the whole month)
+    and is declined here, left for :func:`_apply_range_bound` to
     ground as ``UNTIL`` instead.  Bare numbers ("9", "5") are read literally,
     the same convention :func:`_apply_clock` already uses for "at 9" / "at
     5" -- no am/pm guessing is invented here.
@@ -1361,7 +1362,8 @@ def _apply_clock_range(rec, consumed, ctx, lang, anchor):
                 continue
             text = " ".join(t.raw for t in tokens[start:end])
             got = extract_timespan("at " + text, lang, anchor=anchor)
-            if got is None or got[1] != "":
+            if (got is None or got[1] != ""
+                    or got[0].end - got[0].start != timedelta(minutes=1)):
                 continue
             c = got[0].start
             return end, c.hour, c.minute
