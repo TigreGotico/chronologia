@@ -100,9 +100,7 @@ _LIMITATIONS = [
     pytest.param(
         'spring into action',
         marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
-    pytest.param(
-        'fall for the trick',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+    'fall for the trick',
     pytest.param(
         'midnight oil',
         marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),

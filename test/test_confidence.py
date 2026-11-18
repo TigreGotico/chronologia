@@ -20,7 +20,7 @@ Three contracts are exercised here:
    The achieved minimum is printed for the record.
 
    There is deliberately no matching *ceiling* over the confusables corpus.  A
-   confusable that still parses -- "fall for the trick", "christmas came early"
+   confusable that still parses -- "spring into action", "christmas came early"
    -- yields a reading identical to the real one, and telling those apart takes
    the sentence's meaning, which the extractor does not have; the confusables
    corpus documents exactly that as a downstream concern.  A ceiling could only
