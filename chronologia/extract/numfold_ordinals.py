@@ -34,8 +34,8 @@ from chronologia.extract.numfold_engine import reindex as _reindex
 
 #: languages whose ``pronounce_ordinal_<lang>`` is a deprecated wrapper over
 #: the module's own ``RomanceNumberExtractor``; the extractor is read
-#: directly, and pt is the pt-PT norm the wrapper defaults to.
-_ROMANCE_EXTRACTORS = {"pt": "PT_PT", "gl": "GL", "mwl": "MWL"}
+#: directly.
+_ROMANCE_EXTRACTORS = {"gl": "GL", "mwl": "MWL"}
 
 
 @lru_cache(maxsize=None)

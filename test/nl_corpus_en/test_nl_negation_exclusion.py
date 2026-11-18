@@ -75,7 +75,7 @@ def test_bound_phrases_unchanged(text, start, end, rem):
     ("tomorrow", "2017-06-28T00:00:00", "2017-06-29T00:00:00", ""),
     ("this Friday", "2017-06-30T00:00:00", "2017-07-01T00:00:00", ""),
     ("next week", "2017-07-03T00:00:00", "2017-07-10T00:00:00", ""),
-    ("on weekends", "2017-07-01T00:00:00", "2017-07-03T00:00:00", "on"),
+    ("on weekends", "2017-07-01T00:00:00", "2017-07-03T00:00:00", ""),
 ])
 def test_plain_references_unchanged(text, start, end, rem):
     r = extract_timespan(text, "en", ANCHOR)

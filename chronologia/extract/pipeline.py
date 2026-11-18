@@ -25,6 +25,7 @@ from chronologia.extract.model import LangSpec, Token
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numfold_roman import fold_roman_numerals
+from chronologia.extract.numlayer import attach
 from chronologia.extract.tokenizer import Tokenizer
 
 _WS = re.compile(r"\s+")
@@ -178,7 +179,8 @@ def merge_multiword(tokens: Tuple[Token, ...],
 
 
 def pretokens(text: str, spec: LangSpec) -> Tuple[Token, ...]:
-    """The pre-match stream *before* number folding: tokenize + normalise only.
+    """The pre-match stream *before* number folding: tokenize + normalise,
+    with the number layer attached (:func:`~chronologia.extract.numlayer.attach`).
 
     Range detection reads this stream, not the folded one, because the
     spelled-number fold merges digits across a connector -- "3 and 5" collapses
@@ -190,7 +192,7 @@ def pretokens(text: str, spec: LangSpec) -> Tuple[Token, ...]:
         Tokenizer(spec.tokenizer).tokenize(text))
     if spec.pre_hook is not None:
         tokens = spec.pre_hook(tokens)
-    return tokens
+    return attach(tokens, text, spec.number_lang or spec.lang)
 
 
 def _is_a_numeral_one(tok: Token, hook) -> bool:

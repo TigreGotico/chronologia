@@ -74,3 +74,14 @@ def test_first_friday_of_november_control_unchanged():
     r = _result("the first friday of november")
     assert r is not None and r.remainder == ""
     assert _ymd("the first friday of november") == (2026, 11, 6)
+
+
+def test_the_ordinal_before_to_last_carries_its_place_in_the_text():
+    """numtag indexes a mention into the input text.  The ordinal of
+    "second-to-last" is read alone, so its mention must still point at
+    characters 4 to 10 of "the second-to-last friday"."""
+    from chronologia.extract.loader import load_lang_spec
+    from chronologia.extract.pipeline import pretokens
+    text = "the second-to-last friday"
+    second = pretokens(text, load_lang_spec("en"))[1]
+    assert second.mention.char_span == (4, 10)
