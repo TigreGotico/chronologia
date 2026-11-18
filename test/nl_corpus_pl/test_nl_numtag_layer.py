@@ -57,3 +57,14 @@ def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
 ])
 def test_half_of_a_unit_offset(text, expected):
     assert start(text) == ad(expected)
+
+
+@pytest.mark.parametrize("text,expected,left", [
+    ("ustaw alarm na siódmą rano", datetime(2017, 6, 28, 7, 0), "ustaw alarm na"),
+    ("zrób mi przypomnienie na ósmą wieczorem", datetime(2017, 6, 27, 20, 0),
+     "zrób mi przypomnienie na"),
+])
+def test_spoken_hour_with_a_part_of_the_day(text, expected, left):
+    result = parse(text)
+    assert result.span.start == ad(expected)
+    assert result.remainder == left
