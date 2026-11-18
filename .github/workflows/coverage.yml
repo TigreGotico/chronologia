@@ -15,5 +15,4 @@ jobs:
       install_extras: '.[test]'
       min_coverage: 0
       timeout_minutes: 90
-      pytest_args: '-q -n auto'
       gh_automations_ref: 'feat/coverage-timeout-input'
