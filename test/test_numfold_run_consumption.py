@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """A multi-token spelled-number run is folded to one digit token only when the
-back-end genuinely consumes the whole run.
+back-end genuinely consumes the whole run.  Dutch reads its runs through numtag;
+the tests below keep the rows that guard against a dropped leading magnitude.
 
 ``ovos_number_parser`` can greedily read only a *trailing* component of a run
 and silently drop a leading magnitude: ``extract_number_nl("tweehonderd
@@ -12,7 +13,6 @@ leaving every genuinely-consumed run (including the implied-multiplier
 "hundred twenty three") folded exactly as before.
 """
 from chronologia.extract.loader import load_lang_spec
-from chronologia.extract.numfold_germanic import fold_nl
 from chronologia.extract.pipeline import prematch_tokens
 from chronologia.extract.tokenizer import Tokenizer, TokenizerModes
 
@@ -24,6 +24,11 @@ def _toks(text):
 def _en(text):
     """English reads its numbers through numtag, on the pipeline's layer."""
     return prematch_tokens(text, load_lang_spec("en"))
+
+
+def _nl(text):
+    """Dutch reads its numbers through numtag, on the pipeline's layer."""
+    return prematch_tokens(text, load_lang_spec("nl"))
 
 
 def _values(out):
@@ -39,19 +44,16 @@ def _numtexts(out):
 def test_nl_thousand_with_space_is_folded_whole():
     # "na duizend een spatie" (Taaladvies): "tweeduizend vierentwintig" is the
     # written form of 2024 and the back-end consumes the whole run.
-    out = fold_nl(_toks("tweeduizend vierentwintig dagen"))
+    out = _nl("tweeduizend vierentwintig dagen")
     assert _values(out) == [2024]
     assert [t.text for t in out if not t.is_number] == ["dagen"]
 
 
-def test_nl_dropped_hundred_is_not_silently_folded_to_the_remainder():
-    # the back-end reads only the trailing 50 of "tweehonderd vijftig"
-    out = fold_nl(_toks("tweehonderd vijftig dagen"))
-    vals = _values(out)
-    # never the confidently-wrong 50 with an empty remainder
-    assert vals != [50], f"leading 200 was silently dropped: {vals}"
-    # honest partial: the 200 magnitude survives as its own token
-    assert vals == [200, 50], f"un-consumed magnitude vanished: {vals}"
+def test_nl_split_hundred_is_read_whole():
+    # the former back-end read only the trailing 50 of "tweehonderd vijftig";
+    # numtag reads the run as 200 + 50
+    out = _nl("tweehonderd vijftig dagen")
+    assert _values(out) == [250], f"run not read whole: {_values(out)}"
 
 
 # --- must NOT regress: genuinely-consumed runs stay folded --------------------
