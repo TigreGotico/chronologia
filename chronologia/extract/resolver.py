@@ -767,9 +767,12 @@ class Resolver:
     def _resolve_daypart_ref(self, match, anchor):
         """A time-of-day band ("morning", "night") on a deictically-selected day.
 
-        A bare daypart ("in the morning", "tonight") and "this <daypart>" both
-        name TODAY's band; "last <daypart>" the band a day earlier, "next
-        <daypart>" a day later -- the ``this/last/next`` marker read as a **day**
+        "this <daypart>" and a today word ("tonight") name TODAY's band.  A
+        bare daypart ("in the morning", "à tarde") names today's band while
+        the band has not ended and tomorrow's once it has: "à tarde" said at
+        21:00 is tomorrow afternoon (ruling 28 of the disagreement rulings,
+        the next occurrence class 3 reads).  "last <daypart>" is the band a
+        day earlier, "next <daypart>" a day later -- the ``this/last/next`` marker read as a **day**
         offset (0/-1/+1), not the week offset it means for a calendar period.
         This is what makes "last night" the night that just ended: the night
         band anchored to yesterday, ``[yesterday 21:00, today 06:00)``, reaching
@@ -804,8 +807,14 @@ class Resolver:
         rel_tok = match.slots.get("REL_MARKER")
         off = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
         day = AstroDate.from_datetime(_midnight(anchor) + timedelta(days=off))
-        return Resolution(_daypart_band(day, name, after_evening=True),
-                          self._consumed(match))
+        band = _daypart_band(day, name, after_evening=True)
+        if (rel_tok is None
+                and match.slots["DAYPART"].text
+                not in self.spec.daypart_today_words
+                and band.end <= AstroDate.from_datetime(anchor)):
+            band = _daypart_band(civil_add(day, days=1), name,
+                                 after_evening=True)
+        return Resolution(band, self._consumed(match))
 
     def _named_day_offset(self, match, anchor, step):
         """"the day after/before <named day>": one day past/short of a named

@@ -1255,7 +1255,8 @@ Two ways a daypart resolves:
 - **Deictic on its own.** "this morning" is today's morning band; "tonight" is
   today's night band (running into tomorrow's small hours); "last night" is the
   night that just ended — yesterday's night band, `[yesterday 21:00, today
-  06:00)`. A bare "morning" defaults to today.
+  06:00)`. A bare "morning" is today's morning until the band ends, and
+  tomorrow's after that: "à tarde" said at 21:00 is tomorrow afternoon.
 - **Bound to a named day.** "yesterday morning" is the morning band of
   *yesterday*; "tomorrow night" is tomorrow's night band. The composition pass
   folds a lone daypart onto a lone date construction exactly as it folds a lone
