@@ -563,6 +563,20 @@ def is_alarm_bare_range(left: Tuple[Token, ...],
     return len(rest) == 1 and rest[0].is_number
 
 
+def _day_cue_follows(tokens: Tuple[Token, ...], end: int,
+                     spec: LangSpec) -> bool:
+    """Whether a meridiem or a part of the day follows in the same sentence
+    behind other words: "alarm for 7 or 8 pm".  The bare hour is not the
+    clock then, and the later cue reads with its own hour."""
+    for token in tokens[end:]:
+        if token.break_before:
+            return False
+        if (token.text in spec.meridiems or token.text in spec.dayparts
+                or token.text in spec.daypart_today_words):
+            return True
+    return False
+
+
 def _alarm_hour_goes_on(tokens: Tuple[Token, ...], end: int,
                         spec: LangSpec) -> bool:
     """Whether the words after the hour of an "alarm for <hour>" reading make
@@ -1105,7 +1119,10 @@ class ConstructionMatcher:
                     if (name == "clock_time"
                             and _connector_span("alarm_at", tokens, start,
                                                 self.spec)
-                            and _alarm_hour_goes_on(tokens, end, self.spec)):
+                            and (_alarm_hour_goes_on(tokens, end, self.spec)
+                                 or ("MERIDIEM" not in slots
+                                     and _day_cue_follows(tokens, end,
+                                                          self.spec)))):
                         continue
                     # A holiday name takes no indefinite article when it is
                     # an adjective plus a weekday: "have a good friday" is the

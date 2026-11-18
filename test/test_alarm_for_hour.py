@@ -49,6 +49,13 @@ CLOCKS = [
     ("alarm for 10 to 11", "en", datetime(2026, 11, 17, 10, 50)),
     ("reminder for 10 to 11", "en", datetime(2026, 11, 17, 10, 50)),
     ("alarm for 7 till 8", "en", datetime(2026, 11, 17, 19, 53)),
+    ("alarms for 7 and 8 pm", "en", datetime(2026, 11, 17, 20, 0)),
+    ("alarm for 7 or 8 pm", "en", datetime(2026, 11, 17, 20, 0)),
+    ("alarme para 7 às 8 da noite", "pt", datetime(2026, 11, 17, 20, 0)),
+    ("alarma para 7 a 8 de la noche", "es", datetime(2026, 11, 17, 20, 0)),
+    ("alarm for 7 and 8 in the morning", "en", datetime(2026, 11, 17, 8, 0)),
+    ("set an alarm for 6 or 7 pm tomorrow", "en",
+     datetime(2026, 11, 18, 19, 0)),
     ("reminder for 10 to noon", "en", datetime(2026, 11, 17, 11, 50)),
     ("reminder for 7 to midnight", "en", datetime(2026, 11, 17, 23, 53)),
 ]
@@ -103,6 +110,8 @@ RANGES = [
      datetime(2026, 11, 23), datetime(2026, 11, 28)),
     ("alarma para las 7 hasta las 8", "es",
      datetime(2026, 11, 18, 7, 0), datetime(2026, 11, 18, 8, 1)),
+    ("alarm for 7 tonight", "en",
+     datetime(2026, 11, 17, 21, 0), datetime(2026, 11, 18, 6, 0)),
 ]
 
 
@@ -121,6 +130,15 @@ def test_an_alarm_noun_makes_the_bare_hour_a_clock(text, lang, expected):
     assert found.span.end.datetime() == datetime(
         expected.year, expected.month, expected.day, expected.hour,
         expected.minute + 1)
+
+
+@pytest.mark.parametrize("text,remainder", [
+    ("alarm for 7 pm tomorrow evening", "evening"),
+    ("alarm for 7 pm and a call in the evening",
+     "and a call in the evening"),
+])
+def test_a_meridiem_hour_keeps_the_alarm_noun_in_the_reading(text, remainder):
+    assert extract_timespan(text, "en", ANCHOR).remainder == remainder
 
 
 @pytest.mark.parametrize("text,lang", NO_CLOCK)
