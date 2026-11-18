@@ -49,3 +49,17 @@ def test_a_fraction_names_no_day(text):
 def test_a_day_of_the_month_stays(text, lang, day, rest):
     r = extract_timespan(text, lang, ANCHOR)
     assert (r.span.start, r.remainder) == (AstroDate(*day), rest)
+
+
+@pytest.mark.parametrize("text, lang, start, rest", [
+    ("les 14, 15 mai", "fr", (2027, 5, 15), "les 14"),
+    ("il 14, 15 maggio", "it", (2027, 5, 15), "il 14"),
+    ("los 14, 15 de mayo", "es", (2027, 5, 15), "los 14"),
+    ("a las 9 30 de mayo", "es", (2027, 5, 30, 9), ""),
+    ("a les 10 15 de maig", "ca", (2027, 5, 15, 10), ""),
+    ("sveglia alle 7 15 maggio", "it", (2027, 5, 15, 7), "sveglia"),
+])
+def test_a_digit_day_after_an_article_and_a_number_stays(text, lang, start,
+                                                         rest):
+    r = extract_timespan(text, lang, ANCHOR)
+    assert (r.span.start, r.remainder) == (AstroDate(*start), rest)

@@ -17,6 +17,8 @@ from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 
+from numtag import Form
+
 from chronologia.extract import tokenizer
 from chronologia.calendars import CALENDARS
 from chronologia.extract.compiler import CompiledSpec
@@ -933,9 +935,11 @@ class ConstructionMatcher:
                     # ("a full third of March"), and after the definite
                     # article and a word that places the part ("the first
                     # third", "the last third").  Before a month name only
-                    # the last three count: "un 3 de marzo" is a date.  The
-                    # determiners and the measuring words are locale facts
-                    # (``marker_fraction_determiner.voc``,
+                    # the last three count: "un 3 de marzo" is a date.  A
+                    # digit day is never a fraction, so the new shapes read
+                    # only a spelled ordinal ("les 14, 15 mai" is a day
+                    # list).  The determiners and the measuring words are
+                    # locale facts (``marker_fraction_determiner.voc``,
                     # ``marker_fraction_modifier.voc``).
                     part = None
                     if name == "month_day_ref":
@@ -953,14 +957,19 @@ class ConstructionMatcher:
                         before = tokens[part.index - 1]
                         lead = (tokens[part.index - 2].text
                                 if part.index > 1 else None)
-                        if (before.text in determiner
-                                or (name == "month_day_ref"
-                                    and before.text in indef)
-                                or (before.text in modifier
-                                    and lead in indef | determiner)
-                                or (lead in conn.get("article", frozenset())
-                                    and (before.is_number
-                                         or before.text in modifier))):
+                        spelled = (part.mention is not None
+                                   and part.mention.form is Form.WORDS)
+                        if ((name == "month_day_ref"
+                             and before.text in indef)
+                                or (spelled
+                                    and (before.text in determiner
+                                         or (before.text in modifier
+                                             and lead in indef | determiner)
+                                         or (lead in conn.get("article",
+                                                              frozenset())
+                                             and (before.is_number
+                                                  or before.text
+                                                  in modifier))))):
                             continue
                     # The mirror of the veto above, on the other side of the
                     # weekday: a COUNT immediately before a weekday word that
