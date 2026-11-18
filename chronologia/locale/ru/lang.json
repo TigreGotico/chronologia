@@ -33,8 +33,11 @@
     },
     "calendar_date": {
       "orders": [
+        "DAY MONTH YEAR year_word",
         "DAY MONTH YEAR?",
         "DAY of MONTH YEAR?",
+        "during MONTH DAY? YEAR year_word",
+        "MONTH DAY? YEAR year_word",
         "MONTH DAY? YEAR?"
       ],
       "prefer_future": true
@@ -70,6 +73,7 @@
       "orders": [
         "in GYEAR",
         "article? year_word GYEAR",
+        "GYEAR year_word",
         "GYEAR"
       ]
     },
