@@ -79,8 +79,6 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast WEEKDAY of article? month_word of MONTH of? YEAR?",
         "article? ORD WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
         "article? ordlast WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
-        "article? ORD WEEKDAY of article? SCOPE_UNIT REL_MARKER",
-        "article? ordlast WEEKDAY of article? SCOPE_UNIT REL_MARKER",
         "article? ORD UNIT of MONTH of? YEAR?",
         "article? ordlast UNIT of MONTH of? YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",
@@ -552,6 +550,14 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
     # in (or out) on its own, without disturbing weekday/period.
     "season_ref": [
         "article? SEASON REL_MARKER",
+    ],
+    # the marker trails the period noun: "el último viernes del mes que
+    # viene", "le dernier vendredi du mois prochain".  A locale that puts its
+    # marker before the noun ("the last friday of next month") must not read
+    # the next phrase's "this"/"next" as this marker.
+    "scoped_ordinal": [
+        "article? ORD WEEKDAY of article? SCOPE_UNIT REL_MARKER",
+        "article? ordlast WEEKDAY of article? SCOPE_UNIT REL_MARKER",
     ],
     # "last/next <month>" postposed: "mars dernier", "marzo pasado", "em
     # março passado", "marzo scorso".
