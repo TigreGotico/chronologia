@@ -4161,7 +4161,9 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     numbers are as written.  The word "today" names no
     part of the day, so "at 3:30 today" takes its reading from the same day;
     any other day word keeps the written hour.  24-hour hours are untouched,
-    whatever fraction follows.
+    whatever fraction follows.  An am or pm word the locale lists for a half of
+    the day decides that half even when it is left over unjoined: a pm word
+    pins the pm reading, an am or night word keeps the written hour.
     """
     if (getattr(_reading, "spoken", False)
             or anchor is None or rep is None
@@ -4199,6 +4201,13 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
                                  for t in tokens):
         # a locale with no am/pm vocabulary leaves the word over
         return res
+    meridiem_words = [t.text for t in tokens if t.text in spec.meridiems]
+    if meridiem_words and (
+            not all(spec.meridiems[w] == 12 for w in meridiem_words)
+            or any(w in spec.night_meridiems for w in meridiem_words)):
+        # an am word, a night word, or a mix keeps the written hour
+        return res
+    pm = bool(meridiem_words)
     read = set(range(*clock_match.span)) | (set(range(*rep.span))
                                              if today else set())
     if set(res.consumed) != read:
@@ -4209,9 +4218,11 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     midnight = anchor.replace(hour=0, minute=0, second=0, microsecond=0)
     tod = timedelta(hours=start.hour % 12, minutes=start.minute,
                     seconds=start.second)
-    options = [midnight + tod, midnight + tod + timedelta(hours=12)]
+    options = [midnight + tod + timedelta(hours=12)]
+    if not pm:
+        options.insert(0, midnight + tod)
     if not today:
-        options.append(midnight + tod + timedelta(days=1))
+        options.append(options[0] + timedelta(days=1))
     later = [t for t in options if t >= anchor]
     if not later:
         return res
