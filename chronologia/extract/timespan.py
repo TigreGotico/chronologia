@@ -712,14 +712,17 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         if alarm is not None:
             alarm_words = render_remainder(text, list(left_tok[:sum(alarm)]))
             left_tok = left_tok[sum(alarm):]
-        # a bare "A to B" (no from/between) is only trusted when the left side is
-        # not a lone clock fraction word (avoids hijacking "quarter to five") AND
-        # the connector is not an ``at``-ambiguous preposition (avoids fabricating
-        # "junio a las tres" into a range); either trap is disarmed by a lead.
+        # a bare "A to B" (no from/between) is only trusted when the left side
+        # does not end in a clock fraction word (avoids hijacking "quarter to
+        # five" and "spotkajmy się wpół do ósmej") AND the connector is not an
+        # ``at``-ambiguous preposition (avoids fabricating "junio a las tres"
+        # into a range); either trap is disarmed by a lead.
         led = bool(lead) or at_between is not None
-        left_words = " ".join(t.text for t in left_tok)
+        left_words = [t.text for t in left_tok]
+        ends_in_fraction = any(" ".join(left_words[j:]) in fraction_words
+                               for j in range(len(left_words)))
         conn_words = " ".join(t.text for t in tokens[p:p + k]).lower()
-        if (led or (left_words not in fraction_words
+        if (led or (not ends_in_fraction
                     and conn_words not in lead_required)) \
                 and not is_alarm_bare_range(left_tok, spec):
             prefix = render_remainder(text, list(tokens[:lead_at])) \

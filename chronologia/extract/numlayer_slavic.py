@@ -176,6 +176,14 @@ def make_fold(lang: str, pre: Optional[Fold] = None,
 _RU_HALF_UNITS = frozenset({"часа", "минуты", "дня", "недели"})
 
 
+def _ru_hour(t: Token) -> Optional[Token]:
+    """The ordinal clock hour 1..12 that numtag reads in ``t``, or ``None``."""
+    hour = _read((t,), "ru")
+    if hour is None or not hour.ordinal or not 1 <= (hour.value or 0) <= 12:
+        return None
+    return hour
+
+
 def _split_ru_half(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """Split the Russian "пол" compounds.
 
@@ -183,20 +191,34 @@ def _split_ru_half(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     ninth hour, 8:30: it becomes the clock fraction "половина" and the
     ordinal hour, which numtag reads.  "полдень" and "полночь" stay whole,
     because no number follows "пол" in them.
+
+    A "пол" word before an ordinal hour is the clock fraction too.  The
+    dictionary writes "пол-одиннадцатого" with a hyphen, because the hour
+    starts with a vowel, and "полвосьмого" solid (Русский орфографический
+    словарь РАН, ред. В. В. Лопатин, О. Е. Иванова: "полвосьмо́го"); writers
+    and speech recognisers also give the spaced "пол восьмого".
     """
     out = []
     changed = False
-    for t in tokens:
+    for i, t in enumerate(tokens):
+        nxt = tokens[i + 1] if i + 1 < len(tokens) else None
+        if (t.text == "пол" and nxt is not None and not nxt.is_number
+                and not nxt.break_before and _ru_hour(nxt) is not None):
+            out.append(Token(text="половина", raw=t.raw, index=t.index,
+                             char_start=t.char_start, char_end=t.char_end,
+                             cap=t.cap, prev_cap=t.prev_cap,
+                             break_before=t.break_before))
+            changed = True
+            continue
         tail = t.text[3:] if t.text.startswith("пол") and not t.is_number else ""
         if tail in _RU_HALF_UNITS:
             half_text, rest = "пол", None
         elif tail:
-            hour = _read((replace(t, raw=tail),), "ru")
-            if (hour is None or not hour.ordinal
-                    or not 1 <= (hour.value or 0) <= 12):
+            rest = _ru_hour(replace(t, raw=tail))
+            if rest is None:
                 out.append(t)
                 continue
-            half_text, rest = "половина", hour
+            half_text = "половина"
         else:
             out.append(t)
             continue
@@ -238,6 +260,39 @@ def _glue_cs_three_quarters(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 # The bookish day ordinal "prvého" beside "prvního" (Slovník spisovného jazyka
 # českého: "prvý", the bookish form of "první").
 _CS_SPELLINGS = {"prvého": "prvního"}
+
+
+# -- Polish ----------------------------------------------------------------
+def glue_pl_half(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Join the spaced "w pół do" before an ordinal hour into the clock
+    fraction "wpół do": "w pół do ósmej" is 7:30.  The dictionary writes it
+    solid (Słownik języka polskiego PWN, "wpół": "wpół do dziewiątej");
+    writers and speech recognisers also give the spaced form.
+
+    It is the ``pre_hook`` of the Polish locale, so the range reader sees
+    "wpół" and does not read "do" as "until"."""
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        if (i + 3 < n and t.text == "w" and tokens[i + 1].text == "pół"
+                and tokens[i + 2].text == "do"
+                and not any(x.break_before for x in tokens[i + 1:i + 4])):
+            hour = _read((tokens[i + 3],), "pl")
+            if (hour is not None and hour.ordinal
+                    and 1 <= (hour.value or 0) <= 12):
+                half = tokens[i + 1]
+                out.append(Token(text="wpół", raw=t.raw + " " + half.raw,
+                                 index=t.index, char_start=t.char_start,
+                                 char_end=half.char_end, cap=t.cap,
+                                 prev_cap=t.prev_cap,
+                                 break_before=t.break_before))
+                i += 2
+                continue
+        out.append(t)
+        i += 1
+    return reindex(tuple(out)) if len(out) != n else tokens
 
 
 # -- Croatian --------------------------------------------------------------

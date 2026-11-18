@@ -122,6 +122,7 @@
   "bare_year_min_digits": 4
  },
  "hook": "chronologia.extract.numlayer_slavic:fold_pl",
+ "pre_hook": "chronologia.extract.numlayer_slavic:glue_pl_half",
  "base_grammar": {
   "override": {
    "scoped_ordinal": [
