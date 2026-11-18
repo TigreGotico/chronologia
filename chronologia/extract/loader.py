@@ -151,6 +151,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     period_parts: Dict[str, str] = {}
     decade_words: Dict[str, int] = {}
     clock_landmarks: Dict[str, int] = {}
+    pm_from: Dict[str, int] = {}
     dayparts: Dict[str, str] = {}
     daypart_deictics: Dict[str, str] = {}
     daypart_today_words: Set[str] = set()
@@ -381,6 +382,10 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             mins = int(base[len("clock_landmark_"):])
             for s in surfaces:
                 clock_landmarks[s] = mins
+        elif base.startswith("clock_pm_from_"):
+            hour = int(base[len("clock_pm_from_"):])
+            for s in surfaces:
+                pm_from[s] = hour
         elif base.startswith("daypart_"):
             # daypart_<name>.voc: surfaces naming the time-of-day band <name>
             # (band boundaries live in chronologia.dayparts, CLDR-cited)
@@ -533,7 +538,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         periods=periods, scales=scales,
         scales_by_mode={m: dict(t) for m, t in scales_by_mode.items()},
         period_parts=period_parts,
-        decade_words=decade_words, clock_landmarks=clock_landmarks,
+        decade_words=decade_words, clock_landmarks=clock_landmarks, pm_from=pm_from,
         dayparts=dayparts,
         daypart_deictics=daypart_deictics,
         daypart_today_words=frozenset(daypart_today_words),

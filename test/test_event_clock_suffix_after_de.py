@@ -12,11 +12,17 @@ absolute use (TLFi).  No source shows "N horas da noite" or "N heures du soir"
 as a length.
 
 So "le train de 8 heures du matin demain" is 08:00.  When "de" stands before a
-bare pm hour and neither reading of the hour is inside the band of its part of
-the day, no clock reading exists and the count is the length of an event in
-that band: fr "dîner de deux heures du soir" (14:00 is no evening hour, and
-the fr evening band opens at 18:00, CLDR day periods in
-``chronologia/dayparts.py``).
+bare pm hour and the hour comes before the earliest hour the sources pair with
+the suffix, no clock reading exists and the count is the length of an event in
+that part of the day.  For fr "du soir" the earliest hour is four in the
+afternoon: Académie française, 4e éd., "soir": "Il se retire dès quatre heures
+du soir."; TLFi "soir", B: "Dernière partie de la journée, succédant à
+l'après-midi et précédant le matin (en principe de seize ou dix-sept heures à
+minuit). [des heures] À, vers cinq heures, sept heures, neuf heures du soir".
+So "cinq heures du soir" is 17:00, "quatre heures du soir" is 16:00, and "deux
+heures du soir" and "trois heures du soir" are lengths from the start of the
+evening, 18:00 (CLDR fr day periods, ``chronologia/dayparts.py``).  A suffix
+with no listed hour keeps the clock.
 
 Anchor: Friday 2026-01-30 10:00, so "demain" is 2026-01-31, "samedi" the same
 day, "dimanche" 2026-02-01 and "ontem" 2026-01-29.  Clock hours are the written
@@ -54,13 +60,14 @@ CLOCKS = [
     ("pt", "a missa de 10 horas da manhã domingo", SUN, 10, 0),
     ("pt", "o noticiário de 8 horas da noite", FRI, 20, 0),
     ("pt", "sessão de 9 horas da noite amanhã", SAT, 21, 0),
+    ("fr", "le rendez-vous de cinq heures du soir demain", SAT, 17, 0),
+    ("fr", "soirée de quatre heures du soir samedi", SAT, 16, 0),
 ]
 
 # lang, text, day, start hour, length in hours: no clock reading exists
 BAND_LENGTHS = [
     ("fr", "dîner de deux heures du soir demain", SAT, 18, 2),
     ("fr", "dîner de trois heures du soir demain", SAT, 18, 3),
-    ("fr", "soirée de quatre heures du soir samedi", SAT, 18, 4),
 ]
 
 # lang, text, day, start hour, length in hours: a period with no hour

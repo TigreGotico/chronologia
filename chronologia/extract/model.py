@@ -467,6 +467,10 @@ class LangSpec:
     decade_words: Mapping[str, int] = field(default_factory=dict)
     # clock-landmark surface -> minutes since midnight ("noon" -> 720)
     clock_landmarks: Mapping[str, int] = field(default_factory=dict)
+    # pm suffix surface -> the earliest 24-hour hour the sources pair with it
+    # ("clock_pm_from_16.voc": fr "du soir" from four in the afternoon).  A
+    # surface with no file has no known earliest hour, so the clock stays.
+    pm_from: Mapping[str, int] = field(default_factory=dict)
     # daypart surface -> canonical day-part name ("morning", "night"); the band
     # itself lives in chronologia.dayparts (CLDR-cited), keyed by that name.
     # Facts from the ``daypart_<name>.voc`` filename convention.
