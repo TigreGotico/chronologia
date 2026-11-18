@@ -17,7 +17,9 @@ The other early fact is that `da noite` is a band, not a shift. `dez da noite`
 is 22:00 but `uma da noite` is 01:00 — the small hours one to five stay AM, the
 evening hours six to eleven are PM, and twelve is midnight. The AM ceiling
 follows the `madrugada` band, and the colloquial use of `da noite` for the
-small hours is cited to the Dicionário Priberam entry for *noite*.
+small hours is cited to the Dicionário Priberam entry for *noite*. After a clock,
+`à noite` and `pela noite` read the same band as `da noite`: `às 8 à noite` is
+20:00 and `às 1 à noite` is 01:00.
 
 ## What ships
 

@@ -7,7 +7,9 @@ is 01:00 and `las doce de la noche` is midnight. The vocabulary encodes this as
 a band rather than a uniform PM offset: the small hours one to five stay AM,
 the evening hours six to eleven are PM, and twelve is midnight. The AM ceiling
 follows the `madrugada` band, and the colloquial use of `de la noche` for the
-small hours is cited to RAE's dictionary entry for *noche*.
+small hours is cited to RAE's dictionary entry for *noche*. After a clock,
+`por la noche` reads the same band: `a las 8 por la noche` is 20:00 and
+`a la una por la noche` is 01:00.
 
 The second thing to know is that `mañana` is two words in one. It is the
 morning and it is also tomorrow, and the tomorrow reading wins. The locale
