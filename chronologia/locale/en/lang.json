@@ -130,6 +130,8 @@
     },
     "clock_time": {
       "orders": [
+        "alarm_at HOUR MERIDIEM? ZONE?",
+        "alarm_at HOUR MINUTE MERIDIEM? ZONE?",
         "CLOCK MERIDIEM? ZONE?",
         "at DOTCLOCK MERIDIEM? ZONE?",
         "DOTCLOCK MERIDIEM ZONE?",
@@ -427,5 +429,6 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_en"
+  "pre_hook": "chronologia.extract.numlayer_en:ordinal_to_last",
+  "hook": "chronologia.extract.numlayer_en:fold_en"
 }

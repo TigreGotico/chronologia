@@ -29,6 +29,7 @@ from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
+from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _lone_spoken_hour,
@@ -409,10 +410,15 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     consumed.update(range(i, end))
                     i = end
                     continue
-        # a leading article: "a day" -> count 1; "a couple of days" -> skip it.
+        # a leading article: "a day" -> count 1; "a couple of days" -> skip
+        # it.  numtag reads no number in a quantifier ("couple", "few"), so in
+        # its languages the quantifier word is the count and the article
+        # before it skips too.
         if tokens[j].text in articles:
             if j + 1 < n and (tokens[j + 1].is_number
-                              or tokens[j + 1].text in fracs):
+                              or tokens[j + 1].text in fracs
+                              or (tokens[j + 1].text in spec.quantifiers
+                                  and spec.lang in NUMTAG_LANGS)):
                 j += 1
             else:
                 article_one = tokens[j].text

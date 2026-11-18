@@ -34,7 +34,9 @@ from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
-from chronologia.extract.matcher import ConstructionMatcher
+from chronologia.extract.matcher import (ConstructionMatcher,
+                                         alarm_marker_span,
+                                         is_alarm_bare_range)
 from chronologia.extract.model import (LangSpec, Resolution, Token)
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
@@ -154,8 +156,9 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     # region-keyed ``_REGION_SCALE`` default for the orthogonal scale feature).
     dmy_override = _REGION_DMY.get(region)
     week_override = _REGION_WEEK_START.get(region)
+    number_lang = _REGION_NUMBER_LANG.get(region)
     cache_key = (region if dmy_override is not None or week_override is not None
-                 else code)
+                 or number_lang is not None else code)
     engine = _TIMESPAN_ENGINES.get(cache_key)
     if engine is not None:
         return engine
@@ -176,6 +179,8 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
                 conv = replace(conv, week_start=week_override)
             if conv is not spec.conventions:
                 spec = replace(spec, conventions=conv)
+            if number_lang is not None:
+                spec = replace(spec, number_lang=number_lang)
             engine = DateTimeEngine(spec)
             _TIMESPAN_ENGINES[cache_key] = engine
         return engine
@@ -200,6 +205,13 @@ _REGION_DMY = {
 _REGION_WEEK_START = {
     "en-us": "sunday", "en-ca": "sunday", "pt-br": "sunday",
 }
+
+
+#: Region subtags whose numbers numtag reads with a lexicon of their own.
+#: Brazilian Portuguese counts the short scale: Priberam, "bilião", sense 2,
+#: "[Brasil] Mil milhões (10^9)".  So "dois bilhões e quinhentos milhões" is
+#: 2.5*10^9 in pt-BR and 2.0005*10^12 in pt-PT.
+_REGION_NUMBER_LANG = {"pt-br": "pt-BR"}
 
 
 # ---------------------------------------------------------------------------
@@ -690,6 +702,15 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     if split is not None:
         p, k = split
         left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
+        # "reminder for 3 to 5 pm": a meridiem at the far end makes the 3 an
+        # hour of the range, so the alarm noun and "for" stay out of the
+        # endpoint reading and go to the remainder
+        alarm = alarm_marker_span(left_tok, spec) \
+            if any(t.text in spec.meridiems for t in right_tok) else None
+        alarm_words = ""
+        if alarm is not None:
+            alarm_words = render_remainder(text, list(left_tok[:sum(alarm)]))
+            left_tok = left_tok[sum(alarm):]
         # a bare "A to B" (no from/between) is only trusted when the left side is
         # not a lone clock fraction word (avoids hijacking "quarter to five") AND
         # the connector is not an ``at``-ambiguous preposition (avoids fabricating
@@ -697,10 +718,12 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         led = bool(lead) or at_between is not None
         left_words = " ".join(t.text for t in left_tok)
         conn_words = " ".join(t.text for t in tokens[p:p + k]).lower()
-        if led or (left_words not in fraction_words
-                   and conn_words not in lead_required):
+        if (led or (left_words not in fraction_words
+                    and conn_words not in lead_required)) \
+                and not is_alarm_bare_range(left_tok, spec):
             prefix = render_remainder(text, list(tokens[:lead_at])) \
                 if lead else ""
+            prefix = (prefix + " " + alarm_words).strip()
             # an explicit lead licenses the bare-hour reading of a numeric
             # endpoint ("from 9 to 5"), which must be tried *before* the
             # generic composition so a borrowed meridiem cannot roll a day.
