@@ -51,6 +51,13 @@ def reindex(tokens) -> Tuple[Token, ...]:
     return tuple(replace(t, index=i) for i, t in enumerate(tokens))
 
 
+def run_extent(run) -> Tuple[Optional[int], Optional[int]]:
+    """The half-open character extent of a token run: the first token's
+    ``char_start`` through the last token's ``char_end``, so a fold that
+    replaces the run by one token keeps the source offsets."""
+    return run[0].char_start, run[-1].char_end
+
+
 def _never(_tok: Token) -> bool:
     return False
 
@@ -350,11 +357,15 @@ def collapse_marked_h_clock(tokens, markers) -> Tuple[Token, ...]:
             if (nn is not None and nn.is_number and nn.value is not None
                     and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
                 lit = "%d:%02d" % (int(t.value), int(nn.value))
-                out.append(Token(text=lit, raw=lit, index=0))
+                cs, ce = run_extent(tokens[i:i + 3])
+                out.append(Token(text=lit, raw=lit, index=0,
+                                 char_start=cs, char_end=ce))
                 i += 3
                 continue
             lit = "%d:00" % int(t.value)
-            out.append(Token(text=lit, raw=lit, index=0))
+            cs, ce = run_extent(tokens[i:i + 2])
+            out.append(Token(text=lit, raw=lit, index=0,
+                             char_start=cs, char_end=ce))
             i += 2
             continue
         out.append(t)
