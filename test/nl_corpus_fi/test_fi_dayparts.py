@@ -28,10 +28,11 @@ def _consumed(text):
     return r[0]
 
 
-# (text, start day/hour, end day/hour) -- the CLDR 47 fi bands on the anchor day
+# (text, start day/hour, end day/hour) -- the CLDR 47 fi bands on the anchor
+# day, or on the next day for a band that has ended at 13:04 (ruling 28)
 @pytest.mark.parametrize("text,sd,sh,ed,eh", [
-    ("aamulla", 27, 5, 27, 10),
-    ("aamupäivällä", 27, 10, 27, 12),
+    ("aamulla", 28, 5, 28, 10),
+    ("aamupäivällä", 28, 10, 28, 12),
     ("iltapäivällä", 27, 12, 27, 18),
     ("illalla", 27, 18, 27, 23),
     ("yöllä", 27, 23, 28, 5),

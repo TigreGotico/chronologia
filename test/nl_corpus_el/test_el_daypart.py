@@ -34,8 +34,10 @@ def _band(text, start, end):
 
 
 _BANDS = [
-    ('το πρωί', AstroDate(2017, 6, 27, 4, 0), AstroDate(2017, 6, 27, 12, 0)),
-    ('πρωί', AstroDate(2017, 6, 27, 4, 0), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('το πρωί', AstroDate(2017, 6, 28, 4, 0), AstroDate(2017, 6, 28, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('πρωί', AstroDate(2017, 6, 28, 4, 0), AstroDate(2017, 6, 28, 12, 0)),
     ('το απόγευμα', AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 17, 0)),
     ('απόγευμα', AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 17, 0)),
     ('το βράδυ', AstroDate(2017, 6, 27, 17, 0), AstroDate(2017, 6, 27, 20, 0)),
@@ -58,8 +60,9 @@ def test_daypart_not_default_band():
     default row's boundary to catch that silent fallback.
     """
     s = span('το πρωί')
-    assert s.start == AstroDate(2017, 6, 27, 4, 0)
-    assert s.start != AstroDate(2017, 6, 27, 6, 0)  # the default row's start
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    assert s.start == AstroDate(2017, 6, 28, 4, 0)
+    assert s.start != AstroDate(2017, 6, 28, 6, 0)  # the default row's start
 
 
 @pytest.mark.parametrize("text", [

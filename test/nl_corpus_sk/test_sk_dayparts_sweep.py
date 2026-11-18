@@ -34,8 +34,10 @@ def test_relative_day_band(day, band):
     assert (s.start, s.end) == _expected(day, band), text
 
 
-@pytest.mark.parametrize("band", list(_BAND))
-def test_bare_band_today(band):
-    """A bare daypart lands on the anchor day at its band edges."""
+@pytest.mark.parametrize("band,day", [
+    ("ráno", "zajtra"), ("popoludní", "dnes"), ("večer", "dnes")])
+def test_bare_band_today(band, day):
+    """A bare daypart lands on the anchor day at its band edges, or on the
+    next day once the band has ended at the 13:04 anchor (ruling 28)."""
     s = span(band)
-    assert (s.start, s.end) == _expected("dnes", band), band
+    assert (s.start, s.end) == _expected(day, band), band

@@ -20,7 +20,8 @@ A = datetime(2017, 6, 27, 13, 4)
 
 
 _BANDS = [
-    ('sabah', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('sabah', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
     ('dün akşam', AstroDate(2017, 6, 26, 19, 0), AstroDate(2017, 6, 26, 21, 0)),
     ('yarın sabah', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
     ('gece', AstroDate(2017, 6, 27, 21, 0), AstroDate(2017, 6, 28, 6, 0)),

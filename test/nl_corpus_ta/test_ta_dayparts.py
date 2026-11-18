@@ -13,9 +13,10 @@ import pytest
 from ._corpus import band, minute_at, nomatch, start_end
 
 
+# a band that has ended at the 13:04 anchor is tomorrow's (ruling 28)
 @pytest.mark.parametrize("text,expected", [
-    ("அதிகாலை", band(2027, 5, 12, (3, 0), (5, 0))),
-    ("காலை", band(2027, 5, 12, (5, 0), (12, 0))),
+    ("அதிகாலை", band(2027, 5, 13, (3, 0), (5, 0))),
+    ("காலை", band(2027, 5, 13, (5, 0), (12, 0))),
     ("மதியம்", band(2027, 5, 12, (12, 0), (14, 0))),
     ("பிற்பகல்", band(2027, 5, 12, (14, 0), (16, 0))),
     ("மாலை", band(2027, 5, 12, (16, 0), (18, 0))),

@@ -32,8 +32,10 @@ def _band(text, start, end):
 
 _BANDS = [
     ('esta manhã', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
-    ('de manhã', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
-    ('pela manhã', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('de manhã', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('pela manhã', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
     ('ontem de manhã', AstroDate(2017, 6, 26, 6, 0), AstroDate(2017, 6, 26, 12, 0)),
     ('amanhã de manhã', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
     ('à tarde', AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 19, 0)),
@@ -43,7 +45,8 @@ _BANDS = [
     ('a manhã seguinte', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
     ('esta noite', AstroDate(2017, 6, 27, 19, 0), AstroDate(2017, 6, 28)),
     ('ontem à noite', AstroDate(2017, 6, 26, 19, 0), AstroDate(2017, 6, 27)),
-    ('de madrugada', AstroDate(2017, 6, 27), AstroDate(2017, 6, 27, 6, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('de madrugada', AstroDate(2017, 6, 28), AstroDate(2017, 6, 28, 6, 0)),
 ]
 
 

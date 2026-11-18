@@ -67,15 +67,16 @@ def test_composed_daypart(text, offset, band):
     assert (sp.start, sp.end) == (s, e), f"{text!r} -> {sp}"
 
 
-# bare *-s adverbs -- resolve on the anchor day
-@pytest.mark.parametrize("text,band", [
-    ("vormittags", "vormittag"),
-    ("nachmittags", "nachmittag"),
-    ("abends", "abend"),
-    ("nachts", "nacht"),
+# bare *-s adverbs -- the anchor day's band while it runs, tomorrow's once it
+# has ended at the 13:04 anchor (ruling 28)
+@pytest.mark.parametrize("text,band,offset", [
+    ("vormittags", "vormittag", 1),
+    ("nachmittags", "nachmittag", 0),
+    ("abends", "abend", 0),
+    ("nachts", "nacht", 1),
 ])
-def test_bare_adverb(text, band):
-    s, e = _band_span(0, band)
+def test_bare_adverb(text, band, offset):
+    s, e = _band_span(offset, band)
     sp = span(text)
     assert (sp.start, sp.end) == (s, e), f"{text!r} -> {sp}"
 

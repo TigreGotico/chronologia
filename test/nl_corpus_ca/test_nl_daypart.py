@@ -35,12 +35,14 @@ def _band(text, start, end):
 _BANDS = [
     ('aquest matí', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
     ('demà al matí', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
-    ('al matí ben aviat', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('al matí ben aviat', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
     ('aquesta tarda', AstroDate(2017, 6, 27, 13, 0), AstroDate(2017, 6, 27, 19, 0)),
     ('ahir a la tarda', AstroDate(2017, 6, 26, 13, 0), AstroDate(2017, 6, 26, 19, 0)),
     ('aquest vespre', AstroDate(2017, 6, 27, 19, 0), AstroDate(2017, 6, 27, 21, 0)),
     ('ahir a la nit', AstroDate(2017, 6, 26, 21, 0), AstroDate(2017, 6, 27)),
-    ('de matinada', AstroDate(2017, 6, 27), AstroDate(2017, 6, 27, 6, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('de matinada', AstroDate(2017, 6, 28), AstroDate(2017, 6, 28, 6, 0)),
 ]
 
 

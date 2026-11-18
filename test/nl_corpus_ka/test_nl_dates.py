@@ -75,21 +75,22 @@ def test_named_days_reach_three_out(text, offset):
     assert e - s == timedelta(days=1)
 
 
-@pytest.mark.parametrize("text,h0,h1", [
-    ("დილა", 5, 12),
-    ("დილით", 5, 12),
-    ("ნაშუადღევი", 12, 18),
-    ("ნაშუადღევს", 12, 18),
-    ("საღამო", 18, 21),
-    ("საღამოს", 18, 21),
+@pytest.mark.parametrize("text,h0,h1,days", [
+    ("დილა", 5, 12, 1),
+    ("დილით", 5, 12, 1),
+    ("ნაშუადღევი", 12, 18, 0),
+    ("ნაშუადღევს", 12, 18, 0),
+    ("საღამო", 18, 21, 0),
+    ("საღამოს", 18, 21, 0),
 ])
-def test_daypart_bands(text, h0, h1):
+def test_daypart_bands(text, h0, h1, days):
     """CLDR ka opens the morning at 05:00 and closes the evening at 21:00 --
     both boundaries differ from the library's English default, so a band read
-    off the wrong locale row would land an hour or three out."""
+    off the wrong locale row would land an hour or three out.  The morning
+    has ended at the 13:04 anchor, so it is tomorrow's (ruling 28)."""
     s, e = start_end(text)
     assert (s.hour, e.hour) == (h0, h1)
-    assert s.date() == ANCHOR.date()
+    assert s.date() == ANCHOR.date() + timedelta(days=days)
 
 
 @pytest.mark.parametrize("text", ["ღამე", "ღამით"])

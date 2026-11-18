@@ -4,11 +4,14 @@ import pytest
 from ._corpus import band, start_end
 
 TODAY = (2027, 5, 12)
+# the anchor's next day: a band that has ended at the anchor is tomorrow's
+# (ruling 28)
+TOMORROW = (2027, 5, 13)
 
 
 @pytest.mark.parametrize("text,expected", [
-    ("아침", band(*TODAY, (3, 0), (6, 0))),
-    ("오전", band(*TODAY, (6, 0), (12, 0))),
+    ("아침", band(*TOMORROW, (3, 0), (6, 0))),
+    ("오전", band(*TOMORROW, (6, 0), (12, 0))),
     ("오후", band(*TODAY, (12, 0), (18, 0))),
     ("저녁", band(*TODAY, (18, 0), (21, 0))),
     ("밤", band(*TODAY, (21, 0), (3, 0), days=1)),

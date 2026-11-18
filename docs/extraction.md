@@ -1256,7 +1256,10 @@ Two ways a daypart resolves:
   today's night band (running into tomorrow's small hours); "last night" is the
   night that just ended — yesterday's night band, `[yesterday 21:00, today
   06:00)`. A bare "morning" is today's morning until the band ends, and
-  tomorrow's after that: "à tarde" said at 21:00 is tomorrow afternoon.
+  tomorrow's after that: "à tarde" said at 21:00 is tomorrow afternoon. A
+  word fused with "this" ("tonight", nl "vannacht", sv "i natt") keeps
+  today's band. Two parts of the day ("between morning and evening", "de
+  manhã à noite") stay on the anchor's day.
 - **Bound to a named day.** "yesterday morning" is the morning band of
   *yesterday*; "tomorrow night" is tomorrow's night band. The composition pass
   folds a lone daypart onto a lone date construction exactly as it folds a lone

@@ -25,8 +25,10 @@ A = datetime(2017, 6, 27, 13, 4)
 
 
 _BANDS = [
-    ('ujutru', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
-    ('ујутру', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('ujutru', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('ујутру', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
     ('popodne', AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 18, 0)),
     ('поподне', AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 18, 0)),
     ('uveče', AstroDate(2017, 6, 27, 18, 0), AstroDate(2017, 6, 27, 21, 0)),

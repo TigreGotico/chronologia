@@ -14,36 +14,37 @@ import pytest
 from ._corpus import ad, parse, span, start_end
 from datetime import datetime
 
+# A band that has ended at the 13:04 anchor is tomorrow's (ruling 28).
 BANDS = [
-    ("ноќе", 0, 4),
-    ("наутро", 4, 10),
-    ("претпладне", 10, 12),
-    ("попладне", 12, 18),
-    ("навечер", 18, 24),
+    ("ноќе", 0, 4, 13),
+    ("наутро", 4, 10, 13),
+    ("претпладне", 10, 12, 13),
+    ("попладне", 12, 18, 12),
+    ("навечер", 18, 24, 12),
 ]
 
 
-def _band(hour_from, hour_to):
-    base = datetime(2027, 5, 12)
+def _band(hour_from, hour_to, day):
+    base = datetime(2027, 5, day)
     return (ad(base.replace(hour=hour_from)),
             ad(base.replace(hour=hour_to % 24) if hour_to < 24
-               else datetime(2027, 5, 13)))
+               else datetime(2027, 5, day + 1)))
 
 
-@pytest.mark.parametrize("text,hour_from,hour_to", BANDS)
-def test_each_band_runs_between_its_cldr_hours(text, hour_from, hour_to):
-    assert start_end(text) == _band(hour_from, hour_to)
+@pytest.mark.parametrize("text,hour_from,hour_to,day", BANDS)
+def test_each_band_runs_between_its_cldr_hours(text, hour_from, hour_to, day):
+    assert start_end(text) == _band(hour_from, hour_to, day)
 
 
-@pytest.mark.parametrize("text,hour_from,hour_to", BANDS)
-def test_a_band_opens_on_its_own_first_hour(text, hour_from, hour_to):
+@pytest.mark.parametrize("text,hour_from,hour_to,day", BANDS)
+def test_a_band_opens_on_its_own_first_hour(text, hour_from, hour_to, day):
     s = span(text)
     assert s.start.hour == hour_from
 
 
-@pytest.mark.parametrize("text,hour_from,hour_to", BANDS)
+@pytest.mark.parametrize("text,hour_from,hour_to,day", BANDS)
 def test_a_band_closes_before_the_next_ones_first_hour(text, hour_from,
-                                                       hour_to):
+                                                       hour_to, day):
     s = span(text)
     assert (s.end.hour or 24) == hour_to
 

@@ -22,18 +22,21 @@ def _next_point(h, mi=0):
 
 
 # -- bare daypart bands of the anchor day --------------------------------
-@pytest.mark.parametrize("text,sh,eh,next_day", [
-    ("reggel", 6, 12, False),
-    ("délelőtt", 6, 12, False),
-    ("délután", 12, 18, False),
-    ("este", 18, 21, False),
-    ("éjjel", 21, 6, True),
+# A band that has ended at the 13:04 anchor is tomorrow's (ruling 28).
+@pytest.mark.parametrize("text,sh,eh,next_day,ended", [
+    ("reggel", 6, 12, False, True),
+    ("délelőtt", 6, 12, False, True),
+    ("délután", 12, 18, False, False),
+    ("este", 18, 21, False, False),
+    ("éjjel", 21, 6, True, False),
 ])
-def test_bare_daypart_band(text, sh, eh, next_day):
+def test_bare_daypart_band(text, sh, eh, next_day, ended):
     s = ANCHOR.replace(hour=sh, minute=0, second=0, microsecond=0)
     e = ANCHOR.replace(hour=eh, minute=0, second=0, microsecond=0)
     if next_day:
         e += timedelta(days=1)
+    if ended:
+        s, e = s + timedelta(days=1), e + timedelta(days=1)
     assert start_end(text) == (ad(s), ad(e))
 
 

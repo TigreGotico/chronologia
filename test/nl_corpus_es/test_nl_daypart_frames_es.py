@@ -35,9 +35,12 @@ _FRAMES = ["por la", "en la", "a la", "de la"]
 
 
 def _band(lo, hi):
+    # a band that has ended at the 13:04 anchor is tomorrow's (ruling 28)
+    day = 28 if hi <= 13 else 27
     if hi == 24:
-        return (AstroDate(2017, 6, 27, lo, 0, 0), AstroDate(2017, 6, 28, 0, 0, 0))
-    return (AstroDate(2017, 6, 27, lo, 0, 0), AstroDate(2017, 6, 27, hi, 0, 0))
+        return (AstroDate(2017, 6, day, lo, 0, 0),
+                AstroDate(2017, 6, day + 1, 0, 0, 0))
+    return (AstroDate(2017, 6, day, lo, 0, 0), AstroDate(2017, 6, day, hi, 0, 0))
 
 
 def _cases():

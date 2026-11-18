@@ -44,20 +44,23 @@ def test_en_month_fully_consumes(marker, month, num):
     assert r[0].start == AstroDate(_A.year + (num < _A.month), num, 1)
 
 
-@pytest.mark.parametrize("phrase,start_h,end_h", [
-    ("pola madrugada", 0, 6),
-    ("pola mañá", 6, 12),
-    ("pola tarde", 13, 21),
-    ("pola noite", 21, 24),
+# the madrugada band has ended at the 10:00 anchor, so it is tomorrow's
+# (ruling 28)
+@pytest.mark.parametrize("phrase,start_h,end_h,day", [
+    ("pola madrugada", 0, 6, 15),
+    ("pola mañá", 6, 12, 14),
+    ("pola tarde", 13, 21, 14),
+    ("pola noite", 21, 24, 14),
 ])
-def test_pola_dayframe_control_unchanged(phrase, start_h, end_h):
+def test_pola_dayframe_control_unchanged(phrase, start_h, end_h, day):
     # "pola"/"polo" moved from marker_during.voc to marker_dayframe.voc; the
     # part-of-day reading must resolve to the identical band as before.
     r = _span(phrase)
     assert r is not None
     assert r.remainder == ""
-    assert r[0].start == datetime(2026, 8, 14, start_h)
-    end = datetime(2026, 8, 15) if end_h == 24 else datetime(2026, 8, 14, end_h)
+    assert r[0].start == datetime(2026, 8, day, start_h)
+    end = (datetime(2026, 8, day + 1) if end_h == 24
+           else datetime(2026, 8, day, end_h))
     assert r[0].end == end
 
 
