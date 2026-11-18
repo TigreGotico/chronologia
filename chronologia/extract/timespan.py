@@ -1646,6 +1646,8 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     if core is None:
         return None
     span, consumed = core
+    span, consumed = (_onwards_span(folded, span, consumed, engine.spec)
+                      or (span, consumed))
     consumed = _fold_day_label(folded, consumed, engine.spec)
     consumed = _fold_date_article(folded, consumed, engine.spec, span)
     remainder = render_remainder(text, [t for t in folded
@@ -2134,6 +2136,9 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             if ep is not None and ep[0].end > now else None
 
     def since_span(ep, sub):
+        if ep is not None and ep[0].open_end:
+            # "from 2019 onwards": the endpoint is already the open span
+            return ep
         since = _since_start(ep, sub, engine, anchor, now, text)
         return (DateSpan(since[0], now), since[1]) \
             if since is not None and since[0] < now else None
@@ -2314,6 +2319,37 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
             return DateSpan(now, span.end), set(consumed) | set(range(0, j))
         return "veto"
     return None
+
+
+def _onwards_span(tokens, span, consumed, spec):
+    """"X onwards": the open span from the start of X.
+
+    A marker after X that opens the span at X and leaves it with no end
+    ("2019 onwards", "de 2019 em diante", "de 2019 en adelante") reads as
+    ruling 33 reads a bare "after X", but from the start of X: X itself is
+    inside the span.  The markers are a locale fact
+    (``marker_onwards.voc``).  The marker must follow the last token X
+    consumed, and a "from" word directly before X belongs to the phrase
+    ("from 2019 onwards", "da domani in poi").  Returns
+    ``(new_span, new_consumed)`` or ``None``.
+    """
+    pos = [i for i, t in enumerate(tokens) if t.index in consumed]
+    if not pos:
+        return None
+    k = pos[-1] + 1
+    m = _match_conn_at(tokens, k, _conn_surfaces(spec, "onwards", ()))
+    if not m:
+        return None
+    marker = {t.index for t in tokens[k:k + m]}
+    first = pos[0]
+    for words in (_conn_surfaces(spec, "from", _RANGE_FROM)
+                  + _conn_surfaces(spec, "since", _RANGE_SINCE)):
+        w = len(words)
+        if first >= w and _match_conn_at(tokens, first - w, [words]) == w:
+            marker |= {t.index for t in tokens[first - w:first]}
+            break
+    return (DateSpan(span.start, span.start, span.basis, open_end=True),
+            set(consumed) | marker)
 
 
 def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
@@ -3606,6 +3642,9 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
         return None
     if bare_dir is not None:
         span, consumed = bare_dir
+    else:
+        span, consumed = _onwards_span(tokens, span, consumed,
+                                       engine.spec) or (span, consumed)
     # veto a reference governed by a leading negation/exclusion particle: a
     # trigger reachable across only the skippable run immediately before the span
     # (a whole-prefix scan would falsely veto a trigger in another clause).
@@ -4534,6 +4573,9 @@ def extract_candidates(
                                             engine.spec, anchor)
             if bare_dir not in (None, "veto"):
                 value, consumed = bare_dir
+            else:
+                value, consumed = _onwards_span(tokens, value, consumed,
+                                                engine.spec) or (value, consumed)
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
         # rank: the composed PRIMARY (extract_timespan's own selected reading)
