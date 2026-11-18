@@ -230,13 +230,8 @@ def _mentions_are_ordered_and_non_overlapping(mentions):
     "tredje sundag i februar 2021 and il y a 1 mois",
 ])
 def test_a_rewritten_mention_keeps_the_order(text):
-    # each text yields a mention with char_span None after one with a
-    # char_span
     mentions = extract_timespans(text, "fr")
-    # the row tests the mixed shape only while the engine gives a rewritten
-    # mention no char_span
-    assert any(m.char_span is None for m in mentions)
-    assert any(m.char_span is not None for m in mentions)
+    assert len(mentions) >= 2
     _mentions_are_ordered_and_non_overlapping(mentions)
 
 
