@@ -28,6 +28,8 @@
   },
   "clock_time": {
    "orders": [
+    "at CLOCK oclock MERIDIEM ZONE?",
+    "CLOCK oclock MERIDIEM ZONE?",
     "at? CLOCK MERIDIEM? ZONE?",
     "at HOUR MERIDIEM? ZONE?",
     "HOUR MERIDIEM ZONE?",
