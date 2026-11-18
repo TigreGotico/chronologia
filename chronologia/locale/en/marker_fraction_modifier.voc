@@ -1,0 +1,37 @@
+# Words that measure or place a fraction between its determiner and the
+# ordinal: "a full third of the month", "the final third of the month".
+# A day of the month takes no such word between "the" and its ordinal.
+# "third" as a fraction: Wiktionary, "third", noun sense 2, "One of three
+# equal parts of a whole."  Each word's measuring or placing sense, from
+# Wiktionary unless named (adjective sense number, then its definition):
+#   full      3    "Total, entire."
+#   whole     1    "Entire, undivided."
+#   entire    1    "Whole; complete."
+#   solid     19   "(of time) Entire, complete."
+#   fair      Dictionary.com, adjective 3: "moderately large; ample."
+#   clear     17   "Without diminution; in full; net."
+#   complete  1    "With all parts included; with nothing missing; full."
+#   large     1    "Of considerable or relatively great size or extent."
+#   mere      1    "Just, only; no more than"
+#   extra     1    "Beyond what is due, usual, expected, or necessary; ...
+#                  additional"
+#   total     1    "Entire; relating to the whole of something."
+#   final     1    "Last; ultimate."
+#   middle    1    "Located in the middle; in between."
+#   good      7.3  "Full; entire; at least as much as."
+#   last      1    "Final, ultimate, coming after all others of its kind."
+full
+whole
+entire
+solid
+fair
+clear
+complete
+large
+mere
+extra
+total
+final
+middle
+good
+last
