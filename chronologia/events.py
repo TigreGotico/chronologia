@@ -42,6 +42,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Union
 
 from chronologia.astrodate import DateSpan
+from chronologia.dayparts import lookup
 from chronologia.recurrence import HolidayRecurrence, Recurrence, occurrences
 
 __all__ = ["Event", "extract_event"]
@@ -212,9 +213,31 @@ def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
         tied = any(word in suffixes or (
             word in of_words and nxt in articles)
             for word, nxt in zip(tail, tail[1:] + [""]))
-        if not tied:
+        if not tied or _pm_hour_misses_band(
+                spec, trace.tokens, w.match, first):
             return True
     return False
+
+
+def _pm_hour_misses_band(spec, tokens, match, first: int) -> bool:
+    """True when "de" stands before a bare pm hour tied to its part of the
+    day, and the hour lies outside that part's band: fr "dîner de deux
+    heures du soir" (14:00 is no evening hour), so the count is the length of
+    an event in that band.  An am or night word keeps the clock, because the
+    sources read "du matin" and "da manhã" from midnight to noon.
+    """
+    word = match.slots["MERIDIEM"].text
+    hour = match.slots.get("HOUR")
+    if (hour is None or not hour.is_number or not 1 <= hour.value <= 12
+            or spec.meridiems.get(word) != 12
+            or word in spec.night_meridiems
+            or word not in spec.dayparts
+            or tokens[first - 1].text not in spec.connectors.get("of", ())):
+        return False
+    band = lookup(spec.dayparts[word], spec.lang)
+    pm_hour = int(hour.value) % 12 + 12
+    end = band.end.hour or 24
+    return not band.start.hour <= pm_hour < end
 
 
 def extract_event(
