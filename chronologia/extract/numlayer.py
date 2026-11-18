@@ -343,6 +343,9 @@ def _mention_start(tokens: Tuple[Token, ...], end: int) -> int:
 def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     """Whether the mention that ends before ``end`` is a count, not a year.
 
+    An ordinal ranks and counts nothing: "в две тысячи втором году" is the
+    year 2002, though a unit of time follows it.
+
     A mention that holds a scale word and has a word or another number after
     it is a count: "comprei mil ações ontem", "dois mil e quinhentos euros",
     "paguei mil na segunda", "I saw two thousand five hundred people
@@ -358,8 +361,10 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     number.
     """
     mention = tokens[end - 1].mention
+    if mention is None or mention.kind is Kind.ORDINAL:
+        return False
     start = _mention_start(tokens, end)
-    said = re.split(r"[\s-]+", mention.text.lower()) if mention else []
+    said = re.split(r"[\s-]+", mention.text.lower())
     if not any(w in words.scales for w in said):
         return False
     nxt = tokens[end] if end < len(tokens) else None

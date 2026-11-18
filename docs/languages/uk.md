@@ -28,7 +28,8 @@ patterns (`d MMMM y 'р'.`), both day-first.
 **The unit nouns** ship full first-declension paradigms for `день`, `тиждень`,
 `місяць`, `рік`, `година` and `хвилина`, each citing *Український правопис*
 (2019) for its declension. `рік` is separately noted as suppletive in the
-locative singular (`у році`) and regular elsewhere.
+locative singular (`у році`) and regular elsewhere. A year spoken as an
+ordinal reads as that year: `у дві тисячі другому році` is 2002.
 
 **The determiners** `минулий`/`попередній` ("last/previous"), `наступний`
 ("next"), `останній` ("last" as an ordinal-last determiner, behind

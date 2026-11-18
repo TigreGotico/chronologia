@@ -124,6 +124,7 @@ def date_words(tokens: Tuple[Token, ...], words: DateWords) -> Claims:
             # the Roman Nones before the month; the ninth everywhere else
             claimed.add(i)
         elif (word in words.counts.scales
+              and tok.mention.kind is Kind.CARDINAL
               and tok.char_start != tok.mention.char_span[0]
               and not any(t.text in words.counts.scales
                           for t in tokens[i + 1:end])

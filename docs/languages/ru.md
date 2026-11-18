@@ -98,7 +98,8 @@ with the examples "прочитать с первой по десятую гла
 действителен по март месяц" and "оплата с января по апрель".
 
 **Quarters, ISO weeks, decades and seasons.** `первый квартал 2020`,
-`неделя 12` and the spelled decade `восьмидесятые годы` all resolve. The
+`неделя 12` and the spelled decade `восьмидесятые годы` all resolve. A year
+spoken as an ordinal reads as that year: `в две тысячи втором году` is 2002. The
 seasons carry adjectival narrowing, so `ранней весны` reads as early spring
 rather than the whole of it.
 
