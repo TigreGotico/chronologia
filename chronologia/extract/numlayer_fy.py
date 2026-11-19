@@ -13,7 +13,7 @@ _WORDS = DateWords(
     counts=count_words("fy"))
 
 
-#: After "healwei", "kertier", "oer" and "foar" the hour takes the genitive
+#: After "healwei", "kertier", "oer" and "foar" the hour takes an inflected
 #: form, which numtag does not read; https://github.com/TigreGotico/numtag/issues/143
 _TABLE = {word: (hour, False) for hour, word in enumerate(
     ("ienen", "twaen", "trijen", "fjouweren", "fiven", "seizen", "sânen",

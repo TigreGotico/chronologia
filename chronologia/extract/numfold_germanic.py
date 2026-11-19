@@ -8,7 +8,8 @@ are numbers.
 German, Dutch, Danish, Swedish and Frisian read their numbers through numtag
 (``numlayer_de``, ``numlayer_nl``, ``numlayer_da``, ``numlayer_sv``,
 ``numlayer_fy``).  Norwegian stays here: numtag 0.15.3a1 does not read the
-Bokmål ordinal "annen" or the Nynorsk ordinal "fyrste".  The ``_make_germanic_fold``/``_lazy_germanic_fold`` engine primitives stay in
+Bokmål ordinal "annen" or the Nynorsk ordinal "fyrste".
+The ``_make_germanic_fold``/``_lazy_germanic_fold`` engine primitives stay in
 ``numfold`` because the Turkic folds and the base-locale folds (id/kab/ms/fa)
 share them too -- imported here rather than duplicated.
 """

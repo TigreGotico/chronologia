@@ -40,7 +40,8 @@ the afternoon band is `middeis`, and the two are kept apart deliberately.
 `ienen`, `twaen`, `trijen`, `fjouweren`, `fiven`, `seizen`, `sânen`, `achten`,
 `njoggenen`, `tsienen`, `alven` and `tolven` are supplied as a fixed word-to-value
 map in `chronologia/extract/numlayer_fy.py`, because numtag reads only the
-uninflected cardinals. The map has no cited source. The uninflected form still
+uninflected cardinals. Frisian Wikipedia has each form after `healwei` or `kertier` (for example
+"Haadstjoertiid", "Klaas Koelstra" and "T.S. Eliot"). The uninflected form still
 reads, so `healwei ien` and `healwei ienen` both land on 00:30.
 
 **Day parts** are `nachts` `[00:00, 06:00)`, `moarns` `[06:00, 12:00)`,
