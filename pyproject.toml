@@ -25,14 +25,14 @@ classifiers = [
 # needs three runtime helpers: numtag reads the numbers of Arabic,
 # Aragonese, Asturian, Azerbaijani, Basque, Catalan, Danish, Dutch, English,
 # Estonian, Finnish, French, Galician, German, Greek, Hebrew, Hungarian,
-# Indonesian, Italian, Kabyle, Mirandese, Occitan, Persian, Portuguese,
-# Romanian, Spanish, Swedish and Turkish,
+# Indonesian, Italian, Kabyle, Malay, Mirandese, Occitan, Persian,
+# Portuguese, Romanian, Spanish, Swedish and Turkish,
 # ovos-number-parser reads the spelled numbers of the other
 # languages, and ovos-spec-tools loads the per-language .voc vocabulary
 # bundles under chronologia/locale/. The calendrical core (dates, spans,
 # calendars, eras) still runs on the standard library alone.
 dependencies = [
-    "numtag>=0.15.3a1",
+    "numtag>=0.16.0a1",
     "ovos-number-parser>=0.19.7a2",
     "ovos-spec-tools>=1.5.0a1",
 ]

@@ -543,7 +543,7 @@ before matching. If your language is in the supported list (next section), you
 point `hook` at the ready-made function for it, exactly like Malay does:
 
 ```text
-"hook": "chronologia.extract.numfold:fold_ms"
+"hook": "chronologia.extract.numlayer_ms:fold_ms"
 ```
 
 If your language has no number backend yet, leave `hook` out entirely —

@@ -8,11 +8,10 @@ writer typed a digit or a word.
 
 The languages in :data:`~chronologia.extract.numlayer.NUMTAG_LANGS` read
 their numbers through numtag (:mod:`chronologia.extract.numlayer`).  This
-module holds the Malay fold, which numtag does not read, and the
-``_make_germanic_fold``/``_lazy_germanic_fold`` single-extractor engine that
-``numfold_germanic`` also uses.  The Romance family lives in
-``numfold_romance``, the North Germanic family in ``numfold_germanic``; the
-Slavic, Baltic and Indo-Aryan folds each have their own sibling module.
+module holds the ``_make_germanic_fold``/``_lazy_germanic_fold``
+single-extractor engine that ``numfold_germanic`` uses.  The Romance family
+lives in ``numfold_romance``, the North Germanic family in ``numfold_germanic``;
+the Slavic, Baltic and Indo-Aryan folds each have their own sibling module.
 
 Wired as a language ``hook`` in each locale's ``lang.json`` and applied by
 :func:`~chronologia.extract.pipeline.fold_tokens` after normalisation.  Every
@@ -137,8 +136,3 @@ def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),
         return f(tokens)
 
     return fold
-
-fold_ms = _lazy_germanic_fold(
-    "ovos_number_parser.numbers_id", "extract_number_ms",
-    {"setengah", "separuh", "suku", "ribu", "juta", "bilion", "miliar"},
-    join_words={"puluh", "ratus", "belas"})
