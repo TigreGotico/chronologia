@@ -413,9 +413,14 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         # a leading article: "a day" -> count 1; "a couple of days" -> skip
         # it.  numtag reads no number in a quantifier ("couple", "few"), so in
         # its languages the quantifier word is the count and the article
-        # before it skips too.
+        # before it skips too.  A definite article, "day" and a day number
+        # ("no dia 5 de dezembro") name a date, so the article skips there.
         if tokens[j].text in articles:
             if j + 1 < n and (tokens[j + 1].is_number
+                              or (tokens[j].text not in spec.quantifiers
+                                  and j + 2 < n
+                                  and _unit_of(tokens[j + 1]) == "day"
+                                  and tokens[j + 2].text[:1].isdigit())
                               or tokens[j + 1].text in fracs
                               or (tokens[j + 1].text in spec.quantifiers
                                   and spec.lang in NUMTAG_LANGS)):

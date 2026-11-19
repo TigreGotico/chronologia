@@ -11,7 +11,7 @@ their numbers through numtag (:mod:`chronologia.extract.numlayer`).  This
 module holds the Malay fold, which numtag does not read, and the
 ``_make_germanic_fold``/``_lazy_germanic_fold`` single-extractor engine that
 ``numfold_germanic`` also uses.  The Romance family lives in
-``numfold_romance``, the North Germanic family in ``numfold_germanic``; the
+``numfold_romance``, the Frisian fold in ``numfold_germanic``; the
 Slavic, Baltic and Indo-Aryan folds each have their own sibling module.
 
 Wired as a language ``hook`` in each locale's ``lang.json`` and applied by
