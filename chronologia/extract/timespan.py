@@ -1254,7 +1254,9 @@ def _bare_numeral(text, sub, engine, anchor):
     # numeral ("dia 2"), the opposite word order from a duration ("2 dias"),
     # so the two shapes never collide.
     labels = set(engine.spec.connectors.get("day_label", ()))
-    if labels and all(t is nums[0] or t.text in labels for t in sub):
+    glue = labels | set(engine.spec.connectors.get("article", ()))
+    if labels and any(t.text in labels for t in sub) \
+            and all(t is nums[0] or t.text in glue for t in sub):
         return nums[0]
     # a slice carrying a unit is a duration, not a bare day -- "za 3 dnya do 5
     # aprelya" ("3 days before April 5") is an anchored offset whose "za 3 dnya"

@@ -85,24 +85,31 @@ def test_unlabelled_day_word_stays_out_of_the_summary(lang, text, summary):
     assert extract_event(text, lang, _ANCHOR).summary == summary
 
 
-_RANGE_ISSUE = "https://github.com/TigreGotico/chronologia/issues/1219"
+
+
 _RANGE_ANCHOR = datetime(2026, 1, 30, 10, 0)
 
 _RANGES = [
     ("es", "desde el día 3 hasta el día 5 de marzo"),
     ("gl", "desde o día 3 ata o día 5 de marzo"),
+    ("es", "entre el día 3 y el día 5 de marzo"),
+    ("gl", "entre o día 3 e o día 5 de marzo"),
+    ("ca", "entre el dia 3 i el dia 5 de març"),
+    ("pt", "desde o dia 3 até o dia 5 de março"),
+    ("it", "tra il giorno 3 e il giorno 5 marzo"),
 ]
+_RANGE_END = datetime(2026, 3, 5) + timedelta(days=1)
+_RANGE_GOLD = (AstroDate(2026, 3, 3), AstroDate.from_datetime(_RANGE_END))
 
 
-@pytest.mark.xfail(strict=True, reason=_RANGE_ISSUE)
 @pytest.mark.parametrize("lang,text", _RANGES)
 def test_day_range_event_span(lang, text):
     span = extract_event(text, lang, _RANGE_ANCHOR).span
-    assert (span.start, span.end) == (AstroDate(2026, 3, 3), AstroDate(2026, 3, 6))
+    assert (span.start, span.end) == _RANGE_GOLD
 
 
-@pytest.mark.xfail(strict=True, reason=_RANGE_ISSUE)
 @pytest.mark.parametrize("lang,text", _RANGES)
 def test_day_range_timespan(lang, text):
-    span = extract_timespan(text, lang, _RANGE_ANCHOR).span
-    assert (span.start, span.end) == (AstroDate(2026, 3, 3), AstroDate(2026, 3, 6))
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert (got.span.start, got.span.end) == _RANGE_GOLD
+    assert got.remainder == ""
