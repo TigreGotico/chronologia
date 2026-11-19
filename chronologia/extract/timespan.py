@@ -1368,7 +1368,8 @@ def _labelled_day_keeps_own(sub, donor, donor_read, spec):
     if not any(t.text in labels for t in sub):
         return False
     units = set(spec.units) | set(spec.singular_units)
-    counts_unit = any(t.is_number and nxt.text in units
+    counts_unit = any(t.is_number and t.value is not None and t.value < 100
+                      and nxt.text in units
                       for t, nxt in zip(donor, donor[1:]))
     return counts_unit or (donor_read is not None and donor_read[2] == "clock")
 

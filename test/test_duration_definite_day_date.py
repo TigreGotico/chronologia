@@ -181,3 +181,17 @@ def test_day_range_with_a_relative_month_end(lang, text):
     assert (got.span.start, got.span.end) == (
         AstroDate(2026, 2, 3), AstroDate(2026, 2, 6))
     assert got.remainder == ""
+
+
+_NAMED_YEARS = [
+    ("ru", "с 3 числа по 5 марта 2025 года"),
+    ("uk", "з 3 числа до 5 березня 2025 року"),
+]
+
+
+@pytest.mark.parametrize("lang,text", _NAMED_YEARS)
+def test_labelled_day_borrows_the_month_of_a_named_year_partner(lang, text):
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert (got.span.start, got.span.end) == (
+        AstroDate(2025, 3, 3), AstroDate.from_datetime(
+            datetime(2025, 3, 5) + timedelta(days=1)))
