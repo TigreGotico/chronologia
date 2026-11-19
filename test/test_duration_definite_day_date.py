@@ -86,7 +86,6 @@ def test_unlabelled_day_word_stays_out_of_the_summary(lang, text, summary):
 
 
 
-
 _RANGE_ANCHOR = datetime(2026, 1, 30, 10, 0)
 
 _RANGES = [
@@ -112,4 +111,35 @@ def test_day_range_event_span(lang, text):
 def test_day_range_timespan(lang, text):
     got = extract_timespan(text, lang, _RANGE_ANCHOR)
     assert (got.span.start, got.span.end) == _RANGE_GOLD
+    assert got.remainder == ""
+
+
+_PARTNERS = [
+    (
+        "pt",
+        "desde o dia 10 até às 18h",
+        datetime(2026, 2, 10),
+        datetime(2026, 2, 10, 18) + timedelta(minutes=1),
+    ),
+    (
+        "pt",
+        "desde o dia 3 até daqui a 5 dias",
+        datetime(2026, 2, 3),
+        _RANGE_ANCHOR + timedelta(days=5) + timedelta(days=1),
+    ),
+    (
+        "es",
+        "desde las 10 hasta el día 5 de marzo",
+        datetime(2026, 3, 5, 10),
+        datetime(2026, 3, 5) + timedelta(days=1),
+    ),
+]
+
+
+@pytest.mark.parametrize("lang,text,start,end", _PARTNERS)
+def test_labelled_day_keeps_its_own_month_against_a_clock_or_offset(
+        lang, text, start, end):
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert (got.span.start, got.span.end) == (
+        AstroDate.from_datetime(start), AstroDate.from_datetime(end))
     assert got.remainder == ""
