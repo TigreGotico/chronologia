@@ -42,3 +42,31 @@ def test_vocabulary_map_is_what_locale_resources_gives(lang):
     # ovos_spec_tools.LocaleResources computes it for this one language
     expected = LocaleResources(str(LOCALE)).vocabularies(lang)
     assert loader._vocabularies(os.path.join(str(LOCALE), lang)) == expected
+
+
+@pytest.mark.parametrize("lang, expected", [
+    ("pt", "pt"), ("pt-PT", "pt"), ("pt-BR", "pt"), ("en-US", "en"),
+    ("da-DK", "da"), ("nb-NO", "nb"), ("EN-us", "en"),
+])
+def test_language_is_matched_as_locale_resources_matches_it(lang, expected):
+    # what LocaleResources.vocabularies() would have read for this request
+    assert Path(loader._lang_dir(lang, str(LOCALE))).name == expected
+    assert (LocaleResources(str(LOCALE)).vocabularies(lang)
+            == loader._vocabularies(os.path.join(str(LOCALE), expected)))
+
+
+def test_a_region_loads_its_language_s_words():
+    # the words come from pt/; what depends on the tag asked for (the tag
+    # itself, holidays by region) stays as it was
+    import dataclasses
+    regional, plain = loader.load_lang_spec("pt-BR"), loader.load_lang_spec("pt")
+    assert regional.lang == "pt-BR"
+    tag_bound = {"lang", "holidays", "holiday_sources"}
+    for field in dataclasses.fields(plain):
+        if field.name not in tag_bound:
+            assert getattr(regional, field.name) == getattr(plain, field.name), field.name
+
+
+def test_no_close_language_is_an_error():
+    with pytest.raises(FileNotFoundError):
+        loader.load_lang_spec("zz")

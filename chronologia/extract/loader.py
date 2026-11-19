@@ -37,7 +37,8 @@ from importlib import import_module
 from pathlib import Path
 from typing import Callable, Dict, Optional, Set
 
-from ovos_spec_tools import expand, read_resource_file
+from ovos_spec_tools import (DEFAULT_MAX_LANGUAGE_DISTANCE, closest_lang, expand,
+                             read_resource_file, standardize_lang)
 
 from dataclasses import replace
 
@@ -69,7 +70,8 @@ def _vocabularies(lang_dir: str) -> Dict[str, list]:
 
     ``LocaleResources`` reads every language of the tree it is given when it
     is made, and this tree ships dozens; only the one being loaded is read
-    here.
+    here. Which one that is, ``_lang_dir`` matches as ``LocaleResources``
+    would.
     """
     vocs: Dict[str, list] = {}
     for path in sorted(Path(lang_dir).rglob("*.voc")):
@@ -78,8 +80,31 @@ def _vocabularies(lang_dir: str) -> Dict[str, list]:
     return vocs
 
 
+def _lang_dir(lang: str, locale_dir: str) -> str:
+    """The language directory of ``locale_dir`` that ``lang`` asks for,
+    matched as ``ovos_spec_tools.LocaleResources`` matches it: the same tag
+    first, then the closest one (``closest_lang``), so "pt-PT" and "pt-BR"
+    get ``pt/`` and "en-US" gets ``en/``.
+
+    Only the directory names are listed; nothing in them is read.
+    """
+    names = sorted(entry.name for entry in os.scandir(locale_dir) if entry.is_dir())
+    target = standardize_lang(lang)
+    for name in names:
+        if standardize_lang(name) == target:
+            return os.path.join(locale_dir, name)
+    match = closest_lang(lang, names, DEFAULT_MAX_LANGUAGE_DISTANCE)
+    if match is not None:
+        if match in names:
+            return os.path.join(locale_dir, match)
+        for name in names:
+            if standardize_lang(name) == standardize_lang(match):
+                return os.path.join(locale_dir, name)
+    raise FileNotFoundError(f"no locale data for {lang!r} in {locale_dir}")
+
+
 def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
-    lang_dir = os.path.join(locale_dir, lang)
+    lang_dir = _lang_dir(lang, locale_dir)
 
     with open(os.path.join(lang_dir, "lang.json"), encoding="utf-8") as fh:
         cfg = json.load(fh)
