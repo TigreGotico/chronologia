@@ -100,9 +100,8 @@ pins `hemisphere` to `north`, where Catalan leaves it unset.
 setmana` is not built on anything; the Occitan Wiktionary glosses it as
 Saturday and Sunday. `weekend` and `week-end` ship beside it.
 
-**Numerals.** The fold hook adds `uèit` and `uòch` as spellings of eight,
-because the upstream number vocabulary reads only `uèch`; issue 300 supplies
-the variants.
+**Numerals.** numtag reads `uèch`, `uèit` and `uòch` as eight; issue 300
+supplies the variants.
 
 ## Weaker provenance
 
