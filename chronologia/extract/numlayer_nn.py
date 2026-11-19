@@ -13,8 +13,9 @@ _WORDS = DateWords(
     counts=count_words("nn"))
 
 
-#: numtag reads no number in "fyrste"; https://github.com/TigreGotico/numtag/issues/141
-_TABLE = {"fyrste": (1, True)}
+#: numtag reads no number in "fyrste" and its compounds (numtag#141)
+_TABLE = {"fyrste": (1, True), "tjuefyrste": (21, True),
+          "trettifyrste": (31, True)}
 
 
 def fold_nn(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:

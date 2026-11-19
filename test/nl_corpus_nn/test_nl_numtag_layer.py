@@ -37,6 +37,11 @@ def test_ordinal_day():
     assert span("andre måndag i mai 2021").start == datetime(2021, 5, 10)
 
 
+@pytest.mark.parametrize("word,day", [("tjuefyrste", 21), ("trettifyrste", 31)])
+def test_compound_first_day(word, day):
+    assert span(f"den {word} mai 2025").start == datetime(2025, 5, day)
+
+
 def test_clock_half():
     # "halv åtte" is half an hour before eight: 7:30
     assert span("klokka halv åtte").start == datetime(2017, 6, 27, 19, 30)

@@ -13,8 +13,8 @@ _WORDS = DateWords(
     counts=count_words("nb"))
 
 
-#: numtag reads no number in "annen"; https://github.com/TigreGotico/numtag/issues/140
-_TABLE = {"annen": (2, True)}
+#: numtag reads no number in "annen" (numtag#140) or "annet" (numtag#246)
+_TABLE = {"annen": (2, True), "annet": (2, True)}
 
 
 def fold_nb(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:

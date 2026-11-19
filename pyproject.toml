@@ -25,7 +25,8 @@ classifiers = [
 # needs three runtime helpers: numtag reads the numbers of Arabic,
 # Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish,
 # French, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian,
-# Kabyle, Persian, Portuguese, Spanish, Swedish and Turkish,
+# Kabyle, Norwegian (Bokmål and Nynorsk), Persian, Portuguese, Spanish,
+# Swedish and Turkish,
 # ovos-number-parser reads the spelled numbers of the other
 # languages, and ovos-spec-tools loads the per-language .voc vocabulary
 # bundles under chronologia/locale/. The calendrical core (dates, spans,

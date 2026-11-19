@@ -37,6 +37,14 @@ def test_ordinal_day():
     assert span("annen mandag i mai 2021").start == datetime(2021, 5, 10)
 
 
+def test_neuter_second_quarter():
+    # "annet" is the neuter of the ordinal "annen"
+    assert start_end("annet kvartal 2018") == (
+        datetime(2018, 4, 1), datetime(2018, 7, 1))
+    assert start_end("i annet kvartal") == (
+        datetime(2017, 4, 1), datetime(2017, 7, 1))
+
+
 def test_clock_half():
     # "halv åtte" is half an hour before eight: 7:30
     assert span("klokka halv åtte").start == datetime(2017, 6, 27, 19, 30)

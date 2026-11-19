@@ -9,8 +9,8 @@ German, Dutch, Danish, Swedish and Norwegian read their numbers through numtag
 (``numlayer_de``, ``numlayer_nl``, ``numlayer_da``, ``numlayer_sv``,
 ``numlayer_nb``, ``numlayer_nn``).  Frisian stays here: numtag does not read the
 Frisian clock hours ("fiven").  The ``_lazy_germanic_fold`` engine primitive
-stays in ``numfold`` because the Turkic folds and the base-locale folds
-(id/kab/ms/fa) share it too -- imported here rather than duplicated.
+stays in ``numfold`` because the Malay fold shares it -- imported here rather
+than duplicated.
 """
 from __future__ import annotations
 
