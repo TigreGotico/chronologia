@@ -1,161 +1,53 @@
 # -*- coding: utf-8 -*-
-"""Semitic (Arabic / Hebrew) spelled-number fold hooks.
+"""Arabic and Hebrew date words over the numtag number layer.
 
-Two RTL languages whose calendars already worked but whose relative /
-weekday / clock surfaces did not.  Fixed multi-word slot surfaces (Arabic
-"بعد غد" day-after-tomorrow, Hebrew "יום ראשון" Sunday, "نهاية الأسبوع" /
-"סוף שבוע" weekend, "منتصف الليل" midnight) are folded back to a single token
-by the shared ``pipeline.merge_multiword`` pass, so the ``*.voc`` files list
-those surfaces *with their space* and no glue is needed here.
+Fixed multi-word slot surfaces (Arabic "بعد غد" day-after-tomorrow, Hebrew
+"יום ראשון" Sunday, "نهاية الأسبوع" / "סוף שבוע" weekend, "منتصف الليل"
+midnight) are folded back to a single token by the shared
+``pipeline.merge_multiword`` pass, so the ``*.voc`` files list those surfaces
+*with their space* and no glue is needed here.
 
-This hook owns only **spelled cardinals** ("قبل خمسة أيام",
-"לפני חמישה ימים"): a maximal run of a curated closed set of number-words is
-folded to one digit ``NUM`` token via ``ovos_number_parser``'s
-``extract_number_<lang>``.  The set is curated (not the parser's full
-vocabulary) so unit-duals and weekday homographs -- which the number
-back-end would also read as numbers -- stay their own token.
+numtag reads the spelled numbers ("قبل خمسة وعشرين يوما", "לפני חמישה
+ימים"), the "و"-glued compounds and the ordinal teens ("الخامس عشر").  The
+shared rules of :mod:`chronologia.extract.numlayer_germanic` claim the clock
+fractions, the deep-time scale words and the counts of things.  This module
+claims the ordinals and cardinals that are also weekday or month names
+(Arabic "الاثنين", "تشرين الأول"; Hebrew "יום שני", "שלישי"), and adds the
+passes the clock, the dual nouns and the Hebrew gematria need around that
+fold.
 
-A pure ``tuple[Token] -> tuple[Token]`` transform, re-indexed so
-``Token.index`` stays contiguous, wired as the language ``hook``.
+Pure ``tuple[Token] -> tuple[Token]`` transforms, re-indexed so
+``Token.index`` stays contiguous, wired as the language ``hook`` and
+``pre_hook``.
 """
 from __future__ import annotations
 
 from pathlib import Path
 
-from ovos_number_parser.numbers_ar import extract_number_ar
-from ovos_number_parser.numbers_he import extract_number_he
 from ovos_spec_tools import read_resource_file
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import NumberGrammar, make_fold, reindex
+from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
+                                                   locale_words)
 
 
-def _make_fold(extract_fn, numwords):
-    """A curated-set cardinal fold with the Arabic/Hebrew "و" (and) as the
-    internal run connector ("خمسة وعشرون")."""
-    numset = frozenset(numwords)
-    return make_fold(NumberGrammar(
-        is_number=lambda tok: tok.is_number or tok.text in numset,
-        extract=extract_fn,
-        joiner=lambda tok: tok.text == "و"))
+_AR_WORDS = DateWords(
+    lang="ar",
+    fractions=locale_words("ar", "clock_fraction_"),
+    counts=count_words("ar"))
 
-
-# -- Arabic ------------------------------------------------------------------
-# curated cardinal surfaces (no article).  "اثنين/اثنان" are withheld -- they
-# double as the bare weekday name for Monday; two is spelled as the dual noun
-# (يومين) in real offsets, so nothing is lost.
-_AR_NUM = frozenset({
-    "واحد", "وحدة", "أحد", "إحدى", "احد",
-    "ثلاثة", "ثلاث", "ثلاثه", "أربعة", "أربع", "اربعة", "اربع",
-    "خمسة", "خمس", "خمسه", "ستة", "ست", "سته",
-    "سبعة", "سبع", "سبعه", "ثمانية", "ثماني", "ثمانيه",
-    "تسعة", "تسع", "تسعه", "عشرة", "عشر", "عشره",
-    "عشرون", "عشرين", "ثلاثون", "ثلاثين", "أربعون", "أربعين",
-    "خمسون", "خمسين", "ستون", "ستين", "سبعون", "سبعين",
-    "ثمانون", "ثمانين", "تسعون", "تسعين",
-    "مئة", "مائة", "مئتان", "مئتين",
-})
-# Arabic writes the conjunction و ("and") GLUED onto the word it precedes, with
-# no space -- "خمسة وعشرون" (twenty-five) tokenises as [خمسة][وعشرون], not
-# [خمسة][و][عشرون].  The bare-"و" run connector above therefore never fires on
-# real Arabic text, so a spelled compound 21-99 (and hundred+tens, "مئة وخمسة
-# وعشرون") stalled after its first word and the rest was stranded -- a flat
-# None for the whole utterance.  ovos_number_parser reads the glued run
-# correctly (extract_number_ar("خمسة وعشرون") == 25, "مئة وخمسة وعشرون" == 125),
-# so admit every و-glued cardinal surface to the run set as well.
-_AR_NUM_WAW = frozenset("و" + w for w in _AR_NUM)
-from chronologia.extract.numfold_ordinals import with_ordinals
-
-
-# -- ordinal TEEN fold (11..19), a two-word run -------------------------------
-# The Semitic ordinal teens are written as two words -- an inflected unit
-# ordinal followed by the teen word عشر / עשר ("الخامس عشر" the-fifteenth,
-# "החמישה עשר").  The unit word carries the definite article, so it is NOT in
-# the curated *cardinal* set (خمسة/חמישה are; الخامس/החמישה are not), and the
-# single-token ordinal pre-pass (``with_ordinals``) cannot see a two-word run.
-# The result was that the leading ordinal folded to its UNIT value (الخامس -> 5)
-# while the teen word عشر folded to 10 on its own, and the date bound the unit
-# (April 5 / April 10) -- a silent wrong answer.
-#
-# ovos-number-parser already reads the *joined* two-word run correctly
-# (``extract_number_<lang>("الخامس عشر", ordinals=True) == 15``), so this
-# pre-pass -- run BEFORE ``with_ordinals`` and the cardinal fold -- detects the
-# [unit-ordinal][teen-word] pair and folds it to that value.  Gated on an
-# explicit first-word set so nothing but a genuine ordinal teen can fire, and
-# the month-name ordinals الأول/الثاني are untouched (they are the teen fold's
-# concern only when عشر follows, which the Levantine month names never do).
-_AR_TEEN_SECOND = frozenset({"عشر", "عشرة"})
-_AR_TEEN_FIRST = frozenset({
-    # masculine, with the definite article (the attested date surface)
-    "الحادي", "الثاني", "الثالث", "الرابع", "الخامس", "السادس", "السابع",
-    "الثامن", "التاسع",
-    # feminine, with the definite article ("الخامسة عشرة")
-    "الحادية", "الثانية", "الثالثة", "الرابعة", "الخامسة", "السادسة",
-    "السابعة", "الثامنة", "التاسعة",
-    # article-less variants
-    "حادي", "ثاني", "ثالث", "رابع", "خامس", "سادس", "سابع", "ثامن", "تاسع",
-})
-_HE_TEEN_SECOND = frozenset({"עשר", "עשרה"})
-_HE_TEEN_FIRST = frozenset({
-    # definite (ה-prefixed) unit words -- the stranded surface
-    "האחד", "השניים", "השנים", "השלושה", "הארבעה", "החמישה", "השישה",
-    "השבעה", "השמונה", "התשעה",
-    # feminine definite ("החמש עשרה")
-    "האחת", "השלוש", "הארבע", "החמש", "השש", "השבע", "השמונה", "התשע",
-})
-
-
-def _teen_fold(extract_fn, first_words, second_words):
-    """Fold a [unit-ordinal][teen-word] pair to its 11..19 value."""
-    def rewrite(tokens):
-        out, i, n, changed = [], 0, len(tokens), False
-        while i < n:
-            t = tokens[i]
-            if (not t.is_number and t.text in first_words and i + 1 < n
-                    and tokens[i + 1].text in second_words):
-                try:
-                    v = extract_fn(t.text + " " + tokens[i + 1].text,
-                                   ordinals=True)
-                except Exception:
-                    v = False
-                if v is not False and v is not None and 11 <= v <= 19:
-                    out.append(Token(text=str(int(v)), raw=str(int(v)),
-                                     index=t.index, is_number=True,
-                                     value=int(v), char_start=t.char_start,
-                                     char_end=tokens[i + 1].char_end))
-                    i, changed = i + 2, True
-                    continue
-            out.append(t)
-            i += 1
-        return reindex(tuple(out)) if changed else tokens
-    return rewrite
-
-
-_ar_teen_fold = _teen_fold(extract_number_ar, _AR_TEEN_FIRST, _AR_TEEN_SECOND)
-_he_teen_fold = _teen_fold(extract_number_he, _HE_TEEN_FIRST, _HE_TEEN_SECOND)
-
-
-# Arabic ordinals carry the definite article ال ("الثالث" the-third), which is
-# exactly the surface the quarter phrase "الربع الثالث" attests; the model's
-# ``pronounce_ordinal_ar`` emits that article-prefixed form.  الأول (first) and
-# الثاني (second) are withheld: they are the ordinal component of the Levantine
-# month names (تشرين الأول = October, كانون الثاني = January), so folding them
-# would erase the month.  Consequently a *spelled* Arabic Q1/Q2 does not fold
-# (Q3/Q4 and the digit/Latin-Q forms do) -- a documented, narrow limitation.
-_fold_ar_base = with_ordinals(
-    _make_fold(extract_number_ar, _AR_NUM | _AR_NUM_WAW), "ar",
-                              exclude=("الأول", "الثاني"))
 
 # Rule A, confirmed by native speaker athmanemokraoui (TigreGotico/chronologia
 # #268): الأول (first) / الثاني (second) ARE the ordinal in every position
 # EXCEPT immediately after a Levantine solar month-name prefix
 # (تشرين الأول = October, كانون الثاني = January, جمادى الأولى, ربيع الأول),
-# where they form the month name.  They are withheld from the base fold above
-# (which is global and cannot see the preceding word) and licensed back to the
-# ordinal here in every non-month position, so "النصف الأول من 2020" (first
+# where they form the month name.  They are claimed as words there, and fold
+# to the ordinal in every other position, so "النصف الأول من 2020" (first
 # half) and "الربع الأول" (first quarter) read while تشرين الأول stays October.
 _AR_MONTH_ORD_PREFIX = frozenset({"تشرين", "كانون", "جمادى", "ربيع"})
-_AR_MONTH_ORDINAL = {"الأول": 1, "الأولى": 1, "الثاني": 2, "الثانية": 2}
+_AR_MONTH_ORDINAL = frozenset({"الأول", "الاول", "الأولى", "الاولى", "الثاني",
+                               "الثانية"})
 #: The yesterday word takes the same ordinal as its second half: "أمس الأول"
 #: is the day before yesterday, the reversed twin of "أول أمس".  Folding the
 #: ordinal to 1 there destroys the phrase before the multiword pass can merge
@@ -164,19 +56,36 @@ _AR_MONTH_ORDINAL = {"الأول": 1, "الأولى": 1, "الثاني": 2, "ا�
 _AR_DAY_ORD_PREFIX = frozenset({"أمس", "امس", "الأمس"})
 
 
-def _ar_month_ordinal_license(tokens):
-    out = list(tokens)
-    for i, t in enumerate(out):
-        if t.is_number or t.text not in _AR_MONTH_ORDINAL:
+#: "أول أمس" and "أول من أمس" (the day before yesterday) put the ordinal
+#: before the day word.
+_AR_DAY_ORD_FIRST = frozenset({"أول", "اول"})
+#: The month names that numtag also reads as a number: the Islamic month
+#: "صفر" is also zero.
+_AR_MONTHS = locale_words("ar", "month_")
+#: The weekday names that numtag also reads as a number: "الاثنين" is Monday
+#: and two.  Two is spelled as the dual noun (يومين) in real offsets.
+_AR_WEEKDAYS = locale_words("ar", "weekday_")
+
+
+def _ar_date_names(tokens):
+    """Claim the number words that are part of a weekday, a month or a day
+    name: "الاثنين", "تشرين الأول", "أمس الأول", "أول أمس"."""
+    claimed = set()
+    for i, t in enumerate(tokens):
+        if t.mention is None or t.mention.text != t.raw:
             continue
-        prev = out[i - 1] if i > 0 else None
-        if prev is not None and (prev.text in _AR_MONTH_ORD_PREFIX
-                                 or prev.text in _AR_DAY_ORD_PREFIX):
-            continue  # part of a month name or of "أمس الأول" -- leave it
-        v = _AR_MONTH_ORDINAL[t.text]
-        out[i] = Token(text=str(v), raw=str(v), index=t.index, is_number=True,
-                       value=v, char_start=t.char_start, char_end=t.char_end)
-    return tuple(out)
+        prev = tokens[i - 1].text if i else None
+        after = [u.text for u in tokens[i + 1:i + 3]]
+        if (t.text in _AR_WEEKDAYS or t.text in _AR_MONTHS
+                or (t.text in _AR_MONTH_ORDINAL
+                    and (prev in _AR_MONTH_ORD_PREFIX
+                         or prev in _AR_DAY_ORD_PREFIX))
+                or (t.text in _AR_DAY_ORD_FIRST and after
+                    and (after[0] in _AR_DAY_ORD_PREFIX
+                         or after[0] == "من" and after[1:2]
+                         and after[1] in _AR_DAY_ORD_PREFIX))):
+            claimed.add(i)
+    return claimed, set(), {}
 
 
 # -- feminine ordinal CLOCK hour fold ----------------------------------------
@@ -353,7 +262,7 @@ def split_ar_range_word(tokens):
 #: outright rather than relying on the single-word filter, and for two
 #: DIFFERENT reasons per entry, not one shared one: "שני" is specifically the
 #: SAME string as the construct form of the cardinal "two" (שניים), a
-#: homograph documented on ``_HE_NUM``/``fold_he`` above -- folding it in
+#: homograph documented on ``_he_date_names`` above -- folding it in
 #: would let "יום ושני שעות" (a day and two hours) mis-split into "ו" +
 #: "שני" and risk a duration count being read as a Monday range endpoint,
 #: the same class of defect the Arabic guard's abbreviated-Sunday exclusion
@@ -537,34 +446,31 @@ def _ar_additive_fraction(tokens):
 
 
 def fold_ar(tokens):
-    """Fold the feminine ordinal clock hour first (in clock context only), split
-    a "و"-glued trailing clock fraction off it, then the ordinal teen (11..19),
-    the cardinal/ordinal fold, then license الأول/الثاني positionally
-    (Rule A, #268).  The dual-noun split runs last, on the folded stream, so a
-    dual unit noun reaches the offset grammar as the ``2 <plural unit>`` it
-    means."""
-    return _ar_additive_fraction(_ar_dual_split(_ar_month_ordinal_license(
-        _fold_ar_base(_ar_teen_fold(
-            _ar_clock_fraction_split(_ar_clock_hour_fold(tokens)))))))
+    """Fold the feminine ordinal clock hour first (in clock context only),
+    split a "و"-glued trailing clock fraction off it, then fold the numbers
+    with the weekday and month names claimed (Rule A, #268).  The dual-noun
+    split runs last, on the folded stream, so a dual unit noun reaches the
+    offset grammar as the ``2 <plural unit>`` it means."""
+    return _ar_additive_fraction(_ar_dual_split(fold(
+        _ar_clock_fraction_split(_ar_clock_hour_fold(tokens)), _AR_WORDS,
+        extra=_ar_date_names)))
 
 
 # -- Hebrew ------------------------------------------------------------------
-# curated cardinal surfaces (masc + fem, no prefix).  Dual unit nouns
-# (שבועיים/יומיים ...) are withheld -- they carry their own unit meaning.
-_HE_NUM = frozenset({
-    "אחד", "אחת", "שתי", "שני", "שניים", "שתיים",
-    "שלוש", "שלושה", "ארבע", "ארבעה", "חמש", "חמישה",
-    "שש", "שישה", "שבע", "שבעה", "שמונה", "תשע", "תשעה",
-    "עשר", "עשרה", "עשרים", "שלושים", "ארבעים", "חמישים",
-    "שישים", "שבעים", "שמונים", "תשעים", "מאה", "מאתיים",
-})
-# Hebrew ordinals are NOT folded: the ordinal surfaces שני / שלישי / רביעי /
-# חמישי / שישי (2..6) are exactly the weekday names (Monday..Friday, from
-# יום שני ...), and ראשון (1) is Sunday.  Folding any of them to a digit would
-# destroy bare-weekday, recurrence and offset parsing.  Hebrew's spelled
-# ordinal quarter ("רבעון שלישי") therefore stays a documented xfail -- the
-# collision is total, so it cannot fold at the token level.
-_fold_he_run = _make_fold(extract_number_he, _HE_NUM)
+_HE_WORDS = DateWords(
+    lang="he",
+    fractions=locale_words("he", "clock_fraction_"),
+    counts=count_words("he"))
+# The ordinals שני / שלישי / רביעי / חמישי / שישי (2..6) are exactly the
+# weekday names (Monday..Friday, from יום שני ...), and ראשון (1) is Sunday.
+# Folding any of them to a digit would destroy bare-weekday, recurrence and
+# offset parsing, so they stay words.  Hebrew's spelled ordinal quarter
+# ("רבעון שלישי") therefore stays a documented xfail.
+_HE_WEEKDAY_ORDINALS = frozenset(
+    w for w in locale_words("he", "weekday_abbr_") if " " not in w)
+#: The decade names: "שנות השמונים" (the eighties) is one word for the
+#: multiword pass, and its second word is not the count 80.
+_HE_DECADES = locale_words("he", "decade_word_")
 
 # The one cardinal that is also a weekday name.  שני is the construct form of
 # שניים "two" *and* the ordinal "second", and Hebrew names its weekdays by
@@ -605,10 +511,10 @@ def _he_counts_a_noun(tokens, i):
 #: The MASCULINE forms are deliberately absent.  Hebrew names its weekdays by
 #: the masculine ordinal, so "בשני" is Monday, not two o'clock -- the same
 #: collision ``fold_he`` already guards against for the bare שני.
-_HE_BET_HOURS = frozenset({
-    "אחת", "שתיים", "שלוש", "ארבע", "חמש",
-    "שש", "שבע", "שמונה", "תשע", "עשר",
-})
+_HE_BET_HOURS = {
+    "אחת": 1, "שתיים": 2, "שלוש": 3, "ארבע": 4, "חמש": 5,
+    "שש": 6, "שבע": 7, "שמונה": 8, "תשע": 9, "עשר": 10,
+}
 
 
 #: what must follow the fused numeral for it to be a clock.  The same
@@ -646,7 +552,9 @@ def _he_split_bet_hour(tokens):
             out.append(Token(text="ב", raw=t.raw[0], index=t.index,
                              char_start=t.char_start,
                              char_end=t.char_start + 1 if t.char_start is not None else None))
-            out.append(Token(text=t.text[1:], raw=t.raw[1:], index=t.index,
+            hour = _HE_BET_HOURS[t.text[1:]]
+            out.append(Token(text=str(hour), raw=t.raw[1:], index=t.index,
+                             is_number=True, value=hour,
                              char_start=t.char_start + 1 if t.char_start is not None else None,
                              char_end=t.char_end))
             changed = True
@@ -655,28 +563,35 @@ def _he_split_bet_hour(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
-def fold_he(tokens):
-    """The Hebrew cardinal fold, holding ``שני`` back where it names Monday.
+def _he_date_names(tokens):
+    """Claim the number words that name a weekday, and a fused "at" hour
+    that no time word closes.
 
-    The shared run scanner decides membership one token at a time, which is
-    all every other language needs; the שני homograph is settled by the words
-    around it instead.  The stream is therefore split at each weekday שני and
-    the scanner run over the remaining segments, so a real count ("לפני שני
-    ימים", two days ago) still folds while the weekday survives to be glued
-    onto its day noun by the multiword pass.
+    The ordinal weekday names stay words everywhere.  ``שני`` stays a word
+    where it cannot count a noun (:func:`_he_counts_a_noun`), so a real count
+    ("לפני שני ימים", two days ago) still folds while the weekday survives to
+    be glued onto its day noun by the multiword pass.  numtag reads "בשבע"
+    as 7; outside a clock ("בשבע רצון", gladly) it stays a word.
     """
-    tokens = _he_split_bet_hour(tokens)
-    out = []
-    segment = []
-    for i, tok in enumerate(tokens):
-        if tok.text == _HE_SHENI and not _he_counts_a_noun(tokens, i):
-            out.extend(_fold_he_run(tuple(segment)))
-            out.append(tok)
-            segment = []
-        else:
-            segment.append(tok)
-    out.extend(_fold_he_run(tuple(segment)))
-    return reindex(tuple(out))
+    claimed = set()
+    for i, t in enumerate(tokens):
+        if t.mention is None or t.is_number or t.mention.text != t.raw:
+            continue
+        if i and f"{tokens[i - 1].text} {t.text}" in _HE_DECADES:
+            claimed.add(i)
+        elif t.text == _HE_SHENI:
+            if not _he_counts_a_noun(tokens, i):
+                claimed.add(i)
+        elif t.text in _HE_WEEKDAY_ORDINALS:
+            claimed.add(i)
+        elif t.text[0] == "ב" and t.text[1:] in _HE_BET_HOURS:
+            claimed.add(i)
+    return claimed, set(), {}
+
+
+def _fold_he_cardinal(tokens):
+    """The Hebrew number fold, with the fused "at" hour split off first."""
+    return fold(_he_split_bet_hour(tokens), _HE_WORDS, extra=_he_date_names)
 
 
 # -- feminine ordinals 1/2 that agree with the "half" noun מחצית ---------------
@@ -777,9 +692,6 @@ def _he_gematria_rewrite(tokens):
             continue
         out.append(t)
     return reindex(tuple(out)) if changed else tokens
-
-
-_fold_he_cardinal = fold_he
 
 
 # -- vav-conjunction (ו) proclitic strip --------------------------------------
@@ -922,11 +834,11 @@ def _he_dual_split(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
-def fold_he(tokens):  # noqa: F811  -- wrap the cardinal fold with the fem ordinal
-    """Fold the gematria year numeral (תשפ״ה → 5785), the ordinal teen
-    (11..19) and the feminine ordinal (מחצית's "first/second") before the
-    cardinal fold, then run the cardinal fold: none overlap (each is its own
-    run), and the weekday-masculine ordinals stay untouched. The vav remerge
+def fold_he(tokens):
+    """Fold the gematria year numeral (תשפ״ה → 5785) and the feminine ordinal
+    (מחצית's "first/second") before the number fold, then run the number
+    fold: none overlap (each is its own run), and the weekday-masculine
+    ordinals stay untouched. The vav remerge
     runs first, undoing ``split_he_range_word``'s pre_hook split for any pair
     that was not consumed as a range connector, so a bare fused month/
     weekday/daypart mention resolves clean instead of leaving a stray "ו" in
@@ -937,6 +849,5 @@ def fold_he(tokens):  # noqa: F811  -- wrap the cardinal fold with the fem ordin
     ``_HE_VAV_STEMS`` role the pre_hook does not cover) folds/matches exactly
     like its bare form; the dual split runs on its result so a vav-prefixed
     dual ("ולפני יומיים") reaches it as a bare dual noun token."""
-    return _fold_he_cardinal(_he_ordinal_rewrite(
-        _he_teen_fold(_he_gematria_rewrite(
-            _he_dual_split(_he_vav_strip(_he_vav_remerge(tokens)))))))
+    return _fold_he_cardinal(_he_ordinal_rewrite(_he_gematria_rewrite(
+        _he_dual_split(_he_vav_strip(_he_vav_remerge(tokens))))))

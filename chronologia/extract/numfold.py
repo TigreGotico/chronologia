@@ -8,13 +8,11 @@ writer typed a digit or a word.
 
 The languages in :data:`~chronologia.extract.numlayer.NUMTAG_LANGS` read
 their numbers through numtag (:mod:`chronologia.extract.numlayer`).  This
-module holds every locale whose fold does not share a family engine with
-another language (``fa``, ``id``, ``kab``, ``ms``), and the
+module holds the Malay fold, which numtag does not read, and the
 ``_make_germanic_fold``/``_lazy_germanic_fold`` single-extractor engine that
 ``numfold_germanic`` also uses.  The Romance family lives in
 ``numfold_romance``, the North Germanic family in ``numfold_germanic``; the
-Slavic, Semitic, Baltic, Indo-Aryan and Greek folds each have their own
-sibling module.
+Slavic, Baltic and Indo-Aryan folds each have their own sibling module.
 
 Wired as a language ``hook`` in each locale's ``lang.json`` and applied by
 :func:`~chronologia.extract.pipeline.fold_tokens` after normalisation.  Every
@@ -25,11 +23,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-from chronologia.extract.numfold_engine import (NumberGrammar, make_fold,
-                                                    reindex as _reindex)
-from chronologia.extract.numfold_ordinals import with_ordinals as _with_ordinals
-
-
+from chronologia.extract.numfold_engine import NumberGrammar, make_fold
 
 
 # ---------------------------------------------------------------------------
@@ -144,100 +138,7 @@ def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),
 
     return fold
 
-fold_id = _lazy_germanic_fold(
-    "ovos_number_parser.numbers_id", "extract_number_id",
-    {"setengah", "seperempat", "suku", "ribu", "juta", "miliar", "milyar"},
-    join_words={"puluh", "ratus", "belas"})
-# Indonesian spelled ordinals ("ketiga" third) fold to their digit so the
-# scoped_ordinal ``ORD`` slot binds ("Senin ketiga Maret" = the third Monday of
-# March); from the model's ``pronounce_ordinal_id`` (ke- prefix), plus the
-# alternative first-ordinal surface "kesatu" the pronouncer spells "pertama".
-fold_id = _with_ordinals(fold_id, "id", {"kesatu": 1})
 fold_ms = _lazy_germanic_fold(
     "ovos_number_parser.numbers_id", "extract_number_ms",
     {"setengah", "separuh", "suku", "ribu", "juta", "bilion", "miliar"},
     join_words={"puluh", "ratus", "belas"})
-# Kabyle tells the time with Arabic-borrowed hour NOUNS carrying the definite
-# article ("ɣef lxemsa n tmeddit" = at five in the evening), not with the bare
-# Berber cardinals.  ovos-number-parser knows the bare borrowings (tlata,
-# setta, sebɛa, tmanya) but none of the article-bearing hour forms, so they
-# reach the matcher as plain words and no clock order can bind them.  Map them
-# to their value the way the Frisian coming-hour forms are mapped, so the HOUR
-# slot binds.  Every surface below is written as an hour on kab.wikipedia:
-# "ɣef lweḥda n tṣ̣ebḥit", "ɣef tizi n jjuj d wezgen n tmeddit", "ɣef tlata n
-# tmeddit", "ɣef ṛṛebɛa d wezgen n tmeddit", "ɣef lxemsa n tmeddit", "ɣef
-# tmanya n tmeddit", "ɣef ttesɛa n tṣ̣ebḥit", "Lɛecṛa n tṣ̣ebḥit", "ɣef leḥdac
-# d wezgen n tṣ̣ebḥit", "ɣef ttnac n yiḍ" (Tafsut n Yimaziɣen, Bgayet).
-# The remaining hour nouns come from the Kabyle sentences on Tatoeba, each
-# with the English it is paired with:
-#   "Ha-tt-an d ssaɛtin ɣiṛ ṛṛbeɛ."      -- "It's quarter to two."
-#   "Ha-tt-an d zzuǧ ɣiṛ ṛṛbeɛ."         -- "It's quarter to two."
-#   "Ad d-uɣaleɣ ɣef ssetta d wezgen."   -- "I will be back at half past six."
-#   "Ha-tt-an d ssebɛ u ṛṛbeɛ."          -- a seven-o'clock quarter reading.
-#   "Ha-tt-an d ttmanya ɣiṛ ṛṛbeɛ."      -- "It's a quarter to eight."
-#   "Attan d lεacra d wezgen."           -- "It is ten-thirty."
-#   "Ha-tt-an d leḥḍac u ṛṛbeɛ."         -- "It's a quarter past eleven."
-# Two and seven take their standard forms from @athmanemokraoui, a native
-# Kabyle speaker, on
-# https://github.com/TigreGotico/chronologia/pull/846#issuecomment-5573978767:
-#   "Six is 'ssetta', but seven is 'ssebɛa' (always with the final -a)."
-#   "For the clock hour write 'ssaɛtin' (d ssaɛtin = it's two o'clock).  For
-#    the cardinal number 2 itself, use 'jjuǧ' depending on regional
-#    phonetics."
-# "ssebɛa" and "jjuǧ" rest on that comment alone.  The apocopated "ssebɛ" of
-# the Tatoeba sentence above keeps parsing beside "ssebɛa", as do "jjuj" and
-# "zzuǧ" beside "jjuǧ" -- a parser accepts every attested variation.
-_KAB_HOUR_NOUNS = {
-    "lweḥda": 1, "jjuj": 2, "jjuǧ": 2, "zzuǧ": 2, "ssaɛtin": 2, "ṛṛebɛa": 4,
-    "lxemsa": 5, "ssetta": 6, "ssebɛa": 7, "ssebɛ": 7, "ttmanya": 8,
-    "ttesɛa": 9,
-    "lɛecṛa": 10, "lɛacra": 10, "leḥdac": 11, "leḥḍac": 11, "ttnac": 12,
-}
-fold_kab = _lazy_germanic_fold(
-    "ovos_number_parser.numbers_kab", "extract_number_kab",
-    {"azgen", "wezgen", "agim", "amelyun"}, word_map=_KAB_HOUR_NOUNS)
-# fa (Persian): single extractor extract_number_fa(text, ordinals=False);
-# withhold the half/quarter clock words and the scale words.
-fold_fa = _lazy_germanic_fold(
-    "ovos_number_parser.numbers_fa", "extract_number_fa",
-    {"نیم", "ربع", "چارک", "هزار", "میلیون", "میلیارد"})
-# Persian spelled ordinals ("سوم" third) fold to their digit so the quarter's
-# ``ORD`` slot binds; from the model's ``pronounce_ordinal_fa``.
-fold_fa = _with_ordinals(fold_fa, "fa")
-
-#: the Persian length nouns, from ``locale/fa/unit_*.voc``.  A half word
-#: directly before one of these closes a length ("نیم ساعت" half an hour,
-#: "نیم قرن" half a century); anywhere else "نیم" keeps the clock FRACTION
-#: slot it is withheld from the fold for ("سه و نیم" is half past three).
-_FA_UNITS = frozenset({"ساعت", "دقیقه", "ثانیه", "روز", "هفته", "ماه",
-                       "سال", "دهه", "قرن"})
-_FA_HALF = "نیم"
-
-
-def _fa_half_before_unit(fold):
-    """Fold the Persian half word to 0.5 when a length noun closes it.
-
-    Persian counts an offset with a number and a unit ("دو ساعت دیگه" in two
-    hours), and the half word is not a number the extractor reads, so the
-    half-length frame had no count at all and the phrase resolved to nothing
-    while its duration read correctly.  English and German fold their half
-    word in the same position and for the same reason.
-    """
-    def pre(tokens):
-        out = []
-        for i, t in enumerate(tokens):
-            nxt = tokens[i + 1] if i + 1 < len(tokens) else None
-            if (t.text == _FA_HALF and nxt is not None
-                    and nxt.text in _FA_UNITS):
-                out.append(replace(t, text="0.5", is_number=True, value=0.5))
-                continue
-            out.append(t)
-        return fold(_reindex(tuple(out)))
-
-    return pre
-
-
-fold_fa = _fa_half_before_unit(fold_fa)
-
-
-

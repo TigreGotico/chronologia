@@ -8,7 +8,7 @@ months as a curated literal DUPLICATE surface ("ינואר" and "בינואר" b
 listed in month_1.voc). That approach cannot reach the holiday surfaces
 (harvested from ``well_known.tab`` at load time) or a multi-word holiday
 ("חג הפסח"), so the fix is a token-level strip in the ``he`` fold hook
-(``numfold_semitic._he_vav_strip``): a ו-initial token folds to its bare
+(``numlayer_semitic._he_vav_strip``): a ו-initial token folds to its bare
 remainder only when that remainder is one of a curated closed set of
 Hebrew date/holiday stems, so a real ו-initial root word is never touched.
 

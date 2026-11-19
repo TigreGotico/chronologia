@@ -2545,7 +2545,7 @@ def _sentence_boundary_between(text, start, end) -> bool:
 
 
 # Locales that write the hour-letter clock ("20h", "21h30"); see the folds in
-# numfold_romance, numfold_agglutinative and numfold_germanic.
+# numfold_romance, numlayer_el and numlayer_sv.
 _HOUR_LETTER_LOCALES = frozenset({
     "ast", "ca", "el", "es", "fr", "gl", "it", "oc", "pt", "ro", "sv"})
 _HOUR_LITERAL = re.compile(r"\d{1,2}:\d{2}")

@@ -25,7 +25,7 @@ is neither singular nor plural -- jumejn, ġimagħtejn, sagħtejn, xahrejn,
 sentejn -- and a matcher that knows only singular and plural does not see a
 count in them at all.  Each is split into a synthetic ``2`` plus the ordinary
 plural the unit vocabulary already ships, the same rewrite
-:mod:`chronologia.extract.numfold_semitic` performs for Hebrew's יומיים.
+:mod:`chronologia.extract.numlayer_semitic` performs for Hebrew's יומיים.
 Minute, second and century take NO dual: they are Romance loans (minuta,
 sekonda, seklu, cf. Italian minuto/secondo/secolo) that never acquired Semitic
 dual morphology, so no dual is invented for them.  The same ``-ejn`` suffix
