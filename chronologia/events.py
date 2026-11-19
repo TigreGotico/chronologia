@@ -154,9 +154,9 @@ def _is_bare_clock_length(text: str, lang: str, anchor: datetime,
     length and a date: nl "twee uur in de ochtend" is two hours in the
     morning.
     """
-    from chronologia.extract import explain, load_lang_spec
+    from chronologia.extract import _timespan_engine, explain
 
-    spec = load_lang_spec(lang)
+    spec = _timespan_engine(lang).spec
     markers = {word.lower() for name in ("before", "after")
                for surface in spec.connectors.get(name, ())
                for word in surface.split()}
@@ -187,9 +187,9 @@ def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
     part of the day to the hour: "deux heures du matin" is 02:00.  Only
     languages that list a ``clock_of`` suffix tell the two forms apart.
     """
-    from chronologia.extract import explain, load_lang_spec
+    from chronologia.extract import _timespan_engine, explain
 
-    spec = load_lang_spec(lang)
+    spec = _timespan_engine(lang).spec
     suffixes = spec.connectors.get("clock_of")
     if not suffixes:
         return False
@@ -239,7 +239,7 @@ def extract_event(
     """
     from chronologia.extract import (_timespan_engine, extract_candidates,
                                      extract_duration, extract_recurrence,
-                                     extract_timespan, load_lang_spec)
+                                     extract_timespan)
     from chronologia.extract.nseries import _duration_core
     from chronologia.extract.pipeline import require_text
 
@@ -293,7 +293,7 @@ def extract_event(
             span_words = all_words - words(whole.remainder)
             rest_words = Counter() if rest is None else (
                 words(got_dur.remainder) - words(rest.remainder))
-            spec = load_lang_spec(lang)
+            spec = engine.spec
             offset_words = Counter({
                 word: len(all_words)
                 for name in ("before", "after", "in", "ago")
