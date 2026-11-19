@@ -1128,11 +1128,11 @@ third week". This pass folds each spelled number into one digit token, so a
 `DAY`/`YEAR`/`ORD` slot binds the same whether the writer typed `5` or
 `five`.
 
-For Arabic, Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Persian, Portuguese, Spanish, Swedish and Turkish the numbers come from **numtag**
+For Arabic, Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Persian, Portuguese, Spanish, Swedish and Turkish the numbers come from **numtag**
 (`numlayer.py`). `pretokens` tags the input text once, and each token inside
 a number mention carries that mention beside its word. The language fold
 (`numlayer_en.py`, `numlayer_pt.py`, `numlayer_de.py`, `numlayer_nl.py`,
-`numlayer_da.py`, `numlayer_sv.py`, `numlayer_ca.py` and its Romance
+`numlayer_da.py`, `numlayer_sv.py`, `numlayer_fy.py`, `numlayer_ca.py` and its Romance
 siblings over `numlayer_romance.py`, `numlayer_semitic.py` for Arabic and
 Hebrew, `numlayer_agglutinative.py` for Estonian, Finnish, Hungarian and
 Basque, `numlayer_turkic.py` for Turkish and Azerbaijani, and
@@ -1842,7 +1842,7 @@ The vocabulary files are loaded through **ovos-spec-tools**, the shared
 `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are
 folded to digits before matching, so a slot binds the same whether the
 writer typed `5` or `five`. **numtag** reads the numbers of
-Arabic, Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Persian, Portuguese, Spanish, Swedish and Turkish; **ovos-number-parser** reads the other languages.
+Arabic, Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Persian, Portuguese, Spanish, Swedish and Turkish; **ovos-number-parser** reads the other languages.
 
 To add a language, create `chronologia/locale/<code>/`, translate the `.voc`
 surface forms, and write a `lang.json` that sets the conventions and lists

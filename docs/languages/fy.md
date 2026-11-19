@@ -39,10 +39,9 @@ the afternoon band is `middeis`, and the two are kept apart deliberately.
 **The spoken hour takes an inflected form of its own before a fraction.**
 `ienen`, `twaen`, `trijen`, `fjouweren`, `fiven`, `seizen`, `sânen`, `achten`,
 `njoggenen`, `tsienen`, `alven` and `tolven` are supplied as a fixed word-to-value
-map in `chronologia/extract/numfold_germanic.py`, because the number parser this
-locale folds through reads only the uninflected cardinals. The map has no cited
-source. The uninflected form still reads, so `healwei ien` and `healwei ienen`
-both land on 00:30.
+map in `chronologia/extract/numlayer_fy.py`, because numtag reads only the
+uninflected cardinals. The map has no cited source. The uninflected form still
+reads, so `healwei ien` and `healwei ienen` both land on 00:30.
 
 **Day parts** are `nachts` `[00:00, 06:00)`, `moarns` `[06:00, 12:00)`,
 `middeis` `[12:00, 18:00)` and `jûns` `[18:00, 24:00)`, transcribed in
