@@ -3830,8 +3830,13 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
 
     def _adjacent(a, b):
         (lo, hi) = sorted((a.span, b.span))
-        return all(i in _covered or tokens[i].text in _glue
-                   for i in range(lo[1], hi[0]))
+        gap = [i for i in range(lo[1], hi[0])
+               if i not in _covered and tokens[i].text not in _glue]
+        # "tomorrow's meeting at 9": the noun a possessive day modifies sits
+        # between the day and its clock.
+        if gap == [lo[1]] and tokens[lo[1] - 1].text.endswith(_POSSESSIVE):
+            return True
+        return not gap
 
     _articles = frozenset(spec.connectors.get("article", ()))
 
@@ -4024,6 +4029,9 @@ def _fold_apposed_weekday(resolved, spec, tokens, text):
     return ([(m, r) for m, r in resolved if m is not wd_match],
             set(range(*wd_match.span)))
 
+
+#: The endings of a possessive noun.
+_POSSESSIVE = ("'s", "\u2019s")
 
 #: Connector keys that join two distinct references.
 _SEPARATOR_KEYS = frozenset({"and", "or", "to", "from", "between", "until",
