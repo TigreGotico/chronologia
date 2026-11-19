@@ -1128,11 +1128,11 @@ third week". This pass folds each spelled number into one digit token, so a
 `DAY`/`YEAR`/`ORD` slot binds the same whether the writer typed `5` or
 `five`.
 
-For Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Hungarian, Italian, Portuguese, Spanish, Swedish and Turkish the numbers come from **numtag**
+For Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Hungarian, Italian, Norwegian (Bokmål and Nynorsk), Portuguese, Spanish, Swedish and Turkish the numbers come from **numtag**
 (`numlayer.py`). `pretokens` tags the input text once, and each token inside
 a number mention carries that mention beside its word. The language fold
 (`numlayer_en.py`, `numlayer_pt.py`, `numlayer_de.py`, `numlayer_nl.py`,
-`numlayer_da.py`, `numlayer_sv.py`, `numlayer_ca.py` and its Romance
+`numlayer_da.py`, `numlayer_sv.py`, `numlayer_nb.py`, `numlayer_nn.py`, `numlayer_ca.py` and its Romance
 siblings over `numlayer_romance.py`, `numlayer_agglutinative.py` for Estonian,
 Finnish, Hungarian and Basque, and `numlayer_turkic.py` for Turkish and
 Azerbaijani) names the number words that the date
