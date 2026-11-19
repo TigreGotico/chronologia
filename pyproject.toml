@@ -26,12 +26,12 @@ classifiers = [
 # Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian,
 # Czech, Danish, Dutch, English, Estonian, Finnish, French, Galician,
 # German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese,
-# Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene,
-# Spanish, Swedish, Turkish and Ukrainian, ovos-number-parser reads the
-# spelled numbers of the other languages, and ovos-spec-tools loads the
-# per-language .voc vocabulary bundles under chronologia/locale/. The
-# calendrical core (dates, spans, calendars, eras) still runs on the standard
-# library alone.
+# Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese,
+# Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and
+# Ukrainian, ovos-number-parser reads the spelled numbers of the other
+# languages, and ovos-spec-tools loads the per-language .voc vocabulary
+# bundles under chronologia/locale/. The calendrical core (dates, spans,
+# calendars, eras) still runs on the standard library alone.
 dependencies = [
     "numtag>=0.15.3a1",
     "ovos-number-parser>=0.19.7a2",
