@@ -67,8 +67,8 @@ scoped noun: `kuartal depan`, `minggu lalu`.
 both trailing the year: `1492 m`, `44 sm`.
 
 **Quarters** postpose the ordinal after `kuartal`: `kuartal ketiga` reads as
-Q3 of the anchor year, folding the single-word spelled ordinal through
-`ovos-number-parser`'s `numbers_id`. The year form uses the digit instead —
+Q3 of the anchor year; numtag reads the spelled ordinal. The year form uses
+the digit instead —
 `kuartal 3 2026` — and `Q3 2026` also reads. `kuartal ini` / `depan` / `lalu`
 resolve the current, next and previous quarter relative to the anchor.
 

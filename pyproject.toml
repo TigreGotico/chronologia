@@ -22,11 +22,12 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 # Natural-language date extraction (chronologia.extract / extract_timespan)
-# needs three runtime helpers: numtag reads the numbers of Aragonese,
-# Asturian, Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian,
-# Finnish, French, Galician, German, Hungarian, Italian, Mirandese, Occitan,
-# Portuguese, Romanian, Spanish, Swedish and Turkish, ovos-number-parser
-# reads the spelled numbers of the other
+# needs three runtime helpers: numtag reads the numbers of Arabic,
+# Aragonese, Asturian, Azerbaijani, Basque, Catalan, Danish, Dutch, English,
+# Estonian, Finnish, French, Galician, German, Greek, Hebrew, Hungarian,
+# Indonesian, Italian, Kabyle, Mirandese, Occitan, Persian, Portuguese,
+# Romanian, Spanish, Swedish and Turkish,
+# ovos-number-parser reads the spelled numbers of the other
 # languages, and ovos-spec-tools loads the per-language .voc vocabulary
 # bundles under chronologia/locale/. The calendrical core (dates, spans,
 # calendars, eras) still runs on the standard library alone.
