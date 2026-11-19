@@ -1242,19 +1242,20 @@ def _bare_numeral(text, sub, engine, anchor):
         return None
     if len(sub) == 1:
         return nums[0]
-    # a day-label noun ("dia"/"día") plus nothing else besides the numeral is
-    # still a bare day, even though it resolves on its own to a day of the
-    # ANCHOR month -- "do dia 2 ao dia 5 de setembro" would otherwise bind the
-    # left endpoint to the 2nd of the anchor's month instead of September,
-    # stranding it when the composed range came out reversed.  The label noun
-    # names no month of its own (see ``marker_day_label.voc``), so a slice that
-    # is nothing but the label plus the day number still has to look to its
+    # a slice holding one day-label word ("dia", "día"), the day number and
+    # nothing else but articles ("o dia 2", "el día 3") is a bare day, even
+    # though it resolves on its own to a day of the ANCHOR month -- "do dia 2
+    # ao dia 5 de setembro" would otherwise bind the left endpoint to the 2nd
+    # of the anchor's month instead of September.  The label names no month of
+    # its own (see ``marker_day_label.voc``), so the slice looks to its
     # partner exactly as the label-less "5" in "del 5 al 12 de junio" does.
     # Checked *before* the duration-unit veto below: the label heads the
     # numeral ("dia 2"), the opposite word order from a duration ("2 dias"),
     # so the two shapes never collide.
     labels = set(engine.spec.connectors.get("day_label", ()))
-    if labels and all(t is nums[0] or t.text in labels for t in sub):
+    glue = labels | set(engine.spec.connectors.get("article", ()))
+    if labels and any(t.text in labels for t in sub) \
+            and all(t is nums[0] or t.text in glue for t in sub):
         return nums[0]
     # a slice carrying a unit is a duration, not a bare day -- "za 3 dnya do 5
     # aprelya" ("3 days before April 5") is an anchored offset whose "za 3 dnya"
@@ -1356,6 +1357,23 @@ def _lend_year(bare, donor):
     return tuple(bare) + (lent,)
 
 
+def _labelled_day_keeps_own(sub, donor, donor_read, spec):
+    """True when a day-labelled slice must not borrow from its partner.
+
+    "dia 10" names a day of a month, never an hour or a count of days, so a
+    partner that is a clock ("às 18h") or counts a unit ("daqui a 5 dias")
+    has nothing to lend it.  ``donor_read`` is the partner's own reading.
+    """
+    labels = spec.connectors.get("day_label", ())
+    if not any(t.text in labels for t in sub):
+        return False
+    units = set(spec.units) | set(spec.singular_units)
+    counts_unit = any(t.is_number and t.value is not None and t.value < 100
+                      and nxt.text in units
+                      for t, nxt in zip(donor, donor[1:]))
+    return counts_unit or (donor_read is not None and donor_read[2] == "clock")
+
+
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
                    daily=None, since=False):
@@ -1395,12 +1413,14 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # :func:`_shared_context` for the conditions that keep it narrow.
     bare_left, bare_right = bare_of(left_tok), bare_of(right_tok)
     shared_left = shared_right = False
-    if bare_left is not None and bare_right is None:
+    if bare_left is not None and bare_right is None \
+            and not _labelled_day_keeps_own(left_tok, right_tok, right, spec):
         shared = _shared_context(bare_left, right_tok)
         if shared is not None:
             left = borrowed(shared) or left
             shared_left = True
-    elif bare_right is not None and bare_left is None:
+    elif bare_right is not None and bare_left is None \
+            and not _labelled_day_keeps_own(right_tok, left_tok, left, spec):
         shared = _shared_context(bare_right, left_tok)
         if shared is not None:
             right = borrowed(shared) or right

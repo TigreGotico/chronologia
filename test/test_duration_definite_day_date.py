@@ -85,24 +85,113 @@ def test_unlabelled_day_word_stays_out_of_the_summary(lang, text, summary):
     assert extract_event(text, lang, _ANCHOR).summary == summary
 
 
-_RANGE_ISSUE = "https://github.com/TigreGotico/chronologia/issues/1219"
 _RANGE_ANCHOR = datetime(2026, 1, 30, 10, 0)
 
 _RANGES = [
     ("es", "desde el día 3 hasta el día 5 de marzo"),
     ("gl", "desde o día 3 ata o día 5 de marzo"),
+    ("es", "entre el día 3 y el día 5 de marzo"),
+    ("gl", "entre o día 3 e o día 5 de marzo"),
+    ("ca", "entre el dia 3 i el dia 5 de març"),
+    ("pt", "desde o dia 3 até o dia 5 de março"),
+    ("it", "tra il giorno 3 e il giorno 5 marzo"),
 ]
+_RANGE_END = datetime(2026, 3, 5) + timedelta(days=1)
+_RANGE_GOLD = (AstroDate(2026, 3, 3), AstroDate.from_datetime(_RANGE_END))
 
 
-@pytest.mark.xfail(strict=True, reason=_RANGE_ISSUE)
 @pytest.mark.parametrize("lang,text", _RANGES)
 def test_day_range_event_span(lang, text):
     span = extract_event(text, lang, _RANGE_ANCHOR).span
-    assert (span.start, span.end) == (AstroDate(2026, 3, 3), AstroDate(2026, 3, 6))
+    assert (span.start, span.end) == _RANGE_GOLD
 
 
-@pytest.mark.xfail(strict=True, reason=_RANGE_ISSUE)
 @pytest.mark.parametrize("lang,text", _RANGES)
 def test_day_range_timespan(lang, text):
-    span = extract_timespan(text, lang, _RANGE_ANCHOR).span
-    assert (span.start, span.end) == (AstroDate(2026, 3, 3), AstroDate(2026, 3, 6))
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert (got.span.start, got.span.end) == _RANGE_GOLD
+    assert got.remainder == ""
+
+
+_PARTNERS = [
+    (
+        "pt",
+        "desde o dia 10 até às 18h",
+        datetime(2026, 2, 10),
+        datetime(2026, 2, 10, 18) + timedelta(minutes=1),
+    ),
+    (
+        "pt",
+        "desde o dia 3 até daqui a 5 dias",
+        datetime(2026, 2, 3),
+        _RANGE_ANCHOR + timedelta(days=5) + timedelta(days=1),
+    ),
+    (
+        "es",
+        "desde las 10 hasta el día 5 de marzo",
+        datetime(2026, 3, 5, 10),
+        datetime(2026, 3, 5) + timedelta(days=1),
+    ),
+]
+
+
+@pytest.mark.parametrize("lang,text,start,end", _PARTNERS)
+def test_labelled_day_keeps_its_own_month_against_a_clock_or_offset(
+        lang, text, start, end):
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert (got.span.start, got.span.end) == (
+        AstroDate.from_datetime(start), AstroDate.from_datetime(end))
+    assert got.remainder == ""
+
+
+_RELATIVE_YEARS = [
+    ("pt", "do dia 3 ao dia 5 de março do ano passado"),
+    ("es", "del día 3 al 5 de marzo del año pasado"),
+]
+
+
+@pytest.mark.parametrize("lang,text", _RELATIVE_YEARS)
+def test_labelled_day_borrows_the_month_of_a_relative_year_partner(lang, text):
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert [(d.month, d.day) for d in (got.span.start, got.span.end)] == [
+        (3, 3), (3, 6)]
+
+
+def test_ru_labelled_day_borrows_the_month_of_a_relative_year_partner():
+    got = extract_timespan("с 3 числа по 5 марта следующего года", "ru",
+                           _RANGE_ANCHOR)
+    year = _RANGE_ANCHOR.year + 1
+    assert (got.span.start, got.span.end) == (
+        AstroDate(year, 3, 3), AstroDate.from_datetime(
+            datetime(year, 3, 5) + timedelta(days=1)))
+
+
+_MONTH_ISSUE = "https://github.com/TigreGotico/chronologia/issues/1230"
+_RELATIVE_MONTHS = [
+    ("gl", "entre o día 3 e o 5 do mes que vén"),
+    ("ca", "entre el dia 3 i el 5 del mes que ve"),
+    ("pt", "desde o dia 3 até ao 5 do mês que vem"),
+]
+
+
+@pytest.mark.xfail(strict=True, reason=_MONTH_ISSUE)
+@pytest.mark.parametrize("lang,text", _RELATIVE_MONTHS)
+def test_day_range_with_a_relative_month_end(lang, text):
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert (got.span.start, got.span.end) == (
+        AstroDate(2026, 2, 3), AstroDate(2026, 2, 6))
+    assert got.remainder == ""
+
+
+_NAMED_YEARS = [
+    ("ru", "с 3 числа по 5 марта 2025 года"),
+    ("uk", "з 3 числа до 5 березня 2025 року"),
+]
+
+
+@pytest.mark.parametrize("lang,text", _NAMED_YEARS)
+def test_labelled_day_borrows_the_month_of_a_named_year_partner(lang, text):
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert (got.span.start, got.span.end) == (
+        AstroDate(2025, 3, 3), AstroDate.from_datetime(
+            datetime(2025, 3, 5) + timedelta(days=1)))
