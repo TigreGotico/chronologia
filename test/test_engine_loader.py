@@ -3,6 +3,7 @@ import json
 
 import pytest
 from engine_helpers import load_zz
+from ovos_spec_tools import LocaleResources
 
 from chronologia.extract import load_lang_spec
 
@@ -109,3 +110,22 @@ def test_calendar_month_at_upper_bound_loads(tmp_path):
     root = _write_locale(tmp_path, {"month_hebrew_13.voc": "zadar2\n"})
     spec = load_lang_spec("xx", root)
     assert spec.calendar_months["hebrew"]["zadar2"] == 13
+
+
+def test_one_locale_tree_is_read_once_for_every_load(tmp_path, monkeypatch):
+    root = _write_locale(tmp_path, {"month_6.voc": "zjun\n"})
+    (tmp_path / "yy").mkdir()
+    (tmp_path / "yy" / "month_7.voc").write_text("yjul\n", encoding="utf-8")
+    (tmp_path / "yy" / "lang.json").write_text("{}", encoding="utf-8")
+    built = []
+    real_init = LocaleResources.__init__
+
+    def counting_init(self, *args, **kwargs):
+        built.append(args)
+        real_init(self, *args, **kwargs)
+
+    monkeypatch.setattr(LocaleResources, "__init__", counting_init)
+    for _ in range(3):
+        assert load_lang_spec("xx", root).months == {"zjun": 6}
+        assert load_lang_spec("yy", root).months == {"yjul": 7}
+    assert len(built) == 1
