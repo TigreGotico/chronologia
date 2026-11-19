@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """A definite article, a day word and a day number name a date, not a length."""
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
 
+from chronologia.events import extract_event
 from chronologia.extract import extract_duration
 
 _DATES = [
@@ -29,7 +30,10 @@ _DATES = [
 _LENGTHS = [
     ("pt", "um dia", timedelta(days=1)),
     ("pt", "uma semana e um dia", timedelta(days=8)),
-    ("pt", "durante o dia", timedelta(days=1)),
+    ("pt", "durante um dia", timedelta(days=1)),
+    ("en", "a day 2 hours and 5 minutes", timedelta(days=1, hours=2, minutes=5)),
+    ("fr", "un jour, 2 heures et 5 minutes", timedelta(days=1, hours=2, minutes=5)),
+    ("it", "un giorno, 2 ore e 5 minuti", timedelta(days=1, hours=2, minutes=5)),
     ("es", "dura un día", timedelta(days=1)),
     ("pt", "2 dias", timedelta(days=2)),
 ]
@@ -44,3 +48,37 @@ def test_definite_day_number_is_no_duration(lang, text):
 def test_day_length_stays_a_duration(lang, text, expected):
     got = extract_duration(text, lang)
     assert got is not None and got.duration == expected
+
+
+_ANCHOR = datetime(2025, 6, 18, 10, 30)
+
+_SUMMARIES = [
+    ("pt", "reunião no dia 5 de dezembro", "reunião"),
+    ("es", "reunión el día 5 de diciembre", "reunión"),
+    ("ca", "reunió el dia 5 de desembre", "reunió"),
+    ("it", "riunione il giorno 5 dicembre", "riunione"),
+    ("it", "festa il giorno 24 dicembre", "festa"),
+    ("it", "esame il giorno primo maggio", "esame"),
+    ("gl", "reunión o día 5 de decembro", "reunión"),
+    ("gl", "reunión o dia 5 de decembro", "reunión"),
+]
+
+_ISSUE = "https://github.com/TigreGotico/chronologia/issues/1218"
+
+_UNLABELLED = [
+    ("en", "meeting on the day 5 of december", "meeting"),
+    ("fr", "réunion le jour 5 décembre", "réunion"),
+    ("de", "Treffen am Tag 5 Mai", "treffen"),
+    ("nl", "vergadering op de dag 5 december", "vergadering"),
+]
+
+
+@pytest.mark.parametrize("lang,text,summary", _SUMMARIES)
+def test_day_label_stays_out_of_the_summary(lang, text, summary):
+    assert extract_event(text, lang, _ANCHOR).summary == summary
+
+
+@pytest.mark.xfail(strict=True, reason=_ISSUE)
+@pytest.mark.parametrize("lang,text,summary", _UNLABELLED)
+def test_unlabelled_day_word_stays_out_of_the_summary(lang, text, summary):
+    assert extract_event(text, lang, _ANCHOR).summary == summary
