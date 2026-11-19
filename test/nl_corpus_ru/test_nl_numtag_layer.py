@@ -38,3 +38,25 @@ def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
     result = parse(text, anchor)
     assert result is not None
     assert result.span.start == ad(datetime(2026, month, day))
+
+
+# An ordinal hour after the clock preposition keeps its clock when a word
+# outside the vocabulary follows; the clock reads the same without it.
+def test_ordinal_after_a_locative_preposition_is_no_clock():
+    assert parse("на втором этаже") is None
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1192")
+def test_known_gap_amount_of_a_thousand_is_no_year():
+    assert start("за тысячу рублей вчера") == ad(datetime(2017, 6, 26))
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1193")
+def test_known_gap_hour_and_minute_clock():
+    assert start("в девять тридцать") == ad(datetime(2017, 6, 27, 21, 30))
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1194")
+def test_known_gap_first_half_of_the_day():
+    result = parse("в первой половине дня", datetime(2026, 11, 18, 8, 0))
+    assert result is None or result.span.start != ad(datetime(2026, 11, 18, 13, 0))

@@ -68,3 +68,26 @@ def test_spoken_hour_with_a_part_of_the_day(text, expected, left):
     result = parse(text)
     assert result.span.start == ad(expected)
     assert result.remainder == left
+
+
+# An ordinal hour after the clock preposition keeps its clock when a word
+# outside the vocabulary follows; the clock reads the same without it.
+@pytest.mark.parametrize("text,expected", [
+    ("o dziewiątej zadzwoń do mamy", datetime(2017, 6, 27, 21, 0)),
+    ("przypomnij mi o siódmej wyłączyć piekarnik",
+     datetime(2017, 6, 27, 19, 0)),
+    ("jutro o ósmej spotkanie z lekarzem", datetime(2017, 6, 28, 8, 0)),
+    ("piątego maja o dziewiątej spotkanie", datetime(2018, 5, 5, 9, 0)),
+])
+def test_ordinal_hour_before_another_word(text, expected):
+    assert start(text) == ad(expected)
+
+
+def test_ordinal_before_a_noun_is_no_clock():
+    assert parse("na drugim piętrze") is None
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1195")
+def test_known_gap_spelled_year_of_the_1950s():
+    assert start("w roku tysiąc dziewięćset pięćdziesiątym szóstym") == ad(
+        datetime(1956, 1, 1))

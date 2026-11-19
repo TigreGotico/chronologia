@@ -37,3 +37,22 @@ def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
     result = parse(text, anchor)
     assert result is not None
     assert result.span.start == ad(datetime(2026, month, day))
+
+
+# An ordinal hour after the clock preposition keeps its clock when a word
+# outside the vocabulary follows; the clock reads the same without it.
+@pytest.mark.parametrize("text,expected", [
+    ("о сьомій подзвони мамі", datetime(2017, 6, 27, 19, 0)),
+    ("нагадай мені о дев'ятій перевірити пошту", datetime(2017, 6, 27, 21, 0)),
+    ("завтра о восьмій зустріч з лікарем", datetime(2017, 6, 28, 8, 0)),
+    ("о пів на дев'яту перевірити пошту", datetime(2017, 6, 27, 20, 30)),
+    ("п'ятого травня о дев'ятій зустріч", datetime(2018, 5, 5, 9, 0)),
+    ("вранці о дев'ятій нагадуй мені перевірити пошту",
+     datetime(2017, 6, 28, 9, 0)),
+])
+def test_ordinal_hour_before_another_word(text, expected):
+    assert start(text) == ad(expected)
+
+
+def test_ordinal_before_a_noun_is_no_clock():
+    assert parse("на другому поверсі") is None

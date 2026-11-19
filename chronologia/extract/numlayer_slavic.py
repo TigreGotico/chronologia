@@ -13,7 +13,8 @@ the date words of the Slavic grammars:
 - an ordinal or a count of millions before a word that no date rule reads
   ranks or counts things, so it stays words: "ve druhém patře" is the second
   floor, not two o'clock, and "milion důvodů" keeps its word in an event
-  summary;
+  summary.  An ordinal right after the clock preposition ("о сьомій
+  подзвони", "o dziewiątej zadzwoń") is the hour;
 - an ordinal word from 1 to 31 can name a day of the month ("двадцатого
   числа"), so its number token carries :attr:`Token.day_ordinal`.
 
@@ -56,6 +57,9 @@ def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
                              "period_part_")
     decades = locale_words(lang, "decade_word_")
     vocabulary = locale_words(lang, "")
+    clock_at = (locale_words(lang, "marker_at.voc")
+                - locale_words(lang, "marker_during.voc", "marker_of.voc"))
+    toward = fractions | locale_words(lang, "marker_na.voc")
 
     def claims(tokens: Tuple[Token, ...]) -> Claims:
         claimed: Set[int] = set()
@@ -70,16 +74,23 @@ def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
             elif tok.text in decades:
                 claimed.add(i)
             elif ends_mention(tok) and _names_things(m):
+                first = i
+                while first and tokens[first - 1].mention is m:
+                    first -= 1
+                lead = first
+                while lead and tokens[lead - 1].text in toward:
+                    lead -= 1
+                if (m.kind is Kind.ORDINAL and lead
+                        and not tokens[lead].break_before
+                        and tokens[lead - 1].text in clock_at):
+                    continue
                 end = mention_end(tokens, i)
                 nxt = tokens[end] if end < n else None
                 if (nxt is not None and not nxt.is_number
                         and nxt.mention is None and not nxt.break_before
                         and nxt.text.isalpha()
                         and nxt.text not in vocabulary):
-                    k = i
-                    while k >= 0 and tokens[k].mention is m:
-                        claimed.add(k)
-                        k -= 1
+                    claimed.update(range(first, i + 1))
         return claimed, set(), {}
 
     return claims

@@ -9,8 +9,7 @@ cardinals in both scripts and the declined day-of-month ordinal.  Belarusian
 same reason.
 
 ``fold_sr`` is wired as the language ``hook`` in ``locale/sr/lang.json`` and is
-a pure ``tuple[Token] -> tuple[Token]``.  :func:`_day_rewrite` and
-:func:`_compose` also serve the Estonian fold.
+a pure ``tuple[Token] -> tuple[Token]``.
 """
 from __future__ import annotations
 
