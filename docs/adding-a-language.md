@@ -348,6 +348,7 @@ tell the two apart. Leave them out if your language has no such clash.
 |---|---|
 | `marker_at_counts.voc` | the clock prepositions that also introduce a counted group ("at", "a", "om") |
 | `marker_counted_noun.voc` | nouns that count people or things a clock never takes ("people", "vecinas", "mensen"), singular and plural, each gender |
+| `marker_participle_aux.voc` | forms of the auxiliary that a word with a season reading follows as a past participle (fr "avoir" before "été") |
 
 A bare hour behind one of those prepositions and directly before one of those
 nouns is read as a count. Any other word after the hour, a verb included, leaves

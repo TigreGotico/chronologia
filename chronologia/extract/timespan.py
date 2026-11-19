@@ -3347,6 +3347,22 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
     return tokens[b - 1].text in dir_markers
 
 
+def _participle_season_veto(tokens, match, spec) -> bool:
+    """True for a match that opens on a season word directly behind a form of
+    the auxiliary listed in ``marker_participle_aux.voc``.
+
+    French "été" is the season and the past participle of "être": "il a été
+    malade le 15 mai" says nothing about summer.  The participle follows a form
+    of "avoir", and the season never does, so the reading is dropped there and
+    the date beside it stays.  A language with no such file is untouched.
+    """
+    start = match.span[0]
+    if start == 0 or tokens[start].text not in spec.seasons:
+        return False
+    return tokens[start - 1].text in spec.connectors.get("participle_aux",
+                                                         frozenset())
+
+
 def _num_preamble_named_day_idiom_veto(tokens, match, spec) -> bool:
     """True for a ``named_day_after``/``named_day_before`` match immediately
     preceded by a NUMBER token ("two days after tomorrow", "3 days before
@@ -3427,6 +3443,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _stray_year_zero_veto(tokens, match, spec)
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
+            or _participle_season_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
