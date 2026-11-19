@@ -54,9 +54,11 @@ def _names_things(mention: NumberMention) -> bool:
 
 # The clock preposition of the languages that name the hour with an ordinal,
 # and the ending of the feminine locative ordinal that agrees with the elided
-# "godzina", "hodina" or "година": "o ósmej", "o ôsmej", "о сьомій".
-_ORDINAL_HOUR = {"pl": (("o",), "ej"), "sk": (("o",), "ej"),
-                 "uk": (("о", "об"), "ій")}
+# "godzina", "hodina" or "година": "o ósmej", "o ôsmej", "о сьомій".  Czech
+# has no such ordinal hour, so its empty ending lets only the half-hour
+# fraction pass: "o půl deváté".
+_ORDINAL_HOUR = {"cs": (("o",), ()), "pl": (("o",), "ej"),
+                 "sk": (("o",), "ej"), "uk": (("о", "об"), "ій")}
 
 
 def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
@@ -261,11 +263,17 @@ def _cs_spelling(word: str) -> str:
 
 
 # -- Croatian --------------------------------------------------------------
+_HR_ORDINAL_ENDINGS = ("toga", "moga", "voga", "goga", "ćega")
+
+
 def _hr_spelling(word: str) -> str:
     """The short form of a Croatian ordinal with the movable "a" (navezak):
     "trećega" is "trećeg", "prvoga" is "prvog" (Hrvatski jezični portal:
-    sklonidba rednih brojeva, "-og(a)", "-eg(a)")."""
-    return word[:-1] if len(word) > 5 and word.endswith(("oga", "ega")) else word
+    sklonidba rednih brojeva, "-og(a)", "-eg(a)").  The ordinal stems end in
+    "-t", "-m", "-v", "-g" or "-ć" before the ending, and the shortest ordinal
+    has six letters, so the pronouns "toga", "svoga", "nekoga" and "nečega"
+    stay as they are."""
+    return word[:-1] if len(word) > 5 and word.endswith(_HR_ORDINAL_ENDINGS) else word
 
 
 # -- Bulgarian -------------------------------------------------------------

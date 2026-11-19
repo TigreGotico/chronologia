@@ -43,3 +43,8 @@ def test_masculine_ordinal_after_o_is_no_clock():
 ])
 def test_known_gap_fraction_clock_before_another_word(text, expected):
     assert start(text) == ad(expected)
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1227")
+def test_known_gap_o_prvej_before_a_noun_is_no_clock():
+    assert parse("kniha o prvej svetovej vojne") is None

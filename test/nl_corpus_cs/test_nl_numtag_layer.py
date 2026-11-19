@@ -24,8 +24,7 @@ def test_numbers_read_through_numtag(text, expected):
     assert start(text) == ad(expected)
 
 
-# An ordinal after a preposition names a thing, not an hour: the hour of
-# this language is a cardinal.
+# An ordinal after a locative preposition names a floor or a rank, not an hour.
 def test_ordinal_after_a_locative_preposition_is_no_clock():
     assert parse("ve druhém patře") is None
 
@@ -46,3 +45,11 @@ def test_ordinal_after_about_is_no_clock(text):
 ])
 def test_known_gap_fraction_clock_before_another_word(text, expected):
     assert start(text) == ad(expected)
+
+
+def test_half_hour_after_o_before_another_word():
+    assert start("o půl deváté zavolej mámě") == ad(datetime(2017, 6, 27, 20, 30))
+
+
+def test_plain_ordinal_after_o_is_no_clock():
+    assert parse("o druhém patře") is None

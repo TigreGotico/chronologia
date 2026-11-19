@@ -39,8 +39,7 @@ def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
     assert result.span.start == ad(datetime(2026, month, day))
 
 
-# An ordinal after a preposition names a thing, not an hour: the hour of
-# this language is a cardinal.
+# An ordinal after a locative preposition names a floor or a rank, not an hour.
 def test_ordinal_after_a_locative_preposition_is_no_clock():
     assert parse("на втором этаже") is None
 
