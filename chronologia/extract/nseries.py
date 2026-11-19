@@ -420,8 +420,7 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                               or (tokens[j].text not in spec.quantifiers
                                   and j + 2 < n
                                   and _unit_of(tokens[j + 1]) == "day"
-                                  and (tokens[j + 2].is_number
-                                       or tokens[j + 2].ordinal))
+                                  and tokens[j + 2].text[:1].isdigit())
                               or tokens[j + 1].text in fracs
                               or (tokens[j + 1].text in spec.quantifiers
                                   and spec.lang in NUMTAG_LANGS)):
