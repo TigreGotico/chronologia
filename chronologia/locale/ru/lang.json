@@ -70,7 +70,8 @@
       "orders": [
         "in GYEAR",
         "article? year_word GYEAR",
-        "GYEAR"
+        "GYEAR",
+        "article? PART GYEAR year_word?"
       ]
     },
     "decade_ref": {

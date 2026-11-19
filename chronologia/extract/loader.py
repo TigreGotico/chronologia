@@ -33,6 +33,7 @@ from __future__ import annotations
 import glob
 import json
 import os
+from functools import lru_cache
 from importlib import import_module
 from pathlib import Path
 from typing import Callable, Dict, Optional, Set
@@ -54,6 +55,11 @@ from chronologia.extract.tokenizer import Tokenizer
 
 LOCALE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "locale")
 
+# LocaleResources reads every language of a tree at construction, and an
+# installed tree does not change while the process runs: one instance per
+# tree serves every language.
+_locale_resources = lru_cache(maxsize=None)(LocaleResources)
+
 
 def _resolve_dotted(ref: Optional[str]) -> Optional[Callable]:
     if not ref:
@@ -63,7 +69,7 @@ def _resolve_dotted(ref: Optional[str]) -> Optional[Callable]:
 
 
 def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
-    res = LocaleResources(locale_dir)
+    res = _locale_resources(locale_dir)
     lang_dir = os.path.join(locale_dir, lang)
 
     with open(os.path.join(lang_dir, "lang.json"), encoding="utf-8") as fh:
