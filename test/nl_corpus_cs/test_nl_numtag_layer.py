@@ -38,3 +38,11 @@ def test_known_gap_hour_and_minute_clock():
 @pytest.mark.parametrize("text", ["mluvili jsme o druhém díle", "o třetím pokusu"])
 def test_ordinal_after_about_is_no_clock(text):
     assert parse(text) is None
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
+@pytest.mark.parametrize("text,expected", [
+    ("v půl deváté zavolej mámě", datetime(2017, 6, 27, 20, 30)),
+])
+def test_known_gap_fraction_clock_before_another_word(text, expected):
+    assert start(text) == ad(expected)

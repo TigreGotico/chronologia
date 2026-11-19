@@ -68,3 +68,12 @@ def test_known_gap_first_half_of_the_day():
 ])
 def test_ordinal_after_about_is_no_clock(text):
     assert parse(text) is None
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
+@pytest.mark.parametrize("text,expected", [
+    ("в половине девятого позвони маме", datetime(2017, 6, 27, 20, 30)),
+    ("в четверть девятого позвони маме", datetime(2017, 6, 27, 20, 15)),
+])
+def test_known_gap_fraction_clock_before_another_word(text, expected):
+    assert start(text) == ad(expected)

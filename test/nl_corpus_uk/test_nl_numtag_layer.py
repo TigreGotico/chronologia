@@ -59,3 +59,11 @@ def test_ordinal_before_a_noun_is_no_clock():
 
 def test_masculine_ordinal_after_o_is_no_clock():
     assert parse("о другому етапі") is None
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
+@pytest.mark.parametrize("text,expected", [
+    ("пів на дев'яту подзвони мамі", datetime(2017, 6, 27, 20, 30)),
+])
+def test_known_gap_fraction_clock_before_another_word(text, expected):
+    assert start(text) == ad(expected)
