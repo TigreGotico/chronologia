@@ -4,8 +4,9 @@ from datetime import datetime, timedelta
 
 import pytest
 
+from chronologia import AstroDate
 from chronologia.events import extract_event
-from chronologia.extract import extract_duration
+from chronologia.extract import extract_duration, extract_timespan
 
 _DATES = [
     ("pt", "no dia 5 de dezembro"),
@@ -82,3 +83,26 @@ def test_day_label_stays_out_of_the_summary(lang, text, summary):
 @pytest.mark.parametrize("lang,text,summary", _UNLABELLED)
 def test_unlabelled_day_word_stays_out_of_the_summary(lang, text, summary):
     assert extract_event(text, lang, _ANCHOR).summary == summary
+
+
+_RANGE_ISSUE = "https://github.com/TigreGotico/chronologia/issues/1219"
+_RANGE_ANCHOR = datetime(2026, 1, 30, 10, 0)
+
+_RANGES = [
+    ("es", "desde el día 3 hasta el día 5 de marzo"),
+    ("gl", "desde o día 3 ata o día 5 de marzo"),
+]
+
+
+@pytest.mark.xfail(strict=True, reason=_RANGE_ISSUE)
+@pytest.mark.parametrize("lang,text", _RANGES)
+def test_day_range_event_span(lang, text):
+    span = extract_event(text, lang, _RANGE_ANCHOR).span
+    assert (span.start, span.end) == (AstroDate(2026, 3, 3), AstroDate(2026, 3, 6))
+
+
+@pytest.mark.xfail(strict=True, reason=_RANGE_ISSUE)
+@pytest.mark.parametrize("lang,text", _RANGES)
+def test_day_range_timespan(lang, text):
+    span = extract_timespan(text, lang, _RANGE_ANCHOR).span
+    assert (span.start, span.end) == (AstroDate(2026, 3, 3), AstroDate(2026, 3, 6))
