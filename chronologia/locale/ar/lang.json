@@ -126,8 +126,8 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_semitic:fold_ar",
-  "pre_hook": "chronologia.extract.numfold_semitic:split_ar_range_word",
+  "hook": "chronologia.extract.numlayer_semitic:fold_ar",
+  "pre_hook": "chronologia.extract.numlayer_semitic:split_ar_range_word",
   "quantifiers": {
     "1": [
       "واحد",
