@@ -26,9 +26,9 @@ classifiers = [
 # Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch,
 # English, Estonian, Finnish, French, Galician, German, Greek, Hebrew,
 # Hungarian, Indonesian, Italian, Kabyle, Persian, Polish, Portuguese,
-# Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian, ovos-
-# number-parser reads the spelled numbers of the other
-# languages, and ovos-spec-tools loads the per-language .voc vocabulary
+# Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian,
+# ovos-number-parser reads the spelled numbers of the other languages, and
+# ovos-spec-tools loads the per-language .voc vocabulary
 # bundles under chronologia/locale/. The calendrical core (dates, spans,
 # calendars, eras) still runs on the standard library alone.
 dependencies = [
