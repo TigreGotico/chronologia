@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Spelled-ordinal folding shared across the number-fold families.
 
-The cardinal folds (``numfold``, ``numfold_romance``, ``numfold_semitic``,
-``numfold_turkic``, ``numfold_agglutinative``) read *cardinal* number-words
-from ``ovos_number_parser``'s ``extract_number_<lang>`` back-end.  Several
+The cardinal folds (``numfold`` and ``numfold_slavic``)
+read *cardinal* number-words from
+``ovos_number_parser``'s ``extract_number_<lang>`` back-end.  Several
 constructions instead take a **spelled ordinal** in their ``ORD`` slot -- the
 calendar quarter is the canonical one ("الربع الثالث" = the third quarter).
 Those ordinal surfaces are their own closed morphological class the cardinal

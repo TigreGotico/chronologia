@@ -41,6 +41,8 @@
     },
     "clock_time": {
       "orders": [
+        "at CLOCK oclock MERIDIEM ZONE?",
+        "CLOCK oclock MERIDIEM ZONE?",
         "at? CLOCK MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
         "at HOUR oclock MERIDIEM? ZONE?",
@@ -68,7 +70,8 @@
       "orders": [
         "in GYEAR",
         "article? year_word GYEAR",
-        "GYEAR"
+        "GYEAR",
+        "article? PART GYEAR year_word?"
       ]
     },
     "decade_ref": {
