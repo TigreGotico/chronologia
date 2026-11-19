@@ -1128,7 +1128,7 @@ third week". This pass folds each spelled number into one digit token, so a
 `DAY`/`YEAR`/`ORD` slot binds the same whether the writer typed `5` or
 `five`.
 
-For Arabic, Aragonese, Asturian, Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Portuguese, Romanian, Spanish, Swedish and Turkish the numbers come from **numtag**
+For Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian the numbers come from **numtag**
 (`numlayer.py`). `pretokens` tags the input text once, and each token inside
 a number mention carries that mention beside its word. The language fold
 (`numlayer_en.py`, `numlayer_pt.py`, `numlayer_de.py`, `numlayer_nl.py`,
@@ -1137,12 +1137,18 @@ siblings (`numlayer_an.py`, `numlayer_ast.py`, `numlayer_mwl.py`,
 `numlayer_oc.py` and `numlayer_ro.py` among them) over `numlayer_romance.py`, `numlayer_semitic.py` for Arabic and
 Hebrew, `numlayer_agglutinative.py` for Estonian, Finnish, Hungarian and
 Basque, `numlayer_turkic.py` for Turkish and Azerbaijani, and
-`numlayer_el.py`, `numlayer_fa.py`, `numlayer_id.py` and `numlayer_kab.py`)
+`numlayer_el.py`, `numlayer_fa.py`, `numlayer_id.py`, `numlayer_kab.py` and
+`numlayer_slavic.py` for the Slavic languages)
 names the number words that the date
 grammar reads as words in their position: `half`, `quarter` and `media` in
 a clock (German `halb`, `viertel`), `moins` in "dix heures moins dix",
 `million` and `milhões` before a year word in deep time, `segunda` as
-Monday, Italian `prima` as "before". Every other mention folds to its value. In deep time the count before
+Monday, Italian `prima` as "before", Czech `půl` in "půl deváté", Russian
+`девяностые` as the 1990s. A Slavic ordinal before a word that no date rule
+reads ranks things and stays a word: "ve druhém patře" is the second floor.
+In Polish, Slovak and Ukrainian the feminine ordinal after "o" ("о", "об")
+is the hour instead: "o dziewiątej zadzwoń do mamy" is 21:00.
+Every other mention folds to its value. In deep time the count before
 the scale word is the mention value in units of that word: "one million two
 hundred thousand years ago" counts 1200 thousands and "dois milhões e meio
 de anos" counts 2.5 milhões, so the age is numtag's value. The count is in
@@ -1151,8 +1157,11 @@ in that unit ("66 million years ago" is one million years wide). When another da
 on its own words. `pt-BR` reads its numbers with numtag's Brazilian lexicon,
 where "bilhão" is 10^9; `pt` reads the European one, where it is 10^12.
 `fr-BE` and `fr-CH` read "septante" and "nonante" (and `fr-CH` "huitante")
-with numtag's Belgian and Swiss lexicons; `fr` reads the lexicon of France. The
-other languages fold with their `numfold_*` module and ovos-number-parser.
+with numtag's Belgian and Swiss lexicons; `fr` reads the lexicon of France.
+numtag has no Belarusian, Macedonian or Serbian lexicon, so `be`, `mk` and
+`sr` keep their own tables (`numfold_be.py`, `numfold_macedonian.py`,
+`numfold_slavic.py`). The other languages fold with their `numfold_*` module
+and ovos-number-parser.
 
 **4. Multiword merge** (`chronologia.extract.pipeline.merge_multiword`,
 reached through `fold_tokens`). Vocabulary
@@ -1843,7 +1852,7 @@ The vocabulary files are loaded through **ovos-spec-tools**, the shared
 `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are
 folded to digits before matching, so a slot binds the same whether the
 writer typed `5` or `five`. **numtag** reads the numbers of
-Arabic, Aragonese, Asturian, Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Portuguese, Romanian, Spanish, Swedish and Turkish; **ovos-number-parser** reads the other languages.
+Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian; **ovos-number-parser** reads the other languages.
 
 To add a language, create `chronologia/locale/<code>/`, translate the `.voc`
 surface forms, and write a `lang.json` that sets the conventions and lists

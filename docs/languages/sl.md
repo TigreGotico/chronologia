@@ -5,10 +5,8 @@ expect: `pol devetih` is 8:30, not 9:30 — "half toward nine", counting
 forward to the hour that has not arrived yet rather than back from the one
 that has passed. The hour in that phrase is a *declined* cardinal rather
 than a bare one — `devetih` is the genitive/locative plural of `devet`
-("nine") — and that grammatical fact is what keeps the construction safe
-from a fold that would otherwise erase it, the same trap the Slovak and
-Czech entries in the shared Slavic number-folding module were built to
-avoid.
+("nine"). numtag reads it as 9 and reads `pol` as a fraction, and the fold
+keeps `pol` a word, so the clock reads the fraction and the hour apart.
 
 ## What ships
 
@@ -65,28 +63,20 @@ telling the time — `pol` plus the declined hour counts toward the coming
 hour — and a second, independent web guide (ling-app.com's Slovenian time
 guide) corroborates the direction with a worked example of its own: "if the
 clock reads 1:30, you would say it's half two, or *pol dve*". That guide's
-citation form is the nominative `pol dve`, which the locale does not read;
-the declined `pol dveh` is what resolves to 01:30. The project's own test
+citation form is the nominative `pol dve`, and both it and the declined
+`pol dveh` resolve to 01:30. The project's own test
 corpus checks the pattern against independent arithmetic across five hours
 (`pol devetih` → 08:30, `pol desetih` → 09:30, `pol osmih` → 07:30, `ob pol
 enih` → 12:30, `pol dvanajstih` → 11:30) and separately asserts that a bare
 `pol` with no following hour is not a clock reading at all.
 
-**`pol` in the cardinal fold.** The shared Slavic numfold hook
-(`chronologia.extract.numfold_slavic:fold_sl`) keeps `pol` in its closed
-extra-word set alongside `dva`/`dve`/`tri`, unlike Croatian's parallel
-`pola`, which the same module deliberately excludes because folding it to
-0.5 would erase the toward-hour clock's fraction surface before the grammar
-ever saw it. Two facts about the Slovenian arrangement are checkable
-directly against the source. The fold converts a *bare* `pol` token to the
-numeric value 0.5, and `lang.json`'s `quantifiers` table maps
-`"0.5": ["pol"]`. Separately, the declined hour word that follows —
-`devetih`, `desetih`, `osmih`, `enih`, `dvanajstih` — is absent from
-`_numwords("sl")` and from the `_EXTRA["sl"]` set alike, so a `pol` + hour
-run never extends past `pol` itself and the fold never reaches into the hour
-word. It is that second fact the clock depends on: the construction survives
-because the hour is a declined cardinal no nominative word list contains,
-not because of anything about `pol` in particular.
+**`pol` stays a word.** numtag reads the Slovenian numbers in every case
+form (`numlayer_slavic.py`), and it reads `pol` as the fraction 0.5. The fold
+keeps a fraction that numtag reads as a fraction as a word, so the clock
+reads `pol devetih`, and `lang.json`'s `quantifiers` table maps
+`"0.5": ["pol"]` for the duration `pol ure`. numtag reads the declined hours
+`devetih`, `desetih` and `osmih`; it does not read `enih`, so the fold reads
+`enih` through the nominative `ena`.
 
 **Quarters, ISO weeks, decades and centuries** resolve: `četrtletje`/
 `kvartal`/`kvartala` (quarter, two registers), `teden` (ISO week), no
@@ -95,9 +85,8 @@ recorded source for either.
 **Named days** span `predvčerajšnjim` (the day before yesterday), `včeraj`
 (yesterday), `jutri` (tomorrow), `pojutrišnjem` (the day after tomorrow).
 
-**Numerals** are read through the shared Slavic cardinal-fold hook rather
-than a per-locale vocabulary file, exactly as in Bulgarian; Slovenian has no
-dedicated numeral `.voc` files.
+**Numerals** are read by numtag rather than a per-locale vocabulary file,
+exactly as in Bulgarian; Slovenian has no dedicated numeral `.voc` files.
 
 ## Weaker provenance
 

@@ -2,12 +2,10 @@
 
 Slovak names the hour with a declined ordinal agreeing with an elided
 `hodina`: `o druhej` is two o'clock, `o ôsmej` is eight, and the ordinal
-stands in the feminine locative because the preposition `o` governs it. That
-class is the one piece of morphology the locale owns outright — the cardinal
-number model behind the fold reads nominatives and never emits `druhej`, so a
-closed table of twelve surfaces is folded to its digit in a pass of its own.
-It is also the reason Slovak reads no fractional clock at all, which is the
-second thing to know and is set out below.
+stands in the feminine locative because the preposition `o` governs it.
+numtag reads the ordinal in that case (`numlayer_slavic.py`), so `druhej`
+folds to 2 as the digit does. The same ordinal names the coming hour after
+`pol`: `pol deviatej` is 08:30.
 
 ## What ships
 
@@ -17,8 +15,8 @@ second thing to know and is set out below.
 and `dotted_date` on, so both the written `15. januára 2020` and the spelled
 `pätnásteho januára 2020` resolve to the fifteenth of January. The spelled day
 is a genitive ordinal agreeing with an elided day noun, and Slovak declines
-both elements of a compound (`dvadsiateho tretieho`), so the day fold has to
-claim the tens element before the cardinal fold can take it for a bare number.
+both elements of a compound (`dvadsiateho tretieho`); numtag reads the two
+words as one ordinal, 23.
 
 **Months** ship in four cases at once. The nominative (`január`, `marec`) is
 CLDR 47's `stand-alone` wide chart; the genitive that follows a day ordinal
@@ -45,8 +43,8 @@ hour — `ráno` and `dopoludnia` for AM, `poobede`, `popoludní`, `podvečer` a
 09:00.
 
 **The spoken hour.** The feminine locative ordinal that names the hour
-(`jednej`, `druhej`, `tretej` ... `dvanástej`) is a closed table folded to its
-digit after the cardinal pass, and it feeds the ordinary `at HOUR` order, so
+(`jednej`, `druhej`, `tretej` ... `dvanástej`) folds to its digit through
+numtag, and it feeds the ordinary `at HOUR` order, so
 `o druhej` and `o druhej hodine` are both two o'clock. This is a literal
 named hour, not a toward-hour reading: the preposition plus locative simply
 names the hour it says.
@@ -144,26 +142,12 @@ Czech and Slovenian pages record for their own two quarter words.
 
 ## What refuses
 
-**The whole fractional clock.** `pol deviatej` is the ordinary Slovak for
-08:30, and it returns nothing; so do `štvrť na deväť` and `tri štvrte na
-deväť`, and so does the minute-counted `päť minút po deviatej`. No fraction
-vocabulary ships and no order would read it. Of the eleven Slavic locales in
-the library, Slovak is the only one that ships no clock fraction at all.
-
-The refusal is deliberate and its reasoning is recorded with the number fold.
-Slovak names the coming hour with the same declined ordinal it uses for the
-literal hour — `pol druhej` is 1:30, attested in the Wiktionary translation
-table under the English headword `half past`, whose worked example is "half
-past one" — so the Croatian wiring, a bare cardinal behind a `bare_half_to`
-flag, does not transfer: it would need an ordinal-aware toward-hour
-construction of its own. And unlike Croatian's `pola`, Slovak's `pol` is a
-genuine cardinal number word carrying the duration half (`pol hodiny` is
-thirty minutes, `hodina a pol` ninety), so it cannot simply be lifted out of
-the cardinal fold the way `pola` was. Both halves of that reasoning still
-hold: `pol hodiny` and `štvrť hodiny` reach the duration reader through the
-quantifier table and come back as thirty and fifteen minutes, and the
-toward-hour ordinal is exactly the class the hour table already owns for the
-literal reading, which is why folding it there would collide.
+**Part of the fractional clock.** `pol deviatej` is 08:30 and `štvrť na
+deväť` is 08:15, because `pol` and `štvrť` stay words for the clock. The
+three-quarter `tri štvrte na deväť` and the minute-counted `päť minút po
+deviatej` return nothing. `pol hodiny` and `štvrť hodiny` reach the duration
+reader through the quantifier table and come back as thirty and fifteen
+minutes.
 
 **A century before the era.** `20. storočie pred n. l.` does not return a span
 two thousand years before the era; it is read as a twenty-century offset back
@@ -171,11 +155,6 @@ from the anchor and returns the years 17 to 117, with the era marker stranded.
 The counted phrasing `20 storočí pred naším letopočtom` refuses outright,
 which is the safer of the two behaviours, and `v 20. storočí pred n. l.`
 returns the twentieth century of the common era and strands the marker.
-
-**Spelled numbers in an oblique case.** Slovak puts the numeral after `pred`
-in the instrumental, and the number model behind the fold reads only
-nominatives, so `pred piatimi rokmi` returns nothing where `pred 5 rokmi`
-resolves. The digit spelling covers the same ground.
 
 **Night.** The CLDR 47 `sk` day-period chart gives `v noci` for the night
 band, and no night day part ships, so `v noci` returns nothing and

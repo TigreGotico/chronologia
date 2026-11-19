@@ -39,7 +39,8 @@ NUMTAG_LANGS = {"pt": "pt-PT", "en": "en", "es": "es", "gl": "gl", "ca": "ca",
                 "sv": "sv", "nb": "nb", "nn": "nn", "fy": "fy", "ar": "ar", "el": "el",
                 "fa": "fa", "he": "he", "id": "id", "kab": "kab", "et": "et", "fi": "fi",
                 "hu": "hu", "eu": "eu", "tr": "tr", "az": "az", "an": "an", "ast": "ast",
-                "mwl": "mwl", "oc": "oc", "ro": "ro"}
+                "mwl": "mwl", "oc": "oc", "ro": "ro", "bg": "bg", "cs": "cs", "hr": "hr",
+                "pl": "pl", "ru": "ru", "sk": "sk", "sl": "sl", "uk": "uk"}
 
 _LOCALE_DIR = Path(__file__).resolve().parent.parent / "locale"
 

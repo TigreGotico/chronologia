@@ -3,10 +3,9 @@
 Czech names the half hour for the hour that has not arrived: `půl deváté` is
 08:30, not 09:30, and `půl páté` is half past four. The hour in that phrase is
 not a cardinal at all but a genitive-feminine *ordinal* agreeing with an
-elided `hodiny` — literally "half of the ninth" — and that grammatical fact is
-what keeps the construction alive, because a fold that reads spelled cardinals
-never sees the ordinal and never merges it with the fraction word in front of
-it. The second thing to know is that Czech's quarter hour runs on a different
+elided `hodiny` — literally "half of the ninth". numtag reads the ordinal as
+9 and `půl` as a fraction, and the fold keeps `půl` a word, so the clock reads
+the fraction and the hour apart. The second thing to know is that Czech's quarter hour runs on a different
 grammar from its half hour, and the locale reads only the half.
 
 ## What ships
@@ -77,9 +76,9 @@ the coming hour is the locale's only fractional clock surface, gated by
 `bare_half_to: true` and `toward_hour_12h: true` in `lang.json` and read
 through a `FRACTION HOUR MERIDIEM? ZONE?` order. The hour surfaces —
 `první`, `druhé`, `třetí`, `čtvrté`, `páté`, `šesté`, `sedmé`, `osmé`,
-`deváté`, `desáté`, `jedenácté`, `dvanácté` — are a closed table in the shared
-Slavic number-folding module, applied as a post-pass after the cardinal fold
-so that the fraction word and the hour can never merge into one run. Two
+`deváté`, `desáté`, `jedenácté`, `dvanácté` — fold to their digits through
+numtag, and `půl` stays a word, so the fraction word and the hour never
+merge into one number. Two
 independent sources fix the direction with worked numeric examples.
 Wiktionary's Czech `půl` carries a usage note saying the word means "half to"
 when telling the time and glosses `je půl páté` as "half (past) four";
@@ -90,14 +89,14 @@ speaker "always states the hour being approached". `půl páté` resolves to
 pattern against independent arithmetic, `půl první` among them, which the
 twelve-hour convention flag turns into 12:30 rather than 00:30.
 
-**`půl` stays out of the cardinal fold.** The shared Slavic hook
-(`chronologia.extract.numfold_slavic:fold_cs`) keeps its closed extra-word set
-down to `{dva, dvě, dvou, tři, čtyři}` — the oblique forms the number model's
-nominative pronunciation misses — and deliberately excludes `půl`, because the
-Czech number back-end reads it as 0.5 and folding it would erase the clock's
-fraction word before the grammar ever saw it. The half-hour *duration* is
-unaffected: `půl hodiny` and `čtvrt hodiny` reach the duration reader through
-`lang.json`'s quantifier table and come back as thirty and fifteen minutes.
+**`půl` stays a word.** numtag reads the Czech numbers in every case form
+(`numlayer_slavic.py`), and it reads `půl` as the fraction 0.5. The fold keeps
+a clock or period fraction that numtag reads as a fraction as a word, so the
+clock reads `půl deváté` and the period reader reads `první polovina 2020`.
+The half-hour *duration* reads the same word: `půl hodiny` and `čtvrt hodiny`
+reach the duration reader through `lang.json`'s quantifier table and come
+back as thirty and fifteen minutes. The spaced `tři čtvrtě` joins into the
+clock fraction `třičtvrtě` before the fold.
 
 **Quarters, ISO weeks, decades, centuries and millennia** all resolve, with
 `čtvrtletí` and `kvartál` as two live quarter words, `týden` for the ISO week,
@@ -181,13 +180,6 @@ read as a five-minute offset from the anchor and leaves `devátou` stranded.
 `za pět minut devět` — the ordinary way to say five to nine — is read the same
 way, as an offset five minutes ahead with `devět` stranded, which is a
 confident answer to a question nobody asked.
-
-**Spelled numbers in an oblique case.** Czech puts the numeral after `před` in
-the instrumental (`před pěti lety`, `před dvěma dny`) and after `po dobu` in
-the genitive (`po dobu tří dnů`), and the number model behind the fold reads
-only nominatives, so none of these resolve. The corpus records the boundary
-explicitly rather than papering over it, and the digit spellings (`před 2
-lety`) cover the same ground.
 
 **Night.** The CLDR 47 `cs` day-period chart gives `v noci` for the night
 band, and no night daypart ships, so `v noci` returns nothing and `dnes v
