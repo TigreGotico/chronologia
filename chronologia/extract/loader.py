@@ -1,7 +1,7 @@
 """Load a :class:`LangSpec` from ``locale/<lang>/lang.json`` + ``*.voc``.
 
 Same loading convention as ``eras_scan.load_era_patterns`` -- vocab files
-are read through ``ovos_spec_tools.LocaleResources`` so ``(a|b)`` /
+are read and expanded with ``ovos_spec_tools`` so ``(a|b)`` /
 ``[optional]`` expansion applies uniformly.
 
 Slot *values* are facts encoded in the filename (the loader's only
@@ -37,7 +37,7 @@ from importlib import import_module
 from pathlib import Path
 from typing import Callable, Dict, Optional, Set
 
-from ovos_spec_tools import LocaleResources, expand, read_resource_file
+from ovos_spec_tools import expand, read_resource_file
 
 from dataclasses import replace
 
@@ -62,8 +62,23 @@ def _resolve_dotted(ref: Optional[str]) -> Optional[Callable]:
     return getattr(import_module(module), attr)
 
 
+def _vocabularies(lang_dir: str) -> Dict[str, list]:
+    """Every ``.voc`` under ``lang_dir`` as a name->templates map: what
+    ``ovos_spec_tools.LocaleResources.vocabularies`` gives for this one
+    language (sorted paths, a later file of the same name winning).
+
+    ``LocaleResources`` reads every language of the tree it is given when it
+    is made, and this tree ships dozens; only the one being loaded is read
+    here.
+    """
+    vocs: Dict[str, list] = {}
+    for path in sorted(Path(lang_dir).rglob("*.voc")):
+        if path.is_file():
+            vocs[path.stem] = list(read_resource_file(path))
+    return vocs
+
+
 def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
-    res = LocaleResources(locale_dir)
     lang_dir = os.path.join(locale_dir, lang)
 
     with open(os.path.join(lang_dir, "lang.json"), encoding="utf-8") as fh:
@@ -77,7 +92,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     # expansion (``ovos_spec_tools.expand`` over the same name->templates map)
     # but read the tree a single time, turning first-call locale loading from
     # O(files^2) into O(files).
-    vocab_map = res.vocabularies(lang)
+    vocab_map = _vocabularies(lang_dir)
 
     # The tokenizer emits letter runs and DISCARDS punctuation, so a shipped
     # surface written with internal punctuation ("μ.μ.", "π. χ.", "ap. j.-c.",
