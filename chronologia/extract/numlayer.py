@@ -36,10 +36,10 @@ from chronologia.extract.numfold_engine import reindex
 #: short scale makes "dois bilhões" 2*10^9, and ``fr-BE`` reads "septante".
 NUMTAG_LANGS = {"pt": "pt-PT", "en": "en", "es": "es", "gl": "gl", "ca": "ca",
                 "it": "it", "fr": "fr-FR", "de": "de", "nl": "nl", "da": "da",
-                "sv": "sv", "ar": "ar", "el": "el", "fa": "fa", "he": "he", "id": "id",
-                "kab": "kab", "ms": "ms", "et": "et", "fi": "fi", "hu": "hu", "eu": "eu",
-                "tr": "tr", "az": "az", "an": "an", "ast": "ast", "mwl": "mwl",
-                "oc": "oc", "ro": "ro"}
+                "sv": "sv", "nb": "nb", "nn": "nn", "fy": "fy", "ar": "ar", "el": "el",
+                "fa": "fa", "he": "he", "id": "id", "kab": "kab", "ms": "ms", "et": "et",
+                "fi": "fi", "hu": "hu", "eu": "eu", "tr": "tr", "az": "az", "an": "an",
+                "ast": "ast", "mwl": "mwl", "oc": "oc", "ro": "ro"}
 
 _LOCALE_DIR = Path(__file__).resolve().parent.parent / "locale"
 
