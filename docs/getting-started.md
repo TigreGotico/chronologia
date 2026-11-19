@@ -13,7 +13,7 @@ pip install chronologia
 
 That is everything. You need Python 3.11 or newer. The reckoning core is pure
 standard library; the natural-language layer adds three small pure-Python
-helpers — **numtag** (reads the numbers of Aragonese, Asturian, Catalan, Danish, Dutch, English, French, Galician, German, Italian, Mirandese, Occitan, Portuguese, Romanian, Spanish and Swedish),
+helpers — **numtag** (reads the numbers of Aragonese, Asturian, Azerbaijani, Basque, Catalan, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Hungarian, Italian, Mirandese, Occitan, Portuguese, Romanian, Spanish, Swedish and Turkish),
 **ovos-number-parser** (spelled numbers → digits in the other languages) and
 **ovos-spec-tools** (loads each language's vocabulary). Nothing here ever talks to the internet.
 

@@ -3,6 +3,7 @@
 # people").  Each word is quoted from its Wiktionary Noun entry
 # (https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.
 # people: Noun. "plural of person: a body of persons considered generally or collectively; a group of two or more..."
+# person: Noun. "An individual who has been granted personhood; usually a human being."
 # persons: Noun. "plural of person"
 # guests: Noun. "plural of guest"
 # neighbours: Noun. "plural of neighbour"
@@ -26,6 +27,7 @@
 # euros: Noun. "plural of euro"
 # dollars: Noun. "plural of dollar"
 people
+person
 persons
 guests
 neighbours

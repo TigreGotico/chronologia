@@ -2144,6 +2144,10 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         k = _match_conn_at(tokens, 0, surf)
         if not k:
             return None
+        if (k < n and tokens[k].text
+                in spec.connectors.get("until_amount", ())):
+            # "hasta cuántos grados": the limit is an amount, not a time
+            return None
         ep = endpoint(tokens[k:])
         return build(ep, tokens[k:]) if ep is not None else None
 
@@ -2547,7 +2551,16 @@ _HOUR_LETTER_LOCALES = frozenset({
 _HOUR_LITERAL = re.compile(r"\d{1,2}:\d{2}")
 
 
-def _bare_hour_in_sentence(tokens, consumed, spec):
+def _folded_clock(token, text):
+    """Whether a clock token was built by a fold ("2h" read as 2:00) and not
+    typed as the digits it shows."""
+    return (token.char_start is None or text is None
+            or unicodedata.normalize(
+                "NFKC", text[token.char_start:token.char_end]
+            ).lower() != token.raw)
+
+
+def _bare_hour_in_sentence(tokens, consumed, spec, text=None):
     """Whether the whole reading is a bare hour that stands inside a
     sentence with no clock marker ("un film de 2h", "il reste 3 heures").
 
@@ -2587,12 +2600,12 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
             and read[-1].text in spec.clock_fractions)
     if tail:
         read = read[:-2]
-    literal = (len(read) == 1 and read[0].char_start is None
+    literal = (len(read) == 1 and _folded_clock(read[0], text)
                and _HOUR_LITERAL.fullmatch(read[0].text))
     counted = ((len(read) == 2 and read[0].is_number
                 and read[1].text in oclock)
                or (tail and len(read) == 1 and read[0].is_number
-                   and read[0].char_start is None))
+                   and _folded_clock(read[0], text)))
     if not (literal or counted):
         return False
     markers = (spec.connectors.get("hour_statement", frozenset())
@@ -3334,6 +3347,22 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
     return tokens[b - 1].text in dir_markers
 
 
+def _participle_season_veto(tokens, match, spec) -> bool:
+    """True for a match that opens on a season word directly behind a form of
+    the auxiliary listed in ``marker_participle_aux.voc``.
+
+    French "été" is the season and the past participle of "être": "il a été
+    malade le 15 mai" says nothing about summer.  The participle follows a form
+    of "avoir", and the season never does, so the reading is dropped there and
+    the date beside it stays.  A language with no such file is untouched.
+    """
+    start = match.span[0]
+    if start == 0 or tokens[start].text not in spec.seasons:
+        return False
+    return tokens[start - 1].text in spec.connectors.get("participle_aux",
+                                                         frozenset())
+
+
 def _num_preamble_named_day_idiom_veto(tokens, match, spec) -> bool:
     """True for a ``named_day_after``/``named_day_before`` match immediately
     preceded by a NUMBER token ("two days after tomorrow", "3 days before
@@ -3414,6 +3443,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _stray_year_zero_veto(tokens, match, spec)
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
+            or _participle_season_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
@@ -3609,7 +3639,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # (a whole-prefix scan would falsely veto a trigger in another clause).
     if _exclusion_governing_veto(tokens, consumed, text, engine.spec):
         return None
-    if _bare_hour_in_sentence(tokens, consumed, engine.spec):
+    if _bare_hour_in_sentence(tokens, consumed, engine.spec, text):
         return None
     # Impossible-date veto (residue-veto design, #244): a stranded
     # "<number> of ..." fragment in the remainder -- a day-of-month qualifier
@@ -3800,8 +3830,13 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
 
     def _adjacent(a, b):
         (lo, hi) = sorted((a.span, b.span))
-        return all(i in _covered or tokens[i].text in _glue
-                   for i in range(lo[1], hi[0]))
+        gap = [i for i in range(lo[1], hi[0])
+               if i not in _covered and tokens[i].text not in _glue]
+        # "tomorrow's meeting at 9": the noun a possessive day modifies sits
+        # between the day and its clock.
+        if gap == [lo[1]] and tokens[lo[1] - 1].text.endswith(_POSSESSIVE):
+            return True
+        return not gap
 
     _articles = frozenset(spec.connectors.get("article", ()))
 
@@ -3995,6 +4030,9 @@ def _fold_apposed_weekday(resolved, spec, tokens, text):
             set(range(*wd_match.span)))
 
 
+#: The endings of a possessive noun.
+_POSSESSIVE = ("'s", "\u2019s")
+
 #: Connector keys that join two distinct references.
 _SEPARATOR_KEYS = frozenset({"and", "or", "to", "from", "between", "until",
                              "since"})
@@ -4160,7 +4198,8 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     leading zero reads the same way; "03:30", "12:30", "15:30" and an hour
     written with the letter "h", a dotted clock and a clock folded from spelled
     numbers are as written.  The word "today" names no
-    part of the day, so "at 3:30 today" takes its reading from the same day;
+    part of the day, so "at 3:30 today" and "today at 5" take their reading
+    from the same day (the written hour when both readings have passed);
     any other day word keeps the written hour.  24-hour hours are untouched,
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
@@ -4188,7 +4227,7 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         return res
     hour = clock_match.slots.get("HOUR")
     clock = clock_match.slots.get("CLOCK")
-    if hour is not None and not today:
+    if hour is not None:
         if (not hour.is_number or not 1 <= hour.value <= 12
                 or re.search(r"\d\s*[h:]", (hour.raw or "").lower())
                 or (hour.index + 1 < len(tokens)

@@ -812,9 +812,10 @@ def test_thousand_scale_duration_is_composed_across_locales():
     assert extract_duration("3 gün önce", "tr").duration.days == 3
     assert extract_duration("há 3 dias", "pt").duration.days == 3
     # az "il əvvəl" (year + bare "ago" postposition) must NOT fabricate a span;
-    # the locative early-of-year form still resolves.
+    # the locative early-of-year form still resolves.  "min il əvvəl" is "a
+    # thousand years ago": 2017 - 1000 = 1017, as en "a thousand years ago".
     assert extract_timespan("il əvvəl", "az", r) is None
-    assert extract_timespan("min il əvvəl", "az", r) is None
+    assert extract_timespan("min il əvvəl", "az", r)[0].start.year == 1017
     assert extract_timespan("il əvvəlində", "az", r) is not None
 
 

@@ -14,7 +14,7 @@ import os
 from dataclasses import replace
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex as _reindex
+from chronologia.extract.numfold_engine import run_extent, reindex as _reindex
 
 #: locale root, for reading a language's ``marker_quarter_word.voc`` (the
 #: calendar-quarter noun -- "trimestre").
@@ -43,7 +43,9 @@ def _glue(tokens):
             k = len(seq)
             if tuple(t.text for t in tokens[i:i + k]) == seq:
                 raw = "".join(t.raw for t in tokens[i:i + k])
-                out.append(Token(text=_ROMANCE_GLUE[seq], raw=raw, index=0))
+                cs, ce = run_extent(tokens[i:i + k])
+                out.append(Token(text=_ROMANCE_GLUE[seq], raw=raw, index=0,
+                                 char_start=cs, char_end=ce))
                 i += k
                 break
         else:
@@ -90,7 +92,9 @@ def _collapse_phrase(tokens, words, surface):
     while i < len(tokens):
         if [t.text for t in tokens[i:i + n]] == words:
             raw = " ".join(t.raw for t in tokens[i:i + n])
-            out.append(Token(text=surface, raw=raw, index=0))
+            cs, ce = run_extent(tokens[i:i + n])
+            out.append(Token(text=surface, raw=raw, index=0,
+                             char_start=cs, char_end=ce))
             i += n
         else:
             out.append(tokens[i])
@@ -123,11 +127,15 @@ def _collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
             if (nn is not None and nn.is_number and nn.value is not None
                     and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
                 lit = "%d:%02d" % (int(t.value), int(nn.value))
-                out.append(Token(text=lit, raw=lit, index=0))
+                cs, ce = run_extent(tokens[i:i + 3])
+                out.append(Token(text=lit, raw=lit, index=0,
+                                 char_start=cs, char_end=ce))
                 i += 3
                 continue
             lit = "%d:00" % int(t.value)
-            out.append(Token(text=lit, raw=lit, index=0))
+            cs, ce = run_extent(tokens[i:i + 2])
+            out.append(Token(text=lit, raw=lit, index=0,
+                             char_start=cs, char_end=ce))
             i += 2
             continue
         out.append(t)

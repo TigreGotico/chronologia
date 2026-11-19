@@ -6,15 +6,15 @@ of number-words into a single digit :class:`~chronologia.extract.model.Token`
 so every ``NUM``/``DAY``/``YEAR``/``ORD`` slot binds the same way whether the
 writer typed a digit or a word.
 
-English and Portuguese read their numbers through numtag
-(:mod:`chronologia.extract.numlayer`).  This module holds every locale whose
-fold does not share a family engine with another language (``fa``, ``id``,
-``kab``, ``ms``), and the ``_make_germanic_fold``/``_lazy_germanic_fold``
-single-extractor engine that ``numfold_germanic`` and ``numfold_turkic`` also
-use.  The Romance token passes live in ``numfold_romance``, the Continental/North
-Germanic family in ``numfold_germanic``, the Turkic family in
-``numfold_turkic``; the Slavic, Semitic, Baltic, Indo-Aryan and agglutinative
-families each have their own sibling module.
+The languages in :data:`~chronologia.extract.numlayer.NUMTAG_LANGS` read
+their numbers through numtag (:mod:`chronologia.extract.numlayer`).  This
+module holds every locale whose fold does not share a family engine with
+another language (``fa``, ``id``, ``kab``, ``ms``), and the
+``_make_germanic_fold``/``_lazy_germanic_fold`` single-extractor engine that
+``numfold_germanic`` also uses.  The Romance family lives in
+``numfold_romance``, the North Germanic family in ``numfold_germanic``; the
+Slavic, Semitic, Baltic, Indo-Aryan and Greek folds each have their own
+sibling module.
 
 Wired as a language ``hook`` in each locale's ``lang.json`` and applied by
 :func:`~chronologia.extract.pipeline.fold_tokens` after normalisation.  Every

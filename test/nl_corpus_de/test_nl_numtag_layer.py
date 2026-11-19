@@ -11,7 +11,7 @@ from dateutil.relativedelta import relativedelta
 
 from chronologia import extract_duration
 
-from ._corpus import ANCHOR, datetime, span, start_end, timedelta
+from ._corpus import ANCHOR, datetime, parse, span, start_end, timedelta
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -57,3 +57,10 @@ def test_clock_fractions(text, expected):
 ])
 def test_length_with_a_fraction(text, length):
     assert extract_duration(text, "de").duration == length
+
+
+@pytest.mark.parametrize("text", ["zwei und", "von zwei und"])
+def test_a_number_and_a_joiner_at_the_end_read_no_date(text):
+    # numtag 0.15.3a1 raises on these texts; the extractor
+    # reads no date and does not raise
+    assert parse(text) is None
