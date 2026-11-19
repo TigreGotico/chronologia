@@ -85,7 +85,6 @@ def test_unlabelled_day_word_stays_out_of_the_summary(lang, text, summary):
     assert extract_event(text, lang, _ANCHOR).summary == summary
 
 
-
 _RANGE_ANCHOR = datetime(2026, 1, 30, 10, 0)
 
 _RANGES = [
@@ -143,3 +142,25 @@ def test_labelled_day_keeps_its_own_month_against_a_clock_or_offset(
     assert (got.span.start, got.span.end) == (
         AstroDate.from_datetime(start), AstroDate.from_datetime(end))
     assert got.remainder == ""
+
+
+_RELATIVE_YEARS = [
+    ("pt", "do dia 3 ao dia 5 de março do ano passado"),
+    ("es", "del día 3 al 5 de marzo del año pasado"),
+]
+
+
+@pytest.mark.parametrize("lang,text", _RELATIVE_YEARS)
+def test_labelled_day_borrows_the_month_of_a_relative_year_partner(lang, text):
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert [(d.month, d.day) for d in (got.span.start, got.span.end)] == [
+        (3, 3), (3, 6)]
+
+
+def test_ru_labelled_day_borrows_the_month_of_a_relative_year_partner():
+    got = extract_timespan("с 3 числа по 5 марта следующего года", "ru",
+                           _RANGE_ANCHOR)
+    year = _RANGE_ANCHOR.year + 1
+    assert (got.span.start, got.span.end) == (
+        AstroDate(year, 3, 3), AstroDate.from_datetime(
+            datetime(year, 3, 5) + timedelta(days=1)))

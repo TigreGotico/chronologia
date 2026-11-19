@@ -1361,15 +1361,16 @@ def _labelled_day_keeps_own(sub, donor, donor_read, spec):
     """True when a day-labelled slice must not borrow from its partner.
 
     "dia 10" names a day of a month, never an hour or a count of days, so a
-    partner that is a clock ("às 18h") or holds a unit word ("daqui a 5
-    dias") has nothing to lend it.  donor_read is the partner's own
-    reading."""
+    partner that is a clock ("às 18h") or counts a unit ("daqui a 5 dias")
+    has nothing to lend it.  ``donor_read`` is the partner's own reading.
+    """
     labels = spec.connectors.get("day_label", ())
     if not any(t.text in labels for t in sub):
         return False
-    units = (set(spec.units) | set(spec.singular_units)) - set(labels)
-    return (donor_read is not None and donor_read[2] == "clock") \
-        or any(t.text in units for t in donor)
+    units = set(spec.units) | set(spec.singular_units)
+    counts_unit = any(t.is_number and nxt.text in units
+                      for t, nxt in zip(donor, donor[1:]))
+    return counts_unit or (donor_read is not None and donor_read[2] == "clock")
 
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
