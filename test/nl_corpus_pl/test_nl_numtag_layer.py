@@ -45,7 +45,6 @@ def test_known_numtag_gap():
 ])
 def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
     result = parse(text, anchor)
-    assert result is not None
     assert result.span.start == ad(datetime(2026, month, day))
 
 
@@ -91,3 +90,7 @@ def test_ordinal_before_a_noun_is_no_clock():
 def test_known_gap_spelled_year_of_the_1950s():
     assert start("w roku tysiąc dziewięćset pięćdziesiątym szóstym") == ad(
         datetime(1956, 1, 1))
+
+
+def test_masculine_ordinal_after_o_is_no_clock():
+    assert parse("o drugim etapie") is None

@@ -35,5 +35,13 @@ def test_numbers_read_through_numtag(text, expected):
 ])
 def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
     result = parse(text, anchor)
-    assert result is not None
     assert result.span.start == ad(datetime(2026, month, day))
+
+
+@pytest.mark.parametrize("text", [
+    "razgovarali smo o drugom dijelu",
+    "knjiga o prvom svjetskom ratu",
+    "pričaj mi o prvoj ljubavi",
+])
+def test_ordinal_after_about_is_no_clock(text):
+    assert parse(text) is None

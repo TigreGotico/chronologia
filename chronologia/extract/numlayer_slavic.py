@@ -13,8 +13,8 @@ the date words of the Slavic grammars:
 - an ordinal or a count of millions before a word that no date rule reads
   ranks or counts things, so it stays words: "ve druhém patře" is the second
   floor, not two o'clock, and "milion důvodů" keeps its word in an event
-  summary.  An ordinal right after the clock preposition ("о сьомій
-  подзвони", "o dziewiątej zadzwoń") is the hour;
+  summary.  In Polish, Slovak and Ukrainian the feminine ordinal after the
+  clock preposition is the hour: "o dziewiątej zadzwoń", "о сьомій подзвони";
 - an ordinal word from 1 to 31 can name a day of the month ("двадцатого
   числа"), so its number token carries :attr:`Token.day_ordinal`.
 
@@ -52,13 +52,19 @@ def _names_things(mention: NumberMention) -> bool:
             and Fraction(mention.value) >= 10 ** 6)
 
 
+# The clock preposition of the languages that name the hour with an ordinal,
+# and the ending of the feminine locative ordinal that agrees with the elided
+# "godzina", "hodina" or "година": "o ósmej", "o ôsmej", "о сьомій".
+_ORDINAL_HOUR = {"pl": (("o",), "ej"), "sk": (("o",), "ej"),
+                 "uk": (("о", "об"), "ій")}
+
+
 def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
     fractions = locale_words(lang, "clock_fraction_", "marker_half",
                              "period_part_")
     decades = locale_words(lang, "decade_word_")
     vocabulary = locale_words(lang, "")
-    clock_at = (locale_words(lang, "marker_at.voc")
-                - locale_words(lang, "marker_during.voc", "marker_of.voc"))
+    prepositions, ending = _ORDINAL_HOUR.get(lang, ((), ""))
     toward = fractions | locale_words(lang, "marker_na.voc")
 
     def claims(tokens: Tuple[Token, ...]) -> Claims:
@@ -82,7 +88,8 @@ def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
                     lead -= 1
                 if (m.kind is Kind.ORDINAL and lead
                         and not tokens[lead].break_before
-                        and tokens[lead - 1].text in clock_at):
+                        and tokens[lead - 1].text in prepositions
+                        and (lead < first or tok.text.endswith(ending))):
                     continue
                 end = mention_end(tokens, i)
                 nxt = tokens[end] if end < n else None
@@ -100,7 +107,7 @@ def _day_ordinals(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return tuple(replace(t, day_ordinal=True)
                  if (t.is_number and t.ordinal and t.mention is not None
                      and t.mention.form is Form.WORDS
-                     and 1 <= (t.value or 0) <= 31) else t
+                     and 1 <= t.value <= 31) else t
                  for t in tokens)
 
 
@@ -199,19 +206,20 @@ def _split_ru_half(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     changed = False
     for t in tokens:
         tail = t.text[3:] if t.text.startswith("пол") and not t.is_number else ""
+        if tail not in _RU_HALF_UNITS and not tail.endswith(("ого", "его")):
+            tail = ""
         if tail in _RU_HALF_UNITS:
             half_text, rest = "пол", None
         elif tail:
             hour = _read((replace(t, raw=tail),), "ru")
-            if (hour is None or not hour.ordinal
-                    or not 1 <= (hour.value or 0) <= 12):
+            if hour is None or not hour.ordinal or not 1 <= hour.value <= 12:
                 out.append(t)
                 continue
             half_text, rest = "половина", hour
         else:
             out.append(t)
             continue
-        mid = t.char_start + 3 if t.char_start is not None else None
+        mid = t.char_start + 3
         out.append(Token(text=half_text, raw=half_text, index=t.index,
                          char_start=t.char_start, char_end=mid))
         out.append(replace(rest, index=t.index, char_start=mid,
@@ -248,7 +256,8 @@ def _glue_cs_three_quarters(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 
 # The bookish day ordinal "prvého" beside "prvního" (Slovník spisovného jazyka
 # českého: "prvý", the bookish form of "první").
-_CS_SPELLINGS = {"prvého": "prvního"}
+def _cs_spelling(word: str) -> str:
+    return "prvního" if word == "prvého" else word
 
 
 # -- Croatian --------------------------------------------------------------
@@ -256,7 +265,7 @@ def _hr_spelling(word: str) -> str:
     """The short form of a Croatian ordinal with the movable "a" (navezak):
     "trećega" is "trećeg", "prvoga" is "prvog" (Hrvatski jezični portal:
     sklonidba rednih brojeva, "-og(a)", "-eg(a)")."""
-    return word[:-1] if word.endswith(("oga", "ega")) else word
+    return word[:-1] if len(word) > 5 and word.endswith(("oga", "ega")) else word
 
 
 # -- Bulgarian -------------------------------------------------------------
@@ -277,15 +286,16 @@ def _bg_spelling(word: str) -> str:
 # -- Slovene ---------------------------------------------------------------
 # The hour one in the genitive plural of the clock: "ob enih" is at one, "pol
 # enih" is 12:30 (Fran, SSKJ2: "en").
-_SL_SPELLINGS = {"enih": "ena"}
+def _sl_spelling(word: str) -> str:
+    return "ena" if word == "enih" else word
 
 
 fold_bg = make_fold("bg", spelling=_bg_spelling)
 fold_cs = make_fold("cs", pre=_glue_cs_three_quarters,
-                    spelling=lambda w: _CS_SPELLINGS.get(w, w))
+                    spelling=_cs_spelling)
 fold_hr = make_fold("hr", spelling=_hr_spelling)
 fold_pl = make_fold("pl")
 fold_ru = make_fold("ru", pre=_split_ru_half)
 fold_sk = make_fold("sk")
-fold_sl = make_fold("sl", spelling=lambda w: _SL_SPELLINGS.get(w, w))
+fold_sl = make_fold("sl", spelling=_sl_spelling)
 fold_uk = make_fold("uk")

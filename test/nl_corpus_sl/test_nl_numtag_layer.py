@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from ._corpus import ANCHOR, ad, start
+from ._corpus import ANCHOR, ad, parse, start
 
 
 @pytest.mark.parametrize("text,expected", [
@@ -20,3 +20,8 @@ from ._corpus import ANCHOR, ad, start
 ])
 def test_numbers_read_through_numtag(text, expected):
     assert start(text) == ad(expected)
+
+
+@pytest.mark.parametrize("text", ["ob drugem obisku", "ob tretjem poskusu"])
+def test_ordinal_after_at_is_no_clock(text):
+    assert parse(text) is None

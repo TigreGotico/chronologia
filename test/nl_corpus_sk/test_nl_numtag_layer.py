@@ -31,3 +31,7 @@ def test_numbers_read_through_numtag(text, expected):
 ])
 def test_ordinal_hour_before_another_word(text, expected):
     assert start(text) == ad(expected)
+
+
+def test_masculine_ordinal_after_o_is_no_clock():
+    assert parse("o druhom etape") is None

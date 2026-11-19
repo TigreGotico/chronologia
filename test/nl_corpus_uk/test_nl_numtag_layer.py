@@ -35,7 +35,6 @@ def test_numbers_read_through_numtag(text, expected):
 ])
 def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
     result = parse(text, anchor)
-    assert result is not None
     assert result.span.start == ad(datetime(2026, month, day))
 
 
@@ -56,3 +55,7 @@ def test_ordinal_hour_before_another_word(text, expected):
 
 def test_ordinal_before_a_noun_is_no_clock():
     assert parse("на другому поверсі") is None
+
+
+def test_masculine_ordinal_after_o_is_no_clock():
+    assert parse("о другому етапі") is None

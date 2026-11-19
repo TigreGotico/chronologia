@@ -1145,6 +1145,8 @@ a clock (German `halb`, `viertel`), `moins` in "dix heures moins dix",
 Monday, Italian `prima` as "before", Czech `půl` in "půl deváté", Russian
 `девяностые` as the 1990s. A Slavic ordinal before a word that no date rule
 reads ranks things and stays a word: "ve druhém patře" is the second floor.
+In Polish, Slovak and Ukrainian the feminine ordinal after "o" ("о", "об")
+is the hour instead: "o dziewiątej zadzwoń do mamy" is 21:00.
 Every other mention folds to its value. In deep time the count before
 the scale word is the mention value in units of that word: "one million two
 hundred thousand years ago" counts 1200 thousands and "dois milhões e meio

@@ -36,12 +36,11 @@ def test_numbers_read_through_numtag(text, expected):
 ])
 def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
     result = parse(text, anchor)
-    assert result is not None
     assert result.span.start == ad(datetime(2026, month, day))
 
 
-# An ordinal hour after the clock preposition keeps its clock when a word
-# outside the vocabulary follows; the clock reads the same without it.
+# An ordinal after a preposition names a thing, not an hour: the hour of
+# this language is a cardinal.
 def test_ordinal_after_a_locative_preposition_is_no_clock():
     assert parse("на втором этаже") is None
 
@@ -60,3 +59,12 @@ def test_known_gap_hour_and_minute_clock():
 def test_known_gap_first_half_of_the_day():
     result = parse("в первой половине дня", datetime(2026, 11, 18, 8, 0))
     assert result is None or result.span.start != ad(datetime(2026, 11, 18, 13, 0))
+
+
+@pytest.mark.parametrize("text", [
+    "поговорим о втором варианте",
+    "думаю о первой любви",
+    "книга о третьем рейхе",
+])
+def test_ordinal_after_about_is_no_clock(text):
+    assert parse(text) is None

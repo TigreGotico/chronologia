@@ -36,7 +36,6 @@ def test_numbers_read_through_numtag(text, expected):
 ])
 def test_spelled_date_with_a_year_from_2000(text, month, day, anchor):
     result = parse(text, anchor)
-    assert result is not None
     assert result.span.start == ad(datetime(2026, month, day))
 
 
