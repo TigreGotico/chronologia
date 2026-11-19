@@ -164,3 +164,20 @@ def test_ru_labelled_day_borrows_the_month_of_a_relative_year_partner():
     assert (got.span.start, got.span.end) == (
         AstroDate(year, 3, 3), AstroDate.from_datetime(
             datetime(year, 3, 5) + timedelta(days=1)))
+
+
+_MONTH_ISSUE = "https://github.com/TigreGotico/chronologia/issues/1230"
+_RELATIVE_MONTHS = [
+    ("gl", "entre o día 3 e o 5 do mes que vén"),
+    ("ca", "entre el dia 3 i el 5 del mes que ve"),
+    ("pt", "desde o dia 3 até ao 5 do mês que vem"),
+]
+
+
+@pytest.mark.xfail(strict=True, reason=_MONTH_ISSUE)
+@pytest.mark.parametrize("lang,text", _RELATIVE_MONTHS)
+def test_day_range_with_a_relative_month_end(lang, text):
+    got = extract_timespan(text, lang, _RANGE_ANCHOR)
+    assert (got.span.start, got.span.end) == (
+        AstroDate(2026, 2, 3), AstroDate(2026, 2, 6))
+    assert got.remainder == ""
