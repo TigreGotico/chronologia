@@ -1852,7 +1852,7 @@ The vocabulary files are loaded through **ovos-spec-tools**, the shared
 `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are
 folded to digits before matching, so a slot binds the same whether the
 writer typed `5` or `five`. **numtag** reads the numbers of
-Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian; **ovos-number-parser** reads the other languages.
+Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian; **ovos-number-parser** reads the other languages.
 
 To add a language, create `chronologia/locale/<code>/`, translate the `.voc`
 surface forms, and write a `lang.json` that sets the conventions and lists
