@@ -9,10 +9,9 @@ writer typed a digit or a word.
 The languages in :data:`~chronologia.extract.numlayer.NUMTAG_LANGS` read
 their numbers through numtag (:mod:`chronologia.extract.numlayer`).  This
 module holds the Malay fold, which numtag does not read, and the
-``_make_germanic_fold``/``_lazy_germanic_fold`` single-extractor engine that
-``numfold_germanic`` also uses.  The Romance family lives in
-``numfold_romance``, the Frisian fold in ``numfold_germanic``; the
-Slavic, Baltic and Indo-Aryan folds each have their own sibling module.
+``_make_germanic_fold``/``_lazy_germanic_fold`` single-extractor engine it
+uses.  The Romance family lives in ``numfold_romance``; the Slavic, Baltic
+and Indo-Aryan folds each have their own sibling module.
 
 Wired as a language ``hook`` in each locale's ``lang.json`` and applied by
 :func:`~chronologia.extract.pipeline.fold_tokens` after normalisation.  Every
@@ -20,8 +19,6 @@ fold is a pure ``tuple[Token] -> tuple[Token]`` transform, re-indexed so
 ``Token.index`` stays contiguous.
 """
 from __future__ import annotations
-
-from dataclasses import replace
 
 from chronologia.extract.numfold_engine import NumberGrammar, make_fold
 
@@ -40,8 +37,7 @@ from chronologia.extract.numfold_engine import NumberGrammar, make_fold
 # an explicit stop-set per language.
 # ---------------------------------------------------------------------------
 
-def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None,
-                        join_words=()):
+def _make_germanic_fold(extract_fn, stop_words, join_words=()):
     """Build a ``tuple[Token] -> tuple[Token]`` fold for a Germanic language.
 
     ``extract_fn`` is the language's ``ovos_number_parser`` extractor; the
@@ -52,8 +48,6 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None,
     """
     stop = frozenset(stop_words)
     joinset = frozenset(join_words)
-    suffixes = frozenset(ord_suffixes)
-    wmap = dict(word_map or {})
 
     def value_of(text):
         v = extract_fn(text, ordinals=True)
@@ -84,44 +78,11 @@ def _make_germanic_fold(extract_fn, stop_words, ord_suffixes=(), word_map=None,
         v = value_of(tok.text)
         return v is not None and v is not False
 
-    def pre(tokens):
-        # pass -1: rewrite fixed word->value surfaces to digit tokens.  Used
-        # for the Frisian inflected "coming-hour" forms ("fiven" -> 5,
-        # "fjouweren" -> 4) that the number parser does not recognise but the
-        # clock look-ahead ("healwei fiven" == 04:30) needs as a bare HOUR.
-        if wmap:
-            tokens = tuple(
-                replace(t, text=str(wmap[t.text]), raw=t.raw,
-                        is_number=True, value=wmap[t.text])
-                if (not t.is_number and t.text in wmap) else t
-                for t in tokens)
-
-        # pass 0: merge a digit followed by a lone alphabetic ordinal suffix
-        # ("21 e" -> 21, Dutch "21e"; "3 de" -> 3).  Digit-dot ordinals are
-        # handled by the tokenizer (ordinal_dot); this covers the alpha form.
-        if suffixes:
-            merged = []
-            i = 0
-            while i < len(tokens):
-                t = tokens[i]
-                nxt = tokens[i + 1] if i + 1 < len(tokens) else None
-                if (t.is_number and nxt is not None and not nxt.is_number
-                        and nxt.text in suffixes):
-                    merged.append(replace(t, raw=t.raw + nxt.raw,
-                                          ordinal=True))
-                    i += 2
-                    continue
-                merged.append(t)
-                i += 1
-            tokens = tuple(merged)
-        return tokens
-
     return make_fold(NumberGrammar(
-        is_number=is_numword, extract=value_of, pre=pre, ordinal=is_ordinal))
+        is_number=is_numword, extract=value_of, ordinal=is_ordinal))
 
 
-def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),
-                        word_map=None, join_words=()):
+def _lazy_germanic_fold(module_name, fn_name, stop_words, join_words=()):
     """Defer the ``ovos_number_parser`` import to first call (keeps locale
     load cheap and import-order-independent)."""
     holder = {}
@@ -132,7 +93,6 @@ def _lazy_germanic_fold(module_name, fn_name, stop_words, ord_suffixes=(),
             import importlib
             extract_fn = getattr(importlib.import_module(module_name), fn_name)
             f = holder["f"] = _make_germanic_fold(extract_fn, stop_words,
-                                                  ord_suffixes, word_map,
                                                   join_words)
         return f(tokens)
 
