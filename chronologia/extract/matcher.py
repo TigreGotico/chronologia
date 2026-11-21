@@ -744,6 +744,16 @@ class ConstructionMatcher:
                                      and tokens[start - 1].text
                                      not in self.spec.named_days))):
                         continue
+                    # A word that names a band only when it is the whole text:
+                    # pt "tarde" alone is the afternoon, but "chegou tarde" is
+                    # "arrived late".  The list is a locale fact
+                    # (``marker_daypart_alone.voc``).
+                    if (name == "daypart_ref" and "REL_MARKER" not in slots
+                            and tokens[start].text
+                            in self.spec.connectors.get(
+                                "daypart_alone", frozenset())
+                            and not (start == 0 and end == len(tokens))):
+                        continue
                     # "friday, next week is busy": a weekday and a relative
                     # week in different clauses are two mentions, not one
                     # day of the shifted week.
