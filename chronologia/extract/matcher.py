@@ -497,6 +497,19 @@ def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
                            spec) > 0
 
 
+def _greeted_daypart(tokens: Tuple[Token, ...], index: int,
+                     spec: LangSpec) -> bool:
+    """Is the day-part word at ``index`` the tail of a greeting?
+
+    "good evening" and "good night" greet; they name no band, so the hour of
+    "good evening, set an alarm at 7" stays with its clock.  The word before
+    the part of the day comes from ``daypart_greeting``; a locale with no such
+    vocabulary is untouched.
+    """
+    return (index > 0 and tokens[index - 1].text
+            in spec.connectors.get("daypart_greeting", frozenset()))
+
+
 def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
                     spec: LangSpec) -> int:
     """Longest run of tokens from ``ti`` matching a connector surface.
@@ -1057,6 +1070,10 @@ class ConstructionMatcher:
                         continue
                     if ("DAYPART" in slots and _counted_plural_daypart(
                             tokens, slots["DAYPART"].index, self.spec)):
+                        continue
+                    if ("DAYPART" in slots and "REL_MARKER" not in slots
+                            and _greeted_daypart(
+                                tokens, slots["DAYPART"].index, self.spec)):
                         continue
                     # "the last TWO days of the month" is not "the 2nd day of
                     # the month": a rel-marker ("last"/"next"/"this") sitting
