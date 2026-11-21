@@ -1,5 +1,15 @@
 # Estonian (`et`)
 
+<!-- agent-hint
+covers: where each construction of the Estonian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/et/lang.json`, `chronologia/locale/et/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/et.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Estonian (`et`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Estonian's spoken clock counts toward the hour that has not arrived yet, the
 same direction as Slovenian and unrelated to it — `pool üheksa` is 8:30, not
 9:30, and the same counting-toward logic extends to quarters: `veerand
@@ -122,3 +132,32 @@ binds correctly".
 2. Does `kvartal` compete with any native Estonian alternative for
    "quarter", the way Bulgarian and Slovenian each carry two live quarter
    words?
+
+
+---
+[← Esperanto](eo.md) · [Home](../index.md) · [Filipino →](fil.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("et")
+    True
+    >>> span, rest = extract_timespan('pool üheksa', "et", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('veerand üheksa', "et", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+    >>> span, rest = extract_timespan('kolmveerand üheksa', "et", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:45:00', '')
+    >>> span, rest = extract_timespan('viieteistkümnes aprill', "et", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-04-15T00:00:00', '')
+
+---
+[← Esperanto](eo.md) · [Home](../index.md) · [Filipino →](fil.md)

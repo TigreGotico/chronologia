@@ -1,5 +1,15 @@
 # Asturian (`ast`)
 
+<!-- agent-hint
+covers: where each construction of the Asturian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ast/lang.json`, `chronologia/locale/ast/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/ast.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Asturian (`ast`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Asturian is the thinnest-sourced of the Ibero-Romance locales here. Almost
 nothing in its vocabulary files carries a citation: the three Roman-calendar
 anchors name the Asturian Wikipedia, the night meridiem names the Spanish
@@ -134,14 +144,6 @@ Every one of these is reproduced against the anchor 2017-06-27 13:04 with
 refusals, and a wrong span with a stranded remainder is worse than nothing at
 all.
 
-**The date line loses its year when the year is introduced by `de`.**
-`3 de xineru de 1990` returns 2018-01-03 to 2018-01-04 with `de 1990` in the
-remainder — twenty-eight years off, silently. The calendar-date orders reach
-`DAY of? MONTH YEAR?` but never `DAY of MONTH of YEAR`, so the second `de`
-breaks the match and the yearless reading wins with the future preference
-pushing it into next January. `3 de xineru 1990` and `3 xineru 1990` are both
-correct. `3 de xineru del 1990` fails the same way.
-
 **A leading article is never claimed.** `el 3 de xineru` resolves the day and
 leaves `el` behind; `el 3 de marzu`, `el mediudía`, `la medianueche`, `nel añu
 1990` and `en xineru` all do the same with their own leading word. The
@@ -151,30 +153,10 @@ indefinites and the demonstratives — but no calendar-date order offers an
 article slot for any of it to fill, and the during-slot holds only `durante`,
 so the locative `en` cannot be absorbed by a month either.
 
-**Combining the two loses the clock as well.** `1 de xineru de 2020 a les
-15:30` returns 2018-01-01 as a whole day with `de 2020 a les 15:30` in the
-remainder: the wrong year, the wrong granularity, and a time of day thrown
-away.
-
-**A quarter reads as a whole year.** `el primer trimestre de 2020` returns
-2020-01-01 to 2021-01-01 with `el primer trimestre de` in the remainder. Four
-times too long. `la década de 1980` fails in the mirror image, returning the
-single year 1980 with `la década de` stranded.
-
-**Day-part phrases return tomorrow.** `pela mañana`, `de mañana` and `a la
-mañana` all return 2017-06-28, the whole of the next day, because `mañana` is
-in the morning-meridiem vocabulary and also in the named-day vocabulary as
-*tomorrow*, and with no day-part band to reach, the tomorrow reading is the
-only one available. `el sábadu pela mañana` returns the whole of Saturday with
-`pela mañana` visible. `pela tarde`, `pela nueche` and a bare `nueche` return
-nothing, which is the honest outcome; the morning cases are not.
-
-**One o'clock does not parse.** `la una de la nueche` returns nothing, though
-`les diez de la nueche` is correct, and the same gap holds with any other
-meridiem. The night-clock test file records this as a pre-existing hole.
+**A decade frame.** `la década de 1980` returns the single year 1980 with `la década de` left in the remainder.
 
 **Unadapted French Republican months bind unguarded.** `brumaire` alone
-returns 2016-10-22 to 2016-11-21, and `1 de brumaire` returns 2017-10-22 — a
+returns 2017-10-22 to 2017-11-21, and `1 de brumaire` returns 2017-10-22 — a
 Gregorian span for a Republican month name, with the Republican year nowhere
 in it. `18 de brumaire del añu VIII` returns 2017-11-08 and leaves `del añu
 VIII` in the remainder, which is the one case where the discarded text is the
@@ -202,3 +184,32 @@ part that mattered.
    Asturian actually use them?
 7. Is `ente` or `entre` the ordinary between-preposition, and does `ente
    selmana` mean "on a weekday" as the dictionary's locution suggests?
+
+
+---
+[← Armenian](hy.md) · [Home](../index.md) · [Azerbaijani →](az.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ast")
+    True
+    >>> span, rest = extract_timespan('les diez de la nueche', "ast", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T22:00:00', '')
+    >>> span, rest = extract_timespan('pela mañana', "ast", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:00:00', '')
+    >>> span, rest = extract_timespan('3 de xineru 1990', "ast", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('1990-01-03T00:00:00', '')
+    >>> span, rest = extract_timespan("25 d'avientu", "ast", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-12-25T00:00:00', '')
+
+---
+[← Armenian](hy.md) · [Home](../index.md) · [Azerbaijani →](az.md)

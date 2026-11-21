@@ -1,5 +1,15 @@
 # Greek (`el`)
 
+<!-- agent-hint
+covers: where each construction of the Greek locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/el/lang.json`, `chronologia/locale/el/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/el.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Greek (`el`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Greek marks its determiners twice. `marker_position` sets `weekday_ref` and
 `rel_period` to `post`, and the base grammar's `extend`/`override` entries add
 a second, article-carrying order on top of the plain one — `την Τρίτη που
@@ -88,10 +98,7 @@ fixed relative-marker surfaces rather than free relative clauses.
 ship a dedicated millennium unit rather than folding it into a numeral-plus-
 scale construction.
 
-**Seconds** ship a unit, `δευτερόλεπτο`/`δευτερόλεπτα`, unlike Persian,
-Ukrainian and Romanian, none of which ship a seconds vocabulary at all. This
-page did not find a positive corpus test exercising `N δευτερόλεπτα πριν`
-("N seconds ago") end to end — see Weaker provenance.
+**Seconds** ship a unit, `δευτερόλεπτο`/`δευτερόλεπτα`. `πριν 30 δευτερόλεπτα` reads as 30 seconds ago.
 
 **Fuzzy period parts** are `αρχές`/`αρχή` (early), `μέσα`/`μέση` (mid),
 `τέλη`/`τέλος` (late).
@@ -104,12 +111,6 @@ form.
 
 The weekday and month names carry no recorded source, and neither do the
 seasons or the holiday vocabulary.
-
-The seconds unit ships without a verified positive test of "N seconds ago"
-resolving end to end through `relative_offset`; it was not exercised as a
-false claim on this page, but it was also not independently confirmed to
-work, so it is listed here rather than folded into What ships without
-qualification.
 
 ## What refuses
 
@@ -135,3 +136,32 @@ word only binds inside the full `HOUR CLOCKDIR FRACTION` shape.
    έρχεται`) the dominant spoken form for every weekday, or does it compete
    evenly with the prenominal adjective (`την περασμένη Τρίτη`) in ordinary
    registers?
+
+
+---
+[← German](de.md) · [Home](../index.md) · [Hausa →](ha.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("el")
+    True
+    >>> span, rest = extract_timespan('την Τρίτη που έρχεται', "el", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-04T00:00:00', '')
+    >>> span, rest = extract_timespan('πριν από τρεις μέρες', "el", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-24T00:05:00', '')
+    >>> span, rest = extract_timespan('τρεις και μισή', "el", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:30:00', '')
+    >>> span, rest = extract_timespan('τρεις και τέταρτο', "el", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:15:00', '')
+
+---
+[← German](de.md) · [Home](../index.md) · [Hausa →](ha.md)

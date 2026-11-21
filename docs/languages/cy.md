@@ -1,5 +1,15 @@
 # Welsh (`cy`)
 
+<!-- agent-hint
+covers: where each construction of the Welsh locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/cy/lang.json`, `chronologia/locale/cy/*.voc`, `chronologia/extract/numfold_welsh.py`
+generated: no
+verify: python -m doctest docs/languages/cy.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Welsh (`cy`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_welsh` module in `chronologia/extract/`.
+
 Welsh changes a word's **first letter** according to what precedes it, and that
 one fact shapes this whole locale. A vocabulary listing only dictionary forms
 would silently fail on ordinary sentences, so every mutated surface a temporal
@@ -134,3 +144,29 @@ still only a quantity.
 5. How should the `Hydref` collision between autumn and October be resolved?
 6. Is a millennium noun in use at all?
 7. Is 41–99 joined with `ac` or with `a` before a consonant?
+
+
+---
+[← Vietnamese](vi.md) · [Home](../index.md) · [West Frisian →](fy.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("cy")
+    False
+    >>> span, rest = extract_timespan('chwarter wedi naw', "cy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:15:00', '')
+    >>> span, rest = extract_timespan('hanner awr wedi tri', "cy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:30:00', '')
+    >>> span, rest = extract_timespan('chwarter i bedwar', "cy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:45:00', '')
+
+---
+[← Vietnamese](vi.md) · [Home](../index.md) · [West Frisian →](fy.md)

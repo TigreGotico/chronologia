@@ -1,5 +1,15 @@
 # Georgian (`ka`)
 
+<!-- agent-hint
+covers: where each construction of the Georgian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ka/lang.json`, `chronologia/locale/ka/*.voc`, `chronologia/extract/numfold_georgian.py`
+generated: no
+verify: python -m doctest docs/languages/ka.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Georgian (`ka`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_georgian` module in `chronologia/extract/`.
+
 Georgian counts in base twenty, and reading it any other way is confidently
 wrong on every value from twenty-one to ninety-nine. Between the score
 multiples — `ოცი` 20, `ორმოცი` 40, `სამოცი` 60, `ოთხმოცი` 80 — a number is the
@@ -112,3 +122,32 @@ hold the literal Latin `AM` and `PM` — so no meridiem vocabulary ships.
 5. Which case does `შორის` govern?
 6. Is there a plain "it is N o'clock" surface?
 7. Are the season names in ordinary use with definable boundaries?
+
+
+---
+[← Galician](gl.md) · [Home](../index.md) · [German →](de.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ka")
+    False
+    >>> span, rest = extract_timespan('სამი თვის წინ', "ka", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-03-27T00:05:00', '')
+    >>> span, rest = extract_timespan('მომავალი წელი', "ka", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-01-01T00:00:00', '')
+    >>> span, rest = extract_timespan('ორის ნახევარი', "ka", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:30:00', '')
+    >>> span, rest = extract_timespan('ორი ათასწლეულის წინ', "ka", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('0017-06-27T00:05:00', '')
+
+---
+[← Galician](gl.md) · [Home](../index.md) · [German →](de.md)

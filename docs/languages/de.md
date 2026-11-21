@@ -1,5 +1,15 @@
 # German (`de`)
 
+<!-- agent-hint
+covers: where each construction of the German locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/de/lang.json`, `chronologia/locale/de/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/de.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the German (`de`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Two decisions shape this locale, and both are about the clock. German names
 the half hour by the hour it is heading toward, so `halb acht` is 07:30 and
 never 08:30; `bare_half_to` in `lang.json` is what turns that on. And in the
@@ -116,9 +126,6 @@ doubt either, but the page cannot point at what was consulted.
 
 ## What refuses
 
-**Seconds.** `vor 30 Sekunden` and `in 30 Sekunden` return nothing. No second
-unit ships in the locale, even though the English locale has one.
-
 **A dotted pair with no year.** `15. 6.` returns nothing, and so does
 `am 15. 6. kommen wir`. Those are two ordinals; with no four-digit year to
 anchor the pattern, no date may be fabricated from them.
@@ -134,16 +141,6 @@ year.
 
 **`halb` on its own.** With no hour and no landmark after it, `halb` is not a
 time.
-
-**A season in the genitive.** `während des Sommers` returns nothing, because
-the season vocabulary ships only the bare nominative — `Sommer`, `Frühling`,
-`Herbst`, `Winter` — and `während des` requires the genitive. The nominative
-forms read perfectly well: `im Sommer`, `letzten Sommer` and the adjectival
-`früher Frühling` all resolve.
-
-**`Kalenderwoche` written out.** The abbreviation `KW 12` reads and so does
-`Woche 12`, but the full compound `Kalenderwoche 12` returns nothing; only the
-abbreviation is in the week-number vocabulary.
 
 **The morning as a day part.** `morgens` returns nothing, and
 `heute Morgen` resolves the whole of today with `Morgen` left in the
@@ -169,14 +166,39 @@ rather than anything German.
 1. Should the bare toward-the-hour quarters be gated behind a regional
    variant rather than shipped for all German? The current setting reads
    `viertel neun` as 08:15 in a northern text as readily as in a Bavarian one.
-2. Do the seasons need their genitive forms so that `während des Sommers`
-   reads, and are there other case-marked contexts that would need the same?
-3. Is `Kalenderwoche` common enough in running text to belong in the
-   week-number vocabulary alongside `KW`?
-4. How should `Morgen` and `morgens` be told apart from `morgen` "tomorrow"?
+2. How should `Morgen` and `morgens` be told apart from `morgen` "tomorrow"?
    The distinction is capitalisation in writing and context in speech, and
    neither is available to a case-folding tokenizer.
-5. Does the Nacht band really start at midnight for a German reader, given
+3. Does the Nacht band really start at midnight for a German reader, given
    that `heute Nacht` said in the evening usually means the coming night?
-6. Are `Kalenden`, `Nonen` and `Iden` the forms a German text actually uses,
+4. Are `Kalenden`, `Nonen` and `Iden` the forms a German text actually uses,
    or is the Latin left untranslated in most modern writing?
+
+
+---
+[← Georgian](ka.md) · [Home](../index.md) · [Greek →](el.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("de")
+    True
+    >>> span, rest = extract_timespan('halb acht', "de", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+    >>> span, rest = extract_timespan('viertel neun', "de", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+    >>> span, rest = extract_timespan('dreiviertel neun', "de", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:45:00', '')
+    >>> span, rest = extract_timespan('heute Nacht', "de", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:00:00', '')
+
+---
+[← Georgian](ka.md) · [Home](../index.md) · [Greek →](el.md)

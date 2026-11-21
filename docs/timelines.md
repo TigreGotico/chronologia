@@ -1,5 +1,13 @@
 # Timelines
 
+<!-- agent-hint
+covers: the 13 calendar-reform and date-line timelines and the four kinds of discontinuity
+source: `chronologia/timelines.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[timelines.md]" -q
+see: `docs/timezones.md`, `docs/calendars.md`
+-->
+
 Calendars, as the other guides describe them, are tidy machines: feed one a
 date, get back a day on the number line, forever, in both directions. But real
 history is not tidy. Popes, parliaments, tsars and emperors have all, at one
@@ -137,7 +145,7 @@ print(answer.discontinuity.kind.name)
 # SKIP
 ```
 
-## The ten timelines
+## The thirteen timelines
 
 Each entry in `TIMELINES` is one jurisdiction's history. Here is every one,
 with the story it tells and a line you can run.
@@ -200,7 +208,7 @@ print(TIMELINES["sweden_1700_1712"].date(1712, 2, 30))
 
 Japan switched at the start of 1873 (Meiji 6), abandoning its traditional
 lunisolar calendar. The post-switch side works fully; the pre-1873 lunisolar
-side is not yet a supported calendar, so a date before the switch is reported
+side is not a supported calendar, so a date before the switch is reported
 as simply outside the modelled span:
 
 ```python
@@ -209,8 +217,42 @@ print(TIMELINES["japan_1873"].date(1873, 1, 1))
 ```
 
 Ask that same timeline about a *pre-1873* date and it reports, honestly, that
-the date is outside the part of history it can currently model — the older
-lunisolar calendar is not yet wired in — rather than inventing an answer.
+the date is outside the part of history it models — the older
+lunisolar calendar is not modelled — rather than inventing an answer.
+
+### samoa_2011 — the lost Friday
+
+Samoa moved from UTC-11 to UTC+13 at the end of December 2011, so the whole
+country skipped Friday 30 December:
+
+```python
+answer = TIMELINES["samoa_2011"].date(2011, 12, 30)
+print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())
+# SKIP (2011, 12, 31)
+```
+
+### philippines_1844 — the westward hop
+
+The Philippines moved west across the International Date Line by decree, so
+31 December 1844 never happened in Manila:
+
+```python
+answer = TIMELINES["philippines_1844"].date(1844, 12, 31)
+print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())
+# SKIP (1845, 1, 1)
+```
+
+### alaska_1867 — Julian to Gregorian at the date line
+
+Alaska changed hands from Russia to the United States in October 1867. The
+transfer moved the territory across the date line and onto the Gregorian
+calendar, so the labels 7 to 17 October never existed there:
+
+```python
+answer = TIMELINES["alaska_1867"].date(1867, 10, 10)
+print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())
+# SKIP (1867, 10, 18)
+```
 
 ## Reference: the timeline registry
 
@@ -226,6 +268,9 @@ lunisolar calendar is not yet wired in — rather than inventing an answer.
 | `greece_1923` | Greece | SKIP (13 days, Feb 1923) |
 | `sweden_1700_1712` | Sweden | INSERT (30 Feb 1712) + SKIP (1753) |
 | `japan_1873` | Japan | RELABEL (lunisolar → Gregorian) |
+| `samoa_2011` | Samoa | SKIP (30 Dec 2011) |
+| `philippines_1844` | Philippines | SKIP (31 Dec 1844) |
+| `alaska_1867` | Alaska | SKIP (7–17 Oct 1867) |
 
 Two calls do all the work on any timeline, objects in and objects out:
 
@@ -245,3 +290,6 @@ And the four `DiscontinuityKind` values — `SKIP`, `REPEAT`, `INSERT`,
 draws: if a calendar's own law predicts the change, it belongs to the
 *calendar*; if it took a pope, a parliament, a tsar or an emperor, it belongs
 to a *timeline*.
+
+---
+[← Timezones](timezones.md) · [Home](index.md) · [Deep time →](deep-time.md)

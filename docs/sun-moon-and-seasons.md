@@ -1,5 +1,13 @@
 # Sun, moon, and seasons
 
+<!-- agent-hint
+covers: sunrise and twilight, unequal hours, prayer times, moon phases, seasons, leap seconds and dayparts
+source: `chronologia/solar.py`, `chronologia/moon.py`, `chronologia/equinoxes.py`, `chronologia/leapseconds.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[sun-moon-and-seasons.md]" -q
+see: `docs/timezones.md`, `docs/calendars.md`
+-->
+
 The calendars in this library answer "which day?". This page is about
 *natural* time — the sky the calendar was built to track. Where does the sun
 actually rise, and when do its twilights begin and end? What did an "hour" mean
@@ -483,7 +491,7 @@ print(night.start.day, night.end.day)
 
 Because day-parts are ordinary spans, the interval algebra composes them.
 Adjacent parts tile with no gap — `morning` ends exactly where `afternoon`
-begins — so their union is one seamless span, and the gap between two
+begins — so their union is one continuous span, and the gap between two
 non-adjacent parts is itself a span:
 
 ```python
@@ -671,4 +679,7 @@ day attach as another named school — but the library will not invent one.
 | `SOLAR_TERM_NAMES`, `EQUINOX_ACCURACY`, `SOLAR_TERM_ACCURACY`, `VALID_YEAR_RANGE` | the term names, the two stated bounds, and the 1000..3000 validity window |
 | `daypart_span(date_or_span, name, region=None, zone=None)` | the span a named day-part (morning, tarde, night) occupies on a date; midnight-crossers reach into the next civil day; a `tzinfo` `zone` makes the endpoints aware, resolving DST gap/fold to the post-transition instant |
 | `DAY_PARTS`, `DayPart` | the region-tagged day-part registry (CLDR day-period boundaries) |
-| `DateSpan.intersect` / `.union` / `.gap` | half-open interval algebra over spans (overlap, seamless merge, the hole between) |
+| `DateSpan.intersect` / `.union` / `.gap` | half-open interval algebra over spans (overlap, merge of adjacent spans, the hole between) |
+
+---
+[← Eras and rulers](eras-and-rulers.md) · [Home](index.md) · [Timezones →](timezones.md)

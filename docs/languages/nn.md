@@ -1,5 +1,15 @@
 # Norwegian Nynorsk (`nn`)
 
+<!-- agent-hint
+covers: where each construction of the Norwegian Nynorsk locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/nn/lang.json`, `chronologia/locale/nn/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/nn.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Norwegian Nynorsk (`nn`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 The half hour names the coming hour: `halv to` is 01:30, not 02:30.
 `bare_half_to` is set for that. The quarter takes its direction from the word
 beside it, `over` counting up from the named hour and `på` counting down toward
@@ -103,10 +113,10 @@ reach the other, because this locale binds no meridiem at all — `halv eitt om
 ettermiddagen` returns 00:30 and leaves `om ettermiddagen` in the remainder.
 
 A convention flag named `toward_hour_12h` exists and would change exactly this.
-Eight locales declare `bare_half_to` without it — `da`, `de`, `fy`, `ms`, `nb`,
-`nl`, `nn` and `sv` — and all eight return 00:30 for their own version of the
-phrase. Sixteen declare both, and Icelandic is the only Germanic locale among
-them; `hálf eitt` returns 12:30 there.
+Seven locales declare `bare_half_to` without it — `de`, `fy`, `ms`, `nb`,
+`nl`, `nn` and `sv` — and all seven return 00:30 for their own version of the
+phrase. Eighteen declare both, and Danish and Icelandic are the only Germanic locales
+among them; `hálf eitt` returns 12:30 there.
 
 Turning the flag on for Nynorsk moves more than the bare half, because the
 resolver reads it at three sites and all three sit on the branch that has just
@@ -182,9 +192,6 @@ with `i` in the remainder. `under juni` strands `under`. `frå måndag` returns
 the whole of the following Monday and strands `frå`, so an open range starting
 at a weekday is silently reduced to that weekday.
 
-`klokka halv eitt` → 00:30 with remainder `klokka`. The "at" marker is read
-before a bare hour but not before a fraction.
-
 `kvar måndag` → the next single Monday with remainder `kvar`.
 
 ## Open questions for a native speaker
@@ -199,3 +206,32 @@ before a bare hour but not before a fraction.
    boundary with `føremiddag` match how the words are used?
 5. Is `helgi` current beside `helga`, and is `weekend` written in Nynorsk?
 6. Which of `fjerdedel` and `kvart` is the ordinary quarter-of-an-hour word?
+
+
+---
+[← Norwegian Bokmål](nb.md) · [Home](../index.md) · [Occitan →](oc.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("nn")
+    True
+    >>> span, rest = extract_timespan('halv to', "nn", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:30:00', '')
+    >>> span, rest = extract_timespan('kvart over to', "nn", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:15:00', '')
+    >>> span, rest = extract_timespan('kvart på tre', "nn", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:45:00', '')
+    >>> span, rest = extract_timespan('kvelden', "nn", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T18:00:00', '')
+
+---
+[← Norwegian Bokmål](nb.md) · [Home](../index.md) · [Occitan →](oc.md)

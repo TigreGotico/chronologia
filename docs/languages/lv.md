@@ -1,5 +1,15 @@
 # Latvian (`lv`)
 
+<!-- agent-hint
+covers: where each construction of the Latvian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/lv/lang.json`, `chronologia/locale/lv/*.voc`, `chronologia/extract/numfold_latvian.py`
+generated: no
+verify: python -m doctest docs/languages/lv.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Latvian (`lv`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_latvian` module in `chronologia/extract/`.
+
 Two facts about Latvian shape the whole locale. The first is that a date
 behaves differently depending on whether it stands alone or sits inside a
 sentence: the dateline puts the month in the nominative, the sentence-embedded
@@ -154,3 +164,32 @@ is the only fractional clock surface the locale reads.
 5. Is there a minutes-to-the-hour clock construction at all?
 6. What is the nominative of the noon compound whose locative is
    `pusdienlaikā`?
+
+
+---
+[← Korean](ko.md) · [Home](../index.md) · [Lithuanian →](lt.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("lv")
+    False
+    >>> span, rest = extract_timespan('pusčetri', "lv", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:30:00', '')
+    >>> span, rest = extract_timespan('pirms diviem gadiem', "lv", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2015-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('pirms gada', "lv", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2016-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('pirms 21 gada', "lv", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('1996-06-27T00:05:00', '')
+
+---
+[← Korean](ko.md) · [Home](../index.md) · [Lithuanian →](lt.md)

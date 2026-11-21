@@ -1,5 +1,13 @@
 # EDTF: how archives write dates they're not sure about
 
+<!-- agent-hint
+covers: reading and writing EDTF approximate and uncertain dates as spans
+source: `chronologia/edtf.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[edtf.md]" -q
+see: `docs/extraction.md`, `docs/deep-time.md`
+-->
+
 When a museum catalogues a photograph as "probably the 1890s", or a manuscript
 as "June 1637, approximately", it cannot write a plain calendar date — it does
 not *have* one. It has a **stretch of time**, and some notion of how confident
@@ -213,3 +221,6 @@ pretend a single span could represent them.
 | 2 | unspecified digit anywhere (contiguous) | full |
 | 2 | non-contiguous `X` (e.g. `1XXX-12`), set `[…]` `{…}` | raises `NotImplementedError` |
 ```
+
+---
+[← Recurrence rules](recurrence.md) · [Home](index.md) · [Rulings →](rulings.md)

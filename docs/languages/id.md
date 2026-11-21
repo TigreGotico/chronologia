@@ -1,5 +1,15 @@
 # Indonesian (`id`)
 
+<!-- agent-hint
+covers: where each construction of the Indonesian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/id/lang.json`, `chronologia/locale/id/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/id.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Indonesian (`id`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Indonesian is isolating: nouns do not inflect for number, verbs do not
 conjugate, and direction is carried entirely by trailing particles.
 `lalu` closes a phrase in the past, `lagi` closes one in the future, and both
@@ -146,3 +156,29 @@ phrase inside a relative-offset construction requires the trailing `lalu` or
    should those ship as the locale's actual season vocabulary?
 4. Is `pekan` fully interchangeable with `minggu` for "week" in a numbered
    ISO-week phrase, or is one of the two markedly more formal?
+
+
+---
+[← Icelandic](is.md) · [Home](../index.md) · [Irish →](ga.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("id")
+    True
+    >>> span, rest = extract_timespan('setengah tiga', "id", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:30:00', '')
+    >>> span, rest = extract_timespan('pukul satu malam', "id", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('pukul sebelas malam', "id", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T23:00:00', '')
+
+---
+[← Icelandic](is.md) · [Home](../index.md) · [Irish →](ga.md)

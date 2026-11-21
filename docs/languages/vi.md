@@ -1,5 +1,15 @@
 # Vietnamese (`vi`)
 
+<!-- agent-hint
+covers: where each construction of the Vietnamese locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/vi/lang.json`, `chronologia/locale/vi/*.voc`, `chronologia/extract/numfold_vietnamese.py`
+generated: no
+verify: python -m doctest docs/languages/vi.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Vietnamese (`vi`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_vietnamese` module in `chronologia/extract/`.
+
 Vietnamese has no inflection at all, which removes most of the difficulty other
 locales spend their vocabulary files on and replaces it with a different one:
 several of the most useful temporal words collide exactly with other words, and
@@ -103,3 +113,29 @@ half-read.
 4. What is the "this week" / "this year" deictic, and is `năm nay` it?
 5. Is the additive clock ever written without `phút` in a way that could be
    read unambiguously?
+
+
+---
+[← Ukrainian](uk.md) · [Home](../index.md) · [Welsh →](cy.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("vi")
+    False
+    >>> span, rest = extract_timespan('ba giờ kém mười', "vi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:50:00', '')
+    >>> span, rest = extract_timespan('một giờ đêm', "vi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('bốn giờ năm phút', "vi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T04:05:00', '')
+
+---
+[← Ukrainian](uk.md) · [Home](../index.md) · [Welsh →](cy.md)

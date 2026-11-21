@@ -1,5 +1,13 @@
 # Adding a language
 
+<!-- agent-hint
+covers: the steps for teaching chronologia a new language with word lists and a test corpus
+source: `chronologia/locale/en/lang.json`, `chronologia/extract/schema.py`, `test/test_language_parity.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[adding-a-language.md]" -q
+see: `docs/extraction.md`, `docs/languages/index.md`
+-->
+
 **Who this is for:** you speak a language chronologia does not yet read well,
 and you would like it to. You do **not** need to be a programmer. Adding a
 language is mostly *editing small lists of words in plain text files* — one
@@ -662,7 +670,7 @@ that means the same thing:
 ```
 
 The test runner reads *both*, resolves them, and insists they land on the
-**exact same span**. This is a powerful, honest check: it proves your Malay
+**exact same span**. This check proves your Malay
 "next week" means the same instant of time as English "next week", with no
 hand-tuning. Every language needs **at least 25** such pairs, and the corpus as
 a whole needs **at least 100 example cases** total (across all the little
@@ -883,3 +891,6 @@ your language uses to say them.
 *Ready for the technical reference? The
 ["How a language works — and how to add one"](extraction.md) section of the
 extraction guide is the compact, developer-facing companion to this page.*
+
+---
+[← Reading dates written by humans](extraction.md) · [Home](index.md) · [Events and iCalendar →](events.md)

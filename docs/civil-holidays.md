@@ -1,5 +1,13 @@
 # Civil holidays
 
+<!-- agent-hint
+covers: holiday rules for 260 jurisdictions, subdivisions and the horizon of each table
+source: `chronologia/civil_holidays/`, `chronologia/holiday_data/`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[civil-holidays.md]" -q
+see: `docs/recurrence.md`, `docs/transparency.md`
+-->
+
 The golden question this module answers is not "what are the holidays this
 year?" but **"is Monday a holiday where *you* live?"** — and in most of the
 world the honest answer depends on your *municipality*, not your country.
@@ -320,3 +328,6 @@ rule is in force (`2024-`, `-2015`, `2016-2020`, `2024`).
 
 New jurisdictions are data, not code: add a `.tab` file with its citations and
 the engine loads it.
+
+---
+[← Mars and beyond](mars-and-beyond.md) · [Home](index.md) · [Design →](design.md)

@@ -1,5 +1,15 @@
 # Thai (`th`)
 
+<!-- agent-hint
+covers: where each construction of the Thai locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/th/lang.json`, `chronologia/locale/th/*.voc`, `chronologia/extract/numfold_thai.py`
+generated: no
+verify: python -m doctest docs/languages/th.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Thai (`th`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_thai` module in `chronologia/extract/`.
+
 Thai is written without spaces between words, and it names the hours of the day
 on a six-hour cycle whose word changes with the part of the day. Both facts
 shape what this locale reads, and the second one is why `หกโมง` returns
@@ -149,7 +159,7 @@ fact about the language.
 - The boundary and the label for 16:00 to 18:59, where the three sources
   disagree.
 - Whether the traditional six-hour hour words are still the default in written
-  prose, or whether written Thai now uses 24-hour notation and reserves `ตี`
+  prose, or whether written Thai uses 24-hour notation and reserves `ตี`
   and `ทุ่ม` for speech. No corpus evidence was gathered either way, and the
   answer changes how much of the clock is worth having.
 - Whether a bare four-digit year with no era marker is read as Buddhist by
@@ -161,3 +171,29 @@ fact about the language.
   phrase space. That frequency is what decides whether exact-cover segmentation
   is cautious or crippling.
 - Whether the week starts on Sunday or Monday in ordinary Thai reckoning.
+
+
+---
+[← Tamil](ta.md) · [Home](../index.md) · [Turkish →](tr.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("th")
+    False
+    >>> span, rest = extract_timespan('แปดโมงเช้า', "th", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:00:00', '')
+    >>> span, rest = extract_timespan('ตั้งแต่ วันจันทร์ ถึง วันศุกร์', "th", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-03T00:00:00', '')
+    >>> span, rest = extract_timespan('หกโมงเย็น', "th", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T18:00:00', '')
+
+---
+[← Tamil](ta.md) · [Home](../index.md) · [Turkish →](tr.md)

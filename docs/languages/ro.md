@@ -1,5 +1,15 @@
 # Romanian (`ro`)
 
+<!-- agent-hint
+covers: where each construction of the Romanian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ro/lang.json`, `chronologia/locale/ro/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/ro.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Romanian (`ro`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Romanian is the deepest calendar locale in the project outside the reference
 locales: alongside the Gregorian calendar it ships the Roman calendar
 (kalends, nones, ides), the French Republican calendar, the Hebrew calendar,
@@ -118,9 +128,6 @@ strengthen this page.
 
 ## What refuses
 
-**Seconds spelled out.** No `unit_second` vocabulary ships; only the digit
-clock reaches sub-minute precision.
-
 **A bare quantifier with no direction.** `câțiva ani` alone, with no `acum`,
 `peste` or similar marker, is a count without a direction and is not
 expected to resolve to a specific offset — consistent with the general
@@ -139,3 +146,32 @@ become a point in time.
    articulated form the way the other six weekdays do, and if the enclitic
    article genuinely does not attach to `duminică` the way it attaches to
    `luni`/`lunea`, is that worth a comment recording the reason?
+
+
+---
+[← Portuguese](pt.md) · [Home](../index.md) · [Russian →](ru.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ro")
+    True
+    >>> span, rest = extract_timespan('lunea trecută', "ro", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-26T00:00:00', '')
+    >>> span, rest = extract_timespan('acum trei zile', "ro", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-24T00:05:00', '')
+    >>> span, rest = extract_timespan('trei și un sfert', "ro", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:15:00', '')
+    >>> span, rest = extract_timespan('nouă și jumătate', "ro", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:30:00', '')
+
+---
+[← Portuguese](pt.md) · [Home](../index.md) · [Russian →](ru.md)

@@ -1,5 +1,15 @@
 # Tamil (`ta`)
 
+<!-- agent-hint
+covers: where each construction of the Tamil locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ta/lang.json`, `chronologia/locale/ta/*.voc`, `chronologia/extract/numfold_dravidian.py`
+generated: no
+verify: python -m doctest docs/languages/ta.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Tamil (`ta`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_dravidian` module in `chronologia/extract/`.
+
 Tamil is the library's first Dravidian language. It is agglutinative and
 case-suffixing, and two of its habits decide what this locale reads: an offset
 carries its direction on the counted noun rather than in a separate word, and
@@ -35,9 +45,9 @@ marker surface is unreachable from ordinary text.
 Tamil is an abugida: a syllable is a base consonant carrying combining vowel
 signs, and the virama that cancels the inherent vowel is a combining mark too.
 Those marks are Unicode categories Mn and Mc, which the regex `\w` class does
-not match. Before the tokenizer's letter class carried them, `ஒன்பதரை` arrived
-as the two fragments `ஒன` and `பதர` and not one Tamil word in the locale could
-bind a slot. The class now carries the Tamil block's mark subranges — `U+0B82`,
+not match. Without the marks, `ஒன்பதரை` would arrive
+as the two fragments `ஒன` and `பதர`, and no Tamil word in the locale could
+bind a slot. The tokenizer's letter class carries the Tamil block's mark subranges — `U+0B82`,
 `U+0BBE`–`U+0BCD` and `U+0BD7` — which are Tamil-block codepoints and therefore
 inert for every other script. The digits `௦`–`௯` are excluded because the
 numeric rule already reads them, and the day, month, year and rupee signs
@@ -171,3 +181,29 @@ so none is invented.
 - Whether an unmarked minute tail (`ஏழு மணி இருபது நிமிடம்`, with neither
   `மேல்` nor `குறைவு`) is genuinely read forward, as the fused fractions
   suggest, or whether it is simply not written that way.
+
+
+---
+[← Swedish](sv.md) · [Home](../index.md) · [Thai →](th.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ta")
+    False
+    >>> span, rest = extract_timespan('அதிகாலை', "ta", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:00:00', '')
+    >>> span, rest = extract_timespan('மாலை ஆறு மணி', "ta", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T18:00:00', '')
+    >>> span, rest = extract_timespan('இரவு இரண்டு மணி', "ta", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:00:00', '')
+
+---
+[← Swedish](sv.md) · [Home](../index.md) · [Thai →](th.md)

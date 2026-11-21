@@ -1,5 +1,15 @@
 # Maltese (`mt`)
 
+<!-- agent-hint
+covers: where each construction of the Maltese locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/mt/lang.json`, `chronologia/locale/mt/*.voc`, `chronologia/extract/numfold_maltese.py`
+generated: no
+verify: python -m doctest docs/languages/mt.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Maltese (`mt`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_maltese` module in `chronologia/extract/`.
+
 Maltese is a Semitic language written in the Latin alphabet with a heavy
 Romance vocabulary, and every one of those three facts shows up in this locale.
 The definite article assimilates to nine sun letters, so `il-` becomes `is-`,
@@ -123,3 +133,32 @@ cannot quietly answer text that is not Maltese.
    distinguishes it in writing from the durative `ilu` frame?
 4. Does the clock's switch to `nieqes` happen exactly at the half hour, or
    earlier or later in practice?
+
+
+---
+[← Malay](ms.md) · [Home](../index.md) · [Mirandese →](mwl.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("mt")
+    False
+    >>> span, rest = extract_timespan('is-sitta u kwart', "mt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:15:00', '')
+    >>> span, rest = extract_timespan('is-sitta u nofs', "mt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:30:00', '')
+    >>> span, rest = extract_timespan('it-tmienja nieqes kwart', "mt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:45:00', '')
+    >>> span, rest = extract_timespan('l-għaxra nieqes ħamsa', "mt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:55:00', '')
+
+---
+[← Malay](ms.md) · [Home](../index.md) · [Mirandese →](mwl.md)

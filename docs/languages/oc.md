@@ -1,5 +1,15 @@
 # Occitan (`oc`)
 
+<!-- agent-hint
+covers: where each construction of the Occitan locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/oc/lang.json`, `chronologia/locale/oc/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/oc.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Occitan (`oc`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Occitan sits next to Catalan and reads like it, and the temptation to fill the
 Occitan locale from the Catalan one is the single largest risk to this page's
 accuracy. Catalan's date grammar lets the article stand inside the date —
@@ -135,8 +145,6 @@ the surfaces it covers, and it is still one speaker.
 
 ## What refuses
 
-**Seconds.** `fa 30 segondas` returns nothing. No second unit ships.
-
 **The dotted date.** `15.06.2020` returns nothing.
 
 **Day parts.** `al matin`, `de matin`, `a la vesprada`, `lo ser` and `la
@@ -158,11 +166,6 @@ absent rather than borrowed.
 
 Reproduced with `extract_timespan(text, "oc", anchor=datetime(2017, 6, 27,
 13, 4))`.
-
-`10 oras 30` comes back as 10:00 with `30` stranded, and `10 oras e 30` as
-10:00 with `e 30` stranded. The minute is dropped rather than the parse
-failing. The same time written `10h30`, `10 h 30` or `dètz oras e mièja`
-resolves to 10:30.
 
 `una ora de la nuèch` returns nothing where `1 ora de la nuèch`, `doas oras de
 la nuèch` and `dotze oras de la nuèch` all resolve. `una` is claimed by the
@@ -195,3 +198,32 @@ the same article cost as the date line.
 5. Does `en genièr` mean "in January" in the temporal sense the locale reads
    it as, and is there a published source for that beyond the dictionary
    entry named for it?
+
+
+---
+[← Norwegian Nynorsk](nn.md) · [Home](../index.md) · [Persian →](fa.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("oc")
+    True
+    >>> span, rest = extract_timespan('dètz oras del matin', "oc", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T10:00:00', '')
+    >>> span, rest = extract_timespan('quatre oras del ser', "oc", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T16:00:00', '')
+    >>> span, rest = extract_timespan('la setmana del 20 de julhet', "oc", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-17T00:00:00', '')
+    >>> span, rest = extract_timespan("3 d'octòbre de 1990", "oc", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('1990-10-03T00:00:00', '')
+
+---
+[← Norwegian Nynorsk](nn.md) · [Home](../index.md) · [Persian →](fa.md)

@@ -1,5 +1,15 @@
 # Arabic (`ar`)
 
+<!-- agent-hint
+covers: where each construction of the Arabic locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ar/lang.json`, `chronologia/locale/ar/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/ar.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Arabic (`ar`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 The week starts on Saturday and the weekend is Friday and Saturday. That is set
 in `lang.json` as `week_start: saturday` with `weekend_start: 4`, and it is the
 first thing to know because it changes what "next week" and "the weekend" mean
@@ -74,18 +84,7 @@ vocabulary carry no recorded source. The locale sets `hemisphere` to null.
 
 ## What refuses
 
-**The dual as a count.** `يومين` returns nothing on its own, and so does
-`قبل يومين` — "two days ago", which is the ordinary way to say it. The dual
-files ship, but no construction reaches them, so a dual noun is not read as a
-count of two.
-
-**A proclitic `و`.** `بين يناير ومارس` does not read as a range: the
-conjunction is written glued to the following word and the tokenizer does not
-split it, so `بين` and `مارس` are stranded. Spaced as `بين يناير و مارس` the
-same phrase resolves. The half-past clock form `الثامنة والنصف` refuses for the
-same reason, and it does not resolve spaced either.
-
-**Seconds.** `قبل 30 ثانية` returns nothing. No second unit ships.
+**The half-past clock form.** `الثامنة والنصف` returns nothing, glued or spaced as `الثامنة و النصف`.
 
 **`الليلة` for tonight.** The night band ships as `الليل` and `ليلة`; the
 definite `الليلة` returns nothing.
@@ -100,3 +99,32 @@ definite `الليلة` returns nothing.
    wrong month, given that both sets ship at once?
 4. Is `الثامنة والنصف` the ordinary way to say half past eight, and what should
    the clock read for it?
+
+
+---
+[← Albanian](sq.md) · [Home](../index.md) · [Aragonese →](an.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ar")
+    True
+    >>> span, rest = extract_timespan('الأسبوع القادم', "ar", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-01T00:00:00', '')
+    >>> span, rest = extract_timespan('كانون الثاني', "ar", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-01-01T00:00:00', '')
+    >>> span, rest = extract_timespan('تشرين الأول', "ar", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-10-01T00:00:00', '')
+    >>> span, rest = extract_timespan('3 أكتوبر 1990', "ar", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('1990-10-03T00:00:00', '')
+
+---
+[← Albanian](sq.md) · [Home](../index.md) · [Aragonese →](an.md)

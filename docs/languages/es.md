@@ -1,5 +1,15 @@
 # Spanish (`es`)
 
+<!-- agent-hint
+covers: where each construction of the Spanish locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/es/lang.json`, `chronologia/locale/es/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/es.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Spanish (`es`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 `de la noche` is not a twelve-hour shift, and getting that wrong is the fastest
 way to be an hour or twelve out. Spanish uses the phrase across the whole
 colloquial night, so `las diez de la noche` is 22:00 but `la una de la noche`
@@ -22,7 +32,7 @@ source for them.
 
 **The date line** is `el 3 de octubre de 1990`, little-endian with `de` between
 each part, and it also reads without the article and without the year. Spanish
-additionally has a day-label idiom, `día 3 de octubre`, where `día` heads the
+also has a day-label idiom, `día 3 de octubre`, where `día` heads the
 date rather than being part of it. The vocabulary cites RAE's *Ortografía* and
 the *Diccionario panhispánico de dudas* under *día* for that being a genuine
 temporal function word, and registers it as its own marker so that a leading
@@ -99,8 +109,6 @@ source than the RAE works the rest of the locale is built on.
 
 ## What refuses
 
-**Seconds.** `hace 30 segundos` returns nothing. No second unit ships.
-
 **The dotted date.** `15.06.2020` returns nothing, and it does not fall back
 to reading 2020 as a bare year either. Spanish writes the numeric date with
 slashes, and `15/06/2020` reads.
@@ -123,3 +131,32 @@ is a refusal of the ambiguous reading rather than a gap.
    uses, or does it keep the Latin?
 4. Is `día` ever used in a way that would make folding a leading `día` into a
    date wrong?
+
+
+---
+[← Slovenian](sl.md) · [Home](../index.md) · [Swahili →](sw.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("es")
+    True
+    >>> span, rest = extract_timespan('las diez de la noche', "es", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T22:00:00', '')
+    >>> span, rest = extract_timespan('la una de la noche', "es", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('de la noche', "es", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:00:00', '')
+    >>> span, rest = extract_timespan('las doce de la noche', "es", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-28T00:00:00', '')
+
+---
+[← Slovenian](sl.md) · [Home](../index.md) · [Swahili →](sw.md)

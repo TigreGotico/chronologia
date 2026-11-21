@@ -1,5 +1,13 @@
 # Design: the developer's tour
 
+<!-- agent-hint
+covers: the JDN hub, the value types and what the library refuses to do
+source: `chronologia/astrodate.py`, `chronologia/__init__.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[design.md]" -q
+see: `docs/getting-started.md`, `docs/extraction.md`
+-->
+
 This is the one page written for someone who wants to build *on* the library
 rather than just use it. It explains how the pieces fit, why the boundaries are
 drawn where they are, and — most importantly — what the library will never do
@@ -261,3 +269,6 @@ boundaries — exists to keep that promise.
 Named periods live in a seventh registry, `PERIODS` (see
 [deep-time.md](deep-time.md)). Every entry in every registry converts through
 the same JDN hub, and every shipped number traces to a cited source.
+
+---
+[← Civil holidays](civil-holidays.md) · [Home](index.md) · [Benchmarking chronologia against other date parsers →](benchmarks.md)

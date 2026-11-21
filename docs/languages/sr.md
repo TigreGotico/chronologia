@@ -1,5 +1,15 @@
 # Serbian (`sr`)
 
+<!-- agent-hint
+covers: where each construction of the Serbian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/sr/lang.json`, `chronologia/locale/sr/*.voc`, `chronologia/extract/numfold_slavic.py`
+generated: no
+verify: python -m doctest docs/languages/sr.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Serbian (`sr`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_slavic` module in `chronologia/extract/`.
+
 Serbian is written in two scripts, and the locale reads both. Every vocabulary
 file lists the Latin and the Cyrillic surface side by side, so `dva sata` and
 `два сата` are the same phrase to the extractor and neither script is the
@@ -126,3 +136,32 @@ weeks ago.
    units do the two differ?
 5. Are the determiner paradigms for `ovaj`, `prošli` and `sledeći` complete as
    shipped, or are ordinary temporal phrases missing a case?
+
+
+---
+[← Russian](ru.md) · [Home](../index.md) · [Slovak →](sk.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("sr")
+    False
+    >>> span, rest = extract_timespan('dva sata', "sr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:00:00', '')
+    >>> span, rest = extract_timespan('два сата', "sr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:00:00', '')
+    >>> span, rest = extract_timespan('jedan sat', "sr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('pet sati', "sr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T05:00:00', '')
+
+---
+[← Russian](ru.md) · [Home](../index.md) · [Slovak →](sk.md)

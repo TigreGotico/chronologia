@@ -1,5 +1,15 @@
 # West Frisian (`fy`)
 
+<!-- agent-hint
+covers: where each construction of the West Frisian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/fy/lang.json`, `chronologia/locale/fy/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/fy.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the West Frisian (`fy`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 The half hour names the coming hour. `healwei fiven` is 04:30, not 05:30, and
 the word itself says so: `healwei` is "halfway", the point halfway toward the
 hour that follows. `bare_half_to` is set for that. The quarter word `kertier`
@@ -99,9 +109,9 @@ this locale binds no meridiem at all (see the refusals below). A speaker who
 means half past twelve in the middle of the day gets a time twelve hours away.
 
 A convention flag named `toward_hour_12h` exists and would change exactly this.
-Eight locales declare `bare_half_to` without it — `da`, `de`, `fy`, `ms`, `nb`,
-`nl`, `nn` and `sv` — and all eight return 00:30 for their own version of the
-phrase. Sixteen locales declare both, and Icelandic is the only Germanic one
+Seven locales declare `bare_half_to` without it — `de`, `fy`, `ms`, `nb`,
+`nl`, `nn` and `sv` — and all seven return 00:30 for their own version of the
+phrase. Eighteen declare both, and Danish and Icelandic are the only Germanic locales
 among them; `hálf eitt` returns 12:30 there.
 
 Turning the flag on for West Frisian moves more than the bare half, because the
@@ -187,3 +197,32 @@ stranded in front of a clock time instead of refusing.
 5. Are there fused today-plus-band words on the Dutch model?
 6. Does the Dutch day-period table match Frisian use, or do the bands sit
    differently?
+
+
+---
+[← Welsh](cy.md) · [Home](../index.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("fy")
+    True
+    >>> span, rest = extract_timespan('healwei fiven', "fy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T04:30:00', '')
+    >>> span, rest = extract_timespan('kertier oer twa', "fy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:15:00', '')
+    >>> span, rest = extract_timespan('kertier foar trije', "fy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:45:00', '')
+    >>> span, rest = extract_timespan('healwei ienen', "fy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:30:00', '')
+
+---
+[← Welsh](cy.md) · [Home](../index.md)

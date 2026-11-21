@@ -1,5 +1,15 @@
 # Croatian (`hr`)
 
+<!-- agent-hint
+covers: where each construction of the Croatian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/hr/lang.json`, `chronologia/locale/hr/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/hr.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Croatian (`hr`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Croatian names the half hour for the hour that has not arrived, and it does so
 with a bare cardinal: `pola devet` is 08:30 and `pola tri` is 02:30. That
 single fact separates it from most of its Slavic neighbours, where the same
@@ -157,25 +167,6 @@ those paradigms are attributed but not located.
 
 ## What refuses
 
-**The quarter hour, and every minute counted to or past the hour.** Croatian
-says `četvrt do devet` for 8:45 and `devet i četvrt` for 9:15, and neither
-resolves: the locale ships no quarter fraction, no clock-direction words and
-no order that would bind them. `pet do devet` and `pet minuta poslije devet`
-return nothing for the same reason. The quarter reaches only the duration
-path, where `četvrt sata` is fifteen minutes.
-
-**Every century, decade and millennium reading.** `20. stoljeće`,
-`dvadeseto stoljeće` and `2. desetljeće` all return nothing, and
-`u 20. stoljeću` is worse than nothing: the dotted twenty is claimed as a
-clock hour and the phrase comes back as eight in the evening with `stoljeću`
-stranded. The cause is structural rather than lexical. `lang.json` declares
-its ordinal-scope grammar as an `override`, which replaces the shared base
-list outright, and the base list is where `article? ORD SCOPE_UNIT` — the
-order every century, decade and millennium reading runs through — is defined.
-The century noun is in the vocabulary; no order reads it. Four other Slavic
-locales declare the same override and lose the same reading, and Belarusian,
-which also overrides, re-lists that one order and keeps it.
-
 **Several other scoped-ordinal readings, for the same reason.** The base
 grammar's "Nth weekday of a bare year" and "Nth weekday of this period"
 orders go with it. `prvi ponedjeljak 2020` does not return the first Monday of
@@ -194,10 +185,6 @@ wide chart gives for the eleventh month, and only the shorter `studenog`
 ships. So `15. studenog 2020` is the fifteenth of November and
 `15. studenoga 2020` is the whole of 2020 with the day and month stranded.
 
-**Month abbreviations.** None of the twelve CLDR abbreviated month names
-(`sij`, `velj`, `ožu`, `tra`, `svi`, `lip`, `srp`, `kol`, `ruj`, `lis`, `stu`,
-`pro`) ship, so `15. sij 2020` returns the whole of 2020.
-
 **The two-word afternoon.** CLDR 47 gives `poslije podne` as the `format`
 spelling of the afternoon band and `popodne` as the `stand-alone` one, and
 only the one-word form ships. `danas poslije podne` therefore does not return
@@ -211,9 +198,7 @@ the right hour but strand the noun.
 
 ## Open questions for a native speaker
 
-1. Is `četvrt do devet` worth wiring, and does the quarter take the same
-   toward-hour direction as `pola` or the English one? The half hour is
-   attested twice over; the quarter is not attested here at all.
+1. Does the quarter take the same toward-hour direction as `pola` or the English one?
 2. What case do the shipped oblique weekday and month forms mark, and is the
    set complete for each word?
 3. Are `kvartal` and `tromjesečje` interchangeable for a calendar quarter, or
@@ -224,3 +209,32 @@ the right hour but strand the noun.
    `pola dvanaest uvečer` strands.
 5. Is `poslije podne` the spelling a speaker would type for the afternoon, or
    has `popodne` displaced it in ordinary writing?
+
+
+---
+[← Catalan](ca.md) · [Home](../index.md) · [Czech →](cs.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("hr")
+    True
+    >>> span, rest = extract_timespan('pola devet', "hr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('pola tri', "hr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:30:00', '')
+    >>> span, rest = extract_timespan('u 9 sati navečer', "hr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T21:00:00', '')
+    >>> span, rest = extract_timespan('pola devet navečer', "hr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:30:00', '')
+
+---
+[← Catalan](ca.md) · [Home](../index.md) · [Czech →](cs.md)

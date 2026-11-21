@@ -1,5 +1,15 @@
 # Belarusian (`be`)
 
+<!-- agent-hint
+covers: where each construction of the Belarusian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/be/lang.json`, `chronologia/locale/be/*.voc`, `chronologia/extract/numfold_be.py`
+generated: no
+verify: python -m doctest docs/languages/be.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Belarusian (`be`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_be` module in `chronologia/extract/`.
+
 Belarusian looks like Russian and is not Russian, and the two words this locale
 would most likely have got wrong by assuming otherwise are the two most
 load-bearing ones. The minute is `хвіліна`, not the Russian cognate `мінута`.
@@ -169,3 +179,32 @@ English "this hour" is refused by the same path. Not a gap in this locale.
    or is the absence of a CLDR rule set a genuine reflection of the language?
 6. What are the plural forms of `стагоддзе` and `тысячагоддзе` in counted
    relative-time phrases?
+
+
+---
+[← Basque](eu.md) · [Home](../index.md) · [Bulgarian →](bg.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("be")
+    False
+    >>> span, rest = extract_timespan('палова на пятую', "be", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T04:30:00', '')
+    >>> span, rest = extract_timespan('чвэрць на сёмую', "be", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:15:00', '')
+    >>> span, rest = extract_timespan('без дзесяці першая', "be", datetime(2017, 6, 27, 12, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T12:50:00', '')
+    >>> span, rest = extract_timespan('за квадранец восьмая', "be", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:45:00', '')
+
+---
+[← Basque](eu.md) · [Home](../index.md) · [Bulgarian →](bg.md)

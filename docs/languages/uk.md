@@ -1,5 +1,15 @@
 # Ukrainian (`uk`)
 
+<!-- agent-hint
+covers: where each construction of the Ukrainian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/uk/lang.json`, `chronologia/locale/uk/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/uk.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Ukrainian (`uk`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Ukrainian temporal phrases lean on the same case system Russian does, and the
 locale ships the same kind of answer: full paradigms rather than citation
 forms, because the ordinary spoken register never uses the nominative for a
@@ -10,13 +20,13 @@ ship as complete adjectival or pronominal paradigms rather than single words,
 each citing the *Український правопис* (2019) declension tables for the
 paradigm type it follows.
 
-The clock is a smaller story here than in Russian. Ukrainian has an attested
-spoken half-hour idiom, but chronologia's `uk` locale does not read it: see
-Weaker provenance and What refuses.
+The clock is a smaller story here than in Russian. Ukrainian names the half
+hour toward the coming hour, and the locale reads it: `пів на другу` is 13:30
+and `чверть на третю` is 14:15.
 
 ## What ships
 
-**Weekdays and months** ship wide, and the months additionally ship a
+**Weekdays and months** ship wide, and the months also ship a
 prepositional-case form used after `в`/`у` — `у січні` — reflecting that
 Ukrainian months decline. Neither carries a recorded source in the
 vocabulary comments.
@@ -92,7 +102,7 @@ The weekday and month names carry no recorded source, and neither do the
 seasons' base forms (only their adverbial locatives are cross-checked against
 Wiktionary).
 
-Ukrainian has an attested spoken half-hour idiom this locale does not ship.
+Ukrainian has an attested spoken half-hour idiom.
 `пів` ("half") is documented on Wiktionary as meaning "half to/till" — thirty
 minutes before the *next* whole hour, explicitly contrasted there with
 English "half past" — with the worked example "half past one" glossed as
@@ -101,20 +111,10 @@ Ukrainian dictionary and usage site, corroborated by a Ukrainian-language
 lesson site) gives the same construction with a numeric anchor: `пів на другу`
 names 13:30 (or 1:30), half of the way toward the *second* hour — the same
 toward-the-coming-hour direction Russian `половина девятого` uses for 8:30,
-not the "count past the current hour" direction. `marker_half` ships `пів`
-and `половина`, but only for the `half_period` construction (`перша половина
-року`, "the first half of the year"); no `clock_dir` or fractional
-`clock_time` order wires `пів на +` into a spoken clock reading, so this
-attested idiom is unimplemented rather than merely uncited.
+not the "count past the current hour" direction. The locale reads `пів на другу`
+as 13:30 and `чверть на третю` as 14:15.
 
 ## What refuses
-
-**A spelled fractional clock time.** `пів на другу` and any `чверть на
-третю`-style quarter phrase return nothing. Only a bare digit clock
-(`13:30`), the marked hour with `о`/`годині` (`о 9 годині`), and the two
-landmarks `північ`/`полудень` resolve.
-
-**Seconds.** No `unit_second` vocabulary ships.
 
 **A bare `тому` collision.** Because `тому` is deliberately excluded from the
 `цей` demonstrative paradigm (see What ships), a construction that needed the
@@ -123,12 +123,40 @@ the ago-offset.
 
 ## Open questions for a native speaker
 
-1. Should `пів на <ORD>` be wired into `clock_time`, and does it generalise
-   the way Russian's subtractive `без N` does, or is the coming-hour
-   construction limited to the fixed half-hour point?
+1. Does `пів на <ORD>` generalise the way Russian's subtractive `без N` does,
+   or is the coming-hour construction limited to the fixed half-hour point?
 2. Is `по`'s inclusive reading, argued at length in the vocabulary for
    ranges, equally solid for every date type the `to`/`until` markers cover,
    or only for the day-of-month case the SUM examples give?
 3. Are `вранці` and `зранку` fully interchangeable as the morning-band
    surface, or does one carry a register or regional preference the other
    does not?
+
+
+---
+[← Turkish](tr.md) · [Home](../index.md) · [Vietnamese →](vi.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("uk")
+    True
+    >>> span, rest = extract_timespan('пів на другу', "uk", datetime(2017, 6, 27, 12, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T13:30:00', '')
+    >>> span, rest = extract_timespan('чверть на третю', "uk", datetime(2017, 6, 27, 12, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T14:15:00', '')
+    >>> span, rest = extract_timespan('цього тижня', "uk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-26T00:00:00', '')
+    >>> span, rest = extract_timespan('минулого місяця', "uk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-05-01T00:00:00', '')
+
+---
+[← Turkish](tr.md) · [Home](../index.md) · [Vietnamese →](vi.md)

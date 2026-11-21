@@ -1,5 +1,13 @@
 # Language provenance pages
 
+<!-- agent-hint
+covers: which languages have a provenance page, how each page is organised and which reader handles the numbers of each locale
+source: `chronologia/locale/*/lang.json`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`, `chronologia/extract/numfold_*.py`
+generated: no
+verify: python -c "import re,glob,os;from chronologia.extract.numlayer import NUMTAG_LANGS as N;rows=re.findall(r'^\| \[[^]]*\]\((\w+)\.md\) \| (\w+) \| (\S+) \|',open('docs/languages/index.md').read(),re.M);c={os.path.basename(os.path.dirname(f)) for f in glob.glob('chronologia/locale/*/lang.json')};assert {r[1] for r in rows}==c and len(rows)==len(c) and all(r[0]==r[1] and (r[2]=='numtag')==(r[1] in N) and (r[2]=='numtag' or os.path.exists('chronologia/extract/'+r[2]+'.py')) and os.path.exists('docs/languages/'+r[0]+'.md') for r in rows)"
+see: `docs/index.md`, `docs/extraction.md`
+-->
+
 chronologia never guesses a linguistic surface. A construction ships in a
 locale only where an attested source supports it, and where the sources
 conflict or nothing attests the phrase at all, the locale is left without it
@@ -12,11 +20,7 @@ surfaces came from, which ones rest on thinner evidence than the rest, exactly
 which constructions were refused and why, and what a native speaker would have
 to settle to close the remaining gaps.
 
-Not every locale has a page. A locale without one is not thereby less
-trustworthy — the vocabulary files themselves carry their sources in comment
-headers, and reading `chronologia/locale/<code>/*.voc` answers the same
-question at a finer grain. A page exists where the reasoning was long enough
-that the comment headers alone would not convey it.
+Every locale has a page. The vocabulary files themselves carry their sources in comment headers, and reading `chronologia/locale/<code>/*.voc` answers the same question at a finer grain.
 
 ## How to read a page
 
@@ -51,68 +55,75 @@ exact locator was checked. Where a source was sought and not reached, the page
 says so rather than implying it was read. The output of another date parser is
 never cited as evidence about a language.
 
+## How numbers are read
+
+numtag reads the spelled numbers of the 40 locales in `NUMTAG_LANGS` in `chronologia/extract/numlayer.py`. chronologia keeps no number words for them. The other 21 locales read numbers with their own `numfold_*` module in `chronologia/extract/`. The table names the reader of each locale.
+
 ## Pages
 
-| Language | Page |
-|:---|:---|
-| Albanian | [sq.md](sq.md) |
-| Arabic | [ar.md](ar.md) |
-| Aragonese | [an.md](an.md) |
-| Armenian | [hy.md](hy.md) |
-| Asturian | [ast.md](ast.md) |
-| Azerbaijani | [az.md](az.md) |
-| Basque | [eu.md](eu.md) |
-| Belarusian | [be.md](be.md) |
-| Bulgarian | [bg.md](bg.md) |
-| Croatian | [hr.md](hr.md) |
-| Catalan | [ca.md](ca.md) |
-| Czech | [cs.md](cs.md) |
-| Danish | [da.md](da.md) |
-| Dutch | [nl.md](nl.md) |
-| English | [en.md](en.md) |
-| Esperanto | [eo.md](eo.md) |
-| Estonian | [et.md](et.md) |
-| Filipino | [fil.md](fil.md) |
-| Finnish | [fi.md](fi.md) |
-| French | [fr.md](fr.md) |
-| Galician | [gl.md](gl.md) |
-| Georgian | [ka.md](ka.md) |
-| German | [de.md](de.md) |
-| Greek | [el.md](el.md) |
-| Hausa | [ha.md](ha.md) |
-| Hebrew | [he.md](he.md) |
-| Hindi | [hi.md](hi.md) |
-| Hungarian | [hu.md](hu.md) |
-| Icelandic | [is.md](is.md) |
-| Indonesian | [id.md](id.md) |
-| Irish | [ga.md](ga.md) |
-| Italian | [it.md](it.md) |
-| Kabyle | [kab.md](kab.md) |
-| Korean | [ko.md](ko.md) |
-| Latvian | [lv.md](lv.md) |
-| Lithuanian | [lt.md](lt.md) |
-| Macedonian | [mk.md](mk.md) |
-| Malay | [ms.md](ms.md) |
-| Maltese | [mt.md](mt.md) |
-| Norwegian Nynorsk | [nn.md](nn.md) |
-| Occitan | [oc.md](oc.md) |
-| Norwegian Bokmål | [nb.md](nb.md) |
-| Mirandese | [mwl.md](mwl.md) |
-| Persian | [fa.md](fa.md) |
-| Polish | [pl.md](pl.md) |
-| Portuguese | [pt.md](pt.md) |
-| Romanian | [ro.md](ro.md) |
-| Russian | [ru.md](ru.md) |
-| Serbian | [sr.md](sr.md) |
-| Slovak | [sk.md](sk.md) |
-| Slovenian | [sl.md](sl.md) |
-| Spanish | [es.md](es.md) |
-| Swahili | [sw.md](sw.md) |
-| Swedish | [sv.md](sv.md) |
-| Tamil | [ta.md](ta.md) |
-| Thai | [th.md](th.md) |
-| Turkish | [tr.md](tr.md) |
-| Ukrainian | [uk.md](uk.md) |
-| Vietnamese | [vi.md](vi.md) |
-| Welsh | [cy.md](cy.md) |
-| West Frisian | [fy.md](fy.md) |
+| Language | Code | Numbers |
+|:---|:---|:---|
+| [Albanian](sq.md) | sq | numfold_albanian |
+| [Arabic](ar.md) | ar | numtag |
+| [Aragonese](an.md) | an | numtag |
+| [Armenian](hy.md) | hy | numfold_armenian |
+| [Asturian](ast.md) | ast | numtag |
+| [Azerbaijani](az.md) | az | numtag |
+| [Basque](eu.md) | eu | numtag |
+| [Belarusian](be.md) | be | numfold_be |
+| [Bulgarian](bg.md) | bg | numtag |
+| [Catalan](ca.md) | ca | numtag |
+| [Croatian](hr.md) | hr | numtag |
+| [Czech](cs.md) | cs | numtag |
+| [Danish](da.md) | da | numtag |
+| [Dutch](nl.md) | nl | numtag |
+| [English](en.md) | en | numtag |
+| [Esperanto](eo.md) | eo | numfold_esperanto |
+| [Estonian](et.md) | et | numtag |
+| [Filipino](fil.md) | fil | numfold_filipino |
+| [Finnish](fi.md) | fi | numtag |
+| [French](fr.md) | fr | numtag |
+| [Galician](gl.md) | gl | numtag |
+| [Georgian](ka.md) | ka | numfold_georgian |
+| [German](de.md) | de | numtag |
+| [Greek](el.md) | el | numtag |
+| [Hausa](ha.md) | ha | numfold_chadic |
+| [Hebrew](he.md) | he | numtag |
+| [Hindi](hi.md) | hi | numfold_indic |
+| [Hungarian](hu.md) | hu | numtag |
+| [Icelandic](is.md) | is | numfold_icelandic |
+| [Indonesian](id.md) | id | numtag |
+| [Irish](ga.md) | ga | numfold_irish |
+| [Italian](it.md) | it | numtag |
+| [Kabyle](kab.md) | kab | numtag |
+| [Korean](ko.md) | ko | numfold_korean |
+| [Latvian](lv.md) | lv | numfold_latvian |
+| [Lithuanian](lt.md) | lt | numfold_baltic |
+| [Macedonian](mk.md) | mk | numfold_macedonian |
+| [Malay](ms.md) | ms | numtag |
+| [Maltese](mt.md) | mt | numfold_maltese |
+| [Mirandese](mwl.md) | mwl | numtag |
+| [Norwegian Bokmål](nb.md) | nb | numtag |
+| [Norwegian Nynorsk](nn.md) | nn | numtag |
+| [Occitan](oc.md) | oc | numtag |
+| [Persian](fa.md) | fa | numtag |
+| [Polish](pl.md) | pl | numtag |
+| [Portuguese](pt.md) | pt | numtag |
+| [Romanian](ro.md) | ro | numtag |
+| [Russian](ru.md) | ru | numtag |
+| [Serbian](sr.md) | sr | numfold_slavic |
+| [Slovak](sk.md) | sk | numtag |
+| [Slovenian](sl.md) | sl | numtag |
+| [Spanish](es.md) | es | numtag |
+| [Swahili](sw.md) | sw | numfold_bantu |
+| [Swedish](sv.md) | sv | numtag |
+| [Tamil](ta.md) | ta | numfold_dravidian |
+| [Thai](th.md) | th | numfold_thai |
+| [Turkish](tr.md) | tr | numtag |
+| [Ukrainian](uk.md) | uk | numtag |
+| [Vietnamese](vi.md) | vi | numfold_vietnamese |
+| [Welsh](cy.md) | cy | numfold_welsh |
+| [West Frisian](fy.md) | fy | numtag |
+
+---
+[← Transparency: how correctness is checked](../transparency.md) · [Home](../index.md) · [Albanian →](sq.md)

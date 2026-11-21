@@ -1,5 +1,15 @@
 # Mars and beyond
 
+<!-- agent-hint
+covers: Mars Sol Date, the Darian calendar, lunar cycles and the cosmology epochs
+source: `chronologia/mars.py`, `chronologia/luna.py`, `chronologia/cosmology.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[mars-and-beyond.md]" -q
+see: `docs/deep-time.md`, `docs/sun-moon-and-seasons.md`
+-->
+
+This page covers time beyond Earth: Mars Sol Date and the Darian calendar, the lunar cycles, and the cosmology epochs from the Big Bang to the Cosmic Calendar.
+
 ## What time is it on Mars?
 
 It sounds like a novelty question. For the people who drive the rovers it is a
@@ -300,3 +310,6 @@ On this scale all of recorded history is the last few seconds before midnight.
 Every constant above is transcribed from a cited source in the papers library;
 where a source is silent (the Darian epoch), the library anchors to a published
 correspondence and says so.
+
+---
+[← Deep time](deep-time.md) · [Home](index.md) · [Civil holidays →](civil-holidays.md)

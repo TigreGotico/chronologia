@@ -1,5 +1,15 @@
 # Danish (`da`)
 
+<!-- agent-hint
+covers: where each construction of the Danish locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/da/lang.json`, `chronologia/locale/da/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/da.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Danish (`da`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Danish names the **coming** hour on the half. `halv to` is 01:30, not 02:30,
 and `halv tolv` is 11:30. The Danish Wikipedia article *Klokken* states the
 rule as a subtraction — `"Halv ...[indsæt timetal]" (en halv time fratrukket)`
@@ -37,16 +47,7 @@ tomorrow, which is what CLDR's `i morgen` means once the `i` is dropped, but
 Danish writes the dotted civil date, so `15.06.2020` reads, as does the ISO
 `2020-06-15`.
 
-**The dotted timetable clock.** Resolved by native review: `14.30` and
-`klokken 14.30` now read the same as the colon form `14:30`. The
-`dotted_clock` tokenizer mode was already built (originally for Finnish, CLDR
-47 fi short time pattern `H.mm`) but was opt-in and off by default; declaring
-it for Danish was the whole fix. The mode's own guards keep it from
-colliding with the dotted date it is matched after (`3.6.2020` still reads
-whole) and with plain decimals (`1.000`, `2.5` still fall through to the
-number rule) — verified against both, plus the combined case `3. oktober
-klokken 14.30`, which now also resolves the clock half instead of leaving it
-in the remainder.
+**The dotted timetable clock.** `14.30` reads the same as the colon form `14:30`. The `dotted_clock` tokenizer mode, which Finnish and Danish declare, reads it. The dotted date stays whole (`3.6.2020` is 3 June 2020), and plain decimals such as `1.000` and `2.5` fall through to the number rule. `klokken 14.30` returns 14:30 with `klokken` left in the remainder.
 
 **Relative offsets** are `om` forward and `siden` backward, with `for` licensed
 as a leading before-marker, so both `for tre dage siden` and `tre dage siden`
@@ -105,15 +106,7 @@ five ship as vocabulary: four in both the bare and the definite form
 `aften`/`aftenen`); `morgen` ships definite-only (see below). The
 `formiddag` is the late morning English cannot name in one word.
 
-The `morgen` band is transcribed in `chronologia/dayparts.py`. Resolved by
-native review: it ships now, but only under its DEFINITE surface
-`morgenen` — deliberately excluding the bare `morgen` that sibling
-dayparts (`aften`/`aftenen`, `nat`/`natten`) both ship. Bare `morgen` stays
-reserved for the relative-day "tomorrow" reading; `morgenen` never appears
-in that idiom (`i morgen` is always the bare form), so it carries no such
-ambiguity, and the same surface was already used safely as a meridiem
-marker (`klokken ni om morgenen` == 09:00, above). `om morgenen` alone now
-resolves to the band.
+The `morgen` band is transcribed in `chronologia/dayparts.py`. It ships only under its definite surface `morgenen`, and the bare `morgen` that the sibling day parts (`aften`/`aftenen`, `nat`/`natten`) ship is left out. Bare `morgen` stays reserved for the relative-day "tomorrow" reading, and `morgenen` never appears in that idiom (`i morgen` is always the bare form). `morgenen` alone reads as the 05:00 to 10:00 band, and `klokken ni om morgenen` is 09:00.
 
 **Ranges** are `fra … til …` and `mellem … og …`, with `siden` opening one that
 runs to the anchor and `indtil`/`til` closing one that starts there.
@@ -134,29 +127,9 @@ siden` resolves to 1.5 hours ago rather than half an hour ago.
 
 ## The hour before one
 
-Resolved by native review: Danish sets `toward_hour_12h`. What a Danish
-speaker most often means, given that the everyday clock runs in two
-twelve-hour cycles, is 12:30 for `halv et` and 12:45 for `kvart i et` — half
-past noon, not half past midnight. `toward_hour_12h` is exactly this: where
-it is set, the hour that rolls back from one to zero surfaces as twelve.
+Danish sets `toward_hour_12h`. Where the flag is set, the hour that rolls back from one to zero surfaces as twelve. `halv et` is therefore half past noon, 12:30, and `kvart i et` is 12:45, not the midnight readings. `test/nl_corpus_da/test_da_clock.py` pins both. The day-part binding agrees: `halv et om eftermiddagen` is 12:30 and `kvart i et om eftermiddagen` is 12:45.
 
-Danish is now the second Germanic locale to declare it, alongside Icelandic;
-German, Dutch, Frisian, Swedish, and both Norwegian standards still don't.
-This was scoped to Danish only — Swedish and Bokmål pin the same 00:30/00:45
-shape for their own spellings and were left as-is, since the doc's own
-framing called this a family decision, not a Danish one, and a native review
-of one locale isn't grounds to flip its siblings.
-
-The flag is read at three points in the resolver, and the two that matter
-moved together as expected: `halv et` now resolves to 12:30 and `kvart i et`
-to 12:45, pinned in `test/nl_corpus_da/test_da_clock.py`. Full local test
-suite re-run clean after the change (159419 passed, only 3 pre-existing,
-unrelated `test_packaging.py` errors from a missing `build` module in this
-environment).
-
-The marked forms already read the way a native expects and did not move: the
-day-part binding gives `halv et om eftermiddagen` 12:30 and `kvart i et om
-eftermiddagen` 12:45, same as before.
+Danish and Icelandic are the Germanic locales that set the flag. German, Dutch, Frisian, Swedish and both Norwegian standards do not.
 
 ## Weaker provenance
 
@@ -179,14 +152,8 @@ and the holiday vocabulary record no source.
 
 ## What refuses
 
-**`ét` with its acute.** `halv ét` returns nothing. The bare `et` reads, and
-the accented numeral that Danish orthography uses to distinguish the numeral
-from the article is not in the vocabulary.
-
 **Decades.** `80'erne` and `firserne` return nothing. The locale declares no
 decade construction; Bokmål declares one and reads `80-tallet`.
-
-**Seconds.** `30 sekunder siden` returns nothing. No second unit ships.
 
 **A bare duration.** `to uger` returns nothing. A quantity with no direction
 marker is still only a quantity.
@@ -215,3 +182,32 @@ Resolved: whether `halv et` and `kvart i et` read as 12:30 and 12:45 — see
 
 Resolved: whether `14.30` should read as a clock — see "The dotted timetable
 clock" under "What ships" above.
+
+
+---
+[← Czech](cs.md) · [Home](../index.md) · [Dutch →](nl.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("da")
+    True
+    >>> span, rest = extract_timespan('halv to', "da", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:30:00', '')
+    >>> span, rest = extract_timespan('halv tolv', "da", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T11:30:00', '')
+    >>> span, rest = extract_timespan('halv et', "da", datetime(2017, 6, 27, 12, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T12:30:00', '')
+    >>> span, rest = extract_timespan('kvart i et', "da", datetime(2017, 6, 27, 12, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T12:45:00', '')
+
+---
+[← Czech](cs.md) · [Home](../index.md) · [Dutch →](nl.md)

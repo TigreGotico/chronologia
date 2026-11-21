@@ -1,5 +1,13 @@
 # Getting started
 
+<!-- agent-hint
+covers: the JDN number line, the AstroDate point and the DateSpan interval, with a first extraction
+source: `chronologia/astrodate.py`, `chronologia/__init__.py:__all__`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[getting-started.md]" -q
+see: `docs/use-cases.md`, `docs/design.md`
+-->
+
 This page teaches you the three ideas the whole library is built from. You
 do not need to know anything about calendars, and you barely need to know
 Python. If you can run one line of code and read a printed answer, you can
@@ -55,7 +63,7 @@ print(span.width)                                                  # 30 days, 0:
 ```
 
 **Read a date in another language.** Pass the language code; the vocabulary
-does the rest. chronologia speaks 58 languages, though not all to the same
+does the rest. chronologia speaks 61 languages, though not all to the same
 depth — the README's coverage bands say which have had a full per-language
 review and which are still waiting for a native reader. A language also
 declines constructions its sources do not attest, and that refusal is a
@@ -360,3 +368,6 @@ from chronologia import (
 # The granularity vocabulary a DateSpan reports
 from chronologia import DateTimeResolution
 ```
+
+---
+[← Who is this for?](use-cases.md) · [Home](index.md) · [Reading dates written by humans →](extraction.md)

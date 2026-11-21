@@ -1,5 +1,13 @@
 # Rulings
 
+<!-- agent-hint
+covers: the decisions that fix how a phrase with two readings is read, with examples and sources
+source: `chronologia/extract/resolver.py`, `test/ruling17.py`, `test/ruling17_pins.txt`, `test/ruling23_pins.txt`
+generated: no
+verify: python -c "import re;from datetime import datetime as D;from chronologia import extract_timespan as e;t=open('docs/rulings.md').read();a=D(2017,6,27,13,4);assert re.search(e('en 3 días','an',a)[0].start_datetime.strftime('%Y-%m-%d %H:%M'),t);assert re.search(e('la semana vinient','an',a)[0].start_datetime.strftime('Monday %Y-%m-%d'),t)"
+see: `docs/extraction.md`, `docs/languages/index.md`
+-->
+
 These are the decisions that fix how chronologia reads a phrase where two
 readings are possible. Each ruling gives the reading, an example and, where a
 dictionary or standard rules on it, the source. A ruling marked "Not yet
@@ -130,3 +138,6 @@ that has passed.
 **35. A two-digit year takes the century window of the anchor.** "15/06/20" reads the year in the hundred years from 80 years before the anchor to 20 years after it, as ICU's default two-digit-year start does (ICU SimpleDateFormat, "set2DigitYearStart": the default is 80 years before the current time). Said in 2117 it is 2120; said in 2026 it is 2020. *Not yet implemented. Tracked in [#1035](https://github.com/TigreGotico/chronologia/issues/1035).*
 
 **36. A night word beside a twelve-hour clock picks the half that falls in the night.** de "um elf Uhr nachts", nl "om 11 's nachts" and "om 11:00 's nachts" are 23:00. "um drei Uhr nachts" is 03:00, and "um zwölf Uhr nachts" is 00:00. The night runs on both sides of midnight ("nachts": "in der Nacht", Duden), so the night word does not mark the am half. It marks the reading inside the locale's night band (ruling 10). When neither half of the hour falls in that band, the clock keeps the am half. A 24-hour clock with a night word follows ruling 20. *Not yet implemented. Tracked in [#1079](https://github.com/TigreGotico/chronologia/issues/1079).*
+
+---
+[← EDTF](edtf.md) · [Home](index.md) · [Calendars →](calendars.md)

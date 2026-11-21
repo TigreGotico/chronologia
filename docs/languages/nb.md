@@ -1,5 +1,15 @@
 # Norwegian Bokmål (`nb`)
 
+<!-- agent-hint
+covers: where each construction of the Norwegian Bokmål locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/nb/lang.json`, `chronologia/locale/nb/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/nb.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Norwegian Bokmål (`nb`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Bokmål names the **coming** hour on the half. `halv to` is 01:30, not 02:30,
 and `halv tolv` is 11:30. Bokmålsordboka states the rule under `halv` as "om
 klokkeslett: 30 minutter før en hel time", and its own worked example is the
@@ -132,10 +142,10 @@ Bokmålsordboka's own `halv ti` gloss offers 09.30 *or* 21.30 for one phrase, is
 `toward_hour_12h` convention exists for exactly this: where it is set, the hour
 that rolls back from one to zero surfaces as twelve.
 
-Bokmål does not declare it, and neither do Danish, German, Dutch, Frisian,
-Swedish, Nynorsk, or Malay — eight locales that share the coming-hour half
+Bokmål does not declare it, and neither do German, Dutch, Frisian,
+Swedish, Nynorsk, or Malay — seven locales that share the coming-hour half
 without it, the set defined by the flag combination rather than by family;
-Malay is not Germanic. The one Germanic locale that does set it is Icelandic.
+Malay is not Germanic. The Germanic locales that set it are Danish and Icelandic.
 
 Declaring it here would not be a targeted fix. The flag is read at three points
 in the resolver, and the two that matter are the bare half and the *explicit*
@@ -182,8 +192,6 @@ dotted civil date and no timetable-clock reading is attempted.
 **The spelled decade.** `åttitallet` returns nothing. The decade construction
 reads a digit plus a `tallet` surface, not a spelled decade name.
 
-**Seconds.** `30 sekunder siden` returns nothing. No second unit ships.
-
 **A bare duration.** `to uker` returns nothing. A quantity with no direction
 marker is still only a quantity.
 
@@ -204,3 +212,32 @@ frequency, and the recurrence edge is what answers it.
    tomorrow word?
 5. Should `åttitallet` and the other spelled decade names resolve?
 6. Is `14.30` the written clock Norwegian readers expect to be understood?
+
+
+---
+[← Mirandese](mwl.md) · [Home](../index.md) · [Norwegian Nynorsk →](nn.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("nb")
+    True
+    >>> span, rest = extract_timespan('halv to', "nb", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:30:00', '')
+    >>> span, rest = extract_timespan('halv tolv', "nb", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T11:30:00', '')
+    >>> span, rest = extract_timespan('kvart over ett', "nb", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:15:00', '')
+    >>> span, rest = extract_timespan('klokka åtte', "nb", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:00:00', '')
+
+---
+[← Mirandese](mwl.md) · [Home](../index.md) · [Norwegian Nynorsk →](nn.md)

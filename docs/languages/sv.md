@@ -1,5 +1,15 @@
 # Swedish (`sv`)
 
+<!-- agent-hint
+covers: where each construction of the Swedish locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/sv/lang.json`, `chronologia/locale/sv/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/sv.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Swedish (`sv`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 The Nordic day has five parts where English has four, and the extra one is the
 `förmiddag` — the late morning, `[10:00, 12:00)`, a band English cannot name in
 one word. The `morgon` that precedes it is correspondingly short: five hours,
@@ -88,8 +98,6 @@ not in the vocabulary.
 **The dotted date.** `15.06.2020` returns nothing. Swedish writes the numeric
 date in the ISO order and `2020-06-15` reads.
 
-**Seconds.** `för 30 sekunder sedan` returns nothing. No second unit ships.
-
 **A bare duration.** `två veckor` returns nothing. A quantity with no direction
 marker is still only a quantity.
 
@@ -101,3 +109,29 @@ marker is still only a quantity.
    `morgon` run later in speech than the CLDR table says?
 3. Are the clock words and range markers as this locale ships them the standard
    set, or are there common alternatives missing?
+
+
+---
+[← Swahili](sw.md) · [Home](../index.md) · [Tamil →](ta.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("sv")
+    True
+    >>> span, rest = extract_timespan('halv nio', "sv", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('åtta på kvällen', "sv", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:00:00', '')
+    >>> span, rest = extract_timespan('halv nio på kvällen', "sv", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:30:00', '')
+
+---
+[← Swahili](sw.md) · [Home](../index.md) · [Tamil →](ta.md)

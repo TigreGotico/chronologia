@@ -1,5 +1,15 @@
 # Bulgarian (`bg`)
 
+<!-- agent-hint
+covers: where each construction of the Bulgarian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/bg/lang.json`, `chronologia/locale/bg/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/bg.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Bulgarian (`bg`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Bulgarian is the analytic outlier of the Slavic locales here: no case system
 survives on the noun, so "last week" and "next week" are carried entirely by
 adjective agreement and Bulgarian's postposed definite article
@@ -148,3 +158,32 @@ the half hour is the only fractional clock surface the locale carries.
    date phrases, or does one carry a fiscal connotation the other lacks?
 4. Is `завчера` or `онзи ден` the more current everyday form for "the day
    before yesterday", or do they belong to different registers?
+
+
+---
+[← Belarusian](be.md) · [Home](../index.md) · [Catalan →](ca.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("bg")
+    True
+    >>> span, rest = extract_timespan('28 на май', "bg", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-05-28T00:00:00', '')
+    >>> span, rest = extract_timespan('през май 2030', "bg", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2030-05-01T00:00:00', '')
+    >>> span, rest = extract_timespan('в 9 часа следобед', "bg", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T21:00:00', '')
+    >>> span, rest = extract_timespan('в 2030', "bg", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2030-01-01T00:00:00', '')
+
+---
+[← Belarusian](be.md) · [Home](../index.md) · [Catalan →](ca.md)

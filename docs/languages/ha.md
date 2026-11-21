@@ -1,5 +1,15 @@
 # Hausa (`ha`)
 
+<!-- agent-hint
+covers: where each construction of the Hausa locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ha/lang.json`, `chronologia/locale/ha/*.voc`, `chronologia/extract/numfold_chadic.py`
+generated: no
+verify: python -m doctest docs/languages/ha.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Hausa (`ha`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_chadic` module in `chronologia/extract/`.
+
 Hausa reads its clock the Western way, and that is worth saying first because
 the neighbouring locale in this tree does not. Swahili refuses the spoken hour
 outright: its traditional count runs from sunrise, both conventions live in
@@ -148,3 +158,32 @@ jurisdiction question rather than a vocabulary one.
 5. Are `ƙarni` and a decade word counted in ordinary running text?
 6. Does `tun` look backwards in a way `daga` does not, as English "since" and
    "from" do?
+
+
+---
+[← Greek](el.md) · [Home](../index.md) · [Hebrew →](he.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ha")
+    False
+    >>> span, rest = extract_timespan('ƙarfe 13:00 na rana', "ha", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T13:00:00', '')
+    >>> span, rest = extract_timespan('watan Oktoban 2022', "ha", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2022-10-01T00:00:00', '')
+    >>> span, rest = extract_timespan('watan Fabrairun shekarar 2024', "ha", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2024-02-01T00:00:00', '')
+    >>> span, rest = extract_timespan('kwanaki uku da suka gabata', "ha", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-24T00:05:00', '')
+
+---
+[← Greek](el.md) · [Home](../index.md) · [Hebrew →](he.md)

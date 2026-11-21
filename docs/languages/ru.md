@@ -1,5 +1,15 @@
 # Russian (`ru`)
 
+<!-- agent-hint
+covers: where each construction of the Russian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ru/lang.json`, `chronologia/locale/ru/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/ru.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Russian (`ru`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Almost no Russian temporal phrase stands in the nominative. `на прошлой
 неделе` is prepositional, `в прошлом месяце` and `в прошлом году` are
 prepositional, `прошлым летом` is instrumental — and none of those is the
@@ -115,8 +125,6 @@ vocabulary, and rest on the general contrast with `по`.
 
 ## What refuses
 
-**Seconds.** `30 секунд назад` returns nothing. No second unit ships.
-
 **`часы` as a duration.** The nominative plural of `час` returns nothing on its
 own, by the deliberate withholding described above — it is a wristwatch, not a
 span.
@@ -135,3 +143,32 @@ A quantity with no direction marker is still only a quantity.
    every construction the locale reads, or does one of them resist some?
 4. Should `до` in a range be inclusive or exclusive of the named day? The
    inclusive reading is argued only for `по`.
+
+
+---
+[← Romanian](ro.md) · [Home](../index.md) · [Serbian →](sr.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ru")
+    True
+    >>> span, rest = extract_timespan('без пяти девять', "ru", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:55:00', '')
+    >>> span, rest = extract_timespan('на прошлой неделе', "ru", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-19T00:00:00', '')
+    >>> span, rest = extract_timespan('в прошлом месяце', "ru", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-05-01T00:00:00', '')
+    >>> span, rest = extract_timespan('в прошлом году', "ru", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2016-01-01T00:00:00', '')
+
+---
+[← Romanian](ro.md) · [Home](../index.md) · [Serbian →](sr.md)

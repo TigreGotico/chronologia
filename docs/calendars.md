@@ -1,5 +1,13 @@
 # Calendars
 
+<!-- agent-hint
+covers: the 18 built-in calendars, how to convert in and out of each and how far each is trusted
+source: `chronologia/calendars.py`, `chronologia/calendar_data/`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[calendars.md]" -q
+see: `docs/eras-and-rulers.md`, `docs/timelines.md`
+-->
+
 A calendar is just an agreement about how to name days. Humanity has invented
 dozens of these agreements, and this library speaks eighteen of them. This
 page introduces each one in plain language, shows you how to translate dates
@@ -404,7 +412,7 @@ table for the Badíʿ calendar.
 
 ### French Republican (equinox)
 
-The French Revolutionary calendar as it was *actually kept*, with leap years
+The French Republican calendar as it was *actually kept*, with leap years
 fixed by the observed autumnal equinox at Paris — the historical companion to
 the arithmetic `french_republican` entry.
 
@@ -502,3 +510,6 @@ name (leap-month and intercalary calendars use the larger count).
 
 The Gregorian calendar itself is not a registry entry — it is the reference
 everything converts against, via `gregorian_to_jdn` and `jdn_to_gregorian`.
+
+---
+[← Rulings](rulings.md) · [Home](index.md) · [Eras and rulers →](eras-and-rulers.md)

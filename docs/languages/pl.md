@@ -1,5 +1,15 @@
 # Polish (`pl`)
 
+<!-- agent-hint
+covers: where each construction of the Polish locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/pl/lang.json`, `chronologia/locale/pl/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/pl.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Polish (`pl`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Polish splits its clock system, and the split is deliberate. Only the half hour
 counts toward the coming hour — `wpół do dziewiątej` is half toward nine, 08:30
 — while the quarter uses the ordinary past-and-to reading: `kwadrans po
@@ -81,21 +91,7 @@ recorded source.
 
 ## What refuses
 
-**`między` with weekday endpoints.** `między poniedziałkiem a piątkiem`
-returns nothing, and so does the `i` variant. `między` governs the
-instrumental, and the weekday vocabulary ships only the nominative and the
-genitive — `wtorek` and `wtorku`, not `wtorkiem`. The same frame with month or
-day endpoints reads: `między czerwcem a sierpniem` and `między 3 a 10 lipca`
-both resolve.
-
-**The afternoon and the night as day parts.** `po południu` and `w nocy` return
-nothing. Only the morning and evening bands have vocabulary, even though the
-CLDR table gives all four.
-
-**Decades.** `lata 80` and `lata osiemdziesiąte` return nothing. The locale
-declares no decade construction and ships no decade words.
-
-**Seconds.** `30 sekund temu` returns nothing. No second unit ships.
+**Decades.** `lata 80` returns nothing. The spelled `lata osiemdziesiąte` reads.
 
 **A bare duration.** `dwa tygodnie` returns nothing. A quantity with no
 direction marker is still only a quantity.
@@ -107,6 +103,35 @@ direction marker is still only a quantity.
    the forms Polish actually uses temporally are wanted.
 2. What are the ordinary surfaces for the afternoon and the night bands, and
    are they single words or prepositional phrases?
-3. Should `lata 80` and `lata osiemdziesiąte` resolve as decades?
+3. Should `lata 80` resolve as a decade?
 4. Does the CLDR evening boundary at 21:00 match how a Polish speaker uses
    `wieczorem`?
+
+
+---
+[← Persian](fa.md) · [Home](../index.md) · [Portuguese →](pt.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("pl")
+    True
+    >>> span, rest = extract_timespan('wpół do dziewiątej', "pl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('kwadrans po dziewiątej', "pl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:15:00', '')
+    >>> span, rest = extract_timespan('za kwadrans dziesiąta', "pl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:45:00', '')
+    >>> span, rest = extract_timespan('w zeszłym tygodniu', "pl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-19T00:00:00', '')
+
+---
+[← Persian](fa.md) · [Home](../index.md) · [Portuguese →](pt.md)

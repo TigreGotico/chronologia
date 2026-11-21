@@ -1,5 +1,15 @@
 # Filipino (`fil`)
 
+<!-- agent-hint
+covers: where each construction of the Filipino locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/fil/lang.json`, `chronologia/locale/fil/*.voc`, `chronologia/extract/numfold_filipino.py`
+generated: no
+verify: python -m doctest docs/languages/fil.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Filipino (`fil`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_filipino` module in `chronologia/extract/`.
+
 Filipino carries two complete numeral systems side by side — the native
 Austronesian one and a Spanish-derived one — and they are split by domain
 rather than by register. The clock is where this shows most plainly: it has a
@@ -134,3 +144,32 @@ o'clock with `kuwarto` in the remainder.
 5. Does a real date name its day with a cardinal or an ordinal, and how far does
    the `ika-` series extend?
 6. Are `sesenta` and `nobenta` used as numerals outside money?
+
+
+---
+[← Estonian](et.md) · [Home](../index.md) · [Finnish →](fi.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("fil")
+    False
+    >>> span, rest = extract_timespan('alas otso y medya', "fil", datetime(2017, 6, 27, 12, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:30:00', '')
+    >>> span, rest = extract_timespan('alas otso y medya ng gabi', "fil", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:30:00', '')
+    >>> span, rest = extract_timespan('limang minuto makalipas ang ika-anim ng umaga', "fil", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:05:00', '')
+    >>> span, rest = extract_timespan('ika-24 ng Agosto', "fil", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-08-24T00:00:00', '')
+
+---
+[← Estonian](et.md) · [Home](../index.md) · [Finnish →](fi.md)

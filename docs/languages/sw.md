@@ -1,5 +1,15 @@
 # Swahili (`sw`)
 
+<!-- agent-hint
+covers: where each construction of the Swahili locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/sw/lang.json`, `chronologia/locale/sw/*.voc`, `chronologia/extract/numfold_bantu.py`
+generated: no
+verify: python -m doctest docs/languages/sw.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Swahili (`sw`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_bantu` module in `chronologia/extract/`.
+
 Swahili has a clock this library will not read, and that is the single most
 important thing on this page. `saa tatu` returns nothing.
 
@@ -131,3 +141,32 @@ from yesterday to the anchor.
 5. Do `kutoka` and `tangu` differ in whether they look backwards, as English
    "from" and "since" do?
 6. Are there stated boundaries for the rain-season words?
+
+
+---
+[← Spanish](es.md) · [Home](../index.md) · [Swedish →](sv.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("sw")
+    False
+    >>> span, rest = extract_timespan('saa {0} zilizopita', "sw", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('miaka {0} iliyopita', "sw", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('wiki {0} zilizopita', "sw", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('mwaka uliopita', "sw", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2016-01-01T00:00:00', '')
+
+---
+[← Spanish](es.md) · [Home](../index.md) · [Swedish →](sv.md)

@@ -1,5 +1,15 @@
 # Lithuanian (`lt`)
 
+<!-- agent-hint
+covers: where each construction of the Lithuanian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/lt/lang.json`, `chronologia/locale/lt/*.voc`, `chronologia/extract/numfold_baltic.py`
+generated: no
+verify: python -m doctest docs/languages/lt.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Lithuanian (`lt`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_baltic` module in `chronologia/extract/`.
+
 The rule that shapes this locale is that the form of a counted noun is decided
 by the numeral's **last digit**, not by its size. A numeral ending in 1 — but
 not 11 — takes the singular; one ending in 2 through 9, but not 12 through 19,
@@ -81,9 +91,6 @@ same worked examples.
 
 Each refusal below is pinned by a test.
 
-**Seconds.** `prieš 30 sekundžių` and `po 45 sekundžių` return nothing. No
-second unit ships.
-
 **Calendar quarters.** `pirmasis ketvirtis`, `antras ketvirtis` and the bare
 `ketvirtis` all refuse. No quarter vocabulary was attested.
 
@@ -127,3 +134,29 @@ still only a quantity.
 4. What is the standard era abbreviation, and how is it written?
 5. Does `paskutinis` have a declension that would let it act as the
    "last Friday of the month" marker?
+
+
+---
+[← Latvian](lv.md) · [Home](../index.md) · [Macedonian →](mk.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("lt")
+    False
+    >>> span, rest = extract_timespan('pusė trijų', "lt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:30:00', '')
+    >>> span, rest = extract_timespan('pusė aštuonių', "lt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+    >>> span, rest = extract_timespan('be penkių trys', "lt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:55:00', '')
+
+---
+[← Latvian](lv.md) · [Home](../index.md) · [Macedonian →](mk.md)

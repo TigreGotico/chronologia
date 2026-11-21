@@ -1,5 +1,15 @@
 # Malay (`ms`)
 
+<!-- agent-hint
+covers: where each construction of the Malay locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ms/lang.json`, `chronologia/locale/ms/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/ms.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Malay (`ms`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Malay is morphologically light — nouns do not inflect for number, and a
 weekday, a month and a unit noun all arrive in one shape — so most of this
 locale is a short list of words rather than a set of paradigms. Almost all of
@@ -178,3 +188,32 @@ the quarter of a year, and the year always wins.
 4. What is the ordinary way to say a quarter past and a quarter to, and does
    `suku` appear in it?
 5. Is `kelmarin dulu` the usual phrase for the day before yesterday?
+
+
+---
+[← Macedonian](mk.md) · [Home](../index.md) · [Maltese →](mt.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ms")
+    True
+    >>> span, rest = extract_timespan('pukul satu malam', "ms", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('pukul enam malam', "ms", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T18:00:00', '')
+    >>> span, rest = extract_timespan('pukul sebelas malam', "ms", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T23:00:00', '')
+    >>> span, rest = extract_timespan('pukul dua belas malam', "ms", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-28T00:00:00', '')
+
+---
+[← Macedonian](mk.md) · [Home](../index.md) · [Maltese →](mt.md)

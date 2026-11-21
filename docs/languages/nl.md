@@ -1,5 +1,15 @@
 # Dutch (`nl`)
 
+<!-- agent-hint
+covers: where each construction of the Dutch locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/nl/lang.json`, `chronologia/locale/nl/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/nl.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Dutch (`nl`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 `'s nachts` is a band that crosses midnight, and that single fact governs how
 Dutch clock times land. `drie uur 's nachts` is 03:00, `elf uur 's nachts` is
 23:00, and `twaalf uur 's nachts` is midnight. It is not a twelve-hour shift
@@ -83,12 +93,6 @@ in the remainder. The word `middag` is bound as the noon landmark, so the band
 it also names has no vocabulary of its own — the same collision German has
 between `Mittag` the hour and `Mittag` the point.
 
-**Decades.** `de jaren 80` returns nothing. The locale declares no decade
-construction and ships no decade words, so neither the digit form nor a spelled
-one reads.
-
-**Seconds.** `30 seconden geleden` returns nothing. No second unit ships.
-
 **A bare duration.** `twee weken` and `een kwartier` return nothing on their
 own. A quantity with no direction marker is still only a quantity; with one,
 `over een kwartier` reads.
@@ -101,12 +105,36 @@ edge that answers it.
 
 1. How should the afternoon band be reachable at all, given that `middag` is
    also the noon point? `vanmiddag` and `'s middags` are ordinary Dutch and
-   only the second of them reads.
-2. Should `de jaren 80` and `de jaren tachtig` resolve, and which spelled
-   decade forms are current?
-3. Is `half juni` the ordinary way to say mid-June? It resolves the whole
+   neither of them reads.
+2. Is `half juni` the ordinary way to say mid-June? It resolves the whole
    month with `half` unread, because the mid-month part words are `midden` and
    `medio`.
-4. Should the uninflected `komend` join `komende` as a "next" determiner?
+3. Should the uninflected `komend` join `komende` as a "next" determiner?
    `komend weekend` leaves `komend` unread.
-5. Are `kalenden`, `nonen` and `iden` the forms Dutch historical writing uses?
+4. Are `kalenden`, `nonen` and `iden` the forms Dutch historical writing uses?
+
+
+---
+[← Danish](da.md) · [Home](../index.md) · [English →](en.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("nl")
+    True
+    >>> span, rest = extract_timespan("drie uur 's nachts", "nl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:00:00', '')
+    >>> span, rest = extract_timespan("elf uur 's nachts", "nl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T23:00:00', '')
+    >>> span, rest = extract_timespan('half acht', "nl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+
+---
+[← Danish](da.md) · [Home](../index.md) · [English →](en.md)

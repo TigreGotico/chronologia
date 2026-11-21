@@ -1,5 +1,15 @@
 # Hindi (`hi`)
 
+<!-- agent-hint
+covers: where each construction of the Hindi locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/hi/lang.json`, `chronologia/locale/hi/*.voc`, `chronologia/extract/numfold_indic.py`
+generated: no
+verify: python -m doctest docs/languages/hi.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Hindi (`hi`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_indic` module in `chronologia/extract/`.
+
 The single most important thing about this locale is what it will not answer.
 कल means both yesterday and tomorrow. परसों means both the day before yesterday
 and the day after tomorrow. Which one a speaker means is carried entirely by the
@@ -101,12 +111,7 @@ implementation, not a word list. A Vikram Samvat year is never silently
 converted either: `2081 विक्रम संवत` reads 2081 as the Gregorian year it spells
 and leaves विक्रम unread, rather than quietly applying a +57 shift.
 
-**Closed ranges.** Hindi frames a closed range with both markers postposed —
-`A से B तक`, the start closed by से and the end by तक. The range grammar reads a
-leading frame, so only the open reading fires and the far bound stays visible in
-the remainder. `छह बजे से दस बजे तक` gives six o'clock onward with `तक` unread.
-The open ranges themselves, `शुक्रवार तक` and `सोमवार से`, do resolve. The same
-applies to के बीच, which is attested as "between" but trails both its bounds.
+**Closed ranges.** Hindi frames a closed range with both markers postposed — `A से B तक`, the start closed by से and the end by तक. The range grammar reads a leading frame, so only the open reading fires. `छह बजे से दस बजे तक` returns a span that ends at six o'clock, with `से दस बजे` left in the remainder. The open ranges themselves, `शुक्रवार तक` and `सोमवार से`, do resolve. The same applies to के बीच, which is attested as "between" but trails both its bounds.
 
 **The minutes-to frame.** `दस बजने को सात मिनट` counts seven minutes short of
 ten. Wiring it would need a subtractive clock direction spelled as a two-word
@@ -144,3 +149,32 @@ ship, so `एक लाख साल पहले` refuses.
    beyond इतवार?
 6. Is there a fixed early/mid/late vocabulary for a month that could be
    attested?
+
+
+---
+[← Hebrew](he.md) · [Home](../index.md) · [Hungarian →](hu.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("hi")
+    False
+    >>> span, rest = extract_timespan('तीन दिन पहले', "hi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-24T00:05:00', '')
+    >>> span, rest = extract_timespan('{0} दिन पहले', "hi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('{0} दिन में', "hi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('एक दिन बाद', "hi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-28T00:05:00', '')
+
+---
+[← Hebrew](he.md) · [Home](../index.md) · [Hungarian →](hu.md)

@@ -1,5 +1,15 @@
 # French (`fr`)
 
+<!-- agent-hint
+covers: where each construction of the French locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/fr/lang.json`, `chronologia/locale/fr/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/fr.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the French (`fr`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 The fact that decides the most in this locale is that French writes its numeric
 date with slashes and not with dots. `15/06/2020` reads; `15.06.2020` returns
 nothing at all. The dotted form is the official civil surface of German,
@@ -104,8 +114,6 @@ The weekday and month names carry no recorded source at all.
 `le 15.06.2020` all return nothing, and none of them yields a bare year
 either.
 
-**Seconds.** `il y a 30 secondes` returns nothing. No second unit ships.
-
 **A bare duration.** `quinze jours` returns nothing. A quantity without a
 direction marker is still only a quantity — a fortnight unit does ship, but it
 needs a marker to become a span.
@@ -123,3 +131,32 @@ needs a marker to become a span.
    ambiguous, and if so which of the two readings should win?
 5. Should a Republican-calendar year (`an II`) be readable, and in what
    surface?
+
+
+---
+[← Finnish](fi.md) · [Home](../index.md) · [Galician →](gl.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("fr")
+    True
+    >>> span, rest = extract_timespan('neuf heures moins le quart', "fr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:45:00', '')
+    >>> span, rest = extract_timespan('huit heures et quart', "fr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+    >>> span, rest = extract_timespan('huit heures et demie', "fr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('3 octobre 1990', "fr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('1990-10-03T00:00:00', '')
+
+---
+[← Finnish](fi.md) · [Home](../index.md) · [Galician →](gl.md)

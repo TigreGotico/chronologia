@@ -1,12 +1,22 @@
 # Czech (`cs`)
 
+<!-- agent-hint
+covers: where each construction of the Czech locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/cs/lang.json`, `chronologia/locale/cs/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/cs.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Czech (`cs`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Czech names the half hour for the hour that has not arrived: `půl deváté` is
 08:30, not 09:30, and `půl páté` is half past four. The hour in that phrase is
 not a cardinal at all but a genitive-feminine *ordinal* agreeing with an
 elided `hodiny` — literally "half of the ninth". numtag reads the ordinal as
 9 and `půl` as a fraction, and the fold keeps `půl` a word, so the clock reads
-the fraction and the hour apart. The second thing to know is that Czech's quarter hour runs on a different
-grammar from its half hour, and the locale reads only the half.
+the fraction and the hour apart. The quarter hour runs on a different grammar from the half hour: `čtvrt na devět`
+is 08:15 and `tři čtvrtě na devět` is 08:45.
 
 ## What ships
 
@@ -159,18 +169,6 @@ does.
 
 ## What refuses
 
-**The quarter hour.** Czech says `čtvrt na devět` for 8:15 and `tři čtvrtě na
-devět` for 8:45 — a quarter *onto* the coming hour, with the accusative after
-`na`, an entirely different grammar from the genitive the half hour takes.
-Neither resolves, and neither can: the linking `na` is in no vocabulary file
-and the locale carries no `FRACTION na HOUR` order of the kind Ukrainian has
-for its own `пів на` construction. `čtvrt` is present in
-`clock_fraction_15.voc` and does reach the fraction table, but the resolver
-declines any fraction other than the half unless a locale sets
-`bare_quarter_to`, which Czech does not, so `čtvrt deváté` returns nothing
-too. The quarter reaches only the duration path, where `čtvrt hodiny` is
-fifteen minutes.
-
 **Minutes counted to or past the hour.** `pět minut po deváté` and
 `deset minut před devátou` do not resolve. There is a `MINUTE CLOCKDIR HOUR`
 order in `lang.json`, but the hour-ordinal table it would need to read
@@ -190,15 +188,7 @@ Welsh are the only other locales with a morning daypart and no night one.
 Belarusian ships no day-part vocabulary at all, so the shape is not simply a
 Slavic one.
 
-**A leading preposition on the clock and on the year.** `v půl deváté` and
-`o půl deváté` — the two ordinary ways to say "at half past eight" — resolve to
-08:30 but leave the preposition in the remainder, because the clock's fraction
-order begins at the fraction word where the Slovenian and Croatian equivalents
-begin at an optional `at?`. `v roce 2020` strands its `v` the same way, for a
-different reason: the marker that order names is the future preposition `za`,
-not the locative `v`. Most of the Slavic locales here compose `year_ref` from
-that same `in GYEAR` order — Bulgarian and Belarusian lead theirs with other
-markers, and Macedonian has no marker-led order at all.
+**A leading preposition on the year.** `v roce 2020` returns the whole of 2020 with `v` left in the remainder.
 
 **A missing month abbreviation.** Eleven of the twelve CLDR abbreviated month
 names ship. `zář` does not, so `15. zář 2020` returns the whole of 2020 with
@@ -210,8 +200,7 @@ returns the whole of May with `v půlce` stranded.
 
 ## Open questions for a native speaker
 
-1. Is `čtvrt na devět` worth wiring, and is the accusative after `na` the only
-   linking grammar it takes? The half hour and the quarter hour disagree about
+1. Is the accusative after `na` the only linking grammar the quarter hour takes? The half hour and the quarter hour disagree about
    case in a way no other locale here has to model.
 2. What case do the shipped oblique weekday and month forms mark, and is the
    set complete for each word?
@@ -221,3 +210,32 @@ returns the whole of May with `v půlce` stranded.
    Czech need `v noci` alongside a separate `večer`-adjacent form?
 5. Does `půlka` compete with `polovina` in date phrases (`v půlce května`)
    strongly enough to ship, or is it too colloquial for a calendar reading?
+
+
+---
+[← Croatian](hr.md) · [Home](../index.md) · [Danish →](da.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("cs")
+    True
+    >>> span, rest = extract_timespan('půl deváté', "cs", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('čtvrt na devět', "cs", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+    >>> span, rest = extract_timespan('tři čtvrtě na devět', "cs", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:45:00', '')
+    >>> span, rest = extract_timespan('v 9 hodin večer', "cs", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T21:00:00', '')
+
+---
+[← Croatian](hr.md) · [Home](../index.md) · [Danish →](da.md)

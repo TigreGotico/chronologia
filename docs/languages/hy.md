@@ -1,5 +1,15 @@
 # Armenian (`hy`)
 
+<!-- agent-hint
+covers: where each construction of the Armenian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/hy/lang.json`, `chronologia/locale/hy/*.voc`, `chronologia/extract/numfold_armenian.py`
+generated: no
+verify: python -m doctest docs/languages/hy.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Armenian (`hy`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_armenian` module in `chronologia/extract/`.
+
 Armenian marks almost everything temporal **after** the phrase it governs.
 `առաջ` ("ago") is a postposition, `հետո` and `անց` mark a forward offset from
 the same position, the year word `թ.` trails the year in a written date, and
@@ -88,3 +98,32 @@ span parse.
 4. Is the locative `-ում` current for months and units in ordinary writing —
    `հունիսին` for "in June"?
 5. Is there a word for the weekend?
+
+
+---
+[← Aragonese](an.md) · [Home](../index.md) · [Asturian →](ast.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("hy")
+    False
+    >>> span, rest = extract_timespan('ութ անց կես', "hy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('հունիսի 5', "hy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-06-05T00:00:00', '')
+    >>> span, rest = extract_timespan('{0} օրից', "hy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('հինգ տարի անց', "hy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2022-06-27T00:05:00', '')
+
+---
+[← Aragonese](an.md) · [Home](../index.md) · [Asturian →](ast.md)

@@ -1,5 +1,15 @@
 # Macedonian (`mk`)
 
+<!-- agent-hint
+covers: where each construction of the Macedonian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/mk/lang.json`, `chronologia/locale/mk/*.voc`, `chronologia/extract/numfold_macedonian.py`
+generated: no
+verify: python -m doctest docs/languages/mk.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Macedonian (`mk`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_macedonian` module in `chronologia/extract/`.
+
 Macedonian has no case system, which decides the whole shape of the locale.
 Where the Russian or Croatian folds carry genitive tables for days, hours and
 feminine ordinals, Macedonian needs none of that machinery: every relative-time
@@ -134,3 +144,32 @@ numeral, which is the only position the offset construction reads.
    all?
 4. Does the purely additive clock still read naturally past `:45` in fast
    speech? The worked example that settles the direction only reaches `:50`.
+
+
+---
+[← Lithuanian](lt.md) · [Home](../index.md) · [Malay →](ms.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("mk")
+    False
+    >>> span, rest = extract_timespan('минатата година', "mk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2016-01-01T00:00:00', '')
+    >>> span, rest = extract_timespan('следната година', "mk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-01-01T00:00:00', '')
+    >>> span, rest = extract_timespan('пред 5 дена', "mk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-22T00:05:00', '')
+    >>> span, rest = extract_timespan('девет и петнаесет', "mk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:15:00', '')
+
+---
+[← Lithuanian](lt.md) · [Home](../index.md) · [Malay →](ms.md)

@@ -1,5 +1,15 @@
 # Persian (`fa`)
 
+<!-- agent-hint
+covers: where each construction of the Persian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/fa/lang.json`, `chronologia/locale/fa/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/fa.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Persian (`fa`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Persian ships two independent calendars for the same vocabulary of markers,
 ranges and offsets, and the split between them is the first thing to
 understand. `year_ref` defaults to the Solar Hijri (Jalali) calendar for a
@@ -52,7 +62,7 @@ thirty-minute duration and `ربع ساعت` to a fifteen-minute one. Wiktionary
 entry for `ربع` glosses it "quarter, one-fourth" and gives `دو و ربع` ("two
 and a quarter") as its own worked example for quarter-past-two on a clock —
 confirming the fraction is the same word Persian speakers use for a spoken
-clock time, not merely a duration word.
+clock time, not only a duration word.
 
 **The clock**, despite that, ships only two shapes: a bare digit clock
 (`۱۵:۳۰`, `15:30`) and the marked hour `ساعت N` / `راس ساعت N`, plus the two
@@ -108,17 +118,6 @@ claim to bare numeric input.
 
 ## What refuses
 
-**A spelled fractional clock time.** `دو و ربع` ("quarter past two") and any
-`ساعت و نیم`-style half-past phrase return nothing: `ربع` and `نیم` are
-general quantifiers wired to durations and to the scoped-ordinal grammar
-(`ربع سوم`, "the third quarter"), never to `clock_time`. Wiktionary's own
-`ربع` entry cites `دو و ربع` as the standard reading for quarter past two, so
-this is an attested Persian clock idiom the locale does not read as a clock
-time — flagged here as a defect, not fixed.
-
-**Seconds.** No `unit_second` vocabulary ships, so `سی ثانیه پیش` ("30
-seconds ago") returns nothing.
-
 **The Solar Hijri year outside its window.** A bare four-digit year below
 1200 or above 1500 is read as Gregorian rather than Jalali, by the
 `calendar_year_range` guard in `lang.json`; a Jalali year outside that window
@@ -145,3 +144,32 @@ dedicated surface.
    name at all?
 4. Does the Solar Hijri calendar window (1200–1500) need widening for
    historical or far-future Jalali dates, and if so, by what guard?
+
+
+---
+[← Occitan](oc.md) · [Home](../index.md) · [Polish →](pl.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("fa")
+    True
+    >>> span, rest = extract_timespan('۱۵ اسفند ۱۴۰۲', "fa", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2024-03-05T00:00:00', '')
+    >>> span, rest = extract_timespan('15 مارس 2024', "fa", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2024-03-15T00:00:00', '')
+    >>> span, rest = extract_timespan('هفتهٔ آینده', "fa", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-01T00:00:00', '')
+    >>> span, rest = extract_timespan('از ۵ ژوئن تا ۱۲ ژوئن', "fa", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-06-05T00:00:00', '')
+
+---
+[← Occitan](oc.md) · [Home](../index.md) · [Polish →](pl.md)

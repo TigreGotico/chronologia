@@ -1,5 +1,15 @@
 # Esperanto (`eo`)
 
+<!-- agent-hint
+covers: where each construction of the Esperanto locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/eo/lang.json`, `chronologia/locale/eo/*.voc`, `chronologia/extract/numfold_esperanto.py`
+generated: no
+verify: python -m doctest docs/languages/eo.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Esperanto (`eo`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_esperanto` module in `chronologia/extract/`.
+
 Esperanto has no irregular numerals, no gender and no case government on a
 counted noun, which makes it the simplest number fold in the library. What it
 does have is a suffix distinction that carries meaning nothing else in this
@@ -109,3 +119,32 @@ is wired.
    given that CLDR defines none?
 5. Is a compound ordinal written solid or hyphenated — `dudektria` or
    `dudek-tria`?
+
+
+---
+[← English](en.md) · [Home](../index.md) · [Estonian →](et.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("eo")
+    False
+    >>> span, rest = extract_timespan('la unua de januaro', "eo", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-01-01T00:00:00', '')
+    >>> span, rest = extract_timespan('la sesa kaj duono', "eo", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:30:00', '')
+    >>> span, rest = extract_timespan('duono post la sepa', "eo", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+    >>> span, rest = extract_timespan('kvarono antaŭ la sepa', "eo", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:45:00', '')
+
+---
+[← English](en.md) · [Home](../index.md) · [Estonian →](et.md)

@@ -1,5 +1,15 @@
 # Turkish (`tr`)
 
+<!-- agent-hint
+covers: where each construction of the Turkish locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/tr/lang.json`, `chronologia/locale/tr/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/tr.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Turkish (`tr`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Turkish is postpositional, and the whole locale is arranged around that. The
 marker follows what it scopes — `üç gün sonra` is three days later, `geçen
 hafta` is last week but `salı günü` puts the day-word after the weekday — so
@@ -52,7 +62,7 @@ for `tr`, transcribed in `chronologia/dayparts.py` as morning `[06:00, 12:00)`,
 afternoon `[12:00, 19:00)`, evening `[19:00, 21:00)` and night
 `[21:00, 06:00)`. The evening is a narrow two-hour band and the night wraps
 across midnight. Three of the four have surfaces — `sabah`, `akşam` and `gece`
-— each cited to Wiktionary, and the first two additionally ship their
+— each cited to Wiktionary, and the first two also ship their
 third-person possessive forms `sabahı` and `akşamı`, because that is the form
 the `<weekday> sabahı saat …` construction uses: `salı akşamı` is Tuesday
 evening, not the evening in general.
@@ -94,17 +104,10 @@ source. The locale sets `hemisphere` to null.
 
 ## What refuses
 
-**Seconds.** `30 saniye önce` returns nothing. No second unit ships.
-
 **A from-to range on weekdays.** `pazartesiden cumaya` returns nothing. The
 locale ships no "from" or "to" markers at all — the only range frames are the
 postposed `arası`/`arasında` and the dash, so `pazartesi ile cuma arası` and
 `3 Temmuz - 10 Temmuz` both read.
-
-**A year-first quarter.** `2020 birinci çeyrek` resolves the whole of 2020 and
-leaves `birinci çeyrek` in the remainder. The quarter construction is
-ordinal-first with the year trailing, unlike the seasons and the half-year,
-which are year-first.
 
 **An ordinal week number.** `12. hafta` returns nothing; the ISO week order is
 week-word first, so `hafta 12` reads.
@@ -127,3 +130,32 @@ has no day-part surface.
 4. Is `12. hafta` the ordinary way to name an ISO week in Turkish?
 5. Does `asır` occur often enough in running text to be worth the
    false-positive risk?
+
+
+---
+[← Thai](th.md) · [Home](../index.md) · [Ukrainian →](uk.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("tr")
+    True
+    >>> span, rest = extract_timespan('üç gün sonra', "tr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-30T00:05:00', '')
+    >>> span, rest = extract_timespan('geçen hafta', "tr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-19T00:00:00', '')
+    >>> span, rest = extract_timespan('salı günü', "tr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:00:00', '')
+    >>> span, rest = extract_timespan('pazartesi ile cuma arası', "tr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-03T00:00:00', '')
+
+---
+[← Thai](th.md) · [Home](../index.md) · [Ukrainian →](uk.md)

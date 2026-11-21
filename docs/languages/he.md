@@ -1,5 +1,15 @@
 # Hebrew (`he`)
 
+<!-- agent-hint
+covers: where each construction of the Hebrew locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/he/lang.json`, `chronologia/locale/he/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/he.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Hebrew (`he`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Hebrew writes right to left, glues its prepositions onto the word they govern,
 and keeps two calendars in everyday use at once. All three facts shape what
 this locale can read. The proclitic is the sharpest of them: `ב־` ("in, on,
@@ -202,7 +212,7 @@ form absent from the vocabulary is simply invisible.
 handled by a dedicated pre-pass, which splits `ומרץ` back into two tokens when
 what follows the vav is a recognised month, weekday or day-part surface. The
 `מ־` that opens the range gets no such treatment. `מ ינואר עד אפריל` with a
-space resolves to the three-month span; `מינואר עד אפריל` written normally
+space resolves to the four-month span; `מינואר עד אפריל` written normally
 returns April alone and strands the lead. The consequence reaches the
 vocabulary's own documentation: `marker_to.voc` cites its grammar with the
 worked example `מיום ראשון עד יום שישי`, and that exact string returns Friday
@@ -221,16 +231,7 @@ the homograph collision above: the spelled ordinal *is* the weekday name. The
 digit and the relative-marker forms cover the same ground. This is recorded as
 a deliberate limitation in the numeral module and pinned in the corpus.
 
-**The twelve that is written defectively.** The teen fold reads the definite
-forms of the unit words before `עשר`/`עשרה`, and the cardinal set holds
-`שתיים` but not the equally ordinary defective spelling `שתים`. So
-`שתיים עשרה בלילה` is midnight, and `שתים עשרה בלילה` returns 22:00 with
-`שתים` stranded — the bare `עשרה` reads as ten and the answer is confidently
-two hours wrong. The locale ships defective spellings elsewhere on purpose
-(`מחרתים` beside `מחרתיים`, `צהרים` beside `צהריים`), so the omission is
-inconsistent with its own practice rather than with a stated policy. Written
-with a noon cue instead, `שתים עשרה בצהריים` and `שתיים עשרה בצהריים` both
-strand the numeral entirely and return noon from the landmark alone.
+**The twelve at noon.** `שתים עשרה בצהריים` and `שתיים עשרה בצהריים` both return noon and leave the numeral in the remainder.
 
 **Deep time.** `לפני מיליון שנים` ("a million years ago") returns nothing. The
 construction wants a year word after the scale, and the year-word vocabulary
@@ -266,3 +267,32 @@ and month stranded.
 5. Does the half-hour need `וחצי` after the clock hour, and if so is the
    connective always written fused to the fraction the way Arabic writes its
    own?
+
+
+---
+[← Hausa](ha.md) · [Home](../index.md) · [Hindi →](hi.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("he")
+    True
+    >>> span, rest = extract_timespan('אחת בלילה', "he", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('אחת עשרה בלילה', "he", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T23:00:00', '')
+    >>> span, rest = extract_timespan('שמונה בערב', "he", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:00:00', '')
+    >>> span, rest = extract_timespan('שלוש אחר הצהריים', "he", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T15:00:00', '')
+
+---
+[← Hausa](ha.md) · [Home](../index.md) · [Hindi →](hi.md)

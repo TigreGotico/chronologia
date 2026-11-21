@@ -1,5 +1,15 @@
 # Irish (`ga`)
 
+<!-- agent-hint
+covers: where each construction of the Irish locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ga/lang.json`, `chronologia/locale/ga/*.voc`, `chronologia/extract/numfold_irish.py`
+generated: no
+verify: python -m doctest docs/languages/ga.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Irish (`ga`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_irish` module in `chronologia/extract/`.
+
 Irish mutates a word's initial consonant, and unlike Welsh next door the rules
 for *which* mutation a given trigger imposes are, in several places the temporal
 constructions need, not stated by any source consulted. Where the sources
@@ -130,3 +140,32 @@ the one that ships.
 7. Does `ó` lenite in its temporal sense?
 8. Does the t-prothesised `an tseachtain` need to ship alongside the radical
    `seachtain`? The radical form resolves; the prothesised one does not.
+
+
+---
+[← Indonesian](id.md) · [Home](../index.md) · [Italian →](it.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ga")
+    False
+    >>> span, rest = extract_timespan('leathuair tar éis a trí', "ga", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:30:00', '')
+    >>> span, rest = extract_timespan('ceathrú chun a dó', "ga", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:45:00', '')
+    >>> span, rest = extract_timespan('an Luan seo chugainn', "ga", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-03T00:00:00', '')
+    >>> span, rest = extract_timespan('mí Aibreáin', "ga", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-04-01T00:00:00', '')
+
+---
+[← Indonesian](id.md) · [Home](../index.md) · [Italian →](it.md)

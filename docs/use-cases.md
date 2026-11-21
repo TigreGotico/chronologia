@@ -1,5 +1,13 @@
 # Who is this for?
 
+<!-- agent-hint
+covers: worked programs for seven kinds of reader and what each learns from a span with a basis
+source: `chronologia/__init__.py:__all__`, `examples/`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[use-cases.md]" -q
+see: `docs/getting-started.md`, `docs/extraction.md`
+-->
+
 `chronologia` is a date-reckoning engine. It converts between calendars, holds
 years no `datetime` can, and — the part that matters most — hands back **spans**
 whose width and **basis** tell you honestly how well anything is really known.
@@ -379,7 +387,7 @@ None of these are exotic. They are the everyday seams where civil time is not th
 smooth number line the arithmetic assumes — and where a library that answers
 "that time is ambiguous" or "that time never existed" as a **typed value** saves
 her from a silent off-by-one in production. `chronologia` treats folds and gaps,
-leap seconds, and week logic as first-class, so the edge case is a return value
+leap seconds, and week logic as ordinary inputs, so the edge case is a return value
 she can branch on rather than a corruption she finds in a postmortem.
 
 Recurring schedules are covered too — iCalendar `RRULE` expansion lives in
@@ -506,3 +514,6 @@ astronomer to teach error bars. The engineer to branch on a fold instead of
 shipping a wrong instant. The voice assistant to answer a vague question vaguely.
 Different reasons, same engine — one that would rather tell you what is knowable
 than guess.
+
+---
+[Home](index.md) · [Getting started →](getting-started.md)

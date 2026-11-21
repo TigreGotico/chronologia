@@ -1,5 +1,15 @@
 # Slovak (`sk`)
 
+<!-- agent-hint
+covers: where each construction of the Slovak locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/sk/lang.json`, `chronologia/locale/sk/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/sk.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Slovak (`sk`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Slovak names the hour with a declined ordinal agreeing with an elided
 `hodina`: `o druhej` is two o'clock, `o ôsmej` is eight, and the ordinal
 stands in the feminine locative because the preposition `o` governs it.
@@ -163,12 +173,7 @@ has the converse problem: it is a meridiem cue but not a day part, so
 `dnes dopoludnia` returns the whole day and strands the word. Czech, Polish
 and Welsh share the shape — a morning day part and no night one.
 
-**A leading preposition on a digit clock, and on the year and the period.**
-The clock's first order begins at the clock itself rather than at an optional
-`at?`, so `o 8:30` and `o 20:30` resolve to the right minute and leave the
-preposition in the remainder. `v roku 2020`, `v minulom týždni`,
-`v tomto týždni` and `v minulom roku` strand their `v` for the same reason on
-their own orders, as do `cez víkend`, `na jar` and `v lete`.
+**A leading preposition on the year and the period.** `v roku 2020`, `v minulom týždni`, `v tomto týždni` and `v minulom roku` return their span with `v` left in the remainder, as do `cez víkend` and `na jar`. `v lete` reads whole.
 
 **The final day of a month.** `prvý deň mája` resolves, because
 `ORD UNIT MONTH` is declared; `posledný deň mája` does not, because no
@@ -178,10 +183,6 @@ stranded.
 **`až` as a range word.** `od 1. mája do 5. mája` resolves and
 `1. máj až 5. máj` does not: `až` is in no vocabulary file, so the first date
 is returned alone and the rest of the range is stranded.
-
-**Month abbreviations.** None of the twelve CLDR abbreviated month names
-(`jan`, `feb`, `mar`, `apr`, `máj`, `jún`, `júl`, `aug`, `sep`, `okt`, `nov`,
-`dec`) ship, so `15. jan 2020` returns the whole of 2020.
 
 ## Open questions for a native speaker
 
@@ -200,3 +201,32 @@ is returned alone and the rest of the range is stranded.
    does one belong to fiscal usage?
 5. Is `v noci` the right single surface for the night band, or does the
    locative phrase need a nominal partner?
+
+
+---
+[← Serbian](sr.md) · [Home](../index.md) · [Slovenian →](sl.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("sk")
+    True
+    >>> span, rest = extract_timespan('pol deviatej', "sk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('o deviatej večer', "sk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T21:00:00', '')
+    >>> span, rest = extract_timespan('o deviatej ráno', "sk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:00:00', '')
+    >>> span, rest = extract_timespan('štvrť na deväť', "sk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+
+---
+[← Serbian](sr.md) · [Home](../index.md) · [Slovenian →](sl.md)

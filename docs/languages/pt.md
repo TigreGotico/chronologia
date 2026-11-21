@@ -1,5 +1,15 @@
 # Portuguese (`pt`)
 
+<!-- agent-hint
+covers: where each construction of the Portuguese locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/pt/lang.json`, `chronologia/locale/pt/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/pt.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Portuguese (`pt`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 No bare day-part word resolves in Portuguese. `manhã` on its own returns
 nothing, and so do `tarde`, `noite` and `madrugada`, even though English,
 French and Italian all read their bare morning word. The obstacle is not the
@@ -109,8 +119,6 @@ southern-hemisphere reading for Brazilian Portuguese.
 nothing on their own. This is the locale's defining refusal and the reason is
 above.
 
-**Seconds.** `há 30 segundos` returns nothing. No second unit ships.
-
 **The dotted date.** `15.06.2020` returns nothing, and does not fall back to
 reading 2020 as a bare year. Portuguese writes the numeric date with slashes.
 
@@ -128,3 +136,32 @@ a quantity with no direction marker is still only a quantity.
    the shared CLDR row hides — in particular where `tarde` ends?
 4. Are `calendas`, `nonas` and `idos` the forms Portuguese historical writing
    uses?
+
+
+---
+[← Polish](pl.md) · [Home](../index.md) · [Romanian →](ro.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("pt")
+    True
+    >>> span, rest = extract_timespan('dez da noite', "pt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T22:00:00', '')
+    >>> span, rest = extract_timespan('uma da noite', "pt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('de manhã', "pt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:00:00', '')
+    >>> span, rest = extract_timespan('pela manhã', "pt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:00:00', '')
+
+---
+[← Polish](pl.md) · [Home](../index.md) · [Romanian →](ro.md)

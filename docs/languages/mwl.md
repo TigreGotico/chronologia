@@ -1,5 +1,15 @@
 # Mirandese (`mwl`)
 
+<!-- agent-hint
+covers: where each construction of the Mirandese locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/mwl/lang.json`, `chronologia/locale/mwl/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/mwl.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Mirandese (`mwl`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Mirandese is an Asturleonese language spoken in north-eastern Portugal, and it
 is surrounded on every side by Portuguese. Many of its time words are spelled
 exactly as Portuguese spells them — `janeiro`, `abril`, `maio`, `agosto`,
@@ -113,10 +123,6 @@ no night meridiem to consume it. Where an English or Portuguese speaker would
 expect 19:00, the result is a morning hour with the disambiguating word thrown
 away — the same shape for `a las dieç de la nuite`, which gives 10:00.
 
-`hai ua sumana` and `ua sumana atrás` both return nothing, while `hai un anho`
-reads correctly. The feminine count-one quantifier `ua` is declared in the
-locale but does not reach the offset slot the masculine `un` reaches.
-
 `na sumana que ben` returns the correct week but strands `na`. `l die 15 de
 márcio` returns the correct day but strands `l die`. `l trimestre que ben`
 returns the correct quarter but strands `l`.
@@ -130,3 +136,32 @@ returns the correct quarter but strands `l`.
 4. Is there a word for the day after tomorrow? The locale has `trasdonte` for
    the day before yesterday and nothing on the other side.
 5. Is `sumana` the only spelling, or is *semana* also written?
+
+
+---
+[← Maltese](mt.md) · [Home](../index.md) · [Norwegian Bokmål →](nb.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("mwl")
+    True
+    >>> span, rest = extract_timespan('a las trés e meia', "mwl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:30:00', '')
+    >>> span, rest = extract_timespan('a las trés menos quarto', "mwl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:45:00', '')
+    >>> span, rest = extract_timespan('15 de janeiro de 2020', "mwl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2020-01-15T00:00:00', '')
+    >>> span, rest = extract_timespan('hai trés dies', "mwl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-24T00:05:00', '')
+
+---
+[← Maltese](mt.md) · [Home](../index.md) · [Norwegian Bokmål →](nb.md)

@@ -1,5 +1,13 @@
 # Timezones
 
+<!-- agent-hint
+covers: how zoneinfo zones become timelines and how wall-clock folds and gaps are resolved
+source: `chronologia/zone_timelines.py`, `chronologia/localtime.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[timezones.md]" -q
+see: `docs/timelines.md`, `docs/sun-moon-and-seasons.md`
+-->
+
 This is the page you reached for the moment you thought, *"fine, but how does
 it handle timezones?"* — the first hard question anyone who has been burned by
 dates asks. The short answer is that `chronologia` treats a timezone as a
@@ -148,7 +156,7 @@ print(d.tzname())      # JST
 
 Anything that satisfies the `tzinfo` protocol works the same way — `zoneinfo`,
 `dateutil.tz`, a fixed `datetime.timezone`, or the library's own
-[`LMTZone`](#pre-zone-history-lmtzone) for history before zones existed.
+[`LMTZone`](#pre-zone-history-lmtzone-and-local-mean-time) for history before zones existed.
 
 ### Getting the zone database: `pip install tzdata`
 
@@ -185,7 +193,7 @@ that are not known until the government announces them**, sometimes at very
 short notice. Any library that froze a copy of the world's zone rules into its
 own source would be wrong about Morocco within months. By owning no zone data,
 `chronologia` is wrong about Morocco *never* — it defers to whatever `tzdb` your
-system currently trusts. The same discipline that makes the library refuse to
+system trusts. The same discipline that makes the library refuse to
 guess about a fall-back hour makes it refuse to guess about a decree it cannot
 see.
 
@@ -590,7 +598,7 @@ fold = ny_view.to_instant(datetime(2024, 11, 3, 1, 30))   # fall-back night
 print((fold[1] - fold[0]).total_seconds() / 3600)          # 1.0 — an hour apart
 ```
 
-Because it is a materialized view over *whatever `zoneinfo` currently trusts*, a
+Because it is a materialized view over *whatever `zoneinfo` trusts*, a
 `zone_timeline` is never wrong about Morocco either — re-materialize it and you
 get today's `tzdb`, not a frozen copy.
 
@@ -614,7 +622,7 @@ Read these values as a *faithful surfacing of `tzdb`*, cited to it — not an
 independent historical claim. IANA warns that its pre-1970 data is not reliable,
 so `zone_history_start` reports what `zoneinfo` actually returns and no more; for
 deep history the honest floor remains longitude-based
-[`local_mean_time`](#pre-zone-history-lmtzone).
+[`local_mean_time`](#pre-zone-history-lmtzone-and-local-mean-time).
 
 ## Reference
 
@@ -661,3 +669,6 @@ deep history the honest floor remains longitude-based
   it defers to your system's `zoneinfo` / `tzdata`, so a decree (Morocco,
   anywhere) reaches you through `tzdb` without a library release.
 </content>
+
+---
+[← Sun, moon, and seasons](sun-moon-and-seasons.md) · [Home](index.md) · [Timelines →](timelines.md)

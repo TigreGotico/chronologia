@@ -1,5 +1,15 @@
 # Basque (`eu`)
 
+<!-- agent-hint
+covers: where each construction of the Basque locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/eu/lang.json`, `chronologia/locale/eu/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/eu.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Basque (`eu`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Basque is a language isolate, and the consequence for a date parser is
 structural rather than lexical: there are no prepositions to match. Where most
 locales in this library recognise "from", "until", "during" and "of" as
@@ -109,12 +119,6 @@ These are wrong answers rather than refusals, and a wrong answer with a
 stranded remainder is worse than nothing. Each is stated with the probe that
 produces it, anchored at 2017-06-27 13:04.
 
-`extract_timespan("arratsaldeko bostak eta erdi", "eu")` returns 05:30 with
-`arratsaldeko` left in the remainder. The afternoon meridiem does not compose
-with the `HOUR eta FRACTION` clock order, so the phrase reads as half past five
-in the morning. The same lead composes correctly with the inessive hour:
-`arratsaldeko bostetan` returns 17:00.
-
 `extract_timespan("2020ko lehen hiruhilekoa", "eu")` returns the first quarter
 of **2017**, the anchor year, with `2020ko` in the remainder. The relational
 year form does not bind the `YEAR?` slot of `quarter_ref`.
@@ -139,3 +143,32 @@ narrowed span it returns instead is silently wrong rather than empty.
    and do they take the same `eta` continuation as the plural hours?
 4. Which of the three forward-offset markers — `barru`, `buru`, `barne` — are
    interchangeable, and which are regional?
+
+
+---
+[← Azerbaijani](az.md) · [Home](../index.md) · [Belarusian →](be.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("eu")
+    True
+    >>> span, rest = extract_timespan('bostak eta erdi', "eu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T05:30:00', '')
+    >>> span, rest = extract_timespan('bostak eta laurden', "eu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T05:15:00', '')
+    >>> span, rest = extract_timespan('ekainaren 5ean', "eu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-06-05T00:00:00', '')
+    >>> span, rest = extract_timespan('martxoaren hirugarren astelehena', "eu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-03-20T00:00:00', '')
+
+---
+[← Azerbaijani](az.md) · [Home](../index.md) · [Belarusian →](be.md)

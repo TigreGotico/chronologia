@@ -1,5 +1,15 @@
 # Albanian (`sq`)
 
+<!-- agent-hint
+covers: where each construction of the Albanian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/sq/lang.json`, `chronologia/locale/sq/*.voc`, `chronologia/extract/numfold_albanian.py`
+generated: no
+verify: python -m doctest docs/languages/sq.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Albanian (`sq`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_albanian` module in `chronologia/extract/`.
+
 Albanian marks definiteness as a suffix on the noun — `ditë` is "day",
 `dita` "the day" — and the form a temporal phrase uses is not a stylistic
 choice. It is selected by whatever governs the noun. CLDR's own relative-time
@@ -143,3 +153,32 @@ locale reads only the CLDR pattern, a bare cardinal day: `5 qershor 2027`.
 7. What are zero, the hundreds and the thousands, and what is the tens pattern?
 8. Are `ditë` and `orë` feminine, for the `tre` / `tri` agreement?
 9. Is a compositional `vitin e kaluar` also current alongside `vjet`?
+
+
+---
+[← Language provenance pages](index.md) · [Home](../index.md) · [Arabic →](ar.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("sq")
+    False
+    >>> span, rest = extract_timespan('7 e gjysmë', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+    >>> span, rest = extract_timespan('dy e një çerek', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:15:00', '')
+    >>> span, rest = extract_timespan('tre pa çerek', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:45:00', '')
+    >>> span, rest = extract_timespan('7 e 25 e mëngjesit', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:25:00', '')
+
+---
+[← Language provenance pages](index.md) · [Home](../index.md) · [Arabic →](ar.md)

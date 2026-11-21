@@ -1,5 +1,15 @@
 # Korean (`ko`)
 
+<!-- agent-hint
+covers: where each construction of the Korean locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ko/lang.json`, `chronologia/locale/ko/*.voc`, `chronologia/extract/numfold_korean.py`
+generated: no
+verify: python -m doctest docs/languages/ko.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Korean (`ko`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_korean` module in `chronologia/extract/`.
+
 Korean writes every number twice over. The native series (`하나`, `둘`, `셋` …)
 counts the hours on a clock face; the Sino-Korean series (`일`, `이`, `삼` …)
 counts the minutes beside them, and every calendar field — day, month, year,
@@ -158,3 +168,32 @@ their own.
 3. Does `반` ever read backward from the following hour the way `전` does
    for whole minutes, or is "half past" always forward regardless of which
    half of the clock face it falls on?
+
+
+---
+[← Kabyle](kab.md) · [Home](../index.md) · [Latvian →](lv.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ko")
+    False
+    >>> span, rest = extract_timespan('세 시 십 분 전', "ko", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:50:00', '')
+    >>> span, rest = extract_timespan('세 시 십 분', "ko", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:10:00', '')
+    >>> span, rest = extract_timespan('오전 9시', "ko", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:00:00', '')
+    >>> span, rest = extract_timespan('두 시 반', "ko", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:30:00', '')
+
+---
+[← Kabyle](kab.md) · [Home](../index.md) · [Latvian →](lv.md)

@@ -1,5 +1,15 @@
 # Icelandic (`is`)
 
+<!-- agent-hint
+covers: where each construction of the Icelandic locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/is/lang.json`, `chronologia/locale/is/*.voc`, `chronologia/extract/numfold_icelandic.py`
+generated: no
+verify: python -m doctest docs/languages/is.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Icelandic (`is`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_icelandic` module in `chronologia/extract/`.
+
 Icelandic names the **coming** hour on the half. `hálf tvö` is 01:30, not
 02:30. Everything else about the clock follows from that: the quarter word
 `kortér` takes its direction from the preposition beside it, `yfir` counting up
@@ -105,3 +115,32 @@ only a quantity.
 4. What are the "every" quantifier's forms in a temporal phrase?
 5. Which cases do `frá` and `til` govern in a month-to-month range?
 6. Are there attested era abbreviations?
+
+
+---
+[← Hungarian](hu.md) · [Home](../index.md) · [Indonesian →](id.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("is")
+    False
+    >>> span, rest = extract_timespan('hálf tvö', "is", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:30:00', '')
+    >>> span, rest = extract_timespan('kortér yfir tvö', "is", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:15:00', '')
+    >>> span, rest = extract_timespan('kortér í þrjú', "is", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:45:00', '')
+    >>> span, rest = extract_timespan('fimmtán mínútur yfir eitt', "is", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:15:00', '')
+
+---
+[← Hungarian](hu.md) · [Home](../index.md) · [Indonesian →](id.md)

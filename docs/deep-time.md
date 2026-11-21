@@ -1,5 +1,13 @@
 # Deep time
 
+<!-- agent-hint
+covers: geological and archaeological periods, Before Present ages and radiocarbon calibration
+source: `chronologia/periods.py`, `chronologia/data/`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[deep-time.md]" -q
+see: `docs/mars-and-beyond.md`, `docs/edtf.md`
+-->
+
 Most of this library is about human dates. This page is about the other 99.9%
 of time — the age of the dinosaurs, the ice ages, the Bronze Age — where we
 stop counting individual days and start naming vast stretches. The tools here
@@ -209,3 +217,6 @@ print(ICS_CHART_VERSION)
 
 Both the deep-time chart and the archaeological set are `tabulated` or
 `reconstructed` — never `exact`. Deep time is measured, and the spans say so.
+
+---
+[← Timelines](timelines.md) · [Home](index.md) · [Mars and beyond →](mars-and-beyond.md)

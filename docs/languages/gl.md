@@ -1,5 +1,15 @@
 # Galician (`gl`)
 
+<!-- agent-hint
+covers: where each construction of the Galician locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/gl/lang.json`, `chronologia/locale/gl/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/gl.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Galician (`gl`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Galician sits beside Portuguese and looks like it almost everywhere, which is
 the standing hazard for this locale: a surface that is right in Portuguese is
 not thereby right in Galician, and nothing here is admitted on the strength of
@@ -139,8 +149,6 @@ be refused while a bare `mañá` is admitted; and `tarde` is equally the adverb
 tarde`, a sentence that names no time. `mañá` is available bare because bare
 `mañá` is tomorrow, not the morning.
 
-**Seconds.** `hai 30 segundos` returns nothing. No second unit ships.
-
 **The dotted date.** `15.06.2020` returns nothing and does not fall back to
 reading 2020 as a bare year.
 
@@ -188,3 +196,32 @@ word visible.
    it therefore resolve to ten years?
 5. Are `calendas`, `nonas` and `idos` the forms Galician historical writing
    uses?
+
+
+---
+[← French](fr.md) · [Home](../index.md) · [Georgian →](ka.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("gl")
+    True
+    >>> span, rest = extract_timespan('dez da noite', "gl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T22:00:00', '')
+    >>> span, rest = extract_timespan('unha da noite', "gl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('da noite', "gl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T21:00:00', '')
+    >>> span, rest = extract_timespan('o 3 de outubro de 1990', "gl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('1990-10-03T00:00:00', '')
+
+---
+[← French](fr.md) · [Home](../index.md) · [Georgian →](ka.md)

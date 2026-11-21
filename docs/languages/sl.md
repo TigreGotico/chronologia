@@ -1,5 +1,15 @@
 # Slovenian (`sl`)
 
+<!-- agent-hint
+covers: where each construction of the Slovenian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/sl/lang.json`, `chronologia/locale/sl/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/sl.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Slovenian (`sl`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Slovenian tells the half hour the way a reader coming from English would not
 expect: `pol devetih` is 8:30, not 9:30 — "half toward nine", counting
 forward to the hour that has not arrived yet rather than back from the one
@@ -131,3 +141,32 @@ an ordinary speaker uses — `dvajset čez štiri` (4:20), `pet do enajstih`
    or does one carry a fiscal or bureaucratic connotation the other lacks?
 4. Does `pretekli` compete evenly with `prejšnji` for "last/previous" in
    ordinary registers, or is one clearly dominant?
+
+
+---
+[← Slovak](sk.md) · [Home](../index.md) · [Spanish →](es.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("sl")
+    True
+    >>> span, rest = extract_timespan('pol devetih', "sl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('prejšnji teden', "sl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-19T00:00:00', '')
+    >>> span, rest = extract_timespan('naslednji teden', "sl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-03T00:00:00', '')
+    >>> span, rest = extract_timespan('prejšnje leto', "sl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2016-01-01T00:00:00', '')
+
+---
+[← Slovak](sk.md) · [Home](../index.md) · [Spanish →](es.md)

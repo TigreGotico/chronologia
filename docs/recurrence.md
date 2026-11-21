@@ -1,5 +1,13 @@
 # Recurrence rules (RFC 5545 RRULE)
 
+<!-- agent-hint
+covers: RFC 5545 RRULE parsing and expansion into day-wide spans
+source: `chronologia/recurrence.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[recurrence.md]" -q
+see: `docs/events.md`, `docs/civil-holidays.md`
+-->
+
 "Every third Tuesday." "The last Monday of May." "Friday the 13th." These are
 *recurrence rules* — a compact grammar for an unbounded set of dates. The
 calendar world already standardised that grammar in
@@ -197,3 +205,6 @@ except ValueError as exc:
 frame (and its per-locale equivalents, e.g. Portuguese "todos os feriados em
 Portugal" / "cada feriado de Portugal") straight into this object; an
 unrecognised jurisdiction name simply does not match — never a guess.
+
+---
+[← Events and iCalendar](events.md) · [Home](index.md) · [EDTF →](edtf.md)

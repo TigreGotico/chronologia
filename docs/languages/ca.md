@@ -1,5 +1,15 @@
 # Catalan (`ca`)
 
+<!-- agent-hint
+covers: where each construction of the Catalan locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ca/lang.json`, `chronologia/locale/ca/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/ca.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Catalan (`ca`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 The thing to know before anything else is that Catalan counts quarter hours
 toward the hour that is coming, not away from the hour that has passed.
 `dos quarts de nou` is 08:30, not 09:30 and not 08:15: it is the second of the
@@ -116,8 +126,6 @@ listed here as unchecked.
 
 ## What refuses
 
-**Seconds.** `fa 30 segons` returns nothing. No second unit ships.
-
 **The dotted date.** `15.06.2020` returns nothing and does not fall back to
 reading 2020 as a lone year. Catalan writes the numeric date with slashes.
 
@@ -137,12 +145,6 @@ abbreviations are only reachable inside a larger date.
 
 These are wrong answers, not refusals, and each is reproduced with
 `extract_timespan(text, "ca", anchor=datetime(2017, 6, 27, 13, 4))`.
-
-`d'aquí a 3 hores` comes back as 2017-06-28 03:00 with `d'aquí hores` left in
-the remainder. The `a 3` is being read as a clock time, so the phrase yields a
-point three o'clock tomorrow morning instead of an offset three hours ahead.
-`d'aquí a tres dies` returns nothing, which is the safe outcome; the hour unit
-is the one that collides with the clock grammar.
 
 `el darrer dilluns d'octubre` comes back as the whole of October with `el
 darrer d` stranded, instead of 30 October. `marker_ordlast` holds only
@@ -175,3 +177,32 @@ relative to the open end.
    is `últim` the one to prefer once both are accepted?
 4. Does the `migdia` band want a day-part surface of its own, so that `al
    migdia` names the hour rather than the point?
+
+
+---
+[← Bulgarian](bg.md) · [Home](../index.md) · [Croatian →](hr.md)
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ca")
+    True
+    >>> span, rest = extract_timespan('dos quarts de nou', "ca", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('un quart de nou', "ca", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+    >>> span, rest = extract_timespan('tres quarts de nou', "ca", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:45:00', '')
+    >>> span, rest = extract_timespan('dos quarts de nou del vespre', "ca", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:30:00', '')
+
+---
+[← Bulgarian](bg.md) · [Home](../index.md) · [Croatian →](hr.md)

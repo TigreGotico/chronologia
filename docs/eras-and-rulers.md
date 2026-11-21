@@ -1,5 +1,13 @@
 # Eras and rulers
 
+<!-- agent-hint
+covers: year-numbering eras, regnal years and the Roman date grammar
+source: `chronologia/eras.py`, `chronologia/regnal.py`, `chronologia/roman.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[eras-and-rulers.md]" -q
+see: `docs/calendars.md`, `docs/timelines.md`
+-->
+
 The same year has been numbered many different ways. "2024" to you might be
 "5784" to a Jewish calendar, "1445" to an Islamic one, "Reiwa 6" in Japan, or
 "the consulship of so-and-so" to an ancient Roman. None of these are wrong —
@@ -85,7 +93,7 @@ print(resolve_era("solar_hijri", 1404))
 
 The **Byzantine** Anno Mundi (a Creation era once used across the Orthodox
 world) has a twist: its civil year begins on the **1st of September**, not 1
-January. So the library reports not just a start date but the whole tiled span
+January. So the library reports the whole tiled span, not only a start date,
 from one September to the next:
 
 ```python
@@ -271,7 +279,7 @@ print(easter(1818).isoformat()[:10], easter(1943).isoformat()[:10])
 
 The Eastern Orthodox churches mostly still run the *same* rule, but on the
 **Julian** calendar with the older Julian lunar table. Two things have drifted
-apart — the calendars (now 13 days) and the lunar tables — so Orthodox Easter
+apart — the calendars (13 days) and the lunar tables — so Orthodox Easter
 usually falls one to five weeks later. `chronologia` gives you both, and lets
 you choose how the Orthodox date is expressed:
 
@@ -359,3 +367,6 @@ Movable feasts in `MOVABLE_FEAST_OFFSETS` (day offset from Easter):
 (+39), `pentecost` (+49), `trinity_sunday` (+56), `corpus_christi` (+60).
 Fixed feasts in `FIXED_FEASTS`: `christmas`, `epiphany`, `assumption`,
 `all_saints`.
+
+---
+[← Calendars](calendars.md) · [Home](index.md) · [Sun, moon, and seasons →](sun-moon-and-seasons.md)
