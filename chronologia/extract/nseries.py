@@ -31,6 +31,7 @@ from chronologia.astrodate import DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
+from chronologia.extract.resolver import compose_daypart_clock
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _lone_spoken_hour,
                                           reads_spoken_hours,
@@ -3926,6 +3927,59 @@ def _recur_date_anchored(ctx):
     return None
 
 
+def _recur_daypart_clock(ctx):
+    """``every [weekday] <part of the day> at <clock>`` and the plural
+    ``[weekday] <parts of the day> at <clock>`` -> DAILY (or WEEKLY on the
+    five weekdays) with the clock as ``BYHOUR``/``BYMINUTE``.
+
+    The plural of a part of the day is an adverb for a regular time of day
+    ("mornings", Wiktionary s.v. "mornings"), so "mornings at 8" is a rule
+    where "morning at 8" is one time.  The part of the day supplies the half
+    of the day of a bare hour, as it does for a single time: "every evening
+    at 8" is ``BYHOUR=20``.  A clock the part of the day contradicts ("every
+    morning at 9pm") names no rule.
+    """
+    engine = _timespan_engine(ctx.lang)
+    t = ctx.tokens
+    plural = set(ctx.spec.connectors.get("daypart_plural", ()))
+    matches = engine.matcher.match(t)
+    clocks = [m for m in matches if m.construction == "clock_time"]
+    anchor = ctx.anchor or datetime.now()
+    for dp in matches:
+        if dp.construction != "daypart_ref" or "REL_MARKER" in dp.slots:
+            continue
+        head = dp.span[0]
+        weekday = head > 0 and t[head - 1].text in ctx.weekday_word
+        head -= weekday
+        every = head > 0 and t[head - 1].text in ctx.every
+        head -= every
+        if not every and dp.slots["DAYPART"].text not in plural:
+            continue
+        clock = next((m for m in clocks if m.span[0] >= dp.span[1]), None)
+        if clock is None or not all(t[k].text in ctx.at_words
+                                    for k in range(dp.span[1], clock.span[0])):
+            continue
+        end = clock.span[1]
+        merged = compose_daypart_clock(
+            engine.resolver.resolve(clock, anchor),
+            engine.resolver.resolve(dp, anchor),
+            ctx.spec.dayparts[dp.slots["DAYPART"].text],
+            "MERIDIEM" in clock.slots)
+        if merged is None:
+            return None, set(range(head, end))
+        at = merged.value.start
+        pin = {"byhour": at.hour}
+        if at.minute:
+            pin["byminute"] = at.minute
+        if weekday:
+            rule = _build_every("weekly", byday=tuple(
+                (None, k) for k in range(5)), **pin)
+        else:
+            rule = _build_every("daily", **pin)
+        return rule, set(range(head, end))
+    return None
+
+
 # Recurrence finders, first match wins.  The order below is load-bearing, and
 # it is NOT the order the functions are defined in above, so tidying the
 # file into definition order would silently change what these phrases mean.
@@ -3956,5 +4010,5 @@ _FINDERS = (_recur_nth_weekday_list, _recur_nth_weekday, _recur_holiday,
             _recur_jurisdiction_holidays,
             _recur_date_anchored,
             _recur_once, _recur_on_weekdays, _recur_repeated_numeral,
-            _recur_every, _recur_freq_word,
+            _recur_daypart_clock, _recur_every, _recur_freq_word,
             _recur_weekday_dayword_bare, _recur_habitual_weekday)
