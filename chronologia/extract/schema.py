@@ -117,6 +117,7 @@ SLOT_VOCAB_ATTR: Dict[str, str] = {
     "ZONE": "clock_zones",
     "QUANT": "quantifiers",
     "FRACTION": "clock_fractions",
+    "HALF": "clock_fractions",
     "CLOCKMIN": "clock_dir_minutes",
     "CLOCKDIR": "clock_dirs",
     "MERIDIEM": "meridiems",
