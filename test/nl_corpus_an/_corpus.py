@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared helpers for the an natural-language corpus.
 
-The contract: extract_timespan(text, 'an', anchor). Anchor is a Tuesday (2018-06-05 13:04). Aragonese vocabulary follows Juanpabl (the grammar author): demán/manyana tomorrow, pasadoman day after tomorrow, diya/diyas spelling, lowercase months, 'es' as a token-only plural article. fa=ago, en/dentro=in. Spelled numbers fold via ovos-number-parser (numbers_an).
+The contract: extract_timespan(text, 'an', anchor). Anchor is a Tuesday (2018-06-05 13:04). Aragonese vocabulary follows Juanpabl (the grammar author): demán/manyana tomorrow, pasadoman day after tomorrow, diya/diyas spelling, lowercase months, 'es' as a token-only plural article. fa=ago, en/dentro=in. Spelled numbers read through numtag.
 """
 from datetime import datetime, timedelta  # noqa: F401
 

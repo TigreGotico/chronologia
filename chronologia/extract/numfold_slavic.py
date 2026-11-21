@@ -2,8 +2,8 @@
 
 numtag reads the numbers of Bulgarian, Croatian, Czech, Polish, Russian,
 Slovak, Slovene and Ukrainian (:mod:`chronologia.extract.numlayer_slavic`).
-numtag has no Serbian lexicon, so Serbian keeps this fold: a closed table of
-cardinals in both scripts and the declined day-of-month ordinal.  Belarusian
+Serbian reads from this fold's own tables: a closed table of cardinals in
+both scripts and the declined day-of-month ordinal.  Belarusian
 (:mod:`chronologia.extract.numfold_be`) and Macedonian
 (:mod:`chronologia.extract.numfold_macedonian`) keep their own folds for the
 same reason.
@@ -77,7 +77,7 @@ def _compose(*passes: Callable) -> Callable:
 
 
 # -- Serbian: dual-script cardinal/ordinal fold -------------------------------
-# Neither ovos_number_parser nor numtag reads Serbian.  Below 100, Serbian cardinals form exactly like their Croatian cognates
+# chronologia reads Serbian from its own tables.  Below 100, Serbian cardinals form exactly like their Croatian cognates
 # ("jedan, dva, tri ... dvadeset, trideset ..."), Wiktionary Appendix:
 # Serbo-Croatian/Numbers (https://en.wiktionary.org/wiki/Appendix:Serbo-Croatian/Numbers),
 # so this closed Latin-script table stands in for the model.  Every entry is

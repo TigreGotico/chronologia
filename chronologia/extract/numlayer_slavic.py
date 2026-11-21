@@ -52,13 +52,15 @@ def _names_things(mention: NumberMention) -> bool:
             and Fraction(mention.value) >= 10 ** 6)
 
 
-# The clock preposition of the languages that name the hour with an ordinal,
-# and the ending of the feminine locative ordinal that agrees with the elided
-# "godzina", "hodina" or "година": "o ósmej", "o ôsmej", "о сьомій".  Czech
-# has no such ordinal hour, so its empty ending lets only the half-hour
-# fraction pass: "o půl deváté".
-_ORDINAL_HOUR = {"cs": (("o",), ()), "pl": (("o",), "ej"),
-                 "sk": (("o",), "ej"), "uk": (("о", "об"), "ій")}
+# The clock preposition of the languages that name the hour with an ordinal:
+# "o ósmej", "o ôsmej", "о сьомій".  Czech takes "o" for the half-hour
+# fraction only ("o půl deváté").
+_CLOCK_PREPOSITION = {"cs": ("o",), "pl": ("o",), "sk": ("o",),
+                      "uk": ("о", "об")}
+
+# The ending of the feminine locative ordinal that agrees with the elided
+# "godzina", "hodina" or "година".  Czech has no ordinal hour.
+_ORDINAL_HOUR_ENDING = {"pl": "ej", "sk": "ej", "uk": "ій"}
 
 
 def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
@@ -66,7 +68,8 @@ def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
                              "period_part_")
     decades = locale_words(lang, "decade_word_")
     vocabulary = locale_words(lang, "")
-    prepositions, ending = _ORDINAL_HOUR.get(lang, ((), ""))
+    prepositions = _CLOCK_PREPOSITION.get(lang, ())
+    ending = _ORDINAL_HOUR_ENDING.get(lang)
     toward = fractions | locale_words(lang, "marker_na.voc")
 
     def claims(tokens: Tuple[Token, ...]) -> Claims:
@@ -91,7 +94,8 @@ def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
                 if (m.kind is Kind.ORDINAL and lead
                         and not tokens[lead].break_before
                         and tokens[lead - 1].text in prepositions
-                        and (lead < first or tok.text.endswith(ending))):
+                        and (lead < first
+                             or ending and tok.text.endswith(ending))):
                     continue
                 end = mention_end(tokens, i)
                 nxt = tokens[end] if end < n else None

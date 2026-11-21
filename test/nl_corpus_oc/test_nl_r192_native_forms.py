@@ -7,8 +7,8 @@ Covers: the native "day before yesterday" forms that were previously
 shadowed by the French-calque "abansièr" ('ièr' silently won and returned
 yesterday); the native "last/previous" surfaces in marker_last.voc; the
 afternoon meridiem multiword surfaces; the night clock band; and the two
-spelling variants of the digit 8 ("uèit"/"uòch") the folder now reads via a
-word_map pre-pass ahead of ovos_number_parser.numbers_oc.
+spelling variants of the digit 8 ("uèit"/"uòch"), which the numtag Occitan
+lexicon lists as units of value 8.
 """
 from datetime import timedelta
 

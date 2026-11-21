@@ -15,14 +15,11 @@ parser's own cardinal words do not carry.
 fallback — matching the CLDR 47 `ca-gregorian` chart for `et` at every
 level: full `EEEE, d. MMMM y`, long `d. MMMM y`, medium `d. MMM y`, short
 `dd.MM.yy`.
-Estonian spells the day of month with a single-word ordinal the cardinal
-number model does not read as a number at all (`viieteistkümnes aprill`,
-"the fifteenth of April"); a tens-prefix pre-pass merges a spoken compound
-tens ordinal into one day token before the fold reads it, mirroring the
-equivalent Slavic-family pre-pass. `pronounce_ordinal_et` supplies the day
-values 1–20 and 30 as one word each and the compound tens 21–29/31 as two
-words, so the whole ordinal range is derived from the shared number model
-rather than a per-locale vocabulary file.
+Estonian spells the day of month with an ordinal (`viieteistkümnes aprill`,
+"the fifteenth of April"). numtag reads the ordinal words, one word for the
+days 1–20 and 30 and two words for the compound tens 21–29/31 (`kahekümne
+esimene`). chronologia folds both to the day: `kahekümne esimene aprill` is
+21 April.
 
 **Weekdays and months** ship in the nominative plus the adessive case that
 "on Monday" / "in May" phrases use — `esmaspäev`/`esmaspäeval`,
