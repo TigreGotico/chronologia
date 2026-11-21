@@ -21,13 +21,13 @@ in its place, with a month-led fallback for the year-less phrase. The
 tokenizer runs with `ordinal_dot` on, so the Hungarian habit of closing a date
 with a full stop (`2020. augusztus 15.`) parses as written.
 
-**The spelled day of month** is a single-token ordinal the cardinal number
-model does not read as a number at all. `pronounce_ordinal_hu` emits every
-value from 1 to 31 as one word, so the whole range is derived from the shared
-number model rather than a vocabulary file, and a second derivation adds the
-possessive form the date construction actually takes — `tizenötödike`,
-`huszonegyedike` — by appending the possessive ending in the vowel harmony the
-pronouncer itself chose, with `elseje` handled as the suppletive it is.
+**The spelled day of month** is a single-token ordinal. numtag reads the bare
+ordinal for every value from 1 to 31, so the whole range comes from numtag
+rather than a vocabulary file. numtag does not read the possessive form the
+date construction takes — `tizenötödike`, `huszonegyedike` — so chronologia
+strips the possessive ending, which follows the vowel harmony of the ordinal,
+and has numtag read the remaining ordinal; `elseje` is handled as the
+suppletive it is.
 
 **Months and weekdays** ship in the nominative and the inessive or
 superessive that a "in May" / "on Monday" phrase uses — `január`/`januárban`,

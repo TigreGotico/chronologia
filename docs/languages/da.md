@@ -128,8 +128,8 @@ deep-time period vocabulary.
 The vocabulary file cites Den Danske Ordbog.
 
 **`halvanden`**, the ordinary Danish word for 1.5 (Den Danske Ordbog; from Old
-Norse *halfr annarr*), is declared as the `1.5` quantifier. numtag reads it as the fraction 1.5. The
-former ovos-number-parser reading misread it as a bare `0.5`. `halvanden time
+Norse *halfr annarr*), is declared as the `1.5` quantifier. numtag reads it as the fraction 1.5, not as a bare
+`0.5`. `halvanden time
 siden` resolves to 1.5 hours ago rather than half an hour ago.
 
 ## The hour before one

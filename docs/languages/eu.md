@@ -61,9 +61,8 @@ night therefore does not wrap past midnight; the morning band absorbs the small
 hours. The shipped surfaces are the inessive forms a phrase actually uses —
 `goizean`, `arratsaldean`, `iluntzean`, `gauean` — not the CLDR citation forms.
 
-**Ordinals** use the `-garren` series (`bigarren`, `hirugarren`), supplied by
-`pronounce_ordinal_eu`, plus `lehen` and `lehenengo` for one, which the
-pronouncer does not emit.
+**Ordinals** use the `-garren` series (`bigarren`, `hirugarren`) plus `lehen`
+and `lehenengo` for one. numtag reads all of them as ordinals.
 
 ## Weaker provenance
 

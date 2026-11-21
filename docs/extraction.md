@@ -1158,10 +1158,8 @@ on its own words. `pt-BR` reads its numbers with numtag's Brazilian lexicon,
 where "bilhão" is 10^9; `pt` reads the European one, where it is 10^12.
 `fr-BE` and `fr-CH` read "septante" and "nonante" (and `fr-CH` "huitante")
 with numtag's Belgian and Swiss lexicons; `fr` reads the lexicon of France.
-numtag has no Belarusian, Macedonian or Serbian lexicon, so `be`, `mk` and
-`sr` keep their own tables (`numfold_be.py`, `numfold_macedonian.py`,
-`numfold_slavic.py`). The other languages fold with their `numfold_*` module
-and ovos-number-parser.
+`be`, `mk` and `sr` read through their own tables (`numfold_be.py`,
+`numfold_macedonian.py`, `numfold_slavic.py`).
 
 **4. Multiword merge** (`chronologia.extract.pipeline.merge_multiword`,
 reached through `fold_tokens`). Vocabulary
@@ -1589,8 +1587,8 @@ The classes, from safest to most confusable:
 `extract_timespan` answers "*which* stretch of the calendar does this phrase
 point at?" — one span. Three sibling edges answer the questions a single span
 cannot, and all three run on the **same** shared pipeline (the language
-tokeniser, the `ovos-number-parser` number fold, and the typed vocabulary
-maps), so every language is still data only.
+tokeniser, the number fold (numtag, or the language's own `numfold_*` module), and the
+typed vocabulary maps), so every language is still data only.
 
 ### How *long*? — `extract_duration`
 
@@ -1612,7 +1610,7 @@ assert extract_duration("2 days 4 hours", "en")[0] == timedelta(days=2, hours=4)
 assert extract_duration("quarter of an hour", "en")[0] == timedelta(minutes=15)
 assert extract_duration("three quarters of an hour", "en")[0] == timedelta(minutes=45)
 
-# spelled and digit numbers read alike (ovos-number-parser folds them first)
+# spelled and digit numbers read alike (the number fold reads them first)
 assert extract_duration("ninety minutes", "en")[0] == timedelta(minutes=90)
 
 # leftover words come back untouched, for a caller to keep parsing
@@ -1852,7 +1850,7 @@ The vocabulary files are loaded through **ovos-spec-tools**, the shared
 `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are
 folded to digits before matching, so a slot binds the same whether the
 writer typed `5` or `five`. **numtag** reads the numbers of
-Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Malay, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian; **ovos-number-parser** reads the other languages.
+Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Malay, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian.
 
 To add a language, create `chronologia/locale/<code>/`, translate the `.voc`
 surface forms, and write a `lang.json` that sets the conventions and lists

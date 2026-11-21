@@ -2,37 +2,24 @@
 """Two-word compound "décimo <unit>" ordinals (11th-19th) fold to ORD for
 Portuguese -- R87.
 
-Portuguese "décimo" is at once the ORDINAL_TENS surface for 10th and the
-FRACTION denominator for a-tenth (``NumberVocabulary.FRACTION[10] ==
-"décimo"``), a homograph the shared Romance number-fold already resolved for
-1st-9th UNIT ordinals ("quarto"/"cuarto" = fourth vs. a-quarter) but not for
-the tens word itself, so "décimo" was silently subtracted from the fold's
-word set as a fraction word.  Portuguese writes its 11th-19th ordinals as
-the TWO-word compound "décimo <unit>" ("décimo terceiro" = thirteenth) --
-unlike Spanish, it does not fuse them into one word -- so dropping "décimo"
-broke the compound at its first word: "o décimo terceiro mês de 2026"
-previously landed on the WRONG month (February, reading only the stranded
-"terceiro" -- misread as 3rd rather than composing to 13th) rather than
-refusing outright, a silent-WRONG-value defect, not merely a non-match.
+Portuguese "décimo" is the ordinal of 10th and the denominator of a-tenth.
+Portuguese writes its 11th-19th ordinals as the TWO-word compound "décimo
+<unit>" ("décimo terceiro" = thirteenth), unlike Spanish, which fuses them.
+"o décimo terceiro mês de 2026" must refuse (no 13th month exists), not land
+on the WRONG month (February, reading only "terceiro" as 3rd).
 
-Source: standard Portuguese ordinal-numeral vocabulary (``ovos_number_parser``
-``numbers_pt.NumberVocabulary.ORDINAL_TENS``/``FRACTION``, both listing
-"décimo" for value 10).  Portuguese ordinals 11-19 are conventionally
-written as two words, never fused ("décimo terceiro", not "decimoterceiro").
+Source: standard Portuguese ordinal-numeral vocabulary; the numtag Portuguese
+lexicon lists "décimo" for value 10 as both ordinal and denominator.
 
 Golds are computed by independent calendar reasoning, never read back from
 the parser.
 
 KNOWN REMAINING GAP (out of scope here, not fixed): "décimo quarto"/"décimo
-quinto"/"décimo sexto" etc. -- where the UNIT half is ALSO a fraction
-homograph ("quarto"/"quinto"/"sexto"/"sétimo"/"oitavo"/"nono" are all in
-``FRACTION`` too) -- still fail, because the existing unit-homograph
-licensing only fires after a definite article ("o"/"a"), not after a
-preceding NUMBER token (the now-licensed "décimo").  "décimo primeiro" and
-"décimo segundo" are unaffected (neither "primeiro" nor "segundo" collides
-with a pt fraction word) and are the two compounds this file locks down;
-extending the positional licence to "after a number" is a separate,
-larger change to the shared homograph machinery, not this fix's scope.
+quinto"/"décimo sexto" etc. -- where the UNIT half is also a fraction word
+("quarto"/"quinto"/"sexto"/"sétimo"/"oitavo"/"nono") -- still fail, because
+the unit-homograph licence only fires after a definite article ("o"/"a"),
+not after a preceding number token.  "décimo primeiro" and "décimo segundo"
+are unaffected and are the two compounds this file locks down.
 """
 import pytest
 

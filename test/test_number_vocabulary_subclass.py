@@ -1,9 +1,5 @@
-"""A Romance number fold finds its language's vocabulary when the language
-subclasses ``NumberVocabulary``.
-
-ovos-number-parser's Occitan module holds an ``OccitanVocabulary``. When
-the Romance folds read numbers through ovos-number-parser, that one subclass
-broke extraction in all seven languages below."""
+"""Each Romance number fold reads its own language's spelled numbers: "tomorrow"
+and "three days" resolve in all seven languages below."""
 from datetime import datetime, timedelta
 
 import pytest

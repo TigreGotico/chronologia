@@ -261,11 +261,8 @@ def test_extract_timespans_never_overlap_and_stay_ordered(lang):
 #
 # Found by ``test_random_unicode_never_crashes`` during authoring of this
 # suite: ``extract_timespan("¹", lang)`` (a bare superscript "1", U+00B9)
-# used to raise an uncaught ``ValueError`` for the "da"/"nb"/"nn" locales --
-# an ``isdigit()``/``int()`` mismatch in the shared ``ovos-number-parser``
-# dependency, fixed upstream (OpenVoiceOS/ovos-number-parser#280, which
-# guards every ``int()`` call with ``isdecimal()``). Kept here as a
-# permanent regression check against the dependency.
+# raises no ``ValueError`` for the "da"/"nb"/"nn" locales: ``isdigit()`` is
+# true for such characters but ``int()`` rejects them.
 # --------------------------------------------------------------------------
 
 @pytest.mark.parametrize("lang", ["da", "nb", "nn"])

@@ -113,8 +113,8 @@ def extract_duration(
     every count it finds ("2 days 4 hours" -> 52 hours), including fractional
     counts ("half an hour" -> 30 min, "quarter of an hour" -> 15 min) and the
     trailing "... and a half" idiom ("an hour and a half" -> 90 min).  Numbers
-    are folded by ``ovos-number-parser`` before matching, so "90 minutes" and
-    "ninety minutes" read alike.
+    are folded before matching (through numtag for the languages it has a
+    lexicon for), so "90 minutes" and "ninety minutes" read alike.
 
     The calendar units (month, year, decade) have no fixed length, so they
     are counted on the calendar from ``anchor``: "3 months" from 31 January

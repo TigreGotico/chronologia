@@ -31,8 +31,7 @@ it.
 **The date line** is little-endian and dotted. CLDR 47 gives `d.M.y` for both
 the medium and the short `fi` format, and the tokenizer runs with `dotted_date`
 and `ordinal_dot` on, so `3.6.2020` resolves and so does the ordinal spelling
-`15. elokuuta 2020`. Spelled ordinals fold from the number model's own
-`pronounce_ordinal_fi`, which emits every day of the month as a single
+`15. elokuuta 2020`. numtag reads a spelled ordinal such as `viidestoista` as a single
 compound word, so `viidestoista huhtikuuta` binds the fifteenth. Iso suomen
 kielioppi §770 is the grammar reference the numeral module names for the
 ordinal series.
