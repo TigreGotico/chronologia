@@ -528,6 +528,18 @@ def _unambiguous_lead(spec, surfaces):
     return [w for w in surfaces if " ".join(w) not in particles]
 
 
+def _between_idiom(tokens, lead, spec):
+    """True when the word after the range lead makes the lead part of an idiom.
+
+    es "entre semana" is "on weekdays", so its "entre" leads no range.  The
+    words are a locale fact (``marker_between_idiom.voc``).
+    """
+    pos, k = lead
+    return (pos + k < len(tokens)
+            and tokens[pos + k].text in spec.connectors.get(
+                "between_idiom", frozenset()))
+
+
 def _with_prefix(got, prefix):
     """Prepend the pre-lead text to a composed range's remainder."""
     if got is None or not prefix:
@@ -686,6 +698,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
     at_between = _lead_at(tokens, between_surf, spec)
+    if at_between is not None and _between_idiom(tokens, at_between, spec):
+        at_between = None
     # a "between" lead binds this branch too when the split below lands on a
     # lead-required "to" surface licensed only after a from/between lead (see
     # ``lead_only_to`` -- Hebrew's proclitic ל־ after בין, "בין ... ל...").
