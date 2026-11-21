@@ -3595,6 +3595,88 @@ def _extend_clock_for_duration(span, remainder, tokens, consumed, text, engine):
     return span, remainder
 
 
+def _weekday_run(tokens, spec):
+    """The first run of weekday names joined by "and", "or" or a range "to",
+    as ``(start, end, members)``.  ``members`` maps each weekday of the set to
+    its own tokens, or to ``None`` when a range covers it without naming it.
+    """
+    if not any(t.text in spec.weekdays for t in tokens):
+        return None
+    surfaces = sorted((name.split() for name in spec.weekdays),
+                      key=len, reverse=True)
+    to_surf = _conn_surfaces(spec, "to", _RANGE_TO)
+    list_surf = (_conn_surfaces(spec, "and", _RANGE_AND)
+                 + _conn_surfaces(spec, "or", ("or",)))
+    lead_surf = (_conn_surfaces(spec, "from", _RANGE_FROM)
+                 + _conn_surfaces(spec, "between", _RANGE_BETWEEN))
+    for i in range(len(tokens)):
+        width = _match_conn_at(tokens, i, surfaces)
+        if not width:
+            continue
+        name = tokens[i:i + width]
+        last = spec.weekdays[" ".join(t.text for t in name)]
+        members = {last: name}
+        end = i + width
+        while True:
+            joiner = _match_conn_at(tokens, end, to_surf)
+            is_range = bool(joiner)
+            joiner = joiner or _match_conn_at(tokens, end, list_surf)
+            width = joiner and _match_conn_at(tokens, end + joiner, surfaces)
+            if not width:
+                break
+            name = tokens[end + joiner:end + joiner + width]
+            day = spec.weekdays[" ".join(t.text for t in name)]
+            if is_range:
+                for step in range(1, (day - last) % 7):
+                    members.setdefault((last + step) % 7, None)
+            members.setdefault(day, name)
+            last = day
+            end += joiner + width
+        if len(members) < 2:
+            continue
+        start = i
+        for words in lead_surf:
+            before = [t.text for t in tokens[max(i - len(words), 0):i]]
+            if before == words:
+                start = i - len(words)
+                break
+        return start, end, members
+    return None
+
+
+def _extract_weekday_set_clock(text, raw, engine, anchor, enable, jurisdiction,
+                               scale_mode):
+    """A clock after a weekday range or list ("de lunes a viernes a las ocho")
+    belongs to every day of the set: the answer is the earliest of the readings
+    of the text with each weekday in place of the run.
+    """
+    spec = engine.spec
+    run = _weekday_run(raw, spec)
+    if run is None:
+        return None
+    start, end, members = run
+    full = {}
+    for name, day in spec.weekday_full.items():
+        full[day] = min(full.get(day, name), name, key=len)
+    first = next(iter(members.values()))[0]
+    reads = []
+    for day, name in members.items():
+        if name is None:
+            name = tuple(replace(first, text=word, raw=word)
+                         for word in full[day].split())
+        tokens = tuple(raw[:start]) + tuple(name) + tuple(raw[end:])
+        tokens = tuple(replace(t, index=j) for j, t in enumerate(tokens))
+        got = _resolve_span(text, tokens, engine, anchor, enable,
+                            jurisdiction, scale_mode)
+        if got is None or not timedelta(0) < got[0].end - got[0].start \
+                < timedelta(days=1):
+            return None
+        reads.append(got)
+    earliest = min(reads, key=lambda read: read[0].start)
+    # the first read names the first weekday itself, so its remainder is exact
+    return earliest[0], reads[0][1]
+
+
 def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
                   scale_mode="short"):
     """The single recursive resolver over the token stream.
@@ -3623,6 +3705,10 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # a "since A until B" directional range is tried FIRST: its leading "since"
     # would otherwise let the plain closed-range path split on "until" and roll
     # both endpoints forward, silently dropping "since"'s past-anchoring.
+    weekday_set = _extract_weekday_set_clock(text, raw, engine, anchor, enable,
+                                             jurisdiction, scale_mode)
+    if weekday_set is not None:
+        return weekday_set
     dir_rng = _extract_directional_range(text, raw, engine, anchor, scale_mode)
     if dir_rng is not None:
         return dir_rng
