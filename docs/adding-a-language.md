@@ -539,14 +539,14 @@ vocabulary.
 **4. `hook`** — this is the only line that names a bit of code, and most
 languages that need it are already covered. The hook is the **number-folding
 function**: it turns spelled-out numbers ("three", "twenty-five") into digits
-before matching. If numtag has a lexicon for your language (next section), you
-point `hook` at the ready-made function for it, exactly like Danish does:
+before matching. If your language reads its numbers through numtag (next section), you
+point `hook` at its fold function, exactly like Malay does:
 
 ```text
 "hook": "chronologia.extract.numlayer_ms:fold_ms"
 ```
 
-If numtag has no lexicon for your language, leave `hook` out entirely —
+If your language has no number fold, leave `hook` out entirely —
 chronologia will still read digits perfectly, just not spelled-out number
 words. Nothing else in `lang.json` depends on the hook.
 
@@ -569,22 +569,30 @@ chronologia reads **digits** (`3`, `2027`, `15:30`) in every language with no
 setup at all. The only thing that needs help is **spelled-out** numbers —
 "three days ago" instead of "3 days ago".
 
-Turning "three" into `3` is a separate, specialised job done by
+Turning "three" into `3` is a separate, specialised job. Two kinds of number
+fold exist.
+
+Most languages read their numbers through
 [numtag](https://github.com/TigreGotico/numtag). numtag keeps one lexicon file
-per language, with the source of every rule inside the file. chronologia reads
-every spelled number through it, so it does not re-learn each language's
-number words. A language is covered if numtag ships a lexicon for it.
+per language, with the source of every rule inside the file. A language reads
+through numtag when it has an entry in `NUMTAG_LANGS` in
+`chronologia/extract/numlayer.py`. A numtag lexicon alone is not enough.
 
-**If numtag has a lexicon for your language:** set `hook` in `lang.json` to the
-matching `numlayer_<code>:fold_<code>` function (see the existing languages for
-the exact name; most reuse a shared folder).
+The other languages (for example `be`, `mk`, `sr`, `cy`, `ga` and `ko`) read
+spelled numbers with a `numfold_<code>.py` module of chronologia's own, which
+owns its number words as closed tables.
 
-**If numtag has no lexicon for your language:** that is completely fine. Leave
-`hook` out, ship your language with digit reading only, and it still passes all
-its tests. Adding spelled-out number support means adding a numtag lexicon, as
-numtag's
-[adding-a-language guide](https://github.com/TigreGotico/numtag/blob/dev/docs/adding-a-language.md)
-describes. That is a good follow-up, not a blocker.
+**To read your language through numtag:** first make sure numtag ships a
+lexicon for it. Adding one is described in numtag's
+[adding-a-language guide](https://github.com/TigreGotico/numtag/blob/dev/docs/adding-a-language.md).
+Then add the language to `NUMTAG_LANGS` and write a `numlayer_<code>.py` module
+with a `fold_<code>` function that names the language's date words (compare
+`numlayer_ms.py`; several languages share a family module such as
+`numlayer_slavic.py`). Set `hook` in `lang.json` to that function.
+
+**If your language has no number fold:** that is completely fine. Leave `hook`
+out, ship your language with digit reading only, and it still passes all its
+tests. Spelled-out number support is a good follow-up, not a blocker.
 
 ---
 

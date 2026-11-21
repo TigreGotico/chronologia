@@ -2,7 +2,7 @@
 
 Every family's fold does the *same* thing: scan a maximal run of
 number-word tokens, read its value with the language's
-``extract_number_<lang>`` back-end, and synthesise one digit
+number reader, and synthesise one digit
 :class:`~chronologia.extract.model.Token` that preserves the run's character
 extent (``char_start`` of the first token, ``char_end`` of the last).  The
 only genuine variation is *data* -- which tokens count as number-words, which

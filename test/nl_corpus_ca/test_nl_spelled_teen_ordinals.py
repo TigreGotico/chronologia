@@ -1,21 +1,9 @@
 # -*- coding: utf-8 -*-
 """Spelled 11th-19th ordinals fold to ORD for Catalan -- R87.
 
-Catalan spells its 11th-19th ordinals identically to the FRACTION
-denominator of the same value ("tretzè" = thirteenth *and* a-thirteenth,
-"dotzè" = twelfth *and* a-twelfth -- unlike Spanish/Italian/Portuguese,
-EVERY Catalan ordinal 11-19 is a homograph of its fraction, not just the
-tens word itself).  The shared Romance number-fold already resolved this
-family of homograph for the 1st-9th UNIT ordinals ("quart"/"cuarto" = fourth
-vs. a-quarter) but the mechanism only scanned ORDINAL_UNITS, not
-ORDINAL_TENS, so "tretzè"/"dotzè" and the rest of the Catalan 11-19 series
-were silently subtracted from the fold's word set as fraction words and
-never reached ``scoped_ordinal`` at all: "el tretzè mes de 2026" degraded to
-a bare year_ref match on "2026" instead of refusing (no 13th month exists),
-same defect class as R81/PR #640.
-
-Source: standard Catalan ordinal-numeral vocabulary (the numtag Catalan lexicon, whose
-ordinal and fraction tables list identical surfaces for 11-19 -- "onzè".."dinovè").
+The numtag Catalan lexicon lists "onzè".."dinovè" as ordinals of value
+11-19.  Each reads as an ordinal, so "el tretzè mes de 2026" must refuse (no
+13th month exists) instead of degrading to a bare year_ref match on "2026".
 
 Golds are computed by independent calendar reasoning, never read back from
 the parser.

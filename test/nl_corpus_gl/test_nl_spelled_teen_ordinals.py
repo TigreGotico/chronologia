@@ -1,22 +1,15 @@
 # -*- coding: utf-8 -*-
 """Spelled ordinal "décimo" (10th) folds to ORD for Galician -- R87.
 
-Galician "décimo" is at once the ORDINAL_TENS surface for 10th and the
-FRACTION denominator for a-tenth (``NumberVocabulary.FRACTION[10] ==
-"décimo"``), the same homograph collision Spanish/Portuguese/Italian carry.
-The shared Romance number-fold already resolved this class of homograph for
-1st-9th UNIT ordinals but not for a TENS word, so "décimo" was silently
-subtracted from the fold's word set: "o décimo mes de 2026" degraded to a
-bare year_ref match on "2026" instead of resolving to October.
+The numtag Galician lexicon lists "décimo" both as the ordinal of value 10
+and as the denominator of a tenth, the same homograph Spanish, Portuguese
+and Italian carry.  "o décimo mes de 2026" must resolve to October instead
+of degrading to a bare year_ref match on "2026".
 
-Galician's own 11th-19th ordinals ("undécimo", "duodécimo",
-"decimoterceiro"..."decimonoveno") are each listed as a single complete
-surface in the numtag ordinal table and do NOT collide with the
-fraction table (Galician spells those fractions "onceavo"/"doceavo"/
-"treceavo"/... instead), so they were already correctly folding before this
-fix and are locked down here only as regression controls.
-
-Source: the numtag Galician lexicon (ordinal and fraction tables).
+The lexicon lists "undécimo" and "duodécimo" as the ordinals of 11 and 12.
+Its 11-19 fractions are the "-avo" forms ("onceavo", "doceavo", "treceavo"
+and so on), which do not collide with them.  It has no ordinal entry for
+13-19, so the two-word forms stay impossible months.
 
 Golds are computed by independent calendar reasoning, never read back from
 the parser.

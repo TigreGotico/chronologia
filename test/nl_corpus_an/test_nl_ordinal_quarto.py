@@ -2,16 +2,15 @@
 """Aragonese "quarto trimestre" (4th quarter).
 
 "quarto" (the qu- spelling, 4th) is spelled like the clock/duration fraction
-word "quarto" ("un quarto de hora" = 15 min, see test_nl_duration.py) and is
-NOT in the numtag Aragonese ordinal table (whose ordinal-4 is "cuatreno",
-whose fraction-4 is "cuarto"), so the corpus declares it as an ordinal itself.
+word "quarto" ("un quarto de hora" = 15 min, see test_nl_duration.py).  The
+numtag Aragonese lexicon lists "quarto" as an ordinal of value 4, beside the
+ordinal "cuatreno"; its denominator for 4 is "cuarto".
 
-Now FIXED: an explicit homograph entry licenses "quarto" -> 4 in the ordinal
-frames only -- directly before the quarter noun "trimestre", or after a
-definite article ("o quarto trimestre") -- while the "cuarto" quarter-hour
-fraction stays untouched.  The parallel proper ordinal "cuatreno" keeps working
-(test_nl_quarter.py; feminine "cuatrena" in test_nl_ordinal_week.py, citing
-Gramatica Basica de l'Aragones sec. 8.1.2).
+"quarto" is an ordinal in the frames before the quarter noun "trimestre" and
+after a definite article ("o quarto trimestre"), while the "cuarto"
+quarter-hour fraction stays a fraction.  The ordinal "cuatreno" works the
+same way (test_nl_quarter.py; feminine "cuatrena" in test_nl_ordinal_week.py,
+citing Gramatica Basica de l'Aragones sec. 8.1.2).
 
 Gold (independent arithmetic): quarter N spans calendar months [3N-2..3N];
 Q4 = October-December.  The corpus anchor is 2018-06-05 13:04 (_corpus.ANCHOR),

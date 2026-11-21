@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """Estonian spelled-ordinal day-of-month ("viieteistkümnes aprill" = the
-fifteenth of April).  The single-token ordinal the cardinal back-end does not
-read must fold to the exact day.  ``pronounce_ordinal_et`` emits 1..20 and 30
-as one word; the compound tens 21..29/31 are TWO words ("kahekümne esimene"),
-which the single-token ordinal pre-pass cannot fold -- those remain a
+fifteenth of April).  The single-token ordinal must fold to the exact day.  numtag reads 1..20
+and 30 as one word; the compound tens 21..29/31 are TWO words ("kahekümne
+esimene"), which the single-token ordinal pre-pass cannot fold -- those remain a
 documented deferral, so this corpus covers the single-word range.
 """
 from datetime import datetime

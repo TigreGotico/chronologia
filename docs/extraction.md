@@ -1158,9 +1158,8 @@ on its own words. `pt-BR` reads its numbers with numtag's Brazilian lexicon,
 where "bilhão" is 10^9; `pt` reads the European one, where it is 10^12.
 `fr-BE` and `fr-CH` read "septante" and "nonante" (and `fr-CH` "huitante")
 with numtag's Belgian and Swiss lexicons; `fr` reads the lexicon of France.
-numtag has no Belarusian, Macedonian or Serbian lexicon, so `be`, `mk` and
-`sr` keep their own tables (`numfold_be.py`, `numfold_macedonian.py`,
-`numfold_slavic.py`).
+`be`, `mk` and `sr` read through their own tables (`numfold_be.py`,
+`numfold_macedonian.py`, `numfold_slavic.py`).
 
 **4. Multiword merge** (`chronologia.extract.pipeline.merge_multiword`,
 reached through `fold_tokens`). Vocabulary
@@ -1588,8 +1587,8 @@ The classes, from safest to most confusable:
 `extract_timespan` answers "*which* stretch of the calendar does this phrase
 point at?" — one span. Three sibling edges answer the questions a single span
 cannot, and all three run on the **same** shared pipeline (the language
-tokeniser, the numtag number fold, and the typed vocabulary
-maps), so every language is still data only.
+tokeniser, the number fold (numtag, or the language's own `numfold_*` module), and the
+typed vocabulary maps), so every language is still data only.
 
 ### How *long*? — `extract_duration`
 
