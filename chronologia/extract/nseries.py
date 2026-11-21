@@ -29,6 +29,7 @@ from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
+from chronologia.extract.matcher import _connector_span
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
@@ -345,6 +346,25 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         return (after in spec.dayparts
                 or (count_at > 0 and _unit_of(tokens[count_at - 1]) == "hour"))
 
+    at_words = spec.connectors.get("at", frozenset())
+
+    def _clock_by_marker(count_at, unit_at):
+        # "à 18 heures" and "alarme pour 7 heures" say a time of day: a clock
+        # marker sits right before the count, and the matcher reads the count
+        # with its unit as a clock, as extract_timespan does.  "pour 7 heures"
+        # with no such marker stays a length.
+        if count_at == 0:
+            return False
+        if tokens[count_at - 1].text not in at_words and not any(
+                _connector_span("alarm_at", tokens, k, spec) == count_at - k
+                for k in range(max(0, count_at - 4), count_at)):
+            return False
+        return any(
+            m.construction == "clock_time" and m.span[0] <= count_at
+            and unit_at < m.span[1]
+            and getattr(m.slots.get("HOUR"), "index", None) == count_at
+            for m in engine.matcher.match(tokens))
+
     def _add(kind, count):
         nonlocal total, months
         if kind in calendar_months:
@@ -527,6 +547,10 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     and (unit == "month"
                          or float(count * calendar_months[unit]).is_integer())):
                 i += 1
+                continue
+            if (unit == "hour" and count_tok is not None
+                    and _clock_by_marker(count_tok.index, j)):
+                i = end
                 continue
             _add(unit, count)
             found = True
