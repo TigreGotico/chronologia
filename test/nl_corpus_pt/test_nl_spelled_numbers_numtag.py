@@ -431,3 +431,11 @@ def test_a_comma_after_a_scale_word_ends_the_number():
     got = extract_duration("mil, dois dias", "pt")
     assert got.duration == timedelta(days=2)
     assert got.remainder == "mil"
+
+
+def test_a_range_of_years_after_desde_o_ano_holds_both_years():
+    """The range word "desde" before "o ano" cues the second number too."""
+    s, rest = extract_timespan(
+        "desde o ano dois mil até dois mil e dez em Lisboa", "pt", _FRIDAY)
+    assert (s.start, s.end, rest) == (datetime(2000, 1, 1),
+                                      datetime(2011, 1, 1), "em Lisboa")

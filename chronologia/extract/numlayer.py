@@ -333,8 +333,11 @@ def year_cue(before: Tuple[str, ...], words: CountWords) -> Optional[str]:
         if cue in words.cues:
             return cue
     if len(before) > 2 and before[-2] == NUMBER:
-        opener = year_cue(before[:-2], words)
-        if opener is not None and before[-1] in words.ranges.get(opener, ()):
+        # the range word can stand before a year word: "between the years
+        # two thousand and two thousand and ten"
+        if (year_cue(before[:-2], words) is not None
+                and any(before[-1] in words.ranges.get(w, ())
+                        for w in before[:-2])):
             return before[-1]
     return None
 
