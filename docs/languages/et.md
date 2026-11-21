@@ -18,8 +18,8 @@ level: full `EEEE, d. MMMM y`, long `d. MMMM y`, medium `d. MMM y`, short
 Estonian spells the day of month with an ordinal (`viieteistkümnes aprill`,
 "the fifteenth of April"). numtag reads the ordinal words, one word for the
 days 1–20 and 30 and two words for the compound tens 21–29/31 (`kahekümne
-esimene`). chronologia folds the single-word ordinals to the day; the
-two-word compound tens are not folded.
+esimene`). chronologia folds both to the day: `kahekümne esimene aprill` is
+21 April.
 
 **Weekdays and months** ship in the nominative plus the adessive case that
 "on Monday" / "in May" phrases use — `esmaspäev`/`esmaspäeval`,

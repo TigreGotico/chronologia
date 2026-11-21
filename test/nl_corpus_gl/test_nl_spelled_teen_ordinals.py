@@ -9,7 +9,8 @@ of degrading to a bare year_ref match on "2026".
 The lexicon lists "undécimo" and "duodécimo" as the ordinals of 11 and 12.
 Its 11-19 fractions are the "-avo" forms ("onceavo", "doceavo", "treceavo"
 and so on), which do not collide with them.  It has no ordinal entry for
-13-19, so the two-word forms stay impossible months.
+13-19, but numtag composes the two-word forms ("décimo terceiro" is 13), and
+no 13th month exists, so they refuse.
 
 Golds are computed by independent calendar reasoning, never read back from
 the parser.

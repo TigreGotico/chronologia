@@ -14,12 +14,12 @@ lexicon lists "décimo" for value 10 as both ordinal and denominator.
 Golds are computed by independent calendar reasoning, never read back from
 the parser.
 
-KNOWN REMAINING GAP (out of scope here, not fixed): "décimo quarto"/"décimo
-quinto"/"décimo sexto" etc. -- where the UNIT half is also a fraction word
-("quarto"/"quinto"/"sexto"/"sétimo"/"oitavo"/"nono") -- still fail, because
-the unit-homograph licence only fires after a definite article ("o"/"a"),
-not after a preceding number token.  "décimo primeiro" and "décimo segundo"
-are unaffected and are the two compounds this file locks down.
+KNOWN REMAINING GAP (out of scope here, not fixed): "o décimo quarto mês de
+2026" resolves to the whole year 2026, because "quarto" is also the clock
+quarter and numlayer_pt licenses it as an ordinal only after a definite
+article or before a quarter noun.  The other units ("quinto", "sexto",
+"sétimo", "oitavo", "nono") refuse correctly.  "décimo primeiro" and "décimo
+segundo" are the two compounds this file locks down.
 """
 import pytest
 

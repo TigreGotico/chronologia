@@ -579,7 +579,7 @@ through numtag when it has an entry in `NUMTAG_LANGS` in
 `chronologia/extract/numlayer.py`. A numtag lexicon alone is not enough.
 
 The other languages (for example `be`, `mk`, `sr`, `cy`, `ga` and `ko`) read
-spelled numbers with a `numfold_<code>.py` module of chronologia's own, which
+spelled numbers with a `numfold_*.py` module of chronologia's own, which
 owns its number words as closed tables.
 
 **To read your language through numtag:** first make sure numtag ships a
