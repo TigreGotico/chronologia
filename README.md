@@ -52,7 +52,7 @@ pip install chronologia
 
 Python 3.11+. The calendrical core is pure standard library; the
 natural-language layer adds two small helpers — **numtag** (reads the
-numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian) and **ovos-spec-tools** (loads each language's
+numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Malay, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian) and **ovos-spec-tools** (loads each language's
 vocabulary files).
 
 **Status.** chronologia is in **alpha**: the public API surface named in
@@ -322,7 +322,7 @@ around them:
   one, start there.
 - **[numtag](https://github.com/TigreGotico/numtag)** — finds every number in
   a text and returns typed mentions with their spans and exact values.
-  chronologia reads the numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian through it.
+  chronologia reads the numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Malay, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian through it.
 - **[ovos-spec-tools](https://github.com/OpenVoiceOS/ovos-spec-tools)** — the
   reference implementation of the OVOS formal specifications (template
   expander, locale loader, dialog renderer, language matcher, linter).

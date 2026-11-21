@@ -37,8 +37,8 @@ from chronologia.extract.numfold_engine import reindex
 NUMTAG_LANGS = {"pt": "pt-PT", "en": "en", "es": "es", "gl": "gl", "ca": "ca",
                 "it": "it", "fr": "fr-FR", "de": "de", "nl": "nl", "da": "da",
                 "sv": "sv", "nb": "nb", "nn": "nn", "fy": "fy", "ar": "ar", "el": "el",
-                "fa": "fa", "he": "he", "id": "id", "kab": "kab", "et": "et", "fi": "fi",
-                "hu": "hu", "eu": "eu", "tr": "tr", "az": "az", "an": "an", "ast": "ast",
+                "fa": "fa", "he": "he", "id": "id", "kab": "kab", "ms": "ms", "et": "et",
+                "fi": "fi", "hu": "hu", "eu": "eu", "tr": "tr", "az": "az", "an": "an", "ast": "ast",
                 "mwl": "mwl", "oc": "oc", "ro": "ro", "bg": "bg", "cs": "cs", "hr": "hr",
                 "pl": "pl", "ru": "ru", "sk": "sk", "sl": "sl", "uk": "uk"}
 

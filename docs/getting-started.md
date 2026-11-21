@@ -13,7 +13,7 @@ pip install chronologia
 
 That is everything. You need Python 3.11 or newer. The reckoning core is pure
 standard library; the natural-language layer adds two small pure-Python
-helpers — **numtag** (reads the numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian) and
+helpers — **numtag** (reads the numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Malay, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian) and
 **ovos-spec-tools** (loads each language's vocabulary). Nothing here ever talks to the internet.
 
 ## Your first extraction (60 seconds)

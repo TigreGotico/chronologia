@@ -543,7 +543,7 @@ before matching. If numtag has a lexicon for your language (next section), you
 point `hook` at the ready-made function for it, exactly like Danish does:
 
 ```text
-"hook": "chronologia.extract.numlayer_da:fold_da"
+"hook": "chronologia.extract.numlayer_ms:fold_ms"
 ```
 
 If numtag has no lexicon for your language, leave `hook` out entirely —
