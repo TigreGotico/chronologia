@@ -1778,7 +1778,13 @@ def _fold_date_article(folded, consumed, spec, span):
     ``marker_date_lead_dative.voc`` makes the this-phrase take the lead word
     again: German "an" governs the dative in a time phrase, so "an diesem
     Freitag" folds while the bare "nächsten Freitag" in "ruf mich an
-    nächsten Freitag" leaves "an" to the verb.
+    nächsten Freitag" leaves "an" to the verb.  The determiner folds with
+    its lead word before a calendar date too ("an diesem 31. Januar").  In a
+    locale with such determiners, a lead word of
+    ``marker_date_lead_no_deixis.voc`` opens a bare weekday, daypart or
+    period only through one: the time phrase is "am Montag" or "an diesem
+    Montag", so the "an" of "ruf mich an Montag" and "denk an Montag"
+    belongs to the verb.
     """
     articles = (set(spec.connectors.get("date_article", ()))
                 | set(spec.connectors.get("date_lead", ())))
@@ -1796,6 +1802,12 @@ def _fold_date_article(folded, consumed, spec, span):
     is_clock = (start is not None and end is not None
                 and end - start <= timedelta(minutes=1))
     widened = set(consumed)
+    for i, t in enumerate(folded[1:-1], start=1):
+        if (t.text in dative and t.index not in widened
+                and folded[i + 1].index in widened
+                and folded[i + 1].text not in deictic
+                and folded[i - 1].text in articles):
+            widened.add(t.index)
     for i, t in enumerate(folded[:-1]):
         nxt = folded[i + 1]
         if (t.index in widened or nxt.index not in widened
@@ -1805,8 +1817,9 @@ def _fold_date_article(folded, consumed, spec, span):
                           and nxt.text not in dative
                           and i + 2 < len(folded)
                           and folded[i + 2].text in periods)
+        bare_period = dative and t.text in no_deixis and nxt.text in periods
         opens_day = (t.text in articles and nxt.text not in deictic
-                     and not deictic_phrase)
+                     and not deictic_phrase and not bare_period)
         opens_clock = is_clock and t.text in clock_leads and (
             nxt.is_number or nxt.text in clock_words
             or any(c.isdigit() for c in nxt.text))
