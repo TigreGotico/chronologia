@@ -153,6 +153,14 @@ def extract_duration(
     return _duration_core(text, engine, anchor)
 
 
+def _is_military_time(token) -> bool:
+    """A four-digit hhmm with a leading zero, the shape the matcher's MILTIME
+    slot reads as a clock: "0600", or the "zero six hundred" that folds to it."""
+    raw = token.raw.rstrip(".")
+    return (token.is_number and not token.count and raw.isdigit()
+            and len(raw) == 4 and raw[0] == "0" and int(raw[2:]) <= 59)
+
+
 def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                    calendar_needs_marker: bool = False
                    ) -> Optional[DurationResult]:
@@ -437,6 +445,10 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             elif tokens[j].ordinal:
                 # an ordinal names WHICH unit, not how many: "the second
                 # week" is one week of a series, never fourteen days.
+                j += 1
+            elif _is_military_time(tokens[j]):
+                # a leading zero marks a clock ("0600 hours", "zero six
+                # hundred hours"), never a count of hours
                 j += 1
             elif tokens[j].is_number:
                 # A digit run hundreds of characters long folds to an int no
