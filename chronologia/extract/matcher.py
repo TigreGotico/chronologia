@@ -17,6 +17,8 @@ from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 
+from numtag import Form
+
 from chronologia.extract import tokenizer
 from chronologia.calendars import CALENDARS
 from chronologia.extract.compiler import CompiledSpec
@@ -924,15 +926,51 @@ class ConstructionMatcher:
                             and slots["MARKER"].text not in postposed):
                         continue
                     # A spelled ordinal after an indefinite article ("a third
-                    # of the month is gone", "an eighth of March") is a
-                    # fraction, never a day-of-month: a date names its day
-                    # with the definite article or none ("the third of the
-                    # month", "third of March").
-                    if (name == "month_day_ref" and "ORD" in slots
-                            and slots["ORD"].index > 0
-                            and tokens[slots["ORD"].index - 1].text
-                            in self.spec.connectors.get("indef", frozenset())):
-                        continue
+                    # of the month is gone") is a fraction, never a
+                    # day-of-month: a date names its day with the definite
+                    # article or none ("the third of the month", "third of
+                    # March").  The same holds after a determiner that never
+                    # opens a date ("another third of the month"), after an
+                    # indefinite article and a word that measures the part
+                    # ("a full third of March"), and after the definite
+                    # article and a word that places the part ("the first
+                    # third", "the last third").  Before a month name only
+                    # the last three count: "un 3 de marzo" is a date.  A
+                    # digit day is never a fraction, so the new shapes read
+                    # only a spelled ordinal ("les 14, 15 mai" is a day
+                    # list).  The determiners and the measuring words are
+                    # locale facts (``marker_fraction_determiner.voc``,
+                    # ``marker_fraction_modifier.voc``).
+                    part = None
+                    if name == "month_day_ref":
+                        part = slots.get("ORD")
+                    elif (name == "calendar_date" and "DAY" in slots
+                          and "MONTH" in slots
+                          and slots["DAY"].index < slots["MONTH"].index):
+                        part = slots["DAY"]
+                    if part is not None and part.index > 0:
+                        conn = self.spec.connectors
+                        indef = conn.get("indef", frozenset())
+                        determiner = conn.get("fraction_determiner",
+                                              frozenset())
+                        modifier = conn.get("fraction_modifier", frozenset())
+                        before = tokens[part.index - 1]
+                        lead = (tokens[part.index - 2].text
+                                if part.index > 1 else None)
+                        spelled = (part.mention is not None
+                                   and part.mention.form is Form.WORDS)
+                        if ((name == "month_day_ref"
+                             and before.text in indef)
+                                or (spelled
+                                    and (before.text in determiner
+                                         or (before.text in modifier
+                                             and lead in indef | determiner)
+                                         or (lead in conn.get("article",
+                                                              frozenset())
+                                             and (before.is_number
+                                                  or before.text
+                                                  in modifier))))):
+                            continue
                     # The mirror of the veto above, on the other side of the
                     # weekday: a COUNT immediately before a weekday word that
                     # doubles as a duration ("ორი კვირა" -- two weeks, or two
