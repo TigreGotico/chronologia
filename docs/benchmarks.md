@@ -4,7 +4,7 @@
 covers: how the differential benchmark against dateparser and dateutil runs and what its numbers mean
 source: `benchmark/run.py`, `benchmark/adapter.py`, `benchmark/SCOREBOARD.md`
 generated: no
-verify: python -m pytest test/test_benchmark_smoke.py -q && for p in $(grep -o 'benchmark/[A-Za-z_./]*[A-Za-z]' docs/benchmarks.md | sort -u); do test -e "$p" || { echo "missing $p"; exit 1; }; done
+verify: for f in $(grep '^python benchmark/run.py' docs/benchmarks.md | grep -o -- '--[a-z-]*' | sort -u); do python benchmark/run.py --help | grep -q -- "$f" || exit 1; done && python -c 'exec("import os,re\nt=open(\"docs/benchmarks.md\").read()\nfor q in set(re.findall(r\"`((?:benchmark|test|examples)/[^`<>*:]+)`\",t)): assert os.path.exists(q.rstrip(\"/\")),q\nassert os.path.exists(\"benchmark/SCOREBOARD.md\")\n")'
 see: `docs/extraction.md`, `docs/transparency.md`
 -->
 

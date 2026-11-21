@@ -4,7 +4,7 @@
 covers: where each construction of the Basque locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/eu/lang.json`, `chronologia/locale/eu/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/eu.md
+verify: python -m doctest docs/languages/eu.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/eu.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -82,7 +82,7 @@ in the repository, and this page does not claim provenance for them beyond
 what the files themselves carry.
 
 `iluntzean` is the shipped evening surface, and its comment header cites the
-Wiktionary entry for `iluntze`. That entry was fetched: it has a Basque
+Wiktionary entry for `iluntze`. That entry has a Basque
 section, and it glosses `iluntze` as "dusk", but it carries no declension
 table, so the inessive `iluntzean` specifically is not attested there. The
 other three day-part surfaces are on firmer ground — the Wiktionary entries for
@@ -90,19 +90,17 @@ other three day-part surfaces are on firmer ground — the Wiktionary entries fo
 `goizean`, `arratsaldean` and `gauean` explicitly.
 
 The comment in `numlayer_agglutinative.py` that documents the inessive-plural
-hour fold cites `en.wiktionary.org/wiki/-etan#Basque`. That page was fetched
-and has no Basque section at all; its only section is Old English. The
+hour fold cites `en.wiktionary.org/wiki/-etan#Basque`. That page has no Basque section; its only section is Old English. The
 mechanism it describes is nonetheless the one the code implements and the one
-the hour surfaces show, but the citation does not support it and is recorded
-here as unverified. The same comment's second citation, Euskaltzaindia's
-telling-time forms, names no locator; the institution's site was reached but
-the specific page was not, so that citation is likewise unchecked.
+the hour surfaces show, but the citation does not support it and is unverified.
+The same comment's second citation, Euskaltzaindia's telling-time forms,
+names no locator, so that citation is likewise unchecked.
 
 ## What refuses
 
 **Bare `asteburuan`.** `special_weekend.voc` holds `asteburua` and `asteburu`
-but not the inessive `asteburuan`, so "at the weekend" in its most ordinary
-inflected form returns nothing while the bare noun resolves.
+but not the inessive `asteburuan`, the most ordinary inflected form of "at the
+weekend". `asteburuan` returns nothing, and the bare noun resolves.
 
 **The two-word hours.** One and two o'clock are `ordu bata` and `ordu bietan`,
 two-word forms rather than the single inessive plural the other hours use, and
@@ -144,10 +142,6 @@ narrowed span it returns instead is silently wrong rather than empty.
 4. Which of the three forward-offset markers — `barru`, `buru`, `barne` — are
    interchangeable, and which are regional?
 
-
----
-[← Azerbaijani](az.md) · [Home](../index.md) · [Belarusian →](be.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -169,6 +163,9 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('martxoaren hirugarren astelehena', "eu", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-03-20T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('asteburuan', "eu", anchor) is None
+    True
 
 ---
 [← Azerbaijani](az.md) · [Home](../index.md) · [Belarusian →](be.md)

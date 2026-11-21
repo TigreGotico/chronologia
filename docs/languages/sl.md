@@ -4,7 +4,7 @@
 covers: where each construction of the Slovenian locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/sl/lang.json`, `chronologia/locale/sl/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/sl.md
+verify: python -m doctest docs/languages/sl.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/sl.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -66,7 +66,7 @@ s.v. `ta`.
 
 **The clock's toward-hour half.** `pol` ("half") plus the genitive/locative
 plural of the coming hour's cardinal is the locale's only fractional clock
-surface, gated by `bare_half_to: true` and `toward_hour_12h: true` in
+surface, gated by `bare_half_to: true` in
 `lang.json` and a dedicated `at? FRACTION HOUR MERIDIEM? ZONE?` clock order.
 `clock_fraction_30.voc` cites ZRC SAZU's Jezikovna svetovalnica (Fran/ISJFR),
 telling the time — `pol` plus the declined hour counts toward the coming
@@ -141,10 +141,6 @@ an ordinary speaker uses — `dvajset čez štiri` (4:20), `pet do enajstih`
    or does one carry a fiscal or bureaucratic connotation the other lacks?
 4. Does `pretekli` compete evenly with `prejšnji` for "last/previous" in
    ordinary registers, or is one clearly dominant?
-
-
----
-[← Slovak](sk.md) · [Home](../index.md) · [Spanish →](es.md)
 
 ## Checked examples
 

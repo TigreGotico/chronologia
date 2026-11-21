@@ -4,7 +4,7 @@
 covers: where each construction of the Hebrew locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/he/lang.json`, `chronologia/locale/he/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/he.md
+verify: python -m doctest docs/languages/he.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/he.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -148,8 +148,8 @@ frequency words `יומי`, `שבועי`, `חודשי`, `שנתי`.
 
 **The institute citations do not carry locators.** Several marker files name
 the Academy of the Hebrew Language as a source with no more than an `s.v.` and
-the headword — for `עד`, for `ל־`, and for the vocalisation of `מ־`. The
-Academy's site cannot be fetched to check any of them, and an `s.v.` alone is
+the headword — for `עד`, for `ל־`, and for the vocalisation of `מ־`. No
+Academy page can be cited for any of them, and an `s.v.` alone is
 not a locator that can be followed even in principle. The surfaces are not in
 doubt: Wiktionary's Hebrew entries for `עד` and `בין` carry the senses and the
 examples independently, and the grammar the files cite alongside is a standard
@@ -168,13 +168,11 @@ so the CLDR spelling of two of the fourteen months resolves to nothing.
 
 ## What refuses
 
-**The clock's fractions and directions.** No fraction and no direction word
-ships, so `שלוש וחצי` (half past three), `חצי שלוש` and `רבע לשלוש` (a quarter
-to three) all return nothing. Eight of the locales here ship no clock-fraction
-vocabulary and Hebrew is one of them; both of its Semitic neighbours, Arabic
-and Maltese, ship the fraction and the direction, and Arabic goes further with
-a dedicated pre-pass that splits the fused `و`-connector off the fraction word.
-Nothing equivalent exists here.
+**The clock's fractions and directions.** The locale ships the fraction words but no direction word.
+`שלוש וחצי`, `חצי שלוש` and `רבע לשלוש` return nothing. They mean half past
+three, half toward three and a quarter to three. Arabic ships the fraction and
+the direction, and goes further with a dedicated pre-pass that splits the
+fused `و`-connector off the fraction word. Nothing equivalent exists here.
 
 **The afternoon.** CLDR 47's `he` day-period chart names six periods —
 `בבוקר`, `בצהריים`, `אחר הצהריים`, `בערב`, `בלילה` and `לפנות בוקר` — and
@@ -185,15 +183,15 @@ registered only as a PM clock cue, so `שלוש אחר הצהריים` is 15:00 
 `לפנות בוקר`, the small-hours band, has the same shape as an AM cue and
 resolves to nothing on its own.
 
-**The bare article deictics.** `הלילה` ("tonight"), `הערב` ("this evening") and
-`הבוקר` ("this morning") — the definite article doing the work a demonstrative
-does elsewhere — return nothing. Wiktionary lists `הַלַּיְלָה` among the
+**The bare article deictics.** `הלילה`, `הערב` and `הבוקר` return nothing. They mean tonight, this evening and
+this morning, the definite article doing the work a demonstrative does
+elsewhere. Wiktionary lists `הַלַּיְלָה` among the
 derived terms of `לילה`, so the construction is not obscure; it simply has no
 slot here.
 
 **This week, this month, this year.** CLDR 47's `he` `dateFields` gives
 `השבוע`, `החודש` and `השנה` as the relative-type-0 surfaces for those three
-fields, and every one of them returns nothing, even though all three strings
+fields. `השבוע`, `החודש` and `השנה` return nothing, even though all three strings
 are present in the unit vocabulary. The demonstratives that ship — `הזה`,
 `הזאת`, `הנוכחי`, `הנוכחית` — are the post-nominal series and none of them is
 the bare article the CLDR surface uses. The quarter has the same hole from the
@@ -268,10 +266,6 @@ and month stranded.
    connective always written fused to the fraction the way Arabic writes its
    own?
 
-
----
-[← Hausa](ha.md) · [Home](../index.md) · [Hindi →](hi.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -293,6 +287,25 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('שלוש אחר הצהריים', "he", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-27T15:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('שלוש וחצי', "he", anchor) is None
+    True
+    >>> extract_timespan('חצי שלוש', "he", anchor) is None
+    True
+    >>> extract_timespan('רבע לשלוש', "he", anchor) is None
+    True
+    >>> extract_timespan('הלילה', "he", anchor) is None
+    True
+    >>> extract_timespan('הערב', "he", anchor) is None
+    True
+    >>> extract_timespan('הבוקר', "he", anchor) is None
+    True
+    >>> extract_timespan('השבוע', "he", anchor) is None
+    True
+    >>> extract_timespan('החודש', "he", anchor) is None
+    True
+    >>> extract_timespan('השנה', "he", anchor) is None
+    True
 
 ---
 [← Hausa](ha.md) · [Home](../index.md) · [Hindi →](hi.md)

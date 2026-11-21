@@ -4,7 +4,7 @@
 covers: the 13 calendar-reform and date-line timelines and the four kinds of discontinuity
 source: `chronologia/timelines.py`
 generated: no
-verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[timelines.md]" -q
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/timelines.md
 see: `docs/timezones.md`, `docs/calendars.md`
 -->
 
@@ -57,8 +57,7 @@ from chronologia import proleptic, AstroDate
 # With no reforms, a timeline is just the bare calendar — hand it a real
 # instant and it hands back the civil label a local would have written:
 oct10 = AstroDate.from_calendar("julian", 1582, 10, 10)
-print(proleptic("julian").from_astro(oct10))
-# CivilLabel(year=1582, month=10, day=10)
+print(proleptic("julian").from_astro(oct10))  # CivilLabel(year=1582, month=10, day=10)
 ```
 
 ## The four kinds of discontinuity
@@ -78,10 +77,8 @@ from chronologia import TIMELINES
 
 rome = TIMELINES["rome_1582"]
 answer = rome.date(1582, 10, 9)           # one of the deleted days
-print(answer.discontinuity.kind.name)
-# SKIP
-print(answer.discontinuity.citation)
-# Inter gravissimas (1582); Wikipedia, "Adoption of the Gregorian calendar"
+print(answer.discontinuity.kind.name)  # SKIP
+print(answer.discontinuity.citation)  # Inter gravissimas (1582); Wikipedia, "Adoption of the Gregorian calendar"
 ```
 
 `NeverExisted` is the library "telling you why, not failing" — it is a real
@@ -108,7 +105,8 @@ that has existed exactly once in human history.
 
 ```python
 sweden = TIMELINES["sweden_1700_1712"]
-print(sweden.date(1712, 2, 30))            # a real day, as an AstroDate
+# a real day, as an AstroDate
+print(sweden.date(1712, 2, 30))  # 1712-03-11T00:00:00
 # 1712-03-11T00:00:00
 ```
 
@@ -133,16 +131,14 @@ britain = TIMELINES["britain_1752"]
 
 # The English civil label for the day we would call 24 Feb 1732:
 feb24 = AstroDate.from_calendar("julian", 1752, 2, 24)
-print(britain.from_astro(feb24))
-# CivilLabel(year=1752, month=2, day=24)
+print(britain.from_astro(feb24))  # CivilLabel(year=1752, month=2, day=24)
 ```
 
 And the deleted-days SKIP still applies to the same timeline:
 
 ```python
 answer = britain.date(1752, 9, 5)         # inside the 11 deleted days
-print(answer.discontinuity.kind.name)
-# SKIP
+print(answer.discontinuity.kind.name)  # SKIP
 ```
 
 ## The thirteen timelines
@@ -159,8 +155,7 @@ aliases of this timeline (`spain_1582`, `portugal_1582`, `italy_1582`,
 
 ```python
 rome = TIMELINES["rome_1582"]
-print(rome.date(1582, 10, 9).discontinuity.after_label.as_tuple())
-# (1582, 10, 15)
+print(rome.date(1582, 10, 9).discontinuity.after_label.as_tuple())  # (1582, 10, 15)
 ```
 
 ### britain_1752 — deletion *and* new year's day
@@ -169,8 +164,7 @@ Britain, September 1752: eleven days deleted, and the civil year moved from 25
 March to 1 January (see the RELABEL example above).
 
 ```python
-print(TIMELINES["britain_1752"].date(1752, 9, 5).discontinuity.kind.name)
-# SKIP
+print(TIMELINES["britain_1752"].date(1752, 9, 5).discontinuity.kind.name)  # SKIP
 ```
 
 ### russia_1918 — thirteen days, and the "October" Revolution
@@ -180,8 +174,7 @@ By 1918 the gap was thirteen days. This is why Russia's October Revolution of
 
 ```python
 russia = TIMELINES["russia_1918"]
-print(russia.date(1917, 10, 25))
-# 1917-11-07T00:00:00
+print(russia.date(1917, 10, 25))  # 1917-11-07T00:00:00
 ```
 
 ### greece_1923 — one of the last European switches
@@ -190,8 +183,7 @@ Greece's civil switch in 1923: the day after 15 February (Julian) was 1 March
 (Gregorian), deleting the 16th to the 28th.
 
 ```python
-print(TIMELINES["greece_1923"].date(1923, 2, 20).discontinuity.kind.name)
-# SKIP
+print(TIMELINES["greece_1923"].date(1923, 2, 20).discontinuity.kind.name)  # SKIP
 ```
 
 ### sweden_1700_1712 — the February 30th mess
@@ -200,8 +192,7 @@ Sweden's botched transition and its unique 30 February 1712 (see the INSERT
 example above), followed by its actual Gregorian adoption in 1753.
 
 ```python
-print(TIMELINES["sweden_1700_1712"].date(1712, 2, 30))
-# 1712-03-11T00:00:00
+print(TIMELINES["sweden_1700_1712"].date(1712, 2, 30))  # 1712-03-11T00:00:00
 ```
 
 ### japan_1873 — from a lunisolar calendar to the Gregorian one
@@ -212,8 +203,7 @@ side is not a supported calendar, so a date before the switch is reported
 as simply outside the modelled span:
 
 ```python
-print(TIMELINES["japan_1873"].date(1873, 1, 1))
-# 1873-01-01T00:00:00
+print(TIMELINES["japan_1873"].date(1873, 1, 1))  # 1873-01-01T00:00:00
 ```
 
 Ask that same timeline about a *pre-1873* date and it reports, honestly, that
@@ -227,8 +217,7 @@ country skipped Friday 30 December:
 
 ```python
 answer = TIMELINES["samoa_2011"].date(2011, 12, 30)
-print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())
-# SKIP (2011, 12, 31)
+print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())  # SKIP (2011, 12, 31)
 ```
 
 ### philippines_1844 — the westward hop
@@ -238,20 +227,20 @@ The Philippines moved west across the International Date Line by decree, so
 
 ```python
 answer = TIMELINES["philippines_1844"].date(1844, 12, 31)
-print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())
-# SKIP (1845, 1, 1)
+print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())  # SKIP (1845, 1, 1)
 ```
 
 ### alaska_1867 — Julian to Gregorian at the date line
 
 Alaska changed hands from Russia to the United States in October 1867. The
 transfer moved the territory across the date line and onto the Gregorian
-calendar, so the labels 7 to 17 October never existed there:
+calendar. The timeline declares two discontinuities at that seam. A REPEAT
+maps Friday 6 October and Friday 18 October to the same day, and a SKIP removes
+the labels 7 to 17 October, so those labels never existed there:
 
 ```python
 answer = TIMELINES["alaska_1867"].date(1867, 10, 10)
-print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())
-# SKIP (1867, 10, 18)
+print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple())  # SKIP (1867, 10, 18)
 ```
 
 ## Reference: the timeline registry
@@ -270,7 +259,7 @@ print(answer.discontinuity.kind.name, answer.discontinuity.after_label.as_tuple(
 | `japan_1873` | Japan | RELABEL (lunisolar → Gregorian) |
 | `samoa_2011` | Samoa | SKIP (30 Dec 2011) |
 | `philippines_1844` | Philippines | SKIP (31 Dec 1844) |
-| `alaska_1867` | Alaska | SKIP (7–17 Oct 1867) |
+| `alaska_1867` | Alaska | REPEAT (Friday 6 Oct = 18 Oct) + SKIP (7–17 Oct 1867) |
 
 Two calls do all the work on any timeline, objects in and objects out:
 

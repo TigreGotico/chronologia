@@ -4,7 +4,7 @@
 covers: where each construction of the Galician locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/gl/lang.json`, `chronologia/locale/gl/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/gl.md
+verify: python -m doctest docs/languages/gl.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/gl.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -121,20 +121,18 @@ reading.
 ## Unchecked and broken citations
 
 The four day-part vocabularies and the night meridiem all cite DRAG through
-the URL `https://academia.gal/dicionario/-/termo/mana`. That URL is a soft
-404: it answers HTTP 200 with the dictionary's search shell and no entry. The
-Galician headword is `mañá`, and the entry is reachable only through the
-percent-encoded form of the accented word. The glosses quoted in those
-comments were checked against that entry and are accurate; only the link is
-wrong. The same link appears on the `tarde`, `noite` and `madrugada` files,
+the URL `https://academia.gal/dicionario/-/termo/mana`. That URL leads to
+the dictionary's search page and no entry. The Galician headword is `mañá`,
+and the entry is reachable only through the percent-encoded form of the
+accented word. The glosses quoted in those comments match that entry; only
+the link is wrong. The same link appears on the `tarde`, `noite` and `madrugada` files,
 where it would point at the morning entry even if it resolved.
 
 The during-word vocabulary cites `https://academia.gal/dicionario/en`, which
-returns HTTP 404. The headword `en` does exist in DRAG under the term path
+does not resolve. The headword `en` does exist in DRAG under the term path
 the other entries use.
 
-Every other cited source was fetched and confirmed to contain what the
-vocabulary says it contains: the DRAG entries for `entre`, `de`, `desde`, `a`,
+Every other cited source contains what the vocabulary says it contains: the DRAG entries for `entre`, `de`, `desde`, `a`,
 `ata`, `deica`, `metade`, `ano` and `noite`; the Galician Wikipedia
 *Calendario romano*; and the CLDR 47 day-period chart, whose `gl` row gives
 exactly the five boundaries transcribed.
@@ -197,10 +195,6 @@ word visible.
 5. Are `calendas`, `nonas` and `idos` the forms Galician historical writing
    uses?
 
-
----
-[← French](fr.md) · [Home](../index.md) · [Georgian →](ka.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -222,6 +216,23 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('o 3 de outubro de 1990', "gl", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('1990-10-03T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('tarde', "gl", anchor) is None
+    True
+    >>> extract_timespan('noite', "gl", anchor) is None
+    True
+    >>> extract_timespan('madrugada', "gl", anchor) is None
+    True
+    >>> extract_timespan('máis tarde', "gl", anchor) is None
+    True
+    >>> extract_timespan('15.06.2020', "gl", anchor) is None
+    True
+    >>> extract_timespan('quince días', "gl", anchor) is None
+    True
+    >>> extract_timespan('o século XX', "gl", anchor) is None
+    True
+    >>> extract_timespan('o século vinte', "gl", anchor) is None
+    True
 
 ---
 [← French](fr.md) · [Home](../index.md) · [Georgian →](ka.md)

@@ -4,7 +4,7 @@
 covers: where each construction of the Latvian locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/lv/lang.json`, `chronologia/locale/lv/*.voc`, `chronologia/extract/numfold_latvian.py`
 generated: no
-verify: python -m doctest docs/languages/lv.md
+verify: python -m doctest docs/languages/lv.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/lv.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -61,7 +61,7 @@ choose between them.
 **The clock** reads a fused half-hour compound. Latvian writes `pus` joined
 onto the masculine nominative plural of the hour being counted toward, all in
 one word, so the fold splits it into the `FRACTION HOUR` pair the clock order
-needs and `bare_half_to` plus `toward_hour_12h` in `lang.json` roll the named
+needs and `bare_half_to` in `lang.json` rolls the named
 hour back by one. The direction comes from pronuncia.io's guide to telling time
 in Latvian, which gives `Ir pusastoņi` for 7:30 and `pusčetri` for half past
 three, and from a second independent survey repeating the same rule with the
@@ -115,9 +115,8 @@ not parse.
 **`pusdienlaikā`** ships for noon in the locative alone. That is the form CLDR
 gives, and the nominative of the compound appears in no dictionary consulted.
 
-**Prauliņš, *Latvian: An Essential Grammar* (Routledge)** was sought and not
-reached; no accessible copy turned up. Nothing on this page depends on it, but
-it remains the best available check on the numeral-register trigger and on the
+**Prauliņš, *Latvian: An Essential Grammar* (Routledge)** is not cited here, and no accessible copy was used. Nothing on this page depends on it, but
+it would be the best check on the numeral-register trigger and on the
 short adverbial weekday forms.
 
 ## What refuses
@@ -141,11 +140,9 @@ governs and the dative `līdz` governs are not shipped for month names. Month
 vocabulary carries the nominative, the locative and the abbreviation, those
 being what CLDR and the date constructions attest.
 
-**Genitive datelines.** An earlier reading of the sources suggested Latvian
-dates take a genitive month. It could not be reproduced: the one source that
-appeared to say so shows only nominative and locative month forms in its own
-date examples, and its prose most likely mislabels the locative. No genitive
-date construction ships.
+**Genitive datelines.** No genitive date construction ships. The one source
+that seems to give a genitive month shows only nominative and locative month
+forms in its own date examples.
 
 **Minutes to the hour.** `bez piecām deviņi` returns nothing. No
 minutes-to-the-hour construction was sourced, so none was built; the half hour
@@ -164,10 +161,6 @@ is the only fractional clock surface the locale reads.
 5. Is there a minutes-to-the-hour clock construction at all?
 6. What is the nominative of the noon compound whose locative is
    `pusdienlaikā`?
-
-
----
-[← Korean](ko.md) · [Home](../index.md) · [Lithuanian →](lt.md)
 
 ## Checked examples
 
@@ -190,6 +183,13 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('pirms 21 gada', "lv", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('1996-06-27T00:05:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('otrdien', "lv", anchor) is None
+    True
+    >>> extract_timespan('trešdien', "lv", anchor) is None
+    True
+    >>> extract_timespan('bez piecām deviņi', "lv", anchor) is None
+    True
 
 ---
 [← Korean](ko.md) · [Home](../index.md) · [Lithuanian →](lt.md)

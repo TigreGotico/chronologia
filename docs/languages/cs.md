@@ -4,7 +4,7 @@
 covers: where each construction of the Czech locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/cs/lang.json`, `chronologia/locale/cs/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/cs.md
+verify: python -m doctest docs/languages/cs.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/cs.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -83,7 +83,7 @@ each a declension table built on the irregular `ten`.
 
 **The clock's toward-hour half.** `půl` plus the genitive-feminine ordinal of
 the coming hour is the locale's only fractional clock surface, gated by
-`bare_half_to: true` and `toward_hour_12h: true` in `lang.json` and read
+`bare_half_to: true` in `lang.json` and read
 through a `FRACTION HOUR MERIDIEM? ZONE?` order. The hour surfaces —
 `první`, `druhé`, `třetí`, `čtvrté`, `páté`, `šesté`, `sedmé`, `osmé`,
 `deváté`, `desáté`, `jedenácté`, `dvanácté` — fold to their digits through
@@ -96,8 +96,7 @@ a Czech-for-foreigners grammar table gives `Je čtvrt na osm` for 7:15, `Je půl
 osmé` for 7:30 and `Je tři čtvrtě na osm` for 7:45 under the rule that a Czech
 speaker "always states the hour being approached". `půl páté` resolves to
 04:30 and `půl deváté` to 08:30, and the corpus checks five hours of the
-pattern against independent arithmetic, `půl první` among them, which the
-twelve-hour convention flag turns into 12:30 rather than 00:30.
+pattern against independent arithmetic, `půl první` among them.
 
 **`půl` stays a word.** numtag reads the Czech numbers in every case form
 (`numlayer_slavic.py`), and it reads `půl` as the fraction 0.5. The fold keeps
@@ -153,8 +152,8 @@ SSJČ one named. The surface is sound; the locator is looser than it reads.
 **The determiner and pronoun paradigms** are shipped with locators into the
 Internetová jazyková příručka's expository section (`?id=310` for hard
 adjectives, `?id=311` for soft, `?id=350` for demonstratives) that do not
-resolve. The first two answer with the appliance's own "page not available"
-notice under an HTTP 200, and the third resolves to an article about female
+lead to the cited articles. The first two lead to the site's "page not
+available" notice, and the third leads to an article about female
 personal names. The paradigms themselves are correct and are carried by the
 Wiktionary declension tables cited above; only the institute locators are
 wrong.
@@ -211,10 +210,6 @@ returns the whole of May with `v půlce` stranded.
 5. Does `půlka` compete with `polovina` in date phrases (`v půlce května`)
    strongly enough to ship, or is it too colloquial for a calendar reading?
 
-
----
-[← Croatian](hr.md) · [Home](../index.md) · [Danish →](da.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -236,6 +231,9 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('v 9 hodin večer', "cs", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-27T21:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('v noci', "cs", anchor) is None
+    True
 
 ---
 [← Croatian](hr.md) · [Home](../index.md) · [Danish →](da.md)

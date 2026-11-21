@@ -4,7 +4,7 @@
 covers: sunrise and twilight, unequal hours, prayer times, moon phases, seasons, leap seconds and dayparts
 source: `chronologia/solar.py`, `chronologia/moon.py`, `chronologia/equinoxes.py`, `chronologia/leapseconds.py`
 generated: no
-verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[sun-moon-and-seasons.md]" -q
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/sun-moon-and-seasons.md
 see: `docs/timezones.md`, `docs/calendars.md`
 -->
 
@@ -39,9 +39,11 @@ body. This library ships that table.
 from datetime import date
 from chronologia import utc_tai_offset, TAI_MINUS_GPS
 
-print(utc_tai_offset(date(2024, 1, 1)))               # how far TAI leads UTC
+# how far TAI leads UTC
+print(utc_tai_offset(date(2024, 1, 1)))  # 37
 # 37
-print(utc_tai_offset(date(2024, 1, 1)) - TAI_MINUS_GPS)   # how far GPS leads UTC
+# how far GPS leads UTC
+print(utc_tai_offset(date(2024, 1, 1)) - TAI_MINUS_GPS)  # 18
 # 18
 ```
 
@@ -52,8 +54,7 @@ can convert between the timescales directly:
 from datetime import datetime
 from chronologia import utc_to_tai
 
-print(utc_to_tai(datetime(2024, 1, 1, 12, 0, 0)))
-# 2024-01-01 12:00:37
+print(utc_to_tai(datetime(2024, 1, 1, 12, 0, 0)))  # 2024-01-01 12:00:37
 ```
 
 The table knows how far into the future it can be trusted, and which days
@@ -62,7 +63,8 @@ actually carried a leap second:
 ```python
 from chronologia import TABLE_VALID_UNTIL, is_leap_second_day
 
-print(is_leap_second_day(date(2016, 12, 31)))   # the last leap second so far
+# the last leap second so far
+print(is_leap_second_day(date(2016, 12, 31)))  # True
 # True
 ```
 
@@ -85,8 +87,7 @@ purely by longitude — four minutes of clock for every degree.
 from chronologia import local_mean_time
 
 lisbon = local_mean_time(-9.14)     # Lisbon sits ~9.14° west of Greenwich
-print(lisbon.tzname())
-# LMT-00:36:34(lambda=9.140W)
+print(lisbon.tzname())  # LMT-00:36:34(lambda=9.140W)
 ```
 
 Lisbon's own sun-clock ran about 36 minutes behind Greenwich — which is exactly
@@ -104,10 +105,8 @@ disagree by that much, drifting across the seasons.
 ```python
 from chronologia import equation_of_time
 
-print(round(equation_of_time(date(2024, 11, 3)).total_seconds() / 60, 1))
-# 16.3
-print(round(equation_of_time(date(2024, 2, 12)).total_seconds() / 60, 1))
-# -14.6
+print(round(equation_of_time(date(2024, 11, 3)).total_seconds() / 60, 1))  # 16.3
+print(round(equation_of_time(date(2024, 2, 12)).total_seconds() / 60, 1))  # -14.6
 ```
 
 In early November the sundial runs about 16 minutes *fast*; in mid-February,
@@ -117,8 +116,7 @@ about 15 minutes *slow*. Combine longitude and the equation of time and you get
 ```python
 from chronologia import apparent_solar_time
 
-print(apparent_solar_time(datetime(2024, 11, 3, 12, 0, 0), -9.14).isoformat())
-# 2024-11-03T11:39:45.748585
+print(apparent_solar_time(datetime(2024, 11, 3, 12, 0, 0), -9.14).isoformat())  # 2024-11-03T11:39:45.748585
 ```
 
 At Greenwich noon UTC on that November day, a Lisbon sundial reads about 11:40.
@@ -136,9 +134,11 @@ A decimal hour is one-tenth of a day, so "5 decimal hours" is precisely noon:
 from chronologia import DAY_SUBDIVISIONS
 
 decimal = DAY_SUBDIVISIONS["french_decimal"]
-print(decimal.units_to_us(hours=5))    # microseconds since midnight
+# microseconds since midnight
+print(decimal.units_to_us(hours=5))  # 43200000000
 # 43200000000
-print(86400 * 1000000)                 # microseconds in half a day, for comparison
+# microseconds in a whole day, for comparison
+print(86400 * 1000000)  # 86400000000
 # 86400000000
 ```
 
@@ -159,11 +159,12 @@ UTC `AstroDate`s, and longitude is east-positive — the same convention as
 from chronologia import sun_events, AstroDate
 
 ev = sun_events(AstroDate(2010, 6, 21), 40.0, -105.0)   # Denver, solstice
-print(ev.sunrise.strftime("%Y-%m-%d %H:%M"))    # UTC (Denver is UTC-6)
+# UTC (Denver is UTC-6
+print(ev.sunrise.strftime("%Y-%m-%d %H:%M"))  # 2010-06-21 11:30
 # 2010-06-21 11:30
-print(ev.solar_noon.strftime("%H:%M"))
-# 19:01
-print(ev.sunset.strftime("%Y-%m-%d %H:%M"))     # sunset falls after UTC midnight
+print(ev.solar_noon.strftime("%H:%M"))  # 19:01
+# sunset falls after UTC midnight
+print(ev.sunset.strftime("%Y-%m-%d %H:%M"))  # 2010-06-22 02:31
 # 2010-06-22 02:31
 ```
 
@@ -176,8 +177,7 @@ ev = sun_events(AstroDate(2024, 3, 20), 40.0, 0.0)
 order = [ev.astronomical_dawn, ev.nautical_dawn, ev.civil_dawn, ev.sunrise,
          ev.solar_noon, ev.sunset, ev.civil_dusk, ev.nautical_dusk,
          ev.astronomical_dusk]
-print([e.strftime("%H:%M") for e in order])
-# ['04:33', '05:05', '05:37', '06:04', '12:07', '18:11', '18:38', '19:10', '19:42']
+print([e.strftime("%H:%M") for e in order])  # ['04:33', '05:05', '05:37', '06:04', '12:07', '18:11', '18:38', '19:10', '19:42']
 ```
 
 ### Polar honesty
@@ -192,12 +192,10 @@ reported truthfully:
 from chronologia import NoSunEvent
 
 summer = sun_events(AstroDate(2024, 6, 21), 78.0, 15.0)   # Svalbard, midsummer
-print(isinstance(summer.sunrise, NoSunEvent), summer.sunrise.kind)
-# True polar_day
+print(isinstance(summer.sunrise, NoSunEvent), summer.sunrise.kind)  # True polar_day
 
 winter = sun_events(AstroDate(2024, 12, 21), 78.0, 15.0)  # polar night
-print(isinstance(winter.sunrise, NoSunEvent), winter.sunrise.kind)
-# True polar_night
+print(isinstance(winter.sunrise, NoSunEvent), winter.sunrise.kind)  # True polar_night
 ```
 
 `solar_noon` is always a real instant — it depends only on longitude and the
@@ -214,7 +212,8 @@ sunset instant:
 from chronologia import sunset_day_start
 
 start = sunset_day_start(AstroDate(2024, 6, 1), 31.78, 35.22)  # Jerusalem
-print(start.strftime("%Y-%m-%d %H:%M"))    # the 31 May evening sunset that opens 1 June
+# the 31 May evening sunset that opens 1 June
+print(start.strftime("%Y-%m-%d %H:%M"))  # 2024-05-31 16:38
 # 2024-05-31 16:38
 ```
 
@@ -292,13 +291,10 @@ never a bare instant:
 from datetime import datetime
 from chronologia import moon_phase, next_phase, previous_phase
 # 2024-01-11 11:57 UTC is a real, published new moon (US Naval Observatory).
-print(round(moon_phase(datetime(2024, 1, 11, 11, 57)), 3))
-# 0.005
+print(round(moon_phase(datetime(2024, 1, 11, 11, 57)), 3))  # 0.005
 full = next_phase(datetime(2024, 7, 1), "full")
-print(full.basis)
-# predicted
-print(full.width)
-# 1 day, 4:00:00
+print(full.basis)  # predicted
+print(full.width)  # 1 day, 4:00:00
 ```
 
 `0.005` is close to `0.0` (new moon) — a lunation is about 29.5 days, so
@@ -314,8 +310,7 @@ geological granularity:
 
 ```python
 past_full = previous_phase(datetime(2024, 8, 1), "full")
-print(past_full.basis)
-# reconstructed
+print(past_full.basis)  # reconstructed
 ```
 
 **The accuracy bound is measured, not assumed.** Cross-checked against the
@@ -330,8 +325,7 @@ Every lunation is also numbered, in the older Brown convention almanacs used
 
 ```python
 from chronologia import lunation_number
-print(lunation_number(datetime(2024, 1, 11, 11, 57)))
-# 1250
+print(lunation_number(datetime(2024, 1, 11, 11, 57)))  # 1250
 ```
 
 Ask for a phase name outside the four recognised ones and you get a clear
@@ -375,8 +369,7 @@ for which in ("march", "june", "september", "december"):
 
 # Astronomical northern summer: June solstice -> September equinox (~93 days).
 summer = astronomical_season_span(2024, "summer")
-print("summer runs", (summer.end - summer.start).days, "days")
-# summer runs 93 days
+print("summer runs", (summer.end - summer.start).days, "days")  # summer runs 93 days
 ```
 
 The label flips with the hemisphere: the **same** March equinox that opens
@@ -387,8 +380,7 @@ equinox of the next.
 ```python
 north_spring = astronomical_season_span(2024, "spring", "north")
 south_autumn = astronomical_season_span(2024, "autumn", "south")
-print("same solar events:", north_spring == south_autumn)
-# same solar events: True
+print("same solar events:", north_spring == south_autumn)  # same solar events: True
 ```
 
 The **basis is `"reconstructed"`** — these are closed-form arithmetic
@@ -415,8 +407,7 @@ is 30 minutes, honestly larger than the ~1-minute equinoxes.
 
 ```python
 lichun = solar_term(2024, "lichun")
-print("lichun:", lichun.start.strftime("%Y-%m-%d"))
-# lichun: 2024-02-04
+print("lichun:", lichun.start.strftime("%Y-%m-%d"))  # lichun: 2024-02-04
 print("chunfen == March equinox longitude 0")
 print(solar_term(2024, "chunfen").start.month)  # 3
 ```
@@ -454,8 +445,7 @@ print(daypart_span(tuesday, "afternoon").start.isoformat(),
 
 # Spanish: one "tarde" covers what English splits into afternoon + evening.
 tarde = daypart_span(tuesday, "tarde", region="es")
-print(tarde.start.isoformat(), tarde.end.isoformat())
-# 2027-06-08T12:00:00 2027-06-08T20:00:00
+print(tarde.start.isoformat(), tarde.end.isoformat())  # 2027-06-08T12:00:00 2027-06-08T20:00:00
 ```
 
 Ask for a part a region does not redefine and you get the global default —
@@ -483,10 +473,8 @@ midnight, and the span anchors to the *named* day and reaches into the next:
 
 ```python
 night = daypart_span(tuesday, "night")
-print(night.start.isoformat(), "->", night.end.isoformat())
-# 2027-06-08T21:00:00 -> 2027-06-09T06:00:00
-print(night.start.day, night.end.day)
-# 8 9
+print(night.start.isoformat(), "->", night.end.isoformat())  # 2027-06-08T21:00:00 -> 2027-06-09T06:00:00
+print(night.start.day, night.end.day)  # 8 9
 ```
 
 Because day-parts are ordinary spans, the interval algebra composes them.
@@ -504,8 +492,7 @@ print(morning.union(afternoon).start.isoformat(),
 # 2027-06-08T06:00:00 2027-06-08T18:00:00
 
 # the stretch morning and evening leave between them is the afternoon:
-print(morning.gap(evening) == afternoon)
-# True
+print(morning.gap(evening) == afternoon)  # True
 ```
 
 ## The hour that stretched in summer
@@ -533,10 +520,8 @@ from chronologia import temporal_hour_span, ROMAN_HOURS, AstroDate
 rome = (41.9, 12.5)
 june = temporal_hour_span(AstroDate(2024, 6, 21), *rome, 1, ROMAN_HOURS)
 december = temporal_hour_span(AstroDate(2024, 12, 21), *rome, 1, ROMAN_HOURS)
-print(round(june.width.total_seconds() / 60), "min in June")
-# 76 min in June
-print(round(december.width.total_seconds() / 60), "min in December")
-# 46 min in December
+print(round(june.width.total_seconds() / 60), "min in June")  # 76 min in June
+print(round(december.width.total_seconds() / 60), "min in December")  # 46 min in December
 ```
 
 `hour_number` runs `1..24` for the Roman 12+12 system: hours 1–12 divide
@@ -566,8 +551,7 @@ modulo 24, the 24th hour lands back on the anchor:
 from chronologia import convention_time, sun_events, ITALIAN_HOURS
 
 ev = sun_events(AstroDate(2024, 6, 21), *rome)
-print(convention_time(AstroDate(2024, 6, 21), *rome, 24, ITALIAN_HOURS) == ev.sunset)
-# True
+print(convention_time(AstroDate(2024, 6, 21), *rome, 24, ITALIAN_HOURS) == ev.sunset)  # True
 ```
 
 ### Polar honesty carries through
@@ -581,8 +565,7 @@ never inventing a time:
 from chronologia import NoSunEvent
 
 polar = temporal_hour_span(AstroDate(2024, 6, 21), 78.0, 15.0, 1, ROMAN_HOURS)
-print(isinstance(polar, NoSunEvent), polar.kind)
-# True polar_day
+print(isinstance(polar, NoSunEvent), polar.kind)  # True polar_day
 ```
 
 ### Prayer times
@@ -616,7 +599,8 @@ difference is the point:
 ```python
 mwl = prayer_times(AstroDate(2024, 2, 15), 30.0444, 31.2357, "mwl")
 isna = prayer_times(AstroDate(2024, 2, 15), 30.0444, 31.2357, "isna")
-print(isna.fajr > mwl.fajr)   # ISNA's shallower 15° Fajr is later than MWL's 18°
+# ISNA's shallower 15° Fajr is later than MWL's 18°
+print(isna.fajr > mwl.fajr)  # True
 # True
 ```
 
@@ -626,8 +610,7 @@ after Maghrib — so both kinds are supported:
 ```python
 from datetime import timedelta
 makkah = prayer_times(AstroDate(2024, 2, 15), 21.4225, 39.8262, "umm_al_qura_makkah")
-print(makkah.isha == makkah.maghrib + timedelta(minutes=90))
-# True
+print(makkah.isha == makkah.maghrib + timedelta(minutes=90))  # True
 ```
 
 **High-latitude honesty.** When the summer night is too short for the sun to
@@ -637,8 +620,7 @@ undefined — a typed `NoSunEvent`, never a fabricated time:
 ```python
 from chronologia import NoSunEvent
 short_night = prayer_times(AstroDate(2024, 6, 21), 60.0, 10.0, "mwl")
-print(isinstance(short_night.fajr, NoSunEvent))
-# True
+print(isinstance(short_night.fajr, NoSunEvent))  # True
 ```
 
 The various higher-latitude estimation rules (middle-of-the-night, one-seventh,

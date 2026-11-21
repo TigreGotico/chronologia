@@ -4,7 +4,7 @@
 covers: how extract_timespan turns a phrase into a span, how locales declare their vocabulary and what a locale refuses
 source: `chronologia/extract/`, `chronologia/locale/`
 generated: no
-verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[extraction.md]" -q
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/extraction.md
 see: `docs/adding-a-language.md`, `docs/rulings.md`, `docs/languages/index.md`
 -->
 
@@ -100,10 +100,10 @@ from datetime import datetime
 anchor = datetime(2017, 6, 27, 13, 4)
 
 span, _ = extract_timespan("девет и педесет", "mk", anchor)   # "nine and fifty"
-print(span.start_datetime)          # 2017-06-28 09:50:00
+print(span.start_datetime)  # 2017-06-27 21:50:00
 
-print(extract_timespan("без пет девет", "mk", anchor))   # a minutes-to form
-# None
+# a minutes-to form
+print(extract_timespan("без пет девет", "mk", anchor))  # None
 ```
 
 Serbian shows the other shape a refusal takes — one *word* declining, while a
@@ -116,8 +116,7 @@ declines rather than pick a side:
 span, _ = extract_timespan("prošle sedmice", "sr", anchor)   # "last week"
 print(span.start_datetime.date())   # 2017-06-19
 
-print(extract_timespan("prošle nedelje", "sr", anchor))
-# None
+print(extract_timespan("prošle nedelje", "sr", anchor))  # None
 ```
 
 The same veto runs through the duration reader, for the same reason: a count
@@ -260,8 +259,7 @@ from datetime import datetime
 
 span, _ = extract_timespan("from june 5th to june 12th", "en",
                            datetime(2017, 6, 27))
-print(span.start_datetime.date(), "->", span.end_datetime.date())
-# 2018-06-05 -> 2018-06-13
+print(span.start_datetime.date(), "->", span.end_datetime.date())  # 2018-06-05 -> 2018-06-13
 ```
 
 (June 5–12 is already past the June-27 anchor, so it rolls to the next
@@ -661,7 +659,8 @@ from datetime import datetime
 anchor = datetime(2017, 6, 27)
 span, _ = extract_timespan("the 300s bc", "en", anchor)
 print(span.start.year, span.end.year)   # -308 -298
-print(span.width.days)                   # 3652  (ten years, two leap days)
+# ten years, two leap days
+print(span.width.days)  # 3652
 ```
 
 ## Business days ("in 5 business days", "the next working day")
@@ -700,7 +699,8 @@ anchor = datetime(2026, 12, 23)
 
 # with a jurisdiction, Christmas Day and the weekend are skipped
 span, _ = extract_timespan("in 2 business days", "en", anchor, jurisdiction="PT")
-print(span.start_datetime.date())   # 2026-12-28  (Thu 24 counts, Fri 25 is Natal)
+# Thu 24 counts, Fri 25 is Natal
+print(span.start_datetime.date())  # 2026-12-28
 
 # holiday-blind default: Christmas Day now counts as an ordinary weekday
 span, _ = extract_timespan("in 2 business days", "en", anchor)
@@ -713,7 +713,8 @@ print(span.start_datetime.date())   # 2026-12-24
 # composition on a resolved reference — counted from Christmas, not "now"
 span, _ = extract_timespan("3 working days after christmas", "en", anchor,
                            jurisdiction="PT")
-print(span.start_datetime.date())   # 2026-12-30  (Mon 28, Tue 29, Wed 30)
+# Mon 28, Tue 29, Wed 30
+print(span.start_datetime.date())  # 2026-12-30
 
 # each locale in its own spoken form (día hábil, Werktag, jour ouvré, dia útil)
 for lang, phrase in [("pt", "em 2 dias úteis"), ("es", "en 2 días hábiles"),
@@ -741,8 +742,7 @@ from datetime import datetime
 
 trace = explain("the 3rd week of june 1969", load_lang_spec("en"),
                 datetime(2017, 6, 27))
-print(len(trace.tokens), "tokens,", len(trace.winners), "winning construction")
-# 6 tokens, 1 winning construction
+print(len(trace.tokens), "tokens,", len(trace.winners), "winning construction")  # 6 tokens, 1 winning construction
 ```
 
 `trace.report()` returns the whole thing as readable text — reach for it
@@ -913,7 +913,7 @@ now = datetime(2017, 6, 27)
 # a bare name -> the next occurrence on or after today.  Christmas is still
 # ahead this year, so it is this year's 25 December (a whole-day span).
 span, _ = extract_timespan("christmas", "en", now)
-print(span.start, span.width)          # 2017-12-25 00:00:00 1 day, 0:00:00
+print(span.start, span.width)  # 2017-12-25T00:00:00 1 day, 0:00:00
 
 # Easter has already passed in 2017 (16 April), so a bare "easter" rolls to
 # next year's — resolved through the computus engine, not a table.
@@ -921,16 +921,16 @@ span, _ = extract_timespan("when is easter", "en", now)
 print(span.start.year, span.start.month, span.start.day)   # 2018 4 1
 
 # "next" is strictly future; "last" is the most recent past occurrence.
-print(extract_timespan("next christmas", "en", now)[0].start)   # 2017-12-25
-print(extract_timespan("last easter", "en", now)[0].start)      # 2017-04-16
+print(extract_timespan("next christmas", "en", now)[0].start)  # 2017-12-25T00:00:00
+print(extract_timespan("last easter", "en", now)[0].start)  # 2017-04-16T00:00:00
 
 # an explicit year pins that year's occurrence, no roll.
-print(extract_timespan("easter 2020", "en", now)[0].start)      # 2020-04-12
+print(extract_timespan("easter 2020", "en", now)[0].start)  # 2020-04-12T00:00:00
 
 # the same meaning in other languages — each in its own spoken form.
-print(extract_timespan("natal", "pt", now)[0].start)            # 2017-12-25
-print(extract_timespan("quand est pâques", "fr", now)[0].start) # 2018-04-01
-print(extract_timespan("weihnachten", "de", now)[0].start)      # 2017-12-25
+print(extract_timespan("natal", "pt", now)[0].start)  # 2017-12-25T00:00:00
+print(extract_timespan("quand est pâques", "fr", now)[0].start)  # 2018-04-01T00:00:00
+print(extract_timespan("weihnachten", "de", now)[0].start)  # 2017-12-25T00:00:00
 ```
 
 `explain` traces the binding: it shows which well-known holiday key the surface
@@ -1015,14 +1015,14 @@ drops, verified against the reference database.
 
 ```python
 # each holiday in a language that actually names it.
-print(extract_timespan("when is eid", "en", now)[0].start)          # 2018-06-15
-print(extract_timespan("chinese new year", "en", now)[0].start)     # 2018-02-16
-print(extract_timespan("diwali 2026", "en", now)[0].start)          # 2026-11-08
-print(extract_timespan("hanukkah", "en", now)[0].start)             # 2017-12-13
+print(extract_timespan("when is eid", "en", now)[0].start)  # 2018-06-15T00:00:00
+print(extract_timespan("chinese new year", "en", now)[0].start)  # 2018-02-16T00:00:00
+print(extract_timespan("diwali 2026", "en", now)[0].start)  # 2026-11-08T00:00:00
+print(extract_timespan("hanukkah", "en", now)[0].start)  # 2017-12-13T00:00:00
 
 # native scripts resolve the same way (Arabic / Hebrew locales).
-print(extract_timespan("عيد الفطر", "ar", now)[0].start)             # 2018-06-15
-print(extract_timespan("חנוכה", "he", now)[0].start)                # 2017-12-13
+print(extract_timespan("عيد الفطر", "ar", now)[0].start)  # 2018-06-15T00:00:00
+print(extract_timespan("חנוכה", "he", now)[0].start)  # 2017-12-13T00:00:00
 ```
 
 ### Jurisdiction-bound names — one word, many countries
@@ -1037,9 +1037,12 @@ keyed by `(name, language)`, so each locale resolves the name through *its own*
 jurisdiction default:
 
 ```python
-print(extract_timespan("mother's day", "en", now)[0].start)   # 2018-05-13 (US: 2nd Sun May)
-print(extract_timespan("dia da mãe", "pt", now)[0].start)     # 2018-05-06 (PT: 1st Sun May)
-print(extract_timespan("fête des mères", "fr", now)[0].start) # 2018-05-27 (FR: last Sun May)
+# US: 2nd Sun May
+print(extract_timespan("mother's day", "en", now)[0].start)  # 2018-05-13T00:00:00
+# PT: 1st Sun May
+print(extract_timespan("dia da mãe", "pt", now)[0].start)  # 2018-05-06T00:00:00
+# FR: last Sun May
+print(extract_timespan("fête des mères", "fr", now)[0].start)  # 2018-05-27T00:00:00
 ```
 
 Names with no single implied country are deliberately **left unresolved**:
@@ -1259,17 +1262,16 @@ intersecting the day the date names with the time-of-day the clock names
 from chronologia import extract_timespan
 
 span, remainder = extract_timespan(sentence, "en", datetime(2024, 1, 1))
-print(span.start_datetime, "->", span.end_datetime)
-# 2024-06-05 09:30:00 -> 2024-06-05 09:31:00
-print(span.width)        # 0:01:00   (a minute wide — the clock's precision)
-print(repr(remainder))   # 'the meeting is at'
+print(span.start_datetime, "->", span.end_datetime)  # 2024-06-05 09:30:00 -> 2024-06-05 09:31:00
+# a minute wide — the clock's precision
+print(span.width)  # 0:01:00
+print(repr(remainder))  # 'the meeting is'
 ```
 
 The result is the minute-wide span at half past nine on the fifth of June,
-and the remainder is every token no construction consumed. (`remainder`
-carries the connective words `on`, `the`, `at` too — the engine only
-removes what a construction actually bound, not the natural-language glue
-around it.)
+and the remainder is every token no construction consumed: `the meeting is`.
+The connective words `on`, `the`, `of` and `at` belong to the date and clock
+matches, so they are not left over.
 
 `explain` sees exactly these decisions, because it runs the same pre-match
 pipeline — fold and all. Its trace of this sentence shows both winners with
@@ -1329,8 +1331,7 @@ from chronologia import extract_timespan
 
 anchor = datetime(2024, 3, 6, 12, 0)                 # Wednesday noon
 span, _ = extract_timespan("yesterday morning", "en", anchor)
-print(span.start_datetime, "->", span.end_datetime)
-# 2024-03-05 06:00:00 -> 2024-03-05 12:00:00
+print(span.start_datetime, "->", span.end_datetime)  # 2024-03-05 06:00:00 -> 2024-03-05 12:00:00
 print(span.basis)                                    # reconstructed
 ```
 
@@ -1405,8 +1406,7 @@ registry:
 from chronologia import extract_timespan
 
 span, remainder = extract_timespan("3rd century bc", "en", datetime(2024, 1, 1))
-print(span.start.year, span.end.year, "|", repr(remainder))
-# -299 -199 | ''
+print(span.start.year, span.end.year, "|", repr(remainder))  # -299 -199 | ''
 ```
 
 The 3rd century BC is the BC years 300..201, astronomically `[-299, -199)` — a
@@ -1889,7 +1889,7 @@ contract is:
 - **Only known keys.** Unknown top-level keys, `conventions`/`tokenizer`/
   `guards` keys, per-construction flags (only `prefer_future` and `group`),
   construction names (must be a name the engine ranks), and `group` values
-  (only `classical` today) are all rejected.
+  (only `classical`) are all rejected.
 - **Quantifier keys are numeric strings.** Each key under `quantifiers` is the
   numeric value its surface forms mean (`"2": ["couple", "pair"]`), so a
   non-numeric key is rejected.

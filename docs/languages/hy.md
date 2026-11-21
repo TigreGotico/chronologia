@@ -4,7 +4,7 @@
 covers: where each construction of the Armenian locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/hy/lang.json`, `chronologia/locale/hy/*.voc`, `chronologia/extract/numfold_armenian.py`
 generated: no
-verify: python -m doctest docs/languages/hy.md
+verify: python -m doctest docs/languages/hy.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/hy.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -59,7 +59,7 @@ handles the fused ablative.
 Each refusal is pinned by a test.
 
 **"Since".** A dedicated "since <a point in time>" periphrasis — `-ից ի վեր`,
-`-ից սկսած` — has no fetched worked example, so no open-ended backward range is
+`-ից սկսած` — has no sourced worked example, so no open-ended backward range is
 opened. The bare ablative this locale *does* read is the forward duration
 offset, a different construction that happens to share a suffix.
 
@@ -99,10 +99,6 @@ span parse.
    `հունիսին` for "in June"?
 5. Is there a word for the weekend?
 
-
----
-[← Aragonese](an.md) · [Home](../index.md) · [Asturian →](ast.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -124,6 +120,9 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('հինգ տարի անց', "hy", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2022-06-27T00:05:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('հունիսին', "hy", anchor) is None
+    True
 
 ---
 [← Aragonese](an.md) · [Home](../index.md) · [Asturian →](ast.md)

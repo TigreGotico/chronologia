@@ -28,25 +28,25 @@ The full suite takes about twenty minutes. CI runs it on Python 3.11, 3.12 and 3
 
 ## Rules the repository enforces
 
-A wrong answer is worse than none. When a phrase cannot be read faithfully, `extract_timespan` returns `None`. Never widen a span, round a value or pick the likelier of two readings. [docs/extraction.md](docs/extraction.md#when-a-language-declines-a-phrase) explains how to tell a refusal from a bug.
+A wrong span is worse than no span. Where sources conflict or say nothing, a locale ships nothing and the phrase returns `None`, or a narrower span with the unreadable words in the remainder. [docs/extraction.md](docs/extraction.md#when-a-language-declines-a-phrase) explains how to tell a refusal from a bug.
 
-Do not invent a linguistic fact. A word list entry needs a source: a dictionary, a grammar, a standards body or an attested phrase in the language's corpus. Leave out a form you cannot verify. [CONTRIBUTING.md](CONTRIBUTING.md) states the rule.
+Cite every linguistic and calendrical fact. A word list entry says where the surface came from: a dictionary, a grammar, a standards body, or your own native knowledge stated as such. Where no source exists, the library refuses rather than guesses ([CONTRIBUTING.md](CONTRIBUTING.md)).
 
-Write the test first and check that it fails before the fix. Derive every expected value without this library, by hand or from another source. [CONTRIBUTING.md](CONTRIBUTING.md) states both rules. `test/test_language_parity.py` requires a corpus of at least 100 cases per language and a block that asserts the same spans as English.
+Write the test first and check that it fails before the fix. Derive every expected value without this library, by hand or from another source ([CONTRIBUTING.md](CONTRIBUTING.md)). `test/test_language_parity.py` requires a corpus of at least 100 cases per language and a block that asserts the same spans as English ([docs/adding-a-language.md](docs/adding-a-language.md)).
 
-Every holiday rule needs a frozen gold value in `test/holiday_golds/`. A tier floor stops the provenance counts from shrinking ([transparency](docs/transparency.md)).
+Every holiday rule needs a frozen gold value in `test/holiday_golds/`. A tier floor stops the provenance counts from shrinking ([docs/transparency.md](docs/transparency.md)).
 
 Numbers: numtag reads the numbers of the languages in `NUMTAG_LANGS` in `chronologia/extract/numlayer.py`. The other 21 locales use their own `numfold_*` module. The table is in [docs/languages/index.md](docs/languages/index.md).
 
 Ambiguous phrases follow [docs/rulings.md](docs/rulings.md). A change to a ruling changes that page. `test/ruling17_pins.txt` and `test/ruling23_pins.txt` list the tests whose expected value a ruling moved.
 
-Every python block in `README.md` and `docs/*.md` must run. Mark an illustrative block with `# doctest: skip`.
+Every python block in `README.md` and `docs/*.md` must run. `test/test_docs_examples.py` runs them ([CONTRIBUTING.md](CONTRIBUTING.md)). Mark an illustrative block with `# doctest: skip`.
 
-Commit titles follow conventional commits, and `feat:` is for user-visible features. The release workflow reads them.
+Pull request titles follow [conventional commits](CONTRIBUTING.md). `.github/workflows/conventional-label.yaml` labels the pull request from its title, and the release workflow picks the version bump from the labels. `feat:` is for user-visible features.
 
 ## Before a push
 
 1. Run the tests for the code you touched.
 2. Run `pytest test/test_docs_examples.py` after any change to a docs page or a public name.
-3. Run the `verify` command in the agent hint of each docs page you changed.
+3. Run the `verify` command in the agent hint of each docs page you changed ([docs/index.md](docs/index.md)).
 4. Add a language only through [docs/adding-a-language.md](docs/adding-a-language.md).

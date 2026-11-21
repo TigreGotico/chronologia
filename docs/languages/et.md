@@ -4,7 +4,7 @@
 covers: where each construction of the Estonian locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/et/lang.json`, `chronologia/locale/et/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/et.md
+verify: python -m doctest docs/languages/et.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/et.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -119,11 +119,8 @@ and no arbitrary-minute construction ships.
 
 That is the only refusal. In particular the "Nth
 weekday of month" construction (`märtsi kolmas esmaspäev`, "the third Monday
-of March") resolves, despite the name of the regression test covering it:
-`test_et_ordinal_weekday_xfail.py` is a holdover from the bug the test
-guards against, not a marker of expected failure — the file carries no
-`xfail` decorator, and its own docstring records that the construction "now
-binds correctly".
+of March") resolves. The regression test that covers it,
+`test_et_ordinal_weekday_xfail.py`, carries no `xfail` decorator.
 
 ## Open questions for a native speaker
 
@@ -132,10 +129,6 @@ binds correctly".
 2. Does `kvartal` compete with any native Estonian alternative for
    "quarter", the way Bulgarian and Slovenian each carry two live quarter
    words?
-
-
----
-[← Esperanto](eo.md) · [Home](../index.md) · [Filipino →](fil.md)
 
 ## Checked examples
 

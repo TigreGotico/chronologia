@@ -4,7 +4,7 @@
 covers: where each construction of the Lithuanian locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/lt/lang.json`, `chronologia/locale/lt/*.voc`, `chronologia/extract/numfold_baltic.py`
 generated: no
-verify: python -m doctest docs/languages/lt.md
+verify: python -m doctest docs/languages/lt.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/lt.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -52,7 +52,7 @@ the ordinary "in" or "during" form: `šią savaitę` is this week.
 
 **The clock** has two constructions. `pusė` plus the genitive of the coming
 hour gives the half hour — `pusė trijų` is 02:30, `pusė aštuonių` is 07:30 —
-with `bare_half_to` and `toward_hour_12h` in `lang.json` rolling the named hour
+with `bare_half_to` in `lang.json` rolling the named hour
 back. `be` plus the genitive counts down toward the named hour: `be penkių trys`
 is 02:55. Wiktionary supplies both function words in the right government
 (`be` "without", with the genitive; `pusė` "half"), and Talkpal's guide to
@@ -134,10 +134,6 @@ still only a quantity.
 4. What is the standard era abbreviation, and how is it written?
 5. Does `paskutinis` have a declension that would let it act as the
    "last Friday of the month" marker?
-
-
----
-[← Latvian](lv.md) · [Home](../index.md) · [Macedonian →](mk.md)
 
 ## Checked examples
 

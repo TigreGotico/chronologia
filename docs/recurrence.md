@@ -4,7 +4,7 @@
 covers: RFC 5545 RRULE parsing and expansion into day-wide spans
 source: `chronologia/recurrence.py`
 generated: no
-verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[recurrence.md]" -q
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/recurrence.md
 see: `docs/events.md`, `docs/civil-holidays.md`
 -->
 
@@ -193,7 +193,8 @@ from chronologia.recurrence import JurisdictionHolidays
 
 pt = JurisdictionHolidays("PT")
 dates = list(pt.occurrences(AstroDate(2026, 1, 1), count=14))
-print([d.start.month for d in dates])   # every 2026 Portuguese public holiday
+# every 2026 Portuguese public holiday
+print([d.start.month for d in dates])  # [1, 2, 4, 4, 4, 5, 6, 6, 8, 10, 11, 12, 12, 12]
 
 try:
     pt.to_string()

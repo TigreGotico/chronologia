@@ -4,7 +4,7 @@
 covers: where each construction of the Hindi locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/hi/lang.json`, `chronologia/locale/hi/*.voc`, `chronologia/extract/numfold_indic.py`
 generated: no
-verify: python -m doctest docs/languages/hi.md
+verify: python -m doctest docs/languages/hi.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/hi.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -14,7 +14,7 @@ The single most important thing about this locale is what it will not answer.
 कल means both yesterday and tomorrow. परसों means both the day before yesterday
 and the day after tomorrow. Which one a speaker means is carried entirely by the
 tense of the verb, and chronologia does not read verb tense. So both words are
-refused outright: a bare कल returns nothing rather than a fifty-fifty guess at a
+refused outright: a bare `कल` returns nothing rather than a fifty-fifty guess at a
 direction. आज (today) is unambiguous and does resolve. There is no other named
 day in this locale, and its absence is the design.
 
@@ -109,7 +109,7 @@ vocabulary but a calendar — the lunisolar system carries a leap month and a
 year offset that varies by month, and implementing it is a calendar
 implementation, not a word list. A Vikram Samvat year is never silently
 converted either: `2081 विक्रम संवत` reads 2081 as the Gregorian year it spells
-and leaves विक्रम unread, rather than quietly applying a +57 shift.
+and leaves `विक्रम संवत` in the remainder, rather than quietly applying a +57 shift.
 
 **Closed ranges.** Hindi frames a closed range with both markers postposed — `A से B तक`, the start closed by से and the end by तक. The range grammar reads a leading frame, so only the open reading fires. `छह बजे से दस बजे तक` returns a span that ends at six o'clock, with `से दस बजे` left in the remainder. The open ranges themselves, `शुक्रवार तक` and `सोमवार से`, do resolve. The same applies to के बीच, which is attested as "between" but trails both its bounds.
 
@@ -150,10 +150,6 @@ ship, so `एक लाख साल पहले` refuses.
 6. Is there a fixed early/mid/late vocabulary for a month that could be
    attested?
 
-
----
-[← Hebrew](he.md) · [Home](../index.md) · [Hungarian →](hu.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -175,6 +171,9 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('एक दिन बाद', "hi", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-28T00:05:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('कल', "hi", anchor) is None
+    True
 
 ---
 [← Hebrew](he.md) · [Home](../index.md) · [Hungarian →](hu.md)

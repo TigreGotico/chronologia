@@ -4,7 +4,7 @@
 covers: where each construction of the Croatian locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/hr/lang.json`, `chronologia/locale/hr/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/hr.md
+verify: python -m doctest docs/languages/hr.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/hr.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -106,7 +106,7 @@ year.
 
 **The clock's toward-hour half.** `pola` plus the bare cardinal of the coming
 hour is the locale's only fractional clock surface, gated by `bare_half_to`
-and `toward_hour_12h` in `lang.json` and read through an
+in `lang.json` and read through an
 `at? FRACTION HOUR MERIDIEM? ZONE?` order. The optional leading preposition
 means `u pola devet` and `o pola devet` resolve with nothing left over, which
 the equivalent Czech and Slovenian orders do not manage. Two Wiktionary
@@ -115,7 +115,6 @@ adverb `pola` carries `pola tri — 2:30` in its own sense list, and the
 translation table under the English headword `half past`, whose example is
 "half past one", gives `pola dva` with the qualifier "used with the following
 hour". Both name the coming hour, and `pola tri` resolves to 02:30.
-`toward_hour_12h` makes `pola jedan` 12:30 rather than 00:30.
 
 **`pola` and `pol` stay words.** numtag reads Croatian numbers in every case
 form (`numlayer_slavic.py`), and it reads `pola` and `pol` as the fraction
@@ -209,10 +208,6 @@ the right hour but strand the noun.
    `pola dvanaest uvečer` strands.
 5. Is `poslije podne` the spelling a speaker would type for the afternoon, or
    has `popodne` displaced it in ordinary writing?
-
-
----
-[← Catalan](ca.md) · [Home](../index.md) · [Czech →](cs.md)
 
 ## Checked examples
 

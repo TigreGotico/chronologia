@@ -4,7 +4,7 @@
 covers: the JDN hub, the value types and what the library refuses to do
 source: `chronologia/astrodate.py`, `chronologia/__init__.py`
 generated: no
-verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[design.md]" -q
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/design.md
 see: `docs/getting-started.md`, `docs/extraction.md`
 -->
 
@@ -106,10 +106,8 @@ takes the worst (least certain) of the inputs:
 ```python
 from chronologia import combine_basis
 
-print(combine_basis("exact", "tabulated"))
-# tabulated
-print(combine_basis("reconstructed", "predicted"))
-# reconstructed
+print(combine_basis("exact", "tabulated"))  # tabulated
+print(combine_basis("reconstructed", "predicted"))  # reconstructed
 ```
 
 `exact` is the identity element, so `combine_basis("exact", x)` is just `x`.
@@ -128,10 +126,8 @@ from datetime import timedelta
 from chronologia import lookup
 
 width = lookup("jurassic").span.width
-print(type(width).__name__, width.years)
-# WideDuration 58500000
-print(width > timedelta(days=999))
-# True
+print(type(width).__name__, width.years)  # WideDuration 58500000
+print(width > timedelta(days=999))  # True
 ```
 
 `WideDuration` is orderable and equality-comparable against both other

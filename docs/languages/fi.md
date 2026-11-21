@@ -4,7 +4,7 @@
 covers: where each construction of the Finnish locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/fi/lang.json`, `chronologia/locale/fi/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/fi.md
+verify: python -m doctest docs/languages/fi.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/fi.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -70,17 +70,15 @@ the bare `kolmelta` both give three o'clock, because the ablative numerals one
 through twelve are listed explicitly and a bare one synthesises the missing
 `kello`. Wiktionary's entry for the suffix `-lta` identifies the ablative;
 Iso suomen kielioppi §1237 is cited alongside it for the telling-time use, and
-that section could not be fetched to check. `keskiyöllä` and `keskipäivällä`
+that section is unchecked. `keskiyöllä` and `keskipäivällä`
 are midnight and noon, and both are CLDR 47's `fi` day-period labels for those
 two points.
 
 **The half hour runs toward the coming hour.** `puoli kymmenen` is 09:30, not
 10:30 — the hour named is the one being approached. The reading is enabled by
-`bare_half_to` and read through a `FRACTION HOUR` order, and twenty-six of the
-locales here use the same flag. Fifteen locales also declare that a
-toward-hour twelve means half past noon rather than half past midnight;
-Finnish is not among them, and neither is either of the other two Uralic
-locales, so `puoli yksi` resolves to 00:30.
+`bare_half_to` and read through a `FRACTION HOUR` order, and 25 locales use the
+same flag. `puoli yksi` is 00:30 or 12:30, whichever comes next after the
+anchor (ruling 17 in [the rulings](../rulings.md)).
 
 **Named days** span the five positions around the anchor and are exactly CLDR
 47's `fi` day field for relative types −2 through +2: `toissa päivänä`,
@@ -166,8 +164,8 @@ la`. Neither set ships, so `15. elo 2020` returns the whole of 2020 with the
 day and month stranded, and `ma 15.6.2020` returns the day with `ma` left over.
 Twenty-five of the locales here ship an abbreviated weekday file.
 
-**The dotted date without a year.** `3.6.2020` resolves; `3.6.` on its own,
-which is how a Finnish diary writes a day, returns nothing.
+**The dotted date without a year.** `3.6.2020` resolves. `3.6.` returns nothing, although it is how a
+Finnish diary writes a day.
 
 **The decade by its ordinary name.** Finnish names a decade with `-luku`
 attached to the year — `1990-luku`, `1990-luvulla`. Neither resolves: the
@@ -193,10 +191,6 @@ in front.
 5. Are `pari` and `muutama` precise enough in a temporal offset to bind to two
    and three, or is the vagueness part of what a speaker means by them?
 
-
----
-[← Filipino](fil.md) · [Home](../index.md) · [French →](fr.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -218,6 +212,9 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('kahden viikon päästä', "fi", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-07-11T00:05:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('3.6.', "fi", anchor) is None
+    True
 
 ---
 [← Filipino](fil.md) · [Home](../index.md) · [French →](fr.md)

@@ -229,8 +229,7 @@ Sixty-one languages load, but they are not all equally exercised, and pretending
 otherwise would waste your afternoon. Coverage falls into three honest bands:
 
 **Reviewed in depth** — English, Spanish, Portuguese, French, German, Dutch,
-Russian, Arabic, Hebrew. Each has been through repeated adversarial audit
-rounds *and* a dedicated per-language review that probed everyday register,
+Russian, Arabic, Hebrew. Each has a large phrase corpus that covers everyday register,
 not just textbook forms: "quarter to four", "tonight at 8", "om de twee
 weken", "без пяти девять". Expect these to handle what a person would
 actually type.
@@ -260,10 +259,8 @@ because nothing in the phrase says which half-day it names, Korean ships no
 single-syllable weekday abbreviations (each one is also an everyday word:
 일 is the day, the numeral one and Sunday at once) and no spelled month
 names, and Vietnamese reads no ordinals and no bare "năm" as five. Occitan
-is the model for how that changes:
-a native speaker reviewed a sibling project's word lists, and the forms they
-supplied turned up a real bug here — "davant-ièr" was being read as *yesterday*
-rather than the day before.
+shows how a locale deepens: a native speaker reviewed its word lists, and
+"davant-ièr" reads as the day before yesterday.
 
 Those omissions are the design working, not a backlog. A locale ships a
 construction only where its sources attest one; where they conflict or say

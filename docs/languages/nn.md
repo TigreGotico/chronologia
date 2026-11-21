@@ -4,7 +4,7 @@
 covers: where each construction of the Norwegian Nynorsk locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/nn/lang.json`, `chronologia/locale/nn/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/nn.md
+verify: python -m doctest docs/languages/nn.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/nn.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -104,37 +104,9 @@ Outside the day parts, the named days and `siste`, nothing in this locale
 records a source. The weekday and month names, the clock words, the range
 markers, the seasons and the numeral vocabulary carry none.
 
-## The half hour toward one, and the flag that would move it
+## The half hour toward one
 
-`halv eitt` resolves to 00:30. Nynorsk counts the half toward the coming hour,
-so the phrase names the half hour before one o'clock, and 00:30 and 12:30 are
-both that half hour. The locale returns the 24-hour one and there is no way to
-reach the other, because this locale binds no meridiem at all — `halv eitt om
-ettermiddagen` returns 00:30 and leaves `om ettermiddagen` in the remainder.
-
-A convention flag named `toward_hour_12h` exists and would change exactly this.
-Seven locales declare `bare_half_to` without it — `de`, `fy`, `ms`, `nb`,
-`nl`, `nn` and `sv` — and all seven return 00:30 for their own version of the
-phrase. Eighteen declare both, and Danish and Icelandic are the only Germanic locales
-among them; `hálf eitt` returns 12:30 there.
-
-Turning the flag on for Nynorsk moves more than the bare half, because the
-resolver reads it at three sites and all three sit on the branch that has just
-decremented the hour. Setting it and re-probing every hour from one to twelve
-against the bare half, the quarter each way and a five-minute count each way —
-five phrase shapes across twelve hours, probed here alongside West Frisian for
-a combined 120 phrases — changes three of the Nynorsk ones, and all three name
-one o'clock: `halv eitt` becomes 12:30, `kvart på eitt` becomes 12:45, and
-`fem på eitt` becomes 12:55. Nothing else moves. `kvart på tre` stays 02:45, every
-past-side reading stays where it is, and the landmark forms `kvart på midnatt`
-and `halv middag` are untouched.
-
-The trade is therefore narrower than a whole-clock shift, but it is a trade and
-not a fix. The flag does not separate the bare half from the explicit-direction
-count; it only decides whether the hour rolling back from one to zero is spoken
-as twelve. Off, the daytime readings of all three phrases are unreachable; on,
-the small-hours readings are. Which loss is worse is a question about Nynorsk
-usage, not about the code.
+A bare toward-hour phrase for one o'clock names the half hour before one, 00:30 or 12:30. It resolves to whichever of the two comes next after the anchor (ruling 17 in [the rulings](../rulings.md)): `halv eitt` is 00:30 at 13:04 and 12:30 at 06:05. `toward_hour_12h` only renames hour 0 as 12 on that path, so it changes no bare reading. This locale binds no meridiem word, so `halv eitt om ettermiddagen` returns 00:30 and leaves `om ettermiddagen` in the remainder. `kvart på eitt` and `fem på eitt` follow the same rule.
 
 ## What refuses
 
@@ -207,10 +179,6 @@ at a weekday is silently reduced to that weekday.
 5. Is `helgi` current beside `helga`, and is `weekend` written in Nynorsk?
 6. Which of `fjerdedel` and `kvart` is the ordinary quarter-of-an-hour word?
 
-
----
-[← Norwegian Bokmål](nb.md) · [Home](../index.md) · [Occitan →](oc.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -232,6 +200,27 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('kvelden', "nn", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-27T18:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('morgonen', "nn", anchor) is None
+    True
+    >>> extract_timespan('tre veker', "nn", anchor) is None
+    True
+    >>> extract_timespan('14 dagar', "nn", anchor) is None
+    True
+    >>> extract_timespan('kvar dag', "nn", anchor) is None
+    True
+    >>> extract_timespan('dagleg', "nn", anchor) is None
+    True
+    >>> extract_timespan('om ein halv time', "nn", anchor) is None
+    True
+    >>> extract_timespan('om eit kvarter', "nn", anchor) is None
+    True
+    >>> extract_timespan('etter måndag', "nn", anchor) is None
+    True
+    >>> extract_timespan('14.30', "nn", anchor) is None
+    True
+    >>> extract_timespan('klokka 14.30', "nn", anchor) is None
+    True
 
 ---
 [← Norwegian Bokmål](nb.md) · [Home](../index.md) · [Occitan →](oc.md)

@@ -4,7 +4,7 @@
 covers: reading and writing EDTF approximate and uncertain dates as spans
 source: `chronologia/edtf.py`
 generated: no
-verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[edtf.md]" -q
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/edtf.md
 see: `docs/extraction.md`, `docs/deep-time.md`
 -->
 
@@ -34,15 +34,18 @@ is the whole year, "1985-04" the whole month. The width *is* the precision.
 from chronologia import parse_edtf
 
 day = parse_edtf("1985-04-12").span
-print(day.start, day.end)         # a single day
+# a single day
+print(day.start, day.end)  # 1985-04-12T00:00:00 1985-04-13T00:00:00
 # 1985-04-12T00:00:00 1985-04-13T00:00:00
 
 month = parse_edtf("1985-04").span
-print(month.start, month.end)     # the whole of April
+# the whole of April
+print(month.start, month.end)  # 1985-04-01T00:00:00 1985-05-01T00:00:00
 # 1985-04-01T00:00:00 1985-05-01T00:00:00
 
 year = parse_edtf("1985").span
-print(year.resolution)            # the engine derives the precision
+# the engine derives the precision
+print(year.resolution)  # DateTimeResolution.YEAR
 # DateTimeResolution.YEAR
 ```
 
@@ -51,7 +54,8 @@ first to the *end* of the last:
 
 ```python
 span = parse_edtf("2004-06/2006-08").span
-print(span.start, span.end)       # June 2004 through the end of August 2006
+# June 2004 through the end of August 2006
+print(span.start, span.end)  # 2004-06-01T00:00:00 2006-09-01T00:00:00
 # 2004-06-01T00:00:00 2006-09-01T00:00:00
 ```
 
@@ -60,8 +64,7 @@ one-second span carrying the zone:
 
 ```python
 t = parse_edtf("1985-04-12T23:20:30-04").span.start
-print(t.utcoffset())
-# -1 day, 20:00:00
+print(t.utcoffset())  # -1 day, 20:00:00
 ```
 
 ## Saying you're not sure (Level 1 qualifiers)
@@ -74,10 +77,8 @@ them as flags on the returned `EdtfDate` and marks the span's `basis` as
 
 ```python
 ed = parse_edtf("1984?")
-print(ed.uncertain, ed.approximate)
-# True False
-print(ed.span.basis)
-# reconstructed
+print(ed.uncertain, ed.approximate)  # True False
+print(ed.span.basis)  # reconstructed
 ```
 
 Compare that with *imprecision*, which is carried by the width alone — a decade
@@ -93,9 +94,9 @@ simply the whole year.
 
 ```python
 decade = parse_edtf("156X").span
-print(decade.start.year, decade.end.year)
-# 1560 1570
-print(decade.basis)               # exact endpoints; the width is the doubt
+print(decade.start.year, decade.end.year)  # 1560 1570
+# endpoints; the width is the doubt
+print(decade.basis)  # exact
 # exact
 ```
 
@@ -108,7 +109,8 @@ Level 2 adds quarters and semesters (`2001-34` is the second quarter).
 
 ```python
 spring = parse_edtf("2001-21").span
-print(spring.start, spring.end)   # March, April, May
+# March, April, May
+print(spring.start, spring.end)  # 2001-03-01T00:00:00 2001-06-01T00:00:00
 # 2001-03-01T00:00:00 2001-06-01T00:00:00
 ```
 
@@ -120,8 +122,7 @@ side and flags the open end:
 
 ```python
 ed = parse_edtf("1985-04-12/..")
-print(ed.open_end, ed.span.start)
-# True 1985-04-12T00:00:00
+print(ed.open_end, ed.span.start)  # True 1985-04-12T00:00:00
 ```
 
 ## The deep-time flagship: `Y170000002`
@@ -133,9 +134,9 @@ point type (`AstroDate`) has an **unbounded** year, that Just Works:
 
 ```python
 ed = parse_edtf("Y170000002")     # the year one hundred seventy million...
-print(ed.span.start.year)
-# 170000002
-print(ed.span.start.in_datetime_range)   # far outside datetime's window
+print(ed.span.start.year)  # 170000002
+# far outside datetime's window
+print(ed.span.start.in_datetime_range)  # False
 # False
 ```
 
@@ -144,11 +145,9 @@ Level 2 goes further still. An *exponential* year `Y-17E7` means
 year in the 1900s, estimated to be 1950":
 
 ```python
-print(parse_edtf("Y-17E7").span.start.year)
-# -170000000
+print(parse_edtf("Y-17E7").span.start.year)  # -170000000
 est = parse_edtf("1950S2").span
-print(est.start.year, est.end.year)
-# 1900 2000
+print(est.start.year, est.end.year)  # 1900 2000
 ```
 
 ## Writing EDTF back out
@@ -160,9 +159,9 @@ becomes `1985`, a decade becomes `156X`, an arbitrary interval becomes
 ```python
 from chronologia import format_edtf, AstroDate, DateSpan
 
-print(format_edtf(DateSpan(AstroDate(1560, 1, 1), AstroDate(1570, 1, 1))))
-# 156X
-print(format_edtf(parse_edtf("2001-21").span))   # a season -> its interval
+print(format_edtf(DateSpan(AstroDate(1560, 1, 1), AstroDate(1570, 1, 1))))  # 156X
+# a season -> its interval
+print(format_edtf(parse_edtf("2001-21").span))  # 2001-03/2001-05
 # 2001-03/2001-05
 ```
 

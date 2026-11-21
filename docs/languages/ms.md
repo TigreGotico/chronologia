@@ -4,7 +4,7 @@
 covers: where each construction of the Malay locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/ms/lang.json`, `chronologia/locale/ms/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/ms.md
+verify: python -m doctest docs/languages/ms.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/ms.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -85,7 +85,7 @@ bunga` beside `musim semi`, `musim sejuk` beside `musim dingin`. The weekend is
 
 The locale, and a test that pins it, assert that a bare `setengah` before an
 hour names the half *toward* that hour: `setengah tiga` is 02:30, the German
-pattern. That reading resolves today, and it does so uniformly. All twelve
+pattern. That reading resolves, and it does so uniformly. All twelve
 hours were checked and every one behaves the same way, `setengah H` giving
 (H−1):30.
 
@@ -126,7 +126,7 @@ is ordinary, and Indonesian is where a Malay locale would most easily acquire
 it by analogy. That is a hypothesis about how the reading got here, not
 evidence about Malay.
 
-So today the locale reads a construction that no consulted source attests, and
+So the locale reads a construction that no consulted source attests, and
 strands the one that they do. `pukul lapan setengah` returns 08:00 with
 `setengah` left in the remainder, and the same happens for every hour: the half
 is dropped and a whole hour is returned in its place. If the additive reading
@@ -139,10 +139,7 @@ does `pukul lapan setengah`, hour first, mean 08:30 or 07:30? Nothing here
 should be changed until both are answered, because the sources that speak to
 the second question do not agree with each other.
 
-One related setting hangs off the same answer. The locale declares the
-toward-the-hour half but not the twelve-hour reckoning that usually accompanies
-it, so `setengah satu` resolves to 00:30 rather than 12:30. Whether that is
-right depends entirely on whether the toward-hour reading is right at all.
+`setengah satu` is 00:30 or 12:30, whichever comes next after the anchor (ruling 17 in [the rulings](../rulings.md)).
 
 ## Weaker provenance
 
@@ -189,10 +186,6 @@ the quarter of a year, and the year always wins.
    `suku` appear in it?
 5. Is `kelmarin dulu` the usual phrase for the day before yesterday?
 
-
----
-[← Macedonian](mk.md) · [Home](../index.md) · [Maltese →](mt.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -214,6 +207,9 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('pukul dua belas malam', "ms", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-28T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('pukul 2.30', "ms", anchor) is None
+    True
 
 ---
 [← Macedonian](mk.md) · [Home](../index.md) · [Maltese →](mt.md)

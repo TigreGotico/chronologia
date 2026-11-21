@@ -4,7 +4,7 @@
 covers: where each construction of the Arabic locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/ar/lang.json`, `chronologia/locale/ar/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/ar.md
+verify: python -m doctest docs/languages/ar.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/ar.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -54,10 +54,10 @@ the project's own issue tracker, and the band boundaries are cited to the
 Unicode CLDR 47 day-period rules for `ar`. Four bands ship — `الصباح`,
 `بعد الظهر`, `المساء` and `الليل`.
 
-One exclusion is recorded and worth repeating. `الظهيرة` is *not* listed as an
+`الظهيرة` is *not* listed as an
 afternoon surface. It names midday, and midday is bound as the noon clock
-landmark, so listing it as a band surface was dead vocabulary — the noon
-reading always won. Only `بعد الظهر`, literally "after noon", names the
+landmark, so as a band surface it would never fire: the noon
+reading wins. Only `بعد الظهر`, literally "after noon", names the
 afternoon band.
 
 **Ranges** are `من … إلى …` and `بين … و …`. The from-and-to pair is cited to
@@ -100,10 +100,6 @@ definite `الليلة` returns nothing.
 4. Is `الثامنة والنصف` the ordinary way to say half past eight, and what should
    the clock read for it?
 
-
----
-[← Albanian](sq.md) · [Home](../index.md) · [Aragonese →](an.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -125,6 +121,11 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('3 أكتوبر 1990', "ar", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('1990-10-03T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('الثامنة والنصف', "ar", anchor) is None
+    True
+    >>> extract_timespan('الليلة', "ar", anchor) is None
+    True
 
 ---
 [← Albanian](sq.md) · [Home](../index.md) · [Aragonese →](an.md)

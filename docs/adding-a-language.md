@@ -338,7 +338,7 @@ direction word — means in your language:
 | `bare_half_past` | "half nine" means **9:30** (English colloquial: half *past* nine) |
 | `bare_half_to` | "half nine" means **8:30** (German/Dutch/Scandinavian: the half *before* nine — "halb neun") |
 | `bare_quarter_to` | a bare quarter counts *toward* the coming hour (Hungarian/Estonian: "quarter nine" = 8:15) |
-| `toward_hour_12h` | in a toward-the-hour system, the hour before one is spoken as *twelve*, so "half toward one" is **12:30**, not 00:30 (Slovenian, Russian, Polish, Czech) |
+| `toward_hour_12h` | in a toward-the-hour system, renames the hour before one as *twelve* on the toward-hour path. A bare "half toward one" still resolves to the next of 00:30 and 12:30, whichever comes first after the anchor (ruling 17); the locales Slovenian, Russian, Polish and Czech set it |
 
 Pick the one that matches how *your* language actually speaks. If none applies —
 your language always says the direction word out loud — leave them all off (the

@@ -4,7 +4,7 @@
 covers: where each construction of the Romanian locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/ro/lang.json`, `chronologia/locale/ro/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/ro.md
+verify: python -m doctest docs/languages/ro.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/ro.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -93,8 +93,7 @@ entry.
 a numbered or ordinal quarter; `săptămâna` an ISO week; the spelled decades
 `douăzeci`, `treizeci` … `nouăzeci` each ship their own file rather than a
 shared number grammar; `secol` (century) and `mileniu` (millennium) both
-resolve, the latter one of only three locales among the ones documented here
-to ship a dedicated millennium unit.
+resolve, the latter one of 31 locales that ship a dedicated millennium unit.
 
 **Eras.** `d.hr.`/`după hristos`/`dupa hristos` (AD) and `î.hr.`/`i.hr.`/
 `înainte de hristos` (BC) both ship spaced and unspaced abbreviation
@@ -146,10 +145,6 @@ become a point in time.
    articulated form the way the other six weekdays do, and if the enclitic
    article genuinely does not attach to `duminică` the way it attaches to
    `luni`/`lunea`, is that worth a comment recording the reason?
-
-
----
-[← Portuguese](pt.md) · [Home](../index.md) · [Russian →](ru.md)
 
 ## Checked examples
 

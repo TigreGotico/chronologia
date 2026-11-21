@@ -4,7 +4,7 @@
 covers: which languages have a provenance page, how each page is organised and which reader handles the numbers of each locale
 source: `chronologia/locale/*/lang.json`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`, `chronologia/extract/numfold_*.py`
 generated: no
-verify: python -c "import re,glob,os;from chronologia.extract.numlayer import NUMTAG_LANGS as N;rows=re.findall(r'^\| \[[^]]*\]\((\w+)\.md\) \| (\w+) \| (\S+) \|',open('docs/languages/index.md').read(),re.M);c={os.path.basename(os.path.dirname(f)) for f in glob.glob('chronologia/locale/*/lang.json')};assert {r[1] for r in rows}==c and len(rows)==len(c) and all(r[0]==r[1] and (r[2]=='numtag')==(r[1] in N) and (r[2]=='numtag' or os.path.exists('chronologia/extract/'+r[2]+'.py')) and os.path.exists('docs/languages/'+r[0]+'.md') for r in rows)"
+verify: python -c 'exec("import re,glob,os,json\nfrom chronologia.extract.numlayer import NUMTAG_LANGS as N\nT=open(\"docs/languages/index.md\").read()\nrows=re.findall(r\"^\\| \\[[^]]*\\]\\((\\w+)\\.md\\) \\| (\\w+) \\| (\\S+) \\|\",T,re.M)\nc={os.path.basename(os.path.dirname(f)) for f in glob.glob(\"chronologia/locale/*/lang.json\")}\nassert {r[1] for r in rows}==c and len(rows)==len(c)\nfor pg,code,rd in rows:\n    assert pg==code and os.path.exists(\"docs/languages/\"+pg+\".md\")\n    h=json.load(open(\"chronologia/locale/\"+code+\"/lang.json\")).get(\"hook\",\"\")\n    assert (rd==\"numtag\")==(code in N)\n    assert rd==\"numtag\" or h.startswith(\"chronologia.extract.\"+rd+\":\"),(code,rd,h)\nassert \"the \"+str(len(N))+\" locales in\" in T and \"other \"+str(len(c)-len(N))+\" locales\" in T\n")'
 see: `docs/index.md`, `docs/extraction.md`
 -->
 

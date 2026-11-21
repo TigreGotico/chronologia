@@ -4,7 +4,7 @@
 covers: the JDN number line, the AstroDate point and the DateSpan interval, with a first extraction
 source: `chronologia/astrodate.py`, `chronologia/__init__.py:__all__`
 generated: no
-verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[getting-started.md]" -q
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/getting-started.md
 see: `docs/use-cases.md`, `docs/design.md`
 -->
 
@@ -118,7 +118,8 @@ back an ordinary date object — no integers to thread.
 ```python
 from chronologia import CALENDARS
 
-print(CALENDARS["hebrew"].date(5786, 7, 1))   # 2025-09-23T00:00:00  (Rosh Hashanah)
+# Rosh Hashanah
+print(CALENDARS["hebrew"].date(5786, 7, 1))  # 2025-09-23T00:00:00
 ```
 
 That is enough to be useful today. The rest of this page explains the three
@@ -160,7 +161,8 @@ Let's do it. When does the Hebrew year 5786 begin?
 from chronologia import CALENDARS
 
 hebrew = CALENDARS["hebrew"]
-print(hebrew.date(5786, 7, 1))   # 1 Tishri, the new year
+# 1 Tishri, the new year
+print(hebrew.date(5786, 7, 1))  # 2025-09-23T00:00:00
 # 2025-09-23T00:00:00
 ```
 
@@ -176,8 +178,7 @@ an integer, so you can look at one directly:
 ```python
 from chronologia import gregorian_to_jdn
 
-print(gregorian_to_jdn(2000, 1, 1))
-# 2451545
+print(gregorian_to_jdn(2000, 1, 1))  # 2451545
 ```
 
 The first day of the year 2000 is day number 2,451,545 on the line. Nothing
@@ -200,10 +201,8 @@ from chronologia import AstroDate
 from datetime import datetime
 
 caesar = AstroDate(-43, 3, 15)      # a day in 44 BC (we explain the -43 next)
-print(caesar.isoformat())
-# -000043-03-15T00:00:00
-print(caesar < datetime(2020, 1, 1))
-# True
+print(caesar.isoformat())  # -000043-03-15T00:00:00
+print(caesar < datetime(2020, 1, 1))  # True
 ```
 
 ### Why 44 BC is written as year −43
@@ -227,8 +226,7 @@ numbering*, and it is the reason the arithmetic in this library never needs a
 dates before AD 1. `AstroDate` will even convert back for you:
 
 ```python
-print(AstroDate(-43, 1, 1).bc_year)
-# 44
+print(AstroDate(-43, 1, 1).bc_year)  # 44
 ```
 
 ## DateSpan: a stretch of time
@@ -247,10 +245,8 @@ precise the answer is.
 from chronologia import DateSpan, AstroDate
 
 june = DateSpan(AstroDate(2027, 6, 1), AstroDate(2027, 7, 1))
-print(june.width)
-# 30 days, 0:00:00
-print(june.resolution.name)
-# MONTH
+print(june.width)  # 30 days, 0:00:00
+print(june.resolution.name)  # MONTH
 ```
 
 A single day is a day wide. A month is a month wide. "The Jurassic" is
@@ -279,8 +275,7 @@ link:
 ```python
 from chronologia import combine_basis
 
-print(combine_basis("exact", "tabulated"))
-# tabulated
+print(combine_basis("exact", "tabulated"))  # tabulated
 ```
 
 ## Where to go next

@@ -4,7 +4,7 @@
 covers: where each construction of the Asturian locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/ast/lang.json`, `chronologia/locale/ast/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/ast.md
+verify: python -m doctest docs/languages/ast.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/ast.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -17,7 +17,7 @@ locale it was copied from, and every other file — weekdays, months, seasons,
 markers, units, eras — carries none at all. That is the fact a reader should
 hold onto, because the locale's neighbour is Spanish and a great many Asturian
 surfaces look like Spanish surfaces with the endings changed. Where this page
-says a word is attested, it means the word was found in the *Diccionariu de la
+says a word is attested, it means the word is listed in the *Diccionariu de la
 Llingua Asturiana* published by the Academia de la Llingua Asturiana, not that
 it resembles its Spanish cognate.
 
@@ -127,7 +127,7 @@ not.
 
 ## Unchecked and broken citations
 
-Both citations the locale carries were fetched and hold. The Asturian
+Both citations the locale carries hold. The Asturian
 Wikipedia *Calendariu romanu* contains `calendes`, `nones` and `idus`. The
 Spanish night-meridiem file that the Asturian one defers to does cite the
 Spanish academy's `noche` entry for the small-hours usage, so the inherited
@@ -185,10 +185,6 @@ part that mattered.
 7. Is `ente` or `entre` the ordinary between-preposition, and does `ente
    selmana` mean "on a weekday" as the dictionary's locution suggests?
 
-
----
-[← Armenian](hy.md) · [Home](../index.md) · [Azerbaijani →](az.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -210,6 +206,15 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan("25 d'avientu", "ast", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-12-25T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('el meudía', "ast", anchor) is None
+    True
+    >>> extract_timespan('un par de díes', "ast", anchor) is None
+    True
+    >>> extract_timespan('dellos díes', "ast", anchor) is None
+    True
+    >>> extract_timespan('un día', "ast", anchor) is None
+    True
 
 ---
 [← Armenian](hy.md) · [Home](../index.md) · [Azerbaijani →](az.md)

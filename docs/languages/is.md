@@ -4,7 +4,7 @@
 covers: where each construction of the Icelandic locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/is/lang.json`, `chronologia/locale/is/*.voc`, `chronologia/extract/numfold_icelandic.py`
 generated: no
-verify: python -m doctest docs/languages/is.md
+verify: python -m doctest docs/languages/is.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/is.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -64,12 +64,12 @@ temporal phrase uses: `næsta fimmtudag`, `í næstu viku`.
 
 Each refusal below is pinned by a test.
 
-**The day after tomorrow.** The one candidate a search turned up, `hinn
+**The day after tomorrow.** The one candidate, `hinn
 daginn`, ordinarily means "the other day", and no compositional form was
 attested either. `yfirmorgun` returns nothing and the other candidates leave
 their tokens unread, so no phrase in this locale names a day two ahead.
 
-**"Since".** `frá og með` was never confirmed by a fetched source, so no
+**"Since".** `frá og með` has no confirming source, so no
 "since" vocabulary ships and an anchored open range such as
 `frá og með mánudegi` or `síðan á mánudag` is refused.
 
@@ -77,7 +77,7 @@ their tokens unread, so no phrase in this locale names a day two ahead.
 duration marker has no citation, so a duration phrase must not be read as one.
 
 **"Every".** `á hverjum degi`, `hvern dag`, `á hverjum mánudegi` all fail to
-resolve. No "every" quantifier was independently fetched.
+resolve. No "every" quantifier was independently sourced.
 
 **From-to and between ranges.** `frá júní til ágúst` returns June alone with
 `frá til ágúst` left in the remainder, and `milli júní og september` does not
@@ -116,10 +116,6 @@ only a quantity.
 5. Which cases do `frá` and `til` govern in a month-to-month range?
 6. Are there attested era abbreviations?
 
-
----
-[← Hungarian](hu.md) · [Home](../index.md) · [Indonesian →](id.md)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -141,6 +137,9 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('fimmtán mínútur yfir eitt', "is", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-27T01:15:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('yfirmorgun', "is", anchor) is None
+    True
 
 ---
 [← Hungarian](hu.md) · [Home](../index.md) · [Indonesian →](id.md)

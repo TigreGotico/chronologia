@@ -4,7 +4,7 @@
 covers: where each construction of the Danish locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/da/lang.json`, `chronologia/locale/da/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/da.md
+verify: python -m doctest docs/languages/da.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/da.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -76,11 +76,9 @@ natten` is midnight, with the AM ceiling following the CLDR `nat` band.
 
 Three things about that binding are worth knowing before relying on it.
 
-The at-marker is required. Without `klokken`, a spoken hour in front of `om
-<daypart>` does not bind at all: `tre om eftermiddagen` returns the whole
-afternoon band 12:00–18:00 with `tre om` in the remainder, and every other
-spelled hour behaves the same way. Only the digit and the `klokken` forms
-reach the meridiem.
+The at-marker is optional. Without `klokken`, a spoken hour in front of `om
+<daypart>` binds the same way: `tre om eftermiddagen` is 15:00, `otte om aftenen`
+is 20:00 and `ni om formiddagen` is 09:00, each with an empty remainder.
 
 The hour word `to` is unusable there even with the at-marker. `klokken to om
 eftermiddagen` returns the afternoon band with `klokken om` stranded, and
@@ -122,14 +120,11 @@ The vocabulary file cites Den Danske Ordbog.
 
 **`halvanden`**, the ordinary Danish word for 1.5 (Den Danske Ordbog; from Old
 Norse *halfr annarr*), is declared as the `1.5` quantifier. numtag reads it as the fraction 1.5, not as a bare
-`0.5`. `halvanden time
-siden` resolves to 1.5 hours ago rather than half an hour ago.
+`0.5`. `halvanden time siden` resolves to 1.5 hours ago rather than half an hour ago.
 
 ## The hour before one
 
-Danish sets `toward_hour_12h`. Where the flag is set, the hour that rolls back from one to zero surfaces as twelve. `halv et` is therefore half past noon, 12:30, and `kvart i et` is 12:45, not the midnight readings. `test/nl_corpus_da/test_da_clock.py` pins both. The day-part binding agrees: `halv et om eftermiddagen` is 12:30 and `kvart i et om eftermiddagen` is 12:45.
-
-Danish and Icelandic are the Germanic locales that set the flag. German, Dutch, Frisian, Swedish and both Norwegian standards do not.
+A bare toward-hour phrase for one o'clock names the half hour before one, 00:30 or 12:30. It resolves to whichever of the two comes next after the anchor (ruling 17 in [the rulings](../rulings.md)): `halv et` is 00:30 at 13:04 and 12:30 at 06:05. `toward_hour_12h` only renames hour 0 as 12 on that path, so it changes no bare reading. With a day-part word the hour binds: `halv et om eftermiddagen` is 12:30 and `kvart i et om eftermiddagen` is 12:45. `test/nl_corpus_da/test_da_clock.py` pins `halv et` at 12:30 and `kvart i et` at 12:45 through the same next-reading rule.
 
 ## Weaker provenance
 
@@ -138,14 +133,12 @@ bare `går`/`morgen`/`forgårs`/`overmorgen` that ship beside them do not appear
 in that file and rest on nothing recorded.
 
 Den Danske Ordbog is the source named in the day-part and `sidste` vocabulary
-headers, and `ordnet.dk` refuses automated retrieval — every request answers
-`202` with an empty body — so those citations are **unchecked here**. The
-Danish Wiktionary entries were fetched instead and agree with them:
+headers, and `ordnet.dk` cannot be read by an automated client, so those citations are
+unchecked. The Danish Wiktionary entries agree with them:
 `formiddag` is glossed "Tidspunkt før middag, om morgenen", `eftermiddag`
 "Tidspunkt ca. mellem kl. 12 og 18", `middag` the point around twelve when the
 sun stands highest, and `sidste` "Modsat første". The day-part *boundaries* do
-not depend on the dictionary at all; they are the CLDR chart, which was
-fetched and matches the transcription exactly.
+not depend on the dictionary at all; they are the CLDR chart.
 
 The weekday and month names, the clock words, the range markers, the seasons
 and the holiday vocabulary record no source.
@@ -165,27 +158,8 @@ resolve, leaving the framing `i` or `om` in the remainder: `i eftermiddag`,
 
 ## Open questions for a native speaker
 
-1. Is `tre om eftermiddagen`, with no `klokken`, ordinary enough to need to
-   bind? It is the form that returns a six-hour band.
-2. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split
+1. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split
    puts it at 18:00.
-
-Resolved: whether `halvanden` ships as the 1.5 quantifier — see `halvanden`
-under "What ships" above.
-
-Resolved: whether a `morgen` day-part surface should ship despite the
-collision with the tomorrow word — see the `morgen` paragraph under "What
-ships" above (shipped definite-only, `morgenen`).
-
-Resolved: whether `halv et` and `kvart i et` read as 12:30 and 12:45 — see
-"The hour before one" above.
-
-Resolved: whether `14.30` should read as a clock — see "The dotted timetable
-clock" under "What ships" above.
-
-
----
-[← Czech](cs.md) · [Home](../index.md) · [Dutch →](nl.md)
 
 ## Checked examples
 
@@ -208,6 +182,15 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('kvart i et', "da", datetime(2017, 6, 27, 12, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-27T12:45:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan("80'erne", "da", anchor) is None
+    True
+    >>> extract_timespan('firserne', "da", anchor) is None
+    True
+    >>> extract_timespan('to uger', "da", anchor) is None
+    True
+    >>> extract_timespan('i morges', "da", anchor) is None
+    True
 
 ---
 [← Czech](cs.md) · [Home](../index.md) · [Dutch →](nl.md)

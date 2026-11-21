@@ -4,7 +4,7 @@
 covers: the checks that decide whether answers are right and the provenance tiers of holiday golds
 source: `test/test_holiday_golds.py`, `test/holiday_golds/_tier_floor.json`, `test/test_language_parity.py`, `test/test_docs_examples.py`
 generated: no
-verify: diff <(sed -n 's/^- \*\*\([a-z-]*\)\*\*:.*/\1/p' docs/transparency.md) <(python -c "import re;print(*re.search(r'_TIERS = \((.*?)\)',open('test/test_holiday_golds.py').read())[1].replace('\"','').replace(' ','').split(','),sep='\n')")
+verify: diff <(sed -n 's/^- \*\*\([a-z-]*\)\*\*:.*/\1/p' docs/transparency.md) <(python -c "import re;print(*re.search(r'_TIERS = \((.*?)\)',open('test/test_holiday_golds.py').read())[1].replace('\"','').replace(' ','').split(','),sep='\n')") && python -c 'exec("import os,re\nt=open(\"docs/transparency.md\").read()\nm=re.search(r\"MIN_CASES = (\\d+)\",open(\"test/test_language_parity.py\").read())[1]\nassert \"at least \"+m+\" cases\" in t\nfor q in set(re.findall(r\"`((?:test|chronologia)/[^`<>*]+)`\",t)): assert os.path.exists(q.rstrip(\"/\")),q\n")'
 see: `docs/civil-holidays.md`, `docs/benchmarks.md`
 -->
 

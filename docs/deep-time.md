@@ -4,7 +4,7 @@
 covers: geological and archaeological periods, Before Present ages and radiocarbon calibration
 source: `chronologia/periods.py`, `chronologia/data/`
 generated: no
-verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[deep-time.md]" -q
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/deep-time.md
 see: `docs/mars-and-beyond.md`, `docs/edtf.md`
 -->
 
@@ -26,12 +26,13 @@ published version of that chart, and lets you look any name up.
 from chronologia import lookup
 
 jurassic = lookup("jurassic")
-print(jurassic.span.start.year)   # astronomical year of the older edge
+# astronomical year of the older edge
+print(jurassic.span.start.year)  # -201598050
 # -201598050
-print(jurassic.span.end.year)     # astronomical year of the younger edge
+# astronomical year of the younger edge
+print(jurassic.span.end.year)  # -143098050
 # -143098050
-print(jurassic.level)
-# period
+print(jurassic.level)  # period
 ```
 
 Those years — about 201.6 million and 143.1 million years ago — are not
@@ -39,10 +40,8 @@ guesses this library made up. They come straight from the chart, and they wear
 their basis on their sleeve:
 
 ```python
-print(jurassic.span.basis)
-# tabulated
-print(jurassic.source)
-# ICS International Chronostratigraphic Chart 2023/09
+print(jurassic.span.basis)  # tabulated
+print(jurassic.source)  # ICS International Chronostratigraphic Chart 2023/09
 ```
 
 ### Why the boundaries have error bars
@@ -61,8 +60,7 @@ The chart nests, so you can walk down from a period into its epochs:
 ```python
 from chronologia import children
 
-print([c.name for c in children("jurassic")])
-# ['Early Jurassic', 'Middle Jurassic', 'Late Jurassic']
+print([c.name for c in children("jurassic")])  # ['Early Jurassic', 'Middle Jurassic', 'Late Jurassic']
 ```
 
 ## Subdivide: "the Late Jurassic" beats arithmetic
@@ -76,8 +74,7 @@ returns the real, official one instead of a mechanical third.
 from chronologia import subdivide
 
 late = subdivide(lookup("jurassic"), "late")
-print(late.start.year, late.end.year)
-# -161498050 -143098050
+print(late.start.year, late.end.year)  # -161498050 -143098050
 ```
 
 Those are the exact boundaries of the officially-named **Late Jurassic** —
@@ -86,8 +83,7 @@ get by dividing. Looking the name up directly gives the same span:
 
 ```python
 lj = lookup("late jurassic")
-print(lj.span.start.year, lj.span.end.year)
-# -161498050 -143098050
+print(lj.span.start.year, lj.span.end.year)  # -161498050 -143098050
 ```
 
 ## Region-tagged archaeology: whose Bronze Age?
@@ -139,12 +135,10 @@ band a thousand times narrower. This is the idea of *significant figures*, and
 from chronologia import resolve_bp
 
 rough = resolve_bp("66", "Ma")        # "Ma" = millions of years
-print(rough.start.year, rough.end.year)
-# -65998050 -64998050
+print(rough.start.year, rough.end.year)  # -65998050 -64998050
 
 precise = resolve_bp("66.043", "Ma")
-print(precise.start.year, precise.end.year)
-# -66041050 -66040050
+print(precise.start.year, precise.end.year)  # -66041050 -66040050
 ```
 
 Look at the widths. The rough answer spans a *million* years
@@ -172,10 +166,8 @@ years to calendar years. `calibrate_c14` does that conversion:
 from chronologia import calibrate_c14
 
 span = calibrate_c14(3500)          # 3500 radiocarbon years BP
-print(span.start.year, span.end.year)
-# -1950 -1850
-print(span.basis)
-# reconstructed
+print(span.start.year, span.end.year)  # -1950 -1850
+print(span.basis)  # reconstructed
 ```
 
 So a 3500 radiocarbon-year age actually points to roughly 1900 BC in calendar
@@ -211,8 +203,7 @@ A `NamedPeriod` carries: `name`, `span` (a `DateSpan`), `level`
 ```python
 from chronologia import ICS_CHART_VERSION
 
-print(ICS_CHART_VERSION)
-# 2023/09
+print(ICS_CHART_VERSION)  # 2023/09
 ```
 
 Both the deep-time chart and the archaeological set are `tabulated` or
