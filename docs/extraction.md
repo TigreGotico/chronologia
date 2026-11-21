@@ -307,6 +307,16 @@ per-language range markers, so "bis freitag" / "seit 2010" (de), "jusqu'à
 vendredi" / "depuis 2010" (fr), "até sexta-feira" / "desde 2010" (pt) and
 "hasta viernes" / "desde 2010" (es) behave the same way.
 
+A bare "after X" names a span with a start and no end: the time from the end
+of the next X onward. The span has `open_end` set and stores its start in both
+endpoints, so a consumer that needs an instant takes `span.start`:
+
+```python
+r = extract_timespan("after monday", "en", datetime(2026, 10, 17, 12, 0))
+print(r.span)           # 2026-10-20 00:00 – ..
+print(r.span.open_end)  # True
+```
+
 ### Marker positionality
 
 *Where* a marker sits relative to its date is a first-class per-language fact,

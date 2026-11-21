@@ -122,11 +122,6 @@ their appearance in the test corpus.
 
 ## What refuses
 
-**"After" as a bare open-ended future marker.** `sesudah X` / `setelah X`
-never resolves to an open range, because `DateSpan` has no open-ended-future
-representation to hand it — the same limit that refuses "after" in every
-other locale in this codebase, not an Indonesian-specific gap.
-
 **A duration with no direction marker attached at the wrong construction.**
 Plain `2 jam` folds as a duration through `extract_duration`, but the same
 phrase inside a relative-offset construction requires the trailing `lalu` or

@@ -1,8 +1,8 @@
 """A bare "after"/"before" before a date that takes "the".
 
-"after may 13" is refused: "after X" names an open future that the closed
-``DateSpan`` cannot hold.  "after the 13th of may" is the same reference with
-an article, so it is refused too, not read as 13 May with "after" left over.
+"after may 13" is the open span from the end of 13 May onward, with no end.
+"after the 13th of may" is the same reference with an article, so it reads
+the same, not as 13 May with "after" left over.
 "before the 13th of may" is the open range from now to the end of 13 May, as
 "before may 13" is.  Anchor 16 November 2026: the next 13 May is in 2027.
 """
@@ -21,8 +21,10 @@ ANCHOR = datetime(2026, 11, 16, 12, 0)
     "after may 13",
     "after the 13th of may",
 ])
-def test_after_the_date_is_refused(text):
-    assert parse(text, ANCHOR) is None
+def test_after_the_date_is_open_from_its_end(text):
+    span, rest = parse(text, ANCHOR)
+    assert (span.start, span.open_end) == (datetime(2027, 5, 14), True)
+    assert rest == ""
 
 
 @pytest.mark.parametrize("text", ["before may 13", "before the 13th of may"])

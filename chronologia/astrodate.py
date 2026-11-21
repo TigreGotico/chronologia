@@ -941,6 +941,12 @@ class DateSpan:
     *which stretch of time was referred to*, never parser confidence.
     ``DateTimeResolution`` is derived from :attr:`width`, never stored.
 
+    :attr:`open_end` marks a span with a start and no end: "after monday"
+    is the stretch of time from the end of the next Monday onward. Such a
+    span stores its start in both endpoints, so :attr:`width` is zero and a
+    reader that takes the start, the instant a consumer answers, needs no
+    change. The set operations below read the end as unbounded.
+
     :attr:`basis` records *how* the endpoints were established — ``exact``
     (default, so every existing construction is unchanged), ``tabulated`` (a
     deterministic table that may differ from observation, e.g. the tabular
@@ -952,6 +958,7 @@ class DateSpan:
     start: AstroDate
     end: AstroDate
     basis: str = BASIS_EXACT
+    open_end: bool = False
 
     def __post_init__(self):
         if not isinstance(self.start, AstroDate) \
@@ -963,6 +970,8 @@ class DateSpan:
         if self.basis not in _BASIS_RANK:
             raise ValueError(f"unknown basis {self.basis!r}; expected one of "
                              f"{sorted(_BASIS_RANK)}")
+        if self.open_end and self.end != self.start:
+            raise ValueError("an open-ended DateSpan stores its start as its end")
 
     def __str__(self) -> str:
         """A compact, human-legible rendering (``__repr__`` stays unambiguous).
@@ -1000,6 +1009,8 @@ class DateSpan:
                 s += f"{sign}{hh:02d}:{mm:02d}" + (f":{ss:02d}" if ss else "")
             return s
 
+        if self.open_end:
+            return f"{date_part(start)} {time_part(start)}{_TO}.."
         midnight = (0, 0, 0, 0)
         same_day = (start.year, start.month, start.day) == (end.year, end.month, end.day)
         at_midnight = ((start.hour, start.minute, start.second, start.microsecond) == midnight
@@ -1085,11 +1096,12 @@ class DateSpan:
 
     def contains(self, point) -> bool:
         """True when ``point`` (AstroDate/date/datetime) is in ``[start, end)``."""
-        return self.start <= point < self.end
+        return self.start <= point and (self.open_end or point < self.end)
 
     def overlaps(self, other: "DateSpan") -> bool:
         """True when two half-open spans share any instant."""
-        return self.start < other.end and other.start < self.end
+        return ((other.open_end or self.start < other.end)
+                and (self.open_end or other.start < self.end))
 
     def _min(self, a: AstroDate, b: AstroDate) -> AstroDate:
         return a if a <= b else b
@@ -1107,10 +1119,14 @@ class DateSpan:
         only as well-established as its least-certain endpoint.
         """
         start = self._max(self.start, other.start)
-        end = self._min(self.end, other.end)
+        basis = combine_basis(self.basis, other.basis)
+        if self.open_end and other.open_end:
+            return DateSpan(start, start, basis, open_end=True)
+        end = (other.end if self.open_end else self.end if other.open_end
+               else self._min(self.end, other.end))
         if start >= end:
             return None
-        return DateSpan(start, end, combine_basis(self.basis, other.basis))
+        return DateSpan(start, end, basis)
 
     def union(self, other: "DateSpan") -> "DateSpan":
         """The single span ``[min(starts), max(ends))`` covering both.
@@ -1122,13 +1138,15 @@ class DateSpan:
         single interval cannot represent, so this raises :class:`ValueError`
         (see :meth:`gap` for that hole).  Basis is the worst-of the inputs.
         """
-        if self.end < other.start or other.end < self.start:
+        if self.gap(other) is not None:
             raise ValueError(
                 "union of disjoint non-adjacent spans is not a single span; "
                 "they leave a gap (see DateSpan.gap)")
-        return DateSpan(self._min(self.start, other.start),
-                        self._max(self.end, other.end),
-                        combine_basis(self.basis, other.basis))
+        start = self._min(self.start, other.start)
+        basis = combine_basis(self.basis, other.basis)
+        if self.open_end or other.open_end:
+            return DateSpan(start, start, basis, open_end=True)
+        return DateSpan(start, self._max(self.end, other.end), basis)
 
     def gap(self, other: "DateSpan") -> Optional["DateSpan"]:
         """The empty span between two disjoint spans, or ``None``.
@@ -1138,9 +1156,9 @@ class DateSpan:
         from the earlier span's end up to the later span's start — the stretch
         of time covered by neither.  Basis is the worst-of the inputs.
         """
-        if self.end < other.start:
+        if not self.open_end and self.end < other.start:
             lo, hi = self.end, other.start
-        elif other.end < self.start:
+        elif not other.open_end and other.end < self.start:
             lo, hi = other.end, self.start
         else:
             return None
@@ -1153,8 +1171,11 @@ class DateSpan:
         Both endpoints are nested :meth:`AstroDate.to_json` envelopes and the
         :attr:`basis` rides alongside, so aware/deep-time spans round-trip.
         """
-        return {"type": "DateSpan", "start": self.start.to_json(),
+        data = {"type": "DateSpan", "start": self.start.to_json(),
                 "end": self.end.to_json(), "basis": self.basis}
+        if self.open_end:
+            data["open_end"] = True
+        return data
 
     @classmethod
     def from_json(cls, data: dict) -> "DateSpan":
@@ -1163,4 +1184,5 @@ class DateSpan:
             raise ValueError(f"not a DateSpan envelope: {data.get('type')!r}")
         return cls(AstroDate.from_json(data["start"]),
                    AstroDate.from_json(data["end"]),
-                   data.get("basis", BASIS_EXACT))
+                   data.get("basis", BASIS_EXACT),
+                   bool(data.get("open_end", False)))

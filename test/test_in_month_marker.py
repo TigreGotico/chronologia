@@ -102,7 +102,8 @@ def test_scandinavian_jul_stays_christmas(lang, phrase):
                                       AstroDate(2026, 12, 26))
 
 
-def test_after_marker_still_refuses_a_month():
-    # Estonian "pärast" is "after": an open-ended "after January" span has no
-    # DateSpan representation and must keep refusing.
-    assert extract_timespan("pärast jaanuar", "et", _REF) is None
+def test_after_marker_opens_a_span_from_the_end_of_the_month():
+    # Estonian "pärast" is "after": the next January after 14 August 2026 is
+    # January 2027, so the open span starts on 1 February 2027
+    r = extract_timespan("pärast jaanuar", "et", _REF)
+    assert (r[0].start, r[0].open_end) == (AstroDate(2027, 2, 1), True)

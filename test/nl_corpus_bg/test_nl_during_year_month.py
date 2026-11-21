@@ -2,8 +2,8 @@
 """"during/in" + year and "during/in" + month (bg): "през"/"в" open a
 calendar_date or year_ref span exactly like the bare form, consuming the
 marker instead of stranding it as a remainder. "след" stays a distinct
-surface: it is the future-offset marker ("след 5 дни" = "in 5 days") and
-must keep refusing an open-ended "after <year/month>" reading. Anchor
+surface: it is the future-offset marker ("след 5 дни" = "in 5 days"), and
+"след <year/month>" is the open span from the end of that year or month. Anchor
 2017-06-27 13:04. Every edge hand-derived."""
 import pytest
 
@@ -35,11 +35,16 @@ def test_during_month_consumes_marker(text, m):
     assert r.remainder == ""
 
 
-@pytest.mark.parametrize("text", ["след 2030", "след януари"])
-def test_after_still_refuses(text):
-    # "след" is not a during/in surface -- an open-ended "after <year>" span
-    # has no DateSpan representation and must still be refused.
-    nomatch(text)
+@pytest.mark.parametrize("text, start", [
+    # the next January after 27 June 2017 is January 2018
+    ("след 2030", AstroDate(2031, 1, 1)),
+    ("след януари", AstroDate(2018, 2, 1)),
+])
+def test_after_is_open_from_the_end(text, start):
+    # "след" is not a during/in surface: "after X" is the open span from the
+    # end of X onward
+    s = span(text)
+    assert (s.start, s.open_end) == (start, True)
 
 
 @pytest.mark.parametrize("text,e", [

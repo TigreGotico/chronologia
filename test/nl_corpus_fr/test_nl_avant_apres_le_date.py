@@ -1,8 +1,7 @@
 """"après le 13 mai" and "avant le 13 mai" read as en "after may 13" does.
 
-A bare "after X" names an open future from the end of X.  ``DateSpan`` is a
-closed ``[start, end)`` pair and has no open end, so chronologia refuses
-"after X" in every locale rather than give X itself.  "avant X" (before X)
+A bare "after X" names an open future from the end of X: a ``DateSpan``
+with ``open_end``, never X itself.  "avant X" (before X)
 is the open range from now to the end of X, as en "before may 13" is.
 
 The French date takes its article, "le 13 mai", so the article belongs to
@@ -20,13 +19,14 @@ from ._corpus import parse
 ANCHOR = datetime(2026, 11, 16, 12, 0)
 
 
-@pytest.mark.parametrize("fr, en", [
-    ("après le 13 mai", "after may 13"),
-    ("après le 1er juin", "after june 1st"),
+@pytest.mark.parametrize("fr, en, start", [
+    ("après le 13 mai", "after may 13", datetime(2027, 5, 14)),
+    ("après le 1er juin", "after june 1st", datetime(2027, 6, 2)),
 ])
-def test_after_a_date_is_refused_as_in_english(fr, en):
-    assert parse(fr, ANCHOR) is None
-    assert extract_timespan(en, "en", ANCHOR) is None
+def test_after_a_date_is_open_as_in_english(fr, en, start):
+    for span, rest in (parse(fr, ANCHOR), extract_timespan(en, "en", ANCHOR)):
+        assert (span.start, span.open_end) == (start, True)
+        assert rest == ""
 
 
 @pytest.mark.parametrize("text, end", [

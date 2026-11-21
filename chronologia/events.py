@@ -274,7 +274,10 @@ def extract_event(
         # takes, so the whole-text reading lost the date.  That check holds
         # only when the span reading is the length with its offset words, an
         # offset from now: "the day after next 3 pm" reads a date of its own,
-        # so its "day" is no length even though "3 pm" is left over.
+        # so its "day" is no length even though "3 pm" is left over.  When the
+        # text without the length is a bare "after X", the open span from the
+        # end of X, the length is the offset before that "after": "15 minutes
+        # after christmas" names a moment, not a 15-minute event.
         try:
             whole = extract_timespan(remainder, lang, anchor=anchor,
                                      jurisdiction=jurisdiction)
@@ -304,7 +307,8 @@ def extract_event(
                              for surface in spec.connectors.get("recur_for", ()))
             if not for_marked and not length_words - span_words \
                     and not (bare_offset and rest_words - span_words) \
-                    and (rest is None or rest.span.start != whole.span.start) \
+                    and (rest is None or rest.span.open_end
+                         or rest.span.start != whole.span.start) \
                     and not (rest is not None and _is_bare_clock_length(
                         remainder, lang, anchor, length_words)) \
                     and not _is_counted_part_of_day(

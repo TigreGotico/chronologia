@@ -3,7 +3,8 @@
 the full root-cause writeup. A bare "antes do natal"/"depois do natal" (no
 magnitude) used to strand "antes do"/"depois do" and return Christmas Day
 unchanged; "antes do X" now binds ``[now, X end)`` (mirroring "até ao X"),
-"depois do X" is refused (no open-ended-future representation). Magnitude
+"depois do X" is the open span
+from the end of X onward. Magnitude
 forms ("uma semana antes do natal") are untouched.
 
 Expected values are independently hand-computed against the anchor.
@@ -35,8 +36,11 @@ def test_bare_before_mirrors_until():
     assert before[0] == until[0]
 
 
-def test_bare_after_refused_not_stranded():
-    assert _span("depois do natal") is None
+def test_bare_after_is_open_from_the_end_of_the_holiday():
+    # Christmas 2026 is 25 December and Easter 2027 is 28 March; the span
+    # starts when that day ends and has no end
+    r = _span("depois do natal")
+    assert (r[0].start, r[0].open_end, r[1]) == (datetime(2026, 12, 26), True, "")
 
 
 def test_antes_de_ontem_is_the_day_before_yesterday():
