@@ -399,7 +399,8 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
         # utterance, and a word after the range: "vieram entre dois mil e
         # três mil turistas ontem"
         return len(said) == 1 or len(after) == 3
-    return nxt.is_number or nxt.mention is not None or nxt.text.isalpha()
+    return not nxt.break_before and (
+        nxt.is_number or nxt.mention is not None or nxt.text.isalpha())
 
 
 def counts_things(tokens: Tuple[Token, ...], end: int,
