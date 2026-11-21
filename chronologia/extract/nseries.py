@@ -504,6 +504,16 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         if j < n and _unit_of(tokens[j]) is not None:
             unit = _unit_of(tokens[j])
             end = j + 1
+            # "la semana pasada", "ezen a héten": an article, not a number,
+            # before a unit that a last/next/this word modifies names a
+            # calendar period, not a length.
+            if article_one is not None and (
+                    unit in ("week", "fortnight") or unit in calendar_months
+            ) and (
+                    (end < n and tokens[end].text in spec.rel_markers)
+                    or (i > 0 and tokens[i - 1].text in spec.rel_markers)):
+                i += 1
+                continue
             # "an hour and a half": the fraction trails the unit.
             add2, end2 = _read_additive(end)
             if add2 is not None:
