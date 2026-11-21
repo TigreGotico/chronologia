@@ -5,10 +5,9 @@ with a bare cardinal: `pola devet` is 08:30 and `pola tri` is 02:30. That
 single fact separates it from most of its Slavic neighbours, where the same
 construction takes a declined ordinal agreeing with an elided hour noun
 (`půl deváté`, `pol deviatej`, `полдевятого`). Because the hour is an ordinary
-cardinal, no ordinal table is needed to read it and no post-pass has to be run
-after the number fold; only the fraction word itself has to be kept out of the
-cardinal fold, so that `pola` survives to fill the clock's fraction slot. The
-same wiring serves Serbian, which spells the construction identically.
+cardinal, the clock reads it as numtag reads it; only the fraction word `pola`
+has to stay a word, so that it fills the clock's fraction slot. The same
+wiring serves Serbian, which spells the construction identically.
 
 The second thing to know is that the locale's ordinal-scope grammar is
 declared as a replacement rather than an addition, and several readings the
@@ -108,16 +107,15 @@ translation table under the English headword `half past`, whose example is
 hour". Both name the coming hour, and `pola tri` resolves to 02:30.
 `toward_hour_12h` makes `pola jedan` 12:30 rather than 00:30.
 
-**`pola` stays out of the cardinal fold, `pol` stays in.** The shared Slavic
-hook keeps a closed extra-word set of oblique numerals the number model's
-nominative pronunciation misses, and `pola` is deliberately excluded from it:
-the Croatian number back-end reads it as 0.5, and folding it would erase the
-clock's fraction word before the grammar saw it. Its shorter sibling `pol`
-stays in, because that is the plain cardinal half of a duration — `pol sata`,
-`sat i pol`, `dva i pol sata` — and not the clock word. The accepted cost is
-that the timespan-composing `za pola sata` no longer reaches the clock; the
-duration reader still answers thirty minutes for `pola sata` and ninety for
-`sat i pol` through the quantifier table.
+**`pola` and `pol` stay words.** numtag reads Croatian numbers in every case
+form (`numlayer_slavic.py`), and it reads `pola` and `pol` as the fraction
+0.5. The fold keeps a fraction that numtag reads as a fraction as a word, so
+`pola` fills the clock's fraction slot. The duration reader reads the same
+words through the quantifier table: `pola sata` is thirty minutes, `sat i pol`
+ninety and `dva i pol sata` 150, and `za pola sata` is thirty minutes after
+the anchor. numtag reads the short ordinal genitive (`trećeg`) and not the
+long one with the movable `a` (`trećega`), so the fold reads the long form
+through the short one.
 
 **Quarters and ISO weeks** resolve, with `kvartal` and `tromjesečje` as two
 quarter words and `tjedan` for the ISO week, so `prvi kvartal 2020.` is the
@@ -210,11 +208,6 @@ minute at 12:00.
 `sati`, so `u 9 sati` resolves cleanly while `u 1 sat` and `u 2 sata` — the
 counted forms Croatian requires for one and for two through four — resolve to
 the right hour but strand the noun.
-
-**A neuter ordinal on the quarter word.** The ordinal fold derives its
-surfaces from the masculine nominative the number model pronounces, and
-`tromjesečje` is neuter. `prvi kvartal 2020.` resolves; `prvo tromjesečje
-2020.` returns the whole of 2020 and strands the words that named the quarter.
 
 ## Open questions for a native speaker
 
