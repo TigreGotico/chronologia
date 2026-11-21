@@ -36,6 +36,7 @@
         "CLOCK MERIDIEM? ZONE?",
         "at? HOUR CLOCKDIR FRACTION MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
+        "at? HOUR MERIDIEM ZONE?",
         "at? LANDMARK ZONE?"
       ],
       "prefer_future": true
@@ -105,6 +106,10 @@
     "hemisphere": null,
     "prefer_future": true,
     "offset_clock_composes": true
+  },
+  "lemmas": {
+    "دقیقهای": "دقیقه",
+    "ثانیهای": "ثانیه"
   },
   "guards": {
     "bare_year_min_digits": 4
