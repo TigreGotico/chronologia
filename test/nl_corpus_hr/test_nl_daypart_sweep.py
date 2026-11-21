@@ -18,7 +18,8 @@ from ._corpus import ANCHOR, AstroDate, start_end
 
 # bare + deictic dayparts: (phrase, start, end)
 _WINDOWS = [
-    ("ujutro", AstroDate(2017, 6, 27, 4, 0), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ("ujutro", AstroDate(2017, 6, 28, 4, 0), AstroDate(2017, 6, 28, 12, 0)),
     ("popodne", AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 18, 0)),
     ("navečer", AstroDate(2017, 6, 27, 18, 0), AstroDate(2017, 6, 27, 21, 0)),
     ("noću", AstroDate(2017, 6, 27, 21, 0), AstroDate(2017, 6, 28, 4, 0)),

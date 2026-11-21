@@ -38,7 +38,8 @@ _BANDS = [
     ('ayer por la tarde', AstroDate(2017, 6, 26, 12, 0), AstroDate(2017, 6, 26, 20, 0)),
     ('mañana por la tarde', AstroDate(2017, 6, 28, 12, 0), AstroDate(2017, 6, 28, 20, 0)),
     ('esta noche', AstroDate(2017, 6, 27, 20, 0), AstroDate(2017, 6, 28)),
-    ('de madrugada', AstroDate(2017, 6, 27), AstroDate(2017, 6, 27, 6, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('de madrugada', AstroDate(2017, 6, 28), AstroDate(2017, 6, 28, 6, 0)),
 ]
 
 

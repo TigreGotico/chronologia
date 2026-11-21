@@ -38,10 +38,12 @@ def test_written_together_day_deictic_still_binds(text, off):
 
 
 def test_bare_morgon_is_the_morning_band():
-    """A bare ``morgon`` is the noun "morning" and keeps its CLDR day-period band."""
+    """A bare ``morgon`` is the noun "morning" and keeps its CLDR day-period
+    band.  The band has ended at the 13:04 anchor, so it is tomorrow's
+    (ruling 28)."""
     s = span("morgon")
-    assert (s.start, s.end) == (AstroDate(2017, 6, 27, 5, 0),
-                                AstroDate(2017, 6, 27, 10, 0))
+    assert (s.start, s.end) == (AstroDate(2017, 6, 28, 5, 0),
+                                AstroDate(2017, 6, 28, 10, 0))
 
 
 def test_spaced_tomorrow_is_not_the_morning_band():

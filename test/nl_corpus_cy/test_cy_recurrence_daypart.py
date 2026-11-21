@@ -10,6 +10,8 @@ Welsh CLDR draws only THREE day-part bands -- a morning that opens at midnight
 and runs to noon, an afternoon to 18:00 and an evening to midnight -- and no
 night rule at all, so this locale ships no night surface and none is invented.
 """
+from datetime import timedelta
+
 import pytest
 
 from ._corpus import ANCHOR, ad, nomatch, recur, span
@@ -83,9 +85,11 @@ def test_the_three_cldr_bands(text, h0, h1):
 
 
 def test_the_mutated_morning_matches_the_radical():
-    # A bare day-part is not future-shifted, so it names the anchor day's band.
+    # The morning band has ended at the 13:04 anchor, so a bare "bore" names
+    # tomorrow's band (ruling 28).
+    tomorrow = _TODAY + timedelta(days=1)
     assert (span("bore").start, span("bore").end) == (
-        ad(_TODAY), ad(_TODAY.replace(hour=12)))
+        ad(tomorrow), ad(tomorrow.replace(hour=12)))
     assert span("fore") == span("bore")
 
 

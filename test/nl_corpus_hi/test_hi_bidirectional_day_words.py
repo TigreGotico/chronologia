@@ -37,12 +37,15 @@ def test_a_bidirectional_day_word_is_refused(text):
     "कल सुबह", "कल शाम", "परसों दोपहर", "कल रात",
 ])
 def test_a_bidirectional_day_word_never_anchors_a_daypart(text):
-    """The daypart still resolves on the anchor day; what must not happen is
-    the day word silently shifting it a day either way."""
+    """The daypart resolves as it does alone; what must not happen is the
+    day word silently shifting it a day either way.  Alone, a band that has
+    ended at the 13:04 anchor is tomorrow's (ruling 28): the morning is, the
+    afternoon, the evening and the night are not."""
+    day = 28 if text == "कल सुबह" else 27
     r = parse(text)
     assert r is not None
     assert (r[0].start.year, r[0].start.month,
-            r[0].start.day) == (ANCHOR.year, ANCHOR.month, ANCHOR.day)
+            r[0].start.day) == (ANCHOR.year, ANCHOR.month, day)
     assert text.split()[0] in r[1]
 
 

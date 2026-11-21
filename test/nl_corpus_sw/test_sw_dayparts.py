@@ -27,9 +27,15 @@ BANDS = [
 ]
 
 
+def _day(hi, days):
+    """The anchor's day, or the next one for a band that has ended at the
+    13:04 anchor (ruling 28)."""
+    return 13 if days == 0 and hi <= (13, 4) else 12
+
+
 @pytest.mark.parametrize("word,lo,hi,days", BANDS)
 def test_each_band_resolves_to_its_cldr_hours(word, lo, hi, days):
-    assert start_end(word) == band(2027, 5, 12, lo, hi, days)
+    assert start_end(word) == band(2027, 5, _day(hi, days), lo, hi, days)
 
 
 @pytest.mark.parametrize("word,lo,hi,days", BANDS)
@@ -92,7 +98,7 @@ def test_a_qualifier_on_a_band_narrows_nothing():
 
 @pytest.mark.parametrize("word,lo,hi,days", BANDS)
 def test_a_bare_band_survives_the_counted_hour_veto(word, lo, hi, days):
-    assert start_end(word) == band(2027, 5, 12, lo, hi, days)
+    assert start_end(word) == band(2027, 5, _day(hi, days), lo, hi, days)
 
 
 @pytest.mark.parametrize("word,lo,hi,days", BANDS)

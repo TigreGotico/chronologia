@@ -16,19 +16,20 @@ from chronologia import extract_timespan
 _A = datetime(2017, 6, 27, 13, 4)   # a Tuesday afternoon
 
 
-@pytest.mark.parametrize("surface,start_h,end_h", [
-    ("moarns", 6, 12),      # 's morgens / morning
-    ("middeis", 12, 18),    # 's middags / afternoon
-    ("jûns", 18, 24),       # 's avonds / evening
-    ("jûn", 18, 24),
-    ("nachts", 0, 6),       # 's nachts / night
-    ("nacht", 0, 6),
+# a band that has ended at the 13:04 anchor is tomorrow's (ruling 28)
+@pytest.mark.parametrize("surface,start_h,end_h,day", [
+    ("moarns", 6, 12, 28),      # 's morgens / morning
+    ("middeis", 12, 18, 27),    # 's middags / afternoon
+    ("jûns", 18, 24, 27),       # 's avonds / evening
+    ("jûn", 18, 24, 27),
+    ("nachts", 0, 6, 28),       # 's nachts / night
+    ("nacht", 0, 6, 28),
 ])
-def test_fy_daypart_bands(surface, start_h, end_h):
+def test_fy_daypart_bands(surface, start_h, end_h, day):
     r = extract_timespan(surface, "fy", _A)
     assert r is not None
     s, e = r[0].start_datetime, r[0].end_datetime
-    assert s.hour == start_h % 24 and s.date() == _A.date()
+    assert s.hour == start_h % 24 and s.date() == _A.date().replace(day=day)
     assert (e.hour == end_h % 24) or (end_h == 24 and e.hour == 0)
 
 

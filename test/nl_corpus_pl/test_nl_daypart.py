@@ -22,7 +22,8 @@ A = datetime(2017, 6, 27, 13, 4)
 _BANDS = [
     ('dziś rano', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
     ('wczoraj wieczorem', AstroDate(2017, 6, 26, 18, 0), AstroDate(2017, 6, 26, 21, 0)),
-    ('rano', AstroDate(2017, 6, 27, 6, 0), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('rano', AstroDate(2017, 6, 28, 6, 0), AstroDate(2017, 6, 28, 12, 0)),
 ]
 
 

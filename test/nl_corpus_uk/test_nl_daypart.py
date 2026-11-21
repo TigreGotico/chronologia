@@ -23,7 +23,8 @@ _BANDS = [
     ('сьогодні вранці', AstroDate(2017, 6, 27, 4, 0), AstroDate(2017, 6, 27, 12, 0)),
     ('вчора ввечері', AstroDate(2017, 6, 26, 18, 0), AstroDate(2017, 6, 27)),
     ('завтра вдень', AstroDate(2017, 6, 28, 12, 0), AstroDate(2017, 6, 28, 18, 0)),
-    ('вранці', AstroDate(2017, 6, 27, 4, 0), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('вранці', AstroDate(2017, 6, 28, 4, 0), AstroDate(2017, 6, 28, 12, 0)),
 ]
 
 

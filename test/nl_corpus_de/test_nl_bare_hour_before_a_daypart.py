@@ -36,7 +36,8 @@ BARE = ["fünf"]
 
 #: the daypart band itself, which the clock reading must not swallow.
 BANDS = [
-    ("nachts", "2017-06-27T00:00:00"),
+    # the night band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ("nachts", "2017-06-28T00:00:00"),
     ("heute nacht", "2017-06-27T00:00:00"),
 ]
 

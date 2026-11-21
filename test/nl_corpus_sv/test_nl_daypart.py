@@ -31,7 +31,8 @@ def _band(text, start, end):
 
 _BANDS = [
     ('denna morgon', AstroDate(2017, 6, 27, 5, 0), AstroDate(2017, 6, 27, 10, 0)),
-    ('tidigt på morgonen', AstroDate(2017, 6, 27, 5, 0), AstroDate(2017, 6, 27, 10, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('tidigt på morgonen', AstroDate(2017, 6, 28, 5, 0), AstroDate(2017, 6, 28, 10, 0)),
     ('imorgon morgon', AstroDate(2017, 6, 28, 5, 0), AstroDate(2017, 6, 28, 10, 0)),
     ('i förmiddag', AstroDate(2017, 6, 27, 10, 0), AstroDate(2017, 6, 27, 12, 0)),
     ('i eftermiddag', AstroDate(2017, 6, 27, 12, 0), AstroDate(2017, 6, 27, 18, 0)),

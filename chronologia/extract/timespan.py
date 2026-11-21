@@ -4204,6 +4204,34 @@ def reads_spoken_hours(fn):
 _DIGIT_CLOCK = re.compile(r"([1-9]|1[01]):[0-5]\d")
 
 
+def _bare_daypart_next(res, rep, anchor, resolver, spec, matches):
+    """A bare part of the day that has ended names tomorrow's band.
+
+    "à tarde" said at 10:00 is this afternoon and said at 21:00 is tomorrow
+    afternoon (ruling 28 of the disagreement rulings).  Only a reading that
+    is the part of the day alone moves.  A "this", "last" or "next" word and
+    a today word ("tonight") keep their own day, and so does a part of the
+    day that composes with a date or a clock.  Two parts of the day in one
+    utterance ("de manhã à noite") are a stretch of the anchor's day, and a
+    range end never reaches here: a range reads its endpoints on the
+    anchor's day.
+    """
+    if (rep is None or rep.construction != "daypart_ref"
+            or "REL_MARKER" in rep.slots
+            or rep.slots["DAYPART"].text in spec.daypart_today_words):
+        return res
+    own_word = rep.slots["DAYPART"].index
+    if any(m.construction == "daypart_ref" and "DAYPART" in m.slots
+           and m.slots["DAYPART"].index != own_word for m in matches):
+        return res
+    own = resolver.resolve(rep, anchor)
+    if (own is None or own.value != res.value
+            or own.value.end > AstroDate.from_datetime(anchor)):
+        return res
+    nxt = resolver.resolve(rep, anchor + timedelta(days=1))
+    return res if nxt is None else replace(res, value=nxt.value)
+
+
 def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     """A lone spoken hour takes the next of its two twelve-hour readings.
 
@@ -4378,6 +4406,8 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     if whole:
         res = _lone_spoken_hour(res, rep, anchor, engine.spec, tokens,
                                 [m for m, _ in resolved], text)
+        res = _bare_daypart_next(res, rep, anchor, engine.resolver,
+                                 engine.spec, [m for m, _ in resolved])
     consumed = set(res.consumed) | label_consumed
     # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
     # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
@@ -4528,6 +4558,9 @@ def extract_candidates(
         if win_res is not None:
             win_res = _lone_spoken_hour(win_res, rep, anchor, engine.spec, tokens,
                                         [m for m, _ in composed], text)
+            win_res = _bare_daypart_next(win_res, rep, anchor,
+                                         engine.resolver, engine.spec,
+                                         [m for m, _ in composed])
             consumed_all = set(win_res.consumed) | win_label
             lo, hi = min(consumed_all), max(consumed_all) + 1
             wide = replace(rep, span=(lo, hi))
@@ -4548,8 +4581,10 @@ def extract_candidates(
             res = engine.resolver.resolve(m, anchor, scale_mode)
         if res is None:
             return None
-        return _lone_spoken_hour(res, m, anchor, engine.spec, tokens, matches,
-                                 text)
+        res = _lone_spoken_hour(res, m, anchor, engine.spec, tokens, matches,
+                                text)
+        return _bare_daypart_next(res, m, anchor, engine.resolver, engine.spec,
+                                  matches)
 
     scored = []
     seen = set()

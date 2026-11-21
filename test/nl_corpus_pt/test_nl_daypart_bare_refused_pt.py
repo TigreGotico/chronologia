@@ -35,22 +35,24 @@ def test_bare_daypart_word_is_not_a_span(text):
     nomatch(text)
 
 
-@pytest.mark.parametrize("text,lo,hi", [
-    ("de manhã", 6, 12),
-    ("pela manhã", 6, 12),
-    ("a manhã", 6, 12),
-    ("esta manhã", 6, 12),
-    ("à tarde", 12, 19),
-    ("pela tarde", 12, 19),
-    ("pela noite", 19, 24),
-    ("esta noite", 19, 24),
-    ("de madrugada", 0, 6),
-    ("pela madrugada", 0, 6),
+# a band that has ended at the 13:04 anchor is tomorrow's, unless "esta"
+# names today (ruling 28)
+@pytest.mark.parametrize("text,lo,hi,day", [
+    ("de manhã", 6, 12, 28),
+    ("pela manhã", 6, 12, 28),
+    ("a manhã", 6, 12, 28),
+    ("esta manhã", 6, 12, 27),
+    ("à tarde", 12, 19, 27),
+    ("pela tarde", 12, 19, 27),
+    ("pela noite", 19, 24, 27),
+    ("esta noite", 19, 24, 27),
+    ("de madrugada", 0, 6, 28),
+    ("pela madrugada", 0, 6, 28),
 ])
-def test_the_framed_form_resolves(text, lo, hi):
+def test_the_framed_form_resolves(text, lo, hi, day):
     r = parse(text)
     assert r is not None, text
-    end = (AstroDate(2017, 6, 28, 0, 0, 0) if hi == 24
-           else AstroDate(2017, 6, 27, hi, 0, 0))
-    assert (r.span.start, r.span.end) == (AstroDate(2017, 6, 27, lo, 0, 0), end)
+    end = (AstroDate(2017, 6, day + 1, 0, 0, 0) if hi == 24
+           else AstroDate(2017, 6, day, hi, 0, 0))
+    assert (r.span.start, r.span.end) == (AstroDate(2017, 6, day, lo, 0, 0), end)
     assert r.remainder == "", f"{text!r} stranded {r.remainder!r}"

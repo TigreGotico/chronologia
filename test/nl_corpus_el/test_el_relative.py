@@ -148,6 +148,7 @@ def test_gibberish_sentence_binds_its_daypart():
     r = parse("τρώω μήλα κάθε πρωί")
     assert r is not None
     sp, remainder = r
-    assert sp.start == AstroDate(2017, 6, 27, 4, 0)
-    assert sp.end == AstroDate(2017, 6, 27, 12, 0)
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    assert sp.start == AstroDate(2017, 6, 28, 4, 0)
+    assert sp.end == AstroDate(2017, 6, 28, 12, 0)
     assert remainder == "τρώω μήλα κάθε"

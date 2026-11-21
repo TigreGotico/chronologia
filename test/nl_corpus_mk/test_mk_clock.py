@@ -155,15 +155,16 @@ def test_the_spoken_part_of_day_sets_the_half(text, day_, hh, mm):
     assert parse(text)[1] == ""
 
 
-@pytest.mark.parametrize("text,band", [
-    ("попладне", (12, 18)),
-    ("навечер", (18, 24)),
-    ("наутро", (4, 10)),
-    ("претпладне", (10, 12)),
+# a band that has ended at the 13:04 anchor is tomorrow's (ruling 28)
+@pytest.mark.parametrize("text,band,day_", [
+    ("попладне", (12, 18), TODAY),
+    ("навечер", (18, 24), TODAY),
+    ("наутро", (4, 10), TOMORROW),
+    ("претпладне", (10, 12), TOMORROW),
 ])
-def test_the_same_word_alone_is_still_the_whole_band(text, band):
+def test_the_same_word_alone_is_still_the_whole_band(text, band, day_):
     hour_from, hour_to = band
-    base = datetime(*TODAY)
+    base = datetime(*day_)
     assert start_end(text) == (
         ad(base.replace(hour=hour_from)),
         ad(base.replace(hour=hour_to) if hour_to < 24

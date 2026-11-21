@@ -23,7 +23,8 @@ _BANDS = [
     ('gaur goizean', AstroDate(2017, 6, 27), AstroDate(2017, 6, 27, 12, 0)),
     ('atzo gauean', AstroDate(2017, 6, 26, 21, 0), AstroDate(2017, 6, 27)),
     ('bihar arratsaldean', AstroDate(2017, 6, 28, 12, 0), AstroDate(2017, 6, 28, 19, 0)),
-    ('goizean', AstroDate(2017, 6, 27), AstroDate(2017, 6, 27, 12, 0)),
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    ('goizean', AstroDate(2017, 6, 28), AstroDate(2017, 6, 28, 12, 0)),
 ]
 
 

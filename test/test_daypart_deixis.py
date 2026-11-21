@@ -102,12 +102,14 @@ def test_last_night_is_the_night_that_just_ended():
 
 # -- adversarial ----------------------------------------------------------
 
-def test_bare_daypart_defaults_to_today():
-    # a bare "morning" with no day is the deictic default: today's band, the
-    # same as "this morning".  (Chosen over None: the current day is the only
-    # defensible referent absent other context.)
+def test_bare_daypart_is_its_next_band():
+    # a bare "morning" with no day is today's band while the band runs and
+    # tomorrow's once it has ended (ruling 28).  Said at noon, the morning
+    # has ended and the afternoon has not.
     _assert_band("morning",
-                 AstroDate(2024, 3, 6, 6, 0), AstroDate(2024, 3, 6, 12, 0))
+                 AstroDate(2024, 3, 7, 6, 0), AstroDate(2024, 3, 7, 12, 0))
+    _assert_band("afternoon",
+                 AstroDate(2024, 3, 6, 12, 0), AstroDate(2024, 3, 6, 18, 0))
 
 def test_bare_yesterday_without_daypart_is_still_whole_day():
     # no daypart present -> the whole-day parse is untouched, still exact

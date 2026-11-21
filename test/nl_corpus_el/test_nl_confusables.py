@@ -132,6 +132,7 @@ def test_early_morning_binds_the_cldr_band():
     r = parse('νωρίς το πρωί')
     assert r is not None
     sp, remainder = r
-    assert sp.start == AstroDate(2017, 6, 27, 4, 0)
-    assert sp.end == AstroDate(2017, 6, 27, 12, 0)
+    # the band has ended at 13:04, so it is tomorrow's (ruling 28)
+    assert sp.start == AstroDate(2017, 6, 28, 4, 0)
+    assert sp.end == AstroDate(2017, 6, 28, 12, 0)
     assert remainder == 'νωρίς'

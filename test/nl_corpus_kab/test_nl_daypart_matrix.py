@@ -9,7 +9,8 @@ and the ``ass-a`` ("today") prefix both mean "this <part> of today".
 Band boundaries fall back to chronologia's default day-period convention
 (morning 06-12, evening 18-21, night 21-06 crossing midnight); the native
 speaker did not supply Kabyle-specific clock boundaries. Gold is the anchor
-day (2017-06-27) since a bare daypart is not future-shifted within the day.
+day (2017-06-27).  A bare daypart whose band has ended at the 13:04 anchor is
+tomorrow's (ruling 28); the ``-a`` and ``ass-a`` forms name today's band.
 """
 from datetime import datetime, timedelta
 
@@ -46,6 +47,7 @@ for _p in BANDS:
 @pytest.mark.parametrize("text,part", _SURFACES)
 def test_daypart_band(text, part):
     sp = span(text)
-    s, e = _band(_TODAY, part)
+    ended = text == part and _band(_TODAY, part)[1] <= ANCHOR
+    s, e = _band(_TODAY + timedelta(days=1) if ended else _TODAY, part)
     assert sp.start_datetime == s
     assert sp.end_datetime == e
