@@ -217,6 +217,37 @@ def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
     return False
 
 
+def _without_dangling_count(with_length, remainder, got_span, lang, anchor,
+                            jurisdiction):
+    """The date reading of ``remainder`` with a dangling count taken out.
+
+    The length takes the second number of a range of counts ("durou entre
+    dois mil e três mil horas ontem"), so the first number is left in
+    ``remainder``, where it reads as a year.  The text with the length in it
+    leaves that number to the count of the length.  So when the number is the
+    only extra word the date reading of ``remainder`` takes, the date of the
+    text with the length is the date of the event.
+    """
+    from chronologia.extract import _timespan_engine, extract_timespan
+    from chronologia.extract.numlayer import mentions, reads
+
+    engine = _timespan_engine(lang)
+
+    def words(phrase: str) -> Counter:
+        return Counter(t.text for t in engine.tokenize(phrase))
+
+    whole = extract_timespan(with_length, lang, anchor=anchor,
+                             jurisdiction=jurisdiction)
+    by_whole = Counter() if whole is None else (
+        words(with_length) - words(whole.remainder))
+    extra = words(remainder) - words(got_span.remainder) - by_whole
+    said = " ".join(extra.elements())
+    if whole is None or not (any(word.isdigit() for word in extra)
+                             or (reads(lang) and mentions(said, lang))):
+        return got_span
+    return got_span._replace(span=whole.span)
+
+
 def extract_event(
         text: str,
         lang: str = "en",
@@ -310,6 +341,7 @@ def extract_event(
                     and not _is_counted_part_of_day(
                         remainder, lang, anchor, length_words):
                 got_dur = None
+    with_length = remainder
     if got_dur is not None:
         duration, remainder = got_dur
 
@@ -341,6 +373,9 @@ def extract_event(
                                         jurisdiction=jurisdiction)
         if got_span is None:
             return None
+        if duration is not None:
+            got_span = _without_dangling_count(
+                with_length, remainder, got_span, lang, anchor, jurisdiction)
         cands = extract_candidates(remainder, lang, anchor=anchor)
         if cands:
             conf = cands[0].confidence
