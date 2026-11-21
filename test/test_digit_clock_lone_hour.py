@@ -96,6 +96,37 @@ EVENING = [
      datetime(2017, 6, 27, 16, 30)),
 ]
 
+# text, language, anchor, expected instant: with "today", an evening word keeps
+# the pm half on the anchor's day, also once that time has passed (rulings 26
+# and 27), and "today" between the clock and the evening word does not hide it
+TODAY_EVENING = [
+    ("vandaag om 8:00 's avonds", "nl", datetime(2017, 6, 27, 5, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    ("vandaag om 8:00 's avonds", "nl", AFTER_NOON, datetime(2017, 6, 27, 20, 0)),
+    ("vandaag om 8:00 's avonds", "nl", datetime(2017, 6, 27, 21, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    ("vandaag om 8:00 's avonds", "nl", datetime(2017, 6, 27, 23, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    ("om 8:00 vandaag 's avonds", "nl", datetime(2017, 6, 27, 5, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    ("om 8:00 vandaag 's avonds", "nl", datetime(2017, 6, 27, 21, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    # a morning word keeps the written hour
+    ("om 8:00 vandaag 's ochtends", "nl", datetime(2017, 6, 27, 5, 0),
+     datetime(2017, 6, 27, 8, 0)),
+    # a pm word the locale lists decides the half too
+    ("at 8:00 today pm", "en", datetime(2017, 6, 27, 5, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    ("at 8:00 today pm", "en", AFTER_NOON, datetime(2017, 6, 27, 20, 0)),
+    ("at 8:00 today pm", "en", datetime(2017, 6, 27, 21, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    # Welsh "am" is the word "at", not a meridiem
+    ("am 8:00 heddiw yh", "cy", datetime(2017, 6, 27, 5, 0),
+     datetime(2017, 6, 27, 20, 0)),
+    ("am 8:00 heddiw yh", "cy", datetime(2017, 6, 27, 21, 0),
+     datetime(2017, 6, 27, 20, 0)),
+]
+
 # text, language, anchor, expected instant: "tarde" in another clause means
 # "late", not "evening", so it does not move the clock to the pm half
 OTHER_CLAUSE = [
@@ -129,6 +160,14 @@ def test_a_marked_digit_clock_reads_as_written(text, lang, anchor, expected):
 def test_an_evening_word_moves_a_digit_clock_to_the_pm_half(text, lang, anchor,
                                                             expected):
     assert extract_timespan(text, lang, anchor).span.start.datetime() == expected
+
+
+@pytest.mark.parametrize("text,lang,anchor,expected", TODAY_EVENING)
+def test_today_keeps_the_half_an_evening_word_names(text, lang, anchor,
+                                                    expected):
+    assert extract_timespan(text, lang, anchor).span.start.datetime() == expected
+    assert extract_timespans(text, lang, anchor)[0].span.start.datetime() \
+        == expected
 
 
 @pytest.mark.parametrize("text,lang,anchor,expected", OTHER_CLAUSE)

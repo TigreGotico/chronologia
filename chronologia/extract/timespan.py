@@ -4204,6 +4204,34 @@ def reads_spoken_hours(fn):
 _DIGIT_CLOCK = re.compile(r"([1-9]|1[01]):[0-5]\d")
 
 
+def _clock_glue(spec):
+    """The words that may stand between a clock and its morning or evening
+    word: the clock's own lead, clock word, "of" and article words."""
+    return set().union(*(spec.connectors.get(name, ()) for name in (
+        "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
+        "s")))
+
+
+def _half_words_beside(span, tokens, spec, covered, skip=()):
+    """The morning or evening words beside ``span``, past its glue words.
+
+    Only the first word past the clock's glue words on each side can decide
+    the half: "tarde" in another clause ("no quiero llegar tarde") means
+    late.  A word a match covers (index in ``covered``) was read as something
+    else (es "mañana").  Token indices in ``skip`` stand between as glue does.
+    """
+    glue = _clock_glue(spec)
+    found = []
+    for step in (-1, 1):
+        i = span[0] - 1 if step < 0 else span[1]
+        while 0 <= i < len(tokens) and (tokens[i].text in glue or i in skip):
+            i += step
+        if 0 <= i < len(tokens) and tokens[i].index not in covered \
+                and tokens[i].text in spec.meridiems:
+            found.append(i)
+    return found
+
+
 def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     """A lone spoken hour takes the next of its two twelve-hour readings.
 
@@ -4224,7 +4252,8 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
     unjoined: a pm word pins the pm reading, an am or night word keeps the
-    written hour.
+    written hour.  The word "today" may stand between them, and a pm word
+    with "today" keeps its half when that time has passed.
     """
     if (getattr(_reading, "spoken", False)
             or anchor is None or rep is None
@@ -4258,26 +4287,19 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
           or unicodedata.normalize(
               "NFKC", text[clock.char_start:clock.char_end]).lower() != clock.raw):
         return res
+    glue = _clock_glue(spec)
     if clock is not None and any(t.text.replace(".", "") in ("am", "pm")
-                                 for t in tokens):
-        # a locale with no am/pm vocabulary leaves the word over
+                                 and t.text not in spec.meridiems
+                                 and t.text not in glue for t in tokens):
+        # a locale with no am/pm vocabulary leaves the word over; Welsh "am"
+        # is the word "at"
         return res
-    # Only the first word past the clock's glue words on each side can decide
-    # the half: "tarde" in another clause ("no quiero llegar tarde") means
-    # late.  A word a match covers was read as something else (es "mañana").
     covered = {i for m in matches for i in range(*m.span)}
-    glue = set().union(*(spec.connectors.get(name, ()) for name in (
-        "at", "clock_lead", "oclock", "hours", "clock_of", "of", "article",
-        "s")))
-    n = len(tokens)
-    meridiem_words = []
-    for step in (-1, 1):
-        i = clock_match.span[0] - 1 if step < 0 else clock_match.span[1]
-        while 0 <= i < n and tokens[i].text in glue:
-            i += step
-        if 0 <= i < n and tokens[i].index not in covered \
-                and tokens[i].text in spec.meridiems:
-            meridiem_words.append(tokens[i].text)
+    # the word "today" of the reading stands between the clock and the part
+    # of the day as glue does: nl "om 8:00 vandaag 's avonds"
+    today_words = set(range(*rep.span)) if today else set()
+    meridiem_words = [tokens[i].text for i in _half_words_beside(
+        clock_match.span, tokens, spec, covered, today_words)]
     if meridiem_words and (
             not all(spec.meridiems[w] == 12 for w in meridiem_words)
             or any(w in spec.night_meridiems for w in meridiem_words)):
@@ -4300,9 +4322,11 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     if not today:
         options.append(options[0] + timedelta(days=1))
     later = [t for t in options if t >= anchor]
-    if not later:
+    if not later and not pm:
         return res
-    moment = AstroDate.from_datetime(min(later))
+    # a pm word keeps its half when "today" has passed it: "vandaag om 8:00
+    # 's avonds" said at 21:00 is 20:00, as the spoken "om 8 uur 's avonds"
+    moment = AstroDate.from_datetime(min(later) if later else options[-1])
     return replace(res, value=DateSpan(moment, moment + timedelta(minutes=1),
                                        res.value.basis))
 
