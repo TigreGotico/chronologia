@@ -3,8 +3,8 @@
 
 "quarto" (the qu- spelling, 4th) is spelled like the clock/duration fraction
 word "quarto" ("un quarto de hora" = 15 min, see test_nl_duration.py) and is
-NOT in numbers_an's ordinal vocabulary (whose ordinal-4 is "cuatreno", whose
-fraction-4 is "cuarto"), so it once fell through to the whole-year reading.
+NOT in the numtag Aragonese ordinal table (whose ordinal-4 is "cuatreno",
+whose fraction-4 is "cuarto"), so the corpus declares it as an ordinal itself.
 
 Now FIXED: an explicit homograph entry licenses "quarto" -> 4 in the ordinal
 frames only -- directly before the quarter noun "trimestre", or after a

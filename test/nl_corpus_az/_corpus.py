@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared helpers for the az natural-language corpus.
 
-The contract: extract_timespan(text, 'az', anchor). Anchor is a Tuesday (2017-06-27 13:04). Azerbaijani is agglutinative and DMY; əvvəl/qabaq are the past (ago) markers, sonra the future one; spelled numbers fold via ovos-number-parser (numbers_az).
+The contract: extract_timespan(text, 'az', anchor). Anchor is a Tuesday (2017-06-27 13:04). Azerbaijani is agglutinative and DMY; əvvəl/qabaq are the past (ago) markers, sonra the future one; spelled numbers read through numtag.
 """
 from datetime import datetime, timedelta  # noqa: F401
 

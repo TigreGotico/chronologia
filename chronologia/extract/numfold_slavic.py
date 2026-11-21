@@ -77,7 +77,7 @@ def _compose(*passes: Callable) -> Callable:
 
 
 # -- Serbian: dual-script cardinal/ordinal fold -------------------------------
-# Neither ovos_number_parser nor numtag reads Serbian.  Below 100, Serbian cardinals form exactly like their Croatian cognates
+# numtag has no Serbian lexicon.  Below 100, Serbian cardinals form exactly like their Croatian cognates
 # ("jedan, dva, tri ... dvadeset, trideset ..."), Wiktionary Appendix:
 # Serbo-Croatian/Numbers (https://en.wiktionary.org/wiki/Appendix:Serbo-Croatian/Numbers),
 # so this closed Latin-script table stands in for the model.  Every entry is

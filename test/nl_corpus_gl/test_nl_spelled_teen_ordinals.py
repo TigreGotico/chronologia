@@ -11,13 +11,12 @@ bare year_ref match on "2026" instead of resolving to October.
 
 Galician's own 11th-19th ordinals ("undécimo", "duodécimo",
 "decimoterceiro"..."decimonoveno") are each listed as a single complete
-surface in ``NumberVocabulary.ORDINAL_TENS`` and do NOT collide with the
-FRACTION table (Galician spells those fractions "onceavo"/"doceavo"/
+surface in the numtag ordinal table and do NOT collide with the
+fraction table (Galician spells those fractions "onceavo"/"doceavo"/
 "treceavo"/... instead), so they were already correctly folding before this
 fix and are locked down here only as regression controls.
 
-Source: ``ovos_number_parser`` ``numbers_gl.NumberVocabulary`` (ORDINAL_TENS
-and FRACTION tables).
+Source: the numtag Galician lexicon (ordinal and fraction tables).
 
 Golds are computed by independent calendar reasoning, never read back from
 the parser.

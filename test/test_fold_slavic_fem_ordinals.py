@@ -56,5 +56,5 @@ def test_feminine_ordinal_folds_to_integer(lang, word, value):
     tok = _fold(lang, word)
     assert tok.is_number, f"{lang}:{word!r} did not fold to a number"
     assert tok.value == value, f"{lang}:{word!r} folded to {tok.value}, want {value}"
-    # it must be an INTEGER selector, never the fraction ovos-number-parser reads
+    # it must be an INTEGER selector, never a fraction
     assert isinstance(tok.value, int) and tok.value == int(tok.value)

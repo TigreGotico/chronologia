@@ -15,9 +15,8 @@ previously landed on the WRONG month (February, reading only the stranded
 "terceiro" -- misread as 3rd rather than composing to 13th) rather than
 refusing outright, a silent-WRONG-value defect, not merely a non-match.
 
-Source: standard Portuguese ordinal-numeral vocabulary (``ovos_number_parser``
-``numbers_pt.NumberVocabulary.ORDINAL_TENS``/``FRACTION``, both listing
-"décimo" for value 10).  Portuguese ordinals 11-19 are conventionally
+Source: standard Portuguese ordinal-numeral vocabulary (the numtag Portuguese lexicon, whose
+ordinal and fraction tables both list "décimo" for value 10).  Portuguese ordinals 11-19 are conventionally
 written as two words, never fused ("décimo terceiro", not "decimoterceiro").
 
 Golds are computed by independent calendar reasoning, never read back from

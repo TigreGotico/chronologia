@@ -14,9 +14,8 @@ never reached ``scoped_ordinal`` at all: "el tretzè mes de 2026" degraded to
 a bare year_ref match on "2026" instead of refusing (no 13th month exists),
 same defect class as R81/PR #640.
 
-Source: standard Catalan ordinal-numeral vocabulary (``ovos_number_parser``
-``numbers_ca.NumberVocabulary.ORDINAL_TENS``/``FRACTION``, both listing
-identical surfaces for 11-19 -- "onzè".."dinovè").
+Source: standard Catalan ordinal-numeral vocabulary (the numtag Catalan lexicon, whose
+ordinal and fraction tables list identical surfaces for 11-19 -- "onzè".."dinovè").
 
 Golds are computed by independent calendar reasoning, never read back from
 the parser.

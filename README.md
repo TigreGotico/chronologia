@@ -51,9 +51,8 @@ pip install chronologia
 ```
 
 Python 3.11+. The calendrical core is pure standard library; the
-natural-language layer adds three small helpers — **numtag** (reads the
-numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian), **ovos-number-parser** (spelled numbers →
-digits in the other languages) and **ovos-spec-tools** (loads each language's
+natural-language layer adds two small helpers — **numtag** (reads the
+numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian) and **ovos-spec-tools** (loads each language's
 vocabulary files).
 
 **Status.** chronologia is in **alpha**: the public API surface named in
@@ -321,11 +320,6 @@ around them:
   assistant needs: *saying* a date back out loud, session handling, and the
   legacy per-language helpers. If you need to speak a date rather than read
   one, start there.
-- **[ovos-number-parser](https://github.com/OpenVoiceOS/ovos-number-parser)** —
-  the same idea for numbers: spelled-out numbers, ordinals and fractions to
-  digits and back, across many languages. chronologia uses it to read spelled
-  numbers inside a date phrase in every language that numtag does not read
-  yet.
 - **[numtag](https://github.com/TigreGotico/numtag)** — finds every number in
   a text and returns typed mentions with their spans and exact values.
   chronologia reads the numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian through it.

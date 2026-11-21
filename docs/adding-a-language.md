@@ -539,14 +539,14 @@ vocabulary.
 **4. `hook`** — this is the only line that names a bit of code, and most
 languages that need it are already covered. The hook is the **number-folding
 function**: it turns spelled-out numbers ("three", "twenty-five") into digits
-before matching. If your language is in the supported list (next section), you
-point `hook` at the ready-made function for it, exactly like Malay does:
+before matching. If numtag has a lexicon for your language (next section), you
+point `hook` at the ready-made function for it, exactly like Danish does:
 
 ```text
-"hook": "chronologia.extract.numfold:fold_ms"
+"hook": "chronologia.extract.numlayer_da:fold_da"
 ```
 
-If your language has no number backend yet, leave `hook` out entirely —
+If numtag has no lexicon for your language, leave `hook` out entirely —
 chronologia will still read digits perfectly, just not spelled-out number
 words. Nothing else in `lang.json` depends on the hook.
 
@@ -569,26 +569,22 @@ chronologia reads **digits** (`3`, `2027`, `15:30`) in every language with no
 setup at all. The only thing that needs help is **spelled-out** numbers —
 "three days ago" instead of "3 days ago".
 
-Turning "three" into `3` is a separate, specialised job done by a companion
-library called **ovos-number-parser**. chronologia leans on it so it doesn't
-have to re-learn every language's number words. A language is covered if
-ovos-number-parser ships a `extract_number_<your code>` function for it.
+Turning "three" into `3` is a separate, specialised job done by
+[numtag](https://github.com/TigreGotico/numtag). numtag keeps one lexicon file
+per language, with the source of every rule inside the file. chronologia reads
+every spelled number through it, so it does not re-learn each language's
+number words. A language is covered if numtag ships a lexicon for it.
 
-**Languages with a number backend today** (spelled-out numbers work):
+**If numtag has a lexicon for your language:** set `hook` in `lang.json` to the
+matching `numlayer_<code>:fold_<code>` function (see the existing languages for
+the exact name; most reuse a shared folder).
 
-> an, ar, ast, az, bg, ca, cs, da, de, el, en, es, et, eu, fa, fi, fr, fy, gl,
-> he, hr, hu, id, it, kab, ms, mwl, nb, nl, nn, oc, pl, pt, ro, ru, sk, sl, sv,
-> tr, uk
-
-**If your language is on that list:** set `hook` in `lang.json` to the matching
-`fold_<code>` function (see the existing languages for the exact name — most
-reuse a shared folder).
-
-**If your language is *not* on that list:** that is completely fine. Leave
+**If numtag has no lexicon for your language:** that is completely fine. Leave
 `hook` out, ship your language with digit reading only, and it still passes all
-its tests. Adding spelled-out number support is a separate contribution to
-ovos-number-parser — a good follow-up, not a blocker. If you'd like to add it,
-ask the maintainers where to start.
+its tests. Adding spelled-out number support means adding a numtag lexicon, as
+numtag's
+[adding-a-language guide](https://github.com/TigreGotico/numtag/blob/dev/docs/adding-a-language.md)
+describes. That is a good follow-up, not a blocker.
 
 ---
 
