@@ -22,7 +22,8 @@ from dataclasses import dataclass, field, replace
 from fractions import Fraction
 from functools import lru_cache
 from pathlib import Path
-from typing import Collection, Dict, Mapping, Optional, Tuple, Union
+from typing import (Collection, Dict, FrozenSet, Mapping, Optional, Tuple,
+                    Union)
 
 from numtag import Form, Kind, NumberMention, Scale, tag_numbers
 from ovos_spec_tools import expand, read_resource_file
@@ -75,6 +76,9 @@ _CLAUSE_BREAK = re.compile(r"[.,;:!?]")
 #: The place of a whole mention in :attr:`Token.before` and
 #: :attr:`Token.after`.
 NUMBER = "\x00"
+#: The place of a currency symbol in the words after a mention, which the
+#: tokenizer drops.
+SYMBOL = "\x01"
 
 
 def _same_clause(left: Token, right: Token, text: str) -> bool:
@@ -82,6 +86,24 @@ def _same_clause(left: Token, right: Token, text: str) -> bool:
     return (left.char_end is not None and right.char_start is not None
             and not _CLAUSE_BREAK.search(text, left.char_end,
                                          right.char_start))
+
+
+def words_after(tokens: Tuple[Token, ...], end: int) -> Tuple[str, ...]:
+    """The words after the mention that ends before ``tokens[end]``, in its
+    clause: a currency symbol (:data:`SYMBOL`) right after the mention, then
+    up to two words, each with its own symbol.  A word is its text, but three
+    capitals keep their case, for an ISO 4217 code ("USD")."""
+    out = []
+    if end > 0 and tokens[end - 1].trailing_currency:
+        out.append(SYMBOL)
+    for tok in tokens[end:end + 2]:
+        if tok.break_before:
+            break
+        out.append(tok.text.upper() if tok.upper and len(tok.text) == 3
+                   else tok.text)
+        if tok.trailing_currency:
+            out.append(SYMBOL)
+    return tuple(out[:3])
 
 
 def _words_before(tokens: Tuple[Token, ...], i: int, text: str
@@ -149,11 +171,9 @@ def attach(tokens: Tuple[Token, ...], text: str,
         end, mention = second, out[second].mention
         while end + 1 < len(out) and out[end + 1].mention is mention:
             end += 1
-        nxt = (tokens[end + 1].text,) if (
-            end + 1 < len(tokens)
-            and _same_clause(tokens[end], tokens[end + 1], text)) else ()
         out[first] = replace(out[first],
-                             after=(tokens[second - 1].text, NUMBER) + nxt)
+                             after=(tokens[second - 1].text, NUMBER)
+                             + words_after(tokens, end + 1))
     return tuple(out)
 
 
@@ -186,6 +206,13 @@ def scale_factor(word: str, mention: NumberMention,
     return factors[None].get(word)
 
 
+def locale_words(lang: str, name: str) -> FrozenSet[str]:
+    """The surfaces of the file ``name`` of the locale ``lang``, as written."""
+    return frozenset(
+        s for template in read_resource_file(_LOCALE_DIR / lang / name)
+        for s in expand(template, {}))
+
+
 def mention_number(mention: NumberMention,
                    per: int = 1) -> Union[int, float]:
     """The mention value as the number a token carries, counted in units of
@@ -204,7 +231,8 @@ def number_token(mention: NumberMention, first: Token, last: Token,
                  value=num, char_start=first.char_start,
                  char_end=last.char_end,
                  ordinal=mention.kind is Kind.ORDINAL, mention=mention,
-                 before=first.before, after=first.after)
+                 before=first.before, after=first.after,
+                 trailing_currency=last.trailing_currency)
 
 
 def covers(run: Tuple[Token, ...], mention: NumberMention) -> bool:
@@ -312,6 +340,10 @@ class CountWords:
     units: Collection[str]
     #: The currency names.  A count before one keeps its words.
     currencies: Collection[str] = frozenset()
+    #: The ISO 4217 codes of the currencies, in capitals.
+    codes: Collection[str] = frozenset()
+    #: The words that qualify a currency name: "US", "more".
+    qualifiers: Collection[str] = frozenset()
     #: For a range cue ("from"), the words that open its second endpoint
     #: ("to"): a mention after one is a year too.
     ranges: Mapping[str, Collection[str]] = field(default_factory=dict)
@@ -319,6 +351,23 @@ class CountWords:
     def measures(self, word: str) -> bool:
         """Whether ``word`` is a unit or a currency."""
         return word in self.units or word in self.currencies
+
+    def measured(self, words: Tuple[str, ...]) -> bool:
+        """Whether the words after a mention (:func:`words_after`) measure it.
+
+        A unit, a currency name, a currency symbol or an ISO 4217 code
+        measures it, and so does a currency after a word that qualifies it:
+        "US dollars", "three thousand more dollars".
+        """
+        if not words:
+            return False
+        first = words[0]
+        if (first == SYMBOL or self.measures(first.lower())
+                or first in self.codes):
+            return True
+        return (first in self.qualifiers and len(words) > 1
+                and (words[1] == SYMBOL or words[1].lower() in self.currencies
+                     or words[1] in self.codes))
 
 
 def year_cue(before: Tuple[str, ...], words: CountWords) -> Optional[str]:
@@ -371,8 +420,7 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     if not any(w in words.scales for w in said):
         return False
     nxt = tokens[end] if end < len(tokens) else None
-    if (nxt is not None and not nxt.break_before
-            and words.measures(nxt.text)):
+    if words.measured(words_after(tokens, end)):
         return True
     # a range endpoint is folded on its own, so the words before a mention
     # come from the whole utterance; a part of a mention read again takes
@@ -388,9 +436,9 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
     # a unit after the second number of a range measures the first one too:
     # "between two thousand and three thousand dollars"
     after = tokens[start].after or ()
-    if (cue is not None and len(after) == 3
+    if (cue is not None and len(after) >= 3
             and after[0] in words.ranges.get(cue, ())
-            and words.measures(after[2])):
+            and words.measured(after[2:])):
         return True
     if cue is not None or any(w in words.months for w in before[-2:]):
         return False
@@ -398,7 +446,7 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
         # a range endpoint folded alone has a connector after it in the
         # utterance, and a word after the range: "vieram entre dois mil e
         # três mil turistas ontem"
-        return len(said) == 1 or len(after) == 3
+        return len(said) == 1 or len(after) >= 3
     return nxt.is_number or nxt.mention is not None or nxt.text.isalpha()
 
 
@@ -414,7 +462,7 @@ def counts_things(tokens: Tuple[Token, ...], end: int,
     """
     nxt = tokens[end] if end < len(tokens) else None
     after = tokens[_mention_start(tokens, end)].after or ()
-    if len(after) == 3 and after[2] in words.units:
+    if len(after) >= 3 and after[2] in words.units:
         return False
     return (is_count(tokens, end, words)
             and (nxt is None or not (nxt.is_number or nxt.mention is not None
