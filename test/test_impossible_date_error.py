@@ -58,6 +58,10 @@ IMPOSSIBLE = [
     ("the sixtieth monday of the year", "en", "a year has no 60th Monday",
      (SPAN, CANDIDATES, EVENT)),
     # a recurring date the calendar never has
+    ("every 24th weekday of the month", "en", "a month has no 24th business day",
+     (EVENT, RECURRENCE)),
+    ("jeden 24. Werktag des Monats", "de", "a month has no 24th business day",
+     (RECURRENCE,)),
     ("every 31st of April", "en", "April has no 31st",
      (SPAN, CANDIDATES, EVENT, RECURRENCE)),
 ]
@@ -123,6 +127,7 @@ VALID_OR_NOT_A_DATE = [
     ("2026-W53", "en"),
     ("the 366th day of the year 2020", "en"),
     ("the 366th day of the year", "en"),
+    ("every 23rd weekday of the month", "en"),
     ("the fifth monday of may", "en"),
     ("el quinto lunes de mayo", "es"),
     ("o quinto domingo de outubro", "pt"),
@@ -194,3 +199,12 @@ def test_a_number_beside_a_month_word_is_no_impossible_date(text, lang):
 def test_default_mode_answers_a_month_that_does_not_exist_without_error(extract, text):
     call(extract, text, "en")
     assert call(SPAN, text, "en") is None
+
+
+@pytest.mark.parametrize("text", ["15/13", "31/13", "dia 15/13"])
+@pytest.mark.parametrize("extract", [SPAN, CANDIDATES, EVENT, RECURRENCE],
+                         ids=lambda e: e.__name__)
+def test_default_mode_answers_a_day_over_a_month_that_does_not_exist_without_error(
+        extract, text):
+    call(extract, text, "pt")
+    assert call(SPAN, text, "pt") is None
