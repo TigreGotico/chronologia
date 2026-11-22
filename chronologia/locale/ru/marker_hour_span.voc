@@ -1,0 +1,11 @@
+# Russian "в N-ом часу": the locative of "час" after an ordinal names the
+# N-th hour of the clock face, the span from N-1 o'clock to N o'clock.  "в
+# восьмом часу" is 7:00 to 8:00, the hour that "в половине восьмого" (7:30)
+# falls in.  The HOURSPAN order of clock_time reads it.
+# Sources: Ефремова, Современный толковый словарь, s.v. "восьмой", sense III,
+# "Приближающийся к восьми (о единицах исчисления времени)"
+# (https://gufo.me/dict/efremova/восьмой); ru.wiktionary s.v. "шестой",
+# "шестой час — интервал времени между пятью и шестью часами дня или ночи".
+# Usage: Dostoevsky, "Преступление и наказание" I.5, "— В седьмом часу,
+# завтра".
+часу

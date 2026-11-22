@@ -422,6 +422,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         return token.text in spec.archon_names
     if name == "PRIDIE":
         return token.text in spec.connectors.get("pridie", frozenset())
+    if name == "HOURSPAN":
+        return token.text in spec.connectors.get("hour_span", frozenset())
     # -- deep-time / named-period slots ------------------------------------
     if name == "PERIOD":
         return token.text in spec.periods
