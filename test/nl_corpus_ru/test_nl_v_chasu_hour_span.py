@@ -63,6 +63,22 @@ def test_bare_hour_takes_the_next_twelve_hour_reading(text, anchor, gold):
     assert r.remainder == ""
 
 
+def test_anchor_inside_the_hour_picks_the_reading_by_the_hour_start():
+    inside = datetime(2026, 11, 22, 7, 30)
+    r = parse("в восьмом часу", inside)
+    assert (r.span.start, r.span.end) == _hour(22, 19)
+
+
+@pytest.mark.parametrize("text,gold", [
+    ("вечером в восьмом часу", _hour(22, 19)),
+    ("утром в восьмом часу", _hour(22, 7)),
+])
+def test_day_period_word_before_the_phrase_keeps_the_hour_width(text, gold):
+    r = parse(text, EARLY)
+    assert (r.span.start, r.span.end) == gold
+    assert r.remainder == ""
+
+
 def test_inside_a_sentence():
     r = parse("встретимся в восьмом часу вечера", EARLY)
     assert (r.span.start, r.span.end) == _hour(22, 19)

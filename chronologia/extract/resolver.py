@@ -579,8 +579,8 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
         d = daypart_res.value.start
         new_start = new_start.replace(year=d.year, month=d.month, day=d.day)
     consumed = tuple(sorted(set(clock_res.consumed) | set(daypart_res.consumed)))
-    return Resolution(DateSpan(new_start, new_start + timedelta(minutes=1)),
-                      consumed)
+    width = clock_res.value.end - clock_res.value.start
+    return Resolution(DateSpan(new_start, new_start + width), consumed)
 
 
 def _astro_add_years(start: AstroDate, years: int) -> AstroDate:
