@@ -321,6 +321,11 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             start -= 1
         scope = _month_scope(tokens, hi, spec, gap, anchor)
         if scope is not None:
+            if mode == "nth" and tokens[j].is_number \
+                    and not tokens[j].ordinal:
+                # "5 business days of the month" counts days; only an ordinal
+                # ("the 5th business day of the month") names one.
+                continue
             first, end, scope_ids = scope
             if mode == "last":
                 # last business day of the month == first business day strictly
