@@ -139,5 +139,7 @@ that has passed.
 
 **36. A night word beside a twelve-hour clock picks the half that falls in the night.** de "um elf Uhr nachts", nl "om 11 's nachts" and "om 11:00 's nachts" are 23:00. "um drei Uhr nachts" is 03:00, and "um zwölf Uhr nachts" is 00:00. The night runs on both sides of midnight ("nachts": "in der Nacht", Duden), so the night word does not mark the am half. It marks the reading inside the locale's night band (ruling 10). When neither half of the hour falls in that band, the clock keeps the am half. A 24-hour clock with a night word follows ruling 20. *Not yet implemented. Tracked in [#1079](https://github.com/TigreGotico/chronologia/issues/1079).*
 
+**37. ru "в N-ом часу" is the hour from N-1 to N.** "в восьмом часу" is 07:00 to 08:00, the eighth hour of the clock face, counted as "в половине восьмого" (ruling 9) counts it. A day period fixes the half of the day ("в восьмом часу вечера" is 19:00 to 20:00), and with none the hour takes the next twelve-hour reading after the anchor (ruling 17). The hours run first to twelfth: "в двенадцатом часу ночи" is 23:00 to 24:00. The word "часу" is part of the phrase. Sources attest the construction without defining its count: Русская грамматика (1980) § 2075 and Chekhov, "На страстной неделе" (1887).
+
 ---
 [← EDTF](edtf.md) · [Home](index.md) · [Calendars →](calendars.md)

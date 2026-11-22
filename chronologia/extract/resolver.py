@@ -429,8 +429,9 @@ DATE_CONSTRUCTIONS = frozenset({
 
 
 def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolution:
-    """Intersect a date span with a clock span: the minute-wide clock time
-    placed on the day the date construction selected.
+    """Intersect a date span with a clock span: the clock time (minute-wide,
+    or an hour wide for an ordinal hour) placed on the day the date
+    construction selected.
 
     The date span's ``start`` supplies the calendar day (its left edge is
     that day's midnight); the clock span's ``start`` supplies the
@@ -443,7 +444,8 @@ def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolutio
                       c.hour, c.minute, c.second, c.microsecond,
                       tzinfo=c.tzinfo)
     consumed = tuple(sorted(set(date_res.consumed) | set(clock_res.consumed)))
-    return Resolution(DateSpan(start, start + timedelta(minutes=1)), consumed)
+    width = clock_res.value.end - clock_res.value.start
+    return Resolution(DateSpan(start, start + width), consumed)
 
 
 def _daypart_band(day: AstroDate, name: str,
@@ -2999,6 +3001,15 @@ class Resolver:
             return None
         base = _midnight(anchor)
         dt = base.replace(hour=hour, minute=minute, second=second)
+        width = timedelta(minutes=1)
+        if "HOURSPAN" in match.slots:
+            # ru "в восьмом часу": the N-th hour of the clock face runs from
+            # N-1 o'clock to N o'clock.
+            ordinal = match.slots["HOUR"]
+            if not ordinal.ordinal or not 1 <= ordinal.value <= 12:
+                return None
+            dt -= timedelta(hours=1)
+            width = timedelta(hours=1)
         prefer_future = self.spec.construction_flags.get(
             match.construction, {}).get("prefer_future", False)
         if prefer_future and dt < anchor:
@@ -3007,7 +3018,7 @@ class Resolver:
         tz = self._zone_tzinfo(match.slots.get("ZONE"))
         if tz is not None:
             start = start.replace(tzinfo=tz)
-        return Resolution(DateSpan(start, start + timedelta(minutes=1)),
+        return Resolution(DateSpan(start, start + width),
                           self._consumed(match))
 
     def _zone_tzinfo(self, zone_tok):
