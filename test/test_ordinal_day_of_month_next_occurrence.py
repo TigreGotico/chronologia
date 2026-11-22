@@ -137,3 +137,85 @@ def test_explicit_year_is_kept(text, lang, gold):
 def test_part_of_a_month_keeps_the_anchor_year(text):
     d = _date(text, "en", ANCHORS["a2026"])
     assert (d.year, d.month) == (2026, 3)
+
+
+# -- a range end with no year is its first occurrence on or after the start --
+
+RANGE_ANCHORS = {"r2027": datetime(2027, 3, 3, 15, 30),
+                 "r2026": datetime(2026, 11, 22, 9, 0)}
+# the last day of February keeps the anchor's year, so it is 28 February of
+# 2027 and of 2026; 10 March on or after it is 10 March of the same year
+RANGE_START = {"r2027": date(2027, 2, 28), "r2026": date(2026, 2, 28)}
+
+RANGES_TO_THE_TENTH = [
+    ("en", "from the last day of february to 10 march"),
+    ("en", "from the last day of february to the 10th day of march"),
+    ("en", "from early march to 10 march"),
+    ("en", "from early march to the 10th day of march"),
+    ("es", "del último día de febrero al 10 de marzo"),
+    ("es", "del último día de febrero al décimo día de marzo"),
+    ("pt", "do último dia de fevereiro a 10 de março"),
+    ("pt", "do último dia de fevereiro ao décimo dia de março"),
+    ("de", "vom letzten Tag im Februar bis zum 10. März"),
+    ("de", "vom letzten Tag im Februar bis zum zehnten Tag im März"),
+    ("fr", "du dernier jour de février au 10 mars"),
+    ("fr", "du dernier jour de février au dixième jour de mars"),
+]
+
+
+@pytest.mark.parametrize("key", RANGE_ANCHORS)
+@pytest.mark.parametrize("lang,text", RANGES_TO_THE_TENTH)
+def test_range_end_is_first_occurrence_after_the_start(lang, text, key):
+    r = extract_timespan(text, lang, RANGE_ANCHORS[key])
+    assert r is not None, f"{text!r} ({lang}) did not parse"
+    year = RANGE_START[key].year
+    end = r.span.end
+    assert (end.year, end.month, end.day) == (year, 3, 11)
+    start = r.span.start
+    first = (date(year, 3, 1) if "early" in text else RANGE_START[key])
+    assert (start.year, start.month, start.day) == (first.year, first.month,
+                                                    first.day)
+
+
+@pytest.mark.parametrize("key", RANGE_ANCHORS)
+@pytest.mark.parametrize("text", [
+    "from the last day of february to 1 march",
+    "from the last day of february to the first day of march",
+])
+def test_range_to_the_first_of_march_ends_on_the_second(text, key):
+    r = extract_timespan(text, "en", RANGE_ANCHORS[key])
+    year = RANGE_START[key].year
+    assert (r.span.start.year, r.span.start.month, r.span.start.day) \
+        == (year, 2, 28)
+    assert (r.span.end.year, r.span.end.month, r.span.end.day) \
+        == (year, 3, 2)
+
+
+def test_range_of_two_dates_keeps_its_cycle():
+    # both ends roll to the next occurrence together: 10 and 20 March 2027
+    r = extract_timespan("from 10 march to 20 march", "en", ANCHORS["a2026"])
+    assert (r.span.start.year, r.span.start.month, r.span.start.day) \
+        == (2027, 3, 10)
+    assert (r.span.end.year, r.span.end.month, r.span.end.day) \
+        == (2027, 3, 21)
+
+
+# -- forms that keep the anchor's year ---------------------------------------
+
+@pytest.mark.parametrize("key", ANCHORS)
+@pytest.mark.parametrize("lang,text", [
+    ("en", "the last day of march"),
+    ("es", "el último día de marzo"),
+])
+def test_last_day_of_march_keeps_the_anchor_year(lang, text, key):
+    anchor = ANCHORS[key]
+    assert _date(text, lang, anchor) == date(anchor.year, 3, 31)
+
+
+@pytest.mark.parametrize("text", [
+    "the 0th day of march",
+    "the 32nd day of march",
+    "the 31st day of april",
+])
+def test_a_day_no_month_holds_is_refused(text):
+    assert extract_timespan(text, "en", ANCHORS["a2026"]) is None

@@ -652,6 +652,14 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                        scale_mode=scale_mode),
             anchor, start, bound)
 
+    def following(sub, start):
+        # the endpoint read from the day its range starts
+        if not MINYEAR <= start.year <= MAXYEAR:
+            return None
+        at = anchor.replace(year=start.year, month=start.month, day=start.day,
+                            hour=0, minute=0, second=0, microsecond=0)
+        return _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
+
     def daily(sub):
         # an endpoint that names no day: read two days later, it is the same
         # clock two days later (a weekday or a holiday moves by a week, a
@@ -749,7 +757,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                             is not None for i in range(lead_at, p))
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily, since=since)
+                                     previous, daily, since=since,
+                                     following=following)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -802,7 +811,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily)
+                                     previous, daily, following=following)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -834,7 +843,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 if got is None:
                     got = _compose_range(left_tok, right_tok, endpoint,
                                          borrowed, spec, bare_of,
-                                         monthly, previous, daily)
+                                         monthly, previous, daily,
+                                         following=following)
                 if got is not None:
                     span, rem = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
@@ -1389,7 +1399,7 @@ def _labelled_day_keeps_own(sub, donor, donor_read, spec):
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
-                   daily=None, since=False):
+                   daily=None, since=False, following=None):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1607,6 +1617,19 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         # civil reversed range ("june 12 to june 5") has no deep-time endpoint
         # and is left to fail below.
         start, end = right_span.start, left_span.end
+    # a right end with no year of its own is its first occurrence on or after
+    # the start: a left end that kept the anchor's year must not be paired with
+    # a right end that rolled to the next year
+    if (end > start and following is not None and right[2] == "dated"
+            and not right[3] and not shared_right and not right_lent
+            and (monthly is None or monthly(right_tok) is None)):
+        again = following(right_tok, start)
+        if again is not None and again[2] == "dated":
+            same_date = (again[0].start.month, again[0].start.day) \
+                == (right_span.start.month, right_span.start.day)
+            nearer = _align_awareness(left[0], again[0])[1].end
+            if same_date and start < nearer < end:
+                end = nearer
     if end <= start:
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
