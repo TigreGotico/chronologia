@@ -7,8 +7,8 @@ Covers: the native "day before yesterday" forms that were previously
 shadowed by the French-calque "abansièr" ('ièr' silently won and returned
 yesterday); the native "last/previous" surfaces in marker_last.voc; the
 afternoon meridiem multiword surfaces; the night clock band; and the two
-spelling variants of the digit 8 ("uèit"/"uòch") the folder now reads via a
-word_map pre-pass ahead of ovos_number_parser.numbers_oc.
+spelling variants of the digit 8 ("uèit"/"uòch"), which the numtag Occitan
+lexicon lists as units of value 8.
 """
 from datetime import timedelta
 
@@ -95,7 +95,6 @@ def test_night_band_surfaces(text, hour):
 
 @pytest.mark.parametrize("text", ["a uèch oras", "a uèit oras", "a uòch oras"])
 def test_eight_oclock_spelling_variants(text):
-    # "uèch" is the only spelling ovos_number_parser.numbers_oc reads;
-    # "uèit"/"uòch" are attested variants folded via the new word_map
-    # pre-pass in numfold_romance.py's fold_oc.
+    # "uèch", "uèit" and "uòch" are attested spellings of eight; numtag
+    # reads all three.
     assert start(text) == moved(AstroDate(2017, 6, 28, 8, 0), ANCHOR)

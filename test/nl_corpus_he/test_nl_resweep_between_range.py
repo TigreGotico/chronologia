@@ -92,7 +92,7 @@ def test_between_full_date_range(d1, m1, y1, d2, m2, y2):
 
 # -- fused ו- (no hyphen): the literary form ("ומרץ") used to be swallowed,
 # collapsing the range to just its first endpoint.  A range-only pre_hook
-# (``split_he_range_word``, chronologia/extract/numfold_semitic.py) now
+# (``split_he_range_word``, chronologia/extract/numlayer_semitic.py) now
 # splits a vav-glued month/weekday/daypart word off before range detection
 # reads the pretoken stream, so the second endpoint is visible again.
 def test_between_fused_and_pending():

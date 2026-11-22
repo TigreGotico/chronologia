@@ -57,6 +57,10 @@
     },
     "clock_time": {
       "orders": [
+        "at? at CLOCK oclock article? MERIDIEM ZONE?",
+        "CLOCK oclock article? MERIDIEM ZONE?",
+        "at? at CLOCK of? article? MERIDIEM ZONE?",
+        "CLOCK article? MERIDIEM ZONE?",
         "at? CLOCK article? MERIDIEM? ZONE?",
         "at? at HOUR oclock CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
         "HOUR oclock CLOCKDIR article? FRACTION article? MERIDIEM? ZONE?",
@@ -189,7 +193,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_romance:fold_oc",
+  "hook": "chronologia.extract.numlayer_oc:fold_oc",
   "base_grammar": {
     "marker_position": "post",
     "override": {

@@ -42,11 +42,13 @@ from datetime import datetime, timedelta
 from typing import Optional, Union
 
 from chronologia.astrodate import DateSpan
-from chronologia.recurrence import HolidayRecurrence, Recurrence, occurrences
+from chronologia.extract.impossible import reports_impossible
+from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
+                                    Recurrence, occurrences)
 
 __all__ = ["Event", "extract_event"]
 
-RecurrenceLike = Union[Recurrence, HolidayRecurrence]
+RecurrenceLike = Union[Recurrence, HolidayRecurrence, JurisdictionHolidays]
 
 
 @dataclass(frozen=True)
@@ -82,11 +84,12 @@ def first_occurrence(recurrence: RecurrenceLike,
 
     Works for both rule kinds: a plain :class:`Recurrence` expands through
     :func:`~chronologia.recurrence.occurrences`; a
-    :class:`~chronologia.recurrence.HolidayRecurrence` through its own
+    :class:`~chronologia.recurrence.HolidayRecurrence` or
+    :class:`~chronologia.recurrence.JurisdictionHolidays` through its own
     holiday-engine expansion.  ``None`` when the rule yields nothing near the
     anchor (a holiday outside its tabulated range).
     """
-    if isinstance(recurrence, HolidayRecurrence):
+    if isinstance(recurrence, (HolidayRecurrence, JurisdictionHolidays)):
         gen = recurrence.occurrences(anchor, count=1)
     else:
         gen = occurrences(recurrence, anchor, count=1)
@@ -154,9 +157,9 @@ def _is_bare_clock_length(text: str, lang: str, anchor: datetime,
     length and a date: nl "twee uur in de ochtend" is two hours in the
     morning.
     """
-    from chronologia.extract import explain, load_lang_spec
+    from chronologia.extract import _timespan_engine, explain
 
-    spec = load_lang_spec(lang)
+    spec = _timespan_engine(lang).spec
     markers = {word.lower() for name in ("before", "after")
                for surface in spec.connectors.get(name, ())
                for word in surface.split()}
@@ -187,9 +190,9 @@ def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
     part of the day to the hour: "deux heures du matin" is 02:00.  Only
     languages that list a ``clock_of`` suffix tell the two forms apart.
     """
-    from chronologia.extract import explain, load_lang_spec
+    from chronologia.extract import _timespan_engine, explain
 
-    spec = load_lang_spec(lang)
+    spec = _timespan_engine(lang).spec
     suffixes = spec.connectors.get("clock_of")
     if not suffixes:
         return False
@@ -217,6 +220,7 @@ def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
     return False
 
 
+@reports_impossible
 def extract_event(
         text: str,
         lang: str = "en",
@@ -234,16 +238,23 @@ def extract_event(
     Returns an :class:`Event`, or ``None`` when the text carries neither a
     recurrence nor a datable span (there is no event to build).
 
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
+
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that carries no event, the empty string included, returns ``None``.
     """
     from chronologia.extract import (_timespan_engine, extract_candidates,
-                                     extract_duration, extract_recurrence,
-                                     extract_timespan, load_lang_spec)
-    from chronologia.extract.nseries import _duration_core
+                                     extract_duration, extract_timespan)
+    from chronologia.extract.nseries import (_NEVER_OCCURS, _duration_core,
+                                             _read_recurrence)
     from chronologia.extract.pipeline import require_text
 
     require_text(text, "extract_event")
+    lang = lang.strip().replace("_", "-")
 
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
@@ -251,7 +262,9 @@ def extract_event(
 
     recurrence: Optional[RecurrenceLike] = None
     remainder = text
-    got_rec = extract_recurrence(text, lang, anchor=anchor)
+    got_rec = _read_recurrence(text, lang, anchor)
+    if got_rec is _NEVER_OCCURS:
+        return None
     if got_rec is not None:
         recurrence, remainder = got_rec
 
@@ -293,7 +306,7 @@ def extract_event(
             span_words = all_words - words(whole.remainder)
             rest_words = Counter() if rest is None else (
                 words(got_dur.remainder) - words(rest.remainder))
-            spec = load_lang_spec(lang)
+            spec = engine.spec
             offset_words = Counter({
                 word: len(all_words)
                 for name in ("before", "after", "in", "ago")

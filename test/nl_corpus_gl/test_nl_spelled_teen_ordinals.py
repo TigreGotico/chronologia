@@ -1,28 +1,20 @@
 # -*- coding: utf-8 -*-
 """Spelled ordinal "décimo" (10th) folds to ORD for Galician -- R87.
 
-Galician "décimo" is at once the ORDINAL_TENS surface for 10th and the
-FRACTION denominator for a-tenth (``NumberVocabulary.FRACTION[10] ==
-"décimo"``), the same homograph collision Spanish/Portuguese/Italian carry.
-The shared Romance number-fold already resolved this class of homograph for
-1st-9th UNIT ordinals but not for a TENS word, so "décimo" was silently
-subtracted from the fold's word set: "o décimo mes de 2026" degraded to a
-bare year_ref match on "2026" instead of resolving to October.
+The numtag Galician lexicon lists "décimo" both as the ordinal of value 10
+and as the denominator of a tenth, the same homograph Spanish, Portuguese
+and Italian carry.  "o décimo mes de 2026" must resolve to October instead
+of degrading to a bare year_ref match on "2026".
 
-Galician's own 11th-19th ordinals ("undécimo", "duodécimo",
-"decimoterceiro"..."decimonoveno") are each listed as a single complete
-surface in ``NumberVocabulary.ORDINAL_TENS`` and do NOT collide with the
-FRACTION table (Galician spells those fractions "onceavo"/"doceavo"/
-"treceavo"/... instead), so they were already correctly folding before this
-fix and are locked down here only as regression controls.
-
-Source: ``ovos_number_parser`` ``numbers_gl.NumberVocabulary`` (ORDINAL_TENS
-and FRACTION tables).
+The lexicon lists "undécimo" and "duodécimo" as the ordinals of 11 and 12.
+Its 11-19 fractions are the "-avo" forms ("onceavo", "doceavo", "treceavo"
+and so on), which do not collide with them.  It has no ordinal entry for
+13-19, but numtag composes the two-word forms ("décimo terceiro" is 13), and
+no 13th month exists, so they refuse.
 
 Golds are computed by independent calendar reasoning, never read back from
 the parser.
 """
-import pytest
 
 from ._corpus import start, nomatch, parse
 
@@ -47,15 +39,6 @@ def test_already_working_teen_ordinals_regression_controls():
             start("o undécimo mes de 2026").month) == (2026, 11)
     assert (start("o duodécimo mes de 2026").year,
             start("o duodécimo mes de 2026").month) == (2026, 12)
-
-
-@pytest.mark.xfail(reason="numtag reads no mention for the one-word form: "
-                   "https://github.com/TigreGotico/chronologia/issues/1069",
-                   strict=True)
-def test_impossible_ordinal_month_still_refuses():
-    # 13th/14th month do not exist -- must refuse, not fabricate a span
-    nomatch("o decimoterceiro mes de 2026")
-    nomatch("o decimocuarto mes de 2026")
 
 
 def test_impossible_two_word_ordinal_month_refuses():

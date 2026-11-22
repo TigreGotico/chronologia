@@ -1861,8 +1861,8 @@ test/nl_corpus_vi/test_vi_split_clock.py::test_ruoi_never_lands_in_the_previous_
 test/nl_corpus_vi/test_vi_split_clock.py::test_ruoi_never_lands_in_the_previous_hour[m\u01b0\u1eddi gi\u1edd r\u01b0\u1ee1i-10]
 test/nl_corpus_vi/test_vi_split_clock.py::test_ruoi_without_the_hour_word[hai r\u01b0\u1ee1i-2]
 test/nl_corpus_vi/test_vi_split_clock.py::test_ruoi_without_the_hour_word[m\u01b0\u1eddi r\u01b0\u1ee1i-10]
-test/test_adversarial_audit_han.py::test_bare_clock_range_with_meridiem_no_bogus_day_roll
-test/test_adversarial_audit_han.py::test_subtractive_clock_beats_descending_meridiem_range
+test/test_number_fold_overflow_and_holiday_shift_regressions.py::test_bare_clock_range_with_meridiem_no_bogus_day_roll
+test/test_number_fold_overflow_and_holiday_shift_regressions.py::test_subtractive_clock_beats_descending_meridiem_range
 test/test_duration_is_not_a_clock.py::test_a_clock_time_still_reads[\xe0 2 heures-fr-2]
 test/test_duration_is_not_a_clock.py::test_a_clock_time_still_reads[ve 2 hodiny-cs-2]
 test/test_engine_bare_half_to.py::test_bare_half_counts_down[halb neun-8-30]

@@ -1,8 +1,8 @@
 """Danish numbers read through numtag.
 
 A Danish number is one compound word ("enogtyve"), and a spelled year is one
-or two words ("totusinde femogtyve").  Every expected value is written by hand
-or computed with ``timedelta`` from the anchor.
+or two words ("totusinde femogtyve"). Every expected value is written by
+hand or computed with ``timedelta`` from the anchor.
 """
 import pytest
 

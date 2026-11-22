@@ -1,5 +1,15 @@
 # Albanian (`sq`)
 
+<!-- agent-hint
+covers: where each construction of the Albanian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/sq/lang.json`, `chronologia/locale/sq/*.voc`, `chronologia/extract/numfold_albanian.py`
+generated: no
+verify: python -m doctest docs/languages/sq.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/sq.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Albanian (`sq`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_albanian` module in `chronologia/extract/`.
+
 Albanian marks definiteness as a suffix on the noun — `ditë` is "day",
 `dita` "the day" — and the form a temporal phrase uses is not a stylistic
 choice. It is selected by whatever governs the noun. CLDR's own relative-time
@@ -59,7 +69,7 @@ becoming a clock reading.
 Albanian is the locale whose sources are thinnest overall, and the vocabulary
 files carry no per-file citation comments the way most locales do.
 
-**The clock idioms** rest on one directly-fetched page — detyra.al's article on
+**The clock idioms** rest on one directly cited page — detyra.al's article on
 reading analogue and digital clocks, which supplies `7 e gjysëm` glossed as
 7:30 and the digital-style minute examples — plus two independent tertiary
 aggregates agreeing on `tre pa çerek` for 2:45. That is two lines of evidence,
@@ -77,8 +87,7 @@ tens pattern is implied by an aggregate rather than read from a primary table.
 Zero, the hundreds and the thousands were not confirmed from any directly-read
 source, and `njëqind` does not resolve.
 
-**The Wiktionary `ditë` declension table** was fetched through a summarising
-reader and its ablative row does not match the ablative forms CLDR's own
+**The Wiktionary `ditë` declension table** has an ablative row that does not match the ablative forms CLDR's own
 patterns give. The CLDR-derived forms are what ship; that table is not relied
 on.
 
@@ -110,8 +119,7 @@ refuses.
 after the noun, and `shekulli XXI` returns nothing. Reading that order would
 also swallow `viti 2027` — a year word plus a year — turning it into a
 postposed ordinal, so the construction waits for a mechanism that can tell the
-two apart rather than being bought at that price. The failure this pins is
-concrete: an earlier fall-through answered `shekulli XXI` with 21:00.
+two apart rather than being bought at that price.
 
 **The feminine ordinal `e para`.** It is homographic with the preposition
 `para`, "before" and "ago", and no reading of the bare word tells them apart.
@@ -143,3 +151,45 @@ locale reads only the CLDR pattern, a bare cardinal day: `5 qershor 2027`.
 7. What are zero, the hundreds and the thousands, and what is the tens pattern?
 8. Are `ditë` and `orë` feminine, for the `tre` / `tri` agreement?
 9. Is a compositional `vitin e kaluar` also current alongside `vjet`?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("sq")
+    False
+    >>> span, rest = extract_timespan('7 e gjysmë', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+    >>> span, rest = extract_timespan('dy e një çerek', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:15:00', '')
+    >>> span, rest = extract_timespan('tre pa çerek', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:45:00', '')
+    >>> span, rest = extract_timespan('7 e 25 e mëngjesit', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:25:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('njëqind', "sq", anchor) is None
+    True
+    >>> extract_timespan('që nga e hëna', "sq", anchor) is None
+    True
+    >>> extract_timespan('për tre ditë', "sq", anchor) is None
+    True
+    >>> extract_timespan('tre dekada më parë', "sq", anchor) is None
+    True
+    >>> extract_timespan('shekulli XXI', "sq", anchor) is None
+    True
+    >>> extract_timespan('e diela', "sq", anchor) is None
+    True
+    >>> extract_timespan('e hëna', "sq", anchor) is None
+    True
+    >>> extract_timespan('e marta', "sq", anchor) is None
+    True
+
+---
+[← Language provenance pages](index.md) · [Home](../index.md) · [Arabic →](ar.md)
