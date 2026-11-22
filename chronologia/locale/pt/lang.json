@@ -43,6 +43,7 @@
         "at? HOUR oclock? CLOCKDIR MINUTE ZONE?",
         "at? HOUR oclock? CLOCKDIR MINUTE of? article? MERIDIEM ZONE?",
         "at HOUR oclock? ZONE?",
+        "at HOUR oclock of ZONE?",
         "at HOUR oclock? of? article? MERIDIEM ZONE?",
         "at? HOUR oclock? of? article? MERIDIEM ZONE?",
         "at? HOUR oclock? MERIDIEM ZONE?",

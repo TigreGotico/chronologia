@@ -8,7 +8,9 @@ follows, so the clock and the date compose into one moment.  Anchor
 """
 import pytest
 
-from ._corpus import span
+from chronologia.extract import extract_recurrence
+
+from ._corpus import ANCHOR, span
 
 
 def _fields(s):
@@ -32,3 +34,9 @@ def test_clock_joins_the_date(text, gold):
 ])
 def test_alone_keeps_its_reading(text, gold):
     assert _fields(span(text)) == gold
+
+
+@pytest.mark.parametrize("text,rule", [("ás dez de cada sábado", "FREQ=WEEKLY;BYDAY=SA;BYHOUR=10")])
+def test_recurrence_takes_the_de_after_its_clock(text, rule):
+    r = extract_recurrence(text, "gl", ANCHOR)
+    assert (r.recurrence.to_string(), r.remainder) == (rule, "")

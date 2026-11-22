@@ -8,7 +8,9 @@ follows, so the clock and the date compose into one moment.  Anchor
 """
 import pytest
 
-from ._corpus import span
+from chronologia.extract import extract_recurrence
+
+from ._corpus import ANCHOR, span
 
 
 def _fields(s):
@@ -44,3 +46,26 @@ def test_alone_keeps_its_reading(text, gold):
 def test_ordinal_day_takes_the_clock(text, gold):
     s = span(text)
     assert (s.start.month, s.start.day, s.start.hour, s.start.minute) == gold
+
+
+@pytest.mark.parametrize("text,gold", [
+    ("às dez horas de sábado", (2017, 7, 1, 10, 0)),
+    ("às dez horas do sábado", (2017, 7, 1, 10, 0)),
+    ("às 10 horas de sábado", (2017, 7, 1, 10, 0)),
+    ("às 21 horas de sexta-feira", (2017, 6, 30, 21, 0)),
+    ("às oito horas de domingo", (2017, 7, 2, 8, 0)),
+    ("lembra-me de ligar ao João às dez horas de sábado", (2017, 7, 1, 10, 0)),
+])
+def test_clock_with_horas_keeps_the_day_after_de(text, gold):
+    assert _fields(span(text)) == gold
+
+
+@pytest.mark.parametrize("text,rule", [
+    ("às dez de cada sábado", "FREQ=WEEKLY;BYDAY=SA;BYHOUR=10"),
+    ("às dez de todos os sábados", "FREQ=WEEKLY;BYDAY=SA;BYHOUR=10"),
+    ("às oito e meia de todos os dias", "FREQ=DAILY;BYHOUR=8;BYMINUTE=30"),
+    ("às dez e meia do dia 15 de cada mês", "FREQ=MONTHLY;BYMONTHDAY=15;BYHOUR=10;BYMINUTE=30"),
+])
+def test_recurrence_takes_the_de_after_its_clock(text, rule):
+    r = extract_recurrence(text, "pt", ANCHOR)
+    assert (r.recurrence.to_string(), r.remainder) == (rule, "")

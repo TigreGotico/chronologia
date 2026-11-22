@@ -1577,6 +1577,12 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
         while lo - 1 >= 0 and tokens[lo - 1].text in ctx.at_words \
                 and (lo - 1) not in consumed:
             lo -= 1
+        # "às dez de cada sábado": the "de" between the clock and the
+        # recurrence head belongs to neither
+        if (hi + 1 < n and tokens[hi].text in ctx.of_words
+                and hi not in consumed and hi + 1 in consumed
+                and "MERIDIEM" not in m.slots):
+            hi += 1
         return rec, consumed | set(range(lo, hi))
     return rec, consumed
 
