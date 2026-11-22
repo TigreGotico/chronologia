@@ -4344,8 +4344,8 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     if not later:
         return res
     moment = AstroDate.from_datetime(min(later))
-    return replace(res, value=DateSpan(moment, moment + timedelta(minutes=1),
-                                       res.value.basis))
+    return replace(res, value=DateSpan(moment, moment + (
+        res.value.end - res.value.start), res.value.basis))
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,

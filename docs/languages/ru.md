@@ -28,6 +28,10 @@ ninth, 08:30. Backward is `без`, which subtracts from the hour actually named
 `без четверти десять` is a quarter to ten, 09:45. Both are cited to
 gramota.ru's guide to telling the time.
 
+The locative `в восьмом часу` is the hour that begins at seven: the span from
+07:00 to 08:00, one hour wide. A day period fixes the half of the day, and
+the hours run first to twelfth (`marker_hour_span.voc`, ruling 37).
+
 ## What ships
 
 **Weekdays and months** ship wide and abbreviated, with no recorded source.

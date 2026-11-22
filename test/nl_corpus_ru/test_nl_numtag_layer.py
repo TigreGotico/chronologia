@@ -78,7 +78,8 @@ def test_known_gap_fraction_clock_before_another_word(text, expected):
     assert start(text) == ad(expected)
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1222")
-def test_known_gap_ninth_hour_is_the_hour_before_nine():
+def test_ninth_hour_is_the_hour_before_nine():
     result = parse("в девятом часу позвони маме")
-    assert result is None or result.span.start == ad(datetime(2017, 6, 27, 20, 0))
+    assert result.span.start == ad(datetime(2017, 6, 27, 20, 0))
+    assert result.span.end == ad(datetime(2017, 6, 27, 21, 0))
+    assert result.remainder == "позвони маме"
