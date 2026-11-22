@@ -148,7 +148,7 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     again.  Raises :class:`NotImplementedError` for languages that have no
     engine locale data (``chronologia/locale/<code>/lang.json``).
     """
-    region = lang.lower()
+    region = lang.strip().lower().replace("_", "-")
     code = region.split("-")[0]
     # English is the one base language whose NUMERIC day/month order splits by
     # region -- the US reads mdy ("03/04" = March 4), the rest of the anglosphere

@@ -254,6 +254,7 @@ def extract_event(
     from chronologia.extract.pipeline import require_text
 
     require_text(text, "extract_event")
+    lang = lang.strip().replace("_", "-")
 
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
