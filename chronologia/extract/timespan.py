@@ -1010,6 +1010,18 @@ def _align_awareness(left_span, right_span):
     return attach(left_span), attach(right_span)
 
 
+def _in_zone_of(value, other):
+    """``value`` as a wall clock in the zone ``other`` names, when ``value``
+    is naive and ``other`` is aware; otherwise ``value`` unchanged.
+
+    The anchor ("now") is a naive wall clock, so a zone an endpoint names
+    ("until 1pm utc+2") governs it the way :func:`_align_awareness` lets a zone
+    govern the other end of a range."""
+    if value.tzinfo is None and other.tzinfo is not None:
+        return value.replace(tzinfo=other.tzinfo)
+    return value
+
+
 def _roll_after(span, start, step):
     """``span`` advanced by whole ``step``s until it ends after ``start``.
 
@@ -1481,7 +1493,7 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     if right_dated and left_bare_clock:
         rs, ls = right_span.start, left_span.start
         start = AstroDate(rs.year, rs.month, rs.day, ls.hour, ls.minute,
-                          ls.second, ls.microsecond)
+                          ls.second, ls.microsecond, ls.tzinfo)
     else:
         start = left_span.start
     # roll a cyclic right endpoint forward into the same cycle as the start; a
@@ -1912,6 +1924,7 @@ def _since_start(ep, sub, engine, anchor, now, text):
     if ep is None:
         return None
     start = ep[0].start
+    now = _in_zone_of(now, start)
     if start > now:
         monthly = _monthly_endpoint(text, sub, engine)
         if monthly is not None:
@@ -2109,6 +2122,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     if right_ep is None:
         return None
     end = right_ep[0].end
+    start, end = _in_zone_of(start, end), _in_zone_of(end, start)
     if start >= end:
         return None
     before = render_remainder(text, list(tokens[:lead]))
@@ -2150,13 +2164,17 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                 or _bare_weekday_endpoint(sub, engine, anchor))
 
     def until_span(ep, sub):
-        return (DateSpan(now, ep[0].end), ep[1]) \
-            if ep is not None and ep[0].end > now else None
+        if ep is None:
+            return None
+        here = _in_zone_of(now, ep[0].end)
+        return (DateSpan(here, ep[0].end), ep[1]) if ep[0].end > here else None
 
     def since_span(ep, sub):
         since = _since_start(ep, sub, engine, anchor, now, text)
-        return (DateSpan(since[0], now), since[1]) \
-            if since is not None and since[0] < now else None
+        if since is None:
+            return None
+        here = _in_zone_of(now, since[0])
+        return (DateSpan(since[0], here), since[1]) if since[0] < here else None
 
     def lead(surf, build):
         # the marker leads; its tokens are dropped, the endpoint keeps its own
@@ -2332,10 +2350,23 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
             continue
         if role == "after":
             return "veto"
-        if span.end > now:
-            return DateSpan(now, span.end), set(consumed) | set(range(0, j))
+        here = _in_zone_of(now, span.end)
+        if span.end > here:
+            return DateSpan(here, span.end), set(consumed) | set(range(0, j))
         return "veto"
     return None
+
+
+def _within(span, outer):
+    """``span`` lies inside ``outer``, the two read on one clock."""
+    inner, outer = _align_awareness(span, outer)
+    return inner.start >= outer.start and inner.end <= outer.end
+
+
+def _same_span(a, b):
+    """``a`` and ``b`` are one span, the two read on one clock."""
+    a, b = _align_awareness(a, b)
+    return a.start == b.start and a.end == b.end
 
 
 def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
@@ -4617,14 +4648,13 @@ def extract_candidates(
         # unrelated construction elsewhere in the text (a trailing ISO literal
         # the range does not even consume must not launder its score in).
         within = [c for _, c in scored
-                  if c.span.start >= rspan.start and c.span.end <= rspan.end]
+                  if _within(c.span, rspan)]
         rconf = max([c.confidence for c in within], default=0.9)
         # drop a single candidate that resolved to the SAME span, so the
         # identical span is not shown twice ("since 2019" and its bare year
         # reading); endpoints strictly inside the range stay as runner-ups.
         scored = [(rk, c) for rk, c in scored
-                  if not (c.span.start == rspan.start
-                          and c.span.end == rspan.end)]
+                  if not _same_span(c.span, rspan)]
         # rank the range STRICTLY first (-1): it is extract_timespan's own
         # answer, and must beat a meridiem-blind subtractive clock_time reading
         # of the same phrase ("5 to 9 am") that would otherwise tie on
