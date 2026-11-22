@@ -1213,7 +1213,9 @@ where *all* the date math lives, once, engine-side. Each construction has a
 `_resolve_<name>` method; the sign of a "N units ago" offset is read from
 the marker's declared `Direction`, so a language cannot get ago/hence
 backwards because it never writes the sign. An impossible date never raises
-— `resolve` returns `None` and the construction simply did not fire.
+— `resolve` returns `None` and the construction simply did not fire. A caller
+can opt in to learn that a refusal was an impossible date: see "Impossible
+dates and out-of-range ordinals" below.
 
 ### One phrase, end to end
 
@@ -1524,6 +1526,35 @@ asked for. Returning `None` costs an unhandled case; returning a
 plausible-looking wrong date costs a silent, undetectable one. Between an
 honest "this does not resolve" and a fabricated answer that happens to
 parse without complaint, the library always chooses the former.
+
+**Telling an impossible date from a phrase that is no date.** By default
+both give `None`. A caller that must tell them apart passes
+`impossible="raise"` to `extract_timespan`, `extract_candidates`,
+`extract_event` or `extract_recurrence`. A call that would return `None` (or,
+for `extract_candidates`, an empty list) then raises `ImpossibleDateError`, a
+`ValueError` exported from `chronologia`, when the parser understood a date
+and the calendar rejects it. A call that finds a reading returns it, as in the
+default mode. A phrase that is no date still returns `None`. The error carries
+`text` (the string passed in, not the part of it that named the date), `lang`
+and `reason`.
+
+A phrase that names no year raises only when no year can hold it ("April 31",
+"the sixth Monday of May"). "The fifth Monday of May" does not raise, because
+some year has one. A number above 31 beside a month word ("32 aprile") is not
+reported: such a number is often no day.
+
+```python
+from chronologia import ImpossibleDateError, extract_timespan
+
+extract_timespan("29 February 2017", "en")                       # None
+try:
+    extract_timespan("29 February 2017", "en", impossible="raise")
+except ImpossibleDateError as err:
+    print(err.reason)                                            # February 2017 has no 29th
+```
+
+The value `"none"` is the default. Any other value than `"none"` or
+`"raise"` raises `ValueError`.
 
 ### Known limitations: homographs and confusables
 

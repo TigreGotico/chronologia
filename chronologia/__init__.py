@@ -112,6 +112,7 @@ from chronologia.extract import (Candidate, DateSpanResult, DurationResult,
                                  extract_recurrence, extract_timespan,
                                  extract_timespans)
 from chronologia.events import Event, extract_event
+from chronologia.extract.impossible import ImpossibleDateError
 from chronologia.ical import from_ical, to_ical
 from chronologia.serialization import from_json, to_json
 
@@ -155,6 +156,7 @@ __all__ = [
     "RecurrenceResult",
     # events (one utterance -> Event) and RFC 5545 iCalendar interop
     "Event",
+    "ImpossibleDateError",
     "extract_event",
     "to_ical",
     "from_ical",

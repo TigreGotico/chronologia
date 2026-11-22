@@ -34,6 +34,7 @@ from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
+from chronologia.extract.impossible import reports_impossible
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
@@ -2446,6 +2447,7 @@ def _apply_week_of(tokens, resolved, spec):
     return out
 
 
+@reports_impossible
 def extract_timespan(
         text: str,
         lang: str = "en",
@@ -2495,6 +2497,12 @@ def extract_timespan(
     dialect norm keyed off ``lang`` -- a full BCP-47 region subtag picks the
     dialect (``pt-BR`` short, ``pt-PT`` long) while loading the same base
     locale, a bare code its naming country's norm.
+
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns
@@ -4481,6 +4489,7 @@ class Candidate:
     construction: str
 
 
+@reports_impossible
 def extract_candidates(
         text: str,
         lang: str = "en",
@@ -4499,6 +4508,11 @@ def extract_candidates(
     broken by earlier text position then longer span).  The list is empty when
     nothing temporal was found.  ``anchor`` is the "now" relative phrases
     resolve against (default: the wall clock).
+
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` in place of an empty list; a call
+    that finds a candidate returns its usual list.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns an

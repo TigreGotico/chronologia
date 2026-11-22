@@ -42,6 +42,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Union
 
 from chronologia.astrodate import DateSpan
+from chronologia.extract.impossible import reports_impossible
 from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
                                     Recurrence, occurrences)
 
@@ -219,6 +220,7 @@ def _is_counted_part_of_day(text: str, lang: str, anchor: datetime,
     return False
 
 
+@reports_impossible
 def extract_event(
         text: str,
         lang: str = "en",
@@ -235,6 +237,12 @@ def extract_event(
 
     Returns an :class:`Event`, or ``None`` when the text carries neither a
     recurrence nor a datable span (there is no event to build).
+
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that carries no event, the empty string included, returns ``None``.
