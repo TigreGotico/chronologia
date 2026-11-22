@@ -1527,8 +1527,8 @@ plausible-looking wrong date costs a silent, undetectable one. Between an
 honest "this does not resolve" and a fabricated answer that happens to
 parse without complaint, the library always chooses the former.
 
-**Telling an impossible date from a phrase that is no date.** The default
-is unchanged: both give `None`. A caller that must tell them apart passes
+**Telling an impossible date from a phrase that is no date.** By default
+both give `None`. A caller that must tell them apart passes
 `impossible="raise"` to `extract_timespan`, `extract_candidates`,
 `extract_event` or `extract_recurrence`. A call that would return `None` (or,
 for `extract_candidates`, an empty list) then raises `ImpossibleDateError`, a
@@ -1537,6 +1537,11 @@ and the calendar rejects it. A call that finds a reading returns it, as in the
 default mode. A phrase that is no date still returns `None`. The error carries
 `text` (the string passed in, not the part of it that named the date), `lang`
 and `reason`.
+
+A phrase that names no year raises only when no year can hold it ("April 31",
+"the sixth Monday of May"). "The fifth Monday of May" does not raise, because
+some year has one. A number above 31 beside a month word ("32 aprile") is not
+reported: such a number is often no day.
 
 ```python
 from chronologia import ImpossibleDateError, extract_timespan

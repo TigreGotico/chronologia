@@ -34,7 +34,7 @@ from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
-from chronologia.extract.impossible import decline, ordinal, reports_impossible
+from chronologia.extract.impossible import reports_impossible
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
@@ -2841,15 +2841,6 @@ def _ordish_scope_word(text, spec):
             or text in spec.weekdays)
 
 
-def _decline_oversized_day(token, beside, spec):
-    """Report a stranded numeral that no month has as a day, when a month name
-    stands ``beside`` it ("32 aprile", "the 32nd of February"): a numeral
-    elsewhere ("100 years ago", "the nineties") is no attempt at a day."""
-    if (token.value is not None and token.value == int(token.value) > 31
-            and any(t.text in spec.months for t in beside)):
-        decline(f"no month has a {ordinal(int(token.value))}")
-
-
 def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
     of_surfaces = set(engine.spec.connectors.get("of", ()))
     # Match-start positions of every construction the matcher recognises
@@ -2888,7 +2879,6 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
             continue
         if j + 1 < len(tokens) and (tokens[j + 1].index in consumed
                                     or tokens[j + 1].index in match_starts):
-            _decline_oversized_day(tokens[i], tokens[j + 1:j + 2], engine.spec)
             return True                              # qualifier abuts winner
         if skipped_unit:
             # Shape 2 below (a stranded fragment that does not itself resolve
@@ -2925,7 +2915,6 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
         abuts = ((i > 0 and tokens[i - 1].index in consumed)
                  or (i + 1 < len(tokens) and tokens[i + 1].index in consumed))
         if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:
-            _decline_oversized_day(t, tokens[max(i - 1, 0):i + 2], engine.spec)
             return True                              # impossible day-of-month
     return False
 

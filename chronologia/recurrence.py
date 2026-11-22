@@ -87,6 +87,11 @@ _MONTH_LEN = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 # on an impossible rule raises instead of spinning forever.
 _MAX_EMPTY_PERIODS = 20_000
 
+
+class RuleNeverOccursError(ValueError):
+    """A rule produced no occurrence in :data:`_MAX_EMPTY_PERIODS` periods."""
+
+
 #: Sanity ceiling on a *declared* ``COUNT``. A civil recurrence never
 #: legitimately repeats more than this (274 years of a daily rule); a larger
 #: value is malformed or hostile input (an untrusted
@@ -822,7 +827,7 @@ def occurrences(rec: Recurrence, dtstart, until=None,
         else:
             empty_streak += 1
             if empty_streak > _MAX_EMPTY_PERIODS:
-                raise ValueError(
+                raise RuleNeverOccursError(
                     f"rule produced nothing in {_MAX_EMPTY_PERIODS} "
                     "consecutive periods; it appears never to occur "
                     f"(rule: {rec.to_string()})")

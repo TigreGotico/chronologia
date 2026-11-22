@@ -21,6 +21,7 @@ from typing import List, Optional
 
 from chronologia.astrodate import (_MONTH_NAMES_FULL, _WEEKDAY_NAMES_FULL,
                                    _days_in_month)
+from chronologia.recurrence import RuleNeverOccursError
 
 MODES = ("none", "raise")
 
@@ -80,12 +81,11 @@ def bad_day(year: Optional[int], month: int, day: int) -> Optional[str]:
     """Why ``day`` is not a day of ``month`` in ``year``, or ``None`` when it is.
 
     With no ``year`` the month is taken at its longest, so only a day that no
-    year has is bad.  A month outside 1..12 is not judged: it is as likely a
-    number that is no date at all as a mistyped one.
+    year has is bad.  A month outside 1..12 is not judged here.
     """
-    length = _days_in_month(2000 if year is None else year, month) \
-        if 1 <= month <= 12 else day
-    if not 1 <= day <= length:
+    if not 1 <= month <= 12:
+        return None
+    if not 1 <= day <= _days_in_month(2000 if year is None else year, month):
         return f"{scope_name(month, year)} has no {ordinal(day)}"
     return None
 
@@ -113,8 +113,8 @@ def reports_impossible(extract):
         token = _refusals.set(found)
         try:
             result = extract(*args, **kwargs)
-        except ValueError:
-            # a rule that never occurs can fail downstream; the refusal is its cause
+        except RuleNeverOccursError:
+            # a rule built from a refused date can fail downstream; the refusal is its cause
             if not found:
                 raise
             result = None

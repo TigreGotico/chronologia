@@ -27,8 +27,8 @@ def call(extract, text, lang, **kwargs):
 #: text, language, reason, the extractors that raise it
 IMPOSSIBLE = [
     # a day the month never has
-    ("the 32nd of February", "en", "no month has a 32nd", (SPAN, CANDIDATES, EVENT)),
-    ("32 aprile", "it", "no month has a 32nd", (SPAN, CANDIDATES, EVENT)),
+    ("31 april 2020", "nl", "April 2020 has no 31st", (SPAN, EVENT)),
+    ("29 February 4 BC", "en", "February 4 BC has no 29th", (SPAN, EVENT)),
     ("29 de fevereiro de 2017", "pt", "February 2017 has no 29th", (SPAN, EVENT)),
     ("29 de febrero de 2017", "es", "February 2017 has no 29th", (SPAN, EVENT)),
     ("le 30 février", "fr", "February has no 30th", (SPAN, EVENT)),
@@ -38,17 +38,22 @@ IMPOSSIBLE = [
     ("31/02/2017", "en", "February 2017 has no 31st", (SPAN, CANDIDATES, EVENT)),
     ("the 31st of this month", "en", "November 2026 has no 31st", (SPAN, CANDIDATES, EVENT)),
     # an ordinal the period never reaches
-    ("the 60th day of february", "en", "February 2026 has no 60th day",
+    ("the 60th day of february", "en", "February has no 60th day",
      (SPAN, CANDIDATES, EVENT)),
+    ("the 400th day of the year", "en", "a year has no 400th day",
+     (SPAN, CANDIDATES, EVENT)),
+    ("the 6th weekend of june", "en", "June has no 6th weekend", (SPAN, EVENT)),
+    ("2017-00-00", "en", "2017 has no month 0", (SPAN, CANDIDATES, EVENT)),
+    ("2017-13-00", "en", "2017 has no month 13", (SPAN, CANDIDATES, EVENT)),
+    ("on 2017-15-00 we met", "en", "2017 has no month 15", (SPAN, CANDIDATES, EVENT)),
+    ("de vijfde maandag van februari 2021", "nl", "February 2021 has no 5th Monday",
+     (SPAN, EVENT)),
     ("2017-W53", "en", "2017 has no ISO week 53", (SPAN, CANDIDATES, EVENT)),
     ("the fifth friday of february 2026", "en", "February 2026 has no 5th Friday",
      (SPAN, EVENT)),
-    ("the fifth monday of may", "en", "May 2026 has no 5th Monday", (SPAN,)),
     ("el sexto lunes de mayo", "es", "May has no 6th Monday", (SPAN, EVENT)),
-    ("the sixtieth monday of the year", "en", "2026 has no 60th Monday",
-     (SPAN, CANDIDATES)),
     ("the sixtieth monday of the year", "en", "a year has no 60th Monday",
-     (EVENT,)),
+     (SPAN, CANDIDATES, EVENT)),
     # a recurring date the calendar never has
     ("every 31st of April", "en", "April has no 31st",
      (SPAN, CANDIDATES, EVENT, RECURRENCE)),
@@ -57,8 +62,6 @@ IMPOSSIBLE = [
 #: text -> the extractors whose default answer is None; the others answer a
 #: partial reading, a rule or an error that the option leaves alone
 DEFAULT_NONE = {
-    "the 32nd of February": (SPAN, EVENT),
-    "32 aprile": (SPAN, EVENT),
     "29 de fevereiro de 2017": (SPAN, EVENT),
     "29 de febrero de 2017": (SPAN, EVENT),
     "le 30 février": (SPAN, EVENT),
@@ -115,6 +118,13 @@ VALID_OR_NOT_A_DATE = [
     ("2028-02-29", "en"),
     ("2026-W53", "en"),
     ("the 366th day of the year 2020", "en"),
+    ("the 366th day of the year", "en"),
+    ("the fifth monday of may", "en"),
+    ("el quinto lunes de mayo", "es"),
+    ("o quinto domingo de outubro", "pt"),
+    ("the fifth weekend of may", "en"),
+    ("29 de fevereiro", "pt"),
+    ("o dia 40", "pt"),
     ("the first friday after the 31st", "en"),
     ("week 53 of 2020", "en"),
     ("100 years ago", "en"),
@@ -147,3 +157,36 @@ def test_the_error_is_a_value_error_with_the_phrase_in_its_message():
         extract_timespan("29 February 2017", "en", impossible="raise")
     assert isinstance(caught.value, ImpossibleDateError)
     assert extract_timespan("29 February 2017", "en") is None
+
+
+NOT_A_DATE_TEMPLATES = [
+    ("only {} may come on friday", "en"),
+    ("{} may attend tomorrow", "en"),
+    ("order {} may ship next week", "en"),
+    ("{} march on monday", "en"),
+    ("the {} march today", "en"),
+    ("{} june bugs", "en"),
+    ("{} august men", "en"),
+    ("flight {} april 3", "en"),
+    ("el capítulo {} de abril", "es"),
+    ("Raum {} im Mai", "de"),
+]
+NUMERALS = [32, 33, 40, 45, 50, 60, 64, 99, 100, 150, 200, 500, 1000]
+NOT_A_DATE = [(template.format(n), lang) for template, lang in NOT_A_DATE_TEMPLATES
+              for n in NUMERALS]
+
+
+@pytest.mark.parametrize("text,lang", NOT_A_DATE)
+def test_a_number_beside_a_month_word_is_no_impossible_date(text, lang):
+    for extract in (SPAN, CANDIDATES, EVENT, RECURRENCE):
+        call(extract, text, lang, impossible="raise")
+
+
+@pytest.mark.parametrize("text", ["2017-13-00", "1999-99-00", "2017/13/00",
+                                  "2017.13.00", "on 2017-15-00 we met",
+                                  "2017-00-00", "0000-00-00"])
+@pytest.mark.parametrize("extract", [SPAN, CANDIDATES, EVENT, RECURRENCE],
+                         ids=lambda e: e.__name__)
+def test_default_mode_answers_a_month_that_does_not_exist_without_error(extract, text):
+    call(extract, text, "en")
+    assert call(SPAN, text, "en") is None
