@@ -937,9 +937,12 @@ class ConstructionMatcher:
                     # opens a date ("another third of the month"), after an
                     # indefinite article and a word that measures the part
                     # ("a full third of March"), and after the definite
-                    # article and a word that places the part ("the first
-                    # third", "the last third").  Before a month name only
-                    # the last three count: "un 3 de marzo" is a date.  A
+                    # article and a spelled ordinal or a word that places the
+                    # part, in one clause ("the first third", "the last
+                    # third"); a cardinal ("a las nueve quince de mayo") or
+                    # a comma ("the fourteenth, fifteenth of may") before
+                    # the day leaves it a day.  Before a month name only the
+                    # last three count: "un 3 de marzo" is a date.  A
                     # digit day is never a fraction, so the new shapes read
                     # only a spelled ordinal ("les 14, 15 mai" is a day
                     # list).  The determiners and the measuring words are
@@ -971,9 +974,13 @@ class ConstructionMatcher:
                                              and lead in indef | determiner)
                                          or (lead in conn.get("article",
                                                               frozenset())
-                                             and (before.is_number
-                                                  or before.text
-                                                  in modifier))))):
+                                             and len(part.before or ()) > 1
+                                             and (before.text in modifier
+                                                  or (before.ordinal
+                                                      and before.mention
+                                                      is not None
+                                                      and before.mention.form
+                                                      is Form.WORDS)))))):
                             continue
                     # The mirror of the veto above, on the other side of the
                     # weekday: a COUNT immediately before a weekday word that

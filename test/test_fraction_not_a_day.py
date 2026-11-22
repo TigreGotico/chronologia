@@ -34,6 +34,14 @@ ANCHOR = datetime(2026, 10, 17, 12, 0)
     "the final third of the month",
     "a full third of march",
     "the middle third of november",
+    "the last third of may",
+    "the last fifth of may",
+    "the whole third of may",
+    "the good fifth of may",
+    "the final fifth of may is a holiday",
+    "some third of may",
+    "any third of may",
+    "the middle third of may",
 ])
 def test_a_fraction_names_no_day(text):
     assert extract_timespan(text, "en", ANCHOR) is None
@@ -63,3 +71,48 @@ def test_a_digit_day_after_an_article_and_a_number_stays(text, lang, start,
                                                          rest):
     r = extract_timespan(text, lang, ANCHOR)
     assert (r.span.start, r.remainder) == (AstroDate(*start), rest)
+
+
+@pytest.mark.parametrize("text, lang, start, rest", [
+    ('los catorce, quince de mayo', 'es', (2027, 5, 15), 'los catorce'),
+    ('los catorce y quince de mayo', 'es', (2027, 5, 1, 14, 15), ''),
+    ('a las nueve quince de mayo', 'es', (2027, 5, 15, 9, 0), ''),
+    ('el lunes a las nueve, quince de mayo', 'es', (2027, 5, 15, 9, 0), ''),
+    ('las dos tres de mayo', 'es', (2027, 5, 3, 2, 0), ''),
+    ('el uno, dos de mayo', 'es', (2027, 5, 2), 'el uno'),
+    ('nació un tres de marzo', 'es', (2027, 3, 3), 'nació un'),
+    ('a las once veinte de mayo', 'es', (2027, 5, 20, 11, 0), ''),
+    ('llego a las ocho el quince de mayo', 'es', (2027, 5, 15),
+     'llego a las ocho'),
+    ('the fourteenth, fifteenth of may', 'en', (2027, 5, 15),
+     'the fourteenth'),
+    ('the third of the month', 'en', (2026, 11, 3), ''),
+    ('the first of may', 'en', (2027, 5, 1), ''),
+    ('at nine fifteenth of may', 'en', (2027, 5, 15, 9, 0), ''),
+    ('the 14th, 15th of may', 'en', (2027, 5, 15), 'the 14th'),
+    ('the first, fifteenth of may', 'en', (2027, 5, 15), 'the first'),
+    ('the last of may', 'en', (2027, 5, 1), 'the last of'),
+    ('os catorze, quinze de maio', 'pt', (2027, 5, 15), 'os catorze'),
+    ('às nove, quinze de maio', 'pt', (2027, 5, 15, 9, 0), ''),
+    ('a um de maio', 'pt', (2027, 5, 1), ''),
+    ('les quatorze, quinze mai', 'fr', (2027, 5, 15), 'les quatorze'),
+    ('à neuf heures quinze mai', 'fr', (2027, 5, 1, 9, 15), ''),
+    ('le premier, deux mai', 'fr', (2027, 5, 2), 'le premier'),
+    ('il quattordici, quindici maggio', 'it', (2027, 5, 15), 'il quattordici'),
+    ('alle nove quindici maggio', 'it', (2027, 5, 15, 9, 0), ''),
+    ('a les deu quinze de maig', 'ca', (2027, 5, 15, 10, 0), ''),
+    ('els catorze, quinze de maig', 'ca', (2027, 5, 15), 'els catorze'),
+    ('am vierzehnten, fünfzehnten Mai', 'de', (2027, 5, 15), 'am vierzehnten'),
+    ('die zwei dritten Mai', 'de', (2027, 5, 3), 'die zwei'),
+    ('de veertiende, vijftiende mei', 'nl', (2027, 5, 15), 'de veertiende'),
+    ('om negen vijftien mei', 'nl', (2027, 5, 15, 9, 0), ''),
+    ('os catorce, quince de maio', 'gl', (2027, 5, 15), 'os catorce'),
+])
+def test_a_spelled_number_before_a_day_leaves_it_a_day(text, lang, start,
+                                                       rest):
+    r = extract_timespan(text, lang, ANCHOR)
+    assert (r.span.start, r.remainder) == (AstroDate(*start), rest)
+
+
+def test_a_spelled_fraction_phrase_with_no_day_stays_none():
+    assert extract_timespan("el último tercio del mes", "es", ANCHOR) is None
