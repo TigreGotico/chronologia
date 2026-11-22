@@ -52,8 +52,8 @@ def test_months_12_and_1_keep_their_value(lang, text, month):
 
 
 @pytest.mark.parametrize("text,day", [
-    ("o décimo quarto dia de março", (2026, 3, 14)),
-    ("o vigésimo quarto dia de março", (2026, 3, 24)),
+    ("o décimo quarto dia de março de 2026", (2026, 3, 14)),
+    ("o vigésimo quarto dia de março de 2026", (2026, 3, 24)),
     # day 34 of 2026 is 3 February (31 days of January); day 104 is 14 April (90 days to 31 March)
     ("o trigésimo quarto dia de 2026", (2026, 2, 3)),
     ("o centésimo quarto dia de 2026", (2026, 4, 14)),
