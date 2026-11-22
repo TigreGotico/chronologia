@@ -1638,6 +1638,38 @@ def _bound_payload(rec, consumed, tokens, marker, lang, anchor, grounder):
     return None
 
 
+def _weekday_range_marks(ctx, consumed):
+    """Token indexes where an unconsumed "from WEEKDAY to WEEKDAY" clause
+    puts its "to" word, when that word is also an "until" marker (German
+    "bis", Dutch "tot").  :func:`_apply_bounds` leaves these to
+    :func:`_apply_range_bound`, which reads the clause as a weekday set."""
+    tokens, spec, n = ctx.tokens, ctx.spec, len(ctx.tokens)
+    leads = _conn_surfaces(spec, "between", _RANGE_BETWEEN) \
+        + _conn_surfaces(spec, "from", _RANGE_FROM)
+    mids = _conn_surfaces(spec, "to", ())
+    free = [i for i in range(n) if i not in consumed]
+    marks = set()
+    for p in free:
+        if tokens[p].text not in ctx.weekdays:
+            continue
+        for lead in leads:
+            i = p - len(lead)
+            if i < 0 or [t.text for t in tokens[i:p]] != lead \
+                    or any(x in consumed for x in range(i, p)):
+                continue
+            for mid in mids:
+                q = p + 1 + len(mid)
+                if (q < n and p + 1 not in consumed
+                        and [t.text for t in tokens[p + 1:q]] == mid
+                        and tokens[q].text in ctx.weekdays
+                        and not any(x in consumed for x in range(p + 1, q + 1))
+                        and (q + 1 == n or q + 1 in consumed)
+                        and mid in [list(w.lower().split())
+                                    for w in ctx.until_words]):
+                    marks.add(p + 1)
+    return marks
+
+
 def _apply_bounds(rec, consumed, ctx, lang, anchor):
     """Fold a trailing ``until <date>`` (-> UNTIL) or ``for <duration>``
     (-> COUNT) bound onto ``rec``, extending ``consumed`` over the words it
@@ -1702,10 +1734,13 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
             return None
         return _replace(rec, count=count)
 
+    weekday_ranges = _weekday_range_marks(ctx, consumed)
     for surfaces, grounder in ((ctx.until_words, _ground_until),
                                (ctx.before_words, _ground_until),
                                (ctx.for_words, _ground_count)):
         for marker in _marker_runs(tokens, surfaces, consumed):
+            if surfaces is ctx.until_words and marker[0] in weekday_ranges:
+                continue
             got = _bound_payload(rec, consumed, tokens, marker, lang, anchor,
                                  grounder)
             if got is not None:
