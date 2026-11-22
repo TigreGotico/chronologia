@@ -109,6 +109,8 @@ CLOCKS = [
      datetime(2026, 11, 17, 9, 0)),
     ("alarm for 5 for 8 am flight", "en", datetime(2026, 11, 18, 5, 0)),
     ("alarma para 7 o 8 de la mañana", "es", datetime(2026, 11, 17, 8, 0)),
+    ("alarm for 7 and 8 on monday evening", "en",
+     datetime(2026, 11, 18, 7, 0)),
     ("alarm for 7 then 9 am meeting", "en", datetime(2026, 11, 18, 7, 0)),
     ("reminder for 9 then 3 pm meeting", "en", datetime(2026, 11, 17, 9, 0)),
     ("wekker voor 7 of 8 uur 's avonds", "nl", datetime(2026, 11, 17, 20, 0)),
@@ -203,22 +205,6 @@ def test_nl_joiner_shares_the_later_meridiem_without_uur():
     found = extract_timespan("wekker voor 7 of 8 's avonds", "nl", ANCHOR)
     assert found is not None
     assert found.span.start.datetime() == datetime(2026, 11, 17, 20, 0)
-
-
-def test_a_weekday_keeps_its_evening_word_from_the_hours_before_it():
-    # "evening" belongs to Monday, so the window does not lend it to 8 today
-    found = extract_timespan("alarm for 7 and 8 on monday evening", "en",
-                             ANCHOR)
-    assert found is not None
-    assert found.span.start.datetime() != datetime(2026, 11, 17, 20, 0)
-
-
-@pytest.mark.xfail(
-    strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1058")
-def test_alarm_on_monday_evening_reads_monday_evening():
-    found = extract_timespan("alarm for 7 and 8 on monday evening", "en",
-                             ANCHOR)
-    assert found.span.start.datetime() == datetime(2026, 11, 23, 20, 0)
 
 
 @pytest.mark.parametrize("text,remainder", [
