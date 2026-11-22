@@ -2444,6 +2444,12 @@ def _recur_nth_weekday(ctx):
             # under ``FREQ=YEARLY``: the nth (or, negative, last) matching
             # weekday of the whole year -- exactly the reading "of the year"
             # asks for, so this resolves rather than refuses.
+            if abs(ordn) > (262 if business else 53):
+                # a year holds at most 53 of one weekday (365 = 52 weeks + 1
+                # day, 366 = 52 weeks + 2) and 262 weekdays (a leap year
+                # whose two extra days are both weekdays: 52 * 5 + 2), so the
+                # rule would never occur -- claim the phrase and decline it
+                return None, frozenset(range(start, r + 1))
             if business:
                 return (_business_day_of_year(ordn, year_interval),
                         set(range(start, r + 1)))
