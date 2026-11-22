@@ -239,7 +239,8 @@ def extract_event(
     ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
     phrase naming a date the calendar rejects ("29 February 2017") raises
     :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
-    that is no date still gives ``None``.
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that carries no event, the empty string included, returns ``None``.

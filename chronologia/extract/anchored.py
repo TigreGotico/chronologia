@@ -30,7 +30,6 @@ from datetime import datetime, timedelta
 from typing import List, Optional, Tuple
 
 from chronologia.astrodate import AstroDate, DateSpan
-from chronologia.extract.impossible import bad_day, decline
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _WEEK_START,
                                               _day_span, _midnight, _week_span)
@@ -1159,7 +1158,6 @@ def _nth_weekday_after_daymonth(tokens, spec: LangSpec, anchor) -> Optional[Pair
         try:
             base = datetime(anchor.year, anchor.month, day)
         except ValueError:                        # no such day this month
-            decline(bad_day(anchor.year, anchor.month, day))
             continue
         value = _nth_weekday(base, wd, count, 1)
         end = k + 1

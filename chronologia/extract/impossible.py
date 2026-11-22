@@ -8,14 +8,14 @@ the two apart passes ``impossible="raise"`` and gets an
 
 The readers record why they refuse a reading through :func:`decline` while a
 ``"raise"`` call is running; :func:`reports_impossible` wraps each public
-extractor and raises when a reader recorded a refusal during the call.
-Outside such a call :func:`decline` does nothing.
+extractor and raises when the call found no reading and a reader recorded a
+refusal.  A call that finds a reading returns it, as in the default mode.
+Outside a ``"raise"`` call :func:`decline` does nothing.
 """
 from __future__ import annotations
 
 import functools
 import inspect
-from contextlib import contextmanager
 from contextvars import ContextVar
 from typing import List, Optional
 
@@ -28,7 +28,8 @@ MODES = ("none", "raise")
 class ImpossibleDateError(ValueError):
     """A phrase names a date that cannot exist.
 
-    ``text`` is the text handed to the extractor, ``lang`` its language and
+    ``text`` is the whole string handed to the extractor (not the span of it
+    that named the date), ``lang`` its language and
     ``reason`` a short plain-English account of why the calendar rejects it.
     """
 
@@ -52,21 +53,6 @@ def decline(reason: Optional[str]) -> None:
     found = _refusals.get()
     if reason is not None and found is not None:
         found.append(reason)
-
-
-@contextmanager
-def ignoring_refusals():
-    """Run a reading whose refusals say nothing about the phrase.
-
-    ``extract_candidates`` resolves runner-up readings that the best reading
-    already outranks; a calendar that rejects one of them is no reason to
-    raise.
-    """
-    token = _refusals.set(None)
-    try:
-        yield
-    finally:
-        _refusals.reset(token)
 
 
 def ordinal(n: int) -> str:
@@ -108,8 +94,9 @@ def reports_impossible(extract):
     """Give a public extractor the keyword-only ``impossible`` parameter.
 
     ``"none"`` (the default) leaves the extractor as it is.  ``"raise"`` raises
-    :class:`ImpossibleDateError` when a reader refused a reading because the
-    calendar has no such date.  A call nested inside a
+    :class:`ImpossibleDateError` in place of ``None`` (or an empty list) when
+    a reader refused a reading because the calendar has no such date.  A call
+    that finds some reading returns it.  A call nested inside a
     ``"raise"`` call reports to the outer call.
     """
     signature = inspect.signature(extract)
@@ -130,9 +117,10 @@ def reports_impossible(extract):
             # a rule that never occurs can fail downstream; the refusal is its cause
             if not found:
                 raise
+            result = None
         finally:
             _refusals.reset(token)
-        if found:
+        if found and not result:
             given = signature.bind(*args, **kwargs)
             given.apply_defaults()
             raise ImpossibleDateError(given.arguments["text"],

@@ -33,6 +33,7 @@ from chronologia.extract.impossible import (bad_day, decline, no_such_weekday,
                                             reports_impossible, scope_name)
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
+from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _lone_spoken_hour,
                                           reads_spoken_hours,
@@ -1256,7 +1257,8 @@ def extract_recurrence(
     ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
     phrase naming a date the calendar rejects ("29 February 2017") raises
     :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
-    that is no date still gives ``None``.
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names no recurrence, the empty string included, returns
@@ -2003,6 +2005,10 @@ def _apply_year_scope(rec, consumed, ctx, lang, anchor):
         return None, consumed | set(range(lo, hi))
     if rec.until is not None or rec.count is not None:
         return rec, consumed
+    if len(rec.bymonth) == 1 and len(rec.byday) == 1 and rec.byday[0][0]:
+        (n, weekday), month = rec.byday[0], rec.bymonth[0]
+        if _month_weekday(start.year, month, weekday, n) is None:
+            decline(no_such_weekday(scope_name(month, start.year), n, weekday))
     rec = _replace(rec, until=end)
     return rec, consumed | set(range(lo, hi))
 

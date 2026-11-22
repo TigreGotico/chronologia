@@ -1530,10 +1530,13 @@ parse without complaint, the library always chooses the former.
 **Telling an impossible date from a phrase that is no date.** The default
 is unchanged: both give `None`. A caller that must tell them apart passes
 `impossible="raise"` to `extract_timespan`, `extract_candidates`,
-`extract_event` or `extract_recurrence`. The call then raises
-`ImpossibleDateError`, a `ValueError` exported from `chronologia`, when the
-parser understood a date and the calendar rejects it. A phrase that is no
-date still returns `None`. The error carries `text`, `lang` and `reason`.
+`extract_event` or `extract_recurrence`. A call that would return `None` (or,
+for `extract_candidates`, an empty list) then raises `ImpossibleDateError`, a
+`ValueError` exported from `chronologia`, when the parser understood a date
+and the calendar rejects it. A call that finds a reading returns it, as in the
+default mode. A phrase that is no date still returns `None`. The error carries
+`text` (the string passed in, not the part of it that named the date), `lang`
+and `reason`.
 
 ```python
 from chronologia import ImpossibleDateError, extract_timespan

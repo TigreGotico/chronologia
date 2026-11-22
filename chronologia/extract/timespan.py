@@ -21,7 +21,6 @@ import os
 import re
 import threading
 import unicodedata
-from contextlib import nullcontext
 from datetime import MAXYEAR, MINYEAR, datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
@@ -35,8 +34,7 @@ from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
-from chronologia.extract.impossible import (decline, ignoring_refusals, ordinal,
-                                            reports_impossible)
+from chronologia.extract.impossible import decline, ordinal, reports_impossible
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
@@ -2472,7 +2470,8 @@ def extract_timespan(
     ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
     phrase naming a date the calendar rejects ("29 February 2017") raises
     :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
-    that is no date still gives ``None``.
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns
@@ -4492,8 +4491,8 @@ def extract_candidates(
 
     ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
     phrase naming a date the calendar rejects ("29 February 2017") raises
-    :class:`~chronologia.ImpossibleDateError`; a phrase that is no date gives
-    its usual list.
+    :class:`~chronologia.ImpossibleDateError` in place of an empty list; a call
+    that finds a candidate returns its usual list.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns an
@@ -4571,8 +4570,7 @@ def extract_candidates(
     def _resolve_one(m):
         res = composed_res.get(id(m))
         if res is None:
-            with ignoring_refusals():
-                res = engine.resolver.resolve(m, anchor, scale_mode)
+            res = engine.resolver.resolve(m, anchor, scale_mode)
         if res is None:
             return None
         return _lone_spoken_hour(res, m, anchor, engine.spec, tokens, matches,
@@ -4608,9 +4606,8 @@ def extract_candidates(
         # ("the ides of march 44 BC" -> roman_date + a stranded "44 BC") is a
         # fabricated reading extract_timespan refuses, so it must not be surfaced
         # here either -- otherwise the two public APIs disagree on the top answer.
-        with nullcontext() if id(match) == primary else ignoring_refusals():
-            if _impossible_date_veto(tokens, consumed, text, engine, anchor):
-                continue
+        if _impossible_date_veto(tokens, consumed, text, engine, anchor):
+            continue
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
         # rank: the composed PRIMARY (extract_timespan's own selected reading)
