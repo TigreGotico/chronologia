@@ -1,5 +1,15 @@
 # Lithuanian (`lt`)
 
+<!-- agent-hint
+covers: where each construction of the Lithuanian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/lt/lang.json`, `chronologia/locale/lt/*.voc`, `chronologia/extract/numfold_baltic.py`
+generated: no
+verify: python -m doctest docs/languages/lt.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/lt.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Lithuanian (`lt`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_baltic` module in `chronologia/extract/`.
+
 The rule that shapes this locale is that the form of a counted noun is decided
 by the numeral's **last digit**, not by its size. A numeral ending in 1 — but
 not 11 — takes the singular; one ending in 2 through 9, but not 12 through 19,
@@ -42,7 +52,7 @@ the ordinary "in" or "during" form: `šią savaitę` is this week.
 
 **The clock** has two constructions. `pusė` plus the genitive of the coming
 hour gives the half hour — `pusė trijų` is 02:30, `pusė aštuonių` is 07:30 —
-with `bare_half_to` and `toward_hour_12h` in `lang.json` rolling the named hour
+with `bare_half_to` in `lang.json` rolling the named hour
 back. `be` plus the genitive counts down toward the named hour: `be penkių trys`
 is 02:55. Wiktionary supplies both function words in the right government
 (`be` "without", with the genitive; `pusė` "half"), and Talkpal's guide to
@@ -80,9 +90,6 @@ same worked examples.
 ## What refuses
 
 Each refusal below is pinned by a test.
-
-**Seconds.** `prieš 30 sekundžių` and `po 45 sekundžių` return nothing. No
-second unit ships.
 
 **Calendar quarters.** `pirmasis ketvirtis`, `antras ketvirtis` and the bare
 `ketvirtis` all refuse. No quarter vocabulary was attested.
@@ -127,3 +134,42 @@ still only a quantity.
 4. What is the standard era abbreviation, and how is it written?
 5. Does `paskutinis` have a declension that would let it act as the
    "last Friday of the month" marker?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("lt")
+    False
+    >>> span, rest = extract_timespan('pusė trijų', "lt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:30:00', '')
+    >>> span, rest = extract_timespan('pusė aštuonių', "lt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+    >>> span, rest = extract_timespan('be penkių trys', "lt", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:55:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('ketvirtis', "lt", anchor) is None
+    True
+    >>> extract_timespan('be ketvirčio trys', "lt", anchor) is None
+    True
+    >>> extract_timespan('ketvirtis po trijų', "lt", anchor) is None
+    True
+    >>> extract_timespan('pusė vienuoliktos', "lt", anchor) is None
+    True
+    >>> extract_timespan('pusė trečios', "lt", anchor) is None
+    True
+    >>> extract_timespan('praeitais metais', "lt", anchor) is None
+    True
+    >>> extract_timespan('kitais metais', "lt", anchor) is None
+    True
+    >>> extract_timespan('du šimtai penkiasdešimt dienų', "lt", anchor) is None
+    True
+
+---
+[← Latvian](lv.md) · [Home](../index.md) · [Macedonian →](mk.md)

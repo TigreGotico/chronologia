@@ -17,4 +17,4 @@ jobs:
       timeout_minutes: 120
       pytest_args: >-
         --deselect test/test_extract_robustness.py::test_many_range_connectors_no_recursion
-        --deselect test/test_audit_round2.py::test_long_pure_cardinal_run_does_not_blow_up_or_misfold
+        --deselect test/test_dos_and_data_regressions.py::test_long_pure_cardinal_run_does_not_blow_up_or_misfold

@@ -1,5 +1,15 @@
 # Basque (`eu`)
 
+<!-- agent-hint
+covers: where each construction of the Basque locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/eu/lang.json`, `chronologia/locale/eu/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/eu.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/eu.md afternoon1@12:00 afternoon2@14:00 evening1@19:00 morning1@00:00 morning2@06:00 night1@21:00
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Basque (`eu`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Basque is a language isolate, and the consequence for a date parser is
 structural rather than lexical: there are no prepositions to match. Where most
 locales in this library recognise "from", "until", "during" and "of" as
@@ -72,7 +82,7 @@ in the repository, and this page does not claim provenance for them beyond
 what the files themselves carry.
 
 `iluntzean` is the shipped evening surface, and its comment header cites the
-Wiktionary entry for `iluntze`. That entry was fetched: it has a Basque
+Wiktionary entry for `iluntze`. That entry has a Basque
 section, and it glosses `iluntze` as "dusk", but it carries no declension
 table, so the inessive `iluntzean` specifically is not attested there. The
 other three day-part surfaces are on firmer ground — the Wiktionary entries for
@@ -80,19 +90,17 @@ other three day-part surfaces are on firmer ground — the Wiktionary entries fo
 `goizean`, `arratsaldean` and `gauean` explicitly.
 
 The comment in `numlayer_agglutinative.py` that documents the inessive-plural
-hour fold cites `en.wiktionary.org/wiki/-etan#Basque`. That page was fetched
-and has no Basque section at all; its only section is Old English. The
+hour fold cites `en.wiktionary.org/wiki/-etan#Basque`. That page has no Basque section; its only section is Old English. The
 mechanism it describes is nonetheless the one the code implements and the one
-the hour surfaces show, but the citation does not support it and is recorded
-here as unverified. The same comment's second citation, Euskaltzaindia's
-telling-time forms, names no locator; the institution's site was reached but
-the specific page was not, so that citation is likewise unchecked.
+the hour surfaces show, but the citation does not support it and is unverified.
+The same comment's second citation, Euskaltzaindia's telling-time forms,
+names no locator, so that citation is likewise unchecked.
 
 ## What refuses
 
 **Bare `asteburuan`.** `special_weekend.voc` holds `asteburua` and `asteburu`
-but not the inessive `asteburuan`, so "at the weekend" in its most ordinary
-inflected form returns nothing while the bare noun resolves.
+but not the inessive `asteburuan`, the most ordinary inflected form of "at the
+weekend". `asteburuan` returns nothing, and the bare noun resolves.
 
 **The two-word hours.** One and two o'clock are `ordu bata` and `ordu bietan`,
 two-word forms rather than the single inessive plural the other hours use, and
@@ -108,12 +116,6 @@ a settled one.
 These are wrong answers rather than refusals, and a wrong answer with a
 stranded remainder is worse than nothing. Each is stated with the probe that
 produces it, anchored at 2017-06-27 13:04.
-
-`extract_timespan("arratsaldeko bostak eta erdi", "eu")` returns 05:30 with
-`arratsaldeko` left in the remainder. The afternoon meridiem does not compose
-with the `HOUR eta FRACTION` clock order, so the phrase reads as half past five
-in the morning. The same lead composes correctly with the inessive hour:
-`arratsaldeko bostetan` returns 17:00.
 
 `extract_timespan("2020ko lehen hiruhilekoa", "eu")` returns the first quarter
 of **2017**, the anchor year, with `2020ko` in the remainder. The relational
@@ -139,3 +141,31 @@ narrowed span it returns instead is silently wrong rather than empty.
    and do they take the same `eta` continuation as the plural hours?
 4. Which of the three forward-offset markers — `barru`, `buru`, `barne` — are
    interchangeable, and which are regional?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("eu")
+    True
+    >>> span, rest = extract_timespan('bostak eta erdi', "eu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T05:30:00', '')
+    >>> span, rest = extract_timespan('bostak eta laurden', "eu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T05:15:00', '')
+    >>> span, rest = extract_timespan('ekainaren 5ean', "eu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-06-05T00:00:00', '')
+    >>> span, rest = extract_timespan('martxoaren hirugarren astelehena', "eu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-03-20T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('asteburuan', "eu", anchor) is None
+    True
+
+---
+[← Azerbaijani](az.md) · [Home](../index.md) · [Belarusian →](be.md)
