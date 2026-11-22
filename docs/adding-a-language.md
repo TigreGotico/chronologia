@@ -465,6 +465,7 @@ Some recurrences are said as a single adverb rather than "every + unit":
 | `marker_recur_for.voc` | "for" (as in "every Monday **for** 6 weeks" — bounds the rule with a `COUNT`) |
 | `marker_until.voc` | "until" / "till" (as in "every Friday **until** June" — bounds the rule with an `UNTIL`) |
 | `marker_weekday.voc` | the class noun "weekday(s)" (as in "every weekday", distinct from any one named weekday) |
+| `marker_weekday_count.voc` | the plural forms of the class noun that name a count ("5 weekdays of the month"), never an ordinal |
 | `marker_recur_habitual.voc` | (optional) a habitual preposition some languages use instead of "every" before a weekday — Portuguese marks it with `à` / `às` / `ao` / `aos` ("**à** segunda" = "on Mondays, habitually") |
 
 `special_weekend.voc` (Tier 3) and the weekday/month files (Tier 1) do double

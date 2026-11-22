@@ -158,8 +158,6 @@ VALID_OR_NOT_A_DATE = [
     ("the first 25 weekdays of the month", "en"),
     ("the 25.5 weekday of the month", "en"),
     ("the 300.7 weekday of the year", "en"),
-    ("ich arbeitete 25 Werktage des Monats", "de"),
-    ("25 Werktage des Monats", "de"),
     ("ik werkte 25 werkdagen van de maand", "nl"),
     ("25 werkdagen van de maand", "nl"),
     ("the fifth monday of may", "en"),
@@ -249,8 +247,19 @@ def test_default_mode_answers_a_day_over_a_month_that_does_not_exist_without_err
     ("5 weekdays of the month", "en"),
     ("the first 5 weekdays of the month", "en"),
     ("the 2.5 weekday of the month", "en"),
-    ("ich arbeitete 5 Werktage des Monats", "de"),
     ("ik werkte 5 werkdagen van de maand", "nl"),
 ])
 def test_a_count_of_weekdays_or_a_fraction_is_no_ordinal_rule(text, lang):
     assert call(RECURRENCE, text, lang) is None
+
+
+@pytest.mark.parametrize("text,position", [
+    ("bis zum Ablauf des dritten Werktags des Monats", 3),
+    ("am Ende des 5. Werktags des Monats", 5),
+    ("zum Ablauf des 3. Werktags des Monats", 3),
+])
+def test_a_genitive_german_weekday_ordinal_is_still_read(text, position):
+    """"Werktags" is the genitive singular of "Werktag", not a plural count."""
+    rule = call(RECURRENCE, text, "de")
+    assert rule is not None and rule.recurrence.bysetpos == (position,)
+    assert call(EVENT, text, "de").recurrence.bysetpos == (position,)

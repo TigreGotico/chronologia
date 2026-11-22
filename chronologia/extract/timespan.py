@@ -34,7 +34,7 @@ from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
-from chronologia.extract.impossible import reports_impossible
+from chronologia.extract.impossible import raising, reports_impossible
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
@@ -2523,8 +2523,9 @@ def extract_timespan(
     res = _resolve_span(text, raw, engine, anchor, enable, jurisdiction,
                         scale_mode)
     if res is None:
-        from .nseries import _recur_ctx, _recur_nth_weekday
-        _recur_nth_weekday(_recur_ctx(text, lang, anchor))
+        if raising():
+            from .nseries import _recur_ctx, _recur_nth_weekday
+            _recur_nth_weekday(_recur_ctx(text, lang, anchor))
         return None
     out = DateSpanResult(*res)
     if out.remainder and _is_whole_duration(text, lang):

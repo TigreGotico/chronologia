@@ -56,6 +56,11 @@ def decline(reason: Optional[str]) -> None:
         found.append(reason)
 
 
+def raising() -> bool:
+    """Whether a ``"raise"`` call is running, so a refusal is being recorded."""
+    return _refusals.get() is not None
+
+
 def ordinal(n: int) -> str:
     suffix = "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
     return f"{n}{suffix}"

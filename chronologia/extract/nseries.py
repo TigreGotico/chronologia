@@ -2052,6 +2052,7 @@ class _RecurCtx:
     every: set
     other: set
     weekday_word: set
+    weekday_count_word: set
     articles: set
     of_words: set
     freq: dict
@@ -2140,6 +2141,7 @@ def _recur_ctx(text, lang, anchor):
         every=set(C.get("every", ())),
         other=set(C.get("recur_other", ())),
         weekday_word=set(C.get("weekday", ())),
+        weekday_count_word=set(C.get("weekday_count", ())),
         articles=_article_words(spec),
         of_words=set(C.get("of", ())),
         freq=_freq_map(C),
@@ -2295,8 +2297,7 @@ def _recur_nth_weekday(ctx):
         # the plural class noun after a cardinal is a count ("25 weekdays of
         # the month"), so like a derived weekday plural it needs "every"
         business = t[w].text in ctx.weekday_word and (
-            plural_ok or t[w].text[:-1] not in ctx.weekday_word
-            and t[w].text[:-2] not in ctx.weekday_word)
+            plural_ok or t[w].text not in ctx.weekday_count_word)
         wd = None if business else _weekday_here(ctx, t[w], plural_ok)
         if wd is None and not business:
             continue
