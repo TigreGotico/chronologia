@@ -11,112 +11,258 @@ Everything reduces to the JDN hub, so conversions compose: an
 and calendar-backed eras (Anno Mundi, French Republican, Bahai) resolve
 *exactly* rather than by an epoch-plus-count approximation.
 """
-from chronologia.astrodate import (AstroDate, DateSpan, WideDuration,
-                                   civil_add, combine_basis, is_leap_year,
-                                   resolve_wall_clock)
-from chronologia.calendars import (CALENDARS, Calendar, CalendarDate,
-                                   CalendarRangeError, TabulatedCalendar,
-                                   gregorian_to_jdn, jdn_to_gregorian,
-                                   julian_to_jdn, jdn_to_julian,
-                                   register_event_provider)
-from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, YEAR_CYCLES,
-                                DayCycle, DaySubdivision, YearCycle,
-                                resolve_cycle_day, year_cycle_label,
-                                years_of)
-from chronologia.dayparts import (CLDR_VERSION, DAY_PARTS, DayPart,
-                                  UnknownDayPartError, daypart_span)
-from chronologia.edtf import (EdtfDate, EdtfParseError, format_edtf,
-                             parse_edtf)
-from chronologia.eras import (ERAS, ERA_ALIASES, HEAT_DEATH_YEAR, Era,
-                              EraCounting, astro_year_range, resolve_bp,
-                              resolve_era, resolve_era_year_span)
-from chronologia.axes import (AXES, EARTH_DAY_SECONDS, MARS_SOL_RATIO,
-                              MARS_SOL_SECONDS, TimeAxis, astro_from_jd, jd_of)
-from chronologia.leapseconds import (GPS_EPOCH, LEAP_SECONDS,
-                                     TABLE_VALID_UNTIL, TAI_MINUS_GPS,
-                                     TT_MINUS_TAI, gps_to_utc,
-                                     is_leap_second_day, table_valid_until,
-                                     tai_to_utc, tt_to_utc, utc_tai_offset,
-                                     utc_to_gps, utc_to_tai, utc_to_tt)
-from chronologia.mars import (DARIAN_EPOCH_MSD, DARIAN_MONTHS, DARIAN_WEEKDAYS,
-                              MISSION_ERAS, DarianCalendar, DarianDate,
-                              MarsDate, Mission, darian, mission_sol,
-                              msd_from_tt, to_mars, tt_from_msd)
-from chronologia.localtime import (EOT_ACCURACY, LMTZone, apparent_solar_time,
-                                   equation_of_time, local_mean_time)
-from chronologia.moon import (EPOCH_NEW_MOON, MEAN_SYNODIC_MONTH_DAYS,
-                              MOON_PHASE_ACCURACY, lunation_number, moon_phase,
-                              next_phase, previous_phase)
-from chronologia.equinoxes import (EQUINOX_ACCURACY, SOLAR_TERM_ACCURACY,
-                                   SOLAR_TERM_NAMES, VALID_YEAR_RANGE,
-                                   astronomical_season_span, equinox,
-                                   solar_term)
-from chronologia.luna import (LTC_DRIFT_MICROSECONDS_PER_DAY, LTC_STATUS,
-                              LUNAR_DAY_SECONDS, LunarTimeStandardStatus,
-                              ltc_offset)
-from chronologia.computus import (EASTER_METHODS, FIXED_FEASTS,
-                                  MOVABLE_FEAST_OFFSETS, advent_sunday, easter,
-                                  fixed_feast, movable_feast)
-from chronologia.cosmology import (AGE_OF_UNIVERSE_ERA, COSMIC_PERIODS,
-                                   COSMOLOGIES, HUBBLE_TIME_GYR,
-                                   UNIVERSE_AGE_GYR,
-                                   UNIVERSE_AGE_UNCERTAINTY_GYR, CosmologyParams,
-                                   UncertainEra, age_of_universe_gyr,
-                                   lookback_gyr, lookback_time, resolve_cosmic)
-from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
-                                 AmbiguousPeriodError, NamedPeriod, calibrate_c14,
-                                 candidates, children, lookup, subdivide)
-from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
-                                    Recurrence, every,
-                                    last_weekday_of_month,
-                                    nth_weekday_of_month, occurrences,
-                                    parse_rrule)
-from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
-from chronologia.solar import (SOLAR_ACCURACY, NoSunEvent, SunEvents,
-                               sun_events, sunset_day_start)
-from chronologia.unequal_hours import (BABYLONIAN_HOURS, CLOCK_CONVENTIONS,
-                                       EDO_JAPANESE, ITALIAN_HOURS,
-                                       ROMAN_HOURS, UNEQUAL_HOUR_SYSTEMS,
-                                       ZMANIM_GRA, ClockConvention,
-                                       UnequalHourSystem, convention_time,
-                                       temporal_hour_span)
-from chronologia.prayer_times import (ASR_METHODS, CONVENTIONS, AsrMethod,
-                                      PrayerConvention, PrayerTimes,
-                                      prayer_times)
-from chronologia.resolution import DateTimeResolution
-from chronologia.roman import roman_to_julian
-from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
-                                   DiscontinuityKind, NeverExisted, Timeline,
-                                   TimelineSegment, proleptic)
-from chronologia.zone_timelines import (ClockSegment, ClockTimeline,
-                                        ZoneDiscontinuity, ZoneNeverExisted,
-                                        zone_history_start, zone_timeline)
-from chronologia.civil_holidays import (CATEGORIES, IL_INDEPENDENCE_SHIFT,
-                                        NL_KINGSDAY_SHIFT,
-                                        SATURDAY_SUNDAY_TO_MONDAY,
-                                        US_OBSERVED_SHIFT,
-                                        SUNDAY_TO_MONDAY, CalendarDateRule,
-                                        CivilHoliday, DecreeTableRule,
-                                        OneOffRule,
-                                        EasterOffsetRule, SolarEventRule,
-                                        FixedRule, HolidayCalendar,
-                                        HolidayRule, NthWeekdayRule,
-                                        ExcludeRule,
-                                        ObservedShift, NearestWeekdayRule,
-                                        coverage, holidays_for, is_civil_holiday,
-                                        load_calendar, load_translations,
-                                        parse_name_cell)
-from chronologia.extract import (Candidate, DateSpanResult, DurationResult,
-                                 RecurrenceResult, TimeMention, explain,
-                                 extract_candidates, extract_duration,
-                                 extract_recurrence, extract_timespan,
-                                 extract_timespans)
-from chronologia.events import Event, extract_event
-from chronologia.extract.impossible import ImpossibleDateError
-from chronologia.ical import from_ical, to_ical
-from chronologia.serialization import from_json, to_json
+from __future__ import annotations
 
+import importlib
+from typing import TYPE_CHECKING, Any
+
+from chronologia.prayer_times import prayer_times
 from chronologia.version import VERSION_STR as __version__
+
+if TYPE_CHECKING:
+    from chronologia.astrodate import (AstroDate, DateSpan, WideDuration,
+                                       civil_add, combine_basis, is_leap_year,
+                                       resolve_wall_clock)
+    from chronologia.calendars import (CALENDARS, Calendar, CalendarDate,
+                                       CalendarRangeError, TabulatedCalendar,
+                                       gregorian_to_jdn, jdn_to_gregorian,
+                                       julian_to_jdn, jdn_to_julian,
+                                       register_event_provider)
+    from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, YEAR_CYCLES,
+                                    DayCycle, DaySubdivision, YearCycle,
+                                    resolve_cycle_day, year_cycle_label,
+                                    years_of)
+    from chronologia.dayparts import (CLDR_VERSION, DAY_PARTS, DayPart,
+                                      UnknownDayPartError, daypart_span)
+    from chronologia.edtf import (EdtfDate, EdtfParseError, format_edtf,
+                                 parse_edtf)
+    from chronologia.eras import (ERAS, ERA_ALIASES, HEAT_DEATH_YEAR, Era,
+                                  EraCounting, astro_year_range, resolve_bp,
+                                  resolve_era, resolve_era_year_span)
+    from chronologia.axes import (AXES, EARTH_DAY_SECONDS, MARS_SOL_RATIO,
+                                  MARS_SOL_SECONDS, TimeAxis, astro_from_jd, jd_of)
+    from chronologia.leapseconds import (GPS_EPOCH, LEAP_SECONDS,
+                                         TABLE_VALID_UNTIL, TAI_MINUS_GPS,
+                                         TT_MINUS_TAI, gps_to_utc,
+                                         is_leap_second_day, table_valid_until,
+                                         tai_to_utc, tt_to_utc, utc_tai_offset,
+                                         utc_to_gps, utc_to_tai, utc_to_tt)
+    from chronologia.mars import (DARIAN_EPOCH_MSD, DARIAN_MONTHS, DARIAN_WEEKDAYS,
+                                  MISSION_ERAS, DarianCalendar, DarianDate,
+                                  MarsDate, Mission, darian, mission_sol,
+                                  msd_from_tt, to_mars, tt_from_msd)
+    from chronologia.localtime import (EOT_ACCURACY, LMTZone, apparent_solar_time,
+                                       equation_of_time, local_mean_time)
+    from chronologia.moon import (EPOCH_NEW_MOON, MEAN_SYNODIC_MONTH_DAYS,
+                                  MOON_PHASE_ACCURACY, lunation_number, moon_phase,
+                                  next_phase, previous_phase)
+    from chronologia.equinoxes import (EQUINOX_ACCURACY, SOLAR_TERM_ACCURACY,
+                                       SOLAR_TERM_NAMES, VALID_YEAR_RANGE,
+                                       astronomical_season_span, equinox,
+                                       solar_term)
+    from chronologia.luna import (LTC_DRIFT_MICROSECONDS_PER_DAY, LTC_STATUS,
+                                  LUNAR_DAY_SECONDS, LunarTimeStandardStatus,
+                                  ltc_offset)
+    from chronologia.computus import (EASTER_METHODS, FIXED_FEASTS,
+                                      MOVABLE_FEAST_OFFSETS, advent_sunday, easter,
+                                      fixed_feast, movable_feast)
+    from chronologia.cosmology import (AGE_OF_UNIVERSE_ERA, COSMIC_PERIODS,
+                                       COSMOLOGIES, HUBBLE_TIME_GYR,
+                                       UNIVERSE_AGE_GYR,
+                                       UNIVERSE_AGE_UNCERTAINTY_GYR, CosmologyParams,
+                                       UncertainEra, age_of_universe_gyr,
+                                       lookback_gyr, lookback_time, resolve_cosmic)
+    from chronologia.periods import (ICS_CHART_VERSION, INTCAL20_COARSE, PERIODS,
+                                     AmbiguousPeriodError, NamedPeriod, calibrate_c14,
+                                     candidates, children, lookup, subdivide)
+    from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
+                                        Recurrence, every,
+                                        last_weekday_of_month,
+                                        nth_weekday_of_month, occurrences,
+                                        parse_rrule)
+    from chronologia.regnal import REGNAL_SEQUENCES, RegnalSequence
+    from chronologia.solar import (SOLAR_ACCURACY, NoSunEvent, SunEvents,
+                                   sun_events, sunset_day_start)
+    from chronologia.unequal_hours import (BABYLONIAN_HOURS, CLOCK_CONVENTIONS,
+                                           EDO_JAPANESE, ITALIAN_HOURS,
+                                           ROMAN_HOURS, UNEQUAL_HOUR_SYSTEMS,
+                                           ZMANIM_GRA, ClockConvention,
+                                           UnequalHourSystem, convention_time,
+                                           temporal_hour_span)
+    from chronologia.prayer_times import (ASR_METHODS, CONVENTIONS, AsrMethod,
+                                          PrayerConvention, PrayerTimes,
+                                          prayer_times)
+    from chronologia.resolution import DateTimeResolution
+    from chronologia.roman import roman_to_julian
+    from chronologia.timelines import (TIMELINES, CivilLabel, Discontinuity,
+                                       DiscontinuityKind, NeverExisted, Timeline,
+                                       TimelineSegment, proleptic)
+    from chronologia.zone_timelines import (ClockSegment, ClockTimeline,
+                                            ZoneDiscontinuity, ZoneNeverExisted,
+                                            zone_history_start, zone_timeline)
+    from chronologia.civil_holidays import (CATEGORIES, IL_INDEPENDENCE_SHIFT,
+                                            NL_KINGSDAY_SHIFT,
+                                            SATURDAY_SUNDAY_TO_MONDAY,
+                                            US_OBSERVED_SHIFT,
+                                            SUNDAY_TO_MONDAY, CalendarDateRule,
+                                            CivilHoliday, DecreeTableRule,
+                                            OneOffRule,
+                                            EasterOffsetRule, SolarEventRule,
+                                            FixedRule, HolidayCalendar,
+                                            HolidayRule, NthWeekdayRule,
+                                            ExcludeRule,
+                                            ObservedShift, NearestWeekdayRule,
+                                            coverage, holidays_for, is_civil_holiday,
+                                            load_calendar, load_translations,
+                                            parse_name_cell)
+    from chronologia.extract import (Candidate, DateSpanResult, DurationResult,
+                                     RecurrenceResult, TimeMention, explain,
+                                     extract_candidates, extract_duration,
+                                     extract_recurrence, extract_timespan,
+                                     extract_timespans)
+    from chronologia.events import Event, extract_event
+    from chronologia.extract.impossible import ImpossibleDateError
+    from chronologia.ical import from_ical, to_ical
+    from chronologia.serialization import from_json, to_json
+
+#: Public name -> defining module. Each module loads on first access, so
+#: importing the package does not load every calendar, era and holiday table.
+_EXPORTS = {
+    "chronologia.astrodate": (
+        "AstroDate", "DateSpan", "WideDuration", "civil_add", "combine_basis",
+        "is_leap_year", "resolve_wall_clock",
+    ),
+    "chronologia.calendars": (
+        "CALENDARS", "Calendar", "CalendarDate", "CalendarRangeError",
+        "TabulatedCalendar", "gregorian_to_jdn", "jdn_to_gregorian",
+        "julian_to_jdn", "jdn_to_julian", "register_event_provider",
+    ),
+    "chronologia.cycles": (
+        "DAY_CYCLES", "DAY_SUBDIVISIONS", "YEAR_CYCLES", "DayCycle",
+        "DaySubdivision", "YearCycle", "resolve_cycle_day", "year_cycle_label",
+        "years_of",
+    ),
+    "chronologia.dayparts": (
+        "CLDR_VERSION", "DAY_PARTS", "DayPart", "UnknownDayPartError",
+        "daypart_span",
+    ),
+    "chronologia.edtf": (
+        "EdtfDate", "EdtfParseError", "format_edtf", "parse_edtf",
+    ),
+    "chronologia.eras": (
+        "ERAS", "ERA_ALIASES", "HEAT_DEATH_YEAR", "Era", "EraCounting",
+        "astro_year_range", "resolve_bp", "resolve_era",
+        "resolve_era_year_span",
+    ),
+    "chronologia.axes": (
+        "AXES", "EARTH_DAY_SECONDS", "MARS_SOL_RATIO", "MARS_SOL_SECONDS",
+        "TimeAxis", "astro_from_jd", "jd_of",
+    ),
+    "chronologia.leapseconds": (
+        "GPS_EPOCH", "LEAP_SECONDS", "TABLE_VALID_UNTIL", "TAI_MINUS_GPS",
+        "TT_MINUS_TAI", "gps_to_utc", "is_leap_second_day", "table_valid_until",
+        "tai_to_utc", "tt_to_utc", "utc_tai_offset", "utc_to_gps", "utc_to_tai",
+        "utc_to_tt",
+    ),
+    "chronologia.mars": (
+        "DARIAN_EPOCH_MSD", "DARIAN_MONTHS", "DARIAN_WEEKDAYS", "MISSION_ERAS",
+        "DarianCalendar", "DarianDate", "MarsDate", "Mission", "darian",
+        "mission_sol", "msd_from_tt", "to_mars", "tt_from_msd",
+    ),
+    "chronologia.localtime": (
+        "EOT_ACCURACY", "LMTZone", "apparent_solar_time", "equation_of_time",
+        "local_mean_time",
+    ),
+    "chronologia.moon": (
+        "EPOCH_NEW_MOON", "MEAN_SYNODIC_MONTH_DAYS", "MOON_PHASE_ACCURACY",
+        "lunation_number", "moon_phase", "next_phase", "previous_phase",
+    ),
+    "chronologia.equinoxes": (
+        "EQUINOX_ACCURACY", "SOLAR_TERM_ACCURACY", "SOLAR_TERM_NAMES",
+        "VALID_YEAR_RANGE", "astronomical_season_span", "equinox", "solar_term",
+    ),
+    "chronologia.luna": (
+        "LTC_DRIFT_MICROSECONDS_PER_DAY", "LTC_STATUS", "LUNAR_DAY_SECONDS",
+        "LunarTimeStandardStatus", "ltc_offset",
+    ),
+    "chronologia.computus": (
+        "EASTER_METHODS", "FIXED_FEASTS", "MOVABLE_FEAST_OFFSETS",
+        "advent_sunday", "easter", "fixed_feast", "movable_feast",
+    ),
+    "chronologia.cosmology": (
+        "AGE_OF_UNIVERSE_ERA", "COSMIC_PERIODS", "COSMOLOGIES",
+        "HUBBLE_TIME_GYR", "UNIVERSE_AGE_GYR", "UNIVERSE_AGE_UNCERTAINTY_GYR",
+        "CosmologyParams", "UncertainEra", "age_of_universe_gyr",
+        "lookback_gyr", "lookback_time", "resolve_cosmic",
+    ),
+    "chronologia.periods": (
+        "ICS_CHART_VERSION", "INTCAL20_COARSE", "PERIODS",
+        "AmbiguousPeriodError", "NamedPeriod", "calibrate_c14", "candidates",
+        "children", "lookup", "subdivide",
+    ),
+    "chronologia.recurrence": (
+        "HolidayRecurrence", "JurisdictionHolidays", "Recurrence", "every",
+        "last_weekday_of_month", "nth_weekday_of_month", "occurrences",
+        "parse_rrule",
+    ),
+    "chronologia.regnal": (
+        "REGNAL_SEQUENCES", "RegnalSequence",
+    ),
+    "chronologia.solar": (
+        "SOLAR_ACCURACY", "NoSunEvent", "SunEvents", "sun_events",
+        "sunset_day_start",
+    ),
+    "chronologia.unequal_hours": (
+        "BABYLONIAN_HOURS", "CLOCK_CONVENTIONS", "EDO_JAPANESE",
+        "ITALIAN_HOURS", "ROMAN_HOURS", "UNEQUAL_HOUR_SYSTEMS", "ZMANIM_GRA",
+        "ClockConvention", "UnequalHourSystem", "convention_time",
+        "temporal_hour_span",
+    ),
+    "chronologia.prayer_times": (
+        "ASR_METHODS", "CONVENTIONS", "AsrMethod", "PrayerConvention",
+        "PrayerTimes", "prayer_times",
+    ),
+    "chronologia.resolution": (
+        "DateTimeResolution",
+    ),
+    "chronologia.roman": (
+        "roman_to_julian",
+    ),
+    "chronologia.timelines": (
+        "TIMELINES", "CivilLabel", "Discontinuity", "DiscontinuityKind",
+        "NeverExisted", "Timeline", "TimelineSegment", "proleptic",
+    ),
+    "chronologia.zone_timelines": (
+        "ClockSegment", "ClockTimeline", "ZoneDiscontinuity",
+        "ZoneNeverExisted", "zone_history_start", "zone_timeline",
+    ),
+    "chronologia.civil_holidays": (
+        "CATEGORIES", "IL_INDEPENDENCE_SHIFT", "NL_KINGSDAY_SHIFT",
+        "SATURDAY_SUNDAY_TO_MONDAY", "US_OBSERVED_SHIFT", "SUNDAY_TO_MONDAY",
+        "CalendarDateRule", "CivilHoliday", "DecreeTableRule", "OneOffRule",
+        "EasterOffsetRule", "SolarEventRule", "FixedRule", "HolidayCalendar",
+        "HolidayRule", "NthWeekdayRule", "ExcludeRule", "ObservedShift",
+        "NearestWeekdayRule", "coverage", "holidays_for", "is_civil_holiday",
+        "load_calendar", "load_translations", "parse_name_cell",
+    ),
+    "chronologia.extract": (
+        "Candidate", "DateSpanResult", "DurationResult", "RecurrenceResult",
+        "TimeMention", "explain", "extract_candidates", "extract_duration",
+        "extract_recurrence", "extract_timespan", "extract_timespans",
+    ),
+    "chronologia.events": (
+        "Event", "extract_event",
+    ),
+    "chronologia.extract.impossible": (
+        "ImpossibleDateError",
+    ),
+    "chronologia.ical": (
+        "from_ical", "to_ical",
+    ),
+    "chronologia.serialization": (
+        "from_json", "to_json",
+    ),
+}
 
 __all__ = [
     # unbounded datetime-compatible point and half-open interval
@@ -379,13 +525,25 @@ __all__ = [
 #: object (see :pep:`562`).
 _DEPRECATED_NAMES = {"TimeSpanResult": "DateSpanResult"}
 
+_MODULE_OF = {name: module for module, names in _EXPORTS.items()
+              for name in names}
 
-def __getattr__(name):
+
+def __getattr__(name: str) -> Any:
+    module = _MODULE_OF.get(name)
+    if module is not None:
+        value = getattr(importlib.import_module(module), name)
+        globals()[name] = value
+        return value
     replacement = _DEPRECATED_NAMES.get(name)
     if replacement is not None:
         import warnings
         warnings.warn(
             f"chronologia.{name} is deprecated; use chronologia.{replacement}",
             DeprecationWarning, stacklevel=2)
-        return globals()[replacement]
+        return __getattr__(replacement)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__() -> list[str]:
+    return sorted({*globals(), *_MODULE_OF})
