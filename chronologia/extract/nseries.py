@@ -1577,10 +1577,13 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
         while lo - 1 >= 0 and tokens[lo - 1].text in ctx.at_words \
                 and (lo - 1) not in consumed:
             lo -= 1
-        # "às dez de cada sábado": the "de" between the clock and the
-        # recurrence head belongs to neither
+        # "às dez de cada sábado": the "de" between the clock and a recurrence
+        # head that ends the text belongs to neither.  A free word after the
+        # head ("remind me at 9 of every monday meeting") leaves the "of" to
+        # the words before the clock.
         if (hi + 1 < n and tokens[hi].text in ctx.of_words
-                and hi not in consumed and hi + 1 in consumed
+                and hi not in consumed
+                and all(k in consumed for k in range(hi + 1, n))
                 and "MERIDIEM" not in m.slots):
             hi += 1
         return rec, consumed | set(range(lo, hi))
