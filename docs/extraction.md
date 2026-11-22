@@ -1230,7 +1230,6 @@ from chronologia.extract import DateTimeEngine, load_lang_spec
 engine = DateTimeEngine(load_lang_spec("en"))
 sentence = "the meeting is on the fifth of june at half past nine"
 toks = engine.tokenize(sentence)
-# [(0,'the'),(1,'meeting'),(2,'is'),(3,'on'),(4,'the'),(5,'5'),
 print([(t.index, t.text) for t in toks])  # [(0, 'the'), (1, 'meeting'), (2, 'is'), (3, 'on'), (4, 'the'), (5, '5'), (6, 'of'), (7, 'june'), (8, 'at'), (9, 'half'), (10, 'past'), (11, '9')]
 ```
 

@@ -188,7 +188,7 @@ from chronologia import calibrate_c14, resolve_bp, candidates, lookup, subdivide
 #    never a single confident year.
 c14 = calibrate_c14(3500)                  # 3500 radiocarbon years BP
 # roughly 1900 BC, not "3500 years ago" (which would be ~1550 BC).
-print("calibrated:", c14.start.year, "..", c14.end.year, f"({c14.basis})")  # calibrated: -1950 .. -1850 (reconstructed)  # calibrated: -1950 .. -1850 (reconstructed)
+print("calibrated:", c14.start.year, "..", c14.end.year, f"({c14.basis})")  # calibrated: -1950 .. -1850 (reconstructed)
 
 # 2. Whose Bronze Age? A bare name is ambiguous, so it refuses to guess.
 try:
