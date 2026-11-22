@@ -660,6 +660,25 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                             hour=0, minute=0, second=0, microsecond=0)
         return _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
 
+    def holding(sub, start, end):
+        # the latest reading of a yearly endpoint before ``start``, when it
+        # makes a range of under half a year that holds the anchor
+        now = AstroDate.from_datetime(anchor.replace(tzinfo=None))
+        for back in range(1, 9):
+            if start.year - back < MINYEAR:
+                return None
+            at = anchor.replace(year=start.year - back, month=1, day=1,
+                                hour=0, minute=0, second=0, microsecond=0)
+            got = _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
+            if got is not None and got[0].start < start:
+                begin = got[0].start.replace(tzinfo=None)
+                stop = end.replace(tzinfo=None)
+                if (begin <= now < stop
+                        and stop - begin < timedelta(days=183)):
+                    return got[0].start
+                return None
+        return None
+
     def daily(sub):
         # an endpoint that names no day: read two days later, it is the same
         # clock two days later (a weekday or a holiday moves by a week, a
@@ -758,7 +777,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
                                      previous, daily, since=since,
-                                     following=following)
+                                     following=following,
+                                     holding=holding)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -811,7 +831,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily, following=following)
+                                     previous, daily, following=following,
+                                     holding=holding)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -844,7 +865,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                     got = _compose_range(left_tok, right_tok, endpoint,
                                          borrowed, spec, bare_of,
                                          monthly, previous, daily,
-                                         following=following)
+                                         following=following,
+                                     holding=holding)
                 if got is not None:
                     span, rem = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
@@ -1399,7 +1421,7 @@ def _labelled_day_keeps_own(sub, donor, donor_read, spec):
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
-                   daily=None, since=False, following=None):
+                   daily=None, since=False, following=None, holding=None):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1592,6 +1614,16 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             pulled = earlier[0].start
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
+    # both ends flung to the same year, with the start past the end ("from 1
+    # december to 10 january" said on 20 december): the range is read from the
+    # start's previous occurrence when that range is short and holds the anchor
+    if (end <= start and holding is not None and not left[3] and not right[3]
+            and left[2] == "dated" and right[2] == "dated"
+            and not shared_left and not left_lent and not right_lent
+            and not _definite_endpoint(left_tok, spec)):
+        earlier_start = holding(left_tok, start, end)
+        if earlier_start is not None:
+            start = earlier_start
     # a year lent across the range (one endpoint named the pair's single year)
     # reads the borrowed month in the donor's own year, which reverses the span
     # when the two months sit on opposite sides of the calendar -- "from

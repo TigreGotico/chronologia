@@ -219,3 +219,56 @@ def test_last_day_of_march_keeps_the_anchor_year(lang, text, key):
 ])
 def test_a_day_no_month_holds_is_refused(text):
     assert extract_timespan(text, "en", ANCHORS["a2026"]) is None
+
+
+# -- a range said inside itself, across the new year or 29 February ----------
+
+# said on 20 December 2026 the start is 1 December 2026 and the end the
+# 10 January of 2027; said on 31 December 2027 the same range ends in 2028
+NEW_YEAR_RANGES = [
+    ("en", "from the 1st day of december to 10 january"),
+    ("en", "from 1 december to 10 january"),
+    ("es", "del primer día de diciembre al 10 de enero"),
+    ("es", "del 1 de diciembre al 10 de enero"),
+    ("pt", "do primeiro dia de dezembro a 10 de janeiro"),
+    ("pt", "de 1 de dezembro a 10 de janeiro"),
+    ("de", "vom ersten Tag im Dezember bis zum 10. Januar"),
+    ("de", "vom 1. Dezember bis zum 10. Januar"),
+    ("fr", "du premier jour de décembre au 10 janvier"),
+    ("fr", "du 1 décembre au 10 janvier"),
+]
+
+
+@pytest.mark.parametrize("anchor,year", [(datetime(2026, 12, 20, 9, 0), 2026),
+                                         (datetime(2027, 12, 31, 9, 0), 2027)])
+@pytest.mark.parametrize("lang,text", NEW_YEAR_RANGES)
+def test_range_across_the_new_year_holds_the_anchor(lang, text, anchor, year):
+    r = extract_timespan(text, lang, anchor)
+    assert r is not None, f"{text!r} ({lang}) did not parse"
+    assert r.remainder == ""
+    s, e = r.span.start, r.span.end
+    assert (s.year, s.month, s.day) == (year, 12, 1)
+    assert (e.year, e.month, e.day) == (year + 1, 1, 11)
+
+
+@pytest.mark.parametrize("lang,text", [
+    ("en", "from the 29th day of february to the 1st day of march"),
+    ("en", "from 29 february to 1 march"),
+    ("es", "del 29 de febrero al 1 de marzo"),
+    ("pt", "de 29 de fevereiro a 1 de março"),
+    ("de", "vom 29. Februar bis zum 1. März"),
+    ("fr", "du 29 février au 1 mars"),
+])
+def test_range_from_the_leap_day_said_on_the_first_of_march(lang, text):
+    r = extract_timespan(text, lang, datetime(2028, 3, 1, 9, 0))
+    assert r is not None, f"{text!r} ({lang}) did not parse"
+    s, e = r.span.start, r.span.end
+    assert (s.year, s.month, s.day) == (2028, 2, 29)
+    assert (e.year, e.month, e.day) == (2028, 3, 2)
+
+
+@pytest.mark.parametrize("text", ["from 12 june to 5 june",
+                                  "from the 12th day of june to 5 june"])
+def test_a_reversed_range_is_still_refused(text):
+    r = extract_timespan(text, "en", datetime(2017, 6, 27, 13, 4))
+    assert r is None or r.remainder != ""
