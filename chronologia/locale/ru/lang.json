@@ -45,6 +45,8 @@
         "CLOCK oclock MERIDIEM ZONE?",
         "at? CLOCK MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
+        "at HOUR HOURSPAN MERIDIEM?",
+        "HOURSPAN at HOUR MERIDIEM?",
         "at HOUR oclock MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
@@ -70,7 +72,8 @@
       "orders": [
         "in GYEAR",
         "article? year_word GYEAR",
-        "GYEAR"
+        "GYEAR",
+        "article? PART GYEAR year_word?"
       ]
     },
     "decade_ref": {
@@ -140,7 +143,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_slavic:fold_ru",
+  "hook": "chronologia.extract.numlayer_slavic:fold_ru",
   "base_grammar": {
     "override": {
       "scoped_ordinal": [

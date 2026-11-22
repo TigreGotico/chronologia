@@ -27,10 +27,14 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from typing import List, NamedTuple, Optional, Tuple, Union
 
-from chronologia.astrodate import DateSpan
+from chronologia.astrodate import _WEEKDAY_NAMES_FULL, DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
+from chronologia.extract.impossible import (bad_day, decline, no_such,
+                                            no_such_weekday, reports_impossible,
+                                            scope_name)
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
+from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _lone_spoken_hour,
                                           reads_spoken_hours,
@@ -113,8 +117,8 @@ def extract_duration(
     every count it finds ("2 days 4 hours" -> 52 hours), including fractional
     counts ("half an hour" -> 30 min, "quarter of an hour" -> 15 min) and the
     trailing "... and a half" idiom ("an hour and a half" -> 90 min).  Numbers
-    are folded by ``ovos-number-parser`` before matching, so "90 minutes" and
-    "ninety minutes" read alike.
+    are folded before matching (through numtag for the languages it has a
+    lexicon for), so "90 minutes" and "ninety minutes" read alike.
 
     The calendar units (month, year, decade) have no fixed length, so they
     are counted on the calendar from ``anchor``: "3 months" from 31 January
@@ -413,9 +417,14 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         # a leading article: "a day" -> count 1; "a couple of days" -> skip
         # it.  numtag reads no number in a quantifier ("couple", "few"), so in
         # its languages the quantifier word is the count and the article
-        # before it skips too.
+        # before it skips too.  A definite article, "day" and a day number
+        # ("no dia 5 de dezembro") name a date, so the article skips there.
         if tokens[j].text in articles:
             if j + 1 < n and (tokens[j + 1].is_number
+                              or (tokens[j].text not in spec.quantifiers
+                                  and j + 2 < n
+                                  and _unit_of(tokens[j + 1]) == "day"
+                                  and tokens[j + 2].text[:1].isdigit())
                               or tokens[j + 1].text in fracs
                               or (tokens[j + 1].text in spec.quantifiers
                                   and spec.lang in NUMTAG_LANGS)):
@@ -1203,7 +1212,7 @@ class RecurrenceResult(NamedTuple):
     remainder: str
 
 
-@reads_spoken_hours
+@reports_impossible
 def extract_recurrence(
         text: str,
         lang: str = "en",
@@ -1245,10 +1254,31 @@ def extract_recurrence(
     tuple (unpack it, or read ``.recurrence`` / ``.remainder``) -- or ``None``
     when no recurrence is found.
 
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
+
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names no recurrence, the empty string included, returns
     ``None``.
     """
+    got = _read_recurrence(text, lang, anchor)
+    return None if got is _NEVER_OCCURS else got
+
+
+#: Returned by :func:`_read_recurrence` for a phrase that names a rule no
+#: calendar period ever satisfies ("the sixth monday of every month").  A
+#: caller reading a one-off date from the same words must not fall back to the
+#: bare weekday: the phrase is claimed and refused.
+_NEVER_OCCURS = object()
+
+
+@reads_spoken_hours
+def _read_recurrence(text, lang, anchor):
+    """:func:`extract_recurrence`, but a rule that never occurs returns
+    :data:`_NEVER_OCCURS` where the public function returns ``None``."""
     require_text(text, "extract_recurrence")
     ctx = _recur_ctx(text, lang, anchor)
     tokens = ctx.tokens
@@ -1272,6 +1302,8 @@ def extract_recurrence(
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
+            if rec is _NEVER_OCCURS:
+                return _NEVER_OCCURS
             # a finder may CLAIM its frame yet name no valid recurrence (an
             # impossible recurring date, "every 31st of april"): it returns a
             # None rule so the greedy catch-alls after it do not re-read the
@@ -1281,6 +1313,8 @@ def extract_recurrence(
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_clock_range(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor)
+            if rec is _NEVER_OCCURS:
+                return _NEVER_OCCURS
             # a range bound may CLAIM its clause yet name no valid recurrence
             # (a weekday range that shares no day with an already-set BYDAY
             # base, e.g. "every weekday from saturday to sunday"): declining
@@ -1604,6 +1638,38 @@ def _bound_payload(rec, consumed, tokens, marker, lang, anchor, grounder):
     return None
 
 
+def _weekday_range_marks(ctx, consumed):
+    """Token indexes where an unconsumed "from WEEKDAY to WEEKDAY" clause
+    puts its "to" word, when that word is also an "until" marker (German
+    "bis", Dutch "tot").  :func:`_apply_bounds` leaves these to
+    :func:`_apply_range_bound`, which reads the clause as a weekday set."""
+    tokens, spec, n = ctx.tokens, ctx.spec, len(ctx.tokens)
+    leads = _conn_surfaces(spec, "between", _RANGE_BETWEEN) \
+        + _conn_surfaces(spec, "from", _RANGE_FROM)
+    mids = _conn_surfaces(spec, "to", ())
+    free = [i for i in range(n) if i not in consumed]
+    marks = set()
+    for p in free:
+        if tokens[p].text not in ctx.weekdays:
+            continue
+        for lead in leads:
+            i = p - len(lead)
+            if i < 0 or [t.text for t in tokens[i:p]] != lead \
+                    or any(x in consumed for x in range(i, p)):
+                continue
+            for mid in mids:
+                q = p + 1 + len(mid)
+                if (q < n and p + 1 not in consumed
+                        and [t.text for t in tokens[p + 1:q]] == mid
+                        and tokens[q].text in ctx.weekdays
+                        and not any(x in consumed for x in range(p + 1, q + 1))
+                        and (q + 1 == n or q + 1 in consumed)
+                        and mid in [list(w.lower().split())
+                                    for w in ctx.until_words]):
+                    marks.add(p + 1)
+    return marks
+
+
 def _apply_bounds(rec, consumed, ctx, lang, anchor):
     """Fold a trailing ``until <date>`` (-> UNTIL) or ``for <duration>``
     (-> COUNT) bound onto ``rec``, extending ``consumed`` over the words it
@@ -1668,10 +1734,13 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
             return None
         return _replace(rec, count=count)
 
+    weekday_ranges = _weekday_range_marks(ctx, consumed)
     for surfaces, grounder in ((ctx.until_words, _ground_until),
                                (ctx.before_words, _ground_until),
                                (ctx.for_words, _ground_count)):
         for marker in _marker_runs(tokens, surfaces, consumed):
+            if surfaces is ctx.until_words and marker[0] in weekday_ranges:
+                continue
             got = _bound_payload(rec, consumed, tokens, marker, lang, anchor,
                                  grounder)
             if got is not None:
@@ -1869,7 +1938,10 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
                         # via the old union bug, everything).
                         keep = [wd for wd in days if wd in existing]
                         if not keep:
-                            return None, consumed | set(range(i, n))
+                            decline("the range from "
+                                    f"{_WEEKDAY_NAMES_FULL[start_wd]} to "
+                                    f"{_WEEKDAY_NAMES_FULL[end_wd]} holds no day the rule allows")
+                            return _NEVER_OCCURS, consumed | set(range(i, n))
                         rec = _replace(rec, byday=tuple((None, wd) for wd in keep))
                     else:
                         added = tuple((None, wd) for wd in days)
@@ -1990,6 +2062,10 @@ def _apply_year_scope(rec, consumed, ctx, lang, anchor):
         return None, consumed | set(range(lo, hi))
     if rec.until is not None or rec.count is not None:
         return rec, consumed
+    if len(rec.bymonth) == 1 and len(rec.byday) == 1 and rec.byday[0][0]:
+        (n, weekday), month = rec.byday[0], rec.bymonth[0]
+        if _month_weekday(start.year, month, weekday, n) is None:
+            decline(no_such_weekday(scope_name(month, start.year), n, weekday))
     rec = _replace(rec, until=end)
     return rec, consumed | set(range(lo, hi))
 
@@ -2016,6 +2092,7 @@ class _RecurCtx:
     every: set
     other: set
     weekday_word: set
+    weekday_count_word: set
     articles: set
     of_words: set
     freq: dict
@@ -2104,6 +2181,7 @@ def _recur_ctx(text, lang, anchor):
         every=set(C.get("every", ())),
         other=set(C.get("recur_other", ())),
         weekday_word=set(C.get("weekday", ())),
+        weekday_count_word=set(C.get("weekday_count", ())),
         articles=_article_words(spec),
         of_words=set(C.get("of", ())),
         freq=_freq_map(C),
@@ -2256,7 +2334,10 @@ def _recur_nth_weekday(ctx):
                               or t[start0 - 1].text in ctx.every):
             start0 -= 1
         plural_ok = any(t[k].text in ctx.every for k in range(start0, li0))
-        business = t[w].text in ctx.weekday_word
+        # the plural class noun after a cardinal is a count ("25 weekdays of
+        # the month"), so like a derived weekday plural it needs "every"
+        business = t[w].text in ctx.weekday_word and (
+            plural_ok or t[w].text not in ctx.weekday_count_word)
         wd = None if business else _weekday_here(ctx, t[w], plural_ok)
         if wd is None and not business:
             continue
@@ -2270,6 +2351,8 @@ def _recur_nth_weekday(ctx):
         # the same number as an INTERVAL multiplier instead.
         numeric_last_n = None
         if t[li].is_number:
+            if t[li].value != int(t[li].value):
+                continue
             ordn = int(t[li].value)
         elif (t[li].text in ctx.rel_markers
               and ctx.rel_markers[t[li].text] == -1):
@@ -2390,6 +2473,15 @@ def _recur_nth_weekday(ctx):
                     month_ordn = -numeric_last_n
                 else:
                     return None, frozenset()
+            if month_ordn == 0 or abs(month_ordn) > (23 if business else 5):
+                # a month holds at most five of one weekday and 23 weekdays,
+                # so the rule would never occur -- claim the phrase and
+                # decline it
+                scope = (scope_name(ctx.months[t[r].text], None)
+                         if t[r].text in ctx.months else "a month")
+                decline(no_such(scope, month_ordn, "business day") if business
+                        else no_such_weekday(scope, month_ordn, wd))
+                return _NEVER_OCCURS, frozenset(range(start, r + 1))
             if t[r].text in ctx.months:
                 if business:
                     rec = _business_day_of_month(month_ordn, month=ctx.months[t[r].text])
@@ -2415,6 +2507,14 @@ def _recur_nth_weekday(ctx):
             # under ``FREQ=YEARLY``: the nth (or, negative, last) matching
             # weekday of the whole year -- exactly the reading "of the year"
             # asks for, so this resolves rather than refuses.
+            if ordn == 0 or abs(ordn) > (262 if business else 53):
+                # a year holds at most 53 of one weekday (365 = 52 weeks + 1
+                # day, 366 = 52 weeks + 2) and 262 weekdays (a leap year
+                # whose two extra days are both weekdays: 52 * 5 + 2), so the
+                # rule would never occur -- claim the phrase and decline it
+                decline(no_such("a year", ordn, "business day") if business
+                        else no_such_weekday("a year", ordn, wd))
+                return _NEVER_OCCURS, frozenset(range(start, r + 1))
             if business:
                 return (_business_day_of_year(ordn, year_interval),
                         set(range(start, r + 1)))
@@ -2554,6 +2654,7 @@ def _recur_nth_weekday_list(ctx):
             start -= 1
         # optional "of [the|every] month" tail after the weekday.
         end = w
+        year_end = None
         r = w + 1
         if r < n and p[r].text in ctx.of_words:
             m = r + 1
@@ -2563,16 +2664,27 @@ def _recur_nth_weekday_list(ctx):
             if m < n and p[m].text in ctx.units \
                     and ctx.units[p[m].text] == "month":
                 end = m
+            elif m < n and (p[m].is_number
+                            or ctx.units.get(p[m].text) == "year"):
+                year_end = m
         cs = p[start].char_start
         ce = p[end].char_end
         if cs is None or ce is None:
             continue
         byday = tuple((v, wd) for v in vals)
-        rec = _build_every("monthly", byday=byday)
         consumed = {tok.index for tok in ctx.tokens
                     if tok.char_start is not None and tok.char_end is not None
                     and tok.char_start >= cs and tok.char_end <= ce}
-        return rec, consumed
+        too_many = next((v for v in vals if abs(v) > 5), None)
+        if too_many is not None:
+            if year_end is not None:
+                ye = p[year_end].char_end
+                return None, {tok.index for tok in ctx.tokens
+                              if tok.char_start is not None and tok.char_end is not None
+                              and tok.char_start >= cs and tok.char_end <= ye}
+            decline(no_such_weekday("a month", too_many, wd))
+            return _NEVER_OCCURS, consumed
+        return _build_every("monthly", byday=byday), consumed
     return None
 
 
@@ -3916,6 +4028,7 @@ def _recur_date_anchored(ctx):
             # the named date recurs in no year ("every 31st of april").  This is
             # still the specific yearly-date frame -- consume it and report no
             # recurrence, rather than fall through to a wrong MONTHLY;BYMONTHDAY.
+            decline(bad_day(None, month, day))
             return (None, set(range(i, end)))
         return (rule, set(range(i, end)))
     return None

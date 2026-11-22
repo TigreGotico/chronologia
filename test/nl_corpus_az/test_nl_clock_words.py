@@ -3,8 +3,8 @@
 
 Gold is independent arithmetic: a bare "saat H" names the next occurrence of
 H:00 strictly after the anchor (2017-06-27 13:04).  So H>=14 lands the same
-day; H<=13 rolls to the following morning.  The spelled numeral folds via
-ovos-number-parser exactly like the digit form, so both must agree.
+day; H<=13 rolls to the following morning.  The spelled numeral reads through
+numtag exactly like the digit form, so both must agree.
 """
 from datetime import datetime, timedelta
 import pytest

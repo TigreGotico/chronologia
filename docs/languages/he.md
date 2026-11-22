@@ -1,5 +1,15 @@
 # Hebrew (`he`)
 
+<!-- agent-hint
+covers: where each construction of the Hebrew locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/he/lang.json`, `chronologia/locale/he/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/he.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/he.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Hebrew (`he`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Hebrew writes right to left, glues its prepositions onto the word they govern,
 and keeps two calendars in everyday use at once. All three facts shape what
 this locale can read. The proclitic is the sharpest of them: `ב־` ("in, on,
@@ -138,8 +148,8 @@ frequency words `יומי`, `שבועי`, `חודשי`, `שנתי`.
 
 **The institute citations do not carry locators.** Several marker files name
 the Academy of the Hebrew Language as a source with no more than an `s.v.` and
-the headword — for `עד`, for `ל־`, and for the vocalisation of `מ־`. The
-Academy's site cannot be fetched to check any of them, and an `s.v.` alone is
+the headword — for `עד`, for `ל־`, and for the vocalisation of `מ־`. No
+Academy page can be cited for any of them, and an `s.v.` alone is
 not a locator that can be followed even in principle. The surfaces are not in
 doubt: Wiktionary's Hebrew entries for `עד` and `בין` carry the senses and the
 examples independently, and the grammar the files cite alongside is a standard
@@ -158,13 +168,11 @@ so the CLDR spelling of two of the fourteen months resolves to nothing.
 
 ## What refuses
 
-**The clock's fractions and directions.** No fraction and no direction word
-ships, so `שלוש וחצי` (half past three), `חצי שלוש` and `רבע לשלוש` (a quarter
-to three) all return nothing. Eight of the locales here ship no clock-fraction
-vocabulary and Hebrew is one of them; both of its Semitic neighbours, Arabic
-and Maltese, ship the fraction and the direction, and Arabic goes further with
-a dedicated pre-pass that splits the fused `و`-connector off the fraction word.
-Nothing equivalent exists here.
+**The clock's fractions and directions.** The locale ships the fraction words but no direction word.
+`שלוש וחצי`, `חצי שלוש` and `רבע לשלוש` return nothing. They mean half past
+three, half toward three and a quarter to three. Arabic ships the fraction and
+the direction, and goes further with a dedicated pre-pass that splits the
+fused `و`-connector off the fraction word. Nothing equivalent exists here.
 
 **The afternoon.** CLDR 47's `he` day-period chart names six periods —
 `בבוקר`, `בצהריים`, `אחר הצהריים`, `בערב`, `בלילה` and `לפנות בוקר` — and
@@ -175,15 +183,15 @@ registered only as a PM clock cue, so `שלוש אחר הצהריים` is 15:00 
 `לפנות בוקר`, the small-hours band, has the same shape as an AM cue and
 resolves to nothing on its own.
 
-**The bare article deictics.** `הלילה` ("tonight"), `הערב` ("this evening") and
-`הבוקר` ("this morning") — the definite article doing the work a demonstrative
-does elsewhere — return nothing. Wiktionary lists `הַלַּיְלָה` among the
+**The bare article deictics.** `הלילה`, `הערב` and `הבוקר` return nothing. They mean tonight, this evening and
+this morning, the definite article doing the work a demonstrative does
+elsewhere. Wiktionary lists `הַלַּיְלָה` among the
 derived terms of `לילה`, so the construction is not obscure; it simply has no
 slot here.
 
 **This week, this month, this year.** CLDR 47's `he` `dateFields` gives
 `השבוע`, `החודש` and `השנה` as the relative-type-0 surfaces for those three
-fields, and every one of them returns nothing, even though all three strings
+fields. `השבוע`, `החודש` and `השנה` return nothing, even though all three strings
 are present in the unit vocabulary. The demonstratives that ship — `הזה`,
 `הזאת`, `הנוכחי`, `הנוכחית` — are the post-nominal series and none of them is
 the bare article the CLDR surface uses. The quarter has the same hole from the
@@ -202,7 +210,7 @@ form absent from the vocabulary is simply invisible.
 handled by a dedicated pre-pass, which splits `ומרץ` back into two tokens when
 what follows the vav is a recognised month, weekday or day-part surface. The
 `מ־` that opens the range gets no such treatment. `מ ינואר עד אפריל` with a
-space resolves to the three-month span; `מינואר עד אפריל` written normally
+space resolves to the four-month span; `מינואר עד אפריל` written normally
 returns April alone and strands the lead. The consequence reaches the
 vocabulary's own documentation: `marker_to.voc` cites its grammar with the
 worked example `מיום ראשון עד יום שישי`, and that exact string returns Friday
@@ -221,16 +229,7 @@ the homograph collision above: the spelled ordinal *is* the weekday name. The
 digit and the relative-marker forms cover the same ground. This is recorded as
 a deliberate limitation in the numeral module and pinned in the corpus.
 
-**The twelve that is written defectively.** The teen fold reads the definite
-forms of the unit words before `עשר`/`עשרה`, and the cardinal set holds
-`שתיים` but not the equally ordinary defective spelling `שתים`. So
-`שתיים עשרה בלילה` is midnight, and `שתים עשרה בלילה` returns 22:00 with
-`שתים` stranded — the bare `עשרה` reads as ten and the answer is confidently
-two hours wrong. The locale ships defective spellings elsewhere on purpose
-(`מחרתים` beside `מחרתיים`, `צהרים` beside `צהריים`), so the omission is
-inconsistent with its own practice rather than with a stated policy. Written
-with a noon cue instead, `שתים עשרה בצהריים` and `שתיים עשרה בצהריים` both
-strand the numeral entirely and return noon from the landmark alone.
+**The twelve at noon.** `שתים עשרה בצהריים` and `שתיים עשרה בצהריים` both return noon and leave the numeral in the remainder.
 
 **Deep time.** `לפני מיליון שנים` ("a million years ago") returns nothing. The
 construction wants a year word after the scale, and the year-word vocabulary
@@ -266,3 +265,47 @@ and month stranded.
 5. Does the half-hour need `וחצי` after the clock hour, and if so is the
    connective always written fused to the fraction the way Arabic writes its
    own?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("he")
+    True
+    >>> span, rest = extract_timespan('אחת בלילה', "he", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('אחת עשרה בלילה', "he", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T23:00:00', '')
+    >>> span, rest = extract_timespan('שמונה בערב', "he", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:00:00', '')
+    >>> span, rest = extract_timespan('שלוש אחר הצהריים', "he", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T15:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('שלוש וחצי', "he", anchor) is None
+    True
+    >>> extract_timespan('חצי שלוש', "he", anchor) is None
+    True
+    >>> extract_timespan('רבע לשלוש', "he", anchor) is None
+    True
+    >>> extract_timespan('הלילה', "he", anchor) is None
+    True
+    >>> extract_timespan('הערב', "he", anchor) is None
+    True
+    >>> extract_timespan('הבוקר', "he", anchor) is None
+    True
+    >>> extract_timespan('השבוע', "he", anchor) is None
+    True
+    >>> extract_timespan('החודש', "he", anchor) is None
+    True
+    >>> extract_timespan('השנה', "he", anchor) is None
+    True
+
+---
+[← Hausa](ha.md) · [Home](../index.md) · [Hindi →](hi.md)

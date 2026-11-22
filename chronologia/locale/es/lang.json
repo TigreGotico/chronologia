@@ -98,7 +98,8 @@
       "orders": [
         "in GYEAR",
         "article? year_word of? GYEAR",
-        "GYEAR"
+        "GYEAR",
+        "article? PART of? GYEAR"
       ]
     },
     "holiday_ref": {

@@ -1,67 +1,52 @@
-# Rules for AI agents working in this repository
+# AGENTS.md
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) first — everything there applies. This
-file adds the constraints that exist because agents, not humans, do most of
-the work here, and because the failure modes differ.
+chronologia reads dates that people write in 61 languages and computes across 18 calendars, timelines, holidays, the sun and the moon. Its answers are spans with a width and a basis, and the library returns nothing where it cannot be right.
 
-## The one rule everything else serves
+## Map
 
-A wrong answer is worse than no answer. This library is used to decide what a
-person meant by a date, and a plausible-but-wrong span propagates silently
-into whatever consumes it. When a construction cannot be represented
-faithfully, return nothing. Never widen a span, never round a value, and never
-pick the likelier of two readings to avoid returning `None`.
+| Path | Holds |
+|---|---|
+| `chronologia/` | the calendar, holiday, sky and span code behind `chronologia.__all__` |
+| `chronologia/extract/` | `extract_timespan`: loader, matcher, resolver, tokenizer and the number readers |
+| `chronologia/locale/<code>/` | `lang.json` and the `*.voc` word lists of one language |
+| `chronologia/holiday_data/` | one `<code>.tab` file of holiday rules per jurisdiction |
+| `test/` | engine tests, `nl_corpus_<code>/` phrase corpora, `holiday_golds/`, `holiday_sources/` |
+| `benchmark/` | the differential benchmark and its generated `SCOREBOARD.md` |
+| `docs/`, `examples/` | the guides ([index](docs/index.md)) and eight runnable scripts |
 
-## Never invent a linguistic fact
+## Setup and tests
 
-Do not add a vocabulary surface, an inflection, or a grammar order that you
-have not verified against a real source: a dictionary, a grammar, a standards
-body, or an existing attested phrase in that language's test corpus. Guessed
-surfaces have repeatedly looked plausible, passed review, and been wrong.
+```bash
+python -m venv .venv && . .venv/bin/activate
+pip install -e ".[test]"
+pytest test/test_docs_examples.py                  # every python block in README.md and docs/
+pytest test/nl_corpus_pt                           # one language corpus
+pytest test/ --ignore-glob="test/nl_corpus_*"      # engine, calendars, holidays, packaging
+```
 
-If you are uncertain about a form, leave it out and say so in your report as
-needing a native speaker. An honest gap is a contribution; a confident guess
-is a defect with a test pinning it in place.
+The full suite takes about twenty minutes. CI runs it on Python 3.11, 3.12 and 3.13.
 
-## Tests
+## Rules the repository enforces
 
-Write the test before the fix, and prove it fails against unfixed code by
-reverting your source change with a patch file (`git diff > /tmp/x.patch;
-git apply -R /tmp/x.patch`), running the test, then reapplying. Do not use
-`git stash` for this: stash state is shared across worktrees and corrupts
-concurrent work.
+A wrong span is worse than no span. Where sources conflict or say nothing, a locale ships nothing and the phrase returns `None`, or a narrower span with the unreadable words in the remainder. [docs/extraction.md](docs/extraction.md#when-a-language-declines-a-phrase) explains how to tell a refusal from a bug.
 
-Derive every expected value independently — by hand, or with a library that
-is not this one. Never copy an expectation out of the parser's output.
+Cite every linguistic and calendrical fact. A word list entry says where the surface came from: a dictionary, a grammar, a standards body, or your own native knowledge stated as such. Where no source exists, the library refuses rather than guesses ([CONTRIBUTING.md](CONTRIBUTING.md)).
 
-Do not weaken an existing test to make a change pass. A pinned expectation may
-only change when it pinned a defect, and the pull request must say so
-explicitly and explain why the old expectation was wrong.
+Write the test first and check that it fails before the fix. Derive every expected value without this library, by hand or from another source ([CONTRIBUTING.md](CONTRIBUTING.md)). `test/test_language_parity.py` requires a corpus of at least 100 cases per language and a block that asserts the same spans as English ([docs/adding-a-language.md](docs/adding-a-language.md)).
 
-## Scope
+Every holiday rule needs a frozen gold value in `test/holiday_golds/`. A tier floor stops the provenance counts from shrinking ([docs/transparency.md](docs/transparency.md)).
 
-Fix the defect in front of you. Do not refactor surrounding code toward a
-convention, rename for consistency, or restructure a module you were not asked
-to touch — those changes bury the actual fix and make review expensive.
+Numbers: numtag reads the numbers of the languages in `NUMTAG_LANGS` in `chronologia/extract/numlayer.py`. The other 21 locales use their own `numfold_*` module. The table is in [docs/languages/index.md](docs/languages/index.md).
 
-If you discover a second, unrelated defect while working, report it rather
-than fixing it in the same change.
+Ambiguous phrases follow [docs/rulings.md](docs/rulings.md). A change to a ruling changes that page. `test/ruling17_pins.txt` and `test/ruling23_pins.txt` list the tests whose expected value a ruling moved.
 
-## Comments and commit messages
+Every python block in `README.md` and `docs/*.md` must run. `test/test_docs_examples.py` runs them ([CONTRIBUTING.md](CONTRIBUTING.md)). Mark an illustrative block with `# doctest: skip`.
 
-Comments state invariants and cite sources: why a band is `[06:00, 12:00)`,
-which dictionary attests a surface, what a guard protects against. They never
-narrate the change itself — no review-round tags, no "fixed per feedback", no
-before-and-after history. That belongs in the commit message, which is where
-a reader goes looking for it.
+Pull request titles follow [conventional commits](CONTRIBUTING.md). `.github/workflows/conventional-label.yaml` labels the pull request from its title, and the release workflow picks the version bump from the labels. `feat:` is for user-visible features.
 
-Match the surrounding code's idiom, including whether it uses type
-annotations. Do not add defensive `getattr`/`hasattr` layers or compatibility
-shims for cases that cannot occur.
+## Before a push
 
-## Verifying before you report
-
-Run the tests you claim to have run, and quote real output. If a run was
-interrupted or you are unsure whether it completed, say so — an unverified
-claim of a green suite is worse than an honest "I could not finish this",
-because the next step depends on it being true.
+1. Run the tests for the code you touched.
+2. Run `pytest test/test_docs_examples.py` after any change to a docs page or a public name.
+3. Run the `verify` command in the agent hint of each docs page you changed ([docs/index.md](docs/index.md)).
+4. Add a language only through [docs/adding-a-language.md](docs/adding-a-language.md).

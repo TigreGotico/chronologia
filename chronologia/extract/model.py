@@ -517,6 +517,7 @@ class LangSpec:
     # neither joins the connectors
     at_counts: FrozenSet[str] = field(default_factory=frozenset)
     counted_noun: FrozenSet[str] = field(default_factory=frozenset)
+    upcoming: FrozenSet[str] = field(default_factory=frozenset)
     # the words that join two alarm hours that share one later meridiem, from
     # ``marker_alarm_joiner.voc``
     alarm_joiners: FrozenSet[str] = field(default_factory=frozenset)
