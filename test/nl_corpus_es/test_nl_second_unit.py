@@ -48,7 +48,7 @@ _ORDINALS = [
     ("el segundo lunes de marzo", (2017, 3, 13), (2017, 3, 14)),
     ("la segunda semana de marzo", (2017, 3, 13), (2017, 3, 20)),
     ("el segundo trimestre de 2018", (2018, 4, 1), (2018, 7, 1)),
-    ("el segundo día de marzo", (2017, 3, 2), (2017, 3, 3)),
+    ("el segundo día de marzo", (2018, 3, 2), (2018, 3, 3)),
 ]
 
 

@@ -59,7 +59,7 @@ that has passed.
 
 ## Numbered rulings
 
-**1. A month named without a day.** A month whose span contains the anchor is this month. A month that ended before the anchor is the month of next year. This is ruling C applied to a span: "janvier" said in June 2017 is January 2018, and "juin" said in June 2017 is June 2017. A part of a month ("early march", "first week of march") still keeps the anchor's year.
+**1. A month named without a day.** A month whose span contains the anchor is this month. A month that ended before the anchor is the month of next year. This is ruling C applied to a span: "janvier" said in June 2017 is January 2018, and "juin" said in June 2017 is June 2017. A part of a month ("early march", "first week of march") still keeps the anchor's year. One day of a month is not a part of it: a year-less "the fifteenth day of march" names the date "15 march" names, so it is the next 15 March, as ruling C reads a day of a month. A day equal to the anchor's day is that day.
 
 **2. A bare hour or an hour-letter clock.** "20h", "21h30" and "3 heures" read as a clock when they are the whole utterance, as the ruling for a bare hour alone says. Inside a sentence with no clock marker, they refuse. So fr "un film de 2 heures", "2h de route", "il reste 3 heures" and "3 heures de travail" refuse. ast "20h" and "21h30" alone read 20:00 and 21:30. This agrees with chronologia #882.
 
