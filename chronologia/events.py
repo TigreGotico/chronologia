@@ -42,11 +42,12 @@ from datetime import datetime, timedelta
 from typing import Optional, Union
 
 from chronologia.astrodate import DateSpan
-from chronologia.recurrence import HolidayRecurrence, Recurrence, occurrences
+from chronologia.recurrence import (HolidayRecurrence, JurisdictionHolidays,
+                                    Recurrence, occurrences)
 
 __all__ = ["Event", "extract_event"]
 
-RecurrenceLike = Union[Recurrence, HolidayRecurrence]
+RecurrenceLike = Union[Recurrence, HolidayRecurrence, JurisdictionHolidays]
 
 
 @dataclass(frozen=True)
@@ -82,11 +83,12 @@ def first_occurrence(recurrence: RecurrenceLike,
 
     Works for both rule kinds: a plain :class:`Recurrence` expands through
     :func:`~chronologia.recurrence.occurrences`; a
-    :class:`~chronologia.recurrence.HolidayRecurrence` through its own
+    :class:`~chronologia.recurrence.HolidayRecurrence` or
+    :class:`~chronologia.recurrence.JurisdictionHolidays` through its own
     holiday-engine expansion.  ``None`` when the rule yields nothing near the
     anchor (a holiday outside its tabulated range).
     """
-    if isinstance(recurrence, HolidayRecurrence):
+    if isinstance(recurrence, (HolidayRecurrence, JurisdictionHolidays)):
         gen = recurrence.occurrences(anchor, count=1)
     else:
         gen = occurrences(recurrence, anchor, count=1)
