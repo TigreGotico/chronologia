@@ -146,7 +146,6 @@
     ],
     "override": {
       "season_ref": [
-        "article? SEASON of YEAR",
         "REL_MARKER SEASON",
         "article? SEASON YEAR?"
       ],

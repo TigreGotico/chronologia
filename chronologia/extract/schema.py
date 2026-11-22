@@ -40,8 +40,11 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Dict, FrozenSet, List
+from typing import Dict, FrozenSet, List, Tuple
 
+from chronologia.extract.base_grammar import (BASE_GRAMMAR,
+                                              MARKER_POSTFIX_ORDERS,
+                                              SEASON_YEAR_FIRST_ORDERS)
 from chronologia.extract.compiler import PRECEDENCE, UNIMPLEMENTED
 
 #: bump when the checker's accepted shape changes.
@@ -140,6 +143,15 @@ SLOT_VOCAB_ATTR: Dict[str, str] = {
 #: locale (engine-derived), so an order using one is never counted unreachable.
 _NON_VOC_SLOTS: FrozenSet[str] = frozenset({"HOLIDAY"})
 
+#: connector names the shared base grammar uses.  An optional one a locale has
+#: no vocabulary for is how a language without it (``article?``) shares the
+#: order; any other optional connector without vocabulary is a typo.
+_SHARED_CONNECTORS: FrozenSet[str] = frozenset(
+    tok.rstrip("?")
+    for orders in (BASE_GRAMMAR, MARKER_POSTFIX_ORDERS, SEASON_YEAR_FIRST_ORDERS)
+    for raws in orders.values() for raw in raws for tok in raw.split()
+    if not tok.rstrip("?").isupper())
+
 #: known construction names -- the precedence table plus the declared-but-
 #: unresolved set are the only names the engine understands.
 KNOWN_CONSTRUCTIONS: FrozenSet[str] = frozenset(PRECEDENCE) | UNIMPLEMENTED
@@ -180,13 +192,32 @@ CONVENTION_KEYS: FrozenSet[str] = frozenset({
 GUARD_KEYS: FrozenSet[str] = frozenset({"bare_year_min_digits"})
 
 
-def _order_slots(raw: str, errors: List[str], where: str) -> List[str]:
-    """Parse an order string into its element names, recording malformations.
+def _configured_orders(cfg: dict, ctx: str):
+    """Every ``(where, raw)`` order a locale declares: the inline
+    ``constructions`` orders and the ``base_grammar`` override/extend orders."""
+    for name, body in cfg.get("constructions", {}).items():
+        if isinstance(body, dict) and isinstance(body.get("orders"), list):
+            for raw in body["orders"]:
+                if isinstance(raw, str):
+                    yield f"{ctx} construction {name!r} order {raw!r}", raw
+    bg = cfg.get("base_grammar", {})
+    for section in ("override", "extend"):
+        for name, orders in (bg.get(section, {}) if isinstance(bg, dict)
+                             else {}).items():
+            for raw in orders if isinstance(orders, list) else ():
+                if isinstance(raw, str):
+                    yield (f"{ctx} base_grammar {section} {name!r} "
+                           f"order {raw!r}"), raw
 
-    Returns the *required* (non-optional) element names for downstream
-    reachability, and appends a message per malformed / unknown token.
+
+def _order_slots(raw: str, errors: List[str], where: str
+                 ) -> List[Tuple[str, bool]]:
+    """Parse an order string into its ``(name, optional)`` elements, recording
+    malformations.
+
+    Appends a message per malformed / unknown token.
     """
-    required: List[str] = []
+    names: List[Tuple[str, bool]] = []
     for tok in raw.split():
         if tok.count("?") > 1 or ("?" in tok and not tok.endswith("?")):
             errors.append(f"{where}: token {tok!r} has malformed optional "
@@ -206,9 +237,8 @@ def _order_slots(raw: str, errors: List[str], where: str) -> List[str]:
             errors.append(f"{where}: malformed connector literal {name!r} in "
                           f"order {raw!r}")
             continue
-        if not optional:
-            required.append(name)
-    return required
+        names.append((name, optional))
+    return names
 
 
 def validate_config(cfg: dict, lang: str) -> List[str]:
@@ -293,7 +323,6 @@ def validate_config(cfg: dict, lang: str) -> List[str]:
                 if not isinstance(raw, str):
                     errors.append(f"{where}: order {raw!r} is not a string")
                     continue
-                _order_slots(raw, errors, where)
         for key, val in body.items():
             if key == "orders":
                 continue
@@ -302,6 +331,9 @@ def validate_config(cfg: dict, lang: str) -> List[str]:
             elif key == "group" and val not in KNOWN_GROUPS:
                 errors.append(f"{where}: unknown construction group {val!r} "
                               f"(known: {sorted(KNOWN_GROUPS)})")
+
+    for where, raw in _configured_orders(cfg, ctx):
+        _order_slots(raw, errors, where)
 
     for key, forms in cfg.get("quantifiers", {}).items():
         try:
@@ -341,16 +373,14 @@ def validate_reachability(spec, cfg: dict, lang: str) -> List[str]:
     """
     errors: List[str] = []
     ctx = f"[{lang}]"
-    for name, body in cfg.get("constructions", {}).items():
-        for raw in body.get("orders", []):
-            if not isinstance(raw, str):
-                continue
-            where = f"{ctx} construction {name!r} order {raw!r}"
-            missing = [el for el in _order_slots(raw, [], where)
-                       if not _slot_reachable(el, spec)]
-            if missing:
-                errors.append(f"{where}: unreachable -- no vocabulary for "
-                              f"{', '.join(sorted(set(missing)))}")
+    for where, raw in _configured_orders(cfg, ctx):
+        missing = [name for name, optional in _order_slots(raw, [], where)
+                   if not _slot_reachable(name, spec)
+                   and not (optional and (name.isupper()
+                                          or name in _SHARED_CONNECTORS))]
+        if missing:
+            errors.append(f"{where}: unreachable -- no vocabulary for "
+                          f"{', '.join(sorted(set(missing)))}")
 
     # a declared marker positionality is dead unless the locale actually ships
     # the role's marker surfaces (``marker_<role>.voc``): a ``post``/``affix``
