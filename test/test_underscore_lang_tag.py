@@ -21,3 +21,20 @@ def test_underscore_tag_reads_like_hyphen_tag(extract, underscored, hyphenated, 
     expected = extract(text, hyphenated, _ANCHOR)
     assert expected is not None
     assert extract(text, underscored, _ANCHOR) == expected
+
+
+@pytest.mark.parametrize("underscored,hyphenated,text,summary", [
+    ("pt_BR", "pt-BR", "almoço para amanhã", "almoço"),
+    ("es_ES", "es-ES", "cena para el viernes", "cena"),
+    ("en_GB", "en-GB", "the meeting on friday to", "meeting"),
+])
+def test_underscore_tag_cleans_the_event_summary(underscored, hyphenated, text, summary):
+    assert extract_event(text, hyphenated, _ANCHOR).summary == summary
+    assert extract_event(text, underscored, _ANCHOR).summary == summary
+
+
+@pytest.mark.parametrize("tag", ["en-GB ", "en_GB ", " en-GB"])
+@pytest.mark.parametrize("extract", [extract_timespan, extract_event])
+def test_padded_tag_keeps_its_region(extract, tag):
+    # en-GB reads 03/04/2026 as the 3rd of April, the US default as the 4th of March
+    assert extract("03/04/2026", tag, _ANCHOR).span.start.month == 4
