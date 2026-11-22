@@ -30,7 +30,8 @@ from chronologia.extract.anchored import (apply_anchored_offset,
                                               apply_compound_offset,
                                               apply_ordinal_count,
                                               marker_names_a_reference)
-from chronologia.extract.business import apply_business_days
+from chronologia.extract.business import (apply_business_days,
+                                          decline_weekday_count)
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
@@ -4388,6 +4389,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                                      jurisdiction, text, scale_mode)
     resolved = apply_business_days(tokens, resolved, engine.spec, anchor,
                                    jurisdiction, resolve_ref)
+    decline_weekday_count(tokens, engine.spec)
     # mixed-grain offset compound ("in 3 months and 2 days"): fold every
     # further "[and|,] NUM UNIT" chunk into the leading relative_offset match
     # BEFORE the anchored-offset pass, so a stranded calendar/fixed tail is

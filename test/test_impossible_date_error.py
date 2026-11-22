@@ -59,6 +59,10 @@ IMPOSSIBLE = [
      (SPAN, CANDIDATES, EVENT, RECURRENCE)),
     ("every 263rd weekday of the year", "en", "a year has no 263rd business day",
      (EVENT, RECURRENCE)),
+    ("the 25th weekday of the month", "en", "a month has no 25th business day",
+     (SPAN, EVENT, RECURRENCE)),
+    ("the 263rd weekday of the year", "en", "a year has no 263rd business day",
+     (SPAN, EVENT, RECURRENCE)),
     # a recurring date the calendar never has
     ("every 24th weekday of the month", "en", "a month has no 24th business day",
      (EVENT, RECURRENCE)),
@@ -86,6 +90,8 @@ DEFAULT_NONE = {
     "every sixth monday of the month": (SPAN, EVENT, RECURRENCE),
     "the sixtieth monday of the year": (SPAN, EVENT, RECURRENCE),
     "every 263rd weekday of the year": (RECURRENCE,),
+    "the 25th weekday of the month": (SPAN, EVENT, RECURRENCE),
+    "the 263rd weekday of the year": (SPAN, EVENT, RECURRENCE),
     "every 31st of April": (SPAN, EVENT, RECURRENCE),
 }
 
@@ -132,6 +138,8 @@ VALID_OR_NOT_A_DATE = [
     ("the 366th day of the year", "en"),
     ("every 23rd weekday of the month", "en"),
     ("every 262nd weekday of the year", "en"),
+    ("the 23rd weekday of the month", "en"),
+    ("the 262nd weekday of the year", "en"),
     ("the fifth monday of may", "en"),
     ("el quinto lunes de mayo", "es"),
     ("o quinto domingo de outubro", "pt"),
