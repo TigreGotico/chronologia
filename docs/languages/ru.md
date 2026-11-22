@@ -30,7 +30,8 @@ gramota.ru's guide to telling the time.
 
 The locative `в восьмом часу` is the hour that begins at seven: the span from
 07:00 to 08:00, one hour wide. A day period fixes the half of the day, and
-the hours run first to twelfth (`marker_hour_span.voc`, ruling 37).
+the hours run first to twelfth (`marker_hour_span.voc`, ruling 37). The digit
+form `в 8-м часу` and the inverted order `часу в восьмом` read the same span.
 
 ## What ships
 

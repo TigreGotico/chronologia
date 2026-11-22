@@ -105,3 +105,47 @@ def test_cardinal_clock_stays_a_minute():
 
 def test_ordinal_that_agrees_with_another_noun_is_not_a_clock():
     nomatch("в восьмом классе", EARLY)
+
+
+@pytest.mark.parametrize("text,gold", [
+    ("в 8-м часу вечера", _hour(22, 19)),
+    ("в 8-ом часу вечера", _hour(22, 19)),
+    ("в 8-м часу утра", _hour(22, 7)),
+    ("в 1-м часу ночи", _hour(23, 0)),
+    ("в 1-м часу дня", _hour(22, 12)),
+    ("в 12-м часу дня", _hour(22, 11)),
+    ("в 12-м часу ночи", _hour(22, 23)),
+    ("в 8-м часу", _hour(22, 7)),
+])
+def test_digit_ordinal_reads_like_the_spelled_ordinal(text, gold):
+    r = parse(text, EARLY)
+    assert r is not None
+    assert (r.span.start, r.span.end) == gold
+    assert r.remainder == ""
+
+
+@pytest.mark.parametrize("text,gold", [
+    ("часу в восьмом вечера", _hour(22, 19)),
+    ("часу в восьмом утра", _hour(22, 7)),
+    ("часу в двенадцатом", _hour(22, 11)),
+    ("часу в 8-м вечера", _hour(22, 19)),
+])
+def test_inverted_order_reads_the_same_hour_span(text, gold):
+    r = parse(text, EARLY)
+    assert r is not None
+    assert (r.span.start, r.span.end) == gold
+    assert r.remainder == ""
+
+
+def test_inside_a_sentence_with_a_digit_ordinal():
+    r = parse("встретимся в 8-м часу вечера", EARLY)
+    assert (r.span.start, r.span.end) == _hour(22, 19)
+    assert r.remainder == "встретимся"
+
+
+def test_bare_cardinal_before_chasu_is_not_an_hour_span():
+    nomatch("в 8 часу вечера", EARLY)
+
+
+def test_k_chasu_is_not_an_hour_span():
+    nomatch("к часу дня", EARLY)
