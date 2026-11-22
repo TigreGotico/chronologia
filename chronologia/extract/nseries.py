@@ -29,8 +29,12 @@ from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
+from chronologia.extract.impossible import (bad_day, decline, no_such,
+                                            no_such_weekday, reports_impossible,
+                                            scope_name)
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
+from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _lone_spoken_hour,
                                           reads_spoken_hours,
@@ -1209,6 +1213,7 @@ class RecurrenceResult(NamedTuple):
 
 
 @reads_spoken_hours
+@reports_impossible
 def extract_recurrence(
         text: str,
         lang: str = "en",
@@ -1249,6 +1254,12 @@ def extract_recurrence(
     Returns a :class:`RecurrenceResult` -- a ``(recurrence, remainder)`` named
     tuple (unpack it, or read ``.recurrence`` / ``.remainder``) -- or ``None``
     when no recurrence is found.
+
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names no recurrence, the empty string included, returns
@@ -1995,6 +2006,10 @@ def _apply_year_scope(rec, consumed, ctx, lang, anchor):
         return None, consumed | set(range(lo, hi))
     if rec.until is not None or rec.count is not None:
         return rec, consumed
+    if len(rec.bymonth) == 1 and len(rec.byday) == 1 and rec.byday[0][0]:
+        (n, weekday), month = rec.byday[0], rec.bymonth[0]
+        if _month_weekday(start.year, month, weekday, n) is None:
+            decline(no_such_weekday(scope_name(month, start.year), n, weekday))
     rec = _replace(rec, until=end)
     return rec, consumed | set(range(lo, hi))
 
@@ -2399,6 +2414,10 @@ def _recur_nth_weekday(ctx):
                 # a month holds at most five of one weekday and 23 weekdays,
                 # so the rule would never occur -- claim the phrase and
                 # decline it
+                scope = (scope_name(ctx.months[t[r].text], None)
+                         if t[r].text in ctx.months else "a month")
+                decline(no_such(scope, month_ordn, "business day") if business
+                        else no_such_weekday(scope, month_ordn, wd))
                 return None, frozenset(range(start, r + 1))
             if t[r].text in ctx.months:
                 if business:
@@ -2430,6 +2449,8 @@ def _recur_nth_weekday(ctx):
                 # day, 366 = 52 weeks + 2) and 262 weekdays (a leap year
                 # whose two extra days are both weekdays: 52 * 5 + 2), so the
                 # rule would never occur -- claim the phrase and decline it
+                decline(no_such("a year", ordn, "business day") if business
+                        else no_such_weekday("a year", ordn, wd))
                 return None, frozenset(range(start, r + 1))
             if business:
                 return (_business_day_of_year(ordn, year_interval),
@@ -3932,6 +3953,7 @@ def _recur_date_anchored(ctx):
             # the named date recurs in no year ("every 31st of april").  This is
             # still the specific yearly-date frame -- consume it and report no
             # recurrence, rather than fall through to a wrong MONTHLY;BYMONTHDAY.
+            decline(bad_day(None, month, day))
             return (None, set(range(i, end)))
         return (rule, set(range(i, end)))
     return None
