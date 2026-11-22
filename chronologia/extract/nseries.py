@@ -29,8 +29,9 @@ from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
-from chronologia.extract.impossible import (bad_day, decline, no_such_weekday,
-                                            reports_impossible, scope_name)
+from chronologia.extract.impossible import (bad_day, decline, no_such,
+                                            no_such_weekday, reports_impossible,
+                                            scope_name)
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
@@ -2413,21 +2414,20 @@ def _recur_nth_weekday(ctx):
                 # a month holds at most five of one weekday and 23 weekdays,
                 # so the rule would never occur -- claim the phrase and
                 # decline it
+                scope = (scope_name(ctx.months[t[r].text], None)
+                         if t[r].text in ctx.months else "a month")
+                decline(no_such(scope, month_ordn, "business day") if business
+                        else no_such_weekday(scope, month_ordn, wd))
                 return None, frozenset(range(start, r + 1))
             if t[r].text in ctx.months:
                 if business:
                     rec = _business_day_of_month(month_ordn, month=ctx.months[t[r].text])
                 else:
-                    if abs(month_ordn) > 5:
-                        decline(no_such_weekday(
-                            scope_name(ctx.months[t[r].text], None), month_ordn, wd))
                     rec = _nth_weekday_of_month(month_ordn, wd,
                                                 month=ctx.months[t[r].text])
                 return rec, set(range(start, r + 1))
             if business:
                 return _business_day_of_month(month_ordn), set(range(start, r + 1))
-            if abs(month_ordn) > 5:
-                decline(no_such_weekday("a month", month_ordn, wd))
             return _nth_weekday_of_month(month_ordn, wd), set(range(start, r + 1))
         if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "year":
             # "every last monday of the year": the yearly sibling of

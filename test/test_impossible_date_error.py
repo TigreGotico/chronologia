@@ -51,7 +51,10 @@ IMPOSSIBLE = [
     ("2017-W53", "en", "2017 has no ISO week 53", (SPAN, CANDIDATES, EVENT)),
     ("the fifth friday of february 2026", "en", "February 2026 has no 5th Friday",
      (SPAN, EVENT)),
-    ("el sexto lunes de mayo", "es", "May has no 6th Monday", (SPAN, EVENT)),
+    ("el sexto lunes de mayo", "es", "May has no 6th Monday",
+     (SPAN, EVENT, RECURRENCE)),
+    ("every sixth monday of the month", "en", "a month has no 6th Monday",
+     (SPAN, EVENT, RECURRENCE)),
     ("the sixtieth monday of the year", "en", "a year has no 60th Monday",
      (SPAN, CANDIDATES, EVENT)),
     # a recurring date the calendar never has
@@ -73,7 +76,8 @@ DEFAULT_NONE = {
     "the 60th day of february": (SPAN, EVENT),
     "2017-W53": (SPAN, EVENT),
     "the fifth friday of february 2026": (SPAN,),
-    "el sexto lunes de mayo": (SPAN,),
+    "el sexto lunes de mayo": (SPAN, EVENT, RECURRENCE),
+    "every sixth monday of the month": (SPAN, EVENT, RECURRENCE),
     "the sixtieth monday of the year": (SPAN,),
     "every 31st of April": (SPAN, EVENT, RECURRENCE),
 }
