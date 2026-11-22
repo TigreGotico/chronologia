@@ -2449,12 +2449,12 @@ def _recur_nth_weekday(ctx):
                 # day, 366 = 52 weeks + 2) and 262 weekdays (a leap year
                 # whose two extra days are both weekdays: 52 * 5 + 2), so the
                 # rule would never occur -- claim the phrase and decline it
+                decline(no_such("a year", ordn, "business day") if business
+                        else no_such_weekday("a year", ordn, wd))
                 return None, frozenset(range(start, r + 1))
             if business:
                 return (_business_day_of_year(ordn, year_interval),
                         set(range(start, r + 1)))
-            if abs(ordn) > 53:
-                decline(no_such_weekday("a year", ordn, wd))
             return (_nth_weekday_of_year(ordn, wd, year_interval),
                     set(range(start, r + 1)))
     return None

@@ -56,7 +56,9 @@ IMPOSSIBLE = [
     ("every sixth monday of the month", "en", "a month has no 6th Monday",
      (SPAN, EVENT, RECURRENCE)),
     ("the sixtieth monday of the year", "en", "a year has no 60th Monday",
-     (SPAN, CANDIDATES, EVENT)),
+     (SPAN, CANDIDATES, EVENT, RECURRENCE)),
+    ("every 263rd weekday of the year", "en", "a year has no 263rd business day",
+     (EVENT, RECURRENCE)),
     # a recurring date the calendar never has
     ("every 24th weekday of the month", "en", "a month has no 24th business day",
      (EVENT, RECURRENCE)),
@@ -82,7 +84,8 @@ DEFAULT_NONE = {
     "the fifth friday of february 2026": (SPAN,),
     "el sexto lunes de mayo": (SPAN, EVENT, RECURRENCE),
     "every sixth monday of the month": (SPAN, EVENT, RECURRENCE),
-    "the sixtieth monday of the year": (SPAN,),
+    "the sixtieth monday of the year": (SPAN, EVENT, RECURRENCE),
+    "every 263rd weekday of the year": (RECURRENCE,),
     "every 31st of April": (SPAN, EVENT, RECURRENCE),
 }
 
@@ -128,6 +131,7 @@ VALID_OR_NOT_A_DATE = [
     ("the 366th day of the year 2020", "en"),
     ("the 366th day of the year", "en"),
     ("every 23rd weekday of the month", "en"),
+    ("every 262nd weekday of the year", "en"),
     ("the fifth monday of may", "en"),
     ("el quinto lunes de mayo", "es"),
     ("o quinto domingo de outubro", "pt"),
