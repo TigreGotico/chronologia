@@ -1,5 +1,13 @@
 # Eras and rulers
 
+<!-- agent-hint
+covers: year-numbering eras, regnal years and the Roman date grammar
+source: `chronologia/eras.py`, `chronologia/regnal.py`, `chronologia/roman.py`
+generated: no
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/eras-and-rulers.md
+see: `docs/calendars.md`, `docs/timelines.md`
+-->
+
 The same year has been numbered many different ways. "2024" to you might be
 "5784" to a Jewish calendar, "1445" to an Islamic one, "Reiwa 6" in Japan, or
 "the consulship of so-and-so" to an ancient Roman. None of these are wrong —
@@ -17,8 +25,7 @@ applies any era's rule.
 ```python
 from chronologia import resolve_era
 
-print(resolve_era("common_era", 2024))
-# 2024-01-01
+print(resolve_era("common_era", 2024))  # 2024-01-01
 ```
 
 Some eras count the same years but start their tally somewhere else. The
@@ -26,15 +33,13 @@ Some eras count the same years but start their tally somewhere else. The
 human civilisation carries positive numbers — 2024 becomes the year 12024:
 
 ```python
-print(resolve_era("holocene", 12024))
-# 2024-01-01
+print(resolve_era("holocene", 12024))  # 2024-01-01
 ```
 
 The **Buddhist** era adds 543; the year 2568 BE is our 2025:
 
 ```python
-print(resolve_era("buddhist", 2568))
-# 2025-01-01
+print(resolve_era("buddhist", 2568))  # 2025-01-01
 ```
 
 ### Counting backwards: BC
@@ -45,8 +50,7 @@ number 0, so "44 BC" is stored as year −43 — but the library will hand it ba
 to you in ordinary BC counting:
 
 ```python
-print(resolve_era("before_christ", 44).bc_year)
-# 44
+print(resolve_era("before_christ", 44).bc_year)  # 44
 ```
 
 ### Eras tied to a calendar
@@ -56,8 +60,7 @@ Some eras are really the year-numbering of another calendar. **Anno Mundi**
 resolves it *exactly* through that calendar rather than by rough addition:
 
 ```python
-print(resolve_era("anno_mundi", 5786))
-# 2025-09-23
+print(resolve_era("anno_mundi", 5786))  # 2025-09-23
 ```
 
 That is the real first day of Hebrew year 5786 — the same Rosh Hashanah the
@@ -69,31 +72,28 @@ counts the years of the Islamic calendar from the Hijra, so "1447 AH" is a real
 lunar year, not 1447 read as a Gregorian year:
 
 ```python
-print(resolve_era("hijri", 1447))
-# 2025-06-27
+print(resolve_era("hijri", 1447))  # 2025-06-27
 ```
 
 The Iranian **Solar Hijri** (Jalali) era counts the same Hijra years on a solar
 calendar whose year begins at the vernal-equinox Nowruz:
 
 ```python
-print(resolve_era("solar_hijri", 1404))
-# 2025-03-20
+print(resolve_era("solar_hijri", 1404))  # 2025-03-20
 ```
 
 ### When the year does not start on 1 January
 
 The **Byzantine** Anno Mundi (a Creation era once used across the Orthodox
 world) has a twist: its civil year begins on the **1st of September**, not 1
-January. So the library reports not just a start date but the whole tiled span
+January. So the library reports the whole tiled span, not only a start date,
 from one September to the next:
 
 ```python
 from chronologia import resolve_era_year_span
 
 start, end = resolve_era_year_span("byzantine_am", 7535)
-print(start.isoformat(), end.isoformat())
-# 2026-09-01T00:00:00 2027-09-01T00:00:00
+print(start.isoformat(), end.isoformat())  # 2026-09-01T00:00:00 2027-09-01T00:00:00
 ```
 
 ### Eras that count something other than years
@@ -104,10 +104,8 @@ and **Julian Day** counts days from a starting point deep in 4713 BC (astronomer
 use it for exactly the same reason this library does — an unbroken count):
 
 ```python
-print(resolve_era("unix", 0))
-# 1970-01-01 00:00:00+00:00
-print(resolve_era("julian_day", 0).isoformat())
-# -004713-11-24T00:00:00
+print(resolve_era("unix", 0))  # 1970-01-01 00:00:00+00:00
+print(resolve_era("julian_day", 0).isoformat())  # -004713-11-24T00:00:00
 ```
 
 ### Before Present, and why 1950
@@ -119,8 +117,7 @@ carbon-14, corrupting the natural signal, so 1950 was chosen as the last
 "clean" reference point. It has stayed the convention ever since.
 
 ```python
-print(resolve_era("before_present", 5000).isoformat())
-# -003050-01-01T00:00:00
+print(resolve_era("before_present", 5000).isoformat())  # -003050-01-01T00:00:00
 ```
 
 Five thousand years before 1950 is 3050 BC.
@@ -134,19 +131,17 @@ gives you the Gregorian span of any regnal year.
 ### Japanese eras (nengō)
 
 Japan still does this. Each emperor's reign is an era with its own name, and
-years are counted within it. The current era is **Reiwa**, which began in 2019.
+years are counted within it. **Reiwa** began in 2019.
 "Reiwa 1" runs only from the accession day, so its span is a partial year:
 
 ```python
 from chronologia import REGNAL_SEQUENCES
 
 reiwa1 = REGNAL_SEQUENCES["nengo"].year_span("reiwa", 1)
-print(reiwa1[0].isoformat(), reiwa1[1].isoformat())
-# 2019-05-01T00:00:00 2020-01-01T00:00:00
+print(reiwa1[0].isoformat(), reiwa1[1].isoformat())  # 2019-05-01T00:00:00 2020-01-01T00:00:00
 
 reiwa7 = REGNAL_SEQUENCES["nengo"].year_span("reiwa", 7)
-print(reiwa7[0].isoformat(), reiwa7[1].isoformat())
-# 2025-01-01T00:00:00 2026-01-01T00:00:00
+print(reiwa7[0].isoformat(), reiwa7[1].isoformat())  # 2025-01-01T00:00:00 2026-01-01T00:00:00
 ```
 
 The final year of a *closed* reign is clipped where the next ruler took over —
@@ -154,8 +149,7 @@ the long Meiji era's 45th year ended in July 1912 when the emperor died:
 
 ```python
 meiji45 = REGNAL_SEQUENCES["nengo"].year_span("meiji", 45)
-print(meiji45[0].isoformat(), meiji45[1].isoformat())
-# 1912-01-01T00:00:00 1912-07-30T00:00:00
+print(meiji45[0].isoformat(), meiji45[1].isoformat())  # 1912-01-01T00:00:00 1912-07-30T00:00:00
 ```
 
 ### Roman consuls
@@ -165,8 +159,7 @@ carries a demonstrative set of well-attested consular pairs:
 
 ```python
 caesar = REGNAL_SEQUENCES["consuls"].year_span("caesar_antonius", 1)
-print(caesar[0].isoformat(), caesar[1].isoformat())
-# -000043-01-01T00:00:00 -000042-01-01T00:00:00
+print(caesar[0].isoformat(), caesar[1].isoformat())  # -000043-01-01T00:00:00 -000042-01-01T00:00:00
 ```
 
 That pair held office in 44 BC — the year of Caesar's assassination.
@@ -185,12 +178,12 @@ def accession_bc(variant):
     span = REGNAL_SEQUENCES[variant].year_span("ramesses_ii", 1)
     return span[0].bc_year
 
-print(accession_bc("egyptian_high"))     # High chronology
-# 1304
-print(accession_bc("egyptian_middle"))   # Middle chronology
-# 1290
-print(accession_bc("egyptian_low"))      # Low chronology
-# 1279
+# High chronology
+print(accession_bc("egyptian_high"))  # 1304
+# Middle chronology
+print(accession_bc("egyptian_middle"))  # 1290
+# Low chronology
+print(accession_bc("egyptian_low"))  # 1279
 ```
 
 Ramesses II came to the throne in 1304, 1290, or 1279 BC depending on which
@@ -214,8 +207,7 @@ The answer is 30 March:
 ```python
 from chronologia import roman_to_julian
 
-print(roman_to_julian(-43, 4, "kalends", 3))
-# (-43, 3, 30)
+print(roman_to_julian(-43, 4, "kalends", 3))  # (-43, 3, 30)
 ```
 
 That inclusive counting is why the arithmetic feels off by one to modern eyes —
@@ -223,16 +215,14 @@ you always include the anchor day in the count. A count of 1 is the anchor day
 itself (the Ides of March is simply the Ides, count 1):
 
 ```python
-print(roman_to_julian(-43, 3, "ides", 1))
-# (-43, 3, 15)
+print(roman_to_julian(-43, 3, "ides", 1))  # (-43, 3, 15)
 ```
 
 And a count of 2 is the day before — the Romans had a special word for it,
 *pridie*:
 
 ```python
-print(roman_to_julian(-43, 4, "kalends", 2))
-# (-43, 3, 31)
+print(roman_to_julian(-43, 4, "kalends", 2))  # (-43, 3, 31)
 ```
 
 The result is a **Julian** calendar date (the calendar Rome actually used), in
@@ -255,46 +245,40 @@ with no error bar:
 ```python
 from chronologia import easter
 
-print(easter(2024).isoformat())
-# 2024-03-31T00:00:00
+print(easter(2024).isoformat())  # 2024-03-31T00:00:00
 ```
 
 Easter can only ever land between **22 March and 25 April** — bounds the rule
 guarantees. The earliest possible date last fell in 1818, the latest in 1943:
 
 ```python
-print(easter(1818).isoformat()[:10], easter(1943).isoformat()[:10])
-# 1818-03-22 1943-04-25
+print(easter(1818).isoformat()[:10], easter(1943).isoformat()[:10])  # 1818-03-22 1943-04-25
 ```
 
 ### Why East and West disagree
 
 The Eastern Orthodox churches mostly still run the *same* rule, but on the
 **Julian** calendar with the older Julian lunar table. Two things have drifted
-apart — the calendars (now 13 days) and the lunar tables — so Orthodox Easter
+apart — the calendars (13 days) and the lunar tables — so Orthodox Easter
 usually falls one to five weeks later. `chronologia` gives you both, and lets
 you choose how the Orthodox date is expressed:
 
 ```python
 # Western Easter (Gregorian civil calendar):
-print(easter(2024, "gregorian").isoformat()[:10])
-# 2024-03-31
+print(easter(2024, "gregorian").isoformat()[:10])  # 2024-03-31
 
 # Orthodox Easter, rendered on the civil calendar people actually use:
-print(easter(2024, "julian_gregorian_date").isoformat()[:10])
-# 2024-05-05
+print(easter(2024, "julian_gregorian_date").isoformat()[:10])  # 2024-05-05
 
 # Orthodox Easter carrying its OWN Julian-calendar label (22 April Julian) --
 # a label, not a civil instant, so don't read its weekday as a civil Sunday:
-print(easter(2024, "julian").isoformat()[:10])
-# 2024-04-22
+print(easter(2024, "julian").isoformat()[:10])  # 2024-04-22
 ```
 
 Occasionally the two coincide. 2025 is such a year — both fall on 20 April:
 
 ```python
-print(easter(2025, "gregorian") == easter(2025, "julian_gregorian_date"))
-# True
+print(easter(2025, "gregorian") == easter(2025, "julian_gregorian_date"))  # True
 ```
 
 ### The feasts that move with Easter
@@ -307,12 +291,9 @@ civil date:
 ```python
 from chronologia import movable_feast
 
-print(movable_feast("ash_wednesday", 2024).isoformat()[:10])
-# 2024-02-14
-print(movable_feast("good_friday", 2024).isoformat()[:10])
-# 2024-03-29
-print(movable_feast("pentecost", 2024).isoformat()[:10])
-# 2024-05-19
+print(movable_feast("ash_wednesday", 2024).isoformat()[:10])  # 2024-02-14
+print(movable_feast("good_friday", 2024).isoformat()[:10])  # 2024-03-29
+print(movable_feast("pentecost", 2024).isoformat()[:10])  # 2024-05-19
 ```
 
 The fixed solar feasts don't move at all, and Advent Sunday is counted back
@@ -321,10 +302,8 @@ from the fixed Christmas date (the first Sunday of the four before it):
 ```python
 from chronologia import fixed_feast, advent_sunday
 
-print(fixed_feast("christmas", 2024).isoformat()[:10])
-# 2024-12-25
-print(advent_sunday(2024).isoformat()[:10])
-# 2024-12-01
+print(fixed_feast("christmas", 2024).isoformat()[:10])  # 2024-12-25
+print(advent_sunday(2024).isoformat()[:10])  # 2024-12-01
 ```
 
 ## Reference
@@ -359,3 +338,6 @@ Movable feasts in `MOVABLE_FEAST_OFFSETS` (day offset from Easter):
 (+39), `pentecost` (+49), `trinity_sunday` (+56), `corpus_christi` (+60).
 Fixed feasts in `FIXED_FEASTS`: `christmas`, `epiphany`, `assumption`,
 `all_saints`.
+
+---
+[← Calendars](calendars.md) · [Home](index.md) · [Sun, moon, and seasons →](sun-moon-and-seasons.md)

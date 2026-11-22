@@ -1,5 +1,15 @@
 # Asturian (`ast`)
 
+<!-- agent-hint
+covers: where each construction of the Asturian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ast/lang.json`, `chronologia/locale/ast/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/ast.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/ast.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Asturian (`ast`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Asturian is the thinnest-sourced of the Ibero-Romance locales here. Almost
 nothing in its vocabulary files carries a citation: the three Roman-calendar
 anchors name the Asturian Wikipedia, the night meridiem names the Spanish
@@ -7,7 +17,7 @@ locale it was copied from, and every other file — weekdays, months, seasons,
 markers, units, eras — carries none at all. That is the fact a reader should
 hold onto, because the locale's neighbour is Spanish and a great many Asturian
 surfaces look like Spanish surfaces with the endings changed. Where this page
-says a word is attested, it means the word was found in the *Diccionariu de la
+says a word is attested, it means the word is listed in the *Diccionariu de la
 Llingua Asturiana* published by the Academia de la Llingua Asturiana, not that
 it resembles its Spanish cognate.
 
@@ -117,7 +127,7 @@ not.
 
 ## Unchecked and broken citations
 
-Both citations the locale carries were fetched and hold. The Asturian
+Both citations the locale carries hold. The Asturian
 Wikipedia *Calendariu romanu* contains `calendes`, `nones` and `idus`. The
 Spanish night-meridiem file that the Asturian one defers to does cite the
 Spanish academy's `noche` entry for the small-hours usage, so the inherited
@@ -134,14 +144,6 @@ Every one of these is reproduced against the anchor 2017-06-27 13:04 with
 refusals, and a wrong span with a stranded remainder is worse than nothing at
 all.
 
-**The date line loses its year when the year is introduced by `de`.**
-`3 de xineru de 1990` returns 2018-01-03 to 2018-01-04 with `de 1990` in the
-remainder — twenty-eight years off, silently. The calendar-date orders reach
-`DAY of? MONTH YEAR?` but never `DAY of MONTH of YEAR`, so the second `de`
-breaks the match and the yearless reading wins with the future preference
-pushing it into next January. `3 de xineru 1990` and `3 xineru 1990` are both
-correct. `3 de xineru del 1990` fails the same way.
-
 **A leading article is never claimed.** `el 3 de xineru` resolves the day and
 leaves `el` behind; `el 3 de marzu`, `el mediudía`, `la medianueche`, `nel añu
 1990` and `en xineru` all do the same with their own leading word. The
@@ -151,30 +153,10 @@ indefinites and the demonstratives — but no calendar-date order offers an
 article slot for any of it to fill, and the during-slot holds only `durante`,
 so the locative `en` cannot be absorbed by a month either.
 
-**Combining the two loses the clock as well.** `1 de xineru de 2020 a les
-15:30` returns 2018-01-01 as a whole day with `de 2020 a les 15:30` in the
-remainder: the wrong year, the wrong granularity, and a time of day thrown
-away.
-
-**A quarter reads as a whole year.** `el primer trimestre de 2020` returns
-2020-01-01 to 2021-01-01 with `el primer trimestre de` in the remainder. Four
-times too long. `la década de 1980` fails in the mirror image, returning the
-single year 1980 with `la década de` stranded.
-
-**Day-part phrases return tomorrow.** `pela mañana`, `de mañana` and `a la
-mañana` all return 2017-06-28, the whole of the next day, because `mañana` is
-in the morning-meridiem vocabulary and also in the named-day vocabulary as
-*tomorrow*, and with no day-part band to reach, the tomorrow reading is the
-only one available. `el sábadu pela mañana` returns the whole of Saturday with
-`pela mañana` visible. `pela tarde`, `pela nueche` and a bare `nueche` return
-nothing, which is the honest outcome; the morning cases are not.
-
-**One o'clock does not parse.** `la una de la nueche` returns nothing, though
-`les diez de la nueche` is correct, and the same gap holds with any other
-meridiem. The night-clock test file records this as a pre-existing hole.
+**A decade frame.** `la década de 1980` returns the single year 1980 with `la década de` left in the remainder.
 
 **Unadapted French Republican months bind unguarded.** `brumaire` alone
-returns 2016-10-22 to 2016-11-21, and `1 de brumaire` returns 2017-10-22 — a
+returns 2017-10-22 to 2017-11-21, and `1 de brumaire` returns 2017-10-22 — a
 Gregorian span for a Republican month name, with the Republican year nowhere
 in it. `18 de brumaire del añu VIII` returns 2017-11-08 and leaves `del añu
 VIII` in the remainder, which is the one case where the discarded text is the
@@ -202,3 +184,37 @@ part that mattered.
    Asturian actually use them?
 7. Is `ente` or `entre` the ordinary between-preposition, and does `ente
    selmana` mean "on a weekday" as the dictionary's locution suggests?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ast")
+    True
+    >>> span, rest = extract_timespan('les diez de la nueche', "ast", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T22:00:00', '')
+    >>> span, rest = extract_timespan('pela mañana', "ast", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T06:00:00', '')
+    >>> span, rest = extract_timespan('3 de xineru 1990', "ast", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('1990-01-03T00:00:00', '')
+    >>> span, rest = extract_timespan("25 d'avientu", "ast", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-12-25T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('el meudía', "ast", anchor) is None
+    True
+    >>> extract_timespan('un par de díes', "ast", anchor) is None
+    True
+    >>> extract_timespan('dellos díes', "ast", anchor) is None
+    True
+    >>> extract_timespan('un día', "ast", anchor) is None
+    True
+
+---
+[← Armenian](hy.md) · [Home](../index.md) · [Azerbaijani →](az.md)

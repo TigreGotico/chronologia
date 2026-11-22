@@ -1,5 +1,13 @@
 # chronologia
 
+<!-- agent-hint
+covers: what chronologia does, how to install it, a first extraction and where each topic is documented
+source: `pyproject.toml`, `chronologia/__init__.py:__all__`, `chronologia/__main__.py`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: diff <(sed -n '/^```python/,/^```$/p' README.md | sed '/^```/d;/^main(/d' | python -) <(sed -n 's/^print(.*)  *# //p' README.md)
+see: `docs/index.md`, `docs/getting-started.md`, `AGENTS.md`, `CONTRIBUTING.md`
+-->
+
 **A Python library that reads dates written by humans and answers
 questions about them — any date, in any calendar, from the age of the
 dinosaurs to next Tuesday.**
@@ -66,13 +74,14 @@ When someone says **"June 2027"**, they mean the whole month — not one
 secret instant at midnight on the 1st. This library takes that
 seriously: its answers are **spans** — a start and an end. The width of
 a span is honest information. A day is a day wide. A month is a month
-wide. "The Jurassic" is fifty-eight and a half million years wide:
+wide. "The Jurassic" is fifty-eight and a half million years wide (it starts about
+201.6 million years ago):
 
 ```python
 from chronologia import lookup
 
 jurassic = lookup("jurassic")
-print(jurassic.span.start.year)   # -201598050  (about 201.6 million years ago)
+print(jurassic.span.start.year)   # -201598050
 print(jurassic.span.end.year)     # -143098050
 ```
 
@@ -197,9 +206,9 @@ self-checking scripts (`python examples/01_extract_basics.py`).
 |---|---|
 | **Who is this for?** | [**docs/use-cases.md**](docs/use-cases.md) — worked programs for archivists, historians, archaeologists, faith communities, astronomers, engineers, and voice assistants — start here |
 | Reading human dates | [**docs/extraction.md**](docs/extraction.md) — `extract_timespan` turns a phrase into a span; how the per-language vocabulary works and how to add a language |
-| 18 calendars | Gregorian, Julian, Hebrew, Islamic (arithmetic + Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican, Bahá'í, ISO week, and more — [docs/calendars.md](docs/calendars.md) |
+| 18 calendars | Beside the Gregorian: Julian, Hebrew, Islamic (arithmetic + Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican, Bahá'í, ISO week, and more — [docs/calendars.md](docs/calendars.md) |
 | Timelines | 13 jurisdictions' calendar reforms and dateline hops — Rome, Britain, Sweden, Russia, Greece, Japan, plus the days Samoa, the Philippines and Alaska deleted or re-lived at the International Date Line — [docs/timelines.md](docs/timelines.md) |
-| Named periods | the full geological chart (180 entries) plus regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one — [docs/deep-time.md](docs/deep-time.md) |
+| Named periods | the geological chart (170 entries) plus ten regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one — [docs/deep-time.md](docs/deep-time.md) |
 | Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present; regnal years (Japanese nengō, Roman consuls, Egyptian chronologies) — [docs/eras-and-rulers.md](docs/eras-and-rulers.md) |
 | Recurrence | [RFC 5545 RRULE](docs/recurrence.md) — "every third Tuesday", Labor Day, Friday the 13th — parsed and expanded as pure JDN arithmetic into day-wide `DateSpan`s |
 | Civil holidays | [public/regional/municipal holidays](docs/civil-holidays.md) for 260 jurisdictions as computed rules with observed-shift policies — 32 of them carry subdivisions, Portugal down to municipal depth (~300 concelhos) |
@@ -216,12 +225,11 @@ of guessing.
 
 ## How well does it speak your language?
 
-Fifty-eight languages load, but they are not all equally exercised, and pretending
+Sixty-one languages load, but they are not all equally exercised, and pretending
 otherwise would waste your afternoon. Coverage falls into three honest bands:
 
 **Reviewed in depth** — English, Spanish, Portuguese, French, German, Dutch,
-Russian, Arabic, Hebrew. Each has been through repeated adversarial audit
-rounds *and* a dedicated per-language review that probed everyday register,
+Russian, Arabic, Hebrew. Each has a large phrase corpus that covers everyday register,
 not just textbook forms: "quarter to four", "tonight at 8", "om de twee
 weken", "без пяти девять". Expect these to handle what a person would
 actually type.
@@ -234,12 +242,12 @@ own test corpus and is swept whenever a shared mechanism changes, so the
 common constructions work; the idiomatic long tail is thinner, and that is
 where bug reports are most useful.
 
-**Early** — Albanian, Aragonese, Armenian, Asturian, Esperanto, Filipino,
-Georgian, Hausa, Hindi, Icelandic, Irish, Kabyle, Korean, Latvian, Lithuanian,
-Macedonian, Maltese, Mirandese, Occitan, Serbian, Swahili, Thai, Vietnamese,
-Welsh. The
+**Early** — Albanian, Aragonese, Armenian, Asturian, Belarusian, Esperanto,
+Filipino, Georgian, Hausa, Hindi, Icelandic, Irish, Kabyle, Korean, Latvian,
+Lithuanian, Macedonian, Maltese, Mirandese, Occitan, Serbian, Swahili, Tamil,
+Thai, Vietnamese, Welsh. The
 vocabulary is in place and the engine is shared, so a lot already works, but
-these have not yet had a native speaker read them end to end, and several
+these have not had a native speaker read them end to end, and several
 deliberately omit constructions the source grammar does not use the same
 way — Welsh has no seasons or millennium unit, Irish and Esperanto have no
 dayparts, Georgian has no century unit or "every" quantifier, Armenian omits
@@ -251,10 +259,8 @@ because nothing in the phrase says which half-day it names, Korean ships no
 single-syllable weekday abbreviations (each one is also an everyday word:
 일 is the day, the numeral one and Sunday at once) and no spelled month
 names, and Vietnamese reads no ordinals and no bare "năm" as five. Occitan
-is the model for how that changes:
-a native speaker reviewed a sibling project's word lists, and the forms they
-supplied turned up a real bug here — "davant-ièr" was being read as *yesterday*
-rather than the day before.
+shows how a locale deepens: a native speaker reviewed its word lists, and
+"davant-ièr" reads as the day before yesterday.
 
 Those omissions are the design working, not a backlog. A locale ships a
 construction only where its sources attest one; where they conflict or say
@@ -277,9 +283,8 @@ the library exists at all — and because you should be able to judge the work
 without having to trust either the AI or the maintainer.
 
 **Why it could only be built this way.** A library that reads dates in more
-than fifty languages — with the goal of *every* language over time, the way the
-sibling [orthography2ipa](https://github.com/TigreGotico/orthography2ipa)
-project is already 1000+ languages strong — needs command of grammar,
+than fifty languages — with the goal of *every* language over time —
+needs command of grammar,
 number-words, calendar arithmetic and holiday law in each one. No single
 maintainer speaks that many languages, and commissioning a native-speaker
 linguist for each was never realistic for an open-source project — that is
@@ -304,10 +309,8 @@ faith:
   the team speaks is still held to exactly the same bar as the ones they do.
 
 Neither claim asks for your trust: the citations sit in the source and the
-data-file headers, and the test suite — well over a hundred thousand checks —
-either passes on every commit or it doesn't. The full account, including who
-did what and what the process got wrong along the way, is in
-[**docs/transparency.md**](docs/transparency.md).
+data-file headers, and the test suite either passes on every commit or it
+doesn't. [**docs/transparency.md**](docs/transparency.md) lists the checks.
 
 ## Related projects
 

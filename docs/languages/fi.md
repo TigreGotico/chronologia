@@ -1,5 +1,15 @@
 # Finnish (`fi`)
 
+<!-- agent-hint
+covers: where each construction of the Finnish locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/fi/lang.json`, `chronologia/locale/fi/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/fi.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/fi.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Finnish (`fi`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Finnish has no prepositions to speak of. Where another language puts a word in
 front of a noun to say "at", "from" or "until", Finnish puts a case ending on
 the end of it: `maanantaista` is "from Monday", `perjantaihin` is "to Friday",
@@ -60,17 +70,15 @@ the bare `kolmelta` both give three o'clock, because the ablative numerals one
 through twelve are listed explicitly and a bare one synthesises the missing
 `kello`. Wiktionary's entry for the suffix `-lta` identifies the ablative;
 Iso suomen kielioppi §1237 is cited alongside it for the telling-time use, and
-that section could not be fetched to check. `keskiyöllä` and `keskipäivällä`
+that section is unchecked. `keskiyöllä` and `keskipäivällä`
 are midnight and noon, and both are CLDR 47's `fi` day-period labels for those
 two points.
 
 **The half hour runs toward the coming hour.** `puoli kymmenen` is 09:30, not
 10:30 — the hour named is the one being approached. The reading is enabled by
-`bare_half_to` and read through a `FRACTION HOUR` order, and twenty-six of the
-locales here use the same flag. Fifteen locales additionally declare that a
-toward-hour twelve means half past noon rather than half past midnight;
-Finnish is not among them, and neither is either of the other two Uralic
-locales, so `puoli yksi` resolves to 00:30.
+`bare_half_to` and read through a `FRACTION HOUR` order, and 25 locales use the
+same flag. `puoli yksi` is 00:30 or 12:30, whichever comes next after the
+anchor (ruling 17 in [the rulings](../rulings.md)).
 
 **Named days** span the five positions around the anchor and are exactly CLDR
 47's `fi` day field for relative types −2 through +2: `toissa päivänä`,
@@ -117,17 +125,6 @@ claims to read. The gaps below suggest it is not.
 
 ## What refuses
 
-**The standard clock separator.** Finnish separates hours from minutes with a
-period, not a colon. Kielikello, the Institute for the Languages of Finland's
-journal, states it plainly — "Suomenkielisissä teksteissä kellonajan tunnit ja
-minuutit erotetaan toisistaan pisteellä" — and gives `klo 9.15` and `klo 9.00`
-as examples. CLDR 47 agrees: the `fi` short time format is `H.mm`. Neither
-`klo 9.15` nor `kello 15.30` nor a bare `15.30` resolves. The colon spelling
-does, so `15:30` works and the spelling every Finnish style guide prescribes
-does not. `kello 15:30` has the converse problem and strands `kello`, because
-the order that admits a colon-spelled clock has no slot for the preceding
-o'clock word.
-
 **Every case-marked range.** This is the largest gap on the page and it follows
 directly from the language's own grammar. Finnish opens a range with the
 elative and closes it with the illative — `maanantaista perjantaihin`,
@@ -140,30 +137,11 @@ nothing at all. What does work is the postpositional frame, `tammikuun ja
 maaliskuun välillä`, and the two bound words `alkaen` and `asti`/`saakka`
 declared as trailing markers.
 
-**Those trailing markers reach only a bare year.** `2020 alkaen` and
-`2022 asti` resolve. `1.6.2020 alkaen` returns the single day and strands
-`alkaen`; `1.6.2020 asti` does the same. Written idiomatically the phrase needs
-a case on the noun as well, and the case is not there: `vuodesta 2020 alkaen`
-resolves the year but strands `vuodesta`, and `vuoteen 2022 asti` strands
-`vuoteen`. The worst of the family is `elokuusta 2020 alkaen`, which strands
-the month, reads what is left as "from 2020", and returns a span opening on the
-first of January — a confident answer seven months wide of the phrase.
-
 **The postposition for "after".** `vuoden 2020 jälkeen` resolves the year and
 strands `jälkeen`, so the phrase reads as the year itself rather than as
 everything past it. The engine allows a locale to declare where a marker sits
 for four roles — until, since, for, from — and "after" is not one of them, so
 there is no way to declare `jälkeen` as the postposition it is.
-
-**Day parts.** No day-part vocabulary ships, and `chronologia/dayparts.py`
-records CLDR day-period bands for forty-nine languages without Finnish among
-them. CLDR 47's `fi` chart names five — `aamulla`, `aamupäivällä`,
-`iltapäivällä`, `illalla`, `yöllä` — so `aamulla`, `illalla` and `yöllä`
-resolve to nothing at all, and the two that do ship are registered only as
-clock cues: `kello 9 aamupäivällä` is 09:00 and `kello 21 illalla` is 21:00
-with `illalla` left in the remainder. Eleven of the locales here ship no
-day-part vocabulary, so the shape is not unique, but Estonian and Hungarian —
-the only other Uralic locales here — each ship all four.
 
 **The half hour in the ablative.** `puoli kymmenen` resolves and
 `puoli kymmeneltä` does not: the fraction order wants a bare hour, the ablative
@@ -186,8 +164,8 @@ la`. Neither set ships, so `15. elo 2020` returns the whole of 2020 with the
 day and month stranded, and `ma 15.6.2020` returns the day with `ma` left over.
 Twenty-five of the locales here ship an abbreviated weekday file.
 
-**The dotted date without a year.** `3.6.2020` resolves; `3.6.` on its own,
-which is how a Finnish diary writes a day, returns nothing.
+**The dotted date without a year.** `3.6.2020` resolves. `3.6.` returns nothing, although it is how a
+Finnish diary writes a day.
 
 **The decade by its ordinary name.** Finnish names a decade with `-luku`
 attached to the year — `1990-luku`, `1990-luvulla`. Neither resolves: the
@@ -204,12 +182,39 @@ in front.
 1. Which cases of a month, a weekday and a unit noun does a date or range
    phrase actually need — is it the full elative and illative pair for each, or
    do the postpositional frames carry enough of the load in practice?
-2. Is the period-separated clock (`klo 9.15`) genuinely dominant over the
-   colon, or has the colon become common enough in running text that both
-   should read?
+2. Is the period-separated clock (`klo 9.15`) dominant over the colon in
+   running text?
 3. Does `puoli yksi` mean half past twelve noon, half past midnight, or
    whichever of the two the context makes plausible?
 4. Is `1990-luvulla` the ordinary way to name a decade in speech, or does
    `vuosikymmen` carry that weight outside written registers?
 5. Are `pari` and `muutama` precise enough in a temporal offset to bind to two
    and three, or is the vagueness part of what a speaker means by them?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("fi")
+    True
+    >>> span, rest = extract_timespan('puoli kymmenen', "fi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:30:00', '')
+    >>> span, rest = extract_timespan('kello kolmelta', "fi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:00:00', '')
+    >>> span, rest = extract_timespan('viidestoista huhtikuuta', "fi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-04-15T00:00:00', '')
+    >>> span, rest = extract_timespan('kahden viikon päästä', "fi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-11T00:05:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('3.6.', "fi", anchor) is None
+    True
+
+---
+[← Filipino](fil.md) · [Home](../index.md) · [French →](fr.md)

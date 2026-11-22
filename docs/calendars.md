@@ -1,5 +1,13 @@
 # Calendars
 
+<!-- agent-hint
+covers: the 18 built-in calendars, how to convert in and out of each and how far each is trusted
+source: `chronologia/calendars.py`, `chronologia/calendar_data/`
+generated: no
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/calendars.md
+see: `docs/eras-and-rulers.md`, `docs/timelines.md`
+-->
+
 A calendar is just an agreement about how to name days. Humanity has invented
 dozens of these agreements, and this library speaks eighteen of them. This
 page introduces each one in plain language, shows you how to translate dates
@@ -18,10 +26,10 @@ date object:
 from chronologia import CALENDARS
 
 hebrew = CALENDARS["hebrew"]
-print(hebrew.date(5786, 7, 1))            # a Hebrew date -> an AstroDate
-# 2025-09-23T00:00:00
-print(hebrew.from_astro(hebrew.date(5786, 7, 1)))   # and back again
-# hebrew 5786-07-01
+# a Hebrew date -> an AstroDate
+print(hebrew.date(5786, 7, 1))  # 2025-09-23T00:00:00
+# and back again
+print(hebrew.from_astro(hebrew.date(5786, 7, 1)))  # hebrew 5786-07-01
 ```
 
 `date(year, month, day)` gives the everyday-calendar instant (an `AstroDate`)
@@ -67,8 +75,8 @@ reform later corrected.
 from chronologia import CALENDARS
 
 julian = CALENDARS["julian"]
-print(julian.date(-43, 3, 15))   # the Ides of March, 44 BC
-# -000043-03-13T00:00:00
+# the Ides of March, 44 BC
+print(julian.date(-43, 3, 15))  # -000043-03-13T00:00:00
 ```
 
 The Roman "15 March" lands on the 13th of *our* modern calendar, projected
@@ -85,8 +93,7 @@ It keeps the Julian calendar's shape but uses a cleverer leap-century rule, so
 it tracks the seasons even more closely than the Gregorian calendar does.
 
 ```python
-print(CALENDARS["revised_julian"].date(2800, 3, 1))
-# 2800-02-29T00:00:00
+print(CALENDARS["revised_julian"].date(2800, 3, 1))  # 2800-02-29T00:00:00
 ```
 
 The Revised Julian and Gregorian calendars agree from 1600 to 2800 and first
@@ -105,10 +112,8 @@ are fully arithmetic, so dates far outside any table can be computed exactly.
 from chronologia import AstroDate
 
 hebrew = CALENDARS["hebrew"]
-print(hebrew.date(5786, 7, 1))   # 1 Tishri = Rosh Hashanah
-# 2025-09-23T00:00:00
-print(hebrew.from_astro(AstroDate(2025, 9, 23)))
-# hebrew 5786-07-01
+print(hebrew.date(5786, 7, 1))  # 2025-09-23T00:00:00
+print(hebrew.from_astro(AstroDate(2025, 9, 23)))  # hebrew 5786-07-01
 ```
 
 **A numbering note:** month 7 is Tishri, the civil new year. This library uses
@@ -123,8 +128,8 @@ fixed 30-year leap cycle. It powers most everyday date software.
 
 ```python
 islamic = CALENDARS["islamic_civil"]
-print(islamic.date(1446, 9, 15))   # 15 Ramadan 1446
-# 2025-03-15T00:00:00
+# 15 Ramadan 1446
+print(islamic.date(1446, 9, 15))  # 2025-03-15T00:00:00
 ```
 
 **Caveat:** the *religious* Islamic month begins when witnesses actually see
@@ -139,8 +144,7 @@ equinox — the festival of Nowruz. This entry is the arithmetic 33-year-cycle
 approximation of it.
 
 ```python
-print(CALENDARS["solar_hijri_arithmetic"].date(1403, 1, 1))
-# 2024-03-20T00:00:00
+print(CALENDARS["solar_hijri_arithmetic"].date(1403, 1, 1))  # 2024-03-20T00:00:00
 ```
 
 **Caveat — validity window:** the *legal* Iranian calendar sets Nowruz by the
@@ -157,8 +161,8 @@ a short thirteenth month of 5 or 6 days. It descends directly from the ancient
 Egyptian year, fixed to a leap rule so its new year stays put.
 
 ```python
-print(CALENDARS["coptic"].date(1741, 1, 1))   # 1 Thoout
-# 2024-09-11T00:00:00
+# 1 Thoout
+print(CALENDARS["coptic"].date(1741, 1, 1))  # 2024-09-11T00:00:00
 ```
 
 Source: Dershowitz & Reingold, *Calendrical Calculations*, chapter 4; epoch
@@ -171,8 +175,8 @@ Coptic calendar's exact structure but numbers its years 276 higher, which is
 why Ethiopia's millennium celebration fell in our 2007.
 
 ```python
-print(CALENDARS["ethiopian"].date(2017, 1, 1))   # 1 Maskaram
-# 2024-09-11T00:00:00
+# 1 Maskaram
+print(CALENDARS["ethiopian"].date(2017, 1, 1))  # 2024-09-11T00:00:00
 ```
 
 Notice this is the *same* Gregorian day as Coptic 1741 above — the two
@@ -189,8 +193,8 @@ named in Berber and the year counted from a different era. 1 Yennayer
 Gregorian throughout the 1900–2099 window.
 
 ```python
-print(CALENDARS["berber"].date(2976, 1, 1))   # 1 Yennayer 2976
-# 2026-01-14T00:00:00
+# 1 Yennayer 2976
+print(CALENDARS["berber"].date(2976, 1, 1))  # 2026-01-14T00:00:00
 ```
 
 **Era note:** the +950 offset (Berber year 2976 = 2026 CE) was fixed in 1968
@@ -219,8 +223,8 @@ and — unusually — *no leap year at all*. Every year is exactly 365 days, so 
 new year slips one day earlier against the seasons every four years.
 
 ```python
-print(CALENDARS["armenian"].date(1, 1, 1))   # 1 Navasard AE 1
-# 0552-07-13T00:00:00
+# 1 Navasard AE 1
+print(CALENDARS["armenian"].date(1, 1, 1))  # 0552-07-13T00:00:00
 ```
 
 **Caveat:** because it never intercalates, this "vague year" wanders steadily
@@ -235,8 +239,8 @@ Coptic, Ethiopian and Armenian calendars. Three four-month seasons of harvest,
 flood and growth, plus five feast days, and no leap day ever.
 
 ```python
-print(CALENDARS["egyptian"].date(1, 1, 1))   # 1 Thoth, year 1 of Nabonassar
-# -000746-02-18T00:00:00
+# 1 Thoth, year 1 of Nabonassar
+print(CALENDARS["egyptian"].date(1, 1, 1))  # -000746-02-18T00:00:00
 ```
 
 **Caveat:** the same wandering-year caution as the Armenian calendar — with no
@@ -251,8 +255,8 @@ plus five or six festival days, meant to sweep away the old order. This entry
 uses the tidy arithmetic ("Romme") leap rule.
 
 ```python
-print(CALENDARS["french_republican"].date(1, 1, 1))   # 1 Vendémiaire An I
-# 1792-09-22T00:00:00
+# 1 Vendémiaire An I
+print(CALENDARS["french_republican"].date(1, 1, 1))  # 1792-09-22T00:00:00
 ```
 
 **Caveat:** the calendar as actually used set its leap years by the *observed*
@@ -267,8 +271,8 @@ a handful of intercalary days tucked in before the last month. This entry uses
 the pre-2015 form, where the new year (Naw-Rúz) was locked to 21 March.
 
 ```python
-print(CALENDARS["bahai"].date(1, 1, 1))   # 1 Bahá, BE 1
-# 1844-03-21T00:00:00
+# 1 Bahá, BE 1
+print(CALENDARS["bahai"].date(1, 1, 1))  # 1844-03-21T00:00:00
 ```
 
 **Caveat:** since 2015 the calendar sets Naw-Rúz by the true vernal equinox at
@@ -290,10 +294,9 @@ becomes tun-count `5200`:
 ```python
 from chronologia import AstroDate
 
-print(AstroDate.from_calendar("mayan_long_count", 5200, 0, 0))
-# 2012-12-21T00:00:00 — the famous "end" of the Maya calendar
-print(AstroDate(2012, 12, 21).to_calendar("mayan_long_count"))
-# mayan_long_count 5200-00-00
+# the famous "end" of the Maya calendar
+print(AstroDate.from_calendar("mayan_long_count", 5200, 0, 0))  # 2012-12-21T00:00:00
+print(AstroDate(2012, 12, 21).to_calendar("mayan_long_count"))  # mayan_long_count 5200-00-00
 ```
 
 The full five-position notation (`baktun.katun.tun.uinal.kin`) is available
@@ -315,8 +318,8 @@ day of the first ISO week of 2020. It is a reckoning *of* the Gregorian
 calendar, not a separate era, and businesses use it for scheduling.
 
 ```python
-print(CALENDARS["iso_week"].date(2020, 1, 3))   # 2020, week 1, Wednesday
-# 2020-01-01T00:00:00
+# 2020, week 1, Wednesday
+print(CALENDARS["iso_week"].date(2020, 1, 3))  # 2020-01-01T00:00:00
 ```
 
 **A subtlety worth knowing:** an ISO week can belong to a different year than
@@ -341,8 +344,8 @@ table reaches.
 
 ```python
 umm = CALENDARS["umm_al_qura"]
-print(umm.date(1446, 9, 1))   # 1 Ramadan 1446
-# 2025-03-01T00:00:00
+# 1 Ramadan 1446
+print(umm.date(1446, 9, 1))  # 2025-03-01T00:00:00
 ```
 
 **Caveat — range with fallback:** the table covers AH 1356–1500. Outside it,
@@ -371,16 +374,16 @@ tables.
 
 ```python
 chinese = CALENDARS["chinese"]
-print(chinese.date(2025, 1, 1))   # Chinese New Year 2025
-# 2025-01-29T00:00:00
+# Chinese New Year 2025
+print(chinese.date(2025, 1, 1))  # 2025-01-29T00:00:00
 ```
 
 A leap month is addressed by adding 100 to the ordinary month number, so 2025's
 leap sixth month is month 106:
 
 ```python
-print(chinese.date(2025, 106, 1))   # start of leap month 6
-# 2025-07-25T00:00:00
+# start of leap month 6
+print(chinese.date(2025, 106, 1))  # 2025-07-25T00:00:00
 ```
 
 **Caveat — table range:** exact for lunar years **1901 to 2099** only. There
@@ -395,8 +398,8 @@ equinox at Tehran — the astronomical companion to the arithmetic `bahai` entry
 
 ```python
 badi = CALENDARS["badi_2015"]
-print(badi.date(180, 1, 1))   # 1 Bahá, BE 180
-# 2023-03-21T00:00:00
+# 1 Bahá, BE 180
+print(badi.date(180, 1, 1))  # 2023-03-21T00:00:00
 ```
 
 **Caveat — table range:** covers BE 172–220. Source: the published equinox
@@ -404,14 +407,14 @@ table for the Badíʿ calendar.
 
 ### French Republican (equinox)
 
-The French Revolutionary calendar as it was *actually kept*, with leap years
+The French Republican calendar as it was *actually kept*, with leap years
 fixed by the observed autumnal equinox at Paris — the historical companion to
 the arithmetic `french_republican` entry.
 
 ```python
 freq = CALENDARS["french_republican_equinox"]
-print(freq.date(1, 1, 1))   # 1 Vendémiaire An I
-# 1792-09-22T00:00:00
+# 1 Vendémiaire An I
+print(freq.date(1, 1, 1))  # 1792-09-22T00:00:00
 ```
 
 **Caveat — table range:** covers An I to An XIII, the years the calendar was in
@@ -428,11 +431,9 @@ and the 15-year Roman/Byzantine **indiction**.
 ```python
 from chronologia import year_cycle_label, years_of, AstroDate
 
-print(year_cycle_label(AstroDate(2024, 6, 1), "chinese_zodiac"))
-# dragon
+print(year_cycle_label(AstroDate(2024, 6, 1), "chinese_zodiac"))  # dragon
 
-print([start.year for start, _ in years_of("chinese_zodiac", "dragon", 1990, 2025)])
-# [2000, 2012, 2024]
+print([start.year for start, _ in years_of("chinese_zodiac", "dragon", 1990, 2025)])  # [2000, 2012, 2024]
 ```
 
 **The mod-12-is-wrong-at-January lesson.** The zodiac and sexagenary labels
@@ -441,10 +442,10 @@ apply to the *Chinese lunisolar year*, not the Gregorian year, so a naive
 catches up:
 
 ```python
-print(year_cycle_label(AstroDate(2024, 1, 15), "chinese_zodiac"))   # before CNY 2024-02-10
-# rabbit
-print(year_cycle_label(AstroDate(2024, 2, 10), "chinese_zodiac"))   # Chinese New Year 2024
-# dragon
+# before CNY 2024-02-10
+print(year_cycle_label(AstroDate(2024, 1, 15), "chinese_zodiac"))  # rabbit
+# Chinese New Year 2024
+print(year_cycle_label(AstroDate(2024, 2, 10), "chinese_zodiac"))  # dragon
 ```
 
 `year_cycle_label` resolves through `CALENDARS["chinese"]` itself (see
@@ -459,10 +460,10 @@ January" in *Eras and rulers*), so August and October of the *same* Gregorian
 year carry different indiction numbers:
 
 ```python
-print(year_cycle_label(AstroDate(2024, 8, 15), "indiction"))   # before 1 Sept
-# 2
-print(year_cycle_label(AstroDate(2024, 10, 15), "indiction"))  # after 1 Sept
-# 3
+# before 1 Sept
+print(year_cycle_label(AstroDate(2024, 8, 15), "indiction"))  # 2
+# after 1 Sept
+print(year_cycle_label(AstroDate(2024, 10, 15), "indiction"))  # 3
 ```
 
 Sources: Wikipedia, "Sexagenary cycle" (1984 = jiazi, the stem x branch
@@ -502,3 +503,6 @@ name (leap-month and intercalary calendars use the larger count).
 
 The Gregorian calendar itself is not a registry entry — it is the reference
 everything converts against, via `gregorian_to_jdn` and `jdn_to_gregorian`.
+
+---
+[← Rulings](rulings.md) · [Home](index.md) · [Eras and rulers →](eras-and-rulers.md)
