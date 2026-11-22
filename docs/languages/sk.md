@@ -1,5 +1,15 @@
 # Slovak (`sk`)
 
+<!-- agent-hint
+covers: where each construction of the Slovak locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/sk/lang.json`, `chronologia/locale/sk/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/sk.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/sk.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Slovak (`sk`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Slovak names the hour with a declined ordinal agreeing with an elided
 `hodina`: `o druhej` is two o'clock, `o ôsmej` is eight, and the ordinal
 stands in the feminine locative because the preposition `o` governs it.
@@ -110,10 +120,7 @@ of that year.
 here.** The determiner paradigms, the unit-noun paradigms, the hour-ordinal
 table, the day-ordinal table and both era files are attributed to
 `slovnik.juls.savba.sk` — the Jazykovedný ústav Ľ. Štúra collection, and the
-right authority for all of them. That host answers an automated client with a
-JavaScript browser check rather than the entry: every request returns HTTP 200
-with a page that says only that JavaScript is required, so none of those
-locators can be confirmed without a browser. Treat the attributions as
+right authority for all of them. None of those locators is checked. Treat the attributions as
 unchecked rather than as absent evidence; the surfaces themselves are
 ordinary Slovak and several are corroborated by CLDR.
 
@@ -163,12 +170,7 @@ has the converse problem: it is a meridiem cue but not a day part, so
 `dnes dopoludnia` returns the whole day and strands the word. Czech, Polish
 and Welsh share the shape — a morning day part and no night one.
 
-**A leading preposition on a digit clock, and on the year and the period.**
-The clock's first order begins at the clock itself rather than at an optional
-`at?`, so `o 8:30` and `o 20:30` resolve to the right minute and leave the
-preposition in the remainder. `v roku 2020`, `v minulom týždni`,
-`v tomto týždni` and `v minulom roku` strand their `v` for the same reason on
-their own orders, as do `cez víkend`, `na jar` and `v lete`.
+**A leading preposition on the year and the period.** `v roku 2020`, `v minulom týždni`, `v tomto týždni` and `v minulom roku` return their span with `v` left in the remainder, as do `cez víkend` and `na jar`. `v lete` reads whole.
 
 **The final day of a month.** `prvý deň mája` resolves, because
 `ORD UNIT MONTH` is declared; `posledný deň mája` does not, because no
@@ -178,10 +180,6 @@ stranded.
 **`až` as a range word.** `od 1. mája do 5. mája` resolves and
 `1. máj až 5. máj` does not: `až` is in no vocabulary file, so the first date
 is returned alone and the rest of the range is stranded.
-
-**Month abbreviations.** None of the twelve CLDR abbreviated month names
-(`jan`, `feb`, `mar`, `apr`, `máj`, `jún`, `júl`, `aug`, `sep`, `okt`, `nov`,
-`dec`) ship, so `15. jan 2020` returns the whole of 2020.
 
 ## Open questions for a native speaker
 
@@ -200,3 +198,41 @@ is returned alone and the rest of the range is stranded.
    does one belong to fiscal usage?
 5. Is `v noci` the right single surface for the night band, or does the
    locative phrase need a nominal partner?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("sk")
+    True
+    >>> span, rest = extract_timespan('pol deviatej', "sk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('o deviatej večer', "sk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T21:00:00', '')
+    >>> span, rest = extract_timespan('o deviatej ráno', "sk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:00:00', '')
+    >>> span, rest = extract_timespan('štvrť na deväť', "sk", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('v 20 storočí', "sk", anchor) is None
+    True
+    >>> extract_timespan('v päť storočí', "sk", anchor) is None
+    True
+    >>> extract_timespan('päť storočí', "sk", anchor) is None
+    True
+    >>> extract_timespan('päť minút po deviatej', "sk", anchor) is None
+    True
+    >>> extract_timespan('20 storočí pred naším letopočtom', "sk", anchor) is None
+    True
+    >>> extract_timespan('v noci', "sk", anchor) is None
+    True
+
+---
+[← Serbian](sr.md) · [Home](../index.md) · [Slovenian →](sl.md)

@@ -1,5 +1,15 @@
 # Hungarian (`hu`)
 
+<!-- agent-hint
+covers: where each construction of the Hungarian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/hu/lang.json`, `chronologia/locale/hu/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/hu.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/hu.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Hungarian (`hu`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Hungarian runs the most complete counting-toward-the-hour clock of any locale
 here. `negyed kilenc` is 08:15, `fél kilenc` is 08:30 and `háromnegyed kilenc`
 is 08:45 — a quarter, a half and three quarters of the way *toward* nine,
@@ -136,31 +146,9 @@ native alternative competes with it.
 
 ## What refuses
 
-**The first hour of the toward-hour clock.** `fél egy` resolves to 00:30,
-`negyed egy` to 00:15 and `háromnegyed egy` to 00:45, where the Wiktionary
-`-kor` entry gives 12:30, 12:15 and 12:45 for the same three phrases. The
-resolver subtracts one from the named hour and, for the first hour, that
-lands on zero. A `toward_hour_12h` convention exists for exactly this and
-turns the zero back into twelve; the Slavic toward-hour locales set it and
-Hungarian does not. The same holds for Estonian, and for the Germanic locales
-whose `halb eins` has the same shape, so this is a family-wide arrangement
-rather than a Hungarian one — but it is the one place on this page where the
-locale's answer and its citation disagree outright.
-
 **Minutes counted to or past the hour.** The three counting-toward fractions
 are the only fractional clock surfaces sourced, and no arbitrary-minute
 construction ships.
-
-**A fractional quantifier in an offset.** `fél óra múlva` ("in half an hour")
-and `negyed óra múlva` ("in a quarter of an hour") resolve to one hour from
-the anchor with the quantifier stranded, so the answer is confidently wrong by
-thirty and forty-five minutes rather than refused. The quantifier table
-carries both values; the offset construction does not read from it.
-
-**A trailing case suffix on a digit.** The tokenizer shears the hyphen, so
-`augusztus 15-én` resolves to the right day and leaves `én` in the remainder,
-and `reggel 8-kor` resolves to 08:00 and leaves `kor`. The spelled forms
-(`augusztus tizenötödike`, `nyolckor`) consume everything.
 
 **A year-led quarter or half.** Hungarian puts the year first, and the quarter
 and half-period constructions carry only the year-last orders the shared
@@ -188,15 +176,6 @@ the bare noun. Every other day part in this locale ships the adverb, so
 `éjjel` resolves standing alone and `hajnalban` does not; `holnap hajnalban`
 returns the whole of tomorrow with `hajnalban` stranded.
 
-**Vague quantifiers.** `pár` and `néhány` ("a couple", "a few") are listed in
-the quantifier table but reach no construction: `pár nap múlva` returns one
-day from the anchor with `pár` stranded. `pár` is additionally listed under
-two different values, 2 and 3. That is not a live ambiguity — the table is
-flattened surface-first, so the later bucket wins and the entry under 2 has no
-effect at all. Wiktionary's `pár` does carry both readings, the literal
-"pair" and the vague "some, a few", but a quantifier table can hold only one
-of them.
-
 **A leading article.** `a hétvégén`, `a jövő héten` and `a hónap elején` all
 resolve correctly and all leave the article in the remainder.
 
@@ -212,3 +191,25 @@ resolve correctly and all leave the article in the remainder.
 4. Does `negyedév` compete with a native alternative for a calendar quarter?
 5. Is `hajnalban` the form a phrase uses, with `hajnal` reserved for the bare
    noun, or are both current adverbially?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("hu")
+    True
+    >>> span, rest = extract_timespan('negyed kilenc', "hu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+    >>> span, rest = extract_timespan('fél kilenc', "hu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
+    >>> span, rest = extract_timespan('háromnegyed kilenc', "hu", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:45:00', '')
+
+---
+[← Hindi](hi.md) · [Home](../index.md) · [Icelandic →](is.md)
