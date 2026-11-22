@@ -58,14 +58,22 @@ IMPOSSIBLE = [
     ("the sixtieth monday of the year", "en", "a year has no 60th Monday",
      (SPAN, CANDIDATES, EVENT, RECURRENCE)),
     ("every 263rd weekday of the year", "en", "a year has no 263rd business day",
-     (EVENT, RECURRENCE)),
+     (SPAN, EVENT, RECURRENCE)),
     ("the 25th weekday of the month", "en", "a month has no 25th business day",
+     (SPAN, EVENT, RECURRENCE)),
+    ("the 25th weekday of every month", "en", "a month has no 25th business day",
+     (SPAN, EVENT, RECURRENCE)),
+    ("the 25th weekday of a month", "en", "a month has no 25th business day",
      (SPAN, EVENT, RECURRENCE)),
     ("the 263rd weekday of the year", "en", "a year has no 263rd business day",
      (SPAN, EVENT, RECURRENCE)),
+    ("the 0th weekday of the month", "en", "a month has no 0th business day",
+     (SPAN, EVENT, RECURRENCE)),
+    ("the 0th weekday of the year", "en", "a year has no 0th business day",
+     (SPAN, EVENT, RECURRENCE)),
     # a recurring date the calendar never has
     ("every 24th weekday of the month", "en", "a month has no 24th business day",
-     (EVENT, RECURRENCE)),
+     (SPAN, EVENT, RECURRENCE)),
     ("jeden 24. Werktag des Monats", "de", "a month has no 24th business day",
      (RECURRENCE,)),
     ("every 31st of April", "en", "April has no 31st",
@@ -89,9 +97,14 @@ DEFAULT_NONE = {
     "el sexto lunes de mayo": (SPAN, EVENT, RECURRENCE),
     "every sixth monday of the month": (SPAN, EVENT, RECURRENCE),
     "the sixtieth monday of the year": (SPAN, EVENT, RECURRENCE),
-    "every 263rd weekday of the year": (RECURRENCE,),
+    "every 263rd weekday of the year": (SPAN, RECURRENCE),
+    "every 24th weekday of the month": (SPAN,),
     "the 25th weekday of the month": (SPAN, EVENT, RECURRENCE),
+    "the 25th weekday of every month": (SPAN, EVENT, RECURRENCE),
+    "the 25th weekday of a month": (SPAN, EVENT, RECURRENCE),
     "the 263rd weekday of the year": (SPAN, EVENT, RECURRENCE),
+    "the 0th weekday of the month": (SPAN, EVENT, RECURRENCE),
+    "the 0th weekday of the year": (SPAN, EVENT, RECURRENCE),
     "every 31st of April": (SPAN, EVENT, RECURRENCE),
 }
 
@@ -140,6 +153,15 @@ VALID_OR_NOT_A_DATE = [
     ("every 262nd weekday of the year", "en"),
     ("the 23rd weekday of the month", "en"),
     ("the 262nd weekday of the year", "en"),
+    ("I worked 25 weekdays of the month", "en"),
+    ("25 weekdays of the month", "en"),
+    ("the first 25 weekdays of the month", "en"),
+    ("the 25.5 weekday of the month", "en"),
+    ("the 300.7 weekday of the year", "en"),
+    ("ich arbeitete 25 Werktage des Monats", "de"),
+    ("25 Werktage des Monats", "de"),
+    ("ik werkte 25 werkdagen van de maand", "nl"),
+    ("25 werkdagen van de maand", "nl"),
     ("the fifth monday of may", "en"),
     ("el quinto lunes de mayo", "es"),
     ("o quinto domingo de outubro", "pt"),
@@ -220,3 +242,15 @@ def test_default_mode_answers_a_day_over_a_month_that_does_not_exist_without_err
         extract, text):
     call(extract, text, "pt")
     assert call(SPAN, text, "pt") is None
+
+
+@pytest.mark.parametrize("text,lang", [
+    ("I worked 5 weekdays of the month", "en"),
+    ("5 weekdays of the month", "en"),
+    ("the first 5 weekdays of the month", "en"),
+    ("the 2.5 weekday of the month", "en"),
+    ("ich arbeitete 5 Werktage des Monats", "de"),
+    ("ik werkte 5 werkdagen van de maand", "nl"),
+])
+def test_a_count_of_weekdays_or_a_fraction_is_no_ordinal_rule(text, lang):
+    assert call(RECURRENCE, text, lang) is None

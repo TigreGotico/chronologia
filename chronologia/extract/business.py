@@ -51,7 +51,6 @@ from typing import List, Optional, Set, Tuple
 
 from chronologia.civil_holidays import is_civil_holiday
 from chronologia.extract.anchored import _gap_words, _offset_base
-from chronologia.extract.impossible import decline, no_such, scope_name
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
                                               _day_span, _midnight,
@@ -266,39 +265,6 @@ def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
                 base, dom_end = dom
                 return base, sign, dom_end, set(range(hi, dom_end))
     return None
-
-
-def decline_weekday_count(tokens, spec: LangSpec) -> None:
-    """Record why "the 25th weekday of the month" has no reading.
-
-    A month holds at most 23 weekdays and a year 262.  The span reader gives
-    the class noun no reading, so this only reports the refusal for a
-    ``"raise"`` call, with the wording the recurrence reader uses.
-    """
-    weekday_words = spec.connectors.get("weekday", ())
-    of_words = spec.connectors.get("of", ())
-    skipped = (frozenset(spec.connectors.get("article", ()))
-               | {w for w, v in spec.rel_markers.items() if v == 0})
-    for w, tok in enumerate(tokens):
-        if tok.text not in weekday_words or w == 0 or not tokens[w - 1].is_number:
-            continue
-        r = w + 1
-        if not (r < len(tokens) and tokens[r].text in of_words):
-            continue
-        r += 1
-        while r < len(tokens) and tokens[r].text in skipped:
-            r += 1
-        if r >= len(tokens):
-            continue
-        unit = spec.units.get(tokens[r].text)
-        n = int(tokens[w - 1].value)
-        if tokens[r].text in spec.months and n > 23:
-            decline(no_such(scope_name(spec.months[tokens[r].text], None), n,
-                            "business day"))
-        elif unit == "month" and n > 23:
-            decline(no_such("a month", n, "business day"))
-        elif unit == "year" and n > 262:
-            decline(no_such("a year", n, "business day"))
 
 
 def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,

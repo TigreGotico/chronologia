@@ -2292,7 +2292,11 @@ def _recur_nth_weekday(ctx):
                               or t[start0 - 1].text in ctx.every):
             start0 -= 1
         plural_ok = any(t[k].text in ctx.every for k in range(start0, li0))
-        business = t[w].text in ctx.weekday_word
+        # the plural class noun after a cardinal is a count ("25 weekdays of
+        # the month"), so like a derived weekday plural it needs "every"
+        business = t[w].text in ctx.weekday_word and (
+            plural_ok or t[w].text[:-1] not in ctx.weekday_word
+            and t[w].text[:-2] not in ctx.weekday_word)
         wd = None if business else _weekday_here(ctx, t[w], plural_ok)
         if wd is None and not business:
             continue
@@ -2306,6 +2310,8 @@ def _recur_nth_weekday(ctx):
         # the same number as an INTERVAL multiplier instead.
         numeric_last_n = None
         if t[li].is_number:
+            if t[li].value != int(t[li].value):
+                continue
             ordn = int(t[li].value)
         elif (t[li].text in ctx.rel_markers
               and ctx.rel_markers[t[li].text] == -1):
@@ -2426,7 +2432,7 @@ def _recur_nth_weekday(ctx):
                     month_ordn = -numeric_last_n
                 else:
                     return None, frozenset()
-            if abs(month_ordn) > (23 if business else 5):
+            if month_ordn == 0 or abs(month_ordn) > (23 if business else 5):
                 # a month holds at most five of one weekday and 23 weekdays,
                 # so the rule would never occur -- claim the phrase and
                 # decline it
@@ -2460,7 +2466,7 @@ def _recur_nth_weekday(ctx):
             # under ``FREQ=YEARLY``: the nth (or, negative, last) matching
             # weekday of the whole year -- exactly the reading "of the year"
             # asks for, so this resolves rather than refuses.
-            if abs(ordn) > (262 if business else 53):
+            if ordn == 0 or abs(ordn) > (262 if business else 53):
                 # a year holds at most 53 of one weekday (365 = 52 weeks + 1
                 # day, 366 = 52 weeks + 2) and 262 weekdays (a leap year
                 # whose two extra days are both weekdays: 52 * 5 + 2), so the
