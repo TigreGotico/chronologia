@@ -2395,6 +2395,11 @@ def _recur_nth_weekday(ctx):
                     month_ordn = -numeric_last_n
                 else:
                     return None, frozenset()
+            if abs(month_ordn) > (23 if business else 5):
+                # a month holds at most five of one weekday and 23 weekdays,
+                # so the rule would never occur -- claim the phrase and
+                # decline it
+                return None, frozenset(range(start, r + 1))
             if t[r].text in ctx.months:
                 if business:
                     rec = _business_day_of_month(month_ordn, month=ctx.months[t[r].text])
