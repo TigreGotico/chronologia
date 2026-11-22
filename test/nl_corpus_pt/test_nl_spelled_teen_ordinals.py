@@ -14,12 +14,9 @@ lexicon lists "décimo" for value 10 as both ordinal and denominator.
 Golds are computed by independent calendar reasoning, never read back from
 the parser.
 
-KNOWN REMAINING GAP (out of scope here, not fixed): "o décimo quarto mês de
-2026" resolves to the whole year 2026, because "quarto" is also the clock
-quarter and numlayer_pt licenses it as an ordinal only after a definite
-article or before a quarter noun.  The other units ("quinto", "sexto",
-"sétimo", "oitavo", "nono") refuse correctly.  "décimo primeiro" and "décimo
-segundo" are the two compounds this file locks down.
+"quarto" is also the clock quarter, and the last word of a compound ordinal
+("décimo quarto") keeps its ordinal reading, so "o décimo quarto mês de 2026"
+refuses like the other teens.
 """
 import pytest
 
@@ -56,3 +53,8 @@ def test_decimo_segundo_is_not_misread_as_segundo_alone():
     correct December (12th month)."""
     s = start("o décimo segundo mês de 2026")
     assert (s.year, s.month) == (2026, 12)
+
+
+def test_decimo_quarto_is_refused_not_read_as_the_year():
+    # pre-fix: the whole year 2026 with the remainder 'o décimo quarto mês de'
+    nomatch("o décimo quarto mês de 2026")
