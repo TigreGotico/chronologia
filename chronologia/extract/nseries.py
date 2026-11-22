@@ -29,6 +29,8 @@ from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
+from chronologia.extract.impossible import (bad_day, decline, no_such_weekday,
+                                            reports_impossible, scope_name)
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
@@ -1209,6 +1211,7 @@ class RecurrenceResult(NamedTuple):
 
 
 @reads_spoken_hours
+@reports_impossible
 def extract_recurrence(
         text: str,
         lang: str = "en",
@@ -1249,6 +1252,11 @@ def extract_recurrence(
     Returns a :class:`RecurrenceResult` -- a ``(recurrence, remainder)`` named
     tuple (unpack it, or read ``.recurrence`` / ``.remainder``) -- or ``None``
     when no recurrence is found.
+
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names no recurrence, the empty string included, returns
@@ -2399,11 +2407,16 @@ def _recur_nth_weekday(ctx):
                 if business:
                     rec = _business_day_of_month(month_ordn, month=ctx.months[t[r].text])
                 else:
+                    if abs(month_ordn) > 5:
+                        decline(no_such_weekday(
+                            scope_name(ctx.months[t[r].text], None), month_ordn, wd))
                     rec = _nth_weekday_of_month(month_ordn, wd,
                                                 month=ctx.months[t[r].text])
                 return rec, set(range(start, r + 1))
             if business:
                 return _business_day_of_month(month_ordn), set(range(start, r + 1))
+            if abs(month_ordn) > 5:
+                decline(no_such_weekday("a month", month_ordn, wd))
             return _nth_weekday_of_month(month_ordn, wd), set(range(start, r + 1))
         if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "year":
             # "every last monday of the year": the yearly sibling of
@@ -2423,6 +2436,8 @@ def _recur_nth_weekday(ctx):
             if business:
                 return (_business_day_of_year(ordn, year_interval),
                         set(range(start, r + 1)))
+            if abs(ordn) > 53:
+                decline(no_such_weekday("a year", ordn, wd))
             return (_nth_weekday_of_year(ordn, wd, year_interval),
                     set(range(start, r + 1)))
     return None
@@ -3921,6 +3936,7 @@ def _recur_date_anchored(ctx):
             # the named date recurs in no year ("every 31st of april").  This is
             # still the specific yearly-date frame -- consume it and report no
             # recurrence, rather than fall through to a wrong MONTHLY;BYMONTHDAY.
+            decline(bad_day(None, month, day))
             return (None, set(range(i, end)))
         return (rule, set(range(i, end)))
     return None

@@ -21,6 +21,7 @@ import os
 import re
 import threading
 import unicodedata
+from contextlib import nullcontext
 from datetime import MAXYEAR, MINYEAR, datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
@@ -34,6 +35,8 @@ from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
+from chronologia.extract.impossible import (decline, ignoring_refusals, ordinal,
+                                            reports_impossible)
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
@@ -2415,6 +2418,7 @@ def _apply_week_of(tokens, resolved, spec):
     return out
 
 
+@reports_impossible
 def extract_timespan(
         text: str,
         lang: str = "en",
@@ -2464,6 +2468,11 @@ def extract_timespan(
     dialect norm keyed off ``lang`` -- a full BCP-47 region subtag picks the
     dialect (``pt-BR`` short, ``pt-PT`` long) while loading the same base
     locale, a bare code its naming country's norm.
+
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns
@@ -2802,6 +2811,15 @@ def _ordish_scope_word(text, spec):
             or text in spec.weekdays)
 
 
+def _decline_oversized_day(token, beside, spec):
+    """Report a stranded numeral that no month has as a day, when a month name
+    stands ``beside`` it ("32 aprile", "the 32nd of February"): a numeral
+    elsewhere ("100 years ago", "the nineties") is no attempt at a day."""
+    if (token.value is not None and token.value == int(token.value) > 31
+            and any(t.text in spec.months for t in beside)):
+        decline(f"no month has a {ordinal(int(token.value))}")
+
+
 def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
     of_surfaces = set(engine.spec.connectors.get("of", ()))
     # Match-start positions of every construction the matcher recognises
@@ -2840,6 +2858,7 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
             continue
         if j + 1 < len(tokens) and (tokens[j + 1].index in consumed
                                     or tokens[j + 1].index in match_starts):
+            _decline_oversized_day(tokens[i], tokens[j + 1:j + 2], engine.spec)
             return True                              # qualifier abuts winner
         if skipped_unit:
             # Shape 2 below (a stranded fragment that does not itself resolve
@@ -2876,6 +2895,7 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
         abuts = ((i > 0 and tokens[i - 1].index in consumed)
                  or (i + 1 < len(tokens) and tokens[i + 1].index in consumed))
         if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:
+            _decline_oversized_day(t, tokens[max(i - 1, 0):i + 2], engine.spec)
             return True                              # impossible day-of-month
     return False
 
@@ -4450,6 +4470,7 @@ class Candidate:
     construction: str
 
 
+@reports_impossible
 def extract_candidates(
         text: str,
         lang: str = "en",
@@ -4468,6 +4489,11 @@ def extract_candidates(
     broken by earlier text position then longer span).  The list is empty when
     nothing temporal was found.  ``anchor`` is the "now" relative phrases
     resolve against (default: the wall clock).
+
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError`; a phrase that is no date gives
+    its usual list.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns an
@@ -4545,7 +4571,8 @@ def extract_candidates(
     def _resolve_one(m):
         res = composed_res.get(id(m))
         if res is None:
-            res = engine.resolver.resolve(m, anchor, scale_mode)
+            with ignoring_refusals():
+                res = engine.resolver.resolve(m, anchor, scale_mode)
         if res is None:
             return None
         return _lone_spoken_hour(res, m, anchor, engine.spec, tokens, matches,
@@ -4581,8 +4608,9 @@ def extract_candidates(
         # ("the ides of march 44 BC" -> roman_date + a stranded "44 BC") is a
         # fabricated reading extract_timespan refuses, so it must not be surfaced
         # here either -- otherwise the two public APIs disagree on the top answer.
-        if _impossible_date_veto(tokens, consumed, text, engine, anchor):
-            continue
+        with nullcontext() if id(match) == primary else ignoring_refusals():
+            if _impossible_date_veto(tokens, consumed, text, engine, anchor):
+                continue
         remainder = render_remainder(text, [t for t in tokens
                                             if t.index not in consumed])
         # rank: the composed PRIMARY (extract_timespan's own selected reading)
