@@ -70,3 +70,21 @@ _POSSIBLE = [
 def test_possible_sibling_keeps_its_rule(text, lang, rule):
     assert extract_recurrence(text, lang, _ANCHOR).recurrence.to_string() == rule
     assert extract_event(text, lang, _ANCHOR).recurrence.to_string() == rule
+
+
+_YEAR_TAIL = [
+    ("the second and sixth monday of the year", "en"),
+    ("the second and sixth monday of 2027", "en"),
+    ("o segundo e sexto domingo de 2027", "pt"),
+    ("der zweite und sechste Montag des Jahres", "de"),
+]
+
+
+@pytest.mark.parametrize("text,lang", _YEAR_TAIL)
+def test_year_tail_never_reports_a_month_reason(text, lang):
+    assert extract_recurrence(text, lang, _ANCHOR) is None
+    for extract in (extract_recurrence, extract_event):
+        try:
+            extract(text, lang, _ANCHOR, impossible="raise")
+        except ImpossibleDateError as err:
+            pytest.fail(f"raised {err.reason!r}")

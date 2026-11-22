@@ -2612,6 +2612,7 @@ def _recur_nth_weekday_list(ctx):
             start -= 1
         # optional "of [the|every] month" tail after the weekday.
         end = w
+        year_end = None
         r = w + 1
         if r < n and p[r].text in ctx.of_words:
             m = r + 1
@@ -2621,6 +2622,9 @@ def _recur_nth_weekday_list(ctx):
             if m < n and p[m].text in ctx.units \
                     and ctx.units[p[m].text] == "month":
                 end = m
+            elif m < n and (p[m].is_number
+                            or ctx.units.get(p[m].text) == "year"):
+                year_end = m
         cs = p[start].char_start
         ce = p[end].char_end
         if cs is None or ce is None:
@@ -2631,6 +2635,11 @@ def _recur_nth_weekday_list(ctx):
                     and tok.char_start >= cs and tok.char_end <= ce}
         too_many = next((v for v in vals if abs(v) > 5), None)
         if too_many is not None:
+            if year_end is not None:
+                ye = p[year_end].char_end
+                return None, {tok.index for tok in ctx.tokens
+                              if tok.char_start is not None and tok.char_end is not None
+                              and tok.char_start >= cs and tok.char_end <= ye}
             decline(no_such_weekday("a month", too_many, wd))
             return _NEVER_OCCURS, consumed
         return _build_every("monthly", byday=byday), consumed
