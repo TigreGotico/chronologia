@@ -1208,7 +1208,6 @@ class RecurrenceResult(NamedTuple):
     remainder: str
 
 
-@reads_spoken_hours
 def extract_recurrence(
         text: str,
         lang: str = "en",
@@ -1254,6 +1253,21 @@ def extract_recurrence(
     Text that names no recurrence, the empty string included, returns
     ``None``.
     """
+    got = _read_recurrence(text, lang, anchor)
+    return None if got is _NEVER_OCCURS else got
+
+
+#: Returned by :func:`_read_recurrence` for a phrase that names a rule no
+#: calendar period ever satisfies ("the sixth monday of every month").  A
+#: caller reading a one-off date from the same words must not fall back to the
+#: bare weekday: the phrase is claimed and refused.
+_NEVER_OCCURS = object()
+
+
+@reads_spoken_hours
+def _read_recurrence(text, lang, anchor):
+    """:func:`extract_recurrence`, but a rule that never occurs returns
+    :data:`_NEVER_OCCURS` where the public function returns ``None``."""
     require_text(text, "extract_recurrence")
     ctx = _recur_ctx(text, lang, anchor)
     tokens = ctx.tokens
@@ -1277,6 +1291,8 @@ def extract_recurrence(
         hit = finder(ctx)
         if hit is not None:
             rec, consumed = hit
+            if rec is _NEVER_OCCURS:
+                return _NEVER_OCCURS
             # a finder may CLAIM its frame yet name no valid recurrence (an
             # impossible recurring date, "every 31st of april"): it returns a
             # None rule so the greedy catch-alls after it do not re-read the
@@ -2399,7 +2415,7 @@ def _recur_nth_weekday(ctx):
                 # a month holds at most five of one weekday and 23 weekdays,
                 # so the rule would never occur -- claim the phrase and
                 # decline it
-                return None, frozenset(range(start, r + 1))
+                return _NEVER_OCCURS, frozenset(range(start, r + 1))
             if t[r].text in ctx.months:
                 if business:
                     rec = _business_day_of_month(month_ordn, month=ctx.months[t[r].text])

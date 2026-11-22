@@ -72,10 +72,45 @@ def test_business_day_beyond_the_month_is_declined():
     assert extract_event(text, "en", _ANCHOR) is None
 
 
-@pytest.mark.parametrize("text,lang", [
+_SIXTH_EVERY_MONTH = [
     ("the sixth monday of every month", "en"),
+    ("every sixth monday of every month", "en"),
     ("cada sexto domingo de cada mês", "pt"),
-])
-def test_sixth_weekday_of_every_month_gives_no_rule(text, lang):
+    ("o sexto domingo de cada mês", "pt"),
+    ("el sexto lunes de cada mes", "es"),
+    ("le sixième lundi de chaque mois", "fr"),
+    ("il sesto lunedì di ogni mese", "it"),
+    ("de zesde maandag van elke maand", "nl"),
+    ("el sisè dilluns de cada mes", "ca"),
+    ("o sexto luns de cada mes", "gl"),
+]
+
+_FIFTH_EVERY_MONTH = [
+    ("the fifth monday of every month", "en"),
+    ("o quinto domingo de cada mês", "pt"),
+    ("el quinto lunes de cada mes", "es"),
+    ("le cinquième lundi de chaque mois", "fr"),
+    ("il quinto lunedì di ogni mese", "it"),
+    ("de vijfde maandag van elke maand", "nl"),
+    ("el cinquè dilluns de cada mes", "ca"),
+    ("o quinto luns de cada mes", "gl"),
+]
+
+
+@pytest.mark.parametrize("text,lang", _SIXTH_EVERY_MONTH)
+def test_sixth_weekday_of_every_month_is_declined(text, lang):
     assert extract_recurrence(text, lang, anchor=_ANCHOR) is None
-    assert extract_event(text, lang, _ANCHOR).recurrence is None
+    assert extract_event(text, lang, _ANCHOR) is None
+
+
+@pytest.mark.parametrize("text,lang", _FIFTH_EVERY_MONTH)
+def test_fifth_weekday_of_every_month_keeps_its_rule(text, lang):
+    weekday = 6 if lang == "pt" else 0
+    got = extract_event(text, lang, _ANCHOR)
+    assert got.recurrence.byday == ((5, weekday),)
+    assert got.summary == ""
+    # the first month on or after the anchor with five of that weekday
+    first = next(
+        datetime(2026, 11, d) for d in range(1, 31)
+        if datetime(2026, 11, d).weekday() == weekday and d > 28)
+    assert got.span.start.datetime() == first

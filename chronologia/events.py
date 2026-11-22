@@ -240,9 +240,9 @@ def extract_event(
     Text that carries no event, the empty string included, returns ``None``.
     """
     from chronologia.extract import (_timespan_engine, extract_candidates,
-                                     extract_duration, extract_recurrence,
-                                     extract_timespan)
-    from chronologia.extract.nseries import _duration_core
+                                     extract_duration, extract_timespan)
+    from chronologia.extract.nseries import (_NEVER_OCCURS, _duration_core,
+                                             _read_recurrence)
     from chronologia.extract.pipeline import require_text
 
     require_text(text, "extract_event")
@@ -254,7 +254,9 @@ def extract_event(
 
     recurrence: Optional[RecurrenceLike] = None
     remainder = text
-    got_rec = extract_recurrence(text, lang, anchor=anchor)
+    got_rec = _read_recurrence(text, lang, anchor)
+    if got_rec is _NEVER_OCCURS:
+        return None
     if got_rec is not None:
         recurrence, remainder = got_rec
 
