@@ -6,6 +6,11 @@
 # "Приближающийся к восьми (о единицах исчисления времени)"
 # (https://gufo.me/dict/efremova/восьмой); ru.wiktionary s.v. "шестой",
 # "шестой час — интервал времени между пятью и шестью часами дня или ночи".
+# The digit form "в 8-м часу" reads as the spelled ordinal.  The inverted
+# order "часу в восьмом" ("about the eighth hour") reads as the same span:
+# ru.wiktionary s.v. "час", sense 1, "Обещался зайти часу в двенадцатом."
+# (Гончаров, "Обыкновенная история").  The bare cardinal "в 8 часу" has no
+# source and stays unread.
 # Usage: Dostoevsky, "Преступление и наказание" I.5, "— В седьмом часу,
 # завтра".
 часу

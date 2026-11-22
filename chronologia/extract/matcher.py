@@ -656,6 +656,8 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
             if (suffixes and tokens[ti].is_number
                     and ti + 1 < len(tokens)
                     and tokens[ti + 1].text in suffixes):
+                if el.name == "HOUR":
+                    bound[el.name] = replace(tokens[ti], ordinal=True)
                 consider(_walk(elements, tokens, ei + 1, ti + 2, spec, bound))
     else:
         consumed = _connector_span(el.name, tokens, ti, spec)
