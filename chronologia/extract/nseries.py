@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from typing import List, NamedTuple, Optional, Tuple, Union
 
-from chronologia.astrodate import DateSpan
+from chronologia.astrodate import _WEEKDAY_NAMES_FULL, DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
 from chronologia.extract.impossible import (bad_day, decline, no_such,
                                             no_such_weekday, reports_impossible,
@@ -1313,6 +1313,8 @@ def _read_recurrence(text, lang, anchor):
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_clock_range(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor)
+            if rec is _NEVER_OCCURS:
+                return _NEVER_OCCURS
             # a range bound may CLAIM its clause yet name no valid recurrence
             # (a weekday range that shares no day with an already-set BYDAY
             # base, e.g. "every weekday from saturday to sunday"): declining
@@ -1901,7 +1903,10 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
                         # via the old union bug, everything).
                         keep = [wd for wd in days if wd in existing]
                         if not keep:
-                            return None, consumed | set(range(i, n))
+                            decline("the range from "
+                                    f"{_WEEKDAY_NAMES_FULL[start_wd]} to "
+                                    f"{_WEEKDAY_NAMES_FULL[end_wd]} holds no day the rule allows")
+                            return _NEVER_OCCURS, consumed | set(range(i, n))
                         rec = _replace(rec, byday=tuple((None, wd) for wd in keep))
                     else:
                         added = tuple((None, wd) for wd in days)
@@ -2467,7 +2472,7 @@ def _recur_nth_weekday(ctx):
                 # rule would never occur -- claim the phrase and decline it
                 decline(no_such("a year", ordn, "business day") if business
                         else no_such_weekday("a year", ordn, wd))
-                return None, frozenset(range(start, r + 1))
+                return _NEVER_OCCURS, frozenset(range(start, r + 1))
             if business:
                 return (_business_day_of_year(ordn, year_interval),
                         set(range(start, r + 1)))
@@ -2621,11 +2626,14 @@ def _recur_nth_weekday_list(ctx):
         if cs is None or ce is None:
             continue
         byday = tuple((v, wd) for v in vals)
-        rec = _build_every("monthly", byday=byday)
         consumed = {tok.index for tok in ctx.tokens
                     if tok.char_start is not None and tok.char_end is not None
                     and tok.char_start >= cs and tok.char_end <= ce}
-        return rec, consumed
+        too_many = next((v for v in vals if abs(v) > 5), None)
+        if too_many is not None:
+            decline(no_such_weekday("a month", too_many, wd))
+            return _NEVER_OCCURS, consumed
+        return _build_every("monthly", byday=byday), consumed
     return None
 
 
