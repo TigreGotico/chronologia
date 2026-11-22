@@ -180,13 +180,10 @@ def accession_bc(variant):
 
 # High chronology
 print(accession_bc("egyptian_high"))  # 1304
-# 1304
 # Middle chronology
 print(accession_bc("egyptian_middle"))  # 1290
-# 1290
 # Low chronology
 print(accession_bc("egyptian_low"))  # 1279
-# 1279
 ```
 
 Ramesses II came to the throne in 1304, 1290, or 1279 BC depending on which

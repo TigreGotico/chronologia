@@ -41,10 +41,8 @@ from chronologia import utc_tai_offset, TAI_MINUS_GPS
 
 # how far TAI leads UTC
 print(utc_tai_offset(date(2024, 1, 1)))  # 37
-# 37
 # how far GPS leads UTC
 print(utc_tai_offset(date(2024, 1, 1)) - TAI_MINUS_GPS)  # 18
-# 18
 ```
 
 There it is: GPS time runs **18 seconds** ahead of the UTC on your phone. You
@@ -65,7 +63,6 @@ from chronologia import TABLE_VALID_UNTIL, is_leap_second_day
 
 # the last leap second so far
 print(is_leap_second_day(date(2016, 12, 31)))  # True
-# True
 ```
 
 **Caveat — scope:** this covers 1972 onward (before that, UTC used a different,
@@ -136,10 +133,8 @@ from chronologia import DAY_SUBDIVISIONS
 decimal = DAY_SUBDIVISIONS["french_decimal"]
 # microseconds since midnight
 print(decimal.units_to_us(hours=5))  # 43200000000
-# 43200000000
 # microseconds in a whole day, for comparison
 print(86400 * 1000000)  # 86400000000
-# 86400000000
 ```
 
 `43200000000` is exactly half of `86400000000` — 5 decimal hours land dead on
@@ -161,11 +156,9 @@ from chronologia import sun_events, AstroDate
 ev = sun_events(AstroDate(2010, 6, 21), 40.0, -105.0)   # Denver, solstice
 # UTC (Denver is UTC-6
 print(ev.sunrise.strftime("%Y-%m-%d %H:%M"))  # 2010-06-21 11:30
-# 2010-06-21 11:30
 print(ev.solar_noon.strftime("%H:%M"))  # 19:01
 # sunset falls after UTC midnight
 print(ev.sunset.strftime("%Y-%m-%d %H:%M"))  # 2010-06-22 02:31
-# 2010-06-22 02:31
 ```
 
 Each day also carries the three standard twilight boundaries — civil, nautical,
@@ -214,7 +207,6 @@ from chronologia import sunset_day_start
 start = sunset_day_start(AstroDate(2024, 6, 1), 31.78, 35.22)  # Jerusalem
 # the 31 May evening sunset that opens 1 June
 print(start.strftime("%Y-%m-%d %H:%M"))  # 2024-05-31 16:38
-# 2024-05-31 16:38
 ```
 
 ### Civil days across the date line: `zone=`
@@ -242,13 +234,13 @@ kiritimati = ZoneInfo("Pacific/Kiritimati")
 d = AstroDate(2024, 6, 21)
 
 solar = sun_events(d, 1.87, -157.4)                       # solar day (UTC)
-print(solar.sunrise.replace(tzinfo=timezone.utc)
-      .astimezone(kiritimati).strftime("%Y-%m-%d %H:%M"))
-# 2024-06-22 06:24  <- a day late for "21 June" in Kiritimati
+sunrise_local = solar.sunrise.replace(tzinfo=timezone.utc).astimezone(kiritimati)
+# a day late for "21 June" in Kiritimati
+print(sunrise_local.strftime("%Y-%m-%d %H:%M"))  # 2024-06-22 06:24
 
 civil = sun_events(d, 1.87, -157.4, zone=kiritimati)      # civil day
-print(civil.sunrise.strftime("%Y-%m-%d %H:%M"))
-# 2024-06-21 06:23  <- lands inside the civil day it was asked about
+# <- lands inside the civil day it was asked about
+print(civil.sunrise.strftime("%Y-%m-%d %H:%M"))  # 2024-06-21 06:23
 ```
 
 Under the hood, `zone=` computes the ordinary solar-day events for
@@ -439,9 +431,8 @@ from chronologia import daypart_span
 tuesday = date(2027, 6, 8)
 
 # English: afternoon ends and evening begins at 18:00.
-print(daypart_span(tuesday, "afternoon").start.isoformat(),
-      daypart_span(tuesday, "afternoon").end.isoformat())
-# 2027-06-08T12:00:00 2027-06-08T18:00:00
+pm = daypart_span(tuesday, "afternoon")
+print(pm.start.isoformat(), pm.end.isoformat())  # 2027-06-08T12:00:00 2027-06-08T18:00:00
 
 # Spanish: one "tarde" covers what English splits into afternoon + evening.
 tarde = daypart_span(tuesday, "tarde", region="es")
@@ -456,9 +447,7 @@ unknown:
 ```python
 from chronologia import UnknownDayPartError
 
-print(daypart_span(tuesday, "morning", region="es")
-      == daypart_span(tuesday, "morning"))
-# True
+print(daypart_span(tuesday, "morning", region="es") == daypart_span(tuesday, "morning"))  # True
 
 try:
     daypart_span(tuesday, "tarde")          # no region: "tarde" is not global
@@ -487,9 +476,8 @@ morning = daypart_span(tuesday, "morning")
 afternoon = daypart_span(tuesday, "afternoon")
 evening = daypart_span(tuesday, "evening")
 
-print(morning.union(afternoon).start.isoformat(),
-      morning.union(afternoon).end.isoformat())
-# 2027-06-08T06:00:00 2027-06-08T18:00:00
+day = morning.union(afternoon)
+print(day.start.isoformat(), day.end.isoformat())  # 2027-06-08T06:00:00 2027-06-08T18:00:00
 
 # the stretch morning and evening leave between them is the afternoon:
 print(morning.gap(evening) == afternoon)  # True
@@ -580,9 +568,9 @@ and never rules on which is right.
 from chronologia import prayer_times, AstroDate
 
 pt = prayer_times(AstroDate(2024, 2, 15), 30.0444, 31.2357, "egyptian_gas")
-print([getattr(pt, f).strftime("%H:%M")
-       for f in ("fajr", "sunrise", "dhuhr", "asr_time", "maghrib", "isha")])
-# ['03:08', '04:36', '10:09', '13:18', '15:42', '17:00']   (UTC)
+times = [getattr(pt, f).strftime("%H:%M") for f in ("fajr", "sunrise", "dhuhr", "asr_time", "maghrib", "isha")]
+# the times are UTC
+print(times)  # ['03:08', '04:36', '10:09', '13:18', '15:42', '17:00']
 ```
 
 Dhuhr is solar noon and Maghrib is sunset, straight from `sun_events`. Fajr and
@@ -601,7 +589,6 @@ mwl = prayer_times(AstroDate(2024, 2, 15), 30.0444, 31.2357, "mwl")
 isna = prayer_times(AstroDate(2024, 2, 15), 30.0444, 31.2357, "isna")
 # ISNA's shallower 15° Fajr is later than MWL's 18°
 print(isna.fajr > mwl.fajr)  # True
-# True
 ```
 
 Umm al-Qura fixes Isha not by an angle but by a fixed **interval** — 90 minutes

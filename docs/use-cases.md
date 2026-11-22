@@ -187,8 +187,8 @@ from chronologia import calibrate_c14, resolve_bp, candidates, lookup, subdivide
 # 1. Radiocarbon -> calendar. The answer is a SPAN, marked reconstructed,
 #    never a single confident year.
 c14 = calibrate_c14(3500)                  # 3500 radiocarbon years BP
-print("calibrated:", c14.start.year, "..", c14.end.year, f"({c14.basis})")  # calibrated: -1950 .. -1850 (reconstructed)
-# -> roughly 1900 BC, not "3500 years ago" (which would be ~1550 BC).
+# roughly 1900 BC, not "3500 years ago" (which would be ~1550 BC).
+print("calibrated:", c14.start.year, "..", c14.end.year, f"({c14.basis})")  # calibrated: -1950 .. -1850 (reconstructed)  # calibrated: -1950 .. -1850 (reconstructed)
 
 # 2. Whose Bronze Age? A bare name is ambiguous, so it refuses to guess.
 try:
@@ -250,10 +250,8 @@ from chronologia import easter, prayer_times, CALENDARS, year_cycle_label, Astro
 from zoneinfo import ZoneInfo
 
 # Easter, both traditions, on the civil calendar people actually use:
-print("Western Easter 2027: ", easter(2027, "gregorian").isoformat()[:10])
-print("Orthodox Easter 2027:", easter(2027, "julian_gregorian_date").isoformat()[:10])
-# Western Easter 2027:  2027-03-28
-# Orthodox Easter 2027: 2027-05-02
+print("Western Easter 2027: ", easter(2027, "gregorian").isoformat()[:10])  # Western Easter 2027:  2027-03-28
+print("Orthodox Easter 2027:", easter(2027, "julian_gregorian_date").isoformat()[:10])  # Orthodox Easter 2027: 2027-05-02
 
 # Ramadan planning, honestly. Saudi Arabia PUBLISHES a civil table (Umm al-Qura),
 # so a civil date is real and computable:
@@ -268,10 +266,8 @@ pt = prayer_times(AstroDate(2028, 1, 28), 21.4225, 39.8262,
 print("Fajr / Maghrib in Makkah:", pt.fajr.strftime("%H:%M"), "/", pt.maghrib.strftime("%H:%M"))
 
 # Chinese zodiac and New Year for the festival:
-print("2027 is the year of the", year_cycle_label(AstroDate(2027, 6, 1), "chinese_zodiac"))
-print("Chinese New Year 2027:", CALENDARS["chinese"].date(2027, 1, 1).isoformat()[:10])
-# 2027 is the year of the goat
-# Chinese New Year 2027: 2027-02-06
+print("2027 is the year of the", year_cycle_label(AstroDate(2027, 6, 1), "chinese_zodiac"))  # 2027 is the year of the goat
+print("Chinese New Year 2027:", CALENDARS["chinese"].date(2027, 1, 1).isoformat()[:10])  # Chinese New Year 2027: 2027-02-06
 
 # Hebrew calendar arithmetic — days from Rosh Hashanah to Passover, computed
 # from the calendar's own rules, not looked up:
@@ -332,9 +328,7 @@ print("next full moon:", full.start.isoformat()[:16], "width:", full.width, f"({
 
 # Sunrise at your latitude — and polar honesty when there is no sunrise at all:
 svalbard = sun_events(AstroDate(2027, 6, 21), 78.0, 15.0)
-print("Svalbard midsummer sunrise:", type(svalbard.sunrise).__name__,
-      getattr(svalbard.sunrise, "kind", ""))
-# Svalbard midsummer sunrise: NoSunEvent polar_day
+print("Svalbard midsummer sunrise:", type(svalbard.sunrise).__name__, getattr(svalbard.sunrise, "kind", ""))  # Svalbard midsummer sunrise: NoSunEvent polar_day
 assert isinstance(svalbard.sunrise, NoSunEvent)     # the sun never sets — no lie invented
 
 # "What sol is it for Perseverance?" — mission sol 200, as the Earth day it spanned:
@@ -399,7 +393,6 @@ ny = ZoneInfo("America/New_York")
 fold = resolve_wall_clock(2024, 11, 3, 1, 30, ny)
 # a tuple of two
 print("ambiguous 01:30 ->", len(fold), "instants")  # ambiguous 01:30 -> 2 instants
-# ambiguous 01:30 -> 2 instants
 #    Spring-forward morning: 02:30 never happens -> NeverExisted.
 gap = resolve_wall_clock(2024, 3, 10, 2, 30, ny)
 # NeverExisted
@@ -421,8 +414,8 @@ assert gps_to_utc(gps_event) == utc_event                       # round-trips ex
 
 # 4. ISO-week / fiscal logic: which civil date is ISO week 1, Monday of 2027?
 iso = CALENDARS["iso_week"]
-print("ISO 2027-W01-1:", iso.date(2027, 1, 1).isoformat()[:10])
-# ISO 2027-W01-1: 2027-01-04   (not Jan 1 — ISO weeks start the Monday of week 1)
+# not Jan 1 — ISO weeks start the Monday of week 1
+print("ISO 2027-W01-1:", iso.date(2027, 1, 1).isoformat()[:10])  # ISO 2027-W01-1: 2027-01-04
 ```
 
 The two DST cases return a two-tuple and a `NeverExisted` — values Priya's

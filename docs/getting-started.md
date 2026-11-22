@@ -163,7 +163,6 @@ from chronologia import CALENDARS
 hebrew = CALENDARS["hebrew"]
 # 1 Tishri, the new year
 print(hebrew.date(5786, 7, 1))  # 2025-09-23T00:00:00
-# 2025-09-23T00:00:00
 ```
 
 `date` pushed the Hebrew date down to its spot on the number line and asked

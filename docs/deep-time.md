@@ -28,10 +28,8 @@ from chronologia import lookup
 jurassic = lookup("jurassic")
 # astronomical year of the older edge
 print(jurassic.span.start.year)  # -201598050
-# -201598050
 # astronomical year of the younger edge
 print(jurassic.span.end.year)  # -143098050
-# -143098050
 print(jurassic.level)  # period
 ```
 

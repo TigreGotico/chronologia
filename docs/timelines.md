@@ -107,7 +107,6 @@ that has existed exactly once in human history.
 sweden = TIMELINES["sweden_1700_1712"]
 # a real day, as an AstroDate
 print(sweden.date(1712, 2, 30))  # 1712-03-11T00:00:00
-# 1712-03-11T00:00:00
 ```
 
 Everywhere else on Earth, that day was the 11th of March 1712. The timeline

@@ -72,8 +72,8 @@ with an invalid date ... Such ... instances MUST be ignored").
 
 ```python
 month_end = parse_rrule("FREQ=MONTHLY;COUNT=4")
-print([s.start.date() for s in occurrences(month_end, AstroDate(2023, 1, 31))])
-# -> Jan 31, Mar 31, May 31, Jul 31  (February and April have no 31st)
+# Jan 31, Mar 31, May 31, Jul 31  (February and April have no 31st)
+print([s.start.date() for s in occurrences(month_end, AstroDate(2023, 1, 31))])  # [datetime.date(2023, 1, 31), datetime.date(2023, 3, 31), datetime.date(2023, 5, 31), datetime.date(2023, 7, 31)]
 ```
 
 February is skipped, not fudged. The same rule keeps leap day honest — a
@@ -81,8 +81,8 @@ yearly recurrence anchored on 29 February only fires in leap years:
 
 ```python
 leap = parse_rrule("FREQ=YEARLY;COUNT=3")
-print([s.start.date() for s in occurrences(leap, AstroDate(2024, 2, 29))])
-# -> 2024-02-29, 2028-02-29, 2032-02-29
+# 2024-02-29, 2028-02-29, 2032-02-29
+print([s.start.date() for s in occurrences(leap, AstroDate(2024, 2, 29))])  # [datetime.date(2024, 2, 29), datetime.date(2028, 2, 29), datetime.date(2032, 2, 29)]
 ```
 
 If you want "the last day of the month" *whatever* its length, name that
@@ -90,8 +90,8 @@ instead — `BYMONTHDAY=-1` counts back from the end:
 
 ```python
 last_day = parse_rrule("FREQ=MONTHLY;COUNT=4;BYMONTHDAY=-1")
-print([s.start.date() for s in occurrences(last_day, AstroDate(2023, 1, 1))])
-# -> Jan 31, Feb 28, Mar 31, Apr 30
+# Jan 31, Feb 28, Mar 31, Apr 30
+print([s.start.date() for s in occurrences(last_day, AstroDate(2023, 1, 1))])  # [datetime.date(2023, 1, 31), datetime.date(2023, 2, 28), datetime.date(2023, 3, 31), datetime.date(2023, 4, 30)]
 ```
 
 ## Bounded by design
@@ -124,8 +124,8 @@ Wednesday and you get only Mondays:
 ```python
 mondays = parse_rrule("FREQ=WEEKLY;BYDAY=MO;COUNT=2")
 wednesday = AstroDate(2025, 6, 11)          # a Wednesday
-print([s.start.date() for s in occurrences(mondays, wednesday)])
-# -> 2025-06-16, 2025-06-23  (the seed Wednesday is NOT emitted)
+# 2025-06-16, 2025-06-23  (the seed Wednesday is NOT emitted)
+print([s.start.date() for s in occurrences(mondays, wednesday)])  # [datetime.date(2025, 6, 16), datetime.date(2025, 6, 23)]
 ```
 
 ## What this engine covers, and what it doesn't

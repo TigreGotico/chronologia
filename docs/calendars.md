@@ -28,10 +28,8 @@ from chronologia import CALENDARS
 hebrew = CALENDARS["hebrew"]
 # a Hebrew date -> an AstroDate
 print(hebrew.date(5786, 7, 1))  # 2025-09-23T00:00:00
-# 2025-09-23T00:00:00
 # and back again
 print(hebrew.from_astro(hebrew.date(5786, 7, 1)))  # hebrew 5786-07-01
-# hebrew 5786-07-01
 ```
 
 `date(year, month, day)` gives the everyday-calendar instant (an `AstroDate`)
@@ -79,7 +77,6 @@ from chronologia import CALENDARS
 julian = CALENDARS["julian"]
 # the Ides of March, 44 BC
 print(julian.date(-43, 3, 15))  # -000043-03-13T00:00:00
-# -000043-03-13T00:00:00
 ```
 
 The Roman "15 March" lands on the 13th of *our* modern calendar, projected
@@ -116,7 +113,6 @@ from chronologia import AstroDate
 
 hebrew = CALENDARS["hebrew"]
 print(hebrew.date(5786, 7, 1))  # 2025-09-23T00:00:00
-# 2025-09-23T00:00:00
 print(hebrew.from_astro(AstroDate(2025, 9, 23)))  # hebrew 5786-07-01
 ```
 
@@ -134,7 +130,6 @@ fixed 30-year leap cycle. It powers most everyday date software.
 islamic = CALENDARS["islamic_civil"]
 # 15 Ramadan 1446
 print(islamic.date(1446, 9, 15))  # 2025-03-15T00:00:00
-# 2025-03-15T00:00:00
 ```
 
 **Caveat:** the *religious* Islamic month begins when witnesses actually see
@@ -168,7 +163,6 @@ Egyptian year, fixed to a leap rule so its new year stays put.
 ```python
 # 1 Thoout
 print(CALENDARS["coptic"].date(1741, 1, 1))  # 2024-09-11T00:00:00
-# 2024-09-11T00:00:00
 ```
 
 Source: Dershowitz & Reingold, *Calendrical Calculations*, chapter 4; epoch
@@ -183,7 +177,6 @@ why Ethiopia's millennium celebration fell in our 2007.
 ```python
 # 1 Maskaram
 print(CALENDARS["ethiopian"].date(2017, 1, 1))  # 2024-09-11T00:00:00
-# 2024-09-11T00:00:00
 ```
 
 Notice this is the *same* Gregorian day as Coptic 1741 above — the two
@@ -202,7 +195,6 @@ Gregorian throughout the 1900–2099 window.
 ```python
 # 1 Yennayer 2976
 print(CALENDARS["berber"].date(2976, 1, 1))  # 2026-01-14T00:00:00
-# 2026-01-14T00:00:00
 ```
 
 **Era note:** the +950 offset (Berber year 2976 = 2026 CE) was fixed in 1968
@@ -233,7 +225,6 @@ new year slips one day earlier against the seasons every four years.
 ```python
 # 1 Navasard AE 1
 print(CALENDARS["armenian"].date(1, 1, 1))  # 0552-07-13T00:00:00
-# 0552-07-13T00:00:00
 ```
 
 **Caveat:** because it never intercalates, this "vague year" wanders steadily
@@ -250,7 +241,6 @@ flood and growth, plus five feast days, and no leap day ever.
 ```python
 # 1 Thoth, year 1 of Nabonassar
 print(CALENDARS["egyptian"].date(1, 1, 1))  # -000746-02-18T00:00:00
-# -000746-02-18T00:00:00
 ```
 
 **Caveat:** the same wandering-year caution as the Armenian calendar — with no
@@ -267,7 +257,6 @@ uses the tidy arithmetic ("Romme") leap rule.
 ```python
 # 1 Vendémiaire An I
 print(CALENDARS["french_republican"].date(1, 1, 1))  # 1792-09-22T00:00:00
-# 1792-09-22T00:00:00
 ```
 
 **Caveat:** the calendar as actually used set its leap years by the *observed*
@@ -284,7 +273,6 @@ the pre-2015 form, where the new year (Naw-Rúz) was locked to 21 March.
 ```python
 # 1 Bahá, BE 1
 print(CALENDARS["bahai"].date(1, 1, 1))  # 1844-03-21T00:00:00
-# 1844-03-21T00:00:00
 ```
 
 **Caveat:** since 2015 the calendar sets Naw-Rúz by the true vernal equinox at
@@ -306,8 +294,8 @@ becomes tun-count `5200`:
 ```python
 from chronologia import AstroDate
 
-print(AstroDate.from_calendar("mayan_long_count", 5200, 0, 0))
-# 2012-12-21T00:00:00 — the famous "end" of the Maya calendar
+# the famous "end" of the Maya calendar
+print(AstroDate.from_calendar("mayan_long_count", 5200, 0, 0))  # 2012-12-21T00:00:00
 print(AstroDate(2012, 12, 21).to_calendar("mayan_long_count"))  # mayan_long_count 5200-00-00
 ```
 
@@ -332,7 +320,6 @@ calendar, not a separate era, and businesses use it for scheduling.
 ```python
 # 2020, week 1, Wednesday
 print(CALENDARS["iso_week"].date(2020, 1, 3))  # 2020-01-01T00:00:00
-# 2020-01-01T00:00:00
 ```
 
 **A subtlety worth knowing:** an ISO week can belong to a different year than
@@ -359,7 +346,6 @@ table reaches.
 umm = CALENDARS["umm_al_qura"]
 # 1 Ramadan 1446
 print(umm.date(1446, 9, 1))  # 2025-03-01T00:00:00
-# 2025-03-01T00:00:00
 ```
 
 **Caveat — range with fallback:** the table covers AH 1356–1500. Outside it,
@@ -390,7 +376,6 @@ tables.
 chinese = CALENDARS["chinese"]
 # Chinese New Year 2025
 print(chinese.date(2025, 1, 1))  # 2025-01-29T00:00:00
-# 2025-01-29T00:00:00
 ```
 
 A leap month is addressed by adding 100 to the ordinary month number, so 2025's
@@ -399,7 +384,6 @@ leap sixth month is month 106:
 ```python
 # start of leap month 6
 print(chinese.date(2025, 106, 1))  # 2025-07-25T00:00:00
-# 2025-07-25T00:00:00
 ```
 
 **Caveat — table range:** exact for lunar years **1901 to 2099** only. There
@@ -416,7 +400,6 @@ equinox at Tehran — the astronomical companion to the arithmetic `bahai` entry
 badi = CALENDARS["badi_2015"]
 # 1 Bahá, BE 180
 print(badi.date(180, 1, 1))  # 2023-03-21T00:00:00
-# 2023-03-21T00:00:00
 ```
 
 **Caveat — table range:** covers BE 172–220. Source: the published equinox
@@ -432,7 +415,6 @@ the arithmetic `french_republican` entry.
 freq = CALENDARS["french_republican_equinox"]
 # 1 Vendémiaire An I
 print(freq.date(1, 1, 1))  # 1792-09-22T00:00:00
-# 1792-09-22T00:00:00
 ```
 
 **Caveat — table range:** covers An I to An XIII, the years the calendar was in
@@ -462,10 +444,8 @@ catches up:
 ```python
 # before CNY 2024-02-10
 print(year_cycle_label(AstroDate(2024, 1, 15), "chinese_zodiac"))  # rabbit
-# rabbit
 # Chinese New Year 2024
 print(year_cycle_label(AstroDate(2024, 2, 10), "chinese_zodiac"))  # dragon
-# dragon
 ```
 
 `year_cycle_label` resolves through `CALENDARS["chinese"]` itself (see
@@ -482,10 +462,8 @@ year carry different indiction numbers:
 ```python
 # before 1 Sept
 print(year_cycle_label(AstroDate(2024, 8, 15), "indiction"))  # 2
-# 2
 # after 1 Sept
 print(year_cycle_label(AstroDate(2024, 10, 15), "indiction"))  # 3
-# 3
 ```
 
 Sources: Wikipedia, "Sexagenary cycle" (1984 = jiazi, the stem x branch

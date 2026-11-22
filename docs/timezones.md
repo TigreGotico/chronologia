@@ -292,8 +292,8 @@ of clock per degree.
 from chronologia import local_mean_time
 
 lisbon = local_mean_time(-9.14)      # ~9.14° west of Greenwich (east-positive)
-print(lisbon.tzname())               # LMT-00:36:34(lambda=9.140W)
 # about 36 min behind GMT
+print(lisbon.tzname())               # LMT-00:36:34(lambda=9.140W)  # LMT-00:36:34(lambda=9.140W)
 print(lisbon.offset)  # -1 day, 23:23:26
 ```
 

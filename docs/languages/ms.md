@@ -4,7 +4,7 @@
 covers: where each construction of the Malay locale comes from, what it refuses and which questions a native speaker would settle
 source: `chronologia/locale/ms/lang.json`, `chronologia/locale/ms/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
 generated: no
-verify: python -m doctest docs/languages/ms.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\" or not re.search(r\"[^\\W\\d_]\",ph): continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/ms.md
+verify: python -m doctest docs/languages/ms.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set()\nfor m in re.finditer(r\"`([^`]+)`[^.`\\n]{0,25}?\\b(?:is|are|reads|gives|returns?|resolves? to|comes? back as|=)\\s+(\\d\\d):(\\d\\d)\",pr):\n    ph=m[1]\n    if ph[0]==\"-\": continue\n    r=extract_timespan(ph,c,A)\n    if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2],m[3])\npm=re.sub(r\"`[^`]*`\",lambda m:m[0].replace(\". \",\".\\x01\"),pr)\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(r\"((?:`[^`]+`(?:,| and| or|, and)? ?)+)\\s*(?:both |each |all )?(?:returns?|gives?) (?:nothing|`None`)\",s): cl|=set(x.replace(\"\\x01\",\" \") for x in re.findall(r\"`([^`]+)`\",m[1]))\nex={ast.literal_eval(x) for x in re.findall(r\">>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\",t)}\nif cl!=ex: bad=1;print(\"refusals differ\",cl^ex)\nsys.exit(bad)\n")' docs/languages/ms.md
 see: `docs/languages/index.md`, `docs/extraction.md`
 -->
 
@@ -54,7 +54,7 @@ jam" — and its own example is `kami sampai di rumah pukul lima petang`, five i
 the afternoon. Noon is `tengah hari` and midnight `tengah malam`.
 
 **The night band.** `malam` is not a uniform twelve-hour shift but a band that
-crosses midnight. All twelve hours were checked: `pukul satu malam` is 01:00,
+crosses midnight. `pukul satu malam` is 01:00,
 `pukul enam malam` is 18:00, `pukul sebelas malam` is 23:00, `pukul dua belas
 malam` is 00:00. Hours one through five stay in the small hours, six through
 eleven move to the evening. The evening boundary at 19:00 is CLDR's night band
@@ -85,9 +85,8 @@ bunga` beside `musim semi`, `musim sejuk` beside `musim dingin`. The weekend is
 
 The locale, and a test that pins it, assert that a bare `setengah` before an
 hour names the half *toward* that hour: `setengah tiga` is 02:30, the German
-pattern. That reading resolves, and it does so uniformly. All twelve
-hours were checked and every one behaves the same way, `setengah H` giving
-(H−1):30.
+pattern. That reading resolves, and it does so uniformly: `setengah H` gives
+(H−1):30 for every hour.
 
 What the evidence actually supports is a different construction. Attested Malay
 puts `setengah` **after** the hour, and reads it additively.

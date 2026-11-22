@@ -1230,9 +1230,8 @@ from chronologia.extract import DateTimeEngine, load_lang_spec
 engine = DateTimeEngine(load_lang_spec("en"))
 sentence = "the meeting is on the fifth of june at half past nine"
 toks = engine.tokenize(sentence)
-print([(t.index, t.text) for t in toks])
 # [(0,'the'),(1,'meeting'),(2,'is'),(3,'on'),(4,'the'),(5,'5'),
-#  (6,'of'),(7,'june'),(8,'at'),(9,'half'),(10,'past'),(11,'9')]
+print([(t.index, t.text) for t in toks])  # [(0, 'the'), (1, 'meeting'), (2, 'is'), (3, 'on'), (4, 'the'), (5, '5'), (6, 'of'), (7, 'june'), (8, 'at'), (9, 'half'), (10, 'past'), (11, '9')]
 ```
 
 The matcher finds **two** non-overlapping constructions — a date and a
@@ -1386,9 +1385,9 @@ beats `year_ref` because it covers the longer span `(0, 2)` versus `(0, 1)`:
 from chronologia import explain
 from chronologia.extract import load_lang_spec
 
-print(explain("1500 hours", load_lang_spec("en"), datetime(2024, 1, 1)).report())
-# ... MATCH military_time span=(0, 2) slots={'MILTIME': '1500'} -> 2024-01-01 15:00 – 15:01 ...
-# ... lost  year_ref span=(0, 1): overlaps military_time span=(0, 2) which is longer
+report = explain("1500 hours", load_lang_spec("en"), datetime(2024, 1, 1)).report().splitlines()
+print(report[2].strip())  # MATCH military_time span=(0, 2) slots={'MILTIME': '1500'} -> 2024-01-01 15:00 – 15:01
+print(report[3].strip())  # lost  year_ref span=(0, 1): overlaps military_time span=(0, 2) which is longer
 ```
 
 **Why the grammar needs an era tail — a worked lesson.** Precedence only
