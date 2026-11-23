@@ -2822,7 +2822,7 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     resolves on its own and does not veto.  Shared by _resolve_span (the
     single-winner path) and extract_candidates so the two public APIs never
     disagree on the top answer.
-    A thread-local re-entrancy guard bounds the self-similar blow-up: both
+    A context-local re-entrancy guard (``_veto_active``) bounds the self-similar blow-up: both
     trigger shapes re-parse a stranded fragment through the public
     ``extract_timespan`` ("does this resolve to a real date?"), which re-enters
     this veto; a self-similar input ("5th of june 5th of june ...") would
