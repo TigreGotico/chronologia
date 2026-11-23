@@ -3,7 +3,7 @@
 
 When a maximal run of number-words is folded to a single synthesised digit
 token, that token must carry ``char_start``/``char_end`` covering the run --
-exactly as the Latin (en/romance/germanic) fold in ``numfold.py`` does.  When
+exactly as the other folds do.  When
 the folded token sits at a mention edge, ``char_span`` degrades to ``None``
 without the offsets, and ``utterance[char_span[0]:char_span[1]]`` can no longer
 recover the surface.
