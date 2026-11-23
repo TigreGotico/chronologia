@@ -1405,6 +1405,15 @@ def _apply_clock_range(rec, consumed, ctx, lang, anchor):
             if length == 2 and any(_match(start + 1, mid) is not None
                                    for mid in mids):
                 continue
+            # a day number ("5 december", "5 de desembre") or a repeat count
+            # ("5 10 times") is no clock endpoint
+            if end < n and (tokens[end].text in ctx.months
+                            or (tokens[end].text in ctx.of_words
+                                and end + 1 < n
+                                and tokens[end + 1].text in ctx.months)
+                            or (length == 2 and tokens[start + 1].is_number
+                                and tokens[end].text in ctx.count_words)):
+                continue
             text = " ".join(t.raw for t in tokens[start:end])
             for at in ats:
                 got = extract_timespan(f"{at} {text}", lang, anchor=anchor)
