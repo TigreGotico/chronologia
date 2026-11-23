@@ -46,6 +46,7 @@
         "at HOUR oclock MERIDIEM? ZONE?",
         "HOUR oclock MINUTE oclock? MERIDIEM? ZONE?",
         "HOUR oclock MERIDIEM? ZONE?",
+        "at? MINUTE CLOCKDIR HALF HOUR MERIDIEM? ZONE?",
         "FRACTION CLOCKDIR HOUR MERIDIEM? ZONE?",
         "FRACTION HOUR MERIDIEM? ZONE?",
         "MINUTE CLOCKDIR HOUR MERIDIEM? ZONE?",
@@ -91,7 +92,8 @@
         "in GYEAR",
         "article? year_word GYEAR",
         "GYEAR",
-        "article? year_word NUM SCALE"
+        "article? year_word NUM SCALE",
+        "PART GYEAR"
       ]
     },
     "decade_ref": {

@@ -65,7 +65,8 @@
    "orders": [
     "in GYEAR",
     "article? year_word GYEAR",
-    "GYEAR"
+    "GYEAR",
+    "article? PART GYEAR year_word?"
    ]
   },
   "quarter_ref": {
@@ -123,7 +124,7 @@
  "guards": {
   "bare_year_min_digits": 4
  },
- "hook": "chronologia.extract.numfold_slavic:fold_uk",
+ "hook": "chronologia.extract.numlayer_slavic:fold_uk",
  "base_grammar": {
   "override": {
    "scoped_ordinal": [

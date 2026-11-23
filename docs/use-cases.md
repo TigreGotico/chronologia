@@ -1,5 +1,13 @@
 # Who is this for?
 
+<!-- agent-hint
+covers: worked programs for seven kinds of reader and what each learns from a span with a basis
+source: `chronologia/__init__.py:__all__`, `examples/`
+generated: no
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/use-cases.md
+see: `docs/getting-started.md`, `docs/extraction.md`
+-->
+
 `chronologia` is a date-reckoning engine. It converts between calendars, holds
 years no `datetime` can, and — the part that matters most — hands back **spans**
 whose width and **basis** tell you honestly how well anything is really known.
@@ -117,8 +125,7 @@ from chronologia import CALENDARS, AstroDate, TIMELINES, REGNAL_SEQUENCES
 # and a treaty dated in a Western (New Style / Gregorian) chancery as 10 Sep 1700.
 old_style = CALENDARS["julian"].date(1700, 8, 19)
 new_style = AstroDate(1700, 9, 10)
-print("days apart:", (new_style - old_style).days)
-# days apart: 11
+print("days apart:", (new_style - old_style).days)  # days apart: 11
 
 # Done the naive way — subtracting the calendar numbers as if both were the
 # same calendar — you would get 22 days and be wrong by the 11-day O.S./N.S. gap.
@@ -127,21 +134,17 @@ print("days apart:", (new_style - old_style).days)
 # (George II isn't shipped; the machinery is the same — here the Japanese nengo
 #  and Roman consuls that ARE shipped stand in for the demonstration.)
 meiji1 = REGNAL_SEQUENCES["nengo"].year_span("meiji", 1)
-print("Meiji 1 began:", meiji1[0].isoformat()[:10])
-# Meiji 1 began: 1868-10-23
+print("Meiji 1 began:", meiji1[0].isoformat()[:10])  # Meiji 1 began: 1868-10-23
 
 consul = REGNAL_SEQUENCES["consuls"].year_span("caesar_antonius", 1)
-print("that consulship was:", consul[0].bc_year, "BC")
-# that consulship was: 44 BC
+print("that consulship was:", consul[0].bc_year, "BC")  # that consulship was: 44 BC
 
 # The reforms themselves, as jurisdiction timelines. Russia jumped in 1918,
 # so its "25 October 1917" is the world's 7 November:
-print("October Revolution:", TIMELINES["russia_1918"].date(1917, 10, 25).isoformat()[:10])
-# October Revolution: 1917-11-07
+print("October Revolution:", TIMELINES["russia_1918"].date(1917, 10, 25).isoformat()[:10])  # October Revolution: 1917-11-07
 
 # And Sweden's one-off 30 February 1712 — a day that existed exactly once:
-print("Swedish leap day:", TIMELINES["sweden_1700_1712"].date(1712, 2, 30).isoformat()[:10])
-# Swedish leap day: 1712-03-11
+print("Swedish leap day:", TIMELINES["sweden_1700_1712"].date(1712, 2, 30).isoformat()[:10])  # Swedish leap day: 1712-03-11
 ```
 
 The eleven-day answer is the whole point: the two events were recorded in two
@@ -184,9 +187,8 @@ from chronologia import calibrate_c14, resolve_bp, candidates, lookup, subdivide
 # 1. Radiocarbon -> calendar. The answer is a SPAN, marked reconstructed,
 #    never a single confident year.
 c14 = calibrate_c14(3500)                  # 3500 radiocarbon years BP
-print("calibrated:", c14.start.year, "..", c14.end.year, f"({c14.basis})")
-# calibrated: -1950 .. -1850 (reconstructed)
-# -> roughly 1900 BC, not "3500 years ago" (which would be ~1550 BC).
+# roughly 1900 BC, not "3500 years ago" (which would be ~1550 BC).
+print("calibrated:", c14.start.year, "..", c14.end.year, f"({c14.basis})")  # calibrated: -1950 .. -1850 (reconstructed)
 
 # 2. Whose Bronze Age? A bare name is ambiguous, so it refuses to guess.
 try:
@@ -205,8 +207,10 @@ print("Late British Bronze Age:", late_bronze.start.year, "..", late_bronze.end.
 #    because "66" and "66.043" carry different meanings the moment you type them.
 rough = resolve_bp("66", "Ma")
 precise = resolve_bp("66.043", "Ma")
-print("rough width (yr): ", round(rough.width.days / 365.25))       # ~1,000,000
-print("precise width (yr):", round(precise.width.days / 365.25))    # ~1,000
+# about 1,000,000
+print("rough width (yr): ", round(rough.width.days / 365.25))  # rough width (yr):  999979
+# about 1,000
+print("precise width (yr):", round(precise.width.days / 365.25))  # precise width (yr): 1000
 ```
 
 The calibrated span lands the charcoal near 1900 BC and *says* it is
@@ -246,16 +250,13 @@ from chronologia import easter, prayer_times, CALENDARS, year_cycle_label, Astro
 from zoneinfo import ZoneInfo
 
 # Easter, both traditions, on the civil calendar people actually use:
-print("Western Easter 2027: ", easter(2027, "gregorian").isoformat()[:10])
-print("Orthodox Easter 2027:", easter(2027, "julian_gregorian_date").isoformat()[:10])
-# Western Easter 2027:  2027-03-28
-# Orthodox Easter 2027: 2027-05-02
+print("Western Easter 2027: ", easter(2027, "gregorian").isoformat()[:10])  # Western Easter 2027:  2027-03-28
+print("Orthodox Easter 2027:", easter(2027, "julian_gregorian_date").isoformat()[:10])  # Orthodox Easter 2027: 2027-05-02
 
 # Ramadan planning, honestly. Saudi Arabia PUBLISHES a civil table (Umm al-Qura),
 # so a civil date is real and computable:
 ramadan = CALENDARS["umm_al_qura"].date(1449, 9, 1)   # 1 Ramadan 1449 AH
-print("Civil 1 Ramadan 1449:", ramadan.isoformat()[:10])
-# Civil 1 Ramadan 1449: 2028-01-28
+print("Civil 1 Ramadan 1449:", ramadan.isoformat()[:10])  # Civil 1 Ramadan 1449: 2028-01-28
 # The RELIGIOUS start still waits on a moon-sighting — the honest answer there is
 # a two-day predicted window, never one confident date. (See calendars.md.)
 
@@ -265,18 +266,15 @@ pt = prayer_times(AstroDate(2028, 1, 28), 21.4225, 39.8262,
 print("Fajr / Maghrib in Makkah:", pt.fajr.strftime("%H:%M"), "/", pt.maghrib.strftime("%H:%M"))
 
 # Chinese zodiac and New Year for the festival:
-print("2027 is the year of the", year_cycle_label(AstroDate(2027, 6, 1), "chinese_zodiac"))
-print("Chinese New Year 2027:", CALENDARS["chinese"].date(2027, 1, 1).isoformat()[:10])
-# 2027 is the year of the goat
-# Chinese New Year 2027: 2027-02-06
+print("2027 is the year of the", year_cycle_label(AstroDate(2027, 6, 1), "chinese_zodiac"))  # 2027 is the year of the goat
+print("Chinese New Year 2027:", CALENDARS["chinese"].date(2027, 1, 1).isoformat()[:10])  # Chinese New Year 2027: 2027-02-06
 
 # Hebrew calendar arithmetic — days from Rosh Hashanah to Passover, computed
 # from the calendar's own rules, not looked up:
 heb = CALENDARS["hebrew"]
 rosh = heb.date(5786, 7, 1)
 passover = heb.date(5786, 1, 15)
-print("Rosh Hashanah -> Passover:", (passover - rosh).days, "days")
-# Rosh Hashanah -> Passover: 191 days
+print("Rosh Hashanah -> Passover:", (passover - rosh).days, "days")  # Rosh Hashanah -> Passover: 191 days
 ```
 
 Two Easters, a *civil* Ramadan date that is honest about being a published table
@@ -319,35 +317,31 @@ from datetime import datetime, timedelta
 
 # The March equinox as a SPAN — its width is the honest error bar:
 eq = equinox(2027, "march")
-print("equinox 2027:", eq.start.isoformat()[:19], "+/-", int(eq.width.total_seconds() / 2), "s")
-# equinox 2027: 2027-03-20T20:23:54 +/- 60 s
+print("equinox 2027:", eq.start.isoformat()[:19], "+/-", int(eq.width.total_seconds() / 2), "s")  # equinox 2027: 2027-03-20T20:23:54 +/- 60 s
 
 # A Chinese solar term (the same solar geometry, named the East-Asian way):
 print("start of spring (lichun):", solar_term(2027, "lichun").start.isoformat()[:16])
 
 # "Full moon tonight" is really a day-wide window, and it says so:
 full = next_phase(AstroDate(2027, 6, 1), "full")
-print("next full moon:", full.start.isoformat()[:16], "width:", full.width, f"({full.basis})")
-# next full moon: 2027-06-18T19:28 width: 1 day, 4:00:00 (predicted)
+print("next full moon:", full.start.isoformat()[:16], "width:", full.width, f"({full.basis})")  # next full moon: 2027-06-18T19:28 width: 1 day, 4:00:00 (predicted)
 
 # Sunrise at your latitude — and polar honesty when there is no sunrise at all:
 svalbard = sun_events(AstroDate(2027, 6, 21), 78.0, 15.0)
-print("Svalbard midsummer sunrise:", type(svalbard.sunrise).__name__,
-      getattr(svalbard.sunrise, "kind", ""))
-# Svalbard midsummer sunrise: NoSunEvent polar_day
+print("Svalbard midsummer sunrise:", type(svalbard.sunrise).__name__, getattr(svalbard.sunrise, "kind", ""))  # Svalbard midsummer sunrise: NoSunEvent polar_day
 assert isinstance(svalbard.sunrise, NoSunEvent)     # the sun never sets — no lie invented
 
 # "What sol is it for Perseverance?" — mission sol 200, as the Earth day it spanned:
 sol = mission_sol("perseverance", 200)
-print("Perseverance sol 200 was Earth date:", sol.start.isoformat()[:10])
-# Perseverance sol 200 was Earth date: 2021-09-12
+print("Perseverance sol 200 was Earth date:", sol.start.isoformat()[:10])  # Perseverance sol 200 was Earth date: 2021-09-12
 
 # Sagan's Cosmic Calendar: humans arrive in the final minutes of 31 December.
 def cosmic_moment(years_ago):
     age = float(UNIVERSE_AGE_GYR) * 1e9
     return (datetime(2001, 1, 1) + timedelta(days=365) * (1 - years_ago / age)).strftime("%b %d %H:%M")
 
-print("modern humans appear:", cosmic_moment(200_000))   # Dec 31 23:5x
+# Dec 31 23:5x
+print("modern humans appear:", cosmic_moment(200_000))  # modern humans appear: Dec 31 23:52
 ```
 
 Each answer carries its honesty: the equinox is a two-minute-wide span, the full
@@ -379,7 +373,7 @@ None of these are exotic. They are the everyday seams where civil time is not th
 smooth number line the arithmetic assumes — and where a library that answers
 "that time is ambiguous" or "that time never existed" as a **typed value** saves
 her from a silent off-by-one in production. `chronologia` treats folds and gaps,
-leap seconds, and week logic as first-class, so the edge case is a return value
+leap seconds, and week logic as ordinary inputs, so the edge case is a return value
 she can branch on rather than a corruption she finds in a postmortem.
 
 Recurring schedules are covered too — iCalendar `RRULE` expansion lives in
@@ -397,31 +391,31 @@ ny = ZoneInfo("America/New_York")
 # 1. DST folds and gaps as TYPED answers, not silent bugs.
 #    Fall-back night: 01:30 happens twice -> two instants.
 fold = resolve_wall_clock(2024, 11, 3, 1, 30, ny)
-print("ambiguous 01:30 ->", len(fold), "instants")   # a tuple of two
-# ambiguous 01:30 -> 2 instants
+# a tuple of two
+print("ambiguous 01:30 ->", len(fold), "instants")  # ambiguous 01:30 -> 2 instants
 #    Spring-forward morning: 02:30 never happens -> NeverExisted.
 gap = resolve_wall_clock(2024, 3, 10, 2, 30, ny)
-print("nonexistent 02:30 ->", type(gap).__name__)     # NeverExisted
+# NeverExisted
+print("nonexistent 02:30 ->", type(gap).__name__)  # nonexistent 02:30 -> NeverExisted
 
 # 2. "Same wall time tomorrow" across a fall-back edge is a 25-hour day.
 #    civil_add keeps the wall clock; plain arithmetic silently would not.
 start = AstroDate(2024, 11, 2, 1, 30, tzinfo=ny)
 tomorrow = civil_add(start, days=1, zone=ny)
-print("wall clock preserved:", tomorrow.strftime("%Y-%m-%d %H:%M"))
-# wall clock preserved: 2024-11-03 01:30
+print("wall clock preserved:", tomorrow.strftime("%Y-%m-%d %H:%M"))  # wall clock preserved: 2024-11-03 01:30
 
 # 3. Leap-second forensics: reconciling a GPS-stamped log against a UTC one.
 #    GPS time does NOT tick leap seconds, so it runs ahead of UTC.
 utc_event = AstroDate(2027, 1, 1, 0, 0, 0)
 gps_event = utc_to_gps(utc_event)
-print("UTC 00:00:00 == GPS", gps_event.strftime("%H:%M:%S"))   # 18 s ahead in 2027
-print("current TAI-UTC offset:", utc_tai_offset(utc_event), "s")
+print("UTC 00:00:00 == GPS", gps_event.strftime("%H:%M:%S"))  # UTC 00:00:00 == GPS 00:00:18
+print("TAI-UTC offset:", utc_tai_offset(utc_event), "s")
 assert gps_to_utc(gps_event) == utc_event                       # round-trips exactly
 
 # 4. ISO-week / fiscal logic: which civil date is ISO week 1, Monday of 2027?
 iso = CALENDARS["iso_week"]
-print("ISO 2027-W01-1:", iso.date(2027, 1, 1).isoformat()[:10])
-# ISO 2027-W01-1: 2027-01-04   (not Jan 1 — ISO weeks start the Monday of week 1)
+# not Jan 1 — ISO weeks start the Monday of week 1
+print("ISO 2027-W01-1:", iso.date(2027, 1, 1).isoformat()[:10])  # ISO 2027-W01-1: 2027-01-04
 ```
 
 The two DST cases return a two-tuple and a `NeverExisted` — values Priya's
@@ -464,8 +458,7 @@ anchor = datetime(2024, 1, 1)   # the assistant's "now"
 
 # The phrase, read the way the user said it — no pre-cleaning:
 june, _ = extract_timespan("remind me in june 2027", "en", anchor)
-print("width:", june.width, "| resolution:", june.resolution.name)
-# width: 30 days, 0:00:00 | resolution: MONTH
+print("width:", june.width, "| resolution:", june.resolution.name)  # width: 30 days, 0:00:00 | resolution: MONTH
 
 # Now the assistant can answer honestly. "Is the 15th during 'june 2027'?"
 assert june.contains(AstroDate(2027, 6, 15))
@@ -506,3 +499,6 @@ astronomer to teach error bars. The engineer to branch on a fold instead of
 shipping a wrong instant. The voice assistant to answer a vague question vaguely.
 Different reasons, same engine — one that would rather tell you what is knowable
 than guess.
+
+---
+[Home](index.md) · [Getting started →](getting-started.md)

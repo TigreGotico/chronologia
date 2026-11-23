@@ -1,5 +1,15 @@
 # Norwegian Bokmål (`nb`)
 
+<!-- agent-hint
+covers: where each construction of the Norwegian Bokmål locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/nb/lang.json`, `chronologia/locale/nb/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/nb.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/nb.md 'fem over halv ti@09:35' 'kvart på ett@12:30' morgen@06:00 natt@06:00 'om kvelden@20:00' 'ti på halv ti@09:20'
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Norwegian Bokmål (`nb`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Bokmål names the **coming** hour on the half. `halv to` is 01:30, not 02:30,
 and `halv tolv` is 11:30. Bokmålsordboka states the rule under `halv` as "om
 klokkeslett: 30 minutter før en hel time", and its own worked example is the
@@ -123,38 +133,7 @@ Bokmålsordboka gives it as "som kommer til slutt".
 
 ## The hour before one
 
-This is the open decision of the locale, and both readings are defensible.
-
-What resolves today, in twenty-four-hour terms: `halv ett` is 00:30, `kvart på
-ett` is 00:45, `fem på ett` is 00:55. What a speaker usually means, given that
-Bokmålsordboka's own `halv ti` gloss offers 09.30 *or* 21.30 for one phrase, is
-12:30, 12:45 and 12:55 as readily as the small-hours reading. The
-`toward_hour_12h` convention exists for exactly this: where it is set, the hour
-that rolls back from one to zero surfaces as twelve.
-
-Bokmål does not declare it, and neither do Danish, German, Dutch, Frisian,
-Swedish, Nynorsk, or Malay — eight locales that share the coming-hour half
-without it, the set defined by the flag combination rather than by family;
-Malay is not Germanic. The one Germanic locale that does set it is Icelandic.
-
-Declaring it here would not be a targeted fix. The flag is read at three points
-in the resolver, and the two that matter are the bare half and the *explicit*
-subtractive direction. Turning it on moves `halv ett` to 12:30, which is the
-intent, but it also moves `kvart på ett` to 12:45 and `fem på ett` to 12:55 —
-readings a speaker who said them at midnight would find wrong in the other
-direction. Nothing in the flag distinguishes the two branches.
-
-The cost in tests is exactly two pinned cases in this locale's own corpus,
-`('halv ett', 0, 30)` and `('kvart på ett', 0, 45)` in
-`test/nl_corpus_nb/test_nb_clock.py`. The Danish and Swedish corpora pin the
-same pair for their own spellings, and `test/test_engine_bare_half_to.py` pins
-the same shape once more for German `halb eins`. A change here is a family
-decision, not a Bokmål one.
-
-Unlike Danish, this locale has no marked form that already reads the way a
-native expects: with no meridiem vocabulary, `halv ett om ettermiddagen`
-cannot bind either, so there is no working reading to compare the unmarked one
-against.
+A bare toward-hour phrase for one o'clock names the half hour before one, 00:30 or 12:30. It resolves to whichever of the two comes next after the anchor (ruling 17 in [the rulings](../rulings.md)): `halv ett` is 00:30 at 13:04 and 12:30 at 06:05. `toward_hour_12h` only renames hour 0 as 12 on that path, so it changes no bare reading. This locale has no meridiem vocabulary, so `halv ett om ettermiddagen` cannot bind either. `kvart på ett` and `fem på ett` follow the same rule.
 
 ## Weaker provenance
 
@@ -162,8 +141,8 @@ The named days carry a precise CLDR locator, but the solid spellings and the
 bare `går`/`morgen`/`forgårs`/`overmorgen` beside them do not appear in that
 file and rest on nothing recorded.
 
-The day-part *boundaries* are the CLDR chart, fetched and matching the
-transcription, but taken from the Norwegian rows rather than the Bokmål ones,
+The day-part *boundaries* are the CLDR chart,
+matching the transcription, but taken from the Norwegian rows rather than the Bokmål ones,
 which are empty. The gloss quoted in the vocabulary headers was checked
 against Bokmålsordboka and matches.
 
@@ -181,8 +160,6 @@ dotted civil date and no timetable-clock reading is attempted.
 
 **The spelled decade.** `åttitallet` returns nothing. The decade construction
 reads a digit plus a `tallet` surface, not a spelled decade name.
-
-**Seconds.** `30 sekunder siden` returns nothing. No second unit ships.
 
 **A bare duration.** `to uker` returns nothing. A quantity with no direction
 marker is still only a quantity.
@@ -204,3 +181,49 @@ frequency, and the recurrence edge is what answers it.
    tomorrow word?
 5. Should `åttitallet` and the other spelled decade names resolve?
 6. Is `14.30` the written clock Norwegian readers expect to be understood?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("nb")
+    True
+    >>> span, rest = extract_timespan('halv to', "nb", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:30:00', '')
+    >>> span, rest = extract_timespan('halv tolv', "nb", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T11:30:00', '')
+    >>> span, rest = extract_timespan('kvart over ett', "nb", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:15:00', '')
+    >>> span, rest = extract_timespan('klokka åtte', "nb", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('halv et', "nb", anchor) is None
+    True
+    >>> extract_timespan('kvart på et', "nb", anchor) is None
+    True
+    >>> extract_timespan('om morgenen', "nb", anchor) is None
+    True
+    >>> extract_timespan('kvart over et', "nb", anchor) is None
+    True
+    >>> extract_timespan('14.30', "nb", anchor) is None
+    True
+    >>> extract_timespan('klokka 14.30', "nb", anchor) is None
+    True
+    >>> extract_timespan('åttitallet', "nb", anchor) is None
+    True
+    >>> extract_timespan('to uker', "nb", anchor) is None
+    True
+    >>> extract_timespan('i morges', "nb", anchor) is None
+    True
+    >>> extract_timespan('to ganger i uka', "nb", anchor) is None
+    True
+
+---
+[← Mirandese](mwl.md) · [Home](../index.md) · [Norwegian Nynorsk →](nn.md)

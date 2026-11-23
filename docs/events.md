@@ -1,5 +1,13 @@
 # Events and iCalendar: one sentence in, a calendar entry out
 
+<!-- agent-hint
+covers: extracting a titled event from a sentence and writing it as an .ics file
+source: `chronologia/events.py`, `chronologia/ical.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[events.md]" -q
+see: `docs/recurrence.md`, `docs/extraction.md`
+-->
+
 This guide is for someone who has never used `chronologia` before. It teaches
 every term as it appears, and every code block below actually runs (the test
 suite executes them), so you can copy any of them verbatim.
@@ -156,3 +164,6 @@ except ValueError:
   `extract_duration`, `extract_recurrence`) that `extract_event` composes.
 - [Getting started](getting-started.md) — what a `DateSpan` is and how its two
   edges carry the referential width of a phrase.
+
+---
+[← Adding a language](adding-a-language.md) · [Home](index.md) · [Recurrence rules →](recurrence.md)
