@@ -94,7 +94,8 @@ _MONTHS = _voc("month_")
 _COUNT_WORDS = CountWords(
     scales=_SCALES, cues=_YEAR_CUES | _voc("marker_since"), months=_MONTHS,
     units=_UNITS, currencies=_voc("currency"),
-    ranges={"desde": _voc("marker_until")})
+    ranges={"desde": _voc("marker_until"), "de": _voc("marker_to")},
+    amounts={"entre": _voc("marker_and")})
 
 
 def _number_in(tok: Token, low: float, high: float) -> bool:

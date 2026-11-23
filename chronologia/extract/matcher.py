@@ -1276,7 +1276,8 @@ class ConstructionMatcher:
         neighbours), "om 3 mensen" (about three people).  The locale lists
         those prepositions in ``marker_at_counts.voc`` and the nouns that count
         people or things in ``marker_counted_noun.voc``.  A bare hour behind
-        one of the prepositions and directly before one of the nouns is
+        one of the prepositions, or behind an alarm noun and its "for"
+        (``marker_alarm_at.voc``), and directly before one of the nouns is
         doubtful, unless a comma or a sentence period ends the hour.  Any
         other word after the hour, a verb included, leaves the
         clock as it is.  A doubtful clock stays a candidate, marked ``doubt``;
@@ -1293,8 +1294,10 @@ class ConstructionMatcher:
                     and not tokens[end].break_before
                     and not tokens[end - 1].raw.endswith(".")
                     and tokens[end].text in nouns
-                    and any(t.text in prepositions for t in
-                            tokens[max(0, start - 1):match.slots["HOUR"].index])):
+                    and (_connector_span("alarm_at", tokens, start, self.spec)
+                         or any(t.text in prepositions for t in
+                                tokens[max(0, start - 1):
+                                       match.slots["HOUR"].index]))):
                 cand = MatchCandidate(replace(match, doubt=True),
                                       cand.precedence)
             flagged.append(cand)
