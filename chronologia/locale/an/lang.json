@@ -23,6 +23,7 @@
     "clock_time": {
       "orders": [
         "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
+        "at? at CLOCK of? article? MERIDIEM ZONE?",
         "at? CLOCK MERIDIEM? ZONE?",
         "at? at HOUR of? article? MERIDIEM? ZONE?",
         "at? LANDMARK of? article? MERIDIEM? ZONE?"
@@ -110,7 +111,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_romance:fold_an",
+  "hook": "chronologia.extract.numlayer_an:fold_an",
   "base_grammar": {
     "marker_position": "post"
   }

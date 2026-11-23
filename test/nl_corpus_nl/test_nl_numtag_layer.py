@@ -1,9 +1,9 @@
 """Dutch numbers read through numtag.
 
 A Dutch number is one compound word ("drieëntwintig"), an ordinal century is
-one word ("eenentwintigste"), and the clock fractions "half" and "kwart" stay
-words the clock grammar reads.  Every expected value is written by hand or
-computed with ``relativedelta`` / ``timedelta`` from the anchor.
+one word ("eenentwintigste"), and the clock fractions "half" and "kwart"
+stay words the clock grammar reads. Every expected value is written by hand
+or computed with ``relativedelta`` / ``timedelta`` from the anchor.
 """
 import pytest
 

@@ -1,11 +1,9 @@
 """Estonian day-of-month spelled out as an adessive ordinal ("viiendal
 augustil" = on the 5th of August).  The date construction takes the ordinal
-in the ADESSIVE case (genitive stem + "-l"), not the bare nominative
-``pronounce_ordinal_et`` emits; before the fix the ordinal word matched
-neither the month-word grammar nor the cardinal fold, so the DAY slot never
-bound and the sentence fell back to the whole month with the ordinal
-stranded in the remainder.  Expected day numbers are read directly off the
-sentence (independent of the parser); the anchor is fixed ahead of every day
+in the ADESSIVE case (genitive stem + "-l"), not the bare nominative.  The
+ordinal word must bind the DAY slot, not leave the sentence on the whole month
+with the ordinal stranded in the remainder.  Expected day numbers are read
+directly off the sentence (independent of the parser); the anchor is fixed ahead of every day
 under test so the span never rolls into the following year.
 """
 from datetime import datetime

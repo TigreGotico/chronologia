@@ -1,5 +1,15 @@
 # West Frisian (`fy`)
 
+<!-- agent-hint
+covers: where each construction of the West Frisian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/fy/lang.json`, `chronologia/locale/fy/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/fy.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/fy.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the West Frisian (`fy`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 The half hour names the coming hour. `healwei fiven` is 04:30, not 05:30, and
 the word itself says so: `healwei` is "halfway", the point halfway toward the
 hour that follows. `bare_half_to` is set for that. The quarter word `kertier`
@@ -22,7 +32,7 @@ CLDR: the CLDR 47 `dateFields.json` for `fy` has Dutch in the day rows —
 `gisteren`, `vandaag`, `morgen`, `eergisteren`, `Oermorgen` — so the day names
 shipped here are the Frisian ones CLDR does not have. `hjoed`, `juster` and
 `moarn` each have a West Frisian entry on the English Wiktionary; `eargister`
-and `oaremoarn` have no entry there and rest on nothing that was fetched.
+and `oaremoarn` have no entry there and rest on no source.
 
 **The date line** is little-endian with a bare cardinal day: `15 juny 2020`
 resolves, as does `15-06-2020` and the ISO `2020-06-15`. `ordinal_dot` is off
@@ -38,11 +48,12 @@ the afternoon band is `middeis`, and the two are kept apart deliberately.
 
 **The spoken hour takes an inflected form of its own before a fraction.**
 `ienen`, `twaen`, `trijen`, `fjouweren`, `fiven`, `seizen`, `sânen`, `achten`,
-`njoggenen`, `tsienen`, `alven` and `tolven` are supplied as a fixed word-to-value
-map in `chronologia/extract/numfold_germanic.py`, because the number parser this
-locale folds through reads only the uninflected cardinals. The map has no cited
-source. The uninflected form still reads, so `healwei ien` and `healwei ienen`
-both land on 00:30.
+`njoggenen`, `tsienen`, `alven` and `tolven` are supplied as a fixed
+word-to-value map in `chronologia/extract/numlayer_fy.py`, because numtag reads
+only the uninflected cardinals. Frisian Wikipedia has each form after `healwei`
+or `kertier` (for example "Haadstjoertiid", "Klaas Koelstra" and "T.S. Eliot").
+The uninflected form still reads, so `healwei ien` and `healwei ienen` both
+land on 00:30.
 
 **Day parts** are `nachts` `[00:00, 06:00)`, `moarns` `[06:00, 12:00)`,
 `middeis` `[12:00, 18:00)` and `jûns` `[18:00, 24:00)`, transcribed in
@@ -61,16 +72,15 @@ vocabulary and a before-present marker.
 
 ## Weaker provenance
 
-Only three surfaces in this locale carry a source that can be fetched and read:
+Only three surfaces in this locale carry a source that can be read:
 `yn` and `foarich` cite West Frisian Wiktionary entries, and both entries do
 carry a West Frisian section; `foarich jier` and `folgjend jier` cite the CLDR
 47 `fy` year rows, and those rows do read `foarich jier` and `folgjend jier`.
 Everything else ships uncited.
 
-The day-part citation is the weakest link that still works. `gtb.ivdnt.org` is
-reachable and does host Frisian dictionaries, the *Wurdboek fan de Fryske taal*
-among them, but the site is a JavaScript application whose search results cannot
-be fetched, so no individual lemma behind that citation was confirmed. The
+The day-part citation is the weakest link that still works. `gtb.ivdnt.org` hosts
+Frisian dictionaries, the *Wurdboek fan de Fryske taal* among them, but no
+individual lemma behind that citation is checked. The
 citation names the source as *Frysk Wurdboek*, which is a different Fryske
 Akademy work from the *Wurdboek fan de Fryske taal* the portal actually carries.
 Treat the day-part surfaces as attested by an institution, not by a located
@@ -88,42 +98,9 @@ Fiven`, attests `foar` combining with `healwei`. Frisian Wikipedia also has an
 article titled *Healwei*, and that one is a hamlet on Terschelling and is not
 evidence about the clock.
 
-## The half hour toward one, and the flag that would move it
+## The half hour toward one
 
-`healwei ienen` resolves to 00:30. Frisian counts the half toward the coming
-hour, so the phrase names the half hour before one o'clock, and 00:30 and 12:30
-are both that half hour. The locale returns the 24-hour one, and there is no way
-to reach the other: a following day-part word does not disambiguate it, because
-this locale binds no meridiem at all (see the refusals below). A speaker who
-means half past twelve in the middle of the day gets a time twelve hours away.
-
-A convention flag named `toward_hour_12h` exists and would change exactly this.
-Eight locales declare `bare_half_to` without it — `da`, `de`, `fy`, `ms`, `nb`,
-`nl`, `nn` and `sv` — and all eight return 00:30 for their own version of the
-phrase. Sixteen locales declare both, and Icelandic is the only Germanic one
-among them; `hálf eitt` returns 12:30 there.
-
-Turning the flag on for West Frisian moves more than the bare half, because the
-resolver reads it at three sites and all three are the branch that has just
-decremented the hour. Setting it and re-probing every hour from one to twelve
-against the bare half, the quarter each way and a five-minute count each way —
-five phrase shapes across twelve hours, probed here alongside Nynorsk for a
-combined 120 phrases — changes three of the Frisian ones, and all three name
-one o'clock: `healwei ienen` becomes 12:30, `kertier foar ienen` becomes
-12:45, and `fiif foar ienen` becomes 12:55. Nothing else moves. `kertier foar trije` stays
-02:45, every past-side reading stays where it is, and the landmark forms
-`kertier foar middernacht` and `healwei middei` are untouched.
-
-So the trade is narrower than a whole-clock shift, but it is still a trade and
-not a fix. The flag does not separate the bare half from the explicit-direction
-count; it only asks whether the hour that rolls back from one to zero should be
-spoken as twelve. Off, `healwei ienen` is 00:30 and `kertier foar ienen` is
-00:45, and the daytime readings are unreachable. On, both move to the afternoon
-and the small-hours readings are unreachable instead. Either way one of the two
-senses is lost, and which loss is worse is a question about how Frisian speakers
-actually use the phrase, not about the code. A test pins the current side:
-`test/nl_corpus_fy/test_fy_clock.py` asserts `healwei ienen` is 00:30 along with
-the other eleven hours.
+A bare toward-hour phrase for one o'clock names the half hour before one, 00:30 or 12:30. It resolves to whichever of the two comes next after the anchor (ruling 17 in [the rulings](../rulings.md)): `healwei ienen` is 00:30 at 13:04 and 12:30 at 06:05. `toward_hour_12h` only renames hour 0 as 12 on that path, so it changes no bare reading. This locale binds no meridiem word (see the refusals below), so a following day-part word does not change the reading. `kertier foar ienen` and `fiif foar ienen` follow the same rule.
 
 ## What refuses
 
@@ -186,3 +163,47 @@ stranded in front of a clock time instead of refusing.
 5. Are there fused today-plus-band words on the Dutch model?
 6. Does the Dutch day-period table match Frisian use, or do the bands sit
    differently?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("fy")
+    True
+    >>> span, rest = extract_timespan('healwei fiven', "fy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T04:30:00', '')
+    >>> span, rest = extract_timespan('kertier oer twa', "fy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:15:00', '')
+    >>> span, rest = extract_timespan('kertier foar trije', "fy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:45:00', '')
+    >>> span, rest = extract_timespan('healwei ienen', "fy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:30:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('15.06.2020', "fy", anchor) is None
+    True
+    >>> extract_timespan('trije wiken', "fy", anchor) is None
+    True
+    >>> extract_timespan('fjirtjin dagen', "fy", anchor) is None
+    True
+    >>> extract_timespan('eltse dei', "fy", anchor) is None
+    True
+    >>> extract_timespan('deistich', "fy", anchor) is None
+    True
+    >>> extract_timespan('fanjûn', "fy", anchor) is None
+    True
+    >>> extract_timespan('fannacht', "fy", anchor) is None
+    True
+    >>> extract_timespan('14.30', "fy", anchor) is None
+    True
+    >>> extract_timespan('om 14.30 oere', "fy", anchor) is None
+    True
+
+---
+[← Welsh](cy.md) · [Home](../index.md)

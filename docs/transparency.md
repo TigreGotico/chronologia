@@ -1,137 +1,39 @@
-# Transparency: how this library was built
+# Transparency: how correctness is checked
 
-This library was written by AI, orchestrated by AI, and directed by a
-human. You deserve to know that, and to know how it worked. This page is
-the honest account.
+<!-- agent-hint
+covers: the checks that decide whether answers are right and the provenance tiers of holiday golds
+source: `test/test_holiday_golds.py`, `test/holiday_golds/_tier_floor.json`, `test/test_language_parity.py`, `test/test_docs_examples.py`
+generated: no
+verify: diff <(sed -n 's/^- \*\*\([a-z-]*\)\*\*:.*/\1/p' docs/transparency.md) <(python -c "import re;print(*re.search(r'_TIERS = \((.*?)\)',open('test/test_holiday_golds.py').read())[1].replace('\"','').replace(' ','').split(','),sep='\n')") && python -c 'exec("import os,re\nt=open(\"docs/transparency.md\").read()\nm=re.search(r\"MIN_CASES = (\\d+)\",open(\"test/test_language_parity.py\").read())[1]\nassert \"at least \"+m+\" cases\" in t\nfor q in set(re.findall(r\"`((?:test|chronologia)/[^`<>*]+)`\",t)): assert os.path.exists(q.rstrip(\"/\")),q\n")'
+see: `docs/civil-holidays.md`, `docs/benchmarks.md`
+-->
 
-## Who did what
-
-**The human maintainer designed this architecture.** Years before this
-library existed, they prototyped its core ideas in a lingua-franca pull
-request: date extraction split from time extraction, resolution-aware
-results (day, week, month, century…), calendar-scoped ordinals and
-seasons, and named eras and epochs with out-of-range dates as an open
-problem. That design — including the `ranges` module and the
-`DateTimeResolution` concept that still anchor the resolver — sat
-largely dormant in the predecessor parser until this library grew
-around it. The maintainer also made every decision that shaped the
-result: that results must be *spans* with honest widths rather than
-fake-precise instants; that `AstroDate` must speak `datetime`'s
-language; that extraction belongs in the reckoning library; that
-holiday data must be built clean-room from primary sources, that every
-holiday needs its own "when is X" test, and that holiday names belong
-to the countries that own them; that ugly APIs get rewritten ("anyone
-who reads this will close the tab" — they were right). They contributed
-data directly too — the Portuguese municipal holiday tables began as
-their hand-curated research.
-
-**An orchestrating AI** worked the gaps in that design: filled in the
-unresolved parts (the out-of-range representation became `AstroDate`; the
-resolution concept became span width), extended the architecture to
-domains the original didn't reach (calendars, timelines, deep time, the
-sky, Mars), planned the work, split it into scoped units of work, reviewed
-every result, and merged nothing it had not independently re-verified.
-**Subordinate AI agents** each executed one scoped unit — one language,
-one calendar family, one country batch, one documentation pass — in
-isolation, under written rules, with their work gated by tests before
-merging.
+The library is written by AI and directed and reviewed by a human maintainer. This page lists the checks that decide whether its answers are right, so a reader can judge the work without trusting either party.
 
 ## The method
 
-Three rules did most of the heavy lifting:
+**Cite or refuse.** Every algorithm is transcribed from a named source, and every holiday rule cites a law, a gazette or an official listing. Every gold test value is derived by hand or taken from an independent source, never from the code under test. Where no citable source exists, such as the contested leap pattern of the Javanese calendar, the feature is refused and the reason is documented.
 
-1. **Cite or refuse.** Every algorithm is transcribed from a downloaded,
-   named source; every holiday rule cites a law, gazette, or official
-   listing; every gold test value is derived by hand or from an
-   independent source — never from the code under test. When no
-   citable source existed (the Javanese calendar's contested leap
-   pattern, Bennett's own "not known" for 46 BC), the feature was
-   *refused*, with the reason documented, rather than invented.
-2. **Natural-language test-driven development.** For everything a human
-   types or says, the test corpus came first: thousands of real
-   phrases with hand-derived expected spans, in every supported
-   language, including adversarial cases written to break the code.
-   Any wrong answer became the top-priority bug before any new
-   feature.
-3. **Structural ratchets.** Wherever a quality bar was declared, a test
-   was written that *walks the data* and fails on any gap: every
-   holiday rule must have a gold; every language must have a corpus
-   and a semantic-parity block matching English span-for-span; every
-   code example in every documentation page is executed on every test
-   run. Quality is enforced by the suite, not by promises.
+**Natural-language test-driven development.** Each language has a corpus package `test/nl_corpus_<code>/` of real phrases with hand-derived expected spans. `test/test_language_parity.py` requires at least 100 cases per corpus and a semantic-parity block that asserts the same spans as the English corpus.
 
-### Holiday gold provenance — and what each tier does and does not prove
+**Structural checks.** A test walks the data and fails on a gap. Every holiday rule needs a gold value. Every code block in `README.md` and `docs/` runs in `test/test_docs_examples.py`.
 
-Every holiday rule is checked against a **frozen gold value** stored in a
-per-jurisdiction data file (`test/holiday_golds/<cc>.tab`). A single
-parameterised walker runs all of them against the engine, and a structural test
-reads the same files to enforce that every shipped rule has at least one gold.
-The files are order-free: running any one jurisdiction's subset is green on its
-own, with no import-order coupling.
+## Holiday gold provenance
 
-Each gold carries an explicit **provenance tier**, because not every "green"
-test proves the same thing, and we would rather say so plainly:
+Each holiday rule is checked against a frozen gold value in `test/holiday_golds/<cc>.tab`, one file per jurisdiction. A single parameterised walker in `test/test_holiday_golds.py` runs every gold against the engine. A structural test reads the same files and requires at least one gold per shipped rule.
 
-- **primary** — the expected date is restated from a cited primary source (a
-  statute, gazette, or official listing), independent of the code. A wrong
-  engine result fails against the source. This is the strongest tier.
-- **computed** — the expected date is produced by an independent in-test
-  arithmetic derivation (Easter plus a documented offset, an nth-weekday
-  calculation, or a standalone Julian-day/Hijri conversion that imports nothing
-  from the engine). It proves the engine agrees with a second, separately
-  written calculation.
-- **witnessed** — the expected date is the *output of the independent vacanza
-  `holidays` package*, captured once and frozen with the package version. A
-  witnessed gold proves only that **we agree with an outside witness** — not
-  that either party is correct against the statute. Its value is that it is
-  independent of our own rule table: if a day, month, or subdivision is later
-  mis-transcribed into our `.tab` file, the engine's output diverges from the
-  frozen witnessed value and the test fails. That is the teeth this tier buys.
-- **self-evident** — the expected date is the rule's own argument (a fixed
-  row's month/day, or a decree row's listed gazette date) and no independent
-  witness was available. This is honest but tautological against the `.tab`
-  file: it guarantees the rule *has* a gold and that the engine reproduces its
-  own inputs, but it does **not** independently prove the date is correct. We
-  label these plainly rather than dressing them up as verification.
+Each gold carries a provenance tier, because not every passing test proves the same thing.
 
-The counts per jurisdiction and tier are printed by the suite and guarded by a
-ratchet against a frozen floor, so a tier's coverage can never silently shrink.
-Making provenance first-class turned thousands of previously self-referential
-holiday golds — where the expected date was read from the same rule the engine
-reads — into genuine differentials against the vacanza witness.
+- **primary**: the expected date is restated from a cited primary source, such as a statute, a gazette or an official listing. A wrong engine result fails against the source. This is the strongest tier.
+- **computed**: an independent in-test calculation produces the expected date, for example Easter plus a documented offset, an nth-weekday calculation, or a standalone Julian-day or Hijri conversion. It proves the engine agrees with a second, separately written calculation.
+- **witnessed**: the expected date is the output of the independent `holidays` package from vacanza, captured once and frozen with the package version. It proves agreement with an outside witness, not correctness against the statute. If a date or subdivision in a `.tab` file is mistranscribed, the engine output diverges from the frozen value and the test fails.
+- **self-evident**: the expected date is the rule's own argument, such as the month and day of a fixed row or a listed gazette date of a decree row. It guarantees that the rule has a gold. It does not prove the date is correct.
 
-Cross-validation ran throughout: our calendars against an independent
-open-source implementation (Chinese and Hebrew agreed exactly, 66/66
-and 16/16 — mutual corroboration), our extraction against `dateparser`
-and `dateutil`, our Easter against published tables, our prayer times
-against published timetables, our Mars dates against NASA's own worked
-examples.
+The suite prints the counts per jurisdiction and tier. `test/holiday_golds/_tier_floor.json` holds a frozen floor, and a test fails when a tier count falls below it.
 
-## What the process found in the world
+## Cross-checks against other implementations
 
-Verification pointed both ways. Along the way this process found: a
-transcription error in a widely-mirrored Umm al-Qura data table (an
-impossible 28-day lunar month, corrected against the 29/30 invariant);
-that a commonly-published Solar Hijri leap-cycle variant mispredicts
-Nowruz in some years (the corrected variant was verified against twelve
-documented Nowruz dates and shipped instead, with the discrepancy
-documented); and several long-standing bugs in the predecessor parser's
-own languages, including entire missing grammatical features.
+The calendars were compared with an independent open-source implementation, and extraction was compared with `dateparser` and `dateutil` in the [benchmark](benchmarks.md). Easter dates are checked against published tables, prayer times against published timetables, and Mars dates against worked examples from NASA.
 
-## Why this disclosure
-
-AI-written code at this scale is new enough that readers should not
-have to guess. The honest summary: the *architecture and judgment* in
-this library — its founding design, what it should be, what it must
-refuse to do, whose names things carry, which sources count — are
-human. The *labor* — tens of thousands of lines of arithmetic, data
-transcription, tests, and prose — is AI,
-verified by machine-checkable gates and spot-audited by the
-orchestrator at every merge. Where those gates could not reach
-(translation quality across scripts, contested historical claims), the
-work was scoped down to what could be verified rather than shipped on
-confidence.
-
-The test suite, the citations in every module, and the executable
-documentation are the parts of this story you can check yourself —
-which is exactly why they exist.
+---
+[← Benchmarking chronologia against other date parsers](benchmarks.md) · [Home](index.md) · [Language provenance pages →](languages/index.md)

@@ -92,6 +92,7 @@ CONNECTOR_SLOTS: Dict[str, str] = {
     "PRIDIE": "pridie",
     "NTOLAST": "ordlast",
     "PENULT": "penult",
+    "HOURSPAN": "hour_span",
 }
 
 #: slots reachable if *either* the scope-unit or the plain-unit map is present.
@@ -117,6 +118,7 @@ SLOT_VOCAB_ATTR: Dict[str, str] = {
     "ZONE": "clock_zones",
     "QUANT": "quantifiers",
     "FRACTION": "clock_fractions",
+    "HALF": "clock_fractions",
     "CLOCKMIN": "clock_dir_minutes",
     "CLOCKDIR": "clock_dirs",
     "MERIDIEM": "meridiems",

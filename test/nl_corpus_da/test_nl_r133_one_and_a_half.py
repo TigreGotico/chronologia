@@ -2,9 +2,7 @@
 """(da): the fused "halvanden <unit>" idiom (== "one and one half",
 standard Danish for 1.5) must resolve, not misread as 0.5.
 
-numtag reads "halvanden" as the fraction 1.5; the former ovos-number-parser
-back-end read it as 0.5 (not False), a word_map override in the Danish fold
-corrected that.  See docs/languages/da.md.
+numtag reads "halvanden" as the fraction 1.5, not as 0.5.  See docs/languages/da.md.
 """
 from datetime import timedelta
 

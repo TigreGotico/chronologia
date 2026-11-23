@@ -5,7 +5,7 @@ from dataclasses import replace
 from typing import Tuple
 
 from chronologia.extract.model import LangSpec, Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import reindex, run_extent
 from chronologia.extract.numfold_romance import (_collapse_h_clock,
                                                  _collapse_phrase,
                                                  _elision_split, _glue,
@@ -71,7 +71,9 @@ def _day_phrases(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
                             or out[i - 2].mention is not None))
             if [t.text for t in out[i:i + n]] == words and not counted:
                 raw = " ".join(t.raw for t in out[i:i + n])
-                out[i:i + n] = [Token(text=surface, raw=raw, index=0)]
+                cs, ce = run_extent(out[i:i + n])
+                out[i:i + n] = [Token(text=surface, raw=raw, index=0,
+                                      char_start=cs, char_end=ce)]
             i += 1
     return reindex(tuple(out))
 

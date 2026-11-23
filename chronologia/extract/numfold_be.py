@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Spelled-number folding for Belarusian.
 
-Belarusian has no ``ovos_number_parser`` model, so -- like the Serbian fold in
+chronologia reads Belarusian from its own tables, so -- like the Serbian fold in
 :mod:`chronologia.extract.numfold_slavic` -- the number-word set and the value
 arithmetic are owned here as closed tables.  Every surface below is transcribed
 from Wiktionary's ``Module:number list/data/be``, the same per-language Lua data
