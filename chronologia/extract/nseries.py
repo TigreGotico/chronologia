@@ -2175,13 +2175,15 @@ class _RecurCtx:
 
 
 def _weekday_range_surfaces(spec):
-    """The "to" words that join two weekdays into a range.  A "to" word that is
-    also an "until" word (es "hasta", en "until") stays an until bound, except
-    where the language already uses it to join weekdays (de "bis", nl "tot")."""
-    until = _conn_surfaces(spec, "until", ("until", "till"))
+    """The "to" words that join two weekdays into a range.  A "to" word that
+    starts an "until" word (es "hasta", de "bis zum", nl "tot en met") stays an
+    until bound, except the single word the language already uses to join
+    weekdays (de "bis", nl "tot")."""
+    until_heads = {w[0] for w in _conn_surfaces(spec, "until", ("until", "till"))}
     and_words = _and_words(spec)
     return tuple(w for w in _conn_surfaces(spec, "to", _RANGE_TO)
-                 if w not in until or w[0] in and_words)
+                 if w[0] not in until_heads
+                 or (len(w) == 1 and w[0] in and_words))
 
 
 def _recur_ctx(text, lang, anchor):
@@ -2844,11 +2846,19 @@ def _collect_weekdays(ctx, start, plural_ok, extra_skip=frozenset()):
     end = start + 1
     while True:
         # tried before the "and" skip: de "bis" and nl "tot" are "and" words too
-        hit = next(((len(w) + 1, x) for w in ctx.to_surfaces
-                    if [y.text for y in t[end:end + len(w)]] == list(w)
-                    and end + len(w) < n
-                    and (x := _weekday_here(ctx, t[end + len(w)], plural_ok))
-                    is not None), None)
+        hit = None
+        for w in ctx.to_surfaces:
+            far = end + len(w)
+            if far >= n or [y.text for y in t[end:far]] != list(w):
+                continue
+            last = _weekday_here(ctx, t[far], plural_ok)
+            # a number or month after the far weekday makes it part of an
+            # until date ("tot en met vrijdag 4 december")
+            dated = far + 1 < n and (t[far + 1].is_number
+                                     or t[far + 1].text in ctx.months)
+            if last is not None and not dated:
+                hit = (len(w) + 1, last)
+                break
         if hit is not None:
             width, last = hit
             while days[-1] != last:
