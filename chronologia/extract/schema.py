@@ -28,9 +28,10 @@ Two entry points:
 
 ``validate_reachability(spec, cfg, lang)``
     Given a loaded :class:`~chronologia.extract.model.LangSpec`, checks that
-    every *required* slot / connector of every order has non-empty backing
-    vocabulary in the locale -- i.e. the order can actually fire.  A ``.voc``
-    referenced by a required slot but missing or empty is a defect.
+    every slot / connector of every order has non-empty backing vocabulary in
+    the locale -- i.e. the order can actually fire.  Optional slots and the
+    optional connectors of the shared base grammar may lack vocabulary; any
+    other ``.voc`` an order names but the locale lacks is a defect.
 
 ``validate(cfg, lang, spec)`` runs both and raises
 :class:`LocaleSchemaError` aggregating all findings with locale + field
@@ -367,10 +368,11 @@ def _slot_reachable(name: str, spec) -> bool:
 
 
 def validate_reachability(spec, cfg: dict, lang: str) -> List[str]:
-    """Findings for orders whose required slot/connector has no vocabulary.
+    """Findings for orders that name a slot or connector with no vocabulary.
 
-    An order that can never fire (a required ``.voc`` is missing or empty in the
-    locale) is a defect: dead data that silently disables a construction.
+    Optional slots and the optional connectors of the shared base grammar are
+    exempt.  Any other missing or empty ``.voc`` is a defect: dead data that
+    silently disables a construction, or a typo in a connector name.
     """
     errors: List[str] = []
     ctx = f"[{lang}]"
