@@ -230,13 +230,8 @@ def _mentions_are_ordered_and_non_overlapping(mentions):
     "tredje sundag i februar 2021 and il y a 1 mois",
 ])
 def test_a_rewritten_mention_keeps_the_order(text):
-    # each text yields a mention with char_span None after one with a
-    # char_span
     mentions = extract_timespans(text, "fr")
-    # the row tests the mixed shape only while the engine gives a rewritten
-    # mention no char_span
-    assert any(m.char_span is None for m in mentions)
-    assert any(m.char_span is not None for m in mentions)
+    assert len(mentions) >= 2
     _mentions_are_ordered_and_non_overlapping(mentions)
 
 
@@ -266,11 +261,8 @@ def test_extract_timespans_never_overlap_and_stay_ordered(lang):
 #
 # Found by ``test_random_unicode_never_crashes`` during authoring of this
 # suite: ``extract_timespan("¹", lang)`` (a bare superscript "1", U+00B9)
-# used to raise an uncaught ``ValueError`` for the "da"/"nb"/"nn" locales --
-# an ``isdigit()``/``int()`` mismatch in the shared ``ovos-number-parser``
-# dependency, fixed upstream (OpenVoiceOS/ovos-number-parser#280, which
-# guards every ``int()`` call with ``isdecimal()``). Kept here as a
-# permanent regression check against the dependency.
+# raises no ``ValueError`` for the "da"/"nb"/"nn" locales: ``isdigit()`` is
+# true for such characters but ``int()`` rejects them.
 # --------------------------------------------------------------------------
 
 @pytest.mark.parametrize("lang", ["da", "nb", "nn"])

@@ -1,5 +1,15 @@
 # Malay (`ms`)
 
+<!-- agent-hint
+covers: where each construction of the Malay locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/ms/lang.json`, `chronologia/locale/ms/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/ms.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/ms.md 'pukul lapan setengah@08:30' 'pukul tujuh setengah@19:30' setengah@02:30
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Malay (`ms`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Malay is morphologically light — nouns do not inflect for number, and a
 weekday, a month and a unit noun all arrive in one shape — so most of this
 locale is a short list of words rather than a set of paradigms. Almost all of
@@ -44,7 +54,7 @@ jam" — and its own example is `kami sampai di rumah pukul lima petang`, five i
 the afternoon. Noon is `tengah hari` and midnight `tengah malam`.
 
 **The night band.** `malam` is not a uniform twelve-hour shift but a band that
-crosses midnight. All twelve hours were checked: `pukul satu malam` is 01:00,
+crosses midnight. `pukul satu malam` is 01:00,
 `pukul enam malam` is 18:00, `pukul sebelas malam` is 23:00, `pukul dua belas
 malam` is 00:00. Hours one through five stay in the small hours, six through
 eleven move to the evening. The evening boundary at 19:00 is CLDR's night band
@@ -75,9 +85,8 @@ bunga` beside `musim semi`, `musim sejuk` beside `musim dingin`. The weekend is
 
 The locale, and a test that pins it, assert that a bare `setengah` before an
 hour names the half *toward* that hour: `setengah tiga` is 02:30, the German
-pattern. That reading resolves today, and it does so uniformly. All twelve
-hours were checked and every one behaves the same way, `setengah H` giving
-(H−1):30.
+pattern. That reading resolves, and it does so uniformly: `setengah H` gives
+(H−1):30 for every hour.
 
 What the evidence actually supports is a different construction. Attested Malay
 puts `setengah` **after** the hour, and reads it additively.
@@ -116,7 +125,7 @@ is ordinary, and Indonesian is where a Malay locale would most easily acquire
 it by analogy. That is a hypothesis about how the reading got here, not
 evidence about Malay.
 
-So today the locale reads a construction that no consulted source attests, and
+So the locale reads a construction that no consulted source attests, and
 strands the one that they do. `pukul lapan setengah` returns 08:00 with
 `setengah` left in the remainder, and the same happens for every hour: the half
 is dropped and a whole hour is returned in its place. If the additive reading
@@ -129,10 +138,7 @@ does `pukul lapan setengah`, hour first, mean 08:30 or 07:30? Nothing here
 should be changed until both are answered, because the sources that speak to
 the second question do not agree with each other.
 
-One related setting hangs off the same answer. The locale declares the
-toward-the-hour half but not the twelve-hour reckoning that usually accompanies
-it, so `setengah satu` resolves to 00:30 rather than 12:30. Whether that is
-right depends entirely on whether the toward-hour reading is right at all.
+`setengah satu` is 00:30 or 12:30, whichever comes next after the anchor (ruling 17 in [the rulings](../rulings.md)).
 
 ## Weaker provenance
 
@@ -178,3 +184,31 @@ the quarter of a year, and the year always wins.
 4. What is the ordinary way to say a quarter past and a quarter to, and does
    `suku` appear in it?
 5. Is `kelmarin dulu` the usual phrase for the day before yesterday?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("ms")
+    True
+    >>> span, rest = extract_timespan('pukul satu malam', "ms", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('pukul enam malam', "ms", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T18:00:00', '')
+    >>> span, rest = extract_timespan('pukul sebelas malam', "ms", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T23:00:00', '')
+    >>> span, rest = extract_timespan('pukul dua belas malam', "ms", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-28T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('pukul 2.30', "ms", anchor) is None
+    True
+
+---
+[← Macedonian](mk.md) · [Home](../index.md) · [Maltese →](mt.md)

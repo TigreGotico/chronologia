@@ -37,7 +37,11 @@ from chronologia.extract.numfold_engine import reindex
 #: short scale makes "dois bilhões" 2*10^9, and ``fr-BE`` reads "septante".
 NUMTAG_LANGS = {"pt": "pt-PT", "en": "en", "es": "es", "gl": "gl", "ca": "ca",
                 "it": "it", "fr": "fr-FR", "de": "de", "nl": "nl", "da": "da",
-                "sv": "sv"}
+                "sv": "sv", "nb": "nb", "nn": "nn", "fy": "fy", "ar": "ar", "el": "el",
+                "fa": "fa", "he": "he", "id": "id", "kab": "kab", "ms": "ms", "et": "et",
+                "fi": "fi", "hu": "hu", "eu": "eu", "tr": "tr", "az": "az", "an": "an", "ast": "ast",
+                "mwl": "mwl", "oc": "oc", "ro": "ro", "bg": "bg", "cs": "cs", "hr": "hr",
+                "pl": "pl", "ru": "ru", "sk": "sk", "sl": "sl", "uk": "uk"}
 
 _LOCALE_DIR = Path(__file__).resolve().parent.parent / "locale"
 
@@ -57,8 +61,13 @@ def mentions(text: str, lang: str) -> Tuple[NumberMention, ...]:
     numerals are left out too: :mod:`numfold_roman` reads one only next to a
     century word or after a year marker, so a bare "MMXX" stays a word.
     """
-    return tuple(m for m in tag_numbers(text, NUMTAG_LANGS.get(lang, lang))
-                 if m.form in (Form.WORDS, Form.MIXED))
+    try:
+        found = tag_numbers(text, NUMTAG_LANGS.get(lang, lang))
+    except IndexError:
+        # numtag 0.15.3a1 raises on a number and a joiner at the end of
+        # the text ("zwei und", "két és").  The text then reads no number.
+        return ()
+    return tuple(m for m in found if m.form in (Form.WORDS, Form.MIXED))
 
 
 #: The punctuation that ends a clause.  A cue before it is no cue for a
@@ -109,17 +118,45 @@ def _words_before(tokens: Tuple[Token, ...], i: int, text: str
     return tuple(reversed(out))
 
 
+def _closes_range(tokens: Tuple[Token, ...], last_end: int, i: int,
+                  text: str) -> bool:
+    """Whether the mention that starts at ``tokens[i]`` can close the range
+    of the mention that ends at ``tokens[last_end]``.
+
+    One or two words stand between the mentions, the last of them the word
+    that closes the range.  No clause mark stands between the closing word and
+    the second mention, nor between the first mention and the closing word,
+    except one comma before the closing word: "from two thousand, to three
+    thousand dollars" (ruling 25).
+    """
+    if not 2 <= i - last_end <= 3 or not _same_clause(tokens[i - 1],
+                                                      tokens[i], text):
+        return False
+    for j in range(last_end, i - 1):
+        left, right = tokens[j], tokens[j + 1]
+        if left.char_end is None or right.char_start is None:
+            return False
+        gap = text[left.char_end:right.char_start]
+        if j == i - 2:
+            gap = gap.replace(",", "", 1)
+        if _CLAUSE_BREAK.search(gap):
+            return False
+    return True
+
+
 def attach(tokens: Tuple[Token, ...], text: str,
            lang: str) -> Tuple[Token, ...]:
     """Give each token inside a mention of ``text`` that mention.
 
     ``lang`` is a chronologia locale or a region tag (``pt-BR``).  The first
     token of each mention also gets the words before it in its clause
-    (:attr:`Token.before`).  A mention one word after another mention gets
-    that mention's words, :data:`NUMBER` and the word: "from two thousand to
-    two thousand and ten" gives the second mention ("from", NUMBER, "to").
-    The first mention then gets the word, :data:`NUMBER` and the word after
-    the second mention (:attr:`Token.after`): "between two thousand and three
+    (:attr:`Token.before`).  A mention one or two words after another mention
+    (:func:`_closes_range`) gets that mention's words, :data:`NUMBER` and the
+    words between: "from two thousand to two thousand and ten" gives the
+    second mention ("from", NUMBER, "to"), and "from two thousand dollars to
+    three thousand" gives it ("from", NUMBER, "dollars", "to").  The first
+    mention then gets the closing word, :data:`NUMBER` and the word after the
+    second mention (:attr:`Token.after`): "between two thousand and three
     thousand dollars" gives the first mention ("and", NUMBER, "dollars").
     """
     if not reads(lang):
@@ -135,7 +172,7 @@ def attach(tokens: Tuple[Token, ...], text: str,
     # the words before the last mention, the index of its first token and
     # the index of its last token
     last_before, last_first, last_end = None, None, None
-    # the first token of a mention and of the mention one word after it
+    # the first token of a mention and of the mention that closes its range
     pairs = []
     for i, t in enumerate(tokens):
         m = None
@@ -148,10 +185,13 @@ def attach(tokens: Tuple[Token, ...], text: str,
             continue
         if t.char_start == m.char_span[0]:
             before = _words_before(tokens, i, text)
-            if last_end == i - 2 and len(before) >= 2:
-                # a cue of up to three words, the mention and the word: a
-                # run of mentions keeps a window of fixed length
-                before = (last_before + (NUMBER, before[-1]))[-5:]
+            if (last_end is not None
+                    and _closes_range(tokens, last_end, i, text)):
+                # a cue of up to three words, the mention, up to two words
+                # and the closing word: a run of mentions keeps a window of
+                # fixed length
+                before = (last_before + (NUMBER,) + tuple(
+                    w.text for w in tokens[last_end + 1:i]))[-6:]
                 pairs.append((last_first, i))
             last_before, last_first = before, i
             out.append(replace(t, mention=m, before=before))
@@ -335,9 +375,13 @@ class CountWords:
     codes: Collection[str] = frozenset()
     #: The words that qualify a currency name: "US", "more".
     qualifiers: Collection[str] = frozenset()
-    #: For a range cue ("from"), the words that open its second endpoint
-    #: ("to"): a mention after one is a year too.
+    #: For a word that opens a closed range ("from", "de"), the words that
+    #: close it ("to", "a").  After a cue the mention after the closing word is
+    #: a year too.
     ranges: Mapping[str, Collection[str]] = field(default_factory=dict)
+    #: The same for a word that opens a range of amounts and is no year cue
+    #: ("entre" and "e"): two numbers in such a range count things.
+    amounts: Mapping[str, Collection[str]] = field(default_factory=dict)
 
     def measures(self, word: str) -> bool:
         """Whether ``word`` is a unit or a currency."""
@@ -359,6 +403,20 @@ class CountWords:
         return (first in self.qualifiers and len(words) > 1
                 and (words[1] == SYMBOL or words[1].lower() in self.currencies
                      or words[1] in self.codes))
+
+    def closes(self, opener: Tuple[str, ...], closer: str) -> bool:
+        """Whether a range word stands in ``opener`` and any closing word
+        closes it, so "between two thousand to three thousand dollars" is a
+        range."""
+        closing = [*self.ranges.values(), *self.amounts.values()]
+        return (any(w in self.ranges or w in self.amounts for w in opener)
+                and any(closer in c for c in closing))
+
+    def closes_amounts(self, opener: Tuple[str, ...], closer: str) -> bool:
+        """Whether a word that opens a range of amounts stands in ``opener``
+        and ``closer`` closes it."""
+        return any(closer in self.amounts[w] for w in opener
+                   if w in self.amounts)
 
 
 def year_cue(before: Tuple[str, ...], words: CountWords) -> Optional[str]:
@@ -424,15 +482,29 @@ def is_count(tokens: Tuple[Token, ...], end: int, words: CountWords) -> bool:
             before = (tokens[j - 1].text,) + before
             j -= 1
     cue = year_cue(before, words)
-    # a unit after the second number of a range measures the first one too:
-    # "between two thousand and three thousand dollars"
     after = tokens[start].after or ()
-    if (cue is not None and len(after) >= 3
-            and after[0] in words.ranges.get(cue, ())
+    # a mention that closes a range has the opening words, then NUMBER and
+    # the words between the mentions, the last of them the closing word
+    opener, gap = before, ()
+    if NUMBER in before:
+        at = len(before) - 1 - before[::-1].index(NUMBER)
+        opener, gap = before[:at], before[at + 1:]
+    # a unit after either number of a closed range measures both: "between
+    # two thousand and three thousand dollars", "from two thousand dollars to
+    # three thousand" (ruling 24)
+    if (len(after) >= 3 and words.closes(opener, after[0])
             and words.measured(after[2:])):
+        return True
+    if (gap and words.closes(opener, gap[-1])
+            and any(words.measures(w) for w in gap[:-1])):
         return True
     if cue is not None or any(w in words.months for w in before[-2:]):
         return False
+    # a range that no year cue opens holds two amounts: "entre dois mil e
+    # três mil"
+    if ((len(after) >= 2 and words.closes_amounts(opener, after[0]))
+            or (len(gap) == 1 and words.closes_amounts(opener, gap[0]))):
+        return True
     if nxt is None:
         # a range endpoint folded alone has a connector after it in the
         # utterance, and a word after the range: "vieram entre dois mil e

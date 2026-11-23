@@ -96,7 +96,8 @@ _COUNT_WORDS = CountWords(
     units=_UNITS, currencies=_voc("currency"),
     codes=locale_words("pt", "currency_code.voc"),
     qualifiers=locale_words("pt", "currency_qualifier.voc"),
-    ranges={"desde": _voc("marker_until")})
+    ranges={"desde": _voc("marker_until"), "de": _voc("marker_to")},
+    amounts={"entre": _voc("marker_and")})
 
 
 def _number_in(tok: Token, low: float, high: float) -> bool:
@@ -204,11 +205,14 @@ def _date_words(tokens: Tuple[Token, ...]
             if word == "quarto" and (prev in _DEFINITE
                                      or nxt in _QUARTER_NOUNS):
                 ordinals.add(i)
-            elif _ends_mention(tok) and tok.mention.kind is not Kind.CARDINAL:
+            elif (_ends_mention(tok) and tok.mention.kind is not Kind.CARDINAL
+                  and not (tok.mention.kind is Kind.ORDINAL
+                           and not _alone(tok))):
                 # the half or quarter of a clock hour: "às três e meia" is
                 # 3.5, "meio-dia e quarto" holds "quarto".  In a count ("uma
                 # dúzia e meia", 18) numtag reads the half as part of the
-                # number, and the mention is a cardinal.
+                # number, and the mention is a cardinal.  The last word of a
+                # compound ordinal ("décimo quarto") is the ordinal's own.
                 claimed.add(i)
         elif word == "dez":
             # the CLDR abbreviation of "dezembro", in the month slot of "N de

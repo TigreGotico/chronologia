@@ -141,15 +141,16 @@ class Token:
     mention: Optional["NumberMention"] = field(default=None, compare=False)
     # The texts of the up to three tokens before the first token of a numtag
     # mention, in its clause of the whole utterance; ``None`` on every other
-    # token.  Set by ``numlayer.attach``, so a range endpoint folded on its
-    # own still sees the word that makes the mention a year: "since two
-    # thousand and ten I have lived here".
+    # token.  After another mention it holds that mention's words, a place
+    # mark and the words between the two.  Set by ``numlayer.attach``, so a
+    # range endpoint folded on its own still sees the word that makes the
+    # mention a year: "since two thousand and ten I have lived here".
     before: Optional[Tuple[str, ...]] = field(default=None, compare=False)
-    # On the first token of a mention one word before another mention: that
-    # word, a place mark for the second mention, and the word after it, in
-    # the same clause.  Set by ``numlayer.attach``, so a unit after the
-    # second number of a range measures the first one too: "between two
-    # thousand and three thousand dollars".
+    # On the first token of a mention one or two words before another mention:
+    # the last of those words, a place mark for the second mention, and the
+    # word after it, in the same clause.  Set by ``numlayer.attach``, so a
+    # unit after the second number of a range measures the first one too:
+    # "between two thousand and three thousand dollars".
     after: Optional[Tuple[str, ...]] = field(default=None, compare=False)
 
 
@@ -521,6 +522,7 @@ class LangSpec:
     # neither joins the connectors
     at_counts: FrozenSet[str] = field(default_factory=frozenset)
     counted_noun: FrozenSet[str] = field(default_factory=frozenset)
+    upcoming: FrozenSet[str] = field(default_factory=frozenset)
     # the words that join two alarm hours that share one later meridiem, from
     # ``marker_alarm_joiner.voc``
     alarm_joiners: FrozenSet[str] = field(default_factory=frozenset)

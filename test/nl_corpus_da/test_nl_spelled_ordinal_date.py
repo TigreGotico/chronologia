@@ -1,8 +1,6 @@
 """Danish spelled-ordinal day-of-month ("femtende april" = the fifteenth of
-April).  ovos-number-parser returns False for these ordinals (the
-release-blocked path), so chronologia owns them locally (inverting
-``pronounce_ordinal_da``); the ordinal must fold to the exact day, not strand
-and leave the whole month.
+April).  The ordinal must fold to the exact day, not strand and leave the
+whole month.
 """
 from datetime import datetime
 

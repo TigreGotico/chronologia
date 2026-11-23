@@ -92,7 +92,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_id",
+  "hook": "chronologia.extract.numlayer_id:fold_id",
   "quantifiers": {
     "1": [
       "satu"

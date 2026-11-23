@@ -1,6 +1,14 @@
 # chronologia documentation
 
-Welcome. **chronologia** is a Python library that does two things most projects
+<!-- agent-hint
+covers: every documentation page in reading order, with what each gives the reader
+source: `docs/*.md`, `docs/languages/*.md`, `examples/*.py`
+generated: no
+verify: diff <(cd docs && ls *.md languages/*.md | grep -v '^index.md$' | sort) <(grep -o '^| \[[^]]*\]([^)]*\.md)' docs/index.md | sed 's/.*](\(.*\))/\1/' | sort)
+see: `README.md`, `docs/getting-started.md`, `docs/languages/index.md`
+-->
+
+**chronologia** is a Python library that does two things most projects
 need two libraries for: it *reads* a date the way a human wrote it ("the 15th of
 Ramadan 1446", "next winter", "66 million years ago"), and it *computes* across
 every calendar and system of reckoning humanity has used — offline, without
@@ -15,7 +23,7 @@ guessing, and honest about what cannot be known.
   field.
 - **Building on the library? Want the full surface.** Start with
   [design.md](design.md) — the JDN hub, the four value types, the scope
-  boundaries, and what the library refuses to do and why — then dive into any
+  boundaries, and what the library refuses to do and why — then read any
   reference guide below. The public API is grouped and importable straight from
   `chronologia` (the toolbox is listed at the end of
   [getting-started.md](getting-started.md)).
@@ -77,7 +85,73 @@ of time (a start and an end), not an instant; every span carries a one-word
 |---|---|
 | [design.md](design.md) | The developer's tour: the JDN hub, the type system, and — importantly — what the library refuses to do and why. |
 | [benchmarks.md](benchmarks.md) | The standing differential benchmark against `dateparser` and `dateutil` on the repo's own natural-language corpora. |
-| [transparency.md](transparency.md) | An honest account of how the library was built, failures included. |
+| [transparency.md](transparency.md) | The checks that decide whether the library's answers are right, and the provenance tiers of the holiday gold values. |
+
+### Language provenance pages
+| Guide | What it gives you |
+|---|---|
+| [languages/index.md](languages/index.md) | How each language page is organised, and which reader handles the numbers of each of the 61 locales. |
+| [languages/sq.md](languages/sq.md) | The sources, the weaker evidence and the refusals of the Albanian (`sq`) locale. |
+| [languages/ar.md](languages/ar.md) | The sources, the weaker evidence and the refusals of the Arabic (`ar`) locale. |
+| [languages/an.md](languages/an.md) | The sources, the weaker evidence and the refusals of the Aragonese (`an`) locale. |
+| [languages/hy.md](languages/hy.md) | The sources, the weaker evidence and the refusals of the Armenian (`hy`) locale. |
+| [languages/ast.md](languages/ast.md) | The sources, the weaker evidence and the refusals of the Asturian (`ast`) locale. |
+| [languages/az.md](languages/az.md) | The sources, the weaker evidence and the refusals of the Azerbaijani (`az`) locale. |
+| [languages/eu.md](languages/eu.md) | The sources, the weaker evidence and the refusals of the Basque (`eu`) locale. |
+| [languages/be.md](languages/be.md) | The sources, the weaker evidence and the refusals of the Belarusian (`be`) locale. |
+| [languages/bg.md](languages/bg.md) | The sources, the weaker evidence and the refusals of the Bulgarian (`bg`) locale. |
+| [languages/ca.md](languages/ca.md) | The sources, the weaker evidence and the refusals of the Catalan (`ca`) locale. |
+| [languages/hr.md](languages/hr.md) | The sources, the weaker evidence and the refusals of the Croatian (`hr`) locale. |
+| [languages/cs.md](languages/cs.md) | The sources, the weaker evidence and the refusals of the Czech (`cs`) locale. |
+| [languages/da.md](languages/da.md) | The sources, the weaker evidence and the refusals of the Danish (`da`) locale. |
+| [languages/nl.md](languages/nl.md) | The sources, the weaker evidence and the refusals of the Dutch (`nl`) locale. |
+| [languages/en.md](languages/en.md) | The sources, the weaker evidence and the refusals of the English (`en`) locale. |
+| [languages/eo.md](languages/eo.md) | The sources, the weaker evidence and the refusals of the Esperanto (`eo`) locale. |
+| [languages/et.md](languages/et.md) | The sources, the weaker evidence and the refusals of the Estonian (`et`) locale. |
+| [languages/fil.md](languages/fil.md) | The sources, the weaker evidence and the refusals of the Filipino (`fil`) locale. |
+| [languages/fi.md](languages/fi.md) | The sources, the weaker evidence and the refusals of the Finnish (`fi`) locale. |
+| [languages/fr.md](languages/fr.md) | The sources, the weaker evidence and the refusals of the French (`fr`) locale. |
+| [languages/gl.md](languages/gl.md) | The sources, the weaker evidence and the refusals of the Galician (`gl`) locale. |
+| [languages/ka.md](languages/ka.md) | The sources, the weaker evidence and the refusals of the Georgian (`ka`) locale. |
+| [languages/de.md](languages/de.md) | The sources, the weaker evidence and the refusals of the German (`de`) locale. |
+| [languages/el.md](languages/el.md) | The sources, the weaker evidence and the refusals of the Greek (`el`) locale. |
+| [languages/ha.md](languages/ha.md) | The sources, the weaker evidence and the refusals of the Hausa (`ha`) locale. |
+| [languages/he.md](languages/he.md) | The sources, the weaker evidence and the refusals of the Hebrew (`he`) locale. |
+| [languages/hi.md](languages/hi.md) | The sources, the weaker evidence and the refusals of the Hindi (`hi`) locale. |
+| [languages/hu.md](languages/hu.md) | The sources, the weaker evidence and the refusals of the Hungarian (`hu`) locale. |
+| [languages/is.md](languages/is.md) | The sources, the weaker evidence and the refusals of the Icelandic (`is`) locale. |
+| [languages/id.md](languages/id.md) | The sources, the weaker evidence and the refusals of the Indonesian (`id`) locale. |
+| [languages/ga.md](languages/ga.md) | The sources, the weaker evidence and the refusals of the Irish (`ga`) locale. |
+| [languages/it.md](languages/it.md) | The sources, the weaker evidence and the refusals of the Italian (`it`) locale. |
+| [languages/kab.md](languages/kab.md) | The sources, the weaker evidence and the refusals of the Kabyle (`kab`) locale. |
+| [languages/ko.md](languages/ko.md) | The sources, the weaker evidence and the refusals of the Korean (`ko`) locale. |
+| [languages/lv.md](languages/lv.md) | The sources, the weaker evidence and the refusals of the Latvian (`lv`) locale. |
+| [languages/lt.md](languages/lt.md) | The sources, the weaker evidence and the refusals of the Lithuanian (`lt`) locale. |
+| [languages/mk.md](languages/mk.md) | The sources, the weaker evidence and the refusals of the Macedonian (`mk`) locale. |
+| [languages/ms.md](languages/ms.md) | The sources, the weaker evidence and the refusals of the Malay (`ms`) locale. |
+| [languages/mt.md](languages/mt.md) | The sources, the weaker evidence and the refusals of the Maltese (`mt`) locale. |
+| [languages/mwl.md](languages/mwl.md) | The sources, the weaker evidence and the refusals of the Mirandese (`mwl`) locale. |
+| [languages/nb.md](languages/nb.md) | The sources, the weaker evidence and the refusals of the Norwegian Bokmål (`nb`) locale. |
+| [languages/nn.md](languages/nn.md) | The sources, the weaker evidence and the refusals of the Norwegian Nynorsk (`nn`) locale. |
+| [languages/oc.md](languages/oc.md) | The sources, the weaker evidence and the refusals of the Occitan (`oc`) locale. |
+| [languages/fa.md](languages/fa.md) | The sources, the weaker evidence and the refusals of the Persian (`fa`) locale. |
+| [languages/pl.md](languages/pl.md) | The sources, the weaker evidence and the refusals of the Polish (`pl`) locale. |
+| [languages/pt.md](languages/pt.md) | The sources, the weaker evidence and the refusals of the Portuguese (`pt`) locale. |
+| [languages/ro.md](languages/ro.md) | The sources, the weaker evidence and the refusals of the Romanian (`ro`) locale. |
+| [languages/ru.md](languages/ru.md) | The sources, the weaker evidence and the refusals of the Russian (`ru`) locale. |
+| [languages/sr.md](languages/sr.md) | The sources, the weaker evidence and the refusals of the Serbian (`sr`) locale. |
+| [languages/sk.md](languages/sk.md) | The sources, the weaker evidence and the refusals of the Slovak (`sk`) locale. |
+| [languages/sl.md](languages/sl.md) | The sources, the weaker evidence and the refusals of the Slovenian (`sl`) locale. |
+| [languages/es.md](languages/es.md) | The sources, the weaker evidence and the refusals of the Spanish (`es`) locale. |
+| [languages/sw.md](languages/sw.md) | The sources, the weaker evidence and the refusals of the Swahili (`sw`) locale. |
+| [languages/sv.md](languages/sv.md) | The sources, the weaker evidence and the refusals of the Swedish (`sv`) locale. |
+| [languages/ta.md](languages/ta.md) | The sources, the weaker evidence and the refusals of the Tamil (`ta`) locale. |
+| [languages/th.md](languages/th.md) | The sources, the weaker evidence and the refusals of the Thai (`th`) locale. |
+| [languages/tr.md](languages/tr.md) | The sources, the weaker evidence and the refusals of the Turkish (`tr`) locale. |
+| [languages/uk.md](languages/uk.md) | The sources, the weaker evidence and the refusals of the Ukrainian (`uk`) locale. |
+| [languages/vi.md](languages/vi.md) | The sources, the weaker evidence and the refusals of the Vietnamese (`vi`) locale. |
+| [languages/cy.md](languages/cy.md) | The sources, the weaker evidence and the refusals of the Welsh (`cy`) locale. |
+| [languages/fy.md](languages/fy.md) | The sources, the weaker evidence and the refusals of the West Frisian (`fy`) locale. |
 
 ## Runnable examples
 
