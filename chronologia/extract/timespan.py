@@ -660,7 +660,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                             hour=0, minute=0, second=0, microsecond=0)
         return _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
 
-    def holding(sub, start, end):
+    def holding(sub, start, end, ending):
         # the latest reading of a yearly endpoint before ``start``, when it
         # makes a range that holds the anchor and does not end earlier in the
         # month it starts in
@@ -673,7 +673,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             got = _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
             if got is not None and got[0].start < start:
                 begin = got[0].start.replace(tzinfo=None)
-                stop = end.replace(tzinfo=None)
+                stop = ending(got[0].start, end).replace(tzinfo=None)
                 last = stop - timedelta(days=1)
                 if (begin <= now < stop
                         and (last.month != begin.month
@@ -1617,14 +1617,31 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             pulled = earlier[0].start
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
+    # a right end with no year of its own is its first occurrence on or after
+    # the start: a left end that kept the anchor's year must not be paired with
+    # a right end that rolled to the next year
+    def nearer_end(start, end):
+        if (following is None or right[2] != "dated" or right[3]
+                or shared_right or right_lent
+                or (monthly is not None and monthly(right_tok) is not None)):
+            return end
+        again = following(right_tok, start)
+        if again is not None and again[2] == "dated":
+            same_date = (again[0].start.month, again[0].start.day) \
+                == (right_span.start.month, right_span.start.day)
+            nearer = _align_awareness(left[0], again[0])[1].end
+            if same_date and start < nearer < end:
+                return nearer
+        return end
+
     # both ends flung to the same year, with the start past the end ("from 1
     # december to 10 january" said on 20 december): the range is read from the
-    # start's previous occurrence when that range is short and holds the anchor
+    # start's previous occurrence when that range holds the anchor
     if (end <= start and holding is not None and not left[3] and not right[3]
             and left[2] == "dated" and right[2] == "dated"
             and not shared_left and not left_lent and not right_lent
             and not _definite_endpoint(left_tok, spec)):
-        earlier_start = holding(left_tok, start, end)
+        earlier_start = holding(left_tok, start, end, nearer_end)
         if earlier_start is not None:
             start = earlier_start
     # a year lent across the range (one endpoint named the pair's single year)
@@ -1652,19 +1669,8 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         # civil reversed range ("june 12 to june 5") has no deep-time endpoint
         # and is left to fail below.
         start, end = right_span.start, left_span.end
-    # a right end with no year of its own is its first occurrence on or after
-    # the start: a left end that kept the anchor's year must not be paired with
-    # a right end that rolled to the next year
-    if (end > start and following is not None and right[2] == "dated"
-            and not right[3] and not shared_right and not right_lent
-            and (monthly is None or monthly(right_tok) is None)):
-        again = following(right_tok, start)
-        if again is not None and again[2] == "dated":
-            same_date = (again[0].start.month, again[0].start.day) \
-                == (right_span.start.month, right_span.start.day)
-            nearer = _align_awareness(left[0], again[0])[1].end
-            if same_date and start < nearer < end:
-                end = nearer
+    if end > start:
+        end = nearer_end(start, end)
     if end <= start:
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()

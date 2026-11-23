@@ -329,3 +329,35 @@ def test_a_reversed_range_said_before_its_start_day_reads_next_year():
 def test_a_reversed_range_said_after_its_start_day_is_refused(text):
     r = extract_timespan(text, "en", datetime(2026, 6, 20, 9, 0))
     assert r is None or r.remainder != ""
+
+
+# -- a 29 February start whose previous reading does not hold the anchor ------
+
+@pytest.mark.parametrize("anchor", [datetime(2026, 11, 22, 9, 0),
+                                    datetime(2027, 3, 1, 9, 0)])
+@pytest.mark.parametrize("lang,text", [
+    ("en", "from 29 february to 3 march"),
+    ("en", "29 february until 3 march"),
+    ("en", "between 29 february and 3 march"),
+    ("en", "from the 29th day of february to 3 march"),
+    ("pt", "de 29 de fevereiro a 3 de março"),
+    ("es", "del 29 de febrero al 3 de marzo"),
+])
+def test_leap_day_range_in_a_common_year_is_refused(lang, text, anchor):
+    r = extract_timespan(text, lang, anchor)
+    assert r is None or r.remainder != ""
+
+
+@pytest.mark.parametrize("lang,text", [
+    ("en", "from 29 february to 3 march"),
+    ("en", "from the 29th day of february to 3 march"),
+    ("pt", "de 29 de fevereiro a 3 de março"),
+    ("es", "del 29 de febrero al 3 de marzo"),
+])
+def test_leap_day_range_said_in_the_leap_year_holds_the_anchor(lang, text):
+    r = extract_timespan(text, lang, datetime(2028, 3, 1, 9, 0))
+    assert r is not None, f"{text!r} ({lang}) did not parse"
+    assert r.remainder == ""
+    s, e = r.span.start, r.span.end
+    assert (s.year, s.month, s.day) == (2028, 2, 29)
+    assert (e.year, e.month, e.day) == (2028, 3, 4)
