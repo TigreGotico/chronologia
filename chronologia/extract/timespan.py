@@ -21,6 +21,7 @@ import os
 import re
 import threading
 import unicodedata
+from contextvars import ContextVar
 from datetime import MAXYEAR, MINYEAR, datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
@@ -2764,7 +2765,7 @@ def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
     return False
 
 
-_veto_reentry = threading.local()
+_veto_active: ContextVar[bool] = ContextVar("veto_active", default=False)
 
 
 _CLOCK_LITERAL = re.compile(r"\d{1,2}:\d{2}(:\d{2})?")
@@ -2821,7 +2822,7 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     resolves on its own and does not veto.  Shared by _resolve_span (the
     single-winner path) and extract_candidates so the two public APIs never
     disagree on the top answer.
-    A thread-local re-entrancy guard bounds the self-similar blow-up: both
+    A context-local re-entrancy guard (``_veto_active``) bounds the self-similar blow-up: both
     trigger shapes re-parse a stranded fragment through the public
     ``extract_timespan`` ("does this resolve to a real date?"), which re-enters
     this veto; a self-similar input ("5th of june 5th of june ...") would
@@ -2829,13 +2830,13 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     whether it RESOLVES, not whether it is itself impossible, so the veto is
     skipped while already inside it (one level is enough).
     """
-    if getattr(_veto_reentry, "active", False):
+    if _veto_active.get():
         return False
-    _veto_reentry.active = True
+    token = _veto_active.set(True)
     try:
         return _impossible_date_veto_inner(tokens, consumed, text, engine, anchor)
     finally:
-        _veto_reentry.active = False
+        _veto_active.reset(token)
 
 
 def _ordish_scope_word(text, spec):
@@ -4236,7 +4237,7 @@ def _roll_bare_weekday_time(res, rep, anchor):
                                        res.value.basis))
 
 
-_reading = threading.local()
+_spoken_hours: ContextVar[bool] = ContextVar("spoken_hours", default=False)
 
 
 def reads_spoken_hours(fn):
@@ -4247,12 +4248,11 @@ def reads_spoken_hours(fn):
     """
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
-        outer = getattr(_reading, "spoken", False)
-        _reading.spoken = True
+        token = _spoken_hours.set(True)
         try:
             return fn(*args, **kwargs)
         finally:
-            _reading.spoken = outer
+            _spoken_hours.reset(token)
     return wrapper
 
 
@@ -4283,7 +4283,7 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     adverb "late" (es, pt, gl "tarde") decides nothing when another word of
     its clause comes before it: "llego tarde a las 6:30" is late.
     """
-    if (getattr(_reading, "spoken", False)
+    if (_spoken_hours.get()
             or anchor is None or rep is None
             or any(m.construction == "daypart_ref" or "MERIDIEM" in m.slots
                    for m in matches)
