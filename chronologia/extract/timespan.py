@@ -21,6 +21,7 @@ import os
 import re
 import threading
 import unicodedata
+from contextvars import ContextVar
 from datetime import MAXYEAR, MINYEAR, datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
@@ -34,6 +35,7 @@ from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
+from chronologia.extract.impossible import raising, reports_impossible
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
@@ -147,7 +149,7 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     again.  Raises :class:`NotImplementedError` for languages that have no
     engine locale data (``chronologia/locale/<code>/lang.json``).
     """
-    region = lang.lower()
+    region = lang.strip().lower().replace("_", "-")
     code = region.split("-")[0]
     # English is the one base language whose NUMERIC day/month order splits by
     # region -- the US reads mdy ("03/04" = March 4), the rest of the anglosphere
@@ -1010,6 +1012,18 @@ def _align_awareness(left_span, right_span):
     return attach(left_span), attach(right_span)
 
 
+def _in_zone_of(value, other):
+    """``value`` as a wall clock in the zone ``other`` names, when ``value``
+    is naive and ``other`` is aware; otherwise ``value`` unchanged.
+
+    The anchor ("now") is a naive wall clock, so a zone an endpoint names
+    ("until 1pm utc+2") governs it the way :func:`_align_awareness` lets a zone
+    govern the other end of a range."""
+    if value.tzinfo is None and other.tzinfo is not None:
+        return value.replace(tzinfo=other.tzinfo)
+    return value
+
+
 def _roll_after(span, start, step):
     """``span`` advanced by whole ``step``s until it ends after ``start``.
 
@@ -1242,19 +1256,20 @@ def _bare_numeral(text, sub, engine, anchor):
         return None
     if len(sub) == 1:
         return nums[0]
-    # a day-label noun ("dia"/"día") plus nothing else besides the numeral is
-    # still a bare day, even though it resolves on its own to a day of the
-    # ANCHOR month -- "do dia 2 ao dia 5 de setembro" would otherwise bind the
-    # left endpoint to the 2nd of the anchor's month instead of September,
-    # stranding it when the composed range came out reversed.  The label noun
-    # names no month of its own (see ``marker_day_label.voc``), so a slice that
-    # is nothing but the label plus the day number still has to look to its
+    # a slice holding one day-label word ("dia", "día"), the day number and
+    # nothing else but articles ("o dia 2", "el día 3") is a bare day, even
+    # though it resolves on its own to a day of the ANCHOR month -- "do dia 2
+    # ao dia 5 de setembro" would otherwise bind the left endpoint to the 2nd
+    # of the anchor's month instead of September.  The label names no month of
+    # its own (see ``marker_day_label.voc``), so the slice looks to its
     # partner exactly as the label-less "5" in "del 5 al 12 de junio" does.
     # Checked *before* the duration-unit veto below: the label heads the
     # numeral ("dia 2"), the opposite word order from a duration ("2 dias"),
     # so the two shapes never collide.
     labels = set(engine.spec.connectors.get("day_label", ()))
-    if labels and all(t is nums[0] or t.text in labels for t in sub):
+    glue = labels | set(engine.spec.connectors.get("article", ()))
+    if labels and any(t.text in labels for t in sub) \
+            and all(t is nums[0] or t.text in glue for t in sub):
         return nums[0]
     # a slice carrying a unit is a duration, not a bare day -- "za 3 dnya do 5
     # aprelya" ("3 days before April 5") is an anchored offset whose "za 3 dnya"
@@ -1356,6 +1371,23 @@ def _lend_year(bare, donor):
     return tuple(bare) + (lent,)
 
 
+def _labelled_day_keeps_own(sub, donor, donor_read, spec):
+    """True when a day-labelled slice must not borrow from its partner.
+
+    "dia 10" names a day of a month, never an hour or a count of days, so a
+    partner that is a clock ("às 18h") or counts a unit ("daqui a 5 dias")
+    has nothing to lend it.  ``donor_read`` is the partner's own reading.
+    """
+    labels = spec.connectors.get("day_label", ())
+    if not any(t.text in labels for t in sub):
+        return False
+    units = set(spec.units) | set(spec.singular_units)
+    counts_unit = any(t.is_number and t.value is not None and t.value < 100
+                      and nxt.text in units
+                      for t, nxt in zip(donor, donor[1:]))
+    return counts_unit or (donor_read is not None and donor_read[2] == "clock")
+
+
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
                    daily=None, since=False):
@@ -1395,12 +1427,14 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # :func:`_shared_context` for the conditions that keep it narrow.
     bare_left, bare_right = bare_of(left_tok), bare_of(right_tok)
     shared_left = shared_right = False
-    if bare_left is not None and bare_right is None:
+    if bare_left is not None and bare_right is None \
+            and not _labelled_day_keeps_own(left_tok, right_tok, right, spec):
         shared = _shared_context(bare_left, right_tok)
         if shared is not None:
             left = borrowed(shared) or left
             shared_left = True
-    elif bare_right is not None and bare_left is None:
+    elif bare_right is not None and bare_left is None \
+            and not _labelled_day_keeps_own(right_tok, left_tok, left, spec):
         shared = _shared_context(bare_right, left_tok)
         if shared is not None:
             right = borrowed(shared) or right
@@ -1461,7 +1495,7 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     if right_dated and left_bare_clock:
         rs, ls = right_span.start, left_span.start
         start = AstroDate(rs.year, rs.month, rs.day, ls.hour, ls.minute,
-                          ls.second, ls.microsecond)
+                          ls.second, ls.microsecond, ls.tzinfo)
     else:
         start = left_span.start
     # roll a cyclic right endpoint forward into the same cycle as the start; a
@@ -1758,7 +1792,13 @@ def _fold_date_article(folded, consumed, spec, span):
     ``marker_date_lead_dative.voc`` makes the this-phrase take the lead word
     again: German "an" governs the dative in a time phrase, so "an diesem
     Freitag" folds while the bare "nächsten Freitag" in "ruf mich an
-    nächsten Freitag" leaves "an" to the verb.
+    nächsten Freitag" leaves "an" to the verb.  The determiner folds with
+    its lead word before a calendar date too ("an diesem 31. Januar").  In a
+    locale with such determiners, a lead word of
+    ``marker_date_lead_no_deixis.voc`` opens a bare weekday, daypart or
+    period only through one: the time phrase is "am Montag" or "an diesem
+    Montag", so the "an" of "ruf mich an Montag" and "denk an Montag"
+    belongs to the verb.
     """
     articles = (set(spec.connectors.get("date_article", ()))
                 | set(spec.connectors.get("date_lead", ())))
@@ -1776,6 +1816,12 @@ def _fold_date_article(folded, consumed, spec, span):
     is_clock = (start is not None and end is not None
                 and end - start <= timedelta(minutes=1))
     widened = set(consumed)
+    for i, t in enumerate(folded[1:-1], start=1):
+        if (t.text in dative and t.index not in widened
+                and folded[i + 1].index in widened
+                and folded[i + 1].text not in deictic
+                and folded[i - 1].text in articles):
+            widened.add(t.index)
     for i, t in enumerate(folded[:-1]):
         nxt = folded[i + 1]
         if (t.index in widened or nxt.index not in widened
@@ -1785,8 +1831,9 @@ def _fold_date_article(folded, consumed, spec, span):
                           and nxt.text not in dative
                           and i + 2 < len(folded)
                           and folded[i + 2].text in periods)
+        bare_period = dative and t.text in no_deixis and nxt.text in periods
         opens_day = (t.text in articles and nxt.text not in deictic
-                     and not deictic_phrase)
+                     and not deictic_phrase and not bare_period)
         opens_clock = is_clock and t.text in clock_leads and (
             nxt.is_number or nxt.text in clock_words
             or any(c.isdigit() for c in nxt.text))
@@ -1892,6 +1939,7 @@ def _since_start(ep, sub, engine, anchor, now, text):
     if ep is None:
         return None
     start = ep[0].start
+    now = _in_zone_of(now, start)
     if start > now:
         monthly = _monthly_endpoint(text, sub, engine)
         if monthly is not None:
@@ -2089,6 +2137,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     if right_ep is None:
         return None
     end = right_ep[0].end
+    start, end = _in_zone_of(start, end), _in_zone_of(end, start)
     if start >= end:
         return None
     before = render_remainder(text, list(tokens[:lead]))
@@ -2130,19 +2179,27 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                 or _bare_weekday_endpoint(sub, engine, anchor))
 
     def until_span(ep, sub):
-        return (DateSpan(now, ep[0].end), ep[1]) \
-            if ep is not None and ep[0].end > now else None
+        if ep is None:
+            return None
+        here = _in_zone_of(now, ep[0].end)
+        return (DateSpan(here, ep[0].end), ep[1]) if ep[0].end > here else None
 
     def since_span(ep, sub):
         since = _since_start(ep, sub, engine, anchor, now, text)
-        return (DateSpan(since[0], now), since[1]) \
-            if since is not None and since[0] < now else None
+        if since is None:
+            return None
+        here = _in_zone_of(now, since[0])
+        return (DateSpan(since[0], here), since[1]) if since[0] < here else None
 
     def lead(surf, build):
         # the marker leads; its tokens are dropped, the endpoint keeps its own
         # leftover (the framing word is never part of the remainder)
         k = _match_conn_at(tokens, 0, surf)
         if not k:
+            return None
+        if (k < n and tokens[k].text
+                in spec.connectors.get("until_amount", ())):
+            # "hasta cuántos grados": the limit is an amount, not a time
             return None
         ep = endpoint(tokens[k:])
         return build(ep, tokens[k:]) if ep is not None else None
@@ -2308,10 +2365,23 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
             continue
         if role == "after":
             return "veto"
-        if span.end > now:
-            return DateSpan(now, span.end), set(consumed) | set(range(0, j))
+        here = _in_zone_of(now, span.end)
+        if span.end > here:
+            return DateSpan(here, span.end), set(consumed) | set(range(0, j))
         return "veto"
     return None
+
+
+def _within(span, outer):
+    """``span`` lies inside ``outer``, the two read on one clock."""
+    inner, outer = _align_awareness(span, outer)
+    return inner.start >= outer.start and inner.end <= outer.end
+
+
+def _same_span(a, b):
+    """``a`` and ``b`` are one span, the two read on one clock."""
+    a, b = _align_awareness(a, b)
+    return a.start == b.start and a.end == b.end
 
 
 def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
@@ -2391,6 +2461,7 @@ def _apply_week_of(tokens, resolved, spec):
     return out
 
 
+@reports_impossible
 def extract_timespan(
         text: str,
         lang: str = "en",
@@ -2441,6 +2512,12 @@ def extract_timespan(
     dialect (``pt-BR`` short, ``pt-PT`` long) while loading the same base
     locale, a bare code its naming country's norm.
 
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
+
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns
     ``None``.
@@ -2460,6 +2537,9 @@ def extract_timespan(
     res = _resolve_span(text, raw, engine, anchor, enable, jurisdiction,
                         scale_mode)
     if res is None:
+        if raising():
+            from .nseries import _recur_ctx, _recur_nth_weekday
+            _recur_nth_weekday(_recur_ctx(text, lang, anchor))
         return None
     out = DateSpanResult(*res)
     if out.remainder and _is_whole_duration(text, lang):
@@ -2541,13 +2621,22 @@ def _sentence_boundary_between(text, start, end) -> bool:
 
 
 # Locales that write the hour-letter clock ("20h", "21h30"); see the folds in
-# numfold_romance, numfold_agglutinative and numfold_germanic.
+# numfold_romance, numlayer_el and numlayer_sv.
 _HOUR_LETTER_LOCALES = frozenset({
     "ast", "ca", "el", "es", "fr", "gl", "it", "oc", "pt", "ro", "sv"})
 _HOUR_LITERAL = re.compile(r"\d{1,2}:\d{2}")
 
 
-def _bare_hour_in_sentence(tokens, consumed, spec):
+def _folded_clock(token, text):
+    """Whether a clock token was built by a fold ("2h" read as 2:00) and not
+    typed as the digits it shows."""
+    return (token.char_start is None or text is None
+            or unicodedata.normalize(
+                "NFKC", text[token.char_start:token.char_end]
+            ).lower() != token.raw)
+
+
+def _bare_hour_in_sentence(tokens, consumed, spec, text=None):
     """Whether the whole reading is a bare hour that stands inside a
     sentence with no clock marker ("un film de 2h", "il reste 3 heures").
 
@@ -2587,12 +2676,12 @@ def _bare_hour_in_sentence(tokens, consumed, spec):
             and read[-1].text in spec.clock_fractions)
     if tail:
         read = read[:-2]
-    literal = (len(read) == 1 and read[0].char_start is None
+    literal = (len(read) == 1 and _folded_clock(read[0], text)
                and _HOUR_LITERAL.fullmatch(read[0].text))
     counted = ((len(read) == 2 and read[0].is_number
                 and read[1].text in oclock)
                or (tail and len(read) == 1 and read[0].is_number
-                   and read[0].char_start is None))
+                   and _folded_clock(read[0], text)))
     if not (literal or counted):
         return False
     markers = (spec.connectors.get("hour_statement", frozenset())
@@ -2676,7 +2765,7 @@ def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
     return False
 
 
-_veto_reentry = threading.local()
+_veto_active: ContextVar[bool] = ContextVar("veto_active", default=False)
 
 
 _CLOCK_LITERAL = re.compile(r"\d{1,2}:\d{2}(:\d{2})?")
@@ -2733,7 +2822,7 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     resolves on its own and does not veto.  Shared by _resolve_span (the
     single-winner path) and extract_candidates so the two public APIs never
     disagree on the top answer.
-    A thread-local re-entrancy guard bounds the self-similar blow-up: both
+    A context-local re-entrancy guard (``_veto_active``) bounds the self-similar blow-up: both
     trigger shapes re-parse a stranded fragment through the public
     ``extract_timespan`` ("does this resolve to a real date?"), which re-enters
     this veto; a self-similar input ("5th of june 5th of june ...") would
@@ -2741,13 +2830,13 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     whether it RESOLVES, not whether it is itself impossible, so the veto is
     skipped while already inside it (one level is enough).
     """
-    if getattr(_veto_reentry, "active", False):
+    if _veto_active.get():
         return False
-    _veto_reentry.active = True
+    token = _veto_active.set(True)
     try:
         return _impossible_date_veto_inner(tokens, consumed, text, engine, anchor)
     finally:
-        _veto_reentry.active = False
+        _veto_active.reset(token)
 
 
 def _ordish_scope_word(text, spec):
@@ -3334,6 +3423,22 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
     return tokens[b - 1].text in dir_markers
 
 
+def _participle_season_veto(tokens, match, spec) -> bool:
+    """True for a match that opens on a season word directly behind a form of
+    the auxiliary listed in ``marker_participle_aux.voc``.
+
+    French "été" is the season and the past participle of "être": "il a été
+    malade le 15 mai" says nothing about summer.  The participle follows a form
+    of "avoir", and the season never does, so the reading is dropped there and
+    the date beside it stays.  A language with no such file is untouched.
+    """
+    start = match.span[0]
+    if start == 0 or tokens[start].text not in spec.seasons:
+        return False
+    return tokens[start - 1].text in spec.connectors.get("participle_aux",
+                                                         frozenset())
+
+
 def _num_preamble_named_day_idiom_veto(tokens, match, spec) -> bool:
     """True for a ``named_day_after``/``named_day_before`` match immediately
     preceded by a NUMBER token ("two days after tomorrow", "3 days before
@@ -3414,6 +3519,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _stray_year_zero_veto(tokens, match, spec)
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
+            or _participle_season_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
@@ -3609,7 +3715,7 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     # (a whole-prefix scan would falsely veto a trigger in another clause).
     if _exclusion_governing_veto(tokens, consumed, text, engine.spec):
         return None
-    if _bare_hour_in_sentence(tokens, consumed, engine.spec):
+    if _bare_hour_in_sentence(tokens, consumed, engine.spec, text):
         return None
     # Impossible-date veto (residue-veto design, #244): a stranded
     # "<number> of ..." fragment in the remainder -- a day-of-month qualifier
@@ -3800,8 +3906,13 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
 
     def _adjacent(a, b):
         (lo, hi) = sorted((a.span, b.span))
-        return all(i in _covered or tokens[i].text in _glue
-                   for i in range(lo[1], hi[0]))
+        gap = [i for i in range(lo[1], hi[0])
+               if i not in _covered and tokens[i].text not in _glue]
+        # "tomorrow's meeting at 9": the noun a possessive day modifies sits
+        # between the day and its clock.
+        if gap == [lo[1]] and tokens[lo[1] - 1].text.endswith(_POSSESSIVE):
+            return True
+        return not gap
 
     _articles = frozenset(spec.connectors.get("article", ()))
 
@@ -3996,6 +4107,9 @@ def _fold_apposed_weekday(resolved, spec, tokens, text):
             set(range(*wd_match.span)))
 
 
+#: The endings of a possessive noun.
+_POSSESSIVE = ("'s", "\u2019s")
+
 #: Connector keys that join two distinct references.
 _SEPARATOR_KEYS = frozenset({"and", "or", "to", "from", "between", "until",
                              "since"})
@@ -4124,7 +4238,7 @@ def _roll_bare_weekday_time(res, rep, anchor):
                                        res.value.basis))
 
 
-_reading = threading.local()
+_spoken_hours: ContextVar[bool] = ContextVar("spoken_hours", default=False)
 
 
 def reads_spoken_hours(fn):
@@ -4135,12 +4249,11 @@ def reads_spoken_hours(fn):
     """
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
-        outer = getattr(_reading, "spoken", False)
-        _reading.spoken = True
+        token = _spoken_hours.set(True)
         try:
             return fn(*args, **kwargs)
         finally:
-            _reading.spoken = outer
+            _spoken_hours.reset(token)
     return wrapper
 
 
@@ -4161,14 +4274,15 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     leading zero reads the same way; "03:30", "12:30", "15:30" and an hour
     written with the letter "h", a dotted clock and a clock folded from spelled
     numbers are as written.  The word "today" names no
-    part of the day, so "at 3:30 today" takes its reading from the same day;
+    part of the day, so "at 3:30 today" and "today at 5" take their reading
+    from the same day (the written hour when both readings have passed);
     any other day word keeps the written hour.  24-hour hours are untouched,
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
     unjoined: a pm word pins the pm reading, an am or night word keeps the
     written hour.
     """
-    if (getattr(_reading, "spoken", False)
+    if (_spoken_hours.get()
             or anchor is None or rep is None
             or any(m.construction == "daypart_ref" or "MERIDIEM" in m.slots
                    for m in matches)
@@ -4189,7 +4303,7 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         return res
     hour = clock_match.slots.get("HOUR")
     clock = clock_match.slots.get("CLOCK")
-    if hour is not None and not today:
+    if hour is not None:
         if (not hour.is_number or not 1 <= hour.value <= 12
                 or re.search(r"\d\s*[h:]", (hour.raw or "").lower())
                 or (hour.index + 1 < len(tokens)
@@ -4245,8 +4359,8 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     if not later:
         return res
     moment = AstroDate.from_datetime(min(later))
-    return replace(res, value=DateSpan(moment, moment + timedelta(minutes=1),
-                                       res.value.basis))
+    return replace(res, value=DateSpan(moment, moment + (
+        res.value.end - res.value.start), res.value.basis))
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
@@ -4392,6 +4506,7 @@ class Candidate:
     construction: str
 
 
+@reports_impossible
 def extract_candidates(
         text: str,
         lang: str = "en",
@@ -4410,6 +4525,11 @@ def extract_candidates(
     broken by earlier text position then longer span).  The list is empty when
     nothing temporal was found.  ``anchor`` is the "now" relative phrases
     resolve against (default: the wall clock).
+
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` in place of an empty list; a call
+    that finds a candidate returns its usual list.
 
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns an
@@ -4559,14 +4679,13 @@ def extract_candidates(
         # unrelated construction elsewhere in the text (a trailing ISO literal
         # the range does not even consume must not launder its score in).
         within = [c for _, c in scored
-                  if c.span.start >= rspan.start and c.span.end <= rspan.end]
+                  if _within(c.span, rspan)]
         rconf = max([c.confidence for c in within], default=0.9)
         # drop a single candidate that resolved to the SAME span, so the
         # identical span is not shown twice ("since 2019" and its bare year
         # reading); endpoints strictly inside the range stay as runner-ups.
         scored = [(rk, c) for rk, c in scored
-                  if not (c.span.start == rspan.start
-                          and c.span.end == rspan.end)]
+                  if not _same_span(c.span, rspan)]
         # rank the range STRICTLY first (-1): it is extract_timespan's own
         # answer, and must beat a meridiem-blind subtractive clock_time reading
         # of the same phrase ("5 to 9 am") that would otherwise tie on

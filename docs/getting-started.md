@@ -1,5 +1,13 @@
 # Getting started
 
+<!-- agent-hint
+covers: the JDN number line, the AstroDate point and the DateSpan interval, with a first extraction
+source: `chronologia/astrodate.py`, `chronologia/__init__.py:__all__`
+generated: no
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/getting-started.md
+see: `docs/use-cases.md`, `docs/design.md`
+-->
+
 This page teaches you the three ideas the whole library is built from. You
 do not need to know anything about calendars, and you barely need to know
 Python. If you can run one line of code and read a printed answer, you can
@@ -12,9 +20,8 @@ pip install chronologia
 ```
 
 That is everything. You need Python 3.11 or newer. The reckoning core is pure
-standard library; the natural-language layer adds three small pure-Python
-helpers — **numtag** (reads the numbers of Catalan, Danish, Dutch, English, French, Galician, German, Italian, Portuguese, Spanish and Swedish),
-**ovos-number-parser** (spelled numbers → digits in the other languages) and
+standard library; the natural-language layer adds two small pure-Python
+helpers — **numtag** (reads the numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Malay, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian) and
 **ovos-spec-tools** (loads each language's vocabulary). Nothing here ever talks to the internet.
 
 ## Your first extraction (60 seconds)
@@ -56,7 +63,7 @@ print(span.width)                                                  # 30 days, 0:
 ```
 
 **Read a date in another language.** Pass the language code; the vocabulary
-does the rest. chronologia speaks 58 languages, though not all to the same
+does the rest. chronologia speaks 61 languages, though not all to the same
 depth — the README's coverage bands say which have had a full per-language
 review and which are still waiting for a native reader. A language also
 declines constructions its sources do not attest, and that refusal is a
@@ -111,7 +118,8 @@ back an ordinary date object — no integers to thread.
 ```python
 from chronologia import CALENDARS
 
-print(CALENDARS["hebrew"].date(5786, 7, 1))   # 2025-09-23T00:00:00  (Rosh Hashanah)
+# Rosh Hashanah
+print(CALENDARS["hebrew"].date(5786, 7, 1))  # 2025-09-23T00:00:00
 ```
 
 That is enough to be useful today. The rest of this page explains the three
@@ -153,8 +161,8 @@ Let's do it. When does the Hebrew year 5786 begin?
 from chronologia import CALENDARS
 
 hebrew = CALENDARS["hebrew"]
-print(hebrew.date(5786, 7, 1))   # 1 Tishri, the new year
-# 2025-09-23T00:00:00
+# 1 Tishri, the new year
+print(hebrew.date(5786, 7, 1))  # 2025-09-23T00:00:00
 ```
 
 `date` pushed the Hebrew date down to its spot on the number line and asked
@@ -169,8 +177,7 @@ an integer, so you can look at one directly:
 ```python
 from chronologia import gregorian_to_jdn
 
-print(gregorian_to_jdn(2000, 1, 1))
-# 2451545
+print(gregorian_to_jdn(2000, 1, 1))  # 2451545
 ```
 
 The first day of the year 2000 is day number 2,451,545 on the line. Nothing
@@ -193,10 +200,8 @@ from chronologia import AstroDate
 from datetime import datetime
 
 caesar = AstroDate(-43, 3, 15)      # a day in 44 BC (we explain the -43 next)
-print(caesar.isoformat())
-# -000043-03-15T00:00:00
-print(caesar < datetime(2020, 1, 1))
-# True
+print(caesar.isoformat())  # -000043-03-15T00:00:00
+print(caesar < datetime(2020, 1, 1))  # True
 ```
 
 ### Why 44 BC is written as year −43
@@ -220,8 +225,7 @@ numbering*, and it is the reason the arithmetic in this library never needs a
 dates before AD 1. `AstroDate` will even convert back for you:
 
 ```python
-print(AstroDate(-43, 1, 1).bc_year)
-# 44
+print(AstroDate(-43, 1, 1).bc_year)  # 44
 ```
 
 ## DateSpan: a stretch of time
@@ -240,10 +244,8 @@ precise the answer is.
 from chronologia import DateSpan, AstroDate
 
 june = DateSpan(AstroDate(2027, 6, 1), AstroDate(2027, 7, 1))
-print(june.width)
-# 30 days, 0:00:00
-print(june.resolution.name)
-# MONTH
+print(june.width)  # 30 days, 0:00:00
+print(june.resolution.name)  # MONTH
 ```
 
 A single day is a day wide. A month is a month wide. "The Jurassic" is
@@ -272,8 +274,7 @@ link:
 ```python
 from chronologia import combine_basis
 
-print(combine_basis("exact", "tabulated"))
-# tabulated
+print(combine_basis("exact", "tabulated"))  # tabulated
 ```
 
 ## Where to go next
@@ -361,3 +362,6 @@ from chronologia import (
 # The granularity vocabulary a DateSpan reports
 from chronologia import DateTimeResolution
 ```
+
+---
+[← Who is this for?](use-cases.md) · [Home](index.md) · [Reading dates written by humans →](extraction.md)

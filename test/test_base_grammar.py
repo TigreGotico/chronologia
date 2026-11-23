@@ -340,6 +340,7 @@ def test_scalar_marker_position_unchanged_for_weekday_and_period():
                                               "rel_period": "post",
                                               "weekday_of_week": "post",
                                               "season_ref": "post",
+                                              "scoped_ordinal": "post",
                                               "calendar_date": "post"}}}, {})
     assert scalar == mapping             # scalar == the equivalent full mapping
 

@@ -3,13 +3,11 @@
 
 French spells its 11th-19th/21st-29th/31st ordinals as compounds built on
 "ième" ("onzième" = eleventh, "vingt et unième" = twenty-first) that the
-shared ``ovos_number_parser`` French back-end does not recognise as ordinals
-at all: it reads the "ième" suffix as a *fraction* marker instead ("onzième"
--> 1/11 = 0.0909...), so every one of these compounds was absent from the
-number fold's word set entirely.  A sentence built on one never tokenized an
-ordinal at all: "le treizième mois de 2026" silently degraded to a bare
-year_ref match on "2026" (span = the whole year, remainder = "le treizième
-mois de" stranded) instead of refusing outright the way the digit ordinal
+number fold must read as ordinals, not as fractions ("onzième" is not
+1/11).  A sentence built on one must tokenize an ordinal: "le treizième mois
+de 2026" must not degrade to a bare year_ref match on "2026" (span = the
+whole year, remainder = "le treizième mois de" stranded); it must refuse
+outright the way the digit ordinal
 ("le 13e mois de 2026") and the fused-compound Spanish/Italian ordinals
 already do (R87/R91).
 
