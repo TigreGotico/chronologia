@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared helpers for the ms natural-language corpus.
 
-The contract: extract_timespan(text, 'ms', anchor). Anchor is a Wednesday noon (2026-07-15). Malay is isolating; lepas is the past (ago) marker, lagi the future one, depan the 'next' marker; month names (Mac, Jun, Julai, Ogos, Disember) and second-word 'minit' distinguish it from Indonesian. Spelled numbers fold via ovos-number-parser (numbers_id extract_number_ms).
+The contract: extract_timespan(text, 'ms', anchor). Anchor is a Wednesday noon (2026-07-15). Malay is isolating; lepas is the past (ago) marker, lagi the future one, depan the 'next' marker; month names (Mac, Jun, Julai, Ogos, Disember) and second-word 'minit' distinguish it from Indonesian. Spelled numbers read through numtag.
 """
 from datetime import datetime, timedelta  # noqa: F401
 

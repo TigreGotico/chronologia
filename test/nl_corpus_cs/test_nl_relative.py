@@ -101,13 +101,15 @@ def test_spelled_offset(phrase, delta):
     assert start(phrase) == ad(ANCHOR + delta)
 
 
-# NOTE: oblique/declined numerals ("pěti", "dvěma" -- instrumental of 5/2,
-# as Czech grammar demands after "před") are not folded: ovos_number_parser
-# only reads the nominative surface.  Grammatical spelled-past offsets are an
-# engine-side (number-model) gap; digit forms cover the past direction above.
-def test_oblique_numeral_spelled_past_is_a_gap():
-    # documents the boundary rather than asserting a wrong span
-    assert parse("před pěti lety") is None
+# The declined numerals after "před" ("pěti", "dvěma" -- instrumental of 5
+# and 2, as Czech grammar demands) read like their digits.
+@pytest.mark.parametrize("phrase,delta", [
+    ("před pěti lety", relativedelta(years=5)),
+    ("před dvěma dny", timedelta(days=2)),
+    ("před třemi týdny", timedelta(weeks=3)),
+])
+def test_oblique_numeral_spelled_past(phrase, delta):
+    assert start(phrase) == ad(ANCHOR - delta)
 
 
 # -- named days ----------------------------------------------------------

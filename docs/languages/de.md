@@ -1,5 +1,15 @@
 # German (`de`)
 
+<!-- agent-hint
+covers: where each construction of the German locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/de/lang.json`, `chronologia/locale/de/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/de.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/de.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the German (`de`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Two decisions shape this locale, and both are about the clock. German names
 the half hour by the hour it is heading toward, so `halb acht` is 07:30 and
 never 08:30; `bare_half_to` in `lang.json` is what turns that on. And in the
@@ -116,9 +126,6 @@ doubt either, but the page cannot point at what was consulted.
 
 ## What refuses
 
-**Seconds.** `vor 30 Sekunden` and `in 30 Sekunden` return nothing. No second
-unit ships in the locale, even though the English locale has one.
-
 **A dotted pair with no year.** `15. 6.` returns nothing, and so does
 `am 15. 6. kommen wir`. Those are two ordinals; with no four-digit year to
 anchor the pattern, no date may be fabricated from them.
@@ -134,16 +141,6 @@ year.
 
 **`halb` on its own.** With no hour and no landmark after it, `halb` is not a
 time.
-
-**A season in the genitive.** `während des Sommers` returns nothing, because
-the season vocabulary ships only the bare nominative — `Sommer`, `Frühling`,
-`Herbst`, `Winter` — and `während des` requires the genitive. The nominative
-forms read perfectly well: `im Sommer`, `letzten Sommer` and the adjectival
-`früher Frühling` all resolve.
-
-**`Kalenderwoche` written out.** The abbreviation `KW 12` reads and so does
-`Woche 12`, but the full compound `Kalenderwoche 12` returns nothing; only the
-abbreviation is in the week-number vocabulary.
 
 **The morning as a day part.** `morgens` returns nothing, and
 `heute Morgen` resolves the whole of today with `Morgen` left in the
@@ -167,16 +164,68 @@ rather than anything German.
 ## Open questions for a native speaker
 
 1. Should the bare toward-the-hour quarters be gated behind a regional
-   variant rather than shipped for all German? The current setting reads
+   variant rather than shipped for all German? The setting reads
    `viertel neun` as 08:15 in a northern text as readily as in a Bavarian one.
-2. Do the seasons need their genitive forms so that `während des Sommers`
-   reads, and are there other case-marked contexts that would need the same?
-3. Is `Kalenderwoche` common enough in running text to belong in the
-   week-number vocabulary alongside `KW`?
-4. How should `Morgen` and `morgens` be told apart from `morgen` "tomorrow"?
+2. How should `Morgen` and `morgens` be told apart from `morgen` "tomorrow"?
    The distinction is capitalisation in writing and context in speech, and
    neither is available to a case-folding tokenizer.
-5. Does the Nacht band really start at midnight for a German reader, given
+3. Does the Nacht band really start at midnight for a German reader, given
    that `heute Nacht` said in the evening usually means the coming night?
-6. Are `Kalenden`, `Nonen` and `Iden` the forms a German text actually uses,
+4. Are `Kalenden`, `Nonen` and `Iden` the forms a German text actually uses,
    or is the Latin left untranslated in most modern writing?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("de")
+    True
+    >>> span, rest = extract_timespan('halb acht', "de", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+    >>> span, rest = extract_timespan('viertel neun', "de", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:15:00', '')
+    >>> span, rest = extract_timespan('dreiviertel neun', "de", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:45:00', '')
+    >>> span, rest = extract_timespan('heute Nacht', "de", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('15. 6.', "de", anchor) is None
+    True
+    >>> extract_timespan('1.2.3.4', "de", anchor) is None
+    True
+    >>> extract_timespan('15..06.2020', "de", anchor) is None
+    True
+    >>> extract_timespan('15.06.', "de", anchor) is None
+    True
+    >>> extract_timespan('0.0.0', "de", anchor) is None
+    True
+    >>> extract_timespan('99.99.9999', "de", anchor) is None
+    True
+    >>> extract_timespan('31.02.2020', "de", anchor) is None
+    True
+    >>> extract_timespan('32.06.2020', "de", anchor) is None
+    True
+    >>> extract_timespan('15.13.2020', "de", anchor) is None
+    True
+    >>> extract_timespan('44', "de", anchor) is None
+    True
+    >>> extract_timespan('99', "de", anchor) is None
+    True
+    >>> extract_timespan('7', "de", anchor) is None
+    True
+    >>> extract_timespan('morgens', "de", anchor) is None
+    True
+    >>> extract_timespan('nach Ostern', "de", anchor) is None
+    True
+    >>> extract_timespan('vierzehn Tage', "de", anchor) is None
+    True
+
+---
+[← Georgian](ka.md) · [Home](../index.md) · [Greek →](el.md)

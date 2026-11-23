@@ -1,5 +1,15 @@
 # English (`en`)
 
+<!-- agent-hint
+covers: where each construction of the English locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/en/lang.json`, `chronologia/locale/en/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/en.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/en.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the English (`en`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 English is the reference locale, and that is the honest headline. Its
 vocabulary was written from native competence rather than assembled from cited
 sources, so almost nothing in `chronologia/locale/en/` carries a provenance
@@ -116,3 +126,47 @@ A quantity with no direction marker is still only a quantity.
    American convention, and a British caller writing `06/07/2020` means 6 July.
 3. Should the vocabulary carry sources at all for a native-competence locale,
    or is the corpus the right place for that record?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("en")
+    True
+    >>> span, rest = extract_timespan('6 to 8 pm', "en", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T18:00:00', '')
+    >>> span, rest = extract_timespan('from 9 to 5', "en", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:00:00', '')
+    >>> span, rest = extract_timespan('3:30 to 4:30', "en", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:30:00', '')
+    >>> span, rest = extract_timespan('the 12th month of 2026', "en", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2026-12-01T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('15.06.2020', "en", anchor) is None
+    True
+    >>> extract_timespan('06.15.2020', "en", anchor) is None
+    True
+    >>> extract_timespan('cook on low for 6 to 8 hours', "en", anchor) is None
+    True
+    >>> extract_timespan('the 13th month of 2026', "en", anchor) is None
+    True
+    >>> extract_timespan('the 0th week of may', "en", anchor) is None
+    True
+    >>> extract_timespan('the 5th Monday of February', "en", anchor) is None
+    True
+    >>> extract_timespan('day 32 of February', "en", anchor) is None
+    True
+    >>> extract_timespan('the 366th day of the year 2017', "en", anchor) is None
+    True
+    >>> extract_timespan('a fortnight', "en", anchor) is None
+    True
+
+---
+[← Dutch](nl.md) · [Home](../index.md) · [Esperanto →](eo.md)

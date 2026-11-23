@@ -1,5 +1,15 @@
 # Spanish (`es`)
 
+<!-- agent-hint
+covers: where each construction of the Spanish locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/es/lang.json`, `chronologia/locale/es/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/es.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/es.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Spanish (`es`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 `de la noche` is not a twelve-hour shift, and getting that wrong is the fastest
 way to be an hour or twelve out. Spanish uses the phrase across the whole
 colloquial night, so `las diez de la noche` is 22:00 but `la una de la noche`
@@ -7,7 +17,9 @@ is 01:00 and `las doce de la noche` is midnight. The vocabulary encodes this as
 a band rather than a uniform PM offset: the small hours one to five stay AM,
 the evening hours six to eleven are PM, and twelve is midnight. The AM ceiling
 follows the `madrugada` band, and the colloquial use of `de la noche` for the
-small hours is cited to RAE's dictionary entry for *noche*.
+small hours is cited to RAE's dictionary entry for *noche*. After a clock,
+`por la noche` reads the same band: `a las 8 por la noche` is 20:00 and
+`a la una por la noche` is 01:00.
 
 The second thing to know is that `mañana` is two words in one. It is the
 morning and it is also tomorrow, and the tomorrow reading wins. The locale
@@ -22,7 +34,7 @@ source for them.
 
 **The date line** is `el 3 de octubre de 1990`, little-endian with `de` between
 each part, and it also reads without the article and without the year. Spanish
-additionally has a day-label idiom, `día 3 de octubre`, where `día` heads the
+also has a day-label idiom, `día 3 de octubre`, where `día` heads the
 date rather than being part of it. The vocabulary cites RAE's *Ortografía* and
 the *Diccionario panhispánico de dudas* under *día* for that being a genuine
 temporal function word, and registers it as its own marker so that a leading
@@ -99,8 +111,6 @@ source than the RAE works the rest of the locale is built on.
 
 ## What refuses
 
-**Seconds.** `hace 30 segundos` returns nothing. No second unit ships.
-
 **The dotted date.** `15.06.2020` returns nothing, and it does not fall back
 to reading 2020 as a bare year either. Spanish writes the numeric date with
 slashes, and `15/06/2020` reads.
@@ -123,3 +133,33 @@ is a refusal of the ambiguous reading rather than a gap.
    uses, or does it keep the Latin?
 4. Is `día` ever used in a way that would make folding a leading `día` into a
    date wrong?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("es")
+    True
+    >>> span, rest = extract_timespan('las diez de la noche', "es", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T22:00:00', '')
+    >>> span, rest = extract_timespan('la una de la noche', "es", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T01:00:00', '')
+    >>> span, rest = extract_timespan('de la noche', "es", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:00:00', '')
+    >>> span, rest = extract_timespan('las doce de la noche', "es", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-28T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('15.06.2020', "es", anchor) is None
+    True
+    >>> extract_timespan('quince días', "es", anchor) is None
+    True
+
+---
+[← Slovenian](sl.md) · [Home](../index.md) · [Swahili →](sw.md)
