@@ -275,6 +275,7 @@ def extract_event(
         recurrence, remainder = got_rec
 
     duration: Optional[timedelta] = None
+    date_beside_length: Optional[DateSpan] = None
     got_dur = extract_duration(remainder, lang)
     if got_dur is not None and recurrence is None:
         # "3 days before christmas": the length is the date's offset, not the
@@ -318,6 +319,8 @@ def extract_event(
                 for name in ("before", "after", "in", "ago")
                 for surface in spec.connectors.get(name, ())
                 for word in words(surface)})
+            if not length_words & span_words:
+                date_beside_length = whole.span
             bare_offset = not span_words - length_words - offset_words
             for_marked = any(not words(surface) - length_words
                              for surface in spec.connectors.get("recur_for", ()))
@@ -329,6 +332,7 @@ def extract_event(
                     and not _is_counted_part_of_day(
                         remainder, lang, anchor, length_words):
                 got_dur = None
+                date_beside_length = None
     if got_dur is not None:
         duration, remainder = got_dur
 
@@ -364,6 +368,11 @@ def extract_event(
         if cands:
             conf = cands[0].confidence
         base, remainder = got_span
+        if (duration is not None and date_beside_length is not None
+                and base.start < anchor <= date_beside_length.start):
+            # es "reunión de dos horas mañana": without the length "de mañana"
+            # reads as this morning, before the anchor
+            base = date_beside_length
 
     if base is None:
         return None

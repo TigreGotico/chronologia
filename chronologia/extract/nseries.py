@@ -93,6 +93,17 @@ def _fraction_words(spec):
     return {s: v for s, v in spec.quantifiers.items() if 0 < v < 1}
 
 
+def _fraction_follows_hour(spec) -> bool:
+    """True when a ``clock_time`` order is ``HOUR ... CLOCKDIR ... FRACTION``."""
+    for order in spec.orders.get("clock_time", ()):
+        slots = [e.name for e in order.elements if e.is_slot]
+        if (all(s in slots for s in ("HOUR", "CLOCKDIR", "FRACTION"))
+                and slots.index("HOUR") < slots.index("CLOCKDIR")
+                < slots.index("FRACTION")):
+            return True
+    return False
+
+
 def _article_words(spec):
     """Surfaces that act as bare articles/units-of-one filler (``a``, ``an``,
     ``the``) -- a leading one before a count is skipped, a lone one before a
@@ -261,8 +272,10 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     and 0 < tokens[j].value < 1):
                 return float(tokens[j].value), j + 1
         # fr "deux heures moins le quart": a clock "to" word and a fraction
-        # take that fraction off the count
-        if j < n and spec.clock_dirs.get(tokens[j].text) == -1:
+        # take that fraction off the count, in a locale that reads the
+        # fraction after the hour; elsewhere "before half" starts a clock
+        if (j < n and spec.clock_dirs.get(tokens[j].text) == -1
+                and _fraction_follows_hour(spec)):
             j += 1
             while j < n and tokens[j].text in articles:
                 j += 1
