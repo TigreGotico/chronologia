@@ -22,6 +22,7 @@ filename                meaning
 ``marker_last.voc``     relative marker, -1 week
 ``marker_this.voc``     relative marker, current week
 ``marker_<x>.voc``      connector vocab named ``x`` (e.g. ``of``)
+``fraction_<x>.voc``    words that make a spelled ordinal a fraction, kept out of the connectors
 ======================  ===========================================
 
 ``lang.json`` states facts only: tokenizer switches, construction orders
@@ -171,6 +172,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     counted_noun: Set[str] = set()
     upcoming: Set[str] = set()
     alarm_joiners: Set[str] = set()
+    fraction_words: Dict[str, frozenset] = {}
     jurisdictions: Dict[str, str] = {}
 
     for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
@@ -424,6 +426,9 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             for s in surfaces:
                 day_cycles[s] = key
                 cycle_positions[s] = int(num)
+        elif base.startswith("fraction_"):
+            fraction_words[base[len("fraction_"):]] = frozenset(
+                s.lower() for s in surfaces)
         elif base.startswith("marker_"):
             connectors[base[len("marker_"):]] = frozenset(surfaces)
 
@@ -558,6 +563,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         counted_noun=frozenset(counted_noun),
         upcoming=frozenset(upcoming),
         alarm_joiners=frozenset(alarm_joiners),
+        fraction_words=fraction_words,
         weekday_full=weekday_full,
         quantifiers=quantifiers,
         positions=cfg.get("positions", {}))

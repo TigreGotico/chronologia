@@ -517,6 +517,10 @@ class LangSpec:
     # the words that join two alarm hours that share one later meridiem, from
     # ``marker_alarm_joiner.voc``
     alarm_joiners: FrozenSet[str] = field(default_factory=frozenset)
+    # words that make a spelled ordinal a fraction ("a full third"), by role
+    # (determiner, modifier, place), from ``fraction_<role>.voc``; kept out of
+    # the connectors because they are content words, not glue
+    fraction_words: Mapping[str, FrozenSet[str]] = field(default_factory=dict)
     # holiday_ref surface -> well-known holiday key ("christmas", "easter");
     # derived at load time from the holidays engine's i18n tables (native
     # names + translations + curated spoken aliases), never hand-listed here

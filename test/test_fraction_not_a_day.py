@@ -140,3 +140,25 @@ def test_a_spelled_number_before_a_day_leaves_it_a_day(text, lang, start,
 
 def test_a_spelled_fraction_phrase_with_no_day_stays_none():
     assert extract_timespan("el último tercio del mes", "es", ANCHOR) is None
+
+
+@pytest.mark.parametrize("text, lang, day", [
+    ("el primer ocho de marzo", "es", (2027, 3, 8)),
+    ("o primeiro sete de setembro após a independência", "pt", (2027, 9, 7)),
+    ("il primo otto marzo", "it", (2027, 3, 8)),
+    ("le premier huit mars", "fr", (2027, 3, 8)),
+    ("der erste dritte Oktober nach der Wende", "de", (2027, 10, 3)),
+])
+def test_a_cardinal_day_after_an_ordinal_stays(text, lang, day):
+    r = extract_timespan(text, lang, ANCHOR)
+    assert r.span.start == AstroDate(*day)
+
+
+@pytest.mark.parametrize("text, day", [
+    ("it's no good on friday", (2026, 10, 23)),
+    ("not the whole day on friday", (2026, 10, 23)),
+    ("not a full day on the first of may", (2027, 5, 1)),
+])
+def test_a_fraction_word_after_a_negation_is_no_glue(text, day):
+    r = extract_timespan(text, "en", ANCHOR)
+    assert r.span.start == AstroDate(*day)

@@ -967,9 +967,9 @@ class ConstructionMatcher:
                     # a fraction, so the new shapes read only a spelled
                     # ordinal ("les 14, 15 mai" is a day list).  The
                     # determiners and the words that measure or place a part
-                    # are locale facts (``marker_fraction_determiner.voc``,
-                    # ``marker_fraction_modifier.voc``,
-                    # ``marker_fraction_place.voc``).
+                    # are locale facts (``fraction_determiner.voc``,
+                    # ``fraction_modifier.voc``,
+                    # ``fraction_place.voc``).
                     part = None
                     if name == "month_day_ref":
                         part = slots.get("ORD")
@@ -979,13 +979,12 @@ class ConstructionMatcher:
                         part = slots["DAY"]
                     if part is not None and part.index > 0:
                         conn = self.spec.connectors
+                        fractions = self.spec.fraction_words
                         indef = conn.get("indef", frozenset())
                         article = conn.get("article", frozenset())
-                        determiner = conn.get("fraction_determiner",
-                                              frozenset())
-                        measure = (conn.get("fraction_modifier", frozenset())
-                                   | conn.get("fraction_place", frozenset()))
-                        place = conn.get("fraction_place", frozenset())
+                        determiner = fractions.get("determiner", frozenset())
+                        place = fractions.get("place", frozenset())
+                        measure = fractions.get("modifier", frozenset()) | place
                         before = tokens[part.index - 1]
                         lead = (tokens[part.index - 2].text
                                 if part.index > 1 else None)
@@ -993,6 +992,7 @@ class ConstructionMatcher:
                         # cuts them off
                         words = part.before or ()
                         spelled = (part.mention is not None
+                                   and part.ordinal
                                    and part.mention.form is Form.WORDS
                                    and 3 <= part.value <= 10)
                         ordinal_before = (before.ordinal
@@ -1006,6 +1006,7 @@ class ConstructionMatcher:
                                 or (len(words) > 1 and lead in indef | determiner
                                     and before.text in measure)
                                 or (len(words) > 1 and lead in article
+                                    and place
                                     and (before.text in place
                                          or ordinal_before))):
                             continue
