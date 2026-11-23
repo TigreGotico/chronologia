@@ -2127,6 +2127,9 @@ class _RecurCtx:
     #: the "to" of the "<ordinal> to last" / "next to last" idiom ("the
     #: second-to-last friday of every month").
     to_words: set = frozenset()
+    #: "to" words that join two weekdays into a range (see
+    #: :func:`_weekday_range_surfaces`).
+    to_surfaces: tuple = ()
     #: "penultimate" -- a single-word synonym for "second-to-last".
     penult_words: set = frozenset()
     #: a SINGULAR trailing day-word ("günü" -- tr's "on <weekday>-day", one
@@ -2169,6 +2172,16 @@ class _RecurCtx:
     pretokens: tuple = ()
     #: the spec, kept so a pre-fold finder can fold a lone ordinal on its own.
     spec: object = None
+
+
+def _weekday_range_surfaces(spec):
+    """The "to" words that join two weekdays into a range.  A "to" word that is
+    also an "until" word (es "hasta", en "until") stays an until bound, except
+    where the language already uses it to join weekdays (de "bis", nl "tot")."""
+    until = _conn_surfaces(spec, "until", ("until", "till"))
+    and_words = _and_words(spec)
+    return tuple(w for w in _conn_surfaces(spec, "to", _RANGE_TO)
+                 if w not in until or w[0] in and_words)
 
 
 def _recur_ctx(text, lang, anchor):
@@ -2216,6 +2229,7 @@ def _recur_ctx(text, lang, anchor):
         from_words=set(C.get("from", ())),
         to_words=set(w for words in _conn_surfaces(spec, "to", _RANGE_TO)
                      for w in words if len(words) == 1),
+        to_surfaces=_weekday_range_surfaces(spec),
         penult_words=set(C.get("penult", ())),
         ntolast_next_words=set(C.get("ntolast_next", ())),
         day_word=set(C.get("weekday_word", ())),
@@ -2829,6 +2843,18 @@ def _collect_weekdays(ctx, start, plural_ok, extra_skip=frozenset()):
     days = [wd]
     end = start + 1
     while True:
+        # tried before the "and" skip: de "bis" and nl "tot" are "and" words too
+        hit = next(((len(w) + 1, x) for w in ctx.to_surfaces
+                    if [y.text for y in t[end:end + len(w)]] == list(w)
+                    and end + len(w) < n
+                    and (x := _weekday_here(ctx, t[end + len(w)], plural_ok))
+                    is not None), None)
+        if hit is not None:
+            width, last = hit
+            while days[-1] != last:
+                days.append((days[-1] + 1) % 7)
+            end += width
+            continue
         k = end
         while k < n and (t[k].text in ctx.and_words or t[k].text in extra_skip):
             k += 1
