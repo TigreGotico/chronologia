@@ -27,7 +27,7 @@ classifiers = [
 # .voc vocabulary bundles under chronologia/locale/. The calendrical core
 # (dates, spans, calendars, eras) runs on the standard library alone.
 dependencies = [
-    "numtag>=0.16.0a1",
+    "numtag>=0.19.21a1",
     "ovos-spec-tools>=1.5.0a1",
 ]
 

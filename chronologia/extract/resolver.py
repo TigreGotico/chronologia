@@ -3204,8 +3204,22 @@ class Resolver:
             min_tok = match.slots.get("MINUTE")
             clockmin_tok = match.slots.get("CLOCKMIN")
             dir_tok = match.slots.get("CLOCKDIR")
-            if dir_tok is not None and (frac_tok is not None or min_tok is not None
-                                         or clockmin_tok is not None):
+            half_tok = match.slots.get("HALF")
+            if half_tok is not None:
+                # minutes around the half hour before the stated hour:
+                # "tien voor half negen" is 8.20, "tien over half negen" 8.40
+                # (Team Taaladvies, "Kloktijden: acht uur zeventien / zeventien
+                # over acht / dertien voor halfnegen").  A count of 30 or more
+                # leaves the half hour, so it names no time.
+                offset = (self.spec.clock_fractions[frac_tok.text]
+                          if frac_tok is not None else int(min_tok.value))
+                if offset >= 30:
+                    return None
+                hour -= 1
+                minute = 30 + (offset if self.spec.clock_dirs[dir_tok.text] > 0
+                               else -offset)
+            elif dir_tok is not None and (frac_tok is not None or min_tok is not None
+                                           or clockmin_tok is not None):
                 offset = (self.spec.clock_fractions[frac_tok.text] if frac_tok is not None
                           else self.spec.clock_dir_minutes[clockmin_tok.text]
                           if clockmin_tok is not None else int(min_tok.value))
