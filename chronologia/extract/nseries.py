@@ -1640,9 +1640,14 @@ def _bound_payload(rec, consumed, tokens, marker, lang, anchor, grounder):
 
 def _weekday_range_marks(ctx, consumed):
     """Token indexes where an unconsumed "from WEEKDAY to WEEKDAY" clause
-    puts its "to" word, when that word is also an "until" marker (German
-    "bis", Dutch "tot").  :func:`_apply_bounds` leaves these to
-    :func:`_apply_range_bound`, which reads the clause as a weekday set."""
+    starts its "to" words, so that an "until" marker there is not read as a
+    bound.  It acts where the "to" word doubles as an "until" word: Spanish
+    "hasta", Portuguese "até", French "jusqu'au"/"jusqu'à", Italian "fino a",
+    Catalan "fins a", Galician "ata", German "bis" and Dutch "tot" (also the
+    first word of "tot en met").  :func:`_apply_bounds` leaves these to
+    :func:`_apply_range_bound`, which reads the clause as a weekday set.  A
+    clause followed by more text ("von Montag bis Freitag bis Dezember")
+    is not marked, and its last "bis" stays an until bound."""
     tokens, spec, n = ctx.tokens, ctx.spec, len(ctx.tokens)
     leads = _conn_surfaces(spec, "between", _RANGE_BETWEEN) \
         + _conn_surfaces(spec, "from", _RANGE_FROM)
@@ -1663,9 +1668,7 @@ def _weekday_range_marks(ctx, consumed):
                         and [t.text for t in tokens[p + 1:q]] == mid
                         and tokens[q].text in ctx.weekdays
                         and not any(x in consumed for x in range(p + 1, q + 1))
-                        and (q + 1 == n or q + 1 in consumed)
-                        and mid in [list(w.lower().split())
-                                    for w in ctx.until_words]):
+                        and (q + 1 == n or q + 1 in consumed)):
                     marks.add(p + 1)
     return marks
 
