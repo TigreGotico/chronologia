@@ -59,6 +59,15 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
     ("de", "ruf mich an diesem Freitag", datetime(2017, 6, 30), "ruf mich"),
     ("de", "treffen wir uns am nächsten Freitag", datetime(2017, 6, 30),
      "treffen wir uns"),
+    # "an" with a determiner in the dative opens a calendar date too
+    # (Duden "an": "an diesem 31. Januar"); 31 January 2017 has passed
+    ("de", "ruf mich an diesem 31. Januar", datetime(2018, 1, 31), "ruf mich"),
+    ("de", "wie ist das wetter an diesem 31. Januar", datetime(2018, 1, 31),
+     "wie ist das wetter"),
+    ("de", "an diesem 3. März", datetime(2018, 3, 3), ""),
+    # a feast name takes "an" with no article (Duden "an": "an Ostern");
+    # Easter 2018 is 1 April
+    ("de", "wir treffen uns an Ostern", datetime(2018, 4, 1), "wir treffen uns"),
 ])
 def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
     span, remainder = extract_timespan(text, lang, ANCHOR)
@@ -113,6 +122,11 @@ def test_the_opening_word_goes_with_the_date(lang, text, start, rest):
     ("de", "ruf mich an diesen Freitag", "ruf mich an"),
     ("de", "mach das Licht an nächsten Montag", "mach das Licht an"),
     ("de", "mach das Licht an nächste Woche", "mach das Licht an"),
+    # a bare weekday takes "am" ("am Montag"), so "an" before it is the
+    # particle of the verb or the preposition of "denken an"
+    ("de", "ruf mich an Montag", "ruf mich an"),
+    ("de", "denk an Montag", "denk an"),
+    ("de", "mach das Licht an Freitag", "mach das Licht an"),
     # "um" in front of a dated day is not a clock word
     ("de", "um 8. Mai", "um"),
 ])

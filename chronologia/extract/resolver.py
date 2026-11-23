@@ -1527,9 +1527,11 @@ class Resolver:
                 else _gregorian_month_span(year, month)
             return Resolution(span, self._consumed(match))
         # a year phrase after the month ("march of this year", "5 марта
-        # прошлого года") names the year outright
+        # прошлого года", "noviembre del año que viene") names the year
+        # outright; only "marzo pasado" has the marker right after the month
         year_phrase = (rel_tok is not None and rel_tok.index > month_tok.index
-                       and match.span[1] > rel_tok.index + 1)
+                       and (match.span[1] > rel_tok.index + 1
+                            or rel_tok.index > month_tok.index + 1))
         if year_tok:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
@@ -2139,8 +2141,12 @@ class Resolver:
             if month_tok is not None:               # named month ("... of June")
                 month = self.spec.months[month_tok.text]
                 year_tok = match.slots.get("YEAR")
+                # a relative year phrase ("of november next year", "de
+                # noviembre del año que viene") shifts the anchor's year
+                rel_tok = match.slots.get("REL_MARKER")
                 year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
-                        else anchor.year)
+                        else anchor.year + (self.spec.rel_markers[rel_tok.text]
+                                            if rel_tok else 0))
                 value = _nth_weekday_of_month(year, month, target, n)
                 scope = scope_name(month, year if year_tok else None)
                 most = 0 if year_tok else 5
@@ -3197,8 +3203,22 @@ class Resolver:
             min_tok = match.slots.get("MINUTE")
             clockmin_tok = match.slots.get("CLOCKMIN")
             dir_tok = match.slots.get("CLOCKDIR")
-            if dir_tok is not None and (frac_tok is not None or min_tok is not None
-                                         or clockmin_tok is not None):
+            half_tok = match.slots.get("HALF")
+            if half_tok is not None:
+                # minutes around the half hour before the stated hour:
+                # "tien voor half negen" is 8.20, "tien over half negen" 8.40
+                # (Team Taaladvies, "Kloktijden: acht uur zeventien / zeventien
+                # over acht / dertien voor halfnegen").  A count of 30 or more
+                # leaves the half hour, so it names no time.
+                offset = (self.spec.clock_fractions[frac_tok.text]
+                          if frac_tok is not None else int(min_tok.value))
+                if offset >= 30:
+                    return None
+                hour -= 1
+                minute = 30 + (offset if self.spec.clock_dirs[dir_tok.text] > 0
+                               else -offset)
+            elif dir_tok is not None and (frac_tok is not None or min_tok is not None
+                                           or clockmin_tok is not None):
                 offset = (self.spec.clock_fractions[frac_tok.text] if frac_tok is not None
                           else self.spec.clock_dir_minutes[clockmin_tok.text]
                           if clockmin_tok is not None else int(min_tok.value))

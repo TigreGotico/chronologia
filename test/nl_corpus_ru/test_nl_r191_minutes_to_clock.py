@@ -47,10 +47,7 @@ def _gold(minute):
     ("без пяти девять", 55),
     ("без десяти девять", 50),
     ("без пятнадцати девять", 45),
-    # numtag joins the genitive "двадцати" and the nominative "девять" into 29
-    pytest.param("без двадцати девять", 40, marks=pytest.mark.xfail(
-        strict=True,
-        reason="https://github.com/TigreGotico/numtag/issues/164")),
+    ("без двадцати девять", 40),
 ])
 def test_genitive_minutes_to_bare(text, minute):
     assert span(text) == moved(_gold(minute), ANCHOR)
