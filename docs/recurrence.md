@@ -1,5 +1,13 @@
 # Recurrence rules (RFC 5545 RRULE)
 
+<!-- agent-hint
+covers: RFC 5545 RRULE parsing and expansion into day-wide spans
+source: `chronologia/recurrence.py`
+generated: no
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/recurrence.md
+see: `docs/events.md`, `docs/civil-holidays.md`
+-->
+
 "Every third Tuesday." "The last Monday of May." "Friday the 13th." These are
 *recurrence rules* — a compact grammar for an unbounded set of dates. The
 calendar world already standardised that grammar in
@@ -64,8 +72,8 @@ with an invalid date ... Such ... instances MUST be ignored").
 
 ```python
 month_end = parse_rrule("FREQ=MONTHLY;COUNT=4")
-print([s.start.date() for s in occurrences(month_end, AstroDate(2023, 1, 31))])
-# -> Jan 31, Mar 31, May 31, Jul 31  (February and April have no 31st)
+# Jan 31, Mar 31, May 31, Jul 31  (February and April have no 31st)
+print([s.start.date() for s in occurrences(month_end, AstroDate(2023, 1, 31))])  # [datetime.date(2023, 1, 31), datetime.date(2023, 3, 31), datetime.date(2023, 5, 31), datetime.date(2023, 7, 31)]
 ```
 
 February is skipped, not fudged. The same rule keeps leap day honest — a
@@ -73,8 +81,8 @@ yearly recurrence anchored on 29 February only fires in leap years:
 
 ```python
 leap = parse_rrule("FREQ=YEARLY;COUNT=3")
-print([s.start.date() for s in occurrences(leap, AstroDate(2024, 2, 29))])
-# -> 2024-02-29, 2028-02-29, 2032-02-29
+# 2024-02-29, 2028-02-29, 2032-02-29
+print([s.start.date() for s in occurrences(leap, AstroDate(2024, 2, 29))])  # [datetime.date(2024, 2, 29), datetime.date(2028, 2, 29), datetime.date(2032, 2, 29)]
 ```
 
 If you want "the last day of the month" *whatever* its length, name that
@@ -82,8 +90,8 @@ instead — `BYMONTHDAY=-1` counts back from the end:
 
 ```python
 last_day = parse_rrule("FREQ=MONTHLY;COUNT=4;BYMONTHDAY=-1")
-print([s.start.date() for s in occurrences(last_day, AstroDate(2023, 1, 1))])
-# -> Jan 31, Feb 28, Mar 31, Apr 30
+# Jan 31, Feb 28, Mar 31, Apr 30
+print([s.start.date() for s in occurrences(last_day, AstroDate(2023, 1, 1))])  # [datetime.date(2023, 1, 31), datetime.date(2023, 2, 28), datetime.date(2023, 3, 31), datetime.date(2023, 4, 30)]
 ```
 
 ## Bounded by design
@@ -116,8 +124,8 @@ Wednesday and you get only Mondays:
 ```python
 mondays = parse_rrule("FREQ=WEEKLY;BYDAY=MO;COUNT=2")
 wednesday = AstroDate(2025, 6, 11)          # a Wednesday
-print([s.start.date() for s in occurrences(mondays, wednesday)])
-# -> 2025-06-16, 2025-06-23  (the seed Wednesday is NOT emitted)
+# 2025-06-16, 2025-06-23  (the seed Wednesday is NOT emitted)
+print([s.start.date() for s in occurrences(mondays, wednesday)])  # [datetime.date(2025, 6, 16), datetime.date(2025, 6, 23)]
 ```
 
 ## What this engine covers, and what it doesn't
@@ -185,7 +193,8 @@ from chronologia.recurrence import JurisdictionHolidays
 
 pt = JurisdictionHolidays("PT")
 dates = list(pt.occurrences(AstroDate(2026, 1, 1), count=14))
-print([d.start.month for d in dates])   # every 2026 Portuguese public holiday
+# every 2026 Portuguese public holiday
+print([d.start.month for d in dates])  # [1, 2, 4, 4, 4, 5, 6, 6, 8, 10, 11, 12, 12, 12]
 
 try:
     pt.to_string()
@@ -197,3 +206,6 @@ except ValueError as exc:
 frame (and its per-locale equivalents, e.g. Portuguese "todos os feriados em
 Portugal" / "cada feriado de Portugal") straight into this object; an
 unrecognised jurisdiction name simply does not match — never a guess.
+
+---
+[← Events and iCalendar](events.md) · [Home](index.md) · [EDTF →](edtf.md)

@@ -1,8 +1,8 @@
 """Swedish numbers read through numtag.
 
-A Swedish number is one compound word ("tjugotre"), and an ordinal is one word
-("tjugotredje").  Every expected value is written by hand or computed with
-``timedelta`` from the anchor.
+A Swedish number is one compound word ("tjugotre"), and an ordinal is one
+word ("tjugotredje"). Every expected value is written by hand or computed
+with ``timedelta`` from the anchor.
 """
 from chronologia import extract_duration
 

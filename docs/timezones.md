@@ -1,5 +1,13 @@
 # Timezones
 
+<!-- agent-hint
+covers: how zoneinfo zones become timelines and how wall-clock folds and gaps are resolved
+source: `chronologia/zone_timelines.py`, `chronologia/localtime.py`
+generated: no
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/timezones.md
+see: `docs/timelines.md`, `docs/sun-moon-and-seasons.md`
+-->
+
 This is the page you reached for the moment you thought, *"fine, but how does
 it handle timezones?"* — the first hard question anyone who has been burned by
 dates asks. The short answer is that `chronologia` treats a timezone as a
@@ -37,9 +45,12 @@ from chronologia import resolve_wall_clock
 
 ny = ZoneInfo("America/New_York")
 earlier, later = resolve_wall_clock(2024, 11, 3, 1, 30, ny)
-print(earlier.isoformat())   # 2024-11-03T01:30:00-04:00  (still summer time)
-print(later.isoformat())     # 2024-11-03T01:30:00-05:00  (now winter time)
-print((later - earlier).total_seconds() / 3600)   # 1.0 — a real hour apart
+# still summer time
+print(earlier.isoformat())  # 2024-11-03T01:30:00-04:00
+# now winter time
+print(later.isoformat())  # 2024-11-03T01:30:00-05:00
+# a real hour apart
+print((later - earlier).total_seconds() / 3600)  # 1.0
 ```
 
 The *label* "1:30 AM" names two *instants*, because the *political rule* said
@@ -106,7 +117,8 @@ from chronologia import civil_add
 start = AstroDate(2024, 11, 3, 0, 30, tzinfo=ny)   # just before fall-back
 tomorrow = civil_add(start, days=1, zone=ny)
 print(tomorrow.isoformat())                            # 2024-11-04T00:30:00-05:00
-print((tomorrow - start).total_seconds() / 3600)       # 25.0 — a real extra hour
+# a real extra hour
+print((tomorrow - start).total_seconds() / 3600)  # 25.0
 ```
 
 **Seam 4 — the civil-day anchor for solar queries.** The sun answers in UTC,
@@ -119,7 +131,8 @@ in [the solar/day-part connection](#the-solarday-part-connection) below.
 ```python
 from chronologia import sun_events
 ev = sun_events(AstroDate(2024, 6, 21), 40.0, -105.0)   # Denver, in UTC
-print(ev.sunrise.strftime("%H:%M"))    # 11:30 — a UTC instant, zone-free
+# a UTC instant, zone-free
+print(ev.sunrise.strftime("%H:%M"))  # 11:30
 ```
 
 Four doors, each labelled, each with a typed answer. If a piece of code is not
@@ -148,7 +161,7 @@ print(d.tzname())      # JST
 
 Anything that satisfies the `tzinfo` protocol works the same way — `zoneinfo`,
 `dateutil.tz`, a fixed `datetime.timezone`, or the library's own
-[`LMTZone`](#pre-zone-history-lmtzone) for history before zones existed.
+[`LMTZone`](#pre-zone-history-lmtzone-and-local-mean-time) for history before zones existed.
 
 ### Getting the zone database: `pip install tzdata`
 
@@ -185,7 +198,7 @@ that are not known until the government announces them**, sometimes at very
 short notice. Any library that froze a copy of the world's zone rules into its
 own source would be wrong about Morocco within months. By owning no zone data,
 `chronologia` is wrong about Morocco *never* — it defers to whatever `tzdb` your
-system currently trusts. The same discipline that makes the library refuse to
+system trusts. The same discipline that makes the library refuse to
 guess about a fall-back hour makes it refuse to guess about a decree it cannot
 see.
 
@@ -215,8 +228,9 @@ November too.
 ### Displaying an instant, and "same time tomorrow"
 
 To *show* a moment locally, use `astimezone` (Seam 2). To move by calendar days
-while keeping the clock reading, use `civil_add` with a zone (Seam 3). The two
-answer different questions and never quietly stand in for one another:
+while keeping the clock reading, use `civil_add` with a zone (Seam 3). A plain
+`timedelta` added to an `AstroDate` is the other way to move a point. Across the
+2024-11-03 clock change in New York, the two calls below print the same value:
 
 ```python
 from datetime import timedelta
@@ -224,9 +238,9 @@ from datetime import timedelta
 start = AstroDate(2024, 11, 3, 0, 30, tzinfo=ny)
 
 civil = civil_add(start, days=1, zone=ny)          # same clock reading, next day
-absolute = start + timedelta(hours=24)             # exactly 24 real hours later
-print(civil.isoformat())      # 2024-11-04T00:30:00-05:00  (25 real hours away)
-print(absolute.isoformat())   # 2024-11-03T23:30:00-04:00  (24 real hours, earlier clock)
+absolute = start + timedelta(hours=24)             # plain timedelta arithmetic
+print(civil.isoformat())  # 2024-11-04T00:30:00-05:00
+print(absolute.isoformat())  # 2024-11-04T00:30:00-05:00
 ```
 
 ### The footgun: why a naive `astimezone` raises
@@ -278,8 +292,9 @@ of clock per degree.
 from chronologia import local_mean_time
 
 lisbon = local_mean_time(-9.14)      # ~9.14° west of Greenwich (east-positive)
+# about 36 min behind GMT
 print(lisbon.tzname())               # LMT-00:36:34(lambda=9.140W)
-print(lisbon.offset)                 # -1 day, 23:23:26  (about 36 min behind GMT)
+print(lisbon.offset)  # -1 day, 23:23:26
 ```
 
 This is not a guess dressed as a fact — it is the honest reckoning that actually
@@ -297,11 +312,12 @@ cannot actually support.
 Rather than fail, the library evaluates the zone at a **proxy year**,
 `2000 + (year mod 400)` — the Gregorian calendar (leap days and weekdays)
 repeats on a 400-year cycle, so the proxy shares the real year's calendar shape,
-and the *current* zone rule is projected onto it:
+and the zone's tzdb rule is projected onto it:
 
 ```python
 far = AstroDate(5_000_000, 6, 1, 12, 0, tzinfo=ny)
-print(far.utcoffset())    # -1 day, 20:00:00 — today's US DST rule, projected forward
+# today's US DST rule, projected forward
+print(far.utcoffset())  # -1 day, 20:00:00
 ```
 
 Read this for exactly what it is: a **convention**, not a prediction. Nobody
@@ -350,8 +366,10 @@ from zoneinfo import ZoneInfo
 zone = ZoneInfo("America/New_York")
 first = datetime(2024, 11, 3, 1, 30, fold=0, tzinfo=zone)
 second = datetime(2024, 11, 3, 1, 30, fold=1, tzinfo=zone)
-print(first.utcoffset(), second.utcoffset())   # -1 day, 20:00:00 / -1 day, 19:00:00
-print(first == second)                          # True  — different instants, still "equal"
+# the offsets of the two instants
+print(first.utcoffset(), second.utcoffset())  # -1 day, 20:00:00 -1 day, 19:00:00
+# different instants, still "equal"
+print(first == second)  # True
 ```
 
 Those offsets are UTC−4 and UTC−5 — genuinely different moments — yet `==` says
@@ -465,7 +483,8 @@ from zoneinfo import ZoneInfo
 madrid = ZoneInfo("Europe/Madrid")
 before = sun_events(AstroDate(2024, 3, 30), 40.4, -3.7).sunrise   # day before DST
 after = sun_events(AstroDate(2024, 3, 31), 40.4, -3.7).sunrise    # DST begins
-print(before.strftime("%H:%M"), after.strftime("%H:%M"))          # UTC: 06:02 / 06:00
+# UTC: 06:02 / 06:00
+print(before.strftime("%H:%M"), after.strftime("%H:%M"))  # 06:02 06:00
 # the UTC instants are ~2 min apart; only the LOCAL clock reading leaps an hour.
 ```
 
@@ -493,8 +512,7 @@ from chronologia import sun_events
 
 kiritimati = ZoneInfo("Pacific/Kiritimati")   # UTC+14, longitude ~157° WEST
 ev = sun_events(date(2024, 6, 21), 1.87, -157.4, zone=kiritimati)
-print(ev.sunrise.isoformat()[:22])
-# 2024-06-21T06:23:56.73
+print(ev.sunrise.isoformat()[:22])  # 2024-06-21T06:23:56.73
 ```
 
 Without `zone=`, the same question answered by solar-day anchoring lands a
@@ -587,10 +605,11 @@ gap = ny_view.to_instant(datetime(2024, 3, 10, 2, 30))    # spring-forward morni
 print(type(gap).__name__)                                  # ZoneNeverExisted
 
 fold = ny_view.to_instant(datetime(2024, 11, 3, 1, 30))   # fall-back night
-print((fold[1] - fold[0]).total_seconds() / 3600)          # 1.0 — an hour apart
+# an hour apart
+print((fold[1] - fold[0]).total_seconds() / 3600)  # 1.0
 ```
 
-Because it is a materialized view over *whatever `zoneinfo` currently trusts*, a
+Because it is a materialized view over *whatever `zoneinfo` trusts*, a
 `zone_timeline` is never wrong about Morocco either — re-materialize it and you
 get today's `tzdb`, not a frozen copy.
 
@@ -606,15 +625,17 @@ from chronologia import zone_history_start
 
 instant, lmt, standard = zone_history_start("Europe/London")
 print(instant.date())                     # 1847-12-01
-print(lmt.total_seconds())                # -75.0  — LMT ~1m15s west of Greenwich
-print(standard.total_seconds())           # 0.0    — GMT
+# LMT ~1m15s west of Greenwich
+print(lmt.total_seconds())  # -75.0
+# GMT
+print(standard.total_seconds())  # 0.0
 ```
 
 Read these values as a *faithful surfacing of `tzdb`*, cited to it — not an
 independent historical claim. IANA warns that its pre-1970 data is not reliable,
 so `zone_history_start` reports what `zoneinfo` actually returns and no more; for
 deep history the honest floor remains longitude-based
-[`local_mean_time`](#pre-zone-history-lmtzone).
+[`local_mean_time`](#pre-zone-history-lmtzone-and-local-mean-time).
 
 ## Reference
 
@@ -661,3 +682,6 @@ deep history the honest floor remains longitude-based
   it defers to your system's `zoneinfo` / `tzdata`, so a decree (Morocco,
   anywhere) reaches you through `tzdb` without a library release.
 </content>
+
+---
+[← Sun, moon, and seasons](sun-moon-and-seasons.md) · [Home](index.md) · [Timelines →](timelines.md)

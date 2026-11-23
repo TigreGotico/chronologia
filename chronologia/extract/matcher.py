@@ -427,6 +427,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         return token.text in spec.archon_names
     if name == "PRIDIE":
         return token.text in spec.connectors.get("pridie", frozenset())
+    if name == "HOURSPAN":
+        return token.text in spec.connectors.get("hour_span", frozenset())
     # -- deep-time / named-period slots ------------------------------------
     if name == "PERIOD":
         return token.text in spec.periods
@@ -659,6 +661,8 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
             if (suffixes and tokens[ti].is_number
                     and ti + 1 < len(tokens)
                     and tokens[ti + 1].text in suffixes):
+                if el.name == "HOUR":
+                    bound[el.name] = replace(tokens[ti], ordinal=True)
                 consider(_walk(elements, tokens, ei + 1, ti + 2, spec, bound))
     else:
         consumed = _connector_span(el.name, tokens, ti, spec)
@@ -768,6 +772,17 @@ class ConstructionMatcher:
                     if (name == "weekday_ref" and end < len(tokens)
                             and self.spec.units.get(tokens[end].text)
                             == "day"):
+                        continue
+                    # A marker after the period noun ("del mes que viene")
+                    # is not the marker of a period noun that follows it:
+                    # "del mes este año" holds a month and a year, so "este"
+                    # opens "este año" and stays out of the month scope.
+                    if (name == "scoped_ordinal" and "REL_MARKER" in slots
+                            and "SCOPE_UNIT" in slots
+                            and slots["REL_MARKER"].index
+                            > slots["SCOPE_UNIT"].index
+                            and end < len(tokens)
+                            and tokens[end].text in self.spec.units):
                         continue
                     # A marker that only modifies a singular period ("the
                     # following week") gives no date before a plural period

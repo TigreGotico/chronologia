@@ -7,3 +7,15 @@
 عصراً
 
 بعد الظهر
+# Definite forms after an hour: "الساعة 4 العصر" is four in the afternoon and
+# "الساعة 2 الظهر" is two after noon.  Wiktionary, عصر: "late afternoon",
+# "ellipsis of صَلَاة الْعَصْر"; Wiktionary, ظهر (ظُهْر): "noon, midday",
+# "afternoon, p.m.", citing Wehr, A Dictionary of Modern Written Arabic (1979).
+# Alone, الظهر stays the noon landmark of clock_landmark_720.voc.
+العصر
+الظهر
+# Wiktionary, مغرب (مَغْرِب): "place or time of sunset", "sunset prayer",
+# "evening"; عشاء (عِشَاء): "dusk, nightfall; evening", "evening or nightfall
+# prayer".
+المغرب
+العشاء

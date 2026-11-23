@@ -4,9 +4,8 @@
 "year": on = ten, il = year, -lik nominal suffix, = "decade").
 
 Azerbaijani is Ord-first ("Nth esr"), inheriting the shared scoped_ordinal
-base order unchanged; ordinal words fold via ovos-number-parser
-(numbers_az, ordinals=True).  Gold for the ordinal form: the Nth century
-spans the 100 years opening in year (N-1)*100, half-open, computed
+base order unchanged; ordinal words read through numtag.  Gold for the ordinal form: the Nth
+century spans the 100 years opening in year (N-1)*100, half-open, computed
 independently of the parser -- except the first century, which (no year
 zero) spans [1, 101).
 
