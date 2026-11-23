@@ -4540,6 +4540,9 @@ def extract_candidates(
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
+    from chronologia.extract.nseries import _NEVER_OCCURS, _read_recurrence
+    if _read_recurrence(text, lang, anchor) is _NEVER_OCCURS:
+        return []
     tokens = engine.tokenize(text)
     # Composed readings: the business-day / anchored-offset / ordinal-count
     # post-passes extract_timespan runs are re-run here so the candidate set can

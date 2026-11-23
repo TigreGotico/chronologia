@@ -263,3 +263,29 @@ def test_a_genitive_german_weekday_ordinal_is_still_read(text, position):
     rule = call(RECURRENCE, text, "de")
     assert rule is not None and rule.recurrence.bysetpos == (position,)
     assert call(EVENT, text, "de").recurrence.bysetpos == (position,)
+
+
+#: A rule that never occurs leaves no candidate: the bare weekday or month the
+#: phrase spends on the impossible date is no reading of it.
+NEVER_OCCURS = [
+    ("the 25th weekday of the month", "en", "a month has no 25th business day"),
+    ("the sixth monday of may", "en", "May has no 6th Monday"),
+    ("every sixth monday of the month", "en", "a month has no 6th Monday"),
+    ("el sexto lunes de mayo", "es", "May has no 6th Monday"),
+    ("the sixtieth monday of the year", "en", "a year has no 60th Monday"),
+]
+
+
+@pytest.mark.parametrize("text,lang,reason", NEVER_OCCURS)
+def test_a_rule_that_never_occurs_leaves_no_candidate(text, lang, reason):
+    assert call(CANDIDATES, text, lang) == []
+    assert call(CANDIDATES, text, lang, impossible="none") == []
+
+
+@pytest.mark.parametrize("text,lang,reason", NEVER_OCCURS)
+def test_a_rule_that_never_occurs_raises_from_candidates(text, lang, reason):
+    with pytest.raises(ImpossibleDateError) as caught:
+        call(CANDIDATES, text, lang, impossible="raise")
+    assert caught.value.reason == reason
+    assert caught.value.text == text
+    assert caught.value.lang == lang
