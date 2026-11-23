@@ -326,7 +326,7 @@ _NUMERIC_DATE = re.compile(f"{_ISO}|{_NUMDATE_ANY}|{_SLASHFRAC}")
 #: ``DATE_CONSTRUCTIONS`` the matcher itself emits.
 _COMPOSABLE_DATES = DATE_CONSTRUCTIONS | {
     "business_days", "weekday_count", "weekend_after_next",
-    "weekend_before_last", "weekend_ago"}
+    "weekend_before_last", "weekend_ago", "after_next", "before_last"}
 
 #: A weekday next to one of these LITERAL calendar dates is read as a restated
 #: label of it ("Monday, March 2" -> March 2, weekday consumed).  A DERIVED date
@@ -3867,10 +3867,18 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
     composable = (_COMPOSABLE_DATES | {"relative_offset"}
                  if spec.conventions.offset_clock_composes
                  else _COMPOSABLE_DATES)
+    # "the morning after next" is a band of its day, so a clock beside it may
+    # contradict the band and is left unread; "the week before last" is a
+    # period, so no clock lands on it
     dates = [(m, r) for m, r in resolved
              if m.construction in composable
              and (m.construction != "relative_offset"
-                  or _offset_is_day_or_coarser(m, spec))]
+                  or _offset_is_day_or_coarser(m, spec))
+             and not (m.construction in ("after_next", "before_last")
+                      and ("DAYPART" in m.slots
+                           or (m.slots.get("UNIT") is not None
+                               and spec.units.get(m.slots["UNIT"].text)
+                               != "day")))]
     dayparts = [(m, r) for m, r in resolved
                 if m.construction == "daypart_ref"]
     weekdays = [(m, r) for m, r in resolved
