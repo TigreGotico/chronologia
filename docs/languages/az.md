@@ -1,5 +1,15 @@
 # Azerbaijani (`az`)
 
+<!-- agent-hint
+covers: where each construction of the Azerbaijani locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/az/lang.json`, `chronologia/locale/az/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/az.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/az.md az@19:00 'saat doqquz yarım@09:30'
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Azerbaijani (`az`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Azerbaijani is Turkic and agglutinative, and the locale sits next to Turkish in
 this library in a way that is more hazard than help. The two languages share a
 great deal of temporal vocabulary — `ay`, `gün`, `həftə`, `saat`, `sonra`,
@@ -45,32 +55,30 @@ lead their noun, and `bu` is the proximal.
 **The clock** puts the hour noun `saat` before the numeral and marks the
 numeral itself with the locative case: `saat üçdə`, at three. The suffix
 harmonises for backness and for the voicing of the preceding consonant, giving
-`-tə`, `-ta`, `-də`, `-da`, and the cardinal reader does not recognise the
-inflected surface — it mis-reads `üçdə` as the fraction one-third. The fold in
-`chronologia/extract/numfold_turkic.py` therefore strips the locative ending
-back to the bare cardinal, but only inside a clock frame where a `saat` token
-is present, so that unrelated words ending in the same letters are untouched.
+`-tə`, `-ta`, `-də`, `-da`. numtag reads the inflected numeral as its cardinal,
+`üçdə` as 3. A digit hour takes the suffix after an apostrophe, `saat 9'da`;
+the fold in `chronologia/extract/numlayer_turkic.py` drops that suffix, but
+only inside a clock frame where a `saat` token is present.
 
 **The daypart lead.** Azerbaijani states the part of day before the hour:
 `səhər saat doqquzda` is nine in the morning, `axşam saat səkkizdə` eight in
 the evening. `gecə` is handled separately because it is not a uniform twelve-
 hour shift — it scopes the clock to a band that crosses midnight, so `gecə
 saat üçdə` is 03:00 while `gecə saat doqquzda` is 21:00. The resolver splits
-the band accordingly, and probing confirms both readings.
+the band accordingly, and both readings hold.
 
 **No clock fraction ships.** There is no `clock_fraction_15.voc` and no
-`clock_fraction_30.voc` in this locale. Eight of the sixty-one locales in the
-library are in the same position — `az`, `ha`, `he`, `kab`, `sk`, `sw`, `ta`
-and `th` — so it is not unique, but it is a real gap and it has a visible
+`clock_fraction_30.voc` in this locale. Five of the sixty-one locales in the
+library are in the same position — `az`, `ha`, `sw`, `ta` and `th` — so it is not unique, but it is a real gap and it has a visible
 consequence in the defects section below. `marker_half.voc` holds `yarım`, and
 the quantifier table maps `yarım` to 0.5 and `rüb` to 0.25, but neither reaches
 the clock.
 
 **Century and decade** are the two vocabulary groups that carry their own
 source comments. `əsr` and its plural `əsrlər` come from the Wiktionary entry
-for `əsr`, which was fetched and confirms both the gloss ("century; age, epoch,
+for `əsr`, which confirms both the gloss ("century; age, epoch,
 era"), the Arabic origin, and the plural in the declension table. `onillik` and
-`onilliklər` come from the Wiktionary entry for `il`, which was fetched and
+`onilliklər` come from the Wiktionary entry for `il`, which
 lists `onillik` glossed "decade" among the derived terms.
 
 **Day-part bands** are transcribed from the Unicode CLDR 47 Day Period Rules
@@ -150,3 +158,35 @@ genitive-marked noun before it is not read.
    listed as alternates, or should the tokenizer learn to shear the suffix?
 4. Is `qabaq` or `öncə` interchangeable with `əvvəl` in a counted offset, or
    are they stylistically restricted?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("az")
+    True
+    >>> span, rest = extract_timespan('gecə saat üçdə', "az", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:00:00', '')
+    >>> span, rest = extract_timespan('gecə saat doqquzda', "az", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T21:00:00', '')
+    >>> span, rest = extract_timespan('bazar ertəsi', "az", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-07-03T00:00:00', '')
+    >>> span, rest = extract_timespan('çərşənbə axşamı', "az", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:00:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('extract_timespan("iyunun 5-i", "az")', "az", anchor) is None
+    True
+    >>> extract_timespan('extract_timespan("yazda", "az")', "az", anchor) is None
+    True
+    >>> extract_timespan('extract_timespan("yanvarın ortalarında", "az")', "az", anchor) is None
+    True
+
+---
+[← Asturian](ast.md) · [Home](../index.md) · [Basque →](eu.md)

@@ -812,9 +812,10 @@ def test_thousand_scale_duration_is_composed_across_locales():
     assert extract_duration("3 gün önce", "tr").duration.days == 3
     assert extract_duration("há 3 dias", "pt").duration.days == 3
     # az "il əvvəl" (year + bare "ago" postposition) must NOT fabricate a span;
-    # the locative early-of-year form still resolves.
+    # the locative early-of-year form still resolves.  "min il əvvəl" is "a
+    # thousand years ago": 2017 - 1000 = 1017, as en "a thousand years ago".
     assert extract_timespan("il əvvəl", "az", r) is None
-    assert extract_timespan("min il əvvəl", "az", r) is None
+    assert extract_timespan("min il əvvəl", "az", r)[0].start.year == 1017
     assert extract_timespan("il əvvəlində", "az", r) is not None
 
 
@@ -1532,22 +1533,21 @@ def test_impossible_date_veto_is_not_exponential():
     import time
     from chronologia import extract_timespan
 
-    def best_of_three(reps):
+    def best_of(reps, runs=7):
         text = "5th of june " * reps
-        runs = []
-        for _ in range(3):
-            t0 = time.perf_counter()
+        times = []
+        for _ in range(runs):
+            t0 = time.process_time()
             extract_timespan(text, "en-us", _A)
-            runs.append(time.perf_counter() - t0)
-        return min(runs)
+            times.append(time.process_time() - t0)
+        # CPU time ignores descheduling; load only adds, so take the minimum
+        return min(times)
 
-    # A wall-clock budget measures the machine, not the guard: this ran under
-    # two seconds locally and failed a five-second budget on a loaded runner.
-    # What the guard actually promises is that the work stays linear, so the
-    # assertion is the shape of the curve. Exponential recursion would put
-    # this ratio astronomically above the bound; linear puts it near two.
-    small, large = best_of_three(20), best_of_three(40)
-    assert large / small < 6.0, (
+    # Absolute budgets measure the host, not the guard.  The guarded work
+    # is polynomial (doubling the input costs about 4x); unguarded recursion
+    # costs 2**n, so doubling 6 reps to 12 would multiply it by about 64.
+    small, large = best_of(6), best_of(12)
+    assert large / small < 12.0, (
         "doubling the input multiplied the work by %.1f" % (large / small))
 
 

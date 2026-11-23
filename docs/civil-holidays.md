@@ -1,5 +1,13 @@
 # Civil holidays
 
+<!-- agent-hint
+covers: holiday rules for 260 jurisdictions, subdivisions and the horizon of each table
+source: `chronologia/civil_holidays/`, `chronologia/holiday_data/`
+generated: no
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/civil-holidays.md
+see: `docs/recurrence.md`, `docs/transparency.md`
+-->
+
 The golden question this module answers is not "what are the holidays this
 year?" but **"is Monday a holiday where *you* live?"** — and in most of the
 world the honest answer depends on your *municipality*, not your country.
@@ -228,7 +236,7 @@ schema is open in the sense that a jurisdiction's own vocabulary earns a term:
 jurisdiction's sources name). Filtering on `public` alone is the usual
 question — "is the office closed?" — but it is not the whole schema, and a day
 tagged `optional public` is one your calendar probably still wants to show.
-`CATEGORIES` is importable, so the current set is inspectable rather than
+`CATEGORIES` is importable, so the set is inspectable rather than
 something to trust a document about.
 
 ## Internationalisation — a holiday's real name
@@ -320,3 +328,6 @@ rule is in force (`2024-`, `-2015`, `2016-2020`, `2024`).
 
 New jurisdictions are data, not code: add a `.tab` file with its citations and
 the engine loads it.
+
+---
+[← Mars and beyond](mars-and-beyond.md) · [Home](index.md) · [Design →](design.md)

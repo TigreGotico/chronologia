@@ -109,7 +109,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_fa",
+  "hook": "chronologia.extract.numlayer_fa:fold_fa",
   "quantifiers": {
     "1": [
       "یک"
