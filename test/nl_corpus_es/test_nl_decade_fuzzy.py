@@ -70,15 +70,7 @@ def test_bare_decade_word_form_still_whole_span():
     assert parse('los años noventa')[1] == ""
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "pre-existing, separate defect: 'a principios de <plain GYEAR>' binds "
-    "the bare YEAR construction (whole year) instead of composing PART with "
-    "the year, stranding 'a principios de' in the remainder. Correct gold "
-    "would be the early third of the year, 2000-01-01..2000-05-02T16:00 "
-    "(exact elapsed-microsecond thirds -- a single year does not snap to "
-    "year like a decade/century does). Not touched by the decade_ref "
-    "fuzzy-composition fix this file covers."))
-def test_plain_year_fuzzy_prefix_not_yet_composed():
+def test_plain_year_fuzzy_prefix_composed():
     want_s = AstroDate(2000, 1, 1)
     want_e = AstroDate.from_datetime(
         datetime(2000, 1, 1) + (datetime(2001, 1, 1) - datetime(2000, 1, 1)) / 3)

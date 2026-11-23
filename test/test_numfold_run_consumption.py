@@ -3,14 +3,12 @@
 back-end genuinely consumes the whole run.  Dutch reads its runs through numtag;
 the tests below keep the rows that guard against a dropped leading magnitude.
 
-``ovos_number_parser`` can greedily read only a *trailing* component of a run
-and silently drop a leading magnitude: ``extract_number_nl("tweehonderd
-vijftig")`` returns 50, dropping the 200.  The fold used to stamp that
-50 over the whole run, committing a confidently-wrong value with an empty
-remainder.  The consumption guard in ``_fold_run`` cuts such a run instead --
-the un-consumed magnitude survives as an honest, non-empty remainder -- while
-leaving every genuinely-consumed run (including the implied-multiplier
-"hundred twenty three") folded exactly as before.
+A reader that consumes only a *trailing* component of a run drops a leading
+magnitude: "tweehonderd vijftig" read as 50 loses the 200.  The fold must
+never stamp such a value over the whole run, which commits a
+confidently-wrong value with an empty remainder.  The un-consumed magnitude
+survives as an honest, non-empty remainder, while every genuinely-consumed run
+(including the implied-multiplier "hundred twenty three") folds whole.
 """
 from chronologia.extract.loader import load_lang_spec
 from chronologia.extract.pipeline import prematch_tokens

@@ -18,6 +18,7 @@ _CASES = [
     ('90 minit', timedelta(minutes=90)),
     ('setengah jam', timedelta(minutes=30)),
     ('suku jam', timedelta(minutes=15)),
+    ('tiga suku jam', timedelta(minutes=45)),
     ('2 hari 4 jam', timedelta(days=2, hours=4)),
     ('1 jam 30 minit', timedelta(hours=1, minutes=30)),
 ]

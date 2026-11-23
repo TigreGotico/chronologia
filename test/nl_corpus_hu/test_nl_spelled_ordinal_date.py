@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """Hungarian spelled-ordinal day-of-month.  Hungarian is month-first
 ("április tizenötödik" = the fifteenth of April).  The single-token ordinal
-(which the cardinal back-end does not read) must fold to the exact day, not
-strand and leave the whole month.  ``pronounce_ordinal_hu`` emits every 1..31
-as one word, so the whole range folds.
+must fold to the exact day, not strand and leave the whole month.  numtag
+reads every 1..31 as one word, so the whole range folds.
 """
 from datetime import datetime
 
