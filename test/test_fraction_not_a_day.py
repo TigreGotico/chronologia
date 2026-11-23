@@ -1,9 +1,12 @@
 """A fraction of a month names no day of it.
 
 "third" is also a fraction: Wiktionary, "third", noun sense 2, "One of three
-equal parts of a whole" ("He ate a third of the pie").  A day of the month
-takes "the" or no determiner directly before its ordinal.  The anchor is
-Saturday 17 October 2026, so the next third of the month is 3 November.
+equal parts of a whole" ("He ate a third of the pie").  Only a spelled ordinal
+from third to tenth names a fraction, and only when the phrase is not broken by
+a comma: "first" and "second" name none, and a day follows "any", "another" or
+"the whole" before an ordinal above ten.  The anchor is Saturday 17 October
+2026, so the next first of the month is 1 November and the next third is 3
+November.
 """
 from datetime import datetime
 
@@ -36,8 +39,6 @@ ANCHOR = datetime(2026, 10, 17, 12, 0)
     "the middle third of november",
     "the last third of may",
     "the last fifth of may",
-    "the whole third of may",
-    "the good fifth of may",
     "the final fifth of may is a holiday",
     "some third of may",
     "any third of may",
@@ -45,6 +46,29 @@ ANCHOR = datetime(2026, 10, 17, 12, 0)
 ])
 def test_a_fraction_names_no_day(text):
     assert extract_timespan(text, "en", ANCHOR) is None
+
+
+@pytest.mark.parametrize("text, day", [
+    ("remind me on another first of the month", (2026, 11, 1)),
+    ("pay rent on any first of the month", (2026, 11, 1)),
+    ("some first of the month", (2026, 11, 1)),
+    ("any second of the month", (2026, 11, 2)),
+    ("another second of may", (2027, 5, 2)),
+    ("the last first of the month", (2026, 11, 1)),
+    ("another fifteenth of the month", (2026, 11, 15)),
+    ("any fifteenth of the month is fine", (2026, 11, 15)),
+    ("any eleventh of the month", (2026, 11, 11)),
+    ("a good fifteenth of may", (2027, 5, 15)),
+    ("the whole fifth of may was rainy", (2027, 5, 5)),
+    ("the whole third of may", (2027, 5, 3)),
+    ("the good fifth of may", (2027, 5, 5)),
+    ("a full, third of may", (2027, 5, 3)),
+    ("a good, fifth of may", (2027, 5, 5)),
+    ("another, third of the month", (2026, 11, 3)),
+])
+def test_a_day_after_a_determiner_stays(text, day):
+    r = extract_timespan(text, "en", ANCHOR)
+    assert r.span.start == AstroDate(*day)
 
 
 @pytest.mark.parametrize("text, lang, day, rest", [

@@ -1,7 +1,8 @@
-# Determiners that open a fraction and never a day of the month: "another
-# third of the month", "some third of the month". A date names its day with
-# "the" or no determiner. Wiktionary, "third", noun sense 2: "One of three
-# equal parts of a whole", with the example "He ate a third of the pie."
+# Determiners that open a fraction of three to ten parts: "another third of
+# the month", "some third of the month".  Wiktionary, "third", noun sense 2:
+# "One of three equal parts of a whole", with the example "He ate a third of
+# the pie."  Before "first", "second" or an ordinal above ten the same words
+# leave a day: "another first of the month", "any fifteenth of the month".
 another
 some
 any

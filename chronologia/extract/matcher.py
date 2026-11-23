@@ -949,21 +949,27 @@ class ConstructionMatcher:
                     # of the month is gone") is a fraction, never a
                     # day-of-month: a date names its day with the definite
                     # article or none ("the third of the month", "third of
-                    # March").  The same holds after a determiner that never
-                    # opens a date ("another third of the month"), after an
-                    # indefinite article and a word that measures the part
+                    # March").  A fraction is a unit fraction from a third to
+                    # a tenth, so the same holds for a spelled ordinal from
+                    # 3 to 10 after a determiner that never opens a date
+                    # ("another third of the month"), after an indefinite
+                    # article or determiner and a word that measures the part
                     # ("a full third of March"), and after the definite
-                    # article and a spelled ordinal or a word that places the
-                    # part, in one clause ("the first third", "the last
-                    # third"); a cardinal ("a las nueve quince de mayo") or
-                    # a comma ("the fourteenth, fifteenth of may") before
-                    # the day leaves it a day.  Before a month name only the
-                    # last three count: "un 3 de marzo" is a date.  A
-                    # digit day is never a fraction, so the new shapes read
-                    # only a spelled ordinal ("les 14, 15 mai" is a day
-                    # list).  The determiners and the measuring words are
-                    # locale facts (``marker_fraction_determiner.voc``,
-                    # ``marker_fraction_modifier.voc``).
+                    # article and a word that places the part, in one clause
+                    # ("the last third").  "first" and "second" name no
+                    # fraction, a higher ordinal is a day ("any fifteenth of
+                    # the month"), and a comma ("a full, third of May", "the
+                    # fourteenth, fifteenth of may") or a cardinal ("a las
+                    # nueve quince de mayo") before the day leaves it a day,
+                    # as does "the whole fifth of May", which is the whole of
+                    # the day.  Before a month name only the last three
+                    # count: "un 3 de marzo" is a date.  A digit day is never
+                    # a fraction, so the new shapes read only a spelled
+                    # ordinal ("les 14, 15 mai" is a day list).  The
+                    # determiners and the words that measure or place a part
+                    # are locale facts (``marker_fraction_determiner.voc``,
+                    # ``marker_fraction_modifier.voc``,
+                    # ``marker_fraction_place.voc``).
                     part = None
                     if name == "month_day_ref":
                         part = slots.get("ORD")
@@ -974,29 +980,34 @@ class ConstructionMatcher:
                     if part is not None and part.index > 0:
                         conn = self.spec.connectors
                         indef = conn.get("indef", frozenset())
+                        article = conn.get("article", frozenset())
                         determiner = conn.get("fraction_determiner",
                                               frozenset())
-                        modifier = conn.get("fraction_modifier", frozenset())
+                        measure = (conn.get("fraction_modifier", frozenset())
+                                   | conn.get("fraction_place", frozenset()))
+                        place = conn.get("fraction_place", frozenset())
                         before = tokens[part.index - 1]
                         lead = (tokens[part.index - 2].text
                                 if part.index > 1 else None)
+                        # the words before the day in its clause: a comma
+                        # cuts them off
+                        words = part.before or ()
                         spelled = (part.mention is not None
-                                   and part.mention.form is Form.WORDS)
-                        if ((name == "month_day_ref"
-                             and before.text in indef)
-                                or (spelled
-                                    and (before.text in determiner
-                                         or (before.text in modifier
-                                             and lead in indef | determiner)
-                                         or (lead in conn.get("article",
-                                                              frozenset())
-                                             and len(part.before or ()) > 1
-                                             and (before.text in modifier
-                                                  or (before.ordinal
-                                                      and before.mention
-                                                      is not None
-                                                      and before.mention.form
-                                                      is Form.WORDS)))))):
+                                   and part.mention.form is Form.WORDS
+                                   and 3 <= part.value <= 10)
+                        ordinal_before = (before.ordinal
+                                          and before.mention is not None
+                                          and before.mention.form
+                                          is Form.WORDS)
+                        if name == "month_day_ref" and before.text in indef:
+                            continue
+                        if spelled and words and (
+                                before.text in determiner
+                                or (len(words) > 1 and lead in indef | determiner
+                                    and before.text in measure)
+                                or (len(words) > 1 and lead in article
+                                    and (before.text in place
+                                         or ordinal_before))):
                             continue
                     # The mirror of the veto above, on the other side of the
                     # weekday: a COUNT immediately before a weekday word that
