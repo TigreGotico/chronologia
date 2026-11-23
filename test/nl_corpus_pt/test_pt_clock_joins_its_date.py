@@ -69,3 +69,14 @@ def test_clock_with_horas_keeps_the_day_after_de(text, gold):
 def test_recurrence_takes_the_de_after_its_clock(text, rule):
     r = extract_recurrence(text, "pt", ANCHOR)
     assert (r.recurrence.to_string(), r.remainder) == (rule, "")
+
+
+@pytest.mark.parametrize("text,rule,remainder", [
+    ("às dez de cada sábado por favor", "FREQ=WEEKLY;BYDAY=SA;BYHOUR=10", "por favor"),
+    ("às dez de cada sábado regar as plantas", "FREQ=WEEKLY;BYDAY=SA;BYHOUR=10", "regar as plantas"),
+    ("às 9 de cada segunda e de cada sexta", "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9", "e de cada sexta"),
+    ("lembra-me todos os dias às 9 de tomar o comprimido", "FREQ=DAILY;BYHOUR=9", "lembra-me de tomar o comprimido"),
+])
+def test_recurrence_de_leaves_the_words_after_it(text, rule, remainder):
+    r = extract_recurrence(text, "pt", ANCHOR)
+    assert (r.recurrence.to_string(), r.remainder) == (rule, remainder)

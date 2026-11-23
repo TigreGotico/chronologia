@@ -41,3 +41,11 @@ def test_alone_keeps_its_reading(text, gold):
 def test_recurrence_takes_the_de_after_its_clock(text, rule):
     r = extract_recurrence(text, "es", ANCHOR)
     assert (r.recurrence.to_string(), r.remainder) == (rule, "")
+
+
+@pytest.mark.parametrize("text,rule,remainder", [
+    ("a las diez de cada sábado por favor", "FREQ=WEEKLY;BYDAY=SA;BYHOUR=10", "por favor"),
+])
+def test_recurrence_de_leaves_the_words_after_it(text, rule, remainder):
+    r = extract_recurrence(text, "es", ANCHOR)
+    assert (r.recurrence.to_string(), r.remainder) == (rule, remainder)

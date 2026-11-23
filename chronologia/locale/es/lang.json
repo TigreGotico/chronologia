@@ -176,7 +176,8 @@
     "dmy": true,
     "hemisphere": null,
     "prefer_future": true,
-    "bare_at_markers": ["a"]
+    "bare_at_markers": ["a"],
+    "clock_of_recurrence": true
   },
   "quantifiers": {
     "1": [

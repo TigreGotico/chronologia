@@ -290,6 +290,12 @@ class Conventions:
     # A fact, not logic -- the matcher reads it to veto that one reading;
     # languages that mark clock hours without articles at all leave it empty.
     bare_at_markers: FrozenSet[str] = frozenset()
+    # The locale joins a clock to the recurrence that follows it with its "of"
+    # word ("às dez de cada sábado", "a las diez de cada sábado"), so that
+    # word is part of the clock whatever the text after the recurrence is.
+    # Where it is off ("at 9 of every monday meeting"), the "of" belongs to
+    # the words before the clock unless the recurrence ends the text.
+    clock_of_recurrence: bool = False
     # A day-or-coarser ``relative_offset`` ("3 days ago", "next month") composes
     # with an adjacent trailing ``clock_time`` exactly like a ``named_day``
     # does ("yesterday at 9" -> yesterday 09:00): the clock pins the offset day
