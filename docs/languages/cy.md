@@ -1,5 +1,15 @@
 # Welsh (`cy`)
 
+<!-- agent-hint
+covers: where each construction of the Welsh locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/cy/lang.json`, `chronologia/locale/cy/*.voc`, `chronologia/extract/numfold_welsh.py`
+generated: no
+verify: python -m doctest docs/languages/cy.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/cy.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Welsh (`cy`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_welsh` module in `chronologia/extract/`.
+
 Welsh changes a word's **first letter** according to what precedes it, and that
 one fact shapes this whole locale. A vocabulary listing only dictionary forms
 would silently fail on ordinary sentences, so every mutated surface a temporal
@@ -98,8 +108,8 @@ resolved deliberately. `haf 2020` reads as the bare year with `haf` unconsumed.
 
 **Weekend references.** `y penwythnos` does not resolve.
 
-**Era vocabulary and calendar quarters.** `44 CC`, `1990 OC` and `3ydd chwarter`
-all refuse. `chwarter` ships as the clock fraction only; the calendar-quarter
+**Era vocabulary and calendar quarters.** `44 CC` and `3ydd chwarter` refuse. `1990 OC` returns the
+year 1990 with `OC` left in the remainder. `chwarter` ships as the clock fraction only; the calendar-quarter
 sense would need its own attested construction.
 
 **ISO week references.** `wythnos 3` and `3ydd wythnos` refuse.
@@ -134,3 +144,36 @@ still only a quantity.
 5. How should the `Hydref` collision between autumn and October be resolved?
 6. Is a millennium noun in use at all?
 7. Is 41–99 joined with `ac` or with `a` before a consonant?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("cy")
+    False
+    >>> span, rest = extract_timespan('chwarter wedi naw', "cy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T09:15:00', '')
+    >>> span, rest = extract_timespan('hanner awr wedi tri', "cy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:30:00', '')
+    >>> span, rest = extract_timespan('chwarter i bedwar', "cy", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:45:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('y penwythnos', "cy", anchor) is None
+    True
+    >>> extract_timespan('44 CC', "cy", anchor) is None
+    True
+    >>> extract_timespan('3ydd chwarter', "cy", anchor) is None
+    True
+    >>> extract_timespan('wythnos 3', "cy", anchor) is None
+    True
+    >>> extract_timespan('3ydd wythnos', "cy", anchor) is None
+    True
+
+---
+[← Vietnamese](vi.md) · [Home](../index.md) · [West Frisian →](fy.md)

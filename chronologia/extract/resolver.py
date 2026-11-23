@@ -14,7 +14,11 @@ Resolution conventions (chosen once, documented, asserted in tests):
 
 An impossible or unrepresentable date never raises: :meth:`resolve`
 returns ``None`` (the matcher offered a span the calendar rejects, so the
-construction simply did not fire).
+construction simply did not fire).  A caller opts in to being told by passing
+``impossible="raise"`` to a public extractor: each refusal that the calendar
+causes is then reported through :func:`chronologia.extract.impossible.decline`
+and the extractor raises :class:`~chronologia.ImpossibleDateError`.  The
+default stays silent.
 
 The adopted-extension constructions land their resolvers here:
 ``clock_time`` (with date composition), ``subdivision_time`` (alternative
@@ -32,7 +36,9 @@ from datetime import date, datetime, timedelta
 from typing import Optional
 
 from chronologia.astrodate import (AstroDate, BASIS_RECONSTRUCTED, DateSpan,
-                                   civil_add)
+                                   _days_in_month, civil_add)
+from chronologia.extract.impossible import (bad_day, decline, no_such,
+                                          no_such_weekday, ordinal, scope_name)
 from chronologia.dayparts import daypart_span, lookup as daypart_lookup
 from chronologia.calendars import (CALENDARS, gregorian_to_jdn,
                                         jdn_to_gregorian)
@@ -129,6 +135,11 @@ def _year_with_era(year_tok, era_tok, spec) -> int:
     return era.epoch.year + n - 1
 
 
+def _era_scope(month: int, year_tok, era_tok) -> str:
+    """"February 4 BC": the month and the era year as the speaker wrote them."""
+    return f"{scope_name(month, None)} {year_tok.raw} {era_tok.raw.upper()}"
+
+
 def _nth_weekday_of_month_astro(year: int, month: int, weekday: int,
                                 n: int) -> Optional["AstroDate"]:
     """Same as :func:`_nth_weekday_of_month` but returns an
@@ -137,7 +148,6 @@ def _nth_weekday_of_month_astro(year: int, month: int, weekday: int,
     era-qualified "the last weekend of june 500 BC" can compose without
     routing through stdlib ``date``, which cannot represent astronomical
     year -499 at all."""
-    from chronologia.astrodate import _days_in_month
     last = _days_in_month(year, month)
     days = [d for d in range(1, last + 1)
             if AstroDate(year, month, d).weekday() == weekday]
@@ -191,6 +201,15 @@ def _nth_weekday_of_year(year: int, weekday: int, n: int) -> Optional[date]:
     if idx < 0:
         idx += count
     return first + timedelta(days=7 * idx)
+
+
+def _date_ordinal(n: int, ref_date: date, resolution) -> Optional[date]:
+    """:func:`get_date_ordinal`, or ``None`` when the scope has no such ordinal
+    (a 30th day of February, a 366th day of a common year)."""
+    try:
+        return get_date_ordinal(n, ref_date, resolution)
+    except ValueError:
+        return None
 
 
 def _nth_iso_week_of_year(year: int, n: int) -> Optional[date]:
@@ -340,7 +359,7 @@ def _next_day_month(month: int, day: int, anchor: datetime) -> Optional[datetime
             continue                        # no such day that year
         if value >= _midnight(anchor):
             return value
-    return None
+    return decline(bad_day(None, month, day))
 
 
 def _last_day_month(month: int, day: int, anchor: datetime) -> Optional[datetime]:
@@ -354,7 +373,7 @@ def _last_day_month(month: int, day: int, anchor: datetime) -> Optional[datetime
             continue                        # no such day that year
         if value < _midnight(anchor):
             return value
-    return None
+    return decline(bad_day(None, month, day))
 
 
 def _week_span(start_astro: AstroDate, week_start_name: str) -> DateSpan:
@@ -410,8 +429,9 @@ DATE_CONSTRUCTIONS = frozenset({
 
 
 def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolution:
-    """Intersect a date span with a clock span: the minute-wide clock time
-    placed on the day the date construction selected.
+    """Intersect a date span with a clock span: the clock time (minute-wide,
+    or an hour wide for an ordinal hour) placed on the day the date
+    construction selected.
 
     The date span's ``start`` supplies the calendar day (its left edge is
     that day's midnight); the clock span's ``start`` supplies the
@@ -424,7 +444,8 @@ def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolutio
                       c.hour, c.minute, c.second, c.microsecond,
                       tzinfo=c.tzinfo)
     consumed = tuple(sorted(set(date_res.consumed) | set(clock_res.consumed)))
-    return Resolution(DateSpan(start, start + timedelta(minutes=1)), consumed)
+    width = clock_res.value.end - clock_res.value.start
+    return Resolution(DateSpan(start, start + width), consumed)
 
 
 def _daypart_band(day: AstroDate, name: str,
@@ -558,8 +579,8 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
         d = daypart_res.value.start
         new_start = new_start.replace(year=d.year, month=d.month, day=d.day)
     consumed = tuple(sorted(set(clock_res.consumed) | set(daypart_res.consumed)))
-    return Resolution(DateSpan(new_start, new_start + timedelta(minutes=1)),
-                      consumed)
+    width = clock_res.value.end - clock_res.value.start
+    return Resolution(DateSpan(new_start, new_start + width), consumed)
 
 
 def _astro_add_years(start: AstroDate, years: int) -> AstroDate:
@@ -616,7 +637,7 @@ class Resolver:
                 f"construction {match.construction!r} is declared but not "
                 f"resolved in the engine-core phase; it lands with its own "
                 f"migration wave")
-        handler = getattr(self, f"_resolve_{match.construction}", None)
+        handler = self._HANDLERS.get(match.construction)
         if handler is None:
             raise NotImplementedError(
                 f"no resolver for construction {match.construction!r}")
@@ -626,7 +647,7 @@ class Resolver:
             # long); every other handler ignores the mode.
             if match.construction == "deep_time":
                 return self._resolve_deep_time(match, anchor, scale_mode)
-            return handler(match, anchor)
+            return handler(self, match, anchor)
         except (ValueError, OverflowError, KeyError):
             # "This reading does not resolve to a real date" -- an out-of-range
             # or calendar-invalid value (day 31 of a 30-day month, a year beyond
@@ -802,8 +823,16 @@ class Resolver:
         rel_tok = match.slots.get("REL_MARKER")
         off = self.spec.rel_markers[rel_tok.text] if rel_tok is not None else 0
         day = AstroDate.from_datetime(_midnight(anchor) + timedelta(days=off))
-        return Resolution(_daypart_band(day, name, after_evening=True),
-                          self._consumed(match))
+        band = _daypart_band(day, name, after_evening=True)
+        if rel_tok is not None and rel_tok.text in self.spec.upcoming:
+            # "komende avond": the first band that has not begun.
+            day = AstroDate.from_datetime(_midnight(anchor))
+            band = _daypart_band(day, name, after_evening=True)
+            if band.start <= AstroDate.from_datetime(anchor):
+                day = AstroDate.from_datetime(_midnight(anchor)
+                                              + timedelta(days=1))
+                band = _daypart_band(day, name, after_evening=True)
+        return Resolution(band, self._consumed(match))
 
     def _named_day_offset(self, match, anchor, step):
         """"the day after/before <named day>": one day past/short of a named
@@ -1368,12 +1397,16 @@ class Resolver:
         if weekday:
             d = int(weekday)
             if not 1 <= d <= 7:
-                return None
+                return decline(f"there is no ISO weekday {d}")
+            if _nth_iso_week_of_year(year, week) is None:
+                return decline(f"{year} has no ISO week {week}")
             day = date.fromisocalendar(year, week, d)   # ValueError -> None
             s = AstroDate.from_date(day)
             return Resolution(DateSpan(s, s + timedelta(days=1)),
                               self._consumed(match))
-        monday = date.fromisocalendar(year, week, 1)    # ValueError -> None
+        if _nth_iso_week_of_year(year, week) is None:
+            return decline(f"{year} has no ISO week {week}")
+        monday = date.fromisocalendar(year, week, 1)
         s = AstroDate.from_date(monday)
         return Resolution(DateSpan(s, s + timedelta(days=7)),
                           self._consumed(match))
@@ -1393,6 +1426,9 @@ class Resolver:
         week_start = base - timedelta(days=(anchor.weekday() - start_idx) % 7)
         wknd_idx = self.conventions.weekend_start
         first = week_start + timedelta(days=(wknd_idx - start_idx) % 7)
+        if rel_tok is not None and rel_tok.text in self.spec.upcoming:
+            # "komend weekend": the first weekend that has not begun.
+            rel = 0 if first > base else 1
         first = first + timedelta(weeks=rel)
         s = AstroDate.from_datetime(first)
         return Resolution(DateSpan(s, s + timedelta(days=2)),
@@ -1437,7 +1473,8 @@ class Resolver:
             start = _nth_weekday_of_month_astro(
                 year, month, self.conventions.weekend_start, n)
             if start is None:                         # no such Nth weekend
-                return None
+                return decline(no_such(_era_scope(month, year_tok, era_tok),
+                                       n, "weekend"))
             return Resolution(DateSpan(start, start + timedelta(days=2)),
                               self._consumed(match))
         year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
@@ -1445,6 +1482,11 @@ class Resolver:
         value = _nth_weekend_of_month(year, month,
                                       self.conventions.weekend_start, n)
         if value is None:                            # no such Nth weekend
+            # a year the speaker did not name is only the anchor's: some
+            # other year may hold the weekend
+            if year_tok or n > 5:
+                return decline(no_such(scope_name(month, year if year_tok else None),
+                                       n, "weekend"))
             return None
         start = AstroDate.from_date(value)
         return Resolution(DateSpan(start, start + timedelta(days=2)),
@@ -1477,14 +1519,19 @@ class Resolver:
             # rather than reading "500" as the Gregorian year AD 500 and
             # stranding "BC" as remainder -- see the ``ERA`` slot's docstring.
             year = _year_with_era(year_tok, era_tok, self.spec)
-            astro = AstroDate(year, month, day)     # raises on impossible
+            if bad_day(year, month, day):
+                return decline(f"{_era_scope(month, year_tok, era_tok)} "
+                               f"has no {ordinal(day)}")
+            astro = AstroDate(year, month, day)
             span = DateSpan(astro, astro + timedelta(days=1)) if day_tok \
                 else _gregorian_month_span(year, month)
             return Resolution(span, self._consumed(match))
         # a year phrase after the month ("march of this year", "5 марта
-        # прошлого года") names the year outright
+        # прошлого года", "noviembre del año que viene") names the year
+        # outright; only "marzo pasado" has the marker right after the month
         year_phrase = (rel_tok is not None and rel_tok.index > month_tok.index
-                       and match.span[1] > rel_tok.index + 1)
+                       and (match.span[1] > rel_tok.index + 1
+                            or rel_tok.index > month_tok.index + 1))
         if year_tok:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
@@ -1505,7 +1552,9 @@ class Resolver:
                 # ended is next year's.
                 year += 1
         if year_tok or year_phrase:
-            value = datetime(year, month, day)      # raises on impossible
+            if reason := bad_day(year, month, day):
+                return decline(reason)
+            value = datetime(year, month, day)
         elif day_tok and rel < 0:
             # "last March 5": the latest such day before today
             value = _last_day_month(month, day, anchor)
@@ -1518,7 +1567,10 @@ class Resolver:
                 return None
             year = value.year
         else:
-            value = datetime(year, month, day)      # raises on impossible
+            if bad_day(year, month, day):
+                # the anchor's year lacks the day; report only a day no year has
+                return decline(bad_day(None, month, day))
+            value = datetime(year, month, day)
         span = _day_span(value) if day_tok \
             else _gregorian_month_span(year, month)
         return Resolution(span, self._consumed(match))
@@ -1573,11 +1625,11 @@ class Resolver:
                     year, jdn = y, cand
                     break
             else:
-                return None
+                return decline(f"{surface} never has a day {day}")
         else:
             jdn = calendar.to_jdn(year, month, day)     # raises on impossible
         if calendar.from_jdn(jdn) != (year, month, day):
-            return None                                 # impossible day-in-month
+            return decline(f"{surface} {year} has no day {day}")
         start = AstroDate(*jdn_to_gregorian(jdn))       # ValueError -> None
         if day_tok:
             span = DateSpan(start, start + timedelta(days=1))
@@ -1622,7 +1674,11 @@ class Resolver:
             return Resolution(_gregorian_month_span(y, m),
                               self._consumed(match))
         y, m, d = (int(p) for p in parts)
-        start = AstroDate(y, m, d)                       # ValueError -> None
+        if not 1 <= m <= 12:
+            return decline(f"{y} has no month {m}")
+        if reason := bad_day(y, m, d):
+            return decline(reason)
+        start = AstroDate(y, m, d)
         return Resolution(DateSpan(start, start + timedelta(days=1)),
                           self._consumed(match))
 
@@ -1665,10 +1721,9 @@ class Resolver:
             day, month = month, day
         if not 1 <= month <= 12:
             return None
-        try:
-            start = AstroDate(year, month, day)          # bad day -> ValueError
-        except ValueError:
-            return None
+        if reason := bad_day(year, month, day):
+            return decline(reason)
+        start = AstroDate(year, month, day)
         return Resolution(DateSpan(start, start + timedelta(days=1)),
                           self._consumed(match))
 
@@ -1865,7 +1920,8 @@ class Resolver:
             else:
                 return None
         if value is None:                           # no roll and day is absent
-            return None
+            # a bare "the 31st" names no month, so another month may hold it
+            return decline(bad_day(base.year, base.month, day) if rel_tok else None)
         return Resolution(_day_span(value), self._consumed(match))
 
     #: scope-word kind -> that period's length in whole years.
@@ -2085,9 +2141,15 @@ class Resolver:
             if month_tok is not None:               # named month ("... of June")
                 month = self.spec.months[month_tok.text]
                 year_tok = match.slots.get("YEAR")
+                # a relative year phrase ("of november next year", "de
+                # noviembre del año que viene") shifts the anchor's year
+                rel_tok = match.slots.get("REL_MARKER")
                 year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
-                        else anchor.year)
+                        else anchor.year + (self.spec.rel_markers[rel_tok.text]
+                                            if rel_tok else 0))
                 value = _nth_weekday_of_month(year, month, target, n)
+                scope = scope_name(month, year if year_tok else None)
+                most = 0 if year_tok else 5
             elif gyear_tok is not None:              # bare year, no month:
                 # "the first/last <weekday> of <YEAR>" -- the Nth (or, with
                 # ``ordlast``, final) occurrence of that weekday WITHIN the
@@ -2100,6 +2162,7 @@ class Resolver:
                 # relative to the anchor year rather than the named one.
                 year = int(gyear_tok.value)
                 value = _nth_weekday_of_year(year, target, n)
+                scope, most = str(year), 0
             else:
                 scope_tok = match.slots.get("SCOPE_UNIT")
                 scope_kind = (self.spec.units.get(scope_tok.text)
@@ -2113,6 +2176,8 @@ class Resolver:
                     base = _add_months(_midnight(anchor).replace(day=1), rel)
                     year, month = base.year, base.month
                     value = _nth_weekday_of_month(year, month, target, n)
+                    scope, most = (scope_name(month, year), 0) if rel_tok \
+                        else ("a month", 5)
                     # "the first tuesday of the month", with no marker, names
                     # the next such day once this month's has passed, in the
                     # next month that has it ("the fifth friday" skips the
@@ -2142,6 +2207,7 @@ class Resolver:
                     rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
                     year = anchor.year + rel
                     value = _nth_weekday_of_year(year, target, n)
+                    scope, most = (str(year), 0) if rel_tok else ("a year", 53)
                 elif scope_tok is None:
                     # "the first/last <weekday> of the year_word", bare (no
                     # GYEAR, no SCOPE_UNIT bound at all) -- ``year_word`` is
@@ -2163,10 +2229,14 @@ class Resolver:
                     # ``weekday_ref`` reading ("first/last monday"),
                     # stranding "roku"/"года".
                     value = _nth_weekday_of_year(anchor.year, target, n)
+                    scope, most = "a year", 53
                 else:                                # week/decade/... -> no fit
                     return None
             if value is None:                       # no such Nth weekday
-                return None
+                # a period the speaker did not name is only the anchor's, and
+                # another one may hold the weekday: report an ordinal beyond all
+                return decline(no_such_weekday(scope, n, target)) \
+                    if abs(n) > most else None
             start = AstroDate.from_date(value)
             return Resolution(DateSpan(start, start + timedelta(days=1)),
                               self._consumed(match))
@@ -2214,7 +2284,11 @@ class Resolver:
         if month_tok is not None:                   # month-scoped (named month)
             month = self.spec.months[month_tok.text]
             res = _UNIT_OF_MONTH[unit_kind]
-            value = get_date_ordinal(n, date(year, month, 1), res)
+            value = _date_ordinal(n, date(year, month, 1), res)
+            scope = scope_name(month, year if year_tok else None)
+            most = 0 if year_tok else (_days_in_month(2000, month)
+                                       if unit_kind == "day"
+                                       else {"week": 6}.get(unit_kind, 0))
         elif scope_tok is not None:                 # anchor-relative period
             # "the last day of (the|this|next|last) month/year": the scope word
             # names the anchor's own calendar period, shifted by an optional
@@ -2224,8 +2298,10 @@ class Resolver:
             rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
             if scope_kind == "month":
                 base = _add_months(_midnight(anchor).replace(day=1), rel)
-                value = get_date_ordinal(n, date(base.year, base.month, 1),
-                                         _UNIT_OF_MONTH[unit_kind])
+                value = _date_ordinal(n, date(base.year, base.month, 1),
+                                      _UNIT_OF_MONTH[unit_kind])
+                scope, most = (scope_name(base.month, base.year), 0) if rel_tok \
+                    else ("a month", {"day": 31, "week": 6}.get(unit_kind, 0))
                 # With no marker, a day or week of "the month" that ended
                 # before the anchor is next month's ("the first day of the
                 # month" said on the 17th); "of this month" never rolls.
@@ -2235,23 +2311,30 @@ class Resolver:
                     if _unit_end(start, unit_kind) <= AstroDate.from_datetime(
                             anchor):
                         base = _add_months(base, 1)
-                        value = get_date_ordinal(
+                        value = _date_ordinal(
                             n, date(base.year, base.month, 1),
                             _UNIT_OF_MONTH[unit_kind])
             elif scope_kind == "year" and unit_kind == "week":
                 value = _nth_iso_week_of_year(anchor.year + rel, n)
+                scope, most = (str(anchor.year + rel), 0) if rel_tok \
+                    else ("a year", 53)
             elif scope_kind == "year":
-                value = get_date_ordinal(n, date(anchor.year + rel, 1, 1),
-                                         _UNIT_OF_YEAR[unit_kind])
+                value = _date_ordinal(n, date(anchor.year + rel, 1, 1),
+                                      _UNIT_OF_YEAR[unit_kind])
+                scope, most = (str(anchor.year + rel), 0) if rel_tok \
+                    else ("a year", {"day": 366, "month": 12}.get(unit_kind, 0))
             else:                                   # week/decade/... -> no fit
                 return None
         elif unit_kind == "week":                   # year-scoped (year_word)
             value = _nth_iso_week_of_year(year, n)
+            scope, most = (str(year), 0) if year_tok else ("a year", 53)
         else:
             res = _UNIT_OF_YEAR[unit_kind]
-            value = get_date_ordinal(n, date(year, 1, 1), res)
+            value = _date_ordinal(n, date(year, 1, 1), res)
+            scope, most = (str(year), 0) if year_tok else (
+                "a year", {"day": 366, "month": 12}.get(unit_kind, 0))
         if value is None:
-            return None
+            return decline(no_such(scope, n, unit_kind)) if abs(n) > most else None
         return self._ordinal_result(value, unit_kind, match)
 
     def _ordinal_result(self, value, kind, match):
@@ -2924,6 +3007,15 @@ class Resolver:
             return None
         base = _midnight(anchor)
         dt = base.replace(hour=hour, minute=minute, second=second)
+        width = timedelta(minutes=1)
+        if "HOURSPAN" in match.slots:
+            # ru "в восьмом часу": the N-th hour of the clock face runs from
+            # N-1 o'clock to N o'clock.
+            ordinal = match.slots["HOUR"]
+            if not ordinal.ordinal or not 1 <= ordinal.value <= 12:
+                return None
+            dt -= timedelta(hours=1)
+            width = timedelta(hours=1)
         prefer_future = self.spec.construction_flags.get(
             match.construction, {}).get("prefer_future", False)
         if prefer_future and dt < anchor:
@@ -2932,7 +3024,7 @@ class Resolver:
         tz = self._zone_tzinfo(match.slots.get("ZONE"))
         if tz is not None:
             start = start.replace(tzinfo=tz)
-        return Resolution(DateSpan(start, start + timedelta(minutes=1)),
+        return Resolution(DateSpan(start, start + width),
                           self._consumed(match))
 
     def _zone_tzinfo(self, zone_tok):
@@ -3111,8 +3203,22 @@ class Resolver:
             min_tok = match.slots.get("MINUTE")
             clockmin_tok = match.slots.get("CLOCKMIN")
             dir_tok = match.slots.get("CLOCKDIR")
-            if dir_tok is not None and (frac_tok is not None or min_tok is not None
-                                         or clockmin_tok is not None):
+            half_tok = match.slots.get("HALF")
+            if half_tok is not None:
+                # minutes around the half hour before the stated hour:
+                # "tien voor half negen" is 8.20, "tien over half negen" 8.40
+                # (Team Taaladvies, "Kloktijden: acht uur zeventien / zeventien
+                # over acht / dertien voor halfnegen").  A count of 30 or more
+                # leaves the half hour, so it names no time.
+                offset = (self.spec.clock_fractions[frac_tok.text]
+                          if frac_tok is not None else int(min_tok.value))
+                if offset >= 30:
+                    return None
+                hour -= 1
+                minute = 30 + (offset if self.spec.clock_dirs[dir_tok.text] > 0
+                               else -offset)
+            elif dir_tok is not None and (frac_tok is not None or min_tok is not None
+                                           or clockmin_tok is not None):
                 offset = (self.spec.clock_fractions[frac_tok.text] if frac_tok is not None
                           else self.spec.clock_dir_minutes[clockmin_tok.text]
                           if clockmin_tok is not None else int(min_tok.value))
@@ -3278,3 +3384,81 @@ class Resolver:
                 elif off == 0 and spoken_hour == 12:
                     hour = (hour - 12) % 24
         return hour, minute, second
+
+    # construction name -> handler
+    _HANDLERS = {
+        "relative_offset": _resolve_relative_offset,
+        "named_day": _resolve_named_day,
+        "daypart_ref": _resolve_daypart_ref,
+        "named_day_after": _resolve_named_day_after,
+        "named_day_before": _resolve_named_day_before,
+        "weekday_offset": _resolve_weekday_offset,
+        "named_day_span_idiom": _resolve_named_day_span_idiom,
+        "named_day_offset_from": _resolve_named_day_offset_from,
+        "sametime_shift": _resolve_sametime_shift,
+        "holiday_eve": _resolve_holiday_eve,
+        "weekday_ref": _resolve_weekday_ref,
+        "weekday_of_week": _resolve_weekday_of_week,
+        "before_last": _resolve_before_last,
+        "after_next": _resolve_after_next,
+        "weekday_ago": _resolve_weekday_ago,
+        "unit_ago_weekday": _resolve_unit_ago_weekday,
+        "rel_period": _resolve_rel_period,
+        "rel_span": _resolve_rel_span,
+        "rel_span_quarter": _resolve_rel_span_quarter,
+        "rel_span_weekend": _resolve_rel_span_weekend,
+        "fuzzy_period": _resolve_fuzzy_period,
+        "quarter_ref": _resolve_quarter_ref,
+        "iso_week_ref": _resolve_iso_week_ref,
+        "iso_week_date": _resolve_iso_week_date,
+        "weekend_ref": _resolve_weekend_ref,
+        "weekend_of_month": _resolve_weekend_of_month,
+        "calendar_date": _resolve_calendar_date,
+        "reckoned_date": _resolve_reckoned_date,
+        "iso_date": _resolve_iso_date,
+        "numeric_date": _resolve_numeric_date,
+        "numeric_day_month": _resolve_numeric_day_month,
+        "hebrew_new_year": _resolve_hebrew_new_year,
+        "year_ref": _resolve_year_ref,
+        "decade_ref": _resolve_decade_ref,
+        "month_fuzzy": _resolve_month_fuzzy,
+        "month_day_ref": _resolve_month_day_ref,
+        "half_period": _resolve_half_period,
+        "quarter_of_month": _resolve_quarter_of_month,
+        "scoped_ordinal": _resolve_scoped_ordinal,
+        "scoped_ad": _resolve_scoped_ad,
+        "scoped_bc": _resolve_scoped_bc,
+        "decade_bc": _resolve_decade_bc,
+        "regnal_date": _resolve_regnal_date,
+        "roman_date": _resolve_roman_date,
+        "archon_ref": _resolve_archon_ref,
+        "roman_classical": _resolve_roman_classical,
+        "cycle_ref": _resolve_cycle_ref,
+        "season_ref": _resolve_season_ref,
+        "season_fuzzy": _resolve_season_fuzzy,
+        "solar_event": _resolve_solar_event,
+        "era_bc": _resolve_era_bc,
+        "era_ad": _resolve_era_ad,
+        "era_bp": _resolve_era_bp,
+        "era_auc": _resolve_era_auc,
+        "era_saka": _resolve_era_saka,
+        "era_byzantine": _resolve_era_byzantine,
+        "era_holocene": _resolve_era_holocene,
+        "era_anno_mundi": _resolve_era_anno_mundi,
+        "era_french_republican": _resolve_era_french_republican,
+        "era_buddhist": _resolve_era_buddhist,
+        "era_buddhist_be": _resolve_era_buddhist_be,
+        "era_hijri": _resolve_era_hijri,
+        "era_solar_hijri": _resolve_era_solar_hijri,
+        "roman_eve": _resolve_roman_eve,
+        "olympiad_ref": _resolve_olympiad_ref,
+        "deep_time": _resolve_deep_time,
+        "named_period": _resolve_named_period,
+        "holiday_ref": _resolve_holiday_ref,
+        "new_year_ref": _resolve_new_year_ref,
+        "clock_time": _resolve_clock_time,
+        "subdivision_time": _resolve_subdivision_time,
+        "nongregorian_date": _resolve_nongregorian_date,
+        "military_time": _resolve_military_time,
+        "clock_this_daypart": _resolve_clock_this_daypart,
+    }

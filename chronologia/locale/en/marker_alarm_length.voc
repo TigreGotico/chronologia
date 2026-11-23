@@ -1,12 +1,17 @@
 # A word that adds to a count after the hour of "alarm for 10": "alarm for 10
 # more minutes" is a length.  "more [...] Additional; further." and "extra
 # [...] (beyond what is due, usual, expected, or necessary; extraneous;
-# additional)" (Wiktionary, s.v. "more", "extra").
+# additional)" (Wiktionary, s.v. "more", "extra").  "of" after a number
+# names the whole the number counts from: "alarm for 2 of you".  "of [...]
+# (following a number or other quantitive word) Introduces the whole for which
+# is indicated only the specified part or segment" (Wiktionary, s.v. "of",
+# preposition).
 # "h" and "m" after the hour are the unit letters of a length: "alarm for 10 h"
 # is ten hours and "alarm for 10 m" ten minutes.  "h [...] Abbreviation of
 # hour, particularly when used as a (non-SI) unit of time alongside SI units"
 # and "m [...] Abbreviation of minute" (Wiktionary, s.v. "h", "m", English).
 more
 extra
+of
 h
 m

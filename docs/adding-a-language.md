@@ -1,5 +1,13 @@
 # Adding a language
 
+<!-- agent-hint
+covers: the steps for teaching chronologia a new language with word lists and a test corpus
+source: `chronologia/locale/en/lang.json`, `chronologia/extract/schema.py`, `test/test_language_parity.py`
+generated: no
+verify: python -m pytest "test/test_docs_examples.py::test_doc_examples_execute[adding-a-language.md]" -q
+see: `docs/extraction.md`, `docs/languages/index.md`
+-->
+
 **Who this is for:** you speak a language chronologia does not yet read well,
 and you would like it to. You do **not** need to be a programmer. Adding a
 language is mostly *editing small lists of words in plain text files* — one
@@ -330,7 +338,7 @@ direction word — means in your language:
 | `bare_half_past` | "half nine" means **9:30** (English colloquial: half *past* nine) |
 | `bare_half_to` | "half nine" means **8:30** (German/Dutch/Scandinavian: the half *before* nine — "halb neun") |
 | `bare_quarter_to` | a bare quarter counts *toward* the coming hour (Hungarian/Estonian: "quarter nine" = 8:15) |
-| `toward_hour_12h` | in a toward-the-hour system, the hour before one is spoken as *twelve*, so "half toward one" is **12:30**, not 00:30 (Slovenian, Russian, Polish, Czech) |
+| `toward_hour_12h` | in a toward-the-hour system, renames the hour before one as *twelve* on the toward-hour path. A bare "half toward one" still resolves to the next of 00:30 and 12:30, whichever comes first after the anchor (ruling 17); the locales Slovenian, Russian, Polish and Czech set it |
 
 Pick the one that matches how *your* language actually speaks. If none applies —
 your language always says the direction word out loud — leave them all off (the
@@ -348,6 +356,7 @@ tell the two apart. Leave them out if your language has no such clash.
 |---|---|
 | `marker_at_counts.voc` | the clock prepositions that also introduce a counted group ("at", "a", "om") |
 | `marker_counted_noun.voc` | nouns that count people or things a clock never takes ("people", "vecinas", "mensen"), singular and plural, each gender |
+| `marker_participle_aux.voc` | forms of the auxiliary that a word with a season reading follows as a past participle (fr "avoir" before "été") |
 
 A bare hour behind one of those prepositions and directly before one of those
 nouns is read as a count. Any other word after the hour, a verb included, leaves
@@ -456,6 +465,7 @@ Some recurrences are said as a single adverb rather than "every + unit":
 | `marker_recur_for.voc` | "for" (as in "every Monday **for** 6 weeks" — bounds the rule with a `COUNT`) |
 | `marker_until.voc` | "until" / "till" (as in "every Friday **until** June" — bounds the rule with an `UNTIL`) |
 | `marker_weekday.voc` | the class noun "weekday(s)" (as in "every weekday", distinct from any one named weekday) |
+| `marker_weekday_count.voc` | the plural forms of the class noun that name a count ("5 weekdays of the month"), never an ordinal |
 | `marker_recur_habitual.voc` | (optional) a habitual preposition some languages use instead of "every" before a weekday — Portuguese marks it with `à` / `às` / `ao` / `aos` ("**à** segunda" = "on Mondays, habitually") |
 
 `special_weekend.voc` (Tier 3) and the weekday/month files (Tier 1) do double
@@ -538,14 +548,14 @@ vocabulary.
 **4. `hook`** — this is the only line that names a bit of code, and most
 languages that need it are already covered. The hook is the **number-folding
 function**: it turns spelled-out numbers ("three", "twenty-five") into digits
-before matching. If your language is in the supported list (next section), you
-point `hook` at the ready-made function for it, exactly like Malay does:
+before matching. If your language reads its numbers through numtag (next section), you
+point `hook` at its fold function, exactly like Malay does:
 
 ```text
-"hook": "chronologia.extract.numfold:fold_ms"
+"hook": "chronologia.extract.numlayer_ms:fold_ms"
 ```
 
-If your language has no number backend yet, leave `hook` out entirely —
+If your language has no number fold, leave `hook` out entirely —
 chronologia will still read digits perfectly, just not spelled-out number
 words. Nothing else in `lang.json` depends on the hook.
 
@@ -568,26 +578,30 @@ chronologia reads **digits** (`3`, `2027`, `15:30`) in every language with no
 setup at all. The only thing that needs help is **spelled-out** numbers —
 "three days ago" instead of "3 days ago".
 
-Turning "three" into `3` is a separate, specialised job done by a companion
-library called **ovos-number-parser**. chronologia leans on it so it doesn't
-have to re-learn every language's number words. A language is covered if
-ovos-number-parser ships a `extract_number_<your code>` function for it.
+Turning "three" into `3` is a separate, specialised job. Two kinds of number
+fold exist.
 
-**Languages with a number backend today** (spelled-out numbers work):
+Most languages read their numbers through
+[numtag](https://github.com/TigreGotico/numtag). numtag keeps one lexicon file
+per language, with the source of every rule inside the file. A language reads
+through numtag when it has an entry in `NUMTAG_LANGS` in
+`chronologia/extract/numlayer.py`. A numtag lexicon alone is not enough.
 
-> an, ar, ast, az, bg, ca, cs, da, de, el, en, es, et, eu, fa, fi, fr, fy, gl,
-> he, hr, hu, id, it, kab, ms, mwl, nb, nl, nn, oc, pl, pt, ro, ru, sk, sl, sv,
-> tr, uk
+The other languages (for example `be`, `mk`, `sr`, `cy`, `ga` and `ko`) read
+spelled numbers with a `numfold_*.py` module of chronologia's own, which
+owns its number words as closed tables.
 
-**If your language is on that list:** set `hook` in `lang.json` to the matching
-`fold_<code>` function (see the existing languages for the exact name — most
-reuse a shared folder).
+**To read your language through numtag:** first make sure numtag ships a
+lexicon for it. Adding one is described in numtag's
+[adding-a-language guide](https://github.com/TigreGotico/numtag/blob/dev/docs/adding-a-language.md).
+Then add the language to `NUMTAG_LANGS` and write a `numlayer_<code>.py` module
+with a `fold_<code>` function that names the language's date words (compare
+`numlayer_ms.py`; several languages share a family module such as
+`numlayer_slavic.py`). Set `hook` in `lang.json` to that function.
 
-**If your language is *not* on that list:** that is completely fine. Leave
-`hook` out, ship your language with digit reading only, and it still passes all
-its tests. Adding spelled-out number support is a separate contribution to
-ovos-number-parser — a good follow-up, not a blocker. If you'd like to add it,
-ask the maintainers where to start.
+**If your language has no number fold:** that is completely fine. Leave `hook`
+out, ship your language with digit reading only, and it still passes all its
+tests. Spelled-out number support is a good follow-up, not a blocker.
 
 ---
 
@@ -657,7 +671,7 @@ that means the same thing:
 ```
 
 The test runner reads *both*, resolves them, and insists they land on the
-**exact same span**. This is a powerful, honest check: it proves your Malay
+**exact same span**. This check proves your Malay
 "next week" means the same instant of time as English "next week", with no
 hand-tuning. Every language needs **at least 25** such pairs, and the corpus as
 a whole needs **at least 100 example cases** total (across all the little
@@ -878,3 +892,6 @@ your language uses to say them.
 *Ready for the technical reference? The
 ["How a language works — and how to add one"](extraction.md) section of the
 extraction guide is the compact, developer-facing companion to this page.*
+
+---
+[← Reading dates written by humans](extraction.md) · [Home](index.md) · [Events and iCalendar →](events.md)

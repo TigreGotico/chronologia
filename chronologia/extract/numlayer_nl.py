@@ -14,7 +14,7 @@ from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
 # (``named_day_*.voc``, ``weekday_*.voc``, ``daypart_*_nl.voc``); the fused
 # spelling is just one unrecognised word to the tokenizer, so it strands.
 # This pass splits the compound back into its two known tokens, mirroring
-# :func:`chronologia.extract.numfold_slavic._split_ru_pol_unit`'s shape.
+# :func:`chronologia.extract.numlayer_slavic._split_ru_half`'s shape.
 #
 # "gister" is the compounding stem but is not itself a standalone word --
 # only the citation form "gisteren" (``named_day_-1.voc``) is -- so the stem

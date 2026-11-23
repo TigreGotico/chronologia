@@ -1,5 +1,15 @@
 # Bulgarian (`bg`)
 
+<!-- agent-hint
+covers: where each construction of the Bulgarian locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/bg/lang.json`, `chronologia/locale/bg/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/bg.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/bg.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Bulgarian (`bg`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 Bulgarian is the analytic outlier of the Slavic locales here: no case system
 survives on the noun, so "last week" and "next week" are carried entirely by
 adjective agreement and Bulgarian's postposed definite article
@@ -93,26 +103,20 @@ the heading "half past". Both examples parse, the Wikibooks one because the
 locale also reads Bulgarian's contracted teens and tens: «единайсет» is the
 everyday spelling of eleven, and the long «единадесет» its formal twin. The
 contracted series from eleven to nineteen, together with twenty, thirty and
-sixty, is folded from Wiktionary lemmas; the further clippings that drop the
-final consonant are not, having no lemma of their own, and forty is held out
-because the number model beneath reads a compound built on it as its tail
-alone. The locale reads it through `clock_fraction_30.voc`
+sixty, reads through numtag. The locale reads the clock through
+`clock_fraction_30.voc`
 (`половина`) and `clock_dir_past.voc` (`и`), wired into two `clock_time`
 orders — `at HOUR CLOCKDIR FRACTION article? MERIDIEM? ZONE?` and the same
-shape without the leading `at`. The joiner needs care because `и` is also
-the conjunction Bulgarian's spelled compound numerals are built on
-(`двадесет и едно`), so the cardinal fold would otherwise swallow it; a
-dedicated fold pulls `и` back out of the bare cardinal set and reinstates it
-as the clock's direction word.
+shape without the leading `at`. `и` is also the conjunction of a compound
+numeral (`двадесет и едно`); numtag reads `осем и половина` as one fraction,
+and the fold keeps `половина` and `и` as words for the clock.
 
-**Numerals** are read through the shared Slavic cardinal-fold hook
-(`chronologia.extract.numfold_slavic:fold_bg`) rather than a per-locale
-vocabulary file — no locale ships numeral `.voc` files — and a spelled
-number is recognised by asking `ovos_number_parser`'s Bulgarian back-end
-what a token run is worth. The
-fold's closed extra-word set for `bg` is `{два, две, три, половин}` — the
-oblique/quantifier forms the parser's own nominative pronunciation would
-otherwise miss.
+**Numerals** are read by numtag (`numlayer_slavic.py`), and no locale ships
+numeral `.voc` files. numtag reads the compound `двадесет и три`, and
+`осем и половина` as one fraction mention: the fold keeps `половина` as the
+clock word and reads `осем` again on its own. numtag reads the contracted
+ordinals `единайсети` and `двайсети` but not the long `единадесети` and
+`двадесети`, so the fold reads each long form through its contracted twin.
 
 ## Weaker provenance
 
@@ -129,11 +133,9 @@ calendar-quarter word and the other a fiscal-quarter word.
 **`половин`/`половина`** ship for `half_period` ("first/second half of the
 year") cited to the Institute for Bulgarian Language's online dictionary,
 sense "one of the two equal parts of a whole". The two surfaces do different
-jobs: `половина` is the clock's fraction word, while `половин` is folded as
-a cardinal 0.5 by the numfold hook's extra-word set purely so `half_period`'s
-quantifier slot can read it back, and it reaches no clock construction —
-the same split Persian's page records, where an attested spelled fractional
-clock reaches only the period construction.
+jobs: `половина` is the clock's fraction word, and `половин` is the
+quantifier of `половин година`. Both stay words, and `първата половин година`
+is the first half of the year.
 
 ## What refuses
 
@@ -156,3 +158,28 @@ the half hour is the only fractional clock surface the locale carries.
    date phrases, or does one carry a fiscal connotation the other lacks?
 4. Is `завчера` or `онзи ден` the more current everyday form for "the day
    before yesterday", or do they belong to different registers?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("bg")
+    True
+    >>> span, rest = extract_timespan('28 на май', "bg", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2018-05-28T00:00:00', '')
+    >>> span, rest = extract_timespan('през май 2030', "bg", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2030-05-01T00:00:00', '')
+    >>> span, rest = extract_timespan('в 9 часа следобед', "bg", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T21:00:00', '')
+    >>> span, rest = extract_timespan('в 2030', "bg", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2030-01-01T00:00:00', '')
+
+---
+[← Belarusian](be.md) · [Home](../index.md) · [Catalan →](ca.md)

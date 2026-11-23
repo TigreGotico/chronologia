@@ -38,7 +38,7 @@ def test_bare_digit_binds_and_rolls_to_tomorrow():
 
 def test_bare_spelled_binds_same_as_digit():
     # 'תשע' (spelled nine) folds to the digit 9 upstream of the grammar fix
-    # (numfold_semitic); confirms the new order isn't digit-only by accident.
+    # (numlayer_semitic); confirms the new order isn't digit-only by accident.
     r = parse("בשעה תשע")
     assert r is not None, "'בשעה תשע' did not parse"
     assert r.remainder == ""

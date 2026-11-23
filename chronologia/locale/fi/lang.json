@@ -33,6 +33,8 @@
     },
     "clock_time": {
       "orders": [
+        "at CLOCK oclock MERIDIEM ZONE?",
+        "CLOCK oclock MERIDIEM ZONE?",
         "at CLOCK MERIDIEM? ZONE?",
         "CLOCK MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
@@ -137,14 +139,13 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_agglutinative:fold_fi",
+  "hook": "chronologia.extract.numlayer_agglutinative:fold_fi",
   "base_grammar": {
     "disable": [
       "calendar_date"
     ],
     "override": {
       "season_ref": [
-        "article? SEASON of YEAR",
         "REL_MARKER SEASON",
         "article? SEASON YEAR?"
       ],
