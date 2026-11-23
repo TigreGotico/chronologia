@@ -1367,7 +1367,7 @@ def _unread_date_never_occurs(rec, consumed, ctx):
         (None, None, None))
     for i in range(len(t) - 1):
         nxt = t[i + 1]
-        if not t[i].ordinal or nxt.index in consumed:
+        if not t[i].ordinal or nxt.index in consumed or nxt.break_before:
             continue
         n = int(t[i].value)
         reason = None
@@ -1379,6 +1379,8 @@ def _unread_date_never_occurs(rec, consumed, ctx):
                 reason = no_such(scope, n, "business day")
         elif (nxt.text in ctx.of_words and i + 2 < len(t)
               and t[i + 2].text in ctx.months):
+            if n > 31:
+                return True     # often no day: refused, but no reason is reported
             reason = bad_day(None, ctx.months[t[i + 2].text], n)
         if reason is not None:
             decline(reason)
