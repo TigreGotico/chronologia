@@ -1605,6 +1605,17 @@ def _apply_clock(rec, consumed, ctx, lang, anchor):
         while lo - 1 >= 0 and tokens[lo - 1].text in ctx.at_words \
                 and (lo - 1) not in consumed:
             lo -= 1
+        # An "of" between the clock and the recurrence head belongs to
+        # neither.  Where the locale joins them with it ("às dez de cada
+        # sábado") the "of" goes whatever follows; elsewhere ("remind me at 9
+        # of every monday meeting") it stays unless the head ends the text.
+        if (hi + 1 in consumed
+                and tokens[hi].text in ctx.of_words
+                and hi not in consumed
+                and (ctx.spec.conventions.clock_of_recurrence
+                     or all(k in consumed for k in range(hi + 1, n)))
+                and "MERIDIEM" not in m.slots):
+            hi += 1
         return rec, consumed | set(range(lo, hi))
     return rec, consumed
 

@@ -38,20 +38,27 @@
     "clock_time": {
       "orders": [
         "alarm_at HOUR MERIDIEM? ZONE?",
-        "at? HOUR oclock? CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
+        "at? HOUR oclock? CLOCKDIR article? FRACTION ZONE?",
+        "at? HOUR oclock? CLOCKDIR article? FRACTION of? article? MERIDIEM ZONE?",
         "at? HOUR oclock? CLOCKDIR article? FRACTION at MERIDIEM ZONE?",
         "at? HOUR oclock? CLOCKDIR article? FRACTION dayframe MERIDIEM ZONE?",
-        "at? HOUR oclock? CLOCKDIR MINUTE of? article? MERIDIEM? ZONE?",
+        "at? HOUR oclock? CLOCKDIR MINUTE ZONE?",
+        "at? HOUR oclock? CLOCKDIR MINUTE of? article? MERIDIEM ZONE?",
         "at? HOUR oclock? CLOCKDIR MINUTE at MERIDIEM ZONE?",
         "at? HOUR oclock? CLOCKDIR MINUTE dayframe MERIDIEM ZONE?",
-        "at HOUR oclock? of? article? MERIDIEM? ZONE?",
+        "at HOUR oclock? ZONE?",
+        "at HOUR oclock of ZONE?",
+        "at HOUR oclock? of? article? MERIDIEM ZONE?",
         "at? HOUR oclock? of? article? MERIDIEM ZONE?",
         "at? HOUR oclock? at MERIDIEM ZONE?",
         "at? HOUR oclock? dayframe MERIDIEM ZONE?",
         "at? HOUR oclock? MERIDIEM ZONE?",
-        "at? LANDMARK CLOCKDIR article? FRACTION of? article? MERIDIEM? ZONE?",
-        "at? LANDMARK CLOCKDIR MINUTE of? article? MERIDIEM? ZONE?",
-        "at? LANDMARK of? article? MERIDIEM? ZONE?",
+        "at? LANDMARK CLOCKDIR article? FRACTION ZONE?",
+        "at? LANDMARK CLOCKDIR article? FRACTION of? article? MERIDIEM ZONE?",
+        "at? LANDMARK CLOCKDIR MINUTE ZONE?",
+        "at? LANDMARK CLOCKDIR MINUTE of? article? MERIDIEM ZONE?",
+        "at? LANDMARK ZONE?",
+        "at? LANDMARK of? article? MERIDIEM ZONE?",
         "at CLOCK oclock? of? article? MERIDIEM ZONE?",
         "at? CLOCK oclock? of? article? MERIDIEM ZONE?",
         "at? CLOCK oclock? MERIDIEM ZONE?",
@@ -189,7 +196,8 @@
     "dmy": true,
     "hemisphere": null,
     "prefer_future": true,
-    "bare_at_markers": ["a", "as"]
+    "bare_at_markers": ["a", "as"],
+    "clock_of_recurrence": true
   },
   "quantifiers": {
     "1": [

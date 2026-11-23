@@ -508,6 +508,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
             daypart_proper_noun_guard=conv.get(
                 "daypart_proper_noun_guard", False),
             bare_at_markers=frozenset(conv.get("bare_at_markers", ())),
+            clock_of_recurrence=conv.get("clock_of_recurrence", False),
             weekend_start=conv.get("weekend_start", 5),
             offset_clock_composes=conv.get(
                 "offset_clock_composes", False)),
