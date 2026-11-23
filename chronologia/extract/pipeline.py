@@ -6,7 +6,7 @@ so a trace never misrepresents a real parse:
 
 1. tokenize (language tokenizer modes);
 2. normalise (temporal-lemma / suffix-strip morphology);
-3. the language ``hook`` (English: the spelled-number fold ``numfold``), so a
+3. the language ``hook`` (the spelled-number fold, read through numtag), so a
    written-out number ("the fifth of june") binds the same slot a digit would;
 4. multiword-vocab merge -- period surfaces the tokenizer split ("bronze age")
    folded back into one token so a single slot can bind them.

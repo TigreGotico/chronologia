@@ -7,10 +7,9 @@ alternative, dasa "ten" + warsa "year").
 Malay postposes the ordinal after the noun ("abad ketiga" = the third
 century), the same shape its own quarter_ref sibling already uses
 ("kuartal ketiga"), so this corpus's base_grammar.extend adds
-"CMUNIT ordinal_prefix? ORD" to scoped_ordinal. Spelled ordinals fold through
-ovos-number-parser (numbers_id backend, ordinals=True) only as single
-tokens, so of the spelled forms only the one-word ordinals ("ketiga" etc,
-values 1..9ish) are exercised here. The digit ordinal is written with the ke-
+"CMUNIT ordinal_prefix? ORD" to scoped_ordinal. Spelled ordinals read through
+numtag, so "abad kedua puluh satu" is the 21st century and the one-word
+ordinals ("ketiga" etc) work too. The digit ordinal is written with the ke-
 prefix and a hyphen ("abad ke-20"), which the tokenizer splits, and that form
 resolves too.
 

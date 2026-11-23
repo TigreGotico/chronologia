@@ -17,6 +17,7 @@ _WORDS = DateWords(
     definite=frozenset({"il", "lo", "la", "i", "gli", "le", "l"}),
     quarter_articles=frozenset({"un"}),
     articles_are_words=True,
+    clock_prepositions=frozenset({"alle", "all"}),
     unit_nouns=frozenset({"secondi"}),
     unit_ordinals=frozenset({"secondo"}),
     counts=count_words("it", locale_words("it", "marker_since")))

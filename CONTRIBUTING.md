@@ -22,8 +22,8 @@ remainder — usually means a word is missing from a vocabulary file, which is
 a much smaller fix and an easy first contribution.
 
 If you speak a language in the second or third band of the coverage table in
-the README, reading its vocabulary files is high-leverage work. Nobody on the
-project speaks forty languages, so a native reader finds things no test can.
+the README, reading its vocabulary files is high-value work. Nobody on the
+project speaks all sixty-one languages, so a native reader finds things no test can.
 
 ## Setting up
 
@@ -46,7 +46,7 @@ pytest test/test_docs_examples.py     # every code block in README and docs/
 ```
 
 The full suite takes roughly twenty minutes on a laptop; CI runs it on every
-pull request across Python 3.10 through 3.13, so you do not have to.
+pull request across Python 3.11 through 3.13, so you do not have to.
 
 ## How changes are expected to arrive
 

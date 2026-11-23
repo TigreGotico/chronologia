@@ -1,5 +1,15 @@
 # Dutch (`nl`)
 
+<!-- agent-hint
+covers: where each construction of the Dutch locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/nl/lang.json`, `chronologia/locale/nl/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+generated: no
+verify: python -m doctest docs/languages/nl.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/nl.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Dutch (`nl`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
+
 `'s nachts` is a band that crosses midnight, and that single fact governs how
 Dutch clock times land. `drie uur 's nachts` is 03:00, `elf uur 's nachts` is
 23:00, and `twaalf uur 's nachts` is midnight. It is not a twelve-hour shift
@@ -83,12 +93,6 @@ in the remainder. The word `middag` is bound as the noon landmark, so the band
 it also names has no vocabulary of its own — the same collision German has
 between `Mittag` the hour and `Mittag` the point.
 
-**Decades.** `de jaren 80` returns nothing. The locale declares no decade
-construction and ships no decade words, so neither the digit form nor a spelled
-one reads.
-
-**Seconds.** `30 seconden geleden` returns nothing. No second unit ships.
-
 **A bare duration.** `twee weken` and `een kwartier` return nothing on their
 own. A quantity with no direction marker is still only a quantity; with one,
 `over een kwartier` reads.
@@ -101,12 +105,41 @@ edge that answers it.
 
 1. How should the afternoon band be reachable at all, given that `middag` is
    also the noon point? `vanmiddag` and `'s middags` are ordinary Dutch and
-   only the second of them reads.
-2. Should `de jaren 80` and `de jaren tachtig` resolve, and which spelled
-   decade forms are current?
-3. Is `half juni` the ordinary way to say mid-June? It resolves the whole
+   neither of them reads.
+2. Is `half juni` the ordinary way to say mid-June? It resolves the whole
    month with `half` unread, because the mid-month part words are `midden` and
    `medio`.
-4. Should the uninflected `komend` join `komende` as a "next" determiner?
+3. Should the uninflected `komend` join `komende` as a "next" determiner?
    `komend weekend` leaves `komend` unread.
-5. Are `kalenden`, `nonen` and `iden` the forms Dutch historical writing uses?
+4. Are `kalenden`, `nonen` and `iden` the forms Dutch historical writing uses?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("nl")
+    True
+    >>> span, rest = extract_timespan("drie uur 's nachts", "nl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T03:00:00', '')
+    >>> span, rest = extract_timespan("elf uur 's nachts", "nl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T23:00:00', '')
+    >>> span, rest = extract_timespan('half acht', "nl", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('vanmiddag', "nl", anchor) is None
+    True
+    >>> extract_timespan('twee weken', "nl", anchor) is None
+    True
+    >>> extract_timespan('een kwartier', "nl", anchor) is None
+    True
+    >>> extract_timespan('om de twee weken', "nl", anchor) is None
+    True
+
+---
+[← Danish](da.md) · [Home](../index.md) · [English →](en.md)

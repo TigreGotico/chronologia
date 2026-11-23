@@ -6,10 +6,8 @@ The translative states an *intended* length of time -- "kuinka pitkäksi ajaksi"
 distinct from the partitive ``viisi päivää`` that the corpus already reads.
 See Uusi kielemme, "Expressions of Time" §6.1.
 
-The unit side (``päiväksi``) folds; the *numeral* side does not, because
-``ovos_number_parser``'s Finnish extractor does not decline cardinals into the
-translative, so a spelled ``viideksi`` stays a word.  The digit form therefore
-reads today, and the spelled form is an xfail guarding the number-parser gap.
+The unit side (``päiväksi``) folds, and numtag reads the translative
+numeral (``viideksi`` = 5), so the digit and the spelled forms read alike.
 """
 from datetime import timedelta
 
@@ -31,11 +29,12 @@ def test_translative_digit_duration(text, expected):
     assert got[0] == expected
 
 
-@pytest.mark.xfail(reason="ovos_number_parser does not fold translative "
-                          "cardinals (viideksi); number-parser gap, not vocab",
-                   strict=True)
-def test_spelled_translative_numeral():
-    assert extract_duration('viideksi päiväksi', LANG)[0] == timedelta(days=5)
+@pytest.mark.parametrize("text,expected", [
+    ('viideksi päiväksi', timedelta(days=5)),
+    ('kahdeksi päiväksi', timedelta(days=2)),
+])
+def test_spelled_translative_numeral(text, expected):
+    assert extract_duration(text, LANG)[0] == expected
 
 
 @pytest.mark.parametrize("text", ['2 kesäkuuta', 'ei mitään ajallista tässä'])

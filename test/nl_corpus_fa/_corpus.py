@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared helpers for the fa natural-language corpus.
 
-The contract: extract_timespan(text, 'fa', anchor). Anchor is a Tuesday (2017-06-27 13:04). Persian is RTL/Arabic-script; the tokenizer works in logical order so RTL is transparent. ZWNJ compounds ship as space surfaces glued by the multiword merge. The PRIMARY calendar is Solar Hijri (month_solar_hijri_arithmetic_N), resolved through solar_hijri_arithmetic. پیش/قبل=ago, بعد/دیگر=in. Spelled numbers fold via ovos-number-parser (numbers_fa).
+The contract: extract_timespan(text, 'fa', anchor). Anchor is a Tuesday (2017-06-27 13:04). Persian is RTL/Arabic-script; the tokenizer works in logical order so RTL is transparent. ZWNJ compounds ship as space surfaces glued by the multiword merge. The PRIMARY calendar is Solar Hijri (month_solar_hijri_arithmetic_N), resolved through solar_hijri_arithmetic. پیش/قبل=ago, بعد/دیگر=in. Spelled numbers read through numtag.
 """
 from datetime import datetime, timedelta  # noqa: F401
 

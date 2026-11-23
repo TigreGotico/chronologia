@@ -1,61 +1,34 @@
 """RFC 5545 recurrence rules (RRULE) over the Julian-Day-Number hub.
 
-A calendar-recurrence engine — "every third Tuesday", "the last Monday of
-May", "Friday the 13th" — expressed with the vocabulary of
-:rfc:`5545#section-3.3.10` (the iCalendar ``RECUR`` value type) and evaluated
-by pure integer arithmetic on :class:`~chronologia.astrodate.AstroDate` /
-:class:`~chronologia.astrodate.DateSpan`.  Because expansion is nothing but
-Julian-Day-Number math, a yearly rule iterates just as happily from the year
--500 as from 2025: there is no ``datetime`` window and nothing overflows.
+A calendar-recurrence engine ("every third Tuesday", "the last Monday of May",
+"Friday the 13th") that speaks the vocabulary of :rfc:`5545#section-3.3.10` and
+expands rules with integer Julian-Day-Number arithmetic on
+:class:`~chronologia.astrodate.AstroDate` / :class:`~chronologia.astrodate.DateSpan`.
+There is no ``datetime`` window, so a yearly rule iterates from the year -500
+as easily as from 2025.
 
-Scope — date parts, plus a clock pin (``BYHOUR`` / ``BYMINUTE``)
----------------------------------------------------------------
-This engine implements the *date*-generating rule parts of RFC 5545:
+Supported rule parts: ``FREQ`` (``DAILY`` / ``WEEKLY`` / ``MONTHLY`` /
+``YEARLY``), ``INTERVAL``, ``COUNT``, ``UNTIL``, ``BYMONTH``, ``BYWEEKNO``,
+``BYYEARDAY``, ``BYMONTHDAY``, ``BYDAY`` (with ordinals such as ``1MO`` /
+``-1FR``), ``BYSETPOS`` and ``WKST``.  ``BYHOUR`` / ``BYMINUTE`` pin a clock
+time: each matched day then expands to a one-hour span (one minute when
+``BYMINUTE`` is given) instead of a day-wide :class:`DateSpan`.  The sub-day
+frequencies ``SECONDLY`` / ``MINUTELY`` / ``HOURLY`` and ``BYSECOND`` raise
+``ValueError``.
 
-    ``FREQ`` (``DAILY`` / ``WEEKLY`` / ``MONTHLY`` / ``YEARLY``), ``INTERVAL``,
-    ``COUNT``, ``UNTIL``, ``BYMONTH``, ``BYWEEKNO``, ``BYYEARDAY``,
-    ``BYMONTHDAY``, ``BYDAY`` (including ordinals such as ``1MO`` / ``-1FR``),
-    ``BYSETPOS`` and ``WKST``.
+``DTSTART`` follows the strict reading of RFC 5545 section 3.8.5.3: the
+recurrence set contains ``DTSTART`` only if it matches the rule.  This differs
+from ``python-dateutil``, which always prepends it.  ``DTSTART`` still fixes
+the interval phase and supplies defaults for absent rule parts.
 
-On top of that date skeleton it accepts a **time-of-day pin** — ``BYHOUR`` and
-``BYMINUTE`` — so a civil rule spoken with a clock ("daily at 9", "every
-Wednesday at 9:30") keeps its hour.  When neither is present each occurrence is
-a whole day (a day-wide :class:`DateSpan`), exactly as before; when ``BYHOUR``
-is present each matched day expands to that clock time, a one-hour span (or a
-one-minute span when ``BYMINUTE`` is also given).  The genuinely **sub-day
-frequencies** — ``FREQ=SECONDLY`` / ``MINUTELY`` / ``HOURLY`` — and
-``BYSECOND`` remain **out of scope** (a within-day *frequency* has no meaning
-for a civil calendar rule); parsing any of those still raises ``ValueError``
-rather than silently dropping it.
+:func:`occurrences` refuses an unbounded rule: either the rule (``COUNT`` /
+``UNTIL``) or the call (``count=`` / ``until=``) must bound the set.
 
-DTSTART semantics — **strict RFC, not dateutil-compatible**
------------------------------------------------------------
-The recurrence set contains ``DTSTART`` **only if ``DTSTART`` itself matches
-the rule**.  This is the strict reading of RFC 5545 (§3.8.5.3: "The recurrence
-set ... is the complete set of recurrence instances for a calendar component,
-as defined by the ... 'RRULE' ... The 'DTSTART' property ... MUST be
-synchronized with the recurrence rule, if specified.").  It differs from
-``python-dateutil``, which unconditionally prepends ``DTSTART`` even when it
-does not satisfy the rule.  Concretely, with ``DTSTART`` on a Wednesday and
-``FREQ=WEEKLY;BYDAY=MO`` this engine yields only Mondays; dateutil would emit
-the seed Wednesday first.  ``DTSTART`` is still the anchor that fixes the
-interval phase and supplies defaults for absent rule parts — it just is not
-force-included.
-
-Unbounded rules
----------------
-:func:`occurrences` refuses to enumerate an unbounded set: if neither the rule
-(``COUNT`` / ``UNTIL``) nor the call (``count=`` / ``until=``) bounds it, it
-raises ``ValueError``.  An infinite ``for`` loop over a "forever" rule is
-therefore impossible by accident; ask for a ``count`` or an ``until``.
-
-Citations
----------
-IETF RFC 5545 §3.3.10 (RECUR grammar, the expand/limit dependency table and the
-BYDAY notes) and §3.8.5.3 (the worked example corpus).  The enumerated example
-dates seed the gold test suite.
+Sources: IETF RFC 5545 section 3.3.10 (RECUR grammar, the expand/limit
+dependency table, the BYDAY notes) and section 3.8.5.3 (the worked examples
+that seed the gold tests).
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date as _date, datetime as _datetime, timedelta
 from typing import Any, Dict, Iterator, Optional, Tuple, Union
 
@@ -81,36 +54,28 @@ _FREQS = ("DAILY", "WEEKLY", "MONTHLY", "YEARLY")
 _SUBDAY_FREQS = ("SECONDLY", "MINUTELY", "HOURLY")
 _MONTH_LEN = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
-# A legitimate rule may skip many periods before it hits (a leap-day yearly
-# rule skips three years in four); an *impossible* one (BYMONTH=2;BYMONTHDAY=30)
-# never hits at all.  This bound distinguishes the two so a count-limited call
-# on an impossible rule raises instead of spinning forever.
+# A leap-day yearly rule skips three years in four, so empty periods are
+# normal; an impossible rule (BYMONTH=2;BYMONTHDAY=30) never hits.  This bound
+# tells the two apart.
 _MAX_EMPTY_PERIODS = 20_000
 
-#: Sanity ceiling on a *declared* ``COUNT``. A civil recurrence never
-#: legitimately repeats more than this (274 years of a daily rule); a larger
-#: value is malformed or hostile input (an untrusted
-#: ``RRULE:...COUNT=1000000000`` from ``from_ical`` would otherwise enumerate
-#: for hours). Rejected at construction as a cheap fast-path, so no
-#: ``Recurrence`` carrying an abusive declared count can exist. This is *not*
-#: the authoritative guard: COUNT is only one of several ways an expansion can
-#: turn expensive (a small/absent COUNT with a far ``UNTIL``, or a call-level
-#: ``count=`` override, are just as capable of materialising a huge number of
-#: occurrences). The authoritative bound is :data:`_MAX_EMITTED_OCCURRENCES`,
-#: enforced during generation in :func:`occurrences` itself.
+
+class RuleNeverOccursError(ValueError):
+    """A rule produced no occurrence in :data:`_MAX_EMPTY_PERIODS` periods."""
+
+
+#: Ceiling on a declared ``COUNT``, rejected at construction so an abusive
+#: ``RRULE:...COUNT=1000000000`` never becomes a ``Recurrence``.  The binding
+#: guard is :data:`_MAX_EMITTED_OCCURRENCES`, which also covers a far ``UNTIL``
+#: and a call-level ``count=``.
 _MAX_COUNT = 100_000
 
-#: Hard ceiling on the number of occurrences :func:`occurrences` (and
-#: :meth:`HolidayRecurrence.occurrences`) will actually *emit* for a single
-#: expansion, enforced occurrence-by-occurrence as they are generated — not by
-#: inspecting the rule's declared ``COUNT``. This is what actually bounds the
-#: memory/time cost of materialisation: a rule with a small or absent COUNT
-#: but a distant ``UNTIL`` (or a caller-supplied ``count=``/``until=`` that
-#: bypasses the declared-COUNT fast-path above) is just as able to blow up
-#: materialisation as an abusive declared COUNT, and this catches it too.
-#: Kept equal to :data:`_MAX_COUNT` so behaviour for any rule that already
-#: passed the declared-COUNT check is unchanged.
+#: Ceiling on the occurrences one expansion emits, checked per occurrence by
+#: :func:`occurrences` and by both holiday classes.
 _MAX_EMITTED_OCCURRENCES = 100_000
+
+#: Latest day of each month in any year (February 29).
+_MAX_MONTH_DAYS = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 
 # --------------------------------------------------------------------------
@@ -120,14 +85,6 @@ def _days_in_month(year: int, month: int) -> int:
     if month == 2 and is_leap_year(year):
         return 29
     return _MONTH_LEN[month - 1]
-
-
-def _days_in_year(year: int) -> int:
-    return 366 if is_leap_year(year) else 365
-
-
-def _jdn(year: int, month: int, day: int) -> int:
-    return gregorian_to_jdn(year, month, day)
 
 
 def _weekday(jdn: int) -> int:
@@ -149,24 +106,18 @@ def _week_start(jdn: int, wkst: int) -> int:
 
 
 def _week1_start(cal_year: int, wkst: int) -> int:
-    """JDN of the ``wkst``-day that begins week 1 of ``cal_year`` — the first
-    week carrying at least four days of the year (the ISO 8601 rule,
-    generalized to an arbitrary week-start)."""
-    jan1 = _jdn(cal_year, 1, 1)
+    """JDN of the ``wkst``-day that begins week 1 of ``cal_year``: the first
+    week with at least four days of the year (ISO 8601 for ``wkst == 0``)."""
+    jan1 = gregorian_to_jdn(cal_year, 1, 1)
     ws = _week_start(jan1, wkst)
     return ws if jan1 - ws <= 3 else ws + 7
 
 
 def _week_of(jdn: int, wkst: int) -> Tuple[int, int, int]:
-    """``(week_year, week_number, weeks_in_week_year)`` for ``jdn``.
-
-    For the default ``WKST=MO`` this is exactly the ISO week, so it defers to
-    the registered ``iso_week`` calendar (:func:`iso_week_from_jdn`); other
-    week-starts use the generalized four-day rule above.
-    """
+    """``(week_year, week_number, weeks_in_week_year)`` for ``jdn``."""
     if wkst == 0:
         iso_year, week, _ = iso_week_from_jdn(jdn)
-        total = iso_week_from_jdn(_jdn(iso_year, 12, 28))[1]
+        total = iso_week_from_jdn(gregorian_to_jdn(iso_year, 12, 28))[1]
         return iso_year, week, total
     year = jdn_to_gregorian(jdn)[0]
     w1 = _week1_start(year, wkst)
@@ -198,16 +149,12 @@ def _weekday_index(jdn: int, first: int, last: int) -> Tuple[int, int]:
 # --------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Recurrence:
-    """A frozen, hashable RFC 5545 recurrence rule (date-level parts only).
+    """A frozen, hashable RFC 5545 recurrence rule.
 
-    Build one with :func:`parse_rrule` (from an ``RRULE`` string), with the
-    pythonic :func:`every` constructor, or with the
-    :func:`nth_weekday_of_month` / :func:`last_weekday_of_month` conveniences.
-    Evaluate it with :func:`occurrences`.
-
-    ``byday`` is a tuple of ``(ordinal_or_None, weekday)`` pairs with weekday in
-    Monday==0..Sunday==6.  ``wkst`` is a weekday index (default Monday).  All
-    ``by*`` collections are tuples so the whole object stays hashable.
+    Build one with :func:`parse_rrule`, :func:`every`,
+    :func:`nth_weekday_of_month` or :func:`last_weekday_of_month`; expand it
+    with :func:`occurrences`.  ``byday`` holds ``(ordinal_or_None, weekday)``
+    pairs with weekday in Monday==0..Sunday==6; ``wkst`` is a weekday index.
     """
     freq: str
     interval: int = 1
@@ -244,24 +191,18 @@ class Recurrence:
             if (u.hour, u.minute, u.second):
                 stamp += f"T{u.hour:02d}{u.minute:02d}{u.second:02d}"
             parts.append(f"UNTIL={stamp}")
-        if self.bymonth:
-            parts.append("BYMONTH=" + ",".join(map(str, self.bymonth)))
-        if self.byweekno:
-            parts.append("BYWEEKNO=" + ",".join(map(str, self.byweekno)))
-        if self.byyearday:
-            parts.append("BYYEARDAY=" + ",".join(map(str, self.byyearday)))
-        if self.bymonthday:
-            parts.append("BYMONTHDAY=" + ",".join(map(str, self.bymonthday)))
-        if self.byday:
-            parts.append("BYDAY=" + ",".join(
-                (("" if o is None else str(o)) + _WD_CODE[w])
-                for o, w in self.byday))
-        if self.bysetpos:
-            parts.append("BYSETPOS=" + ",".join(map(str, self.bysetpos)))
-        if self.byhour:
-            parts.append("BYHOUR=" + ",".join(map(str, self.byhour)))
-        if self.byminute:
-            parts.append("BYMINUTE=" + ",".join(map(str, self.byminute)))
+        byday = [("" if o is None else str(o)) + _WD_CODE[w]
+                 for o, w in self.byday]
+        for key, values in (("BYMONTH", self.bymonth),
+                            ("BYWEEKNO", self.byweekno),
+                            ("BYYEARDAY", self.byyearday),
+                            ("BYMONTHDAY", self.bymonthday),
+                            ("BYDAY", byday),
+                            ("BYSETPOS", self.bysetpos),
+                            ("BYHOUR", self.byhour),
+                            ("BYMINUTE", self.byminute)):
+            if values:
+                parts.append(f"{key}=" + ",".join(map(str, values)))
         if self.wkst != 0:
             parts.append(f"WKST={_WD_CODE[self.wkst]}")
         return ";".join(parts)
@@ -307,13 +248,11 @@ def _validate(rec: Recurrence) -> None:
     for d in rec.bymonthday:
         if d == 0 or not -31 <= d <= 31:
             raise ValueError(f"BYMONTHDAY values must be -31..-1 or 1..31, got {d}")
-    # Reject a rule whose fixed month/day pairs can NEVER occur (e.g. 30
-    # February): otherwise it produces nothing and only trips the empty-period
-    # backstop after scanning tens of thousands of periods -- CPU an attacker
-    # can spend cheaply. A negative day (-1 = last day) is always satisfiable.
+    # A rule whose month/day pairs can never occur (30 February) would scan
+    # _MAX_EMPTY_PERIODS periods before failing; reject it up front.  A
+    # negative day (-1 = last day) is always satisfiable.
     if rec.bymonth and rec.bymonthday:
-        _MAX_DAYS = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-        if not any(d < 0 or d <= _MAX_DAYS[m - 1]
+        if not any(d < 0 or d <= _MAX_MONTH_DAYS[m - 1]
                    for m in rec.bymonth for d in rec.bymonthday):
             raise ValueError(
                 f"BYMONTH={rec.bymonth} with BYMONTHDAY={rec.bymonthday} can "
@@ -375,11 +314,8 @@ def _parse_weekdaynum(token: str) -> Tuple[Optional[int], int]:
 
 
 def _parse_until(value: str) -> AstroDate:
-    # ``UNTIL`` is a DATE (``YYYYMMDD``) or DATE-TIME (``YYYYMMDDTHHMMSS`` with
-    # an optional trailing ``Z``).  This date-level engine keeps the wall-clock
-    # time but treats the value as NAIVE — the ``Z`` / any zone offset is not
-    # converted (the cutoff is a wall-clock comparison against DTSTART's own
-    # time-of-day; see :func:`occurrences`).
+    # A DATE (YYYYMMDD) or DATE-TIME (YYYYMMDDTHHMMSS[Z]).  The value is kept
+    # naive: a trailing Z is dropped, not converted.
     date_part, _, time_part = value.partition("T")
     time_part = time_part.rstrip("Zz")
     if len(date_part) < 8 or not date_part.lstrip("+-").isdigit():
@@ -398,12 +334,10 @@ def _parse_until(value: str) -> AstroDate:
 
 
 def parse_rrule(s: str) -> Recurrence:
-    """Parse an RFC 5545 ``RRULE`` string into a :class:`Recurrence`.
+    """Parse an RFC 5545 ``RRULE`` string (optional ``RRULE:`` prefix).
 
-    Accepts an optional ``RRULE:`` prefix.  Rule parts are ``KEY=VALUE`` pairs
-    separated by ``;`` in any order (the RFC does not order them).  Raises
-    ``ValueError`` on an unknown part, a duplicated part, a malformed value, or
-    a sub-day / contradictory rule (see :func:`_validate`).
+    Raises ``ValueError`` on an unknown or duplicated part, a malformed value,
+    or a sub-day or contradictory rule.
 
     >>> parse_rrule("FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13").freq
     'MONTHLY'
@@ -447,23 +381,15 @@ def parse_rrule(s: str) -> Recurrence:
         if code not in WEEKDAYS:
             raise ValueError(f"invalid WKST: {code!r}")
         kwargs["wkst"] = WEEKDAYS[code]
-    if "BYMONTH" in fields:
-        kwargs["bymonth"] = _ints(fields.pop("BYMONTH"))
-    if "BYMONTHDAY" in fields:
-        kwargs["bymonthday"] = _ints(fields.pop("BYMONTHDAY"))
-    if "BYYEARDAY" in fields:
-        kwargs["byyearday"] = _ints(fields.pop("BYYEARDAY"))
-    if "BYWEEKNO" in fields:
-        kwargs["byweekno"] = _ints(fields.pop("BYWEEKNO"))
-    if "BYSETPOS" in fields:
-        kwargs["bysetpos"] = _ints(fields.pop("BYSETPOS"))
+    for key in ("BYMONTH", "BYMONTHDAY", "BYYEARDAY", "BYWEEKNO", "BYSETPOS"):
+        if key in fields:
+            kwargs[key.lower()] = _ints(fields.pop(key))
     if "BYDAY" in fields:
         kwargs["byday"] = tuple(_parse_weekdaynum(t)
                                 for t in fields.pop("BYDAY").split(","))
-    if "BYHOUR" in fields:
-        kwargs["byhour"] = _ints(fields.pop("BYHOUR"))
-    if "BYMINUTE" in fields:
-        kwargs["byminute"] = _ints(fields.pop("BYMINUTE"))
+    for key in ("BYHOUR", "BYMINUTE"):
+        if key in fields:
+            kwargs[key.lower()] = _ints(fields.pop(key))
     if "BYSECOND" in fields:
         raise ValueError(
             "BYSECOND is a sub-second rule part, out of scope for this "
@@ -502,13 +428,11 @@ def _coerce_byday(value) -> Tuple[Tuple[Optional[int], int], ...]:
 
 
 def every(freq: str, **by) -> Recurrence:
-    """Pythonic :class:`Recurrence` builder.
+    """Pythonic :class:`Recurrence` builder; ``freq`` is case-insensitive.
 
-    ``freq`` is case-insensitive (``"yearly"``).  Keyword arguments map onto
-    the rule parts: ``interval``, ``count``, ``until``, ``bymonth``,
-    ``bymonthday``, ``byyearday``, ``byweekno``, ``bysetpos``, ``wkst`` and
-    ``byday``.  ``byday`` accepts ``"1MO"``, ``"MO,WE"``, ``["1MO", "-1FR"]``,
-    or ``(ordinal, weekday)`` tuples; ``wkst`` accepts a code or an int.
+    Keyword arguments are the lowercase rule parts.  ``byday`` accepts
+    ``"1MO"``, ``"MO,WE"``, ``["1MO", "-1FR"]`` or ``(ordinal, weekday)``
+    tuples; ``wkst`` accepts a code or an int.
 
     >>> # U.S. Labor Day: the first Monday of September.
     >>> labor_day = every("yearly", bymonth=9, byday="1MO")
@@ -524,10 +448,6 @@ def every(freq: str, **by) -> Recurrence:
         if name in by:
             kwargs[name] = by.pop(name)
     if "until" in by:
-        # Coerce a caller-supplied date/datetime to AstroDate (the field's
-        # declared type), exactly as parse_rrule and occurrences() do -- a plain
-        # date otherwise reaches to_string()/occurrences() and crashes on the
-        # missing .hour.
         kwargs["until"] = _as_astro(by.pop("until"))
     for name in ("bymonth", "bymonthday", "byyearday", "byweekno", "bysetpos",
                  "byhour", "byminute"):
@@ -546,11 +466,9 @@ def nth_weekday_of_month(n: int, weekday: Union[int, str],
                          month: Optional[int] = None, **extra) -> Recurrence:
     """The ``n``-th ``weekday`` of the month (``n`` may be negative).
 
-    With ``month`` given, it becomes a yearly rule restricted to that month
-    (Thanksgiving = ``nth_weekday_of_month(4, "TH", month=11)``); without it,
-    a monthly rule (the ``n``-th weekday of *every* month).  Extra keyword
-    arguments (``count``, ``until``, ``interval`` ...) pass through to
-    :func:`every`.
+    With ``month`` it is a yearly rule (Thanksgiving is
+    ``nth_weekday_of_month(4, "TH", month=11)``); without, a monthly rule.
+    Extra keyword arguments pass through to :func:`every`.
     """
     wd = _coerce_weekday(weekday)
     if month is not None:
@@ -560,10 +478,7 @@ def nth_weekday_of_month(n: int, weekday: Union[int, str],
 
 def last_weekday_of_month(weekday: Union[int, str],
                           month: Optional[int] = None, **extra) -> Recurrence:
-    """The last ``weekday`` of the month — ``nth_weekday_of_month(-1, ...)``.
-
-    UK spring bank holiday = ``last_weekday_of_month("MO", month=5)``.
-    """
+    """The last ``weekday`` of the month: ``nth_weekday_of_month(-1, ...)``."""
     return nth_weekday_of_month(-1, weekday, month=month, **extra)
 
 
@@ -578,21 +493,22 @@ def _matches(rec: Recurrence, jdn: int, dtstart: AstroDate) -> bool:
 
     if rec.bymonth and m not in rec.bymonth:
         return False
-    if rec.byweekno:
-        wy, wn, total = _week_of(jdn, rec.wkst)
-        if wy != y or not any(_signed(x, wn, total) for x in rec.byweekno):
-            return False
-    if rec.byyearday:
-        yd = jdn - _jdn(y, 1, 1) + 1
-        ytot = _days_in_year(y)
-        if not any(_signed(x, yd, ytot) for x in rec.byyearday):
-            return False
     if rec.bymonthday:
         dim = _days_in_month(y, m)
         if not any(_signed(x, d, dim) for x in rec.bymonthday):
             return False
     if rec.byday and not _byday_match(rec, jdn, y, m, wd):
         return False
+    if rec.byyearday:
+        yd = jdn - gregorian_to_jdn(y, 1, 1) + 1
+        ytot = 366 if is_leap_year(y) else 365
+        if not any(_signed(x, yd, ytot) for x in rec.byyearday):
+            return False
+    # The week number is the dearest test, so it runs last.
+    if rec.byweekno:
+        wy, wn, total = _week_of(jdn, rec.wkst)
+        if wy != y or not any(_signed(x, wn, total) for x in rec.byweekno):
+            return False
 
     # DTSTART-derived defaults for the parts the rule leaves unspecified.
     f = rec.freq
@@ -603,8 +519,7 @@ def _matches(rec: Recurrence, jdn: int, dtstart: AstroDate) -> bool:
         if not rec.bymonthday and not rec.byday and d != dtstart.day:
             return False
     elif f == "YEARLY":
-        finer = (rec.byweekno or rec.byyearday or rec.bymonthday or rec.byday)
-        if not finer:
+        if not _has_finer_day_part(rec):
             if rec.bymonth:
                 if d != dtstart.day:
                     return False
@@ -622,9 +537,10 @@ def _byday_match(rec: Recurrence, jdn: int, y: int, m: int, wd: int) -> bool:
         # Ordinal scope: within the month for MONTHLY (and for YEARLY when a
         # BYMONTH narrows it), within the whole year for a bare YEARLY.
         if rec.freq == "YEARLY" and not rec.bymonth:
-            first, last = _jdn(y, 1, 1), _jdn(y, 12, 31)
+            first = gregorian_to_jdn(y, 1, 1)
+            last = gregorian_to_jdn(y, 12, 31)
         else:
-            first = _jdn(y, m, 1)
+            first = gregorian_to_jdn(y, m, 1)
             last = first + _days_in_month(y, m) - 1
         idx, total = _weekday_index(jdn, first, last)
         if _signed(ordinal, idx, total):
@@ -645,19 +561,13 @@ def _apply_setpos(rec: Recurrence, days: list) -> list:
 
 
 def _has_finer_day_part(rec: Recurrence) -> bool:
-    """Whether any BY part can select a day other than DTSTART's own month/day
-    -- byweekno/byyearday/bymonthday/byday all can, so their presence forbids
-    the DTSTART-default day/month narrowing below."""
+    """Whether a BY part can select a day other than DTSTART's own, which rules
+    out the DTSTART-default day/month narrowing."""
     return bool(rec.byweekno or rec.byyearday or rec.bymonthday or rec.byday)
 
 
 def _candidate_months(rec: Recurrence, dtstart: AstroDate):
-    """The months a YEARLY period must test -- a SUPERSET of the matching ones.
-
-    ``bymonth`` is a hard limit (:func:`_matches` line for ``bymonth``), and a
-    bare YEARLY with no day-selecting part only ever matches DTSTART's month
-    (the YEARLY default in :func:`_matches`), so scanning the other eleven is
-    pure waste.  Narrowing here never drops a match -- ``_keep`` still decides."""
+    """The months a YEARLY period must test, a superset of the matching ones."""
     if rec.bymonth:
         return sorted(rec.bymonth)
     if not _has_finer_day_part(rec):
@@ -667,11 +577,9 @@ def _candidate_months(rec: Recurrence, dtstart: AstroDate):
 
 def _candidate_days_in_month(rec: Recurrence, y: int, m: int,
                              dtstart: AstroDate):
-    """The day-of-month numbers to test in month ``(y, m)`` -- a SUPERSET of the
-    matching ones.  Positive ``bymonthday`` is a hard limit (so only those days
-    can match, when no byweekno/byyearday could select others); a bare rule with
-    no day-selecting part matches only DTSTART's day.  Otherwise the whole month
-    is scanned (byday/negative-monthday/byyearday/byweekno need it)."""
+    """The day-of-month numbers to test in month ``(y, m)``, a superset of the
+    matching ones: positive ``bymonthday`` alone limits them, a bare rule
+    matches only DTSTART's day, anything else needs the whole month."""
     dim = _days_in_month(y, m)
     if (rec.bymonthday and all(x > 0 for x in rec.bymonthday)
             and not rec.byyearday and not rec.byweekno):
@@ -685,7 +593,7 @@ def _period_iter(rec: Recurrence, dtstart: AstroDate):
     """Yield ``(period_start_jdn, sorted_matching_jdns)`` for each interval,
     forever.  The caller bounds it with count/until."""
     freq = rec.freq
-    start_jdn = _jdn(dtstart.year, dtstart.month, dtstart.day)
+    start_jdn = gregorian_to_jdn(dtstart.year, dtstart.month, dtstart.day)
 
     def _keep(candidates):
         return [j for j in candidates if _matches(rec, j, dtstart)]
@@ -704,22 +612,20 @@ def _period_iter(rec: Recurrence, dtstart: AstroDate):
     elif freq == "MONTHLY":
         y, m = dtstart.year, dtstart.month
         while True:
-            days = [_jdn(y, m, d)
+            days = [gregorian_to_jdn(y, m, d)
                     for d in _candidate_days_in_month(rec, y, m, dtstart)]
-            yield _jdn(y, m, 1), _keep(days)
+            yield gregorian_to_jdn(y, m, 1), _keep(days)
             total = (y * 12 + (m - 1)) + rec.interval
             y, m = total // 12, total % 12 + 1
     else:  # YEARLY
         y = dtstart.year
         while True:
-            # only the candidate months/days, not all 365/366 -- a sparse rule
-            # ("every 29th of february") otherwise runs _matches over a full year
-            # per hit, so a large COUNT costs O(365 * count / hit-rate) wall time
-            # even though the emitted-occurrence ceiling is never reached.
-            days = [_jdn(y, m, d)
+            # Test only candidate days: a sparse rule would otherwise scan a
+            # whole year per hit.
+            days = [gregorian_to_jdn(y, m, d)
                     for m in _candidate_months(rec, dtstart)
                     for d in _candidate_days_in_month(rec, y, m, dtstart)]
-            yield _jdn(y, 1, 1), _keep(sorted(days))
+            yield gregorian_to_jdn(y, 1, 1), _keep(sorted(days))
             y += rec.interval
 
 
@@ -730,13 +636,8 @@ def _day_span(jdn: int) -> DateSpan:
 
 
 def _spans_for_day(rec: Recurrence, jdn: int) -> Iterator[DateSpan]:
-    """The occurrence span(s) a matched day contributes.
-
-    With no clock pin this is the whole day (unchanged behaviour).  With
-    ``BYHOUR`` the day expands to that clock time — a one-hour span, or a
-    one-minute span when ``BYMINUTE`` also pins the minute.  Multiple pinned
-    hours/minutes expand to multiple spans per day, in chronological order.
-    """
+    """The span(s) a matched day contributes: the whole day, or one per pinned
+    hour/minute in chronological order."""
     if not rec.byhour:
         yield _day_span(jdn)
         return
@@ -751,20 +652,12 @@ def _spans_for_day(rec: Recurrence, jdn: int) -> Iterator[DateSpan]:
 
 def occurrences(rec: Recurrence, dtstart, until=None,
                 count: Optional[int] = None) -> Iterator[DateSpan]:
-    """Expand ``rec`` from ``dtstart``, yielding day-wide :class:`DateSpan`\\ s.
+    """Expand ``rec`` from ``dtstart`` in chronological order.
 
-    ``dtstart`` is the anchor (an :class:`AstroDate`, ``date``, or
-    ``datetime``): it fixes the interval phase and supplies defaults for absent
-    rule parts, and — per this engine's **strict-RFC** policy — is emitted only
-    if it actually matches the rule (unlike ``dateutil``; see the module
-    docstring).
-
-    A call-level ``until`` (inclusive, date-level) or ``count`` overrides the
-    rule's own ``UNTIL`` / ``COUNT`` for this expansion.  If the expansion is
-    unbounded on **both** sides — the rule has no ``COUNT``/``UNTIL`` *and* the
-    call passes neither — it raises ``ValueError`` rather than looping forever.
-
-    Occurrences come out in strict chronological order.
+    ``dtstart`` (an :class:`AstroDate`, ``date`` or ``datetime``) fixes the
+    interval phase and is emitted only if it matches the rule.  A call-level
+    ``until`` (inclusive) or ``count`` overrides the rule's own.  Raises
+    ``ValueError`` when neither the rule nor the call bounds the expansion.
     """
     dtstart = _as_astro(dtstart)
     eff_until = _as_astro(until) if until is not None else rec.until
@@ -774,24 +667,21 @@ def occurrences(rec: Recurrence, dtstart, until=None,
             "unbounded recurrence: neither the rule nor the call bounds the "
             "set. Pass count=... or until=..., or use a rule with COUNT/UNTIL.")
 
-    start_jdn = _jdn(dtstart.year, dtstart.month, dtstart.day)
-    # Each occurrence inherits DTSTART's time-of-day; the UNTIL cutoff is a
-    # wall-clock comparison of that instant against UNTIL's own time (both
-    # naive — see the module and _parse_until docstrings).
+    start_jdn = gregorian_to_jdn(dtstart.year, dtstart.month, dtstart.day)
+    # Each occurrence inherits DTSTART's time of day; UNTIL is compared as a
+    # naive wall-clock instant.
     start_tod = (dtstart.hour, dtstart.minute, dtstart.second,
                  dtstart.microsecond)
     until_jdn = None
     until_key = None
     if eff_until is not None:
-        until_jdn = _jdn(eff_until.year, eff_until.month, eff_until.day)
+        until_jdn = gregorian_to_jdn(eff_until.year, eff_until.month,
+                                     eff_until.day)
         until_key = (until_jdn, (eff_until.hour, eff_until.minute,
                                  eff_until.second, eff_until.microsecond))
 
     emitted = 0
-    # COUNT=0 is a legal, deliberately-distinct value (_validate rejects only
-    # count < 0): "repeat zero times" yields nothing.  The per-item cutoff below
-    # runs AFTER a yield, so without this guard the first candidate always slips
-    # out and COUNT=0 behaves like COUNT=1.
+    # COUNT=0 yields nothing; the cutoff below runs after a yield.
     if eff_count is not None and eff_count <= 0:
         return
     empty_streak = 0
@@ -822,7 +712,7 @@ def occurrences(rec: Recurrence, dtstart, until=None,
         else:
             empty_streak += 1
             if empty_streak > _MAX_EMPTY_PERIODS:
-                raise ValueError(
+                raise RuleNeverOccursError(
                     f"rule produced nothing in {_MAX_EMPTY_PERIODS} "
                     "consecutive periods; it appears never to occur "
                     f"(rule: {rec.to_string()})")
@@ -831,12 +721,7 @@ def occurrences(rec: Recurrence, dtstart, until=None,
 def _as_astro(value) -> AstroDate:
     if isinstance(value, AstroDate):
         return value
-    # A datetime carries a time-of-day that the wall-clock UNTIL comparison
-    # depends on (occurrences() compares each instant, not just its date), so it
-    # must be preserved -- dropping it read every datetime dtstart/until as
-    # midnight and let occurrences past the cutoff slip through.  A plain date
-    # has no time and stays at midnight.  (datetime is a subclass of date, so it
-    # is tested first.)
+    # datetime is a subclass of date, so it is tested first.
     if isinstance(value, _datetime):
         return AstroDate(value.year, value.month, value.day, value.hour,
                          value.minute, value.second, value.microsecond)
@@ -849,32 +734,20 @@ def _as_astro(value) -> AstroDate:
 # --------------------------------------------------------------------------
 # Movable-feast recurrence — a Recurrence variant an RRULE cannot express.
 # --------------------------------------------------------------------------
-#: Consecutive years a holiday may fail to resolve (out of a tabulated
-#: calendar's range) before :meth:`HolidayRecurrence.occurrences` gives up —
-#: mirrors :data:`_MAX_EMPTY_PERIODS`, so an out-of-range feast stops instead of
-#: spinning forever.
+#: Consecutive years without a holiday before the holiday ``occurrences``
+#: methods stop.
 _MAX_EMPTY_YEARS = 400
 
 
 @dataclass(frozen=True)
 class HolidayRecurrence:
-    """The yearly recurrence of a **movable** civil holiday.
+    """The yearly recurrence of a **movable** holiday (Easter, Eid, Passover).
 
-    Some feasts recur every year yet have *no* RFC 5545 ``RRULE``: Easter and
-    its cycle (a computus, not a ``BY*`` rule), the Islamic ``eid`` feasts (a
-    lunar-calendar lookup), Passover, Diwali… Their date each year comes from
-    the holiday engine, not from integer ``BY*`` arithmetic, so no ``FREQ=...``
-    string can stand in for them.
-
-    This object stays *useful* — :meth:`occurrences` expands the real dates
-    through :data:`chronologia.civil_holidays.WELL_KNOWN_BY_KEY` — while being
-    **honest about serialization**: :meth:`to_string` raises rather than emit a
-    lie.  ``holiday_key`` is a stable well-known key (``"easter"``,
-    ``"eid_al_fitr"``).
-
-    A *fixed*-date holiday (Christmas, New Year) is **not** modelled here: it is
-    a real ``YEARLY;BYMONTH=..;BYMONTHDAY=..`` :class:`Recurrence`.  Only feasts
-    whose civil date genuinely moves year to year land in this class.
+    Its date each year comes from the holiday engine, so no RFC 5545 rule can
+    express it: :meth:`occurrences` expands the real dates through
+    :data:`chronologia.civil_holidays.WELL_KNOWN_BY_KEY` and :meth:`to_string`
+    raises.  ``holiday_key`` is a well-known key (``"easter"``).  A fixed-date
+    holiday (Christmas) is a plain ``YEARLY`` :class:`Recurrence`.
     """
 
     holiday_key: str
@@ -887,13 +760,11 @@ class HolidayRecurrence:
 
     def occurrences(self, dtstart, until=None,
                     count: Optional[int] = None) -> Iterator[DateSpan]:
-        """Yield the holiday's own :class:`DateSpan` for each year on/after
-        ``dtstart``, bounded (as :func:`occurrences` is) by ``count``/``until``.
+        """Yield the holiday's :class:`DateSpan` for each year on/after
+        ``dtstart``, bounded by ``count``/``until``.
 
-        A year in which the feast does not resolve (outside a tabulated
-        calendar's published range) is silently skipped; after
-        :data:`_MAX_EMPTY_YEARS` consecutive misses the iterator stops rather
-        than loop forever.
+        A year the feast does not resolve in is skipped; after
+        :data:`_MAX_EMPTY_YEARS` consecutive misses the iterator stops.
         """
         from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
         wk = WELL_KNOWN_BY_KEY[self.holiday_key]
@@ -907,7 +778,12 @@ class HolidayRecurrence:
         year = dtstart.year
         while True:
             got = wk.span_for(year)
-            if got is not None:
+            if got is None:
+                empty += 1
+                if empty > _MAX_EMPTY_YEARS:
+                    return
+            else:
+                empty = 0
                 span = got[0]
                 if span.start >= dtstart:
                     if eff_until is not None and span.start > eff_until:
@@ -919,15 +795,8 @@ class HolidayRecurrence:
                             f"ceiling of {_MAX_EMITTED_OCCURRENCES} emitted "
                             f"occurrences (holiday: {self.holiday_key!r})")
                     yield span
-                    empty = 0
                     if count is not None and emitted >= count:
                         return
-                else:
-                    empty = 0
-            else:
-                empty += 1
-                if empty > _MAX_EMPTY_YEARS:
-                    return
             year += 1
 
     def to_string(self) -> str:
@@ -954,47 +823,28 @@ class HolidayRecurrence:
 
 
 # --------------------------------------------------------------------------
-# Jurisdiction holiday sets -- "every holiday in Portugal" -- a Recurrence
-# cannot express either: it is not one date's recurrence, it is a whole
-# calendar's worth of (potentially many, mostly-movable) dates per year.
+# Jurisdiction holiday sets ("every holiday in Portugal").
 # --------------------------------------------------------------------------
-_DEFAULT_JURISDICTION_CATEGORIES: Tuple[str, ...] = ("public",)
-
-
 @dataclass(frozen=True)
 class JurisdictionHolidays:
-    """"Every holiday in ``jurisdiction``" -- a whole calendar's holiday set.
+    """Every holiday a jurisdiction observes, as one chronological stream.
 
-    Unlike :class:`HolidayRecurrence` (one *named* movable feast, expanded year
-    by year), this is *every* holiday a jurisdiction observes in a given year,
-    re-queried from :mod:`chronologia.civil_holidays` per year and flattened
-    into a single chronological stream. "Holiday" plainly means the public
-    holidays (bank/statutory closures) unless the caller asks for more, so
-    ``categories`` defaults to ``("public",)`` -- pass e.g.
-    ``("public", "bank")`` for a wider set, or any subset the jurisdiction's
-    data supports.
-
-    ``jurisdiction`` is an upper-cased ISO-3166-1 (or vacanza market) code,
-    e.g. ``"PT"``; ``subdiv`` optionally scopes to a subdivision (``"PT-LIS"``)
-    the same way :func:`~chronologia.civil_holidays.holidays_for` does.
-
-    Like :class:`HolidayRecurrence`, this has **no RFC 5545 rule** -- a
-    jurisdiction's holiday calendar is not ``BY*`` arithmetic, it is a lookup
-    -- so :meth:`to_string` raises rather than emit a lie.
+    Unlike :class:`HolidayRecurrence` (one named feast), the set is re-queried
+    from :mod:`chronologia.civil_holidays` per year.  ``categories`` defaults to
+    the public holidays; ``jurisdiction`` is an upper-cased ISO-3166-1 (or
+    vacanza market) code and ``subdiv`` an optional subdivision (``"PT-LIS"``).
+    It has no RFC 5545 rule, so :meth:`to_string` raises.
     """
 
     jurisdiction: str
     subdiv: Optional[str] = None
-    categories: Optional[Tuple[str, ...]] = _DEFAULT_JURISDICTION_CATEGORIES
+    categories: Optional[Tuple[str, ...]] = ("public",)
 
     def __post_init__(self) -> None:
         from chronologia.civil_holidays import registry
         code = self.jurisdiction.upper()
         object.__setattr__(self, "jurisdiction", code)
-        # Cheap existence probe: a jurisdiction with no shipped .tab data
-        # raises KeyError deep in the registry the first time anyone asks for
-        # a year -- surface that at construction instead, so a caller finds
-        # out immediately rather than at the first occurrences() pull.
+        # Fail at construction, not at the first occurrences() pull.
         try:
             registry._calendar_for(code)
         except KeyError as exc:
@@ -1004,15 +854,11 @@ class JurisdictionHolidays:
     def occurrences(self, dtstart, until=None,
                     count: Optional[int] = None) -> Iterator[DateSpan]:
         """Yield every holiday's :class:`DateSpan` on/after ``dtstart``,
-        chronologically, year by year, bounded (as :func:`occurrences` is) by
-        ``count``/``until``. ``count`` counts *individual holiday
-        occurrences*, not years -- ``count=14`` on a jurisdiction with 13-14
-        public holidays a year yields roughly one calendar year's worth and
-        spills into the next year for the remainder.
+        chronologically, bounded by ``count``/``until``.  ``count`` counts
+        holidays, not years.
 
-        A year that resolves no holiday at all (a genuine data gap) is
-        silently skipped; after :data:`_MAX_EMPTY_YEARS` consecutive such
-        years the iterator stops rather than loop forever.
+        After :data:`_MAX_EMPTY_YEARS` consecutive years without a holiday the
+        iterator stops.
         """
         from chronologia.civil_holidays import registry
         dtstart = _as_astro(dtstart)

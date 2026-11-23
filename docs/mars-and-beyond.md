@@ -1,5 +1,15 @@
 # Mars and beyond
 
+<!-- agent-hint
+covers: Mars Sol Date, the Darian calendar, lunar cycles and the cosmology epochs
+source: `chronologia/mars.py`, `chronologia/luna.py`, `chronologia/cosmology.py`
+generated: no
+verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/mars-and-beyond.md
+see: `docs/deep-time.md`, `docs/sun-moon-and-seasons.md`
+-->
+
+This page covers time beyond Earth: Mars Sol Date and the Darian calendar, the lunar cycles, and the cosmology epochs from the Big Bang to the Cosmic Calendar.
+
 ## What time is it on Mars?
 
 It sounds like a novelty question. For the people who drive the rovers it is a
@@ -198,7 +208,8 @@ no committee, and the library registers it as a time axis:
 from chronologia import AXES, LUNAR_DAY_SECONDS
 
 lunar = AXES["lunar"]
-print(round(LUNAR_DAY_SECONDS))          # 2551443  (29.53 Earth days)
+# 29.53 Earth days
+print(round(LUNAR_DAY_SECONDS))  # 2551443
 ```
 
 A *civil* lunar clock is another matter. On 2 April 2024 the US OSTP directed
@@ -234,7 +245,8 @@ from chronologia import resolve_cosmic
 # recombination: 380 kyr after the Big Bang
 span = resolve_cosmic("380", "ka")
 half_myr = ((1950 - span.start.year) - (1950 - span.end.year)) / 2 / 1e6
-print(round(half_myr, 4))                # 20.0005  (20 Myr epoch + 0.5 kyr value)
+# 20 Myr epoch + 0.5 kyr value
+print(round(half_myr, 4))  # 20.0005
 print(span.basis)                        # reconstructed
 ```
 
@@ -250,7 +262,8 @@ from chronologia import lookback_gyr
 planck = lookback_gyr(1, "planck2018")   # CMB value, H0 = 67.4
 shoes = lookback_gyr(1, "shoes2022")     # local ladder, H0 = 73.04
 print(round(planck, 2), round(shoes, 2)) # 7.95 7.34
-print(round(planck - shoes, 2))          # 0.61 Gyr apart -- the tension, in years
+# Gyr apart -- the tension, in years
+print(round(planck - shoes, 2))  # 0.61
 ```
 
 Two careful measurements disagree, so the library ships both and names them.
@@ -275,7 +288,8 @@ def cosmic_calendar(years_ago):
     return moment.strftime("%b %d %H:%M")
 
 humans = cosmic_calendar(200_000)
-print(f"Modern humans appear: {humans}")             # Dec 31 23:52
+# Dec 31 23:52
+print(f"Modern humans appear: {humans}")  # Modern humans appear: Dec 31 23:52
 assert humans.startswith("Dec 31 23:5")
 ```
 
@@ -300,3 +314,6 @@ On this scale all of recorded history is the last few seconds before midnight.
 Every constant above is transcribed from a cited source in the papers library;
 where a source is silent (the Darian epoch), the library anchors to a published
 correspondence and says so.
+
+---
+[← Deep time](deep-time.md) · [Home](index.md) · [Civil holidays →](civil-holidays.md)

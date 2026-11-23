@@ -51,6 +51,7 @@ from typing import List, Optional, Set, Tuple
 
 from chronologia.civil_holidays import is_civil_holiday
 from chronologia.extract.anchored import _gap_words, _offset_base
+from chronologia.extract.impossible import decline, no_such, scope_name
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
                                               _day_span, _midnight,
@@ -320,6 +321,11 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             start -= 1
         scope = _month_scope(tokens, hi, spec, gap, anchor)
         if scope is not None:
+            if mode == "nth" and tokens[j].is_number \
+                    and not tokens[j].ordinal:
+                # "5 business days of the month" counts days; only an ordinal
+                # ("the 5th business day of the month") names one.
+                continue
             first, end, scope_ids = scope
             if mode == "last":
                 # last business day of the month == first business day strictly
@@ -335,10 +341,16 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             while s0 - 1 >= 0 and tokens[s0 - 1].text in artwords:
                 s0 -= 1
             claimed = set(range(s0, hi)) | scope_ids
-            pair = (Match("business_days", (s0, end), {}),
-                    Resolution(_day_span(value), tuple(sorted(claimed))))
             kept = [(m, r) for m, r in resolved
                     if not (set(range(*m.span)) & claimed)]
+            if mode == "nth" and value >= _add_months(first, 1):
+                # the count runs past the month's last business day: no day of
+                # that month is meant, so the phrase is claimed and refused.
+                decline(no_such(scope_name(first.month, first.year), count,
+                                "business day"))
+                return kept
+            pair = (Match("business_days", (s0, end), {}),
+                    Resolution(_day_span(value), tuple(sorted(claimed))))
             kept.append(pair)
             return kept
         if mode == "last":
