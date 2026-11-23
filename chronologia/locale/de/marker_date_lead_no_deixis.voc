@@ -2,6 +2,10 @@
 # determiner in the dative ("ruf mich an nächsten Freitag", "mach das Licht an nächste Woche").
 # "an" governs the dative in a time phrase, so a bare accusative phrase takes no preposition and the
 # "an" before it belongs to the verb (anrufen, anmachen).
+# Because German lists determiners in marker_date_lead_dative.voc, "an" also does not open a bare
+# weekday, daypart or period: the time phrase is "am Montag" (de.Wiktionary "am": "[1] Angabe eines
+# Zeitpunkts - wann? ... am Donnerstag" [dewikt-am.wikitext.txt]), so the "an" of "ruf mich an Montag"
+# and "denk an Montag" belongs to the verb.
 # Saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace:
 # Duden, "an": "zur Angabe des Zeitpunkts. Grammatik: mit Dativ. an einem Wintermorgen, an diesem 31. Januar" [de-an-duden.txt]
 # DWDS, "an": "2. zeitlich a) ... Grammatik: mit Dativ. Beispiele: das Wetter an diesem, am nächsten Tag" [de-an-dwds.txt]
