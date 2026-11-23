@@ -475,6 +475,19 @@ def test_a_word_spelled_like_an_iso_code_in_lower_case_is_no_currency(text):
     assert s.start == datetime(2000, 1, 1)
 
 
+@pytest.mark.parametrize("text, end", [
+    ("SINCE TWO THOUSAND ALL WAS WELL", _FRIDAY),
+    ("IN TWO THOUSAND TOP SCIENTISTS MET", datetime(2001, 1, 1)),
+])
+def test_an_all_capitals_utterance_reads_no_iso_code(text, end):
+    """Every word of an all-capitals utterance is in capitals, so "ALL" and
+    "TOP" are words there as in lower case: since 2000 runs to the anchor and
+    in 2000 is the year."""
+    s = extract_timespan(text, "en", _FRIDAY).span
+    assert s.start == datetime(2000, 1, 1)
+    assert s.end == end
+
+
 @pytest.mark.parametrize("lang, text, years", [
     ("en", "in two thousand the dollar rose", (2000, 2001)),
     ("en", "since two thousand the euro fell", (2000, None)),

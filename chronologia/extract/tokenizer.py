@@ -651,6 +651,7 @@ class Tokenizer:
                                     index=i, char_start=cs, char_end=ce, cap=cap))
         # re-index sequentially (finditer index already sequential, but be
         # explicit so callers can trust index == position)
+        mixed_case = any(c.islower() for c in text)
         return tuple(Token(t.text, t.raw, i, t.is_number, t.value,
                            t.char_start, t.char_end, t.cap,
                            prev_cap=(tokens[i - 1].cap if i > 0 else False),
@@ -669,6 +670,6 @@ class Tokenizer:
                            trailing_currency=(
                                t.char_end is not None
                                and _currency_follows(low, t.char_end)),
-                           upper=(t.char_end is not None
+                           upper=(mixed_case and t.char_end is not None
                                   and text[t.char_start:t.char_end].isupper()))
                      for i, t in enumerate(tokens))

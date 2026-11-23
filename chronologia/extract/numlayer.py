@@ -237,7 +237,7 @@ def scale_factor(word: str, mention: NumberMention,
     return factors[None].get(word)
 
 
-def locale_words(lang: str, name: str) -> FrozenSet[str]:
+def voc_file_words(lang: str, name: str) -> FrozenSet[str]:
     """The surfaces of the file ``name`` of the locale ``lang``, as written."""
     return frozenset(
         s for template in read_resource_file(_LOCALE_DIR / lang / name)

@@ -99,9 +99,11 @@ class Token:
     # The tokenizer drops the symbol, so this flag is the only record that a
     # currency measures the number.
     trailing_currency: bool = False
-    # Whether the token was written in capitals ("USD").  ``text`` and
-    # ``raw`` are lower-cased, so this flag is the only record that a three
-    # letter word is an ISO 4217 code and not a word ("all", "try").
+    # Whether the token was written in capitals ("USD") in an utterance that
+    # also holds lower-case letters.  ``text`` and ``raw`` are lower-cased, so
+    # this flag is the only record that a three letter word is an ISO 4217
+    # code and not a word ("all", "try").  In an all-capitals utterance every
+    # word is in capitals, so none of them is read as a code.
     upper: bool = False
     # Whether this number token was composed from an INDEFINITE ARTICLE deep-time
     # magnitude ("a million years ago", "a hundred thousand years ago") rather
