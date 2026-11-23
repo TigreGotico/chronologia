@@ -773,6 +773,17 @@ class ConstructionMatcher:
                             and self.spec.units.get(tokens[end].text)
                             == "day"):
                         continue
+                    # A marker after the period noun ("del mes que viene")
+                    # is not the marker of a period noun that follows it:
+                    # "del mes este año" holds a month and a year, so "este"
+                    # opens "este año" and stays out of the month scope.
+                    if (name == "scoped_ordinal" and "REL_MARKER" in slots
+                            and "SCOPE_UNIT" in slots
+                            and slots["REL_MARKER"].index
+                            > slots["SCOPE_UNIT"].index
+                            and end < len(tokens)
+                            and tokens[end].text in self.spec.units):
+                        continue
                     # A marker that only modifies a singular period ("the
                     # following week") gives no date before a plural period
                     # word ("the following weeks were hard"), which names no
