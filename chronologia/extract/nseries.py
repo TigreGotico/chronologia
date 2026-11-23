@@ -1336,6 +1336,8 @@ def _read_recurrence(text, lang, anchor):
             # _apply_clock -- so it declines the same way the steps above do.
             if rec is None:
                 return None
+            if _unread_date_never_occurs(rec, consumed, ctx):
+                return _NEVER_OCCURS
             from chronologia.extract.pipeline import render_remainder
             remainder = render_remainder(text, [t for t in tokens
                                                 if t.index not in consumed])
@@ -1343,6 +1345,45 @@ def _read_recurrence(text, lang, anchor):
     return None
 
 
+#: The period a monthly or yearly rule counts weekdays in, with the most
+#: weekdays of one name and the most business days that period holds.
+_UNREAD_ORDINAL_CAPS = {"MONTHLY": ("a month", 5, 23), "YEARLY": ("a year", 53, 262)}
+
+
+def _unread_date_never_occurs(rec, consumed, ctx):
+    """Whether a date part left unread beside ``rec`` is one the rule's period
+    never holds ("the sixth monday of every other month", "the 30th of february
+    every year"), so that ``rec`` would be a broader rule than the phrase.
+
+    The unread part is an ordinal before a weekday, a business day or
+    "of <month>"; the ordinal itself may have been read as a day of the month
+    ("every month on the sixth monday").  The calendar's reason is recorded.
+    """
+    t = ctx.tokens
+    business = ctx.weekday_word | set(ctx.spec.connectors.get("business", ()))
+    quarterly = any(tok.text in ctx.quarter_word for tok in t)
+    scope, most_weekdays, most_business = _UNREAD_ORDINAL_CAPS.get(
+        rec.freq if isinstance(rec, Recurrence) and not quarterly else None,
+        (None, None, None))
+    for i in range(len(t) - 1):
+        nxt = t[i + 1]
+        if not t[i].ordinal or nxt.index in consumed:
+            continue
+        n = int(t[i].value)
+        reason = None
+        if nxt.text in ctx.weekdays:
+            if scope and n > most_weekdays:
+                reason = no_such_weekday(scope, n, ctx.weekdays[nxt.text])
+        elif nxt.text in business:
+            if scope and n > most_business:
+                reason = no_such(scope, n, "business day")
+        elif (nxt.text in ctx.of_words and i + 2 < len(t)
+              and t[i + 2].text in ctx.months):
+            reason = bad_day(None, ctx.months[t[i + 2].text], n)
+        if reason is not None:
+            decline(reason)
+            return True
+    return False
 
 
 def _apply_clock_range(rec, consumed, ctx, lang, anchor):

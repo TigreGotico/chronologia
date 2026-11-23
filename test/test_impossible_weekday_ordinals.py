@@ -38,6 +38,11 @@ _IMPOSSIBLE = [
     ("o segundo e sexto luns de cada mes", "gl", "a month has no 6th Monday"),
     ("every weekday from saturday to sunday", "en",
      "the range from Saturday to Sunday holds no day the rule allows"),
+    ("the sixth monday of every other month", "en", "a month has no 6th Monday"),
+    ("the sixth monday every month", "en", "a month has no 6th Monday"),
+    ("every month on the sixth monday", "en", "a month has no 6th Monday"),
+    ("the 24th business day of each month", "en", "a month has no 24th business day"),
+    ("the 30th of february every year", "en", "February has no 30th"),
 ]
 
 
