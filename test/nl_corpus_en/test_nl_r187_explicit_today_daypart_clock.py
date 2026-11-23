@@ -24,11 +24,13 @@ Gold is derived by hand: today's date at the PM-shifted hour for PM-side
 day-parts (evening/afternoon/night), the literal hour for the AM-side
 morning day-part.
 """
+from datetime import datetime
+
 import pytest
 
 from ._corpus import parse
 
-ANCHOR_R187 = __import__("datetime").datetime(2026, 8, 14, 10, 0)
+ANCHOR_R187 = datetime(2026, 8, 14, 10, 0)
 TODAY = 14
 
 
@@ -90,7 +92,7 @@ def test_bare_non_explicit_daypart_takes_the_next_such_time():
     assert r is not None
     s = r.span.start
     assert (s.year, s.month, s.day, s.hour) == (2026, 8, TODAY, 15)
-    late = parse("evening at 3", __import__("datetime").datetime(
+    late = parse("evening at 3", datetime(
         2026, 8, 14, 16, 0))
     s = late.span.start
     assert (s.year, s.month, s.day, s.hour) == (2026, 8, 15, 15)
