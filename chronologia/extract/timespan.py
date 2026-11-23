@@ -662,7 +662,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
 
     def holding(sub, start, end):
         # the latest reading of a yearly endpoint before ``start``, when it
-        # makes a range of under half a year that holds the anchor
+        # makes a range that holds the anchor and does not end earlier in the
+        # month it starts in
         now = AstroDate.from_datetime(anchor.replace(tzinfo=None))
         for back in range(1, 9):
             if start.year - back < MINYEAR:
@@ -673,8 +674,10 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is not None and got[0].start < start:
                 begin = got[0].start.replace(tzinfo=None)
                 stop = end.replace(tzinfo=None)
+                last = stop - timedelta(days=1)
                 if (begin <= now < stop
-                        and stop - begin < timedelta(days=183)):
+                        and (last.month != begin.month
+                             or last.day >= begin.day)):
                     return got[0].start
                 return None
         return None

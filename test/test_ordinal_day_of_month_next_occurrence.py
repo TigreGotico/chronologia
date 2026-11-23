@@ -272,3 +272,60 @@ def test_range_from_the_leap_day_said_on_the_first_of_march(lang, text):
 def test_a_reversed_range_is_still_refused(text):
     r = extract_timespan(text, "en", datetime(2017, 6, 27, 13, 4))
     assert r is None or r.remainder != ""
+
+
+# -- a range from a later month into an earlier one ---------------------------
+
+LONG_RANGES = [
+    ("en", "from the 1st day of september to 30 june",
+     datetime(2026, 11, 22, 9, 0), (2026, 9, 1), (2027, 7, 1)),
+    ("en", "from 1 september to 30 june",
+     datetime(2026, 11, 22, 9, 0), (2026, 9, 1), (2027, 7, 1)),
+    ("en", "from the 1st day of june to 31 january",
+     datetime(2026, 12, 20, 9, 0), (2026, 6, 1), (2027, 2, 1)),
+    ("en", "from the 1st day of july to 1 january",
+     datetime(2026, 12, 20, 9, 0), (2026, 7, 1), (2027, 1, 2)),
+    ("en", "from the 15th day of october to 15 april",
+     datetime(2026, 12, 20, 9, 0), (2026, 10, 15), (2027, 4, 16)),
+    ("en", "from 15 october to 15 april",
+     datetime(2026, 12, 20, 9, 0), (2026, 10, 15), (2027, 4, 16)),
+    ("en", "between 1 september and 30 june",
+     datetime(2026, 11, 22, 9, 0), (2026, 9, 1), (2027, 7, 1)),
+    ("en", "between the 1st day of september and 30 june",
+     datetime(2026, 11, 22, 9, 0), (2026, 9, 1), (2027, 7, 1)),
+    ("en", "the 1st day of june until 31 january",
+     datetime(2026, 12, 20, 9, 0), (2026, 6, 1), (2027, 2, 1)),
+    ("en", "from 20 december to 5 january",
+     datetime(2027, 1, 5, 9, 0), (2026, 12, 20), (2027, 1, 6)),
+    ("es", "del primer día de septiembre al 30 de junio",
+     datetime(2026, 12, 20, 9, 0), (2026, 9, 1), (2027, 7, 1)),
+    ("pt", "do primeiro dia de setembro a 30 de junho",
+     datetime(2026, 12, 20, 9, 0), (2026, 9, 1), (2027, 7, 1)),
+]
+
+
+@pytest.mark.parametrize("lang,text,anchor,start,end",
+                         LONG_RANGES)
+def test_range_into_an_earlier_month_holds_the_anchor(lang, text, anchor,
+                                                      start, end):
+    r = extract_timespan(text, lang, anchor)
+    assert r is not None, f"{text!r} ({lang}) did not parse"
+    assert r.remainder == ""
+    s, e = r.span.start, r.span.end
+    assert (s.year, s.month, s.day) == start
+    assert (e.year, e.month, e.day) == end
+
+
+def test_a_reversed_range_said_before_its_start_day_reads_next_year():
+    r = extract_timespan("from 12 june to 5 june", "en",
+                         datetime(2026, 6, 8, 9, 0))
+    s, e = r.span.start, r.span.end
+    assert (s.year, s.month, s.day) == (2026, 6, 12)
+    assert (e.year, e.month, e.day) == (2027, 6, 6)
+
+
+@pytest.mark.parametrize("text", ["from 12 june to 5 june",
+                                  "from the 12th day of june to 5 june"])
+def test_a_reversed_range_said_after_its_start_day_is_refused(text):
+    r = extract_timespan(text, "en", datetime(2026, 6, 20, 9, 0))
+    assert r is None or r.remainder != ""
