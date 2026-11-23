@@ -335,6 +335,11 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         return token.is_number and 0 <= (token.value or 0) <= 9
     if name == "FRACTION":
         return token.text in spec.clock_fractions
+    if name == "HALF":
+        # the half hour that minutes count from ("vijf voor half vier"), in a
+        # locale whose bare half names the half before the hour
+        return (spec.conventions.bare_half_to
+                and spec.clock_fractions.get(token.text) == 30)
     if name == "CLOCKMIN":
         return token.text in spec.clock_dir_minutes
     if name == "CLOCKDIR":
@@ -769,6 +774,17 @@ class ConstructionMatcher:
                     if (name == "weekday_ref" and end < len(tokens)
                             and self.spec.units.get(tokens[end].text)
                             == "day"):
+                        continue
+                    # A marker after the period noun ("del mes que viene")
+                    # is not the marker of a period noun that follows it:
+                    # "del mes este año" holds a month and a year, so "este"
+                    # opens "este año" and stays out of the month scope.
+                    if (name == "scoped_ordinal" and "REL_MARKER" in slots
+                            and "SCOPE_UNIT" in slots
+                            and slots["REL_MARKER"].index
+                            > slots["SCOPE_UNIT"].index
+                            and end < len(tokens)
+                            and tokens[end].text in self.spec.units):
                         continue
                     # A marker that only modifies a singular period ("the
                     # following week") gives no date before a plural period
