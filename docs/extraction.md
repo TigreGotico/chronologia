@@ -1459,7 +1459,8 @@ The two extension paths never cross:
 - **Add a capability** — a new *construction*. Give it an entry in
   `PRECEDENCE` (`compiler.py`), let each language declare its `orders` and any
   new slot vocabulary, teach `_bind` (`matcher.py`) any new slot names, and
-  write one `_resolve_<name>` method (`resolver.py`) for the date math. The
+  write one `_resolve_<name>` method (`resolver.py`) for the date math, with
+  its entry in `Resolver._HANDLERS`. The
   capability then works for *every* language that lists it — the resolver is
   language-agnostic.
 

@@ -1310,8 +1310,8 @@ def _read_recurrence(text, lang, anchor):
             # same tokens into a wrong rule.  The claim is authoritative -- stop.
             if rec is None:
                 return None
-            rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_clock_range(rec, consumed, ctx, lang, anchor)
+            rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
             rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor)
             if rec is _NEVER_OCCURS:
                 return _NEVER_OCCURS
@@ -1433,20 +1433,36 @@ def _apply_clock_range(rec, consumed, ctx, lang, anchor):
             return None
         return i + k if [tokens[i + x].text for x in range(k)] == words else None
 
+    ats = (*spec.connectors.get("at", ()), "at")
+
     def _clock_span(start):
         # a clock endpoint is 1 token ("5") or 2 ("9", "am") -- try the
-        # longer reading first so a trailing am/pm word is captured.
+        # longer reading first so a trailing am/pm word is captured, unless
+        # its second token opens the range's "to" word (de "9 bis").
         for length in (2, 1):
             end = start + length
             if end > n or any(x in consumed for x in range(start, end)):
                 continue
-            text = " ".join(t.raw for t in tokens[start:end])
-            got = extract_timespan("at " + text, lang, anchor=anchor)
-            if (got is None or got[1] != ""
-                    or got[0].end - got[0].start != timedelta(minutes=1)):
+            if length == 2 and any(_match(start + 1, mid) is not None
+                                   for mid in mids):
                 continue
-            c = got[0].start
-            return end, c.hour, c.minute
+            # a day number ("5 december", "5 de desembre") or a repeat count
+            # ("5 10 times") is no clock endpoint
+            if end < n and (tokens[end].text in ctx.months
+                            or (tokens[end].text in ctx.of_words
+                                and end + 1 < n
+                                and tokens[end + 1].text in ctx.months)
+                            or (length == 2 and tokens[start + 1].is_number
+                                and tokens[end].text in ctx.count_words)):
+                continue
+            text = " ".join(t.raw for t in tokens[start:end])
+            for at in ats:
+                got = extract_timespan(f"{at} {text}", lang, anchor=anchor)
+                if (got is None or got[1] != ""
+                        or got[0].end - got[0].start != timedelta(minutes=1)):
+                    continue
+                c = got[0].start
+                return end, c.hour, c.minute
         return None
 
     for i in range(n):
@@ -2168,6 +2184,9 @@ class _RecurCtx:
     #: the "to" of the "<ordinal> to last" / "next to last" idiom ("the
     #: second-to-last friday of every month").
     to_words: set = frozenset()
+    #: "to" words that join two weekdays into a range (see
+    #: :func:`_weekday_range_surfaces`).
+    to_surfaces: tuple = ()
     #: "penultimate" -- a single-word synonym for "second-to-last".
     penult_words: set = frozenset()
     #: a SINGULAR trailing day-word ("günü" -- tr's "on <weekday>-day", one
@@ -2210,6 +2229,18 @@ class _RecurCtx:
     pretokens: tuple = ()
     #: the spec, kept so a pre-fold finder can fold a lone ordinal on its own.
     spec: object = None
+
+
+def _weekday_range_surfaces(spec):
+    """The "to" words that join two weekdays into a range.  A "to" word that
+    starts an "until" word (es "hasta", de "bis zum", nl "tot en met") stays an
+    until bound, except the single word the language already uses to join
+    weekdays (de "bis", nl "tot")."""
+    until_heads = {w[0] for w in _conn_surfaces(spec, "until", ("until", "till"))}
+    and_words = _and_words(spec)
+    return tuple(w for w in _conn_surfaces(spec, "to", _RANGE_TO)
+                 if w[0] not in until_heads
+                 or (len(w) == 1 and w[0] in and_words))
 
 
 def _recur_ctx(text, lang, anchor):
@@ -2257,6 +2288,7 @@ def _recur_ctx(text, lang, anchor):
         from_words=set(C.get("from", ())),
         to_words=set(w for words in _conn_surfaces(spec, "to", _RANGE_TO)
                      for w in words if len(words) == 1),
+        to_surfaces=_weekday_range_surfaces(spec),
         penult_words=set(C.get("penult", ())),
         ntolast_next_words=set(C.get("ntolast_next", ())),
         day_word=set(C.get("weekday_word", ())),
@@ -2870,6 +2902,26 @@ def _collect_weekdays(ctx, start, plural_ok, extra_skip=frozenset()):
     days = [wd]
     end = start + 1
     while True:
+        # tried before the "and" skip: de "bis" and nl "tot" are "and" words too
+        hit = None
+        for w in ctx.to_surfaces:
+            far = end + len(w)
+            if far >= n or [y.text for y in t[end:far]] != list(w):
+                continue
+            last = _weekday_here(ctx, t[far], plural_ok)
+            # a number or month after the far weekday makes it part of an
+            # until date ("tot en met vrijdag 4 december")
+            dated = far + 1 < n and (t[far + 1].is_number
+                                     or t[far + 1].text in ctx.months)
+            if last is not None and not dated:
+                hit = (len(w) + 1, last)
+                break
+        if hit is not None:
+            width, last = hit
+            while days[-1] != last:
+                days.append((days[-1] + 1) % 7)
+            end += width
+            continue
         k = end
         while k < n and (t[k].text in ctx.and_words or t[k].text in extra_skip):
             k += 1
