@@ -637,7 +637,7 @@ class Resolver:
                 f"construction {match.construction!r} is declared but not "
                 f"resolved in the engine-core phase; it lands with its own "
                 f"migration wave")
-        handler = getattr(self, f"_resolve_{match.construction}", None)
+        handler = self._HANDLERS.get(match.construction)
         if handler is None:
             raise NotImplementedError(
                 f"no resolver for construction {match.construction!r}")
@@ -647,7 +647,7 @@ class Resolver:
             # long); every other handler ignores the mode.
             if match.construction == "deep_time":
                 return self._resolve_deep_time(match, anchor, scale_mode)
-            return handler(match, anchor)
+            return handler(self, match, anchor)
         except (ValueError, OverflowError, KeyError):
             # "This reading does not resolve to a real date" -- an out-of-range
             # or calendar-invalid value (day 31 of a 30-day month, a year beyond
@@ -3384,3 +3384,81 @@ class Resolver:
                 elif off == 0 and spoken_hour == 12:
                     hour = (hour - 12) % 24
         return hour, minute, second
+
+    # construction name -> handler
+    _HANDLERS = {
+        "relative_offset": _resolve_relative_offset,
+        "named_day": _resolve_named_day,
+        "daypart_ref": _resolve_daypart_ref,
+        "named_day_after": _resolve_named_day_after,
+        "named_day_before": _resolve_named_day_before,
+        "weekday_offset": _resolve_weekday_offset,
+        "named_day_span_idiom": _resolve_named_day_span_idiom,
+        "named_day_offset_from": _resolve_named_day_offset_from,
+        "sametime_shift": _resolve_sametime_shift,
+        "holiday_eve": _resolve_holiday_eve,
+        "weekday_ref": _resolve_weekday_ref,
+        "weekday_of_week": _resolve_weekday_of_week,
+        "before_last": _resolve_before_last,
+        "after_next": _resolve_after_next,
+        "weekday_ago": _resolve_weekday_ago,
+        "unit_ago_weekday": _resolve_unit_ago_weekday,
+        "rel_period": _resolve_rel_period,
+        "rel_span": _resolve_rel_span,
+        "rel_span_quarter": _resolve_rel_span_quarter,
+        "rel_span_weekend": _resolve_rel_span_weekend,
+        "fuzzy_period": _resolve_fuzzy_period,
+        "quarter_ref": _resolve_quarter_ref,
+        "iso_week_ref": _resolve_iso_week_ref,
+        "iso_week_date": _resolve_iso_week_date,
+        "weekend_ref": _resolve_weekend_ref,
+        "weekend_of_month": _resolve_weekend_of_month,
+        "calendar_date": _resolve_calendar_date,
+        "reckoned_date": _resolve_reckoned_date,
+        "iso_date": _resolve_iso_date,
+        "numeric_date": _resolve_numeric_date,
+        "numeric_day_month": _resolve_numeric_day_month,
+        "hebrew_new_year": _resolve_hebrew_new_year,
+        "year_ref": _resolve_year_ref,
+        "decade_ref": _resolve_decade_ref,
+        "month_fuzzy": _resolve_month_fuzzy,
+        "month_day_ref": _resolve_month_day_ref,
+        "half_period": _resolve_half_period,
+        "quarter_of_month": _resolve_quarter_of_month,
+        "scoped_ordinal": _resolve_scoped_ordinal,
+        "scoped_ad": _resolve_scoped_ad,
+        "scoped_bc": _resolve_scoped_bc,
+        "decade_bc": _resolve_decade_bc,
+        "regnal_date": _resolve_regnal_date,
+        "roman_date": _resolve_roman_date,
+        "archon_ref": _resolve_archon_ref,
+        "roman_classical": _resolve_roman_classical,
+        "cycle_ref": _resolve_cycle_ref,
+        "season_ref": _resolve_season_ref,
+        "season_fuzzy": _resolve_season_fuzzy,
+        "solar_event": _resolve_solar_event,
+        "era_bc": _resolve_era_bc,
+        "era_ad": _resolve_era_ad,
+        "era_bp": _resolve_era_bp,
+        "era_auc": _resolve_era_auc,
+        "era_saka": _resolve_era_saka,
+        "era_byzantine": _resolve_era_byzantine,
+        "era_holocene": _resolve_era_holocene,
+        "era_anno_mundi": _resolve_era_anno_mundi,
+        "era_french_republican": _resolve_era_french_republican,
+        "era_buddhist": _resolve_era_buddhist,
+        "era_buddhist_be": _resolve_era_buddhist_be,
+        "era_hijri": _resolve_era_hijri,
+        "era_solar_hijri": _resolve_era_solar_hijri,
+        "roman_eve": _resolve_roman_eve,
+        "olympiad_ref": _resolve_olympiad_ref,
+        "deep_time": _resolve_deep_time,
+        "named_period": _resolve_named_period,
+        "holiday_ref": _resolve_holiday_ref,
+        "new_year_ref": _resolve_new_year_ref,
+        "clock_time": _resolve_clock_time,
+        "subdivision_time": _resolve_subdivision_time,
+        "nongregorian_date": _resolve_nongregorian_date,
+        "military_time": _resolve_military_time,
+        "clock_this_daypart": _resolve_clock_this_daypart,
+    }
