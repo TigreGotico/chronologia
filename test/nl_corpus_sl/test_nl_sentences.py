@@ -11,7 +11,7 @@ from ._corpus import ANCHOR, AstroDate, ad, start, span
     ("vidiva se čez tri dni", timedelta(days=3)),
     ("pokliči me čez tri ure", timedelta(hours=3)),
     ("opomni me čez deset minut", timedelta(minutes=10)),
-    ("to se je zgodilo pred petimi dnevi", None),  # oblique numeral -> gap
+    ("to se je zgodilo pred petimi dnevi", -timedelta(days=5)),
     ("bili smo tam pred dvema letoma", None),      # dual instr numeral -> gap
     ("sestanek je čez dva tedna", timedelta(weeks=2)),
     ("pride čez štiri dni", timedelta(days=4)),
@@ -21,7 +21,7 @@ from ._corpus import ANCHOR, AstroDate, ad, start, span
 ])
 def test_sentence_offset(text, delta):
     if delta is None:
-        # oblique/dual spelled numerals are not folded (number-model gap)
+        # the dual instrumental "letoma" is no unit of the locale
         from ._corpus import parse
         assert parse(text) is None
     else:

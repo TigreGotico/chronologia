@@ -107,6 +107,35 @@ def test_reachability_flags_missing_vocabulary():
     assert any("unreachable" in e and "SCALE" in e for e in errs)
 
 
+def test_reachability_flags_optional_connector_without_vocabulary():
+    spec = load_lang_spec("en")
+    cfg = {"constructions": {"clock_time": {"orders": ["at? ofd? HOUR"]}}}
+    errs = validate_reachability(spec, cfg, "en")
+    assert any("unreachable" in e and "ofd" in e for e in errs)
+
+
+def test_optional_shared_connector_may_lack_vocabulary():
+    # "article?" is a base-grammar connector; a language without articles
+    # shares the order and ships no article vocabulary
+    from dataclasses import replace
+    spec = load_lang_spec("en")
+    stripped = replace(spec, connectors={k: v for k, v in spec.connectors.items()
+                                         if k != "article"})
+    cfg = {"constructions": {"weekend_ref": {"orders": ["article? WEEKEND"]}}}
+    assert validate_reachability(stripped, cfg, "en") == []
+
+
+@pytest.mark.parametrize("section", ["override", "extend"])
+def test_base_grammar_orders_are_checked(section):
+    spec = load_lang_spec("en")
+    for order, expected in (("REL_MARKER WEEKDAYY", "unknown slot 'WEEKDAYY'"),
+                            ("ofd WEEKDAY", "no vocabulary for ofd"),
+                            ("ofd? WEEKDAY", "no vocabulary for ofd")):
+        cfg = {"base_grammar": {section: {"weekday_ref": [order]}}}
+        errs = validate_config(cfg, "en") + validate_reachability(spec, cfg, "en")
+        assert any(expected in e and section in e for e in errs), (order, errs)
+
+
 def test_positions_unknown_role_is_flagged():
     errs = validate_config({"positions": {"nope": "post"}}, "xx")
     assert any("unknown marker role 'nope'" in e for e in errs)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared helpers for the id natural-language corpus.
 
-The contract: extract_timespan(text, 'id', anchor). Anchor is a Wednesday noon (2026-07-15). Indonesian is isolating (no inflection); lalu is the past (ago) marker, lagi the future one, depan the 'next' relative marker; spelled numbers fold via ovos-number-parser (numbers_id). Sunday is registered as 'ahad' so 'minggu' stays unambiguously the week unit.
+The contract: extract_timespan(text, 'id', anchor). Anchor is a Wednesday noon (2026-07-15). Indonesian is isolating (no inflection); lalu is the past (ago) marker, lagi the future one, depan the 'next' relative marker; spelled numbers read through numtag. Sunday is registered as 'ahad' so 'minggu' stays unambiguously the week unit.
 """
 from datetime import datetime, timedelta  # noqa: F401
 

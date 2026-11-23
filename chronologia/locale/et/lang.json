@@ -128,14 +128,13 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_agglutinative:fold_et",
+  "hook": "chronologia.extract.numlayer_agglutinative:fold_et",
   "base_grammar": {
     "disable": [
       "calendar_date"
     ],
     "override": {
       "season_ref": [
-        "article? SEASON of YEAR",
         "REL_MARKER SEASON",
         "article? SEASON YEAR?"
       ],

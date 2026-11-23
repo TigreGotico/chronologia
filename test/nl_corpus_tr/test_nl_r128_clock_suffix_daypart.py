@@ -10,7 +10,7 @@ Two related silent-wrong defects on the "<weekday> [<daypart>] saat
    apostrophe into its own token boundary, so the tokenizer yields
    ["9", "da"] rather than one glued word, and the digit path never got the
    locative-strip the word-form spoken-clock path already has
-   (``numfold_turkic._strip_locative_hour``).
+   (``numlayer_turkic._drop_digit_locative``).
 
 2. The 3rd-person possessive day-part forms ("akşamı" = "its evening" / "the
    evening of <day>", "sabahı" = "its morning") were absent from the tr

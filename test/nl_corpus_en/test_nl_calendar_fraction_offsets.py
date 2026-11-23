@@ -20,7 +20,7 @@ EXACTLY where one exists:
   (e.g. three quarters) has no defensible day count and is refused (``None``)
   rather than silently truncated.
 * ``year`` fractions never reach the resolver as floats in English -- the
-  numfold pass (chronologia/extract/numfold.py) pre-folds a fractional year
+  number fold pre-folds a fractional year
   onto a whole month count ("half a year" -> "6 months") upstream of this
   code -- so "in half a year" is included below purely as a CONTROL that the
   fix left that existing path untouched.

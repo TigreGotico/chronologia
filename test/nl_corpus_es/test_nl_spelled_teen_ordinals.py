@@ -2,15 +2,13 @@
 """Fused compound spelled ordinals (11th-31st) fold to ORD for Spanish -- R87.
 
 Spanish spells its 11th-19th/21st-29th/31st ordinals as ONE fused word
-("decimotercero" = thirteenth, "vigesimoprimero" = twenty-first) rather than
-the two-word compound ("décimo tercero") the shared Romance number-fold
-already composed through ``extract_number_es``.  The fused spelling was
-absent from the fold's word set entirely, so a sentence built on one never
-tokenized an ordinal at all: "el decimotercer mes de 2026" silently degraded
-to a bare year_ref match on "2026" (span = all of 2026, remainder =
-"el decimotercer mes de") instead of refusing outright the way the digit
-ordinal ("el 13.º mes de 2026") and English ("the thirteenth month of 2026")
-already do (R81, PR #640) -- a silent-wrong, not a mere gap.
+("decimotercero" = thirteenth, "vigesimoprimero" = twenty-first) or as the
+two-word compound ("décimo tercero").  A sentence built on a fused form must
+read as an ordinal: "el decimotercer mes de 2026" must refuse (no 13th month
+exists) instead of degrading to a bare year_ref match on "2026" (span = all
+of 2026, remainder = "el decimotercer mes de"), the way the digit ordinal
+("el 13.º mes de 2026") and English ("the thirteenth month of 2026") do
+(R81, PR #640).
 
 Forms and their citation: Real Academia Española, Diccionario panhispánico
 de dudas (2005), s.v. "numerales, 2.2" -- the fused compound loses the

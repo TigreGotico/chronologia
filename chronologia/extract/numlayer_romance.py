@@ -68,6 +68,9 @@ class DateWords:
     #: Whether an indefinite article stays a word: "un giorno", "une
     #: semaine".  numtag reads it as one with a low confidence.
     articles_are_words: bool = False
+    #: The prepositions after which the article-like word is the hour 1:
+    #: it "alle una di notte".
+    clock_prepositions: FrozenSet[str] = frozenset()
 
 
 def count_words(lang: str, since: Collection[str] = ()) -> CountWords:
@@ -164,7 +167,9 @@ def date_words(tokens: Tuple[Token, ...], words: DateWords) -> Claims:
             # ninth everywhere else ("las nonas jornadas")
             claimed.add(i)
         elif (words.articles_are_words and _alone(tok)
-              and tok.mention.confidence <= ARTICLE_CONFIDENCE):
+              and tok.mention.confidence <= ARTICLE_CONFIDENCE
+              and not (prev is not None
+                       and prev.text in words.clock_prepositions)):
             # the indefinite article: "un giorno", "une semaine"
             claimed.add(i)
         elif word in words.quarter_articles and nxt in words.fractions:

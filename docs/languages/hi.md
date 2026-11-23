@@ -1,10 +1,20 @@
 # Hindi (`hi`)
 
+<!-- agent-hint
+covers: where each construction of the Hindi locale comes from, what it refuses and which questions a native speaker would settle
+source: `chronologia/locale/hi/lang.json`, `chronologia/locale/hi/*.voc`, `chronologia/extract/numfold_indic.py`
+generated: no
+verify: python -m doctest docs/languages/hi.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/hi.md
+see: `docs/languages/index.md`, `docs/extraction.md`
+-->
+
+This page records where each construction of the Hindi (`hi`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_indic` module in `chronologia/extract/`.
+
 The single most important thing about this locale is what it will not answer.
 कल means both yesterday and tomorrow. परसों means both the day before yesterday
 and the day after tomorrow. Which one a speaker means is carried entirely by the
 tense of the verb, and chronologia does not read verb tense. So both words are
-refused outright: a bare कल returns nothing rather than a fifty-fifty guess at a
+refused outright: a bare `कल` returns nothing rather than a fifty-fifty guess at a
 direction. आज (today) is unambiguous and does resolve. There is no other named
 day in this locale, and its absence is the design.
 
@@ -99,14 +109,9 @@ vocabulary but a calendar — the lunisolar system carries a leap month and a
 year offset that varies by month, and implementing it is a calendar
 implementation, not a word list. A Vikram Samvat year is never silently
 converted either: `2081 विक्रम संवत` reads 2081 as the Gregorian year it spells
-and leaves विक्रम unread, rather than quietly applying a +57 shift.
+and leaves `विक्रम संवत` in the remainder, rather than quietly applying a +57 shift.
 
-**Closed ranges.** Hindi frames a closed range with both markers postposed —
-`A से B तक`, the start closed by से and the end by तक. The range grammar reads a
-leading frame, so only the open reading fires and the far bound stays visible in
-the remainder. `छह बजे से दस बजे तक` gives six o'clock onward with `तक` unread.
-The open ranges themselves, `शुक्रवार तक` and `सोमवार से`, do resolve. The same
-applies to के बीच, which is attested as "between" but trails both its bounds.
+**Closed ranges.** Hindi frames a closed range with both markers postposed — `A से B तक`, the start closed by से and the end by तक. The range grammar reads a leading frame, so only the open reading fires. `छह बजे से दस बजे तक` returns a span that ends at six o'clock, with `से दस बजे` left in the remainder. The open ranges themselves, `शुक्रवार तक` and `सोमवार से`, do resolve. The same applies to के बीच, which is attested as "between" but trails both its bounds.
 
 **The minutes-to frame.** `दस बजने को सात मिनट` counts seven minutes short of
 ten. Wiring it would need a subtractive clock direction spelled as a two-word
@@ -144,3 +149,33 @@ ship, so `एक लाख साल पहले` refuses.
    beyond इतवार?
 6. Is there a fixed early/mid/late vocabulary for a month that could be
    attested?
+
+## Checked examples
+
+Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia.extract.numlayer import reads
+    >>> reads("hi")
+    False
+    >>> span, rest = extract_timespan('तीन दिन पहले', "hi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-24T00:05:00', '')
+    >>> span, rest = extract_timespan('{0} दिन पहले', "hi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('{0} दिन में', "hi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T00:05:00', '')
+    >>> span, rest = extract_timespan('एक दिन बाद', "hi", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-28T00:05:00', '')
+    >>> anchor = datetime(2017, 6, 27, 13, 4)
+    >>> extract_timespan('कल', "hi", anchor) is None
+    True
+    >>> extract_timespan('एक लाख साल पहले', "hi", anchor) is None
+    True
+
+---
+[← Hebrew](he.md) · [Home](../index.md) · [Hungarian →](hu.md)

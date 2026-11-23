@@ -90,6 +90,7 @@ def test_a_morning_part_of_the_day_keeps_the_written_hour(text, lang, anchor,
                                                           expected):
     found = extract_timespan(text, lang, anchor)
     assert found.span.start.datetime() == expected
+    assert found.remainder == ""
 
 
 @pytest.mark.parametrize("lang,template", TWINS)
@@ -97,5 +98,7 @@ def test_a_digit_clock_reads_like_the_spoken_hour(lang, template):
     spoken = extract_timespan(template.format("6"), lang, AFTER_NOON)
     digit = extract_timespan(template.format("6:30"), lang, AFTER_NOON)
     assert spoken.span.start.datetime() == datetime(2017, 6, 27, 18, 0)
+    assert spoken.remainder == ""
+    assert digit.remainder == ""
     assert digit.span.start.datetime() == (spoken.span.start.datetime()
                                            + timedelta(minutes=30))
