@@ -3,9 +3,9 @@
 
 Ruling 27: a locale's own morning or evening word beside a digit clock decides
 the half, even when the reader does not join the word to the clock.  A comma
-between the word and the clock does not end that reading in any locale; only a
-sentence end does.  Said at 23:00 on 22 November, each row reads as the next
-such clock, and the evening or afternoon word picks the pm half.  The es, pt
+between the word and the clock does not end that reading in any locale.  Said at 23:00 on 22 November, each
+row reads as the next such clock, and the evening or afternoon word picks the
+pm half.  The es, pt
 and gl adverb "tarde" ("late") is covered in ``test_tarde_late_adverb``.
 """
 from datetime import datetime
@@ -20,7 +20,7 @@ ROWS = [
     ('es', 'el sábado por la tarde, a las 5', datetime(2026, 11, 28, 17, 0)),
     ('es', 'esta tarde, a las 5', datetime(2026, 11, 22, 17, 0)),
     ('es', 'mañana, a las 5 de la tarde', datetime(2026, 11, 23, 17, 0)),
-    ('es', 'a las 5, por la tarde', datetime(2026, 11, 23, 5, 0)),
+    ('es', 'a las 5, por la tarde', datetime(2026, 11, 23, 17, 0)),
     ('es', 'a las 5. Tarde libre', datetime(2026, 11, 23, 17, 0)),
     ('es', 'por la mañana, a las 6', datetime(2026, 11, 23, 6, 0)),
     ('es', 'a las 6:30, que no llegue tarde', datetime(2026, 11, 23, 6, 30)),
