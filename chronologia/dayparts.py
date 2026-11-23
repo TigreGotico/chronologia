@@ -1,55 +1,29 @@
 """Day-part registry: named stretches *within* a civil day, resolved to spans.
 
-A :class:`DayPart` binds a human name for a portion of the day ("morning",
-"tarde") to a start and end **time-of-day** (a day fraction: 06:00 is a quarter
-of the way through the day), tagged with an optional *lang* (``None`` == the
-global default convention) and a versioned *source*.  Applied to a concrete
-civil date by :func:`daypart_span`, it becomes a :class:`DateSpan` — the same
-half-open interval type every other reckoning layer produces.
+A :class:`DayPart` binds a name for a portion of the day ("morning", "tarde")
+to a start and end time of day, tagged with an optional ``lang`` (``None`` is
+the global default) and a ``source``.  :func:`daypart_span` applies it to a
+civil date and returns a :class:`DateSpan`.
 
-The golden rule this module teaches: **a day-part is a convention, and
-conventions differ.**  "Morning" is not a fact about the sun; it is a boundary
-a culture draws, and different cultures draw it differently.  English splits the
-post-noon day into *afternoon* and *evening*; Spanish runs one *tarde* straight
-across both.  So the boundaries are *data*, language-tagged exactly like the
-region-tagged named periods in :mod:`chronologia.periods`, never hard-coded
-engine logic.
+A day-part is a convention and conventions differ: English splits the
+post-noon day into *afternoon* and *evening*, Spanish runs one *tarde* across
+both.  The boundaries are therefore data, tagged by language (``tarde`` is
+Spanish in Madrid and Los Angeles alike), never engine logic.  ``region`` stays
+as an alias of ``lang`` on :class:`DayPart`, :func:`lookup` and
+:func:`daypart_span`.
 
-Why the tag is a *language*, not a region
------------------------------------------
-It says ``lang`` because a language is what it is.  ``tarde`` is Spanish, and
-it is Spanish in Madrid, Lima and Los Angeles alike; nothing about the entry is
-geographic, and calling the tag a region invited the reader to think a
-Spanish-speaker in Texas somehow gets the English bands.  :mod:`periods` keeps
-``region`` because *its* tag really is geographic — the British bronze age is
-not the Chinese one.  The old ``region`` spelling stays available on
-:class:`DayPart`, :func:`lookup` and :func:`daypart_span` as a documented
-alias, because :data:`DAY_PARTS` and both functions are public API and a rename
-must not break a caller who wrote ``region="es"`` while the name was wrong.
-Genuine geographic variation within one language can be layered on the day it
-is actually needed; it is not modelled now.
+Sources.  The per-language rows are transcribed from the Unicode CLDR Day
+Period Rules (TR35, CLDR 47; the chart is in the papers library at
+``standards/cldr47_day_period_rules.html``).  CLDR gives each period a start
+time and lets the next row's start close it, so a band runs ``[own start, next
+start)`` and the last row of the day closes at 24:00.  When one name holds both
+the first row (00:00) and the last row, the rows are one midnight-crossing
+band: Romanian ``noapte`` is ``[22:00, 05:00)``.  Where the names differ the
+rows stay apart: Italian ``notte`` is the small hours ``[00:00, 06:00)``.
 
-Canonical source
-----------------
-The per-language boundaries are the **Unicode CLDR Day Period Rules** (TR35 /
-CLDR 47), the machine-readable authority for locale-specific day periods —
-precisely because it encodes that these boundaries vary by locale.  A copy of
-the chart lives in the papers library
-(``standards/cldr47_day_period_rules.html``) and every language row below is
-transcribed from it.
-
-The **default** set (lang ``None``) is *not* CLDR, and earlier versions of this
-docstring were wrong to say it was.  CLDR's ``en`` rows run ``morning1`` from
-00:00 and place no band before it; chronologia's default starts morning at
-06:00 and runs a ``night`` that wraps 21:00 → 06:00.  That is chronologia's own
-English convention — the reading an English speaker means by "this morning" and
-"tonight" — and it is what the library has always shipped.  It is kept as-is
-deliberately: changing it would silently move every English span already in
-use.  The honest description is therefore "chronologia's English convention,
-which departs from CLDR ``en`` at the morning start and in wrapping night", and
-the CLDR citation is reserved for the per-language rows, where it is exact.
-
-Default convention (lang ``None``), chronologia's own English convention:
+The default set (``lang=None``) is not CLDR.  It is chronologia's own English
+convention, which departs from CLDR ``en`` at the morning start and in the
+wrapping night:
 
 ============ =============== ==================
 day-part     interval        note
@@ -62,80 +36,15 @@ day-part     interval        note
 ``midnight`` ``[00:00, 00:01)`` minimal-width anchor
 ============ =============== ==================
 
-Reading CLDR's rows into spans
-------------------------------
-CLDR states a day period as a *start time* and lets the next row's start close
-it, so a locale's rows are a cyclic partition of the 24 hours.  Transcribing
-that mechanically gives every band ``[own start, next start)``, with the last
-row of the day closing at 24:00.  One rule handles the wrap, and it is applied
-uniformly: **when the same period name occupies both the first row (anchored at
-00:00) and the last row, the two rows are one band and are joined into a single
-midnight-crossing span.**  Romanian is the case that shows it — ``noapte``
-appears at 00:00 *and* at 22:00, one night split by the chart's own
-start-time-only notation, so it is stored once as ``[22:00, 05:00)``.
+Languages that the deictic ``daypart_ref`` grammar reads ("this morning",
+"yesterday evening") are collapsed into the four-band vocabulary ``morning``,
+``afternoon``, ``evening``, ``night``.  A band whose only surface is multi-word
+(Czech ``v noci``, Polish ``po południu``, Turkish ``öğleden sonra``) ships its
+boundaries but no ``daypart_*.voc`` yet.  Bands English has no word for
+(``Vormittag``, ``förmiddag``, ``migdia``) keep their own names.
 
-Where the names differ, the rows are left apart.  Italian ``sera`` closes at
-24:00 and ``notte`` opens at 00:00, so ``notte`` is ``[00:00, 06:00)`` — the
-small hours — and is *not* re-cut into an English-shaped night beginning the
-previous evening.  That is the whole point of transcribing rather than
-translating: English's night wraps because English's night wraps, and Italian's
-does not have to.
-
-Per-language conventions, all from the CLDR 47 chart above:
-
-* ``es`` madrugada ``[00:00, 06:00)``, mañana ``[06:00, 12:00)``, tarde
-  ``[12:00, 20:00)``, noche ``[20:00, 24:00)`` — one *tarde* across what
-  English calls afternoon *and* early evening.
-* ``pt`` madrugada ``[00:00, 06:00)``, manhã ``[06:00, 12:00)``, tarde
-  ``[12:00, 19:00)``, noite ``[19:00, 24:00)``.
-* ``ca`` matinada ``[00:00, 06:00)``, matí ``[06:00, 12:00)``, migdia
-  ``[12:00, 13:00)``, tarda ``[13:00, 19:00)``, vespre ``[19:00, 21:00)``, nit
-  ``[21:00, 24:00)``.
-* ``gl`` madrugada ``[00:00, 06:00)``, mañá ``[06:00, 12:00)``, mediodía
-  ``[12:00, 13:00)``, tarde ``[13:00, 21:00)``, noite ``[21:00, 24:00)``.
-* ``fr`` nuit ``[00:00, 04:00)``, matin ``[04:00, 12:00)``, après-midi
-  ``[12:00, 18:00)``, soir ``[18:00, 24:00)``.
-* ``it`` notte ``[00:00, 06:00)``, mattina ``[06:00, 12:00)``, pomeriggio
-  ``[12:00, 18:00)``, sera ``[18:00, 24:00)``.
-* ``ro`` noapte ``[22:00, 05:00)`` (the joined wrap), dimineață
-  ``[05:00, 12:00)``, după-amiază ``[12:00, 18:00)``, seară ``[18:00, 22:00)``.
-* ``de`` Nacht ``[00:00, 05:00)``, Morgen ``[05:00, 10:00)``, Vormittag
-  ``[10:00, 12:00)``, Mittag ``[12:00, 13:00)``, Nachmittag ``[13:00, 18:00)``,
-  Abend ``[18:00, 24:00)`` — six bands, none of which is English's afternoon.
-* ``nl`` nacht ``[00:00, 06:00)``, ochtend ``[06:00, 12:00)``, middag
-  ``[12:00, 18:00)``, avond ``[18:00, 24:00)``.
-* ``sv`` natt ``[00:00, 05:00)``, morgon ``[05:00, 10:00)``, förmiddag
-  ``[10:00, 12:00)``, eftermiddag ``[12:00, 18:00)``, kväll
-  ``[18:00, 24:00)``.
-* ``da`` nat ``[00:00, 05:00)``, morgen ``[05:00, 10:00)``, formiddag
-  ``[10:00, 12:00)``, eftermiddag ``[12:00, 18:00)``, aften ``[18:00, 24:00)``.
-* ``nb``/``nn`` natt ``[00:00, 06:00)``, morgen/morgon ``[06:00, 10:00)``,
-  formiddag/føremiddag ``[10:00, 12:00)``, ettermiddag ``[12:00, 18:00)``,
-  kveld ``[18:00, 24:00)``.
-
-Further locales (``ar az bg cs el et eu fa he hr hu id is ms pl sk sl
-tr uk``) are transcribed the same way, but collapsed into chronologia's own
-four-band model — ``morning`` (CLDR morning1+morning2), ``afternoon``
-(afternoon1/2), ``evening`` (evening1) and ``night`` (night1, joined with a
-00:00 night2 into one midnight-crossing band) — because these locales are
-consumed through the deictic ``daypart_ref`` grammar ("this morning",
-"yesterday evening"), which speaks that four-band vocabulary.  The bands are
-always shipped; a band whose only natural surface is multi-word (Czech ``v
-noci``, Polish ``po południu``, Turkish ``öğleden sonra``, Malay ``tengah
-hari``) carries no ``daypart_*.voc`` yet -- French ``après-midi`` ships its
-tokenizer-canonicalised "après midi" surface, so it no longer belongs to that
-set -- and ``az`` ships the bands but holds its surfaces for native review.
-
-``Vormittag``, ``förmiddag``, ``formiddag``, ``føremiddag`` and ``migdia`` have
-no English name at all, which is why they are stored under their own names
-rather than folded into ``morning`` or ``noon``.  Inventing an English label
-for a band English does not have would be the same mistake as assuming English's
-hours.
-
-Lookup falls back from a language to the global default: asking for ``morning``
-in ``es`` yields the default morning (Spanish contributes ``tarde``, not a
-``morning`` override); asking for ``tarde`` with no language raises, since
-``tarde`` is not a global name.
+:func:`lookup` falls back from a language to the global default: ``morning``
+in ``es`` is the default morning, while ``tarde`` with no language raises.
 """
 from __future__ import annotations
 
@@ -160,14 +69,10 @@ def _cldr(lang: str) -> str:
     return f"Unicode CLDR {CLDR_VERSION} Day Period Rules (locale {lang})"
 
 
-#: The default set's authority.  Deliberately *not* a CLDR citation: the bands
-#: below are chronologia's own English convention and differ from CLDR ``en``
-#: (which starts morning at 00:00 and does not wrap night).  See the module
-#: docstring for why the shipped default is kept rather than re-cut.
+#: The default set is chronologia's own English convention, not CLDR ``en``.
 _CHRONOLOGIA_EN = "chronologia English day-part convention (see module docs)"
-#: West Frisian has no CLDR day-period rules; it shares the Netherlands
-#: convention, so the band boundaries are Dutch (CLDR nl) and the surfaces are
-#: Frisian (Frysk Wurdboek, Fryske Akademy).
+#: West Frisian has no CLDR rules; it takes the Dutch boundaries and Frisian
+#: surfaces.
 _FY_NL_SHARED = (
     "West Frisian shares the Netherlands day-period convention (no CLDR fy "
     "rules exist); boundaries from " + _cldr("nl") + ", surfaces from the "
@@ -175,11 +80,7 @@ _FY_NL_SHARED = (
 
 
 class UnknownDayPartError(KeyError):
-    """No day-part matches the requested ``(name, region)``.
-
-    Raised by :func:`lookup` (and therefore :func:`daypart_span`) when neither
-    a region-specific entry nor a global default carries the name.
-    """
+    """Neither a language entry nor the global default carries the name."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -199,10 +100,8 @@ class DayPart:
         relative to the anchor is the band on the NEXT civil date.  The span
         API itself never shifts: a calendar date keeps its own small hours.
 
-    ``start``/``end`` are *times of day*, not instants: a :class:`DayPart` is a
-    convention with no date until :func:`daypart_span` anchors it to one.  The
-    ``crosses_midnight`` flag is validated against the endpoints so it can never
-    silently disagree with them.
+    ``start``/``end`` are times of day; :func:`daypart_span` anchors them to a
+    date.
     """
     name: str
     start: time
@@ -224,12 +123,7 @@ class DayPart:
 
     @property
     def region(self) -> Optional[str]:
-        """Deprecated spelling of :attr:`lang`, kept so existing callers work.
-
-        The field was called ``region`` before it was noticed that every value
-        it ever held was a language code.  Reading it still works and returns
-        the language tag; new code should say :attr:`lang`.
-        """
+        """Deprecated spelling of :attr:`lang`."""
         return self.lang
 
     @property
@@ -644,25 +538,16 @@ _LANGUAGES: List[DayPart] = [
     _p("yo", (23, 0), (5, 0), "fi", _cldr("fi")),
 ]
 
-#: Deprecated alias for :data:`_LANGUAGES`, from when the tag was miscalled a
-#: region.  Kept because it is short, private, and free.
-_REGIONAL = _LANGUAGES
-
 #: The day-part registry, keyed by :attr:`DayPart.key`.
 DAY_PARTS: Dict[str, DayPart] = {p.key: p for p in _DEFAULTS + _LANGUAGES}
 
 
 def lookup(name: str, lang: Optional[str] = None, *,
            region: Optional[str] = None) -> DayPart:
-    """Resolve a day-part by ``name``, preferring a ``lang`` entry.
-
-    A language-specific entry (``tarde`` in ``es``) wins; otherwise the global
-    default carries the name (``morning`` has no ``es`` entry, so ``es`` falls
-    back to it).  Raises :class:`UnknownDayPartError` when neither exists.
-
-    ``region`` is the old spelling of ``lang`` and still works; it is honoured
-    only when ``lang`` was not given, so a caller who passes both gets the one
-    they named properly.
+    """Resolve a day-part by ``name``: the ``lang`` entry, else the global
+    default.  ``region`` is the old spelling of ``lang``, used only when
+    ``lang`` is absent.  Raises :class:`UnknownDayPartError` when neither
+    exists.
     """
     if lang is None:
         lang = region
@@ -678,28 +563,13 @@ def lookup(name: str, lang: Optional[str] = None, *,
         f"{sorted(DAY_PARTS)}")
 
 
-def _civil_ymd(date_or_span: Union[AstroDate, date, datetime, DateSpan]
-               ) -> Tuple[int, int, int]:
-    anchor: Union[AstroDate, date, datetime]
-    if isinstance(date_or_span, DateSpan):
-        anchor = date_or_span.start
-    else:
-        anchor = date_or_span
-    return anchor.year, anchor.month, anchor.day
-
-
 def _resolve_boundary(y: int, m: int, d: int, part_time: time,
                       zone: _tzinfo) -> AstroDate:
-    """A day-part endpoint's wall-clock reading, resolved aware in ``zone``.
+    """A day-part endpoint resolved to an aware instant in ``zone``.
 
-    Delegates to :func:`~chronologia.astrodate.resolve_wall_clock` for the
-    fold/gap semantics, then applies the documented convention for the two
-    ambiguous outcomes: **fold** (the reading occurs twice, DST falling back)
-    keeps the *later* of the two real instants; **gap** (the reading is
-    skipped, DST springing forward) is resolved to the *post-transition*
-    instant — the moment with the new, post-jump offset, at that same wall
-    clock reading.  Either way, the boundary is always a single, well-defined
-    instant, never a raised error and never a silently-picked earlier one.
+    A **fold** (DST falling back) keeps the later instant; a **gap** (DST
+    springing forward) takes the post-transition offset at the same wall-clock
+    reading.
     """
     h, mi = part_time.hour, part_time.minute
     resolved = resolve_wall_clock(y, m, d, h, mi, zone)
@@ -740,43 +610,24 @@ def daypart_span(date_or_span: Union[AstroDate, date, datetime, DateSpan],
                  region: Optional[str] = None) -> DateSpan:
     """The span a day-part occupies on a concrete date.
 
-    ``lang`` selects a language's own carve-up of the day ("tarde" in ``es``
-    runs to 20:00); omitted, the global default set applies.  ``region`` is the
-    old spelling of ``lang`` and still works, as on :func:`lookup`.
+    ``lang`` selects a language's carve-up of the day ("tarde" in ``es`` runs
+    to 20:00); ``region`` is its old spelling.  A :class:`DateSpan` argument
+    contributes the civil date of its ``start``.
 
-    ``date_or_span`` supplies the civil date to anchor to — an
-    :class:`AstroDate`/``date``/``datetime`` names the day directly; a
-    :class:`DateSpan` contributes the civil date of its ``start``.
+    A midnight-crosser anchors to the named date and reaches into the next day:
+    ``daypart_span(tuesday, "night")`` is Tue 21:00 to Wed 06:00.  When
+    ``date_or_span`` is a :class:`DateSpan` the result is clipped to it with
+    :meth:`DateSpan.intersect`; a disjoint day-part raises :class:`ValueError`.
 
-    A midnight-crosser anchors to the *named* date and reaches into the next
-    civil day: ``daypart_span(tuesday, "night")`` is Tue 21:00 → **Wed** 06:00
-    (the documented convention — "tuesday night" belongs to Tuesday even though
-    it ends on Wednesday).
-
-    When ``date_or_span`` is itself a :class:`DateSpan`, the result is
-    *composed* with it via :meth:`DateSpan.intersect` — ``daypart_span(some_day,
-    "morning")`` returns morning clipped to that day-span, so applying a
-    day-part to "tuesday" and to a truncated slice of Tuesday differ exactly by
-    the overlap.  A day-part disjoint from the given span raises
-    :class:`ValueError`, since there is no interval to return.
-
-    **``zone``.**  ``None`` (the default) keeps every endpoint a naive
-    wall-clock reading, byte-identical to the library's behaviour before
-    ``zone`` existed.  Given a ``tzinfo``, both endpoints become **aware**
-    :class:`AstroDate` instants in that zone instead of bare wall-clock
-    readings — resolved via
-    :func:`~chronologia.astrodate.resolve_wall_clock`, so a boundary landing
-    in a DST **gap** (spring-forward) or **fold** (fall-back) resolves
-    deterministically to the *post-transition* instant (see
-    :func:`_resolve_boundary`) rather than raising or guessing.  Because the
-    two endpoints can therefore each pick up a different UTC offset across a
-    transition, :attr:`DateSpan.width` on the result honestly reflects the
-    real elapsed time -- 23 or 25 hours instead of the nominal 24 (or, for a
-    day-part narrower than a full day, a similar hour thinner/thicker than its
-    naive width) whenever the transition falls inside the part's boundaries.
+    ``zone=None`` keeps both endpoints naive wall-clock readings.  A ``tzinfo``
+    makes them aware :class:`AstroDate` instants, resolved as in
+    :func:`_resolve_boundary`, so :attr:`DateSpan.width` shows the real elapsed
+    time across a DST transition.
     """
     part = lookup(name, lang, region=region)
-    y, m, d = _civil_ymd(date_or_span)
+    anchor = (date_or_span.start if isinstance(date_or_span, DateSpan)
+              else date_or_span)
+    y, m, d = anchor.year, anchor.month, anchor.day
     span = _span_on_date(part, y, m, d, zone=zone)
     if isinstance(date_or_span, DateSpan):
         composed = span.intersect(date_or_span)
