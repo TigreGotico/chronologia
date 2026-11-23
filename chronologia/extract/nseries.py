@@ -2312,6 +2312,11 @@ def _ntolast_ordn(ctx, t, li):
     return None
 
 
+# Most weekdays a month holds over the 400-year Gregorian cycle: 31-day months
+# reach 23, 30-day months 22, February 21 (a leap February starting on a Monday).
+_MAX_WEEKDAYS_IN_MONTH = {2: 21, 4: 22, 6: 22, 9: 22, 11: 22}
+
+
 def _recur_nth_weekday(ctx):
     """``<ordinal|last> <weekday> of [every] (month|<month name>)``.
 
@@ -2473,10 +2478,13 @@ def _recur_nth_weekday(ctx):
                     month_ordn = -numeric_last_n
                 else:
                     return None, frozenset()
-            if month_ordn == 0 or abs(month_ordn) > (23 if business else 5):
-                # a month holds at most five of one weekday and 23 weekdays,
-                # so the rule would never occur -- claim the phrase and
-                # decline it
+            named_month = ctx.months.get(t[r].text)
+            if month_ordn == 0 or abs(month_ordn) > (
+                    _MAX_WEEKDAYS_IN_MONTH.get(named_month, 23) if business else 5):
+                # a month holds at most five of one weekday and, for a named
+                # month, at most _MAX_WEEKDAYS_IN_MONTH weekdays (23 for an
+                # unnamed one), so the rule would never occur -- claim the
+                # phrase and decline it
                 scope = (scope_name(ctx.months[t[r].text], None)
                          if t[r].text in ctx.months else "a month")
                 decline(no_such(scope, month_ordn, "business day") if business
