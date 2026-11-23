@@ -1,27 +1,24 @@
 # -*- coding: utf-8 -*-
 """Arabic and Hebrew date words over the numtag number layer.
 
-Fixed multi-word slot surfaces (Arabic "بعد غد" day-after-tomorrow, Hebrew
-"יום ראשון" Sunday, "نهاية الأسبوع" / "סוף שבוע" weekend, "منتصف الليل"
-midnight) are folded back to a single token by the shared
-``pipeline.merge_multiword`` pass, so the ``*.voc`` files list those surfaces
-*with their space* and no glue is needed here.
+Fixed multi-word surfaces ("بعد غد", "יום ראשון") are merged to one token by
+``pipeline.merge_multiword``, so the ``*.voc`` files list them with their
+space.
 
-numtag reads the spelled numbers ("قبل خمسة وعشرين يوما", "לפני חמישה
-ימים"), the "و"-glued compounds and the ordinal teens ("الخامس عشر").  The
-shared rules of :mod:`chronologia.extract.numlayer_germanic` claim the clock
-fractions, the deep-time scale words and the counts of things.  This module
-claims the ordinals and cardinals that are also weekday or month names
-(Arabic "الاثنين", "تشرين الأول"; Hebrew "יום שני", "שלישי"), and adds the
-passes the clock, the dual nouns and the Hebrew gematria need around that
-fold.
+numtag reads the spelled numbers, the "و"-glued compounds and the ordinal
+teens.  The shared rules of :mod:`chronologia.extract.numlayer_germanic` claim
+clock fractions, scale words and counts of things.  This module claims the
+ordinals and cardinals that are also weekday or month names ("الاثنين",
+"تشرين الأول", "יום שני") and adds the clock, dual-noun and gematria passes
+around that fold.
 
-Pure ``tuple[Token] -> tuple[Token]`` transforms, re-indexed so
-``Token.index`` stays contiguous, wired as the language ``hook`` and
+Each pass is a ``tuple[Token] -> tuple[Token]`` transform that keeps
+``Token.index`` contiguous; they are wired as the language ``hook`` and
 ``pre_hook``.
 """
 from __future__ import annotations
 
+import re as _re
 from pathlib import Path
 
 from ovos_spec_tools import read_resource_file
@@ -30,6 +27,10 @@ from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
                                                    locale_words)
+from chronologia.hebrew_numerals import (gematria_value, hebrew_year_value,
+                                          is_gematria_numeral)
+
+_LOCALE_DIR = Path(__file__).parent.parent / "locale"
 
 
 _AR_WORDS = DateWords(
@@ -38,32 +39,26 @@ _AR_WORDS = DateWords(
     counts=count_words("ar"))
 
 
-# Rule A, confirmed by native speaker athmanemokraoui (TigreGotico/chronologia
-# #268): الأول (first) / الثاني (second) ARE the ordinal in every position
-# EXCEPT immediately after a Levantine solar month-name prefix
-# (تشرين الأول = October, كانون الثاني = January, جمادى الأولى, ربيع الأول),
-# where they form the month name.  They are claimed as words there, and fold
-# to the ordinal in every other position, so "النصف الأول من 2020" (first
-# half) and "الربع الأول" (first quarter) read while تشرين الأول stays October.
+# الأول (first) and الثاني (second) are the ordinal everywhere except directly
+# after a Levantine solar month prefix (تشرين الأول = October, كانون الثاني =
+# January, جمادى الأولى, ربيع الأول), where they form the month name.  They are
+# claimed as words there and fold to the ordinal elsewhere, so "النصف الأول"
+# (first half) reads while تشرين الأول stays October.  Confirmed by a native
+# speaker (TigreGotico/chronologia #268).
 _AR_MONTH_ORD_PREFIX = frozenset({"تشرين", "كانون", "جمادى", "ربيع"})
 _AR_MONTH_ORDINAL = frozenset({"الأول", "الاول", "الأولى", "الاولى", "الثاني",
                                "الثانية"})
-#: The yesterday word takes the same ordinal as its second half: "أمس الأول"
-#: is the day before yesterday, the reversed twin of "أول أمس".  Folding the
-#: ordinal to 1 there destroys the phrase before the multiword pass can merge
-#: it, and the day word alone then answers YESTERDAY -- a wrong date rather
-#: than a refusal.
+#: "أمس الأول" (the day before yesterday) takes the ordinal after the day
+#: word.  Folding it to 1 would break the phrase before the multiword pass
+#: merges it and the day word alone would answer YESTERDAY.
 _AR_DAY_ORD_PREFIX = frozenset({"أمس", "امس", "الأمس"})
-
 
 #: "أول أمس" and "أول من أمس" (the day before yesterday) put the ordinal
 #: before the day word.
 _AR_DAY_ORD_FIRST = frozenset({"أول", "اول"})
-#: The month names that numtag also reads as a number: the Islamic month
-#: "صفر" is also zero.
+#: Month names numtag also reads as a number ("صفر" is a month and zero).
 _AR_MONTHS = locale_words("ar", "month_")
-#: The weekday names that numtag also reads as a number: "الاثنين" is Monday
-#: and two.  Two is spelled as the dual noun (يومين) in real offsets.
+#: Weekday names numtag also reads as a number ("الاثنين" is Monday and two).
 _AR_WEEKDAYS = locale_words("ar", "weekday_")
 
 
@@ -89,18 +84,10 @@ def _ar_date_names(tokens):
 
 
 # -- feminine ordinal CLOCK hour fold ----------------------------------------
-# Arabic tells clock hours with the FEMININE ordinal -- الثامنة ("the eighth
-# [hour]") is eight o'clock, not the cardinal ثمانية.  These forms carry the
-# definite article and are never in the curated cardinal set, so the base fold
-# left them stranded and a spelled clock time ("الساعة الثامنة صباحا",
-# "الثامنة مساء") did not parse at all.  In an unambiguous CLOCK context --
-# immediately after the o'clock word الساعة, or immediately before an am/pm
-# daypart particle -- fold the feminine ordinal hour الواحدة..الثانية عشرة
-# (1..12) to a CLOCK "H:00" token.  The meridiem-optional clock orders then
-# resolve it, and the shared daypart->meridiem shift turns it into the 24-hour
-# reading (الثامنة مساء -> 20:00).  Gated on the clock context so every
-# non-clock use -- the #268/#279 date ordinals الأول/الثاني, spelled cardinals,
-# quarters -- stays byte-identical.
+# Arabic tells clock hours with the feminine ordinal: الثامنة is eight o'clock.
+# In an unambiguous clock context (right after الساعة, or right before an am/pm
+# daypart particle) the ordinal hour الواحدة..الثانية عشرة folds to a CLOCK
+# "H:00" token.  Every other use of these words stays untouched.
 _AR_CLOCK_AT = frozenset({"الساعة", "الساعه"})
 _AR_CLOCK_MERIDIEM = frozenset({
     "صباحا", "صباحاً", "الصباح", "فجرا", "فجراً",
@@ -111,8 +98,7 @@ _AR_FEM_HOUR = {
     "الواحدة": 1, "الثانية": 2, "الثالثة": 3, "الرابعة": 4, "الخامسة": 5,
     "السادسة": 6, "السابعة": 7, "الثامنة": 8, "التاسعة": 9, "العاشرة": 10,
 }
-# the two-word teen hours -- [feminine unit ordinal][عشرة]: الحادية عشرة (11),
-# الثانية عشرة (12).  المصرية reckoning never spells past twelve o'clock.
+# Two-word teen hours: الحادية عشرة (11), الثانية عشرة (12).
 _AR_FEM_HOUR_TEEN = {"الحادية": 11, "الثانية": 12}
 
 
@@ -123,9 +109,8 @@ def _ar_clock_token(hour, first, last):
 
 
 def _ar_clock_hour_fold(tokens):
-    """Fold a feminine ordinal hour (1..12) to a CLOCK ``H:00`` token when it
-    stands in an unambiguous clock context (after الساعة, or before a daypart
-    meridiem particle)."""
+    """Fold a feminine ordinal hour (1..12) to a CLOCK ``H:00`` token in a
+    clock context."""
     out, i, n, changed = [], 0, len(tokens), False
     while i < n:
         t = tokens[i]
@@ -153,24 +138,16 @@ def _ar_clock_hour_fold(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
-import re as _re
-
 _CLOCK_TEXT = _re.compile(r"\d{1,2}:\d{2}(?::\d{2})?$")
-# The clock-fraction surfaces (matching clock_fraction_{30,15}.voc), bare of the
-# article and of the "و" (and) proclitic.  Arabic writes that connective GLUED
-# onto the fraction it precedes, so "الساعة الثالثة والنصف" tokenises as
-# [CLOCK][والنصف] -- one fused token that is neither a CLOCKDIR nor a FRACTION,
-# which stranded the fraction and returned the bare hour.  The subtractive
-# "إلا" (to) is written with a space and needs no split.
+# Clock-fraction surfaces (``clock_fraction_{30,15}.voc``) without the article
+# or the "و" proclitic.  "الساعة الثالثة والنصف" tokenises as [CLOCK][والنصف], a
+# fused token that is neither CLOCKDIR nor FRACTION.
 _AR_CLOCK_FRACTION = frozenset({"النصف", "نصف", "الربع", "ربع"})
 
 
 def _ar_clock_fraction_split(tokens):
-    """Split a "و"-glued clock fraction ("والنصف" -> "و" + "النصف") when it
-    directly follows a folded CLOCK ``H:MM`` token, so the past-direction
-    connective surfaces as its own CLOCKDIR token and the fraction as FRACTION.
-    Gated on the preceding CLOCK so nothing but a spoken clock fraction fires,
-    keeping every و-glued cardinal ("وعشرون") untouched."""
+    """Split a "و"-glued clock fraction ("والنصف" -> "و" + "النصف") that follows
+    a folded CLOCK token, leaving every other و-glued word ("وعشرون") alone."""
     out, changed = [], False
     for t in tokens:
         if (not t.is_number and len(t.text) > 1 and t.text[0] == "و"
@@ -188,54 +165,33 @@ def _ar_clock_fraction_split(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
-#: locale-directory roots this module's hooks read vocabulary from, same
-#: layout ``loader.LOCALE_DIR`` resolves (``chronologia/locale``).
-_DEFAULT_LOCALE_DIR = str(Path(__file__).parent.parent / "locale")
-
-#: vocab-filename globs that name a single closed-class TEMPORAL slot whose
-#: bare word may legitimately follow a fused waw as a range endpoint --
-#: months (Gregorian and Islamic-civil), weekdays and dayparts.  The
-#: ABBREVIATED weekday file (``weekday_abbr_6.voc``: "أحد"/"احد", bare
-#: Sunday with no article) is deliberately excluded: it is spelled
-#: identically to the bare stem inside the numeral "واحد" (one), so folding
-#: it in would mis-split "واحد وعشرين يوما" (21 days) into "و" + "احد" and
-#: silently drop a day.  ``weekday_[0-9].voc`` (the article-bearing full
-#: form, "الأحد") carries no such collision.  Multiword entries within these
-#: files (``"ربيع الأول"``, ``"يوم الإثنين"``) are filtered out below:
-#: splitting only the leading proclitic off a MULTIWORD surface would leave a
-#: dangling remainder the multiword-merge pass was never asked to re-glue, so
-#: those surfaces are deliberately left unclosed by this hook (tracked
-#: separately).
-_AR_WORD_ROLE_GLOBS = ("month_*.voc", "weekday_[0-9].voc", "daypart_*.voc")
-
-
-def _ar_temporal_words(locale_dir=_DEFAULT_LOCALE_DIR):
-    lang_dir = Path(locale_dir) / "ar"
+def _temporal_words(lang, globs):
+    """The single-word surfaces of the vocabulary files matching ``globs``."""
     words = set()
-    for pattern in _AR_WORD_ROLE_GLOBS:
-        for path in sorted(lang_dir.glob(pattern)):
-            for surface in read_resource_file(path):
-                if " " not in surface:
-                    words.add(surface)
+    for pattern in globs:
+        for path in sorted((_LOCALE_DIR / lang).glob(pattern)):
+            words.update(w for w in read_resource_file(path) if " " not in w)
     return frozenset(words)
 
 
-# Single-word month/weekday/daypart surfaces, used to recognise a "و"-glued
-# temporal word as a range endpoint -- see split_ar_range_word.
-_AR_TEMPORAL_WORDS = _ar_temporal_words()
+#: Vocabulary files whose bare words may follow a fused waw as a range
+#: endpoint: months (Gregorian and Islamic-civil), weekdays and dayparts.
+#: ``weekday_abbr_6.voc`` is left out: its bare Sunday "أحد" is spelled like
+#: the stem inside "واحد" (one), so "واحد وعشرين يوما" would lose a day.
+#: Multiword surfaces are skipped because splitting the proclitic off one
+#: would leave a remainder the multiword merge never re-glues.
+_AR_WORD_ROLE_GLOBS = ("month_*.voc", "weekday_[0-9].voc", "daypart_*.voc")
+
+
+_AR_TEMPORAL_WORDS = _temporal_words("ar", _AR_WORD_ROLE_GLOBS)
 
 
 def split_ar_range_word(tokens):
     """Split a "و"-glued temporal word off its proclitic ("بين يناير ومارس" ->
-    [بين][يناير][و][مارس]).  Arabic writes the "and" conjunction fused onto
-    the word it precedes with no space, so the second endpoint of a range
-    ("بين X وY", "من X وY") is otherwise invisible to the range grammar and
-    the span silently truncates to the first endpoint alone.  Gated on the
-    remainder being a recognised single-word month/weekday/daypart surface
-    (see ``_AR_TEMPORAL_WORDS``), so words that merely happen to start with و
-    ("وسط" mid, "واحد" one, "والنصف" and-the-half, ...) are left untouched.
-    Wired as ``pre_hook`` -- range/connector detection reads the raw pretoken
-    stream, before the ``hook`` number fold ever runs."""
+    [بين][يناير][و][مارس]), so the second endpoint of a range is visible to the
+    range grammar.  Only a remainder in ``_AR_TEMPORAL_WORDS`` splits; words
+    that merely start with و ("وسط", "واحد") stay whole.  Wired as
+    ``pre_hook``, which runs before the ``hook`` number fold."""
     out, changed = [], False
     for t in tokens:
         if (not t.is_number and len(t.raw) > 1 and len(t.text) == len(t.raw)
@@ -252,82 +208,30 @@ def split_ar_range_word(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
-#: vocab-filename globs that name a single closed-class TEMPORAL slot whose
-#: bare word may legitimately follow a fused vav as a range endpoint --
-#: Gregorian and Hebrew-calendar months, and dayparts.  ``weekday_[0-9].voc``
-#: is EXCLUDED, unlike the Arabic version of this guard: every Hebrew weekday
-#: full name Mon..Fri is multiword ("יום שני") and so is already filtered out
-#: by the single-word check below. ``weekday_abbr_*.voc`` (the bare
-#: abbreviated forms, e.g. "שני" Monday, "שלישי" Tuesday, ...) is EXCLUDED
-#: outright rather than relying on the single-word filter, and for two
-#: DIFFERENT reasons per entry, not one shared one: "שני" is specifically the
-#: SAME string as the construct form of the cardinal "two" (שניים), a
-#: homograph documented on ``_he_date_names`` above -- folding it in
-#: would let "יום ושני שעות" (a day and two hours) mis-split into "ו" +
-#: "שני" and risk a duration count being read as a Monday range endpoint,
-#: the same class of defect the Arabic guard's abbreviated-Sunday exclusion
-#: documents ("أحد" inside "واحد"). The other bare abbreviated weekdays
-#: (שלישי/רביעי/חמישי/שישי/ראשון) carry a broader, ordinary ORDINAL
-#: homograph instead -- Hebrew names weekdays by ordinal, so e.g. "שלישי" is
-#: simultaneously "third" and "Tuesday" with no dedicated cardinal collision;
-#: excluding the whole file keeps that one guard simple rather than needing
-#: a second, narrower rationale per entry. ``weekday_abbr_5.voc`` never
-#: reaches either check regardless: its only surfaces ("יום ש"/"ביום ש")
-#: are multiword, so the single-word filter below would have dropped it
-#: anyway. ``weekday_5.voc`` ("שבת", bare Saturday) has no such collision
-#: and is covered through the single-word filter same as any other role.
-#: Multiword entries (weekday full names, "אדר ב"/"אדר שני"/"אדר בית" for
-#: the Hebrew leap month) are filtered out below: splitting only the
-#: leading vav off a MULTIWORD surface would leave a dangling remainder the
-#: multiword-merge pass was never asked to re-glue, so those surfaces are
-#: deliberately left unclosed by this hook (tracked separately).
+#: Vocabulary files whose bare words may follow a fused vav as a range
+#: endpoint: months and dayparts.  The weekday files are left out: "שני"
+#: (Monday) is also the construct form of "two", so "יום ושני שעות" (a day and
+#: two hours) would split into a Monday range endpoint, and the other bare
+#: weekdays are ordinals.  Multiword surfaces are skipped as in the Arabic
+#: guard.
 _HE_WORD_ROLE_GLOBS = ("month_*.voc", "weekday_5.voc", "daypart_*.voc")
 
-#: ``month_hebrew_5.voc`` ("אב", the Hebrew month Av) is excluded outright,
-#: from BOTH the range-endpoint split and the bare-mention remerge below --
-#: not merely narrowed the way the abbreviated weekdays are. "אב" is not a
-#: rare technical homograph: it is also the ordinary, extremely common noun
-#: "father" ("אמא ואב", "mother and father"), and admitting it let a fused
-#: bare mention resolve as a confident ``basis='exact'`` month span for text
-#: that is not talking about a date at all (found on adversarial review --
-#: "אם ואב"/"אבא ואב" mis-resolved to Av). Gregorian months and the other
-#: Hebrew-calendar months carry no such everyday-word collision. The
-#: trade-off, stated not hidden: a range whose second endpoint is a FUSED
-#: "ואב" ("בין ניסן ואב") still truncates, the original defect, left open for
-#: this one month rather than risk the false positive; the spaced form
-#: ("בין ניסן ו אב") is unaffected and already works.
+#: "אב" (the month Av) is also the everyday noun "father": admitting it read
+#: "אם ואב" (mother and father) as a confident month span.  A fused "ואב" range
+#: endpoint ("בין ניסן ואב") therefore stays truncated; the spaced form works.
 _HE_VAV_HOMOGRAPH_EXCLUDE = frozenset({"אב"})
 
 
-def _he_temporal_words(locale_dir=_DEFAULT_LOCALE_DIR):
-    lang_dir = Path(locale_dir) / "he"
-    words = set()
-    for pattern in _HE_WORD_ROLE_GLOBS:
-        for path in sorted(lang_dir.glob(pattern)):
-            for surface in read_resource_file(path):
-                if " " not in surface:
-                    words.add(surface)
-    return frozenset(words) - _HE_VAV_HOMOGRAPH_EXCLUDE
-
-
-# Single-word month/weekday/daypart surfaces, used to recognise a
-# vav-glued temporal word as a range endpoint -- see split_he_range_word.
-_HE_TEMPORAL_WORDS = _he_temporal_words()
+_HE_TEMPORAL_WORDS = (_temporal_words("he", _HE_WORD_ROLE_GLOBS)
+                      - _HE_VAV_HOMOGRAPH_EXCLUDE)
 
 
 def split_he_range_word(tokens):
     """Split a vav-glued temporal word off its proclitic ("בין ינואר ומרץ" ->
-    [בין][ינואר][ו][מרץ]).  Hebrew writes the "and" conjunction fused onto the
-    word it precedes with no space, so the second endpoint of a range
-    ("בין X וY") is otherwise invisible to the range grammar and the span
-    silently truncates to the first endpoint alone.  Gated on the remainder
-    being a recognised single-word month/weekday/daypart surface (see
-    ``_HE_TEMPORAL_WORDS``), so words that merely happen to start with ו
-    ("ורוד" pink, "ותיק" veteran, ...) are left untouched.  Wired as
-    ``pre_hook`` -- range/connector detection reads the raw pretoken stream,
-    before the ``hook`` number fold (``fold_he``, which already strips a
-    vav proclitic off a wider curated word set, ``_he_vav_strip``) ever
-    runs."""
+    [בין][ינואר][ו][מרץ]), so the second endpoint of a range is visible to the
+    range grammar.  Only a remainder in ``_HE_TEMPORAL_WORDS`` splits; words
+    that merely start with ו ("ורוד", "ותיק") stay whole.  Wired as
+    ``pre_hook``, which runs before the ``hook`` number fold."""
     out, changed = [], False
     for t in tokens:
         if (not t.is_number and len(t.text) > 1 and t.text[0] == "ו"
@@ -344,27 +248,15 @@ def split_he_range_word(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
-# -- dual-noun unit split ------------------------------------------------
-# Arabic inflects a unit noun for the DUAL when the count is exactly two --
-# ساعتان/ساعتين ("two hours") is one word, not "ساعتان" spelled together --
-# so unlike every other count, "two" here is never a separate token for the
-# offset grammar's ``NUM UNIT`` pre-amble to read ("بعد ساعتين" stalled to
-# ``None`` while its analytic sibling "بعد ساعتين" written "بعد 2 ساعات"
-# already worked).  Both the nominative -ān and the oblique -ayn are read:
-# W. Wright, *A Grammar of the Arabic Language*, 3rd ed., vol. I, §299 -- the
-# dual is formed with ـَانِ in the nominative and ـَيْنِ in the genitive/
-# accusative, and MSA text uses the oblique form in most running prose.
-#
-# Each dual surface is split into a synthetic ``2`` NUM token followed by the
-# ordinary PLURAL unit word it is dual for -- the same plural surface "بعد 2
-# ساعات" already binds -- so the split needs no grammar or resolver change,
-# only reuse of the existing NUM+UNIT reading.  The synthetic NUM carries a
-# zero-width extent so it never reaches the remainder text; the plural token
-# keeps the dual word's raw/char extent so an unconsumed dual still
-# reconstructs verbatim.  This mirrors ``_he_dual_split`` below.
-#
-# Keys are exactly the surfaces of ``locale/ar/unit_dual_*.voc``; values the
-# matching plural in ``locale/ar/unit_*.voc``.
+# -- dual-noun unit split ----------------------------------------------------
+# A dual unit noun (ساعتان / ساعتين, "two hours") hides its count, so the
+# offset grammar's ``NUM UNIT`` reading never sees it.  Each dual surface is
+# split into a zero-width synthetic ``2`` NUM token and the plural unit it is
+# dual for, which the grammar already binds ("بعد 2 ساعات").  The plural token
+# keeps the dual word's raw and char extent, so an unconsumed dual still
+# reconstructs verbatim.  Both the nominative -ān and the oblique -ayn are
+# read (W. Wright, *A Grammar of the Arabic Language*, 3rd ed., vol. I, §299).
+# Keys are the surfaces of ``locale/ar/unit_dual_*.voc``.
 _AR_DUAL_UNIT_PLURAL = {
     "ساعتان": "ساعات", "ساعتين": "ساعات",      # unit_dual_hour.voc
     "يومان": "أيام", "يومين": "أيام",          # unit_dual_day.voc
@@ -375,10 +267,11 @@ _AR_DUAL_UNIT_PLURAL = {
 }
 
 
-def _ar_dual_split(tokens):
+def _dual_split(tokens, plural_of):
+    """Replace each dual unit noun with ``2`` and its plural, per ``plural_of``."""
     out, changed = [], False
     for t in tokens:
-        plural = None if t.is_number else _AR_DUAL_UNIT_PLURAL.get(t.text)
+        plural = None if t.is_number else plural_of.get(t.text)
         if plural is None:
             out.append(t)
             continue
@@ -393,27 +286,17 @@ def _ar_dual_split(tokens):
 
 
 # -- additive fraction on a counted unit ---------------------------------------
-# A length of "N and a half/quarter <unit>" is written with the fraction fused
-# to the conjunction after the unit noun: "ساعة ونصف" (an hour and a half),
-# "ساعتين ونصف" (two and a half hours), "ساعة وربع" (an hour and a quarter);
-# ar.wikipedia "كويرنافاكا" ("رحلة بطول ساعة ونصف"), "قرزة" ("على بعد ساعتين
-# ونصف"), "حنين (فلم 2005)" ("مدتها ساعة وربع").  The offset grammar reads a
-# NUM before its UNIT, so the fused fraction is folded into that number: a
-# bare singular unit counts one, a preceding numeral keeps its value, and the
-# fraction is added.  The synthetic NUM spans from the unit to the fraction so
-# the whole phrase is consumed; the unit token keeps its own surface.
+# "N and a half/quarter <unit>" is written with the fraction fused to the
+# conjunction after the unit: "ساعة ونصف" (an hour and a half), "ساعتين ونصف".
+# The offset grammar reads a NUM before its UNIT, so the fraction is folded into
+# one number: a bare singular unit counts one, a preceding numeral keeps its
+# value.  The synthetic NUM spans from the unit to the fraction.
 _AR_ADDITIVE_FRACTION = {"ونصف": 0.5, "وربع": 0.25}
 
 
-def _ar_unit_surfaces(locale_dir=_DEFAULT_LOCALE_DIR):
-    lang_dir = Path(locale_dir) / "ar"
-    words = set()
-    for path in sorted(lang_dir.glob("unit_*.voc")):
-        words.update(read_resource_file(path))
-    return frozenset(words)
-
-
-_AR_UNIT_SURFACES = _ar_unit_surfaces()
+_AR_UNIT_SURFACES = frozenset(
+    w for path in sorted((_LOCALE_DIR / "ar").glob("unit_*.voc"))
+    for w in read_resource_file(path))
 
 
 def _ar_additive_fraction(tokens):
@@ -446,14 +329,12 @@ def _ar_additive_fraction(tokens):
 
 
 def fold_ar(tokens):
-    """Fold the feminine ordinal clock hour first (in clock context only),
-    split a "و"-glued trailing clock fraction off it, then fold the numbers
-    with the weekday and month names claimed (Rule A, #268).  The dual-noun
-    split runs last, on the folded stream, so a dual unit noun reaches the
-    offset grammar as the ``2 <plural unit>`` it means."""
-    return _ar_additive_fraction(_ar_dual_split(fold(
-        _ar_clock_fraction_split(_ar_clock_hour_fold(tokens)), _AR_WORDS,
-        extra=_ar_date_names)))
+    """Fold the feminine ordinal clock hour, split a "و"-glued clock fraction
+    off it, fold the numbers with the weekday and month names claimed, then
+    split dual unit nouns and fold additive fractions on the folded stream."""
+    tokens = _ar_clock_fraction_split(_ar_clock_hour_fold(tokens))
+    tokens = fold(tokens, _AR_WORDS, extra=_ar_date_names)
+    return _ar_additive_fraction(_dual_split(tokens, _AR_DUAL_UNIT_PLURAL))
 
 
 # -- Hebrew ------------------------------------------------------------------
@@ -461,88 +342,57 @@ _HE_WORDS = DateWords(
     lang="he",
     fractions=locale_words("he", "clock_fraction_"),
     counts=count_words("he"))
-# The ordinals שני / שלישי / רביעי / חמישי / שישי (2..6) are exactly the
-# weekday names (Monday..Friday, from יום שני ...), and ראשון (1) is Sunday.
-# Folding any of them to a digit would destroy bare-weekday, recurrence and
-# offset parsing, so they stay words.  Hebrew's spelled ordinal quarter
-# ("רבעון שלישי") therefore stays a documented xfail.
+# The ordinals שני..שישי (2..6) are the weekday names Monday..Friday and ראשון
+# (1) is Sunday.  Folding any of them to a digit would break bare-weekday,
+# recurrence and offset parsing, so they stay words; the spelled ordinal
+# quarter ("רבעון שלישי") therefore stays a documented xfail.
 _HE_WEEKDAY_ORDINALS = frozenset(
     w for w in locale_words("he", "weekday_abbr_") if " " not in w)
-#: The decade names: "שנות השמונים" (the eighties) is one word for the
-#: multiword pass, and its second word is not the count 80.
+#: Decade names ("שנות השמונים"): one word for the multiword pass, whose second
+#: word is not the count 80.
 _HE_DECADES = locale_words("he", "decade_word_")
 
-# The one cardinal that is also a weekday name.  שני is the construct form of
-# שניים "two" *and* the ordinal "second", and Hebrew names its weekdays by
-# ordinal -- יום שני is literally "second day", Monday (Hebrew Wikipedia,
-# "שבוע": the day names follow their ordinal number as in Genesis 1, only the
-# seventh keeping the name שבת).  Reading it as the digit 2 is what silently
-# turned "כל יום שני" (every Monday) into a confident FREQ=DAILY.
+# שני is both the construct form of the cardinal "two" and the ordinal "second",
+# and Hebrew names weekdays by ordinal (יום שני is Monday).  Reading it as 2 once
+# turned "כל יום שני" (every Monday) into FREQ=DAILY.
 _HE_SHENI = "שני"
-# The day noun the weekday name is built on, in the surfaces the weekday
-# vocabulary lists (bare and with the ב- "on" prefix).
+# The day noun a weekday name is built on, bare and with the ב- "on" prefix.
 _HE_DAY_NOUN = frozenset({"יום", "ביום"})
 
 
 def _he_counts_a_noun(tokens, i):
-    """Whether ``שני`` at index ``i`` can be the cardinal "two" here.
+    """Whether ``שני`` at index ``i`` can be the cardinal "two".
 
-    A cardinal in the **construct state** binds the noun it counts and cannot
-    stand without it: "שני ימים" is two days, but nothing counts two in
-    "כל שני" -- there the word is the ordinal, i.e. Monday.  So the cardinal
-    reading needs a following word, and it must not be the ordinal's own day
-    noun ("יום שני"), where the weekday reading is the only one available.
+    A construct-state cardinal binds the noun it counts ("שני ימים"), so it
+    needs a following word, and it cannot follow its own day noun ("יום שני").
     """
     if i and tokens[i - 1].text in _HE_DAY_NOUN:
         return False
     return i + 1 < len(tokens) and not tokens[i + 1].is_number
 
 
-#: The FEMININE hour numerals 1..10.  Hebrew tells the time in the feminine,
-#: because שעה ("hour") is feminine, and the preposition ב־ ("at") is written
-#: fused onto the numeral: "בשבע בבוקר" (at seven in the morning) is one
-#: token to a whitespace tokenizer, so the hour was invisible and the phrase
-#: answered the daypart alone.  Attested across ordinary he.wikipedia prose:
-#: "החל בשבע בבוקר" (גלגלצ), "מת גרנט בשמונה בבוקר" (יוליסס ס. גרנט), "הגיע
-#: לברגהוף בעשר בבוקר" (הפלישה לנורמנדי), "בשלוש אחר הצהריים" (הפצצת תל אביב
-#: במלחמת העצמאות), "בחמש אחר הצהריים" (רצח ג'ון לנון), "באחת בלילה"
-#: (מאיר פיינשטיין).
-#:
-#: The MASCULINE forms are deliberately absent.  Hebrew names its weekdays by
-#: the masculine ordinal, so "בשני" is Monday, not two o'clock -- the same
-#: collision ``fold_he`` already guards against for the bare שני.
+#: The feminine hour numerals 1..10.  Hebrew tells time in the feminine and
+#: writes the preposition ב־ ("at") fused on: "בשבע בבוקר" is one token to a
+#: whitespace tokenizer.  The masculine forms are absent: "בשני" is Monday.
 _HE_BET_HOURS = {
     "אחת": 1, "שתיים": 2, "שלוש": 3, "ארבע": 4, "חמש": 5,
     "שש": 6, "שבע": 7, "שמונה": 8, "תשע": 9, "עשר": 10,
 }
 
 
-#: what must follow the fused numeral for it to be a clock.  The same
-#: spellings carry ordinary noun phrases -- "בשבע רצון" is gladly and "בשבע
-#: עיניים" is with close attention, neither naming a time -- so the split is
-#: licensed only where a time word closes it.  The meridiem surfaces are he's
-#: own ``clock_meridiem_*`` vocabularies; the two fraction surfaces are the
-#: ones the hour-and-fraction change beneath this one introduces.
+#: What must follow a fused numeral for it to be a clock.  "בשבע רצון" (gladly)
+#: and "בשבע עיניים" are idioms on the same spelling, so only a time word closes
+#: the split.
 _HE_CLOCK_TAIL = frozenset({
     "בבוקר", "בערב", "בלילה", "ורבע", "וחצי",
-    # the afternoon meridiem is written as two words, so its FIRST token is
-    # what follows the numeral ("אחר הצהריים", and the "אחה צ" abbreviation).
+    # The afternoon meridiem has two words; its first token follows the numeral.
     "אחר", "אחה",
 })
 
 
 def _he_split_bet_hour(tokens):
-    """Split the fused "at" preposition off a feminine hour numeral.
-
-    Emits ["ב"][numeral] so the ordinary ``at HOUR`` grammar binds, the same
-    two-token shape ``split_he_range_word`` produces for a vav-glued month.
-    A lone ב is not a Hebrew word -- it is only ever a proclitic -- so the
-    bare marker this leaves behind can come from nowhere else.
-
-    Only a numeral a time word closes is split.  The fused spelling is also
-    the start of ordinary idioms built on the same numeral, and splitting one
-    of those invents a time out of a phrase that names none.
-    """
+    """Split the fused "at" preposition off a feminine hour numeral that a time
+    word closes, giving ["ב"][numeral] for the ``at HOUR`` grammar."""
     out, changed = [], False
     for i, t in enumerate(tokens):
         nxt = tokens[i + 1] if i + 1 < len(tokens) else None
@@ -564,14 +414,9 @@ def _he_split_bet_hour(tokens):
 
 
 def _he_date_names(tokens):
-    """Claim the number words that name a weekday, and a fused "at" hour
-    that no time word closes.
-
-    The ordinal weekday names stay words everywhere.  ``שני`` stays a word
-    where it cannot count a noun (:func:`_he_counts_a_noun`), so a real count
-    ("לפני שני ימים", two days ago) still folds while the weekday survives to
-    be glued onto its day noun by the multiword pass.  numtag reads "בשבע"
-    as 7; outside a clock ("בשבע רצון", gladly) it stays a word.
+    """Claim the number words that name a weekday, a decade, or a fused "at"
+    hour that no time word closes ("בשבע רצון").  ``שני`` stays a word where it
+    cannot count a noun (:func:`_he_counts_a_noun`).
     """
     claimed = set()
     for i, t in enumerate(tokens):
@@ -595,15 +440,11 @@ def _fold_he_cardinal(tokens):
 
 
 # -- feminine ordinals 1/2 that agree with the "half" noun מחצית ---------------
-# Hebrew names its weekdays by the MASCULINE ordinal (יום ראשון = Sunday, יום
-# שני = Monday), which is exactly why the cardinal fold withholds those forms.
-# The half noun מחצית is FEMININE, so "the first/second half" takes the FEMININE
-# ordinal -- ראשונה / שנייה -- which is NOT a weekday name and collides with
-# nothing, so it folds safely to the digit the half_period ``NUM`` slot binds.
-# Both spellings of "second" (שנייה full plene / שניה) and the definite ה- form
-# the attested surface uses ("המחצית הראשונה") are listed.  Only 1 and 2: a half
-# admits no ordinal past the second.  Even-Shoshan, מילון אבן-שושן, and the
-# Academy of the Hebrew Language: ראשונה / שנייה — שם מספר סודר, נקבה.
+# Weekdays use the masculine ordinal (ראשון, שני), which the cardinal fold
+# withholds.  מחצית is feminine, so "the first/second half" takes ראשונה /
+# שנייה, which are no weekday name and fold to the digit the half_period NUM
+# slot binds.  Only 1 and 2 occur (Even-Shoshan; Academy of the Hebrew
+# Language).
 _HE_ORD_FEM = {
     "ראשונה": 1, "הראשונה": 1,
     "שנייה": 2, "השנייה": 2, "שניה": 2, "השניה": 2,
@@ -625,24 +466,11 @@ def _he_ordinal_rewrite(tokens):
 
 
 # -- gematria year numerals ---------------------------------------------------
-# Hebrew calendar years are traditionally written with letters (gematria):
-# תשפ״ה = 785 (small count) means the year 5785.  The numeral is always set
-# off typographically -- a gershayim ״ before the final letter, or a geresh ׳
-# for the thousands / a lone letter -- and that mark is what makes the fold
-# safe: an UNMARKED run of letters is ordinary Hebrew (a word, a weekday name
-# like יום ראשון) and is left untouched, so weekday / ordinal handling cannot
-# regress.  A marked numeral folds to its integer year (via the shared
-# ``hebrew_numerals`` converter) so it flows through the SAME Hebrew-calendar
-# year path the numeric form (5785) already uses.
-from chronologia.hebrew_numerals import (gematria_value, hebrew_year_value,
-                                          is_gematria_numeral)
-
-# The gematria fold is scoped to a YEAR context: it fires only on a marked
-# numeral that directly follows a Hebrew-calendar month name (bare or with the
-# ב- "in" prefix) or a year word (שנת / בשנת ...), which is exactly where a
-# Hebrew-calendar year stands.  This is what keeps the equally gershayim-marked
-# ABBREVIATIONS -- the weekend סופ״ש, the era marker לפנה״ס -- from being read
-# as numbers: they never follow a Hebrew month, so they are left untouched.
+# Hebrew years are written with letters: תשפ״ה is 785, the year 5785.  Only a
+# numeral marked by a geresh or gershayim folds, so ordinary words and weekday
+# names are untouched.  The fold also needs a year context (a Hebrew month or
+# a year word before it) or a Hebrew month after it, which keeps the equally
+# marked abbreviations סופ״ש (weekend) and לפנה״ס (BCE) from reading as numbers.
 _HE_CAL_MONTH = frozenset({
     "אב", "אדר", "אייר", "אלול", "חשון", "טבת", "כסלו", "ניסן", "סיון",
     "שבט", "תמוז", "תשרי",
@@ -695,41 +523,23 @@ def _he_gematria_rewrite(tokens):
 
 
 # -- vav-conjunction (ו) proclitic strip --------------------------------------
-# Hebrew glues the one-letter conjunction ו ("and") directly onto the word it
-# precedes, no space -- "ומחר" (and-tomorrow), "ופסח" (and-Passover). The
-# bet-preposition ("in") already gets this treatment for months, but as
-# CURATED DUPLICATE literal surfaces -- ``month_1.voc`` lists both "ינואר" and
-# "בינואר" outright. That approach cannot reach the holiday surfaces, which
-# are harvested from ``well_known.tab`` and tokenised at load time, or the
-# multi-word ones ("חג הפסח"), so it is done here instead as a token-level
-# strip: a token whose text starts with ו folds to its bare remainder when
-# that remainder is one of a curated closed set of Hebrew date/holiday stems.
-# Gating on a curated set (rather than "any known vocab surface", which this
-# hook cannot see -- it runs on tokens only) is exactly what keeps a real
-# ו-initial root word ("ותיק", "ורוד"...) untouched: the strip only ever fires
-# on a word already attested here as the Hebrew name of a day, month or
-# holiday.
+# Hebrew glues "and" onto the next word ("ומחר", "ופסח").  A token starting with
+# ו folds to its remainder when that is in a closed set of date, month and
+# holiday stems; ו-initial roots ("ותיק", "ורוד") stay untouched.
 _HE_VAV_STEMS = frozenset({
     # named days (named_day_*.voc)
     "מחר", "היום", "אתמול", "אמש", "מחרתיים", "מחרתים",
     # Gregorian months (month_*.voc, bare form)
     "ינואר", "פברואר", "מרץ", "מרס", "אפריל", "מאי", "יוני", "יולי",
     "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר",
-    # holiday surfaces (well_known.tab, he) -- single-word or the first word
-    # of a multi-word surface ("חג" of "חג הפסח"), left for the multiword
-    # merge pass to glue back together once split off from "וחג"
+    # holiday surfaces (well_known.tab), including the first word of a
+    # multiword surface ("חג" of "חג הפסח") for the multiword merge pass
     "פסח", "חנוכה", "חג",
-    # marker_before (marker_before.voc) -- "ולפני יום" (and-before-a-day) is
-    # ordinary coordinated speech ("...and a day ago, ...")
+    # marker_before.voc: "ולפני יום" is ordinary coordinated speech
     "לפני",
-    # marker_future (marker_future.voc) -- "ובעוד יומיים" (and-in-two-days)
-    # is the forward-direction sibling of "לפני"; without the bare stem
-    # restored the vav strip drops the whole mention instead of the
-    # future-offset marker
+    # marker_future.voc: "ובעוד יומיים", the forward sibling of "לפני"
     "בעוד",
-    # bet-prefixed weekday noun (weekday_*.voc curated duplicate "ביום שני")
-    # -- "וביום ראשון הבא" (and-on-next-Sunday) needs the bare "ביום" restored
-    # so the multiword merge pass can still glue it to the weekday that follows
+    # "וביום ראשון הבא" needs "ביום" restored for the multiword merge pass
     "ביום",
 })
 
@@ -748,32 +558,13 @@ def _he_vav_strip(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
-# ``split_he_range_word`` (pre_hook) already split a fused vav + month/
-# weekday/daypart word into two adjacent tokens ["ו"][word] BEFORE this hook
-# ever sees the stream -- range detection needs that split visible on the raw
-# pretoken stream.  Every OTHER grammar (bare-mention date resolution
-# included) reads this hook's OUTPUT instead (``fold_tokens``, applied to
-# ``pretokens()``'s result -- see ``pipeline.fold_tokens``/``pretokens``), so
-# without undoing the split here first, a standalone fused mention
-# ("ומרץ" alone, no range) would surface a stray unconsumed "ו" token in the
-# remainder instead of resolving clean.  This re-merges the pair back into
-# one bare-word token whenever the two tokens are ADJACENT with no gap
-# (``char_end == char_start``, i.e. actually fused in the source text): a
-# genuinely SPACED "ו word" ("ינואר ו מרץ") keeps its own "ו" token
-# untouched, since that vav is an ordinary free connector word, not a
-# proclitic to undo.
-#
-# NOTE this does not merely RESTORE the pre-pre_hook behaviour -- it
-# BROADENS it.  ``_he_vav_strip`` above only ever curated Gregorian months
-# into ``_HE_VAV_STEMS``, so on the prior release a fused bare mention of a
-# weekday ("ושבת"), a daypart ("ובבוקר") or a Hebrew-calendar month
-# ("וניסן", "וסיון") returned no match at all.  Gating the remerge on
-# ``_HE_VAV_STEMS | _HE_TEMPORAL_WORDS`` (the same set the range-endpoint
-# split itself uses, see ``_HE_TEMPORAL_WORDS`` above) makes those three
-# additional classes resolve too, since they are now reachable via the
-# split either way and leaving them unmerged would only add noise (a stray
-# "ו" in the remainder) without preventing the match.  Pinned with tests
-# (test_nl_ranges.py) rather than left as an undocumented side effect.
+# ``split_he_range_word`` (pre_hook) splits a fused vav + temporal word before
+# this hook runs, because range detection reads the raw stream.  Every other
+# grammar reads this hook's output, so a standalone fused mention ("ומרץ")
+# would leave a stray "ו" in the remainder.  This re-merges the pair into the
+# bare word when the two tokens are adjacent in the source text.  A spaced
+# "ינואר ו מרץ" keeps its "ו": there it is a free connector.  The re-merge also
+# lets a fused bare weekday, daypart or Hebrew-month mention resolve.
 def _he_vav_remerge(tokens):
     out, i, n, changed = [], 0, len(tokens), False
     while i < n:
@@ -794,19 +585,9 @@ def _he_vav_remerge(tokens):
     return reindex(tuple(out)) if changed else tokens
 
 
-# -- dual-noun unit split -----------------------------------------------
-# Hebrew inflects a unit noun for the DUAL number when the count is exactly
-# two -- יומיים ("two days") is one word, not "שני ימים" spelled together --
-# so unlike every other count, "two" here is never a separate token for the
-# offset grammar's ``NUM UNIT`` pre-amble to read ("לפני יומיים" stalled to
-# ``None`` while its analytic sibling "לפני שני ימים" already worked).  Each
-# dual surface is split here into a synthetic ``2`` NUM token followed by the
-# ordinary PLURAL unit word it is dual for -- the same plural surface "לפני 2
-# ימים" already binds -- so the split needs no grammar or resolver change,
-# only reuse of the existing NUM+UNIT reading. The synthetic NUM carries a
-# zero-width extent (mirrors the agglutinative "at"-marker split) so it never
-# reaches the remainder text; the plural token keeps the dual word's raw/char
-# extent so an unconsumed dual still reconstructs verbatim.
+# -- dual-noun unit split -----------------------------------------------------
+# Hebrew dual unit nouns (יומיים, "two days") are split like the Arabic ones,
+# see ``_dual_split``.
 _HE_DUAL_UNIT_PLURAL = {
     "יומיים": "ימים", "יומים": "ימים",      # unit_dual_day.voc -> unit_day.voc
     "שעתיים": "שעות",                        # unit_dual_hour.voc -> unit_hour.voc
@@ -817,37 +598,11 @@ _HE_DUAL_UNIT_PLURAL = {
 }
 
 
-def _he_dual_split(tokens):
-    out, changed = [], False
-    for t in tokens:
-        plural = None if t.is_number else _HE_DUAL_UNIT_PLURAL.get(t.text)
-        if plural is None:
-            out.append(t)
-            continue
-        out.append(Token(text="2", raw="", index=t.index, is_number=True,
-                         value=2, char_start=t.char_start,
-                         char_end=t.char_start))
-        out.append(Token(text=plural, raw=t.raw, index=t.index,
-                         char_start=t.char_start, char_end=t.char_end,
-                         cap=t.cap, prev_cap=t.prev_cap))
-        changed = True
-    return reindex(tuple(out)) if changed else tokens
-
-
 def fold_he(tokens):
-    """Fold the gematria year numeral (תשפ״ה → 5785) and the feminine ordinal
-    (מחצית's "first/second") before the number fold, then run the number
-    fold: none overlap (each is its own run), and the weekday-masculine
-    ordinals stay untouched. The vav remerge
-    runs first, undoing ``split_he_range_word``'s pre_hook split for any pair
-    that was not consumed as a range connector, so a bare fused month/
-    weekday/daypart mention resolves clean instead of leaving a stray "ו" in
-    the remainder -- this both restores the pre-pre_hook Gregorian-month
-    behaviour AND broadens it to weekday/daypart/Hebrew-month mentions that
-    previously had no match at all (see the comment on ``_he_vav_remerge``);
-    the vav strip runs next so a still-fused vav-prefixed date word (any
-    ``_HE_VAV_STEMS`` role the pre_hook does not cover) folds/matches exactly
-    like its bare form; the dual split runs on its result so a vav-prefixed
-    dual ("ולפני יומיים") reaches it as a bare dual noun token."""
-    return _fold_he_cardinal(_he_ordinal_rewrite(_he_gematria_rewrite(
-        _he_dual_split(_he_vav_strip(_he_vav_remerge(tokens))))))
+    """Fold Hebrew date words, in this order: undo the pre_hook vav split where
+    no range consumed it, strip a vav proclitic from curated stems, split dual
+    unit nouns, fold gematria years, rewrite feminine ordinals (מחצית's "first"
+    and "second"), then run the number fold."""
+    tokens = _he_vav_strip(_he_vav_remerge(tokens))
+    tokens = _dual_split(tokens, _HE_DUAL_UNIT_PLURAL)
+    return _fold_he_cardinal(_he_ordinal_rewrite(_he_gematria_rewrite(tokens)))
