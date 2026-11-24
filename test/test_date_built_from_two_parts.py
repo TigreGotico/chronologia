@@ -137,6 +137,8 @@ def test_half_of_two_weeks_before_easter_monday_keeps_the_clock():
     ("es", "cada mañana"), ("gl", "cada mañá"), ("ast", "cada mañana"),
 ])
 def test_cada_before_a_part_of_the_day_leaves_nothing_over(lang, text):
+    # Anchor Saturday 2026-10-17 12:00, so the next morning is on the 18th
     found = extract_timespan(text, lang, _anchor(2026, 10, 17, 12))
     assert found.remainder == ""
+    assert found.span.start.datetime().date() == date(2026, 10, 18)
     assert (found.span.end.datetime() - found.span.start.datetime()).days == 0

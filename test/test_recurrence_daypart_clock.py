@@ -26,4 +26,4 @@ WEEKDAYS = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=8"
     ("pt", "nas manhãs às 8", DAILY),
 ])
 def test_a_daypart_before_a_clock_is_a_rule(lang, text, rule):
-    assert extract_recurrence(text, lang, ANCHOR).recurrence == rule
+    assert str(extract_recurrence(text, lang, ANCHOR).recurrence) == rule
