@@ -47,7 +47,7 @@ def test_second_offset_duration(text, secs):
 _ORDINALS = [
     ("a segunda semana de março", (2017, 3, 13), (2017, 3, 20)),
     ("o segundo trimestre de 2018", (2018, 4, 1), (2018, 7, 1)),
-    ("o segundo dia de março", (2017, 3, 2), (2017, 3, 3)),
+    ("o segundo dia de março", (2018, 3, 2), (2018, 3, 3)),
 ]
 
 

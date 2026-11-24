@@ -2285,6 +2285,13 @@ class Resolver:
             month = self.spec.months[month_tok.text]
             res = _UNIT_OF_MONTH[unit_kind]
             value = _date_ordinal(n, date(year, month, 1), res)
+            # A year-less "Nth day of <month>" names the date its digit form
+            # names: the next such day, as ``calendar_date`` reads "15 march".
+            if (unit_kind == "day" and year_tok is None and 1 <= n <= 31
+                    and self.spec.construction_flags.get(
+                        "calendar_date", {}).get("prefer_future", False)):
+                nxt = _next_day_month(month, n, anchor)
+                value = nxt.date() if nxt is not None else None
             scope = scope_name(month, year if year_tok else None)
             most = 0 if year_tok else (_days_in_month(2000, month)
                                        if unit_kind == "day"
