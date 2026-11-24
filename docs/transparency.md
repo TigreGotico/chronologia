@@ -2,21 +2,21 @@
 
 <!-- agent-hint
 covers: the checks that decide whether answers are right and the provenance tiers of holiday golds
-source: `test/test_holiday_golds.py`, `test/holiday_golds/_tier_floor.json`, `test/test_language_parity.py`, `test/test_docs_examples.py`
+source: test/test_holiday_golds.py, test/holiday_golds/_tier_floor.json, test/test_language_parity.py, test/test_docs_examples.py
 generated: no
-verify: diff <(sed -n 's/^- \*\*\([a-z-]*\)\*\*:.*/\1/p' docs/transparency.md) <(python -c "import re;print(*re.search(r'_TIERS = \((.*?)\)',open('test/test_holiday_golds.py').read())[1].replace('\"','').replace(' ','').split(','),sep='\n')") && python -c 'exec("import os,re\nt=open(\"docs/transparency.md\").read()\nm=re.search(r\"MIN_CASES = (\\d+)\",open(\"test/test_language_parity.py\").read())[1]\nassert \"at least \"+m+\" cases\" in t\nfor q in set(re.findall(r\"`((?:test|chronologia)/[^`<>*]+)`\",t)): assert os.path.exists(q.rstrip(\"/\")),q\n")'
-see: `docs/civil-holidays.md`, `docs/benchmarks.md`
+verify: diff <(sed -n 's/^- \*\*\([a-z-]*\)\*\*:.*/\1/p' docs/transparency.md) <(.venv/bin/python -c "import re;print(*re.search(r'_TIERS = \((.*?)\)',open('test/test_holiday_golds.py').read())[1].replace('\"','').replace(' ','').split(','),sep='\n')") && .venv/bin/python -c 'exec("import os,re\nt=open(\"docs/transparency.md\").read()\nm=re.search(r\"MIN_CASES = (\\d+)\",open(\"test/test_language_parity.py\").read())[1]\nassert \"at least \"+m+\" cases\" in t\nfor q in set(re.findall(r\"\\x60((?:test|chronologia)/[^\\x60<>*]+)\\x60\",t)): assert os.path.exists(q.rstrip(\"/\")),q\n")'
+see: docs/civil-holidays.md, docs/benchmarks.md
 -->
 
 The library is written by AI and directed and reviewed by a human maintainer. This page lists the checks that decide whether its answers are right, so a reader can judge the work without trusting either party.
 
 ## The method
 
-**Cite or refuse.** Every algorithm is transcribed from a named source, and every holiday rule cites a law, a gazette or an official listing. Every gold test value is derived by hand or taken from an independent source, never from the code under test. Where no citable source exists, such as the contested leap pattern of the Javanese calendar, the feature is refused and the reason is documented.
+**Cite or refuse**. Every algorithm is transcribed from a named source, and every holiday rule cites a law, a gazette or an official listing. Every gold test value is derived by hand or taken from an independent source, never from the code under test. Where no citable source exists, such as the contested leap pattern of the Javanese calendar, the feature is refused and the reason is documented.
 
-**Natural-language test-driven development.** Each language has a corpus package `test/nl_corpus_<code>/` of real phrases with hand-derived expected spans. `test/test_language_parity.py` requires at least 100 cases per corpus and a semantic-parity block that asserts the same spans as the English corpus.
+**Natural-language test-driven development**. Each language has a corpus package `test/nl_corpus_<code>/` of real phrases with hand-derived expected spans. `test/test_language_parity.py` requires at least 100 cases per corpus. It also requires a semantic-parity block that asserts the same spans as the English corpus.
 
-**Structural checks.** A test walks the data and fails on a gap. Every holiday rule needs a gold value. Every code block in `README.md` and `docs/` runs in `test/test_docs_examples.py`.
+**Structural checks**. A test walks the data and fails on a gap. Every holiday rule needs a gold value. Every code block in `README.md` and `docs/` runs in `test/test_docs_examples.py`.
 
 ## Holiday gold provenance
 

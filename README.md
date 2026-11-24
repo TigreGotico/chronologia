@@ -2,21 +2,23 @@
 
 <!-- agent-hint
 covers: what chronologia does, how to install it, a first extraction and where each topic is documented
-source: `pyproject.toml`, `chronologia/__init__.py:__all__`, `chronologia/__main__.py`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+source: pyproject.toml, chronologia/__init__.py:__all__, chronologia/__main__.py, chronologia/extract/numlayer.py:NUMTAG_LANGS
 generated: no
-verify: diff <(sed -n '/^```python/,/^```$/p' README.md | sed '/^```/d;/^main(/d' | python -) <(sed -n 's/^print(.*)  *# //p' README.md)
-see: `docs/index.md`, `docs/getting-started.md`, `AGENTS.md`, `CONTRIBUTING.md`
+verify: diff <(sed -n '/^\x60\x60\x60python/,/^\x60\x60\x60$/p' README.md | sed '/^\x60\x60\x60/d;/^main(/d' | .venv/bin/python -) <(sed -n 's/^print(.*)  *# //p' README.md)
+see: docs/index.md, docs/getting-started.md, AGENTS.md, CONTRIBUTING.md
 -->
 
-**A Python library that reads dates written by humans and answers
-questions about them — any date, in any calendar, from the age of the
-dinosaurs to next Tuesday.**
+**chronologia is a Python library that reads dates as people write them and computes across every calendar, from the dinosaurs to next Tuesday**. It turns a phrase into the exact stretch of time it names. Examples are "the 15th of Ramadan 1446", "next winter" and "66 million years ago". It works offline, it never guesses, and it says so when history does not know the answer.
 
-It does two things that usually need two libraries: it *understands* a
-date the way a person wrote it ("the 15th of Ramadan 1446", "next
-winter", "66 million years ago") and it *computes* across every system
-of reckoning humans have used. One call turns a phrase into the exact
-stretch of time it refers to:
+## Quick start
+
+```bash
+pip install chronologia
+```
+
+You need Python 3.11 or newer. The calendar code uses only the standard library. The reading of phrases needs two small helpers that `pip` installs with the package. **numtag** reads the numbers of 40 of the 61 languages. The table in [docs/languages/index.md](docs/languages/index.md) lists them and names the reader of each other language. **ovos-spec-tools** loads the vocabulary of each language. The `test` extra adds the test and benchmark tools.
+
+One call turns a phrase into a span of time:
 
 ```python
 from chronologia import extract_timespan
@@ -27,11 +29,7 @@ span, _ = extract_timespan("the 15th of Ramadan 1446", "en",
 print(span.start_datetime.date())   # 2025-03-15
 ```
 
-That is the whole point of a *span*: a phrase names a stretch of time,
-not an instant.
-
-When a string contains no date at all, `extract_timespan` returns `None`
-(rather than raising), so guard before unpacking on untrusted input:
+A phrase names a stretch of time, not an instant. The third argument is the anchor: the moment that counts as the present for relative phrases. `extract_timespan` returns `None` when the text holds no date. Guard before you unpack text you do not control:
 
 ```python
 result = extract_timespan("no date here", "en", datetime(2024, 1, 1))
@@ -39,43 +37,11 @@ if result is not None:
     span, _ = result
 ```
 
-Ever wondered…
+The public names are in `chronologia.__all__`. The library is in alpha. Signatures can change before a 1.0 release, so pin a version if you need stability. Read [docs/getting-started.md](docs/getting-started.md) for the three ideas that the library builds on. The index in [docs/index.md](docs/index.md) lists every guide in reading order.
 
-- what day **"the 15th of Ramadan"** falls on this year?
-- why Russia celebrates the **October** Revolution in **November**?
-- when exactly **"the Jurassic"** was?
-- what happened to the **ten days that vanished** in October 1582?
-- whether **February 30th** ever existed? (It did. Once. In Sweden.)
+## Spans, not instants
 
-Computers are surprisingly bad at these questions. Python's built-in
-`datetime` can't even hold a year before 1 AD. This library answers all
-of them — and it never needs the internet, never guesses, and tells you
-honestly when history itself doesn't know the answer.
-
-## Install
-
-```bash
-pip install chronologia
-```
-
-Python 3.11+. The calendrical core is pure standard library; the
-natural-language layer adds two small helpers — **numtag** (reads the
-numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Malay, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian) and **ovos-spec-tools** (loads each language's
-vocabulary files).
-
-**Status.** chronologia is in **alpha**: the public API surface named in
-`chronologia.__all__` is what you build against, and it is covered by an
-extensive test suite, but signatures may still change ahead of a 1.0 that
-freezes them. Pin a version if you need stability across upgrades.
-
-## Nobody means midnight
-
-When someone says **"June 2027"**, they mean the whole month — not one
-secret instant at midnight on the 1st. This library takes that
-seriously: its answers are **spans** — a start and an end. The width of
-a span is honest information. A day is a day wide. A month is a month
-wide. "The Jurassic" is fifty-eight and a half million years wide (it starts about
-201.6 million years ago):
+When someone says "June 2027", they mean the whole month, not one instant at midnight on the 1st. Every answer is a **span** with a start and an end. A day is a day wide and a month is a month wide. "The Jurassic" is fifty-eight and a half million years wide, and it starts about 201.6 million years ago:
 
 ```python
 from chronologia import lookup
@@ -85,78 +51,16 @@ print(jurassic.span.start.year)   # -201598050
 print(jurassic.span.end.year)     # -143098050
 ```
 
-Every span also carries a one-word honesty label, its **basis**: was
-this *computed* from an exact rule (`"exact"`), *looked up* in a
-published table (`"tabulated"`), *pieced together* by historians
-(`"reconstructed"`), or *guessed about a future* nobody has decided yet
-(`"predicted"`)? The Jurassic above says `tabulated` — it comes straight
-from the official geological chart, uncertainties included.
+Every span also carries a one-word label for its **basis**. The basis says how the library knows the span:
 
-Under the hood, one trick powers everything: every day that has ever
-existed gets a plain number — its **Julian Day Number** — so *any* of the
-eighteen built-in calendars can talk to any other by meeting at the
-number in the middle. See [docs/getting-started.md](docs/getting-started.md)
-for the three ideas the whole library is built from.
+- `"exact"`: computed from an exact rule.
+- `"tabulated"`: looked up in a published table. The Jurassic above is `tabulated`, because it comes from the official geological chart with its uncertainties.
+- `"reconstructed"`: pieced together by historians.
+- `"predicted"`: a guess about a future that nobody has decided yet.
 
-## What it will NOT do (on purpose)
+One idea powers the rest. Every day that has ever existed gets a plain number, its **Julian Day Number**. Any of the eighteen built-in calendars can talk to any other by meeting at that number.
 
-Some dates cannot be computed — by anyone — and this library refuses to
-pretend otherwise:
-
-- **Moon-sighting months.** The religious Islamic month begins when
-  witnesses *see* the new crescent. A future sighting hasn't happened
-  yet, so the honest answer is a two-day span labelled `predicted` —
-  never fake certainty. (Saudi Arabia's *civil* calendar is published
-  as an official table, so it *is* included — as a table, exactly as
-  far as the table goes.)
-- **The Chinese calendar beyond its tables.** Exact from 1901 to 2099
-  via the Hong Kong Observatory's published tables; beyond that the
-  true calendar needs astronomy, so the library stops rather than
-  drifts.
-- **Calendars nobody controlled.** Before Julius Caesar, Roman priests
-  added days for political reasons — the "calendar" was whatever they
-  decided that year. No software can recover decisions that were never
-  rules. Historians' reconstructions are supported *as*
-  reconstructions, wearing their uncertainty openly.
-
-One rule covers all of it: **a span's width and basis always tell the
-truth about what is knowable.**
-
-## Stories the library can tell
-
-Each of these is a full worked guide in [`docs/`](docs/) — here is just
-the hook and where to read it.
-
-- **The ten days that never happened.** In October 1582 Pope Gregory
-  deleted ten days; Britain lost eleven in 1752, Russia thirteen in 1918
-  (which is why the "October" Revolution fell in November), and Sweden
-  needed a one-off **February 30th** in 1712. Ask for a deleted day and
-  you get a typed `NeverExisted`, not a crash → [docs/timelines.md](docs/timelines.md).
-- **Clocks that lie twice a year.** When clocks "fall back", 1:30 AM
-  happens twice; when they "spring forward", 2:30 AM never happens at
-  all. Resolve a wall-clock time and get the honest answer — both
-  instants, or "that time didn't exist" → [docs/timezones.md](docs/timezones.md).
-- **The sun, the sundial, and the pre-clock day.** Real sunrise, sunset,
-  solar noon and the three twilights (NOAA algorithm, ~1 minute), local
-  *mean* time from before timezones, the unequal hours the Roman world
-  lived by, Islamic prayer times as named conventions, moon phases and
-  the astronomical seasons — plus leap seconds, the reconciliation of
-  atomic and astronomical time → [docs/sun-moon-and-seasons.md](docs/sun-moon-and-seasons.md).
-- **Deep time, honestly.** "66 million years ago" and "66.043 million"
-  are different *claims*, and the span's width says which you made;
-  radiocarbon ages calibrate through the published curve →
-  [docs/deep-time.md](docs/deep-time.md).
-- **Emperors, popes, and consuls.** "Reiwa 7", "the consulship of
-  Lentulus and Marcellus", "Year 5 of Ramesses II" in three competing
-  scholarly chronologies — plus the full Roman Kalends/Nones/Ides
-  grammar in twelve living languages → [docs/eras-and-rulers.md](docs/eras-and-rulers.md).
-- **Beyond Earth.** Mars Sol Date, the Darian calendar, rover
-  mission-sols, a span-valued Big Bang epoch and Sagan's Cosmic Calendar
-  → [docs/mars-and-beyond.md](docs/mars-and-beyond.md).
-
-Even a plain word like **"morning"** is a span — and a *convention* a
-culture agrees on, not a fact about the sun. English splits afternoon
-from evening at 18:00; Spanish runs one *tarde* through to 20:00:
+A word such as "morning" is also a span, and it depends on culture, not on the sun. English splits afternoon from evening at 18:00. Spanish runs one *tarde* through to 20:00:
 
 ```python
 from datetime import date
@@ -167,10 +71,40 @@ print(daypart_span(tuesday, "afternoon").end.isoformat())            # 2027-06-0
 print(daypart_span(tuesday, "tarde", region="es").end.isoformat())  # 2027-06-08T20:00:00
 ```
 
+## What it refuses to do
+
+Some dates cannot be computed by anyone. The library does not pretend otherwise. A span's width and basis always tell the truth about what is knowable.
+
+- **Moon-sighting months**. The religious Islamic month begins when witnesses *see* the new crescent. A future sighting has not happened. The answer is a two-day span labelled `predicted`. The *civil* calendar of Saudi Arabia is an official published table, so the library includes it as a table, as far as the table goes.
+- **The Chinese calendar beyond its tables**. The Hong Kong Observatory tables make it exact from 1901 to 2099. Beyond that the true calendar needs astronomy, so the library stops.
+- **Calendars that nobody controlled**. Before Julius Caesar, Roman priests added days for political reasons. No software can recover decisions that were never rules. The library supports the reconstructions of historians as reconstructions, with their uncertainty in view.
+- **Dates that do not exist**. "29 February 2017" returns `None`, not 1 March. Pass `impossible="raise"` to get an `ImpossibleDateError` that names the reason.
+
+## What each guide covers
+
+| Topic | What you get | Guide |
+|---|---|---|
+| Who is this for? | Worked programs for archivists, historians, archaeologists, faith communities, astronomers, engineers and voice assistants. Start here. | [use-cases](docs/use-cases.md) |
+| Reading human dates | `extract_timespan` turns a phrase into a span. Also durations, recurrences, candidates with character offsets, and how the vocabulary of a language works. | [extraction](docs/extraction.md) |
+| Calendars | Eighteen calendars beside the Gregorian: Julian, Revised Julian, Hebrew, Islamic, Solar Hijri, Chinese (1901 to 2099), Coptic, Ethiopian, Armenian, Berber, ancient Egyptian, Maya Long Count, French Republican, Bahá'í and ISO week. The Islamic calendar has an arithmetic form and the Saudi Umm al-Qura table. | [calendars](docs/calendars.md) |
+| Calendar reforms | Thirteen timelines: Rome, Britain, Sweden, Russia, Greece, Japan, and the days that Samoa, the Philippines and Alaska deleted or lived twice. Ask for a deleted day and you get a typed `NeverExisted`. | [timelines](docs/timelines.md) |
+| Deep time | The geological chart (170 entries) and ten regional archaeological ages. A British Late Bronze Age is not a Mesopotamian one. Radiocarbon ages calibrate through the published curve. | [deep-time](docs/deep-time.md) |
+| Eras and rulers | BC/CE, Anno Mundi, Byzantine and Hijri years, Holocene, Unix time, Julian Day and Before Present. Regnal years: nengō, Roman consuls and three Egyptian chronologies. Roman Kalends, Nones and Ides in twelve locales. | [eras-and-rulers](docs/eras-and-rulers.md) |
+| Recurrence | RFC 5545 RRULE: "every third Tuesday", Labor Day, Friday the 13th. A rule that names a date no year has raises an error. | [recurrence](docs/recurrence.md) |
+| Events | A spoken sentence into a calendar entry, and iCalendar files in both directions. | [events](docs/events.md) |
+| Civil holidays | Holidays for 260 jurisdictions as computed rules with observed-shift policies. 32 of them carry subdivisions, and Portugal goes down to municipal depth (about 300 concelhos). | [civil-holidays](docs/civil-holidays.md) |
+| Sun, moon and seasons | Sunrise, sunset, twilights, unequal hours and prayer times. Moon phases, solstices and equinoxes. Local mean time, leap seconds and the French Revolution's 10-hour clock. | [sun-moon-and-seasons](docs/sun-moon-and-seasons.md) |
+| Timezones | Any `zoneinfo` zone as a timeline, with fall-back and spring-forward handled as typed answers. | [timezones](docs/timezones.md) |
+| Beyond Earth | Mars Sol Date, Coordinated Mars Time and the Darian calendar. Cosmology: a Big Bang epoch as a span, the Hubble tension and Sagan's Cosmic Calendar. | [mars-and-beyond](docs/mars-and-beyond.md) |
+| Comparison | A differential benchmark against `dateparser` and `dateutil` on the hand-derived corpora of the repository. | [benchmarks](docs/benchmarks.md) |
+
+The [`examples/`](examples/) directory holds eight self-checking scripts. Run one with `python examples/01_extract_basics.py`.
+
+Every algorithm and every number in the data files comes from a cited published source. The citations sit in the module docstrings and the data-file headers. Where sources disagree, both versions ship under different names. Where sources are silent, the library says so.
+
 ## Command line
 
-Installing the package puts a `chronologia` command on your path (or run it
-as `python -m chronologia`). Each subcommand prints one friendly line:
+The package installs a `chronologia` command. You can also run `python -m chronologia`. Each subcommand prints one line:
 
 ```bash
 chronologia convert 2024-06-01 --to hebrew        # gregorian 2024-06-01 = hebrew 5784-02-24
@@ -180,9 +114,7 @@ chronologia easter 2024                            # Easter 2024 (gregorian): 20
 chronologia when 1984-06?                          # -> [1984-06-01..., 1984-07-01...) [?]
 ```
 
-The same entry point is callable in-process — handy for scripts and tests —
-by handing `main` an argument list (it prints to stdout and returns an exit
-code):
+A script or test can call the same entry point in-process. Give `main` an argument list. It prints to stdout and returns an exit code:
 
 ```python
 from chronologia.__main__ import main
@@ -192,144 +124,46 @@ main(["convert", "2024-06-01", "--to", "coptic"])
 main(["when", "1984-06?"])
 ```
 
-BC / negative years need argparse's `--` separator so the leading `-` is not
-read as a flag: `chronologia convert --from julian --to gregorian -- -0043-03-15`.
-
-## Reference
-
-Full guides for everything above live in [`docs/`](docs/), mapped with a
-suggested reading order in [**docs/index.md**](docs/index.md). Prefer to learn
-by running code? The [`examples/`](examples/) directory is eight self-contained,
-self-checking scripts (`python examples/01_extract_basics.py`).
-
-| | |
-|---|---|
-| **Who is this for?** | [**docs/use-cases.md**](docs/use-cases.md) — worked programs for archivists, historians, archaeologists, faith communities, astronomers, engineers, and voice assistants — start here |
-| Reading human dates | [**docs/extraction.md**](docs/extraction.md) — `extract_timespan` turns a phrase into a span; how the per-language vocabulary works and how to add a language |
-| 18 calendars | Beside the Gregorian: Julian, Hebrew, Islamic (arithmetic + Saudi Umm al-Qura table), Solar Hijri, Chinese (1901–2099), Coptic, Ethiopian, Armenian, ancient Egyptian, Maya Long Count, French Republican, Bahá'í, ISO week, and more — [docs/calendars.md](docs/calendars.md) |
-| Timelines | 13 jurisdictions' calendar reforms and dateline hops — Rome, Britain, Sweden, Russia, Greece, Japan, plus the days Samoa, the Philippines and Alaska deleted or re-lived at the International Date Line — [docs/timelines.md](docs/timelines.md) |
-| Named periods | the geological chart (170 entries) plus ten regional archaeological ages — a British "Late Bronze Age" is not a Mesopotamian one — [docs/deep-time.md](docs/deep-time.md) |
-| Eras & counts | BC/CE, Anno Mundi, Hijri years, Holocene, Byzantine, unix time, Julian Day, Before Present; regnal years (Japanese nengō, Roman consuls, Egyptian chronologies) — [docs/eras-and-rulers.md](docs/eras-and-rulers.md) |
-| Recurrence | [RFC 5545 RRULE](docs/recurrence.md) — "every third Tuesday", Labor Day, Friday the 13th — parsed and expanded as pure JDN arithmetic into day-wide `DateSpan`s |
-| Civil holidays | [public/regional/municipal holidays](docs/civil-holidays.md) for 260 jurisdictions as computed rules with observed-shift policies — 32 of them carry subdivisions, Portugal down to municipal depth (~300 concelhos) |
-| Time, sun & sky | [sun, moon & seasons](docs/sun-moon-and-seasons.md) — sunrise/sunset/twilights, unequal hours, prayer times, moon phases, solstices/equinoxes, local mean time, leap seconds, and the French Revolution's 10-hour clock |
-| Timezones | [timezones](docs/timezones.md) — reading any `zoneinfo` zone as a timeline with honest fall-back/spring-forward handling |
-| Beyond Earth | [Mars and beyond](docs/mars-and-beyond.md) — Mars Sol Date, Coordinated Mars Time, the Darian calendar, and cosmology (a span-valued Big Bang epoch, the Hubble tension, Sagan's Cosmic Calendar) |
-| How does it compare? | [**docs/benchmarks.md**](docs/benchmarks.md) — a standing differential benchmark against `dateparser` and `dateutil` on the repo's own hand-derived corpora |
-
-Every algorithm and every number in the data files is transcribed from
-a cited published source — citations sit in the module docstrings and
-data-file headers. Where sources disagree, both versions ship under
-different names. Where sources are silent, the library says so instead
-of guessing.
+Years before the common era need argparse's `--` separator, so the leading `-` is not read as a flag: `chronologia convert --from julian --to gregorian -- -0043-03-15`.
 
 ## How well does it speak your language?
 
-Sixty-one languages load, but they are not all equally exercised, and pretending
-otherwise would waste your afternoon. Coverage falls into three honest bands:
+Sixty-one languages load. They are not all tested to the same depth, and three bands say how deep.
 
-**Reviewed in depth** — English, Spanish, Portuguese, French, German, Dutch,
-Russian, Arabic, Hebrew. Each has a large phrase corpus that covers everyday register,
-not just textbook forms: "quarter to four", "tonight at 8", "om de twee
-weken", "без пяти девять". Expect these to handle what a person would
-actually type.
+**Reviewed in depth:** English, Spanish, Portuguese, French, German, Dutch, Russian, Arabic and Hebrew. Each has a large phrase corpus that covers everyday speech, not only textbook forms: "quarter to four", "tonight at 8", "om de twee weken", "без пяти девять". Expect these languages to handle what a person types.
 
-**Broadly covered** — Italian, Polish, Czech, Slovak, Slovenian, Croatian,
-Bulgarian, Ukrainian, Swedish, Danish, Norwegian (Bokmål and Nynorsk),
-Finnish, Estonian, Hungarian, Greek, Turkish, Azerbaijani, Persian,
-Indonesian, Malay, Catalan, Galician, Romanian, Basque, Frisian. Each has its
-own test corpus and is swept whenever a shared mechanism changes, so the
-common constructions work; the idiomatic long tail is thinner, and that is
-where bug reports are most useful.
+**Broadly covered:** Italian, Polish, Czech, Slovak, Slovenian, Croatian, Bulgarian, Ukrainian, Swedish, Danish, Norwegian (Bokmål and Nynorsk), Finnish,
+Estonian, Hungarian, Greek, Turkish, Azerbaijani, Persian, Indonesian, Malay, Catalan, Galician, Romanian, Basque and Frisian. Each has its own test corpus. The tests run again whenever a shared mechanism changes, so the common constructions work. The idiomatic long tail is thinner, and bug reports help most there.
 
-**Early** — Albanian, Aragonese, Armenian, Asturian, Belarusian, Esperanto,
-Filipino, Georgian, Hausa, Hindi, Icelandic, Irish, Kabyle, Korean, Latvian,
-Lithuanian, Macedonian, Maltese, Mirandese, Occitan, Serbian, Swahili, Tamil,
-Thai, Vietnamese, Welsh. The
-vocabulary is in place and the engine is shared, so a lot already works, but
-these have not had a native speaker read them end to end, and several
-deliberately omit constructions the source grammar does not use the same
-way — Welsh has no seasons or millennium unit, Irish and Esperanto have no
-dayparts, Georgian has no century unit or "every" quantifier, Armenian omits
-several markers, Macedonian has no minutes-to-the-hour clock because its own
-style guides count only forward from the hour, Swahili refuses its
-sunrise-counted clock while Hausa, checked for the same ambiguity and found
-not to have it, reads its spoken hour, Thai refuses a bare "N โมง" hour
-because nothing in the phrase says which half-day it names, Korean ships no
-single-syllable weekday abbreviations (each one is also an everyday word:
-일 is the day, the numeral one and Sunday at once) and no spelled month
-names, and Vietnamese reads no ordinals and no bare "năm" as five. Occitan
-shows how a locale deepens: a native speaker reviewed its word lists, and
-"davant-ièr" reads as the day before yesterday.
+**Early:** Albanian, Aragonese, Armenian, Asturian, Belarusian, Esperanto, Filipino, Georgian, Hausa, Hindi, Icelandic, Irish, Kabyle,
+Korean, Latvian, Lithuanian, Macedonian, Maltese, Mirandese, Occitan, Serbian, Swahili, Tamil, Thai, Vietnamese and Welsh. The vocabulary is in place and the engine is shared, so a lot already works. No native speaker has read these languages end to end. Several omit constructions that their source grammars do not use in the same way:
 
-Those omissions are the design working, not a backlog. A locale ships a
-construction only where its sources attest one; where they conflict or say
-nothing, the phrase returns nothing, because a wrong span is worse than no
-span. [docs/extraction.md](docs/extraction.md#when-a-language-declines-a-phrase)
-explains how to tell a deliberate refusal from a bug, and what each is worth
-reporting.
+- Welsh has no seasons and no millennium unit.
+- Irish and Esperanto have no day parts.
+- Georgian has no century unit and no "every" quantifier. Armenian omits several markers.
+- Macedonian has no minutes-to-the-hour clock, because its own style guides count only forward from the hour.
+- Swahili refuses its sunrise-counted clock. Hausa shows no such ambiguity, so it reads its spoken hour.
+- Thai refuses a bare "N โมง" hour, because nothing in the phrase says which half of the day it names.
+- Korean ships no single-syllable weekday abbreviations, because each one is also an everyday word (일 is the day, the numeral one and Sunday at once). It ships no spelled month names.
+- Vietnamese reads no ordinals and no bare "năm" as five.
 
-If your language sits in the second or third band and something reads wrong,
-that report is worth more than a patch — attach the phrase, what you expected,
-and what you got. [CONTRIBUTING.md](CONTRIBUTING.md) explains how a language
-gets deepened, and [docs/adding-a-language.md](docs/adding-a-language.md) is
-the full walkthrough for adding one.
+Occitan shows how a locale deepens. A native speaker reviewed its word lists, and "davant-ièr" reads as the day before yesterday.
 
-## Built by AI, held to account by tests
+These omissions are the design at work. A locale ships a construction only where its sources attest one. Where the sources conflict or say nothing, the phrase returns nothing, because a wrong span is worse than no span. To tell a deliberate refusal from a bug, read [when a language declines a phrase](docs/extraction.md#when-a-language-declines-a-phrase).
 
-chronologia was written and orchestrated by AI, directed and reviewed by a
-human maintainer. That is stated plainly here because the method is the reason
-the library exists at all — and because you should be able to judge the work
-without having to trust either the AI or the maintainer.
+Suppose your language is in the second or third band and a phrase reads wrong. Report the phrase, what you expected and what you got. The [contributing guide](CONTRIBUTING.md) explains how a language gets deeper. The guide [adding a language](docs/adding-a-language.md) is the full walk-through for another language.
 
-**Why it could only be built this way.** A library that reads dates in more
-than fifty languages — with the goal of *every* language over time —
-needs command of grammar,
-number-words, calendar arithmetic and holiday law in each one. No single
-maintainer speaks that many languages, and commissioning a native-speaker
-linguist for each was never realistic for an open-source project — that is
-exactly the barrier that has kept libraries like this narrow, and stuck at a
-handful of major languages. What *is* realistic is to hold AI to a discipline
-strict enough that breadth never buys itself with correctness, so that adding
-the next language is a bounded, verifiable unit of work rather than an act of
-faith:
+## How correctness is checked
 
-- **Cite or refuse.** Every algorithm is transcribed from a named, downloaded
-  source — a linguistics paper, a calendrical reference, a statute or gazette —
-  and every gold test value is derived by hand or from an independent source,
-  never from the code under test. Where sources disagree, both readings ship
-  under different names; where no citable source exists, the feature is
-  *refused* and the gap documented. The library says "not known" rather than
-  guess.
-- **Natural-language, test-driven.** For everything a human types, the test
-  came first: thousands of real phrases with hand-derived expected spans, per
-  language, plus adversarial cases written to break the parser. A wrong answer
-  is the top-priority bug before any new feature — and a semantic-parity block
-  checks every language against English span-for-span, so a language nobody on
-  the team speaks is still held to exactly the same bar as the ones they do.
+AI wrote and orchestrated chronologia, and a human maintainer directs and reviews it. No single maintainer speaks all 61 languages, so the method has to carry the correctness. Every algorithm comes from a named source. Every gold test value comes from hand arithmetic or an independent source, never from the code under test.
 
-Neither claim asks for your trust: the citations sit in the source and the
-data-file headers, and the test suite either passes on every commit or it
-doesn't. [**docs/transparency.md**](docs/transparency.md) lists the checks.
+Where no citable source exists, the library refuses and documents the gap. Each language has a corpus of real phrases with hand-derived spans. A parity test checks every language against English span for span. [docs/transparency.md](docs/transparency.md) lists the checks.
 
 ## Related projects
 
-chronologia is part of the OpenVoiceOS family of language-processing libraries.
-Where this one *reads and reckons* dates, its neighbours handle the pieces
-around them:
-
-- **[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser)** —
-  the voice-facing layer. It builds on chronologia and adds the glue an
-  assistant needs: *saying* a date back out loud, session handling, and the
-  legacy per-language helpers. If you need to speak a date rather than read
-  one, start there.
-- **[numtag](https://github.com/TigreGotico/numtag)** — finds every number in
-  a text and returns typed mentions with their spans and exact values.
-  chronologia reads the numbers of Arabic, Aragonese, Asturian, Azerbaijani, Basque, Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Frisian, Galician, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Kabyle, Malay, Mirandese, Norwegian (Bokmål and Nynorsk), Occitan, Persian, Polish, Portuguese, Romanian, Russian, Slovak, Slovene, Spanish, Swedish, Turkish and Ukrainian through it.
-- **[ovos-spec-tools](https://github.com/OpenVoiceOS/ovos-spec-tools)** — the
-  reference implementation of the OVOS formal specifications (template
-  expander, locale loader, dialog renderer, language matcher, linter).
-  chronologia loads its per-language vocabulary files through it.
+- **[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser)** is the voice-facing layer. It builds on chronologia and adds what an assistant needs: saying a date aloud and session handling.
+- **[numtag](https://github.com/TigreGotico/numtag)** finds every number in a text. It returns typed mentions with their spans and exact values. chronologia reads the numbers of 40 languages through it.
+- **[ovos-spec-tools](https://github.com/OpenVoiceOS/ovos-spec-tools)** implements the OVOS formal specifications (template expander, locale loader, dialog renderer, language matcher, linter). chronologia loads its vocabulary files through it.
 
 ## License
 
