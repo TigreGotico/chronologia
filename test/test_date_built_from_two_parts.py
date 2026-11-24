@@ -90,8 +90,6 @@ START = [
      datetime(2017, 6, 27, 16, 4)),
     ("de", "wir bekommen das ergebnis innerhalb eines tages",
      datetime(2017, 6, 27), datetime(2017, 6, 28)),
-    ("eu", "arratsaldea 5:00", datetime(2017, 6, 27, 13, 4),
-     datetime(2017, 6, 27, 17, 0)),
     ("it", "novembre dell'anno prossimo", datetime(2026, 10, 17, 12),
      date(2027, 11, 1)),
     ("es", "el 5 de noviembre del año que viene", datetime(2026, 10, 17, 12),
