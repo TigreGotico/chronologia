@@ -3,7 +3,7 @@
 
 A digit clock hour worked ("8 صباحا" -> 08:00); the *spelled* feminine ordinal
 hour الثامنة / التاسعة ("the eighth/ninth [hour]") used to be dropped and the
-utterance returned None.  ``numfold_semitic._ar_clock_hour_fold`` now folds the
+utterance returned None.  ``numlayer_semitic._ar_clock_hour_fold`` now folds the
 feminine ordinal hour الواحدة..الثانية عشرة (1..12) to a CLOCK ``H:00`` token in
 an unambiguous clock context (after الساعة, or before an am/pm daypart), and the
 shared daypart->meridiem shift produces the 24-hour reading:

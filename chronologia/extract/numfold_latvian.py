@@ -33,10 +33,10 @@ count.
 """
 from __future__ import annotations
 
-from typing import Callable, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import compose, numeric, reindex
 
 # ---------------------------------------------------------------------------
 # Cardinals.  Every case form the temporal constructions read is listed: the
@@ -297,12 +297,6 @@ def read_run(text: str) -> Optional[int]:
     return total + group if seen else None
 
 
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
-    return Token(text=str(value), raw=str(value), index=tok.index,
-                 is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
-
-
 #: the magnitude class of a cardinal surface, which is what licenses one
 #: number-word to continue the run another opened.  A composed Latvian numeral
 #: descends through the classes -- a lower class may follow a higher one
@@ -354,7 +348,7 @@ def _cardinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             out.append(t)
             i += 1
             continue
-        out.append(_numeric(t, value, tokens[j - 1]))
+        out.append(numeric(t, value, tokens[j - 1]))
         i, changed = j, True
     return reindex(out) if changed else tokens
 
@@ -367,12 +361,12 @@ def _ord_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         if not t.is_number and t.text in _ORD_TENS_LV and i + 1 < n:
             unit = _ORD_LV.get(tokens[i + 1].text, 0)
             if 1 <= unit <= 9:
-                out.append(_numeric(t, _ORD_TENS_LV[t.text] + unit,
-                                    tokens[i + 1]))
+                out.append(numeric(t, _ORD_TENS_LV[t.text] + unit,
+                                   tokens[i + 1]))
                 i, changed = i + 2, True
                 continue
         if not t.is_number and t.text in _ORD_LV:
-            out.append(_numeric(t, _ORD_LV[t.text]))
+            out.append(numeric(t, _ORD_LV[t.text]))
             i, changed = i + 1, True
             continue
         out.append(t)
@@ -400,12 +394,4 @@ def _half_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return reindex(out) if changed else tokens
 
 
-def _compose(*passes: Callable) -> Callable:
-    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        for p in passes:
-            tokens = p(tokens)
-        return tokens
-    return run
-
-
-fold_lv = _compose(_half_rewrite, _ord_rewrite, _cardinal_rewrite)
+fold_lv = compose(_half_rewrite, _ord_rewrite, _cardinal_rewrite)

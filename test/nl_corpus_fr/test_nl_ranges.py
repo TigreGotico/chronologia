@@ -121,3 +121,16 @@ def test_a_without_a_from_lead_is_not_a_range():
 def test_du_au_garbage_never_raises(text):
     from ._corpus import parse
     parse(text)
+
+
+@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1355")
+@pytest.mark.parametrize("text,rest", [
+    ("xx du 10h au 12h", "xx"),
+    ("réunion du 10h au 12h", "réunion"),
+    ("on se voit du 10h au 12h", "on se voit"),
+])
+def test_du_lead_after_a_word_leaves_the_remainder(text, rest):
+    from ._corpus import parse
+    result = parse(text)
+    assert result.span.start == AstroDate(2017, 6, 28, 10, 0)
+    assert result.remainder == rest

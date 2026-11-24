@@ -1,7 +1,6 @@
 """Swedish spelled-ordinal day-of-month ("femtonde april" = the fifteenth of
-April).  ovos-number-parser returns False for these ordinals, so chronologia
-owns them locally (inverting ``pronounce_ordinal_sv``); the ordinal must fold
-to the exact day, not strand and leave the whole month.
+April).  The ordinal must fold to the exact day, not strand and leave the
+whole month.
 """
 from datetime import datetime
 

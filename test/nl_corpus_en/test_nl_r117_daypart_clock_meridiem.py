@@ -29,14 +29,10 @@ Gold is derived by hand from the mission anchor
 * "next tuesday" is the following Tuesday, 2026-08-18 -- an explicit DATE,
   so the clock's own day-rollover rule never applies; the date's day wins
   outright.
-* with no date at all, the bare pre-shift hour still goes through the
-  clock's own "roll to tomorrow if already past the anchor" rule BEFORE the
-  day-part's meridiem shift is applied (the two steps are independent
-  passes) -- "afternoon at 3" reads the bare hour 3 first: 2026-08-11T03:00
-  is before the 12:00 anchor, so it rolls to 2026-08-12T03:00, and *then*
-  the day-part shifts the hour to 15:00, landing on 2026-08-12, not
-  2026-08-11.  This is the pre-existing clock day-selection rule, untouched
-  by this fix -- documented here, not silently assumed.
+* with no date at all, the hour takes the half the day-part names and the
+  next such time is meant: "afternoon at 3" said at 12:00 is 15:00 the same
+  day, as "at 3 in the afternoon" is.  A day-part whose hour has passed
+  moves to the next day.
 """
 import pytest
 
@@ -69,11 +65,9 @@ def test_preceding_morning_composes_clean_with_empty_remainder():
 def test_preceding_afternoon_shifts_a_bare_low_hour_into_the_pm_band():
     r = _p("afternoon at 3")
     assert r is not None
-    # bare hour 3 rolls to the next day under the clock's own prefer-future
-    # rule (2026-08-11T03:00 is before the 12:00 anchor) BEFORE the
-    # day-part's meridiem shift lands it on 15:00 -- see module docstring.
+    # 15:00 on the anchor day is still ahead of the 12:00 anchor.
     assert start_end("afternoon at 3", ANCHOR_R117) == (
-        AstroDate(2026, 8, 12, 15, 0), AstroDate(2026, 8, 12, 15, 1))
+        AstroDate(2026, 8, 11, 15, 0), AstroDate(2026, 8, 11, 15, 1))
     assert r.remainder == ""
 
 

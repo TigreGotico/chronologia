@@ -94,6 +94,17 @@ class Token:
     # this flag is the only record that the next token is a suffix written
     # onto this one, not a separate word ("15 a" with the article "a").
     trailing_hyphen: bool = False
+    # Whether a currency symbol (Unicode category Sc) followed this token in
+    # the original utterance, with only spaces between ("three thousand $").
+    # The tokenizer drops the symbol, so this flag is the only record that a
+    # currency measures the number.
+    trailing_currency: bool = False
+    # Whether the token was written in capitals ("USD") in an utterance that
+    # also holds lower-case letters.  ``text`` and ``raw`` are lower-cased, so
+    # this flag is the only record that a three letter word is an ISO 4217
+    # code and not a word ("all", "try").  In an all-capitals utterance every
+    # word is in capitals, so none of them is read as a code.
+    upper: bool = False
     # Whether this number token was composed from an INDEFINITE ARTICLE deep-time
     # magnitude ("a million years ago", "a hundred thousand years ago") rather
     # than a spoken numeral.  The article form is a colloquial count-from-now
@@ -132,15 +143,16 @@ class Token:
     mention: Optional["NumberMention"] = field(default=None, compare=False)
     # The texts of the up to three tokens before the first token of a numtag
     # mention, in its clause of the whole utterance; ``None`` on every other
-    # token.  Set by ``numlayer.attach``, so a range endpoint folded on its
-    # own still sees the word that makes the mention a year: "since two
-    # thousand and ten I have lived here".
+    # token.  After another mention it holds that mention's words, a place
+    # mark and the words between the two.  Set by ``numlayer.attach``, so a
+    # range endpoint folded on its own still sees the word that makes the
+    # mention a year: "since two thousand and ten I have lived here".
     before: Optional[Tuple[str, ...]] = field(default=None, compare=False)
-    # On the first token of a mention one word before another mention: that
-    # word, a place mark for the second mention, and the word after it, in
-    # the same clause.  Set by ``numlayer.attach``, so a unit after the
-    # second number of a range measures the first one too: "between two
-    # thousand and three thousand dollars".
+    # On the first token of a mention one or two words before another mention:
+    # the last of those words, a place mark for the second mention, and the
+    # word after it, in the same clause.  Set by ``numlayer.attach``, so a
+    # unit after the second number of a range measures the first one too:
+    # "between two thousand and three thousand dollars".
     after: Optional[Tuple[str, ...]] = field(default=None, compare=False)
 
 
@@ -290,6 +302,12 @@ class Conventions:
     # A fact, not logic -- the matcher reads it to veto that one reading;
     # languages that mark clock hours without articles at all leave it empty.
     bare_at_markers: FrozenSet[str] = frozenset()
+    # The locale joins a clock to the recurrence that follows it with its "of"
+    # word ("às dez de cada sábado", "a las diez de cada sábado"), so that
+    # word is part of the clock whatever the text after the recurrence is.
+    # Where it is off ("at 9 of every monday meeting"), the "of" belongs to
+    # the words before the clock unless the recurrence ends the text.
+    clock_of_recurrence: bool = False
     # A day-or-coarser ``relative_offset`` ("3 days ago", "next month") composes
     # with an adjacent trailing ``clock_time`` exactly like a ``named_day``
     # does ("yesterday at 9" -> yesterday 09:00): the clock pins the offset day
@@ -395,6 +413,11 @@ class LangSpec:
     # 24-hour clock they hold only an hour in that band ("22h da tarde" names
     # no time).  A surface here is also present in ``meridiems`` with 12.
     band_meridiems: FrozenSet[str] = field(default_factory=frozenset)
+    # Meridiem words that are also the adverb "late" (es, pt, gl "tarde").
+    # Before a clock and after another word of its clause such a word is the
+    # adverb ("llego tarde a las 6:30").  A surface here is also present in
+    # ``meridiems``.
+    late_meridiems: FrozenSet[str] = field(default_factory=frozenset)
     clock_dirs: Mapping[str, int] = field(default_factory=dict)       # past +1 / to -1
     # season_ref slot vocab (surface -> canonical season name)
     seasons: Mapping[str, str] = field(default_factory=dict)
@@ -512,6 +535,7 @@ class LangSpec:
     # neither joins the connectors
     at_counts: FrozenSet[str] = field(default_factory=frozenset)
     counted_noun: FrozenSet[str] = field(default_factory=frozenset)
+    upcoming: FrozenSet[str] = field(default_factory=frozenset)
     # the words that join two alarm hours that share one later meridiem, from
     # ``marker_alarm_joiner.voc``
     alarm_joiners: FrozenSet[str] = field(default_factory=frozenset)

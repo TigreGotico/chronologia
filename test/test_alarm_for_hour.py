@@ -126,6 +126,10 @@ NO_CLOCK = [
     ("alarm for 1 30 hours", "en"),
     ("alarm for 2 hrs", "en"),
     ("alarm for 2 hr", "en"),
+    ("alarm for 10h", "en"),
+    ("alarm for 10 h", "en"),
+    ("alarm for 10 m", "en"),
+    ("reminder for 5 h", "en"),
     ("alarm for 10 more minutes", "en"),
     ("snooze the alarm for 10 more minutes", "en"),
     ("alarm for 10 extra minutes", "en"),
@@ -143,6 +147,17 @@ NO_CLOCK = [
     ("tavolo per 4", "it"),
     ("tafel voor 4", "nl"),
     ("mesa para 4", "gl"),
+    ("reminder for 5 people", "en"),
+    ("alarm for 2 people", "en"),
+    ("a reminder for 2 of you", "en"),
+    ("alarm for 3 of us", "en"),
+    ("alarma para 3 personas", "es"),
+    ("alarme para 3 pessoas", "pt"),
+    ("réveil pour 3 personnes", "fr"),
+    ("Wecker für 3 Personen", "de"),
+    ("sveglia per 3 persone", "it"),
+    ("wekker voor 3 mensen", "nl"),
+    ("espertador para 3 persoas", "gl"),
 ]
 
 

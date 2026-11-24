@@ -28,7 +28,7 @@ from ovos_spec_tools import expand, read_resource_file
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (CountWords, counts_things,
-                                          fold_mentions,
+                                          fold_mentions, voc_file_words,
                                           mark_counts, mention_number,
                                           mentions, scale_factor,
                                           scale_factors,
@@ -80,6 +80,8 @@ _FACTORS = scale_factors("en")
 _COUNT_WORDS = CountWords(
     scales=_SCALES, cues=_COUNT_CUES, months=_MONTHS, units=_UNITS,
     currencies=_voc("currency."),
+    codes=voc_file_words("en", "currency_code.voc"),
+    qualifiers=voc_file_words("en", "currency_qualifier.voc"),
     ranges={"from": _voc("marker_to.", "marker_until."),
             "since": _voc("marker_until."),
             "between": _voc("marker_and.")})

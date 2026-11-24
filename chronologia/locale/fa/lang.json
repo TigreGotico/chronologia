@@ -36,6 +36,7 @@
         "CLOCK MERIDIEM? ZONE?",
         "at? HOUR CLOCKDIR FRACTION MERIDIEM? ZONE?",
         "at HOUR MERIDIEM? ZONE?",
+        "at? HOUR MERIDIEM ZONE?",
         "at? LANDMARK ZONE?"
       ],
       "prefer_future": true
@@ -106,10 +107,14 @@
     "prefer_future": true,
     "offset_clock_composes": true
   },
+  "lemmas": {
+    "دقیقهای": "دقیقه",
+    "ثانیهای": "ثانیه"
+  },
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold:fold_fa",
+  "hook": "chronologia.extract.numlayer_fa:fold_fa",
   "quantifiers": {
     "1": [
       "یک"

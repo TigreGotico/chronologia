@@ -21,6 +21,7 @@ import os
 import re
 import threading
 import unicodedata
+from contextvars import ContextVar
 from datetime import MAXYEAR, MINYEAR, datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
@@ -32,17 +33,17 @@ from chronologia.extract.anchored import (apply_anchored_offset,
                                               marker_names_a_reference)
 from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
-from chronologia.extract.confidence import score_candidates as _score_candidates
 from chronologia.extract.explain import ExplainTrace, explain
+from chronologia.extract.impossible import raising, reports_impossible
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
                                          is_alarm_bare_range)
 from chronologia.extract.model import (LangSpec, Resolution, Token)
 from chronologia.extract.normaliser import TemporalNormaliser
-from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
-                                              pretokens, render_remainder,
-                                              require_text)
+from chronologia.extract.pipeline import (consumed_extent, fold_tokens,
+                                          join_extents, prematch_tokens,
+                                          render_remainder, require_text)
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               _daypart_band,
                                               compose_date_clock,
@@ -147,7 +148,7 @@ def _timespan_engine(lang: str) -> "DateTimeEngine":
     again.  Raises :class:`NotImplementedError` for languages that have no
     engine locale data (``chronologia/locale/<code>/lang.json``).
     """
-    region = lang.lower()
+    region = lang.strip().lower().replace("_", "-")
     code = region.split("-")[0]
     # English is the one base language whose NUMERIC day/month order splits by
     # region -- the US reads mdy ("03/04" = March 4), the rest of the anglosphere
@@ -324,7 +325,7 @@ _NUMERIC_DATE = re.compile(f"{_ISO}|{_NUMDATE_ANY}|{_SLASHFRAC}")
 #: ``DATE_CONSTRUCTIONS`` the matcher itself emits.
 _COMPOSABLE_DATES = DATE_CONSTRUCTIONS | {
     "business_days", "weekday_count", "weekend_after_next",
-    "weekend_before_last", "weekend_ago"}
+    "weekend_before_last", "weekend_ago", "after_next", "before_last"}
 
 #: A weekday next to one of these LITERAL calendar dates is read as a restated
 #: label of it ("Monday, March 2" -> March 2, weekday consumed).  A DERIVED date
@@ -528,12 +529,13 @@ def _unambiguous_lead(spec, surfaces):
     return [w for w in surfaces if " ".join(w) not in particles]
 
 
-def _with_prefix(got, prefix):
-    """Prepend the pre-lead text to a composed range's remainder."""
-    if got is None or not prefix:
-        return got
-    span, rem = got
-    return span, (prefix + " " + rem).strip() if rem else prefix
+def _with_lead(got, prefix, lead_tok):
+    """Prepend the pre-lead text to a composed range's remainder and widen its
+    extent over the lead word."""
+    span, rem, ext = got
+    if prefix:
+        rem = (prefix + " " + rem).strip() if rem else prefix
+    return span, rem, join_extents(ext, consumed_extent(lead_tok))
 
 
 def _crosses_midnight(span):
@@ -651,6 +653,36 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                        scale_mode=scale_mode),
             anchor, start, bound)
 
+    def following(sub, start):
+        # the endpoint read from the day its range starts
+        if not MINYEAR <= start.year <= MAXYEAR:
+            return None
+        at = anchor.replace(year=start.year, month=start.month, day=start.day,
+                            hour=0, minute=0, second=0, microsecond=0)
+        return _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
+
+    def holding(sub, start, end, ending):
+        # the latest reading of a yearly endpoint before ``start``, when it
+        # makes a range that holds the anchor and does not end earlier in the
+        # month it starts in
+        now = AstroDate.from_datetime(anchor.replace(tzinfo=None))
+        for back in range(1, 9):
+            if start.year - back < MINYEAR:
+                return None
+            at = anchor.replace(year=start.year - back, month=1, day=1,
+                                hour=0, minute=0, second=0, microsecond=0)
+            got = _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
+            if got is not None and got[0].start < start:
+                begin = got[0].start.replace(tzinfo=None)
+                stop = ending(got[0].start, end).replace(tzinfo=None)
+                last = stop - timedelta(days=1)
+                if (begin <= now < stop
+                        and (last.month != begin.month
+                             or last.day >= begin.day)):
+                    return got[0].start
+                return None
+        return None
+
     def daily(sub):
         # an endpoint that names no day: read two days later, it is the same
         # clock two days later (a weekday or a holiday moves by a week, a
@@ -676,12 +708,32 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         return lambda bound: _monthly_start(text, sub, engine, anchor, bound,
                                             found)
 
-    def borrowed(sub):
+    glue = set(spec.connectors.get("article", ())) \
+        | set(spec.connectors.get("day_label", ()))
+
+    def bare_day_extent(own):
+        # the day numeral of a bare endpoint, a suffix written onto it ("5th")
+        # and the article or day label right before it; any other word of the
+        # slice is not part of the reading
+        lo = hi = next(i for i, t in enumerate(own)
+                       if t.is_number and t.value is not None)
+        while lo and own[lo - 1].text in glue:
+            lo -= 1
+        while hi + 1 < len(own) and own[hi + 1].char_start == own[hi].char_end:
+            hi += 1
+        return consumed_extent(own[lo:hi + 1])
+
+    def borrowed(sub, own=None):
         # a slice carrying tokens lent by the other endpoint; resolved through
         # the synthetic-token path so the lent words, which have no extent of
-        # their own here, cannot surface in this endpoint's remainder
-        return _range_endpoint(text, sub, engine, anchor,
-                               resolve=_variant_endpoint, scale_mode=scale_mode)
+        # their own here, cannot surface in this endpoint's remainder.  Given
+        # ``own``, the slice is a bare day read through the other endpoint's
+        # month: the lent words hide its own words from the variant reading.
+        got = _range_endpoint(text, sub, engine, anchor,
+                              resolve=_variant_endpoint, scale_mode=scale_mode)
+        if got is None or own is None:
+            return got
+        return got[:4] + (bare_day_extent(own),)
 
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
@@ -748,7 +800,9 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                             is not None for i in range(lead_at, p))
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily, since=since)
+                                     previous, daily, since=since,
+                                     following=following,
+                                     holding=holding)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -786,7 +840,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                         text, tokens[lead_at + lead:], engine, anchor):
                 return None
             if got is not None:
-                return _with_prefix(got, prefix)
+                return _with_lead(got, prefix,
+                                  tokens[lead_at:lead_at + lead])
 
     # -- between A and B ---------------------------------------------------
     if at_between is not None:
@@ -801,9 +856,11 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily)
+                                     previous, daily, following=following,
+                                     holding=holding)
             if got is not None:
-                return _with_prefix(got, prefix)
+                return _with_lead(got, prefix,
+                                  tokens[lead_at:lead_at + lead])
 
     # -- A <and> B <between> (postposed) ------------------------------------
     # Turkish, Hungarian and Finnish frame a closed range with the "between"
@@ -833,11 +890,14 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 if got is None:
                     got = _compose_range(left_tok, right_tok, endpoint,
                                          borrowed, spec, bare_of,
-                                         monthly, previous, daily)
+                                         monthly, previous, daily,
+                                         following=following,
+                                     holding=holding)
                 if got is not None:
-                    span, rem = got
+                    span, rem, ext = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
-                    return span, rem
+                    return span, rem, join_extents(
+                        ext, consumed_extent(tokens[q:q + mk]))
     return None
 
 
@@ -906,7 +966,9 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     """A range endpoint carrying its *granularity kind* and whether its year was
     pinned, so :func:`_compose_range` can roll it without fabricating.
 
-    Returns ``(span, remainder, kind, pinned)`` or ``None``.  ``kind`` is:
+    Returns ``(span, remainder, kind, pinned, extent)`` or ``None``, where
+    ``extent`` is the character extent of the words the slice consumed.
+    ``kind`` is:
 
     * ``"clock"`` -- a sub-day span (a time of day); its cycle is one day, so a
       right endpoint that lands before the start ("10 pm to 2 am") rolls a day;
@@ -932,20 +994,20 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     # to X" / "between now and X" compose as [anchor, X] instead of collapsing to
     # X's point when the "now" endpoint failed to resolve.
     if _is_now_slice(sub, engine.spec):
-        return _now_span(anchor), "", "dated", True
+        return _now_span(anchor), "", "dated", True, consumed_extent(sub)
     # a bare "new year" endpoint is New Year's Day -- a fixed calendar date, so
     # dated and pinned (never rolled).  This is what binds the trailing holiday
     # of "from Christmas to New Year" instead of dropping it and collapsing the
     # range onto Christmas.
     if _is_new_year_slice(sub, engine.spec):
-        return _new_year_span(anchor), "", "dated", True
+        return _new_year_span(anchor), "", "dated", True, consumed_extent(sub)
     resolve = resolve or _resolve_endpoint
     pinned = any(t.is_number and t.value is not None and t.value >= 100
                  for t in sub)
     weekday = any(t.text in engine.spec.weekdays for t in sub)
     got = resolve(text, sub, engine, anchor, scale_mode=scale_mode)
     if got is not None:
-        span, rem = got
+        span, rem, ext = got
         deep_time = False
         width = span.end - span.start
         if isinstance(width, WideDuration):
@@ -968,10 +1030,10 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
             kind = "deep_time"
         else:
             kind = "dated"
-        return span, rem, kind, pinned
+        return span, rem, kind, pinned, ext
     bw = _bare_weekday_endpoint(sub, engine, anchor)
     if bw is not None:
-        return bw[0], bw[1], "weekday", pinned
+        return bw[0], bw[1], "weekday", pinned, bw[2]
     return None
 
 
@@ -1008,6 +1070,18 @@ def _align_awareness(left_span, right_span):
                         span.end.replace(tzinfo=zone))
 
     return attach(left_span), attach(right_span)
+
+
+def _in_zone_of(value, other):
+    """``value`` as a wall clock in the zone ``other`` names, when ``value``
+    is naive and ``other`` is aware; otherwise ``value`` unchanged.
+
+    The anchor ("now") is a naive wall clock, so a zone an endpoint names
+    ("until 1pm utc+2") governs it the way :func:`_align_awareness` lets a zone
+    govern the other end of a range."""
+    if value.tzinfo is None and other.tzinfo is not None:
+        return value.replace(tzinfo=other.tzinfo)
+    return value
 
 
 def _roll_after(span, start, step):
@@ -1089,7 +1163,7 @@ def _variant_endpoint(text, sub, engine, anchor, scale_mode="short"):
     span, consumed = core
     left = [t for t in folded
             if t.index not in consumed and t.char_start is not None]
-    return span, render_remainder(text, left)
+    return span, render_remainder(text, left), consumed_extent(folded, consumed)
 
 
 def _numeral_is_free(text, sub, engine, anchor, pos):
@@ -1201,14 +1275,14 @@ def _compose_clock_range(text, left_tok, right_tok, engine, anchor):
     move_left = _dateless_clock(left_tok, spec) \
         and not _dateless_clock(right_tok, spec)
     day = timedelta(days=1)
-    for lspan, lrem in lefts:
-        for rspan, rrem in rights:
+    for lspan, lrem, lext in lefts:
+        for rspan, rrem, rext in rights:
             ls, rs = _align_awareness(lspan, rspan)
             ls, rs = (_rebase(ls, rs.start), rs) if move_left \
                 else (ls, _rebase(rs, ls.start))
             if ls.start < rs.end <= ls.start + day:
                 rem = " ".join(p for p in (lrem, rrem) if p).strip()
-                return DateSpan(ls.start, rs.end), rem
+                return DateSpan(ls.start, rs.end), rem, join_extents(lext, rext)
     return None
 
 
@@ -1242,19 +1316,20 @@ def _bare_numeral(text, sub, engine, anchor):
         return None
     if len(sub) == 1:
         return nums[0]
-    # a day-label noun ("dia"/"día") plus nothing else besides the numeral is
-    # still a bare day, even though it resolves on its own to a day of the
-    # ANCHOR month -- "do dia 2 ao dia 5 de setembro" would otherwise bind the
-    # left endpoint to the 2nd of the anchor's month instead of September,
-    # stranding it when the composed range came out reversed.  The label noun
-    # names no month of its own (see ``marker_day_label.voc``), so a slice that
-    # is nothing but the label plus the day number still has to look to its
+    # a slice holding one day-label word ("dia", "día"), the day number and
+    # nothing else but articles ("o dia 2", "el día 3") is a bare day, even
+    # though it resolves on its own to a day of the ANCHOR month -- "do dia 2
+    # ao dia 5 de setembro" would otherwise bind the left endpoint to the 2nd
+    # of the anchor's month instead of September.  The label names no month of
+    # its own (see ``marker_day_label.voc``), so the slice looks to its
     # partner exactly as the label-less "5" in "del 5 al 12 de junio" does.
     # Checked *before* the duration-unit veto below: the label heads the
     # numeral ("dia 2"), the opposite word order from a duration ("2 dias"),
     # so the two shapes never collide.
     labels = set(engine.spec.connectors.get("day_label", ()))
-    if labels and all(t is nums[0] or t.text in labels for t in sub):
+    glue = labels | set(engine.spec.connectors.get("article", ()))
+    if labels and any(t.text in labels for t in sub) \
+            and all(t is nums[0] or t.text in glue for t in sub):
         return nums[0]
     # a slice carrying a unit is a duration, not a bare day -- "za 3 dnya do 5
     # aprelya" ("3 days before April 5") is an anchored offset whose "za 3 dnya"
@@ -1356,14 +1431,32 @@ def _lend_year(bare, donor):
     return tuple(bare) + (lent,)
 
 
+def _labelled_day_keeps_own(sub, donor, donor_read, spec):
+    """True when a day-labelled slice must not borrow from its partner.
+
+    "dia 10" names a day of a month, never an hour or a count of days, so a
+    partner that is a clock ("às 18h") or counts a unit ("daqui a 5 dias")
+    has nothing to lend it.  ``donor_read`` is the partner's own reading.
+    """
+    labels = spec.connectors.get("day_label", ())
+    if not any(t.text in labels for t in sub):
+        return False
+    units = set(spec.units) | set(spec.singular_units)
+    counts_unit = any(t.is_number and t.value is not None and t.value < 100
+                      and nxt.text in units
+                      for t, nxt in zip(donor, donor[1:]))
+    return counts_unit or (donor_read is not None and donor_read[2] == "clock")
+
+
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
-                   daily=None, since=False):
-    """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
+                   daily=None, since=False, following=None, holding=None):
+    """Resolve two endpoint sub-slices into ``(span, remainder, extent)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
     they are dropped; each endpoint contributes its own leftover text.
-    ``endpoint(sub)`` returns ``(span, remainder, kind, pinned)`` or ``None``.
+    ``endpoint(sub)`` returns ``(span, remainder, kind, pinned, extent)`` or
+    ``None``.
 
     The span runs from the left endpoint's start to the right endpoint's end.
     When the right end lands at or before the start the endpoints sit in
@@ -1395,15 +1488,17 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # :func:`_shared_context` for the conditions that keep it narrow.
     bare_left, bare_right = bare_of(left_tok), bare_of(right_tok)
     shared_left = shared_right = False
-    if bare_left is not None and bare_right is None:
+    if bare_left is not None and bare_right is None \
+            and not _labelled_day_keeps_own(left_tok, right_tok, right, spec):
         shared = _shared_context(bare_left, right_tok)
         if shared is not None:
-            left = borrowed(shared) or left
+            left = borrowed(shared, left_tok) or left
             shared_left = True
-    elif bare_right is not None and bare_left is None:
+    elif bare_right is not None and bare_left is None \
+            and not _labelled_day_keeps_own(right_tok, left_tok, left, spec):
         shared = _shared_context(bare_right, left_tok)
         if shared is not None:
-            right = borrowed(shared) or right
+            right = borrowed(shared, right_tok) or right
             shared_right = True
     # a single trailing year is lent to the endpoint that lacks one, so "from
     # January to March 2020" reads both months in 2020 (see :func:`_lend_year`);
@@ -1461,7 +1556,7 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     if right_dated and left_bare_clock:
         rs, ls = right_span.start, left_span.start
         start = AstroDate(rs.year, rs.month, rs.day, ls.hour, ls.minute,
-                          ls.second, ls.microsecond)
+                          ls.second, ls.microsecond, ls.tzinfo)
     else:
         start = left_span.start
     # roll a cyclic right endpoint forward into the same cycle as the start; a
@@ -1549,6 +1644,33 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             pulled = earlier[0].start
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
+    # a right end with no year of its own is its first occurrence on or after
+    # the start: a left end that kept the anchor's year must not be paired with
+    # a right end that rolled to the next year
+    def nearer_end(start, end):
+        if (following is None or right[2] != "dated" or right[3]
+                or shared_right or right_lent
+                or (monthly is not None and monthly(right_tok) is not None)):
+            return end
+        again = following(right_tok, start)
+        if again is not None and again[2] == "dated":
+            same_date = (again[0].start.month, again[0].start.day) \
+                == (right_span.start.month, right_span.start.day)
+            nearer = _align_awareness(left[0], again[0])[1].end
+            if same_date and start < nearer < end:
+                return nearer
+        return end
+
+    # both ends flung to the same year, with the start past the end ("from 1
+    # december to 10 january" said on 20 december): the range is read from the
+    # start's previous occurrence when that range holds the anchor
+    if (end <= start and holding is not None and not left[3] and not right[3]
+            and left[2] == "dated" and right[2] == "dated"
+            and not shared_left and not left_lent and not right_lent
+            and not _definite_endpoint(left_tok, spec)):
+        earlier_start = holding(left_tok, start, end, nearer_end)
+        if earlier_start is not None:
+            start = earlier_start
     # a year lent across the range (one endpoint named the pair's single year)
     # reads the borrowed month in the donor's own year, which reverses the span
     # when the two months sit on opposite sides of the calendar -- "from
@@ -1574,10 +1696,12 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         # civil reversed range ("june 12 to june 5") has no deep-time endpoint
         # and is left to fail below.
         start, end = right_span.start, left_span.end
+    if end > start:
+        end = nearer_end(start, end)
     if end <= start:
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
-    return DateSpan(start, end), remainder
+    return DateSpan(start, end), remainder, join_extents(left[4], right[4])
 
 
 def _minus_one_year(astro):
@@ -1636,7 +1760,8 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     two numeric endpoints never merge) and matched exactly as a whole utterance
     is -- no substring is ever re-tokenized.  Returns ``(span, remainder)`` where
     ``remainder`` is this endpoint's own leftover text (sliced from ``text`` by
-    the unconsumed tokens' recorded extents), or ``None``.
+    the unconsumed tokens' recorded extents), or ``None``.  A third element
+    holds the character extent of the consumed tokens.
     """
     if not sub:
         return None
@@ -1650,7 +1775,7 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     consumed = _fold_date_article(folded, consumed, engine.spec, span)
     remainder = render_remainder(text, [t for t in folded
                                         if t.index not in consumed])
-    return span, remainder
+    return span, remainder, consumed_extent(folded, consumed)
 
 
 def _fold_day_label(folded, consumed, spec):
@@ -1659,7 +1784,7 @@ def _fold_day_label(folded, consumed, spec):
 
     Wired into BOTH the range-endpoint resolver (:func:`_resolve_endpoint`,
     for "do dia 3 ... até ao dia 5 ...") and the single-span resolver
-    (:func:`_resolve_span`'s SINGLE case, for a bare "dia 3 de março" or one
+    (:func:`_point_result`, for a bare "dia 3 de março" or one
     embedded in a sentence, "a reunião é dia 3 de março") -- the leak is the
     same defect signature (a stranded temporal function word beside a
     correctly-bound date) whether or not the date sits inside a range, so the
@@ -1758,7 +1883,13 @@ def _fold_date_article(folded, consumed, spec, span):
     ``marker_date_lead_dative.voc`` makes the this-phrase take the lead word
     again: German "an" governs the dative in a time phrase, so "an diesem
     Freitag" folds while the bare "nächsten Freitag" in "ruf mich an
-    nächsten Freitag" leaves "an" to the verb.
+    nächsten Freitag" leaves "an" to the verb.  The determiner folds with
+    its lead word before a calendar date too ("an diesem 31. Januar").  In a
+    locale with such determiners, a lead word of
+    ``marker_date_lead_no_deixis.voc`` opens a bare weekday, daypart or
+    period only through one: the time phrase is "am Montag" or "an diesem
+    Montag", so the "an" of "ruf mich an Montag" and "denk an Montag"
+    belongs to the verb.
     """
     articles = (set(spec.connectors.get("date_article", ()))
                 | set(spec.connectors.get("date_lead", ())))
@@ -1776,6 +1907,12 @@ def _fold_date_article(folded, consumed, spec, span):
     is_clock = (start is not None and end is not None
                 and end - start <= timedelta(minutes=1))
     widened = set(consumed)
+    for i, t in enumerate(folded[1:-1], start=1):
+        if (t.text in dative and t.index not in widened
+                and folded[i + 1].index in widened
+                and folded[i + 1].text not in deictic
+                and folded[i - 1].text in articles):
+            widened.add(t.index)
     for i, t in enumerate(folded[:-1]):
         nxt = folded[i + 1]
         if (t.index in widened or nxt.index not in widened
@@ -1785,8 +1922,9 @@ def _fold_date_article(folded, consumed, spec, span):
                           and nxt.text not in dative
                           and i + 2 < len(folded)
                           and folded[i + 2].text in periods)
+        bare_period = dative and t.text in no_deixis and nxt.text in periods
         opens_day = (t.text in articles and nxt.text not in deictic
-                     and not deictic_phrase)
+                     and not deictic_phrase and not bare_period)
         opens_clock = is_clock and t.text in clock_leads and (
             nxt.is_number or nxt.text in clock_words
             or any(c.isdigit() for c in nxt.text))
@@ -1868,7 +2006,7 @@ def _monthly_start(text, sub, engine, anchor, bound, found):
 
 
 def _since_start(ep, sub, engine, anchor, now, text):
-    """``(start, remainder)`` of a "since <endpoint>" span, or ``None``.
+    """``(start, remainder, extent)`` of a "since <endpoint>" span, or ``None``.
 
     "since X" is PAST-anchored: it names the most recent occurrence of X
     at-or-before now.  A bare weekday recurs WEEKLY, so resolve it backward
@@ -1888,15 +2026,17 @@ def _since_start(ep, sub, engine, anchor, now, text):
     spec = engine.spec
     wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
     if wk is not None:
-        return wk[0].start, wk[1]
+        return wk[0].start, wk[1], wk[2]
     if ep is None:
         return None
     start = ep[0].start
+    now = _in_zone_of(now, start)
     if start > now:
         monthly = _monthly_endpoint(text, sub, engine)
         if monthly is not None:
             found = _monthly_start(text, sub, engine, anchor, now, monthly)
-            return None if found is None else (found[0].start, found[1])
+            return (None if found is None
+                    else (found[0].start, found[1], found[2]))
     if _definite_endpoint(sub, spec):
         # A DEFINITE endpoint: a now-relative day ("tomorrow"), a
         # direction/rel-qualified reference ("next month", "this friday") or an
@@ -1904,7 +2044,7 @@ def _since_start(ep, sub, engine, anchor, now, text):
         # own direction/rel token.  None of these is an underspecified reference
         # prefer_future flung forward, so never roll it: in the past it opens
         # the span, in the future "since" it is contradictory and is refused.
-        return (start, ep[1]) if start <= now else None
+        return (start, ep[1], ep[2]) if start <= now else None
     if any(t.text in spec.weekdays for t in sub):
         # An UNqualified weekday (the bare-weekday-alone case is handled by
         # _bare_weekday_endpoint above; this is a weekday carrying a clock, e.g.
@@ -1914,7 +2054,7 @@ def _since_start(ep, sub, engine, anchor, now, text):
         # would strand it on the wrong weekday.
         while start > now:
             start = start + timedelta(days=-7)
-        return start, ep[1]
+        return start, ep[1], ep[2]
     # An underspecified recurring reference.  Roll back by its OWN cycle: a bare
     # time-of-day (a sub-day-wide span with no calendar-date word) recurs DAILY,
     # so "since noon" at 9am is yesterday noon -- NOT a year ago; everything else
@@ -1930,14 +2070,14 @@ def _since_start(ep, sub, engine, anchor, now, text):
             lambda at: _resolve_endpoint(text, sub, engine, at),
             anchor, start, now)
         if back is not None:
-            return back[0].start, ep[1]
+            return back[0].start, ep[1], ep[2]
     while start > now:
         pulled = (start + timedelta(days=-1) if is_clock
                   else _minus_one_year(start))
         if pulled is None:
             break
         start = pulled
-    return start, ep[1]
+    return start, ep[1], ep[2]
 
 
 #: The constructions that read a bare month as its next occurrence.
@@ -2057,9 +2197,9 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
         # plain forward range with "since" dropped.  "now" is always the anchor
         # instant; "new year" is the first Jan 1 at or after `at`.
         if _is_now_slice(sub, engine.spec):
-            return _now_span(anchor), ""
+            return _now_span(anchor), "", consumed_extent(sub)
         if _is_new_year_slice(sub, engine.spec):
-            return _new_year_span(at), ""
+            return _new_year_span(at), "", consumed_extent(sub)
         return (_resolve_endpoint(text, sub, engine, at, scale_mode=scale_mode)
                 or _bare_weekday_endpoint(sub, engine, at))
 
@@ -2067,7 +2207,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     since = _since_start(left_ep, left_tok, engine, anchor, now, text)
     if since is None:
         return None
-    start, left_rem = since
+    start, left_rem, _ = since
     # in mid-sentence "since" may be the conjunction of cause ("we stay home
     # since the office is closed from monday to friday"): it opens the range
     # only when its date reads every word up to the terminator
@@ -2089,12 +2229,14 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     if right_ep is None:
         return None
     end = right_ep[0].end
+    start, end = _in_zone_of(start, end), _in_zone_of(end, start)
     if start >= end:
         return None
     before = render_remainder(text, list(tokens[:lead]))
     remainder = " ".join(r for r in (before, left_rem, right_ep[1])
                          if r).strip()
-    return DateSpan(start, end), remainder
+    return (DateSpan(start, end), remainder,
+            join_extents(consumed_extent(tokens[lead:k]), right_ep[2]))
 
 
 def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
@@ -2130,13 +2272,25 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                 or _bare_weekday_endpoint(sub, engine, anchor))
 
     def until_span(ep, sub):
-        return (DateSpan(now, ep[0].end), ep[1]) \
-            if ep is not None and ep[0].end > now else None
+        if ep is None:
+            return None
+        here = _in_zone_of(now, ep[0].end)
+        return ((DateSpan(here, ep[0].end), ep[1], ep[2])
+                if ep[0].end > here else None)
 
     def since_span(ep, sub):
         since = _since_start(ep, sub, engine, anchor, now, text)
-        return (DateSpan(since[0], now), since[1]) \
-            if since is not None and since[0] < now else None
+        if since is None:
+            return None
+        here = _in_zone_of(now, since[0])
+        return ((DateSpan(since[0], here), since[1], since[2])
+                if since[0] < here else None)
+
+    def marked(got, marker):
+        # widen the endpoint's extent over the marker word that bounds it
+        if got is None:
+            return None
+        return got[0], got[1], join_extents(got[2], consumed_extent(marker))
 
     def lead(surf, build):
         # the marker leads; its tokens are dropped, the endpoint keeps its own
@@ -2144,8 +2298,13 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         k = _match_conn_at(tokens, 0, surf)
         if not k:
             return None
+        if (k < n and tokens[k].text
+                in spec.connectors.get("until_amount", ())):
+            # "hasta cuántos grados": the limit is an amount, not a time
+            return None
         ep = endpoint(tokens[k:])
-        return build(ep, tokens[k:]) if ep is not None else None
+        return marked(build(ep, tokens[k:]), tokens[:k]) \
+            if ep is not None else None
 
     def trail(surf, build):
         # a **postposed** marker -- the bound word trailing its date, the
@@ -2156,7 +2315,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             m = len(words)
             if m and m < n and [t.text for t in tokens[n - m:]] == words:
                 ep = endpoint(tokens[:n - m])
-                got = build(ep, tokens[:n - m]) if ep is not None else None
+                got = marked(build(ep, tokens[:n - m]), tokens[n - m:]) \
+                    if ep is not None else None
                 if got is not None:
                     return got
         return None
@@ -2185,7 +2345,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                               if last.char_end is not None else None))
                 sub_a = tuple(tokens[:-1]) + (stripped,)
                 ep = endpoint(sub_a)
-                got = build(ep, sub_a) if ep is not None else None
+                got = marked(build(ep, sub_a), (last,)) \
+                    if ep is not None else None
                 if got is not None:
                     return got
         return None
@@ -2308,10 +2469,23 @@ def _bare_direction_span(tokens, span, consumed, spec, anchor):
             continue
         if role == "after":
             return "veto"
-        if span.end > now:
-            return DateSpan(now, span.end), set(consumed) | set(range(0, j))
+        here = _in_zone_of(now, span.end)
+        if span.end > here:
+            return DateSpan(here, span.end), set(consumed) | set(range(0, j))
         return "veto"
     return None
+
+
+def _within(span, outer):
+    """``span`` lies inside ``outer``, the two read on one clock."""
+    inner, outer = _align_awareness(span, outer)
+    return inner.start >= outer.start and inner.end <= outer.end
+
+
+def _same_span(a, b):
+    """``a`` and ``b`` are one span, the two read on one clock."""
+    a, b = _align_awareness(a, b)
+    return a.start == b.start and a.end == b.end
 
 
 def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
@@ -2334,13 +2508,17 @@ def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
     day = (anchor.replace(hour=0, minute=0, second=0, microsecond=0)
            + timedelta(days=delta))
     start = AstroDate.from_datetime(day)
-    return DateSpan(start, start + timedelta(days=1)), ""
+    return DateSpan(start, start + timedelta(days=1)), "", consumed_extent(sub)
 
 
 def _trailing_meridiem(sub, spec):
     """The am/pm token ending a slice, or None -- for propagating a shared
     meridiem onto a bare range endpoint."""
     if sub and sub[-1].text in spec.meridiems:
+        # the last word of a two-word day name ("i morgon", sv for tomorrow)
+        # is not a meridiem
+        if len(sub) > 1 and f"{sub[-2].text} {sub[-1].text}" in spec.named_days:
+            return None
         return sub[-1]
     return None
 
@@ -2391,6 +2569,7 @@ def _apply_week_of(tokens, resolved, spec):
     return out
 
 
+@reports_impossible
 def extract_timespan(
         text: str,
         lang: str = "en",
@@ -2441,25 +2620,34 @@ def extract_timespan(
     dialect (``pt-BR`` short, ``pt-PT`` long) while loading the same base
     locale, a bare code its naming country's norm.
 
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` instead of giving ``None``; a phrase
+    that is no date still gives ``None``, and a call that finds a reading
+    returns it.
+
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns
     ``None``.
     """
+    from chronologia.extract.reading import read
     require_text(text, "extract_timespan")
-    engine = _timespan_engine(lang)
-    scale_mode = _resolve_scale_mode(lang, scale)
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
-    # tokenize ONCE: the tokenizer regex runs a single time and the resulting
-    # stream is the shared currency.  Range/open-range detection reads the
-    # *pre-fold* stream (connectors still visible); folding the whole stream for
-    # the single-span core, or a lone endpoint's slice, re-uses these tokens --
-    # the tokenizer is never run again on a substring.
-    raw = pretokens(text, engine.spec)
-    res = _resolve_span(text, raw, engine, anchor, enable, jurisdiction,
-                        scale_mode)
+    readings = read(text, lang, anchor, jurisdiction, enable, scale, first=True)
+    res = None
+    if readings:
+        got = readings[0]
+        if got.kind == "span":
+            res = got.span, got.remainder
+        else:
+            res = _point_result(text, got.tokens, got.span, got.claimed,
+                                got.match, _timespan_engine(lang), anchor)
     if res is None:
+        if raising():
+            from .nseries import _recur_ctx, _recur_nth_weekday
+            _recur_nth_weekday(_recur_ctx(text, lang, anchor))
         return None
     out = DateSpanResult(*res)
     if out.remainder and _is_whole_duration(text, lang):
@@ -2541,7 +2729,7 @@ def _sentence_boundary_between(text, start, end) -> bool:
 
 
 # Locales that write the hour-letter clock ("20h", "21h30"); see the folds in
-# numfold_romance, numfold_agglutinative and numfold_germanic.
+# numfold_romance, numlayer_el and numlayer_sv.
 _HOUR_LETTER_LOCALES = frozenset({
     "ast", "ca", "el", "es", "fr", "gl", "it", "oc", "pt", "ro", "sv"})
 _HOUR_LITERAL = re.compile(r"\d{1,2}:\d{2}")
@@ -2685,7 +2873,7 @@ def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
     return False
 
 
-_veto_reentry = threading.local()
+_veto_active: ContextVar[bool] = ContextVar("veto_active", default=False)
 
 
 _CLOCK_LITERAL = re.compile(r"\d{1,2}:\d{2}(:\d{2})?")
@@ -2739,10 +2927,10 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
         German "32. April", Russian "32 апреля"): a bare numeral > 31 that abuts
         the winning span and does not itself name a valid date.
     A stranded but VALID date (a second mention, "... al 5 de junio de 2020")
-    resolves on its own and does not veto.  Shared by _resolve_span (the
+    resolves on its own and does not veto.  Shared by _point_result (the
     single-winner path) and extract_candidates so the two public APIs never
     disagree on the top answer.
-    A thread-local re-entrancy guard bounds the self-similar blow-up: both
+    A context-local re-entrancy guard (``_veto_active``) bounds the self-similar blow-up: both
     trigger shapes re-parse a stranded fragment through the public
     ``extract_timespan`` ("does this resolve to a real date?"), which re-enters
     this veto; a self-similar input ("5th of june 5th of june ...") would
@@ -2750,13 +2938,13 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     whether it RESOLVES, not whether it is itself impossible, so the veto is
     skipped while already inside it (one level is enough).
     """
-    if getattr(_veto_reentry, "active", False):
+    if _veto_active.get():
         return False
-    _veto_reentry.active = True
+    token = _veto_active.set(True)
     try:
         return _impossible_date_veto_inner(tokens, consumed, text, engine, anchor)
     finally:
-        _veto_reentry.active = False
+        _veto_active.reset(token)
 
 
 def _ordish_scope_word(text, spec):
@@ -3343,6 +3531,22 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
     return tokens[b - 1].text in dir_markers
 
 
+def _participle_season_veto(tokens, match, spec) -> bool:
+    """True for a match that opens on a season word directly behind a form of
+    the auxiliary listed in ``marker_participle_aux.voc``.
+
+    French "été" is the season and the past participle of "être": "il a été
+    malade le 15 mai" says nothing about summer.  The participle follows a form
+    of "avoir", and the season never does, so the reading is dropped there and
+    the date beside it stays.  A language with no such file is untouched.
+    """
+    start = match.span[0]
+    if start == 0 or tokens[start].text not in spec.seasons:
+        return False
+    return tokens[start - 1].text in spec.connectors.get("participle_aux",
+                                                         frozenset())
+
+
 def _num_preamble_named_day_idiom_veto(tokens, match, spec) -> bool:
     """True for a ``named_day_after``/``named_day_before`` match immediately
     preceded by a NUMBER token ("two days after tomorrow", "3 days before
@@ -3423,6 +3627,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _stray_year_zero_veto(tokens, match, spec)
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
+            or _participle_season_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
@@ -3554,56 +3759,16 @@ def _extend_clock_for_duration(span, remainder, tokens, consumed, text, engine):
     return span, remainder
 
 
-def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
-                  scale_mode="short"):
-    """The single recursive resolver over the token stream.
+def _point_result(text, tokens, span, consumed, rep, engine, anchor):
+    """``(span, remainder)`` of the point reading ``extract_timespan`` answers
+    with, or ``None`` when one of its checks refuses it.
 
-    One entry, three composition cases tried in precedence order; each wider
-    case resolves its operand sub-spans by recursing back through this same
-    resolver's inner cases, so a bounded/open range is *one derivation* over
-    resolved sub-spans rather than a bolt-on run after the fact:
-
-    * **RANGE** ("from A to B" / "between A and B") -- the span from the left
-      endpoint's start to the right endpoint's end, each endpoint resolved by
-      recursing on its own token slice (:func:`_extract_range`);
-    * **OPEN_RANGE** ("until X" / "since X") -- one recursively-resolved
-      endpoint plus the "now" anchor (:func:`_extract_open_range`);
-    * **SINGLE** -- the single-span core: matcher/resolver plus the
-      business-day, anchored-offset, ordinal-count and week-of composition
-      cases, then the lone date + clock fold (:func:`_resolve_core`).
-
-    ``raw`` is the *pre-fold* stream (connectors still visible so a range
-    splits on the ``to``/``and`` the number fold would otherwise swallow); the
-    SINGLE case folds it.  A range/open-range endpoint recurses through the
-    SINGLE case only (via :func:`_resolve_endpoint`): endpoints are deliberately
-    **not** re-entered into range detection, so a pathological connector chain
-    cannot exhaust the stack.  Returns ``(span, remainder)`` or ``None``.
+    ``span``, ``consumed`` and ``rep`` are the composed winner of the folded
+    ``tokens``; the five vetoes of :func:`_core_veto` run first.
     """
-    # a "since A until B" directional range is tried FIRST: its leading "since"
-    # would otherwise let the plain closed-range path split on "until" and roll
-    # both endpoints forward, silently dropping "since"'s past-anchoring.
-    dir_rng = _extract_directional_range(text, raw, engine, anchor, scale_mode)
-    if dir_rng is not None:
-        return dir_rng
-    rng = _extract_range(text, raw, engine, anchor, scale_mode)
-    if rng is not None:
-        return rng
-    opn = _extract_open_range(text, raw, engine, anchor, scale_mode)
-    if opn is not None:
-        return opn
-    # bare "now" / "right now" is the anchor instant, a zero-width span; a bare
-    # "new year" is New Year's Day.  Both are recognised whole-utterance only, so
-    # neither fires inside a longer phrase ("now and then", "hebrew new year").
-    if _is_now_slice(raw, engine.spec):
-        return _now_span(anchor), ""
-    if _is_new_year_slice(raw, engine.spec):
-        return _new_year_span(anchor), ""
-    tokens = fold_tokens(raw, engine.spec, text)
-    core = _resolve_core(tokens, engine, anchor, enable, jurisdiction, text,
-                         scale_mode, whole=True)
-    if core is None:
+    if _core_veto(tokens, consumed, rep, engine, anchor, text):
         return None
-    span, consumed = core
+    consumed = set(consumed)
     # A bare "before X" / "after X" (no magnitude) left the direction
     # word stranded beside an otherwise-complete "X" -- see
     # _bare_direction_span for why this is a post-hoc check on the core's
@@ -3770,10 +3935,18 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
     composable = (_COMPOSABLE_DATES | {"relative_offset"}
                  if spec.conventions.offset_clock_composes
                  else _COMPOSABLE_DATES)
+    # "the morning after next" is a band of its day, so a clock beside it may
+    # contradict the band and is left unread; "the week before last" is a
+    # period, so no clock lands on it
     dates = [(m, r) for m, r in resolved
              if m.construction in composable
              and (m.construction != "relative_offset"
-                  or _offset_is_day_or_coarser(m, spec))]
+                  or _offset_is_day_or_coarser(m, spec))
+             and not (m.construction in ("after_next", "before_last")
+                      and ("DAYPART" in m.slots
+                           or (m.slots.get("UNIT") is not None
+                               and spec.units.get(m.slots["UNIT"].text)
+                               != "day")))]
     dayparts = [(m, r) for m, r in resolved
                 if m.construction == "daypart_ref"]
     weekdays = [(m, r) for m, r in resolved
@@ -3809,8 +3982,13 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
 
     def _adjacent(a, b):
         (lo, hi) = sorted((a.span, b.span))
-        return all(i in _covered or tokens[i].text in _glue
-                   for i in range(lo[1], hi[0]))
+        gap = [i for i in range(lo[1], hi[0])
+               if i not in _covered and tokens[i].text not in _glue]
+        # "tomorrow's meeting at 9": the noun a possessive day modifies sits
+        # between the day and its clock.
+        if gap == [lo[1]] and tokens[lo[1] - 1].text.endswith(_POSSESSIVE):
+            return True
+        return not gap
 
     _articles = frozenset(spec.connectors.get("article", ()))
 
@@ -3902,7 +4080,8 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
                             in engine.spec.daypart_today_words)
         force_today = dp_is_this or dp_is_today_word
         merged_clock = compose_daypart_clock(clk_res, dp_res, dp_name,
-                                             has_meridiem, force_today)
+                                             has_meridiem, force_today,
+                                             anchor)
         if merged_clock is None:
             # A genuine contradiction ("morning at 9pm") -- decline the
             # whole reading rather than guess a winner (R57 convention).
@@ -4003,6 +4182,9 @@ def _fold_apposed_weekday(resolved, spec, tokens, text):
     return ([(m, r) for m, r in resolved if m is not wd_match],
             set(range(*wd_match.span)))
 
+
+#: The endings of a possessive noun.
+_POSSESSIVE = ("'s", "\u2019s")
 
 #: Connector keys that join two distinct references.
 _SEPARATOR_KEYS = frozenset({"and", "or", "to", "from", "between", "until",
@@ -4132,7 +4314,7 @@ def _roll_bare_weekday_time(res, rep, anchor):
                                        res.value.basis))
 
 
-_reading = threading.local()
+_spoken_hours: ContextVar[bool] = ContextVar("spoken_hours", default=False)
 
 
 def reads_spoken_hours(fn):
@@ -4143,12 +4325,11 @@ def reads_spoken_hours(fn):
     """
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
-        outer = getattr(_reading, "spoken", False)
-        _reading.spoken = True
+        token = _spoken_hours.set(True)
         try:
             return fn(*args, **kwargs)
         finally:
-            _reading.spoken = outer
+            _spoken_hours.reset(token)
     return wrapper
 
 
@@ -4169,14 +4350,17 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     leading zero reads the same way; "03:30", "12:30", "15:30" and an hour
     written with the letter "h", a dotted clock and a clock folded from spelled
     numbers are as written.  The word "today" names no
-    part of the day, so "at 3:30 today" takes its reading from the same day;
+    part of the day, so "at 3:30 today" and "today at 5" take their reading
+    from the same day (the written hour when both readings have passed);
     any other day word keeps the written hour.  24-hour hours are untouched,
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
     unjoined: a pm word pins the pm reading, an am or night word keeps the
-    written hour.
+    written hour.  A word that is also the adverb "late" (es, pt, gl "tarde")
+    decides nothing when another word of its clause comes before it: "llego
+    tarde a las 6:30" is late.
     """
-    if (getattr(_reading, "spoken", False)
+    if (_spoken_hours.get()
             or anchor is None or rep is None
             or any(m.construction == "daypart_ref" or "MERIDIEM" in m.slots
                    for m in matches)
@@ -4197,7 +4381,7 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         return res
     hour = clock_match.slots.get("HOUR")
     clock = clock_match.slots.get("CLOCK")
-    if hour is not None and not today:
+    if hour is not None:
         if (not hour.is_number or not 1 <= hour.value <= 12
                 or re.search(r"\d\s*[h:]", (hour.raw or "").lower())
                 or (hour.index + 1 < len(tokens)
@@ -4225,9 +4409,16 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         i = clock_match.span[0] - 1 if step < 0 else clock_match.span[1]
         while 0 <= i < n and tokens[i].text in glue:
             i += step
-        if 0 <= i < n and tokens[i].index not in covered \
-                and tokens[i].text in spec.meridiems:
-            meridiem_words.append(tokens[i].text)
+        if (not 0 <= i < n or tokens[i].index in covered
+                or tokens[i].text not in spec.meridiems):
+            continue
+        if (step < 0 and i > 0 and not tokens[i].break_before
+                and tokens[i].text in spec.late_meridiems):
+            # after another word of its clause the word is the adverb "late"
+            # ("llego tarde a las 6:30"); the noun opens its clause ("tarde a
+            # las 4:30") or a part-of-the-day match reads it ("de tarde")
+            continue
+        meridiem_words.append(tokens[i].text)
     if meridiem_words and (
             not all(spec.meridiems[w] == 12 for w in meridiem_words)
             or any(w in spec.night_meridiems for w in meridiem_words)):
@@ -4253,25 +4444,39 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     if not later:
         return res
     moment = AstroDate.from_datetime(min(later))
-    return replace(res, value=DateSpan(moment, moment + timedelta(minutes=1),
-                                       res.value.basis))
+    return replace(res, value=DateSpan(moment, moment + (
+        res.value.end - res.value.start), res.value.basis))
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
-                  text=None, scale_mode="short", whole=False):
+                  text=None, scale_mode="short"):
     """The single-span resolution over an already-tokenized stream.
 
-    The whole of the old ``extract_timespan`` body *below* range detection --
-    match, resolve, the business-day / anchored-offset / ordinal-count /
-    week-of post-passes, and the lone date + clock composition -- returning
-    ``(span, consumed)`` where ``consumed`` is the set of claimed token
-    positions (the caller renders the remainder from the unconsumed ones).
-    Factored out so a range endpoint resolves through the *identical* path a
-    whole utterance does, from a re-based slice of the same stream.
-    ``whole`` marks the whole utterance, where a bare month after "since"
-    names the one that has begun (:func:`_since_month`) and a clock standing
-    alone reads its next twelve-hour hour (:func:`_lone_spoken_hour`); a
-    range endpoint follows the range rules instead.
+    :func:`_compose_core` and then :func:`_core_veto`, returning ``(span,
+    consumed)`` where ``consumed`` is the set of claimed token positions (the
+    caller renders the remainder from the unconsumed ones).  A range endpoint
+    resolves through the *identical* path a whole utterance does, from a
+    re-based slice of the same stream.
+    """
+    winner = _compose_core(tokens, engine, anchor, enable, jurisdiction, text,
+                           scale_mode)[1]
+    if winner is None:
+        return None
+    res, consumed, rep = winner
+    if _core_veto(tokens, consumed, rep, engine, anchor, text):
+        return None
+    return res.value, consumed
+
+
+def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
+                  text=None, scale_mode="short", whole=False):
+    """Match, resolve and post-pass ``tokens``, then compose the winner.
+
+    Returns ``(resolved, winner)``: the post-passed ``(match, resolution)``
+    pairs, and the winner as ``(resolution, consumed, representative
+    match)`` or ``None``.  ``whole`` marks the whole utterance, where a bare
+    month after "since" names the one that has begun (:func:`_since_month`);
+    a range endpoint follows the range rules instead.
     """
     resolved = []
     veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
@@ -4316,7 +4521,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                     if not any(i in claimed for i in range(*m.span))]
         resolved.append(count)
     if not resolved:
-        return None
+        return resolved, None
     # widen a date carrying the locale's "week of" marker to its whole week
     resolved = _apply_week_of(tokens, resolved, engine.spec)
     res, label_consumed, rep = _compose(resolved, engine, tokens, anchor,
@@ -4324,11 +4529,13 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     if res is None:
         # A day-part+clock meridiem contradiction ("morning at 9pm") --
         # _compose declined the whole reading rather than pick a winner.
-        return None
-    if whole:
-        res = _lone_spoken_hour(res, rep, anchor, engine.spec, tokens,
-                                [m for m, _ in resolved], text)
-    consumed = set(res.consumed) | label_consumed
+        return resolved, None
+    return resolved, (res, set(res.consumed) | label_consumed, rep)
+
+
+def _core_veto(tokens, consumed, rep, engine, anchor, text):
+    """Whether the composed winner strands a tail that shows it is the wrong
+    reading of an unsupported compound."""
     # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
     # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
     # "roku") is the unsupported "last <plural-unit> of <period>" compound.  The
@@ -4337,14 +4544,14 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     # other locales already return (see _trailing_scope_veto).
     if (rep.construction == "rel_period"
             and _trailing_scope_veto(tokens, consumed, engine.spec)):
-        return None
+        return True
     # A bare weekend reading ("weekend"/"the last N weekends") that strands an
     # unbound "of the Nth month" scope tail is the unsupported ordinal-month
     # weekend compound (see _stranded_ordinal_scope_veto) -- refuse rather
     # than surface the anchor-relative weekend with the scope phrase dropped.
     if (rep.construction in ("weekend_ref", "rel_span_weekend")
             and _stranded_ordinal_scope_veto(tokens, consumed, engine.spec)):
-        return None
+        return True
     # A present-anchored rel_span/rel_period/rel_span_quarter reading that
     # strands an unbound "from <date>" explicit-anchor tail is the
     # unsupported "N units/quarters from <date>" compound (see
@@ -4354,7 +4561,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
             and rep.construction in ("rel_span", "rel_period", "rel_span_quarter")
             and _stranded_explicit_anchor_veto(tokens, consumed, text,
                                                engine.spec, anchor)):
-        return None
+        return True
     # A bare ``calendar_date`` reading (a NAMED month, with or without a
     # year) that strands a leading "ORD half/quarter of?" prefix it could
     # not bind is the unsupported "first half of LEAP february 2028" shape
@@ -4364,7 +4571,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     # too-wide bare-month span with the fraction ordinal dropped.
     if (rep.construction == "calendar_date"
             and _stranded_fraction_prefix_veto(tokens, consumed, engine.spec)):
-        return None
+        return True
     # A century/millennium scoped_ordinal reading that strands a token
     # beside its ORD slot is a partially-folded compound spelled ordinal
     # ("abad kedua puluh" = twentieth, read as 2nd with "puluh" stranded) --
@@ -4372,8 +4579,8 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     # _stranded_compound_ordinal_veto).
     if (rep.construction == "scoped_ordinal"
             and _stranded_compound_ordinal_veto(tokens, rep, engine.spec)):
-        return None
-    return res.value, consumed
+        return True
+    return False
 
 
 @dataclass(frozen=True)
@@ -4391,15 +4598,22 @@ class Candidate:
     * ``confidence`` -- the deterministic score in ``(0, 1]``
       (see :mod:`chronologia.extract.confidence`); **not** a probability;
     * ``construction`` -- the trace name of the construction that matched
-      (``"calendar_date"``, ``"weekday_ref"``, ...).
+      (``"calendar_date"``, ``"weekday_ref"``, ...);
+    * ``char_span`` -- the half-open ``[start, end)`` offsets into the ``text``
+      passed in, before any normalisation, from the first to the last character
+      this reading consumed, so ``text[start:end]`` is the phrase it read.  Words
+      the reading left over between those two ends stay in ``remainder`` and
+      inside the span.  ``None`` only when no consumed token has a position.
     """
 
     span: DateSpan
     remainder: str
     confidence: float
     construction: str
+    char_span: Optional[Tuple[int, int]] = None
 
 
+@reports_impossible
 def extract_candidates(
         text: str,
         lang: str = "en",
@@ -4419,167 +4633,82 @@ def extract_candidates(
     nothing temporal was found.  ``anchor`` is the "now" relative phrases
     resolve against (default: the wall clock).
 
+    ``impossible`` is ``"none"`` (default) or ``"raise"``.  With ``"raise"`` a
+    phrase naming a date the calendar rejects ("29 February 2017") raises
+    :class:`~chronologia.ImpossibleDateError` in place of an empty list; a call
+    that finds a candidate returns its usual list.
+
     ``text`` must be a ``str``; anything else raises :class:`TypeError`.
     Text that names nothing temporal, the empty string included, returns an
     empty list.
     """
+    from chronologia.extract.reading import read
     require_text(text, "extract_candidates")
-    engine = _timespan_engine(lang)
-    scale_mode = _resolve_scale_mode(lang, scale)
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
-    tokens = engine.tokenize(text)
-    # Composed readings: the business-day / anchored-offset / ordinal-count
-    # post-passes extract_timespan runs are re-run here so the candidate set can
-    # never disagree with the single-winner API -- without this, "in 5 business
-    # days" / "3 fridays from now" returned [] (a reading exists) and
-    # "5 days after christmas" ranked Christmas Day itself top, silently dropping
-    # "5 days after".  Mirrors the post-pass block of _resolve_core (the
-    # single-span hot path is deliberately left untouched).
-    composed = []
-    veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
-    for m in engine.matcher.match(tokens, veto):
-        group = engine.spec.construction_flags.get(
-            m.construction, {}).get("group")
-        if group is not None:
-            continue          # classical group is off for the default API
-        r = engine.resolver.resolve(m, anchor, scale_mode)
-        if r is not None:
-            composed.append((m, r))
-    resolve_ref = _make_resolve_ref(tokens, engine, anchor, (), None, text,
-                                    scale_mode)
-    composed = apply_business_days(tokens, composed, engine.spec, anchor, None,
-                                   resolve_ref)
-    composed = apply_compound_offset(tokens, composed, engine.spec, anchor)
-    composed = apply_anchored_offset(tokens, composed, engine.spec)
-    ocount = apply_ordinal_count(tokens, engine.spec, anchor)
-    if ocount is not None:
-        claimed = set(range(*ocount[0].span))
-        composed = [(m, r) for m, r in composed
-                    if not any(i in claimed for i in range(*m.span))]
-        composed.append(ocount)
-    if composed:
-        composed = _apply_week_of(tokens, composed, engine.spec)
-    # The composed WINNER (date+clock / date+daypart / weekday-label) that
-    # _resolve_core selects -- surfaced here via the SAME _compose helper so the
-    # candidate set always contains extract_timespan's exact answer, not just
-    # the un-composed parts.  The representative sub-match is widened to span the
-    # WHOLE composed reading and mapped to the composed resolution, so
-    # confidence() scores its full coverage (not just the sub-part -- otherwise a
-    # bare partial reading can carry a higher confidence VALUE than the correct
-    # composed answer); its consumed set (plus any weekday-label tokens) is
-    # remembered so the remainder excludes everything the winner folded in.
-    label_extra = {}
-    primary = None
-    if composed:
-        win_res, win_label, rep = _compose(composed, engine, tokens,
-                                           anchor, text)
-        if win_res is not None:
-            win_res = _lone_spoken_hour(win_res, rep, anchor, engine.spec, tokens,
-                                        [m for m, _ in composed], text)
-            consumed_all = set(win_res.consumed) | win_label
-            lo, hi = min(consumed_all), max(consumed_all) + 1
-            wide = replace(rep, span=(lo, hi))
-            composed = [(wide, win_res) if m is rep else (m, r)
-                        for m, r in composed]
-            label_extra[id(wide)] = consumed_all
-            primary = id(wide)   # extract_timespan's selected answer -> rank it first
-        # else: a day-part/clock meridiem contradiction -- _compose declined
-        # the whole composed reading (mirrors _resolve_core's None), so no
-        # primary winner is surfaced; the un-composed sub-matches (if any
-        # survive their own resolution) still populate the runner-up list
-        # below exactly as they would for any other unresolved text.
-    composed_res = {id(m): r for m, r in composed}
-
-    def _resolve_one(m):
-        res = composed_res.get(id(m))
-        if res is None:
-            res = engine.resolver.resolve(m, anchor, scale_mode)
-        if res is None:
-            return None
-        return _lone_spoken_hour(res, m, anchor, engine.spec, tokens, matches,
-                                 text)
-
+    readings = read(text, lang, anchor, scale=scale)
+    engine = _timespan_engine(lang)
     scored = []
     seen = set()
-    # the runner-up enumeration must honour the SAME construction-group gate the
-    # composed loop does -- otherwise a group-gated construction (the classical
-    # Latin grammar, off by default) leaks in as a candidate that extract_timespan
-    # would never return.
-    runner_ups = [c.match for c in engine.matcher._candidates(tokens)
-                  if engine.spec.construction_flags.get(
-                      c.match.construction, {}).get("group") is None
-                  and not _candidate_veto(tokens, c.match, engine.spec)]
-    matches = [m for m, _ in composed] + runner_ups
-    for sc in _score_candidates(matches, _resolve_one, engine.spec):
-        match, res, conf = sc.match, sc.resolution, sc.confidence
-        is_composed = id(match) in composed_res
-        key = (match.construction, match.span, res.value)
+    range_reading = None
+    for got in readings:
+        if got.kind == "span":
+            # a bare "now" or "new year" is extract_timespan's own reading
+            if got.construction in ("date_range", "open_range"):
+                range_reading = got
+            continue
+        # the composed winner is ranked and told apart over every token it
+        # claims, not over the one match that represents it
+        at = ((min(got.claimed), max(got.claimed) + 1) if got.primary
+              else got.match.span)
+        key = (got.construction, at, got.span)
         if key in seen:
             continue
         seen.add(key)
-        consumed = label_extra.get(id(match), set(res.consumed))
         # skip a reading governed by a leading negation/exclusion particle
         # ("not tomorrow"): the excluded reference is not a positive date.  The
         # SAME bounded governing-region logic as the single-winner path, so the
         # two public APIs agree on which readings are vetoed.
-        if _exclusion_governing_veto(tokens, consumed, text, engine.spec):
+        if _exclusion_governing_veto(got.tokens, got.claimed, text,
+                                     engine.spec):
             continue
-        # the same impossible-date veto _resolve_span applies to the single
+        # the same impossible-date veto extract_timespan applies to the single
         # winner: a candidate that strands an impossible day-of-month numeral
         # ("the ides of march 44 BC" -> roman_date + a stranded "44 BC") is a
         # fabricated reading extract_timespan refuses, so it must not be surfaced
         # here either -- otherwise the two public APIs disagree on the top answer.
-        if _impossible_date_veto(tokens, consumed, text, engine, anchor):
+        if _impossible_date_veto(got.tokens, got.claimed, text, engine, anchor):
             continue
-        remainder = render_remainder(text, [t for t in tokens
-                                            if t.index not in consumed])
         # rank: the composed PRIMARY (extract_timespan's own selected reading)
         # is first so the two APIs agree on the top answer; then confidence, a
         # composed reading ahead of the bare partial it was built from, earlier
         # text position, and longer span.
-        rank = (0 if id(match) == primary else 1, -conf,
-                0 if is_composed else 1, match.span[0], -match.length)
-        scored.append((rank, Candidate(res.value, remainder, conf,
-                                       match.construction)))
-    # Range and open-range readings ("june 5 to june 12", "between monday and
-    # friday", "since 2019", "until friday") are composed by _resolve_span the
-    # same way extract_timespan resolves them, but the matcher core never
-    # enumerates them -- so without this the ranked candidates omit
-    # extract_timespan's own answer entirely and top-rank a stray single-
-    # endpoint reading instead.  Detect the range on the SAME pre-fold stream
-    # extract_timespan uses and surface it as the PRIMARY candidate (rank 0),
-    # dropping any single candidate whose span the range subsumes so the same
-    # span is not shown twice.
-    raw = pretokens(text, engine.spec)
-    range_ans = _extract_directional_range(text, raw, engine, anchor,
-                                           scale_mode) \
-        or _extract_range(text, raw, engine, anchor, scale_mode)
-    range_kind = "date_range"
-    if range_ans is None:
-        range_ans = _extract_open_range(text, raw, engine, anchor, scale_mode)
-        range_kind = "open_range"
-    if range_ans is not None:
-        rspan, rrem = range_ans
+        rank = (0 if got.primary else 1, -got.confidence,
+                0 if got.selected else 1, at[0], at[0] - at[1])
+        scored.append((rank, Candidate(got.span, got.remainder, got.confidence,
+                                       got.construction, got.chars)))
+    # A range or open range ("june 5 to june 12", "since 2019") is
+    # extract_timespan's own answer, which the matcher never enumerates: it is
+    # the PRIMARY candidate, and a single candidate with the same span is
+    # dropped so the same span is not shown twice.
+    if range_reading is not None:
+        rspan = range_reading.span
         # the range's confidence reflects ITS OWN support: the strongest
         # endpoint reading that falls WITHIN its span -- never the strongest
         # unrelated construction elsewhere in the text (a trailing ISO literal
         # the range does not even consume must not launder its score in).
         within = [c for _, c in scored
-                  if c.span.start >= rspan.start and c.span.end <= rspan.end]
+                  if _within(c.span, rspan)]
         rconf = max([c.confidence for c in within], default=0.9)
-        # drop a single candidate that resolved to the SAME span, so the
-        # identical span is not shown twice ("since 2019" and its bare year
-        # reading); endpoints strictly inside the range stay as runner-ups.
+        # endpoints strictly inside the range stay as runner-ups
         scored = [(rk, c) for rk, c in scored
-                  if not (c.span.start == rspan.start
-                          and c.span.end == rspan.end)]
-        # rank the range STRICTLY first (-1): it is extract_timespan's own
-        # answer, and must beat a meridiem-blind subtractive clock_time reading
-        # of the same phrase ("5 to 9 am") that would otherwise tie on
-        # confidence and win by insertion order, leaving the two APIs disagreeing.
-        scored.append(((-1, -rconf, 0, 0, -len(tokens)),
-                       Candidate(rspan, rrem, rconf, range_kind)))
+                  if not _same_span(c.span, rspan)]
+        # rank the range STRICTLY first (-1): it must beat a meridiem-blind
+        # subtractive clock_time reading of the same phrase ("5 to 9 am") that
+        # would otherwise tie on confidence and win by insertion order.
+        scored.append(((-1,), Candidate(rspan, range_reading.remainder, rconf,
+                                        range_reading.construction,
+                                        range_reading.chars)))
     scored.sort(key=lambda e: e[0])
     return [c for _, c in scored[:limit]]
