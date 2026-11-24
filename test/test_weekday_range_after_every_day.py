@@ -10,6 +10,7 @@ _ANCHORS = (datetime(2026, 11, 22, 9, 0), datetime(2027, 3, 3, 15, 30))
 
 _WEEKDAY_SET = [
     ("every day from monday to friday", "en", "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR"),
+    ("every day from monday until friday", "en", "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR"),
     ("jeden Tag von Montag bis Freitag", "de", "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR"),
     ("elke dag van maandag tot vrijdag", "nl", "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR"),
     ("elke dag van maandag tot en met vrijdag", "nl", "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR"),
@@ -71,8 +72,8 @@ def test_date_range_keeps_its_until(text, lang, until):
 
 
 @pytest.mark.parametrize("text,lang,until,remainder", [
-    ("jeden Tag von Montag bis Freitag bis Dezember", "de", "20261127", ""),
-    ("elke dag van maandag tot vrijdag tot december", "nl", "20261127", ""),
+    ("jeden Tag von Montag bis Freitag bis Dezember", "de", "20261127", "von Montag"),
+    ("elke dag van maandag tot vrijdag tot december", "nl", "20261127", "van maandag"),
 ])
 def test_weekday_range_followed_by_more_text_is_not_a_set(text, lang, until, remainder):
     got = extract_recurrence(text, lang, _ANCHORS[0])

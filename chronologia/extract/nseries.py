@@ -1325,7 +1325,7 @@ def _read_recurrence(text, lang, anchor):
             rec, consumed = _apply_clock_range(rec, consumed, ctx, lang, anchor)
             clauses = range_clauses(
                 tokens, ctx.spec, consumed,
-                lambda left: _reads_a_date(left, lang, anchor))
+                lambda left: _reads_a_date(left, ctx.spec, lang, anchor))
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor,
                                           clauses)
             rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor,
@@ -1725,8 +1725,12 @@ def _bound_payload(rec, consumed, tokens, marker, lang, anchor, grounder):
     return None
 
 
-def _reads_a_date(tokens, lang, anchor):
-    """Whether ``tokens`` read as a span of a day or more, not a clock."""
+def _reads_a_date(tokens, spec, lang, anchor):
+    """Whether ``tokens`` read as a span of a day or more, not a clock.  A
+    bare month or full weekday name is one without a parse."""
+    words = " ".join(t.text for t in tokens)
+    if words in spec.months or words in spec.weekday_full:
+        return True
     got = extract_timespan(" ".join(t.raw for t in tokens), lang, anchor=anchor)
     return got is not None and got.span.end - got.span.start >= timedelta(days=1)
 
@@ -1896,8 +1900,7 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor, clauses):
     clause of :func:`~chronologia.extract.timespan.range_clauses`, rightmost
     lead first (so a genuine date-range candidate is preferred over an earlier
     one), and claims each -- weekday range -> BYDAY intersection, date
-    range -> UNTIL.  A
-    bare-number range ("from 1 to 2") is never accepted as a date-range
+    range -> UNTIL.  A bare-number range ("from 1 to 2") is never accepted as a date-range
     grounding here: unlike "to august"/"to monday", digits alone carry no
     calendar semantics, and accepting them let a leftover numeric range (a
     stray clock-shaped clause :func:`_apply_clock_range` did not claim)

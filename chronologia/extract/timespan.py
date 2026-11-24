@@ -381,14 +381,17 @@ def range_clauses(tokens, spec, consumed, reads_date):
 
     A connector that opens a clause has the role of a range word, whatever
     other role its surface has: German "bis" and Dutch "tot" are also
-    "until" words.  Such a word opens a clause only when ``reads_date`` accepts
-    the tokens before it as a date: "from 9am until 5 december" has an until
-    bound after a clock."""
+    "until" words.  Such a word opens a clause only when it is the clause's
+    only connector, the two sides are not both bare numbers, no "before" word
+    starts the right side, and ``reads_date`` accepts the tokens before it as
+    a date.  Otherwise it is an until bound: "from 9am until 5 december",
+    "from june to august until december", "from 2027 until 2030"."""
     leads = _conn_surfaces(spec, "between", _RANGE_BETWEEN) \
         + _conn_surfaces(spec, "from", _RANGE_FROM)
     mids = _conn_surfaces(spec, "to", _RANGE_TO) \
         + _conn_surfaces(spec, "and", ("and",))
     untils = _conn_surfaces(spec, "until", ())
+    befores = _conn_surfaces(spec, "before", ())
     n = len(tokens)
 
     def match(i, words):
@@ -407,16 +410,24 @@ def range_clauses(tokens, spec, consumed, reads_date):
         j = i + lead_at[i]
         for k in range(j, n):
             width = next((w for mid in mids if (w := match(k, mid))), 0)
+            if not width:
+                continue
             until = next((w for u in untils if (w := match(k, u))), 0)
-            if not width or width < until:
+            if width < until:
                 continue
             m = k + width
             end = next((p for p in range(m, n) if p in lead_at), n)
             left = [tokens[x] for x in range(j, k) if x not in consumed]
             if not left or all(x in consumed for x in range(m, end)):
                 continue
-            if until and not reads_date(left):
-                continue
+            if until:
+                right = [tokens[x] for x in range(m, end) if x not in consumed]
+                if (any(match(x, c) for x in (*range(j, k), *range(m, end))
+                        for c in mids + untils)
+                        or any(match(m, b) for b in befores)
+                        or all(t.is_number for t in left + right)
+                        or not reads_date(left)):
+                    continue
             clauses.append(RangeClause(i, j, k, m, end))
     return clauses
 

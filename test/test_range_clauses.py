@@ -68,3 +68,29 @@ def test_a_range_word_is_read_once(lang, text, rule, remainder):
     got = extract_recurrence(text, lang, ANCHOR)
     assert str(got.recurrence) == rule
     assert got.remainder == remainder
+
+
+# The expected values are the base reading of each phrase; the UNTIL dates
+# are the first of the named month or year: "until december" said on
+# 2026-11-22 is 2026-12-01, "until 2030" is 2030-01-01.
+@pytest.mark.parametrize("lang, text, rule, remainder", [
+    ("en", "every day from june to august until december", "FREQ=DAILY;UNTIL=20261201T000000", "from june to august"),
+    ("pt", "todos os dias de junho a agosto até dezembro", "FREQ=DAILY;UNTIL=20261201T000000", "de junho a agosto"),
+    ("es", "cada día de junio a agosto hasta diciembre", "FREQ=DAILY;UNTIL=20261201T000000", "de junio a agosto"),
+    ("fr", "chaque jour de juin à août jusqu'à décembre", "FREQ=DAILY;UNTIL=20261201T000000", "de juin à août"),
+    ("it", "ogni giorno da giugno a agosto fino a dicembre", "FREQ=DAILY;UNTIL=20261201T000000", "da giugno a agosto"),
+    ("ca", "cada dia de juny a agost fins a desembre", "FREQ=DAILY;UNTIL=20261201T000000", "de juny a agost"),
+    ("gl", "cada día de xuño a agosto ata decembro", "FREQ=DAILY;UNTIL=20261201T000000", "de xuño a agosto"),
+    ("en", "every monday from 2027 until 2030", "FREQ=WEEKLY;UNTIL=20300101T000000;BYDAY=MO", "from 2027"),
+    ("de", "jeden Montag von 2027 bis 2030", "FREQ=WEEKLY;UNTIL=20300101T000000;BYDAY=MO", "von 2027"),
+    ("pt", "todas as segundas de 2027 até 2030", "FREQ=WEEKLY;UNTIL=20300101T000000;BYDAY=MO", "de 2027"),
+    ("es", "cada lunes de 2027 hasta 2030", "FREQ=WEEKLY;UNTIL=20300101T000000;BYDAY=MO", "de 2027"),
+    ("fr", "chaque lundi de 2027 jusqu'à 2030", "FREQ=WEEKLY;UNTIL=20300101T000000;BYDAY=MO", "de 2027"),
+    ("nl", "elke maandag van 2027 tot 2030", "FREQ=WEEKLY;UNTIL=20300101T000000;BYDAY=MO", "van 2027"),
+    ("en", "every day from monday until before christmas", "FREQ=DAILY;UNTIL=20261225T000000", "from monday"),
+    ("pt", "todos os meses do dia 3 até à terceira terça-feira do mês", "FREQ=MONTHLY;UNTIL=20261203T000000;BYDAY=3TU", ""),
+])
+def test_an_until_bound_keeps_its_value(lang, text, rule, remainder):
+    got = extract_recurrence(text, lang, ANCHOR)
+    assert str(got.recurrence) == rule
+    assert got.remainder == remainder

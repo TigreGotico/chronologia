@@ -143,6 +143,11 @@ def grid_inputs() -> Set[Tuple[str, str]]:
                 found.add((lang, bound))
                 for weekday in weekdays:
                     found.add((lang, f"{every} {weekday} {bound}"))
+        for bound in (f"{frm} {months[0]} {to} {months[1]} {until} {months[1]}",
+                      f"{frm} 2027 {until} 2030"):
+            found.add((lang, bound))
+            for weekday in weekdays:
+                found.add((lang, f"{every} {weekday} {bound}"))
     return found
 
 
