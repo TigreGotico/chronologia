@@ -1,6 +1,6 @@
 """Cross-view harness: one phrase through the four extractors, two trees compared.
 
-Every sentence of every ``test/nl_corpus_<lang>/`` package, plus generated
+Every phrase-like string of every ``test/nl_corpus_<lang>/`` package, plus generated
 grids of ordinal, impossible-date and bound phrases, runs through
 ``extract_timespan``, ``extract_candidates``, ``extract_recurrence`` and
 ``extract_event`` in default and raise mode at two fixed anchors.  One TSV row
@@ -22,6 +22,7 @@ import ast
 import collections
 import glob
 import os
+import re
 import statistics
 import sys
 from datetime import datetime
@@ -46,7 +47,7 @@ PARTS = {
     "timespan": ("span", "remainder"),
     "candidates": ("candidates",),
     "recurrence": ("rule", "remainder"),
-    "event": ("summary", "span", "duration", "rule"),
+    "event": ("summary", "span", "duration", "rule", "confidence"),
 }
 HEADER = ("lang", "text", "view", "mode", "anchor", "result", "micros")
 
@@ -80,6 +81,10 @@ SPELLED = ("first", "second", "third", "fourth", "fifth", "sixth", "seventh",
            "eighth", "ninth", "tenth")
 
 
+# URLs, printf-style assert messages, "a,b" parametrize headers, snake_case names
+NOT_A_PHRASE = re.compile(r"://|%[rsd]|^\w+(,\w+)+$|^[a-z0-9]+(_[a-z0-9]+)+$")
+
+
 def _ordinal(n: int) -> str:
     suffix = "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
     return f"{n}{suffix}"
@@ -95,12 +100,15 @@ def corpus_inputs() -> Set[Tuple[str, str]]:
                       if isinstance(node, (ast.Module, ast.FunctionDef, ast.ClassDef))
                       and node.body and isinstance(node.body[0], ast.Expr)
                       and isinstance(node.body[0].value, ast.Constant)}
+        fragments = {id(part) for node in ast.walk(tree) if isinstance(node, ast.JoinedStr)
+                     for part in node.values}
         for node in ast.walk(tree):
             if (isinstance(node, ast.Constant) and isinstance(node.value, str)
-                    and id(node) not in docstrings
+                    and id(node) not in docstrings and id(node) not in fragments
                     and 3 <= len(node.value) <= 90
                     and "\n" not in node.value and "\t" not in node.value
-                    and any(ch.isalnum() for ch in node.value)):
+                    and any(ch.isalnum() for ch in node.value)
+                    and not NOT_A_PHRASE.search(node.value)):
                 found.add((lang, node.value))
     return found
 
@@ -145,7 +153,7 @@ def span_text(span) -> str:
 def normalise(view: str, result) -> str:
     """One line per result; fields in PARTS order joined by ' | '."""
     if view == "candidates":
-        return " ; ".join(f"{span_text(c.span)} | {c.remainder} | {c.construction}"
+        return " ; ".join(f"{span_text(c.span)} | {c.remainder} | {c.construction} | {c.confidence:.4f}"
                           for c in result) or "[]"
     if result is None:
         return "none"
@@ -154,7 +162,7 @@ def normalise(view: str, result) -> str:
     if view == "recurrence":
         return f"{result.recurrence} | {result.remainder}"
     return " | ".join((result.summary, span_text(result.span), str(result.duration),
-                       str(result.recurrence)))
+                       str(result.recurrence), f"{result.confidence:.4f}"))
 
 
 def call(view: str, text: str, lang: str, anchor: datetime, mode: str) -> Tuple[str, int]:
@@ -162,7 +170,7 @@ def call(view: str, text: str, lang: str, anchor: datetime, mode: str) -> Tuple[
     try:
         out = normalise(view, VIEWS[view](text, lang, anchor, impossible=mode))
     except ImpossibleDateError as err:
-        out = f"raise {err.reason}"
+        out = f"raise {err.reason} | {err.lang} | {err.text}"
     except Exception as err:
         out = f"error {type(err).__name__} {err}"
     return out.replace("\t", " ").replace("\n", " "), (perf_counter_ns() - start) // 1000
@@ -228,18 +236,26 @@ def timing(rows: List[Row]) -> Dict[str, List[int]]:
 
 
 def diff(base: List[Row], head: List[Row], limit: int) -> int:
+    """Print the comparison; return how many rows changed, are missing or are duplicated."""
     before = {row[:5]: row[5] for row in base}
     after = {row[:5]: row[5] for row in head}
-    print(f"{len(before)} in, {len(after)} out")
-    only_base, only_head = before.keys() - after.keys(), after.keys() - before.keys()
-    if only_base or only_head:
-        print(f"{len(only_base)} rows only in base, {len(only_head)} only in head")
+    print(f"{len(base)} in, {len(head)} out")
+    duplicates = (len(base) - len(before)) + (len(head) - len(after))
+    if duplicates:
+        print(f"{len(base) - len(before)} duplicate keys in base, {len(head) - len(after)} in head")
+    only_base, only_head = sorted(before.keys() - after.keys()), sorted(after.keys() - before.keys())
+    for name, keys in (("base", only_base), ("head", only_head)):
+        if keys:
+            print(f"{len(keys)} rows only in {name}")
+            for key in keys[:limit or None]:
+                print(f"  {key}")
     changed = collections.defaultdict(list)
     for key in sorted(before.keys() & after.keys()):
         if before[key] != after[key]:
             view = key[2]
             changed[(view, key[3], change_class(view, before[key], after[key]))].append(key)
-    print(f"{sum(map(len, changed.values()))} changed rows")
+    total = sum(map(len, changed.values()))
+    print(f"{total} changed rows")
     for (view, mode, cls), keys in sorted(changed.items()):
         print(f"\n{view} {mode} {cls}: {len(keys)}")
         for key in keys[:limit or None]:
@@ -250,7 +266,7 @@ def diff(base: List[Row], head: List[Row], limit: int) -> int:
         if view in base_times and view in head_times:
             print(f"  {view:<11} base {statistics.median(base_times[view]):.0f} / {percentile(base_times[view], .95)}"
                   f"   head {statistics.median(head_times[view]):.0f} / {percentile(head_times[view], .95)}")
-    return sum(map(len, changed.values()))
+    return total + len(only_base) + len(only_head) + duplicates
 
 
 def words(text: str) -> Set[str]:
@@ -334,7 +350,7 @@ def main(argv=None) -> None:
         write_rows(args.out, run(mine))
         print(f"{len(mine)} inputs, {len(mine) * len(ANCHORS) * len(VIEWS) * len(MODES)} rows -> {args.out}")
     elif args.command == "diff":
-        diff(read_rows(args.base), read_rows(args.head), args.limit)
+        sys.exit(1 if diff(read_rows(args.base), read_rows(args.head), args.limit) else 0)
     else:
         report(disagreements(read_rows(args.tsv)), args.limit)
 

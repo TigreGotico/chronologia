@@ -6,7 +6,8 @@ from benchmark.crossview import (ANCHORS, SEEDS, VIEWS, MODES, diff, disagreemen
 
 INPUTS = set(SEEDS) | {("en", "tomorrow"), ("en", "every friday"),
                        ("en", "the 30th of february"), ("en", "next friday"),
-                       ("en", "in 2024"), ("en", "last summer"), ("en", "no date here"),
+                       ("en", "every easter"), ("en", "no date here"),
+                       ("en", "lunch every friday at noon for 2 hours"),
                        ("en", "monday to friday")}
 WHEN = "2026-11-22T09:00"
 
@@ -23,7 +24,15 @@ def test_exact_normalised_values(rows):
     assert got[("en", "every friday", "recurrence", "none", WHEN)] == \
         "FREQ=WEEKLY;BYDAY=FR | "
     assert got[("en", "the 30th of february", "event", "raise", WHEN)] == \
-        "raise February has no 30th"
+        "raise February has no 30th | en | the 30th of february"
+    assert got[("en", "next friday", "candidates", "none", WHEN)] == \
+        ("2026-11-27T00:00:00/2026-11-28T00:00:00 exact |  | weekday_ref | 0.8833 ; "
+         "2026-11-27T00:00:00/2026-11-28T00:00:00 exact | next | weekday_ref | 0.4417")
+    assert got[("en", "lunch every friday at noon for 2 hours", "event", "none", WHEN)] == \
+        ("lunch | 2026-11-27T12:00:00/2026-11-27T14:00:00 exact | 2:00:00 | "
+         "FREQ=WEEKLY;BYDAY=FR;BYHOUR=12 | 1.0000")
+    assert got[("en", "every easter", "recurrence", "none", WHEN)].startswith(
+        "error ValueError holiday recurrence 'easter' is a movable feast with no RFC 5545 RRULE")
     assert got[("en", "the 30th of february", "event", "none", WHEN)] == "none"
 
 
@@ -36,6 +45,17 @@ def test_seeded_rows_are_reported_as_disagreements(rows):
     found = disagreements([row for row in rows if (row[0], row[1]) in SEEDS])
     listed = {text for keys in found.values() for _, text, _ in keys}
     assert listed == {text for _, text in SEEDS}
+
+
+def test_diff_reports_duplicate_and_missing_rows(rows, capsys):
+    assert diff(rows, rows + rows[:1], 5) == 1
+    out = capsys.readouterr().out
+    assert f"{len(rows)} in, {len(rows) + 1} out" in out
+    assert "0 duplicate keys in base, 1 in head" in out
+    assert diff(rows, rows[1:], 5) == 1
+    out = capsys.readouterr().out
+    assert f"{len(rows)} in, {len(rows) - 1} out" in out
+    assert "1 rows only in base" in out
 
 
 def test_diff_counts_and_classes(rows, tmp_path, capsys):
