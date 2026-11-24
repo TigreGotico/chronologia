@@ -822,14 +822,10 @@ this paragraph changes when the ruling lands.
 
 ### Where a reading sits in the text
 
-`extract_candidates` lists the readings, ranked, and `extract_timespan` returns
-the first one. A caller that needs to know where in the text that reading sits
-reads `char_span` from the first candidate, `extract_candidates(...)[0].char_span`.
-`extract_timespan` still returns the two values `(span, remainder)`.
-
-`char_span` is a pair `(start, end)`. It counts characters in the string you
-passed, before any normalisation, and it is half-open: `text[start:end]` is the
-phrase the reading consumed.
+Each candidate carries `char_span`, a pair `(start, end)`. It counts characters
+in the string you passed, before any normalisation, and it is half-open:
+`text[start:end]` is the phrase that candidate consumed. The candidates are
+ranked, and each one has its own span.
 
 ```python
 text = "call me tomorrow at 3 pm please"
@@ -843,12 +839,31 @@ print(repr(top.remainder))
 # 'call me please'
 ```
 
-The span runs from the first character the reading consumed to the last one.
+The span runs from the first character the candidate consumed to the last one.
 When the consumed words are not next to each other, the words between them are
 inside the span and also in `remainder`. A range includes its lead word and its
-connector ("from june 5th to june 12th" is `(0, 26)`). A word that the language
-leaves outside the range stays out of the span. `char_span` is `None` only when
-no consumed word has a position in the text.
+connector ("from june 5th to june 12th" is `(0, 26)`). A word that the engine
+leaves unconsumed stays out of the span. `char_span` is `None` only when no
+consumed word has a position in the text.
+
+`extract_timespan` returns `(span, remainder)` and no position. Its answer can
+differ from `extract_candidates(...)[0]`. A length after a clock extends the
+answer, so the span in `char_span` of the first candidate covers less than the
+answer does:
+
+```python
+text = "Besprechung um 15:15 für 45 Minuten"
+span, remainder = extract_timespan(text, "de", datetime(2017, 6, 27, 13, 4))
+print(span.start_datetime, span.end_datetime, repr(remainder))
+# 2017-06-27 15:15:00 2017-06-27 16:00:00 'Besprechung'
+top = extract_candidates(text, "de", datetime(2017, 6, 27, 13, 4))[0]
+print(top.construction, top.span.end_datetime, top.char_span)
+# clock_time 2017-06-27 15:16:00 (15, 20)
+```
+
+Here the answer runs to 16:00 and covers "um 15:15 für 45 Minuten". The first
+candidate is the clock alone, `text[15:20]`, which is "15:15". Take the
+position from the candidate whose `span` is the one you use.
 
 ### What the score is made of
 
@@ -885,8 +900,6 @@ signal drags the whole score down the way a weak link should, and every input
 has a clear unit-interval reading.
 
 ### What confidence is **not**
-
-`confidence` ranks candidates and is not a probability. Consumers should pick by rank, or by the documented decline cases, not by a fixed threshold.
 
 It is **not a probability**. It does not estimate "the chance this parse is
 correct" and the numbers do not sum to one across candidates. It is a *relative

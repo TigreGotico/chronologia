@@ -54,6 +54,79 @@ def test_top_candidate_char_span(lang, text, char_span, words):
     assert text[slice(*top.char_span)] == words
 
 
+# Each phrase has the word "ok" after it, and before it where the reading
+# allows a leading word (an open range needs its marker first), so an offset
+# one short or one long lands on a space or on part of "ok".
+BRANCH_CASES = [
+    # postposed range marker
+    ("tr", "ok 5 ile 12 Haziran arasında ok", (3, 28), "5 ile 12 Haziran arasında"),
+    ("hu", "ok június 5 és június 12 között ok", (3, 31), "június 5 és június 12 között"),
+    ("fi", "ok 5. ja 12. kesäkuuta välillä ok", (3, 30), "5. ja 12. kesäkuuta välillä"),
+    # "since A until B"
+    ("en", "ok since monday until friday ok", (3, 28), "since monday until friday"),
+    ("en", "since monday until now", (0, 22), "since monday until now"),
+    ("en", "ok since christmas until new year ok", (3, 33), "since christmas until new year"),
+    # clock ranges, with and without a borrowed meridiem
+    ("en", "ok between 3 and 5 pm ok", (3, 21), "between 3 and 5 pm"),
+    ("en", "ok 10 pm to 2 am ok", (3, 16), "10 pm to 2 am"),
+    ("en", "ok from 9 to 5 pm ok", (3, 17), "from 9 to 5 pm"),
+    # "now", "new year" and bare weekdays as range ends.  These read only
+    # when the endpoint slice is the word alone, so no "ok" beside them.
+    ("en", "from now to friday", (0, 18), "from now to friday"),
+    ("en", "now to friday", (0, 13), "now to friday"),
+    ("en", "from june 5th to now", (0, 20), "from june 5th to now"),
+    ("en", "from christmas to new year", (0, 26), "from christmas to new year"),
+    ("en", "from friday to new year", (0, 23), "from friday to new year"),
+    ("en", "monday to friday", (0, 16), "monday to friday"),
+    ("en", "from monday to friday", (0, 21), "from monday to friday"),
+    ("en", "friday to monday", (0, 16), "friday to monday"),
+    # a bare hour that takes its meridiem from the other end
+    ("en", "3 to 5 pm", (0, 9), "3 to 5 pm"),
+    # open ranges: the marker and every kind of "since" endpoint
+    ("en", "until new year ok", (0, 14), "until new year"),
+    ("en", "since monday", (0, 12), "since monday"),
+    ("en", "since christmas ok", (0, 15), "since christmas"),
+    ("en", "since march ok", (0, 11), "since march"),
+    ("en", "since yesterday ok", (0, 15), "since yesterday"),
+    ("en", "since noon ok", (0, 10), "since noon"),
+    ("en", "since the first tuesday of the month ok", (0, 36),
+     "since the first tuesday of the month"),
+    ("en", "since the 3rd of the month ok", (0, 26), "since the 3rd of the month"),
+]
+
+
+@pytest.mark.parametrize("lang,text,char_span,words", BRANCH_CASES)
+def test_range_branch_char_span(lang, text, char_span, words):
+    top = extract_candidates(text, lang, ANCHOR)[0]
+    assert top.char_span == char_span
+    assert text[slice(*top.char_span)] == words
+
+
+@pytest.mark.parametrize("lang,text,char_span,words", [
+    ("en", "please 5-12 June", (7, 16), "5-12 June"),
+    ("en", "meet me 5-12 June ok", (8, 17), "5-12 June"),
+    ("en", "June 5 to 12 yy", (0, 12), "June 5 to 12"),
+    ("en", "please the 5th to the 12th of June ok", (7, 34), "the 5th to the 12th of June"),
+    ("de", "xx 3. bis 10. Juli", (3, 18), "3. bis 10. Juli"),
+])
+def test_range_naming_the_month_once_leaves_unrelated_words_out(
+        lang, text, char_span, words):
+    top = extract_candidates(text, lang, ANCHOR)[0]
+    assert top.char_span == char_span
+    assert text[slice(*top.char_span)] == words
+
+
+def test_range_lead_is_in_the_span_only_when_the_reading_consumes_it():
+    # "du" opens the range at the start of the text.  After another word the
+    # reading leaves it unconsumed, so it is in the remainder and out of the span.
+    lead = extract_candidates("du 10h au 12h", "fr", ANCHOR)[0]
+    assert lead.char_span == (0, 13)
+    assert lead.remainder == ""
+    after = extract_candidates("xx du 10h au 12h", "fr", ANCHOR)[0]
+    assert after.char_span == (6, 16)
+    assert after.remainder == "xx du"
+
+
 def test_unconsumed_words_between_the_ends_stay_inside_the_span():
     # "frobnitz of" is no part of the reading: it is in the remainder, and the
     # span still runs from the first consumed character to the last.

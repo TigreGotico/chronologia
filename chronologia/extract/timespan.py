@@ -680,17 +680,32 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         return lambda bound: _monthly_start(text, sub, engine, anchor, bound,
                                             found)
 
-    def borrowed(sub, own):
+    glue = set(spec.connectors.get("article", ())) \
+        | set(spec.connectors.get("day_label", ()))
+
+    def bare_day_extent(own):
+        # the day numeral of a bare endpoint, a suffix written onto it ("5th")
+        # and the article or day label right before it; any other word of the
+        # slice is not part of the reading
+        lo = hi = next(i for i, t in enumerate(own)
+                       if t.is_number and t.value is not None)
+        while lo and own[lo - 1].text in glue:
+            lo -= 1
+        while hi + 1 < len(own) and own[hi + 1].char_start == own[hi].char_end:
+            hi += 1
+        return consumed_extent(own[lo:hi + 1])
+
+    def borrowed(sub, own=None):
         # a slice carrying tokens lent by the other endpoint; resolved through
         # the synthetic-token path so the lent words, which have no extent of
-        # their own here, cannot surface in this endpoint's remainder.  With
-        # nothing left over the endpoint consumed all of its own words, which
-        # the lent tokens hide from the extent of the variant reading.
+        # their own here, cannot surface in this endpoint's remainder.  Given
+        # ``own``, the slice is a bare day read through the other endpoint's
+        # month: the lent words hide its own words from the variant reading.
         got = _range_endpoint(text, sub, engine, anchor,
                               resolve=_variant_endpoint, scale_mode=scale_mode)
-        if got is None or got[1]:
+        if got is None or own is None:
             return got
-        return got[:4] + (consumed_extent(own),)
+        return got[:4] + (bare_day_extent(own),)
 
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
@@ -1470,14 +1485,14 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             and left is not None and left[2] == "dated" and not shared_left:
         lent = _lend_year(left_tok, right_tok)
         if lent is not None:
-            new_left = borrowed(lent, left_tok)
+            new_left = borrowed(lent)
             if new_left is not None:
                 left, left_lent = new_left, True
     elif left_year is not None and right_year is None \
             and right is not None and right[2] == "dated" and not shared_right:
         lent = _lend_year(right_tok, left_tok)
         if lent is not None:
-            new_right = borrowed(lent, right_tok)
+            new_right = borrowed(lent)
             if new_right is not None:
                 right, right_lent = new_right, True
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
