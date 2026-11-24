@@ -358,12 +358,17 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         return (after in spec.dayparts
                 or (count_at > 0 and _unit_of(tokens[count_at - 1]) == "hour"))
 
+    clock_spans = None
+
     def _clock_reads(count_at, unit_at):
         # a clock whose preposition precedes the count and which ends after
         # the unit noun: "om 8 uur", "à 8 heures"
-        return any(m.construction == "clock_time" and m.span[0] < count_at
-                   and unit_at < m.span[1]
-                   for m in engine.matcher.match(tokens, None))
+        nonlocal clock_spans
+        if clock_spans is None:
+            clock_spans = [m.span for m in engine.matcher.match(tokens, None)
+                           if m.construction == "clock_time"]
+        return any(start < count_at and unit_at < end
+                   for start, end in clock_spans)
 
     def _add(kind, count):
         nonlocal total, months
