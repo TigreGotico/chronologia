@@ -2,181 +2,134 @@
 
 <!-- agent-hint
 covers: where each construction of the Catalan locale comes from, what it refuses and which questions a native speaker would settle
-source: `chronologia/locale/ca/lang.json`, `chronologia/locale/ca/*.voc`, `chronologia/extract/numlayer.py:NUMTAG_LANGS`
+source: chronologia/locale/ca/lang.json, chronologia/locale/ca/*.voc, chronologia/extract/numlayer.py:NUMTAG_LANGS, test/nl_corpus_ca/, test/test_xfail_open_issues_*.py
 generated: no
-verify: python -m doctest docs/languages/ca.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/ca.md 'un quart i mig de nou@08:22'
-see: `docs/languages/index.md`, `docs/extraction.md`
+verify: .venv/bin/python -m doctest docs/languages/ca.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/ca.md 'un quart i mig de nou@08:22'
+see: docs/languages/index.md, docs/extraction.md
 -->
 
 This page records where each construction of the Catalan (`ca`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
 
-The thing to know before anything else is that Catalan counts quarter hours
-toward the hour that is coming, not away from the hour that has passed.
-`dos quarts de nou` is 08:30, not 09:30 and not 08:15: it is the second of the
-four quarters leading up to nine. `un quart de nou` is 08:15 and `tres quarts
-de nou` is 08:45. The vocabulary gives this its own slot, `marker_quarters`,
-holding `quart` and `quarts`, and the clock grammar leads with a dedicated
-order — `QUARTS quarters of HOUR` — so the count is read before the hour it
-counts toward. No other locale in the library ships a `marker_quarters` file;
-the construction has no equivalent to borrow from, and the reading survives a
-day-part frame, so `dos quarts de nou del vespre` is 20:30.
+Know this first. Catalan counts quarter hours toward the hour that is coming, not away from the hour that has passed.
 
-The second thing is `de la nit`. It is not a uniform twelve-hour shift but a
-band that crosses midnight: `les deu de la nit` is 22:00, `la una de la nit`
-is 01:00, and `les dotze de la nit` is midnight. The small hours one to five
-stay AM, the evening hours six to eleven are PM, and twelve is midnight. The
-AM ceiling follows the `matinada` band, and the colloquial reading is cited in
-the vocabulary to the Institut d'Estudis Catalans' *Diccionari de la llengua
-catalana* (DIEC2) under *nit*.
+`dos quarts de nou` is 08:30, not 09:30 and not 08:15. It is the second of the four quarters leading up to nine. `un quart de nou` is 08:15 and `tres quarts de nou` is 08:45. The vocabulary gives this its own slot, `marker_quarters`, holding `quart` and `quarts`. The clock grammar leads with a dedicated order (`QUARTS quarters of HOUR`) so the count is read before the hour it counts toward. No other locale in the library ships a `marker_quarters` file. The construction has no equivalent to borrow from, and the reading survives a day-part frame, so `dos quarts de nou del vespre` is 20:30.
+
+The second thing is `de la nit`. It is not a uniform twelve-hour shift but a band that crosses midnight: `les deu de la nit` is 22:00, `la una de la nit` is 01:00, and `les dotze de la nit` is midnight. The small hours one to five stay AM, the evening hours six to eleven are PM, and twelve is midnight. The AM ceiling follows the `matinada` band. The colloquial reading is cited in the vocabulary to the Institut d'Estudis Catalans' *Diccionari de la llengua catalana* (DIEC2) under *nit*.
+
+## Try it
+
+To read a phrase, call `extract_timespan` with the phrase, the locale code and an anchor datetime. It returns the span that the phrase names and the text that it left unread.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> span, rest = extract_timespan('dos quarts de nou', "ca", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:30:00', '')
 
 ## What ships
 
-**Weekdays and months** ship wide and abbreviated, and the two-letter weekday
-abbreviations `dl dt dc dj dv ds dg` ship as their own vocabulary. Neither
-group records a source.
+**Weekdays and months** ship wide and abbreviated, and the two-letter weekday abbreviations `dl dt dc dj dv ds dg` ship as their own vocabulary. Neither group records a source.
 
-**The date line** is `el 3 d'octubre de 1990`, little-endian, with the article
-optional and `de` between the parts. The article is optional inside the date
-grammar itself rather than being stripped beforehand, which is what lets `el 3
-d'octubre` and `3 d'octubre` both come back clean. The slashed numeric form
-reads; the dotted one does not.
+**The date line** is `el 3 d'octubre de 1990`, little-endian, with the article optional and `de` between the parts. The article is optional inside the date grammar itself rather than being stripped beforehand, which is what lets `el 3 d'octubre` and `3 d'octubre` both come back clean. The slashed numeric form reads. The dotted one does not.
 
-**Relative offsets** are `dins`, `dintre` and `en` forward and `fa` backward,
-with `enrere` and `endarrere` as trailing past markers, and the grammar takes
-both the marker-first and the count-first order.
+**Relative offsets** are `dins`, `dintre` and `en` forward and `fa` backward, with `enrere` and `endarrere` as trailing past markers. The grammar takes both the marker-first and the count-first order.
 
-**The relative determiners** follow the noun — `el dilluns passat`, `la
-setmana que ve`, `el dilluns vinent` — which is why the locale sets
-`marker_position: post`.
+**The relative determiners** follow the noun (`el dilluns passat`, `la setmana que ve`, `el dilluns vinent`) which is why the locale sets `marker_position: post`.
 
-**Ranges** carry the fullest citation record in the locale. The `from` lead is
-`de`, `des de`, `del` or `a partir de` and the `to` boundary is `a`, `fins a`,
-`fins` or `al`, each attributed in the vocabulary to a specific IEC work: `de`
-and `a` as correlative point-of-departure and point-of-arrival prepositions in
-DIEC2, `fins` as a limit of time in DIEC2 and in the *Gramàtica essencial de
-la llengua catalana* (GEIEC), `a partir de` to Optimot, and the obligatory
-contractions `del` and `al` to the IEC *Gramàtica de la llengua catalana*,
-section 16.3. The from-lead matters structurally: `a` is a hyper-common
-preposition, so a bare `A a B` is only trusted as a range when a from-lead is
-present. `entre … i …` is the other frame, cited to DIEC2 under *entre*.
+**Ranges** carry the fullest citation record in the locale. The `from` lead is `de`, `des de`, `del` or `a partir de` and the `to` boundary is `a`, `fins a`, `fins` or `al`. The vocabulary attributes each one to a specific IEC work. `de` and `a` are correlative point-of-departure and point-of-arrival prepositions in DIEC2. `fins` is a limit of time in DIEC2 and in the *Gramàtica essencial de la llengua catalana* (GEIEC). `a partir de` goes to Optimot. The obligatory contractions `del` and `al` to the IEC *Gramàtica de la llengua catalana*, section 16.3. The from-lead matters structurally: `a` is a hyper-common preposition. A bare `A a B` is only trusted as a range when a from-lead is present. `entre … i …` is the other frame, cited to DIEC2 under *entre*.
 
-**The clock** subtracts with `menys` — `les quatre menys quart` is 03:45 —
-and adds with `i`: `les vuit i mitja`, `les vuit i quart`. `migdia` and
-`mitjanit` are points.
+**The clock** subtracts with `menys` (`les quatre menys quart` is 03:45) and adds with `i`: `les vuit i mitja`, `les vuit i quart`. `migdia` and `mitjanit` are points.
 
-**Day parts** are six bands, more than any locale but Tamil and matched only
-by German, taken from the Unicode CLDR 47 day-period chart for `ca` and
-transcribed in `chronologia/dayparts.py`. The `matinada` is `[00:00, 06:00)`,
-the `matí`
-`[06:00, 12:00)`, the `migdia` an hour of its own at `[12:00, 13:00)`, the
-`tarda` `[13:00, 19:00)`, the `vespre` `[19:00, 21:00)` and the `nit`
-`[21:00, 24:00)`. Two of those cuts are worth naming. Catalan opens the
-afternoon at 13:00, after an hour-wide noon; only German and Galician carve a
-noon band the same way, and Spanish runs its `tarde` straight from twelve.
-And Catalan holds the evening open until 21:00 before the night starts — among
-the locales whose last band runs to midnight, only Galician and Basque start
-it as late. The `vespre` is what makes room for that: the *Gran diccionari de
-la llengua catalana* defines it as the "primeres hores de la nit", the early
-evening that Spanish has no separate word for.
+**Day parts** are six bands, more than any locale but Tamil, and German matches that count. The bands come from the Unicode CLDR 47 day-period chart for `ca`, transcribed in `chronologia/dayparts.py`. The `matinada` is `[00:00, 06:00)`, the `matí` `[06:00, 12:00)`, the `migdia` an hour of its own at `[12:00, 13:00)`, the `tarda` `[13:00, 19:00)`, the `vespre` `[19:00, 21:00)` and the `nit` `[21:00, 24:00)`. Two of those cuts are worth naming. Catalan opens the afternoon at 13:00, after an hour-wide noon.
 
-The `migdia` band ships no day-part vocabulary of its own, so `al migdia`
-reaches you as the noon clock landmark, 12:00, rather than as the hour-wide
-span.
+Only German and Galician carve a noon band the same way, and Spanish runs its `tarde` straight from twelve. Catalan holds the evening open until 21:00 before the night starts. Among the locales whose last band runs to midnight, only Galician and Basque start it as late. The `vespre` makes room for that. The *Gran diccionari de la llengua catalana* defines it as the "primeres hores de la nit". That is the early evening, and Spanish has no separate word for it.
 
-**Fuzzy month parts** are `principis de`, `mitjan` and `finals de`, cutting
-the month into thirds.
+The `migdia` band ships no day-part vocabulary of its own, so `al migdia` reaches you as the noon clock landmark, 12:00, rather than as the hour-wide span.
 
-**Quarters, ISO weeks, decades and eras.** `el primer trimestre de 2020`,
-`setmana 12`, `els anys 80`, `els anys vuitanta`, `44 aC` and `1990 dC` all
-resolve, and a before-present marker ships. `la primera meitat de 2020` reads
-as the first half-year, with `meitat` cited to DIEC2. The plural year noun
-`anys` is kept in its own file away from the singular `any`, because the
-*Gran diccionari* glosses `els anys vint` as the decade while `l'any 1931`
-names a single year — separating them makes the wrong reading unreachable
-rather than merely guarded against.
+**Fuzzy month parts** are `principis de`, `mitjan` and `finals de`, cutting the month into thirds.
 
-**Holidays** resolve: `Nadal` comes back as 25 December, by way of the
-Andorran civil-holiday table, Catalan being Andorra's official language.
+**Quarters, ISO weeks, decades and eras.** `el primer trimestre de 2020`, `setmana 12`, `els anys 80`, `els anys vuitanta`, `44 aC` and `1990 dC` all resolve. A before-present marker ships. `la primera meitat de 2020` reads as the first half-year, with `meitat` cited to DIEC2. The plural year noun `anys` has its own file, apart from the singular `any`, because the *Gran diccionari* glosses `els anys vint` as the decade, while `l'any 1931` names a single year. With two files, the wrong reading cannot bind.
 
-**The Roman calendar anchors** ship in their Catalan vernacular forms
-`calendes`, `nones` and `ides`, cited to the Catalan Wikipedia article
-*Calendari romà*.
+**Holidays** resolve: `Nadal` comes back as 25 December, by way of the Andorran civil-holiday table, Catalan being Andorra's official language.
 
-**Habitual recurrence** is `cada dilluns` or `tots els dilluns`. Answered as a
-recurrence, these are the repeating Mondays; asked for a span, they come back
-as the next Monday with the quantifier left in the remainder.
+**The Roman calendar anchors** ship in their Catalan vernacular forms `calendes`, `nones` and `ides`, cited to the Catalan Wikipedia article *Calendari romà*.
+
+**Habitual recurrence** is `cada dilluns` or `tots els dilluns`. Answered as a recurrence, these are the repeating Mondays, asked for a span. They come back as the next Monday with the quantifier left in the remainder.
 
 ## Weaker provenance
 
-The weekday and month names carry no recorded source, and neither do the
-seasons. The locale sets `hemisphere` to null, so a season never resolves to a
-southern-hemisphere reading.
+The weekday and month names carry no recorded source, and neither do the seasons. The locale sets `hemisphere` to null, so a season never resolves to a southern-hemisphere reading.
 
-The Roman calendar anchors rest on a Wikipedia article, weaker than the IEC
-works the rest of the locale is built on.
+The Roman calendar anchors rest on a Wikipedia article, weaker than the IEC works the rest of the locale is built on.
 
-The DIEC2 citations name entries on a site that serves its dictionary bodies
-from a script rather than in the page, so the entries are not quoted as
-written text. Where the same words appear in the *Gran diccionari de la
-llengua catalana*, that dictionary corroborates them: *entre* is glossed there
-as "en el temps que separa dos moments, dos esdeveniments" and *meitat* as
-"cadascuna de les dues parts iguals … en què és dividit un tot". The Optimot
-and *Gramàtica de la llengua catalana* locators are named on trust and are
-listed here as unchecked.
+The DIEC2 citations name entries on a site that serves its dictionary bodies from a script rather than in the page. The entries are not quoted as written text. Where the same words appear in the *Gran diccionari de la llengua catalana*. That dictionary corroborates them.
+
+It glosses *entre* as "en el temps que separa dos moments, dos esdeveniments". It glosses *meitat* as "cadascuna de les dues parts iguals … en què és dividit un tot". The Optimot and *Gramàtica de la llengua catalana* locators are named on trust and are listed here as unchecked.
 
 ## What refuses
 
-**The dotted date.** `15.06.2020` returns nothing and does not fall back to
-reading 2020 as a lone year. Catalan writes the numeric date with slashes.
+**The dotted date.** `15.06.2020` returns nothing and does not fall back to reading 2020 as a lone year. Catalan writes the numeric date with slashes.
 
-**A bare duration.** `quinze dies` returns nothing. A fortnight unit ships,
-but a quantity with no direction marker is still only a quantity.
+**A bare duration.** `quinze dies` returns nothing. A fortnight unit ships, but a quantity with no direction marker is still only a quantity.
 
-**Half a unit.** `fa mitja hora` returns nothing. `mitja` and `mig` are
-declared as the half quantifier, but the relative-offset grammar has no
-quantifier slot for them to fill, so only a bare numeral opens an offset.
+**Half a unit.** `fa mitja hora` returns nothing. `mitja` and `mig` are declared as the half quantifier. But the relative-offset grammar has no quantifier slot for them to fill. Only a bare numeral opens an offset.
 
 **Roman-numeral centuries.** `el segle XX` returns nothing.
 
-**Weekday abbreviations on their own.** `dj` returns nothing; the
-abbreviations are only reachable inside a larger date.
+**Weekday abbreviations on their own.** `dj` returns nothing. The abbreviations are only reachable inside a larger date.
 
 ## Known defects
 
-These are wrong answers, not refusals, and each is reproduced with
-`extract_timespan(text, "ca", anchor=datetime(2017, 6, 27, 13, 4))`.
+These are wrong answers, not refusals, and each is reproduced with `extract_timespan(text, "ca", anchor=datetime(2017, 6, 27, 13, 4))`.
 
-`el darrer dilluns d'octubre` comes back as the whole of October with `el
-darrer d` stranded, instead of 30 October. `marker_ordlast` holds only
-`últim`, `última`, `ultim` and `ultima`; `darrer` is missing from it, and the
-parse degrades to the bare month rather than failing. `l'últim dia de març`
-resolves correctly, and the Occitan locale gets the same sentence right.
+`el darrer dilluns d'octubre` comes back as the whole of October with `el darrer d` stranded, instead of 30 October. `marker_ordlast` holds only `últim`, `última`, `ultim` and `ultima`. `darrer` is missing from it. The parse degrades to the bare month rather than failing. `l'últim dia de març` resolves correctly. The Occitan locale gets the same sentence right.
 
-`idus de març` comes back as the whole of March with `idus de` stranded. The
-Catalan Wikipedia article the anchors are cited to gives the day as "Idus o
-Ides" and only `ides` ships, so `ides de març` is correct at 15 March while
-its equally attested twin silently widens to the month.
+`idus de març` comes back as the whole of March with `idus de` stranded. The Catalan Wikipedia article that the anchors cite gives the day as "Idus o Ides". Only `ides` ships. `ides de març` is correct at 15 March while its equally attested twin silently widens to the month.
 
-`el 1r de gener` comes back as the whole of January with `el 1r de` stranded,
-where `el primer de gener` resolves to 1 January. The ordinal suffix `r` is
-declared, but the abbreviated ordinal does not reach the day slot.
+`el 1r de gener` comes back as the whole of January with `el 1r de` stranded, where `el primer de gener` resolves to 1 January. The ordinal suffix `r` is declared, but the abbreviated ordinal does not reach the day slot.
 
-`fins al 12 de juny` and `abans del 5 de juny` push their bound into 2018
-while the other end stays at the anchor, producing a span nearly a year long.
-The future preference is applied to the bound in isolation rather than
-relative to the open end.
+`fins al 12 de juny` and `abans del 5 de juny` push their bound into 2018 while the other end stays at the anchor, producing a span nearly a year long. The future preference is applied to the bound in isolation rather than relative to the open end.
 
 ## Open questions for a native speaker
 
-1. Where does `de la nit` stop being AM? The ceiling follows the `matinada`
-   band at five, but `les cinc del matí` and `les cinc de la matinada` are
-   both ordinary Catalan.
-2. Should `dos quarts` accept a bare `quarts de nou` without a count, and is
-   the half-quarter (`un quart i mig de nou`, 08:22 or 08:23) worth reading?
-3. Is `darrer` in `el darrer dilluns d'octubre` the ordinary written form, or
-   is `últim` the one to prefer once both are accepted?
-4. Does the `migdia` band want a day-part surface of its own, so that `al
-   migdia` names the hour rather than the point?
+1. Where does `de la nit` stop being AM? The ceiling follows the `matinada` band at five, but `les cinc del matí` and `les cinc de la matinada` are both ordinary Catalan.
+2. Should `dos quarts` accept a bare `quarts de nou` without a count, and is the half-quarter (`un quart i mig de nou`, 08:22 or 08:23) worth reading?
+3. Is `darrer` in `el darrer dilluns d'octubre` the ordinary written form, or is `últim` the one to prefer once both are accepted?
+4. Does the `migdia` band want a day-part surface of its own, so that `al migdia` names the hour rather than the point?
+
+## Known limits
+
+Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+
+- [#1005](https://github.com/TigreGotico/chronologia/issues/1005): The last weekday of a month gives the whole month or the weekday alone: ca, an, fa, kab
+
+- [#1009](https://github.com/TigreGotico/chronologia/issues/1009): A plural, adverbial or recurring part of the day is not read, so the next hour reads in the evening
+
+- [#1011](https://github.com/TigreGotico/chronologia/issues/1011): An approximate clock (es-CO tipo, gl sobre, ca cap a) is not read
+
+- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+
+- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+
+- [#1060](https://github.com/TigreGotico/chronologia/issues/1060): pt, nl, it, ca: a clock preposition, a count of hours, a part of the day and a date word leave the part of the day in the event summary ("às duas horas à tarde amanhã")
+
+- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+
+- [#1199](https://github.com/TigreGotico/chronologia/issues/1199): es, gl, ca: a count later in the sentence drops the clock ("mañana a las 3 de la tarde compra las 3 cosas" gives 00:00)
+
+- [#1225](https://github.com/TigreGotico/chronologia/issues/1225): Catalan range with the lead "des del" reads the wrong span
+
+- [#1229](https://github.com/TigreGotico/chronologia/issues/1229): es, gl, it, ca: a day-labelled range start next to a clock with a day part reads as an hour
+
+- [#1230](https://github.com/TigreGotico/chronologia/issues/1230): gl, ca, pt: a day range with a relative-month end reads as the whole month
+
+- [#1254](https://github.com/TigreGotico/chronologia/issues/1254): A bare clock with a zone skips the 12-hour rule ("9:30 utc" reads tomorrow 09:30)
+
+- [#1300](https://github.com/TigreGotico/chronologia/issues/1300): ca, ast: a clock with a fraction before "del dia 14 de març" reads only the hour, today
+
+- [#1306](https://github.com/TigreGotico/chronologia/issues/1306): es, pt, de, nl, ca: the indefinite article in "un día de marzo" reads as "the 1st day of march"
+
+- [#1310](https://github.com/TigreGotico/chronologia/issues/1310): Working-day and day-of-month recurrence heads read as every day: "cada dia útil", "día laborable", "cada dia 15"
 
 ## Checked examples
 

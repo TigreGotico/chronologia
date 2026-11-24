@@ -2,140 +2,81 @@
 
 <!-- agent-hint
 covers: where each construction of the Serbian locale comes from, what it refuses and which questions a native speaker would settle
-source: `chronologia/locale/sr/lang.json`, `chronologia/locale/sr/*.voc`, `chronologia/extract/numfold_slavic.py`
+source: chronologia/locale/sr/lang.json, chronologia/locale/sr/*.voc, chronologia/extract/numfold_slavic.py, test/nl_corpus_sr/
 generated: no
-verify: python -m doctest docs/languages/sr.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/sr.md
-see: `docs/languages/index.md`, `docs/extraction.md`
+verify: .venv/bin/python -m doctest docs/languages/sr.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/sr.md
+see: docs/languages/index.md, docs/extraction.md
 -->
 
 This page records where each construction of the Serbian (`sr`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_slavic` module in `chronologia/extract/`.
 
-Serbian is written in two scripts, and the locale reads both. Every vocabulary
-file lists the Latin and the Cyrillic surface side by side, so `dva sata` and
-`два сата` are the same phrase to the extractor and neither script is the
-privileged one.
+Serbian is written in two scripts, and the locale reads both. Every vocabulary file lists the Latin and the Cyrillic surface side by side. `dva sata` and `два сата` are the same phrase to the extractor and neither script is the privileged one.
 
-Two facts decide most of what follows. The first is the paucal: a Serbian noun
-counted by two, three or four stands in the **genitive singular**, and only from
-five upward in the genitive plural. Reading a declension table carelessly gets
-this backwards, labelling the genitive plural as the paucal form, and every
-unit file here is built as `{1: nominative singular, 2–4: genitive singular,
-5+: genitive plural}` for that reason. The second is `nedelja`, which names both
-Sunday and — in some sources — the week. That ambiguity is resolved by
-construction rather than by guessing, and it is the single largest source of
-deliberate refusals in this locale.
+Two facts decide most of what follows. The first is the paucal: a Serbian noun counted by two, three or four stands in the **genitive singular**. Only from five upward in the genitive plural. Reading a declension table carelessly gets this backwards, labelling the genitive plural as the paucal form.
+
+Every unit file here is built as `{1: nominative singular, 2–4: genitive singular, 5+: genitive plural}` for that reason. The second is `nedelja`, which names both Sunday and (in some sources) the week. That ambiguity is resolved by construction rather than by guessing, and it is the single largest source of deliberate refusals in this locale.
+
+## Try it
+
+To read a phrase, call `extract_timespan` with the phrase, the locale code and an anchor datetime. It returns the span that the phrase names and the text that it left unread.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> span, rest = extract_timespan('dva sata', "sr", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T02:00:00', '')
 
 ## What ships
 
-**Weekdays and months** ship in both scripts, with months carrying the genitive
-that follows a day number as well as the nominative: `5. januara 2020` reads
-as the fifth of January.
+**Weekdays and months** ship in both scripts, with months carrying the genitive that follows a day number as well as the nominative: `5. januara 2020` reads as the fifth of January.
 
-**Units** are Wiktionary declension tables, one per noun, with the paucal rule
-applied. Some units syncretise: `dan` and `minut` have the same surface for the
-genitive singular and the genitive plural, so `dva dana` and `pet dana` are
-spelled alike, and the file lists one form for both. Others do not: hour is
-`sat` / `sata` / `sati`, and its vocabulary file states explicitly that
-`sata` is the genitive singular rather than the paucal, because that is the
-mistake the table invites.
+**Units** are Wiktionary declension tables, one per noun, with the paucal rule applied. Some units syncretise: `dan` and `minut` have the same surface for the genitive singular and the genitive plural. `dva dana` and `pet dana` are spelled alike. The file lists one form for both. Others do not: hour is `sat` / `sata` / `sati`. Its vocabulary file states explicitly that `sata` is the genitive singular rather than the paucal, because that is the mistake the table invites.
 
-`sat` doubles as the "o'clock" word and inflects with the hour count exactly as
-the duration unit does — `jedan sat`, `dva sata`, `pet sati` — which is why
-naming the hour uses the same three surfaces.
+`sat` doubles as the "o'clock" word and inflects with the hour count exactly as the duration unit does (`jedan sat`, `dva sata`, `pet sati`) which is why naming the hour uses the same three surfaces.
 
-**Relative offsets** use `pre` for the past and `za` for the future. `pre`
-carries both frames: it is the offset marker in `pre tri dana` (three days ago)
-and the ordinary preposition "before X". Both are wired, from the Wiktionary
-entry and from Talkpal's guide to telling time.
+**Relative offsets** use `pre` for the past and `za` for the future. `pre` carries both frames. It is the offset marker in `pre tri dana` (three days ago) and the ordinary preposition "before X". Both are wired, from the Wiktionary entry and from Talkpal's guide to telling time.
 
-**The clock** works in both directions. Additive: `dva i četvrt` is 2:15, with
-`i` as the joining conjunction. Subtractive: `četvrt do tri` is 2:45, and
-`petnaest do sedam` is 6:45. The half hour names the coming hour, so
-`pola četiri` is 3:30 — attested by the Wikipedia article on date and time
-notation in Serbia, by gospeakserbian's time guide and by Talkpal, three
-independent accounts agreeing. The Wikipedia article notes it is the more
-frequent of two live variants, a minority opposite usage existing.
+**The clock** works in both directions. Additive: `dva i četvrt` is 2:15, with `i` as the joining conjunction. Subtractive: `četvrt do tri` is 2:45, and `petnaest do sedam` is 6:45. The half hour names the coming hour. `pola četiri` is 3:30, attested by the Wikipedia article on date and time notation in Serbia, by gospeakserbian's time guide and by Talkpal, three independent accounts agreeing. The Wikipedia article notes it is the more frequent of two live variants, a minority opposite usage existing.
 
-`petnaest` is treated differently from `četvrt`. `četvrt` is a bare fraction
-word that can stand on either side of the construction; `petnaest` is a literal
-minute count valid only after a direction word, because Serbian does not say a
-bare `petnaest sedam`. It therefore lives in its own class rather than among the
-fractions.
+`petnaest` is treated differently from `četvrt`. `četvrt` is a bare fraction word that can stand on either side of the construction. `petnaest` is a literal minute count valid only after a direction word, because Serbian does not say a bare `petnaest sedam`. It therefore lives in its own class rather than among the fractions.
 
-**`dana` as a filler.** A bare genitive plural `dana` trailing a month, week or
-year count is the emphatic idiom `mesec dana`, literally "a month of days",
-meaning exactly one month and never an extra day. A genuine "+1 day" reads the
-nominative `dan`. The locale knows the difference.
+**`dana` as a filler.** A bare genitive plural `dana` trailing a month, week or year count is the emphatic idiom `mesec dana`, literally "a month of days", meaning exactly one month and never an extra day. A genuine "+1 day" reads the nominative `dan`. The locale knows the difference.
 
-**Day parts** take their band boundaries from the CLDR 47 day-period rules for
-`sr` and their surfaces from Wiktionary: `ujutru`, `popodne`, `uveče`, `noću`.
+**Day parts** take their band boundaries from the CLDR 47 day-period rules for `sr` and their surfaces from Wiktionary: `ujutru`, `popodne`, `uveče`, `noću`.
 
-**Markers** are Wiktionary entries: `posle` (after), `pre` (before), `između`
-with the genitive (between, glued with the ordinary conjunction `i`), `od`
-(from, since), `do` (until, to), `svaki` (every).
+**Markers** are Wiktionary entries: `posle` (after), `pre` (before), `između` with the genitive (between, glued with the ordinary conjunction `i`), `od` (from, since), `do` (until, to), `svaki` (every).
 
 ## Weaker provenance
 
-**The determiners `ovaj`, `prošli` and `sledeći`** are single-sourced to
-Talkpal's Serbian time vocabulary. Because of that, only the attested nominative
-and the ordinary feminine agreement the year phrase needs (`prošle godine`,
-`sledeće godine`, `ove godine`) are shipped, rather than a full reconstructed
-paradigm.
+**The determiners `ovaj`, `prošli` and `sledeći`** are single-sourced to Talkpal's Serbian time vocabulary. Because of that, only the attested nominative and the ordinary feminine agreement the year phrase needs (`prošle godine`, `sledeće godine`, `ove godine`) are shipped, rather than a full reconstructed paradigm.
 
-**The half-hour direction** is corroborated three ways, but one of those sources
-itself records that a minority of speakers use the opposite direction. The
-locale ships the majority reading. A Serbian speaker who means 4:30 by
-`pola četiri` will be misread, and no construction distinguishes the two.
+**The half-hour direction** is corroborated three ways, but one of those sources itself records that a minority of speakers use the opposite direction. The locale ships the majority reading. A Serbian speaker who means 4:30 by `pola četiri` will be misread, and no construction distinguishes the two.
 
-**Ekavian only.** The locale ships `vek`, not the Ijekavian `vijek`;
-`pre dva vijeka` returns nothing. Only that one pair was checked against a
-dictionary, so the Ijekavian variants of the other units are unverified rather
-than deliberately excluded.
+**Ekavian only.** The locale ships `vek`, not the Ijekavian `vijek`. `pre dva vijeka` returns nothing. Only that one pair was checked against a dictionary, so the Ijekavian variants of the other units are unverified rather than deliberately excluded.
 
 ## What refuses
 
-The `nedelja` refusals are all pinned by tests, and each exists because
-answering the sub-reading would be worse than answering nothing.
+The `nedelja` refusals are all pinned by tests, and each exists because answering the sub-reading would be worse than answering nothing.
 
-**`nedelju dana`.** The trailing `dana` is exactly the cue that means WEEK in
-real speech, but expressing that reading needs grammar this locale does not
-have: nothing lets a bare weekday match widen into a week offset. Returning the
-lone-Sunday reading and stranding `dana` would be a worse wrong answer than
-none, so the whole phrase refuses.
+**`nedelju dana`.** The trailing `dana` is exactly the cue that means WEEK in real speech, but expressing that reading needs grammar this locale does not have. Nothing lets a bare weekday match widen into a week offset. Returning the lone-Sunday reading and stranding `dana` would be a worse wrong answer than none, so the whole phrase refuses.
 
-**`prošle nedelje` and `sledeće nedelje`.** In the genitive, dictionaries give
-"last week" as the default gloss, which conflicts with the weekday reading the
-bare nominative gets. No source establishes either as dominant, so the phrase
-refuses rather than silently picking a sense. The nominative
-`prošla nedelja` is unambiguous and does resolve, as last Sunday.
+**`prošle nedelje` and `sledeće nedelje`.** In the genitive, dictionaries give "last week" as the default gloss, which conflicts with the weekday reading the bare nominative gets. No source establishes either as dominant, so the phrase refuses rather than silently picking a sense. The nominative `prošla nedelja` is unambiguous and does resolve, as last Sunday.
 
-**A count before `nedelja` or `nedelje`.** `dve nedelja`, `10 nedelja`,
-`dve nedelje` — a count can only mean a span of weeks, since nobody counts
-specific Sundays that way, but this locale ships no week duration unit under
-`nedelja`. The count vetoes the weekday match and the phrase refuses. The veto
-holds on both sides of a relative marker, since a marker fixes direction and
-not sense. An unambiguous weekday is untouched: `dva ponedeljka` still resolves.
+**A count before `nedelja` or `nedelje`.** `dve nedelja`, `10 nedelja`, `dve nedelje`: a count can only mean a span of weeks, since nobody counts specific Sundays that way. But this locale ships no week duration unit under `nedelja`. The count vetoes the weekday match and the phrase refuses. The veto holds on both sides of a relative marker, since a marker fixes direction and not sense. An unambiguous weekday is untouched: `dva ponedeljka` still resolves.
 
-**`milenijum`.** No declension table was found in the sources consulted, so it
-ships no unit file in either script and every phrasing of it refuses.
+**`milenijum`.** No declension table was found in the sources consulted, so it ships no unit file in either script and every phrasing of it refuses.
 
 **The Ijekavian `vijek`**, as above.
 
-What does work throughout is `sedmica`, the unambiguous week word:
-`za sedmicu` is in a week, `pre sedmice` a week ago, `pre pet sedmica` five
-weeks ago.
+What does work throughout is `sedmica`, the unambiguous week word: `za sedmicu` is in a week, `pre sedmice` a week ago, `pre pet sedmica` five weeks ago.
 
 ## Open questions for a native speaker
 
-1. In `prošle nedelje`, does "last week" or "last Sunday" dominate in ordinary
-   use — and is the answer stable enough to ship?
-2. How common is the minority half-hour direction that reads `pola četiri` as
-   4:30, and is there any cue that distinguishes it?
+1. In `prošle nedelje`, does "last week" or "last Sunday" dominate in ordinary use, and is the answer stable enough to ship?
+2. How common is the minority half-hour direction that reads `pola četiri` as 4:30, and is there any cue that distinguishes it?
 3. What is the declension of `milenijum`?
-4. Should the Ijekavian variants ship alongside the Ekavian ones, and for which
-   units do the two differ?
-5. Are the determiner paradigms for `ovaj`, `prošli` and `sledeći` complete as
-   shipped, or are ordinary temporal phrases missing a case?
+4. Should the Ijekavian variants ship alongside the Ekavian ones, and for which units do the two differ?
+5. Are the determiner paradigms for `ovaj`, `prošli` and `sledeći` complete as shipped, or are ordinary temporal phrases missing a case?
 
 ## Checked examples
 
