@@ -51,6 +51,37 @@ def reindex(tokens) -> Tuple[Token, ...]:
     return tuple(replace(t, index=i) for i, t in enumerate(tokens))
 
 
+def numeric(tok: Token, value: int, end: Optional[Token] = None,
+            ordinal: bool = False) -> Token:
+    """The number token for ``value`` spanning ``tok`` through ``end``."""
+    return Token(text=str(value), raw=str(value), index=tok.index,
+                 is_number=True, value=value, char_start=tok.char_start,
+                 char_end=(end or tok).char_end, ordinal=ordinal)
+
+
+def clock_literal(hour: int, minute: int, first: Token, last: Token) -> Token:
+    """The ``H:MM`` token a clock phrase from ``first`` through ``last`` folds to."""
+    text = f"{hour}:{minute:02d}"
+    return Token(text=text, raw=text, index=first.index,
+                 char_start=first.char_start, char_end=last.char_end)
+
+
+def opaque(first: Token, last: Token, text: str) -> Token:
+    """A word token standing for a refused reading: it binds no slot, so the
+    span it covers reaches no construction."""
+    return Token(text=text, raw=text, index=first.index,
+                 char_start=first.char_start, char_end=last.char_end)
+
+
+def compose(*passes: Callable) -> Callable:
+    """The token fold that applies ``passes`` in order."""
+    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        for p in passes:
+            tokens = p(tokens)
+        return tokens
+    return run
+
+
 def run_extent(run) -> Tuple[Optional[int], Optional[int]]:
     """The half-open character extent of a token run: the first token's
     ``char_start`` through the last token's ``char_end``, so a fold that

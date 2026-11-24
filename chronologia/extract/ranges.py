@@ -1,31 +1,20 @@
-"""Language-agnostic calendar range and season utilities.
-
-Ranges are inclusive ``(start, end)`` tuples of the same type as the
-reference date passed in. Decades, centuries and millennia follow the
-calendar convention (the 1990s are 1990-1999, the 1900s are 1900-1999).
+"""Calendar range and season arithmetic for the extraction resolver.
 
 Seasons are meteorological (month-aligned) and hemisphere-aware: northern
 spring starts March 1st, southern spring starts September 1st.
 """
 import calendar as _calendar
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
-
-# ``DateTimeResolution`` lives in the reckoning core; the same enum identity
-# is shared across the extraction engine and the eras arithmetic (the
-# chronologia enum is a superset, adding deep-time tiers).
 from chronologia.resolution import DateTimeResolution
 
 
 class relativedelta:
-    """Stdlib-only stand-in for the ``month``/``week`` offsets this module
-    needs (chronologia carries no ``python-dateutil`` runtime dependency).
+    """Stdlib stand-in for the week and month offsets of ``dateutil``.
 
-    Only ``weeks`` and ``months`` are supported -- the sole forms the range
-    arithmetic uses -- with the same right-add semantics: weeks are exact
-    seven-day steps, months roll the year over and clamp an overshooting
+    Weeks are exact seven-day steps; months roll the year over and clamp the
     day to the last day of the target month.
     """
 
@@ -60,7 +49,6 @@ class Season(Enum):
     AUTUMN = 2
 
 
-# before-present reference epoch (as in radiocarbon dating)
 BEFORE_PRESENT_EPOCH = date(year=1950, day=1, month=1)
 
 DateRange = Tuple[date, date]
@@ -73,21 +61,6 @@ def get_week_range(ref_date: date) -> DateRange:
     return start, end
 
 
-def get_weekend_range(ref_date: date) -> DateRange:
-    """Saturday..Sunday of the weekend containing or following ``ref_date``.
-
-    During the week this is the upcoming weekend; on a weekend day it is
-    the current weekend.
-    """
-    if ref_date.weekday() == 5:
-        start = ref_date
-    elif ref_date.weekday() == 6:
-        start = ref_date - timedelta(days=1)
-    else:
-        start = get_week_range(ref_date)[0] + timedelta(days=5)
-    return start, start + timedelta(days=1)
-
-
 def get_month_range(ref_date: date) -> DateRange:
     """First..last day of the month containing ``ref_date``."""
     start = ref_date.replace(day=1)
@@ -97,12 +70,6 @@ def get_month_range(ref_date: date) -> DateRange:
         end = ref_date.replace(day=1, month=ref_date.month + 1) - \
             timedelta(days=1)
     return start, end
-
-
-def get_year_range(ref_date: date) -> DateRange:
-    """January 1st..December 31st of the year containing ``ref_date``."""
-    return (ref_date.replace(day=1, month=1),
-            ref_date.replace(day=31, month=12))
 
 
 def get_decade_range(ref_date: date) -> DateRange:
@@ -126,90 +93,33 @@ def get_millennium_range(ref_date: date) -> DateRange:
     return start, end
 
 
-def get_week_number(ref_date: Optional[date] = None) -> int:
-    """ISO-8601 week number of ``ref_date`` (default: today)."""
-    ref_date = ref_date or datetime.now()
-    return ref_date.isocalendar()[1]
-
-
-def _as_date(ref_date: Union[date, datetime]) -> date:
-    if isinstance(ref_date, datetime):
-        return ref_date.date()
-    return ref_date
-
-
-# meteorological season boundaries: {season: (start_month, end_month)}
-# northern hemisphere; the southern hemisphere is shifted by two seasons
-_NORTH_SEASONS = {
-    Season.SPRING: (3, 5),
-    Season.SUMMER: (6, 8),
-    Season.FALL: (9, 11),
+_SEASON_START_MONTH = {
+    Hemisphere.NORTH: {Season.SPRING: 3, Season.SUMMER: 6, Season.FALL: 9,
+                       Season.WINTER: 12},
+    Hemisphere.SOUTH: {Season.FALL: 3, Season.WINTER: 6, Season.SPRING: 9,
+                       Season.SUMMER: 12},
 }
-_SOUTH_SEASONS = {
-    Season.FALL: (3, 5),
-    Season.WINTER: (6, 8),
-    Season.SPRING: (9, 11),
-}
-# season starting in December, wrapping over the new year
-_NORTH_WRAP = Season.WINTER
-_SOUTH_WRAP = Season.SUMMER
 
 
-def date_to_season(ref_date: Optional[date] = None,
-                   hemisphere: Hemisphere = Hemisphere.NORTH) -> Season:
-    """Meteorological season containing ``ref_date`` (default: today)."""
-    ref_date = _as_date(ref_date or datetime.now().date())
-    seasons = _NORTH_SEASONS if hemisphere == Hemisphere.NORTH \
-        else _SOUTH_SEASONS
-    for season, (first, last) in seasons.items():
-        if first <= ref_date.month <= last:
-            return season
-    return _NORTH_WRAP if hemisphere == Hemisphere.NORTH else _SOUTH_WRAP
-
-
-def season_to_date(season: Season, year: Optional[Union[int, date]] = None,
+def season_to_date(season: Season, year: int,
                    hemisphere: Hemisphere = Hemisphere.NORTH) -> date:
-    """Start date of ``season`` in ``year`` (default: current year)."""
-    if year is None:
-        year = datetime.now().year
-    elif not isinstance(year, int):
-        year = year.year
-    seasons = _NORTH_SEASONS if hemisphere == Hemisphere.NORTH \
-        else _SOUTH_SEASONS
-    wrap = _NORTH_WRAP if hemisphere == Hemisphere.NORTH else _SOUTH_WRAP
-    season = Season(season.value) if isinstance(season, Season) \
-        else Season(season)
-    if season == wrap:
-        return date(day=1, month=12, year=year)
-    if season not in seasons:
-        raise ValueError(f"Unknown Season: {season}")
-    return date(day=1, month=seasons[season][0], year=year)
+    """Start date of ``season`` in ``year``."""
+    return date(day=1, month=_SEASON_START_MONTH[hemisphere][season], year=year)
 
 
 def _season_occurrence(season: Season, year: int,
                        hemisphere: Hemisphere) -> DateRange:
     """Half-open ``[start, end)`` of the ``year`` occurrence of ``season``.
 
-    A meteorological season is three months wide, so the December-starting
-    season ends on March 1st of the following year; every deictic reading
-    below is expressed in terms of this span rather than the start date
-    alone, which is what makes the year-wrapping season behave like the
-    other three.
+    The December-starting season ends on March 1st of the following year.
     """
     start = season_to_date(season, year, hemisphere)
     return start, start + relativedelta(months=3)
 
 
-def next_season_date(season: Season, ref_date: Optional[date] = None,
+def next_season_date(season: Season, ref_date: date,
                      hemisphere: Hemisphere = Hemisphere.NORTH) -> date:
-    """Start date of the first occurrence of ``season`` still to begin.
-
-    A speaker standing inside a season never means it by "next": the
-    occurrence has to start strictly after the reference date, so on the
-    first day of summer "next summer" is already the summer of the
-    following year.
-    """
-    ref_date = _as_date(ref_date or datetime.now().date())
+    """Start of the first occurrence of ``season`` that begins after ``ref_date``."""
     for year in range(ref_date.year - 1, ref_date.year + 3):
         start, _ = _season_occurrence(season, year, hemisphere)
         if start > ref_date:
@@ -217,17 +127,13 @@ def next_season_date(season: Season, ref_date: Optional[date] = None,
     raise ValueError(f"no future occurrence of {season}")
 
 
-def last_season_date(season: Season, ref_date: Optional[date] = None,
+def last_season_date(season: Season, ref_date: date,
                      hemisphere: Hemisphere = Hemisphere.NORTH) -> date:
-    """Start date of the most recent occurrence of ``season`` that is over.
+    """Start of the latest occurrence of ``season`` that ended by ``ref_date``.
 
-    "Last summer" said in July means the summer that has finished, never
-    the one the speaker is living through, so the occurrence must have
-    ended on or before the reference date.  The same reading places "last
-    winter" in January two Decembers back, because the December just gone
-    is still running.
+    "Last winter" in January is two Decembers back: the December just gone is
+    still running.
     """
-    ref_date = _as_date(ref_date or datetime.now().date())
     for year in range(ref_date.year + 1, ref_date.year - 3, -1):
         start, end = _season_occurrence(season, year, hemisphere)
         if end <= ref_date:
@@ -235,48 +141,18 @@ def last_season_date(season: Season, ref_date: Optional[date] = None,
     raise ValueError(f"no completed occurrence of {season}")
 
 
-def current_season_date(season: Season, ref_date: Optional[date] = None,
+def current_season_date(season: Season, ref_date: date,
                         hemisphere: Hemisphere = Hemisphere.NORTH) -> date:
-    """Start date of the occurrence of ``season`` a speaker means by "this".
+    """Start of the occurrence of ``season`` that "this" means at ``ref_date``.
 
-    While the reference date falls inside an occurrence, that occurrence is
-    the one meant -- in January "this winter" is the winter that began in
-    December, not the one that begins eleven months later.  Outside the
-    season the calendar year decides, so in July "this winter" is the
-    winter that December brings.
+    Inside an occurrence that occurrence is meant, so in January "this
+    winter" began in December; outside it the calendar year decides.
     """
-    ref_date = _as_date(ref_date or datetime.now().date())
     for year in (ref_date.year - 1, ref_date.year):
         start, end = _season_occurrence(season, year, hemisphere)
         if start <= ref_date < end:
             return start
-    return season_to_date(season, ref_date, hemisphere)
-
-
-def get_season_range(ref_date: Optional[date] = None,
-                     hemisphere: Hemisphere = Hemisphere.NORTH) -> DateRange:
-    """First..last day of the season containing ``ref_date``.
-
-    The December-starting season wraps the new year: its range runs from
-    December 1st to the last day of the following February (the 29th on
-    leap years).
-    """
-    ref_date = _as_date(ref_date or datetime.now().date())
-    seasons = _NORTH_SEASONS if hemisphere == Hemisphere.NORTH \
-        else _SOUTH_SEASONS
-    for first, last in seasons.values():
-        if first <= ref_date.month <= last:
-            start = date(day=1, month=first, year=ref_date.year)
-            end = date(day=1, month=last + 1, year=ref_date.year) - \
-                timedelta(days=1)
-            return start, end
-    # December..February wrap-around season
-    if ref_date.month == 12:
-        start = date(day=1, month=12, year=ref_date.year)
-    else:
-        start = date(day=1, month=12, year=ref_date.year - 1)
-    end = date(day=1, month=3, year=start.year + 1) - timedelta(days=1)
-    return start, end
+    return season_to_date(season, ref_date.year, hemisphere)
 
 
 def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
@@ -284,22 +160,13 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
                      DateTimeResolution.DAY_OF_MONTH) -> date:
     """Resolve "the Nth {unit} of {scope}" into a date.
 
-    BEFORE_PRESENT_* resolutions may land before year 1, which
-    ``datetime.date`` cannot hold; those return an
-    :class:`~chronologia.eras.AstroDate` instead (never raise).
-
-    Args:
-        ordinal: 1-based ordinal; -1 selects the last unit in the scope.
-        ref_date: reference date the containing scope is derived from
-            (default: today).
-        resolution: which unit/scope pair the ordinal refers to.
-
-    Returns:
-        The date of the requested unit (weeks resolve to their Monday,
-        months/years/decades/centuries/millennia to their first day).
+    ``ordinal`` is 1-based and -1 selects the last unit of the scope, which
+    ``ref_date`` (default: today) fixes.  Weeks resolve to their Monday and
+    longer units to their first day.  A BEFORE_PRESENT_* resolution before
+    year 1 returns an :class:`~chronologia.eras.AstroDate`.
     """
     ordinal = int(ordinal)
-    ref_date = _as_date(ref_date or datetime.now())
+    ref_date = ref_date or date.today()
 
     _decade = (ref_date.year // 10) * 10 or 1
     _century = (ref_date.year // 100) * 100 or 1
@@ -361,11 +228,8 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
                 raise ValueError(f"a month has no week {ordinal}")
             _day = ref_date.replace(day=1) + relativedelta(weeks=ordinal) - \
                 timedelta(days=1)
-            # A month spans 4, 5 or even 6 Mon-Sun weeks (Mar 2021 opens on a
-            # Monday and runs Mar 1-7 .. Mar 29-Apr 4), so the old hard cap of 4
-            # wrongly refused the common 5th/6th week.  Accept the ordinal iff
-            # the week it lands on still intersects the month; a week that has
-            # rolled entirely past the month's last day is out of range.
+            # a month spans 4 to 6 Mon-Sun weeks; the ordinal is valid while
+            # its week still intersects the month
             if get_week_range(_day)[0] > get_month_range(ref_date)[1]:
                 raise ValueError(f"month {ref_date:%Y-%m} has no week {ordinal}")
         return get_week_range(_day)[0]
@@ -373,10 +237,7 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
         if ordinal == -1:
             _day = ref_date.replace(day=31, month=12)
         else:
-            # A year has 52 or 53 ISO weeks; anything past that is not a week OF
-            # this year but a wrap into the next -- refuse it (ValueError -> None
-            # at the resolver) rather than fabricate "the 53rd week of 2017" as
-            # 2018-W1.  Dec 28 is always in the year's last ISO week.
+            # Dec 28 is always in the year's last ISO week
             max_week = ref_date.replace(month=12, day=28).isocalendar()[1]
             if not 1 <= ordinal <= max_week:
                 raise ValueError(
@@ -415,9 +276,6 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
     if resolution == DateTimeResolution.MONTH_OF_YEAR:
         if ordinal == -1:
             return ref_date.replace(month=12, day=1)
-        # A year has 12 months; "the 13th month of the year" is contradictory,
-        # not January of the next year -- refuse it (ValueError -> None) rather
-        # than fabricate a wrapped date.
         if not 1 <= ordinal <= 12:
             raise ValueError(f"a year has 12 months, not {ordinal}")
         return ref_date.replace(day=1, month=1) + \
@@ -442,8 +300,7 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
         if ordinal == -1:
             raise OverflowError("The last year of existence can not be "
                                 "represented")
-        if ordinal == 0:
-            # NOTE: no year 0
+        if ordinal == 0:                            # no year 0
             return date(year=1, day=1, month=1)
         return date(year=ordinal, day=1, month=1)
     if resolution == DateTimeResolution.YEAR_OF_DECADE:
@@ -494,7 +351,6 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
             raise OverflowError("The last century of existence can not be "
                                 "represented")
         if ordinal == 1:
-            # NOTE: no century 0 / year 0
             return date(day=1, month=1, year=1)
         return date(year=(ordinal - 1) * 100, day=1, month=1)
     if resolution == DateTimeResolution.CENTURY_OF_MILLENNIUM:
@@ -523,20 +379,16 @@ def get_date_ordinal(ordinal: int, ref_date: Optional[date] = None,
     raise ValueError(f"Invalid DateTimeResolution: {resolution}")
 
 
-#: Julian day number on which BEFORE_PRESENT_EPOCH (1950-01-01) begins;
-#: fixed origin for exact day arithmetic at any depth
+#: Julian day number of BEFORE_PRESENT_EPOCH (1950-01-01)
 _JD_BP_EPOCH = 2433283
 
 
 def _before_present(ordinal, resolution):
-    """Resolve "N {unit}s before present" (present = 1950, the radiocarbon
-    convention).  Results the datetime range can hold are plain ``date``
-    (unchanged behaviour); anything before year 1 is an ``AstroDate``
-    instead of the previous ``OverflowError``.
+    """Resolve "N {unit}s before present" (present = 1950, as in radiocarbon
+    dating).  A result before year 1 is an ``AstroDate``, otherwise a ``date``.
 
-    Day/week counts use Julian-day arithmetic so they stay exact at any
-    depth; month/year counts are integer month/year arithmetic anchored at
-    the epoch, matching what ``relativedelta`` produced in range.
+    Day and week counts use Julian-day arithmetic, exact at any depth; month
+    and year counts are integer arithmetic from the epoch.
     """
     # imported here: eras depends on this module for DateTimeResolution
     from chronologia.eras import AstroDate, julian_day_to_date
@@ -565,10 +417,9 @@ def _before_present(ordinal, resolution):
     return date(year=_year, month=1, day=1)
 
 
-#: unit name -> the {unit}_OF_{scope} resolutions it participates in.
-#: The scoped-ordinal construction ("the 3rd week of june", "the first
-#: decade of the 21st century") maps a spelled unit + scope onto these
-#: ``DateTimeResolution`` members before calling :func:`get_date_ordinal`.
+#: unit name -> the {unit}_OF_{scope} resolution a scoped ordinal ("the 3rd
+#: week of june", "the first decade of the 21st century") passes to
+#: :func:`get_date_ordinal`.
 _UNIT_OF_MONTH = {"day": DateTimeResolution.DAY_OF_MONTH,
                   "week": DateTimeResolution.WEEK_OF_MONTH}
 _UNIT_OF_YEAR = {"day": DateTimeResolution.DAY_OF_YEAR,
