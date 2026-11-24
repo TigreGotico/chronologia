@@ -68,7 +68,7 @@ print(lj.span.start.year, lj.span.end.year)  # -161498050 -143098050
 
 ## Region-tagged archaeology: whose Bronze Age?
 
-Human prehistory has a catch that geology does not: the same name means *different times in different places*. The British Bronze Age and the Mesopotamian Bronze Age are both real, both called "the Bronze Age", and centuries apart, Mesopotamia's began far earlier. A bare name is therefore genuinely ambiguous, so the library refuses to guess. It lists the candidates and lets you choose by region:
+Human prehistory has a catch that geology does not: the same name means *different times in different places*. The British Bronze Age and the Mesopotamian Bronze Age are both real, both called "the Bronze Age", and centuries apart. Mesopotamia's began far earlier. A bare name is therefore genuinely ambiguous, so the library refuses to guess. It lists the candidates and lets you choose by region:
 
 ```python
 from chronologia import candidates

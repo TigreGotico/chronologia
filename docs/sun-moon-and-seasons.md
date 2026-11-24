@@ -104,7 +104,7 @@ print(decimal.units_to_us(hours=5))  # 43200000000
 print(86400 * 1000000)  # 86400000000
 ```
 
-`43200000000` is exactly half of `86400000000`, 5 decimal hours land dead on midday.
+`43200000000` is exactly half of `86400000000`, so 5 decimal hours land dead on midday.
 
 ## Sunrise, sunset, and the twilights
 
@@ -187,9 +187,9 @@ Internally, `zone=` computes the ordinary solar-day events for `date - 1`, `date
 
 The convention is: **the earlier instant wins** when there are two. The `NoSunEvent`/absence for the solar day sharing `date`'s own calendar date is returned when there are none (a persistent polar day/night propagates exactly as before). Every real event returned this way is an **aware** `AstroDate` in `zone`. A `NoSunEvent` is returned unconverted, since it names no instant to convert.
 
-`daypart_span(..., zone=...)` gets the same aware endpoints, resolved through `resolve_wall_clock`. A boundary in a DST gap or fold resolves to the *post-transition* instant. The call never raises and never picks arbitrarily. So `DateSpan.width` on the result reports 23 or 25 hours when the boundaries of the part straddle a transition.
+`daypart_span(..., zone=...)` gets the same aware endpoints, resolved through `resolve_wall_clock`. A boundary in a DST gap or fold resolves to the *post-transition* instant. The call never raises and never picks arbitrarily. So `DateSpan.width` on the result is one hour shorter or longer when the boundaries of the part straddle a transition: 23 or 25 hours for a whole day, and 8 or 10 hours for a 9-hour night.
 
-A narrower part has a proportionally smaller or larger width. `prayer_times` and the unequal-hour functions (`temporal_hour_span`, `convention_time`) accept the same `zone=` for *presentation* only. The computed instants are the same either way. Only the returned `AstroDate`s become aware wall-clock readings in `zone`.
+`prayer_times` and the unequal-hour functions (`temporal_hour_span`, `convention_time`) accept the same `zone=` for *presentation* only. The computed instants are the same either way. Only the returned `AstroDate`s become aware wall-clock readings in `zone`.
 
 ## Why "the next full moon" has an error bar
 
@@ -282,7 +282,7 @@ except ValueError as exc:
 
 ### The 24 solar terms (jieqi)
 
-The same Meeus machinery runs at 15° steps of the Sun's longitude, not only at the 90° cardinals. It gives the 24 Chinese *solar terms*, from `lichun` (立春, "start of spring", about 4 February) through `dongzhi` (冬至, the winter solstice). Because these use Meeus's *low-accuracy* Sun longitude (ch. 25) rather than the dedicated cardinal polynomial, they carry a wider bound, `SOLAR_TERM_ACCURACY` is 30 minutes, honestly larger than the ~1-minute equinoxes.
+The same Meeus machinery runs at 15° steps of the Sun's longitude, not only at the 90° cardinals. It gives the 24 Chinese *solar terms*, from `lichun` (立春, "start of spring", about 4 February) through `dongzhi` (冬至, the winter solstice). Because these use Meeus's *low-accuracy* Sun longitude (ch. 25) rather than the dedicated cardinal polynomial, they carry a wider bound: `SOLAR_TERM_ACCURACY` is 30 minutes, honestly larger than the ~1-minute equinoxes.
 
 ```python
 lichun = solar_term(2024, "lichun")
@@ -316,7 +316,7 @@ tarde = daypart_span(tuesday, "tarde", region="es")
 print(tarde.start.isoformat(), tarde.end.isoformat())  # 2027-06-08T12:00:00 2027-06-08T20:00:00
 ```
 
-Ask for a part a region does not redefine and you get the global default, Spanish overrides *tarde*, not *morning*. So `morning` in region `"es"` is the default morning. Ask for a region-only name with no region and it is honestly unknown:
+Ask for a part a region does not redefine and you get the global default. Spanish overrides *tarde*, not *morning*. So `morning` in region `"es"` is the default morning. Ask for a region-only name with no region and it is honestly unknown:
 
 ```python
 from chronologia import UnknownDayPartError
@@ -338,7 +338,7 @@ print(night.start.isoformat(), "->", night.end.isoformat())  # 2027-06-08T21:00:
 print(night.start.day, night.end.day)  # 8 9
 ```
 
-Because day-parts are ordinary spans, the interval algebra composes them. Adjacent parts tile with no gap, `morning` ends exactly where `afternoon` begins. So their union is one continuous span, and the gap between two non-adjacent parts is itself a span:
+Because day-parts are ordinary spans, the interval algebra composes them. Adjacent parts tile with no gap: `morning` ends exactly where `afternoon` begins. So their union is one continuous span, and the gap between two non-adjacent parts is itself a span:
 
 ```python
 morning = daypart_span(tuesday, "morning")
@@ -370,9 +370,9 @@ print(round(june.width.total_seconds() / 60), "min in June")  # 76 min in June
 print(round(december.width.total_seconds() / 60), "min in December")  # 46 min in December
 ```
 
-`hour_number` runs `1..24` for the Roman 12+12 system: hours 1-12 divide sunrise→sunset, hours 13-24 divide sunset→next sunrise. The daytime hours tile the daylight exactly, the twelfth ends on sunset with no fencepost gap. The width varies with date and latitude, which is the whole point. Ship-in systems are `ROMAN_HOURS`, `ZMANIM_GRA` (Jewish *sha'ot zmaniyot* by the Vilna Gaon, the same sunrise→sunset ÷ 12 geometry), and `EDO_JAPANESE` (six day and six night hours). Every span is `basis="tabulated"`: it inherits the class-B accuracy of the NOAA solar model, not an ephemeris.
+`hour_number` runs `1..24` for the Roman 12+12 system: hours 1-12 divide sunrise→sunset, hours 13-24 divide sunset→next sunrise. The daytime hours tile the daylight exactly: the twelfth ends on sunset with no fencepost gap. The width varies with date and latitude, which is the whole point. Ship-in systems are `ROMAN_HOURS`, `ZMANIM_GRA` (Jewish *sha'ot zmaniyot* by the Vilna Gaon, the same sunrise→sunset ÷ 12 geometry), and `EDO_JAPANESE` (six day and six night hours). Every span is `basis="tabulated"`: it inherits the class-B accuracy of the NOAA solar model, not an ephemeris.
 
-The library does **not** ship the Magen Avraham reckoning of the *zmanim*. It runs dawn to nightfall at solar depressions of 16.1° and 8.5°. `sun_events` exposes only the 6°, 12° and 18° civil, nautical and astronomical twilights. So no honest mapping exists. A missing system is better than a mislabelled one.
+The library does **not** ship the Magen Avraham reckoning of the *zmanim*. That reckoning runs dawn to nightfall at solar depressions of 16.1° and 8.5°. `sun_events` exposes only the 6°, 12° and 18° civil, nautical and astronomical twilights. So no honest mapping exists. A missing system is better than a mislabelled one.
 
 ### Counting from sunset: Italian and Babylonian hours
 

@@ -8,7 +8,7 @@ verify: .venv/bin/python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.a
 see: docs/recurrence.md, docs/transparency.md
 -->
 
-This module answers one question: **"is Monday a holiday where *you* live?"** It does not answer "what are the holidays this year?". In most of the world the answer depends on your *municipality*, not your country.
+This module lists the holidays of a year, but its main question is **"is Monday a holiday where *you* live?"** In most of the world the answer depends on your *municipality*, not your country.
 
 A civil holiday is a **rule**, not a date. "New Year's Day" is *1 January every year*. "US Labor Day" is *the first Monday of September*. "Corpo de Deus" is *the 60th day after Easter*. "Eid al-Fitr" is *1 Shawwal on the Umm al-Qura table*. `chronologia` stores the rule and computes the date with the same JDN machinery as the rest of the library. So a holiday for the year 1789 falls out of the same arithmetic as one for 2024.
 
@@ -31,7 +31,7 @@ Depth varies more than breadth does. A jurisdiction file may carry only the nati
 
 ## The municipal story
 
-Portugal is the flagship. Beyond the thirteen statutory national days, and Carnaval, which is widely observed without being statutory. So it is tagged `optional` alongside `public`, nearly every one of the ~300 *concelhos* (municipalities) has its own **feriado municipal**. Lisbon stops for Santo António on 13 June.
+Portugal is the flagship. It has thirteen statutory national days. It also has Carnaval, which is widely observed but not statutory, so Carnaval is tagged `optional` alongside `public`. Beyond these days, nearly every one of the ~300 *concelhos* (municipalities) has its own **feriado municipal**. Lisbon stops for Santo António on 13 June.
 
 Porto for São João on 24 June. Ask the country and you miss both. Ask the municipality and the real answer appears.
 
@@ -46,7 +46,7 @@ sao_joao = AstroDate(2024, 6, 24)
 assert is_civil_holiday(sao_joao, "PT", subdiv="PT-PRT")
 ```
 
-Subdivisions are additive: `holidays_for("PT", 2024, subdiv="PT-LSB")` returns the national days **plus** Lisbon's municipal ones. Municipal rules can be movable too, Castelo de Vide keeps *Nossa Senhora da Luz* on Easter Monday:
+Subdivisions are additive: `holidays_for("PT", 2024, subdiv="PT-LSB")` returns the national days **plus** Lisbon's municipal ones. Municipal rules can be movable too. Castelo de Vide keeps *Nossa Senhora da Luz* on Easter Monday:
 
 ```python
 cv = holidays_for("PT", 2024, subdiv="PT-CVD")

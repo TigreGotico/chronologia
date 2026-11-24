@@ -85,7 +85,7 @@ assert AXES["earth_day"].count_from_tt(AstroDate(2000, 1, 1, 12)) == 2451545.0
 assert AXES["mars_sol"].unit_seconds > 86400          # a sol is longer than a day
 ```
 
-The `earth_day` axis changes nothing, Earth timekeeping stays on `AstroDate` and the JDN hub. The axis is byte-identical to it, but it stops Earth from being a special case. For `mars_sol` (and any future body) the axis is where the count actually lives. Exchange between axes runs through **TT** (Terrestrial Time, `TAI + 32.184 s`). The leap-second module was the down payment on that bridge.
+The `earth_day` axis changes nothing. Earth timekeeping stays on `AstroDate` and the JDN hub. The axis is byte-identical to it, but it stops Earth from being a special case. For `mars_sol` (and any future body) the axis is where the count actually lives. Exchange between axes runs through **TT** (Terrestrial Time, `TAI + 32.184 s`). The leap-second module was the down payment on that bridge.
 
 ## The Darian calendar
 
@@ -158,7 +158,7 @@ lunar = AXES["lunar"]
 print(round(LUNAR_DAY_SECONDS))  # 2551443
 ```
 
-A *civil* lunar clock is another matter. The US OSTP directed NASA to define **Coordinated Lunar Time** on 2 April 2024. A clock on the Moon runs about 58.7 microseconds per Earth day faster than one on Earth. No such standard exists. So the library refuses to invent one. It ships the *status* as data, and the offset function raises an error until there is something real to compute.
+A *civil* lunar clock is another matter. The US OSTP directed NASA to define **Coordinated Lunar Time** on 2 April 2024. A clock on the Moon runs about 58.7 microseconds per Earth day faster than one on Earth. The library refuses to invent the standard. It ships the *status* as data, and the offset function raises an error until there is something real to compute.
 
 ```python
 from chronologia import LTC_STATUS, ltc_offset, AstroDate

@@ -136,7 +136,7 @@ These are the nouns that appear in phrases like "3 **days** ago" or "in 2 **week
 | `marker_past.voc` | the word that points **backwards** in time, English "ago" |
 | `marker_future.voc` | the word that points **forwards**, English "in" / "hence" |
 
-These two are important and subtle, so here is why they matter. chronologia never guesses direction. In "3 days ago", the word *ago* is what tells it to subtract. Whatever word your language uses for that, Malay uses `lepas` for the past and `lagi` for the future. You list it here, and the shared code does the rest. You do not write any "subtract" logic. You just name the word.
+These two are important and subtle, so here is why they matter. chronologia never guesses direction. In "3 days ago", the word *ago* is what tells it to subtract. You list here whatever word your language uses for that, and the shared code does the rest. Malay uses `lepas` for the past and `lagi` for the future. You do not write any "subtract" logic. You just name the word.
 
 ### The "next / last / this" markers
 
@@ -148,7 +148,7 @@ These two are important and subtle, so here is why they matter. chronologia neve
 
 ### The named days (today / tomorrow / yesterday)
 
-These are single words that name a day by how far it is from *today*. The number in the file name is that offset in days, `0` is today, `1` is tomorrow, `-1` is yesterday.
+These are single words that name a day by how far it is from *today*. The number in the file name is that offset in days: `0` is today, `1` is tomorrow, `-1` is yesterday.
 
 | File | Put in it |
 |---|---|
@@ -241,7 +241,7 @@ When the direction word is *spoken* ("half **past** nine"), there is no ambiguit
 | `bare_quarter_to` | a bare quarter counts *toward* the coming hour (Hungarian/Estonian: "quarter nine" = 8:15) |
 | `toward_hour_12h` | in a toward-the-hour system, renames the hour before one as *twelve* on the toward-hour path. A bare "half toward one" still resolves to the next of 00:30 and 12:30, whichever comes first after the anchor (ruling 17). The locales Slovenian, Russian, Polish and Czech set it |
 
-Pick the one that matches how *your* language actually speaks. If none applies, your language always says the direction word out loud, leave them all off (the default). The plain-language question to ask yourself is: *"In my language, does 'half nine' mean 8:30 or 9:30?"*, and set the flag accordingly.
+Pick the one that matches how *your* language actually speaks. If none applies, because your language always says the direction word out loud, leave them all off (the default). The plain-language question to ask yourself is: *"In my language, does 'half nine' mean 8:30 or 9:30?"*, and set the flag accordingly.
 
 ### When the clock preposition also counts ("a las 3 vecinas")
 
@@ -381,7 +381,7 @@ The safest approach is to copy the `constructions` block from the language close
 "hook": "chronologia.extract.numlayer_ms:fold_ms"
 ```
 
-If your language has no number fold, leave `hook` out entirely, chronologia will still read digits perfectly, just not spelled-out number words. Nothing else in `lang.json` depends on the hook.
+If your language has no number fold, leave `hook` out entirely. chronologia still reads digits, but not spelled-out number words. Nothing else in `lang.json` depends on the hook.
 
 Two more optional keys name code, and few languages need them. `pre_hook` runs once on the whole token stream before range detection and number folding. It takes the tokens alone. `post_hook` runs once on the whole stream after the number fold. It takes the tokens and the language spec. A rewrite that must see a number word next to the unit word after it goes there. French uses it to read "dans 2 heures moins 10 secondes" as one length:
 
@@ -498,7 +498,7 @@ The goal is not bureaucracy. It's that the next person, maintainer or contributo
 
 Sooner or later you will reach a construction your language does not have, or has in a way your sources cannot agree on. Leaving it out is a correct outcome. A locale that ships fewer constructions honestly is worth more than one that ships them all by guessing. Nobody will ask you to fill every file.
 
-The three shapes this takes are all normal. Your language may simply lack the concept, Maltese has no word for the day before yesterday, so it ships no `named_day_-2.voc` and that phrase returns nothing. A word may have a form about which your sources contradict each other. Serbian *nedelja* is Sunday in one dictionary and the week in another, in the very case that "last" and "next" use.
+The three shapes this takes are all normal. Your language may simply lack the concept. Maltese has no word for the day before yesterday, so it ships no `named_day_-2.voc` and that phrase returns nothing. A word may have a form about which your sources contradict each other. Serbian *nedelja* is Sunday in one dictionary and the week in another, in the very case that "last" and "next" use.
 
 So that word answers neither, and the unambiguous *sedmica* carries the week reading. Or the reference data may define no boundaries for something that another language pins down. Several locales ship no day-period bands at all, and invent no clock times for "morning".
 
@@ -514,7 +514,7 @@ The one thing that is never acceptable is a form you made up because the neighbo
 pitgħada
 ```
 
-Then assert the refusal in your corpus, the same way you assert the readings that work, some locales keep a dedicated `test_<code>_refusals.py` module for exactly this:
+Then assert the refusal in your corpus, the same way you assert the readings that work. Some locales keep a dedicated `test_<code>_refusals.py` module for exactly this:
 
 ```python
 # doctest: skip
@@ -566,7 +566,7 @@ april
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest test/nl_corpus_ms/ -q
 ```
 
-**Step 5, see green**. No failures means chronologia reads your spelling and still reads everything it read before. You're done, commit and open a pull request.
+**Step 5, see green**. No failures means chronologia reads your spelling and still reads everything it read before. You're done: commit and open a pull request.
 
 That five-step loop is the whole rhythm of contributing a language: *find the file, add the word with a source, add a test, run it, see green*. It is the same loop for one spelling and for a whole locale.
 

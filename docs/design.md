@@ -26,7 +26,7 @@ This buys three things. Conversions **compose** for free (Hebrew → JDN → Chi
 
 ### Under the hood: the JDN plumbing
 
-The guides speak entirely in objects, `Calendar.date(...)` returns an `AstroDate`, `Calendar.from_astro(...)` returns a `CalendarDate`, and the same `date`/`from_astro` pair sits on `Timeline`. That object facade is a thin convenience over the integer hub that every spoke implements. The hub is a raw `to_jdn(year, month, day) -> int` and its inverse `from_jdn(jdn) -> (year, month, day)`. The free functions `gregorian_to_jdn` and `jdn_to_gregorian` serve the reference calendar. The facade is exactly this composition:
+The guides speak entirely in objects: `Calendar.date(...)` returns an `AstroDate`, `Calendar.from_astro(...)` returns a `CalendarDate`, and the same `date`/`from_astro` pair sits on `Timeline`. That object facade is a thin convenience over the integer hub that every spoke implements. The hub is a raw `to_jdn(year, month, day) -> int` and its inverse `from_jdn(jdn) -> (year, month, day)`. The free functions `gregorian_to_jdn` and `jdn_to_gregorian` serve the reference calendar. The facade is exactly this composition:
 
 ```python
 from chronologia import CALENDARS, AstroDate, gregorian_to_jdn, jdn_to_gregorian

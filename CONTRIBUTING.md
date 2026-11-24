@@ -40,7 +40,7 @@ The full suite takes roughly twenty minutes on a laptop. CI runs it on every pul
 
 ## How changes are expected to arrive
 
-**Tests come first, and they must fail before your fix.** For anything that reads human text, write the phrase and its expected span before touching the parser, and check that the new test genuinely fails against unfixed code, a regression test that passes either way proves nothing.
+**Tests come first, and they must fail before your fix.** For anything that reads human text, write the phrase and its expected span before touching the parser, and check that the new test genuinely fails against unfixed code. A regression test that passes either way proves nothing.
 
 **Derive gold values independently.** Compute the expected date by hand or from a source that is not this library. A test whose expectation was copied from the parser's own output only pins current behaviour, including its bugs.
 
@@ -60,7 +60,7 @@ python -m benchmark.crossview diff --base base.?.tsv --head head.?.tsv
 python -m benchmark.crossview disagree head.?.tsv
 ```
 
-`diff` prints the row counts, the changed rows grouped by view and by kind of change, and the median and p95 time per call of each side. A change should move no row, or only rows of a kind it declares. `diff` exits with 1 when a row changed, is missing or appears twice. `disagree` lists the phrases on which two views of one tree give contradictory readings.
+`diff` prints the row counts, the changed rows grouped by view, mode and kind of change, and the median and p95 time per call of each side. A change should move no row, or only rows of a kind it declares. `diff` exits with 1 when a row changed, is missing or appears twice. `disagree` lists the phrases on which two views of one tree give contradictory readings.
 
 ## Adding a language
 

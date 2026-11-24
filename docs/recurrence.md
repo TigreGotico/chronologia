@@ -58,7 +58,7 @@ month_end = parse_rrule("FREQ=MONTHLY;COUNT=4")
 print([s.start.date() for s in occurrences(month_end, AstroDate(2023, 1, 31))])  # [datetime.date(2023, 1, 31), datetime.date(2023, 3, 31), datetime.date(2023, 5, 31), datetime.date(2023, 7, 31)]
 ```
 
-February is skipped, not fudged. The same rule keeps leap day honest, a yearly recurrence anchored on 29 February only fires in leap years:
+February is skipped, not fudged. The same rule keeps leap day honest. A yearly recurrence anchored on 29 February only fires in leap years:
 
 ```python
 leap = parse_rrule("FREQ=YEARLY;COUNT=3")
@@ -66,7 +66,7 @@ leap = parse_rrule("FREQ=YEARLY;COUNT=3")
 print([s.start.date() for s in occurrences(leap, AstroDate(2024, 2, 29))])  # [datetime.date(2024, 2, 29), datetime.date(2028, 2, 29), datetime.date(2032, 2, 29)]
 ```
 
-If you want "the last day of the month" *whatever* its length, name that instead, `BYMONTHDAY=-1` counts back from the end:
+If you want "the last day of the month" *whatever* its length, name that instead. `BYMONTHDAY=-1` counts back from the end:
 
 ```python
 last_day = parse_rrule("FREQ=MONTHLY;COUNT=4;BYMONTHDAY=-1")
@@ -82,7 +82,8 @@ A rule that names a date no year has is an error. `FREQ=YEARLY;BYMONTH=2;BYMONTH
 try:
     parse_rrule("FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=30")
 except ValueError as exc:
-    print(exc)  # BYMONTH=(2,) with BYMONTHDAY=(30,) can never occur (e.g. 30 February); the rule matches no date
+    message = str(exc)
+print(message)  # BYMONTH=(2,) with BYMONTHDAY=(30,) can never occur (e.g. 30 February); the rule matches no date
 ```
 
 A spoken phrase takes the same road. `extract_recurrence("every 30th of february", "en")` returns `None`. With `impossible="raise"` it raises `ImpossibleDateError`, a `ValueError`, whose `reason` is "February has no 30th". [Impossible dates and out-of-range ordinals](extraction.md#impossible-dates-and-out-of-range-ordinals) lists every refusal.
@@ -94,7 +95,8 @@ print(extract_recurrence("every 30th of february", "en"))  # None
 try:
     extract_recurrence("every 30th of february", "en", impossible="raise")
 except ImpossibleDateError as err:
-    print(err.reason)  # February has no 30th
+    reason = err.reason
+print(reason)  # February has no 30th
 ```
 
 ## Bounded by design

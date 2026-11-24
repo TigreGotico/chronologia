@@ -121,7 +121,7 @@ Anything that satisfies the `tzinfo` protocol works the same way, `zoneinfo`, `d
 pip install tzdata
 ```
 
-`zoneinfo` finds it automatically. `chronologia` does **not** depend on it, you install it only if your system lacks the OS copy. You keep control of which one you get.
+`zoneinfo` finds it automatically. `chronologia` does **not** depend on it. You install it only if your system lacks the OS copy. You keep control of which one you get.
 
 ### Why chronologia vendors no zone data, the Morocco story
 
@@ -193,7 +193,7 @@ except ValueError as exc:
     print("refused:", "naive" in str(exc))    # refused: True
 ```
 
-The fix is to say what you mean, attach the zone the reading was *in* with `replace(tzinfo=...)` (a re-label, not a conversion), then convert:
+The fix is to say what you mean: attach the zone the reading was *in* with `replace(tzinfo=...)` (a re-label, not a conversion), then convert:
 
 ```python
 reading = AstroDate(2024, 6, 1, 12, 0).replace(tzinfo=ny)   # "this was New York noon"
@@ -202,7 +202,7 @@ print(reading.astimezone(timezone.utc).isoformat())         # 2024-06-01T16:00:0
 
 ### Pre-zone history: `LMTZone` and local mean time
 
-Timezones are a *railway-age invention*, before them, every town set noon to its own sun. For dates before standard zones (Britain adopted railway time in
+Timezones are a *railway-age invention*. Before them, every town set noon to its own sun. For dates before standard zones (Britain adopted railway time in
 1847. The international zone system dates from 1884), there is no `ZoneInfo` entry to use, and asking for one would be an anachronism. The library offers **local mean time** instead: a fixed offset that is pure longitude, four minutes of clock per degree.
 
 ```python
@@ -318,7 +318,7 @@ The two part ways on range and scope. `whenever` does civil time rigorously, wit
 
 Zones and the sun meet cleanly *because* of the quarantine. Sun events, prayer times, and unequal hours are all **computed as instants** (in UTC, from latitude and longitude) and only **rendered locally** at Seam 2. That separation dissolves two puzzles that otherwise look like bugs.
 
-**The "prayer times jumped an hour" illusion**. People sometimes report that sunrise or a prayer time "moved an hour overnight" in spring. It did not, the *sun* did nothing unusual. What moved was the *clock*, because a DST transition changed the offset between UTC and the wall reading.
+**The "prayer times jumped an hour" illusion**. People sometimes report that sunrise or a prayer time "moved an hour overnight" in spring. It did not. The *sun* did nothing unusual. What moved was the *clock*, because a DST transition changed the offset between UTC and the wall reading.
 
 The underlying UTC instant drifts by only its natural minute-a-day. The whole hour is an artefact of rendering it against a clock that jumped. Compute in UTC, render locally, and the illusion is explained rather than mysterious:
 

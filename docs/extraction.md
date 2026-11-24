@@ -60,7 +60,7 @@ The same reasoning governs the rest of the library: **a wrong span is worse than
 
 The scheduler on the other end would act on it. Refusing costs the caller one phrase. Guessing costs them a wrong appointment they have no way to detect.
 
-Refusals are not blanket. They are as narrow as the evidence, and the rest of the language keeps working around them. Macedonian reads clock times fine, it just reads them the additive way its own style guides document:
+Refusals are not blanket. They are as narrow as the evidence, and the rest of the language keeps working around them. Macedonian reads clock times fine. It reads them the additive way its own style guides document:
 
 ```python
 from chronologia import extract_timespan
@@ -183,7 +183,7 @@ span, _ = extract_timespan("from june 5th to june 12th", "en",
 print(span.start_datetime.date(), "->", span.end_datetime.date())  # 2018-06-05 -> 2018-06-13
 ```
 
-(June 5-12 is already past the June-27 anchor, so it rolls to the next year, the engine prefers the future for bare calendar dates.)
+(June 5-12 is already past the June-27 anchor, so it rolls to the next year: the engine prefers the future for bare calendar dates.)
 
 Both endpoints resolve in the **same** frame: the future preference is applied to the range as a whole, never to one endpoint alone. So a range that *straddles* the anchor keeps both edges in the current cycle. The left endpoint does not leap a year ahead of the right. Spoken on July 22, "from july 20 to july 25" is this year's July 20-25, not next year's.
 
@@ -210,7 +210,7 @@ The `until`/`through` (open start) and `since` (open end) surfaces are per-langu
 
 ### Marker positionality
 
-*Where* a marker sits relative to its date is a per-language fact. `lang.json` declares it as `positions`. This is a role → position map over the markers `until`, `since` and `for`. Three positions are recognised. The default, when a role is undeclared, is `pre`:
+*Where* a marker sits relative to its date is a per-language fact. `lang.json` declares it as `positions`. This is a role → position map over the open-range and recurrence-bound markers `until`, `since` and `for`. Three positions are recognised. The default, when a role is undeclared, is `pre`:
 
 - **`pre`**: the marker **leads** its date ("until friday", German "bis freitag", French "jusqu'à vendredi"). The English/Romance default.
 - **`post`**: the marker is a **postposed bound word trailing** its date, the native order for many agglutinative languages: Finnish "perjantai asti" / "2020 saakka", Turkish "cumaya kadar", Basque "ostirala arte", Azerbaijani "2020 qədər", Hungarian "2010 óta" (since). The engine scans for the marker after the resolved endpoint.
@@ -218,7 +218,7 @@ The `until`/`through` (open start) and `since` (open end) surfaces are per-langu
 
 The `positions` fact drives which readings the engine attempts. A language declares `until: affix` or `since: post` alongside the ordinary `marker_until` / `marker_since` vocabulary that lists the surface. The postposed open-range markers (Finnish `asti`/`saakka`, Turkish `kadar`, Basque `arte`, Azerbaijani `qədər`) and the Hungarian `-ig` affix and `óta` postposition resolve natively.
 
-Basque `arte` is genuinely ambiguous, it means both "until" and "art". So it only reads as the range marker when the head parses as a date endpoint. A bare "arte" is never a range. Turkish/Azerbaijani add a dative suffix to the date noun in careful speech, which is a downstream morphology concern. The engine reads the bare head.
+Basque `arte` is genuinely ambiguous: it means both "until" and "art". So it only reads as the range marker when the head parses as a date endpoint. A bare "arte" is never a range. Turkish/Azerbaijani add a dative suffix to the date noun in careful speech, which is a downstream morphology concern. The engine reads the bare head.
 
 ## A lone spoken hour
 
@@ -260,7 +260,7 @@ print(span.start_datetime)                      # None
 
 People date the past in ways that `datetime` cannot hold. Examples are a century in Roman numerals, a year "from the founding of Rome" and an Olympiad. Others are the archon that names a Greek year, and a Roman calendar formula. The extractor reads them all and returns a real span, often a span whose edges fall centuries or millennia BC. So `start_datetime` is `None` and the `AstroDate` endpoints carry the value.
 
-Everything in this section resolves through the reckoning core (`chronologia.roman`, `chronologia.eras`, `chronologia.regnal`, `chronologia.archons`), the extractor only recognises the surface. The arithmetic lives in one audited place.
+Everything in this section resolves through the reckoning core (`chronologia.roman`, `chronologia.eras`, `chronologia.regnal`, `chronologia.archons`). The extractor only recognises the surface. The arithmetic lives in one audited place.
 
 ### Roman-numeral centuries (século XII, XIIe siècle, the XII century)
 
@@ -342,7 +342,7 @@ extract_timespan(text, "en", anchor, enable=("classical",))  # 30 March span
 
 ### Kalends, Nones, Ides -- in the reader's own language
 
-"The ides of march" is the default-on surface for the Roman within-month anchors, and it does not stop at English or Latin. The extractor reads Kalends, Nones and Ides as **vernacular phrases**. Each uses the words of its language. The languages are es, pt, ca, gl, it, fr, ast, ro, de and nl. Occitan (`oc`) ships the Latin forms `ides` and `idibus`:
+"The ides of march" is the default-on surface for the Roman within-month anchors, and it does not stop at English or Latin. The extractor reads Kalends, Nones and Ides as **vernacular phrases**. Each uses the words of its language. The languages are es, pt, ca, gl, it, fr, ast, ro, de and nl. Occitan (`oc`) ships no Occitan words for them. It reads the Latin forms `kalends`/`kalendis`, `nones`/`nonis` and `ides`/`idibus`, and the English `calends`:
 
 ```python
 anchor = datetime(2017, 6, 27, 13, 4)
@@ -354,7 +354,7 @@ extract_timespan("le idi di marzo",   "it", anchor)[0].start_datetime   # 2017-0
 extract_timespan("die Iden des März", "de", anchor)[0].start_datetime   # 2017-03-15
 ```
 
-Every surface is attested, not invented. Each `roman_anchor_kalends.voc`, `roman_anchor_nones.voc` and `roman_anchor_ides.voc` file (`chronologia/locale/<lang>/`) has a header that cites the Wikipedia "Roman calendar" article of that language as the source of the word it wires. For example, `pt/roman_anchor_ides.voc` cites `pt.wikipedia.org/wiki/Calendário_romano`. `nl` cites the dedicated `Nonen (kalender)` and `Iden (kalender)` articles.
+Every surface is attested, not invented. Each `roman_anchor_kalends.voc`, `roman_anchor_nones.voc` and `roman_anchor_ides.voc` file (`chronologia/locale/<lang>/`) has a header that cites the Wikipedia "Roman calendar" article of that language as the source of the word it wires. The `en` and `oc` files have no header. For example, `pt/roman_anchor_ides.voc` cites `pt.wikipedia.org/wiki/Calendário_romano`. `nl` cites the dedicated `Nonen (kalender)` and `Iden (kalender)` articles.
 
 **The distinctive part is composition, not the vocabulary**. To the anchored-arithmetic engine, these anchors are one more named reference point. The same engine resolves "3 days before christmas" (see below). So **any** offset composes with **any** anchor in **any** of the twelve languages, for free. The offset logic needs nothing month-specific or language-specific:
 
@@ -479,7 +479,7 @@ for lang, phrase in [("pt", "em 2 dias úteis"), ("es", "en 2 días hábiles"),
     print(lang, s.start_datetime.date())   # each -> 2026-12-28
 ```
 
-On `ouvrable` vs `ouvré` (and similar fine distinctions elsewhere): French law separates *jours ouvrables* (all days bar the weekly rest day and holidays) from *jours ouvrés* (days actually worked). Chronologia does not model that payroll-grade split, both resolve to the same Monday-to-Friday-minus-holidays business day, the everyday sense a speaker means by "working day".
+On `ouvrable` vs `ouvré` (and similar fine distinctions elsewhere): French law separates *jours ouvrables* (all days bar the weekly rest day and holidays) from *jours ouvrés* (days actually worked). Chronologia does not model that payroll-grade split. Both resolve to the same Monday-to-Friday-minus-holidays business day, the everyday sense a speaker means by "working day".
 
 ## Seeing why a parse landed
 
@@ -756,7 +756,7 @@ numtag reads the numbers of 40 of the 61 locales. The table in [languages/index.
 
 Each language has a fold module that names the number words which the date grammar reads as words in their position. The modules share code:
 
-- `numlayer_<code>.py` serves one language each. The codes are an, ast, ca, da, de, el, en, es, fa, fr, fy, gl, id, it, kab, ms, mwl, nb, nl, nn, oc, pt, ro and sv. The Romance modules build on `numlayer_romance.py`, and the Germanic ones on `numlayer_germanic.py`.
+- `numlayer_<code>.py` serves one language each. The codes are an, ast, ca, da, de, el, en, es, fa, fr, fy, gl, id, it, kab, ms, mwl, nb, nl, nn, oc, pt, ro and sv. `numlayer_en.py` and `numlayer_pt.py` stand alone. The other Romance modules build on `numlayer_romance.py`, and the rest build on `numlayer_germanic.py`.
 - `numlayer_semitic.py` serves Arabic and Hebrew.
 - `numlayer_turkic.py` serves Turkish and Azerbaijani.
 - `numlayer_agglutinative.py` serves Estonian, Finnish, Hungarian and Basque.
@@ -902,7 +902,7 @@ print(span.basis)                                    # reconstructed
 
 ### Precedence: the verbatim order
 
-Precedence is **not** the first tie-breaker, span length is. Two candidates only reach the precedence comparison when they cover an **equally long** overlapping span. The order lives in `PRECEDENCE` in `compiler.py` (lower rank = higher priority). Here are the ranks that matter, with a note on the pairs that matter:
+Precedence is **not** the first tie-breaker. Span length is. Two candidates only reach the precedence comparison when they cover an **equally long** overlapping span. The order lives in `PRECEDENCE` in `compiler.py` (lower rank = higher priority). Here are the ranks that matter, with a note on the pairs that matter:
 
 | rank | constructions |
 |------|---------------|
@@ -979,7 +979,7 @@ The matcher is a clean, local token-span grammar, and that buys real limitations
 
 ### Impossible dates and out-of-range ordinals
 
-A phrase can be grammatically well-formed and still name no date that exists: "February 30", "the 32nd of January", "the 13th month of 2026", "the 0th week of May". These are refused, `extract_timespan` returns `None`, never silently rounded, wrapped, or narrowed to something plausible.
+A phrase can be grammatically well-formed and still name no date that exists: "February 30", "the 32nd of January", "the 13th month of 2026", "the 0th week of May". These are refused: `extract_timespan` returns `None`. It never silently rounds, wraps or narrows them to something plausible.
 
 **No overflow projection**. "The 13th month of 2026" is not read as January 2027, as clock arithmetic might carry a minute into the next hour. A year has twelve months and no thirteenth. The same holds for a week beyond the last ISO week of the year.
 
@@ -1004,7 +1004,8 @@ extract_timespan("29 February 2017", "en")                       # None
 try:
     extract_timespan("29 February 2017", "en", impossible="raise")
 except ImpossibleDateError as err:
-    print(err.reason)                                            # February 2017 has no 29th
+    reason = err.reason
+print(reason)                                                    # February 2017 has no 29th
 ```
 
 The value `"none"` is the default. Any other value than `"none"` or `"raise"` raises `ValueError`.
@@ -1230,7 +1231,7 @@ To add a language, create `chronologia/locale/<code>/`, translate the `.voc` sur
 A locale is not free-form data: it must satisfy a **schema** the engine derives from itself and checks the moment a language is loaded (see `chronologia/extract/schema.py`). The loader checks this eagerly. A broken locale fails **loudly** with the language code and the exact field at fault. It does not silently produce a construction that can never match. The contract is:
 
 - **Order strings use the fixed slot alphabet**. Every `orders` entry is a space-separated sequence of *slots* (uppercase, `MONTH`, `NUM`, `SEASON`, …) and *connector literals* (lowercase, `of`, `year_word`, `ago`). The slot alphabet is exactly the set the matcher's `_bind` recognises. A mistyped slot (`MOMTH`) is rejected. A trailing `?` marks a single optional element (`YEAR?`). A `?` anywhere else is malformed.
-- **Every required slot must have vocabulary**. An order is *reachable* only if each non-optional slot and connector has a non-empty backing `.voc` in this locale. `of` needs `marker_of.voc`. `SEASON` needs the `season_*.voc` files. `CAL_MONTH` needs `month_<calendar>_<n>.voc`. An order whose vocabulary was never translated is dead data and is reported, drop the order, or supply the missing surfaces. Numeric/regex slots (`NUM`, `YEAR`, `ORD`, `ISO`, …) need no vocabulary and are always reachable.
+- **Every required slot must have vocabulary**. An order is *reachable* only if each non-optional slot and connector has a non-empty backing `.voc` in this locale. `of` needs `marker_of.voc`. `SEASON` needs the `season_*.voc` files. `CAL_MONTH` needs `month_<calendar>_<n>.voc`. An order whose vocabulary was never translated is dead data and is reported. Drop the order, or supply the missing surfaces. Numeric/regex slots (`NUM`, `YEAR`, `ORD`, `ISO`, …) need no vocabulary and are always reachable.
 - **Only known keys**. The loader rejects unknown top-level keys, unknown `conventions`, `tokenizer` and `guards` keys, and unknown per-construction flags (only `prefer_future` and `group` exist). It rejects construction names that the engine does not rank, and `group` values other than `classical`.
 - **Quantifier keys are numeric strings**. Each key under `quantifiers` is the numeric value its surface forms mean (`"2": ["couple", "pair"]`), so a non-numeric key is rejected.
 
@@ -1293,11 +1294,11 @@ span, _ = extract_timespan("2 years after 1990", "en", anchor)
 assert (span.start.year, span.start.month, span.start.day) == (1992, 1, 1)
 ```
 
-A bare marker with no offset in front of it is **not** anchored arithmetic, "after easter" is still just Easter, unchanged. The pass only fires when a resolvable reference carries an offset pre-amble.
+A bare marker with no offset in front of it is **not** anchored arithmetic: "after easter" is still just Easter, unchanged. The pass only fires when a resolvable reference carries an offset pre-amble.
 
 ## Ordinal counting from now
 
-A weekday can also be *counted* from the anchor. The English form "3 fridays" with a from-the-present marker is the third Friday strictly after the anchor, and "2 mondays ago" is the second Monday strictly before it. "The weekend after next" skips the next weekend and takes the one following. These do not lean on a reference date. They count occurrences from the anchor, so they resolve straight from the words.
+A weekday can also be *counted* from the anchor. The English "3 fridays from now" is the third Friday strictly after the anchor, and "2 mondays ago" is the second Monday strictly before it. "The weekend after next" skips the next weekend and takes the one following. These do not lean on a reference date. They count occurrences from the anchor, so they resolve straight from the words.
 
 ```python
 anchor = datetime(2017, 6, 27)          # Tuesday
@@ -1317,7 +1318,7 @@ span, _ = extract_timespan("el fin de semana después del próximo", "es", ancho
 assert (span.start.year, span.start.month, span.start.day) == (2017, 7, 15)
 ```
 
-The counted form with a from-the-present marker is idiomatic in English, Portuguese, Spanish and French, each in its own words: "3 sextas a partir de agora", "3 viernes a partir de ahora", "3 vendredis à partir de maintenant". German has no clean trailing from-the-present form for it, so German carries only "the weekend after next" here.
+"N weekdays from now" is idiomatic in English, Portuguese, Spanish and French, each in its own words: "3 sextas a partir de agora", "3 viernes a partir de ahora", "3 vendredis à partir de maintenant". German has no clean trailing "from now" form for it, so German carries only "the weekend after next" here.
 
 ## Quarters and ISO weeks
 
@@ -1343,7 +1344,7 @@ assert span.start.month == 4
 assert extract_timespan("Q5 2026", "en", anchor) is None
 ```
 
-An **ISO-8601 week** is named "week 32" (the anchor's ISO year) or "week 32 of 2026". ISO weeks are **Monday-based by the standard**, week 1 is the week containing the year's first Thursday. This is *independent* of the locale's civil `week_start` convention, which only governs "this / next week". The span is the seven days `[Monday, next Monday)`:
+An **ISO-8601 week** is named "week 32" (the anchor's ISO year) or "week 32 of 2026". ISO weeks are **Monday-based by the standard**: week 1 is the week containing the year's first Thursday. This is *independent* of the locale's civil `week_start` convention, which only governs "this / next week". The span is the seven days `[Monday, next Monday)`:
 
 ```python
 span, _ = extract_timespan("week 32 of 2026", "en", anchor)
@@ -1405,7 +1406,7 @@ assert rec.until is not None       # UNTIL the resolved June date
 
 ## Character offsets: locating each mention in the utterance
 
-[`extract_timespans`](#beyond-a-single-span-durations-multiple-mentions-recurrence), the multi-mention edge, tags each `TimeMention` with a `char_span`. This is a half-open `(start, end)` **character** range into the *original* utterance. It comes from the offsets that the tokenizer recorded, and no search of the string recovers it. So slicing the utterance with it recovers the exact substring the mention was read from, even after spelled-number folding rewrote the tokens:
+[`extract_timespans`](#beyond-a-single-span-durations-multiple-mentions-recurrence), the multi-mention edge, tags each `TimeMention` with a `char_span`. This is a half-open `(start, end)` **character** range into the *original* utterance. It comes from the offsets that the tokenizer recorded. The library never searches the string again to find it. So slicing the utterance with it recovers the exact substring the mention was read from, even after spelled-number folding rewrote the tokens:
 
 ```python
 from chronologia.extract.nseries import extract_timespans
@@ -1424,7 +1425,7 @@ A test never pins the engine's own output as the expected answer (that would onl
 
 ## The corpus convention (and the cross-language parity contract)
 
-A language opts into span-native extraction by shipping a **corpus package** at `test/nl_corpus_<code>/`. It is a directory of parametrised `test_nl_*.py` modules. Each case is a real sentence that asserts the exact span, with the expected value derived by hand. `test/test_language_parity.py` is the structural guard over that convention. It is **discovery-based**: it finds corpus packages by directory name, with no hardcoded language list. So a language lands its package and is validated automatically, parallel branches never collide on that file. It enforces three things per discovered corpus:
+A language opts into span-native extraction by shipping a **corpus package** at `test/nl_corpus_<code>/`. It is a directory of parametrised `test_nl_*.py` modules. Each case is a real sentence that asserts the exact span, with the expected value derived by hand. `test/test_language_parity.py` is the structural guard over that convention. It is **discovery-based**: it finds corpus packages by directory name, with no hardcoded language list. So a language lands its package and is validated automatically. Parallel branches never collide on that file. It enforces three things per discovered corpus:
 
 - the corpus backs a real `locale/<code>/lang.json`.
 - the corpus collects **at least 100 cases**.

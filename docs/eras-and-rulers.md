@@ -147,7 +147,7 @@ print(accession_bc("egyptian_middle"))  # 1290
 print(accession_bc("egyptian_low"))  # 1279
 ```
 
-Ramesses II came to the throne in 1304, 1290, or 1279 BC depending on which scholarly chronology you follow. The library refuses to choose for you, that 25-year spread *is* the honest answer.
+Ramesses II came to the throne in 1304, 1290, or 1279 BC depending on which scholarly chronology you follow. The library refuses to choose for you. That 25-year spread *is* the honest answer.
 
 ## The Roman calendar: counting backwards from anchor days
 
@@ -157,7 +157,7 @@ Romans did not number the days of a month 1, 2, 3… Instead they counted *backw
 - the **Nones**, the 5th (or 7th in March, May, July, October).
 - the **Ides**, the 13th (or 15th in those same four months).
 
-The counting is the strange part. "Three days before the Kalends of April" (*ante diem III Kalendas Apriles*) counts **inclusively**: the Kalends itself is day 1. So you count back, 1 April is day 1, 31 March day 2, 30 March day 3. The answer is 30 March:
+The counting is the strange part. "Three days before the Kalends of April" (*ante diem III Kalendas Apriles*) counts **inclusively**: the Kalends itself is day 1. So you count back: 1 April is day 1, 31 March day 2, 30 March day 3. The answer is 30 March:
 
 ```python
 from chronologia import roman_to_julian
@@ -165,13 +165,13 @@ from chronologia import roman_to_julian
 print(roman_to_julian(-43, 4, "kalends", 3))  # (-43, 3, 30)
 ```
 
-That inclusive counting is why the arithmetic feels off by one to modern eyes, you always include the anchor day in the count. A count of 1 is the anchor day itself (the Ides of March is simply the Ides, count 1):
+That inclusive counting is why the arithmetic feels off by one to modern eyes: you always include the anchor day in the count. A count of 1 is the anchor day itself (the Ides of March is simply the Ides, count 1):
 
 ```python
 print(roman_to_julian(-43, 3, "ides", 1))  # (-43, 3, 15)
 ```
 
-And a count of 2 is the day before, the Romans had a special word for it, *pridie*:
+And a count of 2 is the day before. The Romans had a special word for it, *pridie*:
 
 ```python
 print(roman_to_julian(-43, 4, "kalends", 2))  # (-43, 3, 31)
@@ -181,7 +181,7 @@ The result is a **Julian** calendar date (the calendar Rome actually used), in t
 
 ## Movable feasts: why Easter wanders
 
-Most feast days sit on a fixed calendar square, Christmas is always 25 December. Easter is different: it *moves*, and a whole family of feasts moves with it. The rule is old and deliberately simple: **Easter is the first Sunday after the first full moon on or after the 21 March equinox.**
+Most feast days sit on a fixed calendar square: Christmas is always 25 December. Easter is different: it *moves*, and a whole family of feasts moves with it. The rule is old and deliberately simple: **Easter is the first Sunday after the first full moon on or after the 21 March equinox.**
 
 The subtle part is that "full moon" here does not mean *look at the sky*. The Church replaced the real Moon with a **codified arithmetic table**. It is a repeating cycle of "ecclesiastical" full-moon dates, keyed to the year's place in a 19-year lunar cycle. So computing Easter (the *computus*) is exact integer arithmetic on a calendar, not astronomy. Given a year, you get a definite date, with no error bar:
 

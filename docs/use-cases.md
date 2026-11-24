@@ -202,7 +202,7 @@ print("Rosh Hashanah -> Passover:", (passover - rosh).days, "days")  # Rosh Hash
 
 The program shows two Easters. It shows a *civil* Ramadan date that states it is a published table, while the religious start stays a predicted window. It shows prayer times that name their school. It shows Hebrew arithmetic done from first principles. Every one of these respects that these are exact traditions the civil calendar does not override.
 
-**What else you'll want**. The computus in full (why East and West drift, the movable feasts that follow Easter) is in [eras-and-rulers.md](eras-and-rulers.md). Every calendar's rules and reach, including exactly where the Islamic and Chinese calendars stop rather than drift , are in [calendars.md](calendars.md). Prayer conventions, the unequal hours of the pre-clock world, and sunrise/sunset are in [sun-moon-and-seasons.md](sun-moon-and-seasons.md).
+**What else you'll want**. The computus in full (why East and West drift, the movable feasts that follow Easter) is in [eras-and-rulers.md](eras-and-rulers.md). Every calendar's rules and reach, including exactly where the Islamic and Chinese calendars stop rather than drift, are in [calendars.md](calendars.md). Prayer conventions, the unequal hours of the pre-clock world, and sunrise/sunset are in [sun-moon-and-seasons.md](sun-moon-and-seasons.md).
 
 ---
 
@@ -262,7 +262,7 @@ Priya maintains a scheduling and log-analytics service, and her bugs all rhyme: 
 
 None of these are exotic. They are the everyday seams where civil time is not the smooth number line that the arithmetic assumes. A library that answers "that time is ambiguous" or "that time never existed" as a **typed value** saves her from a silent off-by-one in production. The library treats folds, gaps, leap seconds and week logic as ordinary inputs. So the edge case is a return value she can branch on rather than a corruption she finds in a postmortem.
 
-Recurring schedules are covered too, iCalendar `RRULE` expansion lives in [the recurrence guide](recurrence.md) (`every("yearly", bymonth=9, byday="1MO")` is Labor Day). Below, the focus is the part schedulers most often get wrong: being *correct* at the DST and leap-second seams.
+Recurring schedules are covered too: iCalendar `RRULE` expansion lives in [the recurrence guide](recurrence.md) (`every("yearly", bymonth=9, byday="1MO")` is Labor Day). Below, the focus is the part schedulers most often get wrong: being *correct* at the DST and leap-second seams.
 
 ```python
 from chronologia import (resolve_wall_clock, civil_add, utc_to_gps, gps_to_utc,
