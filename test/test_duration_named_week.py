@@ -2,9 +2,11 @@
 
 Class 2b of the OVOS date rulings reads a named week as the calendar unit,
 not as a length.  English "last week" is no length; the phrases below are the
-same words in other locales.  Each row comes from the date.entity file or the
-golden utterances of ovos-skill-date-time.  A week with an article and no
-modifier ("la semana", "a week") stays a length of 7 days.
+same words in other locales.  The named-week rows come from the date.entity
+file or the golden utterances of ovos-skill-date-time.  A week with an article
+and no modifier ("la semana", "a week") stays a length of 7 days, and so does
+a week after a quantifier, before a "this" word, or after a verb spelled like
+"last" (fr "passé", en "last").
 """
 from datetime import datetime, timedelta
 
@@ -56,6 +58,15 @@ def test_article_week_stays_a_length(text, lang):
     ("un mois cet été", "fr", 30),
     ("una settimana questa estate", "it", 7),
     ("a semana desta páscoa", "pt", 7),
+    ("the week this summer", "en", 7),
+    ("in the next 2 weeks", "en", 14),
+    ("j'ai passé la semaine à Paris", "fr", 7),
+    ("he pasado la semana en Madrid", "es", 7),
+    ("tinha passado a semana em Lisboa", "pt", 7),
+    ("ho passato la settimana a Roma", "it", 7),
+    ("he passat la setmana a Barcelona", "ca", 7),
+    ("pasado a semana na praia", "gl", 7),
+    ("the milk will last the week", "en", 7),
 ])
 def test_quantifier_or_this_word_keeps_the_length(text, lang, days):
     found = extract_duration(text, lang, anchor=ANCHOR)

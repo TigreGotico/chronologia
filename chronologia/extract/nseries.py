@@ -545,7 +545,8 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     unit in ("week", "fortnight") or unit in calendar_months
             ) and (
                     (end < n and spec.rel_markers.get(tokens[end].text))
-                    or (i > 0 and tokens[i - 1].text in spec.rel_markers)):
+                    or (i > 0
+                        and spec.rel_markers.get(tokens[i - 1].text) == 0)):
                 i += 1
                 continue
             # "an hour and a half": the fraction trails the unit.
