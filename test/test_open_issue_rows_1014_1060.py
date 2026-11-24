@@ -88,8 +88,9 @@ SPANS = [
     (1032, "it-IT", "il treno delle 8", dt(2026, 10, 17, 20, 0), None, None, dt(2026, 10, 17, 12, 0)),
     (1032, "es", "1 05 de la madrugada", dt(2024, 6, 16, 1, 5), None, None, dt(2024, 6, 15, 10, 0)),
     (1032, "es", "11 55 de la tarde", dt(2024, 6, 15, 23, 55), None, None, dt(2024, 6, 15, 10, 0)),
-    (1032, "ar", "الساعة الثالثة والثلث", dt(2026, 7, 17, 15, 20), None, None, dt(2026, 7, 17, 10, 0)),
-    (1032, "ar", "الساعة التاسعة إلا ربعاً", dt(2026, 7, 17, 20, 45), None, None, dt(2026, 7, 17, 10, 0)),
+    # 1032 gives the minutes, not the half of the day: either next reading passes
+    (1032, "ar", "الساعة الثالثة والثلث", (dt(2026, 7, 17, 15, 20), dt(2026, 7, 18, 3, 20)), None, None, dt(2026, 7, 17, 10, 0)),
+    (1032, "ar", "الساعة التاسعة إلا ربعاً", (dt(2026, 7, 17, 20, 45), dt(2026, 7, 18, 8, 45)), None, None, dt(2026, 7, 17, 10, 0)),
     (1033, "es-ES", "mañana temprano", Within(dt(2026, 10, 18, 4, 0), dt(2026, 10, 18, 12, 0)), None, "", dt(2026, 10, 17, 12, 0)),
     (1033, "de", "morgen früh um 6 uhr", dt(2117, 9, 4, 6, 0), None, None, dt(2117, 9, 3, 13, 30)),
     (1033, "nb", "vekk meg i morgen tidlig", Within(dt(2017, 6, 28, 4, 0), dt(2017, 6, 28, 12, 0)), None, "vekk meg", A),
