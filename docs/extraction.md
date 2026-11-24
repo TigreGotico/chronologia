@@ -820,6 +820,36 @@ these numerals. `extract_timespan` returns `None` and `extract_candidates`
 returns an empty list. The issues [#1032](https://github.com/TigreGotico/chronologia/issues/1032) and [#1035](https://github.com/TigreGotico/chronologia/issues/1035) track the ruling, and
 this paragraph changes when the ruling lands.
 
+### Where a reading sits in the text
+
+`extract_candidates` lists the readings, ranked, and `extract_timespan` returns
+the first one. A caller that needs to know where in the text that reading sits
+reads `char_span` from the first candidate, `extract_candidates(...)[0].char_span`.
+`extract_timespan` still returns the two values `(span, remainder)`.
+
+`char_span` is a pair `(start, end)`. It counts characters in the string you
+passed, before any normalisation, and it is half-open: `text[start:end]` is the
+phrase the reading consumed.
+
+```python
+text = "call me tomorrow at 3 pm please"
+top = extract_candidates(text, "en", datetime(2017, 6, 27, 13, 4))[0]
+print(top.char_span)
+# (8, 24)
+start, end = top.char_span
+print(repr(text[start:end]))
+# 'tomorrow at 3 pm'
+print(repr(top.remainder))
+# 'call me please'
+```
+
+The span runs from the first character the reading consumed to the last one.
+When the consumed words are not next to each other, the words between them are
+inside the span and also in `remainder`. A range includes its lead word and its
+connector ("from june 5th to june 12th" is `(0, 26)`). A word that the language
+leaves outside the range stays out of the span. `char_span` is `None` only when
+no consumed word has a position in the text.
+
 ### What the score is made of
 
 It is a **weighted product** of five factors, each a multiplier in `(0, 1]`
@@ -855,6 +885,8 @@ signal drags the whole score down the way a weak link should, and every input
 has a clear unit-interval reading.
 
 ### What confidence is **not**
+
+`confidence` ranks candidates and is not a probability. Consumers should pick by rank, or by the documented decline cases, not by a fixed threshold.
 
 It is **not a probability**. It does not estimate "the chance this parse is
 correct" and the numbers do not sum to one across candidates. It is a *relative

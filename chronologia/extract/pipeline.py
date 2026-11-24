@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import replace
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from chronologia.extract.model import LangSpec, Token
 from chronologia.extract.normaliser import TemporalNormaliser
@@ -81,6 +81,32 @@ def render_remainder(text: str, tokens) -> str:
         else:
             parts.append(text[s:e])
     return _WS.sub(" ", " ".join(parts)).strip()
+
+
+def consumed_extent(tokens, consumed=None) -> Optional[Tuple[int, int]]:
+    """The half-open ``[start, end)`` offsets into the original text from the
+    first to the last character of the ``tokens`` whose index is in
+    ``consumed`` (every token when ``consumed`` is ``None``).  Tokens without a
+    recorded extent are skipped; ``None`` when none has one."""
+    lo = hi = None
+    for t in tokens:
+        if t.char_start is None or t.char_end is None or (
+                consumed is not None and t.index not in consumed):
+            continue
+        if lo is None or t.char_start < lo:
+            lo = t.char_start
+        if hi is None or t.char_end > hi:
+            hi = t.char_end
+    return None if lo is None else (lo, hi)
+
+
+def join_extents(*extents: Optional[Tuple[int, int]]
+                 ) -> Optional[Tuple[int, int]]:
+    """The smallest extent that holds every extent given; ``None`` is skipped."""
+    found = [e for e in extents if e is not None]
+    if not found:
+        return None
+    return min(e[0] for e in found), max(e[1] for e in found)
 
 
 def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
