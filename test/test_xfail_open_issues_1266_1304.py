@@ -3,7 +3,7 @@
 Each row asserts the value the issue expects. Strict mode turns the run red
 when a fix lands, so the fix removes the mark from its rows.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -88,12 +88,18 @@ def test_twenty_fourth_weekday_of_march_declines():
 
 
 @pytest.mark.xfail(strict=True, reason=URL + "1291")
-def test_de_weekday_from_month_to_month_reads_as_en():
-    german = extract_recurrence("jeden Montag von Juni bis August", "de", ANCHOR)
-    english = extract_recurrence("every monday from june to august", "en", ANCHOR)
-    assert german is not None
-    assert german.remainder == ""
-    assert german.recurrence == english.recurrence
+@pytest.mark.parametrize("lang, text, first, last_monday", [
+    ("de", "jeden Montag von Juni bis August", datetime(2027, 6, 7), datetime(2027, 8, 30)),
+    ("en", "every monday from june to august", datetime(2027, 6, 7), datetime(2027, 8, 30)),
+    ("en", "every monday from 1 to 15 december", datetime(2026, 12, 7), datetime(2026, 12, 14)),
+])
+def test_a_weekday_rule_between_two_bounds_starts_at_the_first(lang, text, first, last_monday):
+    # 1 June 2027 and 1 December 2026 are Tuesdays, so the first Monday is the 7th.
+    # Any UNTIL from the last Monday up to the day before the next one gives the same dates.
+    event = extract_event(text, lang, ANCHOR)
+    assert event.summary == ""
+    assert event.span.start.datetime() == first
+    assert last_monday <= event.recurrence.until.datetime() < last_monday + timedelta(days=7)
 
 
 # (lang, text, anchor, start, end or None, remainder or None)
