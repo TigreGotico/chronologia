@@ -2145,6 +2145,8 @@ class Resolver:
         wd_tok = match.slots.get("WEEKDAY")
         if wd_tok is not None:                      # nth weekday of a month
             target = self.spec.weekdays[wd_tok.text]
+            cap_month = cap_year = None
+            cap_per = "month"
             month_tok = match.slots.get("MONTH")
             gyear_tok = match.slots.get("GYEAR")
             if month_tok is not None:               # named month ("... of June")
@@ -2157,7 +2159,7 @@ class Resolver:
                         else anchor.year + (self.spec.rel_markers[rel_tok.text]
                                             if rel_tok else 0))
                 value = _nth_weekday_of_month(year, month, target, n)
-                scope = (month, year if year_tok else None)
+                cap_month, cap_year = month, year if year_tok else None
             elif gyear_tok is not None:              # bare year, no month:
                 # "the first/last <weekday> of <YEAR>" -- the Nth (or, with
                 # ``ordlast``, final) occurrence of that weekday WITHIN the
@@ -2170,7 +2172,7 @@ class Resolver:
                 # relative to the anchor year rather than the named one.
                 year = int(gyear_tok.value)
                 value = _nth_weekday_of_year(year, target, n)
-                scope = (None, year, "year")
+                cap_year, cap_per = year, "year"
             else:
                 scope_tok = match.slots.get("SCOPE_UNIT")
                 scope_kind = (self.spec.units.get(scope_tok.text)
@@ -2184,7 +2186,8 @@ class Resolver:
                     base = _add_months(_midnight(anchor).replace(day=1), rel)
                     year, month = base.year, base.month
                     value = _nth_weekday_of_month(year, month, target, n)
-                    scope = (month, year) if rel_tok else (None, None)
+                    if rel_tok:
+                        cap_month, cap_year = month, year
                     # "the first tuesday of the month", with no marker, names
                     # the next such day once this month's has passed, in the
                     # next month that has it ("the fifth friday" skips the
@@ -2214,7 +2217,8 @@ class Resolver:
                     rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
                     year = anchor.year + rel
                     value = _nth_weekday_of_year(year, target, n)
-                    scope = (None, year if rel_tok else None, "year")
+                    cap_year = year if rel_tok else None
+                    cap_per = "year"
                 elif scope_tok is None:
                     # "the first/last <weekday> of the year_word", bare (no
                     # GYEAR, no SCOPE_UNIT bound at all) -- ``year_word`` is
@@ -2236,13 +2240,14 @@ class Resolver:
                     # ``weekday_ref`` reading ("first/last monday"),
                     # stranding "roku"/"года".
                     value = _nth_weekday_of_year(anchor.year, target, n)
-                    scope = (None, None, "year")
+                    cap_per = "year"
                 else:                                # week/decade/... -> no fit
                     return None
             if value is None:                       # no such Nth weekday
                 # a period the speaker did not name is only the anchor's, and
                 # another one may hold the weekday: report an ordinal beyond all
-                return decline(ordinal_cap(n, target, *scope))
+                return decline(ordinal_cap(n, target, month=cap_month,
+                                           year=cap_year, per=cap_per))
             start = AstroDate.from_date(value)
             return Resolution(DateSpan(start, start + timedelta(days=1)),
                               self._consumed(match))
@@ -2283,6 +2288,8 @@ class Resolver:
             return self._ordinal_result(value, kind, match)
 
         unit_kind = self.spec.units[unit_tok.text]
+        cap_month = cap_year = None
+        cap_per = "month"
         year_tok = match.slots.get("YEAR") or match.slots.get("GYEAR")
         year = _pivot_two_digit_year(year_tok, anchor.year) if year_tok else anchor.year
         month_tok = match.slots.get("MONTH")
@@ -2298,7 +2305,7 @@ class Resolver:
                         "calendar_date", {}).get("prefer_future", False)):
                 nxt = _next_day_month(month, n, anchor)
                 value = nxt.date() if nxt is not None else None
-            scope = (month, year if year_tok else None)
+            cap_month, cap_year = month, year if year_tok else None
         elif scope_tok is not None:                 # anchor-relative period
             # "the last day of (the|this|next|last) month/year": the scope word
             # names the anchor's own calendar period, shifted by an optional
@@ -2310,7 +2317,8 @@ class Resolver:
                 base = _add_months(_midnight(anchor).replace(day=1), rel)
                 value = _date_ordinal(n, date(base.year, base.month, 1),
                                       _UNIT_OF_MONTH[unit_kind])
-                scope = (base.month, base.year) if rel_tok else (None, None)
+                if rel_tok:
+                    cap_month, cap_year = base.month, base.year
                 # With no marker, a day or week of "the month" that ended
                 # before the anchor is next month's ("the first day of the
                 # month" said on the 17th); "of this month" never rolls.
@@ -2325,22 +2333,27 @@ class Resolver:
                             _UNIT_OF_MONTH[unit_kind])
             elif scope_kind == "year" and unit_kind == "week":
                 value = _nth_iso_week_of_year(anchor.year + rel, n)
-                scope = (None, anchor.year + rel if rel_tok else None, "year")
+                cap_year = anchor.year + rel if rel_tok else None
+                cap_per = "year"
             elif scope_kind == "year":
                 value = _date_ordinal(n, date(anchor.year + rel, 1, 1),
                                       _UNIT_OF_YEAR[unit_kind])
-                scope = (None, anchor.year + rel if rel_tok else None, "year")
+                cap_year = anchor.year + rel if rel_tok else None
+                cap_per = "year"
             else:                                   # week/decade/... -> no fit
                 return None
         elif unit_kind == "week":                   # year-scoped (year_word)
             value = _nth_iso_week_of_year(year, n)
-            scope = (None, year if year_tok else None, "year")
+            cap_year = year if year_tok else None
+            cap_per = "year"
         else:
             res = _UNIT_OF_YEAR[unit_kind]
             value = _date_ordinal(n, date(year, 1, 1), res)
-            scope = (None, year if year_tok else None, "year")
+            cap_year = year if year_tok else None
+            cap_per = "year"
         if value is None:
-            return decline(ordinal_cap(n, unit_kind, *scope))
+            return decline(ordinal_cap(n, unit_kind, month=cap_month,
+                                       year=cap_year, per=cap_per))
         return self._ordinal_result(value, unit_kind, match)
 
     def _ordinal_result(self, value, kind, match):

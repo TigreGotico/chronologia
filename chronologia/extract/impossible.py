@@ -14,11 +14,9 @@ Outside a ``"raise"`` call :func:`decline` does nothing.
 """
 from __future__ import annotations
 
-import calendar
 import functools
 import inspect
 from contextvars import ContextVar
-from datetime import date
 from typing import List, Optional
 
 from chronologia.astrodate import (_MONTH_NAMES_FULL, _WEEKDAY_NAMES_FULL,
@@ -85,8 +83,10 @@ def no_such_weekday(scope: str, n: int, weekday: int) -> str:
 
 
 # The most of a unit one month or one year can hold over the 400-year cycle.
-_MOST_IN_MONTH = {"weekend": 5, "day": 31, "week": 6}
-_MOST_IN_YEAR = {"business day": 262, "day": 366, "week": 53, "month": 12}
+_MOST = {
+    "month": {"weekday": 5, "weekend": 5, "day": 31, "week": 6},
+    "year": {"weekday": 53, "business day": 262, "day": 366, "week": 53, "month": 12},
+}
 # Most weekdays a month holds: 31-day months reach 23, 30-day months 22,
 # February 21 (a leap February starting on a Monday).
 _MOST_WEEKDAYS_IN_MONTH = {2: 21, 4: 22, 6: 22, 9: 22, 11: 22}
@@ -98,27 +98,20 @@ def ordinal_cap(n: int, unit, month: Optional[int] = None,
     """Why no ``per`` ("month" or "year") holds an ``n``-th ``unit``, or ``None``.
 
     ``unit`` is a weekday number (Monday=0) or a unit name ("business day",
-    "weekend", "day", "week", "month").  ``month`` and ``year`` name the
-    period.  Without ``year`` the cap is the most any such period holds, so a
-    period the speaker did not name may still hold ``n``.  With ``year`` a
-    weekday is counted in that period; any other unit is refused, since the
-    caller already searched the period.  ``zero`` refuses a 0th ordinal too.
+    "weekend", "day", "week", "month").  Without ``year`` the cap is the most
+    any such period holds, so a period the speaker did not name may still hold
+    ``n``.  A named ``year`` means the caller searched that period and found
+    no such ordinal: the reason is always given.  ``zero`` refuses a 0th
+    ordinal too.
     """
-    if year is not None and isinstance(unit, int):
-        days = _days_in_month(year, month) if month else 365 + calendar.isleap(year)
-        most = (days - (unit - date(year, month or 1, 1).weekday()) % 7 - 1) // 7 + 1
-    elif year is not None:
+    if year is not None:
         most = 0
-    elif isinstance(unit, int):
-        most = 5 if per == "month" else 53
-    elif per == "year":
-        most = _MOST_IN_YEAR.get(unit, 0)
-    elif unit == "business day":
+    elif unit == "business day" and per == "month":
         most = _MOST_WEEKDAYS_IN_MONTH.get(month, 23)
     elif unit == "day" and month:
         most = _days_in_month(2000, month)
     else:
-        most = _MOST_IN_MONTH.get(unit, 0)
+        most = _MOST[per].get("weekday" if isinstance(unit, int) else unit, 0)
     if abs(n) <= most and not (zero and n == 0):
         return None
     scope = scope_name(month, year) or f"a {per}"

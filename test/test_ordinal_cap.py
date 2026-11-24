@@ -2,50 +2,41 @@
 
 The expected values come from the calendar worked by hand.  1 January 2027 is a
 Friday, so 1 May 2027 is a Saturday and 1 February 2027 is a Monday; 2027 has
-365 days, so its 53rd weekday of one name is a Friday.  2028 is a leap year
-that starts on a Saturday: its 1 February is a Tuesday and it holds 53
-Saturdays and 53 Sundays.  2024 is a leap year that starts on a Monday, so it
-holds 262 weekdays.  May 2023 starts on a Monday and has 31 days (23 weekdays);
-April 2019 starts on a Monday and has 30 days (22 weekdays); February 2016
-starts on a Monday and has 29 days (21 weekdays).
+365 days, so it holds 53 Fridays and 52 of every other weekday.  2024 is a
+leap year that starts on a Monday, so it holds 262 weekdays.  May 2023 starts on
+a Monday and has 31 days (23 weekdays); April 2019 starts on a Monday and has 30
+days (22 weekdays); February 2016 starts on a Monday and has 29 days (21
+weekdays).
 """
 import pytest
 
 from chronologia.extract.impossible import ordinal_cap
 
-MON, TUE, FRI, SAT, SUN = 0, 1, 4, 5, 6
+MON, TUE, FRI, SUN = 0, 1, 4, 6
 
-# May 2027 has 5 Mondays (3, 10, 17, 24, 31), 5 Saturdays (1, 8, 15, 22, 29),
-# 5 Sundays (2, 9, 16, 23, 30) and 4 Tuesdays (4, 11, 18, 25).
+# A named year means the caller searched that period and found no such ordinal.
+# May 2027 holds 5 Mondays (3, 10, 17, 24, 31), so its 6th is the first that is
+# missing; February 2027 holds 4 of each weekday; 2027 holds 52 Mondays.
 _NAMED_PERIOD = [
-    (5, MON, 5, 2027, None),
     (6, MON, 5, 2027, "May 2027 has no 6th Monday"),
-    (-5, MON, 5, 2027, None),
     (-6, MON, 5, 2027, "May 2027 has no 6th to last Monday"),
-    (5, SAT, 5, 2027, None),
-    (5, SUN, 5, 2027, None),
-    (4, TUE, 5, 2027, None),
     (5, TUE, 5, 2027, "May 2027 has no 5th Tuesday"),
-    (-5, TUE, 5, 2027, "May 2027 has no 5th to last Tuesday"),
-    # February 2027 is four whole weeks; the leap February 2028 starts on a Tuesday.
-    (4, MON, 2, 2027, None),
     (5, MON, 2, 2027, "February 2027 has no 5th Monday"),
-    (5, TUE, 2, 2028, None),
     (5, MON, 2, 2028, "February 2028 has no 5th Monday"),
-    # 2027: 53 Fridays and 52 of every other weekday.
-    (53, FRI, None, 2027, None),
     (53, MON, None, 2027, "2027 has no 53rd Monday"),
-    (-53, FRI, None, 2027, None),
-    (-53, MON, None, 2027, "2027 has no 53rd to last Monday"),
-    # 2028: 53 Saturdays and 53 Sundays, 52 of the rest.
-    (53, SAT, None, 2028, None),
-    (53, SUN, None, 2028, None),
     (53, FRI, None, 2028, "2028 has no 53rd Friday"),
+    (-1, MON, None, 2027, "2027 has no last Monday"),
+    # a unit other than a weekday is refused the same way
+    (24, "business day", 5, 2026, "May 2026 has no 24th business day"),
+    (263, "business day", None, 2027, "2027 has no 263rd business day"),
+    (6, "weekend", 5, 2027, "May 2027 has no 6th weekend"),
+    (32, "day", 1, 2027, "January 2027 has no 32nd day"),
+    (54, "week", None, 2026, "2026 has no 54th week"),
 ]
 
 
 @pytest.mark.parametrize("n, unit, month, year, reason", _NAMED_PERIOD)
-def test_a_named_period_is_counted_from_its_calendar(n, unit, month, year, reason):
+def test_a_named_year_always_gives_the_reason(n, unit, month, year, reason):
     assert ordinal_cap(n, unit, month, year) == reason
 
 
