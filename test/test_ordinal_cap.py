@@ -25,7 +25,7 @@ _NAMED_PERIOD = [
     (5, MON, 2, 2028, "February 2028 has no 5th Monday"),
     (53, MON, None, 2027, "2027 has no 53rd Monday"),
     (53, FRI, None, 2028, "2028 has no 53rd Friday"),
-    (-1, MON, None, 2027, "2027 has no last Monday"),
+    (-53, MON, None, 2027, "2027 has no 53rd to last Monday"),
     # a unit other than a weekday is refused the same way
     (24, "business day", 5, 2026, "May 2026 has no 24th business day"),
     (263, "business day", None, 2027, "2027 has no 263rd business day"),
@@ -37,7 +37,8 @@ _NAMED_PERIOD = [
 
 @pytest.mark.parametrize("n, unit, month, year, reason", _NAMED_PERIOD)
 def test_a_named_year_always_gives_the_reason(n, unit, month, year, reason):
-    assert ordinal_cap(n, unit, month, year) == reason
+    per = "month" if month else "year"
+    assert ordinal_cap(n, unit, month, year, per=per) == reason
 
 
 _ANY_PERIOD = [
