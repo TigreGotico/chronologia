@@ -529,7 +529,8 @@ def _daypart_wraps_midnight(name: str) -> bool:
 
 def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
                           name: str, has_explicit_meridiem: bool,
-                          force_today: bool = False
+                          force_today: bool = False,
+                          anchor: Optional[datetime] = None
                           ) -> Optional[Resolution]:
     """Apply a day-part word adjacent to an explicit clock as a MERIDIEM
     hint on it, rather than a competing reading -- "evening at 9" is 21:00,
@@ -555,7 +556,11 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
     into its PM band yet ("tonight at 8" == 20:00, not tomorrow).  Pinning
     the date back to the day-part's own resolved day undoes that premature
     roll; a bare, non-explicit day-part ("evening at 3") keeps the clock's
-    roll untouched, per the documented R117 convention.
+    roll untouched, per the documented R117 convention.  That roll is only
+    kept when the shifted hour has passed too: "evening at 8" said at 12:00
+    is 20:00 the same day, as "at 8 in the evening" is, and said at 21:00 it
+    is 20:00 the next day.  ``anchor`` carries the moment the roll is tested
+    against.
 
     Returns ``None`` on contradiction.
     """
@@ -578,6 +583,12 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
     if force_today:
         d = daypart_res.value.start
         new_start = new_start.replace(year=d.year, month=d.month, day=d.day)
+    elif (anchor is not None
+          and new_start.date() == anchor.date() + timedelta(days=1)):
+        today = new_start.replace(year=anchor.year, month=anchor.month,
+                                  day=anchor.day)
+        if today.datetime() >= anchor.replace(tzinfo=None):
+            new_start = today
     consumed = tuple(sorted(set(clock_res.consumed) | set(daypart_res.consumed)))
     width = clock_res.value.end - clock_res.value.start
     return Resolution(DateSpan(new_start, new_start + width), consumed)

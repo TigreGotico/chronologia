@@ -4076,7 +4076,8 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
                             in engine.spec.daypart_today_words)
         force_today = dp_is_this or dp_is_today_word
         merged_clock = compose_daypart_clock(clk_res, dp_res, dp_name,
-                                             has_meridiem, force_today)
+                                             has_meridiem, force_today,
+                                             anchor)
         if merged_clock is None:
             # A genuine contradiction ("morning at 9pm") -- decline the
             # whole reading rather than guess a winner (R57 convention).
