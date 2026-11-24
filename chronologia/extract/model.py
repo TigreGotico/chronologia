@@ -94,6 +94,17 @@ class Token:
     # this flag is the only record that the next token is a suffix written
     # onto this one, not a separate word ("15 a" with the article "a").
     trailing_hyphen: bool = False
+    # Whether a currency symbol (Unicode category Sc) followed this token in
+    # the original utterance, with only spaces between ("three thousand $").
+    # The tokenizer drops the symbol, so this flag is the only record that a
+    # currency measures the number.
+    trailing_currency: bool = False
+    # Whether the token was written in capitals ("USD") in an utterance that
+    # also holds lower-case letters.  ``text`` and ``raw`` are lower-cased, so
+    # this flag is the only record that a three letter word is an ISO 4217
+    # code and not a word ("all", "try").  In an all-capitals utterance every
+    # word is in capitals, so none of them is read as a code.
+    upper: bool = False
     # Whether this number token was composed from an INDEFINITE ARTICLE deep-time
     # magnitude ("a million years ago", "a hundred thousand years ago") rather
     # than a spoken numeral.  The article form is a colloquial count-from-now
@@ -402,6 +413,11 @@ class LangSpec:
     # 24-hour clock they hold only an hour in that band ("22h da tarde" names
     # no time).  A surface here is also present in ``meridiems`` with 12.
     band_meridiems: FrozenSet[str] = field(default_factory=frozenset)
+    # Meridiem words that are also the adverb "late" (es, pt, gl "tarde").
+    # Before a clock and after another word of its clause such a word is the
+    # adverb ("llego tarde a las 6:30").  A surface here is also present in
+    # ``meridiems``.
+    late_meridiems: FrozenSet[str] = field(default_factory=frozenset)
     clock_dirs: Mapping[str, int] = field(default_factory=dict)       # past +1 / to -1
     # season_ref slot vocab (surface -> canonical season name)
     seasons: Mapping[str, str] = field(default_factory=dict)

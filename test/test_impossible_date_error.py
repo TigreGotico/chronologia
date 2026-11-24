@@ -78,6 +78,14 @@ IMPOSSIBLE = [
      (RECURRENCE,)),
     ("every 31st of April", "en", "April has no 31st",
      (SPAN, CANDIDATES, EVENT, RECURRENCE)),
+    ("annually on the 30th of february", "en", "February has no 30th",
+     (EVENT, RECURRENCE)),
+    ("annually on the 31st of february", "en", "February has no 31st",
+     (EVENT, RECURRENCE)),
+    ("yearly on the 31st of april", "en", "April has no 31st",
+     (EVENT, RECURRENCE)),
+    ("annually at 9 on the 31st of february", "en", "February has no 31st",
+     (EVENT, RECURRENCE)),
 ]
 
 #: text -> the extractors whose default answer is None; the others answer a
@@ -106,6 +114,10 @@ DEFAULT_NONE = {
     "the 0th weekday of the month": (SPAN, EVENT, RECURRENCE),
     "the 0th weekday of the year": (SPAN, EVENT, RECURRENCE),
     "every 31st of April": (SPAN, EVENT, RECURRENCE),
+    "annually on the 30th of february": (EVENT, RECURRENCE),
+    "annually on the 31st of february": (EVENT, RECURRENCE),
+    "yearly on the 31st of april": (EVENT, RECURRENCE),
+    "annually at 9 on the 31st of february": (EVENT, RECURRENCE),
 }
 
 CASES = [(text, lang, reason, extract)

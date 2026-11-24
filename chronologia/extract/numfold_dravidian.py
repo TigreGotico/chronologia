@@ -91,10 +91,12 @@ and ISO literals match them as readily as the ASCII ones.
 """
 from __future__ import annotations
 
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
+from chronologia.dayparts import DAY_PARTS
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import (clock_literal, compose, numeric,
+                                                opaque, reindex)
 
 # ---------------------------------------------------------------------------
 # Cardinals.  Every surface below is transcribed from
@@ -263,25 +265,6 @@ _LOCATIVE: Dict[str, str] = {
 _LOCATIVE_MARKER = "இல்"
 
 
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
-    return Token(text=str(value), raw=str(value), index=tok.index,
-                 is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
-
-
-def _clock_literal(hour: int, minute: int, first: Token, last: Token) -> Token:
-    text = f"{hour}:{minute:02d}"
-    return Token(text=text, raw=text, index=first.index,
-                 char_start=first.char_start, char_end=last.char_end)
-
-
-def _opaque(first: Token, last: Token, text: str) -> Token:
-    """A lexical token standing for a refused reading: it binds no slot, so the
-    span it covers reaches no construction and the extractor answers nothing."""
-    return Token(text=text, raw=text, index=first.index,
-                 char_start=first.char_start, char_end=last.char_end)
-
-
 def _locative_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """Cut a locative-marked unit into the unit plus the forward marker."""
     out: List[Token] = []
@@ -320,7 +303,6 @@ _DAYPART_PAIRS: Dict[Tuple[str, str], str] = {
 
 def _band_hours(key: str) -> frozenset:
     """The whole hours the day-period band ``key`` covers, from the registry."""
-    from chronologia.dayparts import DAY_PARTS
     part = DAY_PARTS[key]
     start, end = part.start.hour, part.end.hour
     span = (end - start) % 24 or 24
@@ -333,16 +315,12 @@ def _band_hours(key: str) -> frozenset:
     return frozenset((start + k) % 24 for k in range(span + 1))
 
 
-def _in_band(key: str, hour: int) -> bool:
-    return hour in _band_hours(key)
-
-
 def _pin_to_band(key: str, hour: int) -> Optional[int]:
     """``hour`` placed at whichever twelve-hour reading the band admits."""
+    band = _band_hours(key)
     if hour > 12:
-        return hour if _in_band(key, hour) else None
-    candidates = {hour % 12, (hour % 12) + 12}
-    inside = [h for h in sorted(candidates) if _in_band(key, h)]
+        return hour if hour in band else None
+    inside = [h for h in (hour % 12, hour % 12 + 12) if h in band]
     return inside[0] if len(inside) == 1 else None
 
 
@@ -375,7 +353,7 @@ def _cardinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             out.append(t)
             i += 1
             continue
-        out.append(_numeric(t, value, tokens[j - 1]))
+        out.append(numeric(t, value, tokens[j - 1]))
         i, changed = j, True
     return reindex(out) if changed else tokens
 
@@ -484,20 +462,11 @@ def _clock_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             minute = minute if hour is not None else None
         if hour is None:
             raw = " ".join(t.raw for t in tokens[i:i + used])
-            out.append(_opaque(tokens[i], last, raw))
+            out.append(opaque(tokens[i], last, raw))
         else:
-            out.append(_clock_literal(hour % 24, minute, tokens[i], last))
+            out.append(clock_literal(hour % 24, minute, tokens[i], last))
         i, changed = i + used, True
     return reindex(out) if changed else tokens
 
 
-def _compose(*passes: Callable) -> Callable:
-    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        for p in passes:
-            tokens = p(tokens)
-        return tokens
-    return run
-
-
-fold_ta = _compose(_locative_rewrite, _cardinal_rewrite,
-                   _clock_rewrite)
+fold_ta = compose(_locative_rewrite, _cardinal_rewrite, _clock_rewrite)

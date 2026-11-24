@@ -20,7 +20,7 @@ from chronologia.extract.numfold_romance import (_LOCALE_ROOT,
                                                  _collapse_h_clock, _glue)
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (CountWords, counts_things,
-                                          fold_mentions,
+                                          fold_mentions, voc_file_words,
                                           mark_counts, mention_number,
                                           scale_factor, scale_factors,
                                           withhold_split_counts)
@@ -94,6 +94,8 @@ _MONTHS = _voc("month_")
 _COUNT_WORDS = CountWords(
     scales=_SCALES, cues=_YEAR_CUES | _voc("marker_since"), months=_MONTHS,
     units=_UNITS, currencies=_voc("currency"),
+    codes=voc_file_words("pt", "currency_code.voc"),
+    qualifiers=voc_file_words("pt", "currency_qualifier.voc"),
     ranges={"desde": _voc("marker_until"), "de": _voc("marker_to")},
     amounts={"entre": _voc("marker_and")})
 

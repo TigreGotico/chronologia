@@ -32,38 +32,26 @@ def _words(lang: str) -> DateWords:
                      counts=count_words(lang))
 
 
-def _with_bare_case_hour(fold: Fold, hours: Dict[str, float], at_surface: str,
+def _with_bare_case_hour(inner: Fold, hours: Dict[str, float], at_surface: str,
                          skip_before: FrozenSet[str] = frozenset(),
                          digit_suffix: Optional[str] = None,
                          no_digit_suffix_after: FrozenSet[str] = frozenset()
                          ) -> Fold:
-    """Wrap a ``fold`` so a bare CASE-SUFFIXED clock hour binds its HOUR.
+    """Wrap ``inner`` so a bare case-suffixed clock hour binds as an HOUR.
 
-    The colloquial telling-time numeral drops the "o'clock" word and glues the
-    temporal/ablative/inessive case suffix straight onto the cardinal -- hu
-    "háromkor" (at three), fi "kolmelta", eu "hiruretan".  Folded to a bare
-    number, it would leave the clock frame no cue at all: standalone the digit
-    binds nothing (returns None), and after a daypart lead the numeral is
-    stranded and only the band comes back.
+    Hu "háromkor", fi "kolmelta" and eu "hiruretan" drop the "o'clock" word
+    and glue the case suffix onto the cardinal.  The glued token splits into
+    a synthetic zero-width ``at`` marker plus the hour number, so the "at
+    HOUR" clock order binds it, alone or after a daypart lead.  The marker is
+    skipped when the hour already follows a word in ``skip_before``.
+    ``at_surface`` must be a surface of the locale's ``marker_at.voc`` and
+    ``hours`` maps each glued surface to its value.
 
-    The one glued token is split into a synthetic ``at`` marker followed by the
-    hour number, so the universal "at HOUR" clock order (present in every locale)
-    binds it -- standalone and after a daypart/meridiem lead ("MERIDIEM at? HOUR").
-    The marker carries an empty ``raw`` and a zero-width extent, so it never
-    reaches the remainder text.  It is suppressed when the hour already trails an
-    explicit clock marker (Finnish "kello kolmelta"), keeping that frame's parse
-    byte-identical.  ``at_surface`` must be a surface in the locale's
-    ``marker_at.voc``; ``hours`` is the ``{glued surface: value}`` telling-time map.
-
-    ``digit_suffix`` names the same suffix written after an hour in DIGITS,
-    where the orthography separates it with a hyphen the tokenizer drops:
-    Hungarian writes "reggel 9-kor" and "delutan 2-kor" beside the spelled
-    "kilenckor".  The suffix then arrives as its own token behind the number,
-    and the pair is read exactly like the glued form.  Only a locale whose
-    spelling rules actually hyphenate the suffix onto a numeral passes it, and
-    ``no_digit_suffix_after`` names the surfaces that must not license it: a
-    clock fraction in a count-toward-the-hour language, where binding the hour
-    alone would answer a whole hour late with the fraction stranded.
+    ``digit_suffix`` is the same suffix written after a digit hour, which the
+    tokenizer leaves as its own token ("reggel 9-kor").  Only a locale that
+    hyphenates the suffix onto a numeral passes it.  ``no_digit_suffix_after``
+    lists the clock fractions that must not license it, since hu counts
+    toward the hour and binding the hour alone would answer a whole hour late.
     """
     def pre(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         out = []
@@ -92,7 +80,7 @@ def _with_bare_case_hour(fold: Fold, hours: Dict[str, float], at_surface: str,
                                  char_end=t.char_start))
             out.append(replace(t, text=str(num), raw=t.raw,
                                is_number=True, value=num))
-        return fold(reindex(tuple(out)))
+        return inner(reindex(tuple(out)))
 
     return pre
 
@@ -108,7 +96,7 @@ def fold_et(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 
 # -- Finnish ----------------------------------------------------------------
 # Finnish tells the clock hour with the ablative "-lta/-ltä" ("kello kolmelta"
-# = at three o'clock).  With "kello" dropped, the ablative alone marks the
+# = at three o'clock); with "kello" dropped the ablative alone marks the
 # clock.  Source: Wiktionary, -lta (https://en.wiktionary.org/wiki/-lta#Finnish),
 # ablative case; VISK §1237 (kellonajat) for the telling-time use.
 _FI_ABLATIVE_HOURS = {
@@ -123,10 +111,8 @@ def _fold_fi(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return fold(tokens, _FI_WORDS)
 
 
-# The bare ablative telling-time forms (kolmelta, yhdeksältä, ...) drop "kello"
-# and carry -lta/-ltä alone; split them so "at HOUR" binds ("kello" is the fi
-# marker_at surface).  When "kello" is already spoken ("kello kolmelta") the
-# synthetic marker is suppressed so that frame stays byte-identical.
+# A bare ablative hour (kolmelta) splits into the "kello" marker plus the
+# hour; after a spoken "kello" or "klo" the marker is skipped.
 fold_fi = _with_bare_case_hour(_fold_fi, _FI_ABLATIVE_HOURS, "kello",
                                skip_before=frozenset({"kello", "klo"}))
 
@@ -214,34 +200,29 @@ def _fold_hu(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return fold(_hu_day_ordinals(tokens), _HU_WORDS, extra=_hu_week_and_counted_fraction)
 
 
-# The bare "-kor" telling-time forms (háromkor, nyolckor, ...) drop "óra" and
-# glue -kor onto the numeral; split them so "at HOUR" binds ("kor" is the hu
-# marker_at surface).  "N órakor" keeps its own "órakor" oclock token and is
-# untouched here.
-# The suffix is also written after an hour in DIGITS, hyphenated: hu.wikipedia
-# prose has "reggel 9-kor", "delutan 2-kor" and "ejjel 11-kor".  A leading
-# clock fraction is held back, because Hungarian counts TOWARD the hour: "fel
-# 8-kor" is 07:30, so binding the hour alone would answer 08:00 with "fel"
-# stranded, a wrong time where refusing is right.
+# Bare "-kor" hours (háromkor) and digit hours with the hyphenated suffix
+# ("reggel 9-kor") split into the synthetic "kor" marker plus the hour.  "N
+# órakor" keeps its own "órakor" token.  A clock fraction before a digit hour
+# blocks the suffix, since "fel 8-kor" is 07:30 and binding 8 alone would
+# answer a wrong time where refusing is right.
 _HU_CLOCK_FRACTIONS = frozenset({"negyed", "fél", "fel", "háromnegyed",
                                  "haromnegyed"})
 fold_hu = _with_bare_case_hour(_fold_hu, _HU_KOR_HOURS, "kor",
                                digit_suffix="kor",
                                no_digit_suffix_after=_HU_CLOCK_FRACTIONS)
-# A day number or a digit clock takes its case suffix after a hyphen: AkH. 12,
-# rule 298, "1848. márc. 15-én", "2014. febr. 28-a", "1-je", "1-jén"; rule
-# 300, "10:35-kor".  The tokenizer drops the hyphen and leaves the suffix as a
-# word of its own, so a suffix that follows a hyphen folds back into the
-# number or clock it is written on.  The sublative "-ra"/"-re" names the same
-# point as a target ("ébressz fel 7-re", wake me for 7).  "-ig" (until) is not
-# folded: it carries a meaning of its own.  The tokenizer splits the dotted
-# clock "10.35" at its dot, so the two halves join back into "10:35" when a
-# clock suffix follows.  An hour after a clock fraction ("fél 8-kor", 7:30)
-# keeps its suffix too, because the fraction blocks the "at HOUR" reading of
-# the bare-suffix fold below.
+# A day number or a digit clock takes its case suffix after a hyphen (AkH. 12,
+# rules 298 and 300: "1848. márc. 15-én", "1-je", "10:35-kor").  The tokenizer
+# drops the hyphen, so a suffix after a hyphen folds back into the number or
+# clock it is written on.  The sublative "-ra"/"-re" names a target ("fel
+# 7-re"); "-ig" (until) means something else and stays apart.  The dotted
+# clock "10.35" arrives split at its dot and joins back when a clock suffix
+# follows.  An hour after a clock fraction keeps its suffix here because the
+# fraction blocks the bare-suffix "at HOUR" reading above.
 _HU_DAY_SUFFIX = frozenset({"a", "e", "án", "én", "je", "jén", "ra", "re"})
 _HU_CLOCK_SUFFIX = frozenset({"kor", "ra", "re"})
 _HU_CLOCK = re.compile(r"\d{1,2}[:.]\d{2}")
+_HU_HOUR_DIGITS = re.compile(r"\d{1,2}")
+_HU_MINUTE_DIGITS = re.compile(r"\d{2}")
 
 
 def _hu_dotted_clock(tokens: Tuple[Token, ...], i: int) -> Optional[Token]:
@@ -250,8 +231,8 @@ def _hu_dotted_clock(tokens: Tuple[Token, ...], i: int) -> Optional[Token]:
     if i + 2 >= len(tokens):
         return None
     hour, minute = tokens[i], tokens[i + 1]
-    if not (hour.trailing_dot and re.fullmatch(r"\d{1,2}", hour.text)
-            and re.fullmatch(r"\d{2}", minute.text)
+    if not (hour.trailing_dot and _HU_HOUR_DIGITS.fullmatch(hour.text)
+            and _HU_MINUTE_DIGITS.fullmatch(minute.text)
             and minute.char_start is not None and hour.char_end is not None
             and minute.char_start == hour.char_end + 1
             and minute.trailing_hyphen
@@ -264,7 +245,7 @@ def _hu_dotted_clock(tokens: Tuple[Token, ...], i: int) -> Optional[Token]:
                    trailing_hyphen=True)
 
 
-def _with_hu_hyphen_suffix(fold):
+def _with_hu_hyphen_suffix(inner: Fold) -> Fold:
     def pre(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         out, i, n = [], 0, len(tokens)
         while i < n:
@@ -289,7 +270,7 @@ def _with_hu_hyphen_suffix(fold):
                 continue
             out.append(t)
             i += 1
-        return fold(reindex(tuple(out)))
+        return inner(reindex(tuple(out)))
 
     return pre
 
@@ -303,9 +284,9 @@ _HU_ONE_AND_A_HALF = frozenset({"másfél", "masfel"})
 _HU_HALF = frozenset({"fél", "fel"})
 
 
-def _with_hu_half_count(fold):
+def _with_hu_half_count(inner: Fold) -> Fold:
     def post(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        tokens = fold(tokens)
+        tokens = inner(tokens)
         out, i, n = [], 0, len(tokens)
         while i < n:
             t = tokens[i]
@@ -386,25 +367,21 @@ def _eu_digit_suffix(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     while i < n:
         t = tokens[i]
         nxt = tokens[i + 1] if i + 1 < n else None
-        if (t.is_number and nxt is not None and not nxt.is_number
-                and nxt.text == "etan"):
-            # the digit hour with the inessive glued on ("3etan" = at three;
-            # Araua 37 writes case suffixes onto digits, "1995eko", "7an"):
-            # the same synthetic "at" + hour the spelled "hiruretan" gets
-            merged.append(Token(text="etan", raw="", index=t.index,
-                                char_start=t.char_start, char_end=t.char_start))
-            merged.append(replace(t, raw=t.raw + nxt.raw,
-                                  char_end=nxt.char_end if nxt.char_end is not None
-                                  else t.char_end))
-            i += 2
-            continue
-        if (t.is_number and nxt is not None and not nxt.is_number
-                and nxt.text in _EU_NUM_SUFFIX):
-            merged.append(replace(t, raw=t.raw + nxt.raw,
-                                  char_end=nxt.char_end if nxt.char_end is not None
-                                  else t.char_end))
-            i += 2
-            continue
+        if t.is_number and nxt is not None and not nxt.is_number:
+            end = nxt.char_end if nxt.char_end is not None else t.char_end
+            if nxt.text == "etan":
+                # the digit hour with the inessive glued on ("3etan", Araua 37)
+                # gets the synthetic "at" the spelled "hiruretan" gets
+                merged.append(Token(text="etan", raw="", index=t.index,
+                                    char_start=t.char_start,
+                                    char_end=t.char_start))
+                merged.append(replace(t, raw=t.raw + nxt.raw, char_end=end))
+                i += 2
+                continue
+            if nxt.text in _EU_NUM_SUFFIX:
+                merged.append(replace(t, raw=t.raw + nxt.raw, char_end=end))
+                i += 2
+                continue
         merged.append(t)
         i += 1
     return reindex(tuple(merged))
