@@ -51,7 +51,7 @@ from typing import List, Optional, Set, Tuple
 
 from chronologia.civil_holidays import is_civil_holiday
 from chronologia.extract.anchored import _gap_words, _offset_base
-from chronologia.extract.impossible import decline, no_such, scope_name
+from chronologia.extract.impossible import decline, ordinal_cap
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
                                               _day_span, _midnight,
@@ -346,8 +346,7 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             if mode == "nth" and value >= _add_months(first, 1):
                 # the count runs past the month's last business day: no day of
                 # that month is meant, so the phrase is claimed and refused.
-                decline(no_such(scope_name(first.month, first.year), count,
-                                "business day"))
+                decline(ordinal_cap(count, "business day", first.month, first.year))
                 return kept
             pair = (Match("business_days", (s0, end), {}),
                     Resolution(_day_span(value), tuple(sorted(claimed))))
