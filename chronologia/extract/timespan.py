@@ -42,9 +42,10 @@ from chronologia.extract.matcher import (ConstructionMatcher,
                                          is_alarm_bare_range)
 from chronologia.extract.model import (LangSpec, Resolution, Token)
 from chronologia.extract.normaliser import TemporalNormaliser
-from chronologia.extract.pipeline import (fold_tokens, prematch_tokens,
-                                              pretokens, render_remainder,
-                                              require_text)
+from chronologia.extract.pipeline import (consumed_extent, fold_tokens,
+                                          join_extents, prematch_tokens,
+                                          pretokens, render_remainder,
+                                          require_text)
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               _daypart_band,
                                               compose_date_clock,
@@ -530,12 +531,13 @@ def _unambiguous_lead(spec, surfaces):
     return [w for w in surfaces if " ".join(w) not in particles]
 
 
-def _with_prefix(got, prefix):
-    """Prepend the pre-lead text to a composed range's remainder."""
-    if got is None or not prefix:
-        return got
-    span, rem = got
-    return span, (prefix + " " + rem).strip() if rem else prefix
+def _with_lead(got, prefix, lead_tok):
+    """Prepend the pre-lead text to a composed range's remainder and widen its
+    extent over the lead word."""
+    span, rem, ext = got
+    if prefix:
+        rem = (prefix + " " + rem).strip() if rem else prefix
+    return span, rem, join_extents(ext, consumed_extent(lead_tok))
 
 
 def _crosses_midnight(span):
@@ -708,12 +710,32 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         return lambda bound: _monthly_start(text, sub, engine, anchor, bound,
                                             found)
 
-    def borrowed(sub):
+    glue = set(spec.connectors.get("article", ())) \
+        | set(spec.connectors.get("day_label", ()))
+
+    def bare_day_extent(own):
+        # the day numeral of a bare endpoint, a suffix written onto it ("5th")
+        # and the article or day label right before it; any other word of the
+        # slice is not part of the reading
+        lo = hi = next(i for i, t in enumerate(own)
+                       if t.is_number and t.value is not None)
+        while lo and own[lo - 1].text in glue:
+            lo -= 1
+        while hi + 1 < len(own) and own[hi + 1].char_start == own[hi].char_end:
+            hi += 1
+        return consumed_extent(own[lo:hi + 1])
+
+    def borrowed(sub, own=None):
         # a slice carrying tokens lent by the other endpoint; resolved through
         # the synthetic-token path so the lent words, which have no extent of
-        # their own here, cannot surface in this endpoint's remainder
-        return _range_endpoint(text, sub, engine, anchor,
-                               resolve=_variant_endpoint, scale_mode=scale_mode)
+        # their own here, cannot surface in this endpoint's remainder.  Given
+        # ``own``, the slice is a bare day read through the other endpoint's
+        # month: the lent words hide its own words from the variant reading.
+        got = _range_endpoint(text, sub, engine, anchor,
+                              resolve=_variant_endpoint, scale_mode=scale_mode)
+        if got is None or own is None:
+            return got
+        return got[:4] + (bare_day_extent(own),)
 
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
@@ -820,7 +842,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                         text, tokens[lead_at + lead:], engine, anchor):
                 return None
             if got is not None:
-                return _with_prefix(got, prefix)
+                return _with_lead(got, prefix,
+                                  tokens[lead_at:lead_at + lead])
 
     # -- between A and B ---------------------------------------------------
     if at_between is not None:
@@ -838,7 +861,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                      previous, daily, following=following,
                                      holding=holding)
             if got is not None:
-                return _with_prefix(got, prefix)
+                return _with_lead(got, prefix,
+                                  tokens[lead_at:lead_at + lead])
 
     # -- A <and> B <between> (postposed) ------------------------------------
     # Turkish, Hungarian and Finnish frame a closed range with the "between"
@@ -872,9 +896,10 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                          following=following,
                                      holding=holding)
                 if got is not None:
-                    span, rem = got
+                    span, rem, ext = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
-                    return span, rem
+                    return span, rem, join_extents(
+                        ext, consumed_extent(tokens[q:q + mk]))
     return None
 
 
@@ -943,7 +968,9 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     """A range endpoint carrying its *granularity kind* and whether its year was
     pinned, so :func:`_compose_range` can roll it without fabricating.
 
-    Returns ``(span, remainder, kind, pinned)`` or ``None``.  ``kind`` is:
+    Returns ``(span, remainder, kind, pinned, extent)`` or ``None``, where
+    ``extent`` is the character extent of the words the slice consumed.
+    ``kind`` is:
 
     * ``"clock"`` -- a sub-day span (a time of day); its cycle is one day, so a
       right endpoint that lands before the start ("10 pm to 2 am") rolls a day;
@@ -969,20 +996,20 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
     # to X" / "between now and X" compose as [anchor, X] instead of collapsing to
     # X's point when the "now" endpoint failed to resolve.
     if _is_now_slice(sub, engine.spec):
-        return _now_span(anchor), "", "dated", True
+        return _now_span(anchor), "", "dated", True, consumed_extent(sub)
     # a bare "new year" endpoint is New Year's Day -- a fixed calendar date, so
     # dated and pinned (never rolled).  This is what binds the trailing holiday
     # of "from Christmas to New Year" instead of dropping it and collapsing the
     # range onto Christmas.
     if _is_new_year_slice(sub, engine.spec):
-        return _new_year_span(anchor), "", "dated", True
+        return _new_year_span(anchor), "", "dated", True, consumed_extent(sub)
     resolve = resolve or _resolve_endpoint
     pinned = any(t.is_number and t.value is not None and t.value >= 100
                  for t in sub)
     weekday = any(t.text in engine.spec.weekdays for t in sub)
     got = resolve(text, sub, engine, anchor, scale_mode=scale_mode)
     if got is not None:
-        span, rem = got
+        span, rem, ext = got
         deep_time = False
         width = span.end - span.start
         if isinstance(width, WideDuration):
@@ -1005,10 +1032,10 @@ def _range_endpoint(text, sub, engine, anchor, resolve=None, scale_mode="short")
             kind = "deep_time"
         else:
             kind = "dated"
-        return span, rem, kind, pinned
+        return span, rem, kind, pinned, ext
     bw = _bare_weekday_endpoint(sub, engine, anchor)
     if bw is not None:
-        return bw[0], bw[1], "weekday", pinned
+        return bw[0], bw[1], "weekday", pinned, bw[2]
     return None
 
 
@@ -1138,7 +1165,7 @@ def _variant_endpoint(text, sub, engine, anchor, scale_mode="short"):
     span, consumed = core
     left = [t for t in folded
             if t.index not in consumed and t.char_start is not None]
-    return span, render_remainder(text, left)
+    return span, render_remainder(text, left), consumed_extent(folded, consumed)
 
 
 def _numeral_is_free(text, sub, engine, anchor, pos):
@@ -1250,14 +1277,14 @@ def _compose_clock_range(text, left_tok, right_tok, engine, anchor):
     move_left = _dateless_clock(left_tok, spec) \
         and not _dateless_clock(right_tok, spec)
     day = timedelta(days=1)
-    for lspan, lrem in lefts:
-        for rspan, rrem in rights:
+    for lspan, lrem, lext in lefts:
+        for rspan, rrem, rext in rights:
             ls, rs = _align_awareness(lspan, rspan)
             ls, rs = (_rebase(ls, rs.start), rs) if move_left \
                 else (ls, _rebase(rs, ls.start))
             if ls.start < rs.end <= ls.start + day:
                 rem = " ".join(p for p in (lrem, rrem) if p).strip()
-                return DateSpan(ls.start, rs.end), rem
+                return DateSpan(ls.start, rs.end), rem, join_extents(lext, rext)
     return None
 
 
@@ -1426,11 +1453,12 @@ def _labelled_day_keeps_own(sub, donor, donor_read, spec):
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
                    daily=None, since=False, following=None, holding=None):
-    """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
+    """Resolve two endpoint sub-slices into ``(span, remainder, extent)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
     they are dropped; each endpoint contributes its own leftover text.
-    ``endpoint(sub)`` returns ``(span, remainder, kind, pinned)`` or ``None``.
+    ``endpoint(sub)`` returns ``(span, remainder, kind, pinned, extent)`` or
+    ``None``.
 
     The span runs from the left endpoint's start to the right endpoint's end.
     When the right end lands at or before the start the endpoints sit in
@@ -1466,13 +1494,13 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             and not _labelled_day_keeps_own(left_tok, right_tok, right, spec):
         shared = _shared_context(bare_left, right_tok)
         if shared is not None:
-            left = borrowed(shared) or left
+            left = borrowed(shared, left_tok) or left
             shared_left = True
     elif bare_right is not None and bare_left is None \
             and not _labelled_day_keeps_own(right_tok, left_tok, left, spec):
         shared = _shared_context(bare_right, left_tok)
         if shared is not None:
-            right = borrowed(shared) or right
+            right = borrowed(shared, right_tok) or right
             shared_right = True
     # a single trailing year is lent to the endpoint that lacks one, so "from
     # January to March 2020" reads both months in 2020 (see :func:`_lend_year`);
@@ -1675,7 +1703,7 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     if end <= start:
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
-    return DateSpan(start, end), remainder
+    return DateSpan(start, end), remainder, join_extents(left[4], right[4])
 
 
 def _minus_one_year(astro):
@@ -1734,7 +1762,8 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     two numeric endpoints never merge) and matched exactly as a whole utterance
     is -- no substring is ever re-tokenized.  Returns ``(span, remainder)`` where
     ``remainder`` is this endpoint's own leftover text (sliced from ``text`` by
-    the unconsumed tokens' recorded extents), or ``None``.
+    the unconsumed tokens' recorded extents), or ``None``.  A third element
+    holds the character extent of the consumed tokens.
     """
     if not sub:
         return None
@@ -1748,7 +1777,7 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
     consumed = _fold_date_article(folded, consumed, engine.spec, span)
     remainder = render_remainder(text, [t for t in folded
                                         if t.index not in consumed])
-    return span, remainder
+    return span, remainder, consumed_extent(folded, consumed)
 
 
 def _fold_day_label(folded, consumed, spec):
@@ -1979,7 +2008,7 @@ def _monthly_start(text, sub, engine, anchor, bound, found):
 
 
 def _since_start(ep, sub, engine, anchor, now, text):
-    """``(start, remainder)`` of a "since <endpoint>" span, or ``None``.
+    """``(start, remainder, extent)`` of a "since <endpoint>" span, or ``None``.
 
     "since X" is PAST-anchored: it names the most recent occurrence of X
     at-or-before now.  A bare weekday recurs WEEKLY, so resolve it backward
@@ -1999,7 +2028,7 @@ def _since_start(ep, sub, engine, anchor, now, text):
     spec = engine.spec
     wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
     if wk is not None:
-        return wk[0].start, wk[1]
+        return wk[0].start, wk[1], wk[2]
     if ep is None:
         return None
     start = ep[0].start
@@ -2008,7 +2037,8 @@ def _since_start(ep, sub, engine, anchor, now, text):
         monthly = _monthly_endpoint(text, sub, engine)
         if monthly is not None:
             found = _monthly_start(text, sub, engine, anchor, now, monthly)
-            return None if found is None else (found[0].start, found[1])
+            return (None if found is None
+                    else (found[0].start, found[1], found[2]))
     if _definite_endpoint(sub, spec):
         # A DEFINITE endpoint: a now-relative day ("tomorrow"), a
         # direction/rel-qualified reference ("next month", "this friday") or an
@@ -2016,7 +2046,7 @@ def _since_start(ep, sub, engine, anchor, now, text):
         # own direction/rel token.  None of these is an underspecified reference
         # prefer_future flung forward, so never roll it: in the past it opens
         # the span, in the future "since" it is contradictory and is refused.
-        return (start, ep[1]) if start <= now else None
+        return (start, ep[1], ep[2]) if start <= now else None
     if any(t.text in spec.weekdays for t in sub):
         # An UNqualified weekday (the bare-weekday-alone case is handled by
         # _bare_weekday_endpoint above; this is a weekday carrying a clock, e.g.
@@ -2026,7 +2056,7 @@ def _since_start(ep, sub, engine, anchor, now, text):
         # would strand it on the wrong weekday.
         while start > now:
             start = start + timedelta(days=-7)
-        return start, ep[1]
+        return start, ep[1], ep[2]
     # An underspecified recurring reference.  Roll back by its OWN cycle: a bare
     # time-of-day (a sub-day-wide span with no calendar-date word) recurs DAILY,
     # so "since noon" at 9am is yesterday noon -- NOT a year ago; everything else
@@ -2042,14 +2072,14 @@ def _since_start(ep, sub, engine, anchor, now, text):
             lambda at: _resolve_endpoint(text, sub, engine, at),
             anchor, start, now)
         if back is not None:
-            return back[0].start, ep[1]
+            return back[0].start, ep[1], ep[2]
     while start > now:
         pulled = (start + timedelta(days=-1) if is_clock
                   else _minus_one_year(start))
         if pulled is None:
             break
         start = pulled
-    return start, ep[1]
+    return start, ep[1], ep[2]
 
 
 #: The constructions that read a bare month as its next occurrence.
@@ -2169,9 +2199,9 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
         # plain forward range with "since" dropped.  "now" is always the anchor
         # instant; "new year" is the first Jan 1 at or after `at`.
         if _is_now_slice(sub, engine.spec):
-            return _now_span(anchor), ""
+            return _now_span(anchor), "", consumed_extent(sub)
         if _is_new_year_slice(sub, engine.spec):
-            return _new_year_span(at), ""
+            return _new_year_span(at), "", consumed_extent(sub)
         return (_resolve_endpoint(text, sub, engine, at, scale_mode=scale_mode)
                 or _bare_weekday_endpoint(sub, engine, at))
 
@@ -2179,7 +2209,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     since = _since_start(left_ep, left_tok, engine, anchor, now, text)
     if since is None:
         return None
-    start, left_rem = since
+    start, left_rem, _ = since
     # in mid-sentence "since" may be the conjunction of cause ("we stay home
     # since the office is closed from monday to friday"): it opens the range
     # only when its date reads every word up to the terminator
@@ -2207,7 +2237,8 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     before = render_remainder(text, list(tokens[:lead]))
     remainder = " ".join(r for r in (before, left_rem, right_ep[1])
                          if r).strip()
-    return DateSpan(start, end), remainder
+    return (DateSpan(start, end), remainder,
+            join_extents(consumed_extent(tokens[lead:k]), right_ep[2]))
 
 
 def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
@@ -2246,14 +2277,22 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         if ep is None:
             return None
         here = _in_zone_of(now, ep[0].end)
-        return (DateSpan(here, ep[0].end), ep[1]) if ep[0].end > here else None
+        return ((DateSpan(here, ep[0].end), ep[1], ep[2])
+                if ep[0].end > here else None)
 
     def since_span(ep, sub):
         since = _since_start(ep, sub, engine, anchor, now, text)
         if since is None:
             return None
         here = _in_zone_of(now, since[0])
-        return (DateSpan(since[0], here), since[1]) if since[0] < here else None
+        return ((DateSpan(since[0], here), since[1], since[2])
+                if since[0] < here else None)
+
+    def marked(got, marker):
+        # widen the endpoint's extent over the marker word that bounds it
+        if got is None:
+            return None
+        return got[0], got[1], join_extents(got[2], consumed_extent(marker))
 
     def lead(surf, build):
         # the marker leads; its tokens are dropped, the endpoint keeps its own
@@ -2266,7 +2305,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             # "hasta cuántos grados": the limit is an amount, not a time
             return None
         ep = endpoint(tokens[k:])
-        return build(ep, tokens[k:]) if ep is not None else None
+        return marked(build(ep, tokens[k:]), tokens[:k]) \
+            if ep is not None else None
 
     def trail(surf, build):
         # a **postposed** marker -- the bound word trailing its date, the
@@ -2277,7 +2317,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
             m = len(words)
             if m and m < n and [t.text for t in tokens[n - m:]] == words:
                 ep = endpoint(tokens[:n - m])
-                got = build(ep, tokens[:n - m]) if ep is not None else None
+                got = marked(build(ep, tokens[:n - m]), tokens[n - m:]) \
+                    if ep is not None else None
                 if got is not None:
                     return got
         return None
@@ -2306,7 +2347,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                               if last.char_end is not None else None))
                 sub_a = tuple(tokens[:-1]) + (stripped,)
                 ep = endpoint(sub_a)
-                got = build(ep, sub_a) if ep is not None else None
+                got = marked(build(ep, sub_a), (last,)) \
+                    if ep is not None else None
                 if got is not None:
                     return got
         return None
@@ -2468,7 +2510,7 @@ def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
     day = (anchor.replace(hour=0, minute=0, second=0, microsecond=0)
            + timedelta(days=delta))
     start = AstroDate.from_datetime(day)
-    return DateSpan(start, start + timedelta(days=1)), ""
+    return DateSpan(start, start + timedelta(days=1)), "", consumed_extent(sub)
 
 
 def _trailing_meridiem(sub, spec):
@@ -2605,7 +2647,7 @@ def extract_timespan(
             from .nseries import _recur_ctx, _recur_nth_weekday
             _recur_nth_weekday(_recur_ctx(text, lang, anchor))
         return None
-    out = DateSpanResult(*res)
+    out = DateSpanResult(*res[:2])
     if out.remainder and _is_whole_duration(text, lang):
         # The noun that opens a clock time is the same one that counts hours,
         # so "2 hodiny 30 minut" -- two and a half hours -- reads as two
@@ -3738,7 +3780,8 @@ def _resolve_span(text, raw, engine, anchor, enable=(), jurisdiction=None,
     SINGLE case folds it.  A range/open-range endpoint recurses through the
     SINGLE case only (via :func:`_resolve_endpoint`): endpoints are deliberately
     **not** re-entered into range detection, so a pathological connector chain
-    cannot exhaust the stack.  Returns ``(span, remainder)`` or ``None``.
+    cannot exhaust the stack.  Returns ``(span, remainder)`` or ``None``; a
+    range also carries the character extent of its words as a third element.
     """
     # a "since A until B" directional range is tried FIRST: its leading "since"
     # would otherwise let the plain closed-range path split on "until" and roll
@@ -4578,13 +4621,19 @@ class Candidate:
     * ``confidence`` -- the deterministic score in ``(0, 1]``
       (see :mod:`chronologia.extract.confidence`); **not** a probability;
     * ``construction`` -- the trace name of the construction that matched
-      (``"calendar_date"``, ``"weekday_ref"``, ...).
+      (``"calendar_date"``, ``"weekday_ref"``, ...);
+    * ``char_span`` -- the half-open ``[start, end)`` offsets into the ``text``
+      passed in, before any normalisation, from the first to the last character
+      this reading consumed, so ``text[start:end]`` is the phrase it read.  Words
+      the reading left over between those two ends stay in ``remainder`` and
+      inside the span.  ``None`` only when no consumed token has a position.
     """
 
     span: DateSpan
     remainder: str
     confidence: float
     construction: str
+    char_span: Optional[Tuple[int, int]] = None
 
 
 @reports_impossible
@@ -4735,7 +4784,8 @@ def extract_candidates(
         rank = (0 if id(match) == primary else 1, -conf,
                 0 if is_composed else 1, match.span[0], -match.length)
         scored.append((rank, Candidate(res.value, remainder, conf,
-                                       match.construction)))
+                                       match.construction,
+                                       consumed_extent(tokens, consumed))))
     # Range and open-range readings ("june 5 to june 12", "between monday and
     # friday", "since 2019", "until friday") are composed by _resolve_span the
     # same way extract_timespan resolves them, but the matcher core never
@@ -4754,7 +4804,7 @@ def extract_candidates(
         range_ans = _extract_open_range(text, raw, engine, anchor, scale_mode)
         range_kind = "open_range"
     if range_ans is not None:
-        rspan, rrem = range_ans
+        rspan, rrem, rext = range_ans
         # the range's confidence reflects ITS OWN support: the strongest
         # endpoint reading that falls WITHIN its span -- never the strongest
         # unrelated construction elsewhere in the text (a trailing ISO literal
@@ -4772,6 +4822,6 @@ def extract_candidates(
         # of the same phrase ("5 to 9 am") that would otherwise tie on
         # confidence and win by insertion order, leaving the two APIs disagreeing.
         scored.append(((-1, -rconf, 0, 0, -len(tokens)),
-                       Candidate(rspan, rrem, rconf, range_kind)))
+                       Candidate(rspan, rrem, rconf, range_kind, rext)))
     scored.sort(key=lambda e: e[0])
     return [c for _, c in scored[:limit]]

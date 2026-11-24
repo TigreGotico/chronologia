@@ -822,6 +822,51 @@ these numerals. `extract_timespan` returns `None` and `extract_candidates`
 returns an empty list. The issues [#1032](https://github.com/TigreGotico/chronologia/issues/1032) and [#1035](https://github.com/TigreGotico/chronologia/issues/1035) track the ruling, and
 this paragraph changes when the ruling lands.
 
+### Where a reading sits in the text
+
+Each candidate carries `char_span`, a pair `(start, end)`. It counts characters
+in the string you passed, before any normalisation, and it is half-open:
+`text[start:end]` is the phrase that candidate consumed. The candidates are
+ranked, and each one has its own span.
+
+```python
+text = "call me tomorrow at 3 pm please"
+top = extract_candidates(text, "en", datetime(2017, 6, 27, 13, 4))[0]
+print(top.char_span)
+# (8, 24)
+start, end = top.char_span
+print(repr(text[start:end]))
+# 'tomorrow at 3 pm'
+print(repr(top.remainder))
+# 'call me please'
+```
+
+The span runs from the first character the candidate consumed to the last one.
+When the consumed words are not next to each other, the words between them are
+inside the span and also in `remainder`. A range includes its lead word and its
+connector ("from june 5th to june 12th" is `(0, 26)`). A word that the engine
+leaves unconsumed stays out of the span at either end. `char_span` is `None` only when no
+consumed word has a position in the text.
+
+`extract_timespan` returns `(span, remainder)` and no position. Its answer can
+differ from `extract_candidates(...)[0]`. A length after a clock extends the
+answer, so the span in `char_span` of the first candidate covers less than the
+answer does:
+
+```python
+text = "Besprechung um 15:15 für 45 Minuten"
+span, remainder = extract_timespan(text, "de", datetime(2017, 6, 27, 13, 4))
+print(span.start_datetime, span.end_datetime, repr(remainder))
+# 2017-06-27 15:15:00 2017-06-27 16:00:00 'Besprechung'
+top = extract_candidates(text, "de", datetime(2017, 6, 27, 13, 4))[0]
+print(top.construction, top.span.end_datetime, top.char_span)
+# clock_time 2017-06-27 15:16:00 (15, 20)
+```
+
+Here the answer runs to 16:00 and covers "um 15:15 für 45 Minuten". The first
+candidate is the clock alone, `text[15:20]`, which is "15:15". Take the
+position from the candidate whose `span` is the one you use.
+
 ### What the score is made of
 
 It is a **weighted product** of five factors, each a multiplier in `(0, 1]`
