@@ -4287,7 +4287,9 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
     unjoined: a pm word pins the pm reading, an am or night word keeps the
-    written hour.
+    written hour.  A word that is also the adverb "late" (es, pt, gl "tarde")
+    decides nothing when another word of its clause comes before it: "llego
+    tarde a las 6:30" is late.
     """
     if (_spoken_hours.get()
             or anchor is None or rep is None
@@ -4338,9 +4340,16 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         i = clock_match.span[0] - 1 if step < 0 else clock_match.span[1]
         while 0 <= i < n and tokens[i].text in glue:
             i += step
-        if 0 <= i < n and tokens[i].index not in covered \
-                and tokens[i].text in spec.meridiems:
-            meridiem_words.append(tokens[i].text)
+        if (not 0 <= i < n or tokens[i].index in covered
+                or tokens[i].text not in spec.meridiems):
+            continue
+        if (step < 0 and i > 0 and not tokens[i].break_before
+                and tokens[i].text in spec.late_meridiems):
+            # after another word of its clause the word is the adverb "late"
+            # ("llego tarde a las 6:30"); the noun opens its clause ("tarde a
+            # las 4:30") or a part-of-the-day match reads it ("de tarde")
+            continue
+        meridiem_words.append(tokens[i].text)
     if meridiem_words and (
             not all(spec.meridiems[w] == 12 for w in meridiem_words)
             or any(w in spec.night_meridiems for w in meridiem_words)):
