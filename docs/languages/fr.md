@@ -4,7 +4,7 @@
 covers: where each construction of the French locale comes from, what it refuses and which questions a native speaker would settle
 source: chronologia/locale/fr/lang.json, chronologia/locale/fr/*.voc, chronologia/extract/numlayer.py:NUMTAG_LANGS, test/nl_corpus_fr/, test/test_xfail_open_issues_*.py
 generated: no
-verify: .venv/bin/python -m doctest docs/languages/fr.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/fr.md
+verify: .venv/bin/python -m doctest docs/languages/fr.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/fr.md && .venv/bin/python -c 'exec("import re,sys\nfrom datetime import datetime\nimport chronologia as C\ndef mins(d):\n    return \"%g\" % (d.total_seconds() / 60)\ndef rem(r):\n    return \" and \\x60%s\\x60 left over\" % r if r else \"\"\ndef out(rd, tx, lg, an):\n    f = getattr(C, rd)\n    r = f(tx, lg, anchor=an) if rd == \"extract_duration\" else f(tx, lg, an)\n    if rd == \"extract_timespan\":\n        if r is None: return \"no reading\"\n        return \"%s to %s%s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), r.span.end.datetime().strftime(\"%Y-%m-%d %H:%M\"), rem(r.remainder))\n    if rd == \"extract_duration\":\n        if r is None: return \"no length\"\n        return \"a length of %s min%s\" % (mins(r.duration), rem(r.remainder))\n    if rd == \"extract_event\":\n        if r is None: return \"no event\"\n        return \"start %s, length %s, summary \\x60%s\\x60\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), \"none\" if r.duration is None else mins(r.duration) + \" min\", r.summary)\n    if r is None: return \"no rule\"\n    return \"the rule \\x60%s\\x60%s\" % (r.recurrence.to_string(), rem(r.remainder))\n\np=sys.argv[1]\nt=open(p).read()\nm=re.search(r\"\\n## Known limits\\n(.*?)(?=\\n---\\n|\\Z)\",t,re.S)\nbad=0\nn=0\nfor ln in (m[1].split(\"\\n\") if m else []):\n    g=re.search(r\"Example \\(reader \\x60(\\w+)\\x60, lang \\x60([\\w-]+)\\x60, anchor (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)\\): \\x60([^\\x60]+)\\x60 gives (.+?)\\. \\[#\\d+\\]\",ln)\n    if not g: continue\n    n+=1\n    o=out(g[1],g[4],g[2],datetime.strptime(g[3],\"%Y-%m-%d %H:%M\"))\n    if o!=g[5]:\n        bad=1\n        print(\"limit differs\",g[4],\"|\",g[5],\"|\",o)\nprint(\"known limits checked:\",n)\nsys.exit(bad)\n")' docs/languages/fr.md
 see: docs/languages/index.md, docs/extraction.md
 -->
 
@@ -28,7 +28,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## What ships
 
-**Weekdays and months** ship wide and abbreviated. The vocabulary records no source for them.
+**Weekdays and months** ship wide and abbreviated. The vocabulary cites Unicode CLDR 47 for them.
 
 **The date line** is little-endian and takes the day as a bare cardinal: `3 octobre 1990`, not an ordinal. `lang.json` sets `ordinal_dot` off. A dot after a numeral is never an ordinal marker in French, which is the same decision that keeps the dotted date out. The slashed numeric form reads, and so does the ISO-shaped year-first form on any separator.
 
@@ -42,7 +42,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 The `matin` then opens at 04:00, two hours before the English morning. The `après-midi` runs `[12:00, 18:00)`, and the `soir` runs `[18:00, 24:00)` with no band between it and the nuit. The hyphenated `après-midi` is canonicalised through the tokenizer, which splits the hyphen into two tokens that the loader re-glues. An ASCII-folded twin ships for the same reason the pm meridiem keeps one.
 
-**Ranges** are `du … au …` and `entre … et …`, `depuis` opens one that runs up to the anchor and `jusqu'à` closes one that starts there.
+**Ranges** are `du … au …` and `entre … et …`. `depuis` opens one that runs up to the anchor, and `jusqu'à` closes one that starts there.
 
 **Quarters, ISO weeks, decades and eras.** `le premier trimestre 2020` and `T1 2020` both resolve, as do `semaine 12`, `les années 80`, `les années quatre-vingt`, `44 av. J.-C.` and `1990 ap. J.-C.`. A before-present marker and the Julian, Unix, Anno Mundi and Holocene era prefixes all ship.
 
@@ -60,7 +60,7 @@ The Hebrew and Islamic month vocabularies ship one spelling per month and record
 
 The French Republican month names ship in ASCII only (`vendemiaire`, not `vendémiaire`) while the Gregorian months and the day parts carry their accents. No source is recorded for the Republican set.
 
-The weekday and month names carry no recorded source at all.
+The weekday and month names cite Unicode CLDR 47.
 
 ## What refuses
 
@@ -75,54 +75,6 @@ The weekday and month names carry no recorded source at all.
 3. Does `nuit` name the small hours of the day for a French reader? Or does `cette nuit`, said in the evening, name the night that is beginning?
 4. Does `le lundi` deserve a reading at all, given that it is genuinely ambiguous, and if so which of the two readings should win?
 5. Should a Republican-calendar year (`an II`) be readable, and in what surface?
-
-## Known limits
-
-Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
-
-**Clocks and parts of the day**
-
-- A list of two days reads as a clock or as the wrong day. Example: `le 14 et 15 mai` gives 2027-05-01 15:14, where the test expects 2027-05-14 00:00. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
-
-- An event with a noun before an evening clock reads a length of nine and a half hours. Example: `dîner neuf heures et demie le soir demain` gives 570 min, where the test expects nothing. [#1026](https://github.com/TigreGotico/chronologia/issues/1026)
-
-- A clock with a dot between hour and minute gives no time. Example: `à 8.15` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
-
-- A length before a part of the day reads as a clock. Example: `demain deux heures de réunion le matin` gives 2026-11-23 02:00 with `de réunion le matin` left over, where the morning band is meant. [#1298](https://github.com/TigreGotico/chronologia/issues/1298)
-
-**Dates, ranges and weeks**
-
-- Decomposed input reads differently from composed input. Example: `le 5 février 2027` gives 2027-01-01 00:00, where the test expects 2027-02-05 00:00. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
-
-- Bare `fr` does not read the Belgian and Swiss tens. Example: `dans septante-et-un jours` gives a length of 1 day with `dans septante-et` left over, where 71 days is meant. [#1075](https://github.com/TigreGotico/chronologia/issues/1075)
-
-- The last weekday of next month reads as the last weekday of this month. Example: `le dernier vendredi du mois prochain` gives 2026-10-30 00:00, where the test expects 2026-11-27 00:00. [#1295](https://github.com/TigreGotico/chronologia/issues/1295)
-
-- A range with a shared month or unit drops the unrelated words from the remainder. Example: `xx du 10h au 12h` gives xx du, where the test expects 'xx'      - xx. [#1351](https://github.com/TigreGotico/chronologia/issues/1351)
-
-**Offsets, lengths and holidays**
-
-- Text that is no date reads as a date, or the wrong reading wins. Example: `de 5 à 8 personnes demain` gives 2026-01-05 05:00, where the test expects 2026-01-06 00:00. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
-
-- A unit word with no number counts as one. Example: `il reste combien de jours avant le 15 mai` gives 2018-05-14 00:00, where the test expects 2018-05-15 00:00. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
-
-- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `un quart d'heure avant noël` gives 2026-12-24 00:00, where the test expects 2026-12-24 23:45. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
-
-- `before christmas` ends after Christmas Day, not when it starts. Example: `avant noël` gives 2026-12-26 00:00, where the test expects 2026-12-25 00:00. [#1097](https://github.com/TigreGotico/chronologia/issues/1097)
-
-**Recurrence**
-
-- A repeat count is not read. Example: `toutes les lundis 10 fois` gives None, where the test expects 10. [#1322](https://github.com/TigreGotico/chronologia/issues/1322)
-
-**Events, zones, business days and the API**
-
-- A phrase with `moins le quart` leaves those words in the event summary. Example: `réunion de deux heures moins le quart le matin demain` gives the summary `réunion de moins le quart`, where the test expects `réunion`. [#1028](https://github.com/TigreGotico/chronologia/issues/1028)
-
-- A clock in `heures` reads as a length. Example: `mets une alarme pour 7 heures demain matin` gives 420 min with remainder 'mets une alarme demain matin', where the test expects nothing. [#1063](https://github.com/TigreGotico/chronologia/issues/1063)
-
-- The event summary keeps the article and the day word before a day number. Example: `réunion le jour 5 décembre` gives réunion le jour, where the test expects 'réunion'      - réunion. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
-
-- The candidate list and the single-span reader read a clock with a length differently. Example: `à 9h pendant 2 heures` gives 2017-06-27 09:01, where the test expects 2017-06-27 11:00. [#1350](https://github.com/TigreGotico/chronologia/issues/1350)
 
 ## Checked examples
 
@@ -156,6 +108,56 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     True
     >>> extract_timespan('quinze jours', "fr", anchor) is None
     True
+
+## Known limits
+
+Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
+
+**Clocks and parts of the day**
+
+- An event with a noun before an evening clock reads a length of nine and a half hours. Example (reader `extract_event`, lang `fr`, anchor 2026-01-30 10:00): `dîner neuf heures et demie le soir demain` gives start 2026-01-31 18:00, length 570 min, summary `dîner`. [#1026](https://github.com/TigreGotico/chronologia/issues/1026)
+
+- A clock with a dot between hour and minute gives no time. Example (reader `extract_timespan`, lang `fr`, anchor 2026-09-25 12:00): `à 8.15` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
+
+- A clock in `heures` reads as a length. Example (reader `extract_duration`, lang `fr`, anchor 2017-06-27 13:04): `mets une alarme pour 7 heures demain matin` gives a length of 420 min and `mets une alarme demain matin` left over. [#1063](https://github.com/TigreGotico/chronologia/issues/1063)
+
+- A length before a part of the day reads as a clock. [#1298](https://github.com/TigreGotico/chronologia/issues/1298)
+
+**Dates, ranges and weeks**
+
+- A unit word with no number counts as one. Example (reader `extract_timespan`, lang `fr`, anchor 2017-06-27 13:04): `il reste combien de jours avant le 15 mai` gives 2018-05-14 00:00 to 2018-05-15 00:00 and `il reste combien` left over. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
+
+- Text that is no date reads as a date, or the wrong reading wins. Example (reader `extract_timespan`, lang `fr`, anchor 2117-09-03 13:30): `elle a 2h de route` gives 2117-09-04 02:00 to 2117-09-04 02:01 and `elle de route` left over. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
+
+- Bare `fr` does not read the Belgian and Swiss tens. Example (reader `extract_duration`, lang `fr`, anchor 2026-01-30 10:00): `dans septante-et-un jours` gives a length of 1440 min and `dans septante-et` left over. [#1075](https://github.com/TigreGotico/chronologia/issues/1075)
+
+- The last weekday of next month reads as the last weekday of this month. Example (reader `extract_event`, lang `fr`, anchor 2026-11-22 09:00): `le dernier vendredi du mois prochain` gives start 2026-11-27 00:00, length none, summary `prochain`. [#1295](https://github.com/TigreGotico/chronologia/issues/1295)
+
+- A list of two days reads as a clock or as the wrong day. Example (reader `extract_timespan`, lang `fr`, anchor 2026-11-22 09:00): `le 14 et 15 mai` gives 2027-05-01 15:14 to 2027-05-01 15:15. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
+
+- A range with a shared month or unit drops the unrelated words from the remainder. Example (reader `extract_timespan`, lang `fr`, anchor 2017-06-27 06:04): `xx du 10h au 12h` gives 2017-06-27 10:00 to 2017-06-27 12:01 and `xx du` left over. [#1351](https://github.com/TigreGotico/chronologia/issues/1351)
+
+- A range lead after another word stays in the remainder. [#1355](https://github.com/TigreGotico/chronologia/issues/1355)
+
+**Offsets, lengths and holidays**
+
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example (reader `extract_timespan`, lang `fr`, anchor 2026-09-25 12:00): `un quart d'heure avant noël` gives 2026-12-24 00:00 to 2026-12-25 00:00 and `un quart` left over. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
+
+- `before christmas` ends after Christmas Day, not when it starts. Example (reader `extract_timespan`, lang `fr`, anchor 2026-09-25 12:00): `avant noël` gives 2026-09-25 12:00 to 2026-12-26 00:00. [#1097](https://github.com/TigreGotico/chronologia/issues/1097)
+
+**Recurrence**
+
+- A repeat count is not read. Example (reader `extract_recurrence`, lang `fr`, anchor 2026-11-22 09:00): `toutes les lundis 10 fois` gives the rule `FREQ=WEEKLY;BYDAY=MO` and `10 fois` left over. [#1322](https://github.com/TigreGotico/chronologia/issues/1322)
+
+**Events, zones, business days and the API**
+
+- A phrase with `moins le quart` leaves those words in the event summary. [#1028](https://github.com/TigreGotico/chronologia/issues/1028)
+
+- The event summary keeps the article and the day word before a day number. Example (reader `extract_event`, lang `fr`, anchor 2025-06-18 10:30): `réunion le jour 5 décembre` gives start 2025-12-05 00:00, length none, summary `réunion le jour`. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
+
+- The candidate list and the single-span reader read a clock with a length differently. [#1350](https://github.com/TigreGotico/chronologia/issues/1350)
+
+- Input typed in decomposed (NFD) form reads differently from the composed (NFC) form. Example (reader `extract_timespan`, lang `fr`, anchor 2017-06-27 06:04): `le 5 février 2027` gives 2027-01-01 00:00 to 2028-01-01 00:00 and `le 5 février` left over. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
 
 ---
 [← Finnish](fi.md) · [Home](../index.md) · [Galician →](gl.md)

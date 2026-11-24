@@ -4,7 +4,7 @@
 covers: where each construction of the Kabyle locale comes from, what it refuses and which questions a native speaker would settle
 source: chronologia/locale/kab/lang.json, chronologia/locale/kab/*.voc, chronologia/extract/numlayer.py:NUMTAG_LANGS, test/nl_corpus_kab/, test/test_xfail_open_issues_*.py
 generated: no
-verify: .venv/bin/python -m doctest docs/languages/kab.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/kab.md
+verify: .venv/bin/python -m doctest docs/languages/kab.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/kab.md && .venv/bin/python -c 'exec("import re,sys\nfrom datetime import datetime\nimport chronologia as C\ndef mins(d):\n    return \"%g\" % (d.total_seconds() / 60)\ndef rem(r):\n    return \" and \\x60%s\\x60 left over\" % r if r else \"\"\ndef out(rd, tx, lg, an):\n    f = getattr(C, rd)\n    r = f(tx, lg, anchor=an) if rd == \"extract_duration\" else f(tx, lg, an)\n    if rd == \"extract_timespan\":\n        if r is None: return \"no reading\"\n        return \"%s to %s%s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), r.span.end.datetime().strftime(\"%Y-%m-%d %H:%M\"), rem(r.remainder))\n    if rd == \"extract_duration\":\n        if r is None: return \"no length\"\n        return \"a length of %s min%s\" % (mins(r.duration), rem(r.remainder))\n    if rd == \"extract_event\":\n        if r is None: return \"no event\"\n        return \"start %s, length %s, summary \\x60%s\\x60\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), \"none\" if r.duration is None else mins(r.duration) + \" min\", r.summary)\n    if r is None: return \"no rule\"\n    return \"the rule \\x60%s\\x60%s\" % (r.recurrence.to_string(), rem(r.remainder))\n\np=sys.argv[1]\nt=open(p).read()\nm=re.search(r\"\\n## Known limits\\n(.*?)(?=\\n---\\n|\\Z)\",t,re.S)\nbad=0\nn=0\nfor ln in (m[1].split(\"\\n\") if m else []):\n    g=re.search(r\"Example \\(reader \\x60(\\w+)\\x60, lang \\x60([\\w-]+)\\x60, anchor (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)\\): \\x60([^\\x60]+)\\x60 gives (.+?)\\. \\[#\\d+\\]\",ln)\n    if not g: continue\n    n+=1\n    o=out(g[1],g[4],g[2],datetime.strptime(g[3],\"%Y-%m-%d %H:%M\"))\n    if o!=g[5]:\n        bad=1\n        print(\"limit differs\",g[4],\"|\",g[5],\"|\",o)\nprint(\"known limits checked:\",n)\nsys.exit(bad)\n")' docs/languages/kab.md
 see: docs/languages/index.md, docs/extraction.md
 -->
 
@@ -55,26 +55,6 @@ The Kabyle vocabulary files carry no per-file source comments, unlike most local
 3. Is `Awussu` a current alternate for August?
 4. Which of the Kabyle temporal words the locale ships are standard, and which are regional?
 
-## Known limits
-
-Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
-
-- A weekday range or list followed by a clock drops the clock or picks a past day. [#1010](https://github.com/TigreGotico/chronologia/issues/1010)
-
-- A word for next or last beside a season, month or week stays in the remainder. Example: `tafsut i d-iteddun` gives 2017-03-01 00:00, where the test expects Within(2018-03-01 00:00:00, 2018-03-22 00:00:00). [#993](https://github.com/TigreGotico/chronologia/issues/993)
-
-- The last weekday of a month gives the whole month, or the weekday alone. Example: `letnayen aneggaru n meɣres` gives 2017-07-03 00:00, where the test expects 2017-03-27 00:00. [#1005](https://github.com/TigreGotico/chronologia/issues/1005)
-
-- A day word or a counted offset gives no reading. Example: `deg 3 wussan` gives no reading. [#992](https://github.com/TigreGotico/chronologia/issues/992)
-
-- A half past the hour loses the half. Example: `sebɛa u nnefṣ` gives no reading, where half past seven is meant. [#1021](https://github.com/TigreGotico/chronologia/issues/1021)
-
-- A compound number loses a part. Example: `mraw d sin n tesdidin` gives 2 min, where the test expects 12 min. [#1210](https://github.com/TigreGotico/chronologia/issues/1210)
-
-- Some number words give no length. Example: `tlatin tasint` gives no reading. [#1211](https://github.com/TigreGotico/chronologia/issues/1211)
-
-- The spelled number twelve reads only the tens. Example: `sin mraw n tesdidin` gives 10 min, where the test expects 12 min. [#1239](https://github.com/TigreGotico/chronologia/issues/1239)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -96,6 +76,26 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     ('2020-01-01T00:00:00', '')
     >>> str(CALENDARS["berber"].date(2976, 1, 1))
     '2026-01-14T00:00:00'
+
+## Known limits
+
+Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
+
+- A weekday range or list followed by a clock drops the clock or picks a past day. Example (reader `extract_timespan`, lang `kab`, anchor 2017-06-27 13:04): `seg letnayen ar lǧemɛa ɣef tesɛa n ṣṣbeḥ, smektay-iyi ad ẓreɣ imaylen-iw` gives 2017-06-26 00:00 to 2017-06-27 13:04 and `ar lǧemɛa ɣef tesɛa n ṣṣbeḥ, smektay-iyi ad ẓreɣ imaylen-iw` left over. [#1010](https://github.com/TigreGotico/chronologia/issues/1010)
+
+- A half past the hour loses the half. [#1021](https://github.com/TigreGotico/chronologia/issues/1021)
+
+- A day word or a counted offset gives no reading. Example (reader `extract_timespan`, lang `kab`, anchor 2017-06-27 13:04): `deg 3 wussan` gives no reading. [#992](https://github.com/TigreGotico/chronologia/issues/992)
+
+- A word for next or last beside a season, month or week stays in the remainder. Example (reader `extract_timespan`, lang `kab`, anchor 2017-06-27 13:04): `tafsut i d-iteddun` gives 2017-03-01 00:00 to 2017-06-01 00:00 and `i d-iteddun` left over. [#993](https://github.com/TigreGotico/chronologia/issues/993)
+
+- The last weekday of a month gives the whole month, or the weekday alone. Example (reader `extract_timespan`, lang `kab`, anchor 2017-06-27 13:04): `letnayen aneggaru n meɣres` gives 2017-07-03 00:00 to 2017-07-04 00:00 and `aneggaru n meɣres` left over. [#1005](https://github.com/TigreGotico/chronologia/issues/1005)
+
+- A compound number loses a part. Example (reader `extract_duration`, lang `kab`, anchor 2017-06-27 13:04): `mraw d sin n tesdidin` gives a length of 2 min and `mraw d` left over. [#1210](https://github.com/TigreGotico/chronologia/issues/1210)
+
+- Some number words give no length. Example (reader `extract_duration`, lang `kab`, anchor 2017-06-27 13:04): `tlatin tasint` gives no length. [#1211](https://github.com/TigreGotico/chronologia/issues/1211)
+
+- The spelled number twelve reads only the tens. Example (reader `extract_duration`, lang `kab`, anchor 2017-06-27 13:04): `sin mraw n tesdidin` gives a length of 10 min and `sin` left over. [#1239](https://github.com/TigreGotico/chronologia/issues/1239)
 
 ---
 [← Italian](it.md) · [Home](../index.md) · [Korean →](ko.md)

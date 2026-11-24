@@ -4,7 +4,7 @@
 covers: where each construction of the Galician locale comes from, what it refuses and which questions a native speaker would settle
 source: chronologia/locale/gl/lang.json, chronologia/locale/gl/*.voc, chronologia/extract/numlayer.py:NUMTAG_LANGS, test/nl_corpus_gl/, test/test_xfail_open_issues_*.py
 generated: no
-verify: .venv/bin/python -m doctest docs/languages/gl.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/gl.md tarde@12:00
+verify: .venv/bin/python -m doctest docs/languages/gl.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/gl.md tarde@12:00 && .venv/bin/python -c 'exec("import re,sys\nfrom datetime import datetime\nimport chronologia as C\ndef mins(d):\n    return \"%g\" % (d.total_seconds() / 60)\ndef rem(r):\n    return \" and \\x60%s\\x60 left over\" % r if r else \"\"\ndef out(rd, tx, lg, an):\n    f = getattr(C, rd)\n    r = f(tx, lg, anchor=an) if rd == \"extract_duration\" else f(tx, lg, an)\n    if rd == \"extract_timespan\":\n        if r is None: return \"no reading\"\n        return \"%s to %s%s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), r.span.end.datetime().strftime(\"%Y-%m-%d %H:%M\"), rem(r.remainder))\n    if rd == \"extract_duration\":\n        if r is None: return \"no length\"\n        return \"a length of %s min%s\" % (mins(r.duration), rem(r.remainder))\n    if rd == \"extract_event\":\n        if r is None: return \"no event\"\n        return \"start %s, length %s, summary \\x60%s\\x60\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), \"none\" if r.duration is None else mins(r.duration) + \" min\", r.summary)\n    if r is None: return \"no rule\"\n    return \"the rule \\x60%s\\x60%s\" % (r.recurrence.to_string(), rem(r.remainder))\n\np=sys.argv[1]\nt=open(p).read()\nm=re.search(r\"\\n## Known limits\\n(.*?)(?=\\n---\\n|\\Z)\",t,re.S)\nbad=0\nn=0\nfor ln in (m[1].split(\"\\n\") if m else []):\n    g=re.search(r\"Example \\(reader \\x60(\\w+)\\x60, lang \\x60([\\w-]+)\\x60, anchor (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)\\): \\x60([^\\x60]+)\\x60 gives (.+?)\\. \\[#\\d+\\]\",ln)\n    if not g: continue\n    n+=1\n    o=out(g[1],g[4],g[2],datetime.strptime(g[3],\"%Y-%m-%d %H:%M\"))\n    if o!=g[5]:\n        bad=1\n        print(\"limit differs\",g[4],\"|\",g[5],\"|\",o)\nprint(\"known limits checked:\",n)\nsys.exit(bad)\n")' docs/languages/gl.md
 see: docs/languages/index.md, docs/extraction.md
 -->
 
@@ -54,13 +54,13 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The `mañá` homograph rests on one entry doing two jobs.** DRAG gives `mañá` two senses in one entry. Sense 1 is the day part and sense 3 is the adverbial "day after today". The locale takes both from that single source and separates them by frame: bare `mañá` is tomorrow, framed `pola mañá` or `esta mañá` or `da mañá` is the morning band. Nothing independent corroborates that the frame is what does the separating.
 
-**`deica` ships as a general range terminus.** DRAG says it is not one. The DRAG entry for `deica` states that the idea of the speaker's own place or moment is always present in it. It gives the explicit contrast that one says `Camiñaron desde Pedrafita ata Santiago` and not `deica Santiago`. The locale nevertheless accepts `de xuño deica agosto` as a range because `deica` sits in the same to-marker vocabulary as `ata`. The reading it produces is the natural one, but it is wider than the source licenses.
+**`deica` ships as a general range terminus.** DRAG says it is not one. The DRAG entry for `deica` states that the idea of *here* or the present moment is always present in it. It gives the explicit contrast that one says `Camiñaron desde Pedrafita ata Santiago` and not `deica Santiago`. The locale nevertheless accepts `de xuño deica agosto` as a range because `deica` sits in the same to-marker vocabulary as `ata`. The reading it produces is the natural one, but it is wider than the source licenses.
 
 **`ata` is a homograph the locale does not guard.** DRAG has two `ata` headwords: the preposition, and a feminine noun for the act of tying sheaves. Only the preposition ships and nothing distinguishes the two.
 
 **The Roman anchors rest on a Wikipedia article,** weaker than the DRAG citations the rest of the locale is built on.
 
-**Weekday and month names, and the seasons, carry no recorded source.** The locale sets `hemisphere` to null. A season is never resolved to a southern reading.
+**The seasons carry no recorded source.** The weekday and month names cite Unicode CLDR 47, except the Monday and Saturday abbreviations. The locale sets `hemisphere` to null. A season is never resolved to a southern reading.
 
 ## Unchecked and broken citations
 
@@ -100,52 +100,6 @@ These are wrong answers, not refusals, and each is reproduced against the anchor
 4. Is `a década de 1980` an ordinary Galician way to name a decade, and should it therefore resolve to ten years?
 5. Are `calendas`, `nonas` and `idos` the forms Galician historical writing uses?
 
-## Known limits
-
-Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
-
-**Clocks and parts of the day**
-
-- A count later in the sentence drops the clock. Example: `mañá ás 3 da tarde compra as 3 cousas` gives 2026-09-26 00:00, where the test expects 2026-09-26 15:00. [#1199](https://github.com/TigreGotico/chronologia/issues/1199)
-
-- An approximate clock such as `about nine` is not read. Example: `avísame de luns a venres pola mañá sobre as 7` gives 2017-07-03 00:00, where the test expects 2017-06-28 07:00. [#1011](https://github.com/TigreGotico/chronologia/issues/1011)
-
-- A day-part phrase after a noun reads as the morning, and a week phrase breaks the clock. Example: `amósame as alarmas de mañá` gives 2017-06-27 06:00, where the test expects 2017-06-28 00:00. [#1014](https://github.com/TigreGotico/chronologia/issues/1014)
-
-- A date built from two parts loses one of them. Example: `cada mañá` gives cada. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
-
-- A clock with a dot between hour and minute gives no time. Example: `ás 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
-
-- A day-labelled range start next to a clock with a day part reads as an hour. Example: `desde o día 10 ata as 8 da noite` gives 2026-01-30 22:00, where the test expects 2026-02-10 00:00. [#1229](https://github.com/TigreGotico/chronologia/issues/1229)
-
-**Dates, ranges and weeks**
-
-- A day number with no month reads nothing. Example: `no día 14` gives no reading. [#1302](https://github.com/TigreGotico/chronologia/issues/1302)
-
-- A day range with a relative-month end reads as the whole month. Example: `entre o día 3 e o 5 do mes que vén` gives 2026-02-01 00:00, where the test expects 2026-02-03 00:00. [#1230](https://github.com/TigreGotico/chronologia/issues/1230)
-
-**Offsets, lengths and holidays**
-
-- A weekday mention drops its preposition or article, where a month keeps it. Example: `o venres` gives (2, 8), where the test expects (0, 8)      At index 0 diff: 2 != 0   Use -v to get more diff. [#996](https://github.com/TigreGotico/chronologia/issues/996)
-
-- A unit word with no number counts as one. Example: `a semana pasada` gives 10080 min with remainder 'pasada', where the test expects nothing. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
-
-- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `un cuarto de hora antes do nadal` gives 2026-12-24 00:00, where the test expects 2026-12-24 23:45. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
-
-**Recurrence**
-
-- A clock range in a recurrence reads the end hour or a wrong minute. Example: `cada luns das 9 ás 17` gives ((17,), ()), where the test expects ((9,), ())      At index 0 diff: (17,) != (9,)   Use -v to get more diff. [#1315](https://github.com/TigreGotico/chronologia/issues/1315)
-
-**Events, zones, business days and the API**
-
-- `century` and `millennium` give no length. Example: `1 século` gives no reading. [#1203](https://github.com/TigreGotico/chronologia/issues/1203)
-
-- A decimal count gives no length. Example: `1.5 horas` gives no reading. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
-
-- A bare clock with a zone skips the 12-hour rule. Example: `antes das 9:30 utc` gives 2017-06-28 09:31 UTC, where the test expects 2017-06-27 21:31 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
-
-- A working-day or day-of-month recurrence reads as every day. Example: `cada día de traballo ás 9` gives DAILY, where the test expects WEEKLY. [#1310](https://github.com/TigreGotico/chronologia/issues/1310)
-
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -184,6 +138,52 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     True
     >>> extract_timespan('o século vinte', "gl", anchor) is None
     True
+
+## Known limits
+
+Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
+
+**Clocks and parts of the day**
+
+- An approximate clock such as `about nine` is not read. Example (reader `extract_timespan`, lang `gl`, anchor 2017-06-27 13:04): `avísame de luns a venres pola mañá sobre as 7` gives 2017-07-03 00:00 to 2017-07-04 00:00 and `avísame de a venres pola mañá sobre as 7` left over. [#1011](https://github.com/TigreGotico/chronologia/issues/1011)
+
+- A day-part phrase after a noun reads as the morning, and a week phrase breaks the clock. Example (reader `extract_timespan`, lang `gl`, anchor 2017-06-27 13:04): `amósame as alarmas de mañá` gives 2017-06-27 06:00 to 2017-06-27 12:00 and `amósame as alarmas` left over. [#1014](https://github.com/TigreGotico/chronologia/issues/1014)
+
+- A clock with a dot between hour and minute gives no time. Example (reader `extract_timespan`, lang `gl`, anchor 2026-09-25 12:00): `ás 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
+
+- A count later in the sentence drops the clock. Example (reader `extract_timespan`, lang `gl-es`, anchor 2026-09-25 12:00): `mañá ás 3 da tarde compra as 3 cousas` gives 2026-09-26 00:00 to 2026-09-27 00:00 and `ás 3 da tarde compra as 3 cousas` left over. [#1199](https://github.com/TigreGotico/chronologia/issues/1199)
+
+- A day-labelled range start next to a clock with a day part reads as an hour. Example (reader `extract_timespan`, lang `gl`, anchor 2026-01-30 10:00): `desde o día 10 ata as 8 da noite` gives 2026-01-30 22:00 to 2026-01-31 20:01. [#1229](https://github.com/TigreGotico/chronologia/issues/1229)
+
+**Dates, ranges and weeks**
+
+- A weekday mention drops its preposition or article, where a month keeps it. [#996](https://github.com/TigreGotico/chronologia/issues/996)
+
+- A unit word with no number counts as one. Example (reader `extract_duration`, lang `gl`, anchor 2017-06-27 13:04): `a semana pasada` gives a length of 10080 min and `pasada` left over. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
+
+- A date built from two parts loses one of them. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
+
+- A day range with a relative-month end reads as the whole month. Example (reader `extract_timespan`, lang `gl`, anchor 2025-06-18 10:30): `entre o día 3 e o 5 do mes que vén` gives 2025-07-01 00:00 to 2025-08-01 00:00 and `3 o 5 do` left over. [#1230](https://github.com/TigreGotico/chronologia/issues/1230)
+
+- A day number with no month reads nothing. Example (reader `extract_timespan`, lang `gl`, anchor 2026-11-22 09:00): `no día 14` gives no reading. [#1302](https://github.com/TigreGotico/chronologia/issues/1302)
+
+**Offsets, lengths and holidays**
+
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example (reader `extract_timespan`, lang `gl`, anchor 2026-09-25 12:00): `un cuarto de hora antes do nadal` gives 2026-12-24 00:00 to 2026-12-25 00:00 and `un cuarto` left over. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
+
+- `century` and `millennium` give no length. Example (reader `extract_duration`, lang `gl`, anchor 2017-06-27 13:04): `1 século` gives no length. [#1203](https://github.com/TigreGotico/chronologia/issues/1203)
+
+- A decimal count is dropped from the length. Example (reader `extract_duration`, lang `gl`, anchor 2017-06-27 13:04): `1.5 horas` gives no length. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
+
+**Recurrence**
+
+- A clock range in a recurrence reads the end hour or a wrong minute. Example (reader `extract_recurrence`, lang `gl`, anchor 2026-11-22 09:00): `cada luns das 9 ás 17` gives the rule `FREQ=WEEKLY;BYDAY=MO;BYHOUR=17` and `das 9` left over. [#1315](https://github.com/TigreGotico/chronologia/issues/1315)
+
+**Events, zones, business days and the API**
+
+- A bare clock with a zone skips the 12-hour rule. Example (reader `extract_timespan`, lang `gl`, anchor 2017-06-27 13:04): `antes das 9:30 utc` gives 2017-06-27 13:04 to 2017-06-28 09:31. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
+
+- A working-day or day-of-month recurrence reads as every day. Example (reader `extract_recurrence`, lang `gl-ES`, anchor 2026-11-22 09:00): `cada día de traballo ás 9` gives the rule `FREQ=DAILY;BYHOUR=9` and `de traballo` left over. [#1310](https://github.com/TigreGotico/chronologia/issues/1310)
 
 ---
 [← French](fr.md) · [Home](../index.md) · [Georgian →](ka.md)

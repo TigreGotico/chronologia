@@ -4,7 +4,7 @@
 covers: where each construction of the German locale comes from, what it refuses and which questions a native speaker would settle
 source: chronologia/locale/de/lang.json, chronologia/locale/de/*.voc, chronologia/extract/numlayer.py:NUMTAG_LANGS, test/nl_corpus_de/, test/test_xfail_open_issues_*.py
 generated: no
-verify: .venv/bin/python -m doctest docs/languages/de.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/de.md
+verify: .venv/bin/python -m doctest docs/languages/de.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/de.md && .venv/bin/python -c 'exec("import re,sys\nfrom datetime import datetime\nimport chronologia as C\ndef mins(d):\n    return \"%g\" % (d.total_seconds() / 60)\ndef rem(r):\n    return \" and \\x60%s\\x60 left over\" % r if r else \"\"\ndef out(rd, tx, lg, an):\n    f = getattr(C, rd)\n    r = f(tx, lg, anchor=an) if rd == \"extract_duration\" else f(tx, lg, an)\n    if rd == \"extract_timespan\":\n        if r is None: return \"no reading\"\n        return \"%s to %s%s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), r.span.end.datetime().strftime(\"%Y-%m-%d %H:%M\"), rem(r.remainder))\n    if rd == \"extract_duration\":\n        if r is None: return \"no length\"\n        return \"a length of %s min%s\" % (mins(r.duration), rem(r.remainder))\n    if rd == \"extract_event\":\n        if r is None: return \"no event\"\n        return \"start %s, length %s, summary \\x60%s\\x60\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), \"none\" if r.duration is None else mins(r.duration) + \" min\", r.summary)\n    if r is None: return \"no rule\"\n    return \"the rule \\x60%s\\x60%s\" % (r.recurrence.to_string(), rem(r.remainder))\n\np=sys.argv[1]\nt=open(p).read()\nm=re.search(r\"\\n## Known limits\\n(.*?)(?=\\n---\\n|\\Z)\",t,re.S)\nbad=0\nn=0\nfor ln in (m[1].split(\"\\n\") if m else []):\n    g=re.search(r\"Example \\(reader \\x60(\\w+)\\x60, lang \\x60([\\w-]+)\\x60, anchor (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)\\): \\x60([^\\x60]+)\\x60 gives (.+?)\\. \\[#\\d+\\]\",ln)\n    if not g: continue\n    n+=1\n    o=out(g[1],g[4],g[2],datetime.strptime(g[3],\"%Y-%m-%d %H:%M\"))\n    if o!=g[5]:\n        bad=1\n        print(\"limit differs\",g[4],\"|\",g[5],\"|\",o)\nprint(\"known limits checked:\",n)\nsys.exit(bad)\n")' docs/languages/de.md
 see: docs/languages/index.md, docs/extraction.md
 -->
 
@@ -28,7 +28,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## What ships
 
-**Weekdays and months** ship in the wide and abbreviated widths. The vocabulary records no source for them. They are the ordinary CLDR-standard German names, and the abbreviations are written without the trailing dot because the tokenizer strips it.
+**Weekdays and months** ship in the wide and abbreviated widths. The vocabulary cites Unicode CLDR 47 for them. The abbreviations are written without the trailing dot because the tokenizer strips it.
 
 **The date line** is little-endian throughout, which `dmy` in `lang.json` declares. Three shapes read. The spelled form is `3. Oktober 1990`. Here the ordinal dot is a genuine ordinal marker. The setting `ordinal_dot` is on and capped at two digits, so a four-digit year can never pass for an ordinal. The dotted civil form is `15.06.2020`.
 
@@ -40,7 +40,7 @@ It reads all three components or none. A run like `15.13.2020` or `31.02.2020` n
 
 **The clock** carries the bare regional quarters and the ordinary `viertel nach` and `viertel vor` directional forms. `Uhr` is the o'clock word and `um` is the "at" marker. Midnight and noon are points. Only one timezone offset ships, UTC.
 
-**Day parts** are where German diverges hardest from English, and the vocabulary spells it out. German splits into `Morgen`, `Vormittag`, `Mittag`, `Nachmittag`, `Abend` and `Nacht`, where `Vormittag` is the half English has no word for at all, Duden glosses it as the "Zeit zwischen Morgen und Mittag". All six band boundaries come from the Unicode CLDR 47 day-period chart for `de` and are transcribed in `chronologia/dayparts.py`: Nacht `[00:00, 05:00)`, Morgen `[05:00, 10:00)`, Vormittag `[10:00, 12:00)`, Mittag `[12:00, 13:00)`, Nachmittag `[13:00, 18:00)` and Abend `[18:00, 24:00)`.
+**Day parts** are where German diverges hardest from English, and the vocabulary spells it out. German splits into `Morgen`, `Vormittag`, `Mittag`, `Nachmittag`, `Abend` and `Nacht`, where `Vormittag` is the half English has no word for at all. Duden glosses it as the "Zeit zwischen Morgen und Mittag". All six band boundaries come from the Unicode CLDR 47 day-period chart for `de` and are transcribed in `chronologia/dayparts.py`: Nacht `[00:00, 05:00)`, Morgen `[05:00, 10:00)`, Vormittag `[10:00, 12:00)`, Mittag `[12:00, 13:00)`, Nachmittag `[13:00, 18:00)` and Abend `[18:00, 24:00)`.
 
 Two consequences of that table are worth naming. The Nachmittag opens at 13:00, after an hour-wide Mittag, and not at noon the way the English afternoon does. And the Nacht is the small hours of the day named, not the evening. The Abend holds the evening through to midnight on its own, so `heute Nacht` is 00:00-05:00 of today.
 
@@ -61,7 +61,7 @@ Only four of the six bands have vocabulary. `Mittag` is the noon clock landmark 
 
 The bare toward-the-hour quarters rest on a single named source, and a widely read newspaper column rather than a grammar. The reading is not in doubt (the column exists to explain exactly this split) but it is regional. The locale ships it for all German without a dialect switch. Nothing in the locale distinguishes a southern speaker's `viertel neun` from a northern speaker's. A northern text that happens to contain those two words in that order will be read as a time.
 
-The weekday and month names carry no recorded source at all. They are not in doubt either, but the page cannot point at what was consulted.
+The weekday and month names cite Unicode CLDR 47.
 
 ## What refuses
 
@@ -87,66 +87,6 @@ The weekday and month names carry no recorded source at all. They are not in dou
 2. How should `Morgen` and `morgens` be told apart from `morgen` "tomorrow"? The distinction is capitalisation in writing and context in speech, and neither is available to a case-folding tokenizer.
 3. Does the Nacht band really start at midnight for a German reader, given that `heute Nacht` said in the evening usually means the coming night?
 4. Are `Kalenden`, `Nonen` and `Iden` the forms a German text actually uses, or is the Latin left untranslated in most modern writing?
-
-## Known limits
-
-Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
-
-**Clocks and parts of the day**
-
-- A date built from two parts loses one of them. Example: `in 3 tagen um 15 uhr` gives 2117-09-06 13:30, where the test expects 2117-09-06 15:00. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
-
-- A day word with a part of the day loses the clock. Example: `weck mich morgen früh um halb sieben` gives 2017-06-28 00:00, where the test expects 2017-06-28 06:30. [#1016](https://github.com/TigreGotico/chronologia/issues/1016)
-
-- A morning or evening word that the reader does not join lets a lone clock take the other half of the day. Example: `um 6 früh` gives 2017-06-27 18:00, where the test expects 2017-06-28 06:00. [#1071](https://github.com/TigreGotico/chronologia/issues/1071)
-
-- A day word with an early, late or part-of-day word gives midnight. Example: `morgen früh um 6 uhr` gives 2117-09-04 00:00, where the test expects 2117-09-04 06:00. [#1033](https://github.com/TigreGotico/chronologia/issues/1033)
-
-- A clock with a dot between hour and minute gives no time. Example: `um 8.15` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
-
-- A list of two days reads as a clock or as the wrong day. Example: `am 14. und 15. Mai` gives 2027-05-15 00:00, where the test expects 2027-05-14 00:00. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
-
-- The meridiem after an abbreviated hour word is lost. Example: `um 8 Std. abends` gives 2026-11-23 08:00, where the test expects 2026-11-23 20:00. [#1312](https://github.com/TigreGotico/chronologia/issues/1312)
-
-- A range reading crosses a full stop. Example: `Wir treffen uns am Montag. Der Bericht ist bis Freitag fällig.` gives 2017-07-08 00:00, where the test expects 2017-07-04 00:00. [#1352](https://github.com/TigreGotico/chronologia/issues/1352)
-
-**Dates, ranges and weeks**
-
-- The indefinite article before a day of a month reads as the first day. Example: `ein Tag im März` gives 2027-03-02 00:00, where the test expects 2027-04-01 00:00. [#1306](https://github.com/TigreGotico/chronologia/issues/1306)
-
-- A range with a shared month or unit drops the unrelated words from the remainder. Example: `xx 3. bis 10. Juli` gives , where the test expects 'xx'      - xx. [#1351](https://github.com/TigreGotico/chronologia/issues/1351)
-
-- Decomposed input reads differently from composed input. Example: `am 5. März 2027 um 15 Uhr` gives 2027-01-01 15:00, where the test expects 2027-03-05 15:00. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
-
-**Offsets, lengths and holidays**
-
-- Text that is no date reads as a date, or the wrong reading wins. Example: `Installiere Version 1.15.20 morgen` gives 2020-01-15 00:00, where the test expects 2026-09-24 00:00. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
-
-**Recurrence**
-
-- A weekday or clock range in a recurrence loses its end. Example: `jeden Montag bis Freitag 9 Uhr` gives ((None, 0), (None, 4)), where the test expects ((None, 0), (None, 1), (None, 2), (None, 3), (None, 4)). [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
-
-- A repeat count is not read. Example: `jeden Montag 10 mal` gives None, where the test expects 10. [#1322](https://github.com/TigreGotico/chronologia/issues/1322)
-
-- A range after a recurring weekday reads its end as an until bound and leaves the start. Example: `jeden Montag von Juni bis August` gives juni. [#1291](https://github.com/TigreGotico/chronologia/issues/1291)
-
-- An until bound in a recurrence resolves on the anchor day. Example: `jeden Montag bis Ende Juni` gives an until bound of 2026-06-21, which is before the anchor 2026-11-22. [#1316](https://github.com/TigreGotico/chronologia/issues/1316)
-
-**Events, zones, business days and the API**
-
-- A night clock with minutes gives the morning hour, where the same clock without minutes gives the evening hour. Example: `um 11:00 nachts` gives 2017-06-28 11:00, where the test expects 2017-06-27 23:00. [#1079](https://github.com/TigreGotico/chronologia/issues/1079)
-
-- The candidate list and the single-span reader read a clock with a length differently. Example: `um 9 Uhr für 2 Stunden` gives 2017-06-27 09:01, where the test expects 2017-06-27 11:00. [#1350](https://github.com/TigreGotico/chronologia/issues/1350)
-
-- A decimal count gives no length. Example: `weck mich in 3 wochen, 497 tagen und 391.6 sekunden` gives 745920 min, where the test expects datetime.timedelta(days=518, seconds=391, microseconds=600000). [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
-
-- The event summary keeps the article and the day word before a day number. Example: `Treffen am Tag 5 Mai` gives treffen am tag, where the test expects 'treffen'      - treffen. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
-
-- A bare clock with a zone skips the 12-hour rule. Example: `vor 9:30 utc` gives 2017-06-28 09:31 UTC, where the test expects 2017-06-27 21:31 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
-
-- The candidate reader does not raise in raise mode, where the event reader does. [#1276](https://github.com/TigreGotico/chronologia/issues/1276)
-
-- An impossible day read apart from its month is dropped, and the rest still reads. Example: `am 30. Februar um 9 Uhr` gives 21:00 today with `am 30. Februar` left over, where the test expects no date. [#1328](https://github.com/TigreGotico/chronologia/issues/1328)
 
 ## Checked examples
 
@@ -200,6 +140,66 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     True
     >>> extract_timespan('vierzehn Tage', "de", anchor) is None
     True
+
+## Known limits
+
+Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
+
+**Clocks and parts of the day**
+
+- A day word with a part of the day loses the clock. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 13:04): `weck mich morgen früh um halb sieben` gives 2017-06-28 00:00 to 2017-06-29 00:00 and `weck mich früh um halb sieben` left over. [#1016](https://github.com/TigreGotico/chronologia/issues/1016)
+
+- A day word with an early, late or part-of-day word gives midnight. Example (reader `extract_timespan`, lang `de`, anchor 2117-09-03 13:30): `morgen früh um 6 uhr` gives 2117-09-04 00:00 to 2117-09-05 00:00 and `früh um 6 uhr` left over. [#1033](https://github.com/TigreGotico/chronologia/issues/1033)
+
+- A clock with a dot between hour and minute gives no time. Example (reader `extract_timespan`, lang `de`, anchor 2026-09-25 12:00): `um 8.15` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
+
+- A night clock with minutes gives the morning hour, where the same clock without minutes gives the evening hour. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 13:04): `um 11:00 nachts` gives 2017-06-28 11:00 to 2017-06-28 11:01. [#1079](https://github.com/TigreGotico/chronologia/issues/1079)
+
+- The meridiem after an abbreviated hour word is lost. Example (reader `extract_timespan`, lang `de`, anchor 2026-11-22 09:00): `um 8 Std. abends` gives 2026-11-23 08:00 to 2026-11-23 08:01 and `Std. abends` left over. [#1312](https://github.com/TigreGotico/chronologia/issues/1312)
+
+**Dates, ranges and weeks**
+
+- A date built from two parts loses one of them. Example (reader `extract_timespan`, lang `de`, anchor 2117-09-03 13:30): `in 3 tagen um 15 uhr` gives 2117-09-06 13:30 to 2117-09-07 13:30 and `um 15 uhr` left over. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
+
+- Text that is no date reads as a date, or the wrong reading wins. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 00:00): `am 0. januar` gives 2018-01-01 00:00 to 2018-02-01 00:00 and `am 0.` left over. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
+
+- The indefinite article before a day of a month reads as the first day. Example (reader `extract_timespan`, lang `de`, anchor 2026-11-22 09:00): `ein Tag im März` gives 2027-03-01 00:00 to 2027-03-02 00:00. [#1306](https://github.com/TigreGotico/chronologia/issues/1306)
+
+- A list of two days reads as a clock or as the wrong day. Example (reader `extract_timespan`, lang `de`, anchor 2026-11-22 09:00): `am 14. und 15. Mai` gives 2027-05-15 00:00 to 2027-05-16 00:00 and `am 14. und` left over. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
+
+- A range with a shared month or unit drops the unrelated words from the remainder. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 06:04): `xx 3. bis 10. Juli` gives 2017-07-03 00:00 to 2017-07-11 00:00. [#1351](https://github.com/TigreGotico/chronologia/issues/1351)
+
+- A range reading crosses a full stop. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 06:04): `Wir treffen uns am Montag. Der Bericht ist bis Freitag fällig.` gives 2017-07-03 00:00 to 2017-07-08 00:00 and `Wir treffen uns Der Bericht ist fällig` left over. [#1352](https://github.com/TigreGotico/chronologia/issues/1352)
+
+**Offsets, lengths and holidays**
+
+- A decimal count is dropped from the length. Example (reader `extract_duration`, lang `de`, anchor 2017-06-27 13:04): `weck mich in 3 wochen, 497 tagen und 391.6 sekunden` gives a length of 745920 min and `weck mich in und 391.6 sekunden` left over. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
+
+**Recurrence**
+
+- A range after a recurring weekday reads its end as an until bound and leaves the start. Example (reader `extract_event`, lang `de`, anchor 2026-11-22 09:00): `jeden Montag von Juni bis August` gives start 2026-11-23 00:00, length none, summary `juni`. [#1291](https://github.com/TigreGotico/chronologia/issues/1291)
+
+- An until bound in a recurrence resolves on the anchor day. [#1316](https://github.com/TigreGotico/chronologia/issues/1316)
+
+- A weekday or clock range in a recurrence loses its end. Example (reader `extract_recurrence`, lang `de`, anchor 2026-11-22 09:00): `jeden Montag bis Freitag 9 Uhr` gives the rule `FREQ=WEEKLY;BYDAY=MO,FR;BYHOUR=9`. [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
+
+- A repeat count is not read. Example (reader `extract_recurrence`, lang `de`, anchor 2026-11-22 09:00): `jeden Montag 10 mal` gives the rule `FREQ=WEEKLY;BYDAY=MO` and `10 mal` left over. [#1322](https://github.com/TigreGotico/chronologia/issues/1322)
+
+**Events, zones, business days and the API**
+
+- A morning or evening word that the reader does not join lets a lone clock take the other half of the day. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 13:04): `um 6 früh` gives 2017-06-27 18:00 to 2017-06-27 18:01 and `früh` left over. [#1071](https://github.com/TigreGotico/chronologia/issues/1071)
+
+- The event summary keeps the article and the day word before a day number. Example (reader `extract_event`, lang `de`, anchor 2025-06-18 10:30): `Treffen am Tag 5 Mai` gives start 2026-05-05 00:00, length none, summary `treffen am tag`. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
+
+- A bare clock with a zone skips the 12-hour rule. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 13:04): `vor 9:30 utc` gives 2017-06-27 13:04 to 2017-06-28 09:31. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
+
+- The candidate reader does not raise in raise mode, where the event reader does. [#1276](https://github.com/TigreGotico/chronologia/issues/1276)
+
+- An impossible day read apart from its month is dropped, and the rest still reads. Example (reader `extract_timespan`, lang `de`, anchor 2026-11-22 09:00): `am 30. Februar um 9 Uhr` gives 2026-11-22 09:00 to 2026-11-22 09:01 and `am 30. Februar` left over. [#1328](https://github.com/TigreGotico/chronologia/issues/1328)
+
+- The candidate list and the single-span reader read a clock with a length differently. [#1350](https://github.com/TigreGotico/chronologia/issues/1350)
+
+- Input typed in decomposed (NFD) form reads differently from the composed (NFC) form. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 06:04): `am 5. März 2027 um 15 Uhr` gives 2027-01-01 15:00 to 2027-01-01 15:01 and `am 5. März` left over. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
 
 ---
 [← Georgian](ka.md) · [Home](../index.md) · [Greek →](el.md)

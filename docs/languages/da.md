@@ -4,7 +4,7 @@
 covers: where each construction of the Danish locale comes from, what it refuses and which questions a native speaker would settle
 source: chronologia/locale/da/lang.json, chronologia/locale/da/*.voc, chronologia/extract/numlayer.py:NUMTAG_LANGS, test/nl_corpus_da/, test/test_xfail_open_issues_*.py
 generated: no
-verify: .venv/bin/python -m doctest docs/languages/da.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/da.md 'fem over halv ti@09:35' 'kun op til et halvt døgn@18:49' morgen@05:00
+verify: .venv/bin/python -m doctest docs/languages/da.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/da.md 'fem over halv ti@09:35' 'kun op til et halvt døgn@18:49' morgen@05:00 && .venv/bin/python -c 'exec("import re,sys\nfrom datetime import datetime\nimport chronologia as C\ndef mins(d):\n    return \"%g\" % (d.total_seconds() / 60)\ndef rem(r):\n    return \" and \\x60%s\\x60 left over\" % r if r else \"\"\ndef out(rd, tx, lg, an):\n    f = getattr(C, rd)\n    r = f(tx, lg, anchor=an) if rd == \"extract_duration\" else f(tx, lg, an)\n    if rd == \"extract_timespan\":\n        if r is None: return \"no reading\"\n        return \"%s to %s%s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), r.span.end.datetime().strftime(\"%Y-%m-%d %H:%M\"), rem(r.remainder))\n    if rd == \"extract_duration\":\n        if r is None: return \"no length\"\n        return \"a length of %s min%s\" % (mins(r.duration), rem(r.remainder))\n    if rd == \"extract_event\":\n        if r is None: return \"no event\"\n        return \"start %s, length %s, summary \\x60%s\\x60\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), \"none\" if r.duration is None else mins(r.duration) + \" min\", r.summary)\n    if r is None: return \"no rule\"\n    return \"the rule \\x60%s\\x60%s\" % (r.recurrence.to_string(), rem(r.remainder))\n\np=sys.argv[1]\nt=open(p).read()\nm=re.search(r\"\\n## Known limits\\n(.*?)(?=\\n---\\n|\\Z)\",t,re.S)\nbad=0\nn=0\nfor ln in (m[1].split(\"\\n\") if m else []):\n    g=re.search(r\"Example \\(reader \\x60(\\w+)\\x60, lang \\x60([\\w-]+)\\x60, anchor (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)\\): \\x60([^\\x60]+)\\x60 gives (.+?)\\. \\[#\\d+\\]\",ln)\n    if not g: continue\n    n+=1\n    o=out(g[1],g[4],g[2],datetime.strptime(g[3],\"%Y-%m-%d %H:%M\"))\n    if o!=g[5]:\n        bad=1\n        print(\"limit differs\",g[4],\"|\",g[5],\"|\",o)\nprint(\"known limits checked:\",n)\nsys.exit(bad)\n")' docs/languages/da.md
 see: docs/languages/index.md, docs/extraction.md
 -->
 
@@ -26,7 +26,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## What ships
 
-**Weekdays and months** ship wide and abbreviated, with no recorded source.
+**Weekdays and months** ship wide and abbreviated. The vocabulary cites Unicode CLDR 47 for most of them.
 
 **The named days** come from Unicode CLDR 47, `cldr-dates-full/main/da/dateFields.json`, whose five day relative-type entries are `i forgårs`, `i går`, `i dag`, `i morgen` and `i overmorgen`. Each ships beside a solid-spelled twin (`iforgårs`, `igår`, `idag`, `imorgen`, `iovermorgen`) and the bare `går`, `morgen`, `forgårs` and `overmorgen` ship as well. Those extra forms are not in the cited file.
 
@@ -76,11 +76,11 @@ The named days carry a precise CLDR locator. But the solid spellings and the bar
 
 Den Danske Ordbog is the source named in the day-part and `sidste` vocabulary headers. `ordnet.dk` cannot be read by an automated client, so those citations are unchecked. The Danish Wiktionary entries agree with them: `formiddag` is glossed "Tidspunkt før middag, om morgenen", `eftermiddag` "Tidspunkt ca. mellem kl. 12 og 18", `middag` the point around twelve when the sun stands highest, and `sidste` "Modsat første". The day-part *boundaries* do not depend on the dictionary at all. They are the CLDR chart.
 
-The weekday and month names, the clock words, the range markers, the seasons and the holiday vocabulary record no source.
+The clock words, the range markers, the seasons and the holiday vocabulary record no source. Most weekday and month names cite Unicode CLDR 47.
 
 ## What refuses
 
-**Decades.** `80'erne` and `firserne` return nothing. The locale declares no decade construction, Bokmål declares one and reads `80-tallet`.
+**Decades.** `80'erne` and `firserne` return nothing. The locale declares no decade construction. Bokmål declares one and reads `80-tallet`.
 
 **A bare duration.** `to uger` returns nothing. A quantity with no direction marker is still only a quantity.
 
@@ -89,28 +89,6 @@ The weekday and month names, the clock words, the range markers, the seasons and
 ## Open questions for a native speaker
 
 1. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split puts it at 18:00.
-
-## Known limits
-
-Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
-
-- A noun that looks like a unit reads as one hour, and a clock preposition phrase is not read. Example: `sæt en timer` gives 60 min with remainder 'sæt', where the test expects nothing. [#1015](https://github.com/TigreGotico/chronologia/issues/1015)
-
-- A part of the day with no day word answers the band that has already passed. Example: `Hvad tid på morgenen gryr dagen ovre i London?` gives 2017-06-27 05:00, where the test expects 2017-06-28 05:00. [#997](https://github.com/TigreGotico/chronologia/issues/997)
-
-- A clock form reads wrong or not at all. Example: `20` gives no reading. [#1032](https://github.com/TigreGotico/chronologia/issues/1032)
-
-- A common word that is no time word reads as a time word. [#990](https://github.com/TigreGotico/chronologia/issues/990)
-
-- A word for next or last beside a season, month or week stays in the remainder. Example: `til foråret` gives 2017-03-01 00:00, where the test expects Within(2018-03-01 00:00:00, 2018-03-22 00:00:00). [#993](https://github.com/TigreGotico/chronologia/issues/993)
-
-- A spelled-out year after a date stays in the remainder. Example: `fredag, den femtende marts, to tusind og fire og tyve` gives 2018-03-15 00:00, where the test expects 2024-03-15 00:00. [#994](https://github.com/TigreGotico/chronologia/issues/994)
-
-- `century` and `millennium` give no length. Example: `1 årtusinde` gives no reading. [#1203](https://github.com/TigreGotico/chronologia/issues/1203)
-
-- The candidate list and the single-span reader disagree on one phrase. [#995](https://github.com/TigreGotico/chronologia/issues/995)
-
-- A compound number loses a part. Example: `ni og fyrre sekunder` gives 0.7 min, where the test expects 0.8 min. [#1210](https://github.com/TigreGotico/chronologia/issues/1210)
 
 ## Checked examples
 
@@ -142,6 +120,28 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     True
     >>> extract_timespan('i morges', "da", anchor) is None
     True
+
+## Known limits
+
+Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
+
+- A part of the day with no day word answers the band that has already passed. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 13:04): `Hvad tid på morgenen gryr dagen ovre i London?` gives 2017-06-27 05:00 to 2017-06-27 10:00 and `Hvad tid gryr dagen ovre i London` left over. [#997](https://github.com/TigreGotico/chronologia/issues/997)
+
+- A noun that looks like a unit reads as one hour, and a clock preposition phrase is not read. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 13:04): `flyt aftalen i morgen til klokken femten` gives 2017-06-28 00:00 to 2017-06-28 15:01 and `flyt aftalen` left over. [#1015](https://github.com/TigreGotico/chronologia/issues/1015)
+
+- A clock form reads wrong or not at all. Example (reader `extract_timespan`, lang `da`, anchor 2117-09-03 13:30): `20` gives no reading. [#1032](https://github.com/TigreGotico/chronologia/issues/1032)
+
+- A common word that is no time word reads as a time word. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 13:04): `Hvornår går det løs med at regne?` gives 2017-06-26 00:00 to 2017-06-27 00:00 and `Hvornår det løs med at regne` left over. [#990](https://github.com/TigreGotico/chronologia/issues/990)
+
+- A word for next or last beside a season, month or week stays in the remainder. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 13:04): `til foråret` gives 2017-03-01 00:00 to 2017-06-01 00:00 and `til` left over. [#993](https://github.com/TigreGotico/chronologia/issues/993)
+
+- A spelled-out year after a date stays in the remainder. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 13:04): `fredag, den femtende marts, to tusind og fire og tyve` gives 2018-03-15 00:00 to 2018-03-16 00:00 and `to tusind og fire og tyve` left over. [#994](https://github.com/TigreGotico/chronologia/issues/994)
+
+- `century` and `millennium` give no length. Example (reader `extract_duration`, lang `da`, anchor 2017-06-27 13:04): `1 årtusinde` gives no length. [#1203](https://github.com/TigreGotico/chronologia/issues/1203)
+
+- A compound number loses a part. Example (reader `extract_duration`, lang `da`, anchor 2017-06-27 13:04): `ni og fyrre sekunder` gives a length of 0.666667 min and `ni og` left over. [#1210](https://github.com/TigreGotico/chronologia/issues/1210)
+
+- The candidate list and the single-span reader disagree on one phrase. [#995](https://github.com/TigreGotico/chronologia/issues/995)
 
 ---
 [← Czech](cs.md) · [Home](../index.md) · [Dutch →](nl.md)
