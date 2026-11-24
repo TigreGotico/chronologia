@@ -83,7 +83,7 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 - A part of the day with no day word answers the band that has already passed. Example: `à tarde` gives 2023-01-15 12:00, where the test expects 2023-01-16 12:00. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- The late afternoon answers the middle of the afternoon, and a phrase gives a 25-hour length. Example: `ao fim da tarde` answers the middle of the afternoon. [#1024](https://github.com/TigreGotico/chronologia/issues/1024)
+- The late afternoon leaves `ao fim` in the remainder, and `na hora` or `dias de semana` reads as a length. Example: `não me deixes esquecer de comprar pão ao fim da tarde` leaves `ao fim` in the remainder. [#1024](https://github.com/TigreGotico/chronologia/issues/1024)
 
 - A date built from two parts loses one of them. Example: `na segunda semana que vem` gives no reading. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 

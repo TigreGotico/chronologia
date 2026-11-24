@@ -102,7 +102,7 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 - An infinitive `to` before `tomorrow morning` opens a range. Example: `remind me to call the bank tomorrow morning` gives 2017-06-27 06:00, where the test expects 2017-06-28 06:00. [#1013](https://github.com/TigreGotico/chronologia/issues/1013)
 
-- The minutes after an alarm hour are dropped. Example: `seven oh five` drops the five. [#1058](https://github.com/TigreGotico/chronologia/issues/1058)
+- The minutes after an alarm hour are dropped. Example: `set an alarm for seven oh five` gives 19:00 with `set an oh five` left over. [#1058](https://github.com/TigreGotico/chronologia/issues/1058)
 
 - A list of hours reads the first two numbers as one clock. Example: `alarm at 7, 8 and 9 tonight` gives 2026-11-18 07:08, where the test expects 2026-11-17 19:00. [#1296](https://github.com/TigreGotico/chronologia/issues/1296)
 
@@ -152,7 +152,7 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 - A clock range in a recurrence reads the end hour or a wrong minute. Example: `every monday 9 to 5` gives ((4,), (51,)), where the test expects ((9,), ())      At index 0 diff: (4,) != (9,)   Use -v to get more diff. [#1315](https://github.com/TigreGotico/chronologia/issues/1315)
 
-- A date or an ordinal weekday next to a frequency word is dropped. Example: `the 15th of february every year` gives a yearly rule and drops the date. [#1320](https://github.com/TigreGotico/chronologia/issues/1320)
+- A date or an ordinal weekday next to a frequency word is dropped. Example: `the 15th of february every year` gives `FREQ=YEARLY`, where `every year on the 15th of february` gives `FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=15`. [#1320](https://github.com/TigreGotico/chronologia/issues/1320)
 
 - A weekday or clock range in a recurrence loses its end. Example: `every monday to friday 9 am` gives ((None, 0),), where the test expects ((None, 0), (None, 1), (None, 2), (None, 3), (None, 4)). [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
 
@@ -170,11 +170,11 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 - A bare clock with a zone skips the 12-hour rule. Example: `9:30 utc` gives 2017-06-28 09:30 UTC, where the test expects 2017-06-27 21:30 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
 
-- The sixth weekday of every month reads as the next such weekday. Example: `the sixth monday of every month` reads as the next Monday. [#1288](https://github.com/TigreGotico/chronologia/issues/1288)
+- The sixth weekday of every month reads as the next such weekday. Example: `the sixth monday of every month` gives the span starting 2026-11-23 with `the sixth of every month` left over, where the test expects no reading. [#1288](https://github.com/TigreGotico/chronologia/issues/1288)
 
 - The last business day of every month reads as a plain monthly rule. Example: `the last business day of every month` gives FREQ=MONTHLY. [#1289](https://github.com/TigreGotico/chronologia/issues/1289)
 
-- The nth weekday of a month reads as the whole month. Example: `the 3rd weekday of march` reads all of March. [#1290](https://github.com/TigreGotico/chronologia/issues/1290)
+- The nth weekday of a month reads as the whole month. Example: `the 3rd weekday of march` gives all of March 2027 with `the 3rd weekday of` left over, where the test expects 2027-03-03. [#1290](https://github.com/TigreGotico/chronologia/issues/1290)
 
 - The first few business days of a month read no span. Example: `the last 3 business days of the month` gives no reading. [#1303](https://github.com/TigreGotico/chronologia/issues/1303)
 

@@ -80,7 +80,7 @@ The refusals below are each pinned by a test, so that closing one requires delib
 
 2. What distinguishes `залетась` from `пазалетась`? Both are glossed "two years ago" and they cannot name the same year.
 
-3. Is `квадранец` still used in speech, or is it now only literary?
+3. Does speech still use `квадранец`, or does it survive only in literary writing?
 
 4. Does an independent source corroborate the `на` plus accusative ordinal construction for the first half of the hour?
 

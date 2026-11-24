@@ -131,7 +131,7 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 - A count of hours or minutes before a holiday gives the day before at 00:00. Example: `un cuarto de hora antes de navidad` gives 2026-12-24 00:00, where the test expects 2026-12-24 23:45. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
 
-- A length before a day word loses the day. Example: `reunión de dos horas mañana` starts today, where it should start tomorrow. [#1332](https://github.com/TigreGotico/chronologia/issues/1332)
+- A length before a day word loses the day. Example: `reunión de dos horas mañana` starts on 2026-11-22, where the test expects 2026-11-23. [#1332](https://github.com/TigreGotico/chronologia/issues/1332)
 
 **Recurrence**
 

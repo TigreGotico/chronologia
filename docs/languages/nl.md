@@ -89,7 +89,7 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 - The minutes after an alarm hour are dropped. [#1058](https://github.com/TigreGotico/chronologia/issues/1058)
 
-- An evening word after a clock gives the morning hour when said after 20:00. Example: `vandaag om 8:00 's avonds`, said after 20:00, gives 08:00, where 20:00 is meant. [#1081](https://github.com/TigreGotico/chronologia/issues/1081)
+- An evening word after `vandaag` gives the morning hour. Example: `om 8:00 vandaag 's avonds` gives 2017-06-27 08:00 with `s avonds` left over, where the test expects the evening hour. [#1081](https://github.com/TigreGotico/chronologia/issues/1081)
 
 - A counted offset reads wrong. Example: `-1 uur` gives 01:00 tomorrow, where the test expects one hour earlier. [#1202](https://github.com/TigreGotico/chronologia/issues/1202)
 
@@ -105,7 +105,7 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 **Recurrence**
 
-- A weekday or clock range in a recurrence loses its end. Example: `tot en met vrijdag` reads differently from `t/m vrijdag`. [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
+- A weekday or clock range in a recurrence loses its end. Example: `elke maandag tot en met vrijdag` gives `FREQ=WEEKLY;UNTIL=20261127T000000;BYDAY=MO`, where `elke maandag t/m vrijdag` gives `FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR`. [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
 
 **Events, zones, business days and the API**
 

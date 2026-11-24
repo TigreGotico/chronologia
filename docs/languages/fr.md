@@ -88,13 +88,13 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 - A clock with a dot between hour and minute gives no time. Example: `à 8.15` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- A length before a part of the day reads as a clock. Example: `demain deux heures de réunion le matin` reads 02:00 as a clock, where a two-hour meeting is meant. [#1298](https://github.com/TigreGotico/chronologia/issues/1298)
+- A length before a part of the day reads as a clock. Example: `demain deux heures de réunion le matin` gives 2026-11-23 02:00 with `de réunion le matin` left over, where the morning band is meant. [#1298](https://github.com/TigreGotico/chronologia/issues/1298)
 
 **Dates, ranges and weeks**
 
 - Decomposed input reads differently from composed input. Example: `le 5 février 2027` gives 2027-01-01 00:00, where the test expects 2027-02-05 00:00. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
 
-- Bare `fr` does not read the Belgian and Swiss tens. Example: `dans septante-et-un jours` gives a length of 1 day, with `dans septante-et` left over. [#1075](https://github.com/TigreGotico/chronologia/issues/1075)
+- Bare `fr` does not read the Belgian and Swiss tens. Example: `dans septante-et-un jours` gives a length of 1 day with `dans septante-et` left over, where 71 days is meant. [#1075](https://github.com/TigreGotico/chronologia/issues/1075)
 
 - The last weekday of next month reads as the last weekday of this month. Example: `le dernier vendredi du mois prochain` gives 2026-10-30 00:00, where the test expects 2026-11-27 00:00. [#1295](https://github.com/TigreGotico/chronologia/issues/1295)
 
@@ -116,7 +116,7 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 **Events, zones, business days and the API**
 
-- A phrase with `moins le quart` leaves those words in the event summary. Example: `réunion de deux heures moins le quart le matin demain` leaves `moins le quart` in the event summary. [#1028](https://github.com/TigreGotico/chronologia/issues/1028)
+- A phrase with `moins le quart` leaves those words in the event summary. Example: `réunion de deux heures moins le quart le matin demain` gives the summary `réunion de moins le quart`, where the test expects `réunion`. [#1028](https://github.com/TigreGotico/chronologia/issues/1028)
 
 - A clock in `heures` reads as a length. Example: `mets une alarme pour 7 heures demain matin` gives 420 min with remainder 'mets une alarme demain matin', where the test expects nothing. [#1063](https://github.com/TigreGotico/chronologia/issues/1063)
 

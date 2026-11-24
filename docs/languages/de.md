@@ -130,7 +130,7 @@ Each line is an open issue with a strict `xfail` test for this language. The mos
 
 - A range after a recurring weekday reads its end as an until bound and leaves the start. Example: `jeden Montag von Juni bis August` gives juni. [#1291](https://github.com/TigreGotico/chronologia/issues/1291)
 
-- An until bound in a recurrence resolves on the anchor day. Example: `bis Ende Juni` ends before the anchor. [#1316](https://github.com/TigreGotico/chronologia/issues/1316)
+- An until bound in a recurrence resolves on the anchor day. Example: `jeden Montag bis Ende Juni` gives an until bound of 2026-06-21, which is before the anchor 2026-11-22. [#1316](https://github.com/TigreGotico/chronologia/issues/1316)
 
 **Events, zones, business days and the API**
 
