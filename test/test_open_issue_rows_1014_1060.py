@@ -45,11 +45,32 @@ def _matches(expected, value):
     return value == expected
 
 
-def _case(issue, *row):
+# Rows that read right on dev: plain tests that keep the fix.
+FIXED_SPANS = {
+    "یک زنگ ساعت برای هفت صبح بگذار",
+    "یک هشدار جدید برای ساعت هشت شب تنظیم کن",
+    "tedd át a megbeszélést három órára",
+    "laat me vanmiddag weten dat ik de loodgieter moet bellen",
+    "väck mig i morgon bitti",
+    "vilka larm har jag till i morgon",
+}
+FIXED_LENGTHS = {
+    "sæt en timer",
+    "lav en timer på ti minutter",
+    "ezarri hamar minutuko tenporizadore bat",
+    "programatu bost minutuko tenporizadorea",
+    "یک تایمر ده دقیقه\u200cای بگذار",
+    "állíts be egy időzítőt öt percre",
+    "kérek egy új időzítőt fél órára",
+    "herinner me eraan elke weekendochtend om 8 uur de planten water te geven",
+}
+
+
+def _case(fixed, issue, *row):
+    marks = () if row[1] in fixed else pytest.mark.xfail(
+        strict=True, reason=URL.format(issue))
     return pytest.param(
-        *row,
-        marks=pytest.mark.xfail(strict=True, reason=URL.format(issue)),
-        id="{}-{}-{}".format(issue, row[0], row[1]))
+        *row, marks=marks, id="{}-{}-{}".format(issue, row[0], row[1]))
 
 
 # issue, lang, text, expected start, expected end or None, expected remainder
@@ -111,7 +132,7 @@ SPANS = [
 
 @pytest.mark.parametrize(
     "lang,text,start,end,remainder,anchor",
-    [_case(issue, lang, text, start, end, rem, anchor)
+    [_case(FIXED_SPANS, issue, lang, text, start, end, rem, anchor)
      for issue, lang, text, start, end, rem, anchor in SPANS])
 def test_span_rows(lang, text, start, end, remainder, anchor):
     found = extract_timespan(text, lang, anchor)
@@ -142,7 +163,7 @@ DURATIONS = [
 
 @pytest.mark.parametrize(
     "lang,text,length,remainder",
-    [_case(issue, lang, text, length, rem)
+    [_case(FIXED_LENGTHS, issue, lang, text, length, rem)
      for issue, lang, text, length, rem in DURATIONS])
 def test_duration_rows(lang, text, length, remainder):
     found = extract_duration(text, lang, anchor=ANCHOR)
@@ -167,7 +188,7 @@ EVENTS = [
 
 @pytest.mark.parametrize(
     "lang,text,start,summary,anchor",
-    [_case(issue, lang, text, start, summary, anchor)
+    [_case((), issue, lang, text, start, summary, anchor)
      for issue, lang, text, start, summary, anchor in EVENTS])
 def test_event_rows(lang, text, start, summary, anchor):
     event = extract_event(text, lang, anchor)
