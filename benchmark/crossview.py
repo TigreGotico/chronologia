@@ -75,6 +75,28 @@ BOUND_WORDS = {
     "gl": ("de", "ata", "entre", "a", "e", "cada", ("xuño", "agosto"), ("luns", "venres")),
 }
 
+# A third month, apart from the range's two, for the until date of "from A to B until C".
+UNTIL_MONTH = {"en": "december", "pt": "dezembro", "es": "diciembre", "de": "Dezember",
+               "fr": "décembre", "it": "dicembre", "nl": "december", "ca": "desembre",
+               "gl": "decembro"}
+
+# "every day" and a weekday pair written with the locale's abbreviations.
+ABBREVIATED_WEEKDAYS = {
+    "en": ("every day", ("mon", "fri")),
+    "pt": ("todos os dias", ("seg", "sex")),
+    "es": ("todos los días", ("lun", "vie")),
+    "de": ("jeden Tag", ("Mo", "Fr")),
+    "fr": ("tous les jours", ("lun", "ven")),
+    "it": ("ogni giorno", ("lun", "ven")),
+    "nl": ("elke dag", ("ma", "vr")),
+    "ca": ("cada dia", ("dl", "dv")),
+    "gl": ("cada día", ("lun", "ven")),
+}
+
+# A date range with an inner "de": "from 3 de junho until 5 de agosto".
+INNER_DE_RANGES = {"pt": "de 3 de junho até 5 de agosto",
+                   "es": "del 3 de junio hasta el 5 de agosto"}
+
 MONTHS = ("january", "february", "march", "april", "may", "june", "july",
           "august", "september", "october", "november", "december")
 SPELLED = ("first", "second", "third", "fourth", "fifth", "sixth", "seventh",
@@ -143,6 +165,23 @@ def grid_inputs() -> Set[Tuple[str, str]]:
                 found.add((lang, bound))
                 for weekday in weekdays:
                     found.add((lang, f"{every} {weekday} {bound}"))
+        for bound in (f"{frm} {months[0]} {to} {months[1]} {until} {UNTIL_MONTH[lang]}",
+                      f"{frm} 2027 {until} 2030"):
+            found.add((lang, bound))
+            for weekday in weekdays:
+                found.add((lang, f"{every} {weekday} {bound}"))
+
+        every_day, (first_day, last_day) = ABBREVIATED_WEEKDAYS[lang]
+        for connector in (to, until):
+            bound = f"{frm} {first_day} {connector} {last_day}"
+            found.add((lang, bound))
+            found.add((lang, f"{every_day} {bound}"))
+            for weekday in weekdays:
+                found.add((lang, f"{every} {weekday} {bound}"))
+        if lang in INNER_DE_RANGES:
+            found.add((lang, INNER_DE_RANGES[lang]))
+            for weekday in weekdays:
+                found.add((lang, f"{every} {weekday} {INNER_DE_RANGES[lang]}"))
     return found
 
 
