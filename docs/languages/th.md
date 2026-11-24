@@ -2,174 +2,88 @@
 
 <!-- agent-hint
 covers: where each construction of the Thai locale comes from, what it refuses and which questions a native speaker would settle
-source: `chronologia/locale/th/lang.json`, `chronologia/locale/th/*.voc`, `chronologia/extract/numfold_thai.py`
+source: chronologia/locale/th/lang.json, chronologia/locale/th/*.voc, chronologia/extract/numfold_thai.py, test/nl_corpus_th/
 generated: no
-verify: python -m doctest docs/languages/th.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/th.md 'ทุ่ม@19:00' 'บ่าย@13:00' 'บ่าย@15:00'
-see: `docs/languages/index.md`, `docs/extraction.md`
+verify: .venv/bin/python -m doctest docs/languages/th.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/th.md 'ทุ่ม@19:00' 'บ่าย@13:00' 'บ่าย@15:00' && .venv/bin/python -c 'exec("import re,sys\nfrom datetime import datetime\nimport chronologia as C\ndef mins(d):\n    return (\"%.6f\" % (d.total_seconds() / 60)).rstrip(\"0\").rstrip(\".\")\ndef rem(r):\n    return \" and \\x60%s\\x60 left over\" % r if r else \"\"\ndef out(rd, tx, lg, an):\n    f = getattr(C, rd)\n    r = f(tx, lg, anchor=an) if rd == \"extract_duration\" else f(tx, lg, an)\n    if rd == \"extract_timespan\":\n        if r is None: return \"no reading\"\n        return \"%s to %s%s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), r.span.end.datetime().strftime(\"%Y-%m-%d %H:%M\"), rem(r.remainder))\n    if rd == \"extract_duration\":\n        if r is None: return \"no length\"\n        return \"a length of %s min%s\" % (mins(r.duration), rem(r.remainder))\n    if rd == \"extract_event\":\n        if r is None: return \"no event\"\n        return \"start %s, length %s, %s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), \"none\" if r.duration is None else mins(r.duration) + \" min\", \"summary \\x60%s\\x60\" % r.summary if r.summary else \"no summary\")\n    if r is None: return \"no rule\"\n    return \"the rule \\x60%s\\x60%s\" % (r.recurrence.to_string(), rem(r.remainder))\n\np=sys.argv[1]\nt=open(p).read()\nm=re.search(r\"\\n## Known limits\\n(.*?)(?=\\n---\\n|\\Z)\",t,re.S)\nbad=0\nn=0\ntot=0\nfor ln in (m[1].split(\"\\n\") if m else []):\n    if \"Example (\" not in ln: continue\n    tot+=1\n    g=re.search(r\"Example \\(reader \\x60(\\w+)\\x60, lang \\x60([\\w-]+)\\x60, anchor (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)\\): \\x60([^\\x60]+)\\x60 gives (.+?)\\. \\[#\\d+\\]\",ln)\n    if not g:\n        bad=1\n        print(\"example line does not parse:\",ln[:80])\n        continue\n    n+=1\n    o=out(g[1],g[4],g[2],datetime.strptime(g[3],\"%Y-%m-%d %H:%M\"))\n    if o!=g[5]:\n        bad=1\n        print(\"limit differs\",g[4],\"|\",g[5],\"|\",o)\nprint(\"known limits checked:\",n,\"of\",tot)\nsys.exit(bad)\n")' docs/languages/th.md
+see: docs/languages/index.md, docs/extraction.md
 -->
 
 This page records where each construction of the Thai (`th`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_thai` module in `chronologia/extract/`.
 
-Thai is written without spaces between words, and it names the hours of the day
-on a six-hour cycle whose word changes with the part of the day. Both facts
-shape what this locale reads, and the second one is why `หกโมง` returns
-nothing.
+Thai is written without spaces between words. It names the hours of the day on a six-hour cycle whose word changes with the part of the day. Both facts shape what this locale reads, and the second one is why `หกโมง` returns nothing.
 
-`หกโมงเช้า` is six in the morning and `หกโมงเย็น` is six in the evening. Strip
-the day-part word and the sources consulted disagree: one glosses a bare
-`หกโมงห้านาที` as an evening reading, another puts a bare `หกโมง` in the
-morning. The two candidates are twelve hours apart, nothing inside the phrase
-chooses between them, and a reader cannot tell a wrong answer from a right one
-by looking at it. So the locale reads `ตี N` and `N ทุ่ม`, which carry their
-half-day in the hour word itself, and any `โมง` phrase that names its day part;
-a bare one it refuses.
+`หกโมงเช้า` is six in the morning and `หกโมงเย็น` is six in the evening. Strip the day-part word and the sources consulted disagree: one glosses a bare `หกโมงห้านาที` as an evening reading, another puts a bare `หกโมง` in the morning. The two candidates are twelve hours apart. Nothing inside the phrase chooses between them.
+
+A reader cannot tell a wrong answer from a right one by looking at it. So the locale reads `ตี N` and `N ทุ่ม`, which carry their half-day in the hour word itself, and any `โมง` phrase that names its day part. A bare one it refuses.
+
+## Try it
+
+To read a phrase, call `extract_timespan` with the phrase, the locale code and an anchor datetime. It returns the span that the phrase names and the text that it left unread.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> span, rest = extract_timespan('แปดโมงเช้า', "th", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T08:00:00', '')
 
 ## Word segmentation
 
-Thai spaces phrases and sentences, not words, so a date phrase arrives as one
-undivided run of letters and nothing in it marks where a slot should begin.
-The locale cuts such a run into words only when the **whole** run is covered,
-end to end, by surfaces it already knows — the shipped vocabulary plus the
-numeral and hour words — taking the longest match at each step. A run it cannot
-cover completely is passed on untouched.
+Thai spaces phrases and sentences, not words. A date phrase arrives as one undivided run of letters and nothing in it marks where a slot should begin. The locale cuts such a run into words only when the **whole** run is covered, end to end, by surfaces it already knows (the shipped vocabulary plus the numeral and hour words) taking the longest match at each step. A run it cannot cover completely is passed on untouched.
 
-That is a refusal, not a shortcut. Maximal-match segmentation would cut a
-reading out of the middle of ordinary prose, and Thai has the homographs to
-make that go wrong: `จันทร์` is Monday and also the moon, `อาทิตย์` is Sunday
-and also the week, `ตี` is the small-hours word and also the everyday verb "to
-hit", `ทุ่ม` is the evening hour word and also "to hurl". Requiring the cover
-to consume the entire run means a numeral syllable inside an ordinary word is
-never mistaken for a count: `สามารถ` ("to be able") opens with the syllable for
-three and is left alone.
+That is a refusal, not a shortcut. Maximal-match segmentation would cut a reading out of the middle of ordinary prose, and Thai has the homographs to make that go wrong: `จันทร์` is Monday and also the moon, `อาทิตย์` is Sunday and also the week, `ตี` is the small-hours word and also the everyday verb "to hit", `ทุ่ม` is the evening hour word and also "to hurl". Requiring the cover to consume the entire run means a numeral syllable inside an ordinary word is never mistaken for a count: `สามารถ` ("to be able") opens with the syllable for three and is left alone.
 
-The consequence to know about: a date phrase written with no space between it
-and the surrounding prose does not parse. `ฉันจะไป พรุ่งนี้` reads; the same
-words with the space closed up do not. A closed range needs the phrase space
-too — range detection runs before the segmenter, so
-`ตั้งแต่ วันจันทร์ ถึง วันศุกร์` reads as a range while the same words run
-together return one endpoint and leave the rest as remainder. A counted offset
-is not affected: `สามวันหลังวันจันทร์` reads whole.
+The consequence to know about: a date phrase written with no space between it and the surrounding prose does not parse. `ฉันจะไป พรุ่งนี้` reads. The same words with the space closed up do not. A closed range needs the phrase space too. Range detection runs before the segmenter. `ตั้งแต่ วันจันทร์ ถึง วันศุกร์` reads as a range while the same words run together return one endpoint and leave the rest as remainder. A counted offset is not affected: `สามวันหลังวันจันทร์` reads whole.
 
 ## What ships
 
-**Weekdays** are the CLDR 47 wide and abbreviated forms from
-`cldr-dates-full/main/th/ca-gregorian.json`. The wide form carries the `วัน`
-("day") prefix and the abbreviation is the same word without it. Both registers
-occur in running text — CLDR's own relative-time data writes bare
-`จันทร์ที่แล้ว` for last Monday and full `วันอาทิตย์ที่แล้ว` for last Sunday —
-so both are read, but the prefixless form binds only where a marker or a date
-frames it. On its own `จันทร์` is as likely to be the moon.
+**Weekdays** are the CLDR 47 wide and abbreviated forms from `cldr-dates-full/main/th/ca-gregorian.json`. The wide form carries the `วัน` ("day") prefix and the abbreviation is the same word without it. Both registers occur in running text (CLDR's own relative-time data writes bare `จันทร์ที่แล้ว` for last Monday and full `วันอาทิตย์ที่แล้ว` for last Sunday) so both are read. But the prefixless form binds only where a marker or a date frames it. On its own `จันทร์` is as likely to be the moon.
 
-**Months** are the wide and abbreviated names from the same file. The
-abbreviations are dot-internal and dot-final (`ม.ค.`, `พ.ค.`), so both the
-dotted surface and its token-canonical spelling are registered.
+**Months** are the wide and abbreviated names from the same file. The abbreviations are dot-internal and dot-final (`ม.ค.`, `พ.ค.`), so both the dotted surface and its token-canonical spelling are registered.
 
-**Relative offsets** come from `dateFields.json`. Thai has no plural agreement,
-so CLDR carries one pattern per direction and the unit noun never changes
-shape. CLDR splits the past marker by unit when generating text — `ที่แล้ว` for
-the year, `ที่ผ่านมา` for everything shorter — but both forms occur on input for
-every unit, so both are read for all of them.
+**Relative offsets** come from `dateFields.json`. Thai has no plural agreement, so CLDR carries one pattern per direction and the unit noun never changes shape. CLDR splits the past marker by unit when generating text (`ที่แล้ว` for the year, `ที่ผ่านมา` for everything shorter) but both forms occur on input for every unit. Both are read for all of them.
 
-**Day parts** are transcribed from the CLDR supplemental day-period rules for
-`th`. CLDR draws two afternoon rows and labels both `บ่าย`, so they are one
-band, 12:00 to 16:00. The two evening rows are not joined: `เย็น` is the late
-afternoon, 16:00 to 18:00, and `ค่ำ` the hours after dark, 18:00 to 21:00, and
-one band across both would answer five hours for a word that means three. The
-night wraps 21:00 round to dawn. `เที่ยง` and `เที่ยงคืน` add no boundary of
-their own and ship as clock landmarks.
+**Day parts** are transcribed from the CLDR supplemental day-period rules for `th`. CLDR draws two afternoon rows and labels both `บ่าย`, so they are one band, 12:00 to 16:00. The two evening rows are not joined: `เย็น` is the late afternoon, 16:00 to 18:00, and `ค่ำ` the hours after dark, 18:00 to 21:00. One band across both would answer five hours for a word that means three. The night wraps 21:00 round to dawn. `เที่ยง` and `เที่ยงคืน` add no boundary of their own and ship as clock landmarks.
 
-**Numerals** are the digit words and the ascending place words from Wiktionary's
-`Module:number_list/data/th` and `Module:th-utilities`, joined by positional
-concatenation with the three irregularities those modules state as conditionals:
-a units digit of 1 after a higher place is `เอ็ด`, a tens digit of 1 drops its
-digit word to leave bare `สิบ`, and a tens digit of 2 is `ยี่`. Those are the
-only licensed spellings of their values, so `หนึ่งสิบ` and `สองสิบ` read as no
-numeral at all rather than being invented into 10 and 20. Two variants read but
-are never generated: `หนึ่ง` for a final 1 in place of `เอ็ด`, and `ซาว` for
-twenty. Thai digits ๐-๙ need no handling — they are Unicode decimal digits and
-the shared tokenizer already reads them.
+**Numerals** are the digit words and the ascending place words from Wiktionary's `Module:number_list/data/th` and `Module:th-utilities`, joined by positional concatenation with the three irregularities those modules state as conditionals: a units digit of 1 after a higher place is `เอ็ด`, a tens digit of 1 drops its digit word to leave bare `สิบ`. A tens digit of 2 is `ยี่`. Those are the only licensed spellings of their values. `หนึ่งสิบ` and `สองสิบ` read as no numeral at all rather than being invented into 10 and 20. Two variants read but are never generated: `หนึ่ง` for a final 1 in place of `เอ็ด`, and `ซาว` for twenty. Thai digits ๐-๙ need no handling. They are Unicode decimal digits and the shared tokenizer already reads them.
 
-**The clock** counts minutes forward from the hour just named; there is no
-subtractive "minutes to the hour" form in either source consulted. `นาที` is
-optional after the count and `ครึ่ง` is the half. The hour itself is named on
-the six-hour cycle: `ตี` plus one to five for the small hours, a numeral plus
-`ทุ่ม` for the evening starting at 19:00, a numeral plus `โมงเช้า` for the
-morning, `บ่ายโมง` for 13:00 and `บ่าย` plus a numeral plus `โมง` for the early
-afternoon.
+**The clock** counts minutes forward from the hour just named. There is no subtractive "minutes to the hour" form in either source consulted. `นาที` is optional after the count and `ครึ่ง` is the half. The hour itself is named on the six-hour cycle: `ตี` plus one to five for the small hours, a numeral plus `ทุ่ม` for the evening starting at 19:00, a numeral plus `โมงเช้า` for the morning, `บ่ายโมง` for 13:00 and `บ่าย` plus a numeral plus `โมง` for the early afternoon.
 
-**The Buddhist Era** is read from its marker. `พ.ศ.` selects the Buddhist
-year-numbering, 543 ahead of the Common Era, and `ค.ศ.` selects the Common Era;
-the conversion runs through the shared era registry, and a marked year composes
-with a full date line the way CLDR's own `d MMMM G y` pattern writes one.
+**The Buddhist Era** is read from its marker. `พ.ศ.` selects the Buddhist year-numbering, 543 ahead of the Common Era, and `ค.ศ.` selects the Common Era. The conversion runs through the shared era registry. A marked year composes with a full date line the way CLDR's own `d MMMM G y` pattern writes one.
 
 ## Weaker provenance
 
-The per-quarter hour words rest on two language-teaching sources and a
-Wikipedia article rather than on a reference grammar, and only the readings all
-three agree on ship. The `โมงเช้า` hours are read directly — `แปดโมงเช้า` is
-08:00 — because every worked morning example in those sources takes that
-reading; the traditional cycle would number the same hours one to five, which
-is why only six through eleven are read.
+The per-quarter hour words rest on two language-teaching sources and a Wikipedia article rather than on a reference grammar. Only the readings all three agree on ship. The `โมงเช้า` hours are read directly (`แปดโมงเช้า` is 08:00) because every worked morning example in those sources takes that reading. The traditional cycle would number the same hours one to five, which is why only six through eleven are read.
 
-The first day of the week is the library default, Monday. CLDR's supplemental
-week data was not consulted for `th`, so the locale states no convention of its
-own rather than asserting one it cannot cite.
+The first day of the week is the library default, Monday. CLDR's supplemental week data was not consulted for `th`, so the locale states no convention of its own rather than asserting one it cannot cite.
 
 ## What refuses
 
-**A bare `N โมง`**, with or without a minute tail, for the reason at the top of
-this page. `หกโมงห้านาที`, `แปดโมงครึ่ง` and `เจ็ดโมงยี่สิบ` all return nothing.
-The minute count fixes the minutes, never the half-day, so the whole phrase is
-withdrawn rather than half-read.
+**A bare `N โมง`**, with or without a minute tail, for the reason at the top of this page. `หกโมงห้านาที`, `แปดโมงครึ่ง` and `เจ็ดโมงยี่สิบ` all return nothing. The minute count fixes the minutes, never the half-day, so the whole phrase is withdrawn rather than half-read.
 
-**The late afternoon, 16:00 to 18:00.** The sources disagree about which word
-covers it: one gives 16:00-18:00 to `โมงเย็น` and starts `ทุ่ม` at 19:00,
-another runs `บ่าย` from 13:00 to 18:00, a third draws the afternoon quarter as
-13:00-18:59. The disagreement is about the label rather than the arithmetic,
-but it means `บ่ายสี่โมง` and `สี่โมงเย็น` may or may not be the same reading.
-The band is omitted rather than awarded to a winner, so `บ่าย` counts to 15:00
-and `โมงเย็น` is read only at `หกโมงเย็น`, 18:00, which one source works out in
-full. A refused clock phrase is withdrawn whole, day-part word included:
-`บ่ายสี่โมง` returns nothing rather than decaying into the bare `บ่าย` band and
-answering four hours for a phrase that named one minute.
+**The late afternoon, 16:00 to 18:00.** The sources disagree about which word covers it: one gives 16:00-18:00 to `โมงเย็น` and starts `ทุ่ม` at 19:00, another runs `บ่าย` from 13:00 to 18:00, a third draws the afternoon quarter as 13:00-18:59. The disagreement is about the label rather than the arithmetic, but it means `บ่ายสี่โมง` and `สี่โมงเย็น` may or may not be the same reading. The band is omitted rather than awarded to a winner. `บ่าย` counts to 15:00 and `โมงเย็น` is read only at `หกโมงเย็น`, 18:00, which one source works out in full. A refused clock phrase is withdrawn whole, day-part word included: `บ่ายสี่โมง` returns nothing rather than decaying into the bare `บ่าย` band and answering four hours for a phrase that named one minute.
 
-**`หนึ่งโมงเช้า` through `ห้าโมงเช้า`**, where the direct reading and the
-traditional cycle collide.
+**`หนึ่งโมงเช้า` through `ห้าโมงเช้า`**, where the direct reading and the traditional cycle collide.
 
-**The sixth hour of a quarter.** The quarters run one to five and the sixth
-hour has its own names, `ย่ำรุ่ง` at dawn and `ย่ำค่ำ` at dusk, so `หกทุ่ม` and
-`ตีหก` are not forms the language has. The two `ย่ำ` words themselves are not
-shipped: no source consulted works out a reading for either.
+**The sixth hour of a quarter.** The quarters run one to five and the sixth hour has its own names, `ย่ำรุ่ง` at dawn and `ย่ำค่ำ` at dusk. `หกทุ่ม` and `ตีหก` are not forms the language has. The two `ย่ำ` words themselves are not shipped: no source consulted works out a reading for either.
 
-**The week reading of `อาทิตย์`.** The word is both Sunday and the week. The
-locale gives the surface to Sunday and ships `สัปดาห์` for the week, so a count
-on `อาทิตย์` counts Sundays and never quietly answers a stretch of weeks.
+**The week reading of `อาทิตย์`.** The word is both Sunday and the week. The locale gives the surface to Sunday and ships `สัปดาห์` for the week. A count on `อาทิตย์` counts Sundays and never quietly answers a stretch of weeks.
 
-**A bare four-digit year is Common Era.** Reading it as Buddhist instead would
-move every foreign date quoted in a Thai text by 543 years, and nothing in the
-digits says which era is meant — CLDR's own long and full date patterns for
-`th` carry the era field for exactly that reason. No digit threshold is used to
-guess: a cut-off would be silently wrong on one side of itself and is not a
-fact about the language.
+**A bare four-digit year is Common Era.** Reading it as Buddhist instead would move every foreign date quoted in a Thai text by 543 years. Nothing in the digits says which era is meant. CLDR's own long and full date patterns for `th` carry the era field for exactly that reason. No digit threshold is used to guess: a cut-off would be silently wrong on one side of itself and is not a fact about the language.
 
 **Seasons, decades and centuries.** No source was consulted for them.
 
 ## Open questions for a native speaker
 
-- The boundary and the label for 16:00 to 18:59, where the three sources
-  disagree.
-- Whether the traditional six-hour hour words are still the default in written
-  prose, or whether written Thai uses 24-hour notation and reserves `ตี`
-  and `ทุ่ม` for speech. No corpus evidence was gathered either way, and the
-  answer changes how much of the clock is worth having.
-- Whether a bare four-digit year with no era marker is read as Buddhist by
-  default in ordinary Thai prose. If it is, the policy above is the safe
-  reading rather than the natural one.
-- Whether `นาที` is genuinely optional after every hour word or only after
-  some.
-- How often a date phrase is written glued to the surrounding prose with no
-  phrase space. That frequency is what decides whether exact-cover segmentation
-  is cautious or crippling.
+- The boundary and the label for 16:00 to 18:59, where the three sources disagree.
+
+- Whether the traditional six-hour hour words are still the default in written prose, or whether written Thai uses 24-hour notation and reserves `ตี` and `ทุ่ม` for speech. No corpus evidence was gathered either way, and the answer changes how much of the clock is worth having.
+
+- Whether a bare four-digit year with no era marker is read as Buddhist by default in ordinary Thai prose. If it is, the policy above is the safe reading rather than the natural one.
+
+- Whether `นาที` is genuinely optional after every hour word or only after some.
+
+- How often a date phrase is written glued to the surrounding prose with no phrase space. That frequency is what decides whether exact-cover segmentation is cautious or crippling.
+
 - Whether the week starts on Sunday or Monday in ordinary Thai reckoning.
 
 ## Checked examples

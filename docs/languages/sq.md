@@ -2,154 +2,100 @@
 
 <!-- agent-hint
 covers: where each construction of the Albanian locale comes from, what it refuses and which questions a native speaker would settle
-source: `chronologia/locale/sq/lang.json`, `chronologia/locale/sq/*.voc`, `chronologia/extract/numfold_albanian.py`
+source: chronologia/locale/sq/lang.json, chronologia/locale/sq/*.voc, chronologia/extract/numfold_albanian.py, test/nl_corpus_sq/
 generated: no
-verify: python -m doctest docs/languages/sq.md && python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/sq.md
-see: `docs/languages/index.md`, `docs/extraction.md`
+verify: .venv/bin/python -m doctest docs/languages/sq.md && .venv/bin/python -c 'exec("import ast,re,sys\nfrom datetime import datetime\nfrom chronologia import extract_timespan\np=sys.argv[1];sk=set(sys.argv[2:]);c=re.search(r\"/(\\w+)\\.md$\",p)[1];t=open(p).read()\npr=re.sub(r\"\\s+\",\" \",re.split(r\"-{2}>\",t,maxsplit=1)[1].split(\"\\n## Checked examples\\n\")[0]);A=datetime(2017,6,27,13,4);bad=0;cl=set();R=set();W=[]\ndef mask(m):\n    W.append(m[1].replace(\"\\x01\",\" \")); return \"\\u27e6%d\\u27e7\"%(len(W)-1)\npm=re.sub(r\"`([^`]*)`\",lambda m:mask(re.match(r\"`([^`]*)`\",m[0].replace(\". \",\".\\x01\"))),pr)\nG=r\"((?:\\u27e6\\d+\\u27e7(?:,| and| or|, and)? ?)+)\"\ndef phr(g): return [W[int(i)] for i in re.findall(r\"\\u27e6(\\d+)\\u27e7\",g) if re.search(r\"[^\\W_]\",W[int(i)])]\nfor s in re.split(r\"(?<=[.!?])\\s+\",pm):\n    for m in re.finditer(G+r\"[^\\u27e6\\d]{0,60}?(?<![\\d:\\u2013-])(\\d\\d):(\\d\\d)(?![\\d\\u2013-]|:\\d)\",s):\n        if s[m.end():m.end()+1] in \"\\u2013-\": continue\n        for ph in phr(m[1]):\n            if ph[0]==\"-\" or \"\\u2026\" in ph or \"<\" in ph or ph+\"@\"+m[2]+\":\"+m[3] in sk: continue\n            r=extract_timespan(ph,c,A)\n            if not(r and r[0].start.minute==int(m[3]) and r[0].start.hour%12==int(m[2])%12): bad=1;print(\"clock\",ph,m[2]+\":\"+m[3])\n    if re.search(r\"returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve\",s): R|=set(phr(s))\n    for m in re.finditer(G+r\"\\s*(?:both |each |all |also |still )?(?:returns? nothing|returns? \\u27e6\\d+\\u27e7|refus(?:es|e|ed)\\b|(?:is|are) refused|(?:does|do) not resolve|fails? to resolve)\",s):\n        if \"None\" in m[0] or \"nothing\" in m[0] or \"refus\" in m[0] or \"resolve\" in m[0]: cl|=set(phr(m[1]))\nfor x in cl:\n    if extract_timespan(x,c,A) is not None: bad=1;print(\"refusal not None\",x)\nex={ast.literal_eval(x) for x in re.findall(r\"^\\s*>>> extract_timespan\\((.+?), \\\"\\w+\\\", anchor\\) is None\\n\\s+True$\",t,re.M)}\nif cl-ex: bad=1;print(\"no doctest\",cl-ex)\nif ex-R: bad=1;print(\"doctest without a refusal sentence\",ex-R)\nif sk: print(\"skipped:\",sorted(sk))\nsys.exit(bad)\n")' docs/languages/sq.md && .venv/bin/python -c 'exec("import re,sys\nfrom datetime import datetime\nimport chronologia as C\ndef mins(d):\n    return (\"%.6f\" % (d.total_seconds() / 60)).rstrip(\"0\").rstrip(\".\")\ndef rem(r):\n    return \" and \\x60%s\\x60 left over\" % r if r else \"\"\ndef out(rd, tx, lg, an):\n    f = getattr(C, rd)\n    r = f(tx, lg, anchor=an) if rd == \"extract_duration\" else f(tx, lg, an)\n    if rd == \"extract_timespan\":\n        if r is None: return \"no reading\"\n        return \"%s to %s%s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), r.span.end.datetime().strftime(\"%Y-%m-%d %H:%M\"), rem(r.remainder))\n    if rd == \"extract_duration\":\n        if r is None: return \"no length\"\n        return \"a length of %s min%s\" % (mins(r.duration), rem(r.remainder))\n    if rd == \"extract_event\":\n        if r is None: return \"no event\"\n        return \"start %s, length %s, %s\" % (r.span.start.datetime().strftime(\"%Y-%m-%d %H:%M\"), \"none\" if r.duration is None else mins(r.duration) + \" min\", \"summary \\x60%s\\x60\" % r.summary if r.summary else \"no summary\")\n    if r is None: return \"no rule\"\n    return \"the rule \\x60%s\\x60%s\" % (r.recurrence.to_string(), rem(r.remainder))\n\np=sys.argv[1]\nt=open(p).read()\nm=re.search(r\"\\n## Known limits\\n(.*?)(?=\\n---\\n|\\Z)\",t,re.S)\nbad=0\nn=0\ntot=0\nfor ln in (m[1].split(\"\\n\") if m else []):\n    if \"Example (\" not in ln: continue\n    tot+=1\n    g=re.search(r\"Example \\(reader \\x60(\\w+)\\x60, lang \\x60([\\w-]+)\\x60, anchor (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)\\): \\x60([^\\x60]+)\\x60 gives (.+?)\\. \\[#\\d+\\]\",ln)\n    if not g:\n        bad=1\n        print(\"example line does not parse:\",ln[:80])\n        continue\n    n+=1\n    o=out(g[1],g[4],g[2],datetime.strptime(g[3],\"%Y-%m-%d %H:%M\"))\n    if o!=g[5]:\n        bad=1\n        print(\"limit differs\",g[4],\"|\",g[5],\"|\",o)\nprint(\"known limits checked:\",n,\"of\",tot)\nsys.exit(bad)\n")' docs/languages/sq.md
+see: docs/languages/index.md, docs/extraction.md
 -->
 
 This page records where each construction of the Albanian (`sq`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_albanian` module in `chronologia/extract/`.
 
-Albanian marks definiteness as a suffix on the noun — `ditë` is "day",
-`dita` "the day" — and the form a temporal phrase uses is not a stylistic
-choice. It is selected by whatever governs the noun. CLDR's own relative-time
-patterns pin down which form each construction takes, and that is what the
-vocabulary encodes: bare indefinite after `këtë` and `çdo`, ablative after
-`pas`, indefinite plural or ablative after `më parë` and `para`, and the
-definite accusative only in the fused `e kaluar` / `e ardhshme` "last" and
-"next" phrases on week and month.
+Albanian marks definiteness as a suffix on the noun (`ditë` is "day", `dita` "the day") and the form a temporal phrase uses is not a stylistic choice. It is selected by whatever governs the noun. CLDR's own relative-time patterns pin down which form each construction takes. That is what the vocabulary encodes: bare indefinite after `këtë` and `çdo`, ablative after `pas`, indefinite plural or ablative after `më parë` and `para`, and the definite accusative only in the fused `e kaluar` / `e ardhshme` "last" and "next" phrases on week and month.
 
-The clock splits by construction. Half past and quarter past name the
-**current** hour — `7 e gjysmë` is 7:30, `dy e një çerek` is 2:15 — while
-quarter to counts back from the **coming** one with `pa`, "minus":
-`tre pa çerek` is 2:45. Away from the quarter marks Albanian does not use an
-idiom at all; it states the digits, `7 e 25 e mëngjesit` for 7:25 in the
-morning.
+The clock splits by construction. Half past and quarter past name the **current** hour (`7 e gjysmë` is 7:30, `dy e një çerek` is 2:15) while quarter to counts back from the **coming** one with `pa`, "minus": `tre pa çerek` is 2:45. Away from the quarter marks Albanian does not use an idiom at all. It states the digits, `7 e 25 e mëngjesit` for 7:25 in the morning.
+
+## Try it
+
+To read a phrase, call `extract_timespan` with the phrase, the locale code and an anchor datetime. It returns the span that the phrase names and the text that it left unread.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> span, rest = extract_timespan('7 e gjysmë', "sq", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T07:30:00', '')
 
 ## What ships
 
-**Weekdays and months** come from CLDR 47,
-`cldr-dates-full/main/sq/ca-gregorian.json`. Every weekday name is historically
-the article `e` plus an ordinal, already fused in the CLDR citation form, and
-each ships in the citation form plus the two forms the relative frames use —
-`e hënë`, `të hënë`, `të hënën`.
+**Weekdays and months** come from CLDR 47, `cldr-dates-full/main/sq/ca-gregorian.json`. Every weekday name is historically the article `e` plus an ordinal, already fused in the CLDR citation form. Each ships in the citation form plus the two forms the relative frames use: `e hënë`, `të hënë`, `të hënën`.
 
-**Relative offsets** follow CLDR's patterns exactly. The past is `X më parë`
-with the indefinite noun (`tre ditë më parë`) or the fronted `para X` with the
-ablative (`para dy ditësh`), a pair Wiktionary's `para` entry corroborates with
-its own examples — `para një jave`, `para dy vjetësh`. The future is `pas X`
-with the ablative, singular for a count of one and the `-sh` plural otherwise:
-`pas tre ditësh`.
+**Relative offsets** follow CLDR's patterns exactly. The past is `X më parë` with the indefinite noun (`tre ditë më parë`) or the fronted `para X` with the ablative (`para dy ditësh`), a pair Wiktionary's `para` entry corroborates with its own examples: `para një jave`, `para dy vjetësh`. The future is `pas X` with the ablative, singular for a count of one and the `-sh` plural otherwise: `pas tre ditësh`.
 
-**This, last and next** are three different shapes. `këtë` takes a bare
-indefinite noun. Week and month take the definite accusative plus a fused
-adjective: `javën e kaluar`, `muajin e ardhshëm`. Year takes neither — it has
-three unrelated lexical words, `vjet` for last year, `sivjet` for this year and
-`mot` for next year, and a fold that generalised the week-and-month pattern to
-the year would produce an unattested surface.
+**This, last and next** are three different shapes. `këtë` takes a bare indefinite noun. Week and month take the definite accusative plus a fused adjective: `javën e kaluar`, `muajin e ardhshëm`. Year takes neither. It has three unrelated lexical words, `vjet` for last year, `sivjet` for this year and `mot` for next year. A fold that generalised the week-and-month pattern to the year would produce an unattested surface.
 
-**`para` and `pas` as general prepositions** cover event-relative "before" and
-"after" as well as the offsets, governing the ablative, with Wiktionary's
-worked examples `para nisjes`, `para dreke`, `para Vitit të Ri`.
+**`para` and `pas` as general prepositions** cover event-relative "before" and "after" as well as the offsets, governing the ablative, with Wiktionary's worked examples `para nisjes`, `para dreke`, `para Vitit të Ri`.
 
-**Ranges** use `nga X deri (në) Y`, with `deri` alone for "until". The worked
-example is `Unë punoj nga ora 8 deri në ora 4`.
+**Ranges** use `nga X deri (në) Y`, with `deri` alone for "until". The worked example is `Unë punoj nga ora 8 deri në ora 4`.
 
-**Day parts** take their bands from the CLDR 47 supplemental day-period rule
-set for `sq` — morning 04:00–09:00 and 09:00–12:00, afternoon 12:00–18:00,
-evening 18:00–24:00, night 00:00–04:00 — and their surfaces from the wide
-day-period names.
+**Day parts** take their bands from the CLDR 47 supplemental day-period rule set for `sq` (morning 04:00-09:00 and 09:00-12:00, afternoon 12:00-18:00, evening 18:00-24:00, night 00:00-04:00) and their surfaces from the wide day-period names.
 
-**The hour word licenses a bare hour.** `ora tetë` is eight o'clock; a bare
-`tetë` names no time. This is what keeps a stray numeral after any noun from
-becoming a clock reading.
+**The hour word licenses a bare hour.** `ora tetë` is eight o'clock. A bare `tetë` names no time. This is what keeps a stray numeral after any noun from becoming a clock reading.
 
 ## Weaker provenance
 
-Albanian is the locale whose sources are thinnest overall, and the vocabulary
-files carry no per-file citation comments the way most locales do.
+Albanian is the locale whose sources are thinnest overall. Outside the weekday and month names, which cite Unicode CLDR 47, the vocabulary files carry no per-file citation comments.
 
-**The clock idioms** rest on one directly cited page — detyra.al's article on
-reading analogue and digital clocks, which supplies `7 e gjysëm` glossed as
-7:30 and the digital-style minute examples — plus two independent tertiary
-aggregates agreeing on `tre pa çerek` for 2:45. That is two lines of evidence,
-one of them primary, for a construction that is internally consistent.
+**The clock idioms** rest on one directly cited page (detyra.al's article on reading analogue and digital clocks, which supplies `7 e gjysëm` glossed as 7:30 and the digital-style minute examples) plus two independent tertiary aggregates agreeing on `tre pa çerek` for 2:45. That is two lines of evidence, one of them primary, for a construction that is internally consistent.
 
-**The ±2 day words** `pardje` and `pasnesër` come from tertiary aggregates
-only.
+**The ±2 day words** `pardje` and `pasnesër` come from tertiary aggregates only.
 
-**`çdo` with units other than the day** is a pattern generalisation. `çdo ditë`
-is attested; `çdo javë`, `çdo muaj` and `çdo vit` follow the same
-determiner-plus-bare-noun rule but were not independently sourced per unit.
+**`çdo` with units other than the day** is a pattern generalisation. `çdo ditë` is attested. `çdo javë`, `çdo muaj` and `çdo vit` follow the same determiner-plus-bare-noun rule but were not independently sourced per unit.
 
-**Numerals.** One through ten and the ordinals through tenth are sourced. The
-tens pattern is implied by an aggregate rather than read from a primary table.
-Zero, the hundreds and the thousands were not confirmed from any directly-read
-source, and `njëqind` does not resolve.
+**Numerals.** One through ten and the ordinals through tenth are sourced. An aggregate implies the tens pattern. The locale does not read it from a primary table. Zero, the hundreds and the thousands were not confirmed from any directly-read source, and `njëqind` does not resolve.
 
-**The Wiktionary `ditë` declension table** has an ablative row that does not match the ablative forms CLDR's own
-patterns give. The CLDR-derived forms are what ship; that table is not relied
-on.
+**The Wiktionary `ditë` declension table** has an ablative row that does not match the ablative forms CLDR's own patterns give. The CLDR-derived forms are what ship. That table is not relied on.
 
-**Gender for the `tre` / `tri` split.** Albanian marks gender on "three".
-`javë` is feminine and `muaj` and `vit` masculine, inferred from the endings
-CLDR's definite-accusative and ablative forms show. The genders of `ditë` and
-`orë` were not independently cross-checked.
+**Gender for the `tre` / `tri` split.** Albanian marks gender on "three". `javë` is feminine and `muaj` and `vit` masculine, inferred from the endings CLDR's definite-accusative and ablative forms show. The genders of `ditë` and `orë` were not independently cross-checked.
 
 ## What refuses
 
-Each refusal is pinned by a test.
+A test pins each refusal.
 
-**"Since".** `që nga` and `që prej` both appear in word lists as "since", with
-nothing fixing which one a temporal phrase takes or what case it governs, so
-neither ships and `që nga e hëna` does not resolve.
+**"Since".** `që nga` and `që prej` both appear in word lists as "since", with nothing fixing which one a temporal phrase takes or what case it governs. Neither ships and `që nga e hëna` does not resolve.
 
-**"Between … and".** `midis`, `ndërmjet` and `në mes` all surfaced as
-"between", none with a two-endpoint example, so no range marker is claimed.
+**"Between … and".** `midis`, `ndërmjet` and `në mes` all surfaced as "between", none with a two-endpoint example, so no range marker is claimed.
 
-**"For <duration>".** `për` is "for" in every preposition list, but with no
-temporal worked example it is not shipped as a duration marker, and
-`për tre ditë` does not resolve.
+**"For <duration>".** `për` is "for" in every preposition list, but with no temporal worked example it is not shipped as a duration marker, and `për tre ditë` does not resolve.
 
-**Decade and millennium.** Neither has a dictionary entry that could be read,
-so the units are absent rather than transliterated, and `tre dekada më parë`
-refuses.
+**Decade and millennium.** Neither has a dictionary entry that could be read, so the units are absent rather than transliterated, and `tre dekada më parë` refuses.
 
-**The postposed century ordinal.** Albanian writes the century with the ordinal
-after the noun, and `shekulli XXI` returns nothing. Reading that order would
-also swallow `viti 2027` — a year word plus a year — turning it into a
-postposed ordinal, so the construction waits for a mechanism that can tell the
-two apart rather than being bought at that price.
+**The postposed century ordinal.** Albanian writes the century with the ordinal after the noun, and `shekulli XXI` returns nothing. Reading that order would also swallow `viti 2027` (a year word plus a year) turning it into a postposed ordinal. The construction waits for a mechanism that can tell the two apart rather than being bought at that price.
 
-**The feminine ordinal `e para`.** It is homographic with the preposition
-`para`, "before" and "ago", and no reading of the bare word tells them apart.
-Only the masculine `parë` is in the ordinal fold, which leaves
-`para dy ditësh` reading correctly as an offset.
+**The feminine ordinal `e para`.** It is homographic with the preposition `para`, "before" and "ago", and no reading of the bare word tells them apart. Only the masculine `parë` is in the ordinal fold, which leaves `para dy ditësh` reading correctly as an offset.
 
-**The abbreviated Tuesday and Saturday.** CLDR abbreviates them `mar` and
-`sht`, spelled exactly like abbreviated March and September. The month reading
-is the one that carries a year, so those two weekday abbreviations are not
-shipped and the abbreviation stays unambiguous: `mar 2020` is March.
+**The abbreviated Tuesday and Saturday.** CLDR abbreviates them `mar` and `sht`, spelled exactly like abbreviated March and September. The month reading is the one that carries a year. Those two weekday abbreviations are not shipped and the abbreviation stays unambiguous: `mar 2020` is March.
 
-**The definite nominative weekday forms.** `e diela`, `e hëna`, `e marta` do
-not resolve. The definite nominative is attested for only two of the seven
-days, so none of the seven ships it.
+**The definite nominative weekday forms.** `e diela`, `e hëna`, `e marta` do not resolve. The definite nominative is attested for only two of the seven days, so none of the seven ships it.
 
-**An ordinal day of the month.** Whether an Albanian date names its day with a
-cardinal or an ordinal, and where the connective goes, was never attested. The
-locale reads only the CLDR pattern, a bare cardinal day: `5 qershor 2027`.
+**An ordinal day of the month.** Whether an Albanian date names its day with a cardinal or an ordinal, and where the connective goes, was never attested. The locale reads only the CLDR pattern, a bare cardinal day: `5 qershor 2027`.
 
 ## Open questions for a native speaker
 
 1. What is the ordinary "since" construction, and what case does it govern?
+
 2. What is the "between A and B" frame, with a worked example?
+
 3. Is `për` the duration marker, and how is "for three days" said?
+
 4. Is there a decade word and a millennium word in ordinary use?
-5. Does a real Albanian date name its day with a cardinal or an ordinal, and
-   where does the connective sit?
+
+5. Does a real Albanian date name its day with a cardinal or an ordinal, and where does the connective sit?
+
 6. Are `pardje` and `pasnesër` standard rather than regional?
+
 7. What are zero, the hundreds and the thousands, and what is the tens pattern?
+
 8. Are `ditë` and `orë` feminine, for the `tre` / `tri` agreement?
+
 9. Is a compositional `vitin e kaluar` also current alongside `vjet`?
 
 ## Checked examples
