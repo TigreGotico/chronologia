@@ -49,3 +49,9 @@ def test_caller_until_overrides_the_rule_until():
     got = [s.start.year for s in rec.occurrences(ANCHOR, until=datetime(2030, 1, 1))]
     assert got == [2027, 2028, 2029]
     assert [s.start.year for s in rec.occurrences(ANCHOR)] == [2027]
+
+
+def test_the_until_day_itself_is_included():
+    from chronologia.recurrence import HolidayRecurrence
+    rec = HolidayRecurrence("easter", until=datetime(2028, 4, 16))
+    assert [s.start.year for s in rec.occurrences(ANCHOR)] == [2027, 2028]

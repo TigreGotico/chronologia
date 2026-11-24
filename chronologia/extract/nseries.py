@@ -1335,8 +1335,8 @@ def _read_recurrence(text, lang, anchor):
             if rec is None:
                 return None
             rec, consumed = _apply_year_scope(rec, consumed, ctx, lang, anchor)
-            # a trailing year scope on a rule this engine has no bound field
-            # for (JurisdictionHolidays, HolidayRecurrence) cannot be honestly
+            # a trailing year scope on a rule with no start field
+            # (JurisdictionHolidays, HolidayRecurrence) cannot be honestly
             # expressed -- see _apply_year_scope -- so it declines the same
             # way the two cases above do.
             if rec is None:
@@ -2108,11 +2108,10 @@ def _apply_year_scope(rec, consumed, ctx, lang, anchor):
     :func:`_apply_bounds` and :func:`_apply_range_bound`.
 
     :class:`~chronologia.recurrence.HolidayRecurrence` and
-    :class:`~chronologia.recurrence.JurisdictionHolidays` carry **no** bound
-    field at all -- their ``occurrences()`` takes ``until``/``count`` only as
-    CALL arguments, nothing on the object itself to set -- so a year scope on
-    either of them cannot be attached to the returned value without silently
-    dropping it or inventing a field that does not exist.  Rather than either,
+    :class:`~chronologia.recurrence.JurisdictionHolidays` carry no start field
+    (HolidayRecurrence carries only ``until``), so a year scope on either of
+    them cannot be attached to the returned value without silently dropping
+    its start or inventing a field that does not exist.  Rather than either,
     this REFUSES the whole extraction (returns ``(None, consumed)``, exactly
     like the ambiguous-UNTIL and empty-intersection declines in
     :func:`_apply_range_bound`) when a year scope is found trailing one of
