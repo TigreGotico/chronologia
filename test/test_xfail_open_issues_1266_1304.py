@@ -38,6 +38,35 @@ def test_candidates_raise_mode(text, reason):
 
 
 @pytest.mark.xfail(strict=True, reason=URL + "1276")
+@pytest.mark.parametrize("lang,text,first,kind", [
+    ("en", "tomorrow or every month on the sixth monday", datetime(2026, 11, 23), "named_day"),
+    ("pt", "amanhã ou todos os meses no sexto domingo", datetime(2026, 11, 23), "named_day"),
+    ("de", "am 3. Juni oder der sechste Montag jedes Monats", datetime(2027, 6, 3), "calendar_date"),
+    ("en", "the sixth monday of may, or else on 3 june", datetime(2027, 6, 3), "calendar_date"),
+])
+def test_candidates_keep_the_valid_date_and_drop_the_refused_weekday(lang, text, first, kind):
+    # A sixth Monday (or Sunday) never occurs, so no candidate may read those
+    # words as a plain weekday; the valid date beside them stays first.
+    found = extract_candidates(text, lang, ANCHOR)
+    assert (found[0].span.start.datetime(), found[0].construction) == (first, kind)
+    assert "weekday_ref" not in [c.construction for c in found]
+
+
+@pytest.mark.xfail(strict=True, reason=URL + "1276")
+@pytest.mark.parametrize("text", [
+    "annually on the 30th of february",
+    "the sixth monday of may 2027",
+    "the sixth monday of may next year",
+    "the sixth monday of may at 7",
+])
+def test_candidates_read_nothing_from_a_refused_date(text):
+    # extract_timespan gives None for each; no candidate may read a year, a
+    # clock or a day of this month out of the refused words.
+    assert extract_timespan(text, "en", ANCHOR) is None
+    assert extract_candidates(text, "en", ANCHOR) == []
+
+
+@pytest.mark.xfail(strict=True, reason=URL + "1276")
 def test_candidates_refused_business_day_has_no_month_fallback():
     assert extract_candidates("the 23rd business day of this month", "en", ANCHOR) == []
 
