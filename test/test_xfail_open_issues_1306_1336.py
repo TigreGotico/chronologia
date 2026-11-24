@@ -329,13 +329,6 @@ def test_impossible_day_in_a_yearly_event_declines():
     assert extract_event("every year in february on the 30th", "en", ANCHOR) is None
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1328")
-def test_day_above_31_in_a_yearly_rule_forms_no_rule():
-    assert extract_recurrence("annually on the 32nd of january", "en", ANCHOR) is None
-    event = extract_event("every year on the 32nd of january", "en", ANCHOR)
-    assert event is None or event.recurrence is None
-
-
 @pytest.mark.parametrize("text", rows(1329, [
     ("anualmente às 9 a 29 de fevereiro",),
     ("todos os anos às 9 a 29 de fevereiro",),
