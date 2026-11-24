@@ -3591,6 +3591,7 @@ def _recur_freq_word(ctx):
             kw = {"interval": interval} if interval != 1 else {}
             end = i + 1
             nxt = i + 1
+            consumed = None
             if freq == "WEEKLY":
                 got = _weekly_byday_qualifier_loose(ctx, nxt)
                 if got is not None:
@@ -3629,9 +3630,17 @@ def _recur_freq_word(ctx):
                                                         date_matches, skip)
                         if got is not None:
                             kw["bymonth"], kw["bymonthday"], y_end = got
-                            return (_build_every(freq, **kw),
-                                    {i} | set(range(skip, y_end)))
-            return _build_every(freq, **kw), set(range(i, end))
+                            consumed = {i} | set(range(skip, y_end))
+            if consumed is None:
+                consumed = set(range(i, end))
+            try:
+                return _build_every(freq, **kw), consumed
+            except ValueError:
+                # the named date recurs in no year ("annually on the 30th of
+                # february"): the frame is claimed and refused, as in
+                # _recur_date_anchored
+                decline(bad_day(None, kw["bymonth"], kw["bymonthday"]))
+                return None, consumed
     for i, tok in enumerate(t):
         # "on" is *required* here (not merely swallowed if present): a bare
         # "weekday"/"weekend" names a single day ("it's a weekday", "the
