@@ -94,8 +94,9 @@ def test_an_until_word_between_two_weekdays_gives_a_weekday_set():
     assert read("en", "every day from monday until friday") == (WEEKDAYS, "")
 
 
-# A weekday rule from one month until another consumes both bounds.  The tree
-# leaves "from june" in the remainder.
+# A weekday rule from one month until another consumes both bounds, and its
+# UNTIL ends with August, as extract_timespan reads "from june to august".  The
+# tree leaves "from june" in the remainder and stops UNTIL at 1 August.
 @ISSUE_1291
 @pytest.mark.parametrize("lang, text", [
     ("de", "jeden Montag von Juni bis August"),
@@ -108,5 +109,17 @@ def test_an_until_word_between_two_weekdays_gives_a_weekday_set():
     ("ca", "cada dilluns de juny fins a agost"),
     ("gl", "cada luns de xuño ata agosto"),
 ])
-def test_a_month_range_with_an_until_word_leaves_no_remainder(lang, text):
-    assert read(lang, text)[1] == ""
+def test_a_month_range_with_an_until_word_runs_to_the_end_of_the_range(lang, text):
+    assert read(lang, text) == ("FREQ=WEEKLY;UNTIL=20270901T000000;BYDAY=MO", "")
+
+
+# An until word after a range keeps its own date, as en "every day from june
+# to august until december" reads.  The tree reads "bis August" as UNTIL, a
+# date before the anchor, and drops "bis Dezember".
+@ISSUE_1291
+@pytest.mark.parametrize("lang, text, remainder", [
+    ("de", "jeden Tag von Juni bis August bis Dezember", "von Juni bis August"),
+    ("nl", "elke dag van juni tot augustus tot december", "van juni tot augustus"),
+])
+def test_an_until_word_after_a_range_keeps_its_date(lang, text, remainder):
+    assert read(lang, text) == (DECEMBER, remainder)
