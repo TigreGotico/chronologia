@@ -333,6 +333,11 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         return token.is_number and 0 <= (token.value or 0) <= 9
     if name == "FRACTION":
         return token.text in spec.clock_fractions
+    if name == "HALF":
+        # the half hour that minutes count from ("vijf voor half vier"), in a
+        # locale whose bare half names the half before the hour
+        return (spec.conventions.bare_half_to
+                and spec.clock_fractions.get(token.text) == 30)
     if name == "CLOCKMIN":
         return token.text in spec.clock_dir_minutes
     if name == "CLOCKDIR":
@@ -422,6 +427,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         return token.text in spec.archon_names
     if name == "PRIDIE":
         return token.text in spec.connectors.get("pridie", frozenset())
+    if name == "HOURSPAN":
+        return token.text in spec.connectors.get("hour_span", frozenset())
     # -- deep-time / named-period slots ------------------------------------
     if name == "PERIOD":
         return token.text in spec.periods
@@ -667,6 +674,8 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
             if (suffixes and tokens[ti].is_number
                     and ti + 1 < len(tokens)
                     and tokens[ti + 1].text in suffixes):
+                if el.name == "HOUR":
+                    bound[el.name] = replace(tokens[ti], ordinal=True)
                 consider(_walk(elements, tokens, ei + 1, ti + 2, spec, bound))
     else:
         consumed = _connector_span(el.name, tokens, ti, spec)
@@ -776,6 +785,17 @@ class ConstructionMatcher:
                     if (name == "weekday_ref" and end < len(tokens)
                             and self.spec.units.get(tokens[end].text)
                             == "day"):
+                        continue
+                    # A marker after the period noun ("del mes que viene")
+                    # is not the marker of a period noun that follows it:
+                    # "del mes este año" holds a month and a year, so "este"
+                    # opens "este año" and stays out of the month scope.
+                    if (name == "scoped_ordinal" and "REL_MARKER" in slots
+                            and "SCOPE_UNIT" in slots
+                            and slots["REL_MARKER"].index
+                            > slots["SCOPE_UNIT"].index
+                            and end < len(tokens)
+                            and tokens[end].text in self.spec.units):
                         continue
                     # A marker that only modifies a singular period ("the
                     # following week") gives no date before a plural period
@@ -1217,7 +1237,8 @@ class ConstructionMatcher:
         neighbours), "om 3 mensen" (about three people).  The locale lists
         those prepositions in ``marker_at_counts.voc`` and the nouns that count
         people or things in ``marker_counted_noun.voc``.  A bare hour behind
-        one of the prepositions and directly before one of the nouns is
+        one of the prepositions, or behind an alarm noun and its "for"
+        (``marker_alarm_at.voc``), and directly before one of the nouns is
         doubtful, unless a comma or a sentence period ends the hour.  Any
         other word after the hour, a verb included, leaves the
         clock as it is.  A doubtful clock stays a candidate, marked ``doubt``;
@@ -1234,8 +1255,10 @@ class ConstructionMatcher:
                     and not tokens[end].break_before
                     and not tokens[end - 1].raw.endswith(".")
                     and tokens[end].text in nouns
-                    and any(t.text in prepositions for t in
-                            tokens[max(0, start - 1):match.slots["HOUR"].index])):
+                    and (_connector_span("alarm_at", tokens, start, self.spec)
+                         or any(t.text in prepositions for t in
+                                tokens[max(0, start - 1):
+                                       match.slots["HOUR"].index]))):
                 cand = MatchCandidate(replace(match, doubt=True),
                                       cand.precedence)
             flagged.append(cand)

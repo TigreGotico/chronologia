@@ -46,7 +46,6 @@ def test_a_plural_part_of_day_reads_like_the_singular(plural, singular, lang):
             == extract_timespan(singular, lang, ANCHOR).span.start.datetime())
 
 
-@pytest.mark.xfail(strict=True, reason="#1044: the singular gives tomorrow")
 @pytest.mark.parametrize("plural,singular,lang", [
     ("afternoons at 3", "afternoon at 3", "en"),
     ("evenings at 8", "evening at 8", "en"),

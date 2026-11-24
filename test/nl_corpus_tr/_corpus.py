@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared helpers for the tr natural-language corpus.
 
-The contract: extract_timespan(text, 'tr', anchor). Anchor is a Wednesday noon (2026-07-15). Turkish is agglutinative and DMY; spelled numbers fold via ovos-number-parser (numbers_tr).
+The contract: extract_timespan(text, 'tr', anchor). Anchor is a Wednesday noon (2026-07-15). Turkish is agglutinative and DMY; spelled numbers read through numtag.
 """
 from datetime import datetime, timedelta  # noqa: F401
 

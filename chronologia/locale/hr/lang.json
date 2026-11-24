@@ -32,6 +32,8 @@
   },
   "clock_time": {
    "orders": [
+    "at CLOCK oclock MERIDIEM ZONE?",
+    "CLOCK oclock MERIDIEM ZONE?",
     "at? CLOCK MERIDIEM? ZONE?",
     "at HOUR MERIDIEM? ZONE?",
     "HOUR MERIDIEM ZONE?",
@@ -116,7 +118,7 @@
  "guards": {
   "bare_year_min_digits": 4
  },
- "hook": "chronologia.extract.numfold_slavic:fold_hr",
+ "hook": "chronologia.extract.numlayer_slavic:fold_hr",
  "base_grammar": {
   "override": {
    "scoped_ordinal": [

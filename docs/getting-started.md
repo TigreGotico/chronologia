@@ -1,9 +1,14 @@
 # Getting started
 
-This page teaches you the three ideas the whole library is built from. You
-do not need to know anything about calendars, and you barely need to know
-Python. If you can run one line of code and read a printed answer, you can
-follow along.
+<!-- agent-hint
+covers: the JDN number line, the AstroDate point and the DateSpan interval, with a first extraction
+source: chronologia/astrodate.py, chronologia/__init__.py:__all__
+generated: no
+verify: .venv/bin/python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};n=bad=0\nfor b in re.findall(r\"\\x60\\x60\\x60python\\n(.*?)\\x60\\x60\\x60\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        n+=isinstance(s,ast.Assert)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/getting-started.md
+see: docs/use-cases.md, docs/design.md
+-->
+
+This page teaches you the three ideas the whole library is built from. You do not need to know anything about calendars, and you barely need to know Python. If you can run one line of code and read a printed answer, you can follow along.
 
 ## Install
 
@@ -11,40 +16,30 @@ follow along.
 pip install chronologia
 ```
 
-That is everything. You need Python 3.11 or newer. The reckoning core is pure
-standard library; the natural-language layer adds three small pure-Python
-helpers — **numtag** (reads the numbers of Catalan, Danish, Dutch, English, French, Galician, German, Italian, Portuguese, Spanish and Swedish),
-**ovos-number-parser** (spelled numbers → digits in the other languages) and
-**ovos-spec-tools** (loads each language's vocabulary). Nothing here ever talks to the internet.
+That is everything. You need Python 3.11 or newer. The reckoning core is pure standard library. The natural-language layer needs two small pure-Python helpers. **numtag** reads the numbers of 40 of the 61 languages. [The language table](languages/index.md) lists them. **ovos-spec-tools** loads each language's vocabulary. Nothing here ever talks to the internet.
 
 ## Your first extraction (60 seconds)
 
-The single most common thing to do with chronologia is turn a phrase a human
-wrote into the stretch of time it means. That is `extract_timespan`. Copy this,
-run it, and you have used the library:
+The single most common thing to do with chronologia is turn a phrase a human wrote into the stretch of time it means. That is `extract_timespan`. Copy this, run it, and you have used the library:
 
 ```python
 from chronologia import extract_timespan
 from datetime import datetime
 
-now = datetime(2017, 6, 27, 13, 4)   # a Tuesday — "now" for relative phrases
-span, remainder = extract_timespan("let's meet next Friday", "en", now)
+anchor = datetime(2017, 6, 27, 13, 4)   # a Tuesday, the anchor for relative phrases
+span, remainder = extract_timespan("let's meet next Friday", "en", anchor)
 
 print(span.start_datetime.date())   # 2017-06-30
 print(remainder)                    # let's meet
 ```
 
-`extract_timespan(text, language, now)` hands back two things: the **span** it
-found (a stretch of time — here, all of that Friday) and the **remainder**, the
-words that were not part of the date. That is the whole loop: text in, a real
-span out.
+`extract_timespan(text, language, anchor)` hands back two things. The **span** is the stretch of time it found, here all of that Friday. The **remainder** is the words that were not part of the date. That is the whole loop: text in, a real span out.
 
 ## Common recipes
 
 Six things you will reach for constantly. Each is a few lines and runs as-is.
 
-**Get the start and end of a phrase.** A span is an interval, so it has both —
-and its `width` tells you how precise the phrase was.
+**Get the start and end of a phrase**. A span is an interval. So it has both, and its `width` tells you how precise the phrase was.
 
 ```python
 from chronologia import extract_timespan
@@ -55,14 +50,7 @@ print(span.start_datetime.date(), "→", span.end_datetime.date())  # 2027-06-01
 print(span.width)                                                  # 30 days, 0:00:00
 ```
 
-**Read a date in another language.** Pass the language code; the vocabulary
-does the rest. chronologia speaks 58 languages, though not all to the same
-depth — the README's coverage bands say which have had a full per-language
-review and which are still waiting for a native reader. A language also
-declines constructions its sources do not attest, and that refusal is a
-deliberate answer rather than a gap:
-[when a language declines a phrase](extraction.md#when-a-language-declines-a-phrase)
-explains how to tell one from a bug.
+**Read a date in another language**. Pass the language code. The vocabulary does the rest. chronologia speaks 61 languages, though not all to the same depth. The README's coverage bands say which languages have a full per-language review and which still wait for a native reader. A language also declines constructions its sources do not attest. That refusal is a deliberate answer, not a gap. [When a language declines a phrase](extraction.md#when-a-language-declines-a-phrase) explains how to tell a refusal from a bug.
 
 ```python
 from chronologia import extract_timespan
@@ -72,8 +60,7 @@ span, _ = extract_timespan("el próximo viernes", "es", datetime(2017, 6, 27, 13
 print(span.start_datetime.date())   # 2017-06-30
 ```
 
-**Look up a holiday.** Holidays are *computed* from published rules, so any
-in-range year works with no download.
+**Look up a holiday**. Holidays are *computed* from published rules, so any in-range year works with no download.
 
 ```python
 from chronologia import holidays_for
@@ -82,8 +69,7 @@ christmas = [h for h in holidays_for("US", 2024) if h.name == "Christmas Day"][0
 print(christmas.span.start_datetime.date())   # 2024-12-25
 ```
 
-**Measure a bare duration.** A length of time with no start comes back as a
-plain `datetime.timedelta`.
+**Measure a bare duration**. A length of time with no start comes back as a plain `datetime.timedelta`.
 
 ```python
 from chronologia import extract_duration
@@ -92,8 +78,7 @@ length, _ = extract_duration("two and a half hours", "en")
 print(length)   # 2:30:00
 ```
 
-**Expand a recurring rule.** Read "every other Monday" into a rule, then ask
-for its next few dates.
+**Expand a recurring rule**. Read "every other Monday" into a rule, then ask for its next few dates.
 
 ```python
 from chronologia import extract_recurrence, occurrences
@@ -105,26 +90,22 @@ dates = [s.start_datetime.date().isoformat() for s in occurrences(rule, dtstart=
 print(dates)   # ['2017-07-10', '2017-07-24', '2017-08-07']
 ```
 
-**Convert a date into another calendar.** Ask a calendar for a date and get
-back an ordinary date object — no integers to thread.
+**Convert a date into another calendar**. Ask a calendar for a date and get back an ordinary date object, no integers to thread.
 
 ```python
 from chronologia import CALENDARS
 
-print(CALENDARS["hebrew"].date(5786, 7, 1))   # 2025-09-23T00:00:00  (Rosh Hashanah)
+# Rosh Hashanah
+print(CALENDARS["hebrew"].date(5786, 7, 1))  # 2025-09-23T00:00:00
 ```
 
-That is enough to be useful today. The rest of this page explains the three
-ideas underneath these calls, so the library never surprises you.
+That is enough to be useful today. The rest of this page explains the three ideas underneath these calls, so the library never surprises you.
 
 ## The one big idea: give every day a number
 
-Calendars disagree about what to *call* a day. Today might be "the 21st of
-July" to you, "the 5th of Muharram" to someone else, and "day 2 of the week"
-to a third person. That is a naming problem, and naming problems are hard.
+Calendars disagree about what to *call* a day. Today might be "the 21st of July" to you and "the 5th of Muharram" to someone else. A third person might say "day 2 of the week". That is a naming problem, and naming problems are hard.
 
-So this library sidesteps it. Imagine laying every day that has ever existed
-in a single straight line and writing a plain counting number under each one:
+So this library sidesteps it. Imagine laying every day that has ever existed in a single straight line and writing a plain counting number under each one:
 
 ```
    … -2    -1     0     1     2     3     4    …
@@ -134,18 +115,9 @@ in a single straight line and writing a plain counting number under each one:
                           just a big number
 ```
 
-That number is called the **Julian Day Number**, or **JDN** for short. (The
-name is historical; think of it simply as "the day's index on the number
-line.") It keeps counting forward forever, and it keeps counting *backward*
-forever too, straight through the age of the pyramids and the dinosaurs
-without ever hitting a wall.
+That number is called the **Julian Day Number**, or **JDN** for short. (The name is historical. Think of it as "the day's index on the number line.") It counts forward for ever. It counts *backward* for ever too, through the age of the pyramids and the dinosaurs, and it never hits a wall.
 
-Here is the trick that makes the whole library work: **every calendar knows
-how to turn its own dates into a JDN, and back again.** So to translate a
-date from one calendar to another, you never compare the two calendars
-directly — you send the date down to its number on the line, then ask the
-other calendar what *it* calls that number. The number in the middle is the
-common language.
+Here is the trick that makes the whole library work. **Every calendar knows how to turn its own dates into a JDN, and back again**. To translate a date from one calendar to another, you never compare the two calendars. You send the date down to its number on the line. Then you ask the other calendar what *it* calls that number. The number in the middle is the common language.
 
 Let's do it. When does the Hebrew year 5786 begin?
 
@@ -153,58 +125,40 @@ Let's do it. When does the Hebrew year 5786 begin?
 from chronologia import CALENDARS
 
 hebrew = CALENDARS["hebrew"]
-print(hebrew.date(5786, 7, 1))   # 1 Tishri, the new year
-# 2025-09-23T00:00:00
+# 1 Tishri, the new year
+print(hebrew.date(5786, 7, 1))  # 2025-09-23T00:00:00
 ```
 
-`date` pushed the Hebrew date down to its spot on the number line and asked
-our everyday (Gregorian) calendar what day sits there, handing back an
-`AstroDate` — a real date object, no integers to thread. The answer, the
-23rd of September 2025, is the real Rosh Hashanah, computed from the Hebrew
-calendar's own rules, not looked up anywhere.
+`date` pushed the Hebrew date down to its spot on the number line. It asked our everyday (Gregorian) calendar what day sits there. The answer is an `AstroDate`, a real date object, with no integers to thread. The answer, the 23rd of September 2025, is the real Rosh Hashanah, computed from the Hebrew calendar's own rules, not looked up anywhere.
 
-The number in the middle is still there under the object — every JDN is just
-an integer, so you can look at one directly:
+The number in the middle is still there under the object. Every JDN is just an integer, so you can look at one directly:
 
 ```python
 from chronologia import gregorian_to_jdn
 
-print(gregorian_to_jdn(2000, 1, 1))
-# 2451545
+print(gregorian_to_jdn(2000, 1, 1))  # 2451545
 ```
 
-The first day of the year 2000 is day number 2,451,545 on the line. Nothing
-magic — just its position.
+The first day of the year 2000 is day number 2,451,545 on the line. Nothing magic, just its position.
 
 ## AstroDate: a date without the year limit
 
-Python already has a way to hold a date: the built-in `datetime`. It is good,
-but it has one hard limit — its year must be between 1 and 9999. Ask it about
-44 BC or the year 12000 and it simply refuses.
+Python already has a way to hold a date: the built-in `datetime`. It is good, but it has one hard limit: its year must be between 1 and 9999. Ask it about 44 BC or the year 12000 and it simply refuses.
 
-`AstroDate` is this library's answer. **Think of it as a `datetime` whose year
-can be any whole number at all** — deep into the past, far into the future. It
-has all the same parts (year, month, day, hour, minute, and so on) and all the
-same abilities (compare two dates, ask what weekday a date is, add a week to
-it), and you can freely mix it with a real `datetime`:
+`AstroDate` is this library's answer. **Think of it as a `datetime` whose year can be any whole number at all**, deep in the past or far in the future. It has the same parts as a `datetime`: year, month, day, hour, minute and so on. It has the same abilities: compare two dates, ask the weekday, add a week. You can mix it with a real `datetime`:
 
 ```python
 from chronologia import AstroDate
 from datetime import datetime
 
 caesar = AstroDate(-43, 3, 15)      # a day in 44 BC (we explain the -43 next)
-print(caesar.isoformat())
-# -000043-03-15T00:00:00
-print(caesar < datetime(2020, 1, 1))
-# True
+print(caesar.isoformat())  # -000043-03-15T00:00:00
+print(caesar < datetime(2020, 1, 1))  # True
 ```
 
 ### Why 44 BC is written as year −43
 
-Historians count the years before the common era as "1 BC, 2 BC, 3 BC…" —
-and, by an old convention, they put *no year zero* between 1 BC and AD 1.
-That missing zero makes arithmetic go wrong: how many years from 1 BC to
-AD 1? You would want to say "two", but the plain subtraction gives one.
+Historians count the years before the common era as "1 BC, 2 BC, 3 BC…". By an old convention, they put *no year zero* between 1 BC and AD 1. That missing zero makes arithmetic go wrong: how many years from 1 BC to AD 1? You would want to say "two", but the plain subtraction gives one.
 
 Astronomers fixed this by giving that gap a real year 0. So they count:
 
@@ -213,94 +167,64 @@ Astronomers fixed this by giving that gap a real year 0. So they count:
   …  -2     -1     0       1      2      3  …    ← what AstroDate uses
 ```
 
-1 BC becomes year 0, 2 BC becomes −1, and in general **X BC becomes the year
-`1 − X`**. So 44 BC is `1 − 44 = −43`. This is called *astronomical year
-numbering*, and it is the reason the arithmetic in this library never needs a
-"skip the missing year" special case. You only ever meet the difference for
-dates before AD 1. `AstroDate` will even convert back for you:
+1 BC becomes year 0, 2 BC becomes −1, and in general **X BC becomes the year `1 − X`**. So 44 BC is `1 − 44 = −43`. This is called *astronomical year numbering*, and it is the reason the arithmetic in this library never needs a "skip the missing year" special case. You only ever meet the difference for dates before AD 1. `AstroDate` will even convert back for you:
 
 ```python
-print(AstroDate(-43, 1, 1).bc_year)
-# 44
+print(AstroDate(-43, 1, 1).bc_year)  # 44
 ```
 
 ## DateSpan: a stretch of time
 
-Here is a quiet truth about how people talk about time. When someone says
-**"June 2027"**, they do not mean one secret instant at midnight on the 1st.
-They mean *the whole month* — any moment from the start of June to the start
-of July.
+Here is a quiet truth about how people talk about time. When someone says **"June 2027"**, they do not mean one secret instant at midnight on the 1st. They mean *the whole month*, any moment from the start of June to the start of July.
 
-So this library's answers are not single instants; they are **stretches**. A
-`DateSpan` is exactly that: a start and an end, holding everything in between.
-And the *width* of the stretch is real, useful information — it tells you how
-precise the answer is.
+So this library's answers are not single instants. They are **stretches**. A `DateSpan` is exactly that: a start and an end, holding everything in between. And the *width* of the stretch is real, useful information. It tells you how precise the answer is.
 
 ```python
 from chronologia import DateSpan, AstroDate
 
 june = DateSpan(AstroDate(2027, 6, 1), AstroDate(2027, 7, 1))
-print(june.width)
-# 30 days, 0:00:00
-print(june.resolution.name)
-# MONTH
+print(june.width)  # 30 days, 0:00:00
+print(june.resolution.name)  # MONTH
 ```
 
-A single day is a day wide. A month is a month wide. "The Jurassic" is
-fifty-eight and a half million years wide. The width is the honesty: a wide span is the
-library admitting it only knows the answer roughly.
+A single day is a day wide. A month is a month wide. "The Jurassic" is fifty-eight and a half million years wide. The width is the honesty: a wide span is the library admitting it only knows the answer roughly.
 
 ## Basis: where an answer came from
 
-Alongside its width, every span carries a one-word honesty label called its
-**basis**. It answers a simple human question: *how do we know this?*
+Alongside its width, every span carries a one-word honesty label called its **basis**. It answers a simple human question: *how do we know this?*
 
 Think of it like the difference between four kinds of statement about time:
 
 | basis | everyday analogy | what it means |
 |---|---|---|
-| `exact` | "the meeting is at 3 o'clock" | computed from a firm rule; no doubt |
+| `exact` | "the meeting is at 3 o'clock" | computed from a firm rule. No doubt |
 | `tabulated` | "the tide table says high tide is 4:12" | read from an official published table |
 | `reconstructed` | "historians think the battle was around 480 BC" | pieced together from evidence about the past |
 | `predicted` | "the eclipse should be visible next April" | a forward guess about something not yet settled |
 
-An `exact` answer is trustworthy to the second. A `reconstructed` one wears
-its uncertainty openly. When the library combines two spans, the result takes
-the *least* certain of their bases — a chain is only as strong as its weakest
-link:
+An `exact` answer is trustworthy to the second. A `reconstructed` one wears its uncertainty openly. When the library combines two spans, the result takes the *least* certain of their bases. A chain is only as strong as its weakest link:
 
 ```python
 from chronologia import combine_basis
 
-print(combine_basis("exact", "tabulated"))
-# tabulated
+print(combine_basis("exact", "tabulated"))  # tabulated
 ```
 
 ## Where to go next
 
-You now know the three ideas — the **JDN** number line, the unbounded
-**AstroDate**, the **DateSpan** stretch with its **basis** — that everything
-else is built on. The other guides go deeper, gently:
+You know the three ideas, the **JDN** number line, the unbounded **AstroDate**, the **DateSpan** stretch with its **basis**, that everything else is built on. The other guides go deeper, gently:
 
-- **[calendars.md](calendars.md)** — all 18 calendars, how to convert, and
-  how far each one can be trusted.
-- **[timelines.md](timelines.md)** — the days that vanished, the day that
-  happened twice, and February 30th.
-- **[deep-time.md](deep-time.md)** — geological periods, archaeology, and
-  radiocarbon dating.
-- **[sun-moon-and-seasons.md](sun-moon-and-seasons.md)** — sunrise, twilights,
-  moon phases, seasons, unequal hours, leap seconds, and sundials.
-- **[timezones.md](timezones.md)** — daylight-saving folds and gaps, and reading
-  any `zoneinfo` zone as a timeline.
-- **[eras-and-rulers.md](eras-and-rulers.md)** — BC/AD, emperors, consuls, and
-  the Roman way of counting days.
-- **[design.md](design.md)** — the developer's tour of how it all fits
-  together.
+- **[calendars.md](calendars.md)**: all 18 calendars, how to convert, and how far each one can be trusted.
+- **[timelines.md](timelines.md)**: the days that vanished, the day that happened twice, and February 30th.
+- **[deep-time.md](deep-time.md)**: geological periods, archaeology, and radiocarbon dating.
+- **[sun-moon-and-seasons.md](sun-moon-and-seasons.md)**: sunrise, twilights, moon phases, seasons, unequal hours, leap seconds, and sundials.
+- **[timezones.md](timezones.md)**: daylight-saving folds and gaps, and reading any `zoneinfo` zone as a timeline.
+- **[eras-and-rulers.md](eras-and-rulers.md)**: BC/AD, emperors, consuls, and the Roman way of counting days.
+- **[design.md](design.md)**: the developer's tour of how it all fits together.
 
 ## Reference: the public toolbox
 
-Everything below can be imported straight from `chronologia`. It is grouped by
-topic so you can find the tool for the job.
+Everything below can be imported straight from `chronologia`. It is grouped by topic so you can find the tool for the job.
 
 ```python
 # The number line and the unbounded date/stretch types
@@ -361,3 +285,6 @@ from chronologia import (
 # The granularity vocabulary a DateSpan reports
 from chronologia import DateTimeResolution
 ```
+
+---
+[← Who is this for?](use-cases.md) · [Home](index.md) · [Reading dates written by humans →](extraction.md)

@@ -431,3 +431,123 @@ def test_a_comma_after_a_scale_word_ends_the_number():
     got = extract_duration("mil, dois dias", "pt")
     assert got.duration == timedelta(days=2)
     assert got.remainder == "mil"
+
+
+@pytest.mark.parametrize("lang, text", [
+    ("en", "from two thousand to three thousand $"),
+    ("en", "between two thousand and three thousand €"),
+    ("en", "between two thousand and three thousand US$"),
+    ("en", "between two thousand and three thousand USD"),
+    ("en", "between two thousand and three thousand ALL"),
+    ("en", "between two thousand and three thousand US dollars"),
+    ("en", "between two thousand and three thousand more dollars"),
+    ("pt", "desde dois mil até três mil €"),
+    ("pt", "desde dois mil até três mil EUR"),
+    ("pt", "desde dois mil até três mil mais euros"),
+])
+def test_a_currency_symbol_code_or_qualified_name_measures_a_range(
+        lang, text):
+    """A currency symbol, an ISO 4217 code or a currency name after one
+    qualifying word makes both numbers of a range amounts (CLDR 49.0.0
+    currency symbols, codes and display names such as "US dollars"); "more"
+    and "mais" qualify the quantity (Wiktionary "more", Priberam "mais")."""
+    assert extract_timespans(text, lang, _FRIDAY) == []
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    ("en", "we paid between two thousand and three thousand USD on monday",
+     _MONDAY_2),
+    ("en", "between two thousand and three thousand $ were stolen yesterday",
+     _THURSDAY_29),
+])
+def test_a_range_of_amounts_with_a_symbol_or_code_leaves_the_day_word(
+        lang, text, day):
+    assert _event_day(lang, text) == day
+
+
+@pytest.mark.parametrize("text", [
+    "between two thousand and three thousand all",
+    "since two thousand try again",
+])
+def test_a_word_spelled_like_an_iso_code_in_lower_case_is_no_currency(text):
+    """"all" and "try" are the codes ALL and TRY only in capitals."""
+    s = extract_timespan(text, "en", _FRIDAY).span
+    assert s.start == datetime(2000, 1, 1)
+
+
+@pytest.mark.parametrize("text, end", [
+    ("SINCE TWO THOUSAND ALL WAS WELL", _FRIDAY),
+    ("IN TWO THOUSAND TOP SCIENTISTS MET", datetime(2001, 1, 1)),
+])
+def test_an_all_capitals_utterance_reads_no_iso_code(text, end):
+    """Every word of an all-capitals utterance is in capitals, so "ALL" and
+    "TOP" are words there as in lower case: since 2000 runs to the anchor and
+    in 2000 is the year."""
+    s = extract_timespan(text, "en", _FRIDAY).span
+    assert s.start == datetime(2000, 1, 1)
+    assert s.end == end
+
+
+@pytest.mark.parametrize("lang, text, years", [
+    ("en", "in two thousand the dollar rose", (2000, 2001)),
+    ("en", "since two thousand the euro fell", (2000, None)),
+    ("pt", "em dois mil o euro subiu", (2000, 2001)),
+    ("pt", "desde dois mil o euro caiu", (2000, None)),
+])
+def test_an_article_between_a_year_and_a_currency_noun_is_no_qualifier(
+        lang, text, years):
+    """Only a word that qualifies a currency stands between a number and its
+    currency noun, so the article of the next phrase keeps the number a
+    year."""
+    s = extract_timespan(text, lang, _FRIDAY).span
+    assert s.start == datetime(years[0], 1, 1)
+    assert years[1] is None or s.end == datetime(years[1], 1, 1)
+
+
+@pytest.mark.parametrize("lang, text", [
+    ("en", "from two thousand dollars to three thousand"),
+    ("en", "between two thousand dollars and three thousand"),
+    ("en", "between two thousand to three thousand dollars"),
+    ("en", "from two thousand, to three thousand dollars"),
+    ("pt", "desde dois mil euros até três mil"),
+    ("pt", "desde dois mil, até três mil euros"),
+    ("pt-BR", "desde dois mil reais até três mil"),
+    ("pt", "de dois mil euros a três mil"),
+    ("pt", "entre dois mil euros e três mil"),
+    ("pt-BR", "desde dois mil, até três mil reais"),
+])
+def test_a_unit_on_either_end_of_a_closed_range_measures_both_ends(
+        lang, text):
+    """A currency after either number makes both numbers amounts: "dois mil
+    euros até três mil" holds no year (NIST SP 811, 7.7: "to" marks a range
+    of values of one quantity).  A comma before the closing word does not
+    split the range."""
+    assert extract_timespans(text, lang, _FRIDAY) == []
+    assert extract_event(text, lang, anchor=_FRIDAY) is None
+
+
+@pytest.mark.parametrize("lang, text, day", [
+    ("pt", "foram entre dois mil e três mil, ontem", _THURSDAY_29),
+    ("pt", "entre dois mil e três mil, na segunda", _MONDAY_2),
+    ("pt", "vieram entre dois mil e três mil. Ontem choveu", _THURSDAY_29),
+    ("pt-BR", "entre dois mil e três mil. Na segunda chegaram", _MONDAY_2),
+])
+def test_a_range_of_bare_thousands_after_entre_leaves_the_day_word(
+        lang, text, day):
+    """"entre" is no year cue in pt, so a range of bare numbers after it holds
+    no year and the day word is the date."""
+    s = extract_timespan(text, lang, _FRIDAY).span
+    assert (s.start, s.end) == day
+
+
+def test_a_range_of_bare_thousands_after_entre_is_no_date():
+    assert extract_timespans("entre dois mil e três mil", "pt",
+                             _FRIDAY) == []
+
+
+def test_a_range_of_years_after_a_month_keeps_its_years():
+    """The month before the first number makes it a year, so "de" does not
+    open a range of amounts."""
+    s = extract_timespan("em março de dois mil e dez a três mil pessoas",
+                         "pt", _FRIDAY).span
+    assert s.start == datetime(2010, 3, 1)

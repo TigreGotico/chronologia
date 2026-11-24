@@ -62,7 +62,7 @@ def test_the_idiom_at_the_end_of_the_phrase_is_unchanged(text, day):
 
 
 @pytest.mark.parametrize("lang, text, day, remainder", [
-    ("en", "the day after next 3 pm", TODAY + timedelta(days=2), "3 pm"),
+    ("en", "the day after next 3 pm", TODAY + timedelta(days=2), ""),
     ("en", "the day after next may be rainy",
      TODAY + timedelta(days=2), "may be rainy"),
     ("fr", "le lundi après le prochain le bureau ferme",
