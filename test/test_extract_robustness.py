@@ -36,12 +36,13 @@ def test_many_range_connectors_no_recursion(n):
         # CPU time ignores descheduling; load only adds, so take the minimum
         return min(times)
 
-    # Absolute budgets measure the host, not the scan.  The scan is linear
-    # (doubling the connectors doubles the time); a per-connector recursion
-    # that re-scans the remainder is quadratic and would quadruple it.
-    small, large = best_of(n // 2), best_of(n)
-    assert large / small < 3.2, (
-        f"doubling {n // 2} connectors multiplied the time by {large / small:.2f}")
+    # Absolute budgets measure the host, not the scan.  Four times the
+    # connectors takes four times as long when the scan is linear, and sixteen
+    # times when a per-connector recursion re-scans the remainder.  8 lies
+    # between the two with room for a busy runner.
+    small, large = best_of(n // 4), best_of(n)
+    assert large / small < 8, (
+        f"four times {n // 4} connectors multiplied the time by {large / small:.2f}")
 
 
 def test_long_whitespace_no_redos():
