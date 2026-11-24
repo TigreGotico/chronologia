@@ -1138,7 +1138,6 @@ class ConstructionMatcher:
                     if (name == "clock_time" and "HOUR" in slots
                             and "CLOCKDIR" not in slots
                             and "FRACTION" not in slots
-                            and "MINUTE" not in slots
                             and "MERIDIEM" not in slots
                             and self.spec.conventions.bare_at_markers):
                         _ai = slots["HOUR"].index - 1

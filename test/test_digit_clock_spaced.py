@@ -53,6 +53,11 @@ def test_spaced_digit_clock_leaves_no_minutes_behind(text, lang):
     ("tenho 10 30 reais", "pt"),
     ("hay 10 30 personas", "es"),
     ("às 5 99", "pt"),
+    # a bare "a" is no clock preposition in pt and es (bare_at_markers)
+    ("de 9 a 10 30", "pt"),
+    ("chegou a 7 30", "pt"),
+    ("vendido a 5 30 euros", "es"),
+    ("ganamos 3 a 2 30", "es"),
 ])
 def test_two_numbers_without_a_clock_preposition_are_no_clock(text, lang):
     assert extract_timespan(text, lang, ANCHOR) is None
