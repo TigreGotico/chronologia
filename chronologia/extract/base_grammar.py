@@ -484,6 +484,12 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "named_day_before": [
         "article? indef? DAYUNIT before DAY_WORD",
     ],
+    # Speech recognition writes a spoken "ten thirty" as "10 30": the hour
+    # and its minutes, with no colon.  The "at" marker is REQUIRED, so a count
+    # of two numbers with no preposition stays a count.
+    "clock_time": [
+        "at article? HOUR MINUTE MERIDIEM? ZONE?",
+    ],
     # "in/during <month>" ("in January", "en janvier", "im Januar").  Only the
     # marker-prefixed order is shared: the bare "MONTH DAY? YEAR?" surface and
     # the day-first orders stay per-locale, since locales disagree on them.
