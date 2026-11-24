@@ -27,7 +27,6 @@ def rows(issue, entries):
     return [pytest.param(*entry, marks=xfail(issue)) for entry in entries]
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1276")
 @pytest.mark.parametrize("text,reason", [
     ("the 25th weekday of the month", "no 25th"),
     ("the sixth monday of may", "no 6th Monday"),
