@@ -34,7 +34,7 @@ def test_season_of_year(text, y, sm):
     ("la terza settimana di luglio", 2017, 7, 17, 7),
     ("il primo giorno di luglio", 2017, 7, 1, 1),
     ("l'ultimo giorno di luglio", 2017, 7, 31, 1),
-    ("il secondo giorno di marzo", 2017, 3, 2, 1),
+    ("il secondo giorno di marzo", 2018, 3, 2, 1),
 ])
 def test_scoped_ordinal(text, y, mo, d, wide):
     s, e = start_end(text)

@@ -529,7 +529,8 @@ def _daypart_wraps_midnight(name: str) -> bool:
 
 def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
                           name: str, has_explicit_meridiem: bool,
-                          force_today: bool = False
+                          force_today: bool = False,
+                          anchor: Optional[datetime] = None
                           ) -> Optional[Resolution]:
     """Apply a day-part word adjacent to an explicit clock as a MERIDIEM
     hint on it, rather than a competing reading -- "evening at 9" is 21:00,
@@ -555,7 +556,11 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
     into its PM band yet ("tonight at 8" == 20:00, not tomorrow).  Pinning
     the date back to the day-part's own resolved day undoes that premature
     roll; a bare, non-explicit day-part ("evening at 3") keeps the clock's
-    roll untouched, per the documented R117 convention.
+    roll untouched, per the documented R117 convention.  That roll is only
+    kept when the shifted hour has passed too: "evening at 8" said at 12:00
+    is 20:00 the same day, as "at 8 in the evening" is, and said at 21:00 it
+    is 20:00 the next day.  ``anchor`` carries the moment the roll is tested
+    against.
 
     Returns ``None`` on contradiction.
     """
@@ -578,6 +583,12 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
     if force_today:
         d = daypart_res.value.start
         new_start = new_start.replace(year=d.year, month=d.month, day=d.day)
+    elif (anchor is not None
+          and new_start.date() == anchor.date() + timedelta(days=1)):
+        today = new_start.replace(year=anchor.year, month=anchor.month,
+                                  day=anchor.day)
+        if today.datetime() >= anchor.replace(tzinfo=None):
+            new_start = today
     consumed = tuple(sorted(set(clock_res.consumed) | set(daypart_res.consumed)))
     width = clock_res.value.end - clock_res.value.start
     return Resolution(DateSpan(new_start, new_start + width), consumed)
@@ -637,7 +648,7 @@ class Resolver:
                 f"construction {match.construction!r} is declared but not "
                 f"resolved in the engine-core phase; it lands with its own "
                 f"migration wave")
-        handler = getattr(self, f"_resolve_{match.construction}", None)
+        handler = self._HANDLERS.get(match.construction)
         if handler is None:
             raise NotImplementedError(
                 f"no resolver for construction {match.construction!r}")
@@ -647,7 +658,7 @@ class Resolver:
             # long); every other handler ignores the mode.
             if match.construction == "deep_time":
                 return self._resolve_deep_time(match, anchor, scale_mode)
-            return handler(match, anchor)
+            return handler(self, match, anchor)
         except (ValueError, OverflowError, KeyError):
             # "This reading does not resolve to a real date" -- an out-of-range
             # or calendar-invalid value (day 31 of a 30-day month, a year beyond
@@ -1527,9 +1538,11 @@ class Resolver:
                 else _gregorian_month_span(year, month)
             return Resolution(span, self._consumed(match))
         # a year phrase after the month ("march of this year", "5 марта
-        # прошлого года") names the year outright
+        # прошлого года", "noviembre del año que viene") names the year
+        # outright; only "marzo pasado" has the marker right after the month
         year_phrase = (rel_tok is not None and rel_tok.index > month_tok.index
-                       and match.span[1] > rel_tok.index + 1)
+                       and (match.span[1] > rel_tok.index + 1
+                            or rel_tok.index > month_tok.index + 1))
         if year_tok:
             year = _pivot_two_digit_year(year_tok, anchor.year)
         else:
@@ -2139,8 +2152,12 @@ class Resolver:
             if month_tok is not None:               # named month ("... of June")
                 month = self.spec.months[month_tok.text]
                 year_tok = match.slots.get("YEAR")
+                # a relative year phrase ("of november next year", "de
+                # noviembre del año que viene") shifts the anchor's year
+                rel_tok = match.slots.get("REL_MARKER")
                 year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
-                        else anchor.year)
+                        else anchor.year + (self.spec.rel_markers[rel_tok.text]
+                                            if rel_tok else 0))
                 value = _nth_weekday_of_month(year, month, target, n)
                 scope = scope_name(month, year if year_tok else None)
                 most = 0 if year_tok else 5
@@ -2279,6 +2296,13 @@ class Resolver:
             month = self.spec.months[month_tok.text]
             res = _UNIT_OF_MONTH[unit_kind]
             value = _date_ordinal(n, date(year, month, 1), res)
+            # A year-less "Nth day of <month>" names the date its digit form
+            # names: the next such day, as ``calendar_date`` reads "15 march".
+            if (unit_kind == "day" and year_tok is None and 1 <= n <= 31
+                    and self.spec.construction_flags.get(
+                        "calendar_date", {}).get("prefer_future", False)):
+                nxt = _next_day_month(month, n, anchor)
+                value = nxt.date() if nxt is not None else None
             scope = scope_name(month, year if year_tok else None)
             most = 0 if year_tok else (_days_in_month(2000, month)
                                        if unit_kind == "day"
@@ -3378,3 +3402,81 @@ class Resolver:
                 elif off == 0 and spoken_hour == 12:
                     hour = (hour - 12) % 24
         return hour, minute, second
+
+    # construction name -> handler
+    _HANDLERS = {
+        "relative_offset": _resolve_relative_offset,
+        "named_day": _resolve_named_day,
+        "daypart_ref": _resolve_daypart_ref,
+        "named_day_after": _resolve_named_day_after,
+        "named_day_before": _resolve_named_day_before,
+        "weekday_offset": _resolve_weekday_offset,
+        "named_day_span_idiom": _resolve_named_day_span_idiom,
+        "named_day_offset_from": _resolve_named_day_offset_from,
+        "sametime_shift": _resolve_sametime_shift,
+        "holiday_eve": _resolve_holiday_eve,
+        "weekday_ref": _resolve_weekday_ref,
+        "weekday_of_week": _resolve_weekday_of_week,
+        "before_last": _resolve_before_last,
+        "after_next": _resolve_after_next,
+        "weekday_ago": _resolve_weekday_ago,
+        "unit_ago_weekday": _resolve_unit_ago_weekday,
+        "rel_period": _resolve_rel_period,
+        "rel_span": _resolve_rel_span,
+        "rel_span_quarter": _resolve_rel_span_quarter,
+        "rel_span_weekend": _resolve_rel_span_weekend,
+        "fuzzy_period": _resolve_fuzzy_period,
+        "quarter_ref": _resolve_quarter_ref,
+        "iso_week_ref": _resolve_iso_week_ref,
+        "iso_week_date": _resolve_iso_week_date,
+        "weekend_ref": _resolve_weekend_ref,
+        "weekend_of_month": _resolve_weekend_of_month,
+        "calendar_date": _resolve_calendar_date,
+        "reckoned_date": _resolve_reckoned_date,
+        "iso_date": _resolve_iso_date,
+        "numeric_date": _resolve_numeric_date,
+        "numeric_day_month": _resolve_numeric_day_month,
+        "hebrew_new_year": _resolve_hebrew_new_year,
+        "year_ref": _resolve_year_ref,
+        "decade_ref": _resolve_decade_ref,
+        "month_fuzzy": _resolve_month_fuzzy,
+        "month_day_ref": _resolve_month_day_ref,
+        "half_period": _resolve_half_period,
+        "quarter_of_month": _resolve_quarter_of_month,
+        "scoped_ordinal": _resolve_scoped_ordinal,
+        "scoped_ad": _resolve_scoped_ad,
+        "scoped_bc": _resolve_scoped_bc,
+        "decade_bc": _resolve_decade_bc,
+        "regnal_date": _resolve_regnal_date,
+        "roman_date": _resolve_roman_date,
+        "archon_ref": _resolve_archon_ref,
+        "roman_classical": _resolve_roman_classical,
+        "cycle_ref": _resolve_cycle_ref,
+        "season_ref": _resolve_season_ref,
+        "season_fuzzy": _resolve_season_fuzzy,
+        "solar_event": _resolve_solar_event,
+        "era_bc": _resolve_era_bc,
+        "era_ad": _resolve_era_ad,
+        "era_bp": _resolve_era_bp,
+        "era_auc": _resolve_era_auc,
+        "era_saka": _resolve_era_saka,
+        "era_byzantine": _resolve_era_byzantine,
+        "era_holocene": _resolve_era_holocene,
+        "era_anno_mundi": _resolve_era_anno_mundi,
+        "era_french_republican": _resolve_era_french_republican,
+        "era_buddhist": _resolve_era_buddhist,
+        "era_buddhist_be": _resolve_era_buddhist_be,
+        "era_hijri": _resolve_era_hijri,
+        "era_solar_hijri": _resolve_era_solar_hijri,
+        "roman_eve": _resolve_roman_eve,
+        "olympiad_ref": _resolve_olympiad_ref,
+        "deep_time": _resolve_deep_time,
+        "named_period": _resolve_named_period,
+        "holiday_ref": _resolve_holiday_ref,
+        "new_year_ref": _resolve_new_year_ref,
+        "clock_time": _resolve_clock_time,
+        "subdivision_time": _resolve_subdivision_time,
+        "nongregorian_date": _resolve_nongregorian_date,
+        "military_time": _resolve_military_time,
+        "clock_this_daypart": _resolve_clock_this_daypart,
+    }

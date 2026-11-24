@@ -21,6 +21,7 @@ import os
 import re
 import threading
 import unicodedata
+from contextvars import ContextVar
 from datetime import MAXYEAR, MINYEAR, datetime, timedelta
 from dataclasses import dataclass, replace
 from typing import Dict, List, NamedTuple, Optional, Tuple
@@ -325,7 +326,7 @@ _NUMERIC_DATE = re.compile(f"{_ISO}|{_NUMDATE_ANY}|{_SLASHFRAC}")
 #: ``DATE_CONSTRUCTIONS`` the matcher itself emits.
 _COMPOSABLE_DATES = DATE_CONSTRUCTIONS | {
     "business_days", "weekday_count", "weekend_after_next",
-    "weekend_before_last", "weekend_ago"}
+    "weekend_before_last", "weekend_ago", "after_next", "before_last"}
 
 #: A weekday next to one of these LITERAL calendar dates is read as a restated
 #: label of it ("Monday, March 2" -> March 2, weekday consumed).  A DERIVED date
@@ -652,6 +653,36 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                                        scale_mode=scale_mode),
             anchor, start, bound)
 
+    def following(sub, start):
+        # the endpoint read from the day its range starts
+        if not MINYEAR <= start.year <= MAXYEAR:
+            return None
+        at = anchor.replace(year=start.year, month=start.month, day=start.day,
+                            hour=0, minute=0, second=0, microsecond=0)
+        return _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
+
+    def holding(sub, start, end, ending):
+        # the latest reading of a yearly endpoint before ``start``, when it
+        # makes a range that holds the anchor and does not end earlier in the
+        # month it starts in
+        now = AstroDate.from_datetime(anchor.replace(tzinfo=None))
+        for back in range(1, 9):
+            if start.year - back < MINYEAR:
+                return None
+            at = anchor.replace(year=start.year - back, month=1, day=1,
+                                hour=0, minute=0, second=0, microsecond=0)
+            got = _range_endpoint(text, sub, engine, at, scale_mode=scale_mode)
+            if got is not None and got[0].start < start:
+                begin = got[0].start.replace(tzinfo=None)
+                stop = ending(got[0].start, end).replace(tzinfo=None)
+                last = stop - timedelta(days=1)
+                if (begin <= now < stop
+                        and (last.month != begin.month
+                             or last.day >= begin.day)):
+                    return got[0].start
+                return None
+        return None
+
     def daily(sub):
         # an endpoint that names no day: read two days later, it is the same
         # clock two days later (a weekday or a holiday moves by a week, a
@@ -749,7 +780,9 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                             is not None for i in range(lead_at, p))
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily, since=since)
+                                     previous, daily, since=since,
+                                     following=following,
+                                     holding=holding)
             # A month-fraction left endpoint ("first half of august", "third
             # quarter of february") whose right side is a BARE lone year
             # joined by "until"/"till"/"through" double-binds that year: the
@@ -802,7 +835,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             if got is None:
                 got = _compose_range(left_tok, right_tok, endpoint,
                                      borrowed, spec, bare_of, monthly,
-                                     previous, daily)
+                                     previous, daily, following=following,
+                                     holding=holding)
             if got is not None:
                 return _with_prefix(got, prefix)
 
@@ -834,7 +868,9 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
                 if got is None:
                     got = _compose_range(left_tok, right_tok, endpoint,
                                          borrowed, spec, bare_of,
-                                         monthly, previous, daily)
+                                         monthly, previous, daily,
+                                         following=following,
+                                     holding=holding)
                 if got is not None:
                     span, rem = got
                     rem = (rem + " " + suffix).strip() if suffix else rem
@@ -1389,7 +1425,7 @@ def _labelled_day_keeps_own(sub, donor, donor_read, spec):
 
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
-                   daily=None, since=False):
+                   daily=None, since=False, following=None, holding=None):
     """Resolve two endpoint sub-slices into one ``(span, remainder)``, or ``None``.
 
     A leading ``from``/``between`` and the connector are outside both slices, so
@@ -1582,6 +1618,33 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             pulled = earlier[0].start
         if pulled is not None and pulled < right_span.end:
             start, end = pulled, right_span.end
+    # a right end with no year of its own is its first occurrence on or after
+    # the start: a left end that kept the anchor's year must not be paired with
+    # a right end that rolled to the next year
+    def nearer_end(start, end):
+        if (following is None or right[2] != "dated" or right[3]
+                or shared_right or right_lent
+                or (monthly is not None and monthly(right_tok) is not None)):
+            return end
+        again = following(right_tok, start)
+        if again is not None and again[2] == "dated":
+            same_date = (again[0].start.month, again[0].start.day) \
+                == (right_span.start.month, right_span.start.day)
+            nearer = _align_awareness(left[0], again[0])[1].end
+            if same_date and start < nearer < end:
+                return nearer
+        return end
+
+    # both ends flung to the same year, with the start past the end ("from 1
+    # december to 10 january" said on 20 december): the range is read from the
+    # start's previous occurrence when that range holds the anchor
+    if (end <= start and holding is not None and not left[3] and not right[3]
+            and left[2] == "dated" and right[2] == "dated"
+            and not shared_left and not left_lent and not right_lent
+            and not _definite_endpoint(left_tok, spec)):
+        earlier_start = holding(left_tok, start, end, nearer_end)
+        if earlier_start is not None:
+            start = earlier_start
     # a year lent across the range (one endpoint named the pair's single year)
     # reads the borrowed month in the donor's own year, which reverses the span
     # when the two months sit on opposite sides of the calendar -- "from
@@ -1607,6 +1670,8 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         # civil reversed range ("june 12 to june 5") has no deep-time endpoint
         # and is left to fail below.
         start, end = right_span.start, left_span.end
+    if end > start:
+        end = nearer_end(start, end)
     if end <= start:
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
@@ -2764,7 +2829,7 @@ def _exclusion_governing_veto(tokens, consumed, text, spec) -> bool:
     return False
 
 
-_veto_reentry = threading.local()
+_veto_active: ContextVar[bool] = ContextVar("veto_active", default=False)
 
 
 _CLOCK_LITERAL = re.compile(r"\d{1,2}:\d{2}(:\d{2})?")
@@ -2821,7 +2886,7 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     resolves on its own and does not veto.  Shared by _resolve_span (the
     single-winner path) and extract_candidates so the two public APIs never
     disagree on the top answer.
-    A thread-local re-entrancy guard bounds the self-similar blow-up: both
+    A context-local re-entrancy guard (``_veto_active``) bounds the self-similar blow-up: both
     trigger shapes re-parse a stranded fragment through the public
     ``extract_timespan`` ("does this resolve to a real date?"), which re-enters
     this veto; a self-similar input ("5th of june 5th of june ...") would
@@ -2829,13 +2894,13 @@ def _impossible_date_veto(tokens, consumed, text, engine, anchor):
     whether it RESOLVES, not whether it is itself impossible, so the veto is
     skipped while already inside it (one level is enough).
     """
-    if getattr(_veto_reentry, "active", False):
+    if _veto_active.get():
         return False
-    _veto_reentry.active = True
+    token = _veto_active.set(True)
     try:
         return _impossible_date_veto_inner(tokens, consumed, text, engine, anchor)
     finally:
-        _veto_reentry.active = False
+        _veto_active.reset(token)
 
 
 def _ordish_scope_word(text, spec):
@@ -3866,10 +3931,18 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
     composable = (_COMPOSABLE_DATES | {"relative_offset"}
                  if spec.conventions.offset_clock_composes
                  else _COMPOSABLE_DATES)
+    # "the morning after next" is a band of its day, so a clock beside it may
+    # contradict the band and is left unread; "the week before last" is a
+    # period, so no clock lands on it
     dates = [(m, r) for m, r in resolved
              if m.construction in composable
              and (m.construction != "relative_offset"
-                  or _offset_is_day_or_coarser(m, spec))]
+                  or _offset_is_day_or_coarser(m, spec))
+             and not (m.construction in ("after_next", "before_last")
+                      and ("DAYPART" in m.slots
+                           or (m.slots.get("UNIT") is not None
+                               and spec.units.get(m.slots["UNIT"].text)
+                               != "day")))]
     dayparts = [(m, r) for m, r in resolved
                 if m.construction == "daypart_ref"]
     weekdays = [(m, r) for m, r in resolved
@@ -4003,7 +4076,8 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
                             in engine.spec.daypart_today_words)
         force_today = dp_is_this or dp_is_today_word
         merged_clock = compose_daypart_clock(clk_res, dp_res, dp_name,
-                                             has_meridiem, force_today)
+                                             has_meridiem, force_today,
+                                             anchor)
         if merged_clock is None:
             # A genuine contradiction ("morning at 9pm") -- decline the
             # whole reading rather than guess a winner (R57 convention).
@@ -4236,7 +4310,7 @@ def _roll_bare_weekday_time(res, rep, anchor):
                                        res.value.basis))
 
 
-_reading = threading.local()
+_spoken_hours: ContextVar[bool] = ContextVar("spoken_hours", default=False)
 
 
 def reads_spoken_hours(fn):
@@ -4247,12 +4321,11 @@ def reads_spoken_hours(fn):
     """
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
-        outer = getattr(_reading, "spoken", False)
-        _reading.spoken = True
+        token = _spoken_hours.set(True)
         try:
             return fn(*args, **kwargs)
         finally:
-            _reading.spoken = outer
+            _spoken_hours.reset(token)
     return wrapper
 
 
@@ -4279,9 +4352,11 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
     whatever fraction follows.  An am or pm word the locale lists for a half of
     the day decides that half only when it stands beside the clock, even
     unjoined: a pm word pins the pm reading, an am or night word keeps the
-    written hour.
+    written hour.  A word that is also the adverb "late" (es, pt, gl "tarde")
+    decides nothing when another word of its clause comes before it: "llego
+    tarde a las 6:30" is late.
     """
-    if (getattr(_reading, "spoken", False)
+    if (_spoken_hours.get()
             or anchor is None or rep is None
             or any(m.construction == "daypart_ref" or "MERIDIEM" in m.slots
                    for m in matches)
@@ -4330,9 +4405,16 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
         i = clock_match.span[0] - 1 if step < 0 else clock_match.span[1]
         while 0 <= i < n and tokens[i].text in glue:
             i += step
-        if 0 <= i < n and tokens[i].index not in covered \
-                and tokens[i].text in spec.meridiems:
-            meridiem_words.append(tokens[i].text)
+        if (not 0 <= i < n or tokens[i].index in covered
+                or tokens[i].text not in spec.meridiems):
+            continue
+        if (step < 0 and i > 0 and not tokens[i].break_before
+                and tokens[i].text in spec.late_meridiems):
+            # after another word of its clause the word is the adverb "late"
+            # ("llego tarde a las 6:30"); the noun opens its clause ("tarde a
+            # las 4:30") or a part-of-the-day match reads it ("de tarde")
+            continue
+        meridiem_words.append(tokens[i].text)
     if meridiem_words and (
             not all(spec.meridiems[w] == 12 for w in meridiem_words)
             or any(w in spec.night_meridiems for w in meridiem_words)):

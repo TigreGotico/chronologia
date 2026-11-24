@@ -364,10 +364,12 @@ day decides the half when it stands beside the clock, also when the reader does
 not join it: Dutch "om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is
 20:00. Only a clock word ("uur"), the word that opens the clock ("om") or an
 article may stand between them, so Spanish "a las 6:30 que no quiero llegar
-tarde" ("late") said at 23:00 is 06:30. A part of the day after a digit clock
-joins the clock as it joins a spoken hour: Spanish "a las 6:30 de la tarde"
-said at 13:04 is 18:30, and "a las 6:30 de la mañana" is 06:30 the next day.
-This holds in
+tarde" ("late") said at 23:00 is 06:30. Spanish, Portuguese and Galician
+"tarde" is also the adverb "late", so before the clock and after another word of
+its clause it decides nothing: "llego tarde a las 6:30" is 06:30, while "tarde a
+las 4:30" is 16:30. A part of the day after a digit clock joins the clock as it
+joins a spoken hour: Spanish "a las 6:30 de la tarde" said at 13:04 is 18:30,
+and "a las 6:30 de la mañana" is 06:30 the next day. This holds in
 every language, for `extract_timespan`,
 `extract_timespans` and the top `extract_candidates` reading. A recurrence pin
 names an hour of the day, so `extract_recurrence("daily at 7")` stays
@@ -1459,7 +1461,8 @@ The two extension paths never cross:
 - **Add a capability** — a new *construction*. Give it an entry in
   `PRECEDENCE` (`compiler.py`), let each language declare its `orders` and any
   new slot vocabulary, teach `_bind` (`matcher.py`) any new slot names, and
-  write one `_resolve_<name>` method (`resolver.py`) for the date math. The
+  write one `_resolve_<name>` method (`resolver.py`) for the date math, with
+  its entry in `Resolver._HANDLERS`. The
   capability then works for *every* language that lists it — the resolver is
   language-agnostic.
 

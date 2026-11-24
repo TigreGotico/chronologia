@@ -38,6 +38,11 @@ _IMPOSSIBLE = [
     ("o segundo e sexto luns de cada mes", "gl", "a month has no 6th Monday"),
     ("every weekday from saturday to sunday", "en",
      "the range from Saturday to Sunday holds no day the rule allows"),
+    ("the sixth monday of every other month", "en", "a month has no 6th Monday"),
+    ("the sixth monday every month", "en", "a month has no 6th Monday"),
+    ("every month on the sixth monday", "en", "a month has no 6th Monday"),
+    ("the 24th business day of each month", "en", "a month has no 24th business day"),
+    ("the 30th of february every year", "en", "February has no 30th"),
 ]
 
 
@@ -88,3 +93,48 @@ def test_year_tail_never_reports_a_month_reason(text, lang):
             extract(text, lang, _ANCHOR, impossible="raise")
         except ImpossibleDateError as err:
             pytest.fail(f"raised {err.reason!r}")
+
+
+#: a date at the edge of what its period holds, a quarter (a period of three
+#: months) and a monthly date followed by a weekday in the next clause: none is refused
+_NOT_REFUSED = [
+    ("every month on the fifth monday", "en"),
+    ("the 23rd business day of each month", "en"),
+    ("every year on the 53rd friday", "en"),
+    ("the 262nd business day of every year", "en"),
+    ("the sixth monday of every quarter", "en"),
+    ("the 24th business day every quarter", "en"),
+    ("pay rent every month on the 15th, monday or tuesday", "en"),
+    ("every month on the 15th. monday is a holiday", "en"),
+    ("every month on the 25th, business as usual", "en"),
+    ("jeden Monat am 15., Montag oder Dienstag", "de"),
+    ("elke maand op de 15e, maandag of dinsdag", "nl"),
+    ("the 29th of february every year", "en"),
+]
+
+
+@pytest.mark.parametrize("text,lang", _NOT_REFUSED)
+def test_a_date_the_period_holds_is_not_refused(text, lang):
+    assert extract_recurrence(text, lang, _ANCHOR) is not None
+    for extract in (extract_recurrence, extract_event):
+        try:
+            extract(text, lang, _ANCHOR, impossible="raise")
+        except ImpossibleDateError as err:
+            pytest.fail(f"raised {err.reason!r}")
+
+
+@pytest.mark.parametrize("text,lang,day", [
+    ("pay rent every month on the 15th, monday or tuesday", "en", 15),
+    ("every month on the 15th. monday is a holiday", "en", 15),
+    ("every month on the 25th, business as usual", "en", 25),
+    ("jeden Monat am 15., Montag oder Dienstag", "de", 15),
+    ("elke maand op de 15e, maandag of dinsdag", "nl", 15),
+])
+def test_a_monthly_day_keeps_its_rule_before_a_weekday_in_the_next_clause(text, lang, day):
+    assert extract_recurrence(text, lang, _ANCHOR).recurrence.bymonthday == (day,)
+
+
+@pytest.mark.parametrize("text", ["the 32nd of may every year", "the 100th of may every year"])
+def test_a_number_above_31_beside_a_month_is_refused_without_a_reason(text):
+    assert extract_recurrence(text, "en", _ANCHOR) is None
+    assert extract_recurrence(text, "en", _ANCHOR, impossible="raise") is None

@@ -1276,8 +1276,8 @@ def test_cardinal_plural_unit_is_not_the_ordinal_day_of_month():
         assert r is not None, text
         return (r.span.start.year, r.span.start.month, r.span.start.day)
 
-    assert _start("the second day of June") == (2017, 6, 2)
-    assert _start("the 2nd day of June") == (2017, 6, 2)
+    assert _start("the second day of June") == (2018, 6, 2)
+    assert _start("the 2nd day of June") == (2018, 6, 2)
     assert _start("the 100th day of the year") == (2017, 4, 10)
     assert _start("the last day of the month") == (2017, 6, 30)
     assert _start("the third week of June") == (2017, 6, 19)
@@ -1309,9 +1309,9 @@ def test_cardinal_plural_unit_is_a_count_across_non_latin_plurals():
         assert r is not None, text
         return (r.span.start.year, r.span.start.month, r.span.start.day)
 
-    assert _start("il secondo giorno di giugno", "it") == (2017, 6, 2)
-    assert _start("de tweede dag van juni", "nl") == (2017, 6, 2)
-    assert _start("второй день июня", "ru") == (2017, 6, 2)
+    assert _start("il secondo giorno di giugno", "it") == (2018, 6, 2)
+    assert _start("de tweede dag van juni", "nl") == (2018, 6, 2)
+    assert _start("второй день июня", "ru") == (2018, 6, 2)
 
 
 def test_month_day_not_bare_hour_morning():
