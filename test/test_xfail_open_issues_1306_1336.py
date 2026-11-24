@@ -19,7 +19,7 @@ from chronologia import (
 ANCHOR = datetime(2026, 11, 22, 9, 0)
 A_2017 = datetime(2017, 6, 27, 13, 4)
 URL = "https://github.com/TigreGotico/chronologia/issues/"
-WEEKDAYS = extract_recurrence("every weekday at 9", "en", ANCHOR).recurrence.byday
+WEEKDAYS = ((None, 0), (None, 1), (None, 2), (None, 3), (None, 4))  # Monday to Friday
 
 
 def xfail(issue):
