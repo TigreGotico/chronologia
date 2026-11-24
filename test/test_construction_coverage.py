@@ -1,9 +1,8 @@
 """The construction vocabulary and the resolver's handlers are one contract.
 
-The resolver dispatches by building a method name: ``_resolve_<construction>``
-(:meth:`Resolver.resolve`). That is convenient and open, but the set of valid
-constructions is otherwise only an emergent property of ``dir(Resolver)``. These
-tests make it a declared, exhaustively-checked contract so a typo, a renamed
+The resolver dispatches through its ``_HANDLERS`` table, which maps each
+construction to its ``_resolve_<construction>`` method. These tests check that
+table against ``PRECEDENCE`` exhaustively, so a typo, a renamed
 handler, or a new construction added to ``PRECEDENCE`` without a resolver fails
 here -- at collection time -- instead of per-utterance at runtime.
 

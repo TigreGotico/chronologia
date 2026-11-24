@@ -1,26 +1,24 @@
 # -*- coding: utf-8 -*-
-"""The Slavic feminine-ordinal fold must span the full date-relevant range.
+"""The Slavic feminine ordinals fold to whole numbers.
 
 Several period nouns are feminine across the family (неделя/седмица/половина/
-декада/четверть ...), and the ordinal selecting one carries the feminine
-nominative ending, which ``pronounce_ordinal_<lang>`` never emits.  #264 folded
-only 1st/2nd, so "третья неделя апреля" (3rd week) stranded and the whole month
-was returned.  This locks the extension to 1..12 for every Slavic locale and
-guards that the fold OWNS the ordinal locally -- upstream ovos-number-parser
-misreads вторая->0.5, третья->0.333, so the surface must become an INTEGER
-token, never a fraction.
+декада/четверть ...), and the ordinal that selects one carries the feminine
+nominative ending: "третья неделя апреля" is the third week of April.  Each
+surface from 3 to 12 must fold to an integer token, never to a fraction
+(вторая is the second, not one half).
 """
 import pytest
 
+from chronologia.extract import numlayer_slavic as NS
 from chronologia.extract.model import Token
-from chronologia.extract import numfold_slavic as NS
+from chronologia.extract.numlayer import attach
 
 
 def _fold(lang, word):
     fold = getattr(NS, f"fold_{lang}")
     tok = Token(text=word, raw=word, index=0, is_number=False,
                 char_start=0, char_end=len(word))
-    out = fold((tok,))
+    out = fold(attach((tok,), word, lang))
     assert len(out) == 1, f"{lang}:{word!r} did not fold to a single token"
     return out[0]
 
@@ -58,5 +56,5 @@ def test_feminine_ordinal_folds_to_integer(lang, word, value):
     tok = _fold(lang, word)
     assert tok.is_number, f"{lang}:{word!r} did not fold to a number"
     assert tok.value == value, f"{lang}:{word!r} folded to {tok.value}, want {value}"
-    # it must be an INTEGER selector, never the fraction ovos-number-parser reads
+    # it must be an INTEGER selector, never a fraction
     assert isinstance(tok.value, int) and tok.value == int(tok.value)

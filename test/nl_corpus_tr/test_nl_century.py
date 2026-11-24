@@ -36,10 +36,12 @@ def test_bare_century_word_no_match(text):
     nomatch(text)
 
 
-def test_compound_spelled_ordinal_refuses():
-    # "on dokuzuncu" (ten + ninth) means "nineteenth", but the number fold
-    # only reads spelled ordinals as single tokens: "dokuzuncu" folds to 9
-    # alone, leaving "on" stranded beside it.  Composing multi-word spelled
-    # ordinals is unsupported -- this refuses (None) rather than silently
-    # answering "the 9th century" for "the nineteenth century".
-    nomatch("on dokuzuncu yüzyıl")
+@pytest.mark.parametrize("text,n", [
+    ("on dokuzuncu yüzyıl", 19), ("yirmi birinci yüzyıl", 21),
+])
+def test_compound_spelled_ordinal(text, n):
+    # "on dokuzuncu" (ten + ninth) is one ordinal, nineteenth: the 19th
+    # century is the years 1801 to 1900
+    s = span(text)
+    assert (s.start.year, s.end.year) == ((n - 1) * 100, n * 100)
+    assert parse(text)[1] == ""

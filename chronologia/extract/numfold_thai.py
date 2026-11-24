@@ -1,62 +1,33 @@
 # -*- coding: utf-8 -*-
 """Word segmentation, spelled-number folding and the six-hour clock, for Thai.
 
-Thai is written in *scriptio continua*: there is no space between words, only
-between phrases and sentences.  The shared tokenizer emits maximal letter runs,
-so a whole Thai date phrase arrives as ONE token and no slot can bind any part
-of it.  Everything here exists to turn that single run into the token stream the
-rest of the engine already understands.
+Thai has no spaces between words, so the shared tokenizer hands a whole date
+phrase over as ONE token.  This module cuts that run into the words the engine
+reads, folds the spelled numerals and the six-hour clock, and converts Buddhist
+Era years.
 
-Segmentation -- exact cover, or nothing
----------------------------------------
-A Thai run is split only when the *whole* run is covered, end to end, by
-surfaces this locale actually knows: the vocabulary it ships plus the numeral
-and clock words below.  Where a cover exists the run is cut into those words,
-longest first; where none exists the token is handed on untouched.
+Segmentation reads only exact covers.  A run is cut only when surfaces the
+locale knows cover it end to end, longest word first; otherwise the token
+passes through untouched.  Maximal-match cutting would pull temporal readings
+out of ordinary prose, and Thai is full of temporal homographs: ``จันทร์`` is
+Monday and the moon, ``อาทิตย์`` is Sunday and the week, ``ตี`` is the
+small-hours word and "to hit", ``ทุ่ม`` is the evening hour and "to hurl".  The
+dictionary comes from the locale's own ``.voc`` files plus the numeral and clock
+words below, so a surface cannot be segmentable but unmatchable.
 
-That is a deliberate refusal rather than a limitation.  Maximal-match
-segmentation would happily cut a temporal reading out of the middle of ordinary
-prose, and Thai is full of temporal homographs that make the cut wrong:
-``จันทร์`` is Monday and also the moon, ``อาทิตย์`` is Sunday and also the week,
-``ตี`` is the small-hours word and also the everyday verb "to hit", ``ทุ่ม`` is
-the evening hour word and also "to hurl".  Requiring the cover to consume the
-entire run means a numeral syllable sitting inside an ordinary word can never
-be mistaken for a count: prose is left alone, and a date phrase standing as its
-own run -- which is how Thai's phrase spacing presents one -- reads exactly.
+Numerals.  Digit words 0-9 and the ascending places ``สิบ`` 10, ``ร้อย`` 100,
+``พัน`` 1 000, ``หมื่น`` 10 000, ``แสน`` 100 000 and ``ล้าน`` 1 000 000 join by
+positional concatenation, with three irregularities: a units 1 after a higher
+place is ``เอ็ด`` (21 is ``ยี่สิบเอ็ด``), a tens 1 drops its digit word (15 is
+``สิบห้า``), and a tens 2 is ``ยี่`` (20 is ``ยี่สิบ``).  These are the only
+licensed spellings, so ``หนึ่งสิบ`` and ``สองสิบ`` are refused.  Two variants
+are read but never generated: a final ``หนึ่ง`` for ``เอ็ด`` and ``ซาว`` for
+``ยี่สิบ``.  Thai digits ๐-๙ are Unicode decimal digits and need no handling.
 
-The dictionary is READ FROM THE LOCALE'S OWN ``.voc`` FILES rather than
-restated here, so a surface can never be segmentable but unmatchable, or
-matchable but unsegmentable.
-
-Numerals
---------
-Digit words 0-9 and the ascending place words ``สิบ`` 10, ``ร้อย`` 100, ``พัน``
-1 000, ``หมื่น`` 10 000, ``แสน`` 100 000, ``ล้าน`` 1 000 000, joined by
-positional concatenation with three irregularities:
-
-* a units digit of 1 following a higher place is ``เอ็ด``, not ``หนึ่ง``
-  (21 is ``ยี่สิบเอ็ด``);
-* a tens digit of 1 drops its digit word, leaving bare ``สิบ`` (10 is ``สิบ``,
-  15 is ``สิบห้า``);
-* a tens digit of 2 is ``ยี่``, not ``สอง`` (20 is ``ยี่สิบ``).
-
-Those three shapes are the ONLY licensed spellings of their values, so
-``หนึ่งสิบ`` and ``สองสิบ`` are refused rather than read as 10 and 20: they are
-arithmetically obvious and orthographically unattested, and accepting them
-would invent a surface.  Two variants are read but never generated: a final 1
-spelled ``หนึ่ง`` in place of ``เอ็ด`` (military register) and ``ซาว`` for
-``ยี่สิบ`` (dialectal).
-
-Thai digits ๐-๙ (U+0E50..) need no handling here: they are Unicode decimal
-digits, so the shared tokenizer already reads ``๒๕๖๘`` as 2568.
-
-The six-hour clock
-------------------
-Thai counts minutes FORWARD from the hour just named -- there is no subtractive
-form -- but the hour's NAME runs on a six-hour cycle whose word changes with the
-part of the day.  Minutes are the number plus ``นาที``, and ``นาที`` is
-frequently dropped; ``ครึ่ง`` ("half") is the thirty-minute mark and follows the
-hour word.  The shapes read here, and only these:
+The six-hour clock counts minutes forward from the hour just named, with no
+subtractive form.  The hour word changes with the part of the day.  Minutes
+are the number plus ``นาที``, which is often dropped, and ``ครึ่ง`` is the half
+hour.  The shapes read, and only these:
 
 ======================  ==============  =========================
 shape                   reading         worked example
@@ -69,52 +40,33 @@ N ``โมงเช้า``, N = 6..11  N             ``แปดโมงคร
 ``หกโมงเย็น``           18:00
 ======================  ==============  =========================
 
-Everything outside that table is refused, for two separate reasons.
-
-*The disputed late afternoon.*  The sources consulted disagree about which
-label covers 16:00-18:59 -- one assigns ``โมงเย็น`` to 16:00-18:00 and starts
-``ทุ่ม`` at 19:00, another runs ``บ่าย`` from 13:00 to 18:00, a third gives the
-afternoon quarter as 13:00-18:59.  The disagreement is about the label, not the
-arithmetic, but it means ``บ่ายสี่โมง`` and ``สี่โมงเย็น`` may or may not be the
-same reading of 16:00 depending on whose table you take.  Only the band all
-three agree on ships: ``บ่าย`` counts to 15:00 and ``โมงเย็น`` is read at the
-single hour a source works out in full, ``หกโมงเย็น`` 18:00.  The 16:00-17:00
-band is omitted rather than assigned to a winner.
-
-*Bare* ``N โมง``.  ``หกโมงเช้า`` is 06:00 and ``หกโมงเย็น`` is 18:00, and one
-source's own worked example glosses bare ``หกโมงห้านาที`` as an evening reading
-while another's table puts bare ``หกโมง`` in the morning.  A ``โมง`` phrase
-carrying no ``เช้า``/``เย็น``/``บ่าย`` is therefore genuinely ambiguous between
-the two half-days and nothing inside the phrase separates them, so the run is
-withdrawn as an opaque token and the extractor answers nothing rather than
-picking a half-day.  ``ตี N`` and ``N ทุ่ม`` carry their half-day in the hour
-word itself and are read.
-
-``N โมงเช้า`` is read as N o'clock directly, for N = 6..11 only.  Every worked
-morning example in the sources takes that reading -- 6, 7 and 8 with ``โมงเช้า``
-are 06:00, 07:00 and 08:00 -- while the traditional cycle would number the same
-hours 1..5.  The two numberings collide exactly on 1..5, so ``หนึ่งโมงเช้า``
-through ``ห้าโมงเช้า`` are refused and 6..11, where no competing reading exists,
-are read.
+Everything else is withdrawn as an opaque token, so the extractor answers
+nothing instead of guessing.  The sources disagree on which label covers
+16:00-18:59, so only the band all of them agree on ships: ``บ่าย`` to 15:00
+and ``โมงเย็น`` at 18:00 alone.  A bare N ``โมง`` is ambiguous between the two
+half-days and nothing in the phrase chooses.  ``N โมงเช้า`` is read for 6..11
+only, because the traditional cycle numbers the same morning hours 1..5 and the
+two readings collide there.
 
 Sources.  Weekday, month, relative-time and day-period data: Unicode CLDR
-(``cldr-dates-full/main/th/ca-gregorian.json``, ``dateFields.json``, and the
-supplemental ``dayPeriods`` ruleset for ``th``).  Numerals, the three
-irregularities and the ``หนึ่ง``/``ซาว`` variants: Wiktionary
-``Module:number_list/data/th`` and ``Module:th-utilities``.  Clock direction,
-minute forms and the per-quarter hour words: the "Telling time in Thai" A1
-grammar point of Complete Thai, "Thai Time Expressions Explained" of The
-Thaiger, and Wikipedia's "Thai six-hour clock".  Nothing is delegated to an
-external number back-end.
+(``cldr-dates-full/main/th``, supplemental ``dayPeriods``).  Numerals and the
+irregularities: Wiktionary ``Module:number_list/data/th`` and
+``Module:th-utilities``.  Clock direction, minute forms and per-quarter hour
+words: the "Telling time in Thai" A1 grammar point of Complete Thai, "Thai Time
+Expressions Explained" of The Thaiger, and Wikipedia's "Thai six-hour clock".
+Nothing is delegated to an external number back-end.
 """
 from __future__ import annotations
 
+import functools
 import glob
 import os
-from typing import Callable, Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
+from chronologia.eras import ERAS
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import (clock_literal, compose, numeric,
+                                                opaque, reindex)
 
 _LOCALE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "locale", "th")
 
@@ -123,6 +75,7 @@ DIGITS: Dict[str, int] = {
     "ศูนย์": 0, "หนึ่ง": 1, "สอง": 2, "สาม": 3, "สี่": 4,
     "ห้า": 5, "หก": 6, "เจ็ด": 7, "แปด": 8, "เก้า": 9,
 }
+_DIGIT_WORD = {v: w for w, v in DIGITS.items()}
 
 #: ascending place words below the million.
 PLACES: Dict[str, int] = {
@@ -162,40 +115,28 @@ def _is_thai(text: str) -> bool:
     return bool(text) and all("ก" <= ch <= "๛" for ch in text)
 
 
-_DICT: Optional[frozenset] = None
-
-
+@functools.cache
 def dictionary() -> frozenset:
     """Every Thai-script surface the segmenter may cut a run into.
 
-    The locale's own ``.voc`` surfaces, read once straight off disk, plus this
-    module's numeral and clock words.  Reading the shipped files rather than
-    restating them is what keeps the segmenter and the matcher from disagreeing
-    about what Thai words exist.
+    The locale's own ``.voc`` surfaces plus this module's numeral and clock
+    words.  Reading the shipped files keeps the segmenter and the matcher
+    from disagreeing about what Thai words exist.
     """
-    global _DICT
-    if _DICT is None:
-        words = set(_OWN_WORDS)
-        for path in glob.glob(os.path.join(_LOCALE_DIR, "*.voc")):
-            with open(path, encoding="utf-8") as fh:
-                for line in fh:
-                    line = line.strip()
-                    if line and not line.startswith("#") and _is_thai(line):
-                        words.add(line)
-        _DICT = frozenset(words)
-    return _DICT
+    words = set(_OWN_WORDS)
+    for path in glob.glob(os.path.join(_LOCALE_DIR, "*.voc")):
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if line and not line.startswith("#") and _is_thai(line):
+                    words.add(line)
+    return frozenset(words)
 
 
-_MAX_WORD_LEN: Optional[int] = None
-
-
+@functools.cache
 def _max_word_len() -> int:
-    """The longest surface in the dictionary: the cover search never scans
-    further back than it could possibly match."""
-    global _MAX_WORD_LEN
-    if _MAX_WORD_LEN is None:
-        _MAX_WORD_LEN = max(len(w) for w in dictionary())
-    return _MAX_WORD_LEN
+    """The longest dictionary surface, which bounds the cover search."""
+    return max(len(w) for w in dictionary())
 
 
 #: a run longer than this is prose, not a date phrase; covering it is not worth
@@ -213,24 +154,22 @@ def segment(run: str) -> Optional[List[str]]:
         return None
     words = dictionary()
     n, longest = len(run), _max_word_len()
-    # reach[j] is True when run[:j] is exactly covered.
-    reach = [False] * (n + 1)
-    reach[0] = True
+    # start[j] is where the longest word ending at j begins in an exact cover
+    # of run[:j], or -1 when run[:j] has none.
+    start = [-1] * (n + 1)
+    start[0] = 0
     for j in range(1, n + 1):
         for k in range(max(0, j - longest), j):
-            if reach[k] and run[k:j] in words:
-                reach[j] = True
+            if start[k] >= 0 and run[k:j] in words:
+                start[j] = k
                 break
-    if not reach[n]:
+    if start[n] < 0:
         return None
     out: List[str] = []
     j = n
     while j:
-        for k in range(max(0, j - longest), j):
-            if reach[k] and run[k:j] in words:
-                out.append(run[k:j])
-                j = k
-                break
+        out.append(run[start[j]:j])
+        j = start[j]
     out.reverse()
     return out
 
@@ -319,34 +258,17 @@ def surface(n: int) -> str:
                         ("พัน", 1000), ("ร้อย", 100)):
         d, n = divmod(n, place)
         if d:
-            out += _digit(d) + word
+            out += _DIGIT_WORD[d] + word
     tens, unit = divmod(n, 10)
     if tens == 1:
         out += TEN
     elif tens == 2:
         out += TENS_TWO + TEN
     elif tens:
-        out += _digit(tens) + TEN
+        out += _DIGIT_WORD[tens] + TEN
     if unit:
-        out += UNIT_ONE if (unit == 1 and out) else _digit(unit)
-    return out or _digit(0)
-
-
-def _digit(d: int) -> str:
-    return next(w for w, v in DIGITS.items() if v == d)
-
-
-def _numeric(first: Token, value: int, last: Token) -> Token:
-    return Token(text=str(value), raw=str(value), index=first.index,
-                 is_number=True, value=value, char_start=first.char_start,
-                 char_end=last.char_end)
-
-
-def _opaque(first: Token, last: Token, text: str) -> Token:
-    """A lexical token standing for a refused reading: it binds no slot, so the
-    span it covers reaches no construction and the extractor answers nothing."""
-    return Token(text=text, raw=text, index=first.index,
-                 char_start=first.char_start, char_end=last.char_end)
+        out += UNIT_ONE if (unit == 1 and out) else _DIGIT_WORD[unit]
+    return out or _DIGIT_WORD[0]
 
 
 def _segment_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
@@ -387,15 +309,9 @@ def _cardinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             out.append(tok)
             i += 1
             continue
-        out.append(_numeric(tok, value, tokens[i + used - 1]))
+        out.append(numeric(tok, value, tokens[i + used - 1]))
         i, changed = i + used, True
     return reindex(out) if changed else tokens
-
-
-def _clock_literal(hour: int, minute: int, first: Token, last: Token) -> Token:
-    text = f"{hour}:{minute:02d}"
-    return Token(text=text, raw=text, index=first.index,
-                 char_start=first.char_start, char_end=last.char_end)
 
 
 def _minutes_at(tokens: Tuple[Token, ...], i: int) -> Tuple[int, int]:
@@ -487,11 +403,11 @@ def _clock_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         if hour is None:
             used += extra
             raw = "".join(t.raw for t in tokens[i:i + used])
-            out.append(_opaque(tokens[i], tokens[i + used - 1], raw))
+            out.append(opaque(tokens[i], tokens[i + used - 1], raw))
             i, changed = i + used, True
             continue
         last = tokens[i + used + extra - 1]
-        out.append(_clock_literal(hour % 24, minute, tokens[i], last))
+        out.append(clock_literal(hour % 24, minute, tokens[i], last))
         i, changed = i + used + extra, True
     return reindex(out) if changed else tokens
 
@@ -507,9 +423,7 @@ _ERA_PREFIXES = {("พ", "ศ"): "buddhist",     # พ.ศ. -- Buddhist Era
 
 
 def _era_year(key: str, n: int) -> int:
-    """``n`` in era ``key`` as a Common-Era year, through the shared registry
-    (BE 2568 == 2025 CE), never a constant restated here."""
-    from chronologia.eras import ERAS
+    """``n`` in era ``key`` as a Common-Era year (BE 2568 == 2025 CE)."""
     return ERAS[key].epoch.year + n - 1
 
 
@@ -537,18 +451,10 @@ def _era_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             out.append(tokens[i])
             i += 1
             continue
-        out.append(_numeric(tokens[i], year, tokens[i + 2]))
+        out.append(numeric(tokens[i], year, tokens[i + 2]))
         i, changed = i + 3, True
     return reindex(out) if changed else tokens
 
 
-def _compose(*passes: Callable) -> Callable:
-    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        for p in passes:
-            tokens = p(tokens)
-        return tokens
-    return run
-
-
-fold_th = _compose(_segment_rewrite, _cardinal_rewrite, _era_rewrite,
-                   _clock_rewrite)
+fold_th = compose(_segment_rewrite, _cardinal_rewrite, _era_rewrite,
+                  _clock_rewrite)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared helpers for the mwl natural-language corpus.
 
-The contract: extract_timespan(text, 'mwl', anchor). Anchor is a Tuesday (2017-06-27 13:04). Mirandese is a NEW language no parser supported before; every surface is cited in papers/linguistics/mwl/INDEX.md (Wiktionary + numbers_mwl), never copied from Asturian. Only the past-offset marker 'hai' is citable; forward offsets and weekday next/last markers are honestly absent. manhana carries the Ibero-Romance morning/tomorrow polysemy. Spelled numbers fold via ovos-number-parser (numbers_mwl).
+The contract: extract_timespan(text, 'mwl', anchor). Anchor is a Tuesday (2017-06-27 13:04). Every Mirandese surface is cited in papers/linguistics/mwl/INDEX.md (Wiktionary + the numtag lexicon), never copied from Asturian. Only the past-offset marker 'hai' is citable; forward offsets and weekday next/last markers are honestly absent. manhana carries the Ibero-Romance morning/tomorrow polysemy. Spelled numbers read through numtag.
 """
 from datetime import datetime, timedelta  # noqa: F401
 

@@ -52,10 +52,10 @@ back-end.
 from __future__ import annotations
 
 from dataclasses import replace
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Dict, Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import compose, numeric, reindex
 
 #: the two genders a Welsh numeral agrees in.
 MASCULINE, FEMININE = "m", "f"
@@ -193,32 +193,28 @@ _DECIMAL_TENS: Dict[int, str] = {
 #: 41..99 is read.  ``test_cy_omitted_surfaces`` pins the refusal.
 
 
+def _put(table: Dict[str, int], phrase: str, value: int) -> None:
+    """Register ``phrase`` and its soft-mutated form, keeping the first value."""
+    table.setdefault(phrase, value)
+    table.setdefault(_mutate_phrase(phrase), value)
+
+
 def _cardinal_phrases() -> Dict[str, int]:
     """Every spelled cardinal surface 0..100 -> value, radical and mutated."""
     out: Dict[str, int] = {}
-
-    def put(phrase: str, value: int) -> None:
-        out.setdefault(phrase, value)
-        out.setdefault(_mutate_phrase(phrase), value)
-
-    for value, words in _UNITS.items():
-        for w in words:
-            put(w, value)
-    for value, words in _VIGESIMAL_WORDS.items():
-        for w in words:
-            put(w, value)
-    for value, words in _VIGESIMAL_COMPOUNDS.items():
-        for w in words:
-            put(w, value)
+    for forms in (_UNITS, _VIGESIMAL_WORDS, _VIGESIMAL_COMPOUNDS):
+        for value, words in forms.items():
+            for w in words:
+                _put(out, w, value)
     # the decimal series: "un deg un" 11 .. "naw deg naw" 99, the tens bare
     for tens, head in _DECIMAL_TENS.items():
-        put(head, tens)
+        _put(out, head, tens)
         for rest in range(1, 10):
             for w in _UNITS[rest]:
-                put(f"{head} {w}", tens + rest)
+                _put(out, f"{head} {w}", tens + rest)
     for rest in range(1, 10):
         for w in _UNITS[rest]:
-            put(f"un deg {w}", 10 + rest)
+            _put(out, f"un deg {w}", 10 + rest)
     return out
 
 
@@ -271,8 +267,7 @@ _ORDINAL_FORMS: Dict[int, Tuple[str, ...]] = {
 ORDINALS: Dict[str, int] = {}
 for _v, _forms in _ORDINAL_FORMS.items():
     for _f in _forms:
-        ORDINALS.setdefault(_f, _v)
-        ORDINALS.setdefault(_mutate_phrase(_f), _v)
+        _put(ORDINALS, _f, _v)
 
 #: the ordinal suffix a DIGIT day-of-month carries ("y 3ydd o Orffennaf", "yr
 #: 11eg o Fai").  The tokenizer shears the digit from the letters, leaving a
@@ -406,51 +401,38 @@ def counted_phrase(n: int, kind: str) -> str:
 # ---------------------------------------------------------------------------
 # The rewriting passes
 # ---------------------------------------------------------------------------
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
-    return Token(text=str(value), raw=str(value), index=tok.index,
-                 is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
+def _phrase_rewriter(table: Dict[str, int]) -> Callable:
+    """The fold of the LONGEST spelled surface of ``table`` at each token.
 
-
-#: the longest spelled surface, in tokens, either table holds.
-_MAX_SPAN = max(len(p.split()) for p in (*CARDINALS, *ORDINALS))
-
-
-def _phrase_rewrite(tokens: Tuple[Token, ...],
-                    table: Dict[str, int]) -> Tuple[Token, ...]:
-    """Fold the LONGEST spelled surface in ``table`` starting at each token.
-
-    Longest-first is what keeps a compound whole: "deg ar hugain" is thirty,
-    not ten followed by a stranded "ar hugain", and "un deg wyth" is eighteen
-    rather than one and eight.
+    Longest-first keeps a compound whole: "deg ar hugain" is thirty, not ten
+    with a stranded "ar hugain", and "un deg wyth" is eighteen, not one and
+    eight.
     """
-    out, i, n, changed = [], 0, len(tokens), False
-    while i < n:
-        if tokens[i].is_number:
-            out.append(tokens[i])
-            i += 1
-            continue
-        for span in range(min(_MAX_SPAN, n - i), 0, -1):
-            window = tokens[i:i + span]
-            if any(t.is_number for t in window):
+    heads = frozenset(phrase.split()[0] for phrase in table)
+    longest = max(len(phrase.split()) for phrase in table)
+
+    def rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        out, i, n, changed = [], 0, len(tokens), False
+        while i < n:
+            if tokens[i].is_number or tokens[i].text not in heads:
+                out.append(tokens[i])
+                i += 1
                 continue
-            value = table.get(" ".join(t.text for t in window))
-            if value is not None:
-                out.append(_numeric(window[0], value, window[-1]))
-                i, changed = i + span, True
-                break
-        else:
-            out.append(tokens[i])
-            i += 1
-    return reindex(out) if changed else tokens
+            for span in range(min(longest, n - i), 0, -1):
+                window = tokens[i:i + span]
+                if any(t.is_number for t in window):
+                    continue
+                value = table.get(" ".join(t.text for t in window))
+                if value is not None:
+                    out.append(numeric(window[0], value, window[-1]))
+                    i, changed = i + span, True
+                    break
+            else:
+                out.append(tokens[i])
+                i += 1
+        return reindex(out) if changed else tokens
 
-
-def _cardinal_rewrite(tokens):
-    return _phrase_rewrite(tokens, CARDINALS)
-
-
-def _ordinal_rewrite(tokens):
-    return _phrase_rewrite(tokens, ORDINALS)
+    return rewrite
 
 
 def _digit_ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
@@ -502,9 +484,9 @@ def _split_vigesimal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         if (t.is_number and i + 3 < n and tokens[i + 1].text in _SPLIT_NOUNS
                 and tokens[i + 2].text == "ar"
                 and tokens[i + 3].text in _SPLIT_TAIL):
-            out.append(_numeric(t, t.value + _SPLIT_TAIL[tokens[i + 3].text],
-                                tokens[i + 3]))
-            out.append(replace(tokens[i + 1], index=tokens[i + 1].index))
+            out.append(numeric(t, t.value + _SPLIT_TAIL[tokens[i + 3].text],
+                               tokens[i + 3]))
+            out.append(tokens[i + 1])
             i, changed = i + 4, True
             continue
         out.append(t)
@@ -512,18 +494,10 @@ def _split_vigesimal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return reindex(out) if changed else tokens
 
 
-def _compose(*passes: Callable) -> Callable:
-    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        for p in passes:
-            tokens = p(tokens)
-        return tokens
-    return run
-
-
 #: the digit-ordinal glue runs first so "3ydd" is one token before anything
 #: else could read the bare "3"; the spelled ordinals then lead the cardinals
 #: (their compounds share the "ar ddeg" / "ar hugain" frames, and only the
 #: ordinal table should claim "unfed ar ddeg"); the split-vigesimal pass runs
 #: last because it needs the leading count already folded to a digit.
-fold_cy = _compose(_digit_ordinal_rewrite, _ordinal_rewrite,
-                   _cardinal_rewrite, _split_vigesimal_rewrite)
+fold_cy = compose(_digit_ordinal_rewrite, _phrase_rewriter(ORDINALS),
+                  _phrase_rewriter(CARDINALS), _split_vigesimal_rewrite)
