@@ -12,7 +12,7 @@ This page records where each construction of the Asturian (`ast`) locale comes f
 
 Only 33 of the 212 Asturian vocabulary files carry a comment. The weekday and month names cite Unicode CLDR 47, the three Roman-calendar anchors name the Asturian Wikipedia, the unit `segundu` cites CLDR 47, several day-part and marker files cite the *Diccionariu de la Llingua Asturiana*, and the night meridiem names the Spanish locale it was copied from. The seasons, the era spellings and the other unit nouns carry none. The thin record matters, because the locale's neighbour is Spanish and a great many Asturian surfaces look like Spanish surfaces with the endings changed. Where this page says a word is attested, it means the word is listed in the *Diccionariu de la Llingua Asturiana* published by the Academia de la Llingua Asturiana, not that it resembles its Spanish cognate.
 
-The other governing fact is that the Unicode day-period table has no Asturian row. Its authority for this language stops at the bare meridiem markers. No time-of-day band ships and `pela mañana`, `pela tarde` and `pela nueche` (the frames the Academia's own dictionary uses in its definitions) are not read as parts of the day. What `pela mañana` does instead is a defect, and it is listed below.
+Another governing fact is that the Unicode day-period table has no Asturian row. Its authority for this language stops at the bare meridiem markers. No time-of-day band ships and `pela mañana`, `pela tarde` and `pela nueche` (the frames the Academia's own dictionary uses in its definitions) are not read as parts of the day. What `pela mañana` does instead is a defect, and it is listed below.
 
 ## Try it
 
