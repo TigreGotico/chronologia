@@ -1287,6 +1287,17 @@ def extract_recurrence(
 _NEVER_OCCURS = object()
 
 
+def _never_occurring_claim(text, lang, anchor):
+    """The token indices of the phrase a finder refused as never occurring, or
+    an empty set when the refusal comes from no single finder."""
+    ctx = _recur_ctx(text, lang, anchor)
+    for finder in _FINDERS:
+        hit = finder(ctx)
+        if hit is not None:
+            return frozenset(hit[1]) if hit[0] is _NEVER_OCCURS else frozenset()
+    return frozenset()
+
+
 @reads_spoken_hours
 def _read_recurrence(text, lang, anchor):
     """:func:`extract_recurrence`, but a rule that never occurs returns

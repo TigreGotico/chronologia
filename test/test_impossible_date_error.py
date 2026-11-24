@@ -301,3 +301,33 @@ def test_a_rule_that_never_occurs_raises_from_candidates(text, lang, reason):
     assert caught.value.reason == reason
     assert caught.value.text == text
     assert caught.value.lang == lang
+
+
+#: text, the day its valid date starts on, a day a reading of the refused words would start on.
+#: ANCHOR is Thursday 2026-11-19: the next "friday" is 2026-11-20, the next "3 june" is
+#: 2027-06-03 and a bare "monday" is 2026-11-23.
+VALID_BESIDE_NEVER = [
+    ("the sixth monday of may, or else on 3 june", datetime(2027, 6, 3), datetime(2026, 11, 23)),
+    ("meet on friday or the sixth monday of may", datetime(2026, 11, 20), datetime(2026, 11, 23)),
+]
+
+
+@pytest.mark.parametrize("text,valid,spent", VALID_BESIDE_NEVER)
+def test_a_valid_date_beside_a_never_occurring_rule_stays_a_candidate(text, valid, spent):
+    for mode in ("none", "raise"):
+        found = call(CANDIDATES, text, "en", impossible=mode)
+        starts = [c.span.start_datetime for c in found]
+        assert starts[0] == valid
+        assert spent not in starts
+        assert found[0].span == call(SPAN, text, "en").span
+
+
+#: yearly dates that no year has: the rule builder refuses them, the one-off reading stays
+YEARLY_NEVER = ["annually on the 30th of february", "annually on the 31st of february",
+                "yearly on the 31st of april"]
+
+
+@pytest.mark.parametrize("text", YEARLY_NEVER)
+def test_a_yearly_adverb_date_no_year_has_does_not_crash_candidates(text):
+    default = call(CANDIDATES, text, "en")
+    assert default == call(CANDIDATES, text, "en", impossible="raise")

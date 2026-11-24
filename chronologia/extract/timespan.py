@@ -4622,10 +4622,14 @@ def extract_candidates(
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
-    from chronologia.extract.nseries import _NEVER_OCCURS, _read_recurrence
-    if _read_recurrence(text, lang, anchor) is _NEVER_OCCURS:
-        return []
     tokens = engine.tokenize(text)
+    from chronologia.extract.nseries import (_NEVER_OCCURS,
+                                             _never_occurring_claim,
+                                             _read_recurrence)
+    never = frozenset()
+    if _read_recurrence(text, lang, anchor) is _NEVER_OCCURS:
+        never = _never_occurring_claim(text, lang, anchor) \
+            or frozenset(t.index for t in tokens)
     # Composed readings: the business-day / anchored-offset / ordinal-count
     # post-passes extract_timespan runs are re-run here so the candidate set can
     # never disagree with the single-winner API -- without this, "in 5 business
@@ -4716,6 +4720,9 @@ def extract_candidates(
             continue
         seen.add(key)
         consumed = label_extra.get(id(match), set(res.consumed))
+        # a reading of the words a never-occurring rule spends is no candidate
+        if never & consumed:
+            continue
         # skip a reading governed by a leading negation/exclusion particle
         # ("not tomorrow"): the excluded reference is not a positive date.  The
         # SAME bounded governing-region logic as the single-winner path, so the
