@@ -45,11 +45,27 @@ def _matches(expected, value):
     return value == expected
 
 
-def _case(issue, *row):
+# Span rows that read right on dev: plain tests that keep the fix.
+FIXED_SPANS = {
+    "um 6 früh",
+    "um sechs früh",
+    "um 6:30 früh",
+    "klokka 6:30 om morgenen",
+    "klokka 6:30 om morgonen",
+    "klokka 6 om morgenen",
+    "klokka 6 om morgonen",
+    "klokka 6 om kvelden",
+    "klokka 6:30 om kvelden",
+    "klokka 8 i kveld",
+    "klokka 6 om ettermiddagen",
+}
+
+
+def _case(fixed, issue, *row):
+    marks = () if row[1] in fixed else pytest.mark.xfail(
+        strict=True, reason=URL.format(issue))
     return pytest.param(
-        *row,
-        marks=pytest.mark.xfail(strict=True, reason=URL.format(issue)),
-        id="{}-{}-{}".format(issue, row[0], row[1]))
+        *row, marks=marks, id="{}-{}-{}".format(issue, row[0], row[1]))
 
 
 # issue, lang, text, expected start, expected end or None, expected remainder
@@ -135,7 +151,7 @@ SPANS = [
 
 @pytest.mark.parametrize(
     "lang,text,start,end,remainder,anchor",
-    [_case(issue, lang, text, start, end, rem, anchor)
+    [_case(FIXED_SPANS, issue, lang, text, start, end, rem, anchor)
      for issue, lang, text, start, end, rem, anchor in SPANS])
 def test_span_rows(lang, text, start, end, remainder, anchor):
     found = extract_timespan(text, lang, anchor)
@@ -178,7 +194,7 @@ DURATIONS = [
 
 @pytest.mark.parametrize(
     "lang,text,length,remainder",
-    [_case(issue, lang, text, length, rem)
+    [_case((), issue, lang, text, length, rem)
      for issue, lang, text, length, rem in DURATIONS])
 def test_duration_rows(lang, text, length, remainder):
     found = extract_duration(text, lang, anchor=ANCHOR)
@@ -204,7 +220,7 @@ CANDIDATES = [
 
 @pytest.mark.parametrize(
     "lang,text,starts,anchor",
-    [_case(issue, lang, text, starts, anchor)
+    [_case((), issue, lang, text, starts, anchor)
      for issue, lang, text, starts, anchor in CANDIDATES])
 def test_candidate_rows(lang, text, starts, anchor):
     found = extract_candidates(text, lang, anchor, limit=3)
