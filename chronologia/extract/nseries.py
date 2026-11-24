@@ -188,6 +188,8 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     articles = _article_words(spec)
     of_words = set(spec.connectors.get("of", ()))
     and_words = _and_words(spec)
+    indef = frozenset(spec.connectors.get("indef", ()))
+    article_nouns = frozenset(spec.connectors.get("article_noun", ()))
     filler = articles | of_words
     n = len(tokens)
 
@@ -421,6 +423,14 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     consumed.update(range(i, end))
                     i = end
                     continue
+        # a unit surface that is also a noun the indefinite article takes
+        # ("en timer", the device) is that noun, not a count of one
+        if (j + 1 < n
+                and text[tokens[j].char_start:tokens[j].char_end].lower()
+                in indef
+                and tokens[j + 1].text in article_nouns):
+            i += 1
+            continue
         # a leading article: "a day" -> count 1; "a couple of days" -> skip
         # it.  numtag reads no number in a quantifier ("couple", "few"), so in
         # its languages the quantifier word is the count and the article

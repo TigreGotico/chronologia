@@ -30,6 +30,21 @@ def test_duration(text, expected):
     assert got[0] == expected
 
 
+@pytest.mark.parametrize("text,expected", [
+    ('lav en timer på ti minutter', timedelta(minutes=10)),
+    ('sæt en timer på 20 minutter', timedelta(minutes=20)),
+])
+def test_en_timer_is_the_device(text, expected):
+    # "timer" is the loan noun (en timer, a device) as well as the plural of
+    # "time"; the indefinite article "en" cannot count a plural.
+    got = extract_duration(text, LANG)
+    assert got is not None and got[0] == expected
+
+
+def test_en_timer_alone_is_no_duration():
+    assert extract_duration('sæt en timer', LANG) is None
+
+
 @pytest.mark.parametrize("text", ['2 juni', 'intet tidsligt her'])
 def test_not_a_duration(text):
     assert extract_duration(text, LANG) is None
