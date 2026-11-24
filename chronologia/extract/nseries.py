@@ -29,9 +29,8 @@ from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import _WEEKDAY_NAMES_FULL, DateSpan
 from chronologia.extract.anchored import _CALENDAR_UNIT_MONTHS
-from chronologia.extract.impossible import (bad_day, decline, no_such,
-                                            no_such_weekday, reports_impossible,
-                                            scope_name)
+from chronologia.extract.impossible import (bad_day, decline, ordinal_cap,
+                                            reports_impossible)
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
@@ -1357,9 +1356,8 @@ def _read_recurrence(text, lang, anchor):
     return None
 
 
-#: The period a monthly or yearly rule counts weekdays in, with the most
-#: weekdays of one name and the most business days that period holds.
-_UNREAD_ORDINAL_CAPS = {"MONTHLY": ("a month", 5, 23), "YEARLY": ("a year", 53, 262)}
+#: The period a monthly or yearly rule counts weekdays in.
+_RULE_PERIODS = {"MONTHLY": "month", "YEARLY": "year"}
 
 
 def _unread_date_never_occurs(rec, consumed, ctx):
@@ -1374,9 +1372,8 @@ def _unread_date_never_occurs(rec, consumed, ctx):
     t = ctx.tokens
     business = ctx.weekday_word | set(ctx.spec.connectors.get("business", ()))
     quarterly = any(tok.text in ctx.quarter_word for tok in t)
-    scope, most_weekdays, most_business = _UNREAD_ORDINAL_CAPS.get(
-        rec.freq if isinstance(rec, Recurrence) and not quarterly else None,
-        (None, None, None))
+    per = _RULE_PERIODS.get(
+        rec.freq if isinstance(rec, Recurrence) and not quarterly else None)
     for i in range(len(t) - 1):
         nxt = t[i + 1]
         if not t[i].ordinal or nxt.index in consumed or nxt.break_before:
@@ -1384,11 +1381,11 @@ def _unread_date_never_occurs(rec, consumed, ctx):
         n = int(t[i].value)
         reason = None
         if nxt.text in ctx.weekdays:
-            if scope and n > most_weekdays:
-                reason = no_such_weekday(scope, n, ctx.weekdays[nxt.text])
+            if per:
+                reason = ordinal_cap(n, ctx.weekdays[nxt.text], per=per)
         elif nxt.text in business:
-            if scope and n > most_business:
-                reason = no_such(scope, n, "business day")
+            if per:
+                reason = ordinal_cap(n, "business day", per=per)
         elif (nxt.text in ctx.of_words and i + 2 < len(t)
               and t[i + 2].text in ctx.months):
             if n > 31:
@@ -2150,7 +2147,7 @@ def _apply_year_scope(rec, consumed, ctx, lang, anchor):
     if len(rec.bymonth) == 1 and len(rec.byday) == 1 and rec.byday[0][0]:
         (n, weekday), month = rec.byday[0], rec.bymonth[0]
         if _month_weekday(start.year, month, weekday, n) is None:
-            decline(no_such_weekday(scope_name(month, start.year), n, weekday))
+            decline(ordinal_cap(n, weekday, month, start.year))
     rec = _replace(rec, until=end)
     return rec, consumed | set(range(lo, hi))
 
@@ -2413,11 +2410,6 @@ def _ntolast_ordn(ctx, t, li):
     return None
 
 
-# Most weekdays a month holds over the 400-year Gregorian cycle: 31-day months
-# reach 23, 30-day months 22, February 21 (a leap February starting on a Monday).
-_MAX_WEEKDAYS_IN_MONTH = {2: 21, 4: 22, 6: 22, 9: 22, 11: 22}
-
-
 def _recur_nth_weekday(ctx):
     """``<ordinal|last> <weekday> of [every] (month|<month name>)``.
 
@@ -2580,16 +2572,12 @@ def _recur_nth_weekday(ctx):
                 else:
                     return None, frozenset()
             named_month = ctx.months.get(t[r].text)
-            if month_ordn == 0 or abs(month_ordn) > (
-                    _MAX_WEEKDAYS_IN_MONTH.get(named_month, 23) if business else 5):
-                # a month holds at most five of one weekday and, for a named
-                # month, at most _MAX_WEEKDAYS_IN_MONTH weekdays (23 for an
-                # unnamed one), so the rule would never occur -- claim the
-                # phrase and decline it
-                scope = (scope_name(ctx.months[t[r].text], None)
-                         if t[r].text in ctx.months else "a month")
-                decline(no_such(scope, month_ordn, "business day") if business
-                        else no_such_weekday(scope, month_ordn, wd))
+            reason = ordinal_cap(month_ordn, "business day" if business else wd,
+                                 named_month, zero=True)
+            if reason:
+                # the month never holds that many, so the rule would never
+                # occur -- claim the phrase and decline it
+                decline(reason)
                 return _NEVER_OCCURS, frozenset(range(start, r + 1))
             if t[r].text in ctx.months:
                 if business:
@@ -2616,13 +2604,12 @@ def _recur_nth_weekday(ctx):
             # under ``FREQ=YEARLY``: the nth (or, negative, last) matching
             # weekday of the whole year -- exactly the reading "of the year"
             # asks for, so this resolves rather than refuses.
-            if ordn == 0 or abs(ordn) > (262 if business else 53):
-                # a year holds at most 53 of one weekday (365 = 52 weeks + 1
-                # day, 366 = 52 weeks + 2) and 262 weekdays (a leap year
-                # whose two extra days are both weekdays: 52 * 5 + 2), so the
-                # rule would never occur -- claim the phrase and decline it
-                decline(no_such("a year", ordn, "business day") if business
-                        else no_such_weekday("a year", ordn, wd))
+            reason = ordinal_cap(ordn, "business day" if business else wd,
+                                 per="year", zero=True)
+            if reason:
+                # the year never holds that many, so the rule would never
+                # occur -- claim the phrase and decline it
+                decline(reason)
                 return _NEVER_OCCURS, frozenset(range(start, r + 1))
             if business:
                 return (_business_day_of_year(ordn, year_interval),
@@ -2784,14 +2771,14 @@ def _recur_nth_weekday_list(ctx):
         consumed = {tok.index for tok in ctx.tokens
                     if tok.char_start is not None and tok.char_end is not None
                     and tok.char_start >= cs and tok.char_end <= ce}
-        too_many = next((v for v in vals if abs(v) > 5), None)
-        if too_many is not None:
+        reason = next(filter(None, (ordinal_cap(v, wd) for v in vals)), None)
+        if reason:
             if year_end is not None:
                 ye = p[year_end].char_end
                 return None, {tok.index for tok in ctx.tokens
                               if tok.char_start is not None and tok.char_end is not None
                               and tok.char_start >= cs and tok.char_end <= ye}
-            decline(no_such_weekday("a month", too_many, wd))
+            decline(reason)
             return _NEVER_OCCURS, consumed
         return _build_every("monthly", byday=byday), consumed
     return None

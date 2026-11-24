@@ -82,6 +82,43 @@ def no_such_weekday(scope: str, n: int, weekday: int) -> str:
     return no_such(scope, n, _WEEKDAY_NAMES_FULL[weekday])
 
 
+# The most of a unit one month or one year can hold over the 400-year cycle.
+_MOST = {
+    "month": {"weekday": 5, "weekend": 5, "day": 31, "week": 6},
+    "year": {"weekday": 53, "business day": 262, "day": 366, "week": 53, "month": 12},
+}
+# Most weekdays a month holds: 31-day months reach 23, 30-day months 22,
+# February 21 (a leap February starting on a Monday).
+_MOST_WEEKDAYS_IN_MONTH = {2: 21, 4: 22, 6: 22, 9: 22, 11: 22}
+
+
+def ordinal_cap(n: int, unit, month: Optional[int] = None,
+                year: Optional[int] = None, per: str = "month",
+                zero: bool = False) -> Optional[str]:
+    """Why no ``per`` ("month" or "year") holds an ``n``-th ``unit``, or ``None``.
+
+    ``unit`` is a weekday number (Monday=0) or a unit name ("business day",
+    "weekend", "day", "week", "month").  Without ``year`` the cap is the most
+    any such period holds, so a period the speaker did not name may still hold
+    ``n``.  A named ``year`` means the caller searched that period and found
+    no such ordinal: the reason is always given.  ``zero`` refuses a 0th
+    ordinal too.
+    """
+    if year is not None:
+        most = 0
+    elif unit == "business day" and per == "month":
+        most = _MOST_WEEKDAYS_IN_MONTH.get(month, 23)
+    elif unit == "day" and month:
+        most = _days_in_month(2000, month)
+    else:
+        most = _MOST[per].get("weekday" if isinstance(unit, int) else unit, 0)
+    if abs(n) <= most and not (zero and n == 0):
+        return None
+    scope = scope_name(month, year) or f"a {per}"
+    return (no_such_weekday(scope, n, unit) if isinstance(unit, int)
+            else no_such(scope, n, unit))
+
+
 def bad_day(year: Optional[int], month: int, day: int) -> Optional[str]:
     """Why ``day`` is not a day of ``month`` in ``year``, or ``None`` when it is.
 
