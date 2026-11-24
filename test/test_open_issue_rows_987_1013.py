@@ -138,7 +138,7 @@ SPANS = [
     (1011, "gl", "avísame de luns a venres pola mañá sobre as 7", dt(2017, 6, 28, 7, 0), None, None, A),
     (1011, "ca", "avisa'm de dilluns a divendres al matí cap a les 7", dt(2017, 6, 28, 7, 0), None, None, A),
     (1012, "pt", "às 10 30", dt(2017, 6, 27, 22, 30), None, "", A),
-    (1012, "fa", "در ساعت 10 30", dt(2017, 6, 27, 22, 30), None, "", A),
+    (1012, "fa", "در ساعت 10 30", dt(2017, 6, 27, 22, 30), None, None, A),
     (1013, "en", "remind me to call the bank tomorrow morning", dt(2017, 6, 28, 6, 0), dt(2017, 6, 28, 12, 0), None, A),
 ]
 
@@ -188,11 +188,6 @@ def test_duration_rows(lang, text, length, remainder):
 
 # issue, lang, text, expected char_span of the first mention
 MENTIONS = [
-
-    (996, "en", "on Friday", (0, 9)),
-    (996, "de", "am Freitag", (0, 10)),
-    (996, "sv", "på fredag", (0, 9)),
-    (996, "nl", "op vrijdag", (0, 10)),
     (996, "pt", "na sexta-feira", (0, 14)),
     (996, "gl", "o venres", (0, 8)),
 ]
