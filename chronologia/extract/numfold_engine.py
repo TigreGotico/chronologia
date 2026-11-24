@@ -2,7 +2,7 @@
 
 Every family's fold does the *same* thing: scan a maximal run of
 number-word tokens, read its value with the language's
-``extract_number_<lang>`` back-end, and synthesise one digit
+number reader, and synthesise one digit
 :class:`~chronologia.extract.model.Token` that preserves the run's character
 extent (``char_start`` of the first token, ``char_end`` of the last).  The
 only genuine variation is *data* -- which tokens count as number-words, which
@@ -49,6 +49,44 @@ _LITERAL = re.compile(
 def reindex(tokens) -> Tuple[Token, ...]:
     """Renumber ``Token.index`` so the stream stays contiguous from 0."""
     return tuple(replace(t, index=i) for i, t in enumerate(tokens))
+
+
+def numeric(tok: Token, value: int, end: Optional[Token] = None,
+            ordinal: bool = False) -> Token:
+    """The number token for ``value`` spanning ``tok`` through ``end``."""
+    return Token(text=str(value), raw=str(value), index=tok.index,
+                 is_number=True, value=value, char_start=tok.char_start,
+                 char_end=(end or tok).char_end, ordinal=ordinal)
+
+
+def clock_literal(hour: int, minute: int, first: Token, last: Token) -> Token:
+    """The ``H:MM`` token a clock phrase from ``first`` through ``last`` folds to."""
+    text = f"{hour}:{minute:02d}"
+    return Token(text=text, raw=text, index=first.index,
+                 char_start=first.char_start, char_end=last.char_end)
+
+
+def opaque(first: Token, last: Token, text: str) -> Token:
+    """A word token standing for a refused reading: it binds no slot, so the
+    span it covers reaches no construction."""
+    return Token(text=text, raw=text, index=first.index,
+                 char_start=first.char_start, char_end=last.char_end)
+
+
+def compose(*passes: Callable) -> Callable:
+    """The token fold that applies ``passes`` in order."""
+    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        for p in passes:
+            tokens = p(tokens)
+        return tokens
+    return run
+
+
+def run_extent(run) -> Tuple[Optional[int], Optional[int]]:
+    """The half-open character extent of a token run: the first token's
+    ``char_start`` through the last token's ``char_end``, so a fold that
+    replaces the run by one token keeps the source offsets."""
+    return run[0].char_start, run[-1].char_end
 
 
 def _never(_tok: Token) -> bool:
@@ -350,11 +388,15 @@ def collapse_marked_h_clock(tokens, markers) -> Tuple[Token, ...]:
             if (nn is not None and nn.is_number and nn.value is not None
                     and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
                 lit = "%d:%02d" % (int(t.value), int(nn.value))
-                out.append(Token(text=lit, raw=lit, index=0))
+                cs, ce = run_extent(tokens[i:i + 3])
+                out.append(Token(text=lit, raw=lit, index=0,
+                                 char_start=cs, char_end=ce))
                 i += 3
                 continue
             lit = "%d:00" % int(t.value)
-            out.append(Token(text=lit, raw=lit, index=0))
+            cs, ce = run_extent(tokens[i:i + 2])
+            out.append(Token(text=lit, raw=lit, index=0,
+                             char_start=cs, char_end=ce))
             i += 2
             continue
         out.append(t)

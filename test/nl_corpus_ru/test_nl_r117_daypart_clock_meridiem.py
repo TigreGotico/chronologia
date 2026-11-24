@@ -18,13 +18,9 @@ MERIDIEM slot at match time, never reaching the composer as a separate
 
 Gold is derived by hand from the mission anchor
 ``datetime(2026, 8, 11, 12, 0)`` (a Tuesday).  For the bare (dateless) forms,
-the clock's own "roll to tomorrow if already past the anchor" rule (a
-pre-existing, untouched pass) runs on the bare pre-shift hour BEFORE the
-day-part's meridiem shift -- see the English R117 file's docstring for the
-worked trace; the same rule applies here, so "вечером в 9 часов" and "утром
-в 9 часов" both roll their bare hour (9, before the 12:00 anchor) to
-2026-08-12 first, and the day-part shift (+12 for the PM-side "вечером",
-+0 for "утром") lands on that rolled day.
+the hour takes the half the day-part names and the next such time is meant:
+"вечером в 9 часов" is 21:00 on the anchor day, still ahead of 12:00, and
+"утром в 9 часов" is 09:00 on the next day, because 09:00 has passed.
 """
 from datetime import datetime
 
@@ -42,7 +38,7 @@ def test_preceding_vecherom_composes_as_pm_meridiem_bare_no_date():
     r = _p("вечером в 9 часов")
     assert r is not None
     assert start_end("вечером в 9 часов", ANCHOR_R117) == (
-        AstroDate(2026, 8, 12, 21, 0), AstroDate(2026, 8, 12, 21, 1))
+        AstroDate(2026, 8, 11, 21, 0), AstroDate(2026, 8, 11, 21, 1))
     assert r.remainder == ""
 
 

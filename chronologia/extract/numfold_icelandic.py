@@ -31,10 +31,10 @@ number back-end.
 """
 from __future__ import annotations
 
-from typing import Callable, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import compose, numeric, reindex
 
 #: the four cases Icelandic inflects for.
 NOMINATIVE, ACCUSATIVE, DATIVE, GENITIVE = "nom", "acc", "dat", "gen"
@@ -285,22 +285,14 @@ _ORDINAL_UNITS: Dict[str, int] = {
 # ---------------------------------------------------------------------------
 # The run reader
 # ---------------------------------------------------------------------------
-CARDINALS: Dict[str, int] = {}
-for _v, _w in _INVARIANT.items():
-    CARDINALS[_w] = _v
-for _v, _w in _INVARIANT_VARIANTS.items():
-    CARDINALS[_w] = _v
-for _v, _forms in NUMERAL_FORMS.items():
-    for _w in _forms.values():
-        CARDINALS[_w] = _v
-for _v, _w in _DATIVE_VARIANTS.items():
-    CARDINALS[_w] = _v
-for _v, _w in _GENITIVE_VARIANTS.items():
-    CARDINALS[_w] = _v
-for _v, _w in TENS.items():
-    CARDINALS[_w] = _v
-for _w in _HUNDRED:
-    CARDINALS[_w] = 100
+CARDINALS: Dict[str, int] = {
+    word: value
+    for table in (_INVARIANT, _INVARIANT_VARIANTS, _DATIVE_VARIANTS,
+                  _GENITIVE_VARIANTS, TENS)
+    for value, word in table.items()}
+CARDINALS.update({word: value for value, forms in NUMERAL_FORMS.items()
+                  for word in forms.values()})
+CARDINALS.update(dict.fromkeys(_HUNDRED, 100))
 CARDINALS.update(_SCALE)
 
 
@@ -341,13 +333,6 @@ def read_run(text: str) -> Optional[int]:
     return total + group if seen else None
 
 
-def _numeric(tok: Token, value: int, end: Token = None,
-             ordinal: bool = False) -> Token:
-    return Token(text=str(value), raw=str(value), index=tok.index,
-                 is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end, ordinal=ordinal)
-
-
 #: the magnitude class of a cardinal surface, which is what licenses one
 #: number-word to continue the run another opened.  A composed Icelandic
 #: numeral descends through the classes -- a lower class may follow a higher
@@ -357,7 +342,6 @@ def _numeric(tok: Token, value: int, end: Token = None,
 #: "fimm minutur i thrju" from collapsing into one number once the unit noun
 #: between them is out of the way.
 _UNIT_CLASS, _TEN_CLASS, _HUNDRED_CLASS, _SCALE_CLASS = 1, 2, 3, 4
-
 
 _TENS_SURFACES = frozenset(TENS.values())
 
@@ -402,7 +386,7 @@ def _cardinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             out.append(t)
             i += 1
             continue
-        out.append(_numeric(t, value, tokens[j - 1]))
+        out.append(numeric(t, value, tokens[j - 1]))
         i, changed = j, True
     return reindex(out) if changed else tokens
 
@@ -415,12 +399,12 @@ def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         if not t.is_number and t.text in _ORDINAL_TENS_SURFACES and i + 2 < n:
             unit = _ORDINAL_UNITS.get(tokens[i + 2].text)
             if tokens[i + 1].text == _AND and unit is not None:
-                out.append(_numeric(t, _ORDINAL_TENS_SURFACES[t.text] + unit,
-                                    tokens[i + 2], ordinal=True))
+                out.append(numeric(t, _ORDINAL_TENS_SURFACES[t.text] + unit,
+                                   tokens[i + 2], ordinal=True))
                 i, changed = i + 3, True
                 continue
         if not t.is_number and t.text in ORDINALS:
-            out.append(_numeric(t, ORDINALS[t.text], ordinal=True))
+            out.append(numeric(t, ORDINALS[t.text], ordinal=True))
             i, changed = i + 1, True
             continue
         out.append(t)
@@ -428,12 +412,4 @@ def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return reindex(out) if changed else tokens
 
 
-def _compose(*passes: Callable) -> Callable:
-    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        for p in passes:
-            tokens = p(tokens)
-        return tokens
-    return run
-
-
-fold_is = _compose(_ordinal_rewrite, _cardinal_rewrite)
+fold_is = compose(_ordinal_rewrite, _cardinal_rewrite)

@@ -25,12 +25,24 @@ def test_many_range_connectors_no_recursion(n):
     # ~500 ' to ' connectors used to recurse extract_timespan once per
     # connector and blow the stack (RecursionError); the token-native scan
     # takes the first split and drops the rest to the remainder.
-    text = " to ".join(["monday"] * n)
-    t0 = time.perf_counter()
-    result = extract_timespan(text, "en")          # must not raise
-    elapsed = time.perf_counter() - t0
-    assert result is not None
-    assert elapsed < 5.0, f"{n} connectors took {elapsed:.2f}s"
+    def best_of(count, runs=5):
+        text = " to ".join(["monday"] * count)
+        times = []
+        for _ in range(runs):
+            t0 = time.process_time()
+            result = extract_timespan(text, "en")      # must not raise
+            times.append(time.process_time() - t0)
+            assert result is not None
+        # CPU time ignores descheduling; load only adds, so take the minimum
+        return min(times)
+
+    # Absolute budgets measure the host, not the scan.  Four times the
+    # connectors takes four times as long when the scan is linear, and sixteen
+    # times when a per-connector recursion re-scans the remainder.  8 lies
+    # between the two with room for a busy runner.
+    small, large = best_of(n // 4), best_of(n)
+    assert large / small < 8, (
+        f"four times {n // 4} connectors multiplied the time by {large / small:.2f}")
 
 
 def test_long_whitespace_no_redos():

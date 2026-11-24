@@ -2,15 +2,13 @@
 """R170 (de): two independent number-folding gaps.
 
 1. "anderthalb" (== "eineinhalb", 1.5) is the more common everyday synonym
-   for "eineinhalb" but ovos-number-parser does not read it back
-   (``extract_number_de('anderthalb')`` is ``None``), so it silently refused
-   to fold and the whole duration phrase stranded.
+   for "eineinhalb"; the fold must read it as 1.5 so the whole duration
+   phrase resolves.
 
 2. The recent ASCII-umlaut fallback work (#714, "naechster"/"naechstes")
-   covered the German function words but not the spelled number words:
-   ovos-number-parser only reads the umlaut spelling ("fünf" -> 5), not its
-   ASCII transliteration ("fuenf" -> None), so "in fuenf tagen" refused to
-   parse while "in fünf tagen" worked.
+   covered the German function words; the spelled number words need the
+   same fallback, so the ASCII transliteration ("fuenf") reads as the umlaut
+   spelling ("fünf" -> 5) and "in fuenf tagen" parses like "in fünf tagen".
 """
 from datetime import datetime, timedelta
 

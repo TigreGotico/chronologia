@@ -63,7 +63,7 @@ def test_varod_is_not_split_as_fused_vav():
 
 # -- fused vav closes classes beyond Gregorian months: the single-word
 # weekday ("שבת" Saturday, the only weekday name that is not multiword --
-# see the module docstring in numfold_semitic.py) and dayparts also ship as
+# see the module docstring in numlayer_semitic.py) and dayparts also ship as
 # single-word he vocabulary and fuse the same way.  Each pins the exact span
 # its already-working spaced-vav sibling resolves to.
 

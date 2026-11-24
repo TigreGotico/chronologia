@@ -11,11 +11,10 @@ day-part fuses into the clock construction's own MERIDIEM slot at match
 time) and is pinned here as a regression control.
 
 Gold is derived by hand from the mission anchor
-``datetime(2026, 8, 11, 12, 0)`` (a Tuesday); see the English R117 file's
-docstring for the worked trace of the bare-hour day-rollover interaction --
-the same pre-existing, untouched rule applies here: the bare pre-shift hour
-9 is before the 12:00 anchor, so it rolls to 2026-08-12 first, and the
-day-part's +12 PM shift then lands on that rolled day.
+``datetime(2026, 8, 11, 12, 0)`` (a Tuesday).  The hour takes the half the
+day-part names and the next such time is meant: "مساءً الساعة التاسعة" is
+21:00 on the anchor day, still ahead of 12:00, as the postposed control
+below already gives.
 """
 from datetime import datetime
 
@@ -33,7 +32,7 @@ def test_preceding_masaan_composes_as_pm_meridiem_bare_no_date():
     r = _p("مساءً الساعة التاسعة")
     assert r is not None
     assert start_end("مساءً الساعة التاسعة", ANCHOR_R117) == (
-        AstroDate(2026, 8, 12, 21, 0), AstroDate(2026, 8, 12, 21, 1))
+        AstroDate(2026, 8, 11, 21, 0), AstroDate(2026, 8, 11, 21, 1))
     assert r.remainder == ""
 
 

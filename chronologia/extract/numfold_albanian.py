@@ -33,10 +33,10 @@ governs it.  :func:`governed_form` states that selection -- ablative after
 """
 from __future__ import annotations
 
-from typing import Callable, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import compose, numeric, reindex
 
 # ---------------------------------------------------------------------------
 # Cardinals.  Transcribed from en.wiktionary.org's Albanian number generator
@@ -253,12 +253,6 @@ def read_run(text: str) -> Optional[int]:
     return None
 
 
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
-    return Token(text=str(value), raw=str(value), index=tok.index,
-                 is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
-
-
 def _is_numberish(tok: Token) -> bool:
     return tok.is_number or tok.text in _CARDINALS
 
@@ -333,7 +327,7 @@ def _cardinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             out.append(t)
             i += 1
             continue
-        out.append(_numeric(t, value, tokens[i + run - 1]))
+        out.append(numeric(t, value, tokens[i + run - 1]))
         i, changed = i + run, True
     return reindex(out) if changed else tokens
 
@@ -346,8 +340,8 @@ def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         if (not t.is_number and t.text in _ORD_ARTICLES and i + 1 < n
                 and not tokens[i + 1].is_number
                 and tokens[i + 1].text in _ORDINALS):
-            out.append(_numeric(t, _ORDINALS[tokens[i + 1].text],
-                                tokens[i + 1]))
+            out.append(numeric(t, _ORDINALS[tokens[i + 1].text],
+                               tokens[i + 1]))
             i, changed = i + 2, True
             continue
         out.append(t)
@@ -378,17 +372,9 @@ def _year_adverb_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return reindex(out) if changed else tokens
 
 
-def _compose(*passes: Callable) -> Callable:
-    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        for p in passes:
-            tokens = p(tokens)
-        return tokens
-    return run
-
-
 #: the cardinal fold runs FIRST, for two reasons.  From six upward an ordinal
 #: is spelled exactly like its cardinal, so "njëzet e gjashtë" (26) must claim
 #: its unit before the ordinal pass could read the tail "e gjashtë" as a bare
 #: sixth; and the year-adverb pass decides whether "vjet" is counted by looking
 #: for a number to its left, which is only there once the count has folded.
-fold_sq = _compose(_cardinal_rewrite, _year_adverb_rewrite, _ordinal_rewrite)
+fold_sq = compose(_cardinal_rewrite, _year_adverb_rewrite, _ordinal_rewrite)

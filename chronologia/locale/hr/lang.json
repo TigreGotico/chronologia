@@ -118,7 +118,7 @@
  "guards": {
   "bare_year_min_digits": 4
  },
- "hook": "chronologia.extract.numfold_slavic:fold_hr",
+ "hook": "chronologia.extract.numlayer_slavic:fold_hr",
  "base_grammar": {
   "override": {
    "scoped_ordinal": [

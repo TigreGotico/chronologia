@@ -130,7 +130,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numfold_agglutinative:fold_eu",
+  "hook": "chronologia.extract.numlayer_agglutinative:fold_eu",
   "base_grammar": {
     "disable": [
       "calendar_date"

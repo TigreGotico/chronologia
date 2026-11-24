@@ -1,19 +1,12 @@
 # -*- coding: utf-8 -*-
 """Spelled 11th-31st ordinals fold to ORD for Italian -- R87.
 
-Italian spells its 11th-19th ordinals identically to the FRACTION
-denominator of the same value ("tredicesimo" = thirteenth *and*
-a-thirteenth), a homograph the shared Romance number-fold already resolves
-positionally for units 1st-9th ("quarto"/"cuarto" = fourth vs. a-quarter) but
-not for these -- ORDINAL_TENS only lists the round tens (10th/20th/.../90th),
-so the collision was invisible to the existing mechanism and the words fell
-out of the fold's vocabulary entirely. 21st-31st are absent from the
-vocabulary outright: Italian fuses the cardinal's stem onto "-esimo"
-("ventuno" -> "ventunesimo"), a spelling ``NumberVocabulary`` does not carry
-at all (only the round tens do).  Without either, "il tredicesimo mese del
-2026" silently degraded to a bare year_ref match on "2026" instead of
-refusing (no 13th month exists), the same defect class R81/PR #640 closed
-for the digit ordinal and English.
+Italian spells its 11th-19th ordinals identically to the denominator of the
+same value ("tredicesimo" = thirteenth *and* a-thirteenth), and fuses the
+cardinal's stem onto "-esimo" from the 21st on ("ventuno" -> "ventunesimo").
+"il tredicesimo mese del 2026" must refuse (no 13th month exists) instead of
+degrading to a bare year_ref match on "2026", the way the digit ordinal and
+English do (R81, PR #640).
 
 Source: Treccani / Accademia della Crusca, "numerali ordinali" -- 11th-19th
 borrow the cardinal's stem + "-esimo" and are genuinely homographic with the
