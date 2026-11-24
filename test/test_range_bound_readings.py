@@ -16,6 +16,7 @@ import pytest
 
 from chronologia.astrodate import AstroDate
 from chronologia.extract.reading import read
+from chronologia.extract.timespan import extract_timespan
 
 ANCHOR = datetime(2026, 11, 22, 9, 0)
 
@@ -40,6 +41,8 @@ def chars(text, first, last):
     ("es", "del 5 al 12 de junio", ["5"], ["12", "de", "junio"]),
     ("de", "jeden Montag von Juni bis August", ["Montag", "Juni"],
      ["August"]),
+    # the left bound does not claim the am/pm word that it borrows
+    ("en", "between eleven and one pm", ["eleven"], ["one", "pm"]),
 ])
 def test_a_closed_range_carries_both_bounds(lang, text, left, right):
     span = read(text, lang, ANCHOR, first=True)[0]
@@ -73,3 +76,43 @@ def test_a_point_and_a_bare_now_carry_no_bound():
     for text in ("next friday", "now"):
         got = read(text, "en", ANCHOR, first=True)[0]
         assert (got.left, got.right) == (None, None)
+
+
+def test_the_bare_day_claims_its_own_words_only():
+    text = "from the 5th to the 12th of june"
+    span = read(text, "en", ANCHOR, first=True)[0]
+    assert words(text, span.left) == ["the", "5", "th"]
+    assert words(text, span.right) == ["the", "12", "th", "of", "june"]
+    assert span.left.chars == (text.find("the 5th"), text.find("5th") + 3)
+    assert span.right.chars == (text.find("the 12th"), len(text))
+
+
+def test_an_affix_bound_claims_its_whole_word_and_reads_its_stem():
+    text = "péntekig"
+    span = read(text, "hu", ANCHOR, first=True)[0]
+    assert span.left is None
+    assert words(text, span.right) == ["péntekig"]
+    assert span.right.chars == (0, len("péntek"))
+
+
+def test_the_borrowed_meridiem_leaves_the_span_unchanged():
+    text = "between eleven and one pm"
+    span = read(text, "en", ANCHOR, first=True)[0]
+    assert span.left.chars == (8, 14)
+    assert span.chars == (0, len(text))
+
+
+def alone(text, lang, anchor=ANCHOR):
+    return extract_timespan(text, lang, anchor).span
+
+
+@pytest.mark.parametrize("lang, text, left, right", [
+    # "dia 3" rolls back to 3 November in the range; alone it is 3 December
+    ("pt", "do dia 3 até hoje", "dia 3", "hoje"),
+    # the range starts last Monday; alone, the bounds read forward
+    ("en", "since monday until friday", "monday", "friday"),
+])
+def test_a_bound_span_is_the_endpoint_read_alone(lang, text, left, right):
+    span = read(text, lang, ANCHOR, first=True)[0]
+    assert span.left.span == alone(left, lang)
+    assert span.right.span == alone(right, lang)

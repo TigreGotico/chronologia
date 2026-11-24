@@ -1558,9 +1558,12 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     if left is None and right is not None and left_tok:
         merid = _trailing_meridiem(right_tok, spec)
         if merid is not None:
-            left = endpoint(tuple(left_tok) + (merid,))
+            lent = replace(merid, index=-1 - len(left_tok),
+                           char_start=None, char_end=None)
+            left = endpoint(tuple(left_tok) + (lent,))
     if left is None or right is None:
         return None
+    left_bound = RangeBound(left[0], left[1], left[5])
     # one interval is read on one clock: a zone named on a single endpoint
     # governs both, so the two ends stay comparable (see _align_awareness).
     left_span, right_span = _align_awareness(left[0], right[0])
@@ -1727,8 +1730,7 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
         return None
     remainder = " ".join(p for p in (left[1], right[1]) if p).strip()
     return (DateSpan(start, end), remainder, join_extents(left[4], right[4]),
-            RangeBound(left[0], left[1], left[5]),
-            RangeBound(right[0], right[1], right[5]))
+            left_bound, RangeBound(right[0], right[1], right[5]))
 
 
 def _minus_one_year(astro):
@@ -2260,6 +2262,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     right_ep = endpoint(right_tok, anchor if reads_day_word else start_dt)
     if right_ep is None:
         return None
+    bound_ep = right_ep if reads_day_word else endpoint(right_tok, anchor)
     end = right_ep[0].end
     start, end = _in_zone_of(start, end), _in_zone_of(end, start)
     if start >= end:
@@ -2270,7 +2273,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     return (DateSpan(start, end), remainder,
             join_extents(consumed_extent(tokens[lead:k]), right_ep[2]),
             RangeBound(left_ep[0], left_rem, left_pieces),
-            RangeBound(right_ep[0], right_ep[1], right_ep[3]))
+            RangeBound(bound_ep[0], right_ep[1], right_ep[3]))
 
 
 def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
