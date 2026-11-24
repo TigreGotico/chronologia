@@ -116,6 +116,8 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - A part of the day in another clause leaves a lone hour as spoken. Example (reader `extract_timespan`, lang `es-ES`, anchor 2026-01-05 06:00): `a las 9, esta noche` gives 2026-01-05 09:00 to 2026-01-05 09:01 and `esta noche` left over. [#1001](https://github.com/TigreGotico/chronologia/issues/1001)
 
+- A part of the day before a clock stays in the remainder. Example (reader `extract_timespan`, lang `es-ES`, anchor 2026-10-17 12:00): `tarde a las 4:30` gives 2026-10-17 16:30 to 2026-10-17 16:31 and `tarde` left over. [#1002](https://github.com/TigreGotico/chronologia/issues/1002)
+
 - A plural, adverbial or recurring part of the day is not read, so the hour reads in the wrong half. Example (reader `extract_timespan`, lang `es`, anchor 2017-06-27 13:04): `recuérdame cada mañana tomar mi medicina a las 8` gives 2017-06-28 00:00 to 2017-06-29 00:00 and `recuérdame cada tomar mi medicina a las 8` left over. [#1009](https://github.com/TigreGotico/chronologia/issues/1009)
 
 - A weekday range or list followed by a clock drops the clock or picks a past day. Example (reader `extract_timespan`, lang `es`, anchor 2017-06-27 13:04): `de lunes a viernes a las ocho de la mañana avísame` gives 2017-07-03 00:00 to 2017-07-03 08:01 and `avísame` left over. [#1010](https://github.com/TigreGotico/chronologia/issues/1010)

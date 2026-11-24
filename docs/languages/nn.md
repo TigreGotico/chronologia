@@ -60,7 +60,7 @@ That citation checks out. The Nynorskordboka entry for `føremiddag` at `ord.uib
 
 Two Bokmål forms ship. `tallet` sits beside the Nynorsk `talet` in the decade-marker vocabulary. `80-tallet` resolves in a Nynorsk locale. `formiddag` and `formiddagen` sit beside `føremiddag` and `føremiddagen`. Both are the kind of surface a Nynorsk writer might actually type, and neither does any harm, but neither is Nynorsk and neither is cited.
 
-Outside the weekday and month names, the day parts, the named days and `siste`, nothing in this locale records a source. The clock words, the range markers, the seasons and the numeral vocabulary carry none.
+Outside the weekday and month names, the day parts, the named days, `siste`, the second and the clock and date lead words, nothing in this locale records a source. The clock words, the range markers, the seasons and the numeral vocabulary carry none.
 
 ## The half hour toward one
 

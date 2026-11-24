@@ -46,7 +46,7 @@ CLDR disagrees with glibc on the last two months, giving `nunembeṛ` and `duǧe
 
 ## What this page cannot tell you
 
-Most Kabyle vocabulary files carry no source comment. The month files for January to October cite Unicode CLDR 47. Several clock-word files, the three day parts, the hour unit and the weekend noun record a check by a native Kabyle speaker. The weekday names and the other markers are not individually sourced. This page does not claim provenance for them that the files do not carry.
+Most Kabyle vocabulary files carry no source comment. The month files for January to October cite Unicode CLDR 47. Several clock-word files, three of the four day parts, the hour unit and the weekend noun record a check by a native Kabyle speaker. The weekday names and the other markers are not individually sourced. This page does not claim provenance for them that the files do not carry.
 
 ## Open questions for a native speaker
 

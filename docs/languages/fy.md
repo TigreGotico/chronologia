@@ -46,7 +46,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## Weaker provenance
 
-Outside the weekday and month names, few surfaces in this locale carry a source that can be read. `yn` and `foarich` cite West Frisian Wiktionary entries, and both entries do carry a West Frisian section. `foarich jier` and `folgjend jier` cite the CLDR 47 `fy` year rows. Those rows do read `foarich jier` and `folgjend jier`. Everything else ships uncited.
+Outside the weekday and month names, few surfaces in this locale carry a source that can be read. `yn` and `foarich` cite West Frisian Wiktionary entries, and both entries do carry a West Frisian section. `foarich jier` and `folgjend jier` cite the CLDR 47 `fy` year rows. Those rows do read `foarich jier` and `folgjend jier`. The second cites the CLDR 47 `fy` units, and the day parts cite the Frisian dictionary material discussed below. Everything else ships uncited.
 
 The day-part citation is the weakest link that still works. `gtb.ivdnt.org` hosts Frisian dictionaries, the *Wurdboek fan de Fryske taal* among them. But no individual lemma behind that citation is checked. The citation names the source as *Frysk Wurdboek*, which is a different Fryske Akademy work from the *Wurdboek fan de Fryske taal* the portal actually carries. Treat the day-part surfaces as attested by an institution, not by a located entry. `moarns` is the one that can be checked elsewhere: its English Wiktionary entry glosses it "in the morning" and points at the *Wurdboek fan de Fryske taal* for the same word.
 

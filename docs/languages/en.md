@@ -60,7 +60,7 @@ English refusals are the most thoroughly argued in the project, because the Engl
 
 **An ordinal that does not exist inside its scope.** `the 13th month of 2026` and `the 0th week of may` return nothing. There is no overflow projection: the thirteenth month of 2026 is not January 2027. `the 12th month of 2026` resolves normally, so the veto does not over-fire.
 
-**An impossible calendar day.** `the 5th Monday of February` returns nothing when that February has only four Mondays. It returns nothing, and it does not raise under `impossible="raise"` either, because some later February has five Mondays. `day 32 of February` and `the 366th day of the year 2017` refuse. They do not fall back to the whole month or the whole year. `the 365th day of the year 2017` resolves.
+**An impossible calendar day.** `the 5th Monday of February` returns nothing when that February has only four Mondays. It returns nothing, and it does not raise under `impossible="raise"` either: with no year named, only an ordinal above five raises, such as `the 6th Monday of February`. `the 5th Monday of February 2017` raises, because it names the year. `day 32 of February` and `the 366th day of the year 2017` refuse. They do not fall back to the whole month or the whole year. `the 365th day of the year 2017` resolves.
 
 **An ordinal-weekday recurrence with a bounded or week-scoped tail.** `every 3rd tuesday of next year`, `of last month`, `of next week` and their siblings yield no recurrence rule at all. The alternative was worse than nothing. A weaker reading would have folded only the head into an unbounded three-week cadence and stranded the tail. That is a different rule, not a small frequency error.
 
