@@ -59,10 +59,12 @@ to fold to 1 on that basis.
 """
 from __future__ import annotations
 
-from typing import Callable, Dict, List, Optional, Tuple
+from functools import partial
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import (clock_literal, compose, numeric,
+                                                reindex)
 
 _NATIVE: Dict[str, int] = {
     "isa": 1, "dalawa": 2, "tatlo": 3, "apat": 4, "lima": 5, "anim": 6,
@@ -172,12 +174,6 @@ def _native_value(word: str) -> Optional[int]:
     return None
 
 
-def _numeric(tok: Token, value: int, end: Token = None) -> Token:
-    return Token(text=str(value), raw=str(value), index=tok.index,
-                 is_number=True, value=value, char_start=tok.char_start,
-                 char_end=(end or tok).char_end)
-
-
 def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """Fold an ``ika-`` ordinal to the bare integer it ranks.
 
@@ -191,25 +187,25 @@ def _ordinal_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         t = tokens[i]
         nxt = tokens[i + 1] if i + 1 < n else None
         if not t.is_number and t.text in _ORDINALS:
-            out.append(_numeric(t, _ORDINALS[t.text]))
+            out.append(numeric(t, _ORDINALS[t.text]))
             i, changed = i + 1, True
             continue
         if (not t.is_number and t.text == _ORD_TEEN_PREFIX and nxt is not None
                 and not nxt.is_number and nxt.text in _ORD_TEEN_STEMS):
-            out.append(_numeric(t, _ORD_TEEN_STEMS[nxt.text], nxt))
+            out.append(numeric(t, _ORD_TEEN_STEMS[nxt.text], nxt))
             i, changed = i + 2, True
             continue
         if (not t.is_number and t.text == _TEEN_PREFIX and nxt is not None
                 and not nxt.is_number
                 and _strip_teen(nxt.text) in _TEEN_STEMS):
-            out.append(_numeric(t, _TEEN_STEMS[_strip_teen(nxt.text)], nxt))
+            out.append(numeric(t, _TEEN_STEMS[_strip_teen(nxt.text)], nxt))
             i, changed = i + 2, True
             continue
         if not t.is_number and t.text == _ORD_PREFIX and nxt is not None:
             value = nxt.value if nxt.is_number else _ORD_STEMS.get(
                 _strip_linker(nxt.text))
             if value is not None:
-                out.append(_numeric(t, value, nxt))
+                out.append(numeric(t, value, nxt))
                 i, changed = i + 2, True
                 continue
         out.append(t)
@@ -244,17 +240,15 @@ def _strip_linker(word: str) -> str:
     return word
 
 
-def read_native_run(words: Tuple[str, ...]) -> Optional[int]:
-    """The value of a run of native cardinal surfaces.
+def _sum_run(values: Iterable[Optional[int]]) -> Optional[int]:
+    """Total of a run of cardinal values; ``None`` as soon as one is unreadable.
 
-    Additive within a magnitude group, multiplicative on ``daan`` (hundred)
-    and ``libo`` (thousand), which closes its group into the total:
-    "dalawang libo't dalawampu't dalawa" == 2022.
+    Additive within a magnitude group; 100 and 1000 multiply the group so far
+    and 1000 closes it into the total.
     """
     total = group = 0
     seen = False
-    for word in words:
-        value = _native_value(word)
+    for value in values:
         if value is None:
             return None
         if value == 1000:
@@ -267,32 +261,23 @@ def read_native_run(words: Tuple[str, ...]) -> Optional[int]:
             group += value
         seen = True
     return total + group if seen else None
+
+
+def read_native_run(words: Tuple[str, ...]) -> Optional[int]:
+    """The value of a run of native cardinal surfaces.
+
+    "dalawang libo't dalawampu't dalawa" == 2022.
+    """
+    return _sum_run(_native_value(word) for word in words)
 
 
 def read_spanish_run(words: Tuple[str, ...]) -> Optional[int]:
     """The value of a run of Spanish-derived cardinal surfaces.
 
-    ``y`` is the joiner above thirty ("kuwarenta y singko" == 45) and is
-    simply skipped; below thirty the words are juxtaposed ("beynte uno").
+    The joiner ``y`` above thirty ("kuwarenta y singko" == 45) is skipped;
+    below thirty the words are juxtaposed ("beynte uno").
     """
-    total = group = 0
-    seen = False
-    for word in words:
-        if word == "y":
-            continue
-        value = _SPANISH.get(word)
-        if value is None:
-            return None
-        if value == 1000:
-            group = (group or 1) * 1000
-            total += group
-            group = 0
-        elif value == 100:
-            group = (group or 1) * 100
-        else:
-            group += value
-        seen = True
-    return total + group if seen else None
+    return _sum_run(_SPANISH.get(word) for word in words if word != "y")
 
 
 def _run_rewrite(tokens: Tuple[Token, ...], value_of, read_run,
@@ -331,17 +316,15 @@ def _run_rewrite(tokens: Tuple[Token, ...], value_of, read_run,
             out.append(t)
             i += 1
             continue
-        out.append(_numeric(t, total, tokens[j - 1]))
+        out.append(numeric(t, total, tokens[j - 1]))
         i, changed = j, True
     return reindex(out) if changed else tokens
 
 
-def _native_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-    return _run_rewrite(tokens, _native_value, read_native_run, None)
-
-
-def _spanish_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-    return _run_rewrite(tokens, _SPANISH.get, read_spanish_run, "y")
+_native_rewrite = partial(_run_rewrite, value_of=_native_value,
+                          read_run=read_native_run, joiner=None)
+_spanish_rewrite = partial(_run_rewrite, value_of=_SPANISH.get,
+                           read_run=read_spanish_run, joiner="y")
 
 
 #: the Spanish-lexified clock's lead-in word, immediately before the hour.
@@ -368,10 +351,8 @@ def _clock_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
             if (hour is not None and minute is not None
                     and float(hour).is_integer() and float(minute).is_integer()
                     and 0 <= hour <= 23 and 0 <= minute <= 59):
-                text = f"{int(hour)}:{int(minute):02d}"
-                out.append(Token(text=text, raw=text, index=tokens[i].index,
-                                 char_start=tokens[i].char_start,
-                                 char_end=tokens[i + 1].char_end))
+                out.append(clock_literal(int(hour), int(minute), tokens[i],
+                                         tokens[i + 1]))
                 i, changed = i + 2, True
                 continue
         out.append(tokens[i])
@@ -379,18 +360,10 @@ def _clock_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return reindex(out) if changed else tokens
 
 
-def _compose(*passes: Callable) -> Callable:
-    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-        for p in passes:
-            tokens = p(tokens)
-        return tokens
-    return run
-
-
 #: the ordinal pass leads so an ``ika-`` hour or day claims its stem before a
 #: cardinal pass could take that stem for a bare count; the two cardinal
 #: tables then run in either order, sharing no surface.  The clock fusion
 #: runs last, once the Spanish table has already folded a compound minute
 #: ("trenta y otso") into one number for it to find adjacent to the hour.
-fold_fil = _compose(_ordinal_rewrite, _native_rewrite, _spanish_rewrite,
-                    _clock_rewrite)
+fold_fil = compose(_ordinal_rewrite, _native_rewrite, _spanish_rewrite,
+                   _clock_rewrite)
