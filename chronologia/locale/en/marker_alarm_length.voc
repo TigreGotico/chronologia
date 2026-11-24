@@ -6,6 +6,12 @@
 # (following a number or other quantitive word) Introduces the whole for which
 # is indicated only the specified part or segment" (Wiktionary, s.v. "of",
 # preposition).
+# "h" and "m" after the hour are the unit letters of a length: "alarm for 10 h"
+# is ten hours and "alarm for 10 m" ten minutes.  "h [...] Abbreviation of
+# hour, particularly when used as a (non-SI) unit of time alongside SI units"
+# and "m [...] Abbreviation of minute" (Wiktionary, s.v. "h", "m", English).
 more
 extra
 of
+h
+m
