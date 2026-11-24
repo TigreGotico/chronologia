@@ -62,7 +62,7 @@ A test pins each refusal.
 
 **Decade and millennium.** Neither `deċennju` nor `millennju` has a dictionary entry to cite, so neither unit ships. The century does: `seklu ilu` reads.
 
-**A future offset without its trailing marker.** `fi żmien sena` returns nothing, while `fi żmien sena oħra` reads as a year ahead. Both directions are marked at the tail, and the only way to accept a bare frame would be to accept a *preposed* direction marker. Which would also accept the preposed `ilu`. That preposed `ilu` is a different lexeme: the person-inflected durative adverb in `Ili jumejn ma norqod` ("I haven't slept in two days"), which needs agreement with a subject this engine cannot read.
+**A future offset without its trailing marker.** `fi żmien sena` returns nothing, while `fi żmien sena oħra` reads as a year ahead. Both directions are marked at the tail, and the only way to accept a bare frame would be to accept a *preposed* direction marker. That would also accept the preposed `ilu`. That preposed `ilu` is a different lexeme: the person-inflected durative adverb in `Ili jumejn ma norqod` ("I haven't slept in two days"), which needs agreement with a subject this engine cannot read.
 
 Reading it as "ago" would invert the direction of the sentence. So the offset orders accept `ilu` only in trailing position. The CLDR count-one and count-two future patterns that omit `oħra` are refused on that trade.
 

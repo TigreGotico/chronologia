@@ -10,7 +10,7 @@ see: docs/languages/index.md, docs/extraction.md
 
 This page records where each construction of the Irish (`ga`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_irish` module in `chronologia/extract/`.
 
-Irish mutates a word's initial consonant, and unlike Welsh next door the rules for *which* mutation a given trigger imposes are, in several places the temporal constructions need, not stated by any source consulted. Where the sources contradict each other or fall silent. This locale ships the unmutated reading alone and refuses the mutated collocation rather than picking a side. Most of the refusals below are that decision applied case by case.
+Irish mutates a word's initial consonant, and unlike Welsh next door the rules for *which* mutation a given trigger imposes are, in several places the temporal constructions need, not stated by any source consulted. Where the sources contradict each other or fall silent, this locale ships the unmutated reading alone and refuses the mutated collocation rather than picking a side. Most of the refusals below are that decision applied case by case.
 
 The clock counts the English way and never the toward-the-hour way: `leathuair tar éis a trí` is 03:30, an hour later than the reading some of Irish's neighbours would give the same shape. Past the half hour it switches to `chun`: `ceathrú chun a dó` is 01:45. Ulster substitutes `i ndiaidh` and `go dtí` for the two directions, and both are accepted.
 

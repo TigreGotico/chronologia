@@ -76,9 +76,9 @@ The weekday and month names, and the holiday vocabulary, carry no recorded sourc
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1353](https://github.com/TigreGotico/chronologia/issues/1353): Decomposed (NFD) input reads differently from composed (NFC) input: fr "ouvrés", pt "março"
+- Decomposed input reads differently from composed input. Example: `akşam saat sekiz` gives akşam. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
 
 ## Checked examples
 

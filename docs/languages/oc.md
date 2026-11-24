@@ -48,11 +48,11 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Eras** run wider than in most locales. Besides `acn` and `apc`, the fold hook recognises the spelled-out `abans jèsus-crist` and `aprèp jèsus-crist` and the secular wording `abans nòstra èra` and `de nòstra èra`, each in both its accented and unaccented spelling, so `44 abans nòstra èra` and `1990 de nòstra èra` resolve. Anno Mundi, Holocene, Julian Day and Unix era prefixes ship as well.
 
-**Non-Gregorian calendars.** Occitan is one of the six locales (with Asturian, English, French, Italian and Romanian) that carry French Republican month names. It also carries Hebrew and Islamic civil months, Japanese era names, the consulship and *pridie* markers of the Roman calendar. The full geological period series. Catalan carries none of it.
+**Non-Gregorian calendars.** Occitan is one of the six locales (with Asturian, English, French, Italian and Romanian) that carry French Republican month names. It also carries Hebrew and Islamic civil months, Japanese era names, the consulship and *pridie* markers of the Roman calendar, and the full geological period series. Catalan carries none of it.
 
 **Decades** ship twice over: `los ans 80` reads the digits and `los ans ochanta` reads the spelled tens, which have their own `decade_word_*` files.
 
-**Seasons** are `prima` and `primtemps` for spring, `estiu`, `auton` and `tardor` for autumn. `ivèrn`/`ivern`. `tardor` is the same word Catalan uses. It is not a borrowing from the Catalan locale: the Occitan Wiktionary carries `tardor` in its Occitan section as a feminine noun naming one of the four seasons, alongside `auton` from Latin *autumnus*. The locale pins `hemisphere` to `north`, where Catalan leaves it unset.
+**Seasons** are `prima` and `primtemps` for spring, `estiu`, `auton` and `tardor` for autumn, and `ivèrn`/`ivern`. `tardor` is the same word Catalan uses. It is not a borrowing from the Catalan locale: the Occitan Wiktionary carries `tardor` in its Occitan section as a feminine noun naming one of the four seasons, alongside `auton` from Latin *autumnus*. The locale pins `hemisphere` to `north`, where Catalan leaves it unset.
 
 **The weekend** is `dimenjada`, built on `dimenge` the way Catalan's `cap de setmana` is not built on anything. The Occitan Wiktionary glosses it as Saturday and Sunday. `weekend` and `week-end` ship beside it.
 
@@ -110,11 +110,11 @@ Reproduced with `extract_timespan(text, "oc", anchor=datetime(2017, 6, 27, 13, 4
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#990](https://github.com/TigreGotico/chronologia/issues/990): A common word reads as a time word: en "fall", da "går" and "morgen", oc "ora", pl "lata"
+- A common word that is no time word reads as a time word. Example: `Quants quilomètres per ora fa lo vent?` gives 12:04 to 13:04, as if `ora fa` meant an hour ago, where the test expects no date. [#990](https://github.com/TigreGotico/chronologia/issues/990)
 
-- [#992](https://github.com/TigreGotico/chronologia/issues/992): Day words and counted offsets with no reading: en "today's", oc "nuèch", an, eu, kab, fi
+- A day word or a counted offset gives no reading. Example: `Farà calor aquela nuèch` gives no reading. [#992](https://github.com/TigreGotico/chronologia/issues/992)
 
 ## Checked examples
 

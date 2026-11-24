@@ -75,9 +75,9 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1231](https://github.com/TigreGotico/chronologia/issues/1231): ms, id: a count followed by setengah reads half of the count
+- A count followed by `setengah` reads half of the count. Example: `dua setengah jam lagi` gives 60 min, where the test expects 150 min. [#1231](https://github.com/TigreGotico/chronologia/issues/1231)
 
 ## Checked examples
 

@@ -75,37 +75,47 @@ The weekday and month names, the seasons and the holiday vocabulary carry no rec
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1022](https://github.com/TigreGotico/chronologia/issues/1022): nl: "vanmiddag", "werkdagochtend" and "weekendochtend" are not read, and "om 8 uur" gives an 8-hour duration
+**Clocks and parts of the day**
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- Some day-part words are not read, and a clock gives an eight-hour length. Example: `laat me vanmiddag weten dat ik de loodgieter moet bellen` gives no reading. [#1022](https://github.com/TigreGotico/chronologia/issues/1022)
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- An evening word before the clock does not read as one time. Example: `vandaag 's avonds om 8:00` gives 2017-06-27 00:00, where the test expects 2017-06-27 20:00. [#1134](https://github.com/TigreGotico/chronologia/issues/1134)
 
-- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+- A date built from two parts loses one of them. Example: `binnen 3 uur` gives 2017-06-27 15:00, where the test expects 2017-06-27 16:04. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1058](https://github.com/TigreGotico/chronologia/issues/1058): Minutes after an alarm hour are dropped: seven oh five, 7 and 30, pt and es 7 30
+- A clock with a dot between hour and minute gives no time. Example: `om 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- [#1060](https://github.com/TigreGotico/chronologia/issues/1060): pt, nl, it, ca: a clock preposition, a count of hours, a part of the day and a date word leave the part of the day in the event summary ("às duas horas à tarde amanhã")
+- The minutes after an alarm hour are dropped. [#1058](https://github.com/TigreGotico/chronologia/issues/1058)
 
-- [#1081](https://github.com/TigreGotico/chronologia/issues/1081): nl "vandaag om 8:00 's avonds" said after 20:00 gives 08:00, not 20:00
+- An evening word after a clock gives the morning hour when said after 20:00. Example: `vandaag om 8:00 's avonds`, said after 20:00, gives 08:00, where 20:00 is meant. [#1081](https://github.com/TigreGotico/chronologia/issues/1081)
 
-- [#1134](https://github.com/TigreGotico/chronologia/issues/1134): nl "vandaag 's avonds om 8:00" with the evening word before the clock does not read as one time
+- A counted offset reads wrong. Example: `-1 uur` gives 01:00 tomorrow, where the test expects one hour earlier. [#1202](https://github.com/TigreGotico/chronologia/issues/1202)
 
-- [#1202](https://github.com/TigreGotico/chronologia/issues/1202): A counted offset reads wrong: nl "-1 uur" gives one hour later, de "in zwei stunden und" gives 2.5 hours
+- The meridiem after an abbreviated hour word is lost. Example: `om 8 u. 's avonds` gives 2026-11-23 08:00, where the test expects 2026-11-23 20:00. [#1312](https://github.com/TigreGotico/chronologia/issues/1312)
 
-- [#1206](https://github.com/TigreGotico/chronologia/issues/1206): nl extract_duration: "vijf minuten na het uur" adds an hour
+**Dates, ranges and weeks**
 
-- [#1218](https://github.com/TigreGotico/chronologia/issues/1218): Event summary keeps the article and day word before a day number in en, fr, de and nl
+- The indefinite article before a day of a month reads as the first day. Example: `een dag van maart` gives 2027-03-02 00:00, where the test expects 2027-04-01 00:00. [#1306](https://github.com/TigreGotico/chronologia/issues/1306)
 
-- [#1254](https://github.com/TigreGotico/chronologia/issues/1254): A bare clock with a zone skips the 12-hour rule ("9:30 utc" reads tomorrow 09:30)
+**Offsets, lengths and holidays**
 
-- [#1306](https://github.com/TigreGotico/chronologia/issues/1306): es, pt, de, nl, ca: the indefinite article in "un día de marzo" reads as "the 1st day of march"
+- Text that is no date reads as a date, or the wrong reading wins. Example: `morgen om 8 of 9 mensen` gives 2026-10-18 08:00, where the test expects 2026-10-18 00:00. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
-- [#1312](https://github.com/TigreGotico/chronologia/issues/1312): Meridiem after an abbreviated hour word is lost: "um 8 Std. abends", "at 8 hr. pm", pt "às 5 pm" read as morning
+**Recurrence**
 
-- [#1321](https://github.com/TigreGotico/chronologia/issues/1321): Weekday and clock ranges in a recurrence: nl "tot en met vrijdag" differs from "t/m", "to friday 9 am" loses the range, "until 5/12" loses the date
+- A weekday or clock range in a recurrence loses its end. Example: `tot en met vrijdag` reads differently from `t/m vrijdag`. [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
+
+**Events, zones, business days and the API**
+
+- A clock preposition, a count of hours or a date word leaves the part of the day in the event summary. Example: `om twee uur in de middag morgen` gives 2026-01-30 14:00, where the test expects 2026-01-31 14:00. [#1060](https://github.com/TigreGotico/chronologia/issues/1060)
+
+- `five minutes past the hour` adds an hour. Example: `vijf minuten na het uur` gives 65 min, where the test expects 5 min. [#1206](https://github.com/TigreGotico/chronologia/issues/1206)
+
+- The event summary keeps the article and the day word before a day number. Example: `vergadering op de dag 5 december` gives vergadering op de dag, where the test expects 'vergadering'      - vergadering. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
+
+- A bare clock with a zone skips the 12-hour rule. Example: `voor 9:30 utc` gives 2017-06-28 09:31 UTC, where the test expects 2017-06-27 21:31 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
 
 ## Checked examples
 

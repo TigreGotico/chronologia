@@ -67,15 +67,15 @@ The weekday and month names, the clock words, the seasons and the holiday vocabu
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1032](https://github.com/TigreGotico/chronologia/issues/1032): Clock forms read wrong or not at all: "3 30 pm", "07.00 Uhr", "24:00", nl "tien over half drie", it "le tre", ar "الثالثة والثلث"
+- A clock form reads wrong or not at all. Example: `الساعة الثالثة والثلث` gives 2026-07-18 03:20, where the test expects 2026-07-17 15:20. [#1032](https://github.com/TigreGotico/chronologia/issues/1032)
 
-- [#1072](https://github.com/TigreGotico/chronologia/issues/1072): Spelled ar and ta clocks keep the written hour while their digit twins take the next reading, th "6:30 น."
+- A spelled clock keeps the written hour, where its digit twin takes the next reading. Example: `الساعة السادسة والنصف` gives 2017-06-28 06:30, where the test expects 2017-06-27 18:30. [#1072](https://github.com/TigreGotico/chronologia/issues/1072)
 
-- [#1209](https://github.com/TigreGotico/chronologia/issues/1209): ar extract_duration: the dual ("شهرين") and a count after the unit ("أسبوع واحد") give no length
+- The dual and a count after the unit give no length. Example: `شهرين` gives no reading. [#1209](https://github.com/TigreGotico/chronologia/issues/1209)
 
-- [#1236](https://github.com/TigreGotico/chronologia/issues/1236): ar extract_duration: "ثلاثون ثانية" gives no length and a fused "و" before a count ends the length early
+- A spelled count of seconds gives no length, and a fused `و` before a count ends the length early. Example: `ثلاثون ثانية` gives no reading. [#1236](https://github.com/TigreGotico/chronologia/issues/1236)
 
 ## Checked examples
 

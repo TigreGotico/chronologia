@@ -70,7 +70,7 @@ The dictionary does not decide it either. *Kamus Dewan* defines `setengah` as `s
 
 The preposed pattern *is* the Indonesian one, where `setengah tiga` for 02:30 is ordinary, and Indonesian is where a Malay locale would most easily acquire it by analogy. That is a hypothesis about how the reading got here, not evidence about Malay.
 
-So the locale reads a construction that no consulted source attests, and strands the one that they do. `pukul lapan setengah` returns 08:00 with `setengah` left in the remainder. The same happens for every hour: the half is dropped and a whole hour is returned in its place. If the additive reading is right. That is a thirty-minute error on every phrase of that shape, with the word that would have corrected it discarded.
+So the locale reads a construction that no consulted source attests, and strands the one that they do. `pukul lapan setengah` returns 08:00 with `setengah` left in the remainder. The same happens for every hour: the half is dropped and a whole hour is returned in its place. If the additive reading is right, that is a thirty-minute error on every phrase of that shape, with the word that would have corrected it discarded.
 
 A native speaker settles this by answering two separate questions. Does `setengah tiga`, hour last, mean anything in Malay, and if so what time? And does `pukul lapan setengah`, hour first, mean 08:30 or 07:30? Nothing here should be changed until both are answered, because the sources that speak to the second question do not agree with each other.
 
@@ -100,15 +100,15 @@ Beyond the half hour above, each of these is reproducible with `extract_timespan
 
 1. Is `setengah tiga`, with the hour after `setengah`, said in Malay at all, and if it is, does it mean 02:30 or 03:30?
 2. Does `pukul lapan setengah` mean 08:30 or 07:30?
-3. If the half is toward the hour, does the hour before one read as twelve. That the half before one is 12:30 rather than 00:30?
+3. If the half is toward the hour, does the hour before one read as twelve, so that the half before one is 12:30 rather than 00:30?
 4. What is the ordinary way to say a quarter past and a quarter to, and does `suku` appear in it?
 5. Is `kelmarin dulu` the usual phrase for the day before yesterday?
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1231](https://github.com/TigreGotico/chronologia/issues/1231): ms, id: a count followed by setengah reads half of the count
+- A count followed by `setengah` reads half of the count. Example: `dua setengah jam lagi` gives 60 min, where the test expects 150 min. [#1231](https://github.com/TigreGotico/chronologia/issues/1231)
 
 ## Checked examples
 

@@ -36,7 +36,7 @@ The bare `morgen` costs something. It is registered as tomorrow, which is what `
 
 **The date line** is little-endian with a dotted ordinal day. `den 3. oktober 1990` and the bare `3. oktober 1990` both resolve. `ordinal_dot` is on and Bokmål writes the dotted civil date. `15.06.2020` reads, as does the ISO `2020-06-15`.
 
-**Relative offsets** are `om` forward and `siden` backward, with `for` licensed as a leading before-marker, so both `for tre dager siden` and `tre dager siden` resolve. Units ship in singular and plural. The feminine `uka` beside `uken`, with a separate `unit1_` file each. `halvannen` is registered as the one-and-a-half quantifier. `om halvannen time` is an hour and a half ahead, English Wiktionary carries it as a Bokmål determiner, "one and a half", citing the Bokmål Dictionary.
+**Relative offsets** are `om` forward and `siden` backward, with `for` licensed as a leading before-marker, so both `for tre dager siden` and `tre dager siden` resolve. Units ship in singular and plural: the feminine `uka` beside `uken`, with a separate `unit1_` file each. `halvannen` is registered as the one-and-a-half quantifier. `om halvannen time` is an hour and a half ahead, English Wiktionary carries it as a Bokmål determiner, "one and a half", citing the Bokmål Dictionary.
 
 **Decades** read off `marker_plural`, whose surfaces are `tallet` and `talet`, so `80-tallet` and `1980-tallet` both resolve to the 1980s. The spelled `åttitallet` does not.
 
@@ -106,13 +106,13 @@ The weekday and month names, the clock words, the range markers, the seasons and
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#990](https://github.com/TigreGotico/chronologia/issues/990): A common word reads as a time word: en "fall", da "går" and "morgen", oc "ora", pl "lata"
+- A morning or evening word that the reader does not join lets a lone clock take the other half of the day. Example: `klokka 8 i kveld` gives 2017-06-28 08:00, where the test expects 2017-06-27 20:00. [#1071](https://github.com/TigreGotico/chronologia/issues/1071)
 
-- [#1033](https://github.com/TigreGotico/chronologia/issues/1033): A day word with an early, late or part-of-day word gives midnight: "mañana temprano", "morgen früh", "freitag morgen"
+- A day word with an early, late or part-of-day word gives midnight. Example: `vekk meg i morgen tidlig` gives 2017-06-28 00:00, where the test expects Within(2017-06-28 04:00:00, 2017-06-28 12:00:00). [#1033](https://github.com/TigreGotico/chronologia/issues/1033)
 
-- [#1071](https://github.com/TigreGotico/chronologia/issues/1071): A morning or evening word the reader does not join lets a lone clock take the other half: de "früh", nb "morgenen", nn "morgonen", de "Uhr abends"
+- A common word that is no time word reads as a time word. Example: `hei hvordan går det` gives Monday 26 June, with `hei hvordan det` left over, where the test expects no date. [#990](https://github.com/TigreGotico/chronologia/issues/990)
 
 ## Checked examples
 

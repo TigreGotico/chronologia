@@ -42,13 +42,13 @@ That matters most in range endpoints, where `do dia 3 de março até ao dia 5 de
 
 `até ao` and `até à` are registered as two-word surfaces of their own, tried before the bare `até`. Without them the scanner found the bare `até` first (it comes first in the sentence) and left the trailing `ao` an unclaimed token stranded in the remainder. A bare `até o dia` with no contraction is untouched, and `até` alone still matches when no contraction follows.
 
-**The clock** has the same two toward-the-hour shapes as Spanish and keeps them apart for the same reason. `quatro menos um quarto` subtracts from the hour already named. `um quarto para as quatro` states the fraction first. Then it names the hour it heads for. Forward is `e`: `oito e meia`, `oito e um quarto`. The article vocabulary holds the indefinite articles `um` and `uma` so that the `um quarto` fraction reads. The vocabulary cites Ciberdúvidas' page on telling the time. `meio-dia` and `meia-noite` are points.
+**The clock** has the same two toward-the-hour shapes as Spanish and keeps them apart for the same reason. The phrase `quatro menos um quarto` subtracts from the hour already named. The phrase `um quarto para as quatro` states the fraction first. Then it names the hour it heads for. Forward is `e`: `oito e meia`, `oito e um quarto`. The article vocabulary holds the indefinite articles `um` and `uma` so that the `um quarto` fraction reads. The vocabulary cites Ciberdúvidas' page on telling the time. `meio-dia` and `meia-noite` are points.
 
 **Day parts** take their boundaries from the Unicode CLDR 47 day-period chart for `pt`, transcribed in `chronologia/dayparts.py`: `madrugada` `[00:00, 06:00)`, `manhã` `[06:00, 12:00)`, `tarde` `[12:00, 19:00)`, `noite` `[19:00, 24:00)`. The surfaces are cited to Priberam, which glosses `manhã` as the period between daybreak and midday. The vocabulary records that the entry marks no European/Brazilian split for these four words and that none is made here: both varieties say `manhã`, `tarde`, `noite` and `madrugada` alike. The frame is `pela`/`pelo` and their plurals, the contractions of `por` with the definite article, cited to Priberam.
 
 **Fuzzy month parts** are `início de`, `meados de` and `fim de`, cutting the month into thirds.
 
-**Quarters, ISO weeks, decades and eras.** `o primeiro trimestre de 2020`, `semana 12`, `os anos 80` and `44 a. C.` all resolve, along with an AD marker and a before-present marker. `a primeira metade de 2020` reads as the first half-year, with `metade` cited to Priberam.
+**Quarters, ISO weeks, decades and eras.** `o primeiro trimestre de 2020`, `semana 12`, `os anos 80` and `44 a. C.` all resolve. An AD marker and a before-present marker resolve too. The phrase `a primeira metade de 2020` reads as the first half-year, with `metade` cited to Priberam.
 
 **The Roman calendar anchors** ship in their Portuguese vernacular forms `calendas`, `nonas` and `idos`, cited to the Portuguese Wikipedia article *Calendário romano*.
 
@@ -77,73 +77,83 @@ The weekday and month names, and the seasons, carry no recorded source. The loca
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#996](https://github.com/TigreGotico/chronologia/issues/996): A weekday mention leaves out its preposition or article. A month or a count keeps it
+**Clocks and parts of the day**
 
-- [#997](https://github.com/TigreGotico/chronologia/issues/997): A part of the day with no day word answers the band that has passed
+- A part of the day with no day word answers the band that has already passed. Example: `à tarde` gives 2023-01-15 12:00, where the test expects 2023-01-16 12:00. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- [#1004](https://github.com/TigreGotico/chronologia/issues/1004): A unit word with no number counts as one: "how many days before christmas" gives 24 December
+- The late afternoon answers the middle of the afternoon, and a phrase gives a 25-hour length. Example: `ao fim da tarde` answers the middle of the afternoon. [#1024](https://github.com/TigreGotico/chronologia/issues/1024)
 
-- [#1008](https://github.com/TigreGotico/chronologia/issues/1008): A clock after for, to, per or para is not read, and a reschedule phrase reads the old time
+- A date built from two parts loses one of them. Example: `na segunda semana que vem` gives no reading. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1009](https://github.com/TigreGotico/chronologia/issues/1009): A plural, adverbial or recurring part of the day is not read, so the next hour reads in the evening
+- A clock with a dot between hour and minute gives no time. Example: `às 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- [#1010](https://github.com/TigreGotico/chronologia/issues/1010): A weekday range or list followed by a clock drops the clock or picks a past day
+- A part of the day said alone gives no reading. Example: `tarde` gives no reading. [#1103](https://github.com/TigreGotico/chronologia/issues/1103)
 
-- [#1012](https://github.com/TigreGotico/chronologia/issues/1012): A digit clock written with a space ("10 30") reads only the hour
+- A list of two days reads as a clock or as the wrong day. Example: `no dia 14 e 15 de maio` gives 2026-12-14 00:00, where the test expects 2027-05-14 00:00. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
 
-- [#1024](https://github.com/TigreGotico/chronologia/issues/1024): pt: "ao fim da tarde" answers the middle of the afternoon, and "dias ... hora" gives a 25-hour duration
+- The meridiem after an abbreviated hour word is lost. Example: `às 5 pm` gives 2026-11-23 05:00, where the test expects 2026-11-23 17:00. [#1312](https://github.com/TigreGotico/chronologia/issues/1312)
 
-- [#1026](https://github.com/TigreGotico/chronologia/issues/1026): fr, pt: an event with a noun before an evening clock reads a 9.5-hour length ("dîner neuf heures et demie le soir demain")
+- A clock after `for`, `to` or `per` is not read, and a reschedule phrase reads the old time. Example: `mova o meu alarme das sete para as oito` gives 2017-06-27 19:53, where the test expects 2017-06-27 19:00. [#1008](https://github.com/TigreGotico/chronologia/issues/1008)
 
-- [#1027](https://github.com/TigreGotico/chronologia/issues/1027): pt: "duas horas e três quartos" reads the clock 14:03 and leaves "quartos"
+- A plural, adverbial or recurring part of the day is not read, so the hour reads in the wrong half. Example: `lembra-me todas as manhãs de tomar o medicamento às 8` gives 2017-06-27 06:00, where the test expects 2017-06-28 08:00. [#1009](https://github.com/TigreGotico/chronologia/issues/1009)
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- A weekday range or list followed by a clock drops the clock or picks a past day. Example: `me lembre de regar as plantas toda segunda e sexta às 8 da manhã` gives 2017-07-03 00:00, where the test expects 2017-06-30 08:00. [#1010](https://github.com/TigreGotico/chronologia/issues/1010)
 
-- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+- A digit clock written with a space reads only the hour. Example: `às 10 30` gives 2017-06-27 22:00, where the test expects 2017-06-27 22:30. [#1012](https://github.com/TigreGotico/chronologia/issues/1012)
 
-- [#1052](https://github.com/TigreGotico/chronologia/issues/1052): en, pt: a plural part of the day before a clock ("mornings at 8", "nas manhãs às 8") gives no recurrence
+- An event with a noun before an evening clock reads a length of nine and a half hours. Example: `jantar nove horas e meia de noite amanhã` gives 570 min, where the test expects nothing. [#1026](https://github.com/TigreGotico/chronologia/issues/1026)
 
-- [#1053](https://github.com/TigreGotico/chronologia/issues/1053): pt: extract_event reads the first number of a spelled range of time units as the year 2000 ("durou entre dois mil e três mil horas ontem")
+- A spelled clock reads as 14:03 and leaves the word for quarters. Example: `duas horas e três quartos` gives 2026-01-30 14:03, where the test expects 2026-01-30 14:45. [#1027](https://github.com/TigreGotico/chronologia/issues/1027)
 
-- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+**Dates, ranges and weeks**
 
-- [#1103](https://github.com/TigreGotico/chronologia/issues/1103): A part of the day said alone gives no reading (pt "tarde", "noite", it "stasera")
+- A day range with a relative-month end reads as the whole month. Example: `desde o dia 3 até ao 5 do mês que vem` gives 2026-02-01 00:00, where the test expects 2026-02-03 00:00. [#1230](https://github.com/TigreGotico/chronologia/issues/1230)
 
-- [#1196](https://github.com/TigreGotico/chronologia/issues/1196): A clock with an offset from a holiday: the readings are missing or in the wrong order ("às 9 uma hora antes do natal" gives 09:00)
+- The indefinite article before a day of a month reads as the first day. Example: `um dia de março` gives 2027-03-02 00:00, where the test expects 2027-04-01 00:00. [#1306](https://github.com/TigreGotico/chronologia/issues/1306)
 
-- [#1201](https://github.com/TigreGotico/chronologia/issues/1201): pt: "em março faz três anos" gives next March, not March three years ago
+- Decomposed input reads differently from composed input. Example: `dia 5 de março de 2027` gives 2017-07-05 00:00, where the test expects 2027-03-05 00:00. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
 
-- [#1203](https://github.com/TigreGotico/chronologia/issues/1203): extract_duration: "century" and "millennium" give no length (da "århundrede", es "siglo", gl "século", pt "milénio")
+**Offsets, lengths and holidays**
 
-- [#1204](https://github.com/TigreGotico/chronologia/issues/1204): extract_duration: a decimal count gives no length ("1.5 horas", "7.5 segundos")
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `duas horas antes do natal` gives 2026-12-24 00:00, where the test expects 2026-12-24 22:00. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
 
-- [#1205](https://github.com/TigreGotico/chronologia/issues/1205): pt extract_duration: "a" before the length leaves the remainder ("daqui a duas horas")
+- A year range after `o ano de` reads one end. Example: `o ano de 2000 a 2005` gives 2001-01-01 00:00, where the test expects 2006-01-01 00:00. [#1327](https://github.com/TigreGotico/chronologia/issues/1327)
 
-- [#1230](https://github.com/TigreGotico/chronologia/issues/1230): gl, ca, pt: a day range with a relative-month end reads as the whole month
+- A clock with an offset from a holiday gives the wrong reading or the wrong order. Example: `às 9 uma hora antes do natal` gives 2026-12-24 09:00, where the test expects 2026-12-24 21:00. [#1196](https://github.com/TigreGotico/chronologia/issues/1196)
 
-- [#1276](https://github.com/TigreGotico/chronologia/issues/1276): extract_candidates does not raise in raise mode where extract_event does
+- A phrase with `faz três anos` gives next March, not March three years ago. Example: `em março faz três anos` gives 2018-03-01 00:00, where the test expects 2014-03-01 00:00. [#1201](https://github.com/TigreGotico/chronologia/issues/1201)
 
-- [#1303](https://github.com/TigreGotico/chronologia/issues/1303): "the first 5 business days of the month" reads no span
+- A weekday mention drops its preposition or article, where a month keeps it. Example: `na sexta-feira` gives (3, 14), where the test expects (0, 14)      At index 0 diff: 3 != 0   Use -v to get more diff. [#996](https://github.com/TigreGotico/chronologia/issues/996)
 
-- [#1306](https://github.com/TigreGotico/chronologia/issues/1306): es, pt, de, nl, ca: the indefinite article in "un día de marzo" reads as "the 1st day of march"
+- A unit word with no number counts as one. Example: `daqui a uma hora, horas vão ser` gives 2017-06-27 15:04, where the test expects 2017-06-27 14:04. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
 
-- [#1310](https://github.com/TigreGotico/chronologia/issues/1310): Working-day and day-of-month recurrence heads read as every day: "cada dia útil", "día laborable", "cada dia 15"
+**Recurrence**
 
-- [#1311](https://github.com/TigreGotico/chronologia/issues/1311): A list of two days reads as a clock or the wrong day: es "el 14 y 15 de mayo" gives 1 May 14:15
+- A plural part of the day before a clock gives no recurrence. Example: `nas manhãs às 8` gives no reading. [#1052](https://github.com/TigreGotico/chronologia/issues/1052)
 
-- [#1312](https://github.com/TigreGotico/chronologia/issues/1312): Meridiem after an abbreviated hour word is lost: "um 8 Std. abends", "at 8 hr. pm", pt "às 5 pm" read as morning
+- A clock before a dated day in a yearly rule becomes the day. Example: `anualmente às 9 a 29 de fevereiro` gives (9,), where the test expects (29,). [#1329](https://github.com/TigreGotico/chronologia/issues/1329)
 
-- [#1315](https://github.com/TigreGotico/chronologia/issues/1315): A clock range in a recurrence reads the end hour or a wrong minute: pt "das 9 às 17" gives 17:00, en "9 to 5" gives 04:51
+- A clock range in a recurrence reads the end hour or a wrong minute. Example: `todas as segundas das 9 às 17` gives ((17,), ()), where the test expects ((9,), ())      At index 0 diff: (17,) != (9,)   Use -v to get more diff. [#1315](https://github.com/TigreGotico/chronologia/issues/1315)
 
-- [#1321](https://github.com/TigreGotico/chronologia/issues/1321): Weekday and clock ranges in a recurrence: nl "tot en met vrijdag" differs from "t/m", "to friday 9 am" loses the range, "until 5/12" loses the date
+- A weekday or clock range in a recurrence loses its end. [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
 
-- [#1327](https://github.com/TigreGotico/chronologia/issues/1327): pt: a year range after "o ano de" reads one end ("o ano de dois mil a dois mil e cinco" gives 2005)
+**Events, zones, business days and the API**
 
-- [#1329](https://github.com/TigreGotico/chronologia/issues/1329): pt: a clock before "a <day> de <month>" in a yearly rule becomes the day ("anualmente às 9 a 29 de fevereiro" gives BYMONTHDAY=9)
+- A spelled range of time units reads the first number as the year 2000. Example: `durou entre dois mil e três mil dias ontem` gives 2000-01-01, where the test expects 2026-01-29. [#1053](https://github.com/TigreGotico/chronologia/issues/1053)
 
-- [#1353](https://github.com/TigreGotico/chronologia/issues/1353): Decomposed (NFD) input reads differently from composed (NFC) input: fr "ouvrés", pt "março"
+- A working-day or day-of-month recurrence reads as every day. Example: `às dez de cada dia 15` gives DAILY, where the test expects MONTHLY. [#1310](https://github.com/TigreGotico/chronologia/issues/1310)
+
+- A word `a` before the length leaves the remainder. Example: `a duas horas` gives , where the test expects 'a'      - a. [#1205](https://github.com/TigreGotico/chronologia/issues/1205)
+
+- A decimal count gives no length. Example: `2.5 horas` gives no reading. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
+
+- `century` and `millennium` give no length. Example: `1 milénio` gives no reading. [#1203](https://github.com/TigreGotico/chronologia/issues/1203)
+
+- The candidate reader does not raise in raise mode, where the event reader does. [#1276](https://github.com/TigreGotico/chronologia/issues/1276)
+
+- The first few business days of a month read no span. Example: `os primeiros 5 dias úteis do mês` gives no reading. [#1303](https://github.com/TigreGotico/chronologia/issues/1303)
 
 ## Checked examples
 

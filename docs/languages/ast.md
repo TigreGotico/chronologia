@@ -10,7 +10,7 @@ see: docs/languages/index.md, docs/extraction.md
 
 This page records where each construction of the Asturian (`ast`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
 
-Asturian is the thinnest-sourced of the Ibero-Romance locales here. Almost nothing in its vocabulary files carries a citation: the three Roman-calendar anchors name the Asturian Wikipedia, the night meridiem names the Spanish locale it was copied from. Every other file (weekdays, months, seasons, markers, units, eras) carries none at all. That is the fact a reader should hold onto, because the locale's neighbour is Spanish and a great many Asturian surfaces look like Spanish surfaces with the endings changed. Where this page says a word is attested. It means the word is listed in the *Diccionariu de la Llingua Asturiana* published by the Academia de la Llingua Asturiana, not that it resembles its Spanish cognate.
+Asturian is the thinnest-sourced of the Ibero-Romance locales here. Almost nothing in its vocabulary files carries a citation: the three Roman-calendar anchors name the Asturian Wikipedia, the night meridiem names the Spanish locale it was copied from. Every other file (weekdays, months, seasons, markers, units, eras) carries none at all. That is the fact a reader should hold onto, because the locale's neighbour is Spanish and a great many Asturian surfaces look like Spanish surfaces with the endings changed. Where this page says a word is attested, it means the word is listed in the *Diccionariu de la Llingua Asturiana* published by the Academia de la Llingua Asturiana, not that it resembles its Spanish cognate.
 
 The other governing fact is that the Unicode day-period table has no Asturian row. Its authority for this language stops at the bare meridiem markers. No time-of-day band ships and `pela mañana`, `pela tarde` and `pela nueche` (the frames the Academia's own dictionary uses in its definitions) are not read as parts of the day. What `pela mañana` does instead is a defect, and it is listed below.
 
@@ -62,7 +62,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## Unchecked and broken citations
 
-Both citations the locale carries hold. The Asturian Wikipedia *Calendariu romanu* contains `calendes`, `nones` and `idus`. The Spanish night-meridiem file that the Asturian one defers to does cite the Spanish academy's `noche` entry for the small-hours usage. The inherited boundary has a source. A source about Spanish.
+Both citations the locale carries hold. The Asturian Wikipedia *Calendariu romanu* contains `calendes`, `nones` and `idus`. The Spanish night-meridiem file that the Asturian one defers to does cite the Spanish academy's `noche` entry for the small-hours usage. The inherited boundary has a source, a source about Spanish.
 
 The Academia de la Llingua Asturiana's dictionary is a POST-driven search with no per-word URL, so headwords are cited here by name rather than by link. Each word named above as attested was looked up individually.
 
@@ -98,11 +98,11 @@ Every one of these is reproduced against the anchor 2017-06-27 13:04 with `extra
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- A date built from two parts loses one of them. Example: `cada mañana` gives cada. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1300](https://github.com/TigreGotico/chronologia/issues/1300): ca, ast: a clock with a fraction before "del dia 14 de març" reads only the hour, today
+- A clock with a fraction before a dated day reads only the hour. Example: `a les diez y cuartu del día 14 de marzu` gives 2026-11-22 10:00, where the test expects 2027-03-14 10:15. [#1300](https://github.com/TigreGotico/chronologia/issues/1300)
 
 ## Checked examples
 

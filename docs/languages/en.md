@@ -40,7 +40,7 @@ The single word `penultimate` is a synonym for the same thing. The vocabulary ci
 
 **`tonight` is a fused word, not a composition.** It ships in its own today-fused day-part table, because it already names today's night band. The plain band word `night` is different: it composes with the clock's own future-roll rule.
 
-**Non-Gregorian calendars, eras and deep time** all ship: Hebrew and Islamic civil months, French Republican months, Japanese nengō era names, Egyptian and other regnal series and Attic archon years. The Roman Kalends-Nones-Ides counting system ships too, with the geological period vocabulary from the Archean to the Holocene. The Anno Mundi, Julian, Unix, Holocene and before-present eras.
+**Non-Gregorian calendars, eras and deep time** all ship: Hebrew and Islamic civil months, French Republican months, Japanese nengō era names, Egyptian and other regnal series and Attic archon years. The Roman Kalends-Nones-Ides counting system ships too. So does the geological period vocabulary from the Archean to the Holocene. The Anno Mundi, Julian, Unix, Holocene and before-present eras ship as well.
 
 **Jurisdiction-aware business days** ship for the United States, Great Britain, Germany, France, Spain, Portugal and Brazil.
 
@@ -74,121 +74,127 @@ English refusals are the most thoroughly argued in the project, because the Engl
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#990](https://github.com/TigreGotico/chronologia/issues/990): A common word reads as a time word: en "fall", da "går" and "morgen", oc "ora", pl "lata"
+**Clocks and parts of the day**
 
-- [#995](https://github.com/TigreGotico/chronologia/issues/995): extract_timespans disagrees with extract_timespan: a lost char_span, "jul", and a clock
+- A date built from two parts loses one of them. Example: `july the fourth` gives 2027-07-01, where the test expects 2027-07-04. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#997](https://github.com/TigreGotico/chronologia/issues/997): A part of the day with no day word answers the band that has passed
+- A day number or an offset before a part of the day and a clock loses the day. Example: `in 2 days evening at 8` gives 2026-11-22 20:00, where the test expects 2026-11-24 20:00. [#1325](https://github.com/TigreGotico/chronologia/issues/1325)
 
-- [#1001](https://github.com/TigreGotico/chronologia/issues/1001): Lone spoken hour: a part of the day in another clause keeps the hour as spoken
+- A number with a leading zero before `minutes` reads as a clock. Example: `0030 minutes` gives no reading. [#1331](https://github.com/TigreGotico/chronologia/issues/1331)
 
-- [#1002](https://github.com/TigreGotico/chronologia/issues/1002): en "at 8 tonight" gives 08:00 tomorrow, not 20:00 tonight
+- A part of the day in another clause leaves a lone hour as spoken. Example: `at 8 or at 9 pm` gives 2017-06-28 08:00, where the test expects 2017-06-27 20:00. [#1001](https://github.com/TigreGotico/chronologia/issues/1001)
 
-- [#1004](https://github.com/TigreGotico/chronologia/issues/1004): A unit word with no number counts as one: "how many days before christmas" gives 24 December
+- A clock after `for`, `to` or `per` is not read, and a reschedule phrase reads the old time. Example: `move my alarm to 9` gives no reading. [#1008](https://github.com/TigreGotico/chronologia/issues/1008)
 
-- [#1008](https://github.com/TigreGotico/chronologia/issues/1008): A clock after for, to, per or para is not read, and a reschedule phrase reads the old time
+- A range whose end is a movable feast, a weekday date or a clocked date reads a year long. Example: `from early march to easter` gives 2027-03-29 00:00, where the test expects 2026-04-06 00:00. [#1309](https://github.com/TigreGotico/chronologia/issues/1309)
 
-- [#1013](https://github.com/TigreGotico/chronologia/issues/1013): en: an infinitive "to" before "tomorrow morning" opens a range
+- A part of the day with no day word answers the band that has already passed. Example: `let the upcoming alarm come back each morning` gives 2017-06-27 06:00, where the test expects 2017-06-28. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- Two parts of the day joined by `and` read as the first band and leave the hour behind. Example: `morning and evening at 8` gives 2026-09-25 20:00, where the test expects 2026-09-26 08:00. [#1049](https://github.com/TigreGotico/chronologia/issues/1049)
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- A plural part of the day before an alarm loses the hour. Example: `good night, set an alarm at 7` gives 2026-09-25 21:00, where the test expects 2026-09-25 19:00. [#1051](https://github.com/TigreGotico/chronologia/issues/1051)
 
-- [#1040](https://github.com/TigreGotico/chronologia/issues/1040): A range of amounts before a range of years gives a year from the first range
+- `last night` with a clock reads the wrong night. Example: `last night at 11` gives 2026-11-22 23:00, where the test expects 2026-11-21 23:00. [#1333](https://github.com/TigreGotico/chronologia/issues/1333)
 
-- [#1041](https://github.com/TigreGotico/chronologia/issues/1041): A spelled range of units before "ago" gives one point and leaves the first number over
+- A spoken hour with `tonight` reads the next morning, not this evening. Example: `at 8 tonight` gives 2017-06-28 08:00, where the test expects 2017-06-27 20:00. [#1002](https://github.com/TigreGotico/chronologia/issues/1002)
 
-- [#1042](https://github.com/TigreGotico/chronologia/issues/1042): A spelled year before a full stop gives no year when a word starts the next sentence
+- An infinitive `to` before `tomorrow morning` opens a range. Example: `remind me to call the bank tomorrow morning` gives 2017-06-27 06:00, where the test expects 2017-06-28 06:00. [#1013](https://github.com/TigreGotico/chronologia/issues/1013)
 
-- [#1049](https://github.com/TigreGotico/chronologia/issues/1049): en: "mornings and evenings at 8" reads the morning band and leaves the hour behind
+- The minutes after an alarm hour are dropped. Example: `seven oh five` drops the five. [#1058](https://github.com/TigreGotico/chronologia/issues/1058)
 
-- [#1051](https://github.com/TigreGotico/chronologia/issues/1051): en: "good evenings, set an alarm at 7" must keep its hour when "evenings" is a part of the day
+- A list of hours reads the first two numbers as one clock. Example: `alarm at 7, 8 and 9 tonight` gives 2026-11-18 07:08, where the test expects 2026-11-17 19:00. [#1296](https://github.com/TigreGotico/chronologia/issues/1296)
 
-- [#1052](https://github.com/TigreGotico/chronologia/issues/1052): en, pt: a plural part of the day before a clock ("mornings at 8", "nas manhãs às 8") gives no recurrence
+- A list of two days reads as a clock or as the wrong day. Example: `on the 14th and 15th of may` gives 2026-12-14 00:00, where the test expects 2027-05-14 00:00. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
 
-- [#1054](https://github.com/TigreGotico/chronologia/issues/1054): A spelled year range with "the year(s)" and a word after it gives only the first year ("between the years two thousand and two thousand and ten in Europe")
+- The meridiem after an abbreviated hour word is lost. Example: `at 8 hr. pm` gives 2026-11-23 08:00, where the test expects 2026-11-23 20:00. [#1312](https://github.com/TigreGotico/chronologia/issues/1312)
 
-- [#1058](https://github.com/TigreGotico/chronologia/issues/1058): Minutes after an alarm hour are dropped: seven oh five, 7 and 30, pt and es 7 30
+- A range reading crosses a full stop. [#1352](https://github.com/TigreGotico/chronologia/issues/1352)
 
-- [#1079](https://github.com/TigreGotico/chronologia/issues/1079): nl "om 11:00 's nachts" gives 11:00 while "om 11 's nachts" gives 23:00, de "elf Uhr nachts" needs a ruling
+**Dates, ranges and weeks**
 
-- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+- A common word that is no time word reads as a time word. [#990](https://github.com/TigreGotico/chronologia/issues/990)
 
-- [#1097](https://github.com/TigreGotico/chronologia/issues/1097): "before christmas" ends after Christmas Day, not when it starts (fr "avant noël", sv "före jul")
+- A range with a shared month or unit drops the unrelated words from the remainder. Example: `June 5 to 12 yy` gives , where the test expects 'yy'      - yy. [#1351](https://github.com/TigreGotico/chronologia/issues/1351)
 
-- [#1098](https://github.com/TigreGotico/chronologia/issues/1098): A bare "after X" gives no reading since 0.33.5a1, where ruling 33 says it is an open span
+**Offsets, lengths and holidays**
 
-- [#1196](https://github.com/TigreGotico/chronologia/issues/1196): A clock with an offset from a holiday: the readings are missing or in the wrong order ("às 9 uma hora antes do natal" gives 09:00)
+- Text that is no date reads as a date, or the wrong reading wins. Example: `☕ tomorrow` gives , where the test expects '☕'      - ☕. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
-- [#1197](https://github.com/TigreGotico/chronologia/issues/1197): A vague count before a holiday gives the whole day before ("a few hours before christmas" gives 24 December 00:00 to 25 December)
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `an hour before easter` gives 2027-03-27 00:00, where the test expects 2027-03-27 23:00. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
 
-- [#1218](https://github.com/TigreGotico/chronologia/issues/1218): Event summary keeps the article and day word before a day number in en, fr, de and nl
+- A clock with an offset from a holiday gives the wrong reading or the wrong order. Example: `at 9 one hour before christmas` gives 2026-12-24 00:00, where the test expects 2026-12-24 21:00. [#1196](https://github.com/TigreGotico/chronologia/issues/1196)
 
-- [#1240](https://github.com/TigreGotico/chronologia/issues/1240): sv, en: the unit word after "and a quarter" or "and a half" stays in the remainder
+- Jurisdiction holidays raise at the bounds, skip the clock and skip the anchor day. Example: `every holiday in Portugal` gives 2027-01-01 00:00, where the test expects 2026-12-25 00:00. [#1255](https://github.com/TigreGotico/chronologia/issues/1255)
 
-- [#1253](https://github.com/TigreGotico/chronologia/issues/1253): extract_timespan with an aware anchor gives a wrong instant for a span that names a zone
+- A spelled year before a full stop gives no year when a word starts the next sentence. Example: `two thousand. Then we moved` gives no reading. [#1042](https://github.com/TigreGotico/chronologia/issues/1042)
 
-- [#1254](https://github.com/TigreGotico/chronologia/issues/1254): A bare clock with a zone skips the 12-hour rule ("9:30 utc" reads tomorrow 09:30)
+- A vague count before a holiday gives the whole day before. Example: `a few hours before christmas` gives 2026-12-24 00:00, where the test expects 2026-09-25 12:00. [#1197](https://github.com/TigreGotico/chronologia/issues/1197)
 
-- [#1255](https://github.com/TigreGotico/chronologia/issues/1255): Jurisdiction holidays: bounds raise, a clock is not applied, the anchor day is skipped
+- A unit word with no number counts as one. Example: `how many days before christmas` gives 2017-12-24 00:00, where the test expects 2017-12-25 00:00. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
 
-- [#1276](https://github.com/TigreGotico/chronologia/issues/1276): extract_candidates does not raise in raise mode where extract_event does
+- A range of amounts before a range of years gives a year from the first range. [#1040](https://github.com/TigreGotico/chronologia/issues/1040)
 
-- [#1288](https://github.com/TigreGotico/chronologia/issues/1288): "the sixth monday of every month" reads next Monday in extract_timespan and extract_candidates
+- `before christmas` ends after Christmas Day, not when it starts. Example: `before christmas` gives 2026-12-26 00:00, where the test expects 2026-12-25 00:00. [#1097](https://github.com/TigreGotico/chronologia/issues/1097)
 
-- [#1289](https://github.com/TigreGotico/chronologia/issues/1289): "the last business day of every month" reads as FREQ=MONTHLY with the ordinal left over
+- The unit word after `and a quarter` or `and a half` stays in the remainder. Example: `an hour and a quarter of an hour` gives hour. [#1240](https://github.com/TigreGotico/chronologia/issues/1240)
 
-- [#1290](https://github.com/TigreGotico/chronologia/issues/1290): "the 3rd weekday of march" reads all of March in extract_timespan
+- A clock with `a quarter past` before a date leaves words in the remainder. Example: `at a quarter past ten on the 14th of march` gives at a. [#1301](https://github.com/TigreGotico/chronologia/issues/1301)
 
-- [#1291](https://github.com/TigreGotico/chronologia/issues/1291): de: "jeden Montag von Juni bis August" reads "bis August" as UNTIL and leaves "von Juni"
+**Recurrence**
 
-- [#1296](https://github.com/TigreGotico/chronologia/issues/1296): en: "alarm at 7, 8 and 9 tonight" reads the list "7, 8" as the clock 7:08
+- An until bound in a recurrence resolves on the anchor day. Example: `every monday at 9 until 5` gives (), where the test expects (9,)      Right contains one more item: 9   Use -v to get more diff. [#1316](https://github.com/TigreGotico/chronologia/issues/1316)
 
-- [#1297](https://github.com/TigreGotico/chronologia/issues/1297): Event summaries turn a spelled numeral into a digit ("a second meeting" gives "2 meeting")
+- A part of the day before the clock is lost in a daily rule. Example: `every evening at 8` gives no reading. [#1324](https://github.com/TigreGotico/chronologia/issues/1324)
 
-- [#1301](https://github.com/TigreGotico/chronologia/issues/1301): en: "at a quarter past ten on the 14th of march" leaves "at a" in the remainder
+- A plural part of the day before a clock gives no recurrence. Example: `mornings at 8` gives no reading. [#1052](https://github.com/TigreGotico/chronologia/issues/1052)
 
-- [#1303](https://github.com/TigreGotico/chronologia/issues/1303): "the first 5 business days of the month" reads no span
+- A clock range in a recurrence reads the end hour or a wrong minute. Example: `every monday 9 to 5` gives ((4,), (51,)), where the test expects ((9,), ())      At index 0 diff: (4,) != (9,)   Use -v to get more diff. [#1315](https://github.com/TigreGotico/chronologia/issues/1315)
 
-- [#1304](https://github.com/TigreGotico/chronologia/issues/1304): A cardinal before a singular business-day noun ("the 3 business day of the month") reads nothing
+- A date or an ordinal weekday next to a frequency word is dropped. Example: `the 15th of february every year` gives a yearly rule and drops the date. [#1320](https://github.com/TigreGotico/chronologia/issues/1320)
 
-- [#1309](https://github.com/TigreGotico/chronologia/issues/1309): A range whose end is a movable feast, a weekday date or a clocked date reads a year long
+- A weekday or clock range in a recurrence loses its end. Example: `every monday to friday 9 am` gives ((None, 0),), where the test expects ((None, 0), (None, 1), (None, 2), (None, 3), (None, 4)). [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
 
-- [#1310](https://github.com/TigreGotico/chronologia/issues/1310): Working-day and day-of-month recurrence heads read as every day: "cada dia útil", "día laborable", "cada dia 15"
+- A range after a recurring weekday reads its end as an until bound and leaves the start. Example: `every monday from june to august` gives 2026-11-23 00:00, where the test expects 2027-06-07 00:00. [#1291](https://github.com/TigreGotico/chronologia/issues/1291)
 
-- [#1311](https://github.com/TigreGotico/chronologia/issues/1311): A list of two days reads as a clock or the wrong day: es "el 14 y 15 de mayo" gives 1 May 14:15
+**Events, zones, business days and the API**
 
-- [#1312](https://github.com/TigreGotico/chronologia/issues/1312): Meridiem after an abbreviated hour word is lost: "um 8 Std. abends", "at 8 hr. pm", pt "às 5 pm" read as morning
+- The candidate reader does not raise in raise mode, where the event reader does. [#1276](https://github.com/TigreGotico/chronologia/issues/1276)
 
-- [#1315](https://github.com/TigreGotico/chronologia/issues/1315): A clock range in a recurrence reads the end hour or a wrong minute: pt "das 9 às 17" gives 17:00, en "9 to 5" gives 04:51
+- A bare `after X` gives no reading, where ruling 33 says it is an open span. Example: `after monday` gives no reading. [#1098](https://github.com/TigreGotico/chronologia/issues/1098)
 
-- [#1316](https://github.com/TigreGotico/chronologia/issues/1316): An until bound in a recurrence resolves on the anchor day: "every monday at 9 until 5 pm" never occurs, de "bis Ende Juni" ends before the anchor
+- The day of a day word reads as a length. Example: `the day after tomorrow` gives 1440 min with remainder 'after tomorrow', where the test expects nothing. [#1326](https://github.com/TigreGotico/chronologia/issues/1326)
 
-- [#1320](https://github.com/TigreGotico/chronologia/issues/1320): A date or ordinal weekday next to a frequency word is dropped: "the 15th of february every year" gives FREQ=YEARLY, "every month on the first friday" gives BYMONTHDAY=1
+- A year-less range that ends on 29 February spans into the next leap year. Example: `from 1 february to 29 february` gives 2027-02-01 00:00, where the test expects 2028-02-01 00:00. [#1330](https://github.com/TigreGotico/chronologia/issues/1330)
 
-- [#1321](https://github.com/TigreGotico/chronologia/issues/1321): Weekday and clock ranges in a recurrence: nl "tot en met vrijdag" differs from "t/m", "to friday 9 am" loses the range, "until 5/12" loses the date
+- A bare clock with a zone skips the 12-hour rule. Example: `9:30 utc` gives 2017-06-28 09:30 UTC, where the test expects 2017-06-27 21:30 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
 
-- [#1324](https://github.com/TigreGotico/chronologia/issues/1324): A part of the day before the clock is lost in a daily rule: en "evening at 8 every day" fires at 08:00
+- The sixth weekday of every month reads as the next such weekday. Example: `the sixth monday of every month` reads as the next Monday. [#1288](https://github.com/TigreGotico/chronologia/issues/1288)
 
-- [#1325](https://github.com/TigreGotico/chronologia/issues/1325): A day number or an offset before a part of the day and a clock loses the day: "the 23rd in the evening at 8", "in 2 days evening at 8"
+- The last business day of every month reads as a plain monthly rule. Example: `the last business day of every month` gives FREQ=MONTHLY. [#1289](https://github.com/TigreGotico/chronologia/issues/1289)
 
-- [#1326](https://github.com/TigreGotico/chronologia/issues/1326): extract_duration reads the "day" of a day word as a length: "at 9 the day before last" gives 9 days
+- The nth weekday of a month reads as the whole month. Example: `the 3rd weekday of march` reads all of March. [#1290](https://github.com/TigreGotico/chronologia/issues/1290)
 
-- [#1328](https://github.com/TigreGotico/chronologia/issues/1328): An impossible day read apart from its month is dropped and the rest still reads: "in february on the 30th", "annually on the 32nd of january"
+- The first few business days of a month read no span. Example: `the last 3 business days of the month` gives no reading. [#1303](https://github.com/TigreGotico/chronologia/issues/1303)
 
-- [#1330](https://github.com/TigreGotico/chronologia/issues/1330): A year-less range that ends on 29 February spans into the next leap year: "from 1 february to 29 february" gives 2027-02-01 .. 2028-03-01
+- An impossible day read apart from its month is dropped, and the rest still reads. Example: `in february on the 30th` gives February 2018 with `on the 30th` left over, where the test expects no date. [#1328](https://github.com/TigreGotico/chronologia/issues/1328)
 
-- [#1331](https://github.com/TigreGotico/chronologia/issues/1331): A leading-zero number before "minutes" reads as a military clock: "0030 minutes" gives 00:30 and no length
+- The candidate list and the single-span reader read a clock with a length differently. Example: `at 9 am for 2 hours` gives 2017-06-27 09:01, where the test expects 2017-06-27 11:00. [#1350](https://github.com/TigreGotico/chronologia/issues/1350)
 
-- [#1333](https://github.com/TigreGotico/chronologia/issues/1333): en: "last night at 11" reads 23:00 tonight, and "at 11 last night" reads 11:00 today
+- The candidate list and the single-span reader disagree on one phrase. [#995](https://github.com/TigreGotico/chronologia/issues/995)
 
-- [#1350](https://github.com/TigreGotico/chronologia/issues/1350): Candidate list and extract_timespan read a clock with a length differently: de "um 9 Uhr für 2 Stunden"
+- A night clock with minutes gives the morning hour, where the same clock without minutes gives the evening hour. [#1079](https://github.com/TigreGotico/chronologia/issues/1079)
 
-- [#1351](https://github.com/TigreGotico/chronologia/issues/1351): A range with a shared month or unit drops the unrelated words from the remainder: en "please 5-12 June"
+- The event summary keeps the article and the day word before a day number. Example: `meeting on the day 5 of december` gives meeting on the day, where the test expects 'meeting'      - meeting. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
 
-- [#1352](https://github.com/TigreGotico/chronologia/issues/1352): A range reading crosses a full stop: de "am Montag. Der Bericht ist bis Freitag"
+- A span that names a zone gives a wrong instant under an aware anchor. [#1253](https://github.com/TigreGotico/chronologia/issues/1253)
+
+- The event summary turns a spelled numeral into a digit. Example: `a second meeting tomorrow` gives 2 meeting, where the test expects 'a second meeting'      - a second meeting. [#1297](https://github.com/TigreGotico/chronologia/issues/1297)
+
+- A cardinal before a singular business-day noun reads nothing. Example: `pay rent on the 3 business day of the month` gives no reading. [#1304](https://github.com/TigreGotico/chronologia/issues/1304)
+
+- A working-day or day-of-month recurrence reads as every day. Example: `every working day at 9` gives no reading. [#1310](https://github.com/TigreGotico/chronologia/issues/1310)
 
 ## Checked examples
 

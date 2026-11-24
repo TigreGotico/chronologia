@@ -36,7 +36,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The relative determiners** follow the noun (`el dilluns passat`, `la setmana que ve`, `el dilluns vinent`) which is why the locale sets `marker_position: post`.
 
-**Ranges** carry the fullest citation record in the locale. The `from` lead is `de`, `des de`, `del` or `a partir de` and the `to` boundary is `a`, `fins a`, `fins` or `al`. The vocabulary attributes each one to a specific IEC work. `de` and `a` are correlative point-of-departure and point-of-arrival prepositions in DIEC2. `fins` is a limit of time in DIEC2 and in the *Gramàtica essencial de la llengua catalana* (GEIEC). `a partir de` goes to Optimot. The obligatory contractions `del` and `al` to the IEC *Gramàtica de la llengua catalana*, section 16.3. The from-lead matters structurally: `a` is a hyper-common preposition. A bare `A a B` is only trusted as a range when a from-lead is present. `entre … i …` is the other frame, cited to DIEC2 under *entre*.
+**Ranges** carry the fullest citation record in the locale. The `from` lead is `de`, `des de`, `del` or `a partir de` and the `to` boundary is `a`, `fins a`, `fins` or `al`. The vocabulary attributes each one to a specific IEC work. DIEC2 gives `de` and `a` as correlative point-of-departure and point-of-arrival prepositions. DIEC2 and the *Gramàtica essencial de la llengua catalana* (GEIEC) give `fins` as a limit of time. Optimot covers `a partir de`. The IEC *Gramàtica de la llengua catalana*, section 16.3, covers the obligatory contractions `del` and `al`. The from-lead matters structurally: `a` is a hyper-common preposition. A bare `A a B` is only trusted as a range when a from-lead is present. `entre … i …` is the other frame, cited to DIEC2 under *entre*.
 
 **The clock** subtracts with `menys` (`les quatre menys quart` is 03:45) and adds with `i`: `les vuit i mitja`, `les vuit i quart`. `migdia` and `mitjanit` are points.
 
@@ -62,7 +62,7 @@ The weekday and month names carry no recorded source, and neither do the seasons
 
 The Roman calendar anchors rest on a Wikipedia article, weaker than the IEC works the rest of the locale is built on.
 
-The DIEC2 citations name entries on a site that serves its dictionary bodies from a script rather than in the page. The entries are not quoted as written text. Where the same words appear in the *Gran diccionari de la llengua catalana*. That dictionary corroborates them.
+The DIEC2 citations name entries on a site that serves its dictionary bodies from a script rather than in the page. The entries are not quoted as written text. The *Gran diccionari de la llengua catalana* corroborates them where the same words appear.
 
 It glosses *entre* as "en el temps que separa dos moments, dos esdeveniments". It glosses *meitat* as "cadascuna de les dues parts iguals … en què és dividit un tot". The Optimot and *Gramàtica de la llengua catalana* locators are named on trust and are listed here as unchecked.
 
@@ -99,37 +99,45 @@ These are wrong answers, not refusals, and each is reproduced with `extract_time
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1005](https://github.com/TigreGotico/chronologia/issues/1005): The last weekday of a month gives the whole month or the weekday alone: ca, an, fa, kab
+**Clocks and parts of the day**
 
-- [#1009](https://github.com/TigreGotico/chronologia/issues/1009): A plural, adverbial or recurring part of the day is not read, so the next hour reads in the evening
+- A date built from two parts loses one of them. Example: `Toca satanic black metal 2 dies per a aquest divendres` gives 2017-06-30, where the test expects 2017-07-02. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1011](https://github.com/TigreGotico/chronologia/issues/1011): An approximate clock (es-CO tipo, gl sobre, ca cap a) is not read
+- A plural, adverbial or recurring part of the day is not read, so the hour reads in the wrong half. Example: `recorda'm que vagi a la feina els matins a les 8` gives 2017-06-27 20:00, where the test expects 2017-06-28 08:00. [#1009](https://github.com/TigreGotico/chronologia/issues/1009)
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- An approximate clock such as `about nine` is not read. Example: `avisa'm de dilluns a divendres al matí cap a les 7` gives 2017-07-03 00:00, where the test expects 2017-06-28 07:00. [#1011](https://github.com/TigreGotico/chronologia/issues/1011)
 
-- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+- A clock with a dot between hour and minute gives no time. Example: `a les 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- [#1060](https://github.com/TigreGotico/chronologia/issues/1060): pt, nl, it, ca: a clock preposition, a count of hours, a part of the day and a date word leave the part of the day in the event summary ("às duas horas à tarde amanhã")
+- A count later in the sentence drops the clock. Example: `demà a les 3 de la tarda compra les 3 coses` gives 2026-09-26 00:00, where the test expects 2026-09-26 15:00. [#1199](https://github.com/TigreGotico/chronologia/issues/1199)
 
-- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+- A day-labelled range start next to a clock with a day part reads as an hour. Example: `entre el dia 10 i les 8 del vespre` gives 2026-01-30 22:00, where the test expects 2026-02-10 00:00. [#1229](https://github.com/TigreGotico/chronologia/issues/1229)
 
-- [#1199](https://github.com/TigreGotico/chronologia/issues/1199): es, gl, ca: a count later in the sentence drops the clock ("mañana a las 3 de la tarde compra las 3 cosas" gives 00:00)
+- A clock with a fraction before a dated day reads only the hour. Example: `a les deu i quart del dia 14 de març` gives 2026-11-22 10:00, where the test expects 2027-03-14 10:15. [#1300](https://github.com/TigreGotico/chronologia/issues/1300)
 
-- [#1225](https://github.com/TigreGotico/chronologia/issues/1225): Catalan range with the lead "des del" reads the wrong span
+**Dates, ranges and weeks**
 
-- [#1229](https://github.com/TigreGotico/chronologia/issues/1229): es, gl, it, ca: a day-labelled range start next to a clock with a day part reads as an hour
+- The range lead `des del` reads the wrong span. Example: `des del 3 fins al 5 de març` gives 2025-12-01 00:00, where the test expects 2026-03-03 00:00. [#1225](https://github.com/TigreGotico/chronologia/issues/1225)
 
-- [#1230](https://github.com/TigreGotico/chronologia/issues/1230): gl, ca, pt: a day range with a relative-month end reads as the whole month
+- The last weekday of a month gives the whole month, or the weekday alone. Example: `el darrer dilluns de març` gives 2018-03-01 00:00, where the test expects 2017-03-27 00:00. [#1005](https://github.com/TigreGotico/chronologia/issues/1005)
 
-- [#1254](https://github.com/TigreGotico/chronologia/issues/1254): A bare clock with a zone skips the 12-hour rule ("9:30 utc" reads tomorrow 09:30)
+- A day range with a relative-month end reads as the whole month. Example: `entre el dia 3 i el 5 del mes que ve` gives 2026-02-01 00:00, where the test expects 2026-02-03 00:00. [#1230](https://github.com/TigreGotico/chronologia/issues/1230)
 
-- [#1300](https://github.com/TigreGotico/chronologia/issues/1300): ca, ast: a clock with a fraction before "del dia 14 de març" reads only the hour, today
+- The indefinite article before a day of a month reads as the first day. Example: `un dia de març` gives 2027-03-02 00:00, where the test expects 2027-04-01 00:00. [#1306](https://github.com/TigreGotico/chronologia/issues/1306)
 
-- [#1306](https://github.com/TigreGotico/chronologia/issues/1306): es, pt, de, nl, ca: the indefinite article in "un día de marzo" reads as "the 1st day of march"
+**Offsets, lengths and holidays**
 
-- [#1310](https://github.com/TigreGotico/chronologia/issues/1310): Working-day and day-of-month recurrence heads read as every day: "cada dia útil", "día laborable", "cada dia 15"
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `un quart d'hora abans de nadal` gives 2026-12-24 00:00, where the test expects 2026-12-24 23:45. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
+
+**Events, zones, business days and the API**
+
+- A clock preposition, a count of hours or a date word leaves the part of the day in the event summary. Example: `a dues hores a la tarda demà` gives 2026-01-31 02:00, where the test expects 2026-01-31 14:00. [#1060](https://github.com/TigreGotico/chronologia/issues/1060)
+
+- A bare clock with a zone skips the 12-hour rule. Example: `abans de les 9:30 utc` gives 2017-06-28 09:31 UTC, where the test expects 2017-06-27 21:31 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
+
+- A working-day or day-of-month recurrence reads as every day. Example: `cada dia laborable a les 9` gives DAILY, where the test expects WEEKLY. [#1310](https://github.com/TigreGotico/chronologia/issues/1310)
 
 ## Checked examples
 

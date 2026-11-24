@@ -86,15 +86,15 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#993](https://github.com/TigreGotico/chronologia/issues/993): A next or last word beside a season, month or week is left over: an, ca, da, hu, kab, nl
+- The sublative case and the `-kor` clock are not read. Example: `kérek egy új időzítőt fél órára` gives no reading. [#1020](https://github.com/TigreGotico/chronologia/issues/1020)
 
-- [#1004](https://github.com/TigreGotico/chronologia/issues/1004): A unit word with no number counts as one: "how many days before christmas" gives 24 December
+- A word for next or last beside a season, month or week stays in the remainder. Example: `1999 nyara` gives 1999-01-01 00:00, where the test expects Within(1999-06-01 00:00:00, 1999-06-22 00:00:00). [#993](https://github.com/TigreGotico/chronologia/issues/993)
 
-- [#1020](https://github.com/TigreGotico/chronologia/issues/1020): hu: the sublative ("hétre", "öt percre", "fél órára") and "7-kor" are not read
+- Text that is no date reads as a date, or the wrong reading wins. Example: `április 31 8 órakor` gives 20:00 today with `április 31` left over, where the test expects no date. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- A unit word with no number counts as one. Example: `ezen a héten` gives 10080 min with remainder 'ezen', where the test expects nothing. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
 
 ## Checked examples
 

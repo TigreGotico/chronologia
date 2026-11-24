@@ -12,7 +12,7 @@ This page records where each construction of the Serbian (`sr`) locale comes fro
 
 Serbian is written in two scripts, and the locale reads both. Every vocabulary file lists the Latin and the Cyrillic surface side by side. `dva sata` and `два сата` are the same phrase to the extractor and neither script is the privileged one.
 
-Two facts decide most of what follows. The first is the paucal: a Serbian noun counted by two, three or four stands in the **genitive singular**. Only from five upward in the genitive plural. Reading a declension table carelessly gets this backwards, labelling the genitive plural as the paucal form.
+Two facts decide most of what follows. The first is the paucal: a Serbian noun counted by two, three or four stands in the **genitive singular**, only from five upward in the genitive plural. Reading a declension table carelessly gets this backwards, labelling the genitive plural as the paucal form.
 
 Every unit file here is built as `{1: nominative singular, 2–4: genitive singular, 5+: genitive plural}` for that reason. The second is `nedelja`, which names both Sunday and (in some sources) the week. That ambiguity is resolved by construction rather than by guessing, and it is the single largest source of deliberate refusals in this locale.
 

@@ -10,7 +10,7 @@ see: docs/languages/index.md, docs/extraction.md
 
 This page records where each construction of the Filipino (`fil`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_filipino` module in `chronologia/extract/`.
 
-Filipino carries two complete numeral systems side by side (the native Austronesian one and a Spanish-derived one) and they are split by domain rather than by register. The clock is where this shows most plainly: it has a Spanish-lexified form, `alas otso y medya ng gabi` for 20:30. A native ordinal form, `limang minuto makalipas ang ika-anim ng umaga` for 06:05. Both ship, and the fold in `chronologia/extract/numfold_filipino.py` reads each in its own vocabulary.
+Filipino carries two complete numeral systems side by side (the native Austronesian one and a Spanish-derived one) and they are split by domain rather than by register. The clock is where this shows most plainly: it has a Spanish-lexified form, `alas otso y medya ng gabi` for 20:30, and a native ordinal form, `limang minuto makalipas ang ika-anim ng umaga` for 06:05. Both ship, and the fold in `chronologia/extract/numfold_filipino.py` reads each in its own vocabulary.
 
 The locale code is `fil` rather than `tl` because that is the code CLDR populates. A lookup for `tl` in CLDR's supplemental day-period table returns nothing. `fil` is present. For the closed grammatical and temporal vocabulary this locale covers, Filipino and Tagalog are effectively the same language.
 

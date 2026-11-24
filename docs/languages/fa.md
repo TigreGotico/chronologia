@@ -71,23 +71,21 @@ The short numeric CLDR date pattern for `fa` (`y/M/d`) orders year first, while 
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#989](https://github.com/TigreGotico/chronologia/issues/989): fa: the verb prefix "می" reads as May, and "سه شنبه" reads as Saturday
+- Compound numbers lose the tens, and a clock loses the hour or the night. Example: `یک تایمر ده دقیقه‌ای بگذار` gives no reading. [#1018](https://github.com/TigreGotico/chronologia/issues/1018)
 
-- [#992](https://github.com/TigreGotico/chronologia/issues/992): Day words and counted offsets with no reading: en "today's", oc "nuèch", an, eu, kab, fi
+- A digit clock written with a space reads only the hour. Example: `در ساعت 10 30` gives 2017-06-27 22:00, where the test expects 2017-06-27 22:30. [#1012](https://github.com/TigreGotico/chronologia/issues/1012)
 
-- [#1005](https://github.com/TigreGotico/chronologia/issues/1005): The last weekday of a month gives the whole month or the weekday alone: ca, an, fa, kab
+- A verb prefix reads as a month name, or a weekday reads as another day. Example: `دمای هوا صبح دوشنبه چند درجه می شود` gives 2017-06-27 01:00, where the test expects 2017-07-03. [#989](https://github.com/TigreGotico/chronologia/issues/989)
 
-- [#1012](https://github.com/TigreGotico/chronologia/issues/1012): A digit clock written with a space ("10 30") reads only the hour
+- The last weekday of a month gives the whole month, or the weekday alone. Example: `آخرین دوشنبه مارس` gives 2018-03-01 00:00, where the test expects 2017-03-27 00:00. [#1005](https://github.com/TigreGotico/chronologia/issues/1005)
 
-- [#1018](https://github.com/TigreGotico/chronologia/issues/1018): fa: compound numbers lose the tens, an adjectival length is not read, and clocks lose the hour or the night
+- Text that is no date reads as a date, or the wrong reading wins. Example: `یک ساعت و پنجاه و هفت و نیم دقیقه طول می` gives May 2018 with the length words left over, where the test expects no date. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- A day word or a counted offset gives no reading. Example: `هفته اول ژوئیه` gives 2017-01-02 00:00, where the test expects 2017-07-03. [#992](https://github.com/TigreGotico/chronologia/issues/992)
 
-- [#1204](https://github.com/TigreGotico/chronologia/issues/1204): extract_duration: a decimal count gives no length ("1.5 horas", "7.5 segundos")
-
-- [#1345](https://github.com/TigreGotico/chronologia/issues/1345): fa: a clock with minutes after "و" reads only the hour ("ساعت ده و پانزده دقیقه")
+- A decimal count gives no length. Example: `7.5 ثانیه` gives no reading. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
 
 ## Checked examples
 

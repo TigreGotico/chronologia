@@ -42,7 +42,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Fuzzy month parts** are `inizio`, `metà` and `fine`, cutting the month into thirds.
 
-**Quarters, ISO weeks, decades and eras.** `il primo trimestre 2020`, `settimana 12`, `gli anni 80` and `44 a.C.` resolve, along with an AD marker, a before-present marker. The Julian, Unix, Anno Mundi and Holocene era prefixes.
+**Quarters, ISO weeks, decades and eras.** `il primo trimestre 2020`, `settimana 12`, `gli anni 80` and `44 a.C.` resolve. An AD marker and a before-present marker resolve too. So do the Julian, Unix, Anno Mundi and Holocene era prefixes.
 
 **The Roman calendar** is unusually complete here. Both the Latin classical forms and the Italian vernacular ones (`calende`, `none`, `idi`) ship, cited to the Italian Wikipedia article *Calendario romano*. The grammar carries the full `ante diem` and `pridie` counting orders, not just the bare anchor day. `le idi di marzo` resolves.
 
@@ -69,33 +69,41 @@ The weekday and month names carry no recorded source.
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1008](https://github.com/TigreGotico/chronologia/issues/1008): A clock after for, to, per or para is not read, and a reschedule phrase reads the old time
+**Clocks and parts of the day**
 
-- [#1010](https://github.com/TigreGotico/chronologia/issues/1010): A weekday range or list followed by a clock drops the clock or picks a past day
+- A clock form reads wrong or not at all. Example: `le tre` gives no reading. [#1032](https://github.com/TigreGotico/chronologia/issues/1032)
 
-- [#1032](https://github.com/TigreGotico/chronologia/issues/1032): Clock forms read wrong or not at all: "3 30 pm", "07.00 Uhr", "24:00", nl "tien over half drie", it "le tre", ar "الثالثة والثلث"
+- A date built from two parts loses one of them. Example: `il 3 novembre alle 5` gives 2026-11-03 00:00, where the test expects 2026-11-03 05:00. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- A clock after `for`, `to` or `per` is not read, and a reschedule phrase reads the old time. Example: `imposta una sveglia per le 7` gives no reading. [#1008](https://github.com/TigreGotico/chronologia/issues/1008)
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- A part of the day said alone gives no reading. Example: `stasera` gives no reading. [#1103](https://github.com/TigreGotico/chronologia/issues/1103)
 
-- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+- A weekday range or list followed by a clock drops the clock or picks a past day. [#1010](https://github.com/TigreGotico/chronologia/issues/1010)
 
-- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+- A clock with a dot between hour and minute gives no time. Example: `alle 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- [#1103](https://github.com/TigreGotico/chronologia/issues/1103): A part of the day said alone gives no reading (pt "tarde", "noite", it "stasera")
+- A day-labelled range start next to a clock with a day part reads as an hour. Example: `tra il giorno 10 e le 8 di sera` gives 2026-01-30 22:00, where the test expects 2026-02-10 00:00. [#1229](https://github.com/TigreGotico/chronologia/issues/1229)
 
-- [#1229](https://github.com/TigreGotico/chronologia/issues/1229): es, gl, it, ca: a day-labelled range start next to a clock with a day part reads as an hour
+- A list of two days reads as a clock or as the wrong day. Example: `il 14 e 15 maggio` gives 2027-05-01 14:15, where the test expects 2027-05-14 00:00. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
 
-- [#1234](https://github.com/TigreGotico/chronologia/issues/1234): it: "stasera dieci meno un quarto" gives no reading
+**Dates, ranges and weeks**
 
-- [#1254](https://github.com/TigreGotico/chronologia/issues/1254): A bare clock with a zone skips the 12-hour rule ("9:30 utc" reads tomorrow 09:30)
+- A spelled evening clock with `meno un quarto` gives no reading. Example: `stasera dieci meno un quarto` gives no reading. [#1234](https://github.com/TigreGotico/chronologia/issues/1234)
 
-- [#1310](https://github.com/TigreGotico/chronologia/issues/1310): Working-day and day-of-month recurrence heads read as every day: "cada dia útil", "día laborable", "cada dia 15"
+**Offsets, lengths and holidays**
 
-- [#1311](https://github.com/TigreGotico/chronologia/issues/1311): A list of two days reads as a clock or the wrong day: es "el 14 y 15 de mayo" gives 1 May 14:15
+- Text that is no date reads as a date, or the wrong reading wins. Example: `il 3 alle 5` gives 2026-10-17 17:00, where the test expects 2026-11-03 05:00. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
+
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `ricordami un'ora prima di capodanno` gives 2026-12-31 00:00, where the test expects 2026-12-31 23:00. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
+
+**Events, zones, business days and the API**
+
+- A bare clock with a zone skips the 12-hour rule. Example: `prima delle 9:30 utc` gives 2017-06-28 09:31 UTC, where the test expects 2017-06-27 21:31 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
+
+- A working-day or day-of-month recurrence reads as every day. Example: `ogni giorno lavorativo alle 9` gives DAILY, where the test expects WEEKLY. [#1310](https://github.com/TigreGotico/chronologia/issues/1310)
 
 ## Checked examples
 

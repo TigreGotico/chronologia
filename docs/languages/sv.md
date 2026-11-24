@@ -70,17 +70,19 @@ Only the day parts, the named days and `sista` carry recorded sources. The weekd
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1025](https://github.com/TigreGotico/chronologia/issues/1025): sv: "i morgon bitti" loses "bitti", and "till i morgon" reads as the morning
+- A morning word loses its second word, and a phrase reads as the morning. Example: `väck mig i morgon bitti` gives 2017-06-28 00:00, where the test expects Within(2017-06-28 04:00:00, 2017-06-28 12:00:00). [#1025](https://github.com/TigreGotico/chronologia/issues/1025)
 
-- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+- The unit word after `and a quarter` or `and a half` stays in the remainder. Example: `två timmar och en kvart` gives kvart. [#1240](https://github.com/TigreGotico/chronologia/issues/1240)
 
-- [#1097](https://github.com/TigreGotico/chronologia/issues/1097): "before christmas" ends after Christmas Day, not when it starts (fr "avant noël", sv "före jul")
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `en kvart före jul` gives 2026-12-24 00:00, where the test expects 2026-12-24 23:45. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
 
-- [#1211](https://github.com/TigreGotico/chronologia/issues/1211): extract_duration: et "poolteist", hu "hét", kab "tasint" and sv "minuters" give no length
+- `before christmas` ends after Christmas Day, not when it starts. Example: `före jul` gives 2026-12-26 00:00, where the test expects 2026-12-25 00:00. [#1097](https://github.com/TigreGotico/chronologia/issues/1097)
 
-- [#1240](https://github.com/TigreGotico/chronologia/issues/1240): sv, en: the unit word after "and a quarter" or "and a half" stays in the remainder
+- The candidate list and the single-span reader disagree on one phrase. [#995](https://github.com/TigreGotico/chronologia/issues/995)
+
+- Some number words give no length. Example: `starta en 9 minuters timer` gives no reading. [#1211](https://github.com/TigreGotico/chronologia/issues/1211)
 
 ## Checked examples
 

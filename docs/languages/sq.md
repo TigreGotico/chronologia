@@ -10,7 +10,7 @@ see: docs/languages/index.md, docs/extraction.md
 
 This page records where each construction of the Albanian (`sq`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by its own `numfold_albanian` module in `chronologia/extract/`.
 
-Albanian marks definiteness as a suffix on the noun (`ditë` is "day", `dita` "the day") and the form a temporal phrase uses is not a stylistic choice. It is selected by whatever governs the noun. CLDR's own relative-time patterns pin down which form each construction takes. That is what the vocabulary encodes: bare indefinite after `këtë` and `çdo`, ablative after `pas`, indefinite plural or ablative after `më parë` and `para`. The definite accusative only in the fused `e kaluar` / `e ardhshme` "last" and "next" phrases on week and month.
+Albanian marks definiteness as a suffix on the noun (`ditë` is "day", `dita` "the day") and the form a temporal phrase uses is not a stylistic choice. It is selected by whatever governs the noun. CLDR's own relative-time patterns pin down which form each construction takes. That is what the vocabulary encodes: bare indefinite after `këtë` and `çdo`, ablative after `pas`, indefinite plural or ablative after `më parë` and `para`, and the definite accusative only in the fused `e kaluar` / `e ardhshme` "last" and "next" phrases on week and month.
 
 The clock splits by construction. Half past and quarter past name the **current** hour (`7 e gjysmë` is 7:30, `dy e një çerek` is 2:15) while quarter to counts back from the **coming** one with `pa`, "minus": `tre pa çerek` is 2:45. Away from the quarter marks Albanian does not use an idiom at all. It states the digits, `7 e 25 e mëngjesit` for 7:25 in the morning.
 

@@ -34,7 +34,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The clock** reads `klukkan` (literally "the clock") or its abbreviation `kl.` as the "at" marker. Between a minute count and the direction word, the optional `mínútur` is accepted: `fimmtán mínútur yfir eitt` is 01:15. The half-hour direction comes from Wiktionary's appendix on telling time in Icelandic, at the 1:30 row, `kortér` and both directional prepositions come from the `kortér` entry itself.
 
-**Day parts** take their band boundaries from the CLDR 47 day-period rule set for `is`, transcribed in `chronologia/dayparts.py`. Their surfaces from the CLDR period names with declensions from Wiktionary. The afternoon is a case worth noting: CLDR's wide name `eftir hádegi` is two words, so the single-token surface shipped is the abbreviated `síðdegis`.
+**Day parts** take their band boundaries from the CLDR 47 day-period rule set for `is`, transcribed in `chronologia/dayparts.py`, and their surfaces from the CLDR period names with declensions from Wiktionary. The afternoon is a case worth noting: CLDR's wide name `eftir hádegi` is two words, so the single-token surface shipped is the abbreviated `síðdegis`.
 
 **Named days** are `í dag`, `í gær`, `á morgun` and `í fyrradag`, each a Wiktionary entry.
 

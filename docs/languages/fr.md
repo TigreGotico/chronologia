@@ -78,43 +78,51 @@ The weekday and month names carry no recorded source at all.
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1004](https://github.com/TigreGotico/chronologia/issues/1004): A unit word with no number counts as one: "how many days before christmas" gives 24 December
+**Clocks and parts of the day**
 
-- [#1026](https://github.com/TigreGotico/chronologia/issues/1026): fr, pt: an event with a noun before an evening clock reads a 9.5-hour length ("dîner neuf heures et demie le soir demain")
+- A list of two days reads as a clock or as the wrong day. Example: `le 14 et 15 mai` gives 2027-05-01 15:14, where the test expects 2027-05-14 00:00. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
 
-- [#1028](https://github.com/TigreGotico/chronologia/issues/1028): fr: "réunion de deux heures moins le quart le matin demain" leaves "moins le quart" in the summary
+- An event with a noun before an evening clock reads a length of nine and a half hours. Example: `dîner neuf heures et demie le soir demain` gives 570 min, where the test expects nothing. [#1026](https://github.com/TigreGotico/chronologia/issues/1026)
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- A clock with a dot between hour and minute gives no time. Example: `à 8.15` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+- A length before a part of the day reads as a clock. Example: `demain deux heures de réunion le matin` reads 02:00 as a clock, where a two-hour meeting is meant. [#1298](https://github.com/TigreGotico/chronologia/issues/1298)
 
-- [#1063](https://github.com/TigreGotico/chronologia/issues/1063): fr: extract_duration reads a clock in "heures" as a length ("pour 7 heures demain matin", "à 18 heures")
+**Dates, ranges and weeks**
 
-- [#1075](https://github.com/TigreGotico/chronologia/issues/1075): fr: bare "fr" no longer reads septante, nonante and huitante on the numtag layer
+- Decomposed input reads differently from composed input. Example: `le 5 février 2027` gives 2027-01-01 00:00, where the test expects 2027-02-05 00:00. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
 
-- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+- Bare `fr` does not read the Belgian and Swiss tens. Example: `dans septante-et-un jours` gives a length of 1 day, with `dans septante-et` left over. [#1075](https://github.com/TigreGotico/chronologia/issues/1075)
 
-- [#1097](https://github.com/TigreGotico/chronologia/issues/1097): "before christmas" ends after Christmas Day, not when it starts (fr "avant noël", sv "före jul")
+- The last weekday of next month reads as the last weekday of this month. Example: `le dernier vendredi du mois prochain` gives 2026-10-30 00:00, where the test expects 2026-11-27 00:00. [#1295](https://github.com/TigreGotico/chronologia/issues/1295)
 
-- [#1218](https://github.com/TigreGotico/chronologia/issues/1218): Event summary keeps the article and day word before a day number in en, fr, de and nl
+- A range with a shared month or unit drops the unrelated words from the remainder. Example: `xx du 10h au 12h` gives xx du, where the test expects 'xx'      - xx. [#1351](https://github.com/TigreGotico/chronologia/issues/1351)
 
-- [#1295](https://github.com/TigreGotico/chronologia/issues/1295): es/fr: "el último viernes del mes que viene" reads the last Friday of this month
+**Offsets, lengths and holidays**
 
-- [#1298](https://github.com/TigreGotico/chronologia/issues/1298): fr: "demain deux heures de réunion le matin" reads 02:00
+- Text that is no date reads as a date, or the wrong reading wins. Example: `de 5 à 8 personnes demain` gives 2026-01-05 05:00, where the test expects 2026-01-06 00:00. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
-- [#1311](https://github.com/TigreGotico/chronologia/issues/1311): A list of two days reads as a clock or the wrong day: es "el 14 y 15 de mayo" gives 1 May 14:15
+- A unit word with no number counts as one. Example: `il reste combien de jours avant le 15 mai` gives 2018-05-14 00:00, where the test expects 2018-05-15 00:00. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
 
-- [#1322](https://github.com/TigreGotico/chronologia/issues/1322): Only en reads a repeat count: de "jeden Montag 10 mal", es "cada lunes 10 veces" leave the count unread
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `un quart d'heure avant noël` gives 2026-12-24 00:00, where the test expects 2026-12-24 23:45. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
 
-- [#1350](https://github.com/TigreGotico/chronologia/issues/1350): Candidate list and extract_timespan read a clock with a length differently: de "um 9 Uhr für 2 Stunden"
+- `before christmas` ends after Christmas Day, not when it starts. Example: `avant noël` gives 2026-12-26 00:00, where the test expects 2026-12-25 00:00. [#1097](https://github.com/TigreGotico/chronologia/issues/1097)
 
-- [#1351](https://github.com/TigreGotico/chronologia/issues/1351): A range with a shared month or unit drops the unrelated words from the remainder: en "please 5-12 June"
+**Recurrence**
 
-- [#1353](https://github.com/TigreGotico/chronologia/issues/1353): Decomposed (NFD) input reads differently from composed (NFC) input: fr "ouvrés", pt "março"
+- A repeat count is not read. Example: `toutes les lundis 10 fois` gives None, where the test expects 10. [#1322](https://github.com/TigreGotico/chronologia/issues/1322)
 
-- [#1355](https://github.com/TigreGotico/chronologia/issues/1355): fr "du ... au ..." after another word leaves "du" in the remainder: "réunion du 10h au 12h"
+**Events, zones, business days and the API**
+
+- A phrase with `moins le quart` leaves those words in the event summary. Example: `réunion de deux heures moins le quart le matin demain` leaves `moins le quart` in the event summary. [#1028](https://github.com/TigreGotico/chronologia/issues/1028)
+
+- A clock in `heures` reads as a length. Example: `mets une alarme pour 7 heures demain matin` gives 420 min with remainder 'mets une alarme demain matin', where the test expects nothing. [#1063](https://github.com/TigreGotico/chronologia/issues/1063)
+
+- The event summary keeps the article and the day word before a day number. Example: `réunion le jour 5 décembre` gives réunion le jour, where the test expects 'réunion'      - réunion. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
+
+- The candidate list and the single-span reader read a clock with a length differently. Example: `à 9h pendant 2 heures` gives 2017-06-27 09:01, where the test expects 2017-06-27 11:00. [#1350](https://github.com/TigreGotico/chronologia/issues/1350)
 
 ## Checked examples
 

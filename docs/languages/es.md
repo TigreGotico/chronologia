@@ -40,7 +40,7 @@ A leading `día` joins the consumed text when the date it labels binds, and neve
 
 **Ranges** are the best-documented part of this locale. The `from` lead is `de`, `desde`, `del` or `a partir de`. The `to` boundary is `a`, `al` or `hasta`. The vocabulary cites each one to a specific RAE work.
 
-`de` and `a` are correlative point-of-departure and point-of-arrival prepositions in the *Diccionario panhispánico de dudas*. `desde` and `hasta` come from the *Diccionario de la lengua española*. `a partir de` is a prepositional locution. The obligatory contractions `del` and `al` to RAE-ASALE's *Nueva gramática* and *Ortografía*. The reason the from-lead matters structurally is that `a` is a hyper-common preposition in Spanish. A bare `A a B` is only trusted as a range when a from-lead is present. `entre … y …` is the other frame, cited to RAE's entry for *entre*.
+The *Diccionario panhispánico de dudas* gives `de` and `a` as correlative point-of-departure and point-of-arrival prepositions. The *Diccionario de la lengua española* gives `desde` and `hasta`. `a partir de` is a prepositional locution. RAE-ASALE's *Nueva gramática* and *Ortografía* give the obligatory contractions `del` and `al`. The reason the from-lead matters structurally is that `a` is a hyper-common preposition in Spanish. A bare `A a B` is only trusted as a range when a from-lead is present. `entre … y …` is the other frame, cited to RAE's entry for *entre*.
 
 **The clock** has two toward-the-hour constructions and they are not the same shape. `las cuatro menos cuarto` subtracts from the hour already named. `un cuarto para las cuatro` states the fraction first. Then it names the hour it heads for. Both give 03:45, and the vocabulary keeps `menos` and `para` separate for exactly that reason. Forward is `y`: `las ocho y media`, `las ocho y cuarto`. `mediodía` and `medianoche` are points.
 
@@ -81,65 +81,75 @@ The Roman calendar anchors rest on a Wikipedia article. That source is weaker th
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#997](https://github.com/TigreGotico/chronologia/issues/997): A part of the day with no day word answers the band that has passed
+**Clocks and parts of the day**
 
-- [#1001](https://github.com/TigreGotico/chronologia/issues/1001): Lone spoken hour: a part of the day in another clause keeps the hour as spoken
+- A date built from two parts loses one of them. Example: `cada mañana` gives cada. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1004](https://github.com/TigreGotico/chronologia/issues/1004): A unit word with no number counts as one: "how many days before christmas" gives 24 December
+- A day-labelled range start next to a clock with a day part reads as an hour. Example: `entre el día 3 y las 5 de la tarde` gives 2026-01-30 15:00, where the test expects 2026-02-03 00:00. [#1229](https://github.com/TigreGotico/chronologia/issues/1229)
 
-- [#1009](https://github.com/TigreGotico/chronologia/issues/1009): A plural, adverbial or recurring part of the day is not read, so the next hour reads in the evening
+- A day word with an early, late or part-of-day word gives midnight. Example: `ayer noche` gives 1997-12-31 00:00, where the test expects Within(1997-12-31 18:00:00, 1998-01-01 00:00:00). [#1033](https://github.com/TigreGotico/chronologia/issues/1033)
 
-- [#1010](https://github.com/TigreGotico/chronologia/issues/1010): A weekday range or list followed by a clock drops the clock or picks a past day
+- A count later in the sentence drops the clock. Example: `mañana a las 3 de la tarde compra las 3 cosas` gives 2026-09-26 00:00, where the test expects 2026-09-26 15:00. [#1199](https://github.com/TigreGotico/chronologia/issues/1199)
 
-- [#1011](https://github.com/TigreGotico/chronologia/issues/1011): An approximate clock (es-CO tipo, gl sobre, ca cap a) is not read
+- A list of two days reads as a clock or as the wrong day. Example: `el 14 y 15 de mayo` gives 2027-05-15 00:00, where the test expects 2027-05-14 00:00. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
 
-- [#1014](https://github.com/TigreGotico/chronologia/issues/1014): es, gl: "de mañana" after a noun is read as the morning, and "entre semana" breaks the clock
+- A part of the day with no day word answers the band that has already passed. Example: `necesito que suene una alarma por la mañana` gives 2017-06-27 06:00, where the test expects 2017-06-28. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- [#1032](https://github.com/TigreGotico/chronologia/issues/1032): Clock forms read wrong or not at all: "3 30 pm", "07.00 Uhr", "24:00", nl "tien over half drie", it "le tre", ar "الثالثة والثلث"
+- A day-part phrase after a noun reads as the morning, and a week phrase breaks the clock. Example: `léeme las alarmas de mañana` gives 2017-06-27 06:00, where the test expects 2017-06-28 00:00. [#1014](https://github.com/TigreGotico/chronologia/issues/1014)
 
-- [#1033](https://github.com/TigreGotico/chronologia/issues/1033): A day word with an early, late or part-of-day word gives midnight: "mañana temprano", "morgen früh", "freitag morgen"
+- A clock form reads wrong or not at all. Example: `11 55 de la tarde` gives no reading. [#1032](https://github.com/TigreGotico/chronologia/issues/1032)
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- A clock with a dot between hour and minute gives no time. Example: `a las 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+- A part of the day in another clause leaves a lone hour as spoken. Example: `a las 9, esta noche` gives 2026-01-05 09:00, where the test expects 2026-01-05 21:00. [#1001](https://github.com/TigreGotico/chronologia/issues/1001)
 
-- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+- A plural, adverbial or recurring part of the day is not read, so the hour reads in the wrong half. Example: `recuérdame cada mañana tomar mi medicina a las 8` gives 2017-06-28 00:00, where the test expects 2017-06-28 08:00. [#1009](https://github.com/TigreGotico/chronologia/issues/1009)
 
-- [#1199](https://github.com/TigreGotico/chronologia/issues/1199): es, gl, ca: a count later in the sentence drops the clock ("mañana a las 3 de la tarde compra las 3 cosas" gives 00:00)
+- A weekday range or list followed by a clock drops the clock or picks a past day. Example: `de lunes a viernes a las ocho de la mañana avísame` gives 2017-07-03 00:00, where the test expects 2017-06-28 08:00. [#1010](https://github.com/TigreGotico/chronologia/issues/1010)
 
-- [#1200](https://github.com/TigreGotico/chronologia/issues/1200): A part of the day after a clock or a weekday stays in the remainder (an "de la tardi", es "en la mañana", eu "gauean", bg "по обед")
+- An approximate clock such as `about nine` is not read. Example: `avíseme de lunes a viernes por la mañana tipo 7` gives 2017-07-03 00:00, where the test expects 2017-06-28 07:00. [#1011](https://github.com/TigreGotico/chronologia/issues/1011)
 
-- [#1203](https://github.com/TigreGotico/chronologia/issues/1203): extract_duration: "century" and "millennium" give no length (da "århundrede", es "siglo", gl "século", pt "milénio")
+- A part of the day after a clock or a weekday stays in the remainder. Example: `a las 8 en la mañana` gives en la mañana. [#1200](https://github.com/TigreGotico/chronologia/issues/1200)
 
-- [#1204](https://github.com/TigreGotico/chronologia/issues/1204): extract_duration: a decimal count gives no length ("1.5 horas", "7.5 segundos")
+- The meridiem after an abbreviated hour word is lost. Example: `a las 8 hrs. de la noche` gives 2026-11-23 08:00, where the test expects 2026-11-23 20:00. [#1312](https://github.com/TigreGotico/chronologia/issues/1312)
 
-- [#1229](https://github.com/TigreGotico/chronologia/issues/1229): es, gl, it, ca: a day-labelled range start next to a clock with a day part reads as an hour
+**Dates, ranges and weeks**
 
-- [#1254](https://github.com/TigreGotico/chronologia/issues/1254): A bare clock with a zone skips the 12-hour rule ("9:30 utc" reads tomorrow 09:30)
+- The last weekday of next month reads as the last weekday of this month. Example: `el último viernes del mes que viene` gives 2026-10-30 00:00, where the test expects 2026-11-27 00:00. [#1295](https://github.com/TigreGotico/chronologia/issues/1295)
 
-- [#1295](https://github.com/TigreGotico/chronologia/issues/1295): es/fr: "el último viernes del mes que viene" reads the last Friday of this month
+- A part of the day before a clock reads only the date. Example: `mañana tarde a las 5` gives 2026-11-23 00:00, where the test expects 2026-11-23 17:00. [#1299](https://github.com/TigreGotico/chronologia/issues/1299)
 
-- [#1297](https://github.com/TigreGotico/chronologia/issues/1297): Event summaries turn a spelled numeral into a digit ("a second meeting" gives "2 meeting")
+- A day number with no month reads nothing. Example: `el día 14` gives no reading. [#1302](https://github.com/TigreGotico/chronologia/issues/1302)
 
-- [#1299](https://github.com/TigreGotico/chronologia/issues/1299): es: "mañana tarde a las 5" reads only the date
+- The indefinite article before a day of a month reads as the first day. Example: `un día de marzo` gives 2027-03-02 00:00, where the test expects 2027-04-01 00:00. [#1306](https://github.com/TigreGotico/chronologia/issues/1306)
 
-- [#1302](https://github.com/TigreGotico/chronologia/issues/1302): es, gl: "el día 14" and "no día 14" without a month read nothing
+**Offsets, lengths and holidays**
 
-- [#1306](https://github.com/TigreGotico/chronologia/issues/1306): es, pt, de, nl, ca: the indefinite article in "un día de marzo" reads as "the 1st day of march"
+- A unit word with no number counts as one. Example: `la semana pasada` gives 10080 min with remainder 'pasada', where the test expects nothing. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
 
-- [#1310](https://github.com/TigreGotico/chronologia/issues/1310): Working-day and day-of-month recurrence heads read as every day: "cada dia útil", "día laborable", "cada dia 15"
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `un cuarto de hora antes de navidad` gives 2026-12-24 00:00, where the test expects 2026-12-24 23:45. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
 
-- [#1311](https://github.com/TigreGotico/chronologia/issues/1311): A list of two days reads as a clock or the wrong day: es "el 14 y 15 de mayo" gives 1 May 14:15
+- A length before a day word loses the day. Example: `reunión de dos horas mañana` starts today, where it should start tomorrow. [#1332](https://github.com/TigreGotico/chronologia/issues/1332)
 
-- [#1312](https://github.com/TigreGotico/chronologia/issues/1312): Meridiem after an abbreviated hour word is lost: "um 8 Std. abends", "at 8 hr. pm", pt "às 5 pm" read as morning
+**Recurrence**
 
-- [#1315](https://github.com/TigreGotico/chronologia/issues/1315): A clock range in a recurrence reads the end hour or a wrong minute: pt "das 9 às 17" gives 17:00, en "9 to 5" gives 04:51
+- A clock range in a recurrence reads the end hour or a wrong minute. Example: `cada lunes de 9 a 17 horas` gives horas. [#1315](https://github.com/TigreGotico/chronologia/issues/1315)
 
-- [#1322](https://github.com/TigreGotico/chronologia/issues/1322): Only en reads a repeat count: de "jeden Montag 10 mal", es "cada lunes 10 veces" leave the count unread
+- A repeat count is not read. Example: `cada lunes 10 veces` gives None, where the test expects 10. [#1322](https://github.com/TigreGotico/chronologia/issues/1322)
 
-- [#1332](https://github.com/TigreGotico/chronologia/issues/1332): es: a length before "mañana" loses the day: "reunión de dos horas mañana" starts today, "reunión de dos horas esta mañana" reads tomorrow
+**Events, zones, business days and the API**
+
+- `century` and `millennium` give no length. Example: `1 siglo` gives no reading. [#1203](https://github.com/TigreGotico/chronologia/issues/1203)
+
+- The event summary turns a spelled numeral into a digit. Example: `una reunión mañana` gives 1 reunión, where the test expects 'una reunión'      - una reunión   ? ^^^. [#1297](https://github.com/TigreGotico/chronologia/issues/1297)
+
+- A working-day or day-of-month recurrence reads as every day. Example: `cada día laborable a las 9` gives DAILY, where the test expects WEEKLY. [#1310](https://github.com/TigreGotico/chronologia/issues/1310)
+
+- A decimal count gives no length. Example: `7.5 segundos` gives no reading. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
+
+- A bare clock with a zone skips the 12-hour rule. Example: `antes de las 9:30 utc` gives 2017-06-28 09:31 UTC, where the test expects 2017-06-27 21:31 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
 
 ## Checked examples
 

@@ -10,7 +10,7 @@ see: docs/languages/index.md, docs/extraction.md
 
 This page records where each construction of the Slovenian (`sl`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
 
-Slovenian tells the half hour the way a reader coming from English would not expect: `pol devetih` is 8:30, not 9:30 ("half toward nine", counting forward to the hour that has not arrived yet rather than back from the one that has passed. The hour in that phrase is a *declined* cardinal rather than a bare one) `devetih` is the genitive/locative plural of `devet` ("nine"). numtag reads it as 9 and reads `pol` as a fraction. The fold keeps `pol` a word. The clock reads the fraction and the hour apart.
+Slovenian tells the half hour the way a reader coming from English would not expect: `pol devetih` is 8:30, not 9:30. It means "half toward nine", counting forward to the hour that has not arrived yet rather than back from the one that has passed. The hour in that phrase is a *declined* cardinal rather than a bare one. The form `devetih` is the genitive/locative plural of `devet` ("nine"). numtag reads it as 9 and reads `pol` as a fraction. The fold keeps `pol` a word. The clock reads the fraction and the hour apart.
 
 ## Try it
 

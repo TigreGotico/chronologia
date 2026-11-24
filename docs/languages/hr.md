@@ -32,7 +32,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Weekdays** ship in the nominative, which matches CLDR 47's wide weekday chart, with the accusative that a `u <weekday>` phrase takes for the three whose accusative differs (`srijedu`, `subotu`, `nedjelju`) and a genitive for each. No source is recorded for the choice of oblique forms. The masculine weekdays ship only nominative and genitive because their accusative is syncretic with the nominative.
 
-**Day parts** are transcribed from the Unicode CLDR 47 day-period rules for `hr`, and all four bands ship. Each surface is the deictic adverb a phrase actually uses: `ujutro` (morning), `popodne` (afternoon), `navečer` and `uvečer` (evening), `noću` (night). Wiktionary's Serbo-Croatian entries carry `ujutro` as an adverb glossed "in the morning", `navečer` as an adverb glossed "in the evening. This evening", and `noću` as an adverb glossed "at night, by night, in the night" and derived there as the instrumental of `noć`. So `danas noću` runs from 21:00 to 04:00 and `sutra ujutro` from 04:00 to 12:00. The same words double as clock meridiem cues on an explicit hour (`ujutro` for AM, `popodne`, `poslijepodne` and `navečer` for PM) so `u 9 sati navečer` is 21:00 and `pola devet navečer` is 20:30.
+**Day parts** are transcribed from the Unicode CLDR 47 day-period rules for `hr`, and all four bands ship. Each surface is the deictic adverb a phrase actually uses: `ujutro` (morning), `popodne` (afternoon), `navečer` and `uvečer` (evening), `noću` (night). Wiktionary's Serbo-Croatian entries carry `ujutro` as an adverb glossed "in the morning", `navečer` as an adverb glossed "in the evening, this evening", and `noću` as an adverb glossed "at night, by night, in the night" and derived there as the instrumental of `noć`. So `danas noću` runs from 21:00 to 04:00 and `sutra ujutro` from 04:00 to 12:00. The same words double as clock meridiem cues on an explicit hour (`ujutro` for AM, `popodne`, `poslijepodne` and `navečer` for PM) so `u 9 sati navečer` is 21:00 and `pola devet navečer` is 20:30.
 
 **Relative offsets** are `prije` (ago) and `za` (in/after), with `u` carrying "in" over a calendar period. That last preposition is cited to its Serbo-Croatian Wiktionary entry, whose preposition sense list gives "in, at" with the locative and "to, into" with the accusative, each with a worked example (`biti u školi`, `ići u školu`).
 
@@ -88,9 +88,9 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1190](https://github.com/TigreGotico/chronologia/issues/1190): pl, cs, sk, bg, hr: the preposition and the year noun stay in the remainder ("w 2024 roku", "2024 година")
+- The preposition and the year noun stay in the remainder. Example: `2024. godine` gives godine. [#1190](https://github.com/TigreGotico/chronologia/issues/1190)
 
 ## Checked examples
 

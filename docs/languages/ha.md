@@ -38,7 +38,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Numerals** come from Wiktionary's `Module:number_list/data/ha`, with every value cross-checked against its own lemma entry. Their composition from ha.wikipedia.org, which habitually glosses a spelled number with the digits it means and so acts as its own worked-example oracle: `goma sha biyar (15)`, `ashirin da shida (26)`, `dubu ɗaya da ɗari tara da goma sha huɗu (1914)`, `dubu biyu da sha biyar (2015)`. Components read largest first, joined by `da`. A scale word leads its multiplier (`ɗari tara` is nine hundred).
 
-The teens are `goma sha` plus a unit, and the `goma` is routinely dropped, as in `ranar sha ɗaya` for the eleventh. Both registers of the tens ship. The inherited `gomiya biyu` and the Arabic `ashirin`.
+The teens are `goma sha` plus a unit, and the `goma` is routinely dropped, as in `ranar sha ɗaya` for the eleventh. Both registers of the tens ship: the inherited `gomiya biyu` and the Arabic `ashirin`.
 
 **Ranges** open with `daga`, close with `zuwa`. `tsakanin X da Y` is the between frame. `tun` is the past-anchored "since" and reaches backwards on its own or before `daga`.
 
@@ -54,7 +54,7 @@ A test pins each refusal.
 
 **The half-hour on a clock.** `da rabi` is well attested on a duration (`awa daya da rabi` is an hour and a half) but no source consulted reads it on a time of day. No source establishes which direction such a reading would run. A fraction read backwards is wrong by half an hour in every reading while looking entirely normal. So the hour stands unchanged and the fraction stays in the remainder, where a caller can see it was not consumed.
 
-**The one-word year deictics.** `bara`, `bana` and `badi` are last year. This year and next year, all three in CLDR and two of them with Wiktionary lemma entries. They are refused for an engine reason rather than a linguistic one. There is no construction for a year deixis carried by one word with no unit noun beside it, and adding one is a change to the engine, not to a locale. The phrasal forms answer instead.
+**The one-word year deictics.** `bara`, `bana` and `badi` are last year, this year and next year, all three in CLDR and two of them with Wiktionary lemma entries. They are refused for an engine reason rather than a linguistic one. There is no construction for a year deixis carried by one word with no unit noun beside it, and adding one is a change to the engine, not to a locale. The phrasal forms answer instead.
 
 **The coming weekday.** CLDR's relative-type-1 for a weekday is `Litinin mai zuwa`. The marker ships and works on every unit (`wata mai zuwa` is next month) but the phrase ends in `zuwa`, which is also this locale's range terminator. The range pass reads the raw token stream before multiword surfaces are glued back together. `Litinin mai zuwa` is therefore claimed by the open range "up to Monday". The test states what the phrase means and is expected to fail until the two can be told apart.
 

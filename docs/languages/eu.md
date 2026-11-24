@@ -30,7 +30,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The date line** is `MONTH-genitive DAY-inessive`, `ekainaren 5ean`, and the year when present leads with its own relational suffix: `2027ko ekaina`, `1999ko urtarrilaren 1ean`. The generic `calendar_date` construction is disabled in `lang.json` in favour of the base grammar's date orders, because the case marking fixes the Basque order, not convention.
 
-**Relative offsets** are two-sided. Backward is the preposed `duela` or `orain dela` (`duela hiru egun`, three days ago. Forward is the postposed `barru`, `buru` or `barne`) `hiru egun barru`, in three days. The `relative_offset` orders in `lang.json` accordingly list both `MARKER NUM UNIT` and `NUM UNIT MARKER`.
+**Relative offsets** are two-sided. Backward is the preposed `duela` or `orain dela`, as in `duela hiru egun` (three days ago). Forward is the postposed `barru`, `buru` or `barne`, as in `hiru egun barru` (in three days). The `relative_offset` orders in `lang.json` accordingly list both `MARKER NUM UNIT` and `NUM UNIT MARKER`.
 
 **The clock** names the hour already reached and counts forward from it with `eta` ("and"): `bostak eta erdi` is 05:30, `bostak eta laurden` is 05:15. The plural hour numerals (`bostak`, `hirurak`, `hamabiak`) are the telling-time forms, and the fold maps them to their values. The backward direction uses `gutxi` ("less").
 
@@ -77,17 +77,17 @@ These are wrong answers rather than refusals, and a wrong answer with a stranded
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#992](https://github.com/TigreGotico/chronologia/issues/992): Day words and counted offsets with no reading: en "today's", oc "nuèch", an, eu, kab, fi
+- A length with a suffix and a digit clock with a case suffix are not read. Example: `ezarri hamar minutuko tenporizadore bat` gives no reading. [#1017](https://github.com/TigreGotico/chronologia/issues/1017)
 
-- [#1009](https://github.com/TigreGotico/chronologia/issues/1009): A plural, adverbial or recurring part of the day is not read, so the next hour reads in the evening
+- A part of the day after a clock or a weekday stays in the remainder. Example: `3:00 gauean` gives gauean. [#1200](https://github.com/TigreGotico/chronologia/issues/1200)
 
-- [#1017](https://github.com/TigreGotico/chronologia/issues/1017): eu: a duration with the adnominal -ko ("hamar minutuko") and a digit clock with a case suffix ("6etan") are not read
+- A plural, adverbial or recurring part of the day is not read, so the hour reads in the wrong half. Example: `gogorarazi goizetan medikazioa hartzeko 8etan` gives 2017-06-27 20:00, where the test expects 2017-06-28 08:00. [#1009](https://github.com/TigreGotico/chronologia/issues/1009)
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- A day word or a counted offset gives no reading. Example: `duela aste bat` gives 2017-01-02 00:00, where the test expects 2017-06-20. [#992](https://github.com/TigreGotico/chronologia/issues/992)
 
-- [#1200](https://github.com/TigreGotico/chronologia/issues/1200): A part of the day after a clock or a weekday stays in the remainder (an "de la tardi", es "en la mañana", eu "gauean", bg "по обед")
+- Text that is no date reads as a date, or the wrong reading wins. Example: `ordu barru` gives one hour from the anchor, where the test expects no date. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
 ## Checked examples
 

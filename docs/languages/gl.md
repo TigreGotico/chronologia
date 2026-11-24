@@ -40,7 +40,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Relative offsets** are `hai` and `atrás` backward, `en` and `dentro` forward. Relative determiners follow their noun (`a semana pasada`, `o luns que vén`) so the locale sets `marker_position: post`.
 
-**Ranges** are `de … a …`, `do … ao …`, `desde …`, `a partir de …`, `ata …` and `deica …`, with `entre … e …` as the other frame. Each preposition is cited to its own DRAG entry. The `de`+`o` and `a`+`o` contractions to the RAG/ILG *Normas ortográficas e morfolóxicas do idioma galego*. The from-lead carries structural weight for the same reason it does in Portuguese: `a` is a hyper-common preposition. A bare `A a B` is trusted as a range only when a from-lead is present.
+**Ranges** are `de … a …`, `do … ao …`, `desde …`, `a partir de …`, `ata …` and `deica …`, with `entre … e …` as the other frame. Each preposition is cited to its own DRAG entry, and the `de`+`o` and `a`+`o` contractions to the RAG/ILG *Normas ortográficas e morfolóxicas do idioma galego*. The from-lead carries structural weight for the same reason it does in Portuguese: `a` is a hyper-common preposition. A bare `A a B` is trusted as a range only when a from-lead is present.
 
 **The clock** has both toward-the-hour shapes and keeps them apart. `catro menos cuarto` subtracts from the hour already named. Forward is `e`: `cinco e media`, `cinco e cuarto`. The indefinite `un`/`unha` sits in the article vocabulary so the `cuarto` fraction can read. `mediodía` and `medianoite` are points.
 
@@ -54,9 +54,9 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The `mañá` homograph rests on one entry doing two jobs.** DRAG gives `mañá` two senses in one entry. Sense 1 is the day part and sense 3 is the adverbial "day after today". The locale takes both from that single source and separates them by frame: bare `mañá` is tomorrow, framed `pola mañá` or `esta mañá` or `da mañá` is the morning band. Nothing independent corroborates that the frame is what does the separating.
 
-**`deica` ships as a general range terminus, and DRAG says it is not one.** The DRAG entry for `deica` states that the idea of the speaker's own place or moment is always present in it. It gives the explicit contrast that one says `Camiñaron desde Pedrafita ata Santiago` and not `deica Santiago`. The locale nevertheless accepts `de xuño deica agosto` as a range because `deica` sits in the same to-marker vocabulary as `ata`. The reading it produces is the natural one, but it is wider than the source licenses.
+**`deica` ships as a general range terminus.** DRAG says it is not one. The DRAG entry for `deica` states that the idea of the speaker's own place or moment is always present in it. It gives the explicit contrast that one says `Camiñaron desde Pedrafita ata Santiago` and not `deica Santiago`. The locale nevertheless accepts `de xuño deica agosto` as a range because `deica` sits in the same to-marker vocabulary as `ata`. The reading it produces is the natural one, but it is wider than the source licenses.
 
-**`ata` is a homograph the locale does not guard.** DRAG has two `ata` headwords: the preposition. A feminine noun for the act of tying sheaves. Only the preposition ships and nothing distinguishes the two.
+**`ata` is a homograph the locale does not guard.** DRAG has two `ata` headwords: the preposition, and a feminine noun for the act of tying sheaves. Only the preposition ships and nothing distinguishes the two.
 
 **The Roman anchors rest on a Wikipedia article,** weaker than the DRAG citations the rest of the locale is built on.
 
@@ -68,7 +68,7 @@ The four day-part vocabularies and the night meridiem all cite DRAG through the 
 
 The during-word vocabulary cites `https://academia.gal/dicionario/en`, which does not resolve. The headword `en` does exist in DRAG under the term path the other entries use.
 
-Every other cited source contains what the vocabulary says it contains: the DRAG entries for `entre`, `de`, `desde`, `a`, `ata`, `deica`, `metade`, `ano` and `noite`. The Galician Wikipedia *Calendario romano*, and the CLDR 47 day-period chart, whose `gl` row gives exactly the five boundaries transcribed.
+Every other cited source contains what the vocabulary says it contains. These sources are the DRAG entries for `entre`, `de`, `desde`, `a`, `ata`, `deica`, `metade`, `ano` and `noite`. They also include the Galician Wikipedia *Calendario romano* and the CLDR 47 day-period chart. The `gl` row of that chart gives exactly the five boundaries transcribed.
 
 ## What refuses
 
@@ -102,39 +102,49 @@ These are wrong answers, not refusals, and each is reproduced against the anchor
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#996](https://github.com/TigreGotico/chronologia/issues/996): A weekday mention leaves out its preposition or article. A month or a count keeps it
+**Clocks and parts of the day**
 
-- [#1004](https://github.com/TigreGotico/chronologia/issues/1004): A unit word with no number counts as one: "how many days before christmas" gives 24 December
+- A count later in the sentence drops the clock. Example: `mañá ás 3 da tarde compra as 3 cousas` gives 2026-09-26 00:00, where the test expects 2026-09-26 15:00. [#1199](https://github.com/TigreGotico/chronologia/issues/1199)
 
-- [#1011](https://github.com/TigreGotico/chronologia/issues/1011): An approximate clock (es-CO tipo, gl sobre, ca cap a) is not read
+- An approximate clock such as `about nine` is not read. Example: `avísame de luns a venres pola mañá sobre as 7` gives 2017-07-03 00:00, where the test expects 2017-06-28 07:00. [#1011](https://github.com/TigreGotico/chronologia/issues/1011)
 
-- [#1014](https://github.com/TigreGotico/chronologia/issues/1014): es, gl: "de mañana" after a noun is read as the morning, and "entre semana" breaks the clock
+- A day-part phrase after a noun reads as the morning, and a week phrase breaks the clock. Example: `amósame as alarmas de mañá` gives 2017-06-27 06:00, where the test expects 2017-06-28 00:00. [#1014](https://github.com/TigreGotico/chronologia/issues/1014)
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- A date built from two parts loses one of them. Example: `cada mañá` gives cada. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+- A clock with a dot between hour and minute gives no time. Example: `ás 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- [#1087](https://github.com/TigreGotico/chronologia/issues/1087): A count of hours or minutes before a holiday gives the day before at 00:00 ("an hour before christmas", "um quarto de hora antes do natal")
+- A day-labelled range start next to a clock with a day part reads as an hour. Example: `desde o día 10 ata as 8 da noite` gives 2026-01-30 22:00, where the test expects 2026-02-10 00:00. [#1229](https://github.com/TigreGotico/chronologia/issues/1229)
 
-- [#1199](https://github.com/TigreGotico/chronologia/issues/1199): es, gl, ca: a count later in the sentence drops the clock ("mañana a las 3 de la tarde compra las 3 cosas" gives 00:00)
+**Dates, ranges and weeks**
 
-- [#1203](https://github.com/TigreGotico/chronologia/issues/1203): extract_duration: "century" and "millennium" give no length (da "århundrede", es "siglo", gl "século", pt "milénio")
+- A day number with no month reads nothing. Example: `no día 14` gives no reading. [#1302](https://github.com/TigreGotico/chronologia/issues/1302)
 
-- [#1204](https://github.com/TigreGotico/chronologia/issues/1204): extract_duration: a decimal count gives no length ("1.5 horas", "7.5 segundos")
+- A day range with a relative-month end reads as the whole month. Example: `entre o día 3 e o 5 do mes que vén` gives 2026-02-01 00:00, where the test expects 2026-02-03 00:00. [#1230](https://github.com/TigreGotico/chronologia/issues/1230)
 
-- [#1229](https://github.com/TigreGotico/chronologia/issues/1229): es, gl, it, ca: a day-labelled range start next to a clock with a day part reads as an hour
+**Offsets, lengths and holidays**
 
-- [#1230](https://github.com/TigreGotico/chronologia/issues/1230): gl, ca, pt: a day range with a relative-month end reads as the whole month
+- A weekday mention drops its preposition or article, where a month keeps it. Example: `o venres` gives (2, 8), where the test expects (0, 8)      At index 0 diff: 2 != 0   Use -v to get more diff. [#996](https://github.com/TigreGotico/chronologia/issues/996)
 
-- [#1254](https://github.com/TigreGotico/chronologia/issues/1254): A bare clock with a zone skips the 12-hour rule ("9:30 utc" reads tomorrow 09:30)
+- A unit word with no number counts as one. Example: `a semana pasada` gives 10080 min with remainder 'pasada', where the test expects nothing. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
 
-- [#1302](https://github.com/TigreGotico/chronologia/issues/1302): es, gl: "el día 14" and "no día 14" without a month read nothing
+- A count of hours or minutes before a holiday gives the day before at 00:00. Example: `un cuarto de hora antes do nadal` gives 2026-12-24 00:00, where the test expects 2026-12-24 23:45. [#1087](https://github.com/TigreGotico/chronologia/issues/1087)
 
-- [#1310](https://github.com/TigreGotico/chronologia/issues/1310): Working-day and day-of-month recurrence heads read as every day: "cada dia útil", "día laborable", "cada dia 15"
+**Recurrence**
 
-- [#1315](https://github.com/TigreGotico/chronologia/issues/1315): A clock range in a recurrence reads the end hour or a wrong minute: pt "das 9 às 17" gives 17:00, en "9 to 5" gives 04:51
+- A clock range in a recurrence reads the end hour or a wrong minute. Example: `cada luns das 9 ás 17` gives ((17,), ()), where the test expects ((9,), ())      At index 0 diff: (17,) != (9,)   Use -v to get more diff. [#1315](https://github.com/TigreGotico/chronologia/issues/1315)
+
+**Events, zones, business days and the API**
+
+- `century` and `millennium` give no length. Example: `1 século` gives no reading. [#1203](https://github.com/TigreGotico/chronologia/issues/1203)
+
+- A decimal count gives no length. Example: `1.5 horas` gives no reading. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
+
+- A bare clock with a zone skips the 12-hour rule. Example: `antes das 9:30 utc` gives 2017-06-28 09:31 UTC, where the test expects 2017-06-27 21:31 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
+
+- A working-day or day-of-month recurrence reads as every day. Example: `cada día de traballo ás 9` gives DAILY, where the test expects WEEKLY. [#1310](https://github.com/TigreGotico/chronologia/issues/1310)
 
 ## Checked examples
 

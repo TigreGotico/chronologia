@@ -69,19 +69,15 @@ The weekday and month names, the seasons and the holiday vocabulary carry no rec
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#990](https://github.com/TigreGotico/chronologia/issues/990): A common word reads as a time word: en "fall", da "går" and "morgen", oc "ora", pl "lata"
+- A half hour written as two words reads no half hour. Example: `w pół do ósmej` gives no reading. [#1335](https://github.com/TigreGotico/chronologia/issues/1335)
 
-- [#1004](https://github.com/TigreGotico/chronologia/issues/1004): A unit word with no number counts as one: "how many days before christmas" gives 24 December
+- The preposition and the year noun stay in the remainder. Example: `2024 rok` gives rok. [#1190](https://github.com/TigreGotico/chronologia/issues/1190)
 
-- [#1190](https://github.com/TigreGotico/chronologia/issues/1190): pl, cs, sk, bg, hr: the preposition and the year noun stay in the remainder ("w 2024 roku", "2024 година")
+- A common word that is no time word reads as a time word. [#990](https://github.com/TigreGotico/chronologia/issues/990)
 
-- [#1195](https://github.com/TigreGotico/chronologia/issues/1195): pl: the spelled years of the 1900s read 1900 or a wrong century
-
-- [#1221](https://github.com/TigreGotico/chronologia/issues/1221): ru, cs, sk, pl, uk: a half-hour or quarter clock followed by another word loses its clock
-
-- [#1335](https://github.com/TigreGotico/chronologia/issues/1335): ru, pl: "пол восьмого" and "w pół do ósmej" written apart read no half hour
+- A unit word with no number counts as one. Example: `która będzie godzina za godzinę` gives 2017-06-27 15:04, where the test expects 2017-06-27 14:04. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
 
 ## Checked examples
 

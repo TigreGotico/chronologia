@@ -30,7 +30,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Weekdays and months** ship in the wide and abbreviated widths. The vocabulary records no source for them. They are the ordinary CLDR-standard German names, and the abbreviations are written without the trailing dot because the tokenizer strips it.
 
-**The date line** is little-endian throughout, which `dmy` in `lang.json` declares. Three shapes read. The spelled form is `3. Oktober 1990`, where the ordinal dot is a genuine ordinal marker: `ordinal_dot` is on, capped at two digits so a four-digit year can never be mistaken for one. The dotted civil form is `15.06.2020`.
+**The date line** is little-endian throughout, which `dmy` in `lang.json` declares. Three shapes read. The spelled form is `3. Oktober 1990`. Here the ordinal dot is a genuine ordinal marker. The setting `ordinal_dot` is on and capped at two digits, so a four-digit year can never pass for an ordinal. The dotted civil form is `15.06.2020`.
 
 It reads all three components or none. A run like `15.13.2020` or `31.02.2020` names no date. The year inside it is not read on its own either. An answer of `2020` there would hand the caller a whole-year span with the day and month silently gone. The same all-or-nothing rule covers the slash and dash separators. A trailing sentence dot is punctuation, not a fourth component, so `15.06.2020.` still reads.
 
@@ -90,53 +90,63 @@ The weekday and month names carry no recorded source at all. They are not in dou
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1016](https://github.com/TigreGotico/chronologia/issues/1016): de: "morgen früh um sechs" and "auf fünfzehn Uhr" lose the clock
+**Clocks and parts of the day**
 
-- [#1033](https://github.com/TigreGotico/chronologia/issues/1033): A day word with an early, late or part-of-day word gives midnight: "mañana temprano", "morgen früh", "freitag morgen"
+- A date built from two parts loses one of them. Example: `in 3 tagen um 15 uhr` gives 2117-09-06 13:30, where the test expects 2117-09-06 15:00. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- A day word with a part of the day loses the clock. Example: `weck mich morgen früh um halb sieben` gives 2017-06-28 00:00, where the test expects 2017-06-28 06:30. [#1016](https://github.com/TigreGotico/chronologia/issues/1016)
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- A morning or evening word that the reader does not join lets a lone clock take the other half of the day. Example: `um 6 früh` gives 2017-06-27 18:00, where the test expects 2017-06-28 06:00. [#1071](https://github.com/TigreGotico/chronologia/issues/1071)
 
-- [#1047](https://github.com/TigreGotico/chronologia/issues/1047): A dotted clock gives no time in eight locales: es "a las 8.30", pt "às 8.15", it "alle 8.30"
+- A day word with an early, late or part-of-day word gives midnight. Example: `morgen früh um 6 uhr` gives 2117-09-04 00:00, where the test expects 2117-09-04 06:00. [#1033](https://github.com/TigreGotico/chronologia/issues/1033)
 
-- [#1071](https://github.com/TigreGotico/chronologia/issues/1071): A morning or evening word the reader does not join lets a lone clock take the other half: de "früh", nb "morgenen", nn "morgonen", de "Uhr abends"
+- A clock with a dot between hour and minute gives no time. Example: `um 8.15` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
-- [#1079](https://github.com/TigreGotico/chronologia/issues/1079): nl "om 11:00 's nachts" gives 11:00 while "om 11 's nachts" gives 23:00, de "elf Uhr nachts" needs a ruling
+- A list of two days reads as a clock or as the wrong day. Example: `am 14. und 15. Mai` gives 2027-05-15 00:00, where the test expects 2027-05-14 00:00. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
 
-- [#1204](https://github.com/TigreGotico/chronologia/issues/1204): extract_duration: a decimal count gives no length ("1.5 horas", "7.5 segundos")
+- The meridiem after an abbreviated hour word is lost. Example: `um 8 Std. abends` gives 2026-11-23 08:00, where the test expects 2026-11-23 20:00. [#1312](https://github.com/TigreGotico/chronologia/issues/1312)
 
-- [#1218](https://github.com/TigreGotico/chronologia/issues/1218): Event summary keeps the article and day word before a day number in en, fr, de and nl
+- A range reading crosses a full stop. Example: `Wir treffen uns am Montag. Der Bericht ist bis Freitag fällig.` gives 2017-07-08 00:00, where the test expects 2017-07-04 00:00. [#1352](https://github.com/TigreGotico/chronologia/issues/1352)
 
-- [#1254](https://github.com/TigreGotico/chronologia/issues/1254): A bare clock with a zone skips the 12-hour rule ("9:30 utc" reads tomorrow 09:30)
+**Dates, ranges and weeks**
 
-- [#1276](https://github.com/TigreGotico/chronologia/issues/1276): extract_candidates does not raise in raise mode where extract_event does
+- The indefinite article before a day of a month reads as the first day. Example: `ein Tag im März` gives 2027-03-02 00:00, where the test expects 2027-04-01 00:00. [#1306](https://github.com/TigreGotico/chronologia/issues/1306)
 
-- [#1291](https://github.com/TigreGotico/chronologia/issues/1291): de: "jeden Montag von Juni bis August" reads "bis August" as UNTIL and leaves "von Juni"
+- A range with a shared month or unit drops the unrelated words from the remainder. Example: `xx 3. bis 10. Juli` gives , where the test expects 'xx'      - xx. [#1351](https://github.com/TigreGotico/chronologia/issues/1351)
 
-- [#1306](https://github.com/TigreGotico/chronologia/issues/1306): es, pt, de, nl, ca: the indefinite article in "un día de marzo" reads as "the 1st day of march"
+- Decomposed input reads differently from composed input. Example: `am 5. März 2027 um 15 Uhr` gives 2027-01-01 15:00, where the test expects 2027-03-05 15:00. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
 
-- [#1311](https://github.com/TigreGotico/chronologia/issues/1311): A list of two days reads as a clock or the wrong day: es "el 14 y 15 de mayo" gives 1 May 14:15
+**Offsets, lengths and holidays**
 
-- [#1312](https://github.com/TigreGotico/chronologia/issues/1312): Meridiem after an abbreviated hour word is lost: "um 8 Std. abends", "at 8 hr. pm", pt "às 5 pm" read as morning
+- Text that is no date reads as a date, or the wrong reading wins. Example: `Installiere Version 1.15.20 morgen` gives 2020-01-15 00:00, where the test expects 2026-09-24 00:00. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
-- [#1316](https://github.com/TigreGotico/chronologia/issues/1316): An until bound in a recurrence resolves on the anchor day: "every monday at 9 until 5 pm" never occurs, de "bis Ende Juni" ends before the anchor
+**Recurrence**
 
-- [#1321](https://github.com/TigreGotico/chronologia/issues/1321): Weekday and clock ranges in a recurrence: nl "tot en met vrijdag" differs from "t/m", "to friday 9 am" loses the range, "until 5/12" loses the date
+- A weekday or clock range in a recurrence loses its end. Example: `jeden Montag bis Freitag 9 Uhr` gives ((None, 0), (None, 4)), where the test expects ((None, 0), (None, 1), (None, 2), (None, 3), (None, 4)). [#1321](https://github.com/TigreGotico/chronologia/issues/1321)
 
-- [#1322](https://github.com/TigreGotico/chronologia/issues/1322): Only en reads a repeat count: de "jeden Montag 10 mal", es "cada lunes 10 veces" leave the count unread
+- A repeat count is not read. Example: `jeden Montag 10 mal` gives None, where the test expects 10. [#1322](https://github.com/TigreGotico/chronologia/issues/1322)
 
-- [#1328](https://github.com/TigreGotico/chronologia/issues/1328): An impossible day read apart from its month is dropped and the rest still reads: "in february on the 30th", "annually on the 32nd of january"
+- A range after a recurring weekday reads its end as an until bound and leaves the start. Example: `jeden Montag von Juni bis August` gives juni. [#1291](https://github.com/TigreGotico/chronologia/issues/1291)
 
-- [#1350](https://github.com/TigreGotico/chronologia/issues/1350): Candidate list and extract_timespan read a clock with a length differently: de "um 9 Uhr für 2 Stunden"
+- An until bound in a recurrence resolves on the anchor day. Example: `bis Ende Juni` ends before the anchor. [#1316](https://github.com/TigreGotico/chronologia/issues/1316)
 
-- [#1351](https://github.com/TigreGotico/chronologia/issues/1351): A range with a shared month or unit drops the unrelated words from the remainder: en "please 5-12 June"
+**Events, zones, business days and the API**
 
-- [#1352](https://github.com/TigreGotico/chronologia/issues/1352): A range reading crosses a full stop: de "am Montag. Der Bericht ist bis Freitag"
+- A night clock with minutes gives the morning hour, where the same clock without minutes gives the evening hour. Example: `um 11:00 nachts` gives 2017-06-28 11:00, where the test expects 2017-06-27 23:00. [#1079](https://github.com/TigreGotico/chronologia/issues/1079)
 
-- [#1353](https://github.com/TigreGotico/chronologia/issues/1353): Decomposed (NFD) input reads differently from composed (NFC) input: fr "ouvrés", pt "março"
+- The candidate list and the single-span reader read a clock with a length differently. Example: `um 9 Uhr für 2 Stunden` gives 2017-06-27 09:01, where the test expects 2017-06-27 11:00. [#1350](https://github.com/TigreGotico/chronologia/issues/1350)
+
+- A decimal count gives no length. Example: `weck mich in 3 wochen, 497 tagen und 391.6 sekunden` gives 745920 min, where the test expects datetime.timedelta(days=518, seconds=391, microseconds=600000). [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
+
+- The event summary keeps the article and the day word before a day number. Example: `Treffen am Tag 5 Mai` gives treffen am tag, where the test expects 'treffen'      - treffen. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
+
+- A bare clock with a zone skips the 12-hour rule. Example: `vor 9:30 utc` gives 2017-06-28 09:31 UTC, where the test expects 2017-06-27 21:31 UTC. [#1254](https://github.com/TigreGotico/chronologia/issues/1254)
+
+- The candidate reader does not raise in raise mode, where the event reader does. [#1276](https://github.com/TigreGotico/chronologia/issues/1276)
+
+- An impossible day read apart from its month is dropped, and the rest still reads. Example: `am 30. Februar um 9 Uhr` gives 21:00 today with `am 30. Februar` left over, where the test expects no date. [#1328](https://github.com/TigreGotico/chronologia/issues/1328)
 
 ## Checked examples
 

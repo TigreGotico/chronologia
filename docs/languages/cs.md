@@ -88,13 +88,9 @@ Wiktionary's Czech `půl` carries a usage note saying the word means "half to" w
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1190](https://github.com/TigreGotico/chronologia/issues/1190): pl, cs, sk, bg, hr: the preposition and the year noun stay in the remainder ("w 2024 roku", "2024 година")
-
-- [#1193](https://github.com/TigreGotico/chronologia/issues/1193): ru, cs: a spoken hour and minute clock reads only the hour
-
-- [#1221](https://github.com/TigreGotico/chronologia/issues/1221): ru, cs, sk, pl, uk: a half-hour or quarter clock followed by another word loses its clock
+- The preposition and the year noun stay in the remainder. Example: `v roce 2024` gives v. [#1190](https://github.com/TigreGotico/chronologia/issues/1190)
 
 ## Checked examples
 

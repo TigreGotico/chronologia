@@ -42,7 +42,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **No clock fraction ships.** There is no `clock_fraction_15.voc` and no `clock_fraction_30.voc` in this locale. Five of the sixty-one locales in the library are in the same position (`az`, `ha`, `sw`, `ta` and `th`) so it is not unique. But it is a real gap and it has a visible consequence in the defects section below. `marker_half.voc` holds `yarım`. The quantifier table maps `yarım` to 0.5 and `rüb` to 0.25, but neither reaches the clock.
 
-**Century and decade** are the two vocabulary groups that carry their own source comments. `əsr` and its plural `əsrlər` come from the Wiktionary entry for `əsr`, which confirms both the gloss ("century, age, epoch, era"), the Arabic origin. The plural in the declension table. `onillik` and `onilliklər` come from the Wiktionary entry for `il`, which lists `onillik` glossed "decade" among the derived terms.
+**Century and decade** are the two vocabulary groups that carry their own source comments. `əsr` and its plural `əsrlər` come from the Wiktionary entry for `əsr`, which confirms both the gloss ("century, age, epoch, era"), the Arabic origin, and the plural in the declension table. `onillik` and `onilliklər` come from the Wiktionary entry for `il`, which lists `onillik` glossed "decade" among the derived terms.
 
 **Day-part bands** are transcribed from the Unicode CLDR 47 Day Period Rules chart, which gives `az` a night running from 19:00, a morning from 04:00, an afternoon from 12:00 and an evening from 17:00. The bands ship. The surfaces do not. Ten locales in the library ship no `daypart_*.voc` files at all (an, ast, az, be, eo, ga, ha, mt, mwl and oc) but nine of those carry no day-part bands either.
 
@@ -85,11 +85,11 @@ Anchored at 2017-06-27 13:04.
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1034](https://github.com/TigreGotico/chronologia/issues/1034): A date built from two parts loses one: an offset with a clock, a count from a day word, the nth weekday of a relative period
+- A date built from two parts loses one of them. Example: `bu 2 həftə əvvəl oldu` gives no reading. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
-- [#1204](https://github.com/TigreGotico/chronologia/issues/1204): extract_duration: a decimal count gives no length ("1.5 horas", "7.5 segundos")
+- A decimal count gives no length. Example: `1.5 saat` gives no reading. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
 
 ## Checked examples
 

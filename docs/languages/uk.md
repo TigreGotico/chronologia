@@ -66,17 +66,15 @@ Ukrainian has an attested spoken half-hour idiom. `пів` ("half") is documente
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#987](https://github.com/TigreGotico/chronologia/issues/987): ru and uk: an hour after "на" is not read as a clock ("будильник на семь утра")
+- An hour after a preposition like `на` is not read as a clock. Example: `на сьому` gives no reading. [#987](https://github.com/TigreGotico/chronologia/issues/987)
 
-- [#988](https://github.com/TigreGotico/chronologia/issues/988): ru and uk: a preposition or the year noun stays in the remainder ("в 2024 году", "в начале года")
+- A year spoken as an ordinal reads no date. Example: `у дві тисячі другому році` gives no reading. [#1336](https://github.com/TigreGotico/chronologia/issues/1336)
 
-- [#1038](https://github.com/TigreGotico/chronologia/issues/1038): [ru][uk] six reading gaps found when ovos-date-parser routed ru and uk
+- A preposition or the year noun stays in the remainder. Example: `2024 року` gives року. [#988](https://github.com/TigreGotico/chronologia/issues/988)
 
-- [#1221](https://github.com/TigreGotico/chronologia/issues/1221): ru, cs, sk, pl, uk: a half-hour or quarter clock followed by another word loses its clock
-
-- [#1336](https://github.com/TigreGotico/chronologia/issues/1336): ru, uk: a year spoken as an ordinal ("в две тысячи втором году") reads no date
+- Six reading gaps found when the locale was routed from ovos-date-parser. [#1038](https://github.com/TigreGotico/chronologia/issues/1038)
 
 ## Checked examples
 

@@ -97,15 +97,15 @@ Each of these returns a wrong or partial answer rather than nothing, which is wo
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1035](https://github.com/TigreGotico/chronologia/issues/1035): Text that is no date reads as a date, or the wrong reading wins: arithmetic, version numbers, "a third of", a holiday name used as a modifier
+- A day-part word after a clock time does not move the hour. Example: `om 8 oere jûns` gives 2026-01-31 08:00, where the test expects 2026-01-30 20:00. [#1220](https://github.com/TigreGotico/chronologia/issues/1220)
 
-- [#1220](https://github.com/TigreGotico/chronologia/issues/1220): fy: a day-part word after a clock time does not move the hour
+- A spelled hour reads as 20 hours, not 24. Example: `fjouwer en tweintich oeren lyn` gives 2026-01-29 14:00, where the test expects 2026-01-29 10:00. [#1226](https://github.com/TigreGotico/chronologia/issues/1226)
 
-- [#1226](https://github.com/TigreGotico/chronologia/issues/1226): fy: "fjouwer en tweintich oeren" reads 20 hours, not 24
+- A lone digit suffix reads as an ordinal ending. Example: `om 8 te begjinnen` gives begjinnen, where the test expects 'te begjinnen'      - te begjinnen   ? ---. [#1228](https://github.com/TigreGotico/chronologia/issues/1228)
 
-- [#1228](https://github.com/TigreGotico/chronologia/issues/1228): fy: the lone digit suffix "te" is read as an ordinal ending
+- Text that is no date reads as a date, or the wrong reading wins. Example: `february 30 2020` gives the year 2020 with `february 30` left over, where the test expects no date. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
 ## Checked examples
 

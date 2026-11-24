@@ -34,7 +34,7 @@ The matching engine reads a direction from a marker token, and the forward phras
 
 Tamil is an abugida: a syllable is a base consonant carrying combining vowel signs. The virama that cancels the inherent vowel is a combining mark too. Those marks are Unicode categories Mn and Mc, which the regex `\w` class does not match. Without the marks, `ஒன்பதரை` would arrive as the two fragments `ஒன` and `பதர`, and no Tamil word in the locale could bind a slot.
 
-The tokenizer's letter class carries the Tamil block's mark subranges (`U+0B82`, `U+0BBE` to `U+0BCD` and `U+0BD7`) which are Tamil-block codepoints and therefore inert for every other script. The digits `௦`–`௯` are excluded because the numeric rule already reads them. The day, month, year and rupee signs because a bookkeeping symbol is not a letter.
+The tokenizer's letter class carries the Tamil block's mark subranges (`U+0B82`, `U+0BBE` to `U+0BCD` and `U+0BD7`) which are Tamil-block codepoints and therefore inert for every other script. The digits `௦`–`௯` are excluded because the numeric rule already reads them, and the day, month, year and rupee signs because a bookkeeping symbol is not a letter.
 
 Tamil digits need no locale pass of their own. They are ordinary Unicode decimal digits. `௨௦௨௬` reads as 2026 and `௧௫:௩௦` matches the clock literal exactly as its ASCII spelling does.
 
@@ -92,9 +92,9 @@ The band's closing hour is admitted as well as its opening one, so 18:00 reads u
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1072](https://github.com/TigreGotico/chronologia/issues/1072): Spelled ar and ta clocks keep the written hour while their digit twins take the next reading, th "6:30 น."
+- A spelled clock keeps the written hour, where its digit twin takes the next reading. Example: `ஒன்பதரை மணி` gives 2017-06-28 09:30, where the test expects 2017-06-27 21:30. [#1072](https://github.com/TigreGotico/chronologia/issues/1072)
 
 ## Checked examples
 

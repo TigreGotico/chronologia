@@ -10,7 +10,7 @@ see: docs/languages/index.md, docs/extraction.md
 
 This page records where each construction of the Kabyle (`kab`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
 
-The Kabyle locale and the Amazigh calendar are two separate things that share one set of month names, and keeping them separate is the point of this page. `chronologia/locale/kab` reads ordinary civil dates in Kabyle, using the Berber month names as the names of the **Gregorian** months. Which is correct, because that is what Kabyle daily speech does. The `berber` calendar in `chronologia/calendars.py` is a different object: the Julian calendar under a shifted era, reachable through the calendar API rather than through the locale.
+The Kabyle locale and the Amazigh calendar are two separate things that share one set of month names, and keeping them separate is the point of this page. `chronologia/locale/kab` reads ordinary civil dates in Kabyle, using the Berber month names as the names of the **Gregorian** months. That is correct, because that is what Kabyle daily speech does. The `berber` calendar in `chronologia/calendars.py` is a different object: the Julian calendar under a shifted era, reachable through the calendar API rather than through the locale.
 
 ## Try it
 
@@ -30,7 +30,7 @@ Because the offset is a pure additive year shift onto the existing Julian arithm
 
 **The year-end leap day is not encoded.** Popular description often says the intercalary day is appended at the end of the year, after Dujembeṛ, rather than sitting inside February as the Julian layout puts it. That claim traces to a single source with no corroborating primary reference, and moving the leap day within the year changes neither which years are leap nor the total day count. It cannot be checked against any dated event. The plain Julian placement is what ships, and the alternative is recorded as an open question rather than as arithmetic.
 
-**The civil Yennayer holidays are deliberately not calendar output.** Algeria's Yennayer public holiday is a fixed civil date, 12 January Gregorian, set by presidential decree in December 2017 and first observed in 2018 (two days *earlier* than the 14 January the Julian-era arithmetic produces for the same era year. Morocco's was made a paid national holiday by the May 2023 royal decree, effective from 2024, at a fixed 13 January. Neither is derived from, or reconcilable with, the arithmetic, so both live in the civil-holidays layer) `holiday_data/dz.tab` and `holiday_data/ma.tab`: and never in the calendar function. The popular folk justification for Algeria's 12 January, thirteen days of drift back from 1 January, is arithmetically inconsistent, since thirteen days after 1 January is the fourteenth. It is not encoded in any form.
+**The civil Yennayer holidays are deliberately not calendar output.** Algeria's Yennayer public holiday is a fixed civil date, 12 January Gregorian, set by presidential decree in December 2017 and first observed in 2018. That is two days *earlier* than the 14 January that the Julian-era arithmetic produces for the same era year. Morocco's holiday became a paid national holiday by the May 2023 royal decree, effective from 2024, at a fixed 13 January. Neither is derived from, or reconcilable with, the arithmetic. Both live in the civil-holidays layer, `holiday_data/dz.tab` and `holiday_data/ma.tab`, and never in the calendar function. The popular folk justification for Algeria's 12 January, thirteen days of drift back from 1 January, is arithmetically inconsistent, since thirteen days after 1 January is the fourteenth. It is not encoded in any form.
 
 ## The locale
 
@@ -57,23 +57,23 @@ The Kabyle vocabulary files carry no per-file source comments, unlike most local
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#992](https://github.com/TigreGotico/chronologia/issues/992): Day words and counted offsets with no reading: en "today's", oc "nuèch", an, eu, kab, fi
+- A weekday range or list followed by a clock drops the clock or picks a past day. [#1010](https://github.com/TigreGotico/chronologia/issues/1010)
 
-- [#993](https://github.com/TigreGotico/chronologia/issues/993): A next or last word beside a season, month or week is left over: an, ca, da, hu, kab, nl
+- A word for next or last beside a season, month or week stays in the remainder. Example: `tafsut i d-iteddun` gives 2017-03-01 00:00, where the test expects Within(2018-03-01 00:00:00, 2018-03-22 00:00:00). [#993](https://github.com/TigreGotico/chronologia/issues/993)
 
-- [#1005](https://github.com/TigreGotico/chronologia/issues/1005): The last weekday of a month gives the whole month or the weekday alone: ca, an, fa, kab
+- The last weekday of a month gives the whole month, or the weekday alone. Example: `letnayen aneggaru n meɣres` gives 2017-07-03 00:00, where the test expects 2017-03-27 00:00. [#1005](https://github.com/TigreGotico/chronologia/issues/1005)
 
-- [#1010](https://github.com/TigreGotico/chronologia/issues/1010): A weekday range or list followed by a clock drops the clock or picks a past day
+- A day word or a counted offset gives no reading. Example: `deg 3 wussan` gives no reading. [#992](https://github.com/TigreGotico/chronologia/issues/992)
 
-- [#1021](https://github.com/TigreGotico/chronologia/issues/1021): kab: "sebɛa u nnefṣ" (half past seven) loses the half
+- A half past the hour loses the half. Example: `sebɛa u nnefṣ` gives no reading, where half past seven is meant. [#1021](https://github.com/TigreGotico/chronologia/issues/1021)
 
-- [#1210](https://github.com/TigreGotico/chronologia/issues/1210): extract_duration: a compound number with "og" or "d" loses a part (da "ni og fyrre", kab "mraw d yiwen")
+- A compound number loses a part. Example: `mraw d sin n tesdidin` gives 2 min, where the test expects 12 min. [#1210](https://github.com/TigreGotico/chronologia/issues/1210)
 
-- [#1211](https://github.com/TigreGotico/chronologia/issues/1211): extract_duration: et "poolteist", hu "hét", kab "tasint" and sv "minuters" give no length
+- Some number words give no length. Example: `tlatin tasint` gives no reading. [#1211](https://github.com/TigreGotico/chronologia/issues/1211)
 
-- [#1239](https://github.com/TigreGotico/chronologia/issues/1239): kab extract_duration: "sin mraw" (twelve) reads only the tens
+- The spelled number twelve reads only the tens. Example: `sin mraw n tesdidin` gives 10 min, where the test expects 12 min. [#1239](https://github.com/TigreGotico/chronologia/issues/1239)
 
 ## Checked examples
 

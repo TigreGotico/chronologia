@@ -88,15 +88,15 @@ A leading bare `a` is stranded whenever `a las` introduces a time. `a las tres e
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#992](https://github.com/TigreGotico/chronologia/issues/992): Day words and counted offsets with no reading: en "today's", oc "nuèch", an, eu, kab, fi
+- A part of the day after a clock or a weekday stays in the remainder. Example: `a las 9 d'o maitín` gives 2017-06-27 21:00, where the test expects 2017-06-28 09:00. [#1200](https://github.com/TigreGotico/chronologia/issues/1200)
 
-- [#993](https://github.com/TigreGotico/chronologia/issues/993): A next or last word beside a season, month or week is left over: an, ca, da, hu, kab, nl
+- A word for next or last beside a season, month or week stays in the remainder. Example: `mes proximo` gives no reading. [#993](https://github.com/TigreGotico/chronologia/issues/993)
 
-- [#1005](https://github.com/TigreGotico/chronologia/issues/1005): The last weekday of a month gives the whole month or the weekday alone: ca, an, fa, kab
+- The last weekday of a month gives the whole month, or the weekday alone. Example: `lo zaguer luns de marzo` gives 2018-03-01 00:00, where the test expects 2017-03-27 00:00. [#1005](https://github.com/TigreGotico/chronologia/issues/1005)
 
-- [#1200](https://github.com/TigreGotico/chronologia/issues/1200): A part of the day after a clock or a weekday stays in the remainder (an "de la tardi", es "en la mañana", eu "gauean", bg "по обед")
+- A day word or a counted offset gives no reading. Example: `pasau manyana` gives 2017-06-28 00:00, where the test expects 2017-06-29. [#992](https://github.com/TigreGotico/chronologia/issues/992)
 
 ## Checked examples
 

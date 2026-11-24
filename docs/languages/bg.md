@@ -10,7 +10,7 @@ see: docs/languages/index.md, docs/extraction.md
 
 This page records where each construction of the Bulgarian (`bg`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
 
-Bulgarian is the analytic outlier of the Slavic locales here: no case system survives on the noun. "Last week" and "next week" are carried entirely by adjective agreement and Bulgarian's postposed definite article (членуване) rather than by a declension the way Slovenian or Latvian would do it (миналата седмица, "last-the week", with the article fused onto the adjective, not the noun. That is the first thing to know about the locale, the second is that its spoken clock names the half hour in the opposite direction from Slovenian and Estonian) forward off the hour that has passed, not toward the one coming.
+Bulgarian is the analytic outlier of the Slavic locales here: no case system survives on the noun. "Last week" and "next week" are carried entirely by adjective agreement and Bulgarian's postposed definite article (членуване) rather than by a declension the way Slovenian or Latvian would do it. An example is миналата седмица, "last-the week", with the article fused onto the adjective, not the noun. That is the first thing to know about the locale. The second is that its spoken clock names the half hour in the opposite direction from Slovenian and Estonian. It counts forward off the hour that has passed, not toward the one coming.
 
 ## Try it
 
@@ -44,11 +44,11 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The clock's hour noun** inflects for count the way a Bulgarian numeral noun ordinarily does (bare `час` after "one" (`в 1 час`), the count form `часа` after any other cardinal (`в 9 часа`)) confirmed directly by the project's test corpus (`test_nl_r168_clock_hour_word.py`), which asserts both forms are consumed into the clock construction rather than stranded in the remainder.
 
-**The clock's additive half hour.** Bulgarian counts the half hour forward off the hour that has already passed rather than toward the one coming: `осем и половина` is 8:30, not 7:30 (the opposite direction from the Slovenian, Croatian and Czech siblings, which all name the hour ahead. Two independent guides gloss the construction with worked numeric examples, Wikibooks' *Bulgarian/Time* giving «Единайсет и половина» for 11:30 and Preply's telling-the-time guide giving «Пет и половина» for 5:30, both under the heading "half past". Both examples parse, the Wikibooks one because the locale also reads Bulgarian's contracted teens and tens: «единайсет» is the everyday spelling of eleven. The long «единадесет» its formal twin.
+**The clock's additive half hour.** Bulgarian counts the half hour forward off the hour that has already passed rather than toward the one coming: `осем и половина` is 8:30, not 7:30, the opposite direction from the Slovenian, Croatian and Czech siblings, which all name the hour ahead. Two independent guides gloss the construction with worked numeric examples, Wikibooks' *Bulgarian/Time* giving «Единайсет и половина» for 11:30 and Preply's telling-the-time guide giving «Пет и половина» for 5:30, both under the heading "half past". Both examples parse, the Wikibooks one because the locale also reads Bulgarian's contracted teens and tens: «единайсет» is the everyday spelling of eleven, and the long «единадесет» its formal twin.
 
-The contracted series from eleven to nineteen, together with twenty, thirty and sixty, reads through numtag. The locale reads the clock through `clock_fraction_30.voc` (`половина`) and `clock_dir_past.voc` (`и`), wired into two `clock_time` orders) `at HOUR CLOCKDIR FRACTION article? MERIDIEM? ZONE?` and the same shape without the leading `at`. `и` is also the conjunction of a compound numeral (`двадесет и едно`), numtag reads `осем и половина` as one fraction. The fold keeps `половина` and `и` as words for the clock.
+The contracted series from eleven to nineteen, together with twenty, thirty and sixty, reads through numtag. The locale reads the clock through `clock_fraction_30.voc` (`половина`) and `clock_dir_past.voc` (`и`), wired into two `clock_time` orders: `at HOUR CLOCKDIR FRACTION article? MERIDIEM? ZONE?` and the same shape without the leading `at`. `и` is also the conjunction of a compound numeral (`двадесет и едно`), and numtag reads `осем и половина` as one fraction. The fold keeps `половина` and `и` as words for the clock.
 
-**Numerals** are read by numtag (`numlayer_slavic.py`). No locale ships numeral `.voc` files. numtag reads the compound `двадесет и три`. `осем и половина` as one fraction mention: the fold keeps `половина` as the clock word and reads `осем` again on its own. numtag reads the contracted ordinals `единайсети` and `двайсети` but not the long `единадесети` and `двадесети`. The fold reads each long form through its contracted twin.
+**Numerals** are read by numtag (`numlayer_slavic.py`). No locale ships numeral `.voc` files. numtag reads the compound `двадесет и три`, and `осем и половина` as one fraction mention: the fold keeps `половина` as the clock word and reads `осем` again on its own. numtag reads the contracted ordinals `единайсети` and `двайсети` but not the long `единадесети` and `двадесети`. The fold reads each long form through its contracted twin.
 
 ## Weaker provenance
 
@@ -71,11 +71,11 @@ The contracted series from eleven to nineteen, together with twenty, thirty and 
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1190](https://github.com/TigreGotico/chronologia/issues/1190): pl, cs, sk, bg, hr: the preposition and the year noun stay in the remainder ("w 2024 roku", "2024 година")
+- A part of the day after a clock or a weekday stays in the remainder. Example: `следващата сряда по обед` gives 2017-07-05 00:00, where the test expects 2017-07-05 12:00. [#1200](https://github.com/TigreGotico/chronologia/issues/1200)
 
-- [#1200](https://github.com/TigreGotico/chronologia/issues/1200): A part of the day after a clock or a weekday stays in the remainder (an "de la tardi", es "en la mañana", eu "gauean", bg "по обед")
+- The preposition and the year noun stay in the remainder. Example: `2024 година` gives година. [#1190](https://github.com/TigreGotico/chronologia/issues/1190)
 
 ## Checked examples
 

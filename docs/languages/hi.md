@@ -30,7 +30,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Weekdays** are the Wiktionary Hindi entries.
 
-**Units** carry both the direct and the oblique case, because a noun counted by a numeral stands in the oblique (दिन / दिनों, हफ़्ता / हफ़्ते, सदी / सदियाँ / सदियों. The declension class governs how many surfaces there are: a masculine consonant stem has one direct form, an ā-stem has a distinct oblique. An invariant loanword like सेकंड has one form for everything. Where a Sanskritic doublet exists and Wiktionary lists it as a synonym of the vernacular word) शताब्दी and शती beside सदी, वर्ष and बरस beside साल, माह and मास beside महीना, both registers ship.
+**Units** carry both the direct and the oblique case, because a noun counted by a numeral stands in the oblique: दिन / दिनों, हफ़्ता / हफ़्ते, सदी / सदियाँ / सदियों. The declension class governs how many surfaces there are. A masculine consonant stem has one direct form, and an ā-stem has a distinct oblique. An invariant loanword like सेकंड has one form for everything. Where a Sanskritic doublet exists and Wiktionary lists it as a synonym of the vernacular word, both registers ship. The doublets are शताब्दी and शती beside सदी, वर्ष and बरस beside साल, and माह and मास beside महीना.
 
 **Relative offsets** postpose their marker. The past marker is पहले, which is CLDR's own pattern word for every unit field. The future marker is में, CLDR's `{0} दिन में`, with बाद as the other everyday word for the same reading, Wiktionary's own usage example there is `एक दिन बाद`.
 
@@ -46,7 +46,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 बजकर frames minutes counted forward from a struck hour: `आठ बजकर बीस मिनट` is 8:20. It is the conjunctive participle of बजना, "to strike the hour". बजे is the adverb that closes an ordinary spoken clock reading.
 
-**Day parts** take their bands from the CLDR 47 supplemental day-period rule set for `hi`, transcribed in `chronologia/dayparts.py`. Their surfaces from the CLDR period names, each confirmed against a Wiktionary gloss: सुबह, दोपहर, शाम, रात.
+**Day parts** take their bands from the CLDR 47 supplemental day-period rule set for `hi`, transcribed in `chronologia/dayparts.py`, and their surfaces from the CLDR period names, each confirmed against a Wiktionary gloss: सुबह, दोपहर, शाम, रात.
 
 **Numerals** are a curated native lexicon in `chronologia/extract/numfold_indic.py`. This is not an optimisation but a necessity: Hindi's numerals from one to ninety-nine are suppletive and not compositional (ब्यालीस is forty-two and cannot be derived from the words for four and two) so a compositional folder cannot read them at all.
 

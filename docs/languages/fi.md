@@ -26,7 +26,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## What ships
 
-**Months** ship in four cases each: the nominative `elokuu`, the partitive `elokuuta` that a day-led date takes, the genitive `elokuun` that leads a month-led one. The inessive `elokuussa` for "in August". The nominative set matches the CLDR 47 `fi` `ca-gregorian` stand-alone wide chart and the partitive set matches its format wide chart, which is partitive throughout for Finnish. So `15. elokuuta 2020` and `elokuun 15.` reach the same day and `elokuussa` reaches the month.
+**Months** ship in four cases each: the nominative `elokuu`, the partitive `elokuuta` that a day-led date takes, the genitive `elokuun` that leads a month-led one, and the inessive `elokuussa` for "in August". The nominative set matches the CLDR 47 `fi` `ca-gregorian` stand-alone wide chart and the partitive set matches its format wide chart, which is partitive throughout for Finnish. So `15. elokuuta 2020` and `elokuun 15.` reach the same day and `elokuussa` reaches the month.
 
 **Weekdays** ship in the nominative and the essive (`maanantai` and `maanantaina`) and CLDR 47 accounts for both, the stand-alone wide chart giving the nominative and the format wide chart the essive for six of the seven. CLDR's format chart has Sunday in the nominative where the other six are essive. The locale ships both forms for all seven and is the more complete for it.
 
@@ -34,7 +34,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Relative offsets** are built from postpositions, not prepositions: `kahden viikon päästä` is in two weeks, `kaksi viikkoa sitten` is two weeks ago, `kolmen viikon kuluttua` is in three weeks. The numeral in the forward frame is genitive, a form the number back-end does not read. The genitives one through twenty are given to the fold explicitly along with `puolen` and `puolentoista`. The unit nouns ship in the nominative, partitive and genitive, and the CLDR-attested oblique case beside them.
 
-**Relative periods** take the case CLDR records for each field, and the vocabulary comments name the chart and the exact strings. The week is adessive (`viime viikolla`, `tällä viikolla`, `ensi viikolla`), the year essive (`viime vuonna`, `tänä vuonna`, `ensi vuonna`). The month inessive on the short noun `kuu` rather than on `kuukausi` (`viime kuussa`, `tässä kuussa`, `ensi kuussa`). Every one of those nine strings is in CLDR 47's `fi` `dateFields` at the relative type the comment claims. The demonstrative ships in all three cases the three fields require (`tänä`, `tässä`, `tällä`) for exactly that reason.
+**Relative periods** take the case CLDR records for each field, and the vocabulary comments name the chart and the exact strings. The week is adessive (`viime viikolla`, `tällä viikolla`, `ensi viikolla`), the year essive (`viime vuonna`, `tänä vuonna`, `ensi vuonna`), and the month inessive on the short noun `kuu` rather than on `kuukausi` (`viime kuussa`, `tässä kuussa`, `ensi kuussa`). Every one of those nine strings is in CLDR 47's `fi` `dateFields` at the relative type the comment claims. The demonstrative ships in all three cases the three fields require (`tänä`, `tässä`, `tällä`) for exactly that reason.
 
 **The clock** binds a digit hour after `kello` or `klo`, or bare, and reads the ablative telling-time forms as hours in their own right. `kello kolmelta` and the bare `kolmelta` both give three o'clock, because the ablative numerals one through twelve are listed explicitly and a bare one synthesises the missing `kello`. Wiktionary's entry for the suffix `-lta` identifies the ablative, Iso suomen kielioppi §1237 is cited alongside it for the telling-time use. That section is unchecked. `keskiyöllä` and `keskipäivällä` are midnight and noon. Both are CLDR 47's `fi` day-period labels for those two points.
 
@@ -68,7 +68,7 @@ The units have nominative, partitive, genitive and one CLDR-attested oblique. So
 
 **The half hour in the ablative.** `puoli kymmenen` resolves and `puoli kymmeneltä` does not: the fraction order wants a bare hour, the ablative hour fold produces a clock token instead. The two do not compose. The result is 10:00 with `puoli` stranded, which is thirty minutes and one hour away from what the phrase says.
 
-**The quantifier words in an offset.** `pari` and `muutama` are declared as two and three and reach the duration reader correctly. But not the relative-offset grammar. `pari viikkoa sitten` returns one week ago with `pari` in the remainder, and `muutama viikko sitten` returns the same. The mechanism exists (the English locale resolves "a couple of weeks ago" and "a few weeks ago" to two and three weeks) so this is a wiring gap rather than an engine limit. It is the one gap on this page where the same locale answers the same word two different ways depending on which reader sees it.
+**The quantifier words in an offset.** `pari` and `muutama` are declared as two and three and reach the duration reader correctly, but not the relative-offset grammar. `pari viikkoa sitten` returns one week ago with `pari` in the remainder, and `muutama viikko sitten` returns the same. The mechanism exists (the English locale resolves "a couple of weeks ago" and "a few weeks ago" to two and three weeks) so this is a wiring gap rather than an engine limit. It is the one gap on this page where the same locale answers the same word two different ways depending on which reader sees it.
 
 **Abbreviations.** CLDR 47 gives clipped month names for `fi` (`tammi`, `helmi`, `maalis` and the rest) and two-letter weekdays, `su ma ti ke to pe la`. Neither set ships, so `15. elo 2020` returns the whole of 2020 with the day and month stranded, and `ma 15.6.2020` returns the day with `ma` left over. Twenty-five of the locales here ship an abbreviated weekday file.
 
@@ -88,15 +88,15 @@ The units have nominative, partitive, genitive and one CLDR-attested oblique. So
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#992](https://github.com/TigreGotico/chronologia/issues/992): Day words and counted offsets with no reading: en "today's", oc "nuèch", an, eu, kab, fi
+- Case forms of clocks and weekdays are not read. Example: `herätä minut puoli seitsemältä` gives 2017-06-27 19:00, where the test expects 2017-06-27 18:30. [#1019](https://github.com/TigreGotico/chronologia/issues/1019)
 
-- [#997](https://github.com/TigreGotico/chronologia/issues/997): A part of the day with no day word answers the band that has passed
+- A part of the day with no day word answers the band that has already passed. Example: `tarvitsen herätyksen aamulla` gives 2017-06-27 05:00, where the test expects 2017-06-28. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- [#1009](https://github.com/TigreGotico/chronologia/issues/1009): A plural, adverbial or recurring part of the day is not read, so the next hour reads in the evening
+- A plural, adverbial or recurring part of the day is not read, so the hour reads in the wrong half. Example: `muistuta minua arkiaamuisin kahdeksalta ottamaan lääkkeeni` gives 2017-06-27 20:00, where the test expects 2017-06-28 08:00. [#1009](https://github.com/TigreGotico/chronologia/issues/1009)
 
-- [#1019](https://github.com/TigreGotico/chronologia/issues/1019): fi: case forms of clocks and weekdays ("puoli seitsemältä", "maanantaiksi", "kello seitsemään") are not read
+- A day word or a counted offset gives no reading. Example: `heinäkuun ensimmäinen viikko` gives no reading. [#992](https://github.com/TigreGotico/chronologia/issues/992)
 
 ## Checked examples
 

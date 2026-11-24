@@ -10,7 +10,7 @@ see: docs/languages/index.md, docs/extraction.md
 
 This page records where each construction of the Russian (`ru`) locale comes from, which ones rest on weaker evidence and which ones it refuses. Numbers are read by numtag (`NUMTAG_LANGS` in `chronologia/extract/numlayer.py`).
 
-Almost no Russian temporal phrase stands in the nominative. `на прошлой неделе` is prepositional, `в прошлом месяце` and `в прошлом году` are prepositional, `прошлым летом` is instrumental. None of those is the dictionary form of the words involved. A locale that shipped citation forms would leave the ordinary spoken register unreadable. This one ships full paradigms: every unit noun in all six cases and both numbers. Every determiner in its complete adjectival or pronominal paradigm. The vocabulary cites Грамота.ру's declension tables for each, naming the declension type it followed.
+Almost no Russian temporal phrase stands in the nominative. `на прошлой неделе` is prepositional, `в прошлом месяце` and `в прошлом году` are prepositional, `прошлым летом` is instrumental. None of those is the dictionary form of the words involved. A locale that shipped citation forms would leave the ordinary spoken register unreadable. This one ships full paradigms: every unit noun in all six cases and both numbers, and every determiner in its complete adjectival or pronominal paradigm. The vocabulary cites Грамота.ру's declension tables for each, naming the declension type it followed.
 
 The clock is the other thing to understand early, because Russian says it in two directions and neither is the English one. Forward from the previous hour is the toward-hour form: `четверть десятого` is a quarter *of the tenth*. That is 09:15. `половина девятого` (contracted `полдевятого`) is half of the ninth, 08:30. Backward is `без`, which subtracts from the hour actually named: `без четверти десять` is a quarter to ten, 09:45. Both are cited to gramota.ru's guide to telling the time.
 
@@ -81,31 +81,23 @@ The `по`-inclusive rule is the best-cited decision in the locale. The correspo
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#987](https://github.com/TigreGotico/chronologia/issues/987): ru and uk: an hour after "на" is not read as a clock ("будильник на семь утра")
+- A half hour written as two words reads no half hour. Example: `пол восьмого` gives no reading. [#1335](https://github.com/TigreGotico/chronologia/issues/1335)
 
-- [#988](https://github.com/TigreGotico/chronologia/issues/988): ru and uk: a preposition or the year noun stays in the remainder ("в 2024 году", "в начале года")
+- An hour after a preposition like `на` is not read as a clock. Example: `поставь напоминание на восемь вечера` gives no reading. [#987](https://github.com/TigreGotico/chronologia/issues/987)
 
-- [#1004](https://github.com/TigreGotico/chronologia/issues/1004): A unit word with no number counts as one: "how many days before christmas" gives 24 December
+- A range reading crosses a full stop. Example: `Мы встретимся в понедельник. Отчёт должен быть готов до пятницы.` gives 2017-07-08 00:00, where the test expects 2017-07-04 00:00. [#1352](https://github.com/TigreGotico/chronologia/issues/1352)
 
-- [#1038](https://github.com/TigreGotico/chronologia/issues/1038): [ru][uk] six reading gaps found when ovos-date-parser routed ru and uk
+- A preposition or the year noun stays in the remainder. Example: `2022 год` gives год. [#988](https://github.com/TigreGotico/chronologia/issues/988)
 
-- [#1192](https://github.com/TigreGotico/chronologia/issues/1192): ru, uk, pl: a spelled amount of one thousand reads as the year 1000
+- A year spoken as an ordinal reads no date. Example: `в две тысячи втором году` gives no reading. [#1336](https://github.com/TigreGotico/chronologia/issues/1336)
 
-- [#1193](https://github.com/TigreGotico/chronologia/issues/1193): ru, cs: a spoken hour and minute clock reads only the hour
+- Six reading gaps found when the locale was routed from ovos-date-parser. [#1038](https://github.com/TigreGotico/chronologia/issues/1038)
 
-- [#1194](https://github.com/TigreGotico/chronologia/issues/1194): ru: "в первой половине дня" reads 13:00
+- Decomposed input reads differently from composed input. Example: `3 рабочих дней` gives днеи. [#1353](https://github.com/TigreGotico/chronologia/issues/1353)
 
-- [#1221](https://github.com/TigreGotico/chronologia/issues/1221): ru, cs, sk, pl, uk: a half-hour or quarter clock followed by another word loses its clock
-
-- [#1335](https://github.com/TigreGotico/chronologia/issues/1335): ru, pl: "пол восьмого" and "w pół do ósmej" written apart read no half hour
-
-- [#1336](https://github.com/TigreGotico/chronologia/issues/1336): ru, uk: a year spoken as an ordinal ("в две тысячи втором году") reads no date
-
-- [#1352](https://github.com/TigreGotico/chronologia/issues/1352): A range reading crosses a full stop: de "am Montag. Der Bericht ist bis Freitag"
-
-- [#1353](https://github.com/TigreGotico/chronologia/issues/1353): Decomposed (NFD) input reads differently from composed (NFC) input: fr "ouvrés", pt "março"
+- A unit word with no number counts as one. Example: `сколько дней до 31 октября` gives 2017-10-30 00:00, where the test expects 2017-10-31 00:00. [#1004](https://github.com/TigreGotico/chronologia/issues/1004)
 
 ## Checked examples
 

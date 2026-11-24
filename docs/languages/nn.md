@@ -111,11 +111,11 @@ Each returns a wrong or partial answer rather than nothing.
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#990](https://github.com/TigreGotico/chronologia/issues/990): A common word reads as a time word: en "fall", da "går" and "morgen", oc "ora", pl "lata"
+- A morning or evening word that the reader does not join lets a lone clock take the other half of the day. Example: `klokka 8 i kveld` gives 2017-06-28 08:00, where the test expects 2017-06-27 20:00. [#1071](https://github.com/TigreGotico/chronologia/issues/1071)
 
-- [#1071](https://github.com/TigreGotico/chronologia/issues/1071): A morning or evening word the reader does not join lets a lone clock take the other half: de "früh", nb "morgenen", nn "morgonen", de "Uhr abends"
+- A common word that is no time word reads as a time word. Example: `hei korleis går det` gives Monday 26 June, with `hei korleis det` left over, where the test expects no date. [#990](https://github.com/TigreGotico/chronologia/issues/990)
 
 ## Checked examples
 

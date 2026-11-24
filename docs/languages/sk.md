@@ -54,7 +54,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## Weaker provenance
 
-**Every citation into the Slovak Academy's dictionary portal is unverified here.** The determiner paradigms, the unit-noun paradigms, the hour-ordinal table, the day-ordinal table and both era files are attributed to `slovnik.juls.savba.sk`: the Jazykovedný ústav Ľ. Štúra collection. The right authority for all of them. None of those locators is checked. Treat the attributions as unchecked rather than as absent evidence. The surfaces themselves are ordinary Slovak and several are corroborated by CLDR.
+**Every citation into the Slovak Academy's dictionary portal is unverified here.** The determiner paradigms, the unit-noun paradigms, the hour-ordinal table, the day-ordinal table and both era files are attributed to `slovnik.juls.savba.sk`: the Jazykovedný ústav Ľ. Štúra collection, the right authority for all of them. None of those locators is checked. Treat the attributions as unchecked rather than as absent evidence. The surfaces themselves are ordinary Slovak and several are corroborated by CLDR.
 
 **The preposition `v`.** Its file cites the English Wiktionary entry for `v`, Slovak section, glossed "in". That section carries an alternative form, an etymology, a pronunciation and a preposition heading with a definition-requested marker in place of any sense. The gloss "in, inside, at" belongs to the Slovene section immediately below it. The Slovak Wikislovník page of the same name is the article for the Latin letter.
 
@@ -94,13 +94,9 @@ Neither supports the citation. The surface is not in doubt. The locator is wrong
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#1190](https://github.com/TigreGotico/chronologia/issues/1190): pl, cs, sk, bg, hr: the preposition and the year noun stay in the remainder ("w 2024 roku", "2024 година")
-
-- [#1221](https://github.com/TigreGotico/chronologia/issues/1221): ru, cs, sk, pl, uk: a half-hour or quarter clock followed by another word loses its clock
-
-- [#1227](https://github.com/TigreGotico/chronologia/issues/1227): sk: "o prvej" before a noun reads 01:00
+- The preposition and the year noun stay in the remainder. Example: `v roku 2024` gives v. [#1190](https://github.com/TigreGotico/chronologia/issues/1190)
 
 ## Checked examples
 

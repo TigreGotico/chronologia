@@ -92,23 +92,25 @@ The weekday and month names, the clock words, the range markers, the seasons and
 
 ## Known limits
 
-Each limit below has an open issue and a strict `xfail` test that fails when the limit is fixed.
+Each line is an open issue with a strict `xfail` test for this language. The most common cases come first. An example shows what the library gives on the test's own anchor date.
 
-- [#990](https://github.com/TigreGotico/chronologia/issues/990): A common word reads as a time word: en "fall", da "går" and "morgen", oc "ora", pl "lata"
+- A noun that looks like a unit reads as one hour, and a clock preposition phrase is not read. Example: `sæt en timer` gives 60 min with remainder 'sæt', where the test expects nothing. [#1015](https://github.com/TigreGotico/chronologia/issues/1015)
 
-- [#993](https://github.com/TigreGotico/chronologia/issues/993): A next or last word beside a season, month or week is left over: an, ca, da, hu, kab, nl
+- A part of the day with no day word answers the band that has already passed. Example: `Hvad tid på morgenen gryr dagen ovre i London?` gives 2017-06-27 05:00, where the test expects 2017-06-28 05:00. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- [#994](https://github.com/TigreGotico/chronologia/issues/994): A spelled-out year after a date is left over in many locales
+- A clock form reads wrong or not at all. Example: `20` gives no reading. [#1032](https://github.com/TigreGotico/chronologia/issues/1032)
 
-- [#997](https://github.com/TigreGotico/chronologia/issues/997): A part of the day with no day word answers the band that has passed
+- A common word that is no time word reads as a time word. [#990](https://github.com/TigreGotico/chronologia/issues/990)
 
-- [#1015](https://github.com/TigreGotico/chronologia/issues/1015): da: "en timer" (a timer) is read as one hour, and "til klokken femten" is not read
+- A word for next or last beside a season, month or week stays in the remainder. Example: `til foråret` gives 2017-03-01 00:00, where the test expects Within(2018-03-01 00:00:00, 2018-03-22 00:00:00). [#993](https://github.com/TigreGotico/chronologia/issues/993)
 
-- [#1032](https://github.com/TigreGotico/chronologia/issues/1032): Clock forms read wrong or not at all: "3 30 pm", "07.00 Uhr", "24:00", nl "tien over half drie", it "le tre", ar "الثالثة والثلث"
+- A spelled-out year after a date stays in the remainder. Example: `fredag, den femtende marts, to tusind og fire og tyve` gives 2018-03-15 00:00, where the test expects 2024-03-15 00:00. [#994](https://github.com/TigreGotico/chronologia/issues/994)
 
-- [#1203](https://github.com/TigreGotico/chronologia/issues/1203): extract_duration: "century" and "millennium" give no length (da "århundrede", es "siglo", gl "século", pt "milénio")
+- `century` and `millennium` give no length. Example: `1 årtusinde` gives no reading. [#1203](https://github.com/TigreGotico/chronologia/issues/1203)
 
-- [#1210](https://github.com/TigreGotico/chronologia/issues/1210): extract_duration: a compound number with "og" or "d" loses a part (da "ni og fyrre", kab "mraw d yiwen")
+- The candidate list and the single-span reader disagree on one phrase. [#995](https://github.com/TigreGotico/chronologia/issues/995)
+
+- A compound number loses a part. Example: `ni og fyrre sekunder` gives 0.7 min, where the test expects 0.8 min. [#1210](https://github.com/TigreGotico/chronologia/issues/1210)
 
 ## Checked examples
 
