@@ -37,17 +37,27 @@
     "clock_time": {
       "orders": [
         "alarm_at HOUR MERIDIEM? ZONE?",
-        "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
-        "at? HOUR CLOCKDIR MINUTE of? article? MERIDIEM? ZONE?",
-        "at? at HOUR of? article? MERIDIEM? ZONE?",
+        "at? HOUR CLOCKDIR FRACTION ZONE?",
+        "at? HOUR CLOCKDIR FRACTION of? article? MERIDIEM ZONE?",
+        "at? HOUR CLOCKDIR FRACTION dayframe article MERIDIEM ZONE?",
+        "at? HOUR CLOCKDIR MINUTE ZONE?",
+        "at? HOUR CLOCKDIR MINUTE of? article? MERIDIEM ZONE?",
+        "at? HOUR CLOCKDIR MINUTE dayframe article MERIDIEM ZONE?",
+        "at? at HOUR ZONE?",
+        "at? at HOUR of? article? MERIDIEM ZONE?",
         "at? HOUR of? article? MERIDIEM ZONE?",
+        "at? at? HOUR dayframe article MERIDIEM ZONE?",
         "at? HOUR MERIDIEM ZONE?",
-        "at? LANDMARK CLOCKDIR FRACTION of? article? MERIDIEM? ZONE?",
-        "at? LANDMARK CLOCKDIR MINUTE of? article? MERIDIEM? ZONE?",
-        "at? LANDMARK of? article? MERIDIEM? ZONE?",
+        "at? LANDMARK CLOCKDIR FRACTION ZONE?",
+        "at? LANDMARK CLOCKDIR FRACTION of? article? MERIDIEM ZONE?",
+        "at? LANDMARK CLOCKDIR MINUTE ZONE?",
+        "at? LANDMARK CLOCKDIR MINUTE of? article? MERIDIEM ZONE?",
+        "at? LANDMARK ZONE?",
+        "at? LANDMARK of? article? MERIDIEM ZONE?",
         "at? at CLOCK of? article? MERIDIEM ZONE?",
         "at? CLOCK of? article? MERIDIEM ZONE?",
         "at? at? CLOCK MERIDIEM? ZONE?",
+        "at? at? CLOCK dayframe article MERIDIEM ZONE?",
         "FRACTION CLOCKDIR article? HOUR MERIDIEM? ZONE?",
         "MINUTE CLOCKDIR article? HOUR MERIDIEM? ZONE?"
       ],
@@ -98,7 +108,8 @@
       "orders": [
         "in GYEAR",
         "article? year_word of? GYEAR",
-        "GYEAR"
+        "GYEAR",
+        "article? PART of? GYEAR"
       ]
     },
     "holiday_ref": {
@@ -165,7 +176,8 @@
     "dmy": true,
     "hemisphere": null,
     "prefer_future": true,
-    "bare_at_markers": ["a"]
+    "bare_at_markers": ["a"],
+    "clock_of_recurrence": true
   },
   "quantifiers": {
     "1": [

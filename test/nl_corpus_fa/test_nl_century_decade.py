@@ -6,8 +6,8 @@ standard Persian dictionary word for a ten-year period).
 Persian postposes the ordinal after the noun ("قرن سوم" = the third
 century), the same shape its own quarter_ref sibling already uses
 ("ربع سوم" style orders), so this corpus's base_grammar.extend adds
-"CMUNIT ORD" to scoped_ordinal. Ordinal words fold via
-ovos-number-parser (numbers_fa, ordinals=True).
+"CMUNIT ORD" to scoped_ordinal. Ordinal words, compounds included
+("بیست و یکم"), fold through the numtag number layer.
 
 Gold for the ordinal form: the Nth century spans the 100 years opening in
 year (N-1)*100, half-open, computed independently of the parser.
@@ -65,11 +65,12 @@ def test_bare_unit_word_no_match(text):
     nomatch(text)
 
 
-def test_compound_spelled_ordinal_refuses():
-    # "بیست و یکم" (twenty + and + first) means "twenty-first", but
-    # extract_number_fa reads only "بیست" (20) out of that run and stops --
-    # it does not compose the "و یکم" continuation. The matcher's ORD slot
-    # then binds 20 alone, stranding "و یکم" beside it. Composing multi-word
-    # spelled ordinals is unsupported -- this refuses (None) rather than
-    # silently answering "the 20th century" for "the twenty-first century".
-    nomatch("قرن بیست و یکم")
+@pytest.mark.parametrize("text,n", [
+    ("قرن بیست و یکم", 21), ("قرن نوزدهم", 19),
+])
+def test_compound_spelled_ordinal(text, n):
+    # "بیست و یکم" (twenty + and + first) is one ordinal, twenty-first: the
+    # 21st century is the years 2001 to 2100
+    s = span(text)
+    assert (s.start.year, s.end.year) == ((n - 1) * 100, n * 100)
+    assert parse(text)[1] == ""

@@ -32,7 +32,7 @@ def test_season_of_year(text, y, sm):
     ("a doua săptămână din iulie", 2017, 7, 10, 7),
     ("a treia săptămână din iulie", 2017, 7, 17, 7),
     ("ultima zi din iulie", 2017, 7, 31, 1),
-    ("a treia zi din martie", 2017, 3, 3, 1),
+    ("a treia zi din martie", 2018, 3, 3, 1),
 ])
 def test_scoped_ordinal(text, y, mo, d, wide):
     s, e = start_end(text)

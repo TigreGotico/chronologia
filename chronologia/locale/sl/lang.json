@@ -123,5 +123,5 @@
    ]
   }
  },
- "hook": "chronologia.extract.numfold_slavic:fold_sl"
+ "hook": "chronologia.extract.numlayer_slavic:fold_sl"
 }

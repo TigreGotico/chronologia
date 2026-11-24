@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """R172: two related Hebrew gaps in the vav-conjunction / spelled-number fold
-hooks (``chronologia.extract.numfold_semitic``).
+hooks (``chronologia.extract.numlayer_semitic``).
 
 1. Curated vav-strip stems (#712's ``_he_vav_strip``) omitted two everyday
    temporal-function words: לפני (before/ago, ``marker_before.voc``) and

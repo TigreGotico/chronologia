@@ -15,18 +15,20 @@ together here since they land on the same composition path once the surface
 is recognised.
 
 A genuinely bare, non-explicit day-part ("avond om 3 uur", no "van-" prefix)
-keeps the clock's own roll-to-tomorrow rule, unaffected by this fix.
+takes the next such time.
 
 Anchor: Friday 2026-08-14 10:00.
 
 Gold is derived by hand: today's date at the PM-shifted hour for the PM-side
 "vanavond", the literal hour for the AM-side "vanochtend"/"vanmorgen".
 """
+from datetime import datetime
+
 import pytest
 
 from ._corpus import parse
 
-ANCHOR_R187 = __import__("datetime").datetime(2026, 8, 14, 10, 0)
+ANCHOR_R187 = datetime(2026, 8, 14, 10, 0)
 TODAY = 14
 
 
@@ -65,12 +67,16 @@ def test_vanochtend_and_vanmorgen_stay_on_anchor_day(daypart, h):
     assert r.remainder == "", text
 
 
-def test_bare_non_explicit_daypart_still_rolls_forward():
-    """"avond om 3 uur" (no "van-" prefix) keeps the clock's own
-    roll-to-tomorrow rule, untouched by this fix."""
+def test_bare_non_explicit_daypart_takes_the_next_such_time():
+    """"avond om 3 uur" (no "van-" prefix) at 10:00 is 15:00 the same day,
+    the next time that matches; at 16:00 it is 15:00 the next day."""
     r = _p("avond om 3 uur")
     assert r is not None
     s = r.span.start
+    assert (s.year, s.month, s.day, s.hour) == (2026, 8, TODAY, 15)
+    late = parse("avond om 3 uur", datetime(
+        2026, 8, 14, 16, 0))
+    s = late.span.start
     assert (s.year, s.month, s.day, s.hour) == (2026, 8, 15, 15)
 
 
