@@ -188,6 +188,8 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     articles = _article_words(spec)
     of_words = set(spec.connectors.get("of", ()))
     and_words = _and_words(spec)
+    indef = frozenset(spec.connectors.get("indef", ()))
+    article_nouns = frozenset(spec.connectors.get("article_noun", ()))
     filler = articles | of_words
     n = len(tokens)
 
@@ -356,6 +358,13 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         return (after in spec.dayparts
                 or (count_at > 0 and _unit_of(tokens[count_at - 1]) == "hour"))
 
+    def _clock_reads(count_at, unit_at):
+        # a clock whose preposition precedes the count and which ends after
+        # the unit noun: "om 8 uur", "à 8 heures"
+        return any(m.construction == "clock_time" and m.span[0] < count_at
+                   and unit_at < m.span[1]
+                   for m in engine.matcher.match(tokens, None))
+
     def _add(kind, count):
         nonlocal total, months
         if kind in calendar_months:
@@ -421,6 +430,14 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     consumed.update(range(i, end))
                     i = end
                     continue
+        # a unit surface that is also a noun the indefinite article takes
+        # ("en timer", the device) is that noun, not a count of one
+        if (j + 1 < n
+                and text[tokens[j].char_start:tokens[j].char_end].lower()
+                in indef
+                and tokens[j + 1].text in article_nouns):
+            i += 1
+            continue
         # a leading article: "a day" -> count 1; "a couple of days" -> skip
         # it.  numtag reads no number in a quantifier ("couple", "few"), so in
         # its languages the quantifier word is the count and the article
@@ -541,6 +558,10 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                          and (i == 0 or tokens[i - 1].text not in of_words))
                     and (unit == "month"
                          or float(count * calendar_months[unit]).is_integer())):
+                i += 1
+                continue
+            if unit == "hour" and count_tok is not None and _clock_reads(
+                    count_tok.index, j):
                 i += 1
                 continue
             _add(unit, count)
@@ -1335,8 +1356,8 @@ def _read_recurrence(text, lang, anchor):
             if rec is None:
                 return None
             rec, consumed = _apply_year_scope(rec, consumed, ctx, lang, anchor)
-            # a trailing year scope on a rule this engine has no bound field
-            # for (JurisdictionHolidays, HolidayRecurrence) cannot be honestly
+            # a trailing year scope on a rule with no start field
+            # (JurisdictionHolidays, HolidayRecurrence) cannot be honestly
             # expressed -- see _apply_year_scope -- so it declines the same
             # way the two cases above do.
             if rec is None:
@@ -2108,11 +2129,10 @@ def _apply_year_scope(rec, consumed, ctx, lang, anchor):
     :func:`_apply_bounds` and :func:`_apply_range_bound`.
 
     :class:`~chronologia.recurrence.HolidayRecurrence` and
-    :class:`~chronologia.recurrence.JurisdictionHolidays` carry **no** bound
-    field at all -- their ``occurrences()`` takes ``until``/``count`` only as
-    CALL arguments, nothing on the object itself to set -- so a year scope on
-    either of them cannot be attached to the returned value without silently
-    dropping it or inventing a field that does not exist.  Rather than either,
+    :class:`~chronologia.recurrence.JurisdictionHolidays` carry no start field
+    (HolidayRecurrence carries only ``until``), so a year scope on either of
+    them cannot be attached to the returned value without silently dropping
+    its start or inventing a field that does not exist.  Rather than either,
     this REFUSES the whole extraction (returns ``(None, consumed)``, exactly
     like the ambiguous-UNTIL and empty-intersection declines in
     :func:`_apply_range_bound`) when a year scope is found trailing one of

@@ -746,17 +746,22 @@ class HolidayRecurrence:
     Its date each year comes from the holiday engine, so no RFC 5545 rule can
     express it: :meth:`occurrences` expands the real dates through
     :data:`chronologia.civil_holidays.WELL_KNOWN_BY_KEY` and :meth:`to_string`
-    raises.  ``holiday_key`` is a well-known key (``"easter"``).  A fixed-date
+    raises.  ``holiday_key`` is a well-known key (``"easter"``); ``until`` is an
+    optional inclusive bound that :meth:`occurrences` uses when the caller
+    passes none.  A fixed-date
     holiday (Christmas) is a plain ``YEARLY`` :class:`Recurrence`.
     """
 
     holiday_key: str
+    until: Optional[AstroDate] = None
 
     def __post_init__(self) -> None:
         from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
         if self.holiday_key not in WELL_KNOWN_BY_KEY:
             raise ValueError(
                 f"unknown well-known holiday key: {self.holiday_key!r}")
+        if self.until is not None:
+            object.__setattr__(self, "until", _as_astro(self.until))
 
     def occurrences(self, dtstart, until=None,
                     count: Optional[int] = None) -> Iterator[DateSpan]:
@@ -769,7 +774,7 @@ class HolidayRecurrence:
         from chronologia.civil_holidays import WELL_KNOWN_BY_KEY
         wk = WELL_KNOWN_BY_KEY[self.holiday_key]
         dtstart = _as_astro(dtstart)
-        eff_until = _as_astro(until) if until is not None else None
+        eff_until = _as_astro(until) if until is not None else self.until
         if eff_until is None and count is None:
             raise ValueError(
                 "unbounded holiday recurrence: pass count=... or until=...")
@@ -810,8 +815,12 @@ class HolidayRecurrence:
         return self.to_string()
 
     def to_json(self) -> dict:
-        """A ``json.dumps``-ready envelope carrying the holiday key."""
-        return {"type": "HolidayRecurrence", "holiday": self.holiday_key}
+        """A ``json.dumps``-ready envelope carrying the holiday key and,
+        when set, the ISO-8601 ``until`` bound."""
+        data = {"type": "HolidayRecurrence", "holiday": self.holiday_key}
+        if self.until is not None:
+            data["until"] = self.until.isoformat()
+        return data
 
     @classmethod
     def from_json(cls, data: dict) -> "HolidayRecurrence":
@@ -819,7 +828,9 @@ class HolidayRecurrence:
         if data.get("type") != "HolidayRecurrence":
             raise ValueError(
                 f"not a HolidayRecurrence envelope: {data.get('type')!r}")
-        return cls(data["holiday"])
+        until = data.get("until")
+        return cls(data["holiday"],
+                   AstroDate.fromisoformat(until) if until else None)
 
 
 # --------------------------------------------------------------------------
