@@ -74,6 +74,27 @@ Commit messages follow [conventional commits](https://www.conventionalcommits.or
 (`fix:`, `feat:`, `docs:`, `chore:`); `feat:` is reserved for user-visible
 features, since the release automation reads these to pick the next version.
 
+## Comparing two trees
+
+A change to one extractor can change what another reads. The cross-view
+harness runs every phrase-like string of every `test/nl_corpus_<lang>/` package, and
+generated grids of ordinal, impossible-date and bound phrases, through
+`extract_timespan`, `extract_candidates`, `extract_recurrence` and
+`extract_event`. Each phrase runs in default and raise mode at two fixed
+anchors. Run it once on the base and once on your branch, then diff the two
+files:
+
+```bash
+for i in 0 1 2 3; do python -m benchmark.crossview run base.$i.tsv --chunk $i/4; done   # one file per chunk
+python -m benchmark.crossview diff --base base.?.tsv --head head.?.tsv
+python -m benchmark.crossview disagree head.?.tsv
+```
+
+`diff` prints the row counts, the changed rows grouped by view and by kind of
+change, and the median and p95 time per call for each side. A change should
+move no row, or only rows of a kind it declares. `diff` exits with 1 when a row
+changed, is missing or appears twice. `disagree` lists the phrases on which two views of one tree give contradictory readings.
+
 ## Adding a language
 
 [docs/adding-a-language.md](docs/adding-a-language.md) is the complete
