@@ -102,6 +102,7 @@ SPANS = [
     (1001, "en", "at 8 we watch the morning show", dt(2017, 6, 27, 20, 0), None, None, A),
     (1001, "es-ES", "a las 9, esta noche", dt(2026, 1, 5, 21, 0), None, None, dt(2026, 1, 5, 6, 0)),
     (1002, "en", "at 8 tonight", dt(2017, 6, 27, 20, 0), None, "", A),
+    (1002, "es-ES", "tarde a las 4:30", dt(2026, 10, 17, 16, 30), None, "", dt(2026, 10, 17, 12, 0)),
     (1004, "en", "how many days before christmas", dt(2017, 12, 25), None, None, A),
     (1004, "fr", "il reste combien de jours avant le 15 mai", dt(2018, 5, 15), None, None, A),
     (1004, "fr", "combien de jours il y a du 1er mars au 15 avril", dt(2018, 3, 1), dt(2018, 4, 16), None, A),
