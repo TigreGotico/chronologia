@@ -53,6 +53,20 @@ def test_candidates_keep_the_valid_date_and_drop_the_refused_weekday(lang, text,
 
 
 @pytest.mark.xfail(strict=True, reason=URL + "1276")
+@pytest.mark.parametrize("text", [
+    "annually on the 30th of february",
+    "the sixth monday of may 2027",
+    "the sixth monday of may next year",
+    "the sixth monday of may at 7",
+])
+def test_candidates_read_nothing_from_a_refused_date(text):
+    # extract_timespan gives None for each; no candidate may read a year, a
+    # clock or a day of this month out of the refused words.
+    assert extract_timespan(text, "en", ANCHOR) is None
+    assert extract_candidates(text, "en", ANCHOR) == []
+
+
+@pytest.mark.xfail(strict=True, reason=URL + "1276")
 def test_candidates_refused_business_day_has_no_month_fallback():
     assert extract_candidates("the 23rd business day of this month", "en", ANCHOR) == []
 
