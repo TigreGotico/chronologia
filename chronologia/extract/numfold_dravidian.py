@@ -91,7 +91,6 @@ and ISO literals match them as readily as the ASCII ones.
 """
 from __future__ import annotations
 
-import functools
 from typing import Dict, List, Optional, Tuple
 
 from chronologia.dayparts import DAY_PARTS
@@ -302,7 +301,6 @@ _DAYPART_PAIRS: Dict[Tuple[str, str], str] = {
 }
 
 
-@functools.cache
 def _band_hours(key: str) -> frozenset:
     """The whole hours the day-period band ``key`` covers, from the registry."""
     part = DAY_PARTS[key]
