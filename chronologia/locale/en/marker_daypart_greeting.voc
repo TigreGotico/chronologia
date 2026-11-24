@@ -1,7 +1,10 @@
-# The word before a part of the day that makes the pair a greeting: "good
-# evening", "good night", "good morning" and "good afternoon" are interjections
+# The pairs that make a greeting: "good evening", "good night", "good
+# morning" and "good afternoon" are greetings
 # and name no band (https://en.wiktionary.org/wiki/good_evening,
 # https://en.wiktionary.org/wiki/good_night,
 # https://en.wiktionary.org/wiki/good_morning,
 # https://en.wiktionary.org/wiki/good_afternoon).
-good
+good evening
+good night
+good morning
+good afternoon

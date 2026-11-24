@@ -4,8 +4,9 @@
 A greeting before a request must not turn into a band that strands the
 request's own hour: "good evening, set an alarm at 7" is an hour, and the
 greeting stays in the remainder.  Wiktionary lists "good evening", "good
-night", "good morning" and "good afternoon" as interjections.  A part of the day
-with no "good" before it still names its band.
+night", "good morning" and "good afternoon" as greetings.  A part of the day
+with no greeting pair before it still names its band, also after an adjective
+"good".
 
 Anchor: Friday 2026-09-25 12:00.  The lone hour 7 takes its next twelve-hour
 reading after the anchor, 19:00 (ruling 17).
@@ -47,3 +48,15 @@ def test_a_part_of_the_day_without_good_keeps_its_band(text, start, end):
     found = extract_timespan(text, "en", ANCHOR)
     assert found.span.start.datetime() == start
     assert found.span.end.datetime() == end
+
+
+@pytest.mark.parametrize("text,remainder", [
+    ("the weather is good tonight", "the weather is good"),
+    ("is it good tonight", "is it good"),
+    ("good tonight", "good"),
+])
+def test_good_as_an_adjective_keeps_the_band(text, remainder):
+    found = extract_timespan(text, "en", ANCHOR)
+    assert found.span.start.datetime() == datetime(2026, 9, 25, 21, 0)
+    assert found.span.end.datetime() == datetime(2026, 9, 26, 6, 0)
+    assert found.remainder == remainder

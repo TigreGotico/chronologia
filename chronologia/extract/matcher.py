@@ -513,7 +513,7 @@ def _greeted_daypart(tokens: Tuple[Token, ...], index: int,
     the part of the day comes from ``daypart_greeting``; a locale with no such
     vocabulary is untouched.
     """
-    return (index > 0 and tokens[index - 1].text
+    return (index > 0 and f"{tokens[index - 1].text} {tokens[index].text}"
             in spec.connectors.get("daypart_greeting", frozenset()))
 
 
