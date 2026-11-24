@@ -540,9 +540,11 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
             # before a unit that a last/next/this word modifies names a
             # calendar period, not a length.
             if article_one is not None and (
+                    article_one not in spec.quantifiers
+            ) and (
                     unit in ("week", "fortnight") or unit in calendar_months
             ) and (
-                    (end < n and tokens[end].text in spec.rel_markers)
+                    (end < n and spec.rel_markers.get(tokens[end].text))
                     or (i > 0 and tokens[i - 1].text in spec.rel_markers)):
                 i += 1
                 continue

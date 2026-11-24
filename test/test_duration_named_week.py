@@ -44,3 +44,20 @@ def test_article_week_stays_a_length(text, lang):
     found = extract_duration(text, lang, anchor=ANCHOR)
     assert found.duration == timedelta(days=7)
     assert found.remainder == ""
+
+
+@pytest.mark.parametrize("text,lang,days", [
+    ("the last few months", "en", 92),
+    ("in the next few weeks", "en", 21),
+    ("die letzten paar Wochen", "de", 14),
+    ("this couple of weeks", "en", 14),
+    ("a week this summer", "en", 7),
+    ("a fortnight this autumn", "en", 14),
+    ("un mois cet été", "fr", 30),
+    ("una settimana questa estate", "it", 7),
+    ("a semana desta páscoa", "pt", 7),
+])
+def test_quantifier_or_this_word_keeps_the_length(text, lang, days):
+    found = extract_duration(text, lang, anchor=ANCHOR)
+    assert found is not None
+    assert found.duration == timedelta(days=days)
