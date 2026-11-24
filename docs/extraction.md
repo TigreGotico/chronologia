@@ -843,7 +843,7 @@ The span runs from the first character the candidate consumed to the last one.
 When the consumed words are not next to each other, the words between them are
 inside the span and also in `remainder`. A range includes its lead word and its
 connector ("from june 5th to june 12th" is `(0, 26)`). A word that the engine
-leaves unconsumed stays out of the span. `char_span` is `None` only when no
+leaves unconsumed stays out of the span at either end. `char_span` is `None` only when no
 consumed word has a position in the text.
 
 `extract_timespan` returns `(span, remainder)` and no position. Its answer can

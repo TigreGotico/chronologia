@@ -80,6 +80,15 @@ BRANCH_CASES = [
     ("en", "monday to friday", (0, 16), "monday to friday"),
     ("en", "from monday to friday", (0, 21), "from monday to friday"),
     ("en", "friday to monday", (0, 16), "friday to monday"),
+    # a bare day with a suffix ("12th"), the first or the last of the range
+    ("en", "from june 5th to 12th", (0, 21), "from june 5th to 12th"),
+    ("en", "june 5th to 12th please", (0, 16), "june 5th to 12th"),
+    # a bare year with a postposed open-range marker
+    ("az", "2020 qədər", (0, 10), "2020 qədər"),
+    ("eu", "2020 arte", (0, 9), "2020 arte"),
+    ("fi", "2020 asti", (0, 9), "2020 asti"),
+    # "since A until B" whose end is the new year
+    ("en", "since monday until new year", (0, 27), "since monday until new year"),
     # a bare hour that takes its meridiem from the other end
     ("en", "3 to 5 pm", (0, 9), "3 to 5 pm"),
     # open ranges: the marker and every kind of "since" endpoint
