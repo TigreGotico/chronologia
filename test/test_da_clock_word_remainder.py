@@ -22,7 +22,8 @@ def test_the_clock_word_leaves_the_remainder(lang, text):
 
 
 @ISSUE
-@pytest.mark.parametrize("text", ["Påmind mig klokken 10:45", "Påmind mig kl. 10:45"])
+@pytest.mark.parametrize("text", [
+    "Påmind mig klokken 10:45", "Påmind mig kl. 10:45", "Påmind mig kl 10:45"])
 def test_da_clock_word_before_a_digit_clock_leaves_the_remainder(text):
     span, remainder = extract_timespan(text, "da", ANCHOR)
     assert (span.start.hour, span.start.minute) == (10, 45)
