@@ -61,3 +61,13 @@ def test_spaced_digit_clock_leaves_no_minutes_behind(text, lang):
 ])
 def test_two_numbers_without_a_clock_preposition_are_no_clock(text, lang):
     assert extract_timespan(text, lang, ANCHOR) is None
+
+
+@pytest.mark.parametrize("text,start", [
+    ("kell kaheksa 5. juuni", datetime(2018, 6, 5, 8, 0)),
+    ("kell üheksa 25. detsembri", datetime(2017, 12, 25, 9, 0)),
+])
+def test_spelled_hour_before_a_dotted_day_is_no_spaced_clock(text, start):
+    res = extract_timespan(text, "et", ANCHOR)
+    assert res.span.start == start
+    assert res.span.end == start + timedelta(minutes=1)

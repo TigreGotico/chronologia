@@ -674,6 +674,13 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
     return best
 
 
+def _typed(token: Token) -> bool:
+    """Whether the number was written with digits, not folded from words."""
+    return (token.raw[:1].isdigit()
+            and (token.char_end or 0) - (token.char_start or 0)
+            == len(token.raw))
+
+
 class ConstructionMatcher:
     """Runs a compiled table over a token stream."""
 
@@ -1143,6 +1150,18 @@ class ConstructionMatcher:
                         _ai = slots["HOUR"].index - 1
                         if (_ai >= 0 and tokens[_ai].text
                                 in self.spec.conventions.bare_at_markers):
+                            continue
+                    # A spaced clock ("10 30") is two numbers written as
+                    # digits.  A digit beside a spelled number ("kaheksa 5.
+                    # juuni": eight o'clock, the 5th of June) or a minute that
+                    # wears the ordinal dot (a day of the month) is no clock.
+                    if (name == "clock_time" and "HOUR" in slots
+                            and "MINUTE" in slots
+                            and slots["MINUTE"].index
+                            == slots["HOUR"].index + 1):
+                        _h, _m = slots["HOUR"], slots["MINUTE"]
+                        if (_m.raw.endswith(".")
+                                or _typed(_h) != _typed(_m)):
                             continue
                     # "alarm for 10" is a clock, "alarm for 10 minutes" is a
                     # length, and "alarm for 7 e meia" has minutes that the

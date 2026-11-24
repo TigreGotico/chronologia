@@ -49,8 +49,7 @@ def test_known_gap_amount_of_a_thousand_is_no_year():
     assert start("за тысячу рублей вчера") == ad(datetime(2017, 6, 26))
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1193")
-def test_known_gap_hour_and_minute_clock():
+def test_hour_and_minute_clock():
     assert start("в девять тридцать") == ad(datetime(2017, 6, 27, 21, 30))
 
 

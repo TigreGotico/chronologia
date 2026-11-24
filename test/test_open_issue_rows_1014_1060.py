@@ -47,6 +47,8 @@ def _matches(expected, value):
 
 # Rows that read right on dev: plain tests that keep the fix.
 FIXED_SPANS = {
+    "alle 3 30",
+    "domani alle 8 15",
     "یک زنگ ساعت برای هفت صبح بگذار",
     "یک هشدار جدید برای ساعت هشت شب تنظیم کن",
     "tedd át a megbeszélést három órára",

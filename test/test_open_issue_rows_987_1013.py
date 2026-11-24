@@ -45,11 +45,18 @@ def _matches(expected, value):
     return value == expected
 
 
-def _case(issue, *row):
+# Rows that read right on dev: plain tests that keep the fix.
+FIXED_SPANS = {
+    "às 10 30",
+    "در ساعت 10 30",
+}
+
+
+def _case(fixed, issue, *row):
+    marks = () if row[1] in fixed else pytest.mark.xfail(
+        strict=True, reason=URL.format(issue))
     return pytest.param(
-        *row,
-        marks=pytest.mark.xfail(strict=True, reason=URL.format(issue)),
-        id="{}-{}-{}".format(issue, row[0], row[1]))
+        *row, marks=marks, id="{}-{}-{}".format(issue, row[0], row[1]))
 
 
 # issue, lang, text, expected start, expected end or None, expected remainder
@@ -140,7 +147,7 @@ SPANS = [
 
 @pytest.mark.parametrize(
     "lang,text,start,end,remainder,anchor",
-    [_case(issue, lang, text, start, end, rem, anchor)
+    [_case(FIXED_SPANS, issue, lang, text, start, end, rem, anchor)
      for issue, lang, text, start, end, rem, anchor in SPANS])
 def test_span_rows(lang, text, start, end, remainder, anchor):
     found = extract_timespan(text, lang, anchor)
@@ -168,7 +175,7 @@ DURATIONS = [
 
 @pytest.mark.parametrize(
     "lang,text,length,remainder",
-    [_case(issue, lang, text, length, rem)
+    [_case((), issue, lang, text, length, rem)
      for issue, lang, text, length, rem in DURATIONS])
 def test_duration_rows(lang, text, length, remainder):
     found = extract_duration(text, lang, anchor=ANCHOR)
@@ -190,7 +197,7 @@ MENTIONS = [
 
 @pytest.mark.parametrize(
     "lang,text,char_span",
-    [_case(issue, lang, text, cs) for issue, lang, text, cs in MENTIONS])
+    [_case((), issue, lang, text, cs) for issue, lang, text, cs in MENTIONS])
 def test_mention_rows(lang, text, char_span):
     found = extract_timespans(text, lang, ANCHOR)
     assert found
