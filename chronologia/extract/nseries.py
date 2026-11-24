@@ -1289,7 +1289,8 @@ _NEVER_OCCURS = object()
 
 def _never_occurring_claim(text, lang, anchor):
     """The token indices of the phrase a finder refused as never occurring, or
-    an empty set when the refusal comes from no single finder."""
+    an empty set when the refusal comes from no single finder, as for a weekday
+    range that holds no day."""
     ctx = _recur_ctx(text, lang, anchor)
     for finder in _FINDERS:
         hit = finder(ctx)

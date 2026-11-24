@@ -4628,8 +4628,9 @@ def extract_candidates(
                                              _read_recurrence)
     never = frozenset()
     if _read_recurrence(text, lang, anchor) is _NEVER_OCCURS:
-        never = _never_occurring_claim(text, lang, anchor) \
-            or frozenset(t.index for t in tokens)
+        never = _never_occurring_claim(text, lang, anchor)
+        if not never:
+            return []
     # Composed readings: the business-day / anchored-offset / ordinal-count
     # post-passes extract_timespan runs are re-run here so the candidate set can
     # never disagree with the single-winner API -- without this, "in 5 business

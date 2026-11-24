@@ -285,6 +285,8 @@ NEVER_OCCURS = [
     ("every sixth monday of the month", "en", "a month has no 6th Monday"),
     ("el sexto lunes de mayo", "es", "May has no 6th Monday"),
     ("the sixtieth monday of the year", "en", "a year has no 60th Monday"),
+    ("every weekday from saturday to sunday", "en",
+     "the range from Saturday to Sunday holds no day the rule allows"),
 ]
 
 
