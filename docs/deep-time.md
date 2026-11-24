@@ -2,25 +2,17 @@
 
 <!-- agent-hint
 covers: geological and archaeological periods, Before Present ages and radiocarbon calibration
-source: `chronologia/periods.py`, `chronologia/data/`
+source: chronologia/periods.py, chronologia/data/
 generated: no
-verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/deep-time.md
-see: `docs/mars-and-beyond.md`, `docs/edtf.md`
+verify: .venv/bin/python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};n=bad=0\nfor b in re.findall(r\"\\x60\\x60\\x60python\\n(.*?)\\x60\\x60\\x60\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        n+=isinstance(s,ast.Assert)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/deep-time.md
+see: docs/mars-and-beyond.md, docs/edtf.md
 -->
 
-Most of this library is about human dates. This page is about the other 99.9%
-of time — the age of the dinosaurs, the ice ages, the Bronze Age — where we
-stop counting individual days and start naming vast stretches. The tools here
-answer "when was the Jurassic?" and "how old is this campfire charcoal?" with
-the same honesty about uncertainty that the rest of the library insists on.
+Most of this library is about human dates. This page is about the other 99.9% of time: the age of the dinosaurs, the ice ages and the Bronze Age. Here we stop counting individual days and name vast stretches. The tools here answer "when was the Jurassic?" and "how old is this campfire charcoal?". They state their uncertainty, as the rest of the library does.
 
 ## Named periods: the geological chart
 
-Geologists have agreed on an official map of deep time — a nested chart of
-eons, eras, periods, epochs and ages, each with a name and a boundary. It is
-maintained by an international body (the ICS, the International Commission on
-Stratigraphy) and revised as the science improves. This library ships one
-published version of that chart, and lets you look any name up.
+Geologists have agreed on an official map of deep time. It is a nested chart of eons, eras, periods, epochs and ages. Each has a name and a boundary. An international body, the International Commission on Stratigraphy (ICS), maintains it and revises it as the science improves. This library ships one published version of that chart, and lets you look any name up.
 
 ```python
 from chronologia import lookup
@@ -33,9 +25,7 @@ print(jurassic.span.end.year)  # -143098050
 print(jurassic.level)  # period
 ```
 
-Those years — about 201.6 million and 143.1 million years ago — are not
-guesses this library made up. They come straight from the chart, and they wear
-their basis on their sleeve:
+Those years, about 201.6 million and 143.1 million years ago, are not guesses this library made up. They come straight from the chart, and they wear their basis on their sleeve:
 
 ```python
 print(jurassic.span.basis)  # tabulated
@@ -44,12 +34,9 @@ print(jurassic.source)  # ICS International Chronostratigraphic Chart 2023/09
 
 ### Why the boundaries have error bars
 
-A geological boundary is never known to the exact year — it is measured, with
-an uncertainty of thousands or millions of years. The chart publishes those
-uncertainties, and this library folds them *outward* into the span: the older
-edge is pushed a little older, the younger edge a little younger, so the span
-covers the full published envelope. A wide span is the science being honest
-about what it does not precisely know.
+A geological boundary is never known to the exact year. It is measured, with an uncertainty of thousands or millions of years. The chart publishes those uncertainties. This library folds them *outward* into the span.
+
+The older edge moves a little older, and the younger edge a little younger. So the span covers the full published envelope. A wide span is the science being honest about what it does not precisely know.
 
 ## Walking the hierarchy
 
@@ -63,10 +50,7 @@ print([c.name for c in children("jurassic")])  # ['Early Jurassic', 'Middle Jura
 
 ## Subdivide: "the Late Jurassic" beats arithmetic
 
-Often you want a rough third of a period — "early", "mid", "late". You can ask
-for that on any span, and by default you get an arithmetic slice. But here is
-the clever part: when the *chart itself* defines that subdivision, the library
-returns the real, official one instead of a mechanical third.
+Often you want a rough third of a period, "early", "mid", "late". You can ask for that on any span, and by default you get an arithmetic slice. But here is the clever part: when the *chart itself* defines that subdivision, the library returns the real, official one instead of a mechanical third.
 
 ```python
 from chronologia import subdivide
@@ -75,9 +59,7 @@ late = subdivide(lookup("jurassic"), "late")
 print(late.start.year, late.end.year)  # -161498050 -143098050
 ```
 
-Those are the exact boundaries of the officially-named **Late Jurassic** —
-161.5 to 143.1 million years ago — not the last 33% of the Jurassic you would
-get by dividing. Looking the name up directly gives the same span:
+Those are the exact boundaries of the official **Late Jurassic**, 161.5 to 143.1 million years ago. They are not the last 33% of the Jurassic that division would give. Looking the name up directly gives the same span:
 
 ```python
 lj = lookup("late jurassic")
@@ -86,12 +68,7 @@ print(lj.span.start.year, lj.span.end.year)  # -161498050 -143098050
 
 ## Region-tagged archaeology: whose Bronze Age?
 
-Human prehistory has a catch that geology does not: the same name means
-*different times in different places*. The British Bronze Age and the
-Mesopotamian Bronze Age are both real, both called "the Bronze Age", and
-centuries apart — Mesopotamia's began far earlier. A bare name is therefore
-genuinely ambiguous, so the library refuses to guess. It lists the candidates
-and lets you choose by region:
+Human prehistory has a catch that geology does not: the same name means *different times in different places*. The British Bronze Age and the Mesopotamian Bronze Age are both real, both called "the Bronze Age", and centuries apart, Mesopotamia's began far earlier. A bare name is therefore genuinely ambiguous, so the library refuses to guess. It lists the candidates and lets you choose by region:
 
 ```python
 from chronologia import candidates
@@ -102,9 +79,7 @@ for period in candidates("bronze age"):
 # MESO -3299 -1199
 ```
 
-Ask for a bare "bronze age" with no region and the library raises an error
-rather than silently picking one — choosing a locale default is *your* job, not
-its:
+Ask for a bare "bronze age" with no region and the library raises an error instead of picking a region. Choosing a regional default is *your* job, not the library's:
 
 ```python
 from chronologia import AmbiguousPeriodError
@@ -119,15 +94,9 @@ except AmbiguousPeriodError:
 
 ## resolve_bp: what "66 million years ago" really claims
 
-Deep-time ages are usually written as a number "before present" (BP), where
-"present" is fixed at 1950. But here is a subtlety most people miss: **the way
-you write the number tells you how precise it is.**
+Deep-time ages are usually written as a number "before present" (BP), where "present" is fixed at 1950. But here is a subtlety most people miss: **the way you write the number tells you how precise it is.**
 
-"66 million years ago" and "66.043 million years ago" are *different claims*.
-The first is rounded to the nearest million — it could really be anywhere in a
-one-million-year band. The second is precise to the nearest thousand years — a
-band a thousand times narrower. This is the idea of *significant figures*, and
-`resolve_bp` reads it straight off the digits you type:
+"66 million years ago" and "66.043 million years ago" are *different claims*. The first is rounded to the nearest million. It could really be anywhere in a one-million-year band. The second is precise to the nearest thousand years, a band a thousand times narrower. This is the idea of *significant figures*, and `resolve_bp` reads it straight off the digits you type:
 
 ```python
 from chronologia import resolve_bp
@@ -139,26 +108,13 @@ precise = resolve_bp("66.043", "Ma")
 print(precise.start.year, precise.end.year)  # -66041050 -66040050
 ```
 
-Look at the widths. The rough answer spans a *million* years
-(−65,998,050 to −64,998,050); the precise one spans just a *thousand*
-(−66,041,050 to −66,040,050). Same event — the extinction of the dinosaurs —
-but the span's width honestly reflects how precisely each phrasing pins it
-down. This is why you should pass the value as a **string**: `"66"` and
-`"66.0"` mean different precisions, but the numbers `66` and `66.0` are
-identical once Python parses them, so the text is what carries the meaning.
+Look at the widths. The rough answer spans a *million* years (−65,998,050 to −64,998,050). The precise one spans just a *thousand* (−66,041,050 to −66,040,050). Same event, the extinction of the dinosaurs, but the span's width honestly reflects how precisely each phrasing pins it down. This is why you should pass the value as a **string**: `"66"` and `"66.0"` mean different precisions. But the numbers `66` and `66.0` are identical once Python parses them, so the text is what carries the meaning.
 
 ## Radiocarbon: why ¹⁴C years are not calendar years
 
-You have heard of "carbon dating" — measuring the tiny amount of radioactive
-carbon-14 left in something once alive to tell how old it is. Here is the part
-the TV documentaries skip: **a radiocarbon age is not a calendar age.**
+You have heard of "carbon dating", measuring the tiny amount of radioactive carbon-14 left in something once alive to tell how old it is. Here is the part the TV documentaries skip: **a radiocarbon age is not a calendar age.**
 
-Carbon-14 forms in the atmosphere at a rate that has wobbled over the
-millennia, so the radiocarbon "clock" runs unevenly. A lab reports a "3500 BP"
-radiocarbon age, but that does *not* mean 3500 calendar years ago. To get a
-real calendar date you must run the measurement through a **calibration
-curve** — a painstakingly-built table (called IntCal) mapping radiocarbon
-years to calendar years. `calibrate_c14` does that conversion:
+Carbon-14 forms in the atmosphere at a rate that has wobbled over the millennia, so the radiocarbon "clock" runs unevenly. A lab reports a "3500 BP" radiocarbon age, but that does *not* mean 3500 calendar years ago. To get a real calendar date you must run the measurement through a **calibration curve**. IntCal is such a table: it maps radiocarbon years to calendar years. `calibrate_c14` does that conversion:
 
 ```python
 from chronologia import calibrate_c14
@@ -168,16 +124,9 @@ print(span.start.year, span.end.year)  # -1950 -1850
 print(span.basis)  # reconstructed
 ```
 
-So a 3500 radiocarbon-year age actually points to roughly 1900 BC in calendar
-terms — and the answer is a *span*, marked `reconstructed`, never a single
-confident year.
+So a 3500 radiocarbon-year age actually points to roughly 1900 BC in calendar terms. The answer is a *span*, marked `reconstructed`, never a single confident year.
 
-**Honest caveat:** the calibration table shipped here is deliberately coarse —
-sampled every hundred years, with a simple nearest-match lookup. It is a
-teaching-and-locating tool that puts a radiocarbon age in the right calendar
-neighbourhood. It is **not** a substitute for real radiocarbon software (such
-as OxCal), which does full statistical calibration. Do not use it for actual
-archaeological dating.
+**Honest caveat:** the calibration table shipped here is deliberately coarse, sampled every hundred years, with a simple nearest-match lookup. It is a teaching-and-locating tool that puts a radiocarbon age in the right calendar neighbourhood. It is **not** a substitute for real radiocarbon software (such as OxCal), which does full statistical calibration. Do not use it for actual archaeological dating.
 
 ## Reference
 
@@ -186,17 +135,14 @@ archaeological dating.
 | `lookup(name)` / `lookup(name, region=...)` | resolve a period name (or key) to its `NamedPeriod` |
 | `candidates(name)` | list every entry matching a name, across regions |
 | `children(key)` | the entries one level down whose parent is `key` |
-| `subdivide(target, part)` | the early/mid/late (or first-/second-half) part; a chart-defined subdivision wins over arithmetic |
+| `subdivide(target, part)` | the early/mid/late (or first-/second-half) part. A chart-defined subdivision wins over arithmetic |
 | `resolve_bp(value, unit)` | a Before-Present expression as a `DateSpan` whose width is its precision (units `a`, `ka`, `Ma`, `Ga`) |
 | `calibrate_c14(bp14c)` | a coarse radiocarbon-to-calendar span, `basis="reconstructed"` |
 | `PERIODS` | the full registry, keyed by entry key |
 | `ICS_CHART_VERSION` | the version string of the shipped chart |
 | `INTCAL20_COARSE` | the coarse calibration samples used by `calibrate_c14` |
 
-A `NamedPeriod` carries: `name`, `span` (a `DateSpan`), `level`
-(`eon`/`era`/`period`/`epoch`/`age`, or `period`/`age` for archaeology),
-`region` (a tag like `"GB"`, or `None` for a global name), `source`, and
-`parent` (the key one level up).
+A `NamedPeriod` carries: `name`, `span` (a `DateSpan`), `level` (`eon`/`era`/`period`/`epoch`/`age`, or `period`/`age` for archaeology), `region` (a tag like `"GB"`, or `None` for a global name), `source`, and `parent` (the key one level up).
 
 ```python
 from chronologia import ICS_CHART_VERSION
@@ -204,8 +150,7 @@ from chronologia import ICS_CHART_VERSION
 print(ICS_CHART_VERSION)  # 2023/09
 ```
 
-Both the deep-time chart and the archaeological set are `tabulated` or
-`reconstructed` — never `exact`. Deep time is measured, and the spans say so.
+Both the deep-time chart and the archaeological set are `tabulated` or `reconstructed`: never `exact`. Deep time is measured, and the spans say so.
 
 ---
 [← Timelines](timelines.md) · [Home](index.md) · [Mars and beyond →](mars-and-beyond.md)

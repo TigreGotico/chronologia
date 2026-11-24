@@ -2,34 +2,25 @@
 
 <!-- agent-hint
 covers: Mars Sol Date, the Darian calendar, lunar cycles and the cosmology epochs
-source: `chronologia/mars.py`, `chronologia/luna.py`, `chronologia/cosmology.py`
+source: chronologia/mars.py, chronologia/luna.py, chronologia/cosmology.py
 generated: no
-verify: python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};bad=0;n=0\nfor b in re.findall(r\"```python\\n(.*?)```\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/mars-and-beyond.md
-see: `docs/deep-time.md`, `docs/sun-moon-and-seasons.md`
+verify: .venv/bin/python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.argv[1];t=open(p).read();ns={};n=bad=0\nfor b in re.findall(r\"\\x60\\x60\\x60python\\n(.*?)\\x60\\x60\\x60\",t,re.S):\n    if \"# doctest: skip\" in b: continue\n    L=b.split(\"\\n\")\n    for s in ast.parse(b).body:\n        o=io.StringIO()\n        with c.redirect_stdout(o): exec(compile(ast.Module([s],[]),p,\"exec\"),ns)\n        n+=isinstance(s,ast.Assert)\n        m=re.match(r\"^\\s*print\\(.*\\)\\s+# (.+)$\",L[s.end_lineno-1]) if isinstance(s,ast.Expr) and s.lineno==s.end_lineno else None\n        if m: n+=1; bad|=m[1].strip()!=o.getvalue().strip()\nsys.exit(bad or n==0)\n")' docs/mars-and-beyond.md
+see: docs/deep-time.md, docs/sun-moon-and-seasons.md
 -->
 
 This page covers time beyond Earth: Mars Sol Date and the Darian calendar, the lunar cycles, and the cosmology epochs from the Big Bang to the Cosmic Calendar.
 
 ## What time is it on Mars?
 
-It sounds like a novelty question. For the people who drive the rovers it is a
-scheduling problem with teeth.
+It sounds like a novelty question. For the people who drive the rovers it is a scheduling problem with teeth.
 
-A Martian solar day — a **sol** — is 24 hours, 39 minutes and 35 seconds long.
-That extra 39 minutes is small enough that a human can live on it and large
-enough that, after a couple of weeks, "morning on Mars" has walked all the way
-around the Earth clock. Early in each mission the flight team works Mars time:
-every shift starts about 40 minutes later than the last, so the team slides
-through Earth's day and night, ordering breakfast at 3am and struggling to
-explain their calendar to everyone else. They are, quite literally, living on a
-different planet's clock.
+A Martian solar day, a **sol**, is 24 hours, 39 minutes and 35 seconds long. The extra 39 minutes is small enough that a human can live on it. It is large enough that after a couple of weeks "morning on Mars" has walked all the way around the Earth clock. Early in each mission the flight team works Mars time: every shift starts about 40 minutes later than the last. So the team slides through Earth's day and night, ordering breakfast at 3am and struggling to explain their calendar to everyone else. They are, quite literally, living on a different planet's clock.
 
-To do that you need answers to three questions, and this library gives you each
-one as an object:
+To do that you need answers to three questions, and this library gives you each one as an object:
 
-- **Which sol is it?** — the Mars Sol Date (MSD), a running count of sols.
-- **What's the time on that sol?** — Coordinated Mars Time (MTC).
-- **What's the date?** — a civil calendar, the Darian calendar.
+- **Which sol is it?**: the Mars Sol Date (MSD), a running count of sols.
+- **What's the time on that sol?**: Coordinated Mars Time (MTC).
+- **What's the date?**: a civil calendar, the Darian calendar.
 
 ```python
 from chronologia import MarsDate, AstroDate
@@ -45,26 +36,17 @@ back = now_on_mars.to_earth()
 assert abs((back - AstroDate(2000, 1, 6)).total_seconds()) < 2
 ```
 
-Objects in, objects out: you hand `from_earth` a real instant and get a
-`MarsDate`; `to_earth` returns a real `AstroDate` (UTC). You never thread a raw
-sol count by hand unless you want to.
+Objects in, objects out: you hand `from_earth` a real instant and get a `MarsDate`. `to_earth` returns a real `AstroDate` (UTC). You never thread a raw sol count by hand unless you want to.
 
 ## Sols and the Mars Sol Date
 
-MSD is to Mars what the Julian Day Number is to Earth: a plain running count of
-days from a fixed zero, with no month structure to trip over. The zero sits near
-1873, chosen so that every date since the first careful telescopic observations
-of Mars comes out positive.
+MSD is to Mars what the Julian Day Number is to Earth. It is a plain running count of days from a fixed zero, with no month structure. The zero sits near 1873, chosen so that every date since the first careful telescopic observations of Mars comes out positive.
 
-The number that matters is the length of a sol: **88,775.244 seconds**
-(1.0274912517 Earth days), from Allison & McEwen's 2000 paper as encoded in
-NASA's Mars24 algorithm. The Mars Sol Date is just
+The number that matters is the length of a sol: **88,775.244 seconds** (1.0274912517 Earth days). It comes from the 2000 paper of Allison and McEwen, as NASA's Mars24 algorithm encodes it. The Mars Sol Date is
 
     MSD = (JD_TT − 2405522.0028779) / 1.0274912517
 
-— a Julian Date on Terrestrial Time, shifted to the epoch and divided by the
-sol length. That is the whole formula. Its most-cited checkpoint is Viking 1,
-which touched down at MSD 36455:
+Here `JD_TT` is a Julian Date on Terrestrial Time. The formula shifts it to the epoch and divides it by the sol length. That is the whole formula. Its most-cited checkpoint is Viking 1, which touched down at MSD 36455:
 
 ```python
 from chronologia import MarsDate, AstroDate
@@ -73,11 +55,9 @@ viking1 = MarsDate.from_earth(AstroDate(1976, 7, 20, 11, 53, 6))
 assert viking1.sol == 36455
 ```
 
-## Coordinated Mars Time — 24 stretched hours
+## Coordinated Mars Time, 24 stretched hours
 
-MTC splits a sol into 24 hours, each 60 minutes of 60 seconds — exactly like an
-Earth clock, except the day being split is a sol. So an MTC hour is a little over
-61 Earth minutes, and midday MTC (half a sol) is 12:00:
+MTC splits a sol into 24 hours of 60 minutes of 60 seconds, as an Earth clock does. The day it splits is a sol. So an MTC hour is a little over 61 Earth minutes, and midday MTC (half a sol) is 12:00:
 
 ```python
 from chronologia import MarsDate
@@ -89,18 +69,11 @@ assert MarsDate.from_msd(1000.5).hour == 12
 assert MarsDate.from_msd(1000.25).hour == 6
 ```
 
-This is the same idea as [French Revolutionary decimal time](timezones.md) —
-rescaling one day into fixed units — applied to the sol instead of the Earth
-day. (MTC is the pure sol fraction; it is *not* the Mars24 "Mean Solar Time"
-figure, which carries an extra ~83-second prime-meridian offset.)
+This is the same idea as [decimal time of the French Revolution](timezones.md): rescale one day into fixed units. Here the day is the sol, not the Earth day. MTC is the pure sol fraction. It is *not* the Mars24 "Mean Solar Time" figure, which carries an extra ~83-second prime-meridian offset.
 
 ## The hub was never about Earth
 
-Strip the labels off the Julian Day Number and nothing about it is specifically
-about Earth, or about days: it *counts a periodic unit from an epoch on one
-shared instant line*. A day, a sol — anything that ticks a steady length of time
-— fits the same shape. That shape is a `TimeAxis`, and it is the real hub this
-library was hiding all along.
+Strip the labels off the Julian Day Number and nothing in it is about Earth or about days. It *counts a periodic unit from an epoch on one shared instant line*. A day, a sol, anything that ticks a steady length of time , fits the same shape. That shape is a `TimeAxis`, and it is the real hub this library was hiding all along.
 
 ```python
 from chronologia import AXES, AstroDate
@@ -112,19 +85,11 @@ assert AXES["earth_day"].count_from_tt(AstroDate(2000, 1, 1, 12)) == 2451545.0
 assert AXES["mars_sol"].unit_seconds > 86400          # a sol is longer than a day
 ```
 
-The `earth_day` axis changes nothing — Earth timekeeping stays on `AstroDate`
-and the JDN hub, and the axis is byte-identical to it — but it stops Earth from
-being a special case. For `mars_sol` (and any future body) the axis is where the
-count actually lives. Exchange between axes runs through **TT** (Terrestrial
-Time, `TAI + 32.184 s`); the leap-second module was the down payment on that
-bridge.
+The `earth_day` axis changes nothing, Earth timekeeping stays on `AstroDate` and the JDN hub. The axis is byte-identical to it, but it stops Earth from being a special case. For `mars_sol` (and any future body) the axis is where the count actually lives. Exchange between axes runs through **TT** (Terrestrial Time, `TAI + 32.184 s`). The leap-second module was the down payment on that bridge.
 
 ## The Darian calendar
 
-A running sol count is fine for logs, but people want months and weekdays. The
-**Darian calendar**, designed by Thomas Gangale in 1985, is the most developed
-proposal: 24 months, a 7-sol week, and a leap rule tuned to the Martian year of
-668.59 sols.
+A running sol count is fine for logs, but people want months and weekdays. The **Darian calendar**, designed by Thomas Gangale in 1985, is the most developed proposal: 24 months, a 7-sol week, and a leap rule tuned to the Martian year of 668.59 sols.
 
 ```python
 from chronologia import darian
@@ -140,26 +105,15 @@ sol = darian.date(195, 8, 14)
 assert sol.sol == 36455
 ```
 
-The structure is fixed by the cited sources: each quarter has five 28-sol months
-and one 27-sol month (668 sols in a common year); a leap year adds one sol to the
-final month (669 sols). A year is a leap year if it is odd or divisible by 10,
-cancelled if divisible by 100, restored if divisible by 500.
+The structure is fixed by the cited sources: each quarter has five 28-sol months and one 27-sol month (668 sols in a common year). A leap year adds one sol to the final month (669 sols). A year is a leap year if it is odd or divisible by 10, cancelled if divisible by 100, restored if divisible by 500.
 
-**An honest gap.** The sources pin the calendar's *structure* completely but do
-not publish a bare numeric sol for its 1609 "Telescopic" epoch. So this library
-anchors the calendar to the one clean, doubly-cited correspondence — Viking 1's
-landing sol (MSD 36455) is 14 Mina 195 — and numbers years outward from there by
-the leap rule. That anchor is what `darian` reproduces exactly; the absolute
-epoch constant is derived, not independently cited, and is documented as such in
-the code.
+**An honest gap**. The sources pin the calendar's *structure* completely but do not publish a bare numeric sol for its 1609 "Telescopic" epoch. So this library anchors the calendar to one correspondence that two sources cite. Viking 1's landing sol (MSD 36455) is 14 Mina 195.
+
+The library numbers years outward from there by the leap rule. That anchor is what `darian` reproduces exactly. The absolute epoch constant is derived, not independently cited, and is documented as such in the code.
 
 ## Mission sols: "Sol 1000 of Curiosity"
 
-Each landed mission counts its own sols from touchdown. There is one catch worth
-knowing: the counting convention differs. Viking, Curiosity and Perseverance call
-their landing sol **Sol 0**; Pathfinder and the Mars Exploration Rovers (Spirit
-and Opportunity) call it **Sol 1**. `mission_sol` knows each mission's rule and
-hands back the one-sol-wide `DateSpan` of Earth time that mission sol occupied.
+Each landed mission counts its own sols from touchdown. There is one catch worth knowing: the counting convention differs. Viking, Curiosity and Perseverance call their landing sol **Sol 0**. Pathfinder and the Mars Exploration Rovers (Spirit and Opportunity) call it **Sol 1**. `mission_sol` knows each mission's rule. It returns the one-sol-wide `DateSpan` of Earth time that the mission sol occupied.
 
 ```python
 from chronologia import mission_sol, AstroDate
@@ -188,21 +142,13 @@ with pytest.raises(KeyError):
 
 ## Relativity, honestly
 
-Every conversion here is stated in Terrestrial Time and is accurate to about a
-millisecond. That is a deliberate boundary, not an oversight. The periodic
-difference between TT and Barycentric Dynamical Time (TDB) is at most ~1.6 ms
-(Allison & McEwen 2000), and that sets the floor of what these numbers mean. The
-light-time delay between Earth and Mars — minutes, varying with orbit — is a real
-effect, but it belongs in a `DateSpan`'s *width* (an honest error bar), never
-silently folded into an instant. Full general-relativistic proper time — the fact
-that a clock on Mars ticks at its own rate relative to a clock on Earth — is out
-of scope: that needs an ephemeris and a spacetime metric, not a calendar.
+Every conversion here is stated in Terrestrial Time and is accurate to about a millisecond. That is a deliberate boundary, not an oversight. The periodic difference between TT and Barycentric Dynamical Time (TDB) is at most ~1.6 ms (Allison & McEwen 2000). That sets the floor of what these numbers mean. The light-time delay between Earth and Mars, minutes, varying with orbit, is a real effect.
 
-## The Moon: a cycle we can count, a standard we can't yet
+But it belongs in a `DateSpan`'s *width* (an honest error bar), never silently folded into an instant. Full general-relativistic proper time is out of scope. A clock on Mars ticks at its own rate relative to a clock on Earth. Computing that rate needs an ephemeris and a spacetime metric, not a calendar.
 
-The Moon is tidally locked, so a surface observer's mean solar day *is* one mean
-synodic month — 29.53 Earth days, new moon to new moon. That natural cycle needs
-no committee, and the library registers it as a time axis:
+## The Moon: a cycle we can count, a standard that does not exist
+
+The Moon is tidally locked. A surface observer's mean solar day *is* one mean synodic month: 29.53 Earth days, new moon to new moon. That natural cycle needs no committee, and the library registers it as a time axis:
 
 ```python
 from chronologia import AXES, LUNAR_DAY_SECONDS
@@ -212,11 +158,7 @@ lunar = AXES["lunar"]
 print(round(LUNAR_DAY_SECONDS))  # 2551443
 ```
 
-A *civil* lunar clock is another matter. On 2 April 2024 the US OSTP directed
-NASA to define **Coordinated Lunar Time**, because a clock on the Moon runs about
-58.7 microseconds per Earth-day faster than one on Earth. The standard does not
-exist yet, so the library refuses to invent one: it ships the *status* as data
-and makes the offset function raise until there is something real to compute.
+A *civil* lunar clock is another matter. The US OSTP directed NASA to define **Coordinated Lunar Time** on 2 April 2024. A clock on the Moon runs about 58.7 microseconds per Earth day faster than one on Earth. No such standard exists. So the library refuses to invent one. It ships the *status* as data, and the offset function raises an error until there is something real to compute.
 
 ```python
 from chronologia import LTC_STATUS, ltc_offset, AstroDate
@@ -230,14 +172,9 @@ with pytest.raises(NotImplementedError):
 
 ## Cosmology: the deepest time
 
-Two things change when the clock runs back to the Big Bang, and the library adds
-exactly those two mechanisms.
+Two things change when the clock runs back to the Big Bang, and the library adds exactly those two mechanisms.
 
-**The epoch is itself uncertain.** Every earthly epoch is a fixed instant; the
-Big Bang is known only to 13.787 ± 0.020 Gyr before present (Planck 2018). So the
-age-of-universe era counts from a *span*, and every date it resolves carries that
-±20 Myr. The epoch uncertainty and the value's own precision simply **add** —
-interval bounds, not statistics, so no quadrature:
+**The epoch is itself uncertain**. Every earthly epoch is a fixed instant. The Big Bang is known only to 13.787 ± 0.020 Gyr before present (Planck 2018). So the age-of-universe era counts from a *span*, and every date it resolves carries that ±20 Myr. The epoch uncertainty and the value's own precision simply **add**, interval bounds, not statistics, so no quadrature:
 
 ```python
 from chronologia import resolve_cosmic
@@ -250,11 +187,7 @@ print(round(half_myr, 4))  # 20.0005
 print(span.basis)                        # reconstructed
 ```
 
-**Looking at the sky is looking at the past.** Light from redshift `z` was
-emitted a lookback time ago, so `lookback_time(z)` places it that many years
-before present. The lookback integral depends on the Hubble constant — and two
-careful measurements *disagree* about it (the Hubble tension). Rather than pick a
-winner, the library ships both as named variants and lets you call it twice:
+**Looking at the sky is looking at the past**. Light from redshift `z` was emitted a lookback time ago. So `lookback_time(z)` places it that many years before present. The lookback integral depends on the Hubble constant, and two careful measurements *disagree* about it (the Hubble tension). Rather than pick a winner, the library ships both as named variants and lets you call it twice:
 
 ```python
 from chronologia import lookback_gyr
@@ -270,11 +203,7 @@ Two careful measurements disagree, so the library ships both and names them.
 
 ### Sagan's Cosmic Calendar (a formatting example)
 
-Carl Sagan's Cosmic Calendar maps the whole 13.787-Gyr history onto a single
-year: the Big Bang at midnight on 1 January, *now* at the last tick of 31
-December. It is a pure presentation affine map — not core reckoning — so it lives
-here as a runnable example. Anatomically modern humans (~200,000 years ago)
-appear in the final minutes of the last day:
+Carl Sagan's Cosmic Calendar maps the whole 13.787-Gyr history onto a single year. The Big Bang falls at midnight on 1 January. The present falls at the last tick of 31 December. It is a pure presentation affine map, not core reckoning, so it lives here as a runnable example. Anatomically modern humans (~200,000 years ago) appear in the final minutes of the last day:
 
 ```python
 from datetime import datetime, timedelta
@@ -311,9 +240,7 @@ On this scale all of recorded history is the last few seconds before midnight.
 | Redshift → lookback | `lookback_time`, `lookback_gyr`, `COSMOLOGIES` | Planck 2018 / SH0ES 2022 (the Hubble tension) |
 | Cosmological periods | `COSMIC_PERIODS` | Wikipedia recombination / chronology of the universe |
 
-Every constant above is transcribed from a cited source in the papers library;
-where a source is silent (the Darian epoch), the library anchors to a published
-correspondence and says so.
+Every constant above comes from a cited source in the papers library. Where a source is silent (the Darian epoch), the library anchors to a published correspondence and says so.
 
 ---
 [← Deep time](deep-time.md) · [Home](index.md) · [Civil holidays →](civil-holidays.md)
