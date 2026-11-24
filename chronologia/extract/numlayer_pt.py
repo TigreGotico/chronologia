@@ -199,7 +199,7 @@ def _date_words(tokens: Tuple[Token, ...]
             (ordinals if _ordinal_weekday(tokens, i) else claimed).add(i)
         elif word in _UNIT_NOUNS:
             claimed.add(i)
-        elif word == "três" and prev == "e" and nxt == "quartos":
+        elif word == "três" and prev == "e" and nxt == "quartos" and nxt2 != "de":
             claimed.add(i)
         elif word in _QUARTER_ARTICLES and nxt in _QUARTERS:
             claimed.add(i)

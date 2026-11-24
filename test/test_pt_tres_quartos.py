@@ -35,6 +35,9 @@ def test_three_quarters_after_the_hour_is_45_minutes(text, expected):
     ("duas horas e três quartos", timedelta(hours=2, minutes=45)),
     ("uma hora e três quartos", timedelta(hours=1, minutes=45)),
     ("três quartos de hora", timedelta(minutes=45)),
+    ("uma hora e três quartos de hora", timedelta(hours=1, minutes=45)),
+    ("duas horas e três quartos de hora", timedelta(hours=2, minutes=45)),
+    ("meia hora e três quartos de hora", timedelta(hours=1, minutes=15)),
     ("duas horas e um quarto", timedelta(hours=2, minutes=15)),
 ])
 def test_three_quarters_after_hours_is_part_of_a_length(text, expected):
