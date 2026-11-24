@@ -3,9 +3,10 @@ select from.
 
 :func:`read` tokenizes the text once.  A span reading comes first: a range
 ("from A to B", "between A and B"), an open range ("until X", "since X"), or a
-bare "now" or "new year".  The point readings follow: the winner the
-single-span core composes, then every other match the matcher found, in
-scoring order.
+bare "now" or "new year".  The point readings follow in scoring order: the
+winner the single-span core composes and every other match the matcher found.
+The winner is not always the first point, so a caller selects it by
+``primary``.
 """
 from __future__ import annotations
 
@@ -34,8 +35,9 @@ class Reading:
     ``kind`` is ``"span"`` or ``"point"``.  ``claimed`` holds the ``index`` of
     each token of ``tokens`` the reading reads: a span reads the stream before
     the number fold and claims every token inside ``chars``, a point reads the
-    folded stream.  ``primary`` marks the winner of each kind: the range and
-    the composed point.  ``selected`` marks a point the matcher selected,
+    folded stream, so a caller that compares a span with a point uses
+    ``chars``.  ``primary`` marks the winner of each kind: the range and the
+    composed point.  ``selected`` marks a point the matcher selected,
     against a runner-up.  ``confidence`` is set on the points of a full read
     only.
     """
