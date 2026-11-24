@@ -362,6 +362,65 @@ def _match_conn_at(tokens, i, surfaces):
     return 0
 
 
+class RangeClause(NamedTuple):
+    """A "from A to B" clause in a token stream, as token index spans: the
+    lead word(s) ``[lead_start, lead_end)``, the connector
+    ``[mid_start, mid_end)`` and the bound after it ``[mid_end, end)``, which
+    stops at the next lead."""
+    lead_start: int
+    lead_end: int
+    mid_start: int
+    mid_end: int
+    end: int
+
+
+def range_clauses(tokens, spec, consumed, reads_date):
+    """Every "from A to B" / "between A and B" clause over unconsumed tokens,
+    with both sides non-empty, scanned from the rightmost lead to the leftmost
+    and, within a lead, from the nearest connector to the farthest.
+
+    A connector that opens a clause has the role of a range word, whatever
+    other role its surface has: German "bis" and Dutch "tot" are also
+    "until" words.  Such a word opens a clause only when ``reads_date`` accepts
+    the tokens before it as a date: "from 9am until 5 december" has an until
+    bound after a clock."""
+    leads = _conn_surfaces(spec, "between", _RANGE_BETWEEN) \
+        + _conn_surfaces(spec, "from", _RANGE_FROM)
+    mids = _conn_surfaces(spec, "to", _RANGE_TO) \
+        + _conn_surfaces(spec, "and", ("and",))
+    untils = _conn_surfaces(spec, "until", ())
+    n = len(tokens)
+
+    def match(i, words):
+        k = len(words)
+        if not words or i + k > n or any((i + x) in consumed for x in range(k)):
+            return 0
+        return k if [tokens[i + x].text for x in range(k)] == words else 0
+
+    lead_at = {}
+    for i in range(n):
+        size = next((w for lead in leads if (w := match(i, lead))), 0)
+        if size:
+            lead_at[i] = size
+    clauses = []
+    for i in sorted(lead_at, reverse=True):
+        j = i + lead_at[i]
+        for k in range(j, n):
+            width = next((w for mid in mids if (w := match(k, mid))), 0)
+            until = next((w for u in untils if (w := match(k, u))), 0)
+            if not width or width < until:
+                continue
+            m = k + width
+            end = next((p for p in range(m, n) if p in lead_at), n)
+            left = [tokens[x] for x in range(j, k) if x not in consumed]
+            if not left or all(x in consumed for x in range(m, end)):
+                continue
+            if until and not reads_date(left):
+                continue
+            clauses.append(RangeClause(i, j, k, m, end))
+    return clauses
+
+
 def _is_written_year(token):
     """True for a bare four-digit number -- the shape a written year range uses."""
     return (token.is_number and token.raw is not None

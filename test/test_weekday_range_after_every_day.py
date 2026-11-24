@@ -71,8 +71,8 @@ def test_date_range_keeps_its_until(text, lang, until):
 
 
 @pytest.mark.parametrize("text,lang,until,remainder", [
-    ("jeden Tag von Montag bis Freitag bis Dezember", "de", "20261127", "von Montag"),
-    ("elke dag van maandag tot vrijdag tot december", "nl", "20261127", "van maandag"),
+    ("jeden Tag von Montag bis Freitag bis Dezember", "de", "20261127", ""),
+    ("elke dag van maandag tot vrijdag tot december", "nl", "20261127", ""),
 ])
 def test_weekday_range_followed_by_more_text_is_not_a_set(text, lang, until, remainder):
     got = extract_recurrence(text, lang, _ANCHORS[0])
