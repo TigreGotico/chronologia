@@ -1367,6 +1367,15 @@ def _read_recurrence(text, lang, anchor):
                 return None
             rec, consumed = _apply_range_reading(rec, consumed, ctx, lang,
                                                  anchor, range_words, span)
+            if range_words - consumed:
+                # no date to ground: the weekday and date clauses read as
+                # they do when an until bound fails
+                rec, consumed = _apply_range_bound(rec, consumed, ctx, lang,
+                                                   anchor, frozenset())
+                if rec is _NEVER_OCCURS:
+                    return _NEVER_OCCURS
+                if rec is None:
+                    return None
             rec, consumed = _apply_year_scope(rec, consumed, ctx, lang, anchor)
             # a trailing year scope on a rule with no start field
             # (JurisdictionHolidays, HolidayRecurrence) cannot be honestly

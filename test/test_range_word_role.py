@@ -103,10 +103,11 @@ def test_a_rule_with_days_keeps_an_until_word_as_its_bound(lang, text, rule):
     ("de", "jeden Freitag von Montag bis Freitag", "FREQ=WEEKLY;BYDAY=FR"),
     ("es", "cada viernes de lunes hasta viernes", "FREQ=WEEKLY;BYDAY=FR"),
     ("pt", "toda sexta-feira de segunda-feira até sexta-feira", "FREQ=WEEKLY;BYDAY=FR"),
+    ("en", "every friday from mon until fri", "FREQ=WEEKLY;BYDAY=FR"),
     ("de", "jeden Werktag von Mo bis Mi", "FREQ=WEEKLY;BYDAY=MO,TU,WE"),
     ("nl", "elke werkdag van ma tot wo", "FREQ=WEEKLY;BYDAY=MO,TU,WE"),
 ])
-def test_an_until_word_that_is_a_to_word_joins_two_weekdays_of_a_rule(lang, text, rule):
+def test_two_weekdays_that_no_date_reads_join_as_a_set_in_a_rule(lang, text, rule):
     assert recurrence(lang, text) == (rule, "")
 
 
