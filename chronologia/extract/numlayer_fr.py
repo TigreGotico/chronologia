@@ -5,11 +5,10 @@ from dataclasses import replace
 from typing import Tuple
 
 from chronologia.extract.model import LangSpec, Token
+from chronologia.extract.numlayer import (collapse_h_clock, collapse_phrase,
+                                          drop_digit_suffix, elision_split,
+                                          glue_abbreviations)
 from chronologia.extract.numfold_engine import reindex, run_extent
-from chronologia.extract.numfold_romance import (_collapse_h_clock,
-                                                 _collapse_phrase,
-                                                 _elision_split, _glue,
-                                                 _merge_digit_ordinal)
 from chronologia.extract.numlayer_romance import (Claims, DateWords,
                                                   count_words, fold,
                                                   locale_words)
@@ -57,7 +56,7 @@ def split_elisions(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """The French ``pre_hook``: split an elided proclitic from its word
     ("d'onze" gives "d" and "onze"), so the number layer finds the number in
     the word.  A lexical apostrophe stays: "aujourd'hui"."""
-    return _elision_split(tokens, _PROCLITICS)
+    return elision_split(tokens, _PROCLITICS)
 
 
 def _day_phrases(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
@@ -97,12 +96,12 @@ def fold_fr(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """
     tokens = split_elisions(tokens)
     for words, surface in _PHRASES:
-        tokens = _collapse_phrase(tokens, words, surface)
+        tokens = collapse_phrase(tokens, words, surface)
     tokens = _day_phrases(tokens)
-    tokens = _collapse_h_clock(tokens, frozenset({"dans", "ilya"}),
+    tokens = collapse_h_clock(tokens, frozenset({"dans", "ilya"}),
                                frozenset({"et", "moins"}))
-    tokens = _merge_digit_ordinal(tokens, _ORDINAL_SUFFIXES)
-    return fold(_glue(tokens), _WORDS, _une_heure)
+    tokens = drop_digit_suffix(tokens, _ORDINAL_SUFFIXES)
+    return fold(glue_abbreviations(tokens), _WORDS, _une_heure)
 
 
 def _governed_hour_length(tokens, spec, governors, fractions, minus,

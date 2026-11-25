@@ -158,7 +158,7 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_da:fold_da",
+  "number_fold": {},
   "base_grammar": {
     "disable": [
       "calendar_date"

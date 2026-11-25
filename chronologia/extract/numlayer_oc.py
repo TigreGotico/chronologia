@@ -4,10 +4,9 @@ from __future__ import annotations
 from typing import Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_romance import (_collapse_h_clock,
-                                                 _collapse_phrase,
-                                                 _elision_split, _glue,
-                                                 _merge_digit_ordinal)
+from chronologia.extract.numlayer import (collapse_h_clock, collapse_phrase,
+                                          drop_digit_suffix, elision_split,
+                                          glue_abbreviations)
 from chronologia.extract.numlayer_romance import (DateWords, count_words,
                                                   fold, locale_words)
 
@@ -41,8 +40,8 @@ _ORD_SUFFIXES = frozenset({"èr", "er", "n", "nd", "en", "ena", "a", "d"})
 
 def fold_oc(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """The Occitan number fold."""
-    tokens = _elision_split(tokens, _PROCLITICS)
+    tokens = elision_split(tokens, _PROCLITICS)
     for seq, surface in _PHRASES:
-        tokens = _collapse_phrase(tokens, seq, surface)
-    tokens = _merge_digit_ordinal(_collapse_h_clock(tokens), _ORD_SUFFIXES)
-    return fold(_glue(tokens), _WORDS)
+        tokens = collapse_phrase(tokens, seq, surface)
+    tokens = drop_digit_suffix(collapse_h_clock(tokens), _ORD_SUFFIXES)
+    return fold(glue_abbreviations(tokens), _WORDS)

@@ -187,7 +187,28 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_de:fold_de",
+  "number_fold": {
+    "word_numbers": [
+      {
+        "words": {
+          "fuenf": 5,
+          "fuenfzehn": 15,
+          "fuenfzig": 50,
+          "zwoelf": 12
+        },
+        "ordinal": false
+      },
+      {
+        "words": {
+          "fuenfte": 5,
+          "fuenften": 5,
+          "zwoelfte": 12,
+          "zwoelften": 12
+        },
+        "ordinal": true
+      }
+    ]
+  },
   "base_grammar": {
     "extend": {
       "season_ref": [

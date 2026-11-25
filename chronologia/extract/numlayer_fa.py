@@ -5,9 +5,9 @@ from dataclasses import replace
 from typing import Tuple
 
 from chronologia.extract.model import Token
+from chronologia.extract.numlayer import (DateWords, count_words, fold,
+                                          locale_words)
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
-                                                   locale_words)
 
 _WORDS = DateWords(
     lang="fa",
