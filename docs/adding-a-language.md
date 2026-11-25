@@ -232,6 +232,8 @@ First, the fraction words:
 | `clock_dir_past.voc` | the word meaning "past" (e.g. "half **past** nine") |
 | `clock_dir_to.voc` | the word meaning "to" / "before" (e.g. "quarter **to** ten") |
 
+An order slot `CLOCKDIR` binds a word from either direction file. The slot `CLOCKTO` binds only a word from `clock_dir_to.voc`. Use `CLOCKTO` in an order that puts the minutes before the hour, such as Portuguese `MINUTE CLOCKTO article? HOUR` ("dez **para** as três", 14:50). With `CLOCKDIR` there, the past word also binds, and "três **e** dez" gets a second reading as 10:03.
+
 When the direction word is *spoken* ("half **past** nine"), there is no ambiguity. The flags below only decide what a **bare** fraction, one with *no* direction word, means in your language:
 
 | Flag in `lang.json` | Set it to `true` if, in your language… |
