@@ -361,6 +361,36 @@ def _match_conn_at(tokens, i, surfaces):
     return 0
 
 
+def _weekday_lead(tokens, split, surfaces, spec):
+    """The lead ``(pos, k)`` of a "WEEKDAY to WEEKDAY" range after an "every"
+    phrase, or ``(0, 0)``.
+
+    A lead that doubles as a date particle ("von", "van", "de") is trusted
+    only utterance-initially (see :func:`_unambiguous_lead`).  Between two
+    weekday names after "every" it is no genitive, so "jeden Werktag von Mo bis
+    Mi" has one.
+    """
+    p, k = split
+    if not any(_is_weekday(tokens[p + k:p + k + n], spec) for n in (1, 2, 3)):
+        return 0, 0
+    for n in (1, 2, 3):
+        if n <= p and _is_weekday(tokens[p - n:p], spec):
+            for words in surfaces:
+                at = p - n - len(words)
+                if at > 0 and [t.text for t in tokens[at:p - n]] == words:
+                    every = {w for s in spec.connectors.get("every", ())
+                             for w in s.split()}
+                    if any(t.text in every for t in tokens[:at]):
+                        return at, len(words)
+    return 0, 0
+
+
+def _is_weekday(tokens, spec):
+    """Whether ``tokens`` are one weekday name; the number fold has not yet
+    joined its words ("segunda" "feira")."""
+    return " ".join(t.text for t in tokens) in spec.weekdays
+
+
 def _is_written_year(token):
     """True for a bare four-digit number -- the shape a written year range uses."""
     return (token.is_number and token.raw is not None
@@ -623,6 +653,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     from_surf = _conn_surfaces(spec, "from", _RANGE_FROM)
     between_surf = _conn_surfaces(spec, "between", _RANGE_BETWEEN)
     and_surf = _conn_surfaces(spec, "and", _RANGE_AND)
+    direction_surf = (_conn_surfaces(spec, "before", ())
+                      + _conn_surfaces(spec, "after", ()))
     # lone clock-fraction words that a bare "A to B" must never treat as a
     # range endpoint (would hijack "quarter to five" / "čtvrt na päť")
     fraction_words = set(spec.clock_fractions) | {"quarter", "half", "a quarter"}
@@ -769,6 +801,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     else:
         lead_at, lead = 0, 0
     split = _first_to_split(tokens, lead_at + lead, to_surf, text, spec)
+    if split is not None and not lead:
+        lead_at, lead = _weekday_lead(tokens, split, from_surf, spec)
     if split is not None:
         p, k = split
         left_tok, right_tok = tokens[lead_at + lead:p], tokens[p + k:]
@@ -788,9 +822,14 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         led = bool(lead) or at_between is not None
         left_words = " ".join(t.text for t in left_tok)
         conn_words = " ".join(t.text for t in tokens[p:p + k]).lower()
+        # "until before christmas" names no day for the range to end on: its
+        # "before" opens a range of its own
+        until_before = conn_words in until_words \
+            and _match_conn_at(right_tok, 0, direction_surf)
         if (led or (left_words not in fraction_words
                     and conn_words not in lead_required)) \
-                and not is_alarm_bare_range(left_tok, spec):
+                and not is_alarm_bare_range(left_tok, spec) \
+                and not until_before:
             prefix = render_remainder(text, list(tokens[:lead_at])) \
                 if lead else ""
             prefix = (prefix + " " + alarm_words).strip()

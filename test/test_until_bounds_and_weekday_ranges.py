@@ -36,20 +36,20 @@ def read(lang, text):
     ("ca", "cada dia de juny a agost fins a desembre", DECEMBER, "de juny a agost"),
     ("gl", "cada día de xuño a agosto ata decembro", DECEMBER, "de xuño a agosto"),
     # a year pair
-    ("en", "every monday from 2027 until 2030", YEAR_PAIR, "from 2027"),
+    ("en", "every monday from 2027 until 2030", YEAR_PAIR, ""),
     ("de", "jeden Montag von 2027 bis 2030", YEAR_PAIR, "von 2027"),
-    ("pt", "todas as segundas de 2027 até 2030", YEAR_PAIR, "de 2027"),
+    ("pt", "todas as segundas de 2027 até 2030", YEAR_PAIR, "de"),
     ("es", "cada lunes de 2027 hasta 2030", YEAR_PAIR, "de 2027"),
     ("fr", "chaque lundi de 2027 jusqu'à 2030", YEAR_PAIR, "de 2027"),
     ("nl", "elke maandag van 2027 tot 2030", YEAR_PAIR, "van 2027"),
-    ("it", "ogni lunedì da 2027 fino a 2030", YEAR_PAIR, "da 2027"),
+    ("it", "ogni lunedì da 2027 fino a 2030", YEAR_PAIR, ""),
     ("ca", "cada dilluns de 2027 fins a 2030", YEAR_PAIR, "de 2027"),
     ("gl", "cada luns de 2027 ata 2030", YEAR_PAIR, "de 2027"),
     # a date range with an inner "de"
     ("pt", "todas as segundas de 3 de junho até 5 de agosto",
-     "FREQ=WEEKLY;UNTIL=20270805T000000;BYDAY=MO", "de 3 de junho"),
+     "FREQ=WEEKLY;UNTIL=20270805T000000;BYDAY=MO", "de"),
     ("es", "cada lunes del 3 de junio hasta el 5 de agosto",
-     "FREQ=WEEKLY;UNTIL=20270805T000000;BYDAY=MO", "del 3 de junio"),
+     "FREQ=WEEKLY;UNTIL=20270805T000000;BYDAY=MO", ""),
     # an until word before a holiday, and a plain until bound
     ("en", "every day from monday until before christmas",
      "FREQ=DAILY;UNTIL=20261225T000000", "from monday"),
@@ -87,9 +87,7 @@ def test_an_abbreviated_weekday_range_keeps_its_weekday_set(lang, text, rule):
     assert read(lang, text) == (rule, "")
 
 
-# "every day from monday until friday" is a weekday set, as with "to".  The
-# tree reads "friday" as an UNTIL of 2026-11-27 and leaves "from monday".
-@ISSUE_1291
+# "every day from monday until friday" is a weekday set, as with "to".
 def test_an_until_word_between_two_weekdays_gives_a_weekday_set():
     assert read("en", "every day from monday until friday") == (WEEKDAYS, "")
 
@@ -114,9 +112,7 @@ def test_a_month_range_with_an_until_word_runs_to_the_end_of_the_range(lang, tex
 
 
 # An until word after a range keeps its own date, as en "every day from june
-# to august until december" reads.  The tree reads "bis August" as UNTIL, a
-# date before the anchor, and drops "bis Dezember".
-@ISSUE_1291
+# to august until december" reads.
 @pytest.mark.parametrize("lang, text, remainder", [
     ("de", "jeden Tag von Juni bis August bis Dezember", "von Juni bis August"),
     ("nl", "elke dag van juni tot augustus tot december", "van juni tot augustus"),
