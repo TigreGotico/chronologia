@@ -25,6 +25,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
+from functools import partial
 from typing import List, NamedTuple, Optional, Tuple, Union
 
 from chronologia.astrodate import _WEEKDAY_NAMES_FULL, DateSpan
@@ -33,6 +34,7 @@ from chronologia.extract.impossible import (bad_day, decline, ordinal_cap,
                                             reports_impossible)
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
+from chronologia.extract.reading import read
 from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _lone_spoken_hour,
@@ -1348,8 +1350,12 @@ def _read_recurrence(text, lang, anchor):
             if rec is None:
                 return None
             rec, consumed = _apply_clock_range(rec, consumed, ctx, lang, anchor)
-            rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor)
-            rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor)
+            range_words, left = _range_words(rec, consumed, ctx, text, lang,
+                                             anchor)
+            rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor,
+                                          range_words)
+            rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor,
+                                               range_words)
             if rec is _NEVER_OCCURS:
                 return _NEVER_OCCURS
             # a range bound may CLAIM its clause yet name no valid recurrence
@@ -1360,6 +1366,18 @@ def _read_recurrence(text, lang, anchor):
             # everything) would be a silent wrong answer, not a decline.
             if rec is None:
                 return None
+            if range_words - consumed:
+                rec, consumed = _apply_range_reading(rec, consumed, ctx, lang,
+                                                     anchor, range_words, left)
+            if range_words - consumed:
+                # no date grounds the range: its clauses read as they do
+                # when an until bound fails
+                rec, consumed = _apply_range_bound(rec, consumed, ctx, lang,
+                                                   anchor, frozenset())
+                if rec is _NEVER_OCCURS:
+                    return _NEVER_OCCURS
+                if rec is None:
+                    return None
             rec, consumed = _apply_year_scope(rec, consumed, ctx, lang, anchor)
             # a trailing year scope on a rule with no start field
             # (JurisdictionHolidays, HolidayRecurrence) cannot be honestly
@@ -1743,47 +1761,103 @@ def _bound_payload(rec, consumed, tokens, marker, lang, anchor, grounder):
     return None
 
 
-def _weekday_range_marks(ctx, consumed):
-    """Token indexes where an unconsumed "from WEEKDAY to WEEKDAY" clause
-    starts its "to" words, so that an "until" marker there is not read as a
-    bound.  It acts where the "to" word doubles as an "until" word: Spanish
-    "hasta", Portuguese "até", French "jusqu'au"/"jusqu'à", Italian "fino a",
-    Catalan "fins a", Galician "ata", German "bis" and Dutch "tot" (also the
-    first word of "tot en met").  :func:`_apply_bounds` leaves these to
-    :func:`_apply_range_bound`, which reads the clause as a weekday set.  A
-    clause followed by more text ("von Montag bis Freitag bis Dezember")
-    is not marked, and its last "bis" stays an until bound."""
-    tokens, spec, n = ctx.tokens, ctx.spec, len(ctx.tokens)
-    leads = _conn_surfaces(spec, "between", _RANGE_BETWEEN) \
-        + _conn_surfaces(spec, "from", _RANGE_FROM)
-    mids = _conn_surfaces(spec, "to", ())
-    free = [i for i in range(n) if i not in consumed]
-    marks = set()
-    for p in free:
-        if tokens[p].text not in ctx.weekdays:
-            continue
-        for lead in leads:
-            i = p - len(lead)
-            if i < 0 or [t.text for t in tokens[i:p]] != lead \
-                    or any(x in consumed for x in range(i, p)):
-                continue
-            for mid in mids:
-                q = p + 1 + len(mid)
-                if (q < n and p + 1 not in consumed
-                        and [t.text for t in tokens[p + 1:q]] == mid
-                        and tokens[q].text in ctx.weekdays
-                        and not any(x in consumed for x in range(p + 1, q + 1))
-                        and (q + 1 == n or q + 1 in consumed)):
-                    marks.add(p + 1)
-    return marks
+def _range_words(rec, consumed, ctx, text, lang, anchor):
+    """The tokens of the unconsumed "until" words that join the two bounds of
+    a range, and the tokens of its left bound with its lead word.
+
+    The text is read with the words of the rule blanked out, its clock
+    included (:func:`_apply_clock` reads it later).  An until word joins a
+    range when it stands alone between the left and the right bound of the
+    primary span reading of that text, or starts a "to" word of the locale
+    that does (nl "tot en met").  In "every friday until june" the rule
+    holds "friday", and "until june" has no left bound, so "until" is the
+    bound of the rule.  In "every monday between june and august until
+    december" the words "and august" stand between the left bound and the
+    until word, and in "every day from monday until before christmas"
+    "before" stands after it, so neither joins a range.  A "before" word
+    before the left bound ("every monday before christmas until december")
+    keeps the until word the rule's bound too."""
+    tokens = ctx.tokens
+    runs = _marker_runs(tokens, ctx.until_words, consumed)
+    last = max((i for i, _ in runs), default=0)
+    # a left bound needs a word of its own before the until word
+    if all(k in consumed for k in range(last)):
+        return frozenset(), frozenset()
+    _, held = _apply_clock(rec, consumed, ctx, lang, anchor)
+    if all(k in held for k in range(last)):
+        return frozenset(), frozenset()
+    rest = list(text)
+    for t in tokens:
+        if t.index in held:
+            rest[t.char_start:t.char_end] = " " * (t.char_end - t.char_start)
+    rest = "".join(rest)
+    got = read(rest, lang, anchor, first=True)
+    if not got or got[0].kind != "span" or None in (got[0].left, got[0].right):
+        return frozenset(), frozenset()
+    span = got[0]
+    first = next(t.index for t in tokens if t.char_start >= span.chars[0])
+    for lead in _conn_surfaces(ctx.spec, "between", _RANGE_BETWEEN) \
+            + _conn_surfaces(ctx.spec, "from", _RANGE_FROM):
+        at = first - len(lead)
+        if (at >= 0 and [t.text for t in tokens[at:first]] == lead
+                and not held.intersection(range(at, first))):
+            first = at
+            break
+    # "before christmas" names no day a range starts on
+    if any(j == first for _, j in _marker_runs(tokens, ctx.before_words, held)):
+        return frozenset(), frozenset()
+    # the until word joins the range when the words between its bounds are
+    # that word, or a "to" word of the locale that starts with it
+    lo, hi = span.left.chars[1], span.right.chars[0]
+    gap = [t.index for t in tokens if t.index not in held
+           and lo <= t.char_start and t.char_end <= hi]
+    if not gap or all(i != gap[0] for i, _ in runs):
+        return frozenset(), frozenset()
+    joints = [[t.text for t in tokens[i:j]] for i, j in runs]
+    if ([tokens[k].text for k in gap]
+            not in joints + _conn_surfaces(ctx.spec, "to", _RANGE_TO)):
+        return frozenset(), frozenset()
+    return frozenset(gap), frozenset(
+        k for k in range(first, gap[0]) if k not in held)
 
 
-def _apply_bounds(rec, consumed, ctx, lang, anchor):
+def _ground_until(rec, text, ctx, lang, anchor):
+    """``rec`` bounded by the start of the date ``text`` names, or ``None``."""
+    from dataclasses import replace as _replace
+    # An "until" marker's payload may itself carry a leading "before"
+    # connector ("until before christmas"): extract_timespan treats a
+    # bare "before <holiday>" as an OPEN range (anchor -> holiday), so
+    # grounding the untouched text would read .start as the anchor and
+    # emit a self-defeating UNTIL=anchor.  Strip the leading before-word
+    # first so the payload matches the bare-holiday form the before_words
+    # marker path itself grounds ("before christmas" -> "christmas"),
+    # keeping "until before X" and "until X" equivalent.
+    stripped = text
+    low = text.lower().split()
+    for surf in ctx.before_words:
+        words = surf.lower().split()
+        k = len(words)
+        if k and low[:k] == words:
+            stripped = " ".join(text.split()[k:])
+            break
+    got = extract_timespan(stripped, lang, anchor=anchor)
+    if got is None:
+        return None
+    return _replace(rec, until=got[0].start)
+
+
+def _apply_bounds(rec, consumed, ctx, lang, anchor, range_words):
     """Fold a trailing ``until <date>`` (-> UNTIL) or ``for <duration>``
     (-> COUNT) bound onto ``rec``, extending ``consumed`` over the words it
     reads.  A bound the engine cannot ground (an unparseable date, a
     calendar-ambiguous duration under a MONTHLY/YEARLY rule) is left untouched
     in the remainder rather than guessed.
+
+    The until words in ``range_words`` join a range, which
+    :func:`_apply_range_bound` and :func:`_apply_range_reading` read later.
+    The range reads the words after it as part of its right bound, as a
+    plain until bound does, so while a range word exists only the other until
+    words are read here.
 
     Both markers may be **multi-word** ("timp de", "в продължение на") and may
     be **postposed** -- the marker following the date/duration rather than
@@ -1793,28 +1867,7 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
     one, per marker."""
     from dataclasses import replace as _replace
     tokens = ctx.tokens
-
-    def _ground_until(rec, text):
-        # An "until" marker's payload may itself carry a leading "before"
-        # connector ("until before christmas"): extract_timespan treats a
-        # bare "before <holiday>" as an OPEN range (anchor -> holiday), so
-        # grounding the untouched text would read .start as the anchor and
-        # emit a self-defeating UNTIL=anchor.  Strip the leading before-word
-        # first so the payload matches the bare-holiday form the before_words
-        # marker path itself grounds ("before christmas" -> "christmas"),
-        # keeping "until before X" and "until X" equivalent.
-        stripped = text
-        low = text.lower().split()
-        for surf in ctx.before_words:
-            words = surf.lower().split()
-            k = len(words)
-            if k and low[:k] == words:
-                stripped = " ".join(text.split()[k:])
-                break
-        got = extract_timespan(stripped, lang, anchor=anchor)
-        if got is None:
-            return None
-        return _replace(rec, until=got[0].start)
+    ground_until = partial(_ground_until, ctx=ctx, lang=lang, anchor=anchor)
 
     def _calendar(text):
         # a length with a month or a year counts only from an anchor
@@ -1833,6 +1886,9 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
                 != (anchor.year, anchor.month, anchor.day))
 
     def _ground_count(rec, text):
+        # UNTIL wins over a later COUNT: RFC 5545 allows one of the two
+        if rec.until is not None:
+            return None
         dur = extract_duration(text, lang, anchor=anchor)
         if dur is None or (dur.remainder and _calendar(text)
                            and _another_start(dur.remainder)):
@@ -1842,12 +1898,12 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
             return None
         return _replace(rec, count=count)
 
-    weekday_ranges = _weekday_range_marks(ctx, consumed)
-    for surfaces, grounder in ((ctx.until_words, _ground_until),
-                               (ctx.before_words, _ground_until),
-                               (ctx.for_words, _ground_count)):
+    groups = ((ctx.until_words, ground_until),
+              (ctx.before_words, ground_until),
+              (ctx.for_words, _ground_count))
+    for surfaces, grounder in groups[:1] if range_words else groups:
         for marker in _marker_runs(tokens, surfaces, consumed):
-            if surfaces is ctx.until_words and marker[0] in weekday_ranges:
+            if surfaces is ctx.until_words and marker[0] in range_words:
                 continue
             got = _bound_payload(rec, consumed, tokens, marker, lang, anchor,
                                  grounder)
@@ -1881,7 +1937,7 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
     # trailing count -- that would build an invalid rule and raise out of the
     # public extractor.  UNTIL wins; the "N times" stays in the remainder.
     if (ctx.count_words and isinstance(rec, Recurrence)
-            and rec.count is None and rec.until is None):
+            and rec.count is None and rec.until is None and not range_words):
         for i in range(n):
             if i in consumed or tokens[i].text not in ctx.count_words:
                 continue
@@ -1900,7 +1956,7 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor):
     return rec, consumed
 
 
-def _apply_range_bound(rec, consumed, ctx, lang, anchor):
+def _apply_range_bound(rec, consumed, ctx, lang, anchor, range_words):
     """Fold a stranded "from A to B" / "between A and B" range clause onto
     ``rec``, extending ``consumed`` over the words it reads.
 
@@ -1926,13 +1982,18 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
       so it is consumed as part of the one clause without contributing a
       value, rather than left stranded in the remainder.
 
-    Declines outright -- rather than guessing -- when ``rec`` already carries
-    an ``UNTIL`` (an explicit "until"/"for" bound already claimed the tail)
-    or is a :class:`~chronologia.recurrence.HolidayRecurrence` (no RRULE
-    fields to fold onto).  A pre-existing ``COUNT`` is cleared when the range
-    grounds an ``UNTIL`` -- COUNT and UNTIL are mutually exclusive in RFC
-    5545, and UNTIL (the explicit bound) wins, mirroring the same policy in
-    :func:`_apply_bounds`.
+    Declines outright -- rather than guessing -- when ``rec`` is a
+    :class:`~chronologia.recurrence.HolidayRecurrence` (no RRULE fields to
+    fold onto).  At an until word of ``range_words`` it reads a weekday range
+    only; :func:`_apply_range_reading` grounds the date range there.  A
+    weekday range there joins a rule that has days of its own only when the
+    until word is also a "to" word of the locale (de "bis"); otherwise the
+    word stays the rule's bound.  A ``rec`` that already carries an ``UNTIL``
+    (an explicit "until"/"for" bound already claimed the tail) takes a
+    weekday range at a range word and nothing else.  A pre-existing ``COUNT``
+    is cleared when the range grounds an ``UNTIL`` -- COUNT and UNTIL are
+    mutually exclusive in RFC 5545, and UNTIL (the explicit bound) wins,
+    mirroring the same policy in :func:`_apply_bounds`.
 
     R94: a sentence may carry MORE than one stranded range clause -- a
     weekday range AND a date range on top of an already-consumed clock range
@@ -1954,7 +2015,10 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
     remainder).
     """
     from dataclasses import replace as _replace
-    if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)) or rec.until is not None:
+    if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)):
+        return rec, consumed
+    bounded = rec.until is not None
+    if bounded and not range_words - consumed:
         return rec, consumed
 
     tokens = ctx.tokens
@@ -1964,6 +2028,7 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
         + _conn_surfaces(spec, "from", _RANGE_FROM)
     mids = _conn_surfaces(spec, "to", _RANGE_TO) \
         + _conn_surfaces(spec, "and", ("and",))
+    own_to = _conn_surfaces(spec, "to", ())
 
     def _match(i, words):
         k = len(words)
@@ -2022,6 +2087,11 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
                 if (len(left) == 1 and len(right) == 1
                         and left[0].text in ctx.weekdays
                         and right[0].text in ctx.weekdays):
+                    if k in range_words:
+                        if rec.byday and not any(_match(k, w) for w in own_to):
+                            continue
+                    elif bounded:
+                        continue
                     start_wd = ctx.weekdays[left[0].text]
                     end_wd = ctx.weekdays[right[0].text]
                     days = []
@@ -2057,6 +2127,9 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
                     consumed = consumed | set(range(i, n))
                     claimed = True
                     break
+
+                if bounded or k in range_words:
+                    continue
 
                 # A bare-number range ("from 1 to 2") carries no calendar
                 # semantics of its own -- unlike "to august"/"to monday", it
@@ -2096,6 +2169,28 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor):
                 break
         if not claimed:
             break
+    return rec, consumed
+
+
+def _apply_range_reading(rec, consumed, ctx, lang, anchor, range_words, left):
+    """Ground the range words that no weekday range read as a date range.
+    UNTIL is the date that a plain "until <date>" bound reads from the same
+    words, and the range consumes the tokens ``left`` of its left bound and
+    its lead word ("de", "von", "from")."""
+    if (isinstance(rec, (HolidayRecurrence, JurisdictionHolidays))
+            or rec.until is not None):
+        return rec, consumed
+    tokens = ctx.tokens
+    ground_until = partial(_ground_until, ctx=ctx, lang=lang, anchor=anchor)
+    for marker in _marker_runs(tokens, ctx.until_words, consumed):
+        if marker[0] not in range_words:
+            continue
+        got = _bound_payload(rec, consumed, tokens, marker, lang, anchor,
+                             ground_until)
+        if got is None:
+            continue
+        rec, extra = got
+        return rec, consumed | extra | left
     return rec, consumed
 
 

@@ -70,12 +70,12 @@ def test_date_range_keeps_its_until(text, lang, until):
     assert got.recurrence.to_string() == f"FREQ=DAILY;UNTIL={until}T000000"
 
 
-@pytest.mark.parametrize("text,lang,until,remainder", [
-    ("jeden Tag von Montag bis Freitag bis Dezember", "de", "20261127", "von Montag"),
-    ("elke dag van maandag tot vrijdag tot december", "nl", "20261127", "van maandag"),
+@pytest.mark.parametrize("text,lang", [
+    ("jeden Tag von Montag bis Freitag bis Dezember", "de"),
+    ("elke dag van maandag tot vrijdag tot december", "nl"),
 ])
-def test_weekday_range_followed_by_more_text_is_not_a_set(text, lang, until, remainder):
+def test_weekday_range_followed_by_an_until_bound_is_a_set(text, lang):
     got = extract_recurrence(text, lang, _ANCHORS[0])
-    assert got.recurrence.byday == ()
-    assert got.recurrence.to_string() == f"FREQ=DAILY;UNTIL={until}T000000"
-    assert got.remainder == remainder
+    assert got.recurrence.to_string() == (
+        "FREQ=DAILY;UNTIL=20261201T000000;BYDAY=MO,TU,WE,TH,FR")
+    assert got.remainder == ""
